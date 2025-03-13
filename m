@@ -1,190 +1,138 @@
-Return-Path: <linux-kernel+bounces-559535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E6F1A5F51E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:02:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08EBCA5F518
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:01:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCE3C3A5195
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:02:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E38173BF659
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A72267701;
-	Thu, 13 Mar 2025 13:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l5T6Wf2p"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED412676F9;
+	Thu, 13 Mar 2025 13:01:38 +0000 (UTC)
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474262676EA
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB212661BE;
+	Thu, 13 Mar 2025 13:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741870931; cv=none; b=KwjuYZQFjX8h7K16CSePjkmWek2vv21Ib6A/SRKwZFJwvwNsYClIfjQF12JTNBJH6D+etiL8/rrPMIO0vliOXtuJJKr8FhAOLxw7XHcTQot+lD/5Z4KJg/RB3g4Few79WsaneAXJpo3T37b1Wy0OKvu1IM2V3MMwzzNPuoQo/O4=
+	t=1741870898; cv=none; b=IXT0WBkw2WiKBevdTrmS8gpOEc7+9mbMtIzcwdxs6KZKh1hMWWyG16I1b1RsaFwOlBpoUqyrcv/U5e5+lF/NkW1uEGqVXPebSyXFA/qWf3eWWUfPZojtpwFUQU5HkWFO6EVgor0nGW41OMhuhAPCvxCuGesjP90yxZL/TlHoWD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741870931; c=relaxed/simple;
-	bh=O4pkq9pY+IGrDhCQlHU6mDDfuQ0F6VBwbCN7BFb0QZo=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=h3bvY2zbWUzpRdMqiZ7NaEetUCUNWWxi69BZmfCGSPQBNvR8kO50Ln4j8VnucY2k4xxAZ19prH3n77PEKRL82ByG53dEkBku0GKoLkMN1AuFRy29pBnMk+jEP2VyJHZxE6uyXVzZ1Yl0TnxY+otvyn2UNauVq3KQuN1qITfsdzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l5T6Wf2p; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741870930; x=1773406930;
-  h=date:from:to:cc:subject:message-id;
-  bh=O4pkq9pY+IGrDhCQlHU6mDDfuQ0F6VBwbCN7BFb0QZo=;
-  b=l5T6Wf2p2HpKMyVEsvCDmCvEtoxbxmdF78PqlSscfFrEzLEBE+0T5Zge
-   0hWwEtnoPBP/ZRRJ8AhF57OtoAjNUkRWldox2xpuzzeB8eykBy7rp/hr5
-   5eTS3vyZBAp1xWJZBOnrSDxYH3bJPOevtQyQ8rpPS7atpCG9Jyms4TtV4
-   YxXmgP7aGIIisgNMS7VM+0WrIGbGr+RgIZc15O/ZrJKPK+X5MybzmAp6X
-   Vx3qNmHRZp55IvIFZSkd+/DOtzgEE5AP5KKk7b+5EY66UXnC8joAp8XpN
-   Tx9cJ0ym8a+WiddeDyulYXB8VdvbrweSSwxnch4WrBrCKAvhOxx1FxHLs
-   Q==;
-X-CSE-ConnectionGUID: X4f7TnL1SJ2hrUZbQhjZ7g==
-X-CSE-MsgGUID: wr90yOslSsGwxANNcR7XKg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="53621510"
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="53621510"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 06:02:09 -0700
-X-CSE-ConnectionGUID: OZagycMqRCiymjgprb1E8g==
-X-CSE-MsgGUID: p3SCI2sOTDW9RwRv6nYTQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="120941626"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 13 Mar 2025 06:02:07 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tsiCK-0009PY-0V;
-	Thu, 13 Mar 2025 13:02:04 +0000
-Date: Thu, 13 Mar 2025 21:01:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:sched/core] BUILD SUCCESS
- e6644c967d3c076969336bd8a9b85ffb45f677f7
-Message-ID: <202503132111.IuWGM1Wp-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1741870898; c=relaxed/simple;
+	bh=SX7pBKY0ZRRjvwuaSY3uDv5mmBx+HWJ12bqJ47Nbliw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=L0ZwpG0L8+g7nig1YdRT3MNUAbih1G6p12X17xreryxE6xcqRgN9jPNPp2roi+RjpgvI9ICvvFOPImrQcXmdPZWWFUhHFrL0u2cX86IF3su9QldaSPr4KkBDpv6FysMquLtDdO/enh7r8RPoDgobr34kJZ5otQxOBJ2SIv+QiQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [119.122.215.89])
+	by smtp.qiye.163.com (Hmail) with ESMTP id e2d5d956;
+	Thu, 13 Mar 2025 21:01:22 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: jonas@kwiboo.se
+Cc: amadeus@jmu.edu.cn,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	heiko@sntech.de,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 0/2] arm64: dts: rockchip: Add pwm nodes for RK3528
+Date: Thu, 13 Mar 2025 21:01:18 +0800
+Message-Id: <20250313130118.2772992-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <22d849c3-8a0d-4704-b69c-8019c7f70ca7@kwiboo.se>
+References: <22d849c3-8a0d-4704-b69c-8019c7f70ca7@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSU9PVk8ZTUtCSE5KGh5DTVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKTlVDQllXWRYaDxIVHRRZQVlPS0hVSktISk5MTlVKS0tVSk
+	JLS1kG
+X-HM-Tid: 0a958f985e7603a2kunme2d5d956
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PT46Mzo6MzJWCBc*SBFKCz4W
+	HyFPCjdVSlVKTE9KQ0xLQ0NISkxKVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
+	QlVKSUlVSUpOVUNCWVdZCAFZQUlIS0M3Bg++
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
-branch HEAD: e6644c967d3c076969336bd8a9b85ffb45f677f7  rseq/selftests: Ensure the rseq ABI TLS is actually 1024 bytes
+Hi,
 
-elapsed time: 1458m
+> Interesting, good that it works with the updated U-Boot. Main change
+> compared to v1 is that it now use clock/reset id and DT closer to what
+> has been merged in mainline Linux. It also has DT params to help
+> initialize the two pwm regulators used by these boards.
+>
+> I will try with the old v1 U-Boot series and see if I can replicated
+> your issue.
 
-configs tested: 98
-configs skipped: 2
+It is easy to reproduce this issue.
+Make the following changes in the new series of u-boot:
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+```
+--- a/configs/radxa-e20c-rk3528_defconfig
++++ b/configs/radxa-e20c-rk3528_defconfig
+@@ -47,9 +47,7 @@ CONFIG_DM_MDIO=y
+ CONFIG_DWC_ETH_QOS=y
+ CONFIG_DWC_ETH_QOS_ROCKCHIP=y
+ CONFIG_PHY_ROCKCHIP_INNO_USB2=y
+-CONFIG_REGULATOR_PWM=y
+ CONFIG_DM_REGULATOR_GPIO=y
+-CONFIG_PWM_ROCKCHIP=y
+ CONFIG_BAUDRATE=1500000
+ CONFIG_DEBUG_UART_SHIFT=2
+ CONFIG_SYS_NS16550_MEM32=y
+```
 
-tested configs:
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-13.2.0
-arc                              allyesconfig    gcc-13.2.0
-arc                   randconfig-001-20250312    gcc-13.2.0
-arc                   randconfig-002-20250312    gcc-13.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                              allyesconfig    gcc-14.2.0
-arm                   randconfig-001-20250312    clang-19
-arm                   randconfig-002-20250312    clang-21
-arm                   randconfig-003-20250312    clang-19
-arm                   randconfig-004-20250312    clang-21
-arm64                            allmodconfig    clang-18
-arm64                 randconfig-001-20250312    clang-21
-arm64                 randconfig-002-20250312    gcc-14.2.0
-arm64                 randconfig-003-20250312    gcc-14.2.0
-arm64                 randconfig-004-20250312    gcc-14.2.0
-csky                  randconfig-001-20250312    gcc-14.2.0
-csky                  randconfig-002-20250312    gcc-14.2.0
-hexagon                          allmodconfig    clang-21
-hexagon                          allyesconfig    clang-18
-hexagon               randconfig-001-20250312    clang-21
-hexagon               randconfig-002-20250312    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250312    clang-19
-i386        buildonly-randconfig-002-20250312    clang-19
-i386        buildonly-randconfig-003-20250312    gcc-12
-i386        buildonly-randconfig-004-20250312    gcc-12
-i386        buildonly-randconfig-005-20250312    gcc-12
-i386        buildonly-randconfig-006-20250312    clang-19
-i386                                defconfig    clang-19
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch             randconfig-001-20250312    gcc-14.2.0
-loongarch             randconfig-002-20250312    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                           ip30_defconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250312    gcc-14.2.0
-nios2                 randconfig-002-20250312    gcc-14.2.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                randconfig-001-20250312    gcc-14.2.0
-parisc                randconfig-002-20250312    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-16
-powerpc               randconfig-001-20250312    clang-21
-powerpc               randconfig-002-20250312    clang-21
-powerpc               randconfig-003-20250312    clang-21
-powerpc64             randconfig-001-20250312    clang-17
-powerpc64             randconfig-002-20250312    clang-15
-powerpc64             randconfig-003-20250312    clang-21
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-21
-riscv                 randconfig-001-20250312    clang-21
-riscv                 randconfig-002-20250312    gcc-14.2.0
-s390                             allmodconfig    clang-19
-s390                              allnoconfig    clang-15
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250312    clang-15
-s390                  randconfig-002-20250312    clang-16
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                    randconfig-001-20250312    gcc-14.2.0
-sh                    randconfig-002-20250312    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250312    gcc-14.2.0
-sparc                 randconfig-002-20250312    gcc-14.2.0
-sparc64               randconfig-001-20250312    gcc-14.2.0
-sparc64               randconfig-002-20250312    gcc-14.2.0
-um                               allmodconfig    clang-21
-um                                allnoconfig    clang-18
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250312    gcc-12
-um                    randconfig-002-20250312    clang-15
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20250312    clang-19
-x86_64      buildonly-randconfig-002-20250312    clang-19
-x86_64      buildonly-randconfig-003-20250312    gcc-12
-x86_64      buildonly-randconfig-004-20250312    clang-19
-x86_64      buildonly-randconfig-005-20250312    clang-19
-x86_64      buildonly-randconfig-006-20250312    clang-19
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250312    gcc-14.2.0
-xtensa                randconfig-002-20250312    gcc-14.2.0
+Or change dts:
+```
+--- a/arch/arm/dts/rk3528-radxa-e20c-u-boot.dtsi
++++ b/arch/arm/dts/rk3528-radxa-e20c-u-boot.dtsi
+@@ -8,9 +8,9 @@
+ };
+ 
+ &vdd_arm {
+-	regulator-init-microvolt = <953000>;
++	status = "disabled";
+ };
+ 
+ &vdd_logic {
+-	regulator-init-microvolt = <900000>;
++	status = "disabled";
+ };
+```
+
+Then the kernel will hang when loading the gpio driver:
+
+[    0.162618] gpio gpiochip2: Static allocation of GPIO bae is deprecated, use dynamic allocation.
+[    0.163558] rockchip-gpio ffb00000.gpio: probed /soc/pinctrl/gpio@ffb00000
+[    0.164322] gpio gpiochip3: Static allocation of GPIO base is deprecated, use dynamic allocation.
+[    0.165231] rockchip-gpio ffb10000.gpio: probed /soc/pinctrl/gpio@ffb10000
+[    0.165977] gpio gpiochip4: Static allocation of GPIO base is deprecated, use dynamic allocation.
+[    0.166886] rockhip-gpio ffb20000.gpio: probed /soc/pinctrl/gpio@ffb20000
+[    0.170342] Internal error: Oos - Undefined instruction: 0000000002000000 [#1] SMP
+
+Changing the debug level:
+[    0.175260] rockchip-pinctrl soc:pinctrl: setting mux of GPIO4-14 to 0
+[    0.175356] rockchip-pinctrl soc:pinctrl: setting mux of GPIO4-20 to 1
+[    0.175968] rockchip-pinctrl soc:pinctrl: setting mux of GPIO4-14 to 0
+[    0.176849] rockchip-pinctrl soc:pinctrl: setting mux of GPIO4-21 to 1
+[    0.178453] rockchip-pinctrl soc:pinctrl: setting mux of GPIO4-13 to 0
+(hang)
+
+Thanks,
+Chukun
 
 --
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
 
