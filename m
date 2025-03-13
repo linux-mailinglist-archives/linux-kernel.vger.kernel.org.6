@@ -1,211 +1,124 @@
-Return-Path: <linux-kernel+bounces-558959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 168FEA5ED9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:07:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A4DBA5EDA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:08:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCDE27A29C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:06:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4BD73BA1CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5211260A33;
-	Thu, 13 Mar 2025 08:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC91D260A58;
+	Thu, 13 Mar 2025 08:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KuB0zno4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oy9Ydscb"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412C9260390;
-	Thu, 13 Mar 2025 08:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD9F1FBE89;
+	Thu, 13 Mar 2025 08:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741853208; cv=none; b=q7FY222U0MHOiMW/4J2wtf14f2c8CtDY9OfOmG3v8oRG8xHIgbStoy8xB0C7Flai/3lejgFQ55kJRkVX7+Ar/fVKlmdvp2fN3BuggjKAJ0eU5ZVjP3N+oMYGT73/Y/jj0Ku6F53m0rNsn6qagFSZvI+djRVUnyAak6rK2qgilx8=
+	t=1741853240; cv=none; b=bSwIm2MO92l9r84DNFU/5kqaKksxcj6iFppdq+l88k0QI+xtZfecR0Gh2J1RGrl+4/BqhgZOxx1Fnu5iZqsmaIpocR0xu/ChUrz1gpA/StiJnmn4GYST0Lmk+BRDhV7sAUWKw9r7rgYNL10qg2KOpD2xQ75p/6RfkFRDMmMcgjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741853208; c=relaxed/simple;
-	bh=bR9JTHQ6TPxSLmWg0pU6f/wQvuPkKUdbi2FXj8T2sUk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f0CgUKt4Flh2P4tgC42BlqYKUk6vxKuwQeiIdW6HzPPdJS9IyHJan0I+gueGdLDpS8c/EqPJ1vYK+Dzcy0uNQiWb+EfN20eGbj0R48je1yliA89PNW8JRA8MoJw58JKn3mYWRpN+Sm6QLEL0/3IVex8yyNH2eN5eGLMFBqm8uY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KuB0zno4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D7RUpd022536;
-	Thu, 13 Mar 2025 08:06:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	U3d4rtPbAvYi3k2CRRFl+IrbVJFOaPAb+Wt2WZKaqoc=; b=KuB0zno4r9dwQ0KZ
-	EQQWQgtxhNpwnZFC41uRcj/76XFzhcLNDW+I/sCh31MQUsxY+k3LzP1VEdBnwmfD
-	6xrArfEej5WkVm0NSn87Me2b9YH+5U/VRMZp6NAz9Ez6mj1JeF0FjFY/jIeTJQPQ
-	/JhtWfMnRxmI+2JxoNHHel0cGECyltyrJvMNA3dMccHayIPM+Xu80CO9x235MVZu
-	BTDABAw/5UtERlqLu+2fPMRgY46JkPowFrlljpgu15vsrD7y7j2kWNyhtY7b+8fs
-	Anc1+LquBMeoGMUzxyc0wWB7AMFHiRztZn3WneL6DuCZm+u0hOAe0I9u7E0iOsN6
-	MCWwrA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45bu07g3bv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 08:06:36 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D86Z4B009459
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 08:06:35 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 13 Mar 2025 01:06:30 -0700
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Praveenkumar I <quic_ipkumar@quicinc.com>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>,
-        Varadarajan Narayanan
-	<quic_varada@quicinc.com>
-Subject: [PATCH v13 4/4] arm64: dts: qcom: ipq5332-rdp441: Enable PCIe phys and controllers
-Date: Thu, 13 Mar 2025 13:36:00 +0530
-Message-ID: <20250313080600.1719505-5-quic_varada@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250313080600.1719505-1-quic_varada@quicinc.com>
-References: <20250313080600.1719505-1-quic_varada@quicinc.com>
+	s=arc-20240116; t=1741853240; c=relaxed/simple;
+	bh=AnQdXNSMT7o7yQZ2TjQSBLykcghF2OWM1Qj32bi/UQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JD31pfPDBmtgN2h0Xq5sBhWAC3nUnH9WC8NnMvirIafIFgFLAKQOYf+CZaNf2LnivxtQxYZYjWJfkpuEJ2uoI5V4iFkMQ2gePNdyjgd7E1Es1OwIK5WsFFU36F6jm6jokUR02/gH6TIPnE7S4PYX9c5ID93YWuSWH55nYmL+3A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oy9Ydscb; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac29af3382dso111815966b.2;
+        Thu, 13 Mar 2025 01:07:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741853235; x=1742458035; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a0fTcyiiClZN7GKZcM5x5s8tHses1BA754IzjfcZUfw=;
+        b=Oy9YdscbkgKtxLbYEZD0m8PX59cnoeGET4B1UT0rlRq5bgP8OvRhiiJJGeTVxZg2Vr
+         XjPxrvVCuCFtjPp03BV+VA7tbrJ+CxU7lQ5zJO0d0JR+FDWviNKQYNUq5oWfS2DyJBf9
+         oM9r0FzyemrkjnMbaejNy7lvFxDbsKYhmmEvDUYa5ZdqrPTw6jeI3OeH4WblCLEOBeCq
+         ZFTvLKOb9JbbQ1czCu0Ru5xExbp+9NbJbC+haFtsbB477LYKPT/jT2rDVQEDwj1wA7Gk
+         TUI8fqGr0TuTj/O7hzws2lgpYY9CJA/pb00sntHPM+huxd7qXKN23tSdrdJRaoHXgd/v
+         RAHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741853235; x=1742458035;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a0fTcyiiClZN7GKZcM5x5s8tHses1BA754IzjfcZUfw=;
+        b=gFAiqwEwe1BzWJB7D4dcKxt2Dyrd6qfggQMLlsK+TJnxD9ojB5Dc18xFsgeZkVSRpH
+         LK25/kRYD0Cd4ZDP/jNPl/bim8TlBZutFhlqjLNOXVl0mS5qTSmSdxl0s60qTU4IjaqY
+         5PngrPzWR0A7CjozQPSdbobWR+9GlgSWqlCBefjawuW7DCaiatM2N8espMGsiaGLJtr6
+         1spZkGFQo61LqW4Og4KZrHm8fG+UdosWshT9B7kpzRabNCJpaD9QTuWQyYLOQvfMel7x
+         Aa0UZ8D3CheuFLmeV3TUMa2Z4ChNtMyZSbtxGfyLWBCIgN7bQewhhnygnVFgt3pRY/7C
+         8ltQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjg4tbWco+oqmLipuaQQWUIl/90lU3kaYzybRbp8T4uIYr7+oWC+isCUinhcltT3CWoCzwfskbPLiGGlA=@vger.kernel.org, AJvYcCW/ckbtovTwxO9DceIW7lBtbDNXy3hL3tjCN3hHdO80NYvw9hS6kG5yLv7p89xLmNewnFjVhtpQ@vger.kernel.org, AJvYcCXL1jqolIdngZ0BGATUA85p2uIoYlguinSxRM9F1D5PldfGJvFZwZGzHGyKLZUMXwOBGsG+suZ+GSmnkw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0J19yl6FRoxCrk/uthAqmESIzv6XowQ3HfsO6+6OUMd7YZL7N
+	as2PcKA82P9MiBgjMun3j9FDJCnlVDE5ByCLtIJY1Hz3nMGVbaIg03CmzA==
+X-Gm-Gg: ASbGncsxeMfvphJ+nEZgVeIjS5p6YaeBCVZIMnDFVcdUsCldYJcGs6TeLeiM38282dY
+	yzngiiW4m7c5nMQTJU+VHip9bUr3zLuR6E/eNMTelsPZFZ49hwlGF/w55xpErYMwVFgsFzZFBWc
+	f3zxrPmM825VZCNUZMMwv5TFoHcA5S7M0qmStwspddWzFAn0YOSJhf06KifBCGjXLjYLZRWWcUj
+	zDLUdA/LtHpKDZQw6Jqud33wg/imdThC9LtnCir6VkbEuTJUHOv8Lo2nSNo65zEBqA1CCYS2C2v
+	FxMKIfyeYbfbP3KdBUI1P9Rijs10SttQTZhJJI/cJDw/z8aeHlKXQ5m3EAlRT4X9Fg==
+X-Google-Smtp-Source: AGHT+IHfoEtyTJ+DcJm71sMd6fkWRqhkLPldXyAkyawyzTHA/K58PyuAovR5fwdqPSDWFgqqccSneg==
+X-Received: by 2002:a17:907:34d5:b0:ac2:cdcb:6a85 with SMTP id a640c23a62f3a-ac2cdcb7301mr749578266b.22.1741853234675;
+        Thu, 13 Mar 2025 01:07:14 -0700 (PDT)
+Received: from [172.27.56.126] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147e7f11sm50762766b.42.2025.03.13.01.07.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 01:07:14 -0700 (PDT)
+Message-ID: <f30ee793-6538-4ec8-b90d-90e7513a5b3c@gmail.com>
+Date: Thu, 13 Mar 2025 10:07:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: k0xUxxI_b8SNfpMhRNq8wLEiqp_hz12p
-X-Authority-Analysis: v=2.4 cv=V+F90fni c=1 sm=1 tr=0 ts=67d2920c cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=A71FK_BBuJjt25o-iSMA:9
- a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: k0xUxxI_b8SNfpMhRNq8wLEiqp_hz12p
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_04,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=838
- impostorscore=0 spamscore=0 priorityscore=1501 phishscore=0 mlxscore=0
- lowpriorityscore=0 suspectscore=0 malwarescore=0 adultscore=0 bulkscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130063
+User-Agent: Mozilla Thunderbird
+Subject: Re: [pull-request] mlx5-next updates 2025-03-10
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: patchwork-bot+netdevbpf@kernel.org, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, andrew+netdev@lunn.ch,
+ leon@kernel.org, saeedm@nvidia.com, gal@nvidia.com, mbloch@nvidia.com,
+ moshe@nvidia.com, linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, leonro@nvidia.com, ychemla@nvidia.com,
+ Tariq Toukan <tariqt@nvidia.com>
+References: <1741608293-41436-1-git-send-email-tariqt@nvidia.com>
+ <174168972325.3890771.16087738431627229920.git-patchwork-notify@kernel.org>
+ <9960fce1-991e-4aa3-b2a9-b3b212a03631@gmail.com>
+ <20250312212942.56d778e7@kernel.org>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20250312212942.56d778e7@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Praveenkumar I <quic_ipkumar@quicinc.com>
 
-Enable the PCIe controller and PHY nodes for RDP 441.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
-Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
----
- arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts | 76 +++++++++++++++++++++
- 1 file changed, 76 insertions(+)
+On 12/03/2025 22:29, Jakub Kicinski wrote:
+> On Tue, 11 Mar 2025 22:50:24 +0200 Tariq Toukan wrote:
+>>> This pull request was applied to bpf/bpf-next.git (net)
+>>
+>> Seems to be mistakenly applied to bpf-next instead of net-next.
+> 
+> The bot gets confused. You should probably throw the date into the tag
+> to make its job a little easier.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts b/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
-index 846413817e9a..79ec77cfe552 100644
---- a/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
-@@ -32,6 +32,34 @@ &sdhc {
- 	status = "okay";
- };
- 
-+&pcie0 {
-+	pinctrl-0 = <&pcie0_default>;
-+	pinctrl-names = "default";
-+
-+	perst-gpios = <&tlmm 38 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 39 GPIO_ACTIVE_LOW>;
-+
-+	status = "okay";
-+};
-+
-+&pcie0_phy {
-+	status = "okay";
-+};
-+
-+&pcie1 {
-+	pinctrl-0 = <&pcie1_default>;
-+	pinctrl-names = "default";
-+
-+	perst-gpios = <&tlmm 47 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 48 GPIO_ACTIVE_LOW>;
-+
-+	status = "okay";
-+};
-+
-+&pcie1_phy {
-+	status = "okay";
-+};
-+
- &tlmm {
- 	i2c_1_pins: i2c-1-state {
- 		pins = "gpio29", "gpio30";
-@@ -40,6 +68,54 @@ i2c_1_pins: i2c-1-state {
- 		bias-pull-up;
- 	};
- 
-+	pcie0_default: pcie0-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio37";
-+			function = "pcie0_clk";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio38";
-+			function = "gpio";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+			output-low;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio39";
-+			function = "pcie0_wake";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+	};
-+
-+	pcie1_default: pcie1-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio46";
-+			function = "pcie1_clk";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio47";
-+			function = "gpio";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+			output-low;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio48";
-+			function = "pcie1_wake";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+	};
-+
- 	sdc_default_state: sdc-default-state {
- 		clk-pins {
- 			pins = "gpio13";
--- 
-2.34.1
+It did not pull the intended patch in this PR:
+f550694e88b7 net/mlx5: Add IFC bits for PPCNT recovery counters group
 
+Anything wrong with the PR itself?
+Or it is bot issue?
+
+> In any case, the tag pulls 6 commits
+> for me now.. (I may have missed repost, I'm quite behind on the ML
+> traffic)
+
+How do we get the patch pulled?
+It's necessary for my next feature in queue...
 
