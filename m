@@ -1,103 +1,106 @@
-Return-Path: <linux-kernel+bounces-560178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADAE2A5FF02
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:15:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42652A5FF11
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:17:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F109A17F292
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:15:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13F3D7A65D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4477F1F37CE;
-	Thu, 13 Mar 2025 18:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="HPofS2JS"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B6F1EB9F4;
-	Thu, 13 Mar 2025 18:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10FC1EE7BD;
+	Thu, 13 Mar 2025 18:15:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBC71C8631;
+	Thu, 13 Mar 2025 18:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741889645; cv=none; b=cLTjjdqKMM0gml8o72dFZAFCEcga1B4z8yaZWQTFifZLm3A1XFqj3TWZMOvrLQ9IQuM6bk55izutoS54jTWI3jCK9JypPcKc2IRFKBHH9HXMyhGxHL5LSEgRDu0Fin/y/GWTqoyyRsb2BPzcM6ZCnUjKs5kkrmgiendzu5r4pR4=
+	t=1741889752; cv=none; b=qiqyUwyqpbgMi7dGxlJy2cSgVRSZsLb3ys5dEafkDHEXI1aEDsCXvE8P6OPKtVmJUeo9O6R+ZxYuOekWj8Tib2MGCuAxj+w0r8kG+XFcZRvFZmK8bjcaX/aGmjj2LxTZlgRDcxuk9IjKW9tzPjY6jsPbA57PbiJHW36+3Wjw6To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741889645; c=relaxed/simple;
-	bh=JsqIMTl34/LNDaxfujHWoB1Q0STvD4LO4oUmAcSG0D8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=akVH2LCbvY7s80IzYDVOgp3RaxaxYmjbXqMMEoLqblZwSEff+gMZAMnfinaKP8VTR455YUYcq5nNvTpSrUrfmPaoQrq7t7Mh3+FNs54A8RotEDY6tjwo3zXiJCXkcBm2SVhfvmRqHvdynS2FWzOK1QrKTtxvxjIsuMSNx0KkFPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=HPofS2JS; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZDFxd30YSzltJQ0;
-	Thu, 13 Mar 2025 18:13:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1741889636; x=1744481637; bh=1rmpn+TtVY3mB9S4HUrhZhDm
-	5b5BiUejJjJzbebaXm0=; b=HPofS2JSXmF1ID+Nw6PGeIvfpB8ylNosure7a2+y
-	REUbdGwNwZ5ECldiQSv6ORBHC/01z2cYM7GXFRHZtiqDBtqs05pVdXxfkq4kN+pY
-	RCP6T8HmA3+8IWJFTgix29t5W7XpbaiUFVWg4WyRd83JD8AlQ+9tWYlX0JtGETvt
-	yczo2jttNbUaWKUV2Zp7WueU1BOnumOVl32KgQAi1K+xV4UCsWz8yRQDLwbQnU1T
-	sJfbqZCID/Su2BsBCWdzQfmezmxKxAocw52MPgQKfPG8zxboPpQLQWud6sNQf+ZN
-	PmGTlHrcqeBYxpCv7DJhxoZRb7+f1xZRRgIN1fsmi0xeNg==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id UHCUQAf4DRtP; Thu, 13 Mar 2025 18:13:56 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZDFxY6vnszltBCt;
-	Thu, 13 Mar 2025 18:13:52 +0000 (UTC)
-Message-ID: <0991bf65-aa76-46b1-b353-2a19069426d1@acm.org>
-Date: Thu, 13 Mar 2025 11:13:51 -0700
+	s=arc-20240116; t=1741889752; c=relaxed/simple;
+	bh=790nIjekPGYAliGPAZRKB2moAt8x9SJMIpb1bPx7iVE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PJWwCGnQSXMGKhJJwIuNn6T5oMqFne8xthx3C4kUviwKqT18C+j9DssopQPIfBg9OKRVYz5qUoyZ8fYCHC4msVdH7ALfrt8CRAz/ECCDfkosyDcBD7BAMoCZBU0JpqDFellBre7pDpe3qGI/gyVpQ6YrlqWXGJ+HfD/abeGz+V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 07FEE12FC;
+	Thu, 13 Mar 2025 11:16:01 -0700 (PDT)
+Received: from K4MQJ0H1H2.arm.com (unknown [10.163.42.238])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AE5113F694;
+	Thu, 13 Mar 2025 11:15:45 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: jroedel@suse.de,
+	akpm@linux-foundation.org
+Cc: ryan.roberts@arm.com,
+	david@redhat.com,
+	willy@infradead.org,
+	hch@lst.de,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Dev Jain <dev.jain@arm.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] mm: Update mask post pxd_clear_bad()
+Date: Thu, 13 Mar 2025 23:44:14 +0530
+Message-Id: <20250313181414.78512-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] scsi: ufs: critical health condition
-To: Avri Altman <avri.altman@wdc.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250211065813.58091-1-avri.altman@wdc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250211065813.58091-1-avri.altman@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/10/25 10:58 PM, Avri Altman wrote:
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index cd404ade48dc..ef56a5eb52dc 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -6216,6 +6216,11 @@ static void ufshcd_exception_event_handler(struct work_struct *work)
->   	if (status & hba->ee_drv_mask & MASK_EE_URGENT_TEMP)
->   		ufshcd_temp_exception_event_handler(hba, status);
->   
-> +	if (status & hba->ee_drv_mask & MASK_EE_HEALTH_CRITICAL) {
-> +		hba->critical_health_count++;
-> +		sysfs_notify(&hba->dev->kobj, NULL, "critical_health");
-> +	}
-> +
->   	ufs_debugfs_exception_event(hba, status);
->   }
+Since pxd_clear_bad() is an operation changing the state of the page tables,
+we should call arch_sync_kernel_mappings() post this.
 
-Hi Avri,
+Fixes: e80d3909be42 ("mm: track page table modifications in __apply_to_page_range()")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Dev Jain <dev.jain@arm.com>
+---
+ mm/memory.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-sysfs_notify() may sleep and hence must not be called from an interrupt
-handler. Please fix.
+diff --git a/mm/memory.c b/mm/memory.c
+index 78c7ee62795e..9a4a8c710be0 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2987,6 +2987,7 @@ static int apply_to_pmd_range(struct mm_struct *mm, pud_t *pud,
+ 			if (!create)
+ 				continue;
+ 			pmd_clear_bad(pmd);
++			*mask = PGTBL_PMD_MODIFIED;
+ 		}
+ 		err = apply_to_pte_range(mm, pmd, addr, next,
+ 					 fn, data, create, mask);
+@@ -3023,6 +3024,7 @@ static int apply_to_pud_range(struct mm_struct *mm, p4d_t *p4d,
+ 			if (!create)
+ 				continue;
+ 			pud_clear_bad(pud);
++			*mask = PGTBL_PUD_MODIFIED;
+ 		}
+ 		err = apply_to_pmd_range(mm, pud, addr, next,
+ 					 fn, data, create, mask);
+@@ -3059,6 +3061,7 @@ static int apply_to_p4d_range(struct mm_struct *mm, pgd_t *pgd,
+ 			if (!create)
+ 				continue;
+ 			p4d_clear_bad(p4d);
++			*mask = PGTBL_P4D_MODIFIED;
+ 		}
+ 		err = apply_to_pud_range(mm, p4d, addr, next,
+ 					 fn, data, create, mask);
+@@ -3095,6 +3098,7 @@ static int __apply_to_page_range(struct mm_struct *mm, unsigned long addr,
+ 			if (!create)
+ 				continue;
+ 			pgd_clear_bad(pgd);
++			mask = PGTBL_PGD_MODIFIED;
+ 		}
+ 		err = apply_to_p4d_range(mm, pgd, addr, next,
+ 					 fn, data, create, &mask);
+-- 
+2.30.2
 
-Thanks,
-
-Bart.
 
