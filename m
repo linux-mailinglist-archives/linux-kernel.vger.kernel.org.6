@@ -1,228 +1,106 @@
-Return-Path: <linux-kernel+bounces-558966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F31EA5EDBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:12:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A1C8A5EDC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:15:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837313B2A5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:12:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 103333BA4CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6713925F97C;
-	Thu, 13 Mar 2025 08:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="LMp9udoM"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324D8260388;
+	Thu, 13 Mar 2025 08:15:33 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98DB19ADB0
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F441E493;
+	Thu, 13 Mar 2025 08:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741853525; cv=none; b=YAhvqCxEgCrnL+W6hNZTcgzyOc8u/LAcYL0LRZqOQDeV884a36Vdy9lV6SewvaXAtYFFjf14p3vBr1D7sKjGsnUFWQiMiQBpXJZ9Kym5uPAPwxmDVm8XL+joo620q2d1xelRkoqAvMM7sSPmVlHvJCcKfHBX/zSVzkchJNDdHLA=
+	t=1741853732; cv=none; b=ioDQZJa+XK9RKgC87d4MJ0wV/Zq7RFaR091G09WjENi+LJZu/M9mWNlujrQymMhj0UUO0JR0NRXpgKmhUOW2ni8Xs2VUEkw594A9cBijRDD1Sm6f3AlBLnCi8HqMy0rxJe3SdwL7dw/d/aqsNvtSPt9eOY2nXik6npAI6BdKLvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741853525; c=relaxed/simple;
-	bh=IzGp4fuI3IHDHrdTjmvckSBEPvHvy8pyQGOWfkKs5ZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AMsNYZTHuiJT1IMFY6E+W7mfZAo4pdEq5nIhkha/yBwD7V9QrRuGyQ/9ibazmR8HiE3nvJr4Zd02+FlPcEmQn63vfTc4heiGW7hGrctvt36VXJzpnahCgRrv/fSjphT65KCxxr5U2gwpmgNQwLeX+pMHj5DB5CHCMkCzLFPdpfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=LMp9udoM; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff69365e1dso1142575a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 01:12:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1741853523; x=1742458323; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hMyv34pTISRCo09Nm4ZPlxjDBtcm83XdK8rjSQH8Ng8=;
-        b=LMp9udoMgjEHzE83rclQ/gN4vSwPVrmpqRceTjYFUlXHdI+5Klm2xFAlk59sSvepmy
-         ZxSQ4PWggmDK4NeM4QaDA+6CvrKVrs9xtaOZAyNObO2+LsxVYMUKu4bJ5ES40kG1QFbI
-         54S6a1ImmBbO4TdkYW/PTdxXtS1Sf8cXTFTljv9PGnMfs/M0FJ0iV9y4GIA/0awustbT
-         qfEEAf5/uV6TS246ZNGtD9M81DGM8fSIto7fAVA7RFEo+7sK/+aEE4s02wAVvbAWSshV
-         nnh1PSbUWVTiUJ4dBo/AiDIb7oamxLEgUvKQ3a/65CvYrwWp11wS2HIIns7N4k6B7g6c
-         ANSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741853523; x=1742458323;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hMyv34pTISRCo09Nm4ZPlxjDBtcm83XdK8rjSQH8Ng8=;
-        b=mNojnZrST0vl0z365FyBveQETzZqcbsjnsaLTtU5eYed4TRpJff6Q5ekai77GPzKN3
-         EM3/DMrOoE0O7Jg+sJCCVXQs1Z6DG7YzBcmRH8m7/NUGP5pzjfTKXMnJMW/RtKO9qsJs
-         m4buZxTCktk0Gy5KvHAN62m60JOypSC8+7btZQzbdI0aLQ/XwCVi0WmRM4EW0h3kP1kF
-         FGhE3Zt1nH4Num6Zdbl+IPC0HnEsGyqnuDIOkUtdAGRK4VK9qY/sdA3DIxfbBUmoJVwB
-         jGLrOuKpbchiNEPYtPoolfRiVgjCjAE4jWXPOh9BSVpP3rjFly3IDZZ4r6zH+W1sx4SB
-         VwqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtDAG1r0AT+LTyUoidmVIxa7EhN5VJFbbLuF+0kp4eD8b7jUHy9Aipwscqdllb8HOQx/npxcccUOJObDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVHcK2J4QeEOYdKE3q9NRiHfmpju3U8Hmc14GXCZfm/VEJ4bTd
-	JK8ztPBKDCqM4ncS0WAOjA9SdRnAX1TWsoCfUmkpV34uILFYctSZnn7FuBFVL34=
-X-Gm-Gg: ASbGnctqK381l7ngMB/9GkKkhtMLTY3j1n1IEdIqgXjEd9B01FhtOOYpmXkD5U7De5N
-	Crlg6WOBzzL8DdmkmHu1VmEMVVYrDIPZrFZXRH610jyAcEhyLx6z65W8mwuKlceuqsOhk3uJp3l
-	WQ4UlmkxJ09naOpuToTo+j0SKS8PniBZqhs4O3yM7I0XwCED7kbf25Zcs2w99mh9XHpCS0x8ErG
-	RPJd1h7H7CdlwE2H7jeM6FN05gJ3iAUsJLlBD3pfEuxAHmp7TotwG/gnlbfPP4NKu5oIG1fNEaN
-	k8Bs/qc/urCi9s6CsJdNThzYHw==
-X-Google-Smtp-Source: AGHT+IHfykXuKqP+IUtV7YBcmaO3errhm+D+UcJTQxE3sDBqJ8q7MdfshOawA55kfif74OzDGiSbMQ==
-X-Received: by 2002:a17:90b:4c4a:b0:2ff:7ad4:77b1 with SMTP id 98e67ed59e1d1-2ff7ce4f260mr37122057a91.2.1741853523011;
-        Thu, 13 Mar 2025 01:12:03 -0700 (PDT)
-Received: from x1 ([97.115.231.194])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68883fesm7885555ad.6.2025.03.13.01.12.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 01:12:02 -0700 (PDT)
-Date: Thu, 13 Mar 2025 01:12:00 -0700
-From: Drew Fustini <drew@pdp7.com>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, guoren@kernel.org,
-	wefu@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, alex@ghiti.fr, jszhang@kernel.org,
-	m.szyprowski@samsung.com, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v8 0/5] TH1520 SoC: Add AON firmware & power-domain
- support
-Message-ID: <Z9KTUIix4z7xb/e1@x1>
-References: <CGME20250311172030eucas1p12dda42760f751174e774b8d1a3d3f4cd@eucas1p1.samsung.com>
- <20250311171900.1549916-1-m.wilczynski@samsung.com>
- <CAPDyKFqeaq5xVNA=0CpMWSt_78qXJsY6+mpE1CSmLrVMQazAjg@mail.gmail.com>
- <4b45236e-8252-4dd5-b3f7-3595b0924182@samsung.com>
+	s=arc-20240116; t=1741853732; c=relaxed/simple;
+	bh=U9cHiEZ2UlFacIMIB70jtsKQGRGFuOhEZ5no/PBzaHM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NeuAzF2slrNjYP1dE0omchUErY1sSe87jRGsZ3KHGxSnoKmP5LlFDzP127m+Z/JjcUILuDCoMe5NJc5YS8fWv33MVN3lQnuUJZvsuqKJcZFF0pbotvjAKToV7CLmahjwYn25d30rqZgUyyJ7AKXMW5XoNQsdPt2yQw8F+2KubvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-03 (Coremail) with SMTP id rQCowACHjw8MlNJnAWfVFA--.3279S2;
+	Thu, 13 Mar 2025 16:15:16 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: lduncan@suse.com,
+	cleech@redhat.com,
+	michael.christie@oracle.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	James.Bottomley@SteelEye.com
+Cc: open-iscsi@googlegroups.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] [SCSI] iscsi: fix error handling in iscsi_add_session()
+Date: Thu, 13 Mar 2025 16:15:07 +0800
+Message-Id: <20250313081507.306792-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4b45236e-8252-4dd5-b3f7-3595b0924182@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACHjw8MlNJnAWfVFA--.3279S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7GF13GrWUGF4kuFW8CF1xZrb_yoWkCFb_Cr
+	WSvryxWr18tws7tw4fWF95Zryq9ryqgrZ3uF4SqayrZa4rXF9Fyr98Wr4vvw4UGw4Du34r
+	t3WDtw48Cr1vgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbSxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWlnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2
+	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
+	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUF0eHDUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On Wed, Mar 12, 2025 at 03:31:04PM +0100, Michal Wilczynski wrote:
-> 
-> 
-> On 3/12/25 14:40, Ulf Hansson wrote:
-> > On Tue, 11 Mar 2025 at 18:20, Michal Wilczynski
-> > <m.wilczynski@samsung.com> wrote:
-> >>
-> >> This patch series introduces and documents power management (PM) support and
-> >> the AON firmware driver for the T-Head TH1520 SoC, as used on the LicheePi 4A
-> >> board. While part of a larger effort to enable the Imagination BXM-4-64 GPU
-> >> upstream, these patches can merge independently.
-> >>
-> >> Bigger series cover letter:
-> >> https://lore.kernel.org/all/20250219140239.1378758-1-m.wilczynski@samsung.com/
-> >>
-> >> This series is versioned to maintain continuity with the bigger patchset it is
-> >> a subseries of. Please find below a changelog for the AON & power-domain:
-> > 
-> > I can pick up patch1 -> patch4 via my pmdomain tree, assuming I can
-> > get an ack from some of the thead-SoC maintainers.
-> > 
-> > Patch5 is probably better to be routed through the SoC maintainers
-> > tree, but let me know if you prefer me to take this one too.
-> 
-> Thanks, I don't have a preference, I'll leave it up to SoC maintainers.
-> I haven't included the device tree changes in this mini-series, as then
-> the PM & firmware, clock, and reset mini-series might conflict with each
-> other in th1520.dtsi file, but SoC maintainers might also find it useful
-> to pick this commit [1], along with the patch5.
-> 
-> [1] - https://lore.kernel.org/all/20250219140239.1378758-20-m.wilczynski@samsung.com/
+Once device_add() failed, we should call put_device() to decrement
+reference count for cleanup. Or it could cause memory leak.
 
-I applied this series on top of next along with the above dts patch.
-The existing functionality of ethernet and emmc continues to work
-correctly. I can apply the dts to my for-next tree once this series
-lands in next.
+As comment of device_add() says, 'if device_add() succeeds, you should
+call device_del() when you want to get rid of it. If device_add() has
+not succeeded, use only put_device() to drop the reference count'.
 
-root@lpi4amain:/sys/kernel/debug/pm_genpd# cat pm_genpd_summary
-domain                          status          children        performance
-    /device                         runtime status                  managed by
-------------------------------------------------------------------------------
-dsp1                            off-0                           0
-dsp0                            off-0                           0
-gpu                             off-0                           0
-venc                            off-0                           0
-npu                             off-0                           0
-vdec                            off-0                           0
+Found by code review.
 
+Cc: stable@vger.kernel.org
+Fixes: 8434aa8b6fe5 ("[SCSI] iscsi: break up session creation into two stages")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/scsi/scsi_transport_iscsi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-Drew
+diff --git a/drivers/scsi/scsi_transport_iscsi.c b/drivers/scsi/scsi_transport_iscsi.c
+index 9c347c64c315..74333e182612 100644
+--- a/drivers/scsi/scsi_transport_iscsi.c
++++ b/drivers/scsi/scsi_transport_iscsi.c
+@@ -2114,6 +2114,7 @@ int iscsi_add_session(struct iscsi_cls_session *session, unsigned int target_id)
+ release_dev:
+ 	device_del(&session->dev);
+ release_ida:
++	put_device(&session->dev);
+ 	if (session->ida_used)
+ 		ida_free(&iscsi_sess_ida, session->target_id);
+ destroy_wq:
+-- 
+2.25.1
 
-> 
-> > 
-> > Kind regards
-> > Uffe
-> > 
-> > 
-> >>
-> >> v8:
-> >> - add proper cleanup in the th1520_pd_probe()
-> >> - add "suppress_bind_attrs = true", since there is no need to unbound the driver
-> >>   during runtime. This simplifies the code by eliminating the remove function
-> >>
-> >> v7:
-> >> - add '#include <linux/slab.h", due to kernel robot issue
-> >>
-> >> v6:
-> >> - split the firmware & power-domain patches into a separate series
-> >>
-> >> v5:
-> >> - changed the AON driver to be a set of library functions rather than a
-> >>   standalone driver
-> >>
-> >> v4:
-> >> - added workaround to disable AUDIO power domain to prevent firmware crashes
-> >>
-> >> v3:
-> >>  - consolidated device tree representation by merging aon and power-domain nodes
-> >>    while maintaining separate drivers internally
-> >>  - power-domain driver is now instantiated from within the aon driver
-> >>  - fixed optional module dependencies in Kconfig
-> >>  - added kernel-doc comments for all exported functions
-> >>  - implemented th1520_aon_remove() to properly clean up mailbox channel
-> >>    resources
-> >>
-> >> v2:
-> >>  - introduced a new firmware driver to manage power-related operations.
-> >>  - rewrote the power-domain driver to function alongside the firmware driver.
-> >>    These nodes in the device tree lack direct address spaces, despite
-> >>    representing HW blocks. Control is achieved via firmware protocol messages
-> >>    transmitted through a mailbox to the E902 core.
-> >>  - added new dt-bindings for power and firmware nodes.
-> >>  - ran dtbs_check and dt_binding_check to ensure compliance.
-> >>
-> >> Michal Wilczynski (5):
-> >>   dt-bindings: firmware: thead,th1520: Add support for firmware node
-> >>   firmware: thead: Add AON firmware protocol driver
-> >>   dt-bindings: power: Add TH1520 SoC power domains
-> >>   pmdomain: thead: Add power-domain driver for TH1520
-> >>   riscv: Enable PM_GENERIC_DOMAINS for T-Head SoCs
-> >>
-> >>  .../bindings/firmware/thead,th1520-aon.yaml   |  53 ++++
-> >>  MAINTAINERS                                   |   5 +
-> >>  arch/riscv/Kconfig.socs                       |   1 +
-> >>  drivers/firmware/Kconfig                      |   9 +
-> >>  drivers/firmware/Makefile                     |   1 +
-> >>  drivers/firmware/thead,th1520-aon.c           | 248 ++++++++++++++++++
-> >>  drivers/pmdomain/Kconfig                      |   1 +
-> >>  drivers/pmdomain/Makefile                     |   1 +
-> >>  drivers/pmdomain/thead/Kconfig                |  12 +
-> >>  drivers/pmdomain/thead/Makefile               |   2 +
-> >>  drivers/pmdomain/thead/th1520-pm-domains.c    | 218 +++++++++++++++
-> >>  .../dt-bindings/power/thead,th1520-power.h    |  19 ++
-> >>  .../linux/firmware/thead/thead,th1520-aon.h   | 200 ++++++++++++++
-> >>  13 files changed, 770 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
-> >>  create mode 100644 drivers/firmware/thead,th1520-aon.c
-> >>  create mode 100644 drivers/pmdomain/thead/Kconfig
-> >>  create mode 100644 drivers/pmdomain/thead/Makefile
-> >>  create mode 100644 drivers/pmdomain/thead/th1520-pm-domains.c
-> >>  create mode 100644 include/dt-bindings/power/thead,th1520-power.h
-> >>  create mode 100644 include/linux/firmware/thead/thead,th1520-aon.h
-> >>
-> >> --
-> >> 2.34.1
-> >>
-> > 
 
