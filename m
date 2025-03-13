@@ -1,98 +1,267 @@
-Return-Path: <linux-kernel+bounces-559505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53D73A5F4A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:38:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08293A5F4A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:39:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEBE73BCEF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:38:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340ED17D0C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D9B267393;
-	Thu, 13 Mar 2025 12:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713112673A4;
+	Thu, 13 Mar 2025 12:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="HqRdct24"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="g8/beGCL"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B000266B75
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F5F267393
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741869510; cv=none; b=n0X+2jf3czyHnBL4dPUAKoGYyLySPwmf10U/A6j77UTp55OGFmLkjiFw2AkXT3iz3QaBenWUj1k/1idXnG5aUaV838adHna7zEdCMbLLq6mZDGVkRqeL8h1nDYF+j8skynx8FoW/dhcaBbo4hZU08KsN1xyrw9h6E1VR9jVNnrQ=
+	t=1741869559; cv=none; b=QDG98k9IpftXF7J0gmnLmKeoiG8APc50vYieKEunCQ+/RkmQ7uUpRapomFe01pRmSj584P0zkv9J+gZwoe6kxWQNMViNAGqOj0U86zGk8WGqFgs9Y75PjjlA9gdU2ed7F7MggWhtaxsYjcy/TwNB3gmSNZiw2tTbskz37cCCmbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741869510; c=relaxed/simple;
-	bh=erWzRxtDS4S1NZ6SEX0W8Mqu6JAwPoiR7LvigQUjCa0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jx5imS5NAJhPZIqJxDbrB8LZUeEeLy6/RzygDKi/Uxygi7MCL21bqTKT3zB+TcWAclZYp453f+JE77Ky8yCFyYLenc49vqzovRbgfLzJjfVHX9SNrFdHAnCXFsPrIK60a5zZ8a9CwDtZcCann9arOdwX5hUncU54QT9yAUJsJek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=HqRdct24; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2feb91a25bdso1598839a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 05:38:28 -0700 (PDT)
+	s=arc-20240116; t=1741869559; c=relaxed/simple;
+	bh=cg5D6pfaTmMxWwYRdSc3ve1jzhcFg1ZIMZvTd79kFXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZdzRjksqxBEedp7FBh6RskhJtD2Pbyy3xgXUCcDAscKyWcmZanEg6YlQvsktuAUAUVSr2kjtKKxzd2b58uPABh/w7HWzwqv6Isx2Hrwk9F/r0C9TWae6NlcsnLwqza193+Pt2c8s9ubgdGFtI3gq0Uc+HGnt8WzfoQNDK68ofc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=g8/beGCL; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso8147715e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 05:39:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1741869508; x=1742474308; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=erWzRxtDS4S1NZ6SEX0W8Mqu6JAwPoiR7LvigQUjCa0=;
-        b=HqRdct24nl7fFG1EtuzCyuSc38eY8f8QBfh0GWv+x3dGoUqP+DPgSV8MqzuLZKiekI
-         fUphqPNl4CsNXXXzF8bgOGPs2bSBkN/leQKEvStpDZa2BWhUPcUd1SM5AE2WPTe9j5IU
-         9LD8sMKvHsPcEuayxdAvZOL7YZpfuuIXbL8sfwdVf47gjd7J4vjc++AsBV0XnL84VncW
-         kuN6585frynZDbnnSilQJk7+Cb0jGJxt6aTAVk/jrZ3xO7Uw4mFWp9IVuwNa9EATln4j
-         fYmBhJHZ8ZglRT0iwjG3f4oYqpY5fVK1ibwMIVDDRfcyOXUU+JGkhaWTC1Lcn4Ybgo60
-         SY4w==
+        d=ventanamicro.com; s=google; t=1741869556; x=1742474356; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xSlQ1L6rFi2oeV1zF6QF9pposhG4AHSuAju9zq00g0c=;
+        b=g8/beGCLOIwMbAr2nOkT6riGp9wK5SU+DNXVeYT8uNdesrrwWIU5ahZ6rcrcSpz+xi
+         fouAPAFJKfZxZqeyMRMDQAdFXtxnw0fjXVc0fLArJTBF0RK+C6S8o4a0mnCbf2/cYdJP
+         qIk7jOORmsHdORaeoK4TZvXgSElkeq1sN2h21She9BJLs32XBBVVWDcSja/wwO20pn0x
+         5vFZ+tsoYK2IiNObKtBp4hV2sAnNGqf0FQtagqEjIAaplToKtn+1iCL+vvUocrICMasP
+         7z7xUfI2deJU0YW7K9/Ls2Q9a6FE+3nF1vGOM+tGxt/5u/k1KH1N7YqiMwYLTSnEhUvP
+         k0EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741869508; x=1742474308;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=erWzRxtDS4S1NZ6SEX0W8Mqu6JAwPoiR7LvigQUjCa0=;
-        b=Eua7F+ocuaPwjlxZCdoQL88+lAwfOc+co5R75SEP2TKwxv8h6KnE7HCV+8e+xoYdJF
-         QdUEucIbiUuP37tgOMQAakifS4uUF5a3SSG8uI0qcRXmqGuuSJciG8s5nxLqpfuwKcKl
-         W6H9LG3kVPi8mbg0L8Qdn1jWW1XvIY4YmsPHc/3B7iPX/wieA7UT7hnWfbSfBSnX+TtR
-         CfK/klQXjyhValu1HwKrXzucbdotWoaSiNU5aV7bEyDF90Un2oMiUuKplsmRX3jtzP+A
-         lrC3nazw4Bitex+q8Cnzx8O4+oD8A4TjukU7RA2YHxWo79qlYjGjc/rr0pbuN+PjSO0Y
-         vo3A==
-X-Gm-Message-State: AOJu0Yz2phryZ7movG2QPclEzJV8jh5o7Ig9k+rJIt7JhWoiy4kB+YO6
-	nPcVclThPyfuEf0v6xr0ZK/2CBs5lXOPY5olrPd11NIxpV6Vunao2BmlCx4uwYcepunGeUOwAOK
-	ZPkSDTnhikyGkOXsfD4baR5kkuul3ibFJUybqQg==
-X-Gm-Gg: ASbGncskg1u6aw7wNvtsOtNaaxXgdFCdEo8olQsP+hvkATyOBMgbIoqosDEBH47p9Zl
-	XSstFD9daIS3xAZeQLOMnAjpOn7A75Yza4M4+atotWM6J6gMXWsrX1WihdX4uxCGmWP6ouBCE0t
-	XlSM2HYa77QHjMh3HF0rWua7rFs4ZxAvhV2GD5CsbmbQ/N
-X-Google-Smtp-Source: AGHT+IEbk5NUcJMVgEAeLPxb32osM2x9ib/KH+2vkyTogXZXkxTrSA3QAaBeQpL6RK3Prv0axIlB3YqoVAI7umsrItA=
-X-Received: by 2002:a17:90b:2792:b0:2f8:34df:5652 with SMTP id
- 98e67ed59e1d1-300ff100773mr13917814a91.21.1741869508543; Thu, 13 Mar 2025
- 05:38:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741869556; x=1742474356;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xSlQ1L6rFi2oeV1zF6QF9pposhG4AHSuAju9zq00g0c=;
+        b=X3F9Ht4XwgHhzZEBALS0zKBNnhmWP7OO5whpnPT8uimxjP9dekROyXa4S0fT1rT6ME
+         yA3kA/HfAbH6I11qYY7sWeIBrUqR5kGjQdDAdG2mwoMN7dhw77ZKsUCN0dvBJgUXCB8O
+         dvdv2Bwd15s0lmVMXOw6vE/URPKEOxUcHONKJf4PfohPZgSLRGsCoSiwwn/hIsKmBx+q
+         wpymM0gprpfzUnf7CLi2Y7jwAnfvSzzyelmJmEIykdua1EiwEzdNPGUk4KLgec+1YcJH
+         iMWbU5zulIH3yXffphDPBHDqKzB6Ez/3ImVGZbJn15JNim9I6bOShGgg1tYrrTeeeLhJ
+         waSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWEzoda4aSfk1RchHPyAVIOSi0kqyJcqlbyA83lJSiApFNrmnKtVvSO8O4aDKmb8tcoiRuNlO5nybYvXJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw16ynFixBjeKp4gzQpGO/EN1l+629qksEjwduXrTeWy1dXkq+/
+	agfHoxJY/v9rSvXhRrwwytXAffurBYIEbeKEaV8T+W8TgS5kU1kw7qBZVNjKLCg=
+X-Gm-Gg: ASbGncuDHfnkPb6BkOJFsJ+ddbi2RR9BIsT/iGOqF+YKs5vA7NnkODmchR7j7jxLDg7
+	X16OH6oiv72nlXfLYBc+wv0SyyaSP/vZVbVl6tqKQb5wx86I5ykhNAyUiJufhsujTTz55W+wPne
+	7LHkDtn3tq0ViDACQQF/nG9Gl41iwJShhu2ysv6CWYHkbqK+J0+lCnu9Rp3CrxwY99LzRhGktsO
+	mzjIzvvfb8f4t0sdGcl02c5MUvd91W0GVH1ou67Fe81jq6kT0A4+wJx5/RwPgjEaM9WAUwikasP
+	kBZ4xSXRszCBonzZjXQ7wqiAw4gnFTM22XNizpjoBHc=
+X-Google-Smtp-Source: AGHT+IHljsBKLiMSwe9a9spi/guXRSlSUeFAziwYEZ2f83TIkAwW439SP28/QrmHbhabYpknI9/fAQ==
+X-Received: by 2002:a5d:64ac:0:b0:38d:dfb8:3679 with SMTP id ffacd0b85a97d-39132d228c5mr22022486f8f.17.1741869556082;
+        Thu, 13 Mar 2025 05:39:16 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200::59a5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c7df33aasm1978419f8f.2.2025.03.13.05.39.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 05:39:15 -0700 (PDT)
+Date: Thu, 13 Mar 2025 13:39:14 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, 
+	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+	Samuel Holland <samuel.holland@sifive.com>
+Subject: Re: [PATCH v3 02/17] riscv: sbi: add FWFT extension interface
+Message-ID: <20250313-5c22df0c08337905367fa125@orel>
+References: <20250310151229.2365992-1-cleger@rivosinc.com>
+ <20250310151229.2365992-3-cleger@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307150940.1309703-1-matt@readmodwrite.com>
-In-Reply-To: <20250307150940.1309703-1-matt@readmodwrite.com>
-From: Matt Fleming <matt@readmodwrite.com>
-Date: Thu, 13 Mar 2025 12:38:16 +0000
-X-Gm-Features: AQ5f1Jp48XVolO0joaqJHII6nYuMdXt1BqKQPbZ4zMS0lcI91QOM1ouPe0h0uRk
-Message-ID: <CAENh_STT90u1G1rqiXOarM5O8Ls5CyxTbrh+Sqi9PBqPmg9RXA@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: Add KDEB_COMPRESS_LEVEL to control compression level
-To: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>
-Cc: linux-kernel@vger.kernel.org, kernel-team@cloudflare.com, 
-	Matt Fleming <mfleming@cloudflare.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250310151229.2365992-3-cleger@rivosinc.com>
 
-On Fri, Mar 7, 2025 at 3:09=E2=80=AFPM Matt Fleming <matt@readmodwrite.com>=
- wrote:
->
-> From: Matt Fleming <mfleming@cloudflare.com>
->
-> Give users more control to tradeoff compression time vs compressed size
-> when building debian packages with a new KDEB_COMPRESS_LEVEL option.
+On Mon, Mar 10, 2025 at 04:12:09PM +0100, Clément Léger wrote:
+> This SBI extensions enables supervisor mode to control feature that are
+> under M-mode control (For instance, Svadu menvcfg ADUE bit, Ssdbltrp
+> DTE, etc).
+> 
+> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+> ---
+>  arch/riscv/include/asm/sbi.h |  5 ++
+>  arch/riscv/kernel/sbi.c      | 97 ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 102 insertions(+)
+> 
+> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+> index bb077d0c912f..fc87c609c11a 100644
+> --- a/arch/riscv/include/asm/sbi.h
+> +++ b/arch/riscv/include/asm/sbi.h
+> @@ -503,6 +503,11 @@ int sbi_remote_hfence_vvma_asid(const struct cpumask *cpu_mask,
+>  				unsigned long asid);
+>  long sbi_probe_extension(int ext);
+>  
+> +int sbi_fwft_all_cpus_set(u32 feature, unsigned long value, unsigned long flags,
+> +			  bool revert_on_failure);
+> +int sbi_fwft_get(u32 feature, unsigned long *value);
+> +int sbi_fwft_set(u32 feature, unsigned long value, unsigned long flags);
+> +
+>  /* Check if current SBI specification version is 0.1 or not */
+>  static inline int sbi_spec_is_0_1(void)
+>  {
+> diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
+> index 1989b8cade1b..256910db1307 100644
+> --- a/arch/riscv/kernel/sbi.c
+> +++ b/arch/riscv/kernel/sbi.c
+> @@ -299,6 +299,103 @@ static int __sbi_rfence_v02(int fid, const struct cpumask *cpu_mask,
+>  	return 0;
+>  }
+>  
+> +int sbi_fwft_get(u32 feature, unsigned long *value)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +/**
+> + * sbi_fwft_set() - Set a feature on all online cpus
 
-Ping? Any feedback on this patch?
+copy+paste of description from sbi_fwft_all_cpus_set(). This function
+only sets the feature on the calling hart.
+
+> + * @feature: The feature to be set
+> + * @value: The feature value to be set
+> + * @flags: FWFT feature set flags
+> + *
+> + * Return: 0 on success, appropriate linux error code otherwise.
+> + */
+> +int sbi_fwft_set(u32 feature, unsigned long value, unsigned long flags)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +struct fwft_set_req {
+> +	u32 feature;
+> +	unsigned long value;
+> +	unsigned long flags;
+> +	cpumask_t mask;
+> +};
+> +
+> +static void cpu_sbi_fwft_set(void *arg)
+> +{
+> +	struct fwft_set_req *req = arg;
+> +
+> +	if (sbi_fwft_set(req->feature, req->value, req->flags))
+> +		cpumask_clear_cpu(smp_processor_id(), &req->mask);
+> +}
+> +
+> +static int sbi_fwft_feature_local_set(u32 feature, unsigned long value,
+> +				      unsigned long flags,
+> +				      bool revert_on_fail)
+> +{
+> +	int ret;
+> +	unsigned long prev_value;
+> +	cpumask_t tmp;
+> +	struct fwft_set_req req = {
+> +		.feature = feature,
+> +		.value = value,
+> +		.flags = flags,
+> +	};
+> +
+> +	cpumask_copy(&req.mask, cpu_online_mask);
+> +
+> +	/* We can not revert if features are locked */
+> +	if (revert_on_fail && flags & SBI_FWFT_SET_FLAG_LOCK)
+
+Should use () around the flags &. I thought checkpatch complained about
+that?
+
+> +		return -EINVAL;
+> +
+> +	/* Reset value is the same for all cpus, read it once. */
+
+How do we know we're reading the reset value? sbi_fwft_all_cpus_set() may
+be called multiple times on the same feature. And harts may have had
+sbi_fwft_set() called on them independently. I think we should drop the
+whole prev_value optimization.
+
+> +	ret = sbi_fwft_get(feature, &prev_value);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Feature might already be set to the value we want */
+> +	if (prev_value == value)
+> +		return 0;
+> +
+> +	on_each_cpu_mask(&req.mask, cpu_sbi_fwft_set, &req, 1);
+> +	if (cpumask_equal(&req.mask, cpu_online_mask))
+> +		return 0;
+> +
+> +	pr_err("Failed to set feature %x for all online cpus, reverting\n",
+> +	       feature);
+
+nit: I'd let the above line stick out. We have 100 chars.
+
+> +
+> +	req.value = prev_value;
+> +	cpumask_copy(&tmp, &req.mask);
+> +	on_each_cpu_mask(&req.mask, cpu_sbi_fwft_set, &req, 1);
+> +	if (cpumask_equal(&req.mask, &tmp))
+> +		return 0;
+
+I'm not sure we want the revert_on_fail support either. What happens when
+the revert fails and we return -EINVAL below? Also returning zero when
+revert succeeds means the caller won't know if we successfully set what
+we wanted or just successfully reverted.
+
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +/**
+> + * sbi_fwft_all_cpus_set() - Set a feature on all online cpus
+> + * @feature: The feature to be set
+> + * @value: The feature value to be set
+> + * @flags: FWFT feature set flags
+> + * @revert_on_fail: true if feature value should be restored to it's orignal
+
+its original
+
+> + * 		    value on failure.
+
+Line 'value' up under 'true'
+
+> + *
+> + * Return: 0 on success, appropriate linux error code otherwise.
+> + */
+> +int sbi_fwft_all_cpus_set(u32 feature, unsigned long value, unsigned long flags,
+> +			  bool revert_on_fail)
+> +{
+> +	if (feature & SBI_FWFT_GLOBAL_FEATURE_BIT)
+> +		return sbi_fwft_set(feature, value, flags);
+> +
+> +	return sbi_fwft_feature_local_set(feature, value, flags,
+> +					  revert_on_fail);
+> +}
+> +
+>  /**
+>   * sbi_set_timer() - Program the timer for next timer event.
+>   * @stime_value: The value after which next timer event should fire.
+> -- 
+> 2.47.2
+
+Thanks,
+drew
 
