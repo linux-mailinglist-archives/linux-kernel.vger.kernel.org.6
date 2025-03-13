@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-560168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B5AFA5FEEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:13:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23ACAA5FEF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:13:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E52407A6294
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:12:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E8027AAE4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AE81F12E7;
-	Thu, 13 Mar 2025 18:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2261F37D3;
+	Thu, 13 Mar 2025 18:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xZmFUlHD"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rV6V5l1Y"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B141F180F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7927C1F2BBB
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741889517; cv=none; b=qvGK45pVXRz4Kilcb5Tm/FiHtDrMOm6h4PfiF83LxCV13+wwm2OO4IzacQh2kCfwx+7sgS0zVKR2XE3Y6En0mU8otY0rJLDVzRrVJ7CTe3IhjXc5MRJqkniRakYZFNyvoj18cDjfstQkyWxgBlcmbrQM260+WDMLEnoQ+uuqa7k=
+	t=1741889520; cv=none; b=IovoB5Ge4qAdu2fUX00fm1uHwOFrCjZzpgxSA4+9dTrWGkT3quYTT1sbdgJklweQEJNCtYrdGT+0EK52ml6dXIoeJZB79UX3OvQhbOzaEqxor4BhZPb2iZcXiisJiobGz0EVXhP3Xkhk564wYGYipqMIA5M1rYQIQGMdzvTHkk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741889517; c=relaxed/simple;
-	bh=S1m2mc+yGnN4a5PigzsimvcF9PVJTalTzczZMp/6AK8=;
+	s=arc-20240116; t=1741889520; c=relaxed/simple;
+	bh=I6idEbcATjINv9XdShmp78j79HzBX3Z2G8brrJmIrc8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hgUl44l+EoToLRQODlAVpvjkZviVbgkAvOi9aBmfun13ARByRvHaDIsUCQJtPiJi7tYD6xDFn0MGYDWHbdn+/1x/TVeBlWqRGH6lhcqqQ+fL3fUhOr5Qi9cwxu3fWB0FHwXVd0fhAp6NzeMbCASh2GwFCEnoArJ0za5MQvMTEQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xZmFUlHD; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=cDXdXOHfbPROw+kto/aOSvdBXxBTzsJeT7bO8FqjeBYtvRyEnRKksumXQu2WD/NvBl1sZ99uFsd9qQEnbXtUDAZnVy9Tkgj+GnoctROdWU12fC5KTxBaj+MklDFVE/CpmfCD7Vm7gP+m5/6k9DqKWJBcXUElzfR5QxrF4ZguSFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rV6V5l1Y; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43ced8c2eb7so9317505e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:11:55 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43ceed237efso9521515e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:11:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741889514; x=1742494314; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1741889517; x=1742494317; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+pdfFaB/k81zEw2QO02syAUWJ0A/YbE7SLXQbmysWgY=;
-        b=xZmFUlHDDz7rC/so6v03PHagsW0e4S800gW8qdIH8JMEmWoQKYGtKSjLv51mSX3hKM
-         CwZlD6sAT8oVYpNSpgN4S3UXwx+kNUB5cE8t033WiOZ8jqa4uoiLyCRSlnl8lnTUpa4/
-         0QTVJw8Tx2K/ptckBDgEMUZX6yZwHSYhPK3fyUfwR77JMvGTeIPEysEoL3QoBudqjZKl
-         qtGJ15eiXKhJ4kBkEq/XtVGoSCi7D+7D6Fj51TjTQi6tbRNvq1dkct4i3Td6Ora1HY7Q
-         VL+4EGeTMagOzEDTwRJ3auI3Cz6NAWtVPhOOLxlz2v2izN8m9bjINM/A1WIis54Givj4
-         ARmA==
+        bh=tRsJowh9EEZA56z2uUOhJ3rtTOtbuzhctlmDmyeE3Lo=;
+        b=rV6V5l1YAyjRZSBpjbfpM1p4vN6TLo68K1WekOHm10y89m9u9KvEp3S4o397bnYQZh
+         s67O0rfCzrKFILNpcIoohxPPPh4fgfJG13tq2J8FvCfjZI+qou+GCgkYnWVjhiJ0V5A6
+         zZoSN9gZkW618zp6WS0zsaxobYaaIfuwZhCdQBEesLZfJ8tC6m/ipqNgpbG4co7l0f/D
+         ZtcO3aLmSYS/8L1RUQyi4Eea5nO5BXiWoHX3vyj15HWBELS+KGqusWwSI/Dka05dTDUt
+         WwZxGD32r1I7GnUgm4c0DJP1m8zBrYKUR6+LpHq15czX61rMLKoAGri1lcm8eTbNVG/M
+         Hx+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741889514; x=1742494314;
+        d=1e100.net; s=20230601; t=1741889517; x=1742494317;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+pdfFaB/k81zEw2QO02syAUWJ0A/YbE7SLXQbmysWgY=;
-        b=hEplSOqpLJUdq+dvPZZdOY8R+Yg3Bpq0HcCNSgwjyYeBf1YaNvrrJ74froMwXNQpyE
-         /x8pqi+S84fzIKn13CU23Daang1Ak8TNzXByLzd7UA3BtTfMZtvmwbd8oMsq4KIb8r0G
-         RRIMt1z8hJX3rCyda/5UszKGWJqWu56Olg+vcdIT0uYPjuEt1ykzCDDEronHM2cCrQuy
-         Un0u560VW9uoHnrJrFjOsRXFD42pXAETBcERS3OAzgnhgcgKKXsPYZrzmtxVUGy25xxD
-         2BDC912w4HZ4lruyR9GJpr3zMdTlUB4GfdISYYWm/uWCyPwlhg/FTe9ijhk8LxIUYRWh
-         knqg==
-X-Gm-Message-State: AOJu0Yx/u/PhvwgOXB/yVRQR6eLJTrGqGqv1XTNymFo5demi+nuJCA7J
-	HmWp2wAVyd846wSPMKdJ0J8aj3D3kFQ587YF12qWXAL9elKGi0B2gofoOojmhe/9EBQ4SuJmnrf
-	qQf2hfExbRA==
-X-Google-Smtp-Source: AGHT+IHRjd714WqfAw15oFXCnMwvJ6lJg1SUh1wqrNovE6dSYYDgAsuTLSBaeJXNp59r6szjiAIaZ5iRK8TFZQ==
-X-Received: from wmbez8.prod.google.com ([2002:a05:600c:83c8:b0:43c:fc61:959c])
+        bh=tRsJowh9EEZA56z2uUOhJ3rtTOtbuzhctlmDmyeE3Lo=;
+        b=QfouvjDiNLKL8+mBJReKCzU0po0cMqnMAEYa6V3kC7UevjVzIR+IID2O+JUG6jKrVA
+         MPsy9coG12mcbvoXfikdKdnO5TZL0FCMO1DxTGBPLe4FREjtLdC8js2RvlGeawql4JvV
+         JlUo5Z6MfDPNsD5/Qgop/s66ELY9U+hN4THayYdrrVAGexl0/N3f5MZd73hvDr5OwY6j
+         01tYBM6jM5OMcM9u8IUruayEDKcftSuZsMz8ni+ZH37XfbsaRt6iOEmMgiGPf+f9UC0r
+         oOyOGxxG84LvAZ014XPyDKkhVC+IsORYeKZVN+otIGqFwid/KOBSYG1+SUXQOdhWCdnz
+         LkBg==
+X-Gm-Message-State: AOJu0Yws8cIj4UPC59EMFnmFlWI7nu0V6RZeLVpV6dNxxCALLAAJtiDn
+	Q1DTWbbk0rJiPItl9f83126dK/N1m7OYtOcCymVoAZfX1S5wY+cfPjyun2nPxriKeT+ygs6SdLQ
+	2fX9vmT1IiA==
+X-Google-Smtp-Source: AGHT+IFfyCsrs7ccNNldH6c3NwbPOVylewQWVrKq/G7/S6WFMNKzAcRUB4lJBTdyYKD3llafwzpnB+NDVR+YSw==
+X-Received: from wmbeq4.prod.google.com ([2002:a05:600c:8484:b0:43b:c967:2f53])
  (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4e8f:b0:43c:fb95:c76f with SMTP id 5b1f17b1804b1-43d1d897497mr5845225e9.9.1741889514676;
- Thu, 13 Mar 2025 11:11:54 -0700 (PDT)
-Date: Thu, 13 Mar 2025 18:11:26 +0000
+ 2002:a05:600c:4f14:b0:43d:7a:471f with SMTP id 5b1f17b1804b1-43d01be7e4bmr134665765e9.18.1741889516996;
+ Thu, 13 Mar 2025 11:11:56 -0700 (PDT)
+Date: Thu, 13 Mar 2025 18:11:27 +0000
 In-Reply-To: <20250313-asi-page-alloc-v1-0-04972e046cea@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,8 +72,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250313-asi-page-alloc-v1-0-04972e046cea@google.com>
 X-Mailer: b4 0.14.2
-Message-ID: <20250313-asi-page-alloc-v1-7-04972e046cea@google.com>
-Subject: [PATCH RFC HACKS 07/11] mm/slub: Set __GFP_SENSITIVE for reclaimable slabs
+Message-ID: <20250313-asi-page-alloc-v1-8-04972e046cea@google.com>
+Subject: [PATCH RFC HACKS 08/11] mm/page_alloc: Simplify gfp_migratetype()
 From: Brendan Jackman <jackmanb@google.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
@@ -85,33 +85,50 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
 	Yosry Ahmed <yosry.ahmed@linux.dev>
 Content-Type: text/plain; charset="utf-8"
 
-It's not currently possible allocate reclaimable, nonsensitive pages.
-For the moment, just add __GFP_SENSITIVE.
-
-This will need to be fixed before this can be a [PATCH].
+This currently uses optimised bit-hacks to avoid conditional branches
+etc. For the purposes of the RFC, let's not get bogged down in those
+details - temporarily just drop the bit hacking.
 
 Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
- mm/slub.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ include/linux/gfp.h | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 1f50129dcfb3cd1fc76ac9398fa7718cedb42385..132e894e96df20f2e2d69d0b602b4719cdc072f5 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -5559,7 +5559,11 @@ static int calculate_sizes(struct kmem_cache_args *args, struct kmem_cache *s)
- 		s->allocflags |= GFP_DMA32;
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index 6bb1a5a7a4ae3392c1cd39cb79271e05512adbeb..23289aa54b6c38a71a908e5a6e034828a75a3b66 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -14,25 +14,20 @@ struct mempolicy;
  
- 	if (s->flags & SLAB_RECLAIM_ACCOUNT)
--		s->allocflags |= __GFP_RECLAIMABLE;
-+		/*
-+		 * TODO: Cannot currently allocate reclaimable, nonsensitive
-+		 * pages. For the moment, just add __GFP_SENSITIVE.
-+		 */
-+		s->allocflags |= __GFP_RECLAIMABLE | __GFP_SENSITIVE;
+ /* Convert GFP flags to their corresponding migrate type */
+ #define GFP_MOVABLE_MASK (__GFP_RECLAIMABLE|__GFP_MOVABLE)
+-#define GFP_MOVABLE_SHIFT 3
  
- 	/*
- 	 * Determine the number of objects per slab
+ static inline int gfp_migratetype(const gfp_t gfp_flags)
+ {
+ 	VM_WARN_ON((gfp_flags & GFP_MOVABLE_MASK) == GFP_MOVABLE_MASK);
+-	BUILD_BUG_ON((1UL << GFP_MOVABLE_SHIFT) != ___GFP_MOVABLE);
+-	BUILD_BUG_ON((___GFP_MOVABLE >> GFP_MOVABLE_SHIFT) != MIGRATE_MOVABLE);
+-	BUILD_BUG_ON((___GFP_RECLAIMABLE >> GFP_MOVABLE_SHIFT) != MIGRATE_RECLAIMABLE);
+-	BUILD_BUG_ON(((___GFP_MOVABLE | ___GFP_RECLAIMABLE) >>
+-		      GFP_MOVABLE_SHIFT) != MIGRATE_HIGHATOMIC);
+ 
+ 	if (unlikely(page_group_by_mobility_disabled))
+ 		return MIGRATE_UNMOVABLE;
+ 
+-	/* Group based on mobility */
+-	return (__force unsigned long)(gfp_flags & GFP_MOVABLE_MASK) >> GFP_MOVABLE_SHIFT;
++	switch (gfp_flags & GFP_MOVABLE_MASK) {
++	case __GFP_RECLAIMABLE: return MIGRATE_RECLAIMABLE;
++	case __GFP_MOVABLE: return MIGRATE_MOVABLE;
++	default: return MIGRATE_UNMOVABLE;
++	}
+ }
+-#undef GFP_MOVABLE_MASK
+-#undef GFP_MOVABLE_SHIFT
+ 
+ static inline bool gfpflags_allow_blocking(const gfp_t gfp_flags)
+ {
 
 -- 
 2.49.0.rc1.451.g8f38331e32-goog
