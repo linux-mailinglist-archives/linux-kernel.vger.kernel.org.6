@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-559312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3149A5F23B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:21:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B160A5F239
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:20:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D7B23BE0F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:20:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9223BDF06
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A796B266183;
-	Thu, 13 Mar 2025 11:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305D126618A;
+	Thu, 13 Mar 2025 11:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m/1Bc8sF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AzwSLWA/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3902661A5
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA361FAC51;
+	Thu, 13 Mar 2025 11:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741864851; cv=none; b=nR4GCeqCKScwOH8lvNDIVzSdrBDzRmh4odwkeaNKs/uVKhzsTTWdsRPrGI8OxGuxoUgkCDuzXPHJ3OMb70ICSwSgMGlxlNXg6HzrweXACYGkXVjq8eyVRsmmat0l2LBszy0oYZFicHBg8tWxRJEvcj4vd6iw16MA7nSziQN4x68=
+	t=1741864847; cv=none; b=I7BzDcLMTNKc78nCAI9RfKj18hzB7P6KqWk8pR3ghlBKTQo5qN77Pc6IYO8UflMTSoSHW/MZB6rrdN1MOCnWFMmzxG5TjaDQANU0GF2/G3RePGIm2T5WJ2qjRDmzOjJI//MJd4z8LN2hy7Ty8DZb1s6KoT+blCTHaoQ0MSeS2oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741864851; c=relaxed/simple;
-	bh=7wnkqZcRu1ZH+v/YyXjTSWZVvVAgYi/52fWDQ3YqwW0=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=h70IhOeEMYXnKoxW5mqex967Qkv2CcPHSvFKISPeWilAZ+zYKPpy6krsYHp+MofzH0gOCSms4r3g07mxmDfBncmQsweSkDmtZDwADJPpuYXTEs94tM13BqhjlyhnfH4cc68kPV1d8Am8FwgSlpAWGptXjl9C4rlJ/5pvzjTA57s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m/1Bc8sF; arc=none smtp.client-ip=198.175.65.15
+	s=arc-20240116; t=1741864847; c=relaxed/simple;
+	bh=hToZW9/4x47mKSYrXIUJ2djr0pkTpdYJARGHnq4Nwaw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t6hhNxECmy2nEujy3bNEHosIjRfW7zwQVApT13PVI7BAEYFScBHHEx043AeuoZVVgLDAbJgVuXBAY7luMWTOeBHWQsJQ5bVuUqGcstzNNESVnjJdo7etqRukS+KvJ4TOkp8OojvrfAnAnqbWPoTkywSDcrSp28WzrHypnzRSA3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AzwSLWA/; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741864849; x=1773400849;
-  h=message-id:date:mime-version:cc:subject:to:references:
+  t=1741864844; x=1773400844;
+  h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=7wnkqZcRu1ZH+v/YyXjTSWZVvVAgYi/52fWDQ3YqwW0=;
-  b=m/1Bc8sFLGVdcfUJEgatp4br67JCbuRepSRE8Q+kdmxYLuxBg1ZWlLxC
-   VkUfGBdmTeqPWj35sj+KFt84orYrroK8KxIxjriP2WM/F5tCtmd/S4XX4
-   HhL8k/uTdf3Ztm3IxGyOdSn6QCpqogHPEEMKxLA+uzI8L60GJCKF+53ob
-   hya7J5SrWMzVY4Jy83ow3WUz/5pfdhE29X5FCiow0GwNmBweTcLsisnEo
-   LGuL9AyRYfIVRCoIudwsy1Wmtm3DVR5fjQ0M+bz+zdQ7bbJySJmucVpIp
-   OXDQi6jnN/SRYhwpdS19mSD3KQt/GaBUNKUIn2Q5npDgLt05iGaMeou1g
-   A==;
-X-CSE-ConnectionGUID: hz+k8JhoRlGOf+4TjUGxnw==
-X-CSE-MsgGUID: Qh08rvo0REuf2H1AtysOnQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="46628394"
+  bh=hToZW9/4x47mKSYrXIUJ2djr0pkTpdYJARGHnq4Nwaw=;
+  b=AzwSLWA/m9b8Ut8PvvghGXiixYOFFzDuyFLgJxGw+fo5H9FlS+55NUek
+   PWW5ue6PebhCz2cwWaJRbj5Jj9vwMQ43YI/zFt98BF5CqEs/JCapwFiw+
+   nnqAYWm4FespyxvUYZ22A82SEIrp0v+NIeWGUWxOCUT+BT/g4GTpCUFli
+   GCrEd7RcTu0Cj6+zVxLtJr/m8YUmxnRTQl1d5p4Ui0hgUiRR+Dwpqdqtu
+   QsUR2BBtK3m/3yNTF2xDf9QsEG+9edWXLQP2oL7S9ac2JxW0f5h7LyL/B
+   b5mvOhiK97v2iVcmyunqH1Kz6iMfG+gBmyY4OGMglstYwZ7sEtvvRuI5X
+   Q==;
+X-CSE-ConnectionGUID: pz7MiPkeTMG3kg/uR6BpPg==
+X-CSE-MsgGUID: DAd8V+P+QPGXv5GZYhmltw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="53970638"
 X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="46628394"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 04:20:49 -0700
-X-CSE-ConnectionGUID: gBnEKdv+RFu8ffDGHI9O8g==
-X-CSE-MsgGUID: C8QiEEMSSpGKVkD5O9P1Cw==
+   d="scan'208";a="53970638"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 04:20:44 -0700
+X-CSE-ConnectionGUID: GbcQkpQYRLKZjG+vUW2MJg==
+X-CSE-MsgGUID: ZY+zSvjLSVy3pfVtyaAL9w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="121422459"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.240.153]) ([10.124.240.153])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 04:20:45 -0700
-Message-ID: <b85990db-41f4-41cc-ab5c-0b952becdde7@linux.intel.com>
-Date: Thu, 13 Mar 2025 19:20:43 +0800
+   d="scan'208";a="125094547"
+Received: from egrumbac-mobl6.ger.corp.intel.com (HELO [10.245.250.7]) ([10.245.250.7])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 04:20:38 -0700
+Message-ID: <bdc7b218-8f14-4bfd-8a76-2f35e5a9393c@linux.intel.com>
+Date: Thu, 13 Mar 2025 13:21:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,100 +66,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
- Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
- Fenghua Yu <fenghuay@nvidia.com>, Zhou Wang <wangzhou1@hisilicon.com>,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v4 0/8] iommu: Remove IOMMU_DEV_FEAT_SVA/_IOPF
-To: Zhangfei Gao <zhangfei.gao@linaro.org>
-References: <20250313051953.4064532-1-baolu.lu@linux.intel.com>
- <CABQgh9HKaDyDQXGB5ZEGg5q4a9ak_8OB9XQ+TpUNcZd_ZMeCAQ@mail.gmail.com>
- <CABQgh9G=7q+FQ0ECZ60UjawgkAM2aeNEb6hXgndEv8S9_4CuPw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] ASoC: SOF: ipc4-topology: Allocate ref_params on
+ stack
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mark Brown <broonie@kernel.org>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>,
+ sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Daniel Baluta
+ <daniel.baluta@nxp.com>, Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+References: <20250312160516.3864295-1-andriy.shevchenko@linux.intel.com>
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
 Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <CABQgh9G=7q+FQ0ECZ60UjawgkAM2aeNEb6hXgndEv8S9_4CuPw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20250312160516.3864295-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2025/3/13 18:57, Zhangfei Gao wrote:
-> On Thu, 13 Mar 2025 at 17:51, Zhangfei Gao<zhangfei.gao@linaro.org> wrote:
->> Hi, Baolu
->>
->> On Thu, 13 Mar 2025 at 13:19, Lu Baolu<baolu.lu@linux.intel.com> wrote:
->>> The new method for driver fault reporting support relies on the domain
->>> to specify a iopf_handler. The driver should detect this and setup the
->>> HW when fault capable domains are attached.
->>>
->>> Move SMMUv3 to use this method and have VT-D validate support during
->>> attach so that all three fault capable drivers have a no-op FEAT_SVA and
->>> _IOPF. Then remove them.
->>>
->>> This was initiated by Jason. I'm following up to remove FEAT_IOPF and
->>> further clean up.
->>>
->>> The whole series is also available at github:
->>> https://github.com/LuBaolu/intel-iommu/commits/iommu_no_feat-v4
->> I got an issue on this branch.
->>
->> Linux 6.14-rc4 + iommu_no_feat-v2
->> drivers/pci/quirks.c
->> quirk_huawei_pcie_sva will set dma-can-stall first
->> arm_smmu_probe_device will check dma-can-stall and set stall_enabled
->> accordingly.
-> This working branch arm_smmu_probe_device is called from pci_bus_add_device
-> So pci_fixup_device is called first
-> 
-> [ 1121.314405]  arm_smmu_probe_device+0x48/0x450
-> [ 1121.314410]  __iommu_probe_device+0xc4/0x3c8
-> [ 1121.314412]  iommu_probe_device+0x40/0x90
-> [ 1121.314414]  acpi_dma_configure_id+0xb4/0x100
-> [ 1121.314417]  pci_dma_configure+0xf8/0x108
-> [ 1121.314421]  really_probe+0x78/0x278
-> [ 1121.314425]  __driver_probe_device+0x80/0x140
-> [ 1121.314427]  driver_probe_device+0x48/0x130
-> [ 1121.314430]  __device_attach_driver+0xc0/0x108
-> [ 1121.314432]  bus_for_each_drv+0x8c/0xf8
-> [ 1121.314435]  __device_attach+0x104/0x1a0
-> [ 1121.314437]  device_attach+0x1c/0x30
-> [ 1121.314440]  pci_bus_add_device+0xb8/0x1f0
-> [ 1121.314442]  pci_iov_add_virtfn+0x2ac/0x300
-> [ 1121.314446]  sriov_enable+0x204/0x468
-> [ 1121.314447]  pci_enable_sriov+0x20/0x40
-> 
-> 
->> This branch
->> arm_smmu_probe_device happens first, when dma-can-stall = 0, so
->> stall_enabled =0.
->> Then drivers/pci/quirks.c: quirk_xxx happens
-> This not working branch: Linux 6.14-rc6 + iommu_no_feat-v4
-> arm_smmu_probe_device is called by pci_device_add
-> Then call pci_bus_add_device -> pci_fixup_device
-> 
->    215.072859]  arm_smmu_probe_device+0x48/0x450
-> [  215.072871]  __iommu_probe_device+0xc0/0x468
-> [  215.072875]  iommu_probe_device+0x40/0x90
-> [  215.072877]  iommu_bus_notifier+0x38/0x68
-> [  215.072879]  notifier_call_chain+0x80/0x148
-> [  215.072886]  blocking_notifier_call_chain+0x50/0x80
-> [  215.072889]  bus_notify+0x44/0x68
-> [  215.072896]  device_add+0x580/0x768
-> [  215.072898]  pci_device_add+0x1e8/0x568
-> [  215.072906]  pci_iov_add_virtfn+0x198/0x300
-> [  215.072910]  sriov_enable+0x204/0x468
-> [  215.072912]  pci_enable_sriov+0x20/0x40
-> 
-> pci_iov_add_virtfn:
-> pci_device_add(virtfn, virtfn->bus);
-> pci_bus_add_device(virtfn); -> pci_fixup_device(pci_fixup_final, dev);
 
-This probably is not caused by this patch series. Can you please have a
-try with the next branch of iommu tree? Or the latest linux-next tree?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git
+On 12/03/2025 18:05, Andy Shevchenko wrote:
+> Currently the compiler (clang 19.1.7) is not happy about the size of
+> the stack frame in sof_ipc4_prepare_copier_module:
+> 
+> sound/soc/sof/ipc4-topology.c:1800:1: error: stack frame size (1288) exceeds limit (1024) in 'sof_ipc4_prepare_copier_module' [-Werror,-Wframe-larger-than]
+>  1800 | sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
+>       | ^
+> 
+> Work around this by allocating ref_params on stack, as it looks the biggest
+> variable on stack right now.
+> 
+> Note, this only happens when compile for 32-bit machines (x86_32 in my case).
 
-Thanks,
-baolu
+I don't have better idea for fix, apart from somehow refactor this huge
+function.
+Thank you for the fix,
+
+Acked-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  sound/soc/sof/ipc4-topology.c | 25 +++++++++++++++++--------
+>  1 file changed, 17 insertions(+), 8 deletions(-)
+> 
+> diff --git a/sound/soc/sof/ipc4-topology.c b/sound/soc/sof/ipc4-topology.c
+> index 6d5cda813e48..41110ee6edc7 100644
+> --- a/sound/soc/sof/ipc4-topology.c
+> +++ b/sound/soc/sof/ipc4-topology.c
+> @@ -7,6 +7,7 @@
+>  //
+>  //
+>  #include <linux/bitfield.h>
+> +#include <linux/cleanup.h>
+>  #include <uapi/sound/sof/tokens.h>
+>  #include <sound/pcm_params.h>
+>  #include <sound/sof/ext_manifest4.h>
+> @@ -1807,8 +1808,8 @@ sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
+>  	struct snd_sof_dev *sdev = snd_soc_component_get_drvdata(scomp);
+>  	struct sof_ipc4_copier_data *copier_data;
+>  	int input_fmt_index, output_fmt_index;
+> -	struct snd_pcm_hw_params ref_params;
+>  	struct sof_ipc4_copier *ipc4_copier;
+> +	struct snd_pcm_hw_params *ref_params __free(kfree) = NULL;
+>  	struct snd_sof_dai *dai;
+>  	u32 gtw_cfg_config_length;
+>  	u32 dma_config_tlv_size = 0;
+> @@ -1884,9 +1885,11 @@ sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
+>  		 * for capture.
+>  		 */
+>  		if (dir == SNDRV_PCM_STREAM_PLAYBACK)
+> -			ref_params = *fe_params;
+> +			ref_params = kmemdup(fe_params, sizeof(*ref_params), GFP_KERNEL);
+>  		else
+> -			ref_params = *pipeline_params;
+> +			ref_params = kmemdup(pipeline_params, sizeof(*ref_params), GFP_KERNEL);
+> +		if (!ref_params)
+> +			return -ENOMEM;
+>  
+>  		copier_data->gtw_cfg.node_id &= ~SOF_IPC4_NODE_INDEX_MASK;
+>  		copier_data->gtw_cfg.node_id |=
+> @@ -1919,8 +1922,11 @@ sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
+>  		 * In case of capture the ref_params returned will be used to
+>  		 * find the input configuration of the copier.
+>  		 */
+> -		ref_params = *fe_params;
+> -		ret = sof_ipc4_prepare_dai_copier(sdev, dai, &ref_params, dir);
+> +		ref_params = kmemdup(fe_params, sizeof(*ref_params), GFP_KERNEL);
+> +		if (!ref_params)
+> +			return -ENOMEM;
+> +
+> +		ret = sof_ipc4_prepare_dai_copier(sdev, dai, ref_params, dir);
+>  		if (ret < 0)
+>  			return ret;
+>  
+> @@ -1929,7 +1935,7 @@ sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
+>  		 * input configuration of the copier.
+>  		 */
+>  		if (dir == SNDRV_PCM_STREAM_PLAYBACK)
+> -			ref_params = *pipeline_params;
+> +			memcpy(ref_params, pipeline_params, sizeof(*ref_params));
+>  
+>  		break;
+>  	}
+> @@ -1938,7 +1944,10 @@ sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
+>  		ipc4_copier = (struct sof_ipc4_copier *)swidget->private;
+>  		copier_data = &ipc4_copier->data;
+>  		available_fmt = &ipc4_copier->available_fmt;
+> -		ref_params = *pipeline_params;
+> +
+> +		ref_params = kmemdup(pipeline_params, sizeof(*ref_params), GFP_KERNEL);
+> +		if (!ref_params)
+> +			return -ENOMEM;
+>  
+>  		break;
+>  	}
+> @@ -1951,7 +1960,7 @@ sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
+>  	/* set input and output audio formats */
+>  	input_fmt_index = sof_ipc4_init_input_audio_fmt(sdev, swidget,
+>  							&copier_data->base_config,
+> -							&ref_params, available_fmt);
+> +							ref_params, available_fmt);
+>  	if (input_fmt_index < 0)
+>  		return input_fmt_index;
+>  
+
+-- 
+Péter
+
 
