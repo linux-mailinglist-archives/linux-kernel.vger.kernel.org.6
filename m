@@ -1,90 +1,137 @@
-Return-Path: <linux-kernel+bounces-558915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A1AA5ED07
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:30:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CE05A5ED06
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:30:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2870B1748BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971303B2D7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8A822DFA2;
-	Thu, 13 Mar 2025 07:30:24 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E143A22DFBE;
+	Thu, 13 Mar 2025 07:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RbuiWT2i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DA322DF95
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B82422DFBB;
+	Thu, 13 Mar 2025 07:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741851024; cv=none; b=JWtZn5DFqQnaVQiHw1nQlU/r/0hYwTR3sndfZhXRXZt+lnt4mMYl1dtuy9azKht3r1zKXRrEfoa9g0avlGpZ7CgX8etM3fH8GKSMfXsPYhfmfmQlUy9qCBBK0+qVk1NuhkXtfTbRv7MMLi9eT8yXusbga+gWaVyfW2eqg0rF3hs=
+	t=1741851021; cv=none; b=rhWn9LJpbRWN1HJcCKs7nZhLRHyCEDWt2Rq7YRqCIAX/0jYpvfeFViOqUfU2Qbs2sXI+wa6nIk40sqMGxmIKUvNHAJsLAz1SvUy6HFGM+qN5ugKP4ErPDIUxF7UvMk2Z1hB88ZbeTrXDd+QJyRUd8lyXJjWZdOyAYEL+VoV3qdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741851024; c=relaxed/simple;
-	bh=LgcwkCtuF2Bj7bpRCoqVugs+6167YT67viU1v7T1oS4=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=BZiL6KYSCUfB9IKmgevDOTF4jMzG7lGSC16kPOM6lwJkPTQMWh8YesOsjgLTyy+UcMcA/ELFWyGXgSyuYwwDRfDVpUr/8WejhbBbR0fBvAvcaGVJZL+beIo38fPBR7gFYZjiaoAt80+fBZ+FKxGyV5Jdrdx3+kqMOb8IgR8QCBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZCzfv649Dz8R04F;
-	Thu, 13 Mar 2025 15:30:15 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 52D7U4F9001072;
-	Thu, 13 Mar 2025 15:30:04 +0800 (+08)
-	(envelope-from ye.xingchen@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid31;
-	Thu, 13 Mar 2025 15:30:06 +0800 (CST)
-Date: Thu, 13 Mar 2025 15:30:06 +0800 (CST)
-X-Zmail-TransId: 2afb67d2897e712-c609d
-X-Mailer: Zmail v1.0
-Message-ID: <202503131530063539XBMkqa4y8t8Gbdie-DRn@zte.com.cn>
+	s=arc-20240116; t=1741851021; c=relaxed/simple;
+	bh=QbnEtM3KvInKXQ/kzErd6KRfneGlpRJhzPkXfRN9iBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T+XPzmC9ZIA51DkHSgwWhPF6ZT44NXaPDac3snPZ0VPy3qFalg5DgA1aU7XTEvSan3OSnbkjSZpFdrEO5dZyzKuYKD+yOH8rzMkA0DOD2Q9I3V8ikknVw895dAZ8jZSc5UjekiMCV3PKKsdMOaNcyEuYvL8KFolNfo8/fG6u8QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RbuiWT2i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66EC4C4CEE9;
+	Thu, 13 Mar 2025 07:30:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741851019;
+	bh=QbnEtM3KvInKXQ/kzErd6KRfneGlpRJhzPkXfRN9iBs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RbuiWT2id1vk9SO5vP9IVGY4KLvk+bWx0qdDElkGMxC2gYERw/QsfdRQ28KKLdtag
+	 0ke+edEIZ9T42U/pIyJgGb/i8XwKr/smO4zasvXrUdwPBF9OSPhQrwVXXOHSerNcea
+	 lo34vcCiPaMcFOyN/w/o+1c2tJi9vlm0vJcaTACpS+lZiAJizxE2CFIdF4lHGSXcZ7
+	 REiJcIfMEJiNQh6SUF1uYdZLrd+pm32tGgob0WnGPmYcwpH00QgCMB0hfxirAuTDqi
+	 dLNbtYs7u0SiK5Tk945gtzCHiFh7z4sWETHt4eoTv9rx4qnBbH0NjLlKyI5szysUvK
+	 b5L4UzVav22QQ==
+Message-ID: <49e87f3a-2f02-40d2-9307-22cfaaa8be7a@kernel.org>
+Date: Thu, 13 Mar 2025 08:30:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <ye.xingchen@zte.com.cn>
-To: <tglx@linutronix.de>
-Cc: <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIIHYyXSBnZW5pcnE6IEZpeCBwYXJhbWV0ZXIgdHlwZSBpbiBkZWNsYXJhdGlvbiBhbmQgZGVmaW5pdGlvbg==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 52D7U4F9001072
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D28987.002/4ZCzfv649Dz8R04F
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/8] memory: Add STM32 Octo Memory Manager driver
+To: Patrice CHOTARD <patrice.chotard@foss.st.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ christophe.kerello@foss.st.com
+References: <20250219080059.367045-1-patrice.chotard@foss.st.com>
+ <20250219080059.367045-5-patrice.chotard@foss.st.com>
+ <6e1757ea-3f5e-4cc0-b142-aee52f016c8f@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <6e1757ea-3f5e-4cc0-b142-aee52f016c8f@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: YeXingchen <ye.xingchen@zte.com.cn>
+On 10/03/2025 14:52, Patrice CHOTARD wrote:
+>> +module_platform_driver(stm32_omm_driver);
+>> +
+>> +MODULE_DESCRIPTION("STMicroelectronics Octo Memory Manager driver");
+>> +MODULE_LICENSE("GPL");
+> 
+> 
+> Hi all,
+> 
+> Anybody alse has additionnal remarks on this driver ?
+BTW, you explained nothing about merging in the cover letter, mark
+already took the patch, but I see there is dependency. This cannot be
+merged and pinging will not change anything here.
 
-The declaration of irq_set_irqchip_state in the header file uses
-bool state as the parameter type, while the definition uses bool val.
+In the future, ALWAYS document dependencies between patches and make it
+explicit for the maintainers.
 
-This patch aligns the parameter name in the definition with the
-declaration,changing val to state to ensure consistency.
-
-Signed-off-by: YeXingchen <ye.xingchen@zte.com.cn>
----
- kernel/irq/manage.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index f300bb6be3bd..fc44c2df8d01 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -2860,7 +2860,7 @@ EXPORT_SYMBOL_GPL(irq_get_irqchip_state);
-  *	interrupt controller has per-cpu registers.
-  */
- int irq_set_irqchip_state(unsigned int irq, enum irqchip_irq_state which,
--			  bool val)
-+			  bool state)
- {
- 	struct irq_desc *desc;
- 	struct irq_data *data;
--- 
-2.25.1
+Best regards,
+Krzysztof
 
