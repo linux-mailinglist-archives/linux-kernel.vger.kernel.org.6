@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-559533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09CB4A5F51B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:02:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D735A5F51C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:02:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89CE417BDB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:02:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 337F03BF734
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C04D267707;
-	Thu, 13 Mar 2025 13:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84F5267732;
+	Thu, 13 Mar 2025 13:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPA9NA4L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4mGiUXD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01090266EF5;
-	Thu, 13 Mar 2025 13:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515F5267717;
+	Thu, 13 Mar 2025 13:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741870918; cv=none; b=m0ls53IFcHlXg/IPw3+XWUZV5+m5R4zb6hMirepbQ5G5VU9vXUU9uIKTQ8e2b2la7sujMJ4FUca4hPPpI49mlaYX8R41oHXCFBNAG3FS1xIMetZeSdtCvWxFCUQs0M2MvW7gqtOzWWxQfQj1CAfhmzGltEtg+qezUFnTDixyyA0=
+	t=1741870919; cv=none; b=uRCqsWRgi5qk1qzmIiBZxGzOwUXFtZl8QayseJJ/TVMtKvpgdMlopcCe+GfO52mkFYPeGdIgXaVMvW2ouji+NamOLrAkET9+SZ2H68+ZfHIuvscW3nwOhZTSb+lXKi8edB0xhMHlY/Ak5HB14FUuU7x5aboWRTNWLHQsKbxyW3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741870918; c=relaxed/simple;
-	bh=c0FvekInO8FCbcUc49J6tuRqYWdLPdnPlSLNVOhYGqo=;
+	s=arc-20240116; t=1741870919; c=relaxed/simple;
+	bh=qnJ0veSCFOWj9TUdAVLHnl9bnvjlXhzIeGXuDk0MMZM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NN+hCdRJFFS+3Z1fHP3Qpuego6HNd28jOwyXD/XLBFs/KdzFD1dxtwcnFxYk+75QaqDugNyfeXQmEjWJkr3SxgelO+834v4eN+wZUakIUdm4YcGgi+Ahc03RmRshm9IffD0GmUOByoOna4F7rOH4KgAIeS3i8zlJygR2isQLxI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPA9NA4L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8A16C4CEDD;
-	Thu, 13 Mar 2025 13:01:55 +0000 (UTC)
+	 MIME-Version:Content-Type; b=WXHUoWifD3SexDUHAAQ9eZbU72QMgyuMNJbG0EmiTbZCkf1fFF/czTLUJZhFlClG2wg5glsHKz1nkPjnM43Uo4c7/SNu0a9+B/1Kah9nIdrHs+8LyJLq3QtwkxFZmie4XRcE6zeybZk9N7EsuNBtlQIlllTGMRW48jJ84SiAS3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i4mGiUXD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F22D1C4CEEF;
+	Thu, 13 Mar 2025 13:01:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741870917;
-	bh=c0FvekInO8FCbcUc49J6tuRqYWdLPdnPlSLNVOhYGqo=;
+	s=k20201202; t=1741870919;
+	bh=qnJ0veSCFOWj9TUdAVLHnl9bnvjlXhzIeGXuDk0MMZM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=hPA9NA4LYBE3/gCT92Hq7Gtb66zpjMlnCbwmviYI9QOPeSmmvcD8b2MZMvklHKCDZ
-	 c8tTKEP4GS7fHzzkbAi70YWJZsDtWRRGF6DUpsm1NdohBxchT9A1NsPHlAwFXeEpef
-	 cKmg61RLeShIyl2D0S8jN+yJ20Bp1bhnvIxhuwg08eKYl8Jgj6gvPKqhFwF/ZW6rcr
-	 6dy+OlDC5DIrzYqIceQIHfBQDx6Bvl6bM4bmTovDYhXOLm0IsKvVXVR1RZNuncu4zC
-	 t0cDDlWX24LFj9eAmrBB8L11U8XHj7hPfn629x2fVmYr2wbGPlAquu24+9buAFuAF7
-	 3AVctEybAaWgg==
+	b=i4mGiUXDfM0rqmSSdZMWqaIAGOGYcj8csDy7wc4apsR7+hXLSNmu6vdsdZ1txxhIt
+	 i9goWcbZ6VcoBXqG3KCPOrmDuggufZUa9aR2goG/Nqjwi0MawvtAZxceodasICp4T8
+	 QD8wGn428XJJh9YW70LRoNIJhYBnL1vtBeqEBpsu1PfmtKllNT/GIFGGYDdYR7sM+k
+	 H0U7t37u2rYFOmsH5hiKe8pi3+/cZ+e7o7gWkMErcCTLae2EnYFHg2enrL7BEC/dym
+	 LpJfYmFAGphN/MHtCMM+PWc/ZSk9KHWXwSrDh7TlyyRsJWQfou0NK4ztNHhN9dnLc8
+	 1UAq+zG+lfyuw==
 From: Lee Jones <lee@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Lee Jones <lee@kernel.org>, Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org
-In-Reply-To: <20250301-exynos7870-pmic-regulators-v3-0-808d0b47a564@disroot.org>
-References: <20250301-exynos7870-pmic-regulators-v3-0-808d0b47a564@disroot.org>
-Subject: Re: [PATCH v3 0/3] Introduce support for Exynos7870's S2MPU05 PMIC
- and its regulators
-Message-Id: <174187091537.3628407.1952858339919432293.b4-ty@kernel.org>
-Date: Thu, 13 Mar 2025 13:01:55 +0000
+To: Lukas Bulwahn <lbulwahn@redhat.com>, Lee Jones <lee@kernel.org>, 
+ linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Cc: kernel-janitors@vger.kernel.org, 
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+In-Reply-To: <a15bb180-401d-49ad-a212-0c81d613fbc8@app.fastmail.com>
+References: <20250303100055.372689-1-lukas.bulwahn@redhat.com>
+ <a15bb180-401d-49ad-a212-0c81d613fbc8@app.fastmail.com>
+Subject: Re: (subset) [PATCH] mfd: remove STA2x11 mfd driver
+Message-Id: <174187091774.3628407.5991715723719010902.b4-ty@kernel.org>
+Date: Thu, 13 Mar 2025 13:01:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,28 +61,24 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.15-dev-510f9
 
-On Sat, 01 Mar 2025 01:07:11 +0530, Kaustabh Chakraborty wrote:
-> Exynos7870 devices use Samsung S2MPU05 as its primary PMIC. Add support
-> for it in the existing PMIC driver. Additionally, also add support for
-> voltage regulators which can be accessed and controlled from the PMIC
-> itself.
-> 
-> Patches from mfd and regulator subsystems have been placed together in
-> this series. Here, both patches from both subsystems depend on the other:
-> 1. The regulator driver patch includes a header file which describes the
->    PMIC registers. This header is introduced in a PMIC patch.
-> 2. The PMIC dt-binding patch references the regulator documentation.
+On Mon, 03 Mar 2025 11:17:22 +0100, Arnd Bergmann wrote:
+> On Mon, Mar 3, 2025, at 11:00, Lukas Bulwahn wrote:
+> > From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> >
+> > With commit dcbb01fbb7ae ("x86/pci: Remove old STA2x11 support"), the mfd
+> > driver for STA2x11 is not needed and cannot be built anymore.
+> >
+> > Remove the driver and its header file.
+> >
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> > ---
 > 
 > [...]
 
 Applied, thanks!
 
-[1/3] regulator: dt-bindings: add documentation for s2mpu05-pmic regulators
-      commit: 07ef6dc942741b918dd0dcbb951e0ae3dd6b53b9
-[2/3] mfd: sec: add support for S2MPU05 PMIC
-      commit: ed33479b7beb2b2dc9649a4e7474b47253d554f9
-[3/3] regulator: s2mps11: Add support for S2MPU05 regulators
-      commit: 169cd52fd9445b30379ea6deafa28a260d489699
+[1/1] mfd: remove STA2x11 mfd driver
+      commit: ba97b3e383c9c8a51afd6358efd120a0ece527cd
 
 --
 Lee Jones [李琼斯]
