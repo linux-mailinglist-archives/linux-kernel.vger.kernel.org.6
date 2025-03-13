@@ -1,136 +1,124 @@
-Return-Path: <linux-kernel+bounces-560151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12CF7A5FEBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:01:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27F95A5FEC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:03:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2229189EF8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:02:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2C5416C76C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149F31EBA09;
-	Thu, 13 Mar 2025 18:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B491EBFE2;
+	Thu, 13 Mar 2025 18:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EwI3hJMZ"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PIuuieoy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65B63E47B;
-	Thu, 13 Mar 2025 18:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C86218C937;
+	Thu, 13 Mar 2025 18:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741888906; cv=none; b=BwrtvY7YHcYX3NVKOTmGMznnLjTGtgqGQQnZtbMLUHn7R9PyIPmT67mox1SOSNa3K7EM/LGqbkrOODpVbtkGInWSfDIWPRwFdXTbhYEh0tKrJiA9YQGysFb3wa2Afi4Uel0Hup9HWoOcjuYe8xgpO5DLdLeFN4QlTkMdGg2O67A=
+	t=1741889013; cv=none; b=YvkHnJPaV9tmTTgLKRlDfnJsglDBsPwnTAAjwzBwWHI31vSBeWphcXuIGhhLQwlpk3YE1g2/ZUKT4fqDK5IZUZm0nDs/FTvW6Gmd+hafsWMivokxL5KBYLa93ouaD/v3vp8bm4h1djelRpSQ4RwmuTeu8vfa0ZJ40393NUqBM4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741888906; c=relaxed/simple;
-	bh=6jV0radH4S2lzjjNkKAxQaEnlVGn3SNEWffq1tdiwe8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TgONvomoTo1Qv3Zew5q+fV3ybBHjANS+fIFCASAUrkuDHYjOM1TWcDzncGip3niJsYvf1fFiWfiIRpKPwOR78DynPP9v/A1qLWAJ3HqU2UFZsXMCzljLfWUaOxLZD4t4oVi96nBmHnWqvyn58Mf3Nx6p2lXC06nJR9eH/Y45zZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EwI3hJMZ; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so2316336a12.0;
-        Thu, 13 Mar 2025 11:01:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741888903; x=1742493703; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=W/aqvoIKuR6wHeO9Dw3liQGVZV24Y7M6R/uaPC7XW8g=;
-        b=EwI3hJMZfiWy0F3PRXMymRU4/wA0hwI92ctwSimkBEOUi6S5/zltisCWfaGOAz8h2r
-         YSYHBDh2XyXQVU/K6y6JQ3vbHgF60udb8F/rldTjQJpGkW/zybn1VyrtwuR4ZORJd6/J
-         jHA+WZRZ47jNFf4N+X5lslnkCNesVNNpb6lWCq/Gg3R9nhjM9DjB6BHPeKHjwxQJHAVQ
-         6RcKb409zS+inC3oKthmfsAFgvrffGRY9RH9CgxqJ77Eui7Ew0f7I7ruk8qZhruuEaC0
-         BUoqhL57+pO8MCiPidob7LAQKPYyHREA2OzpGtm3kh91eYi3urVg8Lob+lsCHRgaCjWd
-         ucqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741888903; x=1742493703;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W/aqvoIKuR6wHeO9Dw3liQGVZV24Y7M6R/uaPC7XW8g=;
-        b=p1D4Qx97QgQb34YlrBoX2B5+NO69oAe/ZYKS6qg9uRzR2fGJaXRJHryKS75TvkgSL5
-         Es6ZlYyp+ZC+m8Ti9L1awjZKuAbxfi0ecJTS6wf4oKERMaxYv+KQWV1S6nde5yo4zI+r
-         zoPxBI3ufWnkXEr3yO/CoTXsB6gWth5+lhm0LJ+IoWAfaFRp8enAOdbUXvaGYqFtvBzy
-         MC/h2KoqdgdUD8/4XbRC3db+4sYWcL03F8XikOJe1QQz6Z8i4Ip8Q1LCpeVCx+TtnUcB
-         a99VeXnRqSVOUV90L5gbDOQWl/l30F6JRrD8cVm8W3jRg8wYnMbwjYpnwcKYy4N/gvvS
-         dw3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUUTikTIKxwD6ddPg+Z4KOHTBaJCR6btXAYtoCVhAh0umMYYAkkzooMMzWUJS+/UGSIAdbyPR6oPPJVyuxnKUo=@vger.kernel.org, AJvYcCUbKo4ncz0oYwJ/vUj48B+QfdTxWBeGn2dZX5M/YgovYzKPYUrIO4pZuBa0hIfRaK9qHzwf68ZfqZS+S2vQ@vger.kernel.org, AJvYcCVOS4C+QKiJ6q69MoyG5BHF1u4pKRGFlvmwGSZ9bM05aIc6G6mK/vP/21mk8kxEPxadR+eHfXPn/e4sMEJOuS+i@vger.kernel.org, AJvYcCXq8PJ9axCecW30opIXfw2Xdgx+i6alcllm9/EBJb7A7RALNHLVFjaejYbuXCPqrcNEmLJ/atgM@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRICr+Yk0wFhy4uu5VMLKlgCT0Sk5H8c8GqhAMRWjnnc2GIhCJ
-	/PS9w3PYmJ6LLI/ZFZ3i+9Y35LlD0H6lsblXQWlgVikKJbDRN9l7
-X-Gm-Gg: ASbGncsWsto95ZKRIh9H/fmxD+gqP+BXAsJcNlyLzQ/b+tOTv62AP0hVskrsS0cDqNV
-	WlBH4tXul3pSPqszIM72Ydb8004wdC3ufBAIzGucH1g4w/vtJde1cxPM7epN3TC455bXtdT2plZ
-	ZLDbpoYkH7xNYr6ruSiPDXcn0cM5yiXfVsL6bZENeMtCUHm2lTmMaR2uWXHFqwSD9WXhoaimI44
-	J15WAMRL8uECv8vOC9Ahhkil9lmlYpTtOBAVSmb0pVzetjz3NvKZNYyDgLAzmoc967x7vRYNidR
-	NJb/AKv5rwux1CTsAwep1pWRp9plMw3KYvraooNoXFgYvePNZSpWbOxPlbGS7S6eeyS8Jnoqmrk
-	TBfU6FVIhOtiFnDAHYX4whoDg+3YxAEAr8FfUbKa2T3sIpkjo6Y3icq0g4O5wVketb/x6RyZpEQ
-	sTP1AKSKyqV4LC2w+E88k=
-X-Google-Smtp-Source: AGHT+IFuZtAhl/EeTwlESgZEmFiH1TMtmKl7RGfRolizt1DBUCNDPnPwoWBarCBAea1UlBVhaKlHyA==
-X-Received: by 2002:a05:6402:2550:b0:5e5:9c04:777 with SMTP id 4fb4d7f45d1cf-5e814d805b7mr3320106a12.6.1741888902566;
-        Thu, 13 Mar 2025 11:01:42 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:20d:1300:1b1c:4449:176a:89ea? (2001-1c00-020d-1300-1b1c-4449-176a-89ea.cable.dynamic.v6.ziggo.nl. [2001:1c00:20d:1300:1b1c:4449:176a:89ea])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e81692e6d4sm945413a12.9.2025.03.13.11.01.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 11:01:41 -0700 (PDT)
-Message-ID: <02b97708-1214-4fa4-a011-70388cff8f79@gmail.com>
-Date: Thu, 13 Mar 2025 19:01:38 +0100
+	s=arc-20240116; t=1741889013; c=relaxed/simple;
+	bh=vDUTFucENehaO2/dGws27eo3GkBWJKTnEa3Wd3e6NSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J40j6RRFEEqaxpQ4csX8DwBQ+niBWDhlMMNIgO2jzqVZDevsrxcbsb0BmJOk6tK9Vsq4LexjYMoGQiJsdb4TMFoFuFMjVTfEUucUbQQ3BEtGTutiApxQT9hCdAraOP3zRmfUPyxlIM9bkzjRY4s5KZMeyFq1Jptvcpvq9uiYyLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PIuuieoy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2902C4CEEA;
+	Thu, 13 Mar 2025 18:03:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741889012;
+	bh=vDUTFucENehaO2/dGws27eo3GkBWJKTnEa3Wd3e6NSo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PIuuieoy6ezhHOOiLjQtLrKmNN5YG0ilUYQQm8bcik750zk+PtW9ztnJtqL2Y7TAn
+	 WYK8YKuxS2RBW3yN3h4FmXoj/Wz+xyL399VPmpYllceyvmWfT0Kj48dIcE3v1oPDad
+	 Sqq+92I2Q+akBWvNcxM6UkZv2cBxgqaBdxOuHp1o14sFza2dTIa1ngxYVl2mEaVXJC
+	 V+8IdYPfbI+6Z8guPtx7XapUgmJIfBxkumeib2dBJy3N+j1xGREFAs6HrPCQGcKmt4
+	 u34m4Ykplgzr47t06U0st9WqONABxytd+I2Prtum4M7vp4Sq6gY1/AqV50pWhaLj8r
+	 ag1kJziDnVhEw==
+Date: Thu, 13 Mar 2025 11:03:32 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v6 09/13] xfs: add XFS_REFLINK_ALLOC_EXTSZALIGN
+Message-ID: <20250313180332.GY2803749@frogsfrogsfrogs>
+References: <20250313171310.1886394-1-john.g.garry@oracle.com>
+ <20250313171310.1886394-10-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 nf 00/15] bridge-fastpath and related improvements
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Kuniyuki Iwashima <kuniyu@amazon.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Nikolay Aleksandrov <razor@blackwall.org>, Roopa Prabhu <roopa@nvidia.com>,
- Ivan Vecera <ivecera@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
- Jozsef Kadlecsik <kadlec@netfilter.org>, Simon Horman <horms@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>,
- Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, bridge@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Ahmed Zaki <ahmed.zaki@intel.com>, Vladimir Oltean <olteanv@gmail.com>,
- Frank Wunderlich <frank-w@public-files.de>,
- Daniel Golle <daniel@makrotopia.org>
-References: <20250305102949.16370-1-ericwouds@gmail.com>
- <897ade0e-a4d0-47d0-8bf7-e5888ef45a61@gmail.com> <Z9DKxOnxr1fSv0On@calendula>
- <58cbe875-80e7-4a44-950b-b836b97f3259@gmail.com> <Z9IUrL0IHTKQMUvC@calendula>
-From: Eric Woudstra <ericwouds@gmail.com>
-Content-Language: en-US
-In-Reply-To: <Z9IUrL0IHTKQMUvC@calendula>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313171310.1886394-10-john.g.garry@oracle.com>
 
-
-
-On 3/13/25 12:11 AM, Pablo Neira Ayuso wrote:
-
->> What do you suggest?
+On Thu, Mar 13, 2025 at 05:13:06PM +0000, John Garry wrote:
+> Add a flag for the xfs_reflink_allocate_cow() API to allow the caller
+> indirectly set XFS_BMAPI_EXTSZALIGN.
 > 
-> Probably I can collect 4/15 and 5/15 from this series to be included
-> in the next pull request, let me take a look. But it would be good to
-> have tests for these two patches.
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+
+Looks pretty straightforward to me...
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+--D
+
+> ---
+>  fs/xfs/xfs_reflink.c | 8 ++++++--
+>  fs/xfs/xfs_reflink.h | 2 ++
+>  2 files changed, 8 insertions(+), 2 deletions(-)
 > 
-
-These are not most important to bridge-fastpath, but it gives extra
-possibilities. How about concentrating first on patch 2/15 (with 1/15
-removing a warning and 3/15 cleaning up), adding nf_flow_encap_push()
-for xmit direct? It is a vital patch for the bridge-fastpath.
-
-Anyway, I will look into writing selftests for conntrack-bridge setup,
-including various vlan setups. This will take me some time, which I
-do not have in abundance, so for that I do not know if I get it done
-before the merge window.
-
+> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
+> index 690b1eefeb0e..9a419af89949 100644
+> --- a/fs/xfs/xfs_reflink.c
+> +++ b/fs/xfs/xfs_reflink.c
+> @@ -444,6 +444,11 @@ xfs_reflink_fill_cow_hole(
+>  	int			nimaps;
+>  	int			error;
+>  	bool			found;
+> +	uint32_t		bmapi_flags = XFS_BMAPI_COWFORK |
+> +					      XFS_BMAPI_PREALLOC;
+> +
+> +	 if (flags & XFS_REFLINK_ALLOC_EXTSZALIGN)
+> +		bmapi_flags |= XFS_BMAPI_EXTSZALIGN;
+>  
+>  	resaligned = xfs_aligned_fsb_count(imap->br_startoff,
+>  		imap->br_blockcount, xfs_get_cowextsz_hint(ip));
+> @@ -477,8 +482,7 @@ xfs_reflink_fill_cow_hole(
+>  	/* Allocate the entire reservation as unwritten blocks. */
+>  	nimaps = 1;
+>  	error = xfs_bmapi_write(tp, ip, imap->br_startoff, imap->br_blockcount,
+> -			XFS_BMAPI_COWFORK | XFS_BMAPI_PREALLOC, 0, cmap,
+> -			&nimaps);
+> +			bmapi_flags, 0, cmap, &nimaps);
+>  	if (error)
+>  		goto out_trans_cancel;
+>  
+> diff --git a/fs/xfs/xfs_reflink.h b/fs/xfs/xfs_reflink.h
+> index f4115836064b..0ab1857074e5 100644
+> --- a/fs/xfs/xfs_reflink.h
+> +++ b/fs/xfs/xfs_reflink.h
+> @@ -13,6 +13,8 @@
+>  #define XFS_REFLINK_CONVERT_UNWRITTEN		(1u << 0)
+>  /* force a new COW mapping to be allocated */
+>  #define XFS_REFLINK_FORCE_COW			(1u << 1)
+> +/* request block allocations aligned to extszhint */
+> +#define XFS_REFLINK_ALLOC_EXTSZALIGN		(1u << 2)
+>  
+>  /*
+>   * Check whether it is safe to free COW fork blocks from an inode. It is unsafe
+> -- 
+> 2.31.1
+> 
+> 
 
