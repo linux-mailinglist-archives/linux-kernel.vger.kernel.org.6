@@ -1,79 +1,63 @@
-Return-Path: <linux-kernel+bounces-558844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 075B0A5EC01
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:59:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15690A5EC07
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:00:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40E8016C08F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:59:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DA7A3B58D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D8B1FC0E6;
-	Thu, 13 Mar 2025 06:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9251FBEB6;
+	Thu, 13 Mar 2025 07:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="mND6Y5s7"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OU9jz2Qe"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078001FCD08
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 06:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0834D1FBCB1;
+	Thu, 13 Mar 2025 07:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741849110; cv=none; b=tkG7zErxNAl1/B/gGmYU5MsTDAA+qcLczF/oevima/hHMgVS/8WWEZ2+ofk16ZMTW/W+yUisUEqxN0L0L55Js6qe0HyQwdRPFUh1dWic1csawl37GPOSpAzY9Hz0HL0uW6jj+fn/zMIMDA55AQF8nGTfW7oDqnUWKCB8gnOUonw=
+	t=1741849211; cv=none; b=VCwSEe3QrztCQAyVg4jnAumy7CcWgmV9BwBGIhbCg71FxF/aIybIiJik8cYnf3M6ItNHA+YBCaxoX7qHd5YvFMVcf9Zr5HnXU8aZ9kaDMsSt+hR2y8m+OmmGw06lMvtNbxnH+UdbPTeuQ9bphape5NRJDtjIBeVsdkZPhWhHq84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741849110; c=relaxed/simple;
-	bh=UG93/JN+C4uzEWrf1epKiCm9PjOLeEr0WUFlntrYe/o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=atghY3Aw1UBYs1T307HbNPXCxo0zfYcoh16IVV65padAyWyURXIpq+rB97yZsIOs2i6OLI6HGgMRSCenFxxAq0h1G5GvC9s5WlJzku2i/znBKOBM5IKMhGG8+x26WKbTBsp8CTiNgdCc4r0C3XuOumImmuRBbSAvH3gNJWelQ8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=mND6Y5s7; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22438c356c8so11029455ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 23:58:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741849108; x=1742453908; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x7fhBUFv13S4cZKboUgbYf/t6ZbQKDXA1phxFoEaqP4=;
-        b=mND6Y5s7Vx4+aEoxZ7gbttc2sJtowpoYFncKWNJR/aIx4z2j6JDuP9YEPK+oUTkEjI
-         +eApXwhhHHJv4nK+oVEmYbiQ/8yhRCoCgEIacYp8DZeNVtW3Mgv2+nTFKFaTs4k+kMfV
-         5wAK//3Y0Z1kOqb54P1rrquLdoMA7NUE52+B7lbWAFec7OISt+IfpReeofz5Kepd1d5D
-         /3vZg6KKfF/O+R1QuZhJNI5oCkc9MbiiI2+Ur6F1r19V4cXGcpbuK6uGc7OQbB/81hm3
-         1iF+kBIe9yCjZwhxSB/cgPsXnsxw/NM0nrqKM6EE6A7Qj1H36HhMWIoa32EemcI9LgQL
-         293w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741849108; x=1742453908;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x7fhBUFv13S4cZKboUgbYf/t6ZbQKDXA1phxFoEaqP4=;
-        b=ErahBQ2PgRlsH973eZx08ZMUxVZ1jIaxfESNTSkgVl6Vy+86te8n1KIBVQ3c+p7GV3
-         w3xJyUcI+BOuJsZhnX80Sv8gbCoKyU+dr+TZl1ZghdM3PA5dGO/A2Syn8tPcdiftA4BT
-         jjQ2nBBXyCEywAbVTarhyOTnrV86ffcvaeLIVNLVDs3E0WgQ9rQe2Gx4G/FrutVZA5LN
-         FZd2IzvVxmiSxZ3d6G/xQFuifbP8qctjFAIVuwxMV73kl0r7WLfUWWY7dJypQ+kZP4Sk
-         IdUWUbTXnIa7REpwQknTWavLHRLg3npJyZFEKJSftGousgMx/cufgjPKpZBUU1MuUb+g
-         JcsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUM1+TuRBlMMy4xkX2xC4inIAVaONI5o4YlmpweKIPHO+w7TH0S9AIsX8GduArgZ4+j76tG6a9v1RGK7f8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww0DXgiTEV1RFUbxO7Y/JL2JO4IvGyw/0vzK/3tboxdVXRPDaJ
-	k+36Bn0GBxFmnEEQBbP82eS0ASgwnuXQ8P91nWz8sNtlIqSyhGJUsxMIHUAR+Nk=
-X-Gm-Gg: ASbGncv0dG5DvjbQXvkVFm32tJRPr3mOe4hsdvquaMKkAbQ0XpSO6IzP31X1PfuCs/m
-	EpSKUMadj59F/N9HTTa8IqzZbz1boFo0lSuGNdj3GsZDmymxxycbU4IVvN2zwh51gYJOQkWRTk0
-	ajejzL0Yaqaz5dq/BsWfkkiWUJx/zcbwM8Q4Rq8l1AOU+4Ty/Kas1p+ZuP29gkha5BQ794sVIBG
-	eyQ+FY8z4y547S6vGEr1+m+LAKnJCrbTJKYCikrulbMisHoJ9dNwngwPPHKtY3e3h2EXGq8lNDZ
-	SLiA0y914gxZ4mNtVdVKRiIKpN5lFB3VcXxkvKIq+/ZPdvUP
-X-Google-Smtp-Source: AGHT+IF+TgNoMe5M/byYKEN+EBcKDv/E4YdTnk5/x7Qy9/IKHZJiaku/6SW8IuLAbysNFNl6dwBYew==
-X-Received: by 2002:a17:902:ec91:b0:223:5e54:c521 with SMTP id d9443c01a7336-22428407e93mr350878545ad.0.1741849108400;
-        Wed, 12 Mar 2025 23:58:28 -0700 (PDT)
-Received: from localhost ([157.82.205.237])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-225c6bd4dabsm6447105ad.233.2025.03.12.23.58.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 23:58:28 -0700 (PDT)
-From: Akihiko Odaki <akihiko.odaki@daynix.com>
-Date: Thu, 13 Mar 2025 15:57:48 +0900
-Subject: [PATCH v4 7/7] KVM: arm64: PMU: Reload when resetting
+	s=arc-20240116; t=1741849211; c=relaxed/simple;
+	bh=ZWu7yEmYDtCiCJ92mO+ZjNEmu6CsBl2tJ1BCQ1nkDBA=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=c7bGAK8f94OUTy0yQ8df54Xt8bDauy/rBi/J3fMYPNEfd2ySv+HRHhZIjVsvTeERArzUEhzEV6UENV25rnqIHNnfFqogZ24FVQwpTrObNGc/xoEP1IJYYc8hz5Q8my4UR2FWlUQVANv+mKjz2/ZUeR88B7fNnfTSIWAbm7K1cSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OU9jz2Qe; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CNoRx2008907;
+	Thu, 13 Mar 2025 06:59:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=yxn8b4CHhcz1mQvwWS88Lu
+	dFQd7CqZ4eIcIt3qiRtK0=; b=OU9jz2Qe9z5s9gdA5s6kABnreJygM9bFud7l6l
+	mGOc0Aa8Rbi9+UtMdCNmsn3E1YiS8vP1nFQ2+aHVxdpDU2ROkuEHyJ2xpzI0Ve4R
+	Mxp3xADecUDtPgZKTRQHgaMx5NIiI8mF3nVYiRWwga5PYH08NUvFIFc6Ru3cOYsG
+	El0vnSEFNZaq22eH4TZTWB6Fq5DoroUsOe1IKy1o2VfF1ZqHzB+Jctfbt5uTKgWG
+	RVzDnbLvdvZh5Tq2yw2+pExf53SLqxfPvIgPH6zWzY9QngR4pmZoxLcQvQLoHMya
+	DdJ88jhp4yo5be+kynBrGsxB80uSjBWMUoMljJFsJNxEPc1g==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2rcvx2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 06:59:54 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D6xr4W032677
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 06:59:53 GMT
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 12 Mar 2025 23:59:47 -0700
+From: Taniya Das <quic_tdas@quicinc.com>
+Subject: [PATCH v6 00/10] Add support for videocc, camcc, dispcc and gpucc
+ on Qualcomm QCS615 platform
+Date: Thu, 13 Mar 2025 12:29:37 +0530
+Message-ID: <20250313-qcs615-v5-mm-cc-v6-0-ebf4b9a5e916@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,105 +66,146 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250313-pmc-v4-7-2c976827118c@daynix.com>
-References: <20250313-pmc-v4-0-2c976827118c@daynix.com>
-In-Reply-To: <20250313-pmc-v4-0-2c976827118c@daynix.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Zenghui Yu <yuzenghui@huawei.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Andrew Jones <andrew.jones@linux.dev>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
- linux-kernel@vger.kernel.org, devel@daynix.com, 
- Akihiko Odaki <akihiko.odaki@daynix.com>
-X-Mailer: b4 0.15-dev-edae6
+X-B4-Tracking: v=1; b=H4sIAFmC0mcC/3WNwQ7CIBBEf6XZs2taIoR68j+aHtoF7B4KFpRoG
+ v5d7N3bvEnmzQ7JRrYJrs0O0WZOHHwFdWqAlsnfLbKpDKIVshWiw42S6iRmieuKRKjn/jI5mnR
+ PEurqEa3j92EcxsoLp2eIn+Mgy1/731VDi7MyvTFOOKHNbXsxsaczhRXGUsoXAVXnvbAAAAA=
+X-Change-ID: 20250221-qcs615-v5-mm-cc-8b94afca89c5
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.15-dev-aa3f6
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=D6NHKuRj c=1 sm=1 tr=0 ts=67d2826a cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=pGLkceISAAAA:8
+ a=C8cLAskXDhL-uTxbcdAA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: fPOEEW0si2gk5Z6nIwwnbpMVrXWYLzFr
+X-Proofpoint-ORIG-GUID: fPOEEW0si2gk5Z6nIwwnbpMVrXWYLzFr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_03,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 lowpriorityscore=0 phishscore=0
+ adultscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015 impostorscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503130054
 
-Replace kvm_pmu_vcpu_reset() with the generic PMU reloading mechanism to
-ensure the consistency with system registers and to reduce code size.
+Add support for multimedia clock controllers on Qualcomm QCS615 platform.
+Update the defconfig to enable these clock controllers.
 
-Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+Global clock controller support
+https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-0-3d716ad0d987@quicinc.com/
+
+Changes in v6:
+- Remove wrongly RB-By tags which got introduced in v4 and was carried
+  to v5 as well.
+- Adding the reference where the tags were added and dropped.
+  -[01/10] clk: qcom: clk-alpha-pll: Add support for dynamic update for slewing PLLs
+    - RB-By from Imran (v2)
+  -[02/10] dt-bindings: clock: Add Qualcomm QCS615 Camera clock controller
+    - RB-By from Krzysztof (v2), drop wrong RB-By from Dmitry (v5)
+  -[03/10] clk: qcom: camcc-qcs615: Add QCS615 camera clock controller driver
+    - R-By from Bryan (v2)
+  -[04/10] dt-bindings: clock: Add Qualcomm QCS615 Display clock controller
+    - Drop wrong RB-By from Dmitry (v5)
+  -[05/10] clk: qcom: dispcc-qcs615: Add QCS615 display clock controller driver
+    - R-By from Dmitry (v1)
+  -[06/10] dt-bindings: clock: Add Qualcomm QCS615 Graphics clock controller
+    - Drop wrong RB-By from Dmitry(v5)
+  -[07/10] clk: qcom: gpucc-qcs615: Add QCS615 graphics clock controller driver
+    - R-By from Dmitry (v1)
+  -[08/10] dt-bindings: clock: Add Qualcomm QCS615 Video clock controller
+    - Drop wrong RB-By from Dmitry(v5)
+  -[09/10] clk: qcom: videocc-qcs615: Add QCS615 video clock controller driver
+    - R-By from Dmitry and Bryan (v3)
+  -[10/10] arm64: defconfig: Enable QCS615 clock controllers
+    - Drop wrong RB-By from Dmitry (v5)
+- Link to v5: https://lore.kernel.org/r/20250221-qcs615-v5-mm-cc-v5-0-b6d9ddf2f28d@quicinc.com
+
+Changes in v5:
+- Update ARM64 || COMPILE_TEST in all Kconfig to resolve kismet warnings.
+- Fix sparse errors in GPUCC.
+- Link to v4: https://lore.kernel.org/r/20250119-qcs615-mm-v4-clockcontroller-v4-0-5d1bdb5a140c@quicinc.com
+
+Changes in v4:
+- Drop patch Update the support for alpha mode configuration as this
+  patch was picked - https://lore.kernel.org/all/20241021-fix-alpha-mode-config-v1-1-f32c254e02bc@gmail.com/
+- Update the bindings to include "qcom,gcc.yaml" [Dmitry]
+
+Changes in v3:
+- update PLL configs to use BIT and GENMASK for vco_val and vco_mask for all CCs [Bryan O'Donoghue]
+- Link to v2: https://lore.kernel.org/r/20241101-qcs615-mm-clockcontroller-v2-0-d1a4870a4aed@quicinc.com
+
+Changes in v2:
+- cleanups in clk_alpha_pll_slew_update and clk_alpha_pll_slew_enable functions [Christophe]
+- update PLL configs for "vco_val = 0x0" shift(20)  [Bryan O'Donoghue]
+- update PLL configs to use lower case for L value  [Dmitry]
+- Link parents for IFE/IPE/BPS GDSCs as Titan Top GDSC [Bryan O'Donoghue, Dmitry]
+- Remove DT_BI_TCXO_AO from camcc-qcs615           [Dmitry]
+- Remove HW_CTRL_TRIGGER from camcc-qcs615         [Bryan O'Donoghue]
+- Update platform name for default configuration   [Dmitry]
+- Link to v1: https://lore.kernel.org/r/20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com
+
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 ---
- arch/arm64/kvm/pmu-emul.c | 14 --------------
- arch/arm64/kvm/reset.c    |  3 ---
- arch/arm64/kvm/sys_regs.c |  3 +++
- include/kvm/arm_pmu.h     |  2 --
- 4 files changed, 3 insertions(+), 19 deletions(-)
+Taniya Das (10):
+      clk: qcom: clk-alpha-pll: Add support for dynamic update for slewing PLLs
+      dt-bindings: clock: Add Qualcomm QCS615 Camera clock controller
+      clk: qcom: camcc-qcs615: Add QCS615 camera clock controller driver
+      dt-bindings: clock: Add Qualcomm QCS615 Display clock controller
+      clk: qcom: dispcc-qcs615: Add QCS615 display clock controller driver
+      dt-bindings: clock: Add Qualcomm QCS615 Graphics clock controller
+      clk: qcom: gpucc-qcs615: Add QCS615 graphics clock controller driver
+      dt-bindings: clock: Add Qualcomm QCS615 Video clock controller
+      clk: qcom: videocc-qcs615: Add QCS615 video clock controller driver
+      arm64: defconfig: Enable QCS615 clock controllers
 
-diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
-index dfa7048a3e2a..62b1deba9856 100644
---- a/arch/arm64/kvm/pmu-emul.c
-+++ b/arch/arm64/kvm/pmu-emul.c
-@@ -248,20 +248,6 @@ void kvm_pmu_vcpu_init(struct kvm_vcpu *vcpu)
- 		pmu->pmc[i].idx = i;
- }
- 
--/**
-- * kvm_pmu_vcpu_reset - reset pmu state for cpu
-- * @vcpu: The vcpu pointer
-- *
-- */
--void kvm_pmu_vcpu_reset(struct kvm_vcpu *vcpu)
--{
--	unsigned long mask = kvm_pmu_valid_counter_mask(vcpu);
--	int i;
--
--	for_each_set_bit(i, &mask, 32)
--		kvm_pmu_stop_counter(kvm_vcpu_idx_to_pmc(vcpu, i));
--}
--
- /**
-  * kvm_pmu_vcpu_destroy - free perf event of PMU for cpu
-  * @vcpu: The vcpu pointer
-diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-index 0b0ae5ae7bc2..7f44539bc822 100644
---- a/arch/arm64/kvm/reset.c
-+++ b/arch/arm64/kvm/reset.c
-@@ -201,9 +201,6 @@ void kvm_reset_vcpu(struct kvm_vcpu *vcpu)
- 	vcpu->arch.reset_state.reset = false;
- 	spin_unlock(&vcpu->arch.mp_state_lock);
- 
--	/* Reset PMU outside of the non-preemptible section */
--	kvm_pmu_vcpu_reset(vcpu);
--
- 	preempt_disable();
- 	loaded = (vcpu->cpu != -1);
- 	if (loaded)
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index 11718c635e2f..307ce37d0434 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -4262,6 +4262,9 @@ void kvm_reset_sys_regs(struct kvm_vcpu *vcpu)
- 	}
- 
- 	set_bit(KVM_ARCH_FLAG_ID_REGS_INITIALIZED, &kvm->arch.flags);
-+
-+	if (kvm_vcpu_has_pmu(vcpu))
-+		kvm_make_request(KVM_REQ_RELOAD_PMU, vcpu);
- }
- 
- /**
-diff --git a/include/kvm/arm_pmu.h b/include/kvm/arm_pmu.h
-index 9c062756ebfa..8ec6296c5917 100644
---- a/include/kvm/arm_pmu.h
-+++ b/include/kvm/arm_pmu.h
-@@ -45,7 +45,6 @@ void kvm_pmu_set_counter_value_user(struct kvm_vcpu *vcpu, u64 select_idx, u64 v
- u64 kvm_pmu_valid_counter_mask(struct kvm_vcpu *vcpu);
- u64 kvm_pmu_get_pmceid(struct kvm_vcpu *vcpu, bool pmceid1);
- void kvm_pmu_vcpu_init(struct kvm_vcpu *vcpu);
--void kvm_pmu_vcpu_reset(struct kvm_vcpu *vcpu);
- void kvm_pmu_vcpu_destroy(struct kvm_vcpu *vcpu);
- void kvm_pmu_disable_counter_mask(struct kvm_vcpu *vcpu, u64 val);
- void kvm_pmu_enable_counter_mask(struct kvm_vcpu *vcpu, u64 val);
-@@ -108,7 +107,6 @@ static inline u64 kvm_pmu_valid_counter_mask(struct kvm_vcpu *vcpu)
- 	return 0;
- }
- static inline void kvm_pmu_vcpu_init(struct kvm_vcpu *vcpu) {}
--static inline void kvm_pmu_vcpu_reset(struct kvm_vcpu *vcpu) {}
- static inline void kvm_pmu_vcpu_destroy(struct kvm_vcpu *vcpu) {}
- static inline void kvm_pmu_disable_counter_mask(struct kvm_vcpu *vcpu, u64 val) {}
- static inline void kvm_pmu_enable_counter_mask(struct kvm_vcpu *vcpu, u64 val) {}
+ .../bindings/clock/qcom,qcs615-camcc.yaml          |   54 +
+ .../bindings/clock/qcom,qcs615-dispcc.yaml         |   73 +
+ .../bindings/clock/qcom,qcs615-gpucc.yaml          |   66 +
+ .../bindings/clock/qcom,qcs615-videocc.yaml        |   64 +
+ arch/arm64/configs/defconfig                       |    4 +
+ drivers/clk/qcom/Kconfig                           |   38 +
+ drivers/clk/qcom/Makefile                          |    4 +
+ drivers/clk/qcom/camcc-qcs615.c                    | 1591 ++++++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.c                   |  170 +++
+ drivers/clk/qcom/clk-alpha-pll.h                   |    1 +
+ drivers/clk/qcom/dispcc-qcs615.c                   |  786 ++++++++++
+ drivers/clk/qcom/gpucc-qcs615.c                    |  525 +++++++
+ drivers/clk/qcom/videocc-qcs615.c                  |  332 ++++
+ include/dt-bindings/clock/qcom,qcs615-camcc.h      |  110 ++
+ include/dt-bindings/clock/qcom,qcs615-dispcc.h     |   52 +
+ include/dt-bindings/clock/qcom,qcs615-gpucc.h      |   39 +
+ include/dt-bindings/clock/qcom,qcs615-videocc.h    |   30 +
+ 17 files changed, 3939 insertions(+)
+---
+base-commit: 50a0c754714aa3ea0b0e62f3765eb666a1579f24
+change-id: 20250221-qcs615-v5-mm-cc-8b94afca89c5
 
+Best regards,
 -- 
-2.48.1
+Taniya Das <quic_tdas@quicinc.com>
 
 
