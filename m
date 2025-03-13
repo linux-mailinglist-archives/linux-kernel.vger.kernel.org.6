@@ -1,157 +1,190 @@
-Return-Path: <linux-kernel+bounces-558904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5318AA5ECE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:24:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E21DA5ECEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:24:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5BC23BB281
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:23:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9C23189C5F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551921FE462;
-	Thu, 13 Mar 2025 07:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="NoMIY2vZ"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE1B1FCFCE;
+	Thu, 13 Mar 2025 07:22:52 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE9F1FCCEA
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1D11FC11E;
+	Thu, 13 Mar 2025 07:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741850517; cv=none; b=Z5lV2IMuTo5KLXHE6lyycrXmDF8jjuQ79MPHI2Nx03VyV/OrfNeZT32mTEuu4oNIT4lQZDPkwbjmHPBwX5iSRtqYPkb7viAw7PQkGwrPsr4adUh9a8b3535FObNCAP99A0j4xl+Nd43QlFJ2/J/pv/QdFD8tbnX+J2qYtcq5DLU=
+	t=1741850572; cv=none; b=Lhmtqkt4s9qdWH0vR4xiXeYwwPQ1aHBIYTX4KPk0oetSaLNWx2KFWhFS0OPlKOOBfjMt3R2aJObbRDKFNcxB5KJp5MQzg3Tn6AEN/YU/KAtYjGteOPkLv9MwcyKFzqEu8sIe03CISd0+Yj+CBiTVXl0FL/dcSdwxswirURDxw7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741850517; c=relaxed/simple;
-	bh=F2iSSOdR/hDLzHj6tvB8TPDBA4YNdpFnG46Hrlaho/Y=;
-	h=From:Mime-Version:References:In-Reply-To:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oc4RlVp/KElLG7bXQIw3lWcTg7Swgp5ZLecFKB9fw5hzZmJlHpqON0zyL5aYi+o0wgusQWehLOjFMCYA7zqT8Tyev8bxnNzkQjKOn4XgeOA7Imp15B5I+AeIkg0hAuuON7SwTqo8dU1xQJE4MrqnMohxQrG8qLuTflk9auZ1BQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=NoMIY2vZ; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e61da95244so1063656a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 00:21:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1741850514; x=1742455314; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:in-reply-to:references:mime-version
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jQAPUFnO9nEMuZGJ5x9hWTx/DhspMU7TljFp3+HbdFk=;
-        b=NoMIY2vZP0t/tX8yBbh7F1TL6xfLB3UbCqHxkPiPpFlc4u0j9lcXwtO1YNr72jcWK0
-         XXfM1XuzC0054OFHErCYjOPqB5I2lfF6vg+jhIug4Wprqz8lpNyXvTLeJ5xvPYbCaC1s
-         JVc3MoR3Igfi7P1Y/ZZLvYs5+Ys1Tu3SfxLeic/k/jCCzcQw+wxsPnr3CVoKUllcWsWd
-         GHHiyEV+wuDBxyX/LzzkVHq14jAn9RYTjoTUhAjuyTvuyuhrsZp6n3tAR1V7O6RlIpuu
-         ZN29yiAgYfcpl/9ZdqGJCJOFOJBZ8JwPABJarArK3ZbdDfnDjZkn/ddq8Hfm/OHHdnSD
-         w+Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741850514; x=1742455314;
-        h=cc:to:subject:message-id:date:in-reply-to:references:mime-version
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jQAPUFnO9nEMuZGJ5x9hWTx/DhspMU7TljFp3+HbdFk=;
-        b=qt6wXx+FxhOyWWgRQZV78XOcRmbWBbdQYk3+P73WbIw/5h7FhDP1DdH/6FkKo2jzDg
-         jvlFGgx2VcA6TmAgrpdNMFHj2dbVCQVk30uSiUMlPoMBKUvVPCrhdjv6SJIOJCksBfrK
-         vp9QAmJmceIHETpslvHf5g+X4xDC8OC/wXF1weXsnCYLo5+/1UkZLt71eYyHElC3Tg5F
-         zAKuIshA9WZCtjUP6/DjS29cQbf7/LiX0vJuXoPSt22oN0k6UZho+0izBdHEO7ktXSM/
-         I6RTPVLSwHyRDazWLyXkai5a0Kfa/dc3WBt+Jtsz75cHbh3KMoOtYa0h94nI7ax9QmvQ
-         RAGg==
-X-Gm-Message-State: AOJu0YzbVhmoHBHwnFeBiwhqn31U4fRsrGX2wU95BwvJLpSXsTAY8u7F
-	PoKljK4NI4q4Ce8yeukHHQYzl6p7+66kKE+FMnmdO9YtuhZDJxCPXEbQTxavom7gg1ayDxMUkjx
-	mXRkW+ssQ9bVJ8JjdUaazVT7TFhdzk93OcQoc
-X-Gm-Gg: ASbGnctzhzrxii9Bg2wEbn2vrXMbdHc3ALGC7Eftqw8H+b1uLXa+o5O24Iw/i6wYvCn
-	FzqMnXjMpDvT/oN2IpDwJpw6gCFcZxUxjHwznk70g0iL+t6ZiWElpYuQcl677UdESA/DGY33CfD
-	rCZPmAoIEkkgQoAiupP2B7tEQlWp4=
-X-Google-Smtp-Source: AGHT+IFfeWDlYHQTGMGMpO3/ozaP1dGAKoleEHFUOzP5BCuASPpC5R/F94l3F6TLYPhgGf2jH/VO5O2ShcA1DRsgK60=
-X-Received: by 2002:a05:6402:2747:b0:5e0:2e70:c2af with SMTP id
- 4fb4d7f45d1cf-5e5e24909a2mr28745235a12.26.1741850514277; Thu, 13 Mar 2025
- 00:21:54 -0700 (PDT)
-Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
- Thu, 13 Mar 2025 02:21:53 -0500
-X-Mailer: git-send-email 2.39.5
-From: Aaron Lu <ziqianlu@bytedance.com>
+	s=arc-20240116; t=1741850572; c=relaxed/simple;
+	bh=+4UJPRqu7JasO2Yf/capeBLoYVmF+HrA7u/DJDlT/1s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Lv/eERRptO14VMYCkuQE/ySCXTZY/5sSCoX115F2psodMLCowsPeS8obpnuh6A0uktGcY6tZWOvGSZ8TR7PkfVlDBa5Wis6+lNtKXyySYiCrCoO/t85AVflCH9aQIqeAogRomDBmxx8CdTjf7K+FSfpmxddrpgMnZZoRpHgjRCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D6vRg3030456;
+	Thu, 13 Mar 2025 00:22:01 -0700
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45b0j4smsa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 13 Mar 2025 00:22:00 -0700 (PDT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Thu, 13 Mar 2025 00:22:00 -0700
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Thu, 13 Mar 2025 00:21:56 -0700
+From: <jianqi.ren.cn@windriver.com>
+To: <stable@vger.kernel.org>
+CC: <patches@lists.linux.dev>, <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>, <andrii@kernel.org>, <ast@kernel.org>,
+        <daniel@iogearbox.net>, <martin.lau@linux.dev>, <song@kernel.org>,
+        <yonghong.song@linux.dev>, <john.fastabend@gmail.com>,
+        <kpsingh@kernel.org>, <sdf@google.com>, <haoluo@google.com>,
+        <jolsa@kernel.org>, <bpf@vger.kernel.org>, <bgrech@redhat.com>,
+        <wander.lairson@gmail.com>, <wander@redhat.com>
+Subject: [PATCH 6.6.y] bpf: Use raw_spinlock_t in ringbuf
+Date: Thu, 13 Mar 2025 15:21:55 +0800
+Message-ID: <20250313072155.167331-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Original-From: Aaron Lu <ziqianlu@bytedance.com>
-References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
-In-Reply-To: <20250313072030.1032893-1-ziqianlu@bytedance.com>
-Date: Thu, 13 Mar 2025 02:21:53 -0500
-X-Gm-Features: AQ5f1JokQNZnRoxq3hXBX0TkqhOuxJ2KX7RFvRrM-srb1Xpe3594xFdcKDUmfTQ
-Message-ID: <CANCG0Gcm92LNtei5yLym-5dK96gb5GF2-tDoLJ+YS0fMx8jADg@mail.gmail.com>
-Subject: [RFC PATCH 5/7] sched/fair: Take care of group/affinity/sched_class
- change for throttled task
-To: Valentin Schneider <vschneid@redhat.com>, Ben Segall <bsegall@google.com>, 
-	K Prateek Nayak <kprateek.nayak@amd.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Mel Gorman <mgorman@suse.de>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Chuyi Zhou <zhouchuyi@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=Cc0I5Krl c=1 sm=1 tr=0 ts=67d28798 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=pGLkceISAAAA:8 a=hWMQpYRtAAAA:8 a=t7CeM3EgAAAA:8
+ a=mcpU0V_MDO7S8Gi0BcUA:9 a=KCsI-UfzjElwHeZNREa_:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-ORIG-GUID: 6AKU1_7RwWQ6zb2c0cXbhaimSrxOWr14
+X-Proofpoint-GUID: 6AKU1_7RwWQ6zb2c0cXbhaimSrxOWr14
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_03,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 lowpriorityscore=0 malwarescore=0 suspectscore=0
+ clxscore=1011 impostorscore=0 spamscore=0 bulkscore=0 mlxscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2502280000 definitions=main-2503130057
 
-On task group change, for a queued task, core will dequeue it and then
-requeued it. The throttled task is still considered as queued by core
-because p->on_rq is still set so core will dequeue it too, but since
-the task is already dequeued on throttle, handle this case properly in
-fair class code.
+From: Wander Lairson Costa <wander.lairson@gmail.com>
 
-Affinity and sched class change is similar.
+[ Upstream commit 8b62645b09f870d70c7910e7550289d444239a46 ]
 
-Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
+The function __bpf_ringbuf_reserve is invoked from a tracepoint, which
+disables preemption. Using spinlock_t in this context can lead to a
+"sleep in atomic" warning in the RT variant. This issue is illustrated
+in the example below:
+
+BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 556208, name: test_progs
+preempt_count: 1, expected: 0
+RCU nest depth: 1, expected: 1
+INFO: lockdep is turned off.
+Preemption disabled at:
+[<ffffd33a5c88ea44>] migrate_enable+0xc0/0x39c
+CPU: 7 PID: 556208 Comm: test_progs Tainted: G
+Hardware name: Qualcomm SA8775P Ride (DT)
+Call trace:
+ dump_backtrace+0xac/0x130
+ show_stack+0x1c/0x30
+ dump_stack_lvl+0xac/0xe8
+ dump_stack+0x18/0x30
+ __might_resched+0x3bc/0x4fc
+ rt_spin_lock+0x8c/0x1a4
+ __bpf_ringbuf_reserve+0xc4/0x254
+ bpf_ringbuf_reserve_dynptr+0x5c/0xdc
+ bpf_prog_ac3d15160d62622a_test_read_write+0x104/0x238
+ trace_call_bpf+0x238/0x774
+ perf_call_bpf_enter.isra.0+0x104/0x194
+ perf_syscall_enter+0x2f8/0x510
+ trace_sys_enter+0x39c/0x564
+ syscall_trace_enter+0x220/0x3c0
+ do_el0_svc+0x138/0x1dc
+ el0_svc+0x54/0x130
+ el0t_64_sync_handler+0x134/0x150
+ el0t_64_sync+0x17c/0x180
+
+Switch the spinlock to raw_spinlock_t to avoid this error.
+
+Fixes: 457f44363a88 ("bpf: Implement BPF ring buffer and verifier support for it")
+Reported-by: Brian Grech <bgrech@redhat.com>
+Signed-off-by: Wander Lairson Costa <wander.lairson@gmail.com>
+Signed-off-by: Wander Lairson Costa <wander@redhat.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+Link: https://lore.kernel.org/r/20240920190700.617253-1-wander@redhat.com
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+Signed-off-by: He Zhe <zhe.he@windriver.com>
 ---
- kernel/sched/fair.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+Verified the build test
+---
+ kernel/bpf/ringbuf.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 9e036f18d73e6..f26d53ac143fe 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5876,8 +5876,8 @@ static void throttle_cfs_rq_work(struct
-callback_head *work)
-
- 	update_rq_clock(rq);
- 	WARN_ON_ONCE(!list_empty(&p->throttle_node));
--	list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
- 	dequeue_task_fair(rq, p, DEQUEUE_SLEEP | DEQUEUE_SPECIAL);
-+	list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
- 	resched_curr(rq);
-
- out_unlock:
-@@ -5920,10 +5920,6 @@ static int tg_unthrottle_up(struct task_group
-*tg, void *data)
- 	/* Re-enqueue the tasks that have been throttled at this level. */
- 	list_for_each_entry_safe(p, tmp, &cfs_rq->throttled_limbo_list,
-throttle_node) {
- 		list_del_init(&p->throttle_node);
--		/*
--		 * FIXME: p may not be allowed to run on this rq anymore
--		 * due to affinity change while p is throttled.
--		 */
- 		enqueue_task_fair(rq_of(cfs_rq), p, ENQUEUE_WAKEUP);
+diff --git a/kernel/bpf/ringbuf.c b/kernel/bpf/ringbuf.c
+index 528f4d634226..6aff5ee483b6 100644
+--- a/kernel/bpf/ringbuf.c
++++ b/kernel/bpf/ringbuf.c
+@@ -29,7 +29,7 @@ struct bpf_ringbuf {
+ 	u64 mask;
+ 	struct page **pages;
+ 	int nr_pages;
+-	spinlock_t spinlock ____cacheline_aligned_in_smp;
++	raw_spinlock_t spinlock ____cacheline_aligned_in_smp;
+ 	/* For user-space producer ring buffers, an atomic_t busy bit is used
+ 	 * to synchronize access to the ring buffers in the kernel, rather than
+ 	 * the spinlock that is used for kernel-producer ring buffers. This is
+@@ -173,7 +173,7 @@ static struct bpf_ringbuf *bpf_ringbuf_alloc(size_t data_sz, int numa_node)
+ 	if (!rb)
+ 		return NULL;
+ 
+-	spin_lock_init(&rb->spinlock);
++	raw_spin_lock_init(&rb->spinlock);
+ 	atomic_set(&rb->busy, 0);
+ 	init_waitqueue_head(&rb->waitq);
+ 	init_irq_work(&rb->work, bpf_ringbuf_notify);
+@@ -417,10 +417,10 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
+ 	cons_pos = smp_load_acquire(&rb->consumer_pos);
+ 
+ 	if (in_nmi()) {
+-		if (!spin_trylock_irqsave(&rb->spinlock, flags))
++		if (!raw_spin_trylock_irqsave(&rb->spinlock, flags))
+ 			return NULL;
+ 	} else {
+-		spin_lock_irqsave(&rb->spinlock, flags);
++		raw_spin_lock_irqsave(&rb->spinlock, flags);
  	}
-
-@@ -7194,6 +7190,16 @@ static int dequeue_entities(struct rq *rq,
-struct sched_entity *se, int flags)
-  */
- static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- {
-+	if (task_is_throttled(p)) {
-+		/* sched/core wants to dequeue this throttled task. */
-+		SCHED_WARN_ON(p->se.on_rq);
-+		SCHED_WARN_ON(flags & DEQUEUE_SLEEP);
-+
-+		list_del_init(&p->throttle_node);
-+
-+		return true;
-+	}
-+
- 	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags &
-DEQUEUE_SAVE))))
- 		util_est_dequeue(&rq->cfs, p);
-
+ 
+ 	pend_pos = rb->pending_pos;
+@@ -446,7 +446,7 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
+ 	 */
+ 	if (new_prod_pos - cons_pos > rb->mask ||
+ 	    new_prod_pos - pend_pos > rb->mask) {
+-		spin_unlock_irqrestore(&rb->spinlock, flags);
++		raw_spin_unlock_irqrestore(&rb->spinlock, flags);
+ 		return NULL;
+ 	}
+ 
+@@ -458,7 +458,7 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
+ 	/* pairs with consumer's smp_load_acquire() */
+ 	smp_store_release(&rb->producer_pos, new_prod_pos);
+ 
+-	spin_unlock_irqrestore(&rb->spinlock, flags);
++	raw_spin_unlock_irqrestore(&rb->spinlock, flags);
+ 
+ 	return (void *)hdr + BPF_RINGBUF_HDR_SZ;
+ }
 -- 
-2.39.5
+2.25.1
+
 
