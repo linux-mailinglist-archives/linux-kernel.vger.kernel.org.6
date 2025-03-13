@@ -1,137 +1,227 @@
-Return-Path: <linux-kernel+bounces-558894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEFA2A5ECD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:21:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B91C5A5ECD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:21:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 208EC16E236
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:21:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79C0C18997B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94AC1FCCEF;
-	Thu, 13 Mar 2025 07:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856F91FC7D6;
+	Thu, 13 Mar 2025 07:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FqJo5nOP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="YVkyf/rE"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3621FC7F6
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0181FC115
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741850450; cv=none; b=Dc4rH5zTwAUK2jjY1SDLra1ll0pclUNwbt3VBy5h/jGevTHVBAqjQtZfkk6bRv4fR/m3+qywuLjssLdfmGK/bLak1uR6t8e/AerN9dXiz1EbwY2M0UX+dyOzlrFgDFdEyq41Bv9AIkjK+ltsqmQNFxgrhPhyHuou2mecm4H8OaY=
+	t=1741850464; cv=none; b=E5Qs0e/v3RuqX78ItzVUe3QpQTaq4nI3QcI17eRY8aWGHI6cxEA2hhnzhMgdaS0SLj7C16u72OGDrPcwQ7iRBRiGe+vVs3CQmCrYIARZjXE/hLQNGwLLF14PqlGD1kanoQWAw+dIrLvSfPo144VjXc/CpXeW+bnkk1BbGQSdz+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741850450; c=relaxed/simple;
-	bh=KtmKrH0Gsv0sBFL6B7nZq6RHI/4HDfiECApPAP1vOr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E5u0mf9+UjW/PraN2+rj+K9Lr6qRs3OTiZIUbVxBcbukCtq9zejBUh9IDIPROuBSSw58EWDTbZeoflSjGdOIzkWAlfCTZZscJAjjw685JGzhAV4slS8k7CGiZt1W/rLy6L46u2geoW3wgw7O9P+ZYNyQJMX+xVGMTTP0Jk36Djg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FqJo5nOP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741850447;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o4bfYEIbp/kS2X2cwGn1CJqsR/J4F2IpC4H45RKU2a4=;
-	b=FqJo5nOPWDZvXMnUaMq8yz7DAur3XgvRRlldH1KzVjncJ0fRNlVzjqNZFuXxvAjubh5CLt
-	5jKxjXawWTfdH8AWnvBzqXRPxrEq0ySpYNjo+t4cSIWfVKj7VHmk6qIelpyJAHuOg2rHkT
-	6r9zYLj7QvIxHGSArTietsOR7zVC46A=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-465-maGDIocdO-C8r8s6XrAoFQ-1; Thu, 13 Mar 2025 03:20:45 -0400
-X-MC-Unique: maGDIocdO-C8r8s6XrAoFQ-1
-X-Mimecast-MFC-AGG-ID: maGDIocdO-C8r8s6XrAoFQ_1741850444
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-39131f2bbe5so210725f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 00:20:45 -0700 (PDT)
+	s=arc-20240116; t=1741850464; c=relaxed/simple;
+	bh=WIGP6c7pZI3O7KpjjWTotO+yvTTuYyAJpgqOBOyp8gY=;
+	h=From:Mime-Version:Date:Message-ID:Subject:To:Cc:Content-Type; b=NEXdh8t0HHZ5H3pK3v+6+bfF4YOwrBPdfBlXXkygsvez7TPFVx6LAR6hI8F/PD7yiC3psZ3a0TgVkwx254ukqiljHZHXfiWeHFOvBn24oW3FNxPQurmx49GI1wmhvM6q7zFZpcbcA8TLKLsWM2StcfZThv28mS88gr1t3T/6n1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=YVkyf/rE; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e6ff035e9aso1292905a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 00:21:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1741850460; x=1742455260; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:mime-version:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mb3Bt/L4MdFutbv6VVq0j5BWvIHVvycjsyPwMxwTSVE=;
+        b=YVkyf/rEIq4G+0mjtKjW6SKc75QD6VjpQQFZ4iP9FkHJa63qm3XW3RMZgGnSQSyVKO
+         2dnEu+Wfaq/eme/qMKAL3wLqof1fH6L8kWxJ2o2AQkr271wIs9+gwomHKaqyTZLRQCQ1
+         EQQ21bQVYqzIlIaSfBcsQL1hPzgY2vGLidcbvEg6lTg/IStFdv9UFgNVOQ4X1N2snDnF
+         Y+wF3X1lKPGlVXHLRoExnaz3vMAXF9x83my0+3PLijYfYQwTFPWw6POz/VpYivXwRlI1
+         abqcK4GP+oUvpsXXc7v7h34eVVxu8yvRFJEbOQrjdyrbChg9DVTkPotTe6HveV+GR8Tw
+         VtEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741850444; x=1742455244;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o4bfYEIbp/kS2X2cwGn1CJqsR/J4F2IpC4H45RKU2a4=;
-        b=vPXkYOQC/bm6WjK+BrOQH9ou5EHeyhjxe7lxDRWHOIlhRBU2a4dxY0VCEg4VGC0c72
-         8kefaeTiyy2l7MuBpviLDYKaCP3mSUMXda5pJQbqGcCTilxtIzcPa3+LR5PV3+phYgDK
-         JwFY73NeHsywUsd8AeyQFThVhYe/AA2Wlz4zLK5jRFw9fYF0KCuhdq/Gubh8+Nyj92hB
-         4ipTZRrfWhZ5Y27oeuHeg2peUDjn/sAudtlERq06KEGOnKC/6LOZo6wZW0X2PFaDzwM5
-         ppNn1qtXslwdh9A9wzBVw0ZEqYQK3RkWQS5Sl9vqMlujgIamNDEo09CHPDS29sd61tjl
-         pCXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkjxZWrUqjIoGn+vMr27fFM/1LOY/M+Ws6kXhhoMjXhJgAIsOexOM0Hrk6yKNTYsEGPwxVHzkWiNjCs5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeyAFJHdFyO++YXHEI1+RNIAmWqY9yDIf8QRVnLC+ZxxoDs+QL
-	aPoUsEb3trotMkywQTCUWR1WpEgYPOCwt/MspnUeZGkOH70QkV19typmSEw0fDNOS/ZL+B/sN0l
-	EMfwKrua8i2LpUk9HJIZbGBxggoEjZL3RTyjnDgev/5ymOeUQLd/bWcMTh4/0ow==
-X-Gm-Gg: ASbGncty3xMNgQtLeE9WLp0cN9nb+yLSHim+lCon3Mwy+CutE2ahpWxYqe0+fkYO6IB
-	Cfdhqqyc5M+eMBsapOxQwexJoihjKcg7nIcf2JHejD7B7XXYDGILpPPXaUhmw0/VTaMe5ol3VX3
-	ad1cOOxITCXZe4wUu2MAKWfjH0XmGKd3x0zccfxeB7Jnlf+SaWXGFaaxh67JE4gGqg5CIQo1w6M
-	gjg0BcX4FZECcQ5K+S/eeB6qlfsMMqPQXqGasXwjRlLp7t0IWDWcHc1/HnD1Fc+FIAhz9j+4WFn
-	EV54hDLQiA==
-X-Received: by 2002:a05:6000:144d:b0:391:2e58:f085 with SMTP id ffacd0b85a97d-39132dab192mr19228447f8f.54.1741850444456;
-        Thu, 13 Mar 2025 00:20:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGdSno6hSKVsk5d06B4EsgagrhEFS5vVdfXL2wu7cQUeZCwJ3oOQpqMw11c+iVNeKk+NLYSpA==
-X-Received: by 2002:a05:6000:144d:b0:391:2e58:f085 with SMTP id ffacd0b85a97d-39132dab192mr19228411f8f.54.1741850444109;
-        Thu, 13 Mar 2025 00:20:44 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d18a2af42sm10316185e9.32.2025.03.13.00.20.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 00:20:43 -0700 (PDT)
-Date: Thu, 13 Mar 2025 03:20:37 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Nico Pache <npache@redhat.com>, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, cgroups@vger.kernel.org, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	jerrin.shaji-george@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com, arnd@arndb.de,
-	gregkh@linuxfoundation.org, jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com, eperezma@redhat.com, jgross@suse.com,
-	sstabellini@kernel.org, oleksandr_tyshchenko@epam.com,
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, nphamcs@gmail.com, yosry.ahmed@linux.dev,
-	kanchana.p.sridhar@intel.com, alexander.atanasov@virtuozzo.com
-Subject: Re: [RFC 1/5] meminfo: add a per node counter for balloon drivers
-Message-ID: <20250313032001-mutt-send-email-mst@kernel.org>
-References: <20250312000700.184573-1-npache@redhat.com>
- <20250312000700.184573-2-npache@redhat.com>
- <c4229ea5-d991-4f5e-a0ff-45dce78a242a@redhat.com>
+        d=1e100.net; s=20230601; t=1741850460; x=1742455260;
+        h=cc:to:subject:message-id:date:mime-version:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mb3Bt/L4MdFutbv6VVq0j5BWvIHVvycjsyPwMxwTSVE=;
+        b=hSf+OOhispxaYtet75qquXRSgwEDeNkYFskfTGBcK0FK/YWjkPFP9TP8gc2HG342L+
+         3ZEGLjrz0Gxpc52+6E8oYPAX1gsqINjGd5xjxu3cSop9P6RhRVkIsglUWSRlLLJFBlsu
+         uuKzmZV9JjmHr+vk4kMp0v0BNKqjsmHXwcADxZQkQChxSGJGPbZOxalCD5al4KHy0UgX
+         WKIv0RlUE6yHEsvpVQL3Bm0Bh1HS3/z7SHwXVJENWcNEc0jeM/B7u2TuSsDvd61HBLY+
+         s+MdCEwS6c5kSgSWn8awzdibE/TL8RoLZwQIGeER1Ox59n8sJEovGLcgY2TCkGiwkvvG
+         AQlA==
+X-Gm-Message-State: AOJu0YweUIrjIA9v3AgO/lOWXKcczW5EJApUa8JpAuBZY5Y0jNIBnyyK
+	itvcw4xR2bvuiz3jjVrRCYt7xIh/uCmOcGsDXubSAsKxrQYUfNsFdFhpvIudZ3UMtpoftuwKIcb
+	2PQrTTzsGY/KIU94+s5HYHfQOGtoUDKeXQ8zM
+X-Gm-Gg: ASbGncsxlwkCvMTJh9YO0lz/0qMcHpkUPir+f1Sx64BSUEKYDlWuF7FZHQdWjXUhzts
+	MsTFPFZCmmKM14v2PgzUVpG03T2b8mWbXB/Xz1cYZKqwaKYB5+dbHes/uS8fCOn4D9e0F5vMvmK
+	B39vzT7qZvWs7Ms2ZXvKGArAMdFaI=
+X-Google-Smtp-Source: AGHT+IERlEVj3mE2Hy5QG0uYVmlj+6xc3jcRkKGk/VCX2hZvznrMEDQOpTktFKZqRLDONhEEnwt8+8tRuhlC6y2ywvc=
+X-Received: by 2002:a50:cc0c:0:b0:5e7:8827:2c33 with SMTP id
+ 4fb4d7f45d1cf-5e788272ca4mr9539592a12.11.1741850460222; Thu, 13 Mar 2025
+ 00:21:00 -0700 (PDT)
+Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
+ Thu, 13 Mar 2025 02:20:59 -0500
+From: Aaron Lu <ziqianlu@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c4229ea5-d991-4f5e-a0ff-45dce78a242a@redhat.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.39.5
+X-Original-From: Aaron Lu <ziqianlu@bytedance.com>
+Date: Thu, 13 Mar 2025 02:20:59 -0500
+X-Gm-Features: AQ5f1JrQjfSy-mFfh2-ULrAKsV_fUeB6HXQoUOKf9a2vBVkInMOCWuwIlG7L1h8
+Message-ID: <CANCG0Gfn-BENDNqJmWC2BCxXLA8pQWrAwNibx22Dv_yUzyNV5g@mail.gmail.com>
+Subject: [RFC PATCH 0/7] Defer throttle when task exits to user
+To: Valentin Schneider <vschneid@redhat.com>, Ben Segall <bsegall@google.com>, 
+	K Prateek Nayak <kprateek.nayak@amd.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Mel Gorman <mgorman@suse.de>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Chuyi Zhou <zhouchuyi@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Mar 12, 2025 at 11:19:06PM +0100, David Hildenbrand wrote:
-> On 12.03.25 01:06, Nico Pache wrote:
-> > Add NR_BALLOON_PAGES counter to track memory used by balloon drivers and
-> > expose it through /proc/meminfo and other memory reporting interfaces.
-> 
-> In balloon_page_enqueue_one(), we perform a
-> 
-> __count_vm_event(BALLOON_INFLATE)
-> 
-> and in balloon_page_list_dequeue
-> 
-> __count_vm_event(BALLOON_DEFLATE);
-> 
-> 
-> Should we maybe simply do the per-node accounting similarly there?
+This is a continuous work based on Valentin Schneider's posting here:
+Subject: [RFC PATCH v3 00/10] sched/fair: Defer CFS throttle to user entry
+https://lore.kernel.org/lkml/20240711130004.2157737-1-vschneid@redhat.com/
 
+Valentin has described the problem very well in the above link. We also
+have task hung problem from time to time in our environment due to cfs quota.
+It is mostly visible with rwsem: when a reader is throttled, writer comes in
+and has to wait, the writer also makes all subsequent readers wait,
+causing problems of priority inversion or even whole system hung.
 
-BTW should virtio mem be tied into this too, in some way? or is it too
-different?
+Changes I've made since Valentin's v3:
+- Use enqueue_task_fair() and dequeue_task_fair() in cfs_rq's throttle
+  and unthrottle path;
+- Get rid of irq_work, since the task work that is supposed to throttle
+  the task can figure things out and do things accordingly, so no need
+  to have a irq_work to cancel a no longer needed task work;
+- Several fix like taking care of task group change, sched class change
+  etc. for throttled task;
+- tasks_rcu fix with this task based throttle.
 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
+Tests:
+- A basic test to verify functionality like limit cgroup cpu time and
+  change task group, affinity etc.
+- A script that tried to mimic a large cgroup setup is used to see how
+  bad it is to unthrottle cfs_rqs and enqueue back large number of tasks
+  in hrtime context.
 
+  The test was done on a 2sockets/384threads AMD CPU with the following
+  cgroup setup: 2 first level cgroups with quota setting, each has 100
+  child cgroups and each child cgroup has 10 leaf child cgroups, with a
+  total number of 2000 cgroups. In each leaf child cgroup, 10 cpu hog
+  tasks are created there. Below is the durations of
+  distribute_cfs_runtime() during a 1 minute window:
+  @durations:
+  [8K, 16K)            274 |@@@@@@@@@@@@@@@@@@@@@
+         |
+  [16K, 32K)           132 |@@@@@@@@@@
+         |
+  [32K, 64K)             6 |
+         |
+  [64K, 128K)            0 |
+         |
+  [128K, 256K)           2 |
+         |
+  [256K, 512K)           0 |
+         |
+  [512K, 1M)           117 |@@@@@@@@@
+         |
+  [1M, 2M)             665
+|@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+  [2M, 4M)              10 |
+         |
+  So the biggest duration is in 2-4ms range in this hrtime context. How
+  bad is this number? I think it is acceptable but maybe the setup I
+  created is not complex enough?
+  In older kernels where async unthrottle is not available, the largest
+  time range can be about 100ms+.
+
+Patches:
+The patchset is arranged to get the basic functionality done first and
+then deal with special cases. I hope this can make it easier to review.
+
+Patch1 is preparation work;
+
+Patch2-3 provide the main functionality.
+Patch2 deals with throttle path: when a cfs_rq is to be throttled, add a
+task work to each of its tasks so that when those tasks return to user, the
+task work can throttle it by dequeuing the task and remember this by
+adding the task to its cfs_rq's limbo list;
+Patch3 deals with unthrottle path: when a cfs_rq is to be unthrottled,
+enqueue back those tasks in limbo list;
+
+Patch4-5 deal with special cases.
+Patch4 deals with task migration: if a task migrates to a throttled
+cfs_rq, setup throttle work for it. If otherwise a task that already has
+task work added migrated to a not throttled cfs_rq, its task work will
+remain: the work handler will figure things out and skip the throttle.
+This also deals with setting throttle task work for tasks that switched
+to fair class, changed group etc. because all these things need enqueue
+the task to the target cfs_rq;
+Patch5 deals with the dequeue path when task changes group, sched class
+etc. Task that is throttled is dequeued in fair, but task->on_rq is
+still set so when it changes task group, sched class or has affinity
+setting change, core will firstly dequeue it. But since this task is
+already dequeued in fair class, this patch handle this situation.
+
+Patch6-7 are two fixes while doing test. I can also fold them in if that
+is better.
+Patch6 makes CONFIG_TASKS_RCU happy. Throttled tasks get scheduled in
+tasks_work_run() by cond_resched() but that is a preempt schedule and
+doesn't mark a task rcu quiescent state, so I add a schedule call in
+throttle task work directly.
+Patch7 fixed a problem where unthrottle path can cause throttle to
+happen again when enqueuing task.
+
+All the patches changelogs are written by me, so if the changelogs look
+poor, it's my bad.
+
+Comments are welcome. If you see any problems or issues with this
+approach, please feel free to let me know, thanks.
+
+Base commit: tip/sched/core, commit fd881d0a085f("rseq: Fix segfault on
+registration when rseq_cs is non-zero").
+
+Known issues:
+- !CONFIG_CFS_BANDWIDTH is totally not tested yet;
+- task_is_throttled_fair() could probably be replaced with
+  task_is_throttled() now but I'll leave this to next version.
+- cfs_rq's pelt clock is stopped on throttle while it can still have
+  tasks running(like some task is still running in kernel space).
+  It's also possible to keep its pelt clock running till its last task
+  is throttled/dequeued, but in this way, this cfs_rq's load may be
+  decreased too much since many of its tasks are throttled. For now,
+  keep it simple by keeping the current behavior.
+
+Aaron Lu (4):
+  sched/fair: Take care of migrated task for task based throttle
+  sched/fair: Take care of group/affinity/sched_class change for
+    throttled task
+  sched/fair: fix tasks_rcu with task based throttle
+  sched/fair: Make sure cfs_rq has enough runtime_remaining on
+    unthrottle path
+
+Valentin Schneider (3):
+  sched/fair: Add related data structure for task based throttle
+  sched/fair: Handle throttle path for task based throttle
+  sched/fair: Handle unthrottle path for task based throttle
+
+ include/linux/sched.h |   4 +
+ kernel/sched/core.c   |   3 +
+ kernel/sched/fair.c   | 380 +++++++++++++++++++++++-------------------
+ kernel/sched/sched.h  |   3 +
+ 4 files changed, 216 insertions(+), 174 deletions(-)
+
+-- 
+2.39.5
 
