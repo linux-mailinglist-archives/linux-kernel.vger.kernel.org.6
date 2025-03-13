@@ -1,247 +1,113 @@
-Return-Path: <linux-kernel+bounces-559476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40EDA5F437
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:23:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96CA7A5F43C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:25:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86C4D7A3024
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:22:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8063119C2162
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38039267387;
-	Thu, 13 Mar 2025 12:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F200D2673A2;
+	Thu, 13 Mar 2025 12:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ncVqIfMA"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="EbCTWpuC"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F55E335BA
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE9D266B40
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741868592; cv=none; b=hZhYyTRovHKHr/Jmma+PioXCTO1jUYxr2nODQgLVKn4MimSYABq8ycB7G1/PI5B2q05U3Cn7xeH3bxiGaMGBQuE3XlbZnBMukPnevV9LkVdgPRREGOWfXPWtREgVla7i3m7SpYSM5x/LrKAFGxGZB2p8vQwpTF5OSy2DUi3LHTE=
+	t=1741868689; cv=none; b=eBlMbSOo8RjmCJK4LKRu4JMisg5N2C+u3XnfA9PIMzYFH92ed0i8fAQ75ACAHvzZIpfN1bPOoKbK2ln5emDy6kpwz1hNGLvtIj+xRx9RRKd2PfjIUEvbXjd1Vao+rxiZyhrl2r+GZewYVoiETg+9vOLrsJ3vG7z98yQO4D/2jQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741868592; c=relaxed/simple;
-	bh=mcPJXBSTtSrp14iFEKn4WCHM0U1Sm8bBMOiy1wa4/tY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=t6IFLy6aSvqvZMCfeKNfznyg19g01A33ok163l5jI4KH//1Vb7gc3bY2ziHGR5VtNfXNdg5OSBr7uEOqwfXKGBIBpffzbU3qAKJcdxSbO2LRk6EgoCe9FQQ6FNnkVxyCGRPBe7pIs55udtBfRHTp4NKLBciTpdSBRNPbSYeFPZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ncVqIfMA; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250313122307euoutp02d6977d823bea14e5edce70783be33f1f~sXEBcw1ch1698516985euoutp02T
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:23:07 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250313122307euoutp02d6977d823bea14e5edce70783be33f1f~sXEBcw1ch1698516985euoutp02T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1741868587;
-	bh=qIrd9kTdaGksR+OaXikozpxmp9lFlYZnRIjjmUZsYSY=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=ncVqIfMAINE+TA71Brea12OaCm6nBglZPAc5NalanEPQutFUq3WVO3zvC0fdamruE
-	 wc45FVJbyYwI2nQx5qwAzw/3UPddym1UVpzEaJ6FCPPq34I7+Xp+shB4zVu2jj+QOX
-	 YOOtgI+L+qbOktQdqzcl8z9L+JCdYJV3wmVg9/Ps=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20250313122306eucas1p2f9144caaeaff5f66d77c8defde5a0afe~sXEBBFb0-2324023240eucas1p2L;
-	Thu, 13 Mar 2025 12:23:06 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 91.5C.20821.A2EC2D76; Thu, 13
-	Mar 2025 12:23:06 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250313122306eucas1p10f67da8328fdf9bfc4590d972e794b8f~sXEAoAej12870728707eucas1p1K;
-	Thu, 13 Mar 2025 12:23:06 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250313122306eusmtrp26de00c6b81f1b8d1f7a2f1d1f844ed06~sXEAnDFFy2795227952eusmtrp2O;
-	Thu, 13 Mar 2025 12:23:06 +0000 (GMT)
-X-AuditID: cbfec7f2-b09c370000005155-9a-67d2ce2ae064
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 8D.88.19654.A2EC2D76; Thu, 13
-	Mar 2025 12:23:06 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250313122303eusmtip208566caf51a9af37bcc7d3ec7315a939~sXD92k4wN2925829258eusmtip2E;
-	Thu, 13 Mar 2025 12:23:03 +0000 (GMT)
-Message-ID: <bf2adf5d-1432-4bb7-846c-e1bcfa84858b@samsung.com>
-Date: Thu, 13 Mar 2025 13:23:02 +0100
+	s=arc-20240116; t=1741868689; c=relaxed/simple;
+	bh=qUINEFrGdyqtUCxJgPIIWVSKNSceW/vG2w99VTb0EFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ED9dBLNIJ8PbLGpCPluACzWp2pG4c/MDJvVzREIrNxAm0UPrO3DldDp9jccXjIOyw9uXBCh2VJtdwdrDaTwDLrsg/0IX1z1pTwmF1Rg0BGmM2N7ueoSFXIETTH42LMo2wvjTzag93BpHJAp8/IFpbBn/vf6h1E6c0Bwo7selWqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=EbCTWpuC; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3913b539aabso549719f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 05:24:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1741868684; x=1742473484; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jdwK1Zh8ZZo6rwDf542VaxRAlTlQ9sZFdzOTXwzDIRU=;
+        b=EbCTWpuCIEVmrusg4jm7PmZ3G9kQr3/k9FBQmvZQ8D7L9OQ+iISsTbF2CI9I7Bi7gG
+         bkXR4Csa9wQus0Wn3s8RDbygCrSwQoxc0zR4YNMOspJKsGE+qogTlrrQv4/JIgdiLaQC
+         srHIzpaxhUnaPIR/rbJblHFnLgfoenOWhKitdtVdX6uHq24OQ/Jk8asZPuloMdH88Gcb
+         PwABAp+AOU8lCJ61EKwfQlNMR9F8nIEIwMFNi4vwTZIMkosSsHDu5x3I0O/zvJuFQpZQ
+         CTaTAXGf8EJm2gSbBuYUb4oq4aKf0bSHvrfQou7r10dsjUH3wz5o/1X0jX53FbeEL0Ws
+         caHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741868684; x=1742473484;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jdwK1Zh8ZZo6rwDf542VaxRAlTlQ9sZFdzOTXwzDIRU=;
+        b=kEBsav4r7igdycwyk8zFvpc0GE4Ntp7ap1SF3B8WRy38cNZ2SbWr/KpdAZPUWXpkVr
+         xky3oBFIf+EybsByG6mX8/93uDUPtTHwn3PNNj9XbBb/EVmrOiijaLlosvW1T7SZ8rZh
+         GRgALArNRrqAiAoHIVrxBE1YaL5zh53TajTr7KgpZ2up2fOa3DDvBhBD8dGnie34Vrgx
+         ErN9cz2aEO06gxDKh787o8+0y7BCapdTt+kxHgWRVAB8RflqBkS4lMbg/0WqY2a+2XNJ
+         8cuSbWRJh9fUr4i2ZtaN09wggdenCOXJbIwaEVp6csB51IA5ESQIaoEhxKjp7wcao4RG
+         1AXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7vypkQIxVzJnUml9z19xVsiUIHqt0XMKstiY6K/ILoSgtpFAmcgskYqX+nBtXx4WVNfTpaZxNtqKb2ss=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy20FkvOtyCkXmawi1GYG2toSNmsCaBOy9WejaoCYf7Wx0lXxZO
+	OwHwE+cqMjqGSv6X2pjAaa/7xSGkDQmv6tylkOw0S4p+O7gC9Zh2VJekNdZ29yU=
+X-Gm-Gg: ASbGncudWJHC6bxw7xfE6uDtLU64xEKo1kYiBcSgsgRoxTtszxcGKDb9exutSsSHnCH
+	WqlzGmSA+ZWjOVuJQm5tO2gtJTCQXpcOa7ONbKKRzVk7K+lnU3D+DrnRiGhleTFLlTJPUQoV9C8
+	5g3Di1Q8OpZ5epUCgMUbUFj5wZ/VOL7bsC5H4hhzKrNvhPa5sfCpQtmn0AW0nwkABLtjvzeoZpq
+	PsiSP/dG4nxRu0MiZdTE+iKd+odqNiFh5ijgkWEqhRFBNk0C/O6jHD1Y0NYFv5jjTRuDjFzUgpj
+	DnNFQwCjLGBMsSjjkA79NFunVg/nnoAv
+X-Google-Smtp-Source: AGHT+IHTTFdUMyPE8J6/FJ/Tz2TmgEnvUPiqAP3Vg4LJA9U623EyzHKoPA3QMg0KCVbZ9Z4v0fkfMA==
+X-Received: by 2002:a05:6000:402a:b0:390:e5c6:920 with SMTP id ffacd0b85a97d-39132d22aa7mr18761264f8f.3.1741868684583;
+        Thu, 13 Mar 2025 05:24:44 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200::59a5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8975b90sm2006325f8f.53.2025.03.13.05.24.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 05:24:44 -0700 (PDT)
+Date: Thu, 13 Mar 2025 13:24:43 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, 
+	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+	Samuel Holland <samuel.holland@sifive.com>, Deepak Gupta <debug@rivosinc.com>
+Subject: Re: [PATCH v3 01/17] riscv: add Firmware Feature (FWFT) SBI
+ extensions definitions
+Message-ID: <20250313-924c6711597160f50c4cf90e@orel>
+References: <20250310151229.2365992-1-cleger@rivosinc.com>
+ <20250310151229.2365992-2-cleger@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] iommu: Get DT/ACPI parsing into the proper probe
- path
-To: Robin Murphy <robin.murphy@arm.com>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown
-	<lenb@kernel.org>, Russell King <linux@armlinux.org.uk>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, Stuart
-	Yoder <stuyoder@gmail.com>, Laurentiu Tudor <laurentiu.tudor@nxp.com>, Nipun
-	Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>, Joerg
-	Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Rob Herring
-	<robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Bjorn Helgaas
-	<bhelgaas@google.com>
-Cc: linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org, Charan Teja Kalla
-	<quic_charante@quicinc.com>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <417d6f59-0d78-4e81-ad0b-e06846f786b0@arm.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SfVCTdRzvt+fZs7G7weOA2y+DvFuvyoGSUr8LIy2y57iyLrrLg7tyxcPm
-	tQ1uYxlcEfEa84ChjrbhYIecEJKwGTREQHbg1AEqxIsT5CBsCQHSJh4okttjxX+fz+f7+b7e
-	l4sJqojN3EOKDFqpEMtEBA9vvbhyNXLbwKBkx3DvTlSbK0VzFXcJVN0zwEZ5J5sI1N1m4KBV
-	L0LFlc0c5NU6cdQ2NU+gus4ygKy/j7DR0LkTBOqvchDIrusAKP9hPo70tih0704Fjpqq5cjk
-	1WFo/byNg7rvzrCRxr72uKzFhaG6KzYc5Y/H7HmamumuYlEFg2sE1VjVCKihkesY1Wac4FBm
-	q5rK75lnU9aGYoLqMjVyqLO131F/njUAyrJgY1Hl57Mpj/XZDwOTeLtTaNmhr2jl9riDPOml
-	rkI83Rr+ddHPa0QOOAI1gMuF5C5YYnhTA3hcAVkPoKe0kmCIF0DHyB+AIR4AF2/cwzQgwJ+x
-	XNuL+7CArAPwVFkyY1oCsL/iAvAF+GQctLpy/SacfAHq1idZjL4JXjbM+PVQcgucdOk5PhxM
-	JsIFzbS/WwhpZcPRgj62j2DkbQCbh8cInwsjhdA1U+2vRJDRUDOv8esBZCxsmHWzGM8WmNdS
-	ifmSIWniwdPTcwQzdzxcbC1nMzgYzjp+4TA4DK63+Yr6EooAND+YfEK0AOa4XYBxxcLxgVXC
-	dzOM3Aqbzm1n5L1Q49FhzCkD4dj8JmaIQHi09ccnMh/+UChg3C9Co+PMf227rw1iWiAybjiM
-	ccOaxg3rGP/vawZ4AxDSapVcQquiFfThKJVYrlIrJFFfpMmt4PELOx85/rYB0+xSlB2wuMAO
-	IBcThfBPv3FNIuCniDOzaGXaZ0q1jFbZwTNcXCTk13QVSASkRJxBf0nT6bTy3yiLG7A5h5Vg
-	M33rLBze95Ez1b03oLzjWHDJ0aCPD56U9WKcmuekR3oXImI+0PPYi2FTnT9hv65e+e1U8rtl
-	nx7fd2L3yxkT0bdSZ5sSX7rero18GJpaqH6f58qxGA7sNwOZ0Ph6qc37dm6K8EZE9mvT9a/0
-	HD4evDTEip+6sPL8OyVy/S7N1viim3EtjpWx+wn1n+clJLenZYJPbBcn7DX39+gsQRng1YTL
-	XfqY9KCR0czSA5yQO7fyUCS2fxn3mJJCvx/qV4Q1r7oXDTsot/uSJSKLmLsa/sAVv3N8NDzx
-	PadANxpZQP21/Faft73C9FS2gLytjf0mNPvmI7O0pbGzL6ujuCTpTKsIV0nF0dswpUr8D68a
-	GnExBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEKsWRmVeSWpSXmKPExsVy+t/xe7pa5y6lG3RfEbVY0pRh8XraBzaL
-	+UfOsVo0L17PZnFw50x2i19fLCw6Z29gt/gy4TSLxc6Hb9kslu/rZ7TY9Pgaq8XlXXPYLM7O
-	O85mcWjqXkaLlj8tLBYzduhZfH05jcVi/fxci7lfpjJb/N+zg93i4IcnrBZdh/4Cjd14i9li
-	+akdLBYtd0wdJD2eHJzH5NF66S+bx5p5axg9Ll+7yOyxc9Zddo8Fm0o9Wo68ZfXYtKqTzWP/
-	3DXsHpuX1Hu82DyT0WPjux1MHhP31Hl83iQXwBelZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdk
-	YqlnaGwea2VkqqRvZ5OSmpNZllqkb5egl3FifxtLwSbZiva1f9kaGLsluhg5OSQETCS+LTnK
-	0sXIxSEksJRRom3eajaIhIzEyWkNrBC2sMSfa11sEEXvGSV2Tv7BDpLgFbCT2HSriQXEZhFQ
-	lZj6/z4TRFxQ4uTMJ2BxUQF5ifu3ZoDVCwsES7zresQIMkhEYBurxLV5O5lBHGaBp4wSX84/
-	Y4VYcYhJYu2aRrB2ZgFxiVtP5oONZRMwlOh62wV2H6eAtcSqV8+ZIGrMJLq2djFC2PISzVtn
-	M09gFJqF5JJZSEbNQtIyC0nLAkaWVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIGJZ9uxn1t2
-	MK589VHvECMTB+MhRgkOZiUR3tW2F9KFeFMSK6tSi/Lji0pzUosPMZoCg2Mis5Rocj4w9eWV
-	xBuaGZgamphZGphamhkrifOyXTmfJiSQnliSmp2aWpBaBNPHxMEp1cDEsmTxo4tLa+xFF6yS
-	+Ky5eu6iMwodN9/+mMvCxqJwvcPdPna7TNPz4/4HDZzz6iXPzr//y5WrQOBWmLu9jVJIR9Sq
-	Vw+TtRrP9/tfLi+qjzIwiueSuSVwjD1H3m6jTX8345re46v7y0V1XUMkRS/s4pz73P7Pj6d3
-	aieHvWoL+BVRttxnspjSF9HLF2c1fuZUN3mgnn7pjZPXsU2OR48bWlcuODTDpyt2SZDBwklf
-	PjwxaNitH8B14uNnnUdv17wSrnWd2fr54STFOIs/OxhCHSI5fBhu9dTpC7eyG5gt0H8Rsrdp
-	6fJdk5a/4AtldGlmPqg4WWlO6o/HQsU5b/98k7GXcV++6V7u/h6reVJKLMUZiYZazEXFiQCr
-	NHxfxQMAAA==
-X-CMS-MailID: 20250313122306eucas1p10f67da8328fdf9bfc4590d972e794b8f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250313095633eucas1p29cb55f2504b4bcf67c16b3bd3fa9b8cd
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250313095633eucas1p29cb55f2504b4bcf67c16b3bd3fa9b8cd
-References: <cover.1740753261.git.robin.murphy@arm.com>
-	<e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com>
-	<CGME20250313095633eucas1p29cb55f2504b4bcf67c16b3bd3fa9b8cd@eucas1p2.samsung.com>
-	<9b358d68-332e-404e-9a75-740297f7b28d@samsung.com>
-	<417d6f59-0d78-4e81-ad0b-e06846f786b0@arm.com>
+In-Reply-To: <20250310151229.2365992-2-cleger@rivosinc.com>
 
-On 13.03.2025 12:01, Robin Murphy wrote:
-> On 2025-03-13 9:56 am, Marek Szyprowski wrote:
-> [...]
->> This patch landed in yesterday's linux-next as commit bcb81ac6ae3c
->> ("iommu: Get DT/ACPI parsing into the proper probe path"). In my tests I
->> found it breaks booting of ARM64 RK3568-based Odroid-M1 board
->> (arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts). Here is the
->> relevant kernel log:
->
-> ...and the bug-flushing-out begins!
->
->> Unable to handle kernel NULL pointer dereference at virtual address
->> 00000000000003e8
->> Mem abort info:
->>     ESR = 0x0000000096000004
->>     EC = 0x25: DABT (current EL), IL = 32 bits
->>     SET = 0, FnV = 0
->>     EA = 0, S1PTW = 0
->>     FSC = 0x04: level 0 translation fault
->> Data abort info:
->>     ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->>     CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->>     GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->> [00000000000003e8] user address but active_mm is swapper
->> Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
->> Modules linked in:
->> CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.14.0-rc3+ #15533
->> Hardware name: Hardkernel ODROID-M1 (DT)
->> pstate: 00400009 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->> pc : devm_kmalloc+0x2c/0x114
->> lr : rk_iommu_of_xlate+0x30/0x90
->> ...
->> Call trace:
->>    devm_kmalloc+0x2c/0x114 (P)
->>    rk_iommu_of_xlate+0x30/0x90
->
-> Yeah, looks like this is doing something a bit questionable which can't
-> work properly. TBH the whole dma_dev thing could probably be cleaned up
-> now that we have proper instances, but for now does this work?
-
-Yes, this patch fixes the problem I've observed.
-
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-BTW, this dma_dev idea has been borrowed from my exynos_iommu driver and 
-I doubt it can be cleaned up.
-
-
->
-> (annoyingly none of my Rockchip boards are set up for testing right 
-> now, but I might have time to dig one out later)
->
-> Thanks,
-> Robin.
->
-> ----->8-----
->
-> Subject: [PATCH] iommu/rockchip: Allocate per-device data sensibly
->
-> Now that DT-based probing is finally happening in the right order again,
-> it reveals an issue in Rockchip's of_xlate, which can now be called
-> during registration, but is using the global dma_dev which is only
-> assigned later. However, this makes little sense when we're already
-> looking up the correct IOMMU device, who should logically be the owner
-> of the devm allocation anyway.
->
-> Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe 
-> path")
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+On Mon, Mar 10, 2025 at 04:12:08PM +0100, Cl�ment L�ger wrote:
+> The Firmware Features extension (FWFT) was added as part of the SBI 3.0
+> specification. Add SBI definitions to use this extension.
+> 
+> Signed-off-by: Cl�ment L�ger <cleger@rivosinc.com>
+> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+> Tested-by: Samuel Holland <samuel.holland@sifive.com>
+> Reviewed-by: Deepak Gupta <debug@rivosinc.com>
 > ---
->  drivers/iommu/rockchip-iommu.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  arch/riscv/include/asm/sbi.h | 33 +++++++++++++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
 >
-> diff --git a/drivers/iommu/rockchip-iommu.c 
-> b/drivers/iommu/rockchip-iommu.c
-> index 323cc665c357..48826d1ccfd8 100644
-> --- a/drivers/iommu/rockchip-iommu.c
-> +++ b/drivers/iommu/rockchip-iommu.c
-> @@ -1148,12 +1148,12 @@ static int rk_iommu_of_xlate(struct device *dev,
->      struct platform_device *iommu_dev;
->      struct rk_iommudata *data;
->
-> -    data = devm_kzalloc(dma_dev, sizeof(*data), GFP_KERNEL);
-> +    iommu_dev = of_find_device_by_node(args->np);
-> +
-> +    data = devm_kzalloc(&iommu_dev->dev, sizeof(*data), GFP_KERNEL);
->      if (!data)
->          return -ENOMEM;
->
-> -    iommu_dev = of_find_device_by_node(args->np);
-> -
->      data->iommu = platform_get_drvdata(iommu_dev);
->      data->iommu->domain = &rk_identity_domain;
->      dev_iommu_priv_set(dev, data);
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
