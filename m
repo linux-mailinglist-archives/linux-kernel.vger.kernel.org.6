@@ -1,169 +1,112 @@
-Return-Path: <linux-kernel+bounces-560285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB6B3A601A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:55:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE7BA601A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:55:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6300519C1DB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:55:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CCEB421E54
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F821F4624;
-	Thu, 13 Mar 2025 19:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A581F4285;
+	Thu, 13 Mar 2025 19:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2F24wbF"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="YCFHt6Gt"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31191F3FD0;
-	Thu, 13 Mar 2025 19:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F611F3D53
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 19:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741895695; cv=none; b=FyL5ZhekO0oAcQMSZUiBUkLvlbyfZxSJSMhzTSDiwZkYFTzkVmye5mztIRa1od9zIojjSzyj8+jY3XH/XaRO630VqnIGdFOlMdSIZAZ7rKYN4kj26RDyOUCjqyxVlS9DdL6CbFiEMsyhNngF/LU6l0YLikOP4/FTzrF/8OxYauY=
+	t=1741895690; cv=none; b=esBL/+I/cQw2JPFxkaST78CQUHwz8TunXX5VGPwBBQTVq8LXkLpQKf551TaJD7pEsnVPJynWDnIHV0zHcE1MmsTr/2XUWOPiqbSL7jsWP3LeXZluuCvDp4KuqwuTQAHIybouQpNJysWGlEGQOPVZpNILR3UoYT2ooe1O0gRqd5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741895695; c=relaxed/simple;
-	bh=OD+/u621mwUN73ktY519JVVMPBtMQmjjQicMrkJACVk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MrKvPjAcgYNFuv7CDXc4BVebJ/ozZqvt8vkVQ4VcwuUw3Oow14LuQmO6VsoOLB7EyC49gRb7GeJfdrcdmdgvL5VDi4TV9sJdLx3tEYx8Zt8M2sEFahBm2DhDtLMiTWfZkJxwM8+pwHoRmYbscAQJJ9N5JvmlQw6OgQxwHnHgSCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2F24wbF; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22355618fd9so29224285ad.3;
-        Thu, 13 Mar 2025 12:54:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741895693; x=1742500493; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wHH4myFoiuxDS6apQJvZG9O0Yk3Qnm1cC4Wjl8gE+b0=;
-        b=T2F24wbFln/ZBk7Qfe+faMRbJFEkNXKNeqvinnooj8eHrXTVpi1ZY0rjfgFU/iHIDv
-         7n1CovnE5qsq0QvTBt9dxpuLcn83oyHPmP6L34qwoadER7sVzlAZOMjcz7Mp9n14zDug
-         aYwIuq6EDQc8M616a/IGbFXMZKT0XaU4AoVaROaA4txP823DXAqx9PyPLK9+ZecTiIDg
-         8pyLU06CtI1uIXhCWzO4VeGC+XIDQpNpNdIWJDXnMQ9sy8LIxv2LxyW00YvPaQc0SB2g
-         h5/+j7VqfbWPN8HgHgKoexgUlxa5x2sDbpMEY6wafAFbJGVI2c0YhtUpknIZIU2xDtbo
-         DKlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741895693; x=1742500493;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wHH4myFoiuxDS6apQJvZG9O0Yk3Qnm1cC4Wjl8gE+b0=;
-        b=EzcyEe1YZbYvq6k5Q84apybrCt1l4vvA2WA4+PaWpieMRfrgWGpCxQG8KS9w6h0wlX
-         VuJBs8IWpy1C/DKgVlFt+3bUWMuf1DINb7R8tq5RTbVhFHr0/+GORYRWPZaRHfGdFSSU
-         aY5mhF+f2RhYyVkGXq+pBVxNRJkA7XtalI32dq0k2JVaOliwEP5o2ZuoPR4+TQyH+lHO
-         Kd+5WXqDCKx2y2sIpHOEYtVmXg5tOB58HBceZLxwfYRcYRZParHdtQiBOWY4c66xUNZZ
-         wd2DE0Hej0Y/30xuYjTTPArG11+8oxUbFO7cml0owyF5f91I6uANtCjOZUiPcJWI0Jn8
-         ivTg==
-X-Gm-Message-State: AOJu0YxYeRpcWSM8t73koGW9jC34h/5wtV+65+a8rg4xEdOmE+nabngK
-	f0yjuwARH8pWCPIOBEJ355/07IyGDl1fxkEfqStZsOuYJnFSgFQWrN3teanU1xQ=
-X-Gm-Gg: ASbGnctB2DxCh1AFT8Y7MxHwBZX/Ya2yC4R+nnfiwFYHDk6L32UE+SoIIp9tJk2Wc4y
-	bJwDprC/QKNoHKz8xkIOcqAqzP3mUXwjJaphMio/Do6izKerNH1d6i/Xg3iyDWzRVGEtzFa/ZdI
-	Zncqo8NU72fwZPzOvTXZ57pW6WfI2VnAhndJuW8OM1N4y+2YtlfR1Zf3p7HUJAtpY7wFHRAhp/6
-	CUQHL8A+1xbPYup99WSTYBN+iJKoDkBME98TxZZ54gnQc12C85BIu6wDyHLgcl9bzVuSeYv1Y1S
-	eRf+jC5xE55BJ3CxQfaGGHQF1bNKnlGV9HqbHJ9PaQ==
-X-Google-Smtp-Source: AGHT+IGYW/k2YlFAjqkFNaFWxXE5BZL1uTyV8DQEqt8Utpg9j1U75c1XYijGakd2K6eWuDEhHRwpRg==
-X-Received: by 2002:a17:903:1b03:b0:215:4a4e:9262 with SMTP id d9443c01a7336-225df2d700emr3225495ad.8.1741895693013;
-        Thu, 13 Mar 2025 12:54:53 -0700 (PDT)
-Received: from fedora.. ([2409:40f2:357:8702:7d06:7e16:a88a:f1b5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6c76sm17397275ad.148.2025.03.13.12.54.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 12:54:52 -0700 (PDT)
-From: Siddharth Menon <simeddon@gmail.com>
-To: linux-iio@vger.kernel.org,
-	lars@metafoo.de,
-	Michael.Hennerich@analog.com,
-	jic23@kernel.org,
-	gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	Siddharth Menon <simeddon@gmail.com>,
-	Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Subject: [PATCH] iio: frequency: ad9832: Use FIELD_PREP macro to set bit fields
-Date: Fri, 14 Mar 2025 01:24:17 +0530
-Message-ID: <20250313195442.30264-1-simeddon@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741895690; c=relaxed/simple;
+	bh=CF1bSX3XlU4ChBISB+cYOWk0F+bA3NnjnVnuf/kjyh4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=cz8Nvp9HBxsQUBnZ9PE9v0YwCj9W+pZpbvfXPeGDpGGIoRQGbno9x1viS6TlQ7r6/9Bk3Sqk70tt5F/TtkanYhrG1zcy+fnLwFlH5rbqaSWYC+w0kyCroHAxvoCnFuK99PP+if8yYh96lV+CRsXo7zMvkAnRYMWNcg0RlCMAOww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=YCFHt6Gt; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id B2FA92C0375;
+	Fri, 14 Mar 2025 08:54:39 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1741895679;
+	bh=CF1bSX3XlU4ChBISB+cYOWk0F+bA3NnjnVnuf/kjyh4=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=YCFHt6GtSuNsI9AVXX815U+BW8iQ5enkD/fTCNkfOEQJr6yttPSX/NMajdu27utke
+	 i+XqgUB/L/xf38ac45wLpkh2IwR458EnBcO3VfKgK3gZz1uVTPjc4oCiE8gnQb6BUD
+	 GbOwRG9NRP7X4Xfv0yhTvhRJHQljjaTlaq71rsoxfW1h4PX0ZOEOXcZIy4Gas1uP2K
+	 T43YABQ8zVtbB+/1wng5YHzCtDygpUnW7x3fxIP4y5+qFsJd+14dJQh7T+Pv/R7xXO
+	 YRlU0T5xaFX9hm7ZzR1k/w1zipgO731oYg91Z6pGeDMtbh5XC7/PKj3GJKZB1Hksvz
+	 2Oj01o0B38t9w==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B67d337ff0001>; Fri, 14 Mar 2025 08:54:39 +1300
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 14 Mar 2025 08:54:39 +1300
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.014; Fri, 14 Mar 2025 08:54:39 +1300
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: "hkallweit1@gmail.com" <hkallweit1@gmail.com>, "linux@armlinux.org.uk"
+	<linux@armlinux.org.uk>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"daniel@makrotopia.org" <daniel@makrotopia.org>, "markus.stockhausen@gmx.de"
+	<markus.stockhausen@gmx.de>, "sander@svanheule.net" <sander@svanheule.net>,
+	netdev <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10] net: mdio: Add RTL9300 MDIO driver
+Thread-Topic: [PATCH v10] net: mdio: Add RTL9300 MDIO driver
+Thread-Index: AQHbk7RQMlEBwbSVuE+Te7ZjHwH5gbNwJygAgAB7A4A=
+Date: Thu, 13 Mar 2025 19:54:39 +0000
+Message-ID: <5ea333ec-c2e4-4715-8a44-0fd2c77a4f3c@alliedtelesis.co.nz>
+References: <20250313010726.2181302-1-chris.packham@alliedtelesis.co.nz>
+ <f7c7f28b-f2b0-464a-a621-d4b2f815d206@lunn.ch>
+In-Reply-To: <f7c7f28b-f2b0-464a-a621-d4b2f815d206@lunn.ch>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D6111809622E754CB108E822046D02FD@alliedtelesis.co.nz>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Ko7u2nWN c=1 sm=1 tr=0 ts=67d337ff a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=GmB-G2GEk0dDs4bVDSMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-Refactor code to use the FIELD_PREP macro for setting bit fields
-instead of manual bit manipulation.
-
-Suggested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Signed-off-by: Siddharth Menon <simeddon@gmail.com>
----
- drivers/staging/iio/frequency/ad9832.c | 39 ++++++++++++++------------
- 1 file changed, 21 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
-index 140ee4f9c137..bbde1f0e84ff 100644
---- a/drivers/staging/iio/frequency/ad9832.c
-+++ b/drivers/staging/iio/frequency/ad9832.c
-@@ -70,6 +70,9 @@
- #define AD9832_FREQ_BITS	32
- #define AD9832_PHASE_BITS	12
- #define RES_MASK(bits)		((1 << (bits)) - 1)
-+#define DATA_MASK       0xFF
-+#define CMD_MASK        (0xF << CMD_SHIFT)
-+#define ADD_MASK        (0xF << ADD_SHIFT)
- 
- /**
-  * struct ad9832_state - driver instance specific data
-@@ -139,18 +142,18 @@ static int ad9832_write_frequency(struct ad9832_state *st,
- 
- 	regval = ad9832_calc_freqreg(clk_freq, fout);
- 
--	st->freq_data[0] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
--					(addr << ADD_SHIFT) |
--					((regval >> 24) & 0xFF));
--	st->freq_data[1] = cpu_to_be16((AD9832_CMD_FRE16BITSW << CMD_SHIFT) |
--					((addr - 1) << ADD_SHIFT) |
--					((regval >> 16) & 0xFF));
--	st->freq_data[2] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
--					((addr - 2) << ADD_SHIFT) |
--					((regval >> 8) & 0xFF));
--	st->freq_data[3] = cpu_to_be16((AD9832_CMD_FRE16BITSW << CMD_SHIFT) |
--					((addr - 3) << ADD_SHIFT) |
--					((regval >> 0) & 0xFF));
-+	st->freq_data[0] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE8BITSW) |
-+					FIELD_PREP(ADD_MASK, addr) |
-+					FIELD_PREP(DATA_MASK, (regval >> 24) & 0xFF));
-+	st->freq_data[1] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE16BITSW) |
-+					FIELD_PREP(ADD_MASK, (addr - 1)) |
-+					FIELD_PREP(DATA_MASK, (regval >> 16) & 0xFF));
-+	st->freq_data[2] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE8BITSW) |
-+					FIELD_PREP(ADD_MASK, (addr - 2)) |
-+					FIELD_PREP(DATA_MASK, (regval >> 8) & 0xFF));
-+	st->freq_data[3] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE16BITSW) |
-+					FIELD_PREP(ADD_MASK, (addr - 3)) |
-+					FIELD_PREP(DATA_MASK, (regval >> 0) & 0xFF));
- 
- 	return spi_sync(st->spi, &st->freq_msg);
- }
-@@ -161,12 +164,12 @@ static int ad9832_write_phase(struct ad9832_state *st,
- 	if (phase >= BIT(AD9832_PHASE_BITS))
- 		return -EINVAL;
- 
--	st->phase_data[0] = cpu_to_be16((AD9832_CMD_PHA8BITSW << CMD_SHIFT) |
--					(addr << ADD_SHIFT) |
--					((phase >> 8) & 0xFF));
--	st->phase_data[1] = cpu_to_be16((AD9832_CMD_PHA16BITSW << CMD_SHIFT) |
--					((addr - 1) << ADD_SHIFT) |
--					(phase & 0xFF));
-+	st->phase_data[0] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_PHA8BITSW) |
-+					FIELD_PREP(ADD_MASK, addr) |
-+					FIELD_PREP(DATA_MASK, (phase >> 8) & 0xFF));
-+	st->phase_data[1] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_PHA16BITSW) |
-+					FIELD_PREP(ADD_MASK, (addr - 1)) |
-+					FIELD_PREP(DATA_MASK, phase & 0xFF));
- 
- 	return spi_sync(st->spi, &st->phase_msg);
- }
--- 
-2.48.1
-
+K2NjIG5ldGRldiwgbGttbA0KDQpPbiAxNC8wMy8yMDI1IDAxOjM0LCBBbmRyZXcgTHVubiB3cm90
+ZToNCj4+ICsJLyogUHV0IHRoZSBpbnRlcmZhY2VzIGludG8gQzQ1IG1vZGUgaWYgcmVxdWlyZWQg
+Ki8NCj4+ICsJZ2xiX2N0cmxfbWFzayA9IEdFTk1BU0soMTksIDE2KTsNCj4+ICsJZm9yIChpID0g
+MDsgaSA8IE1BWF9TTUlfQlVTU0VTOyBpKyspDQo+PiArCQlpZiAocHJpdi0+c21pX2J1c19pc19j
+NDVbaV0pDQo+PiArCQkJZ2xiX2N0cmxfdmFsIHw9IEdMQl9DVFJMX0lOVEZfU0VMKGkpOw0KPj4g
+Kw0KPj4gKwlmd25vZGVfZm9yX2VhY2hfY2hpbGRfbm9kZShub2RlLCBjaGlsZCkNCj4+ICsJCWlm
+IChmd25vZGVfZGV2aWNlX2lzX2NvbXBhdGlibGUoY2hpbGQsICJldGhlcm5ldC1waHktaWVlZTgw
+Mi4zLWM0NSIpKQ0KPj4gKwkJCXByaXYtPnNtaV9idXNfaXNfYzQ1W21kaW9fYnVzXSA9IHRydWU7
+DQo+PiArDQo+IFRoaXMgbmVlZHMgbW9yZSBleHBsYW5hdGlvbi4gU29tZSBQSFlzIG1peCBDMjIg
+YW5kIEM0NSwgZS5nLiB0aGUgPiAxRw0KPiBzcGVlZCBzdXBwb3J0IHJlZ2lzdGVycyBhcmUgaW4g
+dGhlIEM0NSBhZGRyZXNzIHNwYWNlLCBidXQgPD0gMUcgaXMgaW4NCj4gdGhlIEMyMiBzcGFjZS4g
+QW5kIDFHIFBIWXMgd2hpY2ggc3VwcG9ydCBFRUUgbmVlZCBhY2Nlc3MgdG8gQzQ1IHNwYWNlDQo+
+IGZvciB0aGUgRUVFIHJlZ2lzdGVycy4NCg0KQWggZ29vZCBwb2ludC4gVGhlIE1ESU8gaW50ZXJm
+YWNlcyBhcmUgZWl0aGVyIGluIEdQSFkgKGkuZS4gY2xhdXNlIDIyKSANCm9yIDEwR1BIWSBtb2Rl
+IChpLmUuIGNsYXVzZSA0NSkuIFRoaXMgZG9lcyBtZWFuIHdlIGNhbid0IHN1cHBvcnQgc3VwcG9y
+dCANCmJvdGggYzQ1IGFuZCBjMjIgb24gdGhlIHNhbWUgTURJTyBidXMgKHdoZXRoZXIgdGhhdCdz
+IG9uZSBQSFkgdGhhdCANCnN1cHBvcnRzIGJvdGggb3IgdHdvIGRpZmZlcmVudCBQSFlzKS4gSSds
+bCBhZGQgYSBjb21tZW50IHRvIHRoYXQgZWZmZWN0IA0KYW5kIEkgc2hvdWxkIHByb2JhYmx5IG9u
+bHkgcHJvdmlkZSBidXMtPnJlYWQvd3JpdGUgb3IgDQpidXMtPnJlYWRfYzQ1L3dyaXRlX2M0NSBk
+ZXBlbmRpbmcgb24gdGhlIG1vZGUuDQo=
 
