@@ -1,103 +1,156 @@
-Return-Path: <linux-kernel+bounces-559989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F5AA5FC41
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:42:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD636A5FC3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:42:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A07323BC79D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:41:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C87B170BC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0304726B94A;
-	Thu, 13 Mar 2025 16:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5DD26A1B7;
+	Thu, 13 Mar 2025 16:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gUBDOc9w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X0XVnBhB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509D42698B9;
-	Thu, 13 Mar 2025 16:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056832698B9;
+	Thu, 13 Mar 2025 16:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741884015; cv=none; b=XNSishg505WVpi5eE6xNBVjS15INArzd9RKzlvfsJzD+p5WSpjl85r5xdcJnb/SDlDvFyzqLOrfySmBqf77+k2d8vk+KaRWBJTjN+oFaPfilf5PadpDQ+mMHjfbBkop5/AB2w0whBx1/7NytkmLUqmB3whRpzU9o1AU/CRWT4Uw=
+	t=1741884023; cv=none; b=Wm3z5tUKTvxKzufzA7FQdSkXXq1S4POweOwwW/BIz9+KModvQOnzXL12+nahYxMiEhAFdJqg4zfKdOzzq4i0uCcVhc4ERxVZaNhP3Jtid57dlzh3lyzTKZRwYZIZ4rOHJA66ciFIJ135lCIj+YKXJQlBdxm2FVmuzwWJ1uQJW8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741884015; c=relaxed/simple;
-	bh=p8AVcBEQ4JH4wcFU3EvZQIw+okBDu/uodFFvEyHDmr0=;
+	s=arc-20240116; t=1741884023; c=relaxed/simple;
+	bh=8zdutE2Tv2jBNyDN/kXWnU7gquLElmBm8ARO6KCnOgU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bX56mM2sZS/1xYofO0BZvfrhF1m7cRzrOv6Xf72j1Wf2XED/k3yJo30UCk8EDhl30uGd9gfJ/YtAZO22NT3SpQdslPv1g5QTb17r5xWDbDfBsgVJ2wleH2u+TBYy7q9eJ+/ZAMjiI0VCYMNXzSUpkhdZfY6kx+dCzM6eCEa6nOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gUBDOc9w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 124B1C4CEDD;
-	Thu, 13 Mar 2025 16:40:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=V5ity9VpQGFCN9hnase8Vq4kDvfLFZX5hY2bIYPP9E+6TJs3HpSc0TB0oLKkM6fDeXXjTp7e8tbQWLS4MktwdiWi2EDwoYH2eHeRKFbPMPZl69LbaUejcoKzXvjEM8UFC5o+TV7KPm4/SPAqIVkGF4MvPDLwiF/eP7On5JakJo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X0XVnBhB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42C16C4CEDD;
+	Thu, 13 Mar 2025 16:40:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741884014;
-	bh=p8AVcBEQ4JH4wcFU3EvZQIw+okBDu/uodFFvEyHDmr0=;
+	s=k20201202; t=1741884022;
+	bh=8zdutE2Tv2jBNyDN/kXWnU7gquLElmBm8ARO6KCnOgU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gUBDOc9w3N3QjozeGeQIILT8Mbe5q45yfDahRhGlWKbXa6cAbkX28apn5101mzy0q
-	 r71b8K0QrswxlVM5UG8sxjOtJficURk0jRjeStTWrQAhljkS3N/XvAkSp3G7BRRDq/
-	 jEfUNBcPn6VkQtJRHV2qR0sVlTt5RQcALX5skRPgStcridDEVUtZ/yRLq/L7zoOjR+
-	 nu5W9LqomCOD6KOvsgQkcVhAb/5Q30CknG/rSnlFTV+go2RSYFjLNHbzp8kZaub6VS
-	 HKRgHske4Yf60+FjEutO8HFykny5ohBDeyE/ExZDr83PIdcqsrK+PWsgOds4njbUY1
-	 PWqLQw+Gk8mMw==
-Date: Thu, 13 Mar 2025 16:40:08 +0000
-From: Lee Jones <lee@kernel.org>
-To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-Cc: ukleinek@kernel.org, alexandre.torgue@foss.st.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, jic23@kernel.org,
-	daniel.lezcano@linaro.org, tglx@linutronix.de,
-	catalin.marinas@arm.com, will@kernel.org,
-	devicetree@vger.kernel.org, wbg@kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	olivier.moysan@foss.st.com
-Subject: Re: [PATCH v3 2/8] mfd: stm32-lptimer: add support for stm32mp25
-Message-ID: <20250313164008.GC3645863@google.com>
-References: <20250305094935.595667-1-fabrice.gasnier@foss.st.com>
- <20250305094935.595667-3-fabrice.gasnier@foss.st.com>
+	b=X0XVnBhBsZED8/vl/X5GsUz/x8hozyetfiV3fdj5BPsqoZOYlpxN9tCeidGoHL0kz
+	 ZOoQv1fmrgjXeciwCwFwZriUGPkYOEcX1mZEvopcM4gq67CzZxYRb3LWvCAb9ZzNuK
+	 qAuXzdgZmS3V44yfkYmtqhMdp/jFfCC+HVBZ/SQ1OqG3gjF7HP4VrwE/hLii0y5OSW
+	 QkNI1odA8t6VYk70LsEeKth9A0t1mzwHBW5FXgG6eV6m5TiOE+vqzAGQxku8SZO86B
+	 0nZZNkGH8MzQM6IxT0Dy6wjs0bs23/U/Etqzrdm90aIap97oOdv6mPzffhtdoVwSH7
+	 nznUsym799NXA==
+Date: Thu, 13 Mar 2025 17:40:19 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 1/3] rcu/exp: Protect against early QS report
+Message-ID: <Z9MKc7hlZFgLr_jM@localhost.localdomain>
+References: <20250213232559.34163-1-frederic@kernel.org>
+ <20250213232559.34163-2-frederic@kernel.org>
+ <abaf4f7f-42b3-43ff-888c-369501b0b4c6@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250305094935.595667-3-fabrice.gasnier@foss.st.com>
+In-Reply-To: <abaf4f7f-42b3-43ff-888c-369501b0b4c6@paulmck-laptop>
 
-On Wed, 05 Mar 2025, Fabrice Gasnier wrote:
-
-> Add support for STM32MP25 SoC.
-> A new hardware configuration register (HWCFGR2) has been added, to gather
-> number of capture/compare channels, autonomous mode and input capture
-> capability. The full feature set is implemented in LPTIM1/2/3/4. LPTIM5
-> supports a smaller set of features. This can now be read from HWCFGR
-> registers.
+Le Fri, Feb 14, 2025 at 01:10:43AM -0800, Paul E. McKenney a �crit :
+> On Fri, Feb 14, 2025 at 12:25:57AM +0100, Frederic Weisbecker wrote:
+> > When a grace period is started, the ->expmask of each node is set up
+> > from sync_exp_reset_tree(). Then later on each leaf node also initialize
+> > its ->exp_tasks pointer.
+> > 
+> > This means that the initialization of the quiescent state of a node and
+> > the initialization of its blocking tasks happen with an unlocked node
+> > gap in-between.
+> > 
+> > It happens to be fine because nothing is expected to report an exp
+> > quiescent state within this gap, since no IPI have been issued yet and
+> > every rdp's ->cpu_no_qs.b.exp should be false.
+> > 
+> > However if it were to happen by accident, the quiescent state could be
+> > reported and propagated while ignoring tasks that blocked _before_ the
+> > start of the grace period.
+> > 
+> > Prevent such trouble to happen in the future and initialize both the
+> > quiescent states mask to report and the blocked tasks head from the same
+> > node locked block.
+> > 
+> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 > 
-> Add new registers to the stm32-lptimer.h: CCMR1, CCR2, HWCFGR1/2 and VERR.
-> Update the stm32_lptimer data struct so signal the number of
-> capture/compare channels to the child devices.
-> Also Remove some unused bit masks (CMPOK_ARROK / CMPOKCF_ARROKCF).
+> Thank you for looking into this!
 > 
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-> ---
-> Changes in V2:
-> - rely on fallback compatible as no specific .data is associated to the
->   driver. Compatibility is added by reading hardware configuration
->   registers.
-> - read version register, to be used by clockevent child driver
-> - rename register/bits definitions
-> ---
->  drivers/mfd/stm32-lptimer.c       | 33 ++++++++++++++++++++++++++++-
+> One question:  What happens if a CPU has tasks pending during the
+> call to sync_exp_reset_tree(), but all of these tasks complete
+> their RCU read-side critical sections before execution reaches
+> __sync_rcu_exp_select_node_cpus()?
+> 
+> (My guess is that all is well, but even if so, it would be good to record
+> why in the commit log.)
 
-Looks okay.
+All is (expected to be) well because the QS won't be reported yet:
+rdp->cpu_no_qs.b.exp is still false, therefore rnp->expmask will
+still have the RDPs masks set.
 
->  include/linux/mfd/stm32-lptimer.h | 35 ++++++++++++++++++++++++++++---
+!PREEMPT_RCU is different because sync_sched_exp_online_cleanup()
+can report the QS earlier. But that patch is a PREEMPT_RCU concern
+only.
 
-Assumingly this patch is not independent of the others?
+I'll drop a note on the changelog.
 
--- 
-Lee Jones [李琼斯]
+Thanks.
+
+
+> 
+> 						Thanx, Paul
+> 
+> > ---
+> >  kernel/rcu/tree_exp.h | 14 +++++++-------
+> >  1 file changed, 7 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+> > index 8d4895c854c5..caff16e441d1 100644
+> > --- a/kernel/rcu/tree_exp.h
+> > +++ b/kernel/rcu/tree_exp.h
+> > @@ -141,6 +141,13 @@ static void __maybe_unused sync_exp_reset_tree(void)
+> >  		raw_spin_lock_irqsave_rcu_node(rnp, flags);
+> >  		WARN_ON_ONCE(rnp->expmask);
+> >  		WRITE_ONCE(rnp->expmask, rnp->expmaskinit);
+> > +		/*
+> > +		 * Need to wait for any blocked tasks as well.	Note that
+> > +		 * additional blocking tasks will also block the expedited GP
+> > +		 * until such time as the ->expmask bits are cleared.
+> > +		 */
+> > +		if (rcu_is_leaf_node(rnp) && rcu_preempt_has_tasks(rnp))
+> > +			WRITE_ONCE(rnp->exp_tasks, rnp->blkd_tasks.next);
+> >  		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+> >  	}
+> >  }
+> > @@ -393,13 +400,6 @@ static void __sync_rcu_exp_select_node_cpus(struct rcu_exp_work *rewp)
+> >  	}
+> >  	mask_ofl_ipi = rnp->expmask & ~mask_ofl_test;
+> >  
+> > -	/*
+> > -	 * Need to wait for any blocked tasks as well.	Note that
+> > -	 * additional blocking tasks will also block the expedited GP
+> > -	 * until such time as the ->expmask bits are cleared.
+> > -	 */
+> > -	if (rcu_preempt_has_tasks(rnp))
+> > -		WRITE_ONCE(rnp->exp_tasks, rnp->blkd_tasks.next);
+> >  	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+> >  
+> >  	/* IPI the remaining CPUs for expedited quiescent state. */
+> > -- 
+> > 2.46.0
+> > 
 
