@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-559364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E8DDA5F2B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:43:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E47A5F2BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:44:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E11E216B635
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:43:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DD0E188F22D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC35F266B5E;
-	Thu, 13 Mar 2025 11:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A93267F4D;
+	Thu, 13 Mar 2025 11:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LK3VPH6X"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="POG4t+cB"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0D3266B46;
-	Thu, 13 Mar 2025 11:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC3C267B93;
+	Thu, 13 Mar 2025 11:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741866067; cv=none; b=WDMlSTt1+bCMjyPxjJvMudLAaGbcObRI9qIW1xRb3C0/yVtLWWZ6QaXqTWxrFx1e5TG6DK430GZ1qXIoG+sifw+5oQiA/dJPqyrKn0X1wR3Xrqbuj12kQG6gFR3apNkht9dmmt0anPXZ7DXWmH1KXbvdIRzxHzhJDBJIHnNLI+o=
+	t=1741866080; cv=none; b=oG+w3bja3tcDz2MmrTadNxiSaDoJVti8+ViLktk8+BObvL/yxC58cMDwxwI/gpI17CQ4A/9fwSFFZv2exeaC4+jZsuVf1Fsf89zvKcppHiojuGypPFfofJPjzNqkwAkUPGSO8aktp9DM4UdruklQOc+bwKU+cqBfQ+5/mIsTFTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741866067; c=relaxed/simple;
-	bh=GplLPwTK9dUCVkJNtN05NSTyHk7TJv3f61TrBFXIMyA=;
+	s=arc-20240116; t=1741866080; c=relaxed/simple;
+	bh=N97BpYlbNSPfzJGQZ1D7SkQx/OmwuZruOYtg7xU7yyw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CfXz+skphBVI3WlcDtL4sl1KKEMnfcPSGbVP/4+gaigDpPPhyDwpiyIFGeRbEoo2ckzHswf8EDHUFJE9jUWB2KRnyh94yvTIq94NGT5tRcnAAPgV/UrvABA2qKmgnaLrIWl/Gbzgo0d3bBqExyrilT8CrmHSN/n2J7Y85TAqWYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LK3VPH6X; arc=none smtp.client-ip=209.85.167.44
+	 Content-Type:Content-Disposition:In-Reply-To; b=dER5P7vXRt6+qomYxe8MQW7eH9tE5cM35KgvK4hDaQMsKV8m6WNs6PSgJaYKEenvWEDO2ucx0ksSy5N+4gaqC/6I56Wx8AEBQ1BgOCyDkQKlTqYs619N85aPe39ndFjMiG0iSEe9/U8XxbKq+IbUOgLWLjkQTngRvwa0Zap/SL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=POG4t+cB; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5498d2a8b89so889249e87.1;
-        Thu, 13 Mar 2025 04:41:05 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54996d30bfbso717718e87.2;
+        Thu, 13 Mar 2025 04:41:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741866064; x=1742470864; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741866076; x=1742470876; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BaFyzl0YFrML3OmytUU12qD6QrH8ZAERBPK4xvEEj5w=;
-        b=LK3VPH6Xh0x/ZWuhIxY0g0dsAzyGlhYQw4yyKL7yplphWcScXvowvQkPmaEWBHGOqg
-         Gl8QJ4Pyeh+VmyL+lHqeDGU4P8wy9l9l+MmVoIKa2CkoVIJ0nhgUiWYE9bfLIVljzMxt
-         wW5GvvUo3VG2qakkrrZl1HJwE+mCoIlwN3tE0n3uweE7O/yCdzElTOTTd2wr4YLT5m7B
-         6YUOtIt354y7RijAtUt4l5QhSN+ur0fvkLojWWvEnVsC1QfDTpWbjtGF3PXm9oPFImDF
-         m5X6f0o3EMjCVqrVkedjD175YbcHc5NPMZbEiQ9YbDh41SzXBC1A6Cael1FtAuHgkM17
-         Rclw==
+        bh=G+NTzzn1Fnv8JX9NGjwEvgHmyeUTwJ8v4hknnj/x0Lo=;
+        b=POG4t+cBWbpjFb7UK4AAT60fdcOcMzXnViszpv6xYlm0FNJFlKdx9HKW2RchA4zH++
+         NbdsGSqNn5K0DkMxZE9oZLd19qIHUmfnw+1z4HBPdWKxtcv3fRnZXe+Bbgla2pEad0t6
+         LXf9yt9hddmay4Jcyhnlv+tZGJycx9XbZSIHF0/lPH/x4PMGaaXOyuWueeRBil7bIXKd
+         OfweNV8+/17xqanQBk5cuZAhF7Gn2YpBbvTYFUvkVy+yhuXXtqSuiGsP8ZxgeGPJUsYs
+         4PXJ7N5EY9OLd1qM/0oHgVAccFByjL10PdIKK5Jz830TaRTAhLJKeQ6X5srVQXP/DFPI
+         xTqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741866064; x=1742470864;
+        d=1e100.net; s=20230601; t=1741866076; x=1742470876;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BaFyzl0YFrML3OmytUU12qD6QrH8ZAERBPK4xvEEj5w=;
-        b=Tp+B/0oQmP53RyNC38ExBj60KkgIBdwIsPFd8EEV9FOAoCcHo0Q1N240SUznJMt/qo
-         HVoFLBcLp0nTzJlbKnypEv7Da/zO7u3hCaL3pQidverht2z5Y393UXY9Gj9krGBbqxZa
-         vHSN4jJaGiyq80XpFPYexo/jsxhVQX8aULhOTy6+YCHRZX2kFZ4ExHgjmV6+AZ3M1C7X
-         h+celUqMeTSDaI8swbc81283qIM2I8nzDAl6ERsjKpxQbriG4cyzPoUX5g+cZSpFXgCh
-         rDeWxmy3uCckdxb0gxYWGknRr2LDmPMv5tKwBy28tprH+Ad0xell/MF2MY35RwPpPcMm
-         myMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmtX7Tab2Bg6hOZE4UKYdja4hf0wY7yHwc7jsBhZkU3zxcO8rLRts+faX3+GKJ32xjAeGeOhKMoEIIgKZ1@vger.kernel.org, AJvYcCW4aE/u3GGvcHVXY0DMeQ3Az6JlH0mOloEXqSdhMAtFDUkiy3LQFxsBQGzXhOmw8erUWSWbW8X3BhPs@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjwzkFiOs0rLu3x47I4mT5yo8bZkfMmDjXEX+GP8f1NB8petCL
-	8ZKFozF1MnaIZ6i8dE4LVxFZJeM1hyOxutJBhQWkcVQLkUH3Y4Gw
-X-Gm-Gg: ASbGnctW9JIDM2BOrfiXmoqGlGCy2QqTen09AVLVUpD9MRPrKJOBKEKK8NImhW8cfhj
-	pCofqvXV6msz9CCppxX2MWNSbxzclwssUwz/6oB26k8MFQ1Txi6TVL2R34eeMCYius5vmckdrCb
-	s1tQCQV+1pa9LcjKoylIJjGEpKHohwZkgRdtQeLhWlA4Y8Qn/8f6h31TJBX2OzVbhZ42OW4BrR9
-	eHAi3mmYfJcMUqGMbzSJuzmM8IbqoLD7bx3OIr3piWYlGqp/d7XUCoaZZu8P7NF8XWHO7UO+Xdh
-	+yPWtcH85O6cd+wZ73vVHszo6igH3RXgcnjFZCH/25/4dZ8venF3JB3V6K2aSg==
-X-Google-Smtp-Source: AGHT+IG3MDbF1eCbxjtJyEQMKpiK2fHB+pBZVRFPvTPpNXX4w7096GwYJ/QPJOWPmhLvGnEzG+iIHw==
-X-Received: by 2002:a05:6512:3993:b0:545:c7d:1784 with SMTP id 2adb3069b0e04-54990ec824amr9498561e87.43.1741866063854;
-        Thu, 13 Mar 2025 04:41:03 -0700 (PDT)
+        bh=G+NTzzn1Fnv8JX9NGjwEvgHmyeUTwJ8v4hknnj/x0Lo=;
+        b=QKgGcjFZFXHTbEm7oE1jzRMY9HlgY0x8qND0z4dS6H98dIDLfWI0eYnj61CrFsB/3a
+         GEu9l6x/guStnGgK8lYh1qLUCI/ST6K5QqNkG+yRdyPWHwgT8vb8PXx4fQ6lj97zLCTG
+         I+J0ttU9Y2vMBOkhPNKtwTf1plJ4kY1k0r1fjV0KBqMUf26EwCoXEdQb/+sAt4p0/qb1
+         VKDImAF66M+TbPELk+kCblfwEjqVBUapNL2pmHjtaxvPbzEG11J4EI1iQplyoseVAjZY
+         /rziNHpuunJICWNuTcjPL6pTQra7bGAdX9keIQZcG3sRKqKS0GwkcAzSIUQCCbcoSybl
+         i5Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjItLeS4I6pfRGoHX0wlN4EAhspCG5tVgzQ7p3h23+zO9iXaxGh9Ys4eNZzlkljQC/14Y7BMObJ7Qu3gln@vger.kernel.org, AJvYcCWM9dFqbgO8CcVD2r3NXlG/9JDS5DouT/TgsvpAWWUOkXUSMQpne0v3Z1uwGNU1f3AeiThXKskJdOkr@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEU3gxINn1mQMTuyRLZD7DLclPDAKuLT8yBf+2XTxQNno3li+E
+	1IctbTS9mXieFn07YdgO1EQOMj7KasjZUuB++8neBdWu5SlkdANT
+X-Gm-Gg: ASbGncvKvGFWcGWA3Jv0mnTwxvl4lvU4ZE/EWYc3bVrJ9fOX2KikErGtXjoZ0uS8V+O
+	FGuGWAXzsy08ChaTkl4jV6TZe9rnAvbWx4RlCW68Q3GV4XPv9+WraguPBlgC0wJ2cKANsdEs3A3
+	W4OFC5CDpKk90dbxg9jPLjadXVquuyVRTyzWvoomzkfRdowCsqsl+tDoxNXMDKTtOAS35AnkUVP
+	PSyHYydAqvG1LtJp2n8jaQlZWeKJt28YiPC6KyTmZnVB4Ubk2OUl94O6xXzjff+el9ZqFEPYVSn
+	zBKm+MZnrnv0NEFVTun0YE3mA7oZA9Xx/xvvGp5/xw9xtGmG2yA=
+X-Google-Smtp-Source: AGHT+IFuZEL6MZEjWuwNLfzDYfGHyS/llMVd1NMMeT9bsPSWu/Jy2JNXc5sF0MhHkWdyYmsc8EnSpg==
+X-Received: by 2002:ac2:44c6:0:b0:549:91d3:cb16 with SMTP id 2adb3069b0e04-54991d3cb26mr7381426e87.4.1741866075720;
+        Thu, 13 Mar 2025 04:41:15 -0700 (PDT)
 Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba8a702asm182306e87.212.2025.03.13.04.41.01
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7c1a26sm185901e87.97.2025.03.13.04.41.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 04:41:01 -0700 (PDT)
-Date: Thu, 13 Mar 2025 13:40:57 +0200
+        Thu, 13 Mar 2025 04:41:14 -0700 (PDT)
+Date: Thu, 13 Mar 2025 13:41:10 +0200
 From: Matti Vaittinen <mazziesaccount@gmail.com>
 To: Matti Vaittinen <mazziesaccount@gmail.com>,
 	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
@@ -81,8 +81,8 @@ Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
 	Mark Brown <broonie@kernel.org>,
 	Matti Vaittinen <mazziesaccount@gmail.com>,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 01/14] dt-bindings: regulator: Add ROHM BD96802 PMIC
-Message-ID: <93b7b5ba885328301242b8ef708db92c24e50132.1741864404.git.mazziesaccount@gmail.com>
+Subject: [PATCH 02/14] dt-bindings: mfd: Add ROHM BD96802 PMIC
+Message-ID: <b8cd10416e2c3751fda58bf2b3dad86c78ebd43f.1741864404.git.mazziesaccount@gmail.com>
 References: <cover.1741864404.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -91,12 +91,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="OlLCymbnSnZA6bsA"
+	protocol="application/pgp-signature"; boundary="Ft2n4GX3RX91ewdq"
 Content-Disposition: inline
 In-Reply-To: <cover.1741864404.git.mazziesaccount@gmail.com>
 
 
---OlLCymbnSnZA6bsA
+--Ft2n4GX3RX91ewdq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -106,89 +106,138 @@ Integrated Circuit supporting Functional Safety features for application
 processors, SoCs and FPGAs. BD96802 is controlled via I2C, provides two
 interrupt lines and has two controllable buck regulators.
 
-The BD96802 belongs to the family of ROHM Scalable PMICs and is intended
-to be used as a companion PMIC for the BD96801.
-
 Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 ---
- .../regulator/rohm,bd96802-regulator.yaml     | 44 +++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd9680=
-2-regulator.yaml
+ .../bindings/mfd/rohm,bd96802-pmic.yaml       | 100 ++++++++++++++++++
+ 1 file changed, 100 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd96802-pmic=
+=2Eyaml
 
-diff --git a/Documentation/devicetree/bindings/regulator/rohm,bd96802-regul=
-ator.yaml b/Documentation/devicetree/bindings/regulator/rohm,bd96802-regula=
-tor.yaml
+diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd96802-pmic.yaml b=
+/Documentation/devicetree/bindings/mfd/rohm,bd96802-pmic.yaml
 new file mode 100644
-index 000000000000..671eaf1096d3
+index 000000000000..d5d9e69dc0c2
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/rohm,bd96802-regulator.ya=
-ml
-@@ -0,0 +1,44 @@
++++ b/Documentation/devicetree/bindings/mfd/rohm,bd96802-pmic.yaml
+@@ -0,0 +1,100 @@
 +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/regulator/rohm,bd96802-regulator.yaml#
++$id: http://devicetree.org/schemas/mfd/rohm,bd96802-pmic.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: ROHM BD96802 Power Management Integrated Circuit regulators
++title: ROHM BD96802 Scalable Power Management Integrated Circuit
 +
 +maintainers:
 +  - Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 +
-+description:
-+  This module is part of the ROHM BD96802 MFD device. For more details
-+  see Documentation/devicetree/bindings/mfd/rohm,bd96802-pmic.yaml.
++description: |
++  BD96802Qxx-C is an automotive grade configurable Power Management
++  Integrated Circuit supporting Functional Safety features for application
++  processors, SoCs and FPGAs
 +
-+  The regulator controller is represented as a sub-node of the PMIC node
-+  on the device tree.
++properties:
++  compatible:
++    const: rohm,bd96802
 +
-+  Regulator nodes should be named to buck1 and buck2.
-+
-+patternProperties:
-+  "^buck[1-2]$":
-+    type: object
++  reg:
 +    description:
-+      Properties for single BUCK regulator.
-+    $ref: regulator.yaml#
++      I2C slave address.
++    maxItems: 1
 +
-+    properties:
-+      rohm,initial-voltage-microvolt:
-+        description:
-+          Initial voltage for regulator. Voltage can be tuned +/-150 mV fr=
-om
-+          this value. NOTE, This can be modified via I2C only when PMIC is=
- in
-+          STBY state.
-+        minimum: 500000
-+        maximum: 3300000
++  interrupts:
++    description:
++      The PMIC provides intb and errb IRQ lines. The errb IRQ line is used
++      for fatal IRQs which will cause the PMIC to shut down power outputs.
++      In many systems this will shut down the SoC contolling the PMIC and
++      connecting/handling the errb can be omitted. However, there are cases
++      where the SoC is not powered by the PMIC. In that case it may be
++      useful to connect the errb and handle errb events.
++    minItems: 1
++    maxItems: 2
 +
-+      rohm,keep-on-stby:
-+        description:
-+          Keep the regulator powered when PMIC transitions to STBY state.
-+        type: boolean
++  interrupt-names:
++    minItems: 1
++    items:
++      - enum: [intb, errb]
++      - const: errb
 +
-+    unevaluatedProperties: false
++  regulators:
++    $ref: ../regulator/rohm,bd96802-regulator.yaml
++    description:
++      List of child nodes that specify the regulators.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++  - regulators
 +
 +additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/leds/common.h>
++    i2c {
++        #address-cells =3D <1>;
++        #size-cells =3D <0>;
++        pmic: pmic@62 {
++            reg =3D <0x62>;
++            compatible =3D "rohm,bd96802";
++            interrupt-parent =3D <&gpio1>;
++            interrupts =3D <29 IRQ_TYPE_LEVEL_LOW>, <6 IRQ_TYPE_LEVEL_LOW>;
++            interrupt-names =3D "intb", "errb";
++
++            regulators {
++                buck1: BUCK1 {
++                    regulator-name =3D "buck1";
++                    regulator-ramp-delay =3D <1250>;
++                    /* 0.5V min INITIAL - 150 mV tune */
++                    regulator-min-microvolt =3D <350000>;
++                    /* 3.3V + 150mV tune */
++                    regulator-max-microvolt =3D <3450000>;
++
++                    /* These can be set only when PMIC is in STBY */
++                    rohm,initial-voltage-microvolt =3D <500000>;
++                    regulator-ov-error-microvolt =3D <230000>;
++                    regulator-uv-error-microvolt =3D <230000>;
++                    regulator-temp-protection-kelvin =3D <1>;
++                    regulator-temp-warn-kelvin =3D <0>;
++                };
++                buck2: BUCK2 {
++                    regulator-name =3D "buck2";
++                    regulator-min-microvolt =3D <350000>;
++                    regulator-max-microvolt =3D <3450000>;
++
++                    rohm,initial-voltage-microvolt =3D <3000000>;
++                    regulator-ov-error-microvolt =3D <18000>;
++                    regulator-uv-error-microvolt =3D <18000>;
++                    regulator-temp-protection-kelvin =3D <1>;
++                    regulator-temp-warn-kelvin =3D <1>;
++                };
++            };
++        };
++    };
 --=20
 2.48.1
 
 
---OlLCymbnSnZA6bsA
+--Ft2n4GX3RX91ewdq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfSxEkACgkQeFA3/03a
-ocV9eAf/YTGOqr0nkHr0qsRRN434dd/2sFINmLhSvGMVVdZB01nhPsod1b6aYBJN
-kQb/p7xUWp60jitnFYmRExBdu8JJH4kZiLsST7PYD6Goin777QPEwZLMLH0LCZrp
-nOTHbA7aYlZE//fhrg2cMADGjSLaID6ySF+vYdKbq6hsj7YXKd+bjEtpHcG8dBQi
-8k7XzCK6OqTNErbZNIfmt8H6+UtF4Yi1hzgBFd2NQD2fZpeFQKGk7Fp/UuHh7BNP
-GNK3E3mxUuAdziwKgpgFZ4rm+U2PwpAxblmPYIhKUqUbE4tXuzP11kYPEMCE9AUD
-7wqWt7lNMZHwyPlDulzgFyxNJWzvYA==
-=+NW0
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfSxFYACgkQeFA3/03a
+ocVhHQgAnLpjnJKwh/semeo1xD2I3Jt6+sp29OCZ2Nxg1ofkSNTjP7Yqq4snTECY
+oLT6jHbnLiWOSxjaM2n+he4nbU9VAAilT3nCdTGkVvSCmli/kKWcSokEpGymufJt
+qJYWp94FPUSX6B8qa6GYlVRCnembYG+ThG/R0ey3MYkSw6J2vJpGiA2oZLkSijUP
+wt/GXryKHiCQYiepcfNNlVlzATGidrazSgk5EKh8pjEXz0CilvGgJ0uYWRSAO9sf
+fk1xTl7edkK2g15lhX2iBlMm5X5ONKQhbP99HeQAwE1qf0OTZv51dGRf51kymK6w
+JhXViahJowVC0R5SkF/axepApHHIXg==
+=oGI1
 -----END PGP SIGNATURE-----
 
---OlLCymbnSnZA6bsA--
+--Ft2n4GX3RX91ewdq--
 
