@@ -1,201 +1,179 @@
-Return-Path: <linux-kernel+bounces-558640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 255FFA5E8F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:19:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8791AA5E8F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:22:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7ABB18946AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:19:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 842067AAF0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849BE79FE;
-	Thu, 13 Mar 2025 00:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2686AAD;
+	Thu, 13 Mar 2025 00:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aDSvSjIo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YIEHAMzx"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EF54A2D;
-	Thu, 13 Mar 2025 00:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9B72E338A
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 00:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741825171; cv=none; b=rhMQexG5s1JwFsE+Qwu8A1K+4oMUyjGBAQ858HooAEnswrU/tuBPYWd69A1DcF22JgNE4jtMCW5J7EFWjTHdjiv3atQWaG2hSt6AGUZfb9v/ACBx2rQTw3rxpIrlFx2Ofn3xzyM3PNe2LvSpqhqehq9B3KOp3eSJMWYRBSu4srs=
+	t=1741825323; cv=none; b=OGLfXTj0GrpVj+zvdYcKPWkhyG8GfzuDEEM9zhIHC697WwtiJUgit2ee0xLbOf31CzrFKjBRr6OoEGFYP89/6i3lfjRzBtTdwWtBrcoa62Z0TjreZIuVHvDMxl8kmWTK0/R3oBDKy1+WJqNu5B/noSmIhKB4uMNrsrAmZZGxphA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741825171; c=relaxed/simple;
-	bh=OC2kJdO0bX1Vrlgy1KVz18BJpr1zZxwC8vQSJOOX8ws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FSzq1Hlg4H2LiuuQSbhgs/6ajiXVQB8m6J5nfN7nt2Dkt8pnw6SrKjncRh7N+JDBoXPtzHXPH9NE8Dx4Q8u/7kcliRTn7NNvXixuqdx2/7A/3pBFxHV4MWBN9Xkc/S7SbVNDLr7Mh/meHeWwLFT+gUz/NiS+Ze9RdJ6gCg008bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aDSvSjIo; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741825170; x=1773361170;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OC2kJdO0bX1Vrlgy1KVz18BJpr1zZxwC8vQSJOOX8ws=;
-  b=aDSvSjIoJXB5I6161vAeXjdHxa/FK9dmvWjFUbps21OvuJF/ik1n2hJk
-   x7Ss3tfQFO6UipiaE4NAddaqza1I4tkijHkDJk0D9ijgb1mIhWOcZnQyF
-   6CpTFyOxoWHrWBwyvivTBMJWrVG7Aic7IlofkRyeHdkQ+NCfNVvcHUHzU
-   di3sJBYa/fnLrsPj5GlMdRZHYv3Oer44NyelJ2p8gAPypjU2mQAG0sL/z
-   Bh16yZuK6fS/ES/a8lznWOzU4B2G6OrCJNITQCkDrHxD1zNpfDxvBf5fk
-   kjNfCg6CyKO2Ues6jr/U4es+WyUB7HhacNXPnxMZKqDyK9RoUbcySBs4F
-   A==;
-X-CSE-ConnectionGUID: Hsb3R31kQ+mbhx346WVS3w==
-X-CSE-MsgGUID: Me6u2/y6Tm2CWblJW5J6nQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42654588"
-X-IronPort-AV: E=Sophos;i="6.14,243,1736841600"; 
-   d="scan'208";a="42654588"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 17:19:30 -0700
-X-CSE-ConnectionGUID: s3sqfxtzSe6SU3Vj1W6z7Q==
-X-CSE-MsgGUID: nwNajwp9RgyA/BRF2hWX+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,243,1736841600"; 
-   d="scan'208";a="125870236"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 12 Mar 2025 17:19:25 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tsWIE-000908-2X;
-	Thu, 13 Mar 2025 00:19:22 +0000
-Date: Thu, 13 Mar 2025 08:19:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v6 3/4] clk: meson: a1: add the audio clock controller
- driver
-Message-ID: <202503131003.x6L69hJL-lkp@intel.com>
-References: <20250309180940.1322531-4-jan.dakinevich@salutedevices.com>
+	s=arc-20240116; t=1741825323; c=relaxed/simple;
+	bh=fK/ohTw/TsMcFwnx5IOHOIwz5L34zy93o4wP2Ns5sac=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mDpl6BMvKZcQlb/Ws1PbKoaRRUV0HiGEsLSw0s/C4GKSIcYLmkfe7uyiDF9XSlq6460Fi75WXzyugZ7zc7JaT+wSCb9p5NgeTGAPRqeSclbIftBBxhx8GQmE3NS6S29HiEdwA/K7dzD9ppXqo2xa+iFlSYKWsRPNe0jfnZCgwk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YIEHAMzx; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30bf3f3539dso4255651fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 17:22:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1741825319; x=1742430119; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ve1CmfI0K+KYT8TLuMs4lWO1u62BwBHsIfFJVhmEIVY=;
+        b=YIEHAMzxQyH8q/NuDyktO+7lbI9WFxQDxs1Gbi/x5utyDLRCQmd53gNrqIqn4FC8Js
+         A1oGTs+FakVUKAmq8DgF9me6sdIFjQw+rZramji8ulC4ZdSL/cNGi7gdknIEaGDr35As
+         5mXMACUOGReV5BZ1AXdczAs8RC0MiUKxBArho=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741825319; x=1742430119;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ve1CmfI0K+KYT8TLuMs4lWO1u62BwBHsIfFJVhmEIVY=;
+        b=JH/VQggSdF3itmWk82XCMCz/0HUP8srv+wuk89MjD9VHJQK67A9wirDDQkkdnCaGuR
+         omVmhW93fqIvQoJIhuST2fapqPUiMjvQbYRyajym5DnECtQP8PxKVCi+TYwxZa2KkP+D
+         ZuGse/aniAWtoAET9RE5LXgD126BUu8EnAUyXCpfPdlHWklvu3TXtnp/Wkfse/rBAwcm
+         T3vwAu1UVrgZR0CD8g8Pe5PAGPAIke83Bp0OPZfrIxoy5sBa0L0FgEcL03neWdOF/iY9
+         BdQfAM7HcZ4Bm8vnst6mtxXhL3B6gNlRso5fczsu2n6Yfyq00liWyeAm8FO9pKPGl7/k
+         xi1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVkXc+wsDeAHjRzY2Ov2trAxS33pXryZcvwkuR3PKlLsip7Yanjh54zERE1gV0cyg8gGeXdQ0T6H9SmCvA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF5gxEBToVd9dYSJdiuIbQd3gBHfE0pAG3wM0+SRUUobG6tCfX
+	yUNJUnINQ89/sBP9OlNkdVsN8AvWsCyS2zeunUxGk0xzmCUbabrXRW0QfEnkcxvlPHXEPIMDT0D
+	rnh3V
+X-Gm-Gg: ASbGnctDMmsjxTl7esevFnOv6nzY4qBP8wmKgiosO7NkLlgiMoMt+uoOV+kPB+t6LD2
+	udmmvOturpqnyJswAEQma/6b0PLZps4dEMC1HkyepDhGazPga+A9HVeAR/2KByhRCWF/R2AYBE0
+	VTl0PgERovAOHNQ6qXnS4TzY+Z1LCXF2RhazOa8KMafWviflHIVQrR9AgLdr+Gb0tXxQ2PFuEH0
+	zbkGSCetQo2t/AeRWE2wagP5EVhl2V5AxeEpti/PvO2Oe6mrJ8fsYdirHRZ/pgsk1+qXpe7rDp0
+	AJ/qw5LHwIGxqeRYjm/h38A5DYNecz8R2+bceZZ2zle8jIpn0CsZ+tI7USAxBKiDfC40gTJVLHX
+	fswEZq3Xz
+X-Google-Smtp-Source: AGHT+IEl0zHmabh4gyjxtyqbmsROM4LqPh54oFN03IJOqqObVNZO+hcl0qjDXBP88tiE9fV3hEqBIw==
+X-Received: by 2002:a2e:99ce:0:b0:30b:e936:e832 with SMTP id 38308e7fff4ca-30c3de187eamr1869971fa.13.1741825319359;
+        Wed, 12 Mar 2025 17:21:59 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f1ec0f4sm147731fa.109.2025.03.12.17.21.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 17:21:58 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5499da759e8so1683344e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 17:21:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUj4NXSg/Pt7zQtdypQmOOvBSqtRwFzq8IIyM6Yn5sOgL1CRhgmBoYLGbAXLZtXQYCJGH6UeCGDDEMGWZc=@vger.kernel.org
+X-Received: by 2002:a05:6512:3c8a:b0:545:2474:2c9b with SMTP id
+ 2adb3069b0e04-549ba428698mr204467e87.22.1741825317941; Wed, 12 Mar 2025
+ 17:21:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250309180940.1322531-4-jan.dakinevich@salutedevices.com>
+References: <20250310-mipi-synaptic-1-v2-1-20ee4397c670@redhat.com>
+ <20250311-warm-icy-rottweiler-cefcdd@houat> <CAN9Xe3Qwu=E=VVZZ_8EHPF7Xsk6Zcbp=R_b=cRgF=9SWCkmsqA@mail.gmail.com>
+ <CAD=FV=XdngrNhUn8jQ3FGitkBCkiQO1dXnPhCKj+S5Jo8_WUrQ@mail.gmail.com> <CAN9Xe3RQ_L5a+PbXCBbzpn3VxyWEL1_wqA5trY0h=Xj-YMcA1g@mail.gmail.com>
+In-Reply-To: <CAN9Xe3RQ_L5a+PbXCBbzpn3VxyWEL1_wqA5trY0h=Xj-YMcA1g@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 12 Mar 2025 17:21:46 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WJDHAdDCD=Mhffawuz8U7=MkzDueXmAvKpJ-o5eOT6DQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JqR2ONbIt8VCOUlU6wE07GPZEZIhiBEtbAX58jcej3ZuGEyEk_GhqGWc0o
+Message-ID: <CAD=FV=WJDHAdDCD=Mhffawuz8U7=MkzDueXmAvKpJ-o5eOT6DQ@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/panel/synaptics-r63353: Use _multi variants
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Maxime Ripard <mripard@redhat.com>, Maxime Ripard <mripard@kernel.org>, 
+	Michael Trimarchi <michael@amarulasolutions.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Tejas Vipin <tejasvipin76@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jan,
+Hi,
 
-kernel test robot noticed the following build errors:
+On Wed, Mar 12, 2025 at 5:00=E2=80=AFPM Anusha Srivatsa <asrivats@redhat.co=
+m> wrote:
+>
+>
+>
+> On Wed, Mar 12, 2025 at 11:48=E2=80=AFAM Doug Anderson <dianders@chromium=
+.org> wrote:
+>>
+>> Hi,
+>>
+>> On Wed, Mar 12, 2025 at 8:06=E2=80=AFAM Anusha Srivatsa <asrivats@redhat=
+.com> wrote:
+>> >
+>> >> > @@ -106,53 +107,46 @@ static int r63353_panel_power_off(struct r633=
+53_panel *rpanel)
+>> >> >  static int r63353_panel_activate(struct r63353_panel *rpanel)
+>> >> >  {
+>> >> >       struct mipi_dsi_device *dsi =3D rpanel->dsi;
+>> >> > -     struct device *dev =3D &dsi->dev;
+>> >> > -     int i, ret;
+>> >> > +     struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D dsi };
+>> >> > +     int i;
+>> >> >
+>> >> > -     ret =3D mipi_dsi_dcs_soft_reset(dsi);
+>> >> > -     if (ret < 0) {
+>> >> > -             dev_err(dev, "Failed to do Software Reset (%d)\n", re=
+t);
+>> >> > +     mipi_dsi_dcs_soft_reset_multi(&dsi_ctx);
+>> >> > +     if (dsi_ctx.accum_err)
+>> >> >               goto fail;
+>> >> > -     }
+>> >>
+>> >> This changes was definitely not what the script is doing.
+>> >
+>> >
+>> > It isnt. Using coccinelle for the major part of pattern matching and r=
+eplacing the newer _multi variant API. Some handling (including a newline t=
+hat it introduces) and  the returns depend on a case by case basis, which h=
+ad to be done manually.
+>>
+>> ...and now you're getting to see why I didn't think a coccinelle
+>> script could fully handle this task. ;-) IMO instead of trying to get
+>> a coccinelle script to do the full conversion, the right approach
+>> would be to use a coccinelle script (or equivalent) to get the basics
+>> done (just so you don't make any typos) and then cleanup the result
+>> manually. Spending more time on the coccinelle script than it would
+>> take to do the conversion manually is probably not the right approach.
+>>
+>> If your patch wasn't fully generated by a coccinelle script you should
+>> document that in the commit message. Something like "Initial patch was
+>> generated by a coccinelle script and the result was cleaned up
+>> manually." If the script is too long to fit in the commit message,
+>> it's fine to put it somewhere online and provide a link. "Somewhere
+>> online" could easily be a mailing list post.
+>>
+>
+> You know I have been thinking if it makes sense to have this script merge=
+d to coccinelle project and add those details in the commit log.... Was hav=
+ing an offline discussion with  @Maxime Ripard today and he rightly pointed=
+ out that since it is too specific, once all the conversions are done , the=
+ script  would not be further useable....
+> About having the script online and providing a link, something link a git=
+hub link?
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on robh/for-next krzk/for-next krzk-dt/for-next linus/master v6.14-rc6 next-20250312]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+That feels overkill. It seems like you could just send an email to
+LKML or dri-devel and then link it that way. It could be in reply to
+this thread or a totally separate email. lore.kernel.org links are
+great.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jan-Dakinevich/clk-meson-axg-share-the-set-of-audio-helper-macros/20250310-022012
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20250309180940.1322531-4-jan.dakinevich%40salutedevices.com
-patch subject: [PATCH v6 3/4] clk: meson: a1: add the audio clock controller driver
-config: arm64-randconfig-r131-20250312 (https://download.01.org/0day-ci/archive/20250313/202503131003.x6L69hJL-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250313/202503131003.x6L69hJL-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503131003.x6L69hJL-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/clk/meson/a1-audio.c: In function 'a1_audio_clkc_probe':
->> drivers/clk/meson/a1-audio.c:807:18: error: implicit declaration of function '__devm_auxiliary_device_create'; did you mean '__auxiliary_device_add'? [-Wimplicit-function-declaration]
-     807 |         auxdev = __devm_auxiliary_device_create(dev, dev->driver->name,
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                  __auxiliary_device_add
->> drivers/clk/meson/a1-audio.c:807:16: error: assignment to 'struct auxiliary_device *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-     807 |         auxdev = __devm_auxiliary_device_create(dev, dev->driver->name,
-         |                ^
-
-
-vim +807 drivers/clk/meson/a1-audio.c
-
-   748	
-   749	static int a1_audio_clkc_probe(struct platform_device *pdev)
-   750	{
-   751		struct device *dev = &pdev->dev;
-   752		const struct a1_audio_data *data;
-   753		struct auxiliary_device *auxdev;
-   754		struct regmap *map;
-   755		void __iomem *base;
-   756		struct clk *clk;
-   757		unsigned int i;
-   758		int ret;
-   759	
-   760		data = device_get_match_data(dev);
-   761		if (!data)
-   762			return -EINVAL;
-   763	
-   764		clk = devm_clk_get_enabled(dev, "pclk");
-   765		if (IS_ERR(clk))
-   766			return PTR_ERR(clk);
-   767	
-   768		base = devm_platform_ioremap_resource(pdev, 0);
-   769		if (IS_ERR(base))
-   770			return PTR_ERR(base);
-   771	
-   772		map = devm_regmap_init_mmio(dev, base, &a1_audio_regmap_cfg);
-   773		if (IS_ERR(map))
-   774			return PTR_ERR(map);
-   775	
-   776		ret = device_reset(dev);
-   777		if (ret)
-   778			return ret;
-   779	
-   780		for (i = 0; i < data->hw_clks.num; i++) {
-   781			struct clk_hw *hw = data->hw_clks.hws[i];
-   782			struct clk_regmap *clk_regmap = to_clk_regmap(hw);
-   783	
-   784			if (!hw)
-   785				continue;
-   786	
-   787			clk_regmap->map = map;
-   788		}
-   789	
-   790		for (i = 0; i < data->hw_clks.num; i++) {
-   791			struct clk_hw *hw;
-   792	
-   793			hw = data->hw_clks.hws[i];
-   794			if (!hw)
-   795				continue;
-   796	
-   797			ret = devm_clk_hw_register(dev, hw);
-   798			if (ret)
-   799				return ret;
-   800		}
-   801	
-   802		ret = devm_of_clk_add_hw_provider(dev, meson_clk_hw_get,
-   803						  (void *)&data->hw_clks);
-   804		if (ret)
-   805			return ret;
-   806	
- > 807		auxdev = __devm_auxiliary_device_create(dev, dev->driver->name,
-   808							data->rst_drvname, NULL, 0);
-   809		if (!auxdev)
-   810			return -ENODEV;
-   811	
-   812		return 0;
-   813	}
-   814	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-Doug
 
