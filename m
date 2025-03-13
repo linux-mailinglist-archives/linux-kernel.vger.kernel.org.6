@@ -1,180 +1,124 @@
-Return-Path: <linux-kernel+bounces-559052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AFDEA5EEE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:05:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A262A5EEF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:06:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 271317AAAAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:04:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 593101884BD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B4F263C8E;
-	Thu, 13 Mar 2025 09:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Oi5dNurE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08CC61FA14E;
-	Thu, 13 Mar 2025 09:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E22264631;
+	Thu, 13 Mar 2025 09:05:41 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D8F263F25;
+	Thu, 13 Mar 2025 09:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741856700; cv=none; b=Aa0wgFNouf648G72bYkdGArPCwvtt8LwJjsKUvmPWNV4Wj9v79wNMFXzKkrc/fe6X7dIfVj3OeSb1KY3JUo63fH5cbmmSlQNj1PWVHjHEddHNU8AbodWTvB+l1j228yeJv+GHnmbZlhfhsZpCijDDb5Sd2bj9+mE0G9zgwUItHc=
+	t=1741856741; cv=none; b=eQYLf5oKND9s9gNyfKOiKDDmHydoPPTgdtVUQCp+z/zXwJuuXw95AgH9PyjbxZbFQZTh67mmI3clcw1M4GEfdjfzOC/xcZh0okuBnWeqeVLmCHjQP0xZckLu/MhnX+ZbKUGnemK+lbefqNGBvfpUrbH9aSNYsJHCb0qHJl+kQ/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741856700; c=relaxed/simple;
-	bh=IQTJYZcVw5+7o+VKKXg4/rKyXDfRtDS5b8VRdnjkb0I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fikGbXLQAQ6Jq4e1qUfQiURztZ5QZQrDnKZ3ZORNu2E15OMe6XeNH+2ymyoKI43tP9iF6I0OmAzdEhbdJVNXlCadI832XN/DqEmSFd/wLMHIKggb+wxInD/GYSCWubyEQ/Nnqu04sm2xgd4oyCVQNMkAfv0OVwUAieCBpIsuN+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Oi5dNurE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D7RYbJ022547;
-	Thu, 13 Mar 2025 09:04:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JCsnxEwcfRn2/0Gy0Ea9NtUv3ocEWEmPn1CYcxAIdIs=; b=Oi5dNurEtu3IK7y6
-	psHdi7b1YnybXOy75O5farQ/HgL4jaehdala+gbblA+IWl4srqn/gxkWWaE4Qtsj
-	ZARYCqngj/eUpCcIEDk8bO10ffM3Xo54mimD1nLk+3PcYnhzNH44YAj9yoKHyCb6
-	Q2HNX8dxH8+VzvyBRnV1B1SDrUwZ7cFKeavrwaodODyEJWejwog/D+l3K4WGahJb
-	X16oEg/RMIhh4dVzp0lcz94vKmQCVCUtXY7ULYW+uI9msIwm4P2rJxEEvwcJ3jN3
-	B+CigHWDjQnvZE8c5h75oJh3Xyj5gjWaQbAIxdlDHELnBJ9tJ6dFAtolqs4fQUM1
-	D5ixTg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45bu07g8pp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 09:04:32 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D94UvU015982
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 09:04:30 GMT
-Received: from [10.204.66.137] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
- 2025 02:04:23 -0700
-Message-ID: <80439584-c39d-46f7-a62a-82514aa756a8@quicinc.com>
-Date: Thu, 13 Mar 2025 14:34:20 +0530
+	s=arc-20240116; t=1741856741; c=relaxed/simple;
+	bh=61TtN6wFDpZAdqUJIVNY9ZHfRjNQofHuMtPikcmgtZ0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uTUAyZs4t8VhRtL4RUCVbWldoB668BBedlJAoxQTDFAQI9DAhMlA6XVWY2EC9UjRJkJ3ojd97SPyzv9L4Y7UTCPoO1gmfWI7J8xCim/amr+tKAZegMDDKxugYKle48Eo2SrteDyWdd5pF0r+U5Ojri5C4Xnl994tAC4fFZSUOjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.40.54.90])
+	by gateway (Coremail) with SMTP id _____8BxXWvbn9JnrryUAA--.56513S3;
+	Thu, 13 Mar 2025 17:05:31 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.40.54.90])
+	by front1 (Coremail) with SMTP id qMiowMCx_cban9JnUDlIAA--.8065S2;
+	Thu, 13 Mar 2025 17:05:30 +0800 (CST)
+From: Qunqin Zhao <zhaoqunqin@loongson.cn>
+To: lee@kernel.org,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	peterhuewe@gmx.de,
+	jarkko@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-crypto@vger.kernel.org,
+	jgg@ziepe.ca,
+	linux-integrity@vger.kernel.org,
+	pmenzel@molgen.mpg.de,
+	Qunqin Zhao <zhaoqunqin@loongson.cn>
+Subject: [PATCH v5 0/6] Drivers for Loongson security engine
+Date: Thu, 13 Mar 2025 17:05:02 +0800
+Message-Id: <20250313090508.21252-1-zhaoqunqin@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/10] dt-bindings: display: msm: document DSI
- controller and phy on SA8775P
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <robdclark@gmail.com>,
-        <dmitry.baryshkov@linaro.org>, <sean@poorly.run>,
-        <marijn.suijten@somainline.org>, <andersson@kernel.org>,
-        <robh@kernel.org>, <robh+dt@kernel.org>, <krzk+dt@kernel.org>,
-        <konradybcio@kernel.org>, <conor+dt@kernel.org>,
-        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
-        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
-        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <quic_abhinavk@quicinc.com>, <quic_rajeevny@quicinc.com>,
-        <quic_vproddut@quicinc.com>, <quic_jesszhan@quicinc.com>
-References: <20250311122445.3597100-1-quic_amakhija@quicinc.com>
- <20250311122445.3597100-4-quic_amakhija@quicinc.com>
- <20250312-calm-steadfast-cricket-fe9dd8@krzk-bin>
-Content-Language: en-US
-From: Ayushi Makhija <quic_amakhija@quicinc.com>
-In-Reply-To: <20250312-calm-steadfast-cricket-fe9dd8@krzk-bin>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SPoiqIhZt7yk4fFulWD81Vhsz2vC7X2t
-X-Authority-Analysis: v=2.4 cv=V+F90fni c=1 sm=1 tr=0 ts=67d29fa0 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=jBDEQfmX5vGpiVlta2QA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: SPoiqIhZt7yk4fFulWD81Vhsz2vC7X2t
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_04,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
- impostorscore=0 spamscore=0 priorityscore=1501 phishscore=0 mlxscore=0
- lowpriorityscore=0 suspectscore=0 malwarescore=0 adultscore=0 bulkscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130071
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCx_cban9JnUDlIAA--.8065S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7uF1rKw4DXFy3uw1xGF4UAwc_yoW8AFyrpF
+	45AayFkr4UJFZrGrn3Ja48CFyfXa4fXrW3Kay2qw1DWr9xAa48J3yakFyUJa9rJF18JryI
+	qFZ3Cr4UGF1UZacCm3ZEXasCq-sJn29KB7ZKAUJUUUUf529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
+	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
+	1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
+	Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
+	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
+	cVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
+	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v2
+	6r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4SoGDUUUU
+
+Loongson security engine supports random number generation, hash,
+symmetric encryption and asymmetric encryption. Based on these
+encryption functions, TPM2 have been implemented in it.
+
+mfd is the baser driver, crypto and tpm are users.
+
+v5: Registered "ls6000se-rng" device in mfd driver.
+v4: Please look at changelog in tpm and MAINTAINERS. No changes to mfd
+    and crypto.
+v3: Put the updates to the MAINTAINERS in a separate patch.
+v2: Removed misc driver. Added tpm driver.
+
+Qunqin Zhao (6):
+  mfd: Add support for Loongson Security Module
+  MAINTAINERS: Add entry for Loongson Security Module driver
+  crypto: loongson - add Loongson RNG driver support
+  MAINTAINERS: Add entry for Loongson RNG driver
+  tpm: Add a driver for Loongson TPM device
+  MAINTAINERS: Add tpm_lsse.c to LOONGSON CRYPTO DRIVER entry
+
+ MAINTAINERS                            |  14 +
+ drivers/char/tpm/Kconfig               |   9 +
+ drivers/char/tpm/Makefile              |   1 +
+ drivers/char/tpm/tpm_lsse.c            | 103 +++++++
+ drivers/crypto/Kconfig                 |   1 +
+ drivers/crypto/Makefile                |   1 +
+ drivers/crypto/loongson/Kconfig        |   6 +
+ drivers/crypto/loongson/Makefile       |   2 +
+ drivers/crypto/loongson/ls6000se-rng.c | 190 +++++++++++++
+ drivers/mfd/Kconfig                    |  10 +
+ drivers/mfd/Makefile                   |   2 +
+ drivers/mfd/ls6000se.c                 | 374 +++++++++++++++++++++++++
+ include/linux/mfd/ls6000se.h           |  75 +++++
+ 13 files changed, 788 insertions(+)
+ create mode 100644 drivers/char/tpm/tpm_lsse.c
+ create mode 100644 drivers/crypto/loongson/Kconfig
+ create mode 100644 drivers/crypto/loongson/Makefile
+ create mode 100644 drivers/crypto/loongson/ls6000se-rng.c
+ create mode 100644 drivers/mfd/ls6000se.c
+ create mode 100644 include/linux/mfd/ls6000se.h
 
 
-
-On 3/12/2025 5:15 PM, Krzysztof Kozlowski wrote:
-> On Tue, Mar 11, 2025 at 05:54:38PM +0530, Ayushi Makhija wrote:
->> Document DSI controller and phy on SA8775P platform.
->>
->> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
->> ---
->>  .../display/msm/qcom,sa8775p-mdss.yaml        | 188 ++++++++++++++++++
->>  1 file changed, 188 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
->> index a90a8b3f1a9e..628ca68871f4 100644
->> --- a/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
->> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
->> @@ -52,6 +52,26 @@ patternProperties:
->>          items:
->>            - const: qcom,sa8775p-dp
->>  
->> +  "^dsi@[0-9a-f]+$":
->> +    type: object
->> +    additionalProperties: true
->> +
-> 
-> Drop blank line
-> 
->> +    properties:
->> +      compatible:
->> +        items:
-> 
-> contains
-> 
->> +          - const: qcom,sa8775p-dsi-ctrl
->> +          - const: qcom,mdss-dsi-ctrl
-> 
-> Drop fallback
-> 
-> Same comments further
-> 
-> Best regards,
-> Krzysztof
-> 
-
-Hi Krzysztof,
-
-Thanks, for the review.
-
-Will address the above comments in the next patch.
-
-+  "^dsi@[0-9a-f]+$":
-+    type: object
-+    additionalProperties: true
-+    properties:
-+      compatible:
-+        contains:
-+          enum:
-+            - qcom,sa8775p-dsi-ctrl
-+            - qcom,mdss-dsi-ctrl
-+
-+  "^phy@[0-9a-f]+$":
-+    type: object
-+    additionalProperties: true
-+    properties:
-+      compatible:
-+        contains:
-+          enum:
-+            - qcom,sa8775p-dsi-phy-5nm
-+            - qcom,sa8775p-edp-phy
-
-Thanks,
-Ayushi
+base-commit: 6a8f122c5f073c8610c32636663f2512514b1270
+-- 
+2.43.0
 
 
