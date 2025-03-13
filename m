@@ -1,222 +1,198 @@
-Return-Path: <linux-kernel+bounces-560394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EEF1A6037D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:37:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9291FA60385
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:43:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E29A19C558B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:37:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05FCE7A7014
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85081F55EB;
-	Thu, 13 Mar 2025 21:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5458D1F5830;
+	Thu, 13 Mar 2025 21:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fGn7IIyi"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ozaDjLYc"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634851F4C83;
-	Thu, 13 Mar 2025 21:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596761F3FE8
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 21:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741901805; cv=none; b=c9aDN1t3Q1J9wBY3pm9TpyBPYX0VQzA2CEqXVXyMACPoIBk7/7AmPNGSmvuhSe0AG75UscVuOeIj+OyO22vfWMNVRufBon/gCrWgiaBqI2WwTieqV7OIGRL0MGw2Mb+4LC4bNYPjJe04SNgNeTk0Hi4Ws9/q0ZA17f4toX7uj/U=
+	t=1741902200; cv=none; b=uEtlYarsZzcZCjWc9hYV6xbRBl9jmYPELRVydwC0rEnDpDFDg5NJ4ntO9xXdfGzB0b/I8SlRXMuD75TBhncQUzhZt8hQgoqNhgLS6wJ3/K50uL95F/5MoQWOZ/UV+xLLlJzivuzhhkVPj2sFk4N42dcbtiHhgpeYwnR0jATOhcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741901805; c=relaxed/simple;
-	bh=Eqs8bJGp0lv40lbgYhiTihiy4TfvnfAjF88TY/Ar27w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BInFkyqC0OGHbGmjidmb7v7UYYP+okeZDr/xYmFqxfMKz6zSRqk6EFep1ObdtOFH9FMFBqSoMXOzPZBu3q6nQ9tMkallR+nhPbpVVrB28NGZigZD/mVqXfZ0yzUq1hcBqgvAHp/EdN2bYOkblJDePXCsVhq/ug0FNhMu/Y1OYSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fGn7IIyi; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DH6THf019717;
-	Thu, 13 Mar 2025 21:36:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vKC2yzbG9UebsJ1VbEFgVRutkTrHq8RK6afAmCBtcMs=; b=fGn7IIyicUiVyiUr
-	av9A8XC/1OI+OddxR1ryC3iXOVQOOK8Q6XdZlYb5Lwz7aCMmwBwXX/6cCIPgVlsw
-	kGHg0ynn4vxD/cyw67i3E9OBFTb2WyVHdoSADkW4PT04yvSML5SEbuabWC8JvRA0
-	u8zTupEUcdK1OrieAbu83Ke/hE79UO4GLKbl9vC9e7yJU2H9xzT9Z9O/4ldKvJLa
-	Fjrm4g1tXYL8Fjtyfidj3tBXs+ZL+923mxQ0/DhGPoeJA+zzmHL1ArfR8aaw9MZz
-	HNH85ZlOeFYcVdzOPeKjwX9cvtn3S7I4x29qgri78yaoHVuE85K000NQ7Gkuc2+e
-	vgyjXg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45bts0j9er-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 21:36:16 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52DLaF6Q009365
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 21:36:15 GMT
-Received: from [10.46.162.103] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
- 2025 14:36:14 -0700
-Message-ID: <4c83f8c3-6cfd-81a0-afeb-3e8854fa1efc@quicinc.com>
-Date: Thu, 13 Mar 2025 14:36:14 -0700
+	s=arc-20240116; t=1741902200; c=relaxed/simple;
+	bh=ivCFiQ+dQHIBFUpp2swawX+0Cf4h9DDtatGLIXCMrNA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=I1rPGPm9J5fHhY3QpLjxE7M7fPfgdMQ56LIgvyZsPThNoSPp7eesuCVcktQptYYsyYhw9UCN/8edarOJmDnYTEy6ArhxEYmgwOEOtB3Oo0jkGnKEp0oWXoz3MHmuogp2rb/SYziETeLlJhveKUMoWXMld8LCHbel4QidQz0wRT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ozaDjLYc; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac25313ea37so290824466b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:43:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741902195; x=1742506995; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FOcBiTkaVE0xIjFJjpzTTcyKlsXtOuX4g6SaNnhXi50=;
+        b=ozaDjLYcxt9HJ3EzxtUOMNleMx/uaBeB5qTbXepMhLNTJXb6+BCq4h6PdNjOQJGwdD
+         zzU5M0OBl+sSiFnQo6D8FWkcnFDxwxt3XnjCAryxbfUt+wQLAGiUQXPyHllfUaTrNrH9
+         5hOyteDgtfwqAawxbAIhMxBmJ2o3VhsAZUYcXlJkyvexKeb+lh1vUBexFwnt+tLXgV/6
+         y2186nYAE1Kzw9tA0wgA2sHf66WPk4Q77drHHX+PX6UsL3aUJUAK/hOiN2qWVdLri0kP
+         8jRKSL4RlkeghTUCtJcxxH9BWdQzcNROg7m1gY81EmN8nomOy80NJ7SGm4G5Ckk2498M
+         Ck+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741902195; x=1742506995;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FOcBiTkaVE0xIjFJjpzTTcyKlsXtOuX4g6SaNnhXi50=;
+        b=cO6tQpzELIabLctOrx16w/7PT9X/z+2ensiqZoNCpKL+8A/hd+aER2zYxnc0bcCGRh
+         r0XTtYx3CZQC7s1hga2MCwVwVsMh9UWM27cKz4vcrtFUQHkLpeFM6q/wRNSoixtQmtjB
+         3aPKpb+slwe9OM9ocfG/Ykpz0rDoNEdnxRvkG5Jk8BxUY794u3bG10P6gud/Xy0XBEO8
+         wI0cr+t6FmFkYX7wFBE+QzvT85Yya2d5Sf+TfnQZXBqCBmjkIVt1b5uC+I0xTO2h1JJo
+         4U4ZyULAdLhjdAC+9VdhKXUwd/kW9R5aSQ42FITEo9L66W9RnYzEiZbwb24MjxTfO7dA
+         HxRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpB8m2paJ7Z/rNDpavoUqkNulLN0CjMJOj10NtPFy0XvG+z+gqkvRuGzTlmjPbjh3S1OReIGqnpbfBe58=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN0uLBeQQy45liKlse4l4upiVl8o01bzUu/+74iEV2i3YoYURs
+	5FpnzeQfKahq9uzod4OlsatICr/q76kihCKb7cLWtyo6D2CFj0+KnQO3zI/H8cc=
+X-Gm-Gg: ASbGnctFJMlwoTnd3H6uBvJkL3YkhdHXScNRZgQ+IQFkWRx3foYbmyRiOQND39LFJDm
+	gM3hCWqZW63od/oARFtpTKGyd7B/MZP/ypqIfVUrj1kO1Rl+Uuw0JObeC4YsmBjinnU34auxXH/
+	2j7CX3hk78Q8HV2ZliNT3hRHBbIZNTAvI7QeXVYfkjWgqQmb3C9HYe7zAzkcGaqGxz+GQtlS6rT
+	8s6e9FwqPSeBf9SQ3EvznNYNGiJgGAXoTe4nYryRChNzaPWfitsmoSLECXEMYfOiKT2ShIIn9ET
+	rDPlYSrvDyFLfLRSnqu3byFdlwQlF04zqpeaDQcg+kQRaH4AGZuwp5J1itNTKq00lm2QLT3oUYt
+	k0bm6hJLFGHJugy98sWP7VtYQ8itH1VaPCZNbCmsuzf0aiZ7zHO4x6G9+PYtW8qShdjlQ
+X-Google-Smtp-Source: AGHT+IELOlpPoOFEVK43UMvO2j81qUn9SHxfy1MqgJX+vzyn1bwPLuIJfXz10sGX/px7dyIGukqLlw==
+X-Received: by 2002:a17:907:2ce2:b0:abf:51b7:6071 with SMTP id a640c23a62f3a-ac3301768d7mr9148866b.13.1741902195496;
+        Thu, 13 Mar 2025 14:43:15 -0700 (PDT)
+Received: from [192.168.178.107] (2001-1c06-2302-5600-7555-cca3-bbc4-648b.cable.dynamic.v6.ziggo.nl. [2001:1c06:2302:5600:7555:cca3:bbc4:648b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a489e0sm126938866b.151.2025.03.13.14.43.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 14:43:15 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v5 0/5] Add dt-bindings and dtsi changes for CAMSS on
+ x1e80100 silicon
+Date: Thu, 13 Mar 2025 21:43:12 +0000
+Message-Id: <20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v5-0-846c9a6493a8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v1 1/1] scsi: ufs: core: add device level exception
- support
-Content-Language: en-US
-To: Bart Van Assche <bvanassche@acm.org>, <quic_cang@quicinc.com>,
-        <quic_nitirawa@quicinc.com>, <avri.altman@wdc.com>,
-        <peter.wang@mediatek.com>, <manivannan.sadhasivam@linaro.org>,
-        <minwoo.im@samsung.com>, <adrian.hunter@intel.com>,
-        <martin.petersen@oracle.com>
-CC: <linux-scsi@vger.kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Bean Huo
-	<beanhuo@micron.com>, Ziqi Chen <quic_ziqichen@quicinc.com>,
-        Keoseong Park
-	<keosung.park@samsung.com>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Al Viro
-	<viro@zeniv.linux.org.uk>, Eric Biggers <ebiggers@google.com>,
-        open list
-	<linux-kernel@vger.kernel.org>
-References: <772730b9a036a33bebc27cb854576a012e76ca91.1741282081.git.quic_nguyenb@quicinc.com>
- <41678800-470f-4ea2-802c-f9f4d21817f6@acm.org>
-From: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
-In-Reply-To: <41678800-470f-4ea2-802c-f9f4d21817f6@acm.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Q0afexFiAYp-Gn5hVVujUtAR5GRi8940
-X-Authority-Analysis: v=2.4 cv=DNSP4zNb c=1 sm=1 tr=0 ts=67d34fd0 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=ChCBPZhDfTThoWy9I0sA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: Q0afexFiAYp-Gn5hVVujUtAR5GRi8940
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_10,2025-03-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 phishscore=0 malwarescore=0 mlxlogscore=999
- priorityscore=1501 mlxscore=0 spamscore=0 bulkscore=0 impostorscore=0
- suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130166
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHBR02cC/x2NQQqDMBAAvyJ7dmGTmLb4FfGQmLVdaFPJ2hIQ/
+ 97Q48xh5gDlIqwwdgcU/orKOzfwfQfLI+Q7o6TGYMl6csZhHPAp+VMxc93ReiSHTaddBavhGxk
+ iXMJLFY2ny3odYkwuQAtuhVep/9k0n+cPJW0ouXwAAAA=
+X-Change-ID: 20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-1506f74bbd3a
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>, 
+ Todor Tomov <todor.too@gmail.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-media@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
 
-On 3/13/2025 11:14 AM, Bart Van Assche wrote:
-> On 3/6/25 9:31 AM, Bao D. Nguyen wrote:
->> +What:        /sys/bus/platform/drivers/ufshcd/*/device_lvl_exception
->> +What:        /sys/bus/platform/devices/*.ufs/device_lvl_exception
->> +Date:        March 2025
->> +Contact:    Bao D. Nguyen <quic_nguyenb@quicinc.com>
->> +Description:
->> +        The device_lvl_exception is a counter indicating the number
->> +        of times the device level exceptions have occurred since the
->> +        last time this variable is reset. Read the 
->> device_lvl_exception_id
->> +        sysfs node to know more information about the exception.
->> +        The file is read only.
-> 
-> Shouldn't this sysfs attribute have a "_count" suffix to make it clear
-> that it represents a count?
-Thank you, Bart. I agree. Will make the change.
+v5:
+- Picks up a Fixes: that is a valid precursor for this series - Vlad
+- Applies RB from Vlad
+- Drops "cam" prefix in interconnect names - Krzysztof/Vlad
+- Amends sorting of regs, clocks consistent with recent 8550 - Depeng/Vlad
+- Link to v4: https://lore.kernel.org/r/20250119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v4-0-c2964504131c@linaro.org
 
-> 
-> Additionally, here and below, please change "file" into "attribute".
-> 
->> +What:        /sys/bus/platform/drivers/ufshcd/*/device_lvl_exception_id
->> +What:        /sys/bus/platform/devices/*.ufs/device_lvl_exception_id
->> +Date:        March 2025
->> +Contact:    Bao D. Nguyen <quic_nguyenb@quicinc.com>
->> +Description:
->> +        Reading the device_lvl_exception_id returns the device JEDEC
->> +        standard's qDeviceLevelExceptionID attribute. The definition 
->> of the
->> +        qDeviceLevelExceptionID is the ufs device vendor specific 
->> design.
->> +        Refer to the device manufacturer datasheet for more information
->> +        on the meaning of the qDeviceLevelExceptionID attribute value.
->> +        The file is read only.
-> 
-> I'm not sure it is useful to export vendor-specific information to
-> sysfs.
-Because each ufs vendor defines the data differently according to the 
-device spec, we probably can't have a defined handling on this event in 
-the kernel. For some applications such as automobile, the information is 
-useful. If you have suggestions for the user applications to access this 
-data, I am all ears.
+v4:
+- Applies RB from Konrad
+- Adds the second CCI I2C bus to CCI commit log description.
+  I previously considered leaving out the always on pins but, decided
+  to include them in the end and forgot to align the commit log.
+- Alphabetises the camcc.h included in the dtsi. - Vlad
+- Link to v3: https://lore.kernel.org/r/20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-0-cb66d55d20cc@linaro.org
 
-> 
->> diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
->> index 90b5ab6..0248288a 100644
->> --- a/drivers/ufs/core/ufs-sysfs.c
->> +++ b/drivers/ufs/core/ufs-sysfs.c
->> @@ -466,6 +466,56 @@ static ssize_t critical_health_show(struct device 
->> *dev,
->>       return sysfs_emit(buf, "%d\n", hba->critical_health_count);
->>   }
->> +static ssize_t device_lvl_exception_show(struct device *dev,
->> +                     struct device_attribute *attr,
->> +                     char *buf)
->> +{
->> +    struct ufs_hba *hba = dev_get_drvdata(dev);
->> +
->> +    if (hba->dev_info.wspecversion < 0x410)
->> +        return -EOPNOTSUPP;
->> +
->> +    return sysfs_emit(buf, "%u\n", hba->dev_lvl_exception_count);
->> +}
-> 
-> The preferred approach for sysfs attributes that are not supported is to 
-> make these invisible rather than returning an error code.I was thinking it would be useful for the user application to know the 
-ufs device does not support this feature, so that it would not keep 
-trying to read the data.
+v3:
+- Fixes ordering of headers in dtsi - Vlad
+- Changes camcc to always on - Vlad
+- Applies RB as indicated - Krzysztof, Konrad
+- Link to v2: https://lore.kernel.org/r/20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-0-06fdd5a7d5bb@linaro.org
 
-> 
->> +static ssize_t device_lvl_exception_id_show(struct device *dev,
->> +                        struct device_attribute *attr,
->> +                        char *buf)
->> +{
->> +    struct ufs_hba *hba = dev_get_drvdata(dev);
->> +    u64 exception_id;
->> +    int err;
->> +
->> +    ufshcd_rpm_get_sync(hba);
->> +    err = ufshcd_read_device_lvl_exception_id(hba, &exception_id);
->> +    ufshcd_rpm_put_sync(hba);
->> +
->> +    if (err)
->> +        return err;
->> +
->> +    hba->dev_lvl_exception_id = exception_id;
->> +    return sysfs_emit(buf, "%llu\n", exception_id);
->> +}
-> 
-> Just like device_lvl_exception, this attribute shouldn't be visible if
-> device level exceptions are not supported.
-Same reasoning, to inform the user application the feature is not 
-supported so that it does not keep trying.
+v2:
 
-> 
->> +    if (status & hba->ee_drv_mask & MASK_EE_DEV_LVL_EXCEPTION) {
->> +        hba->dev_lvl_exception_count++;
->> +        sysfs_notify(&hba->dev->kobj, NULL, "device_lvl_exception");
->> +    }
-> 
-> sysfs_notify() may sleep and hence must not be called from an interrupt
-> handler.
-I will look into this.
+I've gone through each comment and implemented each suggestion since IMO
+they were all good/correct comments.
 
-Thanks, Bao
+Detail:
 
-> 
-> Thanks,
-> 
-> Bart.
+- Moves x1e80100 camcc to its own yaml - Krzysztof
+- csid_wrapper comes first because it is the most relevant
+  register set - configuring all CSID blocks subordinate to it - bod, Krzysztof
+- Fixes missing commit log - Krz
+- Updates to latest format established @ sc7280 - bod
+- Includes CSID lite which I forgot to add @ v1 - Konrad, bod
+- Replaces static ICC parameters with defines - Konrad
+- Drops newlines between x and x-name - Konrad
+- Drops redundant iommu extents - Konrad
+- Leaves CAMERA_AHB_CLK as-is - Kronrad, Dmitry
+  Link: https://lore.kernel.org/r/3f1a960f-062e-4c29-ae7d-126192f35a8b@oss.qualcomm.com
+- Interrupt EDGE_RISING - Vladimir
+- Implements suggested regulator names pending refactor to PHY API - Vladimir
+- Drop slow_ahb_src clock - Vladimir
+
+Link to v1:
+https://lore.kernel.org/r/20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org
+
+Working tree:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/arm-laptop/wip/x1e80100-6.13-rc3
+
+v1:
+
+This series adds dt-bindings and dtsi for CAMSS on x1e80100.
+
+The primary difference between x1e80100 and other platforms is a new VFE
+and CSID pair at version 680.
+
+Some minor driver churn will be required to support outside of the new VFE
+and CSID blocks but nothing too major.
+
+The CAMCC in this silicon requires two, not one power-domain requiring
+either this fix I've proposed here or something similar:
+
+https://lore.kernel.org/linux-arm-msm/bad60452-41b3-42fb-acba-5b7226226d2d@linaro.org/T/#t
+
+That doesn't gate adoption of the binding description though.
+
+A working tree in progress can be found here:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/x1e80100-6.12-rc7+camss?ref_type=heads
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (4):
+      dt-bindings: media: Add qcom,x1e80100-camss
+      arm64: dts: qcom: x1e80100: Add CAMCC block definition
+      arm64: dts: qcom: x1e80100: Add CCI definitions
+      arm64: dts: qcom: x1e80100: Add CAMSS block definition
+
+Vladimir Zapolskiy (1):
+      dt-bindings: clock: qcom,x1e80100-camcc: Fix the list of required-opps
+
+ .../bindings/clock/qcom,x1e80100-camcc.yaml        |   9 +-
+ .../bindings/media/qcom,x1e80100-camss.yaml        | 367 +++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 352 ++++++++++++++++++++
+ 3 files changed, 724 insertions(+), 4 deletions(-)
+---
+base-commit: 9fbcd7b32bf7c0a5bda0f22c25df29d00a872017
+change-id: 20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-1506f74bbd3a
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
 
