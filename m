@@ -1,62 +1,53 @@
-Return-Path: <linux-kernel+bounces-559454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEC9DA5F3EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:12:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 586C3A5F3E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:12:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06A0017F99D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:12:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D094017FB25
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B51267726;
-	Thu, 13 Mar 2025 12:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8802676F2;
+	Thu, 13 Mar 2025 12:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KjZHgtMQ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mOfhreln"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26252676E4;
-	Thu, 13 Mar 2025 12:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFB7146585;
+	Thu, 13 Mar 2025 12:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741867844; cv=none; b=WnS9h5bnL9iPvgarxVwU5DGbPc0o8mz10U51CvuA6Ot8HpmmBKeocGxE3pAqUqbbhoA4i/7JxB/BmCQwpht4M2yGa7PaL0LrYV3VhkXTHIkvAWIDZX/ueSGcDkn8gtAE7awm/h58hNnZMmisUES0+Hedfq1R09kpeQEnUMQcM5k=
+	t=1741867842; cv=none; b=euvAa/qDA+kS3aQWVjB2ohOYk0Q1IMAUCwt4SfZVyCI6Efx3nQ0ma+6NvlL5ZHs9FF8Khl8arXYeCyC1YVF5G+aQyx0qrHBpykOLS+z8jZ26Par+g/6iaR/Q6PeBF0zzlu1o36XzR6HuxD/FubRqFcUJ0TIU5l7qYzD89UnXUFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741867844; c=relaxed/simple;
-	bh=9egwuzH1xL76Hz6x87GbA/aHFSCxZ6dXs4aookVRQdw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P2z+wKmW2yYCNOMf6xBT7whBv1GhoGIHXHgayuoishc9Cu9ZXkEBYwJi+MhIsSrGWkK36+v4Yna5FR48Q9RBmfUbaw30d75q6do+fDuKyxK+9Qukz8kIfYe3O1Tdzux0YhDIjlOtlY/r6bU7/Cx1BtruNAMoxoZLqZpW5lsZj+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KjZHgtMQ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D7CAmG019811;
-	Thu, 13 Mar 2025 12:10:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	c7UkRMW05zKg8RDl3mwjjPVBN91r1eiT1QbA7lGZtpA=; b=KjZHgtMQ4FccHN6q
-	cMJ3mkAz/0+eZDAqqFbNquykWNWZuzhDQizsUJPq8sYxzG491d8EBzV0ERnLi+su
-	NZmYf7bDVGjmZGEuZJDP1zathfnmDkP8rcZKXd7Dhd2XVjf2ae2XcH6ApMpT3WG6
-	4vsJUHnK9SKQMQM6FNFTOT3Eruu5bkZWT57lNprYHUPYKHweH5xzVrot+5ayFw6X
-	YYMpRra51u4o5iMe9hpHVPPXlCCjw9zHoKuuvuOTLXNrKYmJ8YbKD9qfqNb+nipL
-	JJ7Gno+rBp66gmXmomgyZrV9lVpo9QbWnPIIFbLi8gFLRN41gERlIsSrEPqVNQ92
-	0wvrzg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45bts0gu45-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 12:10:18 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52DCAHEO015684
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 12:10:17 GMT
-Received: from [10.204.66.137] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
- 2025 05:10:10 -0700
-Message-ID: <d64bf3b3-7c4d-490e-8bd7-1ad889aa7472@quicinc.com>
-Date: Thu, 13 Mar 2025 17:40:07 +0530
+	s=arc-20240116; t=1741867842; c=relaxed/simple;
+	bh=qnEIcK5bdGMZiUamZN93eIPZHXZ0CPbZfkeYMs1VQek=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=QBaLS2SaIxVt+JPuZwnRogTBB45NxKxkTAAcla2m21EwkPKaPmdaf+LiBG8mfrN/bRGcwsaIDO//+C6hAkQcTglNP3EhreQ5aeWMseeYRf8hZyFOufMg+IJ659CbdVx2NtJPXwp5qC8FWqopYqxk48DCBnOQcmMiGsQHk0NqEjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mOfhreln; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741867833; x=1742472633; i=markus.elfring@web.de;
+	bh=yYaVDeP1Xdy/g5FhSwAfNwJXShfkIqshNp0sKl5UzpQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=mOfhreln0augtRuJWChz7sIUVk8cU/rZbtGCClbj7fh3P9V+BR11kvUATPHin5sp
+	 Ed8T6Wplv4nHRNOmDVSjajWadXQOvlj4uHqLLMZPqgLYD2JITyxY/jAi5ebt/LPHc
+	 C8JcMNxsjUwVesFxfI2oZkwd9/E14HsCLHst1/udlw2Pkc6E85S+6DAnjVorVRpz0
+	 WWvReebrr1uiSvovp0gGwrZGf/4/5KnCHjeuZhusLmI+jFtCph+KZkfZ9Tpp9a3rL
+	 C1bR7HR6WfpOuw6dgQM+kVP7f7O67PQtJt7bpJpt9v41ks/6eE2cjcJgtJkaunsgL
+	 xaxAhQhDnWR/yd2jlw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.2]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MwR05-1t34iD3k4j-00v5D5; Thu, 13
+ Mar 2025 13:10:32 +0100
+Message-ID: <2e9ae1d6-4bbb-470f-957f-bb6ea2e0829e@web.de>
+Date: Thu, 13 Mar 2025 13:10:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,182 +55,188 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/10] arm64: dts: qcom: sa8775p-ride: add anx7625 DSI
- to DP bridge nodes
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <robdclark@gmail.com>,
-        <dmitry.baryshkov@linaro.org>, <sean@poorly.run>,
-        <marijn.suijten@somainline.org>, <andersson@kernel.org>,
-        <robh@kernel.org>, <robh+dt@kernel.org>, <krzk+dt@kernel.org>,
-        <konradybcio@kernel.org>, <conor+dt@kernel.org>,
-        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
-        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
-        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <quic_abhinavk@quicinc.com>, <quic_rajeevny@quicinc.com>,
-        <quic_vproddut@quicinc.com>, <quic_jesszhan@quicinc.com>
-References: <20250311122445.3597100-1-quic_amakhija@quicinc.com>
- <20250311122445.3597100-8-quic_amakhija@quicinc.com>
- <20250312-athletic-cockle-of-happiness-e88a3a@krzk-bin>
-Content-Language: en-US
-From: Ayushi Makhija <quic_amakhija@quicinc.com>
-In-Reply-To: <20250312-athletic-cockle-of-happiness-e88a3a@krzk-bin>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 6BtJ98pGmkmWzLj0xA-sndcThuicNPoa
-X-Authority-Analysis: v=2.4 cv=DNSP4zNb c=1 sm=1 tr=0 ts=67d2cb2a cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=UXIAUNObAAAA:8 a=COk6AnOGAAAA:8 a=2y1opo3hKBB_uxp-C3oA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=bFq2RbqkfqsA:10 a=a1s67YnXd6TbAZZNj1wK:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 6BtJ98pGmkmWzLj0xA-sndcThuicNPoa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_06,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 phishscore=0 malwarescore=0 mlxlogscore=999
- priorityscore=1501 mlxscore=0 spamscore=0 bulkscore=0 impostorscore=0
- suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130095
+Content-Language: en-GB
+To: linux-rdma@vger.kernel.org, Cheng Xu <chengyou@linux.alibaba.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Kai Shen <kaishen@linux.alibaba.com>,
+ Leon Romanovsky <leon@kernel.org>, Yang Li <yang.lee@linux.alibaba.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH v2] RDMA/erdma: Fix exception handling in
+ erdma_accept_newconn()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:BiWWEZilTrD/yJJQ5T0c/kPNzZSysh6jFIFCQ76SUBCnSl1vWUr
+ PcN57SAiKOtfCYBqhU4LyXjPxfiI+lOOElhE4unDWJwNKbDC4IK10ct3ZcI81XWbyRZJJOa
+ oh6rSJfnUnOkHZyElh/p7py947uJrDcB8cSgf40XB6ybRfIEXLFtstqot1jkiVcUj/3Ma5u
+ 6y+Ikg6ypUXq5ARq1+Utw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:j7JPxJiDw48=;XfhM9AbsBls2oBkC2Naf0RxiDLP
+ N2QZc1vvEv4SJqZb904UtN8dZ+2jI4Daz5SH4F9OMnnuq2WCyQzklJfIv3GfreD8Yxq7YXSGK
+ RytUdCj16H+i+YmB44KBxKjadoEkEZPRo7M4biRHCT3d+w7uLAz04tYr8o90VW2nOdMHx/uaU
+ MKs7YqWKc4KNjZowFjuT8PKpQd2NjRiDXSike6Kn8lPEfc49g/DOpfkZabOPhpAUGCVUo4zZb
+ qfG/5YEynVeg88b5E/fzx/N9HXrdmn/oDRdTVoNvTn6XQue2yxpZhKYdMTW+FKJzxGSRO8AHV
+ xw8vl1blOakiSibPhwoEHgfnoqeTP8EAKJod/y2z+RCJiobpf3jx4eJchlj6K7ZIlhTPnIKyV
+ GPnwkGva4w36gMLwbPMcmmf6Ulfxb4jL879i3dK7fSV/UxWwep8JqA7wc0vyEhs6cGKZAF/r2
+ OMQSJnaT+SMPRlLes0YhUUzqTfPLCMUDbGfWZwqlWNyYziphgYcQ5XpUPoI6LVDPdrXqUoI56
+ KRqFKsEFtiG/13YTEq+/thzIRZIE0eAH+aGHrQNrK4xLwZRy3pe3YwWIsImG/jK4k5ZxLGk2R
+ VjvNG1bv0CoKRnesrIzhMvbeNn6a2nKVH7MDHZUwzneMtMefiaGwo4Svy5umdzoATp5GE/EEL
+ W17zg931elx9XGMPB9UZsZQ1U678Vir30tMnB8hBPlRghsxtqSGD/DrMJzcnKN05sVtm9FECL
+ ybkYBBnw/+8a1mR5hvX8USsl2VcfXV0Xzz+bShp1XyqHWEkxyhIufMID3SUndbwPjrO1a15Jk
+ IrrxRGrdcpN/aiWB5ZZI5ANZ9I6jz0SvDI+4zYg5Vlrh6M2xz06y+dOaQ5ZbtsVCcoC8a5Wae
+ UkD+fgsSFs0RIXViqIe/RN1PAlSL3bdLZ0Q9G9XLeBzB+s/MpuexenINN5Hv9MpFzGa9OxSHI
+ YgZo2f9FXsaBxVqQuTuM6ZmI4H0Z4yNoXfHrHcJ3tXjaxwQPr6FP7OMQMjfVY350LN9Y/VdZd
+ Y8U7PabL2t8ShSfE5zCkyEdNT4RyIG5vGwIHUjIrJXup+ZMhBDii9GFEdub0ZbujrOb8IK1fq
+ HIyc2iq1jsul1TIlYbNg9k7EQRk+lSA5sJ1ncZ9/Y4vm8kjI2pBCRPuoKSAPXZVnkC5DzsaBF
+ uU513IJi3LuXH4KGW8wX+Ls1TNlCloZijt/VhOUxuVC2REpdRCRwy9B0AuVdJ3SgIHI3SDC8c
+ lSc2KismVtxPz/zNA4WQZKNdHLQBtKKo6s5bm+VnSRuHLTY3+L9otjtIE3IO1ZAXjdgF/Q11c
+ 2yNk/aWQUWYFLGvtiKMC7mx0KrDD7Rea7X1qKnGFWVcAbNrAULO09tUvHNgvsNUi7N/9uhexX
+ ibIh6DS+dkZyciEE6hyhJXmt8hnWBD0/YVb3yIYynTqHvGVAtxPCDz3+tJK3N2Dq9uW+rb95P
+ qlOjW5RSZcBZWqdkdbpqwplzig1SToO1WdVCdOox8ZAbnHarY
 
-On 3/12/2025 5:18 PM, Krzysztof Kozlowski wrote:
-> On Tue, Mar 11, 2025 at 05:54:42PM +0530, Ayushi Makhija wrote:
->> Add anx7625 DSI to DP bridge device nodes.
->>
->> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 208 ++++++++++++++++++++-
->>  1 file changed, 207 insertions(+), 1 deletion(-)
->>
-> 
-> So you just gave up after one comment? Context of every email should be
-> trimmed, so if it is not trimmed means something is still there. I know
-> there are reviewers who respond with huge unrelated context, but that's
-> just disrespectful to our time and don't take it as normal.
-> 
-> <form letter>
-> This is a friendly reminder during the review process.
-> 
-> It seems my or other reviewer's previous comments were not fully
-> addressed. Maybe the feedback got lost between the quotes, maybe you
-> just forgot to apply it. Please go back to the previous discussion and
-> either implement all requested changes or keep discussing them.
-> 
-> Thank you.
-> </form letter>
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 13 Mar 2025 11:44:50 +0100
 
-Hi Krzysztof,
+The label =E2=80=9Cerror=E2=80=9D was used to jump to another pointer chec=
+k despite of
+the detail in the implementation of the function =E2=80=9Cerdma_accept_new=
+conn=E2=80=9D
+that it was determined already that corresponding variables contained
+still null pointers.
 
-Thanks, for the review.
+1. Thus return directly if
+   * the cep state is not the value =E2=80=9CERDMA_EPSTATE_LISTENING=E2=80=
+=9D
+     or
+   * a call of the function =E2=80=9Cerdma_cep_alloc=E2=80=9D failed.
 
-I apologize for any confusion or oversight regarding the recent review comments.
-Thank you for your patience and understanding. I value your time and feedback and will work to improve the review process.
+2. Use more appropriate labels instead.
 
-Below are the comments on the patch 7 and patch 8 of the version 1 of the series, that I have addressed in version 2 of patch 7 of the series.
-Let me know, If I did some mistake or if you have any other suggestions.
+3. Delete two questionable checks.
 
-Comments from Konard:
-
-comment 1
-
-> -	pinctrl-0 = <&qup_i2c18_default>;
-> +	pinctrl-0 = <&qup_i2c18_default>,
-> +			<&io_expander_intr_active>,
-> +			<&io_expander_reset_active>;
-
-Please align the '<'s
-
-comment 2
-
-> +		interrupt-parent = <&tlmm>;
-> +		interrupts = <98 IRQ_TYPE_EDGE_BOTH>;
-
-use interrupts-extended, here and below
-
-These above two comments were from the konard in patch 7 in version 1 of the series.
-I have addressed both the above comments in the version 2 of patch 7 of the series.
+4. Omit extra initialisations (for the variables =E2=80=9Cnew_cep=E2=80=9D=
+, =E2=80=9Cnew_s=E2=80=9D and =E2=80=9Cret=E2=80=9D)
+   which became unnecessary with this refactoring.
 
 
+This issue was detected by using the Coccinelle software.
 
-Comments from Krzysztof:
+Fixes: 920d93eac8b9 ("RDMA/erdma: Add connection management (CM) support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
 
-comment 1
-
-> +
-> +		dsi0_int_pin: gpio2_cfg {
-No underscores, see DTS coding style.
-
-I have corrected the above comment in the version 2 of patch 7 of the series.
-
-comment 2
-
-> +
-> +			anx_bridge_1: anx7625@58 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-In this I have changed the node name as anx_bridge1 : anx7625@58.
-Let me know, if I did some mistake or you have any other suggestion over the node name.
-
-I have took the reference from below:
-linux/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi at 629c635eafbaf18260c8083360745c71674640d2 · torvalds/linux · GitHub
-
-comment 3
-
-> +				enable-gpios = <&io_expander 1 0>;
-> +				reset-gpios = <&io_expander 0 0>;
-Use proper defines.
-
-For this above comment,  I have changed above lines into below lines in patch 7 of version 2 of the series.
-
-> +				enable-gpios = <&io_expander 1 GPIO_ACTIVE_HIGH>;
-> +				reset-gpios = <&io_expander 0 GPIO_ACTIVE_HIGH>;
-
-comment 4
-
-> +
-> +			anx_bridge_2: anx7625@58 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-In this I have changed the node name as anx_bridge2 : anx7625@58.
-Let me know, if I did some mistake or you have any other suggestion over the node name.
-
-I have took the reference from below:
-linux/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi at 629c635eafbaf18260c8083360745c71674640d2 · torvalds/linux · GitHub
-
-comment 5
-
-And as Rob's bot pointed out: insufficient testing. :(
-Please be 100% sure everything is tested before you post new version.
-You shouldn't use reviewers for the job of tools, that's quite waste of
-our time.
-
-Fixed the  above warning from DT checker against DT binding in patch 7 of version 2 of the series.
+See also:
+* https://lore.kernel.org/cocci/167179d0-e1ea-39a8-4143-949ad57294c2@linux=
+.alibaba.com/
+* https://lkml.org/lkml/2023/3/19/191
 
 
-Comments from Dmitry:
-
-comment 1
-
-Missing dp-connector devices. Please add them together with the bridges. 
-
-comment 2
-
-Please squash into the previous patch. It doesn't make a lot of sense separately.
-
-These both above commented from Dmitry I have addressed in the version 2 of patch 7 of the series.
-I have squash patch 8 into patch 7 of version 1 into patch 7 of version 2 of the series.
+V2:
+The change suggestion was rebased on source files of the software =E2=80=
+=9CLinux next-20250313=E2=80=9D.
+A corresponding implementation detail was improved by the commit 834376892=
+49e6a17b25e27712fbee292e42e7855
+("RDMA/erdma: Prevent use-after-free in erdma_accept_newconn()") on 2025-0=
+3-06.
 
 
-Thanks,
-Ayushi
+ drivers/infiniband/hw/erdma/erdma_cm.c | 37 +++++++++++---------------
+ 1 file changed, 16 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/infiniband/hw/erdma/erdma_cm.c b/drivers/infiniband/h=
+w/erdma/erdma_cm.c
+index e0acc185e719..a7a79722e940 100644
+=2D-- a/drivers/infiniband/hw/erdma/erdma_cm.c
++++ b/drivers/infiniband/hw/erdma/erdma_cm.c
+@@ -642,16 +642,16 @@ static int erdma_proc_mpareply(struct erdma_cep *cep=
+)
+ static void erdma_accept_newconn(struct erdma_cep *cep)
+ {
+ 	struct socket *s =3D cep->sock;
+-	struct socket *new_s =3D NULL;
+-	struct erdma_cep *new_cep =3D NULL;
+-	int ret =3D 0;
++	struct socket *new_s;
++	struct erdma_cep *new_cep;
++	int ret;
+
+ 	if (cep->state !=3D ERDMA_EPSTATE_LISTENING)
+-		goto error;
++		return;
+
+ 	new_cep =3D erdma_cep_alloc(cep->dev);
+ 	if (!new_cep)
+-		goto error;
++		return;
+
+ 	/*
+ 	 * 4: Allocate a sufficient number of work elements
+@@ -659,7 +659,7 @@ static void erdma_accept_newconn(struct erdma_cep *cep=
+)
+ 	 * events, MPA header processing + MPA timeout.
+ 	 */
+ 	if (erdma_cm_alloc_work(new_cep, 4) !=3D 0)
+-		goto error;
++		goto put_cep;
+
+ 	/*
+ 	 * Copy saved socket callbacks from listening CEP
+@@ -671,7 +671,7 @@ static void erdma_accept_newconn(struct erdma_cep *cep=
+)
+
+ 	ret =3D kernel_accept(s, &new_s, O_NONBLOCK);
+ 	if (ret !=3D 0)
+-		goto error;
++		goto put_cep;
+
+ 	new_cep->sock =3D new_s;
+ 	erdma_cep_get(new_cep);
+@@ -682,7 +682,7 @@ static void erdma_accept_newconn(struct erdma_cep *cep=
+)
+
+ 	ret =3D erdma_cm_queue_work(new_cep, ERDMA_CM_WORK_MPATIMEOUT);
+ 	if (ret)
+-		goto error;
++		goto disassoc_socket;
+
+ 	new_cep->listen_cep =3D cep;
+ 	erdma_cep_get(cep);
+@@ -696,25 +696,20 @@ static void erdma_accept_newconn(struct erdma_cep *c=
+ep)
+ 			new_cep->listen_cep =3D NULL;
+ 			if (ret) {
+ 				erdma_cep_set_free(new_cep);
+-				goto error;
++				goto disassoc_socket;
+ 			}
+ 		}
+ 		erdma_cep_set_free(new_cep);
+ 	}
+ 	return;
+
+-error:
+-	if (new_cep) {
+-		new_cep->state =3D ERDMA_EPSTATE_CLOSED;
+-		erdma_cancel_mpatimer(new_cep);
+-
+-		erdma_cep_put(new_cep);
+-	}
+-
+-	if (new_s) {
+-		erdma_socket_disassoc(new_s);
+-		sock_release(new_s);
+-	}
++disassoc_socket:
++	erdma_socket_disassoc(new_s);
++	sock_release(new_s);
++	new_cep->state =3D ERDMA_EPSTATE_CLOSED;
++	erdma_cancel_mpatimer(new_cep);
++put_cep:
++	erdma_cep_put(new_cep);
+ }
+
+ static int erdma_newconn_connected(struct erdma_cep *cep)
+=2D-
+2.48.1
+
 
