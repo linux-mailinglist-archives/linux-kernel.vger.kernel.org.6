@@ -1,267 +1,271 @@
-Return-Path: <linux-kernel+bounces-559506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08293A5F4A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:39:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 113C7A5F4B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:41:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340ED17D0C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:39:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9641189FE98
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713112673A4;
-	Thu, 13 Mar 2025 12:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172012673B6;
+	Thu, 13 Mar 2025 12:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="g8/beGCL"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="i2Tjh75b"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2040.outbound.protection.outlook.com [40.107.243.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F5F267393
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741869559; cv=none; b=QDG98k9IpftXF7J0gmnLmKeoiG8APc50vYieKEunCQ+/RkmQ7uUpRapomFe01pRmSj584P0zkv9J+gZwoe6kxWQNMViNAGqOj0U86zGk8WGqFgs9Y75PjjlA9gdU2ed7F7MggWhtaxsYjcy/TwNB3gmSNZiw2tTbskz37cCCmbQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741869559; c=relaxed/simple;
-	bh=cg5D6pfaTmMxWwYRdSc3ve1jzhcFg1ZIMZvTd79kFXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FZdzRjksqxBEedp7FBh6RskhJtD2Pbyy3xgXUCcDAscKyWcmZanEg6YlQvsktuAUAUVSr2kjtKKxzd2b58uPABh/w7HWzwqv6Isx2Hrwk9F/r0C9TWae6NlcsnLwqza193+Pt2c8s9ubgdGFtI3gq0Uc+HGnt8WzfoQNDK68ofc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=g8/beGCL; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso8147715e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 05:39:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1741869556; x=1742474356; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xSlQ1L6rFi2oeV1zF6QF9pposhG4AHSuAju9zq00g0c=;
-        b=g8/beGCLOIwMbAr2nOkT6riGp9wK5SU+DNXVeYT8uNdesrrwWIU5ahZ6rcrcSpz+xi
-         fouAPAFJKfZxZqeyMRMDQAdFXtxnw0fjXVc0fLArJTBF0RK+C6S8o4a0mnCbf2/cYdJP
-         qIk7jOORmsHdORaeoK4TZvXgSElkeq1sN2h21She9BJLs32XBBVVWDcSja/wwO20pn0x
-         5vFZ+tsoYK2IiNObKtBp4hV2sAnNGqf0FQtagqEjIAaplToKtn+1iCL+vvUocrICMasP
-         7z7xUfI2deJU0YW7K9/Ls2Q9a6FE+3nF1vGOM+tGxt/5u/k1KH1N7YqiMwYLTSnEhUvP
-         k0EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741869556; x=1742474356;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xSlQ1L6rFi2oeV1zF6QF9pposhG4AHSuAju9zq00g0c=;
-        b=X3F9Ht4XwgHhzZEBALS0zKBNnhmWP7OO5whpnPT8uimxjP9dekROyXa4S0fT1rT6ME
-         yA3kA/HfAbH6I11qYY7sWeIBrUqR5kGjQdDAdG2mwoMN7dhw77ZKsUCN0dvBJgUXCB8O
-         dvdv2Bwd15s0lmVMXOw6vE/URPKEOxUcHONKJf4PfohPZgSLRGsCoSiwwn/hIsKmBx+q
-         wpymM0gprpfzUnf7CLi2Y7jwAnfvSzzyelmJmEIykdua1EiwEzdNPGUk4KLgec+1YcJH
-         iMWbU5zulIH3yXffphDPBHDqKzB6Ez/3ImVGZbJn15JNim9I6bOShGgg1tYrrTeeeLhJ
-         waSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEzoda4aSfk1RchHPyAVIOSi0kqyJcqlbyA83lJSiApFNrmnKtVvSO8O4aDKmb8tcoiRuNlO5nybYvXJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw16ynFixBjeKp4gzQpGO/EN1l+629qksEjwduXrTeWy1dXkq+/
-	agfHoxJY/v9rSvXhRrwwytXAffurBYIEbeKEaV8T+W8TgS5kU1kw7qBZVNjKLCg=
-X-Gm-Gg: ASbGncuDHfnkPb6BkOJFsJ+ddbi2RR9BIsT/iGOqF+YKs5vA7NnkODmchR7j7jxLDg7
-	X16OH6oiv72nlXfLYBc+wv0SyyaSP/vZVbVl6tqKQb5wx86I5ykhNAyUiJufhsujTTz55W+wPne
-	7LHkDtn3tq0ViDACQQF/nG9Gl41iwJShhu2ysv6CWYHkbqK+J0+lCnu9Rp3CrxwY99LzRhGktsO
-	mzjIzvvfb8f4t0sdGcl02c5MUvd91W0GVH1ou67Fe81jq6kT0A4+wJx5/RwPgjEaM9WAUwikasP
-	kBZ4xSXRszCBonzZjXQ7wqiAw4gnFTM22XNizpjoBHc=
-X-Google-Smtp-Source: AGHT+IHljsBKLiMSwe9a9spi/guXRSlSUeFAziwYEZ2f83TIkAwW439SP28/QrmHbhabYpknI9/fAQ==
-X-Received: by 2002:a5d:64ac:0:b0:38d:dfb8:3679 with SMTP id ffacd0b85a97d-39132d228c5mr22022486f8f.17.1741869556082;
-        Thu, 13 Mar 2025 05:39:16 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200::59a5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c7df33aasm1978419f8f.2.2025.03.13.05.39.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 05:39:15 -0700 (PDT)
-Date: Thu, 13 Mar 2025 13:39:14 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH v3 02/17] riscv: sbi: add FWFT extension interface
-Message-ID: <20250313-5c22df0c08337905367fa125@orel>
-References: <20250310151229.2365992-1-cleger@rivosinc.com>
- <20250310151229.2365992-3-cleger@rivosinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7470E78F59;
+	Thu, 13 Mar 2025 12:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741869679; cv=fail; b=nPpbqGHsuA8m83EITViBj9b+W5dJsDz047tBHxDM839EG+j9HIq8LjS97wpw3doFeDjj7XGqR5C1EeWAvXqHsoyQONsg34gczuMOM70wyzlDHzA23DB3Bfhg/X5YbtYN+WYxx7FLz5WndHbA+H5CLKoKWqkV+5wIU6nTY/Bsn08=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741869679; c=relaxed/simple;
+	bh=OHnFG+L5al8IDck31Niu1rdsUwTD/LhTuNz+XRTFDGA=;
+	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=bE56yqaVwukn4rFcWUqXxGoLDfYxwQ8MgyfUycVFckehqMjcpSoXKahVLSnlDNWXpPOgaGfFNacchLDCzsJuSMpXuFcZYhFkOwHPnAOClDNPr9kXX3u8BX4LLpTtjhDB7Pq3KxWiGrfmPKnlc+Fbp9oLZBF/XulkXDN3rmOWTbc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=i2Tjh75b; arc=fail smtp.client-ip=40.107.243.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ysMr2l0CidTThpG8kV8XfceelxEXquQ0GlUqbvYZkJI0EwmJoAnVd+2k30uLS91CYb1bTmJqqmYLoNLnNzfhm2iX1zfYyLKtUPR+IHS8l+6FvF6Bfp2qDWEjUGoOF/ZrZa4Lelihp3Fa1jL4wUgkOYtqb+qL5rRWXPcP5QC3prjxvdTI3q0PNDY1thb08Jcjoja/l1k/B5d7ueUvfHkoO/IT74n89vh6ziyrsoJDdrRx8Qex2Mslh6tMxojtU5AaNAmYP3IfxHvH3y5Jt6+FWobfPEgNoczmeObqCawmyiwcsTPvvb9SnL3UDNa49srf2d+UwQ6r/1oz76CLarQAew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IpGpZWwE6ClOscUad3ws4bxVL5Xn9rIYumTsmKdm3Ws=;
+ b=HxhweIGGVgBDezpmsy2PutCvi9AR2WYc32Ww5pF0ytJIn6CZuKIz+1GjuZ71BUH6Pkey7JZBRE2dpD/kIH63OOXKqmTFiF1cxOPHH+hIaS5iPpj95mWYoi7+BcGgPbldAxFcqKlZl+1jWATYnSWzCk8Dv5VHMymYXWvzLFR4/ENd75sSo7ZpEO4gNQrLVFEObcXr166wYsHgeAxWuszmBNibSgMXTT/On3TufM0ULatsiXVsLXGVbl+vUvufqaEc6WJmsT2MH8FD/fXWuLvJvrrwD43zWXNvPH9FspBR7askEFfOEQdiezSQ5QZt08q0hVTqQonV+K3z35Z/4gxYjg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IpGpZWwE6ClOscUad3ws4bxVL5Xn9rIYumTsmKdm3Ws=;
+ b=i2Tjh75bVT4D611MIN+5kvduYx9VS62sIW23ZPx8TpnvQA/ZEFTI14nhDQ25VU6wrKFeKEdE0cdEzUAevItwU18P93iALv2D9BQ+vyT36Gru9uReJrWEqNF5PcAkwNzRJ4zlpF/Nm8hpIBoMJihKLIJZIvWfPMIYnxW+gjhPVcH3ozJlw4cXVxnoz2VHQt6J2+JWmQz+nRXb/8JO8hRjRc89k99M8VBs8NQUDEquD2J+430BXSVZjFlApGB58ajKKR3X6BrmvKYKishWmMazBUQO7sh4s/uVkEwiptIONmJE9HIHwClTIiOkz/QqYZNq3ypqyvnl6IhGqNMIMgqnkA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by IA0PR12MB8086.namprd12.prod.outlook.com (2603:10b6:208:403::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Thu, 13 Mar
+ 2025 12:41:14 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%6]) with mapi id 15.20.8511.026; Thu, 13 Mar 2025
+ 12:41:14 +0000
+From: Alexandre Courbot <acourbot@nvidia.com>
+Date: Thu, 13 Mar 2025 21:40:59 +0900
+Subject: [PATCH] rust/revocable: add try_with() convenience method
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250313-try_with-v1-1-adcae7ed98a9@nvidia.com>
+X-B4-Tracking: v=1; b=H4sIAFrS0mcC/23MSw7CIBSF4a00dyyGW1JTHLkP0xjkIXcgGCBo0
+ 7B3sWOH/8nJt0G2iWyG87BBspUyxdADDwNor8LDMjK9YeTjxAUKVtJ6e1PxTGvpJBoj7icO/f5
+ K1tFnp65Lb0+5xLTucsXf+gepyJBN0vFZ6ZlzNJdQyZA66viEpbX2BRH1fn6hAAAA
+X-Change-ID: 20250313-try_with-cc9f91dd3b60
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ Danilo Krummrich <dakr@kernel.org>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: TY2PR06CA0048.apcprd06.prod.outlook.com
+ (2603:1096:404:2e::36) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250310151229.2365992-3-cleger@rivosinc.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|IA0PR12MB8086:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0b75059e-e83a-481c-93fd-08dd622c578f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|10070799003|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cy9QbmJldkt1SXN5d1FLeUlGVXRhWVRHUWFCMWRiVks4VFFNNlpyNHgvaFRx?=
+ =?utf-8?B?SkJaV2UvMXNPdnRTWUJQaXVpRCtBTC9VMWVSUjF5YnNyNDVXMllIZnA4ZmtK?=
+ =?utf-8?B?OEY1MjVPbW10UUZxNzZCaW5uamtVNFpyTDE4YlRyc3BITWhGSjJKQmkveWFH?=
+ =?utf-8?B?K1loTXVVWENOMUc4SUxTMisyZmpFc3UvWTNDYlVxMi9FQXI2S2pBTHNBdnYz?=
+ =?utf-8?B?QTUvcUx6ZzlGWjhmaWYrUmFvS2hMa1RjcG9KSHFXQzNXejJvOTZhMzcyelpF?=
+ =?utf-8?B?dVMwZ2ZGY21ZQjhCWTNPVFBvbWtZNlVTMU44emhWNHpEa200MDNoeXBNbEpi?=
+ =?utf-8?B?akg4OWhvZEY5Uk5FaHovVU5JL3k2cjJVWGN6NVQwN1RuTUhBL2I5OG9zUFdv?=
+ =?utf-8?B?U1djb01UQ2p3RkNtZ1RXSkk0Nk1wNjZqbXliVHk4cW9qWHFVanRhTWVKR1pk?=
+ =?utf-8?B?NE1FeFhKYTFGTmN6MVZyZmxKQTdIWVJrR2Rka3hySjVvMnV0VDVDNVdoTGtK?=
+ =?utf-8?B?d3d6emkzZVFlcUgrN1JUNGI1UE1RTzNGL3lxb1JiMFZtdTE2U2pqUjRzcDdH?=
+ =?utf-8?B?dFRHVC8xMW9idGFhMXRwRFdQU3Q1akFTU0E1Y0dncGVuVnJFVW5CcFhldDE1?=
+ =?utf-8?B?M3hWZGdMclJ2MWl1dllTU2w5ck1wR2dUVXF2Mm9Kc0dySWNtMUlQOE9ZZ0l1?=
+ =?utf-8?B?RGxYN1h4TVp2cXJ5Q1hhU3cwc1crL3NwSEtBUjBMdVlaQjdvRFNPUW9RQk9s?=
+ =?utf-8?B?Z3VMN3BtL0VsdzFjN2s2VEpIL05EOG9kQVFpVmwzeTd6Zms3cEg0UDZZeWw4?=
+ =?utf-8?B?WlFWa3pJQnQyeEhNamFQa1FKNDJXd21DUllyU29ud01wQjNNVnBPUUhBSHhi?=
+ =?utf-8?B?VTJZWEVkOU1SbEJxVUlPOFUvcVlEdmdabENqUWlkaXM2WFVLcU5QWDRkL05X?=
+ =?utf-8?B?KzM4SW9PUGFtbVQ2NDVEWUFzdUN6V2crUG1lZERSaFZrdVdvK0ZBQmpQL3k3?=
+ =?utf-8?B?MWJNWnFodTJscGxncW5KRHVoZ0E2eWRqYW5ycDlkb21mTXh3OVNrZjhZbHZY?=
+ =?utf-8?B?YmVxTFhyRFF2SlB4TTlZR2srb1N2ejRVWWE3Z3dQaFoxY0NOdnhIUUpBSFJM?=
+ =?utf-8?B?eVJ2L2xRdzNxVFdNeWxWK0NqTDR4OXdZeW5NVEtXYnJTMiswL08rZC9KUHNv?=
+ =?utf-8?B?WFZ1b3Bla0ltaVFtMC9sK2pyNU5tSmllVVB5ejMvMFQveVVIa2J1bjRRQ3hQ?=
+ =?utf-8?B?MnpHYmhqUFhSdDNzZjdRZitsbDFTOG5ZMlpSa2JJUzVYUnpJWlJLSWlWL0pk?=
+ =?utf-8?B?WEpIRE05eTlyQVVOTEIyOHhuNDNCYzgxTzdRWDFMWTZ3NHVVaks0RlFwek03?=
+ =?utf-8?B?OFYzdEZ6VEMxaFBFWTA5c2JhSk1vTkpZTm1HdStFaTdCVElhYmdZWkVTK041?=
+ =?utf-8?B?ZE9MdmpBM21hU0JUSDU5YzlyQVpzK1QrN1ppWXUvN0s0aFYyclMzVTFWV3BZ?=
+ =?utf-8?B?WDJoQnRWejFNR3ZLY09mZTB4cElscEFWODMzclZ1Zk5aTXlqNTNCR015NmQw?=
+ =?utf-8?B?eXE2V0ZKVmRKN3FPNG8wMERNUSt6VXJILzV6RkIyd3pCbUcvKytRNlJQZXU3?=
+ =?utf-8?B?TkdTU2lheFl1cC9UQkxpVGtqNjVHdVFwYitxTm52enJ0blZzbWRsZ1NpOUM1?=
+ =?utf-8?B?SUl2WUswWXd2WUFicTJQODA0V1JHMlh5cUtrclY4dE4xRVRaazNGUTViYW1O?=
+ =?utf-8?B?cXlYb2FZMm9CMTNEL3I0ZXRTQTdxQU4ya1ZtdWwxWC9abkVzKzRTdU1EZHY2?=
+ =?utf-8?B?Vi9NajN0Wkg4QlduT2xFamJZcXNYb0hJYjlTdDhqcENlRG5tL25sRE5MOHB2?=
+ =?utf-8?B?ZDlwMnhicnFNZzZyUG1zMHVXcUE2NVg5Q2F2ZFFqV2Y1NzlIQWtZRFY4a3BV?=
+ =?utf-8?Q?lAQEF5prIKY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(10070799003)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZG9GcFQ1NnNFZndWK3JoTjBoYlFVNGZuWkx1eWt1ZHdxWTJkMHkzUUVlaE1O?=
+ =?utf-8?B?K1FUN0M1YUhkMzZUbGNreHpONFRjTmkyc3liaGl2UEVaNW5jdmxHSTlPbzhM?=
+ =?utf-8?B?OTc1Z0JNMXo3MWgrSHFMbzdLSFVOMEorMTlvcDVoS2JjcEVuaHB4QWgwckpa?=
+ =?utf-8?B?RTBmZ0czOGVkRStvbkMrdnA4b0w1bVNJYW4wM2xOMzVLSGlKTnBPT3NubVJ4?=
+ =?utf-8?B?dWQxUFRodStWK2VRbzhjYmdZRlJHckNNd2dva0RlWGI1ZXJTbHQwZm1tQUk3?=
+ =?utf-8?B?bkNVbFVaeVdkUlpoeHFxdXZFejlmckxvMTFPQ1NhWHZHbmxCcWFXVUdMR3lw?=
+ =?utf-8?B?QnRNaEp0T1I4SDQ5Vi9NdW1UQ0RqY3d3MG1WQjhjWDF6WVNNNDR4amFXTi9q?=
+ =?utf-8?B?anhXUXV5aWc0bEUxZ3k2TmkwSkVubXl1WmU3U2VaMTBiQzVSY0QxQXlCRmIr?=
+ =?utf-8?B?WklyVU1Oa0FneTdRVnVMbm5sOURTVC85V3dDOTJyeXRUTHFZdUtLMHFjdzd5?=
+ =?utf-8?B?S3R0dGtjeFlmUmlxNHcrR3EwTk91bzZEODJqLzQ5NjVIMUFlcEZUZEl6T1d3?=
+ =?utf-8?B?NmpjaTJmMUw3cjlrNmdyeUF4WUF6bGZxRkRlckx4L0dwUVQ3VVVXeW0vajdK?=
+ =?utf-8?B?bDI1RUowMHJCZFR0OW1MQzJoM1NKRXFkUkhIbHloL1ZkeDVXSWc5a0lrZEFE?=
+ =?utf-8?B?djljOFdKK280MXBTT0R2c2UrMWJ6RFpabWVEQnV5Z3FwcXFYVjFwWi9SdEY0?=
+ =?utf-8?B?T2FoclBKZ1RaMk5UYTd0dm14eUR6WWV1SFFLNlYveThoODlJTXdLTWs0U0ls?=
+ =?utf-8?B?aEtzNHlsaU01MlR2QWV1cThTOWFXblgzMEJKMFVRY3YyaXEvWGNvQkM4Uk55?=
+ =?utf-8?B?L01kK1c4L2FPNUUzdG8wT0tjcVRsQTQ2dDFiYVI5U1dvamU0M0JIQkJKUDBE?=
+ =?utf-8?B?ZGdLbHVmSU5NY1lYN2oxbTZLc04vbnI4Y1pVd1hlTHlGak9kcG84TDF5U1pH?=
+ =?utf-8?B?ckhkSXRvNUtzeWYvOWcwOGRiMEkwRi91aHJtYmx6eTJ4UzcvWXMvVFpnRXR3?=
+ =?utf-8?B?djUxcGcrOUZDMFlqaEFjVUJ6RVNmL2ROQlBHd0k5b2VmUE16V2Q5MGZhdWlU?=
+ =?utf-8?B?SnBSUUZnTlpwa2s5VFA1elZlN0h2S0lGeTd3VENUNUtJWHV1QjMvLzl0UGZu?=
+ =?utf-8?B?UU45MUpqejliRk1qNTN2RWNwUVlZTk5keTVob3pzV3lNelAwUzJJT1V0NUFI?=
+ =?utf-8?B?UW9hNjliK1RVeGVaSW5sTTVnVFNiVkhQK3ZhbGtkd1ExL0xreXBsOXVsTG5Z?=
+ =?utf-8?B?U1pXUTEyUlk4UENyS043ZmQzZHZJRVhCbFl5OG5SelNFUXEyMmNITHZzZGtq?=
+ =?utf-8?B?ZDJBSzhnK21aZFRmV2ZTUWt6Y2tUSE8wd1pRTEsyY0JjY1BDcWJ3WlpLS3JK?=
+ =?utf-8?B?bTJzd3liVDB3UExYeDRMWnBSdWFNVmJvZ296RitJTEFtUTJHb2FWNmxLU3Rq?=
+ =?utf-8?B?L3JMRllRMWxlbm9kZmd1RzBMbW55c1ZSR29jUDNMVEcrcFVyUHlYdDlUZG9j?=
+ =?utf-8?B?Z0N0emxWbm9wbEg1RFZhaFpQTEpjS0xEQm92WkIwUjRNdHNKMC9WWEpVcW5z?=
+ =?utf-8?B?QXM5ZGhJTGJVLzlZdUEzTHljU2o2WmJnY1pTN05YWVZBSExHOWw0czRKMGxL?=
+ =?utf-8?B?b1ltdkNSdlAveDhOcTdHWCtEZUdzUmp1QnBCYVlTSUhVaExLMktTUkZmbUpO?=
+ =?utf-8?B?QlFxVXp3dTRad0hOeHZKUW52TWhRY05YcFVRQmk1THFESUFIZWVaOG44QVRw?=
+ =?utf-8?B?R2RQSXVlTzVDSm1tUExZSmxtVUZiUTlEZ1lsdWZnVjhXR29wOWtKS0d2T3pr?=
+ =?utf-8?B?K2hmT3pCRVczVGY5bTIweUNaUVZGb1c5NmUvUUR5RjZDaUYvZURtalN5Q1c0?=
+ =?utf-8?B?bTJjZExQWFp5YUpIMVBnYlJZN2YrVzEvY2RkSTk3cUdjc2k5VU5vVlRoM3JB?=
+ =?utf-8?B?K3BWbVMyeTJxR2RUVVRkcUVZZzZKQXpOek9IRUVNOXVSQUxzWXB0cnVKZmh3?=
+ =?utf-8?B?eE44SUpsK2dJYUxFTjZqZ0FMWVo1YW9vT0wzcFl2dm1wTzYvSkU0Qllpc2lh?=
+ =?utf-8?B?VlpDZmlHZUFHR2FtNzhTdGw3WHNYM3Vpby8yMXpRSzVhWDlkaUVHcnpEUFRk?=
+ =?utf-8?Q?RY6wEo+LH0LKI6thQNQda7NtMDYwGes0vDYDWmtWdhtb?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b75059e-e83a-481c-93fd-08dd622c578f
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 12:41:14.4769
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tIRMMjkm3cdBXLmXzEkbTkDfGDxaaF9iQ/wOtkgGAcod+PJ80QOS5nTic1fAu9uKdp/Zr296lfR+C7BLOczJCw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8086
 
-On Mon, Mar 10, 2025 at 04:12:09PM +0100, Clément Léger wrote:
-> This SBI extensions enables supervisor mode to control feature that are
-> under M-mode control (For instance, Svadu menvcfg ADUE bit, Ssdbltrp
-> DTE, etc).
-> 
-> Signed-off-by: Clément Léger <cleger@rivosinc.com>
-> ---
->  arch/riscv/include/asm/sbi.h |  5 ++
->  arch/riscv/kernel/sbi.c      | 97 ++++++++++++++++++++++++++++++++++++
->  2 files changed, 102 insertions(+)
-> 
-> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-> index bb077d0c912f..fc87c609c11a 100644
-> --- a/arch/riscv/include/asm/sbi.h
-> +++ b/arch/riscv/include/asm/sbi.h
-> @@ -503,6 +503,11 @@ int sbi_remote_hfence_vvma_asid(const struct cpumask *cpu_mask,
->  				unsigned long asid);
->  long sbi_probe_extension(int ext);
->  
-> +int sbi_fwft_all_cpus_set(u32 feature, unsigned long value, unsigned long flags,
-> +			  bool revert_on_failure);
-> +int sbi_fwft_get(u32 feature, unsigned long *value);
-> +int sbi_fwft_set(u32 feature, unsigned long value, unsigned long flags);
-> +
->  /* Check if current SBI specification version is 0.1 or not */
->  static inline int sbi_spec_is_0_1(void)
->  {
-> diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
-> index 1989b8cade1b..256910db1307 100644
-> --- a/arch/riscv/kernel/sbi.c
-> +++ b/arch/riscv/kernel/sbi.c
-> @@ -299,6 +299,103 @@ static int __sbi_rfence_v02(int fid, const struct cpumask *cpu_mask,
->  	return 0;
->  }
->  
-> +int sbi_fwft_get(u32 feature, unsigned long *value)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +/**
-> + * sbi_fwft_set() - Set a feature on all online cpus
+Revocable::try_access() returns a guard through which the wrapped object
+can be accessed. Code that can sleep is not allowed while the guard is
+held ; thus, it is common that the caller will explicitly need to drop
+it before running sleepable code, e.g:
 
-copy+paste of description from sbi_fwft_all_cpus_set(). This function
-only sets the feature on the calling hart.
+    let b = bar.try_access()?;
+    let reg = b.readl(...);
 
-> + * @feature: The feature to be set
-> + * @value: The feature value to be set
-> + * @flags: FWFT feature set flags
-> + *
-> + * Return: 0 on success, appropriate linux error code otherwise.
-> + */
-> +int sbi_fwft_set(u32 feature, unsigned long value, unsigned long flags)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +struct fwft_set_req {
-> +	u32 feature;
-> +	unsigned long value;
-> +	unsigned long flags;
-> +	cpumask_t mask;
-> +};
-> +
-> +static void cpu_sbi_fwft_set(void *arg)
-> +{
-> +	struct fwft_set_req *req = arg;
-> +
-> +	if (sbi_fwft_set(req->feature, req->value, req->flags))
-> +		cpumask_clear_cpu(smp_processor_id(), &req->mask);
-> +}
-> +
-> +static int sbi_fwft_feature_local_set(u32 feature, unsigned long value,
-> +				      unsigned long flags,
-> +				      bool revert_on_fail)
-> +{
-> +	int ret;
-> +	unsigned long prev_value;
-> +	cpumask_t tmp;
-> +	struct fwft_set_req req = {
-> +		.feature = feature,
-> +		.value = value,
-> +		.flags = flags,
-> +	};
-> +
-> +	cpumask_copy(&req.mask, cpu_online_mask);
-> +
-> +	/* We can not revert if features are locked */
-> +	if (revert_on_fail && flags & SBI_FWFT_SET_FLAG_LOCK)
+    // Don't forget this or things could go wrong!
+    drop(b);
 
-Should use () around the flags &. I thought checkpatch complained about
-that?
+    something_that_might_sleep();
 
-> +		return -EINVAL;
-> +
-> +	/* Reset value is the same for all cpus, read it once. */
+    let b = bar.try_access()?;
+    let reg2 = b.readl(...);
 
-How do we know we're reading the reset value? sbi_fwft_all_cpus_set() may
-be called multiple times on the same feature. And harts may have had
-sbi_fwft_set() called on them independently. I think we should drop the
-whole prev_value optimization.
+This is arguably error-prone. try_with() and try_with_ok() provides an
+arguably safer alternative, by taking a closure that is run while the
+guard is held, and by dropping the guard automatically after the closure
+completes. This way, code can be organized more clearly around the
+critical sections and the risk is forgetting to release the guard when
+needed is considerably reduced:
 
-> +	ret = sbi_fwft_get(feature, &prev_value);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Feature might already be set to the value we want */
-> +	if (prev_value == value)
-> +		return 0;
-> +
-> +	on_each_cpu_mask(&req.mask, cpu_sbi_fwft_set, &req, 1);
-> +	if (cpumask_equal(&req.mask, cpu_online_mask))
-> +		return 0;
-> +
-> +	pr_err("Failed to set feature %x for all online cpus, reverting\n",
-> +	       feature);
+    let reg = bar.try_with_ok(|b| b.readl(...))?;
 
-nit: I'd let the above line stick out. We have 100 chars.
+    something_that_might_sleep();
 
-> +
-> +	req.value = prev_value;
-> +	cpumask_copy(&tmp, &req.mask);
-> +	on_each_cpu_mask(&req.mask, cpu_sbi_fwft_set, &req, 1);
-> +	if (cpumask_equal(&req.mask, &tmp))
-> +		return 0;
+    let reg2 = bar.try_with_ok(|b| b.readl(...))?;
 
-I'm not sure we want the revert_on_fail support either. What happens when
-the revert fails and we return -EINVAL below? Also returning zero when
-revert succeeds means the caller won't know if we successfully set what
-we wanted or just successfully reverted.
+Unlike try_access() which returns an Option, try_with() and
+try_with_ok() return Err(ENXIO) if the object cannot be acquired. The
+Option returned by try_access() is typically converted to an error in
+practice, so this saves one step for the caller.
 
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +/**
-> + * sbi_fwft_all_cpus_set() - Set a feature on all online cpus
-> + * @feature: The feature to be set
-> + * @value: The feature value to be set
-> + * @flags: FWFT feature set flags
-> + * @revert_on_fail: true if feature value should be restored to it's orignal
+try_with() requires the callback itself to return a Result that is
+passed to the caller. try_with_ok() accepts a callback that never fails.
 
-its original
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+This is a feature I found useful to have while writing Nova driver code
+that accessed registers alongside other operations. I would find myself
+quite confused about whether the guard was held or dropped at a given
+point of the code, and it felt like walking through a minefield ; this
+pattern makes things safer and easier to read IMHO.
+---
+ rust/kernel/revocable.rs | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-> + * 		    value on failure.
+diff --git a/rust/kernel/revocable.rs b/rust/kernel/revocable.rs
+index 1e5a9d25c21b279b01f90b02997492aa4880d84f..0157b20373b5b2892cb618b46958bfe095e428b6 100644
+--- a/rust/kernel/revocable.rs
++++ b/rust/kernel/revocable.rs
+@@ -105,6 +105,28 @@ pub fn try_access(&self) -> Option<RevocableGuard<'_, T>> {
+         }
+     }
+ 
++    /// Tries to access the wrapped object and run the closure `f` on it with the guard held.
++    ///
++    /// This is a convenience method to run short non-sleepable code blocks while ensuring the
++    /// guard is dropped afterwards. [`Self::try_access`] carries the risk that the caller
++    /// will forget to explicitly drop that returned guard before calling sleepable code ; this
++    /// method adds an extra safety to make sure it doesn't happen.
++    ///
++    /// Returns `Err(ENXIO)` if the wrapped object has been revoked, or the result of `f` after it
++    /// has been run.
++    pub fn try_with<R, F: Fn(&T) -> Result<R>>(&self, f: F) -> Result<R> {
++        self.try_access().ok_or(ENXIO).and_then(|t| f(&*t))
++    }
++
++    /// Tries to access the wrapped object and run the closure `f` on it with the guard held.
++    ///
++    /// This is the same as [`Self::try_with`], with the exception that `f` is expected to
++    /// always succeed and thus does not need to return a `Result`. Thus the only error case is if
++    /// the wrapped object has been revoked.
++    pub fn try_with_ok<R, F: Fn(&T) -> R>(&self, f: F) -> Result<R> {
++        self.try_with(|t| Ok(f(t)))
++    }
++
+     /// Tries to access the revocable wrapped object.
+     ///
+     /// Returns `None` if the object has been revoked and is therefore no longer accessible.
 
-Line 'value' up under 'true'
+---
+base-commit: 4d872d51bc9d7b899c1f61534e3dbde72613f627
+change-id: 20250313-try_with-cc9f91dd3b60
 
-> + *
-> + * Return: 0 on success, appropriate linux error code otherwise.
-> + */
-> +int sbi_fwft_all_cpus_set(u32 feature, unsigned long value, unsigned long flags,
-> +			  bool revert_on_fail)
-> +{
-> +	if (feature & SBI_FWFT_GLOBAL_FEATURE_BIT)
-> +		return sbi_fwft_set(feature, value, flags);
-> +
-> +	return sbi_fwft_feature_local_set(feature, value, flags,
-> +					  revert_on_fail);
-> +}
-> +
->  /**
->   * sbi_set_timer() - Program the timer for next timer event.
->   * @stime_value: The value after which next timer event should fire.
-> -- 
-> 2.47.2
+Best regards,
+-- 
+Alexandre Courbot <acourbot@nvidia.com>
 
-Thanks,
-drew
 
