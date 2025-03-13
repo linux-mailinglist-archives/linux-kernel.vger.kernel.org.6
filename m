@@ -1,168 +1,126 @@
-Return-Path: <linux-kernel+bounces-558643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56DC8A5E8FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:26:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC628A5E902
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:34:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C45D97ABAEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:25:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 632D83BB40C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9E1BE4E;
-	Thu, 13 Mar 2025 00:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9E3BE49;
+	Thu, 13 Mar 2025 00:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UFjkCsOv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2AD4685
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 00:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="O0WDE/Mk"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7AD10E3;
+	Thu, 13 Mar 2025 00:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741825603; cv=none; b=jcy1w4NHuQH43ANbDafXZqMzBvtthhefMQ5dJSXyTjCeZ6yu8QfIuG1UeG3h7yc5qHWGAwRmJnsMbsbBGBTB9IVfDeaCVVJCYi4QQfrNVUTE3t2pQ022X1bbZEvPAxJDjj9IS2XdsBpeAOgTwXryPn3Cn+nhUCJNuljnTBV5WvE=
+	t=1741826035; cv=none; b=ObJNNWXNS9qY8n4uHThC8QsRj9TBnEjHvSAEyTmbJk/TyPJc9w66hEVp4T72UaN4+5kPhGtvDUTVdplcfYBIYtyopw08bdW+tf98OQfFVw4D6JC9yXfdKutwr4b+mybhWMkKGkUgLiFqo6xrVZV/RXgKOJa6tr2RtJqvMdEgk+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741825603; c=relaxed/simple;
-	bh=6Rc6J3Ph6dfxqwkjoMVz7ABCl1ew9fnFyyH4KQ9IHWc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M1cin5D+ee6SADanUlLgSVRiBv90HG/6zXrZ8t5ZXMgbT2edzXV8+HajNorqMwg86fKFUkkQxoJaBBw1myawkIxwYJdTZ/+RA0w0i+efn88ltVWYTDMulQmoi9oSu3isBYfhJDwvs08j+PyQca/T6BWTlkMbD9szByxG+yqtiGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UFjkCsOv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741825600;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2xc6FM+mqWnW8B2obbyayW6a16PfjrreKGG+xe06AIA=;
-	b=UFjkCsOv2d7emEV4mdhEbI5mm18RaVyez2mvxoR97mut307EZ2dV8OmOKi33sSgmiY2cdx
-	oORB0Q3MTEmGL3rUDMn9/Np4/xuN95B9NgZi/ruseSEqhD8G54Cz09e+Mhc37NPqcOtacW
-	mOHd7ce4fqF602i2geW5fTvaQ9Ffj/s=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-73-wHJcIx3SOe6udlqTSRqU3g-1; Wed, 12 Mar 2025 20:26:39 -0400
-X-MC-Unique: wHJcIx3SOe6udlqTSRqU3g-1
-X-Mimecast-MFC-AGG-ID: wHJcIx3SOe6udlqTSRqU3g_1741825598
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2ff854a2541so695488a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 17:26:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741825593; x=1742430393;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2xc6FM+mqWnW8B2obbyayW6a16PfjrreKGG+xe06AIA=;
-        b=lclnRPM53xvc3YdxP5NKu84pfRHKD/E3oigkeNfHDYZK3l7jaK5lPQat0ASgd6UMoM
-         aHVlK2nS3g+V7uYqbFOl3PZbKtWK5f8c8r31LLISoRU3Oa44yr+B73z3rn0Zz3yOloKD
-         Vdyhjx9oNG35fQOu3uHKPUzkN+WoTaH9queES7mwC8CE5Yl+7MXlWuTNv5F6NX12F4Hh
-         KiYMlUkV1ziS1Z8PZFoU6E2LN9pQFIDmXb+a2Dc06iZHNuh2XBfz0ancWBohngshGZOM
-         7/uQ5bAJEL+l1PoH40z2PnyVT4uVKB2VDm6X8cxD2F7CnicfOtpr9ovgDLV+StTBqUIV
-         +e0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVdrHuHTinbesVDQ1sEtEPmAPebXTM0f8e/BNcHYEYCodJww4/rDG2YMwysE5QEHlUBkJEJ+iai9jZdwvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvaMklYpfFFZ1DqyATJDCDfEdf+TXEzzXW3oYCku9C/JmuzDyk
-	4u6mXqUpkhDd3MnzCowdAWzfuc3jRqmJEz3XqlbUxd1EkxKHhTOXonQJvYE/Eb2LvMJklwyyd8R
-	BRozMUIi+c2F1F5I3w40YSgw3fVjSPG2BFPN9G8rRuHMBLlYDumZQmfFHyqkEiY4j2x4Ixpvs63
-	/UBDbHk7u7Rx/fMuksxxtRbVMpLdNre5JbMdKg
-X-Gm-Gg: ASbGncutDRH3t7y345irvc8D4nDf/7z8JrTsw+p0mDB0fTokVDu1Xklj/zUUMiWK8O1
-	ZFHU9wdmJqgeKKrDE1P4sCm2W5426aSVK2B+j19ZhmlqVrvkdANkbjXwPv/0acmFVbMl12Q==
-X-Received: by 2002:a17:90a:d2c6:b0:2ff:4f04:4266 with SMTP id 98e67ed59e1d1-2ff7cef5c11mr28261648a91.23.1741825593462;
-        Wed, 12 Mar 2025 17:26:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3dWZ4QwsfIUvoSozMvh5gYtrSDcXVdnTP4UK28eIoOYkpHPAKxIFpR9h9De/pEc9Z+J0NEctSIkQBCBJ5tuk=
-X-Received: by 2002:a17:90a:d2c6:b0:2ff:4f04:4266 with SMTP id
- 98e67ed59e1d1-2ff7cef5c11mr28261612a91.23.1741825592977; Wed, 12 Mar 2025
- 17:26:32 -0700 (PDT)
+	s=arc-20240116; t=1741826035; c=relaxed/simple;
+	bh=6CkxKqdAjN/Cx3aZZ+ReIjRKn2TmSXeTFO6XNU+m+lU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=Vv7g/qXB3yU80UxF5+2FsHmElzVQUXtVXezofh9SSjyqAqz7HyhHnrGIu4pxtt+eRUff2TPYCmz3Eent1JoYtf+zZGd1i9LTUL8Ue8dfKkVzGLjk50h3a2JFolA3AVg5YInVEkavrE5Ol8DqV23/pMIu4NrIq7doYUsf5MdScvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=O0WDE/Mk reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=AB2GUHSL2k8vU974ZJtogILKP8rhMHvKGHGeZ+pVxWQ=; b=O
+	0WDE/MkX+VL2kULTxRHxI8f5O4zX5KcccF9Pc75nJE9dAr7HoUTj3oFSdOD0ipfV
+	4mdv68a85oNF7bxNT+HMz5mO+Lu3lOrxPRloYrptfdCaX8JY9J90WwXlAi+rj5eI
+	Sof4FTDtSOcod0qqa92c9KE1osByLNkUtqztGxcNi8=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-123 (Coremail) ; Thu, 13 Mar 2025 08:32:55 +0800
+ (CST)
+Date: Thu, 13 Mar 2025 08:32:55 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Dmitry Baryshkov" <lumag@kernel.org>
+Cc: heiko@sntech.de, hjc@rock-chips.com, mripard@kernel.org,
+	cristian.ciocaltea@collabora.com, neil.armstrong@linaro.org,
+	yubing.zhang@rock-chips.com, krzk+dt@kernel.org,
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, robh@kernel.org,
+	sebastian.reichel@collabora.com,
+	"Andy Yan" <andy.yan@rock-chips.com>,
+	"stephen@radxa.com" <stephen@radxa.com>
+Subject: Re:Re: [PATCH v2 7/7] arm64: dts: rockchip: Enable DP2HDMI for ROCK
+ 5 ITX
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <q3y36jgswj4xa2g3hnptc6kgzphbqfg675r5paa2lwvdseytio@jysj4f2i6osu>
+References: <20250312104214.525242-1-andyshrk@163.com>
+ <20250312104214.525242-8-andyshrk@163.com>
+ <q3y36jgswj4xa2g3hnptc6kgzphbqfg675r5paa2lwvdseytio@jysj4f2i6osu>
+X-NTES-SC: AL_Qu2fA/SZukEs4yKdYOlSyjNW+7xfHKv6+qRChMQvQtsqqTHr9T0KcVtuP1XR3//r4kRAiu7dpbs5Jch8KvJm
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240108131039.2234044-1-Mikhail.Golubev-Ciuchea@opensynergy.com>
- <a366f529-c901-4cd1-a1a6-c3958562cace@wanadoo.fr> <0878aedf-35c2-4901-8662-2688574dd06f@opensynergy.com>
- <Z9FicA7bHAYZWJAb@fedora> <20250312-conscious-sloppy-pegasus-b5099d-mkl@pengutronix.de>
- <Z9GL6o01fuhTbHWO@fedora> <20250312-able-refreshing-hog-ed14e7-mkl@pengutronix.de>
-In-Reply-To: <20250312-able-refreshing-hog-ed14e7-mkl@pengutronix.de>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 13 Mar 2025 08:26:21 +0800
-X-Gm-Features: AQ5f1Jotgxkur0pCBX2T6-2ZHfB5Ly_E8Asn7gts-0i5WF5UC5k-dBCU_8yc-ak
-Message-ID: <CACGkMEtHZB8bLMqepRxd3qvtXWA8g_5pofNBw1=XvxF4ANr6Cg@mail.gmail.com>
-Subject: Re: [PATCH v5] can: virtio: Initial virtio CAN driver.
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Matias Ezequiel Vara Larsen <mvaralar@redhat.com>, Harald Mommer <harald.mommer@opensynergy.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
-	Mikhail Golubev-Ciuchea <Mikhail.Golubev-Ciuchea@opensynergy.com>, 
-	Wolfgang Grandegger <wg@grandegger.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Damir Shaikhutdinov <Damir.Shaikhutdinov@opensynergy.com>, linux-kernel@vger.kernel.org, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	virtualization@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <5858d492.44b.1958ceb23dd.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:eygvCgD3H4e3J9JnFCt9AA--.21925W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkAMPXmfSI2pHYgACsZ
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Wed, Mar 12, 2025 at 9:36=E2=80=AFPM Marc Kleine-Budde <mkl@pengutronix.=
-de> wrote:
->
-> On 12.03.2025 14:28:10, Matias Ezequiel Vara Larsen wrote:
-> > On Wed, Mar 12, 2025 at 11:41:26AM +0100, Marc Kleine-Budde wrote:
-> > > On 12.03.2025 11:31:12, Matias Ezequiel Vara Larsen wrote:
-> > > > On Thu, Feb 01, 2024 at 07:57:45PM +0100, Harald Mommer wrote:
-> > > > > Hello,
-> > > > >
-> > > > > I thought there would be some more comments coming and I could ad=
-dress
-> > > > > everything in one chunk. Not the case, besides your comments sile=
-nce.
-> > > > >
-> > > > > On 08.01.24 20:34, Christophe JAILLET wrote:
-> > > > > >
-> > > > > > Hi,
-> > > > > > a few nits below, should there be a v6.
-> > > > > >
-> > > > >
-> > > > > I'm sure there will be but not so soon. Probably after acceptance=
- of the
-> > > > > virtio CAN specification or after change requests to the specific=
-ation are
-> > > > > received and the driver has to be adapted to an updated draft.
-> > > > >
-> > > > What is the status of this series?
-> > >
-> > > There has been no movement from the Linux side. The patch series is
-> > > quite extensive. To get this mainline, we need not only a proper Linu=
-x
-> > > CAN driver, but also a proper VirtIO specification.
-> >
-> > Thanks for your answer. AFAIK the spec has been merged (see
-> > https://github.com/oasis-tcs/virtio-spec/tree/virtio-1.4).
->
-> Yes, the spec was merged. I think it was written with a specific
-> use-case (IIRC: automotive, Linux on-top of a specific hypervisor) in
-> mind, in Linux we have other use cases that might not be covered.
->
-> > > This whole project is too big for me to do it as a collaborative
-> > > effort.
-> >
-> > What do you mean?
->
-> I mean the driver is too big to review on a non-paid community based
-> effort.
-
-If you can split the path into smaller ones, I'm happy to review.
-
-Thanks
-
-
->
-> regards,
-> Marc
->
-> --
-> Pengutronix e.K.                 | Marc Kleine-Budde          |
-> Embedded Linux                   | https://www.pengutronix.de |
-> Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-> Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
+CkhpIERtaXRyeSwKCkF0IDIwMjUtMDMtMTIgMjA6Mzk6MTcsICJEbWl0cnkgQmFyeXNoa292IiA8
+bHVtYWdAa2VybmVsLm9yZz4gd3JvdGU6Cj5PbiBXZWQsIE1hciAxMiwgMjAyNSBhdCAwNjo0Mjow
+OFBNICswODAwLCBBbmR5IFlhbiB3cm90ZToKPj4gRnJvbTogQW5keSBZYW4gPGFuZHkueWFuQHJv
+Y2stY2hpcHMuY29tPgo+PiAKPj4gVGhlIEhETUkgUG9ydCBuZXh0IHRvIEhlYWRwaG9uZSBKYWNr
+IGlzIGRyaXZlZCBieQo+PiBEUDEgb24gcmszNTg4IHZpYSBhIGRwMmhkbWkgY29udmVydGVyLgo+
+PiAKPj4gQWRkIHJlbGF0ZWQgZHQgbm9kZXMgdG8gZW5hYmxlIGl0Lgo+PiAKPj4gTm90ZTogUk9D
+S0NISVBfVk9QMl9FUF9EUDEgaXMgZGVmaW5lZCBhcyAxMSBpbiBkdC1iaW5kaW5nIGhlYWRlciwK
+Pj4gYnV0IGl0IHdpbGwgdHJpZ2dlciBhIGR0YyB3YXJuaW5nIGxpa2UgImdyYXBoIG5vZGUgdW5p
+dCBhZGRyZXNzCj4+IGVycm9yLCBleHBlY3RlZCAiYiIiIGlmIHdlIHVzZSBpdCBkaXJlY3RseSBh
+ZnRlciBlbmRwb2ludCwgc28gd2UKPj4gdXNlICJiIiBpbnN0ZWFkIGhlcmUuCj4+IAo+PiBTaWdu
+ZWQtb2ZmLWJ5OiBBbmR5IFlhbiA8YW5keS55YW5Acm9jay1jaGlwcy5jb20+Cj4+IC0tLQo+PiAK
+Pj4gKG5vIGNoYW5nZXMgc2luY2UgdjEpCj4+IAo+PiAgLi4uL2Jvb3QvZHRzL3JvY2tjaGlwL3Jr
+MzU4OC1yb2NrLTUtaXR4LmR0cyAgIHwgMzcgKysrKysrKysrKysrKysrKysrKwo+PiAgMSBmaWxl
+IGNoYW5nZWQsIDM3IGluc2VydGlvbnMoKykKPj4gCj4+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0
+L2Jvb3QvZHRzL3JvY2tjaGlwL3JrMzU4OC1yb2NrLTUtaXR4LmR0cyBiL2FyY2gvYXJtNjQvYm9v
+dC9kdHMvcm9ja2NoaXAvcmszNTg4LXJvY2stNS1pdHguZHRzCj4+IGluZGV4IDY3Yjg4NjMyOTI0
+OC4uMjlmMTBlYzlmMGMxIDEwMDY0NAo+PiAtLS0gYS9hcmNoL2FybTY0L2Jvb3QvZHRzL3JvY2tj
+aGlwL3JrMzU4OC1yb2NrLTUtaXR4LmR0cwo+PiArKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL3Jv
+Y2tjaGlwL3JrMzU4OC1yb2NrLTUtaXR4LmR0cwo+PiBAQCAtNTcsNiArNTcsMTggQEAgYW5hbG9n
+LXNvdW5kIHsKPj4gIAkJCSAgIkhlYWRwaG9uZSIsICJIZWFkcGhvbmVzIjsKPj4gIAl9Owo+PiAg
+Cj4+ICsJZHAtY29uIHsKPj4gKwkJY29tcGF0aWJsZSA9ICJkcC1jb25uZWN0b3IiOwo+Cj5Zb3Un
+dmUgd3JpdHRlbiB0aGF0IGl0IGlzIGFuIEhETUkgY29ubmVjdG9yLiBDb3VsZCB5b3UgcG9zc2li
+bHkgY2xhcmlmeSwKPndoeSBpcyBpdCBiZWluZyByZWdpc3RlcmVkIGFzIGEgRFAgY29ubmVjdG9y
+PyBJcyB0aGVyZSBhbnkga2luZCBvZgo+YSBicmlkZ2UgYmV0d2VlbiB0aGUgRFAgY29udHJvbGxl
+ciBhbmQgdGhlIEhETUkgY29ubmVjdG9yPwoKV2hlbiBJIHdhcyBwcmVwYXJpbmcgdGhpcyBwYXRj
+aCBhdCB0aGF0IHRpbWUsIEkgYWxzbyBoYWQgc29tZSBkb3VidHMuIApXaGV0aGVyIGl0IHNob3Vs
+ZCBiZSByZWdpc3RlcmVkIGFzIGEgRFAgY29ubmVjdG9yIG9yIGFuIEhETUkgY29ubmVjdG9yLiAK
+VGhlcmUgaXMgYSBEUDJIRE1JIGNvbnZlcnNpb24gY2hpcCBiZXR3ZWVuIHRoZSBEUCBvZiBSSzM1
+ODggYW5kIHRoaXMgaGRtaSAKaW50ZXJmYWNlLCBidXQgdGhpcyBjb252ZXJzaW9uIGNoaXAgZG9l
+cyBub3QgcmVxdWlyZSBhIHNvZnR3YXJlIGRyaXZlci4gCklmIHRoZSBjdXJyZW50IHdyaXRpbmcg
+aXMgaW5jb3JyZWN0LCBJIHdpbGwgY2hhbmdlIGl0IHRvIGhkbWktY29ubmVjdG9yIGluIHRoZSBu
+ZXh0IHZlcnNpb24uCgpUaGFua3MKPgo+PiArCQlsYWJlbCA9ICJEUCBPVVQiOwo+PiArCQl0eXBl
+ID0gImZ1bGwtc2l6ZSI7Cj4+ICsKPj4gKwkJcG9ydCB7Cj4+ICsJCQlkcF9jb25faW46IGVuZHBv
+aW50IHsKPj4gKwkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8JmRwMV9vdXRfY29uPjsKPj4gKwkJCX07
+Cj4+ICsJCX07Cj4+ICsJfTsKPj4gKwo+PiAgCWdwaW8tbGVkcyB7Cj4+ICAJCWNvbXBhdGlibGUg
+PSAiZ3Bpby1sZWRzIjsKPj4gIAkJcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKPj4gQEAgLTI2
+OCw2ICsyODAsMjQgQEAgJmNwdV9sMyB7Cj4+ICAJY3B1LXN1cHBseSA9IDwmdmRkX2NwdV9saXRf
+czA+Owo+PiAgfTsKPj4gIAo+PiArJmRwMSB7Cj4+ICsJc3RhdHVzID0gIm9rYXkiOwo+PiArCXBp
+bmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7Cj4+ICsJcGluY3RybC0wID0gPCZkcDFtMF9waW5zPjsK
+Pj4gK307Cj4+ICsKPj4gKyZkcDFfaW4gewo+PiArCWRwMV9pbl92cDI6IGVuZHBvaW50IHsKPj4g
+KwkJcmVtb3RlLWVuZHBvaW50ID0gPCZ2cDJfb3V0X2RwMT47Cj4+ICsJfTsKPj4gK307Cj4+ICsK
+Pj4gKyZkcDFfb3V0IHsKPj4gKwlkcDFfb3V0X2NvbjogZW5kcG9pbnQgewo+PiArCQlyZW1vdGUt
+ZW5kcG9pbnQgPSA8JmRwX2Nvbl9pbj47Cj4+ICsJfTsKPj4gK307Cj4+ICsKPj4gICZncHUgewo+
+PiAgCW1hbGktc3VwcGx5ID0gPCZ2ZGRfZ3B1X3MwPjsKPj4gIAlzdGF0dXMgPSAib2theSI7Cj4+
+IEBAIC0xMjYyLDMgKzEyOTIsMTAgQEAgdnAxX291dF9oZG1pMTogZW5kcG9pbnRAUk9DS0NISVBf
+Vk9QMl9FUF9IRE1JMSB7Cj4+ICAJCXJlbW90ZS1lbmRwb2ludCA9IDwmaGRtaTFfaW5fdnAxPjsK
+Pj4gIAl9Owo+PiAgfTsKPj4gKwo+PiArJnZwMiB7Cj4+ICsJdnAyX291dF9kcDE6IGVuZHBvaW50
+QGIgewo+PiArCQlyZWcgPSA8Uk9DS0NISVBfVk9QMl9FUF9EUDE+Owo+PiArCQlyZW1vdGUtZW5k
+cG9pbnQgPSA8JmRwMV9pbl92cDI+Owo+PiArCX07Cj4+ICt9Owo+PiAtLSAKPj4gMi4zNC4xCj4+
+IAo+Cj4tLSAKPldpdGggYmVzdCB3aXNoZXMKPkRtaXRyeQo=
 
