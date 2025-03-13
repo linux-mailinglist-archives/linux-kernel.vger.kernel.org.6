@@ -1,355 +1,153 @@
-Return-Path: <linux-kernel+bounces-559432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C89A5F3C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:06:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5BBAA5F3C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:06:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1F763A708E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:04:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14FF53BE55B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C33267704;
-	Thu, 13 Mar 2025 12:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D143266B4C;
+	Thu, 13 Mar 2025 12:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i6Ns9qxm"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="laX+XLbl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031D92676FF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688501F12F2;
+	Thu, 13 Mar 2025 12:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741867412; cv=none; b=p7iTVqx4DCr5ZgyI/JeL9+Wqo8R/222XcDeB9bo05nqw2DaRnJK5jpxo2YYTINwwi0MZfxX7Ym652wP2I5DkWoGdmnHtRuTG8p7zQt0rVrNeKxexDfhzxhDwleVWnuobBRJAbYk/B+PRbdL24eBaCq9sAp/sWp+pw4qFq/jZZug=
+	t=1741867472; cv=none; b=EV3o9sDkqw1PeCZ348Cn9wL+/RFL2/wXZBPoSvXeTvTVsTR0PDocjVRA30iWF3qZuMDFA+WLYnooRgDBZF4aLYXBpYagrKiJ+SlvITjhfWKj4XpW2GW3s++bapT/LgIur8Sx3+iryPk5M9dosZQhYOpZivfLx849dFKpuYWydu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741867412; c=relaxed/simple;
-	bh=nx7kpSgxEkJipaAu7lH33GZbYOa0QMfX5491dFO/6+A=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=u1i9wMFjBVgrJ0BxkepzOlUzs7GbX4L5JQPah1I/DNiDFtqhjgqxMQiViN5WWGS7ZDFC7LmbJL9yS+wyHPchhNdPhoOVZKmCQiho3x/3MBg31vI74Ea+shxRsCoD+c6rpzramuWBVyhqMeOkqMJe3yOZd26yzxdaFZ6IBNH+fu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i6Ns9qxm; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43ceed237efso6127135e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 05:03:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741867408; x=1742472208; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fNGl6tGD5/LI4v1f0jD3bPnWJc77BwXptrDpG8yXSs8=;
-        b=i6Ns9qxm1YPPCtwiQNSSteCP9l0SbCofJqrs1HOHn/q6Z44lDxZAcSQD72blHn1HIz
-         YaLIRexSPaHkzJzcGclkaVg+wBHMwA8JUO+5xNFKxUwOhDdIFPUI3ZhikKb3zjGLPAq5
-         ocBcwPGDkOY/ucy4VoOOfZx/SS07pq8z7uukSefWd7Fe8qHs9XlZnu7W2OG9MNxsM2Mb
-         Yh7IcMwbxqcz5sHjRkKXfAISn+16eVFFRJma9W4T5bBTvZWFCg24FepXF9gKclZBeLro
-         P1Vg+XgvO4jMbkaHI97qS0VQsjKgHHDCcBfSrqNYrCpqB90JbM6Eco2kxOGtD3M8YLyC
-         J+bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741867408; x=1742472208;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fNGl6tGD5/LI4v1f0jD3bPnWJc77BwXptrDpG8yXSs8=;
-        b=F+sF61+5q1FkX6X/Wtqp6eyk081Lcq6VfIl4WJ1AUFfKNBGbg+mUk+wH2Kr6jjU7mj
-         VW/03jg0BFIKmpeflu1LPF3R3GVvw1Vh6dNRenbsnpS91mJZfKy4qxXeZzd1B30Kxwx7
-         1Y9GUqSjy/msYMIROeimo3UnpKySuzf4w2dOTm0Ms5suk0c1Va6eAauXgDM1FHhmGqwC
-         hvwh7E1KjOT5d4s2+niWmywgsYZiAXevMbLqmgTmrbyxBbq0Vsivjbizut31hC/VYBQj
-         mryTqtv/0cGdRFY1VeizkB5R3UnIgjNNIdlsjpX2UZ/4LwFz8Fg8RgZkV/oAFVj/nDmV
-         ibYw==
-X-Gm-Message-State: AOJu0YyDeDeGWJLZxRUxHZ8MWam9bdScqu/u2sguZVgRv4li+z8lSyJL
-	Omc3qYmtcavTQAwGCid3rs/zSQJ5y8JdO9/+VDqASjjKt4nK3t86aTC3i5dzMxPITeQiLBvTqc4
-	K3kXPAWIo00KrupbT7JCV4gnZ6nkt10queSixHxD0GxHEedmtmdTVBLjCWynfiROpc1afqhWTyn
-	RLAPIkCIXUFrNDht5KwV/yiy5vBhB+AQ==
-X-Google-Smtp-Source: AGHT+IGbaQbw279LlrN6XOdzYV1KoK/rsvovCoLovn6a8ifig6lTjfFVp+BG1c8yk6V/NaRpaFxs+NFy
-X-Received: from wmgg26.prod.google.com ([2002:a05:600d:1a:b0:43c:fa87:4fa0])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:4f14:b0:43d:7a:471f
- with SMTP id 5b1f17b1804b1-43d01be7e4bmr119312355e9.18.1741867408404; Thu, 13
- Mar 2025 05:03:28 -0700 (PDT)
-Date: Thu, 13 Mar 2025 13:03:25 +0100
+	s=arc-20240116; t=1741867472; c=relaxed/simple;
+	bh=8xSatFqW6rNQRg2ui1Hv5/Ccru9q7nKvNSRlZwWl5L8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u6FidkqMNKIaC2336buTEw3XAegKbgC4kcH0E1q2EENyq4FtoPG9Rx/9md6NgqmU5EFgJyAx8TmWZnZWggf/VAf/jWWY0/Ymnm4kB05DYuZ62LSq4hHuw7U6fMb+oDEuJAp4OnwC+XXGDgtAay64ECULnlddolaTyi39nG3+UKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=laX+XLbl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63084C4CEDD;
+	Thu, 13 Mar 2025 12:04:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741867470;
+	bh=8xSatFqW6rNQRg2ui1Hv5/Ccru9q7nKvNSRlZwWl5L8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=laX+XLblooglk5nBQ2OLuWGhtqj6qrkClKYXRqLBhPW0lc/doJ6OVCdrBiPC/mTg3
+	 ypllpZEyEwH1ZbJzgDmhfoLX3y2MLs0YZrWb+QyiKz5xxK1jEYFyTd9UKk1REzAwA8
+	 R/d1CxybPiNxrCUnCouHJpBqv5ItV/PRF6qtbE+mOgG6K0BSG6kPtEvtqd4+TQOIOi
+	 qFC9lieHIU8DcOyk/fWQduHA0ZcfKs3vux9ZjxFIecAZ+oC7p/RQoDadjYIfTJVoWc
+	 AilbK0CyDNeNEKUsz4aHgixCNVndewaZqO/0AKyFWEkNbO3ETwosS1fdTQFuEZN3XQ
+	 pj8pCpmOSW1Ew==
+Date: Thu, 13 Mar 2025 12:04:25 +0000
+From: Will Deacon <will@kernel.org>
+To: Sebastian Ene <sebastianene@google.com>
+Cc: catalin.marinas@arm.com, joey.gouly@arm.com, maz@kernel.org,
+	oliver.upton@linux.dev, snehalreddy@google.com,
+	sudeep.holla@arm.com, suzuki.poulose@arm.com, vdonnefort@google.com,
+	yuzenghui@huawei.com, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v2 3/4] KVM: arm64: Map the hypervisor FF-A buffers on
+ ffa init
+Message-ID: <20250313120424.GA7356@willie-the-truck>
+References: <20250227181750.3606372-1-sebastianene@google.com>
+ <20250227181750.3606372-4-sebastianene@google.com>
+ <20250303234259.GA30749@willie-the-truck>
+ <Z8ZPBZF7J-qKdb_i@google.com>
+ <20250304015633.GA30882@willie-the-truck>
+ <Z8c6enoolJe7Zeqk@google.com>
+ <20250305003808.GA31667@willie-the-truck>
+ <Z8iZkQHknZfY7mpn@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8328; i=ardb@kernel.org;
- h=from:subject; bh=3N2F4ttRD0JrUTdWNB15JOBmiU3jVNhn6hMerwAVSy8=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIf3Syd4vjvOMk+QMb11utO86E/WW2T1m5jzhrfxxoooK7
- jXKJic6SlkYxDgYZMUUWQRm/3238/REqVrnWbIwc1iZQIYwcHEKwEQWKzD8d2r17r0hfbvhyvIp
- t7ssf/81/1cgtuDGpjURC13XRroF1zD8D69+5yUv9NS6N/VCiuH1d29Wh/4tT9c8pSHueP0Dk8w KNgA=
-X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
-Message-ID: <20250313120324.1095968-2-ardb+git@google.com>
-Subject: [PATCH] x86/boot: Move LA57 trampoline to separate source file
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8iZkQHknZfY7mpn@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-From: Ard Biesheuvel <ardb@kernel.org>
+On Wed, Mar 05, 2025 at 06:36:01PM +0000, Sebastian Ene wrote:
+> On Wed, Mar 05, 2025 at 12:38:08AM +0000, Will Deacon wrote:
+> > On Tue, Mar 04, 2025 at 05:38:02PM +0000, Sebastian Ene wrote:
+> > > On Tue, Mar 04, 2025 at 01:56:35AM +0000, Will Deacon wrote:
+> > > >   | [...] negotiation of the version must happen before an invocation of
+> > > >   | any other FF-A ABI
+> > > > 
+> > > 
+> > > We do that, as the hypervisor negotiates its own version in
+> > > hyp_ffa_init.
+> > 
+> > hyp_ffa_init() only issues FFA_VERSION afaict, which is the one call
+> > that you're allowed to make during negotiation. So the existing code is
+> > fine.
+> > 
+> > > I think the host shouldn't be allowed to overwrite the
+> > > hyp_ffa_version obtained from _init, this feels wrong as you
+> > > can have a driver that forcefully downgrades the hypervisor to an old
+> > > version.
+> > 
+> > I think that's also fine. The FFA code in the hypervisor exists solely
+> > to proxy requests from the host; it's not used for anything else and so,
+> > from the host's persective, FFA should behave identically to the case in
+> > which the proxy is not present (e.g. if we were just using VHE). That
+> > means that we're doing the right thing by deferring to the host for
+> > version negotation.
+> > 
+> > Are you saying there's a bug in the current code if the host negotiates
+> > the downgrade?
+> 
+> It is an issue *only* for doing guest-ffa (which isn't posted here yet).
+> If we allow the host to dictate the version & there is an issue with TZ
+> FF-A dispatcher in that version => the guests will be affected by this
+> as well.
 
-To permit the EFI stub to call this code even when building the kernel
-without the legacy decompressor, move the trampoline out of the latter's
-startup code.
+When we get to guests doing FF-A, I still think the host should be
+responsible for the version negotiation and guests should just be given
+whatever has been negotiated. We could extend the hypervisor to marshall
+between different versions, but I'd rather do that only if we actually
+need it.
 
-No functional change intended.
+> > > We need to do three things, Sudeep & Will please correct me if I am
+> > > wrong, but this is how I see it:
+> > > 
+> > > - the hypervisor should act as a separate entity (it has a different ID and
+> > > in the current implementation we don't do a distinction between host/hyp) and
+> > > it should be able to lock its own version from init.
+> > 
+> > I strongly disagree with that. The hypervisor isn't using FFA for
+> > anything other than proxying the host and so we don't need to negotiate
+> > a separate version.
+> > 
+> > What would we gain by doing this? Is there a bug with what we're doing
+> > at the moment?
+> 
+> I think we need to make a distinction between the host and the
+> hypervisor when we are adding support for guest-ffa. We currently have
+> the same id (== 0) for both of them.
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
-This is part of an ongoing effort on my part to make the existing,
-generic EFI zboot format work on x86 as well. This work is tentatively
-aimed for the v6.16 cycle, but some standalone changes such as this one
-can be pulled forward to reduce the impact of many boot code changes
-landing at once (as this always makes for fun debugging).
+Right, and we currently don't support guest-ffa, so no problem :)
 
- arch/x86/boot/compressed/Makefile     |   1 +
- arch/x86/boot/compressed/head_64.S    | 103 ------------------
- arch/x86/boot/compressed/la57toggle.S | 112 ++++++++++++++++++++
- 3 files changed, 113 insertions(+), 103 deletions(-)
+> > > - keep a separate version negotiated for the host
+> > > - trap FFA_ID_GET from the host and return ID=1 because
+> > >   currently we forward the call to the TZ and it returns the same ID
+> > >   as the (hypervisor == 0).
+> > 
+> > Why is this beneficial? It just looks like complexity at EL2 for no gain
+> > to me, but maybe I'm missing something.
+> >
+> 
+> Because the host can impersonate the hypervisor using ff-a direct calls atm.
+> and we are in a position to restrict the host from playing nasty games
+> with TZ.
 
-diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index 606c74f27459..0e0b238e8363 100644
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -98,6 +98,7 @@ ifdef CONFIG_X86_64
- 	vmlinux-objs-$(CONFIG_AMD_MEM_ENCRYPT) += $(obj)/mem_encrypt.o
- 	vmlinux-objs-y += $(obj)/pgtable_64.o
- 	vmlinux-objs-$(CONFIG_AMD_MEM_ENCRYPT) += $(obj)/sev.o
-+	vmlinux-objs-y += $(obj)/la57toggle.o
- endif
- 
- vmlinux-objs-$(CONFIG_ACPI) += $(obj)/acpi.o
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index 1dcb794c5479..3dc86352cdbe 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -483,110 +483,7 @@ SYM_FUNC_START_LOCAL_NOALIGN(.Lrelocated)
- 	jmp	*%rax
- SYM_FUNC_END(.Lrelocated)
- 
--/*
-- * This is the 32-bit trampoline that will be copied over to low memory. It
-- * will be called using the ordinary 64-bit calling convention from code
-- * running in 64-bit mode.
-- *
-- * Return address is at the top of the stack (might be above 4G).
-- * The first argument (EDI) contains the address of the temporary PGD level
-- * page table in 32-bit addressable memory which will be programmed into
-- * register CR3.
-- */
--	.section ".rodata", "a", @progbits
--SYM_CODE_START(trampoline_32bit_src)
--	/*
--	 * Preserve callee save 64-bit registers on the stack: this is
--	 * necessary because the architecture does not guarantee that GPRs will
--	 * retain their full 64-bit values across a 32-bit mode switch.
--	 */
--	pushq	%r15
--	pushq	%r14
--	pushq	%r13
--	pushq	%r12
--	pushq	%rbp
--	pushq	%rbx
--
--	/* Preserve top half of RSP in a legacy mode GPR to avoid truncation */
--	movq	%rsp, %rbx
--	shrq	$32, %rbx
--
--	/* Switch to compatibility mode (CS.L = 0 CS.D = 1) via far return */
--	pushq	$__KERNEL32_CS
--	leaq	0f(%rip), %rax
--	pushq	%rax
--	lretq
--
--	/*
--	 * The 32-bit code below will do a far jump back to long mode and end
--	 * up here after reconfiguring the number of paging levels. First, the
--	 * stack pointer needs to be restored to its full 64-bit value before
--	 * the callee save register contents can be popped from the stack.
--	 */
--.Lret:
--	shlq	$32, %rbx
--	orq	%rbx, %rsp
--
--	/* Restore the preserved 64-bit registers */
--	popq	%rbx
--	popq	%rbp
--	popq	%r12
--	popq	%r13
--	popq	%r14
--	popq	%r15
--	retq
--
- 	.code32
--0:
--	/* Disable paging */
--	movl	%cr0, %eax
--	btrl	$X86_CR0_PG_BIT, %eax
--	movl	%eax, %cr0
--
--	/* Point CR3 to the trampoline's new top level page table */
--	movl	%edi, %cr3
--
--	/* Set EFER.LME=1 as a precaution in case hypervsior pulls the rug */
--	movl	$MSR_EFER, %ecx
--	rdmsr
--	btsl	$_EFER_LME, %eax
--	/* Avoid writing EFER if no change was made (for TDX guest) */
--	jc	1f
--	wrmsr
--1:
--	/* Toggle CR4.LA57 */
--	movl	%cr4, %eax
--	btcl	$X86_CR4_LA57_BIT, %eax
--	movl	%eax, %cr4
--
--	/* Enable paging again. */
--	movl	%cr0, %eax
--	btsl	$X86_CR0_PG_BIT, %eax
--	movl	%eax, %cr0
--
--	/*
--	 * Return to the 64-bit calling code using LJMP rather than LRET, to
--	 * avoid the need for a 32-bit addressable stack. The destination
--	 * address will be adjusted after the template code is copied into a
--	 * 32-bit addressable buffer.
--	 */
--.Ljmp:	ljmpl	$__KERNEL_CS, $(.Lret - trampoline_32bit_src)
--SYM_CODE_END(trampoline_32bit_src)
--
--/*
-- * This symbol is placed right after trampoline_32bit_src() so its address can
-- * be used to infer the size of the trampoline code.
-- */
--SYM_DATA(trampoline_ljmp_imm_offset, .word  .Ljmp + 1 - trampoline_32bit_src)
--
--	/*
--         * The trampoline code has a size limit.
--         * Make sure we fail to compile if the trampoline code grows
--         * beyond TRAMPOLINE_32BIT_CODE_SIZE bytes.
--	 */
--	.org	trampoline_32bit_src + TRAMPOLINE_32BIT_CODE_SIZE
--
--	.text
- SYM_FUNC_START_LOCAL_NOALIGN(.Lno_longmode)
- 	/* This isn't an x86-64 CPU, so hang intentionally, we cannot continue */
- 1:
-diff --git a/arch/x86/boot/compressed/la57toggle.S b/arch/x86/boot/compressed/la57toggle.S
-new file mode 100644
-index 000000000000..9ee002387eb1
---- /dev/null
-+++ b/arch/x86/boot/compressed/la57toggle.S
-@@ -0,0 +1,112 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#include <linux/linkage.h>
-+#include <asm/segment.h>
-+#include <asm/boot.h>
-+#include <asm/msr.h>
-+#include <asm/processor-flags.h>
-+#include "pgtable.h"
-+
-+/*
-+ * This is the 32-bit trampoline that will be copied over to low memory. It
-+ * will be called using the ordinary 64-bit calling convention from code
-+ * running in 64-bit mode.
-+ *
-+ * Return address is at the top of the stack (might be above 4G).
-+ * The first argument (EDI) contains the address of the temporary PGD level
-+ * page table in 32-bit addressable memory which will be programmed into
-+ * register CR3.
-+ */
-+
-+	.section ".rodata", "a", @progbits
-+SYM_CODE_START(trampoline_32bit_src)
-+	/*
-+	 * Preserve callee save 64-bit registers on the stack: this is
-+	 * necessary because the architecture does not guarantee that GPRs will
-+	 * retain their full 64-bit values across a 32-bit mode switch.
-+	 */
-+	pushq	%r15
-+	pushq	%r14
-+	pushq	%r13
-+	pushq	%r12
-+	pushq	%rbp
-+	pushq	%rbx
-+
-+	/* Preserve top half of RSP in a legacy mode GPR to avoid truncation */
-+	movq	%rsp, %rbx
-+	shrq	$32, %rbx
-+
-+	/* Switch to compatibility mode (CS.L = 0 CS.D = 1) via far return */
-+	pushq	$__KERNEL32_CS
-+	leaq	0f(%rip), %rax
-+	pushq	%rax
-+	lretq
-+
-+	/*
-+	 * The 32-bit code below will do a far jump back to long mode and end
-+	 * up here after reconfiguring the number of paging levels. First, the
-+	 * stack pointer needs to be restored to its full 64-bit value before
-+	 * the callee save register contents can be popped from the stack.
-+	 */
-+.Lret:
-+	shlq	$32, %rbx
-+	orq	%rbx, %rsp
-+
-+	/* Restore the preserved 64-bit registers */
-+	popq	%rbx
-+	popq	%rbp
-+	popq	%r12
-+	popq	%r13
-+	popq	%r14
-+	popq	%r15
-+	retq
-+
-+	.code32
-+0:
-+	/* Disable paging */
-+	movl	%cr0, %eax
-+	btrl	$X86_CR0_PG_BIT, %eax
-+	movl	%eax, %cr0
-+
-+	/* Point CR3 to the trampoline's new top level page table */
-+	movl	%edi, %cr3
-+
-+	/* Set EFER.LME=1 as a precaution in case hypervsior pulls the rug */
-+	movl	$MSR_EFER, %ecx
-+	rdmsr
-+	btsl	$_EFER_LME, %eax
-+	/* Avoid writing EFER if no change was made (for TDX guest) */
-+	jc	1f
-+	wrmsr
-+1:
-+	/* Toggle CR4.LA57 */
-+	movl	%cr4, %eax
-+	btcl	$X86_CR4_LA57_BIT, %eax
-+	movl	%eax, %cr4
-+
-+	/* Enable paging again. */
-+	movl	%cr0, %eax
-+	btsl	$X86_CR0_PG_BIT, %eax
-+	movl	%eax, %cr0
-+
-+	/*
-+	 * Return to the 64-bit calling code using LJMP rather than LRET, to
-+	 * avoid the need for a 32-bit addressable stack. The destination
-+	 * address will be adjusted after the template code is copied into a
-+	 * 32-bit addressable buffer.
-+	 */
-+.Ljmp:	ljmpl	$__KERNEL_CS, $(.Lret - trampoline_32bit_src)
-+SYM_CODE_END(trampoline_32bit_src)
-+
-+/*
-+ * This symbol is placed right after trampoline_32bit_src() so its address can
-+ * be used to infer the size of the trampoline code.
-+ */
-+SYM_DATA(trampoline_ljmp_imm_offset, .word  .Ljmp + 1 - trampoline_32bit_src)
-+
-+	/*
-+         * The trampoline code has a size limit.
-+         * Make sure we fail to compile if the trampoline code grows
-+         * beyond TRAMPOLINE_32BIT_CODE_SIZE bytes.
-+	 */
-+	.org	trampoline_32bit_src + TRAMPOLINE_32BIT_CODE_SIZE
--- 
-2.49.0.rc0.332.g42c0ae87b1-goog
+Can you give a specific example of why impersonating a direct call is a
+problem? I agree that it sounds bad, but the hypervisor is still in the
+middle and so it can check what the call is requesting.
 
+Will
 
