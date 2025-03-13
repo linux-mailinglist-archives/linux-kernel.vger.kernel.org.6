@@ -1,125 +1,109 @@
-Return-Path: <linux-kernel+bounces-558754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73323A5EAA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 05:36:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36753A5EAB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 05:41:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1D197AAF77
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 04:35:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E5927AA7AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 04:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24BA14A605;
-	Thu, 13 Mar 2025 04:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB093149DE8;
+	Thu, 13 Mar 2025 04:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EXg543e3"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="b9oT00sl"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8D11386DA;
-	Thu, 13 Mar 2025 04:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E261386DA
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 04:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741840580; cv=none; b=sj4zIiaJGJAsZq4cnTcwx01hcxauSt9NCKtMnF6HppYbHtjEjddHPi7p4uWiYWzCca92J9ISNjjzzvrGTc9j/zfI1y4Ek/JDEmFsnju7zgNgTjrSvGHa3y3i0Hb6ORCT0Gj4NWNo4rS3mwdrcwQ0VmXGpHnGE/EhWb+McYxZrxo=
+	t=1741840856; cv=none; b=lKF+KRzaJUdiDfln0oO1fPrhziSY7qEvodsIe9D/Z6iN2JqwNg0njxRwRrvQkbnhz+vgiJBVr+Kgrf9t2nNDM3xSBZ0SI6MzeP92wT6ElzuUU8o04+ERoUa/s9AuCNBzMyjIkeJO7hb7u38jDFcfgtho5BtqGNBoycVEyBhq7R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741840580; c=relaxed/simple;
-	bh=poDSq3c/+Ogs+u1G3fiKjF8Ul07WCCrlskdvEFohxrY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=irlJpGjhW7bdvxEHL0K4rbeQQ+VwQl7BBujws4/ZgOtaMkd9qJ2JvKQcbgTIshEbSBCRufBv+Ltjt2FZp4KsTlUKnEAyq6LARFfV7c6E8eBEtE59Xh9Wt6XEsAYXIIE31Clbx8tng4uLlvv1Zz292n2KVss4MDe69T3pY4EPLOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EXg543e3; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6e8fa1f99a6so518546d6.3;
-        Wed, 12 Mar 2025 21:36:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741840574; x=1742445374; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=slsulH31X6Z0v0G795q8VNo19hZffiGI8EJwmN2Ou9o=;
-        b=EXg543e3aAdVBhchvs/lVXCVtR++ZkzlTdE81PkLTVO7bKG7OIbME4BuNSLadLbdvT
-         z9d7g1He/WpMqITmwI8/V77/I5miiW8aHNu9kflJkZJodn3tkxIBccBzcg7gQPeubmjO
-         AMZv38vrGiIQrAaVtrSKM6HiRk3/xZ58axHTJct4Tl8fa9FnH4CDsscxpxNiDnq/hJGI
-         0WCelm9Of5wMKZe+w1FyNDeWTtapdnJTGnwPnojdDgoDIVvoa+j/yt5Wy7HOFabLo3WF
-         1lv3fDQgt1IExC1QBEfqfZ8KpIm69WYg5UymFbbvjZZ9Q/HH3RsjFP9chVN89azAf9sP
-         mmkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741840574; x=1742445374;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=slsulH31X6Z0v0G795q8VNo19hZffiGI8EJwmN2Ou9o=;
-        b=YtZxyeGjULVoMQksEkTRMoAunQ3Vztq0ke7f/d0UwxC0PxKa6nUjE86azpr5KDSmI/
-         KQ7Jd6FRlNd3px2KChPVwuob9+d1ONqqVJysiCV+Yj2m99O7uqEpBPi2ZRr6j1NzEQxD
-         geU/0oNh8RIP+I/QbCXKcn8QrHkSQiGb8CAMGzAqWNKZGXzbzWl3FuwCoFAQVeSlJzyg
-         EjOrw/PYHhn3Dbbor5AiMIHIcTlX7O+fEOUMCuFToP7KrZz0pVY55bQ37gbjPbLggBl0
-         6ZBNDboLTu5Q5NGV9olUBTxZCnwA9uGP60I5aBvZl5AC3JNpA+pRcLo+YXVFqiwpfy5n
-         svWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGc56bMdoOrKHEW2BW/Mw0REqOlZkOaprn67bbrg/g8aniHt3siTRBO2PpANbsGrbDQa3LpBoEDA5Y6Ps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW0RJ2hTqYofpJJSFR9eFQ6KW5qhpnK3sU1ep36eRP2WppkB2o
-	NgyINLP3anGdjAEHrRPAV4gLMHO+erTPQeq1PTyjAHGNCKtNnqU=
-X-Gm-Gg: ASbGnct820DZLNz9Wffpu3anOP9FFMWntmv+S3N17YfZiR+b2ivphrpL5aj2oqloiKC
-	amWWmTiIcBSWG8oJMUqHKUFmcB+6QAh+RmfHwEoje5Exkiyf8OokjsD29phS0q+XBvmn9u+Kj2+
-	2fqr58HMalm8kXnMw68F/Bw6n1Sqx59R/Fi+BP4LVTML5PlG8wix2HH5hoBD5BDSR53RRb2MNpp
-	t8wfLLnQmDW5bSTEzG9rjDeYmEzFYD5mv6jxe+cyP/cH7m03L2dI3mx4qtIfS7TT4x6bbTrAGDe
-	M+vtWLI1yaDap/Ond1PLpnGJDHunKooxUb37KUSLmFWPG8NzdsvO
-X-Google-Smtp-Source: AGHT+IF5YB97HetbVUkdqlBkx7GTkWZiBRUUTwZ4B5HrDCjhn6X+mUy6jUHGd+6QPO2Qch7Of42vOA==
-X-Received: by 2002:a05:6214:76a:b0:6d8:e6be:50fc with SMTP id 6a1803df08f44-6ea3a68c0c7mr55023226d6.6.1741840573921;
-        Wed, 12 Mar 2025 21:36:13 -0700 (PDT)
-Received: from ise-alpha.. ([2620:0:e00:550a:642:1aff:fee8:511b])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade34c121sm4602266d6.107.2025.03.12.21.36.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 21:36:13 -0700 (PDT)
-From: Chenyuan Yang <chenyuan0y@gmail.com>
-To: rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	rui.zhang@intel.com,
-	lukasz.luba@arm.com,
-	u.kleine-koenig@baylibre.com
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chenyuan Yang <chenyuan0y@gmail.com>
-Subject: [PATCH] thermal: int340x: Add Null check for adev
-Date: Wed, 12 Mar 2025 23:36:11 -0500
-Message-Id: <20250313043611.1212116-1-chenyuan0y@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741840856; c=relaxed/simple;
+	bh=g70bD4HYTcy5uhQr/oheCZwZ2hOfkGMFCmt7uvKBKUM=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=U5826Ze4akhwRLXgdzRvGEFL/TmnvOL6uOzQ/WuyTr0yEKBKmG+Olqg3eBiSc5XiDKrjxtPe43fotUrcDidspSh9pwujuTc0LXGb4UFSC52RqIHVNVtIE7v9427kbwT+7tpBrPh2hwZdyZcAorZHCQ35lB2VFP4e/V8rg2XxRJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=b9oT00sl; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=Content-Type:MIME-Version:Message-ID:Subject:To:From:Date:
+	Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=lXHRa+oExN9zXZEhKA+D04KHA7QghE0Lto71uVp3zwA=; b=b9oT00slAzCp98rGiq8aMWQhnE
+	20aBFhnltZYGK9TrEaOTCrtTe5w4wRIf+wMZU3NwUMIXwoss4yU0NmCswX+qx2TiGyMBu4Lc/yu9i
+	Aw1O2Tx3FCkUT0wwth8gBcC8bcjYrJ5X3beNK9evTFA2AUg3i/fkuccGgbXkzuXJSwETJXq/QdvQ+
+	kJ9/6exH7XC5b7uEzG1YEro+qc6NtxclAFfWd9bQO2g2+Rgxump7M/Do63w8ENfBEFqfc6eEeQawr
+	t9F/VvpfX8uQ78Gg/HiE45b806lK49AGlsXilVfYc2yYSYIf4NeCzv9vwrGRpSnScOYDo68W8bErQ
+	s38f3h+w==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tsaN0-00687w-14;
+	Thu, 13 Mar 2025 12:40:35 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 13 Mar 2025 12:40:34 +0800
+Date: Thu, 13 Mar 2025 12:40:34 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Christoph Hellwig <hch@lst.de>, Zi Yan <ziy@nvidia.com>,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH] mm: Move nth_page from folio_page into folio_next
+Message-ID: <Z9JhwhMIn4uhkHrI@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Not all devices have an ACPI companion fwnode, so adev might be NULL.
-This is similar to the commit cd2fd6eab480
-("platform/x86: int3472: Check for adev == NULL").
+Discontiguous memory may require the use of nth_page instead of adding
+to struct page arithmetically.  However, discontiguous memory cannot
+exist within a single folio.
 
-Add a check for adev not being set and return -ENODEV in that case to
-avoid a possible NULL pointer deref in int3402_thermal_probe().
+The function folio_page is mostly used for accessing a page within
+a folio, therefore using nth_page for it is overkill.
 
-Note, under the same directory, int3400_thermal_probe() has such a
-check.
+Move it to the only place where it's needed, which is folio_next.
 
-Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
----
- drivers/thermal/intel/int340x_thermal/int3402_thermal.c | 3 +++
- 1 file changed, 3 insertions(+)
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-diff --git a/drivers/thermal/intel/int340x_thermal/int3402_thermal.c b/drivers/thermal/intel/int340x_thermal/int3402_thermal.c
-index 543b03960e99..57b90005888a 100644
---- a/drivers/thermal/intel/int340x_thermal/int3402_thermal.c
-+++ b/drivers/thermal/intel/int340x_thermal/int3402_thermal.c
-@@ -45,6 +45,9 @@ static int int3402_thermal_probe(struct platform_device *pdev)
- 	struct int3402_thermal_data *d;
- 	int ret;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 7b1068ddcbb7..5f63ee0770f7 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2115,7 +2115,7 @@ static inline int thp_nr_pages(struct page *page)
+  */
+ static inline struct folio *folio_next(struct folio *folio)
+ {
+-	return (struct folio *)folio_page(folio, folio_nr_pages(folio));
++	return (struct folio *)nth_page(&folio->page, folio_nr_pages(folio));
+ }
  
-+	if (!adev)
-+		return -ENODEV;
-+
- 	if (!acpi_has_method(adev->handle, "_TMP"))
- 		return -ENODEV;
+ /**
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 36d283552f80..ebba355c45a5 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -275,7 +275,7 @@ static __always_inline unsigned long _compound_head(const struct page *page)
+  * check that the page number lies within @folio; the caller is presumed
+  * to have a reference to the page.
+  */
+-#define folio_page(folio, n)	nth_page(&(folio)->page, n)
++#define folio_page(folio, n)	(&(folio)->page + (n))
  
+ static __always_inline int PageTail(const struct page *page)
+ {
 -- 
-2.34.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
