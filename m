@@ -1,45 +1,54 @@
-Return-Path: <linux-kernel+bounces-558699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D6AA5E99F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 03:09:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 500E5A5E9A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 03:11:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F1EF18979F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:09:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 858D4177319
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C27181ACA;
-	Thu, 13 Mar 2025 02:08:57 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD4F78F59;
+	Thu, 13 Mar 2025 02:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="K96VwPv+"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75EDEC4;
-	Thu, 13 Mar 2025 02:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9891EEC4;
+	Thu, 13 Mar 2025 02:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741831737; cv=none; b=Gz+rGRTmY0YXcMSmGfNSy6/JbsjHX2vlKjCensM5ikHhlrZ5wQEvHaUR+6kGKhM9P6zuuEOuaPqj8KRi/dIayvL+nK2JLGMjk11Sh9MNuSe9LbVIU2EUOyUCQNXLuZPMOfKycYk0izH9Mrlz2vntBCmQx4W+XBwby08OqvmTjCc=
+	t=1741831890; cv=none; b=bbTK54SVYLDQPq387vWqmWs0w+y896UrxePm+Qru3UksFx1ZeobvbevhK/H0ZbvWJ25fijwOGKqvxFqC2MJ2tbBCy9qu7vkD3wgjlpl8FUNLO7Mk/2BdLDpJOn9VywK4nddTd3tK4ynVOe2NyTaufWJMd42nNCdOLom5YP7D3rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741831737; c=relaxed/simple;
-	bh=5PXdoVQxoeu0uhvZ98hV7wg/SGuDIsg93giDttYwCLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=W93zw2jn4ype1ZaU75ytNadLLy2Jqy7vvB8JVd18Dn9VV05X4OYUGcNGowJuvltXQAGPAtWr40IK9s8P5SD8eLpYosI2GQhw6Fpll1QY7eIZNBUxW3esiYOhfvQ4zwRvVpeOCNz6m1VbDHi4Gye/DqDoTx2edSHobDLWl6K7FgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZCrRb462YzvWm2;
-	Thu, 13 Mar 2025 10:04:59 +0800 (CST)
-Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6B8EF1402DB;
-	Thu, 13 Mar 2025 10:08:50 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
- (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 13 Mar
- 2025 10:08:49 +0800
-Message-ID: <537f33c2-ca19-4025-9d22-4ab44f92e8c0@huawei.com>
-Date: Thu, 13 Mar 2025 10:08:48 +0800
+	s=arc-20240116; t=1741831890; c=relaxed/simple;
+	bh=FpC/vTuwIK5xIUgyQayYXS0BC2eQhbdB7objGTLAYV0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uUYuNHWMuVahEmGD5zdx5DHanpfHt3h3cFcgwobAPaMHusEvCIYM+4Xcj2goCRG2HDU1WW5/kSv5i3b9N+Z68lZTt1z4lf63iu4R9PWO8aY/SUiuRRI6hRd31ATNhjoH6d/ALMDw5n1vmck4IOPct+fBddCFiaRquaWgCYZptoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=K96VwPv+; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741831881;
+	bh=FpC/vTuwIK5xIUgyQayYXS0BC2eQhbdB7objGTLAYV0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=K96VwPv+aIwjbtzVY9PiUbxOZEX7YVvF3CNB/wJzqT34HrNwMBSIY6172lqADQjVk
+	 xqGE8H7jqxTScepZPCRIBTlOI5eIVnZ55BOhvUHMMux8yRR2FSSlxtpg1Hnr4h1nHG
+	 7rR+Fpdjnn7k3GVKPKhZ52mYWzfQiaXAHNlMjfrDrx9Lab6deu+lD980tlczpHtm+J
+	 dBhB2uksMY+FsynP2gf+lom+DEzd6bsBwHZcGP9gCUrNLgqKYV2ZUaoxCYjmDRPsyF
+	 MAThuelWlIXJzj6Z3OR1ZGvcbN4pH5xamSzylh6Ca/BK7fBiF63S1OR5/Bb01Xm5oq
+	 YcxJQwdEchJVg==
+Received: from [192.168.50.250] (unknown [171.76.87.92])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5D09C17E1134;
+	Thu, 13 Mar 2025 03:11:18 +0100 (CET)
+Message-ID: <cc9501d1-c779-4728-a609-ce83a73f46f6@collabora.com>
+Date: Thu, 13 Mar 2025 07:40:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,207 +56,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] ext4: avoid journaling sb update on error if
- journal is destroying
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, Zhang Yi <yi.zhang@huawei.com>, Jan
- Kara <jack@suse.cz>
-CC: Ritesh Harjani <ritesh.list@gmail.com>, <linux-ext4@vger.kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>, <linux-kernel@vger.kernel.org>, Mahesh Kumar
-	<maheshkumar657g@gmail.com>, Yang Erkun <yangerkun@huawei.com>
-References: <1bf59095d87e5dfae8f019385ba3ce58973baaff.1741270780.git.ojaswin@linux.ibm.com>
- <87ldtfhmo7.fsf@gmail.com>
- <Z8xAmyICsNlln4Y3@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <87ecz7hcw0.fsf@gmail.com>
- <Z8xbLrdN3L1E50-G@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <87cyergyb1.fsf@gmail.com>
- <Z82EjcExRMc8nz2v@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <871pv5cx6v.fsf@gmail.com>
- <bct36ajzi6sardnmc6yz4ot4fbpr654b4k2xz54mrtyje7wofq@qpwzbtctwqnf>
- <Z9GZdSiDL0J80720@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <5ygal3ht47dcpftsxxksmk4lid47al2g4xzlbennmtteeqqsed@uswr3gimu3wc>
- <ee4156da-e199-443a-9af9-246e8d89559e@huawei.com>
+Subject: Re: [PATCH v2] drm/ci: add kms_cursor_legacy@torture-bo to apq8016
+ flakes
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Rob Clark
+ <robdclark@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ Helen Koike <helen.koike@collabora.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ lumag@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+References: <20241204-cursor_tor_skip-v2-1-f03bcbc4b455@quicinc.com>
 Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <ee4156da-e199-443a-9af9-246e8d89559e@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg500008.china.huawei.com (7.202.181.45)
+From: Vignesh Raman <vignesh.raman@collabora.com>
+In-Reply-To: <20241204-cursor_tor_skip-v2-1-f03bcbc4b455@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2025/3/13 9:20, Zhang Yi wrote:
-> On 2025/3/13 1:15, Jan Kara wrote:
->> On Wed 12-03-25 19:56:36, Ojaswin Mujoo wrote:
->>> On Wed, Mar 12, 2025 at 11:51:03AM +0100, Jan Kara wrote:
->>>> On Mon 10-03-25 10:13:36, Ritesh Harjani wrote:
->>>>> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
->>>>>> On Sun, Mar 09, 2025 at 12:11:22AM +0530, Ritesh Harjani wrote:
->>>>>>> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
->>>>>>>> On Sat, Mar 08, 2025 at 06:56:23PM +0530, Ritesh Harjani wrote:
->>>>>>>>> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
->>>>>>>>>> On Sat, Mar 08, 2025 at 03:25:04PM +0530, Ritesh Harjani (IBM) wrote:
->>>>>>>>>>> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
->>>>>>>>>>>> Presently we always BUG_ON if trying to start a transaction on a journal marked
->>>>>>>>>>>> with JBD2_UNMOUNT, since this should never happen. However, while ltp running
->>>>>>>>>>>> stress tests, it was observed that in case of some error handling paths, it is
->>>>>>>>>>>> possible for update_super_work to start a transaction after the journal is
->>>>>>>>>>>> destroyed eg:
->>>>>>>>>>>>
->>>>>>>>>>>> (umount)
->>>>>>>>>>>> ext4_kill_sb
->>>>>>>>>>>>    kill_block_super
->>>>>>>>>>>>      generic_shutdown_super
->>>>>>>>>>>>        sync_filesystem /* commits all txns */
->>>>>>>>>>>>        evict_inodes
->>>>>>>>>>>>          /* might start a new txn */
->>>>>>>>>>>>        ext4_put_super
->>>>>>>>>>>> 	flush_work(&sbi->s_sb_upd_work) /* flush the workqueue */
->>>>>>>>>>>>          jbd2_journal_destroy
->>>>>>>>>>>>            journal_kill_thread
->>>>>>>>>>>>              journal->j_flags |= JBD2_UNMOUNT;
->>>>>>>>>>>>            jbd2_journal_commit_transaction
->>>>>>>>>>>>              jbd2_journal_get_descriptor_buffer
->>>>>>>>>>>>                jbd2_journal_bmap
->>>>>>>>>>>>                  ext4_journal_bmap
->>>>>>>>>>>>                    ext4_map_blocks
->>>>>>>>>>>>                      ...
->>>>>>>>>>>>                      ext4_inode_error
->>>>>>>>>>>>                        ext4_handle_error
->>>>>>>>>>>>                          schedule_work(&sbi->s_sb_upd_work)
->>>>>>>>>>>>
->>>>>>>>>>>>                                                 /* work queue kicks in */
->>>>>>>>>>>>                                                 update_super_work
->>>>>>>>>>>>                                                   jbd2_journal_start
->>>>>>>>>>>>                                                     start_this_handle
->>>>>>>>>>>>                                                       BUG_ON(journal->j_flags &
->>>>>>>>>>>>                                                              JBD2_UNMOUNT)
->>>>>>>>>>>>
->>>>>>>>>>>> Hence, introduce a new sbi flag s_journal_destroying to indicate journal is
->>>>>>>>>>>> destroying only do a journaled (and deferred) update of sb if this flag is not
->>>>>>>>>>>> set. Otherwise, just fallback to an un-journaled commit.
->>>>>>>>>>>>
->>>>>>>>>>>> We set sbi->s_journal_destroying = true only after all the FS updates are done
->>>>>>>>>>>> during ext4_put_super() (except a running transaction that will get commited
->>>>>>>>>>>> during jbd2_journal_destroy()). After this point, it is safe to commit the sb
->>>>>>>>>>>> outside the journal as it won't race with a journaled update (refer
->>>>>>>>>>>> 2d01ddc86606).
->>>>>>>>>>>>
->>>>>>>>>>>> Also, we don't need a similar check in ext4_grp_locked_error since it is only
->>>>>>>>>>>> called from mballoc and AFAICT it would be always valid to schedule work here.
->>>>>>>>>>>>
->>>>>>>>>>>> Fixes: 2d01ddc86606 ("ext4: save error info to sb through journal if available")
->>>>>>>>>>>> Reported-by: Mahesh Kumar <maheshkumar657g@gmail.com>
->>>>>>>>>>>> Suggested-by: Jan Kara <jack@suse.cz>
->>>>>>>>>>>> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
->>>>>>>>>>>> ---
->>>>>>>>>>>>   fs/ext4/ext4.h      | 2 ++
->>>>>>>>>>>>   fs/ext4/ext4_jbd2.h | 8 ++++++++
->>>>>>>>>>>>   fs/ext4/super.c     | 4 +++-
->>>>>>>>>>>>   3 files changed, 13 insertions(+), 1 deletion(-)
->>>>>>>>>>>>
->>>>>>>>>>>> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
->>>>>>>>>>>> index 2b7d781bfcad..d48e93bd5690 100644
->>>>>>>>>>>> --- a/fs/ext4/ext4.h
->>>>>>>>>>>> +++ b/fs/ext4/ext4.h
->>>>>>>>>>>> @@ -1728,6 +1728,8 @@ struct ext4_sb_info {
->>>>>>>>>>>>   	 */
->>>>>>>>>>>>   	struct work_struct s_sb_upd_work;
->>>>>>>>>>>>   
->>>>>>>>>>>> +	bool s_journal_destorying;
->>>>>>>>>>>> +
->>>>>>>>>>>>   	/* Atomic write unit values in bytes */
->>>>>>>>>>>>   	unsigned int s_awu_min;
->>>>>>>>>>>>   	unsigned int s_awu_max;
->>>>>>>>>>>> diff --git a/fs/ext4/ext4_jbd2.h b/fs/ext4/ext4_jbd2.h
->>>>>>>>>>>> index 9b3c9df02a39..6bd3ca84410d 100644
->>>>>>>>>>>> --- a/fs/ext4/ext4_jbd2.h
->>>>>>>>>>>> +++ b/fs/ext4/ext4_jbd2.h
->>>>>>>>>>>> @@ -437,6 +437,14 @@ static inline int ext4_journal_destroy(struct ext4_sb_info *sbi, journal_t *jour
->>>>>>>>>>>>   {
->>>>>>>>>>>>   	int err = 0;
->>>>>>>>>>>>   
->>>>>>>>>>>> +	/*
->>>>>>>>>>>> +	 * At this point all pending FS updates should be done except a possible
->>>>>>>>>>>> +	 * running transaction (which will commit in jbd2_journal_destroy). It
->>>>>>>>>>>> +	 * is now safe for any new errors to directly commit superblock rather
->>>>>>>>>>>> +	 * than going via journal.
->>>>>>>>>>>> +	 */
->>>>>>>>>>>> +	sbi->s_journal_destorying = true;
->>>>>>>>>>> This is not correct right. I think what we decided to set this flag
->>>>>>>>>>> before we flush the workqueue. So that we don't schedule any new
->>>>>>>>>>> work after this flag has been set. At least that is what I understood.
->>>>>>>>>>>
->>>>>>>>>>> [1]: https://lore.kernel.org/all/87eczc6rlt.fsf@gmail.com/
->>>>>>>>>>>
->>>>>>>>>>> -ritesh
->>>>>>>>>> Hey Ritesh,
->>>>>>>>>>
->>>>>>>>>> Yes that is not correct, I missed that in my patch however we realised
->>>>>>>>>> that adding it before flush_work() also has issues [1]. More
->>>>>>>>>> specifically:
->>>>>>>>> Ohk. right.
->>>>>>>>>
->>>>>>>>>>                       **kjournald2**
->>>>>>>>>>                       jbd2_journal_commit_transaction()
->>>>>>>>>>                       ...
->>>>>>>>>>                       ext4_handle_error()
->>>>>>>>>>                          /* s_journal_destorying is not set */
->>>>>>>>>>                          if (journal && !s_journal_destorying)
->>>>>>>>> Then maybe we should not schedule another work to update the superblock
->>>>>>>>> via journalling, it the error itself occurred while were trying to
->>>>>>>>> commit the journal txn?
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> -ritesh
->>>>>>>> Hmm, ideally yes that should not happen, but how can we achieve that?
->>>>>>>> For example with the trace we saw:
->>>>>>>>
->>>>>>>>     **kjournald2**
->>>>>>>>     jbd2_journal_commit_transaction()
->>>>>>>>       jbd2_journal_get_descriptor_buffer
->>>>>>>>         jbd2_journal_bmap
->>>>>>>>           ext4_journal_bmap
->>>>>>>>             ext4_map_blocks
->>>>>>>>               ...
->>>>>>>>               ext4_inode_error
->>>>>>>>                 ext4_handle_error
->>>>>>>>                   schedule_work(&sbi->s_sb_upd_work)
->>>>>>>>
->>>>>>>> How do we tell ext4_handle_error that it is in the context of a
->>>>>>>> committing txn.
->>>> So I was thinking about this. It is not a problem to determine we are
->>>> running in kjournald context - it is enough to check
->>>>
->>>> 	current == EXT4_SB(sb)->s_journal->j_task
->>> Oh, right :)
->>>
->>>> But I'm not sure checking this in ext4_handle_error() and doing direct sb
->>>> update instead of scheduling a journalled one is always correct. For
->>>> example kjournald does also writeback of ordered data and if that hits an
->>>> error, we do not necessarily abort the journal (well, currently we do as
->>>> far as I'm checking but it seems a bit fragile to rely on this).
->>> Okay so IIUC your concern is there might be some codepaths, now or in
->>> the future, where kjournald might call the FS layer, hit an error and
->>> still decide to not abort. In which case we would still want to update
->>> the sb via journal.
->> Yeah. The reason why I'm a bit concerned about it is mostly the case of
->> kjournald also handling ordered data and situations like
->> !(journal->j_flags & JBD2_ABORT_ON_SYNCDATA_ERR) where people want to
->> continue although ordered data had issues. Or situations where something in
->> j_commit_callback or another jbd2 hook ends up calling ext4_error()...
->>
-> Ha, right! This is a case where kjournald triggers an ext4 error but does
-> not abort the journal for now, I forgot this one, and there may be more.
-> Thanks for pointing it out. I would also prefer to use this solution of
-> adding ext4_journal_destory().
->
-If we consider the possibility that there might be calls to ext4_error()
-without aborting the journal, although I cannot imagine how this might
-happen, this situation may indeed appear in hidden corners now or in the
-future. Therefore, an extra flag is indeed needed, with which we don't
-have to think so much. 😀
+Hi Abhinav,
 
+On 05/12/24 01:29, Abhinav Kumar wrote:
+>  From the jobs [1] and [2] of pipeline [3], its clear that
+> kms_cursor_legacy@torture-bo is most certainly a flake and
+> not a fail for apq8016. Mark the test accordingly to match the results.
+> 
+> [1] : https://gitlab.freedesktop.org/drm/msm/-/jobs/67676481
+> [2] : https://gitlab.freedesktop.org/drm/msm/-/jobs/67677430
+> [3]: https://gitlab.freedesktop.org/drm/msm/-/pipelines/1322770
+> 
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+> Changes in v2:
+> - Fix the failure rate from 100 to 33 as thats the accurate one
+> - Link to v1: https://lore.kernel.org/r/20241204-cursor_tor_skip-v1-1-f5f0bba5df7b@quicinc.com
+> ---
+>   drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt b/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt
+> new file mode 100644
+> index 000000000000..2fb192c92559
+> --- /dev/null
+> +++ b/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt
+> @@ -0,0 +1,5 @@
+> +# Board Name: msm-apq8016-db410c
+> +# Failure Rate: 33
+> +# IGT Version: 1.28-ga73311079
+> +# Linux Version: 6.12.0-rc2
+> +kms_cursor_legacy@torture-bo
 
-Cheers,
-Baokun
+Reviewed-by: Vignesh Raman <vignesh.raman@collabora.com>
+
+Regards,
+Vignesh
+
+> 
+> ---
+> base-commit: 798bb342e0416d846cf67f4725a3428f39bfb96b
+> change-id: 20241204-cursor_tor_skip-9d128dd62c4f
+> 
+> Best regards,
 
 
