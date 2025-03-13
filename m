@@ -1,123 +1,216 @@
-Return-Path: <linux-kernel+bounces-559913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6172A5FADF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:11:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81EC1A5FAED
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:13:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0AC47A4EA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:10:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AED517E112
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2BA26BD8C;
-	Thu, 13 Mar 2025 16:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="OdoSv+Fs"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A4E26BD83
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 16:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F2226BD83;
+	Thu, 13 Mar 2025 16:04:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9376526BDBA
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 16:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741881848; cv=none; b=uxtTonXSOK07QsnEXaZOTbvg+5vcLYjwHh6BovBnqSDhj0FyN5bHIjQXq3X+jC0VYTCmoLbJhoV+wLV84/XXhKcY3Gpu3mSW9XHX6C0sAUgK/EUJNmQWNWG1JVBAQs+BT6g2bJ3hzSioc+W/vf5vp15IoA8m3CByKLNGlE4ESOE=
+	t=1741881857; cv=none; b=PeMJRo3amfa7sit0LjcrG4TZhh5ayUMFMlWLsS0e8opUPio71MADfQFiQE0agvT0E0poMUb019krlQtrgQytL+yuVI2BZboubQnvDAuuZQfRcovaM9XG5WUeUcdjGAjBVXnacLrbifsbdSGV0v46w9XO9i5v3/F6g0X2usQfabA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741881848; c=relaxed/simple;
-	bh=hBSfzFoCyQ5JKu6HvTphQSCiNduazkjE8VhN+ka+iv4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UsnMnor2V6JKmffq9Oemj17Z2ZBl0y8nYy+R3MWkKKqRjV9RRUfLfcA1iqsiVy2yaPW1298nIQcQIa5wNh4YzgRHtDWtIZPJ4YF2xiTncbknD1+FIgHU6CLNePJw2DcXypb/MoOXLtlRSQsW6/xBKdiQXWAg6Sip3dZtgRnf3hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=OdoSv+Fs; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1741881845; x=1742141045;
-	bh=zJzfYxqTGkpvxERVV5xc7MvB+YJR4f+zoVmRta1ZEMc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=OdoSv+FsaUzHNvgKe8WkVvrVYmpgRJUbIw/9WlM2oG8d+T+VpA/us+gkkYvVptNnO
-	 mTJ+gkIiQ3QRtGFb1QmFTYp8i+fO1czeq8VB6YSt944F1ItXw5bvdpluoNL5ZkHB88
-	 /Q9AyULSgoc6oi3OH0LvxzFn8GnjYAO26b6WrRTed2iw20yIK+Be+p3XABQY3nsHjR
-	 4nqzW9a2V11V+ewo5fw3Ay2tRam5qC/URzDixgkJhyxmwtiTNwxwfIquqOE8EzjWzr
-	 bjTYn/vPG+LZX8PP+WXYnVJcFmYyuD2t+NKHZBeluSH2rwljPBaDhmVIbXvN5rhBqO
-	 w6TQEEPDBvW6w==
-Date: Thu, 13 Mar 2025 16:04:00 +0000
-To: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-input@vger.kernel.org, dri-devel@lists.freedesktop.org
-From: Rahul Rameshbabu <sergeantsagara@protonmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Rahul Rameshbabu <sergeantsagara@protonmail.com>
-Subject: [PATCH RFC 3/3] rust: hid: demo the core abstractions for probe and remove
-Message-ID: <20250313160220.6410-6-sergeantsagara@protonmail.com>
-In-Reply-To: <20250313160220.6410-2-sergeantsagara@protonmail.com>
-References: <20250313160220.6410-2-sergeantsagara@protonmail.com>
-Feedback-ID: 26003777:user:proton
-X-Pm-Message-ID: b638180c65cc3d8ba015ced71bcec205a97bd6d0
+	s=arc-20240116; t=1741881857; c=relaxed/simple;
+	bh=IG5sg+EIOS9WTU2xvzpI4j6wSUFuFjy4fLnkB2YxnkM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s2WvG4RW6NXo1jBF3xgwqhZZVVEKgmSsKAe2EAgXYlrTSAFPS6NLqV9fELYsUiwWh5BZWI0fF/4cnU5F/ZgGaM8hLSWgtXym1SwwOBAzDYhVOC/KQLdm5MczEr77faQYt+KI6iThjB6PBv3suzkSdRnEzbZCH35VRoDzDWALjko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 418A1150C;
+	Thu, 13 Mar 2025 09:04:24 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 855B93F673;
+	Thu, 13 Mar 2025 09:04:13 -0700 (PDT)
+Date: Thu, 13 Mar 2025 16:04:09 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: lcherian@marvell.com, coresight@lists.linaro.org,
+	Mike Leach <mike.leach@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 5/7] coresight: Clear self hosted claim tag on probe
+Message-ID: <20250313160409.GS9682@e132581.arm.com>
+References: <20250211103945.967495-1-james.clark@linaro.org>
+ <20250211103945.967495-6-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250211103945.967495-6-james.clark@linaro.org>
 
-This is a very basic "hello, world!" implementation to illustrate that the
-probe and remove callbacks are working as expected. I chose an arbitrary
-device I had on hand for populating in the HID device id table.
+On Tue, Feb 11, 2025 at 10:39:41AM +0000, James Clark wrote:
+> 
+> This can be left behind from a crashed kernel after a kexec so clear it
+> when probing each device. Similarly to
+> coresight_disclaim_device_unlocked(), only clear it if it's already set
+> to avoid races with an external debugger.
+> 
+> We need a csdev_access struct in etm_init_arch_data() so just replace
+> the iomem pointer with a full csdev_access struct. This means all usages
+> need to be updated to go through csa->base.
+> 
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>  drivers/hwtracing/coresight/coresight-catu.c  |  1 +
+>  drivers/hwtracing/coresight/coresight-core.c  | 48 +++++++++++++++----
+>  .../hwtracing/coresight/coresight-cti-core.c  |  2 +
+>  drivers/hwtracing/coresight/coresight-etb10.c |  2 +
+>  drivers/hwtracing/coresight/coresight-etm.h   |  6 +--
+>  .../coresight/coresight-etm3x-core.c          | 28 +++++------
+>  .../coresight/coresight-etm3x-sysfs.c         |  8 ++--
+>  .../coresight/coresight-etm4x-core.c          |  2 +
+>  .../hwtracing/coresight/coresight-funnel.c    |  2 +
+>  .../coresight/coresight-replicator.c          |  1 +
+>  .../hwtracing/coresight/coresight-tmc-core.c  |  1 +
+>  include/linux/coresight.h                     |  3 ++
+>  12 files changed, 73 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
+> index d9259c0b6e64..575c2d247a90 100644
+> --- a/drivers/hwtracing/coresight/coresight-catu.c
+> +++ b/drivers/hwtracing/coresight/coresight-catu.c
+> @@ -558,6 +558,7 @@ static int __catu_probe(struct device *dev, struct resource *res)
+>         catu_desc.subtype.helper_subtype = CORESIGHT_DEV_SUBTYPE_HELPER_CATU;
+>         catu_desc.ops = &catu_ops;
+> 
+> +       coresight_reset_claim(&catu_desc.access);
+>         drvdata->csdev = coresight_register(&catu_desc);
+>         if (IS_ERR(drvdata->csdev))
+>                 ret = PTR_ERR(drvdata->csdev);
+> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+> index 7fe5d5d432c4..97f33ffad05e 100644
+> --- a/drivers/hwtracing/coresight/coresight-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-core.c
+> @@ -212,20 +212,48 @@ int coresight_claim_device(struct coresight_device *csdev)
+>  EXPORT_SYMBOL_GPL(coresight_claim_device);
+> 
+>  /*
+> - * coresight_disclaim_device_unlocked : Clear the claim tag for the device.
+> + * Clear the claim tag for the device.
+> + * Returns an error if the device wasn't already claimed.
+> + */
+> +int coresight_reset_claim(struct csdev_access *csa)
+> +{
+> +       int ret;
+> +
+> +       CS_UNLOCK(csa->base);
+> +       ret = coresight_reset_claim_unlocked(csa);
+> +       CS_LOCK(csa->base);
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(coresight_reset_claim);
 
-  [  +0.012968] monitor_control: Probing HID device vendor: 2389 product: 2=
-9204 using Rust!
-  [  +0.000108] monitor_control: Removing HID device vendor: 2389 product: =
-29204 using Rust!
+Maybe my question is overlapping with Mike's comment.
 
-Signed-off-by: Rahul Rameshbabu <sergeantsagara@protonmail.com>
----
- drivers/hid/hid_monitor_control.rs | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Callers never check the return values from coresight_reset_claim(). I am
+wandering if coresight_reset_claim() can directly call
+coresight_clear_self_claim_tag() for _trying_ to clear self-host tag in
+probe phase. Any self claim tag issues will be deferred to detect until
+enable the component.
 
-diff --git a/drivers/hid/hid_monitor_control.rs b/drivers/hid/hid_monitor_c=
-ontrol.rs
-index 18afd69a56d5..aeb6e4058a6b 100644
---- a/drivers/hid/hid_monitor_control.rs
-+++ b/drivers/hid/hid_monitor_control.rs
-@@ -8,17 +8,22 @@
-     Driver,
- };
-=20
-+const USB_VENDOR_ID_NVIDIA: u32 =3D 0x0955;
-+const USB_DEVICE_ID_NVIDIA_THUNDERSTRIKE_CONTROLLER: u32 =3D 0x7214;
-+
- struct HidMonitorControl;
-=20
- #[vtable]
- impl Driver for HidMonitorControl {
-     fn probe(dev: &mut hid::Device, id: &hid::DeviceId) -> Result<()> {
-         /* TODO implement */
-+        pr_info!("Probing HID device vendor: {} product: {} using Rust!\n"=
-, id.vendor(), id.product());
-         Ok(())
-     }
-=20
-     fn remove(dev: &mut hid::Device) {
-         /* TODO implement */
-+        pr_info!("Removing HID device vendor: {} product: {} using Rust!\n=
-", dev.vendor(), dev.product());
-     }
- }
-=20
-@@ -26,8 +31,8 @@ fn remove(dev: &mut hid::Device) {
-     driver: HidMonitorControl,
-     id_table: [
-         kernel::usb_device! {
--            vendor: /* TODO fill in */,
--            product: /* TODO fill in */,
-+            vendor: USB_VENDOR_ID_NVIDIA,
-+            product: USB_DEVICE_ID_NVIDIA_THUNDERSTRIKE_CONTROLLER,
-         },
-     ],
-     name: "monitor_control",
---=20
-2.47.2
+For consistent, we might rename coresight_reset_claim() to
+coresight_reset_self_claim_tag(), which acquires CS lock and clear
+self claim tag.
 
+> +/*
+> + * Clear the claim tag for the device. Called with CS_UNLOCKed for the component.
+> + * Returns an error if the device wasn't already claimed.
+> + */
+> +int coresight_reset_claim_unlocked(struct csdev_access *csa)
+> +{
+> +       if (coresight_read_claim_tags(csa) == CORESIGHT_CLAIM_SELF_HOSTED) {
+> +               coresight_clear_self_claim_tag(csa);
+> +               return 0;
+> +       }
+> +
+> +       return -EINVAL;
+> +}
+> +EXPORT_SYMBOL_GPL(coresight_reset_claim_unlocked);
+> +
+> +/*
+> + * coresight_disclaim_device_unlocked : Clear the claim tag for the device
+> + * and warn if the device wasn't already claimed.
+>   * Called with CS_UNLOCKed for the component.
+>   */
+>  void coresight_disclaim_device_unlocked(struct csdev_access *csa)
+>  {
+> -       if (coresight_read_claim_tags(csa) == CORESIGHT_CLAIM_SELF_HOSTED)
+> -               coresight_clear_self_claim_tag(csa);
+> -       else
+> -               /*
+> -                * The external agent may have not honoured our claim
+> -                * and has manipulated it. Or something else has seriously
+> -                * gone wrong in our driver.
+> -                */
+> -               WARN_ON_ONCE(1);
+> +       /*
+> +        * Warn if the external agent hasn't honoured our claim
+> +        * and has manipulated it. Or something else has seriously
+> +        * gone wrong in our driver.
+> +        */
+> +       WARN_ON_ONCE(coresight_reset_claim_unlocked(csa));
+>  }
+>  EXPORT_SYMBOL_GPL(coresight_disclaim_device_unlocked);
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-cti-core.c b/drivers/hwtracing/coresight/coresight-cti-core.c
+> index 073f67a41af9..389a72362f0c 100644
+> --- a/drivers/hwtracing/coresight/coresight-cti-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-cti-core.c
+> @@ -931,6 +931,8 @@ static int cti_probe(struct amba_device *adev, const struct amba_id *id)
+>         cti_desc.ops = &cti_ops;
+>         cti_desc.groups = drvdata->ctidev.con_groups;
+>         cti_desc.dev = dev;
+> +
+> +       coresight_reset_claim(&cti_desc.access);
+>         drvdata->csdev = coresight_register(&cti_desc);
+>         if (IS_ERR(drvdata->csdev)) {
+>                 ret = PTR_ERR(drvdata->csdev);
+> diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
+> index d8bc3e776c88..b598b2c0c9bb 100644
+> --- a/drivers/hwtracing/coresight/coresight-etb10.c
+> +++ b/drivers/hwtracing/coresight/coresight-etb10.c
+> @@ -772,6 +772,8 @@ static int etb_probe(struct amba_device *adev, const struct amba_id *id)
+>         desc.pdata = pdata;
+>         desc.dev = dev;
+>         desc.groups = coresight_etb_groups;
+> +
+> +       coresight_reset_claim(&desc.access);
+>         drvdata->csdev = coresight_register(&desc);
+>         if (IS_ERR(drvdata->csdev))
+>                 return PTR_ERR(drvdata->csdev);
+> diff --git a/drivers/hwtracing/coresight/coresight-etm.h b/drivers/hwtracing/coresight/coresight-etm.h
+> index e02c3ea972c9..a89736309c27 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm.h
+> +++ b/drivers/hwtracing/coresight/coresight-etm.h
+> @@ -229,7 +229,7 @@ struct etm_config {
+>   * @config:    structure holding configuration parameters.
+>   */
+>  struct etm_drvdata {
+> -       void __iomem                    *base;
+> +       struct csdev_access             csa;
 
+I would like to extract the change for using `csdev_access` in the
+ETMv3 driver into a new patch, which is irrelevant to reset self claim
+tags and would significantly reduce the complexity in this patch.
+
+Thanks,
+Leo
 
