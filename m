@@ -1,105 +1,96 @@
-Return-Path: <linux-kernel+bounces-560356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A5EA602F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:48:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BFADA602F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:48:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A915A19C5CA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:48:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 900647A6CD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA431F463F;
-	Thu, 13 Mar 2025 20:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264791F463F;
+	Thu, 13 Mar 2025 20:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="arsDX0RU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSXM1u0K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B21F1F4614
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 20:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782AF1F4627;
+	Thu, 13 Mar 2025 20:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741898878; cv=none; b=CBW3Snhl1+BiMWJfLgx0p/C2DkJxu9oljmMCxMlmd3NCNMABiVzkooJuCoKdR4KH+kkuwHRinAqwYw8CwEaAYEULxMT7M+JWmXos6zuz6WhKXRDKUX8p5OnjMxc68ydAbCnYnrmZS0qRotsDHQdKtKp19rA22id2pspSaUyIKjI=
+	t=1741898900; cv=none; b=XdreskWik4CV/GQXEhrolnhz2AVqDQ3eUgqK6RZopxHSibWRDhqb8r1k2uTgrwaVx6H5MSpeJzIeYoSo7PxbrduHiK1grmL7zWgDhZdOhXzTiRHs5vpMsqpQzcedTYmHqcaab1aSb1gvVxYbzoKsER2Cb3N37ZUCNGCLxsWk5wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741898878; c=relaxed/simple;
-	bh=BJAL/2BqmnF2wqJ0CNyA2TidlwFu13d/cuLzBvREwgM=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=sZXRCRQL7Ulee/USd+KBWWieW3eE96Fe9aSkfsWVUmR3vk2NsCj3vYvpyxBCBrM+kGxR+mkBWBRjiVa+dLxVqv55fRQxUfHTry3gUCyxwjSybNX71uLeoKAc35kB75cZroxtGK7fnCUv3Bc0ihnfQqy4Hp+cI5NsFNjCdWva2Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=arsDX0RU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741898876;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6524Cf8HlDwGjtyKBEw77UKWV6Y0ZpYj68qA0nrJekk=;
-	b=arsDX0RU5EI2898nRZ6O6GFhuRN7rOVdZDLqqUWcKEEkupGXeMn1bVGiweLnkCbjBGgkdE
-	b0ZoJkGIfnaHxB7khJMKGVvEX+y3tvsUFDMCAAbQeGKQnkRN3U+BiOU1dZ3W/4MFiX9V4d
-	YBYJ0DcXzQc8d2MpIcejptCtmt2Fvhc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-453-XrGS2Ke0P9Ki2Sy3jOvxVg-1; Thu,
- 13 Mar 2025 16:47:52 -0400
-X-MC-Unique: XrGS2Ke0P9Ki2Sy3jOvxVg-1
-X-Mimecast-MFC-AGG-ID: XrGS2Ke0P9Ki2Sy3jOvxVg_1741898871
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2C6271955E80;
-	Thu, 13 Mar 2025 20:47:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 29AF21955BCB;
-	Thu, 13 Mar 2025 20:47:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <3cc1ac78a01be069f79dcf82e2f3e9bfe28d9a4b.camel@dubeyko.com>
-References: <3cc1ac78a01be069f79dcf82e2f3e9bfe28d9a4b.camel@dubeyko.com> <1385372.1741861062@warthog.procyon.org.uk>
-To: slava@dubeyko.com
-Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
-    Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-    Jeff Layton <jlayton@kernel.org>,
-    Alexander Viro <viro@zeniv.linux.org.uk>,
-    Christian Brauner <brauner@kernel.org>, ceph-devel@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    Slava.Dubeyko@ibm.com
-Subject: Re: Does ceph_fill_inode() mishandle I_NEW?
+	s=arc-20240116; t=1741898900; c=relaxed/simple;
+	bh=14wY1siKGZ3820aBaKNXQVIAz+KjbbyY897XAg4KGjI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mzHJwt7iWs5IeXfONUEU0HDpUiS0dG9DmNHw1r79l//7Pwyowec0I7/4j7iNdr5z6Yv8pR4IXiQ2Nbj5UWmpg5WTY1El+xBXflEwajO+wXl0Euhu/uBFlSQA8xYukO3M6rJTFWiMGqhWjXDndVrUTXuxepdS3tf0bjNkIE45/2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSXM1u0K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B4BC4CEF0;
+	Thu, 13 Mar 2025 20:48:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741898899;
+	bh=14wY1siKGZ3820aBaKNXQVIAz+KjbbyY897XAg4KGjI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SSXM1u0KQfURC0D2gVK2tBDBA4MOQUTMv4fZGDxheNu1d7BhRNX37jWKaitB4cwXT
+	 ucO7byoMmh70Yno0Pfj3uv+p52IEwXTGvbm7hj+Dd4KkIb7Bev3JapSTlHX58xcBeS
+	 M7bx2svpoeSdjB4NJsjM3VBAgT47r9Xi9kvsU1GmQJs8DS5lHaNPEwtfC0RsO9lsD4
+	 cXyyd4Ss/r2npoDnsVkCOwA0EvdCy3rCQUAMNyTwD/fLwqNJXYH33UAj21vtuATq18
+	 uulIDvEfoiQ7/ts+9tR1nsaN37VG8pMFXQW8q9DSstMuhRJ2sSTcEr/avRg7A55IS1
+	 UGY4ONIRSReeg==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2c68fd223bcso17484fac.1;
+        Thu, 13 Mar 2025 13:48:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUC+wRp/hz59Y/q2NQFKF19TW0QoyHf7k9IRkR6ujO9vXexHhTQtItOQ75UDEp4i3y4aU/kJg3/FtSLfcQ=@vger.kernel.org, AJvYcCXvuFNWc2SkZP5tpK02rgsas4uYcVj30L9753Lc4+FA/PNKSgiO8aeB2kMIeNHV2l3fK0cSpp4WXe0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwRmsTDx0AvG4IcAKBhJ9Yj7cYbWkp9qXLCaY1ZFLe3FRaBqEs
+	cTpxDWOWqV4ZWalgWMuVEvsyzc6UM91m1UA8Os1sFXFInxFbK291XUVDuDu0y+aa5upQOv3J2fO
+	vDfbHU3TuysAOJEYLoksNROhKFhs=
+X-Google-Smtp-Source: AGHT+IE4t6npoBFzHNSjity518d09fPiG5ev38y3yQv/EjExH31/wKbxPjuEeKqHNnHUVzTS7UFHOTwKh4qDxs1DL9A=
+X-Received: by 2002:a05:6870:46a2:b0:2a7:d345:c0bb with SMTP id
+ 586e51a60fabf-2c6911416a2mr8350fac.27.1741898899165; Thu, 13 Mar 2025
+ 13:48:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1468675.1741898867.1@warthog.procyon.org.uk>
-Date: Thu, 13 Mar 2025 20:47:47 +0000
-Message-ID: <1468676.1741898867@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20250313043611.1212116-1-chenyuan0y@gmail.com> <uudh23zxngyi534idmutg6v3aowjnokedomv76iyanuda4nocy@m5xqjtdc47kh>
+In-Reply-To: <uudh23zxngyi534idmutg6v3aowjnokedomv76iyanuda4nocy@m5xqjtdc47kh>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 13 Mar 2025 21:48:07 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iMs7tsu+XXQbO=NoEY=zf1YRbJ8SFP+FAWyVVxFs=xxg@mail.gmail.com>
+X-Gm-Features: AQ5f1JrQ5TjWinvVL6c8_rqj_TtBDp3oYbJQ99w2FM47tghI9ARPqp3QcjtJWOc
+Message-ID: <CAJZ5v0iMs7tsu+XXQbO=NoEY=zf1YRbJ8SFP+FAWyVVxFs=xxg@mail.gmail.com>
+Subject: Re: [PATCH] thermal: int340x: Add Null check for adev
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Chenyuan Yang <chenyuan0y@gmail.com>
+Cc: daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-slava@dubeyko.com wrote:
+On Thu, Mar 13, 2025 at 9:37=E2=80=AFAM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@baylibre.com> wrote:
+>
+> Hello,
+>
+> On Wed, Mar 12, 2025 at 11:36:11PM -0500, Chenyuan Yang wrote:
+> > Not all devices have an ACPI companion fwnode, so adev might be NULL.
+> > This is similar to the commit cd2fd6eab480
+> > ("platform/x86: int3472: Check for adev =3D=3D NULL").
+> >
+> > Add a check for adev not being set and return -ENODEV in that case to
+> > avoid a possible NULL pointer deref in int3402_thermal_probe().
+> >
+> > Note, under the same directory, int3400_thermal_probe() has such a
+> > check.
+> >
+> > Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+>
+> Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
+> Fixes: 77e337c6e23e ("Thermal: introduce INT3402 thermal driver")
 
-> What do you mean by mishandling? Do you imply that Ceph has to set up
-> the I_NEW somehow? Is it not VFS responsibility?
-
-No - I mean that if I_NEW *isn't* set when the function is called,
-ceph_fill_inode() will go and partially reinitialise the inode.  Now, having
-reviewed the code in more depth and talked to Jeff Layton about it, I think
-that the non-I_NEW pass will only change pointers with some sort of locking
-and will release the old target - though it may overwrite some pointers with
-the same value without protection (i_fops for example).
-
-That said, if it's possible for *two* processes to be going through that
-function without I_NEW set, you can get places where both of them will try
-freeing the old data and replacing it with new without any locking - but I
-don't know if that can happen.
-
-David
-
+Applied as 6.15 material, thanks!
 
