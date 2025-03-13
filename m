@@ -1,105 +1,254 @@
-Return-Path: <linux-kernel+bounces-559406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A208EA5F37D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:55:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B515A5F37C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:55:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BECB3BA066
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:53:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 691F2189DC76
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56389266EE9;
-	Thu, 13 Mar 2025 11:52:45 +0000 (UTC)
-Received: from mail-gw02.astralinux.ru (mail-gw02.astralinux.ru [195.16.41.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB4A266599;
+	Thu, 13 Mar 2025 11:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QyHOBJur"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF45266F01
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.16.41.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72391FAC4F
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741866764; cv=none; b=RdtfQbyeFHJjVfQ0Jrt9cDmj5Z+QexW4cIxfT/+4pmfCUNeEIRAwyzXpO+z2yG77s4MNqk+o7SQrh/vohh5eDLo94PGo2FChxjpu2fB62Rfvfr2ruU1DJWd8tbsz5zrLKKMal3rWFhoFWhHiacz8cMH6IkZm9c1NtIv9x4d0w8I=
+	t=1741866936; cv=none; b=JAbDsBdr2L2lSVG/lDcc86HXDadTl5NeTTumP/6/wNbc6VwslvLhEb1TSQk0UmiUm5Rdkg44VZf5Qhl4id5EZCv7O80P1Qu+1pX+4YJYhqaUQlUy+r7Mh6sfzTr40Yrc2KyFTe06du4lUPQ5dyHO7a7B36gkZyFtpwPRmPdoqLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741866764; c=relaxed/simple;
-	bh=jMfGEardadq5VhaxruCsipbVkj4VSamJ5hIDyKVyMiI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pzE73vZ3acLrYYChmo0j5wWSaaWHCzOragJauhhYc4sCtopY6V8MKLZtPEFfRQE45Xzrpvc+rrIu8cLEGajAfzP+C3KBev92qNWgtMJHjs1oESyKHzROG9SyALatAp1gbnwXyfWT3hkVs61RyOHEHoJC2SbGbe62E6hf5lpLBtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=195.16.41.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from gca-msk-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw02.astralinux.ru (Postfix) with ESMTP id 726901F95A;
-	Thu, 13 Mar 2025 14:52:30 +0300 (MSK)
-Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail03.astralinux.ru [10.177.185.108])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-gw02.astralinux.ru (Postfix) with ESMTPS;
-	Thu, 13 Mar 2025 14:52:28 +0300 (MSK)
-Received: from localhost.localdomain (unknown [10.177.20.58])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4ZD5TR0Dl2z1h0Bc;
-	Thu, 13 Mar 2025 14:52:26 +0300 (MSK)
-From: Anastasia Belova <abelova@astralinux.ru>
-To: Minchan Kim <minchan@kernel.org>
-Cc: Anastasia Belova <abelova@astralinux.ru>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] mm/zsmalloc: prevent integer overflow in obj_free
-Date: Thu, 13 Mar 2025 14:51:45 +0300
-Message-ID: <20250313115147.47418-1-abelova@astralinux.ru>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1741866936; c=relaxed/simple;
+	bh=j/UxuFfYZjRloTYF+5DAhKRpSh3d6hX+rPVHR81TlAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U5ZAW6gwifwz62byUPD5ASgoBWWxtuvAx5a/v1GAPwY+4v5iRe7sKBSfsftmdAtcmQT8Lw314HUjR2MMCuXTSqFXm6XzJA9SVt8i9ps6h0fmywhom/K9c7Ba9sjH9YTT1xgPjY+LL9J427PqEmRZhFZ+wP0TDzrPUIv79TPhoEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QyHOBJur; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9374C4CEDD;
+	Thu, 13 Mar 2025 11:55:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741866936;
+	bh=j/UxuFfYZjRloTYF+5DAhKRpSh3d6hX+rPVHR81TlAw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QyHOBJur9eip0g5JOOU4J2LYpMmOmDMhO/KHPrxbBuHhafjk/0D948H2bU4J9YpuU
+	 +hQeipgcEw3h8cjvj/LnElc/QgZmFVaG+jRjxcMmcI27zf4zEVX3HoJL4IvqNDGqba
+	 sNd1bUEcSija1pmwx6Ah/w3JUgGXtYFguyoUtu2Ry4f4ZUpZ7Zmy68SkbavGFZecbD
+	 HIX8K8qEFF17n6yXNGRs9es6C/7rx1ucNppSIDNim+Q7TADXfmJDYNI89+0t45kOg+
+	 dv6UHG3EhJrYhpk6XmJonn2gpRhn+j384uK/T0Ilx98CWiVEbchRLO0HiMbZUAuspj
+	 9ABYoqL6HGgGw==
+Date: Thu, 13 Mar 2025 12:55:33 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Andy Yan <andyshrk@163.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
+	Herve Codina <herve.codina@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Simona Vetter <simona.vetter@ffwll.ch>, lumag@kernel.org
+Subject: Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
+ connector by encoder
+Message-ID: <20250313-dazzling-deer-of-ampleness-21db67@houat>
+References: <20250304-bridge-connector-v5-0-aacf461d2157@kernel.org>
+ <20250304-bridge-connector-v5-4-aacf461d2157@kernel.org>
+ <5180089f.a640.19566290538.Coremail.andyshrk@163.com>
+ <608c01c.7716.1958e8d879f.Coremail.andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;new-mail.astralinux.ru:7.1.1;astralinux.ru:7.1.1, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 191738 [Mar 13 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/03/13 08:11:00 #27754998
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xsshdtprknacva2v"
+Content-Disposition: inline
+In-Reply-To: <608c01c.7716.1958e8d879f.Coremail.andyshrk@163.com>
 
-The result of multiplication of class_size and f_objidx
-may not fit unsigned integer. Add explicit casting to
-unsigned long to prevent integer overflow.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+--xsshdtprknacva2v
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
+ connector by encoder
+MIME-Version: 1.0
 
-Fixes: bfd093f5e7f0 ("zsmalloc: use freeobj for index")
-Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
----
- mm/zsmalloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi,
 
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 6d0e47f7ae33..96e0b04ff278 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -1421,7 +1421,7 @@ static void obj_free(int class_size, unsigned long obj)
- 
- 
- 	obj_to_location(obj, &f_zpdesc, &f_objidx);
--	f_offset = offset_in_page(class_size * f_objidx);
-+	f_offset = offset_in_page((unsigned long)class_size * f_objidx);
- 	zspage = get_zspage(f_zpdesc);
- 
- 	vaddr = kmap_local_zpdesc(f_zpdesc);
--- 
-2.43.0
+On Thu, Mar 13, 2025 at 04:09:54PM +0800, Andy Yan wrote:
+> At 2025-03-05 19:55:19, "Andy Yan" <andyshrk@163.com> wrote:
+> >At 2025-03-04 19:10:47, "Maxime Ripard" <mripard@kernel.org> wrote:
+> >>With the bridges switching over to drm_bridge_connector, the direct
+> >>association between a bridge driver and its connector was lost.
+> >>
+> >>This is mitigated for atomic bridge drivers by the fact you can access
+> >>the encoder, and then call drm_atomic_get_old_connector_for_encoder() or
+> >>drm_atomic_get_new_connector_for_encoder() with drm_atomic_state.
+> >>
+> >>This was also made easier by providing drm_atomic_state directly to all
+> >>atomic hooks bridges can implement.
+> >>
+> >>However, bridge drivers don't have a way to access drm_atomic_state
+> >>outside of the modeset path, like from the hotplug interrupt path or any
+> >>interrupt handler.
+> >>
+> >>Let's introduce a function to retrieve the connector currently assigned
+> >>to an encoder, without using drm_atomic_state, to make these drivers'
+> >>life easier.
+> >>
+> >>Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> >>Co-developed-by: Simona Vetter <simona.vetter@ffwll.ch>
+> >>Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> >>---
+> >> drivers/gpu/drm/drm_atomic.c | 45 ++++++++++++++++++++++++++++++++++++=
+++++++++
+> >> include/drm/drm_atomic.h     |  3 +++
+> >> 2 files changed, 48 insertions(+)
+> >>
+> >>diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> >>index 9ea2611770f43ce7ccba410406d5f2c528aab022..b926b132590e78f8d41d48e=
+b4da4bccf170ee236 100644
+> >>--- a/drivers/gpu/drm/drm_atomic.c
+> >>+++ b/drivers/gpu/drm/drm_atomic.c
+> >>@@ -985,10 +985,55 @@ drm_atomic_get_new_connector_for_encoder(const st=
+ruct drm_atomic_state *state,
+> >>=20
+> >> 	return NULL;
+> >> }
+> >> EXPORT_SYMBOL(drm_atomic_get_new_connector_for_encoder);
+> >>=20
+> >>+/**
+> >>+ * drm_atomic_get_connector_for_encoder - Get connector currently assi=
+gned to an encoder
+> >>+ * @encoder: The encoder to find the connector of
+> >>+ * @ctx: Modeset locking context
+> >>+ *
+> >>+ * This function finds and returns the connector currently assigned to
+> >>+ * an @encoder.
+> >>+ *
+> >>+ * Returns:
+> >>+ * The connector connected to @encoder, or an error pointer otherwise.
+> >>+ * When the error is EDEADLK, a deadlock has been detected and the
+> >>+ * sequence must be restarted.
+> >>+ */
+> >>+struct drm_connector *
+> >>+drm_atomic_get_connector_for_encoder(const struct drm_encoder *encoder,
+> >>+				     struct drm_modeset_acquire_ctx *ctx)
+> >>+{
+> >>+	struct drm_connector_list_iter conn_iter;
+> >>+	struct drm_connector *out_connector =3D ERR_PTR(-EINVAL);
+> >>+	struct drm_connector *connector;
+> >>+	struct drm_device *dev =3D encoder->dev;
+> >>+	int ret;
+> >>+
+> >>+	ret =3D drm_modeset_lock(&dev->mode_config.connection_mutex, ctx);
+> >>+	if (ret)
+> >>+		return ERR_PTR(ret);
+> >
+> >It seems that this will cause a deadlock when called from a  hotplug han=
+dling path,
+> >I have a WIP DP diver[0],  which suggested by Dmitry to use this API fro=
+m a=20
+> >&drm_bridge_funcs.detect callback to get the connector,  as detect is ca=
+lled by drm_helper_probe_detect,
+> >which will hold connection_mutex first, so the deaklock happens:
+> >
+> >
+> >drm_helper_probe_detect(struct drm_connector *connector,
+> >                        struct drm_modeset_acquire_ctx *ctx,
+> >                        bool force)
+> >{
+> >        const struct drm_connector_helper_funcs *funcs =3D connector->he=
+lper_private;
+> >        struct drm_device *dev =3D connector->dev;
+> >        int ret;
+> >
+> >        if (!ctx)
+> >                return drm_helper_probe_detect_ctx(connector, force);
+> >
+> >        ret =3D drm_modeset_lock(&dev->mode_config.connection_mutex, ctx=
+);
+> >        if (ret)
+> >                return ret;
+> >
+> >        if (funcs->detect_ctx)
+> >                ret =3D funcs->detect_ctx(connector, ctx, force);
+> >        else if (connector->funcs->detect)
+> >                ret =3D connector->funcs->detect(connector, force);
+> >        else
+> >                ret =3D connector_status_connected;
+> >
+> >        if (ret !=3D connector->status)
+> >                connector->epoch_counter +=3D 1;
+> >
+> >So I wonder can we let drm_bridge_funcs.detect pass a connector for this=
+ case ?
+> >
+> >
+> >
+> >[0]https://lore.kernel.org/linux-rockchip/047EECFC-7E55-44EC-896F-13FE04=
+333E4D@gmail.com/T/#m25bc53b79f5cc7bddfcb7aae5656f68df396f094
+> >>+
+> >>+	drm_connector_list_iter_begin(dev, &conn_iter);
+> >>+	drm_for_each_connector_iter(connector, &conn_iter) {
+> >>+		if (!connector->state)
+> >>+			continue;
+> >>+
+> >>+		if (encoder =3D=3D connector->state->best_encoder) {
+> >>+			out_connector =3D connector;
+>=20
+>=20
+> When try to use this patch in my bridge driver,  I found that the connect=
+or->state->best_encoder=20
+>  maybe NULL when   drm_bridge_funcs.detect or drm_bridge_funcs.detect_ctx=
+ is  called:
+>=20
+> [   52.713030] Invalid return value -22 for connector detection
+> [   52.713539] WARNING: CPU: 7 PID: 288 at drivers/gpu/drm/drm_probe_help=
+er.c:602 drm_helper_probe_single_connector_modes+0x5e0/
+> 0x63c
+> [   52.714568] Modules linked in:
+>=20
+> [   52.724546] Call trace:
+> [   52.724762]  drm_helper_probe_single_connector_modes+0x5e0/0x63c (P)
+> [   52.725319]  drm_mode_getconnector+0x2a4/0x488
+> [   52.725711]  drm_ioctl_kernel+0xb4/0x11c
+> [   52.726057]  drm_ioctl+0x22c/0x544
+> [   52.726358]  __arm64_sys_ioctl+0xac/0xe0
+> [   52.726706]  invoke_syscall+0x44/0x100
+> [   52.727039]  el0_svc_common.constprop.0+0x3c/0xd4
+>=20
+> This is because  best_encoder is set by set_best_encoder, which is called=
+ from
+> drm_atomic_helper_check_modeset. When we call drm_mode_getconnector=20
+> for the first time, the functions mentioned above have not been called ye=
+t,
+> then we can't match the encoder from connector->state->best_encoder for t=
+his case.
 
+As far as I'm concerned, it's by design. Encoders and connectors have
+1:N relationship, and only once a connector has been enabled it has an
+encoder.
+
+If the connector is disabled, there's no associated encoder.
+
+Maxime
+
+--xsshdtprknacva2v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ9LHtAAKCRDj7w1vZxhR
+xVvBAP48i2/X1q1f6MXYy/AOqvz/U2IluDodoKdi1fETcrMKTQD/VPKyXcV8m/lS
+xMLjJEJpzYEG0R0t/82OSx5j9vk6LgI=
+=pEwZ
+-----END PGP SIGNATURE-----
+
+--xsshdtprknacva2v--
 
