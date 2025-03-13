@@ -1,533 +1,282 @@
-Return-Path: <linux-kernel+bounces-559757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E0E5A5F92B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:00:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E99F6A5F92D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:02:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDBE2189AA06
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:00:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9178E17BDDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E4A268C4F;
-	Thu, 13 Mar 2025 15:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A082686B1;
+	Thu, 13 Mar 2025 15:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D5oxhg8q"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aZyvDSA9"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2078.outbound.protection.outlook.com [40.107.236.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B8B267B7A;
-	Thu, 13 Mar 2025 15:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741878009; cv=none; b=AeIDJQsSTviHR0GSzxny5Gsc9zh+Pgw93rJ2BTDff3irLgMUtC2Bc5Y+PxGxPJ0YNI6ZYZv6JF73IkZMRj0nLNisxx+iaI5cw+eamgJPDMDLSM0hdt6G5pfzhBBtXTiz5eJAFgyUlwfZQNZF+kHzRkaSJGreyeRhkQhI4jswLnI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741878009; c=relaxed/simple;
-	bh=KC1m31817J7462d/SmhYdKFn5PuYI2mViXOADan3lxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qQY8ISobVe1eY7Nh26mGs7Hg7JNPArKe4ByYLad1F375k3hPtC9/OUgmSB6+kNm4OamocRX7i5AyLC2d6JY58wKAl/8DlXWWzxarMxkVGA4MYrTxAABw+Mb8hI6Ie8lKTgli0C0TqOMAc47uB+U4xt5HkQdh+dn0rdAmuipTDog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D5oxhg8q; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c24ae82de4so109228185a.1;
-        Thu, 13 Mar 2025 08:00:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741878006; x=1742482806; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EyPn7NjBk5S3/v/4X6t5VKp3w1Z1FvuZfz4F9ZBY5FA=;
-        b=D5oxhg8qg6l2D/0w4K5pOIS7kb/4F2qfrKPoLemC8yOnV0fpCAgsb/i6+b2Az0p1qj
-         YszWmcKCjNfgKJK2vfkIXK6bAst5yB8jMNF0XrXO6xMYppmNdqQd2j3TgNs9ffFxF1qw
-         NfQEmdDlmycdCE/wRRnQu+b8101qWCS8P7z3sofQMJErF7S9tDV+xjyA3yvDEzVdAIzu
-         aHzmEQj5pkfwqOSELz0q/RzHlGQdqITk/PX1GZmodcKkU2NrH5s3hOrDwxervBlb7TbM
-         iC+MQKKm5NQ0fWHhraIkm1BYmIJDWa8y/XjIBp+sYqxr8CKPtDAD7u7iagnWj+kwvxUX
-         w+mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741878006; x=1742482806;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EyPn7NjBk5S3/v/4X6t5VKp3w1Z1FvuZfz4F9ZBY5FA=;
-        b=l5mK7ZVyLJXXkz/OBJsW4vxGI3dx4QuxUE1ItgCKosYAOskbuGOF6wZUeZXBPDDcle
-         61DPRl142lULAg+D4MBRnqSHehD54sCpkiJBNzuL6Kdc1Y3/gIwoPCENbpFpManc5uEr
-         iLBI+rYfkeLwp3FSjTDuA5SHFxUks2BPTUef/cmB9vfIjG8CUJUcxVeLUn8ijsxgwq35
-         S2K3Rh5I+T87wpNBwKeZHxFNdqiLOgwOUvD9Q/TdjKCAQFZy2BfyU02n58+e9lZHEwdD
-         aBg2Nnjn3BCt/UULUa9SrIe0z5hFh8EuqDhdv7NMKUTMgcJKZwqjzbLDxa8DedW7qrol
-         hvUA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfzizMU/EXAtO7cr1GQ6sBr+OOrXkrijyETS7lgqIpTUdNXTTlTaCCoF4wlaqiO654BxfOa6n9RRNBBWDxolk=@vger.kernel.org, AJvYcCX8HYyZZV4em9F0BnGmKkKzqYObwna3/uPFaRdC3s+10nGhkzxv58NtsOawtiATy90XdH3ZeUsCIITbQaM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPQPb+xdlAhHebEhI3qwvTKYFDqP1yGj/haZqbkyN9tixZCTEY
-	+z1k+45fdwkPOZZS/sKNgM+xiAP7nncVVOIbUTsLdkWqcRKn9Sb6
-X-Gm-Gg: ASbGncsUT9vVQff4NyKs6aTVgolzXM2nKa+jJzcblWx3nxZv6LDrTaVJ7rzj594hum3
-	elILhDe0vZxE/BdajZy0A9GhYAdrm4MOV8L9iRElubRQOM/LVAhuWwO/7FohyqPW4dJE7yexQYz
-	4hy6s3ExHLL2hL/M6bidykU9GlPmsBF9MwOcFktgwNr7er4ClpQQHmyOOmwfIeJsKcN7B5C5NJN
-	knVFOuc+jylXiloyRtKhYJnkRsHZJB2d8ojVKq5e92FnYArvy+isi928dE3wh3IkDpD11C48n31
-	TdaeeuOwMKgE/u2UIExaHCoN4hGnMDLQmNS5JVhW7nS6Uz2opQDYquDVIBa1dzKQezBaRri0Kh0
-	tObF1Je+or9+R4D/sD0a2+HyXQFtatjvA6ow=
-X-Google-Smtp-Source: AGHT+IGJLszst2prXRgVjyt/QDtTt/i9C9tc48ilAaxuLQv9Z7ou63EzpbJA2WopAZyHMMgeYc4OXw==
-X-Received: by 2002:a05:620a:489a:b0:7c5:4750:92ff with SMTP id af79cd13be357-7c55e843a89mr2064223485a.7.1741878004819;
-        Thu, 13 Mar 2025 08:00:04 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573c9a818sm107776585a.50.2025.03.13.08.00.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 08:00:04 -0700 (PDT)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id B41221200071;
-	Thu, 13 Mar 2025 11:00:03 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Thu, 13 Mar 2025 11:00:03 -0400
-X-ME-Sender: <xms:8_LSZ-1SyuH9AvYs7m-0Ls75Aomku9NjcaQJOmGfJqTsMOT9va_j1g>
-    <xme:8_LSZxFZGCooH_Ed5cYy1mZ6WUnICruQG-5s_ENc75HaPFyfWsln6svCff5k5h4kq
-    aExsA234GumKvWgoQ>
-X-ME-Received: <xmr:8_LSZ26Kb529KeYIrnGwRhU1167lFz3NZEShx3ccXnTpXrbNKq9n6kVD>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdekvdehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfel
-    leeivedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
-    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
-    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudefpdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopegrtghouhhrsghothesnhhvihguihgrrd
-    gtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    rghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehgrghrhiesgh
-    grrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhm
-    rghilhdrtghomhdprhgtphhtthhopegsvghnnhhordhlohhsshhinhesphhrohhtohhnrd
-    hmvgdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepthhmgh
-    hrohhsshesuhhmihgthhdrvgguuh
-X-ME-Proxy: <xmx:8_LSZ_0wKIWpY6PDq29PVbF_7lHjd1hnu5CGcEbIFKv0EUcOQiRcvA>
-    <xmx:8_LSZxHun5l7ezOle6sESUF-rls_W1tc_9FzOXZhuocnvGth3CFAQg>
-    <xmx:8_LSZ48_js-CGA84apO00xMpALFFaHJ22ZFiZvtDoyg01N5KIyBQZg>
-    <xmx:8_LSZ2kbHTkzszmBj1cJHsoozWqGS0OHeMMmko0yAz0zrIQqIylm7w>
-    <xmx:8_LSZ5HOgdPinX6vlSEvl-2wdjIXmo1kZxiZ3sJc3MFnoKTJgwY8o8bB>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 13 Mar 2025 11:00:03 -0400 (EDT)
-Date: Thu, 13 Mar 2025 08:00:01 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D7A241C8B;
+	Thu, 13 Mar 2025 15:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741878159; cv=fail; b=kKZqZlXkt7Nr7IW23qeXhysKMzENE4ujFd5Tuw+XDTEU4/5JPE9HGWzb07osFETMGU1xdgerU2l0JKRc3HrEBoq8oeVuPvFcCklo8yqHVgoRMd3ge1zlE1Mzn5z55eUUWaKFBcaWfOmiEf7bRfzG76fAnU/QSyQ4XFpY7pn1gQY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741878159; c=relaxed/simple;
+	bh=dh/GwsY7+7OI/mCyX/iDwsla5p6xkt44x7um+zCPxdM=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=XSS1gLAQizR6XO5z9cfI6hlQUICK+uFC7a5CnMFnmE8jcT2xzxaTZhkNI5Uzqh2BJc+3gkrQVEBOyCdb0EotGNNYLuyMxXY8Z8rVce/jw6X7AzYH3SGKDRfnoMZlbRJsDZvJVRSUmkaoDMpaGEJ4MN4qm9uFs1A88khIiYFHqAY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aZyvDSA9; arc=fail smtp.client-ip=40.107.236.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kzPyafgnvwxYnmardy9Rmi7nYS/a79hSz6oBFFIUigr5oNkvM810IKc/Q02zGnJPj88Tc1yUSrde/W0gQiJPmUM3SHJHq5Z2rP7CM1Ha444Rj1Dw52m6T7sLvFw4/0v0V9gEDQEFmiX9Lx4osuc4AY+lUg22eUOclhH5PtPQ9Qc3JaY7sPtWhe0WTfFNVfnHnbTpiOG4gDsb4xxPduu+dY5qIFR5JuKvpn6KmiGRyyWtuj3xdAL78QumpQH0kzseotN3UsqYgH4UDMd2RXCXEm7PR6jSppX7P45hlgjJaVkkBFVJukEzzjUOJAn189bZXTXJlTE5Upq8Re1CMBGcsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mBtiOjydrxlCpwS20vAXrOwF9W1KM9q/P7BvHS2ut/c=;
+ b=swdYKXlg07hcrj9APmO98SULG0uUtqaagUOWRqpY4St3osQHAon4kXpGA5tqjuHRpDPXrjLBRK8sbhBA3xB4zQL7sK/JZXjw9MEUZzjat5sGNLteoruI8Dt32nXIDHEdhVwoXHbyAIMDGjV9tNBrzGF89G+4vpSwVtKm7+bSFoLuXnL/XvdpyEILQub7z+ohglgwjIuFGHkSxM80GSlVODXv7duM+dE+ZhElsx6FAi5je2VHeGBfem/Fjjs4g/Erg1UqGvjdfkRh6Bh+XQ0qmE5k7YxlMWxsiz69eUHZD3l0UOpdNYx53eUgApNnDUDzF5jKv+tnqXuoXAt5t9x8aw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mBtiOjydrxlCpwS20vAXrOwF9W1KM9q/P7BvHS2ut/c=;
+ b=aZyvDSA9oAKu0gJBliJPCqdfrwTVdFv5/lbs/AMHNvfUgfuCdYb2C0tU1WYz55y5O5nDGnoYLx0A1yoTh5XKsJBtXtQFCjeeudIhQ5OoXUCXZu/nEPqz/29LdQ+/9so9SqvPKg4isWqCSgrsonMuBPk8SUXFVpbb9BnK/tIoMHsyGt/YQLrpylLlIR6b9ictYLo2PvJXHW7spgSkS9QFDG56sbrNiYNvMDMWFYkVgVTnfLB2TRHxWg2mls4WKGGF9IM24xT4+jyrMljy9foGQzbEBC7szkVgfU/0srFRMCxBrFOVnkT+MpGka5H+f2tHYi0orqpbn++9RuDDploOLA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CY8PR12MB7316.namprd12.prod.outlook.com (2603:10b6:930:50::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Thu, 13 Mar
+ 2025 15:02:32 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%6]) with mapi id 15.20.8511.026; Thu, 13 Mar 2025
+ 15:02:32 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 14 Mar 2025 00:02:29 +0900
+Message-Id: <D8F89QYB689L.UWU0WFGZ04XU@nvidia.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
 Subject: Re: [PATCH RFC] rust: add macros to define registers layout
-Message-ID: <Z9Ly8R-kZaiamicV@Mac.home>
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
 References: <20250313-registers-v1-1-8d498537e8b2@nvidia.com>
+ <Z9Ly8R-kZaiamicV@Mac.home>
+In-Reply-To: <Z9Ly8R-kZaiamicV@Mac.home>
+X-ClientProxiedBy: TYCP301CA0042.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:400:380::10) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313-registers-v1-1-8d498537e8b2@nvidia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CY8PR12MB7316:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f4d2f4f-505b-44aa-2952-08dd624014ef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|10070799003|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d3lOQjBDRGpacm9zWXBVdDFjM1BLbkdKcWw1am0xNW5iWUVuZ3hrVlNiRTB2?=
+ =?utf-8?B?d210RmIwd01SV0c3NHNjRkRJQVpzeGwxRkd6alhUWWlJV0ZramFoNit1ZTcy?=
+ =?utf-8?B?QUtzL2tuQ3ZHZkc3eDRaTk9taWhVUzVNQlJsdDZUOGl6cnlNYlZWOHhWY1pL?=
+ =?utf-8?B?dFpteFdEWnB0Qmk4WmJoQUdmWHZBdjJJSEZKRHdad0hQWGk4ZUtNdDl3dmlz?=
+ =?utf-8?B?M0NuR3cwci82UWxqRDA3SlZ0ZmlBQmhUWUhzRS9EOTBHRVJvODR2TUtFemtY?=
+ =?utf-8?B?Y3A3ZUFnS0FPem1jNmxINDYrclMwQStpQ1Q5UjJDTzJiUWdQa25BdVQ3d2Jp?=
+ =?utf-8?B?TVRsK0QvU3g4L3ZqYTduNEZ2Y21JakJmalhKcnEwS09hRVc0aGcwb1pyZ0li?=
+ =?utf-8?B?SFc3MGI4TXZCeGRiU2g1c2JHM2M4ZCtXMGF6MWkwNE10L2xwbG9jaW1oazlq?=
+ =?utf-8?B?ZHUxL3Q0MDRxZk1FeFFXejV1VExmdzBIRnhTalAvcSt0a2dwSkdaOVdCTmhV?=
+ =?utf-8?B?TDlzcitYQlV0TG5hbHpsWit1dlBZTVlwL084ZlRwZWEzejVxdFF4YVY4QWxJ?=
+ =?utf-8?B?RE0rZEdsaDk5a3ZBVGdFM0psV1had3hCRFFhVUprV0NEQ3NtL1NlSVl5RCto?=
+ =?utf-8?B?Zzhxd3U4ZU1QMmEwanZvOHZabVdveVJGWlEvTDl1bHpNU04rdldKekxUc3gr?=
+ =?utf-8?B?RHp2N1RJL3RTZnVQMUZSTTRSZFIrbko0VzlHR3ROYzFHclpmV0c4MXpmOHhm?=
+ =?utf-8?B?WkVKQUVmbFgzd0p0aDlVMlJORkZjNkh3cFFVN1UzOEZ6dVpTaTFhMGZHV3cr?=
+ =?utf-8?B?ZTFZdm5nQkV5RUYyNkQwK3VqL3AxSElmWGlXN2xjWXJCNlFYQ1lib1ZkcGd5?=
+ =?utf-8?B?aTdSYytDbHFEcEZCL0wzUUNUcVI4Qm5tQzAxUE1XQjFCY3lYY091MXFvTUJa?=
+ =?utf-8?B?RGlJNFlheHJoM2VRcXk0VHpxYTNaRHhKRWo3UjRtWjNiRTJLaXlzaUlyY2Nk?=
+ =?utf-8?B?MURJYjFTZDhja0JoOVVzajlMNmxUYndWekFkYllsanoxUHRXUFNVRm9Nbzhz?=
+ =?utf-8?B?dmo3N1B2Rys2SVEzRCtWMlRYdlIrKzQ0ZlZCOTFIbzZpcjJ1TkIzVHJCK3Ns?=
+ =?utf-8?B?clVEVEpad00rdG1GblpMMVd4MjVUejVxZ2VLZ3ZSenN2MlRqS1NjZ3FldjE1?=
+ =?utf-8?B?TjEra1JTK0ZzM3RMbDJSVGp4YmF4TnZ3U0piS2tpTW16a3Fkc1BPclNDaFRh?=
+ =?utf-8?B?a0pReWpGVDVGTGovZ2NYYzJJSGo3K2hwcWdaU0NvaXlJbldJd0pwNXJDNDBy?=
+ =?utf-8?B?ZTBrNFkvU21qaEpyWG9ZNzRjT0RYUlJrWkZpRmpkZnQwOW8weUY5YmtqWXJL?=
+ =?utf-8?B?ZkVzbDRRSS9qdDhYTDZiSTNya1plT3hQK3U4YnpUY1dydDdjR1lZREdSWW9H?=
+ =?utf-8?B?RmI4Y095aDhodkpYNDcrOXlCOXM4ci81YzhWK3VtMjBMYkJkSmNjdnQ1T0o5?=
+ =?utf-8?B?U1dTUXFwa2h1bndUaDFDK2pwTUdLdlY3UDZ1UEtZMVRmeFovUDZmSjVydVpG?=
+ =?utf-8?B?S2pjWHJjeU1BT1QvYXpLc0dSY1UwYWFxU0VyRDlrMy9rRWEzdjhDanpESnZH?=
+ =?utf-8?B?dDk4c3JZRlRqS254OG1yWnZyRU1FUFU2RWF3Tm9IK1Y3Q2F0R1VybkkvSDYr?=
+ =?utf-8?B?Q0d6a25kNmQ4RnYxVWh1Vm5DUXNPVERvMHFxZERIcFp3SFpzM3l0amhzb3Q3?=
+ =?utf-8?B?UXd2bVZIYmZZZ2xPdEhmZVRodzNLeDVCUldraXBKRDN3cTNxMmM4Z1gwUVZz?=
+ =?utf-8?B?R1IyazBDSExCVXkrZE1QUDdxUG5hMU1QRzFlQ1J0Y3AySEhoUXJWbkltb3lv?=
+ =?utf-8?Q?63mLiwM2anr29?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Sms5UVhKcTd6d2owanppY05aRllKUVZGNWN6bEgwajBaVy9TNUgwcHRqSFho?=
+ =?utf-8?B?SXZKcXNudDd2OWZxZEdmQWJaczdkbmdkOVRHTXMyMG5ncU1zQ1hDREtCRCtU?=
+ =?utf-8?B?QVdRR2ZiZXNLdVgvTWpjUjA5VHM5WGdrWCtHbmorWG5JY0k5K21aOEtpUXAv?=
+ =?utf-8?B?K1g1UUNyUlhYUS9iYkN2RVhDTGdJMGxEZWdjbjZrMnF2eWJwY0QzMk13Z2pa?=
+ =?utf-8?B?N0NZdzdSM2ZuQVcwRXJwRUgyRUFnTXB4RGhHN1ZEc1h1VmMvMmxIT09kbTJD?=
+ =?utf-8?B?bjIxakVuSVZlL1FibVB0ekJRdzN1b3lGUWlSaEd0Yk9ra21iZThsTlFjdmhK?=
+ =?utf-8?B?M2E1NEZVVmJlOE1ZdEZUajhCSktxcnlhc0FIc3FpeEhjaWl5Qm9Pd3hNd1la?=
+ =?utf-8?B?cWxOeEZzWFdkR0lBTzlWUmV3QTArZVZzTkNoRGZydmIxQndDRkU5MlB2TmRt?=
+ =?utf-8?B?c2I1ZFQrNUt1Q0ErSmV4N0xtR2lxTTdWRTVXTW5hUysrTWd5L1BESkJPQWNU?=
+ =?utf-8?B?RHg1WXBtMWRMc2grUHVvR3RaSXUvVzlWNnBJOFl0ZDArY1h1aXUrbzZCVmxW?=
+ =?utf-8?B?eCtHbE02QUJqSFB3SWk0RlQ5QXo3OFo1ZmlwbGtIN2lwTkdRVVMwSFNScWhX?=
+ =?utf-8?B?eEZySGFnMjIvdlRrZ0t0VGd2YTV0QTJGZ1NsTHdLcVZLbjV6SE1rSTl1N0xE?=
+ =?utf-8?B?K2FzMVdYNDBFWUl3QmpZam9iZm45cEZSNTdvcXArdk9ETmQwM0lKUTErL0ww?=
+ =?utf-8?B?bDk0aHYvYkhZc3U4UW1sWlJSaWV2MVdnQXEvSGZRdDg0R3YxVDYrTFJBWFlY?=
+ =?utf-8?B?bHFjZHJVMzNBVnVDYUM0QjhIWitJZ2ZKajE3MHJhNmlwc3lRR29QZ0JvOTJX?=
+ =?utf-8?B?bFZKZE9lakJQd0VYVUk0azlFc2xyK0tsaTFlQnI3OFM4QVZ2VkRkbG1NUEVj?=
+ =?utf-8?B?WS9ERk1NeXp6TTVpYzlXUzJtc3pUd1NlNTlOcXlqWktHTVNyUGlzM2QzT1p2?=
+ =?utf-8?B?S3hZZTJrb2k1WXhLc1ZldDNjYTBFMDdZU3JEWDcyeDdLOHlVQ2ZtYmJKb1Vp?=
+ =?utf-8?B?am5COTdVdmxMenJjcnZKeDVjaHlFMHdaakRnaEtqZUlNYXJESXA0TzFZNytS?=
+ =?utf-8?B?bDVlRjhCbTlYciszSmI3TEdmdklRVzVmU0gwSjZ3YUZoQUNjVHZSRGdraytM?=
+ =?utf-8?B?S1cydnVZdW1xdnMzZlozbmxRMmhCUGtEMTlhVlpidXFpM1NuWm9Bc2phTk8x?=
+ =?utf-8?B?RSt5SXV1alVobWkrcDZWNnN0RVJEbFFzNUZjTkdCaUwvYzBMMVFoblk2VXhM?=
+ =?utf-8?B?ZUxNRWh5eUQ3ODZqNE4xSlppZUcyZXpjb1dESkdZZU5KVjV3N0tsSW9zYmtI?=
+ =?utf-8?B?azlORDI0c2VNc1FXMlJudzNWeTN3QU1xS1hrWnBYUGFEcEhEK251enlVVGhU?=
+ =?utf-8?B?U0t5K3BYbFRDeitONW82UHA0RHlYZ045djZTTUxqditsYW9GRmdYRjJBVkdu?=
+ =?utf-8?B?MzU1anBPeFdIRTBxZTNGSmFZVGFEY3UzeTByOHk4Q2pCUmxRSVRsRG41UlB6?=
+ =?utf-8?B?Q1lBeUVIYmhXZnFrYmhYTUdnRExXc3N6R2RyRTgwKzhLaDVZUlJKdTV4ODZW?=
+ =?utf-8?B?UVgrK0d2TmMxaU5Rb3oxalQzVWpjaFFGQURXWEhNS3JuSms2SVIvRzdXU0JI?=
+ =?utf-8?B?Q0RuYWZsSVdHaWNvYzlTWXVxN0hvb2dRd1ZXeXdSYnowUTU4ZktDZ2l4SWN5?=
+ =?utf-8?B?bnlzSkNXVmRCSXlwTWFEby9uUSs5aG9VbDlOUUI2bS90LytzSTB4a3V4am5J?=
+ =?utf-8?B?dVlidldzRkh6UUsvNnUxM2hZajV6NXgzYXpqalZYM25rYjJDZjh5am15RUgv?=
+ =?utf-8?B?LzNlQWs0cldReGdmTjFRRU1Kd3puKzI4NWlkbmhqaDVHUjhpN3ZvUmhFQlV1?=
+ =?utf-8?B?R0llb011MlpFZWFmbEdXTVdjZEZiUEtQUE5jVGJPalo0eUVqbnROcEt5WEhV?=
+ =?utf-8?B?UktzVVJsbVRQUjBYb1BSMEVhVjkzcGZpaWhyZlBaZ21JRzFLbkwxc3VhVEhO?=
+ =?utf-8?B?bC85L05Id2gweVFCa003cGlUalVIMUxHVjBFb0h5ckRnNGo2b1pObVVxVkRQ?=
+ =?utf-8?B?T1ZCSmpxd2piNHF2Q3Z0b1JobWdpSW0weUVRN2FaMVRSTXFlcFMvaUlscVpZ?=
+ =?utf-8?Q?GXMtOWinXIsQC5NYLXCcYKpiGBqmkVGRIYAozGQyDMZH?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f4d2f4f-505b-44aa-2952-08dd624014ef
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 15:02:32.6323
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kTu/GmmVsdjiR8Uec+/ZYcISz7jiY980AMdBIX1Wkdug9jKSskiZ4I99WqQ/EbqegJksWBr+nxclQTDbI/4M1A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7316
 
-On Thu, Mar 13, 2025 at 11:48:25PM +0900, Alexandre Courbot wrote:
-> Add two macros, reg_def!() and reg_def_rel!(), that define a given
-> register's layout and provide accessors for absolute or relative
-> offsets, respectively.
-> 
-> The following example (taken from the rustdoc) helps understanding how
-> they are used:
-> 
->     reg_def!(Boot0@0x00000100, "Basic revision information about the chip";
->         3:0     minor_rev => as u8, "minor revision of the chip";
->         7:4     major_rev => as u8, "major revision of the chip";
->         28:20   chipset => try_into Chipset, "chipset model"
->     );
-> 
-> This defines a `Boot0` type which can be read or written from offset
-> `0x100` of an `Io` region. It is composed of 3 fields, for instance
-> `minor_rev` is made of the 4 less significant bits of the register. Each
-> field can be accessed and modified using helper methods:
-> 
->     // Read from offset `0x100`.
->     let boot0 = Boot0.read(&bar);
->     pr_info!("chip revision: {}.{}", boot0.major_rev(), boot0.minor_rev());
-> 
->     // `Chipset::try_from` will be called with the value of the field and
->     // returns an error if the value is invalid.
->     let chipset = boot0.chipset()?;
-> 
->     // Update some fields and write the value back.
->     boot0.set_major_rev(3).set_minor_rev(10).write(&bar);
-> 
-> Fields are made accessible using one of the following strategies:
-> 
-> - `as <type>` simply casts the field value to the requested type.
-> - `as_bit <type>` turns the field into a boolean and calls
->   <type>::from()` with the obtained value. To be used with single-bit
->   fields.
-> - `into <type>` calls `<type>::from()` on the value of the field. It is
->   expected to handle all the possible values for the bit range selected.
-> - `try_into <type>` calls `<type>::try_from()` on the value of the field
->   and returns its result.
-> 
-> The documentation strings are optional. If present, they will be added
-> to the type or the field getter and setter methods they are attached to.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
-> I have written these initially for the nova-core driver, then it has
-> been suggested that they might be useful outside of it as well, so here
-> goes.
-> 
-> This is my first serious attempt at writing Rust macros and I am sure
-> there is a lot that is wrong with them, but I'd like to get early
-> feedback and see whether this is actually something we want for the
-> kernel in general.
-> 
-> The following in particular needs to be improved, suggestions are
-> welcome:
-> 
-> - Inner types other than `u32` need to be supported - this can probably
->   just be an extra parameter of the macro.
-> - The syntax can certainly be improved. I've tried to some with
->   something that makes the register layout obvious, while fitting within
->   the expectations of the Rust macro parser, but my lack of experience
->   certainly shows here.
-> - We probably need an option to make some fields or whole registers
->   read-only.
-> - The I/O offset and read/write methods should be optional, so the
->   layout part can be used for things that are not registers.
-> - The visibility of the helper macros is a bit of a headache - I haven't
->   found a way to completely hide them to the outside, so I have prefixed
->   them with `__` for now.
-> - Formatting - there are some pretty long lines, not sure how to break
->   them in an idiomatic way.
-> 
-> Sorry if this is still a bit rough around the edges, but hopefully the
-> potential benefit is properly conveyed.
-> ---
->  rust/kernel/lib.rs |   1 +
->  rust/kernel/reg.rs | 284 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 285 insertions(+)
-> 
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 398242f92a961c3a445d681c65449047a847968a..d610199f6675d22fa01d4db524d9989581f7b646 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -69,6 +69,7 @@
->  pub mod prelude;
->  pub mod print;
->  pub mod rbtree;
-> +mod reg;
+On Fri Mar 14, 2025 at 12:00 AM JST, Boqun Feng wrote:
+> On Thu, Mar 13, 2025 at 11:48:25PM +0900, Alexandre Courbot wrote:
+>> Add two macros, reg_def!() and reg_def_rel!(), that define a given
+>> register's layout and provide accessors for absolute or relative
+>> offsets, respectively.
+>>=20
+>> The following example (taken from the rustdoc) helps understanding how
+>> they are used:
+>>=20
+>>     reg_def!(Boot0@0x00000100, "Basic revision information about the chi=
+p";
+>>         3:0     minor_rev =3D> as u8, "minor revision of the chip";
+>>         7:4     major_rev =3D> as u8, "major revision of the chip";
+>>         28:20   chipset =3D> try_into Chipset, "chipset model"
+>>     );
+>>=20
+>> This defines a `Boot0` type which can be read or written from offset
+>> `0x100` of an `Io` region. It is composed of 3 fields, for instance
+>> `minor_rev` is made of the 4 less significant bits of the register. Each
+>> field can be accessed and modified using helper methods:
+>>=20
+>>     // Read from offset `0x100`.
+>>     let boot0 =3D Boot0.read(&bar);
+>>     pr_info!("chip revision: {}.{}", boot0.major_rev(), boot0.minor_rev(=
+));
+>>=20
+>>     // `Chipset::try_from` will be called with the value of the field an=
+d
+>>     // returns an error if the value is invalid.
+>>     let chipset =3D boot0.chipset()?;
+>>=20
+>>     // Update some fields and write the value back.
+>>     boot0.set_major_rev(3).set_minor_rev(10).write(&bar);
+>>=20
+>> Fields are made accessible using one of the following strategies:
+>>=20
+>> - `as <type>` simply casts the field value to the requested type.
+>> - `as_bit <type>` turns the field into a boolean and calls
+>>   <type>::from()` with the obtained value. To be used with single-bit
+>>   fields.
+>> - `into <type>` calls `<type>::from()` on the value of the field. It is
+>>   expected to handle all the possible values for the bit range selected.
+>> - `try_into <type>` calls `<type>::try_from()` on the value of the field
+>>   and returns its result.
+>>=20
+>> The documentation strings are optional. If present, they will be added
+>> to the type or the field getter and setter methods they are attached to.
+>>=20
+>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>> ---
+>> I have written these initially for the nova-core driver, then it has
+>> been suggested that they might be useful outside of it as well, so here
+>> goes.
+>>=20
+>> This is my first serious attempt at writing Rust macros and I am sure
+>> there is a lot that is wrong with them, but I'd like to get early
+>> feedback and see whether this is actually something we want for the
+>> kernel in general.
+>>=20
+>> The following in particular needs to be improved, suggestions are
+>> welcome:
+>>=20
+>> - Inner types other than `u32` need to be supported - this can probably
+>>   just be an extra parameter of the macro.
+>> - The syntax can certainly be improved. I've tried to some with
+>>   something that makes the register layout obvious, while fitting within
+>>   the expectations of the Rust macro parser, but my lack of experience
+>>   certainly shows here.
+>> - We probably need an option to make some fields or whole registers
+>>   read-only.
+>> - The I/O offset and read/write methods should be optional, so the
+>>   layout part can be used for things that are not registers.
+>> - The visibility of the helper macros is a bit of a headache - I haven't
+>>   found a way to completely hide them to the outside, so I have prefixed
+>>   them with `__` for now.
+>> - Formatting - there are some pretty long lines, not sure how to break
+>>   them in an idiomatic way.
+>>=20
+>> Sorry if this is still a bit rough around the edges, but hopefully the
+>> potential benefit is properly conveyed.
+>> ---
+>>  rust/kernel/lib.rs |   1 +
+>>  rust/kernel/reg.rs | 284 ++++++++++++++++++++++++++++++++++++++++++++++=
++++++++
+>>  2 files changed, 285 insertions(+)
+>>=20
+>> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+>> index 398242f92a961c3a445d681c65449047a847968a..d610199f6675d22fa01d4db5=
+24d9989581f7b646 100644
+>> --- a/rust/kernel/lib.rs
+>> +++ b/rust/kernel/lib.rs
+>> @@ -69,6 +69,7 @@
+>>  pub mod prelude;
+>>  pub mod print;
+>>  pub mod rbtree;
+>> +mod reg;
+>
+> This is for io registers? Could you please move it into kernel::io
+> instead of defining it as a top level mod?
 
-This is for io registers? Could you please move it into kernel::io
-instead of defining it as a top level mod?
-
-Regards,
-Boqun
-
->  pub mod revocable;
->  pub mod security;
->  pub mod seq_file;
-> diff --git a/rust/kernel/reg.rs b/rust/kernel/reg.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..3f0bad18b4f757fb3e7d45f2fde6c3214fa957c8
-> --- /dev/null
-> +++ b/rust/kernel/reg.rs
-> @@ -0,0 +1,284 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Types and macros to define register layout and accessors.
-> +//!
-> +//! A single register typically includes several fields, which are accessed through a combination
-> +//! of bit-shift and mask operations that introduce a class of potential mistakes, notably because
-> +//! not all possible field values are necessarily valid.
-> +//!
-> +//! The macros in this module allow to define, using an intruitive and readable syntax, a dedicated
-> +//! type for each register with its own field accessors that can return an error is a field's value
-> +//! is invalid. They also provide a builder type allowing to construct a register value to be
-> +//! written by combining valid values for its fields.
-> +
-> +/// Helper macro for the `reg_def` family of macros.
-> +///
-> +/// Defines the wrapper `$name` type, as well as its relevant implementations (`Debug`, `BitOr`,
-> +/// and conversion to regular `u32`).
-> +#[macro_export]
-> +macro_rules! __reg_def_common {
-> +    ($name:ident $(, $type_comment:expr)?) => {
-> +        $(
-> +        #[doc=$type_comment]
-> +        )?
-> +        #[repr(transparent)]
-> +        #[derive(Clone, Copy, Default)]
-> +        pub(crate) struct $name(u32);
-> +
-> +        // TODO: should we display the raw hex value, then the value of all its fields?
-> +        impl ::core::fmt::Debug for $name {
-> +            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-> +                f.debug_tuple(stringify!($name))
-> +                    .field(&format_args!("0x{0:x}", &self.0))
-> +                    .finish()
-> +            }
-> +        }
-> +
-> +        impl core::ops::BitOr for $name {
-> +            type Output = Self;
-> +
-> +            fn bitor(self, rhs: Self) -> Self::Output {
-> +                Self(self.0 | rhs.0)
-> +            }
-> +        }
-> +
-> +        impl From<$name> for u32 {
-> +            fn from(reg: $name) -> u32 {
-> +                reg.0
-> +            }
-> +        }
-> +    };
-> +}
-> +
-> +/// Helper macro for the `reg_def` family of macros.
-> +///
-> +/// Defines the getter method for $field.
-> +#[macro_export]
-> +macro_rules! __reg_def_field_getter {
-> +    (
-> +        $hi:tt:$lo:tt $field:ident
-> +            $(=> as $as_type:ty)?
-> +            $(=> as_bit $bit_type:ty)?
-> +            $(=> into $type:ty)?
-> +            $(=> try_into $try_type:ty)?
-> +        $(, $comment:expr)?
-> +    ) => {
-> +        $(
-> +        #[doc=concat!("Returns the ", $comment)]
-> +        )?
-> +        #[inline]
-> +        pub(crate) fn $field(self) -> $( $as_type )? $( $bit_type )? $( $type )? $( core::result::Result<$try_type, <$try_type as TryFrom<u32>>::Error> )? {
-> +            const MASK: u32 = ((((1 << $hi) - 1) << 1) + 1) - ((1 << $lo) - 1);
-> +            const SHIFT: u32 = MASK.trailing_zeros();
-> +            let field = (self.0 & MASK) >> SHIFT;
-> +
-> +            $( field as $as_type )?
-> +            $(
-> +            // TODO: it would be nice to throw a compile-time error if $hi != $lo as this means we
-> +            // are considering more than one bit but returning a bool...
-> +            <$bit_type>::from(if field != 0 { true } else { false }) as $bit_type
-> +            )?
-> +            $( <$type>::from(field) )?
-> +            $( <$try_type>::try_from(field) )?
-> +        }
-> +    }
-> +}
-> +
-> +/// Helper macro for the `reg_def` family of macros.
-> +///
-> +/// Defines all the field getter methods for `$name`.
-> +#[macro_export]
-> +macro_rules! __reg_def_getters {
-> +    (
-> +        $name:ident
-> +        $(; $hi:tt:$lo:tt $field:ident
-> +            $(=> as $as_type:ty)?
-> +            $(=> as_bit $bit_type:ty)?
-> +            $(=> into $type:ty)?
-> +            $(=> try_into $try_type:ty)?
-> +        $(, $field_comment:expr)?)* $(;)?
-> +    ) => {
-> +        #[allow(dead_code)]
-> +        impl $name {
-> +            $(
-> +            ::kernel::__reg_def_field_getter!($hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)?);
-> +            )*
-> +        }
-> +    };
-> +}
-> +
-> +/// Helper macro for the `reg_def` family of macros.
-> +///
-> +/// Defines the setter method for $field.
-> +#[macro_export]
-> +macro_rules! __reg_def_field_setter {
-> +    (
-> +        $hi:tt:$lo:tt $field:ident
-> +            $(=> as $as_type:ty)?
-> +            $(=> as_bit $bit_type:ty)?
-> +            $(=> into $type:ty)?
-> +            $(=> try_into $try_type:ty)?
-> +        $(, $comment:expr)?
-> +    ) => {
-> +        kernel::macros::paste! {
-> +        $(
-> +        #[doc=concat!("Sets the ", $comment)]
-> +        )?
-> +        #[inline]
-> +        pub(crate) fn [<set_ $field>](mut self, value: $( $as_type)? $( $bit_type )? $( $type )? $( $try_type)? ) -> Self {
-> +            const MASK: u32 = ((((1 << $hi) - 1) << 1) + 1) - ((1 << $lo) - 1);
-> +            const SHIFT: u32 = MASK.trailing_zeros();
-> +
-> +            let value = ((value as u32) << SHIFT) & MASK;
-> +            self.0 = self.0 | value;
-> +            self
-> +        }
-> +        }
-> +    };
-> +}
-> +
-> +/// Helper macro for the `reg_def` family of macros.
-> +///
-> +/// Defines all the field setter methods for `$name`.
-> +#[macro_export]
-> +macro_rules! __reg_def_setters {
-> +    (
-> +        $name:ident
-> +        $(; $hi:tt:$lo:tt $field:ident
-> +            $(=> as $as_type:ty)?
-> +            $(=> as_bit $bit_type:ty)?
-> +            $(=> into $type:ty)?
-> +            $(=> try_into $try_type:ty)?
-> +        $(, $field_comment:expr)?)* $(;)?
-> +    ) => {
-> +        #[allow(dead_code)]
-> +        impl $name {
-> +            $(
-> +            ::kernel::__reg_def_field_setter!($hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)?);
-> +            )*
-> +        }
-> +    };
-> +}
-> +
-> +/// Defines a dedicated type for a register with an absolute offset, alongside with getter and
-> +/// setter methods for its fields and methods to read and write it from an `Io` region.
-> +///
-> +/// Example:
-> +///
-> +/// ```no_run
-> +/// reg_def!(Boot0@0x00000100, "Basic revision information about the chip";
-> +///     3:0     minor_rev => as u8, "minor revision of the chip";
-> +///     7:4     major_rev => as u8, "major revision of the chip";
-> +///     28:20   chipset => try_into Chipset, "chipset model"
-> +/// );
-> +/// ```
-> +///
-> +/// This defines a `Boot0` type which can be read or written from offset `0x100` of an `Io` region.
-> +/// It is composed of 3 fields, for instance `minor_rev` is made of the 4 less significant bits of
-> +/// the register. Each field can be accessed and modified using helper methods:
-> +///
-> +/// ```no_run
-> +/// // Read from offset 0x100.
-> +/// let boot0 = Boot0.read(&bar);
-> +/// pr_info!("chip revision: {}.{}", boot0.major_rev(), boot0.minor_rev());
-> +///
-> +/// // `Chipset::try_from` will be called with the value of the field and returns an error if the
-> +/// // value is invalid.
-> +/// let chipset = boot0.chipset()?;
-> +///
-> +/// // Update some fields and write the value back.
-> +/// boot0.set_major_rev(3).set_minor_rev(10).write(&bar);
-> +/// ```
-> +///
-> +/// Fields are made accessible using one of the following strategies:
-> +///
-> +/// - `as <type>` simply casts the field value to the requested type.
-> +/// - `as_bit <type>` turns the field into a boolean and calls `<type>::from()` with the obtained
-> +///   value. To be used with single-bit fields.
-> +/// - `into <type>` calls `<type>::from()` on the value of the field. It is expected to handle all
-> +///   the possible values for the bit range selected.
-> +/// - `try_into <type>` calls `<type>::try_from()` on the value of the field and returns its
-> +///   result.
-> +///
-> +/// The documentation strings are optional. If present, they will be added to the type or the field
-> +/// getter and setter methods they are attached to.
-> +#[macro_export]
-> +macro_rules! reg_def {
-> +    (
-> +        $name:ident@$offset:expr $(, $type_comment:expr)?
-> +        $(; $hi:tt:$lo:tt $field:ident
-> +            $(=> as $as_type:ty)?
-> +            $(=> as_bit $bit_type:ty)?
-> +            $(=> into $type:ty)?
-> +            $(=> try_into $try_type:ty)?
-> +        $(, $field_comment:expr)?)* $(;)?
-> +    ) => {
-> +        ::kernel::__reg_def_common!($name);
-> +
-> +        #[allow(dead_code)]
-> +        impl $name {
-> +            #[inline]
-> +            pub(crate) fn read<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(bar: &T) -> Self {
-> +                Self(bar.readl($offset))
-> +            }
-> +
-> +            #[inline]
-> +            pub(crate) fn write<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(self, bar: &T) {
-> +                bar.writel(self.0, $offset)
-> +            }
-> +        }
-> +
-> +        ::kernel::__reg_def_getters!($name; $( $hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)? );*);
-> +
-> +        ::kernel::__reg_def_setters!($name; $( $hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)? );*);
-> +    };
-> +}
-> +
-> +/// Defines a dedicated type for a register with a relative offset, alongside with getter and
-> +/// setter methods for its fields and methods to read and write it from an `Io` region.
-> +///
-> +/// See the documentation for [`reg_def`] for more details. This macro works similarly to
-> +/// `reg_def`, with the exception that the `read` and `write` methods take a `base` argument that
-> +/// is added to the offset of the register before access, and the `try_read` and `try_write`
-> +/// methods are added to allow access with offsets unknown at compile-time.
-> +#[macro_export]
-> +macro_rules! reg_def_rel {
-> +    (
-> +        $name:ident@$offset:expr $(, $type_comment:expr)?
-> +        $(; $hi:tt:$lo:tt $field:ident
-> +            $(=> as $as_type:ty)?
-> +            $(=> as_bit $bit_type:ty)?
-> +            $(=> into $type:ty)?
-> +            $(=> try_into $try_type:ty)?
-> +        $(, $field_comment:expr)?)* $(;)?
-> +    ) => {
-> +        ::kernel::__reg_def_common!($name);
-> +
-> +        #[allow(dead_code)]
-> +        impl $name {
-> +            #[inline]
-> +            pub(crate) fn read<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(bar: &T, base: usize) -> Self {
-> +                Self(bar.readl(base + $offset))
-> +            }
-> +
-> +            #[inline]
-> +            pub(crate) fn write<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(self, bar: &T, base: usize) {
-> +                bar.writel(self.0, base + $offset)
-> +            }
-> +
-> +            #[inline]
-> +            pub(crate) fn try_read<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(bar: &T, base: usize) -> ::kernel::error::Result<Self> {
-> +                bar.try_readl(base + $offset).map(Self)
-> +            }
-> +
-> +            #[inline]
-> +            pub(crate) fn try_write<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(self, bar: &T, base: usize) -> ::kernel::error::Result<()> {
-> +                bar.try_writel(self.0, base + $offset)
-> +            }
-> +        }
-> +
-> +        ::kernel::__reg_def_getters!($name; $( $hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)? );*);
-> +
-> +        ::kernel::__reg_def_setters!($name; $( $hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)? );*);
-> +    };
-> +}
-> 
-> ---
-> base-commit: 4d872d51bc9d7b899c1f61534e3dbde72613f627
-> change-id: 20250313-registers-7fdcb3d926b0
-> 
-> Best regards,
-> -- 
-> Alexandre Courbot <acourbot@nvidia.com>
-> 
+It is (although one could argue that the bitfield accessors can probably
+be useful for non-register types as well), and agreed that this would
+fit better in kernel::io. Thanks for the suggestion.
 
