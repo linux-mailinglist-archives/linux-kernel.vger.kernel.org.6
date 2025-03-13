@@ -1,95 +1,154 @@
-Return-Path: <linux-kernel+bounces-559136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1133FA5EFE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:48:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88D5DA5EFE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:49:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74D4F3A6A0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:47:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C92AB17C9F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B092641E6;
-	Thu, 13 Mar 2025 09:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE8E264608;
+	Thu, 13 Mar 2025 09:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="py1khyo4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q4GgRiU+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7FF24EF69;
-	Thu, 13 Mar 2025 09:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4291FBCAE;
+	Thu, 13 Mar 2025 09:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741859245; cv=none; b=WCGfRENCPoHZWHsLFScr/y8pNYkCbl4hFWDyFNGOFcIlD+t+OSmadFcAQnfeOLF6eSdXXbAYHnFCoU3tCpXLGmjwdHyhXPSlvVqU/YCjuIqggUVuhvUv8WjQ8vghxaXnbutBYLd4aYhHGG5Nx3aVqlnv333LCvCmr1NGbMuOJIM=
+	t=1741859344; cv=none; b=CNdV0nSv/DynGxaLWPTZplj1lIwyVUMpj6sgICkZqE/OHynoOleFqstjqvZ7EzAaEQqOie39X7SwwC25p7FNnMuXQaQ87GO+VSDdXWI+2shtdeHml/kmxq3nPMQBqNJ9W811TWMTNP1vjCe8wM1JXtVF1BHgjWHRAZn30ttcBvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741859245; c=relaxed/simple;
-	bh=Qup0lTCmW1iNqV8AqsFH1fnQQjom+z+/RUgaV70lD/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HhBPZvNa0CXN8sdHJSWccGRFX8lSmG6q1tJ4GyG5JpVPVfJPlaOHNcEWtgljkwVgaAwjaV27vGuyeWAcyzJ1DAqNMXupEHfEFjPG0bZuXfB1tAkh1Qs6og7XbRf9tFS3H7PSAcfrYmWf1P/UVLSLYq8CUdr0IHuQILh6MgAVZnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=py1khyo4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF35DC4CEDD;
-	Thu, 13 Mar 2025 09:47:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741859245;
-	bh=Qup0lTCmW1iNqV8AqsFH1fnQQjom+z+/RUgaV70lD/M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=py1khyo4coU3MtgwSglyKuz0L+klp+rUNbHCvReBZSA+hP1aIfvH/uIjI/fLRnTBM
-	 8hcHrUlpV45h8ompLl6MasTkz+AtMJDu6UY1kK36Qj1K3BrPvWj2/CEsIdJ1F0nICY
-	 wUo4Isc0StGtEPorXqbCE8H2XnOryaOTKh1Xo8ok=
-Date: Thu, 13 Mar 2025 10:47:22 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: richard@nod.at, chengzhihao1@huawei.com, miquel.raynal@bootlin.com,
-	vigneshr@ti.com, logang@deltatee.com, linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] mtd: fix error handling in uif_init()
-Message-ID: <2025031334-paving-jolliness-3383@gregkh>
-References: <20250313091609.308724-1-make24@iscas.ac.cn>
+	s=arc-20240116; t=1741859344; c=relaxed/simple;
+	bh=2mwOsBgHwVZsH4BlvuNy5aRO2iLfNreiH0VhMivhBOQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=S062x4yb4iSH7mkexfCOdorN5OyPW/K177bCFDpoe5KZyNJG1mhx4aOTE44I8c2KA/84W2gVkgGvvhpj9SFAOrV40RuY3/x8WRkLkFNVUQzl8gBNVXWlxgudnOV31nMucN1DgYB69kBAocg3uZt2aGATdxk//HWZuli6cV5KH8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q4GgRiU+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D0m9jE003543;
+	Thu, 13 Mar 2025 09:48:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MGP/KB4+n9JDWeVs1CYtyV9lE8klH1kKAMutxhxApOg=; b=Q4GgRiU+chBTmf4L
+	em1koVP0cFXxgZSUaqTBvyAWROIBRZ9T0ye/0jXXVL8jeLBBJP5m3+ZgusQ6v85F
+	pfr5M+nVhBQDAjGLcaNKB0S5CgbqIhZzImbVZNJgVswWA3motA40VJQ5Ml/pVoIM
+	E5VRjbw9S0YjhVs7omP5kl7e7Outm+UK1Au16O4339CpPoYItzTQUz9G3ubs63TV
+	LwGIzgaD4kbuV/4AoasliuoDdjWxQx4HDPSipErmkfgmeesZAKRuBuhD12wFw1Qz
+	dRFn/hKkOkrmtybWYt7O8jvr8fHpwzvjqedGP1nAA0fmRm6CVFfG8KflAT6i2mFc
+	0ocoMw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45b96yb8vr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 09:48:39 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D9mcO7022527
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 09:48:38 GMT
+Received: from [10.204.66.137] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
+ 2025 02:48:31 -0700
+Message-ID: <c1e554f3-cf4f-42ba-aa75-94c8b0a13ff3@quicinc.com>
+Date: Thu, 13 Mar 2025 15:18:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313091609.308724-1-make24@iscas.ac.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/10] dt-bindings: msm: dsi-controller-main: document
+ the SA8775P DSI CTRL
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <robdclark@gmail.com>,
+        <dmitry.baryshkov@linaro.org>, <sean@poorly.run>,
+        <marijn.suijten@somainline.org>, <andersson@kernel.org>,
+        <robh@kernel.org>, <robh+dt@kernel.org>, <krzk+dt@kernel.org>,
+        <konradybcio@kernel.org>, <conor+dt@kernel.org>,
+        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
+        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
+        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
+        <quic_abhinavk@quicinc.com>, <quic_rajeevny@quicinc.com>,
+        <quic_vproddut@quicinc.com>, <quic_jesszhan@quicinc.com>
+References: <20250311122445.3597100-1-quic_amakhija@quicinc.com>
+ <20250311122445.3597100-3-quic_amakhija@quicinc.com>
+ <20250312-fine-vermilion-grebe-bdd5c9@krzk-bin>
+Content-Language: en-US
+From: Ayushi Makhija <quic_amakhija@quicinc.com>
+In-Reply-To: <20250312-fine-vermilion-grebe-bdd5c9@krzk-bin>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: QBVGklf5M8TFsG4hVHR9MLeJ8aXV5AWU
+X-Authority-Analysis: v=2.4 cv=I+llRMgg c=1 sm=1 tr=0 ts=67d2a9f7 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EkG_hp2kC7S3OihkgwwA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: QBVGklf5M8TFsG4hVHR9MLeJ8aXV5AWU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_04,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ lowpriorityscore=0 adultscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 spamscore=0 malwarescore=0 mlxscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503130077
 
-On Thu, Mar 13, 2025 at 05:16:09PM +0800, Ma Ke wrote:
-> Once cdev_device_add() failed, we should call put_device() to decrement
-> reference count for cleanup. Or it could cause memory leak.
+
+
+On 3/12/2025 5:14 PM, Krzysztof Kozlowski wrote:
+> On Tue, Mar 11, 2025 at 05:54:37PM +0530, Ayushi Makhija wrote:
+>> diff --git a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
+>> index ffbd1dc9470e..3621e3f12b65 100644
+>> --- a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
+>> +++ b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
+>> @@ -23,6 +23,7 @@ properties:
+>>                - qcom,msm8996-dsi-ctrl
+>>                - qcom,msm8998-dsi-ctrl
+>>                - qcom,qcm2290-dsi-ctrl
+>> +              - qcom,sa8775p-dsi-ctrl
 > 
-> Found by code review.
+> That's incomplete, where is the rest of updates in the file? Not
+> needed?
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 493cfaeaa0c9 ("mtd: utilize new cdev_device_add helper function")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->  drivers/mtd/ubi/build.c | 1 +
->  1 file changed, 1 insertion(+)
+> Best regards,
+> Krzysztof
 > 
-> diff --git a/drivers/mtd/ubi/build.c b/drivers/mtd/ubi/build.c
-> index ef6a22f372f9..ca4c54cf9fd4 100644
-> --- a/drivers/mtd/ubi/build.c
-> +++ b/drivers/mtd/ubi/build.c
-> @@ -486,6 +486,7 @@ static int uif_init(struct ubi_device *ubi)
->  	kill_volumes(ubi);
->  	cdev_device_del(&ubi->cdev, &ubi->dev);
->  out_unreg:
-> +	put_device(&ubi->dev);
 
-Oh wow.  No, that's not going to work.
+Hi Krzysztof,
 
-This driver is broken in that there are two different reference counted
-structures attempting to manage the same chunk of memory.  Things will
-break as your patch here shows.
+Thanks, for the review.
 
-Please fix this all up to work properly instead, don't think that this
-change will actually fix anything :(
+Each compatible string has a different set of clocks which are associated with it.
 
-thanks,
+Sorry, I forget to add qcom,sa8775p-dsi-ctrl compatible based on the set of clocks which are associated with it.
+Will add it in next patch.
 
-greg k-h
+--- a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
++++ b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
+@@ -349,6 +349,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - qcom,sa8775p-dsi-ctrl
+               - qcom,sc7180-dsi-ctrl
+               - qcom,sc7280-dsi-ctrl
+               - qcom,sm6150-dsi-ctrl
+
+The remaining content in the file will stay the same, no other changes are needed.
+
+Thanks,
+Ayushi
+
+
 
