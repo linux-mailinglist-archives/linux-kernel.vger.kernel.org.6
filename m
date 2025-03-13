@@ -1,130 +1,163 @@
-Return-Path: <linux-kernel+bounces-558796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D01A5EB4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:49:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD035A5EB57
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:55:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E35601765CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 05:49:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90DA31898561
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 05:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187701F9A85;
-	Thu, 13 Mar 2025 05:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF23D1FAC49;
+	Thu, 13 Mar 2025 05:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bHBwYGrR"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="zGmHtGiY"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5372126C1E;
-	Thu, 13 Mar 2025 05:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B2C80604;
+	Thu, 13 Mar 2025 05:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741844955; cv=none; b=TImY1OxNqTjMAMpakftX8Vw4spp0MlgzYfu+o7H7ASuRM/hdxgMdrUDAbEhW6nxG86OkJD+93ZZOCqJsNxS1zrFdcyLfYu0qJHLl2cFl+RufiLsaHPx3goaIfYD1asSSjUSedqRw2AVN3IaQ2VLKN7SO7H6WYpbfsRSk6xwM7s4=
+	t=1741845337; cv=none; b=CVSv2bgO0iNBTMYQJVGliCocvTUhVo0+GPiMh3s0XFTRCVjfMdv+5psT4Tmyw0DLQ80KSDzr78/XargIBJkg/dPDYeWceUR1siSybrzCUo7VrHHRPZ0PC2ay8D1Wc1B8FABEXizTu1O6uIQ+cAretVld/Q0cm+OySU2iO4dY0mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741844955; c=relaxed/simple;
-	bh=LgVHIOpYFYiFMvOVhlqsYaX605qc/jDixS9WUqzPivI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CBngYnUCrneueR8c2HcYJni/IcKXv5tpyp6RD69tG5k1XMny5jdCs49ABZxMpI5XwRnb2J73tcjMudSQkpFgRSz6EW5Ibx5uBUdlpU5UShgrcgRn6mD5a/uO0f0jY0Rlyg9Nd40/iI23/oBV4/eSShpAi5FNhLCb9d9yCL0V8tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bHBwYGrR; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741844949;
-	bh=aN7QLqLK6AYHIXig8XICcnCy+W2u83IoAFjYeIfcN0E=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bHBwYGrRP/sAE4hBE8OJduqroRQgeRAbpmLP8m/7IkrrlXeBBZck//H1M3rxGjgBY
-	 HemA4zbMzVg+g6Y1t13WKsj/0WVlWQ6/BrR/qTFBtrUoIQz3dUtg5qklV3itMPCokA
-	 xpW0YxW/C+nfKYj+tsBMh8Ns5jTfJqk71bZ+W6+8fuKDSGcMi1sufxIXe/OqLGJVKu
-	 C2NTAkqs0YKX5swD1eJRf6MQxWP7vyPhszZj2+Kc0kKGyTxpVaA9Jizl18q3+4wGqe
-	 zsuOGBqZjP9IlxEyQ4D7CNqvNE448EX+E8SsDr+Tds/LgUUBSpkwbPR/Kioouj4ozd
-	 NNFJ/jaSjzeWA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZCxQD23RXz4x04;
-	Thu, 13 Mar 2025 16:49:08 +1100 (AEDT)
-Date: Thu, 13 Mar 2025 16:49:06 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, Joel
- Granados <joel.granados@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>, Kaixiong Yu
- <yukaixiong@huawei.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the sysctl tree with the ext3 tree
-Message-ID: <20250313164906.6d6ff001@canb.auug.org.au>
+	s=arc-20240116; t=1741845337; c=relaxed/simple;
+	bh=HfSlSZ2CqVWFW48fAe4Pz+wvV6Z9OMo9fS/2rnnhenU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W7LBa+QIAAj06PEg3+vl+zZSsxBlt7T2Va5wyv8a6nl+wITVx/nlMkqsJdU/PP5wL6GwkY2XpK8uq1i6s7MD44kPimYSbL3m2DejAcFE0GYBzKdXFNeVNsG2nUJKxQmjs1I6+GTNk+vWrD72ScJI+PcNF+8pLrHPIrRuaf6aBZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=zGmHtGiY; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52D5tLKc1737463
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Mar 2025 00:55:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741845321;
+	bh=XJezcyfF+yORt8Uw98gj4iwE+jSOmsLoiF2fnCYB870=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=zGmHtGiYaruD/5pWpaw3Km0ciUIhgr2MyPPLZyMnga2DreISPKbwWt5W+1+CUH44N
+	 1wDnb6Q9N5BwlRdwN+asaguym9HKZPgajwDhL9nPpaqDZvDdgLJUGKIZL9ZZ9sE01u
+	 h1WZOIbJy5u/ZVVEsSbJppqWKnNYybMNNtqW3q18=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52D5tLrL018383
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 13 Mar 2025 00:55:21 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 13
+ Mar 2025 00:55:20 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 13 Mar 2025 00:55:20 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52D5tJmY065334;
+	Thu, 13 Mar 2025 00:55:20 -0500
+Date: Thu, 13 Mar 2025 11:25:19 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <vigneshr@ti.com>, <manivannan.sadhasivam@linaro.org>,
+        <robh@kernel.org>, <bhelgaas@google.com>, <rogerq@kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <stable@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
+Subject: Re: [PATCH] PCI: j721e: Fix the value of linkdown_irq_regfield for
+ J784S4
+Message-ID: <20250313055519.j3bpvsm6govd5ytk@uda0492258>
+References: <20250305132018.2260771-1-s-vadapalli@ti.com>
+ <20250312161600.GA680640@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/UW=m8+dzg/QGJ8+e/KX80a.";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250312161600.GA680640@bhelgaas>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
---Sig_/UW=m8+dzg/QGJ8+e/KX80a.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Mar 12, 2025 at 11:16:00AM -0500, Bjorn Helgaas wrote:
 
-Hi all,
+Hello Bjorn,
 
-Today's linux-next merge of the sysctl tree got a conflict in:
+> [+to Matt, author of e49ad667815d]
 
-  mm/filemap.c
+I dropped Matt's email on purpose since it will bounce as the email is
+no longer valid.
 
-between commit:
+> 
+> On Wed, Mar 05, 2025 at 06:50:18PM +0530, Siddharth Vadapalli wrote:
+> > Commit under Fixes assigned the value of 'linkdown_irq_regfield' for the
+> > J784S4 SoC as 'LINK_DOWN' which corresponds to BIT(1). However, according
+> > to the Technical Reference Manual and Register Documentation for the J784S4
+> > SoC [0], BIT(1) corresponds to "ENABLE_SYS_EN_PCIE_DPA_1" which is __NOT__
+> > the field for the link-state interrupt. Instead, it is BIT(10) of the
+> > "PCIE_INTD_ENABLE_REG_SYS_2" register that corresponds to the link-state
+> > field named as "ENABLE_SYS_EN_PCIE_LINK_STATE".
+> 
+> I guess the reason we want this is that on J784S4, we ignore actual
+> link-down interrupts (and we don't write STATUS_CLR_REG_SYS_2 to clear
+> the interrupt indication, so maybe there's an interrupt storm), and we
+> think some other interrupt (DPA_1, whatever that is) is actually a
+> link-down interrupt?
 
-  e6529028f9ac ("Revert "fsnotify: generate pre-content permission event on=
- page fault"")
+While it is true that actual link-down interrupts are ignored, it is not
+the case that there's an interrupt storm because the same incorrect macro
+is used to enable the interrupt line. Since the enables an interrupt for
+DPA_1 which never fires, we don't run into the situation where we are not
+clearing the interrupt (the interrupt handler will look for the same
+incorrect field to clear the interrupt if it does fire for DPA_1, but that
+doesn't happen). The 'linkdown_irq_regfield' corresponds to the
+"link-state" field not just in the J784S4 SoC, but in all SoCs supported by
+the pci-j721e.c driver. It is only in J721E that it is BIT(1)
+[LINK_DOWN macro], while in all other SoCs (J784S4 included), it is BIT(10)
+[J7200_LINK_DOWN macro since it was first added for J7200 SoC]. Matt
+probably referred to J721E's Technical Reference Manual and ended up
+incorrectly assigning "LINK_DOWN", due to which the driver is enabling
+the DPA_1 interrupt and the interrupt handler is also going to look for
+the field corresponding to receiving an interrupt for DPA_1.
 
-from the ext3 tree and commit:
+> 
+> > Hence, set 'linkdown_irq_regfield' to the macro 'J7200_LINK_DOWN' which
+> > expands to BIT(10) and was first defined for the J7200 SoC. Other SoCs
+> > already reuse this macro since it accurately represents the link-state
+> > field in their respective "PCIE_INTD_ENABLE_REG_SYS_2" register.
+> > 
+> > [0]: https://www.ti.com/lit/zip/spruj52
+> 
+> Thanks for the spec URL.  Can you include a relevant section number?
+> I searched for some of this stuff but couldn't find it.
 
-  73aa354af21d ("mm: filemap: move sysctl to mm/filemap.c")
+The URL above is taken from the "User Guide" section of the following
+webpage:
+https://www.ti.com/product/TDA4VH-Q1
+corresponding to the J784S4 SoC (TDA4VH is another name for it).
 
-from the sysctl tree.
+The User Guide [0] is a zip file containing the Technical Reference
+Manual (without Registers) along with an Excel Sheet containing the
+Registers. There unfortunately is no particular section that I can
+quote in the Excel Sheet. The PCIe registers described in the Excel
+Sheet contain the "PCIE_INTD_ENABLE_REG_SYS_2" register in one of the
+rows (I didn't want to mention the row number since things could change
+over time, similar to how you pointed out below that the URL could
+potentially change). However, the register name should remain the same,
+the reason being that the name is consistent across all SoCs supported
+by the pci-j721e.c.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+> 
+> Since I have low confidence that the URL will be valid after a few
+> years, I wish the spec also had a human-readable name and revision
+> number.  But maybe the alphabet soup or "SPRUJ52D", "revised July
+> 2024" is all we can hope for.
 
---=20
-Cheers,
-Stephen Rothwell
+I can only hope that the URL will redirect to the latest version of the
+User Guide if at all it becomes invalid.
 
-diff --cc mm/filemap.c
-index 1911d43b319e,004d78767804..000000000000
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@@ -47,6 -47,8 +47,7 @@@
-  #include <linux/splice.h>
-  #include <linux/rcupdate_wait.h>
-  #include <linux/sched/mm.h>
-+ #include <linux/sysctl.h>
- -#include <linux/fsnotify.h>
-  #include <asm/pgalloc.h>
-  #include <asm/tlbflush.h>
-  #include "internal.h"
-
---Sig_/UW=m8+dzg/QGJ8+e/KX80a.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfScdIACgkQAVBC80lX
-0Gw37Af7BqDElLXXxieWbiFDk9qd4lLNDKFLGa/B7JYFzCjrm2i/y5UBi9zQe2kR
-UtR25RzxlAfy9qFco6lXIoOpiYKNdXfVS1uJlFRR51oMMV9b5xXWKOEiP+iFQER0
-T6bnSJWManox7LYrpECK3guvCp5PGf5bFmG9zaUP7U9zIxVknluvmJi+VZtxQfKJ
-DfqInUXFmfaNo/hZTxKyPLQmfIKIsezxY0lgNdiJ1pJkdtCZAQhgi+mmPlr+XijW
-DSPRruq70tDAvGbkVQeu9wKwX/O9pBax0RZf7OJhjtpHviTrkdQnHg0BRRMT6Ntp
-0q7RyKoTBjVvvtOJqMq3jsBiM7sEwg==
-=DFkd
------END PGP SIGNATURE-----
-
---Sig_/UW=m8+dzg/QGJ8+e/KX80a.--
+Regards,
+Siddharth.
 
