@@ -1,206 +1,156 @@
-Return-Path: <linux-kernel+bounces-559117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34EF6A5EFB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:39:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 444FAA5EFC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:40:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 328893A88ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:38:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D3983BA5E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEFB264607;
-	Thu, 13 Mar 2025 09:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJsnqep8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5844526560E;
+	Thu, 13 Mar 2025 09:40:06 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C473264FA8
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EACF265610;
+	Thu, 13 Mar 2025 09:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741858729; cv=none; b=LAorq75+1QBsdjzIzbgcTeV1osSbWk4vpRv9xr2HjH3u2L+OTaaXzVsWWbGaRdrsszyOAohDxCjaKZXQ585SauENnmyZPnH5YuhAi0K+dCffLlDM6pWUAMzNovOyIuaT156UFWKwH0M/pGYM9dQl0770D5OUVsuKXCdoTXCR6tc=
+	t=1741858805; cv=none; b=E2lHsEDIp9OIys6zkTdbCxfaHbz2nqDEeSQoC7Xar9c33ILzB+t0si4WaQgl6BZd23cSP8Flv0MYj731HJEv8pUbhMIu8ENmoULKO+VEcEQW7Y9Iqxjwkz56Zacx7cKVOe7ZdfhlWUxuD3bK7CyyCilZbn9aNkLlWJHIZC1czNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741858729; c=relaxed/simple;
-	bh=XduVv5oWP5XVLUDadTwpUfDqlbjfXc9kb+OmeMBd47E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P6y3mVinH5Zoq4fRhKitAKQnzl0A3+eulAJZZjKa3226hgThE3qkI3nKVKcoFcoeycaYto809w/Bw47XkF5lwFPyVDGm+NnoUtNC2yJ5cidX2gKTfXx3/2KYXLA0JVJlUSemBoTgt7rNut2twWznrXitfvvlYNPJ4ctErawxjsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJsnqep8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39340C4CEE3;
-	Thu, 13 Mar 2025 09:38:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741858728;
-	bh=XduVv5oWP5XVLUDadTwpUfDqlbjfXc9kb+OmeMBd47E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oJsnqep8qoQtltsZ/P/mRMfuyLIVgPWJvJ96dFaI743K7A26Mt4Bn2l4reKhD4rJL
-	 3Re/al7IX35asDsCZnCbvBIuqxZrIVFl6GNsw61JRTl3Cbet+ev4tpT+YCRK9dl0Wk
-	 VK4dlpvncb6NdP42b9uYFAqmUSoZfVxhVIb5LEbgYumXdRbg4S4nY5klkFpB3+HjUK
-	 ynxh5Er6qVNEWTEun0WR9srYLTP+BmG4YQr5jiRcHlpwMRFTpcZK+5VOtpnIqAF1Fp
-	 Pwlc+MV3jDNGkgZXVcJHPnzD7h1WSA2gHHXMuPNfd9zpzOnH36SCjPYB1gU25R3COX
-	 K554Voa4h2cow==
-Message-ID: <f019144d-3ecd-4d90-9c57-790a93966176@kernel.org>
-Date: Thu, 13 Mar 2025 10:38:43 +0100
+	s=arc-20240116; t=1741858805; c=relaxed/simple;
+	bh=OanOg2QJhwZ6mKdmGf8UyGOz8ytmi0JebT8MUuN1NtE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mm4TlZ8A9DUYhlsa5OWRKt/Q/MOG5vv3GkeyXPtrQ7CWZg/vH39GEx9ij9e+yVLN65PHvdgobwlpp0I768gogpCBgxecqFKzz/P0qIe+mbrQTs3iJgYkB8DgMMXTrIEdOnnyvKeGVYn8AbowNK6leUQjpHfzlEOH60lJmE8FBDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZD2RQ1ztrz6J6g3;
+	Thu, 13 Mar 2025 17:35:30 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 96D80140442;
+	Thu, 13 Mar 2025 17:40:01 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Mar
+ 2025 10:40:00 +0100
+Date: Thu, 13 Mar 2025 09:39:59 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Zaid Alali <zaidal@os.amperecomputing.com>
+CC: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
+	<tony.luck@intel.com>, <bp@alien8.de>, <robert.moore@intel.com>,
+	<dan.j.williams@intel.com>, <Benjamin.Cheatham@amd.com>,
+	<Avadhut.Naik@amd.com>, <viro@zeniv.linux.org.uk>, <arnd@arndb.de>,
+	<ira.weiny@intel.com>, <dave.jiang@intel.com>,
+	<sthanneeru.opensrc@micron.com>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <acpica-devel@lists.linux.dev>
+Subject: Re: [PATCH v4 5/9] ACPI: APEI: EINJ: Enable the discovery of EINJv2
+ capabilities
+Message-ID: <20250313093959.0000619d@huawei.com>
+In-Reply-To: <20250306234810.75511-6-zaidal@os.amperecomputing.com>
+References: <20250306234810.75511-1-zaidal@os.amperecomputing.com>
+	<20250306234810.75511-6-zaidal@os.amperecomputing.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] dt-bindings: add device tree binding for silex
- multipk
-To: "Gupta, Nipun" <nipun.gupta@amd.com>, linux-kernel@vger.kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- derek.kiernan@amd.com, dragan.cvetic@amd.com, arnd@arndb.de,
- gregkh@linuxfoundation.org
-Cc: praveen.jain@amd.com, harpreet.anand@amd.com, nikhil.agarwal@amd.com,
- srivatsa@csail.mit.edu, code@tyhicks.com, ptsm@linux.microsoft.com
-References: <20250312095421.1839220-1-nipun.gupta@amd.com>
- <20250312095421.1839220-2-nipun.gupta@amd.com>
- <37707900-9162-43f2-b89b-3e1fec514daf@kernel.org>
- <270daefd-22a6-9359-edcb-c514644cfe4f@amd.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <270daefd-22a6-9359-edcb-c514644cfe4f@amd.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 13/03/2025 10:25, Gupta, Nipun wrote:
->>> +
->>> +maintainers:
->>> +  - Nipun Gupta <nipun.gupta@amd.com>
->>> +  - Praveen Jain <praveen.jain@amd.com>
->>> +
->>> +description: |
->>> +  Silex Multipk device handles the Asymmetric crypto operations. The
->>> +  driver provides interface to user-space to directly interact with the
->>> +  Silex MultiPK device.
->>
->> Why this isn't in crypto?
+On Thu,  6 Mar 2025 15:48:06 -0800
+Zaid Alali <zaidal@os.amperecomputing.com> wrote:
+
+> Enable the driver to show all supported error injections for EINJ
+> and EINJv2 at the same time. EINJv2 capabilities can be discovered
+> by checking the return value of get_error_type, where bit 30 set
+> indicates EINJv2 support.
 > 
-> It is mentioned in patch RFC 1/2 - because Crypto AF_ALG does not 
-> support offloading asymmetric operations from user-space (which was 
-> attempted to be added earlier in Linux at: 
-> https://lore.kernel.org/all/146672253157.23101.15291203749122389409.stgit@tstruk-mobl1.ra.intel.com/)
+> Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
+Trivial comment for another day inline.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-And if crypto framework starts supporting it, would it mean that
-hardware should be relocated? No, place it in directory matching the
-class of the device.
-
+> ---
+>  drivers/acpi/apei/apei-internal.h |  2 +-
+>  drivers/acpi/apei/einj-core.c     | 64 ++++++++++++++++++++++++-------
+>  drivers/acpi/apei/einj-cxl.c      |  2 +-
+>  3 files changed, 52 insertions(+), 16 deletions(-)
 > 
->>
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: silex,mutlipk
->>
->> Unknown vendor prefix
->>
->> Device name part is weirdly generic. How is this device exactly called?
->> Where is it used? Where is datasheet?
-> 
-> The device is on AMD versal series and is named "Multi PKI" device. I
-> will update to use compatible as xlnx,multipk (AMD versal series link: 
+> diff --git a/drivers/acpi/apei/apei-internal.h b/drivers/acpi/apei/apei-internal.h
+> index cd2766c69d78..77c10a7a7a9f 100644
+> --- a/drivers/acpi/apei/apei-internal.h
+> +++ b/drivers/acpi/apei/apei-internal.h
+> @@ -131,7 +131,7 @@ static inline u32 cper_estatus_len(struct acpi_hest_generic_status *estatus)
+>  
+>  int apei_osc_setup(void);
+>  
+> -int einj_get_available_error_type(u32 *type);
+> +int einj_get_available_error_type(u32 *type, int einj_action);
+>  int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2, u64 param3,
+>  		      u64 param4);
+>  int einj_cxl_rch_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
+> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
+> index 3f828f9265a8..aee9a7b17313 100644
+> --- a/drivers/acpi/apei/einj-core.c
+> +++ b/drivers/acpi/apei/einj-core.c
+> @@ -33,6 +33,7 @@
+>  #define SLEEP_UNIT_MAX		5000			/* 5ms */
+>  /* Firmware should respond within 1 seconds */
+>  #define FIRMWARE_TIMEOUT	(1 * USEC_PER_SEC)
+> +#define ACPI65_EINJV2_SUPP	BIT(30)
+>  #define ACPI5_VENDOR_BIT	BIT(31)
+>  #define MEM_ERROR_MASK		(ACPI_EINJ_MEMORY_CORRECTABLE | \
+>  				ACPI_EINJ_MEMORY_UNCORRECTABLE | \
+> @@ -84,6 +85,7 @@ static struct debugfs_blob_wrapper vendor_errors;
+>  static char vendor_dev[64];
+>  
+>  static u32 available_error_type;
+> +static u32 available_error_type_v2;
+>  
+>  /*
+>   * Some BIOSes allow parameters to the SET_ERROR_TYPE entries in the
+> @@ -159,13 +161,13 @@ static void einj_exec_ctx_init(struct apei_exec_context *ctx)
+>  			   EINJ_TAB_ENTRY(einj_tab), einj_tab->entries);
+>  }
+>  
+> -static int __einj_get_available_error_type(u32 *type)
+> +static int __einj_get_available_error_type(u32 *type, int einj_action)
+>  {
+>  	struct apei_exec_context ctx;
+>  	int rc;
+>  
+>  	einj_exec_ctx_init(&ctx);
+> -	rc = apei_exec_run(&ctx, ACPI_EINJ_GET_ERROR_TYPE);
+> +	rc = apei_exec_run(&ctx, einj_action);
+>  	if (rc)
+>  		return rc;
+>  	*type = apei_exec_ctx_get_output(&ctx);
+> @@ -174,12 +176,12 @@ static int __einj_get_available_error_type(u32 *type)
+>  }
+>  
+>  /* Get error injection capabilities of the platform */
+> -int einj_get_available_error_type(u32 *type)
+> +int einj_get_available_error_type(u32 *type, int einj_action)
+>  {
+>  	int rc;
+>  
+>  	mutex_lock(&einj_mutex);
 
-Then a SoC? So no, you are supposed to use SoC specific compatibles.
+Might be worth looking at using guard(mutex) in here to simplify paths.
+But that's a job for another day!
 
-But this does not really answer about undocumented prefix, although
-maybe you want to say that it is too generic?
+> -	rc = __einj_get_available_error_type(type);
+> +	rc = __einj_get_available_error_type(type, einj_action);
+>  	mutex_unlock(&einj_mutex);
+>  
+>  	return rc;
 
-> https://www.amd.com/en/products/adaptive-socs-and-fpgas/versal/premium-series.html). 
-> Seems also renaming files to xlnx_multipk.c etc would be better. Will 
-
-We talk about binding here.
-
-> update.
-> 
-> The device is used for PKI offload for OpenSSL based applications.
-> Unfortunately data sheet is not available in public domain.
-> 
->>
->>> +
->>> +  interrupts:
->>> +    maxItems: 1
->>> +
->>> +  reg:
->>> +    items:
->>> +      - description: PKI Queues memory region
->>> +      - description: PKI TRNG memory region
->>> +      - description: PKI reset memory region
->>
->> reset? Like reset controller? Why is this here instead of using existing
->> reset framework?
-> 
-> Not exactly, there is a clock reset which is separate from the device. I 
-> explored and there is a soft reset as well which will do the 
-> functionality and we do not need this memory region. Will remove it.
-
-So that's a separate device and you need to use here resets property.
-
-> 
->>
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - interrupts
->>> +  - iommus
->>
->> You did not test your patches.
-> 
-> We have tested the driver code, but device tree yaml needs some changes 
-> you mentioned (and so the dts)
-
-Bouncing back such argument is just making me disappointed in this work.
-
-You did not test it. Period. Send patches only after testing. See
-documentation in the DT directory (or talks or online resources).
-
-Best regards,
-Krzysztof
 
