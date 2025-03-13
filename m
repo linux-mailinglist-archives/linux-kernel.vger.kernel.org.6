@@ -1,132 +1,190 @@
-Return-Path: <linux-kernel+bounces-559313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353BEA5F23E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:22:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9849FA5F23F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:23:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E3DC18984B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:22:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8D2717E538
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B897B26618B;
-	Thu, 13 Mar 2025 11:22:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F861D7984;
-	Thu, 13 Mar 2025 11:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D579226619A;
+	Thu, 13 Mar 2025 11:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="CrSw37as"
+Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191E51D7984;
+	Thu, 13 Mar 2025 11:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741864936; cv=none; b=E3sT1G4TivZBQUqFMibWLGQDFnj5Q9/LRfizgTwX/mVaQSEI/5KI5ts0+LviiZvaZFElo7slPVnrYembMlmWymsnbqifTqls9GRIpExPT2T4zjcnsOMrslnz64kG56cPnjXYygUnsrheEhQzVhyta0z6IC6lBhpfFGAHci+2/Tw=
+	t=1741864980; cv=none; b=M3ackeZ5Jq6o1UIqdggZQl8QBuqf95gWsFGhYfvl5qCXiFUA8DC1bK8ihkucm/yzyvvOZeFBORbBsBbRLqKZcV8OX5eTDvRbEYDMuc3YsYKF7rkCB0Gke6xENe9h8D/hBUN1qjgn6sUHfZnoxKUbSPzwj9yz6vC10tEYBJ7JTus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741864936; c=relaxed/simple;
-	bh=4t6ekqbYxOtMNjNf7aNb9zZJ5HroBgVFvfHr43bQgpU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=T3T/cfW0sHnCWy3VEaWWSl6mqJ3Q1QIjjBZKC4WplD/2HTgIDCs1rBAYDb8CjXnwdJT4Bs/5v9Qt88DkNCnlRMjDZse0yFvXZT/QJNYgR3020GYVaho75B+pdwl1867grmZqJFXJxi/aubCcvEFCYSmSaqu6e7QPalata9uwHBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C0171C00;
-	Thu, 13 Mar 2025 04:22:24 -0700 (PDT)
-Received: from [10.1.32.45] (Suzukis-MBP.cambridge.arm.com [10.1.32.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C09D33F673;
-	Thu, 13 Mar 2025 04:22:08 -0700 (PDT)
-Message-ID: <e8749c86-fe93-4123-aa2e-5677e7a2c695@arm.com>
-Date: Thu, 13 Mar 2025 11:22:07 +0000
+	s=arc-20240116; t=1741864980; c=relaxed/simple;
+	bh=XY+iNNACdBsMNypqI8/Hgwk7dDdT2rxt/fpEeetk9SM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eipe9riwkZTJ4PO2nX2sxTbjsEAzDDDq2aH+hr+0NJVqtQ27K3ByjdfYaRQj63JGhdo53EOImoxkz8jAG/U3gZHI3LhjLd38Cs4OzvLe0wwqDppacUNEpeXjr1D5ULa5tIsV+fUhJljN+JfPZaesl5IV3i+geSCP3IUgYKQ+oDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=CrSw37as; arc=none smtp.client-ip=49.12.72.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
+From: Fiona Behrens <me@kloenk.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
+	t=1741864973; bh=jSXSMSPF0QFuoZukFVRkPbDl46MFQbzURRYuYJ5wXt4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date;
+	b=CrSw37asf6/iFodL/wjtvKlMgUKSF9zkaUaxcsP6zHkmrGE1+J/OBGPKbkHYn+U1m
+	 2Tc2m5mSDjDd2sIf3EvmzDobOXUNsijIwCfX6OxspfQsmaJ2WoNAd+1WB3f7AD8xDr
+	 7WUJC9B6pMdMc2RKIoAD1LzJ5qgkj8hV/xy4NLmg=
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
+  Boqun Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,
+  =?utf-8?Q?Bj=C3=B6rn?=
+ Roy Baron <bjorn3_gh@protonmail.com>,  Andreas Hindborg
+ <a.hindborg@kernel.org>,  Alice Ryhl <aliceryhl@google.com>,  Trevor Gross
+ <tmgross@umich.edu>,  rust-for-linux@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 18/22] rust: pin-init: internal: synchronize with
+ user-space version
+In-Reply-To: <20250308110339.2997091-19-benno.lossin@proton.me> (Benno
+	Lossin's message of "Sat, 08 Mar 2025 11:05:22 +0000")
+References: <20250308110339.2997091-1-benno.lossin@proton.me>
+	<20250308110339.2997091-19-benno.lossin@proton.me>
+Date: Thu, 13 Mar 2025 12:22:52 +0100
+Message-ID: <m2tt7xxjhv.fsf@kloenk.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] Initial BBML2 support for contpte_convert()
-Content-Language: en-GB
-To: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
- ryan.roberts@arm.com, yang@os.amperecomputing.com, corbet@lwn.net,
- catalin.marinas@arm.com, will@kernel.org, jean-philippe@linaro.org,
- robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org,
- mark.rutland@arm.com, joey.gouly@arm.com, maz@kernel.org,
- james.morse@arm.com, broonie@kernel.org, anshuman.khandual@arm.com,
- oliver.upton@linux.dev, ioworker0@gmail.com, baohua@kernel.org,
- david@redhat.com, jgg@ziepe.ca, shameerali.kolothum.thodi@huawei.com,
- nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
- smostafa@google.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev
-References: <20250313104111.24196-2-miko.lenczewski@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250313104111.24196-2-miko.lenczewski@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Miko,
+Benno Lossin <benno.lossin@proton.me> writes:
 
-On 13/03/2025 10:41, Mikołaj Lenczewski wrote:
-> Hi All,
-> 
-> This patch series adds adding initial support for eliding
-> break-before-make requirements on systems that support BBML2 and
-> additionally guarantee to never raise a conflict abort.
-> 
-> This support elides a TLB invalidation in contpte_convert(). This
-> leads to a 12% improvement when executing a microbenchmark designed
-> to force the pathological path where contpte_convert() gets called.
-> This represents an 80% reduction in the cost of calling
-> contpte_convert().
-> 
-> This series is based on v6.14-rc4 (d082ecbc71e9).
-> 
-> Patch 1 implements an allow-list of cpus that support BBML2, but with
-> the additional constraint of never causing TLB conflict aborts. We
-> settled on this constraint because we will use the feature for kernel
-> mappings in the future, for which we cannot handle conflict aborts
-> safely.
-> 
-> Yang Shi has a series at [1] that aims to use BBML2 to enable splitting
-> the linear map at runtime. This series partially overlaps with it to add
-> the cpu feature. We believe this series is fully compatible with Yang's
-> requirements and could go first.
-> 
+> Synchronize the internal macros crate with the user-space version that
+> uses the quote crate [1] instead of a custom `quote!` macro. The imports
+> in the different version are achieved using `cfg` on the kernel config
+> value. This cfg is always set in the kernel and never set in the
+> user-space version.
+>
+> Since the quote crate requires the proc_macro2 crate, imports also need
+> to be adjusted and `.into()` calls have to be inserted.
+>
+> Link: https://crates.io/crates/quote [1]
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+> Tested-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-Nothing about the patch functionality, but :
+Reviewed-by: Fiona Behrens <me@Kloenk.dev>
 
-Minor nit: Generally it is a good idea to add "What changed" from the
-previous posting.  That gives the reviewers an idea of what to look for
-in the new version. Something like:
-
-Changes since V2:
-  {Adding a link to the posting is an added bonus, as we can look up the 
-discussions easily}
-  - blah blah
-  - ..
-
-
-Cheers
-Suzuki
-
-
-> [1]:
->    https://lore.kernel.org/linux-arm-kernel/20250304222018.615808-1-yang@os.amperecomputing.com/
-> 
-> Mikołaj Lenczewski (3):
->    arm64: Add BBM Level 2 cpu feature
->    iommu/arm: Add BBM Level 2 smmu feature
->    arm64/mm: Elide tlbi in contpte_convert() under BBML2
-> 
->   .../admin-guide/kernel-parameters.txt         |  3 +
->   arch/arm64/Kconfig                            | 11 +++
->   arch/arm64/include/asm/cpucaps.h              |  2 +
->   arch/arm64/include/asm/cpufeature.h           |  6 ++
->   arch/arm64/kernel/cpufeature.c                | 76 +++++++++++++++++++
->   arch/arm64/kernel/pi/idreg-override.c         |  2 +
->   arch/arm64/mm/contpte.c                       |  3 +-
->   arch/arm64/tools/cpucaps                      |  1 +
->   .../iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c   |  3 +
->   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   |  3 +
->   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  4 +
->   11 files changed, 113 insertions(+), 1 deletion(-)
-> 
-
+> ---
+>  rust/pin-init/internal/src/helpers.rs     |  3 +++
+>  rust/pin-init/internal/src/lib.rs         | 16 +++++++++++++---
+>  rust/pin-init/internal/src/pin_data.rs    |  3 +++
+>  rust/pin-init/internal/src/pinned_drop.rs |  3 +++
+>  rust/pin-init/internal/src/zeroable.rs    |  3 +++
+>  5 files changed, 25 insertions(+), 3 deletions(-)
+>
+> diff --git a/rust/pin-init/internal/src/helpers.rs b/rust/pin-init/internal/src/helpers.rs
+> index 78521ba19d0b..236f989a50f2 100644
+> --- a/rust/pin-init/internal/src/helpers.rs
+> +++ b/rust/pin-init/internal/src/helpers.rs
+> @@ -1,5 +1,8 @@
+>  // SPDX-License-Identifier: Apache-2.0 OR MIT
+>  
+> +#[cfg(not(kernel))]
+> +use proc_macro2 as proc_macro;
+> +
+>  use proc_macro::{TokenStream, TokenTree};
+>  
+>  /// Parsed generics.
+> diff --git a/rust/pin-init/internal/src/lib.rs b/rust/pin-init/internal/src/lib.rs
+> index c201b8a53915..30e145f80bc0 100644
+> --- a/rust/pin-init/internal/src/lib.rs
+> +++ b/rust/pin-init/internal/src/lib.rs
+> @@ -7,6 +7,13 @@
+>  //! `pin-init` proc macros.
+>  
+>  #![cfg_attr(not(RUSTC_LINT_REASONS_IS_STABLE), feature(lint_reasons))]
+> +// Allow `.into()` to convert
+> +// - `proc_macro2::TokenStream` into `proc_macro::TokenStream` in the user-space version.
+> +// - `proc_macro::TokenStream` into `proc_macro::TokenStream` in the kernel version.
+> +//   Clippy warns on this conversion, but it's required by the user-space version.
+> +//
+> +// Remove once we have `proc_macro2` in the kernel.
+> +#![allow(clippy::useless_conversion)]
+>  
+>  use proc_macro::TokenStream;
+>  
+> @@ -14,6 +21,9 @@
+>  #[path = "../../../macros/quote.rs"]
+>  #[macro_use]
+>  mod quote;
+> +#[cfg(not(kernel))]
+> +#[macro_use]
+> +extern crate quote;
+>  
+>  mod helpers;
+>  mod pin_data;
+> @@ -23,17 +33,17 @@
+>  #[allow(missing_docs)]
+>  #[proc_macro_attribute]
+>  pub fn pin_data(inner: TokenStream, item: TokenStream) -> TokenStream {
+> -    pin_data::pin_data(inner, item)
+> +    pin_data::pin_data(inner.into(), item.into()).into()
+>  }
+>  
+>  #[allow(missing_docs)]
+>  #[proc_macro_attribute]
+>  pub fn pinned_drop(args: TokenStream, input: TokenStream) -> TokenStream {
+> -    pinned_drop::pinned_drop(args, input)
+> +    pinned_drop::pinned_drop(args.into(), input.into()).into()
+>  }
+>  
+>  #[allow(missing_docs)]
+>  #[proc_macro_derive(Zeroable)]
+>  pub fn derive_zeroable(input: TokenStream) -> TokenStream {
+> -    zeroable::derive(input)
+> +    zeroable::derive(input.into()).into()
+>  }
+> diff --git a/rust/pin-init/internal/src/pin_data.rs b/rust/pin-init/internal/src/pin_data.rs
+> index 9b974498f4a8..87d4a7eb1d35 100644
+> --- a/rust/pin-init/internal/src/pin_data.rs
+> +++ b/rust/pin-init/internal/src/pin_data.rs
+> @@ -1,5 +1,8 @@
+>  // SPDX-License-Identifier: Apache-2.0 OR MIT
+>  
+> +#[cfg(not(kernel))]
+> +use proc_macro2 as proc_macro;
+> +
+>  use crate::helpers::{parse_generics, Generics};
+>  use proc_macro::{Group, Punct, Spacing, TokenStream, TokenTree};
+>  
+> diff --git a/rust/pin-init/internal/src/pinned_drop.rs b/rust/pin-init/internal/src/pinned_drop.rs
+> index 386f52f73c06..c824dd8b436d 100644
+> --- a/rust/pin-init/internal/src/pinned_drop.rs
+> +++ b/rust/pin-init/internal/src/pinned_drop.rs
+> @@ -1,5 +1,8 @@
+>  // SPDX-License-Identifier: Apache-2.0 OR MIT
+>  
+> +#[cfg(not(kernel))]
+> +use proc_macro2 as proc_macro;
+> +
+>  use proc_macro::{TokenStream, TokenTree};
+>  
+>  pub(crate) fn pinned_drop(_args: TokenStream, input: TokenStream) -> TokenStream {
+> diff --git a/rust/pin-init/internal/src/zeroable.rs b/rust/pin-init/internal/src/zeroable.rs
+> index 0cf6732f27dc..acc94008c152 100644
+> --- a/rust/pin-init/internal/src/zeroable.rs
+> +++ b/rust/pin-init/internal/src/zeroable.rs
+> @@ -1,5 +1,8 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+> +#[cfg(not(kernel))]
+> +use proc_macro2 as proc_macro;
+> +
+>  use crate::helpers::{parse_generics, Generics};
+>  use proc_macro::{TokenStream, TokenTree};
 
