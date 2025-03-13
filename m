@@ -1,340 +1,233 @@
-Return-Path: <linux-kernel+bounces-559172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C9EEA5F05F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:14:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EFD9A5F061
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:14:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF39E3BC5E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:13:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83F3D17BE02
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C44264A7B;
-	Thu, 13 Mar 2025 10:14:00 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17541264FBD;
+	Thu, 13 Mar 2025 10:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fjOgfPH8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDBC1EE028
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741860840; cv=none; b=UXdWVocQiGKhPNKOiDPZ1HSJYm33CTjz8LZl6GEbZ+JYsw5kf7YhnE+y8+Nq4YokR+MEKaY31f0BOMk4Mo1AV2BROdNO+t/7MYjy84NjSNR/KbKqY+qmhwbgSzGN4R4x24t53EGxzPoF0EcE1P/qsG4wnXbo9jycpOGuOnK5LNk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741860840; c=relaxed/simple;
-	bh=QAvY60nFRsvo+brbaJsOsW6FJe4W2Iosodam+1HiqMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aEm+YMV0RitKD811KqzvjwwYO6XqLHDgpPEpqIb5EehfjRe9TmzulFNqdEUf2Kz2xPMKp02qK3JQbaWEIkZGKTbLlS3UOxXgaoSOuirA4s01Flkvi3d6Z5an9lB4eMuuIX5geUeHOnnLZXz1rmK9AQTqNyC9q3uT4qFVGqITJs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E369C4CEDD;
-	Thu, 13 Mar 2025 10:13:54 +0000 (UTC)
-Date: Thu, 13 Mar 2025 06:13:51 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Joel Fernandes <joelagnelf@nvidia.com>, Qais Yousef
- <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, Juri Lelli
- <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider
- <vschneid@redhat.com>, Ben Segall <bsegall@google.com>, Zimuzo Ezeozue
- <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, Will Deacon
- <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng
- <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya
- <Metin.Kaya@arm.com>, Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak
- <kprateek.nayak@amd.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel
- Lezcano <daniel.lezcano@linaro.org>, Suleiman Souhlal
- <suleiman@google.com>, kernel-team@android.com, "Connor O'Brien"
- <connoro@google.com>, Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [RFC PATCH v15 2/7] locking/mutex: Rework
- task_struct::blocked_on
-Message-ID: <20250313061351.412bc92e@batman.local.home>
-In-Reply-To: <20250312221147.1865364-3-jstultz@google.com>
-References: <20250312221147.1865364-1-jstultz@google.com>
-	<20250312221147.1865364-3-jstultz@google.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7911B261583;
+	Thu, 13 Mar 2025 10:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741860860; cv=fail; b=CVc3lcLU04GwrzRUeZdI9vGoFSvHJ//xv2IlvuJSDVqrsFKVK3adCgmzCSxKuglFbdQwP/xfdpON0CSVx4H2ytmmRRaFSH+gM0H62AcDBTgGopx2qEsCKmDz76H7LaIx3/jYapgm19DOsS1AzQac9aC1w74z6i0CrCSGlvFZMhE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741860860; c=relaxed/simple;
+	bh=xIwm0s7cOIxL2drL34UYAUIL1a8tI81Ja7YOTHKmB50=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=oSf3eqIbbrlLG2TJjaQ24bF6umDHBjsOLAMMKV9ITjebaSFJfCxMGEylVEPxXBxp96bOFAPWFSVNxXplfUZ0A8i5jeBDyZXhGj45jGuk74Kid1Owug5n0dCSH4OjWVPyIU2VM4CBc4YjXck1jlzxKKqyHZUw8mZl/B3AcPLgWGs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fjOgfPH8; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741860858; x=1773396858;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=xIwm0s7cOIxL2drL34UYAUIL1a8tI81Ja7YOTHKmB50=;
+  b=fjOgfPH8QWZYh1ZGJpaofCWBz9RpiQPabrcwsF2neiwSB2DanqiYiABy
+   ulUcSh6NP7tF1rAisDz1a3b/A/rU8tvvDpqW+fbMRYE18vy/rtpb4+zKj
+   KrlBULN+UOiTqbC3/8l0OLCZ4oSoAS222jcc4og8sq0mQriWjg24zcmrr
+   kZVqIu4kdAGqBseLKqTVqEbyZ4OLjEMw65JOkJLdO0OiwPl3363GD8BKA
+   ArIqauPND7fhjzhqzeFofIi7hGKVVSzQBJt5rAQK/2+T9OuxCQ9GLhtDC
+   mRbb6iaUVg1br+xi5ELIdx2fZxkccrZyuQxtHIpW1lpQC0F+DoJxi7Elw
+   Q==;
+X-CSE-ConnectionGUID: 1bDoN/yXQ0i2Xo3ZTCWg6Q==
+X-CSE-MsgGUID: 0NzHUxDDSW6NTMGlmw9E6w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="53963670"
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="53963670"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 03:14:17 -0700
+X-CSE-ConnectionGUID: i4sSIfqpTkO4SKU6ZydxrA==
+X-CSE-MsgGUID: EYm/Bx9iRhqAI2rDxXpygQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="121832761"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 03:14:17 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 13 Mar 2025 03:14:16 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 13 Mar 2025 03:14:16 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.174)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 13 Mar 2025 03:14:15 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sSWyDuadNt4783LveB1b4bkwgseHCwN6vARDYXdfD813LtJPaEkBi7D5JNHJ9r/rAXhq1jpxJd1y4I4bmKuhlN3LgVaJSvql50mPMxK/Sc4PbtH9Wlh9NUN4JRPNomK1+FKd3yx1ZP0ustf0VZcF0e99/fAN0pK/mxKXg8HeMv3wYW79zw8bfS4MgZCy7AH8PEuDGylH8B0H2Gp7H4RkzZKrKr2AyOfIzOZs04akdmV9xbFK8PqIPdbSkqVeLN7ZZ1E3fTIWpIvycBeQP81lRYmanQBTu/fdMPcd9cilJe7KgfIg9FBpQkHjKdOSKV11+Vjwz73V8bUfJ+H7hVN2NQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xIwm0s7cOIxL2drL34UYAUIL1a8tI81Ja7YOTHKmB50=;
+ b=sd7xPhs+5oycGMeruX0PHjnZ035Laic1WYj3RcNwYIXQvan0pZPpsoECPr+nmWaqHEgjl7kAtK8Kv7S5yNqhDNyF3MsAKpDCiNmkDXK9fZ7asPmL1Gu+pN6NToLMhVUPBV+6Dt9C6dRwPwfZRBVq7/XNzDgVqYnHYmiCGipIp+X++uxd7egA3sGfcLrg0fPl8nHRh4R9nHtoCi4wozH9pCNHfGjnbhCZphrVPvD1m0Tu7L8q/l0g5alE38yX+upxwrj7e9KV727A+uft9WSPx0QUJtdP1GgBYD779T3uYkN5D/6uWUPbYqQSqxD8N0kKa31nayUsrHmiNlD25lQjdg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by CH3PR11MB7391.namprd11.prod.outlook.com (2603:10b6:610:151::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Thu, 13 Mar
+ 2025 10:13:54 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%6]) with mapi id 15.20.8511.026; Thu, 13 Mar 2025
+ 10:13:53 +0000
+From: "Huang, Kai" <kai.huang@intel.com>
+To: "tglx@linutronix.de" <tglx@linutronix.de>, "x86@kernel.org"
+	<x86@kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "seanjc@google.com"
+	<seanjc@google.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
+CC: "szy0127@sjtu.edu.cn" <szy0127@sjtu.edu.cn>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Zhang,
+ Mingwei" <mizhang@google.com>, "kevinloughlin@google.com"
+	<kevinloughlin@google.com>
+Subject: Re: [PATCH 3/7] x86, lib: Add WBNOINVD helper functions
+Thread-Topic: [PATCH 3/7] x86, lib: Add WBNOINVD helper functions
+Thread-Index: AQHbiLpczdF4IZzJl0KbxlGfpndoHrNw78eA
+Date: Thu, 13 Mar 2025 10:13:53 +0000
+Message-ID: <71fb365773bdc6a38120f81c1177cb27cd2bb914.camel@intel.com>
+References: <20250227014858.3244505-1-seanjc@google.com>
+	 <20250227014858.3244505-4-seanjc@google.com>
+In-Reply-To: <20250227014858.3244505-4-seanjc@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5978:EE_|CH3PR11MB7391:EE_
+x-ms-office365-filtering-correlation-id: b8d8cc59-9dfb-4452-e8c3-08dd6217c241
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?azc3UU5aNTB1dGFVenF1eTM2R05ESFo5SFJYekNEU1pPWFhjekkvTWlRRGUw?=
+ =?utf-8?B?aVJVaUtmM0Z5aUxUUmUyRHBEcE80NjV0MzJieXJOQUhBbFVnYkdPRXNac1hR?=
+ =?utf-8?B?Sk9SUC9BNFhoYTFQZ2Nub3MrSVFZMXJoKzVoeWsrRzRrK1BBb1FLNU05WENW?=
+ =?utf-8?B?cno1V0g2NVdjeU8ySERJTGpSRlprTndqTXlpN2t3Y0lENWo3MHI2dTN0eTBD?=
+ =?utf-8?B?bE1Lc0N6TU1XQ3lXa0hlMHBybVpUSi95ZTZwcmZmUVFlZmFtMHhWK1A2Q1Zv?=
+ =?utf-8?B?eG4zeFk3ZXhGUU5oa0pVeGJMYlY5cFc2eUwvWUpZeTdaNXZXQXVRRm5lWXVv?=
+ =?utf-8?B?MHBhYnVWTmdOKzBaNzI1dzh3WU9rZHprQVBjRCtTVkFqVG1rM2xoUGVjWm5E?=
+ =?utf-8?B?RUFPRHVkaVlJQUZTbkh0VjBZQmRUajNJMmR0VGpFVWpadWFYTUFxS0FhREw0?=
+ =?utf-8?B?UEMwWnk2amY2bXVFTGhNOWhqcE9PTDVWUUx6Sys3TWd1QW9Ydmp0VG02VVNW?=
+ =?utf-8?B?SitObkZNRm5sa21xejVqbjlnYzFMY1JLZjE5TVZEVmRwUHhtMGYzNHJBZFdJ?=
+ =?utf-8?B?c2M2bG1RLzYwNWhVaHBUWUJIOTVuMHRBK1FxTXdGZmV4YkxUclJ4VFpCVExD?=
+ =?utf-8?B?Q2t1enkwT1NZOTZNeWRTcG82YUNiSXFCNzFwU3kwRGNBY0pGWEs5K3lhamZB?=
+ =?utf-8?B?L2ZxQzN0eXp5SFdpUEhNUnFQazViVTA2aDlxT2pFR0hobC94Vmh6Vm8rVy9D?=
+ =?utf-8?B?K21uVFhMamQ1a0VLcDY5K3VBOFVBYmxCYmZDZlJlZ0todXErUVRNcURaUGM2?=
+ =?utf-8?B?Q2pLakxXSHc4RFAzTHB3YXRLaW13SkN5d0NKdVMzbVJrZGtIbk1ubHNzMGha?=
+ =?utf-8?B?WnFXVWJUWW1YVW9jVXE5Yk9RdkRuZVY3aUVSWXBSOC9hSTZnSkxCRXFhU28x?=
+ =?utf-8?B?ZXdQQnNRbS91b0xZelBaS3llTkxkU2ticlZWSzZGSGFxZys4UGc2NTJxNlM1?=
+ =?utf-8?B?Wk5Cem5JRVZSRmd5UHh0Z3JsWEorbHczVkIyZ1dMM1lwb2d1VVcvSFdjYlNP?=
+ =?utf-8?B?cGhFNVp6MS9Xd2NwZ1g5N2tJME9MbHFsbGJrRmN2ZTAyTDRNRWZJaGlUSGR6?=
+ =?utf-8?B?aXk3aFFpaWc1SytFUzBOYXFkYjBHYU5wSmNITlZlcEZtYWI3NnZpODhxQkdQ?=
+ =?utf-8?B?TGgyS1dsZzZhdFYxbmhhQXY5UFVUS1RkZEFGWTdMZjE4bjN4Q1RaMjQzY1Zq?=
+ =?utf-8?B?NjZIa0ZOdkU2K2FRQkE4aHRiMlRkK3hrQnBhV2xaMStWZ1dMbjhET0YveXFD?=
+ =?utf-8?B?TTZBZWxESE1pOWdoeFNJTUVMM20zczlqeHJKVHF2MFJFcmRRcHhsNHR2QWhw?=
+ =?utf-8?B?UXo1UmlEWUpRMDc0RUlOelN2TEltNHZZRnRDTWwrMys3UlEzai9CNnc1WkVD?=
+ =?utf-8?B?M3FKdmZOeXIyQ2JwTGI4YXJNbHQ1YTlldTB3TVZ3VVBQUy9IeGp0RXBaTjc3?=
+ =?utf-8?B?MlhJcGFML0tDR09Ib2RBaDFOVlFvaFVqc3hRUFJBbGdyUzIyMHFZRUVkRGYv?=
+ =?utf-8?B?bUROZDlDcTN5c2dsSDFNMlhCVHc1bStTREdIeUVHbHlFYlpkZUNpLzhlM3Za?=
+ =?utf-8?B?N0Q2ZmEyUEtpdjliOUVLcXVueTNGYkIvcmJVNmF0RVBWOFJxRm53YVVESTN2?=
+ =?utf-8?B?QXIzb3FISjJRN2UrTm5OQllENzZsZzJqbUVlcmx1T1k1STdObnQ3dGpkek9r?=
+ =?utf-8?B?LzVhWEZzWStyellDUTQ2ZEpHS2F5R2ptbkdxRUZyNkhxOUN4TDdldWF4SkZI?=
+ =?utf-8?B?WXZLano0SkswWG1SZ3cycjBQQ1hLYlE5d3BnMk05dVBWRXZHbDlBb05VQ0VF?=
+ =?utf-8?B?SkloVHgzWk16aXFXYklRaDdZNjBMWnRNZGV2SnVlN280aG8wMjhFL3hLWHYx?=
+ =?utf-8?Q?9WyYHDjzaXLht9LGBK5dTcAk08y1v1TW?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?eWR1bGZ3bkhpQjhOdVJmY2NoZ2V5ajBXMVRzWnBXM2hra1pCZGc4YWplYU9L?=
+ =?utf-8?B?bU1zNW9wWEZSVjZTS21neUNWbmFRbjF2K2UrLzZhYjJ1aE9LSEgxQkJOUEdr?=
+ =?utf-8?B?UzJOeFl6RlpHVmlYWjJ4czhFa1hNNGhoWGh2c3JrUkczRDdIeW5qZVc1ejB1?=
+ =?utf-8?B?QmM1QktNVVJGc2hGWUJDN1RCSENESW8xVzFVdUFVejgyeTVDQkhPSGhWVUJP?=
+ =?utf-8?B?dHBRdDFWbjNYb2h6NlZnam5iM0t1aEJBOHpPdHFoMC9BT0hsVHB1bHBwV3lG?=
+ =?utf-8?B?bWljUFJQQVkydHFFMkdzMlloOFFSUmUvMk82dDJUZUFaWlVHMUlnZTk1QXd5?=
+ =?utf-8?B?Y09mN1h0R1Z1RFlkT2xxcUgzcVVHaTJaeEpzREVrVzVqTWwxYWozZHpYcVZx?=
+ =?utf-8?B?LzJLZ3BKb3pzUFhSVmdzVlZ6ajdVc1o5M2VOTGtnZUFxdVNTaDdVSWNTZzB5?=
+ =?utf-8?B?Y2p2Q1IzV2c3Rm1wTWV2ZEtYWUFyL01LdVFUQjdyc0NjR09VMHMyY1N5aGE0?=
+ =?utf-8?B?eG5mc3VvVk5ZYkJxcGN0MHBnSUtaQzNDc0RXTENIMVFJeTdmZ0JFWi9pcXNv?=
+ =?utf-8?B?ZThuQXNvRnIrTEUySVR3MFRETGNNaWxSc3JvaWJjb2U5VEtYNmJMSCtZZWxF?=
+ =?utf-8?B?SUo0U0tablpvYXVjbElFNks4MU00SUpuNUlUQ0pVQVdkVlhaS3ovV1NZaHQv?=
+ =?utf-8?B?TmNzN3dyVG1kN2lYeTBxKzdLcjJoN05odjZrUGhhdDR4R215WHpWZlExM0J2?=
+ =?utf-8?B?OWVrZlYzRHFFUU1xVjlkOTJsNWN1dmkwMzNKSkU4L1JMRm5XL3VOMjlpS2ZB?=
+ =?utf-8?B?dzhDTUk0Nkp3alQ1MGxhcjJhbG53NjVFNmFKNmxxZDBHcGczSGdXOTZGeVhF?=
+ =?utf-8?B?VUt2eHkwcC9uN2VDUnRJNXFWWnRkOThCcEtwU2M4OCsxVGJabE9TTzZvUFlI?=
+ =?utf-8?B?M1VmcERaMFNZQWJsdTdTcWdzMzFvWmZkay83bURSTWZsWVRnV2pMNVpvbkVu?=
+ =?utf-8?B?S1AzMUdrNlZxRmJxM0w0dklFRFFBYXh1bUJOR05SQmdjOXFPQm9hMjczRXJO?=
+ =?utf-8?B?dVh5YnZRcjQ3WGtnN1lWTk9lVDhDQTEyMlYyRmhZS0RzbjdXek9kMnp0Nnlj?=
+ =?utf-8?B?SUVNa3IzNm44NWtkWEJ4WDA3cldXRFljSFhVbFQ5WFNIQTlHZG9qQzFIK1Nz?=
+ =?utf-8?B?d1AxRGtJWml5RFNNZFhvOTdycXh3OFpyV0JmY2U4WW9XWWtTTkRocFA3TXhr?=
+ =?utf-8?B?RXM2eE5sRG9WOTVXQlpOak5leDdpZFYveDFyUFphSnYwRGdHMWRTU3RVVzZj?=
+ =?utf-8?B?SjNGSDZycEViM1Zhd2c5VWpUWWpTRjFyVERmVTdIUmFVTkU3QzBVNWVibmRa?=
+ =?utf-8?B?dkNVU2ZSQXoxVGwwRWkrdUZmU2orYThKZXBBMjd0Wmcyb0dCTWJmaFowbG4w?=
+ =?utf-8?B?VjZLZU5QWE93TDl6Z0VEclhkNXZTK0tCTEFTWUNDNC9VQm5jdlFjOTdzeTdw?=
+ =?utf-8?B?MW5jNlg1QzNPQS80N0dPdTM1cHBFWGVYU1l2eEtKczhvVzNNU1k1bnFQR1h4?=
+ =?utf-8?B?aisxclRCNzV2R0drb1JNQ1B3ZmZlTENYSEJnL3h6WDRPMUNzWUNYVEI5ZlQ2?=
+ =?utf-8?B?OU1qS2tweTIwQW5HNVZtejBiVSt5eHN2N3lBSjI1bVJoa0h0bWVHeDJxUU9z?=
+ =?utf-8?B?TlF1NjNPMVg2MkNiSk5WVmZsamszVVl3YUpOajNnVVpWdytOVW9Ka1d2dTZ3?=
+ =?utf-8?B?eUZPUDVURjlGbTlSY0NwaFBSd1JYbmZLTmJJNWNEbDBwd0JWSXRHMFdMWm9C?=
+ =?utf-8?B?anpXcHh1ZTBaVjZ5WnR6WXBOTW16TVFEK1o5akJKZnByWi9lZGxlMUFVMTNQ?=
+ =?utf-8?B?ZWp1WnNVRlVDMVJxcmM1YXNZbW56aEl0UHJCN3h6c1BzRjJuQUl4SC9DZ1Ex?=
+ =?utf-8?B?aS9SeWVyMlFwUHBRbnd1VGlNK3lyNTVxUTM2c2V3RXFPcEVFcUNQbHRmcVJ1?=
+ =?utf-8?B?cUFacmlvK1lydkxtcHpkNVp2S056ZU95Nm0wZ1FuRXdLRktpTVVGZXdXdUd3?=
+ =?utf-8?B?WjdZVVp0dXdtWnB4QlpQUTNYQzdJdlZRQWd5Y2tYcC94VmFxbFNucFdkWGt1?=
+ =?utf-8?Q?a206KOUtF0bVYvO+xJvBMygei?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F45687FD77B05943A58A2007E7E2B605@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8d8cc59-9dfb-4452-e8c3-08dd6217c241
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2025 10:13:53.8776
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: KI9gDNSyXDf8wMbDEfN5N3t8giNrYb9bqp/53tF4uaHDN8WxWcFVTdmQ3vSa8/EnlrdIF9KvbiL0kLsboQgFsA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7391
+X-OriginatorOrg: intel.com
 
-
-FYI, this is useful for Masami's "hung task" work that will show what
-tasks a hung task is blocked on in a crash report.
-
-  https://lore.kernel.org/all/174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com/
-
--- Steve
-
-
-On Wed, 12 Mar 2025 15:11:32 -0700
-John Stultz <jstultz@google.com> wrote:
-
-> From: Peter Zijlstra <peterz@infradead.org>
-> 
-> Track the blocked-on relation for mutexes, to allow following this
-> relation at schedule time.
-> 
->    task
->      | blocked-on
->      v
->    mutex
->      | owner
->      v
->    task
-> 
-> This all will be used for tracking blocked-task/mutex chains
-> with the prox-execution patch in a similar fashion to how
-> priority inheritance is done with rt_mutexes.
-> 
-> For serialization, blocked-on is only set by the task itself
-> (current). And both when setting or clearing (potentially by
-> others), is done while holding the mutex::wait_lock.
-> 
-> Cc: Joel Fernandes <joelagnelf@nvidia.com>
-> Cc: Qais Yousef <qyousef@layalina.io>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Cc: Valentin Schneider <vschneid@redhat.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Ben Segall <bsegall@google.com>
-> Cc: Zimuzo Ezeozue <zezeozue@google.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> Cc: Metin Kaya <Metin.Kaya@arm.com>
-> Cc: Xuewen Yan <xuewen.yan94@gmail.com>
-> Cc: K Prateek Nayak <kprateek.nayak@amd.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Suleiman Souhlal <suleiman@google.com>
-> Cc: kernel-team@android.com
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> [minor changes while rebasing]
-> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Signed-off-by: Connor O'Brien <connoro@google.com>
-> [jstultz: Fix blocked_on tracking in __mutex_lock_common in error paths]
-> Signed-off-by: John Stultz <jstultz@google.com>
-> ---
-> v2:
-> * Fixed blocked_on tracking in error paths that was causing crashes
-> v4:
-> * Ensure we clear blocked_on when waking ww_mutexes to die or wound.
->   This is critical so we don't get circular blocked_on relationships
->   that can't be resolved.
-> v5:
-> * Fix potential bug where the skip_wait path might clear blocked_on
->   when that path never set it
-> * Slight tweaks to where we set blocked_on to make it consistent,
->   along with extra WARN_ON correctness checking
-> * Minor comment changes
-> v7:
-> * Minor commit message change suggested by Metin Kaya
-> * Fix WARN_ON conditionals in unlock path (as blocked_on might already
->   be cleared), found while looking at issue Metin Kaya raised.
-> * Minor tweaks to be consistent in what we do under the
->   blocked_on lock, also tweaked variable name to avoid confusion
->   with label, and comment typos, as suggested by Metin Kaya
-> * Minor tweak for CONFIG_SCHED_PROXY_EXEC name change
-> * Moved unused block of code to later in the series, as suggested
->   by Metin Kaya
-> * Switch to a tri-state to be able to distinguish from waking and
->   runnable so we can later safely do return migration from ttwu
-> * Folded together with related blocked_on changes
-> v8:
-> * Fix issue leaving task BO_BLOCKED when calling into optimistic
->   spinning path.
-> * Include helper to better handle BO_BLOCKED->BO_WAKING transitions
-> v9:
-> * Typo fixup pointed out by Metin
-> * Cleanup BO_WAKING->BO_RUNNABLE transitions for the !proxy case
-> * Many cleanups and simplifications suggested by Metin
-> v11:
-> * Whitespace fixup pointed out by Metin
-> v13:
-> * Refactor set_blocked_on helpers clean things up a bit
-> v14:
-> * Small build fixup with PREEMPT_RT
-> v15:
-> * Improve consistency of names for functions that assume blocked_lock
->   is held, as suggested by Peter
-> * Use guard instead of separate spinlock/unlock calls, also suggested
->   by Peter
-> * Drop blocked_on_state tri-state for now, as its not needed until
->   later in the series, when we get to proxy-migration and return-
->   migration.
-> ---
->  include/linux/sched.h        |  5 +----
->  kernel/fork.c                |  3 +--
->  kernel/locking/mutex-debug.c |  9 +++++----
->  kernel/locking/mutex.c       | 19 +++++++++++++++++++
->  kernel/locking/ww_mutex.h    | 18 ++++++++++++++++--
->  5 files changed, 42 insertions(+), 12 deletions(-)
-> 
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 1462f2c70aefc..03775c44b7073 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1212,10 +1212,7 @@ struct task_struct {
->  	struct rt_mutex_waiter		*pi_blocked_on;
->  #endif
->  
-> -#ifdef CONFIG_DEBUG_MUTEXES
-> -	/* Mutex deadlock detection: */
-> -	struct mutex_waiter		*blocked_on;
-> -#endif
-> +	struct mutex			*blocked_on;	/* lock we're blocked on */
->  
->  #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
->  	int				non_block_count;
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 735405a9c5f32..38f055082d07a 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -2357,9 +2357,8 @@ __latent_entropy struct task_struct *copy_process(
->  	lockdep_init_task(p);
->  #endif
->  
-> -#ifdef CONFIG_DEBUG_MUTEXES
->  	p->blocked_on = NULL; /* not blocked yet */
-> -#endif
-> +
->  #ifdef CONFIG_BCACHE
->  	p->sequential_io	= 0;
->  	p->sequential_io_avg	= 0;
-> diff --git a/kernel/locking/mutex-debug.c b/kernel/locking/mutex-debug.c
-> index 6e6f6071cfa27..758b7a6792b0c 100644
-> --- a/kernel/locking/mutex-debug.c
-> +++ b/kernel/locking/mutex-debug.c
-> @@ -53,17 +53,18 @@ void debug_mutex_add_waiter(struct mutex *lock, struct mutex_waiter *waiter,
->  {
->  	lockdep_assert_held(&lock->wait_lock);
->  
-> -	/* Mark the current thread as blocked on the lock: */
-> -	task->blocked_on = waiter;
-> +	/* Current thread can't be already blocked (since it's executing!) */
-> +	DEBUG_LOCKS_WARN_ON(task->blocked_on);
->  }
->  
->  void debug_mutex_remove_waiter(struct mutex *lock, struct mutex_waiter *waiter,
->  			 struct task_struct *task)
->  {
-> +	struct mutex *blocked_on = READ_ONCE(task->blocked_on);
-> +
->  	DEBUG_LOCKS_WARN_ON(list_empty(&waiter->list));
->  	DEBUG_LOCKS_WARN_ON(waiter->task != task);
-> -	DEBUG_LOCKS_WARN_ON(task->blocked_on != waiter);
-> -	task->blocked_on = NULL;
-> +	DEBUG_LOCKS_WARN_ON(blocked_on && blocked_on != lock);
->  
->  	INIT_LIST_HEAD(&waiter->list);
->  	waiter->task = NULL;
-> diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
-> index b36f23de48f1b..37d1966970617 100644
-> --- a/kernel/locking/mutex.c
-> +++ b/kernel/locking/mutex.c
-> @@ -627,6 +627,8 @@ __mutex_lock_common(struct mutex *lock, unsigned int state, unsigned int subclas
->  			goto err_early_kill;
->  	}
->  
-> +	WARN_ON(current->blocked_on);
-> +	current->blocked_on = lock;
->  	set_current_state(state);
->  	trace_contention_begin(lock, LCB_F_MUTEX);
->  	for (;;) {
-> @@ -663,6 +665,12 @@ __mutex_lock_common(struct mutex *lock, unsigned int state, unsigned int subclas
->  
->  		first = __mutex_waiter_is_first(lock, &waiter);
->  
-> +		/*
-> +		 * As we likely have been woken up by task
-> +		 * that has cleared our blocked_on state, re-set
-> +		 * it to the lock we are trying to aquire.
-> +		 */
-> +		current->blocked_on = lock;
->  		set_current_state(state);
->  		/*
->  		 * Here we order against unlock; we must either see it change
-> @@ -683,6 +691,7 @@ __mutex_lock_common(struct mutex *lock, unsigned int state, unsigned int subclas
->  	}
->  	raw_spin_lock_irqsave(&lock->wait_lock, flags);
->  acquired:
-> +	current->blocked_on = NULL;
->  	__set_current_state(TASK_RUNNING);
->  
->  	if (ww_ctx) {
-> @@ -712,9 +721,11 @@ __mutex_lock_common(struct mutex *lock, unsigned int state, unsigned int subclas
->  	return 0;
->  
->  err:
-> +	current->blocked_on = NULL;
->  	__set_current_state(TASK_RUNNING);
->  	__mutex_remove_waiter(lock, &waiter);
->  err_early_kill:
-> +	WARN_ON(current->blocked_on);
->  	trace_contention_end(lock, ret);
->  	raw_spin_unlock_irqrestore_wake(&lock->wait_lock, flags, &wake_q);
->  	debug_mutex_free_waiter(&waiter);
-> @@ -924,6 +935,14 @@ static noinline void __sched __mutex_unlock_slowpath(struct mutex *lock, unsigne
->  		next = waiter->task;
->  
->  		debug_mutex_wake_waiter(lock, waiter);
-> +		/*
-> +		 * Unlock wakeups can be happening in parallel
-> +		 * (when optimistic spinners steal and release
-> +		 * the lock), so blocked_on may already be
-> +		 * cleared here.
-> +		 */
-> +		WARN_ON(next->blocked_on && next->blocked_on != lock);
-> +		next->blocked_on = NULL;
->  		wake_q_add(&wake_q, next);
->  	}
->  
-> diff --git a/kernel/locking/ww_mutex.h b/kernel/locking/ww_mutex.h
-> index 37f025a096c9d..00db40946328e 100644
-> --- a/kernel/locking/ww_mutex.h
-> +++ b/kernel/locking/ww_mutex.h
-> @@ -284,6 +284,14 @@ __ww_mutex_die(struct MUTEX *lock, struct MUTEX_WAITER *waiter,
->  #ifndef WW_RT
->  		debug_mutex_wake_waiter(lock, waiter);
->  #endif
-> +		/*
-> +		 * When waking up the task to die, be sure to clear the
-> +		 * blocked_on pointer. Otherwise we can see circular
-> +		 * blocked_on relationships that can't resolve.
-> +		 */
-> +		WARN_ON(waiter->task->blocked_on &&
-> +			waiter->task->blocked_on != lock);
-> +		waiter->task->blocked_on = NULL;
->  		wake_q_add(wake_q, waiter->task);
->  	}
->  
-> @@ -331,9 +339,15 @@ static bool __ww_mutex_wound(struct MUTEX *lock,
->  		 * it's wounded in __ww_mutex_check_kill() or has a
->  		 * wakeup pending to re-read the wounded state.
->  		 */
-> -		if (owner != current)
-> +		if (owner != current) {
-> +			/*
-> +			 * When waking up the task to wound, be sure to clear the
-> +			 * blocked_on pointer. Otherwise we can see circular
-> +			 * blocked_on relationships that can't resolve.
-> +			 */
-> +			owner->blocked_on = NULL;
->  			wake_q_add(wake_q, owner);
-> -
-> +		}
->  		return true;
->  	}
->  
-
+T24gV2VkLCAyMDI1LTAyLTI2IGF0IDE3OjQ4IC0wODAwLCBTZWFuIENocmlzdG9waGVyc29uIHdy
+b3RlOg0KPiBGcm9tOiBLZXZpbiBMb3VnaGxpbiA8a2V2aW5sb3VnaGxpbkBnb29nbGUuY29tPg0K
+PiANCj4gSW4gbGluZSB3aXRoIFdCSU5WRCB1c2FnZSwgYWRkIFdCT05JTlZEIGhlbHBlciBmdW5j
+dGlvbnMuICBGYWxsIGJhY2sgdG8NCj4gV0JJTlZEICh2aWEgYWx0ZXJuYXRpdmUoKSkgaWYgV0JO
+T0lOVkQgaXNuJ3Qgc3VwcG9ydGVkLCBhcyBXQklOVkQgcHJvdmlkZXMNCj4gYSBzdXBlcnNldCBv
+ZiBmdW5jdGlvbmFsaXR5LCBqdXN0IG1vcmUgc2xvd2x5Lg0KPiANCj4gTm90ZSwgYWx0ZXJuYXRp
+dmUoKSBlbnN1cmVzIGNvbXBhdGliaWxpdHkgd2l0aCBlYXJseSBib290IGNvZGUgYXMgbmVlZGVk
+Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogS2V2aW4gTG91Z2hsaW4gPGtldmlubG91Z2hsaW5AZ29v
+Z2xlLmNvbT4NCj4gUmV2aWV3ZWQtYnk6IFRvbSBMZW5kYWNreSA8dGhvbWFzLmxlbmRhY2t5QGFt
+ZC5jb20+DQo+IFtzZWFuOiBtYXNzYWdlIGNoYW5nZWxvZyBhbmQgY29tbWVudHMsIHVzZSBBU01f
+V0JOT0lOVkQgYW5kIF9BU01fQllURVNdDQo+IFNpZ25lZC1vZmYtYnk6IFNlYW4gQ2hyaXN0b3Bo
+ZXJzb24gPHNlYW5qY0Bnb29nbGUuY29tPg0KDQpSZXZpZXdlZC1ieTogS2FpIEh1YW5nIDxrYWku
+aHVhbmdAaW50ZWwuY29tPg0KDQpbLi4uXQ0KDQo+ICBzdGF0aWMgX19hbHdheXNfaW5saW5lIHZv
+aWQgd2JpbnZkKHZvaWQpDQo+ICB7DQo+IC0JYXNtIHZvbGF0aWxlKCJ3YmludmQiOiA6IDoibWVt
+b3J5Iik7DQo+ICsJYXNtIHZvbGF0aWxlKCJ3YmludmQiIDogOiA6ICJtZW1vcnkiKTsNCj4gK30N
+Cj4gDQoNCk5pdDogdGhpcyBpcyBub3QgcmVsYXRlZCwgdGhvdWdoLg0K
 
