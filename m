@@ -1,52 +1,68 @@
-Return-Path: <linux-kernel+bounces-559752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07ECAA5F91A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:55:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7B7EA5F91E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:55:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09A9517902C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:55:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36A653B7606
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3B52686B3;
-	Thu, 13 Mar 2025 14:55:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B2B2686AD
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02E9268FC6;
+	Thu, 13 Mar 2025 14:55:08 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E186A268C62;
+	Thu, 13 Mar 2025 14:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741877704; cv=none; b=SyG73ZoIQrBzcRniyYHgk7JENPx4otjiuH82je04o8zEDOzY6WsGBLpp5G4RgOHpxcc8X70t8XUYdfvWhRcOglojR92yv22OL0NrQldBIB3e/o4OK1h8WActnMOYcC5vUUq/hPzIkyUdqwUW+OcsuYuUBIXQf3xjIlErhEBuesk=
+	t=1741877708; cv=none; b=arxX4PCqFKxOdrsGkU8YRx8n1TY6eHg1/mowdUU7Pn6dNupMtGq21mZMpGkYc707BY+h5QJgz8D/HFS8DDqGCYT5+e/BOMbpRayeGKWleHiGmlIbX8tZWgOMI+TUY1z78Tm/wwLvOrDfWh4kL6Gv4KrkUZS9oR78lONn6YsMoRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741877704; c=relaxed/simple;
-	bh=Y/jMw/T2ECIkUtNYZ6DZyaIiiEl5KUsCLGEvvoCpf6w=;
+	s=arc-20240116; t=1741877708; c=relaxed/simple;
+	bh=aB/1xWCtge2A14D7gWkDYwClmMINQeE78a2chUdOCUY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HFsFUR9dUGUJcJMzy5trlEYyf5WdTz7SzXKsYXOfB7CuQZw8p/mEpdPi0HCRT3+ypyw83mCTRnM5La0LuNG0ZxUU5ME+4KU6a9Igey3VqS1MpceNSfXSYkpQyC4DtpZNr06P6Pdl7ZYJ58u29wBf6ItfUhSWqpIp6PLhjEVZa00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1CFD01516;
-	Thu, 13 Mar 2025 07:55:12 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C8E63F694;
-	Thu, 13 Mar 2025 07:55:01 -0700 (PDT)
-Date: Thu, 13 Mar 2025 14:54:56 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: lcherian@marvell.com, coresight@lists.linaro.org,
-	Mike Leach <mike.leach@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 2/7] coresight: Convert disclaim functions to take a
- struct cs_access
-Message-ID: <20250313145456.GR9682@e132581.arm.com>
-References: <20250211103945.967495-1-james.clark@linaro.org>
- <20250211103945.967495-3-james.clark@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PCzPASTVyitbEVBmR49jaHOdSmt1ed6yPwk8wrLoCUd3FMAkHL39Tx2PuVfRjn3CBPfNGLrvR3YZdFG9pg7AS6E6qb6MsXdSyhLT23XWfpp+PgzoEAoT2MzzIbLUPzH/+MGbM+JXcIImAhiIARUFGog0lHpgu83YWqtNktR1n4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: Dk76XHy7Sj+r+SwRmPso7w==
+X-CSE-MsgGUID: ZS4kWQVwTd6C/5p4wp3CAw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="54377760"
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="54377760"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:55:06 -0700
+X-CSE-ConnectionGUID: mMDFGEiPRGy+NFppYP91sQ==
+X-CSE-MsgGUID: j+rBMYUTS9m310XjyX3BCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="121478821"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:55:03 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1tsjxb-00000002D1f-2i6W;
+	Thu, 13 Mar 2025 16:54:59 +0200
+Date: Thu, 13 Mar 2025 16:54:59 +0200
+From: Andy Shevchenko <andy@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Emanuele Ghidoli <ghidoliemanuele@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	soc@kernel.org, Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [RFC PATCH v1 0/2] platform: toradex: Add toradex embedded
+ controller
+Message-ID: <Z9Lxw4qVApejzeAE@smile.fi.intel.com>
+References: <20250313144331.70591-1-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,21 +71,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250211103945.967495-3-james.clark@linaro.org>
+In-Reply-To: <20250313144331.70591-1-francesco@dolcini.it>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Feb 11, 2025 at 10:39:38AM +0000, James Clark wrote:
+On Thu, Mar 13, 2025 at 03:43:29PM +0100, Francesco Dolcini wrote:
+> From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> 
+> This series adds support for the Toradex Embedded Controller, currently used
+> on Toradex SMARC iMX95 and iMX8MP boards, with more to come in the future.
 
-[...]
+How many do you have that will come with like 99% guarantee?
 
->  static inline bool coresight_is_claimed_any(struct coresight_device *csdev)
->  {
-> -       return coresight_read_claim_tags(csdev) != 0;
-> +       return coresight_read_claim_tags(&csdev->access) != 0;
->  }
+> The EC provides board power-off, reset and GPIO expander functionalities.
+> 
+> Sending it as an RFC to gather initial feedback on it before investing more
+> time in testing and adding the remaining functionalities, with that said both
+> the code and the binding are in condition to be wholly reviewed.
 
-Likewise other claim functions, can coresight_is_claimed_any() change its
-argument type from struct coresight_device to struct csdev_access?
+This doesn't explain why you need a separate folder.
 
-Thanks,
-Leo
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
