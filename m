@@ -1,137 +1,144 @@
-Return-Path: <linux-kernel+bounces-559297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE123A5F215
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:14:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31AB6A5F217
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:14:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D056B3AC1E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:13:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 999E43B8877
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C852661A8;
-	Thu, 13 Mar 2025 11:13:50 +0000 (UTC)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C79F265CD9;
+	Thu, 13 Mar 2025 11:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MJXz7tr9"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0665FB95;
-	Thu, 13 Mar 2025 11:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A394266183;
+	Thu, 13 Mar 2025 11:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741864430; cv=none; b=HTVsYmQ/nMez6P8kVHFEHYE9frl86fyOn0Dtgoq6FLPVgGqwvNLYx93maRg1BZZKQgtmUNDbStUCwz0dEBu9fJy7fSEltOifQjrh2js8G9FcxMY2vzJoWYYrl4KEpkE7J41R+9ZnAxql9RJkcaa+Kmk+0HiQSzCH0frjGf50rjw=
+	t=1741864459; cv=none; b=qGWQ8THWEVDJA5pRQRb61Kmsnh2z68gSbf3bfkYzJg5awbNoxAHfKZg0lyFhUk1yy5ZIGwTeVxdHfMWkIfDQHf34/f3zSa2BvRNTB0BW2NHF/ttlbbk2O29dGf57tRZO2Z0+apk/ajPw+ptHkDdBmmWG7Uu6xD5HevjVkUdw/3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741864430; c=relaxed/simple;
-	bh=HRqlj3f451EuGpE4aN6v6KzfunskA5WFsS38RpEwOSg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tiALX9EYvWHZMdIEzC3WuHisI4TRWJtBNZGyds2yxnehtiAHmasrXTKyN4GmwU88GpG7fHwZbDU/5W0AZKrt8gDQ0IvVVV3m3AzjTRhdGWj6xAelgMx0nsg6e3MI2IE1e0FFEBOmFCzngSlgKdpJdKtlsUTn9Lkj/EbVIKRO+JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-86718c2c3b9so385944241.2;
-        Thu, 13 Mar 2025 04:13:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741864425; x=1742469225;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f+aTfeoVSIyB0YffFidlDzeB2TUKfGBiv94evK8t4xc=;
-        b=ObZV/au5jmBMZXY75luoojHUbmvGogTAqreJmA+IIH/ExLs3TtWUzxlNXc4LehyoBA
-         jG5nT4Z/B+h7CRbpGXDYWnuJHPqE1+AEpqraKOwn/KEhujPxoPVaNHa0OhCRrxfrkOqJ
-         b/sMp3LCsaFIAxwqRllDF3RzDcZj/QOi7zF0bSBPFdslcVSWpemGdC3iLEZ2KU0NnN+s
-         SRZBmZZ0rYAQwYdlxiWWHudbHyU7WbyC5HVl706awYzTxnAaBTuFs3iC1Unrqex+oVu1
-         s5qrkPAgBpID9pepnppbnu+rsKrwMGvsG4Fz9Z3IQ1i4Lswc9jRyV3gKYXYw6zMl1ayQ
-         O7xA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ3kcz1VLhnBmzMqwtS9id8ygMag3N7wscuTdA6nKN681uS0y0x4cgHi5SBeTLw6/ilZJz51B2+itI@vger.kernel.org, AJvYcCX6IofZiIbOgDWh/uA8Yy6HY8x6vrjSxA7RwAUMwFjQ9FeheMF0nwi/CpNM8nI1AWxQ1iQzmvSuoOGYZAV/cA==@vger.kernel.org, AJvYcCXfdHN0fcH9yidS9GLSwiQxf2uKt10vdTLVotv2dNSGKf4pr94IhjmygV9BZEBgosnO+hyvSaVAee7FUFp7@vger.kernel.org, AJvYcCXj4eWwUuOhdlelgWo31Gpa7FuwEoc3+LTbtYA3qy2LzFb6ZoLEhi00mdRvTBAqH5azRaLfRPH4@vger.kernel.org, AJvYcCXvkzItTigmD/MmcNn+pFc6XhColgKDB0LbblQaJXGADRfSURrqG+NsNgyM8KhMLt7R5blWiQ2tSCXA@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEwNxT7HfcyFKdlOlyDfNzwdRupno6BNWVQ0rhsbt2vQodCgCm
-	awZZNCBkSIuu+z1LiE8vv9PVSQK2zPK/wiRaHBhHpF9iDBziuEPZIUgDe29n
-X-Gm-Gg: ASbGncsXk+fBkIz5tZHgdVl2btXsW2cq3066jJV5p1eFD6wmTTyZri5NjeyR6gC1kxt
-	LZMv6+QKOnn7f6XEwhFAlSREzczGWGz0nlx8fLJo4Y3cC3cusfM6WU2D/f7nk3l+MzsK67VgplH
-	oKH1I2FI/4PJQElcTAnoVQaCSvA14J9Y3w5bR873hLTsh6hV5RK0xtSRdfG2H+blvUu4zljuRPV
-	O2vtyPBKxKvphu1MyIDN1Hxn9U+7PfHAJhLQO2WBI1bm1PnBZ4sxAm/R26yj8JFmNwBQ3yRonvw
-	N6j6t24RHCbOe5mlq7gmGI7a4azaSMr8TdGVtEgxJwM5gFmAAZwuwGqEzLbwy8LqF/2gf/8J0TI
-	x4pz4gqE=
-X-Google-Smtp-Source: AGHT+IFx3ko6Ysd7DNw6CJ37Ci5grYHyEPZJGZ2nrkXEINIv8uNUpv8Briaa/BVOKoToXTfJCTMibA==
-X-Received: by 2002:a05:6102:5491:b0:4ba:eb24:fb28 with SMTP id ada2fe7eead31-4c34d20cd1fmr12077830137.3.1741864425520;
-        Thu, 13 Mar 2025 04:13:45 -0700 (PDT)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c374f646cbsm127309137.16.2025.03.13.04.13.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 04:13:44 -0700 (PDT)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-86c29c0acdfso416372241.3;
-        Thu, 13 Mar 2025 04:13:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV6jX0Lh/nN97+/kIExraptGYK/UWcbcPdxKmwa6HtOzZxaVk4IoXeSNSMP4o9w3TivPypKaO0A@vger.kernel.org, AJvYcCWwWtc2XMdSlaT2SHIkXds/a4aWMhnORLFgBhSkErQBzX0uX8G556yFFMKEfGhgiiuDaraZUQQY235Pr977@vger.kernel.org, AJvYcCXDRUWLevKcBpq7M4ShFvimI6G06pAmDOI1743m2CD+I6a5oURCahOJMM6bYoDWg+aX6ZAz3tW/+f7e@vger.kernel.org, AJvYcCXTK20WBzr518AQ354hvJmkM9wBXWrTjvSZXp9PRsvj/VNTm9qCmyThG4WA8fvzuKDaRYgszRZTeCzi@vger.kernel.org, AJvYcCXZMTk/YlsjjYEwglfdDmVdv0DEh0LYxJ6vdiWyvt2LTBE2zCEkCDIKvbIelIlyUeP/qJGCY8EFRrTKTj+sMg==@vger.kernel.org
-X-Received: by 2002:a05:6102:6058:b0:4c3:64bc:7d16 with SMTP id
- ada2fe7eead31-4c364bc826emr6410107137.16.1741864424462; Thu, 13 Mar 2025
- 04:13:44 -0700 (PDT)
+	s=arc-20240116; t=1741864459; c=relaxed/simple;
+	bh=1Ry7KePRqIwKg1gp1qMl4hqEkDK/oQLqKLvRIEIBNAg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Cp+G76UJcGj4LPeYcBRRCbafdP3Y2hoVSUAz+FmYX+w39GkYSEEO/0FyAGQIeFB9o42f6eH02l79L4SkTxiPZXAwaalNSTx+kFVIMez0DxH6edqcFe7aYifwE0n5ZgpXOXL/OeG09MtyFooieQ/L9mLgqhgZeN4Qkda/N/505Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MJXz7tr9; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52DBEATZ1856319
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Mar 2025 06:14:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741864450;
+	bh=/TF/F6lXdjR8IB4UYkLtUXrENiAwln8Gi9GSzblYrCw=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=MJXz7tr9nyecpy7QjTkOLn6IkrbZKqEAzsHPRXduyv7sFMykNvgyjwzP7o7tpEFu9
+	 bcle+02bf266ZgS0wooko5Stcm49XrXP2lQ/8qy9LoVYoXwl+jCBi7uxIh17tV1RpU
+	 DnYE10eJD+cS8qLmsGhRYcKvLQtMNa9Tm9uaBJhA=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52DBEAu7041226
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 13 Mar 2025 06:14:10 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 13
+ Mar 2025 06:14:10 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 13 Mar 2025 06:14:10 -0500
+Received: from [10.24.69.37] (a0497641-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [10.24.69.37] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52DBE60E053638;
+	Thu, 13 Mar 2025 06:14:07 -0500
+Message-ID: <8e58b093-1c64-45b9-a9d3-9835a3bbc4fd@ti.com>
+Date: Thu, 13 Mar 2025 16:44:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313110359.242491-1-quic_mmanikan@quicinc.com>
-In-Reply-To: <20250313110359.242491-1-quic_mmanikan@quicinc.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Mar 2025 12:13:32 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV_YE2pf+SxXR5sWG1+aG8wv5MtRWk+0+ZF_n8ao7seRg@mail.gmail.com>
-X-Gm-Features: AQ5f1JqRTMYro5mN9behN-6IiqjAuHgeViZHARDgbLMt0YG5Pc6vqgxhUbgQtPQ
-Message-ID: <CAMuHMdV_YE2pf+SxXR5sWG1+aG8wv5MtRWk+0+ZF_n8ao7seRg@mail.gmail.com>
-Subject: Re: [PATCH v12 0/6] Add NSS clock controller support for IPQ9574
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	konradybcio@kernel.org, catalin.marinas@arm.com, will@kernel.org, 
-	p.zabel@pengutronix.de, richardcochran@gmail.com, geert+renesas@glider.be, 
-	lumag@kernel.org, heiko@sntech.de, biju.das.jz@bp.renesas.com, 
-	quic_tdas@quicinc.com, nfraprado@collabora.com, 
-	elinor.montmasson@savoirfairelinux.com, ross.burton@arm.com, 
-	javier.carrasco@wolfvision.net, ebiggers@google.com, quic_anusha@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, 
-	quic_varada@quicinc.com, quic_srichara@quicinc.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: misc: bist: Add BIST dt-binding for TI
+ K3 devices
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
+References: <20241128140825.263216-1-n-francis@ti.com>
+ <20241128140825.263216-2-n-francis@ti.com>
+ <ho7ktcnbtl7mvamfthqho23co2fc4z7bgjha7pu4wivxm6ndhu@tfbpveonhckz>
+ <837d329b-bcdd-4c3b-b508-e916b110ce25@ti.com>
+ <e57dfc3e-b702-4803-b776-20c6dbd98fef@kernel.org>
+Content-Language: en-US
+From: Neha Malcom Francis <n-francis@ti.com>
+In-Reply-To: <e57dfc3e-b702-4803-b776-20c6dbd98fef@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Manikanta,
+Hi Krzysztof
 
-On Thu, 13 Mar 2025 at 12:04, Manikanta Mylavarapu
-<quic_mmanikan@quicinc.com> wrote:
-> Add bindings, driver and devicetree node for networking sub system clock
-> controller on IPQ9574. Also add support for gpll0_out_aux clock
-> which serves as the parent for some nss clocks.
->
-> Changes in V12:
+On 29/11/24 14:45, Krzysztof Kozlowski wrote:
+> On 29/11/2024 08:43, Neha Malcom Francis wrote:
+>>>> +
+>>>> +  power-domains:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  ti,bist-instance:
+>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>> +    description:
+>>>> +      the BIST instance in the SoC represented as an integer
+>>>
+>>> No instance indices are allowed. Drop.
+>>>
+>>
+>> Question on this, this is not a property that is driven by software but rather 
+>> indicates which register sequences have to be picked up for triggering this test 
+>> from this instance. So I don't see how I can workaround this without getting 
+>> this number. Or maybe call it ID rather than instance?
+> 
+> I don't understand how the device operates, so what is exactly behind
+> some sequences of registers for triggering this test. You described
+> property as index or ID of one instance of the block. That's not what we
+> want in the binding. That's said maybe other, different hardware
+> characteristic is behind, who knows. Or maybe it's about callers... or
+> maybe that's not hardware property at all, but runtime OS, who knows.
+> 
 
-Thanks for your series!
+Sorry for such a late reply, but I was hoping to get more details on
+this "ID" and never got back to the thread...
 
->  .../bindings/clock/qcom,ipq9574-nsscc.yaml    |   98 +
->  arch/arm64/boot/dts/qcom/ipq9574.dtsi         |   29 +
->  arch/arm64/configs/defconfig                  |    1 +
->  drivers/clk/qcom/Kconfig                      |    7 +
->  drivers/clk/qcom/Makefile                     |    1 +
->  drivers/clk/qcom/gcc-ipq9574.c                |   15 +
->  drivers/clk/qcom/nsscc-ipq9574.c              | 3110 +++++++++++++++++
->  include/dt-bindings/clock/qcom,ipq9574-gcc.h  |    1 +
->  .../dt-bindings/clock/qcom,ipq9574-nsscc.h    |  152 +
->  .../dt-bindings/reset/qcom,ipq9574-nsscc.h    |  134 +
+The best way I can describe is this device (BIST) runs a safety
+diagnostic test on a bunch of processors/blocks (let's call them
+targets). There's a mapping between the instance of this device and the
+targets it will run the test. This ID was essentially letting the BIST
+driver know which are these targets.
 
-I don't think you need to CC people who just modified the arm64
-defconfig before, but never touched qcom clock drivers.  The list of
-maintainers and reviewers reported by scripts/get_maintainer.pl is
-already quite large.
+Should I perhaps trigger it the other way around; a target driver asks
+for it's safety test to be run by pointing to the BIST instance? However
+the issue with this approach is, the architecture of this safety test
+device is that once triggered, it will run the test on all the targets
+it controls and that should be reflected in the software arch as well right?
 
-So please drop me from future submissions.
-Thanks!
+Yet another way would be the BIST points out the targets it controls via
+their phandles in its node... but this approach would trigger the probe
+of these targets before the test runs on them. And in hardware, the test
+must run only one before the device is used, else we see indefinite
+behavior.
 
-Gr{oetje,eeting}s,
 
-                        Geert
+> Best regards,
+> Krzysztof
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanking You
+Neha Malcom Francis
 
