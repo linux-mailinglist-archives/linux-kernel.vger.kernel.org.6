@@ -1,80 +1,73 @@
-Return-Path: <linux-kernel+bounces-559738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A94A5F8D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:46:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3387AA5F8ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:48:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80F7817DB7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:46:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0912A3B17E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072BB267F5E;
-	Thu, 13 Mar 2025 14:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D818268690;
+	Thu, 13 Mar 2025 14:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J59mzNUm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="VC2KQ+qm"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC7586337;
-	Thu, 13 Mar 2025 14:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8A9267F7D
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741877183; cv=none; b=frX/astY/jWRhXpQ4yBrwby0cb9KAtmeUsz1oCMBwnsK+FOwY0vY/e462RBwgfj2oeIRe4eXu9BAsGPjnqld8tpno7i+OpDFNsEkMXZXLYCXtHaFB7Jutm2eWrpZO6lqhoqZ8KkR4SKbE0EBvvl2kXfnWZmX/Yal1qDjg+JDfg8=
+	t=1741877307; cv=none; b=IZh/7fZOSRdsEAKfubStlAC3Y7+TuIHxQiTOtEaj0NUK84Clqwr9izwaWCzQ3/KcfHDgyG/D8hbLo5v9MxJNyozwrJPpD5P6UuCjz5g3WrvtvpI+hpKF4jX7kcWrHbINzoa2AwGR6sZ8/KNDwSrT73x4iEhX/D6FubT7TIp5l7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741877183; c=relaxed/simple;
-	bh=tshyggDOde6rCy5WxES5KRnyBHK98eY57xGucW/T14k=;
+	s=arc-20240116; t=1741877307; c=relaxed/simple;
+	bh=74q1QugtPVhiVAF1IrlosmnlxVF5HcoC1FvEOwi7tH8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T7u9XQHGZIgbu/VOmNJqCohdfEaLUHxIxnHII3qLwu5WieSlnrx+IYiozuUCHjQB7KFjiDewb01DyAs9JDA8s3qSXXWMaL9yQzBuRg+KWFRpT/ZVLr/IpmdfvCj+ICgg4/IYMqdUta3YIlwOUgeikGWNJKIZuMpG1x65hEmTF0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J59mzNUm; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741877182; x=1773413182;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tshyggDOde6rCy5WxES5KRnyBHK98eY57xGucW/T14k=;
-  b=J59mzNUmu6aKO0B5e7jSChd9bf+dEKKGz27YyzeoJXM9zuoq/z/Mc9y8
-   Hk7tIVcdr/veSrXBiXqgkbBsJEPK97Aox+W4OEdZfl/s5M6hbMcvwUeV4
-   9Ta3Omi3NNqCoJwG7VKIKC9XOL9/ceapaW95JauAEizHjWChz3voJj+J3
-   CvhgvXPWTaiweSu0+wlX1iPlIlXfvMYOfrc4Dn6QRU5k46FszfW8dGD+I
-   QH9a4l6wuztv0ttNCKyHL8WU+afu6AX6aPYqsm1mbzNxvC0xIyCJ5agTt
-   4w0YF5NXREYzkCrcbTteNf2a+l/Hc1Y2a1BGtnWIAB4WpN2zlfJ6tpi/s
-   Q==;
-X-CSE-ConnectionGUID: EuPbakHSSZ2dHqkDasi3bw==
-X-CSE-MsgGUID: yoVLTT5eTX+SR8NIbF5aMw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="43128154"
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="43128154"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:46:21 -0700
-X-CSE-ConnectionGUID: 6aH8UiBVQRWTl1zZCHlr5w==
-X-CSE-MsgGUID: kkf6NXANQpCg4GIsyiprtw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="120763387"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:46:20 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tsjpB-00000002Cuo-2dqq;
-	Thu, 13 Mar 2025 16:46:17 +0200
-Date: Thu, 13 Mar 2025 16:46:17 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>
-Subject: Re: [PATCH v1 1/1] spi: Use inclusive language
-Message-ID: <Z9LvueoWc1o7ayUS@smile.fi.intel.com>
-References: <20250313111442.322850-1-andriy.shevchenko@linux.intel.com>
- <1c49edb2-2ffc-419e-be5e-7e15669a7839@sirena.org.uk>
- <Z9LlTflb1HQMyEv2@smile.fi.intel.com>
- <e329812d-90a5-456e-9a00-abb5c2c8d25d@sirena.org.uk>
- <Z9LqyWr4GH4RX6Nj@smile.fi.intel.com>
- <Z9Ls-zhryd7mJv-b@smile.fi.intel.com>
- <dc17b87b-29c1-4b66-9353-c934a68b929a@sirena.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IlYuttloe7pBZmVt0fcnIwNQX/SIbVVGQ5ZrGCneOSwE83JwJ83BChUai27gIvcEEgfGOrwR20Bu/6ozuUfNUdTCl39wbsW05UwpMre8tz9c7GHdCDWd6x5U1/E5M6g8CMZFuhUE0ve6C6p4f7TuGuSvLuQ0ZaKygLmK7a5hVWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=VC2KQ+qm; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=u/++hCF7QJgCGMIGXB1yxG4YNrbxMmRRLIRePkjIo3E=; b=VC2KQ+qmz6W3rJ7GNbTCsztko8
+	LDqufW9YKHjgungru41toALL08cFiu4blUfxnm9oSPJW+He035ev16/Qqu/EVCt12ZSBHTXBl982R
+	XmPd4pfzuuh9+px5dGoOoaMPU2YgkaXg4zyqQtwG//7thbf1JBw93dCS6rPBiWHnhrs4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tsjrA-0051Fm-OX; Thu, 13 Mar 2025 15:48:20 +0100
+Date: Thu, 13 Mar 2025 15:48:20 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jiri Slaby <jirislaby@kernel.org>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Talel Shenhar <talel@amazon.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Guo Ren <guoren@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Subject: Re: [patch 3/7] soc: dove: Convert generic irqchip locking to guard()
+Message-ID: <3860ac63-3181-4d00-8824-6d122e195176@lunn.ch>
+References: <20250313142404.896902416@linutronix.de>
+ <20250313142524.137040686@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,32 +76,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dc17b87b-29c1-4b66-9353-c934a68b929a@sirena.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250313142524.137040686@linutronix.de>
 
-On Thu, Mar 13, 2025 at 02:39:27PM +0000, Mark Brown wrote:
-> On Thu, Mar 13, 2025 at 04:34:35PM +0200, Andy Shevchenko wrote:
-> > On Thu, Mar 13, 2025 at 04:25:13PM +0200, Andy Shevchenko wrote:
+On Thu, Mar 13, 2025 at 03:31:21PM +0100, Thomas Gleixner wrote:
+> Conversion was done with Coccinelle. No functional change.
 > 
-> > > Yes, the base where it was merged to is eds-acpi branch of my public GH [1],
-> > > which has no SPI stuff in there.
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Gregory Clement <gregory.clement@bootlin.com>
+> ---
+>  drivers/soc/dove/pmu.c |    3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> > $ git checkout -b test-spi-mrg spi/for-next
-> > $ git cherry-pick -1 87a228960033
-> > [test-spi-mrg 8a11d1063109] spi: Use inclusive language
-> > Date: Fri Dec 8 19:02:54 2023 +0200
-> > 2 files changed, 64 insertions(+), 66 deletions(-)
-> 
-> > In any case there is a v2, please try that one.
-> 
-> That one does apply.
+> --- a/drivers/soc/dove/pmu.c
+> +++ b/drivers/soc/dove/pmu.c
+> @@ -257,10 +257,9 @@ static void pmu_irq_handler(struct irq_d
+>  	 * So, let's structure the code so that the window is as small as
+>  	 * possible.
+>  	 */
+> -	irq_gc_lock(gc);
+> +	guard(raw_spinlock)(&gc->lock);
+>  	done &= readl_relaxed(base + PMC_IRQ_CAUSE);
+>  	writel_relaxed(done, base + PMC_IRQ_CAUSE);
+> -	irq_gc_unlock(gc);
+>  }
 
-Okay, It might be that I send the previous version by a mistake or it was based
-on an old spi/for-next. Now I don't know as it's gone.
+My personal preference would be a scoped_guard() rather than this
+magical guard() construct which looks nothing like C. But whatever.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-
+    Andrew
 
