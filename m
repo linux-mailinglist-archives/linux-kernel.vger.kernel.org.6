@@ -1,228 +1,326 @@
-Return-Path: <linux-kernel+bounces-560353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8629A602EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:45:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8118A602F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:47:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71D1A19C5C92
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:46:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7457A19C5F89
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659421F462C;
-	Thu, 13 Mar 2025 20:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B381E1F462C;
+	Thu, 13 Mar 2025 20:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="W+CuQAWX"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013046.outbound.protection.outlook.com [52.101.67.46])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S86SFHPb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB5B1F37C5;
-	Thu, 13 Mar 2025 20:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741898743; cv=fail; b=GJ8ipzzgj8ZqHXqx7T/Ae1ToRXyz4Lq73f1zkt9aqHDu3wnCo1QjAI8GE0xDxvARSXMUeZCjmgKNh/fj3qOPwSdzk4+xudARzwz6epFxucZQAdhzglD15LSMwVkL4rFtSwhCtfoteyR+BJ3aIA88wAfLGkYmz+n4boqMafwXeb8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741898743; c=relaxed/simple;
-	bh=IfvwgIjmkSIsaatioYU3Sdzbp0qN/F9ZSZV14/Y8g/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=SM7ZSyOLpSAxu2rO8l66o+Vpwv5Ebrtu5YtCKntM6rhoQToPJJeMpmGggAmdvL14ESIXgO6/xlgxnrH6uhNrR+qUmfsUiM+FtHvxy97HKHKNZ+sJsAl39LIrxP7KSGB/FpIh5SkzagsmymwObtWyZMFSf3WUVDnvMBO9TUluupw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=W+CuQAWX; arc=fail smtp.client-ip=52.101.67.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ATKqOUG6GHT0V/JWaGSksAFUWLrwfQnRN7qtEIMh4iJ9T/WZj87kWlQVr5p+c3MABOEVDP10DspWcqaheBID7epAfXn9ZXNUTB+A6vG06ppeir+tyvDTlL1tnRu05OqDQEYTTAVI2WZnZy6n+Sb3Ch3C1GEA4RoGInIBZqFiiPZEgDb8aBPTzacAMJw0q4ipfUt0I1sm7YrU1K4GXQQP1DgaKIib0zq72fTVNM3nOJoLYPp3XyFxcugoicUWwyEwbdfmEje0XMV2tFyG/37UEVwasLkQK7lXZR9A9+dqZSMHSdzxLMLfonNqvaM94abMLQ4GGrgMOXKVWhzlvElqPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SJYvvswhIBKLMo4PBjAdgYS5okGNAlsPnsdeAl4fXSw=;
- b=BX1DrrKi/0/FJJ8L5+NouHNx2wd/ZmfoyamatWPXs94PI89fzEJq7qryr0yQsegKNX/DgxAmOvU+L1ttyan5+eGCgQ7ypo+wZxwedyzoN15/njQfUx3D9OfUrye8zPzlmkWb35QpDhmVNB0Yq/cGI6XJU4+xZzoUeKlA9p6/OFvRn/2TapA02q+9/EWshyveJRaAhm8egCQvhbzo1293kW4UFerPuef1yStf3+StqYjlfLICOE5hKqzqXF8O6oEdS1pdBGyfu52JgPGpnv9cTRhWdMuWZn2+XhXVl/3eVL9yT5KM84ArwYP3tPHCC7oKMMhkyU2rDt/iglTDLYflnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SJYvvswhIBKLMo4PBjAdgYS5okGNAlsPnsdeAl4fXSw=;
- b=W+CuQAWXmAJX2naShk+itCE6Trp9NKQwa/5FmYi0nRmu0MH6FzZA+fB5S7CbwOGT982KymDhOhjdzrIZcny44F4128opPGkLhboWqvV3vPBS3oU864XpVgD7JDDSk3oiWilWPK9fyyVKWrpAIQAKyO71FyPcu0AA5KxXy487x+sw73kkM0ojtw17/phJpkd7WFF/xydnA7BwD2WohXyg+h/hJbvMZ2c4rBBPm18Pg8KM340mJsHsMpGwOAe9ob5yjJexhE/dDn2z2Xp2VTfplyBzw7FOOZ3ZW66RvIjGFB0FeZ2UriLE/C1gka55Kti9Q6t2DL0g6Lr7TYL/E2RvVw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VI2PR04MB10642.eurprd04.prod.outlook.com (2603:10a6:800:27f::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Thu, 13 Mar
- 2025 20:45:36 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.8511.026; Thu, 13 Mar 2025
- 20:45:36 +0000
-Date: Thu, 13 Mar 2025 16:45:26 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	Niklas Cassel <cassel@kernel.org>
-Subject: Re: [PATCH v11 04/11] PCI: dwc: Move devm_pci_alloc_host_bridge() to
- the beginning of dw_pcie_host_init()
-Message-ID: <Z9ND5vARXpL8g1t/@lizhi-Precision-Tower-5810>
-References: <20250313-pci_fixup_addr-v11-4-01d2313502ab@nxp.com>
- <20250313192254.GA745234@bhelgaas>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313192254.GA745234@bhelgaas>
-X-ClientProxiedBy: SJ0PR03CA0339.namprd03.prod.outlook.com
- (2603:10b6:a03:39c::14) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8651F4180;
+	Thu, 13 Mar 2025 20:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741898851; cv=none; b=aW3VkFpNYaehRPH2+ePzWQjS/pIBhc/MlODGjXr4PeZ7bpIFRlQmNQ7tYHBIW609JCiUVLAlO5zN6beMnqf6aEVtYbPv9AcA4CL6exraik8Akv0f1idsRzk34mm93iq3q4bOl/GoK8MHAZPba+GCZ3yA6nsqO4s/que8ZOMipzY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741898851; c=relaxed/simple;
+	bh=2ptC1nB6iTpHCXQhoIYsaJqR4EN2MYDh6QRC1rrBrkQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DiUAk9jA5w5Tm2pF+L6KpcH5xKW3XdhoI2NU62aCCnKNUgzzK24aEJqcDLPDjd/NnuxvKgf5BUhd/RFrSMHllyH1cWHQzWDvVle74q3VcMsQSDUjqv9TcDde0UX33XpUyJft+hxFv+CQgUNPc3fQS4rVWYyLQkRPXTQ5bpx1K+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S86SFHPb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0F84C4CEE3;
+	Thu, 13 Mar 2025 20:47:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741898851;
+	bh=2ptC1nB6iTpHCXQhoIYsaJqR4EN2MYDh6QRC1rrBrkQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S86SFHPbqyPRihfU9Y7jh/O6zioevBKixqE1TPy5bMBGmHfHBZTcHPwCx/Gp/Zz6w
+	 VNqXIUsOj3U/N6x1SlqUhlBmovtn093k2m2XnJngfbW8nBo8TwRrsOtzp1Qw6GZE8z
+	 c2RedR0TPA+fxCdhPPnaYO6vkW8OZAZI+Ys59HZ3qji6ekg1Rz4auRHl5TRqOABiL7
+	 HEuZr7Ks7AqwVnJN907Wmqy2M05NTEqEBE64EV/3lZy2oIYD5JLsiGSA0a022UKzBg
+	 CAUcSl4H5h+0LOeEL2QwUfXfmOPfWL9nqLkkPYggV2Akg16KuFa0QLWzzzSNxCNjx6
+	 czilEh84yNZUQ==
+Date: Thu, 13 Mar 2025 17:47:27 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	guoren <guoren@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+	linux-riscv@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v5 00/11] perf: Support multiple system call tables in
+ the build
+Message-ID: <Z9NEX3j_1RUvaFI0@x1>
+References: <20250308003209.234114-1-irogers@google.com>
+ <Z9KFLGpenwOP32q3@google.com>
+ <Z9M24AJzui9lFbGo@x1>
+ <Z9M9-YhDJg3NgiUy@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI2PR04MB10642:EE_
-X-MS-Office365-Filtering-Correlation-Id: 95a92601-1c4e-4118-2426-08dd627001c0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|7416014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+5Q5lazD8voXHyw2c5dIPnHGyZfoPsc4JSUZgpPZnxAkFVHVYiWUSNde1ZT8?=
- =?us-ascii?Q?S1gX0Dayi5VkWubu63MmKdD+LNUU3tN+jQFbDt7RnDomzIy0xKAJb1ARsx9e?=
- =?us-ascii?Q?V88U1fNuJGBMwxbolrDnYDRVJ87rLnQZsgbfU7JcPTXX8e9O7GjpOfxViafJ?=
- =?us-ascii?Q?nNZJyizngYMqvcxV9IlItur2RidHAhs3Vo4hJi3GpYsxNpKVrn6KsJxrcJyI?=
- =?us-ascii?Q?TV1D9AdKOPPLg9T+TxOO9TzG57oNbB1WSblr0BzYQF1aF0PMAM0OU7AFkqnZ?=
- =?us-ascii?Q?ooecD3C5JwN723YcRy6Cldz9GfKYd0by2H0x1JSCmjlT1Z0V9NX/swmv3Ng5?=
- =?us-ascii?Q?yYaj8jACd9FwA2vdxiK+oMh5TkUClfE9OgyQZmoW1lY9Hwqi5d3cW2ZC7Bs8?=
- =?us-ascii?Q?lelfvWDXdWVRHnZZywmTCNiz3hhKtQ/iFhYV44C9U7u25n/nf6ezU2EHhBJW?=
- =?us-ascii?Q?s1uGXhsLqOoniJjCcA14CnD/s1/RGDIxNEU4mlkwr+V9WTEqXG9xAkh2aEyK?=
- =?us-ascii?Q?OaA8YuosimLLcEHRvkXhdx7eTwrMRlzHFVL4i5PKLVyRqmX1Bl2j1uLqFe2N?=
- =?us-ascii?Q?LDjQy7teN8osc+JzGsBEa3LigB5GTulXPxAUu3ybfqCkUkVPhnaOz1XduAZB?=
- =?us-ascii?Q?VDBqt7R0p7XJFtj8Dsxc1lbQPWzvDrzBf+XLPmMpaagMUNWYGl1GnADk6yUI?=
- =?us-ascii?Q?ZlZjmDJl7FmkX1FULE1GB3Ez+VlZXtXbegq4ky/NWojrVS/IUsXQePoKJrsJ?=
- =?us-ascii?Q?u9hHJbK16iBqtzPnpTaMcEagnJQ2P9HoDV8eeTaIeR0j8xkGvWHUStl+kJY/?=
- =?us-ascii?Q?w3I91AgrbX26eOB2toG5OFDLTuSvBg/8RcE++LzG82qQJbbx+OJNQk1mpLQH?=
- =?us-ascii?Q?WBuTXr8JWhZzjVHag3cgQIYHClnjzL6e9/chfwr1mfl/8Ww4yOAZ9mitSoxM?=
- =?us-ascii?Q?T53zc9RGhXPW+RflBqi4ISEhzWI8hIcCnbsL79v++T/gdQ6X4OVnKLPYGZG9?=
- =?us-ascii?Q?lt/RxjFtbByLnc0Le6pK6mmi07+GJ9qbtAY2xk8LY+HTgU3m3li5oe3VjGMe?=
- =?us-ascii?Q?oaCa23TyNNlNBqxAXskUyo6xUMWG8DKB2qp7f36NlQDFY08tsGfmHSaozEnn?=
- =?us-ascii?Q?hd+iFPFGVrLqGAxuqspjNRFPygZvUFngVetzCfeRlpIuDeTBm8zDYvrEtGNj?=
- =?us-ascii?Q?FvmXJwyL4TRbGEpkZqFNf6qmGVn6cno+xKbb/1Qpzhk7fp9LsH3iSVl22ySv?=
- =?us-ascii?Q?zxeWpa/g39s2fwIn3y1dr1v5/qfICqxz5PDICa0cTnOa8a5oDaOWEbZgms+8?=
- =?us-ascii?Q?A1ob+sFCXRIFnTXy7KOpNWBX6U1eeRARU7GP2tFhuiA3uuZR8Z2Jk3DUFdQj?=
- =?us-ascii?Q?2XiYbetZblcqo2Qq/3x4YCQmzDahefOP4xzMtB3py8SXSd1Y3HnHVdVWtBUV?=
- =?us-ascii?Q?CSP2DncakHAGeee7dZM0KyEctteHlkPH?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?NpiD9EY3NgRFrjpcFMtCF11EHiKPVXnvYJKiHgUqzCWtVtRe5Rw8SoEekjWo?=
- =?us-ascii?Q?DpdC9nLmR5rPmplBNFOriz4vqp42pY4DcBAePV4GeadtzWSKxl+Yfh/Jof14?=
- =?us-ascii?Q?k2gYgcHs2I4sKaAxXI6ea+mop7+zymAYo++GvAjSYivjXjjCm90hYVICsNA8?=
- =?us-ascii?Q?I9nNUk67szDL16C2hLS5mLjwnfusMhYi/E7aERjY2b1QRrjVp4xD/Y5TaBbk?=
- =?us-ascii?Q?WgAwkr/FWylsJWjsrI3Z6OlkA2IwySKKIaWpD+rvgmnBEQriztXbgrfBQvun?=
- =?us-ascii?Q?tswGYlaaLJUr8mqjSbmiQCJqiqPM7YFBottew/CpAeLY+HA0ZnCWqSJZjLor?=
- =?us-ascii?Q?YgfBdfz/lq+/GtjjsMU5Kbh3UOBSUD2BoXnnskr3JazCrea9ikbYni5PZDAa?=
- =?us-ascii?Q?3Rf+IKrQOYcOOGAXk/fhhWPisb3JFqWOvPu3PEMzH083ZHhUgVD8gmM/yLXI?=
- =?us-ascii?Q?Qsc/sKmD6GRbwlWO6pztgD9XQfE6DvqPEiNOmREfTORxhKKz+MN9fxp3w00F?=
- =?us-ascii?Q?cswYX5QrsdG/5BP44TVWAnF93xtg2pvmsVpcDYlmQBABrKE/DrDwSpY+9UG3?=
- =?us-ascii?Q?lQlmxWiVs++rMP3VAI9Y/76GSMdPP6CqMUietNP9R/G07ZvI3v+ugS3f+urZ?=
- =?us-ascii?Q?gVM2TPlVoTdBwx7s0Mf2zKpLiiwBhGkfjFyI/FUoXO7o0sZ+UlhjDl7wS6GW?=
- =?us-ascii?Q?Id5bu6EGq9JuBlRjQakiACFiJ1pxysspfkI4UgNWvnE+AqodBMnAJmPz4KZn?=
- =?us-ascii?Q?ExrYPQqpqv1kyYPAyjxetd3clNUiKf/KOLR6VXOcguY4SAUMD4YEmJtjqwj1?=
- =?us-ascii?Q?XrXl3JSxGjhlRlWuVMSymkE0h8nV7skN3JHJHn3snjFfXi4VsesqsoyV2ei8?=
- =?us-ascii?Q?RaNRIOZLCAOtTUbiccXSf1XQHTAkaFL9AyGFqeeGggaSaSG3JVWSYSSEhobY?=
- =?us-ascii?Q?YGRzvZo6ix1w9gub1OnCjezmSDH7+JejLZ+fix7D80czoL1I+Kog5XfYi4N4?=
- =?us-ascii?Q?sAanbK8WxsllwpRl0b7ftZ9u5dz4ABRMHAWH5EMKm/XP9689gGHSKMa4ccwt?=
- =?us-ascii?Q?UNiKt+jIRMZN7Vp8rL0Q02FRJsu3D0GxXrykkxYUXJVYMYxH1TBw+GERPHsP?=
- =?us-ascii?Q?L40s5rbF9ZaN/AZRvxoQefRYer5Uy2VUrIug080nm4imPYpMWbG/EESLXRTQ?=
- =?us-ascii?Q?ThCJ5cA23ORnBmAD0X01xeA/VKsACPoEnykN4ncei/ZCiCgbXRaDZR6WEL3Q?=
- =?us-ascii?Q?5OwMnneAMKAlTEI1uYggocFtZI0poTtAbeRzSCV9RNZffyV+BAT0JRiTiGbt?=
- =?us-ascii?Q?krPGdl4WlYOat4GsSq2NzH0o0qsujNeJGxCCRFrP5upyBqaKa0myMr1IneUr?=
- =?us-ascii?Q?RYFiV7WXzWhVV32AwJRYLMJFatdKE0/DaORt22URhsX90f3z/5R5GBmCXVoP?=
- =?us-ascii?Q?XcJNxQjIQejZLD8S5vXHIxDyVIeMcjlYlTLsp3ygtpYYTbz86tZoX/GUGr5i?=
- =?us-ascii?Q?BikeaR/moWCAL7BFmzLk0nK+/EbUH2D4kESW3/5Jyx/dhyBEguEk82dMbCSP?=
- =?us-ascii?Q?khiUO6gTVUdsvh/B7rA=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95a92601-1c4e-4118-2426-08dd627001c0
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 20:45:36.3221
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BA+CfOpxS9ffXIHit4ioM6QUvvmZ4uwBukA/wnPEdvQtdQeaajisTp9hCSWXpDyzNEMmqGWYUW+FmzQ4vA1Reg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10642
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z9M9-YhDJg3NgiUy@x1>
 
-On Thu, Mar 13, 2025 at 02:22:54PM -0500, Bjorn Helgaas wrote:
-> On Thu, Mar 13, 2025 at 11:38:40AM -0400, Frank Li wrote:
-> > Move devm_pci_alloc_host_bridge() to the beginning of dw_pcie_host_init().
-> > Since devm_pci_alloc_host_bridge() is common code that doesn't depend on
-> > any DWC resource, moving it earlier improves code logic and readability.
-> >
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-designware-host.c | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> > index c57831902686e..52a441662cabe 100644
-> > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> > @@ -452,6 +452,12 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
-> >
-> >  	raw_spin_lock_init(&pp->lock);
-> >
-> > +	bridge = devm_pci_alloc_host_bridge(dev, 0);
-> > +	if (!bridge)
-> > +		return bridge;
->
-> This returns NULL (0) where it previously returned -ENOMEM.  Callers
-> interpret zero as "success", so I think it should stil return -ENOMEM.
+On Thu, Mar 13, 2025 at 05:20:09PM -0300, Arnaldo Carvalho de Melo wrote:
+> Still building, but noticed this on x86_64:
+> 
+> 105: perf trace enum augmentation tests                              : FAILED!
+> 106: perf trace BTF general tests                                    : FAILED!
+> 107: perf trace exit race                                            : Ok
+> 108: perf trace record and replay                                    : FAILED!
+> 
+> 
+> The first doesn´t help that much with verbose mode, haven't checked if
+> before this series it was failing :-\
+> 
+> root@x1:~# perf test -vvv 105
+> 105: perf trace enum augmentation tests:
+> --- start ---
+> test child forked, pid 19411
+> Checking if vmlinux exists
+> Tracing syscall landlock_add_rule
+> ---- end(-1) ----
+> 105: perf trace enum augmentation tests                              : FAILED!
+> root@x1:~#
 
-It should be -ENOMEM. Sorry for that. Strange, not sure what happen when
-I copy/past code.
+So:
 
-Do you need respin it or you can fix it?
+root@x1:~# perf trace -e landlock_add_rule perf test -w landlock
+root@x1:~# 
 
-Frank
+But:
 
->
-> I tentatively changed it back to -ENOMEM locally, let me know if
-> that's wrong.
->
-> > +	pp->bridge = bridge;
-> > +
-> >  	ret = dw_pcie_get_resources(pci);
-> >  	if (ret)
-> >  		return ret;
-> > @@ -460,12 +466,6 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
-> >  	if (ret)
-> >  		return ret;
-> >
-> > -	bridge = devm_pci_alloc_host_bridge(dev, 0);
-> > -	if (!bridge)
-> > -		return -ENOMEM;
-> > -
-> > -	pp->bridge = bridge;
-> > -
-> >  	/* Get the I/O range from DT */
-> >  	win = resource_list_first_type(&bridge->windows, IORESOURCE_IO);
-> >  	if (win) {
-> >
-> > --
-> > 2.34.1
-> >
+root@x1:~# perf trace perf test -w landlock |& grep landlock_add_rule
+    26.120 ( 0.002 ms): perf/19791 landlock_add_rule(ruleset_fd: 11, rule_type: LANDLOCK_RULE_PATH_BENEATH, rule_attr: 0x7ffde75e2680, flags: 45) = -1 EINVAL (Invalid argument)
+    26.124 ( 0.001 ms): perf/19791 landlock_add_rule(ruleset_fd: 11, rule_type: LANDLOCK_RULE_NET_PORT, rule_attr: 0x7ffde75e2690, flags: 45) = -1 EINVAL (Invalid argument)
+root@x1:~# 
+
+-e is having some trouble, when no event is specified, then it works.
+
+Something in the changes made to:
+
+static int trace__parse_events_option(const struct option *opt, const char *str,
+                                      int unset __maybe_unused)
+
+
+- Arnaldo
+
+More data:
+
+root@x1:~# perf trace -vvv -e landlock_add_rule perf test -w landlock
+Using CPUID GenuineIntel-6-BA-3
+Opening: cpu/cycles/
+------------------------------------------------------------
+perf_event_attr:
+  type                             0 (PERF_TYPE_HARDWARE)
+  config                           0xa00000000 (cpu_atom/PERF_COUNT_HW_CPU_CYCLES/)
+  disabled                         1
+------------------------------------------------------------
+sys_perf_event_open: pid 0  cpu -1  group_fd -1  flags 0x8 = 27
+Opening: cpu/cycles/
+------------------------------------------------------------
+perf_event_attr:
+  type                             0 (PERF_TYPE_HARDWARE)
+  config                           0x400000000 (cpu_core/PERF_COUNT_HW_CPU_CYCLES/)
+  disabled                         1
+------------------------------------------------------------
+sys_perf_event_open: pid 0  cpu -1  group_fd -1  flags 0x8 = 28
+Opening: raw_syscalls:sys_enter
+------------------------------------------------------------
+perf_event_attr:
+  type                             2 (PERF_TYPE_TRACEPOINT)
+  size                             136
+  config                           0x197 (raw_syscalls:sys_enter)
+  { sample_period, sample_freq }   1
+  sample_type                      IP|TID|TIME|ID|CPU|PERIOD|RAW
+  read_format                      ID|LOST
+  disabled                         1
+  inherit                          1
+  mmap                             1
+  comm                             1
+  enable_on_exec                   1
+  task                             1
+  sample_id_all                    1
+  mmap2                            1
+  comm_exec                        1
+  ksymbol                          1
+  bpf_event                        1
+  { wakeup_events, wakeup_watermark } 1
+------------------------------------------------------------
+sys_perf_event_open: pid 19786  cpu 0  group_fd -1  flags 0x8 = 29
+sys_perf_event_open: pid 19786  cpu 1  group_fd -1  flags 0x8 = 30
+sys_perf_event_open: pid 19786  cpu 2  group_fd -1  flags 0x8 = 31
+sys_perf_event_open: pid 19786  cpu 3  group_fd -1  flags 0x8 = 33
+sys_perf_event_open: pid 19786  cpu 4  group_fd -1  flags 0x8 = 34
+sys_perf_event_open: pid 19786  cpu 5  group_fd -1  flags 0x8 = 35
+sys_perf_event_open: pid 19786  cpu 6  group_fd -1  flags 0x8 = 36
+sys_perf_event_open: pid 19786  cpu 7  group_fd -1  flags 0x8 = 37
+sys_perf_event_open: pid 19786  cpu 8  group_fd -1  flags 0x8 = 38
+sys_perf_event_open: pid 19786  cpu 9  group_fd -1  flags 0x8 = 39
+sys_perf_event_open: pid 19786  cpu 10  group_fd -1  flags 0x8 = 40
+sys_perf_event_open: pid 19786  cpu 11  group_fd -1  flags 0x8 = 41
+Opening: raw_syscalls:sys_exit
+------------------------------------------------------------
+perf_event_attr:
+  type                             2 (PERF_TYPE_TRACEPOINT)
+  size                             136
+  config                           0x196 (raw_syscalls:sys_exit)
+  { sample_period, sample_freq }   1
+  sample_type                      IP|TID|TIME|ID|CPU|PERIOD|RAW
+  read_format                      ID|LOST
+  disabled                         1
+  inherit                          1
+  enable_on_exec                   1
+  sample_id_all                    1
+  { wakeup_events, wakeup_watermark } 1
+------------------------------------------------------------
+sys_perf_event_open: pid 19786  cpu 0  group_fd -1  flags 0x8 = 42
+sys_perf_event_open: pid 19786  cpu 1  group_fd -1  flags 0x8 = 43
+sys_perf_event_open: pid 19786  cpu 2  group_fd -1  flags 0x8 = 44
+sys_perf_event_open: pid 19786  cpu 3  group_fd -1  flags 0x8 = 45
+sys_perf_event_open: pid 19786  cpu 4  group_fd -1  flags 0x8 = 46
+sys_perf_event_open: pid 19786  cpu 5  group_fd -1  flags 0x8 = 47
+sys_perf_event_open: pid 19786  cpu 6  group_fd -1  flags 0x8 = 48
+sys_perf_event_open: pid 19786  cpu 7  group_fd -1  flags 0x8 = 49
+sys_perf_event_open: pid 19786  cpu 8  group_fd -1  flags 0x8 = 50
+sys_perf_event_open: pid 19786  cpu 9  group_fd -1  flags 0x8 = 51
+sys_perf_event_open: pid 19786  cpu 10  group_fd -1  flags 0x8 = 52
+sys_perf_event_open: pid 19786  cpu 11  group_fd -1  flags 0x8 = 53
+Opening: __augmented_syscalls__
+------------------------------------------------------------
+perf_event_attr:
+  type                             1 (PERF_TYPE_SOFTWARE)
+  size                             136
+  config                           0xa (PERF_COUNT_SW_BPF_OUTPUT)
+  { sample_period, sample_freq }   1
+  sample_type                      IP|TID|TIME|ID|CPU|PERIOD|RAW
+  read_format                      ID|LOST
+  disabled                         1
+  enable_on_exec                   1
+  sample_id_all                    1
+  { wakeup_events, wakeup_watermark } 1
+------------------------------------------------------------
+sys_perf_event_open: pid 19786  cpu 0  group_fd -1  flags 0x8 = 54
+sys_perf_event_open: pid 19786  cpu 1  group_fd -1  flags 0x8 = 55
+sys_perf_event_open: pid 19786  cpu 2  group_fd -1  flags 0x8 = 56
+sys_perf_event_open: pid 19786  cpu 3  group_fd -1  flags 0x8 = 57
+sys_perf_event_open: pid 19786  cpu 4  group_fd -1  flags 0x8 = 58
+sys_perf_event_open: pid 19786  cpu 5  group_fd -1  flags 0x8 = 59
+sys_perf_event_open: pid 19786  cpu 6  group_fd -1  flags 0x8 = 60
+sys_perf_event_open: pid 19786  cpu 7  group_fd -1  flags 0x8 = 61
+sys_perf_event_open: pid 19786  cpu 8  group_fd -1  flags 0x8 = 62
+sys_perf_event_open: pid 19786  cpu 9  group_fd -1  flags 0x8 = 63
+sys_perf_event_open: pid 19786  cpu 10  group_fd -1  flags 0x8 = 64
+sys_perf_event_open: pid 19786  cpu 11  group_fd -1  flags 0x8 = 65
+Problems reading syscall 156: 2 (No such file or directory)(_sysctl) information
+Problems reading syscall 183: 2 (No such file or directory)(afs_syscall) information
+Problems reading syscall 174: 2 (No such file or directory)(create_module) information
+Problems reading syscall 214: 2 (No such file or directory)(epoll_ctl_old) information
+Problems reading syscall 215: 2 (No such file or directory)(epoll_wait_old) information
+Problems reading syscall 177: 2 (No such file or directory)(get_kernel_syms) information
+Problems reading syscall 211: 2 (No such file or directory)(get_thread_area) information
+Problems reading syscall 181: 2 (No such file or directory)(getpmsg) information
+vmlinux BTF loaded
+Problems reading syscall 212: 2 (No such file or directory)(lookup_dcookie) information
+Problems reading syscall 180: 2 (No such file or directory)(nfsservctl) information
+Problems reading syscall 182: 2 (No such file or directory)(putpmsg) information
+Problems reading syscall 178: 2 (No such file or directory)(query_module) information
+Problems reading syscall 185: 2 (No such file or directory)(security) information
+Problems reading syscall 205: 2 (No such file or directory)(set_thread_area) information
+Problems reading syscall 184: 2 (No such file or directory)(tuxcall) information
+Problems reading syscall 134: 2 (No such file or directory)(uselib) information
+Problems reading syscall 236: 2 (No such file or directory)(vserver) information
+event qualifier tracepoint filter: id == 29098429
+mmap size 528384B
+libperf: mmap_per_cpu: nr cpu values 12 nr threads 1
+libperf: idx 0: mmapping fd 29
+<SNIP>
+root@x1:~#
+
+root@x1:~# cat /sys/kernel/tracing/events/syscalls/sys_enter_landlock_add_rule/id
+1449
+root@x1:~# perf trace -e landlock_add_rule perf test -w landlock
+root@x1:~# strace -e landlock_add_rule perf test -w landlock
+landlock_add_rule(11, LANDLOCK_RULE_PATH_BENEATH, {allowed_access=LANDLOCK_ACCESS_FS_READ_FILE, parent_fd=14}, 0x2d) = -1 EINVAL (Invalid argument)
+landlock_add_rule(11, LANDLOCK_RULE_NET_PORT, {allowed_access=LANDLOCK_ACCESS_NET_CONNECT_TCP, port=19}, 0x2d) = -1 EINVAL (Invalid argument)
++++ exited with 0 +++
+root@x1:~# 
+
+root@x1:~# vim /tmp/build/perf-tools-next/trace/beauty/generated/syscalltbl.c
+<SNIP>
+static const char *const syscall_num_to_name_EM_X86_64[] = {
+	[0] = "read",
+	[1] = "write",
+	[2] = "open",
+<SNIP>
+	[442] = "mount_setattr",
+	[443] = "quotactl_fd",
+	[444] = "landlock_create_ruleset",
+	[445] = "landlock_add_rule",
+	[446] = "landlock_restrict_self",
+	[447] = "memfd_secret",
+	[448] = "process_mrelease",
+	[449] = "futex_waitv",
+	[450] = "set_mempolicy_home_node",
+<SNIP>
+};
+static const uint16_t syscall_sorted_names_EM_X86_64[] = {
+	156,	/* _sysctl */
+	43,	/* accept */
+	288,	/* accept4 */
+<SNIP>
+	246,	/* kexec_load */
+	250,	/* keyctl */
+	62,	/* kill */
+	445,	/* landlock_add_rule */
+	444,	/* landlock_create_ruleset */
+	446,	/* landlock_restrict_self */
+	94,	/* lchown */
+	192,	/* lgetxattr */
+<SNIP>
+};
+
+<SNIP>
+
+#if defined(ALL_SYSCALLTBL) || defined(__i386__) || defined(__x86_64__)
+       {
+	      .num_to_name = syscall_num_to_name_EM_386,
+	      .sorted_names = syscall_sorted_names_EM_386,
+	      .e_machine = EM_386,
+	      .num_to_name_len = ARRAY_SIZE(syscall_num_to_name_EM_386),
+	      .sorted_names_len = ARRAY_SIZE(syscall_sorted_names_EM_386),
+       },
+       {
+	      .num_to_name = syscall_num_to_name_EM_X86_64,
+	      .sorted_names = syscall_sorted_names_EM_X86_64,
+	      .e_machine = EM_X86_64,
+	      .num_to_name_len = ARRAY_SIZE(syscall_num_to_name_EM_X86_64),
+	      .sorted_names_len = ARRAY_SIZE(syscall_sorted_names_EM_X86_64),
+       },
+#endif // defined(ALL_SYSCALLTBL) || defined(__i386__) || defined(__x86_64__)
+
+<SNIP>
 
