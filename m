@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-560369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85C26A60337
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECFC4A60338
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:07:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADB527A56B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:06:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12BFE17A9E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EA61F463F;
-	Thu, 13 Mar 2025 21:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA071F5831;
+	Thu, 13 Mar 2025 21:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="VueEj8pF"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="NELMSqTp"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3DF1F540F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 21:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5CE1F5615
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 21:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741900027; cv=none; b=U0+DYSvQOdPezagx1L+ZUqUjbMqvhk2hAQ/BLg+pLyV/MXmx/PmGXVXH5rzzOAiRAEfC932XJPydnisZGlSNVv0SWABR8KO/DdewcPWtP2PMY/kjbFdHTIsr2XPsVd6yZVS1XTT0G43m+emF/nqgd3VUQ0pvavpKXs2Xk2OQkXI=
+	t=1741900029; cv=none; b=HciRp4dqwjqTwbeFHHu6Txn7ewjClf6PA1e36MGUkUR+1HVWwUkmXiUz7LsbQwgXVLZx6hJAOPJ5lgyP/U48mt/f6hhIpCC41QHX4GYIzl8duiXs+FhOWCBgbRN0zSMF34vhQ9uD8qwUonXcezthtQGjjrD3ZxDs+qsCACp7Z0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741900027; c=relaxed/simple;
-	bh=G5viki70LrhtbkQE4Q5MpsJyR7EHFb+uxi7SbmxvjUM=;
+	s=arc-20240116; t=1741900029; c=relaxed/simple;
+	bh=BVUrVAfT5xc89udf2TBcaTF/XSlcQ15FasIY5sdTWY4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Nu21ribhpi0Gb2WkLBsIpc4Mld5gaPoeyX9iDFaGVtd6fgNzxypxvZcEj2MaFUUrnPt1v7GPn+DrCEa/Uu/gK0gA37n95S9CmhEWNSGZPr6cbFe6tWnQ6aOslj7uGQvsce5gvDkNR8v1oQ0NrGyyOLwL6fKnHcaCf3HNfd1ZTuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=VueEj8pF; arc=none smtp.client-ip=209.85.219.43
+	 MIME-Version; b=mUFabFexd/1T8NdXlfS82gRcB+7+9YQmenJ0wtatKqHa+N/0Gz8PuJLz0V6awzbyWih5qOWolp4dUtT3/5NPdSEKoXeRUpDV3t9rh6EDpTT4Lw87gfxNtRqfjv61PEKRNAe8A9pX9xWFX/FghUucGvxwzYxf7t4VOKp5njpS/lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=NELMSqTp; arc=none smtp.client-ip=209.85.222.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6ddcff5a823so12826116d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:07:04 -0700 (PDT)
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c56321b22cso159391285a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:07:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1741900024; x=1742504824; darn=vger.kernel.org;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1741900027; x=1742504827; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sZHRsjhwN4k6tUsXlsg8AVWAXyHTwCMhLnhjRmadEFs=;
-        b=VueEj8pFsLksb5cIDfWIXaZZUXlOwlZZjHb1zEIeest6oB0PnuknAaRPdXfPlQRel2
-         ENPAgITF6SaTDGIpcsiPfvYEsqUa1NkhIMjUVC9roc0aKfi7rhkvwjW+A5NSvJU/pIHL
-         Qs3VOSw2i+Mx6C0TverAVbTlnuGTHr+Wm7eD4Dk918wbWZhoy8DJwa8Qy5lXwQQlfhw7
-         7jHx7B+4WbSxH2QlDjEJi2+iUpSilKPmimJOpRon4FqEj6Bbn0QGV3QNawxfx9rQFOTD
-         T2ISVwHeVEieGQmLFOiV2xAGBWl3xFe9XXKDo4tEFFgK4KVx/X0nfSpMX17MvhTonu/S
-         z7ZA==
+        bh=9ouliMx/rxg1GN/5kBba4AjsVs5wNUw9q6lxfkWoRUQ=;
+        b=NELMSqTpH+JST81bqEKPZVzSvvwog2kVt6Csvi152M2ObpaRx0Axq2bpVQaIC2fDc+
+         s35ncjXZYhePJDC+h8HkEwoHKRQdSSEg290Jm7Qbq2L/xtqRWgrp9GEX/aG2flkSykl2
+         2oWhcSwGJVq8RurZBGLjcBBCnHJYNNMG1wByIU+U0NDSZwPmWIiDfhIvI4+4jmivzsww
+         wtpPKK/Izvh0jEofOJ8LNO/UOocvCacN9byE417J4cGO98GeMK3RuzB0kD62Rdu04A4+
+         hQR+WFgiX2EKj+cCnQe72yA6FNRZ/HWqqljDFAmPsbwb+5q5PropbBgKXGzdfBxsNUvc
+         ufhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741900024; x=1742504824;
+        d=1e100.net; s=20230601; t=1741900027; x=1742504827;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sZHRsjhwN4k6tUsXlsg8AVWAXyHTwCMhLnhjRmadEFs=;
-        b=rbNr6z8p8HXWHD27tLLsHcLSvs7MIieiAroM/qHg1BWS8AwUVzLVu+vIR776S3uPnU
-         94LxMaKuTOxDnz7Jl5xUdVyNTfSnStRPQOLuaXXDjGqBsrcCToolo5XC3OB93MkP1df2
-         3bKIJE92FbF4N7jDcj+w2Q9D13WOdsokRjhjDGFDGVIsnOLxpAkuooLXCP+hTM9oAwGb
-         D+5S9tsAESOIi9C2Nlwq9thdj9n5GLxOkAzAEodmOKGWHvmooIuzOiL0DKHREoFFjwWO
-         2K8GrBAzeXWcvG8dmeu89T9ietV4HrGlS2Dik2ZSTfH/rqNu8pjzCQXBeW9EUOW3ZelE
-         8sCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXx8j4WOtYkAVlgGtrMc6foM055FUbKp2jCtOEo/yrvhAeEaQvEzbikrAGRtMuJr8pNX8TsUtlS+fJLMSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe3p4ox6Jej9Dmn3UwzY8KboRFv21JLaG7BtFuGDjrcnqIyk2D
-	i8VZho+Nu9DrPHoWiLDLCrhLaTt2RBSLcIARXtgpO2/AbQcGnEL2YrrhuWEpwJE=
-X-Gm-Gg: ASbGnct9M5jUJGeuFOhot+lIQyMHXvAhxEh9B/iapvrhtQdJAyO1QJ8gK7cC5+cruUA
-	XGdjTI5lgtpXkHF11fiVT4wuCmtvX4KtcqmNB8V0YsXrb2GvjbcJjAifQLLVX7IMtzee5OBkc54
-	gQLeJE57lkKvm7PaLS9f8e7M/G4m8rh9CHgvfrJUAP8ZdtgNZWwC3kaUOF/8sNaq06YpP6m9U9L
-	d3lT1jkH/nUve674UJwhE+swsgivc7+ALPzYnmSi/47+3FftDqRgfcWNZPdqj0N983ZQNZeTLF3
-	bOashCoGY8JMHviFjaH4PJaYzD5VBZt8yWMdInySdw0=
-X-Google-Smtp-Source: AGHT+IHwO+cZb5MGTiwyC3MJf2gMVF38ko0IXPhHKQ4bI2CQqbDOb0AFS8ZUsuofmUulVbWhY9Mvjw==
-X-Received: by 2002:a05:6214:5299:b0:6e6:6c39:cb71 with SMTP id 6a1803df08f44-6eae7b3faa0mr22068376d6.45.1741900024009;
-        Thu, 13 Mar 2025 14:07:04 -0700 (PDT)
+        bh=9ouliMx/rxg1GN/5kBba4AjsVs5wNUw9q6lxfkWoRUQ=;
+        b=HNqI31BpeSvnOONt9itdyXfg4BNMPRtpgpRcGd/iTJRYzOiCccY/3jz3Go1jOxk/Pt
+         3dgsLeal50QpUZSTJeheKvFOYEnEGWjnFbBTVmZjSn0t4S5jB9mBnaPqDyva07/5EdHZ
+         m2eKmHvx7XVXJtAOT/4XM7eKfc/nrO7bPQtuGmVVKfOrXW2y+6aRaZfxZ2hsCUi17LO7
+         6jnZgHekM0tUwiV4baaEq/QL1d53iKx7JNvAO7IOVMzrIPy77gzbCivO+J/rIH85w/i3
+         k8WC4Xni891ryawjU5NG9kS9s3B5mOmnMIoVK843F+kQrL15f5Cek7UGrLvnBgHT+iZw
+         s9RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUW7DqnPEbVGgg7rOcFivMfc8V++oCllFYTx4F1cP6dLLoXSa+Ej4eAmEy0wbV2beQhpBcF0k2UOp2IQL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt/0V8PCxQ2ndNG+USwJp7Xq1E4e2ZacehzWeh/qmkdV9kLQvh
+	R459o8MpsrO2eEpjjSOlIH9EPsL6rTcO8vU2jyFD34zESXrBLTzOhef30bMFAls=
+X-Gm-Gg: ASbGncv1KanSKJ7n3b/50+6IryH63Xdan7K9WX/UQeTjcsWY8vsH63fXa2cDgH9biZK
+	pc0WqHuiOUmsmxEm+xgM4PBmnulpjVZ+FsaS9nQbLP8jXcftFZ7MGAiaaXix6v86ccD56pRByJ1
+	oKN/TCC1UCFZ1gSO4JuLNpwLByE8hNq67HDNlfb9neLmzDuWLWLHL1YK2bkyYoCsvU1zdt5zd7h
+	3kfeZaX4OYg7TwExBuBRXLO+C50Qs49U5AnMB0GXE+UppJKKORdF++T46Zzc6OCFbriyV1hfykL
+	o85jdSGC4Dp1QEiX9TDXOBugVQX0bZ1KP691mdPgF1w=
+X-Google-Smtp-Source: AGHT+IGURnx3waTxMIfAkGQ+RELMEfUq3qDPKdHBU4TLhM9iO7ZYMst5c+ohVVmbcycCmEztxbjgYQ==
+X-Received: by 2002:a05:620a:8ecb:b0:7c5:53ab:a732 with SMTP id af79cd13be357-7c5737b8b58mr536730085a.16.1741900026755;
+        Thu, 13 Mar 2025 14:07:06 -0700 (PDT)
 Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6eade230de3sm14015326d6.28.2025.03.13.14.07.01
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c573c9d641sm143094885a.65.2025.03.13.14.07.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 14:07:02 -0700 (PDT)
+        Thu, 13 Mar 2025 14:07:04 -0700 (PDT)
 From: Johannes Weiner <hannes@cmpxchg.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Vlastimil Babka <vbabka@suse.cz>,
@@ -78,9 +78,9 @@ Cc: Vlastimil Babka <vbabka@suse.cz>,
 	Zi Yan <ziy@nvidia.com>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] mm: page_alloc: defrag_mode
-Date: Thu, 13 Mar 2025 17:05:34 -0400
-Message-ID: <20250313210647.1314586-4-hannes@cmpxchg.org>
+Subject: [PATCH 4/5] mm: page_alloc: defrag_mode kswapd/kcompactd assistance
+Date: Thu, 13 Mar 2025 17:05:35 -0400
+Message-ID: <20250313210647.1314586-5-hannes@cmpxchg.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250313210647.1314586-1-hannes@cmpxchg.org>
 References: <20250313210647.1314586-1-hannes@cmpxchg.org>
@@ -92,231 +92,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The page allocator groups requests by migratetype to stave off
-fragmentation. However, in practice this is routinely defeated by the
-fact that it gives up *before* invoking reclaim and compaction - which
-may well produce suitable pages. As a result, fragmentation of
-physical memory is a common ongoing process in many load scenarios.
+When defrag_mode is enabled, allocation fallbacks strongly prefer
+whole block conversions instead of polluting or stealing partially
+used blocks. This means there is a demand for pageblocks even from
+sub-block requests. Let kswapd/kcompactd help produce them.
 
-Fragmentation deteriorates compaction's ability to produce huge
-pages. Depending on the lifetime of the fragmenting allocations, those
-effects can be long-lasting or even permanent, requiring drastic
-measures like forcible idle states or even reboots as the only
-reliable ways to recover the address space for THP production.
+By the time kswapd gets woken up, normal rmqueue and block conversion
+fallbacks have been attempted and failed. So always wake kswapd with
+the block order; it will take care of producing a suitable compaction
+gap and then chain-wake kcompactd with the block order when its done.
 
-In a kernel build test with supplemental THP pressure, the THP
-allocation rate steadily declines over 15 runs:
+                                                VANILLA        DEFRAGMODE-ASYNC
+Hugealloc Time mean               52739.45 (    +0.00%)   34300.36 (   -34.96%)
+Hugealloc Time stddev             56541.26 (    +0.00%)   36390.42 (   -35.64%)
+Kbuild Real time                    197.47 (    +0.00%)     196.13 (    -0.67%)
+Kbuild User time                   1240.49 (    +0.00%)    1234.74 (    -0.46%)
+Kbuild System time                   70.08 (    +0.00%)      62.62 (   -10.50%)
+THP fault alloc                   46727.07 (    +0.00%)   57054.53 (   +22.10%)
+THP fault fallback                21910.60 (    +0.00%)   11581.40 (   -47.14%)
+Direct compact fail                 195.80 (    +0.00%)     107.80 (   -44.72%)
+Direct compact success                7.93 (    +0.00%)       4.53 (   -38.06%)
+Direct compact success rate %         3.51 (    +0.00%)       3.20 (    -6.89%)
+Compact daemon scanned migrate  3369601.27 (    +0.00%) 5461033.93 (   +62.07%)
+Compact daemon scanned free     5075474.47 (    +0.00%) 5824897.93 (   +14.77%)
+Compact direct scanned migrate   161787.27 (    +0.00%)   58336.93 (   -63.94%)
+Compact direct scanned free      163467.53 (    +0.00%)   32791.87 (   -79.94%)
+Compact total migrate scanned   3531388.53 (    +0.00%) 5519370.87 (   +56.29%)
+Compact total free scanned      5238942.00 (    +0.00%) 5857689.80 (   +11.81%)
+Alloc stall                        2371.07 (    +0.00%)    2424.60 (    +2.26%)
+Pages kswapd scanned            2160926.73 (    +0.00%) 2657018.33 (   +22.96%)
+Pages kswapd reclaimed           533191.07 (    +0.00%)  559583.07 (    +4.95%)
+Pages direct scanned             400450.33 (    +0.00%)  722094.07 (   +80.32%)
+Pages direct reclaimed            94441.73 (    +0.00%)  107257.80 (   +13.57%)
+Pages total scanned             2561377.07 (    +0.00%) 3379112.40 (   +31.93%)
+Pages total reclaimed            627632.80 (    +0.00%)  666840.87 (    +6.25%)
+Swap out                          47959.53 (    +0.00%)   77238.20 (   +61.05%)
+Swap in                            7276.00 (    +0.00%)   11712.80 (   +60.97%)
+File refaults                    138043.00 (    +0.00%)  143438.80 (    +3.91%)
 
-    thp_fault_alloc
-    61988
-    56474
-    57258
-    50187
-    52388
-    55409
-    52925
-    47648
-    43669
-    40621
-    36077
-    41721
-    36685
-    34641
-    33215
+With this patch, defrag_mode=1 beats the vanilla kernel in THP success
+rates and allocation latencies. The trend holds over time:
 
-This is a hurdle in adopting THP in any environment where hosts are
-shared between multiple overlapping workloads (cloud environments),
-and rarely experience true idle periods. To make THP a reliable and
-predictable optimization, there needs to be a stronger guarantee to
-avoid such fragmentation.
+  thp_fault_alloc
 
-Introduce defrag_mode. When enabled, reclaim/compaction is invoked to
-its full extent *before* falling back. Specifically, ALLOC_NOFRAGMENT
-is enforced on the allocator fastpath and the reclaiming slowpath.
+      VANILLA        DEFRAGMODE-ASYNC
+        61988                   52066
+        56474                   58844
+        57258                   58233
+        50187                   58476
+        52388                   54516
+        55409                   59938
+        52925                   57204
+        47648                   60238
+        43669                   55733
+        40621                   56211
+        36077                   59861
+        41721                   57771
+        36685                   58579
+        34641                   51868
+        33215                   56280
 
-For now, fallbacks are permitted to avert OOMs. There is a plan to add
-defrag_mode=2 to prefer OOMs over fragmentation, but this requires
-additional prep work in compaction and the reserve management to make
-it ready for all possible allocation contexts.
+DEFRAGMODE-ASYNC also wins on %sys as ~3/4 of the direct compaction
+work is shifted to kcompactd.
 
-The following test results are from a kernel build with periodic
-bursts of THP allocations, over 15 runs:
-
-                                        vanilla    defrag_mode=1
-@claimer[unmovable]:                        189              103
-@claimer[movable]:                           92              103
-@claimer[reclaimable]:                      207               61
-@pollute[unmovable from movable]:            25                0
-@pollute[unmovable from reclaimable]:        28                0
-@pollute[movable from unmovable]:         38835                0
-@pollute[movable from reclaimable]:      147136                0
-@pollute[reclaimable from unmovable]:       178                0
-@pollute[reclaimable from movable]:          33                0
-@steal[unmovable from movable]:              11                0
-@steal[unmovable from reclaimable]:           5                0
-@steal[reclaimable from unmovable]:         107                0
-@steal[reclaimable from movable]:            90                0
-@steal[movable from reclaimable]:           354                0
-@steal[movable from unmovable]:             130                0
-
-Both types of polluting fallbacks are eliminated in this workload.
-
-Interestingly, whole block conversions are reduced as well. This is
-because once a block is claimed for a type, its empty space remains
-available for future allocations, instead of being padded with
-fallbacks; this allows the native type to group up instead of
-spreading out to new blocks. The assumption in the allocator has been
-that pollution from movable allocations is less harmful than from
-other types, since they can be reclaimed or migrated out should the
-space be needed. However, since fallbacks occur *before*
-reclaim/compaction is invoked, movable pollution will still cause
-non-movable allocations to spread out and claim more blocks.
-
-Without fragmentation, THP rates hold steady with defrag_mode=1:
-
-    thp_fault_alloc
-    32478
-    20725
-    45045
-    32130
-    14018
-    21711
-    40791
-    29134
-    34458
-    45381
-    28305
-    17265
-    22584
-    28454
-    30850
-
-While the downward trend is eliminated, the keen reader will of course
-notice that the baseline rate is much smaller than the vanilla
-kernel's to begin with. This is due to deficiencies in how reclaim and
-compaction are currently driven: ALLOC_NOFRAGMENT increases the extent
-to which smaller allocations are competing with THPs for pageblocks,
-while making no effort themselves to reclaim or compact beyond their
-own request size. This effect already exists with the current usage of
-ALLOC_NOFRAGMENT, but is amplified by defrag_mode insisting on whole
-block stealing much more strongly.
-
-Subsequent patches will address defrag_mode reclaim strategy to raise
-the THP success baseline above the vanilla kernel.
+Reclaim activity is higher. Part of that is simply due to the
+increased memory footprint from higher THP use. The other aspect is
+that *direct* reclaim/compaction are still going for requested orders
+rather than targeting the page blocks required for fallbacks, which is
+less efficient than it could be. However, this is already a useful
+tradeoff to make, as in many environments peak periods are short and
+retaining the ability to produce THP through them is more important.
 
 Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 ---
- Documentation/admin-guide/sysctl/vm.rst |  9 +++++++++
- mm/page_alloc.c                         | 27 +++++++++++++++++++++++--
- 2 files changed, 34 insertions(+), 2 deletions(-)
+ mm/page_alloc.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-index ec6343ee4248..e169dbf48180 100644
---- a/Documentation/admin-guide/sysctl/vm.rst
-+++ b/Documentation/admin-guide/sysctl/vm.rst
-@@ -29,6 +29,7 @@ files can be found in mm/swap.c.
- - compaction_proactiveness
- - compaction_proactiveness_leeway
- - compact_unevictable_allowed
-+- defrag_mode
- - dirty_background_bytes
- - dirty_background_ratio
- - dirty_bytes
-@@ -162,6 +163,14 @@ On CONFIG_PREEMPT_RT the default value is 0 in order to avoid a page fault, due
- to compaction, which would block the task from becoming active until the fault
- is resolved.
- 
-+defrag_mode
-+===========
-+
-+When set to 1, the page allocator tries harder to avoid fragmentation
-+and maintain the ability to produce huge pages / higher-order pages.
-+
-+It is recommended to enable this right after boot, as fragmentation,
-+once it occurred, can be long-lasting or even permanent.
- 
- dirty_background_bytes
- ======================
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 6f0404941886..9a02772c2461 100644
+index 9a02772c2461..4a0d8f871e56 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -273,6 +273,7 @@ int min_free_kbytes = 1024;
- int user_min_free_kbytes = -1;
- static int watermark_boost_factor __read_mostly = 15000;
- static int watermark_scale_factor = 10;
-+static int defrag_mode;
- 
- /* movable_zone is the "real" zone pages in ZONE_MOVABLE are taken from */
- int movable_zone;
-@@ -3389,6 +3390,11 @@ alloc_flags_nofragment(struct zone *zone, gfp_t gfp_mask)
- 	 */
- 	alloc_flags = (__force int) (gfp_mask & __GFP_KSWAPD_RECLAIM);
- 
-+	if (defrag_mode) {
-+		alloc_flags |= ALLOC_NOFRAGMENT;
-+		return alloc_flags;
-+	}
+@@ -4076,15 +4076,21 @@ static void wake_all_kswapds(unsigned int order, gfp_t gfp_mask,
+ 	struct zone *zone;
+ 	pg_data_t *last_pgdat = NULL;
+ 	enum zone_type highest_zoneidx = ac->highest_zoneidx;
++	unsigned int reclaim_order;
 +
- #ifdef CONFIG_ZONE_DMA32
- 	if (!zone)
- 		return alloc_flags;
-@@ -3480,7 +3486,7 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
- 				continue;
- 		}
- 
--		if (no_fallback && nr_online_nodes > 1 &&
-+		if (no_fallback && !defrag_mode && nr_online_nodes > 1 &&
- 		    zone != zonelist_zone(ac->preferred_zoneref)) {
- 			int local_nid;
- 
-@@ -3591,7 +3597,7 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
- 	 * It's possible on a UMA machine to get through all zones that are
- 	 * fragmented. If avoiding fragmentation, reset and try again.
- 	 */
--	if (no_fallback) {
-+	if (no_fallback && !defrag_mode) {
- 		alloc_flags &= ~ALLOC_NOFRAGMENT;
- 		goto retry;
- 	}
-@@ -4128,6 +4134,9 @@ gfp_to_alloc_flags(gfp_t gfp_mask, unsigned int order)
- 
- 	alloc_flags = gfp_to_alloc_flags_cma(gfp_mask, alloc_flags);
- 
 +	if (defrag_mode)
-+		alloc_flags |= ALLOC_NOFRAGMENT;
-+
- 	return alloc_flags;
++		reclaim_order = max(order, pageblock_order);
++	else
++		reclaim_order = order;
+ 
+ 	for_each_zone_zonelist_nodemask(zone, z, ac->zonelist, highest_zoneidx,
+ 					ac->nodemask) {
+ 		if (!managed_zone(zone))
+ 			continue;
+-		if (last_pgdat != zone->zone_pgdat) {
+-			wakeup_kswapd(zone, gfp_mask, order, highest_zoneidx);
+-			last_pgdat = zone->zone_pgdat;
+-		}
++		if (last_pgdat == zone->zone_pgdat)
++			continue;
++		wakeup_kswapd(zone, gfp_mask, reclaim_order, highest_zoneidx);
++		last_pgdat = zone->zone_pgdat;
+ 	}
  }
  
-@@ -4510,6 +4519,11 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
- 				&compaction_retries))
- 		goto retry;
- 
-+	/* Reclaim/compaction failed to prevent the fallback */
-+	if (defrag_mode) {
-+		alloc_flags &= ALLOC_NOFRAGMENT;
-+		goto retry;
-+	}
- 
- 	/*
- 	 * Deal with possible cpuset update races or zonelist updates to avoid
-@@ -6286,6 +6300,15 @@ static const struct ctl_table page_alloc_sysctl_table[] = {
- 		.extra1		= SYSCTL_ONE,
- 		.extra2		= SYSCTL_THREE_THOUSAND,
- 	},
-+	{
-+		.procname	= "defrag_mode",
-+		.data		= &defrag_mode,
-+		.maxlen		= sizeof(defrag_mode),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
- 	{
- 		.procname	= "percpu_pagelist_high_fraction",
- 		.data		= &percpu_pagelist_high_fraction,
 -- 
 2.48.1
 
