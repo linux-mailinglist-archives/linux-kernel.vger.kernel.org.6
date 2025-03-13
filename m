@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-558863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63A0AA5EC4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:05:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE45A5EC51
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:06:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CE3C3AF78E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:04:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F42A189E107
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3107F1FFC71;
-	Thu, 13 Mar 2025 07:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11BD8201013;
+	Thu, 13 Mar 2025 07:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="N9z5AYpR"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="ECdzwPAG"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFC21FFC69
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B251FCFE7
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741849299; cv=none; b=czNdY1XO+UOrpb8e4s/1ELXkN17BIZwtfd1Q0GKbF4pErLcc6Fhy9gk6Bz3uW53hWbdEKgRKn0zjKFjjft3WW4CyRv+5v8e9hs10RzxlKw0+fHkEgZRDEaH6kremR8PIa+4DtXQZ3GY3Jj/EwGe/WcNZmQzTNTlXfoi3bNJoNpo=
+	t=1741849305; cv=none; b=mHFL+Awp8/WHcsGxTtfVnE/g12q8HkLF5UsgbugQlaeVwEDUFfSLgOUA5cv7fuvKR0MHWu0FdSZcFDVC09W4V4GA6WySc4GjBbFyePT//2uMqJErNJa1Fsih4YKDsbV+DveNMhntMw3bkiribBjPjc+CxOJ3lwyHPs8/w8JHH+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741849299; c=relaxed/simple;
-	bh=tjt6UJr/WhYJJgKlXXv2tzURIehZ2/2wH4imLUM3bx4=;
+	s=arc-20240116; t=1741849305; c=relaxed/simple;
+	bh=uj6BiB0IqVm8+xs3f9Zn6aCjK6f7zlPp0hv2djTMvTQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To; b=pvB6KiYMr8J0Og4Gxycrp/PmIrcAt6fRk6XFqer6Hj5t96JfyF+SagU4MkeDFcXgkn1ah9xB05H6+simfXCztyAcALt7r227hOBPWtGb57n9Cr/qdIB2UZO0UfW/+eqX2+ErBntWlNm8f6sV+CogglPCdLlk5JRLDJSMt65M/MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=N9z5AYpR; arc=none smtp.client-ip=209.85.214.175
+	 In-Reply-To:To; b=OqdR1mbMFJ6D6C6F/A0LRUZ2AZ8ABhzPWubNkyJcE83liqOf1chAB9nD27Nm+mHIF3qwqQ0DzPeOrdnRVbLG4s0b1qcXY3H8AjEolV+8I7HqVG3J0lMcH8haZeHKPWJYi1R7OkTkd30PWz33KXNhb0Rfkqddu/1UxjMIGHtNLRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=ECdzwPAG; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-223f4c06e9fso11048855ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 00:01:37 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-223f4c06e9fso11050135ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 00:01:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741849297; x=1742454097; darn=vger.kernel.org;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741849303; x=1742454103; darn=vger.kernel.org;
         h=to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DgNJjOB2VNdnBavlgHvSgZbzYgc2stuH8jHGRqRaRcM=;
-        b=N9z5AYpRTofOvsMI8/LwRH3mSDceutebZIF40gGr1Wln4VrZqMJJxmSf1IN25vD9Bc
-         XuHixSgts+t26afNcN0yLL502JAakibg5hlGjLEWp+kkGJs2ndzlZTii8AKKoyPiUkkQ
-         2LAuA2Z+Qc4+yK3341SYhq1awEmnVeFYiyYRUpGuwi6PTfySqYXNKNo3U64bz7G4rNIe
-         9QKbrsWC6KIWTLJIc7cU75WZBZtmuH1EwGg+jSTsbIGUfF38miFZq0n0VM1rObCdzozp
-         VpTGXEiCKyyaxKxNrbxiBfY+hen+n2wsF+Ppal9ctqlT6l5E4cMAJj6gj3wjgJv42i9T
-         nSrg==
+        bh=CFouu/EN4lEKQm+2Nyv7q163Sd7hDT7Qc+wcMAoVrxU=;
+        b=ECdzwPAGAoCSWTXNIPQAxfcp5P5SO/fvBwY8wBAZUecHrDq/oB25D5UMWszSldfTLP
+         p5QDz7GxzNr20zvrqcBBLrPOhOkButkAn7HNPGKGn72o66/xWBn69cIc8OwYKzii2YHF
+         UTHRdX1A7gEmF0OytmdVJrL9JF5JwU9BzZgP2kXboWM7r1e4HjB68MGU41+fgxzmdpBd
+         qSs08DI12hK+QOphesK44Ut/fK55/lQt0/u3Lyr2X3iiy60Wb7Oh5Qehrr+3n0mE/EtG
+         +zdg17kGP3uJaj9moQmRyyLwDMfU7aniXslS0xnqhH4oLBRi7FOKo4xuA1+QLLWqO7uf
+         X1Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741849297; x=1742454097;
+        d=1e100.net; s=20230601; t=1741849303; x=1742454103;
         h=to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DgNJjOB2VNdnBavlgHvSgZbzYgc2stuH8jHGRqRaRcM=;
-        b=kk4mRSYA4Ux4T6x2L9+cufFeqBkB62SHWM+zfrvLI2RHoDVFb0MLsleM+w88/HYj8+
-         tH4MxkWGuZJXoUeWisoSxWSiJ3zNVbShIN9KwknEAVCRWzybsLB77sW0R485nqUzVPIH
-         /9qC5MAbO1EJTAEWdx6HnMg/RjE5ZtfUbaLMWZxkvqi2Lvr/ZtWtvPklgA/GryNLgtDf
-         p0b6pVItgQwNVpYwRnVkEz5/PUbUDUzMWWS1Fhde7xCHSP40+UV9/ucbwqUXDvNFM9h/
-         rOqE1F1wHptuzpwqBx079FwfnvZgPl9OKzjj9jW4WjhON5g2EpjsUd+N2cKvZJuqzwXK
-         lmbg==
-X-Forwarded-Encrypted: i=1; AJvYcCV93XPsSdX2VEvECWA1Kt/Gb9KaQIQv6e0emaRJY4c2OyZS5a+ay5gXfjdGLc4aYsVFMoEUxO4ddK0SXvo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzoh2YMtodWvDBbFTnpiuhVo5+MpeJQKxXCwrhdPOe3CVNhzmbA
-	onF3hYZsTpZY1u3d2F0ifEhecPpTV8+hKqkXyk/f8rrTkTkb2hAU8PCHsnDE9kA=
-X-Gm-Gg: ASbGncu57xZcCAhHRaxBH7BWj0LAOw+dalTT0wa3+5tm+ipQgFi9EJ4fhF/iuHSdORi
-	+v/OABA07/lxZJgkn6aldNyuDcog18wvTMEn8IHWKuxfdAwGKgZWoi1BFvkrGJbbHGySdg2fGp0
-	Fi2DljfQBDyGK7EoIc5p/9tlLXzfFAJA7u9QG1zcXuLgpuqcDAT5v/Ut8YQsIR9IQ/EIeKFaHlm
-	JoJ+yk3Bqjxv8cUdq7qXa/V1RqIZK1QvtpZCzptgNtVNPd38zzVPPq0B9st2RIVOlPwbW+O1AnJ
-	mrgcGw+JPDEl5UvRKtTDpUYnkCZd2sDACTaymRfOcfgxBPb1MfIcUZ5iKGo=
-X-Google-Smtp-Source: AGHT+IF5wWHOyH5JHVoHtTy7K1X2eW3fNA4SOZ5Z2GJbYtGXN3r5z7f/KOO/C3Z0RJnF3qBJwnVUzw==
-X-Received: by 2002:a17:902:f548:b0:215:a303:24e9 with SMTP id d9443c01a7336-225c651d65emr18870555ad.3.1741849297043;
-        Thu, 13 Mar 2025 00:01:37 -0700 (PDT)
+        bh=CFouu/EN4lEKQm+2Nyv7q163Sd7hDT7Qc+wcMAoVrxU=;
+        b=kEuYUqOx/MkTm+Vgd/lI4EXMc432hrql5XG3yAyZJd1mG4TaIOnOsJ5anGSoJwtgnX
+         9HsCivHpU5ytX5e5OpPg2vAip/hxCIs8c+/F+8Zk0N23xUbO1Eu3wO3nz7LqSpouv5T/
+         5czm0XOdkHdTMc22W9+8W8zXcfj+a3qN0zY8IdUvd5yMJV+xRCwLiF11hoeKhrpjwPaz
+         0dakxk7mFpfYYo1rzobGwqbWlwQTPOYMjzKXB51WrKNzeuywtNduXmXjlz3N6L0zt2hS
+         9yg3jAc4DJditPTU/ZAus9alu2o5aO+zmIJ4EjJPXzTpRXhesSPHdHY38uKahc4ptqHV
+         GgdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuySfii/pjoPGc4QRS4gB/qUUcbfXOwQ7oTrxdGV5hOZEsy3v/tuB6S9ZR6w4G0esHKDDgJKTqMMdn6OA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqBgYl7WA3m7rgyqiLV4hNRSIt1qQE6BWPBPHRSGTxMjRUPcbq
+	pvEp1mJq3jUW8HLn9fLWD87u+h/j0KsvI1PWuaEONJMw1aQWLIiZN9jrRcrOnyA=
+X-Gm-Gg: ASbGncsf2oTNQdyMe7aIyH2dmwGtL6x4P1UVeHcg6qbyGkFH8Vy1bPA72mmPt7u3l/W
+	aUW/QGE/HofKwTt8XBO69tedDpKiwXnIllj4GSIQb33PiRoQJv7+86G5hOprThQYQRAYFXgusUW
+	JmM2WGgpwu/CWvr3vvLSmDJgCCIT4LZ7WSjSl1nGelVHLBroNtObzHVKY/09lEvpi1OH3u+CytM
+	T9sZIMu4oalC13cM5PsYLTVc02bYFUSp3iAjMNuzX6Ae5aaBX+WZaYV9KnIOksAp/cAbwtHRHG3
+	aon3NXMUVhQKLrp/mN9G/2o3O+AJDIggaeaglc7pLQXK1NBd
+X-Google-Smtp-Source: AGHT+IF41bM6O52nxyqfLS5xcbnmD0BRXYmKkq1aTZiZh+PP5DLgrJ3Gf/DAzNS+0zNbGzXZ+/OHfQ==
+X-Received: by 2002:a17:903:189:b0:221:8568:c00f with SMTP id d9443c01a7336-225c64097abmr19829395ad.0.1741849302826;
+        Thu, 13 Mar 2025 00:01:42 -0700 (PDT)
 Received: from localhost ([157.82.205.237])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-225c6bbeb7esm6519955ad.193.2025.03.13.00.01.32
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-225c6bbe84esm6495685ad.176.2025.03.13.00.01.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 00:01:36 -0700 (PDT)
+        Thu, 13 Mar 2025 00:01:42 -0700 (PDT)
 From: Akihiko Odaki <akihiko.odaki@daynix.com>
-Date: Thu, 13 Mar 2025 16:01:05 +0900
-Subject: [PATCH net-next v10 02/10] net: flow_dissector: Export
- flow_keys_dissector_symmetric
+Date: Thu, 13 Mar 2025 16:01:06 +0900
+Subject: [PATCH net-next v10 03/10] tun: Allow steering eBPF program to
+ fall back
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250313-rss-v10-2-3185d73a9af0@daynix.com>
+Message-Id: <20250313-rss-v10-3-3185d73a9af0@daynix.com>
 References: <20250313-rss-v10-0-3185d73a9af0@daynix.com>
 In-Reply-To: <20250313-rss-v10-0-3185d73a9af0@daynix.com>
 To: Jonathan Corbet <corbet@lwn.net>, 
@@ -102,42 +102,105 @@ To: Jonathan Corbet <corbet@lwn.net>,
  Akihiko Odaki <akihiko.odaki@daynix.com>
 X-Mailer: b4 0.15-dev-edae6
 
-flow_keys_dissector_symmetric is useful to derive a symmetric hash
-and to know its source such as IPv4, IPv6, TCP, and UDP.
+This clarifies a steering eBPF program takes precedence over the other
+steering algorithms.
 
 Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
-Tested-by: Lei Yang <leiyang@redhat.com>
 ---
- include/net/flow_dissector.h | 1 +
- net/core/flow_dissector.c    | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ Documentation/networking/tuntap.rst |  7 +++++++
+ drivers/net/tun.c                   | 28 +++++++++++++++++-----------
+ include/uapi/linux/if_tun.h         |  9 +++++++++
+ 3 files changed, 33 insertions(+), 11 deletions(-)
 
-diff --git a/include/net/flow_dissector.h b/include/net/flow_dissector.h
-index ced79dc8e856..d01c1ec77b7d 100644
---- a/include/net/flow_dissector.h
-+++ b/include/net/flow_dissector.h
-@@ -423,6 +423,7 @@ __be32 flow_get_u32_src(const struct flow_keys *flow);
- __be32 flow_get_u32_dst(const struct flow_keys *flow);
+diff --git a/Documentation/networking/tuntap.rst b/Documentation/networking/tuntap.rst
+index 4d7087f727be..86b4ae8caa8a 100644
+--- a/Documentation/networking/tuntap.rst
++++ b/Documentation/networking/tuntap.rst
+@@ -206,6 +206,13 @@ enable is true we enable it, otherwise we disable it::
+       return ioctl(fd, TUNSETQUEUE, (void *)&ifr);
+   }
  
- extern struct flow_dissector flow_keys_dissector;
-+extern struct flow_dissector flow_keys_dissector_symmetric;
- extern struct flow_dissector flow_keys_basic_dissector;
++3.4 Reference
++-------------
++
++``linux/if_tun.h`` defines the interface described below:
++
++.. kernel-doc:: include/uapi/linux/if_tun.h
++
+ Universal TUN/TAP device driver Frequently Asked Question
+ =========================================================
  
- /* struct flow_keys_digest:
-diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
-index 9cd8de6bebb5..32c7ee31330c 100644
---- a/net/core/flow_dissector.c
-+++ b/net/core/flow_dissector.c
-@@ -1862,7 +1862,8 @@ void make_flow_keys_digest(struct flow_keys_digest *digest,
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index d8f4d3e996a7..9133ab9ed3f5 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -476,21 +476,29 @@ static u16 tun_automq_select_queue(struct tun_struct *tun, struct sk_buff *skb)
+ 	return txq;
  }
- EXPORT_SYMBOL(make_flow_keys_digest);
  
--static struct flow_dissector flow_keys_dissector_symmetric __read_mostly;
-+struct flow_dissector flow_keys_dissector_symmetric __read_mostly;
-+EXPORT_SYMBOL(flow_keys_dissector_symmetric);
- 
- u32 __skb_get_hash_symmetric_net(const struct net *net, const struct sk_buff *skb)
+-static u16 tun_ebpf_select_queue(struct tun_struct *tun, struct sk_buff *skb)
++static bool tun_ebpf_select_queue(struct tun_struct *tun, struct sk_buff *skb,
++				  u16 *ret)
  {
+ 	struct tun_prog *prog;
+ 	u32 numqueues;
+-	u16 ret = 0;
++	u32 prog_ret;
++
++	prog = rcu_dereference(tun->steering_prog);
++	if (!prog)
++		return false;
+ 
+ 	numqueues = READ_ONCE(tun->numqueues);
+-	if (!numqueues)
+-		return 0;
++	if (!numqueues) {
++		*ret = 0;
++		return true;
++	}
+ 
+-	prog = rcu_dereference(tun->steering_prog);
+-	if (prog)
+-		ret = bpf_prog_run_clear_cb(prog->prog, skb);
++	prog_ret = bpf_prog_run_clear_cb(prog->prog, skb);
++	if (prog_ret == TUN_STEERINGEBPF_FALLBACK)
++		return false;
+ 
+-	return ret % numqueues;
++	*ret = (u16)prog_ret % numqueues;
++	return true;
+ }
+ 
+ static u16 tun_select_queue(struct net_device *dev, struct sk_buff *skb,
+@@ -500,9 +508,7 @@ static u16 tun_select_queue(struct net_device *dev, struct sk_buff *skb,
+ 	u16 ret;
+ 
+ 	rcu_read_lock();
+-	if (rcu_dereference(tun->steering_prog))
+-		ret = tun_ebpf_select_queue(tun, skb);
+-	else
++	if (!tun_ebpf_select_queue(tun, skb, &ret))
+ 		ret = tun_automq_select_queue(tun, skb);
+ 	rcu_read_unlock();
+ 
+diff --git a/include/uapi/linux/if_tun.h b/include/uapi/linux/if_tun.h
+index 287cdc81c939..980de74724fc 100644
+--- a/include/uapi/linux/if_tun.h
++++ b/include/uapi/linux/if_tun.h
+@@ -115,4 +115,13 @@ struct tun_filter {
+ 	__u8   addr[][ETH_ALEN];
+ };
+ 
++/**
++ * define TUN_STEERINGEBPF_FALLBACK - A steering eBPF return value to fall back
++ *
++ * A steering eBPF program may return this value to fall back to the steering
++ * algorithm that should have been used if the program was not set. This allows
++ * selectively overriding the steering decision.
++ */
++#define TUN_STEERINGEBPF_FALLBACK -1
++
+ #endif /* _UAPI__IF_TUN_H */
 
 -- 
 2.48.1
