@@ -1,135 +1,111 @@
-Return-Path: <linux-kernel+bounces-558659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62C18A5E925
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:00:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED70A5E929
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:02:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5D1E17B048
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:00:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46BEC3B9FC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FAC22092;
-	Thu, 13 Mar 2025 01:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6C7171C9;
+	Thu, 13 Mar 2025 01:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZE6MNvX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bdnxQnke"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D804134AC;
-	Thu, 13 Mar 2025 01:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB8B610C;
+	Thu, 13 Mar 2025 01:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741827616; cv=none; b=HgGQ27CQO3V5CE9Nvp2KOdQMVxaGNcXlxFa/lZTMa+R+NsZlOTXxlfGUSFxbUByDJlMViZJp4/O+Ws9joZwqWSTwedxsv5LS+IgTU6nmYb8V4LZ0a3nWqHzW6rB0+aS+6KjOmgO+A+nhHPG91AvFqvUi1NbwRs2CI/zEQFJw/KY=
+	t=1741827765; cv=none; b=iQsRBMjpaynYc7nBCKEnV685gTTYpdzV6cfg1QMBkGrRHiyDxzsAWh93VBfmz/SXEH5RwspNMF0gm0uskhOFaSo6e6CaWAptLGKuBHyJfGgU4Fvisb52hgGMlWEG5nBxdbwE76Q9kj1ad9v28++DUH1+HVVDPd40DQ0n7LePxPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741827616; c=relaxed/simple;
-	bh=7xUY1S6zXxsXXT8asLU92YS/TfvLV/gFRXP7obNkQWM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GGBpprCBQd6asSN7dnTgPcw/blf3GoQ2Efq+XM1gguVYBcgRZzu/HRMoU7tg5fNmqkazyFiUmThG9iHhDdoW1gw/5LGSdl3iN5V1aDDuuui7z8J0pEtapJXL4lyuzjlkkjD1hVu7L8/7xgT66qRjyWCJVCfRTpDIziNt3dhMLpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sZE6MNvX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F1C0C4CEDD;
-	Thu, 13 Mar 2025 01:00:13 +0000 (UTC)
+	s=arc-20240116; t=1741827765; c=relaxed/simple;
+	bh=Q1aM5cKFYnCHCe+T3JOO7jfxAGoZ83bIHgGxGhIR7KI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G/H6MTaEaj1SWJmajPYl3XZBOsGFMJYPdnMq348XnyzPc0/wUQnSudFCcmqrutiNi30sBgxpjyVIcMAmuF5LUsEY4LDZb3gqqa6UNP7880CqGFwhJhRn6VIC6ZHpO1m1mSVTwVWTTbItdWeAIVwJ3DtDz/1LmtJ+a9v63jkkvgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bdnxQnke; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6686C4CEDD;
+	Thu, 13 Mar 2025 01:02:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741827614;
-	bh=7xUY1S6zXxsXXT8asLU92YS/TfvLV/gFRXP7obNkQWM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sZE6MNvXD8vRI3+AKi4f6VMLXNyuG4M2XRMz93jmTIlfeI2FzUhnDXdLZGmGjJte+
-	 ysFbVDq08W4vEoEF9OZfNvxkin/VWmmhP5FpqdhSLDsXbIDWpGJ68EcAK0OMZdNDcX
-	 DiBX3vUH+jZRUbgMGNtzDW3qK4UpzEfBdELtUmRJ8yH707evO5ozPWcnGgWtbGIIJ9
-	 aTAaVmCnv/iIF6AyMFOELVJRoQbva4rlNpDBWcgY65apXhJ2KfON/ULC14zD2vRb4b
-	 JYNnR3bvkKoAPPYRzQi2/Id8IS4h8kn6TRPpkio3knxzrPyDRJWuLVTo7ZtRZkd9C0
-	 9CAMmxG33aSLg==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] tracing: tprobe-events: Fix leakage of module refcount
-Date: Thu, 13 Mar 2025 10:00:10 +0900
-Message-ID: <174182761071.83274.18334217580449925882.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-User-Agent: StGit/0.19
+	s=k20201202; t=1741827764;
+	bh=Q1aM5cKFYnCHCe+T3JOO7jfxAGoZ83bIHgGxGhIR7KI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bdnxQnke3jBtHWePuV7KUt/fojwaT4L3NoOnAKZFudZ3qcbujGYHj1u1QidUExrld
+	 UuBunM5C7ZA8Tlj8Q35GWUBWQiFepi5/v45djtvHrq8an2w3b36iP/39QGpRJ2vtZR
+	 tAnxSQsfO0Yx4rFN5xrqH84WpVitA5LJ2YYhXgUB5pcopST1DRcM1PvU0zGFCmO83F
+	 mEvVti9UPh/mipArpdxMTxlgL7CtMimzhAIOR2qPXbXXeeADw5VbUnOLCzfqhatLC5
+	 Kv686iQaNqUDfW8lcawDuMZNJ91iV67Uu7YxQ523stEXNN/MlB7Y+ybJGKhExEjKO+
+	 ko1JGGEX1MVlg==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-547bcef2f96so505370e87.1;
+        Wed, 12 Mar 2025 18:02:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWjy++1+5y2voJKzRU5s2whV0PNonJCJX3k1/0A08a01PNyWua+MwAlb3fYWhguQI9ysNJxiQMfSoA=@vger.kernel.org, AJvYcCWwOxayiRzZQH1AuEk9EOcXfx0LDpAORJu/yVjIglLP6I6XnhST4IKMgJZ4XoZMFyFLCNWiEnf3op2mUXRr@vger.kernel.org, AJvYcCXvRMtB6ZsfkukSVSp8UnFDNbIt2cQVGaTw68Uv+blASgYugQWki3fo2+WysrIocA+lGHObYu5HYFX8kqRk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yycv/9hdsPMpGwwKvmx+vPsDPs1Ub/WMbtGE6LchNYrng+EXgj6
+	W9gO2TTQ3dR+zC+W4fX3N04rJLKOh0ckH1IsYIOkE0sOD3bWhlEWZoY7n2S3NMjG1i5XL6qZ7/V
+	KizDmkIgV0UXvKL/Xshp18VXucSA=
+X-Google-Smtp-Source: AGHT+IFhpoWAb7JEwtDxPPyUFo+XGguBg11A4gNdZlqOCCzXKIRoCEOHiOu8g3CZG/LuNlO8PKASOBCMoq+eLun8uEg=
+X-Received: by 2002:a05:6512:6d6:b0:549:8d2a:8820 with SMTP id
+ 2adb3069b0e04-549ababf0ccmr3887313e87.17.1741827763390; Wed, 12 Mar 2025
+ 18:02:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250311154535.56560-1-liukefan24s@ict.ac.cn>
+In-Reply-To: <20250311154535.56560-1-liukefan24s@ict.ac.cn>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 13 Mar 2025 10:02:06 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQPdxFStU8=opM8_gZvwFL26F7SMKZ94uHDnUpZ=tpBbw@mail.gmail.com>
+X-Gm-Features: AQ5f1JoFpbmptc9jMsV1ah9W40wua59RShx7QVusfFdHCzSV2gDwXlxV8K7646A
+Message-ID: <CAK7LNAQPdxFStU8=opM8_gZvwFL26F7SMKZ94uHDnUpZ=tpBbw@mail.gmail.com>
+Subject: Re: [PATCH] Documentation/kbuild: Fix indentation in modules.rst example
+To: Kefan Liu <liukefan24s@ict.ac.cn>
+Cc: corbet@lwn.net, linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Wed, Mar 12, 2025 at 12:46=E2=80=AFAM Kefan Liu <liukefan24s@ict.ac.cn> =
+wrote:
+>
+> Correct the indentation in an example within the `modules.rst` file
+> to improve readability.
+>
+> Signed-off-by: Kefan Liu <liukefan24s@ict.ac.cn>
 
-When enabling the tracepoint at loading module, the target module
-refcount is incremented by find_tracepoint_in_module(). But it is
-unnecessary because the module is not unloaded while processing
-module loading callbacks.
-Moreover, the refcount is not decremented in that function.
-To be clear the module refcount handling, move the try_module_get()
-callsite to trace_fprobe_create_internal(), where it is actually
-required.
+Applied to linux-kbuild.
+Thanks!
 
-Fixes: 57a7e6de9e30 ("tracing/fprobe: Support raw tracepoints on future loaded modules")
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Cc: stable@vger.kernel.org
----
- kernel/trace/trace_fprobe.c |   21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+> ---
+>  Documentation/kbuild/modules.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/kbuild/modules.rst b/Documentation/kbuild/modu=
+les.rst
+> index a42f00d8cb90..d0703605bfa4 100644
+> --- a/Documentation/kbuild/modules.rst
+> +++ b/Documentation/kbuild/modules.rst
+> @@ -318,7 +318,7 @@ Several Subdirectories
+>                 |       |__ include
+>                 |           |__ hardwareif.h
+>                 |__ include
+> -               |__ complex.h
+> +                       |__ complex.h
+>
+>         To build the module complex.ko, we then need the following
+>         kbuild file::
+> --
+> 2.43.0
+>
+>
 
-diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
-index 88a80953ae5e..985ff98272da 100644
---- a/kernel/trace/trace_fprobe.c
-+++ b/kernel/trace/trace_fprobe.c
-@@ -920,13 +920,8 @@ static void __find_tracepoint_module_cb(struct tracepoint *tp, struct module *mo
- 
- 	if (!data->tpoint && !strcmp(data->tp_name, tp->name)) {
- 		data->tpoint = tp;
--		if (!data->mod) {
-+		if (!data->mod)
- 			data->mod = mod;
--			if (!try_module_get(data->mod)) {
--				data->tpoint = NULL;
--				data->mod = NULL;
--			}
--		}
- 	}
- }
- 
-@@ -938,13 +933,7 @@ static void __find_tracepoint_cb(struct tracepoint *tp, void *priv)
- 		data->tpoint = tp;
- }
- 
--/*
-- * Find a tracepoint from kernel and module. If the tracepoint is in a module,
-- * this increments the module refcount to prevent unloading until the
-- * trace_fprobe is registered to the list. After registering the trace_fprobe
-- * on the trace_fprobe list, the module refcount is decremented because
-- * tracepoint_probe_module_cb will handle it.
-- */
-+/* Find a tracepoint from kernel and module. */
- static struct tracepoint *find_tracepoint(const char *tp_name,
- 					  struct module **tp_mod)
- {
-@@ -973,6 +962,7 @@ static void reenable_trace_fprobe(struct trace_fprobe *tf)
- 	}
- }
- 
-+/* Find a tracepoint from specified module. */
- static struct tracepoint *find_tracepoint_in_module(struct module *mod,
- 						    const char *tp_name)
- {
-@@ -1179,6 +1169,11 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
- 	if (is_tracepoint) {
- 		ctx->flags |= TPARG_FL_TPOINT;
- 		tpoint = find_tracepoint(symbol, &tp_mod);
-+		/* lock module until register this tprobe. */
-+		if (tp_mod && !try_module_get(tp_mod)) {
-+			tpoint = NULL;
-+			tp_mod = NULL;
-+		}
- 		if (tpoint) {
- 			ctx->funcname = kallsyms_lookup(
- 				(unsigned long)tpoint->probestub,
 
+--=20
+Best Regards
+Masahiro Yamada
 
