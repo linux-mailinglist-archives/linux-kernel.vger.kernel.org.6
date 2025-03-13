@@ -1,116 +1,238 @@
-Return-Path: <linux-kernel+bounces-559581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59D57A5F5D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:21:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1612A5F5BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:17:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 333E4189DEB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:18:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5702166F6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA6D267AE4;
-	Thu, 13 Mar 2025 13:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94FE266590;
+	Thu, 13 Mar 2025 13:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CbxcRkr5"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8hjaunz"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F65267735;
-	Thu, 13 Mar 2025 13:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C111F26773A;
+	Thu, 13 Mar 2025 13:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741871869; cv=none; b=GhHMS+rCa+HGrcZh64+LbX9rvu8CkTqMdFlGM7FYU1ahlPlrJVnLxpXmCaS48yAxaSbaV42b1W2xRyj3tVF5RwFCqPzxa9ji/vk9BRatoJOlhSv5qEzG2ey96S3p/2QUYKkKe+2o8U7WpABno4YDcXnEjYcVdLwKzI/Uu9KGRBM=
+	t=1741871857; cv=none; b=tZoMO+GXQVpDVJ/2NAbAWhu0gXk+9HpbWyQQ41peAlj6I/ORFue972T/TfdWBD9c6/CIVQlnqy3xXCKM2Ny5WMJrieNfB8FLHCanxeh2o/Sq+vojVBGhV5VPkaqfW1Q2+log3H20gCDQqLw5o+P96R3akdNuRjrwx65kOTItkL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741871869; c=relaxed/simple;
-	bh=yDGWynoa4NHLG+/FL8La2c2pXIbj5JLF9ZRJKihaX0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JXeoA3aMiAKgz/9mdvWRAufys9FPB39eL60zrK71s1Y0i66f0kDJkhnDrGgMHQ/v+zQNRLhPBPOTPjQcONX7LRz7pEjWU4xy1NWOt+Qj5ug+1a3Gg75m73VZGXBvqFB2HTHZ01Vcbf0y/rcEbKvvk2U5gKBiTj3f7bYxL4syv0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CbxcRkr5; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=4EvY1LEFvjjHJU3jZAtzphl1AzmykKRYyWCA/SvfCK4=; b=Cb
-	xcRkr5Js6+IwxGpOdQ1oKGkQeF2cq/TMzpc3U5FT2lIMY76EHMFIggsHj8bcQ651yDwsQnnj+ykg/
-	VVeS7E5Fzb19hUdFqt2smal5gYticNcoGaqM1qybqC23066JPaLgcwYgNZK7XSU5DFkTI5Si9hhIM
-	sbyH5zQuUwYlRao=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tsiRD-004zrS-Is; Thu, 13 Mar 2025 14:17:27 +0100
-Date: Thu, 13 Mar 2025 14:17:27 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Michael Klein <michael@fossekall.de>,
-	Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Samuel Holland <samuel@sholland.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: dts: bananapi: add support for PHY LEDs
-Message-ID: <7cf91323-d550-496a-a8ec-ae104c77224d@lunn.ch>
-References: <20250312193629.85417-1-michael@fossekall.de>
- <20250312193629.85417-2-michael@fossekall.de>
- <4637912.LvFx2qVVIh@jernej-laptop>
- <Z9KYqlfUYxRaWnGQ@a98shuttle.de>
- <20250313104042.694c1856@donnerap.manchester.arm.com>
+	s=arc-20240116; t=1741871857; c=relaxed/simple;
+	bh=kkaM9TxXGoRauSWyPFM1CfAT8bnaddnIbIa/Vm9rMiE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o4GhLTOSOi/TAbtQGT2zkj5it3yMgSDWKJqhdbDZEwI/CpUa/02hLUly1QA1DFTakHgGmghPmDKucX3xv1eYCyrTLiIrA9K+M0fjiET+CpCvBKzPpx2Kv7LWkORJmITeb5TrULn/04FjTN3g/jvWwLKM6cThCNnksuB0cRVG6j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J8hjaunz; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30bf1d48843so8439041fa.2;
+        Thu, 13 Mar 2025 06:17:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741871851; x=1742476651; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fMtd4Ct3saMXFXwwgDnBOHF0+oIR6E5UNtteZil5UN4=;
+        b=J8hjaunzizmRAokAoygqVBKX61wj/+8ohLFbpOENnQjBlMY0Q9OqrmPxD5pq7SX99A
+         rLzItqpTLs/e94YoIbh8u53+1nEGHdQamblipJ+W6F1vGd9mH4I3g03PxhT5YrX9VUhP
+         Uuw7RNZaISNKAdW/ZW4o1zbCfFta5DI6KV0iQ+lC3eHCkRgRBkibt1KgzNlSPy2vv4/X
+         Eatrao6u2vbCz+E8AqfTNyHe3BlLJxuFQD3/TphfWyWltlEvLyCrTiIOy/kLPEyvurQ7
+         jj3BAbjC0UQ6J4kMl5hsvtNuBFu23KUO2wo2C/YFeKoG19rh/BeZRqjZLobyOkBHu/KQ
+         6gYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741871851; x=1742476651;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fMtd4Ct3saMXFXwwgDnBOHF0+oIR6E5UNtteZil5UN4=;
+        b=Ddc4A9+P4qDONyEMXIudeo8UuqYi+RYkeL+P7DQEEF43Rln0xJzZ6juKfqsA2RPbT0
+         XCsQ95JrFKDpUMuwDYtDIFQbxMGIfErhqQMjVqn5LVzhekqUED0k+pVRDNOIXOUeW8JF
+         FLb7SPVaMVTSRAAZg0sJmaD7wqlM6fQ1fSL1bVTFW1xhpdDiwGV6QdkKp51dlQZsHm9W
+         uU6CpkT++LxGKay5yPT830o3gmXUx3gBzYaAVTv3AAJk1XS145kWQmJj3kuPsaufxzFk
+         evO9KNFn2ps9jCPMUmhPKOhG9JONW8HEHdxdB5/MVXEkPs8PyWaxE3I0ytMpuAN6PPYh
+         dFEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNnSdrVdnZEEZgDL7JXC2VkqCjG8RcTv8ID3nYWBBuhdjvFHlcYlieMhbobAodO25ifou8T/MfUrZ81lXeMKU1pOw=@vger.kernel.org, AJvYcCWMMaC6cP36DE0Y0xGgj+gOSqqYTo2AFkPoOKX40fc/ip6VQcpxUFcmWnMjTTiW3dVqFGlCuftZMLCXjDfH@vger.kernel.org, AJvYcCWMmhQCJb3RRAJBbXiS08RB4lDGPMrQ+sH4Js1KCxO4RXtnaEhBFdefDFRF6AvJmXJPc2s6QKm0Fi/H@vger.kernel.org, AJvYcCX+qXP95yfnQ9ZI/6mSvWSsXHFw+UeDniSIbgykcfmH+GOH9xSjy/LWbxsdSU9e4SM9uUVOqxqVKcXj@vger.kernel.org, AJvYcCX3mr8Z8tfRCt1job+J8VhusszyaCg2MncMxLpzpOVd1zs018aJfafGLaaiR5rqw1z6Ins9RGgmRHp7ew==@vger.kernel.org
+X-Gm-Message-State: AOJu0YziTtN7Z2jqIdluHXqrs9gI3QDD2dzt5pp7KKkBcEPaq3/D2lxg
+	dMb9coavjzSDuhEpNTPG4j60+Z2UvYrZjNxqYVqmzP+D2wu7nrEk
+X-Gm-Gg: ASbGncvXoZv7Cc4FKAWTsiIRhBXAhuiDvFxKFw1vFwdwYtr37/+/dDlgwBDc+n0XNuk
+	533kzdczLavUzAXCVubLeJXkmwd8l/8ZJPEQ/g2QHOjrHpZ6j0pPJvrJpvJkChOGvvJKmGnpXEt
+	okUBirmbbVwj4+uFORcDZ57MzYZospoUqw6XOkYtK5PVVjP3SVlSU9c4D6bNWXkB57gi+DWmmea
+	nbqdNRinQk1phtgcvBA5dxJJOGPkEWebH6rYnOp+vR2F84xzs/TB2QyK1XumonFjNLjL/1KPH9T
+	SA4Y8fr9VI4EN+BAdzZqK9jbf5fnSPehuMPCh7S8Su7aljXY7HH3moxYLVi9wf72ur4s3FyV2DC
+	tANj6nRYX4XyXwdu5bkxWBQ11RQ==
+X-Google-Smtp-Source: AGHT+IGUUl0LVmN96xFU94Q8pBwvgPJWhTup+0iU4QVNU/cc+uuXO+92xsYm0ESUYd6MtzARCUk8Xg==
+X-Received: by 2002:a05:651c:2106:b0:30b:b204:6b80 with SMTP id 38308e7fff4ca-30bf44eda0cmr93616221fa.8.1741871850985;
+        Thu, 13 Mar 2025 06:17:30 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f1da3d2sm2136881fa.92.2025.03.13.06.17.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 06:17:30 -0700 (PDT)
+Message-ID: <bca95d63-fb6e-4d6c-8ab6-df67f0e697e6@gmail.com>
+Date: Thu, 13 Mar 2025 15:17:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250313104042.694c1856@donnerap.manchester.arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 03/10] iio: adc: add helpers for parsing ADC nodes
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Guillaume Stols <gstols@baylibre.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ Trevor Gamblin <tgamblin@baylibre.com>,
+ Matteo Martelli <matteomartelli3@gmail.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev
+References: <cover.1741849323.git.mazziesaccount@gmail.com>
+ <c8899e8c535a1d93cd7588b7c160eb0fae5d26d2.1741849323.git.mazziesaccount@gmail.com>
+ <Z9LQFqSweiV-zT3b@smile.fi.intel.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <Z9LQFqSweiV-zT3b@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 13, 2025 at 10:40:42AM +0000, Andre Przywara wrote:
-> On Thu, 13 Mar 2025 09:34:50 +0100
-> Michael Klein <michael@fossekall.de> wrote:
+On 13/03/2025 14:31, Andy Shevchenko wrote:
+> On Thu, Mar 13, 2025 at 09:18:18AM +0200, Matti Vaittinen wrote:
+>> There are ADC ICs which may have some of the AIN pins usable for other
+>> functions. These ICs may have some of the AIN pins wired so that they
+>> should not be used for ADC.
+>>
+>> (Preferred?) way for marking pins which can be used as ADC inputs is to
+>> add corresponding channels@N nodes in the device tree as described in
+>> the ADC binding yaml.
+>>
+>> Add couple of helper functions which can be used to retrieve the channel
+>> information from the device node.
 > 
-> Hi,
+> ...
 > 
-> > On Thu, Mar 13, 2025 at 07:07:24AM +0100, Jernej Škrabec wrote:
-> > >Dne sreda, 12. marec 2025 ob 20:36:28 Srednjeevropski standardni čas je Michael Klein napisal(a):  
-> > >> The Bananapi M1 has three LEDs connected to the RTL8211E ethernet PHY.
-> > >> Add the corresponding nodes to the device tree.
-> > >>
-> > >> Signed-off-by: Michael Klein <michael@fossekall.de>  
-> > >
-> > >This is patch 2/2. Which one is patch 1/2? I got only one.  
-> > 
-> > https://patchwork.kernel.org/project/netdevbpf/patch/20250312193629.85417-1-michael@fossekall.de/
-> > 
-> > Sorry for any inconvenience in case I messed up the patch submission.
-> > 
-> > I made two commits for this change and submitted them via `git send-email 
-> > HEAD^^`. The first patch went to netdev@vger.kernel.org, the second 
-> > to linux-arm-kernel@lists.infradead.org, which seems logical. Have I 
-> > done something wrong?
+>> +int devm_iio_adc_device_alloc_chaninfo_se(struct device *dev,
+>> +					  const struct iio_chan_spec *template,
+>> +					  int max_chan_id,
+>> +					  struct iio_chan_spec **cs)
+>> +{
+>> +	struct iio_chan_spec *chan_array, *chan;
+>> +	int num_chan = 0, ret;
 > 
-> Well, for those really small "series" it's probably better to send all
-> patches to everyone, especially if the first patch gives some context,
-> without which the second leaves people (like me) scratching their head.
+> Unneeded assignment.
 
-However, netdev does not like pathchsets which contain patches which
-should not be applied to the netdev tree. DT patches generally go
-through a different Maintainer to driver changes implementing the
-binding.
+Hmm. I have a deja-vu. Thanks for the reminder.
 
-So for your DT patch, you could add to the commit message something
-like:
+> 
+>> +	num_chan = iio_adc_device_num_channels(dev);
+>> +	if (num_chan < 1)
+>> +		return num_chan;
+> 
+> This is really interesting code. So, if the above returns negative error code,
+> we return it, if it returns 0, we return success (but 0 channels)?
 
-The RTL8211E ethernet PHY driver has recently gained support for
-controlling PHY LEDs via /sys/class/leds. The Bananapi M1 has three
-LEDs connected to the RTL8211E PHY.  Add the corresponding nodes to
-the device tree.
+Yes. I don't think it's that interesting though. Checking the devicetree 
+succeeded while no channels were found. I think returning 0 is very much 
+aligned with this.
 
-	Andrew
+> Shouldn't we do *cs = NULL; at the case of 0 channels if it's a success?
+
+I suppose you're right.
+
+But, as you pointed out in review of the 05/10:
+ > Usually in other similar APIs we return -ENOENT. And user won't need
+ > to have an additional check in case of 0 being considered as an error
+ > case too.
+
+I don't know whether to agree with you here. For majority of the ADC 
+drivers, having no channels in devicetree is indeed just another error, 
+which I think is not in any ways special.
+
+However, for 33,3333% of the users added in this patch, the "no channels 
+found" is not really an error condition ;) The BD79124 could have all 
+channels used for GPO - although this would probably be very very 
+unusual. (Why buying an ADC chip if you need just a GPO?). Still, this 
+wouldn't be an error. (And I need to handle this better in BD79124 probe 
+- so thanks).
+
+> (Under success I assume that returned values are okay to go with, and cs in
+> your case will be left uninitialised or contain something we don't control.
+
+I see your point although I wouldn't be concerned with cs not being NULL 
+for as long as number of channels is zero.
+
+Anyway, I think it makes sense to simplify ~67% of callers by returning 
+-ENODEV if there is no channels. The remaining ~33% can then check for 
+the -ENODEV and handle it separately from other returned errors. So, thanks.
+
+>> +	chan_array = devm_kcalloc(dev, num_chan, sizeof(*chan_array),
+>> +				  GFP_KERNEL);
+>> +	if (!chan_array)
+>> +		return -ENOMEM;
+>> +
+>> +	chan = &chan_array[0];
+>> +
+>> +	device_for_each_named_child_node_scoped(dev, child, "channel") {
+>> +		u32 ch;
+>> +
+>> +		ret = fwnode_property_read_u32(child, "reg", &ch);
+>> +		if (ret)
+>> +			return ret;
+> 
+>> +		if (max_chan_id != -1 && ch > max_chan_id)
+>> +			return -ERANGE;
+> 
+> Hmm... What if max_chan_id is equal to an error code?
+> Or in other words, why -1 is special and not all negative numbers?
+
+-1 was just picked to represent a 'don't care' value. Old habit. In the 
+old days I handled lots of code where -1 was defined as 'invalid' for 
+APIs with unsigned ints as well. It works nicely on systems where it 
+turns out to be maximum positive value - leaving most of the number 
+space for valid values.
+
+I suppose saying any negative means "don't care" works well here. And, 
+dropping all negatives here will also make the check below just work 
+with unsigned comparison.
+
+> Also note, you used unsigned type and compare it to int which,
+> in case of being negative will give promotion.
+
+Right. I didn't thin negative IDs would make sense and trusted users to 
+pass only positive ones. Treating all negatives as "don't care" is 
+indeed better than trusting this.
+
+Thanks.
+
+> The ch will not be
+> big enough in most cases (unless it's great than (INT_MAX + 1).
+> 
+> TL;DR: you have a potential integer overflow here.
+> 
+>> +		*chan = *template;
+>> +		chan->channel = ch;
+>> +		chan++;
+>> +	}
+>> +
+>> +	*cs = chan_array;
+>> +
+>> +	return num_chan;
+>> +}
+> 
+
 
