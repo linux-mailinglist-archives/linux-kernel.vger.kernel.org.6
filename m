@@ -1,97 +1,100 @@
-Return-Path: <linux-kernel+bounces-559851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB669A5FA9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:00:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD8ADA5FAA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:01:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79B0219C3AC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:00:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0255189B62F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE09269823;
-	Thu, 13 Mar 2025 15:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E58B2690F9;
+	Thu, 13 Mar 2025 15:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="d4N46iWD"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OCQH7Obx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="teH3p7U7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6D52690C9;
-	Thu, 13 Mar 2025 15:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1CD2690D7
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741881567; cv=none; b=Xoy8iEYz5qt74YaZSeNPTW/fuFXCuDM9CgS5dlugCcg0QrhoYuYeoj4iZur1omgXq+kvllxZgW1wT8x0AzwXoX+xpFX5yRRg7IC+Az0nOtXKVNh6Oe2nsVy+6RRxHZQ+Z3kgJZRBhaPSBk5lsDNfYRvCKoNdhlW2WL4gZlZcd74=
+	t=1741881585; cv=none; b=f5jgZ7zPkPvXX385XC6fYWgjEDCt9nEx8ZPa5pN6kTQHnsJ+nnY30VNvFjH8Gueit4BKv623ho57gSLI6ilf7OGiQTHSeCx2iQOnqAYvwoqf5ljsVWJRNZMAyIQIlotkFExdId9HCqW9h+QwtKf/OvwQTKoFkmIXdv4lGrrEvJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741881567; c=relaxed/simple;
-	bh=ltv4SGnYeTNOm4U6udF0M3JRhzGYt4vV6y5YQjJTO1o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hS/bQx7BsZhxLfwrmJV0Hz8rYWYv1GL8Q51S1n0cvhhk6AKk0KqfwtIxI04lpMgf8EzoNm7EjWNd/mJ0tkKc7GSrAGAXNCNj+JQt1e8B6oVqikpTzbe+zUJIsfp29cxlS0BmnQZ4EIq5dqO+U5oDK7B7b9ysXDKpVwww/vlrjuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=d4N46iWD; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1741881564;
-	bh=ltv4SGnYeTNOm4U6udF0M3JRhzGYt4vV6y5YQjJTO1o=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=d4N46iWDYoFjgA9IJwU6S4Y1+DmHZGYeHlBi85p9I/DYwaEL+vy0Io38+A2ztkQPH
-	 lN4ly9O1Jyn8uFfV4mEzq5D5h2jT+egOepwLtQN+GPB9FHejNmY3CJg6ydnCBjUT6v
-	 gXMzA2YQG8l/UAUAHgBqDqACRh0zfn4ZvCMEVBCs=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Thu, 13 Mar 2025 16:59:12 +0100
-Subject: [PATCH 4/4] x86/boot/compressed: Switch to -ffile-prefix-map
+	s=arc-20240116; t=1741881585; c=relaxed/simple;
+	bh=qmDjoX8h7NEB+eT+QeAl4QsgBucU40XmMm5U6V0gatE=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=dE9uETB9Q79J0Pk6qc01IaE74D7/CY5VwL6QvTCRW+DJ7FdLeZeCSRRFtGE3HSaHCYBfCWfy/pHPCZ7RWYtbLWAncOyWUNZtgjb/zJTgWLt1kGnp2umeo7OF0wcN6bJP4KTyFgUyMDO6BZYAXYYhBDvfT+C5qH0USjGKApU/JJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OCQH7Obx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=teH3p7U7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250313154615.860723120@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741881582;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=pC5u9IABiaLSzqnFooP5hA+9dFjsd9YXaN72QMClq10=;
+	b=OCQH7ObxZUU6lnkrIcTfdQ8HDsvfirXW75Jxkidk+zO+7PNuDhq8pzMsWsO41A3GYEZMaN
+	79BWoZ3+9gTKrqqt78CmtuRAnWqcq/jRT0cQh6wkuiU8sOJJ2yWtDqyBLBUhgOA7zmxOO9
+	oELoQtxv9fNyRMVHUEsJwDF9xVEuCkhFSxFt+78Tj+OsLUPCKGLV6Y/4XxLo0gVUbeMK2w
+	81iAr/oOQ58IiGqB3pf/tsJQ6w7w7oKsv8UpRsxj5hBaQJhx59IDB/uM3qyVCatkSnOrwT
+	NNkzb8wMvaFqKBQNAPHCY44wuInsscFbz5frCzOBZc4abqctXTxfJuaZyJ19kg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741881582;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=pC5u9IABiaLSzqnFooP5hA+9dFjsd9YXaN72QMClq10=;
+	b=teH3p7U7E0QN1oYeJxEiAlmy7/bx6AAh+KJ8Nps7uujVf9OteziRBzJNougoyY+MZQW3a3
+	d5hyy6s7odsrg6CQ==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ Jiri Slaby <jirislaby@kernel.org>
+Subject: [patch 00/46] genirq: Cleanups and conversion to lock guards
+Date: Thu, 13 Mar 2025 16:59:41 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250313-kbuild-prefix-map-v1-4-38cea8448c5f@weissschuh.net>
-References: <20250313-kbuild-prefix-map-v1-0-38cea8448c5f@weissschuh.net>
-In-Reply-To: <20250313-kbuild-prefix-map-v1-0-38cea8448c5f@weissschuh.net>
-To: Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
- Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, 
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
- "H. Peter Anvin" <hpa@zytor.com>, Ben Hutchings <ben@decadent.org.uk>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741881563; l=1083;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=ltv4SGnYeTNOm4U6udF0M3JRhzGYt4vV6y5YQjJTO1o=;
- b=D/vhrS+o3YPzdcbd9BxcgIN1BT9UTcZQzpCKyao1/h6tggjOZTiXNddWjHUU5jipnsvpYRU65
- rc5mrA2bh2dCok8Gok9Qi8UrZtzf0lVi0AnIGTd9OSlYWkYavDvhdHn
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
--ffile-prefix-map is a more general variant of the currently used
--fmacro-prefix-map. It is also what the top-level Makefile is using now.
+The generic interrupt core code has accumulated quite some inconsistencies
+over time and a common pattern in various API functions is:
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+    unsigned long flags;
+    struct irq_desc *desc = irq_get_desc_[bus]lock(irq, &flags, mode);
+
+    if (!desc)
+       return -EINVAL;
+    ....
+    irq_put_desc_[bus]unlock(desc, flags);
+
+That's awkward and requires gotos in failure paths.
+
+This series provides conditional lock guards and converts the core code
+over to use those guards. Along with that it converts the other open coded
+lock/unlock pairs and fixes up coding and kernel doc formatting.  The
+conversions were partially done with Coccinelle where possible.
+
+The series applies on Linus tree and is also available from git:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git irq/core
+
+Thanks,
+
+	tglx
 ---
- arch/x86/boot/compressed/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index 606c74f274593ebaf6200b7d307a453e2c6e872e..73a67366cb706658f9680cd50864a68546d3dc98 100644
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -38,7 +38,7 @@ KBUILD_CFLAGS += -fno-stack-protector
- KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
- KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
- KBUILD_CFLAGS += -Wno-pointer-sign
--KBUILD_CFLAGS += $(call cc-option,-fmacro-prefix-map=$(srctree)/=)
-+KBUILD_CFLAGS += $(call cc-option,-ffile-prefix-map=$(srctree)/=)
- KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
- KBUILD_CFLAGS += -D__DISABLE_EXPORTS
- # Disable relocation relaxation in case the link is not PIE.
-
--- 
-2.48.1
-
+ include/linux/irq.h     |    2 
+ kernel/irq/autoprobe.c  |   26 -
+ kernel/irq/chip.c       |  640 ++++++++++----------------
+ kernel/irq/cpuhotplug.c |   10 
+ kernel/irq/debugfs.c    |    3 
+ kernel/irq/internals.h  |   47 -
+ kernel/irq/irqdesc.c    |  136 +----
+ kernel/irq/manage.c     | 1154 ++++++++++++++++++++----------------------------
+ kernel/irq/pm.c         |   38 -
+ kernel/irq/proc.c       |   65 --
+ kernel/irq/resend.c     |   50 --
+ kernel/irq/spurious.c   |  104 +---
+ 12 files changed, 920 insertions(+), 1355 deletions(-)
 
