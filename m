@@ -1,99 +1,128 @@
-Return-Path: <linux-kernel+bounces-559168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4495A5F04F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:10:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E09A4A5F057
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:11:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62539174E87
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:10:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5DD617DDEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D63265611;
-	Thu, 13 Mar 2025 10:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF52265635;
+	Thu, 13 Mar 2025 10:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LNtyegOu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T7VBDQao"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533EE264F8C;
-	Thu, 13 Mar 2025 10:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9816126560E;
+	Thu, 13 Mar 2025 10:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741860599; cv=none; b=DfWd9el/1KZqleaPw3RCU1iUFfxiHZcjQSGrUkwxM+efPlDiqAkpJAK0IKFWVq01Vwbuxb9ItxVZOcZFyiG+V4B5Y1AX6/XDHF+zsXRWLos+x5arGMqA6HR+4J1oDBrTM/0Ft1w8N91L/4hsDAlxRcZ3hgtEubdytdkv1EZLIAk=
+	t=1741860654; cv=none; b=A6f3/CBrP3y3EeEG8Ayvfk+Xuz4eVBEb0ELxzDyd4IsZjAMoRIn1EMqSuZzVNU6hJkKe4iI9ZHW8SHYNSqzaICl3m6ARmYwF5/cUzKdQ/wGa8YPde72BVPk9ToGv/chj1wm8aVWiV/p6pvMs+EFM0cfUDTktYvmUAbbAfvDcBfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741860599; c=relaxed/simple;
-	bh=3ia4Sn6jj2l6liyurFbn7ply3ehwt3UFgJmXXXgNixs=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=BAeCIi0C/aW4z+Cc4sZWOsZhrYzKiWZa0ygDyMa7kJZWKWCLVDA+NJGvl4juuHtoEjTSp1VuVTj8054OINDMDecsDxyCg/XwJ5XX3dSG6BW8LD3557ldPtC6zqT3RbwEVD9lu66mKeEyU2nkt8+Ge+nLHzHMwR/ZpJ4HOyAY/AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LNtyegOu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0D0FC4CEEA;
-	Thu, 13 Mar 2025 10:09:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741860598;
-	bh=3ia4Sn6jj2l6liyurFbn7ply3ehwt3UFgJmXXXgNixs=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=LNtyegOucLPnqQ38sjFfRNvvezBFC4y9FCkZcmFH2kWyqiF9R/iS7BkNuRtP3S1u8
-	 KiHhdWl+mGBJJgaazt2AOesNpi9zIdIn6Y2kNzPavbAbR/mhddZP+hfwrbL/MyJD0M
-	 B5K+82CiclQzGCs5NcG5cmWHeT9EaK7aT6tuJMY0wROiolOBKIfPuYbNIVacqCkbA9
-	 10oEzXg6zG2/IklQ50xj9u9uu8wnkuJuZh363iPIHrTVHmuSEtSc2OQkojILJLibqZ
-	 +yWBS6dIDSs65QEkQMUVTmw6PadG440vJqMvbAJklNP2QyciSbI8g7DWPZ2zpIdJFB
-	 h9C7azPak9Qcg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70BD63806651;
-	Thu, 13 Mar 2025 10:10:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1741860654; c=relaxed/simple;
+	bh=iDTPmKsP/Dkh4u+cTW/Lgk7hf7SQS3xcNseBGE75wpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DMvVCQ7JQuuqW8lsl5DDQsmVxJLurEKfuPiTaIc2il2DpZK7hcuL0uVjcO1kfgNwrOAtC6RIEFQIlp2KYNpxV+af39dY80BW7jO2ZFGhqxJnp9GQgHVxdTbZYXmfLMrLMvM83P3biB2ah5VPq8HmDeJjtFH6HzHjfxCpGTWnAzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T7VBDQao; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741860652; x=1773396652;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iDTPmKsP/Dkh4u+cTW/Lgk7hf7SQS3xcNseBGE75wpE=;
+  b=T7VBDQaoCp48ih/skMjiFRIXlxRD651cZjVuj+A7woEoEE7puaxcWdA1
+   jDtpH44+AQXARl5gW9SvuQVTIwjg2hNUQyyvuNYAwiD+hvGnQgS+fdhxr
+   Ds1PokSOBH/yjLHLugQJLPeqDFZR+tPgfJtylu1APuKNcyYwC3pWnuggg
+   t11Syk9NKC7wn5ea5ZOBS1UfayTMtT4R+cX4FbujHC5aN+SXourYxQhLa
+   NJz9/qM/Bc4yF45t5flUU8qbNxRw4csnIglLAIwfWzY+/S/mhS/VOfvQu
+   snZ6czTiutpDqc6Wpi8SdjFQxYZZIIEmHe0LTogFGRcHmeTQLDPYdivMq
+   Q==;
+X-CSE-ConnectionGUID: /LA1ktMtRnaDfhFpb4O0Xg==
+X-CSE-MsgGUID: YHGow8oHSf6BGun5+1DfLw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="46873637"
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="46873637"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 03:10:51 -0700
+X-CSE-ConnectionGUID: QfouAGhmRcOb8ID6NJbPbw==
+X-CSE-MsgGUID: 4EoC7DcFQ7W0MBVryaDIsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="151747890"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 03:10:50 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 96A2511F96E;
+	Thu, 13 Mar 2025 12:10:46 +0200 (EET)
+Date: Thu, 13 Mar 2025 10:10:46 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl, viro@zeniv.linux.org.uk,
+	bartosz.golaszewski@linaro.org, benjamin.gaignard@collabora.com,
+	hljunggr@cisco.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] media: v4l2-dev: fix error handling in
+ __video_register_device()
+Message-ID: <Z9KvJteBVuPE8Hrs@kekkonen.localdomain>
+References: <20250313074318.305556-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 0/3] net: stmmac: dwmac-rk: Validate GRF and peripheral GRF
- during probe
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174186063226.1446759.12026198009173732573.git-patchwork-notify@kernel.org>
-Date: Thu, 13 Mar 2025 10:10:32 +0000
-References: <20250308213720.2517944-1-jonas@kwiboo.se>
-In-Reply-To: <20250308213720.2517944-1-jonas@kwiboo.se>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: heiko@sntech.de, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313074318.305556-1-make24@iscas.ac.cn>
 
-Hello:
+Hi Ma,
 
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Thanks for the patch.
 
-On Sat,  8 Mar 2025 21:37:12 +0000 you wrote:
-> All Rockchip GMAC variants typically write to GRF regs to control e.g.
-> interface mode, speed and MAC rx/tx delay. Newer SoCs such as RK3576 and
-> RK3588 use a mix of GRF and peripheral GRF regs. These syscon regmaps is
-> located with help of a rockchip,grf and rockchip,php-grf phandle.
+On Thu, Mar 13, 2025 at 03:43:18PM +0800, Ma Ke wrote:
+> Once device_register() failed, we should call put_device() to
+> decrement reference count for cleanup. Or it could cause memory leak.
 > 
-> However, validating the rockchip,grf and rockchip,php-grf syscon regmap
-> is deferred until e.g. interface mode or speed is configured.
+> As comment of device_register() says, 'NOTE: _Never_ directly free
+> @dev after calling this function, even if it returned an error! Always
+> use put_device() to give up the reference initialized in this function
+> instead.'
 > 
-> [...]
+> Found by code review.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: baa057e29b58 ("media: v4l2-dev: use pr_foo() for printing messages")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>  drivers/media/v4l2-core/v4l2-dev.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
+> index 5bcaeeba4d09..1619614e96bf 100644
+> --- a/drivers/media/v4l2-core/v4l2-dev.c
+> +++ b/drivers/media/v4l2-core/v4l2-dev.c
+> @@ -1060,6 +1060,7 @@ int __video_register_device(struct video_device *vdev,
+>  	if (ret < 0) {
+>  		mutex_unlock(&videodev_lock);
+>  		pr_err("%s: device_register failed\n", __func__);
+> +		put_device(&vdev->dev);
 
-Here is the summary with links:
-  - [v2,1/3] dt-bindings: net: rockchip-dwmac: Require rockchip,grf and rockchip,php-grf
-    https://git.kernel.org/netdev/net-next/c/313cf06ef4de
-  - [v2,2/3] net: stmmac: dwmac-rk: Validate GRF and peripheral GRF during probe
-    https://git.kernel.org/netdev/net-next/c/247e84f66a3d
-  - [v2,3/3] net: stmmac: dwmac-rk: Remove unneeded GRF and peripheral GRF checks
-    https://git.kernel.org/netdev/net-next/c/41f35564cb71
+Fixing this isn't quite as simple. The release callback is actually set
+below so there's no release callback set for this device yet.
 
-You are awesome, thank you!
+>  		goto cleanup;
+>  	}
+>  	/* Register the release callback that will be called when the last
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Kind regards,
 
-
+Sakari Ailus
 
