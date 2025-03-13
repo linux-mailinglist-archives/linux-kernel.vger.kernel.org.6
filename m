@@ -1,197 +1,317 @@
-Return-Path: <linux-kernel+bounces-559926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE57BA5FB40
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:20:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75293A5FB47
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:20:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9690E883340
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:13:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C1923B2D83
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8446D269B0F;
-	Thu, 13 Mar 2025 16:12:34 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA7E2690E6;
-	Thu, 13 Mar 2025 16:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F590269820;
+	Thu, 13 Mar 2025 16:13:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F11C268FFA;
+	Thu, 13 Mar 2025 16:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741882354; cv=none; b=r1Tw1qJEUm5xwOy9Zjv2NEX9XfD3OoV67vDsdjOMTK8HvAKr95Wiv9j1aytSL86DMY/GWpC/mKj2mHj5EwMwYAnSpKAenhvzT3H/ofvPxithpPLNGxiTW3sJjWmukSbj7J9WMFm2ubTfZGZ+qGitaah4VT43jxZBTwgz/lwCE3I=
+	t=1741882413; cv=none; b=i3LpbMqMmJYyPBrXlN4fAZ0/mUWNfo1++k8UsogZVzExYaLV1f0Sbnke8CfRLA8pmjpYTHjblHjr07CmWMBPvQDJz/bQ+ERdD6bAWa9qa98dOaLWsa1ll1UBL2yUh4yNvm9W/1TgZ708CogUqTG0UloFUa4RBe3aQjYj2x9+JCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741882354; c=relaxed/simple;
-	bh=nJgwZ90lvtn9MB8Orqeey9ZWPMtUlNmbJi/0dOUJIEI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SZWkXTMmDCqO/jLNW0eQ2fLOzSmksi52EQauScZOaiIJuc5NXJggVlBHsrf6VyQGyjQhlIu0IXIf+sQ7lLoi8mYKbcyfDvf3p4JdaqpGvgSJVVU4/DYofEug9vH5dK5Q/xwNDrKMvqAsMlLgME89XfSi4Zh5rbWMsjOQi3Sj67Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDC9p4X3zz6H8mF;
-	Fri, 14 Mar 2025 00:09:18 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 90C2C140391;
-	Fri, 14 Mar 2025 00:12:28 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Mar
- 2025 17:12:28 +0100
-Date: Thu, 13 Mar 2025 16:12:26 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Gregory Price <gourry@gourry.net>
-CC: <lsf-pc@lists.linux-foundation.org>, <linux-mm@kvack.org>,
-	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [LSF/MM] CXL Boot to Bash - Section 1: BIOS, EFI, and Early
- Boot
-Message-ID: <20250313161226.00000038@huawei.com>
-In-Reply-To: <Z8ZKKwDnuAjtyohz@gourry-fedora-PF4VCD3F>
-References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
-	<Z6LKJZkcdjuit2Ck@gourry-fedora-PF4VCD3F>
-	<Z8ZKKwDnuAjtyohz@gourry-fedora-PF4VCD3F>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1741882413; c=relaxed/simple;
+	bh=qDQpxnFleLv3LFu0RuGYQWEblbnNu04jHg/Mi33/xmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qiEPEvot9uVIYWVSKmAnFq1EMb6v72vCq8SzVopopOfDENneXlIDz6srG14XNWywNfxtR/Yw4ZT11CUCEXqx+Sar16kza5VmM2wTrPxTjoWalxR8kPYIkjp3QrTuRuKOaLxXYtpjUhCYX+3mVT04vqPNzOwVaTcJo14vZnYRTcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D5EE2150C;
+	Thu, 13 Mar 2025 09:13:39 -0700 (PDT)
+Received: from [10.57.85.159] (unknown [10.57.85.159])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2EF9A3F673;
+	Thu, 13 Mar 2025 09:13:25 -0700 (PDT)
+Message-ID: <ea10caee-59ef-4a00-9b61-37cb0a379411@arm.com>
+Date: Thu, 13 Mar 2025 16:13:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- frapeml500008.china.huawei.com (7.182.85.71)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] arm64: Add BBM Level 2 cpu feature
+Content-Language: en-GB
+To: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
+ suzuki.poulose@arm.com, yang@os.amperecomputing.com, corbet@lwn.net,
+ catalin.marinas@arm.com, will@kernel.org, jean-philippe@linaro.org,
+ robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org,
+ mark.rutland@arm.com, joey.gouly@arm.com, maz@kernel.org,
+ james.morse@arm.com, broonie@kernel.org, anshuman.khandual@arm.com,
+ oliver.upton@linux.dev, ioworker0@gmail.com, baohua@kernel.org,
+ david@redhat.com, jgg@ziepe.ca, shameerali.kolothum.thodi@huawei.com,
+ nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
+ smostafa@google.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ iommu@lists.linux.dev
+References: <20250313104111.24196-2-miko.lenczewski@arm.com>
+ <20250313104111.24196-3-miko.lenczewski@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250313104111.24196-3-miko.lenczewski@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 3 Mar 2025 19:32:43 -0500
-Gregory Price <gourry@gourry.net> wrote:
+On 13/03/2025 10:41, Mikołaj Lenczewski wrote:
+> The Break-Before-Make cpu feature supports multiple levels (levels 0-2),
+> and this commit adds a dedicated BBML2 cpufeature to test against
+> support for, as well as a kernel commandline parameter to optionally
+> disable BBML2 altogether.
+> 
+> This is a system feature as we might have a big.LITTLE architecture
+> where some cores support BBML2 and some don't, but we want all cores to
+> be available and BBM to default to level 0 (as opposed to having cores
+> without BBML2 not coming online).
+> 
+> To support BBML2 in as wide a range of contexts as we can, we want not
+> only the architectural guarantees that BBML2 makes, but additionally
+> want BBML2 to not create TLB conflict aborts. Not causing aborts avoids
+> us having to prove that no recursive faults can be induced in any path
+> that uses BBML2, allowing its use for arbitrary kernel mappings.
+> Support detection of such CPUs.
+> 
+> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
 
-> On Tue, Feb 04, 2025 at 09:17:09PM -0500, Gregory Price wrote:
-> > ------------------------------------------------------------------
-> > Step 2: BIOS / EFI generates the CEDT (CXL Early Detection Table).
-> > ------------------------------------------------------------------
-> > 
-> > This table is responsible for reporting each "CXL Host Bridge" and
-> > "CXL Fixed Memory Window" present at boot - which enables early boot
-> > software to manage those devices and the memory capacity presented
-> > by those devices.
-> > 
-> > Example CEDT Entries (truncated) 
-> >          Subtable Type : 00 [CXL Host Bridge Structure]
-> >               Reserved : 00
-> >                 Length : 0020
-> > Associated host bridge : 00000005
-> > 
-> >          Subtable Type : 01 [CXL Fixed Memory Window Structure]
-> >               Reserved : 00
-> >                 Length : 002C
-> >               Reserved : 00000000
-> >    Window base address : 000000C050000000
-> >            Window size : 0000003CA0000000
-> > 
-> > If this memory is NOT marked "Special Purpose" by BIOS (next section),
-> > you should find a matching entry EFI Memory Map and /proc/iomem
-> > 
-> > BIOS-e820:   [mem 0x000000c050000000-0x000000fcefffffff] usable
-> > /proc/iomem: c050000000-fcefffffff : System RAM
-> > 
-> > 
-> > Observation: This memory is treated as 100% normal System RAM
-> > 
-> >    1) This memory may be placed in any zone (ZONE_NORMAL, typically)
-> >    2) The kernel may use this memory for arbitrary allocations
-> >    4) The driver still enumerates CXL devices and memory regions, but
-> >    3) The CXL driver CANNOT manage this memory (as of today)
-> >       (Caveat: *some* RAS features may still work, possibly)
-> > 
-> > This creates an nuanced management state.
-> > 
-> > The memory is online by default and completely usable, AND the driver
-> > appears to be managing the devices - BUT the memory resources and the
-> > management structure are fundamentally separate.
-> >    1) CXL Driver manages CXL features
-> >    2) Non-CXL SystemRAM mechanisms surface the memory to allocators.
-> >   
-> 
-> Adding some additional context here
-> 
-> -------------------------------------
-> Nuance X: NUMA Nodes and ACPI Tables.
-> -------------------------------------
-> 
-> ACPI Table parsing is partially architecture/platform dependent, but
-> there is common code that affects boot-time creation of NUMA nodes.
-> 
-> NUMA-nodes are not a dynamic resource.  They are (presently, Feb 2025)
-> statically configured during kernel init, and the number of possible
-> NUMA nodes (N_POSSIBLE) may not change during runtime.
-> 
-> CEDT/CFMW and SRAT/Memory Affinity entries describe memory regions
-> associated with CXL devices.  These tables are used to allocate NUMA
-> node IDs during _init.
-> 
-> The "System Resource Affinity Table" has "Memory Affinity" entries
-> which associate memory regions with a "Proximity Domain"
-> 
->         Subtable Type : 01 [Memory Affinity]
->                Length : 28
->      Proximity Domain : 00000001
->             Reserved1 : 0000
->          Base Address : 000000C050000000
->        Address Length : 0000003CA0000000
-> 
-> The "Proximity Domain" utilized by the kernel ACPI driver to match this
-> region with a NUMA node (in most cases, the proximity domains here will
-> directly translate to a NUMA node ID - but not always).
-> 
-> CEDT/CFMWS do not have a proximity domain - so the kernel will assign it
-> a NUMA node association IFF no SRAT Memory Affinity entry is present.
-> 
-> SRAT entries are optional, CFMWS are required for each host bridge.
+I have 2 nits below, but with those resolved:
 
-They aren't required for each HB.  You could have multiple host bridge and one CFMWS
-as long as you have decided to only support interleave.
-I would only expect to see this where the bios is instantiating CFMWS
-entries to match a specific locked down config though.
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
 
+> ---
+>  .../admin-guide/kernel-parameters.txt         |  3 +
+>  arch/arm64/Kconfig                            | 11 +++
+>  arch/arm64/include/asm/cpucaps.h              |  2 +
+>  arch/arm64/include/asm/cpufeature.h           |  6 ++
+>  arch/arm64/kernel/cpufeature.c                | 76 +++++++++++++++++++
+>  arch/arm64/kernel/pi/idreg-override.c         |  2 +
+>  arch/arm64/tools/cpucaps                      |  1 +
+>  7 files changed, 101 insertions(+)
 > 
-> If SRAT entries are present, one NUMA node is created for each detected
-> proximity domain in the SRAT. Additional NUMA nodes are created for each
-> CFMWS without a matching SRAT entry.
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index fb8752b42ec8..3e4cc917a07e 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -453,6 +453,9 @@
+>  	arm64.no32bit_el0 [ARM64] Unconditionally disable the execution of
+>  			32 bit applications.
+>  
+> +	arm64.nobbml2	[ARM64] Unconditionally disable Break-Before-Make Level
+> +			2 support
+> +
+>  	arm64.nobti	[ARM64] Unconditionally disable Branch Target
+>  			Identification support
+>  
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 940343beb3d4..49deda2b22ae 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -2057,6 +2057,17 @@ config ARM64_TLB_RANGE
+>  	  The feature introduces new assembly instructions, and they were
+>  	  support when binutils >= 2.30.
+>  
+> +config ARM64_BBML2_NOABORT
+> +	bool "Enable support for Break-Before-Make Level 2 detection and usage"
+> +	default y
+> +	help
+> +	  FEAT_BBM provides detection of support levels for break-before-make
+> +	  sequences. If BBM level 2 is supported, some TLB maintenance requirements
+> +	  can be relaxed to improve performance. We additonally require the
+> +	  property that the implementation cannot ever raise TLB Conflict Aborts.
+> +	  Selecting N causes the kernel to fallback to BBM level 0 behaviour
+> +	  even if the system supports BBM level 2.
+> +
+>  endmenu # "ARMv8.4 architectural features"
+>  
+>  menu "ARMv8.5 architectural features"
+> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+> index 0b5ca6e0eb09..2d6db33d4e45 100644
+> --- a/arch/arm64/include/asm/cpucaps.h
+> +++ b/arch/arm64/include/asm/cpucaps.h
+> @@ -23,6 +23,8 @@ cpucap_is_possible(const unsigned int cap)
+>  		return IS_ENABLED(CONFIG_ARM64_PAN);
+>  	case ARM64_HAS_EPAN:
+>  		return IS_ENABLED(CONFIG_ARM64_EPAN);
+> +	case ARM64_HAS_BBML2_NOABORT:
+> +		return IS_ENABLED(CONFIG_ARM64_BBML2_NOABORT);
+>  	case ARM64_SVE:
+>  		return IS_ENABLED(CONFIG_ARM64_SVE);
+>  	case ARM64_SME:
+> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+> index e0e4478f5fb5..7f5b220dacde 100644
+> --- a/arch/arm64/include/asm/cpufeature.h
+> +++ b/arch/arm64/include/asm/cpufeature.h
+> @@ -18,6 +18,7 @@
+>  #define ARM64_SW_FEATURE_OVERRIDE_NOKASLR	0
+>  #define ARM64_SW_FEATURE_OVERRIDE_HVHE		4
+>  #define ARM64_SW_FEATURE_OVERRIDE_RODATA_OFF	8
+> +#define ARM64_SW_FEATURE_OVERRIDE_NOBBML2	12
+>  
+>  #ifndef __ASSEMBLY__
+>  
+> @@ -866,6 +867,11 @@ static __always_inline bool system_supports_mpam_hcr(void)
+>  	return alternative_has_cap_unlikely(ARM64_MPAM_HCR);
+>  }
+>  
+> +static inline bool system_supports_bbml2_noabort(void)
+> +{
+> +	return alternative_has_cap_unlikely(ARM64_HAS_BBML2_NOABORT);
+> +}
+> +
+>  int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
+>  bool try_emulate_mrs(struct pt_regs *regs, u32 isn);
+>  
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index d561cf3b8ac7..b936e0805161 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -2176,6 +2176,76 @@ static bool hvhe_possible(const struct arm64_cpu_capabilities *entry,
+>  	return arm64_test_sw_feature_override(ARM64_SW_FEATURE_OVERRIDE_HVHE);
+>  }
+>  
+> +static inline bool bbml2_possible(void)
+> +{
+> +	return !arm64_test_sw_feature_override(ARM64_SW_FEATURE_OVERRIDE_NOBBML2);
 
-Don't forget the fun of CFMWS covering multiple SRAT entries (I think
-we just go with the first one?)
+If you're going to keep this helper, I think it really needs to be:
 
-> 
-> CFMWS describes host-bridge information, and so if SRAT is missing - all
-> devices behind the host bridge will become naturally associated with the
-> same NUMA node.
+return IS_ENABLED(CONFIG_ARM64_BBML2_NOABORT) &&
+       !arm64_test_sw_feature_override(ARM64_SW_FEATURE_OVERRIDE_NOBBML2);
 
-I wouldn't go with naturally for the reason below.  It happens, but maybe
-not natural :)
+Then you would simplify the caller to remove it's own
+IS_ENABLED(CONFIG_ARM64_BBML2_NOABORT) check.
 
-> 
-> 
-> big long TL;DR:
-> 
-> This creates the subtle assumption that each host-bridge will have
-> devices with similar performance characteristics if they're intended
-> for use as general purpose memory and/or interleave.
+But personally I would remove the helper and just fold the test into
+has_bbml2_noabort().
 
-Not just devices, also topologies.  Could well have switches below some
-ports and direct connected devices on others.
+Thanks,
+Ryan
 
-> 
-> This means you should expect to have to reboot your machine if a
-> different NUMA topology is needed (for example, if you are physically
-> hotunplugging a volatile device to plug in a non-volatile device).
-If the bios is friendly you should be able to map that to a different
-CFMWS, but sure what bios is that nice?
-> 
-> 
-> 
-> Stay tuned for more Fun and Profit with ACPI tables :]
-:)
-> ~Gregory
-> 
+> +}
+> +
+> +static bool cpu_has_bbml2_noabort(unsigned int cpu_midr)
+> +{
+> +	/* We want to allow usage of bbml2 in as wide a range of kernel contexts
+> +	 * as possible. This list is therefore an allow-list of known-good
+> +	 * implementations that both support bbml2 and additionally, fulfill the
+> +	 * extra constraint of never generating TLB conflict aborts when using
+> +	 * the relaxed bbml2 semantics (such aborts make use of bbml2 in certain
+> +	 * kernel contexts difficult to prove safe against recursive aborts).
+> +	 *
+> +	 * Note that implementations can only be considered "known-good" if their
+> +	 * implementors attest to the fact that the implementation never raises
+> +	 * TLBI conflict aborts for bbml2 mapping granularity changes.
+> +	 */
+> +	static const struct midr_range supports_bbml2_noabort_list[] = {
+> +		MIDR_REV_RANGE(MIDR_CORTEX_X4, 0, 3, 0xf),
+> +		MIDR_REV_RANGE(MIDR_NEOVERSE_V3, 0, 2, 0xf),
+> +		{}
+> +	};
+> +
+> +	return is_midr_in_range_list(cpu_midr, supports_bbml2_noabort_list);
+> +}
+> +
+> +static inline unsigned int __cpu_read_midr(int cpu)
+
+nit: why the double underscrore prefix?
+
+> +{
+> +	WARN_ON_ONCE(!cpu_online(cpu));
+> +
+> +	return per_cpu(cpu_data, cpu).reg_midr;
+> +}
+> +
+> +static bool has_bbml2_noabort(const struct arm64_cpu_capabilities *caps, int scope)
+> +{
+> +	if (!IS_ENABLED(CONFIG_ARM64_BBML2_NOABORT))
+> +		return false;
+> +
+> +	if (!bbml2_possible())
+> +		return false;
+> +
+> +	if (scope & SCOPE_SYSTEM) {
+> +		int cpu;
+> +
+> +		/* We are a boot CPU, and must verify that all enumerated boot
+> +		 * CPUs have MIDR values within our allowlist. Otherwise, we do
+> +		 * not allow the BBML2 feature to avoid potential faults when
+> +		 * the insufficient CPUs access memory regions using BBML2
+> +		 * semantics.
+> +		 */
+> +		for_each_online_cpu(cpu) {
+> +			if (!cpu_has_bbml2_noabort(__cpu_read_midr(cpu)))
+> +				return false;
+> +		}
+> +
+> +		return true;
+> +	} else if (scope & SCOPE_LOCAL_CPU) {
+> +		/* We are a hot-plugged CPU, so only need to check our MIDR.
+> +		 * If we have the correct MIDR, but the kernel booted on an
+> +		 * insufficient CPU, we will not use BBML2 (this is safe). If
+> +		 * we have an incorrect MIDR, but the kernel booted on a
+> +		 * sufficient CPU, we will not bring up this CPU.
+> +		 */
+> +		return cpu_has_bbml2_noabort(read_cpuid_id());
+> +	}
+> +
+> +	return false;
+> +}
+> +
+>  #ifdef CONFIG_ARM64_PAN
+>  static void cpu_enable_pan(const struct arm64_cpu_capabilities *__unused)
+>  {
+> @@ -2926,6 +2996,12 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>  		.matches = has_cpuid_feature,
+>  		ARM64_CPUID_FIELDS(ID_AA64MMFR2_EL1, EVT, IMP)
+>  	},
+> +	{
+> +		.desc = "BBM Level 2 without conflict abort",
+> +		.capability = ARM64_HAS_BBML2_NOABORT,
+> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+> +		.matches = has_bbml2_noabort,
+> +	},
+>  	{
+>  		.desc = "52-bit Virtual Addressing for KVM (LPA2)",
+>  		.capability = ARM64_HAS_LPA2,
+> diff --git a/arch/arm64/kernel/pi/idreg-override.c b/arch/arm64/kernel/pi/idreg-override.c
+> index c6b185b885f7..9728faa10390 100644
+> --- a/arch/arm64/kernel/pi/idreg-override.c
+> +++ b/arch/arm64/kernel/pi/idreg-override.c
+> @@ -209,6 +209,7 @@ static const struct ftr_set_desc sw_features __prel64_initconst = {
+>  		FIELD("nokaslr", ARM64_SW_FEATURE_OVERRIDE_NOKASLR, NULL),
+>  		FIELD("hvhe", ARM64_SW_FEATURE_OVERRIDE_HVHE, hvhe_filter),
+>  		FIELD("rodataoff", ARM64_SW_FEATURE_OVERRIDE_RODATA_OFF, NULL),
+> +		FIELD("nobbml2", ARM64_SW_FEATURE_OVERRIDE_NOBBML2, NULL),
+>  		{}
+>  	},
+>  };
+> @@ -246,6 +247,7 @@ static const struct {
+>  	{ "rodata=off",			"arm64_sw.rodataoff=1" },
+>  	{ "arm64.nolva",		"id_aa64mmfr2.varange=0" },
+>  	{ "arm64.no32bit_el0",		"id_aa64pfr0.el0=1" },
+> +	{ "arm64.nobbml2",		"arm64_sw.nobbml2=1" },
+>  };
+>  
+>  static int __init parse_hexdigit(const char *p, u64 *v)
+> diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
+> index 1e65f2fb45bd..b03a375e5507 100644
+> --- a/arch/arm64/tools/cpucaps
+> +++ b/arch/arm64/tools/cpucaps
+> @@ -14,6 +14,7 @@ HAS_ADDRESS_AUTH_ARCH_QARMA5
+>  HAS_ADDRESS_AUTH_IMP_DEF
+>  HAS_AMU_EXTN
+>  HAS_ARMv8_4_TTL
+> +HAS_BBML2_NOABORT
+>  HAS_CACHE_DIC
+>  HAS_CACHE_IDC
+>  HAS_CNP
 
 
