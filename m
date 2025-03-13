@@ -1,127 +1,179 @@
-Return-Path: <linux-kernel+bounces-559497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09BB2A5F480
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:32:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2813A5F48E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:33:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC84017CFC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:31:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1298B3BD15D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D862676CD;
-	Thu, 13 Mar 2025 12:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292302676E6;
+	Thu, 13 Mar 2025 12:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CQWub/lC"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hgzDi35J"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69D026772C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C1321423A;
+	Thu, 13 Mar 2025 12:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741868987; cv=none; b=P0JC1675B8ptltdDAOsONqsv5HiQOUdlzRvbhbq6MTSLIT84JetHHOMiYlam+YmRU3N+3g/hVq3b/9G/6vI9PXto8jfxtg8N9d34UwfAfypr50SImTHaBWppQHWC2+uT+MAcSeul/czPkGTgbGbzaHgKoNb0/oJMv/Hb4c2SxeQ=
+	t=1741869090; cv=none; b=WXWxQiTDr0E5JZU8zF9FlYals5pmRZFj+DI0MwLnpqoUekmbX8Cl7nyGloQBozFC6dtGNid2cIgs2ZSP4WzPzFqJA9NLwEw3IdWX1BTwRKKDJtsX5MMXAijNZ5XtKDuiDLR079NRfZICpO6Wz/baF3viBkptH+bRuK3FnF33le0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741868987; c=relaxed/simple;
-	bh=1g+NyktzSKK2XkKOy3k13nywcL9Mhib0LiUglpwfgZw=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=XeX/N4VmoCqtMh8Q0D2+F12RUS1RrpV+jPVpl9PQheQf807/1EqJ0sXfXaR4fsVWU8qQAIsFdxr9XJVOm5aBFcouwm/3g0Ob7SEBrcYCSYWh7OQnUh9/V4nk3ZseRKYY7r+rAMlluEDxDwOYGUn6X+3G+BEzqtGkQOiAivqB5Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CQWub/lC; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-476a57a9379so12235871cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 05:29:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741868982; x=1742473782; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7Zwf41u2oqw87EX3fkunUasMCQRwAQQeTNbOgyP9FzA=;
-        b=CQWub/lC8wNKB1Yhwx5NObbw85YNuo9VstX4QF7oFij3y04I4Ugh+rPvM188+fNxux
-         mJwhLF/AAjVpSEo+4QeZCQpxSTqlodQNJHsTrmSvAiQe5Usfrp8q/polQIRVqYyCjMBA
-         FrL1OxfapIpq9Bbn7F0kXk7Uwab2MmbFLowUAhdl/VPv+rs+2Bm4a5Hg4G+2f8dmJUUC
-         IBQvwMVxy/e1w3SV7cOF3wM6ba+iW9/zOVojPMYumqAvpWsbHvYf4Rh0Yu87z8+nl7PQ
-         7LHuuchejJduzP5pjXxYV2vdfHRX4WTFaSL6cdYWvGC3RCAqvRHIzcZQV4Jkxi5NnT6W
-         4x6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741868982; x=1742473782;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Zwf41u2oqw87EX3fkunUasMCQRwAQQeTNbOgyP9FzA=;
-        b=enEYdE02mpvJ+HMBO4u8Etixovo73dYMEJoofSuHiT8+QsRi8RF34ce4gIFvvyx/8y
-         mp1bdiQrLbxOwW+l/oK70vPv7Zow7op9y1qK8PUStR63VKsQ6imX5pfp0ir4P2/rLS/O
-         7ubyQIfEkASpHSy364MWGcQF+6yfZejOw94uwK5H22nK8jJrQpciLytsG+A6Ay24uiPE
-         4hLcgJHW1A6x1lX6Xruyc9KaNihf6lO3y8DcX5oL/qTVP/zuEd8agyJPBpfP2G69Dwyy
-         H6ujesELmX1YAnqV4Xj/htXnnp2TWhLjkV2UIJcodZKoQoKjyGms31h1YRWo3igNlJYB
-         YYDA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8HzmdlmAHNciaIrUQWzFJvRhh+AMSLyceFqkC0BC3ssEZ+1jvDz7UfwV0Jq9hp2x44luGm+zVFVaxHuE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh6GkW+jkfyAdbQioOPw7OMF0Wu6JqIHuxMi2u+2bRUTuY9T4Z
-	DRmLZvj+ghu9B0cXaluXz70EByDExRgABdQAPw0s4cdbka59mn5XUlUnL2AdvA==
-X-Gm-Gg: ASbGncuBTFPjJ/QB7KfAUNolUO1xShCIB/n1Q0BiUCW/qbUT5m7EjMvIQB6fO5gFTBV
-	2aOsIOJOWiIsYt1jGkXo5O8cqcoc1l+jbqraazxrdBXLDKitTTqomz8/6HqQSzT9OltmM4p0mQ2
-	ky6IxbVffZYKhKG+H6+/Tho15iOtkH8mHEnSQrs8qVT+a65JCVjFQiumh9Rd8wVdsdDR+ZWHiK4
-	BUILIqhLLbRKFajSj8zwdtVueT7oWJywFD8xaCMlPcz7GMUQvzzZBz5xvUDBNraEQwuVR9FbBpG
-	umlA91OuO9V8gCgN08yvDR1gt6PeY1CfaWRa+S3Oqhrl0wqqQpEE5s86Yxhnpy9y/NsBKp3CRnu
-	fmUEKj7V4jW4xKqAAUL4=
-X-Google-Smtp-Source: AGHT+IFnv2N7W3t0ayHxjjtCyn9mUUoe/Hxh3K5QKhmpW8fJk7aFYPPODamWfDzX3U1KP5rz9GLzbQ==
-X-Received: by 2002:ad4:4eed:0:b0:6e8:9957:e705 with SMTP id 6a1803df08f44-6e9006752e0mr464948326d6.34.1741868982415;
-        Thu, 13 Mar 2025 05:29:42 -0700 (PDT)
-Received: from [192.168.7.16] (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade24eabesm8979316d6.67.2025.03.13.05.29.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 05:29:42 -0700 (PDT)
-From: Paul Moore <paul@paul-moore.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, <eparis@redhat.com>, <linux-security-module@vger.kernel.org>, <audit@vger.kernel.org>
-CC: <jmorris@namei.org>, <serge@hallyn.com>, <keescook@chromium.org>, <john.johansen@canonical.com>, <penguin-kernel@i-love.sakura.ne.jp>, <stephen.smalley.work@gmail.com>, <linux-kernel@vger.kernel.org>, <selinux@vger.kernel.org>
-Date: Thu, 13 Mar 2025 08:29:36 -0400
-Message-ID: <1958f7b4780.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <5ea749e38c39e783741bdd0491a1338d@paul-moore.com>
-References: <20250307183701.16970-5-casey@schaufler-ca.com>
- <5ea749e38c39e783741bdd0491a1338d@paul-moore.com>
-User-Agent: AquaMail/1.54.1 (build: 105401536)
-Subject: Re: [PATCH v2 4/6] Audit: Add record for multiple task security contexts
+	s=arc-20240116; t=1741869090; c=relaxed/simple;
+	bh=SaIYexesddvO0UWpmRz0MzTzyVkL/mdX/8rqZt/hSb4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h+iVaCgqNkMABbgeCcY0KkPuHMJscZ8Kz8ofCo+wpGSXweRsEXcOKcYchNY78TMCIV+r+S5IzdiOyPq04zryFD3aLvpqZmtLtmGnd4aEwnQtTtXbU5ReluuH1hkMtmTLCbJ35JFAtxUpX+2fmeO1RN3PUBg2hTmg8Frt4rVZqkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hgzDi35J; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741869088; x=1773405088;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SaIYexesddvO0UWpmRz0MzTzyVkL/mdX/8rqZt/hSb4=;
+  b=hgzDi35JTJqmywopeUpr27IGiRGw+iv7PXHfmbkxZ046+ozsxLa3p/Cq
+   EA2qdB0CNqz6vjEXghAGAOXpWWWt/KxsbnZ62vlrwNZevf8EUtDyjEwA8
+   Xi8EOmEzMAsC7htI+X+1FrgKNgw+WPl4E0ePSZjsfH2x4zglyPgMmnSH+
+   eaaZZkPiSd6GmyJOXniR8pMhjbmceq7iOOFvBNis8LpWekPI3Qs1seoy7
+   H+YbDAQ0Cg50lNavFiqUOQZNTVdD7VC5MXeL4G4dWkPooqhES31Y+MNNr
+   H4AUHGfn/INIhEM4x+NKWHAnSN4Ww8bxz4j5NvIneQRtbGaUwpqP1FgTa
+   w==;
+X-CSE-ConnectionGUID: hcG73BDfTHy3C8i7AnXEAQ==
+X-CSE-MsgGUID: JJemP9z0S9iepOLkuY1qrQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="30571962"
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="30571962"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 05:31:27 -0700
+X-CSE-ConnectionGUID: jQelpd4eTZ2rpBfxbdM9hA==
+X-CSE-MsgGUID: JO4NOY5VRgq94b7DdOX/ZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="121441131"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 05:31:22 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tshiY-00000002Aba-2whI;
+	Thu, 13 Mar 2025 14:31:18 +0200
+Date: Thu, 13 Mar 2025 14:31:18 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Guillaume Stols <gstols@baylibre.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v7 03/10] iio: adc: add helpers for parsing ADC nodes
+Message-ID: <Z9LQFqSweiV-zT3b@smile.fi.intel.com>
+References: <cover.1741849323.git.mazziesaccount@gmail.com>
+ <c8899e8c535a1d93cd7588b7c160eb0fae5d26d2.1741849323.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c8899e8c535a1d93cd7588b7c160eb0fae5d26d2.1741849323.git.mazziesaccount@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-
-On March 12, 2025 7:51:36 PM Paul Moore <paul@paul-moore.com> wrote:
-> On Mar  7, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Thu, Mar 13, 2025 at 09:18:18AM +0200, Matti Vaittinen wrote:
+> There are ADC ICs which may have some of the AIN pins usable for other
+> functions. These ICs may have some of the AIN pins wired so that they
+> should not be used for ADC.
+> 
+> (Preferred?) way for marking pins which can be used as ADC inputs is to
+> add corresponding channels@N nodes in the device tree as described in
+> the ADC binding yaml.
+> 
+> Add couple of helper functions which can be used to retrieve the channel
+> information from the device node.
 
 ...
 
->
->> diff --git a/include/linux/security.h b/include/linux/security.h
->> index 540894695c4b..79a9bf4a7cdd 100644
->> --- a/include/linux/security.h
->> +++ b/include/linux/security.h
->> @@ -168,6 +168,7 @@ struct lsm_prop {
->>
->> extern const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1];
->> extern u32 lsm_active_cnt;
->> +extern u32 lsm_subjctx_cnt;
->
-> I'm not loving this.  More below, but I'd really like to hide some of
-> this detail inside a LSM API/hook if possible.
+> +int devm_iio_adc_device_alloc_chaninfo_se(struct device *dev,
+> +					  const struct iio_chan_spec *template,
+> +					  int max_chan_id,
+> +					  struct iio_chan_spec **cs)
+> +{
+> +	struct iio_chan_spec *chan_array, *chan;
+> +	int num_chan = 0, ret;
 
-Thinking more about this I think we can't go with a LSM_MAX_PROPS, or 
-similar determined at build time since we have the ability to toggle LSMs 
-at boot.  Need to think on this some more, but the answer is going to have 
-to be a variable and not a #define.
+Unneeded assignment.
 
-The LSM init work I'm doing right now directly impacts this, and I'm in the 
-final stages now. Let me see what looks reasonable and I'll get back to you.
+> +	num_chan = iio_adc_device_num_channels(dev);
+> +	if (num_chan < 1)
+> +		return num_chan;
 
---
-paul-moore.com
->
+This is really interesting code. So, if the above returns negative error code,
+we return it, if it returns 0, we return success (but 0 channels)?
+
+Shouldn't we do *cs = NULL; at the case of 0 channels if it's a success?
+(Under success I assume that returned values are okay to go with, and cs in
+your case will be left uninitialised or contain something we don't control.
+
+> +	chan_array = devm_kcalloc(dev, num_chan, sizeof(*chan_array),
+> +				  GFP_KERNEL);
+> +	if (!chan_array)
+> +		return -ENOMEM;
+> +
+> +	chan = &chan_array[0];
+> +
+> +	device_for_each_named_child_node_scoped(dev, child, "channel") {
+> +		u32 ch;
+> +
+> +		ret = fwnode_property_read_u32(child, "reg", &ch);
+> +		if (ret)
+> +			return ret;
+
+> +		if (max_chan_id != -1 && ch > max_chan_id)
+> +			return -ERANGE;
+
+Hmm... What if max_chan_id is equal to an error code?
+Or in other words, why -1 is special and not all negative numbers?
+
+Also note, you used unsigned type and compare it to int which,
+in case of being negative will give promotion. The ch will not be
+big enough in most cases (unless it's great than (INT_MAX + 1).
+
+TL;DR: you have a potential integer overflow here.
+
+> +		*chan = *template;
+> +		chan->channel = ch;
+> +		chan++;
+> +	}
+> +
+> +	*cs = chan_array;
+> +
+> +	return num_chan;
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
