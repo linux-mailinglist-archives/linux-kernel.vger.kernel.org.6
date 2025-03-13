@@ -1,127 +1,148 @@
-Return-Path: <linux-kernel+bounces-559725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 222CDA5F890
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:38:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30E69A5F8AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:41:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25F1B178293
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:37:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C9493B17CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527E7267F70;
-	Thu, 13 Mar 2025 14:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C030268C76;
+	Thu, 13 Mar 2025 14:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="D6qPpum9"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LOnlQYMV"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CD62676CA
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552982686AE
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741876597; cv=none; b=Fyb/M3eTno6Xz/aKT+O8LP6kPAXA7OjUtvwT+K8qE6HEdb+AR+F6EXFWAeGtDHjIkODZ92BBYpBau6sHKi/M9a4jeOrisWZ/MnOtPY4SS2gLni8Mc+fr0SeJTMPuNexwxRzawX+fl5R1/cS3HfY3vXvetnNpobMqgP/0C1mDsK8=
+	t=1741876611; cv=none; b=FTA02lkHs3WtcJ+xF/Mtr6Zx7Rk+IpQy3pA1101W39icbiNgNf8F2NjITUqM2RPftOPN2fFXZ6509rNV/djgRrnJwrnZABVXTbWHEnWzk3r+NfWeWaQdLPsZUSaZxQBD77vhGDZkHSe93Y5B8yOfi1siHK57X6nfhNcBaLNL0Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741876597; c=relaxed/simple;
-	bh=kpdGqB7sRL5WIstUzPvOeT4l/Yq+5vIRdCZmu1RHyOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d5cjidYfxAOzHvS2JJ1r9GfmsyJXRA2C+vEL+3CzSgux2GbseWV2CbOMBM+crdFnUxxwK3G3eDw0SGNBvDnwg4eFVBuszQgZ1968hrlJ5V6aShA2yTsczfCq1CQkSS8HGqtgmKAPbxKTRZvdm5E59v9KNH0XI4UARCa9xhLeoiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=D6qPpum9; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c08b14baa9so74807685a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:36:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1741876595; x=1742481395; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1+GC/kQTwmLeftS0ziJ99XGRNFCxec8W85lzFkXDKks=;
-        b=D6qPpum9gdzy+IMEFk92CTDy7CDq6ZC1Hee39DEIunEg3UCjElH9x9SVbuV87Na9SO
-         +edc8BdHaLqnAjATTyEAtiQ0wGhUujxL9vScIPd8dPUKQnMgbtGYi786Jqyc8V5BiCcu
-         eRTtwFd4d98JLNjB798hg+f2bCx54WUCOWju+8V/Ei6J9f3qV/N27tHbvIo1SHGn0YG5
-         /jCvYn8adcSq5yOV0/vaagmBuT9D2TM4n6ZHOSzgS+ypVTjQfjgZ+VwAixaY7nr8R8Cp
-         wUPOknZF1fHAnK2Spcq/vkRY874+zz99XHkOcRBibCBUMB4fwLAET1exVf00HYFZW5Sy
-         3Xog==
+	s=arc-20240116; t=1741876611; c=relaxed/simple;
+	bh=fcmjexBjqgsbpWuTt8xiQDxio5fQOv40sLnyz2huYyc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Olt7G+tP9EorF4fdA4Yd9CD/dn11DzVyCE+dzE4zbFMNHg2SQIizbDuqBePqzLk/JvdZkmLfp/qz9GMRRREm3wDsTPY0mdP8QjBzl6rG/R5OWN9WstOxawS8QhD+vM+WG8y/UquhBWQhKpCwIB9qR0ib7qkbto4nzmNc4SZ56Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LOnlQYMV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DA8eIZ027346
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:36:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Iayw8L6OX7w5xqy3B7BuifNHp7uwUgTuMGxBekIniRE=; b=LOnlQYMVTahsWjbi
+	rVEBFc9qK85ziMo4ChS2xBAlNqXqTBl5SIq81UVC5F66SQg5JmNIWTnQjoFng3gM
+	ZGetDtXF4zhKhU/qLbxZIiXV8LU0BDGnpJOsSQ+8W+sZJD1rcklDgPf78nMAJW8Z
+	/3UO5ZbbFkCVyqFxiqySACe5RYe1ovHCrzQahNL8qFtvHepAPrgqukq6RdfoZxaF
+	9cAf2yZGbbYOvvLySXY0NYZ99kSvh2IwsE99yuhHkN1pREtDxwb1/PHxngxIGCDS
+	/p8KyrfW4f007ltqzS49AN4WgakqOpF6vGhlLL+r8q2KUC4N5s3ZmmlmornetAVh
+	/FbpEw==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2px5v9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:36:49 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e8fec7ab4dso2814096d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:36:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741876595; x=1742481395;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1+GC/kQTwmLeftS0ziJ99XGRNFCxec8W85lzFkXDKks=;
-        b=ZRA5OOkoxIQREPV7PwbwR8CKryj6jcdAufyb9Do9amQIs86xBPPKzjfFZEafPObA3S
-         uPZBiSRnBZg1CcZbDDFfeTaxlEMR+i4mWPSkfn305s6kTZOIxRWJGnDKBeiSUJHcQyIZ
-         qOjdkIeYkW6i2KwMUgdBCgtnngyInT8UC8lhKuDg+mk1JgfmtnAdjOlzfO304QHKVrFz
-         VIl1115brC7D8uKBQ+ow++EYxB7zhhMtyV8Vn/BoyNNP58Cu2Gw0D1MsTk7f3HaC/+FL
-         ixrFGQ+l04CdMTVAhtcNJwjhxNZh0glhb06tk4vDb4mDB9d9y++OqlxRcf1pCLLm40Cq
-         ZXCg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6ITQQ/cO7PbjFx+PstH30G/Ix2H6/c8gjntGJg4PVDTSVOO7dDJ6h7w+DnC6NF9AK90ZA1p0UfjW6XOg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ/pShOr+nrcQrXY1KETkyLHrwSgaqlGuwiZ9X3fWB6ioUd3Qj
-	twEk1apLgat08liCfwXYwKVUF5ftlbrOP3HYT8aZcp+hQxCaxTmHHX1nv0C2tQ==
-X-Gm-Gg: ASbGncs64azVvY/msUyxc4N2P3+vFnC/EczRtAsUX6t8LcvLQ91/OjDKNhSlhuJ6E69
-	Nf4rkhucygHoiszr/b4mWRk7shO/v0g4rwJ2tEL3A+P3UIS88EQsCBl78t8drzTLQTO+7kx/nFU
-	6gm4C+62FzLIvHnGSD6P++Y+2Qq8CS65m19AohytDq7ABs80JXohr/2wv1/jmslV8JqQIcrtqrU
-	7WNcye22aOXCAe+QiQ2Jukth7t0uasWwXgsqJPbJIgVlGTOaOPMdl68LT20gqjBp4eIvyt2Dayq
-	KLL2e4Lkr8o70NDB+cI5DbDHe+7rtx4y9HhpCaS25JpcgOf6e7pWiFT4fQjvWrE=
-X-Google-Smtp-Source: AGHT+IElO+1ztaV5m+hivSUVgmImy/dTi1GJRC9PcO0ahEH42X8dkNaJACuepjN4sI//XopSPmMOQA==
-X-Received: by 2002:a05:620a:439f:b0:7c5:6396:f161 with SMTP id af79cd13be357-7c56396fac3mr1848651985a.49.1741876594973;
-        Thu, 13 Mar 2025 07:36:34 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573d89b9asm104149985a.99.2025.03.13.07.36.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 07:36:34 -0700 (PDT)
-Date: Thu, 13 Mar 2025 10:36:32 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: daixin_tkzc <daixin_tkzc@163.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-	matthew dharm <mdharm-usb@one-eyed-alien.net>,
-	linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
-	linux-kernel@vger.kernel.org
-Subject: Re:[PATCH] usb: storage: Fix `us->iobuf` size for BOT transmission
- to prevent memory overflow
-Message-ID: <814316b6-013b-4735-995d-b6c0c616c71b@rowland.harvard.edu>
-References: <20250311084111.322351-1-daixin_tkzc@163.com>
- <2b6c4aa7.b165.1958f6b7a3a.Coremail.daixin_tkzc@163.com>
+        d=1e100.net; s=20230601; t=1741876608; x=1742481408;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Iayw8L6OX7w5xqy3B7BuifNHp7uwUgTuMGxBekIniRE=;
+        b=BMdpLE3TzHFmf1mWTq3+oEi1nvVULDGj/9p1XGDQG6zLL09FNT5BI4AhJGxsd6EV40
+         0izLGaGl8EoBe0SAR5d8VEL8EWYuhiXKtc7ouIeaYUHtL99RsPRF71Bf22f/ngu8/mO+
+         TCm7af0hUk2MYaQnbWQ8VNODVjgLFvlzbe7CrNwNPngR56fU8aCm1bbm4FDFCO766vN2
+         o7vpz5emMtjicsJzNIMmNXzHWGFY78brMrKVFm16J3zuEB2GMuoujRct6SUYDKLleBAd
+         5U+7c1wGbV8Y1q/ZMgihT70FEBdpgPzwECcycZPGGQ4/tGAbTQJmQnR5IDJuB+2/7jV1
+         +QtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9hetz1DMOJJTsu9st0Bpls/AZDOidsod4Pg6NMvG+/ZIj6lglZsaz+DRuL0dnzRs2LL0iSTib1uG8yTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwndZPrMJ/yIEGEW2tu0Gg8IqaQNjHRM7LNgB8/VZVgfi3eD+0X
+	gF/eOKH9JxMB88mPW9Mv4wC2wbtjU0rKqOOj59Rsa0oG+hWVKKtpI5iNqb0Ar7j6tQD5+WTjAon
+	4v5fJi1mNNFrxORchWMSYFj2Iw+GaZbvGb/3agI+dGjhV4Udx2WFqxQNOtAYlXzeUpYETiEM=
+X-Gm-Gg: ASbGnct9crXfFwsOmZ6ZFI/0K+NspXWabYIwWKg9JzVgpJxMAXHi0kvy8mLHa0uVCdm
+	2yB3H4rn8VcQErw5CQG01SDgXMXznS+ic/VzZnf/Bzu4c2qawDNACoVqcjON8kfnXcxDh04zqrQ
+	cm0u34yjD+BziYKjw80bvCPtIioMaMBEqd2HrrgG6A9tntpsRzY1Ao007Qr1wKDPMd1tP6/M6Ww
+	WWTDsJS37mFNLwM6HP5d97ugBaKPy6+GNiNvLb+JDAELadNwk4MXAeQyGSHwTfvBlLV6M4xb1fC
+	60Wu5C4YIx6Ch/89p1AzG+Yl20fH3AVdrUNs1CVkhg0Khb3iPIA7eLm8oQ6ZdR/dJ3gacg==
+X-Received: by 2002:ad4:5c6e:0:b0:6e6:5cad:5ce8 with SMTP id 6a1803df08f44-6e908d5cd3fmr118537716d6.6.1741876607910;
+        Thu, 13 Mar 2025 07:36:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtErHMVXuVhR9/1k6bEnfgqC6qn9DQ6fe884e1yhVTkqGYcXJ5LojlhftI2iNuNv3u6p6Rwg==
+X-Received: by 2002:ad4:5c6e:0:b0:6e6:5cad:5ce8 with SMTP id 6a1803df08f44-6e908d5cd3fmr118537536d6.6.1741876607455;
+        Thu, 13 Mar 2025 07:36:47 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3149d0df9sm87916766b.99.2025.03.13.07.36.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 07:36:46 -0700 (PDT)
+Message-ID: <2fb1ddf6-0fca-4bf6-9970-728448f893d2@oss.qualcomm.com>
+Date: Thu, 13 Mar 2025 15:36:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2b6c4aa7.b165.1958f6b7a3a.Coremail.daixin_tkzc@163.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] ARM: dts: qcom: sdx75: Add QPIC NAND support
+To: Kaushal Kumar <quic_kaushalk@quicinc.com>, vkoul@kernel.org,
+        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        manivannan.sadhasivam@linaro.org, miquel.raynal@bootlin.com,
+        richard@nod.at, vigneshr@ti.com, andersson@kernel.org,
+        konradybcio@kernel.org, agross@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org
+References: <20250313130918.4238-1-quic_kaushalk@quicinc.com>
+ <20250313130918.4238-5-quic_kaushalk@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250313130918.4238-5-quic_kaushalk@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=P506hjAu c=1 sm=1 tr=0 ts=67d2ed81 cx=c_pps a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=ncw13XDXEW9X0_jSTFUA:9 a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-GUID: BSmO7CQPjTADJ1aAz1h6U2pQo6G8vLHI
+X-Proofpoint-ORIG-GUID: BSmO7CQPjTADJ1aAz1h6U2pQo6G8vLHI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_06,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ mlxscore=0 spamscore=0 bulkscore=0 priorityscore=1501 impostorscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=845 lowpriorityscore=0
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503130114
 
-On Thu, Mar 13, 2025 at 08:12:20PM +0800, daixin_tkzc wrote:
-> Thank you for reviewing my patch.
-> 
-> 
-> I'm sorry I just responded individually.
-> 
-> 
-> Of course, when the USB device and host are transmitting normally, us->iobuf size is 64, which is enough for CBW/CSW and there will be no problem. 
-> Howerver, we encountered a problem in the FPGA verification environment, that is, the DWC otg controller detected a Babble Error, and we believe that the processing flow of the device driver will cause the risk of us->iobuf overflow. 
-> 
-> 
-> Regarding USB Babble Error, the DWC_otg_programming manual describes it as follows:
-> |
-> 
-> 3.8.1 Handling Babble Conditions
-> 
-> DWC_otg handles two cases of babble: packet babble and port babble. Packet babble occurs if the device sends more data than the maximum packet size for the channel. Port babble occurs if the controller continues to receive data from the device at EOF2 (the end of frame 2, which is very close to SOF).
-> 
-> When DWC_otg detects a packet babble, it stops writing data into the Rx buffer and waits for the end of packet (EOP). When it detects an EOP, it flushes already-written data in the Rx buffer and generates a Babble interrupt to the application
-> 
-> |
+On 3/13/25 2:09 PM, Kaushal Kumar wrote:
+> Add devicetree node to enable support for QPIC
+> NAND controller on Qualcomm SDX75 platform.
+> Since there is no "aon" clock in SDX75, a dummy
+> clock is provided.
 
-What is your point?
+Alter the bindings not to require it then, instead
 
-Are you claiming that the DWC_otg driver doesn't handle packet babble 
-properly?  If that is true then you need to fix the DWC_otg driver, not 
-change the usb-storage driver.
+[...]
 
-You have not done a good job of explaining how us->iobuf overflow could 
-occur.
+>  
+> +		qpic_nand: nand-controller@1cc8000 {
+> +			compatible = "qcom,sdx75-nand", "qcom,sdx55-nand";
+> +			reg = <0x0 0x01cc8000 0x0 0x10000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			clocks = <&rpmhcc RPMH_QPIC_CLK>,
+> +				 <&nand_clk_dummy>;
+> +			clock-names = "core", "aon";
+> +
+> +			dmas = <&qpic_bam 0>,
+> +			       <&qpic_bam 1>,
+> +			       <&qpic_bam 2>;
+> +			dma-names = "tx", "rx", "cmd";
 
-Alan Stern
+Please make dma-names a vertical list, just like dmas
+
+Konrad
 
