@@ -1,158 +1,91 @@
-Return-Path: <linux-kernel+bounces-559175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A30A5F066
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:15:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6196A5F06F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:18:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 272D517CD89
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:15:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 795213B61DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63419264F8C;
-	Thu, 13 Mar 2025 10:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E8F264FBB;
+	Thu, 13 Mar 2025 10:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugcnYxaZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D08O7btk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24171EE028
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A17265600
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741860899; cv=none; b=A3uo1BRAifhOKIRpb29i25zAlQkKWuRDD97V90HJXGiNXTNEk52w2LwhtxfQwIjrFu30gGkYgn7n3zs0/hD3ySa4zYbS/qeytqQliL5GwluIonzVqRjAOylM6KzO84XrR6s4FUejwDO4JppPdn4piGw2WUnzcsvLWGr9O4FNQhI=
+	t=1741861076; cv=none; b=ld/UzDWgf3Yku/Z8u4jb6bYmriwIQFQYlZoMq10i173HlHS+yU5rrCjrsaqSLIRS5dqwt5N4AWtHShdaz/Ullr+//N8Ag2GX/Q6OCNGV1TykOevtjXhZxaByX/fTb8hI/Z8bFZT8FK2F6zBg341N4sXCAXYiiAKjLt8rAQbZN5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741860899; c=relaxed/simple;
-	bh=WVTEqUhJ7/BgMAK8ZwgIuXdFji02ZncxR5TKwQmTydA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nv1Xzatok0hkJmcX5EbfpgCysDUlILSMKgT7SgQLEd8745AH2MtpjSvAVj5HIA4DNrN5WUhQGgv5B1OqiPFQntrLfHCXJ63GCoe912pfKPYJ/6zIUnKFUkWpJ6bEAODOpXnITxKsN1WaOYsAuJA2DC9Hq2gbB72cyRsW0jXuk6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ugcnYxaZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3EC6C4CEDD;
-	Thu, 13 Mar 2025 10:14:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741860899;
-	bh=WVTEqUhJ7/BgMAK8ZwgIuXdFji02ZncxR5TKwQmTydA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ugcnYxaZ4SuG1MgMOz3S0kNiRFbRMTjZmgfV5hzriwytxOlfJ8g1BLLnBGW0YZA/o
-	 2plpQsJDhC018QK6x8+RpXRu7pkUFc3tPr+sSt4y8DgGgx9zjAfRRUu1bLQGgk2Nx/
-	 H2XV9MYhCho1rcdZq7Qw3s86gINvw4166a4l1Nzrw7UqBEqGoLOI7pdgBlnTFstLUO
-	 vhwy0kFjoONtNpexeC7zdPaSecEHFIPFv20aOYPd508hFCSEc+qTQFQBj326CMkh1j
-	 ct6x6YZdAVC9nfJT0G9bEj+JWgT7c2/OloXbsMJi6ESQLIkkUjryjh6ncQKInPoUCs
-	 onwL5cbu/J5sA==
-Date: Thu, 13 Mar 2025 11:14:51 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: x86@kernel.org, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"H . Peter Anvin" <hpa@zytor.com>, Uros Bizjak <ubizjak@gmail.com>,
-	Sandipan Das <sandipan.das@amd.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Eric Biggers <ebiggers@google.com>, Xin Li <xin3.li@intel.com>,
-	Alexander Shishkin <alexander.shishkin@intel.com>,
-	Kirill Shutemov <kirill.shutemov@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] x86/cpufeature: Warn about unmet feature dependencies
-Message-ID: <Z9KwG9t2OVhoapZc@gmail.com>
-References: <20250307000204.3581369-1-sohil.mehta@intel.com>
- <Z8resWzgtZaTuzEN@gmail.com>
- <ed81aa4e-6ebc-40ad-af45-289cc7138c0f@intel.com>
+	s=arc-20240116; t=1741861076; c=relaxed/simple;
+	bh=/Shtpfb7BHCmzgzI2E8QdrJ71iVjmgVHThFuwFqzFtg=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=JSQoGzAWhtUxJKK8fZypBchPmWCmj4eNoKUYFkjF/sBV4qrR/MZBgKJyNeEC+ZM4AYn435EzbUEeQfJSZDVYy1YbjZ1rTSeLaAZZPv1RtZVcB0/dwXEp+H2OgiJO+OpqId1zChnCc0n9oNuuqkHHi7LP8/z3QLXcvXDgPKIHkaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D08O7btk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741861073;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=9PuNOtOdGXpJpaKSTTpElFraHIPQkY93SwNR6N9vnoY=;
+	b=D08O7btkmIbVxm2ihcEgdR/v41ic8sB7EYAutQ3qBBncR+2a1zSMd8w7secNSNPMyLCnUn
+	S94ie9DHsUHtAQ9tPe/21+SR0h8kk2LPjzSYH2SXNlmOii8MOZ1XKwjjgFu2IZZ5bCm3QT
+	ILIIBpgmczRTm4M3vrzZaAa2hSr9D4Y=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-120-x84u6bDdNuuDAdK_8PXEiw-1; Thu,
+ 13 Mar 2025 06:17:49 -0400
+X-MC-Unique: x84u6bDdNuuDAdK_8PXEiw-1
+X-Mimecast-MFC-AGG-ID: x84u6bDdNuuDAdK_8PXEiw_1741861068
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 30EB9195608B;
+	Thu, 13 Mar 2025 10:17:48 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A73AE1800945;
+	Thu, 13 Mar 2025 10:17:43 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
+    Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+    Christian Brauner <brauner@kernel.org>, ceph-devel@vger.kernel.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Does ceph_fill_inode() mishandle I_NEW?
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ed81aa4e-6ebc-40ad-af45-289cc7138c0f@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1385371.1741861062.1@warthog.procyon.org.uk>
+Date: Thu, 13 Mar 2025 10:17:42 +0000
+Message-ID: <1385372.1741861062@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
+ceph_fill_inode() seems to be mishandling I_NEW.  It only check I_NEW when
+setting i_mode.  It then goes on to clobber a bunch of things in the inode
+struct and ceph_inode_info struct (granted in some cases it's overwriting with
+the same thing), irrespective of whether the inode is already set up
+(i.e. if I_NEW isn't set).
 
-* Sohil Mehta <sohil.mehta@intel.com> wrote:
+It looks like I_NEW has been interpreted as to indicating that the inode is
+being created as a filesystem object (e.g. by mkdir) whereas it's actually
+merely about allocation and initialisation of struct inode in memory.
 
-> On 3/7/2025 3:55 AM, Ingo Molnar wrote:
-> 
-> >>  
-> >> +	/* Scan for unmet dependencies based on the CPUID dependency table */
-> >> +	scan_feature_dependencies(c);
-> > 
-> > s/scane_feature_dependencies
-> >  /x86_check_cpufeature_deps
-> > 
-> 
-> How about check_cpufeature_deps() without the "x86" prefix? It would
-> blend in with the other function calls in early_identify_cpu() and
-> identify_cpu().
+David
 
-Yeah, I suppose that would work too. There's no discernible rhyme and 
-reason to the naming choices within the interfaces used by 
-arch/x86/kernel/cpu/common.c that I can see, so I suppose the shorter 
-one that is still unambiguous wins.
-
-> >> + */
-> >> +static const char *x86_feature_name(unsigned int feature, char *buf)
-> >> +{
-> >> +	if (x86_cap_flags[feature])
-> >> +		return x86_cap_flags[feature];
-> >> +
-> >> +	snprintf(buf, 16, "%d*32+%2d", feature / 32, feature % 32);
-> >> +
-> >> +	return buf;
-> >> +}
-> >> +
-> 
-> I was wondering if it would be better to build the feature name using 
-> a macro and reusing it elsewhere? This is all I could come up with:
-> 
-> /*
->  * Use with a %s format specifier to print the feature name.
->  *
->  * Return the feature "name" if set, otherwise return the X86_FEATURE_*
->  * numerals to make it easier to identify the feature.
->  */
-> #define x86_feature_name(feature) \
-> 	(x86_cap_flags[feature] ? x86_cap_flags[feature] : \
-> 	({ \
-> 		char buf[16]; \
-> 		snprintf(buf, 16, "%d*32+%2d", feature >> 5, feature & 31); \
-> 		buf; \
-> 	}) \
-> 	)
-
-I'm not sure this is an improvement.
-
-> This would remove the need for callers to explicitly define a buffer. 
-> Also, it would help reduce a few lines in the newly merged 
-> parse_set_clear_cpuid(). But overall, it doesn't seem worth it. Let 
-> me know if you think otherwise or have a better idea.
-
-No good ideas right now.
-
-> > I'd make this a bit less passive-aggressive, something like:
-> > 
-> >      x86 CPU feature dependency check failure: CPU%d has '%s' enabled but '%s' disabled. Kernel might be fine, but no guarantees.
-> > 
-> 
-> Sure! How about making it slightly shorter?
-> 
-> "x86 CPU feature check: CPU%d has '%s' enabled but '%s' disabled. Kernel
-> might be fine, but no guarantees."
-
-Yeah, so I really wanted to sneak in the 'dependency' part - because 
-it's not necessarily obvious from the text, and most syslog readers 
-will have no idea what it's all about.
-
-I don't think line length should be an issue for a message we don't 
-expect to trigger normally. Clarity is more important.
-
-Thanks,
-
-	Ingo
 
