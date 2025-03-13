@@ -1,105 +1,100 @@
-Return-Path: <linux-kernel+bounces-560062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4002BA5FD26
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:12:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBDD9A5FD27
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:12:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 042D51896C67
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:12:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C28C67A1862
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6E4269D1B;
-	Thu, 13 Mar 2025 17:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21A7269D17;
+	Thu, 13 Mar 2025 17:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QaNbA1+N"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OUKlJdm3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="beLv1MYd";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OUKlJdm3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="beLv1MYd"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7A3269CF8
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8CB63B9
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741885932; cv=none; b=Ixcey3+/virrJYlqASUlIBOa098S42SGZpm/1+38lZvzOyejL6dCnsMaDjA3Tw2lkuOZafbTdslLXbtHlNMda5OJ6a4IlsaT4m01kzXK2fsv26VnnMUAZXuDqLie0mdZgXCQLXvQ5LHb/Ux2aXHQhyWV6POQDfZLCTBjljL1lG4=
+	t=1741885940; cv=none; b=lSfBETXOSTLpG+GohY6dhdnVdXEJ6mFh1wefBoDpKeLKW2LYPgNkEatpmSVoqNFWj579aEqCUBpCvK5awzdND5PW0cu71oaV2mNW7hFNwg7hpHs1KRSvqrMiliEuIjtjvEe0nSyPfEJUW4aDBCGfgF+/DKkF2tprDjWRcEGd6/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741885932; c=relaxed/simple;
-	bh=+eE9WT0Gb1oQ7l+5iK4YZ/BXWxyzhii5ao/7GfKePmg=;
+	s=arc-20240116; t=1741885940; c=relaxed/simple;
+	bh=dAUUa1OubLTz1bv/k0IIf4cOnDgx406ok2+wXz2Tctw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MdVedb8ixKYIc8B1DGueoRXw+dEX6coil0oTmP8LyxcyaVJiMsoNTfLb6h33L5dmYxgqeEz2hTUd6aeaGHzyai8BucfezgfrdTdwgUL4Trk2ZnbiFS7mFKuKyGFSLD7hrM+eQtQ0nWVWoJLo2byRF4tT4Y+2rp3KdqFcBal25TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QaNbA1+N; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741885929;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S35uhZQ7N9Mqu/xNHX45VhH6raEHmy+88xG7YsvggTPMtyikZtfo/dOZ+JaG1ttSRa4fxwnTVQ9bH2sRkJHwiOxs/ypZoVRdWigF/WoBGizwgi+4ArCv8iBkNMrQu4HDNnCjhla6mG+uDaweL5tTkQ9tGXBKmOvm8XL3Fgd1TRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OUKlJdm3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=beLv1MYd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OUKlJdm3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=beLv1MYd; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 019081F457;
+	Thu, 13 Mar 2025 17:12:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741885936; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nGrmHbgAII+9uPhNMvyhCYNvKc1gV86tMiTemisyc0o=;
-	b=QaNbA1+NAuA+wbzmhT1/6VZk0H5w7q3NvC+LpXSXrkjy7/HvRy5YID5COUNSPH6CgCUfcI
-	I8tlw72eu7L5Hluw9dcuyLJ5SggF0Pwl4dzf+nzEa6bvJa/56ph7sF3e2mEXex+tt3CCYy
-	bM+NNj3zxxzWkHJ6dHQCwzFlnO6XLqg=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-640-n5uJ0epTM6mc8sBHsyJ2oA-1; Thu, 13 Mar 2025 13:12:08 -0400
-X-MC-Unique: n5uJ0epTM6mc8sBHsyJ2oA-1
-X-Mimecast-MFC-AGG-ID: n5uJ0epTM6mc8sBHsyJ2oA_1741885927
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43cfda30a3cso6477885e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:12:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741885925; x=1742490725;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nGrmHbgAII+9uPhNMvyhCYNvKc1gV86tMiTemisyc0o=;
-        b=sc07QJl0gNDQgGUyVHnRbYfVVND251sGg65wW7hbdMhhOkTwzQrsslkcW27cITeNT+
-         gVBVhOfUDJFy9k+04Iad9QeA2KZfbHb3d7CFXSYt+xiod3rgDKVcBW7UjZGQzQMLALlr
-         JeASA1xXplRAy2pzM4ibEQkRTTbB06S/+ZUWKNPweZnlWK9OfKOTUXcm/fOfzStcO4a7
-         qpWfFL93lIBG7T6qEQJzNyYQ88pJni5MPPJPGq8M77lWQ/E4UfShcJO/MDSqlyFsZQ/D
-         r/t+8LQOtj651LkSS/DrkATiQeyNzJ3gu6RdS7PHWLOjTMs9Gg31TZ26Qi3weOVwo+9m
-         HZ+Q==
-X-Gm-Message-State: AOJu0Yxj2PMShFEj3vg8wX95DdKX/o+lZuo/2UuPATj/GKC9yLUz43T/
-	nIsJQbynY8aRtaIEY/rl7zXWh8BvP/lqgDqro5ZNAyQi4pd09eMk+1Iq5NoUDAO6zo0JjN5CVK3
-	nPP2EPGrfSAm+/GX57dW0p/kXjY66nLifzxpvCjzFRvZ1DvxhoHPdEWelB0Nt7thIR75p1ns8bE
-	qjvQVd4Nv6lL6gA83vPOCWoxoWoF7kAPfRZFzMmLFz1iK64fzX
-X-Gm-Gg: ASbGnct9/KVx63tt5l5+a+J5izQnPPw3+CvcVPZFMbRJ69UDNy/HsOkeln1e5kYJU4L
-	ijlKnKeIv2YJa4fosNis7wt4x0XHxEpEIxr15CywKJhrVnm/aZlOxRZzO4Weca68hgVQsd1xT3t
-	CFjKfjZrUYeiZNpWm44qtyEPtPFrR2OvOzrnb9eIGOZ61YAeWxYnDxlFxbvA9N5shDgCCoWJAM2
-	pj1WqIgEs/mJzuY/LCMvd4PXEEp3JEeXCkz3tGBXvSDb7WeCLyEXSrwCDN1aiTtnTY4gZyyVSME
-	+Eve2GXYxQ/Cg0cYoRVx85eW7qqcYiREdV6+0jmzU1k=
-X-Received: by 2002:a05:600c:3b1a:b0:43c:eea9:f45d with SMTP id 5b1f17b1804b1-43d1d8c6d50mr4689145e9.18.1741885925455;
-        Thu, 13 Mar 2025 10:12:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEyjRHKruacR3ykIkv2Ici+Gurb8exc5FYumQgohkNFhqNL6UYwE5HWX2mxAmRslvWd1m7+Tg==
-X-Received: by 2002:a05:600c:3b1a:b0:43c:eea9:f45d with SMTP id 5b1f17b1804b1-43d1d8c6d50mr4688815e9.18.1741885925020;
-        Thu, 13 Mar 2025 10:12:05 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.49.7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a8c5d04sm62439625e9.27.2025.03.13.10.12.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 10:12:04 -0700 (PDT)
-Date: Thu, 13 Mar 2025 18:12:02 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Phil Auld <pauld@redhat.com>, luca.abeni@santannapisa.it,
-	tommaso.cucinotta@santannapisa.it,
-	Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH v4 6/8] cgroup/cpuset: Remove
- partition_and_rebuild_sched_domains
-Message-ID: <Z9MR4ryNDJZDzsSG@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250313170011.357208-1-juri.lelli@redhat.com>
+	bh=K4ICCjQ2QaChT0WMUS7l+2tIWo1GGw2+dqcK619hsvk=;
+	b=OUKlJdm3ZHBUuBP3+WwT6Drxeyk8a07l6E2YRbveigwJcewnRYMT92sUwJZSXSXPDXXjCJ
+	myrj+9zrcubOiX5yGx4WbJLjCo4ap33kZiynfGKJ+xGlIlf28IjbFIgaeiwPnHmUqkk5md
+	XnOwvx63eJdNm8rmAdswDQkODeWeqGA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741885936;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K4ICCjQ2QaChT0WMUS7l+2tIWo1GGw2+dqcK619hsvk=;
+	b=beLv1MYdJzVP9GgHEFoSaent1f2y3D2KvlsxRuOuS2Q7rxB3F5Qy2TkarcWR44d2+MfXVq
+	cZcDAbzHz1OKenBA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=OUKlJdm3;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=beLv1MYd
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741885936; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K4ICCjQ2QaChT0WMUS7l+2tIWo1GGw2+dqcK619hsvk=;
+	b=OUKlJdm3ZHBUuBP3+WwT6Drxeyk8a07l6E2YRbveigwJcewnRYMT92sUwJZSXSXPDXXjCJ
+	myrj+9zrcubOiX5yGx4WbJLjCo4ap33kZiynfGKJ+xGlIlf28IjbFIgaeiwPnHmUqkk5md
+	XnOwvx63eJdNm8rmAdswDQkODeWeqGA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741885936;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K4ICCjQ2QaChT0WMUS7l+2tIWo1GGw2+dqcK619hsvk=;
+	b=beLv1MYdJzVP9GgHEFoSaent1f2y3D2KvlsxRuOuS2Q7rxB3F5Qy2TkarcWR44d2+MfXVq
+	cZcDAbzHz1OKenBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ECFB913797;
+	Thu, 13 Mar 2025 17:12:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id W0zTOe8R02ePOwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 13 Mar 2025 17:12:15 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A7096A0908; Thu, 13 Mar 2025 18:12:11 +0100 (CET)
+Date: Thu, 13 Mar 2025 18:12:11 +0100
+From: Jan Kara <jack@suse.cz>
+To: ye.xingchen@zte.com.cn
+Cc: brauner@kernel.org, jeff.johnson@oss.qualcomm.com, jack@suse.cz, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] nls: Fix utf8s_to_utf16s parameter =?utf-8?Q?type_?=
+ =?utf-8?Q?in_declaration_and=C2=A0definition?=
+Message-ID: <f6a3zjnituwlspbsjhiy47anx2yf24fpzofhm2nablqsk4rj6l@qfsq7pyyakba>
+References: <20250313163601139fRqick9X3NNePcVQzW3na@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,54 +103,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250313170011.357208-1-juri.lelli@redhat.com>
+In-Reply-To: <20250313163601139fRqick9X3NNePcVQzW3na@zte.com.cn>
+X-Rspamd-Queue-Id: 019081F457
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-partition_and_rebuild_sched_domains() and partition_sched_domains() are
-now equivalent.
+On Thu 13-03-25 16:36:01, ye.xingchen@zte.com.cn wrote:
+> From: YeXingchen <ye.xingchen@zte.com.cn>
+> 
+> The declaration of utf8s_to_utf16s in the header file uses
+> bool maxlen as the parameter type, while the definition uses bool maxout.
+> 
+> This patch aligns the parameter name in the definition with the
+> declaration,changing inlen to len,maxout to maxlen to ensure consistency.
+> 
+> Signed-off-by: YeXingchen <ye.xingchen@zte.com.cn>
 
-Remove the former as a nice clean up.
+Thanks for the patches but you should rather be modifying prototypes in
+include/linux/nls.h to match the real declaration. If you actually check
+the history, you'll notice commit 045ddc8991698 modified the implementation
+but forgot to update the prototypes in include/linux/nls.h. And the names
+in the implementation are indeed more descriptive.
 
-Suggested-by: Waiman Long <llong@redhat.com>
-Reviewed-by: Waiman Long <llong@redhat.com>
-Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
-Reviewed-by: Valentin Schneider <vschneid@redhat.com>
-Tested-by: Waiman Long <longman@redhat.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
----
- kernel/cgroup/cpuset.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+								Honza
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 1892dc8cd211..a51099e5d587 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -993,15 +993,6 @@ void dl_rebuild_rd_accounting(void)
- 	rcu_read_unlock();
- }
- 
--static void
--partition_and_rebuild_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
--				    struct sched_domain_attr *dattr_new)
--{
--	sched_domains_mutex_lock();
--	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
--	sched_domains_mutex_unlock();
--}
--
- /*
-  * Rebuild scheduler domains.
-  *
-@@ -1063,7 +1054,7 @@ void rebuild_sched_domains_locked(void)
- 	ndoms = generate_sched_domains(&doms, &attr);
- 
- 	/* Have scheduler rebuild the domains */
--	partition_and_rebuild_sched_domains(ndoms, doms, attr);
-+	partition_sched_domains(ndoms, doms, attr);
- }
- #else /* !CONFIG_SMP */
- void rebuild_sched_domains_locked(void)
+
+> ---
+> v1->v2
+> fix the parameter
+>  fs/nls/nls_base.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/nls/nls_base.c b/fs/nls/nls_base.c
+> index 18d597e49a19..fcce6ff1380a 100644
+> --- a/fs/nls/nls_base.c
+> +++ b/fs/nls/nls_base.c
+> @@ -129,24 +129,24 @@ static inline void put_utf16(wchar_t *s, unsigned c, enum utf16_endian endian)
+>  	}
+>  }
+> 
+> -int utf8s_to_utf16s(const u8 *s, int inlen, enum utf16_endian endian,
+> -		wchar_t *pwcs, int maxout)
+> +int utf8s_to_utf16s(const u8 *s, int len, enum utf16_endian endian,
+> +		wchar_t *pwcs, int maxlen)
+>  {
+>  	u16 *op;
+>  	int size;
+>  	unicode_t u;
+> 
+>  	op = pwcs;
+> -	while (inlen > 0 && maxout > 0 && *s) {
+> +	while (len > 0 && maxlen > 0 && *s) {
+>  		if (*s & 0x80) {
+> -			size = utf8_to_utf32(s, inlen, &u);
+> +			size = utf8_to_utf32(s, len, &u);
+>  			if (size < 0)
+>  				return -EINVAL;
+>  			s += size;
+> -			inlen -= size;
+> +			len -= size;
+> 
+>  			if (u >= PLANE_SIZE) {
+> -				if (maxout < 2)
+> +				if (maxlen < 2)
+>  					break;
+>  				u -= PLANE_SIZE;
+>  				put_utf16(op++, SURROGATE_PAIR |
+> @@ -156,15 +156,15 @@ int utf8s_to_utf16s(const u8 *s, int inlen, enum utf16_endian endian,
+>  						SURROGATE_LOW |
+>  						(u & SURROGATE_BITS),
+>  						endian);
+> -				maxout -= 2;
+> +				maxlen -= 2;
+>  			} else {
+>  				put_utf16(op++, u, endian);
+> -				maxout--;
+> +				maxlen--;
+>  			}
+>  		} else {
+>  			put_utf16(op++, *s++, endian);
+> -			inlen--;
+> -			maxout--;
+> +			len--;
+> +			maxlen--;
+>  		}
+>  	}
+>  	return op - pwcs;
+> -- 
+> 2.25.1
 -- 
-2.48.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
