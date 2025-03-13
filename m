@@ -1,181 +1,112 @@
-Return-Path: <linux-kernel+bounces-559656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743A5A5F73C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:06:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F33A5F73E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:07:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6F54168520
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:06:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45754188A41E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB088267AE9;
-	Thu, 13 Mar 2025 14:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6924E267B11;
+	Thu, 13 Mar 2025 14:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="O3so/JpO"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="y/o9KKF7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A95F35944
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB1935944;
+	Thu, 13 Mar 2025 14:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741874788; cv=none; b=FiQl3+FysxQ26D8W5Fp4Oq4FGPK7ogVT6BnDHOliJ36mX7vrLs+iQGZljsX/qnQXpW2vPV7SRfgyfqrU93Y+UwksqOeC/ei3e0fJnp1DO9AXF5dU9Y8CQtlGrtPFqTFuCGv6HB9EHmT5YlJ5i0zx9vlCh278f8dRbuX4W0NFz0w=
+	t=1741874828; cv=none; b=KX2TvcLaDHJfuLPOb/9/g50RyZpfCyaRQYImA9TBUFWTv2GqtcIN3D+dOQKlSEzer50qYWej+Haz/LEyVd8anqHPjqowtSCHmYMpkFJb3V9jSoUkbKXf2Q5dMU7zFdtBR3eyvPC2mWqWG9mlsFiXtgoslGcievO15Fih090Vpzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741874788; c=relaxed/simple;
-	bh=U6YYA0pQzHVT5ZNcufy8EzIeHHrGIlivviDFVBaBLG4=;
+	s=arc-20240116; t=1741874828; c=relaxed/simple;
+	bh=VK6IFCnWqH1VDlX+0nZlauCvGg9qfSZhNL8pqBhu234=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XeHfncZfmW8ZqcbtKfzPFLqRTgTt5W5BRV+hz7EBodpzwVeX6F+/GlxxAXGSxZCQTG5flPp9D6DFieqNLh3Q1RW/Lp2XmzbBu8+ccPm8uaN13VjZDUFGL2EAZF4PG7vp116mjVGN2wjfRR4kVyUJB9THsZHJvkN1MJTMmOE5IBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=O3so/JpO; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=Sw1Im7IY6HGSZTwSlodOKGVFEVW29j0gB60U8GGwFts=; b=O3so/JpO78km8bs/
-	Osb8IsrmwlrA9Eglf6zr6+kjsDEUi78JEEaPj7CtPWMM7RnJgxFS0yhF65mT5A/Ez+V5eSSQTFpV0
-	WwdZWuYmMiH27XZNb+UfqdR/lV2o0C5fcoJ0U9M3g60JOTOHmAHrMLEWIKBMJQOAqs87ziFnpH6nV
-	U9j9i54dosBCZ6nPuCfFMcmDMT9ExU7PiCLS6kIUN50mMEqj9cT51jDgVXMnFJx5QZgcYPZAhdpp5
-	1dbS5VX10pqVt2dxbYRuOaZumKXzbDMTx5nsrg70G2Rcu19hSVE8S0pIg4kzGOr/69s++1BIlRD3f
-	wllQOK8Lw4GiSVrLjQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1tsjCZ-004eIB-0X;
-	Thu, 13 Mar 2025 14:06:23 +0000
-Date: Thu, 13 Mar 2025 14:06:23 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: abbotti@mev.co.uk, hsweeten@visionengravers.com
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] comedi: comedi_8254: Remove unused
- comedi_8254_ns_to_timer
-Message-ID: <Z9LmXxvc6tA-SPrn@gallifrey>
-References: <20241010204127.271377-1-linux@treblig.org>
- <ZzPKWeqPhY0miHSC@gallifrey>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OaGdf5SMYgzBYphJMsGRva/vmq/07chLubTHc3uGdzVgOGnnpLwpA8ldpN7G/Cl0kS4W9wDf2J6r9hm48d6MOkZP8AvU/XbhVBTBlNM6bHsq/uki1i/qgIkIp8b6RmGggDY21EftoJ1nD/N1ZNpVHMDWidjrrRWnLhq2R0xfHmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=y/o9KKF7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D06BC4CEDD;
+	Thu, 13 Mar 2025 14:07:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741874828;
+	bh=VK6IFCnWqH1VDlX+0nZlauCvGg9qfSZhNL8pqBhu234=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=y/o9KKF7FXQqvvJPN+f0dQLbgHndsHqQzyH2jNJvjBTBRNH3KdqJmnhpzyGQOIf9W
+	 JQGxlaNON20Krw4IYTxGgm/2R85Jr/xLJnBf1KGOOGUVfS27hU7Cdkp/mBmF2TWk42
+	 5+2JDQfluXXZ2rMvoirVsCp2tGJhafCrsqdGIQ+0=
+Date: Thu, 13 Mar 2025 15:07:05 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 5.4 000/328] 5.4.291-rc1 review
+Message-ID: <2025031359-unsmooth-greasily-5c8e@gregkh>
+References: <20250311145714.865727435@linuxfoundation.org>
+ <CA+G9fYtG9K8ywO4w2ys=UEuD_r1LgOuZhG4cg62YKAX0qK35cg@mail.gmail.com>
+ <603b3f10-6ad9-46af-8b31-d11e46f4698a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZzPKWeqPhY0miHSC@gallifrey>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 14:05:57 up 309 days,  1:19,  1 user,  load average: 0.00, 0.02,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <603b3f10-6ad9-46af-8b31-d11e46f4698a@gmail.com>
 
-* Dr. David Alan Gilbert (linux@treblig.org) wrote:
-> * linux@treblig.org (linux@treblig.org) wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > comedi_8254_ns_to_timer() has been unused since it was added
-> > in commit
-> > d42b5211d861 ("staging: comedi: comedi_8254: introduce module for 8254 timer support")
-> > 
-> > Remove it.
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+On Thu, Mar 13, 2025 at 06:59:24AM -0700, Florian Fainelli wrote:
 > 
-> Ping.
-
-Hi,
-  I'd appreciate if someone could pick up and review this old cleanup patch.
-
-Thanks,
-
-Dave
-
-> Thanks,
 > 
-> Dave
-> 
-> > ---
-> >  drivers/comedi/drivers/comedi_8254.c | 37 ----------------------------
-> >  include/linux/comedi/comedi_8254.h   |  2 --
-> >  2 files changed, 39 deletions(-)
+> On 3/13/2025 12:19 AM, Naresh Kamboju wrote:
+> > On Tue, 11 Mar 2025 at 20:33, Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > > 
+> > > This is the start of the stable review cycle for the 5.4.291 release.
+> > > There are 328 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > > 
+> > > Responses should be made by Thu, 13 Mar 2025 14:56:14 +0000.
+> > > Anything received after that time might be too late.
+> > > 
+> > > The whole patch series can be found in one patch at:
+> > >          https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.291-rc1.gz
+> > > or in the git tree and branch at:
+> > >          git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> > > and the diffstat can be found below.
+> > > 
+> > > thanks,
+> > > 
+> > > greg k-h
 > > 
-> > diff --git a/drivers/comedi/drivers/comedi_8254.c b/drivers/comedi/drivers/comedi_8254.c
-> > index 6beca2a6d66e..9b7747dab747 100644
-> > --- a/drivers/comedi/drivers/comedi_8254.c
-> > +++ b/drivers/comedi/drivers/comedi_8254.c
-> > @@ -77,10 +77,6 @@
-> >   * to create a 32-bit rate generator (I8254_MODE2). These functions are
-> >   * provided to handle the cascaded counters:
-> >   *
-> > - * comedi_8254_ns_to_timer()
-> > - *	Calculates the divisor value needed for a single counter to generate
-> > - *	ns timing.
-> > - *
-> >   * comedi_8254_cascade_ns_to_timer()
-> >   *	Calculates the two divisor values needed to the generate the pacer
-> >   *	clock (in ns).
-> > @@ -472,39 +468,6 @@ void comedi_8254_cascade_ns_to_timer(struct comedi_8254 *i8254,
-> >  }
-> >  EXPORT_SYMBOL_GPL(comedi_8254_cascade_ns_to_timer);
-> >  
-> > -/**
-> > - * comedi_8254_ns_to_timer - calculate the divisor value for nanosec timing
-> > - * @i8254:	comedi_8254 struct for the timer
-> > - * @nanosec:	the desired ns time
-> > - * @flags:	comedi_cmd flags
-> > - */
-> > -void comedi_8254_ns_to_timer(struct comedi_8254 *i8254,
-> > -			     unsigned int *nanosec, unsigned int flags)
-> > -{
-> > -	unsigned int divisor;
-> > -
-> > -	switch (flags & CMDF_ROUND_MASK) {
-> > -	default:
-> > -	case CMDF_ROUND_NEAREST:
-> > -		divisor = DIV_ROUND_CLOSEST(*nanosec, i8254->osc_base);
-> > -		break;
-> > -	case CMDF_ROUND_UP:
-> > -		divisor = DIV_ROUND_UP(*nanosec, i8254->osc_base);
-> > -		break;
-> > -	case CMDF_ROUND_DOWN:
-> > -		divisor = *nanosec / i8254->osc_base;
-> > -		break;
-> > -	}
-> > -	if (divisor < 2)
-> > -		divisor = 2;
-> > -	if (divisor > I8254_MAX_COUNT)
-> > -		divisor = I8254_MAX_COUNT;
-> > -
-> > -	*nanosec = divisor * i8254->osc_base;
-> > -	i8254->next_div = divisor;
-> > -}
-> > -EXPORT_SYMBOL_GPL(comedi_8254_ns_to_timer);
-> > -
-> >  /**
-> >   * comedi_8254_set_busy - set/clear the "busy" flag for a given counter
-> >   * @i8254:	comedi_8254 struct for the timer
-> > diff --git a/include/linux/comedi/comedi_8254.h b/include/linux/comedi/comedi_8254.h
-> > index d527f04400df..21be0b7250b4 100644
-> > --- a/include/linux/comedi/comedi_8254.h
-> > +++ b/include/linux/comedi/comedi_8254.h
-> > @@ -129,8 +129,6 @@ void comedi_8254_pacer_enable(struct comedi_8254 *i8254,
-> >  void comedi_8254_update_divisors(struct comedi_8254 *i8254);
-> >  void comedi_8254_cascade_ns_to_timer(struct comedi_8254 *i8254,
-> >  				     unsigned int *nanosec, unsigned int flags);
-> > -void comedi_8254_ns_to_timer(struct comedi_8254 *i8254,
-> > -			     unsigned int *nanosec, unsigned int flags);
-> >  
-> >  void comedi_8254_set_busy(struct comedi_8254 *i8254,
-> >  			  unsigned int counter, bool busy);
-> > -- 
-> > 2.47.0
+> > Results from Linaro’s test farm.
+> > No regressions on arm64, arm, x86_64, and i386.
 > > 
-> -- 
->  -----Open up your eyes, open up your mind, open up your code -------   
-> / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-> \        dave @ treblig.org |                               | In Hex /
->  \ _________________________|_____ http://www.treblig.org   |_______/
+> > Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > 
+> > NOTE:
+> > The following build errors noticed on arm, arm64 and x86 builds
+> > net/ipv4/udp.c: In function 'udp_send_skb':
+> > include/linux/kernel.h:843:43: warning: comparison of distinct pointer
+> > types lacks a cast
+> >    843 |                 (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+> >        |                                           ^~
+> >   Link:
+> >    - ttps://storage.tuxsuite.com/public/linaro/anders/builds/2uDcpdUQnEV7etYkHnVyp963joS/
 > 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+> Yep, this is seen with net/ipv6/udp.c for the same reasons, see my comment
+> here:
+> 
+> https://lore.kernel.org/all/0f5c904f-e9e3-405f-a54d-d81d56dc797e@gmail.com/
+
+Should now be fixed.
 
