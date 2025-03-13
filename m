@@ -1,91 +1,110 @@
-Return-Path: <linux-kernel+bounces-558951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4944AA5ED75
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:02:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7647EA5ED7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:02:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31F167A30B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:01:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 538D77A2E8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4451D63C2;
-	Thu, 13 Mar 2025 08:02:02 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EA922D4ED;
+	Thu, 13 Mar 2025 08:02:49 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B852C2E3391
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064602E3391;
+	Thu, 13 Mar 2025 08:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741852922; cv=none; b=i9pcs80UGLiVSg22RRRnJIfGmtfPqc1+1Tpk5WeZgrElW1RK6MnWLJQ3c0x/RgF63JuQG68DZg7wqULpLdrvlElFKfuef1Nhs7rRKc0xZoj+vyeeAzgUdEBqSXfe4oWr+4+75CfvuWk4QDPNHPGCOHJa4Z8RZWiAwPK83fDwwjY=
+	t=1741852969; cv=none; b=uJN1XVYQWPBVkSDz0DOGIAHVq6rybKSApbz9szaJv7ahDK8bYndGQCbubVGNh8UV1C4n9DRHhCLGAewcBbMZejsnKqYYut8gNzrBGOXBvXXQpqCiAj7lwp81xYoP00UxTYPM3LXMtfZo0lHHBBwaCCRtOFe7YLN8EYihjLPRjOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741852922; c=relaxed/simple;
-	bh=81NE1tzJhmPFRrYpB9Bhj1MdMf5ZTyJLVw86l8UtWkw=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=h0qQ4VX5C/ijaH5rmEv57Wb2bgc0KWFuvVZIcep4RhN7g+oTauQYQEJzXOYvSBK9E039+Dma35QKZi0HCLmtQyBVSHVeidDyRUIt9KHTTHX9s8a7Zb2j551hF4Qp41aLfSBKqwBsRAmxhHxcSIrt+PhPlmlfOWZCY2bfD6/bWeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4ZD0ML6Q7xz50FXX;
-	Thu, 13 Mar 2025 16:01:50 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 52D81OQ4061308;
-	Thu, 13 Mar 2025 16:01:24 +0800 (+08)
-	(envelope-from ye.xingchen@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid31;
-	Thu, 13 Mar 2025 16:01:26 +0800 (CST)
-Date: Thu, 13 Mar 2025 16:01:26 +0800 (CST)
-X-Zmail-TransId: 2af967d290d6ffffffffc1c-704fe
-X-Mailer: Zmail v1.0
-Message-ID: <202503131601265834sSbkAuqH0NUydxGXf-Fa@zte.com.cn>
+	s=arc-20240116; t=1741852969; c=relaxed/simple;
+	bh=bVAxUrDNMF7/87dKl8ntYRsXmIQa6n5Pwu3NQrYXZJo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MQrmsS8TWv29dPGWncSNQxh/H1M6Vud2mTobXjnSgD08JjVclrDywthB50loHNWD/RCBBy0JwCKuCRfUPUqu7E3AK9FtFv/O+9s4F6zJ32xsrIAbVwPremxGlzV4niV1azXLQ/RUtLsMmf6XVMut/X/82iUKgxracpkOZNpPFvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-03 (Coremail) with SMTP id rQCowAA3PAwMkdJncq_UFA--.3004S2;
+	Thu, 13 Mar 2025 16:02:28 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: geoff@infradead.org,
+	maddy@linux.ibm.com,
+	mpe@ellerman.id.au,
+	npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	naveen@kernel.org,
+	arnd.bergmann@de.ibm.com
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] [POWERPC] ps3: fix error handling in ps3_system_bus_device_register()
+Date: Thu, 13 Mar 2025 16:02:19 +0800
+Message-Id: <20250313080219.306311-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <ye.xingchen@zte.com.cn>
-To: <brauner@kernel.org>
-Cc: <jack@suse.cz>, <jeff.johnson@oss.qualcomm.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIXSBubHM6IEZpeCB1dGYzMl90b191dGY4IHBhcmFtZXRlciB0eXBlIGluIGRlY2xhcmF0aW9uIGFuZMKgZGVmaW5pdGlvbg==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 52D81OQ4061308
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D290EE.004/4ZD0ML6Q7xz50FXX
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAA3PAwMkdJncq_UFA--.3004S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7GF13GrWUGF4kuFW8uFyUZFb_yoWkuFb_tw
+	4Ivas3X3yxJFsrKFn5CF13Crn3GF9IqrWYqr42q3Wxta4rXayq93y8XFyUJw4UWas7Ar45
+	AFn8Kr43A3WSkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbSkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28Icx
+	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
+	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU122NtUUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-From: YeXingchen <ye.xingchen@zte.com.cn>
+Once device_register() failed, we should call put_device() to
+decrement reference count for cleanup. Or it could cause memory leak.
 
-The declaration of utf32_to_utf8 in the header file uses
-bool maxlen as the parameter type, while the definition uses bool maxout.
+As comment of device_register() says, 'NOTE: _Never_ directly free
+@dev after calling this function, even if it returned an error! Always
+use put_device() to give up the reference initialized in this function
+instead.'
 
-This patch aligns the parameter name in the definition with the
-declaration,changing maxout to maxlen to ensure consistency.
+Found by code review.
 
-Signed-off-by: YeXingchen <ye.xingchen@zte.com.cn>
+Cc: stable@vger.kernel.org
+Fixes: a3d4d6435b56 ("[POWERPC] ps3: add ps3 platform system bus support")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- fs/nls/nls_base.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/ps3/system-bus.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/nls/nls_base.c b/fs/nls/nls_base.c
-index 18d597e49a19..1dc2f8c8916e 100644
---- a/fs/nls/nls_base.c
-+++ b/fs/nls/nls_base.c
-@@ -83,7 +83,7 @@ int utf8_to_utf32(const u8 *s, int inlen, unicode_t *pu)
+diff --git a/arch/powerpc/platforms/ps3/system-bus.c b/arch/powerpc/platforms/ps3/system-bus.c
+index afbaabf182d0..c477d0ee523a 100644
+--- a/arch/powerpc/platforms/ps3/system-bus.c
++++ b/arch/powerpc/platforms/ps3/system-bus.c
+@@ -769,6 +769,9 @@ int ps3_system_bus_device_register(struct ps3_system_bus_device *dev)
+ 	pr_debug("%s:%d add %s\n", __func__, __LINE__, dev_name(&dev->core));
+ 
+ 	result = device_register(&dev->core);
++	if (result)
++		put_device(&dev->core);
++
+ 	return result;
  }
- EXPORT_SYMBOL(utf8_to_utf32);
-
--int utf32_to_utf8(unicode_t u, u8 *s, int maxout)
-+int utf32_to_utf8(unicode_t u, u8 *s, int maxlen)
- {
- 	unsigned long l;
- 	int c, nc;
+ 
 -- 
 2.25.1
+
 
