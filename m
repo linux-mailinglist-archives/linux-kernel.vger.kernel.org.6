@@ -1,49 +1,73 @@
-Return-Path: <linux-kernel+bounces-559296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA436A5F20D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:10:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D1EA5F21A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:14:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C290719C17B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:10:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BF063B937E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82880265CC7;
-	Thu, 13 Mar 2025 11:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310F82661A8;
+	Thu, 13 Mar 2025 11:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFpakx8q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jLcrso4E"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E971E8325;
-	Thu, 13 Mar 2025 11:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193ED26560B;
+	Thu, 13 Mar 2025 11:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741864197; cv=none; b=Fup8I/DzyoszZH7U8rN5qTp4orubCwV3I5h2a4nj8gWLC+hH4LoQC+pICBGq/63cVgDQdXVmAF3x3n6DXO24y+vHSHC9g2i7CEXZjAEuJGlX/QGgC6uaJfv0TezMXS0haF9emUoxsviZBd00isblx3i3LN5byVH5rPLzNK6HZjU=
+	t=1741864469; cv=none; b=PUK5v/7RLL6cHK9pZ7VMoKbby0OMuv8l3ZdUBZqJLUz0wLLGwcD4JdG72GgxX7Y+zmyiJI4VqYhdN9wJs/wd75iYJFDTqo9lqdvnGGFI3ZZZNQ2gz6VlvvC9u4L2NlhBFg78DTJzb2PkprPpnLVEdjuSfIOQsH1XVxYKcUghrAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741864197; c=relaxed/simple;
-	bh=y5Rt/A3I0puk2tWJqwdD+VS9AYs8xTcIZQZ75uLi/aQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ak3AvlsujpbijMrwkx+O0KoHYJufdLd7x4RCTmpJlurlFyLclg3H3KzjFOil0vputju417HmDXnO9Vdh8OLKbNj2SZhDFgi9CBp+ivLKJUhEC3XArFPwB1kNbEJS5xes7IuRZa7TFxKpNDBJ0mMUviPrTYST2yo/nGPRwRustrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFpakx8q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38B53C4CEDD;
-	Thu, 13 Mar 2025 11:09:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741864196;
-	bh=y5Rt/A3I0puk2tWJqwdD+VS9AYs8xTcIZQZ75uLi/aQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=OFpakx8qWuEP5hs9WCekvz25n4fnw63dd3zf1Hsha7Gk7+1cmshaz6E6oE8d6Ieh+
-	 tBzkhdDKSaYH1OgAoNK+7jfD0fdJN4xQ1W2eZZQZ9HelvNaxoDzMiG4MttBJXWwp8t
-	 OYQ48FdLg1Aw9IqOqJEj0BBUa8qX6V/9YjFqw9jvVKWW22JNwRMHhG8JnhrlhbaW6S
-	 29uLDOm+zyzCye6P/FtsnHmuM8tJKNGUgYdVxO1sAeEi7yoQhyS/YRufPMcwDeeXtg
-	 ax/RpzUJ7Toj8NLazkxeVIel3BUqwjK+RCDn16ltaxBF+hnLwAAfRjkh+iPS9k7Pz+
-	 SWDFtToOpr/aQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB6693806651;
-	Thu, 13 Mar 2025 11:10:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1741864469; c=relaxed/simple;
+	bh=U/Q/0h/esesBGgSEURjD5WBzn2PpFAaabIM7VOSzjS0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=anmxTmhoeo+M9wJ9MHShALKJBsJu5Z+2fED9HAOUgIcXMol4cooSUATGklf6A3lelYBRzjXqXw9kk/nphjplWLrlOiJ9QyDxEznDFMxTP4RAPX3aSObwCOiy4myEetVUWkN+WIKQSCqsxQ03fRoXGeOy3N5qm+FHEItoSvfQO1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jLcrso4E; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741864468; x=1773400468;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=U/Q/0h/esesBGgSEURjD5WBzn2PpFAaabIM7VOSzjS0=;
+  b=jLcrso4EzWF/Qhp9MBU64uzsTtrJuT/3F8CK66eV0wsfdxfrjssuWdng
+   s2RpGHNQU7NGAN/UpHM4yrI+3ULEhlexozkS+B06QKjUgP4BuO/b3znh5
+   jneDQTs5G1ItYpp6iVk6FoYsZZnkmxsURNvUq5h3HhJtfWtJDMcfi3TjW
+   sA2hT8ztxMetbuQDGFQaPztOH1A0iFALhKsh6H/roKaE05HGYdGaEx/5I
+   PL8bdRbDGKMZnNS/vLnBTfMiI+RBkSP56kb5odAhH/rWKfIA4DWdJLCw6
+   Tj/5FHcSDAUBnV9BjU2wdVXaRcnaVV5MswPDGr6ysniQHhU3RNyuyS3MF
+   A==;
+X-CSE-ConnectionGUID: 4Kw+JmhTSBevRUa4YrqRYw==
+X-CSE-MsgGUID: 7eYq8hs0T6e1fEurhrhwsg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="53612341"
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="53612341"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 04:14:27 -0700
+X-CSE-ConnectionGUID: 1AUU88FWRGmh9mlC7X5BJA==
+X-CSE-MsgGUID: 9xonymIsQfKqIsODAX2VVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="144104378"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa002.fm.intel.com with ESMTP; 13 Mar 2025 04:14:26 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id C5C821FC; Thu, 13 Mar 2025 13:14:24 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Longbin Li <looong.bin@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v2 0/2] spi: sg2044-nor: A couple of cleanups
+Date: Thu, 13 Mar 2025 13:12:58 +0200
+Message-ID: <20250313111423.322775-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,57 +75,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] dt-bindings: net: Define interrupt constraints for
- DWMAC vendor bindings
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174186423076.1466791.15724461347771862891.git-patchwork-notify@kernel.org>
-Date: Thu, 13 Mar 2025 11:10:30 +0000
-References: <20250309003301.1152228-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250309003301.1152228-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, neil.armstrong@linaro.org, khilman@baylibre.com,
- jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, heiko@sntech.de, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, nobuhiro1.iwamatsu@toshiba.co.jp,
- matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
- vineetha.g.jaya.kumaran@intel.com, biao.huang@mediatek.com,
- xiaoning.wang@nxp.com, linux-imx@nxp.com, david.wu@rock-chips.com,
- christophe.roullier@foss.st.com, rmk+kernel@armlinux.org.uk,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-rockchip@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-mediatek@lists.infradead.org,
- prabhakar.mahadev-lad.rj@bp.renesas.com
 
-Hello:
+The driver has one ordering issue and one missed case for dev_err_probe().
+Address that in this mini-series.
 
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+In v2:
+- fixed obvious typo (LKP)
 
-On Sun,  9 Mar 2025 00:33:01 +0000 you wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> The `snps,dwmac.yaml` binding currently sets `maxItems: 3` for the
-> `interrupts` and `interrupt-names` properties, but vendor bindings
-> selecting `snps,dwmac.yaml` do not impose these limits.
-> 
-> Define constraints for `interrupts` and `interrupt-names` properties in
-> various DWMAC vendor bindings to ensure proper validation and consistency.
-> 
-> [...]
+Andy Shevchenko (2):
+  spi: sg2044-nor: Fully convert to device managed resources
+  spi: sg2044-nor: Convert to dev_err_probe()
 
-Here is the summary with links:
-  - [net-next] dt-bindings: net: Define interrupt constraints for DWMAC vendor bindings
-    https://git.kernel.org/netdev/net-next/c/5a1dddd29444
+ drivers/spi/spi-sg2044-nor.c | 25 +++++++------------------
+ 1 file changed, 7 insertions(+), 18 deletions(-)
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.47.2
 
 
