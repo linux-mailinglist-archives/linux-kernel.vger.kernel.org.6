@@ -1,161 +1,249 @@
-Return-Path: <linux-kernel+bounces-560036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB25BA5FCE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:02:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ADBCA5FCCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:59:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE11E7A5038
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:01:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 182DE3B234D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E1F26AA8C;
-	Thu, 13 Mar 2025 17:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mOwJDeMX"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA0D26A0A6;
+	Thu, 13 Mar 2025 16:59:33 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DAB26AA88
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D6914F121
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 16:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741885281; cv=none; b=btX/wFHdBAAUGmAKZCA8K9zphHwGd1OQp9ciuXR5XcbFb+0gqsjA2S6uRGPTGRLBrNz4Y9HDTRmx+cOLxRf2GqYwCJU6AS2Mx6G24AK2aF1gg0XxpXS63iSINrW+YEMC7mgmsqTJFgAhJGo+O2YjtzpPhIWHzzGrSxc2eKgL9RA=
+	t=1741885173; cv=none; b=IszJYGedm1iEYKPbUtNn7+qlV5NvpEmIbyH8tTZyBrPRlHWumNvcmdsxVmerAoHigqgqDOuAOJFeRciimffY3UALuW69owB4cacGyvdC1DkX+rRVNk+F0ubKkGuh11dNCNGPzqD1E9Oj8639FRjUZwLTJ0qh+RrTXvmoqYMH9rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741885281; c=relaxed/simple;
-	bh=CKet4m8V3++JJj6egp5O6U4HIkFGKFAGQObq/K0Fa08=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Go3lGFVGPIOta7kvZxFrkDp0G4xRRHK0RMjTIIUATvFyu6J6zKHwVSt2c7x4cPEg1jyxPSj9KB0kWn3VMi5+9sF6+2iczfQpFwpaZuZlCSS4E7rNXHxrX1lSnZvOUACD8DM4ZQpi4BNaAqzq8taTWpl6C7V0V2gzER8VQ2iqUKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mOwJDeMX; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22423adf751so19963065ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:01:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741885279; x=1742490079; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nUQ+OrAh02CbWtjPdQxW9RlcKT1xdT7Rpo6ksTT/P0Y=;
-        b=mOwJDeMXAheJUlyiTrI/PYWU/nw28LfMI5YOZaKbV2RtXOJ/kxltGfg5ucGkWKeH23
-         IKm/1PxkMUv3s3KMv6BFIUUHZAJdnfSfbSs4TWaIAhlrmeBE0QXcpW0Q1ROG5IeHD6+D
-         +4MIPUhYwJgFj4wv4Z+6TDAmVAU//B30D+Bfx0SwnopSi517AIfIwoB0FTMwMylxaAYU
-         6GhHPZmyFRz+Jc4gBnN6oFZTnt1SByvDFTd60JGwOGCXzDmnLY8vwUA06b51nusqIZyr
-         VgenVPAIKxCL0n6xdo0cSCvaub+/QhuqB+vfOjMzTV28Bbrhn4aArln1roI624w0rmxp
-         kpRA==
+	s=arc-20240116; t=1741885173; c=relaxed/simple;
+	bh=r78kbKxQagOfA4fTjXUz8rQD0c6w/m7aqX4C3ZCFu1Y=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=d8myhPSe2oa2sF2ymYyn4JBpzcvXorm4CuL5jwYZPZ/bHEP1LPv1YCNvQi5Yb4Lc4uxg6vKTDjgO83Ngnq8TSsdwaqI4HqbnQ3AdTu6kn/joPWSmgorU9j5oj4AfWR1B+1rR8Yiryfon2ieXXU56tFvgN6qELZYtrvoLWoQBR2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-85b4ee2e69bso159926139f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:59:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741885279; x=1742490079;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
+        d=1e100.net; s=20230601; t=1741885170; x=1742489970;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=nUQ+OrAh02CbWtjPdQxW9RlcKT1xdT7Rpo6ksTT/P0Y=;
-        b=AciLOxgjxuL6Er7pYd9HyEUjhtkGmcBLrwzPOeukSy/O+az2zkEBSGzTbMtGXAgsg9
-         74+KUbJ/lzoL1mLdpTufMBz/fQxpmVP2kfKyBp2VbhiviDPoJgUTU+p39OJ/opa5qwLL
-         2japNogiqi0zqhCIGbUY9HRYehVQ50I+5ELLLBtxg40RoK3AUUPtyaKFK/DRBApc3dL+
-         RQQlU1jsXzOlh+qllsz3vqGWS5fEq1/2PwErGD9UJNbsQr2Isg+NtoJoSKdDk1fGXY3B
-         SxjTkiAl1gFpUxLUIVHwng/zH7z0dGY6ZBV2h+jeRzHD+A0CfoSUMPeIVKcud1dwmLBw
-         PiIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyd+Y6uMKfla6cXvRHqmZYHuUdgvZwdHMc5FlxQ9LQTA2Vl4/X/DeVkRJk7FhiLo13GfxCWdYv+r5BSnI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyshFX0eCiExNydkt3uJwo9gIwDnqLbyyMPjN/Spn3HuQKtlcZw
-	BCEzawyuP0uk/7PJsK9lrL/uQVKWhmqeZsZshl15wGIDnZF6aaNl
-X-Gm-Gg: ASbGnctDgemTKpOmkiaDWe+r4WXqGoJjFQdXlFadJD6NPP3Gc/85gJ/fAOepcYS+yo2
-	JEG1gIvg21qXvXb4dxAicTPIn7ViEdhL1UzvrujIvjzBXCjVDNJ/9dqzEky0H4qsTwwahuD2j9M
-	+Qv0X3MEUEaumEI7dCDr56Crf7IJJM4XaR45iN03rPNDu794RX2om9kSvhcqYopcUdmqxNdkqAU
-	wAdcGblR6pKQ+o86Tb3HQwSF2mZ6WJRkjENgQOl6o3wYPxNMVLvJQe8hOYQ7LnCc4x5s+Fexg7M
-	ZvyDQzJhr6vnF6qA6khkT7bFlRWp5bMRjBhYcdCoq/vwcymFOdo4ptPOla2U0MNkkA==
-X-Google-Smtp-Source: AGHT+IEtL0owIxoYlBZ71gxEIW/LFwX9S1V54rOpGhTHmxstlznzvgnxMsNk+OzJF8x7byESxSp3WQ==
-X-Received: by 2002:a17:903:1c8:b0:223:26da:4b8e with SMTP id d9443c01a7336-22592e21948mr178552515ad.4.1741885278863;
-        Thu, 13 Mar 2025 10:01:18 -0700 (PDT)
-Received: from KASONG-MC4.tencent.com ([106.37.123.220])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371167df0esm1613529b3a.93.2025.03.13.10.01.13
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 13 Mar 2025 10:01:18 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Chris Li <chrisl@kernel.org>,
-	Barry Song <v-songbaohua@oppo.com>,
-	Hugh Dickins <hughd@google.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Baoquan He <bhe@redhat.com>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>
-Subject: [PATCH v3 1/7] mm, swap: avoid reclaiming irrelevant swap cache
-Date: Fri, 14 Mar 2025 00:59:29 +0800
-Message-ID: <20250313165935.63303-2-ryncsn@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250313165935.63303-1-ryncsn@gmail.com>
-References: <20250313165935.63303-1-ryncsn@gmail.com>
-Reply-To: Kairui Song <kasong@tencent.com>
+        bh=tdpBlpt1qHoogcDEBbY7Tv30XG+ng+gd1D5ipu5ours=;
+        b=IyKUXTmF/oItzd8CuC68cHtBYxa2/TQVyMVkBWNRhYS4FdY+yDUspDo2J6k6DZSrl2
+         cShckkYJDYHes8dHTVSVmDQ6l6ypUCvSO1k0F5QMkH8066bheJD0gKRC+aR0OJndMvQD
+         PadW32nBmpV+FC08lhiiGlAMujrEYhY2bpOSunsTIQd1gJeBVPMeqL97hYTFItjZaLmj
+         qZx8qgLqxSXE2JkzJt+q0ggDk142Se/ugC5Xr+oDLXkTviSr6udxf6e8HqXw1e/vC98J
+         qpdSQB1g6O8axB3SGqyUDQhEWcPvciBQDAtUYw5+384R+7D0Zng/3Dn2gk7odMlxejMY
+         j8dA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZfL1TMwlzjbsaGa2+ruLSQ9to+hQT9U9mmpVEjZBXuWbkRv+vx6ZD8oUJ2PL52ylKst1NGpmkoGzCqzE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnnMXE563fwFxpGJjT3sqsVssGU0vOA25pVP+NGC5Rs7vcATOi
+	Gx2EuLI7r5X+1x/KpPCFZIaBuVCwd5f6xwj5iGuUurm8meP1Pz55XlGRWcdgA4LqOXYFIeUelfG
+	OTWTXRaDw7NRsTcliIlIvl+llQT8n8niJoWpbEcPx2WGYV/nc8kE2xi0=
+X-Google-Smtp-Source: AGHT+IEczvvqGmjagvGQMtEa8Pq8M87g8xXwDIdXCeR2blw2m2+e3dFRH9JVZaM1p69oDP9VprNq9WWirbaRHuT0ORQausSa5xKg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:18cb:b0:3cf:c7d3:e4b with SMTP id
+ e9e14a558f8ab-3d4817af930mr5683665ab.21.1741885170615; Thu, 13 Mar 2025
+ 09:59:30 -0700 (PDT)
+Date: Thu, 13 Mar 2025 09:59:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67d30ef2.050a0220.14e108.0039.GAE@google.com>
+Subject: [syzbot] [bpf?] KASAN: slab-out-of-bounds Read in atomic_ptr_type_ok
+From: syzbot <syzbot+a5964227adc0f904549c@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, iii@linux.ibm.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
+	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
+	yepeilin@google.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-From: Kairui Song <kasong@tencent.com>
+Hello,
 
-Swap allocator will do swap cache reclaim to recycle HAS_CACHE slots for
-allocation.  It initiates the reclaim from the offset to be reclaimed and
-looks up the corresponding folio.  The lookup process is lockless, so it's
-possible the folio will be removed from the swap cache and given a
-different swap entry before the reclaim locks the folio.  If it happens,
-the reclaim will end up reclaiming an irrelevant folio, and return wrong
-return value.
+syzbot found the following issue on:
 
-This shouldn't cause any problem with correctness or stability, but it is
-indeed confusing and unexpected, and will increase fragmentation, decrease
-performance.
+HEAD commit:    f28214603dc6 Merge branch 'selftests-bpf-move-test_lwt_seg..
+git tree:       bpf-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15f84664580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b7bde34acd8f53b1
+dashboard link: https://syzkaller.appspot.com/bug?extid=a5964227adc0f904549c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16450ba8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11f5fa54580000
 
-Fix this by checking whether the folio is still pointing to the offset the
-allocator want to reclaim before reclaiming it.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b6b450916744/disk-f2821460.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f67764ad4712/vmlinux-f2821460.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/42aedcc506e8/bzImage-f2821460.xz
 
-Signed-off-by: Kairui Song <kasong@tencent.com>
-Reviewed-by: Baoquan He <bhe@redhat.com>
+The issue was bisected to:
+
+commit e24bbad29a8de70bb33c1cabc85bb40e6707572a
+Author: Peilin Ye <yepeilin@google.com>
+Date:   Tue Mar 4 01:06:13 2025 +0000
+
+    bpf: Introduce load-acquire and store-release instructions
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=154f5074580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=174f5074580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=134f5074580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a5964227adc0f904549c@syzkaller.appspotmail.com
+Fixes: e24bbad29a8d ("bpf: Introduce load-acquire and store-release instructions")
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in is_ctx_reg kernel/bpf/verifier.c:6185 [inline]
+BUG: KASAN: slab-out-of-bounds in atomic_ptr_type_ok+0x3d7/0x550 kernel/bpf/verifier.c:6223
+Read of size 4 at addr ffff888141b0d690 by task syz-executor143/5842
+
+CPU: 1 UID: 0 PID: 5842 Comm: syz-executor143 Not tainted 6.14.0-rc3-syzkaller-gf28214603dc6 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0x16e/0x5b0 mm/kasan/report.c:521
+ kasan_report+0x143/0x180 mm/kasan/report.c:634
+ is_ctx_reg kernel/bpf/verifier.c:6185 [inline]
+ atomic_ptr_type_ok+0x3d7/0x550 kernel/bpf/verifier.c:6223
+ check_atomic_store kernel/bpf/verifier.c:7804 [inline]
+ check_atomic kernel/bpf/verifier.c:7841 [inline]
+ do_check+0x89dd/0xedd0 kernel/bpf/verifier.c:19334
+ do_check_common+0x1678/0x2080 kernel/bpf/verifier.c:22600
+ do_check_main kernel/bpf/verifier.c:22691 [inline]
+ bpf_check+0x165c8/0x1cca0 kernel/bpf/verifier.c:23821
+ bpf_prog_load+0x1664/0x20e0 kernel/bpf/syscall.c:2967
+ __sys_bpf+0x4ea/0x820 kernel/bpf/syscall.c:5811
+ __do_sys_bpf kernel/bpf/syscall.c:5918 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5916 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5916
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa3ac86bab9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe50fff5f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fa3ac86bab9
+RDX: 0000000000000094 RSI: 00004000000009c0 RDI: 0000000000000005
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000006
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+Allocated by task 5842:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __kmalloc_cache_noprof+0x243/0x390 mm/slub.c:4325
+ kmalloc_noprof include/linux/slab.h:901 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ do_check_common+0x1ec/0x2080 kernel/bpf/verifier.c:22499
+ do_check_main kernel/bpf/verifier.c:22691 [inline]
+ bpf_check+0x165c8/0x1cca0 kernel/bpf/verifier.c:23821
+ bpf_prog_load+0x1664/0x20e0 kernel/bpf/syscall.c:2967
+ __sys_bpf+0x4ea/0x820 kernel/bpf/syscall.c:5811
+ __do_sys_bpf kernel/bpf/syscall.c:5918 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5916 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5916
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888141b0d000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 312 bytes to the right of
+ allocated 1368-byte region [ffff888141b0d000, ffff888141b0d558)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x141b08
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x57ff00000000040(head|node=1|zone=2|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 057ff00000000040 ffff88801b042000 dead000000000100 dead000000000122
+raw: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
+head: 057ff00000000040 ffff88801b042000 dead000000000100 dead000000000122
+head: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
+head: 057ff00000000003 ffffea000506c201 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 1, tgid 1 (swapper/0), ts 8909973200, free_ts 0
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f4/0x240 mm/page_alloc.c:1585
+ prep_new_page mm/page_alloc.c:1593 [inline]
+ get_page_from_freelist+0x3a8c/0x3c20 mm/page_alloc.c:3538
+ __alloc_frozen_pages_noprof+0x264/0x580 mm/page_alloc.c:4805
+ alloc_pages_mpol+0x311/0x660 mm/mempolicy.c:2270
+ alloc_slab_page mm/slub.c:2423 [inline]
+ allocate_slab+0x8f/0x3a0 mm/slub.c:2587
+ new_slab mm/slub.c:2640 [inline]
+ ___slab_alloc+0xc27/0x14a0 mm/slub.c:3826
+ __slab_alloc+0x58/0xa0 mm/slub.c:3916
+ __slab_alloc_node mm/slub.c:3991 [inline]
+ slab_alloc_node mm/slub.c:4152 [inline]
+ __kmalloc_cache_noprof+0x27b/0x390 mm/slub.c:4320
+ kmalloc_noprof include/linux/slab.h:901 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ virtio_pci_probe+0x54/0x340 drivers/virtio/virtio_pci_common.c:689
+ local_pci_probe drivers/pci/pci-driver.c:324 [inline]
+ pci_call_probe drivers/pci/pci-driver.c:392 [inline]
+ __pci_device_probe drivers/pci/pci-driver.c:417 [inline]
+ pci_device_probe+0x6c5/0xa10 drivers/pci/pci-driver.c:451
+ really_probe+0x2b9/0xad0 drivers/base/dd.c:658
+ __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
+ driver_probe_device+0x50/0x430 drivers/base/dd.c:830
+ __driver_attach+0x45f/0x710 drivers/base/dd.c:1216
+ bus_for_each_dev+0x239/0x2b0 drivers/base/bus.c:370
+ bus_add_driver+0x346/0x670 drivers/base/bus.c:678
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff888141b0d580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888141b0d600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888141b0d680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                         ^
+ ffff888141b0d700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888141b0d780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
 ---
- mm/swapfile.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index a7f60006c52c..5618cd1c4b03 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -210,6 +210,7 @@ static int __try_to_reclaim_swap(struct swap_info_struct *si,
- 	int ret, nr_pages;
- 	bool need_reclaim;
- 
-+again:
- 	folio = filemap_get_folio(address_space, swap_cache_index(entry));
- 	if (IS_ERR(folio))
- 		return 0;
-@@ -227,8 +228,16 @@ static int __try_to_reclaim_swap(struct swap_info_struct *si,
- 	if (!folio_trylock(folio))
- 		goto out;
- 
--	/* offset could point to the middle of a large folio */
-+	/*
-+	 * Offset could point to the middle of a large folio, or folio
-+	 * may no longer point to the expected offset before it's locked.
-+	 */
- 	entry = folio->swap;
-+	if (offset < swp_offset(entry) || offset >= swp_offset(entry) + nr_pages) {
-+		folio_unlock(folio);
-+		folio_put(folio);
-+		goto again;
-+	}
- 	offset = swp_offset(entry);
- 
- 	need_reclaim = ((flags & TTRS_ANYWAY) ||
--- 
-2.48.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
