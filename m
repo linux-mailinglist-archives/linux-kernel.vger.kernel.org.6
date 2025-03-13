@@ -1,460 +1,300 @@
-Return-Path: <linux-kernel+bounces-559774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 313C4A5F98A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:19:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 615ECA5F999
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:21:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F393418975D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:19:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91F421895B98
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A4F268C78;
-	Thu, 13 Mar 2025 15:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2B4269817;
+	Thu, 13 Mar 2025 15:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="f1UhVqV4"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L5Yzwm/p"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4BC26980D
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83419269809
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741879105; cv=none; b=pNNktOgQLtX94dQ4ZPOcCOZwXof0TRLmRIWioMTfVUNG1WmqqMeUDWTLKBNQDDVz32JeWOgZZm73ZQiQkIEA3u7s6ys1LVtx+jnFyy62xGKn+U9JMkCKC4/4SPj/NThFHajBPWB+4+YgOsYmwLJJCioebO0bh3QKpZAeQ7aB3Rs=
+	t=1741879157; cv=none; b=t0UK4GBPvUi1tGgTePZNESrc+DKaubScM/1CSqxqFldzfrUgb2orlFAjWbAqqvGDlx/+loLLXd5JAXreUpY7eCQCqDu/QcfxtBgBCIacUie8JAZLeIAd7JeZ8Cj1VH5FcnAcxvSMDmiuzfTfqJYb7/l6PP1ZrJ/03bSiTijq0MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741879105; c=relaxed/simple;
-	bh=TmYoqe1ERxJgWNkBYOrm1mVXMHTya6wo1OaLK5bJFpQ=;
+	s=arc-20240116; t=1741879157; c=relaxed/simple;
+	bh=Dahx4YCeDFazmQDtfk0gy0C6DwC6v3J6Nwvt1/nlFxs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JK5hLJk1c4K4i63/4y/93a9ODGXiAlzAeB3vU6S1wzPp5ec7HHNAfhKpBqB77LPafUqsLS309pDb+iVN2ZCMdKsD24cS+88CYRjI3J3XNWqOV8CFF0LIFVbOVkrNXesaDL7ZKu7j75XD3LmZ66hDFdNpT5Dg6bQPdyJUVC5U5Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=f1UhVqV4; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43bb6b0b898so10213165e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:18:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1741879101; x=1742483901; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=isB+41NGUW/+LtTWyVmmsVADbWrUkVd/mu3pBc3RyqY=;
-        b=f1UhVqV454zbsVhWO5y86H5Qzm76ICjJP/ZAGWYJacHyl3uMJ7NZulyGQDeCsWEpIw
-         AfDYZ/pWsjigmto5IoFUS65xM0Q+rScmI0q1lm8Fy7/W/dWbRRaa1sqGyP7+3t+FgN9A
-         InnUTc1juD1ABt0NwLcHiM7ZI0bq7M+FHjKZCWP7NcmzkQr0N0INyLPQ3oktkC6ccV7q
-         LpXPhRAurElHyqJPlEb83TCHfQ/mUtoHkGz5rKH2wncLhQeCi2YFcSHuxOHRDcEdvhVF
-         /A/mJkISh5yEvESccOm7V6dOyGAtESr/hfxso8LN2305sr26WuLfr+9Zg7iuxSpwgl3I
-         5R4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741879101; x=1742483901;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=isB+41NGUW/+LtTWyVmmsVADbWrUkVd/mu3pBc3RyqY=;
-        b=Gv2j6MOXyNaczZrnUoe5fOI+qlS2YkBFlgS2sp4n2QMxpd9/5iV2XP2r5+QDTYWf+2
-         rQhtE7L+qODIlzKW9QRKuipLePqo4erKw8pdDLP7NQwrc1BGYc2oLFEuyCdK8SOUn+jh
-         t+JXBWw0apd2tga6bloVbXNlLRCbSsQNEHgoAQE+yV7mmoRarjDGU7EL0pJxbf0s4Pls
-         M2E9jtJMGOHOzYy9EJOTK03vGfjRys8/SnWy84I4wEgeaafxA7Ld08TTW23wEU3DgrLs
-         cB8o90eMXYzk38NWlFINOAGeaYpRxwz4pRYjcb4qQ1uzQPdHx8VyXOGSSQ3lPb6R5q4x
-         B+PA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMtZYEinsQxPPF33eqZvjmc1zV24kTwGamGVNsbLLN8/RSdh8pyHHPy9xIfuchK4LZPgmgVhVgHAZu+QA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfd2wBtR+0r4n/1b54jlmpooVaOiQopSRNkiBvAVIuoOh0rq15
-	aVw6ysVgEuKjwqnaxitMxcazemOudr1U6K+fJym4eqa5cuCKiHJd4I0jNzomKXI=
-X-Gm-Gg: ASbGncu6wYM5QCAghepcWdUiTPTIOTnV51xbnn22PSWn5sr5tj2E6ADPVNqD5f3JyfH
-	6ctRTI7qsaPSBJgJtQx6L+xNUaK4GJMHEuLr56klo/uH0n2vNaRRsox4kKxCZ9LbVb2dVNCFo9d
-	zDKogRglA+pB82ozetHGwRkwZxt1dVUsoHGr5p6GO4kDFRvl1IwKKv6gsSfxCkeYDHme9du5Wnq
-	UlZJXbSdbkO8J2dwyAex3CKCTfo7Hlfc9uwgJzJZmJLyty3boSsAZgH8rnjTp/Iu8s0DsaIdpyD
-	6L+Oh7Sm6152lpV4CKsXMiWEifLkXis3
-X-Google-Smtp-Source: AGHT+IGQoej17xQcxoErKHLCqvlPlZSqjGfTS7DBqmbIvkpb8XJf7iEa6MP5sQiwocZCvXTx8N2C4g==
-X-Received: by 2002:a05:600c:3502:b0:43c:f4b3:b0ad with SMTP id 5b1f17b1804b1-43d01c12187mr109092455e9.19.1741879100728;
-        Thu, 13 Mar 2025 08:18:20 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200::59a5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a8d0ab1sm56347735e9.34.2025.03.13.08.18.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 08:18:19 -0700 (PDT)
-Date: Thu, 13 Mar 2025 16:18:18 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH v3 16/17] RISC-V: KVM: add support for FWFT SBI extension
-Message-ID: <20250313-b15bd3f690fccfc5d1a946fc@orel>
-References: <20250310151229.2365992-1-cleger@rivosinc.com>
- <20250310151229.2365992-17-cleger@rivosinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oxlcY7QGkh2p1IYTxTGX4gJw4E6Tm2o0Fi8yl/e8/txiekg8mJk4QUprzStY3cZvK0xOuk8sKWS6Wtt9KPjcshMpsrOLm0+Jqnp7Dc82Pg8xNHPhZA4QN2NkWavRAvc9fm2gxCXYGFZJfQkhkTl5KFFSxJw9iAh41Hvii3XZnYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L5Yzwm/p; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741879154;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G9zaHgixonSILPYIqqBFAZyXZsf0jbzyGyxAoGfZOaA=;
+	b=L5Yzwm/pJ7/bMg0dpU007Wuwgc3+b9WN5ersKY0eWqnNuZSM5bkspxA6Xt+COzf8GeNNKj
+	1WILfi8kF1QvhJbJWV/V+Vy/EDM1eUzyhRJEuu5gpPwIqa7DE3fh5NQl/BuC5DjM0jQ2+I
+	Fo9RYoP0Oymevu420KO3VlHWVMK/mOo=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-527-Gji8Z6jlOeSsyoEMH6KeKw-1; Thu,
+ 13 Mar 2025 11:19:10 -0400
+X-MC-Unique: Gji8Z6jlOeSsyoEMH6KeKw-1
+X-Mimecast-MFC-AGG-ID: Gji8Z6jlOeSsyoEMH6KeKw_1741879148
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 646961800258;
+	Thu, 13 Mar 2025 15:19:08 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.22.76.11])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 36B5A300376F;
+	Thu, 13 Mar 2025 15:19:03 +0000 (UTC)
+Date: Thu, 13 Mar 2025 11:18:59 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Steve Grubb <sgrubb@redhat.com>
+Cc: Paul Moore <paul@paul-moore.com>,
+	Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>,
+	LKML <linux-kernel@vger.kernel.org>, linux-modules@vger.kernel.org,
+	Linux Kernel Audit Mailing List <audit@vger.kernel.org>,
+	Eric Paris <eparis@parisplace.org>
+Subject: Re: [PATCH v1] audit,module: restore audit logging in load failure
+ case
+Message-ID: <Z9L3YwDxHcRI5EWp@madcap2.tricolour.ca>
+References: <999cdd694f951acd2f4ad665fe7ab97d0834e162.1729717542.git.rgb@redhat.com>
+ <b7f8e0d11b6cfc7547709c7efc472021@paul-moore.com>
+ <Z8oWlAwgKWW+M8yL@madcap2.tricolour.ca>
+ <2743964.lGaqSPkdTl@x2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250310151229.2365992-17-cleger@rivosinc.com>
+In-Reply-To: <2743964.lGaqSPkdTl@x2>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Mon, Mar 10, 2025 at 04:12:23PM +0100, Clément Léger wrote:
-> Add basic infrastructure to support the FWFT extension in KVM.
+On 2025-03-07 14:41, Steve Grubb wrote:
+> On Thursday, March 6, 2025 4:41:40â€¯PM Eastern Standard Time Richard Guy 
+> Briggs wrote:
+> > On 2024-10-24 16:41, Paul Moore wrote:
+> > > On Oct 23, 2024 Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > The move of the module sanity check to earlier skipped the audit
+> > > > logging
+> > > > call in the case of failure and to a place where the previously used
+> > > > context is unavailable.
+> > > > 
+> > > > Add an audit logging call for the module loading failure case and get
+> > > > the module name when possible.
+> > > > 
+> > > > Link: https://issues.redhat.com/browse/RHEL-52839
+> > > > Fixes: 02da2cbab452 ("module: move check_modinfo() early to
+> > > > early_mod_check()") Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > > ---
+> > > > 
+> > > >  kernel/module/main.c | 4 +++-
+> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/kernel/module/main.c b/kernel/module/main.c
+> > > > index 49b9bca9de12..1f482532ef66 100644
+> > > > --- a/kernel/module/main.c
+> > > > +++ b/kernel/module/main.c
+> > > > @@ -3057,8 +3057,10 @@ static int load_module(struct load_info *info,
+> > > > const char __user *uargs,> > 
+> > > >  	 * failures once the proper module was allocated and
+> > > >  	 * before that.
+> > > >  	 */
+> > > > 
+> > > > -	if (!module_allocated)
+> > > > +	if (!module_allocated) {
+> > > > +		audit_log_kern_module(info->name ? info->name : 
+> "(unavailable)");
+> > > > 
+> > > >  		mod_stat_bump_becoming(info, flags);
+> > > > 
+> > > > +	}
+> > > 
+> > > We probably should move the existing audit_log_kern_module() to just
+> > > after the elf_validity_cache_copy() call as both info->name and
+> > > info->mod->name should be as valid as they are going to get at that
+> > > point.  If we do that then we only have two cases we need to worry about,
+> > > a failed module_sig_check() or a failed elf_validity_cache_copy(), and
+> > > in both cases we can use "(unavailable)" without having to check
+> > > info->name first.
+> > 
+> > Fair enough.
+> > 
+> > > However, assuming we move the audit_log_kern_module() call up a bit as
+> > > described above, I'm not sure there is much value in calling
+> > > audit_log_kern_module() with an "(unavailable)" module name in those
+> > > early two cases.  We know it's an attempted module load based on the
+> > > SYSCALL record, seeing an associated "(unavailable)" KERN_MODULE record
+> > > doesn't provide us with any more information than if we had simply
+> > > skipped the KERN_MODULE record.
+> > 
+> > Understood.  I wonder if the absence of the record in the error case
+> > will leave us guessing if we lost a record from the event?  We will have
+> > the error code from the SYSCALL record but not much more than that, and
+> > some of those error codes could just as well be generated after that
+> > point too.  This would be a similar situation to the vanishing fields in
+> > an existing record, but is likely easier to mitigate than a
+> > non-last-field vanishing or shifting around in an existing record.
+> > 
+> > Steve?  Atilla?  Any comments?
 > 
-> Signed-off-by: Clément Léger <cleger@rivosinc.com>
-> ---
->  arch/riscv/include/asm/kvm_host.h          |   4 +
->  arch/riscv/include/asm/kvm_vcpu_sbi.h      |   1 +
->  arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h |  31 +++
->  arch/riscv/include/uapi/asm/kvm.h          |   1 +
->  arch/riscv/kvm/Makefile                    |   1 +
->  arch/riscv/kvm/vcpu_sbi.c                  |   4 +
->  arch/riscv/kvm/vcpu_sbi_fwft.c             | 212 +++++++++++++++++++++
->  7 files changed, 254 insertions(+)
->  create mode 100644 arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
->  create mode 100644 arch/riscv/kvm/vcpu_sbi_fwft.c
+> We should only get the events if we have syscall rules that would result in 
+> kernel module loading/unloading events. I suppose that by the time audit 
+> loads it's rules, many modules have already loaded. So, I don't think we need 
+> to worry about early cases. But when we do get a kernel module load/unload 
+> event based on the rules, we need it's name - even in failures. We need to be 
+> able to determine what was attempted since this could affect system 
+> integrity.
+
+Ok, yes, agreed.  But that information isn't available yet for a number
+of error cases.  It hasn't even been looked for yet after
+module_sig_check() and can't be reliably found until halfway through
+elf_validity_cache_copy().
+
+So, we should provide the record and make a best effort to fill in that
+information if we can.  We could try more aggressively to extract it
+from the info blob, but I don't know if that is worth the effort because
+a number of the steps leading up to it are necessary to check the
+validity and set up structures to extract it.
+
+> -Steve
 > 
-> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
-> index bb93d2995ea2..c0db61ba691a 100644
-> --- a/arch/riscv/include/asm/kvm_host.h
-> +++ b/arch/riscv/include/asm/kvm_host.h
-> @@ -19,6 +19,7 @@
->  #include <asm/kvm_vcpu_fp.h>
->  #include <asm/kvm_vcpu_insn.h>
->  #include <asm/kvm_vcpu_sbi.h>
-> +#include <asm/kvm_vcpu_sbi_fwft.h>
->  #include <asm/kvm_vcpu_timer.h>
->  #include <asm/kvm_vcpu_pmu.h>
->  
-> @@ -281,6 +282,9 @@ struct kvm_vcpu_arch {
->  	/* Performance monitoring context */
->  	struct kvm_pmu pmu_context;
->  
-> +	/* Firmware feature SBI extension context */
-> +	struct kvm_sbi_fwft fwft_context;
-> +
->  	/* 'static' configurations which are set only once */
->  	struct kvm_vcpu_config cfg;
->  
-> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi.h b/arch/riscv/include/asm/kvm_vcpu_sbi.h
-> index cb68b3a57c8f..ffd03fed0c06 100644
-> --- a/arch/riscv/include/asm/kvm_vcpu_sbi.h
-> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi.h
-> @@ -98,6 +98,7 @@ extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_hsm;
->  extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_dbcn;
->  extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_susp;
->  extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_sta;
-> +extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_fwft;
->  extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_experimental;
->  extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_vendor;
->  
-> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h b/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
-> new file mode 100644
-> index 000000000000..ec7568e0dc1a
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
-> @@ -0,0 +1,31 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2025 Rivos Inc.
-> + *
-> + * Authors:
-> + *     Clément Léger <cleger@rivosinc.com>
-> + */
-> +
-> +#ifndef __KVM_VCPU_RISCV_FWFT_H
-> +#define __KVM_VCPU_RISCV_FWFT_H
-> +
-> +#include <asm/sbi.h>
-> +
-> +struct kvm_sbi_fwft_config;
-> +struct kvm_sbi_fwft_feature;
-> +struct kvm_vcpu;
+> > > Untested, but this is what I'm talking about:
+> > > 
+> > > diff --git a/include/linux/audit.h b/include/linux/audit.h
+> > > index 0050ef288ab3..eaa10e3c7eca 100644
+> > > --- a/include/linux/audit.h
+> > > +++ b/include/linux/audit.h
+> > > @@ -417,7 +417,7 @@ extern int __audit_log_bprm_fcaps(struct linux_binprm
+> > > *bprm,> 
+> > >  extern void __audit_log_capset(const struct cred *new, const struct cred
+> > >  *old); extern void __audit_mmap_fd(int fd, int flags);
+> > >  extern void __audit_openat2_how(struct open_how *how);
+> > > 
+> > > -extern void __audit_log_kern_module(char *name);
+> > > +extern void __audit_log_kern_module(const char *name);
+> > > 
+> > >  extern void __audit_fanotify(u32 response, struct
+> > >  fanotify_response_info_audit_rule *friar); extern void
+> > >  __audit_tk_injoffset(struct timespec64 offset);
+> > >  extern void __audit_ntp_log(const struct audit_ntp_data *ad);
+> > > 
+> > > @@ -519,7 +519,7 @@ static inline void audit_openat2_how(struct open_how
+> > > *how)> 
+> > >                 __audit_openat2_how(how);
+> > >  
+> > >  }
+> > > 
+> > > -static inline void audit_log_kern_module(char *name)
+> > > +static inline void audit_log_kern_module(const char *name)
+> > > 
+> > >  {
+> > >  
+> > >         if (!audit_dummy_context())
+> > >         
+> > >                 __audit_log_kern_module(name);
+> > > 
+> > > @@ -677,7 +677,7 @@ static inline void audit_mmap_fd(int fd, int flags)
+> > > 
+> > >  static inline void audit_openat2_how(struct open_how *how)
+> > >  { }
+> > > 
+> > > -static inline void audit_log_kern_module(char *name)
+> > > +static inline void audit_log_kern_module(const char *name)
+> > > 
+> > >  {
+> > >  }
+> > > 
+> > > diff --git a/kernel/audit.h b/kernel/audit.h
+> > > index a60d2840559e..5156ecd35457 100644
+> > > --- a/kernel/audit.h
+> > > +++ b/kernel/audit.h
+> > > @@ -199,7 +199,7 @@ struct audit_context {
+> > > 
+> > >                         int                     argc;
+> > >                 
+> > >                 } execve;
+> > >                 struct {
+> > > 
+> > > -                       char                    *name;
+> > > +                       const char              *name;
+> > > 
+> > >                 } module;
+> > >                 struct {
+> > >                 
+> > >                         struct audit_ntp_data   ntp_data;
+> > > 
+> > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > > index 0627e74585ce..f79eb3a5a789 100644
+> > > --- a/kernel/auditsc.c
+> > > +++ b/kernel/auditsc.c
+> > > @@ -2870,7 +2870,7 @@ void __audit_openat2_how(struct open_how *how)
+> > > 
+> > >         context->type = AUDIT_OPENAT2;
+> > >  
+> > >  }
+> > > 
+> > > -void __audit_log_kern_module(char *name)
+> > > +void __audit_log_kern_module(const char *name)
+> > > 
+> > >  {
+> > >  
+> > >         struct audit_context *context = audit_context();
+> > > 
+> > > diff --git a/kernel/module/main.c b/kernel/module/main.c
+> > > index 49b9bca9de12..3acb65073c53 100644
+> > > --- a/kernel/module/main.c
+> > > +++ b/kernel/module/main.c
+> > > @@ -2884,6 +2884,8 @@ static int load_module(struct load_info *info,
+> > > const char __user *uargs,> 
+> > >         if (err)
+> > >         
+> > >                 goto free_copy;
+> > > 
+> > > +       audit_log_kern_module(info->name);
+> > > +
+> > > 
+> > >         err = early_mod_check(info, flags);
+> > >         if (err)
+> > >         
+> > >                 goto free_copy;
+> > > 
+> > > @@ -2897,8 +2899,6 @@ static int load_module(struct load_info *info,
+> > > const char __user *uargs,> 
+> > >         module_allocated = true;
+> > > 
+> > > -       audit_log_kern_module(mod->name);
+> > > -
+> > > 
+> > >         /* Reserve our place in the list. */
+> > >         err = add_unformed_module(mod);
+> > >         if (err)
+> > > 
+> > > --
+> > > paul-moore.com
+> > 
+> > - RGB
 
-Should only need the forward declaration for kvm_sbi_fwft_feature.
+- RGB
 
-> +
-> +struct kvm_sbi_fwft_config {
-> +	const struct kvm_sbi_fwft_feature *feature;
-> +	bool supported;
-> +	unsigned long flags;
-> +};
-> +
-> +/* FWFT data structure per vcpu */
-> +struct kvm_sbi_fwft {
-> +	struct kvm_sbi_fwft_config *configs;
-> +};
-> +
-> +#define vcpu_to_fwft(vcpu) (&(vcpu)->arch.fwft_context)
-> +
-> +#endif /* !__KVM_VCPU_RISCV_FWFT_H */
-> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/asm/kvm.h
-> index f06bc5efcd79..fa6eee1caf41 100644
-> --- a/arch/riscv/include/uapi/asm/kvm.h
-> +++ b/arch/riscv/include/uapi/asm/kvm.h
-> @@ -202,6 +202,7 @@ enum KVM_RISCV_SBI_EXT_ID {
->  	KVM_RISCV_SBI_EXT_DBCN,
->  	KVM_RISCV_SBI_EXT_STA,
->  	KVM_RISCV_SBI_EXT_SUSP,
-> +	KVM_RISCV_SBI_EXT_FWFT,
->  	KVM_RISCV_SBI_EXT_MAX,
->  };
->  
-> diff --git a/arch/riscv/kvm/Makefile b/arch/riscv/kvm/Makefile
-> index 4e0bba91d284..06e2d52a9b88 100644
-> --- a/arch/riscv/kvm/Makefile
-> +++ b/arch/riscv/kvm/Makefile
-> @@ -26,6 +26,7 @@ kvm-y += vcpu_onereg.o
->  kvm-$(CONFIG_RISCV_PMU_SBI) += vcpu_pmu.o
->  kvm-y += vcpu_sbi.o
->  kvm-y += vcpu_sbi_base.o
-> +kvm-y += vcpu_sbi_fwft.o
->  kvm-y += vcpu_sbi_hsm.o
->  kvm-$(CONFIG_RISCV_PMU_SBI) += vcpu_sbi_pmu.o
->  kvm-y += vcpu_sbi_replace.o
-> diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
-> index 18726096ef44..27f22e98c8f8 100644
-> --- a/arch/riscv/kvm/vcpu_sbi.c
-> +++ b/arch/riscv/kvm/vcpu_sbi.c
-> @@ -78,6 +78,10 @@ static const struct kvm_riscv_sbi_extension_entry sbi_ext[] = {
->  		.ext_idx = KVM_RISCV_SBI_EXT_STA,
->  		.ext_ptr = &vcpu_sbi_ext_sta,
->  	},
-> +	{
-> +		.ext_idx = KVM_RISCV_SBI_EXT_FWFT,
-> +		.ext_ptr = &vcpu_sbi_ext_fwft,
-> +	},
->  	{
->  		.ext_idx = KVM_RISCV_SBI_EXT_EXPERIMENTAL,
->  		.ext_ptr = &vcpu_sbi_ext_experimental,
-> diff --git a/arch/riscv/kvm/vcpu_sbi_fwft.c b/arch/riscv/kvm/vcpu_sbi_fwft.c
-> new file mode 100644
-> index 000000000000..cce1e41d5490
-> --- /dev/null
-> +++ b/arch/riscv/kvm/vcpu_sbi_fwft.c
-> @@ -0,0 +1,212 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2025 Rivos Inc.
-> + *
-> + * Authors:
-> + *     Clément Léger <cleger@rivosinc.com>
-> + */
-> +
-> +#include <linux/errno.h>
-> +#include <linux/err.h>
-> +#include <linux/kvm_host.h>
-> +#include <asm/cpufeature.h>
-> +#include <asm/sbi.h>
-> +#include <asm/kvm_vcpu_sbi.h>
-> +#include <asm/kvm_vcpu_sbi_fwft.h>
-> +
-> +struct kvm_sbi_fwft_feature {
-> +	/**
-> +	 * @id: Feature ID
-> +	 */
-> +	enum sbi_fwft_feature_t id;
-> +
-> +	/**
-> +	 * @supported: Check if the feature is supported on the vcpu
-> +	 *
-> +	 * This callback is optional, if not provided the feature is assumed to
-> +	 * be supported
-> +	 */
-> +	bool (*supported)(struct kvm_vcpu *vcpu);
-> +
-> +	/**
-> +	 * @set: Set the feature value
-> +	 *
-> +	 * This callback is mandatory
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+Upstream IRC: SunRaycer
+Voice: +1.613.860 2354 SMS: +1.613.518.6570
 
-Since we're doing all this documentation, then let's also state they
-return SBI errors (which are longs, so we should probably return longs).
-
-> +	 */
-> +	int (*set)(struct kvm_vcpu *vcpu, struct kvm_sbi_fwft_config *conf, unsigned long value);
-> +
-> +	/**
-> +	 * @get: Get the feature current value
-> +	 *
-> +	 * This callback is mandatory
-> +	 */
-> +	int (*get)(struct kvm_vcpu *vcpu, struct kvm_sbi_fwft_config *conf, unsigned long *value);
-> +};
-> +
-> +static const enum sbi_fwft_feature_t kvm_fwft_defined_features[] = {
-> +	SBI_FWFT_MISALIGNED_EXC_DELEG,
-> +	SBI_FWFT_LANDING_PAD,
-> +	SBI_FWFT_SHADOW_STACK,
-> +	SBI_FWFT_DOUBLE_TRAP,
-> +	SBI_FWFT_PTE_AD_HW_UPDATING,
-> +	SBI_FWFT_POINTER_MASKING_PMLEN,
-> +};
-> +
-> +static bool kvm_fwft_is_defined_feature(enum sbi_fwft_feature_t feature)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(kvm_fwft_defined_features); i++) {
-> +		if (kvm_fwft_defined_features[i] == feature)
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +static const struct kvm_sbi_fwft_feature features[] = {
-> +};
-> +
-> +static struct kvm_sbi_fwft_config *
-> +kvm_sbi_fwft_get_config(struct kvm_vcpu *vcpu, enum sbi_fwft_feature_t feature)
-> +{
-> +	int i = 0;
-
-no need for '= 0'
-
-> +	struct kvm_sbi_fwft *fwft = vcpu_to_fwft(vcpu);
-> +
-> +	for (i = 0; i < ARRAY_SIZE(features); i++) {
-> +		if (fwft->configs[i].feature->id == feature)
-> +			return &fwft->configs[i];
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
-> +static int kvm_fwft_get_feature(struct kvm_vcpu *vcpu, u32 feature,
-> +				struct kvm_sbi_fwft_config **conf)
-> +{
-> +	struct kvm_sbi_fwft_config *tconf;
-> +
-> +	tconf = kvm_sbi_fwft_get_config(vcpu, feature);
-> +	if (!tconf) {
-> +		if (kvm_fwft_is_defined_feature(feature))
-> +			return SBI_ERR_NOT_SUPPORTED;
-> +
-> +		return SBI_ERR_DENIED;
-> +	}
-> +
-> +	if (!tconf->supported)
-> +		return SBI_ERR_NOT_SUPPORTED;
-> +
-> +	*conf = tconf;
-> +
-> +	return SBI_SUCCESS;
-> +}
-> +
-> +static int kvm_sbi_fwft_set(struct kvm_vcpu *vcpu, u32 feature,
-> +			    unsigned long value, unsigned long flags)
-> +{
-> +	int ret;
-> +	struct kvm_sbi_fwft_config *conf;
-> +
-> +	ret = kvm_fwft_get_feature(vcpu, feature, &conf);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if ((flags & ~SBI_FWFT_SET_FLAG_LOCK) != 0)
-> +		return SBI_ERR_INVALID_PARAM;
-> +
-> +	if (conf->flags & SBI_FWFT_SET_FLAG_LOCK)
-> +		return SBI_ERR_DENIED_LOCKED;
-> +
-> +	conf->flags = flags;
-> +
-> +	return conf->feature->set(vcpu, conf, value);
-> +}
-> +
-> +static int kvm_sbi_fwft_get(struct kvm_vcpu *vcpu, unsigned long feature,
-> +			    unsigned long *value)
-> +{
-> +	int ret;
-> +	struct kvm_sbi_fwft_config *conf;
-> +
-> +	ret = kvm_fwft_get_feature(vcpu, feature, &conf);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return conf->feature->get(vcpu, conf, value);
-> +}
-> +
-> +static int kvm_sbi_ext_fwft_handler(struct kvm_vcpu *vcpu, struct kvm_run *run,
-> +				    struct kvm_vcpu_sbi_return *retdata)
-> +{
-> +	int ret = 0;
-> +	struct kvm_cpu_context *cp = &vcpu->arch.guest_context;
-> +	unsigned long funcid = cp->a6;
-> +
-> +	switch (funcid) {
-> +	case SBI_EXT_FWFT_SET:
-> +		ret = kvm_sbi_fwft_set(vcpu, cp->a0, cp->a1, cp->a2);
-> +		break;
-> +	case SBI_EXT_FWFT_GET:
-> +		ret = kvm_sbi_fwft_get(vcpu, cp->a0, &retdata->out_val);
-> +		break;
-> +	default:
-> +		ret = SBI_ERR_NOT_SUPPORTED;
-> +		break;
-> +	}
-> +
-> +	retdata->err_val = ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int kvm_sbi_ext_fwft_init(struct kvm_vcpu *vcpu)
-> +{
-> +	struct kvm_sbi_fwft *fwft = vcpu_to_fwft(vcpu);
-> +	const struct kvm_sbi_fwft_feature *feature;
-> +	struct kvm_sbi_fwft_config *conf;
-> +	int i;
-> +
-> +	fwft->configs = kcalloc(ARRAY_SIZE(features), sizeof(struct kvm_sbi_fwft_config),
-> +				GFP_KERNEL);
-> +	if (!fwft->configs)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(features); i++) {
-> +		feature = &features[i];
-> +		conf = &fwft->configs[i];
-> +		if (feature->supported)
-> +			conf->supported = feature->supported(vcpu);
-> +		else
-> +			conf->supported = true;
-> +
-> +		conf->feature = feature;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void kvm_sbi_ext_fwft_deinit(struct kvm_vcpu *vcpu)
-> +{
-> +	struct kvm_sbi_fwft *fwft = vcpu_to_fwft(vcpu);
-> +
-> +	kfree(fwft->configs);
-> +}
-> +
-> +static void kvm_sbi_ext_fwft_reset(struct kvm_vcpu *vcpu)
-> +{
-> +	int i = 0;
-
-no need for '= 0'
-
-> +	struct kvm_sbi_fwft *fwft = vcpu_to_fwft(vcpu);
-> +
-> +	for (i = 0; i < ARRAY_SIZE(features); i++)
-> +		fwft->configs[i].flags = 0;
-> +}
-> +
-> +const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_fwft = {
-> +	.extid_start = SBI_EXT_FWFT,
-> +	.extid_end = SBI_EXT_FWFT,
-> +	.handler = kvm_sbi_ext_fwft_handler,
-> +	.init = kvm_sbi_ext_fwft_init,
-> +	.deinit = kvm_sbi_ext_fwft_deinit,
-> +	.reset = kvm_sbi_ext_fwft_reset,
-> +};
-> -- 
-> 2.47.2
->
-
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
