@@ -1,53 +1,66 @@
-Return-Path: <linux-kernel+bounces-560085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E747A5FD80
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:19:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACC65A5FD85
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:19:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ADCC175CBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:18:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B02633BE8BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C484E187554;
-	Thu, 13 Mar 2025 17:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7505B18FDDA;
+	Thu, 13 Mar 2025 17:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fhhKPC2o"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pLb1Bgxl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716F413C689
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD29613C689;
+	Thu, 13 Mar 2025 17:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741886190; cv=none; b=NQR92hbeIwn3C47uXsbwRT2AeQkwkekYTJEyti3iRNTWlF+J37u562DLiyHi68OoTC0QTnc1GmqNIyVImWPVhTBcHHQKO/T1AsuuYTSnLJ26qzwj32JcS5yusKlNTZ/x3y5fQB6P9jMHMWWGPZbP/B+QykSBG+K3cHTBLNqFGf0=
+	t=1741886199; cv=none; b=DhbqpbUGPuNkyIVlVL0b7M5Kxm5fEC6fJGrlk/ypeNDf6BN/ffEhsh7DRMN48LHCMBklu0ttROBtfDKid6+BHczidKJ9x5duDx2aFGPQHjlLk4PRSX2bh3vk7IqtRBv19/Arpk+/FbWHQoJ37cPJ5M8H1feH0gfSc0SXN83XSlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741886190; c=relaxed/simple;
-	bh=65ynb6Gh/C7olI1InBJQjf4Uy45Ac4TLwO1SIzO2cEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m4jujgMetu/1rpOq24bXHGgIMYRmxLIPTKZlOmBNblOC2wmolr6h71zbpPConnBzr5RF3g8RMvR7LJqKXtM7AvFW2KwTU0znhpF0HLAQjdMiYbFJ1sI/wEl8ZqXk1HTteLlxsLTd3+2wutOVK7orEAkgeoPmts/E5BVoll998Bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fhhKPC2o; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 13 Mar 2025 13:16:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741886176;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z4SmU3b6wHvKk5inE+NGrQrAKfK6zUobXoS9IuHdb+o=;
-	b=fhhKPC2oco7UjaBJOsogS04mjpzCsBkg8j1JUmpJsBlIHIDibW+PD1yCWrJATcNl6r0k87
-	EIJBIkwUMhDBp8uc7lTpuGyzDPUyc+PETkkGofKE4E88fb/aycah0RYCIvQWLnKkfSn3dC
-	/YCsyIilB71nWTzp7xfzM53gPeRh1nA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] codetag: Avoid unused alloc_tags sections/symbols
-Message-ID: <jmcazyqlkimqhswwqn2du7ik5sbm5fommonrgovy5d6knqbqcr@xebmu4akkkoy>
-References: <20250313143002.9118-1-petr.pavlu@suse.com>
+	s=arc-20240116; t=1741886199; c=relaxed/simple;
+	bh=zWvKTNAKlfaKyLmnxPyqzWeB+4hJOUxXXjAo9PVxwlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=PfiVFKjuNgRlSMp6hCW8x4vJelkgO/mcNetyyfly6Y7PUMy1s6jsOcBa2avGndnn8/6lgz+nMW331262bLZWjqdW6qE/aRiZUSan4OIW7rXH+xS9LTNYhZDmLtEo4cN02OwAuN1V+Gpy6/94QnfOa6ym7KaStYqy6mCxAxXMIhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pLb1Bgxl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DD82C4CEDD;
+	Thu, 13 Mar 2025 17:16:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741886199;
+	bh=zWvKTNAKlfaKyLmnxPyqzWeB+4hJOUxXXjAo9PVxwlw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=pLb1BgxlqzOdfw15QvV14UuHOIGAwS0A0KCRTc/zF4KFJ7WyCwHGxUQIcnFJAKREH
+	 K9p9N6lwlw4tnSxiEogbx+3fsQUSRRuqWPIaBKn7WeUAjzZxR6oL+s7ZiCgBUbDMdp
+	 q4ekXP7Ufa8kTZ7QrGo9tILd3LPsGdUe7+NLVD81D4IAfAGQDFNL+j3Yz1C3vPqZvg
+	 wmIEzGBxozhlPGNvcRAaLdJZehx8vOqsUfWBRVdrSuIZy2BYykPdMdQPB0qBm8sDvZ
+	 7ktxPUB+rmqCKWUyjY6BJ8Jg5ZRBv6995rtd7Nxsb9pRKIt0tPnAsWvnTL+Wt9m5xH
+	 0lDyuwxydXp4w==
+Date: Thu, 13 Mar 2025 12:16:37 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jeff Johnson <jjohnson@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	mhi@lists.linux.dev, linux-wireless@vger.kernel.org,
+	ath11k@lists.infradead.org, quic_pyarlaga@quicinc.com,
+	quic_vbadigan@quicinc.com, quic_vpernami@quicinc.com,
+	quic_mrana@quicinc.com,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Subject: Re: [PATCH v2 09/10] PCI: Add function to convert lnkctl2speed to
+ pci_bus_speed
+Message-ID: <20250313171637.GA739165@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,63 +69,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250313143002.9118-1-petr.pavlu@suse.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250313-mhi_bw_up-v2-9-869ca32170bf@oss.qualcomm.com>
 
-On Thu, Mar 13, 2025 at 03:29:20PM +0100, Petr Pavlu wrote:
-> With CONFIG_MEM_ALLOC_PROFILING=n, vmlinux and all modules unnecessarily
-> contain the symbols __start_alloc_tags and __stop_alloc_tags, which define
-> an empty range. In the case of modules, the presence of these symbols also
-> forces the linker to create an empty .codetag.alloc_tags section.
+On Thu, Mar 13, 2025 at 05:10:16PM +0530, Krishna Chaitanya Chundru wrote:
+> Add a exported function to convert lnkctl2speed to enum pci_bus_speed,
+> so that other kernel drivers can use it.
 > 
-> Update codetag.lds.h to make the data conditional on
-> CONFIG_MEM_ALLOC_PROFILING.
-> 
-> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
-
-Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
-
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
 > ---
->  include/asm-generic/codetag.lds.h | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
+>  drivers/pci/pci.c   | 12 ++++++++++++
+>  include/linux/pci.h |  1 +
+>  2 files changed, 13 insertions(+)
 > 
-> diff --git a/include/asm-generic/codetag.lds.h b/include/asm-generic/codetag.lds.h
-> index 372c320c5043..0ea1fa678405 100644
-> --- a/include/asm-generic/codetag.lds.h
-> +++ b/include/asm-generic/codetag.lds.h
-> @@ -2,6 +2,12 @@
->  #ifndef __ASM_GENERIC_CODETAG_LDS_H
->  #define __ASM_GENERIC_CODETAG_LDS_H
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 869d204a70a3..75505437a9c9 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -6011,6 +6011,18 @@ int pcie_link_speed_mbps(struct pci_dev *pdev)
+>  }
+>  EXPORT_SYMBOL(pcie_link_speed_mbps);
 >  
-> +#ifdef CONFIG_MEM_ALLOC_PROFILING
-> +#define IF_MEM_ALLOC_PROFILING(...) __VA_ARGS__
-> +#else
-> +#define IF_MEM_ALLOC_PROFILING(...)
-> +#endif
-> +
->  #define SECTION_WITH_BOUNDARIES(_name)	\
->  	. = ALIGN(8);			\
->  	__start_##_name = .;		\
-> @@ -9,7 +15,7 @@
->  	__stop_##_name = .;
->  
->  #define CODETAG_SECTIONS()		\
-> -	SECTION_WITH_BOUNDARIES(alloc_tags)
-> +	IF_MEM_ALLOC_PROFILING(SECTION_WITH_BOUNDARIES(alloc_tags))
->  
->  /*
->   * Module codetags which aren't used after module unload, therefore have the
-> @@ -28,6 +34,6 @@
->   * unload them individually once unused.
->   */
->  #define MOD_SEPARATE_CODETAG_SECTIONS()		\
-> -	MOD_SEPARATE_CODETAG_SECTION(alloc_tags)
-> +	IF_MEM_ALLOC_PROFILING(MOD_SEPARATE_CODETAG_SECTION(alloc_tags))
->  
->  #endif /* __ASM_GENERIC_CODETAG_LDS_H */
-> 
-> base-commit: 80e54e84911a923c40d7bee33a34c1b4be148d7a
-> -- 
-> 2.43.0
-> 
+> +/**
+> + * pci_lnkctl2_bus_speed - converts lnkctl2 speed to pci_bus_speed
+
+I try to use imperative mood ("convert lnkctl2") to match commit log
+style.
+
+> + * @speed: LNKCAP2 SLS value
+> + *
+> + * Returns pci_bus_speed
+
+Not sure how strict kernel-doc is about this, but I've been told
+it wants "Return:" with a colon here:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/doc-guide/kernel-doc.rst?id=v6.13#n142
 
