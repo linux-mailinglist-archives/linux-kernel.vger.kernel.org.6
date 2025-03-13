@@ -1,267 +1,338 @@
-Return-Path: <linux-kernel+bounces-560234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B461A6004C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:01:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC8DEA601D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:04:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B1BA3AC485
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:00:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4847C8804E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9131EEA51;
-	Thu, 13 Mar 2025 19:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5440E1F2BAD;
+	Thu, 13 Mar 2025 20:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="xR6BM2cm"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=dell.com header.i=@dell.com header.b="KmG50+MF"
+Received: from mx0b-00154904.pphosted.com (mx0b-00154904.pphosted.com [148.163.137.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29E078C9C;
-	Thu, 13 Mar 2025 19:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741892465; cv=none; b=oRNjT0TXnbQzIQlSKPqRZnMwMiHaVhgQ3lAO2VyRgT7s7m1fa4W00yOmzq6KxToBeUtbux1IKKC3oaPJv7Ze8xLlo+iPYx9RyuQOpj0ZKzrS7eKfjhxyMqKsXBEi6LEL/YqVWiKHwuB4jgIi+hhrrpC+l2fxj2WAlQi9u7gfrlY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741892465; c=relaxed/simple;
-	bh=pSVmGllTttvTFJsoQA7Fl64POuhcfvRXwFGcwndmA0Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hZwdt3I/61hVwWWVrmpWiFR930wEjKjpz0Y2zOEDQsY5kxgeYwWwlOf453GO6IT9Tf1ZreWwKfZZXPuvjaFQNyOnPsQr9+BZyBzwp/mQjkruQlAEoP+pbsXAjs+dlRlpNSt5oQqGhV+lcVRZ+AHveMcQjw54ICHDcdR+ZBoDMeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=xR6BM2cm; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=WMLsc23o2VA6gSpVgAlsayo+yB0H4z9pqmva5w2FXqE=; b=xR6BM2cm1nS6H6rY4RiY0+X6Ij
-	xE8g9qEk22quDoCqK0SF9kL9fPMDzVcvNE60rbRbSQlcfonOKugQpfSwhtNlCZSTrLNu51Fi4uH/x
-	loNeU6y2XSXUE+03P88VQegXy9KpaqS1u0MrO6zH2s6VRdzG7FZEwNjSYC8srFzHxxFCAwtgebKmj
-	bjSIRs3sg0F5FE7TythvpFujR9I+A8Qlgr3axVGZwfW2bcqLBGY8GbwNqpTBHBjO/MS12iZ/qJ9us
-	WbZzkUVDzmgUzQ/I6ct7Rvf4DXgkJM2uVPva5a8aHl5TbUmTIo5RgbzWy43xcBmZtwjiI4ctyQct0
-	kCp7WkrA==;
-Received: from ip-185-104-138-79.ptr.icomera.net ([185.104.138.79] helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tsnnU-0001rO-Mo; Thu, 13 Mar 2025 20:00:49 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Quentin Schulz <quentin.schulz@cherry.de>,
- Dragan Simic <dsimic@manjaro.org>
-Cc: Alexey Charkov <alchark@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Chen-Yu Tsai <wens@kernel.org>,
- Diederik de Haas <didi.debian@cknow.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Kever Yang <kever.yang@rock-chips.com>
-Subject:
- Re: [PATCH v5 7/8] arm64: dts: rockchip: Add OPP data for CPU cores on
- RK3588j
-Date: Thu, 13 Mar 2025 20:00:40 +0100
-Message-ID: <3271211.5fSG56mABF@phil>
-In-Reply-To: <2cf3889741f84584d8f23a4407fed08e@manjaro.org>
-References:
- <20240617-rk-dts-additions-v5-0-c1f5f3267f1e@gmail.com>
- <a56b59a21dc3c21192fe45197eee4865@manjaro.org>
- <2cf3889741f84584d8f23a4407fed08e@manjaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984B4149C64;
+	Thu, 13 Mar 2025 20:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.137.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741896277; cv=fail; b=uSwXuTyRMyIS3y0Od5607aa5zNkBuHD05HUpxabpFb81E8H88aftrf1FNBF4qhakAzPtwAlU+3HXLCTUp6+kjgBlr08iMiGyVJE/pU0Nf9UO+a295bZnpSh0f/+uDneWyV8rVAZ4HQLscuOBAPBRbTDDVadS/cYAIb0U9iMHjiU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741896277; c=relaxed/simple;
+	bh=XcOsMmPx/5KNJ2rz0YXfZLNZfnzMjFHPlbt/EgGWB7k=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=KC05NWxxi1TsUSrxqABQ6oJUncwsjQXkazGpgorhZh9P1fvtSqwzZN6Dc43Rz20YBMvA0FrwoUmVv2t65B/Qt4/8uzuRy+b5zx8QM9Kf95yhfzfW/pVnqL+sq87pxyNeAK3iYIaDEZBokITAqP7JoB+zQ3xxOTarv75F0+rCNkc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dell.com; spf=pass smtp.mailfrom=dell.com; dkim=pass (2048-bit key) header.d=dell.com header.i=@dell.com header.b=KmG50+MF; arc=fail smtp.client-ip=148.163.137.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dell.com
+Received: from pps.filterd (m0170394.ppops.net [127.0.0.1])
+	by mx0b-00154904.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DFpmxA018559;
+	Thu, 13 Mar 2025 12:34:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=smtpout1; bh=h
+	Ljub6PoD3/IHa+flUhTkrbH6y3HLdm6Ln4miE+NA34=; b=KmG50+MF9wkbYQnea
+	Z9J5Ea6ZgP78VoTS9tX3Ei/3JSEk16RyW04iDFAfoVg7gX6h4JV/ZYWbYExDxvqb
+	nEK0W26PRYU1d7uxf5DnhN9RrdkHMy+bOO/EQcYvSe1pFVnSW2AVfriDO0QKWbVo
+	e4m3S0SpCss+FlW1Shc+6frdebQa0IYh+rGMpJnWGk8QNgU4VlyDhmADgf7nAwYq
+	2sN89hgFEShj58efhFfLJbX/jI1PEhk7qJaLWhuJmp86a+4v1Y/XNsO0Id+jdJdV
+	86xY8zcs4QLNLYqSRQHHaY1FvC452N5CWMqkACyS1CwMDoO1e06swIWKimRkwLDe
+	pdPhQ==
+Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com [67.231.149.39])
+	by mx0b-00154904.pphosted.com (PPS) with ESMTPS id 45au44jcwf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 12:34:20 -0400 (EDT)
+Received: from pps.filterd (m0142693.ppops.net [127.0.0.1])
+	by mx0a-00154901.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DFbEMQ028129;
+	Thu, 13 Mar 2025 12:34:19 -0400
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2047.outbound.protection.outlook.com [104.47.70.47])
+	by mx0a-00154901.pphosted.com (PPS) with ESMTPS id 45c25j0xbv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Mar 2025 12:34:18 -0400 (EDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=o4ogS7GC68ApMXfwqkctvQxks/9wVcoQYNuE5Nl3Y3d+QVXnpx4OecBnXgTCoON6OZtcbDVri3QYZfPKBNpFUdLE48PoKsiTtqMmGnFfR8oL8BpqOzyzd7zHuSErrxNIDZcmTUdKf/hAi3yO8zVBMX03J9kxoyQV9+fwoYWVSTAxBBrf8KH9sb4GffzUM6a06PXnKOqzNyYRf/nvThy1EDlr7kPTOesfL1WTKR+Q6jN3z6OqHcbU+finw0KO9a0K4bvoOb16bx8RGq398X0rSC+hwPCwBML6MhG6CHQHgjwQ7ZbVjNO2vks5nCqTnMXB8amZOq9cYq9lsJ/m+RFQjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hLjub6PoD3/IHa+flUhTkrbH6y3HLdm6Ln4miE+NA34=;
+ b=a69IsIY/2xlwhQACZfNhQ2BMSYgRYGh8duc3HVfnfME2zpC9VA6joVA+LSEagcT9dPlioYTOjNweFT3jVgbT+pxMFDAxHfp509ms+6IVsZP3nkVod/vEmEvBrBeY0YY0x4Cf9CroDyPjSyogbEwkis3aulLoOE3oKhxcqK9560xDHFYNbGKRc0I99d2was4DjO6UW5I2elcLwL73bIzpqyOJFgnXoewtGxMOOYrstyfmHsOFQ/NihR8YW/EQ547y0SnlNlEAe0UG2W3FzqB/elBWBrd/20DLUT/kWM6nGpi8zoE4oKuHszVj6lGQgUsiWbS+HJmfPUq4LBS9TVpNjg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=dell.com; dmarc=pass action=none header.from=dell.com;
+ dkim=pass header.d=dell.com; arc=none
+Received: from CY5PR19MB6147.namprd19.prod.outlook.com (2603:10b6:930:c::14)
+ by DM6PR19MB4106.namprd19.prod.outlook.com (2603:10b6:5:24e::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Thu, 13 Mar
+ 2025 16:34:14 +0000
+Received: from CY5PR19MB6147.namprd19.prod.outlook.com
+ ([fe80::d390:13bd:b078:f743]) by CY5PR19MB6147.namprd19.prod.outlook.com
+ ([fe80::d390:13bd:b078:f743%7]) with mapi id 15.20.8511.026; Thu, 13 Mar 2025
+ 16:34:14 +0000
+From: "Tudor, Laurentiu" <Laurentiu.Tudor1@dell.com>
+To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        "linux-arm-msm@vger.kernel.org"
+	<linux-arm-msm@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>,
+        "freedreno@lists.freedesktop.org"
+	<freedreno@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>,
+        "abel.vesa@linaro.org" <abel.vesa@linaro.org>,
+        "johan@kernel.org" <johan@kernel.org>
+Subject: RE: [PATCH v2 0/2] drm/msm/dp: Introduce link training per-segment
+ for LTTPRs
+Thread-Topic: [PATCH v2 0/2] drm/msm/dp: Introduce link training per-segment
+ for LTTPRs
+Thread-Index: AQHbkt8aD0iZ7dHIsUSDlD3K/YJUJ7NxROqg
+Date: Thu, 13 Mar 2025 16:34:14 +0000
+Message-ID:
+ <CY5PR19MB6147B4E21D67D2E2A1913E6FBAD32@CY5PR19MB6147.namprd19.prod.outlook.com>
+References: <20250311234109.136510-1-alex.vinarskis@gmail.com>
+In-Reply-To: <20250311234109.136510-1-alex.vinarskis@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_ActionId=dde3064c-cb63-4bf2-8ff7-9ab61fd45b6c;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_ContentBits=0;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_Enabled=true;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_Method=Privileged;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_Name=Public
+ No Visual
+ Label;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_SetDate=2025-03-13T16:34:00Z;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_Tag=10,
+ 0, 1, 1;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY5PR19MB6147:EE_|DM6PR19MB4106:EE_
+x-ms-office365-filtering-correlation-id: b6aee14b-6694-4983-5938-08dd624ce43f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|10070799003|366016|7416014|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?ySJ+kgjjYNZvzT6l5Q4dKJv5AjzuEHRMz1A5cycGIjdxyHvLMVYYswHV4P3P?=
+ =?us-ascii?Q?NH00DOa+SlnO78cE8H3aEToO6VTk4+n8qVGuoXjs80ZcA25otJE1Hd4neNBw?=
+ =?us-ascii?Q?vIMceLxNmokJ1zUjkUvQ9ByUhgc/JCuZq6m/t8jEwjlJdHzww2csdgHkbQDw?=
+ =?us-ascii?Q?QvlS4NzyvWgGj3TE2ATv8WYEAnry/pzZVM068FWwyQ1gxkR3UFPi9kG9A9sk?=
+ =?us-ascii?Q?BwllRuk3mgfzXP1tsk25pcS8lYY0NE7op9aEIH+BD0pVwDZpDSLfbGHquIqp?=
+ =?us-ascii?Q?vxYVDJfvUag7LBlK4f+D9Cdq00mFN8EBIZvwg02DP6plwqxC39OhVuNr95iM?=
+ =?us-ascii?Q?XA0YfAg+l1Pe1Bn0XrKhumnNcHKT5Zq1fEzTdwKa36WWz0oj/uKVyvC6L+i9?=
+ =?us-ascii?Q?hW6YvgMXSjubP58GNp9H6EtabYreqNJ93pJGQQJi/3VQUzZXOO8hVBc31wrZ?=
+ =?us-ascii?Q?8E6VYnoshgPFliltHpbokvaBYB9iK/4VItdzOTmO9ynjYMZs7Sh/Aez4xDnr?=
+ =?us-ascii?Q?aziGOXQly2/Ssn/Z0+9NemardZEaj5lzjl/L7IVzf2aejeUUWSLXf2eAe4Q5?=
+ =?us-ascii?Q?EbdU6aWHeXBiwyPwSWfmTu8yR8VEDzfWzKBUjZ3HjO8u1gj7pXkJfGz8F9II?=
+ =?us-ascii?Q?9BYryRL40fRWC0Bt39ZaQpc9nLT/V8U9TAyIU8aXlHtST36IkmRwuu4Dq1AK?=
+ =?us-ascii?Q?TSDffglKW9bLtMa04mhFj40xKTA+JekAU0Rc4aGtCBZySu2eaBkd8f5RIZFv?=
+ =?us-ascii?Q?xOLzf0+Bojg1nS6u0jq3A6W+TO2o+JsYggRfAD4KGfoXoA5pGWWoSwdzAkRa?=
+ =?us-ascii?Q?+jpag0e1ar6LLtJqNWr0d98iDDKNrDWyCkOTz9KH1MUY1JkSzrgq0V4Y3bvO?=
+ =?us-ascii?Q?FYlbdl+Q3+C7AtxLvDlzo+Zo0QaSJ4UNEJBFm0nc60u0Sv3DlB9IojiLZNJf?=
+ =?us-ascii?Q?fb0/RjFxKfUWcrK8Dkl2UhRuyUa7VFdpQGgA7BWrxKZIOjlt6i8LG6Ek09uR?=
+ =?us-ascii?Q?H1rtKrm9K2ntogb07wlFczZA/YnQ+N3TQKr6xheWL3lS8siJ4C4WRQ6OA5bW?=
+ =?us-ascii?Q?l5VhngxWU4s+lJb3QhZutooxB1Id+q83jZxtdjiznrhfjcyRKd41KVKZQ6va?=
+ =?us-ascii?Q?AGpXZ828QlzMwLdhXhEDI1jBZkmqKUm1X5UOP/mS4zxlX6BebA/RIQCmhIen?=
+ =?us-ascii?Q?1SPqg+ExBya+Y1Jjw55QMXUKzDKP3Cx6W2LTY57rqXDhMzX9Isbc1U/oYwP5?=
+ =?us-ascii?Q?PI7L1hnk1CaMuodIons6E8Nc16eDCQtRlTyy3EdrkKtMzkpjxspQEZKnG4Ou?=
+ =?us-ascii?Q?e7LxX1K3S5Ax0r0BxwX7L/hpASPo8AhU0rqlBoxQP7gxSC4H56FRTq/9Hfp3?=
+ =?us-ascii?Q?yV/sL3K6h9/cqvjS8CjuJxGli9xR3Da2ZkG1r2rxzMOvXQsdGg=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR19MB6147.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(7416014)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?qvGFCLBdj9CIbW5vBbN1Lz2fPadLyRnqYXlkMbtZrMTEtAuKJenMh3p028i4?=
+ =?us-ascii?Q?G1T/MiOTrZbQMz762G63fZi5ixRZA1yvWcThp/26B7gbLgQ213HsSdYvteSJ?=
+ =?us-ascii?Q?mXd6M4DHLGcBtwjRQU6uQVWfhXQHLyIG+vXUapnn82vc282vlXlf958Buln1?=
+ =?us-ascii?Q?wBKMmFrlzDWPf1FaDThk14flbB6S544idPMePLulds57ICXAxHYKn8U77v1v?=
+ =?us-ascii?Q?H1fh27FOccaqTUEbzBPeBtvBdKVLOrZhx2GjkYdzMABz7Ar2ffHnDRP+uPl4?=
+ =?us-ascii?Q?pO1X2aOhDVtl5z/v0twbdElhy4R+oLDm7fnyRhEXfKYjwWOe7iIAPa1KoQsY?=
+ =?us-ascii?Q?ztUFyMehQLXF1HTi+kCo+nsZJM5W4VXZF/Y7BUru3XnZwU5s0A2O3n1vNdmQ?=
+ =?us-ascii?Q?7Ludp67MNm/5/OnCJCQtBByFzHucnwD92QAMUWuANso1dwDzC2drZYfD2bHu?=
+ =?us-ascii?Q?d1Hmni/ilHFVMsM3WIppv+t8KkcOEBatNzA6bXnH50O/ILeOEoBtDGsHCYHH?=
+ =?us-ascii?Q?R2ToyaXmLODV2HZnjntohs6fSPgFPKcMa2mpXqQ5tmMAKYr2hsZBgOCUyi3N?=
+ =?us-ascii?Q?ps7kvsHJf/ESJV2p0AUGc0H/v6D/GEnWoqCnBldpD346Z84YqX4ZE4FtlnW9?=
+ =?us-ascii?Q?e5p3sXIuW3mf9ikn9ohaf+Fuh3TLrtUkk07U22SWui+661aBx3qFgxzXMqEY?=
+ =?us-ascii?Q?iU/MP13JK9wh+Rxxj+oZ3UEs1LMD3yrS2eXCeCcyM5WmkxBOjzynd8wqKHwP?=
+ =?us-ascii?Q?bRqfj5ywrxt+llHUFwi3rU2JxJnqfd6wA1rWhwfEJi6IVUwVcUrNeNQgFWIb?=
+ =?us-ascii?Q?UNtqzrO+ipD97Z1E+hN5bLNt4y9GOxD1PhxCsHIz3bpVMF0Myd/UuKHrzNiu?=
+ =?us-ascii?Q?oZ7opXjrkW6mLpLrXfaKc5gqhjtAa22o/+/0bw8tbxFKrhDKEm57FIWT3mHj?=
+ =?us-ascii?Q?JX8WmXJvaBesJgPq7Uqoh8m0VHI2W0kMzB4xRnIxESVUFj2EYRnZTd/tdqko?=
+ =?us-ascii?Q?OqMQ7RyWZo9WH09+PZFzZqXMUsml585l0CdsuD4NQVgikq7xHOg1cCJJBb0P?=
+ =?us-ascii?Q?N6LM5EBlJw72F6K97CUTM3IoSY20tPEaTR059m3mLN8IpSi4kr1w1NCyuUOZ?=
+ =?us-ascii?Q?JqwN3CgwPYopDCWq6tPFGWCfcjGnLO3D1EAgwUh5Nhhoi/xPbyh4VuA/nufQ?=
+ =?us-ascii?Q?mQZ4G3m1FILazIh7/SAKlahSfa4NKz3X8b3mZ/l0kBgHl9dmHPovcVX4hdfH?=
+ =?us-ascii?Q?EpLXU8VHneHN1XXLsXq2fbZHbSImq2SHmwOFWL6+hSx+vMEIlfxe0Z6TYXPX?=
+ =?us-ascii?Q?O82WJssMZJKzBy1ySXpEZnromCdA35bhv94kkLCkYjnVjTJqGGtiCvf0zZIN?=
+ =?us-ascii?Q?0lgPjv1AlyomTXNtMJEhsEYlERzlnRD98c1QHWQACNFueJNJRZYwbOY8s5wR?=
+ =?us-ascii?Q?yuA/kkRB7abXJZ5q0dnDGEkQKZ2B4dSxKw1M+od5gKb87Yjm2DfaSL9sgncY?=
+ =?us-ascii?Q?DeB8gvvtffbQ1EznciUbcF09FQBA8zPQzv2a4G4dskIRFAMr+5VIF5K6nF5f?=
+ =?us-ascii?Q?4GpvEHSUJzRrFIXzQPYtbXjH9pAIXKjy7/RQOfUTDIULdGkYejazowE6fO+b?=
+ =?us-ascii?Q?tgfI98/F+QqLFvAj/9yxr32ThN4eqR4iM7i1V5eZOYWQXd1enNhEw2TpfXF6?=
+ =?us-ascii?Q?5dqCTw=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+X-OriginatorOrg: Dell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR19MB6147.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6aee14b-6694-4983-5938-08dd624ce43f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2025 16:34:14.2364
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 945c199a-83a2-4e80-9f8c-5a91be5752dd
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xh8Yd0e8HIIDDJbD+wLMOMQ2nA3zxwx6BGXQp2qcamDdG1TMQgzycENl7Z0YvfKrdFLze1lekmoeUAzICBAcBfGjOGenjW6RwRlDhtsFJ2o=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR19MB4106
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_07,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
+ mlxscore=0 priorityscore=1501 impostorscore=0 malwarescore=0 phishscore=0
+ mlxlogscore=999 clxscore=1011 lowpriorityscore=0 spamscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503130128
+X-Proofpoint-ORIG-GUID: vVVMmBlG1iDmkPzHodrG-d2J6lYv7Neb
+X-Proofpoint-GUID: vVVMmBlG1iDmkPzHodrG-d2J6lYv7Neb
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1011 priorityscore=1501
+ spamscore=0 adultscore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
+ phishscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503130128
 
-Am Donnerstag, 13. M=C3=A4rz 2025, 11:42:17 MEZ schrieb Dragan Simic:
-> Hello all,
+
+
+> -----Original Message-----
+> From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+> Sent: Wednesday, March 12, 2025 1:38 AM
+> Subject: [PATCH v2 0/2] drm/msm/dp: Introduce link training per-segment f=
+or
+> LTTPRs
 >=20
-> On 2025-03-12 11:34, Dragan Simic wrote:
-> > On 2025-03-12 11:15, Quentin Schulz wrote:
-> >> On 2/16/25 1:32 PM, Alexey Charkov wrote:
-> >>> On Sat, Feb 15, 2025 at 11:30=E2=80=AFPM Heiko St=C3=BCbner <heiko@sn=
-tech.de>=20
-> >>> wrote:
-> >>>> Am Samstag, 15. Februar 2025, 19:59:44 MEZ schrieb Alexey Charkov:
-> >>>>> On Tue, Feb 11, 2025 at 7:32=E2=80=AFPM Quentin Schulz=20
-> >>>>> <quentin.schulz@cherry.de> wrote:
-> >>>>>> On 6/17/24 8:28 PM, Alexey Charkov wrote:
-> >> [...]
-> >>>>>>> +     };
-> >>>>>>> +
-> >>>>>>> +     cluster2_opp_table: opp-table-cluster2 {
-> >>>>>>> +             compatible =3D "operating-points-v2";
-> >>>>>>> +             opp-shared;
-> >>>>>>> +
-> >>>>>>> +             opp-1416000000 {
-> >>>>>>> +                     opp-hz =3D /bits/ 64 <1416000000>;
-> >>>>>>> +                     opp-microvolt =3D <750000 750000 950000>;
-> >>>>>>> +                     clock-latency-ns =3D <40000>;
-> >>>>>>> +             };
-> >>>>>>> +             opp-1608000000 {
-> >>>>>>> +                     opp-hz =3D /bits/ 64 <1608000000>;
-> >>>>>>> +                     opp-microvolt =3D <787500 787500 950000>;
-> >>>>>>> +                     clock-latency-ns =3D <40000>;
-> >>>>>>> +             };
-> >>>>>>> +             opp-1800000000 {
-> >>>>>>> +                     opp-hz =3D /bits/ 64 <1800000000>;
-> >>>>>>> +                     opp-microvolt =3D <875000 875000 950000>;
-> >>>>>>> +                     clock-latency-ns =3D <40000>;
-> >>>>>>> +             };
-> >>>>>>> +             opp-2016000000 {
-> >>>>>>> +                     opp-hz =3D /bits/ 64 <2016000000>;
-> >>>>>>> +                     opp-microvolt =3D <950000 950000 950000>;
-> >>>>>>> +                     clock-latency-ns =3D <40000>;
-> >>>>>>> +             };
-> >>>>>>=20
-> >>>>>> opp-1800000000 and opp-2016000000 should be removed as well.
-> >>>>>>=20
-> >>>>>> Did I misunderstand what Rockchip did here? Adding Kever in Cc at=
-=20
-> >>>>>> least
-> >>>>>> for awareness on Rockchip side :)
-> >>>>>>=20
-> >>>>>> I guess another option could be to mark those above as
-> >>>>>>=20
-> >>>>>> turbo-mode;
-> >>>>>>=20
-> >>>>>> though no clue what this would entail. From a glance at cpufreq,=20
-> >>>>>> it
-> >>>>>> seems that for Rockchip since we use the default cpufreq-dt, it=20
-> >>>>>> would
-> >>>>>> mark those as unusable, so essentially a no-op, so better remove=20
-> >>>>>> them
-> >>>>>> entirely?
-> >>>>>=20
-> >>>>> I believe the opp core just marks 'turbo-mode' opps as
-> >>>>> CPUFREQ_BOOST_FREQ, and cpufreq-dt only passes that flag along to=20
-> >>>>> the
-> >>>>> cpufreq core. But then to actually use those boost frequencies I=20
-> >>>>> would
-> >>>>> guess the governor needs to somehow know the power/thermal=20
-> >>>>> constraints
-> >>>>> of the chip?.. Don't know where that is defined.
-> >>>>=20
-> >>>> personally I don't believe in "boost" frequencies - except when they=
-=20
-> >>>> are
-> >>>> declared officially.
-> >>>>=20
-> >>>> Rockchip for the longest time maintains that running the chip=20
-> >>>> outside
-> >>>> the declared power/rate envelope can reduce its overall lifetime.
-> >>>>=20
-> >>>> So for Rockchip in mainline a "it runs stable for me" has never been=
-=20
-> >>>> a
-> >>>> suitable reasoning ;-) .
-> >>>=20
-> >>> My key concern here was perhaps that we are looking at a file inside
-> >>> the Rockchip source tree which looks relevant by the name of it, but
-> >>> doesn't actually get included anywhere for any of the boards. This=20
-> >>> may
-> >>> or may not constitute an endorsement by Rockchip of any OPPs listed
-> >>> there :-D
-> >>=20
-> >> Rockchip support stated:
-> >>=20
-> >> """
-> >> If you run overdrive mode, you do not need to include rk3588j.dtsi,
-> >> and you can change it to #incldue rk3588.dtsi to ensure that the
-> >> maximum frequency can reach 2GHz
-> >>=20
-> >> below picture from datasheet.
-> >> """
-> >>=20
-> >> The picture is the table 3-2 Recommended operating conditions, page 30
-> >> from the RK3588J datasheet, e.g.
-> >> https://www.lcsc.com/datasheet/lcsc_datasheet_2403201054_Rockchip-RK35=
-88J_C22364189.pdf
-> >>=20
-> >> What is overdrive?
-> >>=20
-> >> """
-> >> Overdrive mode brings higher frequency, and the voltage will increase
-> >> accordingly. Under
-> >> the overdrive mode for a long time, the chipset may shorten the
-> >> lifetime, especially in high temperature condition
-> >> """
-> >>=20
-> >> according to the same datasheet, end of the same table, page 31.
-> >>=20
-> >> so this seems like a turbo-mode frequency to me.
-> >>=20
-> >> Additionally, the note for the "normal mode" (the one with the lower
-> >> freqs) states:
-> >>=20
-> >> """
-> >> Normal mode means the chipset works under safety voltage and=20
-> >> frequency. For the
-> >> industrial environment, highly recommend to keep in normal mode, the=20
-> >> lifetime is
-> >> reasonably guaranteed.
-> >> """
-> >>=20
-> >> I believe "industrial environment" means RK3588J used in the
-> >> temperatures that aren't OK for the standard RK3588 variant?
-> >=20
-> > Thanks a lot for obtaining these clarifications!
-> >=20
-> > Yes, I'd say that in this case "industrial environment" boils down
-> > to the extended temperature range for the RK3588J variant.
-> >=20
-> >>> I haven't seen a TRM for the J variant, nor do I have a board with
-> >>> RK3588J to run tests, so it would be great if Kever could chime in
-> >>> with how these OPPs are different from the others (or not).
-> >>>=20
-> >>>> So while the situation might be strange for the rk3588j, I really=20
-> >>>> only want
-> >>>> correct frequencies here please - not any pseudo "turbo freqs".
-> >>>>=20
-> >>>> I don't care that much what people do on their own device{s/trees},=
-=20
-> >>>> but
-> >>>> the devicetrees we supply centrally (and to u-boot, etc) should only
-> >>>> contain frequencies vetted by the manufacturer.
-> >>>=20
-> >>> Fair enough. Let's just try and get another data point on whether
-> >>> these frequencies are vetted or not.
-> >>=20
-> >> So the higher freqs seems to be vetted (and used by default on
-> >> Rockchip's BSP kernel), it just feels like you aren't really supposed
-> >> to run those higher frequencies all the time? And especially not in
-> >> "industrial environment"?
-> >>=20
-> >> I would assume we want to stay on the safer side and remove those
-> >> higher frequencies? Heiko?
-> >=20
-> > I agree, we should remove the higher-frequency OPPs.  I'd like
-> > to go through everything once again in detail and prepare a patch
-> > that removes the unsafe OPPs, and you could review it once it's
-> > on the ML, to make sure it's fine.
+> Recently added Initial LTTPR support in msm/dp has configured LTTPR(s) to
+> non-transparent mode to enable video output on X1E-based devices that com=
+e
+> with LTTPR on the motherboards. However, video would not work if addition=
+al
+> LTTPR(s) are present between sink and source, which is the case for USB T=
+ype-C
+> docks (eg. Dell WD19TB/WD22TB4), and at least some universal
+> Thunderbolt/USB Type-C monitors (eg. Dell U2725QE).
 >=20
-> Just as a note, everything above (and even a bit more) is confirmed
-> and clearly described in the publicly available RK3588J datasheet,
-> which I'll provide as a reference in my upcoming patch.
+> First, take into account LTTPR capabilities when computing max link rate,
+> number of lanes. Take into account previous discussion on the lists - exi=
+t early if
+> reading DPCD caps failed. This also fixes
+> "*ERROR* panel edid read failed" on some monitors which seems to be cause=
+d
+> by msm_dp_panel_read_sink_caps running before LTTPR(s) are initialized.
+>=20
+> Finally, implement link training per-segment. Pass lttpr_count to all req=
+uired
+> helpers.
+> This seems to also partially improve UI (Wayland) hanging when changing
+> external display's link parameters (resolution, framerate):
+> * Prior to this series, via direct USB Type-C to display connection,
+>   attempt to change resolution or framerate hangs the UI, setting does
+>   not stick. Some back and forth replugging finally sets desired
+>   parameters.
+> * With this series, via direct USB Type-C to display connection,
+>   changing parameters works most of the time, without UI freezing. Via
+>   docking station/multiple LTTPRs the setting again does not stick.
+> * On Xorg changing link paramaters works in all combinations.
+>=20
+> These appear to be mainlink initialization related, as in all cases LT pa=
+sses
+> successfully.
+>=20
+> Test matrix:
+> * Dell XPS 9345, Ubuntu 24.10, Gnome 47, Wayland
+> 	* Left USB Type-C, Right USB Type-C
+> 	* Direct monitor connection, Dell WD19TB, Dell WD22TB4, USB
+>           Type-C to HDMI dongle, USB Type-C to DP dongle
+> 	* Dell AW3423DWF, Samsung LS24A600, dual Samsung LS24A600 (one
+> 	  monitor per USB Type-C connector)
+> * Dell XPS 9345, Ubuntu 24.10, Gnome 47, Wayland
+> 	* Left USB Type-C, Right USB Type-C
+> 	* Direct monitor connection
+> 	* Samsung S34BG85 (USB Type-C), Dell U2725QE (universal
+>           Thunderbolt/USB Type-C, probes with an LTTPR when in USB
+>           Type-C/DP Alt mode)
+>=20
+> In both cases, "Thunderbot Support"/"USB4 PCIE Tunneling" was disabled in
+> UEFI to force universal Thunderbolt/USB Type-C devices to work in DP Alt
+> mode.
+> In both cases laptops had HBR3 patches applied [1], resulting in maximum
+> successful link at 3440x1440@100hz and 4k@60hz respectively.
+> When using Dell WD22TB4/U2725QE, USB Type-C pin assigment D got enabled
+> and USB3.0 devices were working in parallel to video ouput.
+>=20
+> Known issues:
+> * As mentioned above, it appears that on Gnome+Wayland framerate and
+>   resolution parameter adjustment is not stable.
+>=20
+> Due to lack of access to the official DisplayPort specfication, changes w=
+ere
+> primarily inspired by/reverse engineered from Intel's i915 driver.
+>=20
+> [1]
+> https://urldefense.com/v3/__https://lore.kernel.org/all/20250226231436.16=
+1
+> 38-2-
+> alex.vinarskis@gmail.com/__;!!LpKI!hlok7KSBKQntrFMYAFr0mFGIjXmlwtqOD
+> mQuO_6YwQ1pNJWCY9KqVJjzRZFzLv9fDgYOinq0MkYpccsMJFtXiQWvlNs2$ [lo
+> re[.]kernel[.]org]
+>=20
+> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
 
-so just to reiterate my stance, in mainline I really only want frequencies
-that are not possibly influencing the lifetime of the chip.
+Tested-by: Laurentiu Tudor <Laurentiu.Tudor1@dell.com>
 
-It doesn't even matter about the variant we're talking about being
-industrial :-) . When someone is using mainline I want them to be
-reasonable assured that we don't have stuff in here that may affect
-the lifetime of their board.
+---
+Thanks & Best Regards, Laurentiu
 
-All gambling on performance for possible lifetime reduction people
-can do on their own ... for example with a dt-overlay ;-) .
-
-So TL;DR, I agree to both Quentin and Dragan
-
-
-Heiko
-
+> ---
+>=20
+> Changes in v2:
+> - Picked up Abel's R-b tags
+> - Fixed typo as per Abel, fixed readability as per Johan
+> - Updated cover and commit message on mailink issue which appears to be
+>   specific to Gnome+Wayland. No problems on Xorg.
+> - Link to v1:
+> https://urldefense.com/v3/__https://lore.kernel.org/all/20250310211039.29=
+8
+> 43-1-
+> alex.vinarskis@gmail.com/__;!!LpKI!hlok7KSBKQntrFMYAFr0mFGIjXmlwtqOD
+> mQuO_6YwQ1pNJWCY9KqVJjzRZFzLv9fDgYOinq0MkYpccsMJFtXiW5uR0d1$ [l
+> ore[.]kernel[.]org]
+>=20
+> ---
+>=20
+> Aleksandrs Vinarskis (2):
+>   drm/msm/dp: Fix support of LTTPR handling
+>   drm/msm/dp: Introduce link training per-segment for LTTPRs
+>=20
+>  drivers/gpu/drm/msm/dp/dp_ctrl.c    | 137 +++++++++++++++++++---------
+>  drivers/gpu/drm/msm/dp/dp_ctrl.h    |   2 +-
+>  drivers/gpu/drm/msm/dp/dp_display.c |  31 +++++--
+>  drivers/gpu/drm/msm/dp/dp_panel.c   |  30 ++++--
+>  drivers/gpu/drm/msm/dp/dp_panel.h   |   2 +
+>  5 files changed, 141 insertions(+), 61 deletions(-)
+>=20
+> --
+> 2.45.2
 
 
