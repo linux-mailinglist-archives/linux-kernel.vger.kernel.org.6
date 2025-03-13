@@ -1,144 +1,153 @@
-Return-Path: <linux-kernel+bounces-559143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CF09A5EFF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:54:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A90DA5EFFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:56:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E4691897C8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:54:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E7A717D332
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4269A2641D4;
-	Thu, 13 Mar 2025 09:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="PGylW7eo"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72292264629;
+	Thu, 13 Mar 2025 09:56:11 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86061C1F0C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DEB1C1F0C;
+	Thu, 13 Mar 2025 09:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741859641; cv=none; b=K/f7uAUEpPBglU1svT5CUJgY8lNFDacZasW1aZLAJqGwpC6HiM9CAGk6LjuRj49a4QyZPL4TCmIIHXQjyNdXOBiDEY1ubw12EjOicwTOT2wOMWPPlSdPGFfFmsCI5Ov5yI/x08WaC9a3MhDOscKiPZzzWaskWGwXpwKskDnm+8A=
+	t=1741859771; cv=none; b=QmIkgOUXiTIg3ox8wNRbWHiok4+cALERu7r5CeRC0ywKCPiIxkXDnPKObrAXWJa4Q9k3g1MKY49ZmnQ2kCYQ9NteTfXAv1KU+paWKCEhMTnD0aZKljK/QrIQv9jNtQLkg3lmncqRjYXpWEhJo47yFhDnoR+/6gvx9ga3CMjLeBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741859641; c=relaxed/simple;
-	bh=iIU9WP6zvjQquq+s7GzSKkfGvC6NNu1FQq0+12aU6iM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kZgc+tHAdTXqnJ/I0d8XAU2eMV03OfbJ6hVVvEbAPJNyGvrDnqrwpSwA7rKeGy/J0UA6yKo4bqwghtVg8eIMY4DfcQClDe4n2Jky4uudd6ZApwXh2M5hUQiGkICLdrqWTtPtf75/TnVbzTZQp7ITiJogu7brPXDCCe6f9iuZh6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=PGylW7eo; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43690d4605dso4585175e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 02:53:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1741859638; x=1742464438; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bkj3D7HWqdTM0cPpPrir4nDCLwOAsHNRg+iHEHjJvgA=;
-        b=PGylW7eoC+bbMgXy7YJsKD0Kjjm8SVuYxwxUqLMIoZGrUDmycLDQKH/PetAj7+aRPN
-         rUnyRDPdcSPl1vu+9y0MZGN9FomeR2LAqGqdX/V0rbQ9iOvs0AnHl3Nk/RgtUPxlc2bu
-         /F+qbLjTN/tTWbBzKevR+2unfxToDAMAuwV6Ubmq/Q8Ht/Ht6JsQrDGa8eBpQkXeogC1
-         ndTF9URMxFm2paFjb/DGwlD7tq4ihrJh8nO11J7LLByQ3SY1I8hu+uH7doS9I8ezAxLF
-         C2XLWlM1yYS/jPz+RhHz4XwzGtAfeov/WuCq0P0nFcqKdmtrk9KmpDc9Z1H245S1h52I
-         odIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741859638; x=1742464438;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bkj3D7HWqdTM0cPpPrir4nDCLwOAsHNRg+iHEHjJvgA=;
-        b=xFj/D7lSLSaJJF4BM6lp0Dw3rqZK4b5TnsDFV1GQaNLEypE7BUA6GQ5CxoXGlaJrwS
-         3rYG5XVKeWmL1hVoyL/ewjuWA82XNiZMLvZ4hY59PWVkqLXE5PXhmKAwkc9AtB9QMWRJ
-         O2/TrJ/ST66pS/Yg+vSrR0uTSMKK3cnM95UK+5pvNv7WaP/NQYKn9F485UcgjHw4OcwY
-         F8dVCXrU+QjYS8YbYxzinNk842yCC3oGpOlLc+pn9z8QpT9cthtr8s+cx04ssq3nJvBU
-         4bP/uiJbz990JOcyKXNCpwcv14wW72o728HLGIxJg5EU5MC5sDLv8cBZWnu25yKqdaQt
-         skmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDZKwDyxcXtBOrwV6zJKAtR1dwZailmzjSNCwbJXQcRK7/CWzlug3nen8q1joS3cfSpMeJsyGRoTvxt+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGpDToW0hQriSoBepWz53drU/9hDti3wi2zmXsw5TWrHSNI4AQ
-	WHdyZaPP8GhKYMhNMZs5q2FrHw9R/+80KuG+NE+tC78xGOAKlcvWbvQoyXgPRtk=
-X-Gm-Gg: ASbGncvm0qXrEjOY9JafIi/bjj9gQY+OvgGM3OJU1mHDt3Zo5V+kBLy9V4iASn0YQqQ
-	oJzJ+TcScDgpdoW6GmAky3xlZYu5IqizCuOrEDlu05RyUvnSfi7jGmHuHCirvx1jKx9rjUoSdKN
-	gnEyARgyXzUOVQ2mabMLWx33crjTzeWzF1hoslGlDy4HfUwJiF74p3cGDRbuucPuP3/jYGiKhhn
-	SMMWsWkzLJyelrMFYE8gKm6zQR32AkoTnnE6aWBKkLXMFOag2vFRkyHIM3SrNJdJm3Lst171c1O
-	niPcvR5mKvLwXC1JxLBGbgu7VOf3dV/mGxeae+lT2LQPIc/n8YzZ+gY/vGg0BythfAdi+Kg=
-X-Google-Smtp-Source: AGHT+IGFah8rosyfcYtPjUa18Cm/2jw3dX6OMmMtmKOZgN/CnODc8pdsRob3xheHOpbGu6piHsVtOA==
-X-Received: by 2002:a05:600c:3b10:b0:43d:47e:3205 with SMTP id 5b1f17b1804b1-43d047e37d8mr105284545e9.11.1741859637901;
-        Thu, 13 Mar 2025 02:53:57 -0700 (PDT)
-Received: from [192.168.0.101] ([90.241.98.187])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a8d1666sm48277205e9.40.2025.03.13.02.53.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 02:53:57 -0700 (PDT)
-Message-ID: <0e3c8abc-7ccf-4a02-bec2-ddb0c7276d9d@ursulin.net>
-Date: Thu, 13 Mar 2025 09:53:56 +0000
+	s=arc-20240116; t=1741859771; c=relaxed/simple;
+	bh=8S9vrq166jilX+o1O51fu4DeDsRpbJT1z2ZmakIqa1E=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GrD6jS5NgcOJ9x4b+dzvDmBz77HvCe6axtokA5IhisQXI0EUA70q8L93M1o3yDHxkI8yPiRHbAAaa3uC5CRkzLTZsOM3HzQClU7ZqR9Z6pNMi/XTN6j8C8qwDPp6Dt8pec1CAiMpPPLU/2LQzXcibJ8ITR2Dvhb6zYUhyvfpPB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZD2qY1djfz6H8fW;
+	Thu, 13 Mar 2025 17:52:57 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id C1B061400CA;
+	Thu, 13 Mar 2025 17:56:06 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Mar
+ 2025 10:56:05 +0100
+Date: Thu, 13 Mar 2025 09:56:04 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Zaid Alali <zaidal@os.amperecomputing.com>
+CC: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
+	<tony.luck@intel.com>, <bp@alien8.de>, <robert.moore@intel.com>,
+	<dan.j.williams@intel.com>, <Benjamin.Cheatham@amd.com>,
+	<Avadhut.Naik@amd.com>, <viro@zeniv.linux.org.uk>, <arnd@arndb.de>,
+	<ira.weiny@intel.com>, <dave.jiang@intel.com>,
+	<sthanneeru.opensrc@micron.com>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <acpica-devel@lists.linux.dev>
+Subject: Re: [PATCH v4 8/9] ACPI: APEI: EINJ: Enable EINJv2 error injections
+Message-ID: <20250313095604.00001ccf@huawei.com>
+In-Reply-To: <20250306234810.75511-9-zaidal@os.amperecomputing.com>
+References: <20250306234810.75511-1-zaidal@os.amperecomputing.com>
+	<20250306234810.75511-9-zaidal@os.amperecomputing.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] drm/sched: Remove kthread header
-To: Philipp Stanner <phasta@kernel.org>,
- Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sumit Semwal <sumit.semwal@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250305155326.153596-2-phasta@kernel.org>
- <20250305155326.153596-3-phasta@kernel.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-In-Reply-To: <20250305155326.153596-3-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Thu,  6 Mar 2025 15:48:09 -0800
+Zaid Alali <zaidal@os.amperecomputing.com> wrote:
 
-On 05/03/2025 15:53, Philipp Stanner wrote:
-> The kthread header doesn't need to be included anymore. It's a relict
-> from commit a6149f039369 ("drm/sched: Convert drm scheduler to use a
-> work queue rather than kthread").
+> Enable the driver to inject EINJv2 type errors. The component
+> array values are parsed from user_input and expected to contain
+> hex values for component id and syndrome separated by space,
+> and multiple components are separated by new line as follows:
 > 
-> Remove the unneeded includes.
+> component_id1 component_syndrome1
+> component_id2 component_syndrome2
+>  :
+> component_id(n) component_syndrome(n)
 > 
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> for example:
+> 
+> $comp_arr="0x1 0x2
+> >0x1 0x4
+> >0x2 0x4"  
+> $cd /sys/kernel/debug/apei/einj/
+> $echo "$comp_arr" > einjv2_component_array
+> 
+> Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
 > ---
->   drivers/gpu/drm/scheduler/sched_entity.c | 1 -
->   drivers/gpu/drm/scheduler/sched_fence.c  | 1 -
->   2 files changed, 2 deletions(-)
+>  drivers/acpi/apei/einj-core.c | 101 ++++++++++++++++++++++++++++++----
+>  1 file changed, 90 insertions(+), 11 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
-> index f9811420c787..e55b98af8a50 100644
-> --- a/drivers/gpu/drm/scheduler/sched_entity.c
-> +++ b/drivers/gpu/drm/scheduler/sched_entity.c
-> @@ -21,7 +21,6 @@
->    *
->    */
->   
-> -#include <linux/kthread.h>
->   #include <linux/slab.h>
->   #include <linux/completion.h>
->   
-> diff --git a/drivers/gpu/drm/scheduler/sched_fence.c b/drivers/gpu/drm/scheduler/sched_fence.c
-> index e971528504a5..d6239e015b66 100644
-> --- a/drivers/gpu/drm/scheduler/sched_fence.c
-> +++ b/drivers/gpu/drm/scheduler/sched_fence.c
-> @@ -21,7 +21,6 @@
->    *
->    */
->   
-> -#include <linux/kthread.h>
->   #include <linux/module.h>
->   #include <linux/sched.h>
->   #include <linux/slab.h>
+> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
+> index 4c748fa0a479..1aea84958b00 100644
+> --- a/drivers/acpi/apei/einj-core.c
+> +++ b/drivers/acpi/apei/einj-core.c
 
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+>  static void einj_exec_ctx_init(struct apei_exec_context *ctx)
+>  {
+> @@ -288,11 +298,24 @@ static void *einj_get_parameter_address(void)
+>  		struct set_error_type_with_address v5param;
+>  		void __iomem *p;
+>  
+> +		v5param_size = sizeof(v5param);
+>  		p = acpi_os_map_iomem(pa_v5, sizeof(v5param));
+>  		if (p) {
+> -			memcpy_fromio(&v5param, p, sizeof(v5param));
+> +			int offset, len;
+> +
+> +			memcpy_fromio(&v5param, p, v5param_size);
+>  			acpi5 = 1;
+>  			check_vendor_extension(pa_v5, &v5param);
+> +			if (available_error_type & ACPI65_EINJV2_SUPP) {
+> +				len = v5param.einjv2_struct.length;
+> +				offset = offsetof(struct einjv2_extension_struct, component_arr);
+> +				nr_components = (len - offset) / 32;
 
-Regards,
+Can we use sizeof() anything for that 32?
 
-Tvrtko
+> +				acpi_os_unmap_iomem(p, v5param_size);
+I wonder if a comment or two would be useful here to explain why we need to expand the mapping.
+
+> +				offset = offsetof(struct set_error_type_with_address, einjv2_struct);
+> +				v5param_size = offset + struct_size(&v5param.einjv2_struct,
+> +					component_arr, nr_components);
+> +				p = acpi_os_map_iomem(pa_v5, v5param_size);
+> +			}
+>  			return p;
+>  		}
+>  	}
+
+...
+
+
+> @@ -945,10 +1023,11 @@ static void __exit einj_remove(struct platform_device *pdev)
+>  
+>  	if (einj_param) {
+>  		acpi_size size = (acpi5) ?
+> -			sizeof(struct set_error_type_with_address) :
+> +			v5param_size :
+>  			sizeof(struct einj_parameter);
+>  
+>  		acpi_os_unmap_iomem(einj_param, size);
+> +
+Unrelated change that shouldn't be in this patch.
+
+
+>  		if (vendor_errors.size)
+>  			acpi_os_unmap_memory(vendor_errors.data, vendor_errors.size);
+>  	}
+
 
