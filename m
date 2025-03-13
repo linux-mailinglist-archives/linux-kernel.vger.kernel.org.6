@@ -1,150 +1,103 @@
-Return-Path: <linux-kernel+bounces-559193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7025A5F0C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:26:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D28BA5F084
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:21:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 378F83BEBC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:25:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CAB93B26CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B18A266B58;
-	Thu, 13 Mar 2025 10:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B29265CAE;
+	Thu, 13 Mar 2025 10:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnmz/Ive"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="chRVdD5c"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673B4264F90;
-	Thu, 13 Mar 2025 10:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3131EE028;
+	Thu, 13 Mar 2025 10:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741861420; cv=none; b=fmuj7WADfgisvEa8FJQiiYJiHKaHeB0evISfjIdKxDNXON8zAo33gLiCkdY3oRA74uNN8T0NCQ127DiXfM3qBLT6BW3vZX6p+wh7bs3xHclJzA3YjYlj6bPpAeBL1HoRSl9VOaiBc0GA7CBplIvX/W6sj8q2Ug6VRoqIT7ZsgnM=
+	t=1741861288; cv=none; b=l1EqIFw6NbqK+AA1ylr154iAStLy+xErwutORF9VdXAbkx8Vy9AVKBgGJpxzQzmzA2STch7FB0KliVJZyPw14FhzplzWOLwJ6dLOMX0LdmeHH15RoqYQmnNTRvQR8EP5kgTuZjAIOE5tg/cpsDBWEyAGBPplWtvI/F7fBl5HiS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741861420; c=relaxed/simple;
-	bh=3F984dgkxbY6fPkXv+6fJCMjPaWNvKS7SFLAjQ5BVr4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ad105awX4dWhv+fE91musVaqga7Mu2SRXc/AJPW/wFvspvE+R6WL+R1YuemNru+S0y79VgaWxZ0zb5gHl1Sgq+mWefpSd5I4E2XKg9qEpsl2gctJEmv1icYi9O8vNyM/fAt7hKB8/qHcJUah9sxs3EVd7f+YJwvCJpmjnO9oAcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnmz/Ive; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2DFCC4CEE3;
-	Thu, 13 Mar 2025 10:23:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741861419;
-	bh=3F984dgkxbY6fPkXv+6fJCMjPaWNvKS7SFLAjQ5BVr4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=fnmz/IvenKzyDaTbcaqWf4f8uu+jh6px4VUuCIEptlCm2OeaDysjT3zmIb3b0Z3wE
-	 1yu5TRA8yMXGqQkPLEvs2P74ul2Fu83l5BJ0Ty4PnLaXPCAWpoUbJF/M6E7N2U+egd
-	 LByaippAqOHi7557T4pj1nemmRTCWQ9IU1LmAKEup2myWtHfFFv6JXMu6E5gR+eT2f
-	 w3TeteCXXOyxAZcwS4fYZuORHmVibqCeqsnjLtWJKu6QY4hAVbE3PqhLINxtI8pE/M
-	 9MYdmR4OYJxJd8LgX0TalbgG6rTQR+qAzIKIExva5vqsi8Tt62+x2SJNbaqopUHErn
-	 87OMlU4OsUzcg==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Thu, 13 Mar 2025 11:21:01 +0100
-Subject: [PATCH net-next 12/12] selftests: mptcp: add pm sysctl mapping
- tests
+	s=arc-20240116; t=1741861288; c=relaxed/simple;
+	bh=cfebVLUHNUezFRL9YCM9hxV/pp652rwNYdE3gxbbonM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U4Nt3AemMB94p9wZnpt340s1/GzX0RS9JWqxk8wW9vwoseQslrxaYLy3dbtTNIMeu0VoU6GsfNfPB3v202lTOGtYTxOJ/AjBx64Nvrc22jUoQrxtP4+amhAgoMbAA/DDgSsUGTUBFyvvuQWfkmOO8iVicsvqac7cgP6lGQo/JYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=chRVdD5c; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=xdvi7iawbva2dofelbrkhjtklu.protonmail; t=1741861283; x=1742120483;
+	bh=oSHmWh3vAbBN7vdlEzmuzXiqy2c6RHhX3Wjngq/DT6w=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=chRVdD5cD5bMyhhzC7qUlj1mgmQaBNY2avdn/wyhbmYM6pGc9Jm2uH373MKcXtSAs
+	 19YHh2ecQb40Kz7MGBM7EMCbz8Vz95hSkbdPq7l6KGmeXy4wmm5fzM3wZibATHGxZ+
+	 ZvFoeTD9BP96vW4XGKYT6aycnhmSTugSELsEp/W7BkIq7HDzGN1v+mb40fPXkah5Hl
+	 Q4GhI63BKUYqIONJyZUx73wZ4IdFKiCqoYb1VVbbn05tswo0XlTIcS7gld4QWMae+B
+	 b6w3Iw9bGyrJKvktt4mfJnWNkG9yqi4KPca5HMw86GAnrVXLjXjHEAdcPm9QCvC1V2
+	 iZJC8m6NDfLHQ==
+Date: Thu, 13 Mar 2025 10:21:18 +0000
+To: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 1/4] rust: pci: use to_result() in enable_device_mem()
+Message-ID: <D8F2AE364QC3.11HU88HZQCS43@proton.me>
+In-Reply-To: <20250313021550.133041-2-dakr@kernel.org>
+References: <20250313021550.133041-1-dakr@kernel.org> <20250313021550.133041-2-dakr@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: cd9fd983219177ffe633db16d80de1f2dce5082b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250313-net-next-mptcp-pm-ops-intro-v1-12-f4e4a88efc50@kernel.org>
-References: <20250313-net-next-mptcp-pm-ops-intro-v1-0-f4e4a88efc50@kernel.org>
-In-Reply-To: <20250313-net-next-mptcp-pm-ops-intro-v1-0-f4e4a88efc50@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
- Geliang Tang <geliang@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2235; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=Tc4PpQ+Y/jnprgu+15f2z73L06rmBn9s1LlWpDmpj4I=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBn0rGbRH937aT7yKRBus6q5SgVNpqGBqg2hpW9t
- CbZC9NalcCJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ9KxmwAKCRD2t4JPQmmg
- c5SUD/9Sy+sMpYkhdzaJ4ijw9HCSPkKvL7xPzQB1qvLOh0PkXQlZf2gBvQ8KXhqOJg2P9TtUkJm
- xVW37RogFdsV3ByxlQD0Bib9rUGWIFIj6C8LXi1MBglQdo5xPlYkZzhcWWyXSOMGDANfEKzw4DZ
- j8R4N2rlwwzmbuFNBxR87Nk+Tet4kvHHL6YMG/ts3voh1PT1QyR7se27NrMAIFaqdWVbqAXLZsX
- yF4SlNVYo7Oz7+bZTWywLpT9dZbGkMHV+x0YC8+C1bh/sLT0jtF/tCxUkZLXIjcVNdeg5JRuHq8
- +Yz/5L+XqeocpGfhjp+df4ZGgujez+IlcnlT3YBg00s0Opi/HGY5ELlXYyYKZkJhiNjj7NdVgNW
- f2ARUlaFf1x/yYoLwyR7GzOIfnVhzKiGtmn3c42+iOicAgf311JfFdodVCaPbtrazNTjQTtEiSr
- qZREkGGiOaBcEoA3Z+Wk1TZokBdvtdGHx70LLvspqKZqjzS7QARsc+BAbLqbin/lV9+zGZafmvQ
- /0Ujw1PTSqbNJHWgpWXlGrpO+lFXg9xwOn4/4gpdqxVw9y7+6v5+A+ildw0nSfzpgRsfHekyoUj
- HNLLx9jwaEEARmKat34yC+0/B7TlcAlVsZFWK/PB8IOv6xtJrJs3K1RDJSvtFQ2WTijat9K5jzp
- KkS9TRXHDUJTB8w==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Geliang Tang <tanggeliang@kylinos.cn>
+On Thu Mar 13, 2025 at 3:13 AM CET, Danilo Krummrich wrote:
+> Simplify enable_device_mem() by using to_result() to handle the return
+> value of the corresponding FFI call.
+>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-This patch checks if the newly added net.mptcp.path_manager is mapped
-successfully from or to the old net.mptcp.pm_type in userspace_pm.sh.
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
-Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
-Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 ---
- tools/testing/selftests/net/mptcp/userspace_pm.sh | 30 ++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
+Cheers,
+Benno
 
-diff --git a/tools/testing/selftests/net/mptcp/userspace_pm.sh b/tools/testing/selftests/net/mptcp/userspace_pm.sh
-index 3651f73451cf8b07d4492c60da45e88aabc44b7a..333064b0b5ac03ae003417d2070f3c08f94743ed 100755
---- a/tools/testing/selftests/net/mptcp/userspace_pm.sh
-+++ b/tools/testing/selftests/net/mptcp/userspace_pm.sh
-@@ -117,7 +117,36 @@ cleanup()
- trap cleanup EXIT
- 
- # Create and configure network namespaces for testing
-+print_title "Init"
- mptcp_lib_ns_init ns1 ns2
-+
-+# check path_manager and pm_type sysctl mapping
-+if [ -f /proc/sys/net/mptcp/path_manager ]; then
-+	ip netns exec "$ns1" sysctl -q net.mptcp.path_manager=userspace
-+	pm_type="$(ip netns exec "$ns1" sysctl -n net.mptcp.pm_type)"
-+	if [ "${pm_type}" != "1" ]; then
-+		test_fail "unexpected pm_type: ${pm_type}"
-+		mptcp_lib_result_print_all_tap
-+		exit ${KSFT_FAIL}
-+	fi
-+
-+	ip netns exec "$ns1" sysctl -q net.mptcp.path_manager=error 2>/dev/null
-+	pm_type="$(ip netns exec "$ns1" sysctl -n net.mptcp.pm_type)"
-+	if [ "${pm_type}" != "1" ]; then
-+		test_fail "unexpected pm_type after error: ${pm_type}"
-+		mptcp_lib_result_print_all_tap
-+		exit ${KSFT_FAIL}
-+	fi
-+
-+	ip netns exec "$ns1" sysctl -q net.mptcp.pm_type=0
-+	pm_name="$(ip netns exec "$ns1" sysctl -n net.mptcp.path_manager)"
-+	if [ "${pm_name}" != "kernel" ]; then
-+		test_fail "unexpected path-manager: ${pm_name}"
-+		mptcp_lib_result_print_all_tap
-+		exit ${KSFT_FAIL}
-+	fi
-+fi
-+
- for i in "$ns1" "$ns2" ;do
- 	ip netns exec "$i" sysctl -q net.mptcp.pm_type=1
- done
-@@ -152,7 +181,6 @@ mptcp_lib_events "${ns1}" "${server_evts}" server_evts_pid
- sleep 0.5
- mptcp_lib_subtests_last_ts_reset
- 
--print_title "Init"
- print_test "Created network namespaces ns1, ns2"
- test_pass
- 
+> ---
+>  rust/kernel/pci.rs | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+>
+> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
+> index 4c98b5b9aa1e..386484dcf36e 100644
+> --- a/rust/kernel/pci.rs
+> +++ b/rust/kernel/pci.rs
+> @@ -382,12 +382,7 @@ pub fn device_id(&self) -> u16 {
+>      /// Enable memory resources for this device.
+>      pub fn enable_device_mem(&self) -> Result {
+>          // SAFETY: `self.as_raw` is guaranteed to be a pointer to a vali=
+d `struct pci_dev`.
+> -        let ret =3D unsafe { bindings::pci_enable_device_mem(self.as_raw=
+()) };
+> -        if ret !=3D 0 {
+> -            Err(Error::from_errno(ret))
+> -        } else {
+> -            Ok(())
+> -        }
+> +        to_result(unsafe { bindings::pci_enable_device_mem(self.as_raw()=
+) })
+>      }
+> =20
+>      /// Enable bus-mastering for this device.
 
--- 
-2.48.1
 
 
