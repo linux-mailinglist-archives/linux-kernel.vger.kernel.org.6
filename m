@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-560190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7710A5FF20
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:22:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D631EA5FF25
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:24:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67E707A36D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:21:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D61F1189D31C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BE41EDA0B;
-	Thu, 13 Mar 2025 18:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF561F2BA1;
+	Thu, 13 Mar 2025 18:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b2AMyT+P"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="glhJFjHC"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F4917E8E2
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496851F0E27
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741890166; cv=none; b=oOIRu6PxhRikzsO6939KV45i12ob/9iB/OaO1wz3v9d7z8pBOMoqRGQqOEmripImymp1vWXFF+/5LYX+k5L17k0xU9WDIdNE6OB+Px1A2u3m7Igb+k8cMc+g2M4rdqxRiI5iRPWWM19PSNDt3t2kkLLp3cNr+UdLA5mSObJZY9s=
+	t=1741890171; cv=none; b=FxudQTs41QqnUu5MDj/BBTg79Qyudt9L6aQOxla/4B+VashQfoiEn5mu72QkE4nkfVYNjTFq5eK1NOMMbCLIX9tSkAdeV9fwA9nEVbVoDO4ahMbeayGru5KgH63DDuWcLg/PhkdNb4r+nmJCQp09a57q6SS2Nmc3b+J5s4/15KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741890166; c=relaxed/simple;
-	bh=g4Kuo2CPanqbJ5fBryROh6KFUqZfMSobOEFj6Rycvvg=;
+	s=arc-20240116; t=1741890171; c=relaxed/simple;
+	bh=Ih/15p3e+YusF5SBfkMrut+LZSUneG59jPziLo5dmRE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Uh2NdMNjgWm0Trg630G00pEBnodj8xVQBeoy8QflIZQZNSAPdwwcwniXTh7/d20zSws7pYXr84SML5GZRAZdfOOjLp/7LZpQDn6pNozevhjbRrLLd6/h5BlaQdCqjdhGeNtvNcUhOmQzm6Yi7o2XP4Ndw55yIIPb9rt0fHF5IWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b2AMyT+P; arc=none smtp.client-ip=209.85.219.180
+	 MIME-Version; b=a3Se9KcsxRxYTMyZzehxwkLCn2Xd4a27Xe2fq/vJavlQnIZM/kuygmQEcfdpKzbCmncOiGZ+e6kMng9glb4yqS9z1wwvez14qHT8WFs4hm/tgylN12enRwcdl/K67FmaU7M+aOFHvJzbqNefaojRDjSNRznhZ8hOdDSqqG3NrF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=glhJFjHC; arc=none smtp.client-ip=209.85.128.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e63c3a53a4cso1123841276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:22:44 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6ff0c9d1761so12180647b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:22:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741890160; x=1742494960; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741890163; x=1742494963; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r249kTrGMfiJdyCvHIqY7lcf73sz6LjLxDDjAJXT47c=;
-        b=b2AMyT+Pv0seaCWh19G3pRjWucd5RO329u+jA1QON9jpo85LY6GdKOgTA+kayu4zmT
-         BfGIKoPq1iNkfyrR+UDi2YTxe1VB7QridXjsAg/GtaSwwJlj2lOo3CfnWYqfQ2lm6oZa
-         UO0XBJcjJ+hxOSp6YVEK3fmbImcf5SKEN6912kGMPtGM3Qs8W20zalpTBvX7RIS2pIiX
-         AcrYGUyqOrCy+jBhjXd3nRhOFtzOy1qZnbIGHuIuFph1W/mZfDsKLUyCvIiQ48P+SDrf
-         hrV8lZQzmAB/7OFVN+05XCM9oUpAdJF5/3DpUqRHhsSHkrgZiuzePse0NRuLBY87158Z
-         q8Ug==
+        bh=+A1kHXEAvFzpWlz21OYBee4KubY/kyVNoRGmvJidEss=;
+        b=glhJFjHCuzAVzxT6M9PSVh/lxasWFbwnpKpXEd7Oa7/+iQ4s1/REdFhn45/YGWg113
+         D6WGS5M8ND6cYsxhwiFG8t6q98NwVUiLOmH+tJwng3825mM0Bd0QbHblX8t8zaNp2dse
+         RhwyCj4HdlgB+rX2Sb2XyzkFsAUxyelTdyPuHN0JAjAk92NCozyxlSEq63xw4vr41UdI
+         A48y7BtceUayP6T7M2QRoD6MKq5kiPE98Bb9+TaKJKEh3B6FQ0hTtffApL4cOfwfA8MO
+         ziEvIPgKsaLz0C70Kos3taCh0hg0jzcfz/8+vo/h9XctOgUc14ks1PUkFXOZfZ9Y5KOg
+         EmNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741890160; x=1742494960;
+        d=1e100.net; s=20230601; t=1741890163; x=1742494963;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=r249kTrGMfiJdyCvHIqY7lcf73sz6LjLxDDjAJXT47c=;
-        b=nOITefpwOkU9qoI8TA0i7SIsRg1AoORwQYrQUqPR6d/Rnj+g2ACXChUutkFEMs56jH
-         +pZ6VzW3qLgTCNkyGQCsx57Q52jwFN47Q7qQoihGb4vSpo8wtCgxR8TBJvijha0kwhsT
-         4gnWrUJzxQNgfSUPwdf321FpkSYZUXawr4+kHHbAWUoBeHAibDzA21M9yzJRTH+hobFz
-         1OPBW64pNjNuBBgudJ9oKJQiNE7Dp1+mmngOQa/9B4Bx40Jkcoxf+b0FZGm+HcWxgR2Y
-         V+rP8K1fJRZYKYJzsn5kbHnZT6nBUYG5XNo+z5KuKAoncsMiqOKmDM8SNrtaPaVEKd/D
-         izow==
-X-Gm-Message-State: AOJu0YwXQQCI+HxKXTo1CdnJLDYEX3BMJNJLTAjFKCcSjmRuIjYxi+WT
-	PwjqchmLdrXtliawKLu5GZdvM+WuTwGBKCkZDikDrZHON3oIXqzCh68E
-X-Gm-Gg: ASbGncsvdBxELTrQliTQoLRTXc/r+QRXlAIoocv95WpURzu78RMzhjtQ78JFEdSLP/f
-	oexNE4jt6oTsS7Sr/1iCTHwaFWiKAb0oD82laVuHJUKhczOQmN1dJgVCbf1kax44YF5AaQF5EU9
-	4pw0apAUxue6psSnGM5BKj8w1FXftt86g0dI6pgbAegA3ZsdbxkMvE/duX6ibuXn6ExdptlmN4q
-	2LjilwY+bGIL5QtYtmbK/eH5qfbgsqi600RIbXQyFIz2O9YfqWP2nVSh5NjDyGiDh/VLfI3iB2y
-	il0e1mxwYYVyjXAZVQkS5kqBLnH7pEYiOAd8
-X-Google-Smtp-Source: AGHT+IEhb5zRpnSbW+CPM9ho/zNMlWHLm+SLOGqkvx+9244XZjARw7mgTV97uqXDMfpg6SlvLJqCEw==
-X-Received: by 2002:a05:690c:45c8:b0:6fb:4fee:6044 with SMTP id 00721157ae682-6ff43539961mr438647b3.15.1741890160624;
-        Thu, 13 Mar 2025 11:22:40 -0700 (PDT)
+        bh=+A1kHXEAvFzpWlz21OYBee4KubY/kyVNoRGmvJidEss=;
+        b=GCMBhiPEaH0TrDEBEOTBYcaFMR7uBBVnODAmhslbu+a9w67ifw9SpQu59cGbl8BzT3
+         +8WKRqNa4x+AUQuvfYru3vPUkCUmLBXNh/8ZcLJOlVqv+i4Qm8ZiAmIGjyZ+xllVAesk
+         9LOP0EH38ee7QuWZLoATk4CcOc3l/7DDasIL7SziegHNFGj6l/HoXpnoRmnnnlbqKk5T
+         HXswTOg3KCPvb0tW5nro5cDXwxnv5S+KrZRG3u4uv3wtB8XQpkla6es2Cb7xBYFmbHlT
+         3nJ72G1wKLUJMllNIJO0/HWGaX9EdLGd82y88qKp6bH/n2sQTkN31kS6dft38SsvUs6R
+         9CJw==
+X-Gm-Message-State: AOJu0Yzs4B89lECRj974H8kL4apwbfGoGcJpInspL5UT4JBBVPQm8BYE
+	F+9X0wCA36vwYXz2KoEcWVsYjvnnnn0QoessjFoDLRfDTcSJ21G2inZS
+X-Gm-Gg: ASbGncv+EM5sM6jQI2IyntJCs04ns4BhzGkyi1HSrB9hl92VH+FKQbW+33MPxDiEdyf
+	+yLtmHWFEW8g8kcH3zo3mkY1YnVhT/NhY0P7FnYjD+Ij7HP9+/NNY9qN4IkY48+jSz+WX+uW7RC
+	x1N+vpnNco5X4Wpg9G06ucfj/PBJ2q2jnLN7stwdiYqtCus2bC5CwzVeq/7kKiE+F2xFUiELIre
+	Gpso6+oAKU4Axp4ODvN6grqqZ003BKNBzV1qR98BM1lpcCmVwpTvPezPuqC0N0bJ0RfirbB1XV2
+	hn+qNy2D0XDQjaerjLIkECPK6A==
+X-Google-Smtp-Source: AGHT+IFRlyXzA7o0jrl0P5fDVCba5QQzgZPf1rtm6v9nS3SupVujqQHIg6rTkr8AlnUnb4BoXj3HHQ==
+X-Received: by 2002:a05:690c:25c3:b0:6f7:50b7:8fe0 with SMTP id 00721157ae682-6ff41f0c834mr8999407b3.1.1741890161864;
+        Thu, 13 Mar 2025 11:22:41 -0700 (PDT)
 Received: from citadel.lan ([2600:6c4a:4d3f:6d5c::1019])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ff3288f0absm4910347b3.54.2025.03.13.11.22.39
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ff3288f0absm4910347b3.54.2025.03.13.11.22.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 11:22:40 -0700 (PDT)
+        Thu, 13 Mar 2025 11:22:41 -0700 (PDT)
 From: Brian Gerst <brgerst@gmail.com>
 To: linux-kernel@vger.kernel.org,
 	x86@kernel.org
@@ -81,9 +81,9 @@ Cc: Ingo Molnar <mingo@kernel.org>,
 	Juergen Gross <jgross@suse.com>,
 	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
 	Brian Gerst <brgerst@gmail.com>
-Subject: [PATCH 1/5] x86/xen: Move Xen upcall handler
-Date: Thu, 13 Mar 2025 14:22:32 -0400
-Message-ID: <20250313182236.655724-2-brgerst@gmail.com>
+Subject: [PATCH 2/5] x86/syscall/32: Move 32-bit syscall dispatch code
+Date: Thu, 13 Mar 2025 14:22:33 -0400
+Message-ID: <20250313182236.655724-3-brgerst@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250313182236.655724-1-brgerst@gmail.com>
 References: <20250313182236.655724-1-brgerst@gmail.com>
@@ -95,211 +95,717 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move the upcall handler to Xen-specific files.
+Move the 32-bit syscall dispatch code to syscall_32.c.
 
 No functional changes.
 
 Signed-off-by: Brian Gerst <brgerst@gmail.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 ---
- arch/x86/entry/common.c     | 72 -------------------------------------
- arch/x86/xen/enlighten_pv.c | 46 ++++++++++++++++++++++++
- include/xen/xen-ops.h       | 19 ++++++++++
- 3 files changed, 65 insertions(+), 72 deletions(-)
+ arch/x86/entry/Makefile     |   2 +
+ arch/x86/entry/common.c     | 321 ----------------------------------
+ arch/x86/entry/syscall_32.c | 336 +++++++++++++++++++++++++++++++++++-
+ 3 files changed, 336 insertions(+), 323 deletions(-)
 
+diff --git a/arch/x86/entry/Makefile b/arch/x86/entry/Makefile
+index ce1cc1622385..96a6b86e0a8b 100644
+--- a/arch/x86/entry/Makefile
++++ b/arch/x86/entry/Makefile
+@@ -8,8 +8,10 @@ UBSAN_SANITIZE := n
+ KCOV_INSTRUMENT := n
+ 
+ CFLAGS_REMOVE_common.o		= $(CC_FLAGS_FTRACE)
++CFLAGS_REMOVE_syscall_32.o	= $(CC_FLAGS_FTRACE)
+ 
+ CFLAGS_common.o			+= -fno-stack-protector
++CFLAGS_syscall_32.o		+= -fno-stack-protector
+ 
+ obj-y				:= entry.o entry_$(BITS).o syscall_$(BITS).o
+ obj-y				+= common.o
 diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index 3514bf2978ee..ce4d88eda693 100644
+index ce4d88eda693..183efabefe57 100644
 --- a/arch/x86/entry/common.c
 +++ b/arch/x86/entry/common.c
-@@ -21,11 +21,6 @@
- #include <linux/uaccess.h>
- #include <linux/init.h>
- 
--#ifdef CONFIG_XEN_PV
--#include <xen/xen-ops.h>
--#include <xen/events.h>
--#endif
--
- #include <asm/apic.h>
- #include <asm/desc.h>
- #include <asm/traps.h>
-@@ -455,70 +450,3 @@ SYSCALL_DEFINE0(ni_syscall)
- {
- 	return -ENOSYS;
+@@ -125,327 +125,6 @@ __visible noinstr bool do_syscall_64(struct pt_regs *regs, int nr)
  }
--
--#ifdef CONFIG_XEN_PV
--#ifndef CONFIG_PREEMPTION
--/*
-- * Some hypercalls issued by the toolstack can take many 10s of
-- * seconds. Allow tasks running hypercalls via the privcmd driver to
-- * be voluntarily preempted even if full kernel preemption is
-- * disabled.
-- *
-- * Such preemptible hypercalls are bracketed by
-- * xen_preemptible_hcall_begin() and xen_preemptible_hcall_end()
-- * calls.
-- */
--DEFINE_PER_CPU(bool, xen_in_preemptible_hcall);
--EXPORT_SYMBOL_GPL(xen_in_preemptible_hcall);
--
--/*
-- * In case of scheduling the flag must be cleared and restored after
-- * returning from schedule as the task might move to a different CPU.
-- */
--static __always_inline bool get_and_clear_inhcall(void)
+ #endif
+ 
+-#if defined(CONFIG_X86_32) || defined(CONFIG_IA32_EMULATION)
+-static __always_inline int syscall_32_enter(struct pt_regs *regs)
 -{
--	bool inhcall = __this_cpu_read(xen_in_preemptible_hcall);
+-	if (IS_ENABLED(CONFIG_IA32_EMULATION))
+-		current_thread_info()->status |= TS_COMPAT;
 -
--	__this_cpu_write(xen_in_preemptible_hcall, false);
--	return inhcall;
+-	return (int)regs->orig_ax;
 -}
 -
--static __always_inline void restore_inhcall(bool inhcall)
+-#ifdef CONFIG_IA32_EMULATION
+-bool __ia32_enabled __ro_after_init = !IS_ENABLED(CONFIG_IA32_EMULATION_DEFAULT_DISABLED);
+-
+-static int __init ia32_emulation_override_cmdline(char *arg)
 -{
--	__this_cpu_write(xen_in_preemptible_hcall, inhcall);
+-	return kstrtobool(arg, &__ia32_enabled);
 -}
--#else
--static __always_inline bool get_and_clear_inhcall(void) { return false; }
--static __always_inline void restore_inhcall(bool inhcall) { }
+-early_param("ia32_emulation", ia32_emulation_override_cmdline);
 -#endif
 -
--static void __xen_pv_evtchn_do_upcall(struct pt_regs *regs)
+-/*
+- * Invoke a 32-bit syscall.  Called with IRQs on in CT_STATE_KERNEL.
+- */
+-static __always_inline void do_syscall_32_irqs_on(struct pt_regs *regs, int nr)
 -{
--	struct pt_regs *old_regs = set_irq_regs(regs);
+-	/*
+-	 * Convert negative numbers to very high and thus out of range
+-	 * numbers for comparisons.
+-	 */
+-	unsigned int unr = nr;
 -
--	inc_irq_stat(irq_hv_callback_count);
--
--	xen_evtchn_do_upcall();
--
--	set_irq_regs(old_regs);
--}
--
--__visible noinstr void xen_pv_evtchn_do_upcall(struct pt_regs *regs)
--{
--	irqentry_state_t state = irqentry_enter(regs);
--	bool inhcall;
--
--	instrumentation_begin();
--	run_sysvec_on_irqstack_cond(__xen_pv_evtchn_do_upcall, regs);
--
--	inhcall = get_and_clear_inhcall();
--	if (inhcall && !WARN_ON_ONCE(state.exit_rcu)) {
--		irqentry_exit_cond_resched();
--		instrumentation_end();
--		restore_inhcall(inhcall);
--	} else {
--		instrumentation_end();
--		irqentry_exit(regs, state);
+-	if (likely(unr < IA32_NR_syscalls)) {
+-		unr = array_index_nospec(unr, IA32_NR_syscalls);
+-		regs->ax = ia32_sys_call(regs, unr);
+-	} else if (nr != -1) {
+-		regs->ax = __ia32_sys_ni_syscall(regs);
 -	}
 -}
--#endif /* CONFIG_XEN_PV */
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index 5e57835e999d..af9e43c47b07 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -73,6 +73,7 @@
- #include <asm/mwait.h>
- #include <asm/pci_x86.h>
- #include <asm/cpu.h>
-+#include <asm/irq_stack.h>
- #ifdef CONFIG_X86_IOPL_IOPERM
- #include <asm/io_bitmap.h>
- #endif
-@@ -94,6 +95,21 @@ void *xen_initial_gdt;
- static int xen_cpu_up_prepare_pv(unsigned int cpu);
- static int xen_cpu_dead_pv(unsigned int cpu);
- 
-+#ifndef CONFIG_PREEMPTION
+-
+-#ifdef CONFIG_IA32_EMULATION
+-static __always_inline bool int80_is_external(void)
+-{
+-	const unsigned int offs = (0x80 / 32) * 0x10;
+-	const u32 bit = BIT(0x80 % 32);
+-
+-	/* The local APIC on XENPV guests is fake */
+-	if (cpu_feature_enabled(X86_FEATURE_XENPV))
+-		return false;
+-
+-	/*
+-	 * If vector 0x80 is set in the APIC ISR then this is an external
+-	 * interrupt. Either from broken hardware or injected by a VMM.
+-	 *
+-	 * Note: In guest mode this is only valid for secure guests where
+-	 * the secure module fully controls the vAPIC exposed to the guest.
+-	 */
+-	return apic_read(APIC_ISR + offs) & bit;
+-}
+-
+-/**
+- * do_int80_emulation - 32-bit legacy syscall C entry from asm
+- * @regs: syscall arguments in struct pt_args on the stack.
+- *
+- * This entry point can be used by 32-bit and 64-bit programs to perform
+- * 32-bit system calls.  Instances of INT $0x80 can be found inline in
+- * various programs and libraries.  It is also used by the vDSO's
+- * __kernel_vsyscall fallback for hardware that doesn't support a faster
+- * entry method.  Restarted 32-bit system calls also fall back to INT
+- * $0x80 regardless of what instruction was originally used to do the
+- * system call.
+- *
+- * This is considered a slow path.  It is not used by most libc
+- * implementations on modern hardware except during process startup.
+- *
+- * The arguments for the INT $0x80 based syscall are on stack in the
+- * pt_regs structure:
+- *   eax:				system call number
+- *   ebx, ecx, edx, esi, edi, ebp:	arg1 - arg 6
+- */
+-__visible noinstr void do_int80_emulation(struct pt_regs *regs)
+-{
+-	int nr;
+-
+-	/* Kernel does not use INT $0x80! */
+-	if (unlikely(!user_mode(regs))) {
+-		irqentry_enter(regs);
+-		instrumentation_begin();
+-		panic("Unexpected external interrupt 0x80\n");
+-	}
+-
+-	/*
+-	 * Establish kernel context for instrumentation, including for
+-	 * int80_is_external() below which calls into the APIC driver.
+-	 * Identical for soft and external interrupts.
+-	 */
+-	enter_from_user_mode(regs);
+-
+-	instrumentation_begin();
+-	add_random_kstack_offset();
+-
+-	/* Validate that this is a soft interrupt to the extent possible */
+-	if (unlikely(int80_is_external()))
+-		panic("Unexpected external interrupt 0x80\n");
+-
+-	/*
+-	 * The low level idtentry code pushed -1 into regs::orig_ax
+-	 * and regs::ax contains the syscall number.
+-	 *
+-	 * User tracing code (ptrace or signal handlers) might assume
+-	 * that the regs::orig_ax contains a 32-bit number on invoking
+-	 * a 32-bit syscall.
+-	 *
+-	 * Establish the syscall convention by saving the 32bit truncated
+-	 * syscall number in regs::orig_ax and by invalidating regs::ax.
+-	 */
+-	regs->orig_ax = regs->ax & GENMASK(31, 0);
+-	regs->ax = -ENOSYS;
+-
+-	nr = syscall_32_enter(regs);
+-
+-	local_irq_enable();
+-	nr = syscall_enter_from_user_mode_work(regs, nr);
+-	do_syscall_32_irqs_on(regs, nr);
+-
+-	instrumentation_end();
+-	syscall_exit_to_user_mode(regs);
+-}
+-
+-#ifdef CONFIG_X86_FRED
+-/*
+- * A FRED-specific INT80 handler is warranted for the follwing reasons:
+- *
+- * 1) As INT instructions and hardware interrupts are separate event
+- *    types, FRED does not preclude the use of vector 0x80 for external
+- *    interrupts. As a result, the FRED setup code does not reserve
+- *    vector 0x80 and calling int80_is_external() is not merely
+- *    suboptimal but actively incorrect: it could cause a system call
+- *    to be incorrectly ignored.
+- *
+- * 2) It is called only for handling vector 0x80 of event type
+- *    EVENT_TYPE_SWINT and will never be called to handle any external
+- *    interrupt (event type EVENT_TYPE_EXTINT).
+- *
+- * 3) FRED has separate entry flows depending on if the event came from
+- *    user space or kernel space, and because the kernel does not use
+- *    INT insns, the FRED kernel entry handler fred_entry_from_kernel()
+- *    falls through to fred_bad_type() if the event type is
+- *    EVENT_TYPE_SWINT, i.e., INT insns. So if the kernel is handling
+- *    an INT insn, it can only be from a user level.
+- *
+- * 4) int80_emulation() does a CLEAR_BRANCH_HISTORY. While FRED will
+- *    likely take a different approach if it is ever needed: it
+- *    probably belongs in either fred_intx()/ fred_other() or
+- *    asm_fred_entrypoint_user(), depending on if this ought to be done
+- *    for all entries from userspace or only system
+- *    calls.
+- *
+- * 5) INT $0x80 is the fast path for 32-bit system calls under FRED.
+- */
+-DEFINE_FREDENTRY_RAW(int80_emulation)
+-{
+-	int nr;
+-
+-	enter_from_user_mode(regs);
+-
+-	instrumentation_begin();
+-	add_random_kstack_offset();
+-
+-	/*
+-	 * FRED pushed 0 into regs::orig_ax and regs::ax contains the
+-	 * syscall number.
+-	 *
+-	 * User tracing code (ptrace or signal handlers) might assume
+-	 * that the regs::orig_ax contains a 32-bit number on invoking
+-	 * a 32-bit syscall.
+-	 *
+-	 * Establish the syscall convention by saving the 32bit truncated
+-	 * syscall number in regs::orig_ax and by invalidating regs::ax.
+-	 */
+-	regs->orig_ax = regs->ax & GENMASK(31, 0);
+-	regs->ax = -ENOSYS;
+-
+-	nr = syscall_32_enter(regs);
+-
+-	local_irq_enable();
+-	nr = syscall_enter_from_user_mode_work(regs, nr);
+-	do_syscall_32_irqs_on(regs, nr);
+-
+-	instrumentation_end();
+-	syscall_exit_to_user_mode(regs);
+-}
+-#endif
+-#else /* CONFIG_IA32_EMULATION */
+-
+-/* Handles int $0x80 on a 32bit kernel */
+-__visible noinstr void do_int80_syscall_32(struct pt_regs *regs)
+-{
+-	int nr = syscall_32_enter(regs);
+-
+-	add_random_kstack_offset();
+-	/*
+-	 * Subtlety here: if ptrace pokes something larger than 2^31-1 into
+-	 * orig_ax, the int return value truncates it. This matches
+-	 * the semantics of syscall_get_nr().
+-	 */
+-	nr = syscall_enter_from_user_mode(regs, nr);
+-	instrumentation_begin();
+-
+-	do_syscall_32_irqs_on(regs, nr);
+-
+-	instrumentation_end();
+-	syscall_exit_to_user_mode(regs);
+-}
+-#endif /* !CONFIG_IA32_EMULATION */
+-
+-static noinstr bool __do_fast_syscall_32(struct pt_regs *regs)
+-{
+-	int nr = syscall_32_enter(regs);
+-	int res;
+-
+-	add_random_kstack_offset();
+-	/*
+-	 * This cannot use syscall_enter_from_user_mode() as it has to
+-	 * fetch EBP before invoking any of the syscall entry work
+-	 * functions.
+-	 */
+-	syscall_enter_from_user_mode_prepare(regs);
+-
+-	instrumentation_begin();
+-	/* Fetch EBP from where the vDSO stashed it. */
+-	if (IS_ENABLED(CONFIG_X86_64)) {
+-		/*
+-		 * Micro-optimization: the pointer we're following is
+-		 * explicitly 32 bits, so it can't be out of range.
+-		 */
+-		res = __get_user(*(u32 *)&regs->bp,
+-			 (u32 __user __force *)(unsigned long)(u32)regs->sp);
+-	} else {
+-		res = get_user(*(u32 *)&regs->bp,
+-		       (u32 __user __force *)(unsigned long)(u32)regs->sp);
+-	}
+-
+-	if (res) {
+-		/* User code screwed up. */
+-		regs->ax = -EFAULT;
+-
+-		local_irq_disable();
+-		instrumentation_end();
+-		irqentry_exit_to_user_mode(regs);
+-		return false;
+-	}
+-
+-	nr = syscall_enter_from_user_mode_work(regs, nr);
+-
+-	/* Now this is just like a normal syscall. */
+-	do_syscall_32_irqs_on(regs, nr);
+-
+-	instrumentation_end();
+-	syscall_exit_to_user_mode(regs);
+-	return true;
+-}
+-
+-/* Returns true to return using SYSEXIT/SYSRETL, or false to use IRET */
+-__visible noinstr bool do_fast_syscall_32(struct pt_regs *regs)
+-{
+-	/*
+-	 * Called using the internal vDSO SYSENTER/SYSCALL32 calling
+-	 * convention.  Adjust regs so it looks like we entered using int80.
+-	 */
+-	unsigned long landing_pad = (unsigned long)current->mm->context.vdso +
+-					vdso_image_32.sym_int80_landing_pad;
+-
+-	/*
+-	 * SYSENTER loses EIP, and even SYSCALL32 needs us to skip forward
+-	 * so that 'regs->ip -= 2' lands back on an int $0x80 instruction.
+-	 * Fix it up.
+-	 */
+-	regs->ip = landing_pad;
+-
+-	/* Invoke the syscall. If it failed, keep it simple: use IRET. */
+-	if (!__do_fast_syscall_32(regs))
+-		return false;
+-
+-	/*
+-	 * Check that the register state is valid for using SYSRETL/SYSEXIT
+-	 * to exit to userspace.  Otherwise use the slower but fully capable
+-	 * IRET exit path.
+-	 */
+-
+-	/* XEN PV guests always use the IRET path */
+-	if (cpu_feature_enabled(X86_FEATURE_XENPV))
+-		return false;
+-
+-	/* EIP must point to the VDSO landing pad */
+-	if (unlikely(regs->ip != landing_pad))
+-		return false;
+-
+-	/* CS and SS must match the values set in MSR_STAR */
+-	if (unlikely(regs->cs != __USER32_CS || regs->ss != __USER_DS))
+-		return false;
+-
+-	/* If the TF, RF, or VM flags are set, use IRET */
+-	if (unlikely(regs->flags & (X86_EFLAGS_RF | X86_EFLAGS_TF | X86_EFLAGS_VM)))
+-		return false;
+-
+-	/* Use SYSRETL/SYSEXIT to exit to userspace */
+-	return true;
+-}
+-
+-/* Returns true to return using SYSEXIT/SYSRETL, or false to use IRET */
+-__visible noinstr bool do_SYSENTER_32(struct pt_regs *regs)
+-{
+-	/* SYSENTER loses RSP, but the vDSO saved it in RBP. */
+-	regs->sp = regs->bp;
+-
+-	/* SYSENTER clobbers EFLAGS.IF.  Assume it was set in usermode. */
+-	regs->flags |= X86_EFLAGS_IF;
+-
+-	return do_fast_syscall_32(regs);
+-}
+-#endif
+-
+ SYSCALL_DEFINE0(ni_syscall)
+ {
+ 	return -ENOSYS;
+diff --git a/arch/x86/entry/syscall_32.c b/arch/x86/entry/syscall_32.c
+index 8cc9950d7104..7c286e89fd04 100644
+--- a/arch/x86/entry/syscall_32.c
++++ b/arch/x86/entry/syscall_32.c
+@@ -1,10 +1,23 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/* System call table for i386. */
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Some hypercalls issued by the toolstack can take many 10s of
-+ * seconds. Allow tasks running hypercalls via the privcmd driver to
-+ * be voluntarily preempted even if full kernel preemption is
-+ * disabled.
++ * 32-bit system call dispatch
 + *
-+ * Such preemptible hypercalls are bracketed by
-+ * xen_preemptible_hcall_begin() and xen_preemptible_hcall_end()
-+ * calls.
++ * Copyright (c) 2015 Andrew Lutomirski
++ *
++ * Based on asm and ptrace code by many authors.  The code here originated
++ * in ptrace.c and signal.c.
 + */
-+DEFINE_PER_CPU(bool, xen_in_preemptible_hcall);
-+EXPORT_SYMBOL_GPL(xen_in_preemptible_hcall);
-+#endif
-+
- struct tls_descs {
- 	struct desc_struct desc[3];
- };
-@@ -687,6 +703,36 @@ DEFINE_IDTENTRY_RAW(xenpv_exc_machine_check)
- }
- #endif
  
-+static void __xen_pv_evtchn_do_upcall(struct pt_regs *regs)
+ #include <linux/linkage.h>
+ #include <linux/sys.h>
+ #include <linux/cache.h>
+ #include <linux/syscalls.h>
++#include <linux/entry-common.h>
++#include <linux/nospec.h>
++#include <linux/uaccess.h>
++#include <asm/apic.h>
++#include <asm/traps.h>
++#include <asm/cpufeature.h>
+ #include <asm/syscall.h>
+ 
+ #ifdef CONFIG_IA32_EMULATION
+@@ -42,3 +55,322 @@ long ia32_sys_call(const struct pt_regs *regs, unsigned int nr)
+ 	default: return __ia32_sys_ni_syscall(regs);
+ 	}
+ };
++
++static __always_inline int syscall_32_enter(struct pt_regs *regs)
 +{
-+	struct pt_regs *old_regs = set_irq_regs(regs);
++	if (IS_ENABLED(CONFIG_IA32_EMULATION))
++		current_thread_info()->status |= TS_COMPAT;
 +
-+	inc_irq_stat(irq_hv_callback_count);
-+
-+	xen_evtchn_do_upcall();
-+
-+	set_irq_regs(old_regs);
++	return (int)regs->orig_ax;
 +}
 +
-+__visible noinstr void xen_pv_evtchn_do_upcall(struct pt_regs *regs)
++#ifdef CONFIG_IA32_EMULATION
++bool __ia32_enabled __ro_after_init = !IS_ENABLED(CONFIG_IA32_EMULATION_DEFAULT_DISABLED);
++
++static int __init ia32_emulation_override_cmdline(char *arg)
 +{
-+	irqentry_state_t state = irqentry_enter(regs);
-+	bool inhcall;
++	return kstrtobool(arg, &__ia32_enabled);
++}
++early_param("ia32_emulation", ia32_emulation_override_cmdline);
++#endif
 +
-+	instrumentation_begin();
-+	run_sysvec_on_irqstack_cond(__xen_pv_evtchn_do_upcall, regs);
++/*
++ * Invoke a 32-bit syscall.  Called with IRQs on in CT_STATE_KERNEL.
++ */
++static __always_inline void do_syscall_32_irqs_on(struct pt_regs *regs, int nr)
++{
++	/*
++	 * Convert negative numbers to very high and thus out of range
++	 * numbers for comparisons.
++	 */
++	unsigned int unr = nr;
 +
-+	inhcall = get_and_clear_inhcall();
-+	if (inhcall && !WARN_ON_ONCE(state.exit_rcu)) {
-+		irqentry_exit_cond_resched();
-+		instrumentation_end();
-+		restore_inhcall(inhcall);
-+	} else {
-+		instrumentation_end();
-+		irqentry_exit(regs, state);
++	if (likely(unr < IA32_NR_syscalls)) {
++		unr = array_index_nospec(unr, IA32_NR_syscalls);
++		regs->ax = ia32_sys_call(regs, unr);
++	} else if (nr != -1) {
++		regs->ax = __ia32_sys_ni_syscall(regs);
 +	}
 +}
 +
- struct trap_array_entry {
- 	void (*orig)(void);
- 	void (*xen)(void);
-diff --git a/include/xen/xen-ops.h b/include/xen/xen-ops.h
-index 47f11bec5e90..174ef8e4600f 100644
---- a/include/xen/xen-ops.h
-+++ b/include/xen/xen-ops.h
-@@ -208,10 +208,29 @@ static inline void xen_preemptible_hcall_end(void)
- 	__this_cpu_write(xen_in_preemptible_hcall, false);
- }
- 
-+/*
-+ * In case of scheduling the flag must be cleared and restored after
-+ * returning from schedule as the task might move to a different CPU.
++#ifdef CONFIG_IA32_EMULATION
++static __always_inline bool int80_is_external(void)
++{
++	const unsigned int offs = (0x80 / 32) * 0x10;
++	const u32 bit = BIT(0x80 % 32);
++
++	/* The local APIC on XENPV guests is fake */
++	if (cpu_feature_enabled(X86_FEATURE_XENPV))
++		return false;
++
++	/*
++	 * If vector 0x80 is set in the APIC ISR then this is an external
++	 * interrupt. Either from broken hardware or injected by a VMM.
++	 *
++	 * Note: In guest mode this is only valid for secure guests where
++	 * the secure module fully controls the vAPIC exposed to the guest.
++	 */
++	return apic_read(APIC_ISR + offs) & bit;
++}
++
++/**
++ * do_int80_emulation - 32-bit legacy syscall C entry from asm
++ * @regs: syscall arguments in struct pt_args on the stack.
++ *
++ * This entry point can be used by 32-bit and 64-bit programs to perform
++ * 32-bit system calls.  Instances of INT $0x80 can be found inline in
++ * various programs and libraries.  It is also used by the vDSO's
++ * __kernel_vsyscall fallback for hardware that doesn't support a faster
++ * entry method.  Restarted 32-bit system calls also fall back to INT
++ * $0x80 regardless of what instruction was originally used to do the
++ * system call.
++ *
++ * This is considered a slow path.  It is not used by most libc
++ * implementations on modern hardware except during process startup.
++ *
++ * The arguments for the INT $0x80 based syscall are on stack in the
++ * pt_regs structure:
++ *   eax:				system call number
++ *   ebx, ecx, edx, esi, edi, ebp:	arg1 - arg 6
 + */
-+static __always_inline bool get_and_clear_inhcall(void)
++__visible noinstr void do_int80_emulation(struct pt_regs *regs)
 +{
-+	bool inhcall = __this_cpu_read(xen_in_preemptible_hcall);
++	int nr;
 +
-+	__this_cpu_write(xen_in_preemptible_hcall, false);
-+	return inhcall;
++	/* Kernel does not use INT $0x80! */
++	if (unlikely(!user_mode(regs))) {
++		irqentry_enter(regs);
++		instrumentation_begin();
++		panic("Unexpected external interrupt 0x80\n");
++	}
++
++	/*
++	 * Establish kernel context for instrumentation, including for
++	 * int80_is_external() below which calls into the APIC driver.
++	 * Identical for soft and external interrupts.
++	 */
++	enter_from_user_mode(regs);
++
++	instrumentation_begin();
++	add_random_kstack_offset();
++
++	/* Validate that this is a soft interrupt to the extent possible */
++	if (unlikely(int80_is_external()))
++		panic("Unexpected external interrupt 0x80\n");
++
++	/*
++	 * The low level idtentry code pushed -1 into regs::orig_ax
++	 * and regs::ax contains the syscall number.
++	 *
++	 * User tracing code (ptrace or signal handlers) might assume
++	 * that the regs::orig_ax contains a 32-bit number on invoking
++	 * a 32-bit syscall.
++	 *
++	 * Establish the syscall convention by saving the 32bit truncated
++	 * syscall number in regs::orig_ax and by invalidating regs::ax.
++	 */
++	regs->orig_ax = regs->ax & GENMASK(31, 0);
++	regs->ax = -ENOSYS;
++
++	nr = syscall_32_enter(regs);
++
++	local_irq_enable();
++	nr = syscall_enter_from_user_mode_work(regs, nr);
++	do_syscall_32_irqs_on(regs, nr);
++
++	instrumentation_end();
++	syscall_exit_to_user_mode(regs);
 +}
 +
-+static __always_inline void restore_inhcall(bool inhcall)
++#ifdef CONFIG_X86_FRED
++/*
++ * A FRED-specific INT80 handler is warranted for the follwing reasons:
++ *
++ * 1) As INT instructions and hardware interrupts are separate event
++ *    types, FRED does not preclude the use of vector 0x80 for external
++ *    interrupts. As a result, the FRED setup code does not reserve
++ *    vector 0x80 and calling int80_is_external() is not merely
++ *    suboptimal but actively incorrect: it could cause a system call
++ *    to be incorrectly ignored.
++ *
++ * 2) It is called only for handling vector 0x80 of event type
++ *    EVENT_TYPE_SWINT and will never be called to handle any external
++ *    interrupt (event type EVENT_TYPE_EXTINT).
++ *
++ * 3) FRED has separate entry flows depending on if the event came from
++ *    user space or kernel space, and because the kernel does not use
++ *    INT insns, the FRED kernel entry handler fred_entry_from_kernel()
++ *    falls through to fred_bad_type() if the event type is
++ *    EVENT_TYPE_SWINT, i.e., INT insns. So if the kernel is handling
++ *    an INT insn, it can only be from a user level.
++ *
++ * 4) int80_emulation() does a CLEAR_BRANCH_HISTORY. While FRED will
++ *    likely take a different approach if it is ever needed: it
++ *    probably belongs in either fred_intx()/ fred_other() or
++ *    asm_fred_entrypoint_user(), depending on if this ought to be done
++ *    for all entries from userspace or only system
++ *    calls.
++ *
++ * 5) INT $0x80 is the fast path for 32-bit system calls under FRED.
++ */
++DEFINE_FREDENTRY_RAW(int80_emulation)
 +{
-+	__this_cpu_write(xen_in_preemptible_hcall, inhcall);
++	int nr;
++
++	enter_from_user_mode(regs);
++
++	instrumentation_begin();
++	add_random_kstack_offset();
++
++	/*
++	 * FRED pushed 0 into regs::orig_ax and regs::ax contains the
++	 * syscall number.
++	 *
++	 * User tracing code (ptrace or signal handlers) might assume
++	 * that the regs::orig_ax contains a 32-bit number on invoking
++	 * a 32-bit syscall.
++	 *
++	 * Establish the syscall convention by saving the 32bit truncated
++	 * syscall number in regs::orig_ax and by invalidating regs::ax.
++	 */
++	regs->orig_ax = regs->ax & GENMASK(31, 0);
++	regs->ax = -ENOSYS;
++
++	nr = syscall_32_enter(regs);
++
++	local_irq_enable();
++	nr = syscall_enter_from_user_mode_work(regs, nr);
++	do_syscall_32_irqs_on(regs, nr);
++
++	instrumentation_end();
++	syscall_exit_to_user_mode(regs);
++}
++#endif
++#else /* CONFIG_IA32_EMULATION */
++
++/* Handles int $0x80 on a 32bit kernel */
++__visible noinstr void do_int80_syscall_32(struct pt_regs *regs)
++{
++	int nr = syscall_32_enter(regs);
++
++	add_random_kstack_offset();
++	/*
++	 * Subtlety here: if ptrace pokes something larger than 2^31-1 into
++	 * orig_ax, the int return value truncates it. This matches
++	 * the semantics of syscall_get_nr().
++	 */
++	nr = syscall_enter_from_user_mode(regs, nr);
++	instrumentation_begin();
++
++	do_syscall_32_irqs_on(regs, nr);
++
++	instrumentation_end();
++	syscall_exit_to_user_mode(regs);
++}
++#endif /* !CONFIG_IA32_EMULATION */
++
++static noinstr bool __do_fast_syscall_32(struct pt_regs *regs)
++{
++	int nr = syscall_32_enter(regs);
++	int res;
++
++	add_random_kstack_offset();
++	/*
++	 * This cannot use syscall_enter_from_user_mode() as it has to
++	 * fetch EBP before invoking any of the syscall entry work
++	 * functions.
++	 */
++	syscall_enter_from_user_mode_prepare(regs);
++
++	instrumentation_begin();
++	/* Fetch EBP from where the vDSO stashed it. */
++	if (IS_ENABLED(CONFIG_X86_64)) {
++		/*
++		 * Micro-optimization: the pointer we're following is
++		 * explicitly 32 bits, so it can't be out of range.
++		 */
++		res = __get_user(*(u32 *)&regs->bp,
++			 (u32 __user __force *)(unsigned long)(u32)regs->sp);
++	} else {
++		res = get_user(*(u32 *)&regs->bp,
++		       (u32 __user __force *)(unsigned long)(u32)regs->sp);
++	}
++
++	if (res) {
++		/* User code screwed up. */
++		regs->ax = -EFAULT;
++
++		local_irq_disable();
++		instrumentation_end();
++		irqentry_exit_to_user_mode(regs);
++		return false;
++	}
++
++	nr = syscall_enter_from_user_mode_work(regs, nr);
++
++	/* Now this is just like a normal syscall. */
++	do_syscall_32_irqs_on(regs, nr);
++
++	instrumentation_end();
++	syscall_exit_to_user_mode(regs);
++	return true;
 +}
 +
- #else
- 
- static inline void xen_preemptible_hcall_begin(void) { }
- static inline void xen_preemptible_hcall_end(void) { }
-+static __always_inline bool get_and_clear_inhcall(void) { return false; }
-+static __always_inline void restore_inhcall(bool inhcall) { }
- 
- #endif /* CONFIG_XEN_PV && !CONFIG_PREEMPTION */
- 
++/* Returns true to return using SYSEXIT/SYSRETL, or false to use IRET */
++__visible noinstr bool do_fast_syscall_32(struct pt_regs *regs)
++{
++	/*
++	 * Called using the internal vDSO SYSENTER/SYSCALL32 calling
++	 * convention.  Adjust regs so it looks like we entered using int80.
++	 */
++	unsigned long landing_pad = (unsigned long)current->mm->context.vdso +
++					vdso_image_32.sym_int80_landing_pad;
++
++	/*
++	 * SYSENTER loses EIP, and even SYSCALL32 needs us to skip forward
++	 * so that 'regs->ip -= 2' lands back on an int $0x80 instruction.
++	 * Fix it up.
++	 */
++	regs->ip = landing_pad;
++
++	/* Invoke the syscall. If it failed, keep it simple: use IRET. */
++	if (!__do_fast_syscall_32(regs))
++		return false;
++
++	/*
++	 * Check that the register state is valid for using SYSRETL/SYSEXIT
++	 * to exit to userspace.  Otherwise use the slower but fully capable
++	 * IRET exit path.
++	 */
++
++	/* XEN PV guests always use the IRET path */
++	if (cpu_feature_enabled(X86_FEATURE_XENPV))
++		return false;
++
++	/* EIP must point to the VDSO landing pad */
++	if (unlikely(regs->ip != landing_pad))
++		return false;
++
++	/* CS and SS must match the values set in MSR_STAR */
++	if (unlikely(regs->cs != __USER32_CS || regs->ss != __USER_DS))
++		return false;
++
++	/* If the TF, RF, or VM flags are set, use IRET */
++	if (unlikely(regs->flags & (X86_EFLAGS_RF | X86_EFLAGS_TF | X86_EFLAGS_VM)))
++		return false;
++
++	/* Use SYSRETL/SYSEXIT to exit to userspace */
++	return true;
++}
++
++/* Returns true to return using SYSEXIT/SYSRETL, or false to use IRET */
++__visible noinstr bool do_SYSENTER_32(struct pt_regs *regs)
++{
++	/* SYSENTER loses RSP, but the vDSO saved it in RBP. */
++	regs->sp = regs->bp;
++
++	/* SYSENTER clobbers EFLAGS.IF.  Assume it was set in usermode. */
++	regs->flags |= X86_EFLAGS_IF;
++
++	return do_fast_syscall_32(regs);
++}
 -- 
 2.48.1
 
