@@ -1,125 +1,94 @@
-Return-Path: <linux-kernel+bounces-559022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD2EA5EE75
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:51:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D360A5EE68
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:50:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6AD63B88D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:51:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E871189FC5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9902620E4;
-	Thu, 13 Mar 2025 08:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113BB262D2B;
+	Thu, 13 Mar 2025 08:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmO3jUKm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+9tQIfj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488E4262D16;
-	Thu, 13 Mar 2025 08:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E59526281A;
+	Thu, 13 Mar 2025 08:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741855843; cv=none; b=fzTKEv3KsfIGOCWiV+VtRwFgfVO8I8b8gsmtpPashAyzLp28x2/9ELplkhIP9MuY4H6squzA9KpWtp7FTtTB2JeFm1Go7jfMXlRV1QqjOqupJbi85xeb2A8fq57hvViOM0PV8EJRkOLYXjZEQie4bQtGnJ4TysLBObFVV8t37hY=
+	t=1741855798; cv=none; b=PiBjl6dtaqfFyZ4slAFfbcb8YouApku61gNLKKLvK+r6pXPsmKkowtpS9JirL+LQZ4iYDdXK9A5N0QHm6xMhDRmO4gujkabmtiTkZPtrQJAo5YbtwShKjTgPovVWeTseMGkjwSG73IfesxsjvUmL3b7C6gkJIQ1htASQXz92TnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741855843; c=relaxed/simple;
-	bh=AaLGvCMflk/8nmpvfygkfLg+3xhOY9lgQwRoQdX2ybU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Li1OuxCkhrTdRwUfvoc4WQPxO7S7Noo/VKDiB/giMVPcBdndE5L6u2anqGYQX1YjcI3/ceYOvThdVpJZgL2Usc603UQLMzuxJgqM2u3BNWIOJvC7liJ7uaTsq2dtf8f9+fHySY/I030wQS2lszMhHvZsbxdPwsj57GqXwA9Wt2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmO3jUKm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FB19C4CEEB;
-	Thu, 13 Mar 2025 08:50:36 +0000 (UTC)
+	s=arc-20240116; t=1741855798; c=relaxed/simple;
+	bh=Z9bhnmQuVTK3KlaOUmQ71atR3CCNcpznsgNzTr7cStk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=bCSCD66Cboxv+HmDYY3XFec5gjKhKnPxcgj8GD6E5sXF3MI+Sq4ECHr9Sc96rd5npcuXHMkknxn+tJEjhcj9j5HdMmZqVEwcLREX8JfcKyq9vsDjd3vNu7XDBysAWQwdZwXE6gFTFyMl6PCJRPMWY+HvoqGqLnT0bRCM+P67j8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G+9tQIfj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92595C4CEDD;
+	Thu, 13 Mar 2025 08:49:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741855843;
-	bh=AaLGvCMflk/8nmpvfygkfLg+3xhOY9lgQwRoQdX2ybU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dmO3jUKmBVspgoGdMHJ6GCTqbnJmH88g3j1T8G5EAl0THm9yLOFaue5sqRj5OvulL
-	 JDFz0riU11zg/X78iwbTarr4TvFmfK8DLqSfW3eTe6WB8kL6Es42n6O3tlpkHbZAK/
-	 MddO4H7+nAkEsGBtjkyOaEPQGzf99i47IvgYSdPnrbUs4nUDEiD7dXUj7+ljxhekex
-	 WIblD0DPkQSvW7b4+4lYaNNABQnwgyKp9/zbAcNER9k3wtivj85pEii/P8wzA8SRLt
-	 D19EmWaE9tfDyJ7ywnhhFy5RIha0IUNNb88eI8PbrBIswq/SKVNbBt/+G+QCiEvSIQ
-	 5jMpnYmgMMg6w==
-Date: Thu, 13 Mar 2025 09:50:31 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>, Ryan Lee <ryan.lee@canonical.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, John Johansen <john.johansen@canonical.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Kentaro Takeda <takedakn@nttdata.co.jp>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Subject: Re: [RFC PATCH 1/6] fs: invoke LSM file_open hook in do_dentry_open
- for O_PATH fds as well
-Message-ID: <20250313-dompteur-dachten-bb695fcbebf1@brauner>
-References: <20250312212148.274205-1-ryan.lee@canonical.com>
- <20250312212148.274205-2-ryan.lee@canonical.com>
- <20250312213714.GT2023217@ZenIV>
+	s=k20201202; t=1741855797;
+	bh=Z9bhnmQuVTK3KlaOUmQ71atR3CCNcpznsgNzTr7cStk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=G+9tQIfjeJErLON2J/nToFA2RBUmgwbQxm+0CYZjQjXaYAz1xuuwv0oBNxKwzXQjz
+	 cEKVukEuVIWDw8azuwTDidseHqEU/I4c5hbrK0bxqYIwwFg8ZRBHeQyUz8BB590FMA
+	 99O3TeIzuMcZ5c5gj0A9iCgI/1eIupk4OvlsLChq5RkBZT/8wqGcT9CpmLKYVbNVV7
+	 b9cOTqT7gcayjn03OseokgQivAx8Y6ZqSpaw/e1e93HjqEiS+cJ/fI39LoprugcUM8
+	 a0F5g1CSpOiX+nhCdwjlGKs5yA/BIfY/ePEaUu/hd8vi2WrU1WNvYJvpuwW5fozQ4M
+	 3CE1CdBnudnwA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D8D3806651;
+	Thu, 13 Mar 2025 08:50:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250312213714.GT2023217@ZenIV>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: hns3: use string choices helper
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174185583203.1420926.338411681169004091.git-patchwork-notify@kernel.org>
+Date: Thu, 13 Mar 2025 08:50:32 +0000
+References: <20250307113733.819448-1-shaojijie@huawei.com>
+In-Reply-To: <20250307113733.819448-1-shaojijie@huawei.com>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+ shenjian15@huawei.com, wangpeiyang1@huawei.com, liuyonglong@huawei.com,
+ chenhao418@huawei.com, jonathan.cameron@huawei.com,
+ shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Mar 12, 2025 at 09:37:14PM +0000, Al Viro wrote:
-> On Wed, Mar 12, 2025 at 02:21:41PM -0700, Ryan Lee wrote:
-> > Currently, opening O_PATH file descriptors completely bypasses the LSM
-> > infrastructure. Invoking the LSM file_open hook for O_PATH fds will
-> > be necessary for e.g. mediating the fsmount() syscall.
+Hello:
 
-LSM mediation for the mount api should be done by adding appropriate
-hooks to the new mount api.
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-> > 
-> > Signed-off-by: Ryan Lee <ryan.lee@canonical.com>
-> > ---
-> >  fs/open.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/open.c b/fs/open.c
-> > index 30bfcddd505d..0f8542bf6cd4 100644
-> > --- a/fs/open.c
-> > +++ b/fs/open.c
-> > @@ -921,8 +921,13 @@ static int do_dentry_open(struct file *f,
-> >  	if (unlikely(f->f_flags & O_PATH)) {
-> >  		f->f_mode = FMODE_PATH | FMODE_OPENED;
-> >  		file_set_fsnotify_mode(f, FMODE_NONOTIFY);
-> >  		f->f_op = &empty_fops;
-> > -		return 0;
-> > +		/*
-> > +		 * do_o_path in fs/namei.c unconditionally invokes path_put
-> > +		 * after this function returns, so don't path_put the path
-> > +		 * upon LSM rejection of O_PATH opening
-> > +		 */
-> > +		return security_file_open(f);
+On Fri, 7 Mar 2025 19:37:33 +0800 you wrote:
+> From: Jian Shen <shenjian15@huawei.com>
 > 
-> Unconditional path_put() in do_o_path() has nothing to do with that -
-> what gets dropped there is the reference acquired there; the reference
-> acquired (and not dropped) here is the one that went into ->f_path.
-> Since you are leaving FMODE_OPENED set, you will have __fput() drop
-> that reference.
+> Use string choices helper for better readability.
 > 
-> Basically, you are simulating behaviour on the O_DIRECT open of
-> something that does not support O_DIRECT - return an error, with
-> ->f_path and FMODE_OPENED left in place.
+> Signed-off-by: Jian Shen <shenjian15@huawei.com>
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 > 
-> Said that, what I do not understand is the point of that exercise -
-> why does LSM need to veto anything for those and why is security_file_open()
+> [...]
 
-I really think this is misguided. This should be done via proper hooks
-into apis that use O_PATH file descriptors for specific purposes but not
-for the generic open() path.
+Here is the summary with links:
+  - [net-next] net: hns3: use string choices helper
+    https://git.kernel.org/netdev/net-next/c/9e3285040514
 
-> the right place for such checks?
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-It isn't.
 
-> 
-> The second part is particularly interesting...
 
