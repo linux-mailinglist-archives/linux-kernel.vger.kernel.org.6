@@ -1,152 +1,121 @@
-Return-Path: <linux-kernel+bounces-560260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B0AFA60123
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:27:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28E96A60124
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:27:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E31217EDD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:27:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3DDD17F083
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69481F1932;
-	Thu, 13 Mar 2025 19:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412771F30BB;
+	Thu, 13 Mar 2025 19:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jSbFWKsW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gCTXiXIb"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67891F37C3
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 19:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566011E8353
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 19:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741893977; cv=none; b=gQpBnI+N7S+cVRSCHA7e8le0RVPF/Zxbjt2nkjyevCmGCLlmFyto2HQcjOGzWMf72Vpq3yvlGg/4TiTytYPllzWYiCCQot+Fk1tbMIM5xxC484/bOYc8tg8Ygw63Jnah5cRjNT2Xy5rX5nhSSSRoHZLP4tf6HuJy4R7so8okiEQ=
+	t=1741894014; cv=none; b=Lm7WJoZuLQ+zxkmfKoBBjKJYXg6Ng+8RivA6NPfbNQp2h9p0pT20g9LkzyjtViZO/Pq937Q09TMkqtFHCKSPbqnGFAV5/0JPcmZRUrRYWn4TFCpgwNqR4YBD+T4pdD9AfjdNp5uCB5jBgTmS2+dX3sYDCDdRBYWZO4kokQEnsrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741893977; c=relaxed/simple;
-	bh=STE3EP1T2rA3Vl8u/qi1S6RDvOni8tomKBFZSMRjP4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BNLRffOB2FaVakr9JyNUkJ5rSjUVdlLjQLqJzTCpEVEEFDnDZSpwzG15Lpkras36Dc1b6lIyXzI2mnEP8ZqOGOfstC0OATy6LNrFsb0YlCWoY3XYHRXrBh42R7gW4uP6bCnxS9wO4pvXtBByA/zKIA7CnQr+ABF0PlBHTUA1cT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jSbFWKsW; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741893975; x=1773429975;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=STE3EP1T2rA3Vl8u/qi1S6RDvOni8tomKBFZSMRjP4w=;
-  b=jSbFWKsWzvwqBQNYZiWlY9LHwwPWwMD21AU0cv/YKKU1Gi/lsVCt7hPa
-   u1EAax7qMM8OECAii1nDTPiAynNNckq9SrZf0uxjJ5I3dGriyTY+sHQCh
-   1gsm6sFYj9w/7wKFOXLtC0i5iO3r21mAHPJOkEREgBpsjXst/O01zzZw5
-   xeMpObnZjQ01v+0YRLMQx7fkWUpbxeIY5Jbsgw99YukoILOOdhd+t8ruI
-   oBKWXRLiDq0I+jGiLFxYJA7E0AMOa7VW2bzuAqlpMUOrmYopM8R7BVJ67
-   UqzjvD7DVXmM947tlFZ8LpiQFeU/tzSYuZK4TQoYuvTpU3soxQLwO3Gyd
-   g==;
-X-CSE-ConnectionGUID: afJg6xJ3T2+ITCtkhujSZg==
-X-CSE-MsgGUID: 5yeOt/7EQvy6tki76bRSSA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="43135136"
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="43135136"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 12:26:15 -0700
-X-CSE-ConnectionGUID: SIEaDluVRDSqy2NLYjRDlQ==
-X-CSE-MsgGUID: B4vUpEeYQZOF0L1kSk4CdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="158200422"
-Received: from trinityj-mobl2.amr.corp.intel.com (HELO desk) ([10.125.145.187])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 12:26:14 -0700
-Date: Thu, 13 Mar 2025 12:26:06 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: David Kaplan <david.kaplan@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	Brendan Jackman <jackmanb@google.com>,
-	Derek Manwaring <derekmn@amazon.com>
-Subject: Re: [PATCH v4 03/36] x86/bugs: Restructure mmio mitigation
-Message-ID: <20250313192606.iijythngqtpx4tyy@desk>
-References: <20250310164023.779191-1-david.kaplan@amd.com>
- <20250310164023.779191-4-david.kaplan@amd.com>
- <20250313093617.GHZ9KnEXpdM4dwLYFz@fat_crate.local>
+	s=arc-20240116; t=1741894014; c=relaxed/simple;
+	bh=vfobcrC7uYHl5aIagul0kneEB07/v+no5IZ0QVC8YH0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=FhKBE/olLK1mz+UsBG73tdDAC00Qc5wU7RZeNg73dDQpnTKJh8EkYZAjMRYgpfdiDxA6p2ilTPyzeTVG8M7nD0Ro8Qp84ZrsrjxHpdrRXC0shsKMo973iflu4EzREcP2/hCXhORLUvvRmD161/Bx22VL4hhsiNtQSocrOHPhv7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gCTXiXIb; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 28FCA40E022E;
+	Thu, 13 Mar 2025 19:26:49 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 1Mdt4pq0Hz4x; Thu, 13 Mar 2025 19:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741894001; bh=FY8zFsP65DD/JJDFbnrqjcgWeFNbwzLGfQLupp2+Ho8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=gCTXiXIbPa5hoXuMtzfoYLw8AFITmhONvKS5jPoHaEol3/h0QrjlsaFGr7J4sCFE4
+	 JrHcnTrE6GzBmzVdw6UKfEXIoK1HEJG6D2wR2P2nPLCtxaxKJBVcfH36GQ27Ervxld
+	 jjYukjSwdOq9jJnSiDZmoMM3k7sa9Cg4TDGX0LbSwSiVHoE6evOQTeGukhVqf/ypwn
+	 6hbBC7KF/7EmAYK7hLOgjvg0khfNeJ0X5ezbKR7BxNgsSrpvbYsu+WatUINpBpTO8D
+	 lQemMmlDi7gVYyw5jr7GOS7Zvrs+/Pequ2b2KwqvdkVK9SOsuMd9PxsYkDKIHnN30L
+	 05p/juQ+1GhYMiAYgnsnfrh23msmXz7ejQvxBADa9+OVwQoO7grkEn2x+p0N8peOgP
+	 2Czb2STMrUSmvFg2dMZrkxluhAMHbAgh4mycAtFrujQu1kFwJlR0j2j/z3m+EzktWm
+	 S+Wwj7/Wkqhm2yq76nnAqgqKPTHUMJ7qBAD8cL/XIpOMA+Gw1OtX54O0QjbyTtUm5g
+	 dwreTX6LkX7sw5xSKDEyBaDpyrhjyoem5CF2Udm/N7C1WL1qUY3E0UnAADFR3DT1uF
+	 /CWbCAzh2twplLajUG+rN7UNrD2bCTujuIgnAEsIufpjA8z089YMfykgR0bOwLRoJI
+	 MAGZkl2fewRAlWhzVBsRlUD4=
+Received: from [IPv6:::1] (unknown [IPv6:2a02:3038:266:6540:81ab:a9fd:fb89:8f56])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2626040E0219;
+	Thu, 13 Mar 2025 19:26:34 +0000 (UTC)
+Date: Thu, 13 Mar 2025 20:26:28 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/asm=3A_Use_asm=5Finline=28=29_?=
+ =?US-ASCII?Q?instead_of_asm=28=29_in_amd=5Fclear=5Fdivider=28=29?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250313191828.83855-1-ubizjak@gmail.com>
+References: <20250313191828.83855-1-ubizjak@gmail.com>
+Message-ID: <96E2026E-CEF1-4A4C-B107-7FCE2CD9121F@alien8.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313093617.GHZ9KnEXpdM4dwLYFz@fat_crate.local>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 13, 2025 at 10:36:17AM +0100, Borislav Petkov wrote:
-> I'd expect to see:
-> 
-> 	if (mmio_mitigation == MMIO_MITIGATION_AUTO) {
->                 mmio_mitigation = MMIO_MITIGATION_VERW;
-> 		verw_mitigation_selected = true;
-> 	}
-> 
->         if (boot_cpu_has_bug(X86_BUG_MDS) || taa_vulnerable())
->                 verw_mitigation_selected = true;
-> 
-> because the above branch already selected MMIO_MITIGATION_VERW so we might as
-> well set verw_mitigation_selected, right?
+On March 13, 2025 8:18:09 PM GMT+01:00, Uros Bizjak <ubizjak@gmail=2Ecom> w=
+rote:
+>Use asm_inline() to instruct the compiler that the size of asm()
+>is the minimum size of one instruction, ignoring how many instructions
+>the compiler thinks it is=2E ALTERNATIVE macro that expands to several
+>pseudo directives causes instruction length estimate to count
+>more than 20 instructions=2E
+>
+>bloat-o-meter reports no code size changes=2E
+>
+>Signed-off-by: Uros Bizjak <ubizjak@gmail=2Ecom>
+>Cc: Thomas Gleixner <tglx@linutronix=2Ede>
+>Cc: Ingo Molnar <mingo@kernel=2Eorg>
+>Cc: Borislav Petkov <bp@alien8=2Ede>
+>Cc: Dave Hansen <dave=2Ehansen@linux=2Eintel=2Ecom>
+>Cc: "H=2E Peter Anvin" <hpa@zytor=2Ecom>
+>---
+> arch/x86/include/asm/processor=2Eh | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/arch/x86/include/asm/processor=2Eh b/arch/x86/include/asm/pr=
+ocessor=2Eh
+>index 5d2f7e5aff26=2E=2E06e499ba4fe8 100644
+>--- a/arch/x86/include/asm/processor=2Eh
+>+++ b/arch/x86/include/asm/processor=2Eh
+>@@ -707,7 +707,7 @@ static inline u32 per_cpu_l2c_id(unsigned int cpu)
+>  */
+> static __always_inline void amd_clear_divider(void)
+> {
+>-	asm volatile(ALTERNATIVE("", "div %2\n\t", X86_BUG_DIV0)
+>+	asm_inline volatile(ALTERNATIVE("", "div %2", X86_BUG_DIV0)
+> 		     :: "a" (0), "d" (0), "r" (1));
+> }
+>=20
 
-There is a subtle difference between setting verw_mitigation_selected and
-MMIO_MITIGATION_VERW. The former is a system-wide switch that indicates
-VERW is needed at both kernel-exit and VMenter. MMIO Stale Data is
-different from other VERW based mitigations because it only requires VERW
-at VMenter, when not affected by MDS/TAA. So, turning the system-wide knob
-here would be wrong.
-
-> > +static void __init mmio_update_mitigation(void)
-> > +{
-> > +	if (!boot_cpu_has_bug(X86_BUG_MMIO_STALE_DATA) || cpu_mitigations_off())
-> > +		return;
-> > +
-> > +	if (verw_mitigation_selected)
-> > +		mmio_mitigation = MMIO_MITIGATION_VERW;
-[...]
-> > +	if (boot_cpu_has_bug(X86_BUG_MMIO_UNKNOWN))
-> 
-> Btw, that UNKNOWN thing is just silly. Looking at git history:
-> 
-> 7df548840c49 ("x86/bugs: Add "unknown" reporting for MMIO Stale Data")
-> 
-> this was added just so that it doesn't say "Not affected" about those CPUs but
-> "unknown."
-> 
-> But
-> 
->   "Mitigation is not deployed when the status is unknown."
-> 
-> so if it is only about reporting, I think we can synthesize the logic of this:
-> 
->         if (!arch_cap_mmio_immune(x86_arch_cap_msr)) {
->                 if (cpu_matches(cpu_vuln_blacklist, MMIO))
->                         setup_force_cpu_bug(X86_BUG_MMIO_STALE_DATA);
->                 else if (!cpu_matches(cpu_vuln_whitelist, NO_MMIO))
->                         setup_force_cpu_bug(X86_BUG_MMIO_UNKNOWN);
->         }
-> 
-> into a separate function and get rid of that X86_BUG_MMIO_UNKNOWN thing.
-
-Hmm, that would not be straightforward, specially for sysfs status. The
-above logic requires parsing the cpu_vuln_whitelist which is not available
-after init. Moreover, sysfs reads would become slower if it has to read an
-MSR and parse tables.
-
-Also, cpu_show_common() by default shows "Not affected" in the absence of
-bug bit. So setting X86_BUG_MMIO_UNKNOWN is simpler overall.
-
-cpu_show_common(bug)
-{
-	if (!boot_cpu_has_bug(bug))
-		return sysfs_emit(buf, "Not affected\n");
+So there's no point for this one=2E=2E=2E
+--=20
+Sent from a small device: formatting sucks and brevity is inevitable=2E 
 
