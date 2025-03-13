@@ -1,121 +1,136 @@
-Return-Path: <linux-kernel+bounces-560261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E96A60124
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:27:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3806FA60136
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:30:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3DDD17F083
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:27:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D6D37AF1EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412771F30BB;
-	Thu, 13 Mar 2025 19:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6330E1F30DD;
+	Thu, 13 Mar 2025 19:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gCTXiXIb"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GyEKrDub"
+Received: from mail-qk1-f201.google.com (mail-qk1-f201.google.com [209.85.222.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566011E8353
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 19:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451B81F2B88
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 19:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741894014; cv=none; b=Lm7WJoZuLQ+zxkmfKoBBjKJYXg6Ng+8RivA6NPfbNQp2h9p0pT20g9LkzyjtViZO/Pq937Q09TMkqtFHCKSPbqnGFAV5/0JPcmZRUrRYWn4TFCpgwNqR4YBD+T4pdD9AfjdNp5uCB5jBgTmS2+dX3sYDCDdRBYWZO4kokQEnsrI=
+	t=1741894044; cv=none; b=BkJWuScXONszewUNXmVGlf+yRT5TdYjOdya4G7hS85NVHLeplpRh5oaDeuVStmOYq5gB+ZkeKSNB7I7S75yc6g3ipmknSZAPH85rQVq9olQeTa2oQ7t+E1cAlnnzLZlag8zXB7mnUs+/kxvCUJAkPLDpkfX/tSeXbzj8zx4mU0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741894014; c=relaxed/simple;
-	bh=vfobcrC7uYHl5aIagul0kneEB07/v+no5IZ0QVC8YH0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=FhKBE/olLK1mz+UsBG73tdDAC00Qc5wU7RZeNg73dDQpnTKJh8EkYZAjMRYgpfdiDxA6p2ilTPyzeTVG8M7nD0Ro8Qp84ZrsrjxHpdrRXC0shsKMo973iflu4EzREcP2/hCXhORLUvvRmD161/Bx22VL4hhsiNtQSocrOHPhv7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gCTXiXIb; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 28FCA40E022E;
-	Thu, 13 Mar 2025 19:26:49 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 1Mdt4pq0Hz4x; Thu, 13 Mar 2025 19:26:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741894001; bh=FY8zFsP65DD/JJDFbnrqjcgWeFNbwzLGfQLupp2+Ho8=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=gCTXiXIbPa5hoXuMtzfoYLw8AFITmhONvKS5jPoHaEol3/h0QrjlsaFGr7J4sCFE4
-	 JrHcnTrE6GzBmzVdw6UKfEXIoK1HEJG6D2wR2P2nPLCtxaxKJBVcfH36GQ27Ervxld
-	 jjYukjSwdOq9jJnSiDZmoMM3k7sa9Cg4TDGX0LbSwSiVHoE6evOQTeGukhVqf/ypwn
-	 6hbBC7KF/7EmAYK7hLOgjvg0khfNeJ0X5ezbKR7BxNgsSrpvbYsu+WatUINpBpTO8D
-	 lQemMmlDi7gVYyw5jr7GOS7Zvrs+/Pequ2b2KwqvdkVK9SOsuMd9PxsYkDKIHnN30L
-	 05p/juQ+1GhYMiAYgnsnfrh23msmXz7ejQvxBADa9+OVwQoO7grkEn2x+p0N8peOgP
-	 2Czb2STMrUSmvFg2dMZrkxluhAMHbAgh4mycAtFrujQu1kFwJlR0j2j/z3m+EzktWm
-	 S+Wwj7/Wkqhm2yq76nnAqgqKPTHUMJ7qBAD8cL/XIpOMA+Gw1OtX54O0QjbyTtUm5g
-	 dwreTX6LkX7sw5xSKDEyBaDpyrhjyoem5CF2Udm/N7C1WL1qUY3E0UnAADFR3DT1uF
-	 /CWbCAzh2twplLajUG+rN7UNrD2bCTujuIgnAEsIufpjA8z089YMfykgR0bOwLRoJI
-	 MAGZkl2fewRAlWhzVBsRlUD4=
-Received: from [IPv6:::1] (unknown [IPv6:2a02:3038:266:6540:81ab:a9fd:fb89:8f56])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2626040E0219;
-	Thu, 13 Mar 2025 19:26:34 +0000 (UTC)
-Date: Thu, 13 Mar 2025 20:26:28 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org, linux-kernel@vger.kernel.org
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/asm=3A_Use_asm=5Finline=28=29_?=
- =?US-ASCII?Q?instead_of_asm=28=29_in_amd=5Fclear=5Fdivider=28=29?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250313191828.83855-1-ubizjak@gmail.com>
-References: <20250313191828.83855-1-ubizjak@gmail.com>
-Message-ID: <96E2026E-CEF1-4A4C-B107-7FCE2CD9121F@alien8.de>
+	s=arc-20240116; t=1741894044; c=relaxed/simple;
+	bh=ILIt1I4K0yqsx2yeqHM01aYQOroUH63iR+NR+X1/jzw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=C6BAyx88hHTRZhbLUq20zYcQur/MnzBCEzOcnRqdt8O9ShwJnJUIQbfFap3vbtDjzyIGABG7i7a6uDc3wUg7GhIMdPk/AF0G9uUVAv9++InhtDMlJIaaJoshfqR4st1SuifEWudmii2opUdFe/SfFsUizfZzZQvaD1YlRBl6YuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GyEKrDub; arc=none smtp.client-ip=209.85.222.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com
+Received: by mail-qk1-f201.google.com with SMTP id af79cd13be357-7c53b4b0d69so308622185a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:27:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741894042; x=1742498842; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Flzo3lVXN6Qb29UsmAIPXEQO4WxyqMDpwWQQUOakg/A=;
+        b=GyEKrDubZNrDsnddwJG8wfLf7QgcpHD9SL1LfAkhYSSJG9DIPEfMpilre2G2u5k8gD
+         aWEjT2+PAYdTQKHgqRqk6NHcOQT2PvcvmibLeI6xItGVIuflcrLakzGpjrBDryvAV+8H
+         ytA8pTqM2vpPpMQ/rI+qsHdvcjlzvqSV0ATKn6MYsdDZiTtyPuy9GCf2u5Dz1/vcJACZ
+         GwT5T16v/sIzSA1IziEXE4vhAOrFOnJdAkjmSw1xKBafoQp2M98piq/bs40GlhxAl0Cv
+         fzVcFBJX9B2HQjVw9YtqGnmcbXeUNeTUufMmA6QxxnaaUy2wsjDGisurFucAwaYXIFf/
+         0tAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741894042; x=1742498842;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Flzo3lVXN6Qb29UsmAIPXEQO4WxyqMDpwWQQUOakg/A=;
+        b=MU0Y00f98yORCilhmTf9BHI28hHoVq9jN2UScpVgUpmZzHLofQ385pO9SiIL35fUsH
+         lM0BqO6jN60MvUaQ/OuzehfMRkT5gReKr9gkQ+WDxlD1M0FGKbasP10LMePPSgR2kajW
+         6JgKzDkvbCyXS9myNM0Co7LQ29BUf2dXNJgEwIKcti8vjwZqCaL+7sIbMHaCkoJsz9kL
+         misyokORJQ+YLZnyyB+xkajYnI6fhgoQKOZxUKBQXpL5mzk/jXeAhgY52BeCxmxfpMD5
+         MaPFFBf6bI0u/JayU/PmRzBi6OxP5yosZ7XA5w8zO2s03AkNXMVqdvpwO+GcjOij6IB7
+         w4Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlcscjht4z4dV9KyV4r86cdICxJRiuaVRwPhBK3gFI6MgLCwbXvHFsacMlMnFSH4jFEDuW6wn16jvTAPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk3FOredWqvj0wvl9ow2E6noDBpi6HURHUXu5MkOpcXiJsJAVE
+	Lo/ZRKxh64uiqeuEYJqjNsuGV67/hiH4sJmcMvcCAGz3EM4N2tEGZTuGMF7CW1cY/Q7EDgepAg=
+	=
+X-Google-Smtp-Source: AGHT+IEhCEWKmQjlaJ2Hf9ADlQ1vji3WEjuildMcB96v9vZqW2qrPWk46XWEkANhfAWxGwXSXAbZlKWs4Q==
+X-Received: from qkd1.prod.google.com ([2002:a05:620a:a001:b0:7c3:cc0d:22fb])
+ (user=rmoar job=prod-delivery.src-stubby-dispatcher) by 2002:a05:620a:2713:b0:7c5:67ac:a826
+ with SMTP id af79cd13be357-7c579fafb41mr102376685a.50.1741894042243; Thu, 13
+ Mar 2025 12:27:22 -0700 (PDT)
+Date: Thu, 13 Mar 2025 19:27:13 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+Message-ID: <20250313192714.1380005-1-rmoar@google.com>
+Subject: [PATCH v3 1/2] kunit: tool: Fix bug in parsing test plan
+From: Rae Moar <rmoar@google.com>
+To: shuah@kernel.org, davidgow@google.com
+Cc: jackmanb@google.com, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	Rae Moar <rmoar@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On March 13, 2025 8:18:09 PM GMT+01:00, Uros Bizjak <ubizjak@gmail=2Ecom> w=
-rote:
->Use asm_inline() to instruct the compiler that the size of asm()
->is the minimum size of one instruction, ignoring how many instructions
->the compiler thinks it is=2E ALTERNATIVE macro that expands to several
->pseudo directives causes instruction length estimate to count
->more than 20 instructions=2E
->
->bloat-o-meter reports no code size changes=2E
->
->Signed-off-by: Uros Bizjak <ubizjak@gmail=2Ecom>
->Cc: Thomas Gleixner <tglx@linutronix=2Ede>
->Cc: Ingo Molnar <mingo@kernel=2Eorg>
->Cc: Borislav Petkov <bp@alien8=2Ede>
->Cc: Dave Hansen <dave=2Ehansen@linux=2Eintel=2Ecom>
->Cc: "H=2E Peter Anvin" <hpa@zytor=2Ecom>
->---
-> arch/x86/include/asm/processor=2Eh | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/arch/x86/include/asm/processor=2Eh b/arch/x86/include/asm/pr=
-ocessor=2Eh
->index 5d2f7e5aff26=2E=2E06e499ba4fe8 100644
->--- a/arch/x86/include/asm/processor=2Eh
->+++ b/arch/x86/include/asm/processor=2Eh
->@@ -707,7 +707,7 @@ static inline u32 per_cpu_l2c_id(unsigned int cpu)
->  */
-> static __always_inline void amd_clear_divider(void)
-> {
->-	asm volatile(ALTERNATIVE("", "div %2\n\t", X86_BUG_DIV0)
->+	asm_inline volatile(ALTERNATIVE("", "div %2", X86_BUG_DIV0)
-> 		     :: "a" (0), "d" (0), "r" (1));
-> }
->=20
+A bug was identified where the KTAP below caused an infinite loop:
 
-So there's no point for this one=2E=2E=2E
---=20
-Sent from a small device: formatting sucks and brevity is inevitable=2E 
+ TAP version 13
+ ok 4 test_case
+ 1..4
+
+The infinite loop was caused by the parser not parsing a test plan
+if following a test result line.
+
+Fix this bug by parsing test plan line to avoid the infinite loop.
+
+Signed-off-by: Rae Moar <rmoar@google.com>
+---
+Changes since v2:
+- None, adds test in second patch
+
+ tools/testing/kunit/kunit_parser.py | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/kunit_parser.py
+index 29fc27e8949b..da53a709773a 100644
+--- a/tools/testing/kunit/kunit_parser.py
++++ b/tools/testing/kunit/kunit_parser.py
+@@ -759,7 +759,7 @@ def parse_test(lines: LineStream, expected_num: int, log: List[str], is_subtest:
+ 		# If parsing the main/top-level test, parse KTAP version line and
+ 		# test plan
+ 		test.name = "main"
+-		ktap_line = parse_ktap_header(lines, test, printer)
++		parse_ktap_header(lines, test, printer)
+ 		test.log.extend(parse_diagnostic(lines))
+ 		parse_test_plan(lines, test)
+ 		parent_test = True
+@@ -768,13 +768,12 @@ def parse_test(lines: LineStream, expected_num: int, log: List[str], is_subtest:
+ 		# the KTAP version line and/or subtest header line
+ 		ktap_line = parse_ktap_header(lines, test, printer)
+ 		subtest_line = parse_test_header(lines, test)
++		test.log.extend(parse_diagnostic(lines))
++		parse_test_plan(lines, test)
+ 		parent_test = (ktap_line or subtest_line)
+ 		if parent_test:
+-			# If KTAP version line and/or subtest header is found, attempt
+-			# to parse test plan and print test header
+-			test.log.extend(parse_diagnostic(lines))
+-			parse_test_plan(lines, test)
+ 			print_test_header(test, printer)
++
+ 	expected_count = test.expected_count
+ 	subtests = []
+ 	test_num = 1
+
+base-commit: 0619a4868fc1b32b07fb9ed6c69adc5e5cf4e4b2
+-- 
+2.49.0.rc1.451.g8f38331e32-goog
+
 
