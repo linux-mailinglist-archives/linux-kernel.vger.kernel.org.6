@@ -1,139 +1,208 @@
-Return-Path: <linux-kernel+bounces-559205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9169A5F0E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:29:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66066A5F0E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:30:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B98F7A20D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:28:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CBA919C0D2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8E4265CCB;
-	Thu, 13 Mar 2025 10:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536F1265CC3;
+	Thu, 13 Mar 2025 10:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="bdQNUlmB"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gsk66exq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88265265CBE
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8999D264FBD;
+	Thu, 13 Mar 2025 10:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741861785; cv=none; b=KJt7AG7esE+WY7Mx43r14RlVFvcTb7i6eXPOt8gKeShOPeAt14iDkbCe0voexVxKDURPvToAO9ORVbjAp2+yDEahzq3UHWYF5O8ToiKmvqV6B3VdYz4gMtuNucxK84HjyUxre3YQTql+3iP98lJBdAii5RqIxWKvL8Ejz5ChWjY=
+	t=1741861819; cv=none; b=LzuctnxxcRqJJKOgfHkNfU3RyDKjhrJP/i5V3DogpSXvaHrJI5OAWVf9dg3A92SZk1lI5IweOaUZ5tVcOCM8ZjkReuq0WY8WlHXFC2HuFDnDRuKsudvNWgCmof5mYDJRb7lBXI90dv9DdVMKNxcH8Dr+/nZQSE6NhVdttWoW7dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741861785; c=relaxed/simple;
-	bh=kx3fT1v+s8zGn26DjIZXyTiNRIbzYWcAF0u7mBfjOPQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r4ImjrsVBsEoN1kPlxhnQ7ee0XBn15ufHByv7c033OKXQDZP12KWbeGbUaXeaxDqbKu3x8nWqH7j6JTBofSjCvBX45ZCsz9dLZPkMIvMR/DqMlTNeptZPVA/h/rj0z319jfpDG+X4PG9dNdx3Mipi+0g8W7EC2cyGYO1egxHLx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=bdQNUlmB; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741861780; x=1742120980;
-	bh=1l1YD43ep1fYD3ethMW94e1z8mHLgTYZKv75z5Pq3J8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=bdQNUlmB2uRwVvRUjh+dMyMaUJTBn4DBUYhK9FLvPjn3/KBsRQof7TcQh6vN+QLBB
-	 gX4Scjseu3F0yqeF+GSYGfXuRfXgCTASKzcO3a8lYKixMgVfYJgqioCOOC28JbnzE/
-	 OCNgjGhOxTbsvN29U+YYLh0kOausIYBS2HXDRJi2pwG+lTRrVGJIi0InHs58vIhLt6
-	 YgwZJNNKjgZ5zmDgOwvyjOSWAsccI7oVZj4dM9RqNs6l1MlWOQVoTH9VZLSU416IGH
-	 hZDlAmK5BAmlFtP0FqXmS/jSyLMfwa5ajVxRVXfiKSWWuoPyWJfPbLR0xt0shM4QBe
-	 3YDLp3BJTjFbg==
-Date: Thu, 13 Mar 2025 10:29:35 +0000
-To: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 2/4] rust: device: implement device context marker
-Message-ID: <D8F2GQ4WYT7Z.172Z7R7V8BIGR@proton.me>
-In-Reply-To: <20250313021550.133041-3-dakr@kernel.org>
-References: <20250313021550.133041-1-dakr@kernel.org> <20250313021550.133041-3-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 1064acdb2a8582f09ec1586ce41697ae9e397b0e
+	s=arc-20240116; t=1741861819; c=relaxed/simple;
+	bh=QEvxVG8I/hTVZKOvqF1lYUikB1WAzIg+p5U+9zryPT0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SGQV1dZW26pb37q5V/vdr77xp8/ve+SFHeGLVzVDcgBl9gGl+4+ErxrwREZRRQHcTP7R6w2pmv1WKyorVoIlYPn0Dcl1rSCUXjWg3YccXtLXw2Vxtfm5DEao5suAxPfT/+Irs8ZB5UTWaVxpzrR6tBT+U+wDRIzxJV60A8wPvz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gsk66exq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16211C4CEE3;
+	Thu, 13 Mar 2025 10:30:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741861819;
+	bh=QEvxVG8I/hTVZKOvqF1lYUikB1WAzIg+p5U+9zryPT0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Gsk66exqBT/kKfea0fo4Q+0PXcBK0s4a3sQigv+rvzP4d4w2XK1YQERTbFUgUmxBp
+	 ajc7+UuXPVswVpY/MgdzOCPPqFEPMZRe5HS/PlS6Es+uXvGw4Dbp/I7Uqdk+xI94a4
+	 yyVjGgU5aqhZymraWi0rnwcOp88dXSXNEq4W5RYg2lAKej/F6aEVU7WQg8cNTbLqCK
+	 v4ZIDX5mtv+2PtqB1hEsHA3UZ+Y9qFm5JAJbYfyioVGXHo9QXwHHGwIb31mCB+8Mqw
+	 GGo52/0ybPbADOqaSZhtOEcz/EjwEGo44RVi+rfGANjxXjHu5mMfhhiY4SVqdMflkK
+	 rVMDVzGILcrAw==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-549967c72bcso945577e87.3;
+        Thu, 13 Mar 2025 03:30:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXUMu6yChRNoCDPG4ZAP6Jgt8cqi++9xP+J1FR12J/Xbx6cOWnQRFikaqU6iMiT9dv7laq/RQiZNz2fcwc=@vger.kernel.org, AJvYcCXf9/oMnqdu9eBZNGhfAkhX/Opcsk929uYgrCoJVON3WvlzBYz+mQK2y9UMB4CoTp+rbD3xMZF02sR2c/5i@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVJKgqqNoQm0OC9MQX2Fsof7aAusM/8lOEn3XMWXcMQiI/2a1I
+	21wHTuhj0hZEQoiu6XmuT68C0eTRHaeNxphhJ4u5CBSKvuGTpaL1oZcjD7XJL3mpTjyomRFTS5l
+	Whhvsg+g6KNvXCaG6PI4LhNezqb4=
+X-Google-Smtp-Source: AGHT+IHYqyvlbFJWpUpXNCxWAr3gQGfo/B1oVwVdpaiXhvEQDZmER5taQn2phFdz+AWOWgVByaE0iZNyjmX15WzStcU=
+X-Received: by 2002:a05:6512:2342:b0:549:8b24:988f with SMTP id
+ 2adb3069b0e04-54990da2790mr8737978e87.0.1741861817726; Thu, 13 Mar 2025
+ 03:30:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250311110616.148682-9-ardb+git@google.com> <202503131715.Fb6CfjhT-lkp@intel.com>
+ <CAMj1kXGBLV6W7mJcELmsQuDUi0u-DofyD985znmVoHoZKZTuxA@mail.gmail.com> <CAMj1kXEZccymq1OhXErSK+prS3L7sygm7_5_1v+j2cypncQuzA@mail.gmail.com>
+In-Reply-To: <CAMj1kXEZccymq1OhXErSK+prS3L7sygm7_5_1v+j2cypncQuzA@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 13 Mar 2025 19:29:41 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT_NRio2pkR1Km5Nq8KM38zYF7VCoGP0OjEP_Owg-ukpQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JrvxKSzDk58nqsT3nejvFSY6kfeqbfgNaL4ldnTl0LmsnwFvj15KgRa8Ec
+Message-ID: <CAK7LNAT_NRio2pkR1Km5Nq8KM38zYF7VCoGP0OjEP_Owg-ukpQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] Kbuild: Create intermediate vmlinux build with
+ relocations preserved
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: kernel test robot <lkp@intel.com>, Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, 
+	linux-kbuild@vger.kernel.org, x86@kernel.org, Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu Mar 13, 2025 at 3:13 AM CET, Danilo Krummrich wrote:
-> Some bus device functions should only be called from bus callbacks,
-> such as probe(), remove(), resume(), suspend(), etc.
+On Thu, Mar 13, 2025 at 7:18=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
+ote:
 >
-> To ensure this add device context marker structs, that can be used as
-> generics for bus device implementations.
+> On Thu, 13 Mar 2025 at 10:34, Ard Biesheuvel <ardb@kernel.org> wrote:
+> >
+> > On Thu, 13 Mar 2025 at 10:21, kernel test robot <lkp@intel.com> wrote:
+> > >
+> > > Hi Ard,
+> > >
+> > > kernel test robot noticed the following build errors:
+> > >
+> > > [auto build test ERROR on masahiroy-kbuild/for-next]
+> > > [also build test ERROR on masahiroy-kbuild/fixes tip/x86/core s390/fe=
+atures linus/master v6.14-rc6 next-20250312]
+> > > [If your patch is applied to the wrong git tree, kindly drop us a not=
+e.
+> > > And when submitting patch, we suggest to use '--base' as documented i=
+n
+> > > https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > >
+> > > url:    https://github.com/intel-lab-lkp/linux/commits/Ard-Biesheuvel=
+/Kbuild-link-vmlinux-sh-Make-output-file-name-configurable/20250311-190926
+> > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/lin=
+ux-kbuild.git for-next
+> > > patch link:    https://lore.kernel.org/r/20250311110616.148682-9-ardb=
+%2Bgit%40google.com
+> > > patch subject: [PATCH v2 3/4] Kbuild: Create intermediate vmlinux bui=
+ld with relocations preserved
+> > > config: x86_64-randconfig-076-20250313 (https://download.01.org/0day-=
+ci/archive/20250313/202503131715.Fb6CfjhT-lkp@intel.com/config)
+> > > compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+> > > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/a=
+rchive/20250313/202503131715.Fb6CfjhT-lkp@intel.com/reproduce)
+> > >
+> > > If you fix the issue in a separate patch/commit (i.e. not just a new =
+version of
+> > > the same patch/commit), kindly add following tags
+> > > | Reported-by: kernel test robot <lkp@intel.com>
+> > > | Closes: https://lore.kernel.org/oe-kbuild-all/202503131715.Fb6CfjhT=
+-lkp@intel.com/
+> > >
+> > > All errors (new ones prefixed by >>):
+> > >
+> > > >> gawk: scripts/generate_builtin_ranges.awk:82: fatal: cannot open f=
+ile `vmlinux.map' for reading: No such file or directory
+> > >
+> >
+> > Hmm it seems I missed some things in link-vmlinux.sh - I will take a lo=
+ok.
 >
-> Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> We'd need something like the below applied on top - shall I send a v3?
 
-I would have folded this into #3, but if you prefer it being split, then
-it's also fine.
 
-> ---
->  rust/kernel/device.rs | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+I will insert this before you patch set.
+https://lore.kernel.org/linux-kbuild/20250313102604.1491732-1-masahiroy@ker=
+nel.org/T/#u
+
+I would have done this earlier.
+That is simply because I always run out of my time
+and I do not have time to fix issues before someone stumbles on them.
+
+
+
 >
-> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-> index db2d9658ba47..39793740a95c 100644
-> --- a/rust/kernel/device.rs
-> +++ b/rust/kernel/device.rs
-> @@ -209,6 +209,24 @@ unsafe impl Send for Device {}
->  // synchronization in `struct device`.
->  unsafe impl Sync for Device {}
-> =20
-> +/// Marker trait for the context of a bus specific device.
-> +///
-> +/// Some functions of a bus specific device should only be called from a=
- certain context, i.e. bus
-> +/// callbacks, such as `probe()`.
-> +///
-> +/// This is the marker trait for structures representing the context of =
-a bus specific device.
-> +pub trait DeviceContext {}
+> --- a/scripts/link-vmlinux.sh
+> +++ b/scripts/link-vmlinux.sh
+> @@ -46,6 +46,7 @@
+>
+>  # Link of vmlinux
+>  # ${1} - output file
+> +# ${2} - map file
+>  vmlinux_link()
+>  {
+>         local output=3D${1}
+> @@ -99,7 +100,7 @@ vmlinux_link()
+>         fi
+>
+>         if is_enabled CONFIG_VMLINUX_MAP; then
+> -               ldflags=3D"${ldflags} ${wl}-Map=3D${output}.map"
+> +               ldflags=3D"${ldflags} ${wl}-Map=3D${2}"
+>         fi
+>
+>         ${ld} ${ldflags} -o ${output}                                   \
+> @@ -185,7 +186,7 @@
+>  {
+>         rm -f .btf.*
+>         rm -f System.map
+> -       rm -f vmlinux
+> +       rm -f ${VMLINUX}
+>         rm -f vmlinux.map
+>  }
+>
+> @@ -224,7 +225,7 @@
+>                 strip_debug=3D1
+>         fi
+>
+> -       vmlinux_link .tmp_vmlinux1
+> +       vmlinux_link .tmp_vmlinux1 .tmp_vmlinux1.map
+>  fi
+>
+>  if is_enabled CONFIG_DEBUG_INFO_BTF; then
+> @@ -267,19 +268,19 @@
+>         sysmap_and_kallsyms .tmp_vmlinux1
+>         size1=3D$(${CONFIG_SHELL} "${srctree}/scripts/file-size.sh" ${kal=
+lsymso})
+>
+> -       vmlinux_link .tmp_vmlinux2
+> +       vmlinux_link .tmp_vmlinux2 .tmp_vmlinux2.map
+>         sysmap_and_kallsyms .tmp_vmlinux2
+>         size2=3D$(${CONFIG_SHELL} "${srctree}/scripts/file-size.sh" ${kal=
+lsymso})
+>
+>         if [ $size1 -ne $size2 ] || [ -n "${KALLSYMS_EXTRA_PASS}" ]; then
+> -               vmlinux_link .tmp_vmlinux3
+> +               vmlinux_link .tmp_vmlinux3 .tmp_vmlinux3.map
+>                 sysmap_and_kallsyms .tmp_vmlinux3
+>         fi
+>  fi
+>
+>  strip_debug=3D
+>
+> -vmlinux_link "${VMLINUX}"
+> +vmlinux_link "${VMLINUX}" vmlinux.map
+>
+>  # fill in BTF IDs
+>  if is_enabled CONFIG_DEBUG_INFO_BTF; then
 
-I would make this trait sealed. ie:
-
-    pub trait DeviceContext: private::Sealed {}
-   =20
-    mod private {
-        pub trait Sealed {}
-
-        impl Sealed for super::Core {}
-        impl Sealed for super::Normal {}
-    }
-
-Since currently a user can create a custom context (it will be useless,
-but then I think it still is better to give them a compile error).
-
-If you make it sealed,
-
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-
----
-Cheers,
-Benno
-
-> +
-> +/// The [`Normal`] context is the context of a bus specific device when =
-it is not an argument of
-> +/// any bus callback.
-> +pub struct Normal;
-> +impl DeviceContext for Normal {}
-> +
-> +/// The [`Core`] context is the context of a bus specific device when it=
- is supplied as argument of
-> +/// any of the bus callbacks, such as `probe()`.
-> +pub struct Core;
-> +impl DeviceContext for Core {}
-> +
->  #[doc(hidden)]
->  #[macro_export]
->  macro_rules! dev_printk {
 
 
+--=20
+Best Regards
+Masahiro Yamada
 
