@@ -1,98 +1,111 @@
-Return-Path: <linux-kernel+bounces-559651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F553A5F72D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:02:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D377BA5F730
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:03:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC4E54200B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:02:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787E519C28B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20536267AE9;
-	Thu, 13 Mar 2025 14:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FD5267B04;
+	Thu, 13 Mar 2025 14:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gHyC3yRy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF347346D;
-	Thu, 13 Mar 2025 14:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jPDw6ug8"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE7211CA9;
+	Thu, 13 Mar 2025 14:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741874515; cv=none; b=O0zyULSPQD9zNNNmo/+VBCBaz/+UYB1zWBLQQig73dBuqpU+jb8XZ/7d706vTRLJfDcSCBr5JCcftuB6s2PRo2LjYslpYTguFiQhCCaqJiduGbc5I4qTrpOktEuRtKRMeVEoID9VOo9O4k++jW9lU9jWl5w6mbgU+BpYAEVJChA=
+	t=1741874605; cv=none; b=CcRsEmkHKlGo3ywytKO8xKyx3XCnc6qY564NXdxj/ECe6i5ixOhPSk6gND34sYv1O9d17ddtqvyefcF00bHFbM0h2jpJhjH9wS232GWw7rYRROvvjFVAINl/fBXupm035bmunZuWf0I/rpgbha338vu0CywRidVmM8g/XTbrXi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741874515; c=relaxed/simple;
-	bh=UQJd59E6gmYMorGBrKuxpH2LfzIAgPkg97I9q5PiEec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jn0ZU63bpp+WNnQk46A6bjiKQjGnkSEQK16pp/8nplwhliok645NUPOs551NrvsigeJwg92ef1Ue2d95RDKzdz3BDHjAdU6eAlfobVIdxhnaI3VU9m98scIcHSMmWt/BA3AZjJMOKLO/koYW6MYNfwAWo59oxr5RyXsHt/PZB+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gHyC3yRy; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741874515; x=1773410515;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UQJd59E6gmYMorGBrKuxpH2LfzIAgPkg97I9q5PiEec=;
-  b=gHyC3yRyoRHrCoqEmSL1T5OcdzjbFth0JvRuCKkqRirynFXZ4FwaJlq3
-   GvLM6XWfrCB2OVQLT0dCdM3CCvFpgmh2wohEgRD75/anBQ40oYSLKKCda
-   yu4+pzXK2LMT+z7i1HdTzC5N/sjRmH/gfoKAGwF27745IkM/H29f/vzNO
-   rd63Nu/bmtFI2xMR0x+/JsqYDQG74IqVnMay+HeHHojJMqh1kwr4MjC4C
-   JYPClXFzOiPOioABgyRXSUW0Y90Ld3zMip/znQqwqWEenPRJig8semmL6
-   71tLrbKg6uEkfRKUh0CXS7rZvz3I89TdHt/SO7PG+/8qIcXs/cExF8bc5
-   A==;
-X-CSE-ConnectionGUID: WtypmPDhQXGIs6h+T0TXmA==
-X-CSE-MsgGUID: e8YgJr+HTQCMjJ4ZVEbxdQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="43093363"
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="43093363"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:01:54 -0700
-X-CSE-ConnectionGUID: Wpao57hOS6mRoQigZrL1vw==
-X-CSE-MsgGUID: UiAD3bjaS/GJXieHF//i5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="120750166"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:01:52 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tsj8A-00000002C55-00qX;
-	Thu, 13 Mar 2025 16:01:50 +0200
-Date: Thu, 13 Mar 2025 16:01:49 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>
-Subject: Re: [PATCH v1 1/1] spi: Use inclusive language
-Message-ID: <Z9LlTflb1HQMyEv2@smile.fi.intel.com>
-References: <20250313111442.322850-1-andriy.shevchenko@linux.intel.com>
- <1c49edb2-2ffc-419e-be5e-7e15669a7839@sirena.org.uk>
+	s=arc-20240116; t=1741874605; c=relaxed/simple;
+	bh=5GOXMi43b2br+eJe7B+HzXuFeUte47U460ED9s1ePqg=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=pGWjTMKeKWaRJ9GzjwLVXkx9McVlxfWed9YvzRm8j0tQ+K/cIt1puueKHbPthYxmwllbi/mL1Kncr2Lf00IZrlhCL66ZRHSZX8D2VSKj/J39BaeSLhh8uoN3uJNZ80flOdPQUn7RSlkbbVwN7jijPDtAoWgSwMGxO6JLli/BZUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=jPDw6ug8; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1218)
+	id C510E210B174; Thu, 13 Mar 2025 07:03:23 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C510E210B174
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741874603;
+	bh=eJL1r7Uke2I0Gu+6nN6SjJW+WcL3S+JauWgGgw37SJA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jPDw6ug8qjHWz0ptpuH3a6V4o17/C2BYmBdukR5ltocowSiEqafTtwW5BvKjEKmb5
+	 gaSQe1h15mIoqqe0QiMva6i1LviLdSgKXxz/PQzzGKj2sgb3iQacYq+5N/T9ea2Vyg
+	 kTY5nt/mGzl9LxZPMDDgdoMfGGOZzlqmoqAUElaI=
+From: Abhishek Tiwari <abhitiwari@linux.microsoft.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	kees@kernel.org,
+	tony.luck@intel.com,
+	gpiccoli@igalia.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Cc: abhitiwari@microsoft.com,
+	Abhishek Tiwari <abhitiwari@linux.microsoft.com>
+Subject: [PATCH] dt-bindings: memory: Document linux,usable-memory property
+Date: Thu, 13 Mar 2025 07:02:25 -0700
+Message-Id: <1741874545-19091-1-git-send-email-abhitiwari@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1c49edb2-2ffc-419e-be5e-7e15669a7839@sirena.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Mar 13, 2025 at 12:47:32PM +0000, Mark Brown wrote:
-> On Thu, Mar 13, 2025 at 01:14:42PM +0200, Andy Shevchenko wrote:
-> > Replace "master" by "[host] controller" in the SPI core code and comments.
-> > All the similar to the "slave" by "target [device]" changes.
-> 
-> This doesn't apply against current code, please check and resend.
+Add Documentation for linux,usable-memory
 
-Hmm... It's based on the spi/for-next. Should I use another branch?
+Signed-off-by: Abhishek Tiwari <abhitiwari@linux.microsoft.com>
+---
+ .../bindings/linux,usable-memory.txt          | 32 +++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/linux,usable-memory.txt
 
+diff --git a/Documentation/devicetree/bindings/linux,usable-memory.txt b/Documentation/devicetree/bindings/linux,usable-memory.txt
+new file mode 100644
+index 000000000000..167054d2e9a2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/linux,usable-memory.txt
+@@ -0,0 +1,32 @@
++linux,usable-memory
++===================
++
++Description
++-----------
++The ``linux,usable-memory`` property can be used to restrict usable memory
++region. This property holds a base address and size, Memory outside of this
++range is not accessible by the kernel. This property is particularly useful
++in specialized hardware platforms where certain memory regions must be
++reserved for specific use.
++
++Common use cases include:
++- Allocating ``ramoops`` region
++- Reserving memory for hardware-specific needs
++- Fake Protecting persistent memory (PMEM)
++
++Valid memory may be sparse within the specified range.
++An example device tree configuration is shown below:
++
++.. code-block:: dts
++/ {
++	&memory {
++		linux,usable-memory = <
++			0x00000000 0x80000000 0x00000000 0x1BA00000
++			0x00000000 0xA1000000 0x00000000 0x2AC00000
++		>;
++	};
++};
++
++While this property does not represent a real hardware, the address
++and the size are expressed in #address-cells and #size-cells,
++respectively, of the root node.
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.48.1
 
 
