@@ -1,178 +1,131 @@
-Return-Path: <linux-kernel+bounces-559240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29135A5F132
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:45:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8505AA5F131
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:44:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB6B517E068
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:45:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB9643AE558
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5C3265CDC;
-	Thu, 13 Mar 2025 10:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB282571BF;
+	Thu, 13 Mar 2025 10:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="B92emiyE"
-Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfwuO4E7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5184E25FA25;
-	Thu, 13 Mar 2025 10:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DCA16BE17
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741862695; cv=none; b=WXIUpNYk0gsmvrZNO3rnUm28x7gajpKQaQUZmJ4YYQ/TLUeWFALeQug9T4h4WcBHydgQ0sX+5mtNc7Au4GDB8lLpOxgJYvXJ3VcUElwlhGp95wDcobnUpQSVEu84kJnYPuaqWg28pchxLaVA9tq58hRQQ9lni4Sl2dBT7WdUlxA=
+	t=1741862688; cv=none; b=O5Xw4RrAEtoKSYUnwXCkkcAuuaLyiVcpONpAgYeZI0HxEj6hYPn+cRgvpquR/Nw/fC5Y/DkGykeoWvzGr88MohWXjv1a9QAo4moyR6b3QysFTFmmeo3faRiIWTQaT/LrTyPMGVjFSjPoocPjKcs+ekFRsRx/ttpAfK31WQCgsE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741862695; c=relaxed/simple;
-	bh=buE1atiYPYQ607nxgunbzSf/tfSUHJlGFsw5PTuvC/k=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QjO6Qssgqg0T4gmEdh8Z7ZeBm9BM8zVlS+PgpNrHVWdKwLGhgbsi4VoR3BvD76/RnHeyuLL/sFJqvCXugHENMxpeSC+MbF8/N1QWqbP0W7aKjHc0tq3akjWTPWD8XiA94aWazXCjqOhsCg6gD9LCq6QThZZWjffWQTiVvbTL6+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=B92emiyE; arc=none smtp.client-ip=79.135.106.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741862685; x=1742121885;
-	bh=cEp0z9a1YFho7EAFWzdcM9E6nSuKjT0pUbaWukOFjiE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=B92emiyE4n0MDgfkevUR+bMzJG4iQTRtouqNmwaNhuRkELHDxE2SoIBB2mhg+2qAv
-	 OVgWcCVhHTP3dns3k5g5CoNhUpmhcP6YD2F+WUYRN21ft52tsrehwEqAg//x8ShXgO
-	 yf4MmXVrNqkQmjekJIpjkUlhf68ejUEccqc+aEP9Vq9PiZufTwnCC+82dwQvcJQwa2
-	 DikqHHoRbk5pHfG+MAUiQgp0a74WucxZZvewBQa1mhLMapVUwn2yKePeT1jXLULumO
-	 yqP8BvVH/GZlzPtmpby4qGS5fVBOvIu046BVv6kLDaWiUFOGcjpU5nCvT8S1hpv3Z6
-	 kr3cTSHrMg0Lw==
-Date: Thu, 13 Mar 2025 10:44:38 +0000
-To: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 3/4] rust: pci: fix unrestricted &mut pci::Device
-Message-ID: <D8F2S8YNYGZP.3JQKC7ZMRAB2C@proton.me>
-In-Reply-To: <20250313021550.133041-4-dakr@kernel.org>
-References: <20250313021550.133041-1-dakr@kernel.org> <20250313021550.133041-4-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 89a882be85537588231892a321560284113bea8d
+	s=arc-20240116; t=1741862688; c=relaxed/simple;
+	bh=Ea/nF/6yF8q+yD6HjryxJLrzxjPzAhV6V2F/wso++vc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZARHBxDrdoRscRwMIjlTd6TEI/1e1B0aErgpJrLI3KDLy2mBIaWSoRSA4wHOupEXAb4nStLsKwlksXnZq5iFdkcMiylpM9uCdr7iSeAzYscvaHqfL52fXnhMU5MHb8xvzcmEh0hdYHsg62fcWUD+eRe28XJjXEyg89lQHpINQUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfwuO4E7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3E27C4CEDD;
+	Thu, 13 Mar 2025 10:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741862688;
+	bh=Ea/nF/6yF8q+yD6HjryxJLrzxjPzAhV6V2F/wso++vc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZfwuO4E7CBH0225uI4SAo32VIdUKvpQ2GRBTZkOarnahlXaW9r933s3zWIgLiurhe
+	 /RZbf0TQLYgyWwGN9gqyZ067XyA3AUe60Z8xL9UB1KynBpWSH4tReS6K+hvnwgxUMj
+	 RQEFKCEbTeXXH7uyPtnlm/aqiZ+hAZFrJLW/WS2JLmVS2Ouc4QKk9vY3dRLzykS2a7
+	 1PJsvBSbGr53MrI9FvxGdwaDom62AUo68cqHlP3dHM2G6cIwm3WH1fskmz0nubAen/
+	 F5XtF8pZjchZ5e2ZHS83RaIVya7AcB73xx3N3IR/0JYmJVXdsZx+KjYGCVdMP2pQc/
+	 2x86DWb/qTzwQ==
+Date: Thu, 13 Mar 2025 11:44:41 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
+	Dave Young <dyoung@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>, jpoimboe@kernel.org,
+	bsz@amazon.de
+Subject: Re: [PATCH v7 7/8] [DO NOT MERGE] x86/kexec: Add int3 in kexec path
+ for testing
+Message-ID: <Z9K3GXSaZUcVr8cb@gmail.com>
+References: <20250312144257.2348250-1-dwmw2@infradead.org>
+ <20250312144257.2348250-8-dwmw2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312144257.2348250-8-dwmw2@infradead.org>
 
-On Thu Mar 13, 2025 at 3:13 AM CET, Danilo Krummrich wrote:
-> As by now, pci::Device is implemented as:
->
-> =09#[derive(Clone)]
-> =09pub struct Device(ARef<device::Device>);
->
-> This may be convenient, but has the implication that drivers can call
-> device methods that require a mutable reference concurrently at any
-> point of time.
 
-Which methods take mutable references? The `set_master` method you
-mentioned also took a shared reference before this patch.
+* David Woodhouse <dwmw2@infradead.org> wrote:
 
-> Instead define pci::Device as
->
-> =09pub struct Device<Ctx: DeviceContext =3D Normal>(
-> =09=09Opaque<bindings::pci_dev>,
-> =09=09PhantomData<Ctx>,
-> =09);
->
-> and manually implement the AlwaysRefCounted trait.
->
-> With this we can implement methods that should only be called from
-> bus callbacks (such as probe()) for pci::Device<Core>. Consequently, we
-> make this type accessible in bus callbacks only.
->
-> Arbitrary references taken by the driver are still of type
-> ARef<pci::Device> and hence don't provide access to methods that are
-> reserved for bus callbacks.
->
-> Fixes: 1bd8b6b2c5d3 ("rust: pci: add basic PCI device / driver abstractio=
-ns")
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-
-Two small nits below, but it already looks good:
-
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-
+> From: David Woodhouse <dwmw@amazon.co.uk>
+> 
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 > ---
->  drivers/gpu/nova-core/driver.rs |   4 +-
->  rust/kernel/pci.rs              | 126 ++++++++++++++++++++------------
->  samples/rust/rust_driver_pci.rs |   8 +-
->  3 files changed, 85 insertions(+), 53 deletions(-)
->
+>  arch/x86/kernel/relocate_kernel_64.S | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+> index 17d41e6e1a4b..2b7fc59af373 100644
+> --- a/arch/x86/kernel/relocate_kernel_64.S
+> +++ b/arch/x86/kernel/relocate_kernel_64.S
+> @@ -158,7 +158,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+>  	lidt	(%rsp)
+>  	addq	$10, %rsp
+>  
+> -	//int3
+> +	int3
 
-> @@ -351,20 +361,8 @@ fn deref(&self) -> &Self::Target {
->  }
-> =20
->  impl Device {
+So this is all boot-serialized functionality with no SMP concerns 
+whatsoever, right?
 
-One alternative to implementing `Deref` below would be to change this to
-`impl<Ctx: DeviceContext> Device<Ctx>`. But then one would lose the
-ability to just do `&pdev` to get a `Device` from a `Device<Core>`... So
-I think the deref way is better. Just wanted to mention this in case
-someone re-uses this pattern.
+If yes then we could use something like this:
 
-> -    /// Create a PCI Device instance from an existing `device::Device`.
-> -    ///
-> -    /// # Safety
-> -    ///
-> -    /// `dev` must be an `ARef<device::Device>` whose underlying `bindin=
-gs::device` is a member of
-> -    /// a `bindings::pci_dev`.
-> -    pub unsafe fn from_dev(dev: ARef<device::Device>) -> Self {
-> -        Self(dev)
-> -    }
-> -
->      fn as_raw(&self) -> *mut bindings::pci_dev {
-> -        // SAFETY: By the type invariant `self.0.as_raw` is a pointer to=
- the `struct device`
-> -        // embedded in `struct pci_dev`.
-> -        unsafe { container_of!(self.0.as_raw(), bindings::pci_dev, dev) =
-as _ }
-> +        self.0.get()
->      }
-> =20
->      /// Returns the PCI vendor ID.
+	static int exception_selftest = 1;
 
->  impl AsRef<device::Device> for Device {
->      fn as_ref(&self) -> &device::Device {
-> -        &self.0
-> +        // SAFETY: By the type invariant of `Self`, `self.as_raw()` is a=
- pointer to a valid
-> +        // `struct pci_dev`.
-> +        let dev =3D unsafe { addr_of_mut!((*self.as_raw()).dev) };
-> +
-> +        // SAFETY: `dev` points to a valid `struct device`.
-> +        unsafe { device::Device::as_ref(dev) }
+and add the INT3 point:
 
-Why not use `&**self` instead (ie go through the `Deref` impl)?
+	int3
+.globl after_int3
+after_int3:
 
-> @@ -77,7 +77,7 @@ fn probe(pdev: &mut pci::Device, info: &Self::IdInfo) -=
-> Result<Pin<KBox<Self>>>
-> =20
->          let drvdata =3D KBox::new(
->              Self {
-> -                pdev: pdev.clone(),
-> +                pdev: (&**pdev).into(),
+And do this in the early exception handler:
 
-It might be possible to do:
+	...
+	
+	if (exception_selftest) {
+		exception_selftest = 0;
 
-    impl From<&pci::Device<Core>> for ARef<pci::Device> { ... }
+		print_something_warm_and_fuzzy();
 
-Then this line could become `pdev: pdev.into()`.
+		IRET-to-after_int3;
+	}
 
----
-Cheers,
-Benno
+	...
 
->                  bar,
->              },
->              GFP_KERNEL,
+	... regular exception path ...
 
+... but all in assembly or so ;-)
 
+This would make it reasonably certain that the most complex bits of 
+this new debuging code are in working order, all the time.
+
+Thanks,
+
+	Ingo
 
