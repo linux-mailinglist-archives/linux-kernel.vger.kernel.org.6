@@ -1,213 +1,121 @@
-Return-Path: <linux-kernel+bounces-558806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74598A5EB77
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:04:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE899A5EB7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:05:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83CEC3B4A58
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:04:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DE2A16D2D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950931FAC59;
-	Thu, 13 Mar 2025 06:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9D61F4C82;
+	Thu, 13 Mar 2025 06:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lFT7W7Of"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kED28Sjn"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC2F1FBE92;
-	Thu, 13 Mar 2025 06:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B6C1F9F72
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 06:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741845846; cv=none; b=g3Q8V1DUvxHBT6kfHbQIpP/ygrJQDNAw9WNkapI18aV2oImfGzr07K6NB9NyBJV1orl2ZIuzSpltFjj6RVKBWkxtJpX0uu+ohTYdOt5CddA0mgW5a17dI0uC5M8YnhJ4EWZqCwbKXrUyX/rXHG41wD6RKB7OJKMGl1BxnpRUdys=
+	t=1741845928; cv=none; b=IrxPnPkvlnzZDp5XiOzUGf2jjQmrXTqHGI3KoEI/kU1WWNSDUWBkN+0rEEt+xuAQJ9Op+lbTHQ6hhwzyYjNwTYdtZYB86if5LjGp278FWB8tlM9p6IFzZXuYqY/BHzF771JH92WtA8rj+4Me5rvNs58pDXFjyfQlARv/u8NB9As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741845846; c=relaxed/simple;
-	bh=UqnA4Y9ZnkmDLOxHRgyITFmrTx5GTkAFBtGcKpO/xI0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=hcSFy8/fgY6M2aunZDAboFUNPi5gTxeptd/HiBfFHlTJ/qGjxnVmC1vHdN0qrWPXfw5skNDaK8b7xTHy7AnVKOq6qMAVpHmiCREDyf5hkbofrtPwbHCCvYHvCc6zHT3ome9Y+HjYZIRtemU236O3cevCvbMZHjeFDFvoUhK2TLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lFT7W7Of; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D2KLXD007310;
-	Thu, 13 Mar 2025 06:04:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uAEYDZT7XNQdv+gxhZhu0lkAO2jOF3EV0Qf8X8IkF+Q=; b=lFT7W7Of7cjOxBiN
-	qiqnqwaFDIz+LQAhIaiM18YUOEL7QYw3AuFHN3/QIjZtqJqVIGQNiFDSH6mV8gNK
-	TuIcLOvEnomI2YOzr6dYJlGB0Ibu0xRQUnMuQ4tkxq4iOxqd3GfZA+x2E6P3rGNH
-	W0YSM8wBzsrVwKKsqeNW04IGtEo1uVGcA5bRBu6fAYLXRXd9e/4OXQPO6vwazUkb
-	jh/8cVcBIy96EJE3QrYG/FP7uVe3IBqSq1sAnLh0eDhwwRXgE3KrkDyTqOwSkpis
-	Ikt6TyzpZel4250x5QHmZU9JLnOHXptyeyiTniW90sHYhsM5Pt+P4CvW2Ng4V/A0
-	rm07Tw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45bpg88fx5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 06:04:01 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D640sM031484
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 06:04:00 GMT
-Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 12 Mar 2025 23:03:56 -0700
-From: Imran Shaik <quic_imrashai@quicinc.com>
-Date: Thu, 13 Mar 2025 11:33:40 +0530
-Subject: [PATCH 2/2] arm64: dts: qcom: qcs8300: Add cpufreq scaling node
+	s=arc-20240116; t=1741845928; c=relaxed/simple;
+	bh=xnjEUUt219szQVqS0FUbXn7jZKDT0VQ883gSiPYS0ZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ljgS+mTXq5wOBe8hdCUpJqN2ORAG66+VW7nLdmQOHrSXPYbe52YMIh0c+NpVIJHPXMDP2xVHC7OGQUJOely5puXaQSsR69P7stIJCqxMfoA+28YdIFRKUBKtX7TllfEUh5Z3r/DHah/aLi/SBveqWVU+Za7TXQFL7tEAwALDEjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kED28Sjn; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-223fb0f619dso10794595ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 23:05:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741845926; x=1742450726; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ECQXFTKYOwgoxNWOGHysFhcD6t84a8REZICN/4jtZ5M=;
+        b=kED28SjnwcZto2IkTRX7p74kNmvwWpgjG6u07C0SY5sCiPVDpwLSPgdVl90OutwA3e
+         tA1Fm8OwFXs7In07wqf3aVAAfdZOmvAS9CUsa+0U/kUm6sUgDJWg4tSrwKl65vpZ2x/D
+         z6Ok6f08iTefTmi5gyABqQNlvNhLVUFR/1n5BaPd2CZH3Ba4GO/VNmBTSAi63e6ddx2L
+         Zlkm6OUKq2fSOUtQZedR14BwP/toHrhOEmYl+OyIRTsdb9JLhWqq+XZ8pEWH9JCD3sk7
+         fzpNITsP9Wy71Go1ygTpeVV+/4kftKFS4mkB4TGusdxDVnkFMpINqZHpJP1WisrNeehs
+         BZKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741845926; x=1742450726;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ECQXFTKYOwgoxNWOGHysFhcD6t84a8REZICN/4jtZ5M=;
+        b=a4WDpxAn2/ZNwFu/6HUkuU3p95+LROEZ/YEFgm/oaHKrhTbt4qDQwQTvj3YGLvRgNa
+         9EwsQPZghU2oZzPU7Gv5rIuKmPVfxxEosAurn4IH+K8BPamoJJE00eNRJb/5qh0mkgVV
+         0Yub15dtCz+Iyxpmlx2GFKU/pEePCe6NlFVBKyKZuGELxDPv5pGrpRi5D3SPWa0slFao
+         r4+EPvjKIu6IQuat8QTkO7GYh+TNo8ZHEzWlbeHEemqPGszyL3wfv6t3fg8KFp3cq6rq
+         Z+oCTrv5KnQxm7PNX+ib7EE7tVxsm4swZwxgN7FiNcM/v34JBWaFMmnRWirz4RBjr6jH
+         ijTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXC5Oho9OwKBguB28ZlolLeO+edaRn+GN51LZ3d9zkRS8n7sCMnsVKQeS/j+n7wDM2u1C5MauyT8Qu8k70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHX0/FXoKQUJSJV27gOSwXihXmSp9z5EXLzvlWhuH7pyAxmGBM
+	2VACEUA3jtjp90mXro4zBjUfp8KmYo1jPtjXOV0f9lod+jHAmSih9po33bQR1g==
+X-Gm-Gg: ASbGncst8gSiNeLzr9I9UB1Dg/gLOg40XV1iQop7nOZFQFqrFAlLQ8FTcQG6+wGEcOd
+	w9kzV6jrQuHpDtcq05/QbkPvGucxKz7VNAYhXdDvnpxrmjYLTLVzCoo58exHbZQste0Emfu2+Yy
+	3uqqL2DAVz1M4gmqUqrK9MfLbmxDti8wa3HakaTOMJLo+BnabYpZOp/CnRzbAAki1NQlWpB0N4U
+	0GihDD/3D3mNJt64Huc9vKosV+45Q9RM0Z5ZHF+BS3EPxpUCe+DfcECBzBmUC3HkVkuEpKZMmho
+	JxeBRXFftcC+JlSuyKBR1HUS9wfSH5yBVxL5/djTD2V6JwKu1X64ag==
+X-Google-Smtp-Source: AGHT+IHNYbI7b2RsxEIqYIkLTAuLCtKd3n8R178hhBoO3FhGxq8OJi1CT08xESSMe4ltVJpCSclHjw==
+X-Received: by 2002:a17:902:ec92:b0:220:fce7:d3a6 with SMTP id d9443c01a7336-22592e44a09mr126226875ad.23.1741845926623;
+        Wed, 12 Mar 2025 23:05:26 -0700 (PDT)
+Received: from thinkpad ([120.60.60.84])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-737115781f3sm534483b3a.76.2025.03.12.23.05.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 23:05:26 -0700 (PDT)
+Date: Thu, 13 Mar 2025 11:35:21 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC NOT TESTED 0/2] PCI: dra7xx: Try to clean up
+ dra7xx_pcie_cpu_addr_fixup()
+Message-ID: <20250313060521.kjue4la47xd7g4te@thinkpad>
+References: <20250305-dra-v1-0-8dc6d9a0e1c0@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250313-qcs8300-cpufreq-scaling-v1-2-d4cd3bd9c018@quicinc.com>
-References: <20250313-qcs8300-cpufreq-scaling-v1-0-d4cd3bd9c018@quicinc.com>
-In-Reply-To: <20250313-qcs8300-cpufreq-scaling-v1-0-d4cd3bd9c018@quicinc.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar
-	<viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Manivannan
- Sadhasivam" <manivannan.sadhasivam@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        Imran Shaik <quic_imrashai@quicinc.com>
-X-Mailer: b4 0.14.1
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=PtWTbxM3 c=1 sm=1 tr=0 ts=67d27551 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=-kjJAZhfdypRAnGlKBgA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: l8GukOOoWU1Dfs00tphHw_8e2Q370Wn6
-X-Proofpoint-ORIG-GUID: l8GukOOoWU1Dfs00tphHw_8e2Q370Wn6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_03,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 mlxscore=0 mlxlogscore=828 impostorscore=0 spamscore=0
- adultscore=0 phishscore=0 bulkscore=0 clxscore=1011 malwarescore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130045
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250305-dra-v1-0-8dc6d9a0e1c0@nxp.com>
 
-Add cpufreq-hw node to support cpufreq scaling on QCS8300.
+On Wed, Mar 05, 2025 at 11:20:21AM -0500, Frank Li wrote:
+> This patches basic on
+> https://lore.kernel.org/imx/20250128-pci_fixup_addr-v9-0-3c4bb506f665@nxp.com/
+> 
+> I have not hardware to test.
+> 
+> Look for driver owner, who help test this and start move forward to remove
+> cpu_addr_fixup() work.
+> 
 
-Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs8300.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+If you remove cpu_addr_fixup() callback, it will break backwards compatibility
+with old DTs.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-index cdd412706b5b..eb6b01683d1d 100644
---- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-@@ -52,6 +52,7 @@ cpu0: cpu@0 {
- 			power-domain-names = "psci";
- 			capacity-dmips-mhz = <1946>;
- 			dynamic-power-coefficient = <472>;
-+			qcom,freq-domain = <&cpufreq_hw 0>;
- 
- 			l2_0: l2-cache {
- 				compatible = "cache";
-@@ -71,6 +72,7 @@ cpu1: cpu@100 {
- 			power-domain-names = "psci";
- 			capacity-dmips-mhz = <1946>;
- 			dynamic-power-coefficient = <472>;
-+			qcom,freq-domain = <&cpufreq_hw 0>;
- 
- 			l2_1: l2-cache {
- 				compatible = "cache";
-@@ -90,6 +92,7 @@ cpu2: cpu@200 {
- 			power-domain-names = "psci";
- 			capacity-dmips-mhz = <1946>;
- 			dynamic-power-coefficient = <507>;
-+			qcom,freq-domain = <&cpufreq_hw 1>;
- 
- 			l2_2: l2-cache {
- 				compatible = "cache";
-@@ -109,6 +112,7 @@ cpu3: cpu@300 {
- 			power-domain-names = "psci";
- 			capacity-dmips-mhz = <1946>;
- 			dynamic-power-coefficient = <507>;
-+			qcom,freq-domain = <&cpufreq_hw 1>;
- 
- 			l2_3: l2-cache {
- 				compatible = "cache";
-@@ -128,6 +132,7 @@ cpu4: cpu@10000 {
- 			power-domain-names = "psci";
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			qcom,freq-domain = <&cpufreq_hw 2>;
- 
- 			l2_4: l2-cache {
- 				compatible = "cache";
-@@ -147,6 +152,7 @@ cpu5: cpu@10100 {
- 			power-domain-names = "psci";
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			qcom,freq-domain = <&cpufreq_hw 2>;
- 
- 			l2_5: l2-cache {
- 				compatible = "cache";
-@@ -166,6 +172,7 @@ cpu6: cpu@10200 {
- 			power-domain-names = "psci";
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			qcom,freq-domain = <&cpufreq_hw 2>;
- 
- 			l2_6: l2-cache {
- 				compatible = "cache";
-@@ -185,6 +192,7 @@ cpu7: cpu@10300 {
- 			power-domain-names = "psci";
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			qcom,freq-domain = <&cpufreq_hw 2>;
- 
- 			l2_7: l2-cache {
- 				compatible = "cache";
-@@ -5235,6 +5243,24 @@ rpmhpd_opp_turbo_l1: opp-9 {
- 			};
- 		};
- 
-+		cpufreq_hw: cpufreq@18591000 {
-+			compatible = "qcom,qcs8300-cpufreq-epss", "qcom,cpufreq-epss";
-+			reg = <0x0 0x18591000 0x0 0x1000>,
-+			      <0x0 0x18594000 0x0 0x1000>,
-+			      <0x0 0x18593000 0x0 0x1000>;
-+			reg-names = "freq-domain0", "freq-domain1", "freq-domain2";
-+
-+			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "dcvsh-irq-0", "dcvsh-irq-1", "dcvsh-irq-2";
-+
-+			clocks = <&rpmhcc RPMH_CXO_CLK>, <&gcc GCC_GPLL0>;
-+			clock-names = "xo", "alternate";
-+
-+			#freq-domain-cells = <1>;
-+		};
-+
- 		remoteproc_gpdsp: remoteproc@20c00000 {
- 			compatible = "qcom,qcs8300-gpdsp-pas", "qcom,sa8775p-gpdsp0-pas";
- 			reg = <0x0 0x20c00000 0x0 0x10000>;
+You should fix the existing DTs and continue carrying the callback for a while.
+
+- Mani
 
 -- 
-2.25.1
-
+மணிவண்ணன் சதாசிவம்
 
