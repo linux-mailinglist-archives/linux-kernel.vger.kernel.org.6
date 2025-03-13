@@ -1,152 +1,131 @@
-Return-Path: <linux-kernel+bounces-559790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 417C8A5F9D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:29:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AB46A5F9DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:29:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D206B7AA960
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:28:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C385E17FF20
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2D0268FC9;
-	Thu, 13 Mar 2025 15:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="z0YuMFnX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KjImxb+x";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="z0YuMFnX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KjImxb+x"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EE8260366
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4611269813;
+	Thu, 13 Mar 2025 15:29:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D8E269808;
+	Thu, 13 Mar 2025 15:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741879736; cv=none; b=rQOyLCi+vpb0Iz58em7+2vo+/UpKvKn20AxEEB4XF7Jte+IqPxAaA1zqLSWc7buVbaP6/IyI8YT1fGlIAay8D0cV8BV2C9ZzLZySbkjzyvchaAkuOgxMS8eVwzK2X6mgx1RQi/5OSNkK4ap2AplpPj9GlxKd/0jac2wyLPOfPfE=
+	t=1741879759; cv=none; b=Qi7mzKfLl9kVpHtBlXJXK4QewWAGGFQY7aqm1NuU+r9xeUpURKCXwUqZ8MVpLTW3b71nRuXnMApq59nZtni50/QVZhfKsektclVv2AaBHBIcEQ2af2sC3GQkbvA+K7sAYTFmR/yyxx33TvyrIv/yOt5s+t4m6U1QAe4AwlTu/6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741879736; c=relaxed/simple;
-	bh=36k0TlL5aEc2I8sZ0kU+FjEBUdKQFkuUdXwaj2GmVT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V/CJFhSACDRpfPeRaKHaC3XH08NRw0kEmlx20dnoqfNnxq/MemSiJgQjW2/wDd7yPCuGWoLpG4X4YBmPqMYHTMZuUBblpBbjvaDzk6e3T3lbwu8/USrSnZxKNiCEnViRNOA9TAmoU90A9241clvGstHh4Bta35o2+L/XUSgAhuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=z0YuMFnX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KjImxb+x; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=z0YuMFnX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KjImxb+x; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B18FF1F388;
-	Thu, 13 Mar 2025 15:28:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741879732; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Da3VwQ0Q/TpvbUSlTbof5uzpY0q8GBI7PkAEVqPXZmA=;
-	b=z0YuMFnX4Gl9Vol4QPmUR9Vs2SUZZMhAKm5PJxIqg466iddNC7rFXEFBj6UDYUDmXLoGm+
-	oYWrRo0Hh30IunT4SH1+hLK2TF09Gu3CViBtzaKws4CgEvUR2cve7Yh8IZtVJGXRc93o0L
-	dYiq+L3i3c1DPZUitNYSSlrO6p5l8e4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741879732;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Da3VwQ0Q/TpvbUSlTbof5uzpY0q8GBI7PkAEVqPXZmA=;
-	b=KjImxb+x9GkRIoNLRBiM/Ok1yYUEgPo/AH1cUEi8OMxkMNDlWYRGuhezrgGQ1dqnE5w9vz
-	E9yxzmps+nBOK9BA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741879732; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Da3VwQ0Q/TpvbUSlTbof5uzpY0q8GBI7PkAEVqPXZmA=;
-	b=z0YuMFnX4Gl9Vol4QPmUR9Vs2SUZZMhAKm5PJxIqg466iddNC7rFXEFBj6UDYUDmXLoGm+
-	oYWrRo0Hh30IunT4SH1+hLK2TF09Gu3CViBtzaKws4CgEvUR2cve7Yh8IZtVJGXRc93o0L
-	dYiq+L3i3c1DPZUitNYSSlrO6p5l8e4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741879732;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Da3VwQ0Q/TpvbUSlTbof5uzpY0q8GBI7PkAEVqPXZmA=;
-	b=KjImxb+x9GkRIoNLRBiM/Ok1yYUEgPo/AH1cUEi8OMxkMNDlWYRGuhezrgGQ1dqnE5w9vz
-	E9yxzmps+nBOK9BA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9DDE9137BA;
-	Thu, 13 Mar 2025 15:28:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 66KFJrT50mdXHQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 13 Mar 2025 15:28:52 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5E1CFA0908; Thu, 13 Mar 2025 16:28:48 +0100 (CET)
-Date: Thu, 13 Mar 2025 16:28:48 +0100
-From: Jan Kara <jack@suse.cz>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the ext3 tree
-Message-ID: <bvj5iudnoftzgevrgt2yomwnt3jfgecjcg3cx7jh7pehnyvgej@3wjfqkiiljob>
-References: <20250313115026.364a8147@canb.auug.org.au>
+	s=arc-20240116; t=1741879759; c=relaxed/simple;
+	bh=UCfoq5iv8gZQgWR9g+UiHw55YgFlpcDqEVY1HoIkIzs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=eTbV4gPFcINTshxFpZAt1+av3Gk0XGIeYYbqIcErG94ZbWfO8Xzf8DUzeuCnpCYvADIVzIHaE/0NM0Gi2kc3Z10YcHg+Wm6/2GP5jkdmNqtktY1wTXeiaNPNXwB6y5IwpfAZJRl5CPa2e5Ca0vx2888kzU17PAFqryvFT56vCbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3C29E201B;
+	Thu, 13 Mar 2025 08:29:26 -0700 (PDT)
+Received: from e133711.arm.com (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BAC1F3F694;
+	Thu, 13 Mar 2025 08:29:14 -0700 (PDT)
+From: Sudeep Holla <sudeep.holla@arm.com>
+Date: Thu, 13 Mar 2025 15:28:49 +0000
+Subject: [PATCH v3 03/13] mailbox: pcc: Drop unnecessary endianness
+ conversion of pcc_hdr.flags
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313115026.364a8147@canb.auug.org.au>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250313-pcc_fixes_updates-v3-3-019a4aa74d0f@arm.com>
+References: <20250313-pcc_fixes_updates-v3-0-019a4aa74d0f@arm.com>
+In-Reply-To: <20250313-pcc_fixes_updates-v3-0-019a4aa74d0f@arm.com>
+To: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>, 
+ Jassi Brar <jassisinghbrar@gmail.com>, Huisong Li <lihuisong@huawei.com>, 
+ Adam Young <admiyo@os.amperecomputing.com>, 
+ Robbie King <robbiek@xsightlabs.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2141; i=sudeep.holla@arm.com;
+ h=from:subject:message-id; bh=UCfoq5iv8gZQgWR9g+UiHw55YgFlpcDqEVY1HoIkIzs=;
+ b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBn0vnESUxQx6rqi4Q0YSvDGMvX2KJJ+P4dmoQm4
+ knxotCnrqOJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ9L5xAAKCRAAQbq8MX7i
+ mFcNEACxVrjtPjXpBrEX4HVnmPkyaozacS2YdnDAtATsCmJJH2+5LDQNqHnMecgrqJEANJwRme0
+ hLu1ZsDgYlr/KJWA2Y/sG76wuOesNLtAFdj+5lVgtHjed0VlNlcSP0utcVQFKVyB/svHm8E4FXV
+ lf8xoD72n9kgSiGXOupWk0dH/MvcX5l2DXMCz8WiUbpuljps5T7OPmxWDGZS9Oqgq77KL418COI
+ TIZNwZ+DU+8vAYpGRPi1wR2vwc1ZFpRaxBtwaW8zojjOwtXs5qLpGcX6IE2NFDOwdxvem44+ask
+ R17UOwRmP56W/S/8T1fG8se/XdkYr7AyZkUKFbuJBs4nghj+dANbAmhUsimWp/3cHIr2duqwzK9
+ FFHYrt9peo82QB4+g4wSflJ7QZbX/lFB5F1FzJXN3BSA6i5/1OF9pxCLK0wXOAJrhqu0datP06+
+ WUQe2JVMGHZ4Sd1Vd6RnHyQ/LDKuBlwCaBw98Op53Ai1xovRz1hjYrnzKzpJLb8lEfH4v1hiOEj
+ +dUE2atz0HcH8+w1PmEQ8OxB+j/HUwzwO4tw3o2Pjo/QxiA+GB/HoNLy2Epq/DChudtsN6YdfGU
+ B6H1yvDq1fIPJyycStOuGZQs0f/IammcpqIbzMLXh6LJ9knE0c4bzpYRhUNtiHvfAOm1ZvrMnnk
+ eMgt3Deld7vGQKA==
+X-Developer-Key: i=sudeep.holla@arm.com; a=openpgp;
+ fpr=7360A21742ADF5A11767C1C139CFD4755FE2D5B4
 
-On Thu 13-03-25 11:50:26, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Commits
-> 
->   c27bb2f1343c ("Revert "fanotify: disable readahead if we have pre-content watches"")
->   4fea134e1712 ("Revert "mm: don't allow huge faults for files with pre content watches"")
->   e28a4bdddc53 ("Revert "xfs: add pre-content fsnotify hook for DAX faults"")
->   df4447e2b3ef ("Revert "ext4: add pre-content fsnotify hook for DAX faults"")
-> 
-> are missing a Signed-off-by from their author.
-> 
-> Reverts are commits as well, so need reasonable commit messages and SoBs.
+The Sparse static checker flags a type mismatch warning related to
+endianness conversion:
 
-Yeah, I wasn't sure about reverts so thanks for letting me know. I'll fix
-that up.
+  |  warning: incorrect type in argument 1 (different base types)
+  |     expected restricted __le32 const [usertype] *p
+  |     got unsigned int *
 
-								Honza
+This is because an explicit endianness conversion (le32_to_cpu()) was
+applied unnecessarily to a pcc_hdr.flags field that is already in
+little-endian format.
+
+The PCC driver is only enabled on little-endian kernels due to its
+dependency on ACPI and EFI, making the explicit conversion unnecessary.
+
+The redundant conversion occurs in pcc_chan_check_and_ack() for the
+pcc_hdr.flags field. Drop this unnecessary endianness conversion of
+pcc_hdr.flags.
+
+Also drop the redundant PCC_ACK_FLAG_MASK definition and use the
+more appropriate and already defined PCC_CMD_COMPLETION_NOTIFY.
+
+Acked-by: Huisong Li <lihuisong@huawei.com>
+Tested-by: Adam Young <admiyo@os.amperecomputing.com>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+---
+ drivers/mailbox/pcc.c | 2 +-
+ include/acpi/pcc.h    | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+index f8215a8f656a460b38806d4c002470c3fe1e3c9c..9cf0ca772c1adb73ceb91d25a2abd1d12c678d90 100644
+--- a/drivers/mailbox/pcc.c
++++ b/drivers/mailbox/pcc.c
+@@ -292,7 +292,7 @@ static void check_and_ack(struct pcc_chan_info *pchan, struct mbox_chan *chan)
+ 	 *
+ 	 * The PCC master subspace channel clears chan_in_use to free channel.
+ 	 */
+-	if (le32_to_cpup(&pcc_hdr.flags) & PCC_ACK_FLAG_MASK)
++	if (pcc_hdr.flags & PCC_CMD_COMPLETION_NOTIFY)
+ 		pcc_send_data(chan, NULL);
+ 	else
+ 		pcc_chan_reg_read_modify_write(&pchan->cmd_update);
+diff --git a/include/acpi/pcc.h b/include/acpi/pcc.h
+index 699c1a37b8e7846362bae35477eb5736be15d79e..d1e506f041c5a80857d4a025fa3c1803746ba4b9 100644
+--- a/include/acpi/pcc.h
++++ b/include/acpi/pcc.h
+@@ -32,7 +32,6 @@ struct pcc_mbox_chan {
+ #define PCC_CMD_COMPLETION_NOTIFY	BIT(0)
+ 
+ #define MAX_PCC_SUBSPACES	256
+-#define PCC_ACK_FLAG_MASK	0x1
+ 
+ #ifdef CONFIG_PCC
+ extern struct pcc_mbox_chan *
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.34.1
+
 
