@@ -1,197 +1,175 @@
-Return-Path: <linux-kernel+bounces-558696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3FCBA5E990
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:50:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2265AA5E997
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:53:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33B633A850C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:50:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62AB5188B2EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666597405A;
-	Thu, 13 Mar 2025 01:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B8178F3B;
+	Thu, 13 Mar 2025 01:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BlM9vd7E"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Syi7TJYo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01834C6C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 01:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83B8FC0B;
+	Thu, 13 Mar 2025 01:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741830616; cv=none; b=TR+wARHkV+hdShqtzhq86M134ybxBqkF7lbm1YJ1VFikuIZB9exn2LiU0jGJG2Uihz7MpuZOqQTW2F11Y4m9+0jglcSMq/pG5hjqdvcfVYy8+KwIfkbs3G+T5/GgkKexyLiR/I76NPpaMJtdJgKa0NKhTmd0bKPgbuZZLwkE3ZY=
+	t=1741830829; cv=none; b=RxteCJM2k6ko5RbMxvgvDLWYakvPN5ovklUgMljFC8U1QJ1auHBDyti2qvsH2k4hjKEvKC0M15TRBGIjUimvetqvH2N3YwzLAVHD/Y2pOnUFqfYbesw94jHfd55Vl7JybH0sSU2spUgTkFN3Nyi6H0A+b77kx4O4bBgNXgYY+mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741830616; c=relaxed/simple;
-	bh=41AczRiNyc4mn1z+SuV//JXGz0lYt/dC7rUHxIupShE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d2pfDc6vCvAMvW535ePVgNc2gcZcC1MCV2HGFve38k3DpekrmW/gUyhRdLYzhZ4Jdo2SgO5NZvI4vDhaK5Naxb4pYFuK7tKBMpGEFxBCl9fVrVc4wyajsc54g84b8pj8bTHuyTRDOXIMFubnIVt2WkKBtDHYcsK+vVrmMX2/a5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BlM9vd7E; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-543e4bbcd86so496574e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 18:50:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741830613; x=1742435413; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8rhnTdC4msVOGkRqdQCpgRtVWxEKnxMJbPpV2vd+gws=;
-        b=BlM9vd7EzYygTFRBb/onUbcWoMxHW3hyCj3S/tLzRUsXsXRACw6r4ooHWRgiLjgXqi
-         zyKoU3xggmD0FB2/gEF+mMFO+Eu3a6yDQQB1XKvLCWWJBzzIpeFaEO+VWBUfSuA0oxJZ
-         306FhdE6Xzxdcv27Ciu3yZHU+XJHcHbWGeWy8RDcvGi2K/8TsBqBmLbaZFWCY+a1sGWY
-         KFxdco0URfjmeG+kYWCQSCmbfKUN/6ph6kJ2rwWSDXSaCgAR2YsRluB1LZw6b4CPTYVM
-         OBm+MjnncyHnibOweTvo6px1KaaeXK2+a2iA9jzMHKrHp8tkx6Oy3RauOLj+Ikp4Sj3M
-         czlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741830613; x=1742435413;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8rhnTdC4msVOGkRqdQCpgRtVWxEKnxMJbPpV2vd+gws=;
-        b=dIYPlKMrUa+N3SxfpX6WH+mIylMLkIDvseuj9ZaB9B3OMZuCN+a2ko9r1VcDFesLfs
-         fQwm9mzLgtWWyvQEw2ylgSA+h67gzWSVuDznd1+8iv7YKTeNHX7oosZpcxFS/LDZcn4T
-         XW+Oh6oEVpMpGx27ZRvDNdgOUMEOiRWne4jW+8KIMDc0bqMw/h5kFrdWX/JMkPU9gBIR
-         /5OWTrkI0XdTq0bT+CcVMM79Cf0jUWlXgw+9GH+nYI+aJsO21+OyUsia82Nekb4ptKZy
-         XZEt9/EMnxnPN+mq2B0xsqM7OkuhJ2AxGY8DTCH6Z426tL5CTl4HSEC6HhjrfIwuAOER
-         oYFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwvsXdP7VLnuFSbuBWXqCOXkrMvNMchDB/G4WUHXpWntTWXyy3okipeZrkdd9BHyd9LWBQkiVM9/iDEI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys89BAGjtJMhtaJDpLTr+caqJmLO8avHTc6KJL6zq2LhGOkyNs
-	t6P3nOdnXnxnREE5ZLNb2llpTCjXD+P473R7AGdfUYxO8Q8jUA0WHOqmQnEl0GoTf6spN7UZB3r
-	c5Jgco4B8tTSXJq4mLu96627L/8Ql41m1iiW/
-X-Gm-Gg: ASbGncu59x1d3JsbPFNeHfqqDIcjpe8wguIScnI7xEy280DfBC41T3EJjtPP4pcbz6f
-	EzUSVh/VUuKbU9zB5Rm7zwo+luiM6rV6TLHx5uCJjEB0HDblT8lzg0uHNT4Ys0i5t6OywiSpccv
-	Ur/J13jaDCQxDh7HoR2jENnAOayTRPGc7jX3BXGyYitNoXQC0uvSrW
-X-Google-Smtp-Source: AGHT+IFMUtlnzYcbytb8yU8Bu3i7ST+jbM6zWRM1rfI1C2MhEYrUzZr7z46qnooeSHU0twUyuT1E1JDN0et4biqdQUY=
-X-Received: by 2002:a05:6512:1245:b0:545:5d:a5cd with SMTP id
- 2adb3069b0e04-54990e2c073mr7803758e87.6.1741830612786; Wed, 12 Mar 2025
- 18:50:12 -0700 (PDT)
+	s=arc-20240116; t=1741830829; c=relaxed/simple;
+	bh=4nColgqOELuFgHL1IbFS/S4uTy/GrD5r3pOic4ag7/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tWnt6Dh1cEtnoBvkeAlravubPiNhNo/H9o71DGoBb6EFDPm86/c+i0zYaT4I69dzyttdZuy0U1LC+9Hst4jDhyn3ab/aENoqBvK2JA8Rnk+3q3r6csRI80eGHFVNFkMVchuXuYXJrW/Vl8z4eaWVvcLHC+RQ/YMUYmSYYA8ZblU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Syi7TJYo; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741830827; x=1773366827;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4nColgqOELuFgHL1IbFS/S4uTy/GrD5r3pOic4ag7/U=;
+  b=Syi7TJYoaF1eJfa2LDnY38l73MqrenpAgZcNZILeFXM2MsdDmuug+O/u
+   PH0MZEsPsM3TWGbhNUap9+NT6Kf4FHdec3GEmi/XRXQDW1rkWlIK6/ClD
+   1dfviF/eRaDb7812tAJ3PyVHiJSGc40f4L8L4UhXZPLUjB5+jPvvT3lMR
+   hpvWQTHE+cj5nvHwcWw84AIvVXh5ku+QfS+yj5pJ49xLeOsNBKwsARjL1
+   Mt9XMZ3i7CynrQphwJqlF2EpkTn81MQ3dnCgNhm6R6JCr02pTvTf9xfFp
+   kynbLqQ2jWPEdqCcqFnGW3ka2ywxON7gsxS57LO4oNJs52BNpolC6sX1Z
+   Q==;
+X-CSE-ConnectionGUID: svluWkbnRj69bLQf9k0pvw==
+X-CSE-MsgGUID: 9qi9Ha2ARkWnMMNuSsw+Iw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="60331361"
+X-IronPort-AV: E=Sophos;i="6.14,243,1736841600"; 
+   d="scan'208";a="60331361"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 18:53:47 -0700
+X-CSE-ConnectionGUID: veBJ0OhYR4iCo23Ckye1gQ==
+X-CSE-MsgGUID: GFEQRz2SQi6MtH5yyB4OYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,243,1736841600"; 
+   d="scan'208";a="124971853"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 12 Mar 2025 18:53:45 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tsXlL-00092i-29;
+	Thu, 13 Mar 2025 01:53:34 +0000
+Date: Thu, 13 Mar 2025 09:53:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Suraj Patil <surajpatil522@gmail.com>, jic23@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, lars@metafoo.de,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Suraj Patil <surajpatil522@gmail.com>
+Subject: Re: [PATCH] iio: industrialio-trigger: Fix typos in comments
+Message-ID: <202503130901.12r9Jl8B-lkp@intel.com>
+References: <20250311155927.467523-1-surajpatil522@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114220921.2529905-1-saravanak@google.com>
- <20241114220921.2529905-2-saravanak@google.com> <CAJZ5v0grG7eSJ7_c73i9-bXaFhm5rfE2WmxtR6yLB-MGkd7sVg@mail.gmail.com>
- <CAJZ5v0i42ZczVpDWQD4_OuduuHb3LDMmn0FJ9_XoqL8Frx9MEw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0i42ZczVpDWQD4_OuduuHb3LDMmn0FJ9_XoqL8Frx9MEw@mail.gmail.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Wed, 12 Mar 2025 18:49:36 -0700
-X-Gm-Features: AQ5f1JpeqZsD8iihTHZ2xPjQCBSbgVweLRKkornpnC9Uki24vODyoMydcmMSRpM
-Message-ID: <CAGETcx83c2bDROcNWOiL9Dry4k2BWVzftncObCAzdftHY0u_NQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/5] PM: sleep: Fix runtime PM issue in dpm_resume()
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Segall <bsegall@google.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, kernel-team@android.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311155927.467523-1-surajpatil522@gmail.com>
 
-On Tue, Mar 11, 2025 at 3:47=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->
-> On Wed, Dec 4, 2024 at 1:53=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.o=
-rg> wrote:
-> >
-> > Trim CC list.
-> >
-> > On Thu, Nov 14, 2024 at 11:09=E2=80=AFPM Saravana Kannan <saravanak@goo=
-gle.com> wrote:
-> > >
-> > > Some devices might have their is_suspended flag set to false. In thes=
-e
-> > > cases, dpm_resume() should skip doing anything for those devices.
-> >
-> > Not really.  This is particularly untrue for devices with
-> > power.direct_complete set that have power.is_suspended clear.
-> >
-> > > However, runtime PM enable and a few others steps are done before
-> > > checking for this flag. Fix it so that we do things in the right orde=
-r.
-> >
-> > I don't see the bug this is fixing, but I can see bugs introduced by it=
-.
->
-> So AFAICS the bug is in the error path when dpm_suspend() fails in
-> which case some devices with direct_complete set may not have been
-> handled by device_suspend().  Since runtime PM has not been disabled
-> for those devices yet, it doesn't make sense to re-enable runtime PM
-> for them (and if they had runtime PM disabled to start with, this will
-> inadvertently enable runtime PM for them).
->
-> However, two changes are needed to fix this issue:
-> (1) power.is_suspended needs to be set for the devices with
-> direct_complete set in device_suspend().
-> (2) The power.is_suspended check needs to be moved after the
-> power.syscore one in device_resume().
->
-> The patch below only does (2) which is insufficient and it introduces
-> a functional issue for the direct_complete devices with runtime PM
-> disabled because it will cause runtime PM to remain disabled for them
-> permanently.
->
-> > I think that you want power.is_suspended to be checked before waiting
-> > for the superiors.  Fair enough, since for devices with
-> > power.is_suspended clear, there should be no superiors to wait for, so
-> > the two checks can be done in any order and checking
-> > power.is_suspended first would be less overhead.  And that's it
-> > AFAICS.
-> >
-> > > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > > ---
-> > >  drivers/base/power/main.c | 6 +++---
-> > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> > > index 4a67e83300e1..86e51b9fefab 100644
-> > > --- a/drivers/base/power/main.c
-> > > +++ b/drivers/base/power/main.c
-> > > @@ -913,6 +913,9 @@ static void device_resume(struct device *dev, pm_=
-message_t state, bool async)
-> > >         if (dev->power.syscore)
-> > >                 goto Complete;
-> > >
-> > > +       if (!dev->power.is_suspended)
-> > > +               goto Unlock;
->
-> And this should be "goto Complete" because jumping to Unlock
-> introduces a device locking imbalance.
->
-> > > +
-> > >         if (dev->power.direct_complete) {
-> > >                 /* Match the pm_runtime_disable() in __device_suspend=
-(). */
-> > >                 pm_runtime_enable(dev);
-> > > @@ -931,9 +934,6 @@ static void device_resume(struct device *dev, pm_=
-message_t state, bool async)
-> > >          */
-> > >         dev->power.is_prepared =3D false;
-> > >
-> > > -       if (!dev->power.is_suspended)
-> > > -               goto Unlock;
-> > > -
-> > >         if (dev->pm_domain) {
-> > >                 info =3D "power domain ";
-> > >                 callback =3D pm_op(&dev->pm_domain->ops, state);
-> > > --
->
-> If you want to submit a new version of this patch, please do so by the
-> end of the week or I will send my fix because I want this issue to be
-> addressed in 6.15.
+Hi Suraj,
 
-Please do ahead with the fix for this. I'm not too comfortable with
-the direct_complete logic yet.
+kernel test robot noticed the following build errors:
 
--Saravana
+[auto build test ERROR on jic23-iio/togreg]
+[also build test ERROR on linus/master v6.14-rc6 next-20250312]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->
-> BTW, please note that this is orthogonal to the recent async
-> suspend-resume series
->
-> https://lore.kernel.org/linux-pm/13709135.uLZWGnKmhe@rjwysocki.net/
->
-> so there is no reason why it should be addressed in that series.
+url:    https://github.com/intel-lab-lkp/linux/commits/Suraj-Patil/iio-industrialio-trigger-Fix-typos-in-comments/20250312-000420
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20250311155927.467523-1-surajpatil522%40gmail.com
+patch subject: [PATCH] iio: industrialio-trigger: Fix typos in comments
+config: hexagon-randconfig-002-20250313 (https://download.01.org/0day-ci/archive/20250313/202503130901.12r9Jl8B-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project e15545cad8297ec7555f26e5ae74a9f0511203e7)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250313/202503130901.12r9Jl8B-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503130901.12r9Jl8B-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/iio/industrialio-trigger.c:165:13: error: no member named 're' in 'struct iio_trigger_ops'
+     165 |         trig->ops->re-enable(trig);
+         |         ~~~~~~~~~  ^
+>> drivers/iio/industrialio-trigger.c:165:16: error: call to undeclared function 'enable'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     165 |         trig->ops->re-enable(trig);
+         |                       ^
+   drivers/iio/industrialio-trigger.c:185:17: error: no member named 're' in 'struct iio_trigger_ops'
+     185 |             trig->ops->re-enable)
+         |             ~~~~~~~~~  ^
+>> drivers/iio/industrialio-trigger.c:185:20: error: use of undeclared identifier 'enable'
+     185 |             trig->ops->re-enable)
+         |                           ^
+   drivers/iio/industrialio-trigger.c:246:17: error: no member named 're' in 'struct iio_trigger_ops'
+     246 |             trig->ops->re-enable)
+         |             ~~~~~~~~~  ^
+   drivers/iio/industrialio-trigger.c:246:20: error: use of undeclared identifier 'enable'
+     246 |             trig->ops->re-enable)
+         |                           ^
+   drivers/iio/industrialio-trigger.c:247:14: error: no member named 're' in 'struct iio_trigger_ops'
+     247 |                 trig->ops->re-enable(trig);
+         |                 ~~~~~~~~~  ^
+   drivers/iio/industrialio-trigger.c:247:17: error: call to undeclared function 'enable'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     247 |                 trig->ops->re-enable(trig);
+         |                               ^
+   8 errors generated.
+
+
+vim +165 drivers/iio/industrialio-trigger.c
+
+   155	
+   156	static void iio_reenable_work_fn(struct work_struct *work)
+   157	{
+   158		struct iio_trigger *trig = container_of(work, struct iio_trigger,
+   159							reenable_work);
+   160	
+   161		/*
+   162		 * This 'might' occur after the trigger state is set to disabled -
+   163		 * in that case the driver should skip reenabling.
+   164		 */
+ > 165		trig->ops->re-enable(trig);
+   166	}
+   167	
+   168	/*
+   169	 * In general, re-enable callbacks may need to sleep and this path is
+   170	 * not performance sensitive, so just queue up a work item
+   171	 * to reneable the trigger for us.
+   172	 *
+   173	 * Races that can cause this.
+   174	 * 1) A handler occurs entirely in interrupt context so the counter
+   175	 *    the final decrement is still in this interrupt.
+   176	 * 2) The trigger has been removed, but one last interrupt gets through.
+   177	 *
+   178	 * For (1) we must call re-enable, but not in atomic context.
+   179	 * For (2) it should be safe to call reenanble, if drivers never blindly
+   180	 * re-enable after state is off.
+   181	 */
+   182	static void iio_trigger_notify_done_atomic(struct iio_trigger *trig)
+   183	{
+   184		if (atomic_dec_and_test(&trig->use_count) && trig->ops &&
+ > 185		    trig->ops->re-enable)
+   186			schedule_work(&trig->reenable_work);
+   187	}
+   188	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
