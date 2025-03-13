@@ -1,132 +1,127 @@
-Return-Path: <linux-kernel+bounces-558803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409BDA5EB6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:03:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDBD4A5EB6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:04:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D9317A5CDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:02:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38BB11895577
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31C21FAC57;
-	Thu, 13 Mar 2025 06:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA281FAC5D;
+	Thu, 13 Mar 2025 06:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zplUBdIc"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KqlYV7i1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FE1132117
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 06:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C51D41AAC;
+	Thu, 13 Mar 2025 06:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741845792; cv=none; b=eYc4/hxdQq0Yn6Aj1vOwqO6uZC5o3ZazQ1qyMgzOeRdXCnf1o1KdgypaWJzzuAqM/4aD6GPpqWuW3dTlULeJwO23XqpvFdeN0YeMmeg2dicZ3/nMARNE2b8eKF+ay1nBsBdXpkxHKybR5tDHfbla3m6RffVlzn0LIb89aq4g4mY=
+	t=1741845838; cv=none; b=JYIoR73kunuad91i40tw5IkQ9G+FYFfVA72kNjXZBs/zFi1soTa2v6kZegBpq9VM0w5S1JFVyWA1rKtIiDmbyxAn/YJYujINf2cCwl60pyF5EkC5wshpbEiyjobjJN9MTvm+kiDoaPpV1XSkPc/XB6Bn10DH2Ze5B/2zeI436n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741845792; c=relaxed/simple;
-	bh=3IHj0fwKLeVDGBEhR8BPbj3M6F9IduKAqL/V0C9213o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aP011SQmFL2snVE/S8hTmEaz7jWpsNkGSSHwenqP402PTk6828qEAQvFvleVB+3u34tCh33S3070muYxAXziaBykxLGEHkIUn9SVUZaSbiakHEn5oTybsTDoFZmUYcVBvLEwBDIDwLY5WHeF1gXi03LQzmz4mgLugchis3vtzhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zplUBdIc; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2243803b776so16003415ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 23:03:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741845790; x=1742450590; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=f6MdjnJ3ua2k7HKceKUirt21FtnY4dMiCyblx2R2tuo=;
-        b=zplUBdIcrp7/hOs653ldpWZ0xoFlR1vsnxtwjz2h+Ci9p/zwf3/5J2K20czzrE6cTz
-         dTO9HluaW/hMJFKnuRg++aptR3zGIB3zAiz8Wg6VOzRM3GA3ogzBozHoPVmfOVuABoOR
-         2xjJ1cVihKMgJDT83AoBq2joYl2HGsw6CQo/9iMmFNy7inj2y87VoKkMoFu+g3Iqbktd
-         /vPdrqW3P/EAlFyqU3azOhiV+PikG2uciQ6vM3kPFhLG3Th7ohFl3VD1j+j18j0HQuAN
-         TPhnq9+uXXSFzQK82qY1ASsQwHGu/ZLLRilNPI/fsBzc9apQCM/xrpxZq5PqEwdTkpQc
-         bAMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741845790; x=1742450590;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f6MdjnJ3ua2k7HKceKUirt21FtnY4dMiCyblx2R2tuo=;
-        b=Go26h4JsutXRZTxe/i72ko7q40bRTI+tQOCDa0ricbbx1Mnq+ufc82xu2n6sPoohDx
-         GFAVe2dKxc3xeZcU149KBJiGv8QdlZfwfO+KHc8AGaVIKnH/aI0SYDoUqrludVGlW72S
-         sbwOyoy2O1Q7ye8uOqMGKGjPwRzgxCeuVflvp8v+oq37zzp3/8om4s31PFr0L+72fN1H
-         f7g7sFHymfqJaM4C77HsL8G3aVKQ5MPwUfbpHKyH0NsFGatFXlnoNyawQcKbe/T2lEAz
-         E5JqJ7SDjKLxSq42sayDlZ2oJQjYB+seEBzKKFgxRy6dBkikbnEdsKdIa1JuQY3JmAF9
-         FYrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxKc4Q/mkk3Vcfhdo01xPc4cRfMRQF4aLM8ru8hO4CI+6JmuL3wkbVmswnvT3tsxrTjgCEl5GoRWMGlxs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWt2YlPgKnEl1Op3d3kf/V+2w++25oLDyGSmoY27W5dJmvryTu
-	do4gLwoVfqYDR0abSJDitDFz6ORGNtDTLUxoUqQGSCloUbqhCyoqFy7A8uf4VMrsEpXFw53fE0U
-	=
-X-Gm-Gg: ASbGncsCgLLWHgvPdGyAqeLfHjjftg9NelWbNPLWcElAWxYzTFuzMECQgSNX9fzv9sR
-	Ixzc7kEyNTBKte/tqWQO0gs6NP1sAwuwKPjDkB8F8dOyU0+ueciQBk2B0pVmNk9JERgAvFnVBuI
-	SEBLGcMTsvGwM4nSitfym2Aev1oiMN4ZVZNVzJsfa1Dn/plPWZMaez2zs0Gww1PR6KbgFup+0co
-	OfatoFddzfMtIVt7fzOCMgQoD1ecG57aN21Fj+kfxOg2NrWQd6Vf6UDFSgaaflrB8AdDucuOv9y
-	h7HMUWxaQLzA1rQkuKqj5jXp7wBtZQxEMkUu646V9eWQnl0exSc/vA==
-X-Google-Smtp-Source: AGHT+IFPxLRLvvJqzA698/VJnGHbi0WkE2Kuvvzmsfile6eRsQmYWiTTJ/9mF+iWI4d+NDoThioxKg==
-X-Received: by 2002:a17:902:e802:b0:224:584:6f04 with SMTP id d9443c01a7336-2242888ab27mr315006605ad.18.1741845790022;
-        Wed, 12 Mar 2025 23:03:10 -0700 (PDT)
-Received: from thinkpad ([120.60.60.84])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c688866asm5616385ad.50.2025.03.12.23.03.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 23:03:09 -0700 (PDT)
-Date: Thu, 13 Mar 2025 11:33:03 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Vidya Sagar <vidyas@nvidia.com>, Frank Li <Frank.Li@nxp.com>,
-	Niklas Cassel <cassel@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] PCI: dwc: ep: Return -ENOMEM for allocation failures
-Message-ID: <20250313060303.66eqdf7ok5xpkokw@thinkpad>
-References: <36dcb6fc-f292-4dd5-bd45-a8c6f9dc3df7@stanley.mountain>
+	s=arc-20240116; t=1741845838; c=relaxed/simple;
+	bh=sBxebX+/Br9VVujF+As+JjAC+0rgul4iZ+Mw0seP8FY=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=lRJAt1mwa6e79kAbv1ZL7VcUi/wkh2Qr67AZpyyh/tosffd3ASi8td7uJrMtdfxcaJy/uC3CCzaLhWQj/zeaVSrLjsyX36MSO/dcRTn7ejCIsc5kul9fl9Lko7Bzrhads6r1KGya/ghU73qNxe1LbpL8908b0+I308OC2c/bSTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KqlYV7i1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CMvLnL031304;
+	Thu, 13 Mar 2025 06:03:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=eqNj9qijiBYrG8OOvp5pMa
+	Rj/2wvemLIREsZ5gX6peE=; b=KqlYV7i1N0OU6dOF4XmCCCCsFe3l2cpKQmX1U5
+	yC49h+e14VLkv6VhdfHOktwohXFkWYs39dLWUxN0lCbVIxe738d+yuNU1t/llepg
+	G9lQw6M85EaP1/l5kPgj3WxtkI+zdNOQ59mIcGWMKnO/BOfWMu++sawZCMDnHUZa
+	bCdNQx/bPnGydEYhOnw0o7gjKnxMu2djtH+LW4ZE131EynBBMz14ZHEnqfeXIPhv
+	t0Gaj4Up09RFZbLPiv8z8aM/3o+H7aNMfgNb+dEMrLtrLjH8HIgEqbEObNZETnSD
+	63IrRKahcPJTD8Up0nSIb9FSF0wl3slfJf7dDDc6LigOLvvA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2qmsad-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 06:03:52 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D63pNs010382
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 06:03:51 GMT
+Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 12 Mar 2025 23:03:46 -0700
+From: Imran Shaik <quic_imrashai@quicinc.com>
+Subject: [PATCH 0/2] Add support for cpufreq scaling on QCS8300
+Date: Thu, 13 Mar 2025 11:33:38 +0530
+Message-ID: <20250313-qcs8300-cpufreq-scaling-v1-0-d4cd3bd9c018@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <36dcb6fc-f292-4dd5-bd45-a8c6f9dc3df7@stanley.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADp10mcC/x3MQQqEMAxA0atI1gbaBkXmKoOLUKMGpGqDIoh3t
+ 7h8i/9vMMkqBr/qhiynmq6pwNcVxJnTJKhDMQQXGkeecI/WkXMYt2PMsqNFXjRNKNR65tBQywS
+ l3rKMen3nf/88L72KNdVpAAAA
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar
+	<viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Manivannan
+ Sadhasivam" <manivannan.sadhasivam@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        Imran Shaik <quic_imrashai@quicinc.com>
+X-Mailer: b4 0.14.1
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: BxV6SwvuZjBJ9EnvMemdsq6lV-j5Da-0
+X-Proofpoint-GUID: BxV6SwvuZjBJ9EnvMemdsq6lV-j5Da-0
+X-Authority-Analysis: v=2.4 cv=TIhFS0la c=1 sm=1 tr=0 ts=67d27548 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=Z8OjjQeRuBHFSbpv-LYA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_03,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 mlxlogscore=755 mlxscore=0 clxscore=1011 bulkscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 phishscore=0 impostorscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503130046
 
-On Wed, Mar 05, 2025 at 06:00:07PM +0300, Dan Carpenter wrote:
-> If the bitmap allocations fail then dw_pcie_ep_init_registers() currently
-> returns success.  Return -ENOMEM instead.
-> 
-> Fixes: 869bc5253406 ("PCI: dwc: ep: Fix DBI access failure for drivers requiring refclk from host")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Add cpufreq-hw node to support cpufreq scaling on QCS8300.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+---
+Imran Shaik (2):
+      dt-bindings: cpufreq: cpufreq-qcom-hw: Add QCS8300 compatible
+      arm64: dts: qcom: qcs8300: Add cpufreq scaling node
 
-- Mani
+ .../bindings/cpufreq/cpufreq-qcom-hw.yaml          |  2 ++
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi              | 26 ++++++++++++++++++++++
+ 2 files changed, 28 insertions(+)
+---
+base-commit: 9fbcd7b32bf7c0a5bda0f22c25df29d00a872017
+change-id: 20250313-qcs8300-cpufreq-scaling-e361aa2536a3
 
-> ---
->  drivers/pci/controller/dwc/pcie-designware-ep.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> index 20f2436c7091..1b873d486b2d 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> @@ -908,6 +908,7 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
->  	if (ret)
->  		return ret;
->  
-> +	ret = -ENOMEM;
->  	if (!ep->ib_window_map) {
->  		ep->ib_window_map = devm_bitmap_zalloc(dev, pci->num_ib_windows,
->  						       GFP_KERNEL);
-> -- 
-> 2.47.2
-> 
-
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Imran Shaik <quic_imrashai@quicinc.com>
+
 
