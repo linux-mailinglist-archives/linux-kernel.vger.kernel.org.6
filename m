@@ -1,126 +1,131 @@
-Return-Path: <linux-kernel+bounces-558644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC628A5E902
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:34:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A13BDA5E904
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:35:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 632D83BB40C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:33:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F29C33BB469
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9E3BE49;
-	Thu, 13 Mar 2025 00:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B006FC5;
+	Thu, 13 Mar 2025 00:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="O0WDE/Mk"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7AD10E3;
-	Thu, 13 Mar 2025 00:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="szJI721i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1A0BE49;
+	Thu, 13 Mar 2025 00:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741826035; cv=none; b=ObJNNWXNS9qY8n4uHThC8QsRj9TBnEjHvSAEyTmbJk/TyPJc9w66hEVp4T72UaN4+5kPhGtvDUTVdplcfYBIYtyopw08bdW+tf98OQfFVw4D6JC9yXfdKutwr4b+mybhWMkKGkUgLiFqo6xrVZV/RXgKOJa6tr2RtJqvMdEgk+I=
+	t=1741826111; cv=none; b=tb8a9kjjSC7ZLmcBH58gsDyQBrBbK2+ut9+LeCmdDU7ajdPAQHAArc4SYa46uuFscAJO1IaXRUPLR5479dZ4UcIHDWPAdfu4hoidD0silT6fgOWBhNqhT7FIa2DcCk7SMObpdSuSu1U6nTxrkUj4ofJyDcEd8zuHkTEWzX3lee8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741826035; c=relaxed/simple;
-	bh=6CkxKqdAjN/Cx3aZZ+ReIjRKn2TmSXeTFO6XNU+m+lU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=Vv7g/qXB3yU80UxF5+2FsHmElzVQUXtVXezofh9SSjyqAqz7HyhHnrGIu4pxtt+eRUff2TPYCmz3Eent1JoYtf+zZGd1i9LTUL8Ue8dfKkVzGLjk50h3a2JFolA3AVg5YInVEkavrE5Ol8DqV23/pMIu4NrIq7doYUsf5MdScvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=O0WDE/Mk reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=AB2GUHSL2k8vU974ZJtogILKP8rhMHvKGHGeZ+pVxWQ=; b=O
-	0WDE/MkX+VL2kULTxRHxI8f5O4zX5KcccF9Pc75nJE9dAr7HoUTj3oFSdOD0ipfV
-	4mdv68a85oNF7bxNT+HMz5mO+Lu3lOrxPRloYrptfdCaX8JY9J90WwXlAi+rj5eI
-	Sof4FTDtSOcod0qqa92c9KE1osByLNkUtqztGxcNi8=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-123 (Coremail) ; Thu, 13 Mar 2025 08:32:55 +0800
- (CST)
-Date: Thu, 13 Mar 2025 08:32:55 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Dmitry Baryshkov" <lumag@kernel.org>
-Cc: heiko@sntech.de, hjc@rock-chips.com, mripard@kernel.org,
-	cristian.ciocaltea@collabora.com, neil.armstrong@linaro.org,
-	yubing.zhang@rock-chips.com, krzk+dt@kernel.org,
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, robh@kernel.org,
-	sebastian.reichel@collabora.com,
-	"Andy Yan" <andy.yan@rock-chips.com>,
-	"stephen@radxa.com" <stephen@radxa.com>
-Subject: Re:Re: [PATCH v2 7/7] arm64: dts: rockchip: Enable DP2HDMI for ROCK
- 5 ITX
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <q3y36jgswj4xa2g3hnptc6kgzphbqfg675r5paa2lwvdseytio@jysj4f2i6osu>
-References: <20250312104214.525242-1-andyshrk@163.com>
- <20250312104214.525242-8-andyshrk@163.com>
- <q3y36jgswj4xa2g3hnptc6kgzphbqfg675r5paa2lwvdseytio@jysj4f2i6osu>
-X-NTES-SC: AL_Qu2fA/SZukEs4yKdYOlSyjNW+7xfHKv6+qRChMQvQtsqqTHr9T0KcVtuP1XR3//r4kRAiu7dpbs5Jch8KvJm
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1741826111; c=relaxed/simple;
+	bh=ZNMXClnUZbe+u7N9g4p0/U2o58T3siXKyG+xYh1KNH8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UXRl4WxnLTjlVVcfKA4f54cgFbpqQpleJwTy0+7dxqYtZyyhie86MyM7daCYjt37NPwEIxfhSCq6+Fa9qag4hGa2ci5JK6+thCmIlJn5si8FocmWd6FiKezk2nrU2Ppmad25emtjWb5hbo1qFNEStmyeblUIY/ljXgEW4omVqMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=szJI721i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 753E8C4CEEB;
+	Thu, 13 Mar 2025 00:35:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741826110;
+	bh=ZNMXClnUZbe+u7N9g4p0/U2o58T3siXKyG+xYh1KNH8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=szJI721ijiOwmyHqsOOzxkpLyFXE+rOlu87Xzg0kQcOuJdh2rJh6pTkxHOfEppdPX
+	 XKYnLleHgSCDzLndKsa3GzLTM3hmG8MzxEHel17dcGvTAfgcCnQwP3/qJ5uxpV4mDQ
+	 nWX70u156V1cVteJc0ePeqd9Pfua619gVkwd4jIEuIhjK3nLmZ7Ym5uUaJsfRZ9RB0
+	 omQFlv8x6RAsYrFq928GtWjByY6xLGThdekDrMeoNcjtAHRhwqVu8sy8AE2M1Q6ELV
+	 c+Tt8VDTb6EXflUKiuWhXrup3YxoGXKcA2ZEtmwvWmsUugIWEA0QUPPV0gMN8gYBK2
+	 xOyqr0/H8iM7g==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30bf8632052so4063811fa.0;
+        Wed, 12 Mar 2025 17:35:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU+9jChGobUwinU354f5Cf4V3QDuvKf8CzmHnrTOaBlsCfo2WiqFHGJNY+pcZQQcsyHyK6S6tr1JP8EEZA=@vger.kernel.org, AJvYcCVO1hbOFn651p91dssMmLmmgXszdpFVDfwJNBRJnU+NTxcwqTJFPWmgvUBE4acR7b9B0iF022+BKjDnT4YY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbCW5vwU4gXOuxAcT2B8fE88PKtH2DGcYwMs7TLA3DUOzhXqiL
+	/z4vX7WW+rrp52DEleO9eGDciyvObDCBi8qMjr6R4aEb2t6oQhykdioRHITlzUlIYKczHYIuflV
+	i9ia9WO5Ou75AATnu6ZVPcyuvAj4=
+X-Google-Smtp-Source: AGHT+IGYyXeYfkhDSwHrnAla25ar+VcB90pwC91yOVQMoN+zBq8t5iMIE1/pEMS8tJ0BkbPnYsR6nXBNJHT5Kb2jIXU=
+X-Received: by 2002:a05:6512:b14:b0:545:c89:2bc9 with SMTP id
+ 2adb3069b0e04-549910cb4a9mr9227384e87.43.1741826109127; Wed, 12 Mar 2025
+ 17:35:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <5858d492.44b.1958ceb23dd.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:eygvCgD3H4e3J9JnFCt9AA--.21925W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkAMPXmfSI2pHYgACsZ
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+References: <20250311-moddesc-error-v1-1-79adedf48d0e@oss.qualcomm.com>
+In-Reply-To: <20250311-moddesc-error-v1-1-79adedf48d0e@oss.qualcomm.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 13 Mar 2025 09:34:33 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASYFEFFbnqwDuJNf4ngU9uLavJuQqknOimpYeAeHyk1zQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JrQVAU-kF3eCnB0QvYcxVn-E2rNqouk7YLKaG-duzbfrpmut8i_jiufYdk
+Message-ID: <CAK7LNASYFEFFbnqwDuJNf4ngU9uLavJuQqknOimpYeAeHyk1zQ@mail.gmail.com>
+Subject: Re: [PATCH] script: modpost: require a MODULE_DESCRIPTION()
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Arnd Bergmann <arnd@kernel.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-CkhpIERtaXRyeSwKCkF0IDIwMjUtMDMtMTIgMjA6Mzk6MTcsICJEbWl0cnkgQmFyeXNoa292IiA8
-bHVtYWdAa2VybmVsLm9yZz4gd3JvdGU6Cj5PbiBXZWQsIE1hciAxMiwgMjAyNSBhdCAwNjo0Mjow
-OFBNICswODAwLCBBbmR5IFlhbiB3cm90ZToKPj4gRnJvbTogQW5keSBZYW4gPGFuZHkueWFuQHJv
-Y2stY2hpcHMuY29tPgo+PiAKPj4gVGhlIEhETUkgUG9ydCBuZXh0IHRvIEhlYWRwaG9uZSBKYWNr
-IGlzIGRyaXZlZCBieQo+PiBEUDEgb24gcmszNTg4IHZpYSBhIGRwMmhkbWkgY29udmVydGVyLgo+
-PiAKPj4gQWRkIHJlbGF0ZWQgZHQgbm9kZXMgdG8gZW5hYmxlIGl0Lgo+PiAKPj4gTm90ZTogUk9D
-S0NISVBfVk9QMl9FUF9EUDEgaXMgZGVmaW5lZCBhcyAxMSBpbiBkdC1iaW5kaW5nIGhlYWRlciwK
-Pj4gYnV0IGl0IHdpbGwgdHJpZ2dlciBhIGR0YyB3YXJuaW5nIGxpa2UgImdyYXBoIG5vZGUgdW5p
-dCBhZGRyZXNzCj4+IGVycm9yLCBleHBlY3RlZCAiYiIiIGlmIHdlIHVzZSBpdCBkaXJlY3RseSBh
-ZnRlciBlbmRwb2ludCwgc28gd2UKPj4gdXNlICJiIiBpbnN0ZWFkIGhlcmUuCj4+IAo+PiBTaWdu
-ZWQtb2ZmLWJ5OiBBbmR5IFlhbiA8YW5keS55YW5Acm9jay1jaGlwcy5jb20+Cj4+IC0tLQo+PiAK
-Pj4gKG5vIGNoYW5nZXMgc2luY2UgdjEpCj4+IAo+PiAgLi4uL2Jvb3QvZHRzL3JvY2tjaGlwL3Jr
-MzU4OC1yb2NrLTUtaXR4LmR0cyAgIHwgMzcgKysrKysrKysrKysrKysrKysrKwo+PiAgMSBmaWxl
-IGNoYW5nZWQsIDM3IGluc2VydGlvbnMoKykKPj4gCj4+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0
-L2Jvb3QvZHRzL3JvY2tjaGlwL3JrMzU4OC1yb2NrLTUtaXR4LmR0cyBiL2FyY2gvYXJtNjQvYm9v
-dC9kdHMvcm9ja2NoaXAvcmszNTg4LXJvY2stNS1pdHguZHRzCj4+IGluZGV4IDY3Yjg4NjMyOTI0
-OC4uMjlmMTBlYzlmMGMxIDEwMDY0NAo+PiAtLS0gYS9hcmNoL2FybTY0L2Jvb3QvZHRzL3JvY2tj
-aGlwL3JrMzU4OC1yb2NrLTUtaXR4LmR0cwo+PiArKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL3Jv
-Y2tjaGlwL3JrMzU4OC1yb2NrLTUtaXR4LmR0cwo+PiBAQCAtNTcsNiArNTcsMTggQEAgYW5hbG9n
-LXNvdW5kIHsKPj4gIAkJCSAgIkhlYWRwaG9uZSIsICJIZWFkcGhvbmVzIjsKPj4gIAl9Owo+PiAg
-Cj4+ICsJZHAtY29uIHsKPj4gKwkJY29tcGF0aWJsZSA9ICJkcC1jb25uZWN0b3IiOwo+Cj5Zb3Un
-dmUgd3JpdHRlbiB0aGF0IGl0IGlzIGFuIEhETUkgY29ubmVjdG9yLiBDb3VsZCB5b3UgcG9zc2li
-bHkgY2xhcmlmeSwKPndoeSBpcyBpdCBiZWluZyByZWdpc3RlcmVkIGFzIGEgRFAgY29ubmVjdG9y
-PyBJcyB0aGVyZSBhbnkga2luZCBvZgo+YSBicmlkZ2UgYmV0d2VlbiB0aGUgRFAgY29udHJvbGxl
-ciBhbmQgdGhlIEhETUkgY29ubmVjdG9yPwoKV2hlbiBJIHdhcyBwcmVwYXJpbmcgdGhpcyBwYXRj
-aCBhdCB0aGF0IHRpbWUsIEkgYWxzbyBoYWQgc29tZSBkb3VidHMuIApXaGV0aGVyIGl0IHNob3Vs
-ZCBiZSByZWdpc3RlcmVkIGFzIGEgRFAgY29ubmVjdG9yIG9yIGFuIEhETUkgY29ubmVjdG9yLiAK
-VGhlcmUgaXMgYSBEUDJIRE1JIGNvbnZlcnNpb24gY2hpcCBiZXR3ZWVuIHRoZSBEUCBvZiBSSzM1
-ODggYW5kIHRoaXMgaGRtaSAKaW50ZXJmYWNlLCBidXQgdGhpcyBjb252ZXJzaW9uIGNoaXAgZG9l
-cyBub3QgcmVxdWlyZSBhIHNvZnR3YXJlIGRyaXZlci4gCklmIHRoZSBjdXJyZW50IHdyaXRpbmcg
-aXMgaW5jb3JyZWN0LCBJIHdpbGwgY2hhbmdlIGl0IHRvIGhkbWktY29ubmVjdG9yIGluIHRoZSBu
-ZXh0IHZlcnNpb24uCgpUaGFua3MKPgo+PiArCQlsYWJlbCA9ICJEUCBPVVQiOwo+PiArCQl0eXBl
-ID0gImZ1bGwtc2l6ZSI7Cj4+ICsKPj4gKwkJcG9ydCB7Cj4+ICsJCQlkcF9jb25faW46IGVuZHBv
-aW50IHsKPj4gKwkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8JmRwMV9vdXRfY29uPjsKPj4gKwkJCX07
-Cj4+ICsJCX07Cj4+ICsJfTsKPj4gKwo+PiAgCWdwaW8tbGVkcyB7Cj4+ICAJCWNvbXBhdGlibGUg
-PSAiZ3Bpby1sZWRzIjsKPj4gIAkJcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKPj4gQEAgLTI2
-OCw2ICsyODAsMjQgQEAgJmNwdV9sMyB7Cj4+ICAJY3B1LXN1cHBseSA9IDwmdmRkX2NwdV9saXRf
-czA+Owo+PiAgfTsKPj4gIAo+PiArJmRwMSB7Cj4+ICsJc3RhdHVzID0gIm9rYXkiOwo+PiArCXBp
-bmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7Cj4+ICsJcGluY3RybC0wID0gPCZkcDFtMF9waW5zPjsK
-Pj4gK307Cj4+ICsKPj4gKyZkcDFfaW4gewo+PiArCWRwMV9pbl92cDI6IGVuZHBvaW50IHsKPj4g
-KwkJcmVtb3RlLWVuZHBvaW50ID0gPCZ2cDJfb3V0X2RwMT47Cj4+ICsJfTsKPj4gK307Cj4+ICsK
-Pj4gKyZkcDFfb3V0IHsKPj4gKwlkcDFfb3V0X2NvbjogZW5kcG9pbnQgewo+PiArCQlyZW1vdGUt
-ZW5kcG9pbnQgPSA8JmRwX2Nvbl9pbj47Cj4+ICsJfTsKPj4gK307Cj4+ICsKPj4gICZncHUgewo+
-PiAgCW1hbGktc3VwcGx5ID0gPCZ2ZGRfZ3B1X3MwPjsKPj4gIAlzdGF0dXMgPSAib2theSI7Cj4+
-IEBAIC0xMjYyLDMgKzEyOTIsMTAgQEAgdnAxX291dF9oZG1pMTogZW5kcG9pbnRAUk9DS0NISVBf
-Vk9QMl9FUF9IRE1JMSB7Cj4+ICAJCXJlbW90ZS1lbmRwb2ludCA9IDwmaGRtaTFfaW5fdnAxPjsK
-Pj4gIAl9Owo+PiAgfTsKPj4gKwo+PiArJnZwMiB7Cj4+ICsJdnAyX291dF9kcDE6IGVuZHBvaW50
-QGIgewo+PiArCQlyZWcgPSA8Uk9DS0NISVBfVk9QMl9FUF9EUDE+Owo+PiArCQlyZW1vdGUtZW5k
-cG9pbnQgPSA8JmRwMV9pbl92cDI+Owo+PiArCX07Cj4+ICt9Owo+PiAtLSAKPj4gMi4zNC4xCj4+
-IAo+Cj4tLSAKPldpdGggYmVzdCB3aXNoZXMKPkRtaXRyeQo=
+On Wed, Mar 12, 2025 at 4:49=E2=80=AFAM Jeff Johnson
+<jeff.johnson@oss.qualcomm.com> wrote:
+>
+> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+> description is missing"), a module without a MODULE_DESCRIPTION() has
+> resulted in a warning with make W=3D1. Since that time, all known
+> instances of this issue have been fixed. Therefore, now make it an
+> error if a MODULE_DESCRIPTION() is not present.
+>
+> Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+> ---
+> did my treewide cleanup for v6.11, Arnd had a few more stragglers that
+> he was going to fix. I hope that by posting, some of the 0-day bots
+> will pick it up and hopefully provide some feedback.
+
+
+I pushed this patch to a separate branch,
+so that 0day bot can compile-test it.
+
+If there is no error reported, I will move it to
+the for-next branch.
+
+
+
+
+> Note: I'm not really sure if *all* of these have been fixed. After I
+> ---
+>  scripts/mod/modpost.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index c35d22607978..c0b7a869ed24 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -1596,8 +1596,8 @@ static void read_symbols(const char *modname)
+>                                                      namespace);
+>                 }
+>
+> -               if (extra_warn && !get_modinfo(&info, "description"))
+> -                       warn("missing MODULE_DESCRIPTION() in %s\n", modn=
+ame);
+> +               if (!get_modinfo(&info, "description"))
+> +                       error("missing MODULE_DESCRIPTION() in %s\n", mod=
+name);
+>         }
+>
+>         for (sym =3D info.symtab_start; sym < info.symtab_stop; sym++) {
+>
+> ---
+> base-commit: 4d872d51bc9d7b899c1f61534e3dbde72613f627
+> change-id: 20250311-moddesc-error-2ad949dcc6ba
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
