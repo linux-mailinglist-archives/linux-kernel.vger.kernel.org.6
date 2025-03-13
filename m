@@ -1,137 +1,169 @@
-Return-Path: <linux-kernel+bounces-560439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 212BBA6043B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:27:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02330A6044D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:28:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 516833A6F1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:27:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B556119C2298
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D731F7095;
-	Thu, 13 Mar 2025 22:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAEF21F875B;
+	Thu, 13 Mar 2025 22:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YVsz8wcN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gKjx50c9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BF61D8A10;
-	Thu, 13 Mar 2025 22:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124C31F75A9;
+	Thu, 13 Mar 2025 22:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741904843; cv=none; b=fTuOwuhJ195IDLU2onHAmykILmNKk+Q9AMGV0+BfQLJtc4s5BaWaIA9cYXGRbqBxKsfvIMlZu6jtXynlm0H2i9kxywgTNdhP/P5+LDd2jcCNgHJ0XgJmGHcZRpM8lC8Qs6tz6klsGtsxq2bht8ITXcjvA+Ad/5VigI8hSpfh8L4=
+	t=1741904902; cv=none; b=cqkMtphbKHe4AjcJV5ZGzcaxLnzfpWFCAZLnka4r3BlDz/fkOqXCB2xRAqRUGooyy7TpYM2H9vknzCpad4+WB175dP3CF2XyPFg2ciFo+1u4jQE2zgflDhb3NC6Z+RNKWb7eBf11+HvW7kOOUmQEnA7xVsHFuzmjXvcLszQtbPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741904843; c=relaxed/simple;
-	bh=oqMznX9Nd36QyVtbCLNhEMH/gemQ9Km8Eei7KAjhxC0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dWB86KPKGTmTdYwI7eytEHlC3YQYHs5QmP6pPht8X2xwppu9niRm72inYJ4m/iXXKwfIsMCVXXNpjTy+VAmcG/7LPc0a/paDCNlzW5QUrS/9PuNvn13WdD6sJmhH9gP66/U1TTHUkAhrGoWBhJDZd9zT7TxEQ6jxaa6sl5W+fJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YVsz8wcN; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741904842; x=1773440842;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=oqMznX9Nd36QyVtbCLNhEMH/gemQ9Km8Eei7KAjhxC0=;
-  b=YVsz8wcNFG8rSziNXv7p9YgrEqzjbGx4WJW0H+NvZyUdF0sPEHJGNJuJ
-   KxVSN/miN2jwtgDmu77SHi7tkgnZK+RPQPRyV1BVhwnYcYlFtgeYLQsSO
-   cD9chxC7CJBS8L42vDAsxR3Ygrf1t9RiMYtHyJp4V28zkLZz525J8JBB7
-   kn+EGm6Ft676yGMuMQdW9qz0HZxGg9quGAdoAOs4TIGXRCDB1pia2rhBt
-   ADORp4gbILsSiCctkLzSSJbUyeDVve8c1UN7AW5qsvJjdJrLqzodi95rv
-   Wbai7Cs5pwwWaz/VRWYmphuS7lRxOkqd37WTdP9fce2PNgGisn8QoLMLN
-   g==;
-X-CSE-ConnectionGUID: iDImOkpcTwSlU3LubxpFgw==
-X-CSE-MsgGUID: LkPRswgbRCqL1yf2m+038g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="53252577"
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="53252577"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 15:27:21 -0700
-X-CSE-ConnectionGUID: HUmAPeRjTqOMgxyfZS0kcQ==
-X-CSE-MsgGUID: gRdjlx2oS0uGP+mByYzGgw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="121591133"
-Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.108.86]) ([10.125.108.86])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 15:27:19 -0700
-Message-ID: <b2bb61f0-6250-4b90-a765-c2873eccb07d@intel.com>
-Date: Thu, 13 Mar 2025 15:27:18 -0700
+	s=arc-20240116; t=1741904902; c=relaxed/simple;
+	bh=o7UMXnwXNFO3PGtSyVpZFrQrH7A6FtO8QMXwMvwlE70=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KkFcuhoyImP0OptAFVvd6DXe3ktSPvjEJP4HGxDvfvMaAZa2t6UJ43ztRsti76DYXWomI46ZpfjbUab0soyqQRaEUSoYyZZYPWwFVmkeey8EZm1/9cOy8EyEzo2pk+BBT2YnqKUztH1JxIjBf8R+K377FsuzAuZ5sDwl9paChSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gKjx50c9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13C55C4CEDD;
+	Thu, 13 Mar 2025 22:28:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741904901;
+	bh=o7UMXnwXNFO3PGtSyVpZFrQrH7A6FtO8QMXwMvwlE70=;
+	h=Date:From:To:Cc:Subject:From;
+	b=gKjx50c96+AOt7Od3k3N6tlxQyo+ZUO57Mi8Efqkkh+ymAK15/5mOOeErqblDkAdY
+	 PIKEuixrcua3aCgwU+ygmjFR+xA2FNGZs1EzrDSZjWs5DQUI3H3iSzpwkyLjSb8ibk
+	 dZOL437FCUYJkWWTcT/RTaPgdZi+A3IRSqD4SAxfMTTkYTdyTqSzv7osb/+nimHa+n
+	 2OqOpEVMWH/pzPXDDxePeT8+EqU4VT+aCoIw/x6Sdwc3cL2tkDYDXgEyYHykUZtOkI
+	 ysgijvjzwj4F0GQS/EyBU6O9VI72+CK6X/yjB/MfSdrf6JexlWOyOgJ/JCBJkhZPk0
+	 dACcNyEhhZVBw==
+Date: Fri, 14 Mar 2025 08:58:23 +1030
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2][next] firewire: core: avoid
+ -Wflex-array-member-not-at-end warning
+Message-ID: <Z9NcB81yfPo-8o0h@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cxl/acpi: Add Null check for adev
-To: Alison Schofield <alison.schofield@intel.com>,
- Chenyuan Yang <chenyuan0y@gmail.com>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, vishal.l.verma@intel.com,
- ira.weiny@intel.com, dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250313190753.450546-1-chenyuan0y@gmail.com>
- <Z9NWdob3CSy9UDq5@aschofie-mobl2.lan>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <Z9NWdob3CSy9UDq5@aschofie-mobl2.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
+a flexible structure where the size of the flexible-array member
+is known at compile-time, and refactor the rest of the code,
+accordingly.
 
+So, with these changes, fix the following warning:
 
-On 3/13/25 3:04 PM, Alison Schofield wrote:
-> On Thu, Mar 13, 2025 at 02:07:53PM -0500, Chenyuan Yang wrote:
->> Not all devices have an ACPI companion fwnode, so adev might be NULL.
->> This is similar to the commit cd2fd6eab480
->> ("platform/x86: int3472: Check for adev == NULL").
->>
->> Add a check for adev not being set and return -ENODEV in that case to
->> avoid a possible NULL pointer deref in cxl_acpi_probe().
->>
-> 
-> Avoiding the NULL ptr deref seems obvious as ACPI_COMPANION() return
-> is routinely checked throughout the kernel. Why the reference to the
-> other commit? Do these devices have something in common?
-> 
-> I'm curious as to when *this* specific adev can be NULL.
+drivers/firewire/core-cdev.c:1141:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 
-You get a NULL by either the the platform device being probed is not setup correctly and the fwnode end up failing is_acpi_device_node() or CONFIG_ACPI is not set. The second is impossible as cxl_acpi depends on CONFIG_CXL_ACPI which
-depends on CONFIG_ACPI. The likelihood of the first I don't think is high unless the platform device for ACPI0017 is corrupted. So in this instance in the probe function, the checking while is fine for code correctness, may not be absolutely necessary perhaps. Just my 2 cents.
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+Changes in v2:
+ - Adjust COUNT argument for DEFINE_RAW_FLEX() to 64. (Takashi)
 
-DJ
+v1:
+ - Link: https://lore.kernel.org/linux-hardening/Z9AA9tAbcIcz6BMO@kspp/
 
-> 
-> Looks good to check it like you do here, or if someone chimes in that
-> it can never be NULL, just add a code comment saying so.
-> 
-> Perhaps emit a message on NULL too.
-> 
-> 
-> 
->> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
->> ---
->>  drivers/cxl/acpi.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
->> index cb14829bb9be..9195001db3c1 100644
->> --- a/drivers/cxl/acpi.c
->> +++ b/drivers/cxl/acpi.c
->> @@ -823,6 +823,9 @@ static int cxl_acpi_probe(struct platform_device *pdev)
->>  	struct acpi_device *adev = ACPI_COMPANION(host);
->>  	struct cxl_cfmws_context ctx;
->>  
->> +	if (!adev)
->> +		return -ENODEV;
->> +
->>  	device_lock_set_class(&pdev->dev, &cxl_root_key);
->>  	rc = devm_add_action_or_reset(&pdev->dev, cxl_acpi_lock_reset_class,
->>  				      &pdev->dev);
->> -- 
->> 2.34.1
->>
+ drivers/firewire/core-cdev.c | 42 ++++++++++++++++--------------------
+ 1 file changed, 19 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/firewire/core-cdev.c b/drivers/firewire/core-cdev.c
+index b360dca2c69e..bd04980009a4 100644
+--- a/drivers/firewire/core-cdev.c
++++ b/drivers/firewire/core-cdev.c
+@@ -1137,10 +1137,7 @@ static int ioctl_queue_iso(struct client *client, union ioctl_arg *arg)
+ 	unsigned long payload, buffer_end, transmit_header_bytes = 0;
+ 	u32 control;
+ 	int count;
+-	struct {
+-		struct fw_iso_packet packet;
+-		u8 header[256];
+-	} u;
++	DEFINE_RAW_FLEX(struct fw_iso_packet, u, header, 64);
+ 
+ 	if (ctx == NULL || a->handle != 0)
+ 		return -EINVAL;
+@@ -1172,29 +1169,29 @@ static int ioctl_queue_iso(struct client *client, union ioctl_arg *arg)
+ 	while (p < end) {
+ 		if (get_user(control, &p->control))
+ 			return -EFAULT;
+-		u.packet.payload_length = GET_PAYLOAD_LENGTH(control);
+-		u.packet.interrupt = GET_INTERRUPT(control);
+-		u.packet.skip = GET_SKIP(control);
+-		u.packet.tag = GET_TAG(control);
+-		u.packet.sy = GET_SY(control);
+-		u.packet.header_length = GET_HEADER_LENGTH(control);
++		u->payload_length = GET_PAYLOAD_LENGTH(control);
++		u->interrupt = GET_INTERRUPT(control);
++		u->skip = GET_SKIP(control);
++		u->tag = GET_TAG(control);
++		u->sy = GET_SY(control);
++		u->header_length = GET_HEADER_LENGTH(control);
+ 
+ 		switch (ctx->type) {
+ 		case FW_ISO_CONTEXT_TRANSMIT:
+-			if (u.packet.header_length & 3)
++			if (u->header_length & 3)
+ 				return -EINVAL;
+-			transmit_header_bytes = u.packet.header_length;
++			transmit_header_bytes = u->header_length;
+ 			break;
+ 
+ 		case FW_ISO_CONTEXT_RECEIVE:
+-			if (u.packet.header_length == 0 ||
+-			    u.packet.header_length % ctx->header_size != 0)
++			if (u->header_length == 0 ||
++			    u->header_length % ctx->header_size != 0)
+ 				return -EINVAL;
+ 			break;
+ 
+ 		case FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL:
+-			if (u.packet.payload_length == 0 ||
+-			    u.packet.payload_length & 3)
++			if (u->payload_length == 0 ||
++			    u->payload_length & 3)
+ 				return -EINVAL;
+ 			break;
+ 		}
+@@ -1204,20 +1201,19 @@ static int ioctl_queue_iso(struct client *client, union ioctl_arg *arg)
+ 		if (next > end)
+ 			return -EINVAL;
+ 		if (copy_from_user
+-		    (u.packet.header, p->header, transmit_header_bytes))
++		    (u->header, p->header, transmit_header_bytes))
+ 			return -EFAULT;
+-		if (u.packet.skip && ctx->type == FW_ISO_CONTEXT_TRANSMIT &&
+-		    u.packet.header_length + u.packet.payload_length > 0)
++		if (u->skip && ctx->type == FW_ISO_CONTEXT_TRANSMIT &&
++		    u->header_length + u->payload_length > 0)
+ 			return -EINVAL;
+-		if (payload + u.packet.payload_length > buffer_end)
++		if (payload + u->payload_length > buffer_end)
+ 			return -EINVAL;
+ 
+-		if (fw_iso_context_queue(ctx, &u.packet,
+-					 &client->buffer, payload))
++		if (fw_iso_context_queue(ctx, u, &client->buffer, payload))
+ 			break;
+ 
+ 		p = next;
+-		payload += u.packet.payload_length;
++		payload += u->payload_length;
+ 		count++;
+ 	}
+ 	fw_iso_context_queue_flush(ctx);
+-- 
+2.43.0
 
 
