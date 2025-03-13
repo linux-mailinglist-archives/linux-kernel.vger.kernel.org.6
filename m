@@ -1,122 +1,103 @@
-Return-Path: <linux-kernel+bounces-559988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDAF8A5FC36
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:41:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F5AA5FC41
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:42:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9B0E170E3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:41:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A07323BC79D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14F726B2DC;
-	Thu, 13 Mar 2025 16:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0304726B94A;
+	Thu, 13 Mar 2025 16:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="rWqf+0PM"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gUBDOc9w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B37F26AABA
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 16:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509D42698B9;
+	Thu, 13 Mar 2025 16:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741884008; cv=none; b=ei+KqUXi2WuhkHOQgFB8zi4q15xZfUFKBt3V2TZq7VoCDMZFoWvY08XW1WkjL8ARnPn0URJ7A0Qjm0VwSaJoQbL0pVW295K+SrTN71S/RG4/t4fyy1ftaB/dHgmA+kP5oC88BX8K6kAg3OZpaQ6uUbbUhc3IyIu+z5GgrjFguVs=
+	t=1741884015; cv=none; b=XNSishg505WVpi5eE6xNBVjS15INArzd9RKzlvfsJzD+p5WSpjl85r5xdcJnb/SDlDvFyzqLOrfySmBqf77+k2d8vk+KaRWBJTjN+oFaPfilf5PadpDQ+mMHjfbBkop5/AB2w0whBx1/7NytkmLUqmB3whRpzU9o1AU/CRWT4Uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741884008; c=relaxed/simple;
-	bh=GWLwb/in/ljzG15bf2lZCq2gdMYjM1TmRRBfkCLRuqc=;
+	s=arc-20240116; t=1741884015; c=relaxed/simple;
+	bh=p8AVcBEQ4JH4wcFU3EvZQIw+okBDu/uodFFvEyHDmr0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dIKYZV3uKtOwwryOROq6DNLeOyW3ZXtIBx0dpF0UL9GNyGK1z7Nl5Nd8FcMhPZvgy5M3IJnQ04H9p/43vt77y+XyJVP0yE5t35K0ktdIr/xBeOUjs1yic1D0ByqUBwNb9lbHUvYSSLLMdViCSKM74p8nkVeTu9jex8qWJZ+RtqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=rWqf+0PM; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6e8fce04655so11150826d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:40:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1741884005; x=1742488805; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AU1db5kv6b5O3y8o3SsJx1lUw+kz3Y+K2K5M1PC6NRk=;
-        b=rWqf+0PMKiCEcaZkh/n/kSfZHXtA7YK7bKZ5XT9cGoHGO4qPuc5/gUpqrb+O6nUW78
-         6CrObp3C3UZqq35+BOgM2pJDk56a6Phf7jcgiCLWEG/u5sKv+8Q6wMymR1DAaIzPBTJp
-         hCmqiYrRxiFdmziM/xnKCrGEw+0lLH/rkaDtl3OXpWsTUJrkKHxxFnlf1rRw1OKtHtLu
-         A6XKWLEkAxrIkgE6JEMvKLI/24Y3IRWPQtBSulPjFM6etFLU6sUHRee8QfDdElDxZ/L2
-         QnGa/LjUwYQKYVFNIdK0y9EyVUP0a9doLQ4f9Nq4iGDfWzl7RNIvfCLCN1gv7R2LPAP5
-         NR9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741884005; x=1742488805;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AU1db5kv6b5O3y8o3SsJx1lUw+kz3Y+K2K5M1PC6NRk=;
-        b=qJwOgHH1EYB5YE2VsFpjE3gRRqMe87Bl9LyFrESI6mVjaKCw3C249JS6QKPJB2+3xt
-         +9nSZznydPlmF8cm1ivs8bgsXMt06D2vImGHgcpnPPJl9suAE5yt/FDcx0Cn8EqdnJKX
-         +3U7W4049Xn5IQMF+91+qnOFjJD1SYOPtgemi3mEicF7Objn7sOqUsXOaEIFR5aX/lCw
-         Y8/TkUv/mxYfnX7R5PNmSWnm9Jlhr8nSBEKY8Fx5cEWyy23n0YpwxeVGIPB0agauyueB
-         T/s69yiN/VMi7G8tl0LplPAowh/3x1B7thvEgLtRRNHGNzPTQvPy12KoC045YaCRAC5P
-         aDkA==
-X-Forwarded-Encrypted: i=1; AJvYcCXx2MdFSZI9+R+Z0VPp+fQdN3K1H4qNYszaZtJnc9LjEYv8IAogsX9ccTo0ZQXu25Yf8339vaeNkBMfNIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7RUb8ZveAd5pSASuVmoNbsKrSvZJE+W6Mevqy6SBGvMcI5inU
-	NOr1Hj6xR5A7jPz/eCsrYY+ohfFqqoWi6m/1rTEn01dhNFLszWDLxHUDf16vfrg=
-X-Gm-Gg: ASbGncuOy0rys7Hvt7Qud5NNBTImE61Ek5yQg1oWR8S6QUqPjb3KVkmXWmh0rQFmUMW
-	2y3ecNmjJ+h2O3OwjWdQjiRExO9BJ/3JDU/FXO2y8fdDqW56YrDIdUDt/1vtmNOCjwJpOl3Y9gS
-	gQqhp3jPWvZ9V7ARJ2YPQnBrvDuZ9jcJieWjm0vjR7vRrxL5hiB75AuSHIoFc6xoic7zEgd0ipo
-	wuYhLubdWz3GZmB6wXrZasqXESttmhlYo0KFJGlwFv2kk1scXeoWqcCFbo2RmhqQ7FIIHSr5gsz
-	WqNkpVMAmX6QacrG6KTDPBb8MGxmt9QYfVzyKyRouORL6jWHSn11/eJyhXu5IZXVuRW+zU/bjnQ
-	jnKHLgNzqgGwEhSvKi29rGnur5mc=
-X-Google-Smtp-Source: AGHT+IFkbHVcwllGuGBIJA3zC1/en1QL/cRzQlTpw+FJ8AJ/Tz+liHnNiv/rq/e44ltwNEtCG6qzGw==
-X-Received: by 2002:a05:6214:f62:b0:6e8:9526:5788 with SMTP id 6a1803df08f44-6ea23b41e51mr182171836d6.0.1741884005199;
-        Thu, 13 Mar 2025 09:40:05 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade24ea07sm11488136d6.66.2025.03.13.09.40.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 09:40:04 -0700 (PDT)
-Date: Thu, 13 Mar 2025 12:40:02 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Rakie Kim <rakie.kim@sk.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
-	joshua.hahnjy@gmail.com, dan.j.williams@intel.com,
-	ying.huang@linux.alibaba.com, kernel_team@skhynix.com,
-	honggyu.kim@sk.com, yunjeong.mun@sk.com
-Subject: Re: [PATCH v2 3/4] mm/mempolicy: Enable sysfs support for memory
- hotplug in weighted interleave
-Message-ID: <Z9MKYlJW9WtotzR3@gourry-fedora-PF4VCD3F>
-References: <Z9Gy-No6pXFWZAyc@gourry-fedora-PF4VCD3F>
- <20250313063416.703-1-rakie.kim@sk.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bX56mM2sZS/1xYofO0BZvfrhF1m7cRzrOv6Xf72j1Wf2XED/k3yJo30UCk8EDhl30uGd9gfJ/YtAZO22NT3SpQdslPv1g5QTb17r5xWDbDfBsgVJ2wleH2u+TBYy7q9eJ+/ZAMjiI0VCYMNXzSUpkhdZfY6kx+dCzM6eCEa6nOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gUBDOc9w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 124B1C4CEDD;
+	Thu, 13 Mar 2025 16:40:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741884014;
+	bh=p8AVcBEQ4JH4wcFU3EvZQIw+okBDu/uodFFvEyHDmr0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gUBDOc9w3N3QjozeGeQIILT8Mbe5q45yfDahRhGlWKbXa6cAbkX28apn5101mzy0q
+	 r71b8K0QrswxlVM5UG8sxjOtJficURk0jRjeStTWrQAhljkS3N/XvAkSp3G7BRRDq/
+	 jEfUNBcPn6VkQtJRHV2qR0sVlTt5RQcALX5skRPgStcridDEVUtZ/yRLq/L7zoOjR+
+	 nu5W9LqomCOD6KOvsgQkcVhAb/5Q30CknG/rSnlFTV+go2RSYFjLNHbzp8kZaub6VS
+	 HKRgHske4Yf60+FjEutO8HFykny5ohBDeyE/ExZDr83PIdcqsrK+PWsgOds4njbUY1
+	 PWqLQw+Gk8mMw==
+Date: Thu, 13 Mar 2025 16:40:08 +0000
+From: Lee Jones <lee@kernel.org>
+To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+Cc: ukleinek@kernel.org, alexandre.torgue@foss.st.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, jic23@kernel.org,
+	daniel.lezcano@linaro.org, tglx@linutronix.de,
+	catalin.marinas@arm.com, will@kernel.org,
+	devicetree@vger.kernel.org, wbg@kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	olivier.moysan@foss.st.com
+Subject: Re: [PATCH v3 2/8] mfd: stm32-lptimer: add support for stm32mp25
+Message-ID: <20250313164008.GC3645863@google.com>
+References: <20250305094935.595667-1-fabrice.gasnier@foss.st.com>
+ <20250305094935.595667-3-fabrice.gasnier@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250313063416.703-1-rakie.kim@sk.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250305094935.595667-3-fabrice.gasnier@foss.st.com>
 
-On Thu, Mar 13, 2025 at 03:34:10PM +0900, Rakie Kim wrote:
-> On Wed, 12 Mar 2025 12:14:48 -0400 Gregory Price <gourry@gourry.net> wrote:
+On Wed, 05 Mar 2025, Fabrice Gasnier wrote:
+
+> Add support for STM32MP25 SoC.
+> A new hardware configuration register (HWCFGR2) has been added, to gather
+> number of capture/compare channels, autonomous mode and input capture
+> capability. The full feature set is implemented in LPTIM1/2/3/4. LPTIM5
+> supports a smaller set of features. This can now be read from HWCFGR
+> registers.
 > 
-> Given that this adjustment is part of integrating the refactored
-> structure, I believe this patch does not need to be split into two.
-> However, I would appreciate any further input you may have on this.
->
+> Add new registers to the stm32-lptimer.h: CCMR1, CCR2, HWCFGR1/2 and VERR.
+> Update the stm32_lptimer data struct so signal the number of
+> capture/compare channels to the child devices.
+> Also Remove some unused bit masks (CMPOK_ARROK / CMPOKCF_ARROKCF).
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+> ---
+> Changes in V2:
+> - rely on fallback compatible as no specific .data is associated to the
+>   driver. Compatibility is added by reading hardware configuration
+>   registers.
+> - read version register, to be used by clockevent child driver
+> - rename register/bits definitions
+> ---
+>  drivers/mfd/stm32-lptimer.c       | 33 ++++++++++++++++++++++++++++-
 
-Another way of saying this is: can you please change the ordering of
-patch 2 and 3 and place the functional changes into "make mempolicy
-support memory hotplug" patch.
+Looks okay.
 
-It's a little odd to "make mempolicy support memory hotplug" and then
-follow that up with a patch that says "now make it REALLY support it".
+>  include/linux/mfd/stm32-lptimer.h | 35 ++++++++++++++++++++++++++++---
 
-Patch 2 should read:
-   "Refactor weighted_interleave sysfs to allow node structure to be
-    dynamic"
-Patch 3 should read:
-   "Make weighted interleave sysfs structure support memory hotplug"
+Assumingly this patch is not independent of the others?
 
-I think you'll find the patches end up looking much cleaner this way as
-well.
-
-~Gregory
+-- 
+Lee Jones [李琼斯]
 
