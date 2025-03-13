@@ -1,203 +1,113 @@
-Return-Path: <linux-kernel+bounces-559905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B79A9A5FAF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:13:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08410A5FAF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:13:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AD7F3A5C7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:09:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A23E6188DEAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9A626A0B3;
-	Thu, 13 Mar 2025 16:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8371A26A0E2;
+	Thu, 13 Mar 2025 16:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GW+PyTZO"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnuYAtXc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF4B268FF9
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 16:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8C226980A;
+	Thu, 13 Mar 2025 16:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741881684; cv=none; b=p1K3YzVLdDygtSPG1VKrcSZLzTl11hcDOd2bjUZJ2KnSe9fzGwz5yeiJGDRfFAxwd+lqE4vkvU3BSlPBYceYiUK5b78GJftoFd8LN6kCSEZZXvN6oI6bJAE8LnAxraxZf7DmW7luDzwTeUgamAtGOCaH2Xus3Mh+qjNJlNUBGmI=
+	t=1741881737; cv=none; b=ar3bOgBYovCAC+kyoGsvbizhbIpSt/SIkgjxvFylqfFvukir8N8r6sEZXnP2nE3AP9/uSpW/tWljBerO8NSJM5NKOV0ynnNzCE9Q/FStTCzcRycXKS6gqCPKDZbxfCh6YRTlADue5V2VYy6ZqTxQm0P8ng29P4MaUS2YlMzjm+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741881684; c=relaxed/simple;
-	bh=He1qoD1LyuJLmPXOu6Sug+RnIL2fCie3WCh5VYdyMDk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WPYiNtzGe1jeJ+U5v9kruc9XJnqLFfBXkXM0ljy/+MXCufSjzB+PSCdqewb4cux6Cu1e2Y7y/BlGpELoTUJbHVtZswiZ6fZJCLGH+Fc1l9Xu5WfByetQD5fvA/0qfuxzPHFfRxb5EYa4A7wr9B0qbQfHVyOjRG7Znqo13xEreG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GW+PyTZO; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2240aad70f2so197895ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:01:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741881682; x=1742486482; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W/yH+WMcOt8tNQM0srrtHpsC9U4iKncCQNGb3KLC61c=;
-        b=GW+PyTZOHDeFgOzZP5gVqe5lzT1KIkWwdj++6Dx8csEPtaVJQ1iuHfuXCuS5SjMSti
-         pe9QJ/ciDWV7+ka4PisEo0k2EDF6aN3s8tK0nzpO1TJSd9xoHlhFoibQGVg9BtHW4vAX
-         JPxEx+F03e/zb1HFhjoYJV6dzbw2PVwpp20SU3BXykIIxarVGv9M3kybqT8ig7PMVawf
-         c5q5OxmXPcbyP6w/GpEmHjfA4oF4na6VWlX/ceY02c1eDSO27Hx6fpPcqo+HoegZi5oz
-         dahS4uGaA33s+sf0KotUXzSjZiQ++5U7ojxHSDy09hBsLopOR5Ts7IuPuc/6EIuCcS5S
-         Tz9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741881682; x=1742486482;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W/yH+WMcOt8tNQM0srrtHpsC9U4iKncCQNGb3KLC61c=;
-        b=Oqank+7nLk6/EsnrvVDn1/0NNAZcJgC06Vqnaw31UkfNnwGK86UAvjVeSvqZuE7cWk
-         2Hl3YD7bZyod6idv/6Hs0aD8q50R1xX1ja8GktfWyRfuOAUOyATKtfQCH/JfkxeIJ22i
-         gDH67ad8UYBUDSLpo/q26BjFROORCVjjFvF+PjAJftMNS2G8Uvsl3TG2e6ijw2TkFFKC
-         iiHYCew/h1gV/jq02qJQkZgFGm28F9aG2G49OwMeky8Kw3hUfQ1+zVl/w8cFJxV0tdzO
-         3z72/Qk+Ek6ftPBA8R6H1AZbkcmvQ0Es7lszc5javCMX2crSOnZs4vFibzUE+Rxyk1X5
-         Ajvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWqm8BCdgzVkxGCnxwbEBGCtnRn4+xQ2fmBAc6r1ipVyWatKfSOV/o4sndK6no7N0T7MmkNcxrmVPZOTj4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwK+xZgHl1CTOZIPKJhemYYpF9TSJp8qkrWD7zrrMs8w3Zz2vU
-	Vgxa35dREXmvI93bcLsNue7AiDdoC/rbc40WJnNaSHpoOStrcn2xtEFGQYBHtKyX7Cbq7wU0p3F
-	tOSoG6PSZ+PQkVgvC8W9bWyDt+F36RNlAKPk5
-X-Gm-Gg: ASbGncuoO3Kcr6vvXXC4bStdMCVZrpZxde5WvXDm8ZmB1DO8sf0uwDrWYHLVC5ZZbFZ
-	1UWQgq2PlrjVHhuM1RiBUu4piVufxTIuhfx270F+951c3vjCNxjbV5VnSzkz1U0DGJJu/U8/9ux
-	3KGuqO4+SqvFoxrqIODBkhw7/C751MJU+YPk6ju54sQdUE/vwyrS5ll/E=
-X-Google-Smtp-Source: AGHT+IEfR+iXZ7BebnhxB5okisX5ERNMertQsNLMEMPpFQikCdkWp3eUopoaUifcDnJZ/HTnk/fkfvYLDMyu7hcQBE8=
-X-Received: by 2002:a17:903:19e8:b0:215:7ced:9d66 with SMTP id
- d9443c01a7336-225c5322e12mr2999115ad.10.1741881681251; Thu, 13 Mar 2025
- 09:01:21 -0700 (PDT)
+	s=arc-20240116; t=1741881737; c=relaxed/simple;
+	bh=SIwoOnJbCCZD6NLPzZTs8MK5F2JNGdpdSvWQ8Oqdt7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=euEWiLsjkNedMAshNKM5/B7obtDwnOaBDIUo7+fzF6qrhseVA3dl1K4CjPpF2iPs67W12hkaXwPt1HzS8AvUYmruyEnGufIohjWBerXx22gclLpd31Ipt4j1/Lqt9yNRrv6sewR1U+Zg3sNFRF5G0wlUag1TDVaZ8nMwkSnhS0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnuYAtXc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF852C4CEDD;
+	Thu, 13 Mar 2025 16:02:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741881737;
+	bh=SIwoOnJbCCZD6NLPzZTs8MK5F2JNGdpdSvWQ8Oqdt7k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FnuYAtXcv4mrX7gH+rVqZueFOZwmu7zNbeuLL+rzBt0Ym3wTPGutW76g/dTeEgnts
+	 fl/Qx3h2ds9r996R1cLAefj3GAlxTP8ObHpJxxmL2YeBqSXmwSozI+/9S0svALjbrN
+	 YoE+G3mnMJu5tQJYyGSBKyudVzTovgoTyJrtCeJNAvj4cxPZNpd4MZMECI00n8ByBA
+	 my7S6e5iM+Q51hFo1k7l3+tYy7WOAjlIS9eJE0jvqUeq5UDbprCuVrKkE6MPR1QoOU
+	 R+YEeQUj3rfxGdu+xvmdmhGJGW2TBh4PqhzMOc6GAxkY7QOnEfWryU4lDuI54OtsGQ
+	 FAPHAi2E4wa9A==
+Date: Thu, 13 Mar 2025 17:02:12 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Heiko Carstens <hca@linux.ibm.com>, Kees Cook <kees@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, sparclinux@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] s390: mv s390 sysctls into their own file under
+ arch/s390 dir
+Message-ID: <t3q6lsy4tjlp5ngapyguwdzu5arorznl3bgjr3iki3rudetuw5@waddjgfn7vvu>
+References: <20250306-jag-mv_ctltables-v2-0-71b243c8d3f8@kernel.org>
+ <20250306-jag-mv_ctltables-v2-6-71b243c8d3f8@kernel.org>
+ <20250307152620.9880F75-hca@linux.ibm.com>
+ <r73ph4ht5ejeeuj65nxocmqp7pury2mekz2lz3r6fs264s24c4@ransymcrzk2h>
+ <your-ad-here.call-01741690967-ext-1293@work.hours>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313075126.547881-1-gautam@linux.ibm.com> <Z9LnuXCvK5P5KCiU@thinkpad2024>
-In-Reply-To: <Z9LnuXCvK5P5KCiU@thinkpad2024>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 13 Mar 2025 09:01:10 -0700
-X-Gm-Features: AQ5f1JrxRsSvm9uzSroxX2RwhQ6wbjbDcA0dzrSUad0a-XkWOT__3vkZ8beC4io
-Message-ID: <CAP-5=fWjca+SMBdsyPe8Ggsqrqz=ZzWqxDYhaF+pcYk0MJ12zA@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/3] Introduce a C extension module to allow libperf
- usage from python
-To: "John B. Wyatt IV" <jwyatt@redhat.com>
-Cc: Gautam Menghani <gautam@linux.ibm.com>, peterz@infradead.org, mingo@redhat.com, 
-	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <your-ad-here.call-01741690967-ext-1293@work.hours>
 
-On Thu, Mar 13, 2025 at 7:12=E2=80=AFAM John B. Wyatt IV <jwyatt@redhat.com=
-> wrote:
->
-> Hello Gautam
->
-> On Thu, Mar 13, 2025 at 01:21:21PM +0530, Gautam Menghani wrote:
-> > In this RFC series, we are introducing a C extension module to allow
-> > python programs to call the libperf API functions. Currently libperf ca=
-n
-> > be used by C programs, but expanding the support to python is beneficia=
-l
-> > for python users.
-> >
-> > The structure of the patch series is as follows:
-> > 1. Patch 1 : Create wrappers for the perf structs which are used by
-> > examples/counting.c
-> >
-> > 2. Patch 2: Create the C extension module that maps and exposes the
-> > libperf functions to python programs
->
-> May I ask why you are not using SWIG? With libcpupower the kernel has
-> already been using SWIG to generate Python bindings for a C user-space AP=
-I.
->
-> This has several advantages including a much smaller footprint (you only
-> need to copy the header definitions into a .swg file), can generate for
-> several languages (Perl, Ruby, Java and C#), and SWIG is an active,
-> tested, and mature piece of software code that has been around for
-> almost as long as the Linux kernel.
->
-> Python bindings including the makefile as an example:
-> https://elixir.bootlin.com/linux/v6.13.6/source/tools/power/cpupower/bind=
-ings/python
->
-> How to use the bindings in a script:
-> https://elixir.bootlin.com/linux/v6.13.6/source/tools/power/cpupower/bind=
-ings/python/test_raw_pylibcpupower.py
->
-> Original discussion:
-> https://lore.kernel.org/linux-pm/20240724221122.54601-1-jwyatt@redhat.com=
-/
->
-> SWIG has been pretty useful as it helped me find two issues in the
-> libcpupower API that have been around for over 10 years:
-> https://lore.kernel.org/linux-pm/20240905021916.15938-1-jwyatt@redhat.com=
-/T/#mf04b4ba93f79fe68c20c1d88d8ed966164a1c7d7
-> https://lore.kernel.org/linux-pm/20250305210901.24177-1-jwyatt@redhat.com=
-/
+On Tue, Mar 11, 2025 at 12:02:47PM +0100, Vasily Gorbik wrote:
+> On Mon, Mar 10, 2025 at 02:41:59PM +0100, Joel Granados wrote:
+> > On Fri, Mar 07, 2025 at 04:26:20PM +0100, Heiko Carstens wrote:
+> > > On Thu, Mar 06, 2025 at 12:29:46PM +0100, joel granados wrote:
+> > > > Move s390 sysctls (spin_retry and userprocess_debug) into their own
+> > > > files under arch/s390. We create two new sysctl tables
+> > > > (2390_{fault,spin}_sysctl_table) which will be initialized with
+> > > > arch_initcall placing them after their original place in proc_root_init.
+> > > > 
+> > > > This is part of a greater effort to move ctl tables into their
+> > > > respective subsystems which will reduce the merge conflicts in
+> > > > kernel/sysctl.c.
+> > > > 
+> > > > Signed-off-by: joel granados <joel.granados@kernel.org>
+> > > > ---
+> > > >  arch/s390/lib/spinlock.c | 18 ++++++++++++++++++
+> > > >  arch/s390/mm/fault.c     | 17 +++++++++++++++++
+> > > >  kernel/sysctl.c          | 18 ------------------
+> > > >  3 files changed, 35 insertions(+), 18 deletions(-)
+> > > 
+> > > Acked-by: Heiko Carstens <hca@linux.ibm.com>
+> > > 
+> > > How should this go upstream? Will you take care of this, or should
+> > > this go via the s390 tree?
+> > 
+> > thx for the review
+> > 
+> > It would be great if you can push it through the s390 tree. However, if
+> > it is not possible to do so, please let me know and I'll add it to the
+> > sysctl-next changes.
+> 
+> I've slightly changed the commit message
+> s390: Move s390 sysctls into their own file under arch/s390
+> 
+> And applied, thank you!
+ok. I'll remove it from my future versions.
+Thx
 
-So I think we should probably get rid of libperf and re-integrate it
-back into the perf code. There are issues in the code, like removing a
-list element:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/lib/perf/evlist.c?h=3Dtmp.perf-tools-next#n58
-just leaks the removed element. Deleting the element means that the
-container evsel, rather than the libperf perf_evsel, leaks things like
-the name variable. We can add yet more call backs and complexity but
-I'm not sure what we're winning. Perhaps we can move things the other
-way, perf code into libperf, like machine, session, pmus, .. I'd
-prefer if we were to do that we refactored the code and adopted the
-same license as libbpf as both libraries have similar packaging
-issues. The viral GPLv2 on libperf is something of an issue. Perhaps
-we can also migrate this code to Rust.
+-- 
 
-SWIG is fine, there is also CLIF, I'm way of dependencies as even a
-python dependency in the perf build is optional.
-
-We already have perf python bindings, and I've been working to extend
-those for example in:
-https://lore.kernel.org/lkml/20250228222308.626803-1-irogers@google.com/
-and I've been working to expand those for things like hybrid CPUs. It
-seems a shame to reinvent all of that logic again on top of libperf.
-
-Thanks,
-Ian
-
-> >
-> > 2. Patch 3: A python variant of counting.c - counting.py to demonstrate
-> > the usage of libperf from python
-> >
-> > We have not added support for entire libperf, as we want to get
-> > community feedback on the approach taken in this series.
-> >
-> > Gautam Menghani (3):
-> >   libperf: Introduce wrappers for perf structs to be exposed to python
-> >   libperf: Introduce a C extension module for python
-> >   libperf: Add counting.py example to demonstrate libperf usage from
-> >     python
-> >
-> >  tools/lib/perf/Build                          |   1 +
-> >  .../perf/Documentation/examples/counting.py   |  74 +++
-> >  tools/lib/perf/Makefile                       |  12 +-
-> >  tools/lib/perf/include/perf/py_perf.h         | 431 ++++++++++++++++++
-> >  tools/lib/perf/libperf.map                    |   1 +
-> >  tools/lib/perf/py_perf.c                      | 262 +++++++++++
-> >  6 files changed, 779 insertions(+), 2 deletions(-)
-> >  create mode 100755 tools/lib/perf/Documentation/examples/counting.py
-> >  create mode 100644 tools/lib/perf/include/perf/py_perf.h
-> >  create mode 100644 tools/lib/perf/py_perf.c
-> >
-> > --
-> > 2.47.0
-> >
->
-> --
-> Sincerely,
-> John Wyatt
-> Software Engineer, Core Kernel
-> Red Hat
->
+Joel Granados
 
