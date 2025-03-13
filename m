@@ -1,216 +1,533 @@
-Return-Path: <linux-kernel+bounces-559756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6CC9A5F929
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:59:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E0E5A5F92B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:00:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62CDA3B41AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:59:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDBE2189AA06
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92362686BC;
-	Thu, 13 Mar 2025 14:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E4A268C4F;
+	Thu, 13 Mar 2025 15:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mtIUYoTt"
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D5oxhg8q"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5133B267F7D;
-	Thu, 13 Mar 2025 14:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B8B267B7A;
+	Thu, 13 Mar 2025 15:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741877962; cv=none; b=B8N9KTIgZQVbBdv3ePRIbt2NZwCBGkc7KkbmnyWb/2TmlNYAUdnaW//SQD5ZSEZHC/jlX0bWo6de2gLulN+/2zpEWpp0yML6KC42+wOD2v/rYAJ9cimN9+o132hb5/bCGSVKZjGqlZw6/03cw5jCRFmQxdG+0rPOIhYnfCPd/MU=
+	t=1741878009; cv=none; b=AeIDJQsSTviHR0GSzxny5Gsc9zh+Pgw93rJ2BTDff3irLgMUtC2Bc5Y+PxGxPJ0YNI6ZYZv6JF73IkZMRj0nLNisxx+iaI5cw+eamgJPDMDLSM0hdt6G5pfzhBBtXTiz5eJAFgyUlwfZQNZF+kHzRkaSJGreyeRhkQhI4jswLnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741877962; c=relaxed/simple;
-	bh=5liuPlBqcaflDWW/TPdi7YXsdgu4Qktt64p67vZjWFA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lhlvOgMYqi/rF0FCatUdLWTGxaFpnjZufWQvdEWMoN9C6bQnCFqV/lhrIsDwRiwYRdKWXFpfbrJXdOfVWZ6ZARZ6q3JC6Aei5khD0Abp2X9PVKLsBGw7/x3hwa9W12Z1TRcN7wZJiBhWU2VXRmPIzDSB/1fBMqZesj4BvQ0n+rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mtIUYoTt; arc=none smtp.client-ip=45.157.188.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZD9cr1zkCzC2d;
-	Thu, 13 Mar 2025 15:59:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1741877948;
-	bh=0Gf1DhgQRyBiPnPBQsXXR7n45nbxbcPvMlsb2hmwO+s=;
-	h=From:To:Cc:Subject:Date:From;
-	b=mtIUYoTtQ0tdNQjqeBvqnicNw6dpqGUbj8D4veT61dES8X6IhDRLYCShmU6ku9M4v
-	 IBmZw2jJOwXSbpA9FPw1LwoBgq7nGkAhUer8/aTj5n/NzUoq7WPzj/I6bqdulSAAir
-	 cNXi7s/oYO7ToWmSzvA/LReu/2VlyZztzjCTriRE=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZD9cq3ZlSzD7B;
-	Thu, 13 Mar 2025 15:59:07 +0100 (CET)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	"Serge E . Hallyn" <serge@hallyn.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Subject: [RFC PATCH v1] landlock: Allow signals between threads of the same process
-Date: Thu, 13 Mar 2025 15:59:04 +0100
-Message-ID: <20250313145904.3238184-1-mic@digikod.net>
+	s=arc-20240116; t=1741878009; c=relaxed/simple;
+	bh=KC1m31817J7462d/SmhYdKFn5PuYI2mViXOADan3lxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qQY8ISobVe1eY7Nh26mGs7Hg7JNPArKe4ByYLad1F375k3hPtC9/OUgmSB6+kNm4OamocRX7i5AyLC2d6JY58wKAl/8DlXWWzxarMxkVGA4MYrTxAABw+Mb8hI6Ie8lKTgli0C0TqOMAc47uB+U4xt5HkQdh+dn0rdAmuipTDog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D5oxhg8q; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c24ae82de4so109228185a.1;
+        Thu, 13 Mar 2025 08:00:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741878006; x=1742482806; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EyPn7NjBk5S3/v/4X6t5VKp3w1Z1FvuZfz4F9ZBY5FA=;
+        b=D5oxhg8qg6l2D/0w4K5pOIS7kb/4F2qfrKPoLemC8yOnV0fpCAgsb/i6+b2Az0p1qj
+         YszWmcKCjNfgKJK2vfkIXK6bAst5yB8jMNF0XrXO6xMYppmNdqQd2j3TgNs9ffFxF1qw
+         NfQEmdDlmycdCE/wRRnQu+b8101qWCS8P7z3sofQMJErF7S9tDV+xjyA3yvDEzVdAIzu
+         aHzmEQj5pkfwqOSELz0q/RzHlGQdqITk/PX1GZmodcKkU2NrH5s3hOrDwxervBlb7TbM
+         iC+MQKKm5NQ0fWHhraIkm1BYmIJDWa8y/XjIBp+sYqxr8CKPtDAD7u7iagnWj+kwvxUX
+         w+mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741878006; x=1742482806;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EyPn7NjBk5S3/v/4X6t5VKp3w1Z1FvuZfz4F9ZBY5FA=;
+        b=l5mK7ZVyLJXXkz/OBJsW4vxGI3dx4QuxUE1ItgCKosYAOskbuGOF6wZUeZXBPDDcle
+         61DPRl142lULAg+D4MBRnqSHehD54sCpkiJBNzuL6Kdc1Y3/gIwoPCENbpFpManc5uEr
+         iLBI+rYfkeLwp3FSjTDuA5SHFxUks2BPTUef/cmB9vfIjG8CUJUcxVeLUn8ijsxgwq35
+         S2K3Rh5I+T87wpNBwKeZHxFNdqiLOgwOUvD9Q/TdjKCAQFZy2BfyU02n58+e9lZHEwdD
+         aBg2Nnjn3BCt/UULUa9SrIe0z5hFh8EuqDhdv7NMKUTMgcJKZwqjzbLDxa8DedW7qrol
+         hvUA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfzizMU/EXAtO7cr1GQ6sBr+OOrXkrijyETS7lgqIpTUdNXTTlTaCCoF4wlaqiO654BxfOa6n9RRNBBWDxolk=@vger.kernel.org, AJvYcCX8HYyZZV4em9F0BnGmKkKzqYObwna3/uPFaRdC3s+10nGhkzxv58NtsOawtiATy90XdH3ZeUsCIITbQaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPQPb+xdlAhHebEhI3qwvTKYFDqP1yGj/haZqbkyN9tixZCTEY
+	+z1k+45fdwkPOZZS/sKNgM+xiAP7nncVVOIbUTsLdkWqcRKn9Sb6
+X-Gm-Gg: ASbGncsUT9vVQff4NyKs6aTVgolzXM2nKa+jJzcblWx3nxZv6LDrTaVJ7rzj594hum3
+	elILhDe0vZxE/BdajZy0A9GhYAdrm4MOV8L9iRElubRQOM/LVAhuWwO/7FohyqPW4dJE7yexQYz
+	4hy6s3ExHLL2hL/M6bidykU9GlPmsBF9MwOcFktgwNr7er4ClpQQHmyOOmwfIeJsKcN7B5C5NJN
+	knVFOuc+jylXiloyRtKhYJnkRsHZJB2d8ojVKq5e92FnYArvy+isi928dE3wh3IkDpD11C48n31
+	TdaeeuOwMKgE/u2UIExaHCoN4hGnMDLQmNS5JVhW7nS6Uz2opQDYquDVIBa1dzKQezBaRri0Kh0
+	tObF1Je+or9+R4D/sD0a2+HyXQFtatjvA6ow=
+X-Google-Smtp-Source: AGHT+IGJLszst2prXRgVjyt/QDtTt/i9C9tc48ilAaxuLQv9Z7ou63EzpbJA2WopAZyHMMgeYc4OXw==
+X-Received: by 2002:a05:620a:489a:b0:7c5:4750:92ff with SMTP id af79cd13be357-7c55e843a89mr2064223485a.7.1741878004819;
+        Thu, 13 Mar 2025 08:00:04 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573c9a818sm107776585a.50.2025.03.13.08.00.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 08:00:04 -0700 (PDT)
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfauth.phl.internal (Postfix) with ESMTP id B41221200071;
+	Thu, 13 Mar 2025 11:00:03 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Thu, 13 Mar 2025 11:00:03 -0400
+X-ME-Sender: <xms:8_LSZ-1SyuH9AvYs7m-0Ls75Aomku9NjcaQJOmGfJqTsMOT9va_j1g>
+    <xme:8_LSZxFZGCooH_Ed5cYy1mZ6WUnICruQG-5s_ENc75HaPFyfWsln6svCff5k5h4kq
+    aExsA234GumKvWgoQ>
+X-ME-Received: <xmr:8_LSZ26Kb529KeYIrnGwRhU1167lFz3NZEShx3ccXnTpXrbNKq9n6kVD>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdekvdehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfel
+    leeivedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
+    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
+    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudefpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopegrtghouhhrsghothesnhhvihguihgrrd
+    gtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    rghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehgrghrhiesgh
+    grrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhm
+    rghilhdrtghomhdprhgtphhtthhopegsvghnnhhordhlohhsshhinhesphhrohhtohhnrd
+    hmvgdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepthhmgh
+    hrohhsshesuhhmihgthhdrvgguuh
+X-ME-Proxy: <xmx:8_LSZ_0wKIWpY6PDq29PVbF_7lHjd1hnu5CGcEbIFKv0EUcOQiRcvA>
+    <xmx:8_LSZxHun5l7ezOle6sESUF-rls_W1tc_9FzOXZhuocnvGth3CFAQg>
+    <xmx:8_LSZ48_js-CGA84apO00xMpALFFaHJ22ZFiZvtDoyg01N5KIyBQZg>
+    <xmx:8_LSZ2kbHTkzszmBj1cJHsoozWqGS0OHeMMmko0yAz0zrIQqIylm7w>
+    <xmx:8_LSZ5HOgdPinX6vlSEvl-2wdjIXmo1kZxiZ3sJc3MFnoKTJgwY8o8bB>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 13 Mar 2025 11:00:03 -0400 (EDT)
+Date: Thu, 13 Mar 2025 08:00:01 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH RFC] rust: add macros to define registers layout
+Message-ID: <Z9Ly8R-kZaiamicV@Mac.home>
+References: <20250313-registers-v1-1-8d498537e8b2@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313-registers-v1-1-8d498537e8b2@nvidia.com>
 
-Because Linux credentials are managed per thread, user space relies on
-some hack to synchronize credential update across threads from the same
-process.  This is required by the Native POSIX Threads Library and
-implemented by set*id(2) wrappers and libcap(3) to use tgkill(2) to
-synchronize threads.  See nptl(7) and libpsx(3).  Furthermore, some
-runtimes like Go do not enable developers to have control over threads
-[1].
+On Thu, Mar 13, 2025 at 11:48:25PM +0900, Alexandre Courbot wrote:
+> Add two macros, reg_def!() and reg_def_rel!(), that define a given
+> register's layout and provide accessors for absolute or relative
+> offsets, respectively.
+> 
+> The following example (taken from the rustdoc) helps understanding how
+> they are used:
+> 
+>     reg_def!(Boot0@0x00000100, "Basic revision information about the chip";
+>         3:0     minor_rev => as u8, "minor revision of the chip";
+>         7:4     major_rev => as u8, "major revision of the chip";
+>         28:20   chipset => try_into Chipset, "chipset model"
+>     );
+> 
+> This defines a `Boot0` type which can be read or written from offset
+> `0x100` of an `Io` region. It is composed of 3 fields, for instance
+> `minor_rev` is made of the 4 less significant bits of the register. Each
+> field can be accessed and modified using helper methods:
+> 
+>     // Read from offset `0x100`.
+>     let boot0 = Boot0.read(&bar);
+>     pr_info!("chip revision: {}.{}", boot0.major_rev(), boot0.minor_rev());
+> 
+>     // `Chipset::try_from` will be called with the value of the field and
+>     // returns an error if the value is invalid.
+>     let chipset = boot0.chipset()?;
+> 
+>     // Update some fields and write the value back.
+>     boot0.set_major_rev(3).set_minor_rev(10).write(&bar);
+> 
+> Fields are made accessible using one of the following strategies:
+> 
+> - `as <type>` simply casts the field value to the requested type.
+> - `as_bit <type>` turns the field into a boolean and calls
+>   <type>::from()` with the obtained value. To be used with single-bit
+>   fields.
+> - `into <type>` calls `<type>::from()` on the value of the field. It is
+>   expected to handle all the possible values for the bit range selected.
+> - `try_into <type>` calls `<type>::try_from()` on the value of the field
+>   and returns its result.
+> 
+> The documentation strings are optional. If present, they will be added
+> to the type or the field getter and setter methods they are attached to.
+> 
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> I have written these initially for the nova-core driver, then it has
+> been suggested that they might be useful outside of it as well, so here
+> goes.
+> 
+> This is my first serious attempt at writing Rust macros and I am sure
+> there is a lot that is wrong with them, but I'd like to get early
+> feedback and see whether this is actually something we want for the
+> kernel in general.
+> 
+> The following in particular needs to be improved, suggestions are
+> welcome:
+> 
+> - Inner types other than `u32` need to be supported - this can probably
+>   just be an extra parameter of the macro.
+> - The syntax can certainly be improved. I've tried to some with
+>   something that makes the register layout obvious, while fitting within
+>   the expectations of the Rust macro parser, but my lack of experience
+>   certainly shows here.
+> - We probably need an option to make some fields or whole registers
+>   read-only.
+> - The I/O offset and read/write methods should be optional, so the
+>   layout part can be used for things that are not registers.
+> - The visibility of the helper macros is a bit of a headache - I haven't
+>   found a way to completely hide them to the outside, so I have prefixed
+>   them with `__` for now.
+> - Formatting - there are some pretty long lines, not sure how to break
+>   them in an idiomatic way.
+> 
+> Sorry if this is still a bit rough around the edges, but hopefully the
+> potential benefit is properly conveyed.
+> ---
+>  rust/kernel/lib.rs |   1 +
+>  rust/kernel/reg.rs | 284 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 285 insertions(+)
+> 
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index 398242f92a961c3a445d681c65449047a847968a..d610199f6675d22fa01d4db524d9989581f7b646 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -69,6 +69,7 @@
+>  pub mod prelude;
+>  pub mod print;
+>  pub mod rbtree;
+> +mod reg;
 
-To avoid potential issues, and because threads are not security
-boundaries, let's relax the Landlock signal scoping to always allow
-signals sent between threads of the same process.  This exception is
-similar to the __ptrace_may_access() one.
+This is for io registers? Could you please move it into kernel::io
+instead of defining it as a top level mod?
 
-hook_file_set_fowner() now checks if the target task is part of the same
-process as the caller.  If this is the case, then the related signal
-triggered by the socket will always be allowed.
+Regards,
+Boqun
 
-Scoping of abstract UNIX sockets is not changed because kernel objects
-(e.g. sockets) should be tied to their creator's domain at creation
-time.
-
-Note that creating one Landlock domain per thread puts each of these
-threads (and their future children) in their own scope, which is
-probably not what users expect, especially in Go where we do not control
-threads.  However, being able to drop permissions on all threads should
-not be restricted by signal scoping.  We are working on a way to make it
-possible to atomically restrict all threads of a process with the same
-domain [2].
-
-Closes: https://github.com/landlock-lsm/go-landlock/issues/36
-Fixes: 54a6e6bbf3be ("landlock: Add signal scoping")
-Fixes: c8994965013e ("selftests/landlock: Test signal scoping for threads")
-Depends-on: 26f204380a3c ("fs: Fix file_set_fowner LSM hook inconsistencies")
-Link: https://pkg.go.dev/kernel.org/pub/linux/libs/security/libcap/psx [1]
-Link: https://github.com/landlock-lsm/linux/issues/2 [2]
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Günther Noack <gnoack@google.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Serge Hallyn <serge@hallyn.com>
-Cc: Tahera Fahimi <fahimitahera@gmail.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20250313145904.3238184-1-mic@digikod.net
----
-
-I'm still not sure how we could reliably detect if the running kernel
-has this fix or not, especially in Go.
----
- security/landlock/fs.c                        | 22 +++++++++++++++----
- security/landlock/task.c                      | 12 ++++++++++
- .../selftests/landlock/scoped_signal_test.c   |  2 +-
- 3 files changed, 31 insertions(+), 5 deletions(-)
-
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 71b9dc331aae..47c862fe14e4 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -27,7 +27,9 @@
- #include <linux/mount.h>
- #include <linux/namei.h>
- #include <linux/path.h>
-+#include <linux/pid.h>
- #include <linux/rcupdate.h>
-+#include <linux/sched/signal.h>
- #include <linux/spinlock.h>
- #include <linux/stat.h>
- #include <linux/types.h>
-@@ -1630,15 +1632,27 @@ static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
- 
- static void hook_file_set_fowner(struct file *file)
- {
--	struct landlock_ruleset *new_dom, *prev_dom;
-+	struct fown_struct *fown = file_f_owner(file);
-+	struct landlock_ruleset *new_dom = NULL;
-+	struct landlock_ruleset *prev_dom;
-+	struct task_struct *p;
- 
- 	/*
- 	 * Lock already held by __f_setown(), see commit 26f204380a3c ("fs: Fix
- 	 * file_set_fowner LSM hook inconsistencies").
- 	 */
--	lockdep_assert_held(&file_f_owner(file)->lock);
--	new_dom = landlock_get_current_domain();
--	landlock_get_ruleset(new_dom);
-+	lockdep_assert_held(&fown->lock);
-+
-+	/*
-+	 * Always allow sending signals between threads of the same process.  This
-+	 * ensures consistency with hook_task_kill().
-+	 */
-+	p = pid_task(fown->pid, fown->pid_type);
-+	if (!same_thread_group(p, current)) {
-+		new_dom = landlock_get_current_domain();
-+		landlock_get_ruleset(new_dom);
-+	}
-+
- 	prev_dom = landlock_file(file)->fown_domain;
- 	landlock_file(file)->fown_domain = new_dom;
- 
-diff --git a/security/landlock/task.c b/security/landlock/task.c
-index dc7dab78392e..4578ce6e319d 100644
---- a/security/landlock/task.c
-+++ b/security/landlock/task.c
-@@ -13,6 +13,7 @@
- #include <linux/lsm_hooks.h>
- #include <linux/rcupdate.h>
- #include <linux/sched.h>
-+#include <linux/sched/signal.h>
- #include <net/af_unix.h>
- #include <net/sock.h>
- 
-@@ -264,6 +265,17 @@ static int hook_task_kill(struct task_struct *const p,
- 		/* Dealing with USB IO. */
- 		dom = landlock_cred(cred)->domain;
- 	} else {
-+		/*
-+		 * Always allow sending signals between threads of the same process.
-+		 * This is required for process credential changes by the Native POSIX
-+		 * Threads Library and implemented by the set*id(2) wrappers and
-+		 * libcap(3) with tgkill(2).  See nptl(7) and libpsx(3).
-+		 *
-+		 * This exception is similar to the __ptrace_may_access() one.
-+		 */
-+		if (same_thread_group(p, current))
-+			return 0;
-+
- 		dom = landlock_get_current_domain();
- 	}
- 	dom = landlock_get_applicable_domain(dom, signal_scope);
-diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
-index 475ee62a832d..767f117703b7 100644
---- a/tools/testing/selftests/landlock/scoped_signal_test.c
-+++ b/tools/testing/selftests/landlock/scoped_signal_test.c
-@@ -281,7 +281,7 @@ TEST(signal_scoping_threads)
- 	/* Restricts the domain after creating the first thread. */
- 	create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
- 
--	ASSERT_EQ(EPERM, pthread_kill(no_sandbox_thread, 0));
-+	ASSERT_EQ(0, pthread_kill(no_sandbox_thread, 0));
- 	ASSERT_EQ(1, write(thread_pipe[1], ".", 1));
- 
- 	ASSERT_EQ(0, pthread_create(&scoped_thread, NULL, thread_func, NULL));
-
-base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
--- 
-2.48.1
-
+>  pub mod revocable;
+>  pub mod security;
+>  pub mod seq_file;
+> diff --git a/rust/kernel/reg.rs b/rust/kernel/reg.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..3f0bad18b4f757fb3e7d45f2fde6c3214fa957c8
+> --- /dev/null
+> +++ b/rust/kernel/reg.rs
+> @@ -0,0 +1,284 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Types and macros to define register layout and accessors.
+> +//!
+> +//! A single register typically includes several fields, which are accessed through a combination
+> +//! of bit-shift and mask operations that introduce a class of potential mistakes, notably because
+> +//! not all possible field values are necessarily valid.
+> +//!
+> +//! The macros in this module allow to define, using an intruitive and readable syntax, a dedicated
+> +//! type for each register with its own field accessors that can return an error is a field's value
+> +//! is invalid. They also provide a builder type allowing to construct a register value to be
+> +//! written by combining valid values for its fields.
+> +
+> +/// Helper macro for the `reg_def` family of macros.
+> +///
+> +/// Defines the wrapper `$name` type, as well as its relevant implementations (`Debug`, `BitOr`,
+> +/// and conversion to regular `u32`).
+> +#[macro_export]
+> +macro_rules! __reg_def_common {
+> +    ($name:ident $(, $type_comment:expr)?) => {
+> +        $(
+> +        #[doc=$type_comment]
+> +        )?
+> +        #[repr(transparent)]
+> +        #[derive(Clone, Copy, Default)]
+> +        pub(crate) struct $name(u32);
+> +
+> +        // TODO: should we display the raw hex value, then the value of all its fields?
+> +        impl ::core::fmt::Debug for $name {
+> +            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+> +                f.debug_tuple(stringify!($name))
+> +                    .field(&format_args!("0x{0:x}", &self.0))
+> +                    .finish()
+> +            }
+> +        }
+> +
+> +        impl core::ops::BitOr for $name {
+> +            type Output = Self;
+> +
+> +            fn bitor(self, rhs: Self) -> Self::Output {
+> +                Self(self.0 | rhs.0)
+> +            }
+> +        }
+> +
+> +        impl From<$name> for u32 {
+> +            fn from(reg: $name) -> u32 {
+> +                reg.0
+> +            }
+> +        }
+> +    };
+> +}
+> +
+> +/// Helper macro for the `reg_def` family of macros.
+> +///
+> +/// Defines the getter method for $field.
+> +#[macro_export]
+> +macro_rules! __reg_def_field_getter {
+> +    (
+> +        $hi:tt:$lo:tt $field:ident
+> +            $(=> as $as_type:ty)?
+> +            $(=> as_bit $bit_type:ty)?
+> +            $(=> into $type:ty)?
+> +            $(=> try_into $try_type:ty)?
+> +        $(, $comment:expr)?
+> +    ) => {
+> +        $(
+> +        #[doc=concat!("Returns the ", $comment)]
+> +        )?
+> +        #[inline]
+> +        pub(crate) fn $field(self) -> $( $as_type )? $( $bit_type )? $( $type )? $( core::result::Result<$try_type, <$try_type as TryFrom<u32>>::Error> )? {
+> +            const MASK: u32 = ((((1 << $hi) - 1) << 1) + 1) - ((1 << $lo) - 1);
+> +            const SHIFT: u32 = MASK.trailing_zeros();
+> +            let field = (self.0 & MASK) >> SHIFT;
+> +
+> +            $( field as $as_type )?
+> +            $(
+> +            // TODO: it would be nice to throw a compile-time error if $hi != $lo as this means we
+> +            // are considering more than one bit but returning a bool...
+> +            <$bit_type>::from(if field != 0 { true } else { false }) as $bit_type
+> +            )?
+> +            $( <$type>::from(field) )?
+> +            $( <$try_type>::try_from(field) )?
+> +        }
+> +    }
+> +}
+> +
+> +/// Helper macro for the `reg_def` family of macros.
+> +///
+> +/// Defines all the field getter methods for `$name`.
+> +#[macro_export]
+> +macro_rules! __reg_def_getters {
+> +    (
+> +        $name:ident
+> +        $(; $hi:tt:$lo:tt $field:ident
+> +            $(=> as $as_type:ty)?
+> +            $(=> as_bit $bit_type:ty)?
+> +            $(=> into $type:ty)?
+> +            $(=> try_into $try_type:ty)?
+> +        $(, $field_comment:expr)?)* $(;)?
+> +    ) => {
+> +        #[allow(dead_code)]
+> +        impl $name {
+> +            $(
+> +            ::kernel::__reg_def_field_getter!($hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)?);
+> +            )*
+> +        }
+> +    };
+> +}
+> +
+> +/// Helper macro for the `reg_def` family of macros.
+> +///
+> +/// Defines the setter method for $field.
+> +#[macro_export]
+> +macro_rules! __reg_def_field_setter {
+> +    (
+> +        $hi:tt:$lo:tt $field:ident
+> +            $(=> as $as_type:ty)?
+> +            $(=> as_bit $bit_type:ty)?
+> +            $(=> into $type:ty)?
+> +            $(=> try_into $try_type:ty)?
+> +        $(, $comment:expr)?
+> +    ) => {
+> +        kernel::macros::paste! {
+> +        $(
+> +        #[doc=concat!("Sets the ", $comment)]
+> +        )?
+> +        #[inline]
+> +        pub(crate) fn [<set_ $field>](mut self, value: $( $as_type)? $( $bit_type )? $( $type )? $( $try_type)? ) -> Self {
+> +            const MASK: u32 = ((((1 << $hi) - 1) << 1) + 1) - ((1 << $lo) - 1);
+> +            const SHIFT: u32 = MASK.trailing_zeros();
+> +
+> +            let value = ((value as u32) << SHIFT) & MASK;
+> +            self.0 = self.0 | value;
+> +            self
+> +        }
+> +        }
+> +    };
+> +}
+> +
+> +/// Helper macro for the `reg_def` family of macros.
+> +///
+> +/// Defines all the field setter methods for `$name`.
+> +#[macro_export]
+> +macro_rules! __reg_def_setters {
+> +    (
+> +        $name:ident
+> +        $(; $hi:tt:$lo:tt $field:ident
+> +            $(=> as $as_type:ty)?
+> +            $(=> as_bit $bit_type:ty)?
+> +            $(=> into $type:ty)?
+> +            $(=> try_into $try_type:ty)?
+> +        $(, $field_comment:expr)?)* $(;)?
+> +    ) => {
+> +        #[allow(dead_code)]
+> +        impl $name {
+> +            $(
+> +            ::kernel::__reg_def_field_setter!($hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)?);
+> +            )*
+> +        }
+> +    };
+> +}
+> +
+> +/// Defines a dedicated type for a register with an absolute offset, alongside with getter and
+> +/// setter methods for its fields and methods to read and write it from an `Io` region.
+> +///
+> +/// Example:
+> +///
+> +/// ```no_run
+> +/// reg_def!(Boot0@0x00000100, "Basic revision information about the chip";
+> +///     3:0     minor_rev => as u8, "minor revision of the chip";
+> +///     7:4     major_rev => as u8, "major revision of the chip";
+> +///     28:20   chipset => try_into Chipset, "chipset model"
+> +/// );
+> +/// ```
+> +///
+> +/// This defines a `Boot0` type which can be read or written from offset `0x100` of an `Io` region.
+> +/// It is composed of 3 fields, for instance `minor_rev` is made of the 4 less significant bits of
+> +/// the register. Each field can be accessed and modified using helper methods:
+> +///
+> +/// ```no_run
+> +/// // Read from offset 0x100.
+> +/// let boot0 = Boot0.read(&bar);
+> +/// pr_info!("chip revision: {}.{}", boot0.major_rev(), boot0.minor_rev());
+> +///
+> +/// // `Chipset::try_from` will be called with the value of the field and returns an error if the
+> +/// // value is invalid.
+> +/// let chipset = boot0.chipset()?;
+> +///
+> +/// // Update some fields and write the value back.
+> +/// boot0.set_major_rev(3).set_minor_rev(10).write(&bar);
+> +/// ```
+> +///
+> +/// Fields are made accessible using one of the following strategies:
+> +///
+> +/// - `as <type>` simply casts the field value to the requested type.
+> +/// - `as_bit <type>` turns the field into a boolean and calls `<type>::from()` with the obtained
+> +///   value. To be used with single-bit fields.
+> +/// - `into <type>` calls `<type>::from()` on the value of the field. It is expected to handle all
+> +///   the possible values for the bit range selected.
+> +/// - `try_into <type>` calls `<type>::try_from()` on the value of the field and returns its
+> +///   result.
+> +///
+> +/// The documentation strings are optional. If present, they will be added to the type or the field
+> +/// getter and setter methods they are attached to.
+> +#[macro_export]
+> +macro_rules! reg_def {
+> +    (
+> +        $name:ident@$offset:expr $(, $type_comment:expr)?
+> +        $(; $hi:tt:$lo:tt $field:ident
+> +            $(=> as $as_type:ty)?
+> +            $(=> as_bit $bit_type:ty)?
+> +            $(=> into $type:ty)?
+> +            $(=> try_into $try_type:ty)?
+> +        $(, $field_comment:expr)?)* $(;)?
+> +    ) => {
+> +        ::kernel::__reg_def_common!($name);
+> +
+> +        #[allow(dead_code)]
+> +        impl $name {
+> +            #[inline]
+> +            pub(crate) fn read<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(bar: &T) -> Self {
+> +                Self(bar.readl($offset))
+> +            }
+> +
+> +            #[inline]
+> +            pub(crate) fn write<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(self, bar: &T) {
+> +                bar.writel(self.0, $offset)
+> +            }
+> +        }
+> +
+> +        ::kernel::__reg_def_getters!($name; $( $hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)? );*);
+> +
+> +        ::kernel::__reg_def_setters!($name; $( $hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)? );*);
+> +    };
+> +}
+> +
+> +/// Defines a dedicated type for a register with a relative offset, alongside with getter and
+> +/// setter methods for its fields and methods to read and write it from an `Io` region.
+> +///
+> +/// See the documentation for [`reg_def`] for more details. This macro works similarly to
+> +/// `reg_def`, with the exception that the `read` and `write` methods take a `base` argument that
+> +/// is added to the offset of the register before access, and the `try_read` and `try_write`
+> +/// methods are added to allow access with offsets unknown at compile-time.
+> +#[macro_export]
+> +macro_rules! reg_def_rel {
+> +    (
+> +        $name:ident@$offset:expr $(, $type_comment:expr)?
+> +        $(; $hi:tt:$lo:tt $field:ident
+> +            $(=> as $as_type:ty)?
+> +            $(=> as_bit $bit_type:ty)?
+> +            $(=> into $type:ty)?
+> +            $(=> try_into $try_type:ty)?
+> +        $(, $field_comment:expr)?)* $(;)?
+> +    ) => {
+> +        ::kernel::__reg_def_common!($name);
+> +
+> +        #[allow(dead_code)]
+> +        impl $name {
+> +            #[inline]
+> +            pub(crate) fn read<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(bar: &T, base: usize) -> Self {
+> +                Self(bar.readl(base + $offset))
+> +            }
+> +
+> +            #[inline]
+> +            pub(crate) fn write<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(self, bar: &T, base: usize) {
+> +                bar.writel(self.0, base + $offset)
+> +            }
+> +
+> +            #[inline]
+> +            pub(crate) fn try_read<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(bar: &T, base: usize) -> ::kernel::error::Result<Self> {
+> +                bar.try_readl(base + $offset).map(Self)
+> +            }
+> +
+> +            #[inline]
+> +            pub(crate) fn try_write<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(self, bar: &T, base: usize) -> ::kernel::error::Result<()> {
+> +                bar.try_writel(self.0, base + $offset)
+> +            }
+> +        }
+> +
+> +        ::kernel::__reg_def_getters!($name; $( $hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)? );*);
+> +
+> +        ::kernel::__reg_def_setters!($name; $( $hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)? );*);
+> +    };
+> +}
+> 
+> ---
+> base-commit: 4d872d51bc9d7b899c1f61534e3dbde72613f627
+> change-id: 20250313-registers-7fdcb3d926b0
+> 
+> Best regards,
+> -- 
+> Alexandre Courbot <acourbot@nvidia.com>
+> 
 
