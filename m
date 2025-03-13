@@ -1,62 +1,99 @@
-Return-Path: <linux-kernel+bounces-559587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45566A5F5D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:21:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F994A5F5DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:23:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AADFA3AEC2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:21:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C074419C2F9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F8B267721;
-	Thu, 13 Mar 2025 13:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3025267B01;
+	Thu, 13 Mar 2025 13:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hs5puAaa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R4XDZXka"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE273265610;
-	Thu, 13 Mar 2025 13:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B26267AF6
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741872103; cv=none; b=Amp0eSoQgiI3c03pEHY6xNX2YQCJlwg7O7RRoEjA/1dnkbO2ZVhOPSNJDsE25tyOlAWsa5m4nkaW7doALiMRDiBEAcc7na6azpIf1qxaagtjKIU2MvxByFo2aXDknRsmRWDcBtLe8hNbKqsrmWKSdP4vIjwOC3zTXUul/Vxwjpc=
+	t=1741872108; cv=none; b=qZZDKODJ2tOzBtt4SwT68U+CLKLFNICkAzKf3cTZ3/60LvwaIBMb/rUkYKtNhEby+iD/55RkCBTnhY23laUhxjiMkYCnr7FA2qCpaTdgTXwiUwUr/PPEyGrQF7DZ46AmkpYK5UZE/IUNzXdoGnXCv3CB9CxvpX3Kp2CQW2HmWtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741872103; c=relaxed/simple;
-	bh=fF2QQTE+2YlxG3sB1lZ42t5C418bXvGhFBRVwKr1Kpg=;
+	s=arc-20240116; t=1741872108; c=relaxed/simple;
+	bh=NzgzTyi8Zp31j/MxiJYX8O0vM08HqIVdJ8gqDLXE+SU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mf1z9+H5ZmZ9Kky2hp/aXbvBdoOWt8WdG5U8oqWdi11dX6Ve1gFy7hsKYV00sMmmAes/DBoDd3gFuhLKhgqrWGdQKqXTLYgtdIA/QUZo/kTUd5ycl4yzipVtp5FHibSSZS7ouloyWuRJ7lzNrDBTW5oTDmsft7KFBS1CpyAlcmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hs5puAaa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14E84C4CEE5;
-	Thu, 13 Mar 2025 13:21:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741872102;
-	bh=fF2QQTE+2YlxG3sB1lZ42t5C418bXvGhFBRVwKr1Kpg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hs5puAaaFMdqwgfIqkKwLHW6ZeRgfcbUzR8YNU2CaYJ3WLY9ZVVODoiotmphYWUj9
-	 zE+qKbmvtmdAUMM1ujxlvrtLaa74rV+r7IoDOvoj9TSZ2bZjLpZc1OSXP8ffRrY68/
-	 jlLrLDxKwlL48GKa6lnMvNmZuuJZUTYgLcEiWIzNvbNCyaePBZ8yT5qzQPp4ByZdqq
-	 i9Eflcvo1pUQUmOHh5Wtve8cU2BjKVfl1xn4GxNWl1edLCPtyte7lpL1r6Ky9/9A2W
-	 qMHSbZ08UEwQOXFptifHfzCQk1aB45s9mj+T5t4n/93/2EXTxFAAUXTxSQR+qQEMeB
-	 TDndXATAWJ41g==
-Date: Thu, 13 Mar 2025 13:21:36 +0000
-From: Lee Jones <lee@kernel.org>
-To: Artur Weber <aweber.kernel@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Stanislav Jakubek <stano.jakubek@gmail.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v6 00/10] mfd: bcm590xx: Add support for BCM59054
-Message-ID: <20250313132136.GC3616286@google.com>
-References: <20250304-bcm59054-v6-0-ae8302358443@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Su3gUl4zo9nI1GFhqaBfzAr721xRBBeS+DICUYYwPdD7P5Hwdq7Op8+LzQZwkC/70RntfP7/g809/4mf0XPhbmM2oR3BoFVe6Db9hb5xHlJc0HOQ8l6j5wkCihdpafuaIWmctZIwQzsY9dcpSKW6bvz52rAWnENU3kSnL7K92OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R4XDZXka; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741872105;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sr12YOz6b+Wdc4ncvk9yUKUep9d7avEpDYfmzKprqkk=;
+	b=R4XDZXkaAvPgT64Hnsqt+S4DwCMkrhczGp1iHT6djg3R3DsoVWegpoj3EbUDiD6eMNR3Hl
+	R9PkhRhuv7iiDc4k1i/oabLeDJi/VZQuY9d/Pk4XFil3dgK/NXK8rQilljhQZWcw9ArlGW
+	gjXP7Qtm9fi8l1M+1TW11j9AhXKQ2Dg=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-627-t3zOVOyiMwyktEPgW7SEwQ-1; Thu, 13 Mar 2025 09:21:44 -0400
+X-MC-Unique: t3zOVOyiMwyktEPgW7SEwQ-1
+X-Mimecast-MFC-AGG-ID: t3zOVOyiMwyktEPgW7SEwQ_1741872103
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-391315098b2so373488f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 06:21:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741872103; x=1742476903;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sr12YOz6b+Wdc4ncvk9yUKUep9d7avEpDYfmzKprqkk=;
+        b=EG5O4lTFp2VIUeB6yjQXpj9lde45zO90hNq/E4xTDoarMujTgd/T199jFhAM7KqiKx
+         kKiZxzg9tw1uNgVKeMOT29VnQzYcdvFluZjNzUdKrUouNfBiR9OXoQe5o6MPWKMR7S/x
+         lKtVU+j9NjkpkZNhboQLMd9t93n0TVKulJ/YDKispuZeYYKlXb5pDtcLkCGukcTuuAkG
+         tMWehVjaqDKC4x5cJR3bhEjdsrf8wHLrWGwiIgLbmHX824xEmnHtkAlH65JOiSUgYWJN
+         TqsnAv3QQ6Sqa7Wx2LWV3O0DFq5KwNjj5JAmFMZ3pm8ugC4W8urkJC+Bj4WJIGwTFjk/
+         Eebg==
+X-Forwarded-Encrypted: i=1; AJvYcCULC0X8J0hXefkqOCikEWjXl+6WST8mKeiwMb/vNodC6stKdLjrN5yFQCd8R6kiMGihN2UKh7r14UAVt08=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI5Sfmboq8tuoo9LHDiuqqVPzr3W38oKA8F2WNzwP1lGFTevSh
+	MTpYsihVVJ7wSnjVAkNAIQOUYVjo8gqBaTx38HMn87e8rz3bozmfP4zrU3muBpIR6CU0pMOsStx
+	LFsyNAMU4ls6VwxqJ2HIGEt0uWKiTHYEHeMCJ/rgJmGJQJXH0ihS6+sFOmxlunQ==
+X-Gm-Gg: ASbGnct+ItIeq/uZEJWGy4Ju0y90SQegibVExI0AQuPJfjzBE1sThl0rzF7mpc2OlmA
+	SHswuUPLakuxz6oxdYqRb84gdKOrbFt4fWqC7EfdUkqOpdySql+oKq8LlUuu+AWr+4Ff3FuyRRr
+	D5P7AhkyXlul7+STdvR71hfs9rk6acgN8OoWIA83FiiNFwuPcOjN3SlDWu8oTRGFotHVXqvB5KQ
+	XsubZkERa6y2n2LH31rbauj+SCyIF4rXqBWths0tMnXgZDOhqHOE52aTh2AIuRTLPy4Mknw9qb/
+	qNQiJzB4LrssH8p99ly3Ilw110Ia2S9/tqYrplV7/h8=
+X-Received: by 2002:a05:6000:1541:b0:38f:3c01:fb1f with SMTP id ffacd0b85a97d-39132d7ed99mr18293813f8f.30.1741872102792;
+        Thu, 13 Mar 2025 06:21:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFfH6My/OYYnn4ivMgF2lOD1PwxUg7kd5/ME50Z6QRYoQsn2H+AyfQZYmsIkGUqPz5lQV49QA==
+X-Received: by 2002:a05:6000:1541:b0:38f:3c01:fb1f with SMTP id ffacd0b85a97d-39132d7ed99mr18293792f8f.30.1741872102411;
+        Thu, 13 Mar 2025 06:21:42 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.49.7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb40cdc5sm2098207f8f.80.2025.03.13.06.21.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 06:21:41 -0700 (PDT)
+Date: Thu, 13 Mar 2025 14:21:39 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Harshit Agarwal <harshit@nutanix.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] sched/deadline: Fix race in push_dl_task
+Message-ID: <Z9Lb496DoMcu9hk_@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250307204255.60640-1-harshit@nutanix.com>
+ <Z9FXC7NMaGxJ6ai6@jlelli-thinkpadt14gen4.remote.csb>
+ <8B627F86-EF5F-4EA2-96F4-E47B0B3CAD38@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,96 +103,113 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250304-bcm59054-v6-0-ae8302358443@gmail.com>
+In-Reply-To: <8B627F86-EF5F-4EA2-96F4-E47B0B3CAD38@nutanix.com>
 
-On Tue, 04 Mar 2025, Artur Weber wrote:
+Hi,
 
-> Add support for the BCM59054 MFD to the bcm590xx driver and fix a
-> couple of small bugs in it that also affected the already supported
-> BCM59056.
-> 
-> While we're at it - convert the devicetree bindings to YAML format
-> and drop the bcm59056 DTS in favor of describing the PMU in users'
-> DTS files, as is done for most other MFDs.
-> 
-> The BCM59054 is fairly similar to the BCM59056, with the primary
-> difference being the different number and layout of regulators.
-> It is primarily used in devices using the BCM21664 and BCM23550
-> chipsets.
-> 
-> This patchset has been tested on a Samsung Galaxy Grand Neo
-> (baffinlite rev02; DTS not in mainline yet) with a BCM59054 PMIC.
-> Testing on a BCM59056 would be appreciated.
-> 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
-> Changes in v6:
-> - Rename mfd/brcm,bcm590xx.yaml to mfd/brcm,bcm59056.yaml again
-> - Use PMU ID value as device type
-> - Rename rev_dig and rev_ana to rev_digital and rev_analog
-> - Link to v5: https://lore.kernel.org/r/20250221-bcm59054-v5-0-065f516a9042@gmail.com
-> 
-> Changes in v5:
-> - Make regulator binding descriptions reference mfd/brcm,bcm590xx.yaml
->   instead of mfd/brcm,bcm59056.yaml
-> - Move regmap type enum to common MFD header
-> - Link to v4: https://lore.kernel.org/r/20250215-bcm59054-v4-0-dbfb2d76a855@gmail.com
-> 
-> Changes in v4:
-> - Fix yamllint warnings in DT bindings
-> - Address miscelaneous review comments related to DT bindings
->   - Note that I did not end up moving the regulator refs from
->     allOf compatible matches; I explained my reasoning in [1].
->     [1] https://lore.kernel.org/lkml/ab853605-859d-44c6-8cbd-44391cd677e6@gmail.com/
-> - Add PMU ID/revision parsing to MFD driver
-> - Fix instances of regulator data not matching vendor kernel for
->   BCM59054
-> - Use different voltage table for BCM59054 VSR reg based on PMU
->   revision
-> - Link to v3: https://lore.kernel.org/r/20250131-bcm59054-v3-0-bbac52a84787@gmail.com
-> 
-> Changes in v3:
-> - Split out regulator DT bindings into separate YAML
-> - Use tables of regulator info instead of get_XXX_register, reg_is_XXX
->   functions
-> - Drop "regulator: bcm590xx: Add proper handling for PMMODE registers";
->   it adds unnecessary noise to the series and will be submitted separately
-> - Link to v2: https://lore.kernel.org/r/20231030-bcm59054-v2-0-5fa4011aa5ba@gmail.com
-> 
-> Changes in v2:
-> - Fixed BCM59054 ID being passed to BCM59056 function in the
->   regulator driver
-> - Dropped linux-rpi-kernel from the CC list
-> - Link to v1: https://lore.kernel.org/r/20231030-bcm59054-v1-0-3517f980c1e3@gmail.com
-> 
-> ---
-> Artur Weber (10):
->       dt-bindings: mfd: brcm,bcm59056: Convert to YAML
->       dt-bindings: mfd: brcm,bcm59056: Add compatible for BCM59054
->       ARM: dts: Drop DTS for BCM59056 PMU
->       mfd: bcm590xx: Drop unused "id" member of bcm590xx MFD struct
->       mfd: bcm590xx: Add support for multiple device types + BCM59054 compatible
->       mfd: bcm590xx: Add PMU ID/revision parsing function
->       regulator: bcm590xx: Use dev_err_probe for regulator register error
->       regulator: bcm590xx: Store regulator descriptions in table
->       regulator: bcm590xx: Rename BCM59056-specific data as such
->       regulator: bcm590xx: Add support for BCM59054 regulators
-> 
->  .../devicetree/bindings/mfd/brcm,bcm59056.txt      |   39 -
->  .../devicetree/bindings/mfd/brcm,bcm59056.yaml     |   76 ++
->  .../bindings/regulator/brcm,bcm59054.yaml          |   56 +
->  .../bindings/regulator/brcm,bcm59056.yaml          |   51 +
->  arch/arm/boot/dts/broadcom/bcm28155-ap.dts         |   68 +-
->  arch/arm/boot/dts/broadcom/bcm59056.dtsi           |   91 --
->  drivers/mfd/bcm590xx.c                             |   75 +-
->  drivers/regulator/bcm590xx-regulator.c             | 1289 ++++++++++++++++----
->  include/linux/mfd/bcm590xx.h                       |   28 +-
->  9 files changed, 1366 insertions(+), 407 deletions(-)
+On 12/03/25 18:46, Harshit Agarwal wrote:
+> Thanks Juri, for taking a look.
 
-Besides my one comment, the MFD side looks okay.
+Of course! Thanks to you for working on this.
 
-So you still need ACKs from Mark and to rework Rob's suggestion.
+> > On Mar 12, 2025, at 2:42 AM, Juri Lelli <juri.lelli@redhat.com> wrote:
+> > 
+> > Hi Harshit,
+> > 
+> > Thanks for this!
+> > 
+> > I don't think we want this kind of URLs in the changelog, as URL might
+> > disappear while the history remains (at least usually a little longer
+> > :). Maybe you could add a very condensed version of the description of
+> > the problem you have on the other fix?
+> 
+> Sorry about this and thanks for pointing it out. I will fix it in the
+> next version of the patch.
 
--- 
-Lee Jones [李琼斯]
+No worries and thanks.
+
+> >> In this fix we bail out or retry in the push_dl_task, if the task is no
+> >> longer at the head of pushable tasks list because this list changed
+> >> while trying to lock the runqueue of the other CPU.
+> >> 
+> >> Signed-off-by: Harshit Agarwal <harshit@nutanix.com>
+> >> Cc: stable@vger.kernel.org
+> >> ---
+> >> kernel/sched/deadline.c | 25 +++++++++++++++++++++----
+> >> 1 file changed, 21 insertions(+), 4 deletions(-)
+> >> 
+> >> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> >> index 38e4537790af..c5048969c640 100644
+> >> --- a/kernel/sched/deadline.c
+> >> +++ b/kernel/sched/deadline.c
+> >> @@ -2704,6 +2704,7 @@ static int push_dl_task(struct rq *rq)
+> >> {
+> >> struct task_struct *next_task;
+> >> struct rq *later_rq;
+> >> + struct task_struct *task;
+> >> int ret = 0;
+> >> 
+> >> next_task = pick_next_pushable_dl_task(rq);
+> >> @@ -2734,15 +2735,30 @@ static int push_dl_task(struct rq *rq)
+> >> 
+> >> /* Will lock the rq it'll find */
+> >> later_rq = find_lock_later_rq(next_task, rq);
+> >> - if (!later_rq) {
+> >> - struct task_struct *task;
+> >> + task = pick_next_pushable_dl_task(rq);
+> >> + if (later_rq && (!task || task != next_task)) {
+> >> + /*
+> >> + * We must check all this again, since
+> >> + * find_lock_later_rq releases rq->lock and it is
+> >> + * then possible that next_task has migrated and
+> >> + * is no longer at the head of the pushable list.
+> >> + */
+> >> + double_unlock_balance(rq, later_rq);
+> >> + if (!task) {
+> >> + /* No more tasks */
+> >> + goto out;
+> >> + }
+> >> 
+> >> + put_task_struct(next_task);
+> >> + next_task = task;
+> >> + goto retry;
+> > 
+> > I fear we might hit a pathological condition that can lead us into a
+> > never ending (or very long) loop. find_lock_later_rq() tries to find a
+> > later_rq for at most DL_MAX_TRIES and it bails out if it can't.
+> 
+> This pathological case exists today as well and will be there even
+> if we move this check inside find_lock_later_rq. This check is just
+> broadening the scenarios where we would retry, where we would
+> have panicked otherwise (the bug).
+> If this check is moved inside find_lock_later_rq then function will
+> return null and then the caller here will do the same which is retry
+> or bail out if no tasks are available. Specifically, tt will execute
+> the if (!later_rq) block here.
+> The number of retries will be bound by the number of tasks in 
+> the pushable tasks list.
+> 
+> > 
+> > Maybe to discern between find_lock_later_rq() callers we can use
+> > dl_throttled flag in dl_se and still implement the fix in find_lock_
+> > later_rq()? I.e., fix similar to the rt.c patch in case the task is not
+> > throttled (so caller is push_dl_task()) and not rely on pick_next_
+> > pushable_dl_task() if the task is throttled.
+> > 
+> 
+> Sure I can do this as well but like I mentioned above I don’t think
+> it will be any different than this patch unless we want to
+> handle the race for offline migration case or if you prefer
+> this in find_lock_later_rq just to keep it more inline with the rt
+> patch. I just found the current approach to be less risky :)
+
+What you mean with "handle the race for offline migration case"?
+
+And I am honestly conflicted. I think I like the encapsulation better if
+we can find a solution inside find_lock_later_rq(), as it also aligns
+better with rt.c, but you fear it's more fragile?
+
+Best,
+Juri
+
 
