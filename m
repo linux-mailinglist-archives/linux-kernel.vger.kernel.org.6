@@ -1,124 +1,157 @@
-Return-Path: <linux-kernel+bounces-559947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61FDBA5FB81
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:25:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEF5BA5FB6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:24:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EC0B19C07EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:22:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8FE7169295
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F602269812;
-	Thu, 13 Mar 2025 16:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863E626A08A;
+	Thu, 13 Mar 2025 16:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MWc/Jp1w"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cowdBlzD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3417D1FBC99;
-	Thu, 13 Mar 2025 16:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30B6267F77;
+	Thu, 13 Mar 2025 16:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741882936; cv=none; b=Ryq2rmprZl0JlMGTObpMLuoNcFZuxvSAiVaPPOcth+GN19hDWpplF0aMIKgy/O70xljJT8LzQ7XRhRy4A1RffgcFBRIK2nmSkRQjMpL9E6vMH/o90h9WIuWmHOK9BQu3coyLmlowtCe/OGxQvZJ1MwRkueyuFGUGZ/cxRpzgXn8=
+	t=1741882957; cv=none; b=UVaKTr61HhBRdps1TNX1/Ir+k/+IA0rSgkJZXBcgp7dAkub2b3Z/mTYcqQ5ACj0LaA3oqjA4VyS5isNVXyvYrX4Vu3ZGamYopI1XVXJO+7cbUyQbI2tFcyyh2TY+Xy1wjounz/NTV/hETCa1SQt7eys0IBZRrO8yxgwz4LeXhUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741882936; c=relaxed/simple;
-	bh=g/ziCSYU/t5mOcyQ9jChz5L500++nNSbX0kxdW3nRAE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P8nx1CPahECljI8BjxVftwexDGRsVtPC3G3nEEVKb5Cite41fyNCGEHf1qUqd7otDTbVeAjZK4R+sJ8wa60E8Nkj862HnhOY4kc/OrFfUkOxme6f+esr7QEhZ10silHAy5GY205qnWndJ6B5gh1Nc4I/hwmMtfMcFZH0pmJAdmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MWc/Jp1w; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6e241443e8dso2134006d6.0;
-        Thu, 13 Mar 2025 09:22:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741882934; x=1742487734; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UfIHfaRWNP9xRngkABo8R5/139+Bl09qwSrP6E5fMS4=;
-        b=MWc/Jp1wR/UrVUqdkIkhxi0LCBU4bwbZy8UYG26naRq/TjSK2Fhe36ZLlsvhCUNn47
-         cpzrxaZk5GcKGMcwanLLN4It51C74FVXQARXK4/WhXhRcga3glVsnb+aR6funiR37YeU
-         r1QSII3KoTOjSRphB8vu4TQmVwSZn4dNLtPPqlkcA0UIvG0JkjfDSAb8RfuLPonhyYTC
-         Z348xwTNnXDYxsMLxuWjo5QmlpqP9mfCQqcJd6qxynEu4vXIdZ1JRfhq1H6gfkY6qXDh
-         FATEynaj1KnhW7j+9ItXpOdI2NwMKmMMW8sz8cYuRuv2qdl3uv4LzjfWPMrUKlDd2SEE
-         9uLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741882934; x=1742487734;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UfIHfaRWNP9xRngkABo8R5/139+Bl09qwSrP6E5fMS4=;
-        b=T00oqXZ7I4WIp4VSQWrXhPi1Dls7+LB1aA33SFTmFRjPu+3CssOKlW8NnQIogjFLrJ
-         TPNYOims1y0cYktkQb4ZYSYT6wzEorcX2ju3jGFHtomBv5MIecfECyQQprE8MbbScsb2
-         NEVQqlNMXbipanv/thqlmi0Le98BJAQDwZ35taw6qPCYDYuFV0fSFbnCAHnI09xPJ+78
-         otNtMcVPjUfQqOH/1q6rs/TZTKhEf8QhdZjXZ4hvHrkR1oAV5nqKrqvgM72BQrJbF5Mb
-         v5tePbS30iSpl2JNlVk6C6tNcMWruXYcBoCkROswR+z1/s6b2Vqi0tJRhK3+vqHiZ7cN
-         ykzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKRcVQtmGDl0qMUyeS5piYqWITfDasJCOIUOYN4iQLEtqyrEAuZbmRqnPC0tAzzIi+lMz/5v2RWmEJOC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs0zR5O8UIv1VTMdLyzOHvjXNLKs5LnWQ8LC8BM76IMcEPag/8
-	W4er29DWRsOeAzcGLYIbliSfWWznVRwy1ImbnvUJ7VSJj6RCGF8=
-X-Gm-Gg: ASbGncs8EhsY5OzvqjKXmhyDpEzJ+LISFLBv8EYYrxtoGLMpZaf8Y2D/5jf2i0tdkEj
-	Ca+OGY0oQ7vGwuTxMejrPhfY91j3h+Lk37aWTYVuAK6MLprM9RN6bvmTWTy4jgAMq3FlUAgfrz3
-	w25MEHtbNUjffpE3d7KEQsZXe8k4BwM5IIhVUsuto/HV4GBvFVtPS/4AUyKuCdlJl8Whq7hrE4k
-	wOksttiu/MU3Qi9ykGhJW5DPyE0qdfFwRG7XKwUf01F9UCL9DVCFsuXsmJ4/Lk3eWCmKDybPHBt
-	LVcKbUBLz01SAT6HgH912FEJuPyEPT8HNTwKMlDCbJs5y3QWnMwd
-X-Google-Smtp-Source: AGHT+IFmv2d+8t/XrIOjXJPJhGj6EnNZatKe6KLSHcmC8CbdVIZNMlpFeQ1NwzNXZDpDFrW8TtWxzQ==
-X-Received: by 2002:ad4:5c6e:0:b0:6e6:5cad:5ce8 with SMTP id 6a1803df08f44-6e908d5cd3fmr120573996d6.6.1741882934043;
-        Thu, 13 Mar 2025 09:22:14 -0700 (PDT)
-Received: from ise-alpha.. ([2620:0:e00:550a:642:1aff:fee8:511b])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade330cb6sm11153606d6.88.2025.03.13.09.22.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 09:22:13 -0700 (PDT)
-From: Chenyuan Yang <chenyuan0y@gmail.com>
-To: heikki.krogerus@linux.intel.com,
-	gregkh@linuxfoundation.org,
-	lk@c--e.de,
-	dmitry.baryshkov@linaro.org,
-	u.kleine-koenig@baylibre.com,
-	diogo.ivo@tecnico.ulisboa.pt,
-	saranya.gopal@intel.com
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chenyuan Yang <chenyuan0y@gmail.com>
-Subject: [PATCH] usb: typec: ucsi: acpi: Add Null check for adev
-Date: Thu, 13 Mar 2025 11:22:11 -0500
-Message-Id: <20250313162211.3650958-1-chenyuan0y@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741882957; c=relaxed/simple;
+	bh=9BJrspz9yE1EjgzFvirmz3UiLOLMBPHH+mtqER++Sv4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=M8alPbHB3KIOU/p14kUQD2EuUy7IeKbA1WkjWVMlUrEj9eQAjzbpdhwpr++P3xGo0brB0/gCHzkbYB1IYDSsGIs5PO2XJkasEltrZOY2Az7YpuBULgNg0doDc8fFaRdWXNAA9OVy1PVXCpeTbXTz3Hl1ctJjFjm8o/yVTptNbwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cowdBlzD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 23D30C4CEDD;
+	Thu, 13 Mar 2025 16:22:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741882957;
+	bh=9BJrspz9yE1EjgzFvirmz3UiLOLMBPHH+mtqER++Sv4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=cowdBlzDy6FflC/ZLWngg82GGSp87Lv+258sp3afuZWEodpoUgpmcY+ykT2FKbOWq
+	 M97H1mze30wQ+MSTSmLcdxhgDGjxizkuz55nPhgQG3AEPzV47LljyTkIbpLgDPXUv+
+	 JIls9M3M4lekWtald2eM9Mj8ACAq+GRSWvsahnhm9llpuJTQSlFMCdWRvdSucUSPIi
+	 qL3KaviRXN7H8hTaqi90/QrYAg5o6OXqetmdEsMCX8ghNKoOBQB+/D21mBk4fTWpNn
+	 2G2FWdnswjoP8nzkXOLTAis5sMoEs+/2ZEK2rKoZeTRhjWvM+lWLxDLJN4+weIdOUP
+	 hX6JXfA68z+cg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE67C282EC;
+	Thu, 13 Mar 2025 16:22:37 +0000 (UTC)
+From: Joel Granados <joel.granados@kernel.org>
+Subject: [PATCH v3 0/5] sysctl: Move sysctls from kern_table into their
+ respective subsystems
+Date: Thu, 13 Mar 2025 17:22:22 +0100
+Message-Id: <20250313-jag-mv_ctltables-v3-0-91f3bb434d27@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD4G02cC/23N3wqCMBTH8VeJc91if9TNrnqPiJjbUVemsckox
+ HdvChFRl98fnM+ZIKB3GGC/mcBjdMENfQqx3YBpdd8gcTY1cMpzypkkF92QWzybsRt11WEgppY
+ 5ZpIiVTmks7vH2j1W8nhK3bowDv65fohsWd+Y+sUiI5QYK4pS6UpZXh6u6HvsdoNvYNEi/wiCF
+ n8EngTJKp4Jo6yo1Zcwz/MLvJ2Q0PMAAAA=
+X-Change-ID: 20250217-jag-mv_ctltables-cf75e470e085
+To: Kees Cook <kees@kernel.org>, Joel Granados <joel.granados@kernel.org>, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, sparclinux@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2666;
+ i=joel.granados@kernel.org; h=from:subject:message-id;
+ bh=9BJrspz9yE1EjgzFvirmz3UiLOLMBPHH+mtqER++Sv4=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGfTBkiMKwNqoKHHDpFPfiyeQ2Fe0oUt/OEGr
+ v94WKqL/HG7rIkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJn0wZIAAoJELqXzVK3
+ lkFPvoAL/3V02KJiyAmy9V2bEiQYwDMb29ke6mz1PS2I1Hyq6bTTE+UOFqXEJK3263QufMxE1ym
+ 1ngbr1fQ9ayJAjPqDVxalEbAM4tm9tUipTiJBCAKrjWIXbn9c8SuonY7lcTWLzuIf9KJDOOO8MP
+ ta6m3pLU+J2mbCgPqyJg0CrbyOltjxkWWK0YnyzlTA0EMNYfkTBOOKK+bHpeQdqhV/yM+444WM/
+ pBDKXOb3Xtvid9OKx62BqIPJ6d0DlFf+TdmorQWitW0YtjhFJ4p8qyh5Ju5ToW/uoCYKsc8EJqU
+ MC74luzxZNer3UwjAwWz0kYQimT8QvW6bGQhBLcDUL70aLr/srJ1KquVbYbGW+L8CfS0buGn9VD
+ MDw79Hh9mX8QiUB/B1D5/KIVdaDEFe9IgO6TabiX3NYvJI+gUQB1iSZt2Bo8W8Sy7i1zuPRisYg
+ tJDqSuvoCNPD/N/ffv96zxA7FdMtJ5SBRIpvxGyWi4cIxc8Fv2fL2LGkdUgQKwK5ER+I1ouBmr7
+ uo=
+X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
+ auth_id=239
 
-Not all devices have an ACPI companion fwnode, so adev might be NULL.
-This is similar to the commit cd2fd6eab480
-("platform/x86: int3472: Check for adev == NULL").
+This series relocates sysctl tables from kern_table to their respective
+subsystems. To keep the scope manageable, this patchset focuses on
+architecture-specific and core kernel sysctl tables. Further relocations
+will follow once this series progresses.
 
-Add a check for adev not being set and return -ENODEV in that case to
-avoid a possible NULL pointer deref in ucsi_acpi_probe().
+By decentralizing sysctl registrations, subsystem maintainers regain
+control over their sysctl interfaces, improving maintainability and
+reducing the likelihood of merge conflicts. All this is made possible by
+the work done to reduce the ctl_table memory footprint in commit
+d7a76ec87195 ("sysctl: Remove check for sentinel element in ctl_table
+arrays").
 
-Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+* Birds eye view of what has changed:
+    - Archs: sparc
+        arch/sparc/kernel/{Makefile,setup.c}
+    - Kernel core:
+        kernel/{panic.c,signal.c,trace/trace.c}
+        kernel/events/{core.c,callchain.c}
+
+* Testing was done by running sysctl selftests on x86_64 and 0-day.
+
+Comments are greatly appreciated
+
+Changes in v3:
+- Removed s390 from the series as it is being upstreamed through s390
+  tree. Adjusted the Cc and To to reflect this.
+- made stack_tracer_enabled static
+- Link to v2: https://lore.kernel.org/r/20250306-jag-mv_ctltables-v2-0-71b243c8d3f8@kernel.org
+
+Changes in v2:
+- Dropped the perf and x86 patches as they are making their way
+  upstream. Removed relevant ppl from To: and Cc: mail header.
+- "ftrace:..." -> "tracing:..." for patch 3
+- Moved stac_tracer_enabled to trace_stack.c instead of trace.c
+- s390: fixed typo and removed the CONFIG_SMP ifdefs
+- Updated trailers
+- Link to v1: https://lore.kernel.org/r/20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org
+
 ---
- drivers/usb/typec/ucsi/ucsi_acpi.c | 3 +++
- 1 file changed, 3 insertions(+)
+Signed-off-by: Joel Granados <joel.granados@kernel.org>
 
-diff --git a/drivers/usb/typec/ucsi/ucsi_acpi.c b/drivers/usb/typec/ucsi/ucsi_acpi.c
-index ac1ebb5d9527..d517914c6439 100644
---- a/drivers/usb/typec/ucsi/ucsi_acpi.c
-+++ b/drivers/usb/typec/ucsi/ucsi_acpi.c
-@@ -189,6 +189,9 @@ static int ucsi_acpi_probe(struct platform_device *pdev)
- 	acpi_status status;
- 	int ret;
- 
-+	if (!adev)
-+		return -ENODEV;
-+
- 	if (adev->dep_unmet)
- 		return -EPROBE_DEFER;
- 
+---
+Joel Granados (5):
+      panic: Move panic ctl tables into panic.c
+      signal: Move signal ctl tables into signal.c
+      tracing: Move trace sysctls into trace.c
+      stack_tracer: move sysctl registration to kernel/trace/trace_stack.c
+      sparc: mv sparc sysctls into their own file under arch/sparc/kernel
+
+ arch/sparc/kernel/Makefile |   1 +
+ arch/sparc/kernel/setup.c  |  46 +++++++++++++++++++
+ include/linux/ftrace.h     |   9 ----
+ kernel/panic.c             |  30 +++++++++++++
+ kernel/signal.c            |  11 +++++
+ kernel/sysctl.c            | 108 ---------------------------------------------
+ kernel/trace/trace.c       |  36 ++++++++++++++-
+ kernel/trace/trace_stack.c |  22 ++++++++-
+ 8 files changed, 144 insertions(+), 119 deletions(-)
+---
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+change-id: 20250217-jag-mv_ctltables-cf75e470e085
+
+Best regards,
 -- 
-2.34.1
+Joel Granados <joel.granados@kernel.org>
+
 
 
