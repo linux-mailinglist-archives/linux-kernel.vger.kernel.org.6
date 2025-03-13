@@ -1,51 +1,97 @@
-Return-Path: <linux-kernel+bounces-560462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A81EA6049C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:45:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 147BDA604A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:46:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AC8A19C3A51
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:46:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6959F3BDA5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEA91F7580;
-	Thu, 13 Mar 2025 22:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D4B1F8918;
+	Thu, 13 Mar 2025 22:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MJT5qlm2"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Na28z13R"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031561B4247
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 22:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A531F5608;
+	Thu, 13 Mar 2025 22:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741905948; cv=none; b=IlOFtpSW6fkKFFn4bFRQbfNbVprQjuT6uPsnGTOBwAzUBqyYDsQojgIYDYvPuBbKdCidCnRPVTBxYc6PsUMMYL9gZVilTVBjEhMnjIAppL814dpcgPmLM7bcoZw749c7punR8HGBGOO7X13b49D8QK18e8ImUYZYnDzyutPR9eo=
+	t=1741905995; cv=none; b=cayGN52lcrob99WXa/1rhAXIrNW5I627OqJGlhaZDS2nWUE28XzSpQQ0b6mPzThVfrDNNLHE1oF9DOyHs4JzxtMu6XE0n/IUAc6jq/+ooDdkGJPOJT/y0SMthoVdjMcEAhssY2Fv6MHOJSKGG0Y5iIV1xJ5NZdPqhwmnJkN0FuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741905948; c=relaxed/simple;
-	bh=Ymy0B5muedkUu/7d59s/P9NCVbZU8Ja1pMH/Wa7JwX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ONHSBK6ihcepIhX/7m4o6fl9tgpYRAsayFqMN+SsFMU2bwP6+QiouZ+qdP1y2wJ3mMfhYKyw6hncx7ZoWNanehMOu0WFtZuCRDIBa9mp2nMUcIz+RC+dC2H7AvAkmGBfNfUb8ZbFllDCauB1T6KNba2AMman5CQZMeSJ3Mk0eW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MJT5qlm2; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 13 Mar 2025 18:45:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741905934;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=mPDyGh56r2beH47Vbuy8u85ZHdi1u9UW+poaGehUIXk=;
-	b=MJT5qlm2FP77eypgdSRLIDeMSuM4Pf8sofL/JC00S7T9EwvQDesGfKYK24UsNJenyl7/SF
-	D1fN4CIcYLdItJa8mkV06iXJ5KRtMeVcGuikxONDoBjn5vKysi3hJcgx88XrkI0Cucm1nZ
-	hnoqHP1WvXHUj3QsRjFNaLuHsEejg24=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.14-rc7
-Message-ID: <de7fintuxlgh7wteymuo4oproofqngifpul6gq5f66p4b7qih3@5q34khdi2ikv>
+	s=arc-20240116; t=1741905995; c=relaxed/simple;
+	bh=QOeWgJa3zFHIM7eilY1J0Y00uN0Q8k5nTUHUnDWrk3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hdyH8tHFfyBJGVvBDWrHOoDFGQBmJugPOlBOe71jw319RcdaDfZPN0UMVEDGdkJlGML3zd5qQPzKx2Lq5C5m0voxTNCvC6GvYCq4e4fUCOFMIdKPUr3Ej8jjed1f909RP43iVu4DNLV3uc0InDIffg4anjQ1kQRAY2A0LqiADA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Na28z13R; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e8f8657f29so12967756d6.3;
+        Thu, 13 Mar 2025 15:46:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741905992; x=1742510792; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pydKdgNblpGj5h7sZOGmI2zMsvih3t2v6u7UCPYQDt4=;
+        b=Na28z13RHHwG8TxXrCEgJB1QzXJuhd8/sRiZxYDOjC8zqz+/9hV1CFqDcMjyIOGpqr
+         QVJp47jcVglf3GvgCRXM+hiW9bWtYC5V/wh2h9fMcXy4GZuul8gwArkT7YsDNDkj8Sxx
+         MXmTCAdmluH6U+BdZ2d872ShV5RKsKJOjMyhaMM73tRWTrvDr/kGqCuROSrnDOCLwIat
+         QRojiVKWcDPQoGOsP845nOt/E7WOilEF6lADee+0u0+N4s3cJNPrC4a6tuLrI2sVGc3b
+         NzfUf1sM7p/ZegHWfV0pK4ljDAtNPE5nyTtMZxjWPQDYJVKadB4nTRshsTT+1+E3i/Gp
+         0+Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741905992; x=1742510792;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pydKdgNblpGj5h7sZOGmI2zMsvih3t2v6u7UCPYQDt4=;
+        b=FQAf1NWSE17wuo150xuE1xUIVwb1KjG7B9G10tG36ogkuhBjrKqUOC1jItRSJdwjsI
+         Vy2OSQC7SXoGFepPtRu/NFFouj9fbzdJEsGWzgsKBdfKAMGwvZfWJ2BBOtO1oaevMjP+
+         fZXlP8X9dBh233VLT6l41QkbMazt+nZJuklap3j0tOZi7IkS1xJkhqe9xUsXxMW+LgmL
+         QRbbxOdwza5axZLTY/kXHkqCgCezjxbLQwB5LKoeBtsDo0P2w3w8r+qlrh7dmq3lmnaw
+         8IUqPJe/o8/sgiOirTZb+VgqfE/49uMj5KtcydYZcMTOKzlzuTQrcBZQ80jQEy0F0KN6
+         HOGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYC7T3UDtXZ43GFSiezlD+EhNlPgwYIU8XPQ9LHLRWahGtw3BoAdR6NswnHe7Fe3mOuDuybuATuncd@vger.kernel.org, AJvYcCWcQc5zL62iGCLCDufXMd2iYmqOjA2Z4v0Rg7zlmRmM5TpHEYBMvU1QDjJvokYs95oGg96/zEHE@vger.kernel.org, AJvYcCXS+ExQ9M68kILeD4bonqn3uFqFnDm2o34u7TgPJIV8UE8sstJvr8fgMPAeUCrA6F4/KevLa+j7uoN3/mab@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCiCjmpRP4/CnzRYe4w0dXsaOtDT56cAyH2slzKNLNt+pFqirV
+	hD9+yV30cf3UQr1fMU0rMWywAE536mrSS3AWnejRSC3kNC/FsuNP
+X-Gm-Gg: ASbGncshZP2PPR8PT5CddCylk7ygqfZWOtmEaN1kkeddJl+yx9wLr/jLMgW61SWBd2j
+	cPxqFqQsbzEdA9UabkfCHN+Y7yzgNX2v8W91OTGe8yDQUfwMCIsNjOdZFY8ow+1DDvu8nw9oQeb
+	XEtBWyBh00/dW12vNSgzGE5St/oS+PkJY/Uzmz7mTYpxglA0MpRvCs9lwH8xg0TVhcfvS/nCYoO
+	LUDMCRQo3IjUviY6H5nG6VF3ZB6xVngXPGmF5IgO9up/pzPBTUuRbjBIORdA4NEqIg2tBTfcAkP
+	6O9nhRXFx1vEe59BAktR
+X-Google-Smtp-Source: AGHT+IFqkOHBtuKsF1XowHyy1ib8FDyL6+pkzITiQkL+N8KWE76/yTSNJDscUTJ0dRbwpaXJOoTbcg==
+X-Received: by 2002:a05:6214:4009:b0:6e8:f3b0:fa33 with SMTP id 6a1803df08f44-6eaea9ed9e0mr3028786d6.8.1741905992624;
+        Thu, 13 Mar 2025 15:46:32 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6eade208e6bsm14898746d6.1.2025.03.13.15.46.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 15:46:32 -0700 (PDT)
+Date: Fri, 14 Mar 2025 06:46:22 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: sophgo: add clock controller
+ for SG2044
+Message-ID: <txuujicelz5kbcnn3qyihwaspqrdc42z4kmijpwftkxlbofg2w@jsqmwj4lz662>
+References: <20250226232320.93791-1-inochiama@gmail.com>
+ <20250226232320.93791-2-inochiama@gmail.com>
+ <2c00c1fba1cd8115205efe265b7f1926.sboyd@kernel.org>
+ <epnv7fp3s3osyxbqa6tpgbuxdcowahda6wwvflnip65tjysjig@3at3yqp2o3vp>
+ <f1d5dc9b8f59b00fa21e8f9f2ac3794b.sboyd@kernel.org>
+ <x43v3wn5rp2mkhmmmyjvdo7aov4l7hnus34wjw7snd2zbtzrbh@r5wrvn3kxxwv>
+ <b816b3d1f11b4cc2ac3fa563fe5f4784.sboyd@kernel.org>
+ <nxvuxo7lsljsir24brvghblk2xlssxkb3mfgx6lbjahmgr4kep@fvpmciimfikg>
+ <f5228d559599f0670e6cbf26352bd1f1.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,47 +100,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <f5228d559599f0670e6cbf26352bd1f1.sboyd@kernel.org>
 
-The following changes since commit 80e54e84911a923c40d7bee33a34c1b4be148d7a:
+On Thu, Mar 13, 2025 at 01:22:28PM -0700, Stephen Boyd wrote:
+> Quoting Inochi Amaoto (2025-03-12 18:08:11)
+> > On Wed, Mar 12, 2025 at 04:43:51PM -0700, Stephen Boyd wrote:
+> > > Quoting Inochi Amaoto (2025-03-12 16:29:43)
+> > > > On Wed, Mar 12, 2025 at 04:14:37PM -0700, Stephen Boyd wrote:
+> > > > > Quoting Inochi Amaoto (2025-03-11 16:31:29)
+> > > > > > 
+> > > > > > > or if that syscon node should just have the #clock-cells property as
+> > > > > > > part of the node instead.
+> > > > > > 
+> > > > > > This is not match the hardware I think. The pll area is on the middle
+> > > > > > of the syscon and is hard to be separated as a subdevice of the syscon
+> > > > > > or just add  "#clock-cells" to the syscon device. It is better to handle
+> > > > > > them in one device/driver. So let the clock device reference it.
+> > > > > 
+> > > > > This happens all the time. We don't need a syscon for that unless the
+> > > > > registers for the pll are both inside the syscon and in the register
+> > > > > space 0x50002000. Is that the case? 
+> > > > 
+> > > > Yes, the clock has two areas, one in the clk controller and one in
+> > > > the syscon, the vendor said this design is a heritage from other SoC.
+> > > 
+> > > My question is more if the PLL clk_ops need to access both the syscon
+> > > register range and the clk controller register range. What part of the
+> > > PLL clk_ops needs to access the clk controller at 0x50002000?
+> > > 
+> > 
+> > The PLL clk_ops does nothing, but there is an implicit dependency:
+> > When the PLL change rate, the mux attached to it must switch to 
+> > another source to keep the output clock stable. This is the only
+> > thing it needed.
+> 
+> I haven't looked at the clk_ops in detail (surprise! :) but that sounds
+> a lot like the parent of the mux is the PLL and there's some "safe"
+> source that is needed temporarily while the PLL is reprogrammed for a
+> new rate. Is that right? I recall the notifier is in the driver so this
+> sounds like that sort of design.
 
-  Linux 6.14-rc6 (2025-03-09 13:45:25 -1000)
+You are right, this design is like what you say. And this design is 
+the reason that I prefer to just reference the syscon node but not
+setting the syscon with "#clock-cell".
 
-are available in the Git repository at:
-
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-13
-
-for you to fetch changes up to 9c18ea7ffee090b47afaa7dc41903fb1b436d7bd:
-
-  bcachefs: bch2_get_random_u64_below() (2025-03-13 12:40:22 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.14-rc7
-
-Roxana caught an unitialized value that might explain some of the
-rebalance weirdness we're still tracking down - cool.
-
-Otherwise pretty minor.
-
-----------------------------------------------------------------
-Alan Huang (1):
-      bcachefs: Fix b->written overflow
-
-Kent Overstreet (4):
-      bcachefs: Make sure trans is unlocked when submitting read IO
-      bcachefs: fix tiny leak in bch2_dev_add()
-      bcachefs: target_congested -> get_random_u32_below()
-      bcachefs: bch2_get_random_u64_below()
-
-Roxana Nicolescu (1):
-      bcachefs: Initialize from_inode members for bch_io_opts
-
- fs/bcachefs/btree_io.c |  2 +-
- fs/bcachefs/extents.c  |  2 +-
- fs/bcachefs/inode.c    |  1 +
- fs/bcachefs/io_read.c  | 19 ++++++++++++-------
- fs/bcachefs/super.c    | 11 ++++++-----
- fs/bcachefs/util.c     | 23 ++++++++++++++---------
- fs/bcachefs/util.h     |  2 +-
- 7 files changed, 36 insertions(+), 24 deletions(-)
+Regards,
+Inochi
 
