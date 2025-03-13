@@ -1,103 +1,94 @@
-Return-Path: <linux-kernel+bounces-559468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51FF4A5F419
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:20:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C24BA5F42E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:21:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A1F317D1CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:20:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D286B19C022A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C1D266EFF;
-	Thu, 13 Mar 2025 12:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2356E266F0B;
+	Thu, 13 Mar 2025 12:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eP310P8n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQaer/FU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05DDFC0B;
-	Thu, 13 Mar 2025 12:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D8A335BA;
+	Thu, 13 Mar 2025 12:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741868409; cv=none; b=rbGEh3WW4p+bLPG+nfXMFiqGEP6A9jdYX2GQ08c27fzJjB9FGONvOYht4SWIEuAXu7Z1KPpfg6WWRrq2Op9tJTLdsci1MWCcP2I96idhTRHAYm66bBr6jv41+NvslqAGEKTN0+Rm7nU5yFCiloUoNqlu8gBaYbhNGIsIWXTZxl8=
+	t=1741868506; cv=none; b=G3hvCu3nBuKZCs6Ym09Xpab7DSFU0b1uHRPWkY6l9ORvcmi06WFCU9qLZMmxJYAnlpla7sXeFWZRNSK4UanfgivKck8uJfCVyTdPxIEb3vV/Z9U0xk6T9I4OdzbgRmDT6wjGb6B/AT2lyGTSIkXPd/ln9sioDgn80+M9zDlZApM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741868409; c=relaxed/simple;
-	bh=uqFaBSHIs6hkpHAepTQUQWUex2GHDEOlYVmk4sFY0oE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=IModOGShfQkU3aRrOvbvMbmCW+pxnFUg4Vlcc5EaQS3rScC+U+dgCA3bVJTbm6KibzQVGMKpYdk9S6rMbCeahUDCBfRXEnNhd91w6udzrL5U5veNsmFSq42NhNK3t9W96fsLHp5ZgaZY9NMiV917KQNbG/ZZ7DAcgWXS/lqfV5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eP310P8n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65E75C4CEDD;
-	Thu, 13 Mar 2025 12:20:08 +0000 (UTC)
+	s=arc-20240116; t=1741868506; c=relaxed/simple;
+	bh=QufmZPS8ox6XEcE14PIgRsf+OlqSGddamexQokuBYxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fqt3pDJSf+mx/zUEaG5XpbMxH3MD0ie1edTYQvoUiyDzuZ5TtLtPy3TEQ2AEPs3Ug8Iv2LN7w1zgnZMD/HlYNnX5ufYE+we3lxG3R63XakI+Ce7mUUiBibuTN58+TrLqgY/pZs+GxNTxT0nojKEjaSu2durM8oRRDTIV13Fm6Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQaer/FU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DC21C4CEDD;
+	Thu, 13 Mar 2025 12:21:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741868408;
-	bh=uqFaBSHIs6hkpHAepTQUQWUex2GHDEOlYVmk4sFY0oE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=eP310P8nPsrfZu0rtZD6xG7FK3e5o9rKliwQp1gQBO339+T1RqyCDZD2G0LD5wcud
-	 JhmyGLFWYuvN/qsevv8ocEQX/oYzpUJONLlxxAMSnTSvodyjcSTmGOJekTwxgNk+Ix
-	 lBCly7Niqz+ZyQcm1Fqv31PXDVgDuKgCPja0kMNx5ThAqqPw1oylMUrMbCcoaAAkNQ
-	 jPsg9JnSI9G0grfDBs2e2TXNdhZVFAapmZRMfIrAdHwPEw2jXu5KBZItRiYIaRxvxx
-	 SGxJbh/UHQGuIEogUns6zc/S+YOSdS6nuBQ5KPqAzUYEsDrGsT+Vd/EqHFyHb7EbsP
-	 pKZ3McP8B/oCg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D543806651;
-	Thu, 13 Mar 2025 12:20:44 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1741868506;
+	bh=QufmZPS8ox6XEcE14PIgRsf+OlqSGddamexQokuBYxA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kQaer/FU51ED/keQqTzTmhBCZOzp0ncteR9klAlqZafCk0PI/ZZPp7G9/7dYxD1/D
+	 iBaEtDuhyTfhuVIf7ETP+0xPlUUdyi5RQ/oDcqzluCQUU+1XWeUrCC6Rfd+Jt9D8FX
+	 4XjKvKxOn0pAKAgvNallCLfLd6R8p0eWyRfAmh9s3aE2mj15bL4VTY39xFHUzFmTTL
+	 XUsjXTsSjJfpFC6guhJKpjEVRKwS3tywLKoFBnUlJ9rgYYGdCXjxCOX39j0VLc0p9y
+	 wWD8nu3p5AIOZ6wXIeqR14EHQaRR2Lmip2vd8EeWAHvw3TPgdHdEntZSJSYNYp7b83
+	 H8h28d6PMoLbA==
+Date: Thu, 13 Mar 2025 13:21:40 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Eric <eric.4.debian@grabatoulnz.fr>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Salvatore Bonaccorso <carnil@debian.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Jian-Hong Pan <jhp@endlessos.org>, regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	Dieter Mummenschanz <dmummenschanz@web.de>
+Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
+ board type") on reboot (but not cold boot)
+Message-ID: <Z9LN1HiFrGxmO6Ba@ryzen>
+References: <Z8l61Kxss0bdvAQt@ryzen>
+ <Z8l7paeRL9szo0C0@ryzen>
+ <689f8224-f118-47f0-8ae0-a7377c6ff386@grabatoulnz.fr>
+ <Z8rCF39n5GjTwfjP@ryzen>
+ <9c4a635a-ce9f-4ed9-9605-002947490c61@redhat.com>
+ <Z88rtGH39C-S8phk@ryzen>
+ <383d5740-7740-4051-b39a-b8c74b035ec2@redhat.com>
+ <Z9BFSM059Wj2cYX5@ryzen>
+ <9670400b-4723-4028-b5ae-5005ed3766c1@grabatoulnz.fr>
+ <95783730-0a77-40a0-9933-509eaa0ba558@grabatoulnz.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net 0/6] mlx5 misc fixes 2025-03-10
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174186844301.1489828.15120756086422441476.git-patchwork-notify@kernel.org>
-Date: Thu, 13 Mar 2025 12:20:43 +0000
-References: <1741644104-97767-1-git-send-email-tariqt@nvidia.com>
-In-Reply-To: <1741644104-97767-1-git-send-email-tariqt@nvidia.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, andrew+netdev@lunn.ch, gal@nvidia.com, mbloch@nvidia.com,
- moshe@nvidia.com, saeedm@nvidia.com, leon@kernel.org, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <95783730-0a77-40a0-9933-509eaa0ba558@grabatoulnz.fr>
 
-Hello:
+Hello Eric,
 
-This series was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Tue, 11 Mar 2025 00:01:38 +0200 you wrote:
-> Hi,
+On Wed, Mar 12, 2025 at 10:39:37PM +0100, Eric wrote:
 > 
-> This patchset provides misc bug fixes from the team to the mlx5 core and
-> Eth drivers.
-> 
-> Thanks,
-> Tariq.
-> 
-> [...]
+> With the patch you asked me to test, the SSD is properly detected at reboot,
+> both by the UEFI and the kernel.
 
-Here is the summary with links:
-  - [net,1/6] net/mlx5: DR, use the right action structs for STEv3
-    https://git.kernel.org/netdev/net/c/03ebae199255
-  - [net,2/6] net/mlx5: HWS, Rightsize bwc matcher priority
-    https://git.kernel.org/netdev/net/c/521992337f67
-  - [net,3/6] net/mlx5: Fix incorrect IRQ pool usage when releasing IRQs
-    https://git.kernel.org/netdev/net/c/32d2724db5b2
-  - [net,4/6] net/mlx5: Lag, Check shared fdb before creating MultiPort E-Switch
-    https://git.kernel.org/netdev/net/c/32966984bee1
-  - [net,5/6] net/mlx5: Bridge, fix the crash caused by LAG state check
-    https://git.kernel.org/netdev/net/c/4b8eeed4fb10
-  - [net,6/6] net/mlx5e: Prevent bridge link show failure for non-eswitch-allowed devices
-    https://git.kernel.org/netdev/net/c/e92df790d07a
+Thanks a lot for testing!
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Interesting that DIPM is enabled on both, but only causes a problem on
+Samsung.
 
 
+Kind regards,
+Niklas
 
