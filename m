@@ -1,111 +1,146 @@
-Return-Path: <linux-kernel+bounces-559050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B44F1A5EEDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:03:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0189A5EEDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:03:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D215419C1074
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:03:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C5993AABD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6AB264624;
-	Thu, 13 Mar 2025 09:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48713263C6A;
+	Thu, 13 Mar 2025 09:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gGxfFEx7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="c3Fz9NOI"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C7322F163;
-	Thu, 13 Mar 2025 09:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675FE260A3C
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741856556; cv=none; b=a1vnnJ3w0McFtVnga/bQGZ2TLdYUPVbmsjFATyKHX/CAEXmP2rtlZ0xHCsjbP0/3rPWwjNyNVhzKME6w2jmt1+yqd/AIigv99bTVue8GqXAIR3ckUG8R/m8mzPNVCFI/d0yKqdLf4p/JuXWeAChOlPinlHsyV4pHXLWITiiyRvw=
+	t=1741856578; cv=none; b=C8aya08BHm5Hlz2HCcN6kgyhagJxOYljFGhUIWdJmUbjtqrsRPgF5Mu2TgAN7lo6fGQxoxsBH+Mwtky0NtgbTdzBzx6zQheUDBK6stFYfecAp1xTXgddOyGtQQgS7WA1xysWcfxiELQkCTfyqgcgb1oEI8XLajcnlmuI3LzCv3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741856556; c=relaxed/simple;
-	bh=puRFOogVBwJjAXTpJBm30uYFBzpj1RgRfFr0WKW4VD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oZsxyUuHoXJ+UmyfkAKNRdYQLU3tplt/GZU+fvFHO/JSKW5AmDrFD5WMMD0STIRk3DqP40HAPrrcjVuHYGNweY8g14RMwfsa9woGHsL7vzVKSG8uTm18bvch8wiWlMSdgV+4PtB9miyRC3GeBv5QZkOJWUogaZiLdG9F/6Bby1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gGxfFEx7; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741856555; x=1773392555;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=puRFOogVBwJjAXTpJBm30uYFBzpj1RgRfFr0WKW4VD0=;
-  b=gGxfFEx7BYRaNl9n73u0AKl0Nt9AjRpf3Tf0pNsrKRSZybNo9OfQkplk
-   TfmyEl2lWh7nWIQ3QSn9Cdh+FPns5lXVB8l5cHncbUG/1EwvC0ALcCu3p
-   nAqDDXmXi6Yw329YUBcOi9kmNT3UPE4NtrxzzZtUPeoR9PxEarMT5H+Xl
-   xWTJVDipdtFWaZuomKTS37ggAEBKQ6ytB7yjg96gmPADoLgwaTwEGeWgG
-   slguEaWeKMViCh8JVgPrOUd58MFDe9+ZMeWKMXjfjgZk9Moyw9vffPd2N
-   /pZdWuktiPEbHquzuwA3CinhtNLjPE2ZDgO4YrHx+LMyyLnHWcgBRlX21
-   w==;
-X-CSE-ConnectionGUID: TQYW4ddyRdigpAexw978Cg==
-X-CSE-MsgGUID: Xj5BcJoFR3WyMgzljEfGwA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="53599859"
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="53599859"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 02:02:34 -0700
-X-CSE-ConnectionGUID: UJerJ1FESBO9PyHHKIPwuw==
-X-CSE-MsgGUID: f09Ru+GjRvOR3sHk70y+Yg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="121386670"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 02:02:32 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tseSS-000000027n7-1E2e;
-	Thu, 13 Mar 2025 11:02:28 +0200
-Date: Thu, 13 Mar 2025 11:02:28 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ma Ke <make24@iscas.ac.cn>, Wang Hai <wanghai26@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, jdamato@fastly.com,
-	aleksander.lobakin@intel.com, quic_zijuhu@quicinc.com,
-	wanghai26@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] net-sysfs: fix error handling in
- netdev_register_kobject()
-Message-ID: <Z9KfJBzR9ZWFBJDf@smile.fi.intel.com>
-References: <20250313075528.306019-1-make24@iscas.ac.cn>
- <Z9Ke3moM5BVSsPax@smile.fi.intel.com>
+	s=arc-20240116; t=1741856578; c=relaxed/simple;
+	bh=tg7DSbFPev/ToBK3Ef+B4kvdMI9TFA2cmy+2Ov/LwAA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Blxjv5O3MV28SFBvP2BUsWWoowqSIf6ylHbKjNR/dzAwIjI+q+xmtQnGm4XbkSg5Wamw2rHzOClj+4CA6J3kPiU+vcBk1CqFC5d4SSc5d9UuDOFSK0/0epHliKAtqUOS/XU0GR0AYbAuypF6UGzrY9tkqISrQY65en2M+mOPcqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=c3Fz9NOI; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30bf8632052so7040461fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 02:02:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1741856574; x=1742461374; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tg7DSbFPev/ToBK3Ef+B4kvdMI9TFA2cmy+2Ov/LwAA=;
+        b=c3Fz9NOIFh/7lQP0J+Lrymt+zaUXJbki7GWDT0lPdCuKCcMCoran2GfYVsFc+RDSxs
+         PbhgDS1asQE1P4CJvJT28BNjSEgZWIZ9x992WldY6uTlE18+d+ftuUljvSG6KydnOwma
+         4jb/zlpHsNWy+jlqwIvrocrnVAMwHFBvei2OZXqE0jt70gz5mCwGuLAMGBrqQwhsc5zN
+         E4KhfQ7TbyIv7rl0j+NwQX/e5InSsxvkplw50604o8RqCzCaGhufHpfNrP/PID2VvS9a
+         6i/34H8I8GRzSDoNBLmIK2kSLrGvDUUAW79OHMpdUUYZW4Z9a6qfl+84WTtDGcvGQOLy
+         mK4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741856574; x=1742461374;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tg7DSbFPev/ToBK3Ef+B4kvdMI9TFA2cmy+2Ov/LwAA=;
+        b=IPJp0L7HmJMKdUmJ3B1ea/Db4S9ZoZ52U1cxFuwu1msV6otyj6UFTOGAlJslV0PhIl
+         1k9RRbI+WtEEmaBM/Z2qXm7/8fUXfY7bp322ELNxxYdL6OwRkfv7cIbr476KcrRv0VVi
+         WBXnyvlEX9Gds41HSE94z8H2/fdhUHW1eWAYX61VZAt8RimrjMKzLcpbnIkHGrC3z3pr
+         zsLzxUDmxSZWYKCBRyQn9a2I+9bPHFGVwPDZVDPJIPAxlMltFOW0pAeuprnGuFw44aGm
+         9wXzAw5X95wxx7LSDvocK5UT2zjQG/79QHCjExLkoKra5U+luC7g04tTqRRpAveXIRa+
+         gTbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzI4NAvN+l4BoN53+f0t0yuFvAxQLtb4RYC7VskVwFK+CrGmrm98A9C+/4KhUcqMgeBgWQVNXmIKRsSPs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVRfkRE833jg7oa47R6ad4DWftauDEiq27qDo3MrCRM6KJGms0
+	Fpwvc/KkuzsqgVLZvdBA5z+3NGzNio1rXKyFZeLMUnX6tvGoo+qxsseSeSeUCDUbHLPFY50NLGD
+	fUbclu8BQaL5GvYe+9ok1cijhbKkV4TIiJPpcQQ==
+X-Gm-Gg: ASbGncvvDVn0WJ3dVSZUvAuRgPYakM7VaT1A8Sl/G5fSK/9cO6ZA7EhvOR03YLIT2o6
+	e3G5F3/hHQs4Jid93NuKHzW3O+TDWl5ueFR95eO6Q0hhdFP6hlmQGv3cTGU4L3QBa0z+kojKBsE
+	DYD33ybPVKMidn7SfsZR3env+ohrePWUKceI+sX6xU
+X-Google-Smtp-Source: AGHT+IEvjYCUz8+4rdFfCSurcxSpdJL3vG3Az7HPINb1JM3PerHD1lC7Td2QRd0UxLGyaIs3gOzfVrzXmJ3QkkmoRrw=
+X-Received: by 2002:a05:6512:1597:b0:549:8f24:b617 with SMTP id
+ 2adb3069b0e04-54990e2c019mr8873182e87.4.1741856574247; Thu, 13 Mar 2025
+ 02:02:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9Ke3moM5BVSsPax@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250313034812.3910627-1-hezhongkun.hzk@bytedance.com> <Z9KPzQNctY_ALL0D@tiehlicka>
+In-Reply-To: <Z9KPzQNctY_ALL0D@tiehlicka>
+From: Zhongkun He <hezhongkun.hzk@bytedance.com>
+Date: Thu, 13 Mar 2025 17:02:41 +0800
+X-Gm-Features: AQ5f1JpXLeTNidzVpI0S8XFw2I56K4hTNHQkbtr22KOqanhQ0XZYUc7wNGjGRos
+Message-ID: <CACSyD1M_=knwBkP4RtMqLskv5U3W2oRCwdxdsv_PTvyxr2627Q@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH V1] mm: vmscan: skip the file folios in
+ proactive reclaim if swappiness is MAX
+To: Michal Hocko <mhocko@suse.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, muchun.song@linux.dev, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-+Cc: Wang Hai
+On Thu, Mar 13, 2025 at 3:57=E2=80=AFPM Michal Hocko <mhocko@suse.com> wrot=
+e:
+>
+> On Thu 13-03-25 11:48:12, Zhongkun He wrote:
+> > With this patch 'commit <68cd9050d871> ("mm: add swappiness=3D arg to
+> > memory.reclaim")', we can submit an additional swappiness=3D<val> argum=
+ent
+> > to memory.reclaim. It is very useful because we can dynamically adjust
+> > the reclamation ratio based on the anonymous folios and file folios of
+> > each cgroup. For example,when swappiness is set to 0, we only reclaim
+> > from file folios.
+> >
+> > However,we have also encountered a new issue: when swappiness is set to
+> > the MAX_SWAPPINESS, it may still only reclaim file folios. This is due
+> > to the knob of cache_trim_mode, which depends solely on the ratio of
+> > inactive folios, regardless of whether there are a large number of cold
+> > folios in anonymous folio list.
+> >
+> > So, we hope to add a new control logic where proactive memory reclaim o=
+nly
+> > reclaims from anonymous folios when swappiness is set to MAX_SWAPPINESS=
+.
+> > For example, something like this:
+> >
+> > echo "2M swappiness=3D200" > /sys/fs/cgroup/memory.reclaim
+> >
+> > will perform reclaim on the rootcg with a swappiness setting of 200 (ma=
+x
+> > swappiness) regardless of the file folios. Users have a more comprehens=
+ive
+> > view of the application's memory distribution because there are many
+> > metrics available. For example, if we find that a certain cgroup has a
+> > large number of inactive anon folios, we can reclaim only those and ski=
+p
+> > file folios, because with the zram/zswap, the IO tradeoff that
+> > cache_trim_mode is making doesn't hold - file refaults will cause IO,
+> > whereas anon decompression will not.
+> >
+> > With this patch, the swappiness argument of memory.reclaim has a more
+> > precise semantics: 0 means reclaiming only from file pages, while 200
+> > means reclaiming just from anonymous pages.
+>
+> Well, with this patch we have 0 - always swap, 200 - never swap and
+> anything inbetween behaves more or less arbitrary, right? Not a new
+> problem with swappiness but would it make more sense to drop all the
+> heuristics for scanning LRUs and simply use the given swappiness when
+> doing the pro active reclaim?
+>
 
-On Thu, Mar 13, 2025 at 11:01:18AM +0200, Andy Shevchenko wrote:
-> On Thu, Mar 13, 2025 at 03:55:28PM +0800, Ma Ke wrote:
-> > Once device_add() failed, we should call put_device() to decrement
-> > reference count for cleanup. Or it could cause memory leak.
-> > 
-> > As comment of device_add() says, 'if device_add() succeeds, you should
-> > call device_del() when you want to get rid of it. If device_add() has
-> > not succeeded, use only put_device() to drop the reference count'.
-> 
-> Okay, have you read the history of this?
-> 6b70fc94afd1 ("net-sysfs: Fix memory leak in netdev_register_kobject")
-> 8ed633b9baf9 ("Revert "net-sysfs: Fix memory leak in netdev_register_kobject"")
-> https://syzkaller.appspot.com/x/log.txt?x=1737671b200000
-> 
-> TL;DR: next time provide a better changelog and clean syzkaller report.
+Thanks for your suggestion! I totally agree with you. I'm preparing to send
+another patch to do this and a new thread to discuss, because I think the
+implementation doesn't conflict with this one. Do you think so ?
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> --
+> Michal Hocko
+> SUSE Labs
 
