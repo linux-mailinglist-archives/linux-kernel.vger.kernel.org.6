@@ -1,184 +1,108 @@
-Return-Path: <linux-kernel+bounces-560141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F45A5FE8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:50:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F572A5FE93
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:51:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA147189486F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:50:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BA771766B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3174B1E8327;
-	Thu, 13 Mar 2025 17:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCFF1EEA34;
+	Thu, 13 Mar 2025 17:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0fc6TNNG";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EzjVpdXy"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="WamOBYPo"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A2B1E51EE;
-	Thu, 13 Mar 2025 17:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778F41EB1B8
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741888243; cv=none; b=J16PyQZWgZVU2UeZk3K7mi1KIpaRXUvKkE7/cQerrQTPBHNsD2Yu/wWgrsXk1AYvoQzQh4gUEwUHSKklJGCg+Vku0L/o41D/nhe81iGuNOwGPIRrkeUYehZqoab5N5otxSTk79Q1U4syJM+kHAyxaJuE6gA6v9MAxRTsFyEAqx0=
+	t=1741888250; cv=none; b=uuL1424x7Xx/KaPI8UfXcYhSZfvXfqN+o8ZohrfGUK6ToUxY2L1I9eAR6oOo7yddXQUS2HmpLoWNofqe+EfyfVNNRSTuF7M27wwlpSqZQhsvYSQ+APjAkMZbHGsjetPwZIOWF6H2KFbWiODgoflc7mVxQdc6VTtTr3GvekhR324=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741888243; c=relaxed/simple;
-	bh=hE3o3l6YDDbEl7ls3Vj4rSrOsIq7qnOAbxmMi+K2QSA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=tBSRBd7XULCCazyssnBjG5I5l9Qcai1d5KI4fGAA54t/baTMWrLim+4jj/O97qb0h9fKtimGSF8BL8fUvcFl+G2PFf3j69Pdmy+NdzBnf5hnVMIiX/gG1MTHi34YW/OyiGeNBm9g0bVBKZW9AmTh8XSCRBbw/JAh9fCeK7czsm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0fc6TNNG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EzjVpdXy; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 13 Mar 2025 17:50:34 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741888239;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Tv3o6lwids3X2Ww1BF3y4l+mwnpzcwgvGJXX1PhNsQk=;
-	b=0fc6TNNG2FoYoBsaBlPnti79CBu3lKoeeDeG6k2fGin6pRMlNFuaGhUcuk9Y9B9AbOsd2f
-	DXBWH0qNWws/3V41mB+9BngG+MGhCRhBDPKeX4KUFY8/GcfX1+K6wfYgpLDN5TEHihiKiH
-	tVle44b5J+1oRIjSf5yYe2OxcRV1Hw1C6uTAkVn0HxU7nWVhnNMUECqo/+BOKKqAx3XV0H
-	W3wPhSYvQq+VXoq6WwZ2nvZ9Pbn6x5mpRpBcXuHX5/Nn4fIKw0ct0pdncDiS1EoPFNwQa6
-	xuZBSIM7ncnYfSlwv6jDGH6vmyAu+//Q9G8qAUXnCrmJ0f3NWeWu29O7+nob+A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741888239;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Tv3o6lwids3X2Ww1BF3y4l+mwnpzcwgvGJXX1PhNsQk=;
-	b=EzjVpdXyXcAv67R+0nz28EhjJWpId6sFzp4nVPZNzkXvn9NAE6kxMOjERN0y54/OVfSGNo
-	bOEDtOYa3/8LhiAA==
-From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/fpu] x86/fpu: Use XSAVE{,OPT,C,S} and XRSTOR{,S} mnemonics
- in xstate.h
-Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250313130251.383204-1-ubizjak@gmail.com>
-References: <20250313130251.383204-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1741888250; c=relaxed/simple;
+	bh=hH2M0L8GugWIjL/IH69cL2k2SDu29U8ksydcjEDakFQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o2BKa2CQ7RHU0P2kCiAwghcLkP1hcdJ4ZEP1CEVFavk/7kJNFKlYz0He867R9cB9QTYOxGNbV22SBNMdQVdxBkekqWagYcpw2oaKApLi+vbEeLoTNmLlN309VWqj4dJgTRkq+QEi8cTfSMfFrFY3eO/uKme20ApJKW2tEV5EqJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=WamOBYPo; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741888246; x=1742147446;
+	bh=yWSTgNLE8+/y0F/wD0wigkqck+4QhaXuow7VuEL2rP0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=WamOBYPoWTC+oHDvFY4Psc29v1aXbWvf6/cqWmexcjvTGlOSRt75qNBOU2mQfJOMn
+	 +Irluf37gIUo3UoNocD3rTvEwiOB25FNUe6jMKDbjlr3Zr1QcRSo12HKL8Mk6KC8D9
+	 n++9yNvc9exrjZURDLiiq2+5OovwSF5OwLq4JKboXhpOWBHKQKkZPRISBBXynaIgsL
+	 n3k2CxBu5PiFlbwPhB6OazeCu1z/ciCJZ8oAE1YUnw5pYy+a/0y5dgJ8v+020lo8fq
+	 wyfib5WyBJgFjgadlpinwu0oueBl2CQxchKBXPg5umEzATcYNqKEWS3DBCC2SP1ebD
+	 xiGUK7Q7lWYDA==
+Date: Thu, 13 Mar 2025 17:50:40 +0000
+To: Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust/revocable: add try_with() convenience method
+Message-ID: <D8FBUHBNPIEL.5A8GOEMPJSEA@proton.me>
+In-Reply-To: <Z9L-Z4Aw64Hi5Lj8@pollux>
+References: <20250313-try_with-v1-1-adcae7ed98a9@nvidia.com> <D8F7D2RPRVAO.2EF39MZXM6FPR@proton.me> <D8F8E4PBHK7O.399Y83M1L3XK3@nvidia.com> <D8F91L51P2EA.2FBHGJYSV06HY@proton.me> <Z9L-Z4Aw64Hi5Lj8@pollux>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: c4f6d763d9be7a997f3e4bf9bf7b8294942129be
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174188823430.14745.17591986001259957573.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/fpu branch of tip:
+On Thu Mar 13, 2025 at 4:48 PM CET, Danilo Krummrich wrote:
+> On Thu, Mar 13, 2025 at 03:38:55PM +0000, Benno Lossin wrote:
+>> On Thu Mar 13, 2025 at 4:08 PM CET, Alexandre Courbot wrote:
+>> > On Thu Mar 13, 2025 at 11:19 PM JST, Benno Lossin wrote:
+>> >> Would it make sense to not use `Result` here and continue with `Optio=
+n`?
+>> >
+>> > We would have to return an Option<Result<R>> in this case. The current
+>> > code folds the closure's Result into the one of the guard's acquisitio=
+n
+>> > for convenience.
+>> >
+>> > Actually, I don't think I have ever used try_access() a single time
+>> > without converting its returned Option into a Result. Wouldn't it make
+>> > sense to do the opposite, i.e. make try_access() return Err(ENXIO) whe=
+n
+>> > the guard cannot be acquired and document this behavior?
+>>=20
+>> Sure, if you're always doing
+>>=20
+>>     let guard =3D rev.try_access().ok_or(ENXIO)?;
+>>=20
+>> Then it makes sense from my view, maybe Danilo has some other argument
+>> for why `Option` is better.
+>
+> Most of the time I think we indeed want to derive an Err() if try_access(=
+)
+> fails, but not with a specific error code. The error code depends on the =
+context
+> of where the revocable is used (e.g. for I/O mappings), but it also depen=
+ds on
+> the driver semantics.
 
-Commit-ID:     2883b4c2169a435488f7845e1b6fdc6f3438c7c6
-Gitweb:        https://git.kernel.org/tip/2883b4c2169a435488f7845e1b6fdc6f3438c7c6
-Author:        Uros Bizjak <ubizjak@gmail.com>
-AuthorDate:    Thu, 13 Mar 2025 14:02:27 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 13 Mar 2025 18:36:52 +01:00
+In that case a single function with this signature would make sense:
 
-x86/fpu: Use XSAVE{,OPT,C,S} and XRSTOR{,S} mnemonics in xstate.h
+    fn access_with<R>(&self, f: impl FnOnce(&T) -> R) -> Option<R>;
 
-Current minimum required version of binutils is 2.25, which
-supports XSAVE{,OPT,C,S} and XRSTOR{,S} instruction mnemonics.
+If there are common usages that always return the same error code, then
+we could add them as functions with `Result`.
 
-Replace the byte-wise specification of XSAVE{,OPT,C,S}
-and XRSTOR{,S} with these proper mnemonics.
-
-No functional change intended.
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250313130251.383204-1-ubizjak@gmail.com
 ---
- arch/x86/kernel/fpu/xstate.h | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+Cheers,
+Benno
 
-diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
-index aa16f1a..1418423 100644
---- a/arch/x86/kernel/fpu/xstate.h
-+++ b/arch/x86/kernel/fpu/xstate.h
-@@ -94,18 +94,17 @@ static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u64 ma
- /* XSAVE/XRSTOR wrapper functions */
- 
- #ifdef CONFIG_X86_64
--#define REX_PREFIX	"0x48, "
-+#define REX_SUFFIX	"64"
- #else
--#define REX_PREFIX
-+#define REX_SUFFIX
- #endif
- 
--/* These macros all use (%edi)/(%rdi) as the single memory argument. */
--#define XSAVE		".byte " REX_PREFIX "0x0f,0xae,0x27"
--#define XSAVEOPT	".byte " REX_PREFIX "0x0f,0xae,0x37"
--#define XSAVEC		".byte " REX_PREFIX "0x0f,0xc7,0x27"
--#define XSAVES		".byte " REX_PREFIX "0x0f,0xc7,0x2f"
--#define XRSTOR		".byte " REX_PREFIX "0x0f,0xae,0x2f"
--#define XRSTORS		".byte " REX_PREFIX "0x0f,0xc7,0x1f"
-+#define XSAVE		"xsave" REX_SUFFIX " %[xa]"
-+#define XSAVEOPT	"xsaveopt" REX_SUFFIX " %[xa]"
-+#define XSAVEC		"xsavec" REX_SUFFIX " %[xa]"
-+#define XSAVES		"xsaves" REX_SUFFIX " %[xa]"
-+#define XRSTOR		"xrstor" REX_SUFFIX " %[xa]"
-+#define XRSTORS		"xrstors" REX_SUFFIX " %[xa]"
- 
- /*
-  * After this @err contains 0 on success or the trap number when the
-@@ -114,10 +113,10 @@ static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u64 ma
- #define XSTATE_OP(op, st, lmask, hmask, err)				\
- 	asm volatile("1:" op "\n\t"					\
- 		     "xor %[err], %[err]\n"				\
--		     "2:\n\t"						\
-+		     "2:\n"						\
- 		     _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT_MCE_SAFE)	\
- 		     : [err] "=a" (err)					\
--		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
-+		     : [xa] "m" (*(st)), "a" (lmask), "d" (hmask)	\
- 		     : "memory")
- 
- /*
-@@ -137,12 +136,12 @@ static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u64 ma
- 				   XSAVEOPT, X86_FEATURE_XSAVEOPT,	\
- 				   XSAVEC,   X86_FEATURE_XSAVEC,	\
- 				   XSAVES,   X86_FEATURE_XSAVES)	\
--		     "\n"						\
-+		     "\n\t"						\
- 		     "xor %[err], %[err]\n"				\
- 		     "3:\n"						\
- 		     _ASM_EXTABLE_TYPE_REG(1b, 3b, EX_TYPE_EFAULT_REG, %[err]) \
- 		     : [err] "=r" (err)					\
--		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
-+		     : [xa] "m" (*(st)), "a" (lmask), "d" (hmask)	\
- 		     : "memory")
- 
- /*
-@@ -156,7 +155,7 @@ static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u64 ma
- 		     "3:\n"						\
- 		     _ASM_EXTABLE_TYPE(1b, 3b, EX_TYPE_FPU_RESTORE)	\
- 		     :							\
--		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
-+		     : [xa] "m" (*(st)), "a" (lmask), "d" (hmask)	\
- 		     : "memory")
- 
- #if defined(CONFIG_X86_64) && defined(CONFIG_X86_DEBUG_FPU)
 
