@@ -1,151 +1,245 @@
-Return-Path: <linux-kernel+bounces-559451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B52A5F3E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:11:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEC9DA5F3EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:12:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 591DB17F7F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:11:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06A0017F99D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249BE266EF5;
-	Thu, 13 Mar 2025 12:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B51267726;
+	Thu, 13 Mar 2025 12:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXj8mXD5"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KjZHgtMQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E68267B9A;
-	Thu, 13 Mar 2025 12:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26252676E4;
+	Thu, 13 Mar 2025 12:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741867781; cv=none; b=dV9DvPQjebNFeLBGHwpCyi/HwP10+iCH9ahETVWcN9SYa6f9h9jPKAZ8R+H2nYyruVMbPn6s+OAcHlswZXqm55hLNG3Zm9QABmMGK1g4BgWRiaq8TkGMtff3+WbIiCkY8dLgV8jY4mI47dmEmqYHNKfrkCyJXYNmoYCtB51XZ2Y=
+	t=1741867844; cv=none; b=WnS9h5bnL9iPvgarxVwU5DGbPc0o8mz10U51CvuA6Ot8HpmmBKeocGxE3pAqUqbbhoA4i/7JxB/BmCQwpht4M2yGa7PaL0LrYV3VhkXTHIkvAWIDZX/ueSGcDkn8gtAE7awm/h58hNnZMmisUES0+Hedfq1R09kpeQEnUMQcM5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741867781; c=relaxed/simple;
-	bh=/jdmrrYLryvXv8srvg9uxHzbJWZOpIDvDn8UcNKJvRU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kchj63MhXbnaArDqydjvGI4QeaK93e2RWIpJqCTwSGxb3QCciqkMXVDyYfOh9wd+1w356ffvD2i2UoMxgNM03gM4ul8g+hyPXefkFFMmP40ik9ggo4l7Xvx8WNPYTSC+yL6nSWvviL/nkz/KiilytYeHbY76GuIgU3tBSnsFFkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXj8mXD5; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c5675dec99so101016585a.0;
-        Thu, 13 Mar 2025 05:09:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741867779; x=1742472579; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3mAU+08l83PeGzw4/E2OYnPhEcr7Ovsn8UVQNoJ5/84=;
-        b=BXj8mXD5ey3FQ6DsQ0dMKFE+CXyiscSwaiwOyuYoW4EMkUMq3bQnEVIkdzzIO8k2Oa
-         4NIvkIiPbDu42p/UPnZkEPzrsAeH5lIiv1z1YL+TGvo+5rXxhUVjbiPb2HpHEtv7XSgV
-         a2z7sd6rNMSL1WXl8RwS2MZN+uFgbFUtwtYPczn64WGLj0ux6SkkjVhtMh5qnPp6n6YS
-         nmFcT2nvxuvUL8CDOFWOZ69/YFqVEN0dHX6FaLoN3PCOSbhNKREyGsUS3s+bAxfgaK6J
-         95FO+rPdTGod+4px42KnJmIRCSgbG99lkV5UeEVHiTk27T75I3pKTpCyf/1PCYpyt7x/
-         F6gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741867779; x=1742472579;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3mAU+08l83PeGzw4/E2OYnPhEcr7Ovsn8UVQNoJ5/84=;
-        b=drW7b4hPoqVyjnWnMslxzK6fwSRskMpYqg0fP67QhZBrKxW2wXZoeWMwPTVgZPnqWS
-         lmaL9n5qZRw51u7WdMR7bLvAioFFxOUa2B9oEpXBPPhTLQFxSVu8bhG1xfgRMsmwyvb/
-         XLffvFomlg3pUKDvPnBvx7ilAf+o+K+2x9PHES732LdrBV3UTemkHmUjXAggWMIjG1V9
-         8aiRhma9WqkjzCizkxdWhxx5wCTmsB0iStQC3vt2CzLlnUOejAWbc67aQ2+5Q2u4Qe2M
-         ceD03AI/WTEG1a4yN7wC/i7pR5nyir2KToO6c7fYkiDejZzSH4p/5dus6DW6p1ZG8+Cc
-         Ldlw==
-X-Forwarded-Encrypted: i=1; AJvYcCULoxDrVIsPBmH2rvZDIcRkIK86i0RwI/8+AF7RinDmoOQ0rY9LROtTQ3mCHnX2miGhNxpXE1H9u09+OUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2sJ0cpsIrsv8LaX2dga8UFEdxC32ok9YNLYgSZKdPdZPOE0eM
-	0GGyIP+0wHza0/GbHP1HPbE+Kgd8vfIpZI42lWh4ophS9Lnue6ny
-X-Gm-Gg: ASbGncsXnjxBhwFoPQ2syWCtHemzP5SgVhXN76QvV6QQVyt4ur1aiwiFB9jLIfnI6VL
-	aYPjqgqaD4qJmZRUdz29VE5tNnES+wh4mF4zH44oZFyODWwR4GYXjSiOXi9BPSYJ9QzvQEjJvZl
-	l/Hc5EiOLdR4C7Gf/PHr83FUlG5e/IwNx7M3o/FHIqNuIbgW8vi+T2sTV2k/9X3Wzggah/Mzh6u
-	Uz+cTBCJ1z7ZNQzbBWjqqKZ/dRW0COvQxua6829476KPOg7NLDJKZW9HgZiq4MSo87EUr+uRUUq
-	OFQJIaTw3MZ/Zu1ucpDDui9FL+gPtr/sywfUW1vkSbRkgTMTHPrbzZq6xkJnhre3FA==
-X-Google-Smtp-Source: AGHT+IGq64HwIW8ZLXRexo/Sl5uDNfM++bQIWTjMTwM82E+RoVIQzUTxWYCM+6Co70rfhftuvEqa8w==
-X-Received: by 2002:a05:6214:daa:b0:6e6:646e:a0f8 with SMTP id 6a1803df08f44-6e9005f899emr405651506d6.16.1741867778783;
-        Thu, 13 Mar 2025 05:09:38 -0700 (PDT)
-Received: from nerdopolis2.localnet ([2600:4040:5e66:a800:1190:f8d0:801f:5e0a])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade334d02sm8728466d6.80.2025.03.13.05.09.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 05:09:38 -0700 (PDT)
-From: Adam Simonelli <adamsimonelli@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jiri Slaby <jirislaby@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Andy Shevchenko <andy.shevchenko@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- John Ogness <john.ogness@linutronix.de>,
- Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v8 1/4] ttynull: Always initialize console index to -1
-Date: Thu, 13 Mar 2025 08:09:36 -0400
-Message-ID: <4810112.n0HT0TaD9V@nerdopolis2>
-In-Reply-To: <Z9Gcg-iMMCAhLUJf@pathway.suse.cz>
-References:
- <20250311033133.1859963-1-adamsimonelli@gmail.com>
- <20250311033133.1859963-2-adamsimonelli@gmail.com>
- <Z9Gcg-iMMCAhLUJf@pathway.suse.cz>
+	s=arc-20240116; t=1741867844; c=relaxed/simple;
+	bh=9egwuzH1xL76Hz6x87GbA/aHFSCxZ6dXs4aookVRQdw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=P2z+wKmW2yYCNOMf6xBT7whBv1GhoGIHXHgayuoishc9Cu9ZXkEBYwJi+MhIsSrGWkK36+v4Yna5FR48Q9RBmfUbaw30d75q6do+fDuKyxK+9Qukz8kIfYe3O1Tdzux0YhDIjlOtlY/r6bU7/Cx1BtruNAMoxoZLqZpW5lsZj+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KjZHgtMQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D7CAmG019811;
+	Thu, 13 Mar 2025 12:10:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	c7UkRMW05zKg8RDl3mwjjPVBN91r1eiT1QbA7lGZtpA=; b=KjZHgtMQ4FccHN6q
+	cMJ3mkAz/0+eZDAqqFbNquykWNWZuzhDQizsUJPq8sYxzG491d8EBzV0ERnLi+su
+	NZmYf7bDVGjmZGEuZJDP1zathfnmDkP8rcZKXd7Dhd2XVjf2ae2XcH6ApMpT3WG6
+	4vsJUHnK9SKQMQM6FNFTOT3Eruu5bkZWT57lNprYHUPYKHweH5xzVrot+5ayFw6X
+	YYMpRra51u4o5iMe9hpHVPPXlCCjw9zHoKuuvuOTLXNrKYmJ8YbKD9qfqNb+nipL
+	JJ7Gno+rBp66gmXmomgyZrV9lVpo9QbWnPIIFbLi8gFLRN41gERlIsSrEPqVNQ92
+	0wvrzg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45bts0gu45-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 12:10:18 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52DCAHEO015684
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 12:10:17 GMT
+Received: from [10.204.66.137] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
+ 2025 05:10:10 -0700
+Message-ID: <d64bf3b3-7c4d-490e-8bd7-1ad889aa7472@quicinc.com>
+Date: Thu, 13 Mar 2025 17:40:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/10] arm64: dts: qcom: sa8775p-ride: add anx7625 DSI
+ to DP bridge nodes
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <robdclark@gmail.com>,
+        <dmitry.baryshkov@linaro.org>, <sean@poorly.run>,
+        <marijn.suijten@somainline.org>, <andersson@kernel.org>,
+        <robh@kernel.org>, <robh+dt@kernel.org>, <krzk+dt@kernel.org>,
+        <konradybcio@kernel.org>, <conor+dt@kernel.org>,
+        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
+        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
+        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
+        <quic_abhinavk@quicinc.com>, <quic_rajeevny@quicinc.com>,
+        <quic_vproddut@quicinc.com>, <quic_jesszhan@quicinc.com>
+References: <20250311122445.3597100-1-quic_amakhija@quicinc.com>
+ <20250311122445.3597100-8-quic_amakhija@quicinc.com>
+ <20250312-athletic-cockle-of-happiness-e88a3a@krzk-bin>
+Content-Language: en-US
+From: Ayushi Makhija <quic_amakhija@quicinc.com>
+In-Reply-To: <20250312-athletic-cockle-of-happiness-e88a3a@krzk-bin>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 6BtJ98pGmkmWzLj0xA-sndcThuicNPoa
+X-Authority-Analysis: v=2.4 cv=DNSP4zNb c=1 sm=1 tr=0 ts=67d2cb2a cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=UXIAUNObAAAA:8 a=COk6AnOGAAAA:8 a=2y1opo3hKBB_uxp-C3oA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=bFq2RbqkfqsA:10 a=a1s67YnXd6TbAZZNj1wK:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 6BtJ98pGmkmWzLj0xA-sndcThuicNPoa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_06,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 phishscore=0 malwarescore=0 mlxlogscore=999
+ priorityscore=1501 mlxscore=0 spamscore=0 bulkscore=0 impostorscore=0
+ suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503130095
 
-On Wednesday, March 12, 2025 10:38:59 AM EDT Petr Mladek wrote:
-> On Mon 2025-03-10 23:31:30, adamsimonelli@gmail.com wrote:
-> > From: Adam Simonelli <adamsimonelli@gmail.com>
-> > 
-> > This allows ttynull to be considered in console selection.
+On 3/12/2025 5:18 PM, Krzysztof Kozlowski wrote:
+> On Tue, Mar 11, 2025 at 05:54:42PM +0530, Ayushi Makhija wrote:
+>> Add anx7625 DSI to DP bridge device nodes.
+>>
+>> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 208 ++++++++++++++++++++-
+>>  1 file changed, 207 insertions(+), 1 deletion(-)
+>>
 > 
-> This is not true. It should be possible to register ttynull even
-> when .index == 0.
+> So you just gave up after one comment? Context of every email should be
+> trimmed, so if it is not trimmed means something is still there. I know
+> there are reviewers who respond with huge unrelated context, but that's
+> just disrespectful to our time and don't take it as normal.
 > 
-> The .index is important only for drivers which support more devices,
-> e.g. the serial port or virtual terminal.
+> <form letter>
+> This is a friendly reminder during the review process.
 > 
-> > 
-> > Suggested-by: Petr Mladek <pmladek@suse.com>
-> > Signed-off-by: Adam Simonelli <adamsimonelli@gmail.com>
-> > ---
-> >  drivers/tty/ttynull.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/tty/ttynull.c b/drivers/tty/ttynull.c
-> > index 6b2f7208b564..d8b51edde628 100644
-> > --- a/drivers/tty/ttynull.c
-> > +++ b/drivers/tty/ttynull.c
-> > @@ -57,6 +57,7 @@ static struct tty_driver *ttynull_device(struct console *c, int *index)
-> >  static struct console ttynull_console = {
-> >  	.name = "ttynull",
-> >  	.device = ttynull_device,
-> > +	.index = -1,
+> It seems my or other reviewer's previous comments were not fully
+> addressed. Maybe the feedback got lost between the quotes, maybe you
+> just forgot to apply it. Please go back to the previous discussion and
+> either implement all requested changes or keep discussing them.
 > 
-> There is only one "/dev/ttynull". And its index is initialized to "0".
-> At least it seems to be the last parameter in:
+> Thank you.
+> </form letter>
 > 
-> static int __init ttynull_init(void)
-> {
-> [...]
-> 	tty_port_link_device(&ttynull_port, driver, 0);
-> [...]
-> }
-> 
-> So, I believe this it should be perfectly fine to keep the default "0"
-> here. Note that it is special for ttynull because it is only one...
-> 
-> IMHO, this patch adds more harm than good :-)
-> 
-> Best Regards,
-> Petr
-> 
-Understood, thanks for the explanation about that.
+
+Hi Krzysztof,
+
+Thanks, for the review.
+
+I apologize for any confusion or oversight regarding the recent review comments.
+Thank you for your patience and understanding. I value your time and feedback and will work to improve the review process.
+
+Below are the comments on the patch 7 and patch 8 of the version 1 of the series, that I have addressed in version 2 of patch 7 of the series.
+Let me know, If I did some mistake or if you have any other suggestions.
+
+Comments from Konard:
+
+comment 1
+
+> -	pinctrl-0 = <&qup_i2c18_default>;
+> +	pinctrl-0 = <&qup_i2c18_default>,
+> +			<&io_expander_intr_active>,
+> +			<&io_expander_reset_active>;
+
+Please align the '<'s
+
+comment 2
+
+> +		interrupt-parent = <&tlmm>;
+> +		interrupts = <98 IRQ_TYPE_EDGE_BOTH>;
+
+use interrupts-extended, here and below
+
+These above two comments were from the konard in patch 7 in version 1 of the series.
+I have addressed both the above comments in the version 2 of patch 7 of the series.
 
 
 
+Comments from Krzysztof:
+
+comment 1
+
+> +
+> +		dsi0_int_pin: gpio2_cfg {
+No underscores, see DTS coding style.
+
+I have corrected the above comment in the version 2 of patch 7 of the series.
+
+comment 2
+
+> +
+> +			anx_bridge_1: anx7625@58 {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+In this I have changed the node name as anx_bridge1 : anx7625@58.
+Let me know, if I did some mistake or you have any other suggestion over the node name.
+
+I have took the reference from below:
+linux/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi at 629c635eafbaf18260c8083360745c71674640d2 · torvalds/linux · GitHub
+
+comment 3
+
+> +				enable-gpios = <&io_expander 1 0>;
+> +				reset-gpios = <&io_expander 0 0>;
+Use proper defines.
+
+For this above comment,  I have changed above lines into below lines in patch 7 of version 2 of the series.
+
+> +				enable-gpios = <&io_expander 1 GPIO_ACTIVE_HIGH>;
+> +				reset-gpios = <&io_expander 0 GPIO_ACTIVE_HIGH>;
+
+comment 4
+
+> +
+> +			anx_bridge_2: anx7625@58 {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+In this I have changed the node name as anx_bridge2 : anx7625@58.
+Let me know, if I did some mistake or you have any other suggestion over the node name.
+
+I have took the reference from below:
+linux/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi at 629c635eafbaf18260c8083360745c71674640d2 · torvalds/linux · GitHub
+
+comment 5
+
+And as Rob's bot pointed out: insufficient testing. :(
+Please be 100% sure everything is tested before you post new version.
+You shouldn't use reviewers for the job of tools, that's quite waste of
+our time.
+
+Fixed the  above warning from DT checker against DT binding in patch 7 of version 2 of the series.
+
+
+Comments from Dmitry:
+
+comment 1
+
+Missing dp-connector devices. Please add them together with the bridges. 
+
+comment 2
+
+Please squash into the previous patch. It doesn't make a lot of sense separately.
+
+These both above commented from Dmitry I have addressed in the version 2 of patch 7 of the series.
+I have squash patch 8 into patch 7 of version 1 into patch 7 of version 2 of the series.
+
+
+Thanks,
+Ayushi
 
