@@ -1,191 +1,389 @@
-Return-Path: <linux-kernel+bounces-559661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAFF2A5F752
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:11:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F30FBA5F758
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:11:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14DD83BD159
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:10:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D1CF3BBAAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AF2267B98;
-	Thu, 13 Mar 2025 14:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24276267B65;
+	Thu, 13 Mar 2025 14:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uDHtueXP"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2052.outbound.protection.outlook.com [40.107.244.52])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="DoZM/Utw"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7230267B81;
-	Thu, 13 Mar 2025 14:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741875052; cv=fail; b=oBGCWUULlGsx0JiD9JDAYpP+nASmoanijMjZiG4PBZs4SRNzNEF8hBNYYXIBoSletZtj+YRUmKFzW8ReGaDnxbx7+DQCLEWopGmXwVJh+z90ndpBr7srvX9ghAUn9PMVq+/HNSR/pVpVXscEN/L7+TJLXyuHGAG//6//3LLXp1s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741875052; c=relaxed/simple;
-	bh=xDzn0upzTDBigjBCxRftJWKoVKOtF94TMsJ5lu6RFu0=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sVVQqlYbfCBnJshJcTYgbEqtf+zEoBQBGhEt/f1A0VVg3yuLmAMewmYGHQMmQYLTsVfVw5NYYFWjh5FIuYy9yT2AbpWJX1oZWuyTnH9rhT0HSskq+wf2iZkWkLxH7nvzWcF4CJeB1G+skVxp8RpX6MY9BvEx5X+hEWZjoBteRIU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uDHtueXP; arc=fail smtp.client-ip=40.107.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q9Xxc1jvxfwxARhJvAlLZiiSt8NWqHEHT8usVZ8fJEUPYaUU9s6bSZLvwsCNmkS7uTSDo0EOkLf/NEpl4OskSq3NMKJY6BXrHhFvAAlG+biPRkj6BdD4yZHa7RWlwhnM6c3favu5vZc7lNYW4jp97rielbnBu6gOv/E/BZoqiYOwTRslMvAqNNbG32Yw/82Ef+wAMB8SdA3xZG9pUqUS7m++YMhfNTyuEGI/IZ3qyNC8LKji1NgwGWsU/eRLOFCOncSNlrW86PY5iHH5hS5HVR6+uaBeG5kHrgAXKYywTdDBR8DSEnhMRcoIDSC7I43+uKvWpS5a+TSrSkHkBEyRhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xDzn0upzTDBigjBCxRftJWKoVKOtF94TMsJ5lu6RFu0=;
- b=q4N3k02kPVDMigRmlfCmImG1ztWRc8SRo2bsFbt4NyY3e09U/Gr6L+D0qqtFN2l3blSUYHQjH2FMDlFm70/A7OtaCw3Auy7gAPb2X325zoEEiGmBDXenX162RgAO64MSRarNrGq79k41tZGaROa6yOhJ/eKEv3hKko92BvsXPgQwSvQCHk19v2tmbYMl5VdrPHoo5Njz9gJiinkR1jx89X19awwxyXBjiLr8PdnahmUuMv2LdyQNS+bE4SrM3nAkbFvRP8DgBMHESMfC91SQ9m67Y8hxbelyy57HvNUE+V1+Iv9bG+aJDxRF9+1JavfZINsSPOXbPkLCd16J+u2M8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
- is 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com;
- dmarc=temperror action=none header.from=amd.com; dkim=none (message not
- signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xDzn0upzTDBigjBCxRftJWKoVKOtF94TMsJ5lu6RFu0=;
- b=uDHtueXPmvKlZuhB5j5MjpTFM1IFx5fIvjNQ9QH7nopKdmOiicu+i6UpdawdXdolk9BUW8a66bdTSPhQxWHrqdj+LHQMrG76inZVyqBjAOzXbXu6lCtaa3BXOHgBzDQDPfoO8sGXfYW/aVmiCBmtmfsnbaC7rmRqb+zYPBAS4Zk=
-Received: from MN0P222CA0003.NAMP222.PROD.OUTLOOK.COM (2603:10b6:208:531::13)
- by LV2PR12MB5944.namprd12.prod.outlook.com (2603:10b6:408:14f::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Thu, 13 Mar
- 2025 14:10:46 +0000
-Received: from BL02EPF0001A0FF.namprd03.prod.outlook.com
- (2603:10b6:208:531:cafe::ea) by MN0P222CA0003.outlook.office365.com
- (2603:10b6:208:531::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.21 via Frontend Transport; Thu,
- 13 Mar 2025 14:10:46 +0000
-X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
- 165.204.84.17) smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=temperror action=none header.from=amd.com;
-Received-SPF: TempError (protection.outlook.com: error in processing during
- lookup of amd.com: DNS Timeout)
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL02EPF0001A0FF.mail.protection.outlook.com (10.167.242.106) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Thu, 13 Mar 2025 14:10:45 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Mar
- 2025 09:10:44 -0500
-From: Nathan Lynch <nathan.lynch@amd.com>
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>, Vinod Koul
-	<vkoul@kernel.org>, <dmaengine@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <dave.jiang@intel.com>, <kristen.c.accardi@intel.com>, kernel test robot
-	<oliver.sang@intel.com>
-Subject: Re: [PATCH v1] dmaengine: dmatest: Fix dmatest waiting less when
- interrupted
-In-Reply-To: <87senhoq1k.fsf@intel.com>
-References: <20250305230007.590178-1-vinicius.gomes@intel.com>
- <878qpa13fe.fsf@AUSNATLYNCH.amd.com> <87senhoq1k.fsf@intel.com>
-Date: Thu, 13 Mar 2025 09:10:42 -0500
-Message-ID: <874izx10nx.fsf@AUSNATLYNCH.amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867F0267B04;
+	Thu, 13 Mar 2025 14:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741875079; cv=none; b=o4f2hJUDCGqwKb4SanUzDFxwbZOdyjADA4MX0id8sTM8gGbpP/EtuQVFaaHMMjIZzAODD9Z5jiiLtsEF7yHELb2XShyQewRWQo/auJla/0Ia+qpbRQYgKJ9PZsITMua+x6IgUkFz5Jq+ZaKrUteYGMXkUy8K+a9XLgUHArDaNKQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741875079; c=relaxed/simple;
+	bh=IGqisGwCAtyYbOb7OLJfY7Fx7hmscguuf7cCiQCAFiM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rUZOnKojdYYX8HXrumEX2mNJxXlyE51JK4P90Y+QMRs1aD+qwzYNlMkKS5gS6ediYcblqevCxPiOdneOQY+3n6rooI043tQwhdmX56egLzq4Hy88pb17MVPgxOTJ9Ibiu+r1VPX9UwOKMNWQZZMU1mDAnMTMB+cZblzrFNvYyeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=DoZM/Utw; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741875073; x=1742134273;
+	bh=Wwjd3F8ZVcLlKooopouWDqOPW0C84gclDWUIL90/JTg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=DoZM/UtwzAz3l+BUaRdDMTlZjnm54wefuEZ9fvJS15jUhGlM4gjWCHQaSCnr+22vu
+	 GAQ3M1/icunF7pBqlZ5NJr+nZu+Ui1lLY9jPcsAXadhrgcVDrgzkPwIGUzmBAIj9fk
+	 xL81b9dlal8eotSV+Vh3HpqG9ZdhQ2ngsUQKK3/UFevwh8mnzfez//1z0xkq3TfHGR
+	 hd20iI8Cb/DMA5BvLx9p5QTXFB/AqVNwTp57TfcELUROxM34vLHNt+78so2hAVyX4z
+	 yjwY4+7OZavEatCLcw8qEu50XDdqo1auGRnKnV0ya/pJhwrQ9zTKkSYXH7JpW8tskF
+	 zfhw3+LTi9GOg==
+Date: Thu, 13 Mar 2025 14:11:06 +0000
+To: Tamir Duberstein <tamird@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] rust: enable `clippy::as_underscore` lint
+Message-ID: <D8F76A4JSEXO.2OKKJLAU5OZN@proton.me>
+In-Reply-To: <CAJ-ks9mJ=2hFxfWEkq+9b=atE89sHXa5NBcdVNRd3az6MSv0pA@mail.gmail.com>
+References: <20250309-ptr-as-ptr-v2-0-25d60ad922b7@gmail.com> <CAJ-ks9kCgATKDE2qAuO3XpQfjVO2jGyq3D4sbUcVKyW6G1vuuQ@mail.gmail.com> <D8EL9QFS1XNT.JBSMRXD4D7GT@proton.me> <CAJ-ks9=TRDg3g=NG7k97P_5jXpZ4K4v0DxrmJFR+uF0-3zJkXw@mail.gmail.com> <CAJ-ks9=hAwOGtVv0zh9CcH7XOxjGnizvK1QOMAi8nKStocKr2Q@mail.gmail.com> <D8ELW7X9796K.2ZGJS34LDTHOP@proton.me> <CAJ-ks9k1gZ=tLSe6OjuKFgg6=QE5R_Ajo0ZJwZJp08_1LMiODw@mail.gmail.com> <D8ENBWTC8UPH.LLEGZ2D4U7KQ@proton.me> <CAJ-ks9mJ=2hFxfWEkq+9b=atE89sHXa5NBcdVNRd3az6MSv0pA@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 0d8c6066aa79effc9e6ffd556187124ab8df8180
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FF:EE_|LV2PR12MB5944:EE_
-X-MS-Office365-Filtering-Correlation-Id: 03c4289c-aeff-4aec-2672-08dd6238d8c7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013|7053199007|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Gh+tYNrP1QdNWEiCR/oPZA0lNdJ4mcshFxLiHngFHcRF6XSeVyENuli0qdIZ?=
- =?us-ascii?Q?mhVfMQvlxg3ePXFLjqMBqtVNdIdWZHD6mXQC9B45zYsMK8w48Y25IVsSHnGj?=
- =?us-ascii?Q?TRhkuyjqRg0CBo/F6zhLf/sR3jxUJgFXX/FbW6gXcHbWxu58Fm2PscVzDgsP?=
- =?us-ascii?Q?s7x3g+89VO0zCM51A7HH6EsyJH7VOxkdhcf3OEGhR5Mt+60hiWlFFQq97fiA?=
- =?us-ascii?Q?a2n1rYKl2MxBGOKbFXrxC9kHT8Q3fH9TtCCRWpR9D8tzbFX/9tFZA7Ao0LKD?=
- =?us-ascii?Q?z7ZvooplaJEeJvwgERKPyznxLZctbDZmb7d8HGI8xvLEOA86w7cy877JR8MJ?=
- =?us-ascii?Q?gs9kO/L2TRxxiAIaCdVen4qFB/h5kSWMfT9f6K34NVfAZTRXKaAo7vlNJUlQ?=
- =?us-ascii?Q?nKLnpSSm2RcjuYY0NYQesIeUkA1sDpBBez4Ujh5s7vSLIHoAEkEstjFx0pLq?=
- =?us-ascii?Q?Pylf/rH38Khj5XfsmZ8EaJlXySQLu7MpzoY2kgeTAiJE49vClVRLjzz57Kvj?=
- =?us-ascii?Q?JUn1fPOanHLjQ05/I6tbKwAm60RQrNiL3yoXWW1dpf+iaE4JEZKZIQVfw/qC?=
- =?us-ascii?Q?h4I0kBlcAnfEc9J4zEZecDNV45H+lDzrc7Z1lH8nyjgr/wt0VbLVCsj0AuJW?=
- =?us-ascii?Q?ETrJJDWAZ+m4dIxfH3ByJR4irc/Twf/T+FflfX9QZBL3wvjOLLyoldjScMM8?=
- =?us-ascii?Q?kyvAvc786NySqg5YQskDg4Wl0XZpMQo/Eq1zMTr6PM4LZUm9UDNd//qx9ShL?=
- =?us-ascii?Q?pkBjwWEmkbvrsVP3eCLoQEW4Rso8VLNgyrqqCI5DCe/25jDJ2i0ubGwvsiMo?=
- =?us-ascii?Q?mogDXsA1Ihxyp32RZi0ONTXZ2hWoX9p2fkzXkH9jbJacZCgXkrP18u6fKL0c?=
- =?us-ascii?Q?P5UOSO+nB/+oHHeTNjvgMtD92qfeTnEd1c1yW+a+Y/Jfb1I200d6Ebft7FyY?=
- =?us-ascii?Q?/J2GlOt71ILrF/yI7fNE/d99+HBc/McSonxzzwAKFVwbxorRXXESSEWRTXRQ?=
- =?us-ascii?Q?vY+DYFupTDJxD6L3ZFvWchj5VmHzwSZEtRujOtOFeSt/QAxH/nxpjsom07QQ?=
- =?us-ascii?Q?ir6N7uF4DFv/4+glmau0HWcO8xq/h+Fe/A7WPsJXblGyTOStGF/IKsM1aFAl?=
- =?us-ascii?Q?2u03UM+2uGhXMUbCNFu5BDFs2jUAeLpl3RgLiponS62R3gLMzF7T+TcU7D0d?=
- =?us-ascii?Q?hL5EwBQgDXYOlbE7zm3GTwFmIFfzyavMnq3HATD7GGTVvp3jQqzSFqFrP/2t?=
- =?us-ascii?Q?N7CNqMmy+Bea6QyiGpNZBUOl0rkS0n//rU22vNaEeEFie3h7MyMHUdWqMDr1?=
- =?us-ascii?Q?6M9hJC1nc05MG/UKH1LNtmOlHMOPhUbQjcaP4kFmEZNPowOtrezP3N1QeNW4?=
- =?us-ascii?Q?QfRGUoaX6gLqBzTC5Q9aTEc5PxI78uyJ9o9c61k80NKihT8pY6JHAz847Poo?=
- =?us-ascii?Q?P96rlMwQJIoubM9zZLH2Be0jVgjnxD7xpMlRHQxE3Cim+SknUYiOlDe5f4JD?=
- =?us-ascii?Q?IPHPaIxbMmSR0/w=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013)(7053199007)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 14:10:45.0786
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03c4289c-aeff-4aec-2672-08dd6238d8c7
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A0FF.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5944
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Vinicius,
-
-Vinicius Costa Gomes <vinicius.gomes@intel.com> writes:
-> Nathan Lynch <nathan.lynch@amd.com> writes:
->> Vinicius Costa Gomes <vinicius.gomes@intel.com> writes:
->>> Change the "wait for operation finish" logic to take interrupts into
->>> account.
->>>
->>> When using dmatest with idxd DMA engine, it's possible that during
->>> longer tests, the interrupt notifying the finish of an operation
->>> happens during wait_event_freezable_timeout(), which causes dmatest to
->>> cleanup all the resources, some of which might still be in use.
->>>
->>> This fix ensures that the wait logic correctly handles interrupts,
->>> preventing premature cleanup of resources.
->>>
->>> Reported-by: kernel test robot <oliver.sang@intel.com>
->>> Closes: https://lore.kernel.org/oe-lkp/202502171134.8c403348-lkp@intel.com
+On Thu Mar 13, 2025 at 11:47 AM CET, Tamir Duberstein wrote:
+> On Wed, Mar 12, 2025 at 6:38=E2=80=AFPM Benno Lossin <benno.lossin@proton=
+.me> wrote:
 >>
->> Given the report at the URL above I'm struggling to follow the rationale
->> for this change. It looks like a use-after-free in idxd while
->> resetting/unbinding the device, and I can't see how changing whether
->> dmatest threads perform freezeable waits would change this.
+>> On Wed Mar 12, 2025 at 11:24 PM CET, Tamir Duberstein wrote:
+>> > On Wed, Mar 12, 2025 at 5:30=E2=80=AFPM Benno Lossin <benno.lossin@pro=
+ton.me> wrote:
+>> >>
+>> >> On Wed Mar 12, 2025 at 10:10 PM CET, Tamir Duberstein wrote:
+>> >> > On Wed, Mar 12, 2025 at 5:04=E2=80=AFPM Tamir Duberstein <tamird@gm=
+ail.com> wrote:
+>> >> >>
+>> >> >> On Wed, Mar 12, 2025 at 5:01=E2=80=AFPM Benno Lossin <benno.lossin=
+@proton.me> wrote:
+>> >> >> > Always enable the features, we have `allow(stable_features)` for=
+ this
+>> >> >> > reason (then you don't have to do this dance with checking if it=
+'s
+>> >> >> > already stable or not :)
+>> >> >>
+>> >> >> It's not so simple. In rustc < 1.84.0 the lints *and* the strict
+>> >> >> provenance APIs are behind `feature(strict_provenance)`. In rustc =
+>=3D
+>> >> >> 1.84.0 the lints are behind `feature(strict_provenance_lints)`. So=
+ you
+>> >> >> need to read the config to learn that you need to enable
+>> >> >> `feature(strict_provenance_lints)`.
+>> >>
+>> >> I see... And `strict_provenance_lints` doesn't exist in <1.84? That's=
+ a
+>> >> bit of a bummer...
+>> >>
+>> >> But I guess we could have this config option (in `init/Kconfig`):
+>> >>
+>> >>     config RUSTC_HAS_STRICT_PROVENANCE
+>> >>             def_bool RUSTC_VERSION >=3D 108400
+>> >>
+>> >> and then do this in `lib.rs`:
+>> >>
+>> >>     #![cfg_attr(CONFIG_RUSTC_HAS_STRICT_PROVENANCE, feature(strict_pr=
+ovenance_lints))]
+>> >
+>> > Yep! That's exactly what I did, but as I mentioned up-thread, the
+>> > result is that we only cover the `kernel` crate.
 >>
+>> Ah I see, can't we just have the above line in the other crate roots?
 >
-> I think that the short version is that the reproducition script triggers
-> different problems on different platforms/configurations.
+> The most difficult case is doctests. You'd have to add this to every
+> example AFAICT.
 >
-> The solution I proposed fixes a problem I was seeing on a SPR system, on
-> a GNR system (that I was only able to get later) I see something more similar
-> to this particular splat (currently working on the fix).
->
-> Seeing this question, I realize that I should have added a note to the
-> commit detailing this.
->
-> So I am planning on proposing two (this and another) fixes for the same
-> report, hoping that it's not that confusing/unusual.
+>> >> > Actually this isn't even the only problem. It seems that
+>> >> > `-Astable_features` doesn't affect features enabled on the command
+>> >> > line at all:
+>> >> >
+>> >> > error[E0725]: the feature `strict_provenance` is not in the list of
+>> >> > allowed features
+>> >> >  --> <crate attribute>:1:9
+>> >> >   |
+>> >> > 1 | feature(strict_provenance)
+>> >> >   |         ^^^^^^^^^^^^^^^^^
+>> >>
+>> >> That's because you need to append the feature to `rust_allowed_featur=
+es`
+>> >> in `scripts/Makefile.build` (AFAIK).
+>> >
+>> > Thanks, that's a helpful pointer, and it solves some problems but not
+>> > all. The root Makefile contains this bit:
+>> >
+>> >> KBUILD_HOSTRUSTFLAGS :=3D $(rust_common_flags) -O -Cstrip=3Ddebuginfo=
+ \
+>> >> -Zallow-features=3D $(HOSTRUSTFLAGS)
+>> >
+>> > which means we can't use the provenance lints against these host
+>> > targets (including e.g. `rustdoc_test_gen`). We can't remove this
+>> > -Zallow-features=3D either because then core fails to compile.
+>> >
+>> > I'm at the point where I think I need more involved help. Want to take
+>> > a look at my attempt? It's here:
+>> > https://github.com/tamird/linux/tree/b4/ptr-as-ptr.
 
-I'm still confused... why is wait_event_freezable_timeout() the wrong
-API for dmatest to use, and how could changing it to
-wait_event_timeout() cause it to "take interrupts into account" that it
-didn't before?
+With doing `allow(clippy::incompatible_msrv)`, I meant doing that
+globally, not having a module to re-export the functions :)
 
-AFAIK the only change made here is that dmatest threads effectively
-become unfreezeable, which is contrary to prior authors' intentions:
+>> I'll take a look tomorrow, you're testing my knowledge of the build
+>> system a lot here :)
+>
+> We're guaranteed to learn something :)
 
-commit 981ed70d8e4f ("dmatest: make dmatest threads freezable")
-commit adfa543e7314 ("dmatest: don't use set_freezable_with_signal()")
+Yep! I managed to get it working, but it is rather janky and
+experimental. I don't think you should use this in your patch series
+unless Miguel has commented on it.
+
+Notable things in the diff below:
+* the hostrustflags don't get the *provenance_casts lints (which is
+  correct, I think, but probably not the way I did it with filter-out)
+* the crates compiler_builtins, bindings, uapi, build_error, libmacros,
+  ffi, etc do get them, but probably shouldn't?
+
+---
+Cheers,
+Benno
+
+diff --git a/Makefile b/Makefile
+index 70bdbf2218fc..38a79337cd7b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -473,6 +473,8 @@ export rust_common_flags :=3D --edition=3D2021 \
+ =09=09=09    -Astable_features \
+ =09=09=09    -Dnon_ascii_idents \
+ =09=09=09    -Dunsafe_op_in_unsafe_fn \
++=09=09=09    -Wfuzzy_provenance_casts \
++=09=09=09    -Wlossy_provenance_casts \
+ =09=09=09    -Wmissing_docs \
+ =09=09=09    -Wrust_2018_idioms \
+ =09=09=09    -Wunreachable_pub \
+@@ -493,7 +495,7 @@ KBUILD_HOSTCFLAGS   :=3D $(KBUILD_USERHOSTCFLAGS) $(HOS=
+T_LFS_CFLAGS) \
+ =09=09       $(HOSTCFLAGS) -I $(srctree)/scripts/include
+ KBUILD_HOSTCXXFLAGS :=3D -Wall -O2 $(HOST_LFS_CFLAGS) $(HOSTCXXFLAGS) \
+ =09=09       -I $(srctree)/scripts/include
+-KBUILD_HOSTRUSTFLAGS :=3D $(rust_common_flags) -O -Cstrip=3Ddebuginfo \
++KBUILD_HOSTRUSTFLAGS :=3D $(filter-out -Wfuzzy_provenance_casts -Wlossy_pr=
+ovenance_casts,$(rust_common_flags)) -O -Cstrip=3Ddebuginfo \
+ =09=09=09-Zallow-features=3D $(HOSTRUSTFLAGS)
+ KBUILD_HOSTLDFLAGS  :=3D $(HOST_LFS_LDFLAGS) $(HOSTLDFLAGS)
+ KBUILD_HOSTLDLIBS   :=3D $(HOST_LFS_LIBS) $(HOSTLDLIBS)
+diff --git a/init/Kconfig b/init/Kconfig
+index d0d021b3fa3b..82e28d6f7c3f 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -132,6 +132,9 @@ config CC_HAS_COUNTED_BY
+ config RUSTC_HAS_COERCE_POINTEE
+ =09def_bool RUSTC_VERSION >=3D 108400
+=20
++config RUSTC_HAS_STABLE_STRICT_PROVENANCE
++=09def_bool RUSTC_VERSION >=3D 108400
++
+ config PAHOLE_VERSION
+ =09int
+ =09default $(shell,$(srctree)/scripts/pahole-version.sh $(PAHOLE))
+diff --git a/rust/Makefile b/rust/Makefile
+index ea3849eb78f6..998b57c6e5f7 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -436,7 +436,8 @@ $(obj)/helpers/helpers.o: $(src)/helpers/helpers.c $(re=
+cordmcount_source) FORCE
+ $(obj)/exports.o: private skip_gendwarfksyms =3D 1
+=20
+ $(obj)/core.o: private skip_clippy =3D 1
+-$(obj)/core.o: private skip_flags =3D -Wunreachable_pub
++$(obj)/core.o: private skip_flags =3D -Wunreachable_pub \
++    -Wfuzzy_provenance_casts -Wlossy_provenance_casts
+ $(obj)/core.o: private rustc_objcopy =3D $(foreach sym,$(redirect-intrinsi=
+cs),--redefine-sym $(sym)=3D__rust$(sym))
+ $(obj)/core.o: private rustc_target_flags =3D $(core-cfgs)
+ $(obj)/core.o: $(RUST_LIB_SRC)/core/src/lib.rs \
+diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
+index 014af0d1fc70..185bf29e44d9 100644
+--- a/rust/bindings/lib.rs
++++ b/rust/bindings/lib.rs
+@@ -9,6 +9,14 @@
+ //! using this crate.
+=20
+ #![no_std]
++#![cfg_attr(
++    not(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE),
++    feature(strict_provenance)
++)]
++#![cfg_attr(
++    CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE,
++    feature(strict_provenance_lints)
++)]
+ // See <https://github.com/rust-lang/rust-bindgen/issues/1651>.
+ #![cfg_attr(test, allow(deref_nullptr))]
+ #![cfg_attr(test, allow(unaligned_references))]
+diff --git a/rust/build_error.rs b/rust/build_error.rs
+index fa24eeef9929..84e24598857f 100644
+--- a/rust/build_error.rs
++++ b/rust/build_error.rs
+@@ -18,6 +18,14 @@
+ //! [const-context]: https://doc.rust-lang.org/reference/const_eval.html#c=
+onst-context
+=20
+ #![no_std]
++#![cfg_attr(
++    not(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE),
++    feature(strict_provenance)
++)]
++#![cfg_attr(
++    CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE,
++    feature(strict_provenance_lints)
++)]
+=20
+ /// Panics if executed in [const context][const-context], or triggers a bu=
+ild error if not.
+ ///
+diff --git a/rust/compiler_builtins.rs b/rust/compiler_builtins.rs
+index f14b8d7caf89..0dcb25a644f6 100644
+--- a/rust/compiler_builtins.rs
++++ b/rust/compiler_builtins.rs
+@@ -21,6 +21,14 @@
+=20
+ #![allow(internal_features)]
+ #![feature(compiler_builtins)]
++#![cfg_attr(
++    not(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE),
++    feature(strict_provenance)
++)]
++#![cfg_attr(
++    CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE,
++    feature(strict_provenance_lints)
++)]
+ #![compiler_builtins]
+ #![no_builtins]
+ #![no_std]
+diff --git a/rust/ffi.rs b/rust/ffi.rs
+index 584f75b49862..28a5e9a09b70 100644
+--- a/rust/ffi.rs
++++ b/rust/ffi.rs
+@@ -8,6 +8,14 @@
+ //! C ABI. The kernel does not use [`core::ffi`], so it can customise the =
+mapping that deviates from
+ //! the platform default.
+=20
++#![cfg_attr(
++    not(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE),
++    feature(strict_provenance)
++)]
++#![cfg_attr(
++    CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE,
++    feature(strict_provenance_lints)
++)]
+ #![no_std]
+=20
+ macro_rules! alias {
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 398242f92a96..6fd4fb2176aa 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -13,6 +13,14 @@
+=20
+ #![no_std]
+ #![feature(arbitrary_self_types)]
++#![cfg_attr(
++    not(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE),
++    feature(strict_provenance)
++)]
++#![cfg_attr(
++    CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE,
++    feature(strict_provenance_lints)
++)]
+ #![cfg_attr(CONFIG_RUSTC_HAS_COERCE_POINTEE, feature(derive_coerce_pointee=
+))]
+ #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(coerce_unsized))=
+]
+ #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(dispatch_from_dy=
+n))]
+diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
+index 8c7b786377ee..91450de998d3 100644
+--- a/rust/macros/lib.rs
++++ b/rust/macros/lib.rs
+@@ -2,6 +2,15 @@
+=20
+ //! Crate for all kernel procedural macros.
+=20
++#![cfg_attr(
++    not(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE),
++    feature(strict_provenance)
++)]
++#![cfg_attr(
++    CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE,
++    feature(strict_provenance_lints)
++)]
++
+ // When fixdep scans this, it will find this string `CONFIG_RUSTC_VERSION_=
+TEXT`
+ // and thus add a dependency on `include/config/RUSTC_VERSION_TEXT`, which=
+ is
+ // touched by Kconfig when the version string from the compiler changes.
+diff --git a/rust/uapi/lib.rs b/rust/uapi/lib.rs
+index 13495910271f..84ef3828e0d4 100644
+--- a/rust/uapi/lib.rs
++++ b/rust/uapi/lib.rs
+@@ -8,6 +8,14 @@
+ //! userspace APIs.
+=20
+ #![no_std]
++#![cfg_attr(
++    not(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE),
++    feature(strict_provenance)
++)]
++#![cfg_attr(
++    CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE,
++    feature(strict_provenance_lints)
++)]
+ // See <https://github.com/rust-lang/rust-bindgen/issues/1651>.
+ #![cfg_attr(test, allow(deref_nullptr))]
+ #![cfg_attr(test, allow(unaligned_references))]
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 993708d11874..021ee36ae8f2 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -226,7 +226,10 @@ $(obj)/%.lst: $(obj)/%.c FORCE
+ # Compile Rust sources (.rs)
+ # ------------------------------------------------------------------------=
+---
+=20
+-rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint_re=
+asons
++# Lints were moved to `strict_provenance_lints` when `strict_provenance` w=
+as stabilized.
++#
++# See https://github.com/rust-lang/rust/commit/56ee492a6e7a917b2b3f888e33d=
+d52a13d3ecb64.
++rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint_re=
+asons,$(if $(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE),strict_provenance_l=
+ints,strict_provenance)
+=20
+ # `--out-dir` is required to avoid temporaries being created by `rustc` in=
+ the
+ # current working directory, which may be not accessible in the out-of-tre=
+e
+
 
 
