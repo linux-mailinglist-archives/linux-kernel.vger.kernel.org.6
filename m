@@ -1,138 +1,124 @@
-Return-Path: <linux-kernel+bounces-559464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1C9A5F40D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:17:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F117A5F40F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:17:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0DA93A607C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:16:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3814F17F308
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E72026771C;
-	Thu, 13 Mar 2025 12:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EAE266F1A;
+	Thu, 13 Mar 2025 12:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mvpnul61"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Roxd87ae"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA172676E0;
-	Thu, 13 Mar 2025 12:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89948266B40;
+	Thu, 13 Mar 2025 12:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741868166; cv=none; b=C6BecevUwwyT756xVfSJG9U1Bdh4G4tR6qEtzjRJc7IdD3W+fk31CBMhNnWJJe50o8Kh6mJVNKGtbrkIDcoh7fDH9Ej2Byhn8CkHFUZyxub02zQ2/8P96jS+sCRgHWZHCy+vX1rLRFmciaRgjuAEpqTc+5glzTRMt9iZYpF+f7g=
+	t=1741868185; cv=none; b=nfzDnRHyaOlz/WuyyV+0ccNHuZbupeSD2Qf6lttm377H0vq9dTU7lkes8Eak4Vx5C6ibnsMRF5A/X8mY0MNrV3/RuV7OiDdVGGk/SkrhU+8gIfxTQVIW1VvvSjLhZMotfzAZcOlatNA4Ldg+Pd1CtLA54o/lQgot8LtjRlE3leY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741868166; c=relaxed/simple;
-	bh=ZWHDQFZydgFLF+pZhM5zaTgB/SRGh95yQ/J43duDfo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AXoEr+5Q6tn5F2KwLPCIu75cSCkOK/TSixJdSyNnTeIWlDaVWsn51HKFbcNXOf8DnHJX4lImBobwHAKAmP0NvBSWHKG+vcVAH4nFSWOONzXw491UMYfhgelgG5Skjyy97XOhxZ3PIz+H4FHnYiI+qBQZqIgmAr2URM+eHGxijSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mvpnul61; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DBAEC4CEEB;
-	Thu, 13 Mar 2025 12:16:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741868166;
-	bh=ZWHDQFZydgFLF+pZhM5zaTgB/SRGh95yQ/J43duDfo4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mvpnul617r3+1dJblDjuGGF3ygGimnd4POqbjFo4+O44NuhkG8MrwnO4J7SN96WfS
-	 Eg2ju52wMFzIKWlWGxAafV0lhzgdgNg3/4R12d/n1OI8YH+hBSdjITulP9baWQf1g7
-	 4ZNcfDFOO0YoabVlIfJpBV+8WdB92DhaHXXo3V8zGi0tZ2915gd6CIV0IYwkxMB3ZD
-	 9XjHE9QsRB9AD+dEhS4KMrTYEYUC67YyOfo5ocyJ/0nUmdq0UYBhih2r1skkSY6IOK
-	 k6HV4X3z21S4/yKifPdRROwdqOsixPHowbEuoo66WoObj7bk9GHrVEsvCz/CcMVB9i
-	 1ECWlKglNYubQ==
-Date: Thu, 13 Mar 2025 12:15:59 +0000
-From: Will Deacon <will@kernel.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Sebastian Ene <sebastianene@google.com>, catalin.marinas@arm.com,
-	joey.gouly@arm.com, maz@kernel.org, oliver.upton@linux.dev,
-	snehalreddy@google.com, suzuki.poulose@arm.com,
-	vdonnefort@google.com, yuzenghui@huawei.com, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-team@android.com, Andrei Homescu <ahomescu@google.com>
-Subject: Re: [PATCH v2 4/4] KVM: arm64: Release the ownership of the hyp rx
- buffer to Trustzone
-Message-ID: <20250313121559.GB7356@willie-the-truck>
-References: <20250227181750.3606372-1-sebastianene@google.com>
- <20250227181750.3606372-5-sebastianene@google.com>
- <20250305004522.GC31667@willie-the-truck>
- <20250305094104.vctshdtgdukno2aj@bogus>
- <20250305193425.GA32246@willie-the-truck>
- <Z8ltm55D1jrv8QtX@bogus>
+	s=arc-20240116; t=1741868185; c=relaxed/simple;
+	bh=+TIjaWLq+k8j709rR1HauZvIDScpqyb45V6w2bWtKHM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T4HTWp0tMOU+tbOhz3jTO64af19oJHU+TEEfWNR9QC76xP0IlH01/5QsyaxjAO9b1tNlZkrGw0y29jO8gZV/c7V8dZvoNcbBYOu4OcZqXo/PBG2BPCIyD9syWJ4Gfgzr4lN+FF/5LxV3Ba6gGHoqewd3EKsJWYFiQ7RNZrUjcRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Roxd87ae; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22355618fd9so16202495ad.3;
+        Thu, 13 Mar 2025 05:16:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741868184; x=1742472984; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fm8fq5i0vpAjTWwW3jwRc1uPshAS1XnTW97HiaXAENI=;
+        b=Roxd87aezQfpGPSbvyXc8BDi8EwGZR3BYyrtLSU7dE+60ANO/R9XUSeoB1qWpamM4c
+         2gnWCD6uo8MurvmHA57jJbeh2SbyrydJTjPUCHURhI+swI8BOj66w0bmmvZZjVzITsfZ
+         oHaNN4PmlT88Y6GwFT4Ltla+k9dEzTyQXp3wgVzGgcpbFvSJxnVN0mhBpWjKzQmzUn6d
+         WDQtoC2S/Z6GG6r23LcnM+O0wqVMK1fqRdAYhcac49XcokUqDH+ZZbK9OTyJUiwJGc+5
+         HAiVIkgh+0HRq8U/vNM871zvThAuaEYSgMYpxhFlf/4dYmdqe+dAIU6wskhdc6zHQW5F
+         O58Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741868184; x=1742472984;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fm8fq5i0vpAjTWwW3jwRc1uPshAS1XnTW97HiaXAENI=;
+        b=UMBXaW/Qfvcgz5XEVvE82OzNSSigI2VcdA5ElKi/ahBzn46gO6P05Q07JpZnwbWcfu
+         w7pv7DkCMlT/DF9YiLMo6+OCQCqmhpWoMXktmUHaxAhoFHJNOzM9P6EJTJQiROY4YmKQ
+         WedSWhlfEbfClzu3/mIV/vr8ltX9EPVqyodl8x+oRnNty5hlXuF/4A7YxgNuM2w+rjpu
+         Di0KqhLW134aYaNuIwJuL2bh2Wpbb0jX5GHXpVgRGAXgGr/VSE7sJV/qxmTOhn00ZRiR
+         cPdK5gNJrsSdDArLs8OsALqYHWja48L/yK9fH3oF4tjtcgnxzCn3XICpp4JH51s0+F+g
+         Je6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUHgCOvhBfMz33cIN4nFNwULHCFVmOz3Tb/JC0d3/ZUtI/SvF2c9WsnSUobWBUP1pl/DITkb2NZiWc8oA794wl+LEiN@vger.kernel.org, AJvYcCXB7ChE9a4cyMBrRbW4MdU3YtaoRr7Mnd/UCbebyRVGhkHi9yc26D+KLHBW5ogbOkwE0MjmvSVNtrM=@vger.kernel.org, AJvYcCXX4uftehqc7Ji7jJW4xbwFkACXdh4h7TGijyQTTJT47NLM31Itwa8NPm+oS33CXenG6gRHmUlUHLC3NiKy@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLQ+FJ5zOoTepBQHA0FxPCzuP88JKXq1SWUPzmzaCSBKQWHplE
+	dRczVHGSgkh1JbYH5EWvY0p7wcRB7kPAU4Iwvv46NGAg813ABaz+
+X-Gm-Gg: ASbGncuo2eG7siTWqafMmhNw8RTg8U/zxL5/dz+ZzazTdjH/Ym29UdkHkt31LElv3ZF
+	DP+gjvAm3qi8ANXTfVaFOOWYf21YxS+Bxb/rfWpGDcn/kF71ZG3pioAiZfON9xST4Jgln7D0YMJ
+	mai6ePqHIJ3yqt4k+Galn8+XHBqGLKs6NsFskshNzHJU9MQ9h1Z6jlaAD/2uSV3P6cMb+hTkv9B
+	JE+CqilUAws1YhQvMpKq/Px8CjFa32Be5MSpoOTU+TtqaeuhR9BpcCb06/LaC+mzidwXr+7NPF+
+	Rcp/7ajWhQh4rnoDlxIdWhE60pjlgCmN5mhuf82jxpR3hYRdJtGf
+X-Google-Smtp-Source: AGHT+IHQtvAx5vR6EcoVx3cqc3qpwWGM7hmtHRZwrnH2OnV0qoF4IGFFKA3P5vGN9Xmq9qQXGCx1xA==
+X-Received: by 2002:a17:902:e84d:b0:221:78a1:27fb with SMTP id d9443c01a7336-22592e21969mr157466725ad.11.1741868183631;
+        Thu, 13 Mar 2025 05:16:23 -0700 (PDT)
+Received: from [192.168.0.150] ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6c6bsm11691775ad.150.2025.03.13.05.16.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 05:16:22 -0700 (PDT)
+Message-ID: <4cc0a072-3eaf-4fbf-a334-012aacf9039f@gmail.com>
+Date: Thu, 13 Mar 2025 19:16:17 +0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z8ltm55D1jrv8QtX@bogus>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] docs: tracing: Reduce maxdepth in index
+ documentation
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Purva Yeshi <purvayeshi550@gmail.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20250312124717.7208-1-purvayeshi550@gmail.com>
+ <20250312134907.06d27d78@batman.local.home> <Z9JKqVvG1iw0bFXR@archie.me>
+ <20250313070457.647c8c57@batman.local.home>
+Content-Language: en-US
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+In-Reply-To: <20250313070457.647c8c57@batman.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 06, 2025 at 09:40:43AM +0000, Sudeep Holla wrote:
-> On Wed, Mar 05, 2025 at 07:34:26PM +0000, Will Deacon wrote:
-> > On Wed, Mar 05, 2025 at 09:41:04AM +0000, Sudeep Holla wrote:
-> > > On Wed, Mar 05, 2025 at 12:45:23AM +0000, Will Deacon wrote:
-> > > > Hmm, the FFA spec is characteristically unclear as to whether or not we
-> > > > need to release the rx buffer in the case that the flags indicate use of
-> > > > the rx buffer but the returned partition count is 0.
-> > > > 
-> > > > Sudeep -- do you know what we should be doing in that case?
-> > > > 
-> > > 
-> > > We need to call RX_RELEASE here. I went back to the spec to confirm the
-> > > same again.
-> > > 
-> > > v1.2 EAC0 spec Section 7.2.2.4.2 Transfer of buffer ownership
-> > > (Or just look for the section title in any version of the spec)
-> > > "
-> > > 2. Ownership transfer for the RX buffer takes place as follows.
-> > >     2. For a framework message,
-> > >        1. Completion of the FFA_PARTITION_INFO_GET ABI transfers the ownership
-> > >        of the caller’s RX buffer from the Producer to the Consumer.
-> > > 3. For both types of messages, an invocation of the following FF-A ABIs
-> > >     transfers the ownership from the Consumer to the Producer.
-> > >        1. FFA_MSG_WAIT ...
-> > >        2. FFA_RX_RELEASE.
-> > > "
-> > > 
-> > > Hope that helps, can dig deeper if there are any ambiguities around this.
-> > 
-> > Thanks Sudeep, but that also makes it sound like we need the RX_RELEASE
-> > even if we're not using the RX buffer per the input flags. :/
-> > 
+On 3/13/25 18:04, Steven Rostedt wrote:
+> On Thu, 13 Mar 2025 10:02:01 +0700
+> Bagas Sanjaya <bagasdotme@gmail.com> wrote:
 > 
-> Good spot, I had forgotten about the input flags that can avoid using the
-> buffer. I will see if we can improve the spec in that regards.
+>> If you'd like to generate a patch series, you can refer to thoughtbot
+>> blogpost at [1].
+> 
+> ??
+> 
+> This is already a patch series.
+> 
+>>
+>> And you can also add cover letter by passing --cover-letter to
+>> git-format-patch(1).
+> 
+> It's simple enough it doesn't need a cover letter.
+> 
 
-Thanks. In the meantime, what do you think is the correct behaviour in that
-case? I guess _not_ doing the release when the flags don't request the RX
-buffer? In other words:
+I mean I'm directing my reply to Purva.
 
+Thanks anyway.
 
-	if (flags & PARTITION_INFO_GET_RETURN_COUNT_ONLY)
-		goto out_unlock;
-
-	if (!count)
-		goto release_rx;
-
-	[...]
-
-	if (copy_sz > KVM_FFA_MBOX_NR_PAGES * PAGE_SIZE) {
-		ffa_to_smccc_res(res, FFA_RET_ABORTED);
-		goto release_rx;
-	}
-
-	memcpy(host_buffers.rx, hyp_buffers.rx, copy_sz);
-release_rx:
-	ffa_rx_release(&_res);
-out_unlock:
-	hyp_spin_unlock(&host_buffers.lock);
-}
-
-
-What do you reckon?
-
-Will
+-- 
+An old man doll... just what I always wanted! - Clara
 
