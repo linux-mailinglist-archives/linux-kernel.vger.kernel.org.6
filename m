@@ -1,146 +1,120 @@
-Return-Path: <linux-kernel+bounces-559041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 280EDA5EEAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:58:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66937A5EEA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:57:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AC701653B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:58:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A99F917D240
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC69C2641FE;
-	Thu, 13 Mar 2025 08:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9FF2641D7;
+	Thu, 13 Mar 2025 08:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Eh1Za3yo"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RbHr2b77"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D2326281F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24B31BDCF;
+	Thu, 13 Mar 2025 08:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741856270; cv=none; b=VZrIkL+V5fgdxl82vi2UuL/TinxlUsa0j1AN/B2d1rWnfq+Jxsot0NbkKo+IUhItWpYOTWNbQmQWP61BVOgomjDo2hoJL8Qt7x/EGEWarTWLhBSQCEz6mwDQbi+vNRXxHleBTE6ezO7inPzzPr92E7lUjaP1WRfBNTM0pUklLRo=
+	t=1741856216; cv=none; b=HVkrx/A3/sXdg96DNvgpXAYdiZa3mlFWBaFSuDB5lu33xCpw/VUVwexi7odQFjcMojDTQY2D3zqmxcV6IW7IfvrlEBYYzCULJw8tzZRea7Ae7/bVb8vb5XBvYks7f4uqey5IRMuqlF3clqqTo1+oeC3vt4361LH6gW/ilhTQjks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741856270; c=relaxed/simple;
-	bh=oNVte8lvt8b44yuQA7mpFTfd90aDPPxxo5o7QBnVwxo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JtweRFWdnWyuIjsHtDg0F2YXfpGLyvlktls9oAb/Cx0SD2kZYXK4glbCK5avL6kKDgKpBLZmQna/Umeq6oOWYM/Mw4QQncTqYC7u1ig46y2kaPX7XVK4d/lYIo5UaMHRl4v4IchgLofrz/YDYthPVfxSb+hrbOlM+jCP35I+5qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Eh1Za3yo; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5495c1e1b63so811848e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 01:57:47 -0700 (PDT)
+	s=arc-20240116; t=1741856216; c=relaxed/simple;
+	bh=c039YNETMcNqRqnRXKVd621FpuTy63kWGtPKmojyopM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=paLJoooKPg/qGbjJKUJbCf9sk+I248Yeqc3wAiOnE1b34nTM4yfh9ZFYtKs2oS6NVDxsafbagKaV84LdyaIOlnL+RQrX/FmHiYTZ+w0QmUONqC+0mDoMd5oG4GvrSYx05qT+YpAYjKcRL9DgV8+I+0/0XWQXP7MCH7jH3xKNBk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RbHr2b77; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so4320445e9.1;
+        Thu, 13 Mar 2025 01:56:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1741856266; x=1742461066; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oNVte8lvt8b44yuQA7mpFTfd90aDPPxxo5o7QBnVwxo=;
-        b=Eh1Za3yoD9bVLY0ugfFRHJwUy3EKr+pWvscBKj2a7e/p2o5uDLEAcrC3tDoOzps9ed
-         AcEDPeC6X1PNgMpIYy+A4DTOVDz/2H8u9Dw4PYodnPb66demZXn+1xS3sOEnSAhk7Z0v
-         jdsuobrUPK/V3pzK15VidTaCj9MFBZGBnVmAnBt2+zrFRyVW48ljLPk2piiXnr2OufpJ
-         Hv7dIpsb+qlbEKrfXm3rz1neOUcjAarQ2q8YLG2bI89N3Jps/BrfQAwsn/8AN9BOollS
-         fUwDr27XpBtjr5jRKQ133hzNM93Y/GtUjiyUqBY4yGGxNAvy7kj9W+LNixmn10qTm/QL
-         yFIQ==
+        d=gmail.com; s=20230601; t=1741856212; x=1742461012; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oRQXI6lA2k16mQbfcxjJ2ekaa8g5t6U5iqSudrtHjjA=;
+        b=RbHr2b77WEX+8OQYm9ei0rK7hDls0lNU+tMkWCYnCRiwspPM8Q6fCJE/Jno8x5atJH
+         m7KuVAG9SNEXU2faLk9C+qwjvVzwNGE9QUxzm6xjhXAM1asV7HqZ+8sE9LbRGI0CvPVC
+         2Hp+EnlRIovpN6bohh2ahV/H7TeA1vbKtXTVMpFLrOBI0++ILsXJNKHCAw3roXdINiWG
+         3C0RDMLiYs/VQGsDpHZwP00D4xRP2VMaki2oUdyC1b1QwE7GbEcbO4T9eDZPGS053iv0
+         UJ36GcsnHV2e4vEPY45dqmzsVa7jKCXkqv1m9661HNmUqmmb0PL71ASAhD56Ntd6N7yD
+         UPYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741856266; x=1742461066;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oNVte8lvt8b44yuQA7mpFTfd90aDPPxxo5o7QBnVwxo=;
-        b=r3CkFRINqy8waTnJpo7jmaXMqdaC5BYHlikVQEEiVAGaxpCeSmpUD2/XVtwbjN6Khk
-         Y9XQ20JCo3mope7MyOfnED9raR8FZy8aAvOgN+s83JM9WjmM+KwhMIElzAeoBJx4kYaJ
-         yn1KlV4duV5e8LjvlITWrvM1o7sigoPje49VJVNX2kJzFCf9Jv4ULLJPw4KCGcXIlGCP
-         t9WkYFLQBpzzgtXXdlpqig1E8AoCMCgiDkyk+VzJXqVm5bsCgcAwzxAVT1yJNakq0Tor
-         La6rw+oO1XADfnAU5VPXcdsnk8JqF6NRjYpj15DdGTlUMjQMzvvukvTzZrUl5gfmS47m
-         KBAA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/+T27fiZgPMOwNfj4qFRND8wuDFnEw42GpagPjuS+kNLEyIpsbfazWPPEzIuZtq0PUfKRr27CjKDKaD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB3Kq9MmNvw1EAlEkCawPuoMI4tK4gBMGj4Tn3WGDhVamVYdHX
-	JBS1bgIBFZp0fbysgMwZQmvQ2Z00cJ8yijl0X6/uI+1Po+IFssN/df0BLbPfkXMU3CDvLSAIJRB
-	WJqoGybLKsZ6NolciD0fYP6JugjnV97eC4JU5qlSexQNQXAx8UzgBzg==
-X-Gm-Gg: ASbGncvxLvLH/ZCM5G7iLAO1QJ2Avf9t6GUBekJZE2GdsKPwR9KqmjscCcLbDPYOCNU
-	KwolMguhp3eXqH1FlOVxqrADiuUbYw2WRnuRc9LxpiRMTdQA6ojJzA/r+It7rgY3p8Aa7wJkSD4
-	uKUudfF/M2VcaOaIlnfcByDy+rMwMLa+7QpB8sFvuvJmO58mYDpDQ=
-X-Google-Smtp-Source: AGHT+IHrHgCaZK4KN9oZUVm2A3FprVTQvoB4+X6fONU0XmSiN2PgvVRMZuCwOSd4wSdmwbJZwo+uEPVOSQjD46oRw9k=
-X-Received: by 2002:a05:6512:3b9c:b0:549:4de9:c23 with SMTP id
- 2adb3069b0e04-549abaaad89mr3687097e87.9.1741856266079; Thu, 13 Mar 2025
- 01:57:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741856212; x=1742461012;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oRQXI6lA2k16mQbfcxjJ2ekaa8g5t6U5iqSudrtHjjA=;
+        b=I5AiJkAt8jioh81GWypOn7vsF94nZioD/RyGp2gIZbxkl6pu/xCw1Lny53HVxEWbtG
+         3UHvUGg/0rjCBEwzr0+Yx5jrtNb+3+I2CrU76VvzMr0CnbNwE+l82dIiXFDrsA2cNiFp
+         zhD/ivlM5vEhFahzwbAwz4yg+tXA5Ar7kGWW1tZAw3oLzrjnTOhyQhrtysw9onClexOc
+         +sNR6eA6QcBXX4/49V/nZxLbwkNUFYvgJKnYxjM9c/uI/NNRmBTSjC4UShP2JDe0FICg
+         yD4sQlFT0aGI4Eks7ruWNHA7sG7BcORx2q2yczYMDAJsJg+qtcqp8DTwZjTsO6cYCNdW
+         oodg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpuePeSBxyHMH858TbP+x1rzACqmlGNuLEXLg+7yk0xyYTjioGGLgm5oo2ce4h/2DEWpvCTKFcFg==@vger.kernel.org, AJvYcCV6ykcz47UWj/2TNrxT00R4G8I5DGd3ko3NbuH26uaNSGWh63YrFX6nU2fucuzcymCNCvwmJd/Up/3ptKj1@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTfERvr3HcIjor+gB+cyQ45L4kYjBYPmTFNfqkQeHqh1nmOIu/
+	5QAR/Z26fJQ/roVRe65dtn831hD2snO4QYVZlDWQkjvfMQK3zJnvxhWFgKEp
+X-Gm-Gg: ASbGncsPamE9oDwit0uTOSTvfXFPcNh67hKAl8m2tfxbvWyiewGj0TfIYFWsOyHn5y2
+	+S53D0NAsC0a4CsooZmm2FvetYoZlKrtryUJzJMjAprZrFuAMxMaCk+k5G5iHT2HKxaG8mdl5LO
+	KwDwTiWVvfSEjRJyqVr1gpCLlSituRu+muNxGjiGKQINjV1zrkr1x/z+Za+GkXWe2sRMKEmmQI9
+	fArZz/n7DCzFZzNdHRMuTqYkKlcoH6aX20/x2ZvwC9RCRu5gP+SHBKD9gZfp2KPThyFwI3iskIe
+	EU2xSuEW2F4xgDUrhOsOGfQBqhGz9RhFIydTKiStuOin4ikE6BNOORJ6eA==
+X-Google-Smtp-Source: AGHT+IGzld6XmsHuSGyS5xO4/BFT6L9qRZC3dbHu5qjOj3rnyoHn2qbidcUUT57sIIpYDj10Qe2Y+w==
+X-Received: by 2002:a05:600c:548e:b0:439:873a:1114 with SMTP id 5b1f17b1804b1-43d1c18289cmr70405e9.6.1741856211785;
+        Thu, 13 Mar 2025 01:56:51 -0700 (PDT)
+Received: from [192.168.116.141] ([148.252.129.108])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d188bb34asm13182135e9.18.2025.03.13.01.56.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 01:56:51 -0700 (PDT)
+Message-ID: <7a4217ce-1251-452c-8570-fb36e811b234@gmail.com>
+Date: Thu, 13 Mar 2025 08:57:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313034812.3910627-1-hezhongkun.hzk@bytedance.com> <Z9KPzQNctY_ALL0D@tiehlicka>
-In-Reply-To: <Z9KPzQNctY_ALL0D@tiehlicka>
-From: Zhongkun He <hezhongkun.hzk@bytedance.com>
-Date: Thu, 13 Mar 2025 16:57:34 +0800
-X-Gm-Features: AQ5f1Jo6rW2JENj9_ZucQSXxIKOzDShDlUIMTYmxGFUKf9EuY47aXkvY1bGOAW8
-Message-ID: <CACSyD1PU59py6rjiZ5snvRL449OmuH9W+RMbNpmOfhO80XuW5Q@mail.gmail.com>
-Subject: Re: Re: [PATCH V1] mm: vmscan: skip the file folios in proactive
- reclaim if swappiness is MAX
-To: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, muchun.song@linux.dev, 
-	linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 0/2] introduce io_uring_cmd_import_fixed_vec
+To: Sidong Yang <sidong.yang@furiosa.ai>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org
+References: <20250312142326.11660-1-sidong.yang@furiosa.ai>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250312142326.11660-1-sidong.yang@furiosa.ai>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 13, 2025 at 3:57=E2=80=AFPM Michal Hocko <mhocko@suse.com> wrot=
-e:
->
-> On Thu 13-03-25 11:48:12, Zhongkun He wrote:
-> > With this patch 'commit <68cd9050d871> ("mm: add swappiness=3D arg to
-> > memory.reclaim")', we can submit an additional swappiness=3D<val> argum=
-ent
-> > to memory.reclaim. It is very useful because we can dynamically adjust
-> > the reclamation ratio based on the anonymous folios and file folios of
-> > each cgroup. For example,when swappiness is set to 0, we only reclaim
-> > from file folios.
-> >
-> > However,we have also encountered a new issue: when swappiness is set to
-> > the MAX_SWAPPINESS, it may still only reclaim file folios. This is due
-> > to the knob of cache_trim_mode, which depends solely on the ratio of
-> > inactive folios, regardless of whether there are a large number of cold
-> > folios in anonymous folio list.
-> >
-> > So, we hope to add a new control logic where proactive memory reclaim o=
-nly
-> > reclaims from anonymous folios when swappiness is set to MAX_SWAPPINESS=
-.
-> > For example, something like this:
-> >
-> > echo "2M swappiness=3D200" > /sys/fs/cgroup/memory.reclaim
-> >
-> > will perform reclaim on the rootcg with a swappiness setting of 200 (ma=
-x
-> > swappiness) regardless of the file folios. Users have a more comprehens=
-ive
-> > view of the application's memory distribution because there are many
-> > metrics available. For example, if we find that a certain cgroup has a
-> > large number of inactive anon folios, we can reclaim only those and ski=
-p
-> > file folios, because with the zram/zswap, the IO tradeoff that
-> > cache_trim_mode is making doesn't hold - file refaults will cause IO,
-> > whereas anon decompression will not.
-> >
-> > With this patch, the swappiness argument of memory.reclaim has a more
-> > precise semantics: 0 means reclaiming only from file pages, while 200
-> > means reclaiming just from anonymous pages.
->
-> Well, with this patch we have 0 - always swap, 200 - never swap and
-> anything inbetween behaves more or less arbitrary, right? Not a new
-> problem with swappiness but would it make more sense to drop all the
-> heuristics for scanning LRUs and simply use the given swappiness when
-> doing the pro active reclaim?
+On 3/12/25 14:23, Sidong Yang wrote:
+> This patche series introduce io_uring_cmd_import_vec. With this function,
+> Multiple fixed buffer could be used in uring cmd. It's vectored version
+> for io_uring_cmd_import_fixed(). Also this patch series includes a usage
+> for new api for encoded read in btrfs by using uring cmd.
 
-Thanks for your suggestion! I totally agree with you. I'm preparing to send
-another patch to do this and a new thread to discuss, because I think the
-implementation doesn't conflict with this one. Do you think so ?
+Pretty much same thing, we're still left with 2 allocations in the
+hot path. What I think we can do here is to add caching on the
+io_uring side as we do with rw / net, but that would be invisible
+for cmd drivers. And that cache can be reused for normal iovec imports.
 
->
-> --
-> Michal Hocko
-> SUSE Labs
+https://github.com/isilence/linux.git regvec-import-cmd
+(link for convenience)
+https://github.com/isilence/linux/tree/regvec-import-cmd
+
+Not really target tested, no btrfs, not any other user, just an idea.
+There are 4 patches, but the top 3 are of interest.
+
+Another way would be to cache in btrfs, but then btrfs would need to
+care about locking for the cache and some other bits, and we wouldn't
+be able to reuse it for other drivers.
+
+-- 
+Pavel Begunkov
+
 
