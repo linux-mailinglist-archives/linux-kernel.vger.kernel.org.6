@@ -1,208 +1,184 @@
-Return-Path: <linux-kernel+bounces-559207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66066A5F0E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:30:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ABD2A5F0E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:30:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CBA919C0D2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:30:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEB6D7A42F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536F1265CC3;
-	Thu, 13 Mar 2025 10:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2739A265CB7;
+	Thu, 13 Mar 2025 10:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gsk66exq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VME+fC5m"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8999D264FBD;
-	Thu, 13 Mar 2025 10:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D3A1BC5C
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741861819; cv=none; b=LzuctnxxcRqJJKOgfHkNfU3RyDKjhrJP/i5V3DogpSXvaHrJI5OAWVf9dg3A92SZk1lI5IweOaUZ5tVcOCM8ZjkReuq0WY8WlHXFC2HuFDnDRuKsudvNWgCmof5mYDJRb7lBXI90dv9DdVMKNxcH8Dr+/nZQSE6NhVdttWoW7dg=
+	t=1741861800; cv=none; b=J0uoalnror6U1OM3J7mL2p4vEV0IfrgkahiJEYaCTNKduJf27rzqj85oyfxHckbIVovIP/9xu1BvELYNtzxYZaeaWjkJMr22imDBZ2kFcC+8KKV7Gv5vpm3d1nCCV5ogFJDQMwSlg3FN6vkW6drQeugZsmpeGD/sI0vZvlW8lG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741861819; c=relaxed/simple;
-	bh=QEvxVG8I/hTVZKOvqF1lYUikB1WAzIg+p5U+9zryPT0=;
+	s=arc-20240116; t=1741861800; c=relaxed/simple;
+	bh=NEmSl0VCjKfvL7t65VUB5MzMa9tpwGW3y/LTbdNnZVY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SGQV1dZW26pb37q5V/vdr77xp8/ve+SFHeGLVzVDcgBl9gGl+4+ErxrwREZRRQHcTP7R6w2pmv1WKyorVoIlYPn0Dcl1rSCUXjWg3YccXtLXw2Vxtfm5DEao5suAxPfT/+Irs8ZB5UTWaVxpzrR6tBT+U+wDRIzxJV60A8wPvz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gsk66exq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16211C4CEE3;
-	Thu, 13 Mar 2025 10:30:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741861819;
-	bh=QEvxVG8I/hTVZKOvqF1lYUikB1WAzIg+p5U+9zryPT0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Gsk66exqBT/kKfea0fo4Q+0PXcBK0s4a3sQigv+rvzP4d4w2XK1YQERTbFUgUmxBp
-	 ajc7+UuXPVswVpY/MgdzOCPPqFEPMZRe5HS/PlS6Es+uXvGw4Dbp/I7Uqdk+xI94a4
-	 yyVjGgU5aqhZymraWi0rnwcOp88dXSXNEq4W5RYg2lAKej/F6aEVU7WQg8cNTbLqCK
-	 v4ZIDX5mtv+2PtqB1hEsHA3UZ+Y9qFm5JAJbYfyioVGXHo9QXwHHGwIb31mCB+8Mqw
-	 GGo52/0ybPbADOqaSZhtOEcz/EjwEGo44RVi+rfGANjxXjHu5mMfhhiY4SVqdMflkK
-	 rVMDVzGILcrAw==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-549967c72bcso945577e87.3;
-        Thu, 13 Mar 2025 03:30:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXUMu6yChRNoCDPG4ZAP6Jgt8cqi++9xP+J1FR12J/Xbx6cOWnQRFikaqU6iMiT9dv7laq/RQiZNz2fcwc=@vger.kernel.org, AJvYcCXf9/oMnqdu9eBZNGhfAkhX/Opcsk929uYgrCoJVON3WvlzBYz+mQK2y9UMB4CoTp+rbD3xMZF02sR2c/5i@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVJKgqqNoQm0OC9MQX2Fsof7aAusM/8lOEn3XMWXcMQiI/2a1I
-	21wHTuhj0hZEQoiu6XmuT68C0eTRHaeNxphhJ4u5CBSKvuGTpaL1oZcjD7XJL3mpTjyomRFTS5l
-	Whhvsg+g6KNvXCaG6PI4LhNezqb4=
-X-Google-Smtp-Source: AGHT+IHYqyvlbFJWpUpXNCxWAr3gQGfo/B1oVwVdpaiXhvEQDZmER5taQn2phFdz+AWOWgVByaE0iZNyjmX15WzStcU=
-X-Received: by 2002:a05:6512:2342:b0:549:8b24:988f with SMTP id
- 2adb3069b0e04-54990da2790mr8737978e87.0.1741861817726; Thu, 13 Mar 2025
- 03:30:17 -0700 (PDT)
+	 To:Cc:Content-Type; b=axJlvYXLMFIBHDwzcBvThUPPBrYdkBkKXp5kJicqLGROtcLRmpbJBvOaie/THrBrwyoqOPpmc0RWE6ESnH05wiT8+ZLvMgYvlz2b9czJXg3W+8tuJ8AFSQpEdb2px84pexGBtjoaQJsMBtEacA2FITNvEPxVcWinRYtve26Ijgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VME+fC5m; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54991d85f99so1957455e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 03:29:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1741861796; x=1742466596; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pviuwRFdfnui+N+RMClLZiL5AkwReTbr0Jey2Ox0RLI=;
+        b=VME+fC5mC0W/AyrSaiA6j+OcR/T8tbx7vplq0U14zwgF46NxayQnajSKdJEB7Rdg8N
+         qn50O5s3wOsLXICa6eo5u4mx3imhWJUPRTNK44qQi0oY33dq8cnFaFRNGoMY9/WvPHwK
+         qmaToebcslN/dwxlOLakZGiKQ/FD6Mm9jXHD4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741861796; x=1742466596;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pviuwRFdfnui+N+RMClLZiL5AkwReTbr0Jey2Ox0RLI=;
+        b=keB8FkbiPkgAbw5fnTEL1bKy3bqAnntTm1Nc/goQCvpvrKYlW2AyE3x2ewBtRt67wr
+         eekDRsKHOGXEHqMN7Z2/+4u7tD8U0OtXqzQ4sXrXU2ww4lj1z2lk17RtcBK8sacajX+h
+         eVKdL0jwuJ4PS2m9qpzmk4NhAMZaCx/+Yj47d8KAJkWg0Q7zOWs3thRG2BHYPcOzYKJl
+         8KvtzFtacKpLKCMRgJvzR7q2Pyn91TYj8ywy1pZ+N4rnUATTEfto8/KPzc+7EcdADbhS
+         K9EBdio1CtRhSqs93KqS6Mci8JNUxN7/HaBBawLuOJpJbW7i+FXpf21TDQ90i0ZGZGJ0
+         Ym/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWbstbVSlYsAOzDHnGPitYf4eiPUxu9OM99mpqBZT69lZZBmdR8clSgbrvcF40Qa6FJNnSnF+YgOXzaBbU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDoxdyijed2+Lb9a6MTM2DgojEdnHHqt7FY/76ZTuwbpxqxhrk
+	D6tmNTIQpeNT2ZLOIDbVEPMb14uzt79/JjEETLXYTBmbbM6hl23EJG8n9fOtY4aGz+EUBuL3C4U
+	=
+X-Gm-Gg: ASbGncuEWksr1piGOeGMrggzgtKxyEWMg6XfLt/OAGN/GwMymZpu8uZPNDxuty9nbmq
+	pL7Jw4V7TqY5Dp2MG9HCo+0In7mhbVKOvptq936vqSEEuptA9a3HAJF+NXjdu3QKsflQyeQVDl4
+	j8tTwTP6RRjZ5kKfLjthToo3JW7D5U/WiwfeJbrhU2H5iiVje3Wo0XH7yPr79sVBlxMwNUMEr6m
+	tZOFwgabWHAAALJf8PS8Vvh/oaNwDMQM0XmivZUM1krZg7L1ufn8HjS0R5LmJ/92xLZg8xk8enA
+	M0OlvGxptQaDtvUDyHl0gPsCcE02AkUw1Rq7ydXsnwhBcT8iLQ8A1Nz3KIyIuQzyYyQrCuQ9t4f
+	0WtcHc4otmas=
+X-Google-Smtp-Source: AGHT+IFayby1JxeVF2jMpTkvZljIuFvqOCUI3nrRiEmeJNUKZuPeZHaFtDgL1O88iyen/vXaPgZeUg==
+X-Received: by 2002:a05:6512:2309:b0:545:6a2:e59 with SMTP id 2adb3069b0e04-549ba41c35bmr716913e87.18.1741861795586;
+        Thu, 13 Mar 2025 03:29:55 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7a81basm170798e87.28.2025.03.13.03.29.55
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 03:29:55 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30bee278c2aso20039351fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 03:29:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW6rhZDs3jWz34GxVPOMP5xdl1gIjT80xt+3094l1AeaDr9amEQI1tt571RnUEAWFgTCbGoQbcP31ViFOw=@vger.kernel.org
+X-Received: by 2002:a05:6512:39c8:b0:548:878b:ccb3 with SMTP id
+ 2adb3069b0e04-549ba429dcemr762107e87.25.1741861794589; Thu, 13 Mar 2025
+ 03:29:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311110616.148682-9-ardb+git@google.com> <202503131715.Fb6CfjhT-lkp@intel.com>
- <CAMj1kXGBLV6W7mJcELmsQuDUi0u-DofyD985znmVoHoZKZTuxA@mail.gmail.com> <CAMj1kXEZccymq1OhXErSK+prS3L7sygm7_5_1v+j2cypncQuzA@mail.gmail.com>
-In-Reply-To: <CAMj1kXEZccymq1OhXErSK+prS3L7sygm7_5_1v+j2cypncQuzA@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 13 Mar 2025 19:29:41 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT_NRio2pkR1Km5Nq8KM38zYF7VCoGP0OjEP_Owg-ukpQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JrvxKSzDk58nqsT3nejvFSY6kfeqbfgNaL4ldnTl0LmsnwFvj15KgRa8Ec
-Message-ID: <CAK7LNAT_NRio2pkR1Km5Nq8KM38zYF7VCoGP0OjEP_Owg-ukpQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] Kbuild: Create intermediate vmlinux build with
- relocations preserved
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: kernel test robot <lkp@intel.com>, Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, 
-	linux-kbuild@vger.kernel.org, x86@kernel.org, Ingo Molnar <mingo@kernel.org>
+References: <20250312192528.95838-1-andriy.shevchenko@linux.intel.com>
+ <67d1f748.050a0220.353790.339b@mx.google.com> <Z9Kf06nLg86jmcqI@smile.fi.intel.com>
+ <4633173e-111a-4659-945d-149e3857896c@xs4all.nl>
+In-Reply-To: <4633173e-111a-4659-945d-149e3857896c@xs4all.nl>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Thu, 13 Mar 2025 11:29:41 +0100
+X-Gmail-Original-Message-ID: <CANiDSCs5QsyTxYj4DnsYD=18RXGBXGVQ=r_XxY6C011JTmh+LQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JqH81eCmniQ-A65SsDIPlCKmBwLLnS5WW7jzue24hdFz1RihLXZRmsS1gk
+Message-ID: <CANiDSCs5QsyTxYj4DnsYD=18RXGBXGVQ=r_XxY6C011JTmh+LQ@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=5Bv2=2C1=2F1=5D_media=3A_v4l2=2Dcore=3A_Replace_the_check_for?=
+	=?UTF-8?Q?_firmware_registered_I=C2=B2C_devices?=
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 13, 2025 at 7:18=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
-ote:
+On Thu, 13 Mar 2025 at 10:52, Hans Verkuil <hverkuil@xs4all.nl> wrote:
 >
-> On Thu, 13 Mar 2025 at 10:34, Ard Biesheuvel <ardb@kernel.org> wrote:
+> On 13/03/2025 10:05, Andy Shevchenko wrote:
+> > On Wed, Mar 12, 2025 at 02:06:16PM -0700, Patchwork Integration wrote:
+> >> Dear Andy Shevchenko:
+> >>
+> >> Thanks for your patches! Unfortunately the Media CI robot detected som=
+e
+> >> issues:
+> >>
+> >> # Test media-patchstyle:./0001-media-v4l2-core-Replace-the-check-for-f=
+irmware-regis.patch media style
+> >> ERROR: ./0001-media-v4l2-core-Replace-the-check-for-firmware-regis.pat=
+ch: Missing 'media:' prefix in Subject
 > >
-> > On Thu, 13 Mar 2025 at 10:21, kernel test robot <lkp@intel.com> wrote:
-> > >
-> > > Hi Ard,
-> > >
-> > > kernel test robot noticed the following build errors:
-> > >
-> > > [auto build test ERROR on masahiroy-kbuild/for-next]
-> > > [also build test ERROR on masahiroy-kbuild/fixes tip/x86/core s390/fe=
-atures linus/master v6.14-rc6 next-20250312]
-> > > [If your patch is applied to the wrong git tree, kindly drop us a not=
-e.
-> > > And when submitting patch, we suggest to use '--base' as documented i=
-n
-> > > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> > >
-> > > url:    https://github.com/intel-lab-lkp/linux/commits/Ard-Biesheuvel=
-/Kbuild-link-vmlinux-sh-Make-output-file-name-configurable/20250311-190926
-> > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/lin=
-ux-kbuild.git for-next
-> > > patch link:    https://lore.kernel.org/r/20250311110616.148682-9-ardb=
-%2Bgit%40google.com
-> > > patch subject: [PATCH v2 3/4] Kbuild: Create intermediate vmlinux bui=
-ld with relocations preserved
-> > > config: x86_64-randconfig-076-20250313 (https://download.01.org/0day-=
-ci/archive/20250313/202503131715.Fb6CfjhT-lkp@intel.com/config)
-> > > compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> > > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/a=
-rchive/20250313/202503131715.Fb6CfjhT-lkp@intel.com/reproduce)
-> > >
-> > > If you fix the issue in a separate patch/commit (i.e. not just a new =
-version of
-> > > the same patch/commit), kindly add following tags
-> > > | Reported-by: kernel test robot <lkp@intel.com>
-> > > | Closes: https://lore.kernel.org/oe-kbuild-all/202503131715.Fb6CfjhT=
--lkp@intel.com/
-> > >
-> > > All errors (new ones prefixed by >>):
-> > >
-> > > >> gawk: scripts/generate_builtin_ranges.awk:82: fatal: cannot open f=
-ile `vmlinux.map' for reading: No such file or directory
-> > >
+> > LOL, what?
+>
+> Hmm, the 'I=C2=B2C' bit in the Subject header causes it to be UTF-8. The =
+Subject line in
+> patchwork (1) is now:
+>
+> Subject: [PATCH v2 1/1] =3D?utf-8?q?media=3D3A_v4l2-core=3D3A_Replace_the=
+_check_fo?=3D
+>         =3D?utf-8?q?r_firmware_registered_I=3DC2=3DB2C_devices?=3D
+>
+> so the check for the 'media:' prefix in the Subject line fails.
+>
+> Interestingly, if I commit the patch (git am) to a test branch, then run
+> 'git format-patch -n1' the Subject line now reads:
+>
+> Subject: [PATCH 1/1] =3D?UTF-8?q?media:=3D20v4l2-core:=3D20Replace=3D20th=
+e=3D20check?=3D
+>  =3D?UTF-8?q?=3D20for=3D20firmware=3D20registered=3D20I=3DC2=3DB2C=3D20de=
+vices?=3D
+>
+> and that restored the ':'.
+>
+> Ricardo, can you look at this?
+
+STOP breaking media-ci :P [1]
+
+Thanks for the report. We were not ready to handle that encoding. I am
+now leveraging "git log" and it seems to work fine.
+https://gitlab.freedesktop.org/linux-media/media-ci/-/merge_requests/246
+
+Regards
+
+>
+> I also noticed that the v1 and v2 patches ended up in my spam folder. Whe=
+ther that
+> is related to UTF-8 in the Subject is not clear (my provider marks way to=
+o many
+> legit posts as spam).
+>
+> Andy, can you post a v3 with just 'I2C' in the subject instead of 'I=C2=
+=B2C'? If nothing
+> else, I'd like to know if that's the reason it ended up in my spam folder=
+.
+>
+> Regards,
+>
+>         Hans
+>
+> (1) https://patchwork.linuxtv.org/project/linux-media/patch/2025031219252=
+8.95838-1-andriy.shevchenko@linux.intel.com/
+>
 > >
-> > Hmm it seems I missed some things in link-vmlinux.sh - I will take a lo=
-ok.
+> >> Please fix your series, and upload a new version. If you have a patchw=
+ork
+> >> account, do not forget to mark the current series as Superseded.
+> >>
+> >> For more details, check the full report at:
+> >> https://linux-media.pages.freedesktop.org/-/users/patchwork/-/jobs/727=
+74130/artifacts/report.htm .
+> >
 >
-> We'd need something like the below applied on top - shall I send a v3?
 
-
-I will insert this before you patch set.
-https://lore.kernel.org/linux-kbuild/20250313102604.1491732-1-masahiroy@ker=
-nel.org/T/#u
-
-I would have done this earlier.
-That is simply because I always run out of my time
-and I do not have time to fix issues before someone stumbles on them.
-
-
-
->
-> --- a/scripts/link-vmlinux.sh
-> +++ b/scripts/link-vmlinux.sh
-> @@ -46,6 +46,7 @@
->
->  # Link of vmlinux
->  # ${1} - output file
-> +# ${2} - map file
->  vmlinux_link()
->  {
->         local output=3D${1}
-> @@ -99,7 +100,7 @@ vmlinux_link()
->         fi
->
->         if is_enabled CONFIG_VMLINUX_MAP; then
-> -               ldflags=3D"${ldflags} ${wl}-Map=3D${output}.map"
-> +               ldflags=3D"${ldflags} ${wl}-Map=3D${2}"
->         fi
->
->         ${ld} ${ldflags} -o ${output}                                   \
-> @@ -185,7 +186,7 @@
->  {
->         rm -f .btf.*
->         rm -f System.map
-> -       rm -f vmlinux
-> +       rm -f ${VMLINUX}
->         rm -f vmlinux.map
->  }
->
-> @@ -224,7 +225,7 @@
->                 strip_debug=3D1
->         fi
->
-> -       vmlinux_link .tmp_vmlinux1
-> +       vmlinux_link .tmp_vmlinux1 .tmp_vmlinux1.map
->  fi
->
->  if is_enabled CONFIG_DEBUG_INFO_BTF; then
-> @@ -267,19 +268,19 @@
->         sysmap_and_kallsyms .tmp_vmlinux1
->         size1=3D$(${CONFIG_SHELL} "${srctree}/scripts/file-size.sh" ${kal=
-lsymso})
->
-> -       vmlinux_link .tmp_vmlinux2
-> +       vmlinux_link .tmp_vmlinux2 .tmp_vmlinux2.map
->         sysmap_and_kallsyms .tmp_vmlinux2
->         size2=3D$(${CONFIG_SHELL} "${srctree}/scripts/file-size.sh" ${kal=
-lsymso})
->
->         if [ $size1 -ne $size2 ] || [ -n "${KALLSYMS_EXTRA_PASS}" ]; then
-> -               vmlinux_link .tmp_vmlinux3
-> +               vmlinux_link .tmp_vmlinux3 .tmp_vmlinux3.map
->                 sysmap_and_kallsyms .tmp_vmlinux3
->         fi
->  fi
->
->  strip_debug=3D
->
-> -vmlinux_link "${VMLINUX}"
-> +vmlinux_link "${VMLINUX}" vmlinux.map
->
->  # fill in BTF IDs
->  if is_enabled CONFIG_DEBUG_INFO_BTF; then
-
-
-
+[1] No, seriously, thanks for taking the time to report back, it really hel=
+ps!
 --=20
-Best Regards
-Masahiro Yamada
+Ricardo Ribalda
 
