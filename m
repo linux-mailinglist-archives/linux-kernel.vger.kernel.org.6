@@ -1,328 +1,167 @@
-Return-Path: <linux-kernel+bounces-558918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2BDEA5ED13
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:34:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A282A5ED1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:35:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E774417893D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:34:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52AEA3A9ED4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CB925F995;
-	Thu, 13 Mar 2025 07:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CE1260361;
+	Thu, 13 Mar 2025 07:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SWEMnlQE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aRjHhLxI"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A987B25F96F;
-	Thu, 13 Mar 2025 07:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAE413BC3F;
+	Thu, 13 Mar 2025 07:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741851250; cv=none; b=f+F/d0lg9ML3zHNmtpoEb9yyMotzkFGUbjxdIt/Sg0Bgb8N82rUzM8w1fdb8Ql4lkVPpePU2GgEj4IpPnAP+REfukHActsyHfwrO7gTjBP/oBNkNbcofXhYqIreDEaUCy7DQG3DPq97uD/16ad9YiqSqyC2ucFfxDpCcE1gHP0A=
+	t=1741851310; cv=none; b=LyaGzSaFaHVj2eW3rMak5nL0zkR/dLRJN24JZudoZx9DUx7kbbVMMOxS16Zf4wNnKPTp8xyys19dXTPGFIAY0gh6G06X7VEI1VwECtCNE4PC9ZGz5s5cRbiQR57XFPN9IoAbMNlKuaVLwXhihdjnxgRYqSWXz42QkAVwjhAS3CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741851250; c=relaxed/simple;
-	bh=n7oj+3BMVatFUBrwyBY2k5vyym+icTWhFSlMuR1riQQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e45bMVbYmCMOPgciDeaeuBFVetetx4w53rdDeW29rRixSPMQUtV+Ore6mkCBnJoVtIgrPa9BJDvxBPQz5YipH1vJRjsBm8/7d9+4f5W+fOzetc0iZd/WXR6yid8yfP1DwZHLKhQRlQ09FOW7LxcPHTDd2d0LFqUFWxtafbUgYb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SWEMnlQE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FB9FC4CEF2;
-	Thu, 13 Mar 2025 07:34:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741851250;
-	bh=n7oj+3BMVatFUBrwyBY2k5vyym+icTWhFSlMuR1riQQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SWEMnlQEFBJ8GwE92hn7JMZ2dVjqBKlPftKjdsyQ5qcJ/CEJKL/tM2IRMpZhqsUTP
-	 grm9zrIZ8uUvdNwcZTZj2x0qs2juS8xDrW+08tHPfFHWVYO6Hoq6tpor6R3ytf3cH6
-	 cGaOZ456RyvR3B66rM5267AYTY1T9yzuJzpBfL9gPcu/SaJcJkyYXcTXF0/MlnkIiB
-	 SJhVnfddaYr1bk7Xf+RfaW/AQrCmxayUuii7KXFH2Jfc4UjlKUbWDdIwgIfOgODEML
-	 SYeidepb6r/SZX1tQsD5EmCtUQiklQ/nhj0Jh9E/sCVK2ITQg/EBx/neYjTqKQo2RM
-	 +e5Ch+aHBc4wg==
-Message-ID: <ac119dba-6e73-496c-97e1-d59ac0fe4a27@kernel.org>
-Date: Thu, 13 Mar 2025 08:33:59 +0100
+	s=arc-20240116; t=1741851310; c=relaxed/simple;
+	bh=EdxGxN+VRDwhAkSIvCST7YEsLLAsc4WQBymWR5igh5U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E+Bzq0heDFLEQl94852tNB76BLnXjSDAbcM6duFNqL+MOWFPijhG7lUkEgGTM1JmVxNO6k1ktNC2325KEhCbtJnl5OTOGJQ4MQvADzxc5tDbJac6qcrEE1I4v36O1r6KzqJo16SYdKxw6NgwuWk5tCItihWP+prC4S6FOzDqjo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aRjHhLxI; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e614da8615so1283047a12.1;
+        Thu, 13 Mar 2025 00:35:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741851307; x=1742456107; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YUsrUN0Sa3eMBis7ScutQ4swK59H4nn7rnZNJQLZ63Y=;
+        b=aRjHhLxIyJf/6HTj4bJrNEPoxP+KrM9Vtd90FIA8N1OINusUEJRklZuMueLAJnBj2j
+         /v06sI7x0T4jt8RIs9EALuWpIPfspg85Ev1racAvLlW7r5YwsHJS65nrsckpdX5mRJk8
+         PK6/OII/01fp0O94ci2Iq5gAjIU0aQMsB1noXn7V6KKUNigob5c+/LSbHrn6Kw5g2+cs
+         41fu5H7pu400cYcHqpsC1081HghYBn2OvxLErES5UN0QAZ3epiiJ3D3SrSRctFvlL3eN
+         43ioQjnkZPD3S/I3gIKvhWAh3pZiNGCD7AVzoyY8hF0wbdI+qjPHYW1R3HytZmFuXRIR
+         1Feg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741851307; x=1742456107;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YUsrUN0Sa3eMBis7ScutQ4swK59H4nn7rnZNJQLZ63Y=;
+        b=tUgkei0m8aTf7cikGISMv3R9Z/SkNdB8am+ZAwd4/6fp4qRQCoosEwPMj49pLK3Lw8
+         u2UBA4HRS6moFVzeU4KiUaONOB/5hhA+noXZOvTHZhTbbI+6qsVYKojBePQ6KzvYuTqY
+         k96BjSeotHkqyERul4tRrOstQlCwU9GQWoc3OXToS22C5GXqb5wOrClhgRrWzLYNHTF1
+         OwUAsP4FLPyx73Iva7FtOhfiZ7MuyTkrhfShH/oH6lnYPtHXxew9n3Bk7oP8AuqaN32z
+         mKmvZynZHEnNdCSuI9JX3HDkHedIsOXgp4waxSRWKl89gRa9p3s1Os8hCRztJI4pcQn7
+         G9QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFlU6/P726+E3MXCbIsB0xiT2H7LGhVoIKcLgI3zEfPJs+kIkQpe3fLkDPnowLgcj/NjY1BuWug4QQiQ==@vger.kernel.org, AJvYcCV/+3uEQ2/pIHGnDdi+od93T50CKMM3E792Lg5HjxLjLoAynmd9m8X5EM9EoJ4n6xzm50YObqJQDbftS6lX@vger.kernel.org, AJvYcCVHgbvJHnnFWzfIdSyYHIIqlDktsqeIL7gENTZwc9gjcK9SGn183Tg5Um6wyouba+YT6WMB2jxGGX0y@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK31OG/tpUD/M+i80W22/C0lsEKzXO3jbxraaQvOAFI2YVUu6q
+	tnowNeONr3djZkzmgpHyjPE6JoGs9S8OaGJE4aXf4mSY+n1on3RNc3wzEJ95gGARMui4egY0tmG
+	74zy/9JObzfHzvfdklA7TvyBEeP/joZ5exVsCwQ==
+X-Gm-Gg: ASbGncsN+wpYnzlHvkBbvEkGIFCQ0DFGsYgSVwnc1+mYkmbPOsQKcCyFNrQ5k/6hyJm
+	tN+M+h7Ww1ULmlGhLe+aMNG2h+JwahfcznlL2vuzN/IBtp0wUJLrMhkZAHzrfvwRa80deY9hh4e
+	Ij76pd2iQqGTJsYUar6iMuuvI66mMGSs8Zr0qUOshPDER6
+X-Google-Smtp-Source: AGHT+IG0AbFafmJCSVXuCn9+d9aJ6rWGv0lewSciVuUOX99LLiYxCavfe+aGJvWGZ3Z6k5yceyGSjWwk/zr0TjlaX0g=
+X-Received: by 2002:a05:6402:2550:b0:5e5:9c04:777 with SMTP id
+ 4fb4d7f45d1cf-5e814d805b7mr1311903a12.6.1741851306525; Thu, 13 Mar 2025
+ 00:35:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/8] memory: Add STM32 Octo Memory Manager driver
-To: Patrice CHOTARD <patrice.chotard@foss.st.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>
-Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- christophe.kerello@foss.st.com
-References: <20250219080059.367045-1-patrice.chotard@foss.st.com>
- <20250219080059.367045-5-patrice.chotard@foss.st.com>
- <eaf1ecca-4fde-4128-8590-6013c3a13a04@kernel.org>
- <8b1b7df5-07f4-4f95-88e7-4e95ee909ffd@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <8b1b7df5-07f4-4f95-88e7-4e95ee909ffd@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-8-git-send-email-nunodasneves@linux.microsoft.com>
+ <CAMvTesAW-9Mo0oY6UUh2anp6DQCSsVCUhBiV2-bKp2VD_N0DYw@mail.gmail.com> <5e3e8c30-912c-4fe3-bfac-1ae21242473b@linux.microsoft.com>
+In-Reply-To: <5e3e8c30-912c-4fe3-bfac-1ae21242473b@linux.microsoft.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Thu, 13 Mar 2025 15:34:28 +0800
+X-Gm-Features: AQ5f1JpFmeyU-ZXvz0ptwRLZ-nTkXcfB_mlOTr3vDPCyoNGFdLAtzHdNo9-Hw44
+Message-ID: <CAMvTesAPeLBfYVa5TGx-o6p+0g_Q1bn6s+nZK5i7NK8QGyfbTA@mail.gmail.com>
+Subject: Re: [PATCH v5 07/10] Drivers: hv: Introduce per-cpu event ring tail
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, x86@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org, kys@microsoft.com, 
+	haiyangz@microsoft.com, wei.liu@kernel.org, mhklinux@outlook.com, 
+	decui@microsoft.com, catalin.marinas@arm.com, will@kernel.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org, 
+	joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de, 
+	jinankjain@linux.microsoft.com, muminulrussell@gmail.com, 
+	skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com, 
+	ssengar@linux.microsoft.com, apais@linux.microsoft.com, 
+	Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com, 
+	gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com, 
+	muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org, 
+	lenb@kernel.org, corbet@lwn.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/03/2025 15:23, Patrice CHOTARD wrote:
->>> +static int stm32_omm_disable_child(struct device *dev)
->>> +{
->>> +	struct stm32_omm *omm = dev_get_drvdata(dev);
->>> +	struct reset_control *reset;
->>> +	int ret;
->>> +	u8 i;
->>> +
->>> +	for (i = 0; i < omm->nb_child; i++) {
->>> +		ret = clk_prepare_enable(omm->child[i].clk);
->>> +		if (ret) {
->>> +			dev_err(dev, "Can not enable clock\n");
->>> +			return ret;
->>> +		}
->>> +
->>> +		reset = of_reset_control_get_exclusive(omm->child[i].node, 0);
->>> +		if (IS_ERR(reset)) {
->>> +			dev_err(dev, "Can't get child reset\n");
->>
->> Why do you get reset of child? Parent is not suppposed to poke there.
->> You might not have the reset there in the first place and it would not
->> be an error.
-> 
-> By ressetting child (OSPI), we ensure they are disabled and in a known state.
-> See the comment below.
-> 
->>
->>
->>> +			return PTR_ERR(reset);
->>> +		};
->>> +
->>> +		/* reset OSPI to ensure CR_EN bit is set to 0 */
->>> +		reset_control_assert(reset);
->>> +		udelay(2);
->>> +		reset_control_deassert(reset);
->>
->> No, the child should handle this, not parent.
-> 
-> Octo Memory Manager can only be configured if both child are disabled.
-> That's why here, parent handles this.
+On Thu, Mar 13, 2025 at 3:45=E2=80=AFAM Nuno Das Neves
+<nunodasneves@linux.microsoft.com> wrote:
+>
+> On 3/10/2025 6:01 AM, Tianyu Lan wrote:
+> > On Thu, Feb 27, 2025 at 7:09=E2=80=AFAM Nuno Das Neves
+> > <nunodasneves@linux.microsoft.com> wrote:
+> >>
+> >> Add a pointer hv_synic_eventring_tail to track the tail pointer for th=
+e
+> >> SynIC event ring buffer for each SINT.
+> >>
+> >> This will be used by the mshv driver, but must be tracked independentl=
+y
+> >> since the driver module could be removed and re-inserted.
+> >>
+> >> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> >> Reviewed-by: Wei Liu <wei.liu@kernel.org>
+> >
+> > It's better to expose a function to check the tail instead of exposing
+> > hv_synic_eventring_tail directly.
+> >
+> What is the advantage of using a function for this? We need to both set
+> and get the tail.
 
-So if device by any chance started and is doing some useful work, then
-you cancel that work and reset it?
+We may add lock or check to avoid race conditions and this depends on the
+user case. This is why I want to see how mshv driver uses it.
 
-And what if child does not have reset line? Your binding allows that, so
-how is it supposed to work then?
+>
+> > BTW, how does mshv driver use hv_synic_eventring_tail? Which patch
+> > uses it in this series?
+> >
+> This variable stores indices into the synic eventring page (one for each
+> SINT, and per-cpu). Each SINT has a ringbuffer of u32 messages. The tail
+> index points to the latest one.
+>
+> This is only used for doorbell messages today. The message in this case i=
+s
+> a port number which is used to lookup and invoke a callback, which signal=
+s
+> ioeventfd(s), to notify the VMM of a guest MMIO write.
+>
+> It is used in patch 10.
 
-This also leads me to questions about bindings - if you need to assert
-some reset, doesn't it mean that these resets are also coming through
-this device so they are part of this device node?
+I found "extern u8 __percpu **hv_synic_eventring_tail;" in the
+drivers/hv/mshv_root.h of patch 10.
+I seem to miss the code to use it.
 
++int hv_call_unmap_stat_page(enum hv_stats_object_type type,
++                           const union hv_stats_object_identity *identity)=
+;
++int hv_call_modify_spa_host_access(u64 partition_id, struct page **pages,
++                                  u64 page_struct_count, u32 host_access,
++                                  u32 flags, u8 acquire);
++
++extern struct mshv_root mshv_root;
++extern enum hv_scheduler_type hv_scheduler_type;
++extern u8 __percpu **hv_synic_eventring_tail;
++
++#endif /* _MSHV_ROOT_H_ */
 
-> 
->>
->>> +
->>> +		reset_control_put(reset);
->>> +		clk_disable_unprepare(omm->child[i].clk);
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int stm32_omm_probe(struct platform_device *pdev)
->>> +{
->>> +	struct platform_device *vdev;
->>> +	struct device *dev = &pdev->dev;
->>> +	struct stm32_omm *omm;
->>> +	struct clk *clk;
->>> +	int ret;
->>> +	u8 child_access_granted = 0;
->>
->> Keep inits/assignments together
-> 
-> ok
-> 
->>
->>> +	u8 i, j;
->>> +	bool child_access[OMM_CHILD_NB];
->>> +
->>> +	omm = devm_kzalloc(dev, sizeof(*omm), GFP_KERNEL);
->>> +	if (!omm)
->>> +		return -ENOMEM;
->>> +
->>> +	omm->io_base = devm_platform_ioremap_resource_byname(pdev, "regs");
->>> +	if (IS_ERR(omm->io_base))
->>> +		return PTR_ERR(omm->io_base);
->>> +
->>> +	omm->mm_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "memory_map");
->>> +	if (IS_ERR(omm->mm_res))
->>> +		return PTR_ERR(omm->mm_res);
->>> +
->>> +	/* check child's access */
->>> +	for_each_child_of_node_scoped(dev->of_node, child) {
->>> +		if (omm->nb_child >= OMM_CHILD_NB) {
->>> +			dev_err(dev, "Bad DT, found too much children\n");
->>> +			ret = -E2BIG;
->>> +			goto err_clk_release;
->>> +		}
->>> +
->>> +		if (!of_device_is_compatible(child, "st,stm32mp25-ospi")) {
->>> +			ret = -EINVAL;
->>> +			goto err_clk_release;
->>> +		}
->>> +
->>> +		ret = stm32_omm_check_access(dev, child);
->>> +		if (ret < 0 && ret != -EACCES)
->>> +			goto err_clk_release;
->>> +
->>> +		child_access[omm->nb_child] = false;
->>> +		if (!ret) {
->>> +			child_access_granted++;
->>> +			child_access[omm->nb_child] = true;
->>> +		}
->>> +
->>> +		omm->child[omm->nb_child].node = child;
->>> +
->>> +		clk = of_clk_get(child, 0);
->>
->> Why are you taking children clock? And why with this API, not clk_get?
-> 
-> I need children's clock to reset them.
-
-
-The device driver should reset its device. It is not a discoverable bus,
-that would explain power sequencing from the parent.
-
-> Why of_clk_get() usage is a problem here ? i can't get your point ?
-
-Because it is not the API which device drivers should use. You should
-use clk_get or devm_clk_get.
-
-
-> 
->> This looks like mixing clock provider in the clock consumer.
->>
->>> +		if (IS_ERR(clk)) {
->>> +			dev_err(dev, "Can't get child clock\n");
->>
->> Syntax is always return dev_err_probe (or ret = dev_err_probe).
-> 
-> ok
-> 
->>
->>> +			ret = PTR_ERR(clk);
->>> +			goto err_clk_release;
->>> +		};
->>> +
->>> +		omm->child[omm->nb_child].clk = clk;
->>> +		omm->nb_child++;
->>> +	}
->>> +
->>> +	if (omm->nb_child != OMM_CHILD_NB) {
->>> +		ret = -EINVAL;
->>> +		goto err_clk_release;
->>> +	}
->>> +
->>> +	platform_set_drvdata(pdev, omm);
->>> +
->>> +	pm_runtime_enable(dev);
->>> +
->>> +	/* check if OMM's resource access is granted */
->>> +	ret = stm32_omm_check_access(dev, dev->of_node);
->>> +	if (ret < 0 && ret != -EACCES)
->>> +		goto err_clk_release;
->>> +
->>> +	if (!ret && child_access_granted == OMM_CHILD_NB) {
->>> +		/* Ensure both OSPI instance are disabled before configuring OMM */
->>> +		ret = stm32_omm_disable_child(dev);
->>> +		if (ret)
->>> +			goto err_clk_release;
->>> +
->>> +		ret = stm32_omm_configure(dev);
->>> +		if (ret)
->>> +			goto err_clk_release;
->>> +	} else {
->>> +		dev_dbg(dev, "Octo Memory Manager resource's access not granted\n");
->>> +		/*
->>> +		 * AMCR can't be set, so check if current value is coherent
->>> +		 * with memory-map areas defined in DT
->>> +		 */
->>> +		ret = stm32_omm_set_amcr(dev, false);
->>> +		if (ret)
->>> +			goto err_clk_release;
->>> +	}
->>> +
->>> +	/* for each child, if resource access is granted and status "okay", probe it */
->>> +	for (i = 0; i < omm->nb_child; i++) {
->>> +		if (!child_access[i] || !of_device_is_available(omm->child[i].node))
->>
->> If you have a device available, why do you create one more platform device?
->>
->>> +			continue;
->>> +
->>> +		vdev = of_platform_device_create(omm->child[i].node, NULL, NULL);
->>
->> Why you cannot just populate the children?
-> 
-> I can't use of_platform_populate(), by default it will populate all OMM's child.
-> Whereas here, we want to probe only the OMM's child which match our criteria.  
-
-
-Why wouldn't you populate everyone? The task of bus driver is not to
-filter out DT. If you got such DT - with all device nodes - you are
-expected to populate all of them. Otherwise, if you do not want all of
-them, it is expected that firmware or bootloader will give you DT
-without these nodes.
-
-Best regards,
-Krzysztof
+--=20
+Thanks
+Tianyu Lan
 
