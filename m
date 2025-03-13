@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-560273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE2FA6016D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:40:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21A4A6016F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:41:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D811189F1DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:40:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F5EC188E19B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919AD1F239B;
-	Thu, 13 Mar 2025 19:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vckNOv8+"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE401F12FF;
+	Thu, 13 Mar 2025 19:41:11 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCF417E;
-	Thu, 13 Mar 2025 19:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B015917E
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 19:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741894816; cv=none; b=gPB6acOhtiWee2R6Ny8pmFa/vkFwK1VEldAHnN2LT5cAsVsV0XrgpyimSfOhK1nDaoIJ68ckXyjSzomA+nAnrlxUBqsgH58/MvauRxCP+gsXqtZ71Pext76w6yNulAOkRdz+XwKufZ/WDwA+w8l19Jc2pb3aXXwdzqVgEGcFMhg=
+	t=1741894871; cv=none; b=Gs/XuDQD+SExKYBEx0uZ2hjwsPbI7/Tr3TSANQfxZFY9rxcMuF5VIlw7WYCztmB2ZviW4uR82V+foVcuJY0/9M/imzHQ7/jF8woWt9q+W/ip9lx3lJKZz0cocf4O5gY0maEvM5+f5RvEtrezTHBsTnb2SHGmPt27nDFIj+Jb3MQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741894816; c=relaxed/simple;
-	bh=MxnMpBHlU5qSu1Hw5ANyvJ4rrYrWYTVkrc5mFvbVK6A=;
+	s=arc-20240116; t=1741894871; c=relaxed/simple;
+	bh=w81oytOJ52LUX+gcGHeVMyaViS4IklZp3npw04X3rQk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AQS7f/1mzbnKR39+1ptsJu5VzUfOp8MdSEzMFZWCjJqGV1F9cIlshrm/kDAmn2SrHJL4poKaoUUshSkI4J71wSQ3iRmz/XHuludMc5dHBdpJsMrnjk0Wcbe1lxPlqQIiTTXWNCvhnQJNhTHtlMsZd0UaXVwV2CvquIn5bsAX4vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vckNOv8+; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=9naFZnNjfAr4VFxA6DXzomBgdIv+Y9yUqhztcRXhoo4=; b=vckNOv8+pcWjuTykQnmDcnPQZS
-	mzzt1MGc6Q6W8aKmz9/rdPsKq/DBGGBbXIVYG0Nm0Cu47iVGjsSx555zxXW2jtJeIEjMMx0SsYS0t
-	yDQnoH89NmjldiJPse3NtUw4EsntwDXICAX2cgUdckkAJ9b4ZampTrTK0rFZfuq4UmgM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tsoPM-0055Vu-Ck; Thu, 13 Mar 2025 20:39:56 +0100
-Date: Thu, 13 Mar 2025 20:39:56 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Michael Klein <michael@fossekall.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] net: phy: realtek: Add support for PHY LEDs on
- RTL8211E
-Message-ID: <e3a36d27-5f7b-4c86-a6b9-2b37d3d16ee8@lunn.ch>
-References: <20250312193629.85417-1-michael@fossekall.de>
- <e62af3a7-c228-4523-a1fb-330f4f96f28c@lunn.ch>
- <Z9Mp86eWYw3hgt0x@a98shuttle.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i/DX4g7VKQ0+Qib+TXr+3V0lx2vUxvtCApG/TcAj+goKKOyakpEhTT9rFMx2Q1XC3kyHGFBnjWvc+evHqMhcgvJHqU56h65iXGpEKHWj1/vQquc4JbStTZ5i8UE+4h8k5GS6hOAfSb6AhxAulRahA9FqqdXJpGbR0UTof8J0ZMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tsoQ9-0002QO-AO; Thu, 13 Mar 2025 20:40:45 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tsoQ9-005aKi-0I;
+	Thu, 13 Mar 2025 20:40:45 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tsoQ8-00BQoh-39;
+	Thu, 13 Mar 2025 20:40:44 +0100
+Date: Thu, 13 Mar 2025 20:40:44 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Johan Hovold <johan@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 0/3] USB-Serial serdev support
+Message-ID: <20250313194044.t2t3c7j6ktvshjhs@pengutronix.de>
+References: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
+ <Zt7kCxawoszunWq3@hovoldconsulting.com>
+ <20240917044948.i2eog4ondf7vna7q@pengutronix.de>
+ <Z8_wcASfJ8SeAQ8l@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,67 +64,151 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z9Mp86eWYw3hgt0x@a98shuttle.de>
+In-Reply-To: <Z8_wcASfJ8SeAQ8l@hovoldconsulting.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-> > > +static int rtl8211e_led_hw_control_get(struct phy_device *phydev, u8 index,
-> > > +				       unsigned long *rules)
-> > > +{
-> > > +	int oldpage, ret;
-> > > +	u16 cr1, cr2;
-> > > +
-> > > +	if (index >= RTL8211x_LED_COUNT)
-> > > +		return -EINVAL;
-> > > +
-> > > +	oldpage = phy_select_page(phydev, 0x7);
-> > > +	if (oldpage < 0)
-> > > +		goto err_restore_page;
-> > > +
-> > > +	ret = __phy_write(phydev, RTL821x_EXT_PAGE_SELECT, 0x2c);
-> > > +	if (ret)
-> > > +		goto err_restore_page;
+On 25-03-11, Johan Hovold wrote:
+> On Tue, Sep 17, 2024 at 06:49:48AM +0200, Marco Felsch wrote:
+> > On 24-09-09, Johan Hovold wrote:
+> > > On Wed, Aug 07, 2024 at 04:08:47PM +0200, Marco Felsch wrote:
+> > > > this patchset is based on Johan's patches [1] but dropped the need of
+> > > > the special 'serial' of-node [2].
+> > > 
+> > > That's great that you found and referenced my proof-of-concept patches,
+> > > but it doesn't seem like you tried to understand why this hasn't been
+> > > merged yet.
+> 
+> > > First, as the commit message you refer to below explain, we need some
+> > > way to describe multiport controllers. Just dropping the 'serial' node
+> > > does not make that issue go away.
 > > 
-> > What is happening here? You select page 0x7, and then use
-> > RTL821x_EXT_PAGE_SELECT to select 0x2c? Does this hardware have pages
-> > within pages?
+> > Sorry for asking but isn't the current OF abstraction [1] enough? As far
+> > as I understood we can describe the whole USB tree within OF. I used [1]
+> > and the this patchset to describe the following hierarchy:
+> > 
+> >  usb-root -> usb-hub port-1 -> usb-serial interface-0 -> serial
+> >                                                          bt-module
+> > 
+> > [1] Documentation/devicetree/bindings/usb/usb-device.yaml
 > 
-> Kind of; this is from the datasheet:
+> Again, you still need to consider devices with multiple serial ports
+> (and they do not always map neatly to one port per interface either).
+
+We use a dual-port FTDI and our USB tree looks as followed:
+
+/:  Bus 001.Port 001: Dev 001, Class=root_hub, Driver=xhci-hcd/1p, 480M
+    ID 1d6b:0002 Linux Foundation 2.0 root hub
+    |__ Port 001: Dev 002, If 0, Class=Hub, Driver=hub/4p, 480M
+        ID 0424:2514 Microchip Technology, Inc. (formerly SMSC) USB 2.0 Hub
+        |__ Port 001: Dev 003, If 0, Class=Vendor Specific Class, Driver=ftdi_sio, 480M
+            ID 0403:6010 Future Technology Devices International, Ltd FT2232C/D/H Dual UART/FIFO IC
+        |__ Port 001: Dev 003, If 1, Class=Vendor Specific Class, Driver=ftdi_sio, 480M
+            ID 0403:6010 Future Technology Devices International, Ltd FT2232C/D/H Dual UART/FIFO IC
+
+interface-0 is used for the bt-module which is served by the serdev
+driver.
+
+interface-1 is used by an userspace driver which makes use of the
+/dev/ttyUSB1 port.
+
+So we do have the multiple serial ports use-case already. Can you please
+explain what I miss?
+
+> > > Second, and more importantly, you do not address the main obstacle for
+> > > enabling serdev for USB serial which is that the serdev cannot handle
+> > > hotplugging.
+> > 
+> > Hotplugging is a good point but out-of-scope IMHO (at least for now)
+> > since the current serdev implementation rely on additional firmware
+> > information e.g OF node to be present. E.g. if the above mentioned setup
+> > would connect the "serial bt-module" directly to the UART port you still
+> > need an OF node to bind the serdev driver. If the node isn't present
+> > user-space would need to do the hci handling.
 > 
-> 	6.9.5.  Access to Extension Page (ExtPage)
-> 	
-> 	Set MDIO commands as shown below to switch to the Extension Page (ExtPage) 0xXY (in Hex).
-> 	1. Set Register 31 Data=0x0007 (set to Extension Page)
-> 	2. Set Register 30 Data=0x00XY (Extension Page XY)
-> 	3. Set the target Register Data
-> 	4. Set Register 31 Data=0x0000 (switch to Page 0)
+> There's nothing preventing you from adding a devicetree node for a USB
+> device that can be unplugged.
+
+I see and I have to admit that I didn't test this :/ But since you
+pointed it out I tested it now!
+
+So as explained, our USB tree looks as above and our DTS looks like the
+one in the cover letter. Of course I run on an embedded system but the
+USB FTDI based module is powered by the VBUS of the hub. Therefore I
+ran the test by disabling the downstream port which in turn disabled the
+VBUS supply. This should come very close to a physical unplug event.
+
+8<----------------------------------------------------------------
+
+## The test system before the "unplug"
+
+root@test:~# ls -al /sys/class/bluetooth/
+total 0
+drwxr-xr-x  2 root root 0 Jan  8 18:31 .
+drwxr-xr-x 62 root root 0 Jan  8 18:31 ..
+lrwxrwxrwx  1 root root 0 Jan  8 18:31 hci0 -> ../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0/serial0-0/bluetooth/hci0
+
+root@test:~# ls -al /sys/bus/serial/devices/
+total 0
+drwxr-xr-x 2 root root 0 Jan  8 18:31 .
+drwxr-xr-x 4 root root 0 Jan  8 18:28 ..
+lrwxrwxrwx 1 root root 0 Jan  8 18:31 serial0 -> ../../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0
+lrwxrwxrwx 1 root root 0 Jan  8 18:31 serial0-0 -> ../../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0/serial0-0
+
+## The "unplug" event and the system after the event
+
+root@test:~# echo 1 > /sys/bus/usb/devices/usb1/1-1/1-1\:1.0/1-1-port1/disable
+
+root@test:~# ls -al /sys/class/bluetooth/
+total 0
+drwxr-xr-x  2 root root 0 Jan  8 18:40 .
+drwxr-xr-x 62 root root 0 Jan  8 18:31 ..
+
+root@test:~# ls -al /sys/bus/serial/devices/
+total 0
+drwxr-xr-x 2 root root 0 Jan  8 18:40 .
+drwxr-xr-x 4 root root 0 Jan  8 18:28 ..
+
+## The "plug" event and the system after the event
+
+root@test:~# echo 0 > /sys/bus/usb/devices/usb1/1-1/1-1\:1.0/1-1-port1/disable
+root@test:~# [ 1121.297918] btnxpuart serial0-0: supply vcc not found, using dummy regulator
+
+root@test:~# ls -al /sys/class/bluetooth/
+total 0
+drwxr-xr-x  2 root root 0 Jan  8 18:41 .
+drwxr-xr-x 62 root root 0 Jan  8 18:31 ..
+lrwxrwxrwx  1 root root 0 Jan  8 18:41 hci0 -> ../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0/serial0-0/bluetooth/hci0
+
+root@test:~# ls -al /sys/bus/serial/devices/
+total 0
+drwxr-xr-x 2 root root 0 Jan  8 18:41 .
+drwxr-xr-x 4 root root 0 Jan  8 18:28 ..
+lrwxrwxrwx 1 root root 0 Jan  8 18:41 serial0 -> ../../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0
+lrwxrwxrwx 1 root root 0 Jan  8 18:41 serial0-0 -> ../../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0/serial0-0
+
+8<----------------------------------------------------------------
+
+> > So from my POV the serdev abstraction is for manufacturers which make
+> > use of "onboard" usb-devices which are always present at the same USB
+> > tree location. Serdev is not made for general purpose USB ports (yet)
+> > where a user can plug-in all types of USB devices.
 > 
-> Register 30 is RTL821x_EXT_PAGE_SELECT, LED config registers are on
-> extension page 0x2c
+> Right, but someone need to make sure that serdev can handle devices
+> going away first as nothing is currently preventing that from happening.
 
-O.K. So it would be good to turn this into a patch series doing some
-cleanup and then add LED support at the end.
+Can you please check my above tests? Maybe I do miss something but for
+me it looks like it's working. Looking forwards for your input.
 
-Please add a #define for 0x07 page number. It is used in a few places,
-and it would be good to replace the magic number with some sort of
-name taken from the datasheet. Add other #defines as you need them, if
-the datasheet gives them a name.
+Regards,
+  Marco
 
-Add a helper something like:
 
-rtl8211e_modify_ext_page(struct phy_device *phydev, u16 ext_page, u32 regnum,
-                         u16 mask, u16 set)
-
-and use it in rtl8211e_config_init()
-
-Add helpers
-
-rtl8211e_read_ext_page(struct phy_device *phydev, u16 ext_page, u32 regnum)
-rtl8211e_write_ext_page(struct phy_device *phydev, u16 ext_page, u32 regnum, u16 val)
-
-and then add LED support using these helpers. That should help
-separate the LED code itself from this odd page in page code.
-
-    Andrew
-
----
-pw-bot: cr
+> > > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git/log/?h=usb-serial-of
+> > > > [2] https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git/commit/?h=usb-serial-of&id=b19239022c92567a6a9ed40e8522e84972b0997f
+> 
+> Johan
+> 
 
