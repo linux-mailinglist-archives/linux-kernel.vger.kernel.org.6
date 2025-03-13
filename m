@@ -1,159 +1,172 @@
-Return-Path: <linux-kernel+bounces-559278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22025A5F1D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:04:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7C9BA5F1D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:05:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1696F7A63A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:00:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18B913AB9DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42C4265CD9;
-	Thu, 13 Mar 2025 11:01:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F661EDA17;
-	Thu, 13 Mar 2025 11:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A2826618D;
+	Thu, 13 Mar 2025 11:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OZBmUtyI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED321EE028;
+	Thu, 13 Mar 2025 11:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741863702; cv=none; b=nu0w+C1zMK4Av52TTrCN+All5roBil9U6UaphAKv1zzyCqJAcTL6t8Di606B62myCxfj0uIjI44hPlFd5fm/P1Z16ZL3XRDZ3rKXxtbdD7Vs5dkM2yqZ5Jo5mXeU0DdF6PXHCk7fjFzi6nLLce98Jj3IS67DQimqW6DUb7nq9GE=
+	t=1741863892; cv=none; b=NU/OemVb8XVMRNNgBLhTY04Ipyd+kA8y4cmJg1eMoLjJkBc+F6ZUaa6hDQKyU+et0Pc9bLvIMPmWarLD7SXrEwuz/8GLakFzdNKggwK6rHJLTbC0EnjsbppLdlwrYcS8dnQl2GZg6spBoLy9ZC5CI8y10CLL2zHjHD1mkjqYu6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741863702; c=relaxed/simple;
-	bh=XefTSzn/nQqjD6JMR5JYpIY4KIl/yqcRheoDY2b+ilE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SWJggU+BI5x5FzF8dySMseJiNiSdVvnBDWWisLiGCKxzdIh5wZEut4gIvHGD2eRo5qsqHDSpr0RT60EO/iecNHSQdZ3G78lxBtAzFissZYg6aqnraswrels4schCNLx664w/WD3DUpZcFw7QSCS14hJOZxg7TGaXsARMLWeJlr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 21D5E1516;
-	Thu, 13 Mar 2025 04:01:50 -0700 (PDT)
-Received: from [10.57.40.246] (unknown [10.57.40.246])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C60353F673;
-	Thu, 13 Mar 2025 04:01:35 -0700 (PDT)
-Message-ID: <417d6f59-0d78-4e81-ad0b-e06846f786b0@arm.com>
-Date: Thu, 13 Mar 2025 11:01:33 +0000
+	s=arc-20240116; t=1741863892; c=relaxed/simple;
+	bh=1NUbU754X//+cjS7K+VoyzyBOWzjRqfL7OprdlF9hVk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cu9Tg4h0Vej9Q6HKH7JhXb8XyH7XlLoxhChW61K823q7KvSJbFQYmysXVPqgghYDwwVlS3iAH1xXZ+kcmYuThYNH1KmBL4gj5hiEs1jWf7Apelu85C6kQ8Z31uchiskBstmYiuTIVcfcs+ArYtrvuLD94UlHXJCii055fLho4+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OZBmUtyI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D9591Z028516;
+	Thu, 13 Mar 2025 11:04:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+93ZydzSe4pbz4Se8FBVU9
+	D4Tf1Anr1jH1qcF2iFcQg=; b=OZBmUtyIOrjNdgh1BN1bKSmYO41UQJeaaRdXp+
+	5if60KsPmycOWIB8Dio6yB3+oU3MExsntGLAfgHBjX6mzrKWbz9MORUsahFgbUlV
+	9wvV/PyviVsSrgXsivNqLZdxjvq4kXYNohviX+msW2d2C8hk3h3LvhF9GsJ9RkEG
+	iCL0rBHN6DPo0goEiFk3auRSzWoNVhqAhgWJWgozxWT0cQQZa569BdD9Y6ezkQTO
+	0wwdpfvm69ISF7gD/clocikRYjr8J7r2oH7C+GoAkq5O6x9HydWAq2hc95no5kxR
+	FXkgRA8klfrdr1vMbPsNQ6/RP7VjcfVKBKcPPSGdI3d1ZsRw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2pwkbd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 11:04:18 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52DB4HMO009116
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 11:04:17 GMT
+Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 13 Mar 2025 04:04:08 -0700
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
+        <geert+renesas@glider.be>, <lumag@kernel.org>, <heiko@sntech.de>,
+        <biju.das.jz@bp.renesas.com>, <quic_tdas@quicinc.com>,
+        <nfraprado@collabora.com>, <elinor.montmasson@savoirfairelinux.com>,
+        <ross.burton@arm.com>, <javier.carrasco@wolfvision.net>,
+        <ebiggers@google.com>, <quic_anusha@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>
+CC: <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
+Subject: [PATCH v12 0/6] Add NSS clock controller support for IPQ9574
+Date: Thu, 13 Mar 2025 16:33:53 +0530
+Message-ID: <20250313110359.242491-1-quic_mmanikan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] iommu: Get DT/ACPI parsing into the proper probe
- path
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Russell King <linux@armlinux.org.uk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Stuart Yoder <stuyoder@gmail.com>,
- Laurentiu Tudor <laurentiu.tudor@nxp.com>, Nipun Gupta
- <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
- Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
- Charan Teja Kalla <quic_charante@quicinc.com>
-References: <cover.1740753261.git.robin.murphy@arm.com>
- <e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com>
- <CGME20250313095633eucas1p29cb55f2504b4bcf67c16b3bd3fa9b8cd@eucas1p2.samsung.com>
- <9b358d68-332e-404e-9a75-740297f7b28d@samsung.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <9b358d68-332e-404e-9a75-740297f7b28d@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=P506hjAu c=1 sm=1 tr=0 ts=67d2bbb2 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=3uq4IZcbrjxfy09u4asA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 2EC1nRsHT1cgsw1FUgsX3ig_-SKTz7s7
+X-Proofpoint-ORIG-GUID: 2EC1nRsHT1cgsw1FUgsX3ig_-SKTz7s7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_05,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
+ mlxscore=0 spamscore=0 bulkscore=0 priorityscore=1501 impostorscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=838 lowpriorityscore=0
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503130087
 
-On 2025-03-13 9:56 am, Marek Szyprowski wrote:
-[...]
-> This patch landed in yesterday's linux-next as commit bcb81ac6ae3c
-> ("iommu: Get DT/ACPI parsing into the proper probe path"). In my tests I
-> found it breaks booting of ARM64 RK3568-based Odroid-M1 board
-> (arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts). Here is the
-> relevant kernel log:
+Add bindings, driver and devicetree node for networking sub system clock
+controller on IPQ9574. Also add support for gpll0_out_aux clock
+which serves as the parent for some nss clocks.
 
-...and the bug-flushing-out begins!
+Changes in V12:
+	- nsscc driver
+		- Pick up R-b tag.
+	- dtsi
+		- Pick up R-b tag.
+	- defconfig
+		- Pick up R-b tag.
+	- Rebased on linux-next tip.
 
-> Unable to handle kernel NULL pointer dereference at virtual address
-> 00000000000003e8
-> Mem abort info:
->     ESR = 0x0000000096000004
->     EC = 0x25: DABT (current EL), IL = 32 bits
->     SET = 0, FnV = 0
->     EA = 0, S1PTW = 0
->     FSC = 0x04: level 0 translation fault
-> Data abort info:
->     ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->     CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->     GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [00000000000003e8] user address but active_mm is swapper
-> Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> Modules linked in:
-> CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.14.0-rc3+ #15533
-> Hardware name: Hardkernel ODROID-M1 (DT)
-> pstate: 00400009 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : devm_kmalloc+0x2c/0x114
-> lr : rk_iommu_of_xlate+0x30/0x90
-> ...
-> Call trace:
->    devm_kmalloc+0x2c/0x114 (P)
->    rk_iommu_of_xlate+0x30/0x90
+V11 can be found at:
+https://lore.kernel.org/linux-arm-msm/20250226075449.136544-1-quic_mmanikan@quicinc.com/
 
-Yeah, looks like this is doing something a bit questionable which can't
-work properly. TBH the whole dma_dev thing could probably be cleaned up
-now that we have proper instances, but for now does this work?
+V10 can be found at:
+https://lore.kernel.org/linux-arm-msm/20250221101426.776377-1-quic_mmanikan@quicinc.com/
 
-(annoyingly none of my Rockchip boards are set up for testing right now, 
-but I might have time to dig one out later)
+V9 can be found at:
+https://lore.kernel.org/linux-arm-msm/20250207073926.2735129-1-quic_mmanikan@quicinc.com/
 
-Thanks,
-Robin.
+V8 can be found at:
+https://lore.kernel.org/linux-arm-msm/20241025035520.1841792-1-quic_mmanikan@quicinc.com/
 
------>8-----
+V7 can be found at:
+https://lore.kernel.org/linux-arm-msm/20241009074125.794997-1-quic_mmanikan@quicinc.com/
 
-Subject: [PATCH] iommu/rockchip: Allocate per-device data sensibly
+V6 can be found at:
+https://lore.kernel.org/linux-arm-msm/20241004080332.853503-1-quic_mmanikan@quicinc.com/
 
-Now that DT-based probing is finally happening in the right order again,
-it reveals an issue in Rockchip's of_xlate, which can now be called
-during registration, but is using the global dma_dev which is only
-assigned later. However, this makes little sense when we're already
-looking up the correct IOMMU device, who should logically be the owner
-of the devm allocation anyway.
+V5 can be found at:
+https://lore.kernel.org/linux-arm-msm/20240626143302.810632-1-quic_devipriy@quicinc.com/
 
-Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe 
-path")
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
-  drivers/iommu/rockchip-iommu.c | 6 +++---
-  1 file changed, 3 insertions(+), 3 deletions(-)
+V4 can be found at:
+https://lore.kernel.org/linux-arm-msm/20240625070536.3043630-1-quic_devipriy@quicinc.com/
 
-diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-index 323cc665c357..48826d1ccfd8 100644
---- a/drivers/iommu/rockchip-iommu.c
-+++ b/drivers/iommu/rockchip-iommu.c
-@@ -1148,12 +1148,12 @@ static int rk_iommu_of_xlate(struct device *dev,
-  	struct platform_device *iommu_dev;
-  	struct rk_iommudata *data;
+V3 can be found at:
+https://lore.kernel.org/linux-arm-msm/20240129051104.1855487-1-quic_devipriy@quicinc.com/
 
--	data = devm_kzalloc(dma_dev, sizeof(*data), GFP_KERNEL);
-+	iommu_dev = of_find_device_by_node(args->np);
-+
-+	data = devm_kzalloc(&iommu_dev->dev, sizeof(*data), GFP_KERNEL);
-  	if (!data)
-  		return -ENOMEM;
+V2 can be found at:
+https://lore.kernel.org/linux-arm-msm/20230825091234.32713-1-quic_devipriy@quicinc.com/
 
--	iommu_dev = of_find_device_by_node(args->np);
--
-  	data->iommu = platform_get_drvdata(iommu_dev);
-  	data->iommu->domain = &rk_identity_domain;
-  	dev_iommu_priv_set(dev, data);
+Devi Priya (6):
+  dt-bindings: clock: gcc-ipq9574: Add definition for GPLL0_OUT_AUX
+  clk: qcom: gcc-ipq9574: Add support for gpll0_out_aux clock
+  dt-bindings: clock: Add ipq9574 NSSCC clock and reset definitions
+  clk: qcom: Add NSS clock Controller driver for IPQ9574
+  arm64: dts: qcom: ipq9574: Add nsscc node
+  arm64: defconfig: Build NSS Clock Controller driver for IPQ9574
+
+ .../bindings/clock/qcom,ipq9574-nsscc.yaml    |   98 +
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |   29 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-ipq9574.c                |   15 +
+ drivers/clk/qcom/nsscc-ipq9574.c              | 3110 +++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h  |    1 +
+ .../dt-bindings/clock/qcom,ipq9574-nsscc.h    |  152 +
+ .../dt-bindings/reset/qcom,ipq9574-nsscc.h    |  134 +
+ 10 files changed, 3548 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+ create mode 100644 drivers/clk/qcom/nsscc-ipq9574.c
+ create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
+ create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
+
+
+base-commit: 9fbcd7b32bf7c0a5bda0f22c25df29d00a872017
 -- 
-2.39.2.101.g768bb238c484.dirty
-
+2.34.1
 
 
