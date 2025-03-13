@@ -1,207 +1,120 @@
-Return-Path: <linux-kernel+bounces-560174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E529A5FEF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:14:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A38C8A5FEFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:14:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F9DB1892C5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:14:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90D881894990
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617591E8353;
-	Thu, 13 Mar 2025 18:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Vjde6D3e"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A3B1F0E3D;
+	Thu, 13 Mar 2025 18:12:55 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97071F03E0;
-	Thu, 13 Mar 2025 18:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1DF1E51EE;
+	Thu, 13 Mar 2025 18:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741889540; cv=none; b=ZiSrpbH0Un9g3MsvEUq0c98gwICfJz2TYfZlyhQ8h63tsmIr6MlusVXP2g1AqCkStK4Gen9zJ3lkJEA8B7yhSvoxe+If3tEK++VeB28mqEvr518Uv/4VDiWmf4pro2b/HdCImmefpsNjr8N/jf91FWRawR4vrTMNyE1dIdis3IQ=
+	t=1741889575; cv=none; b=RVEHs+J7+TZxEMWXUc62S7YP8INzdTc1jflS+uqz0XUpfjvuUapCDoHbUVk8eZZebAw9GLYqMZSOI9sfcRmIJ5DDsCgBhv/Fm0dtpliOsh6Gx64TONaTVuDqX+E08+3hCvTtQf4UcNDI1KSc9q6ESxLTftWSefmJzsk9TOC6734=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741889540; c=relaxed/simple;
-	bh=8Zqt9zi/FnC7k8GuHDy1ukGq3CUt3k0moSNlURadgLI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Vf0W4VqmZg8ccsN0PnXjSRWgZwVrJUxqaLclrYApKMMmjBfj8tEzWK8yltW5ELM5e0/Y/lhuzcfYEd9HK1hEOfuPrVhhbQh8ER1wtHOoKBFogNnFPpQXMz90RkGXcz04lZEcBJB++JLMlQJqZWP3F9WdQoTZqshDBAK8/iYaSc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Vjde6D3e; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741889533; x=1742148733;
-	bh=srZ9dMa1whdbkDsfnTWuQVdrHW1c6weSBgLs5X2xzXk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=Vjde6D3es+FZD2i6nszzd+Hgukt8o27vgDDfWp2jm96W+oLCnogjSWy9m1JzHPVJX
-	 1irYvVn3fp2UlTepZj4LPqame5PkF1jsA/iUl3OWvTXt9hYSi8UiXKaUQ99JEn/DEz
-	 fo2oDRmOFgswdoLgpDm5x+Ei8G2KeWGyHF3tYcWIgv8mZVR3cvzX8aEGShpo2vcghX
-	 vN6eboR5Md26RDXfVYE5uFKUhR/68AYzFJsEnXn97LUFJnEnlo1zgi4n1lY2E+/sIC
-	 QJaAeDw3MssC1B7ZprfH0fReKBb8747T8wWsl/TQKPc4bW24dWbtRN3QQ4SzLYD6Vz
-	 ZekcLQszuPFXg==
-Date: Thu, 13 Mar 2025 18:12:08 +0000
-To: Tamir Duberstein <tamird@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] rust: enable `clippy::as_underscore` lint
-Message-ID: <D8FCATTC479L.BDRZBC6TJ51Q@proton.me>
-In-Reply-To: <CAJ-ks9n1oGAGSrXYWjvR+_raw8h+skkdfSYpeSuQZ9jEs5q-6Q@mail.gmail.com>
-References: <20250309-ptr-as-ptr-v2-0-25d60ad922b7@gmail.com> <CAJ-ks9=TRDg3g=NG7k97P_5jXpZ4K4v0DxrmJFR+uF0-3zJkXw@mail.gmail.com> <CAJ-ks9=hAwOGtVv0zh9CcH7XOxjGnizvK1QOMAi8nKStocKr2Q@mail.gmail.com> <D8ELW7X9796K.2ZGJS34LDTHOP@proton.me> <CAJ-ks9k1gZ=tLSe6OjuKFgg6=QE5R_Ajo0ZJwZJp08_1LMiODw@mail.gmail.com> <D8ENBWTC8UPH.LLEGZ2D4U7KQ@proton.me> <CAJ-ks9mJ=2hFxfWEkq+9b=atE89sHXa5NBcdVNRd3az6MSv0pA@mail.gmail.com> <D8F76A4JSEXO.2OKKJLAU5OZN@proton.me> <CAJ-ks9n1oGAGSrXYWjvR+_raw8h+skkdfSYpeSuQZ9jEs5q-6Q@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: d74d9f9fe6f44074994f0914e725607f21a3708b
+	s=arc-20240116; t=1741889575; c=relaxed/simple;
+	bh=w7h+C1e3nKxZHfNJfAwxyAknU7YcoWF3GaRMfx+P8u4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BrOfZ5F0W9BsMknK2xUg11eKrR5K+2YIDQlqXzalC4aj6rk1DWivDp8xznQiHL4jGJVnSi2w4oMyVxPQnPvB9fNB80/crXchmXhi1C/dtHOQvmDgZcDyBZA/+GiICkmTmd5iHifEfZnpAd8f41WcuKz02gz9/2GSNaYmW+gAwSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aaeec07b705so206486666b.2;
+        Thu, 13 Mar 2025 11:12:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741889572; x=1742494372;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vYxlmv810ezcplIPoQtIO8dfhKLPRYFog6EoMaT+7UQ=;
+        b=drOUxEMDEg/TrCLOgb90n83e0hbqOc+Q06aJBiEG2qIUUYa5MyA6BgbTQwZR5JweUv
+         /t+81ldW4gqnp0gjYWd2EWelSVxs7OTx06kSfbNY34BlztXl9l7lWsJwZvXCP6C8G8KS
+         lzse6qtpeH3jnC9MYIKvnVFVdKUmTyvi8zbIv0ZfmsnvL3EP2kmEgGgCuuPdnQv8yFmS
+         WEKkksn4S05CsDphsMHtY3evk5Q38vC6uSjQchvyOJ4SPeg6MOtTdw8QJrUoh97JXO6l
+         lrHRa6iP22+ET7rz6dTCh7YShxmSttZq7iQEJl39Ri96GatLGmkPBDTepnBNxxVPULE7
+         9ZqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQXLa/Bh95aoh8lR+LUkg5/8ovh8ASM93nP2LrDIyIJPiNwEzHyMUYsCHhZJfJDxylhTQWAwJSuGDDTn+O9A==@vger.kernel.org, AJvYcCVihu3ypBa/L8Vyd08MeS1yjCj4spNdsC1GAU4MpV5bh/oAVRGMUNe5tNo7FJq37Ad87q36gNXGLdQQx3U=@vger.kernel.org, AJvYcCXKU9q7FJ2yPGKBTbHnKNrmAqL1i6xByJxh261PkUaFecGcoxZ+eNoyzqVX2Z2YoNNTDuMppe2iPEgoSu1E0s9e/Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVGnizalTHoFyXMWdPyXDgAiIxL09qsvQ9oiXUi5Uvl+21fwkB
+	z/V6iOUGOXMbiAcf3pf5mzJ2Ife1YBjMKoSV1tF2e9DL0Z7aHjJN
+X-Gm-Gg: ASbGncspz4cQvoroBLtMUX4QV97kj2hHOK8Grf2/CwgqvLpau+qbejx/tx6DrAaQYE1
+	XUwxcTMVg3Fzsj/QvWRxMM2DySXKJolZMAULX5qmCgLh0z8kRJ2b4ElgNxSg00yZ4VON7Wa+XR3
+	0WwJWQJPPA3+cS7lk7mzclawKNumaDXuHGavHVEiu/hUCAebBoJj7aJ026Q06GI5rSRzDwGoU/1
+	lCFwO0NqWF4qM52aQ3lS0v+hD/fNeFd3N1LWHQPLXEGgL3KZM9eVQ4Ab+peEw3oToT1bKQ/N/9D
+	AlUG9RTs0u9R8hue62Ps8Hr26SnVxegdHXSIko2+0hNsuQ==
+X-Google-Smtp-Source: AGHT+IEIROBjcQc5+N5Ug6gFEtowlLLgmIvSl5IlxYNgNSYZ+MT7JS4kaQNvmVgwY2CUORVYXQi9zQ==
+X-Received: by 2002:a17:906:59a1:b0:ac3:aa7:fa07 with SMTP id a640c23a62f3a-ac30aa7fbd8mr405245766b.44.1741889571403;
+        Thu, 13 Mar 2025 11:12:51 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:3::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a4856csm107427266b.156.2025.03.13.11.12.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 11:12:50 -0700 (PDT)
+Date: Thu, 13 Mar 2025 11:12:48 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Song Liu <song@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-toolchains@vger.kernel.org, live-patching@vger.kernel.org,
+	indu.bhagat@oracle.com, puranjay@kernel.org, wnliu@google.com,
+	irogers@google.com, joe.lawrence@redhat.com, jpoimboe@kernel.org,
+	mark.rutland@arm.com, peterz@infradead.org,
+	roman.gushchin@linux.dev, rostedt@goodmis.org, will@kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH 1/2] arm64: Implement arch_stack_walk_reliable
+Message-ID: <20250313-angelic-coral-giraffe-dfa4f3@leitao>
+References: <20250308012742.3208215-1-song@kernel.org>
+ <20250308012742.3208215-2-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250308012742.3208215-2-song@kernel.org>
 
-On Thu Mar 13, 2025 at 6:50 PM CET, Tamir Duberstein wrote:
-> On Thu, Mar 13, 2025 at 10:11=E2=80=AFAM Benno Lossin <benno.lossin@proto=
-n.me> wrote:
->>
->> On Thu Mar 13, 2025 at 11:47 AM CET, Tamir Duberstein wrote:
->> > On Wed, Mar 12, 2025 at 6:38=E2=80=AFPM Benno Lossin <benno.lossin@pro=
-ton.me> wrote:
->> >>
->> >> On Wed Mar 12, 2025 at 11:24 PM CET, Tamir Duberstein wrote:
->> >> > On Wed, Mar 12, 2025 at 5:30=E2=80=AFPM Benno Lossin <benno.lossin@=
-proton.me> wrote:
->> >> >>
->> >> >> On Wed Mar 12, 2025 at 10:10 PM CET, Tamir Duberstein wrote:
->> >> >> > On Wed, Mar 12, 2025 at 5:04=E2=80=AFPM Tamir Duberstein <tamird=
-@gmail.com> wrote:
->> >> >> >>
->> >> >> >> On Wed, Mar 12, 2025 at 5:01=E2=80=AFPM Benno Lossin <benno.los=
-sin@proton.me> wrote:
->> >> >> >> > Always enable the features, we have `allow(stable_features)` =
-for this
->> >> >> >> > reason (then you don't have to do this dance with checking if=
- it's
->> >> >> >> > already stable or not :)
->> >> >> >>
->> >> >> >> It's not so simple. In rustc < 1.84.0 the lints *and* the stric=
-t
->> >> >> >> provenance APIs are behind `feature(strict_provenance)`. In rus=
-tc >=3D
->> >> >> >> 1.84.0 the lints are behind `feature(strict_provenance_lints)`.=
- So you
->> >> >> >> need to read the config to learn that you need to enable
->> >> >> >> `feature(strict_provenance_lints)`.
->> >> >>
->> >> >> I see... And `strict_provenance_lints` doesn't exist in <1.84? Tha=
-t's a
->> >> >> bit of a bummer...
->> >> >>
->> >> >> But I guess we could have this config option (in `init/Kconfig`):
->> >> >>
->> >> >>     config RUSTC_HAS_STRICT_PROVENANCE
->> >> >>             def_bool RUSTC_VERSION >=3D 108400
->> >> >>
->> >> >> and then do this in `lib.rs`:
->> >> >>
->> >> >>     #![cfg_attr(CONFIG_RUSTC_HAS_STRICT_PROVENANCE, feature(strict=
-_provenance_lints))]
->> >> >
->> >> > Yep! That's exactly what I did, but as I mentioned up-thread, the
->> >> > result is that we only cover the `kernel` crate.
->> >>
->> >> Ah I see, can't we just have the above line in the other crate roots?
->> >
->> > The most difficult case is doctests. You'd have to add this to every
->> > example AFAICT.
->> >
->> >> >> > Actually this isn't even the only problem. It seems that
->> >> >> > `-Astable_features` doesn't affect features enabled on the comma=
-nd
->> >> >> > line at all:
->> >> >> >
->> >> >> > error[E0725]: the feature `strict_provenance` is not in the list=
- of
->> >> >> > allowed features
->> >> >> >  --> <crate attribute>:1:9
->> >> >> >   |
->> >> >> > 1 | feature(strict_provenance)
->> >> >> >   |         ^^^^^^^^^^^^^^^^^
->> >> >>
->> >> >> That's because you need to append the feature to `rust_allowed_fea=
-tures`
->> >> >> in `scripts/Makefile.build` (AFAIK).
->> >> >
->> >> > Thanks, that's a helpful pointer, and it solves some problems but n=
-ot
->> >> > all. The root Makefile contains this bit:
->> >> >
->> >> >> KBUILD_HOSTRUSTFLAGS :=3D $(rust_common_flags) -O -Cstrip=3Ddebugi=
-nfo \
->> >> >> -Zallow-features=3D $(HOSTRUSTFLAGS)
->> >> >
->> >> > which means we can't use the provenance lints against these host
->> >> > targets (including e.g. `rustdoc_test_gen`). We can't remove this
->> >> > -Zallow-features=3D either because then core fails to compile.
->> >> >
->> >> > I'm at the point where I think I need more involved help. Want to t=
-ake
->> >> > a look at my attempt? It's here:
->> >> > https://github.com/tamird/linux/tree/b4/ptr-as-ptr.
->>
->> With doing `allow(clippy::incompatible_msrv)`, I meant doing that
->> globally, not having a module to re-export the functions :)
->
-> Yeah, but I think that's too big a hammer. It's a useful warning, and
-> it doesn't accept per-item configuration.
+On Fri, Mar 07, 2025 at 05:27:41PM -0800, Song Liu wrote:
+> With proper exception boundary detection, it is possible to implment
+> arch_stack_walk_reliable without sframe.
+> 
+> Note that, arch_stack_walk_reliable does not guarantee getting reliable
+> stack in all scenarios. Instead, it can reliably detect when the stack
+> trace is not reliable, which is enough to provide reliable livepatching.
+> 
+> This version has been inspired by Weinan Liu's patch [1].
+> 
+> [1] https://lore.kernel.org/live-patching/20250127213310.2496133-7-wnliu@google.com/
+> Signed-off-by: Song Liu <song@kernel.org>
 
-Hmm, I don't think it's as useful. We're going to be using more unstable
-features until we eventually bump the minimum version when we can
-disable `RUSTC_BOOTSTRAP=3D1`. From that point onwards, it will be very
-useful, but before that I don't think that it matters too much. Maybe
-the others disagree.
+Tested-by: Breno Leitao <leitao@debian.org>
 
->> >> I'll take a look tomorrow, you're testing my knowledge of the build
->> >> system a lot here :)
->> >
->> > We're guaranteed to learn something :)
->>
->> Yep! I managed to get it working, but it is rather janky and
->> experimental. I don't think you should use this in your patch series
->> unless Miguel has commented on it.
->>
->> Notable things in the diff below:
->> * the hostrustflags don't get the *provenance_casts lints (which is
->>   correct, I think, but probably not the way I did it with filter-out)
->> * the crates compiler_builtins, bindings, uapi, build_error, libmacros,
->>   ffi, etc do get them, but probably shouldn't?
->
-> Why don't we want host programs to have the same warnings applied? Why
-> don't we want it for all those other crates?
+>  arch/arm64/Kconfig                         |  2 +-
+>  arch/arm64/include/asm/stacktrace/common.h |  1 +
+>  arch/arm64/kernel/stacktrace.c             | 44 +++++++++++++++++++++-
+>  3 files changed, 45 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 940343beb3d4..ed4f7bf4a879 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -275,6 +275,7 @@ config ARM64
+>  	select HAVE_SOFTIRQ_ON_OWN_STACK
+>  	select USER_STACKTRACE_SUPPORT
+>  	select VDSO_GETRANDOM
+> +	select HAVE_RELIABLE_STACKTRACE
 
-I have never looked at the rust hostprogs before, so I'm missing some
-context here.
+Can we really mark this is reliable stacktrace?  I am wondering
+if we need an intermediate state (potentially reliable stacktrace?)
+until we have a fully reliable stack unwinder.
 
-I didn't enable them, because they are currently being compiled without
-any unstable features and I thought we might want to keep that. (though
-I don't really see a reason not to compile them with unstable features
-that we also use for the kernel crate)
-
-> I'd expect we want uniform diagnostics settings throughout which is
-> why these things are in the Makefile rather than in individual crates
-> in the first place.
->
-> Your patch sidesteps the problems I'm having by not applying these
-> lints to host crates, but I think we should.
-
-We're probably working on some stuff that Miguel's new build system will
-do entirely differently. So I wouldn't worry too much about getting it
-perfect, as it will be removed in a couple cycles.
-
----
-Cheers,
-Benno
-
+Thanks for working on it.
+--breno
 
