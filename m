@@ -1,101 +1,182 @@
-Return-Path: <linux-kernel+bounces-559659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 374A5A5F744
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:09:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A60AA5F750
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:10:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CFE57A948A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:08:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D22B07A5664
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C879267B1F;
-	Thu, 13 Mar 2025 14:08:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258BF267AEA
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C784267B11;
+	Thu, 13 Mar 2025 14:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RVkEXeKE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B7B2676E9
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741874935; cv=none; b=WQF0SHvn4Tc1lJUa89J0oB0TU3EvtXMN76gK5lpuQqlsa/sv30OHgE1FVLkM0GkpE+XTiF/ZuNBYOt4mZ3H6F1hqUDGtPf1+8xWncd7C0XsdwNMxvQintRl9tJUt1LCQuyYtSsf989MSFLJBoKjWsDajr2IPskMXKRq7FZeSq0s=
+	t=1741875048; cv=none; b=sRup5Q/Af9kXBAn1zfX/XVe6R9j6HKHM1pJ5nld3Bb87fsvbx9RGJHjVTG4Swp/SbJRYFTDypX4ql6ZmjcR8wThJ5xlrkB32IjpMqjQzp5eHuTN2XvgBNJUxF9j2xS/b42FhjoF24Uaj90Ze0Mbl7hX31V1d8wiScvHE/zUQ/Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741874935; c=relaxed/simple;
-	bh=GM5Vbbv0sXx4IvuELCUOE6NuXse5q//sW3nZFqc1lbo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cOnumr47Zyc/w0t7nhieOZ0s2t56YifkgGCvWVLwLWUKIxKfzd+sFUg73thTQwTaZSjkDQX6qIAGBcDDt/k4Y/8OuULu4l90UBTGOl7hct5SYJgwTKHx42Virjb/JAiNnDbzBQ6RCIV6hzYCcsPAgYTgEhU3ZY/y9xVLuJF53A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B260F150C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:09:01 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 250A73F694
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:08:51 -0700 (PDT)
-Date: Thu, 13 Mar 2025 14:08:42 +0000
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/komeda: Remove unnecessary NULL check before
- clk_prepare_enable()
-Message-ID: <Z9Lm6nSPphPfupEB@e110455-lin.cambridge.arm.com>
-References: <20250313082907.2481547-1-nichen@iscas.ac.cn>
+	s=arc-20240116; t=1741875048; c=relaxed/simple;
+	bh=EJUTitUtD81Y4bLuGqwLvb2dQonGPDfF1oZONJIlL4o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nEMmxY5Ge1fTZSg6NIy89FjbpYQ7/hRBVBL8SuvUEYjWd8aLn+2v1R5/03n9Vz5O1LMGQ56x0DQvGBX8R8FtTf/qKYIUfZsQ7w4f3ca6vpw55AaPMz/cj2we8HyyOeiz9RQoj8wji3SQU9ZJlmHVi1O1LM2CGybsjT1fDDDajmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RVkEXeKE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741875045;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dKqf08821exowg6WUhMV197zYPDi7Ol6Vs+4dmfDUQU=;
+	b=RVkEXeKEGAtKXHWQddphIakl3fIDgSNWlA+ZQn8d4LaEnmRsqVgK6wxHD/+domhcCugVbd
+	wPMKiYAGh8XqMwo2MY5NyU8NOgkBzzAtLOvCWpVtNIqhZh3DecjIS3/y7/va831PwbfCXk
+	NPv6lkdA4QNh8YdeogQaOV7iNEBpWh0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-191-H1vHTVnzNvC551eOvE71Ng-1; Thu,
+ 13 Mar 2025 10:10:42 -0400
+X-MC-Unique: H1vHTVnzNvC551eOvE71Ng-1
+X-Mimecast-MFC-AGG-ID: H1vHTVnzNvC551eOvE71Ng_1741875041
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BFEED180AF57;
+	Thu, 13 Mar 2025 14:10:41 +0000 (UTC)
+Received: from fedora.brq.redhat.com (unknown [10.43.17.52])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5BE6B300376F;
+	Thu, 13 Mar 2025 14:10:39 +0000 (UTC)
+From: Tomas Glozar <tglozar@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	John Kacur <jkacur@redhat.com>,
+	Luis Goncalves <lgoncalv@redhat.com>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>
+Subject: [PATCH] rtla: Fix segfault in save_trace_to_file call
+Date: Thu, 13 Mar 2025 15:10:34 +0100
+Message-ID: <20250313141034.299117-1-tglozar@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250313082907.2481547-1-nichen@iscas.ac.cn>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Mar 13, 2025 at 04:29:07PM +0800, Chen Ni wrote:
-> clk_prepare_enable() already checked NULL clock parameter.
-> Remove unneeded NULL check for clk here.
+Running rtla with exit on threshold, but without saving trace leads to a
+segmenetation fault:
 
-You're not saving anything here. If mdev->aclk is NULL you still end up
-calling clk_prepare() and clk_enable() even if they return zero immediately.
-And if you don't like the check for mdev->aclk not being NULL, you should
-also move the clk_disable_unprepare() call outside the if() {...} block.
+$ rtla timerlat hist -T 10
+...
+Max timerlat IRQ latency from idle: 4.29 us in cpu 0
+Segmentation fault
 
-Best regards,
-Liviu
+This is caused by null pointer deference in the call of
+save_trace_to_file, which attempts to dereference an uninitialized
+osnoise_tool variable:
 
-> 
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> ---
->  drivers/gpu/drm/arm/display/komeda/komeda_dev.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> index 5ba62e637a61..2b59830f0572 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> @@ -282,8 +282,7 @@ void komeda_dev_destroy(struct komeda_dev *mdev)
->  
->  	debugfs_remove_recursive(mdev->debugfs_root);
->  
-> -	if (mdev->aclk)
-> -		clk_prepare_enable(mdev->aclk);
-> +	clk_prepare_enable(mdev->aclk);
->  
->  	for (i = 0; i < mdev->n_pipelines; i++) {
->  		komeda_pipeline_destroy(mdev, mdev->pipelines[i]);
-> -- 
-> 2.25.1
-> 
+save_trace_to_file(record->trace.inst, params->trace_output);
+                   ^ this is uninitialized if params->trace_output is
+                     not set
 
+Fix this by not attempting to dereference "record" if it is NULL and
+passing NULL instead. As a safety measure, the first field is also
+checked for NULL inside save_trace_to_file.
+
+Fixes: dc4d4e7c72d1 ("rtla: Refactor save_trace_to_file")
+Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+---
+Note: As this fixes a commit in linux-next, the Fixes commit ID might
+have to be adjusted.
+
+ tools/tracing/rtla/src/osnoise_hist.c  | 3 ++-
+ tools/tracing/rtla/src/osnoise_top.c   | 3 ++-
+ tools/tracing/rtla/src/timerlat_hist.c | 3 ++-
+ tools/tracing/rtla/src/timerlat_top.c  | 3 ++-
+ tools/tracing/rtla/src/trace.c         | 2 +-
+ 5 files changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/tools/tracing/rtla/src/osnoise_hist.c b/tools/tracing/rtla/src/osnoise_hist.c
+index 7c6ef67ef3e6..f4c9051c33c4 100644
+--- a/tools/tracing/rtla/src/osnoise_hist.c
++++ b/tools/tracing/rtla/src/osnoise_hist.c
+@@ -983,7 +983,8 @@ int osnoise_hist_main(int argc, char *argv[])
+ 
+ 	if (osnoise_trace_is_off(tool, record)) {
+ 		printf("rtla osnoise hit stop tracing\n");
+-		save_trace_to_file(record->trace.inst, params->trace_output);
++		save_trace_to_file(record ? record->trace.inst : NULL,
++				   params->trace_output);
+ 	}
+ 
+ out_hist:
+diff --git a/tools/tracing/rtla/src/osnoise_top.c b/tools/tracing/rtla/src/osnoise_top.c
+index 0eeefbbbf317..dacec2f99017 100644
+--- a/tools/tracing/rtla/src/osnoise_top.c
++++ b/tools/tracing/rtla/src/osnoise_top.c
+@@ -813,7 +813,8 @@ int osnoise_top_main(int argc, char **argv)
+ 
+ 	if (osnoise_trace_is_off(tool, record)) {
+ 		printf("osnoise hit stop tracing\n");
+-		save_trace_to_file(record->trace.inst, params->trace_output);
++		save_trace_to_file(record ? record->trace.inst : NULL,
++				   params->trace_output);
+ 	}
+ 
+ out_top:
+diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
+index 93d0c9e45020..822c068b4776 100644
+--- a/tools/tracing/rtla/src/timerlat_hist.c
++++ b/tools/tracing/rtla/src/timerlat_hist.c
+@@ -1473,7 +1473,8 @@ int timerlat_hist_main(int argc, char *argv[])
+ 		if (!params->no_aa)
+ 			timerlat_auto_analysis(params->stop_us, params->stop_total_us);
+ 
+-		save_trace_to_file(record->trace.inst, params->trace_output);
++		save_trace_to_file(record ? record->trace.inst : NULL,
++				   params->trace_output);
+ 	}
+ 
+ out_hist:
+diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
+index 3894ac37d81c..c3196a0bb585 100644
+--- a/tools/tracing/rtla/src/timerlat_top.c
++++ b/tools/tracing/rtla/src/timerlat_top.c
+@@ -1295,7 +1295,8 @@ int timerlat_top_main(int argc, char *argv[])
+ 		if (!params->no_aa)
+ 			timerlat_auto_analysis(params->stop_us, params->stop_total_us);
+ 
+-		save_trace_to_file(record->trace.inst, params->trace_output);
++		save_trace_to_file(record ? record->trace.inst : NULL,
++				   params->trace_output);
+ 	} else if (params->aa_only) {
+ 		/*
+ 		 * If the trace did not stop with --aa-only, at least print the
+diff --git a/tools/tracing/rtla/src/trace.c b/tools/tracing/rtla/src/trace.c
+index 74ed2f6208ba..69cbc48d53d3 100644
+--- a/tools/tracing/rtla/src/trace.c
++++ b/tools/tracing/rtla/src/trace.c
+@@ -75,7 +75,7 @@ int save_trace_to_file(struct tracefs_instance *inst, const char *filename)
+ 	int out_fd, in_fd;
+ 	int retval = -1;
+ 
+-	if (!filename)
++	if (!inst || !filename)
+ 		return 0;
+ 
+ 	in_fd = tracefs_instance_file_open(inst, file, O_RDONLY);
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+2.48.1
+
 
