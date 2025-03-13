@@ -1,249 +1,135 @@
-Return-Path: <linux-kernel+bounces-559593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E52A5F5E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:24:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89247A5F5EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:25:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE09117B6B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:24:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1917C188CA81
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8970D267AF4;
-	Thu, 13 Mar 2025 13:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43652267AF4;
+	Thu, 13 Mar 2025 13:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dz+Vjr8P"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CgRsHjrX"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C36265610;
-	Thu, 13 Mar 2025 13:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3970267713
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741872264; cv=none; b=P1y5KFJoA3tyreu2U/NgJBIstGWnoONx1lfAvRuK9jNOoiAilUHujISq1ja5kktjcwVpjnhxb8nwxJI9oDxQMRl4bJ4xBCqF/tNYhsF8g8zenARcgFG188+6p3muANVyr/HvZIaKRfJ4EwGjZ9mnXrQ/3GRa0mQJFACoz9OgsBA=
+	t=1741872282; cv=none; b=iVrT5zdfIoTWbyKR3Er2WQZjaPx9y1rShPb2c/SzyGERsb4c/OnTvcljfkye9qh+RiS3501WFyh/DGk52J7Vm8FSNoimIlGeUpxr0rUJ7Ouyme8CqVzTm6KKlG/JC1Nb2IzOdlVFRoFndC1PXHhZK+q4A7N/BYIseA6yFq1prnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741872264; c=relaxed/simple;
-	bh=jCDe7Wc94ba6aJ/MFQbCu86uV8l1MOm2WI7qny2btIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uUrVBPQxyQtDn+0OhPRkza1GpbGYDACLBwlAGxu/iyDS6XhvwNAtxhCFl+57dQVaF2vgDpnmI/IytzoATzdsbm4af9KGUxnVowai82xPyTTRsoOLFFcvM8BhkhyEhZJPJxxmbuDHB5d5U8edTLH+Cg/XgxVmMB7/rJ0Oig5XUA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dz+Vjr8P; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741872263; x=1773408263;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=jCDe7Wc94ba6aJ/MFQbCu86uV8l1MOm2WI7qny2btIY=;
-  b=dz+Vjr8Pivx9Y9nQrD3GImA/al6j1qkNuqv6IN4+fSUOYN5asyJsVJTs
-   RexsZbuSqHR7JIBM2eEjTNVhUuF2Nfv7QxBeD19LHA6JJEAJiSy5QlV98
-   7LXq6cAG/29audJVmC/VFyBlADh/I5NAxGn1rrqQZGFUrqT/8hWd+skwZ
-   H0YaqRQtPN0dGEbMibUxfwhEu/3xRckWr50NOPeHxsno6yO3L+zkdmNtO
-   jOx+sPzf7QLbiRDq2ip3DDqq3HG2GpKrPokUFwbo3ItGawHaUG/MlIF4C
-   aABH5deocTQU1VO+ZgnYeJ1M9ylXJee5DiYy87gwCQ4mSrBdPcomsmNDg
-   w==;
-X-CSE-ConnectionGUID: OzzBWEFFQra20W9g/Zdmgg==
-X-CSE-MsgGUID: VshMdA3iQ/6HFai5gpgbug==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="60387877"
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="60387877"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 06:24:22 -0700
-X-CSE-ConnectionGUID: P2b3MLySQXqccd5C+UEwdw==
-X-CSE-MsgGUID: 6BtBIRMqRfu7WFaTVmO00g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="125833934"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 06:24:17 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tsiXl-00000002BIs-16K9;
-	Thu, 13 Mar 2025 15:24:13 +0200
-Date: Thu, 13 Mar 2025 15:24:13 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: Petr Mladek <pmladek@suse.com>, Kees Cook <kees@kernel.org>,
-	Sven Peter <sven@svenpeter.dev>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Aun-Ali Zaidi <admin@kodeit.net>,
-	Maxime Ripard <mripard@kernel.org>,
-	"airlied@redhat.com" <airlied@redhat.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"apw@canonical.com" <apw@canonical.com>,
-	"joe@perches.com" <joe@perches.com>,
-	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
-	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	Hector Martin <marcan@marcan.st>,
-	"asahi@lists.linux.dev" <asahi@lists.linux.dev>
-Subject: Re: [PATCH 1/2] lib/vsprintf: Add support for generic FourCCs by
- extending %p4cc
-Message-ID: <Z9LcfW8H_0YudtdC@smile.fi.intel.com>
-References: <ff3a9c58-5c7a-4c48-8a9e-cc828a43baed@app.fastmail.com>
- <PN3PR01MB9597E5C609290DB1A967263CB8D02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <Z9HgVn-XELC065w0@smile.fi.intel.com>
- <47AE7FCD-0F30-4379-ADE9-090A15ACD58F@live.com>
- <Z9Kb8zMJgmSP-rgD@smile.fi.intel.com>
- <PN3PR01MB959780176C0B16C36FBD59C3B8D32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <Z9KdzZUxs3vlwp0Z@smile.fi.intel.com>
- <PN3PR01MB9597A8F02423B9E4C585F5EBB8D32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <Z9K36SRz7Ja_AyQb@pathway.suse.cz>
- <D1A20E79-554E-4E91-BE47-B6493BDC3823@live.com>
+	s=arc-20240116; t=1741872282; c=relaxed/simple;
+	bh=oxBvzwvTrG82n8EJbBWNJ307/ROiMAIN3ZDd1Xbf3ig=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=YzWRZj1PSca/MSQUN9uM86aw4iPSSoQUTOKeWfjJEPTIKs7E0GykfTQgcGYxNOqmKtuWyhMsTe4+7vN0aNMCQ2LIucem+T25wrQFQ/bmmQr0q+oKin7NT68qDY+IBZDXZsZ78WXcUlZBzU1t9Y+5bG3NCPr+jyOds+BxMIyGuPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CgRsHjrX; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-85ad83ba141so95368239f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 06:24:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1741872280; x=1742477080; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5PLsvEgnbim2yotRJtm3RxSyGerYXasNwsqr+/KVpS4=;
+        b=CgRsHjrXXRqq4vaPHAcHpS5QmNOKwPbwPx1qON250R6Zi2OYgAUJ+uhFKQuGASSWQm
+         rS7BY/yLPqLiuDxkl1/pXv7VWbJ7vDEGxpDH6GcG6/dLYajQjZHTa8KbZ+qumNySbDVQ
+         gz6YNnTe5EHVHnU/j+EU4aBDLYuPhD9jw0fqBgZkqKCCOAEfIOt1oGRotT9X1Ju/lCix
+         1bBdnCrP7jcTTY79NVlC35F9pvq8RTo3qnAo1c2m5X5xGbeUAbZETRvWLoKC6dh7aE6e
+         gLjgAv/qJFO5MTjp5mpC15RwBUcg8FbdNu6RlZel9/kWcHOY+Vi/o8qQR9Lpa2KJ1yXT
+         A59A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741872280; x=1742477080;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5PLsvEgnbim2yotRJtm3RxSyGerYXasNwsqr+/KVpS4=;
+        b=XYFJiZ1kfKvBZevs9khV6xVamKK4ql4pckTZzRxFj2a4s8eyeKc1/pAd+t0oBtAbpv
+         kmqjLNJjpr3nqPz4TT2v4x7iekaGrkymsHuoVwfgwWktupR4ki7Y/Rcj0Cx60b5lKdx5
+         2v1u7s0QEfvPNt4Rk/8Jo52oFEQTdDiXty6VLPO1v4WsUg5S5dKIiILkbhPmQx4X9EGR
+         kTlF8OVJYy+tZqGagNuUHLLDJfmJDt1AcRMauH2KdUOjvQ6US7F5QnpJPVj4S+KM5mh0
+         /hPdbmDvrJ8trOiNFE8zIYggtx6s6Ykh8rFMFdJ7lPInW+Ku8Boqk14ucRofzzUZ+Ati
+         1lQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7Jlo+rOs/40RM5uhqpCCSClsFk6HS5/ieP1ED/9yyPxncCvf9tF2b5IgjhvcNT50ot/cICVqLfYFOWbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDQQL2nCPnzbKIlH4lNGI5b824GvSVvW2qq2yUzDiQeLSEjf29
+	vkQsiHCPkd3YvzRc2ctdz/ihyNfF3YOXCYvVc2BquG083mUW0zYMdmDEfYh/Vns=
+X-Gm-Gg: ASbGncshvV22/kwS6BwHeqrEeBIR9fjocMkHRU16mPLqmi6vQNqmT1kl3o4bnmoW+VA
+	i+dffHHAQpybGlUpvR7hKDwa4t1S0kL2F/Q+rUOW57U2lGuCEY9+N/yI3UcuWiMHp6KZ9gdMDZg
+	H+2J4mTNEtdOG1tKs8yhdIbFj8uVLFnomGB3CPCPlItZZh/BmZsKO+PZ3rQoyqF4ztgyZSgzjnE
+	9B6yAurWodfURk0W8zjRsV38U2vhGWwp7uYcVmK9gpPPRUm6tZ5PgCTil/DKuRXx0tPI1iWwh7E
+	p811lQ3yeD0CImptuLhFNIp2RoUgrtAmCJQ=
+X-Google-Smtp-Source: AGHT+IEer637uehs/daevOydns9iUer0NF8/Lop3Ui7LDoPjH6cMpb131IF3qkXQqxQNFL57dNEHAg==
+X-Received: by 2002:a05:6602:380d:b0:85b:5494:5519 with SMTP id ca18e2360f4ac-85b54946d71mr1891701439f.5.1741872279762;
+        Thu, 13 Mar 2025 06:24:39 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85db879e512sm31580739f.28.2025.03.13.06.24.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 06:24:39 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: "Md. Haris Iqbal" <haris.iqbal@ionos.com>, 
+ Jack Wang <jinpu.wang@ionos.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+ Paolo Bonzini <pbonzini@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+ =?utf-8?q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>, 
+ Juergen Gross <jgross@suse.com>, 
+ Stefano Stabellini <sstabellini@kernel.org>, 
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
+ Maxim Levitsky <maximlevitsky@gmail.com>, Alex Dubov <oakad@yahoo.com>, 
+ Ulf Hansson <ulf.hansson@linaro.org>, Richard Weinberger <richard@nod.at>, 
+ Zhihao Cheng <chengzhihao1@huawei.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, Sven Peter <sven@svenpeter.dev>, 
+ Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+ Sagi Grimberg <sagi@grimberg.me>, James Smart <james.smart@broadcom.com>, 
+ Chaitanya Kulkarni <kch@nvidia.com>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Anuj Gupta <anuj20.g@samsung.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ virtualization@lists.linux.dev, xen-devel@lists.xenproject.org, 
+ linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org
+In-Reply-To: <20250313035322.243239-1-anuj20.g@samsung.com>
+References: <CGME20250313040150epcas5p347f94dac34fd2946dea51049559ee1de@epcas5p3.samsung.com>
+ <20250313035322.243239-1-anuj20.g@samsung.com>
+Subject: Re: [PATCH] block: remove unused parameter
+Message-Id: <174187227786.18244.14269218969550436496.b4-ty@kernel.dk>
+Date: Thu, 13 Mar 2025 07:24:37 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D1A20E79-554E-4E91-BE47-B6493BDC3823@live.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-7b9b9
 
-On Thu, Mar 13, 2025 at 11:06:54AM +0000, Aditya Garg wrote:
-> > On 13 Mar 2025, at 4:18 PM, Petr Mladek <pmladek@suse.com> wrote:
-> > On Thu 2025-03-13 09:13:23, Aditya Garg wrote:
-> >>> On 13 Mar 2025, at 2:27 PM, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> >>> On Thu, Mar 13, 2025 at 08:53:28AM +0000, Aditya Garg wrote:
-> >>>>>> On 13 Mar 2025, at 2:19 PM, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> >>>>> On Thu, Mar 13, 2025 at 07:26:05AM +0000, Aditya Garg wrote:
-> >>>>>>>> On 13 Mar 2025, at 12:58 AM, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> >>>>>>> On Wed, Mar 12, 2025 at 07:14:36PM +0000, Aditya Garg wrote:
-> >>>>>>>>> On 12 Mar 2025, at 9:05 PM, Sven Peter <sven@svenpeter.dev> wrote:
-> >>>>>>>>> On Wed, Mar 12, 2025, at 13:03, Aditya Garg wrote:
 
-...
-
-> >>>>>>>>> I don't have a strong opinion either way: for SMC I just need to print
-> >>>>>>>>> FourCC keys for debugging / information in a few places.
-> >>>>>>>>> 
-> >>>>>>>>> I'm preparing the SMC driver for upstreaming again (after a two year delay :-()
-> >>>>>>>>> and was just going to use macros to print the SMC FourCC keys similar to
-> >>>>>>>>> DRM_MODE_FMT/DRM_MODE_ARG for now to keep the series smaller and revisit
-> >>>>>>>>> the topic later.
-> >>>>>>>>> 
-> >>>>>>>>> Right now I have these in my local tree (only compile tested so far):
-> >>>>>>>>> 
-> >>>>>>>>> #define SMC_KEY_FMT "%c%c%c%c (0x%08x)"
-> >>>>>>>>> #define SMC_KEY_ARG(k) (k)>>24, (k)>>16, (k)>>8, (k), (k)
-> >>>>>>>> 
-> >>>>>>>> That seems to be a nice alternative, which I guess Thomas was also suggesting.
-> >>>>>>> 
-> >>>>>>> I don't think it's "nice". Each of the approaches has pros and cons.
-> >>>>>>> You can start from bloat-o-meter here and compare it with your %p extension.
-> >>>>>>> 
-> >>>>>>> Also, can you show the bloat-o-meter output for the vsprintf.c?
-> >>>>>> 
-> >>>>>> Here are your outputs:
-> >>>>> 
-> >>>>> Thank you!
-> >>>>> 
-> >>>>>> ---------------------------------------------------------------------
-> >>>>>> For appletbdrm:
-> >>>>>> 
-> >>>>>> aditya@MacBook:~/linux$ ./scripts/bloat-o-meter $P4 $MACRO
-> >>>>>> add/remove: 0/0 grow/shrink: 1/1 up/down: 64/-19 (45)
-> >>>>>> Function                                     old     new   delta
-> >>>>>> appletbdrm_read_response                     395     459     +64
-> >>>>>> appletbdrm_probe                            1786    1767     -19
-> >>>>>> Total: Before=13418, After=13463, chg +0.34%
-> >>>>> 
-> >>>>> This is enough, no need to repeat this for every parameter.
-> >>>>> 
-> >>>>>> ---------------------------------------------------------------------
-> >>>>>> For vsprintf:
-> >>>>>> 
-> >>>>>> aditya@MacBook:~/linux$ ./scripts/bloat-o-meter $OLD $NEW
-> >>>>>> add/remove: 0/0 grow/shrink: 1/0 up/down: 220/0 (220)
-> >>>>>> Function                                     old     new   delta
-> >>>>>> fourcc_string                                479     699    +220
-> >>>>>> Total: Before=26454, After=26674, chg +0.83%
-> >>>>> 
-> >>>>> So, we get +220 bytes vs +43 bytes. It means if we found 5+ users, it worth
-> >>>>> doing.
-> >>>> 
-> >>>> Will it also depend upon the number of times it's being used? In appletbdrm,
-> >>>> it is being used 3 times. Probably more in Asahi SMC.
-> >>> 
-> >>> Right, it depends on the usage count. Also on different architectures it may
-> >>> give different results. On 32-bit it probably gives better statistics.
-> >> 
-> >> Best to go ahead with vsprintf then. Petr, are you still there?
-> > 
-> > I am here but there were many other things in the queue ;-)
-> > 
-> > I do not have strong opinion. I am not familiar with the FourCC
-> > format and it looks like a magic to me. But it seems that it makes
-> > sense for the users.
-> > 
-> > I personally find the %pcX modifiers a bit less hacky than
-> > the two macros SMC_KEY_FMT/SMC_KEY_ARG.
-> > 
-> > So I am fine with this patch:
-> > 
-> > Reviewed-by: Petr Mladek <pmladek@suse.com>
-> > Tested-by: Petr Mladek <pmladek@suse.com>
-> > 
-> > 
-> > Now, the question is how to get this patch into the mainline.
-> > 
-> > Normally, it would make perfect sense to queue it via the DRM tree
-> > because drivers/gpu/drm/tiny/appletbdrm.c is a new driver...
-> > 
-> > But this time there is a conflicting patchset which is reworking
-> > the entire lib/test_printf.c file, see
-> > 20250307-printf-kunit-convert-v6-0-4d85c361c241@gmail.com
+On Thu, 13 Mar 2025 09:23:18 +0530, Anuj Gupta wrote:
+> request_queue param is not used by blk_rq_map_sg and __blk_rq_map_sg.
+> remove it.
 > 
-> Link seems to be broken
-
-It works fine. Because it's not a link, it's Message-ID, you need to add
-https://lore.kernel.org/r/ in front of it.
-
-> > And it will likely be ready for the next merge window as well.
-> > I am going to review it right away.
-> > 
-> > It is even more complicated because the patchset converting
-> > the printf test module to KUNIT depends on another changes
-> > in Kees' tree (moving kunit test modules to lib/tests/).
-> > So it might be easier when it goes via Kees' tree.
-> > 
-> > And it might be easier when even this patch goes via Kees' tree.
-> > 
-> > My proposal:
-> > 
-> > I suggest to separate the fourcc_pointer() test update
-> > to a separate patch and add it later after the merge window
-> > when things settle down.
-> > 
-> > I mean to send the vsprintf.c, checkpatch.pl, and doc update
-> > via DRM tree together with the new appletbdrm.c driver.
 > 
-> Sounds good. At least we can get it working. I’ll make sure the self
-> tests get updated once 6.15-rc1 gets released, or Kees can share
-> his tree, where I can add the tests as well.
-> 
-> I’ll send a v2 so that Thomas can take them up.
-> > 
-> > And update the selftest later when both DRM tree and KUNIT
-> > update reaches mainline.
-> > 
-> > How does that sound, please?
 
-To me sounds good, but I'm not a maintainer involved in all this :-)
+Applied, thanks!
 
+[1/1] block: remove unused parameter
+      commit: 61667cb6644f6fb01eb8baa928e381c016b5ed7b
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
+Jens Axboe
+
 
 
 
