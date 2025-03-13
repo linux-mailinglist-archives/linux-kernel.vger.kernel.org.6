@@ -1,100 +1,125 @@
-Return-Path: <linux-kernel+bounces-559011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D32F5A5EE50
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:46:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DA29A5EE58
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:48:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 480403BA8AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:46:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB1D3B7426
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D7C262D08;
-	Thu, 13 Mar 2025 08:46:35 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C0A262D03;
+	Thu, 13 Mar 2025 08:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPQY6xqo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7B120EB
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF233A8D2;
+	Thu, 13 Mar 2025 08:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741855594; cv=none; b=WRoarYngQ6nuJFzBFnt0fO6E5nSNWZEBeaVZQAmW06dRClZcOZYABQ+iECxNn/tZMZ4P0hnmwt8xA2o+YnH9euJq94pOKQIVqLpq2upOU4oA8T/TesWFvVFDFBhDM7odQYYUtJjkcELpQ+dTIEGzwmOJq+GM5B9x/8Slgh6FKSw=
+	t=1741855692; cv=none; b=aHeakW1v+MBEudsU5GPVXuuNqc+EqFvqCfo2mx6Ox7WQzSgpolfckdw8hUBlP8NDRH2WkEhlOYjyM89Cam8eOqnJ5zbWnhIIM5b68KlxaYlm5OVkk/R1FIU9yE1CeptZMDllhxbCmY2VdGcgJKYUUFygxL7CPdduZOOYZcUupaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741855594; c=relaxed/simple;
-	bh=lX5fbAxYohnvu2u3/SWuHgfzE9prnMx7mT62tFxAocU=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=uXZlH3c0etBUA1jRA5EUyGr3333NYp6b7SnvF4ZGrCiplocD05o0Lsgd8KeTbHY8vijaS6uTb8ZEMYkP8gVFc6qa1zmx25hSLaYxtCv4SdbVljcfkC8UT6nWDC0b3v11wYkyGk/g7RWavwIM6+HuBd0d55bj4hIipMMnJ7N8FPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4ZD1Lp33VHz50FXL;
-	Thu, 13 Mar 2025 16:46:26 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl1.zte.com.cn with SMTP id 52D8kC1d078180;
-	Thu, 13 Mar 2025 16:46:12 +0800 (+08)
-	(envelope-from ye.xingchen@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid31;
-	Thu, 13 Mar 2025 16:46:15 +0800 (CST)
-Date: Thu, 13 Mar 2025 16:46:15 +0800 (CST)
-X-Zmail-TransId: 2afa67d29b57ffffffff93b-5023d
-X-Mailer: Zmail v1.0
-Message-ID: <20250313164615305U0u1TXBAUsEnpGZQjtOS-@zte.com.cn>
+	s=arc-20240116; t=1741855692; c=relaxed/simple;
+	bh=Hk3K9FqTOGbUtdb1NPCducwlxxGW7aeLrXgBAKioQXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tXd7eyNLSRkjBf2jYqFQMuYxMesromiYxI2RzJ953fYmJWa2lNeIQK/yU1u66kObmweMM1QxJIOFn9uYQo9BKNak5mPF5+fDwZCHjej9S8ixwASL8g2Spxi+16KxCYFAp03TdCXjzqwQcwsa/Dz5U5qj66rm3vMBpaqWnYAT3Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VPQY6xqo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40ED5C4CEDD;
+	Thu, 13 Mar 2025 08:48:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741855691;
+	bh=Hk3K9FqTOGbUtdb1NPCducwlxxGW7aeLrXgBAKioQXo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VPQY6xqoIH5MlTjU2hWK+0T9qaC3UNqSTJRdEFJojusBnEsK6UnQA7BdnYibAf1TU
+	 QLKNLsZ5cBF/KlQiWzJYl/QzHHd8K6wZthcZRm17DM8eVSl36R4rbzngAnBix/l+B5
+	 LJaJxV+aOIu/k7I4FNU+984WncZikIgG3A550VYRNYgzkPs8AbGebZXKyz/3BnfVkn
+	 mZ4A7SMe6Wpi2H0yxsgRelCrqsoVTKfTq/jmApiNzpouHy6aS3vjJ2IJXoLIO7N/80
+	 vmtPDwb7p0CYyeOxn6PD2WktU7llh1Y0EE83KVENFcHR7vhUcMKFI18IQ8NiSCXtB8
+	 Oh2tTt1Ejtf5Q==
+Date: Thu, 13 Mar 2025 09:48:07 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Amit Sunil Dhamne <amitsd@google.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Badhri Jagan Sridharan <badhri@google.com>, 
+	Sebastian Reichel <sre@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-pm@vger.kernel.org, RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
+Subject: Re: [PATCH 1/5] dt-bindings: connector: add fixed-batteries property
+Message-ID: <20250313-tidy-kakapo-of-abundance-eebf91@krzk-bin>
+References: <20250312-batt_ops-v1-0-88e0bb3129fd@google.com>
+ <20250312-batt_ops-v1-1-88e0bb3129fd@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <ye.xingchen@zte.com.cn>
-To: <brauner@kernel.org>
-Cc: <jeff.johnson@oss.qualcomm.com>, <jack@suse.cz>,
-        <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIXSBubHM6IEZpeCB1dGY4X3RvX3V0ZjMyIHBhcmFtZXRlciB0eXBlIGluIGRlY2xhcmF0aW9uIGFuZMKgZGVmaW5pdGlvbg==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 52D8kC1d078180
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D29B62.004/4ZD1Lp33VHz50FXL
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250312-batt_ops-v1-1-88e0bb3129fd@google.com>
 
-From: YeXingchen <ye.xingchen@zte.com.cn>
+On Wed, Mar 12, 2025 at 04:42:01PM -0700, Amit Sunil Dhamne wrote:
+> Add a new "fixed-batteries" DT property to connector class. This
+> property is populated with nodes associated with battery type power
+> supplies powering the USB PD connector. This is needed by the Type-C
+> Port Manager (TCPM) to query psy properties which are used to feed
 
-The declaration of utf8_to_utf32 in the header file uses
-int len as the parameter type, while the definition uses int inlen.
+What is "psy" in terms of bindings?
 
-This patch aligns the parameter name in the definition with the
-declaration,changing inlen to len to ensure consistency.
+> Battery_Status & Battery_Capacity AMS.
+> 
+> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+> ---
+>  Documentation/devicetree/bindings/connector/usb-connector.yaml | 8 ++++++++
+>  Documentation/devicetree/bindings/usb/maxim,max33359.yaml      | 1 +
+>  2 files changed, 9 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+> index 11e40d225b9f3a0d0aeea7bf764f1c00a719d615..5e15bc060f5a2cfce842f83de738f1e8bae3ce2d 100644
+> --- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
+> +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+> @@ -300,6 +300,14 @@ properties:
+>      $ref: /schemas/types.yaml#/definitions/uint8-array
+>      maxItems: 4
+>  
+> +  fixed-batteries:
+> +    description: Contains references to nodes associated with battery type power
+> +      supplies powering the USB PD device. These batteries are fixed type and
 
-Signed-off-by: YeXingchen <ye.xingchen@zte.com.cn>
----
- fs/nls/nls_base.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+What is a "battery type power supply"? If you just link here batteries,
+then we have type for it - monitored-battery - but I doubt connector has
+direct connection to the battery.
 
-diff --git a/fs/nls/nls_base.c b/fs/nls/nls_base.c
-index 18d597e49a19..59989205f1b5 100644
---- a/fs/nls/nls_base.c
-+++ b/fs/nls/nls_base.c
-@@ -52,7 +52,7 @@ static const struct utf8_table utf8_table[] =
- #define SURROGATE_LOW	0x00000400
- #define SURROGATE_BITS	0x000003ff
+If you mean chargers, the OF graph is already there for this and no need
+for this patch.
 
--int utf8_to_utf32(const u8 *s, int inlen, unicode_t *pu)
-+int utf8_to_utf32(const u8 *s, int len, unicode_t *pu)
- {
- 	unsigned long l;
- 	int c0, c, nc;
-@@ -71,7 +71,7 @@ int utf8_to_utf32(const u8 *s, int inlen, unicode_t *pu)
- 			*pu = (unicode_t) l;
- 			return nc;
- 		}
--		if (inlen <= nc)
-+		if (len <= nc)
- 			return -1;
- 		s++;
- 		c = (*s ^ 0x80) & 0xFF;
--- 
-2.25.1
+> +      not hot swappable.
+> +    minItems: 1
+> +    maxItems: 4
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +
+>  dependencies:
+>    sink-vdos-v1: [ sink-vdos ]
+>    sink-vdos: [ sink-vdos-v1 ]
+> diff --git a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+> index 3de4dc40b79192b60443421b557bd2fb18683bf7..66c99f0131f074f1c08e31d7481f555647e3b2f8 100644
+> --- a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+> +++ b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+> @@ -75,6 +75,7 @@ examples:
+>                                         PDO_FIXED(9000, 2000, 0)>;
+>                  sink-bc12-completion-time-ms = <500>;
+>                  pd-revision = /bits/ 8 <0x03 0x01 0x01 0x08>;
+> +                fixed-batteries = <&batt1 &batt2>;
+
+Two phandles, so two <>.
+
+Best regards,
+Krzysztof
+
 
