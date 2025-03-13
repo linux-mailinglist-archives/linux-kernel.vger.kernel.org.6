@@ -1,127 +1,134 @@
-Return-Path: <linux-kernel+bounces-560378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FAA7A60351
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:18:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F41A60352
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:18:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90459423417
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E48A83B7C05
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557B51F55EB;
-	Thu, 13 Mar 2025 21:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8B11F417E;
+	Thu, 13 Mar 2025 21:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IatQbLGu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="1b5+Vrpv"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA041F542A;
-	Thu, 13 Mar 2025 21:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481801F3B91
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 21:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741900658; cv=none; b=ouCi5vm44PWyHCUmlXFxLu5nPVCym0Az1sqn0MmAfbDKDBEIB4RJ3Y1XHJSH4VNr7ESeXdHdGHKwjUJxXZyQRhO4OYx2aL8UH5i58JsHkAzCy5NMsNkyukQt2mcqfUIsYfTtH0Kw9tbMf0yrqzKqGAzHhn4Xbaow6kr3JiiiOwA=
+	t=1741900673; cv=none; b=aRzWF8kBxayCvoSPeBKqaUPa0g6UQcK9HRWC8GiBj3wiuMzjaY7wxcHOuwzkeqphSp8P9bexsZSMr/pAh5TawcBp1Wu3lrfsCPmkF+wBxn2QP1xYuDCaIrGnbxXNKqMKZG3EvZ0CDuoaE6JJ/GXFd4+iRafiS3LPLO3F74EWAZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741900658; c=relaxed/simple;
-	bh=Le6EQ1Pr/AK5Dy86XGbDFF8qdnl/LrgWUu4Ti5KP2U4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FDZGb6YJewWRFoKxXj0IXhxoYlUTw0PoYuuq08YUBVDT5dTHCtnraTRSZMw5OT9NJPZWRDw5t6p5pS+nY+0VX4C3WUDTgmqEduBLohoOZXm+BHdp0VQWCGvTbfohFHCdjxJkzBJwq0BevCFpDsg7Aa3UPd1k60EyNUN8JYDz6J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IatQbLGu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA2D4C4CEDD;
-	Thu, 13 Mar 2025 21:17:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741900658;
-	bh=Le6EQ1Pr/AK5Dy86XGbDFF8qdnl/LrgWUu4Ti5KP2U4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IatQbLGuuQDS98eiH/zBFSxXIgQRopSCsXLo8obJRduaiCY8e6F5LU6qJ+rn5H10r
-	 LIs3pu3r36ROHuQkZeEA5tAYobF/0ZLqQkXmXpXvHeAKIslTPIKYmoGs4wFpfdYnx0
-	 ORHNfOHQ5HwETC7reG5MFdfJdVRI1Ng5Dmq7c+LYePrO4b6+ckIdaJHQxAhjxVlQNg
-	 DMf1zkJvK/mgpuFDlyVwtaQGXt+X2b4ayIkZwI5SQtXhq3fGcIJwhuAES1TmAXI0iZ
-	 gsHwgGqPh/fnqe7OKiMVynwJJfEpoe5z0E1CSOe0iIpIxNhvlPT8t/XooeFTFYbZ4n
-	 4LWgVNYONCp4w==
-Date: Thu, 13 Mar 2025 21:17:33 +0000
-From: Will Deacon <will@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Christoffer Dall <cdall@cs.columbia.edu>,
-	Marc Zyngier <maz@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	"Rob Herring (Arm)" <robh@kernel.org>
-Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm-perf
- tree
-Message-ID: <20250313211732.GB7937@willie-the-truck>
-References: <20250312201853.0d75d9fe@canb.auug.org.au>
- <20250312124501.GA6181@willie-the-truck>
- <Z9G_aKHzs4GFe4O5@linux.dev>
+	s=arc-20240116; t=1741900673; c=relaxed/simple;
+	bh=G4ASBTtqtknhUvwbdVnJBrEV71JuUUm2tjJwlnY30mg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KVzsBKC4L2XOiuYwytvylOLmnol36+JhD1oCY+WRPDZ1yrzmTD5GNCetO40qJrPviIGzr/fVb8LFEUQrKdl/OCVY9CWSNLw6kqPTsmaPdyOb97jMXKq8OI2urXvkRzpO+27dwZLfCXv+kxutRBOL6VrATaROMAeSWCraunOy9BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=1b5+Vrpv; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-72bb9725de4so62812a34.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:17:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741900669; x=1742505469; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WBuMvSWKrj6vDaWbSVnQynse1bN77KOct+TmAZuqGnQ=;
+        b=1b5+VrpvHqle+jGwoBog35dtLkyaADU48hdP9PmyAkH1oXHcxN3y43Vtw1+YiLu6x9
+         OEBQOuppdZWd9JY2vJDxolTkWokSRHU/bdBrZZE7wohgVjOsUml436z5OZL3wq2BnLa3
+         h9BMLp/YfUU0LQBueNSDEw8OwWHRKcsUYCm/+0PopaTtG0d5xceIF1uFs/XKPFwkqDU3
+         7LIqHtPeZOvOo/OIvuZWJ8L4xR5JpspPFap9iLd81kFXX7FyIFmYJnDG7ic9T6yf7Ljw
+         i2cB4EqadZnpH/PSgnQ3Pyxmbf6QvtccSKpFfD/fnEkJDvpAPkeZ95+Z5B0PqIcJh9cQ
+         xUQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741900669; x=1742505469;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WBuMvSWKrj6vDaWbSVnQynse1bN77KOct+TmAZuqGnQ=;
+        b=TbOUlCWEN6RiGVP+tRjI/8zy1oEuT4fQiCaE4FDr+VTQZCAs0AUGEul9nWM1RUmEOJ
+         9uG+AZqh2NUzA0lZ790eRYqwOZMTM6tGXhZ/MC7KcGy6YjElRv57Sk4JgbJ5JbU6Eu4H
+         +8sVBRIOIUi386dTBvk4YxRWv/VULSD/rR+jhsAdPbxeriiO6528eOJ8074LrMbI9JWJ
+         kGLHS805qpmVcCoEV3GjbrKYU38XkRPPtvQnwhQT5kuf8+oDj4moRcaUUoVVJvKamyvV
+         tfQFYgnbebE8BJLI8xihzZt/zlXfLP2t55NAhPPHFnSJu/azNZ4Ojftf3bgEdWdqN3td
+         OKZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSUtYHgGtGfP7DzA3egtyUazVKRpnHowxaqdoZYjX8g6XljCCPS32JgcbcGzE/nh6KWQSmnSdqLzhL8t4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysCDWmiVU8Uuk3/1pm4n6qgJMMxj+1yUxAK8WWIGLyyr/hDGFp
+	+FQpY4wAwO1ThN+M2IVUMaWsvbW+cu4CyD8dxbYhuCZEMKb9y3CTUxqDv/tQYN7VXIIzTv6L5Ab
+	dvcE=
+X-Gm-Gg: ASbGncsvuKzDuh23zReZzp8QIslqbZXKw2PcaPykbYlO6mbrecpHvY/+he5pamDk17d
+	VgyRK+fT3ua3LqOEMBcIZp7DU5bdpbDWqhm8jA/oSFAfjRzovNo0PW1wv5yKO/C9OIjj/5AfSr/
+	JmKyCtr7a1C4ZYxoQ5Z+aKB8KIyIro88mrS3DCz+mW13aMeEeWAk+Yx5Kzjz/Pio9B3WtKztQBx
+	ItRHK/Bljc3+VOKsTf7m9xplOwv7JgzVdxLox1SJq2x/thb2qNhJqJVn6j329f+TScH2mvEjZ19
+	VWPkSJ0SegZgSaRjLC0voTjL3dqKoJRAo8liRLbmf2/841P9kPhQRkpFMN4aVen3eSt1UGismSO
+	Li103ZQ==
+X-Google-Smtp-Source: AGHT+IFXmac6Zno1e8gIT1+e4oFU8bsJfG4bD93al3kFBt3DuzLabzwqDobbA9nezeqb4ONGDiWQcA==
+X-Received: by 2002:a05:6830:64c7:b0:72a:1ecc:d23a with SMTP id 46e09a7af769-72bb95ef063mr821303a34.15.1741900668987;
+        Thu, 13 Mar 2025 14:17:48 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c670f77a5bsm479504fac.9.2025.03.13.14.17.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 14:17:47 -0700 (PDT)
+Message-ID: <4866908a-2e93-4d19-aef3-5203e002a8cf@baylibre.com>
+Date: Thu, 13 Mar 2025 16:17:45 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9G_aKHzs4GFe4O5@linux.dev>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: davinci: da850: fix selecting ARCH_DAVINCI_DA8XX
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240401-da850-fix-select-da8xx-v1-1-a348ab91448f@baylibre.com>
+ <CAMRc=Mc7Xa58J55_kenkr2OA=ho6YH_gENOFEvAiA+q+p54dDQ@mail.gmail.com>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <CAMRc=Mc7Xa58J55_kenkr2OA=ho6YH_gENOFEvAiA+q+p54dDQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 12, 2025 at 10:07:52AM -0700, Oliver Upton wrote:
-> On Wed, Mar 12, 2025 at 12:45:02PM +0000, Will Deacon wrote:
-> > On Wed, Mar 12, 2025 at 08:18:53PM +1100, Stephen Rothwell wrote:
-> > > Hi all,
-> > > 
-> > > Today's linux-next merge of the kvm-arm tree got a conflict in:
-> > > 
-> > >   drivers/perf/apple_m1_cpu_pmu.c
-> > > 
-> > > between commit:
-> > > 
-> > >   c2e793da59fc ("perf: apple_m1: Don't disable counter in m1_pmu_enable_event()")
-> > > 
-> > > from the arm-perf tree and commit:
-> > > 
-> > >   75ecffc361bb ("drivers/perf: apple_m1: Refactor event select/filter configuration")
-> > > 
-> > > from the kvm-arm tree.
-> > > 
-> > > I fixed it up (see below) and can carry the fix as necessary. This
-> > > is now fixed as far as linux-next is concerned, but any non trivial
-> > > conflicts should be mentioned to your upstream maintainer when your tree
-> > > is submitted for merging.  You may also want to consider cooperating
-> > > with the maintainer of the conflicting tree to minimise any particularly
-> > > complex conflicts.
-> > > 
-> > > -- 
-> > > Cheers,
-> > > Stephen Rothwell
-> > > 
-> > > diff --cc drivers/perf/apple_m1_cpu_pmu.c
-> > > index 39349ecec3c1,6be703619a97..000000000000
-> > > --- a/drivers/perf/apple_m1_cpu_pmu.c
-> > > +++ b/drivers/perf/apple_m1_cpu_pmu.c
-> > > @@@ -396,7 -428,11 +428,7 @@@ static void m1_pmu_enable_event(struct 
-> > >   	user = event->hw.config_base & M1_PMU_CFG_COUNT_USER;
-> > >   	kernel = event->hw.config_base & M1_PMU_CFG_COUNT_KERNEL;
-> > >   
-> > > - 	m1_pmu_configure_counter(event->hw.idx, evt, user, kernel);
-> > >  -	m1_pmu_disable_counter_interrupt(event->hw.idx);
-> > >  -	m1_pmu_disable_counter(event->hw.idx);
-> > >  -	isb();
-> > >  -
-> > > + 	m1_pmu_configure_counter(event->hw.idx, event->hw.config_base);
-> > >   	m1_pmu_enable_counter(event->hw.idx);
-> > >   	m1_pmu_enable_counter_interrupt(event->hw.idx);
-> > >   	isb();
-> > 
-> > Looks fine to me but I'd also be happy to stick the first two patches
-> > on a shared branch to avoid this. Oliver?
+On 4/2/24 3:47 AM, Bartosz Golaszewski wrote:
+> On Mon, Apr 1, 2024 at 5:10 PM David Lechner <dlechner@baylibre.com> wrote:
+>>
+>> Chips in the DA850 family need to have ARCH_DAVINCI_DA8XX to be selected
+>> in order to enable some peripheral drivers.
+>>
+>> This was accidentally removed in a previous commit.
+>>
+>> Fixes: dec85a95167a ("ARM: davinci: clean up platform support")
+>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+>> ---
+>>  arch/arm/mach-davinci/Kconfig | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
+>> index 2a8a9fe46586..3fa15f342240 100644
+>> --- a/arch/arm/mach-davinci/Kconfig
+>> +++ b/arch/arm/mach-davinci/Kconfig
+>> @@ -27,6 +27,7 @@ config ARCH_DAVINCI_DA830
+>>
+>>  config ARCH_DAVINCI_DA850
+>>         bool "DA850/OMAP-L138/AM18x based system"
+>> +       select ARCH_DAVINCI_DA8XX
+>>         select DAVINCI_CP_INTC
+>>
+>>  config ARCH_DAVINCI_DA8XX
+>>
+>> ---
+>> base-commit: 39cd87c4eb2b893354f3b850f916353f2658ae6f
+>> change-id: 20240401-da850-fix-select-da8xx-989725eec11f
 > 
-> Agreed!
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/oupton/linux.git perf/m1-guest-events
+> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Cheers, man. I'll pull that in shortly...
-
-Will
+Hi Bartosz, here's an old one that never got picked up and I never got around
+to resending. Can you pick it up along with the other davinci stuff you are
+doing this cycle?
 
