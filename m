@@ -1,204 +1,158 @@
-Return-Path: <linux-kernel+bounces-558774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9551FA5EB07
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:18:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2549A5EB0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:19:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8A0117933B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 05:17:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA03E18958D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 05:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C571FBC81;
-	Thu, 13 Mar 2025 05:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D824D1F91E3;
+	Thu, 13 Mar 2025 05:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="luNogbAE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LoEnZR5Z"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E4B1FAC5F;
-	Thu, 13 Mar 2025 05:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFD81372
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 05:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741843035; cv=none; b=u/UVWNGmiU3nu2uOcc+H/ZzSHrflgOEvej9+cqRo45bJ+P0mYG3ZvuH/xqWhl3826yPI2AWSsCDQrtZhFxYU8BbdOc5gG8SRRbf5kH7/obsp/OltItwavfCeZ8yh9+yN6V4NkavlmUA0/kAGmdw+h0ghywf0UTnPGeB7e//4778=
+	t=1741843182; cv=none; b=rhmtxRa9w6z9zOk5yODqV0Z/2bDPoUUuKRTALU66mGVx4aPHbfpMHMtvDSkNC9tV3Y+bTjiiXs3C1ezwXZvZkUmmNjFd03ShMmhlbO98GWKG6J2x7sD4E/2gosJSGdtKlWtpYPrzNoYPqdzyafYQcqnaOpU8FOqDe9IJopvfUII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741843035; c=relaxed/simple;
-	bh=pfEcnwtoBGfL5v3a/QE2n6zOgKgHLmMhs++9bmj3+vo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GoTms5RFPyekyRSKLwTFRxsiHy4E16tWxX3v+Um9xv5EvevfspPqhc1vHY6WsA5h3sirF1NdE58lZFeoggcvxA1dAgWL3CRJrQic09AgIiK9iwmOXkNqJnWE6nf7S1la15l97+Mwc5h6spmSA1cicp7upT6m2uX3l1bsTXcPfWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=luNogbAE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CMsZrD009124;
-	Thu, 13 Mar 2025 05:17:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=2y2v+RBFtHqZvOj1TgxGn+Vh
-	LKxqFsPsT2CXX1tbA3Y=; b=luNogbAE+Ixz8d51HVGpmDJw6ylTCYaWc3dsublU
-	eRjB7gvLPdWObq+qEWjNKp2g6j6ilQngndKsXc2F4PNLPYiJy6ONbQ+AeRWONh0e
-	nmo1MuDw8c2pUUCBX4fAOiCSI+GlzPYE44kBbxAloXzDzmTOkPEbhIT/c+pL2SU2
-	RAGs3c1LW/q5aMMbk0SOmK7VkwSKIcIIDre275EN3pMWlvgvRXSFihF7i8n+65gT
-	NLn4YL+r90zTAqUiimpiF2FBWGR5OmvFnEEAeK2hu1uYzKlgmFebKnPJ1p8pngC6
-	Q90dHG/KqH0RFjjycHfU9U9e5iYMJ25b/U10B6S0VZ/bhA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2rcktb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 05:17:10 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D5H9Go016518
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 05:17:09 GMT
-Received: from hu-mapa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 12 Mar 2025 22:17:06 -0700
-From: Manish Pandey <quic_mapa@quicinc.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "James E.J.
- Bottomley" <James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen"
-	<martin.petersen@oracle.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>,
-        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>
-Subject: [PATCH V3 3/3] scsi: ufs-qcom: Add support for testbus registers
-Date: Thu, 13 Mar 2025 10:46:35 +0530
-Message-ID: <20250313051635.22073-4-quic_mapa@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250313051635.22073-1-quic_mapa@quicinc.com>
-References: <20250313051635.22073-1-quic_mapa@quicinc.com>
+	s=arc-20240116; t=1741843182; c=relaxed/simple;
+	bh=C1sTURMNg4y9jZ7mt47a+t26kfz9pLw7XyJTaq3HaUw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H5NHoszpHKn2SWulWNH6ccDPLHugetvtWawMGQDdfTUxZruC8+rAPwYCcMtqOrgTTqOqFdmZnlVDp8zzzoCn9+E3sCvBTU3jld+zZtweMBaJtArBclV6K++R67VA5ETP5jAn5YnMuD07kNgSE7M80REwF5vXDdcBlK66dA5R6e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LoEnZR5Z; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741843180; x=1773379180;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=C1sTURMNg4y9jZ7mt47a+t26kfz9pLw7XyJTaq3HaUw=;
+  b=LoEnZR5ZmzORtXFvwh2zu33FLsxUboBnxlbBfGv64AXYBCfSAuRxE3vP
+   tJzLI0nuZ7rQ+4sSYCc30MHCF7qOb0ebRPD5/84zuoba1npgRHa+SBVtN
+   6qj5jIYOBEMsjK6Wo6BxqTApee00CsZQupep3t0kurn6AxzuF1FXaX5ep
+   mRu/TM+m2AM9IcvkPguOQJF7oq3k44jh2XyyVekXdat1q2fvfrzFNe+Z5
+   ZFZR9ycsTeR86Mudtw4btCUZBYxDhK0Xb0HNliE9ua3/BQIzBT7eq9h7L
+   l5kHf8pW9r2glcIMveWEhs1vCh+dqQ38MyMk+M4zScZNsaxwHQ+UH+Lru
+   Q==;
+X-CSE-ConnectionGUID: +QV0MVeHQHGNMnu1aGrGnA==
+X-CSE-MsgGUID: 1DK+5oOpSrOgsYTmIbz5VA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="54323631"
+X-IronPort-AV: E=Sophos;i="6.14,243,1736841600"; 
+   d="scan'208";a="54323631"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 22:19:40 -0700
+X-CSE-ConnectionGUID: gF4r/zS8QGKmiEyg6IRmGg==
+X-CSE-MsgGUID: xQaO4069S8qA72HD41lQjg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,243,1736841600"; 
+   d="scan'208";a="151807013"
+Received: from allen-box.sh.intel.com ([10.239.159.52])
+  by fmviesa001.fm.intel.com with ESMTP; 12 Mar 2025 22:19:37 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Kevin Tian <kevin.tian@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Fenghua Yu <fenghuay@nvidia.com>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Zhou Wang <wangzhou1@hisilicon.com>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: [PATCH v4 0/8] iommu: Remove IOMMU_DEV_FEAT_SVA/_IOPF
+Date: Thu, 13 Mar 2025 13:19:45 +0800
+Message-ID: <20250313051953.4064532-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=D6NHKuRj c=1 sm=1 tr=0 ts=67d26a56 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=qEoxdu5ElFVaSqPk7CsA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: aMvaP6szKTDLUwK--G2XtnAdi8f4SlXN
-X-Proofpoint-ORIG-GUID: aMvaP6szKTDLUwK--G2XtnAdi8f4SlXN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_02,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- priorityscore=1501 mlxscore=0 spamscore=0 lowpriorityscore=0 phishscore=0
- adultscore=0 malwarescore=0 mlxlogscore=813 clxscore=1015 impostorscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130039
+Content-Transfer-Encoding: 8bit
 
-This patch introduces support for dumping testbus registers,
-enhancing the debugging capabilities for UFS-QCOM drivers.
+The new method for driver fault reporting support relies on the domain
+to specify a iopf_handler. The driver should detect this and setup the
+HW when fault capable domains are attached.
 
-Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
----
-Changes in v3:
-- Annotated the 'testbus' declaration with __free.
-- Converted the switch-statements into an array lookup.
-- Introduced struct testbus_info{} for handling testbus switch-statements to an array lookup.
-Changes in v2:
-- Rebased patchsets.
-- Link to v1: https://lore.kernel.org/linux-arm-msm/20241025055054.23170-1-quic_mapa@quicinc.com/
+Move SMMUv3 to use this method and have VT-D validate support during
+attach so that all three fault capable drivers have a no-op FEAT_SVA and
+_IOPF. Then remove them.
 
----
- drivers/ufs/host/ufs-qcom.c | 53 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 52 insertions(+), 1 deletion(-)
+This was initiated by Jason. I'm following up to remove FEAT_IOPF and
+further clean up.
 
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index fb9da04c0d35..c32b1268d299 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -17,6 +17,7 @@
- #include <linux/time.h>
- #include <linux/unaligned.h>
- #include <linux/units.h>
-+#include <linux/cleanup.h>
- 
- #include <soc/qcom/ice.h>
- 
-@@ -98,6 +99,24 @@ static const struct __ufs_qcom_bw_table {
- 	[MODE_MAX][0][0]		    = { 7643136,	819200 },
- };
- 
-+static const struct {
-+	int nminor;
-+	char *prefix;
-+} testbus_info[TSTBUS_MAX] = {
-+	[TSTBUS_UAWM]     = {32, "TSTBUS_UAWM "},
-+	[TSTBUS_UARM]     = {32, "TSTBUS_UARM "},
-+	[TSTBUS_TXUC]     = {32, "TSTBUS_TXUC "},
-+	[TSTBUS_RXUC]     = {32, "TSTBUS_RXUC "},
-+	[TSTBUS_DFC]      = {32, "TSTBUS_DFC "},
-+	[TSTBUS_TRLUT]    = {32, "TSTBUS_TRLUT "},
-+	[TSTBUS_TMRLUT]   = {32, "TSTBUS_TMRLUT "},
-+	[TSTBUS_OCSC]     = {32, "TSTBUS_OCSC "},
-+	[TSTBUS_UTP_HCI]  = {32, "TSTBUS_UTP_HCI "},
-+	[TSTBUS_COMBINED] = {32, "TSTBUS_COMBINED "},
-+	[TSTBUS_WRAPPER]  = {32, "TSTBUS_WRAPPER "},
-+	[TSTBUS_UNIPRO]   = {256, "TSTBUS_UNIPRO "}
-+};
-+
- static void ufs_qcom_get_default_testbus_cfg(struct ufs_qcom_host *host);
- static int ufs_qcom_set_core_clk_ctrl(struct ufs_hba *hba, unsigned long freq);
- 
-@@ -1566,6 +1585,33 @@ int ufs_qcom_testbus_config(struct ufs_qcom_host *host)
- 	return 0;
- }
- 
-+static void ufs_qcom_dump_testbus(struct ufs_hba *hba)
-+{
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+	int i, j, nminor = 0, testbus_len = 0;
-+	u32 *testbus __free(kfree) = NULL;
-+	char *prefix;
-+
-+	testbus = kmalloc(256 * sizeof(u32), GFP_KERNEL);
-+	if (!testbus)
-+		return;
-+
-+	for (j = 0; j < TSTBUS_MAX; j++) {
-+		nminor = testbus_info[j].nminor;
-+		prefix = testbus_info[j].prefix;
-+		host->testbus.select_major = j;
-+		testbus_len = nminor * sizeof(u32);
-+		for (i = 0; i < nminor; i++) {
-+			host->testbus.select_minor = i;
-+			ufs_qcom_testbus_config(host);
-+			testbus[i] = ufshcd_readl(hba, UFS_TEST_BUS);
-+			usleep_range(100, 200);
-+		}
-+		print_hex_dump(KERN_ERR, prefix, DUMP_PREFIX_OFFSET,
-+				16, 4, testbus, testbus_len, false);
-+	}
-+}
-+
- static void ufs_qcom_dump_mcq_hci_regs(struct ufs_hba *hba)
- {
- 	/* sleep intermittently to prevent CPU hog during data dumps. */
-@@ -1680,9 +1726,14 @@ static void ufs_qcom_dump_dbg_regs(struct ufs_hba *hba)
- 
- 	/* ensure below dumps occur only in task context due to blocking calls. */
- 	if (in_task()) {
--		/* Dump MCQ Host Vendor Specific Registers */
-+		/* dump MCQ Host Vendor Specific Registers */
- 		if (hba->mcq_enabled)
- 			ufs_qcom_dump_mcq_hci_regs(hba);
-+
-+		/* sleep a bit intermittently as we are dumping too much data */
-+		ufshcd_dump_regs(hba, UFS_TEST_BUS, 4, "UFS_TEST_BUS ");
-+		usleep_range(1000, 1100);
-+		ufs_qcom_dump_testbus(hba);
- 	}
- }
- 
+The whole series is also available at github:
+https://github.com/LuBaolu/intel-iommu/commits/iommu_no_feat-v4
+
+Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+
+Change log:
+v4:
+ - Refined arm_smmu_disable_iopf() to improve code clarity.
+ - Separate patches for vt-d refactoring have been merged.
+ - All patches are based on the latest iommu/next branch to prevent
+   potential merge conflicts.
+
+v3: https://lore.kernel.org/linux-iommu/20250228092631.3425464-1-baolu.lu@linux.intel.com/
+ - Series has been tested by Zhangfei Gao with arm-smmu-v3 driver.
+ - Refined some code according to Kevin's suggestions.
+ - No functional change.
+
+v2: https://lore.kernel.org/linux-iommu/20250224051627.2956304-1-baolu.lu@linux.intel.com/
+ - Fix removing wrong nesting master_domain in
+   arm_smmu_remove_master_domain().
+ - Fix iopf enable/disable in iommufd mock driver for domain
+   replacement.
+
+v1: https://lore.kernel.org/linux-iommu/20250214061104.1959525-1-baolu.lu@linux.intel.com/
+
+Jason Gunthorpe (2):
+  iommu/arm-smmu-v3: Put iopf enablement in the domain attach path
+  iommu: Remove IOMMU_DEV_FEAT_SVA
+
+Lu Baolu (6):
+  iommu/vt-d: Put iopf enablement in domain attach path
+  iommufd/selftest: Put iopf enablement in domain attach path
+  dmaengine: idxd: Remove unnecessary IOMMU_DEV_FEAT_IOPF
+  uacce: Remove unnecessary IOMMU_DEV_FEAT_IOPF
+  iommufd: Remove unnecessary IOMMU_DEV_FEAT_IOPF
+  iommu: Remove iommu_dev_enable/disable_feature()
+
+ drivers/accel/amdxdna/aie2_pci.c              |  13 +-
+ drivers/dma/idxd/init.c                       |  43 +-----
+ drivers/iommu/amd/iommu.c                     |  34 -----
+ .../iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c   |  86 +----------
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 137 ++++++++++--------
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  39 +----
+ drivers/iommu/intel/iommu.c                   |  71 +++++----
+ drivers/iommu/intel/iommu.h                   |  33 +++++
+ drivers/iommu/intel/nested.c                  |  16 +-
+ drivers/iommu/intel/svm.c                     |   9 +-
+ drivers/iommu/iommu-sva.c                     |   3 -
+ drivers/iommu/iommu.c                         |  32 ----
+ drivers/iommu/iommufd/device.c                |  64 ++++----
+ drivers/iommu/iommufd/fault.c                 |  45 ------
+ drivers/iommu/iommufd/iommufd_private.h       |   5 -
+ drivers/iommu/iommufd/selftest.c              |  64 ++++++--
+ drivers/misc/uacce/uacce.c                    |  40 -----
+ include/linux/iommu.h                         |  35 -----
+ 18 files changed, 272 insertions(+), 497 deletions(-)
+
 -- 
-2.17.1
+2.43.0
 
 
