@@ -1,138 +1,116 @@
-Return-Path: <linux-kernel+bounces-559027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70ADFA5EE86
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:53:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF696A5EE8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:53:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D50519C0420
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:53:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 400D016EBFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC2F262D16;
-	Thu, 13 Mar 2025 08:52:57 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7701C262D2B;
+	Thu, 13 Mar 2025 08:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kIgV65KG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412C21EFF98
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2EF26137F;
+	Thu, 13 Mar 2025 08:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741855977; cv=none; b=C/n6upju/WG1Zjqv51i19c6cJlLg+MbatFtbPuUkhp+5uKbYV5blneGeUlzCWfxYkngt4rQrk9MYB5CcFDgQRWh+6aYyglUBsV2PDyPkrG6CfrqqgkThVgscIaoJaS8Qr0KSdVbSsuVYHyYrlAg/qcp97R5pfMqmY0CMyIy+E2s=
+	t=1741856030; cv=none; b=H0nSl28WRu8YDk6u0+/LLcJ/MIexTWnEROLL/HfFqx+dsouB/uwT5Z6j7wZqpuFyKNyAg8MFiJMpO2TpRpQbXar1ZufK3mcAt16BJRAB2von881Mp0USEd6cON01n0a97UdVjkQ0qVdztmP4j9JMhORtoBxPlkYa6ix8LgTjN7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741855977; c=relaxed/simple;
-	bh=Aj37OrVDyo0VAV9ndPxxRLEZSEuDHPou2KW6wZslDK4=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=RoEwJ29c4MrE24UzxlFvuUx1YTuaPd/x+14ZVgvLXkkeI1A44naVB3ZQ9LjMjMDGlTPF7574aLvLsGIAcZ9IdRRFLRB9PbDmLNkUbF9b4SS85sNZLRUo3XSkk4Tz07rgwFFWmMIRPJ0+tR045su0cclN1gUF/lnk1lxwwsNDo+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4ZD1V94qrSz4x5pd;
-	Thu, 13 Mar 2025 16:52:49 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl1.zte.com.cn with SMTP id 52D8qRE5086854;
-	Thu, 13 Mar 2025 16:52:27 +0800 (+08)
-	(envelope-from ye.xingchen@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid31;
-	Thu, 13 Mar 2025 16:52:30 +0800 (CST)
-Date: Thu, 13 Mar 2025 16:52:30 +0800 (CST)
-X-Zmail-TransId: 2af967d29cceffffffff9e4-c826e
-X-Mailer: Zmail v1.0
-Message-ID: <20250313165230561l6bijg5xALudLL3FN303g@zte.com.cn>
+	s=arc-20240116; t=1741856030; c=relaxed/simple;
+	bh=DGDOMC0GYV/bil6LMIxE+mGIXtVxjPcXlE2MjWiHu90=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FMy5s9s3RmQYliyOtJhFw1j2uVSsJiFi2zATuB1fsPw300+azYOYeEkYV9Cp+37DONGesSTWHXg7g8OHenGE/nikptsrjP9fWXHVMAsklMAyFvZHY3uQpNF9bQ2NTSJH89kGYSCEbmUy+zL+YAjk4XV54LJ2GhiZRC1BVWWl17E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kIgV65KG; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741856029; x=1773392029;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=DGDOMC0GYV/bil6LMIxE+mGIXtVxjPcXlE2MjWiHu90=;
+  b=kIgV65KGQTflCCByfcbCJ/dfmtXfnizMG7yf58LyXpOYiIB1nF1e/pT/
+   nlCoDwxwUbqRopyB6hNBDJiOcJtBhNrCBLn+LlyntaE1L7ci2sjal/y8I
+   kWTAZpLkD9NDtycU6WbVjbG/C+tEHDgYcbZ+pD2CQxYWlQJ1ycaeIm3qN
+   lta6MhPv2jBAFBUvFtuuyuRIV2TXzAxMVPvdXsE36P4F/eVos+ZVco2X/
+   ZNiY9Sfp1yak8eDxH+d7/YGInJpVVNsAjpzVnKjt3z4BYLic1uvkXi71M
+   W0J+UqM3JnitqeicY8kqHZVSvQjFh1u2ezGL8Ql26tNbz0Rbsq+X78TlC
+   Q==;
+X-CSE-ConnectionGUID: 0B2Pt4jqR8ifzwAi9FeWRw==
+X-CSE-MsgGUID: xLZG71HhQWKRcj8ejMGC1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42214077"
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="42214077"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 01:53:48 -0700
+X-CSE-ConnectionGUID: VDe/2QC7Ssi6NJarAyXqZQ==
+X-CSE-MsgGUID: BCOFWHxJSveIQzI8eeT0Tw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="121389107"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa010.fm.intel.com with ESMTP; 13 Mar 2025 01:53:46 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 7218A1FC; Thu, 13 Mar 2025 10:53:45 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Paul Moore <paul@paul-moore.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Eric Paris <eparis@redhat.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 1/1] audit: Mark audit_log_vformat() with __printf() attribute
+Date: Thu, 13 Mar 2025 10:52:39 +0200
+Message-ID: <20250313085343.241623-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <ye.xingchen@zte.com.cn>
-To: <brauner@kernel.org>
-Cc: <jeff.johnson@oss.qualcomm.com>, <jack@suse.cz>,
-        <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIXSBubHM6IEZpeCB1dGYxNnNfdG9fdXRmOHMgcGFyYW1ldGVyIHR5cGUgaW4gZGVjbGFyYXRpb24gYW5kwqBkZWZpbml0aW9u?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 52D8qRE5086854
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D29CE1.000/4ZD1V94qrSz4x5pd
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: YeXingchen <ye.xingchen@zte.com.cn>
+audit_log_vformat() is using printf() type of format, and GCC compiler
+(Debian 14.2.0-17) is not happy about this:
 
-The declaration of utf16s_to_utf8s in the header file uses
-different parameter type with definition.
+kernel/audit.c:1978:9: error: function ‘audit_log_vformat’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
+kernel/audit.c:1987:17: error: function ‘audit_log_vformat’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
 
-This patch aligns the parameter name in the definition with the
-declaration,changing maxout to maxlen, inlen to len to ensure consistency.
+Fix the compilation errors (`make W=1` when CONFIG_WERROR=y, which is default)
+by adding __printf() attribute.
 
-Signed-off-by: YeXingchen <ye.xingchen@zte.com.cn>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- fs/nls/nls_base.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/fs/nls/nls_base.c b/fs/nls/nls_base.c
-index 18d597e49a19..09b6dbc599c9 100644
---- a/fs/nls/nls_base.c
-+++ b/fs/nls/nls_base.c
-@@ -183,27 +183,27 @@ static inline unsigned long get_utf16(unsigned c, enum utf16_endian endian)
- 	}
- }
+v2: added necessary technical information to the commit message (Paul)
 
--int utf16s_to_utf8s(const wchar_t *pwcs, int inlen, enum utf16_endian endian,
--		u8 *s, int maxout)
-+int utf16s_to_utf8s(const wchar_t *pwcs, int len, enum utf16_endian endian,
-+		u8 *s, int maxlen)
+ kernel/audit.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/audit.c b/kernel/audit.c
+index 5f5bf85bcc90..f365e1bbeac6 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -1956,8 +1956,8 @@ static inline int audit_expand(struct audit_buffer *ab, int extra)
+  * will be called a second time.  Currently, we assume that a printk
+  * can't format message larger than 1024 bytes, so we don't either.
+  */
+-static void audit_log_vformat(struct audit_buffer *ab, const char *fmt,
+-			      va_list args)
++static __printf(2, 0)
++void audit_log_vformat(struct audit_buffer *ab, const char *fmt, va_list args)
  {
- 	u8 *op;
- 	int size;
- 	unsigned long u, v;
-
- 	op = s;
--	while (inlen > 0 && maxout > 0) {
-+	while (len > 0 && maxlen > 0) {
- 		u = get_utf16(*pwcs, endian);
- 		if (!u)
- 			break;
- 		pwcs++;
--		inlen--;
-+		len--;
- 		if (u > 0x7f) {
- 			if ((u & SURROGATE_MASK) == SURROGATE_PAIR) {
- 				if (u & SURROGATE_LOW) {
- 					/* Ignore character and move on */
- 					continue;
- 				}
--				if (inlen <= 0)
-+				if (len <= 0)
- 					break;
- 				v = get_utf16(*pwcs, endian);
- 				if ((v & SURROGATE_MASK) != SURROGATE_PAIR ||
-@@ -214,18 +214,18 @@ int utf16s_to_utf8s(const wchar_t *pwcs, int inlen, enum utf16_endian endian,
- 				u = PLANE_SIZE + ((u & SURROGATE_BITS) << 10)
- 						+ (v & SURROGATE_BITS);
- 				pwcs++;
--				inlen--;
-+				len--;
- 			}
--			size = utf32_to_utf8(u, op, maxout);
-+			size = utf32_to_utf8(u, op, maxlen);
- 			if (size == -1) {
- 				/* Ignore character and move on */
- 			} else {
- 				op += size;
--				maxout -= size;
-+				maxlen -= size;
- 			}
- 		} else {
- 			*op++ = (u8) u;
--			maxout--;
-+			maxlen--;
- 		}
- 	}
- 	return op - s;
+ 	int len, avail;
+ 	struct sk_buff *skb;
 -- 
-2.25.1
+2.47.2
+
 
