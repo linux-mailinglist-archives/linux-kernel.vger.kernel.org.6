@@ -1,234 +1,366 @@
-Return-Path: <linux-kernel+bounces-558690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2A74A5E980
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:42:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30668A5E984
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:47:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B79367AB4E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:41:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D052E189CFBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BB34D8C8;
-	Thu, 13 Mar 2025 01:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0C341760;
+	Thu, 13 Mar 2025 01:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ClB2dS3T"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S0sxH77Z"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9AF2E3391;
-	Thu, 13 Mar 2025 01:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EEF33FFD
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 01:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741830124; cv=none; b=KT+YGaFVwKclFYVmXp5fsHMry6BF6Su0czpVIhpMxoaO44PlILd6hD1a0VyyAor2G7hylim15RQ62LubdgQFa9Iu73gHe8TvB+UA+m9mbcjTV534xUy5slL2sK0bpxkyouKnXpmSSFI/QV4KwjllfZCYzeU7YhjV/2u+0AqWudk=
+	t=1741830430; cv=none; b=RVDfUghsRhXjTnS1GZCk+EA8oxmCwc11W2bvEVJl3/lubnSx0anr6sHoPdSYqRVD++TpasXV6SjkrNGyfXg6BwGBGIRpvkqLow6lGgix2axWO0YXqtzAcCv89vqsUgRG51ub5T4YOGZ7l10GSn4RphvqMUV7sRLoWvkWj5jvcPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741830124; c=relaxed/simple;
-	bh=OXsK9DbHWXnSdMtU5dlwh0THUxGYDE82UwGH7j3euaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eIXnb4KkjkgsTPnzftyqpeuirrotOl2gQfaDsjlhvpBzaznOGXeIbWkE56SLAdf/STqSue8mGAMimS1j9lUl0R2DfIwoH6q/h2R4rxXevkGSXC5W4p1Wwdhh84I+FBXust5saE1BxT47eqmyaX7CmJr62OlwsAoM1uWwMC1eNWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ClB2dS3T; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D0m9so003543;
-	Thu, 13 Mar 2025 01:41:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	M3WuqxTgoKmIQDpMl5O5+Mc9CBvQKuAJmwCls7/LPMM=; b=ClB2dS3TcoIcPPB5
-	vzFpnsqXHpMfVn0gs3FWgg+RBzcOcEsDKkfjtvW99la0UGmL2ov/NOWM53sPi775
-	9bRiVWkv33XMZcFGJOUMknpL/BNT0YkpzUZ8nPVAb6KJa9X9ABBeEr4DxoWOgAVD
-	TyX3DqmU8tMWvTJWwxlqcT6UmfHtykcuqXDhffaPP7YF61YzSPf+GuhuXxcWAnQI
-	EN4Le2owD/0rSJVE7yUZyMeQqX3e/SunVqIcVmGOVXi3IyD/UoZSt3XK/W6qPo7w
-	Xs/qfji0kL5nmAj2Y3g2vS/7w8lQkKVJE4LTTRDqzYi+EgKcbwE6HfFvh/rWnFmr
-	w5Q18g==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45b96ya19m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 01:41:56 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D1fudv015335
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 01:41:56 GMT
-Received: from [10.239.29.24] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Mar
- 2025 18:41:54 -0700
-Message-ID: <8251fc50-5df4-4a3f-91bf-40c09c33cf6e@quicinc.com>
-Date: Thu, 13 Mar 2025 09:41:51 +0800
+	s=arc-20240116; t=1741830430; c=relaxed/simple;
+	bh=eJgweNseQCI2D9GEAWm0wbnjfc9PoRMUEdQhKolkdxc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A8TZIQPInD1dILZkUIL+b5Xm3HPEZJOhVXbLcuG540gX9A1+Q/Wg6pAoU78+t8QHO//OUR1MeYGtBOcjlJyL+byZ+ao9USjplwhaajcegXaQrp9LAcrX6ivSsqlIXujgfzw3Ch4v1cWNk9dlbT3/KB45q3NydzhwbTQTrOQyS6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S0sxH77Z; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54991d85f99so1618940e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 18:47:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741830426; x=1742435226; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BidaDh8d3foyw4r7prRPoY79Prlxtd8J3kdtqZjB7uc=;
+        b=S0sxH77Z29Ur12j1DotXQGtFHYaVwsarFPZXHBHDy3F1BaEGs7QMPzwOpCyYiLAhnY
+         LBtY5iKLxmoRAhdKAhxq0UKks5P/6X6m9+vWiAYH3BmXditbcQTS90XsEbuDnFuvws7n
+         Z+q+FRw/jjg1yc+T+EXZUPSkom8BD2w5eFofTHaWqF/Zj2bKKDuAjviTqMVEMyEQ4XuK
+         5Hn4D2vt+Bw/QGNMBR2UYvCepUmgw5StzyPsiAI2y4YQ65U6lDPFijcX/WPPdTp3gC7E
+         heZzrsugFoM5+8FSylfRzyVQo2buDT3F0X4hfpTfKu7w7aoYkP0OAhanGqywYmZnFxqT
+         Y/Ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741830426; x=1742435226;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BidaDh8d3foyw4r7prRPoY79Prlxtd8J3kdtqZjB7uc=;
+        b=XUxbv/cvaWB7zATbZH/LWQI/ABLBtzD+pbS9EMpoQhr/OttMed7DF4Z7NN+K4tVquz
+         QvoRXqiznAJVdg1WPmJ+OMnGL3JmoJh9ZTpKALckuyFCTFacCPvT22YdPpebWG512RuL
+         iva+SBWZxAJ8hH6W7xl/3sVb9JBFXcT/Y+wpSYo8Veq8nvyNn6CaYM/vvyASxP6DGX1u
+         xscQLzccGA9E6dEbBSFpiDR3GU8hrH9seqPPPub+ESckIfzeysVgfnKqj7udP6Dadihe
+         IyfX/+RBSUoISkfzMn2wSU3H2uhrbQgQDJQdaujepUIJQqTdKtWBtu8uNOfzSDsml7JS
+         CLrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrPxq515tA95nAOxuz/ZiphpHMcA1MdFC3R38Zk1zeh33cJzT182dY328WIA0X/vJz9oG6hutUwz2or0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSEEfo+kljKK+OdN/17zEUvMrWWjbtbdYFIelnGenFXtRcK8dJ
+	/XnJhySi2kiGBh54Flzg8HHEY+vB9p5YTcUWXsvqaU1CNRG3uCtHMTfrKhgHX4YfZx/65ZTpLkC
+	hImGmGsv6apItSjgJS4HxdUeQMQDzdxCAyo7c
+X-Gm-Gg: ASbGncvYtlegdUwch8nUGIwoqn2PqISJMZH5AMpL1JzX6ggHshdRC+3dtRrGRVUnrgS
+	eVSa7XJFjvbpiYEE5cklVZzMdPOxo2QdshsmIlxNdUzYkETTfHif/l9bDGHiIxzfeoRLDtkcRy1
+	8m0IsDRVdal1PF/cHqtSbMmDeLnvHUn6brIilmDVgyFbtfGXcbc2XC
+X-Google-Smtp-Source: AGHT+IGXjcqPog3YLZd3XA456d1/2r7M/uWgjDVDcwwZwKfq7btJjUoFXQkp27tOQqU33e0tZa63RGwWjJfKbaHp+0g=
+X-Received: by 2002:a05:6512:3990:b0:549:68a7:177c with SMTP id
+ 2adb3069b0e04-549ba3d563fmr238704e87.7.1741830425813; Wed, 12 Mar 2025
+ 18:47:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
- length
-To: Johan Hovold <johan@kernel.org>
-CC: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, <ath11k@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <johan+linaro@kernel.org>
-References: <20250310010217.3845141-1-quic_miaoqing@quicinc.com>
- <20250310010217.3845141-3-quic_miaoqing@quicinc.com>
- <Z866cCj8SWyZjCoP@hovoldconsulting.com>
- <7b1c5e40-b11d-421b-8c8b-117a2a53298b@quicinc.com>
- <c0cdcaf2-655b-4d22-a949-1519c552e6a4@oss.qualcomm.com>
- <72d95d77-674e-4ae7-83b0-ab58748b8251@quicinc.com>
- <Z9G5zEOcTdGKm7Ei@hovoldconsulting.com>
-Content-Language: en-US
-From: Miaoqing Pan <quic_miaoqing@quicinc.com>
-In-Reply-To: <Z9G5zEOcTdGKm7Ei@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: pWY8Qf7XDFYmi1Uu1LG3_sLpgHo3SVBs
-X-Authority-Analysis: v=2.4 cv=I+llRMgg c=1 sm=1 tr=0 ts=67d237e5 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=POYSu9ou3bP9OeXHj2YA:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: pWY8Qf7XDFYmi1Uu1LG3_sLpgHo3SVBs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_01,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- lowpriorityscore=0 adultscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 spamscore=0 malwarescore=0 mlxscore=0 suspectscore=0
- phishscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130011
+References: <13709135.uLZWGnKmhe@rjwysocki.net> <1819312.VLH7GnMWUR@rjwysocki.net>
+In-Reply-To: <1819312.VLH7GnMWUR@rjwysocki.net>
+From: Saravana Kannan <saravanak@google.com>
+Date: Wed, 12 Mar 2025 18:46:29 -0700
+X-Gm-Features: AQ5f1JoxP_uDsyltUX6ryNBbVmg9p4_BA7TrFqAr8M2uTlZczo-atwRYtkMjfxA
+Message-ID: <CAGETcx86f+8cGBxMixgoOy2fwgtEO_ysN1q-h9PACxdRjRiFPw@mail.gmail.com>
+Subject: Re: [PATCH v1 3/5] PM: sleep: Resume children right after resuming
+ the parent
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Sorry for the delay, I wanted to double, triple, multiple check my
+replies to make sure I didn't get it wrong. I hope I didn't.
 
-
-On 3/13/2025 12:43 AM, Johan Hovold wrote:
-> On Wed, Mar 12, 2025 at 09:11:45AM +0800, Miaoqing Pan wrote:
->> On 3/11/2025 11:20 PM, Jeff Johnson wrote:
->>> On 3/11/2025 1:29 AM, Miaoqing Pan wrote:
->>>> On 3/10/2025 6:09 PM, Johan Hovold wrote:
->>>>> I'm still waiting for feedback from one user that can reproduce the
->>>>> ring-buffer corruption very easily, but another user mentioned seeing
->>>>> multiple zero-length descriptor warnings over the weekend when running
->>>>> with this patch:
->>>>>
->>>>> 	ath11k_pci 0006:01:00.0: rxed invalid length (nbytes 0, max 2048)
->>>>>
->>>>> Are there ever any valid reasons for seeing a zero-length descriptor
->>>>> (i.e. unrelated to the race at hand)? IIUC the warning would only be
->>>>> printed when processing such descriptors a second time (i.e. when
->>>>> is_desc_len0 is set).
->>>>
->>>> That's exactly the logic, only can see the warning in a second time. For
->>>> the first time, ath12k_ce_completed_recv_next() returns '-EIO'.
->>>
->>> That didn't answer Johan's first question:
->>> Are there ever any valid reasons for seeing a zero-length descriptor?
->>
->> The events currently observed are all firmware logs. The discarded
->> packets will not affect normal operation. I will adjust the logging to
->> debug level.
-> 
-> That still does not answer the question whether there are ever any valid
-> reasons for seeing zero-length descriptors. I assume there are none?
-> 
->>> We have an issue that there is a race condition where hardware updates the
->>> pointer before it has filled all the data. The current solution is just to
->>> read the data a second time. But if that second read also occurs before
->>> hardware has updated the data, then the issue isn't fixed.
->>   
->> Thanks for the addition.
->>
->>> So should there be some forced delay before we read a second time?
->>> Or should we attempt to read more times?
->>
->> The initial fix was to keep waiting for the data to be ready. The
->> observed phenomenon is that when the second read fails, subsequent reads
->> will continue to fail until the firmware's CE2 ring is full and triggers
->> an assert after timeout. However, this situation is relatively rare, and
->> in most cases, the second read will succeed. Therefore, adding a delay
->> or multiple read attempts is not useful.
-> 
-> The proposed fix is broken since ath11k_hal_ce_dst_status_get_length()
-> not just reads the length but also sets it to zero so that the updated
-> length may indeed never be seen.
-> 
-Good point!
-
-> I've taken a closer look at the driver and it seems like we're missing a
-> read barrier to make sure that the updated descriptor is not read until
-> after the head pointer.
-> 
-> Miaoqing, could you try the below patch with your reproducer and see if
-> it is enough to fix the corruption?
-> 
-Sure, the stress test is running.
-
-> If so I can resend with the warning removed and include a corresponding
-> fix for ath12k (it looks like there are further places where barriers
-> are missing too).
-> 
-> Johan
-> 
-> 
-If the DMA read barrier works, do you think my submitted patch series is 
-still needed? Because the error handling is incorrect.
-
-
->  From 656dbd0894741445aeb16ee8357e6fef51b6084c Mon Sep 17 00:00:00 2001
-> From: Johan Hovold <johan+linaro@kernel.org>
-> Date: Wed, 12 Mar 2025 16:49:20 +0100
-> Subject: [PATCH] wifi: ath11k: fix ring-buffer corruption
-> 
-> Users of the Lenovo ThinkPad X13s have reported that Wi-Fi sometimes
-> breaks and the log fills up with errors like:
-> 
-> 	ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1484, expected 1492
-> 	ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
-> 
-> which based on a quick look at the driver seemed to indicate some kind
-> of ring-buffer corruption.
-> 
-> Miaoqing Pan tracked it down to the host seeing the updated destination
-> ring head pointer before the updated descriptor, and the error handling
-> for that in turn leaves the ring buffer in an inconsistent state.
-> 
-> Add the missing the read barrier to make sure that the descriptor is
-> read after the head pointer to address the root cause of the corruption.
-> 
-> The error handling can be fixed separately in case there can ever be
-> actual zero-length descriptors.
-> 
-> FIXME: remove WARN_ON_ONCE() added for verification purposes
-> 
-> Tested-on: WCN6855 hw2.1 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
-> 
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218623
-> Link: https://lore.kernel.org/20250310010217.3845141-3-quic_miaoqing@quicinc.com
-> Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>
-> Cc: stable@vger.kernel.org	# 5.6
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+On Tue, Feb 25, 2025 at 8:46=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.ne=
+t> wrote:
+>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> According to [1], the handling of device suspend and resume, and
+> particularly the latter, involves unnecessary overhead related to
+> starting new async work items for devices that cannot make progress
+> right away because they have to wait for other devices.
+>
+> To reduce this problem in the resume path, use the observation that
+> starting the async resume of the children of a device after resuming
+> the parent is likely to produce less scheduling and memory management
+> noise than starting it upfront while at the same time it should not
+> increase the resume duration substantially.
+>
+> Accordingly, modify the code to start the async resume of the device's
+> children when the processing of the parent has been completed in each
+> stage of device resume and only start async resume upfront for devices
+> without parents.
+>
+> Also make it check if a given device can be resumed asynchronously
+> before starting the synchronous resume of it in case it will have to
+> wait for another that is already resuming asynchronously.
+>
+> In addition to making the async resume of devices more friendly to
+> systems with relatively less computing resources, this change is also
+> preliminary for analogous changes in the suspend path.
+>
+> On the systems where it has been tested, this change by itself does
+> not affect the overall system resume duration in a measurable way.
+>
+> Link: https://lore.kernel.org/linux-pm/20241114220921.2529905-1-saravanak=
+@google.com/ [1]
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > ---
->   drivers/net/wireless/ath/ath11k/ce.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/net/wireless/ath/ath11k/ce.c b/drivers/net/wireless/ath/ath11k/ce.c
-> index e66e86bdec20..423b970e288c 100644
-> --- a/drivers/net/wireless/ath/ath11k/ce.c
-> +++ b/drivers/net/wireless/ath/ath11k/ce.c
-> @@ -393,8 +393,12 @@ static int ath11k_ce_completed_recv_next(struct ath11k_ce_pipe *pipe,
->   		goto err;
->   	}
->   
-> +	/* Make sure descriptor is read after the head pointer. */
-> +	dma_rmb();
+>  drivers/base/power/main.c |   72 +++++++++++++++++++++++++++++++++++++++=
++------
+>  1 file changed, 63 insertions(+), 9 deletions(-)
+>
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -621,12 +621,41 @@
+>         return false;
+>  }
+>
+> +static int dpm_async_unless_in_progress(struct device *dev, void *fn)
+> +{
+> +       async_func_t func =3D fn;
 > +
->   	*nbytes = ath11k_hal_ce_dst_status_get_length(desc);
->   	if (*nbytes == 0) {
-> +		WARN_ON_ONCE(1);	// FIXME: remove
->   		ret = -EIO;
->   		goto err;
->   	}
+> +       if (!dev->power.work_in_progress)
+> +               dpm_async_fn(dev, func);
+> +
+> +       return 0;
+> +}
+> +
+> +static void dpm_async_resume_children(struct device *dev, async_func_t f=
+unc)
+> +{
+> +       mutex_lock(&dpm_list_mtx);
+> +
+> +       /*
+> +        * Start processing "async" children of the device unless it's be=
+en
+> +        * started already for them.
+> +        *
+> +        * This could have been done for the device's "async" consumers t=
+oo, but
+> +        * they either need to wait for their parents or the processing h=
+as
+> +        * already started for them after their parents were processed.
+> +        */
+> +       device_for_each_child(dev, func, dpm_async_unless_in_progress);
 
+Is there a reason you aren't resuming the consumers? Or checking that
+the children won't block on any suppliers?
+
+Not dealing with device links might be ok for systems where there
+aren't a lot of device links, but in DT based systems with fw_devlink
+this patch will not make much of a difference. There'll still be a ton
+of "sleep and try again" issues because of the supplier/consumer
+dependencies. And when you include device links, it's a dependency
+graph and no longer a dependency tree. So things become a bit more
+complicated.
+
+Also, not taking device links isn't consideration when kicking off
+async work is not just about additional sleep/wake cycles, but it'll
+also cause more thread creation because blocked "async" worker threads
+will quickly use up the worker thread pool and more threads need to be
+created.
+
+> +
+> +       mutex_unlock(&dpm_list_mtx);
+> +}
+> +
+>  static void dpm_clear_async_state(struct device *dev)
+>  {
+>         reinit_completion(&dev->power.completion);
+>         dev->power.work_in_progress =3D false;
+>  }
+>
+> +static void async_resume_noirq(void *data, async_cookie_t cookie);
+> +
+>  /**
+>   * device_resume_noirq - Execute a "noirq resume" callback for given dev=
+ice.
+>   * @dev: Device to handle.
+> @@ -710,6 +739,8 @@
+>                 dpm_save_failed_dev(dev_name(dev));
+>                 pm_dev_err(dev, state, async ? " async noirq" : " noirq",=
+ error);
+>         }
+> +
+> +       dpm_async_resume_children(dev, async_resume_noirq);
+
+Similar comment here.
+
+>  }
+>
+>  static void async_resume_noirq(void *data, async_cookie_t cookie)
+> @@ -733,19 +764,24 @@
+>         mutex_lock(&dpm_list_mtx);
+>
+>         /*
+> -        * Trigger the resume of "async" devices upfront so they don't ha=
+ve to
+> -        * wait for the "non-async" ones they don't depend on.
+> +        * Start processing "async" devices without parents upfront so th=
+ey
+> +        * don't wait for the "sync" devices they don't depend on.
+>          */
+>         list_for_each_entry(dev, &dpm_noirq_list, power.entry) {
+>                 dpm_clear_async_state(dev);
+> -               dpm_async_fn(dev, async_resume_noirq);
+> +               if (!dev->parent)
+> +                       dpm_async_fn(dev, async_resume_noirq);
+>         }
+>
+>         while (!list_empty(&dpm_noirq_list)) {
+>                 dev =3D to_device(dpm_noirq_list.next);
+>                 list_move_tail(&dev->power.entry, &dpm_late_early_list);
+>
+> +               dpm_async_unless_in_progress(dev, async_resume_noirq);
+> +
+>                 if (!dev->power.work_in_progress) {
+> +                       dev->power.work_in_progress =3D true;
+> +
+>                         get_device(dev);
+>
+>                         mutex_unlock(&dpm_list_mtx);
+> @@ -781,6 +817,8 @@
+>         device_wakeup_disarm_wake_irqs();
+>  }
+>
+> +static void async_resume_early(void *data, async_cookie_t cookie);
+> +
+>  /**
+>   * device_resume_early - Execute an "early resume" callback for given de=
+vice.
+>   * @dev: Device to handle.
+> @@ -848,6 +886,8 @@
+>                 dpm_save_failed_dev(dev_name(dev));
+>                 pm_dev_err(dev, state, async ? " async early" : " early",=
+ error);
+>         }
+> +
+> +       dpm_async_resume_children(dev, async_resume_early);
+
+Similar comment here.
+
+>  }
+>
+>  static void async_resume_early(void *data, async_cookie_t cookie)
+> @@ -875,19 +915,24 @@
+>         mutex_lock(&dpm_list_mtx);
+>
+>         /*
+> -        * Trigger the resume of "async" devices upfront so they don't ha=
+ve to
+> -        * wait for the "non-async" ones they don't depend on.
+> +        * Start processing "async" devices without parents upfront so th=
+ey
+> +        * don't wait for the "sync" devices they don't depend on.
+>          */
+>         list_for_each_entry(dev, &dpm_late_early_list, power.entry) {
+>                 dpm_clear_async_state(dev);
+
+I initially thought that there could be a race here, but it's not the
+case because you are using the dpm_list_mtx here. However, since you
+are grabbing the dpm_list_mtx lock before you loop through and kick
+off the async threads for child devices it'll cause a lot of
+unnecessary lock contention/waiting. Which is what this series is
+trying to avoid in the first place.
+
+If you take device links into consideration (which we need to do for
+this patch series to improve suspend/resume for DT based systems),
+there is an even higher chance of racing (or more lock contention)
+because multiple threads might attempt to resume the same device.
+Which is why in my patch series, I try to use the device links read
+lock than using the single dpm_list_mtx mutex.
+
+Thanks,
+Saravana
+
+> -               dpm_async_fn(dev, async_resume_early);
+> +               if (!dev->parent)
+> +                       dpm_async_fn(dev, async_resume_early);
+>         }
+>
+>         while (!list_empty(&dpm_late_early_list)) {
+>                 dev =3D to_device(dpm_late_early_list.next);
+>                 list_move_tail(&dev->power.entry, &dpm_suspended_list);
+>
+> +               dpm_async_unless_in_progress(dev, async_resume_early);
+> +
+>                 if (!dev->power.work_in_progress) {
+> +                       dev->power.work_in_progress =3D true;
+> +
+>                         get_device(dev);
+>
+>                         mutex_unlock(&dpm_list_mtx);
+> @@ -919,6 +964,8 @@
+>  }
+>  EXPORT_SYMBOL_GPL(dpm_resume_start);
+>
+> +static void async_resume(void *data, async_cookie_t cookie);
+> +
+>  /**
+>   * device_resume - Execute "resume" callbacks for given device.
+>   * @dev: Device to handle.
+> @@ -1012,6 +1059,8 @@
+>                 dpm_save_failed_dev(dev_name(dev));
+>                 pm_dev_err(dev, state, async ? " async" : "", error);
+>         }
+> +
+> +       dpm_async_resume_children(dev, async_resume);
+>  }
+>
+>  static void async_resume(void *data, async_cookie_t cookie)
+> @@ -1043,19 +1092,24 @@
+>         mutex_lock(&dpm_list_mtx);
+>
+>         /*
+> -        * Trigger the resume of "async" devices upfront so they don't ha=
+ve to
+> -        * wait for the "non-async" ones they don't depend on.
+> +        * Start processing "async" devices without parents upfront so th=
+ey
+> +        * don't wait for the "sync" devices they don't depend on.
+>          */
+>         list_for_each_entry(dev, &dpm_suspended_list, power.entry) {
+>                 dpm_clear_async_state(dev);
+> -               dpm_async_fn(dev, async_resume);
+> +               if (!dev->parent)
+> +                       dpm_async_fn(dev, async_resume);
+>         }
+>
+>         while (!list_empty(&dpm_suspended_list)) {
+>                 dev =3D to_device(dpm_suspended_list.next);
+>                 list_move_tail(&dev->power.entry, &dpm_prepared_list);
+>
+> +               dpm_async_unless_in_progress(dev, async_resume);
+> +
+>                 if (!dev->power.work_in_progress) {
+> +                       dev->power.work_in_progress =3D true;
+> +
+>                         get_device(dev);
+>
+>                         mutex_unlock(&dpm_list_mtx);
+>
+>
+>
 
