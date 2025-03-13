@@ -1,223 +1,225 @@
-Return-Path: <linux-kernel+bounces-560319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F75A60242
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:17:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86FBDA60250
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:19:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87AFB3A777C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 997B9166196
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3E31F5615;
-	Thu, 13 Mar 2025 20:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3001F3FE8;
+	Thu, 13 Mar 2025 20:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="YeyMO4zM"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2101.outbound.protection.outlook.com [40.107.237.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T1c8C+K6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FD11F4E5F;
-	Thu, 13 Mar 2025 20:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.101
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741896771; cv=fail; b=nv31nlj2H8PObW6XaIMgv6NrHHdYJuOSqZ+a7GGI5dooh6mjkKmeF1VyM0ozy3ImAQcZeQmzQVJboPi2lTwXO9EuT21mMXbQ/c/lcL0whsAMMU8CAS8VQHuAOZkZ184Dkee+XLm9PRPyjvLflEzy4LQNWuLT0yvtVQGD7e0CQ+I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741896771; c=relaxed/simple;
-	bh=WKHwBCiWZV3fnmJtgMwrbYtVwzUyreMZLxZzvg1eySc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gWrfkwbeRlalhKxC4Y659zlS4cBCcETIXx32qI8gB/7L1DFw4+G4NCjwjzC/Ji9VL5/KnB2t023giPFG623VshehINFJ58Ox64kMaF93IHy2lok2x3CJiP9B32/W8/PWqlGRBt/XiG7GqCKNUvMYdHdpPhhTJgTnf00Q3wDPF9c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=YeyMO4zM; arc=fail smtp.client-ip=40.107.237.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fUY2c/+c4ZKJpNMHW1TyT+otH1u3bsTb8rXFTJizXr+a4iK6HTqwn2OeOmZnyJ/gxQV7NGcupcGwujeSVwYwH5yekInN2R35L+p7GadDGEKfg3GbTqgxAwJMnnyql/0uKbtwSwM7DU5e+T1BFl8WHYFiVgsaW/tVDfPpa64AVUN4Sh3QXexc1tB7boMtIJrGgn9+IcXCrNNZjncxYXvr+tcCYkKr0D6VO8xq/9O4Jc+bWssshotkjp0s1Fhl6XrKBNhccBKIY2qVibGBXreCqdWjZi/DXOeuiXEkm1hBw+l156HnTq1fQaF+zS2HplYDOxuRKcdFMMVntd/r/3niCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Fgn3g0p4W8XPPR71S1Pvw25BbfbPiD7iIu2EesaX1HA=;
- b=yFNeCUbPAuCBqDou73MoeZkc4V4Odmws1Zrc0VlgW3OhvzTB647PInmMHcxizf6UA78nY0DW5GOot61nRE9focH7QcECTWYRX6VNZ//wkWj0l7o3aWqApMPYdwC79wvh8D+uJH/NHivgo2Uo43ZQ4qnJOXpQLC29AekmcXZS2JCGgvwnGGJX/b8Tu5nexs4iPylOAalOU/ElSmrapQbR1HMb6pe08W1S+mcsSXWk9CHL2xcEa+PKDDAyjKYyJQ/8ZiPr14FLzd1xpeCBg9wyzqPZ7/BBPu21+5jSYL5UBVHpRUGmdgVsOMbgpvd7kBV+4BWLWMKGGIE0+bC4t+gUXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fgn3g0p4W8XPPR71S1Pvw25BbfbPiD7iIu2EesaX1HA=;
- b=YeyMO4zMxaf8+x3SCvNkmOXkUn6u8hRJlB+eTAQgvCbTonmaYkH2b5DhQB1xuJY22ZXXwuCgm3V/hPW7uJJYGDFfMUCpMiGKI+wpCt8DHWBt9PvDWqwwoHXRzN/Cx6t5C3xzuZOLjr7Pf6ihsXwICiQorJcF4TCojom2Ffq3zaw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
- SJ0PR01MB7415.prod.exchangelabs.com (2603:10b6:a03:3d2::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8511.27; Thu, 13 Mar 2025 20:12:47 +0000
-Received: from MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::13ba:df5b:8558:8bba%3]) with mapi id 15.20.8511.026; Thu, 13 Mar 2025
- 20:12:47 +0000
-From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-To: Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Leo Yan <leo.yan@linux.dev>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0653ADDDC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 20:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741897115; cv=none; b=n+p8MegvJl0MirPMU6rAWej/KIKRIG8mdNTGpsYPgTDeGi5ctcFs7cz5fRAUQwtK7zZ8Q73KxmjCZUh1vLoZTFIy5N9+Dj8RmXMgRuRs5D4aa+EUr58xf4m+vxsid1hU0Xu6qDegWnz9z+02IwTCEaGJgDF/Wy9djIugmC7spDE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741897115; c=relaxed/simple;
+	bh=qtWBkPrVTBT9asQjq8csr8AjAImGhr6AZdO7KfBXHLU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SxYzn0Siq+C82taSVNtauifRFfUmWfgObS2QZOIaEoMSMSYjPe32kMjPQ0aQmOp0skmIFnOOF0MkxniatR301k8lF3lQ6b/O5hmHPQ1fTX+9O+wa29BQ8crnXphg8SIWLfOUXovfNWwC9FcwIGVhGFhVef2F84BboJRwK3/VZhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T1c8C+K6; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741897114; x=1773433114;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=qtWBkPrVTBT9asQjq8csr8AjAImGhr6AZdO7KfBXHLU=;
+  b=T1c8C+K6jAeIToQb+IyB97+iCQcj8IxmJZcPpEDIjm7yhmbo6JwznHRl
+   3axurfarxnm4ekUpXslzx8G2nWiHHIY1+kLacve7m/ic8AIrpvOgbjdhM
+   x4yeIiEAmwK6SOcNut7oRAJVctIDWe6ieVJhY410c7as5+xvbwSQTOEJk
+   cgRd8HkzegWuNOpCKVupRdBbAu6TjDDidtJGqa9L9kxPRpokDHts5KhNX
+   Ts9buqT3kscY5bSjFwaeqJ0cOFFLXto9fTURTm2hQb/7yipZZKcGjW/el
+   KM9S4LhtzDvngujSt4e+KN7Z/YJfHJezilRIFh3WvWSYSob6QHeJe6d1l
+   g==;
+X-CSE-ConnectionGUID: kqt070n3QLCV9wVEqPvazg==
+X-CSE-MsgGUID: soHxGPUHRZqVlzsQ0fRGJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="53687809"
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="53687809"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 13:18:33 -0700
+X-CSE-ConnectionGUID: 195l6/kIRu60Lv142oT+fQ==
+X-CSE-MsgGUID: X8yG9rsXR1GfGizSGhiXng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="125944720"
+Received: from sohilmeh.sc.intel.com ([172.25.103.65])
+  by orviesa003.jf.intel.com with ESMTP; 13 Mar 2025 13:18:33 -0700
+From: Sohil Mehta <sohil.mehta@intel.com>
+To: x86@kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Ilkka Koskinen <ilkka@os.amperecomputing.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Xin Li <xin3.li@intel.com>,
+	Alexander Shishkin <alexander.shishkin@intel.com>,
+	Kirill Shutemov <kirill.shutemov@linux.intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] perf vendor events arm64 AmpereOneX: Fix frontend_bound calculation
-Date: Thu, 13 Mar 2025 20:15:59 +0000
-Message-ID: <20250313201559.11332-3-ilkka@os.amperecomputing.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250313201559.11332-1-ilkka@os.amperecomputing.com>
-References: <20250313201559.11332-1-ilkka@os.amperecomputing.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: DS7PR03CA0256.namprd03.prod.outlook.com
- (2603:10b6:5:3b3::21) To MW4PR01MB6228.prod.exchangelabs.com
- (2603:10b6:303:76::7)
+Subject: [PATCH v6] x86/cpufeature: Warn about unmet feature dependencies
+Date: Thu, 13 Mar 2025 20:16:08 +0000
+Message-ID: <20250313201608.3304135-1-sohil.mehta@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|SJ0PR01MB7415:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2c3f3d3-f79b-43bf-3853-08dd626b6c3d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|366016|1800799024|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?rkbovQ/11jt7SsvrVwN0aAm+XVl6Key/GHNGlBifuq9hJT5Da/ejjL6ax/e8?=
- =?us-ascii?Q?hVNPRJkNeizhPqCJuk0skZeL9rCuQpUw5R94gY0h8TW8ewHpRNMPuddH/I+6?=
- =?us-ascii?Q?Lee7euL/h7EYfWhTeCQ+k1zBKwnUK02rWpHL7i7gLLjCpG4VyqdHEpBhAW80?=
- =?us-ascii?Q?qRQls79ybGZVuI8CAXSf0TMu7Hs/tpvNyKR7jI93rUl5XTEpirK1PsDFEpLE?=
- =?us-ascii?Q?Lw2eSWSr7UvD3WA2PrE1A3eEyRM6dcEr18zcvWa6E40zipiOt84IbijB9qVx?=
- =?us-ascii?Q?gTypKEbqnTXZ9gElmRuGj+BafcLGX1bOPWZj3d0s0leYeQhiFkWfxjL3mpYc?=
- =?us-ascii?Q?/za+AnXg1m0wv2ki33B9JkH5DJ4cT6r4GB0FvZ1cohr0sF5oZk3DXYpIWWuc?=
- =?us-ascii?Q?Bq5FqcmRaf9tfs7SCi9xD7cRJ8GB8+mxxNCiLG93XBmgC6owwKLv6MBNe95h?=
- =?us-ascii?Q?nKPDqp152bmX6okqWsnc/CR7/ZYcE6+31lQoNDYE0W7VD9/F+v4klvxHFB5/?=
- =?us-ascii?Q?aJfniBEBlsARfzvS/7SN/OT0j33XAeYpBdvwtofsYQ6Rf3UeWTmdziv8VFgs?=
- =?us-ascii?Q?mpixQcwknv9taT6PlRIt/igOcHCilknx5Z8dcxsWN2ucY1ke14mJ8a6c6meI?=
- =?us-ascii?Q?rzCywU+ywEKS4tILh1QaADwMT++7gvfoixaL8HkrXxkC6HwUjXuN+WQC8VNp?=
- =?us-ascii?Q?nb6oy0nVUpqmr/HRKmmzLa2VJk2T67+72a3+NHnA7XcbQM9bHFYJJMjw/Kw5?=
- =?us-ascii?Q?wgY6CV67GPelE+tOSV8RvtFVZ53wMi3dFmcSLBq+BBXe5GLzXJhZDUyhHs3o?=
- =?us-ascii?Q?beSybySnqkIq11Rkfpr95rp0zf0xkQMiuc+UJkwkX9BgicPfyZ0lEYEEpvMI?=
- =?us-ascii?Q?YdLOjtEsifkrOxQL/oYRBlCN+FdC3++fW1QJyslaQ9BQxSZ9qrBJZLx4nakK?=
- =?us-ascii?Q?LGX3RWKYKqJ7jY+g7pTysWxzY1JT+pRWEdOpNR0ZcPYO9/hb+2VAAunCXKQw?=
- =?us-ascii?Q?9xZkR224i47/CZC4kDmut7W7z55qOHtiqiJem3hR4JBs6N3wZv9MO96hDUDC?=
- =?us-ascii?Q?zj6oWwmald9WUT7YmG+hbmm8yrFwbMc/UBSlaItcdv43Grh+NAwEkaOI7kzQ?=
- =?us-ascii?Q?HiINYmDIt+hSfs9DS/d7KnLT53MiaY2R+04F+V2678D360JzscvSOTFqCza1?=
- =?us-ascii?Q?rt56MyOX4krE1KNHR7MM3o0pG7cKdTVFbwnNCSMbPq3KQLTtk+K3vxwZUtAj?=
- =?us-ascii?Q?rrGlp51CqZkhPLm/yBpG6oFwi3EGL2nEvKc8MmEGnHj4BNm2xh/6WF9boohT?=
- =?us-ascii?Q?ZhIbBfRyTfOxGB+8Wd2NXSA3OGCNCRROwEr3LRAv88QK65/ZZb3CdE3x5/DB?=
- =?us-ascii?Q?dFxxHXjRBTfFJR3txAgoidryxpmWv9Cj+qdcOOM144Y4IkCR2XcYlnXJJ987?=
- =?us-ascii?Q?hYgrMGLMsDs5Q53yX2cHKFTzQLJZRGqQWOpc9YcGMRoZDtVXpbfBKw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(366016)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bpzfhw4WDrLXfUSAXLMbcm8G3xdThehW/ZDvf8B+XCS/Mk33pgGoC2TTZyYt?=
- =?us-ascii?Q?AxcRnQdw34SSbcPiiAeEv2zmLHNtUI7ecAax1hXMfARxkyDNQBpxbwIiHS83?=
- =?us-ascii?Q?6hRN1CT3tK0qIvA1iaVxe3O0ZD++fZpbfRXpv+FeJEshBnWQTbglv6KX63gd?=
- =?us-ascii?Q?9M317IvEUS22ExI6Nwk0xxDQ5CPxMGddBajDkuUeUXu+Oy0BR74a7CmwHbDO?=
- =?us-ascii?Q?hjtjbryeVwJeS4DcrivD2WCVbPXfyCeh+RHJ9DrwnDkA4R9IPvEs02nRm7Wp?=
- =?us-ascii?Q?ovYgpVs80/4cQaUOINy4n+7hW7r83UXvlfRXV0bdUxXm+ays3RyQUZY1CAkF?=
- =?us-ascii?Q?1zNxmBtBwX0rfoi33lZRyHOZhppbu9vB57euS55UPlwd7jKRULjzJKKz6YC/?=
- =?us-ascii?Q?uzKxQmqDRk8Z5HpX5vsYInrdqe+/ALqGA1UKnpMjD5GQzF2TG0SfCGD1ezfi?=
- =?us-ascii?Q?MBLnCTsVqhCnrwaqizbGCgglmDnz/Qno6UkGknME3ctm4w7Z8jnw318f1WBk?=
- =?us-ascii?Q?Dtf5JHNA4FYLylFZbsmesuGWjxxIIx+L+AO+yVaazZISMo9tfDHtm01zvHkF?=
- =?us-ascii?Q?ByS5zDZMsOOy8CqOzVvoILA6NBudgZkW6t1CXpLiHCu2Rxg+sVigFcfnUjBU?=
- =?us-ascii?Q?pw911nln4yI4LXVEZXJ2zyOFYu1XXfX2e1K8le0vW/oeyFeNH8g/kVXRY62F?=
- =?us-ascii?Q?KBAA27njQ18L+7pr8uwTuSvLlVUrRHm/N2ITkiGSZPvaopSi5Zq7UvojL2OM?=
- =?us-ascii?Q?IUJBrJlYhYhIYas/KJ1P/Q4lpC3ClKHyD2UqcYq0oP5sGVlCTeug/CAuCKdn?=
- =?us-ascii?Q?fwv53ye+e0yycVJI2poT3BttH9L4EeG7fehaG0z+NRnOniutx1Ut2O4W5Fqx?=
- =?us-ascii?Q?eSOAfXoaa2mER5tEvdY+T3Fkh/ETL9gC/5V3FNnOsuuY1bI6+rXXmXuAU0ZL?=
- =?us-ascii?Q?dNjagojEo8SeLN0sz+p8+PX7z8X2KVWlKnyDtWN8QoyMpklIXkd+XjNOl4U8?=
- =?us-ascii?Q?Kw9Y4sR6013Bg98hygJ3rQYm7D2bd6pMTr5SW6K6TuMvTXVwHwZ9bYsVWYjP?=
- =?us-ascii?Q?ktkk7jea6SliYt23IKwYNeVnBXh5buw472YQN11aYkY7WQ5l9LdzMD6a8+6G?=
- =?us-ascii?Q?qM8YHiwK8q04YXQGyiR7mpQem0Yoyyd1Ub0GrExP5QYZuGcCRr0k5hNE3Lq6?=
- =?us-ascii?Q?8VJud4JZ/tNT6vzkWHakQgDBcLqZ9GfWWXSd20qsrz8ETXQZJKuNaePsvMTq?=
- =?us-ascii?Q?1cRI4JgLLHB1fuAXEhy40bo3vOYUNnF6wch7pgjyBYmviidK2xsd5cInYk88?=
- =?us-ascii?Q?byDkm4xs2zS2AiGYFTgKxICy4Om0tiOabvnoGTxElKvQXMM57wHH04GoUC2S?=
- =?us-ascii?Q?TdiN2VtzkSsA3THbnnPwMEWOMWc1Aa3shUlkMx1kaU0QpeN+Iyb/1yjgXsOt?=
- =?us-ascii?Q?nk6Mctae+tQCCchpmaUr8LApCYV27fXqnF39sJSM+AUIq+tTxxYoiRAOnAwi?=
- =?us-ascii?Q?oz67XheYaGm50Y2tB7FK1qTcNqL69UEesVIftI81Xh2xvREIQ7P77UC/LfXi?=
- =?us-ascii?Q?YC4NKmRbkzUSB0Hm358No50PqSElQBj6RYBCSqdKlDlnsRnGcFj8C2evWkK6?=
- =?us-ascii?Q?HBxmKMbqS9WN3etv9iHQZcI=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2c3f3d3-f79b-43bf-3853-08dd626b6c3d
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 20:12:47.4719
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: giNXvJ3/OINGJhSyyxlya1PB9VanLrAhVIiV4MpCDgdK21rqQvf8F429NXl5TdskCtS9ojHMfHfkZx4rzw3aPnKcC0X/Ta1o2bmM14Uve6GpHyqVgn444nCnz14Sz8hf
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR01MB7415
+Content-Transfer-Encoding: 8bit
 
-frontend_bound metrics was miscalculated due to different scaling in
-a couple of metrics it depends on. Change the scaling to match with
-AmpereOne.
+Currently, the cpuid_deps[] table is only exercised when a particular
+feature is explicitly disabled and clear_cpu_cap() is called. However,
+some of these listed dependencies might already be missing during boot.
 
-Fixes: 16438b652b46 ("perf vendor events arm64 AmpereOneX: Add core PMU events and metrics")
-Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+These types of errors shouldn't generally happen in production
+environments, but they could sometimes sneak through, especially when
+VMs and Kconfigs are in the mix. Also, the kernel might introduce
+artificial dependencies between unrelated features, such as making LAM
+depend on LASS.
+
+Unexpected failures can occur when the kernel tries to use such
+features. Add a simple boot-time scan of the cpuid_deps[] table to
+detect the missing dependencies. One option is to disable all of such
+features during boot, but that may cause regressions in existing
+systems. For now, just warn about the missing dependencies to create
+awareness.
+
+As a trade-off between spamming the kernel log and keeping track of all
+the features that have been warned about, only warn about the first
+missing dependency. Any subsequent unmet dependency will only be logged
+after the first one has been resolved.
+
+Features are typically represented through unsigned integers within the
+kernel, though some of them have user-friendly names if they are exposed
+via cpuinfo.  Show the friendlier name if available, otherwise display
+the X86_FEATURE_* numerals to make it easier to identify the feature.
+
+Suggested-by: Tony Luck <tony.luck@intel.com>
+Suggested-by: Ingo Molnar <mingo@redhat.com>
+Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
 ---
- .../arch/arm64/ampere/ampereonex/metrics.json          | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+v6: Change name to check_cpufeature_deps() (Ingo)
+    Improve kernel log message (Ingo)
 
-diff --git a/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json b/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
-index c5d1d22bd034..5228f94a793f 100644
---- a/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
-+++ b/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
-@@ -229,19 +229,19 @@
-     },
-     {
-         "MetricName": "slots_lost_misspeculation_fraction",
--        "MetricExpr": "(OP_SPEC - OP_RETIRED) / (CPU_CYCLES * #slots)",
-+        "MetricExpr": "100 * (OP_SPEC - OP_RETIRED) / (CPU_CYCLES * #slots)",
-         "BriefDescription": "Fraction of slots lost due to misspeculation",
-         "DefaultMetricgroupName": "TopdownL1",
-         "MetricGroup": "Default;TopdownL1",
--        "ScaleUnit": "100percent of slots"
-+        "ScaleUnit": "1percent of slots"
-     },
-     {
-         "MetricName": "retired_fraction",
--        "MetricExpr": "OP_RETIRED / (CPU_CYCLES * #slots)",
-+        "MetricExpr": "100 * OP_RETIRED / (CPU_CYCLES * #slots)",
-         "BriefDescription": "Fraction of slots retiring, useful work",
-         "DefaultMetricgroupName": "TopdownL1",
-         "MetricGroup": "Default;TopdownL1",
--        "ScaleUnit": "100percent of slots"
-+        "ScaleUnit": "1percent of slots"
-     },
-     {
-         "MetricName": "backend_core",
-@@ -266,7 +266,7 @@
-     },
-     {
-         "MetricName": "frontend_bandwidth",
--        "MetricExpr": "frontend_bound - frontend_latency",
-+        "MetricExpr": "frontend_bound - 100 * frontend_latency",
-         "BriefDescription": "Fraction of slots the CPU did not dispatch at full bandwidth - able to dispatch partial slots only (1, 2, or 3 uops)",
-         "MetricGroup": "TopdownL2",
-         "ScaleUnit": "1percent of slots"
+v5: https://lore.kernel.org/lkml/20250307000204.3581369-1-sohil.mehta@intel.com/
+    Don't disable features with unmet dependencies (Ingo)
+    Use pr_warn_once() for the warning (Ingo)
+
+v4: Update the log level to pr_info() (Ingo)
+    Update the char buffer size to 16 (0day warning)
+    Dropped Dave's review tag since the code has changed a bit more
+    than usual.
+
+v3: Picked up the review tag.
+    Reworded the commit message.
+
+v2: Use cpu_has() instead of boot_cpu_has() (Sean)
+---
+ arch/x86/include/asm/cpufeature.h |  1 +
+ arch/x86/kernel/cpu/common.c      |  4 ++++
+ arch/x86/kernel/cpu/cpuid-deps.c  | 35 +++++++++++++++++++++++++++++++
+ 3 files changed, 40 insertions(+)
+
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index de1ad09fe8d7..9c9fff960093 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -149,6 +149,7 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+ 
+ extern void setup_clear_cpu_cap(unsigned int bit);
+ extern void clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int bit);
++void check_cpufeature_deps(struct cpuinfo_x86 *c);
+ 
+ #define setup_force_cpu_cap(bit) do {			\
+ 							\
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 7cce91b19fb2..fe9c1c42ff49 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1610,6 +1610,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+ 
+ 		c->cpu_index = 0;
+ 		filter_cpuid_features(c, false);
++		check_cpufeature_deps(c);
+ 
+ 		if (this_cpu->c_bsp_init)
+ 			this_cpu->c_bsp_init(c);
+@@ -1870,6 +1871,9 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ 	/* Filter out anything that depends on CPUID levels we don't have */
+ 	filter_cpuid_features(c, true);
+ 
++	/* Check for unmet dependencies based on the CPUID dependency table */
++	check_cpufeature_deps(c);
++
+ 	/* If the model name is still unset, do table lookup. */
+ 	if (!c->x86_model_id[0]) {
+ 		const char *p;
+diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
+index df838e3bdbe0..a2fbea0be535 100644
+--- a/arch/x86/kernel/cpu/cpuid-deps.c
++++ b/arch/x86/kernel/cpu/cpuid-deps.c
+@@ -147,3 +147,38 @@ void setup_clear_cpu_cap(unsigned int feature)
+ {
+ 	do_clear_cpu_cap(NULL, feature);
+ }
++
++/*
++ * Return the feature "name" if available, otherwise return
++ * the X86_FEATURE_* numerals to make it easier to identify
++ * the feature.
++ */
++static const char *x86_feature_name(unsigned int feature, char *buf)
++{
++	if (x86_cap_flags[feature])
++		return x86_cap_flags[feature];
++
++	snprintf(buf, 16, "%d*32+%2d", feature / 32, feature % 32);
++
++	return buf;
++}
++
++void check_cpufeature_deps(struct cpuinfo_x86 *c)
++{
++	char feature_buf[16], depends_buf[16];
++	const struct cpuid_dep *d;
++
++	for (d = cpuid_deps; d->feature; d++) {
++		if (cpu_has(c, d->feature) && !cpu_has(c, d->depends)) {
++			/*
++			 * Only warn about the first unmet dependency on the
++			 * first CPU where it is encountered to avoid spamming
++			 * the kernel log.
++			 */
++			pr_warn_once("x86 CPU feature dependency check failure: CPU%d has '%s' enabled but '%s' disabled. Kernel might be fine, but no guarantees.\n",
++				     smp_processor_id(),
++				     x86_feature_name(d->feature, feature_buf),
++				     x86_feature_name(d->depends, depends_buf));
++		}
++	}
++}
 -- 
-2.47.0
+2.43.0
 
 
