@@ -1,218 +1,132 @@
-Return-Path: <linux-kernel+bounces-559512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F48A5F4CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:46:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48953A5F4D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:47:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4202019C1650
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:46:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 280E819C2041
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3377266F06;
-	Thu, 13 Mar 2025 12:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA7B2676C1;
+	Thu, 13 Mar 2025 12:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nE8ZX09V";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WTjyPNT/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RTxxhWK+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B716F1FAC50;
-	Thu, 13 Mar 2025 12:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408D442052;
+	Thu, 13 Mar 2025 12:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741869965; cv=none; b=uRhStAJGKFz1HuUfmhPV3fLdyJ2SPNGyPaup8jRfyEyu11NBe0SGqE5HUvi327lJO3Y6BJMJuk4/sZHZyadzJbY8gy4XSuqOQGpL3NcadTlwCkI26eA4GWJzjkQUl2H9t22mfhizcYHRoAfUHyTGwJCy5lTfNuuzk63hSRx+INo=
+	t=1741870020; cv=none; b=idv/BUvzp+tsyfS47ezF+QCOtUAN/Nvgk7tEI1H6E1jwjrfoma2d2M/nzVZBulBKXZn5jHR/rZhtLSwkRWrC5tqJclzPEWB72kskGVaHc+eYtym4GQqNDoQ38QsKNy/3MawsBaN3DR7nI76ac3SxxGG1stzg4PDRfdYVjXd9HwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741869965; c=relaxed/simple;
-	bh=qxndFUZ0995ivdAeUKljJ+YX17oLEJ/3PqcdibEtKtU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=gHhGd0CF+W8LBzYFn0U8eyqKPoQVZBoiWxOU67s1Pb9EHQIBtov9IlhDkAKXIbUTurxe76rOsZDlJnvzPuX3n/KyFZfxBc0JqyIG2yUzlEuu8W3aWjI1KtzD10ugL2UfFpzLOMWQOyoecAIWdLzSvhB0E30feBEMfB8h83hDXkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nE8ZX09V; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WTjyPNT/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 13 Mar 2025 12:45:56 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741869960;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zm3G8ZcMlovMIdNEHfpSYw/oicmU1TDHVBDx0u1h0f8=;
-	b=nE8ZX09Va8CDwFdwTcsrEmXWqSGiUoLdd2FDJsRh67rE5UN9OjaM28IXSDkeJKNwRd0lyU
-	OLKbwD1QaUb+vvbFb/Z4Wj7tsZ7zAPGSNiYnpg71FaZ11OhFujq6J0fHoufynIa5fi4dWS
-	qyyJlDlpkXJLaM5wnErsk86py6gysiOyRFVsBmI3qCt0De1XuGhU0PR2xx587szM5iDdUk
-	sdZ2zGYeVwLZJ730r21DvwbSIPHfp0Y3Inb8bQwElqaacKZNfNVCMBXlf1lvzHB6Jq5hQ8
-	s+ERgyrTDPDNpqPWmvISeI5/7Y5haFitSHffR4lMqlWaGtnnnkT55vFSxKI6hA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741869960;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zm3G8ZcMlovMIdNEHfpSYw/oicmU1TDHVBDx0u1h0f8=;
-	b=WTjyPNT/qRVHRErdGerEOPu7i49yCMuyGaIjyQsdBVop8n/lX7UZ4b/IVFjotI3O2YfEV4
-	hmEGChLDtPopgGDw==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/msi] genirq/msi: Make a few functions static
-Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250309084110.204054172@linutronix.de>
-References: <20250309084110.204054172@linutronix.de>
+	s=arc-20240116; t=1741870020; c=relaxed/simple;
+	bh=VqBuO17pl29b/mkdF8heRUrB5SFzPUHE+ouSwBXTJ5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RmOPVsDtUvMUAhPu0JfQFSBvvgcgM1ngPRcr/gIRm+YBAZ6NF16NOilDYmBVxi+TvAzks7izDhWxISrz7k/V2PsIJ24wq8OECMug04wvP9DCqnek1oRz8PdRyqRcSyBLMr/WEGQuH5OAiGaWI2w76oURWZfS8Dugm5X0jVkujKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RTxxhWK+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFC11C4CEEB;
+	Thu, 13 Mar 2025 12:46:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741870019;
+	bh=VqBuO17pl29b/mkdF8heRUrB5SFzPUHE+ouSwBXTJ5M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RTxxhWK+8hW2wd5kyTgn1URPiP6HIC9f2US+F+12U4PfbasZMRsEVOB0rVUBlr2Aw
+	 fsJXbJkbiOjgWhoqb0/Tsi7mtzmQIXPgSC3uP9v8WWyDFHwFFHQyTWHMI3RRzxoc2m
+	 xVSEdt40Tonk82Ofwgk5qVm9Iq2x5kJZnm7JAf7GAdb/FXM+9nKbRUKAW9G7rI2TQn
+	 WP1c4u7NyynohapNlxjro4TqEuu/OoFezKz27D7PxSktuU6BMZaXFCzsSCCs/xujnd
+	 poc2tlsiHt2wqDv7kD5HXTVqSwrsgMtqUdxP37MUtHtLqu/ZtDBhLjHa3VO0KhUJ/s
+	 w8xt0J13olXgw==
+Date: Thu, 13 Mar 2025 12:46:55 +0000
+From: Lee Jones <lee@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Introduce support for Exynos7870's S2MPU05 PMIC
+ and its regulators
+Message-ID: <20250313124655.GA3616286@google.com>
+References: <20250301-exynos7870-pmic-regulators-v3-0-808d0b47a564@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174186995610.14745.8917886531875410170.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250301-exynos7870-pmic-regulators-v3-0-808d0b47a564@disroot.org>
 
-The following commit has been merged into the irq/msi branch of tip:
+On Sat, 01 Mar 2025, Kaustabh Chakraborty wrote:
 
-Commit-ID:     537625233537179cb2e8293b2c0dc9c989363f41
-Gitweb:        https://git.kernel.org/tip/537625233537179cb2e8293b2c0dc9c989363f41
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Sun, 09 Mar 2025 09:41:42 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 13 Mar 2025 13:35:33 +01:00
+> Exynos7870 devices use Samsung S2MPU05 as its primary PMIC. Add support
+> for it in the existing PMIC driver. Additionally, also add support for
+> voltage regulators which can be accessed and controlled from the PMIC
+> itself.
+> 
+> Patches from mfd and regulator subsystems have been placed together in
+> this series. Here, both patches from both subsystems depend on the other:
+> 1. The regulator driver patch includes a header file which describes the
+>    PMIC registers. This header is introduced in a PMIC patch.
+> 2. The PMIC dt-binding patch references the regulator documentation.
+> 
+> Note that 1. is a build dependency, but 2. is not.
+> 
+> This patch series is a part of Exynos7870 upstreaming.
+> 
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> ---
+> Changes in v3:
+> - Lowercase "ldo" and "buck" in regulator dt-bindings and driver patches.
+> - Add back missing Reviewed-by: tag in [PATCH v2 2/3].
+> - Link to v2: https://lore.kernel.org/r/20250219-exynos7870-pmic-regulators-v2-0-1ea86fb332f7@disroot.org
+> 
+> Changes in v2:
+> - Drop applied [PATCH 2/4].
+> - Added myself as maintainer in s2mpu05-pmic DT docs.
+> - Edited LDO description to explain missing LDOs.
+> - Added all missing regulator control registers intended for CP.
+> - Modify regulator_desc_s2mpu05_ldo* macros to allow choosing register
+>   suffixes (CTRL, CTRL1, etc). Subsequently, drop Reviewed-by: tag in
+>   [PATCH 4/4].
+> - Take over ownership of patches by the co-author, upon their request.
+> - Link to v1: https://lore.kernel.org/r/20250204-exynos7870-pmic-regulators-v1-0-05adad38102c@disroot.org
+> 
+> ---
+> Kaustabh Chakraborty (3):
+>       regulator: dt-bindings: add documentation for s2mpu05-pmic regulators
+>       mfd: sec: add support for S2MPU05 PMIC
+>       regulator: s2mps11: Add support for S2MPU05 regulators
+> 
+>  .../bindings/regulator/samsung,s2mpu05.yaml        |  47 ++++++
+>  drivers/mfd/sec-core.c                             |  12 ++
+>  drivers/mfd/sec-irq.c                              |  34 ++++
+>  drivers/regulator/Kconfig                          |   4 +-
+>  drivers/regulator/s2mps11.c                        |  92 ++++++++++-
+>  include/linux/mfd/samsung/core.h                   |   1 +
+>  include/linux/mfd/samsung/irq.h                    |  44 +++++
+>  include/linux/mfd/samsung/s2mpu05.h                | 183 +++++++++++++++++++++
+>  8 files changed, 414 insertions(+), 3 deletions(-)
+> ---
+> base-commit: be5c7bbb3a64baf884481a1ba0c2f8fb2f93f7c3
+> change-id: 20250203-exynos7870-pmic-regulators-26512b79a29b
+> 
+> Best regards,
+> -- 
+> Kaustabh Chakraborty <kauschluss@disroot.org>
 
-genirq/msi: Make a few functions static
+Applied the set.
 
-None of these functions are used outside of the MSI core.
+I'll send out a pull-request if all goes well with build testing.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250309084110.204054172@linutronix.de
----
- include/linux/msi.h |  5 -----
- kernel/irq/msi.c    | 40 +++++++---------------------------------
- 2 files changed, 7 insertions(+), 38 deletions(-)
+Note to self: ib-mfd-regulator-6.15
 
-diff --git a/include/linux/msi.h b/include/linux/msi.h
-index b10093c..df2dd63 100644
---- a/include/linux/msi.h
-+++ b/include/linux/msi.h
-@@ -81,7 +81,6 @@ struct device_attribute;
- struct irq_domain;
- struct irq_affinity_desc;
- 
--void __get_cached_msi_msg(struct msi_desc *entry, struct msi_msg *msg);
- #ifdef CONFIG_GENERIC_MSI_IRQ
- void get_cached_msi_msg(unsigned int irq, struct msi_msg *msg);
- #else
-@@ -603,8 +602,6 @@ void msi_remove_device_irq_domain(struct device *dev, unsigned int domid);
- bool msi_match_device_irq_domain(struct device *dev, unsigned int domid,
- 				 enum irq_domain_bus_token bus_token);
- 
--int msi_domain_alloc_irqs_range_locked(struct device *dev, unsigned int domid,
--				       unsigned int first, unsigned int last);
- int msi_domain_alloc_irqs_range(struct device *dev, unsigned int domid,
- 				unsigned int first, unsigned int last);
- int msi_domain_alloc_irqs_all_locked(struct device *dev, unsigned int domid, int nirqs);
-@@ -613,8 +610,6 @@ struct msi_map msi_domain_alloc_irq_at(struct device *dev, unsigned int domid, u
- 				       const struct irq_affinity_desc *affdesc,
- 				       union msi_instance_cookie *cookie);
- 
--void msi_domain_free_irqs_range_locked(struct device *dev, unsigned int domid,
--				       unsigned int first, unsigned int last);
- void msi_domain_free_irqs_range(struct device *dev, unsigned int domid,
- 				unsigned int first, unsigned int last);
- void msi_domain_free_irqs_all_locked(struct device *dev, unsigned int domid);
-diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
-index fa92882..57e6421 100644
---- a/kernel/irq/msi.c
-+++ b/kernel/irq/msi.c
-@@ -270,16 +270,11 @@ fail:
- 	return ret;
- }
- 
--void __get_cached_msi_msg(struct msi_desc *entry, struct msi_msg *msg)
--{
--	*msg = entry->msg;
--}
--
- void get_cached_msi_msg(unsigned int irq, struct msi_msg *msg)
- {
- 	struct msi_desc *entry = irq_get_msi_desc(irq);
- 
--	__get_cached_msi_msg(entry, msg);
-+	*msg = entry->msg;
- }
- EXPORT_SYMBOL_GPL(get_cached_msi_msg);
- 
-@@ -1352,21 +1347,17 @@ static int msi_domain_alloc_locked(struct device *dev, struct msi_ctrl *ctrl)
- }
- 
- /**
-- * msi_domain_alloc_irqs_range_locked - Allocate interrupts from a MSI interrupt domain
-+ * msi_domain_alloc_irqs_range - Allocate interrupts from a MSI interrupt domain
-  * @dev:	Pointer to device struct of the device for which the interrupts
-  *		are allocated
-  * @domid:	Id of the interrupt domain to operate on
-  * @first:	First index to allocate (inclusive)
-  * @last:	Last index to allocate (inclusive)
-  *
-- * Must be invoked from within a msi_lock_descs() / msi_unlock_descs()
-- * pair. Use this for MSI irqdomains which implement their own descriptor
-- * allocation/free.
-- *
-  * Return: %0 on success or an error code.
-  */
--int msi_domain_alloc_irqs_range_locked(struct device *dev, unsigned int domid,
--				       unsigned int first, unsigned int last)
-+int msi_domain_alloc_irqs_range(struct device *dev, unsigned int domid,
-+				unsigned int first, unsigned int last)
- {
- 	struct msi_ctrl ctrl = {
- 		.domid	= domid,
-@@ -1374,27 +1365,10 @@ int msi_domain_alloc_irqs_range_locked(struct device *dev, unsigned int domid,
- 		.last	= last,
- 		.nirqs	= last + 1 - first,
- 	};
--
--	return msi_domain_alloc_locked(dev, &ctrl);
--}
--
--/**
-- * msi_domain_alloc_irqs_range - Allocate interrupts from a MSI interrupt domain
-- * @dev:	Pointer to device struct of the device for which the interrupts
-- *		are allocated
-- * @domid:	Id of the interrupt domain to operate on
-- * @first:	First index to allocate (inclusive)
-- * @last:	Last index to allocate (inclusive)
-- *
-- * Return: %0 on success or an error code.
-- */
--int msi_domain_alloc_irqs_range(struct device *dev, unsigned int domid,
--				unsigned int first, unsigned int last)
--{
- 	int ret;
- 
- 	msi_lock_descs(dev);
--	ret = msi_domain_alloc_irqs_range_locked(dev, domid, first, last);
-+	ret = msi_domain_alloc_locked(dev, &ctrl);
- 	msi_unlock_descs(dev);
- 	return ret;
- }
-@@ -1618,8 +1592,8 @@ static void msi_domain_free_locked(struct device *dev, struct msi_ctrl *ctrl)
-  * @first:	First index to free (inclusive)
-  * @last:	Last index to free (inclusive)
-  */
--void msi_domain_free_irqs_range_locked(struct device *dev, unsigned int domid,
--				       unsigned int first, unsigned int last)
-+static void msi_domain_free_irqs_range_locked(struct device *dev, unsigned int domid,
-+					      unsigned int first, unsigned int last)
- {
- 	struct msi_ctrl ctrl = {
- 		.domid	= domid,
+-- 
+Lee Jones [李琼斯]
 
