@@ -1,122 +1,114 @@
-Return-Path: <linux-kernel+bounces-558701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 500E5A5E9A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 03:11:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB81CA5E9B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 03:17:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 858D4177319
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:11:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 829D4189740A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD4F78F59;
-	Thu, 13 Mar 2025 02:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF9686337;
+	Thu, 13 Mar 2025 02:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="K96VwPv+"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N9UZCPCk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9891EEC4;
-	Thu, 13 Mar 2025 02:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02E82E339B;
+	Thu, 13 Mar 2025 02:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741831890; cv=none; b=bbTK54SVYLDQPq387vWqmWs0w+y896UrxePm+Qru3UksFx1ZeobvbevhK/H0ZbvWJ25fijwOGKqvxFqC2MJ2tbBCy9qu7vkD3wgjlpl8FUNLO7Mk/2BdLDpJOn9VywK4nddTd3tK4ynVOe2NyTaufWJMd42nNCdOLom5YP7D3rI=
+	t=1741832255; cv=none; b=jNdjX184Zfhri5Bm/14wrx080AjG+oYi1yynOAtvStbGluTZQ3tN5ICbG24wZ0B6oOSQMFIZ+5Dj2yvaZ/KB0XQYwxj0d8iFqRbgeRi09soMYAP/fBHMsft5RMruSI2ftpH7yVtF/3J+i1N37vWmd/kBL/KgE7JEs2+eLeOygr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741831890; c=relaxed/simple;
-	bh=FpC/vTuwIK5xIUgyQayYXS0BC2eQhbdB7objGTLAYV0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uUYuNHWMuVahEmGD5zdx5DHanpfHt3h3cFcgwobAPaMHusEvCIYM+4Xcj2goCRG2HDU1WW5/kSv5i3b9N+Z68lZTt1z4lf63iu4R9PWO8aY/SUiuRRI6hRd31ATNhjoH6d/ALMDw5n1vmck4IOPct+fBddCFiaRquaWgCYZptoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=K96VwPv+; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741831881;
-	bh=FpC/vTuwIK5xIUgyQayYXS0BC2eQhbdB7objGTLAYV0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K96VwPv+aIwjbtzVY9PiUbxOZEX7YVvF3CNB/wJzqT34HrNwMBSIY6172lqADQjVk
-	 xqGE8H7jqxTScepZPCRIBTlOI5eIVnZ55BOhvUHMMux8yRR2FSSlxtpg1Hnr4h1nHG
-	 7rR+Fpdjnn7k3GVKPKhZ52mYWzfQiaXAHNlMjfrDrx9Lab6deu+lD980tlczpHtm+J
-	 dBhB2uksMY+FsynP2gf+lom+DEzd6bsBwHZcGP9gCUrNLgqKYV2ZUaoxCYjmDRPsyF
-	 MAThuelWlIXJzj6Z3OR1ZGvcbN4pH5xamSzylh6Ca/BK7fBiF63S1OR5/Bb01Xm5oq
-	 YcxJQwdEchJVg==
-Received: from [192.168.50.250] (unknown [171.76.87.92])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5D09C17E1134;
-	Thu, 13 Mar 2025 03:11:18 +0100 (CET)
-Message-ID: <cc9501d1-c779-4728-a609-ce83a73f46f6@collabora.com>
-Date: Thu, 13 Mar 2025 07:40:54 +0530
+	s=arc-20240116; t=1741832255; c=relaxed/simple;
+	bh=ZzBkCbP94JNW8bVsYEmxDasU8VlzdS23ZosxuRc1c5M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dn3cMLDXhsDDOGeZZnL7Boz137yFw4trSY2zM9EaMNDhfHw+uoYU2Ik2hX3Nh/YHXu1xRll2TKRHDbP9vafV3onovrG0xPM/JtSwlN6pGtYCWu/+mb43tMLSaDP+IhigJAy/Nu9rhcAaWNukWYS/7fboGTmenGJUpoqSO/Ap/j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N9UZCPCk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3026AC4CEDD;
+	Thu, 13 Mar 2025 02:17:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741832253;
+	bh=ZzBkCbP94JNW8bVsYEmxDasU8VlzdS23ZosxuRc1c5M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=N9UZCPCk+O+4GMq8iwAgg/fNj7Vd6HM23gpWuIWpzWlK6bNJ75zercWQx9G7oe4hk
+	 HxhJ381d094FdTRSNmQGn+U7xGWXQ7pj8O44W9y7mZKOQ7+IP7srpyY/jTQeJZxJPR
+	 csJSP9WymZ9NzXgWR86MxHprTb7doGHOWYEGMeIFniHXRGBhXMGuomniJkSViQOOSp
+	 61w1NawFkXCI2NRCFJYUu00DmKXHCG5EJuc1YhuFG+6ZSNkNnCW1rhXCndu2ZTVwe6
+	 rpfmiHtYrx5wwbyRlgvb95udktqwF/cjbwRcXYCCoMJKIJFjNZywMzVPS/ZOr4yLNT
+	 nnjli068YI9Aw==
+From: Danilo Krummrich <dakr@kernel.org>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	bhelgaas@google.com,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu
+Cc: linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH 0/4] Improve soundness of bus device abstractions
+Date: Thu, 13 Mar 2025 03:13:30 +0100
+Message-ID: <20250313021550.133041-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/ci: add kms_cursor_legacy@torture-bo to apq8016
- flakes
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Rob Clark
- <robdclark@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- Helen Koike <helen.koike@collabora.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- lumag@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-References: <20241204-cursor_tor_skip-v2-1-f03bcbc4b455@quicinc.com>
-Content-Language: en-US
-From: Vignesh Raman <vignesh.raman@collabora.com>
-In-Reply-To: <20241204-cursor_tor_skip-v2-1-f03bcbc4b455@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Abhinav,
+Currently, when sharing references of bus devices (e.g. ARef<pci::Device>), we
+do not have a way to restrict which functions of a bus device can be called.
 
-On 05/12/24 01:29, Abhinav Kumar wrote:
->  From the jobs [1] and [2] of pipeline [3], its clear that
-> kms_cursor_legacy@torture-bo is most certainly a flake and
-> not a fail for apq8016. Mark the test accordingly to match the results.
-> 
-> [1] : https://gitlab.freedesktop.org/drm/msm/-/jobs/67676481
-> [2] : https://gitlab.freedesktop.org/drm/msm/-/jobs/67677430
-> [3]: https://gitlab.freedesktop.org/drm/msm/-/pipelines/1322770
-> 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> ---
-> Changes in v2:
-> - Fix the failure rate from 100 to 33 as thats the accurate one
-> - Link to v1: https://lore.kernel.org/r/20241204-cursor_tor_skip-v1-1-f5f0bba5df7b@quicinc.com
-> ---
->   drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt | 5 +++++
->   1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt b/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt
-> new file mode 100644
-> index 000000000000..2fb192c92559
-> --- /dev/null
-> +++ b/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt
-> @@ -0,0 +1,5 @@
-> +# Board Name: msm-apq8016-db410c
-> +# Failure Rate: 33
-> +# IGT Version: 1.28-ga73311079
-> +# Linux Version: 6.12.0-rc2
-> +kms_cursor_legacy@torture-bo
+Consequently, it is possible to call all bus device functions concurrently from
+any context. This includes functions, which access fields of the (bus) device,
+which are not protected against concurrent access.
 
-Reviewed-by: Vignesh Raman <vignesh.raman@collabora.com>
+This is improved by applying an execution context to the bus device in form of a
+generic type.
 
-Regards,
-Vignesh
+For instance, the PCI device reference that is passed to probe() has the type
+pci::Device<Core>, which implements all functions that are only allowed to be
+called from bus callbacks.
 
-> 
-> ---
-> base-commit: 798bb342e0416d846cf67f4725a3428f39bfb96b
-> change-id: 20241204-cursor_tor_skip-9d128dd62c4f
-> 
-> Best regards,
+The implementation for the default context (pci::Device) contains all functions
+that are safe to call from any context concurrently.
+
+The context types can be extended as required, e.g. to limit availability  of
+certain (bus) device functions to probe().
+
+A branch containing the patches can be found in [1].
+
+[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/device
+
+Danilo Krummrich (4):
+  rust: pci: use to_result() in enable_device_mem()
+  rust: device: implement device context marker
+  rust: pci: fix unrestricted &mut pci::Device
+  rust: platform: fix unrestricted &mut platform::Device
+
+ drivers/gpu/nova-core/driver.rs      |   4 +-
+ rust/kernel/device.rs                |  18 ++++
+ rust/kernel/pci.rs                   | 131 ++++++++++++++++-----------
+ rust/kernel/platform.rs              |  93 ++++++++++++-------
+ samples/rust/rust_driver_pci.rs      |   8 +-
+ samples/rust/rust_driver_platform.rs |  16 +++-
+ 6 files changed, 177 insertions(+), 93 deletions(-)
+
+
+base-commit: b28786b190d1ae2df5e6a5181ad78c6f226ea3e1
+-- 
+2.48.1
 
 
