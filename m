@@ -1,156 +1,156 @@
-Return-Path: <linux-kernel+bounces-560156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7630A5FED6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:08:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55801A5FEDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:09:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 852BE19C3F8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:08:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F7C4189010F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3521EB193;
-	Thu, 13 Mar 2025 18:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C19C1EEA30;
+	Thu, 13 Mar 2025 18:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JVmEhSdO"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="Ao39xEo/"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85B61DD9AB
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BB91E51EE
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741889288; cv=none; b=uRJbOAka24oXSQ/RsomEAurxuzY4YV2wOswcMlpDVjvBta2Odx+pm5Op/VG0Ll9SYloFPw8mBlSQhxMiUqwSkwA1JOhUKF8u5TNyXPZ/Jrka8WvpYFi8SCzMz++XTZA1cgNyp96vsfnavveXK6BrOFz/b4N6D2VFOVSh9RCrD3M=
+	t=1741889325; cv=none; b=oCCuF3pZQUU6IBlDD2kG3oySqMiM9ciJIT2/GRPug0mqLzExkJxlslRgBV7exUhklXnudb+tTfoQxnjR1w/tvOvaZFlITz5GWQGtR0YVbAwRzwqROooE3GYw+9vwkCbPaftg5hSS3hPQKpM77Izn2hVLU5MFzZ4VQ/WyQBjEtkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741889288; c=relaxed/simple;
-	bh=UkNKXb1bKramp3ecbD5yyn/qkZfQyoZLvEdDU3QZzHw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jp5CU0gTQx7LqatmZ+AQ34cazg7KXt6raVOvc4Gv16X8JEiDx6pH9bL7yoIHKiEzL+triuk4ehzz4IjhwBntjEYG0FXG5+8kpHFOdn6bEZTaFQFXuXqoef+iJWw24MJSHrfR+I5QmetpUyxOhntdAqhxJ+hNa2bY+VUyAFDsXog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JVmEhSdO; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-476693c2cc2so35521cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:08:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741889285; x=1742494085; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MQ3C4fOkeNWFHbw5y8h5vEhHAYC7Z2Nh+a7nGhBzcEA=;
-        b=JVmEhSdOuZ0EGN/kFyDiKUEUx9zOgQUnWqOb4kfI8V5p3tXlPQsfQJDW1PaobEiun7
-         XrQV3es3S2mknWDaUT5C7Gpq1Xuokwd8Hk3oMaPMEXsCwx1b7JKfmIgPQ1OVjUaLbhEh
-         b3YQmVF3L+RGtVpgz6im5drDMUbvWz83JaXcbvY5UFrDCdqh4FCIgD1lWLmkL/IaiM4U
-         Ori10N2WUAkS1hLJH/kGj8ri/kmr78mu51hClwATOd7yrN+ejIoCN9H6W0XKgzYrHTv4
-         /7dmUCnkqMbKOer8dNeE/2+x1rXErN4EIJpRk1fucKIQyuyRp/NKMWLmY7r9TCeluSYc
-         9ldw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741889285; x=1742494085;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MQ3C4fOkeNWFHbw5y8h5vEhHAYC7Z2Nh+a7nGhBzcEA=;
-        b=r5pwvohCCfGyLRuh8KHPrMc7P0zSVybXwOynN3fGnind4MlqIQGebXUh3KImtm1dYQ
-         Yz3GRlIpJ6rUOtmFiBeVEnXsiZQIaBT79PGIt7XHZVkvZ9PGDaFzI3Dq6OA/KiNXsvKi
-         ngjN1cD8btMZE+fte7wXKIZo5JN1GYLjtBIGWD21iUtymQ5/hq+O9llHeh5CK2idKBWi
-         nyKc06WYyDJ+KRw+yM5s5Yusz9QjlvvRpJxKEv6NEaeMEcyiFkz81enuQ3dVr+07ileU
-         p1UrJt191cBKDN/NyQoEHaUo5fygcEkXnhBZUNb8fl2qiGoMhKHO809DsCIoNwChbOaJ
-         ijiw==
-X-Forwarded-Encrypted: i=1; AJvYcCUog3DBh+SyDmVEK5mmh9kmo7z+CD/sRdqLflhcPV6ltZCUUqDFxxVDozQUN83lgb+qaXblOyPMYurRHRo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDOZVr+Qjfa1dmzd9zMWat9T4Pd+C3OGpo7qXXeC40fGVhi2JY
-	uojbgEaY086ZkrlGv41gmaTbMM3L/L8VqFHJMzDsSvAbGjpTUQr+Zao8CMMm/MrReE9d/b9TIcp
-	Hvx7XcW4QspYuzWrlZzM2z4+RFATpkL21xzgq
-X-Gm-Gg: ASbGncvRgXfXUS0WiFbgbf8uMm8ah3KLDxMe8ajb1DUsMyZ4S+4MgRaKB3bCe++XNo8
-	OYB2micbXbpZzKW/khRzyoZr3p4nUzBr7fPWbuTG/O3Ay+UA7s7Fw1aNoaI3wqSjlypKp2plmt+
-	PO+Otmam7b3/5A/Dx0r10mXkRGfktTkJMQ5arAZ/ZS3XPDwszZ2E76epi9
-X-Google-Smtp-Source: AGHT+IHrpWqTbMqDznsTHsJ8E9Do30+x9d4gdSw8dj7dE/tKMqx+yW62kkvZYTMbk6yRcBICLabCKUwu3xD7MbVZ4tg=
-X-Received: by 2002:ac8:5f4b:0:b0:471:9480:a14b with SMTP id
- d75a77b69052e-476c6a5313cmr230021cf.12.1741889285223; Thu, 13 Mar 2025
- 11:08:05 -0700 (PDT)
+	s=arc-20240116; t=1741889325; c=relaxed/simple;
+	bh=MXtePF6repqds/x6JPCzOwKs4bPaXnVnBSNXtX5OfIc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MfWcvEHXrH9z2WQSduShKi48TT7ZLxqXFvBTmDkg8nzp/01/2e8DHHekNCb4FZs70uzBWaBPXDCvfYM/2zMNSsJigRlEUCXLoKIrgC0Mv9LhA+kKgJBJkxqR/BzgGtue1xT9kYYeEKp246tZw0xYVpfbfx9Tx8o3to2Ppm4Hqvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=Ao39xEo/; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
+	s=key1; t=1741889320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oWH7hszwO9I5RYZpht/nXn68Y2cBdPRRedslDcO5mD8=;
+	b=Ao39xEo/pSp/j5tAL4U5bRkiqX/8hAJD2h5Q3TQYeoM2KfRkAZOXysg68TccSm87i+b8UV
+	kiREpjW7qU6Qz5NKsUVUQSnyPRUNScPmTvRmGLrA0zOQMJD51uK13Ub6Bq8SXcopsvd1VE
+	7p3Zn+BdFU4Rjarkxrw6vR2AaFmrOwPBr8UlVsv32H+n6YPJ04zzwb7xuKMCLJB9l4PWdZ
+	yBjQeWsgIXA8Fjn6KqCNIcpPA+5z0Y4LVRZ40AMGel90Z5xTXaDVtGl8rqS+TEXPS+AHHF
+	K4lghj57TDh/oo+B50iD8d9RL/q4sqoc1cB84Av2UH7VZRWeFsP3gjRg8Pw/UA==
+From: Ignacio Encinas <ignacio@iencinas.com>
+Date: Thu, 13 Mar 2025 19:08:19 +0100
+Subject: [PATCH v2] 9p/trans_fd: mark concurrent read and writes to
+ p9_conn->err
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313143002.9118-1-petr.pavlu@suse.com> <jmcazyqlkimqhswwqn2du7ik5sbm5fommonrgovy5d6knqbqcr@xebmu4akkkoy>
-In-Reply-To: <jmcazyqlkimqhswwqn2du7ik5sbm5fommonrgovy5d6knqbqcr@xebmu4akkkoy>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 13 Mar 2025 11:07:53 -0700
-X-Gm-Features: AQ5f1JqTh6MJsjdch2B1hiY959vhHY_r5y3ZS715LvCN36Z2QzffjAcAKrSyahw
-Message-ID: <CAJuCfpEpFqLX-WtXzSdktkp7w3s3JWeSqeG_fms6Ydun+docTA@mail.gmail.com>
-Subject: Re: [PATCH] codetag: Avoid unused alloc_tags sections/symbols
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Petr Pavlu <petr.pavlu@suse.com>, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250313-p9_conn_err_benign_data_race-v2-1-0bb9f45f6bb2@iencinas.com>
+X-B4-Tracking: v=1; b=H4sIABIf02cC/43NTQqDMBCG4atI1k2JkWDsqvcoEvIz6iw6KRORF
+ vHuTT1Bl8+3eL9dFGCEIm7NLhg2LJipQl8aERdPM0hM1UIrbVSnrHwNLmYiB8wuAOFMLvnVO/Y
+ RpO6NncCGAEmJmngxTPg+84+xesGyZv6cb1v7W/8Mb61sZa8HMH0yttPhjkARyZdrzE8xHsfxB
+ eL3bFzLAAAA
+X-Change-ID: 20250308-p9_conn_err_benign_data_race-2758fe8bbed0
+To: linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
+ Eric Van Hensbergen <ericvh@kernel.org>, 
+ Latchesar Ionkov <lucho@ionkov.net>, 
+ Dominique Martinet <asmadeus@codewreck.org>, 
+ Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc: Sishuai Gong <sishuai.system@gmail.com>, Marco Elver <elver@google.com>, 
+ v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ syzbot+d69a7cc8c683c2cb7506@syzkaller.appspotmail.com, 
+ syzbot+483d6c9b9231ea7e1851@syzkaller.appspotmail.com, 
+ Ignacio Encinas <ignacio@iencinas.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Mar 13, 2025 at 10:16=E2=80=AFAM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
->
-> On Thu, Mar 13, 2025 at 03:29:20PM +0100, Petr Pavlu wrote:
-> > With CONFIG_MEM_ALLOC_PROFILING=3Dn, vmlinux and all modules unnecessar=
-ily
-> > contain the symbols __start_alloc_tags and __stop_alloc_tags, which def=
-ine
-> > an empty range. In the case of modules, the presence of these symbols a=
-lso
-> > forces the linker to create an empty .codetag.alloc_tags section.
-> >
-> > Update codetag.lds.h to make the data conditional on
-> > CONFIG_MEM_ALLOC_PROFILING.
-> >
-> > Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
->
-> Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
+Writes for the error value of a connection are spinlock-protected inside
+p9_conn_cancel, but lockless reads are present elsewhere to avoid
+performing unnecessary work after an error has been met.
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+Mark the write and lockless reads to make KCSAN happy. Mark the write as
+exclusive following the recommendation in "Lock-Protected Writes with
+Lockless Reads" in tools/memory-model/Documentation/access-marking.txt
+while we are at it.
 
->
-> > ---
-> >  include/asm-generic/codetag.lds.h | 10 ++++++++--
-> >  1 file changed, 8 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/include/asm-generic/codetag.lds.h b/include/asm-generic/co=
-detag.lds.h
-> > index 372c320c5043..0ea1fa678405 100644
-> > --- a/include/asm-generic/codetag.lds.h
-> > +++ b/include/asm-generic/codetag.lds.h
-> > @@ -2,6 +2,12 @@
-> >  #ifndef __ASM_GENERIC_CODETAG_LDS_H
-> >  #define __ASM_GENERIC_CODETAG_LDS_H
-> >
-> > +#ifdef CONFIG_MEM_ALLOC_PROFILING
-> > +#define IF_MEM_ALLOC_PROFILING(...) __VA_ARGS__
-> > +#else
-> > +#define IF_MEM_ALLOC_PROFILING(...)
-> > +#endif
-> > +
-> >  #define SECTION_WITH_BOUNDARIES(_name)       \
-> >       . =3D ALIGN(8);                   \
-> >       __start_##_name =3D .;            \
-> > @@ -9,7 +15,7 @@
-> >       __stop_##_name =3D .;
-> >
-> >  #define CODETAG_SECTIONS()           \
-> > -     SECTION_WITH_BOUNDARIES(alloc_tags)
-> > +     IF_MEM_ALLOC_PROFILING(SECTION_WITH_BOUNDARIES(alloc_tags))
-> >
-> >  /*
-> >   * Module codetags which aren't used after module unload, therefore ha=
-ve the
-> > @@ -28,6 +34,6 @@
-> >   * unload them individually once unused.
-> >   */
-> >  #define MOD_SEPARATE_CODETAG_SECTIONS()              \
-> > -     MOD_SEPARATE_CODETAG_SECTION(alloc_tags)
-> > +     IF_MEM_ALLOC_PROFILING(MOD_SEPARATE_CODETAG_SECTION(alloc_tags))
-> >
-> >  #endif /* __ASM_GENERIC_CODETAG_LDS_H */
-> >
-> > base-commit: 80e54e84911a923c40d7bee33a34c1b4be148d7a
-> > --
-> > 2.43.0
-> >
+Reported-by: syzbot+d69a7cc8c683c2cb7506@syzkaller.appspotmail.com
+Reported-by: syzbot+483d6c9b9231ea7e1851@syzkaller.appspotmail.com
+Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
+---
+Changes in v2:
+
+Drop unnecessary READ_ONCE in p9_fd_request (that I added in v1)
+
+-@@ net/9p/trans_fd.c: static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
+- 
+-   spin_lock(&m->req_lock);
+- 
+--  if (m->err < 0) {
+-+  if (READ_ONCE(m->err) < 0) {
+-           spin_unlock(&m->req_lock);
+-           return m->err;
+-   }
+
+- Link to v1: https://lore.kernel.org/r/20250308-p9_conn_err_benign_data_race-v1-1-729e57d5832b@iencinas.com
+---
+ net/9p/trans_fd.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index 196060dc6138af10e99ad04a76ee36a11f770c65..758eaeddf32b480e0a88914da66f923f7021e608 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -196,7 +196,8 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
+ 		return;
+ 	}
+ 
+-	m->err = err;
++	WRITE_ONCE(m->err, err);
++	ASSERT_EXCLUSIVE_WRITER(m->err);
+ 
+ 	list_for_each_entry_safe(req, rtmp, &m->req_list, req_list) {
+ 		list_move(&req->req_list, &cancel_list);
+@@ -283,7 +284,7 @@ static void p9_read_work(struct work_struct *work)
+ 
+ 	m = container_of(work, struct p9_conn, rq);
+ 
+-	if (m->err < 0)
++	if (READ_ONCE(m->err) < 0)
+ 		return;
+ 
+ 	p9_debug(P9_DEBUG_TRANS, "start mux %p pos %zd\n", m, m->rc.offset);
+@@ -450,7 +451,7 @@ static void p9_write_work(struct work_struct *work)
+ 
+ 	m = container_of(work, struct p9_conn, wq);
+ 
+-	if (m->err < 0) {
++	if (READ_ONCE(m->err) < 0) {
+ 		clear_bit(Wworksched, &m->wsched);
+ 		return;
+ 	}
+@@ -622,7 +623,7 @@ static void p9_poll_mux(struct p9_conn *m)
+ 	__poll_t n;
+ 	int err = -ECONNRESET;
+ 
+-	if (m->err < 0)
++	if (READ_ONCE(m->err) < 0)
+ 		return;
+ 
+ 	n = p9_fd_poll(m->client, NULL, &err);
+
+---
+base-commit: 2a520073e74fbb956b5564818fc5529dcc7e9f0e
+change-id: 20250308-p9_conn_err_benign_data_race-2758fe8bbed0
+
+Best regards,
+-- 
+Ignacio Encinas <ignacio@iencinas.com>
+
 
