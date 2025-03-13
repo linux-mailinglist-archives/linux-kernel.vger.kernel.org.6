@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-559239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8505AA5F131
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:44:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B85A5F136
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:46:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB9643AE558
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:44:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD91F3AF65C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB282571BF;
-	Thu, 13 Mar 2025 10:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBAF91EF097;
+	Thu, 13 Mar 2025 10:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfwuO4E7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uLLh1Bwu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DCA16BE17
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2672E3395
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741862688; cv=none; b=O5Xw4RrAEtoKSYUnwXCkkcAuuaLyiVcpONpAgYeZI0HxEj6hYPn+cRgvpquR/Nw/fC5Y/DkGykeoWvzGr88MohWXjv1a9QAo4moyR6b3QysFTFmmeo3faRiIWTQaT/LrTyPMGVjFSjPoocPjKcs+ekFRsRx/ttpAfK31WQCgsE4=
+	t=1741862781; cv=none; b=exe0koO4h20mAc2X6AeqQIL1SYGijlNKo5cMBCvHi6/5q1GJd0CTO2NRFPzHJpdIuTlt9eHPqLNdoRwcWDDjntR+jPXx/1jEDzCn/RHIQ1tiYM4QkIrMF4pes1Ef3Wz1fiK/inJWgnoH5mCS6ccRFSEN6rIdvpLFBjQLM5a8PhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741862688; c=relaxed/simple;
-	bh=Ea/nF/6yF8q+yD6HjryxJLrzxjPzAhV6V2F/wso++vc=;
+	s=arc-20240116; t=1741862781; c=relaxed/simple;
+	bh=vp6EbvU1rvNWK2KUsT3PKhqiMCwg7EHYtb3O8meg2es=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZARHBxDrdoRscRwMIjlTd6TEI/1e1B0aErgpJrLI3KDLy2mBIaWSoRSA4wHOupEXAb4nStLsKwlksXnZq5iFdkcMiylpM9uCdr7iSeAzYscvaHqfL52fXnhMU5MHb8xvzcmEh0hdYHsg62fcWUD+eRe28XJjXEyg89lQHpINQUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfwuO4E7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3E27C4CEDD;
-	Thu, 13 Mar 2025 10:44:43 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CtLEeUsS7s9fF20xZaDwNw2BP/gnCx5uWm2PLnbim5gIwfC9U/uH7gWdDCqPJ/EHU/6qsYj4OUSQk23aipycvCS+dO51W8nzB4Otqrqv4WFHie8Z+bIJwPMWxm2D89lya6tb5C1p/ODi971qu7JwMSznCqktpC2nte5pBnxSkbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uLLh1Bwu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A139C4CEDD;
+	Thu, 13 Mar 2025 10:46:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741862688;
-	bh=Ea/nF/6yF8q+yD6HjryxJLrzxjPzAhV6V2F/wso++vc=;
+	s=k20201202; t=1741862780;
+	bh=vp6EbvU1rvNWK2KUsT3PKhqiMCwg7EHYtb3O8meg2es=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZfwuO4E7CBH0225uI4SAo32VIdUKvpQ2GRBTZkOarnahlXaW9r933s3zWIgLiurhe
-	 /RZbf0TQLYgyWwGN9gqyZ067XyA3AUe60Z8xL9UB1KynBpWSH4tReS6K+hvnwgxUMj
-	 RQEFKCEbTeXXH7uyPtnlm/aqiZ+hAZFrJLW/WS2JLmVS2Ouc4QKk9vY3dRLzykS2a7
-	 1PJsvBSbGr53MrI9FvxGdwaDom62AUo68cqHlP3dHM2G6cIwm3WH1fskmz0nubAen/
-	 F5XtF8pZjchZ5e2ZHS83RaIVya7AcB73xx3N3IR/0JYmJVXdsZx+KjYGCVdMP2pQc/
-	 2x86DWb/qTzwQ==
-Date: Thu, 13 Mar 2025 11:44:41 +0100
+	b=uLLh1Bwu+h7c8wLZOnsoo6txJm3UYCHpIXJ4M3GjWJzoDusKCvkROHfDm92bCWiZk
+	 co6XAVN2udWnzHSwWRlfmidQtp9AkGR8Yw+zdFPnXgPjfZEmN0BWG4/G24wRHcNYC8
+	 WMdQZVB2DlknBVRFFePGftf3dhM7I8/wblddoL1Oz+6iFr3MtMYyljWw/iLgbWL+d0
+	 vdSBAs7LkQRcXtgZk/DIfrzNY1HjE/+jLohlQJ9CzrXQ8cI3beFMV4ytO0UNhg3pLi
+	 YURe7XMvIDBQ036BDXYWXzXvgOpd2vKFmPUYpkW6A9RCxNiglwwzsCuxpOZ7Okp6dw
+	 oV1635hkw4g3w==
+Date: Thu, 13 Mar 2025 11:46:13 +0100
 From: Ingo Molnar <mingo@kernel.org>
 To: David Woodhouse <dwmw2@infradead.org>
 Cc: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>,
@@ -55,11 +55,10 @@ Cc: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>,
 	Dave Young <dyoung@redhat.com>,
 	Peter Zijlstra <peterz@infradead.org>, jpoimboe@kernel.org,
 	bsz@amazon.de
-Subject: Re: [PATCH v7 7/8] [DO NOT MERGE] x86/kexec: Add int3 in kexec path
- for testing
-Message-ID: <Z9K3GXSaZUcVr8cb@gmail.com>
+Subject: Re: [PATCH v7 0/8] x86/kexec: Add exception handling for
+ relocate_kernel
+Message-ID: <Z9K3dcMAgu3cot85@gmail.com>
 References: <20250312144257.2348250-1-dwmw2@infradead.org>
- <20250312144257.2348250-8-dwmw2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,62 +67,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250312144257.2348250-8-dwmw2@infradead.org>
+In-Reply-To: <20250312144257.2348250-1-dwmw2@infradead.org>
 
 
 * David Woodhouse <dwmw2@infradead.org> wrote:
 
-> From: David Woodhouse <dwmw@amazon.co.uk>
+> Debugging kexec failures is painful, as anything going wrong in execution
+> of the critical relocate_kernel() function tends to just lead to a triple
+> fault. Thus leading to *weeks* of my life that I won't get back. Having
+> hacked something up for my own use, I figured I should share it...
 > 
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> ---
->  arch/x86/kernel/relocate_kernel_64.S | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Add a trivial exception handler in the relocate_kernel environment which 
+> outputs to the early_printk serial console if configured. Currently only 
+> 8250-compatible serial ports are supported, but that could be extended.
 > 
-> diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-> index 17d41e6e1a4b..2b7fc59af373 100644
-> --- a/arch/x86/kernel/relocate_kernel_64.S
-> +++ b/arch/x86/kernel/relocate_kernel_64.S
-> @@ -158,7 +158,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
->  	lidt	(%rsp)
->  	addq	$10, %rsp
->  
-> -	//int3
-> +	int3
+> I had to hack up QEMU support for a PCI serial port which matches what
+> the existing early_printk code can drive, and the *real* 8250_pci driver
+> doesn't seem to cope with that setup at all, but whatever... the kexec
+> code now drives the same 32-bit stride which is all that earlyprintk
+> supports. We can always add more later, if anyone cares.
+> 
+> Someone who cares might want to bring the i386 version into line with
+> this, although the lack of rip-based addressing makes all the PIC code a
+> bit harder.
+> 
+> David Woodhouse (8):
+>       x86/kexec: Debugging support: load a GDT
+>       x86/kexec: Debugging support: Load an IDT and basic exception entry points
+>       x86/kexec: Debugging support: Dump registers on exception
+>       x86/kexec: Add 8250 serial port output
+>       x86/kexec: Add 8250 MMIO serial port output
+>       x86/kexec: Invalidate GDT/IDT from relocate_kernel() instead of earlier
+>       [DO NOT MERGE] x86/kexec: Add int3 in kexec path for testing
+>       [DO NOT MERGE] x86/kexec: Add CFI type information to relocate_kernel()
+> 
+>  arch/x86/include/asm/kexec.h         |   7 ++
+>  arch/x86/kernel/early_printk.c       |   9 ++
+>  arch/x86/kernel/machine_kexec_64.c   |  50 ++++++--
+>  arch/x86/kernel/relocate_kernel_64.S | 254 +++++++++++++++++++++++++++++++++++++++-
+>  4 files changed, 308 insertions(+), 12 deletions(-)
 
-So this is all boot-serialized functionality with no SMP concerns 
-whatsoever, right?
-
-If yes then we could use something like this:
-
-	static int exception_selftest = 1;
-
-and add the INT3 point:
-
-	int3
-.globl after_int3
-after_int3:
-
-And do this in the early exception handler:
-
-	...
-	
-	if (exception_selftest) {
-		exception_selftest = 0;
-
-		print_something_warm_and_fuzzy();
-
-		IRET-to-after_int3;
-	}
-
-	...
-
-	... regular exception path ...
-
-... but all in assembly or so ;-)
-
-This would make it reasonably certain that the most complex bits of 
-this new debuging code are in working order, all the time.
+I applied the first 3 patches to tip:x86/boot for phased-risk-reduction 
+reasons, and because I had some questions and suggestions starting at 
+patch #4.
 
 Thanks,
 
