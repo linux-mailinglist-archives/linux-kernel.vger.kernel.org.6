@@ -1,130 +1,124 @@
-Return-Path: <linux-kernel+bounces-560350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6386CA602E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:44:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08591A602EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:44:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 491E4881130
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:44:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E120C7AA110
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDDA1F4734;
-	Thu, 13 Mar 2025 20:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC741F4627;
+	Thu, 13 Mar 2025 20:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="cC7ZJfFZ"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b="HguGzJ76"
+Received: from mx0a-00300601.pphosted.com (mx0a-00300601.pphosted.com [148.163.146.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773D21F4621
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 20:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA9C1F419D;
+	Thu, 13 Mar 2025 20:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.146.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741898655; cv=none; b=IK2kLROkh+ZObjl2oZs5gjRXGzjj3ea98UMTtgWdz+u+oj+GJXraQIzwyO/KmAjIysNeAV+NBcNblT3QZy5WiEAPXy0An2kfPPxAzNsb84PjWu4nvbs7S0pnTKbOLxNgNbjM7rFTmuBv2/fci+E9/FfpnTH2oQwheYYiDVITf0E=
+	t=1741898684; cv=none; b=C+2yNyK0uFPwGDGNSa92tGjhpiFGOMnGLeOr2gPhZZCwcG04czCzcoCcEi/s1LSDzYo+EvzfvMspw/lqEboNlLRep26RgV8umDcEKsTFe5Olg9/VraWf843sF5q19tEt25DnAUxlrQBO1PKeyiA+mfo9GctZzoXc4lAqqnoDvF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741898655; c=relaxed/simple;
-	bh=QvftfQ+N31PDzhDFty5prLUokxwG9Cqc+YRRm3SobXI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=CX5k2YAO9h7rpl/KrvH62zFsOeXRJDVuYQvY5jVrzjS6GvdUtIBEA5/buNzytllI6tYuCLJafnit0ICUzCja+eyHrK56r/IAe4rPP8S/PUkBLy4TxVC1gZighkThf42kihrqNhDXSgJHeTJEpBzzRRWwH/OQ1lH8FOq4j1iu9ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=cC7ZJfFZ; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 4723F2C0375;
-	Fri, 14 Mar 2025 09:44:11 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1741898651;
-	bh=QvftfQ+N31PDzhDFty5prLUokxwG9Cqc+YRRm3SobXI=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=cC7ZJfFZTtvR7hHeevBnSt9saC5nZ29KE23r3P/9E7wJdJYJnwgAEAwXfhqKCgrjN
-	 oqk3AG7hsDKUnqFwW9AqrQ1YNc1qXT+agci/ID5JYch+1v0h5p5ogdRN2UfEZvYguc
-	 mSIApCzVOZ0VxiLYhW0FWBrH2FMO0Nt4AEbPzA/QUD7GwrnjlBeB/Q1yIma4cP7JYZ
-	 MxJLXy0jMtqx+fbT6LFwiTm5YjivTqpK7WQn5fmWH+OlYv4R9M2BRkoWfnq1cfmVDY
-	 vsm6HqIzFrTUEFgM9wJYkbpvQ//eBkywOycrnfAartp1YuMf1rnWlyexVpo11nAc8n
-	 cWOusbqsAk0GA==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B67d3439b0001>; Fri, 14 Mar 2025 09:44:11 +1300
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Fri, 14 Mar 2025 09:44:11 +1300
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.014; Fri, 14 Mar 2025 09:44:10 +1300
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: "hkallweit1@gmail.com" <hkallweit1@gmail.com>, "linux@armlinux.org.uk"
-	<linux@armlinux.org.uk>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"daniel@makrotopia.org" <daniel@makrotopia.org>, "markus.stockhausen@gmx.de"
-	<markus.stockhausen@gmx.de>, "sander@svanheule.net" <sander@svanheule.net>,
-	netdev <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10] net: mdio: Add RTL9300 MDIO driver
-Thread-Topic: [PATCH v10] net: mdio: Add RTL9300 MDIO driver
-Thread-Index: AQHbk7RQMlEBwbSVuE+Te7ZjHwH5gbNwJygAgAB7A4CAAAtMgIAAAJ2AgAAA44CAAAEKAA==
-Date: Thu, 13 Mar 2025 20:44:10 +0000
-Message-ID: <6ae8b7c6-8e75-4bfc-9ea3-302269a26951@alliedtelesis.co.nz>
-References: <20250313010726.2181302-1-chris.packham@alliedtelesis.co.nz>
- <f7c7f28b-f2b0-464a-a621-d4b2f815d206@lunn.ch>
- <5ea333ec-c2e4-4715-8a44-0fd2c77a4f3c@alliedtelesis.co.nz>
- <be39bb63-446e-4c6a-9bb9-a823f0a482be@lunn.ch>
- <539762a3-b17d-415c-9316-66527bfc6219@alliedtelesis.co.nz>
- <6a98ba41-34ee-4493-b0ea-0c24d7e979b1@lunn.ch>
-In-Reply-To: <6a98ba41-34ee-4493-b0ea-0c24d7e979b1@lunn.ch>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <63AC36120E64B04DA3BAC2ACB1FCD9C9@alliedtelesis.co.nz>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1741898684; c=relaxed/simple;
+	bh=Y802YPgUelF5kdRztFzXGPveN+UuS2xYcoz143vw2yk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z5eaeN0SBkmEFwY0v5gsGw3iumL0HvqsGTgV9II+Yq29kT9DsRIu7dAK48wRUhR/4o1aesukX8FH7iLUEPlHdGe6shvo23icVfGOOQqKrxXSJwL2UKnBIG0iaj4pQBItn6jJeBkZvGa7YND+Nysbq4/Ft063XNOCYHwNMFMT/qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com; spf=pass smtp.mailfrom=ni.com; dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b=HguGzJ76; arc=none smtp.client-ip=148.163.146.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ni.com
+Received: from pps.filterd (m0142705.ppops.net [127.0.0.1])
+	by mx0b-00300601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DKbd54025198;
+	Thu, 13 Mar 2025 20:44:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ni.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=PPS11142024;
+	 bh=qmZtXzry0+1HTLglhiWFVHKGFkCwlbgPOwkxBRFjUnY=; b=HguGzJ76aIaY
+	kzbrnL5pRorPH5pD+RsVkReZQYJBPbFlwUwWOHxcNXDCawY14637XNabw5m29S/K
+	dGYuhUsUCT7A8ynH8tCw/MJcm3wUm5Im2Uqsx6SxT1bz1icj8kCsEI/lcQFT6rOX
+	4EX80KuRW3amIGgC1yqnKPLDXzZvi+P/g9H60Hp0Ob/yJ3C2RH9a47vTfoauqJtB
+	3kg1a0rtJiEw38bbeYRHPrxGLdZUjAhooGMUK6ZI0zlv39tQlsGkvutHDhx9ejN3
+	akA0zgUM3VkgHM5X5SLi/7yEF2eep+WOiwhApRR8cbXB6n4pDTRuCDvHZl/Bbj1d
+	ZGdZwOjAbQ==
+Received: from us-aus-excas-p1.ni.corp.natinst.com ([130.164.94.73])
+	by mx0b-00300601.pphosted.com (PPS) with ESMTPS id 45c6jgg3qc-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 20:44:40 +0000 (GMT)
+Received: from us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) by
+ us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Thu, 13 Mar 2025 15:44:39 -0500
+Received: from ershephe-ubuntu.amer.corp.natinst.com (172.18.68.32) by
+ us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) with Microsoft SMTP
+ Server id 15.2.1258.28 via Frontend Transport; Thu, 13 Mar 2025 15:44:39
+ -0500
+From: Erick Shepherd <erick.shepherd@ni.com>
+To: <adrian.hunter@intel.com>
+CC: <brad.mouring@ni.com>, <erick.shepherd@ni.com>,
+        <gratian.crisan@emerson.com>, <kyle.roeschley@ni.com>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <ulf.hansson@linaro.org>
+Subject: RE: [PATCH] mmc: core: Wait for Vdd to settle on card power off
+Date: Thu, 13 Mar 2025 15:44:38 -0500
+Message-ID: <20250313204439.1582652-1-erick.shepherd@ni.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <802daedb-d82c-4d0b-8e69-d166c169cbb1@intel.com>
+References: <802daedb-d82c-4d0b-8e69-d166c169cbb1@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Ko7u2nWN c=1 sm=1 tr=0 ts=67d3439b a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=tcDedsyIYY4bTMdrMOQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Proofpoint-GUID: jR-Ma8FunrZo4In4KTW4fxzlQAhqxqXQ
+X-Proofpoint-ORIG-GUID: jR-Ma8FunrZo4In4KTW4fxzlQAhqxqXQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_09,2025-03-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ suspectscore=0 spamscore=0 impostorscore=0 mlxscore=0 mlxlogscore=619
+ malwarescore=0 phishscore=0 lowpriorityscore=0 clxscore=1015
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503130159
 
-DQpPbiAxNC8wMy8yMDI1IDA5OjQwLCBBbmRyZXcgTHVubiB3cm90ZToNCj4gT24gVGh1LCBNYXIg
-MTMsIDIwMjUgYXQgMDg6Mzc6MThQTSArMDAwMCwgQ2hyaXMgUGFja2hhbSB3cm90ZToNCj4+IE9u
-IDE0LzAzLzIwMjUgMDk6MzUsIEFuZHJldyBMdW5uIHdyb3RlOg0KPj4+IE9uIFRodSwgTWFyIDEz
-LCAyMDI1IGF0IDA3OjU0OjM5UE0gKzAwMDAsIENocmlzIFBhY2toYW0gd3JvdGU6DQo+Pj4+ICtj
-YyBuZXRkZXYsIGxrbWwNCj4+Pj4NCj4+Pj4gT24gMTQvMDMvMjAyNSAwMTozNCwgQW5kcmV3IEx1
-bm4gd3JvdGU6DQo+Pj4+Pj4gKwkvKiBQdXQgdGhlIGludGVyZmFjZXMgaW50byBDNDUgbW9kZSBp
-ZiByZXF1aXJlZCAqLw0KPj4+Pj4+ICsJZ2xiX2N0cmxfbWFzayA9IEdFTk1BU0soMTksIDE2KTsN
-Cj4+Pj4+PiArCWZvciAoaSA9IDA7IGkgPCBNQVhfU01JX0JVU1NFUzsgaSsrKQ0KPj4+Pj4+ICsJ
-CWlmIChwcml2LT5zbWlfYnVzX2lzX2M0NVtpXSkNCj4+Pj4+PiArCQkJZ2xiX2N0cmxfdmFsIHw9
-IEdMQl9DVFJMX0lOVEZfU0VMKGkpOw0KPj4+Pj4+ICsNCj4+Pj4+PiArCWZ3bm9kZV9mb3JfZWFj
-aF9jaGlsZF9ub2RlKG5vZGUsIGNoaWxkKQ0KPj4+Pj4+ICsJCWlmIChmd25vZGVfZGV2aWNlX2lz
-X2NvbXBhdGlibGUoY2hpbGQsICJldGhlcm5ldC1waHktaWVlZTgwMi4zLWM0NSIpKQ0KPj4+Pj4+
-ICsJCQlwcml2LT5zbWlfYnVzX2lzX2M0NVttZGlvX2J1c10gPSB0cnVlOw0KPj4+Pj4+ICsNCj4+
-Pj4+IFRoaXMgbmVlZHMgbW9yZSBleHBsYW5hdGlvbi4gU29tZSBQSFlzIG1peCBDMjIgYW5kIEM0
-NSwgZS5nLiB0aGUgPiAxRw0KPj4+Pj4gc3BlZWQgc3VwcG9ydCByZWdpc3RlcnMgYXJlIGluIHRo
-ZSBDNDUgYWRkcmVzcyBzcGFjZSwgYnV0IDw9IDFHIGlzIGluDQo+Pj4+PiB0aGUgQzIyIHNwYWNl
-LiBBbmQgMUcgUEhZcyB3aGljaCBzdXBwb3J0IEVFRSBuZWVkIGFjY2VzcyB0byBDNDUgc3BhY2UN
-Cj4+Pj4+IGZvciB0aGUgRUVFIHJlZ2lzdGVycy4NCj4+Pj4gQWggZ29vZCBwb2ludC4gVGhlIE1E
-SU8gaW50ZXJmYWNlcyBhcmUgZWl0aGVyIGluIEdQSFkgKGkuZS4gY2xhdXNlIDIyKQ0KPj4+PiBv
-ciAxMEdQSFkgbW9kZSAoaS5lLiBjbGF1c2UgNDUpLiBUaGlzIGRvZXMgbWVhbiB3ZSBjYW4ndCBz
-dXBwb3J0IHN1cHBvcnQNCj4+Pj4gYm90aCBjNDUgYW5kIGMyMiBvbiB0aGUgc2FtZSBNRElPIGJ1
-cyAod2hldGhlciB0aGF0J3Mgb25lIFBIWSB0aGF0DQo+Pj4+IHN1cHBvcnRzIGJvdGggb3IgdHdv
-IGRpZmZlcmVudCBQSFlzKS4gSSdsbCBhZGQgYSBjb21tZW50IHRvIHRoYXQgZWZmZWN0DQo+Pj4+
-IGFuZCBJIHNob3VsZCBwcm9iYWJseSBvbmx5IHByb3ZpZGUgYnVzLT5yZWFkL3dyaXRlIG9yDQo+
-Pj4+IGJ1cy0+cmVhZF9jNDUvd3JpdGVfYzQ1IGRlcGVuZGluZyBvbiB0aGUgbW9kZS4NCj4+PiBJ
-cyB0aGVyZSBtb3JlIHRvIGl0IHRoYW4gdGhpcz8gQmVjYXVzZSB3aHkgbm90IGp1c3Qgc2V0IHRo
-ZSBtb2RlIHBlcg0KPj4+IGJ1cyB0cmFuc2FjdGlvbj8NCj4+IEl0J3MgYSBidXMgbGV2ZWwgc2V0
-dGluZyBhdCBpbml0IHRpbWUuIFlvdSBjYW4ndCBkeW5hbWljYWxseSBzd2l0Y2ggbW9kZXMuDQo+
-IFdoeSBub3Q/IFRoZSBidXMgaXMgb25seSBldmVyeSBkb2luZyBvbmUgdHJhbnNhY3Rpb24gYXQg
-YSB0aW1lLCBzbyB3aHkNCj4gbm90IHN3aXRjaCBpdCBwZXIgdHJhbnNhY3Rpb24/DQoNCkknbSBw
-cmV0dHkgc3VyZSBpdCB3b3VsZCB1cHNldCB0aGUgaGFyZHdhcmUgcG9sbGluZyBtZWNoYW5pc20g
-d2hpY2ggDQp1bmZvcnR1bmF0ZWx5IHdlIGNhbid0IGRpc2FibGUgKGVhcmxpZXIgSSB0aG91Z2h0
-IHdlIGNvdWxkIGJ1dCB0aGVyZSBhcmUgDQp2YXJpb3VzIHN3aXRjaCBmZWF0dXJlcyB0aGF0IHJl
-bHkgb24gaXQpLg0K
+> sdhci is used by a number of drivers (drivers/mmc/host/sdhci*)=0D
+> that typically use the regulator framework to meet voltage=0D
+> requirements. So that is not the right place to make changes.=0D
+=0D
+> It would be best to put the affected PCI device IDs into=0D
+> sdhci_intel_set_power() as I showed.=0D
+=0D
+I see, that makes sense. The majority of our devices are using either=0D
+Apollo Lake or Bay Trail host controllers. Would it be ok to expand=0D
+your solution to include both? I tested the following change on a few=0D
+of our devices and confirmed the delay is called. If this looks good I=0D
+can submit a V2 of this patch.=0D
+=0D
+--- a/drivers/mmc/host/sdhci-pci-core.c=0D
++++ b/drivers/mmc/host/sdhci-pci-core.c=0D
+@@ -610,9 +610,12 @@ static void sdhci_intel_set_power(struct sdhci_host *h=
+ost, unsigned char mode,=0D
+ =0D
+ 	sdhci_set_power(host, mode, vdd);=0D
+ =0D
+-	if (mode =3D=3D MMC_POWER_OFF)=0D
++	if (mode =3D=3D MMC_POWER_OFF) {=0D
++		if (slot->chip->pdev->device =3D=3D PCI_DEVICE_ID_INTEL_APL_SD ||=0D
++		    slot->chip->pdev->device =3D=3D PCI_DEVICE_ID_INTEL_BYT_SD)=0D
++			usleep_range(15000, 17500);=0D
+ 		return;=0D
+-=0D
++	}=0D
+ 	/*=0D
+ 	 * Bus power might not enable after D3 -> D0 transition due to the=0D
+ 	 * present state not yet having propagated. Retry for up to 2ms.=0D
+-- =0D
+=0D
+Regards,=0D
+Erick=0D
 
