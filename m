@@ -1,113 +1,131 @@
-Return-Path: <linux-kernel+bounces-560242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62814A600A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:08:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F19FA600AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:11:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6511171874
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:08:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBEFD3ABCA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53BA1F1506;
-	Thu, 13 Mar 2025 19:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADECD1F1521;
+	Thu, 13 Mar 2025 19:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4n7yt8Ud"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oevAoY3+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35E3F4FA
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 19:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD41F4FA;
+	Thu, 13 Mar 2025 19:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741892909; cv=none; b=S67Fqi+efekoFOfs14DJoAjDwicFPiMiqtefsLL13U0GpzJvlzoVU3e5yY0QK1RQIU2+ySanGGSGI8wxEGrKbXkvPGlOkZz58/Ie5O8LsS3fNwGDMaDa4sfi9hOzunhffkUtfAaMqZDG4AvKDDKKhc4aDjPaS8C83rLuRo2yP6Y=
+	t=1741893069; cv=none; b=furLdIOSToJvGNsJyTOSs781xIBFgz6YWdrMmkIyYNfDghK0fFC+iw0Z21h4J8mytNQVQCKObXXzeEb2nWu8236DiNZ3ARcRD8aoCNObrr/h5hBL46kq0f3utZLbf7qJkzVIPTw30aHgHshsAI6aAeCbp4wlyIErdI+YyU69F6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741892909; c=relaxed/simple;
-	bh=zebU4/k/EeqtjpAsS6Cj6e8OZa3BjJTLbL/wQkDK6t4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ftORcaSKABxWmaGNpnBmkbaLtFGIKmpG5RfOlFITys9k7d76vEEmCKL4hq5TBu6w0qQ2abYhv6gYEXaz3VlqNxHCpgTxYRCL0tTsqAGLLDSEHltwaP9InfmIIGkYTKsbmOBWgN3MLtDPmAHatauBAUM09U0dIhdVswT0zyaLJPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4n7yt8Ud; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so2000502a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:08:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741892905; x=1742497705; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v8INpOFDdy6zgQZNj++IeYTATBDv20/pe9DlHWL5cZs=;
-        b=4n7yt8UdK9/5gW9HMm7NewCvXJ0eVxR/ORAI2lKogF6bnnPb2gSvhMYSIkf3VeZVGe
-         lCx17R4mxaZ1ROH6JzxkZscE9ZVhJfbGNXeoD9mtflsts1gSpAwo6j1G3alPstOpS411
-         NL7D/ZCoVbRyrPMVKqvWb3dSe+fn2jfmvnZSK59ELvGF2rWE4x02gS7Tox8XpuQEeVvX
-         sxj5MCFBTHBuN+6Lohy4SCeSAO/RNBSDV5aYsflvi+AZS+DyMBdLm8FE4XM++sx1Nt28
-         TU5UVqjuPYHtiBZ+pV5AvT9dhiIoChQI+51fKhyiLxw17v9x7bv1JSnBXaJcqAh7g6gg
-         kdOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741892905; x=1742497705;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v8INpOFDdy6zgQZNj++IeYTATBDv20/pe9DlHWL5cZs=;
-        b=DgleU1ZN/6fRlQzPV7d1FIarRhdVbYpzmafNhFqIEYkf1sfhxAHz226cNnkNtHdPkM
-         NfpIUZECnzkFRTJucAWk+PerMSpX7eaCrAB++sBWSO3UpN9osER4wnGu7dpW8k1mnMG3
-         d2nExlCGOK8040eE8phAEw8Lm12m39vZjNRslalEgXsvLimsd3qsseZPe4LLOe+ypt0F
-         a46Gkg6FdDkf2WSYUcSYCwCTuonHuFdZXXFFVzNCOYCw7BwvvGmdw38s+elSiy9QaK4N
-         pj0UDY68RqfAK9t+5nkZrpXV7rNtMJdTPWyBWMTtp3Q6FhF9FFVZyljJcppt4V7TP+6R
-         1SBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1X7hp5Lkl2Inq29UvzPoeeFYC8jqDETQFloKF5bYFPt0aGFODHswHAsPz/eJ9R3MPj8owBNXygIEVNUI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCthD1U9UHvukBbmNyD270wBLjYTl/mriCEA9QSTj70mNMNTJV
-	90Nc/ilgWOwrPnZmpn/ei4FhKXV+P1RWNl/rO/xmxtLTgUNQelDe+Gg5a9WxUQ==
-X-Gm-Gg: ASbGncv4XEfLjVZKp/+0edaontsE/KimDlrlYauC6twJbyd8cJwh6GfZ5hHEjEHmQRO
-	CRGVKJWB6nIpIIisGjfJEouEKll0YGSM/O8XV3kIGbEsppkJ7rwwQHcToET97uhQyCapSt9WSXP
-	HCw21Ecf6Cj7T8FLCPJfAVDtbI3y1ZN5ip/Xtq41pIWcBTA27P+ByQ8W7mZatG4EM2UppkI3DPb
-	EmSJlG0Iu1wyVXRFVa4w0971zyjnY7wNGLfN3dX97bgZw4+GzN3zvlkTQdfnB+fol7ATt/ejtlV
-	R4QsHosHlx+tOqaNz1RsEwLmy13kGW/Z/EOlQf0HIjWDi6pTFUlILiOoDqorFlEvPhod8RooWh0
-	QVTlu7TL8Czf8DQ==
-X-Google-Smtp-Source: AGHT+IFa00JtzqukTdU3WMYr5CjZc1RVh7xO3wiZcNVvi/pVcZene2/D4xio0rZGpWde7c+HTNy7zQ==
-X-Received: by 2002:a17:907:9452:b0:ac2:bde9:22af with SMTP id a640c23a62f3a-ac3290943a7mr61434466b.13.1741892905085;
-        Thu, 13 Mar 2025 12:08:25 -0700 (PDT)
-Received: from google.com (140.20.91.34.bc.googleusercontent.com. [34.91.20.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3149cfb96sm112178066b.119.2025.03.13.12.08.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 12:08:24 -0700 (PDT)
-Date: Thu, 13 Mar 2025 19:08:20 +0000
-From: Quentin Perret <qperret@google.com>
-To: Gavin Shan <gshan@redhat.com>
-Cc: kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, maz@kernel.org,
-	oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org,
-	shan.gavin@gmail.com
-Subject: Re: [PATCH] KVM: arm64: Drop sort_memblock_regions()
-Message-ID: <Z9MtJPNm1pLATGo7@google.com>
-References: <20250311043718.91004-1-gshan@redhat.com>
+	s=arc-20240116; t=1741893069; c=relaxed/simple;
+	bh=Lr25EZkqxsPL3BB3IHuJEFZ8TJ1hBBK49jrHSJx6Gj4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HAoEw6TlZuwAeSVFqq4JN8Hn7pViS6DIM52N5v/7lc6IZGz515WkHpEbrjc8sM3zeJ5fcBJdj6O6nZAYOpmfSdH8DIsmTHY0HLLMLHuKBRPhZf9ByAg9PD7L5d9Jw8xnsZ2D6Xh9GICmntvwLmv02Pj2AKpHoAMQ6YLj5sHkt4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oevAoY3+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71E39C4CEEE;
+	Thu, 13 Mar 2025 19:11:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741893068;
+	bh=Lr25EZkqxsPL3BB3IHuJEFZ8TJ1hBBK49jrHSJx6Gj4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=oevAoY3+/xB5VOwPK/1aY6R2CgtAQVmg9qw2dUTMnNz4qVSiKJDy3ZHfRR16qT+/4
+	 dVYWCd79CPNwrCz8OQQcQhFRgmsj7YValC4LccajI/xIBupibEPUCGGpLxvczxx4+4
+	 FvhaJtKiq/oheQW7uf3JuDTOuTB6lrG+rlxQUHQOHVSUrITYB/SUgcOlnOABelmx5D
+	 n3s/daUujbgufdPlIJjDZbu245wCFv368RoC+7bwyNecYdHdq273StjobJAbCMlBSz
+	 L++PFLlZ5Swc248DwDwTjIPwxurGSgFPlwmmRoCpRyiS7+PVPn2iWYaK9u8rBTzTKO
+	 b1Lxnk6yR14NQ==
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3cfce97a3d9so5495625ab.2;
+        Thu, 13 Mar 2025 12:11:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQKH3IT0t1SfVGM0Zg1AOB9CNIdgYSyuNZujDg7VhOVNISm2LqSklGyYGJa9T5cecVzWsbrYu3K3BN1+0=@vger.kernel.org, AJvYcCVMhSWJWdSOSI0OUM6wGOdPu4Rc8fQBLa/oqGuc/brmdwScNK7biN/R9VKsorX/qpAPI0WFe2wnA3dN/9JRLA==@vger.kernel.org, AJvYcCX5dSGcgHjQhPBB/oWByGbqNe3HD87YLxJRrst0t4JjlGOrj7J2z1WetlU/OupotC2/mVYQZQ3+hYceB5YShqTqvA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7/Q969YAJ0HF1qmGOoVhuq8NZQ9o5FbfxiwQAQtrLZefScJRX
+	fqwhOVxkIrhLYz+g5f0ayMC/dmrMlsxwx9vqv/iOZDL45Atya3mIEY6ob6urW0rDlpCiLDt5Ct3
+	IefgPwWKDM4Wx9Jabzj3MfxE9iFU=
+X-Google-Smtp-Source: AGHT+IGNaR9f/JVYBzHMMBNK+4GBcPFS332kc+pm3ldB4zFS8Anllv7AuVgokgN6kmTde5EZ5Ep8F2WKYTV04VfIU5M=
+X-Received: by 2002:a05:6e02:144b:b0:3d4:276:9a1b with SMTP id
+ e9e14a558f8ab-3d481783128mr10476285ab.16.1741893067798; Thu, 13 Mar 2025
+ 12:11:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311043718.91004-1-gshan@redhat.com>
+References: <20250308012742.3208215-1-song@kernel.org> <20250308012742.3208215-2-song@kernel.org>
+ <20250313-angelic-coral-giraffe-dfa4f3@leitao>
+In-Reply-To: <20250313-angelic-coral-giraffe-dfa4f3@leitao>
+From: Song Liu <song@kernel.org>
+Date: Thu, 13 Mar 2025 12:10:56 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW4QjDx1_2xXVjPzy2HueR+ZGb-q=zsn4S-TYSp38Tp-Zg@mail.gmail.com>
+X-Gm-Features: AQ5f1JoREMu_L4nvl7y97uDhMFDyg_nK0nvfqGckRS9rsJPlVC_Jg1pGhtp1-gQ
+Message-ID: <CAPhsuW4QjDx1_2xXVjPzy2HueR+ZGb-q=zsn4S-TYSp38Tp-Zg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: Implement arch_stack_walk_reliable
+To: Breno Leitao <leitao@debian.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-toolchains@vger.kernel.org, live-patching@vger.kernel.org, 
+	indu.bhagat@oracle.com, puranjay@kernel.org, wnliu@google.com, 
+	irogers@google.com, joe.lawrence@redhat.com, jpoimboe@kernel.org, 
+	mark.rutland@arm.com, peterz@infradead.org, roman.gushchin@linux.dev, 
+	rostedt@goodmis.org, will@kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tuesday 11 Mar 2025 at 14:37:18 (+1000), Gavin Shan wrote:
-> Drop sort_memblock_regions() and avoid sorting the copied memory
-> regions to be ascending order on their base addresses, because the
-> source memory regions should have been sorted correctly when they
-> are added by memblock_add() or its variants.
-> 
-> This is generally reverting commit a14307f5310c ("KVM: arm64: Sort
-> the hypervisor memblocks"). No functional changes intended.
+On Thu, Mar 13, 2025 at 11:12=E2=80=AFAM Breno Leitao <leitao@debian.org> w=
+rote:
+>
+> On Fri, Mar 07, 2025 at 05:27:41PM -0800, Song Liu wrote:
+> > With proper exception boundary detection, it is possible to implment
+> > arch_stack_walk_reliable without sframe.
+> >
+> > Note that, arch_stack_walk_reliable does not guarantee getting reliable
+> > stack in all scenarios. Instead, it can reliably detect when the stack
+> > trace is not reliable, which is enough to provide reliable livepatching=
+.
+> >
+> > This version has been inspired by Weinan Liu's patch [1].
+> >
+> > [1] https://lore.kernel.org/live-patching/20250127213310.2496133-7-wnli=
+u@google.com/
+> > Signed-off-by: Song Liu <song@kernel.org>
+>
+> Tested-by: Breno Leitao <leitao@debian.org>
 
-I think this was originally introduced in an early version of the code
-where the reserved regions were also registered, hence requiring
-sorting. But yes, with the code as it is today I can't see what would
-break without it, so:
+Thanks for the testing!
 
-  Reviewed-by: Quentin Perret <qperret@google.com>
+>
+> >  arch/arm64/Kconfig                         |  2 +-
+> >  arch/arm64/include/asm/stacktrace/common.h |  1 +
+> >  arch/arm64/kernel/stacktrace.c             | 44 +++++++++++++++++++++-
+> >  3 files changed, 45 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> > index 940343beb3d4..ed4f7bf4a879 100644
+> > --- a/arch/arm64/Kconfig
+> > +++ b/arch/arm64/Kconfig
+> > @@ -275,6 +275,7 @@ config ARM64
+> >       select HAVE_SOFTIRQ_ON_OWN_STACK
+> >       select USER_STACKTRACE_SUPPORT
+> >       select VDSO_GETRANDOM
+> > +     select HAVE_RELIABLE_STACKTRACE
+>
+> Can we really mark this is reliable stacktrace?  I am wondering
+> if we need an intermediate state (potentially reliable stacktrace?)
+> until we have a fully reliable stack unwinder.
 
-Thanks!
-Quentin
+AFAICT, we do not expect arch_stack_walk_reliable() to always
+return a reliable stack. Instead, it is expected to return -EINVAL if
+the stack trace is not reliable. OTOH, arch_stack_walk() doesn't
+warn the caller when the stack trace is not reliable. This is exactly
+what we need for live patch: we just need to make the patch
+transition when the stack trace is reliable and none of the functions
+in the stack is being patched. If the stack trace is not reliable, we
+will retry the transition at a later time.
+
+Thanks,
+Song
 
