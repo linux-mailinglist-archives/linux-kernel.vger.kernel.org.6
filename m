@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-559120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8719EA5EFB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:39:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E39ACA5EFBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:40:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E19C23A918C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:39:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C031A7A73C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755DD2641DE;
-	Thu, 13 Mar 2025 09:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CC8264608;
+	Thu, 13 Mar 2025 09:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="DVHINQW7"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2058.outbound.protection.outlook.com [40.107.237.58])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RnJHilNI"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2044.outbound.protection.outlook.com [40.107.92.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B502641DF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DED3264614
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.44
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741858783; cv=fail; b=gTjGcpOQM5vN0pBXk9wZo2D27OemjhMVwh9D5bRRnOtxQEvwoS7MWL+TuxKmjR+/o/q/MgHFzQVPbuCTzMOKtXM2sNuUFReBQYL5Q33y3guL4TRnYbQ6DnDOGPa2GDA3I9EztYxxQgmy1vOmEw5dxFu+OBjYEirFX2GFBisfBOI=
+	t=1741858800; cv=fail; b=qXfCRYAodbNeDSWq2Q2W4rUKaZ+L1fSrXWF7fHMowUUTbrbItBYsAg5gxXSx1UQV9aG0nqo7VF+l6Ea6Qkk4Z1WxfCvNItzIGgfPeMuUpOmM2OTceFoSJOKrXivwouB8kOV0HD/VJqCfdMt07EYXjGg6ZizAUyH9SXtxerJFOP0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741858783; c=relaxed/simple;
-	bh=ZX9E5u5YFODE1Da8tR5uU8WdJFzIBtlsolxhNQBUCPQ=;
+	s=arc-20240116; t=1741858800; c=relaxed/simple;
+	bh=8gHAAiJFTWF/5uCh9rllspDrOyQBv7+kaznkGXzY05Y=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iX0ITj0Uj9USmxVT9CjBXYqJmeHckTPfH54LAvM3bR498ueiefrU5qRQ9WN1GCqjrcc33qpKU3ZLdLI2jg3PcttUKCRK2u6EHYE8FTG2oXN4nGXb85gGvH5T0vONzBAOwY9IXAqLTV+QT7kAOWzKBPAMm0ZZxnGj0WOhTvA62go=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=DVHINQW7; arc=fail smtp.client-ip=40.107.237.58
+	 MIME-Version:Content-Type; b=HsESg6ukmvRIrE3JD08VHWpUbOhw9z2oH3k6yJJ9P8XQyDnX5CpckDBrOam8i99T67vVH025P1FxtYBcAw/ZT+WDl8gy4ZYhyrINsUF0Spk8SNKueZY+Zyzi+9X9QCBI8H73coapykgpee11sXFF39dI0NLSsFBUtEE8GsGXXCs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RnJHilNI; arc=fail smtp.client-ip=40.107.92.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QnYXo0YtZUWsMvYobagCz8EH2YoVq82JnA/2BR8lIQkvNa3Qn7OM4iLVXlcFAv52YlCWvGIyvmbFYhnAY/P6ug4ekjxO/97VSXCRsnKMtBvnVqTmIIMZEvLFyMk5zK+2U0Xn5cAaZ4hjMNEHn7ZZ0qoP1SwtvI6Xk6oWyhRcqy47P3Mb6+640oyp3Xi8MkvZRc59sRGhDHg8tH9GNUJAAXJn8+HPBo7Cd+7HxXgQhJR4oR0atj0r+CsFykqsyLLVCm7s+8Nw4kEfPgMTV+ldXIOGJal35FWkWaFTLu5gpaYNEi2er2w8xsy5J4ETFBT5sIplCbf9LpKMc8TAaHzy/w==
+ b=H4Y+vQoosjtC6suZRuFjS4fhW62GqgP4JqVsmGPWNDWFcJlAYrz1um6XiH1LqThAt2GKTvqmxmSXSbHXYIcJ8fT0vKBLKeHqk+WpC89pi3bcPtHcUpmKwPxkc5EuxZpqjVQwGh9xtiQqixI1FwIv+p35CV6Ck6aeuBnYplonjzDQhSc4a4xPJ8e7+MDFO8ROWhRSz4reDg3X1oRy+e+m/riQbJy0mxrz9+j+Z1u6q86+evZ48LKIFS2m+flbivm93KI374yBla072WBUZXnFgWQ5BzmZ2B+lz6cXJdUJCSmEXa0TmXc9OD1mFrSFH3foo595bn9KAl/TcZSkUzKm4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q5MEss81ikQ4a1yPc7QlAkM9Ap7hvJpIRshYb2zErUk=;
- b=UGTI387h6qGGg+70y7gXzafjm1WmSYsbEtVlDYMvOjtzjIRU6KtXh41IHXpZu2KR3m2q9nFS0Svp86H/K8lhdl+c6fajzoLXOoi35NXy/bS7HSbrLMjgY8GdOzkCx62TmDRSLFoLi5O6Y94ZbruNrYFLIKOB+RSBnztE0aqD0Z+v23bZLB6pBS27q/UpsORt0zRa2RgVgMw+3vJ2ObQHLfG1BEzmh0keC8o1rXgwcAZJUa4bLVOYIa1jFTthA9e8eGlMlC99v4RvVeLP5tSC6Ks+DpgzIDJ6ZcvIWu1FrEEdDEGllUdBExRiFAVo0KFKP9cXIe/WKbVQYckyLvpoMw==
+ bh=IUwVN6AlJq94CP3sCMcW4UPJp8D5mXUeUVcpBeK2w1Q=;
+ b=Z2a0xqBz000jy+v9wSa1IHHMevqPCNOlRmEMDG8rJIOHSeEDHRqkEKZhODJdmudkB9JONnYWe0+H8H/pUyQ+g1t8AWGGe3hrCgpRfUVXU5STEpF7+NpY8fp+iaZwCC62sECXlL0Ur1tgLKvmVqRVpTdXlplj8B8En8c/aBDiolg/A240qd+evOxtidAJKwxJMXdK4dRywrM7WKL5s6ZBb+OFV7CgieJbor5NrGtGR6Hdga71DJ90wqbKJtSxYg4LHNK+jCfWjyWqX8oXzm3UgaOQRNW69ZtRcWMFneODp09azE/VCAt3aIBOE93naGOcq92gwAq3nR1SakJO4QizVQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q5MEss81ikQ4a1yPc7QlAkM9Ap7hvJpIRshYb2zErUk=;
- b=DVHINQW7XUGXy+SEkGdrTzDTVYKIs4b/7brmTtWhIxYJeNGjId5jBhSuEqD/LqZHjUHugxjSW1MxsBrma1zD35nmucM8yMpDq+SrCQQXMsHlv0MFq+MtuCTe8KapgOOZKFurhCtQSKqgnvfRuGCTpmRUlKQ9FB2fuA+wrjPZm2c=
-Received: from DM6PR02CA0150.namprd02.prod.outlook.com (2603:10b6:5:332::17)
- by CY8PR12MB7217.namprd12.prod.outlook.com (2603:10b6:930:5b::20) with
+ bh=IUwVN6AlJq94CP3sCMcW4UPJp8D5mXUeUVcpBeK2w1Q=;
+ b=RnJHilNI32sLWNsqjV4lSezKiEodY0BDYVbB6b/SdPSCQwwgU7QeVEAW4gfmCBie2tt/KwLNUOWS9VXWQE5g8yi44qgwzqfiYPKTKSR+43a67B2kyQYJDvlySDR71PC4oeba7bl1nsxr4aVnXOwtMHOQiBPOHEBEzA/f6O3Efq8=
+Received: from CY5PR15CA0248.namprd15.prod.outlook.com (2603:10b6:930:66::15)
+ by MN2PR12MB4303.namprd12.prod.outlook.com (2603:10b6:208:198::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.28; Thu, 13 Mar
- 2025 09:39:36 +0000
-Received: from CY4PEPF0000E9DA.namprd05.prod.outlook.com
- (2603:10b6:5:332:cafe::3c) by DM6PR02CA0150.outlook.office365.com
- (2603:10b6:5:332::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.24 via Frontend Transport; Thu,
- 13 Mar 2025 09:39:36 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Thu, 13 Mar
+ 2025 09:39:54 +0000
+Received: from CY4PEPF0000E9D6.namprd05.prod.outlook.com
+ (2603:10b6:930:66:cafe::96) by CY5PR15CA0248.outlook.office365.com
+ (2603:10b6:930:66::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.27 via Frontend Transport; Thu,
+ 13 Mar 2025 09:39:53 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000E9DA.mail.protection.outlook.com (10.167.241.73) with Microsoft
+ CY4PEPF0000E9D6.mail.protection.outlook.com (10.167.241.69) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Thu, 13 Mar 2025 09:39:35 +0000
+ 15.20.8534.20 via Frontend Transport; Thu, 13 Mar 2025 09:39:53 +0000
 Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Mar
- 2025 04:39:30 -0500
+ 2025 04:39:48 -0500
 From: K Prateek Nayak <kprateek.nayak@amd.com>
 To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
 	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
@@ -80,9 +80,9 @@ CC: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
 	<void@manifault.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, "Swapnil
  Sapkal" <swapnil.sapkal@amd.com>, Shrikanth Hegde <sshegde@linux.ibm.com>, "K
  Prateek Nayak" <kprateek.nayak@amd.com>
-Subject: [RFC PATCH 5/8] sched/topology: Define sg_lb_stats_prop and embed it inside sched_domain_shared
-Date: Thu, 13 Mar 2025 09:37:43 +0000
-Message-ID: <20250313093746.6760-6-kprateek.nayak@amd.com>
+Subject: [RFC PATCH 6/8] sched/fair: Increase probability of lb stats being reused
+Date: Thu, 13 Mar 2025 09:37:44 +0000
+Message-ID: <20250313093746.6760-7-kprateek.nayak@amd.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250313093746.6760-1-kprateek.nayak@amd.com>
 References: <20250313093746.6760-1-kprateek.nayak@amd.com>
@@ -98,174 +98,124 @@ X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9DA:EE_|CY8PR12MB7217:EE_
-X-MS-Office365-Filtering-Correlation-Id: e16bfeeb-ed39-4cea-49fa-08dd6212f7a9
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D6:EE_|MN2PR12MB4303:EE_
+X-MS-Office365-Filtering-Correlation-Id: 01e777bd-c9eb-490d-c0e8-08dd62130240
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|7416014|36860700013|1800799024;
+	BCL:0;ARA:13230040|82310400026|7416014|376014|36860700013|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6mUrQkYBH9wIDr3O4+VYBu4Y1ZHpoYft+YUrOKL2QzSTVggUfEsWHJqUXzqs?=
- =?us-ascii?Q?WhsLuD8ln1uaGIn5FyDhqXvaG/UiMzwJnn6IqNDcHWNvxSXbStFLxdkfseHT?=
- =?us-ascii?Q?lPZefx3rqDXxlLOWRnqX+snjqilQxipzRbGAohMQrKBnHW6aLL8t8kdWgPJ2?=
- =?us-ascii?Q?OihTmj4i743IoYXeArBi4uswkE4q7lh3YVNpH3OBIs5rb14qYLzW+1kJyWx9?=
- =?us-ascii?Q?SbR5fqOIrVzKNBk3c8jVhtF7xrY5o0VJ62P8RwRUmkXsxAT5RXsqRWWOggK1?=
- =?us-ascii?Q?Ku27EYphV6uQnEzCxY1trLV9hkGCniHePTzvdrRvABY/DI8diCPDAdo3G9WS?=
- =?us-ascii?Q?6SvKVfofcH9NrB65oiAicCIC+2uZ2z7nsqvIgEzsU0JTuQWI9dqN7m/CxruW?=
- =?us-ascii?Q?S1lciqxfOAV7Tp1LcW2JVOZgUDe5Zqq04vGXl4c3oHj5mJJNvmnQLrQFMu9k?=
- =?us-ascii?Q?awQAKCg9kQK1U6UjVuhRB/c6ut4d//37J0wDZyNSxxrQKxpEjj/RITkgrdD7?=
- =?us-ascii?Q?g+aObAms7Q4W9jBqOg/CbcqlqRDmcQbSP5+YhCXln1UFRfY+H4wSqNSEQ1Wc?=
- =?us-ascii?Q?7k53gHzf+yDQdgefFF1v33B8aQu++x/Ia42WwUk8C25cUz9ecfQpglBc8p6w?=
- =?us-ascii?Q?uBXlMCMo9WKnBduQFT7uVeasJXO8JaH81kRQt6pqqHgWoj036/txE+Iq+nXq?=
- =?us-ascii?Q?h5058lbEDQ1akuTeeZrQfXY/92bgWOprz2dZyxQ77NFVwFC6cUl4bT0JxiUm?=
- =?us-ascii?Q?oMMmXIkZqGKxLKK8HroZ3S0gAj9bcLT04GVaIO4283kocIrqUNbJwZtc93S6?=
- =?us-ascii?Q?comJzFY99Oy/f0lPQcDKsAdViZ9gecHSXbXK2eFyEvC9HDNj4axXbMPbrYIZ?=
- =?us-ascii?Q?gcVmzJsdS+mW2SgYceRafkOh8IcvPtsbr1oVTT8eZNmyCr2jTlBdaUQcRvO1?=
- =?us-ascii?Q?b5MH7whTE5Lg2Swn3esOHbr8dbZnQMyPUxNjAPodzE9aow9ajXzGP3BZp/u7?=
- =?us-ascii?Q?ByudwIqEeL1yowVdft4GRFo0e4WGRkqlBnrhJBhtbZPcSI5DBcRXUYUPgl8v?=
- =?us-ascii?Q?pIWT1XwyZfX5JeqPO2yMRWMMr8IjUVU9K5mFX4UQ24ASa4ZtzoNoHtQ53+B9?=
- =?us-ascii?Q?FUdBoyCPO3uJXDu9JDrlQYEgi31I6kmftM6bP95paFyk5K2U6tPeBvOhSQia?=
- =?us-ascii?Q?UsYb/OqhT0v5/Hf4XgnsKCb+ssE+y0kkMHTWHomls1/Q87Gb+CJN5w0icB6N?=
- =?us-ascii?Q?FWRs24G8bZO84kxbSdZiQRSs4xMtqveFHcHyh42TKiVAZ3JJp+naKkV+4600?=
- =?us-ascii?Q?7oenwr971zWy/y8G8mO/UuwJI1lyfGBi7PNl7JBYiY8lhNFNJeWQBbeO72AF?=
- =?us-ascii?Q?wu834rhqaqIuHb4qktSd5pcbgIsFrC1W7dsiqNmeoCuW8gfWkdm5ArzKmwlE?=
- =?us-ascii?Q?1uEz8vRxhqxsE0Zbd1HN6GjS7N6Htpq2KgOg4sQNqLu7wqS7BIPrpA=3D=3D?=
+	=?us-ascii?Q?aZJHZlrJEk1KadugUU3vpskdvzZYq1WGUUeoX8NbK6PXblbpbgtQr+MAFc1y?=
+ =?us-ascii?Q?Z8w/YdWCAZ4UMB2hr2GCAaMNRZfvV++iT/PiG+JTRFcQNYgnp5qggEI3iP1a?=
+ =?us-ascii?Q?v6knMZnQZnYHN4IScurRKrnOzcGZvcPHgTt5ZmLlHrCz5zqbIOry+wDDwTZ2?=
+ =?us-ascii?Q?TZwxAbvIUIJSB6DTRkqUjDHRiJHbwruRa+9/jZiBtA97xbVqtvQzPwUxGbOL?=
+ =?us-ascii?Q?hKttlIwtKwKmBQqjqZMWEWqCclYEs062Wu4A1XJO3ikw3ziUMWG85DB5cSJD?=
+ =?us-ascii?Q?IO6qjTw4wT/+cqFCtga8Gy4dOmiym2oXf+HbcfRYn3E8/hG0g74WWnJ+VyGk?=
+ =?us-ascii?Q?TYb9qIYH+ZjFL7f8xn9QtRU12s/h9HT4rsWAah3p5mJw0cpTE0jsPEIaRBkj?=
+ =?us-ascii?Q?tB6gC+jHoGPrQQ00LQij3UvJTVknCvdgS7q/yK2R0KdD+2PoVP9mjvspuDJl?=
+ =?us-ascii?Q?zU7/2O5V8RNOek4fRLI1r5+KZOVn0obDJoVV7uTy20yzL6iyacziMDyt3s/j?=
+ =?us-ascii?Q?lDs+VL3Umew3NZo7Zxe0uQfn+caazW2vAcaI9NsMTHswRMrJyPpyQP8t3CSR?=
+ =?us-ascii?Q?QaapMuUepK/ukvaDXyEfNDr+1a4tCfeedtGlblYvcoLx41/CdSyYPwxqtOXD?=
+ =?us-ascii?Q?0UcInOvtgOcke8NP+8VYWbeKTYYGj6yjeOkDMuP/I/Zj0RnDwi26nmuPSxdP?=
+ =?us-ascii?Q?aDvBCKASiWW9ESIThfRCQnY2I/40hFEwY5Z2VTRJ4Mg7xn1AsGYdBvcQI5Pw?=
+ =?us-ascii?Q?Iq0EJDgxvpz92+lJoy5mWzDEoCKYCkuh6f90tKDmiiRjOdiw3U9Ua3fJF24a?=
+ =?us-ascii?Q?kxxCiQBfne5piR0pfDuCPnFoWVmkoSUlDs3sILAHk32J2Rl3f8o+mQ1H2SpM?=
+ =?us-ascii?Q?CvfbCC6mA6TiYBMN7EOhp8AdNVmfXUm061l914stAwOlZjcbquo1BprIRbMD?=
+ =?us-ascii?Q?ICUZqhfuOG/9Pd50l1R2yRm4fgJgn5C4ldAmU0qIjsopUjAUbaMzxcovdd1O?=
+ =?us-ascii?Q?77LEKGUo0H5QwHYypfCjkKb0aktrpVQiTWH5ib9vf9l03fiZlk1YCZX8hhxV?=
+ =?us-ascii?Q?p62qFfPg0+IyCVFNfDWUfdo4FGxcixRJM8+kzsZK6J8mZszIX1ehAY5xuBzx?=
+ =?us-ascii?Q?A2tREjae4VMEgjN+vEOGYBjVhxE8aWk09N2LUdufRkoqMxuvyvtF23fGtrya?=
+ =?us-ascii?Q?ps3SI5pChbuNHoz/bMR70tnJXMTR8qYLgiW/kraWe1DwtFeTt7x4D0MyXPi4?=
+ =?us-ascii?Q?Ql1wYMFjxU7xTC7j63IrZQjHDGLcZGPbrmEk2oTLs2fGpGy3DmbUK13Y/Fqq?=
+ =?us-ascii?Q?bNceI0QEwhnhOOy1FvcG5K2AK6lspnGujshURzdYDLvCJZaoXaM2KYYUcsO1?=
+ =?us-ascii?Q?APDTLHzhXaLDNuy6KjUbE8mSWRn37lyx5IB2hVrK5aSxAs/wXkULBLgfQ4no?=
+ =?us-ascii?Q?DWex/PpOCJtI0Bt9DkZfLo7KpRp9RNhRoH+cgNPwS3NpyjwUNb6MpQ=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 09:39:35.9228
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 09:39:53.6770
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e16bfeeb-ed39-4cea-49fa-08dd6212f7a9
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01e777bd-c9eb-490d-c0e8-08dd62130240
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9DA.namprd05.prod.outlook.com
+	CY4PEPF0000E9D6.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7217
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4303
 
-"struct sg_lb_stats_prop" is a container around "sg_lb_stats" to help
-propagate the load balancing stats up the sched domain hierarchy. Embed
-the same in "sched_domain_shared" for concurrent load balancing
-instances to reuse the statistics collected for domains below.
+The load balancer will start caching the sg_lb_stats during load
+balancing and propagate it up the sched domain hierarchy in the
+subsequent commits.
+
+Increase the probability of load balancing intervals across domains to
+be aligned to improve the reuse efficiency of the propagated stats.
+Go one step further and proactively explore balancing at a higher domain
+if the next update time for a higher domain in before the next update
+time for its children.
 
 Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 ---
- include/linux/sched/topology.h |  9 +++++----
- kernel/sched/sched.h           | 11 +++++++++++
- kernel/sched/topology.c        | 26 +++++++++++++++++++++++---
- 3 files changed, 39 insertions(+), 7 deletions(-)
+ kernel/sched/fair.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-index 7f3dbafe1817..a16d7d9dd9d3 100644
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -78,10 +78,11 @@ extern int sched_domain_level_max;
- struct sched_group;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 3b1ed14e4b5e..60517a732c10 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -11956,15 +11956,6 @@ get_sd_balance_interval(struct sched_domain *sd, int cpu_busy)
  
- struct sched_domain_shared {
--	atomic_t	ref;
--	atomic_t	nr_busy_cpus;
--	int		has_idle_cores;
--	int		nr_idle_scan;
-+	atomic_t		ref;
-+	atomic_t		nr_busy_cpus;
-+	int			has_idle_cores;
-+	int			nr_idle_scan;
-+	void			*private;	/* lb stats propagation field */
- };
+ 	/* scale ms to jiffies */
+ 	interval = msecs_to_jiffies(interval);
+-
+-	/*
+-	 * Reduce likelihood of busy balancing at higher domains racing with
+-	 * balancing at lower domains by preventing their balancing periods
+-	 * from being multiples of each other.
+-	 */
+-	if (cpu_busy)
+-		interval -= 1;
+-
+ 	interval = clamp(interval, 1UL, max_load_balance_interval);
  
- struct sched_domain {
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 9372a75ab3cf..391c4180eeb3 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2170,6 +2170,17 @@ struct sg_lb_stats {
- #endif
- };
+ 	return interval;
+@@ -12126,7 +12117,7 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+ 	int continue_balancing = 1;
+ 	int cpu = rq->cpu;
+ 	int busy = idle != CPU_IDLE && !sched_idle_cpu(cpu);
+-	unsigned long interval;
++	unsigned long interval, prev_sd_next_balance = 0;
+ 	struct sched_domain *sd;
+ 	/* Earliest time when we have to do rebalance again */
+ 	unsigned long next_balance = jiffies + 60*HZ;
+@@ -12136,6 +12127,8 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
  
-+/*
-+ * sg_lb_stats_prop - Load balancer stats propagation container.
-+ * This is embedded in sg->shared->private and is used to propagate
-+ * sched_domain load balancing statistics up the hierarchy.
-+ */
-+struct sg_lb_stats_prop {
-+	raw_spinlock_t          stats_lock;	/* Lock for updating the cached stats */
-+	unsigned long		last_update;	/* Time when stats was last updated (jiffies) */
-+	struct sg_lb_stats	sg_stats;	/* Cached sched_group stats */
-+};
+ 	rcu_read_lock();
+ 	for_each_domain(cpu, sd) {
++		unsigned long next_interval;
 +
- static inline struct cpumask *sched_group_span(struct sched_group *sg)
- {
- 	return to_cpumask(sg->cpumask);
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 508ee8aa492b..aeb55f66e8d6 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -621,10 +621,19 @@ static void link_sg_shared(struct sched_group *sg, struct sched_domain_shared *s
- 	atomic_inc(&sds->ref);
- }
+ 		/*
+ 		 * Decay the newidle max times here because this is a regular
+ 		 * visit to all the domains.
+@@ -12162,7 +12155,9 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+ 				goto out;
+ 		}
  
-+static void free_sched_domain_shared(struct sched_domain_shared *sd_shared)
-+{
-+	if (!sd_shared)
-+		return;
-+
-+	kfree(sd_shared->private);
-+	kfree(sd_shared);
-+}
-+
- static void free_sg_shared(struct sched_group *sg)
- {
- 	if (sg->shared && atomic_dec_and_test(&sg->shared->ref))
--		kfree(sg->shared);
-+		free_sched_domain_shared(sg->shared);
- 
- 	sg->shared = NULL;
- }
-@@ -661,7 +670,7 @@ static void destroy_sched_domain(struct sched_domain *sd)
- 	free_sched_groups(sd->groups, 1);
- 
- 	if (sd->shared && atomic_dec_and_test(&sd->shared->ref))
--		kfree(sd->shared);
-+		free_sched_domain_shared(sd->shared);
- 	kfree(sd);
- }
- 
-@@ -2273,6 +2282,7 @@ static int __sdt_alloc(const struct cpumask *cpu_map)
- 			struct sched_domain_shared *sds;
- 			struct sched_group *sg;
- 			struct sched_group_capacity *sgc;
-+			struct sg_lb_stats_prop *sg_stats;
- 
- 			sd = kzalloc_node(sizeof(struct sched_domain) + cpumask_size(),
- 					GFP_KERNEL, cpu_to_node(j));
-@@ -2288,6 +2298,16 @@ static int __sdt_alloc(const struct cpumask *cpu_map)
- 
- 			*per_cpu_ptr(sdd->sds, j) = sds;
- 
-+			sg_stats = kzalloc_node(sizeof(struct sg_lb_stats_prop),
-+					GFP_KERNEL, cpu_to_node(j));
-+
-+			if (!sg_stats)
-+				return -ENOMEM;
-+
-+			raw_spin_lock_init(&sg_stats->stats_lock);
-+			sg_stats->last_update = 0;
-+			sds->private = (void *)sg_stats;
-+
- 			sg = kzalloc_node(sizeof(struct sched_group) + cpumask_size(),
- 					GFP_KERNEL, cpu_to_node(j));
- 			if (!sg)
-@@ -2332,7 +2352,7 @@ static void __sdt_free(const struct cpumask *cpu_map)
+-		if (time_after_eq(jiffies, sd->last_balance + interval)) {
++		next_interval = sd->last_balance + interval;
++		if (time_after_eq(jiffies, next_interval) ||
++		    (prev_sd_next_balance && time_after(prev_sd_next_balance, next_interval))) {
+ 			if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
+ 				/*
+ 				 * The LBF_DST_PINNED logic could have changed
+@@ -12174,6 +12169,7 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
  			}
- 
- 			if (sdd->sds)
--				kfree(*per_cpu_ptr(sdd->sds, j));
-+				free_sched_domain_shared(*per_cpu_ptr(sdd->sds, j));
- 			if (sdd->sg)
- 				kfree(*per_cpu_ptr(sdd->sg, j));
- 			if (sdd->sgc)
+ 			sd->last_balance = jiffies;
+ 			interval = get_sd_balance_interval(sd, busy);
++			prev_sd_next_balance = sd->last_balance + interval;
+ 		}
+ 		if (need_serialize)
+ 			atomic_set_release(&sched_balance_running, 0);
 -- 
 2.43.0
 
