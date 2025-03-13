@@ -1,94 +1,124 @@
-Return-Path: <linux-kernel+bounces-560421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05EB1A603D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:00:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E9C0A603DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:02:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DAA5421107
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:00:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F13D919C4F25
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CC01F76C2;
-	Thu, 13 Mar 2025 22:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB9F1F63FE;
+	Thu, 13 Mar 2025 22:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AsSmmTsL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="vFgcnF91"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6BA1F754C;
-	Thu, 13 Mar 2025 22:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410CD7FBAC;
+	Thu, 13 Mar 2025 22:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741903224; cv=none; b=cjhJuXbKUucEKsTc7Il/F2FMXA2YxenTVN8ykdQKKE8vA4T/HcaFPOoHRX2hj97bKmcH3WlokUoINnvx8TULgsm8giBCoanxkbaUjcLF9mRrYeBmC/xh3X4sxoBqsEYHtN6c5W/7dsfH9hbOSGNNK/hOE/cLZ70w9xOtGqUudzQ=
+	t=1741903317; cv=none; b=X8zR3SnijwULf+DxTH7iC8u/qCIRBHJsPoivAWox96oevpb7MT/yEIMkE+OyKybxSd+2X2w/DkSA0j9B4ZusPqCt+RP/8/cTqnJL+DABASjNg6G9EaNIETgebMA2jwiKrEZdvvMy7zBUodftcKib0Z7ZVSMmeAPXOfhvx1GjTh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741903224; c=relaxed/simple;
-	bh=hdrHTR1mL6tmZplZ1odsZgbWQm+yiq9Gt1ma1cVGaS4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=sbOhjBg3R30T5sWYvfvmrPfQEgL4iec2GWIFM75GdrRahMnXJn3jYQ6gwuZ7PspjSUF+G9BSJ/TS+7kXTvURBPTeymhJ/XAwGwNijlVO5i6hfeJ9fR9Wxn8Gww7fh95GjY45y2UCy0z+U42zdaNiXMjRUfGfqXQApaBLlpOK7UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AsSmmTsL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61617C4CEEA;
-	Thu, 13 Mar 2025 22:00:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741903223;
-	bh=hdrHTR1mL6tmZplZ1odsZgbWQm+yiq9Gt1ma1cVGaS4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=AsSmmTsL/avuhvlYe1k9W9fLouGe3miPR7yUX83m5klF1r659wLQG1XcMEBWNUUdf
-	 aLfugTttEnporG/wEdmKkXnR6eZGtI6FvvYFvCM5NezvE2or4qSMfjf3bIgO6iTd0x
-	 7vh1L4E50Yen+weXKEZ0DbEzXuptaPtXKk1Xi+yaiKNWUm6LC1bc9oyEfUm8LK4TKp
-	 PZLkP2xByy9VX2nk4hAOysNLlHmrWVG+QT3LmS0I33h/sDsyVk54G48M3TUqlAicSy
-	 RYqhTDdunuUo3HYnmD+velIarwW6ieeqf0OVGOlHQYraSDFghMCXVvSzi2DmNgN/ki
-	 xjqVQIyQh8vhw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BDE3806651;
-	Thu, 13 Mar 2025 22:00:59 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1741903317; c=relaxed/simple;
+	bh=Xl5XZkRzyHK1ICtN1r6YQrbroSsa44PrhiPDBMEXYWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ObpqQOR6EIPpxsk/dCHBFrUmboifkXUScGm2p1tBySIi5jUm5St2uY3yfKXvKHrtbHExEVj25BO4Fdrn8f8TFHE90LlpuPxmeN9vjrkuWCMTn3rX9dCy4N9+K46NV0BPO1Bdjm3a0QtoVw5cwTEDVLnSNetxGzrKntdCRXMMHYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=vFgcnF91; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=rno9OMXiXAURQ7qP4ybw0rYOr4Xj/xylSi9vradBspI=; b=vFgcnF91xKT49B1jJtvYniByP/
+	BBsCeh77OH1VaD+LpsV1Or85YgaYrAqZF3iWNbMAQkR2SN3aCv2WxkBUb0XWKcEPuOxWabVsDuUQc
+	kvRJpe3ayVZlvrSf9lAOzr2ZJLkEYnD/80pce/vETN9fbpcYhNUCRj1AAFO+iGHNXW4GiVDH5V1hm
+	Ptn4SMhx0TdkyI/3UD4exWGrnur1MkDE11Fz+d9XTomg/+ZB2AVVCufl7irLS5IGZtRH02ps0wYtt
+	xg7+63HPSfu5SBKqo7B19V00sPb8fPzw8ZsuNQywmBG9Y0jHtdXxtE6UAn76Hkx5tmpyEmtTicWOK
+	9jApPauA==;
+Date: Thu, 13 Mar 2025 23:01:48 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
+Cc: "rogerq@kernel.org" <rogerq@kernel.org>, "tony@atomide.com"
+ <tony@atomide.com>, "aaro.koskinen@iki.fi" <aaro.koskinen@iki.fi>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+ "khilman@baylibre.com" <khilman@baylibre.com>
+Subject: Re: [PATCH] Revert "bus: ti-sysc: Probe for l4_wkup and l4_cfg
+ interconnect devices first"
+Message-ID: <20250313230148.792f224b@akair>
+In-Reply-To: <6348326299702a12ed4faa6ea25ee8bbe5e232aa.camel@siemens.com>
+References: <20250313094708.1003092-1-alexander.sverdlin@siemens.com>
+	<20250313202129.0dcfc44e@akair>
+	<6348326299702a12ed4faa6ea25ee8bbe5e232aa.camel@siemens.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] block: Name the RQF flags enum
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174190325773.1674705.18381879459653855191.git-patchwork-notify@kernel.org>
-Date: Thu, 13 Mar 2025 22:00:57 +0000
-References: <20250306-rqf_flags-v1-1-bbd64918b406@debian.org>
-In-Reply-To: <20250306-rqf_flags-v1-1-bbd64918b406@debian.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org, kernel-team@meta.com,
- yonghong.song@linux.dev
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+Am Thu, 13 Mar 2025 20:42:23 +0000
+schrieb "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>:
 
-This patch was applied to netdev/net.git (main)
-by Jens Axboe <axboe@kernel.dk>:
+> Hi Andreas!
+>=20
+> On Thu, 2025-03-13 at 20:21 +0100, Andreas Kemnade wrote:
+> > > This reverts commit 4700a00755fb5a4bb5109128297d6fd2d1272ee6.
+> > >=20
+> > > It brakes target-module@2b300050 ("ti,sysc-omap2") probe on AM62x in =
+a case
+> > > when minimally-configured system tries to network-boot:
+> > >  =20
+> > brakes or breaks? To unterstand the severity of the issue... =20
+>=20
+> Thanks for the correction, it should have been "breaks"...
+>=20
+> > > [=C2=A0=C2=A0=C2=A0 6.888776] probe of 2b300050.target-module returne=
+d 517 after 258 usecs
+> > > [=C2=A0=C2=A0 17.129637] probe of 2b300050.target-module returned 517=
+ after 708 usecs
+> > > [=C2=A0=C2=A0 17.137397] platform 2b300050.target-module: deferred pr=
+obe pending: (reason unknown)
+> > > [=C2=A0=C2=A0 26.878471] Waiting up to 100 more seconds for network.
+> > >=20
+> > > Arbitrary 10 deferrals is really not a solution to any problem. =20
+> >=20
+> > So there is a point where no more probe of anything pending are
+> > triggered and therefore things are not probed? =20
+>=20
+> Because there is a point indeed (if we configure quite minimal set of dri=
+vers just
+> enough to mount NFS) when deferred probes are not triggered any longer.
+>=20
+> > > Stable mmc enumeration can be achiever by filling /aliases node prope=
+rly
+> > > (4700a00755fb commit's rationale).
+> > >  =20
+> > yes, it does not look like a clean solution. And we have the
+> > proper aliases node in many places. What I am a bit wondering about is
+> > what kind of sleeping dogs we are going to wake up by this revert. So I
+> > think this should be tested a lot esp. about possible pm issues.
+> >=20
+> > Not every dependency in the sysc probe area is properly defined. =20
+>=20
+> But the patch I propose to revert is really not a solution for missing
+> dependencies on syscons. I'm fine with not propagating this to stable,
+> but reverting in master should give enough time for older SoCs to test,
+> WDYT?
+>
+I am not against your revert proposal and not against propagating it
+to stable, I would just like to see some Tested-Bys before it gets
+applied to anything. If anything nasty pops up, it should be solved in a
+cleaner way then with the offending patch.
 
-On Thu, 06 Mar 2025 08:27:51 -0800 you wrote:
-> Commit 5f89154e8e9e3445f9b59 ("block: Use enum to define RQF_x bit
-> indexes") converted the RQF flags to an anonymous enum, which was
-> a beneficial change. This patch goes one step further by naming the enum
-> as "rqf_flags".
-> 
-> This naming enables exporting these flags to BPF clients, eliminating
-> the need to duplicate these flags in BPF code. Instead, BPF clients can
-> now access the same kernel-side values through CO:RE (Compile Once, Run
-> Everywhere), as shown in this example:
-> 
-> [...]
-
-Here is the summary with links:
-  - block: Name the RQF flags enum
-    https://git.kernel.org/netdev/net/c/e7112524e5e8
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Regards,
+Andreas
 
