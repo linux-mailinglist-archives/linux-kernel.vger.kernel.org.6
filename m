@@ -1,133 +1,90 @@
-Return-Path: <linux-kernel+bounces-559004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E60A5EE3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:41:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00631A5EE3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:42:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAE83171C5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:41:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6937F3A7647
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E7E261571;
-	Thu, 13 Mar 2025 08:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="OStm+eJx"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D0A261566;
+	Thu, 13 Mar 2025 08:42:24 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55151EA7FC;
-	Thu, 13 Mar 2025 08:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCF51EA7FC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741855287; cv=none; b=uyk1cEseu9BofWdUr+2LiR2alqLDRmALIhucLnO+lVMDZooAnRGZhFvc6StCvfdAzE28CCYUgRK90kGDjZUnJb5NTTaaj+pSYUHe/AH2Tbpv/nNPaNFh/Pi23AooE0RcffBa7crqKjGBGf4SUDLP0Sna1P93LcZ6sTCF+kxxXmk=
+	t=1741855344; cv=none; b=MDu7gku6503bDdFwLtErcXMkdAoltmmmKCxQb9ySlNMfEqRDEisHfmUwsLPZE3MlSMT4ptLk/BQFgG+t0J/pHIIE8pv+EelvLF6bOoyDS6caqCvXNWL1hYx3SIMGExA4B4wPsDPVc2Dt1f5tgqqqdjb3iwHiMnu1PH5sguODnQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741855287; c=relaxed/simple;
-	bh=/Am8PS1urBK4vKQNjEf+4rlsiDrz113oLVXfJaO/094=;
+	s=arc-20240116; t=1741855344; c=relaxed/simple;
+	bh=vA5wxjoYQ18CfQhj0cxn1zrY/iSsxfanXpxr9W6PPY4=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HAmE4lRM2VDeS4ijODJiT9K86UiDtMxrTl6uhIIN5nfvyhtiZopVbtPRRXCKgDUxYzzXsos7nK45Va02I6pViT3kOCRvvwuS59q3L3kF6Qbfyn7h64jhg/y7CyAMSuO9A3mziieGgh6HEtSAsqdj39Iwojd2CZNFYN0kD53Cn7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=OStm+eJx; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4ZD1Dq63N9z9tD1;
-	Thu, 13 Mar 2025 09:41:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1741855275; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m0s9BXoOXwlavaR7+igiPKZFuNZEvjYPYrMoR9PJJ9U=;
-	b=OStm+eJxJOT29Vjs9GNAVvClQl4ZrJ22/0/f3Ja9wWMbjT9yVJaJbTK6wsNYfKATILNJZZ
-	7APXc+TcCsKMT9bwiTIbs+ChmSaHo4CXt64G7pLc4jb5qcAvc2ZO2cEH9JsCeQpuqHeFGY
-	YPJLcM51YL5PAmsaC7kmVp/eeltE8IRBr4H4rANlaV3P+SjWJlGRlcdBS0X2oCdWKKYjo0
-	2S6XPkqX8nQnISiSVykbX0yq1Ajz7yQRTxB8AzCmC/sfUtD1rUuaESEwUPBqkRvkX/fONW
-	6ztu+gLeXzss5rmkVTOS2+asSDtLFcfEc29Rj3spsIjBJ3bxOWi73le8l1FoHw==
-Message-ID: <91a06e390d6b526bd9e9ba37cb478d337a2294dd.camel@mailbox.org>
-Subject: Re: [PATCH V4] drm/sched: Fix fence reference count leak
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Qianyi Liu <liuqianyi125@gmail.com>, airlied@gmail.com, 
- ckoenig.leichtzumerken@gmail.com, dakr@kernel.org, daniel@ffwll.ch, 
- maarten.lankhorst@linux.intel.com, matthew.brost@intel.com,
- mripard@kernel.org,  phasta@kernel.org, tzimmermann@suse.de
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Date: Thu, 13 Mar 2025 09:41:11 +0100
-In-Reply-To: <20250311060251.4041101-1-liuqianyi125@gmail.com>
-References: <20250311060251.4041101-1-liuqianyi125@gmail.com>
+	 Content-Type:MIME-Version; b=XOMMoFA76REOJgOfisEn5+CJk7j5aE6GkjY4+lX892v/u7f4elVcPT5gkLZy2jvOFoHgXi5z/7skYiKRR7BcFb6CATyOMhXr0H35ywiMDvrDmzanRPtgnkUvtLsS+1whNBbTR8KYcw0MpUtwSyVqZlCsebhMSSBXJcBRrFIKdzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tse8t-00007I-JV; Thu, 13 Mar 2025 09:42:15 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tse8t-005VQP-19;
+	Thu, 13 Mar 2025 09:42:15 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tse8t-0003Y4-10;
+	Thu, 13 Mar 2025 09:42:15 +0100
+Message-ID: <dbdbc1f6c30cba1e0e1445de09564864dfdb8b58.camel@pengutronix.de>
+Subject: Re: [PATCH v4] reset: mchp: sparx5: Fix for lan966x
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>, 
+	Steen.Hegelund@microchip.com, daniel.machon@microchip.com, 
+	UNGLinuxDriver@microchip.com, herve.codina@bootlin.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Thu, 13 Mar 2025 09:42:15 +0100
+In-Reply-To: <20250227105502.25125-1-horatiu.vultur@microchip.com>
+References: <20250227105502.25125-1-horatiu.vultur@microchip.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: q1q4tsbu5owia83jckezz1ppzj9i6pga
-X-MBO-RS-ID: 1b049b0e8507b5db404
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, 2025-03-11 at 14:02 +0800, Qianyi Liu wrote:
-> From: qianyi liu <liuqianyi125@gmail.com>
+On Do, 2025-02-27 at 11:55 +0100, Horatiu Vultur wrote:
+> With the blamed commit it seems that lan966x doesn't seem to boot
+> anymore when the internal CPU is used.
+> The reason seems to be the usage of the devm_of_iomap, if we replace
+> this with devm_ioremap, this seems to fix the issue as we use the same
+> region also for other devices.
 >=20
-> The last_scheduled fence leaks when an entity is being killed and
-> adding
-> the cleanup callback fails.
->=20
-> Decrement the reference count of prev when dma_fence_add_callback()
-> fails, ensuring proper balance.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 2fdb8a8f07c2 ("drm/scheduler: rework entity flush, kill and
-> fini")
-> Signed-off-by: qianyi liu <liuqianyi125@gmail.com>
+> Fixes: 0426a920d6269c ("reset: mchp: sparx5: Map cpu-syscon locally in ca=
+se of LAN966x")
+> Reviewed-by: Herve Codina <herve.codina@bootlin.com>
+> Tested-by: Herve Codina <herve.codina@bootlin.com>
+> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
 
-Applied to drm-misc-fixes, thank you.
+Applied to reset/fixes, thanks!
 
-P.
+[1/1] reset: mchp: sparx5: Fix for lan966x
+      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3D0e2268f88bb2
 
-> ---
-> v3 -> v4: Improve commit message and add code comments (Philipp)
-> v2 -> v3: Rework commit message (Markus)
-> v1 -> v2: Added 'Fixes:' tag and clarified commit message (Philipp
-> and Matthew)
-> ---
-> =C2=A0drivers/gpu/drm/scheduler/sched_entity.c | 11 +++++++++--
-> =C2=A01 file changed, 9 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/scheduler/sched_entity.c
-> b/drivers/gpu/drm/scheduler/sched_entity.c
-> index 69bcf0e99d57..da00572d7d42 100644
-> --- a/drivers/gpu/drm/scheduler/sched_entity.c
-> +++ b/drivers/gpu/drm/scheduler/sched_entity.c
-> @@ -259,9 +259,16 @@ static void drm_sched_entity_kill(struct
-> drm_sched_entity *entity)
-> =C2=A0		struct drm_sched_fence *s_fence =3D job->s_fence;
-> =C2=A0
-> =C2=A0		dma_fence_get(&s_fence->finished);
-> -		if (!prev || dma_fence_add_callback(prev, &job-
-> >finish_cb,
-> -					=C2=A0=C2=A0
-> drm_sched_entity_kill_jobs_cb))
-> +		if (!prev ||
-> +		=C2=A0=C2=A0=C2=A0 dma_fence_add_callback(prev, &job->finish_cb,
-> +					=C2=A0=C2=A0
-> drm_sched_entity_kill_jobs_cb)) {
-> +			/*
-> +			 * Adding callback above failed.
-> +			 * dma_fence_put() checks for NULL.
-> +			 */
-> +			dma_fence_put(prev);
-> =C2=A0			drm_sched_entity_kill_jobs_cb(NULL, &job-
-> >finish_cb);
-> +		}
-> =C2=A0
-> =C2=A0		prev =3D &s_fence->finished;
-> =C2=A0	}
-
+regards
+Philipp
 
