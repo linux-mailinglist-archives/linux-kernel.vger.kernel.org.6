@@ -1,159 +1,152 @@
-Return-Path: <linux-kernel+bounces-560109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 688E0A5FDD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:34:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EAEAA5FDE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:35:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A751F16F00E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:34:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA9CA421C28
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF85187554;
-	Thu, 13 Mar 2025 17:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A761D5AB5;
+	Thu, 13 Mar 2025 17:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVQyU8mB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IaB2WuN2"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4590514386D;
-	Thu, 13 Mar 2025 17:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5614616DC28
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741887290; cv=none; b=GJErdFHPvtD4HSGVNIDl0olPMVlTvVnspaz/MnC25+L2fASURAGn9+Jamq9viDw82U+Xr05FxjuYMYmqyO7SSssL7vSyU1fDsRkYU4J4wz5c5hyiPJU5WqQ++HapcDStNkWWH2oKFaxpDAaG0vLVpA5k2hRHD4RVWZsXdmXNrHg=
+	t=1741887301; cv=none; b=NdQtPEuGl0NuJb5APdTfLu+xOjtqZFI9hailEVnaQAaK/i/PlwqkHgc3mEUrHZz+bd92tRhXEck8tJjMYg9CYQtyGiW5jAtiU5SWpsb5GWWS6ffJ/KlI1Q8xpTSEQepY3K+ZH1215DTEfGGJzXIQh/ssZGfBUk8pkAce5NFPk8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741887290; c=relaxed/simple;
-	bh=OoAvfSAO5M3PHg1qgT00ibdT5WETqpo45KH3DuoIfjE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jwQrJOBkl4kLo9sPaxrhgdY/8Dbo39d7uSvcXl5HwHIXt6fSF7pTIOBLNfduuaK/29XckIuN9uDHW//8/UyacH6YaMDqOW67rUIP2DGixdwC4ECHzTs99koMhjoP5ynO4JiPcSmK3Fu4mH3tv5yHRfgKbqnYXrrvIxybWr9+J9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVQyU8mB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7B6BC4CEEA;
-	Thu, 13 Mar 2025 17:34:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741887289;
-	bh=OoAvfSAO5M3PHg1qgT00ibdT5WETqpo45KH3DuoIfjE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VVQyU8mBAHNp06f4PUy8OQ441a3jzB0w7cdr7DECxbtEliMh01cQUWRWvFYU3Jez5
-	 RkdnI1LCoaG7yppGd9vje1fEdUoHzs3A5HH0zBqE+yFMcbOswaG7PGNAVDbtVbGQuG
-	 rHqqNwL2pbQFRBc4kq3PgxHk6Gd6btpLtWNO3AMV9bD1DfPOaerkp3DgRE1PuAxdTW
-	 18+vvZB5PhAsHJrLYHTMEzzeCEOV2/D+wJby5pXwes6nzXzoOmetd5UFctZLD4jsNu
-	 0SiX1C1WDorGyJZy5/32/g2HlM+ZisCfcYi5uy3ilNb6Go6TvGn3h39aDHO31lyI43
-	 8eQsG2/A/ZsFw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tsmSE-00DJ4E-TQ;
-	Thu, 13 Mar 2025 17:34:47 +0000
-Date: Thu, 13 Mar 2025 17:34:46 +0000
-Message-ID: <86ikocomvd.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: =?UTF-8?B?TWlrb8WCYWo=?= Lenczewski <miko.lenczewski@arm.com>
-Cc: ryan.roberts@arm.com,
-	suzuki.poulose@arm.com,
-	yang@os.amperecomputing.com,
-	corbet@lwn.net,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	jean-philippe@linaro.org,
-	robin.murphy@arm.com,
-	joro@8bytes.org,
-	akpm@linux-foundation.org,
-	mark.rutland@arm.com,
-	joey.gouly@arm.com,
-	james.morse@arm.com,
-	broonie@kernel.org,
-	anshuman.khandual@arm.com,
-	oliver.upton@linux.dev,
-	ioworker0@gmail.com,
-	baohua@kernel.org,
-	david@redhat.com,
-	jgg@ziepe.ca,
-	shameerali.kolothum.thodi@huawei.com,
-	nicolinc@nvidia.com,
-	mshavit@google.com,
-	jsnitsel@redhat.com,
-	smostafa@google.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev
-Subject: Re: [PATCH v3 1/3] arm64: Add BBM Level 2 cpu feature
-In-Reply-To: <20250313104111.24196-3-miko.lenczewski@arm.com>
-References: <20250313104111.24196-2-miko.lenczewski@arm.com>
-	<20250313104111.24196-3-miko.lenczewski@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1741887301; c=relaxed/simple;
+	bh=teNW5gIZaqNNqnPivdYVGhV0iuN3q+s0pOAIQRfvUdI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FBiP+5IYp7ZBNTAhLj7gWpZ1PLBzDMvAUsjfjcFVjfva3EEQ9+BMEtES+FbJtXNSUKRDOe+uija/f7FABvb9SL2U8VbXk5+177P15gD4chzIi5AvKXVPGU//B2e49Hlki37vDiSsZmYJL9g4MXpP4sPIxQBid9loCfDtuus7DNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IaB2WuN2; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cfe574976so8244565e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:34:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741887298; x=1742492098; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oXkYzz2Ho7HoWYUA45E8jVGK6oEmHJXqvRS4IbzYytA=;
+        b=IaB2WuN2w7gYjcHt1Uwp/c0H3IvM4cm2xe9st2dygFqSTtb8QhJfAaoI4J5/TzekFD
+         8yyo8Gx4O7veB5CKFARZ1cppceVT3zLRZgWEwkAs/vT7sfLq5SKH+wKslk+bxGewCx7M
+         tFmFfB2LA9ujzxcCdQbS/wJuGWs1GL4cetnngLE/BVrdZ6T0tqjSar9DQCHhdFDHH5xE
+         Jv3t7J/7bCs36+OchcNEOnn0LJFw2sJsW/AK4Lhf9CK7aOf0HBVicIxlqxwyL6Q0LNCu
+         bT1UnNAxQ9omQ4NKBlzSaLU/sp/JuD749GEOsa5czywnrJvc/ksKqieZcbiwf4zHP0z6
+         3gOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741887298; x=1742492098;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oXkYzz2Ho7HoWYUA45E8jVGK6oEmHJXqvRS4IbzYytA=;
+        b=coduOLWLFiURo5JkSmf6iqS4PFvVTVvKMhbubJUGdB6nVg631rHGe/rt6oGjca50xj
+         xrK99rxDW3Y6ubHCgXSnyAGke91AY9C/5gB8Vk05KwadcX6BXqGbzSBGhFmE93rGgNHZ
+         7ZvrTaKk0ODr7wY7Chs7/uVPmZqlQTofsjM4QQST1YiTLaO/jHmJkcILT8JEhGsgVXcD
+         q0oK1y+ujS96SXOWgZC4onAS631Mh2xIeyM/3jViTE8KfgPaUbLXys7h7mont1NoMtKO
+         SmbDlVfx+7BLVPGVHRF4xFSiXMDRkXTBux4E08DzgjwqK/MGJfnH/XgoOgNS7tGGWcTw
+         8jBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVp/4/ohoZYq8/jcHVJMrkfykozuXtcF0tIJxCikq13DS2ELzMoqCcJRlO6DxXWA/mkjR5kgzgjjo8x7yw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweXbVUgGeFaWs6DhAaKLLs4aYk/ClorBRGA8jQKveiSi6Gq5XD
+	Qjm3zeoyvdMArhyQCQKx557dEFx3WtEW63wAQTeXOYhyKmuiMqiXJYkjumuuL10G8aXwOSpe+5h
+	ZsQ+NlUSS6t7SOd65nLSc/mLhjOro7MM4p9/bxw==
+X-Gm-Gg: ASbGncvJhitFTIo41FVEMU8YH+iWaG5/sBBv8CxB4yjUTUbYbCQlD8LRRbRCdWS1WC6
+	eq5Sky9jxmR1il+cMlVUl7kTDI3XxKZSlA0PPrwRx0GITn6o5MReymaT5TkaNQdfy5q6gsxK83y
+	I0fVKBh8iimvAGHpElOrTPMgPvo75QgrrsxVPIto1IihtLgpJnEkvOfpeEsM5HqfVDM5SOAQ==
+X-Google-Smtp-Source: AGHT+IE1c9T0TY/pjJhjtchTkkrxDWqZJglz/azIkv2TkxGPgH3NolVO9vmQFRaJtQOUi7YI3c4g7vzs00zqUmzqNzw=
+X-Received: by 2002:a5d:5989:0:b0:38d:cf33:31d6 with SMTP id
+ ffacd0b85a97d-39263b006c5mr11690959f8f.3.1741887297667; Thu, 13 Mar 2025
+ 10:34:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: miko.lenczewski@arm.com, ryan.roberts@arm.com, suzuki.poulose@arm.com, yang@os.amperecomputing.com, corbet@lwn.net, catalin.marinas@arm.com, will@kernel.org, jean-philippe@linaro.org, robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org, mark.rutland@arm.com, joey.gouly@arm.com, james.morse@arm.com, broonie@kernel.org, anshuman.khandual@arm.com, oliver.upton@linux.dev, ioworker0@gmail.com, baohua@kernel.org, david@redhat.com, jgg@ziepe.ca, shameerali.kolothum.thodi@huawei.com, nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com, smostafa@google.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-v1-1-675b6bc57176@linaro.org>
+ <CACr-zFC=mPNeeHMp9XnSby+cMQaPWt_3s8iUiCN+EnVPeGad8Q@mail.gmail.com>
+ <uljqxwfgl26txrfqvkvzzpj6qurgmwcbuot7gu2u6rwjaqgncb@jeuyi4mexjff>
+ <CACr-zFDSFizYmrVN-dV334n1kq17UB9k4FxrV20NNQCQMhzrwg@mail.gmail.com>
+ <92dd35a2-d1cc-4f2b-b3a8-5752ec33b0d3@kernel.org> <CACr-zFCYWEFPO8yExp_8hOQdVtC9Zwu1ZOZNksSeyyS6Ht0e9A@mail.gmail.com>
+ <Z9HjMyjzE9XlqrEj@x1>
+In-Reply-To: <Z9HjMyjzE9XlqrEj@x1>
+From: Christopher Obbard <christopher.obbard@linaro.org>
+Date: Thu, 13 Mar 2025 17:34:46 +0000
+X-Gm-Features: AQ5f1JrDO9V43KtazVC9qZW1Wz_qdtZmiVsFJZOGkGi6dHNCT7HLwGuh8qsdaME
+Message-ID: <CACr-zFAHGcQtwSz0EF0kt7_PUXxwi3GZY2BmAVedbLjh3+4LhA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: defconfig: Enable Qualcomm interconnects as built-in
+To: Brian Masney <bmasney@redhat.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 13 Mar 2025 10:41:10 +0000,
-Miko=C5=82aj Lenczewski <miko.lenczewski@arm.com> wrote:
->=20
-> diff --git a/arch/arm64/kernel/pi/idreg-override.c b/arch/arm64/kernel/pi=
-/idreg-override.c
-> index c6b185b885f7..9728faa10390 100644
-> --- a/arch/arm64/kernel/pi/idreg-override.c
-> +++ b/arch/arm64/kernel/pi/idreg-override.c
-> @@ -209,6 +209,7 @@ static const struct ftr_set_desc sw_features __prel64=
-_initconst =3D {
->  		FIELD("nokaslr", ARM64_SW_FEATURE_OVERRIDE_NOKASLR, NULL),
->  		FIELD("hvhe", ARM64_SW_FEATURE_OVERRIDE_HVHE, hvhe_filter),
->  		FIELD("rodataoff", ARM64_SW_FEATURE_OVERRIDE_RODATA_OFF, NULL),
-> +		FIELD("nobbml2", ARM64_SW_FEATURE_OVERRIDE_NOBBML2, NULL),
->  		{}
->  	},
->  };
-> @@ -246,6 +247,7 @@ static const struct {
->  	{ "rodata=3Doff",			"arm64_sw.rodataoff=3D1" },
->  	{ "arm64.nolva",		"id_aa64mmfr2.varange=3D0" },
->  	{ "arm64.no32bit_el0",		"id_aa64pfr0.el0=3D1" },
-> +	{ "arm64.nobbml2",		"arm64_sw.nobbml2=3D1" },
+Hi Brian,
 
-Why is that a SW feature? This looks very much like a HW feature to
-me, and you should instead mask out ID_AA64MMFR2_EL1.BBM, and be done
-with it. Something like:
+On Wed, 12 Mar 2025 at 19:40, Brian Masney <bmasney@redhat.com> wrote:
+>
+> Hi Christopher,
+>
+> On Wed, Mar 12, 2025 at 12:10:56PM +0100, Christopher Obbard wrote:
+> > For reference, I am working on updating initramfs generation tools in
+> > Debian/Fedora to include the required interconnect modules. Currently
+> > the interconnect drivers are built as modules in these distros, but
+> > are not included in the initrd. That is where my confusion initially
+> > stemmed from.
+>
+> From a Fedora and centos-stream-9/10 perspective, we have dracut
+> updated so that the interconnect modules are included in the initramfs
+> by default.
+>
+> https://github.com/dracutdevs/dracut/blob/master/modules.d/90kernel-modules/module-setup.sh#L74
+>
+> Let me know if you are seeing a specific issue with the initramfs on
+> Fedora and I can help you.
 
-diff --git a/arch/arm64/kernel/pi/idreg-override.c b/arch/arm64/kernel/pi/i=
-dreg-override.c
-index c6b185b885f70..803a0c99f7b46 100644
---- a/arch/arm64/kernel/pi/idreg-override.c
-+++ b/arch/arm64/kernel/pi/idreg-override.c
-@@ -102,6 +102,7 @@ static const struct ftr_set_desc mmfr2 __prel64_initcon=
-st =3D {
- 	.override	=3D &id_aa64mmfr2_override,
- 	.fields		=3D {
- 		FIELD("varange", ID_AA64MMFR2_EL1_VARange_SHIFT, mmfr2_varange_filter),
-+		FIELD("bbm", ID_AA64MMFR2_EL1_BBM_SHIFT, NULL),
- 		{}
- 	},
- };
-@@ -246,6 +247,7 @@ static const struct {
- 	{ "rodata=3Doff",			"arm64_sw.rodataoff=3D1" },
- 	{ "arm64.nolva",		"id_aa64mmfr2.varange=3D0" },
- 	{ "arm64.no32bit_el0",		"id_aa64pfr0.el0=3D1" },
-+	{ "arm64.nobbml2",		"id_aa64mmfr2.bbm=3D0" },
- };
-=20
- static int __init parse_hexdigit(const char *p, u64 *v)
+Awesome, turns out I am wrong and the interconnect drivers are in fact
+present in the latest nightly Fedora 42 image I am testing:
+
+$ lsinitramfs initramfs-6.14.0-0.rc3.29.fc42.aarch64.img  | grep interconnect
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/imx
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/imx/imx-interconnect.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/imx/imx8mm-interconnect.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/imx/imx8mn-interconnect.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/imx/imx8mp-interconnect.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/imx/imx8mq-interconnect.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/icc-osm-l3.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/icc-smd-rpm.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-msm8916.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-msm8953.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-msm8996.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-qcm2290.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sa8775p.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sc7280.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sc8180x.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sc8280xp.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sdm845.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sdx75.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sm6115.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sm8150.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sm8250.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sm8450.ko.xz
+usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-x1e80100.ko.xz
+
 
 
 Thanks,
 
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
+Chris
 
