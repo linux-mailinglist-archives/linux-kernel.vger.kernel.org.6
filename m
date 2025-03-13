@@ -1,105 +1,110 @@
-Return-Path: <linux-kernel+bounces-559603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B147CA5F5FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:32:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6A9A5F723
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:00:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1839188716A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:32:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF3507A257D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A64267B14;
-	Thu, 13 Mar 2025 13:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B92C1F942D;
+	Thu, 13 Mar 2025 14:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pxY93nuP"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="hhVk+t1k"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D406267AF8
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF3B267B85;
+	Thu, 13 Mar 2025 14:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741872734; cv=none; b=W/SkaZWHeLZFvXUI2p6FnhqR8gTWBD1GrFf/b9WABrPUE0YG7JFhEBrYbHuwXNf79oBWzFgxSVh250eqXCIF8nBqr1J/Pa1iXd3QbsAF0LiAY6rLclYHXCwvPcLqDN569m56mdoY8+Oyi0aABgDbS+YoKKwbbND1zpn0NMMqQfU=
+	t=1741874437; cv=none; b=hmPadaCusR0fTwb5p/iuAkftEm/Cm/aWLg0Vu1AElbRCnI8RcT8w9slW2rC/obRHuVz8l/Ck4YxfS40ypVJROftfV3L5XUEWJsEpbPc9HmR02xh2jg3tois44ywM+EOC7nqN58qlZfKiaO1+OFVcJ9ASbvzG/cxsehgga3Nlld4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741872734; c=relaxed/simple;
-	bh=AECcWww6Tf2VbVqFmnGwEIKamySDLJ1qqx+m5Bfribo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KHjsoDnvZl4jzFYNxyyBf9nR8uMLqjqMovEhN/i66VtWpmM8lIOvYDc+djf/peQNpMt+jFHMmk1AVcfRUErWd6dBqH/NBZDfAy/4NMC0JzZWBOGncEkNeHtEItubU2eh4Alo6r61Uxk+gDcduK72g95xLhiNPDDu3qBAc/KzEkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pxY93nuP; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741872730;
+	s=arc-20240116; t=1741874437; c=relaxed/simple;
+	bh=OORnarBLZoM8w6pBuDPCN02BbzmkfN+e2BeRwda/AvA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sVZDrSL4UJ9rPLYfLL5c2C21n5pNrhRNDr6NjITYOgoSAIjFz773xg+qhVcFY6v9q5wdOi9InHdVPKd9e3sRRmANUR+35w0kbwNWXImdDi8QUOytW5ud+ybhI052D6so9HjQnDW44pVi6blRXiAXs2mqOx95SBo9b8tVTvaxCPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=hhVk+t1k; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from wse-pc.fritz.box (p5b164989.dip0.t-ipconnect.de [91.22.73.137])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 918132FC0189;
+	Thu, 13 Mar 2025 15:00:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1741874430;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=1tAC6FrZfssFC8hLTnPDxdfC5S49p/m9V+OqiWaLwGE=;
-	b=pxY93nuPkhxkVqBmB96EE6MQ9mnMcU9ZWWsVhhfdsTihqTjC5KLb9u2iVbcSbVLseLs5bA
-	7SaH1HZ26fwBPMjjSw6IliMyrcvtyQ9QssI+KvuwdNKuARJBeMAny7IRsU1y9pJ448V6Km
-	71QeU5W9CEgknVEV/jnZvurjH058mGk=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Song Liu <song@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Thorsten Blum <thorsten.blum@linux.dev>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] watchdog/perf: Optimize bytes copied and remove manual NUL-termination
-Date: Thu, 13 Mar 2025 14:30:02 +0100
-Message-ID: <20250313133004.36406-2-thorsten.blum@linux.dev>
+	bh=FOFSQNyM0icOexkDUVBuOK+NmfzXRAGy8joQIWnow0k=;
+	b=hhVk+t1kY+j0SNARpZONHmRni3bVnmdG8LUi8AnolLBmkpIkLKNfStEu/gAj5Krb+36qyp
+	QupbeFA1zP+T3xUM2E50lD0oarvPoEFlL4+DsanTHDNY2KRY4jO8yTFxPYg/UeConBE9vJ
+	OU+ogc5jN5QwGRNyjT4SHDGIK1aGsKg=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+From: Werner Sembach <wse@tuxedocomputers.com>
+To: ilpo.jarvinen@linux.intel.com,
+	hdegoede@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Werner Sembach <wse@tuxedocomputers.com>
+Subject: [PATCH v4 1/1] Input: atkbd - Fix TUXEDO NB02 notebook keyboards
+Date: Thu, 13 Mar 2025 14:31:47 +0100
+Message-ID: <20250313140028.617291-1-wse@tuxedocomputers.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Currently, up to 23 bytes of the source string are copied to the
-destination buffer (including the comma and anything after it), only to
-then manually NUL-terminate the destination buffer again at index 'len'
-(where the comma was found).
+Some notebooks send Super + Control + KEY_ZENKAKUHANKAKU¹ upon pressing the
+touchpad toggle key.
 
-Fix this by calling strscpy() with 'len' instead of the destination
-buffer size to copy only as many bytes from the source string as needed.
+It can be mapped to correctly touggle the touchpad purely in userspace with
+these patches:
 
-Change the length check to allow 'len' to be less than or equal to the
-destination buffer size to fill the whole buffer if needed.
+- https://gitlab.freedesktop.org/xkeyboard-config/xkeyboard-config/-/merge_requests/810
+- https://invent.kde.org/plasma/kwin/-/merge_requests/7278
+- https://invent.kde.org/plasma/plasma-desktop/-/merge_requests/2873
 
-Remove the if-check for the return value of strscpy(), because calling
-strscpy() with 'len' always truncates the source string at the comma as
-expected and NUL-terminates the destination buffer at the corresponding
-index instead. Remove the manual NUL-termination.
+But as you can see, this requires per desktop environment patches. GNOME already
+has the correct mapping and KDE does with the patches above, but smaller ones
+might also need patches.
 
-No functional changes intended.
+As an alternative soltuion I also wanted to suggest this i8042 filter + virtual
+input device.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- kernel/watchdog_perf.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+v2: Coding style fixes
+v3: Send F21 keypress via virtual input device instead of serio interrupts
+v4: Add cover letter
+    Fix copy paste error "GPL-2.0-only" to "GPL-2.0-or-later"
+    Add missing Copyright lines
 
-diff --git a/kernel/watchdog_perf.c b/kernel/watchdog_perf.c
-index 59c1d86a73a2..b81167cb0dfc 100644
---- a/kernel/watchdog_perf.c
-+++ b/kernel/watchdog_perf.c
-@@ -294,12 +294,10 @@ void __init hardlockup_config_perf_event(const char *str)
- 	} else {
- 		unsigned int len = comma - str;
- 
--		if (len >= sizeof(buf))
-+		if (len > sizeof(buf))
- 			return;
- 
--		if (strscpy(buf, str, sizeof(buf)) < 0)
--			return;
--		buf[len] = 0;
-+		strscpy(buf, str, len);
- 		if (kstrtoull(buf, 16, &config))
- 			return;
- 	}
+Werner Sembach (1):
+  Input: atkbd - Fix TUXEDO NB02 notebook keyboards touchpad toggle key
+
+ MAINTAINERS                                 |   6 ++
+ drivers/platform/x86/Kconfig                |   2 +
+ drivers/platform/x86/Makefile               |   3 +
+ drivers/platform/x86/tuxedo/Kbuild          |   8 ++
+ drivers/platform/x86/tuxedo/Kconfig         |   8 ++
+ drivers/platform/x86/tuxedo/nb02/Kbuild     |   9 ++
+ drivers/platform/x86/tuxedo/nb02/Kconfig    |  17 ++++
+ drivers/platform/x86/tuxedo/nb02/platform.c | 107 ++++++++++++++++++++
+ 8 files changed, 160 insertions(+)
+ create mode 100644 drivers/platform/x86/tuxedo/Kbuild
+ create mode 100644 drivers/platform/x86/tuxedo/Kconfig
+ create mode 100644 drivers/platform/x86/tuxedo/nb02/Kbuild
+ create mode 100644 drivers/platform/x86/tuxedo/nb02/Kconfig
+ create mode 100644 drivers/platform/x86/tuxedo/nb02/platform.c
+
 -- 
-2.48.1
+2.43.0
 
 
