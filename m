@@ -1,157 +1,150 @@
-Return-Path: <linux-kernel+bounces-559078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60736A5EF47
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:14:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB2FBA5EF4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:14:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEFB31895C83
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:14:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B2D33B2D91
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2161F264609;
-	Thu, 13 Mar 2025 09:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90774264631;
+	Thu, 13 Mar 2025 09:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DFQpRe3U"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="COfY+IkA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF2C1F0E4F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81C0264A71
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741857234; cv=none; b=vE3u15upEim41M+ZI4JiEN9EQigRUdPPuONnlF0vRF+RVKrOjdB/j4QKwVJz3kwv/YiF8k/5BmVuGe32Zw5LAx3LYdW0iBRsA/j1ogx7dIN4ni9hQ293IJlpdNaJv24o9GMflcz4i8GZTwjeqq3Rh3nODpYnGVQlExOn/MK4iMc=
+	t=1741857238; cv=none; b=ROLpdhwA4waY5HQ4BbqO+vBk+WW+zlhh6v4CrkNDkovI01JN3vZVE1lSg4c6fac8Rns5zJJm36y9ZIaJKmgq3BMnZ/UUpHgYBfFZmstawO2Y3SmY2LwGSnM1dYhXjpZWhhfdVnl5xWO04kF5GQXh1tHMF9f2KKZdm0PzjukGcBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741857234; c=relaxed/simple;
-	bh=ydB9bTeNot+OE1Xz0uP/spOJpO+hHXQWfxo/NKrFah0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i6am8Bi1KeYTO/Ssw17q6lafJn9oAZeu2nEATSSToUyi9HyiEu1TUdCuJDXCLkBaYyavk9q5x3eF0VJIJcL1CemrmYVhGgOSItN9drTwOOPoLVtAaT8tnrBefiOcZvBYb152MQXMLLqJTsJZVjx8RYSeKiSbzku0bBdP3q5ulKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DFQpRe3U; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so4031035e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 02:13:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741857230; x=1742462030; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A1vA9sHgurzlxpNTPQ3LIOp8IB6esizGYotCRKHRMvg=;
-        b=DFQpRe3UkXzDaxmmom5RmpsTdbJDxNuDNiivDin1gnEa5Dh4DAW7uNAFUEFzsjyRGW
-         kcCYgewraVCzIEcCunrWzyQej3//X3CsfLT47+9w8t+xbenV+iDBrUIGGBLbq8/8fa9B
-         o/tmMPESFGOPcD5UQiNO0N9fCygAekQC7l8og/ofUQR18GHEkK1HOf5C5IWhkB2IJfxJ
-         5aF3NsMjD5OqiGUT+mhlDRt6NEexx6KTMh/duWL+unl3MwqnyZAaUXpC7THeMtrareyv
-         v9TBGvmFlQvM6W1VUVNazu1FfSB4ZffUDhJkZdDxhbAlKCGC9agTObnE6ugYlnuD/Nyz
-         Q2+w==
+	s=arc-20240116; t=1741857238; c=relaxed/simple;
+	bh=B8z3XxDcPYT3TwJe2u7bee/oFX2rHWkSq1iClzFBhvY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H7kVZyPK+nGLkbKV/VSMTpYO9ErXL5OevToITVFjz8DL23lHVxUmlJQD4PaVGQFt0EaWO8ZJXlPx1/6LhcUJ1lhg2Hd3pX0UjWbQaCfj9BnVm3emMQpwbgXqefnzwRmCkZs5qhQxTPxCZkP3OwLoh+LChYJYxrpmc5VpTSgl+v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=COfY+IkA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741857235;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iVZ0tLlG0gxUYcMK2sjB46xw1TF5VnAEq4UYGXh3mEs=;
+	b=COfY+IkAM5L9hhxWAY3Kw4nIJBJlO0qgoM/O/bvxRmwV9MXYVOx4vAcNi0fl6/U3uPtuOf
+	D36e823QIXMav57ALcI9h1vgrJS3Moq1bIU1XNPv3T9Wt94OYLT2EEVJKirbIT3MEuwBmW
+	td9r19E/9Ed27BLKoBWsgsrotoGDgU0=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-270-B-_H6El6MAyZ5vL6LKI8QQ-1; Thu, 13 Mar 2025 05:13:54 -0400
+X-MC-Unique: B-_H6El6MAyZ5vL6LKI8QQ-1
+X-Mimecast-MFC-AGG-ID: B-_H6El6MAyZ5vL6LKI8QQ_1741857233
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3912a0439afso303096f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 02:13:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741857230; x=1742462030;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A1vA9sHgurzlxpNTPQ3LIOp8IB6esizGYotCRKHRMvg=;
-        b=WhMbJHoWziAw5VFJ4Eu4jqawpaH1n5BVsfb9OxppywDJqhW8Y9zF5q+5YNukrnDxpY
-         +xLsOB3DgMV+Z6kPEajlgBbr5aawBcaZR+t4IzoZPZhn4mUP84wsTaeAepj2W8D/UTsY
-         8rjxmkoQ1inWgHaGY9/modCWHHHVXrilalHDt8wXtrxSe8muEqHHZ220f+Wnou/VtcMo
-         nokojNUOhWBFPaHOD/DOkIKhAxw0rrBT0Z3z4f6YMAjrqKjklolAgLpc5sCe3HEX0m0b
-         RJa9yPREF7EC/Hk5EgxAxtY4hoDhUJQnnXNO9BF3uCV1q4YjXNjCBxWGdixd+CJifGYa
-         ZAYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/x7NxQ0ra2F6pVOJ/cnjQ6btJZ7l6K69pbsg1LYAc6f/Fre9Pr9n5LKG6De2ml0nqdRMt7HJT3IESDoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4j/zsGum6oKW8ETKg/aGrUHY47BrOzKz0FBY5eMVyDGttoO91
-	Y2F5TsyDHNb24SFUUO+Der3Ha6FCBWSvqriXOUpCmvWvZmXhHh5Xq7/q8qGoUg==
-X-Gm-Gg: ASbGncs3REJwp8zND9HspMiG9ZQVlHeWKjbuCFxR5UIHAfw9+6xl3Z2/B0CZonYiSiG
-	vEw+jEGUpyNeXqfNwH3IoKwtbZDKEwRm4EvxSGf1ysbTp4DxYZCx4baMimeiNzrTkO8yVK/nTi7
-	CU1qwhR32tt/AgP33XUr2buYGPHeOke/Tfkiwc69679FTdzCqsbumtw8VU+Qa/C6j+NABqHYSUY
-	KRw6WP83WZl0oPpb71jcRpB4jEVpsyylSUGL8zpdtHUo9qaWFZSNoBoqo4wB/8d8PK7ym24uwIV
-	9+99ieSU74MpY+lTJ6BLFN87I7wfKZoDbgDJ8uo7tcVXJyDlTUk5rqm0hEOg1Uaaipx0AFd5Uko
-	mVrjFwiMYlfSp
-X-Google-Smtp-Source: AGHT+IE8nhdSI8oCc7HhvHZ8FNICrr82pSWj5KiIjJGm0gYMIEOr9ifulYDK2iTUrARjY9lcII5V5Q==
-X-Received: by 2002:a05:600c:3591:b0:43c:f16a:641e with SMTP id 5b1f17b1804b1-43cf16a6b0cmr139569915e9.6.1741857230356;
-        Thu, 13 Mar 2025 02:13:50 -0700 (PDT)
-Received: from google.com (105.168.195.35.bc.googleusercontent.com. [35.195.168.105])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d188affdbsm13931305e9.7.2025.03.13.02.13.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 02:13:49 -0700 (PDT)
-Date: Thu, 13 Mar 2025 09:13:45 +0000
-From: Vincent Donnefort <vdonnefort@google.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org,
-	qperret@google.com, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v3 2/3] KVM: arm64: Distinct pKVM teardown memcache for
- stage-2
-Message-ID: <Z9KhybW0J2WIX1eU@google.com>
-References: <20250307113411.469018-1-vdonnefort@google.com>
- <20250307113411.469018-3-vdonnefort@google.com>
- <87plim7hgc.wl-maz@kernel.org>
+        d=1e100.net; s=20230601; t=1741857233; x=1742462033;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iVZ0tLlG0gxUYcMK2sjB46xw1TF5VnAEq4UYGXh3mEs=;
+        b=S0mm2ZxSIpH93nd9o3CMsrup2pjAs+I+Izmq2kAcGfje/dFpZaY8hU2R9hcaMoAbol
+         jvicgBXZfXO482Lc+SxTrg0ZmOBIjsdlYlqybodPmGijVipDFJohrmK0bT0deWigcvqH
+         qKzExX82KqiW3B6XIpoZwXXfa36uRd0Z4jZjDbg8XlMBH9uWSS43i18QK6UfPgJ4Bj1k
+         3KK2M5Uz+3mKAQZE5Gpq8Jld5dd5StqGB3uPRJ+1DMpa+GySKpEj42mtun2skrz2Ij3g
+         +CGhD8E0odmpPdy4z2ta++AhdtuBDIlEAU6gYxTzmGTAcYWXEOsLL7gJB+LIQMvkKPtj
+         6e5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWv4OvzPcN5e00tfFjrTr3tQOk7ejafq86v3F7bSvsXrKkDSIcFdVfAXBqokqFojOtpYX7YAEGpKUePBtY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUYxEXGZyE9M4dimggj4qkaGjZ9y3O47Qc+tZeOVq3rJIG0vwP
+	bsgUVsXFy3T289mbeaVjNZ+PmjtQxQQSItGVgfmLfv1Q8BZKPpDzkqOg0j/AN2wYmYJmg7JgYDG
+	uBaKjOrKqqSIliPRwcLDQRQNXQsYZVrxFp2rAYfICzPGIswuNSEnrANxv75is1A==
+X-Gm-Gg: ASbGnctuulroYBGXF4jQ7dq5gtMgOJ7NhafSPllVeaXYybqDcXcSKa20n26hWBA7Hzl
+	9KVfN/FbgQulVQgarZ7w4SFZ0j56WlUAfFdJQ1ZnI9vINGv+HhtKyugxnnKwq4cReFXis/m/3WM
+	eygBg+GRDuGYGFznkgZldAZvKWCmksIWYeAcPufO2IuLXcAg9pWAQzmq0TTDC7qnOq68WxLJIXu
+	V3HJEVu7Ujs49n5T/pGAjcZhjaaTieG9JmnY2FqgD9lXwLf929OJsm/AafSuj1eLfGcyOMEptOD
+	ccdQOSiB5WXxOog5EoGh+aVrkztzWyZv7YOdnZldFio=
+X-Received: by 2002:a5d:64cb:0:b0:391:3fa7:bf66 with SMTP id ffacd0b85a97d-3913fa7c415mr17065946f8f.31.1741857232651;
+        Thu, 13 Mar 2025 02:13:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHbjX4TBW23c/gT1Ykr54Jxw9IBGriCcPT5Lz7WvNJIWr0e0qiBIFuFczS2FQTDIKFEENThyA==
+X-Received: by 2002:a5d:64cb:0:b0:391:3fa7:bf66 with SMTP id ffacd0b85a97d-3913fa7c415mr17065917f8f.31.1741857232262;
+        Thu, 13 Mar 2025 02:13:52 -0700 (PDT)
+Received: from [192.168.88.253] (146-241-7-237.dyn.eolo.it. [146.241.7.237])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8975bdfsm1423712f8f.49.2025.03.13.02.13.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 02:13:51 -0700 (PDT)
+Message-ID: <92a9cb8d-fe6b-4389-9d65-64b668f1e221@redhat.com>
+Date: Thu, 13 Mar 2025 10:13:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87plim7hgc.wl-maz@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 00/13] net: phy: Rework linkmodes handling in
+ a dedicated file
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
+ Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, Russell King <linux@armlinux.org.uk>,
+ Heiner Kallweit <hkallweit1@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, Simon Horman <horms@kernel.org>,
+ Romain Gantois <romain.gantois@bootlin.com>
+References: <20250307173611.129125-1-maxime.chevallier@bootlin.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250307173611.129125-1-maxime.chevallier@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 12, 2025 at 08:59:15AM +0000, Marc Zyngier wrote:
-> On Fri, 07 Mar 2025 11:34:10 +0000,
-> Vincent Donnefort <vdonnefort@google.com> wrote:
-> > 
-> > In order to account for memory dedicated to the stage-2 page-tables, use
-> > a separated memcache when tearing down the VM.
-> > 
-> > Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
-> > 
-> > diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> > index 12691ae23d4c..ace3969e8106 100644
-> > --- a/arch/arm64/include/asm/kvm_host.h
-> > +++ b/arch/arm64/include/asm/kvm_host.h
-> > @@ -246,6 +246,7 @@ typedef unsigned int pkvm_handle_t;
-> >  struct kvm_protected_vm {
-> >  	pkvm_handle_t handle;
-> >  	struct kvm_hyp_memcache teardown_mc;
-> > +	struct kvm_hyp_memcache stage2_teardown_mc;
-> >  	bool enabled;
-> >  };
-> >  
-> > diff --git a/arch/arm64/kvm/hyp/nvhe/pkvm.c b/arch/arm64/kvm/hyp/nvhe/pkvm.c
-> > index 3927fe52a3dd..15f8d5315959 100644
-> > --- a/arch/arm64/kvm/hyp/nvhe/pkvm.c
-> > +++ b/arch/arm64/kvm/hyp/nvhe/pkvm.c
-> > @@ -678,7 +678,7 @@ teardown_donated_memory(struct kvm_hyp_memcache *mc, void *addr, size_t size)
-> >  
-> >  int __pkvm_teardown_vm(pkvm_handle_t handle)
-> >  {
-> > -	struct kvm_hyp_memcache *mc;
-> > +	struct kvm_hyp_memcache *mc, *stage2_mc;
-> >  	struct pkvm_hyp_vm *hyp_vm;
-> >  	struct kvm *host_kvm;
-> >  	unsigned int idx;
-> > @@ -706,7 +706,8 @@ int __pkvm_teardown_vm(pkvm_handle_t handle)
-> >  
-> >  	/* Reclaim guest pages (including page-table pages) */
-> >  	mc = &host_kvm->arch.pkvm.teardown_mc;
-> > -	reclaim_guest_pages(hyp_vm, mc);
-> > +	stage2_mc = &host_kvm->arch.pkvm.stage2_teardown_mc;
-> > +	reclaim_guest_pages(hyp_vm, stage2_mc);
+On 3/7/25 6:35 PM, Maxime Chevallier wrote:
+> Hello everyone,
 > 
-> This looks odd. What counts as stage-2 pages here? Or is it that
-> reclaim_guest_pages() is very badly named?
-
-Yes, this is a naming issue here. How about 
-
-  reclaim_pgtable_pages(hyp_vm, stage2_mc);
-
-Then I can probably drop that /* Push the metadata pages to the teardown
-memcache */  comment as it is clear what is pgtable and what is meta-data?
-
+> This is V5 of the phy_caps series. In a nutshell, this series reworks the way
+> we maintain the list of speed/duplex capablities for each linkmode so that we
+> no longer have multiple definition of these associations.
 > 
-> Thanks,
+> That will help making sure that when people add new linkmodes in
+> include/uapi/linux/ethtool.h, they don't have to update phylib and phylink as
+> well, making the process more straightforward and less error-prone.
 > 
-> 	M.
+> It also generalises the phy_caps interface to be able to lookup linkmodes
+> from phy_interface_t, which is needed for the multi-port work I've been working
+> on for a while.
 > 
-> -- 
-> Without deviation from the norm, progress is not possible.
+> This V5 addresse Russell's and Paolo's reviews, namely :
+> 
+>  - Error out when encountering an unknown SPEED_XXX setting
+> 
+>    It prints an error and fails to initialize phylib. I've tested by
+>    introducing a dummy 1.6T speed, I guess it's only a matter of time
+>    before that actually happens :)
+> 
+>  - Deal more gracefully with the fixed-link settings, keeping some level of
+>    compatibility with what we had before by making sure we report a
+>    single BaseT mode like before.
+> 
+> V1 : https://lore.kernel.org/netdev/20250222142727.894124-1-maxime.chevallier@bootlin.com/
+> V2 : https://lore.kernel.org/netdev/20250226100929.1646454-1-maxime.chevallier@bootlin.com/
+> V3 : https://lore.kernel.org/netdev/20250228145540.2209551-1-maxime.chevallier@bootlin.com/
+> V4 : https://lore.kernel.org/netdev/20250303090321.805785-1-maxime.chevallier@bootlin.com/
+
+LGTM, waiting an extra bit to allow explicit acks from the phy crew.
+
+Thanks,
+
+Paolo
+
 
