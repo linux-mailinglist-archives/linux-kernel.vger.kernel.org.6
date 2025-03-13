@@ -1,214 +1,134 @@
-Return-Path: <linux-kernel+bounces-560274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21A4A6016F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:41:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A86DA60171
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:41:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F5EC188E19B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:41:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68C12189766C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE401F12FF;
-	Thu, 13 Mar 2025 19:41:11 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DB61F3B98;
+	Thu, 13 Mar 2025 19:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAyhe5lB"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B015917E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 19:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147781F2B90;
+	Thu, 13 Mar 2025 19:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741894871; cv=none; b=Gs/XuDQD+SExKYBEx0uZ2hjwsPbI7/Tr3TSANQfxZFY9rxcMuF5VIlw7WYCztmB2ZviW4uR82V+foVcuJY0/9M/imzHQ7/jF8woWt9q+W/ip9lx3lJKZz0cocf4O5gY0maEvM5+f5RvEtrezTHBsTnb2SHGmPt27nDFIj+Jb3MQ=
+	t=1741894879; cv=none; b=GRR0pEHDzUs+aZEihxcpQ3JukvfwFQIJcoZD8nTgePL0/ebYI+5rrRdLWNFHctvv/Q8VGGy+ubOXv5+8rwB01yyeEBL/Zj0FNVqxfdNcqjKXPH6rkFjS2G04BdRdfY8axpm3AnQIQuNUhvlnG1zqQvW9sh52Up0OKqZkhryN7Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741894871; c=relaxed/simple;
-	bh=w81oytOJ52LUX+gcGHeVMyaViS4IklZp3npw04X3rQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i/DX4g7VKQ0+Qib+TXr+3V0lx2vUxvtCApG/TcAj+goKKOyakpEhTT9rFMx2Q1XC3kyHGFBnjWvc+evHqMhcgvJHqU56h65iXGpEKHWj1/vQquc4JbStTZ5i8UE+4h8k5GS6hOAfSb6AhxAulRahA9FqqdXJpGbR0UTof8J0ZMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tsoQ9-0002QO-AO; Thu, 13 Mar 2025 20:40:45 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tsoQ9-005aKi-0I;
-	Thu, 13 Mar 2025 20:40:45 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tsoQ8-00BQoh-39;
-	Thu, 13 Mar 2025 20:40:44 +0100
-Date: Thu, 13 Mar 2025 20:40:44 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Johan Hovold <johan@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 0/3] USB-Serial serdev support
-Message-ID: <20250313194044.t2t3c7j6ktvshjhs@pengutronix.de>
-References: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
- <Zt7kCxawoszunWq3@hovoldconsulting.com>
- <20240917044948.i2eog4ondf7vna7q@pengutronix.de>
- <Z8_wcASfJ8SeAQ8l@hovoldconsulting.com>
+	s=arc-20240116; t=1741894879; c=relaxed/simple;
+	bh=WUH2ocflO1cNKNmhbkDZJYgN2wbCaTQAVsBuQZ+M57g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l5d5vgYtZGcNhXAbk4IZ+DblXpopktAwql7iEH80AME/Q+J5bETqMDdQ6ie7w7z1o4F/8LKM1/T+7kfEBLwJ0j7iFAIvNCOrDNt4ZIScFMKhm3McOCPLPz9BM2Fa9LZ1X8FXJ67D5ZOm/cn4O+FF5WNO1OAK+mtQA2Sk9aWt+nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MAyhe5lB; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e5e1a38c1aso1688152a12.2;
+        Thu, 13 Mar 2025 12:41:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741894876; x=1742499676; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FXEzxEd8+oNnzMOAtWoRdYumhlynnfDozmjfwkSl2KA=;
+        b=MAyhe5lB55KauvkpIW17ZW5VLS9mjTjg+rfwtDww0VZ5ORu+z+bJ0h10PVruk3CMwj
+         kfXMamr1J2V6RZNr3b1WXyYyTdI4an3RcvCm7mY+F+l+iDTYdQdweXLjtweLGeoZ+VLO
+         414O1YUsP2db+So9s5DGeIR8TYuBZns9PExvRZfY9ldcuxl7RBA5duaYNiGanrSyhvFP
+         HOAemBDr1aVvtz1muI6ybc8hEFOO1WqTw8Jkh2XTjgHqrMwyszX5q7XVnA433e+Tr7kD
+         jmqgORXUT1JMtwJkus4Q+yXxtns1JKaJBeNpAyNF0VUOlJ12v70pc+UHbEdNWRQGAa6t
+         NnjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741894876; x=1742499676;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FXEzxEd8+oNnzMOAtWoRdYumhlynnfDozmjfwkSl2KA=;
+        b=ekqVkKmVc2AySKwffkSiQHyTxMtdih1hkHNvk+Ghs1P21s15mp2HODHXkTjhX1I77Y
+         hgvHStMeJvVPf9ic10W3+xJbDV9KDJMtVXosbIhBPPab39pWZWtBzHY45mre9xDk9ikG
+         Ov3pM8A8U/D6bI8EARj6We6bJbdRX0/PDG0l9joDSW2ZmIKttC2mupJ+5Fnxa7rC8xMZ
+         Pp3cp9VKCcVWTc4DLh4xAwDFM0PETCOzHRxMpFlk+hOpIb+JzPs7NpHZvt/ciZ51FlR4
+         SZ/yX4MHQiujgxx1/mUYnd76VppX0EC5jkaRn1BWWQc9dlRQLcGkzMnxVtMnvAkDcbBO
+         nvIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBioa0wGptYbcq6UDvVGYhtZVPdHP5Bjte8nK2eGL9ZGkwnYGlTInEOUWn8wlIkHTLYKVgjXMMXGD7izw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDK67GXNR/OR/jrIeDb1fDDqZpkvhGLYuQjyoK0bM9ZKdvIBgU
+	60BmQqmKTuhUBzssFMurt4nkrMSltEt9O4c+StWgbPPsp1p7WEL5
+X-Gm-Gg: ASbGncuhUC2Qt288YhyDouVIpbe6PsDybkpFEyyx+a3aZ7AtkZ2UVCgXalvNnJQqAXN
+	w1UkOFVqGFtG/1ey3guM8pcl7J1wGrwaQsmdLKk8rQMYeF0XSi1gWcDbhVKUPZK3FDHpx96ob3W
+	BpMwUEkA1oT/oBBsCIAOrubMWSQH+OmWI8LEMnakyn7H+vBIWsvnJijo0pbsBCLa9CPggjyQ6a1
+	nThS0jQ5BOoQt/kZstbjaBdjQux+FQJ7yZofZgYkApON6qvmnal2iHvvUGn6vo6tjwdRTRE+hdN
+	d4xApeKWNVR7fDq7H8QS5LlskRXqcvAGd1zAeSTEWWBck1UBG9aSa9SbxA==
+X-Google-Smtp-Source: AGHT+IGVbzc4ZfepwBe4lwL/vFzF6ib86XY2NgsOo+OqcPI5LcBFDNIpsOtJiAgTucImNxYYSmd+dg==
+X-Received: by 2002:a05:6402:348d:b0:5e0:49e4:2180 with SMTP id 4fb4d7f45d1cf-5e87c45f948mr637025a12.25.1741894875982;
+        Thu, 13 Mar 2025 12:41:15 -0700 (PDT)
+Received: from ?IPV6:2001:871:22a:99c5::1ad1? ([2001:871:22a:99c5::1ad1])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816afdfd0sm1072154a12.75.2025.03.13.12.41.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 12:41:15 -0700 (PDT)
+Message-ID: <9a516b5f-8509-4643-9c54-26caadc42348@gmail.com>
+Date: Thu, 13 Mar 2025 20:41:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8_wcASfJ8SeAQ8l@hovoldconsulting.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] rust: task: mark Task methods inline
+To: Panagiotis Foliadis <pfoliadis@posteo.net>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20250311-inline-c-wrappers-v2-1-72c99d35ff33@posteo.net>
+Content-Language: en-US, de-DE
+From: Christian Schrefl <chrisi.schrefl@gmail.com>
+In-Reply-To: <20250311-inline-c-wrappers-v2-1-72c99d35ff33@posteo.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 25-03-11, Johan Hovold wrote:
-> On Tue, Sep 17, 2024 at 06:49:48AM +0200, Marco Felsch wrote:
-> > On 24-09-09, Johan Hovold wrote:
-> > > On Wed, Aug 07, 2024 at 04:08:47PM +0200, Marco Felsch wrote:
-> > > > this patchset is based on Johan's patches [1] but dropped the need of
-> > > > the special 'serial' of-node [2].
-> > > 
-> > > That's great that you found and referenced my proof-of-concept patches,
-> > > but it doesn't seem like you tried to understand why this hasn't been
-> > > merged yet.
+On 11.03.25 4:05 PM, Panagiotis Foliadis wrote:
+> When you build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
+> toolchain provided by kernel.org, the following symbols are generated:
 > 
-> > > First, as the commit message you refer to below explain, we need some
-> > > way to describe multiport controllers. Just dropping the 'serial' node
-> > > does not make that issue go away.
-> > 
-> > Sorry for asking but isn't the current OF abstraction [1] enough? As far
-> > as I understood we can describe the whole USB tree within OF. I used [1]
-> > and the this patchset to describe the following hierarchy:
-> > 
-> >  usb-root -> usb-hub port-1 -> usb-serial interface-0 -> serial
-> >                                                          bt-module
-> > 
-> > [1] Documentation/devicetree/bindings/usb/usb-device.yaml
+> $ nm vmlinux | grep ' _R'.*Task | rustfilt
+> ffffffff817b2d30 T <kernel::task::Task>::get_pid_ns
+> ffffffff817b2d50 T <kernel::task::Task>::tgid_nr_ns
+> ffffffff817b2c90 T <kernel::task::Task>::current_pid_ns
+> ffffffff817b2d00 T <kernel::task::Task>::signal_pending
+> ffffffff817b2cc0 T <kernel::task::Task>::uid
+> ffffffff817b2ce0 T <kernel::task::Task>::euid
+> ffffffff817b2c70 T <kernel::task::Task>::current
+> ffffffff817b2d70 T <kernel::task::Task>::wake_up
+> ffffffff817b2db0 T <kernel::task::Task as kernel::types::AlwaysRefCounted>::dec_ref
+> ffffffff817b2d90 T <kernel::task::Task as kernel::types::AlwaysRefCounted>::inc_ref
 > 
-> Again, you still need to consider devices with multiple serial ports
-> (and they do not always map neatly to one port per interface either).
-
-We use a dual-port FTDI and our USB tree looks as followed:
-
-/:  Bus 001.Port 001: Dev 001, Class=root_hub, Driver=xhci-hcd/1p, 480M
-    ID 1d6b:0002 Linux Foundation 2.0 root hub
-    |__ Port 001: Dev 002, If 0, Class=Hub, Driver=hub/4p, 480M
-        ID 0424:2514 Microchip Technology, Inc. (formerly SMSC) USB 2.0 Hub
-        |__ Port 001: Dev 003, If 0, Class=Vendor Specific Class, Driver=ftdi_sio, 480M
-            ID 0403:6010 Future Technology Devices International, Ltd FT2232C/D/H Dual UART/FIFO IC
-        |__ Port 001: Dev 003, If 1, Class=Vendor Specific Class, Driver=ftdi_sio, 480M
-            ID 0403:6010 Future Technology Devices International, Ltd FT2232C/D/H Dual UART/FIFO IC
-
-interface-0 is used for the bt-module which is served by the serdev
-driver.
-
-interface-1 is used by an userspace driver which makes use of the
-/dev/ttyUSB1 port.
-
-So we do have the multiple serial ports use-case already. Can you please
-explain what I miss?
-
-> > > Second, and more importantly, you do not address the main obstacle for
-> > > enabling serdev for USB serial which is that the serdev cannot handle
-> > > hotplugging.
-> > 
-> > Hotplugging is a good point but out-of-scope IMHO (at least for now)
-> > since the current serdev implementation rely on additional firmware
-> > information e.g OF node to be present. E.g. if the above mentioned setup
-> > would connect the "serial bt-module" directly to the UART port you still
-> > need an OF node to bind the serdev driver. If the node isn't present
-> > user-space would need to do the hci handling.
+> These Rust symbols are trivial wrappers around the C functions
+> get_pid_ns, task_tgid_nr_ns, task_active_pid_ns, signal_pending, uid,
+> euid, get_current, wake_up, get_task_struct and put_task_struct.It
+> doesn't make sense to go through a trivial wrapper for these
+> functions, so mark them inline.
 > 
-> There's nothing preventing you from adding a devicetree node for a USB
-> device that can be unplugged.
-
-I see and I have to admit that I didn't test this :/ But since you
-pointed it out I tested it now!
-
-So as explained, our USB tree looks as above and our DTS looks like the
-one in the cover letter. Of course I run on an embedded system but the
-USB FTDI based module is powered by the VBUS of the hub. Therefore I
-ran the test by disabling the downstream port which in turn disabled the
-VBUS supply. This should come very close to a physical unplug event.
-
-8<----------------------------------------------------------------
-
-## The test system before the "unplug"
-
-root@test:~# ls -al /sys/class/bluetooth/
-total 0
-drwxr-xr-x  2 root root 0 Jan  8 18:31 .
-drwxr-xr-x 62 root root 0 Jan  8 18:31 ..
-lrwxrwxrwx  1 root root 0 Jan  8 18:31 hci0 -> ../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0/serial0-0/bluetooth/hci0
-
-root@test:~# ls -al /sys/bus/serial/devices/
-total 0
-drwxr-xr-x 2 root root 0 Jan  8 18:31 .
-drwxr-xr-x 4 root root 0 Jan  8 18:28 ..
-lrwxrwxrwx 1 root root 0 Jan  8 18:31 serial0 -> ../../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0
-lrwxrwxrwx 1 root root 0 Jan  8 18:31 serial0-0 -> ../../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0/serial0-0
-
-## The "unplug" event and the system after the event
-
-root@test:~# echo 1 > /sys/bus/usb/devices/usb1/1-1/1-1\:1.0/1-1-port1/disable
-
-root@test:~# ls -al /sys/class/bluetooth/
-total 0
-drwxr-xr-x  2 root root 0 Jan  8 18:40 .
-drwxr-xr-x 62 root root 0 Jan  8 18:31 ..
-
-root@test:~# ls -al /sys/bus/serial/devices/
-total 0
-drwxr-xr-x 2 root root 0 Jan  8 18:40 .
-drwxr-xr-x 4 root root 0 Jan  8 18:28 ..
-
-## The "plug" event and the system after the event
-
-root@test:~# echo 0 > /sys/bus/usb/devices/usb1/1-1/1-1\:1.0/1-1-port1/disable
-root@test:~# [ 1121.297918] btnxpuart serial0-0: supply vcc not found, using dummy regulator
-
-root@test:~# ls -al /sys/class/bluetooth/
-total 0
-drwxr-xr-x  2 root root 0 Jan  8 18:41 .
-drwxr-xr-x 62 root root 0 Jan  8 18:31 ..
-lrwxrwxrwx  1 root root 0 Jan  8 18:41 hci0 -> ../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0/serial0-0/bluetooth/hci0
-
-root@test:~# ls -al /sys/bus/serial/devices/
-total 0
-drwxr-xr-x 2 root root 0 Jan  8 18:41 .
-drwxr-xr-x 4 root root 0 Jan  8 18:28 ..
-lrwxrwxrwx 1 root root 0 Jan  8 18:41 serial0 -> ../../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0
-lrwxrwxrwx 1 root root 0 Jan  8 18:41 serial0-0 -> ../../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0/serial0-0
-
-8<----------------------------------------------------------------
-
-> > So from my POV the serdev abstraction is for manufacturers which make
-> > use of "onboard" usb-devices which are always present at the same USB
-> > tree location. Serdev is not made for general purpose USB ports (yet)
-> > where a user can plug-in all types of USB devices.
+> After applying this patch, the above command will produce no output.
 > 
-> Right, but someone need to make sure that serdev can handle devices
-> going away first as nothing is currently preventing that from happening.
+> Link: https://github.com/Rust-for-Linux/linux/issues/1145
+> Signed-off-by: Panagiotis Foliadis <pfoliadis@posteo.net>
+> ---
 
-Can you please check my above tests? Maybe I do miss something but for
-me it looks like it's working. Looking forwards for your input.
+Reviewed-by: Christian Schrefl <chrisi.schrefl@gmail.com>
 
-Regards,
-  Marco
-
-
-> > > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git/log/?h=usb-serial-of
-> > > > [2] https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git/commit/?h=usb-serial-of&id=b19239022c92567a6a9ed40e8522e84972b0997f
-> 
-> Johan
-> 
+Cheers
+Christian
 
