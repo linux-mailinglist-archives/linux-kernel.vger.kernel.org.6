@@ -1,243 +1,134 @@
-Return-Path: <linux-kernel+bounces-559232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82625A5F120
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:43:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAA78A5F123
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:43:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAD3B19C0163
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:43:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C804E189F309
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6328264F83;
-	Thu, 13 Mar 2025 10:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EB52641DD;
+	Thu, 13 Mar 2025 10:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="ecwBlwCK"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TC4UC/pj"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E006B2571BF;
-	Thu, 13 Mar 2025 10:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9DE1D88D0;
+	Thu, 13 Mar 2025 10:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741862550; cv=none; b=H8xTZr8RmBzik3R/kFffBCKnobeOGLwWTaQ2NXGwkWRn3DvBHO3xn4T5xKPysBopNOWJoPlpiyxUo4zG9AMJN3lGH/iEmAJZlUQdGqSLgjQmnzLenptb4zlwjLTM3B+G3VbpskNvE3l6RqnMPm9Vh84IGsXa6AiQfdjUCAcfWYk=
+	t=1741862593; cv=none; b=VNZEYycf1zmAVLlOVhmBBPA7A0serRo22lvTbyXFVC+B8xLcYsgVY0sU8MhP4I+V3NIHhjOWqMnDRu+YkcvYDhKhTZxMMaFTkzEjP78bdTKxQpYwHxzCvLrdbSIvUIZUDe5ta/69Khz9PD+hU+RH9n33+UVa+0Kqwyx67MfxEQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741862550; c=relaxed/simple;
-	bh=Fmjr2+soZpmLJ/Pog2M9SWWtJSsDEl2ShGVhMKgUWf4=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=LvqY4d6hNtId0ETThfhL4gWPkdu1Sy1OdSVO7C3VcdzC41deaGZH7Mnhunb1w41BI3UwYqbGkb1J2SkvFfjPvPeYR9+PhcDI4QsRyog6LEUC74qNkkxM11tEQrar6FNBT5JQ2rGQZDu6D2FDqF/JVRfKqL0hvrmohwYOelHpTlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=ecwBlwCK; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1741862593; c=relaxed/simple;
+	bh=WvEgZ2VU8iAw9Pl1DlzhPxdA+1nrFUMdbUQAq1IlBnk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=iqHISExLgQVlYlmd044ftTeZg91miKzgMG9RNkXy63mmAeX0gVmi74hFPlhXCNtzj1crYdu8JrkH9uzQSK077WZMtEXX8HjGYLzMI37AlouBt+Nozd5xtU2AiLXvNn/O4DiyfC8f1vlPE2rXsmjXit7lLUM2nba46x1gsjGN36U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TC4UC/pj; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e64700a38cso1175466a12.1;
+        Thu, 13 Mar 2025 03:43:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741862588; x=1742467388; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p/wMjl7Q/J6WQRlQUTRmWAqcrf0d7pU34h1ehg31lfI=;
+        b=TC4UC/pj71DlOZESrtddTEX4cwNdM4leH+wUpa0HLNgmFznQgff77BiGgAAQnxcQj7
+         dWOtQPo6BgG4YFwW/YbYq/3grgSf5ZVhMdL2Je2TGgLal7XiydoLxOKxUSqD5Ev/TqbY
+         SApOpJBo0qNInuKwc5vVn0+XkHQ0lcH7dXfOoC3n5VlxR96GR01Bcv1ijZIxZLyUVBGv
+         DGSnmV9FS8A99pQMxcBrAHbZhuc2Xegda9WtPXZNj/ScNhLX/jqeP8hqymdEwQV9JcE5
+         lSDyK1oP8o7KpeCNDA3ecppp5cCwdRVbzY5hlNjOb6mYelyV3y+Xf1a0kLhyQkQ3l+Mq
+         YCEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741862588; x=1742467388;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p/wMjl7Q/J6WQRlQUTRmWAqcrf0d7pU34h1ehg31lfI=;
+        b=SagmW9DOgpdWDuva5JbSdvlKogvQQkhT5ZULqUOpZ67bHA51PdEzhUih3Pkx0Z7VWB
+         GLbuvwbxXbdqCnj39VoLOnvmpZtncwYXlv/XDAWaBfL4HyDtedoFp3ooDKC1ZpWXQQZp
+         P+5BHvzmqkCytFwX+eDFxEpSZg4Rs/nT9xe4mHKPy4u1K7JFxMfQc3/SJvAUggpRqdAK
+         C661mHaTrT22tgsEiit5EIeHZ5ma1qQL5CVKCmr94uqU6TVOZFQi8EGWqRUpwbvBvH5o
+         FQh6USkJpknRbT3+hv2HzgKs3E/nEn9QypT8AiYt5OEl+3Z6AWO2bbA5X0FnTmPnWCTG
+         mHLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUdI4Xs9f43OM1jGUs/4pUU1T4clDWHBnlIehQ9MHfAZZfB9D/exwC9JYOWXm2aNLv2Qc+ygzwOqkW@vger.kernel.org, AJvYcCVZHlS85wulFgboQDI3xVO1BfvCGa/hQPOtcHtPQFat2Bz2NTXEZTemd93uHnuZfSNfSQs8WL5MTM2CbWTX@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjYpFJ20FUeAwBK/66owlg45UTzAz5kA4HxmR7w8FGPuyrxflg
+	aqYfkU5UxmmTj9te40UzbNBb/5XuvNQLINdfgl61dPWDjqlYIigO
+X-Gm-Gg: ASbGncvtFYluNQCsEIzgoBfrCQYu6InXaDsRLBgQz9MKll6Ovni2wJ/TJ5js2JpFqsO
+	5cvWaXRO7fdOkGZKwA7vkpzbw2Eubmzi2VytnpY6S+E433R7O75HDJBfSyoSUh/wzG6BJQoCw4t
+	8MHtLEebGYPOCqTl2lP9JF9avkFUpbbYhlkNVw+H/D5eiXpvtlhhlwJqhS+sQhGnGZO6gsTaB6g
+	r+hMRvfBPPHk8rl1RtJqgujW9MlfPLlGN6smOw5DY+S2irD0I4TOYOz93X2t7cYhBwg39IOydEo
+	x+wpVTJzrkBiWYNmtKRa0OWk/Q4E1WhfTY7UGSxz/O0vCU2kzPEVmVDEwnQhPSHmYZeLfGXRrwh
+	9irxN+f3UgS/WKz6J2+wEm+CXfg==
+X-Google-Smtp-Source: AGHT+IHlgJ/0Zq8LGAbC0JM1shbR97v6kXIu61cyy2+LFvXoplbiFx6QsyXJl8Y+G3l47+Ic+J7RIw==
+X-Received: by 2002:a05:6402:2347:b0:5e7:c42e:3cc0 with SMTP id 4fb4d7f45d1cf-5e7c42e3d2fmr6212085a12.9.1741862588162;
+        Thu, 13 Mar 2025 03:43:08 -0700 (PDT)
+Received: from smtpclient.apple (89-66-237-154.dynamic.chello.pl. [89.66.237.154])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816afdfd0sm598994a12.75.2025.03.13.03.43.05
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Mar 2025 03:43:07 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1741862539;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LFm3KsmAW7VDcqDfFUvV8TrvWBGDHYSxcO8XpMmIi+o=;
-	b=ecwBlwCKU6P8di9N2w737dS2NNAKJ9CyOCuMtbfDwzW9u69CT/TRIeJEFxjk/182gVtIzR
-	se7/9NEMVL1oLKstEyNFEECefTHeCNqkAlqHz/SdZeUWGGOxeUbE0/baIX/9Sm0z8Qg7qo
-	2AY+7InpS1r2CjHAFmc2VKC/1nqlM8hW73X3y1o9iFWOZuFH9B2OZO/gcoKP/ls7Xu2zld
-	LLZ+LfRFH/Hv4Y66qW1WfAgQ0x7tjTCF80CxqqHvrFJWmk7pkInWXwBXR5ZG7PpOyR1cxE
-	S3CXyNn85silJPhR6hoGeO0jIwQCF3PnTaI2VqP2iEzbFQdlTBEsuJUtMT15/A==
-Date: Thu, 13 Mar 2025 11:42:17 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Quentin Schulz <quentin.schulz@cherry.de>
-Cc: Alexey Charkov <alchark@gmail.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Viresh Kumar
- <viresh.kumar@linaro.org>, Chen-Yu Tsai <wens@kernel.org>, Diederik de Haas
- <didi.debian@cknow.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Kever Yang <kever.yang@rock-chips.com>
-Subject: Re: [PATCH v5 7/8] arm64: dts: rockchip: Add OPP data for CPU cores
- on RK3588j
-In-Reply-To: <a56b59a21dc3c21192fe45197eee4865@manjaro.org>
-References: <20240617-rk-dts-additions-v5-0-c1f5f3267f1e@gmail.com>
- <d8ce8db2-1717-40f8-b53e-24cc71a758c9@cherry.de>
- <CABjd4Yw-r-ogfwcrph4K1wbkybS25gk6LFg8wpqLG27uWdybNA@mail.gmail.com>
- <2914631.KiezcSG77Q@diego>
- <CABjd4YxF4N1tAgGUZk-oKkMUO+Q9rWHZsas9gMQdJ+TF4A1=NA@mail.gmail.com>
- <e55125ed-64fb-455e-b1e4-cebe2cf006e4@cherry.de>
- <a56b59a21dc3c21192fe45197eee4865@manjaro.org>
-Message-ID: <2cf3889741f84584d8f23a4407fed08e@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH v2 2/7] drm/bridge: synopsys: Add DW DPTX Controller
+ support library
+From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+X-Priority: 3
+In-Reply-To: <381bbdeb.342.1958ce2b7f8.Coremail.andyshrk@163.com>
+Date: Thu, 13 Mar 2025 11:42:54 +0100
+Cc: heiko@sntech.de,
+ neil.armstrong@linaro.org,
+ sebastian.reichel@collabora.com,
+ lumag@kernel.org,
+ devicetree@vger.kernel.org,
+ hjc@rock-chips.com,
+ mripard@kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org,
+ yubing.zhang@rock-chips.com,
+ dri-devel@lists.freedesktop.org,
+ Andy Yan <andy.yan@rock-chips.com>,
+ krzk+dt@kernel.org,
+ robh@kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <FE66F347-431A-45E1-8764-06767B7FC74E@gmail.com>
+References: <20250312104214.525242-1-andyshrk@163.com>
+ <20250312104214.525242-3-andyshrk@163.com>
+ <61E9B36C-8568-4C0E-A9A7-07FF612912AA@gmail.com>
+ <381bbdeb.342.1958ce2b7f8.Coremail.andyshrk@163.com>
+To: Andy Yan <andyshrk@163.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
 
-Hello all,
 
-On 2025-03-12 11:34, Dragan Simic wrote:
-> On 2025-03-12 11:15, Quentin Schulz wrote:
->> On 2/16/25 1:32 PM, Alexey Charkov wrote:
->>> On Sat, Feb 15, 2025 at 11:30 PM Heiko Stübner <heiko@sntech.de> 
->>> wrote:
->>>> Am Samstag, 15. Februar 2025, 19:59:44 MEZ schrieb Alexey Charkov:
->>>>> On Tue, Feb 11, 2025 at 7:32 PM Quentin Schulz 
->>>>> <quentin.schulz@cherry.de> wrote:
->>>>>> On 6/17/24 8:28 PM, Alexey Charkov wrote:
->> [...]
->>>>>>> +     };
->>>>>>> +
->>>>>>> +     cluster2_opp_table: opp-table-cluster2 {
->>>>>>> +             compatible = "operating-points-v2";
->>>>>>> +             opp-shared;
->>>>>>> +
->>>>>>> +             opp-1416000000 {
->>>>>>> +                     opp-hz = /bits/ 64 <1416000000>;
->>>>>>> +                     opp-microvolt = <750000 750000 950000>;
->>>>>>> +                     clock-latency-ns = <40000>;
->>>>>>> +             };
->>>>>>> +             opp-1608000000 {
->>>>>>> +                     opp-hz = /bits/ 64 <1608000000>;
->>>>>>> +                     opp-microvolt = <787500 787500 950000>;
->>>>>>> +                     clock-latency-ns = <40000>;
->>>>>>> +             };
->>>>>>> +             opp-1800000000 {
->>>>>>> +                     opp-hz = /bits/ 64 <1800000000>;
->>>>>>> +                     opp-microvolt = <875000 875000 950000>;
->>>>>>> +                     clock-latency-ns = <40000>;
->>>>>>> +             };
->>>>>>> +             opp-2016000000 {
->>>>>>> +                     opp-hz = /bits/ 64 <2016000000>;
->>>>>>> +                     opp-microvolt = <950000 950000 950000>;
->>>>>>> +                     clock-latency-ns = <40000>;
->>>>>>> +             };
->>>>>> 
->>>>>> opp-1800000000 and opp-2016000000 should be removed as well.
->>>>>> 
->>>>>> Did I misunderstand what Rockchip did here? Adding Kever in Cc at 
->>>>>> least
->>>>>> for awareness on Rockchip side :)
->>>>>> 
->>>>>> I guess another option could be to mark those above as
->>>>>> 
->>>>>> turbo-mode;
->>>>>> 
->>>>>> though no clue what this would entail. From a glance at cpufreq, 
->>>>>> it
->>>>>> seems that for Rockchip since we use the default cpufreq-dt, it 
->>>>>> would
->>>>>> mark those as unusable, so essentially a no-op, so better remove 
->>>>>> them
->>>>>> entirely?
->>>>> 
->>>>> I believe the opp core just marks 'turbo-mode' opps as
->>>>> CPUFREQ_BOOST_FREQ, and cpufreq-dt only passes that flag along to 
->>>>> the
->>>>> cpufreq core. But then to actually use those boost frequencies I 
->>>>> would
->>>>> guess the governor needs to somehow know the power/thermal 
->>>>> constraints
->>>>> of the chip?.. Don't know where that is defined.
->>>> 
->>>> personally I don't believe in "boost" frequencies - except when they 
->>>> are
->>>> declared officially.
->>>> 
->>>> Rockchip for the longest time maintains that running the chip 
->>>> outside
->>>> the declared power/rate envelope can reduce its overall lifetime.
->>>> 
->>>> So for Rockchip in mainline a "it runs stable for me" has never been 
->>>> a
->>>> suitable reasoning ;-) .
->>> 
->>> My key concern here was perhaps that we are looking at a file inside
->>> the Rockchip source tree which looks relevant by the name of it, but
->>> doesn't actually get included anywhere for any of the boards. This 
->>> may
->>> or may not constitute an endorsement by Rockchip of any OPPs listed
->>> there :-D
->> 
->> Rockchip support stated:
->> 
->> """
->> If you run overdrive mode, you do not need to include rk3588j.dtsi,
->> and you can change it to #incldue rk3588.dtsi to ensure that the
->> maximum frequency can reach 2GHz
->> 
->> below picture from datasheet.
->> """
->> 
->> The picture is the table 3-2 Recommended operating conditions, page 30
->> from the RK3588J datasheet, e.g.
->> https://www.lcsc.com/datasheet/lcsc_datasheet_2403201054_Rockchip-RK3588J_C22364189.pdf
->> 
->> What is overdrive?
->> 
->> """
->> Overdrive mode brings higher frequency, and the voltage will increase
->> accordingly. Under
->> the overdrive mode for a long time, the chipset may shorten the
->> lifetime, especially in high temperature condition
->> """
->> 
->> according to the same datasheet, end of the same table, page 31.
->> 
->> so this seems like a turbo-mode frequency to me.
->> 
->> Additionally, the note for the "normal mode" (the one with the lower
->> freqs) states:
->> 
->> """
->> Normal mode means the chipset works under safety voltage and 
->> frequency. For the
->> industrial environment, highly recommend to keep in normal mode, the 
->> lifetime is
->> reasonably guaranteed.
->> """
->> 
->> I believe "industrial environment" means RK3588J used in the
->> temperatures that aren't OK for the standard RK3588 variant?
-> 
-> Thanks a lot for obtaining these clarifications!
-> 
-> Yes, I'd say that in this case "industrial environment" boils down
-> to the extended temperature range for the RK3588J variant.
-> 
->>> I haven't seen a TRM for the J variant, nor do I have a board with
->>> RK3588J to run tests, so it would be great if Kever could chime in
->>> with how these OPPs are different from the others (or not).
->>> 
->>>> So while the situation might be strange for the rk3588j, I really 
->>>> only want
->>>> correct frequencies here please - not any pseudo "turbo freqs".
->>>> 
->>>> I don't care that much what people do on their own device{s/trees}, 
->>>> but
->>>> the devicetrees we supply centrally (and to u-boot, etc) should only
->>>> contain frequencies vetted by the manufacturer.
->>> 
->>> Fair enough. Let's just try and get another data point on whether
->>> these frequencies are vetted or not.
->> 
->> So the higher freqs seems to be vetted (and used by default on
->> Rockchip's BSP kernel), it just feels like you aren't really supposed
->> to run those higher frequencies all the time? And especially not in
->> "industrial environment"?
->> 
->> I would assume we want to stay on the safer side and remove those
->> higher frequencies? Heiko?
-> 
-> I agree, we should remove the higher-frequency OPPs.  I'd like
-> to go through everything once again in detail and prepare a patch
-> that removes the unsafe OPPs, and you could review it once it's
-> on the ML, to make sure it's fine.
 
-Just as a note, everything above (and even a bit more) is confirmed
-and clearly described in the publicly available RK3588J datasheet,
-which I'll provide as a reference in my upcoming patch.
+> Wiadomo=C5=9B=C4=87 napisana przez Andy Yan <andyshrk@163.com> w dniu =
+13 mar 2025, o godz. 01:23:
+>=20
+>=20
+> Hi Piotr,
+> =E5=9C=A8 2025-03-12 22:23:15=EF=BC=8C"Piotr Oniszczuk" =
+<piotr.oniszczuk@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> This series still  based on Linux 6.14 rc4.
+>=20
+> Did you apply the three dependency patch mentioned in my cover letter?
+
+Thx!
+I noticed =
+https://lore.kernel.org/linux-rockchip/20250302115257.188774-1-andyshrk@16=
+3.com/ was missing
+Sorry for false alarm.
+Now v2 works ok for me on rock5a and rock5itx
+=20=
 
