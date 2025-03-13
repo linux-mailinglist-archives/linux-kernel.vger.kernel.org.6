@@ -1,120 +1,142 @@
-Return-Path: <linux-kernel+bounces-559090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A0AA5EF6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:20:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04738A5EF70
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:21:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDF8A168932
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:20:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACFB01897D81
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743D72641D4;
-	Thu, 13 Mar 2025 09:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34209263F36;
+	Thu, 13 Mar 2025 09:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OdfMcqrK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="c5Kbhe6s"
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1166D1FA14E;
-	Thu, 13 Mar 2025 09:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E722C80
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741857647; cv=none; b=l2s5Objt+BssVkHb2cts0Gp+njUdiCFvg/aPAEocb3lMt9IfuaU4XozaCUcWXFMtGDXJgye0IEPuxE42a+HNBMtcBuJwB6tRcu9Ns8z6ntxNTwxZO5XGSlymPQghNA6OhnblcL+APJRJ2Pu+uPv+c5SWNBDZ6Uetz+dIwQfKp8o=
+	t=1741857675; cv=none; b=XfQrkooI7jdmhmuUQsA4jDBQptkWPyJMRIP90C84WV7SZQggZmXwtg3kzouMDgHkOcwCcE+sw8uu/EWTZQCdwLv2MLFBd3m0MJhifNwNz9r+MfSfgLhpGjuO+e06bMoGuJ8+u9rwDm1WGKYNQLiztfMEkA9oiKiQkGcXo6ZRSfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741857647; c=relaxed/simple;
-	bh=aOaVRhsJoHJssf1SasDIjbcmYABF1qsyZ0Gh81rOTM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jy9La//5FYc9jSxFOxJHdArm4sifgI1yVaD9upITBRWAfvGafvrh+XRJWMQJeAG8mQ/d3cTLR+FXJVyusB1rpCPMzkr3j2cO6Po36UzNtVdu/S1PtXFWrwdRZ2nZIA0vdS05X45nXmLXVlQsCgxjAWhh7yevAlS9bzUsPd2QBbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OdfMcqrK; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741857646; x=1773393646;
+	s=arc-20240116; t=1741857675; c=relaxed/simple;
+	bh=jYelqFqrz8yWDeGxZPC7eFPF6Li8AI+xraD4fW4VbUc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lxIjmLLPbeo9wC4zBXULu8NCWjmdR3LfNmnzXvkiSXetY9HrG86BobISB7ANxMgcp+iAN10CbLkkXxXmQgOLGm6NBbUnAUmUt1ifvpIKUUGhbKZsYrH+MWOXGB8H/pJ+7yVjU8lQdLInD38QwGxP9cCQe36qfiTWATsM47kmhnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=c5Kbhe6s; arc=none smtp.client-ip=52.95.49.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1741857673; x=1773393673;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=aOaVRhsJoHJssf1SasDIjbcmYABF1qsyZ0Gh81rOTM4=;
-  b=OdfMcqrK3GVuuDad2JYE8+S9pF/ln2ed+PzautsoxI6/9t2KvmBNGzLQ
-   ERjNZJ8/zZENK8u8y/t92jP8YHuetRevpmKNHJ+QgeClbft93SkmhkW/h
-   iEJ7mIGOW/cZVaQQnnYiK1SaMMImwX3RM8ORCU/YUJJpbAwaxhIRQQsbd
-   5iojhf1hPYsy5/fhx9i0klNUYc4aEcG5GTHR/7oQkSCZaa3WXYVcjn6QL
-   xqjeVPS1tg3B1tmT9ZCqOwKweS6hEbhmFOP6AxyZ8zn7xWt1tam0LPaUQ
-   Sufc9VBNX/fOj/ABx4SC+0tcVIoePVQESFBUS3P1n9pZmRfE88nhXW87q
-   A==;
-X-CSE-ConnectionGUID: 4IPIoUTVSGmaACWvhiXC4Q==
-X-CSE-MsgGUID: GfAq4QBbTk6OD56Fhhqa2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="53612739"
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="53612739"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 02:20:45 -0700
-X-CSE-ConnectionGUID: QfILyGOYSZ+hKJI87ayHLQ==
-X-CSE-MsgGUID: phAPCN/TRruKPJZoOFa0+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="121598319"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 02:20:43 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tsek5-0000000283c-0vLW;
-	Thu, 13 Mar 2025 11:20:41 +0200
-Date: Thu, 13 Mar 2025 11:20:40 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: kernel test robot <lkp@intel.com>
-Cc: Longbin Li <looong.bin@gmail.com>, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v1 1/2] spi: sg2044-nor: Fully convert to device managed
- resources
-Message-ID: <Z9KjaFIO1slBsi8R@smile.fi.intel.com>
-References: <20250312172016.4070094-2-andriy.shevchenko@linux.intel.com>
- <202503130708.AmtUDVfq-lkp@intel.com>
+  bh=V79qnuZr00/9Cxbf7zsTxIJStpQ+zna9/iQ2fmQuMaE=;
+  b=c5Kbhe6spb/YEPZ5zid0envxY5XyJX9x06CGU+CPHjTMXlDBMm0cCt4h
+   DbEMXMqd/WtEoAeaUAgMvTXjq3iOW3regh964MSEj3vqt7VOayzPZ6+6l
+   g/iKXWql0RmldyfjOvq0QXkFqtvXyR4pgonIIJsOf4ucglvgBDDlHw1Fb
+   0=;
+X-IronPort-AV: E=Sophos;i="6.14,244,1736812800"; 
+   d="scan'208";a="480050407"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 09:21:10 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [10.0.17.79:51423]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.26.251:2525] with esmtp (Farcaster)
+ id 75c96dbf-4db0-43df-aa48-4d3835685f6f; Thu, 13 Mar 2025 09:21:09 +0000 (UTC)
+X-Farcaster-Flow-ID: 75c96dbf-4db0-43df-aa48-4d3835685f6f
+Received: from EX19D018EUA001.ant.amazon.com (10.252.50.145) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 13 Mar 2025 09:21:09 +0000
+Received: from EX19MTAUWA002.ant.amazon.com (10.250.64.202) by
+ EX19D018EUA001.ant.amazon.com (10.252.50.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 13 Mar 2025 09:21:08 +0000
+Received: from email-imr-corp-prod-iad-all-1b-8410187a.us-east-1.amazon.com
+ (10.25.36.210) by mail-relay.amazon.com (10.250.64.203) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1544.14 via Frontend Transport; Thu, 13 Mar 2025 09:21:08 +0000
+Received: from dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com [10.253.65.58])
+	by email-imr-corp-prod-iad-all-1b-8410187a.us-east-1.amazon.com (Postfix) with ESMTP id D5E184040D;
+	Thu, 13 Mar 2025 09:21:07 +0000 (UTC)
+Received: by dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (Postfix, from userid 23002382)
+	id 94B7420DE2; Thu, 13 Mar 2025 09:21:07 +0000 (UTC)
+Date: Thu, 13 Mar 2025 09:21:07 +0000
+From: Hagar Hemdan <hagarhem@amazon.com>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+CC: Vincent Guittot <vincent.guittot@linaro.org>, Ingo Molnar
+	<mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
+	<juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall
+	<bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider
+	<vschneid@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<wuchi.zero@gmail.com>, <abuehaze@amazon.com>
+Subject: Re: [PATCH] /sched/core: Fix Unixbench spawn test regression
+Message-ID: <20250313092107.GA30527@amazon.com>
+References: <20250306162635.2614376-1-dietmar.eggemann@arm.com>
+ <CAKfTPtCfd_=gm7rsT_qBL8pw5uybEvYH4N2tvxpKndxxi4L7oA@mail.gmail.com>
+ <8ddd7bb2-3a18-48b5-85c6-23263134308a@arm.com>
+ <CAKfTPtD9DwWquFN6G8BXAii7HH5zJeEXiUjE8ma-eHdEqeHzdw@mail.gmail.com>
+ <51d24e59-247d-4b66-9ddb-4b9f0f53497b@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <202503130708.AmtUDVfq-lkp@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <51d24e59-247d-4b66-9ddb-4b9f0f53497b@arm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Thu, Mar 13, 2025 at 07:34:50AM +0800, kernel test robot wrote:
-> Hi Andy,
+On Wed, Mar 12, 2025 at 03:41:40PM +0100, Dietmar Eggemann wrote:
+> On 11/03/2025 17:35, Vincent Guittot wrote:
+> > On Mon, 10 Mar 2025 at 16:29, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+> >>
+> >> On 10/03/2025 14:59, Vincent Guittot wrote:
+> >>> On Thu, 6 Mar 2025 at 17:26, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+> >>>>
+> >>>> Hagar reported a 30% drop in UnixBench spawn test with commit
+> >>>> eff6c8ce8d4d ("sched/core: Reduce cost of sched_move_task when config
+> >>>> autogroup") on a m6g.xlarge AWS EC2 instance with 4 vCPUs and 16 GiB RAM
+> >>>> (aarch64) (single level MC sched domain) [1].
+> >>>>
+> >>>> There is an early bail from sched_move_task() if p->sched_task_group is
+> >>>> equal to p's 'cpu cgroup' (sched_get_task_group()). E.g. both are
+> >>>> pointing to taskgroup '/user.slice/user-1000.slice/session-1.scope'
+> >>>> (Ubuntu '22.04.5 LTS').
+> >>>
+> >>> Isn't this same use case that has been used by commit eff6c8ce8d4d to
+> >>> show the benefit of adding the test if ((group ==
+> >>> tsk->sched_task_group) ?
+> >>> Adding Wuchi who added the condition
+> >>
+> >> IMHO, UnixBench spawn reports a performance number according to how many
+> >> tasks could be spawned whereas, IIUC, commit eff6c8ce8d4d was reporting
+> >> the time spend in sched_move_task().
+> > 
+> > But does not your patch revert the benefits shown in the figures of
+> > commit eff6c8ce8d4d ? It skipped sched_move task in do_exit autogroup
+> > and you adds it back
 > 
-> kernel test robot noticed the following build errors:
+> Yeah, we do need the PELT update in sched_change_group()
+> (task_change_group_fair()) in the do_exit() path to get the 30% score
+> back in 'UnixBench spawn'. Even that means we need more time due to this
+> in sched_move_task().
 > 
-> [auto build test ERROR on broonie-spi/for-next]
-> [cannot apply to linus/master v6.14-rc6 next-20250312]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> I retested this and it turns out that 'group == tsk->sched_task_group'
+> is only true when sched_move_task() is called from exit.
 > 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/spi-sg2044-nor-Fully-convert-to-device-managed-resources/20250313-012347
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-> patch link:    https://lore.kernel.org/r/20250312172016.4070094-2-andriy.shevchenko%40linux.intel.com
-> patch subject: [PATCH v1 1/2] spi: sg2044-nor: Fully convert to device managed resources
-> config: sh-allyesconfig (https://download.01.org/0day-ci/archive/20250313/202503130708.AmtUDVfq-lkp@intel.com/config)
-> compiler: sh4-linux-gcc (GCC) 14.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250313/202503130708.AmtUDVfq-lkp@intel.com/reproduce)
+> So to get the score back for 'UnixBench spawn' we should rather revert
+> commit eff6c8ce8d4d.
 > 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202503130708.AmtUDVfq-lkp@intel.com/
+> The analysis in my patch still holds though.
 > 
-> All errors (new ones prefixed by >>):
-
-Oh, indeed, missed the compilation of this module somehow.
-Will be fixed in v2, thanks!
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> If you guys agree I can send the revert with my analysis in the
+> patch-header.
+Agree. The follow up commit fa614b4feb5a ("sched: Simplify sched_move_task()")
+needs to be reverted as well.
 
