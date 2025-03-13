@@ -1,285 +1,244 @@
-Return-Path: <linux-kernel+bounces-558693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21321A5E98A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:48:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14AF2A5E98C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:49:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00A137ABE27
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:47:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BB833A815D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04836208A9;
-	Thu, 13 Mar 2025 01:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405917346D;
+	Thu, 13 Mar 2025 01:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zf9ysgEs"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="tcuQClVl"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2112.outbound.protection.outlook.com [40.107.215.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AA24C6C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 01:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741830474; cv=none; b=sSayhpmqumkGkeQ4MthkDvIoBrvt5+/aS4OQWRdKsFnLapxBUsEza5wNkMR+47WKG+t/YUn77n+9LHcm/EPf0g/IEx56jA6WiOw1UuF7q9xir7WKQO1KGT8glfwMt8oZwBy4l/NociFi9NhfluMZF+PaZa2mlgJxSat/K+18Tc0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741830474; c=relaxed/simple;
-	bh=JXYJpN1bl6l6EhN1PqsffQzL+dYYLgRDi7LBkvLgIuc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cY/o8z4oCoiITBI8tEhG61e8lFqVJiZeiAzIZxHRqDg4y1ebg3QVKCwCvdj9oCMwxs/AoaylmsJ927xM35Ewv7oDQiFNNGbpfla5N0yWbb2F30AUXwVGY0Sll/2+ahAgHjiuxkMSIN65ZAr6sO1nt2R2DxqsgFkTHO+wKbbW73k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zf9ysgEs; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-543d8badc30so547743e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 18:47:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741830470; x=1742435270; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x3/spb3qXJ4NahJTapd88icwEqd3UeK2ahBi2LPP2yU=;
-        b=zf9ysgEs/52Yi9Nzvh8pzTWhwhak3g4B5O97Ay/rDjv7AkKk6Ts3ZTAFyFTR2+M3aH
-         8T8hSIyRAb/zt5vDGjatWlTORK/FvpX7Xi5dh4VrbcWyQAekjnRi1d1g7KU28Yw5x8tK
-         kmCVMDsILzsVXE1UiBLWyUOWspZY7pRRTVTJkmiV2btAM2Cw3gjUAe6jAELevo81PeSk
-         f8YjhB3U7d2HKtzR80a6zND7TAH/KigZbb59aqRK/3+GXfwiB3O9Fdw6X461WvJKyf+9
-         IOeuaVfVxbXVD4EPFwhtuzi9H+5SzBt8Cn6GM9ReM5TE1ZdOOVieHw2ryqVXoG8btaMW
-         Jbzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741830470; x=1742435270;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x3/spb3qXJ4NahJTapd88icwEqd3UeK2ahBi2LPP2yU=;
-        b=Rp+isYFopnPD+m2nxsJCxMBfbCu6XVwXxHrso0MwM3kzJdNdeKm/PfSGokmoj+59Yi
-         8ki0Jy9h/NGmWunDbdd7wEIHRb9Qdn9q+ZBj/00nL0MKMD5o+Fupz1oO9ZSxYmVCayKk
-         MIYgdvi0BKppiACwOO8PUawHGQZ3CLEMeMv3UXjtMW7oFsqSN/mjOskZRCpcdCTKkvKI
-         iOKZVYGbopWgTD5/O5cCf3/Kw0dk117RnDmyWFEOJNTk42YyT9YHTbt5kYICeF07mp3Y
-         C1oimyHHShjg4z0d2UccbPXjYrmaAvEDTDOT2PJf7aLvpvDvgc3j3xt+tfZ1/k2i8c0S
-         tKUA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdt4xruwNk5IBQfyWLj5uXQRSp6ODGQ7qQjLsEuZfmTaSrShZus+awXxVdh6JZAGo5vOs9lJ7IqpES2ew=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrjytw0c5aLoLV2/2EkDb/koCfwy4qEVcz0qfPiDh4H+wZ/GJm
-	YqjDxwf93ZH9orEwlIu6sZlYZKKY45/1QLHPMZfSNlh1cqN+pHtFyMNjeINhf4Ez0EV3ROKXQqN
-	ZH2bTGXvNsBhKbEOJBz6J8qX+2iw5QfV1i/nE
-X-Gm-Gg: ASbGnctqbL94Bd8Jd3f86hf0Y/5VlVSw7+cvep7ExYiw9Zar9VeYArY2VVfOGvxATZz
-	SAtMEUGV49K6Z5hr+YeYYvIT2/9/D2yijV+XXKvYtOI3sUjpwBAvbgHB/lY45Wgfi+B+C+oQdQ9
-	NgAZyrHsEiFV1jjVbjjlEzSO0fSsZWLbilwtcKHYo/kcwWZE3nBJ10
-X-Google-Smtp-Source: AGHT+IGfrE0FD7ElHYVtgn+Jzz49Ecmh8odTcnd44SieAVCNHGDKoeXuaEzeSrks1fs1ZI7cRhKIFOEKI4pgrNixsHQ=
-X-Received: by 2002:a05:6512:ad1:b0:549:8c86:190b with SMTP id
- 2adb3069b0e04-54990ec17f7mr10167266e87.39.1741830470334; Wed, 12 Mar 2025
- 18:47:50 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EFD4C6C;
+	Thu, 13 Mar 2025 01:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741830547; cv=fail; b=o6NfV/Fabl7zd1e9H+Wd0ZOnW/XAOjOAnNu96tNyJjcBmQdpt/dT+WPmnkHU5tZP5m/pIP/wUvD+2veFuQ65zgHlataGzOcNjy+eFabzCv1G2u5Q2wxR/uMy8tqj64oPb0FoozA4brvGBzoqKWMdHLiWWUYkgZtL5AWJ02fuAK4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741830547; c=relaxed/simple;
+	bh=nsInsX0QhVM/mIsw22JbDEoV0uFMJ2hISDc2mhlRyag=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=gltz2gqpMPfRXVBF46p+WTJgVv8RyDsy90LNgIfr80tf7bqOcR//2tw1fAFDDQqQMtvx17EHftKMtpT3XFuyJkOV/qgxfJJVIFosqML5fSRcbmVVRfEK5dfdUW6JJX+lDamVWuZNNPazyXIbUqZYj24BUdKaEmsE+skqLOQ1IF0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=tcuQClVl; arc=fail smtp.client-ip=40.107.215.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=h8w92O8EhXTdOCO3+GwEoFoQeohqUQvOGcCkT+hcU3nH9XfxkODGh7UzusUDIqebBzBuP1U4BbjspLuQ/AQmBLhlcEPbJIkkLzMJudOTN5m5TzIPWlG12GmSI3HnqcGWdVDdijrG0cX3PelIQIgYH5BVfbhrYJopxQ3Qpv7NaWOyeoRTYmxkyJvgKrWPxIGWDqyIaPOmYFzBxWzosmfZHH0GUrL+pjxEGt2s+iulk94zAB5Q208Os7yORZwvhLVP/yMN4OgOOBm4LjLHXXq9qkhXyexsKtsCCAMc88b0cAFbRocu0lWa0AtX6D4zH8A50rFbkk4mZ5DNE4RMxj1K4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7izwqDlsphk/cKyH6AVwQwaAo/wZ4PPab+sy0XjFIMY=;
+ b=GpdLcD11TNFHsEdsU6M34BWQUJ8+0GlMpXoIvRhk0VPC8XUtNv/FY95qI43wo94WdynpcYcck7dLHfas8ZdK05FJKiiUk2Ub4DOhSwvUwrYva7arD9FQigSlWbpM+45O9VB6Xyr0YvYXt61fGNah1kZrcYUUdVEbENWrWJyi8AN3qCZaYbTGoAay56igxc8wk9NeRYkqXvDmPawgj0GbkGJqGTGKk2lL8y5QZjdtzywKfGhEz6j1Ihz/Ogo8ZWNCurkKEuAYpRpityYQ5h6I6ixYAzLahJ1sqNXujirdtCVKc6VMYEB2CA5T5m+GhFxK/TbrF1m4QHMVNCkzghBofw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7izwqDlsphk/cKyH6AVwQwaAo/wZ4PPab+sy0XjFIMY=;
+ b=tcuQClVlwC6UBfiN7Ww/YZiFOrd3b8FCl1xYl2SkNVMgwa2pBkM8nYZ3WDun+9Lw+sNBIDOfOjbHtpv0E9IAjAxEZ63Mw4LJ8fzrA0gjrGNpq4RJKsd7KkSRkDw1Lg9Kd4gbPRCV3kHu9mM5Y9/dmYyho6DRKAJLrcSMJjBJ6PTyl3G/UyCMqL/5dJ7Qg3cpvoV8DGJYATlPZh5p5k0kycL6Vq36V3zeTyK+pZJGWGU+odj7ezM9MNTQJ7YUaocTvyGAhdwJTFC8FUD4rzNqAH4xXDfa8dVsr0xJ3xjJ1KTqeN7kD31ocInDDbFbo+bvOdSxqS7apAa2ciPIpWdhbA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from JH0PR03MB7384.apcprd03.prod.outlook.com (2603:1096:990:11::8)
+ by SEYPR03MB8080.apcprd03.prod.outlook.com (2603:1096:101:167::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Thu, 13 Mar
+ 2025 01:48:58 +0000
+Received: from JH0PR03MB7384.apcprd03.prod.outlook.com
+ ([fe80::1ff4:d29:cc2e:7732]) by JH0PR03MB7384.apcprd03.prod.outlook.com
+ ([fe80::1ff4:d29:cc2e:7732%4]) with mapi id 15.20.8534.024; Thu, 13 Mar 2025
+ 01:48:57 +0000
+Message-ID: <b9d6a851-c43f-4db9-9a83-6eba3c9b1dd0@amlogic.com>
+Date: Thu, 13 Mar 2025 09:48:54 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: reset: Add compatible for Amlogic
+ A4/A5 Reset Controller
+Content-Language: en-US
+To: Conor Dooley <conor@kernel.org>
+CC: Philipp Zabel <p.zabel@pengutronix.de>, zelong dong
+	<zelong.dong@amlogic.com>, Neil Armstrong <neil.armstrong@linaro.org>, "Kevin
+ Hilman" <khilman@baylibre.com>, Rob Herring <robh@kernel.org>, "Martin
+ Blumenstingl" <martin.blumenstingl@googlemail.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>, "Conor
+ Dooley" <conor.dooley@microchip.com>
+References: <20240918074211.8067-1-zelong.dong@amlogic.com>
+ <20240918074211.8067-2-zelong.dong@amlogic.com>
+ <a5d9b775dd860d8f2bbf174300a2e3161b654035.camel@pengutronix.de>
+ <20240918-delirious-skiing-224172be96d4@squawk>
+ <84612c6b-621d-47cc-8a2e-41d1fa42f0fe@amlogic.com>
+ <20250312-atlas-paver-0f0e888a641b@spud>
+From: Kelvin Zhang <kelvin.zhang@amlogic.com>
+In-Reply-To: <20250312-atlas-paver-0f0e888a641b@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0058.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::9) To JH0PR03MB7384.apcprd03.prod.outlook.com
+ (2603:1096:990:11::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <13709135.uLZWGnKmhe@rjwysocki.net> <2016539.usQuhbGJ8B@rjwysocki.net>
-In-Reply-To: <2016539.usQuhbGJ8B@rjwysocki.net>
-From: Saravana Kannan <saravanak@google.com>
-Date: Wed, 12 Mar 2025 18:47:13 -0700
-X-Gm-Features: AQ5f1Jq875T67hHOe71r_YySZQpkiSdeWx-nk7GkjWbyFBLj9VIYwLJrN7RkuuI
-Message-ID: <CAGETcx8WOezY5-MePZ8X8f7_deys1eB-VvQLQwUPtd5MO8ApSA@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] PM: sleep: Make late and noirq suspend of devices
- more asynchronous
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: JH0PR03MB7384:EE_|SEYPR03MB8080:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b47321b-022e-4697-0194-08dd61d13850
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NWEydjhiQkhwQTR0VFhtWjU0NVZBV2g0eUJ1NDhORTl5aHZYem5sdVZzQ0lw?=
+ =?utf-8?B?a0ZoYklXWEpnWFdabU4raTQzZWNwU0k4emc1ZC9qdWFzUjZLRWtRMEYzUWNW?=
+ =?utf-8?B?VGtIT1ltYmliWU56U0VIVHdTUHQwQ3ZsRi9LVTZ1ZXVnMzFIMGN6MFBrbDcx?=
+ =?utf-8?B?cWRzQmxROCsvaFVVdmh5SmNlSS9kQzlRY2NMQWdXRXdSUCsrSHpFcG1qTFAy?=
+ =?utf-8?B?YnBvYW84bmZEK24yYlk3cS9PVVovNWlPcUZBc3B1M1d1aVRjcCtEWStTMHdT?=
+ =?utf-8?B?Z1dkYnprMkpJcnB0cjhQVjRXYU9yNStuMUNYRThjTmlMenhEd3lKaGw5OUpk?=
+ =?utf-8?B?RUVXWFBKdnpxM0krbFh3ZUx0Zkxnd0VFM1dwM0kvMVBmN09yTFVzL28wSXdq?=
+ =?utf-8?B?MzhVbjdqY1NhT1VQWllXSUt3RDBiemkwTjZjZjJMd2RFNEVHWS9QeGpKV3o4?=
+ =?utf-8?B?Q2s0VisxK0FIaDFiVW1uYnBiNzlyVjJlRitmZGpWd0w3cUlqYS93Y1dZQ1VH?=
+ =?utf-8?B?bFJ5M2JBWTlmZ2tjS3dKVzdwTDBKSGRYRGlZWUQzczRzeXhXazA1dzIrN3Rs?=
+ =?utf-8?B?eE5lSENhWWV5UVRleEx6bjZzMHdJVFJmaWRobCtSTHZZc2p2U2YvOTVOclVq?=
+ =?utf-8?B?ZEFxbGcrVHYva2h3UDVTYjArQmFRU1hzTENsSkI3eHNwU0dsMWh6WHFtbEZu?=
+ =?utf-8?B?UVcvM0NFcXJOejgrNlFKMy82Y0ZYRnRzK0Q0NFVoN0pHOU1KRlFJYU9hN3Vv?=
+ =?utf-8?B?eDJ4c0R1aGRCM1Z5aVRBQmlxSG9McEVNRFRwSDg2REErU2c4V2ZPOGEzNENL?=
+ =?utf-8?B?bkpWNUNDaDQ4UmhFSllIZmYra3I3ajIwVW5nS1V2eFM0SDRHRnR0bE9BUllL?=
+ =?utf-8?B?dkErNlJXOWU2d240TTZNWWE3cSt0NStEQWlzcTdIdGIzL0tsT3VJNzJZZ0xI?=
+ =?utf-8?B?NjIrdytlaTY5a0dabDJEWC9MeDJ4VFo0TjhOa0NWalVYeFdrUFZaRzhtQzla?=
+ =?utf-8?B?VHpwMldMa2R4UmY5R1dnM2NUNm5ndVZoV2VmcGZ3TnNIRkwrZ21rUDM4clBz?=
+ =?utf-8?B?RzExUStaeWJBTWd5a0RBeGRTeDZsYzRMTjArTU13WkhLcTdtRTJscnMvWFhl?=
+ =?utf-8?B?WmtWODFQZkc3SW5IeUJWdlVvRXU5YmNWU2xPc1AvM1FYTVVqdDBvdzBDT01w?=
+ =?utf-8?B?ejRmVkFGRHNTck04SnhIQi9qSVZHZkY0MkZMZ0UrYjFYem1iZGZCbGN3NWFI?=
+ =?utf-8?B?em5zWWRaa2haN1kvNnFtWFhIOVNmU0s4UVA2M2NzNTlod1h4RUVZZ2lCTEl5?=
+ =?utf-8?B?NzdLN1ZlVmtsdGQybDFBWUxvbUd2OGkzUG5WQXRoeGg1VE51OUNGZU00MGU3?=
+ =?utf-8?B?SkJzd2djRmlmdGh5N08zMmhpTlppK1JnTWJuNFJuS09neHhxOGp5ZFRVSS9O?=
+ =?utf-8?B?WndyZHIvVENkeEE4QWFzVERuQXVUcUJRVnRkMm0rQjViK3BsbnpodVArcVFR?=
+ =?utf-8?B?TFAraHVVQTJuNHVJQXNtUDdDaHpWMzQ1ZHhuUmwvY29uRzFZRWVEaVNEa3BE?=
+ =?utf-8?B?TUttQUVEQ2lKMkJJS0E5VzI5WFlYSy9lbjM1U1BGM05McnJwQjBKckh4MUhE?=
+ =?utf-8?B?MUlIQ3YwaTZoN0FaY2tpZkVacGRoSmxpTE9DckF5Qk0wZWZ6NE13Rk5rbWdw?=
+ =?utf-8?B?OWp1SnZwaUR0NWtNcWh0L0RIcXR2SndwdmNZVlhSTkVOMFhuQWovQTBhU1Bm?=
+ =?utf-8?B?VGcwdW0yQW1IQkRkckF2NEhPZlZnbDJuMDVWblZzemRFL2NaRXVYL3NvWlhs?=
+ =?utf-8?B?OEhKYlF3QVlZOGNTUjBxT0tDd3BqU2hlMmJER2VBUG5PRzE0eXUrTExjeEZD?=
+ =?utf-8?Q?pQ5O9KH6v1t2b?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR03MB7384.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aFFKVlNFNGhkWkVNbWxsTTJoN1hZWUpzbmVGRUpWM1lwaGVjZVlQRVE4S3Vh?=
+ =?utf-8?B?ZHhTUEVsTlcvSjd5WHVmSmFkdERTSGt1d2oyMHFKNmpQbmNWMlN3NktEd3NY?=
+ =?utf-8?B?em1uT3hwajdoNm5iQ2ttcm5SZGZiM3RXeFRocTFVZk5EQWsweE5MTytTNTha?=
+ =?utf-8?B?dTlxamVITCtsMm0vMU0yM012Wk80c1J3MVBKemE5QXRKd3JxTWhPazRHVkkr?=
+ =?utf-8?B?RHBHOFN1czltZkRpNnJxZ3p4aUw5OFphNWtEUE9mTk9XTHpFK3ZPSU9nYlZG?=
+ =?utf-8?B?OWZYeU0yRzNsWHVFRXE3MTVHbTBtN2U0K1huSTNrYWRCYTFURkdpNDRGRllr?=
+ =?utf-8?B?QUJGYVQ5K013ZGZSLytacm9MQXFuZFBaS3l0VU9ubDMxYzhDLytSbDl0aEdi?=
+ =?utf-8?B?TGtmdVFLRk43WHlIaHZ4U0puWisrMGpUM3Z5MWJzTHhWOEl0M3NWZ0NHSUtp?=
+ =?utf-8?B?Q3o2eTRIem56M2lSdm1KNkFBOVBVK3RWSWw1MnpyaGhEMFhMQkYzbTZ0cUNj?=
+ =?utf-8?B?NHdyY21TdnJ3M0JOUWl0emVuajE4a1FadUVvZUluWStNdnl2M2dwV2g2RUZk?=
+ =?utf-8?B?eGQ4ZlNmTFRMdzhNNTRQcEw3VVozUERVWVFtbGJNWFdFQ0Z4SUhOSXVPK1Fy?=
+ =?utf-8?B?cUtTTzBwZHJpbUlZeGRHeUFvanZ1SFhpaWxmM1UxaXF0ejBlWGFwcVE1c1g2?=
+ =?utf-8?B?SkQ2QW45dlVLT3FoZjRnT0lhK1lwblRacnpQYTB4ZEdWM1lNSGt0OWtBazQx?=
+ =?utf-8?B?cFR2R1FYc0xMY1NjUktpdkYzQm9XRWJobGtYdUthWlc5cmpldERwQ3Y4bVpq?=
+ =?utf-8?B?YXE4aWR5cU9aT1ZTU09GRnp5UjRHV0x5NHNVdUlUb0pLaVhBRVZMUU95bVlB?=
+ =?utf-8?B?M0hELzVmdmMvZFVBN0oyWjBPblVEb1JpL3JEWXlmSE8yRTI2cllLcGZTU2tZ?=
+ =?utf-8?B?V1dGQldJUFQzc25SdG5VSjdLZ21lbDVoYlo5Tnh0Uk5vR2wyZi9uYTE1YmxK?=
+ =?utf-8?B?V2FDSFdFRVZubWtsUmRNbXhYL1g2QmVDUWRnNEE0VS9OUVJmdWcxZW41WmVl?=
+ =?utf-8?B?US9aN283ZW1lOXFpakJueTdiaGVnZ1lFSmtWMk1PdFArOWs4WlJ0UzRObGFr?=
+ =?utf-8?B?bVpqSjFJZUxxb2VnMXRoYzA5bjgyYW9SS2NkM092RngrTEpUeG5ZK0NIWTJh?=
+ =?utf-8?B?VHhBMU9PNm9TVzZIc1lCdVk1N2pYVU1acFNQaHU5bGZISE51NUZUVGR1Qnd3?=
+ =?utf-8?B?WEEyNVI0R2l2VzQwbGFhUnBpL2pONThOclFMK3AxY1IrQ2NiN2tuTkh5c2lT?=
+ =?utf-8?B?U1kzQWNzYUNjckQxdkVINmxFZXl2UzhFUjdVUUg3eGVjWXNQSmRKSUV1WjBV?=
+ =?utf-8?B?QjlJQ2JjbTg0Y2JmSm5Ic21kS1BNL2hseHgxYlFKSXhiRzZSY3BiYXE2UW5O?=
+ =?utf-8?B?cmtISmNONmN4TDVGNUFzRWMraHlGU0JtQkhzbnNpNnF4cU42cFJZWlI5QzJv?=
+ =?utf-8?B?VW4ySjRBVVpPUFpnekl2aEszb3NMaVd2dHZxQjlnekpxZ2tsK0cvODdQVENP?=
+ =?utf-8?B?amlGSE9NS3dNb1VGZkw1Z0h5clk0dFVuYk5kbnlPZjliK1dJWVJTMTFqS1pI?=
+ =?utf-8?B?T1BUSVFITmhEMHlpMFVsOExtMUlNSHRJOTFQOWxOVHNhd0hwUmcyVWNGbHg1?=
+ =?utf-8?B?ZTY5Wk92V2VZSEFvRHd0YTZsZlA1a1RwdGhPM2NVVkZPL1d1M09UOXJZdTJz?=
+ =?utf-8?B?MHFFMTZ6VS9TQThWci9SWVpiTFlDTW5IT0FsTzRWeEFXdGkyRXR0NGFWTlpi?=
+ =?utf-8?B?eG4wMWNEN21wNmhHTUZpbzBNbExKaWFwdWxFa2taNGxhUEZDR3hFUktteGtJ?=
+ =?utf-8?B?dXhUOFN0MWtVYjhvcm8rdERhem9nZXdDcTR1T2xKdWtJOG9ERU0rQmNZT0Yv?=
+ =?utf-8?B?c1RhSkRrdGtTdkROT09oK2kwQkNqdXd5UHg4WnMxZVJSakVCUjFidkEySVJq?=
+ =?utf-8?B?bTlLenNRckhCYUl6UUtHcTJoenNPcDRLejU5NFpUNkp0bkY4dUMxVUJWQnVn?=
+ =?utf-8?B?NHpPRm1Ca2gweVF2S0Z3Zzl0TXcwTTJVWEg2blZmT0N3eGJvSHd0d1JOYWJq?=
+ =?utf-8?B?MG5FbFdJQmwvaGx4dnd6SFo3MTBSeTIrenhYV2lQZ1Z6eU1ERDBLU1UvQWxw?=
+ =?utf-8?B?cGc9PQ==?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b47321b-022e-4697-0194-08dd61d13850
+X-MS-Exchange-CrossTenant-AuthSource: JH0PR03MB7384.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 01:48:57.8452
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IpnzqVeAMNTtad1LN1WRCK7GMBdhdxJmtVmGuycOkUn3qrMsi3ncVMtdo/TLyMQ0INnvgcTsdmOm+wg/BsGWOyEkt2e0znjjB/haUmWY/QM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB8080
 
-On Tue, Feb 25, 2025 at 8:46=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.ne=
-t> wrote:
->
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> In analogy with previous changes, make device_suspend_late() and
-> device_suspend_noirq() start the async suspend of the device's parent
-> and suppliers after the device itself has been processed and make
-> dpm_suspend_late() and dpm_noirq_suspend_devices() start processing
-> "async" leaf devices (that is, devices without children or consumers)
-> upfront because they don't need to wait for any other devices.
->
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  drivers/base/power/main.c |   60 +++++++++++++++++++++++++++++++++++++++=
--------
->  1 file changed, 52 insertions(+), 8 deletions(-)
->
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -1317,6 +1317,8 @@
->         device_links_read_unlock(idx);
->  }
->
-> +static void async_suspend_noirq(void *data, async_cookie_t cookie);
-> +
->  /**
->   * device_suspend_noirq - Execute a "noirq suspend" callback for given d=
-evice.
->   * @dev: Device to handle.
-> @@ -1396,7 +1398,13 @@
->  Complete:
->         complete_all(&dev->power.completion);
->         TRACE_SUSPEND(error);
-> -       return error;
-> +
-> +       if (error || async_error)
-> +               return error;
-> +
-> +       dpm_async_suspend_superior(dev, async_suspend_noirq);
-> +
-> +       return 0;
->  }
->
->  static void async_suspend_noirq(void *data, async_cookie_t cookie)
-> @@ -1410,6 +1418,7 @@
->  static int dpm_noirq_suspend_devices(pm_message_t state)
->  {
->         ktime_t starttime =3D ktime_get();
-> +       struct device *dev;
->         int error =3D 0;
->
->         trace_suspend_resume(TPS("dpm_suspend_noirq"), state.event, true)=
-;
-> @@ -1419,15 +1428,28 @@
->
->         mutex_lock(&dpm_list_mtx);
->
-> +       /*
-> +        * Start processing "async" leaf devices upfront because they don=
-'t need
-> +        * to wait.
-> +        */
-> +       list_for_each_entry_reverse(dev, &dpm_late_early_list, power.entr=
-y) {
-> +               dpm_clear_async_state(dev);
-> +               if (dpm_leaf_device(dev))
-> +                       dpm_async_fn(dev, async_suspend_noirq);
-> +       }
-> +
->         while (!list_empty(&dpm_late_early_list)) {
-> -               struct device *dev =3D to_device(dpm_late_early_list.prev=
-);
-> +               dev =3D to_device(dpm_late_early_list.prev);
->
->                 list_move(&dev->power.entry, &dpm_noirq_list);
+On 2025/3/13 04:31, Conor Dooley wrote:
+> On Tue, Mar 11, 2025 at 05:48:26PM +0800, Kelvin Zhang wrote:
+>>
+>> On 2024/9/18 16:01, Conor Dooley wrote:
+>>> On Wed, Sep 18, 2024 at 09:51:28AM +0200, Philipp Zabel wrote:
+>>>> On Mi, 2024-09-18 at 15:42 +0800, zelong dong wrote:
+>>>>> From: Zelong Dong<zelong.dong@amlogic.com>
+>>>>>
+>>>>> Add new compatible for Amlogic A4/A5 Reset Controller
+>>>>>
+>>>>> Signed-off-by: Zelong Dong<zelong.dong@amlogic.com>
+>>>>> Acked-by: Conor Dooley<conor.dooley@microchip.com>
+>>>>> ---
+>>>>>    .../bindings/reset/amlogic,meson-reset.yaml   | 23 ++++++++++++-------
+>>>>>    1 file changed, 15 insertions(+), 8 deletions(-)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/reset/amlogic,meson-reset.yaml b/Documentation/devicetree/bindings/reset/amlogic,meson-reset.yaml
+>>>>> index 695ef38a7bb3..0ad81fe7b629 100644
+>>>>> --- a/Documentation/devicetree/bindings/reset/amlogic,meson-reset.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/reset/amlogic,meson-reset.yaml
+>>>>> @@ -12,14 +12,21 @@ maintainers:
+>>>>>    properties:
+>>>>>      compatible:
+>>>>> -    enum:
+>>>>> -      - amlogic,meson8b-reset # Reset Controller on Meson8b and compatible SoCs
+>>>>> -      - amlogic,meson-gxbb-reset # Reset Controller on GXBB and compatible SoCs
+>>>>> -      - amlogic,meson-axg-reset # Reset Controller on AXG and compatible SoCs
+>>>>> -      - amlogic,meson-a1-reset # Reset Controller on A1 and compatible SoCs
+>>>>> -      - amlogic,meson-s4-reset # Reset Controller on S4 and compatible SoCs
+>>>>> -      - amlogic,c3-reset # Reset Controller on C3 and compatible SoCs
+>>>>> -      - amlogic,t7-reset
+>>>>> +    oneOf:
+>>>>> +      - items:
+>>>> I'm not well versed in preferred dt-bindings style, but this items
+>>>> looks superfluous to me. It only contains a single enum.
+>>> Oh, ye. Good spot.
+>> Hello Philipp, Conor,
+>> Sorry for the late reply.
+>>
+>> Do you mean to use 'amlogic,meson-s4-reset' for A4 and A5 directly, without
+>> the fallback?
+> No. We are saying that
+> 
+> +      - items:
+> +          - enum:
+> +              - amlogic,meson8b-reset # Reset Controller on Meson8b and compatible SoCs
+> 
+> is pointless duplication, because your "items" list only has only
+> entry in it (the enum) and you could just remove the "- items" line
+> entirely and have the same outcome.
 
-This issue is present in the previous patch too, but it's easier for
-me to point it out here. Suspend abort will break now.
+Got it.
+Thanks!
 
-For example, say the devices are suspended in the order A -> B -> C ->
-D -> E if everything was sync.
+-- 
+Best regards,
 
-Case 1: Fully sync devices
-If C aborts, only A and B will be in the dpm_noirq_list. When we try
-to undo the suspend, we just resume devices in dpm_noirq_list and that
-just resumes A and B.
+Kelvin Zhang
 
-Case 2: Only C is sync.
-When C aborts, A, B, D and E could have finished suspending. But only
-A and B will be in the dpm_noirq_list. When we try to undo the
-suspend, we just resume devices in dpm_noirq_list and that just
-resumes A and B. D and E never get resumed.
-
-My fix for this is to move all devices to dpm_noirq_list if a suspend
-aborts and then using the existing
-is_suspended/is_noirq_suspended/is_late_suspended flags to skip over
-devices that haven't been suspended. That works nicely except in
-is_suspended and I tried to fix it in [2]. But you had an issue with
-[2] that I didn't fully understand and I meant to dig deeper and fix.
-But I didn't get around to it as I got swamped with other work.
-
-[2] - https://lore.kernel.org/linux-pm/20241114220921.2529905-2-saravanak@g=
-oogle.com/
-
-Thanks,
-Saravana
-
-
-
->
-> -               dpm_clear_async_state(dev);
-> -               if (dpm_async_fn(dev, async_suspend_noirq))
-> +               dpm_async_unless_in_progress(dev, async_suspend_noirq);
-> +
-> +               if (dev->power.work_in_progress)
->                         continue;
->
-> +               dev->power.work_in_progress =3D true;
-> +
->                 get_device(dev);
->
->                 mutex_unlock(&dpm_list_mtx);
-> @@ -1492,6 +1514,8 @@
->         spin_unlock_irq(&parent->power.lock);
->  }
->
-> +static void async_suspend_late(void *data, async_cookie_t cookie);
-> +
->  /**
->   * device_suspend_late - Execute a "late suspend" callback for given dev=
-ice.
->   * @dev: Device to handle.
-> @@ -1568,7 +1592,13 @@
->  Complete:
->         TRACE_SUSPEND(error);
->         complete_all(&dev->power.completion);
-> -       return error;
-> +
-> +       if (error || async_error)
-> +               return error;
-> +
-> +       dpm_async_suspend_superior(dev, async_suspend_late);
-> +
-> +       return 0;
->  }
->
->  static void async_suspend_late(void *data, async_cookie_t cookie)
-> @@ -1586,6 +1616,7 @@
->  int dpm_suspend_late(pm_message_t state)
->  {
->         ktime_t starttime =3D ktime_get();
-> +       struct device *dev;
->         int error =3D 0;
->
->         trace_suspend_resume(TPS("dpm_suspend_late"), state.event, true);
-> @@ -1597,15 +1628,28 @@
->
->         mutex_lock(&dpm_list_mtx);
->
-> +       /*
-> +        * Start processing "async" leaf devices upfront because they don=
-'t need
-> +        * to wait.
-> +        */
-> +       list_for_each_entry_reverse(dev, &dpm_suspended_list, power.entry=
-) {
-> +               dpm_clear_async_state(dev);
-> +               if (dpm_leaf_device(dev))
-> +                       dpm_async_fn(dev, async_suspend_late);
-> +       }
-> +
->         while (!list_empty(&dpm_suspended_list)) {
-> -               struct device *dev =3D to_device(dpm_suspended_list.prev)=
-;
-> +               dev =3D to_device(dpm_suspended_list.prev);
->
->                 list_move(&dev->power.entry, &dpm_late_early_list);
->
-> -               dpm_clear_async_state(dev);
-> -               if (dpm_async_fn(dev, async_suspend_late))
-> +               dpm_async_unless_in_progress(dev, async_suspend_late);
-> +
-> +               if (dev->power.work_in_progress)
->                         continue;
->
-> +               dev->power.work_in_progress =3D true;
-> +
->                 get_device(dev);
->
->                 mutex_unlock(&dpm_list_mtx);
->
->
->
 
