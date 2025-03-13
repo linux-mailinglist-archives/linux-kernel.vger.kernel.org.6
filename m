@@ -1,118 +1,136 @@
-Return-Path: <linux-kernel+bounces-558649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6E6A5E90F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:47:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65795A5E912
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:49:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD2733ACC0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:46:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 692D27AB875
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9D2C2D1;
-	Thu, 13 Mar 2025 00:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBE215E97;
+	Thu, 13 Mar 2025 00:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="It5epQqq"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Recuo1bc"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFF7523A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 00:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE55F610C;
+	Thu, 13 Mar 2025 00:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741826823; cv=none; b=sA20YFUTlT4fwMzy9pzxjpurw7LadHlOd7o46dciyaClTqMK+KsLuMdpWp4id189qnDhRyB7fmkD6VojHox7/m9YfrcKU/y1usPKpy5zHarLGa56fZ4FEKEEPTOqX1NgvzHvCKM3wZhhr0QYKVZ4o0ED/Obn5iTB9aumFuTuGkU=
+	t=1741826983; cv=none; b=bU6Oc/E9iKUyIDjjlKUL8wW5xpG4odgjv0FXs4dm/zRnSAOGOcRjZFXHsL87sypc/UiiE9LEpUBAwAKuBMHtj091GsNtFAYMvFvXHEaxYJC1IESuhfWA/pIVVyKMlFk5Fpoekqe/pKJsnwqa896RjMQuT5hNKV+BCukyzX6C4iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741826823; c=relaxed/simple;
-	bh=WPU72+Y1ga+DiactL+y7ZYRgAAU6hBeWyVS/OFb7HI8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A5NW3SaK8GPKFaBMaYj9kKb3KsR7EFOSQrfTyc3dlYlmbxHEZkTknuQxIcbVD9nm1ntKkDhsOQC9WTDxxVvzytXpJhE2D7++xsZWR/ACGYus5eFFQhLluQcdBlnMBJQ8gr8yrsc6d0aNTtp0w06llWoJu4PBtt0xtkF7dLdNsLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=It5epQqq; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54954fa61c8so407126e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 17:47:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741826818; x=1742431618; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0wOPhYxd+v4ASdWl9NlF7B1oiomg9NbTmCV332MQzSY=;
-        b=It5epQqqJkJSajDxGWygGe2IEhPSrHbi7rsDVOJQ/vJmaxFHUG8v5nWGEyybQXZSMA
-         VbMt/4/4qE568rSK8sLtuyVpo9Q71EzW1idLubvwboY3YehJk4G27cHTzIqPG/6z507O
-         ito3V/ghj/9fNMDsLPqzg/xmSXek2TSazRsOo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741826818; x=1742431618;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0wOPhYxd+v4ASdWl9NlF7B1oiomg9NbTmCV332MQzSY=;
-        b=lJdKxlIGMkI3rg8Q82n8IakOqmuHjZev+X2QwycWWo4LpkwiFDBOvKJUex/PbeXPzo
-         XIICOiWjy069PUuAiOJ+CsBYGiB1gFqiGQN+GGn7D2m2AlCEmOZEG+Uss1RMIfS2Ux82
-         o9EdhmevRysqMoCoLpYArcSrFjWSTFBfLSvGXCp8psjFmB2czKfb9XNdcCHEEyNDd4B3
-         OmOl4rQUTCyDUCzFnAZmDYx8pmZ+JFYx6fTCVfyVdWGWS8c2PlRYr2gMVReKwMWpeueb
-         Mfyko5NmgZkffepcC53N31hn1nFrgL0cfBM6A50bSGs1hwdUzkQ5TZnS5yXrqAPbn9mu
-         dV8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXNiAGyQMMciUPX+nPTzhjoK8V7j9xBEf5aE7mRUiQETgl3Om/pfi2KWpRuFmmFahoQlCpYf5cgJnlsADo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwreVKGT+Adoyfeh3ivO4+d4PZQUuhuVTkCaTnKLYTL97xIXptH
-	kRL0njaXFKJ7Bjozl+N5DdPoE+3bqW+fm8Je49b8VoLEJcctl+jeRktnWH/qutraWT4n01cD32J
-	ZcKBY
-X-Gm-Gg: ASbGncvD47vV4vD1bA5VHMlK+4/2rtrmfkfd/ZawNpNDhw/QEWHD1G7YxnL4lr+xV9f
-	AjVj7xWo2hmentQgrmnvvMzIkTSocSkgwhlXzc3ZLLpj6JtsUEcnJqxb5/XD3M99S1TkB0x+nQG
-	u6OCTcmkn5sEvcJxva5SwpSoyNGB4nLXVchj5KtWqEFPjD6emgDNNmyeAnST9U6K6SXmCTifTKy
-	RKQ/NyCVZDZo1zgU5yipOafq4dexHAqmJvECxAC5eyVxfTXYZ85kPtlkB8iFBDbOwOYsnrVtwKk
-	FuJob2OOHoE0HDliP2BNcXk4DnIdnq9bqEldHZMktS/ioT9G3mzQAuX1rGYIBNq6NTqugy0c1T4
-	BK7IEjBMb/CbgSBeColWLwgQ=
-X-Google-Smtp-Source: AGHT+IE7iXGMtHlGjes3a1kLgbi2/1OFjcyjkyS7c+08Eizx5tM4/9W+cHxUepi7jmVzf0b7lfRU/Q==
-X-Received: by 2002:a05:6512:128a:b0:549:b116:240e with SMTP id 2adb3069b0e04-549b1163221mr2602974e87.24.1741826818138;
-        Wed, 12 Mar 2025 17:46:58 -0700 (PDT)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7a85b1sm37850e87.27.2025.03.12.17.46.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 17:46:58 -0700 (PDT)
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30795988ebeso4794891fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 17:46:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXJwQx+7JAVlVeXqO0pzdPbTBSURwz05S1HJ+bePZUVGwRMxK27a0EiHk8Vwk3yML2Px2i6vL2pSsHzSas=@vger.kernel.org
-X-Received: by 2002:a05:6512:281b:b0:549:4bf7:6464 with SMTP id
- 2adb3069b0e04-54990ea9485mr7115862e87.38.1741826816614; Wed, 12 Mar 2025
- 17:46:56 -0700 (PDT)
+	s=arc-20240116; t=1741826983; c=relaxed/simple;
+	bh=mShvun6u+c79rJKie2ctFkxfcvNB0ZNBQJ7Cbaf9Fz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qryv5ZtLRrAWJQGB7POjQcTd6WGdm6N1H0dwhP/7mpcUrcdJwEoM3l0TqklHSA7xj3LPmHh2iHGUDGQWDkTV8wZYWPlZnzxyLnm3xvmzzOKS5u14lV1FlWarTbERRGRE28Rh6CTJnzsDTI1VnNcnPYPRwYkqWmvf1YmNPRQGvwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Recuo1bc; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1741826970;
+	bh=s79QbonB/1M1H1R9GH34tFkAAQ3ImHrCJt1dHjdi5b0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Recuo1bc80UXUAFKiwcy7Po0NhN9QSJFbgQyFRKRgbIAFFTUhH2QlQ7kZ8qhbtOmK
+	 VtA7UmNtYksg0kaBPs51nEtn8SMUNUd+D8VSnHzb9DftbGzgXFrOeC7UvX24yGn/ot
+	 Wi9yyc7a7b2xjAVL29tZ+iPhjbJecMTfvJZfnV/pT0JFR61Tow/J47azvklAZ6kOt0
+	 2u1eq3vO9AXqXbA9ZKHpFln1ODXGgQZ7T5cMdX3GVc8b9ruKp5AKwUOOQixvInryxm
+	 MmU/F+JAhhLonicQwfwSmgarf2K5i0T4PYAYrKTU3O5u2O7+uIiN4c5lVgtf1cAlni
+	 /ssWQKXnTzS7Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZCpmV3LPJz4wj2;
+	Thu, 13 Mar 2025 11:49:29 +1100 (AEDT)
+Date: Thu, 13 Mar 2025 11:49:29 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Networking <netdev@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Stanislav Fomichev
+ <sdf@fomichev.me>, Taehee Yoo <ap420073@gmail.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20250313114929.43744df1@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311091803.31026-1-ceggers@arri.de> <20250311091803.31026-2-ceggers@arri.de>
-In-Reply-To: <20250311091803.31026-2-ceggers@arri.de>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 12 Mar 2025 17:46:43 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=V9WRjcxfYRtBWUe+twqjqkmW4r_oZYo2xJ4PctXgBQxw@mail.gmail.com>
-X-Gm-Features: AQ5f1Jq0-SLDcKeX8oiWyKvQkAVrt3keer7p83h3mGU_CX8qI6SRix9M-0SOgk4
-Message-ID: <CAD=FV=V9WRjcxfYRtBWUe+twqjqkmW4r_oZYo2xJ4PctXgBQxw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] regulator: check that dummy regulator has been
- probed before using it
-To: Christian Eggers <ceggers@arri.de>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/wfNVq4GJXNamDxDIS+9EpLu";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/wfNVq4GJXNamDxDIS+9EpLu
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi all,
 
-On Tue, Mar 11, 2025 at 2:18=E2=80=AFAM Christian Eggers <ceggers@arri.de> =
-wrote:
->
-> @@ -2213,6 +2221,8 @@ struct regulator *_regulator_get_common(struct regu=
-lator_dev *rdev, struct devic
->                          */
->                         dev_warn(dev, "supply %s not found, using dummy r=
-egulator\n", id);
->                         rdev =3D dummy_regulator_rdev;
-> +                       if (!rdev)
-> +                               return ERR_PTR(-EPROBE_DEFER);
+Today's linux-next merge of the net-next tree got a conflict in:
 
-nit: it feels like the dev_warn() above should be below your new
-check. Otherwise you'll get the same message again after the deferral
-processes.
+  net/core/devmem.c
+
+between commit:
+
+  a70f891e0fa0 ("net: devmem: do not WARN conditionally after netdev_rx_que=
+ue_restart()")
+
+from the net tree and commit:
+
+  1d22d3060b9b ("net: drop rtnl_lock for queue_mgmt operations")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/core/devmem.c
+index 0e5a2c672efd,5c4d79a1bcd8..000000000000
+--- a/net/core/devmem.c
++++ b/net/core/devmem.c
+@@@ -118,11 -125,12 +126,14 @@@ void net_devmem_unbind_dmabuf(struct ne
+  		WARN_ON(rxq->mp_params.mp_priv !=3D binding);
+ =20
+  		rxq->mp_params.mp_priv =3D NULL;
++ 		rxq->mp_params.mp_ops =3D NULL;
+ =20
++ 		netdev_lock(binding->dev);
+  		rxq_idx =3D get_netdev_rx_queue_index(rxq);
+ -		WARN_ON(netdev_rx_queue_restart(binding->dev, rxq_idx));
+ +
+ +		err =3D netdev_rx_queue_restart(binding->dev, rxq_idx);
+ +		WARN_ON(err && err !=3D -ENETDOWN);
++ 		netdev_unlock(binding->dev);
+  	}
+ =20
+  	xa_erase(&net_devmem_dmabuf_bindings, binding->id);
+
+--Sig_/wfNVq4GJXNamDxDIS+9EpLu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfSK5kACgkQAVBC80lX
+0GzwdAf+LHsYSjY0CWPzfKIDOgF7JSqTTQkQp2kfJITgXswd2WKpvr4rHVjBe2mv
+AOelKVyC94t0Xw2iQme7Sa+5Jaq7SOHttVjWB260i/AGXHiR4N+lo6SNlDeGUYhr
+TEKMA5HFVG2sRiuX6qC3b5vWs74w9OINXhO5X4dqW2zvAddjy43pDCE5UsU4sUSb
+G708kuc9JGyMxKebPdvxkKEvFxX9jiP+tAqvBAP2w4yNv19MrQ8kh6m0qQ8FouOv
+BX9Q6sWus5m2E6hxUH8RUqqss64wNtvwHfEb/KdzRrTSuoGnhnSTMI7ibKjHtHvw
+scETVYCp3tnVwAjBs8rwLriaqH9AKA==
+=ZXqg
+-----END PGP SIGNATURE-----
+
+--Sig_/wfNVq4GJXNamDxDIS+9EpLu--
 
