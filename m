@@ -1,141 +1,177 @@
-Return-Path: <linux-kernel+bounces-559681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 866C8A5F7FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:26:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFCCBA5F7FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:26:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4FD019C467D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:26:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F382D420A9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832CF267F7E;
-	Thu, 13 Mar 2025 14:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC5226868F;
+	Thu, 13 Mar 2025 14:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoR5w33N"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Egk/Df7Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B59C267F5E;
-	Thu, 13 Mar 2025 14:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BF9267F4F;
+	Thu, 13 Mar 2025 14:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741875951; cv=none; b=ae9BunNOAuvLFfinkpyq7wzHEsb2JUuDumCZXbKrmTMVBbB8WH8/zVTDV7AmC8uPFSdf5EyTXI1CzvPLhentn22pxUvAmbLX5QarzVfAoEsu/w6KWwL1/9n1OFI5tzK72nfPlgjxgAwC7N+QlfKddYblQBqBVwBfBLc0pVDPI5A=
+	t=1741875961; cv=none; b=s9lajWk6qfCB2pJeTbmNbWxY9RFFQT814SL+84H+EAupmTli3zOe5FnKaWcz4H6/R3ZH0is/LPl7hTj/FX1jkPSnHQlsk4Otk4RKQMJH6llOwdzo7MZaXuE9GRqzCIa6by8EBiZn5K0nlkK+6Ur/kUu9OMCuGQ35xNWtp90GuPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741875951; c=relaxed/simple;
-	bh=/X1T8m4Bnen3WeN9vFB5QU0qKn0cMJp+nlGe1TVUSho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JNs/D3LvLIQTLWOvxb2OEQWi+KTvqTwFSpFvh5S5OKJYWOsT2ftD4KFEGG4dGLtWl2c7ezWFTbfuQmStv5QXao+20ljXSJhHJ3JytqqwD+hUFJ5Jih+cmKi93uXqHxKNKqEhpHbjqzR6q98iwVxAU4h5Kf1ff+6kAyt0DfvMRco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoR5w33N; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2255003f4c6so18965805ad.0;
-        Thu, 13 Mar 2025 07:25:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741875950; x=1742480750; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yt2liAs3aMHm+KHHmdHu8tTJ1pcBVxGtNnpneo2Ud6Y=;
-        b=JoR5w33NivKJALkb6NI/0Tj4ERc/hIGZwYklI1bH1GNq0l6o73fdvKDp0uK6TxX29h
-         oz5wuO/bK9joahXh5UdAX8lV+zXmjuDQ8pSFO2SMIrdyjey1BwZpnJjmJl3LJ7moyvn+
-         4tXGf9UtTe5MhXTSjJIwersYs0//3F0V+drlZi2ZidiI+QpysecM/dn6ZohgscLl80MA
-         zQGxHfTpaBl+vCviHYGl6DrSWPim0lAZRSQpJ2xUZUAJFfrXhulfL2MGd9P56tzQN9Hy
-         7/Q6LBZ8XLZTrRGD32PT7xa/Ay6x8eDgIrUeypd7Xtu3Of62xVNwQh093jejuPWbtwML
-         YVGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741875950; x=1742480750;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yt2liAs3aMHm+KHHmdHu8tTJ1pcBVxGtNnpneo2Ud6Y=;
-        b=jj4iwlVPcIczKuVQV4LuALpWswe8x/sOV3g2DoC6gFyAMEIFjOh7mLAyifv/BwcHBE
-         4qxJ0k6/ShBJ5rXyf3ziDdz5VyeJBZEyh+ufHvOKK3jJBN5K6KuAcmYFTXKWzjgzEY44
-         BIR32LMgVRuFfQLtvzU/3mifzlSx1e0Z3EjN+95Solld3ZaNay2/LvRsZDks7IC2AR8V
-         Ygv/+lpuYeQvBmkEVZx/NIY4mt0zwKwbmq1wb9OEPV0CQC/7K3vx1NnJubMZhXk9zzUq
-         SVzHP+DIgqIkhZHfE8JfnT0HPKSFXXzT3PM2fRkJiPNbCGXF3nbYbyvRetIqVlnSgQMH
-         cYKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpudtwQWwSkmnM2iwCzd2N5eZeTb2PgivqySqGkuRcvms8BxWjhCt0blIm3wBE9CFXarJJNOuIM2jWV+xX@vger.kernel.org, AJvYcCV9xgXsY8MLL6eZHxlrdwAw+CYKq6sHBBVEgzMiNjKEk7CRaWYg9Zp2vvWeuHb3Kv3DhYul/qGAPo5b@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSsBvDAk/ut9k4HebIx+XzxsPAy1KkjrvNM821ojR8WYechSqo
-	xIx2XiCZDnEsuRbqPTSpcDmboDECHSA47ykBU7RAcHVQU/dLR5Lqun65WbzcgRo=
-X-Gm-Gg: ASbGncuI6ZcdD06Z655DFuLbIdBXgHhVSDyLzaWOIqfij2/9GMfcjENic7yFRdLmFo4
-	7XG5/JHEbLvEpkhQ34WF88DrPU/+5m0Mnuu/ELjQJHVNXf7ifwc+GyI8k5tciIwTCLl8DZ/6Uah
-	4MIXUjIRc8ZggPX3Ph1UHF7umA3CL7+fiYBVumf6FExf6ZQqX16KMyq0r2z+/GIJfx8+UrRxdkF
-	XLbhklOa5n5t23UHarrUmGsl+QUegS48GuHsMS/rDr9KZpHroFFRSGB8hTGG6aa4NJ53UxGKSP7
-	qmdABDBVg6e3z9CAvLcIs5na0HKw4grn3e44A25g619us0A8Tw0u/hllJvvLcCDOdBPieWQ8eaR
-	OWgFWW5s6D8gNuiwtcldM/Q==
-X-Google-Smtp-Source: AGHT+IF6eAtFOSwvFOI4Gm40tsebSeGzoaBQCU7pRdsE126LhuSwKSdaUakjB7uJmyjpQif4VQKq2g==
-X-Received: by 2002:a05:6a20:9f0a:b0:1f5:7eb5:72c7 with SMTP id adf61e73a8af0-1f58cbc5d79mr17800801637.29.1741875949583;
-        Thu, 13 Mar 2025 07:25:49 -0700 (PDT)
-Received: from ?IPV6:2409:4081:1112:2682:8c5d:7e25:b34:fa93? ([2409:4081:1112:2682:8c5d:7e25:b34:fa93])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56e9e195asm1318840a12.25.2025.03.13.07.25.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 07:25:49 -0700 (PDT)
-Message-ID: <70cab705-c656-48bd-9b65-841f68c41d40@gmail.com>
-Date: Thu, 13 Mar 2025 19:55:41 +0530
+	s=arc-20240116; t=1741875961; c=relaxed/simple;
+	bh=CZx6TwMA0NCh5fjlQFkDkBD0jjZYUy/h1Qs71+ifFJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mqYlGYm39DDmXniTpqGFcDL5AFJWY7CjfOpgPmxZ3KLBDqAiiPyQa46RWvreDZ1Dm5vIX7isEH1TZisMoWHq85tn+N5YyLff4HnLAerJc/nCxO831Srco1aTnAs6v9S3kp4mldBPnU+I/ff4lLnn/Q+blfcRmQA2W53SWrdm8CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Egk/Df7Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10B8BC4CEDD;
+	Thu, 13 Mar 2025 14:25:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741875960;
+	bh=CZx6TwMA0NCh5fjlQFkDkBD0jjZYUy/h1Qs71+ifFJ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Egk/Df7QgTF4jkaGx8zGZQ9I6MBHi8FpKUeBCjhX1EEYiVwPcoPxBqcctA+UEjCZn
+	 nG0cI2wLCDQ8wCrfpZiEVT3BJ2dEzwmJ0iuZPgtwpOyPsHFNliagzvdAhTRSH3SyxQ
+	 VyQI+fdeul9I4cHBjHW/h8PI4jKHEvXeIGl5ZT+gcrVUjOgUBXTpvdnaPCO54vNan0
+	 3CVuUM6nrO+6eS+x96Pm/hQ53rGeGMGd9AhR97s5IFFyTw4QOfe2VuIZUd7fDOiFCF
+	 L65p25TegzwUG5VpUvqneiC03UBeVcuUREtLUBfVi2ERT/VxCgwLpM8S8jytkGlpSZ
+	 FA389rd5x/NZQ==
+Date: Thu, 13 Mar 2025 15:25:55 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org,
+	aliceryhl@google.com, tmgross@umich.edu,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 3/4] rust: pci: fix unrestricted &mut pci::Device
+Message-ID: <Z9Lq8xyTbIzfPhRX@pollux>
+References: <20250313021550.133041-1-dakr@kernel.org>
+ <20250313021550.133041-4-dakr@kernel.org>
+ <D8F2S8YNYGZP.3JQKC7ZMRAB2C@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: pwm: Convert lpc32xx-pwm.txt to YAML
-To: Krzysztof Kozlowski <krzk@kernel.org>, ukleinek@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, vz@mleia.com,
- piotr.wojtaszczyk@timesys.com
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250312122750.6391-1-purvayeshi550@gmail.com>
- <b2f6a357-a468-4526-a1b6-69ab2c643b2c@kernel.org>
-Content-Language: en-US
-From: Purva Yeshi <purvayeshi550@gmail.com>
-In-Reply-To: <b2f6a357-a468-4526-a1b6-69ab2c643b2c@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D8F2S8YNYGZP.3JQKC7ZMRAB2C@proton.me>
 
-On 13/03/25 16:34, Krzysztof Kozlowski wrote:
-> On 12/03/2025 13:27, Purva Yeshi wrote:
->> Convert the existing `lpc32xx-pwm.txt` bindings documentation into a
->> YAML schema (`nxp,lpc3220-pwm.yaml`).
->>
->> Set `"#pwm-cells"` to `const: 3` for expected PWM cell properties.
->>
->> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
->> ---
+On Thu, Mar 13, 2025 at 10:44:38AM +0000, Benno Lossin wrote:
+> On Thu Mar 13, 2025 at 3:13 AM CET, Danilo Krummrich wrote:
+> > As by now, pci::Device is implemented as:
+> >
+> > 	#[derive(Clone)]
+> > 	pub struct Device(ARef<device::Device>);
+> >
+> > This may be convenient, but has the implication that drivers can call
+> > device methods that require a mutable reference concurrently at any
+> > point of time.
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> 
-> ---
-> 
-> <form letter>
-> This is an automated instruction, just in case, because many review tags
-> are being ignored. If you know the process, you can skip it (please do
-> not feel offended by me posting it here - no bad intentions intended).
-> If you do not know the process, here is a short explanation:
-> 
-> Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-> of patchset, under or above your Signed-off-by tag, unless patch changed
-> significantly (e.g. new properties added to the DT bindings). Tag is
-> "received", when provided in a message replied to you on the mailing
-> list. Tools like b4 can help here. However, there's no need to repost
-> patches *only* to add the tags. The upstream maintainer will do that for
-> tags received on the version they apply.
-> 
-> Full context and explanation:
-> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-> </form letter>
-> 
-> Best regards,
-> Krzysztof
+> Which methods take mutable references? The `set_master` method you
+> mentioned also took a shared reference before this patch.
 
-Hi Krzysztof,
+Yeah, that's basically a bug that I never fixed (until now), since making it
+take a mutable reference would not have changed anything in terms of
+accessibility.
 
-Thank you for your review! I will include your Reviewed-by tag in the 
-next version if no significant changes are made.
+> 
+> > Instead define pci::Device as
+> >
+> > 	pub struct Device<Ctx: DeviceContext = Normal>(
+> > 		Opaque<bindings::pci_dev>,
+> > 		PhantomData<Ctx>,
+> > 	);
+> >
+> > and manually implement the AlwaysRefCounted trait.
+> >
+> > With this we can implement methods that should only be called from
+> > bus callbacks (such as probe()) for pci::Device<Core>. Consequently, we
+> > make this type accessible in bus callbacks only.
+> >
+> > Arbitrary references taken by the driver are still of type
+> > ARef<pci::Device> and hence don't provide access to methods that are
+> > reserved for bus callbacks.
+> >
+> > Fixes: 1bd8b6b2c5d3 ("rust: pci: add basic PCI device / driver abstractions")
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> 
+> Two small nits below, but it already looks good:
+> 
+> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> 
+> > ---
+> >  drivers/gpu/nova-core/driver.rs |   4 +-
+> >  rust/kernel/pci.rs              | 126 ++++++++++++++++++++------------
+> >  samples/rust/rust_driver_pci.rs |   8 +-
+> >  3 files changed, 85 insertions(+), 53 deletions(-)
+> >
+> 
+> > @@ -351,20 +361,8 @@ fn deref(&self) -> &Self::Target {
+> >  }
+> >  
+> >  impl Device {
+> 
+> One alternative to implementing `Deref` below would be to change this to
+> `impl<Ctx: DeviceContext> Device<Ctx>`. But then one would lose the
+> ability to just do `&pdev` to get a `Device` from a `Device<Core>`... So
+> I think the deref way is better. Just wanted to mention this in case
+> someone re-uses this pattern.
+> 
+> > -    /// Create a PCI Device instance from an existing `device::Device`.
+> > -    ///
+> > -    /// # Safety
+> > -    ///
+> > -    /// `dev` must be an `ARef<device::Device>` whose underlying `bindings::device` is a member of
+> > -    /// a `bindings::pci_dev`.
+> > -    pub unsafe fn from_dev(dev: ARef<device::Device>) -> Self {
+> > -        Self(dev)
+> > -    }
+> > -
+> >      fn as_raw(&self) -> *mut bindings::pci_dev {
+> > -        // SAFETY: By the type invariant `self.0.as_raw` is a pointer to the `struct device`
+> > -        // embedded in `struct pci_dev`.
+> > -        unsafe { container_of!(self.0.as_raw(), bindings::pci_dev, dev) as _ }
+> > +        self.0.get()
+> >      }
+> >  
+> >      /// Returns the PCI vendor ID.
+> 
+> >  impl AsRef<device::Device> for Device {
+> >      fn as_ref(&self) -> &device::Device {
+> > -        &self.0
+> > +        // SAFETY: By the type invariant of `Self`, `self.as_raw()` is a pointer to a valid
+> > +        // `struct pci_dev`.
+> > +        let dev = unsafe { addr_of_mut!((*self.as_raw()).dev) };
+> > +
+> > +        // SAFETY: `dev` points to a valid `struct device`.
+> > +        unsafe { device::Device::as_ref(dev) }
+> 
+> Why not use `&**self` instead (ie go through the `Deref` impl)?
 
-Best regards,
-Purva Yeshi
+`&**self` gives us a `Device` (i.e. `pci::Device`), not a `device::Device`.
+
+> 
+> > @@ -77,7 +77,7 @@ fn probe(pdev: &mut pci::Device, info: &Self::IdInfo) -> Result<Pin<KBox<Self>>>
+> >  
+> >          let drvdata = KBox::new(
+> >              Self {
+> > -                pdev: pdev.clone(),
+> > +                pdev: (&**pdev).into(),
+> 
+> It might be possible to do:
+> 
+>     impl From<&pci::Device<Core>> for ARef<pci::Device> { ... }
+> 
+> Then this line could become `pdev: pdev.into()`.
+
+Yeah, having to write `&**pdev` was bothering me too, and I actually tried what
+you suggest, but it didn't compile -- I'll double check.
 
