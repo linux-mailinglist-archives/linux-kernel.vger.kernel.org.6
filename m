@@ -1,151 +1,225 @@
-Return-Path: <linux-kernel+bounces-560029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 602A8A5FCDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:00:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D37A5FCD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:00:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D39519C1860
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:00:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 803AD3B453E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185D026A09F;
-	Thu, 13 Mar 2025 17:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA8726988E;
+	Thu, 13 Mar 2025 17:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PUTzMvfb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Q6DWMT4W"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1289615748F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5540D1581F8
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741885226; cv=none; b=rsLUA820fBBD4aXrrDgvabHZzZgnHsbTEFvzUojFyzTA3XJu8KWsjN5U23/aqNEA0RfFDXOyZR4IlucZPcY9Fa3cAsX7ZmGp3OTMlHdiLsOIc/G71Ke4lvcxFRreAMFQ5frUc3WLZrpjxzTe/8/nc5XODE8ocsy9W1BEfphEj9U=
+	t=1741885224; cv=none; b=Bx+V9a6IWTvE/gIWJV+5N2qFrfzyPf7VNI9fVi7gSv1MrFQfuJMzXIhXNzP+A3pyCp6/pQLbyUvA5WCCLWFPhjrCYD0SqZzg/h29OC269//zAZr/1WkRDh7gjqefM3kEgthbPHvfJDZWXahwC73zIkRCfcqbZWQ943rZnPHG6pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741885226; c=relaxed/simple;
-	bh=hPgfIteAKRae6Xb9DtmO3KzHb+o6HvFeO+EvqotCUBk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rq4R58fKqJ0HtmyE3iCmaUmJBmj9GMO6/tRV4fzsnqvtlk8uuZM7TmYyG2xaiVVA6/s+b6v8mcF/jcQEPHAvezaa1omrEcV3X3BYbSHaAoO64vYwJSKbI82J9iscJOyNVar0b/BTM7wDDXo2952rV9FKcac+4fF0nD0YHERJnIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PUTzMvfb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741885222;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j8YjG5ItqH/53cxab3vJ+AAYA8I/sog4WfKqtRusAYQ=;
-	b=PUTzMvfbcSCBI49oVy2UZHZ6gF0FU6i7brc4EztVNV96WEqfUXYoi2sQ2t8WrX+u6Pyje8
-	h+80Jnkj6ceXpBaTpQQZE4gKqJssZgpCmAK1cNVWz+L3nztOZHEVT0HrdBzlX6Q7C06W9g
-	Za66uExUV6ZZUYZ8HI28WHazy1G6kWI=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-227-PXJzaSreOlGlPRH__s98Ug-1; Thu, 13 Mar 2025 13:00:21 -0400
-X-MC-Unique: PXJzaSreOlGlPRH__s98Ug-1
-X-Mimecast-MFC-AGG-ID: PXJzaSreOlGlPRH__s98Ug_1741885220
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-391459c0395so532991f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:00:21 -0700 (PDT)
+	s=arc-20240116; t=1741885224; c=relaxed/simple;
+	bh=RYxSqwzI/2EnMBRnPRSSojkRPyxDGmcJUxa+ewzJoU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dR61/7+bSNaDT6c/m9yLVjtbBJQScXjIpFG13f8e1+kMBpMqRYegp/yKZE9yaqL/j0YxbeM2rEMlyLcW9o3v3BvF5torOmTdLHRDXcxCHY2hRceLZj0vw6yU4/VO1/NOnCCERMVEPRGPBwjCo6p80hleYeQS/xHCAXnauuld1Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Q6DWMT4W; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 9DCA53F47C
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:00:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1741885217;
+	bh=fUoJ0YlwG+ODRfDs+U2h4d0BcQxrChC2nMxkx+ZtzpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=Q6DWMT4W1QkIXBodh0etMRc2nNllX7OfxpUOhEVNhhScqdjvKGCYrKc0m7VECRDpJ
+	 rr5Nb9xFNtCH4XuYYygmz+ju32dzCka4cKFa6hWjEZaLtlJnEa0y4ZQhvHm+6+9U7n
+	 r3V8TrX7NuqLm5ifibWvocAvL02clmUGWUBCUzIzMNMv0lOEJN91lmlphANQ9W+Ude
+	 DtdYDf6Tq7/Yfyj5450uMKbyHDcvLxhHfjtrLlzitjCWNTGXC4ESGB+DPbr8gRqUzY
+	 HpGIuE0VV/T1/3wnTWQsch5Z0tEPPhtc/K7H7k1dVofRXQtNaOWDJRuiaEsivsrtXQ
+	 6IRcW8kW/rygw==
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff7cf599beso2084096a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:00:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741885217; x=1742490017;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j8YjG5ItqH/53cxab3vJ+AAYA8I/sog4WfKqtRusAYQ=;
-        b=APafp0CZ8g5AKjkbzlIJ9BlE2Z6144t7msTZSRGg0VZKfMvudEgMuo8f6yoDQuyyfP
-         jNzKplTPp4ikRlRJrKB3gOdo0+ZBBwJkCcjEKLHOIIl2GpMkAyIkRMlCB5YC92hUX+Ym
-         rc4WFiNrPNwpb7xUJ3kltc0No9rmcDY8HD0TAaP7OLCl7f/qgByg8wfMpiIpdQPtOsvV
-         m9mH41EInBRvYLdfYB/0IIYxXrSEPephL06DkJIHJ3jx8VEKheQJHc680x0EAGBaq9QX
-         l9YPwofXT1Drsetscq3GS3ILTBA9Tv4C1EQ/4Yb7oVoXkSqdJgHVc+3P8uryc6pmnMkL
-         OREg==
-X-Gm-Message-State: AOJu0YwLwZWYihf3X2XP6y6lzdjTF/ssuCsrzWa+wR59RM++vkI8g7EC
-	7MEIzZlLybxSjNThRp2esyAFSTdWubssfHSYQrecnsltDb11vl8YjFqQtLRSjf+hubxinFlwocn
-	Od89gnjbFYuDuN5jxmFHpwbSboTYJBN/KS1UVZqz2Md/53u4EBRH2JTEBAc/ox4bQvWOtgZuT2M
-	g8q/dmreRuaO4wiSGtrsjTgd01B4wqHjQGWTY+2bv/eJog11Pd
-X-Gm-Gg: ASbGncuAfUNROZbp4bC2kVc5vYY5WUMEOROqj1x6jic6Ok/Yx0K3c7z4BEpE2rNE6rx
-	LYU1SiHMvEBigRI7r6kdiCID2HJvG3qvhd85QE1YhaDyCrJ2fYhS2oDOsNcADaXalyW50seWk3h
-	K4/v/RvNriQtnnjuMMD+m2lYkebYOnHJuV6FR8pmoP2AwzqbPZxRn01rTFwNiXclHzK516AnyAJ
-	UnNhe76N8oUfSHC+ulbvFmFprly63VvsxEPuFwhbF+M/2blZa2tn5X8pg8Ar3ul3gV/vj6i0EbF
-	UbNxUrjmIcp0uJpyLyWgBnxMiKiz8VbgbY80Jau7FLw=
-X-Received: by 2002:a05:6000:23c2:b0:391:122c:8ab with SMTP id ffacd0b85a97d-396c1c207bcmr188059f8f.22.1741885216935;
-        Thu, 13 Mar 2025 10:00:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGkUvqQ4kZQgkVidzMwhKp3X0BWVh24OqT8ruMci31YdZKf7dZODGUNpYgkn2DkAYcJwNHbWw==
-X-Received: by 2002:a05:6000:23c2:b0:391:122c:8ab with SMTP id ffacd0b85a97d-396c1c207bcmr188002f8f.22.1741885216374;
-        Thu, 13 Mar 2025 10:00:16 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.49.7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d18a2aaa6sm25912475e9.25.2025.03.13.10.00.15
+        d=1e100.net; s=20230601; t=1741885216; x=1742490016;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fUoJ0YlwG+ODRfDs+U2h4d0BcQxrChC2nMxkx+ZtzpA=;
+        b=DKDUFbP7Xrc008TaOugRe+S6sHqzP5KLDUN2WBiS3BTE1huM49StqyUIgduxBDzfWW
+         Rec8yH8YZzabrT/q712TQTlqMy+ilr+OCoQbVWqb/bxOJg2bZ5Gk3SsRKQKRwQGiat+R
+         tFIh0E7KIyl9gQ6YIQSnFt499qsGsXPxNzMaFDuleK0pzCl+Dk4pLR+p7lXSP+ezQJPV
+         Qfc9XxAztusGUq33BckAtIRd+MrmnZlL9QhCl6I7pEhB8k7onz82+DqhbqGBOZ30nEIB
+         u55HNRtdxDRYpgKfOcqza16sWoiO+bSgzOcmscHnPke1I8SGov05bf7a15ESrQpOFBrR
+         iH7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUaIR3itR8WCqdR4z+yuanWXxptwp+yIoKFmtOp++jOOwYY57CHW4yO0VZy1PQudBqwTTsMkKsoR194Eow=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+qFTB7WRC4Hqd15qWK+LVd9sDaHQ75HmSb8kqqjZu2dnQAqZW
+	xLhQshjAu5LXEySJ7gFS1RGsLdYpL40iTcYhFabwzx33mh5VtoDjdWNWXaL6kVTlHKuCMcXTWMV
+	bbcDPmUo6x+Kcg/X3sFeYIY9BIb/zbvDP1xraOFAav9ti1tklAiavdP6bpLAg1bAoaKtbU4pl0Z
+	+C5Q==
+X-Gm-Gg: ASbGnctif6F4rCOK1LPiwRMLG0+C9lPBNGnACLrJ7Al3vNeTtAyuf2haPkAR3hmqjxG
+	UU+rgeaGJ6YiGq0A9BqwGx4Mr6GOLO362LNTFIWBArtMPR0KTsCMc3bx43NXOVRtgkQm9J6KCZF
+	D40PuP50MyJguSXEjt7iLsdPjjA1rdIaba/upAjiSPSOj8hrpi+llFAemZ7Q/LAjHTKNiM1tgwg
+	uwWoLKPYH2P9idzaFSZaKGjpbDUOyY18E2sK3Jg4ix0Fd/fxaPhdbhe0yLr/vr6pvhBljw0RKPJ
+	Z5BgL++QRL9AAhMC
+X-Received: by 2002:a05:6a00:a16:b0:736:53ce:a32c with SMTP id d2e1a72fcca58-736eb87c234mr14988260b3a.17.1741885215974;
+        Thu, 13 Mar 2025 10:00:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGZKXbfIRDv2S58V3wGzrMBxEA6UOye0xO53GmJmkmtt9ccYnOJCbY4VXHrfLoqoPoutlG3VQ==
+X-Received: by 2002:a05:6a00:a16:b0:736:53ce:a32c with SMTP id d2e1a72fcca58-736eb87c234mr14988216b3a.17.1741885215540;
+        Thu, 13 Mar 2025 10:00:15 -0700 (PDT)
+Received: from localhost ([240f:74:7be:1:4ca:c54c:f4ea:3eea])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73711695ad4sm1607514b3a.132.2025.03.13.10.00.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 10:00:16 -0700 (PDT)
-From: Juri Lelli <juri.lelli@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Phil Auld <pauld@redhat.com>,
-	luca.abeni@santannapisa.it,
-	tommaso.cucinotta@santannapisa.it,
-	Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH v4 1/8] sched/deadline: Ignore special tasks when rebuilding domains
-Date: Thu, 13 Mar 2025 18:00:04 +0100
-Message-ID: <20250313170011.357208-2-juri.lelli@redhat.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250313170011.357208-1-juri.lelli@redhat.com>
-References: <20250313170011.357208-1-juri.lelli@redhat.com>
+        Thu, 13 Mar 2025 10:00:15 -0700 (PDT)
+Date: Fri, 14 Mar 2025 02:00:13 +0900
+From: Koichiro Den <koichiro.den@canonical.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
+	linus.walleij@linaro.org, maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/9] Introduce configfs-based interface for
+ gpio-aggregator
+Message-ID: <4xyrmml7f2urxjjkeurnlus375phzhxfqej5dnzdxlrhx7jn5z@5iizxyft4cht>
+References: <20250224143134.3024598-1-koichiro.den@canonical.com>
+ <CAMRc=Me9_EvVj2U-wGWjoVyH_igZBtUs1ymtE=4_r2EkSBAAcA@mail.gmail.com>
+ <oedikhiegt3iqj7xg4vtfhlqxihicd7bdtaglk73q2m3c42zla@roh336fpkszm>
+ <CAMRc=MeHBYngume_k-tfqEnkrkt3-axWKXKS1xkxkyH-6QFSkQ@mail.gmail.com>
+ <n25f2iho3yn7ahx6isnm55g2cw5ox34rhqukhvgohzmtq22vzl@p5pptw6lw7ln>
+ <CAMRc=MdPLpQTeebDPk0+5ovuFCjcpNdb3BN5c7ADAxStE08JBQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MdPLpQTeebDPk0+5ovuFCjcpNdb3BN5c7ADAxStE08JBQ@mail.gmail.com>
 
-SCHED_DEADLINE special tasks get a fake bandwidth that is only used to
-make sure sleeping and priority inheritance 'work', but it is ignored
-for runtime enforcement and admission control.
+On Mon, Mar 10, 2025 at 06:46:25PM GMT, Bartosz Golaszewski wrote:
+> On Mon, Mar 10, 2025 at 5:28 PM Koichiro Den <koichiro.den@canonical.com> wrote:
+> >
+> 
+> [snip!]
+> 
+> Please remove unnecessary context from responses. You attached
+> hundreds of lines of stack traces here. :(
 
-Be consistent with it also when rebuilding root domains.
+Right, this will never happen. Sorry for inconvenience.
 
-Reported-by: Jon Hunter <jonathanh@nvidia.com>
-Fixes: 53916d5fd3c0 ("sched/deadline: Check bandwidth overflow earlier for hotplug")
-Tested-by: Waiman Long <longman@redhat.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Reviewed-by: Valentin Schneider <vschneid@redhat.com>
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
----
- kernel/sched/deadline.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> >
+> > Thanks, I've confirmed it. It seems I overlooked it because somehow
+> > lockdep and kasan were not enabled for a while.
+> >
+> > Assuming the v5 patch series rebased onto the latest gpio/for-next
+> > 21c853ad9309 ("gpio: adnp: use new line value setter callbacks"),
+> > the following follow-up patch should suffice.
+> >
+> > ------------8<--------------8<---------------
+> > diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
+> > index df34d8fcb79a..56f0fde8c843 100644
+> > --- a/drivers/gpio/gpio-aggregator.c
+> > +++ b/drivers/gpio/gpio-aggregator.c
+> > @@ -207,7 +207,18 @@ static void aggr_free_lines(struct gpio_aggregator *aggr)
+> >
+> >         list_for_each_entry_safe(line, tmp, &aggr->list_head, entry) {
+> >                 configfs_unregister_group(&line->group);
+> > -               aggr_line_del(aggr, line);
+> > +               /*
+> > +                * Normally, we acquire aggr->lock within the configfs
+> > +                * callback. However, in the legacy sysfs interface case,
+> > +                * calling configfs_(un)register_group while holding
+> > +                * aggr->lock could cause a deadlock. Fortunately, this is
+> > +                * unnecessary because the new_device/delete_device path
+> > +                * and the module unload path are mutually exclusive,
+> > +                * thanks to an explicit try_module_get. That's why this
+> > +                * minimal scoped_guard suffices here.
+> > +                */
+> > +               scoped_guard(mutex, &aggr->lock)
+> > +                       aggr_line_del(aggr, line);
+> >                 kfree(line->key);
+> >                 kfree(line);
+> >         }
+> > @@ -926,8 +937,6 @@ static void gpio_aggr_device_release(struct config_item *item)
+> >  {
+> >         struct gpio_aggregator *aggr = to_gpio_aggregator(item);
+> >
+> > -       guard(mutex)(&aggr->lock);
+> > -
+> >         /*
+> >          * At this point, aggr is neither active nor activating,
+> >          * so calling aggr_deactivate() is always unnecessary.
+> > @@ -1072,7 +1081,8 @@ static int aggr_parse(struct gpio_aggregator *aggr)
+> >                                                         &line->group);
+> >                         if (error)
+> >                                 goto err;
+> > -                       aggr_line_add(aggr, line);
+> > +                       scoped_guard(mutex, &aggr->lock)
+> > +                               aggr_line_add(aggr, line);
+> >
+> >                         error = aggr_add_gpio(aggr, key, U16_MAX, &n);
+> >                         if (error)
+> > @@ -1101,7 +1111,8 @@ static int aggr_parse(struct gpio_aggregator *aggr)
+> >                                                         &line->group);
+> >                         if (error)
+> >                                 goto err;
+> > -                       aggr_line_add(aggr, line);
+> > +                       scoped_guard(mutex, &aggr->lock)
+> > +                               aggr_line_add(aggr, line);
+> >
+> >                         error = aggr_add_gpio(aggr, key, i, &n);
+> >                         if (error)
+> > @@ -1205,8 +1216,10 @@ static DRIVER_ATTR_WO(new_device);
+> >
+> >  static void gpio_aggregator_free(struct gpio_aggregator *aggr)
+> >  {
+> > -       if (aggr_is_activating(aggr) || aggr_is_active(aggr))
+> > -               aggr_deactivate(aggr);
+> > +       scoped_guard(mutex, &aggr->lock) {
+> > +               if (aggr_is_activating(aggr) || aggr_is_active(aggr))
+> > +                       aggr_deactivate(aggr);
+> > +       }
+> >         aggr_free_lines(aggr);
+> >         configfs_unregister_group(&aggr->group);
+> >         kfree(aggr);
+> > ------------8<--------------8<---------------
+> >
+> >
+> > * The second hunk should be squashed into
+> >   [PATCH v5 4/9] gpio: aggregator: introduce basic configfs interface
+> >
+> > * The rest of the hunks should be squashed into
+> >   [PATCH v5 8/9] gpio: aggregator: expose aggregator created via legacy sysfs to configfs
+> >
+> > If you agree with the above approach, I'll send out v6,
+> > while also addressing your feedback here:
+> > https://lore.kernel.org/all/CAMRc=MdoMKdqyzGMFDa3aMz3h=vfZ0OtwARxY7FdsPKcBu9HQA@mail.gmail.com/
+> >
+> > Koichiro
+> >
+> 
+> I won't be testing in-line diff chunks. Please, just fix these issues
+> and send a v6. Also: please do write some sort of a script to automate
+> the testing of this driver if possible. Ideally: add test script to
+> selftests.
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index ff4df16b5186..1a041c1fc0d1 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2956,7 +2956,7 @@ void dl_add_task_root_domain(struct task_struct *p)
- 	struct dl_bw *dl_b;
- 
- 	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
--	if (!dl_task(p)) {
-+	if (!dl_task(p) || dl_entity_is_special(&p->dl)) {
- 		raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
- 		return;
- 	}
--- 
-2.48.1
+Sorry for the delayed response, I've been so tied up with other tasks this
+week. Ok, I'll introduce a kselftest for gpio-aggregator. Actually I've
+wanted that from the beginning.. I believe it should rely on gpio-sim for
+convenience, but please let me know if you don't think so.
 
+Thanks.
+
+> 
+> Bart
 
