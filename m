@@ -1,146 +1,143 @@
-Return-Path: <linux-kernel+bounces-559469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF15BA5F41F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:20:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F81BA5F420
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:21:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 832D417DCFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:20:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 830107A9534
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C01B266F17;
-	Thu, 13 Mar 2025 12:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7BA266F01;
+	Thu, 13 Mar 2025 12:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="GK71GE4t"
-Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LGp2Wrd3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C263266B5D;
-	Thu, 13 Mar 2025 12:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F021EE7A8;
+	Thu, 13 Mar 2025 12:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741868421; cv=none; b=sWjBBsEHjWW6eY+NsovhRElRYFz/H9oEql8tAdv7rRJE/m/YJ0jwWn65UcU5ZQA4wzJh8m5HnBOt8kHjzMAzS4Neh3z7IJvGCHhHmUyWErTOUPkjw7AP8w5OgiVOASCxrH2Ds1Pp/WqqcW3apffSig79LfduC5Wr5GmmUkrqKO4=
+	t=1741868433; cv=none; b=iGa+FzcLnVByZlq40RLx/WC6wnWSfRACb9zbMZOg5Xz/KO7JGKy9j35iYkyX5fzXP5JjKIMdRPxQEapOANaRTvYZ7VyjdMebmigGIqQoX3pavYb/39LpPQ84jNNmaD2U03GkdzvLp2vY6px81jjn6RN761iSpSJvfsGf+nPYWSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741868421; c=relaxed/simple;
-	bh=3iGZSwuLq3yrknLL5RySYUSMhsg9VkT40uzIPuymtTY=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=maICDNhW4rWL+nUmSYmJ7AOFGGloATEYI203GxGa5SOGl9SWxXOr+JGa2Uz4vUiDHLc/FnVk2GUY+Jp8LBRCpah8oeWDhGj66p5Vkji1DdzochbgjZpN1Ds5JEMP5K/Im9fnffr0K7JzWG+nXTBmS37D8xPaZe6x6COpGPovc9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=GK71GE4t; arc=none smtp.client-ip=79.135.106.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=7xxo62i6crbnlchhsuekovtiea.protonmail; t=1741868416; x=1742127616;
-	bh=TathujLwFVMTye6lELcmgVbrxs57jJ//7gvzSyvksPM=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=GK71GE4ti4a71r/hc0+htbUWiwqKzC9yioxtJahuey4bUugslOMvEztwq+bQ0lfHa
-	 gi5l8l2xFIoGcpOrJDgreVJ3qFVQq7Oq2POsTU38znOQvgAs4MR2y8ZgDbKf95uAEh
-	 z1PqPpePqBL4RM8zRvqo8eQBKWR8iOMHKSR9Raz2HKZwGHefGNRoTDaMby3f7dY1vY
-	 uDGgnfbycgdXNIuMNgx5SGMHGdMqejzOd/fqhI0XkWPz2HNTD7m6lnF+rUuPDkcTZl
-	 uk+xy+ZkylddaxdRx9U44x1m+x5f09eOh5pedWWQwJ/uSQv4GJLKMKztpXs8eQtWIf
-	 r0BzW3/UhN5+g==
-Date: Thu, 13 Mar 2025 12:20:11 +0000
-To: Antonio Hickey <contact@antoniohickey.com>, Andreas Hindborg <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Benno Lossin <y86-dev@protonmail.com>, linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, netdev@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH 3/3] rust: replace `addr_of[_mut]!` with `&raw [mut]`
-Message-ID: <D8F4TDZXEN5K.10OKB62YV8AKT@proton.me>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: f64ae2ea4dbafc85decddca94ca7eebb4bcd48cf
+	s=arc-20240116; t=1741868433; c=relaxed/simple;
+	bh=J9gkmDvvDPgdi4lbEVPnHeSBkfUAvzFaSnLIVoFM3hg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BNxecQhq3hGFMEjGiu6V+x2SWksK4YyEbhYsy2DkRG2Uvcu6Jgmu3YA/JO5yrhjvGtm0n55r3Y8wwYvVGf9j+8DHhW6tCmGMyXpKNKUyE8U3uxqfoPiJS+qE3KohaIj3NldAEWL4UclfmFGtwn81qlxqwY4gOKT0+wTqwqveIhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LGp2Wrd3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D9Q5HT023241;
+	Thu, 13 Mar 2025 12:20:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fDU8c74Q4bDPD4cXlM5fRCqP8qjtAceNigyKKmnZJuw=; b=LGp2Wrd3RM3qpfZh
+	MmtyydncBM/h6hX+2FhFnIYjoYb7DcDNQ5Vdrl5ZgrNviN8DY2b9sIUkJWaJ2cmV
+	ROWlRX9aSTlMqZN+AEhSRpLdzgctb5Yk6lVbB3zjccQpT6FJ7ZUEvjpLGN3FTack
+	lroSbDFR+/uVEby93e0jTpIlLkGsL4+hkLZ6v9xrHOLS9s/By2lrnkRS6zeKmMuG
+	TtfezUkeyxo1bv4utG/SSkrmPFDrUVrm8yki8okj0FXl/zLViEUDP+w22d4IWoKF
+	b4PLbFRf+O5CC9DBEDsiBhqsmPdgdn16TdeeWdxux1oXN+Q1EbLNLYh4iAP+edG8
+	T2ys+A==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2mnspq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 12:20:23 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52DCKNal020388
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 12:20:23 GMT
+Received: from [10.218.15.14] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
+ 2025 05:20:18 -0700
+Message-ID: <c402bdae-04b0-4745-b4c9-f12298cd7a05@quicinc.com>
+Date: Thu, 13 Mar 2025 17:50:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 RESEND 1/2] dmaengine: qcom: gpi: Add GPI Block event
+ interrupt support
+To: Vinod Koul <vkoul@kernel.org>
+CC: Andi Shyti <andi.shyti@kernel.org>,
+        Sumit Semwal
+	<sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?=
+	<christian.koenig@amd.com>,
+        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>, <quic_msavaliy@quicinc.com>,
+        <quic_vtanuku@quicinc.com>
+References: <20250212120536.28879-1-quic_jseerapu@quicinc.com>
+ <20250212120536.28879-2-quic_jseerapu@quicinc.com> <Z89TC7fKzmmeu6tW@vaman>
+Content-Language: en-US
+From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+In-Reply-To: <Z89TC7fKzmmeu6tW@vaman>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: pmnVupMtP4qZ34e0cWtkVzg1kvtB_MB7
+X-Authority-Analysis: v=2.4 cv=aKnwqa9m c=1 sm=1 tr=0 ts=67d2cd87 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=llsIEhTl_2UyQBK4H_sA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: pmnVupMtP4qZ34e0cWtkVzg1kvtB_MB7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_06,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
+ adultscore=0 malwarescore=0 priorityscore=1501 phishscore=0 spamscore=0
+ bulkscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503130097
 
-On Thu Mar 13, 2025 at 6:33 AM CET, Antonio Hickey wrote:
-> Replacing all occurrences of `addr_of!(place)` with `&raw place`, and
-> all occurrences of `addr_of_mut!(place)` with `&raw mut place`.
->
-> Utilizing the new feature will allow us to reduce macro complexity, and
-> improve consistency with existing reference syntax as `&raw`, `&raw mut`
-> is very similar to `&`, `&mut` making it fit more naturally with other
-> existing code.
->
-> Depends on: Patch 1/3 0001-rust-enable-raw_ref_op-feature.patch
+Hi Vinod, Thanks for the review comments.
 
-This information shouldn't be in the commit message. You can put it
-below the `---` (that won't end up in the commit message). But since you
-sent this as part of a series, you don't need to mention it.
+On 3/11/2025 2:30 AM, Vinod Koul wrote:
+> On 12-02-25, 17:35, Jyothi Kumar Seerapu wrote:
+>> GSI hardware generates an interrupt for each transfer completion.
+>> For multiple messages within a single transfer, this results in
+>> N interrupts for N messages, leading to significant software
+>> interrupt latency.
+>>
+>> To mitigate this latency, utilize Block Event Interrupt (BEI) mechanism.
+>> Enabling BEI instructs the GSI hardware to prevent interrupt generation
+>> and BEI is disabled when an interrupt is necessary.
+>>
+>> When using BEI, consider splitting a single multi-message transfer into
+>> chunks of 8 messages internally and so interrupts are not expected for
+>> the first 7 message completions, only the last message triggers
+>> an interrupt, indicating the completion of 8 messages.
+>>
+>> This BEI mechanism enhances overall transfer efficiency.
+> 
+> That sounds good but I dont like the idea that we add a custom interface
+> for this. Please use DMA_PREP_INTERRUPT instead. Adding this flag should
+> trigger N interrupts, absence of this should lead to Block events only
+> 
+The DMA_PREP_INTERRUPT flag in DMA operations is used to indicate that 
+an interrupt should be generated once the DMA transfer is completed.
+However, this flag itself does not block interrupt generation at the GPI 
+DMA hardware level. The GPI DMA hardware can still raise interrupts even 
+in the absence of the DMA_PREP_INTERRUPT flag.
 
-> Suggested-by: Benno Lossin <y86-dev@protonmail.com>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1148
-> Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
-> ---
->  rust/kernel/block/mq/request.rs        |  4 ++--
->  rust/kernel/faux.rs                    |  4 ++--
->  rust/kernel/fs/file.rs                 |  2 +-
->  rust/kernel/init.rs                    |  8 ++++----
->  rust/kernel/init/macros.rs             | 28 +++++++++++++-------------
->  rust/kernel/jump_label.rs              |  4 ++--
->  rust/kernel/kunit.rs                   |  4 ++--
->  rust/kernel/list.rs                    |  2 +-
->  rust/kernel/list/impl_list_item_mod.rs |  6 +++---
->  rust/kernel/net/phy.rs                 |  4 ++--
->  rust/kernel/pci.rs                     |  4 ++--
->  rust/kernel/platform.rs                |  4 +---
->  rust/kernel/rbtree.rs                  | 22 ++++++++++----------
->  rust/kernel/sync/arc.rs                |  2 +-
->  rust/kernel/task.rs                    |  4 ++--
->  rust/kernel/workqueue.rs               |  8 ++++----
->  16 files changed, 54 insertions(+), 56 deletions(-)
+To block interrupts at the GPI DMA hardware level, we need to use the 
+Block Event Interrupt (BEI) bit (as explained in the commit log).
+As an example : for 100 transfers, we only want to receive one interrupt 
+at the 100th transfer. This helps us significantly reduce latencies, as 
+handling back-to-back 100 interrupts can take a few milliseconds.
 
-[...]
-
-> diff --git a/rust/kernel/jump_label.rs b/rust/kernel/jump_label.rs
-> index 4e974c768dbd..05d4564714c7 100644
-> --- a/rust/kernel/jump_label.rs
-> +++ b/rust/kernel/jump_label.rs
-> @@ -20,8 +20,8 @@
->  #[macro_export]
->  macro_rules! static_branch_unlikely {
->      ($key:path, $keytyp:ty, $field:ident) =3D> {{
-> -        let _key: *const $keytyp =3D ::core::ptr::addr_of!($key);
-> -        let _key: *const $crate::bindings::static_key_false =3D ::core::=
-ptr::addr_of!((*_key).$field);
-> +        let _key: *const $keytyp =3D &raw $key;
-
-This should be `&raw const $key`. I wrote that wrongly in the issue.
-
-> +        let _key: *const $crate::bindings::static_key_false =3D &raw (*_=
-key).$field;
-
-Same here.
-
->          let _key: *const $crate::bindings::static_key =3D _key.cast();
-> =20
->          #[cfg(not(CONFIG_JUMP_LABEL))]
-> diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
-> index 824da0e9738a..18357dd782ed 100644
-> --- a/rust/kernel/kunit.rs
-> +++ b/rust/kernel/kunit.rs
-> @@ -128,9 +128,9 @@ unsafe impl Sync for UnaryAssert {}
->              unsafe {
->                  $crate::bindings::__kunit_do_failed_assertion(
->                      kunit_test,
-> -                    core::ptr::addr_of!(LOCATION.0),
-> +                    &raw LOCATION.0,
-
-And here.
-
->                      $crate::bindings::kunit_assert_type_KUNIT_ASSERTION,
-> -                    core::ptr::addr_of!(ASSERTION.0.assert),
-> +                    &raw ASSERTION.0.assert,
-
-Lastly here as well.
-
----
-Cheers,
-Benno
+Hope this explains it well. Please let me know if there are any other 
+concerns or feedback.
 
 
