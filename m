@@ -1,289 +1,261 @@
-Return-Path: <linux-kernel+bounces-558814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497AFA5EB8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:11:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FA9A5EB95
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:16:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF2173AF4D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:11:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 988A81897380
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830F91FBC8B;
-	Thu, 13 Mar 2025 06:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9CF1FBC8B;
+	Thu, 13 Mar 2025 06:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gbWnERzv";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="H6Ot7s17"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="huYIxo9j"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51DC78F4A;
-	Thu, 13 Mar 2025 06:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741846306; cv=fail; b=hX6mFUsgUMeNJ3sjODL6QefsiyctAG4MjYoYIda+gRGt1QxrgAbZ/OtD7bPnYhEs+f7Rcf4qZsVqQr/Q6X5/ruZ0ELjbTOLRDyWkEkiY93/nog07cq8Oo952Wq5QCE/jPyYzidIAikjyIp5sTA7lBF1jsOVc0TlN2q5DTWmZuYM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741846306; c=relaxed/simple;
-	bh=OJReS0DfMPNKqbr9Pl4kI7OWGVtt+VqmujvR4RtRrf8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=YOq3PXi62kibgbYgKCDEZGXf6UoEJ8/sxrbH3R3oNYUR2tadK4KWfTdknaOxu+DRbhcZ3PSBNU7G+G7mPeTDU7QcrIQTxb+imfiasJvktQziv0kTAtNuYcvIEGNNetsyPsjEBbM5eLLm8mKd5j7RcEOdUXnP05v1KMCfZYoxX5s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=gbWnERzv; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=H6Ot7s17; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D3tjDb008197;
-	Thu, 13 Mar 2025 06:11:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=M3Cz2ygUs5+i19aIsZIbGlBWepne1H5KrjcqpFo+3ho=; b=
-	gbWnERzvrue2tL6PmaiP6hOCeftqDiiVvwqhCRvrX0Eg4shvL4N3qLNQLyUSzRA7
-	HNXEUJ0BwhFAcL3OeAc1sQthONOumvvGNvd1DmbrDOUceG2//9E3sVWN7xhuINjs
-	cwXIj6hUoLAexxCjO37rDh6+wV59KPT8HnEw7dDAZq0kBZepI3jAEGOz7tyIRUsk
-	+XeUBXmm4lZ63AZ7GUp1cShLaIDW+TbOSDbblESASQ+Q/2KUMpajXB4gKMnQq+4H
-	x5RP5FfTov5UuTjwtmHBBkRgQRyL4yuzEFlIedestPubttaAAfP/BGdv5qZKYTgF
-	Dq0v8VLWEK3Y4TD7LpGW+w==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45au4duhmu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Mar 2025 06:11:34 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52D4FuW9019485;
-	Thu, 13 Mar 2025 06:11:17 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2173.outbound.protection.outlook.com [104.47.56.173])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 45atn1fr35-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Mar 2025 06:11:17 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TfN9P93ADAX0exMEHhuMoZCAGptBbbO9I8keMnWU3P8D5NNtkR1ZYJZCIyET4oA5bq4ZAeSf20OrpgMpFIjWX1mUPlw17wnCcQ6DJoPMDARHxC/8x6fDK2TVDqyY8MZ4Os+ST7HoECL9h61hMzWah4pWZN8aAyWmiI6Se60HxWh7a+qVehqkYdRn+B6kV+gAM9fGU8yvQ9MY49mFyQi6swZ0AzRluOBM/XrksmrizKYPs+dcUQnhZeP41yi2lCxMp0qopJqRs+G1/I2aTmCJyhzjVgOdKJt0fV/raQlHVquxHhZtW/ZecvIudx9EHLokmWLh/auON0GGs6/D/pvr1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=M3Cz2ygUs5+i19aIsZIbGlBWepne1H5KrjcqpFo+3ho=;
- b=rQ047s75ilna57U6SwDcHJnKEj869jbSAJgdFeTfbZRL3nzabJ9R5L+qL7ojf99F/amqGuAd8FsObbHwQUKZuKFvchyTAIz6zX9swo5OGJd+0DkebnX9ww00da860CjVQs+LxmIZIsjXxPshnzntHCjTFGacXrpXo6f+cJeDf2LzGulhAuEdGaUFNqzxBXjJHw2t59Yw85BRJDR0xn3Vja4y2GbM7akop+x1o4xnErUTPImW5UUgFYZNf9mZQtw1wynpV9uE43NzdQIw0IfHZmjpUZQNxqsVUgbnRvrvZL9ZsZ+XKRvgRewqAXHiYBvOIWfEaRJ2mdLsbbpgflV6nw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M3Cz2ygUs5+i19aIsZIbGlBWepne1H5KrjcqpFo+3ho=;
- b=H6Ot7s17awJTY0HkFHu0utYqc7Y4ooMW/DlntFzIMMZMmGdKgRQ4Mro0/zldHxR+boh5PEJgyFSCdM1PoBln/jGYOGrGCAyq0BWnVnuPX3OsForwVS6XIs8PESvtlzals65Jfv42TjjcG+KV16vEJUKm7B66Rgqz4Q5t7Exl9Zg=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by DS7PR10MB5069.namprd10.prod.outlook.com (2603:10b6:5:3a8::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.28; Thu, 13 Mar
- 2025 06:11:14 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.8511.026; Thu, 13 Mar 2025
- 06:11:14 +0000
-Message-ID: <68adae58-459e-488a-951c-127cc472f123@oracle.com>
-Date: Thu, 13 Mar 2025 06:11:12 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 03/10] xfs: Refactor xfs_reflink_end_cow_extent()
-To: "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>
-Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org, cem@kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-        ritesh.list@gmail.com, martin.petersen@oracle.com
-References: <20250310183946.932054-1-john.g.garry@oracle.com>
- <20250310183946.932054-4-john.g.garry@oracle.com>
- <Z9E2kSQs-wL2a074@infradead.org>
- <589f2ce0-2fd8-47f6-bbd3-28705e306b68@oracle.com>
- <Z9FHSyZ7miJL7ZQM@infradead.org> <20250312154636.GX2803749@frogsfrogsfrogs>
- <Z9I0Ab5TyBEdkC32@dread.disaster.area>
- <20250313045121.GE2803730@frogsfrogsfrogs>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <20250313045121.GE2803730@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0157.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2c7::14) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E86437160;
+	Thu, 13 Mar 2025 06:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741846571; cv=none; b=bsWAU4+C6D6MCAIwHnX7D3HJFIVur8/hTZxIoEv4UDW4YW0Ue6DbBY3cgjx/TlIp+xyDkuq90tQV+RwMcxCfPtZS62pAaJ1MtqU3g3wkCKjw+3YyR3y59nQFzzDnaXlTaz21ZquSFWl0J77qZvBiIBokO0JyHd3s+nv9IQwv5uc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741846571; c=relaxed/simple;
+	bh=NCktOrQPVh1zYv5yGrDEBS8pBtx+XeKTejvBMk9/5Bg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IE3xBHD3y2NC5OLHxwVTB94HKp+rNPyYI+AThex5xEJFUmRcap6c941vfI1tn8jFcQ0hJk10Rdr8TF0/EV4fxBEwxclunbR1jqUwbxQu3GjCJFaN143sF/YAorU9WNgV1ChOGjISoFaCy40ailJznP+EITEqOKa4pRUhjgco+Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=huYIxo9j; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CLnhYH014938;
+	Thu, 13 Mar 2025 06:15:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	SEskWSaR5lig+yqq/pODCWaOenT97ESIy6ccSJZjSP0=; b=huYIxo9j1DpEj83O
+	sQkK2R6XdbQVVt9U6K7tLRdtbRTQ2+c6voJVLhvB4L4aeRWOiJzgikYcae82fRyu
+	3+cYDWnOnt7vkq8Oxhe1WGJYdM0MuKgiM+TDv5a11vJLtKoCqOnfyUAI85DVezX7
+	6BLbfZAhQrVa4Vb6qRTS3uwbwR35taeirGhKaB3WgVByOKAo7+AAKakfkw3Kelu4
+	yA+Zr6h7c9tHL/eMb8H0bqp/Vctaesqk8ecXQlLpJ0hqPVsnNy4RwLa20SHIl+y4
+	iOwAaijKloYlzM2Ia4EO8D7aRC1wGJBP78Kyk5rmE2faXi1kYf3r2bknkIcQoW9q
+	4+2fAQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2p4tvx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 06:15:51 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D6FowS007338
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 06:15:51 GMT
+Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Mar
+ 2025 23:15:45 -0700
+Message-ID: <8a18c699-3d36-4143-9a1b-6074fea52263@quicinc.com>
+Date: Thu, 13 Mar 2025 14:15:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DS7PR10MB5069:EE_
-X-MS-Office365-Filtering-Correlation-Id: b4133c12-1deb-4c1e-2f83-08dd61f5dc07
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OXJUZGpLaVRWb2NadVQxY1FPdldmSFdSdFJJUFArcUtwaFA1UGc0SE1WMXlT?=
- =?utf-8?B?bytKdzhqZUhIeXBvVUdSejA5V29pRXFhMnlyN01TdWcralJ5NVBBZTZQODkw?=
- =?utf-8?B?anoxYnZudFZSakJ5YTgzSmhsV3VXNnJnUmhWRW5rbE1LUDNaSGVObk1PMDZ1?=
- =?utf-8?B?aFBIN2NZbjE3VFJRVHAzeTU2VzNHeFVvbEJBYmdxTkVCYUpUeFpYcGEwYkox?=
- =?utf-8?B?dlJUSW5zRS80Skp0NjlRczVmOTIxMG5wcTd4clhmSUFLTDhPSDY2bDR6bjZM?=
- =?utf-8?B?cFAyUnVQSVBlZzRyUmd1U2lrOXU1UXBVV0xOOTVESzBWVmZjQ1pUTTJFbHdp?=
- =?utf-8?B?OUIyNVZKNkN0YWE4RXoyWUF4MHA0RWRKQ1BiSXdobWZ4K3ZDcmxNanBTbEsr?=
- =?utf-8?B?SWZmZHFyRzI0cFp1TG43REhkUnNLeDNLZGZkNmt3YWxzRU9RcVp6aUxEMEhD?=
- =?utf-8?B?QXo5ODJHbmwrZlhTYW1oYVR3ZXFNUHBqekQ2MTZCd25nb1ZBMEpXL2JmU3pv?=
- =?utf-8?B?ZHVUMG1kK0p6bWtmQUpmNFFuWkxGK0Y5MUc5T202cU9ZOForcUt2UGo5QmEx?=
- =?utf-8?B?SEd1R2FIYlh6Vm55aDQ4SStpNnd1VnYwN3F4TU54WCtrc3pULzJNMWlOeTJK?=
- =?utf-8?B?VTIzVnlidXVzdUNhU2VtcmlBODJxYmNpclhhdllVOGdZVXdFb3FCMXNBak5U?=
- =?utf-8?B?Mklla3VUUEs1alVnNjJOZTBRZDJOTTI5Q052aWZ5clN3UXh1MUNZZGU4QTVL?=
- =?utf-8?B?T1VxdEgvejhVbXJHTXEwbkt1eWJxL2JXRXVSdnRpQ3FSaVZ2NEZ4Ujg3bHo2?=
- =?utf-8?B?bGNwMi9vcGhGd0hSSGpRUVptQjVSRGtVVDRkczhWL1lLYS9UVmw2Y0lJbEhP?=
- =?utf-8?B?TDZXTUFlb1lYY0wrei9CdzkydGRmaEd2V1VCUTM3UWJsTzRXS1NuQisvbVNQ?=
- =?utf-8?B?Ui9mejhSUkR5bE1lcE1uS0ZBcHJySWJlY1BDMVJaUlRzOHIxYXpaenZFT2ZL?=
- =?utf-8?B?TFBYcGdNQnpsTU5GdFZhWHZELzc0WTFlenZGeXpVWnZ3RnByR3hMUkNQdG94?=
- =?utf-8?B?K1Z2c1NrdWhzcHQzTDQ4dXlWaHZ1Z205YnlIZnVBK0U2Vkd4eTBJaEd6YTBp?=
- =?utf-8?B?UWh4WVJ3T3FvNVhIalQvbHUzOHBwN0xwQ2F1MWNkN2I0NUNYWWhES2ZnbDZK?=
- =?utf-8?B?WXo0enZCY1lSNXRoUHpzV3FpeStKUzg1cUhOb0hDZldCSE5sU2lPbVJxcUlS?=
- =?utf-8?B?KzBsd2RZUlhFZWZGZTBsWCtLem9OeTZWeHNvQnJlZGlaeUNmRkl6Y0s4dTFx?=
- =?utf-8?B?MkY5YkY4L1BjZG5FSzZsVzAvVFBKMHc2bGFMVHlmU1padjlLR056Wlp4dlJz?=
- =?utf-8?B?SUFRRUNNc1RYUEt1VytUNWhYRUxrZCs1SHhkZ201UVlnMWc3WHNoUHRndGRu?=
- =?utf-8?B?QVpRV0FkRm1CTUVCZkNwV2xkUWcvV0ZaTUcrZ2sxTit4K0J0QWZhV3hxL2ZU?=
- =?utf-8?B?NzhMSGtOWDN1UzFqb1N0QTYxVFpRSlRaLzVzTUtFbEFma3FSYTU3aHYwcUFx?=
- =?utf-8?B?R2dabW9MVVlKMCt2R3l5RjlMT3Z1K2k5N2R1MVRrdTlpOEpRWlUyaWpsck5o?=
- =?utf-8?B?QU9yeUk5SXZWWW5KSDUwbXZHV29lUkN1c3h6TjFSU0VXOW9VV2NrNk9La2JW?=
- =?utf-8?B?SjhscjRzQVVoVFgxb1FVczVRYUJLbk1VdU9WdEhKcGZ1TmlzYnlHbzZyUFhM?=
- =?utf-8?B?blNpNGVEdUNsYjIwYkVLN3A2TnRSN1NNVEJPL1puY3pFZlEvWnFPMWR4SEZL?=
- =?utf-8?B?UURCZVcwc1RKNjloRWhmbVl0cGozT2NxY054dzRweVFvaXhvbEkvTlhjc2xl?=
- =?utf-8?Q?JBN6OTZ4IoqhC?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dnJpK2tUckVyWEFZNDNrRnNSdTdCWllPSUxNaFgxbFh6VThzNEQxOHNmalc2?=
- =?utf-8?B?NjhBTlBRaHFHcXhzMEJnOHhpTWdndERuTGJhbU1qK0FTT0FRT1EwS3piWnF0?=
- =?utf-8?B?WFBEV0tMcERxWUFrcmMwaVZMWDlFcEVCajlvYlkyWFEzdDkyYm5CbFQ4OFNk?=
- =?utf-8?B?RzU4dnhrL3AyWFdPaWFwekpYOHpOeVBnakZBSkZYVnhJQVdTajc0UVVzUW9J?=
- =?utf-8?B?V0p0RGNhcE9MQ2Y0bjR0QWNCamZ5WCtLbldxbW1TeU9Pa1BrMWE3ZHBrY1N1?=
- =?utf-8?B?bG81SDJYblNvK1JmNUhsYndLcnQ5WFZrMWpsaFhyQ0Fhck1HQUVHVHRzS1dj?=
- =?utf-8?B?NGxNcUQ1UkV0S3d2MlRBcHdjSHRLSlVhaTc0YlVLcUVPM2dtTHFiQTdGTWI0?=
- =?utf-8?B?ekE1K1puZ0JoRVY5eDIrbW55cDh6b1NhSXJLYS9sZWtEcnpQaXBQSG9hSytT?=
- =?utf-8?B?b2c4a3BaMGRDY2NiR0JqZGpyKzVvcUYxYUVlaW14MDJCL1B2dGdZZm4vdzlS?=
- =?utf-8?B?dElncERzZTdWSmdIbDR6UGZVa3V2c0lYdTNnOTZTaFVQUnpuUk9SOVM1YU8r?=
- =?utf-8?B?V0puRUIwT0wyUGpBZWN5aGFHcURsUmptZFRGV204Q1Y0SlNpNTkvTDVJL3dN?=
- =?utf-8?B?ZjFsSXlQWXlpdXNlUXVLTzV6d1A0bjRTTk4zTGYrc0g0Q1VHZzVvUlBMcUx1?=
- =?utf-8?B?UlFkM1o1RmNCWC9NRGVCKzJhOVphdmdNcThwZXdrWXM3Q3YyaHhIYVZzN21K?=
- =?utf-8?B?MkZueFM4K21BcVI1aFlJVzdqZHZVMWYzMndoNHJ4RzRsMzdWUlM2WkthVURL?=
- =?utf-8?B?RVl6V2xDRmIvT1YrU0JsS1diWjNFSWdoRWhxdHF0RzBLcXhvWXlvSXhIN09B?=
- =?utf-8?B?RmNJclRUSkhoaExZT0Rad251VHB6Nzh3OTlLN21iVUMxbVdaODIzT3czSk5z?=
- =?utf-8?B?cnZNbFJSaE1uVE1EcW5KcGYvblB4Z0JMMDVZR1hBZW1Qb0Z0dVlsbjVwVTZK?=
- =?utf-8?B?c3RadmltdUY4TnFDNXV2aUZWN2hlVDBHN09HUytDUDRwWllNVDNmeW41TFg1?=
- =?utf-8?B?UU4rcDJpcGRna0M3dFhMMGJMU3RzQktiRi9jU29kT1RlUG9pTUVaQzQzSGZa?=
- =?utf-8?B?WG5zSVFEZnRQSi9scW5YOXFtWTkydWdmZVdaZ2wxWVdheDdmNzJTR2RpUkRE?=
- =?utf-8?B?N0R3SHZVODh2NnlzTlYxWGIvU1NJdzZjcERlMGJLS1JTaWhRdm5aNDlDUmlk?=
- =?utf-8?B?dVpoN1Vtcm9id2FrYU1XWEp5dWpleDlyOFNQUWtFREZPMGhSeTU1eDU1ODNx?=
- =?utf-8?B?UGlPVm9FSDN5RU5rdDhyeFF4TmNvdFhhMG1uSFVMSE5ReGp1Q1pxMy95S2xM?=
- =?utf-8?B?aTVxcXhwd3lYamY4b3dMRzdESGJmbEpiRlJqM1hZMVFJZHJ3WUZzUHJ0aWty?=
- =?utf-8?B?bWxRQ1QrdGJneWYvUXcyaFZrbC9aQVFJYWJQMFhRWDZtT3o2aHltQ0dXdGV6?=
- =?utf-8?B?TGU0MjR2VjM5djBLU2x5MlpVN2JVc01lYXl6WVNkTXlJUThBakFza3JrY3lO?=
- =?utf-8?B?d0w5MnBrT29jblI1aEJsMHR1dnU0OXVhb0M0UGN3djB4NklkYUpQTVAxRUR4?=
- =?utf-8?B?RHRsekhrZktzR0ZRckY4VTY4SUNabHM4L3Fuc3J0VlFORy9ydWVKQWkyK25j?=
- =?utf-8?B?U2tObHRFSzNFUENwdE0rVHRrb2MrWENKYTIxWUhHYVlXKzJUblgxaitFZWtC?=
- =?utf-8?B?OWNzYngxZVI2T25MbkdVSDFydWdQeUJNQXhtdXdCeWFkVlA0WTIzRWNSdjB0?=
- =?utf-8?B?VHVyMlpvN3gxTmJ2QmZkWTE4c05hMy9vakloN200dHJrblp4VWcxbC9oLzFM?=
- =?utf-8?B?VlB4VmNUcjlyOERxeUhHWGoxR2FrVlNBU0tRRGdpSkhEUTZZMEFMMjRaQzJG?=
- =?utf-8?B?SmtPUHVSWXYyenNYY2Zka0gwSDFDak5KR0h0S0ZpWjhtMFB0bVJKZHVtZnVG?=
- =?utf-8?B?UGdnNkV3RldJeDlsbVVPU01zZGN6cHNSc0VkcHJhME11RU1JSWZKdksxdEhY?=
- =?utf-8?B?VHM3U2RMVVhFeVM3TmJDWlZ5OTZ0UGxBVk93Q0RJL0s1VCtaeDJMdC9Cd0ZX?=
- =?utf-8?B?VE44bFREbkhIU3RoVkovKzRXRTN5Tkd1MThnT2htWHNpVHdib2lBSGk5enVS?=
- =?utf-8?B?SkE9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	wy34ZkTFkNuuqTPRD2enExpJgFofKd5vr4Fe/XPjwB30zp3yVnelrMbG0xta/qtWorP20c5Tbb0JkKgJd2cEaw1JazBBDBRwQPIijzWd0TltbNOrA/ZsRe5YA8jKIAdv01Y2vn7aVy+vY2UX7hnWkBgXXGZtIDOfBCc08u4fDcD2v6wep0DfLLdZ4NVXQV5E1HHXwNv/bSFqiMItIQcEeG9RXc7mCwvNxhSaRKmPM+H3XzxaFqsM/shmgw9EKG9Wa/DZFaM9ubHusXp5VYGfJ8vjJIM5v3KgTPYgIFuzcVrwfe0QGS+pjl6KO8voIP6kCn6srf1YZMoUNP+XI1blfoBJOLnl8uo43fzGYR7Bf0EDeRLfY4ltS8f7jzpvVnSybaSfY628QejwpJ0OgPwbUcgYtm3X+Rk+VTlB7FgA/LZBGAmd/QvCprG91dGtOoTg4qQ2XggVNgj/4yHDrisL0uqIchNbX9pWCH5eK5006q7JRucXaCAo9meFda4Klf2rIh8cFZTIsKOP5HeH7PCRAS3rs3fgSvDIQoHR+kR0zHplbD3KuTWD1yVepiorwhC1gyY0Ht+NHi/T2cJimyEjB+Yw51WbMUXsDq4Q/i7AgsI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b4133c12-1deb-4c1e-2f83-08dd61f5dc07
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 06:11:14.4925
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: s9toadtLXOM/rmZClYA3YLmNpn5nTBLpHV+bphGBoMORiXTRKeiUYSRVSaSXPixNOPeH8pROvlQWfvjBuZoPiw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5069
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/4] coresight: ctcu: Enable byte-cntr function for TMC
+ ETR
+To: Mike Leach <mike.leach@linaro.org>
+CC: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        James Clark
+	<james.clark@linaro.org>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Tingwei Zhang
+	<quic_tingweiz@quicinc.com>,
+        Jinlong Mao <quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20250310090407.2069489-1-quic_jiegan@quicinc.com>
+ <CAJ9a7Vj=Ni_o94u1B+oouv0GD5DVmST=N31-hsN=SPSbaoqO_Q@mail.gmail.com>
+Content-Language: en-US
+From: Jie Gan <quic_jiegan@quicinc.com>
+In-Reply-To: <CAJ9a7Vj=Ni_o94u1B+oouv0GD5DVmST=N31-hsN=SPSbaoqO_Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=ePkTjGp1 c=1 sm=1 tr=0 ts=67d27817 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=myPZrXr1dOEo5VCIbN8A:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: vYXc0755I2aVbikhbBka3N03L-nFuhbo
+X-Proofpoint-GUID: vYXc0755I2aVbikhbBka3N03L-nFuhbo
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-13_03,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0
- mlxlogscore=999 bulkscore=0 malwarescore=0 adultscore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2502280000 definitions=main-2503130047
-X-Proofpoint-ORIG-GUID: NxY9HdO76OMelz7o01oBNTKZA50oUqWR
-X-Proofpoint-GUID: NxY9HdO76OMelz7o01oBNTKZA50oUqWR
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
+ mlxscore=0 malwarescore=0 suspectscore=0 impostorscore=0 bulkscore=0
+ clxscore=1015 lowpriorityscore=0 spamscore=0 priorityscore=1501
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503130047
 
-On 13/03/2025 04:51, Darrick J. Wong wrote:
->> Hence if we are walking a range of extents in the BMBT to unmap
->> them, then we should only be generating 2 intents per loop - a BUI
->> for the BMBT removal and a CUI for the shared refcount decrease.
->> That means we should be able to run at least a thousand iterations
->> of that loop per transaction without getting anywhere near the
->> transaction reservation limits.
->>
->> *However!*
->>
->> We have to relog every intent we haven't processed in the deferred
->> batch every-so-often to prevent the outstanding intents from pinning
->> the tail of the log. Hence the larger the number of intents in the
->> initial batch, the more work we have to do later on (and the more
->> overall log space and bandwidth they will consume) to relog them
->> them over and over again until they pop to the head of the
->> processing queue.
->>
->> Hence there is no real perforamce advantage to creating massive intent
->> batches because we end up doing more work later on to relog those
->> intents to prevent journal space deadlocks. It also doesn't speed up
->> processing, because we still process the intent chains one at a time
->> from start to completion before moving on to the next high level
->> intent chain that needs to be processed.
->>
->> Further, after the first couple of intent chains have been
->> processed, the initial log space reservation will have run out, and
->> we are now asking for a new resrevation on every transaction roll we
->> do. i.e. we now are now doing a log space reservation on every
->> transaction roll in the processing chain instead of only doing it
->> once per high level intent chain.
->>
->> Hence from a log space accounting perspective (the hottest code path
->> in the journal), it is far more efficient to perform a single high
->> level transaction per extent unmap operation than it is to batch
->> intents into a single high level transaction.
->>
->> My advice is this: we should never batch high level iterative
->> intent-based operations into a single transaction because it's a
->> false optimisation.  It might look like it is an efficiency
->> improvement from the high level, but it ends up hammering the hot,
->> performance critical paths in the transaction subsystem much, much
->> harder and so will end up being slower than the single transaction
->> per intent-based operation algorithm when it matters most....
-> How specifically do you propose remapping all the extents in a file
-> range after an untorn write?  The regular cow ioend does a single
-> transaction per extent across the entire ioend range and cannot deliver
-> untorn writes.  This latest proposal does, but now you've torn that idea
-> down too.
+
+
+On 3/12/2025 9:22 PM, Mike Leach wrote:
+> Hi,
 > 
-> At this point I have run out of ideas and conclude that can only submit
-> to your superior intellect.
+> On Mon, 10 Mar 2025 at 09:05, Jie Gan <quic_jiegan@quicinc.com> wrote:
+>>
+>> From: Jie Gan <jie.gan@oss.qualcomm.com>
+>>
+>> The byte-cntr function provided by the CTCU device is used to transfer data
+>> from the ETR buffer to the userspace. An interrupt is tiggered if the data
+>> size exceeds the threshold set in the BYTECNTRVAL register. The interrupt
+>> handler counts the number of triggered interruptions and the read function
+>> will read the data from the ETR buffer if the IRQ count is greater than 0.
+>> Each successful read process will decrement the IRQ count by 1.
+>>
+>> The byte cntr function will start when the device node is opened for reading,
+>> and the IRQ count will reset when the byte cntr function has stopped. When
+>> the file node is opened, the w_offset of the ETR buffer will be read and
+>> stored in byte_cntr_data, serving as the original r_offset (indicating
+>> where reading starts) for the byte counter function.
+>>
+>> The work queue for the read operation will wake up once when ETR is stopped,
+>> ensuring that the remaining data in the ETR buffer has been flushed based on
+>> the w_offset read at the time of stopping.
+>>
+>> The following shell commands write threshold to BYTECNTRVAL registers.
+>>
+>> Only enable byte-cntr for ETR0:
+>> echo 0x10000 > /sys/devices/platform/soc@0/4001000.ctcu/ctcu0/byte_cntr_val
+>>
+>> Enable byte-cntr for both ETR0 and ETR1(support both hex and decimal values):
+>> echo 0x10000 4096 > /sys/devices/platform/soc@0/4001000.ctcu/ctcu0/byte_cntr_val
+>>
+>> Setting the BYTECNTRVAL registers to 0 disables the byte-cntr function.
+>> Disable byte-cntr for ETR0:
+>> echo 0 > /sys/devices/platform/soc@0/4001000.ctcu/ctcu0/byte_cntr_val
+>>
+>> Disable byte-cntr for both ETR0 and ETR1:
+>> echo 0 0 > /sys/devices/platform/soc@0/4001000.ctcu/ctcu0/byte_cntr_val
+>>
+>> There is a minimum threshold to prevent generating too many interrupts.
+>> The minimum threshold is 4096 bytes. The write process will fail if user try
+>> to set the BYTECNTRVAL registers to a value less than 4096 bytes(except
+>> for 0).
+>>
+>> Finally, the user can read data from the ETR buffer through the byte-cntr file
+>> nodes located under /dev, for example reads data from the ETR0 buffer:
+>> cat /dev/byte-cntr0
+>>
+>> Way to enable and start byte-cntr for ETR0:
+>> echo 0x10000 > /sys/devices/platform/soc@0/4001000.ctcu/ctcu0/byte_cntr_val
+>> echo 1 > /sys/bus/coresight/devices/tmc_etr0/enable_sink
+>> echo 1 > /sys/bus/coresight/devices/etm0/enable_source
+>> cat /dev/byte-cntr0
+>>
 > 
-> --D
+> There is a significant issue with attempting to drain an ETR buffer
+> while it is live in the way you appear to be doing.
+> 
+> You have no way of knowing if the TMC hardware write pointer wraps and
+> overtakes the point where you are currently reading. This could cause
+> data corruption as TMC writes as you are reading, or contention for
+> the buffer that affects the TMC write.
+> 
+> Even if those two events do not occur, then the trace capture sequence
+> is corrupted.
+> 
+> Take a simple example - suppose we split the buffer into 4 blocks of
+> trace, which are filled by the ETR
+> 
+> buffer = 1, 2, 3, 4
+> 
+> Now you suppose you have read 1 & 2 into your userspace buffer / file.
+> 
+> file = 1, 2
+> 
+> If there is now some system event that prevents your userspace code
+> from running for a while, then it is possible that the ETR continues,
+> wraps and the buffer is now
+> 
+> buffer = 5, 6, 7, 4
+> 
+> Your next two reads will be 7, 4
+> 
+> file = 1, 2, 7, 4
+> 
+> This trace is now corrupt and will cause decode errors. There is no
+> way for the decoder to determine that the interface between blocks 2 &
+> 7 is not correct. If you are fortunate then this issue will cause an
+> actual explicit decode error, if you are less fortunate then decode
+> will continue but in fact be inaccurate, with no obvious way to detect
+> the inaccuracy.
+> 
+> We encountered this problem early in the development of the perf data
+> collection. Even though perf was stopping the trace to copy the
+> hardware buffer, it would concatenate unrelated trace blocks into the
+> perf userspace buffer, which initially caused decoding errors. This is
+> now mitigated in perf by marking boundaries and recording indexes of
+> the boundaries, so the tool can reset the decoder at the start of non
+> contiguous blocks.
+> 
+> If you do not stop the TMC when draining the ETR buffer, you have no
+> way of determining if this has occurred.
+> 
+> Clearly using large buffers, split into smaller blocks can mitigate
+> the possibility of a wrap in this way - but never eliminate it,
+> especially given the extreme rate that trace data can be generated.
+> 
 
-I'm hearing that we can fit thousands without getting anywhere the 
-limits - this is good.
+Hi Mike,
 
-But then also it is not optimal in terms of performance to batch, right? 
-Performance is not so important here. This is for a software fallback, 
-which we should not frequently hit. And even if we do, we're still 
-typically not going to have many extents.
+Thanks for detailed explanation. It's clear and makes sense to me.
 
-For our specific purpose, we want 16KB atomic writes - that is max of 4 
-extents. So this does not really sound like something to be concerned 
-with for these atomic write sizes.
-
-We can add some arbitrary FS awu max, like 64KB, if that makes people 
-feel more comfortable.
+I will look for another reasonable solution.
 
 Thanks,
-John
+Jie
+
+> Regards
+> 
+> Mike
+> 
+> 
+>> Jie Gan (4):
+>>    coresight: tmc: Introduce new APIs to get the RWP offset of ETR buffer
+>>    dt-bindings: arm: Add an interrupt property for Coresight CTCU
+>>    coresight: ctcu: Enable byte-cntr for TMC ETR devices
+>>    arm64: dts: qcom: sa8775p: Add interrupts to CTCU device
+>>
+>>   .../bindings/arm/qcom,coresight-ctcu.yaml     |  17 +
+>>   arch/arm64/boot/dts/qcom/sa8775p.dtsi         |   5 +
+>>   drivers/hwtracing/coresight/Makefile          |   2 +-
+>>   .../coresight/coresight-ctcu-byte-cntr.c      | 339 ++++++++++++++++++
+>>   .../hwtracing/coresight/coresight-ctcu-core.c |  96 ++++-
+>>   drivers/hwtracing/coresight/coresight-ctcu.h  |  59 ++-
+>>   .../hwtracing/coresight/coresight-tmc-etr.c   |  45 ++-
+>>   drivers/hwtracing/coresight/coresight-tmc.h   |   3 +
+>>   8 files changed, 556 insertions(+), 10 deletions(-)
+>>   create mode 100644 drivers/hwtracing/coresight/coresight-ctcu-byte-cntr.c
+>>
+>> --
+>> 2.34.1
+>>
+> 
+> 
+
 
