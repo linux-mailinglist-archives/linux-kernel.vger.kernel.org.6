@@ -1,197 +1,183 @@
-Return-Path: <linux-kernel+bounces-560437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A02C2A60439
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:24:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 337C6A6043A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:26:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A593BDD67
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:24:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD71619C22EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2721F7902;
-	Thu, 13 Mar 2025 22:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897971F7095;
+	Thu, 13 Mar 2025 22:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQR/dARi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lPQcFsDm"
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317B31F4630;
-	Thu, 13 Mar 2025 22:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF2C1D8A10
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 22:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741904665; cv=none; b=B3AveD3xSqj33FAzb4QAa6A2y6QgFz4Ssoz1E7sj/eGxoWyXR/Lb4iWUBICeYrWvL+ELejLk2R1jJos1eGnUM3eNn7lTzNJnsls6mwujoSI1ssIHNSuJyCTy2Fv7OjjGnwW7/LrTNM+x1r9Fs1jpA7OroafpkFc+3vdJb5wIj1s=
+	t=1741904761; cv=none; b=M/i6u90grUQeHyHBVkUTWU6xy6q7ORElku5/kPlmH+8PLfMlGg+nsaCrHgmhtSXDXs0FSqZniZj4p4+5mJrM7lcbSbiprqN2piluPrAJspmHVZ525XdJP/FftQekxsKizaWze5dlmHYpZ8s4ntONBb931RI2v/qQbxpFj/BToEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741904665; c=relaxed/simple;
-	bh=C3TTb5Ms+0aEPdd4dgKKRbOv77Nyo/jHCcFF8YqhaZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nPlFbqrY9XpzOP+s/4uWtBvSak4Kj/vALHuOZpPLmtz0vHKCaxO72UTJ/y83d3zz5kezupUD4sQVhn7WrUnH5SKruO094wCfsQVVe8CmRYYtKlfrkFEIg72RkEtqlQmfA6pym44/H9LCzjU64kVP82xBz4cEzV8a6lwiaH4BtpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQR/dARi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6F0BC4CEDD;
-	Thu, 13 Mar 2025 22:24:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741904665;
-	bh=C3TTb5Ms+0aEPdd4dgKKRbOv77Nyo/jHCcFF8YqhaZs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sQR/dARim8x9mrB1aT27WjxqmOQRnqm1zxCXydRDRhh2Qt7E2HHIDgePOTgOLNtxH
-	 5O4bKKUiWy1YbBo8+lBAIrm3zpYXJl76XWhGz1mkLy02o+HBa72O/8jvx5Dz3LdxLS
-	 MSwVefC0Kaj8FwgED/bd2dNMsbYxrKf0TttEP5NJYcMZ0hqAouJVlFk6AbNtNAGlFB
-	 G1r43yFKdyhIejJ2DDnf7iRoI5hoLKllChNR1xb26UoV8edo3tHZ52PGG2LKEsA6a2
-	 2FPrkBaXQ5mYMvvjoo29D3g13wC6nQv2eqexu/rn6SuzktY52Kl/f6kaXPsY0ODyYb
-	 lp0V0kEuf4Eqw==
-Date: Thu, 13 Mar 2025 15:24:22 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Aditya Gupta <adityag@linux.ibm.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Changbin Du <changbin.du@huawei.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Li Huafei <lihuafei1@huawei.com>,
-	Dmitry Vyukov <dvyukov@google.com>, Andi Kleen <ak@linux.intel.com>,
-	Chaitanya S Prakash <chaitanyas.prakash@arm.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	llvm@lists.linux.dev, Song Liu <song@kernel.org>,
-	bpf@vger.kernel.org, Daniel Xu <dxu@dxuuu.xyz>
-Subject: Re: [PATCH v2 00/17] Support dynamic opening of capstone/llvm remove
- BUILD_NONDISTRO
-Message-ID: <Z9NbFqaDQMjvYxcc@google.com>
-References: <20250122062332.577009-1-irogers@google.com>
- <Z5K712McgLXkN6aR@google.com>
- <CAP-5=fX2n4nCTcSXY9+jU--X010hS9Q-chBWcwEyDzEV05D=FQ@mail.gmail.com>
- <CAP-5=fUHLP-vtktodVuvMEbOd+TfQPPndkajT=WNf3Mc4VEZaA@mail.gmail.com>
- <CAP-5=fV_z+Ev=wDt+QDwx8GTNXNQH30H5KXzaUXQBOG1Mb8hJg@mail.gmail.com>
+	s=arc-20240116; t=1741904761; c=relaxed/simple;
+	bh=QZV2NTgEg7k+1XHNq5HE27b9f2LssIVk3RUzMP/R1r8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZFddEYYFdsfuQB7lueNB+3GaywbUZXjD6h9Whg8Xj9DpimVb6EZBMZL23r0gUZ+fZUNSAMTxDGKsh6Dn69hJyoclTTe1Kja4DvRN9QUFUoXzK/e5UlYPh+TCPt+NuxlUSdaHq3zgXQAP4mPn2a+qzez/JcXPESvwo7Uu6m+RUJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lPQcFsDm; arc=none smtp.client-ip=209.85.160.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2c2bc6acd74so201061fac.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:25:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1741904758; x=1742509558; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HO0VpTSFVmDIRg6D2iUyymvRyONg1pufELLgkVchWVM=;
+        b=lPQcFsDmbZy6AEqIflKhd9RqVMEAaX/V3CmrKtK+/ehEXw4UlsUl0Zws0QlR/IlV1X
+         VX6iRbMJzUxxvi5tW2J/EBjQ+HaG2QEMleLlE50U4ZC05e26SNkMixHWajrQo/edHZQI
+         YSuwXegy7cgYyyUHqWbY+iZA38i8ox4dkYskQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741904758; x=1742509558;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HO0VpTSFVmDIRg6D2iUyymvRyONg1pufELLgkVchWVM=;
+        b=QlROympLDyB/T5h36jqkeF0vE333QB1qR6pR7jnyrrL6xSnL/Shcfsj8YmcZvmryeB
+         jWWZhNgvgcarwJot4ZoL42+Gy058iebDqF69VSFlqZRkUbvbRv+D+87fCOJxwdKtsWzH
+         5KXM3jYhe0hZMtIidso9XI3XZLO6R+kc6yDkkh8hQmhj6yULRcil59Hb5vloYnWX5AYM
+         fzO6mstIBPwrCXjVGl3fKZ988JnzXcaN58tguQvrDEIQdlgaHZzanHK8ZKTpIqxE0Kc3
+         pwEMFbnRhV7c//gT7Sv4kukF4oA7eKW7J27XRBMo5ffBaglP6/gUaA+uY+XPZgSNLTLY
+         1CZw==
+X-Forwarded-Encrypted: i=1; AJvYcCU11rdNMhpffDq0vE7Qgig+jCFQ+teogGH7I/Du9IMV7NgXbHY34F/AA4wnTT47j+gjQk6yZeuXU3NAGjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLtp5jWxMQVkKlSIIvXCpzk8u47zpJErM89uWWZBAz51DjJ77G
+	czhwAGFey6tRoXuUZvNwOr6su4S0itJHcalbZofdQkvL8hcZBbXHqN9I5sU/0LIjlvVuDJS4JAm
+	s8IWPSssUHWtJ4kO/SgLtLFc4j6sQ1fL2YC80
+X-Gm-Gg: ASbGncu/3EHf0O+kRIvsc1KH+oivUdymDGrj4pJFxB+dsTX204HL+hCPM1zRmZgPrJP
+	hxeSnTIpXvS/zhuoQ3OQCK1JoDzOuSjWWhBKuFQ9JCSqxQPm0IC8lRfszvupoPgSldg8I0q1ZuQ
+	XlVp8x9VwymCxkMz0ReZl9zNHfYwRzn2JaO9I=
+X-Google-Smtp-Source: AGHT+IFGFOX+JdCKJ5EW0lljriIIgVcYBIERJmy8IRbYMG52NjTsVEcHPVx2F0p10iZ15QufBCgqhdZZ/AQ7u3A452s=
+X-Received: by 2002:a05:6870:41cd:b0:29e:723c:8e9d with SMTP id
+ 586e51a60fabf-2c690f385c8mr57268fac.4.1741904757815; Thu, 13 Mar 2025
+ 15:25:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fV_z+Ev=wDt+QDwx8GTNXNQH30H5KXzaUXQBOG1Mb8hJg@mail.gmail.com>
+References: <20250313000623.3192896-1-jeffxu@google.com> <1bbce89c-1efe-40cf-9085-ec4ec16f7996@lucifer.local>
+In-Reply-To: <1bbce89c-1efe-40cf-9085-ec4ec16f7996@lucifer.local>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Thu, 13 Mar 2025 15:25:46 -0700
+X-Gm-Features: AQ5f1Jp2EPkBExs0LgI3wECuDDPaXmKkN-4wE1NQSGw_NG7eEjTDTsm1Ivwa46c
+Message-ID: <CABi2SkVKxyX0uDabg+wHiq_vTBFbUST-nRdur7cCPB2myhCWhg@mail.gmail.com>
+Subject: Re: [PATCH] mseal sysmap: add arch-support txt
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, agordeev@linux.ibm.com, 
+	borntraeger@linux.ibm.com, gor@linux.ibm.com, hca@linux.ibm.com, 
+	kees@kernel.org, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, svens@linux.ibm.com, 
+	thomas.weissschuh@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ian,
+On Wed, Mar 12, 2025 at 10:21=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Thu, Mar 13, 2025 at 12:06:23AM +0000, jeffxu@chromium.org wrote:
+> > From: Jeff Xu <jeffxu@chromium.org>
+> >
+> > Add Documentation/features/core/mseal_sys_mappings/arch-support.txt
+> >
+> > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> > ---
+> >  .../core/mseal_sys_mappings/arch-support.txt  | 30 +++++++++++++++++++
+> >  1 file changed, 30 insertions(+)
+> >  create mode 100644 Documentation/features/core/mseal_sys_mappings/arch=
+-support.txt
+> >
+> > diff --git a/Documentation/features/core/mseal_sys_mappings/arch-suppor=
+t.txt b/Documentation/features/core/mseal_sys_mappings/arch-support.txt
+> > new file mode 100644
+> > index 000000000000..8db637254de9
+> > --- /dev/null
+> > +++ b/Documentation/features/core/mseal_sys_mappings/arch-support.txt
+> > @@ -0,0 +1,30 @@
+> > +#
+> > +# Feature name:          mseal-system-mappings
+> > +#         Kconfig:       ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
+> > +#         description:   arch supports mseal system mappings
+> > +#
+> > +    -----------------------
+> > +    |         arch |status|
+> > +    -----------------------
+> > +    |       alpha: | TODO |
+> > +    |         arc: | TODO |
+> > +    |         arm: |  N/A |
+> > +    |       arm64: |  ok  |
+> > +    |        csky: | TODO |
+> > +    |     hexagon: | TODO |
+> > +    |   loongarch: | TODO |
+> > +    |        m68k: | TODO |
+> > +    |  microblaze: | TODO |
+> > +    |        mips: | TODO |
+> > +    |       nios2: | TODO |
+> > +    |    openrisc: | TODO |
+> > +    |      parisc: | TODO |
+> > +    |     powerpc: | TODO |
+> > +    |       riscv: | TODO |
+> > +    |        s390: |  ok  |
+> > +    |          sh: | TODO |
+> > +    |       sparc: | TODO |
+> > +    |          um: | TODO |
+> > +    |         x86: |  ok  |
+> > +    |      xtensa: | TODO |
+> > +    -----------------------
+> > --
+> > 2.49.0.rc0.332.g42c0ae87b1-goog
+> >
+>
+> I mean fine, but why not in the existing mseal documentation file where y=
+ou
+> already document system mappings?
+>
+you mean adding s390 in the mseal.rst ? I thought Heiko was going to
+add that ? [1], maybe not ?
 
-On Wed, Mar 12, 2025 at 02:04:30PM -0700, Ian Rogers wrote:
-> On Mon, Feb 10, 2025 at 10:06 AM Ian Rogers <irogers@google.com> wrote:
-> >
-> > On Thu, Jan 23, 2025 at 3:36 PM Ian Rogers <irogers@google.com> wrote:
-> > > On Thu, Jan 23, 2025 at 1:59 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > I like changes up to this in general.  Let me take a look at the
-> > > > patches.
-> >
-> > So it would be nice to make progress with this series given some level
-> > of happiness, I don't see any actions currently on the patch series as
-> > is. If I may be so bold as to recap the issues that have come up:
-> >
-> > 1) Andi Kleen mentions that dlopen is inferior to linking against
-> > libraries and those libraries aren't a memory overhead if unused.
-> >
-> > I agree but pointed-out the data center use case means that saving
-> > size on binaries can be important to some (me). We've also been trying
-> > to reduce perf's dependencies for distributions as perf dragging in
-> > say the whole of libLLVM can be annoying for making minimal
-> > distributions that contain perf. Perhaps somebody (Arnaldo?) more
-> > involved with distributions can confirm or deny the distribution
-> > problem, I'm hoping it is self-evident.
-> >
-> > 2) Namhyung Kim was uncomfortable with the code defining
-> > types/constants that were in header files as the two may drift over
-> > time
-> >
-> > I agree but in the same way as a function name is an ABI for dlysym,
-> > the types/constants are too. Yes a header file may change, but in
-> > doing so the ABI has changed and so it would be an incompatible change
-> > and everything would be broken. We'd need to fix the code for this,
-> > say as we did when libbpf moved to version 1.0, but using a header
-> > file would only weakly guard against this problem. The problem with
-> > including the header files is that then the build either breaks
-> > without the header or we need to support a no linking against a
-> > library and not using dlopen case. I suspect a lot of distributions
-> > wouldn't understand the build subtlety in this, the necessary build
-> > options and things installed, and we'd end up not using things like
-> > libLLVM even when it is known to be a large performance win. I also
-> > hope one day we can move from parsing text out of forked commands, as
-> > it is slower and more brittle, to just directly using libraries.
-> > Making dlopen the fallback (probably with a warning on failure) seems
-> > like the right direction for this except we won't get it if we need to
-> > drag in extra dependency header files for the build to succeed (well
-> > we could have a no library or dlopen option, but then we'd probably
-> > find distributions packaging this and things like perf annotate
-> > getting broken as they don't even know how to dlopen a library).
-> >
-> > 3) Namhyung Kim (and I) also raises that the libcapstone patch can be
-> > smaller by dropping the print_capstone_detail support on x86
-> >
-> > Note, given the similarity between capstone and libLLVM for
-> > disassembly, it is curious that only capstone gives the extra detail.
-> >
-> > I agree. Given the capstone disassembly output will be compromised we
-> > should warn for this, probably in Makefile.config to avoid running
-> > afoul of -Werror. It isn't clear that having a warning is a good move
-> > given the handful of structs needed to support print_capstone_detail.
-> > I'd prefer to keep the structs so that we haven't got a warning that
-> > looks like it needs cleaning up.
-> >
-> > 4) Namhyung Kim raised concerns over #if placement
-> >
-> > Namhyung raised that he'd prefer:
-> > ```
-> > #if HAVE_LIBCAPSTONE_SUPPORT
-> > // lots of code
-> > #else
-> > // lots of code
-> > #endif
-> > ```
-> > rather than the #ifs being inside or around individual functions. I
-> > raised that the large #ifs is a problem in the current code as you
-> > lose context when trying to understand a function. You may look at a
-> > function but not realize it isn't being used because of a #if 10s or
-> > 100s of lines above. Namhyung raised that the large #ifs is closer to
-> > kernel style, I disagreed as I think kernel style is only doing this
-> > when it stubs out a bunch of API functions, not when more context
-> > would be useful. Hopefully as the person writing the patches the style
-> > choice I've made can be respected.
-> >
-> > 5) Daniel Xu raised issues with the removal of libbfd for Rust
-> > support, as the code implies libbfd C++ demangling is a pre-requisite
-> > of legacy rust symbol demangling
-> >
-> > A separate patch was posted adding Rust v0 symbol demangling with no
-> > libbfd dependency:
-> > https://lore.kernel.org/lkml/20250129193037.573431-1-irogers@google.com/
-> > The legacy support should work with the non-libbfd demanglers as
-> > that's what we have today. We should really clean up Rust demangling
-> > and have tests. This is blocked on the Rust community responding to:
-> > https://github.com/rust-lang/rust/issues/60705
+From the example given by Heiko [1] , arch-support.txt is the official
+way of documenting arch specific support. But adding these info in
+mseal.rst won't hurt.
 
-I think #ifdef placements is not a big deal, but I still don't want to
-pull libcapstone details into the perf tree.
+> Plus I feel this need expansion a bit 'N/A' is because of being non-64 bi=
+t
+> right?
+>
+Below is the definition of N/A in Documentation/features/arch-support.txt
+   | N/A|  # feature doesn't apply to the architecture
 
-For LLVM, I think you should to build llvm-c-helpers anyway which means
-you still need LLVM headers and don't need to redefine the structures.
+It fits the arm case because mseal is not supported in 32 bit.
 
-Can we do the same for capstone?  I think it's best to use capstone
-headers directly and add a build option to use dlopen().
+> Actually this will change soon btw, based on Matthew's idea I plan to dro=
+p the
+> 32-bit vma flags limit.
+>
+Okay, we can update this section to TODO when 32-bit vma flags are
+expanded. Based on past comments, I gather we want the document to
+reflect the current state of the kernel, not future features.
 
-Thanks,
-Namhyung
+> Anyway yeah, let's move that over there please.
 
+I'm looking at Heiko's direction first to see if mseal.rst will be
+updated as part of the s390 patch, technically that belongs to Heiko's
+patch series. I can also add that if Heiko doesn't care :-)
+
+Thanks
+-Jeff
+
+[1]https://lore.kernel.org/all/20250312153946.10610B02-hca@linux.ibm.com/
 
