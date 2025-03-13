@@ -1,195 +1,139 @@
-Return-Path: <linux-kernel+bounces-559604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA158A5F603
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:33:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53784A5F605
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:34:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD8561898615
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:33:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF3913A9B44
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BC8267731;
-	Thu, 13 Mar 2025 13:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2914B26770A;
+	Thu, 13 Mar 2025 13:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4LJjbsC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC78DDDC;
-	Thu, 13 Mar 2025 13:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="27yAvhoh"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08ADD2673A4
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741872786; cv=none; b=RJiXRLgxQpfcIKozt5HmKdXxQvPnAx+/Cjd8nFVcFGJvpXhndwylDi007lvJc5lPj8ge1utFJGwwlsfUUqXf/MDGbczhb8KcOULvQNBsxTgWiel2sccBXw/4YN5Qyj42nqbEjZ6s7PIS5iPoUncdg53vkXQBbtkIQALy3tI/ljA=
+	t=1741872851; cv=none; b=GgjgQ3Bwxr/hUmTQuxMbH8yFqOYOr549xUTXG0zScgh86w+snl0wlbeXEBHTA0hBaD907SaN/1qKWLJSzwz1l8K2xDX0ppMaY5fT+Smi2+ZWBIdfNbGVQvd8XcH9gwarE2YXv9Gvr1B/b1rayCCMa8CXg9tMjl03ts/wojElUT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741872786; c=relaxed/simple;
-	bh=XuNfwVZH74W5UU9BfBiDYpp8IqrD1Na93CcN16Z/tIM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yq7VwXgIm+p/fCilYleDSFgOBwE4h+voyXFSY2e3hy97vJ4BvONKt48IecdKx6lMjDbp7t2+ZDUu3745UPJ5WhwMxJyzQElV9R7dbQK/MBjLTK4DrAXEemDHr9XwVnqBY6yLQi26KsWtU+0Xdr5pc3QitrzaGZnKvYZvVDL9/aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4LJjbsC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91333C4CEEF;
-	Thu, 13 Mar 2025 13:33:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741872785;
-	bh=XuNfwVZH74W5UU9BfBiDYpp8IqrD1Na93CcN16Z/tIM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=I4LJjbsCY9PGv7Jvw7YhXMc1fvi5lZ+b5uYPmwu1smKYPlPLICoO+nSwJ//+/Y10/
-	 5U1IeG1X2q+OhMpWOmfl2/+YpP583aHZqxduHUP/z+80UpFsBckB76iXxiVAbrFBVM
-	 8aA/L0uKKUe04NBIM+gbeAcEogjWf9CH99qqld6W+gCDGScuCfg8gXUeNOdhxwMBIV
-	 mYrqV82etsAubzhkxLxBt8yIe1CE1KEYCZv3F+M8g5CM5YdE4EbJb2KcY0qSbydgJD
-	 WtASrHvxzXB6566M98W7UyFl0lZgj4MUvm0tRXAyTXaWT3X+K/A8QDKvhHO4gjWYmJ
-	 xg99R2cnA6m9Q==
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2bcc0c6c149so973768fac.1;
-        Thu, 13 Mar 2025 06:33:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVkoHlLKpR1zABNy6w+RC4fBYAWCZtrbtk6JiWpkZow/YYGrd3PuxP1kaFlrNMNry2Z4ZUAf7IzyVgdyr0=@vger.kernel.org, AJvYcCXyTaVdfOwlKwZqSoa9F5ObxsfZpil/dW6mmhKVaSuSBrgR5pbj0DPbkZDsmTgg3zI5GYXzG30VhO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7V5Mf/bc6Xc99GLQAYNyjTLt4hWTWSGnkSNr9wCS275HgUdUe
-	EGf37I0oqQeoy9B8A23S3JVrSo8BPbhbErpuMShEYupXK5ztim/gQqdrDSvfMIqoKaA/+7YjfcM
-	wtIu6QZRywMzl7KHN8bW6zhAZplk=
-X-Google-Smtp-Source: AGHT+IGkPwuAC9RvVaAjV7Vla8jW9hy4OPGMSPR+shxk7LKgl53PqLOuTMaknbmPrrhzKzhepZMWcCWlXloQ9uFPw+8=
-X-Received: by 2002:a05:6871:109:b0:289:2126:6826 with SMTP id
- 586e51a60fabf-2c261304b27mr15019905fac.30.1741872784779; Thu, 13 Mar 2025
- 06:33:04 -0700 (PDT)
+	s=arc-20240116; t=1741872851; c=relaxed/simple;
+	bh=p9pO1Dh5i1mI+kxl7fBF0Z2buokBUlPWYzwtIDs2ZSs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bEAeE0ME2XT54sVaK9mOuWtXCEnSvqc7kGrl3Ut0FKxuj0/psyQsLgzircrGQjLpicvUXCpOKoP8GETbTQ5THfOwHSWXfTbBCsdp+9PhrEz6CSuaLHnSa3JcpG6OLKtFcT6QjPw+eavx24xOtWrKFZlH4KIxryZ2oODTLosKjQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=27yAvhoh; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 7D8E714C2D3;
+	Thu, 13 Mar 2025 14:34:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1741872842;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LjTF37SNnxkBpB2MiFl8F1xIEEcE091gYhI+2+SrGcU=;
+	b=27yAvhohID0fWiXqSYo3Za072nv27URh9jKoVEbwbnAN7jZfClvR3DaNVtJpuZMPCs5VKG
+	uO457qloTAPYXSxXDyIm4Ps2sJTaO3PbOnGoy36sQhc4AhlVo6VAtt7qLsenqXDIhGYn+Q
+	QD1aF9MYziobyfQCjzeEmSCrXFQR1RTA/3KuqCtu/IHfXpIglExj2D6Bpis6h808C2wr58
+	8NNlgUX3KlNavcPYR8PK9+H8xDSAphovSqNQJwZ5I7k25MPXwL879KpMBIy2nsEIRCBTRz
+	Xi48ChTaIWio4BkrfbQr9iJtMxLWb4i1p3oE4PgIYLxsNZL0e2xQKmMC1mMMuQ==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id d99e76a3;
+	Thu, 13 Mar 2025 13:33:58 +0000 (UTC)
+Date: Thu, 13 Mar 2025 22:33:43 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	syzbot <syzbot+5b667f9a1fee4ba3775a@syzkaller.appspotmail.com>
+Subject: Re: [PATCH] fs/9p: fix NULL pointer dereference on mkdir
+Message-ID: <Z9Let2cdA4dB7tTe@codewreck.org>
+References: <E1tsiI6-002iMG-Kh@kylie.crudebyte.com>
+ <4597443.VRNSQfLuZI@silver>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <13709135.uLZWGnKmhe@rjwysocki.net> <2016539.usQuhbGJ8B@rjwysocki.net>
- <CAGETcx8WOezY5-MePZ8X8f7_deys1eB-VvQLQwUPtd5MO8ApSA@mail.gmail.com>
-In-Reply-To: <CAGETcx8WOezY5-MePZ8X8f7_deys1eB-VvQLQwUPtd5MO8ApSA@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 13 Mar 2025 14:32:52 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hghyWwd_kZXS1+9pD+DkWiP_4MYORryvkhmFoqayQVaw@mail.gmail.com>
-X-Gm-Features: AQ5f1JpYFF509PP0Fu3AHxgL1jmkJIzqwRhd-FBPM-1QI89Z0k3rbdYuPNlRmY4
-Message-ID: <CAJZ5v0hghyWwd_kZXS1+9pD+DkWiP_4MYORryvkhmFoqayQVaw@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] PM: sleep: Make late and noirq suspend of devices
- more asynchronous
-To: Saravana Kannan <saravanak@google.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold <johan@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4597443.VRNSQfLuZI@silver>
 
-On Thu, Mar 13, 2025 at 2:47=E2=80=AFAM Saravana Kannan <saravanak@google.c=
-om> wrote:
->
-> On Tue, Feb 25, 2025 at 8:46=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.=
-net> wrote:
-> >
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > In analogy with previous changes, make device_suspend_late() and
-> > device_suspend_noirq() start the async suspend of the device's parent
-> > and suppliers after the device itself has been processed and make
-> > dpm_suspend_late() and dpm_noirq_suspend_devices() start processing
-> > "async" leaf devices (that is, devices without children or consumers)
-> > upfront because they don't need to wait for any other devices.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >  drivers/base/power/main.c |   60 +++++++++++++++++++++++++++++++++++++=
-++-------
-> >  1 file changed, 52 insertions(+), 8 deletions(-)
-> >
-> > --- a/drivers/base/power/main.c
-> > +++ b/drivers/base/power/main.c
-> > @@ -1317,6 +1317,8 @@
-> >         device_links_read_unlock(idx);
-> >  }
-> >
-> > +static void async_suspend_noirq(void *data, async_cookie_t cookie);
-> > +
-> >  /**
-> >   * device_suspend_noirq - Execute a "noirq suspend" callback for given=
- device.
-> >   * @dev: Device to handle.
-> > @@ -1396,7 +1398,13 @@
-> >  Complete:
-> >         complete_all(&dev->power.completion);
-> >         TRACE_SUSPEND(error);
-> > -       return error;
-> > +
-> > +       if (error || async_error)
-> > +               return error;
-> > +
-> > +       dpm_async_suspend_superior(dev, async_suspend_noirq);
-> > +
-> > +       return 0;
-> >  }
-> >
-> >  static void async_suspend_noirq(void *data, async_cookie_t cookie)
-> > @@ -1410,6 +1418,7 @@
-> >  static int dpm_noirq_suspend_devices(pm_message_t state)
-> >  {
-> >         ktime_t starttime =3D ktime_get();
-> > +       struct device *dev;
-> >         int error =3D 0;
-> >
-> >         trace_suspend_resume(TPS("dpm_suspend_noirq"), state.event, tru=
-e);
-> > @@ -1419,15 +1428,28 @@
-> >
-> >         mutex_lock(&dpm_list_mtx);
-> >
-> > +       /*
-> > +        * Start processing "async" leaf devices upfront because they d=
-on't need
-> > +        * to wait.
-> > +        */
-> > +       list_for_each_entry_reverse(dev, &dpm_late_early_list, power.en=
-try) {
-> > +               dpm_clear_async_state(dev);
-> > +               if (dpm_leaf_device(dev))
-> > +                       dpm_async_fn(dev, async_suspend_noirq);
-> > +       }
-> > +
-> >         while (!list_empty(&dpm_late_early_list)) {
-> > -               struct device *dev =3D to_device(dpm_late_early_list.pr=
-ev);
-> > +               dev =3D to_device(dpm_late_early_list.prev);
-> >
-> >                 list_move(&dev->power.entry, &dpm_noirq_list);
->
-> This issue is present in the previous patch too, but it's easier for
-> me to point it out here. Suspend abort will break now.
->
-> For example, say the devices are suspended in the order A -> B -> C ->
-> D -> E if everything was sync.
->
-> Case 1: Fully sync devices
-> If C aborts, only A and B will be in the dpm_noirq_list. When we try
-> to undo the suspend, we just resume devices in dpm_noirq_list and that
-> just resumes A and B.
->
-> Case 2: Only C is sync.
-> When C aborts, A, B, D and E could have finished suspending. But only
-> A and B will be in the dpm_noirq_list. When we try to undo the
-> suspend, we just resume devices in dpm_noirq_list and that just
-> resumes A and B. D and E never get resumed.
->
-> My fix for this is to move all devices to dpm_noirq_list if a suspend
-> aborts and then using the existing
-> is_suspended/is_noirq_suspended/is_late_suspended flags to skip over
-> devices that haven't been suspended. That works nicely except in
-> is_suspended and I tried to fix it in [2]. But you had an issue with
-> [2] that I didn't fully understand and I meant to dig deeper and fix.
-> But I didn't get around to it as I got swamped with other work.
->
-> [2] - https://lore.kernel.org/linux-pm/20241114220921.2529905-2-saravanak=
-@google.com/
+Christian Schoenebeck wrote on Thu, Mar 13, 2025 at 02:29:42PM +0100:
+> On Thursday, March 13, 2025 1:59:32 PM CET Christian Schoenebeck wrote:
+> > When a 9p tree was mounted with option 'posixacl', parent directory had a
+> > default ACL set for its subdirectories, e.g.:
+> > 
+> >   setfacl -m default:group:simpsons:rwx parentdir
+> > 
+> > then creating a subdirectory crashed 9p client, as v9fs_fid_add() call in
+> > function v9fs_vfs_mkdir_dotl() sets the passed 'fid' pointer to NULL
+> > (since dafbe689736) even though the subsequent v9fs_set_create_acl() call
+> > expects a valid non-NULL 'fid' pointer:
+> > 
+> >   [   37.273191] BUG: kernel NULL pointer dereference, address: 0000000000000000
+> >   ...
+> >   [   37.322338] Call Trace:
+> >   [   37.323043]  <TASK>
+> >   [   37.323621]  ? __die+0x1f/0x60
+> >   [   37.324448]  ? page_fault_oops+0x158/0x470
+> >   [   37.325532]  ? search_module_extables+0x4a/0x80
+> >   [   37.326742]  ? p9_client_walk+0x1c/0x2c0 [9pnet]
+> >   [   37.328006]  ? search_bpf_extables+0x5b/0x80
+> >   [   37.329142]  ? exc_page_fault+0x72/0x190
+> >   [   37.330196]  ? asm_exc_page_fault+0x22/0x30
+> >   [   37.331330]  ? p9_client_walk+0x1c/0x2c0 [9pnet]
+> >   [   37.332562]  ? v9fs_fid_xattr_get+0x59/0x120 [9p]
+> >   [   37.333824]  v9fs_fid_xattr_set+0x6f/0x130 [9p]
+> >   [   37.335077]  v9fs_set_acl+0x82/0xc0 [9p]
+> >   [   37.336112]  v9fs_set_create_acl+0x41/0x60 [9p]
+> >   [   37.337326]  v9fs_vfs_mkdir_dotl+0x20d/0x2e0 [9p]
+> >   [   37.338590]  vfs_mkdir+0x192/0x250
+> >   [   37.339535]  do_mkdirat+0x135/0x160
+> >   [   37.340465]  __x64_sys_mkdir+0x42/0x60
+> >   [   37.341455]  do_syscall_64+0x4b/0x110
+> >   [   37.342447]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> Oops, forgot to decode the trace back:
+> 
+> [   37.322338] Call Trace:
+> [   37.323043]  <TASK>
+> [   37.323621] ? __die (arch/x86/kernel/dumpstack.c:421 arch/x86/kernel/dumpstack.c:434) 
+> [   37.324448] ? page_fault_oops (arch/x86/mm/fault.c:714) 
+> [   37.325532] ? search_module_extables (kernel/module/main.c:3733) 
+> [   37.326742] ? p9_client_walk (net/9p/client.c:1165) 9pnet 
+> [   37.328006] ? search_bpf_extables (kernel/bpf/core.c:804) 
+> [   37.329142] ? exc_page_fault (./arch/x86/include/asm/paravirt.h:686 arch/x86/mm/fault.c:1488 arch/x86/mm/fault.c:1538) 
+> [   37.330196] ? asm_exc_page_fault (./arch/x86/include/asm/idtentry.h:574) 
+> [   37.331330] ? p9_client_walk (net/9p/client.c:1165) 9pnet 
+> [   37.332562] ? v9fs_fid_xattr_get (fs/9p/xattr.c:30) 9p 
+> [   37.333824] v9fs_fid_xattr_set (fs/9p/fid.h:23 fs/9p/xattr.c:121) 9p 
+> [   37.335077] v9fs_set_acl (fs/9p/acl.c:276) 9p 
+> [   37.336112] v9fs_set_create_acl (fs/9p/acl.c:307) 9p 
+> [   37.337326] v9fs_vfs_mkdir_dotl (fs/9p/vfs_inode_dotl.c:411) 9p 
+> [   37.338590] vfs_mkdir (fs/namei.c:4313) 
+> [   37.339535] do_mkdirat (fs/namei.c:4336) 
+> [   37.340465] __x64_sys_mkdir (fs/namei.c:4354) 
+> [   37.341455] do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83) 
+> [   37.342447] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+> 
+> Dominique, do you want me to send a v2 or would you update the commit log on
+> your end?
 
-I hope that my last message in this thread clarifies this a bit.
+Thank you for the quick patch!
+I can update the message on my end unless there's another reason to send
+a v2
 
-Anyway, yes, this is a bug and yes, it can be addressed by just
-continuing to move devices to the target list on errors until all of
-them get moved and then look at
-is_suspended/is_noirq_suspended/is_late_suspended.
-
-I'll post a fix for the direct-complete handling in device_suspend()
-and an update of the last three patches in this series with this issue
-addressed.
+Looks good to me, I'll test a bit over the weekend and send to Linus in
+the merge window in a couple of weeks (I guess it could be sent right
+away...)
+-- 
+Dominique
 
