@@ -1,261 +1,255 @@
-Return-Path: <linux-kernel+bounces-558815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6FA9A5EB95
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:16:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930C0A5EB9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:19:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 988A81897380
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:16:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC726189A16B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9CF1FBC8B;
-	Thu, 13 Mar 2025 06:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46A21FBC8B;
+	Thu, 13 Mar 2025 06:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="huYIxo9j"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bGjw6W0K"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E86437160;
-	Thu, 13 Mar 2025 06:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600D52F2E;
+	Thu, 13 Mar 2025 06:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741846571; cv=none; b=bsWAU4+C6D6MCAIwHnX7D3HJFIVur8/hTZxIoEv4UDW4YW0Ue6DbBY3cgjx/TlIp+xyDkuq90tQV+RwMcxCfPtZS62pAaJ1MtqU3g3wkCKjw+3YyR3y59nQFzzDnaXlTaz21ZquSFWl0J77qZvBiIBokO0JyHd3s+nv9IQwv5uc=
+	t=1741846768; cv=none; b=VGhUU6kfntWuo9bhP8XA9BDT0zyOLUgLfwAWqDpIh4UOB9fAGL55U9FTiFSywQahlA6tstzkpGtdMTuQtWZJRs+B0muCNAVEb0BaThKMGv7ffD1Xz6uWBkCNN4fa9nGozVcJPsNwtj9ko0rZ/LZbtOuQrtJXf1iQDu0V3molF+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741846571; c=relaxed/simple;
-	bh=NCktOrQPVh1zYv5yGrDEBS8pBtx+XeKTejvBMk9/5Bg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IE3xBHD3y2NC5OLHxwVTB94HKp+rNPyYI+AThex5xEJFUmRcap6c941vfI1tn8jFcQ0hJk10Rdr8TF0/EV4fxBEwxclunbR1jqUwbxQu3GjCJFaN143sF/YAorU9WNgV1ChOGjISoFaCy40ailJznP+EITEqOKa4pRUhjgco+Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=huYIxo9j; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CLnhYH014938;
-	Thu, 13 Mar 2025 06:15:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SEskWSaR5lig+yqq/pODCWaOenT97ESIy6ccSJZjSP0=; b=huYIxo9j1DpEj83O
-	sQkK2R6XdbQVVt9U6K7tLRdtbRTQ2+c6voJVLhvB4L4aeRWOiJzgikYcae82fRyu
-	3+cYDWnOnt7vkq8Oxhe1WGJYdM0MuKgiM+TDv5a11vJLtKoCqOnfyUAI85DVezX7
-	6BLbfZAhQrVa4Vb6qRTS3uwbwR35taeirGhKaB3WgVByOKAo7+AAKakfkw3Kelu4
-	yA+Zr6h7c9tHL/eMb8H0bqp/Vctaesqk8ecXQlLpJ0hqPVsnNy4RwLa20SHIl+y4
-	iOwAaijKloYlzM2Ia4EO8D7aRC1wGJBP78Kyk5rmE2faXi1kYf3r2bknkIcQoW9q
-	4+2fAQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2p4tvx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 06:15:51 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D6FowS007338
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 06:15:51 GMT
-Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Mar
- 2025 23:15:45 -0700
-Message-ID: <8a18c699-3d36-4143-9a1b-6074fea52263@quicinc.com>
-Date: Thu, 13 Mar 2025 14:15:42 +0800
+	s=arc-20240116; t=1741846768; c=relaxed/simple;
+	bh=6+Op+lyCycwJhs/YJ17iT1umDzfeT7rmCXKyOJCk7ZM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lJcQ9bio+17p7meAtFI4fsOnS3h2RtbWulmJOFsOkxmkOYQnkrBtaNJ3fNkGe7kZsqJa5bgJgNgNq6ubEMsfgZq6WrbEUskTzrLQ1XvaoxfGjGf15u4kwzLKesv4SGVI4wBi9UW18p0Xxn+VWfTm08tIPaPrLpo0gdm5a4c4bTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bGjw6W0K; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22409077c06so15406825ad.1;
+        Wed, 12 Mar 2025 23:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741846765; x=1742451565; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5AEORV8hgJxqEhMV8ZMadRplYEF+lyBFwpCTbagzejc=;
+        b=bGjw6W0KG2axLriXShAQsAUiyCr18L27zMPzN2R38EDPyBbkkxRFa/2oJHKOcrHJHM
+         VIVeO3ZdVs7krBJA1QGb8SWQ4NwQAG2SpokG5kflSfr2P6lTntXUA2GdsAAzNSYZNwv6
+         jwy+nObxvbcLAUyxFPrywpfufFELb1DCSLHiYwq71L7F6EmAN5yQW+n0/0vPdmRiBcHH
+         lDcszVyOP//Wtvo7BZHN45idQ8Km/TpvWTi9+yGbgkqbSGVUBh+xjgdJ8+3/XuJHtbfU
+         qxgCCUPdXbe20FAanIHO/9OuS6M2GkKRo3clw5+JT0cpPCXmJUB2NIo5NvphIUZn8Ox9
+         Dl0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741846765; x=1742451565;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5AEORV8hgJxqEhMV8ZMadRplYEF+lyBFwpCTbagzejc=;
+        b=ohk+zz97jeBT1hXriY5qK7ujDqljPxEWV4TXE9+w4f4twcUyblsdQeTzCxXjFqxhEV
+         Vdq1TfegHSdfq3/lUIxc4DAbmttC8nkEBgymnfKPnHKLTlSXRu30G1ZLwHBaZIRQ6n71
+         SKUMCLmbfiSjWkad9Ry5N5bcOfYzNmCxcVUonpH6x2AeiR6OkD8caKhvzClakwNN1cOk
+         TLlpN5fHd5hI1NB+e35++DwbkzmMzNOuQOR2qd6Fd+nxbllSCP4VRBFh/RLu11sEgOFA
+         Mgc/OUVYT8zfYV9JdHcV1CzKForz0npWYDCURSe1YSllrd7Xz5jZv2LwMIFoJBhGd9t4
+         hISw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFNT2UhNQpqef7UAvr6JgsIse8mBj0Tjza1AGAeENsSX2Z6ZU8NG9MsOW79aaFF4SaZq4W7BXcJ+mx@vger.kernel.org, AJvYcCVYtHrG1cWs9ISAz/me5gm1PF5tBlEAy0CMkS+iFGxUugmD5kvB8lZsaZRKDkVBUvnDms6MLVgRuS4MReSu@vger.kernel.org, AJvYcCXOo550haPH83YOTzqzxcX4oPFnB7QNZ5I+VFITUHzv73jPK/IOMA8QtCjCMo3sXPkwEO9AXRnFLLMwXEwc@vger.kernel.org, AJvYcCXmgRdXfnlIP7J8yj3Mj/H3bp085WsQQIgXCnOUwS55XtAFF52tuhzPz/JKu2FO5AdKttl1mcUurEr8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyyq8Hwl7rilKfABb/UqzySvUpB2MZkfdQjDPbfLhTOLzslAe1F
+	MMG87W7wY3anhTjAKIlmSxeTHxIl6DPRayHzTWd6tVqbqMlN9j9c
+X-Gm-Gg: ASbGnct6rudYaTQppnjDPHcHBNHA+V2zbOylEST3pU+7kLhmT/j4D3UB7OV362ozi2Q
+	dQTZm4IxhmugmZSk8wmU22suYjG2BO99GCcm/iE67IAcqKZ5qMac7PgbYzJybnfDu7EgxVZphLc
+	MXbIEyGKLg/e/PwooflteTn9LVD8KC/GXagGibwK7SXI5TqHaTCWUqQErzGIZWi2R6fQCYdOkdQ
+	2IAasJWT4ZgWUIBKkdyrnw73ed1v7cMVwm+tphSCm72zSdEFRHWfzUmTXn/d2T6kgFpXlNpYhes
+	DrtVr++LGuNOFMosa8OH5WJ/bHt+JlFRmldk4/Ajp/QBGVgAsmSanm2T/RUhptdHiLNzwbHISAx
+	wV2ZVUYtL9lYr4OYrVjEKlVI=
+X-Google-Smtp-Source: AGHT+IEus6VFy47YaAw3pn+3kom0RXfYbUHDNa127pXeDRAp5C/cxTv4BWeEGn3OlBfTu5QxnnHJYw==
+X-Received: by 2002:a17:903:283:b0:224:194c:6942 with SMTP id d9443c01a7336-22428bded4amr397258325ad.34.1741846765523;
+        Wed, 12 Mar 2025 23:19:25 -0700 (PDT)
+Received: from localhost.localdomain (c-67-160-120-253.hsd1.wa.comcast.net. [67.160.120.253])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68880dfsm5856985ad.38.2025.03.12.23.19.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 23:19:25 -0700 (PDT)
+From: mhkelley58@gmail.com
+X-Google-Original-From: mhklinux@outlook.com
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	lpieralisi@kernel.org,
+	kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	arnd@arndb.de
+Cc: x86@kernel.org,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-arch@vger.kernel.org
+Subject: [PATCH v2 0/6] hyperv: Introduce new way to manage hypercall args
+Date: Wed, 12 Mar 2025 23:19:05 -0700
+Message-Id: <20250313061911.2491-1-mhklinux@outlook.com>
+X-Mailer: git-send-email 2.25.1
+Reply-To: mhklinux@outlook.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/4] coresight: ctcu: Enable byte-cntr function for TMC
- ETR
-To: Mike Leach <mike.leach@linaro.org>
-CC: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        James Clark
-	<james.clark@linaro.org>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Tingwei Zhang
-	<quic_tingweiz@quicinc.com>,
-        Jinlong Mao <quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20250310090407.2069489-1-quic_jiegan@quicinc.com>
- <CAJ9a7Vj=Ni_o94u1B+oouv0GD5DVmST=N31-hsN=SPSbaoqO_Q@mail.gmail.com>
-Content-Language: en-US
-From: Jie Gan <quic_jiegan@quicinc.com>
-In-Reply-To: <CAJ9a7Vj=Ni_o94u1B+oouv0GD5DVmST=N31-hsN=SPSbaoqO_Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=ePkTjGp1 c=1 sm=1 tr=0 ts=67d27817 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=myPZrXr1dOEo5VCIbN8A:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: vYXc0755I2aVbikhbBka3N03L-nFuhbo
-X-Proofpoint-GUID: vYXc0755I2aVbikhbBka3N03L-nFuhbo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_03,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
- mlxscore=0 malwarescore=0 suspectscore=0 impostorscore=0 bulkscore=0
- clxscore=1015 lowpriorityscore=0 spamscore=0 priorityscore=1501
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130047
+Content-Transfer-Encoding: 8bit
 
+From: Michael Kelley <mhklinux@outlook.com>
 
+This patch set introduces a new way to manage the use of the per-cpu
+memory that is usually the input and output arguments to Hyper-V
+hypercalls. Current code allocates the "hyperv_pcpu_input_arg", and in
+some configurations, the "hyperv_pcpu_output_arg". Each is a 4 KiB
+page of memory allocated per-vCPU. A hypercall call site disables
+interrupts, then uses this memory to set up the input parameters for
+the hypercall, read the output results after hypercall execution, and
+re-enable interrupts. The open coding of these steps has led to
+inconsistencies, and in some cases, violation of the generic
+requirements for the hypercall input and output as described in the
+Hyper-V Top Level Functional Spec (TLFS)[1]. This patch set introduces
+a new family of inline functions to replace the open coding. The new
+functions encapsulate key aspects of the use of per-vCPU memory for
+hypercall input and output,and ensure that the TLFS requirements are
+met (max size of 1 page each for input and output, no overlap of input
+and output, aligned to 8 bytes, etc.).
 
-On 3/12/2025 9:22 PM, Mike Leach wrote:
-> Hi,
-> 
-> On Mon, 10 Mar 2025 at 09:05, Jie Gan <quic_jiegan@quicinc.com> wrote:
->>
->> From: Jie Gan <jie.gan@oss.qualcomm.com>
->>
->> The byte-cntr function provided by the CTCU device is used to transfer data
->> from the ETR buffer to the userspace. An interrupt is tiggered if the data
->> size exceeds the threshold set in the BYTECNTRVAL register. The interrupt
->> handler counts the number of triggered interruptions and the read function
->> will read the data from the ETR buffer if the IRQ count is greater than 0.
->> Each successful read process will decrement the IRQ count by 1.
->>
->> The byte cntr function will start when the device node is opened for reading,
->> and the IRQ count will reset when the byte cntr function has stopped. When
->> the file node is opened, the w_offset of the ETR buffer will be read and
->> stored in byte_cntr_data, serving as the original r_offset (indicating
->> where reading starts) for the byte counter function.
->>
->> The work queue for the read operation will wake up once when ETR is stopped,
->> ensuring that the remaining data in the ETR buffer has been flushed based on
->> the w_offset read at the time of stopping.
->>
->> The following shell commands write threshold to BYTECNTRVAL registers.
->>
->> Only enable byte-cntr for ETR0:
->> echo 0x10000 > /sys/devices/platform/soc@0/4001000.ctcu/ctcu0/byte_cntr_val
->>
->> Enable byte-cntr for both ETR0 and ETR1(support both hex and decimal values):
->> echo 0x10000 4096 > /sys/devices/platform/soc@0/4001000.ctcu/ctcu0/byte_cntr_val
->>
->> Setting the BYTECNTRVAL registers to 0 disables the byte-cntr function.
->> Disable byte-cntr for ETR0:
->> echo 0 > /sys/devices/platform/soc@0/4001000.ctcu/ctcu0/byte_cntr_val
->>
->> Disable byte-cntr for both ETR0 and ETR1:
->> echo 0 0 > /sys/devices/platform/soc@0/4001000.ctcu/ctcu0/byte_cntr_val
->>
->> There is a minimum threshold to prevent generating too many interrupts.
->> The minimum threshold is 4096 bytes. The write process will fail if user try
->> to set the BYTECNTRVAL registers to a value less than 4096 bytes(except
->> for 0).
->>
->> Finally, the user can read data from the ETR buffer through the byte-cntr file
->> nodes located under /dev, for example reads data from the ETR0 buffer:
->> cat /dev/byte-cntr0
->>
->> Way to enable and start byte-cntr for ETR0:
->> echo 0x10000 > /sys/devices/platform/soc@0/4001000.ctcu/ctcu0/byte_cntr_val
->> echo 1 > /sys/bus/coresight/devices/tmc_etr0/enable_sink
->> echo 1 > /sys/bus/coresight/devices/etm0/enable_source
->> cat /dev/byte-cntr0
->>
-> 
-> There is a significant issue with attempting to drain an ETR buffer
-> while it is live in the way you appear to be doing.
-> 
-> You have no way of knowing if the TMC hardware write pointer wraps and
-> overtakes the point where you are currently reading. This could cause
-> data corruption as TMC writes as you are reading, or contention for
-> the buffer that affects the TMC write.
-> 
-> Even if those two events do not occur, then the trace capture sequence
-> is corrupted.
-> 
-> Take a simple example - suppose we split the buffer into 4 blocks of
-> trace, which are filled by the ETR
-> 
-> buffer = 1, 2, 3, 4
-> 
-> Now you suppose you have read 1 & 2 into your userspace buffer / file.
-> 
-> file = 1, 2
-> 
-> If there is now some system event that prevents your userspace code
-> from running for a while, then it is possible that the ETR continues,
-> wraps and the buffer is now
-> 
-> buffer = 5, 6, 7, 4
-> 
-> Your next two reads will be 7, 4
-> 
-> file = 1, 2, 7, 4
-> 
-> This trace is now corrupt and will cause decode errors. There is no
-> way for the decoder to determine that the interface between blocks 2 &
-> 7 is not correct. If you are fortunate then this issue will cause an
-> actual explicit decode error, if you are less fortunate then decode
-> will continue but in fact be inaccurate, with no obvious way to detect
-> the inaccuracy.
-> 
-> We encountered this problem early in the development of the perf data
-> collection. Even though perf was stopping the trace to copy the
-> hardware buffer, it would concatenate unrelated trace blocks into the
-> perf userspace buffer, which initially caused decoding errors. This is
-> now mitigated in perf by marking boundaries and recording indexes of
-> the boundaries, so the tool can reset the decoder at the start of non
-> contiguous blocks.
-> 
-> If you do not stop the TMC when draining the ETR buffer, you have no
-> way of determining if this has occurred.
-> 
-> Clearly using large buffers, split into smaller blocks can mitigate
-> the possibility of a wrap in this way - but never eliminate it,
-> especially given the extreme rate that trace data can be generated.
-> 
+With this change, hypercall call sites no longer directly access
+"hyperv_pcpu_input_arg" and "hyperv_pcpu_output_arg". Instead, one of
+a family of new functions provides the per-cpu memory that a hypercall
+call site uses to set up hypercall input and output areas.
+Conceptually, there is no longer a difference between the "per-vCPU
+input page" and "per-vCPU output page". Only a single per-vCPU page is
+allocated, and it is used to provide both hypercall input and output.
+All current hypercalls can fit their input and output within that single
+page, though the new code allows easy changing to two pages should a
+future hypercall require a full page for each of the input and output.
 
-Hi Mike,
+The new functions always zero the fixed-size portion of the hypercall
+input area (but not any array portion -- see below) so that
+uninitialized memory isn't inadvertently passed to the hypercall.
+Current open-coded hypercall call sites are inconsistent on this point,
+and use of the new functions addresses that inconsistency. The output
+area is not zero'ed by the new code as it is Hyper-V's responsibility
+to provide legal output.
 
-Thanks for detailed explanation. It's clear and makes sense to me.
+When the input or output (or both) contain an array, the new code
+calculates and returns how many array entries fit within the per-cpu
+memory page, which is effectively the "batch size" for the hypercall
+processing multiple entries. This batch size can then be used in the
+hypercall control word to specify the repetition count. This
+calculation of the batch size replaces current open coding of the
+batch size, which is prone to errors. Note that the array portion of
+the input area is *not* zero'ed. The arrays are almost always 64-bit
+GPAs or something similar, and zero'ing that much memory seems
+wasteful at runtime when it will all be overwritten. The hypercall
+call site is responsible for ensuring that no part of the array is
+left uninitialized (just as with current code).
 
-I will look for another reasonable solution.
+The new family of functions is realized as a single inline function
+that handles the most complex case, which is a hypercall with input
+and output, both of which contain arrays. Simpler cases are mapped to
+this most complex case with #define wrappers that provide zero or NULL
+for some arguments. Several of the arguments to this new function
+must be compile-time constants generated by "sizeof()" expressions.
+As such, most of the code in the new function is evaluated by the
+compiler, with the result that the runtime code paths are no longer
+than with the current open coding. An exception is the new code
+generated to zero the fixed-size portion of the input area in cases
+where it was not previously done.
 
-Thanks,
-Jie
+Use of the new function typically (but not always) saves a few lines
+of code at each hypercall call site. This is traded off against the
+lines of code added for the new functions. With code currently
+upstream, the net is an add of about 60 lines of code and comments.
+However, as additional hypercall call sites are upstreamed from the
+OpenHCL project[2] in support of Linux running in the Hyper-V root
+partition and in VTLs other than VTL 0, the net lines of code added is
+nearly zero.
 
-> Regards
-> 
-> Mike
-> 
-> 
->> Jie Gan (4):
->>    coresight: tmc: Introduce new APIs to get the RWP offset of ETR buffer
->>    dt-bindings: arm: Add an interrupt property for Coresight CTCU
->>    coresight: ctcu: Enable byte-cntr for TMC ETR devices
->>    arm64: dts: qcom: sa8775p: Add interrupts to CTCU device
->>
->>   .../bindings/arm/qcom,coresight-ctcu.yaml     |  17 +
->>   arch/arm64/boot/dts/qcom/sa8775p.dtsi         |   5 +
->>   drivers/hwtracing/coresight/Makefile          |   2 +-
->>   .../coresight/coresight-ctcu-byte-cntr.c      | 339 ++++++++++++++++++
->>   .../hwtracing/coresight/coresight-ctcu-core.c |  96 ++++-
->>   drivers/hwtracing/coresight/coresight-ctcu.h  |  59 ++-
->>   .../hwtracing/coresight/coresight-tmc-etr.c   |  45 ++-
->>   drivers/hwtracing/coresight/coresight-tmc.h   |   3 +
->>   8 files changed, 556 insertions(+), 10 deletions(-)
->>   create mode 100644 drivers/hwtracing/coresight/coresight-ctcu-byte-cntr.c
->>
->> --
->> 2.34.1
->>
-> 
-> 
+A couple hypercall call sites have requirements that are not 100%
+handled by the new function. These still require some manual open-
+coded adjustment or open-coded batch size calculations -- see the
+individual patches in this series. Suggestions on how to do better
+are welcome.
+
+The patches in the series do the following:
+
+Patch 1: Introduce the new family of functions for assigning hypercall
+         input and output arguments.
+
+Patch 2 to 5: Change existing hypercall call sites to use one of the new
+         functions. In some cases, tweaks to the hypercall argument data
+         structures are necessary, but these tweaks are making the data
+         structures more consistent with the overall pattern. These
+         four patches are independent of each other, and can go in any
+         order. The breakup into 4 patches is for ease of review.
+
+Patch 6: Update the name of the variable used to hold the per-cpu memory
+         used for hypercall arguments. Remove code for managing the
+	 per-cpu output page.
+
+Patch 1 from v1 of the patch set has been dropped in v2. It was a bug
+fix that has already been picked up.
+
+The new code compiles and runs successfully on x86 and arm64. Separate
+from this patch set, for evaluation purposes I also applied the
+changes to the additional hypercall call sites in the OpenHCL
+project[2]. However, I don't have the hardware or Hyper-V
+configurations needed to test running in the Hyper-V root partition or
+in a VTL other than VTL 0. So the related hypercall call sites still
+need to be tested to make sure I didn't break anything. Hopefully
+someone with the necessary configurations and Hyper-V versions can
+help with that testing.
+
+For gcc 9.4.0, I've looked at the generated code for a couple of
+hypercall call sites on both x86 and arm64 to ensure that it boils
+down to the equivalent of the current open coding. I have not looked
+at the generated code for later gcc versions or for Clang/LLVM, but
+there's no reason to expect something worse as the code isn't doing
+anything tricky.
+
+This patch set is built against linux-next20250311.
+
+[1] https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/tlfs
+[2] https://github.com/microsoft/OHCL-Linux-Kernel
+
+Michael Kelley (6):
+  Drivers: hv: Introduce hv_hvcall_*() functions for hypercall arguments
+  x86/hyperv: Use hv_hvcall_*() to set up hypercall arguments -- part 1
+  x86/hyperv: Use hv_hvcall_*() to set up hypercall arguments -- part 2
+  Drivers: hv: Use hv_hvcall_*() to set up hypercall arguments
+  PCI: hv: Use hv_hvcall_*() to set up hypercall arguments
+  Drivers: hv: Replace hyperv_pcpu_input/output_arg with hyperv_pcpu_arg
+
+ arch/x86/hyperv/hv_apic.c           |  10 ++-
+ arch/x86/hyperv/hv_init.c           |  12 ++--
+ arch/x86/hyperv/hv_vtl.c            |   9 +--
+ arch/x86/hyperv/irqdomain.c         |  17 +++--
+ arch/x86/hyperv/ivm.c               |  18 ++---
+ arch/x86/hyperv/mmu.c               |  19 ++---
+ arch/x86/hyperv/nested.c            |  14 ++--
+ drivers/hv/hv.c                     |  11 +--
+ drivers/hv/hv_balloon.c             |   4 +-
+ drivers/hv/hv_common.c              |  57 +++++----------
+ drivers/hv/hv_proc.c                |   8 +--
+ drivers/hv/hyperv_vmbus.h           |   2 +-
+ drivers/pci/controller/pci-hyperv.c |  18 +++--
+ include/asm-generic/mshyperv.h      | 103 +++++++++++++++++++++++++++-
+ include/hyperv/hvgdk_mini.h         |   6 +-
+ 15 files changed, 184 insertions(+), 124 deletions(-)
+
+-- 
+2.25.1
 
 
