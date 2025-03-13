@@ -1,108 +1,108 @@
-Return-Path: <linux-kernel+bounces-560067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A8DA5FD2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:13:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5486A5FD1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:10:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BA201897E07
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:13:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 147111720C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10657269D1D;
-	Thu, 13 Mar 2025 17:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7099A26A0C2;
+	Thu, 13 Mar 2025 17:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="a9vhazHK"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JIddFRKe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E270E269D17;
-	Thu, 13 Mar 2025 17:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C369626A0A4;
+	Thu, 13 Mar 2025 17:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741886012; cv=none; b=pFpxWDjlg7CLWVW47DJ/GjQoR72oYA4drui1sMhaTX6QbfN2zry5n3EGTfGthWj3mKF9kdn4tKIXCIvsUScWhCwCSuYLumWspxoGYWWbY1GGYmp1P4yjp/0A+cxbPL4c4Vfn+Anw2tF8UeiGcIGZbgO8Oi9/Z30Moe5n1OUyCAg=
+	t=1741885791; cv=none; b=PCGkN0zNpYkUhTKjS0SR1gpTr74DCjxbmXFnVFJnD1+6Rffj96TRnuisFZyzhpXFvv82AVZqwIDu2orA08DcmxoVgirhUkPQp/Qjqbaj87T+mec4BjSrgkCTAn9v3iVAPIWi6GRrPRax7i1jT/EEFwomKKcsNmPak4+IvrwkHdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741886012; c=relaxed/simple;
-	bh=diJSF/CFhzF4mpOrg6/v7b4ce8q9oyNGZxy8T2BQuRg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NOQsqYfnuBgKpHuh/UHSExcoHu0CfSPa3KuIzrrZIEwjcZ8WVDYQojPD1obIYMOtslnr/d6WKP+ZHETk2afQOdUdoznA3Ij6TTbM39ShFNZyEU16cWv9kmoFjKTP+wX8dBX4VwGFyOOAck5EAgeSxWur9qlL6MalXI8wXBgyq3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=a9vhazHK; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1741886011; x=1773422011;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=diJSF/CFhzF4mpOrg6/v7b4ce8q9oyNGZxy8T2BQuRg=;
-  b=a9vhazHKFcWQKu5XWOuM+XfRj4t+LTZZzKaQubvZRvguwUda5qqBt4U8
-   LyACL4Ku+s+JxrNEQD8C7l03t48d5C4uRv569Q2sZm6Osswa2NHvkHv8k
-   UO6lQvHahSmayhYFtLjPYeTSt1vthW1C7ckiZO3grm5fP3Mj7xRNvTNqV
-   uRliVLatyvJO8k4sK4n3gDf9ujKho6aFmREoy9aCsqOe4HSziwNSmVKFY
-   fD3Xr5dUOoM1eFDwZqTiK1Re1dGBK0Vr07n0EfS9pV3K0ZFJ5utcAyBJi
-   0sdoVM9gWTXrbX+1CWOzEkfREPmEyZgK5dHOokL5r2ielrgLWZTC93FSS
-   Q==;
-X-CSE-ConnectionGUID: B9TUKtqzRIeSJmjgupUrQg==
-X-CSE-MsgGUID: QJk0X681TY6O0QMV/WcuYA==
-X-IronPort-AV: E=Sophos;i="6.14,245,1736838000"; 
-   d="scan'208";a="38975338"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Mar 2025 10:13:25 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 13 Mar 2025 10:12:43 -0700
-Received: from che-dk-ungapp03lx.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Thu, 13 Mar 2025 10:12:40 -0700
-From: Rengarajan S <rengarajan.s@microchip.com>
-To: <vaibhaavram.tl@microchip.com>, <kumaravel.thiagarajan@microchip.com>,
-	<arnd@arndb.de>, <gregkh@linuxfoundation.org>, <linux-gpio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <unglinuxdriver@microchip.com>
-CC: <rengarajan.s@microchip.com>
-Subject: [PATCH v1 char-misc-linus 2/2] misc: microchip: pci1xxxx: Fix incorrect IRQ status handling during ack
-Date: Thu, 13 Mar 2025 22:38:56 +0530
-Message-ID: <20250313170856.20868-3-rengarajan.s@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250313170856.20868-1-rengarajan.s@microchip.com>
-References: <20250313170856.20868-1-rengarajan.s@microchip.com>
+	s=arc-20240116; t=1741885791; c=relaxed/simple;
+	bh=sAqPeaaP78JXfLlIvaZj0VRL43aWerSGG4s5j0yVKS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S2a1+DuHExHGr9bsRCzlBg00/WIqlVoRs48FvhHT2I+z6o/OwX07ek4WvNyZ3RG9g65N7umIX9bq7nuXgAxN2zfVUJIgKps05v3wSdZgFDHgqXUZITmJy/EGKBiNZ2Y/4xUUjn5vCD2IovGShFzb3h9mFm8XZDRGirv7DAlEGvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JIddFRKe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AE2FC4CEE9;
+	Thu, 13 Mar 2025 17:09:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741885791;
+	bh=sAqPeaaP78JXfLlIvaZj0VRL43aWerSGG4s5j0yVKS0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JIddFRKel0caC56WFEnasFaM9S0AIIOHInn/ADrJkrwLPYgTZbsw/OqYsyeiGzFf6
+	 6V+bNm3J/6bFtFhjWoyAZWr4NgYFLJmG3hZXrUqvoNho1by8oLb2j+8PmWfu1k9zBI
+	 jsC14SepH+lVbpztAqfuDXSGITQOa+xqyydCsoPm6ovRNN1Hb438gZM5fzA5kny7Q4
+	 hGmRXlJHQgOc/+wdFnZ4gZ+9nzZfUJrGhyHnYy7T647jFNIB/Ap80rTXqGFtWwg4EK
+	 JtjUHFKWtLVRJkfOBpytGx5maa9pJAv4UGJgStpIRknBTvHWW2FkVC1fVR/CF9bLi2
+	 8/4jFFBS30gfQ==
+Date: Thu, 13 Mar 2025 18:09:45 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH linux-next] perf/ring_buffer: Add EPOLLRDNORM flag for
+ poll
+Message-ID: <Z9MRWT5PWtPaY-pl@gmail.com>
+References: <20250313051047.2436098-1-chen.dylane@linux.dev>
+ <Z9Kt57aAC7XET7Na@gmail.com>
+ <87b67a79-d97e-4f81-9bf2-aa34d613b5bf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <87b67a79-d97e-4f81-9bf2-aa34d613b5bf@linux.dev>
 
-Under irq_ack, pci1xxxx_assign_bit reads the current interrupt status,
-modifies and writes the entire value back. Since, the IRQ status bit
-gets cleared on writing back, the better approach is to directly write
-the bitmask to the register in order to preserve the value.
 
-Fixes: 1f4d8ae231f4 ("misc: microchip: pci1xxxx: Add gpio irq handler and irq helper functions irq_ack, irq_mask, irq_unmask and irq_
-set_type of irq_chip.")
-Signed-off-by: Rengarajan S <rengarajan.s@microchip.com>
----
- drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+* Tao Chen <chen.dylane@linux.dev> wrote:
 
-diff --git a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
-index 88a405b72125..55b892f982e9 100644
---- a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
-+++ b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
-@@ -165,7 +165,7 @@ static void pci1xxxx_gpio_irq_ack(struct irq_data *data)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&priv->lock, flags);
--	pci1xxx_assign_bit(priv->reg_base, INTR_STAT_OFFSET(gpio), (gpio % 32), true);
-+	writel(BIT(gpio % 32), priv->reg_base + INTR_STAT_OFFSET(gpio));
- 	spin_unlock_irqrestore(&priv->lock, flags);
- }
- 
--- 
-2.25.1
+> 在 2025/3/13 18:05, Ingo Molnar 写道:
+> > 
+> > * Tao Chen <chen.dylane@linux.dev> wrote:
+> > 
+> > > The poll man page says POLLRDNORM is equivalent to POLLIN,
+> > > so add EPOLLRDNORM here.
+> > > 
+> > > Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+> > > ---
+> > >   kernel/events/ring_buffer.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+> > > index 59a52b1a1..5130b119d 100644
+> > > --- a/kernel/events/ring_buffer.c
+> > > +++ b/kernel/events/ring_buffer.c
+> > > @@ -19,7 +19,7 @@
+> > >   static void perf_output_wakeup(struct perf_output_handle *handle)
+> > >   {
+> > > -	atomic_set(&handle->rb->poll, EPOLLIN);
+> > > +	atomic_set(&handle->rb->poll, EPOLLIN | EPOLLRDNORM);
+> > 
+> > So what does EPOLLRDNORM mean to begin with? There doesn't seem to be
+> > separate/specific handling of it anywhere in the kernel that I can
+> > see...
+> > 
+> 
+> It seems that if user set pollfd with POLLRDNORM, perf_poll will not return
+> until timeout even if perf_output_wakeup called, whereas POLLIN returns.
 
+Mind adding this to the changelog, and explain that this patch fixes 
+this particular poll() functionality and semantics for userspace?
+
+Thanks,
+
+	Ingo
 
