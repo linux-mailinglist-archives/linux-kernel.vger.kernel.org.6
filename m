@@ -1,254 +1,222 @@
-Return-Path: <linux-kernel+bounces-559407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B515A5F37C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:55:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D50DA5F382
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:56:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 691F2189DC76
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:55:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A27B21692B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB4A266599;
-	Thu, 13 Mar 2025 11:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7CD266598;
+	Thu, 13 Mar 2025 11:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QyHOBJur"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="j/cmBnbZ"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72391FAC4F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE26F1FAC4F
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741866936; cv=none; b=JAbDsBdr2L2lSVG/lDcc86HXDadTl5NeTTumP/6/wNbc6VwslvLhEb1TSQk0UmiUm5Rdkg44VZf5Qhl4id5EZCv7O80P1Qu+1pX+4YJYhqaUQlUy+r7Mh6sfzTr40Yrc2KyFTe06du4lUPQ5dyHO7a7B36gkZyFtpwPRmPdoqLc=
+	t=1741866981; cv=none; b=jMLypDF+P+1L+7EQEKTFt83qkWb9z8xCQYJOnsOu6SQny4JJnDr1PIWJYqc48UZwif33Rz0lPMyfv5K0Clgy1Ehupj3wX0ZftacrqkkYnly69rD6ZSu1g8RNVt1wEvaOhsDonVzuAMteTiyt04wRkWnApRPvzuFEQ+wKuQfTgng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741866936; c=relaxed/simple;
-	bh=j/UxuFfYZjRloTYF+5DAhKRpSh3d6hX+rPVHR81TlAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U5ZAW6gwifwz62byUPD5ASgoBWWxtuvAx5a/v1GAPwY+4v5iRe7sKBSfsftmdAtcmQT8Lw314HUjR2MMCuXTSqFXm6XzJA9SVt8i9ps6h0fmywhom/K9c7Ba9sjH9YTT1xgPjY+LL9J427PqEmRZhFZ+wP0TDzrPUIv79TPhoEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QyHOBJur; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9374C4CEDD;
-	Thu, 13 Mar 2025 11:55:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741866936;
-	bh=j/UxuFfYZjRloTYF+5DAhKRpSh3d6hX+rPVHR81TlAw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QyHOBJur9eip0g5JOOU4J2LYpMmOmDMhO/KHPrxbBuHhafjk/0D948H2bU4J9YpuU
-	 +hQeipgcEw3h8cjvj/LnElc/QgZmFVaG+jRjxcMmcI27zf4zEVX3HoJL4IvqNDGqba
-	 sNd1bUEcSija1pmwx6Ah/w3JUgGXtYFguyoUtu2Ry4f4ZUpZ7Zmy68SkbavGFZecbD
-	 HIX8K8qEFF17n6yXNGRs9es6C/7rx1ucNppSIDNim+Q7TADXfmJDYNI89+0t45kOg+
-	 dv6UHG3EhJrYhpk6XmJonn2gpRhn+j384uK/T0Ilx98CWiVEbchRLO0HiMbZUAuspj
-	 9ABYoqL6HGgGw==
-Date: Thu, 13 Mar 2025 12:55:33 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Andy Yan <andyshrk@163.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
-	Herve Codina <herve.codina@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Simona Vetter <simona.vetter@ffwll.ch>, lumag@kernel.org
-Subject: Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
- connector by encoder
-Message-ID: <20250313-dazzling-deer-of-ampleness-21db67@houat>
-References: <20250304-bridge-connector-v5-0-aacf461d2157@kernel.org>
- <20250304-bridge-connector-v5-4-aacf461d2157@kernel.org>
- <5180089f.a640.19566290538.Coremail.andyshrk@163.com>
- <608c01c.7716.1958e8d879f.Coremail.andyshrk@163.com>
+	s=arc-20240116; t=1741866981; c=relaxed/simple;
+	bh=8YSFaPnnraz2L8qi2krgso545b8C0btTmDKKAKeG0uI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kzsBO2vXYmbGeWSRGCS7yuv2cz89uF6QIRK2XLTjNUxb54Obc5JVhvuQl5Z5da6LgUbzC3CYJOsgCLde7BiZd3eOsyRPWRHCxjK7sm4FHXFONmplpLOJN5mJJcCnnPZzXn/YjlhZ9r3LE6w/WsZ/7msN5Bwu9qBhSyrHlyrflJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=j/cmBnbZ; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5499c8fa0f3so990227e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 04:56:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1741866977; x=1742471777; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GBeZSLN5RdC5jHLNiuFJa6YOsMbFeh/krmmMuSB+kdI=;
+        b=j/cmBnbZGJOzZY4VhyNSqBHmpd2CSM9/S70vsoJua8plUa3X4elKxNXM0KhshyK1xl
+         zIQMxqtVRTC10CzWhCF+UR6bQxs8PrssEyDAhgKApWncR7/+xqWIPBiBwJaq0q5b1FVp
+         RPdG2ERc3GPxe65arqxQuWnvkdGgAZv9srw/q76RMQ3fa4gQi9qZvFeCMYCeK0qk0g6M
+         MFixs3yt5B+NwM5e9to1kk/m6iI9i6I2EUgzoeyfOoMBHctAVsDC5ztLEXBMnvpu6glQ
+         uCKxyo5MoVcpU8ypM3RzmAQsOm7qbDdI160Vi0dCxKlMf09dICflgAEAO6Sn7nGtywgP
+         ZM1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741866977; x=1742471777;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GBeZSLN5RdC5jHLNiuFJa6YOsMbFeh/krmmMuSB+kdI=;
+        b=uV6SliuYXarJoCKD9arTTsn+QHmQ+kRQtDZeNbU+dug1YTPggt3JnJ+HKi/31F7rv6
+         Uika143hpZD7osZE0d45iDDh7RSLuyg2voA3yMK/YlWxw0KeVxVaPCJ6dATlOx585PAD
+         P/6dtT6+tVyQWDkcViPcCfhI01QAAqquGMuZhQjm1VPJ/b7FCcUjMJEdj7exipryRXaw
+         eLLHn2aGInrXCR0O7TuHnRiu5kHcYQq7XRA1ZforZsd9+yLTvcWyluN2h2lT6h4wC688
+         1d80MhVa0W5YcsuYsvY4QjfHm7asTCOjymdF6t0hjJgRU6tlcBkwz4UT8J0dqGseabaZ
+         wtFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXp7eQsW5iub6ZzbAvqZQXjf3ya/Yv8URCN6rf154Zzsg6br2+hmK/bfiOfW5/Ag43MpVloLzGt7vCe1PM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXh1X6zKfPO1pInwElq4KCEvtY7NSQUniiIx7vXiIfkLiUw8+5
+	RY6cMzvDoqnC70QUKOD2OtIjTITMpZj+GT1ZblrFbQu9KJd2hL20T2cL2JRhs7ws84gWuiakHX+
+	WqryZOi9b8XRKXfxWkZVPa7R14TqhydCufB4ALCtOX7VPnxgxhA66Mg==
+X-Gm-Gg: ASbGnctPRgY04lYQBbWySPV+4T53fO5LyarDMdwHom0wp6P+JZ5pXsfj7BoTjbrRhsJ
+	CwY1+mzoCvKPEKOCnCCDl5foLAItUFBGmcLYjrzGeSDHnEOPALBz80BbSJ2oem0jI/oDt34cywD
+	iPaxsZCHOrHMXHqpvchcT5nCEo2IsagCb88AhzDHc=
+X-Google-Smtp-Source: AGHT+IGEyp8QlFUO5iBEQ3+sjvXdhFu8C1RRBX4cpUJB6fBBJ7ZTqWe0E9PLhwuwpOMizy4BKuMJYxz3SiV73Nqw/98=
+X-Received: by 2002:a05:6512:2313:b0:549:4416:df02 with SMTP id
+ 2adb3069b0e04-549910b6194mr7925159e87.41.1741866976644; Thu, 13 Mar 2025
+ 04:56:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xsshdtprknacva2v"
-Content-Disposition: inline
-In-Reply-To: <608c01c.7716.1958e8d879f.Coremail.andyshrk@163.com>
-
-
---xsshdtprknacva2v
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250313034812.3910627-1-hezhongkun.hzk@bytedance.com>
+ <Z9KPzQNctY_ALL0D@tiehlicka> <CACSyD1PU59py6rjiZ5snvRL449OmuH9W+RMbNpmOfhO80XuW5Q@mail.gmail.com>
+ <Z9KofXR3KOIBXb1A@tiehlicka>
+In-Reply-To: <Z9KofXR3KOIBXb1A@tiehlicka>
+From: Zhongkun He <hezhongkun.hzk@bytedance.com>
+Date: Thu, 13 Mar 2025 19:55:39 +0800
+X-Gm-Features: AQ5f1Jpo3Xic03LAlbOgUO1vxBJrzOBtSKzzs_8j6CeGNehBeppmpW2K0Q-LMv8
+Message-ID: <CACSyD1OHD8oXQcQmi1D9t2f5oeMVDvCQnYZUMQTGbqBz4YYKLQ@mail.gmail.com>
+Subject: Re: [External] Re: Re: [PATCH V1] mm: vmscan: skip the file folios in
+ proactive reclaim if swappiness is MAX
+To: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, muchun.song@linux.dev, 
+	linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
- connector by encoder
-MIME-Version: 1.0
 
-Hi,
+On Thu, Mar 13, 2025 at 5:43=E2=80=AFPM Michal Hocko <mhocko@suse.com> wrot=
+e:
+>
+> On Thu 13-03-25 16:57:34, Zhongkun He wrote:
+> > On Thu, Mar 13, 2025 at 3:57=E2=80=AFPM Michal Hocko <mhocko@suse.com> =
+wrote:
+> > >
+> > > On Thu 13-03-25 11:48:12, Zhongkun He wrote:
+> > > > With this patch 'commit <68cd9050d871> ("mm: add swappiness=3D arg =
+to
+> > > > memory.reclaim")', we can submit an additional swappiness=3D<val> a=
+rgument
+> > > > to memory.reclaim. It is very useful because we can dynamically adj=
+ust
+> > > > the reclamation ratio based on the anonymous folios and file folios=
+ of
+> > > > each cgroup. For example,when swappiness is set to 0, we only recla=
+im
+> > > > from file folios.
+> > > >
+> > > > However,we have also encountered a new issue: when swappiness is se=
+t to
+> > > > the MAX_SWAPPINESS, it may still only reclaim file folios. This is =
+due
+> > > > to the knob of cache_trim_mode, which depends solely on the ratio o=
+f
+> > > > inactive folios, regardless of whether there are a large number of =
+cold
+> > > > folios in anonymous folio list.
+> > > >
+> > > > So, we hope to add a new control logic where proactive memory recla=
+im only
+> > > > reclaims from anonymous folios when swappiness is set to MAX_SWAPPI=
+NESS.
+> > > > For example, something like this:
+> > > >
+> > > > echo "2M swappiness=3D200" > /sys/fs/cgroup/memory.reclaim
+> > > >
+> > > > will perform reclaim on the rootcg with a swappiness setting of 200=
+ (max
+> > > > swappiness) regardless of the file folios. Users have a more compre=
+hensive
+> > > > view of the application's memory distribution because there are man=
+y
+> > > > metrics available. For example, if we find that a certain cgroup ha=
+s a
+> > > > large number of inactive anon folios, we can reclaim only those and=
+ skip
+> > > > file folios, because with the zram/zswap, the IO tradeoff that
+> > > > cache_trim_mode is making doesn't hold - file refaults will cause I=
+O,
+> > > > whereas anon decompression will not.
+> > > >
+> > > > With this patch, the swappiness argument of memory.reclaim has a mo=
+re
+> > > > precise semantics: 0 means reclaiming only from file pages, while 2=
+00
+> > > > means reclaiming just from anonymous pages.
+> > >
+> > > Well, with this patch we have 0 - always swap, 200 - never swap and
+> > > anything inbetween behaves more or less arbitrary, right? Not a new
+> > > problem with swappiness but would it make more sense to drop all the
+> > > heuristics for scanning LRUs and simply use the given swappiness when
+> > > doing the pro active reclaim?
+> >
+> > Thanks for your suggestion! I totally agree with you. I'm preparing to =
+send
+> > another patch to do this and a new thread to discuss, because I think t=
+he
+> > implementation doesn't conflict with this one. Do you think so ?
+>
+> If the change will enforce SCAN_FRACT for proactive reclaim with
+> swappiness given then it will make the balancing much smoother but I do
+> not think the behavior at both ends of the scale would imply only single
+> LRU scanning mode.
 
-On Thu, Mar 13, 2025 at 04:09:54PM +0800, Andy Yan wrote:
-> At 2025-03-05 19:55:19, "Andy Yan" <andyshrk@163.com> wrote:
-> >At 2025-03-04 19:10:47, "Maxime Ripard" <mripard@kernel.org> wrote:
-> >>With the bridges switching over to drm_bridge_connector, the direct
-> >>association between a bridge driver and its connector was lost.
-> >>
-> >>This is mitigated for atomic bridge drivers by the fact you can access
-> >>the encoder, and then call drm_atomic_get_old_connector_for_encoder() or
-> >>drm_atomic_get_new_connector_for_encoder() with drm_atomic_state.
-> >>
-> >>This was also made easier by providing drm_atomic_state directly to all
-> >>atomic hooks bridges can implement.
-> >>
-> >>However, bridge drivers don't have a way to access drm_atomic_state
-> >>outside of the modeset path, like from the hotplug interrupt path or any
-> >>interrupt handler.
-> >>
-> >>Let's introduce a function to retrieve the connector currently assigned
-> >>to an encoder, without using drm_atomic_state, to make these drivers'
-> >>life easier.
-> >>
-> >>Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >>Co-developed-by: Simona Vetter <simona.vetter@ffwll.ch>
-> >>Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> >>---
-> >> drivers/gpu/drm/drm_atomic.c | 45 ++++++++++++++++++++++++++++++++++++=
-++++++++
-> >> include/drm/drm_atomic.h     |  3 +++
-> >> 2 files changed, 48 insertions(+)
-> >>
-> >>diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> >>index 9ea2611770f43ce7ccba410406d5f2c528aab022..b926b132590e78f8d41d48e=
-b4da4bccf170ee236 100644
-> >>--- a/drivers/gpu/drm/drm_atomic.c
-> >>+++ b/drivers/gpu/drm/drm_atomic.c
-> >>@@ -985,10 +985,55 @@ drm_atomic_get_new_connector_for_encoder(const st=
-ruct drm_atomic_state *state,
-> >>=20
-> >> 	return NULL;
-> >> }
-> >> EXPORT_SYMBOL(drm_atomic_get_new_connector_for_encoder);
-> >>=20
-> >>+/**
-> >>+ * drm_atomic_get_connector_for_encoder - Get connector currently assi=
-gned to an encoder
-> >>+ * @encoder: The encoder to find the connector of
-> >>+ * @ctx: Modeset locking context
-> >>+ *
-> >>+ * This function finds and returns the connector currently assigned to
-> >>+ * an @encoder.
-> >>+ *
-> >>+ * Returns:
-> >>+ * The connector connected to @encoder, or an error pointer otherwise.
-> >>+ * When the error is EDEADLK, a deadlock has been detected and the
-> >>+ * sequence must be restarted.
-> >>+ */
-> >>+struct drm_connector *
-> >>+drm_atomic_get_connector_for_encoder(const struct drm_encoder *encoder,
-> >>+				     struct drm_modeset_acquire_ctx *ctx)
-> >>+{
-> >>+	struct drm_connector_list_iter conn_iter;
-> >>+	struct drm_connector *out_connector =3D ERR_PTR(-EINVAL);
-> >>+	struct drm_connector *connector;
-> >>+	struct drm_device *dev =3D encoder->dev;
-> >>+	int ret;
-> >>+
-> >>+	ret =3D drm_modeset_lock(&dev->mode_config.connection_mutex, ctx);
-> >>+	if (ret)
-> >>+		return ERR_PTR(ret);
-> >
-> >It seems that this will cause a deadlock when called from a  hotplug han=
-dling path,
-> >I have a WIP DP diver[0],  which suggested by Dmitry to use this API fro=
-m a=20
-> >&drm_bridge_funcs.detect callback to get the connector,  as detect is ca=
-lled by drm_helper_probe_detect,
-> >which will hold connection_mutex first, so the deaklock happens:
-> >
-> >
-> >drm_helper_probe_detect(struct drm_connector *connector,
-> >                        struct drm_modeset_acquire_ctx *ctx,
-> >                        bool force)
-> >{
-> >        const struct drm_connector_helper_funcs *funcs =3D connector->he=
-lper_private;
-> >        struct drm_device *dev =3D connector->dev;
-> >        int ret;
-> >
-> >        if (!ctx)
-> >                return drm_helper_probe_detect_ctx(connector, force);
-> >
-> >        ret =3D drm_modeset_lock(&dev->mode_config.connection_mutex, ctx=
-);
-> >        if (ret)
-> >                return ret;
-> >
-> >        if (funcs->detect_ctx)
-> >                ret =3D funcs->detect_ctx(connector, ctx, force);
-> >        else if (connector->funcs->detect)
-> >                ret =3D connector->funcs->detect(connector, force);
-> >        else
-> >                ret =3D connector_status_connected;
-> >
-> >        if (ret !=3D connector->status)
-> >                connector->epoch_counter +=3D 1;
-> >
-> >So I wonder can we let drm_bridge_funcs.detect pass a connector for this=
- case ?
-> >
-> >
-> >
-> >[0]https://lore.kernel.org/linux-rockchip/047EECFC-7E55-44EC-896F-13FE04=
-333E4D@gmail.com/T/#m25bc53b79f5cc7bddfcb7aae5656f68df396f094
-> >>+
-> >>+	drm_connector_list_iter_begin(dev, &conn_iter);
-> >>+	drm_for_each_connector_iter(connector, &conn_iter) {
-> >>+		if (!connector->state)
-> >>+			continue;
-> >>+
-> >>+		if (encoder =3D=3D connector->state->best_encoder) {
-> >>+			out_connector =3D connector;
->=20
->=20
-> When try to use this patch in my bridge driver,  I found that the connect=
-or->state->best_encoder=20
->  maybe NULL when   drm_bridge_funcs.detect or drm_bridge_funcs.detect_ctx=
- is  called:
->=20
-> [   52.713030] Invalid return value -22 for connector detection
-> [   52.713539] WARNING: CPU: 7 PID: 288 at drivers/gpu/drm/drm_probe_help=
-er.c:602 drm_helper_probe_single_connector_modes+0x5e0/
-> 0x63c
-> [   52.714568] Modules linked in:
->=20
-> [   52.724546] Call trace:
-> [   52.724762]  drm_helper_probe_single_connector_modes+0x5e0/0x63c (P)
-> [   52.725319]  drm_mode_getconnector+0x2a4/0x488
-> [   52.725711]  drm_ioctl_kernel+0xb4/0x11c
-> [   52.726057]  drm_ioctl+0x22c/0x544
-> [   52.726358]  __arm64_sys_ioctl+0xac/0xe0
-> [   52.726706]  invoke_syscall+0x44/0x100
-> [   52.727039]  el0_svc_common.constprop.0+0x3c/0xd4
->=20
-> This is because  best_encoder is set by set_best_encoder, which is called=
- from
-> drm_atomic_helper_check_modeset. When we call drm_mode_getconnector=20
-> for the first time, the functions mentioned above have not been called ye=
-t,
-> then we can't match the encoder from connector->state->best_encoder for t=
-his case.
+Hi Michal, I'am confused about the description that 'I do not think the beh=
+avior
+at both ends of the scale would imply only single LRU scanning mode.=E2=80=
+=99
+and what we should do at the max value of swappiness.
 
-As far as I'm concerned, it's by design. Encoders and connectors have
-1:N relationship, and only once a connector has been enabled it has an
-encoder.
+Besides that, I have discovered a new issue. If we drop all the heuristics =
+for
+scanning LRUs, the swappiness value each time will accurately represent the
+ratio of memory to be reclaimed. This means that before each pro reclamatio=
+n
+operation, we would need to have a relatively clear understanding of the cu=
+rrent
+memory ratio and dynamically changing the swappiness more often because wit=
+h
+the pro memory reclaim the ratio is alway changing . As a result, the
+flexibility
+would be reduced.
 
-If the connector is disabled, there's no associated encoder.
+However, at both ends of the scale, we would have a clearer intention to re=
+claim
+from a single list. For example, in a cgroup, if we have 10G of anon pages =
+and
+3G of file pages, I would prefer to set swappiness=3D200 to reclaim anon
+pages only.
+Once the amount of file and anon pages becomes roughly equal, we can set
+swappiness=3D100 and rely on the system's original heuristics to determine =
+the
+appropriate amount to reclaim. On the other hand, if we have 1g anon, and 1=
+0G
+page caches, we would like to set swappiness=3D0 to reclaim only from file =
+pages
+even with cache_trim_mode. At least from the semantic perspective, it
+is clear, and
+users don=E2=80=99t need to worry about the threshold of cache_trim_mode or=
+ even don't
+know the existence of cache_trim_mode .
 
-Maxime
+Overall, setting swappiness=3D0 and swappiness=3D200 to reclaim from a sing=
+le
+LRU list is intended to address the extreme cases we have actually encounte=
+red.
+As Johannes mentioned above, with the zram/zswap, the IO tradeoff that
+cache_trim_mode is making doesn't hold - file refaults will cause IO,
+whereas anon
+decompression will not.  we would like to set swappiness=3D200 to
+reclaim only from
+anon list which really makes sense to us.
 
---xsshdtprknacva2v
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ9LHtAAKCRDj7w1vZxhR
-xVvBAP48i2/X1q1f6MXYy/AOqvz/U2IluDodoKdi1fETcrMKTQD/VPKyXcV8m/lS
-xMLjJEJpzYEG0R0t/82OSx5j9vk6LgI=
-=pEwZ
------END PGP SIGNATURE-----
-
---xsshdtprknacva2v--
+> --
+> Michal Hocko
+> SUSE Labs
 
