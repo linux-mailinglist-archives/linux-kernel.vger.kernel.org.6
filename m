@@ -1,235 +1,312 @@
-Return-Path: <linux-kernel+bounces-559629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B307A5F6AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:52:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB636A5F6B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:53:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52FCE7A430C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:51:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F06C2177278
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01670267F61;
-	Thu, 13 Mar 2025 13:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF28267F66;
+	Thu, 13 Mar 2025 13:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="S6GtSI/d"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2073.outbound.protection.outlook.com [40.107.249.73])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNFd9PbY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF120267F5C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741873911; cv=fail; b=Wra9AsR5pgMsdG4hQMwLH2/B3SShKQTBDfawaVrhCVqpOuQtHwYXKlpqvTkkRB/apZ0waNHe4cjXvkPvoQW5/qELknAmwnxDVddJNl3P04ZOn0OgvYIhg/QD6vgeUjfuZRKR5gmldt/MQH4Wa48mQtUdjckmjTCq9BtEcQ0zAn8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741873911; c=relaxed/simple;
-	bh=cSUfwuf8Pxe1WyGdUC0FIgLGRBSLj3/mhl1QaO0Y0ek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nwsXA3WikHyLPAT1JOd4qp2nRSwk8zD4/plLEcitcmgTNJI9CM8f6zg86npxCDsAaDIz77QgKyOMnvjO0vvng0elxu6RxKTl5PjDMZn/dWaVQENZtqYXhZg5wxANXTTjN8pPwF1WTa6x7xsadR8fnoZ4YYyquttrNMS5OEFF2A0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=fail (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=S6GtSI/d reason="signature verification failed"; arc=fail smtp.client-ip=40.107.249.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NnUBEWXwd5XzY156ERmWwXdnrle/AKgp3dIKVXO+b2uBlpWJuoUVpwWoeLqt42VcqqVSN9UtFPwOSjD7PuHRLpLN4+8mrvOBll3Rj8T6YZry9waBU1qfnceyDHcf+yDuPEMyodf8eTKc3E9ojznH01esn8w18xVzqrzH7awaL5r6Zb/8aGx+eICPDWVscvpYbl+7aVHciaVD8w5Lb2LgHmu8ENI9UxieY/h/4YpicIRqvQz+319EEqH78BQZnn74XBWGU4pwzmsxRY70P/7DLgGPsRc/tNj9A1uoRoNh3wYacRa3hcOuzjTn1S15Xjp2SyqseMqkotMz+ATpdvXHoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GUp5I9bxDRXMsjAfEJ7jXsjtxjZLP9YU0HGEB/1/mWI=;
- b=cUK0PqH/k5cxPqhZMB8wL1FXbBz9bM6/my42F8lA9ghJdXGkfgqFuhQKDDQrQ2MyVyut/msyESPDiYRQ3P6Gu5Z3bB3MIIrrGpiZXuWOjc82SAzrC3mvnAIfK3IPpc64JZn2mZZzrFRLv5HQPCx7etNnh8eZyywj06QGzCF2K/Pco8SeVEF+lj08beiGUizGH1w3kXF1qRyzAqvhVMtDXg/xZLOuisR+hc47cRHyM65+k1Do/4NEPK3DOLTcCuPCKzoEwSM2GTDpNGN+Mv9vHe9OMDvh3PItz3oZjJnapwbKOBLkqrtSMktoLnNQPNW2+Bz2gcOExC7JJ0FAXSCgYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GUp5I9bxDRXMsjAfEJ7jXsjtxjZLP9YU0HGEB/1/mWI=;
- b=S6GtSI/di9797Qc/7yno+0Nspp9/Zkl26l/uYNclvqDosKyQKGE5su6tooouYU5frONord2j5LSICuub3z3N70B5IYZTQ+pJGRzoU/XyvLHe15ynn5aS43rTTvlONBQKXGa4Dnu1uc+xp3OgxEYccDT8EwE9Ia+m7idoYWEihcpeqX7e0pHZ/2I/Eq5H2+A8MCHv6TZ+NmfM55YTwDWT3RbU0u3rnZAKuBCj15TUiEiUYrq2BIuaTAl7N6hd4w1XNH7sZJPGpbA7u6n4gmik6ggUzour5kKu2fxVcU+JWeDCa/i5Y5atSO5/jWjldxo+N+kT6SnK8NruihjNQrCdzg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
- by VI1PR04MB7039.eurprd04.prod.outlook.com (2603:10a6:800:12b::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.28; Thu, 13 Mar
- 2025 13:51:46 +0000
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b317:9c26:147f:c06e]) by AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b317:9c26:147f:c06e%5]) with mapi id 15.20.8534.027; Thu, 13 Mar 2025
- 13:51:46 +0000
-Date: Thu, 13 Mar 2025 15:51:42 +0200
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: "Dr. David Alan Gilbert" <linux@treblig.org>, stuyoder@gmail.com, 
-	Laurentiu Tudor <laurentiu.tudor@nxp.com>, linuxppc-dev@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bus: fsl-mc: Remove deadcode
-Message-ID: <oz65tdekf2ywyzadbntuxntwxulcdzyo33se54qqdsddkogquh@bqnmsmqijfvb>
-References: <20241115152055.279732-1-linux@treblig.org>
- <3f9dbb7b-6527-48e1-9028-b46e5a0c58ce@csgroup.eu>
- <Z9LbwRUsHwFLpBZA@gallifrey>
- <362f9392-f891-4a15-9ffd-5f5a6cac41b8@csgroup.eu>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <362f9392-f891-4a15-9ffd-5f5a6cac41b8@csgroup.eu>
-X-ClientProxiedBy: AM6PR10CA0015.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:209:89::28) To AS8PR04MB8868.eurprd04.prod.outlook.com
- (2603:10a6:20b:42f::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4C4267B72;
+	Thu, 13 Mar 2025 13:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741873923; cv=none; b=g/EfHNk/J/HGIOn/6unDz+5+R0t85qcf+omCdpFdfrU19ryH7G4e/eNDxOVd7wQay91w5iE05hGb6HWjOp/OOr9zmWl1AuKA3rVn9TtcXNIsNzbwTzwS5N2b2AwGIJnAkljT0Yx+E5+FD+5wRwLkUQnXYE/nURvRo+nVuUV6kLY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741873923; c=relaxed/simple;
+	bh=xoyDodBFvNvmguT9IBaqx5WxLExGYaUZYbOSWw3WeAM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aqZjVBTvAipbhOwrtnk60aXPk0VkJyeGyAubHbmzt2c2uZUOmGjIk6UN0U1D7xysBikv+bmIkCFrYEEEZ6Cw8AbMIZNJ3PBRDGBirFOIyRneeMujluoG8iKhKLiyLSd6ojF0rMqkHErA0U0qA7UIkpxK/0wgRjTHiOd5CdKeWRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNFd9PbY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7502C4CEE5;
+	Thu, 13 Mar 2025 13:52:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741873923;
+	bh=xoyDodBFvNvmguT9IBaqx5WxLExGYaUZYbOSWw3WeAM=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=fNFd9PbYSlwvHXAweFPAWZH/AlJ7aS+fI5fv019D2PSu/qe+5Im8XZ3K2gEW1dkQI
+	 7fs5toLr7n0RzbFWto2De6njD2bAWxSlDFJBz3BvUgdK3As5ealFp5C0gJVqd4ud/9
+	 Yx5jrIZ0SK7kBq1aqJWG30HIbgmBJo5rHSsnBdUWLc0vqJ9l7gG+1qRbHVaEb3uEW8
+	 xmH3BatLLr03NnoI3hMESgXZj4tQ+v2ONnWLtqKHP6pEk1cDCb3Ge5oER8daaHjoL9
+	 DyJhJR6Fzd5FF0PsTnX1eyYD05+3cypQ4P4FuCUheVFqaVHjuqnZeFW0y1gbankVY6
+	 tdeiZAvDBQNxA==
+Message-ID: <e85ca4e841b8e5c5f7d0408caf99f404284da687.camel@kernel.org>
+Subject: Re: [PATCH] sunrpc: add a rpc_clnt shutdown control in debugfs
+From: Jeff Layton <jlayton@kernel.org>
+To: Benjamin Coddington <bcodding@redhat.com>
+Cc: Trond Myklebust <trondmy@hammerspace.com>, anna@kernel.org, 
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 13 Mar 2025 09:52:01 -0400
+In-Reply-To: <0E1E14E2-BD4B-433B-8355-EEF45384BE83@redhat.com>
+References: <20250312-rpc-shutdown-v1-1-cc90d79a71c2@kernel.org>
+	 <7906109F-91D2-4ECF-B868-5519B56D2CEE@redhat.com>
+	 <997f992f951bd235953c5f0e2959da6351a65adb.camel@kernel.org>
+	 <8bf55a6fb64ba9e21a1ec8c5644355ffd6496c6e.camel@hammerspace.com>
+	 <ee74d5920532d81f77e503d6ef8bc5fbfc66d04e.camel@kernel.org>
+	 <0E1E14E2-BD4B-433B-8355-EEF45384BE83@redhat.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|VI1PR04MB7039:EE_
-X-MS-Office365-Filtering-Correlation-Id: d2accff3-5a4a-4d95-2f92-08dd623631ab
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|366016|13003099007|7053199007|27256017;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?n7d9ClzdfJ6mpC8REkARTPKTtkNyksyrVT/wRqA6wt9n3dTW4o5klE88ws?=
- =?iso-8859-1?Q?sTvhajq/xFl2pUHiJM8HC+OPnRdjY10S7AL7uP/dpArCbzjO01VHjD6xq7?=
- =?iso-8859-1?Q?vSy9ZniC73jqw/431lw2OeKraOx+QGEhdAolJwxKAelWVS1DDb4tq5Z3/s?=
- =?iso-8859-1?Q?/Fha7pB5B7FjVhl6mivObmLxftmUDgVLTYFDniXKEijFDoYNy+2tune/RL?=
- =?iso-8859-1?Q?/+dV/kudFIkVkeh3ko1qw1e5Awd1EtFM+zDkzb0wNqf03P5A7Ph/SpJfq3?=
- =?iso-8859-1?Q?9c2HOOPXZ/ItMA/a/HWI6TAXoLjNbOgHo4809Oh3C5GUB4Ven5E9vJzDWE?=
- =?iso-8859-1?Q?SHw19w/zv4x8vLbDGlVnSUWaE3N9KMaX8zjK4l/D/9WOR0yHeg6aerWI9J?=
- =?iso-8859-1?Q?1tvvXY2+Di1y1GqO+gN0o5B8HKICctQCFBtCCp7j7NDfAjngDCa/pDNcyO?=
- =?iso-8859-1?Q?peitxNlp54lCsRnyi7HKWzAUM9obHTy8rjdR6k5AiK2ms8ghp8bN/Q75w5?=
- =?iso-8859-1?Q?+cvOJqi4qAHDeC/Mqw1Rtex+/xBatrpxxHxUr7YKWuFMqfa2EOgxVLDJ6Q?=
- =?iso-8859-1?Q?/IxaCPczaHCNXYmjr4HwyOZ2hxdTjScvzNnYDO9xXfwAUTYI/AzmJTMrqQ?=
- =?iso-8859-1?Q?Wfiv0orVMGwIjPH9xJmQnztuVcR6IWsXL/3zeUYtDsWShjjsUk8vrYSTT4?=
- =?iso-8859-1?Q?FMM6Ugk1C+AQp7MkDWSTB24gT++E/K/VKpT/nwUbHP+GeyjM2CDUlhvU7q?=
- =?iso-8859-1?Q?Ui+pM74J7WS9+XZRxayXvKn7cfh5NSNvLP+3dzFQwm189V+biBZqC7ZmwE?=
- =?iso-8859-1?Q?oTcxEWHgu8MUwijPde/szUcjFBtLo3rpZNMq/DuEQc7ESjl1ByT5vTQrvI?=
- =?iso-8859-1?Q?ghV7104x6bK/tdeB5jhuTTd59HQmxM9KxAnRf9tyC8O0e/qjxsDwiv7gXR?=
- =?iso-8859-1?Q?YXwxCQE98LSTCLDmJdNzWau6xlvxynrQ273f3QDMVSTdWU+S4RhIHzYTWq?=
- =?iso-8859-1?Q?raIrP2R2/GRYDDfjWNhO4gaXTpeGSycqus84ICNDs/Futjsw9ylAqSdDCO?=
- =?iso-8859-1?Q?CyRtRmStrFlIPwlzMSKpjITvYlQgUiklTAbc+3m0Ayhpx3F5ij1OvsTinS?=
- =?iso-8859-1?Q?OLqpyL2cGbkMmaTjzKuOOpYqmINUhGrs6rho0966Qr6g4Dv0KS/FRUTqoJ?=
- =?iso-8859-1?Q?gAcIeajMXlY/Di/56Oj6jVsO+hmkTpiaeaDwsMi7fSXHktQxdVeYYBM4SQ?=
- =?iso-8859-1?Q?rhoq1e6HiG1sw9m/pvi2PsulIhBbBCMGtSG3GDzGhnpoV5KkKJprFg+MPI?=
- =?iso-8859-1?Q?gGsu3KW5MH/XFEmt0N41pu2z2823kvOmW7ztC7fFtIvmjebYHKBbWkg0Wt?=
- =?iso-8859-1?Q?37LUg4A8CULrmfByVqKlzM1t0faLKX6WA9jnYd5b7mqvCJ7rD99F6OUmlD?=
- =?iso-8859-1?Q?cMlYOkW3uXUR6wDKO8fd5RywqOVqJa4TRVPDbNTpGYOR2MeHkSfd/etQFE?=
- =?iso-8859-1?Q?Q=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(13003099007)(7053199007)(27256017);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?hilon3FNFlz5K+L9QHfczcKb/zzNhzAmxcxd2RrGJ6dwBBPwUtkaYW8e2v?=
- =?iso-8859-1?Q?D0Na+Mww0mX3PmSpja5kiuVw3Q3IceS4cUdRpaWBGe2c6yLVeHD0bxJh8p?=
- =?iso-8859-1?Q?5TTjbaNABI0aHW0XybUVHEOWEoyNe7swXuq3ru5HOsS2+5XPfekiiVjkx5?=
- =?iso-8859-1?Q?e/E0rvS4HkPBF/rZWQCIPTSe2JejxtjmYgYIdn9vBMbs3vh47TxQiwEQ3A?=
- =?iso-8859-1?Q?XGwm/3iBLCsRq4T8/8cgjfwC0AEiyZ51MB5bnKm4ScqiMWF2TWdrQLxCbC?=
- =?iso-8859-1?Q?9knBh50dqN9Cq0/mOAKS/uWp8nuaLG8yubrvfWPdRcaJMnvQL+Ow/lmyTY?=
- =?iso-8859-1?Q?cbxuVAP6Yc6WRv1USqhpPkMxg5qTQCLtXPUOGDdV2TmJgC9ygjNjgfswsc?=
- =?iso-8859-1?Q?6DA0+jOOKdAEZF487gRLl813dTvWq24OIwmcjhMX3MZkW0y2tG8rZFDFs6?=
- =?iso-8859-1?Q?cDKVLjznUPzqsRWnSaoNPhVjs09YezHSNEL9jlRtSlpmIk8uz5oQJLSSkU?=
- =?iso-8859-1?Q?VmeqMc4ULnG+u7lfyzmJBWNRnfk5U24PADAeSmq1XoXo2AZeqMqWLN6zzn?=
- =?iso-8859-1?Q?YxzxBDm/F6HTqLqF+4QPUB9nhhkUA0X5N/LzLbEDWd14G7/jl2GvzvCd1P?=
- =?iso-8859-1?Q?X2DH8aw94pvxzMUyyRoTD7kh4XCNT73cY3Jfa2PMtMqms/ONf1Hll3Wzjl?=
- =?iso-8859-1?Q?ILmCtR9gbQDMgAn0ppN4vTVjVubJPKt1uEyaQD4GunW3Xxomix1V/tY04o?=
- =?iso-8859-1?Q?FZbSL/E8uScJ7ZRe3NkF5cubo7+VWXe0mkSyVRJ5+pX0V3OuqfpRW0wLHl?=
- =?iso-8859-1?Q?xKyX3eawHgXafFH6r9yFncjTBlFTdylRmWI7GNa4G8CQzoLNsN+cqgkV7v?=
- =?iso-8859-1?Q?eUdN6Pg35JrO3CNtKYRMhG2HFiq2pfnqri5Rpv8WJBkeK+Z8D0ACNaOxxV?=
- =?iso-8859-1?Q?tSRMBfNKYf/w5tXhgv0RAQfn+CsIC7kDpvRNf9TVtiyyjYNfjdXw4xMXE8?=
- =?iso-8859-1?Q?n4oUFaXlivf2EaCqc4M57f5EeZym5m9t6i0UvteIDdvrGPHV9xDSh/3Gmy?=
- =?iso-8859-1?Q?0Yc2e+yCMq9woFIgWGDPvIuFaDVOWI62DEHmZl451eo8Xkh2VP8l9krIKn?=
- =?iso-8859-1?Q?H5GV0zg1tE1enGbepfe7eK4mPLGnTHY45BeLfpA+QqAsa3xLzIwblgVExL?=
- =?iso-8859-1?Q?kj9YiW0+WaM303LBBE0ieMj3JE9frs0IpYY/SD4LVD9kmbWuRCt5IQWNck?=
- =?iso-8859-1?Q?rPn1QX5QlPxBwLemXViqYUUmo82yu6dfqbsLPHcW9eu+UAuZSlUWv5rbW7?=
- =?iso-8859-1?Q?jG46ua4P2ERjsa9re+u7N3AirmnXmrxnj2ZkxBsF5kkWh81F6mQHrVezJv?=
- =?iso-8859-1?Q?29lt6Y67ayK7P8tgSQXJmvY3RlHdmDM1BJ6NjlFRPYK86PKLFeFwT0sUs9?=
- =?iso-8859-1?Q?i7jl2yzS6fbZIUWLUAAlrTIz2mWgBtg6LAuvmXswBo81SAv1cHQcfSR8RL?=
- =?iso-8859-1?Q?6kDepWMlkB3EGBYpC2zmiGNAHsMTwFYqAJrW1Vu+DAkX8jqetDxx0NnxhY?=
- =?iso-8859-1?Q?VRRIdXIIwzvCpxRWj0HMHENbmh8cjBuTpD3qi9LGtfTJF+EUftKdUk0cIe?=
- =?iso-8859-1?Q?CeS3kmTgTPXZKm6KQXTueXdE6e0PkAD0nH?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2accff3-5a4a-4d95-2f92-08dd623631ab
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 13:51:45.9849
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rXHJ9/TsAcFLrPp9pJgzeO6szhfQi7nJwn2L74QbeeVWYNkJ/qJAxfH5rDBbP7jTyGOYNF5H1XoxAIfpFqqJLQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7039
 
-On Thu, Mar 13, 2025 at 02:37:56PM +0100, Christophe Leroy wrote:
-> 
-> 
-> Le 13/03/2025 à 14:21, Dr. David Alan Gilbert a écrit :
-> > [Vous ne recevez pas souvent de courriers de linux@treblig.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> > 
-> > * Christophe Leroy (christophe.leroy@csgroup.eu) wrote:
-> > > 
-> > > 
-> > > Le 15/11/2024 à 16:20, linux@treblig.org a écrit :
-> > > > [Vous ne recevez pas souvent de courriers de linux@treblig.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> > > > 
-> > > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > > > 
-> > > > fsl_mc_allocator_driver_exit() was added explicitly by
-> > > > commit 1e8ac83b6caf ("bus: fsl-mc: add fsl_mc_allocator cleanup function")
-> > > > but was never used.
-> > > > 
-> > > > Remove it.
-> > > > 
-> > > > fsl_mc_portal_reset() was added in 2015 by
-> > > > commit 197f4d6a4a00 ("staging: fsl-mc: fsl-mc object allocator driver")
-> > > > but was never used.
-> > > > 
-> > > > Remove it.
-> > > > 
-> > > > fsl_mc_portal_reset() was the only caller of dpmcp_reset().
-> > > > 
-> > > > Remove it.
-> > > > 
-> > > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > > 
-> > > Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> > 
-> > Hi,
-> >    Can someone pick this old change up please?  I see the PPC patchwork says
-> >    'handled elsewhere' but doesn't say where.
-> 
-> MAINTAINERS file says where:
-> 
-> QORIQ DPAA2 FSL-MC BUS DRIVER
-> M:	Stuart Yoder <stuyoder@gmail.com>
-> M:	Laurentiu Tudor <laurentiu.tudor@nxp.com>
-> L:	linux-kernel@vger.kernel.org
-> S:	Maintained
-> F:	Documentation/ABI/stable/sysfs-bus-fsl-mc
-> F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
-> F:
-> Documentation/networking/device_drivers/ethernet/freescale/dpaa2/overview.rst
-> F:	drivers/bus/fsl-mc/
-> F:	include/uapi/linux/fsl_mc.h
-> 
-> FREESCALE SOC DRIVERS
-> M:	Christophe Leroy <christophe.leroy@csgroup.eu>
-> L:	linuxppc-dev@lists.ozlabs.org
-> L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> S:	Maintained
-> F:	Documentation/devicetree/bindings/misc/fsl,dpaa2-console.yaml
-> F:	Documentation/devicetree/bindings/soc/fsl/
-> F:	drivers/soc/fsl/
-> F:	include/linux/fsl/
-> F:	include/soc/fsl/
-> 
-> I acked the 2 line changes in include/linux/fsl/mc.h, the main changes being
-> in the C files which are not under my scope.
-> 
-> Stuart, Laurentiu, can you pick up the patch ?
+On Thu, 2025-03-13 at 09:35 -0400, Benjamin Coddington wrote:
+> On 13 Mar 2025, at 9:15, Jeff Layton wrote:
+>=20
+> > On Wed, 2025-03-12 at 22:31 +0000, Trond Myklebust wrote:
+> > > On Wed, 2025-03-12 at 10:37 -0400, Jeff Layton wrote:
+> > > > On Wed, 2025-03-12 at 09:52 -0400, Benjamin Coddington wrote:
+> > > > > On 12 Mar 2025, at 9:36, Jeff Layton wrote:
+> > > > >=20
+> > > > > > There have been confirmed reports where a container with an NFS
+> > > > > > mount
+> > > > > > inside it dies abruptly, along with all of its processes, but t=
+he
+> > > > > > NFS
+> > > > > > client sticks around and keeps trying to send RPCs after the
+> > > > > > networking
+> > > > > > is gone.
+> > > > > >=20
+> > > > > > We have a reproducer where if we SIGKILL a container with an NF=
+S
+> > > > > > mount,
+> > > > > > the RPC clients will stick around indefinitely. The orchestrato=
+r
+> > > > > > does a MNT_DETACH unmount on the NFS mount, and then tears down
+> > > > > > the
+> > > > > > networking while there are still RPCs in flight.
+> > > > > >=20
+> > > > > > Recently new controls were added[1] that allow shutting down an
+> > > > > > NFS
+> > > > > > mount. That doesn't help here since the mount namespace is
+> > > > > > detached from
+> > > > > > any tasks at this point.
+> > > > >=20
+> > > > > That's interesting - seems like the orchestrator could just reord=
+er
+> > > > > its
+> > > > > request to shutdown before detaching the mount namespace.=C2=A0 N=
+ot an
+> > > > > objection,
+> > > > > just wondering why the MNT_DETACH must come first.
+> > > > >=20
+> > > >=20
+> > > > The reproducer we have is to systemd-nspawn a container, mount up a=
+n
+> > > > NFS mount inside it, start some I/O on it with fio and then kill -9
+> > > > the
+> > > > systemd running inside the container. There isn't much the
+> > > > orchestrator
+> > > > (root-level systemd) can do to at that point other than clean up
+> > > > what's
+> > > > left.
+> > > >=20
+> > > > I'm still working on a way to reliably detect when this has happene=
+d.
+> > > > For now, we just have to notice that some clients aren't dying.
+> > > >=20
+> > > > > > Transplant shutdown_client() to the sunrpc module, and give it =
+a
+> > > > > > more
+> > > > > > distinct name. Add a new debugfs sunrpc/rpc_clnt/*/shutdown kno=
+b
+> > > > > > that
+> > > > > > allows the same functionality as the one in /sys/fs/nfs, but at
+> > > > > > the
+> > > > > > rpc_clnt level.
+> > > > > >=20
+> > > > > > [1]: commit d9615d166c7e ("NFS: add sysfs shutdown knob").
+> > > > > >=20
+> > > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > >=20
+> > > > > I have a TODO to patch Documentation/ for this knob mostly to wri=
+te
+> > > > > warnings
+> > > > > because there are some potential "gotchas" here - for example you
+> > > > > can have
+> > > > > shared RPC clients and shutting down one of those can cause
+> > > > > problems for a
+> > > > > different mount (this is true today with the
+> > > > > /sys/fs/nfs/[bdi]/shutdown
+> > > > > knob).=C2=A0 Shutting down aribitrary clients will definitely bre=
+ak
+> > > > > things in
+> > > > > weird ways, its not a safe place to explore.
+> > > > >=20
+> > > >=20
+> > > > Yes, you really do need to know what you're doing. 0200 permissions
+> > > > are
+> > > > essential for this file, IOW. Thanks for the R-b!
+> > >=20
+> > > Sorry, but NACK! We should not be adding control mechanisms to debugf=
+s.
+> > >=20
+> >=20
+> > Ok. Would adding sunrpc controls under sysfs be more acceptable? I do
+> > agree that this is a potential footgun, however. It would be nicer to
+> > clean this situation up automagically.
+> >=20
+> > > One thing that might work in situations like this is perhaps to make
+> > > use of the fact that we are monitoring whether or not rpc_pipefs is
+> > > mounted. So if the mount is containerised, and the orchestrator
+> > > unmounts everything, including rpc_pipefs, we might take that as a hi=
+nt
+> > > that we should treat any future connection errors as being fatal.
+> > >=20
+> >=20
+> > rpc_pipefs isn't being mounted at all in the container I'm using. I
+> > think that's not going to be a reliable test for this.
+> >=20
+> > > Otherwise, we'd have to be able to monitor the root task, and check i=
+f
+> > > it is still alive in order to figure out if out containerised world h=
+as
+> > > collapsed.
+> > >=20
+> >=20
+> > If by the root task, you mean the initial task in the container, then
+> > that method seems a little sketchy too. How would we determine that
+> > from the RPC layer?
+> >=20
+> > To be clear: the situation here is that we have a container with a veth
+> > device that is communicating with the outside world. Once all of the
+> > processes in the container exit, the veth device in the container
+> > disappears. The rpc_xprt holds a ref on the netns though, so that
+> > sticks around trying to retransmit indefinitely.
+> >=20
+> > I think what we really need is a lightweight reference on the netns.
+> > Something where we can tell that there are no userland tasks that care
+> > about it anymore, so we can be more aggressive about giving up on it.
+> >=20
+> > There is a "passive" refcount inside struct net, but that's not quite
+> > what we need as it won't keep the sunrpc_net in place.
+> >=20
+> > What if instead of holding a netns reference in the xprt, we have it
+> > hold a reference on a new refcount_t that lives in sunrpc_net? Then, we
+> > add a pre_exit pernet_ops callback that does a shutdown_client() on all
+> > of the rpc_clnt's attached to the xprts in that netns. The pre_exit can
+> > then just block until the sunrpc_net refcount goes to 0.
+> >=20
+> > I think that would allow everything to be cleaned up properly?
+>=20
+> Do you think that might create unwanted behaviors for a netns that might
+> still be repairable?   Maybe that doesn't make a lot of sense if there ar=
+e no
+> processes in it, but I imagine a network namespace could be in this state
+> and we'd still want to try to use it.
+>=20
 
-Stuart and Laurentiu are no longer at NXP. Even when they handled the
-fsl-mc bus driver, they didn't have a tree themselves to pick patches up
-but rather, historically, patches on the fsl-mc bus were picked by Greg
-KH.
+I don't think so. Once there are no userland tasks holding a reference
+to a namespace, there is no way to reach it from outside the kernel,
+AFAICT, so there is no way repair it.
 
-Ioana
+It would actually be nice if we had a way to say "open net namespace
+with this inode number". I guess we could add filehandle and
+open_by_handle_at() support to nsfs...
+
+> which, if used, creates an explicit requirement for the orchestrator to
+> define exactly what should happen if the veth goes away.  When creating t=
+he
+> namespace, the orchestrator should insert a rule that says "when this vet=
+h
+> disappears, we shutdown this fs".
+>
+> Again, I'm not sure if that's even possible, but I'm willing to muck arou=
+nd
+> a bit and give it a try.
+>=20
+
+I'd really prefer to do something that "just works" with existing
+userland applications, but if we have to do something like that, then
+so be it.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
