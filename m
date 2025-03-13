@@ -1,157 +1,175 @@
-Return-Path: <linux-kernel+bounces-559993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5CD7A5FC48
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:43:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2150A5FC60
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:44:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D30597A890D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:42:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E42313AC678
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C24D26A0DC;
-	Thu, 13 Mar 2025 16:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F391269AE6;
+	Thu, 13 Mar 2025 16:43:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qodb0LD4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gB5+ydLY"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3FC268FE4;
-	Thu, 13 Mar 2025 16:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBDC944F;
+	Thu, 13 Mar 2025 16:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741884137; cv=none; b=awYWPQ9HjBGo1tnvOZhcOBmi4freh9aewqTfXLsN5un10DQXSLfca84F5YJxJEXPg3FSyfgtBI/dJiumRKqFcQxwlOmwRjF5wAK/DCVwnGMz3cuVjLYRdUyRbwOELDpd6yeLYUzUgX/vGJOUYqrNswpYeF/y3q+G0aRiDUdVDhs=
+	t=1741884187; cv=none; b=C73V521vapuoNtusHkl1OrtGkuyIGqIEwnCsxz/hqeBujZn6STHkP1WSEszm/rqnbgfUGQdj08zE+vl1t3UVE/yKVxfJrbrh70p2HK1VZJkhCbv7Nv8o4Y8LqlJpO/jAqko/kmoO6zkLW1Q5PkKrVCmZzaQ4vD2RqPgTdzPZ66g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741884137; c=relaxed/simple;
-	bh=DyWTNTgy8kHzg4Osmhv7e7UL0kU6+DuQEfTAbk0Nx1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WPWbeczXiRgT1ZXDcjpwX3+6yCX7PZIwHl880Axson4bw8dbZ5eVqG2SerxYQLQdxdIiu+B7anGu6AdKtEkkREtC5H95M2mMlXFd5dNzLY/DJUfdP8iGN/2zGt1Jn2hkeNBlSaXcH1035I5o+PUewAeZcKRSb7OLAho2GsP8cf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qodb0LD4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17910C4CEE9;
-	Thu, 13 Mar 2025 16:42:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741884136;
-	bh=DyWTNTgy8kHzg4Osmhv7e7UL0kU6+DuQEfTAbk0Nx1k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qodb0LD4MmDeeqYnU6AlJa9f/2SqshRXtDrK0QTyvq4aidqSLizjoStsnasZnIC1X
-	 Z+sL1VfQjfJ4H3xj2EdAYsShp1iV7rn//+VORCx8UX6tSUhQLYKpG7c9kZpX/YWePr
-	 hueGKVjV6PEX4bQWNUsLkH7rfDmTSE44YaCBWe2XTCAbucePAzePGhS5SHbNmlHvEK
-	 D5ncERxebtd5CAAR96gZkSOWE5kNklRJ4G6q6e8ecFfft5iqUJweZeGL++7UUrVsVh
-	 WrODqU0EyS0GHOP4+yrHy01obzKql8ai3zFyAycFD+tM2mTQ7Z05nb9l3kIfD/b+Dj
-	 7vHsr4rR58Odw==
-Date: Thu, 13 Mar 2025 16:42:11 +0000
-From: Lee Jones <lee@kernel.org>
-To: Ryan.Wanner@microchip.com
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	claudiu.beznea@tuxon.dev, sre@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	p.zabel@pengutronix.de, linux@armlinux.org.uk,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v3 00/21] Enable Power Modes Support for SAMA7D65 SoC
-Message-ID: <20250313164211.GD3645863@google.com>
-References: <cover.1740671156.git.Ryan.Wanner@microchip.com>
+	s=arc-20240116; t=1741884187; c=relaxed/simple;
+	bh=nE5EpPB4If8RqZq+HFcWNMkObw2tBdQFgI8fiUTDjP4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:Cc:From:
+	 References:In-Reply-To; b=ZhEBVqOFwN0ZOEX3ZXEudYPOiTPwHgBzeWlrdHQ1t2tzZiUbKd1BYPb3QgsStcXttxQ0BosbnBqXFUdLCh8d/QtOCESWtdnKLkihzcua6OIpxqxT5bCQThkmYo+RrOU0eOsscybIyOylyCC+jz2QgyKr3lru5TqdJG2WY+favWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gB5+ydLY; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E64B2442CE;
+	Thu, 13 Mar 2025 16:43:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741884182;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JMMCggDw9vDK2Yxc6oEQTEtAehkSZ19aO0voX4jpN6E=;
+	b=gB5+ydLYSuiVzCjCgsFLD1v5Xg6uPAl9hgRIkOQ62erSYfMfiN8CxjC/KEIp7uMIb3FgiW
+	CkGGDvjg1H8uDThSdWsan1bxhecSegifJ/ZMy3q0RqOM3UKZ+vCOuiRLhlW9BrhNvaNzHU
+	98ZmovIgKi0dfziYVoixlN3vCydQDuRXH+XRTMEmdAkTPVqrO48lL1dFBb9o7KNscuRQma
+	PuDBH+wTgnFfnwSCSg4cEoHci33rnawP30QclnihHIffpvp+FbmbTZ+BGcjieQUiwlN4vb
+	VWav564x6se7tOYtg2OPwbPYx9QH/UuQR1u97o8geAjybwSQiOXEEVHmcUzR+Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1740671156.git.Ryan.Wanner@microchip.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 13 Mar 2025 17:43:00 +0100
+Message-Id: <D8FAEPI26C8F.397VN87KK9VIO@bootlin.com>
+To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
+Subject: Re: [PATCH v4 07/10] gpio: max7360: Add MAX7360 gpio support
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
+ <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
+ <20250214-mdb-max7360-support-v4-7-8a35c6dbb966@bootlin.com>
+ <Z69oa8_LKFxUacbj@smile.fi.intel.com>
+ <D7UOIHL2WOZP.LLGRKMILNJFU@bootlin.com>
+ <Z7OXQqyPjtGgTySf@smile.fi.intel.com>
+In-Reply-To: <Z7OXQqyPjtGgTySf@smile.fi.intel.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdekgeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvffuvefhofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeihfetgfdtudelteeuvdetjeeihfegledtgffgtdeivdduhedvveekjeegkeelteenucffohhmrghinheprghnrghlohhgrdgtohhmpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddvpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkohesihhnthgvlhdrtghomhdprhgtphhtthhop
+ ehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghmvghlrdgsohhuhhgrrhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplh
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-On Thu, 27 Feb 2025, Ryan.Wanner@microchip.com wrote:
+On Mon Feb 17, 2025 at 9:08 PM CET, Andy Shevchenko wrote:
+> On Mon, Feb 17, 2025 at 12:20:13PM +0100, Mathieu Dubois-Briand wrote:
+> > To provide a bit more details, there is basically two set of pins usabl=
+e
+> > as GPIOs.
+> >=20
+> > On one side we have what I refer to as GPIOs:
+> >   - PORT0 to PORT7 pins of the chip.
+> >   - Shared with PWM and rotary encoder functionalities. Functionality
+> >     selection can be made independently for each pin. We have to ensure
+> >     the same pin is not used by two drivers at the same time. E.g. we
+> >     cannot have at the same time GPIO4 and PWM4.
+> >   - Supports input and interrupts.
+> >   - Outputs may be configured as constant current.
+> >   - 8 GPIOS supported, so ngpios is fixed to MAX7360_MAX_GPIO.
+> >   - maxim,max7360-gpio compatible, gpio_function =3D=3D MAX7360_GPIO_PO=
+RT.
+> >=20
+> > On the other side, we have what I refer to as GPOs:
+> >   - COL2 to COL7 pins of the chip.
+> >   - Shared with the keypad functionality. Selections is made by
+> >     partitioning the pins: first pins for keypad columns, last pins for
+> >     GPOs. Partition is described by the ngpios property.
+> >   - Only support outputs.
+> >   - maxim,max7360-gpo compatible, gpio_function =3D=3D MAX7360_GPIO_COL=
+.
+> >=20
+> > > Or you mean that there output only GPIO lines in HW after all?
+> > > Is there a link to the datasheet?
+> >=20
+> > A datasheet is available on https://www.analog.com/en/products/max7360.=
+html
+>
+> Thank you for this good elaboration!
+> I will check on the datasheet later on, having one week off.
+>
 
-> From: Ryan Wanner <Ryan.Wanner@microchip.com>
-> 
-> This patch set adds support for low power modes for the SAMA7D65 SoC and
-> the required components and changes for low power modes.
-> 
-> The series includes changes in the asm code to account for the addtional
-> clocks that are in this SoC.
-> 
-> The Device tree additions are to enable all the components needed to
-> keep the SoC in low power mode.
-> 
-> There are some DTB check warnings but that is due to the dt-binding not
-> in the correct .yaml file format.
-> 
-> Changes v1 -> v2:
-> - Add missing compatible for ddr3phy, it is now in both syscon sets.
-> - Fix alphabetical ordering for sama7d65.
-> - Remove the incorrect reorganizing patch.
-> - Remove sama7g5-rtt as a compatible for sama7d65-rtt and add
->   sama7d65-rtt as a compatible wake up source in the pm driver.
-> 
-> Changes from v2 -> v3:
-> - Correct mistake in v2 sfrbu dt-binding patch.
-> - Correct incorrect dt-binding addition and formatting for rtc and rtt bindings.
-> - Add missing SoB tag.
-> - Cleaned up commit message for Backup mode to describe SHDWC is status
->   register is cleared for this SoC.
-> - Cleaned up variable naming and usage for mcks. Changed the mcks number
->   to the correct number of clocks needed to be saved and corrected the
->   ASM code accordingly.
-> - Removed the SHDWC from ULP0 wake-up source as it is not configured as
->   a valid wake-up source for ULP0.
-> - Separated all the DTSI and DTS changes into individual patches.
-> 
-> 
-> Li Bin (1):
->   ARM: at91: pm: fix at91_suspend_finish for ZQ calibration
-> 
-> Ryan Wanner (20):
->   dt-bindings: mfd: syscon: add microchip,sama7d65-ddr3phy
->   dt-bindings: mfd: syscon: add microchip,sama7d65-sfrbu
+Thanks for your feedback! Sorry I haven't been able to work on this
+series for the last few weeks, but I finally had the opportunity to
+integrate your comments.
 
-Ping me when these are ready to take.
+> But what I have read above sounds to me like the following:
+>
+> 1) the PORT0-PORT7 should be just a regular pin control with the respecti=
+ve
+> function being provided (see pinctrl-cy8c95x0.c as an example);
+>
 
->   dt-bindings: sram: Add microchip,sama7d65-sram
->   dt-bindings: power: reset: atmel,sama5d2-shdwc: Add
->     microchip,sama7d65-shdwc
->   dt-bindings: reset: atmel,at91sam9260-reset: add
->     microchip,sama7d65-rstc
->   dt-bindings: rtc: at91rm9200: add microchip,sama7d65-rtc
->   dt-bindings: at91rm9260-rtt: add microchip,sama7d65-rtt
->   ARM: at91: Add PM support to sama7d65
->   ARM: at91: pm: add DT compatible support for sama7d65
->   ARM: at91: PM: Add Backup mode for SAMA7D65
->   ARM: at91: pm: Enable ULP0/ULP1 for SAMA7D65
->   power: reset: at91-sama5d2_shdwc: Add sama7d65 PMC
->   ARM: dts: microchip: sama7d65: Add SRAM and DRAM components support
->   ARM: dts: microchip: sama7d65: Add Reset Controller to sama7d65 SoC
->   ARM: dts: microchip: sama7d65: Add Shutdown controller support
->   ARM: dts: microchip: sama7d65: Add RTT and GPBR Support for sama7d65
->     SoC
->   ARM: dts: microchip: sama7d65: Add RTC support for sama7d65
->   ARM: dts: microchip: sama7d65: Add SFRBU support to sama7d65
->   ARM: dts: microchip: sama7d65: Enable shutdown controller
->   ARM: dts: microchip: sama7d65: Add RTT timer to curiosity board
-> 
->  .../devicetree/bindings/mfd/syscon.yaml       |   4 +
->  .../power/reset/atmel,sama5d2-shdwc.yaml      |   5 +
->  .../reset/atmel,at91sam9260-reset.yaml        |   3 +
->  .../bindings/rtc/atmel,at91rm9200-rtc.yaml    |   4 +-
->  .../bindings/rtc/atmel,at91sam9260-rtt.yaml   |   1 +
->  .../devicetree/bindings/sram/sram.yaml        |   1 +
->  .../dts/microchip/at91-sama7d65_curiosity.dts |  13 +++
->  arch/arm/boot/dts/microchip/sama7d65.dtsi     |  77 +++++++++++++
->  arch/arm/mach-at91/Kconfig                    |   1 +
->  arch/arm/mach-at91/pm.c                       |  47 +++++---
->  arch/arm/mach-at91/pm.h                       |   1 +
->  arch/arm/mach-at91/pm_data-offsets.c          |   2 +
->  arch/arm/mach-at91/pm_suspend.S               | 101 ++++++++++++++++--
->  drivers/power/reset/at91-sama5d2_shdwc.c      |   1 +
->  14 files changed, 238 insertions(+), 23 deletions(-)
-> 
-> -- 
-> 2.43.0
-> 
+Ok, so I created a pin control driver for the PORT pins. This will
+effectively help to prevent concurrent use of pins in place of the
+request()/free() callbacks.
 
--- 
-Lee Jones [李琼斯]
+My only concern is: as there is no real pin muxing on the chip, my
+.set_mux callabck in pinmux_ops structure is not doing anything. It
+looks like I'm not the only one
+(drivers/pinctrl/pinctrl-microchip-sgpio.c does the same thing), but I
+hope this is OK.
+
+> 2) the COL2 COL7 case can be modeled as a simplest GPIO (GPO) driver with
+> reserved lines property (this will set valid mask and let GPIOLIB to refu=
+se any
+> use of the keypad connected pins.
+>
+
+I mostly went that way, just a few notes.
+
+I chose to not use the reserved lines property in the device tree, but
+instead implemented a gpiolib init_valid_mask() callback. In believe
+this is better, as:
+- We can automatically generate the valid gpios mask, based on the
+  number of columns used.
+- It allows to get rid of the compatibility check between the number of
+  columns and the number of GPIOs provided by the device tree: DT
+  provides the number of columns, we deduct the number of GPIOs.
+
+I chose to number GPIOs from 0 to 7.
+- This might be a bit questionable, as GPIO 0 and 1 will always be
+  invalid: pins 0 and 1 of the chip cannot be used as GPIOs. I'm
+  definitely open to discussion on this point.
+- Yet I believe it simplifies everything for the user: pin numbers and
+  GPIO numbers are the same instead of having an offset of 2.
+- It also simplifies a bit the GPIO driver code.
+
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
