@@ -1,188 +1,108 @@
-Return-Path: <linux-kernel+bounces-560100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57CEAA5FDC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:28:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1DCAA5FDC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:29:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390EA1738C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:28:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 005FE8802A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767E618A6D3;
-	Thu, 13 Mar 2025 17:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2987189F56;
+	Thu, 13 Mar 2025 17:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQ2DxQ6s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WsiJ1vS4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE45158868;
-	Thu, 13 Mar 2025 17:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01AFD12CD88;
+	Thu, 13 Mar 2025 17:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741886910; cv=none; b=b0NpawxaFzeeIa/f4Bq11NEGTP5lB04LmPS8hwV7yz8g0qBi9tC0moc/p5Kxdnhk8Cq1vVsrB7cJM3aFDCGiuHb8llGK7rv51+4vr/BGALQPOtFPVBBjz9ad3pKPEa9ED4jm6C05ts3ZNokQP5VzJQ4/kUK7JR0hDoMFx1hcTog=
+	t=1741886939; cv=none; b=akdWVFGE36tFFRXuGjDQz9nobRABRxkOSX2rTwVTY+mvkQ9WaHOTsWxJisoTZRc5OsYbDPEYI0Zjk1H8dgk/J60sc7PqW2PpOhGQuvShPCOahALKUK3rWGTj/hcD9tpLtQn0uoWG6aNqWjqqxPyP36WE2eBykQjuz+pfXeLzBtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741886910; c=relaxed/simple;
-	bh=ysZJy/pStSvMTNKpMrLF6jzCLOYDpj1uIdVrASzzEoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=f3d7SyDKBtFlqB6a+fvCPFbMtkxPxbZhlBIoroAxyAhToYf4/FMIaoijH90AMVSvW+oWtIJIa3u0ezu1oqStTNARE3Zvznsfc190v3/4oryb4dq6+K2P62adLsxiQfX6aUBS3jLdxeINub1KgUYEZXGE9Rnn0ldBrKgALsaRMVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dQ2DxQ6s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20167C4CEDD;
-	Thu, 13 Mar 2025 17:28:30 +0000 (UTC)
+	s=arc-20240116; t=1741886939; c=relaxed/simple;
+	bh=pCKx8h4RdPEXnrliEof7w9TGctCJ+lkyJAvPxZvj8as=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=liW8s5H1NxzBeCRiIcQJdhCxAjugRR2ma55gP5ZLu5BPx0W8jO47KebiC4Lh6Yn9BaMynJtavHE6ut1qHkym9j1Le3oUD8+W4h+ZYOvnHcZwq6iMyHJNI1laGUP9pqVJPm2xvuS9L8S9eJIVSt78TzFoob3/E3VwT54e7pBdYZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WsiJ1vS4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78296C4CEDD;
+	Thu, 13 Mar 2025 17:28:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741886910;
-	bh=ysZJy/pStSvMTNKpMrLF6jzCLOYDpj1uIdVrASzzEoY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=dQ2DxQ6sIpOoITZl4zyHIxnBnbZyOGDZNCdr6pjx83cxo7HKyABB0MY5WSzJPQMiy
-	 3ol/5oSMjL14PA0/ckuboggAjr77NDLlyW/cF4PCSVOSERWtWivHsQYmquJI5Reogs
-	 HM7bSJ5Xii3T05scdfAqplAxvpe8MfMcdZoOUm1paIPCyvWEzJO3msis1SJCp4K1cu
-	 ccxcBkbSQ0hqb0svtmMvC8pQ8gomopQTsJ6IY3MkcJ50NnDR9gbOoogZ29hSAaGpyo
-	 C7Z1Z+K13kh2VAUFqfC76Fp9gcjIaawMMPBmhHRhM7iyhlimU3im7nE91MoZikvLpk
-	 ZsUdRxHkoL0iA==
-Date: Thu, 13 Mar 2025 12:28:28 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Jeff Johnson <jjohnson@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	mhi@lists.linux.dev, linux-wireless@vger.kernel.org,
-	ath11k@lists.infradead.org, quic_pyarlaga@quicinc.com,
-	quic_vbadigan@quicinc.com, quic_vpernami@quicinc.com,
-	quic_mrana@quicinc.com,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	Miaoqing Pan <quic_miaoqing@quicinc.com>
-Subject: Re: [PATCH v2 10/10] wifi: ath11k: add support for MHI bandwidth
- scaling
-Message-ID: <20250313172828.GA740705@bhelgaas>
+	s=k20201202; t=1741886938;
+	bh=pCKx8h4RdPEXnrliEof7w9TGctCJ+lkyJAvPxZvj8as=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WsiJ1vS4VkmRkEQ91gUkBcXJpHCkjiQdXuKiOQrrIiFFBXTiyzWC1lNxpbasmhUpq
+	 3JfyOHYn+nAM5kLaFI7eKKMk0HVf0PYt9MfKkoBJ8D20YQKw1ngGTv9SXVphquEE2h
+	 5FlTV4pustJ2ITwpRF1Mfnt55HA7MhFAT/DH8k8bfDg8uSfYhcoZzDsRwQ4++FKCuA
+	 ot/lfD8WMiYADiTKuF+3761zflCg4viKvvK9vcUUI5qt7A6AsUxSPP/q9N2rzjlyFr
+	 zE/pTffZvM1VqP7YEYZUp20FKgVv5uizsSJhZI1T/0EIjucCggWl2hxTSmb3uw6p4S
+	 9WKQ0vOSUIRTA==
+From: Kees Cook <kees@kernel.org>
+To: Arpitha Raghunandan <98.arpi@gmail.com>,
+	David Gow <davidgow@google.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	Tamir Duberstein <tamird@gmail.com>
+Cc: Kees Cook <kees@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org,
+	linuxppc-dev@lists.ozlabs.org,
+	workflows@vger.kernel.org
+Subject: Re: [PATCH v6 0/3] printf: convert self-test to KUnit
+Date: Thu, 13 Mar 2025 10:28:50 -0700
+Message-Id: <174188692856.3317505.16138391415680640168.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250307-printf-kunit-convert-v6-0-4d85c361c241@gmail.com>
+References: <20250307-printf-kunit-convert-v6-0-4d85c361c241@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313-mhi_bw_up-v2-10-869ca32170bf@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 13, 2025 at 05:10:17PM +0530, Krishna Chaitanya Chundru wrote:
-> From: Miaoqing Pan <quic_miaoqing@quicinc.com>
+On Fri, 07 Mar 2025 17:08:55 -0500, Tamir Duberstein wrote:
+> This is one of just 3 remaining "Test Module" kselftests (the others
+> being bitmap and scanf), the rest having been converted to KUnit.
 > 
-> Add support for MHI bandwidth scaling, which will reduce power consumption
-> if WLAN operates with lower bandwidth. This feature is only enabled for
-> QCA6390.
-
-What is the event that initiates bandwidth scaling or reduces power
-consumption?  Is there any kind of user interface like a sysfs knob
-an administrator can use?
-
-Does this happen based on ath11k usage?  Battery or thermal status?  
-
-I guess reducing power consumption or reducing heat is probably the
-driving factor since we would always use max performance if power and
-heat were not issues?
-
-Some hints here would be useful.
-
-> Tested-on: WCN6855 hw2.1 PCI WLAN.HSP.1.1-04546-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
-> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
-> ---
->  drivers/net/wireless/ath/ath11k/mhi.c | 41 +++++++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
+> I tested this using:
 > 
-> diff --git a/drivers/net/wireless/ath/ath11k/mhi.c b/drivers/net/wireless/ath/ath11k/mhi.c
-> index 6e45f464a429..74769c0993ae 100644
-> --- a/drivers/net/wireless/ath/ath11k/mhi.c
-> +++ b/drivers/net/wireless/ath/ath11k/mhi.c
-> @@ -20,6 +20,7 @@
->  #define MHI_TIMEOUT_DEFAULT_MS	20000
->  #define RDDM_DUMP_SIZE	0x420000
->  #define MHI_CB_INVALID	0xff
-> +#define MHI_BW_SCALE_CHAN_DB 126
->  
->  static const struct mhi_channel_config ath11k_mhi_channels_qca6390[] = {
->  	{
-> @@ -73,6 +74,17 @@ static struct mhi_event_config ath11k_mhi_events_qca6390[] = {
->  		.client_managed = false,
->  		.offload_channel = false,
->  	},
-> +	{
-> +		.num_elements = 8,
-> +		.irq_moderation_ms = 0,
-> +		.irq = 1,
-> +		.mode = MHI_DB_BRST_DISABLE,
-> +		.data_type = MHI_ER_BW_SCALE,
-> +		.priority = 2,
-> +		.hardware_event = false,
-> +		.client_managed = false,
-> +		.offload_channel = false,
-> +	},
->  };
->  
->  static const struct mhi_controller_config ath11k_mhi_config_qca6390 = {
-> @@ -313,6 +325,33 @@ static void ath11k_mhi_op_write_reg(struct mhi_controller *mhi_cntrl,
->  	writel(val, addr);
->  }
->  
-> +static int ath11k_mhi_op_get_misc_doorbell(struct mhi_controller *mhi_cntrl,
-> +					   enum mhi_er_data_type type)
-> +{
-> +	if (type == MHI_ER_BW_SCALE)
-> +		return MHI_BW_SCALE_CHAN_DB;
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int ath11k_mhi_op_bw_scale(struct mhi_controller *mhi_cntrl,
-> +				  struct mhi_link_info *link_info)
-> +{
-> +	enum pci_bus_speed speed = pci_lnkctl2_bus_speed(link_info->target_link_speed);
-> +	struct ath11k_base *ab = dev_get_drvdata(mhi_cntrl->cntrl_dev);
-> +	struct pci_dev *pci_dev = to_pci_dev(ab->dev);
-> +	struct pci_dev *pdev;
-> +
-> +	if (!pci_dev)
-> +		return -EINVAL;
-> +
-> +	pdev = pci_upstream_bridge(pci_dev);
-> +	if (!pdev)
-> +		return -ENODEV;
-> +
-> +	return pcie_set_target_speed(pdev, speed, true);
-
-Seems kind of unfortunate that:
-
-  1) The endpoint driver needs to be involved here, even though it
-  does nothing that is endpoint-specific, and
-
-  2) The endpoint driver twiddles something in *another* device (the
-  upstream bridge).  There's a potential locking issue here and
-  potential conflict with any other devices that may be below that
-  bridge.
-
-> +}
-> +
->  static int ath11k_mhi_read_addr_from_dt(struct mhi_controller *mhi_ctrl)
->  {
->  	struct device_node *np;
-> @@ -389,6 +428,8 @@ int ath11k_mhi_register(struct ath11k_pci *ab_pci)
->  	mhi_ctrl->status_cb = ath11k_mhi_op_status_cb;
->  	mhi_ctrl->read_reg = ath11k_mhi_op_read_reg;
->  	mhi_ctrl->write_reg = ath11k_mhi_op_write_reg;
-> +	mhi_ctrl->bw_scale = ath11k_mhi_op_bw_scale;
-> +	mhi_ctrl->get_misc_doorbell = ath11k_mhi_op_get_misc_doorbell;
->  
->  	switch (ab->hw_rev) {
->  	case ATH11K_HW_QCN9074_HW10:
+> $ tools/testing/kunit/kunit.py run --arch arm64 --make_options LLVM=1 printf
 > 
-> -- 
-> 2.34.1
-> 
+> [...]
+
+Applied to for-next/move-kunit-tests, thanks!
+
+[1/3] printf: convert self-test to KUnit
+      https://git.kernel.org/kees/c/7a79e7daa84e
+[2/3] printf: break kunit into test cases
+      https://git.kernel.org/kees/c/81a03aa9b88c
+[3/3] printf: implicate test line in failure messages
+      https://git.kernel.org/kees/c/034bee685fd4
+
+Take care,
+
+-- 
+Kees Cook
+
 
