@@ -1,139 +1,386 @@
-Return-Path: <linux-kernel+bounces-559461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7846AA5F400
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:16:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E005AA5F403
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:16:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 710587A59CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:15:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BDF617E305
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADEBC2676F1;
-	Thu, 13 Mar 2025 12:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFF2266599;
+	Thu, 13 Mar 2025 12:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJRY1Rxo"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VT4fPc+D"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560662673BA;
-	Thu, 13 Mar 2025 12:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B72C266EFF
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741868128; cv=none; b=O7MuGaByShHcstPOeUeLptEoSH26kaY6+WhvD7RujzWxzXlVJfqT/Gh3kim4Z2tQqc5EH1GAH6pOJqT9uLN0QRHO1Q97UnsmtLAmYMoVr60FYO/nBcOZfL27zAkxS2AZrZqNhRTK5R4JgWVd3ZjfAhyBp8RWt57nvvdDJnE9URw=
+	t=1741868158; cv=none; b=JN4IaB2v1hJI61MvNlFmJphFbfAYyIoyQBTRVag9LXsQRdbYCOMpg5ZY+4D58oSppNi9+PQp3Y91eKn3NGbV76uN2Uy373hOCSvAq7b+9PZUnv2JJ/UIJiZW+Db5oebr4at91EuSb9CToRF6OooL4Oh8bnJP0RbQqRdYSySXB4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741868128; c=relaxed/simple;
-	bh=msRQvskLF0OZgyr0Nn2gFUtgHE+JQ1Q+SpkaJxkauws=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HW6EIMKVOTFTXT4d+XcRr11H4hfPpvTMiVxa/8LJkvvXEdiZ1j4NVVmIDdnNWrBFuFCX49ofNTcsojB++AERz3Bn2U5ChPtHbBACwmv67C2vVGmwcXropBjdfEVR7WWrIavZHgiLSdxbhkXfHxgYho6aJC8ZbGZCNz/s/if0c8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VJRY1Rxo; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-549644ae382so1008884e87.1;
-        Thu, 13 Mar 2025 05:15:25 -0700 (PDT)
+	s=arc-20240116; t=1741868158; c=relaxed/simple;
+	bh=vp5MZTmroiuBdvR0ttdRG0jnr2uZNkSNRW9eKcTZPEo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HmNa+EwV623DoXCIJdl4KKSXcpKdmZbo/fGicAp7r4ARyo3uQLj/bO+ZxFD3LEv7USe3HQqkfL4/SGelo/GRf82v6r2rPa4ZnbfAq92LlLynlaeFGVS7AQQXNxPKYiN9g4QQmzyujWk0ZpLtE2FBPJLrMKLXmIUbblAJVTSUWyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VT4fPc+D; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6fedf6aaed2so8967097b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 05:15:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741868124; x=1742472924; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EX8q9UrYqVDJV0DCL4gk761qzs/ghU5IMPiNSIbYdrU=;
-        b=VJRY1Rxomem9o7mHI16uMgqpPHedNYFmkWItA7uP2rf+J94QnVcUiybc5Td/E2wHyf
-         DYrh/7GLuHBGFNpbncFzwWeoxSVVFSiIbXZMZhw7Mp7cXM5GY7P+XbpHXfQv5IgaS0Ch
-         8mGndV+bG9rY1JF7otXbMZCeBr9ggw/q08xEKfrNJph8ageLoxVfpYpoc77eApEcW8NU
-         afdw44AGbz8hfZidsrYIz99i1OD37GJTUYtxHRY0qJxclaK4tjw+T6vPHc6mOjhjjYZZ
-         0UYsJxkKct1oMdhTXzcyPKHtmlFvJTqRVHVeRWyu8OBjALd1ZFXVl7ZX+KcbJ+VVzMP5
-         PanA==
+        d=linaro.org; s=google; t=1741868151; x=1742472951; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Oxo4nRaNKlTff6Ix3Ee9t1VjmVf7/i10eQiNoUZabVo=;
+        b=VT4fPc+DPLi79SHdfV7xvzO/spCKw5YsEqZC8zyp96um+pfKZrJbCL5yNpNsW3YUUc
+         8Q1VZaJkd0j29pSKombRliV0OzGGBDQTPii/lxnUMW3KzGglLnQ9J8truKAvielmFx9S
+         Dx1FayxUdVmOiyu/9lS58IyOV0HZd6ku1IVi6ih5fVUvSC9CZOieBQxtX3rCBrZXPySN
+         nl0sTKXKVzfB2h2H3CoKENtKR/FTVnc7TCeSnUOov/ixRFC8QEpqVfrchVUtT8lAJCfW
+         IFNG1ZYoMZerH/NmdBUtBljHy4ZCEuRtQTC0Lqc2fLnWjWrh85F/Qw0rRsqTo8WaTJY6
+         QqSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741868124; x=1742472924;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EX8q9UrYqVDJV0DCL4gk761qzs/ghU5IMPiNSIbYdrU=;
-        b=U2sB3HavkJ6Uh3jORwNJpGpgdiPrQHEdizXYWZjn7id3C4S5csT/oDkxLhF4h1Ajtq
-         l9zBBZnzlxjnTDF63pubD0FUs68fZE79zvGuCy3PyhNBNnUzYy3R3Ww+wV2MzVUTScNc
-         jFQvODtTG9rT7DjPDyuPC8XIMqBEdzkt1ZZX0WMyzr0cAQRSuOEQbI5QYqc+Vk7CcJbz
-         yjWX53vJjjk/i52QZX0ifVOo/wKHfLiPkldugBFsOqwIr+kAzrH/EIyPmO6X07JLdumT
-         BMB6wnuvnpgYMvhDqR4gRk7Z/Mh99he51FwwhzHVxc/BucCCj78avIK5vkE0q8V03TaC
-         AfxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBNdmCWnOn2xjmGrEMsr0FtkagqYB9lSsZa1SE/AoLf+Eqv0DRSnbVc4pRO4xNDY5T4IyMnIaQwAmR0tQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQp6dSA8SPIuXPQtdnpixtmw70MOHDQeGRqqGlY8Cyzvaxjt+9
-	j914Qr1wZnbUyK8NtRJ7Fz5bjMCAfbpCcMs0iIza7ldMm8mR5Q4/
-X-Gm-Gg: ASbGncsrylzDh4UQP9dE5Cod9wjh5UwPU09xN5FbVhq7nWegNNCUcdveXWa0ZNn0byP
-	IKUp+o3TVtnA36wYLYFcCWT5U7eXD6xxPuKqhUF1w4jzKlZinEBteDZX7lEUD0ffIlwiz31wtaG
-	Bbw3ZZmyuw5tnnPBO+x5Ic0RZFjvYd35t7zk/Gpjw6Z/W2YqPSW29ApdwIBmVeIatkONt+JRxWw
-	Hz0coYY4pCU5/zT3AZJ5WDECfXaGflYloNOrCVe3vEIMyKuYs0qGfhe/xG0l62uphRWn7aRsLgy
-	EYQnhDromxC0f/j7TuJY5WQf0Wtgfmfa8jPTV2CuKwmxxUW87SYwVe5/tkXetsE90ZpgOO6bAl3
-	VAmVFkQA0ZnEM7satsAzD6Gs=
-X-Google-Smtp-Source: AGHT+IHMRtNCp83Y5VfziuGToqqqNP58sFYcJkuPp1RzeIUqXPMosvv/GKK4Fe03sF47GiIrlqbP7Q==
-X-Received: by 2002:a05:6512:1242:b0:545:2837:17d0 with SMTP id 2adb3069b0e04-54990e5d3fcmr9433873e87.12.1741868124206;
-        Thu, 13 Mar 2025 05:15:24 -0700 (PDT)
-Received: from [192.168.1.11] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7c192bsm192851e87.89.2025.03.13.05.15.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 05:15:23 -0700 (PDT)
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-Date: Thu, 13 Mar 2025 13:14:44 +0100
-Subject: [PATCH 4/4] watchdog: da9052_wdt: respect TWDMIN
+        d=1e100.net; s=20230601; t=1741868151; x=1742472951;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Oxo4nRaNKlTff6Ix3Ee9t1VjmVf7/i10eQiNoUZabVo=;
+        b=mZ3C1XVf+cYeaMrPt/2KLdjbVfnoVCa9s7az7YibfkznLZtxf9OZtmt2t7fJVt9yjU
+         VEjL4oUv6VIbo+dpiQTsPz1Ob5gPtcrPgiuifnUTt549JHueQQJkhXUxj4ZiX8VAj3R9
+         xp0TuPXb7YRkVFI8PbgGaCwecGyUL1fjN5GNQLbPDAF/ATdtXKxC6IYUe4VVxWoLFgSi
+         DK+bqfms8booFHwW36R7PNoyLyOHs/FAae0WYziBcf9gaLMP8Bpgzb6KQHUy6E50cEo8
+         2PEuQXih6tW8OtjTh50odLgHcFA/Xs3joz6J/3pVZusVwdphJ3B+8RmTtrA+IwHR84MQ
+         iwJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXd/R2QHj83AE3Y2Iyb8xU+7+LjXLYu1+TF+brdkenhz9qu7K8OwKDy58Ry55g18NyA0Qme7boH30nFh9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaA30gmYOhaclVgD3Bb1LOQcX8JmuvhLaUFtCOkD4R9BJmpRSn
+	8IjKlGYTK/bBcQtZg9/ihvZTJKWdsIpBjlmOyk6GNRrNq4kCE0PrJhr0oGE8yvSCFH5iixgbnWl
+	/6A+EtWGYMa8ktbyDyZK+DZbU5//vMdhldmVyTw==
+X-Gm-Gg: ASbGncvaNVx8FoZK0s+jNlUrq9KIS85gywgUHXAaK6Ld6raDRST0d3XO7rOvWb4zh3s
+	JI4C6bXBBxNXtmJKjAvkNyJjEG1AnvMnhQeEV+a0065ocZaFfPiQ3INkkejbBizlTY04O3TFMB/
+	nENSsECBP96wEpQETuLoLNKu0GQf0=
+X-Google-Smtp-Source: AGHT+IH+g4YhUvJzDDM8IF19825mFy84oTJJNtvmLZ+edTkcRlAfOhjQ33xlQord/MYk0nTfcCGUgTiOxucg/kuf8R8=
+X-Received: by 2002:a05:690c:6389:b0:6fe:c4bd:e2ca with SMTP id
+ 00721157ae682-6ff2f80f6f8mr30294897b3.14.1741868151300; Thu, 13 Mar 2025
+ 05:15:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250313-da9052-fixes-v1-4-379dc87af953@gmail.com>
-References: <20250313-da9052-fixes-v1-0-379dc87af953@gmail.com>
-In-Reply-To: <20250313-da9052-fixes-v1-0-379dc87af953@gmail.com>
-To: Support Opensource <support.opensource@diasemi.com>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>
-Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Marcus Folkesson <marcus.folkesson@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=945;
- i=marcus.folkesson@gmail.com; h=from:subject:message-id;
- bh=msRQvskLF0OZgyr0Nn2gFUtgHE+JQ1Q+SpkaJxkauws=;
- b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBn0sxNyp/FjToxW9L13vbZBkc33m+xJJc7q48ql
- mVpKIkU0s+JAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCZ9LMTQAKCRCIgE5vWV1S
- MsckD/9h1UydeVp6qsi+uKW5zBfGDCsGW5VxuZlyfzEph8LSo7bvEZ7zza+keb/Zr++SzDK/swb
- VIKvjFQX7w/0RQ78pJ9tdLPnbF2lj8JarD0SOSgo6pyxNLLUTKEa1WOQaBntXjY3oyQpBTqrob+
- 29lgnNKYd7O7Pf0i0ROt2qHnmqJlOOXtQMh8AsfycyvPr7t/aX7V6uNm8O+VXsQUWdlQdLfSgKT
- AYZdu7bh0UOkjsXCNWwM0aRNpNsbjMhW0+vKWAdBlMOqLqR9Uum4jkPSQ1e52mzVwwrkur5ZBr6
- u5whBqWQTzsmvjYYbKVzFkSHQB5/Brm8h08qeajZPyYL+0VGXUBs0fqZGYvixMPIFmnRLCTOC+N
- g/OZTAF0rnRsQKw9rq3n4tBQzLoVc3Td6nuSQ+1U4m7pdULCVNltq+HLLIDe0REaogi9nM8s5uT
- SEy0jyEK3vszBAdzpu8ix9FOhqQrhcZFOzh9Rp8BTkBU5kpgy4VZdetORrFZT2AoXzfFneDbJwp
- D3TYzzvLXdPlDpG0h21w5PMTel/o1V5Atf8dU0ENPTw+AKFGwuJBygw5EP6VYNqiC2yOFvPJyQj
- FaJfdQeRPmcMqFTJp/T6dEWvXuDZYOpuOJRtAJEmeO+pifmHuZfDDe/xQ5UZNazkwEqLkCU6DSu
- DnPwqg/N2zb0AUw==
-X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
- fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
+References: <CGME20250313040150epcas5p347f94dac34fd2946dea51049559ee1de@epcas5p3.samsung.com>
+ <20250313035322.243239-1-anuj20.g@samsung.com>
+In-Reply-To: <20250313035322.243239-1-anuj20.g@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 13 Mar 2025 13:15:15 +0100
+X-Gm-Features: AQ5f1JqMiJUg0zYIlcoPjPPIUUYi7aY9XoeZibdDJNGexKsNoy8AEu5lVvN-wm8
+Message-ID: <CAPDyKFqdK0OPKkTK5C5b1_9kXNSkXJKBvBSa80eXj+GpNfEKBg@mail.gmail.com>
+Subject: Re: [PATCH] block: remove unused parameter
+To: Anuj Gupta <anuj20.g@samsung.com>
+Cc: Jens Axboe <axboe@kernel.dk>, "Md. Haris Iqbal" <haris.iqbal@ionos.com>, 
+	Jack Wang <jinpu.wang@ionos.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	=?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>, 
+	Juergen Gross <jgross@suse.com>, Stefano Stabellini <sstabellini@kernel.org>, 
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, Maxim Levitsky <maximlevitsky@gmail.com>, 
+	Alex Dubov <oakad@yahoo.com>, Richard Weinberger <richard@nod.at>, Zhihao Cheng <chengzhihao1@huawei.com>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+	Sagi Grimberg <sagi@grimberg.me>, James Smart <james.smart@broadcom.com>, 
+	Chaitanya Kulkarni <kch@nvidia.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
+	xen-devel@lists.xenproject.org, linux-mmc@vger.kernel.org, 
+	linux-mtd@lists.infradead.org, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-nvme@lists.infradead.org, 
+	linux-scsi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-We have to wait at least the minimium time for the watchdog window
-(TWDMIN) before writings to the wdt register after the
-watchdog is activated.
-Otherwise the chip will assert TWD_ERROR and power down to reset mode.
+On Thu, 13 Mar 2025 at 06:13, Anuj Gupta <anuj20.g@samsung.com> wrote:
+>
+> request_queue param is not used by blk_rq_map_sg and __blk_rq_map_sg.
+> remove it.
+>
+> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
 
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
----
- drivers/watchdog/da9052_wdt.c | 1 +
- 1 file changed, 1 insertion(+)
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org> # For MMC/MEMSTICK
 
-diff --git a/drivers/watchdog/da9052_wdt.c b/drivers/watchdog/da9052_wdt.c
-index 90b620b11b5fb634372e18ce4c40568cd946f284..b46338061e7d269adec691f8e88e650e1e2fbfc9 100644
---- a/drivers/watchdog/da9052_wdt.c
-+++ b/drivers/watchdog/da9052_wdt.c
-@@ -180,6 +180,7 @@ static int da9052_wdt_probe(struct platform_device *pdev)
- 	da9052_wdt = &driver_data->wdt;
- 
- 	da9052_wdt->timeout = DA9052_DEF_TIMEOUT;
-+	da9052_wdt->min_hw_heartbeat_ms = DA9052_TWDMIN;
- 	da9052_wdt->info = &da9052_wdt_info;
- 	da9052_wdt->ops = &da9052_wdt_ops;
- 	da9052_wdt->parent = dev;
-
--- 
-2.48.1
-
+> ---
+>  block/blk-merge.c                   | 4 ++--
+>  block/bsg-lib.c                     | 2 +-
+>  drivers/block/mtip32xx/mtip32xx.c   | 2 +-
+>  drivers/block/rnbd/rnbd-clt.c       | 2 +-
+>  drivers/block/sunvdc.c              | 2 +-
+>  drivers/block/virtio_blk.c          | 2 +-
+>  drivers/block/xen-blkfront.c        | 2 +-
+>  drivers/memstick/core/ms_block.c    | 2 +-
+>  drivers/memstick/core/mspro_block.c | 4 +---
+>  drivers/mmc/core/queue.c            | 2 +-
+>  drivers/mtd/ubi/block.c             | 2 +-
+>  drivers/nvme/host/apple.c           | 2 +-
+>  drivers/nvme/host/fc.c              | 2 +-
+>  drivers/nvme/host/pci.c             | 2 +-
+>  drivers/nvme/host/rdma.c            | 3 +--
+>  drivers/nvme/target/loop.c          | 2 +-
+>  drivers/scsi/scsi_lib.c             | 2 +-
+>  include/linux/blk-mq.h              | 9 ++++-----
+>  18 files changed, 22 insertions(+), 26 deletions(-)
+>
+> diff --git a/block/blk-merge.c b/block/blk-merge.c
+> index 1d1589c35297..fdd4efb54c6c 100644
+> --- a/block/blk-merge.c
+> +++ b/block/blk-merge.c
+> @@ -551,8 +551,8 @@ static inline struct scatterlist *blk_next_sg(struct scatterlist **sg,
+>   * Map a request to scatterlist, return number of sg entries setup. Caller
+>   * must make sure sg can hold rq->nr_phys_segments entries.
+>   */
+> -int __blk_rq_map_sg(struct request_queue *q, struct request *rq,
+> -               struct scatterlist *sglist, struct scatterlist **last_sg)
+> +int __blk_rq_map_sg(struct request *rq, struct scatterlist *sglist,
+> +                   struct scatterlist **last_sg)
+>  {
+>         struct req_iterator iter = {
+>                 .bio    = rq->bio,
+> diff --git a/block/bsg-lib.c b/block/bsg-lib.c
+> index 93523d8f8195..9ceb5d0832f5 100644
+> --- a/block/bsg-lib.c
+> +++ b/block/bsg-lib.c
+> @@ -219,7 +219,7 @@ static int bsg_map_buffer(struct bsg_buffer *buf, struct request *req)
+>         if (!buf->sg_list)
+>                 return -ENOMEM;
+>         sg_init_table(buf->sg_list, req->nr_phys_segments);
+> -       buf->sg_cnt = blk_rq_map_sg(req->q, req, buf->sg_list);
+> +       buf->sg_cnt = blk_rq_map_sg(req, buf->sg_list);
+>         buf->payload_len = blk_rq_bytes(req);
+>         return 0;
+>  }
+> diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
+> index 95361099a2dc..0d619df03fa9 100644
+> --- a/drivers/block/mtip32xx/mtip32xx.c
+> +++ b/drivers/block/mtip32xx/mtip32xx.c
+> @@ -2056,7 +2056,7 @@ static void mtip_hw_submit_io(struct driver_data *dd, struct request *rq,
+>         unsigned int nents;
+>
+>         /* Map the scatter list for DMA access */
+> -       nents = blk_rq_map_sg(hctx->queue, rq, command->sg);
+> +       nents = blk_rq_map_sg(rq, command->sg);
+>         nents = dma_map_sg(&dd->pdev->dev, command->sg, nents, dma_dir);
+>
+>         prefetch(&port->flags);
+> diff --git a/drivers/block/rnbd/rnbd-clt.c b/drivers/block/rnbd/rnbd-clt.c
+> index 82467ecde7ec..15627417f12e 100644
+> --- a/drivers/block/rnbd/rnbd-clt.c
+> +++ b/drivers/block/rnbd/rnbd-clt.c
+> @@ -1010,7 +1010,7 @@ static int rnbd_client_xfer_request(struct rnbd_clt_dev *dev,
+>          * See queue limits.
+>          */
+>         if ((req_op(rq) != REQ_OP_DISCARD) && (req_op(rq) != REQ_OP_WRITE_ZEROES))
+> -               sg_cnt = blk_rq_map_sg(dev->queue, rq, iu->sgt.sgl);
+> +               sg_cnt = blk_rq_map_sg(rq, iu->sgt.sgl);
+>
+>         if (sg_cnt == 0)
+>                 sg_mark_end(&iu->sgt.sgl[0]);
+> diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
+> index 282f81616a78..2b33fb5b949b 100644
+> --- a/drivers/block/sunvdc.c
+> +++ b/drivers/block/sunvdc.c
+> @@ -485,7 +485,7 @@ static int __send_request(struct request *req)
+>         }
+>
+>         sg_init_table(sg, port->ring_cookies);
+> -       nsg = blk_rq_map_sg(req->q, req, sg);
+> +       nsg = blk_rq_map_sg(req, sg);
+>
+>         len = 0;
+>         for (i = 0; i < nsg; i++)
+> diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+> index 6a61ec35f426..a3df4d49bd46 100644
+> --- a/drivers/block/virtio_blk.c
+> +++ b/drivers/block/virtio_blk.c
+> @@ -226,7 +226,7 @@ static int virtblk_map_data(struct blk_mq_hw_ctx *hctx, struct request *req,
+>         if (unlikely(err))
+>                 return -ENOMEM;
+>
+> -       return blk_rq_map_sg(hctx->queue, req, vbr->sg_table.sgl);
+> +       return blk_rq_map_sg(req, vbr->sg_table.sgl);
+>  }
+>
+>  static void virtblk_cleanup_cmd(struct request *req)
+> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+> index edcd08a9dcef..5babe575c288 100644
+> --- a/drivers/block/xen-blkfront.c
+> +++ b/drivers/block/xen-blkfront.c
+> @@ -751,7 +751,7 @@ static int blkif_queue_rw_req(struct request *req, struct blkfront_ring_info *ri
+>         id = blkif_ring_get_request(rinfo, req, &final_ring_req);
+>         ring_req = &rinfo->shadow[id].req;
+>
+> -       num_sg = blk_rq_map_sg(req->q, req, rinfo->shadow[id].sg);
+> +       num_sg = blk_rq_map_sg(req, rinfo->shadow[id].sg);
+>         num_grant = 0;
+>         /* Calculate the number of grant used */
+>         for_each_sg(rinfo->shadow[id].sg, sg, num_sg, i)
+> diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
+> index 5b617c1f6789..f4398383ae06 100644
+> --- a/drivers/memstick/core/ms_block.c
+> +++ b/drivers/memstick/core/ms_block.c
+> @@ -1904,7 +1904,7 @@ static void msb_io_work(struct work_struct *work)
+>
+>                 /* process the request */
+>                 dbg_verbose("IO: processing new request");
+> -               blk_rq_map_sg(msb->queue, req, sg);
+> +               blk_rq_map_sg(req, sg);
+>
+>                 lba = blk_rq_pos(req);
+>
+> diff --git a/drivers/memstick/core/mspro_block.c b/drivers/memstick/core/mspro_block.c
+> index 634d343b6bdb..c9853d887d28 100644
+> --- a/drivers/memstick/core/mspro_block.c
+> +++ b/drivers/memstick/core/mspro_block.c
+> @@ -627,9 +627,7 @@ static int mspro_block_issue_req(struct memstick_dev *card)
+>         while (true) {
+>                 msb->current_page = 0;
+>                 msb->current_seg = 0;
+> -               msb->seg_count = blk_rq_map_sg(msb->block_req->q,
+> -                                              msb->block_req,
+> -                                              msb->req_sg);
+> +               msb->seg_count = blk_rq_map_sg(msb->block_req, msb->req_sg);
+>
+>                 if (!msb->seg_count) {
+>                         unsigned int bytes = blk_rq_cur_bytes(msb->block_req);
+> diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
+> index ab662f502fe7..3ba62f825b84 100644
+> --- a/drivers/mmc/core/queue.c
+> +++ b/drivers/mmc/core/queue.c
+> @@ -523,5 +523,5 @@ unsigned int mmc_queue_map_sg(struct mmc_queue *mq, struct mmc_queue_req *mqrq)
+>  {
+>         struct request *req = mmc_queue_req_to_req(mqrq);
+>
+> -       return blk_rq_map_sg(mq->queue, req, mqrq->sg);
+> +       return blk_rq_map_sg(req, mqrq->sg);
+>  }
+> diff --git a/drivers/mtd/ubi/block.c b/drivers/mtd/ubi/block.c
+> index 2836905f0152..39cc0a6a4d37 100644
+> --- a/drivers/mtd/ubi/block.c
+> +++ b/drivers/mtd/ubi/block.c
+> @@ -199,7 +199,7 @@ static blk_status_t ubiblock_read(struct request *req)
+>          * and ubi_read_sg() will check that limit.
+>          */
+>         ubi_sgl_init(&pdu->usgl);
+> -       blk_rq_map_sg(req->q, req, pdu->usgl.sg);
+> +       blk_rq_map_sg(req, pdu->usgl.sg);
+>
+>         while (bytes_left) {
+>                 /*
+> diff --git a/drivers/nvme/host/apple.c b/drivers/nvme/host/apple.c
+> index a060f69558e7..a437eee741e1 100644
+> --- a/drivers/nvme/host/apple.c
+> +++ b/drivers/nvme/host/apple.c
+> @@ -525,7 +525,7 @@ static blk_status_t apple_nvme_map_data(struct apple_nvme *anv,
+>         if (!iod->sg)
+>                 return BLK_STS_RESOURCE;
+>         sg_init_table(iod->sg, blk_rq_nr_phys_segments(req));
+> -       iod->nents = blk_rq_map_sg(req->q, req, iod->sg);
+> +       iod->nents = blk_rq_map_sg(req, iod->sg);
+>         if (!iod->nents)
+>                 goto out_free_sg;
+>
+> diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
+> index b9929a5a7f4e..1b5ad1173bc7 100644
+> --- a/drivers/nvme/host/fc.c
+> +++ b/drivers/nvme/host/fc.c
+> @@ -2571,7 +2571,7 @@ nvme_fc_map_data(struct nvme_fc_ctrl *ctrl, struct request *rq,
+>         if (ret)
+>                 return -ENOMEM;
+>
+> -       op->nents = blk_rq_map_sg(rq->q, rq, freq->sg_table.sgl);
+> +       op->nents = blk_rq_map_sg(rq, freq->sg_table.sgl);
+>         WARN_ON(op->nents > blk_rq_nr_phys_segments(rq));
+>         freq->sg_cnt = fc_dma_map_sg(ctrl->lport->dev, freq->sg_table.sgl,
+>                                 op->nents, rq_dma_dir(rq));
+> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> index 950289405ef2..a0b1c57067aa 100644
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -812,7 +812,7 @@ static blk_status_t nvme_map_data(struct nvme_dev *dev, struct request *req,
+>         if (!iod->sgt.sgl)
+>                 return BLK_STS_RESOURCE;
+>         sg_init_table(iod->sgt.sgl, blk_rq_nr_phys_segments(req));
+> -       iod->sgt.orig_nents = blk_rq_map_sg(req->q, req, iod->sgt.sgl);
+> +       iod->sgt.orig_nents = blk_rq_map_sg(req, iod->sgt.sgl);
+>         if (!iod->sgt.orig_nents)
+>                 goto out_free_sg;
+>
+> diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
+> index 86a2891d9bcc..b5a0295b5bf4 100644
+> --- a/drivers/nvme/host/rdma.c
+> +++ b/drivers/nvme/host/rdma.c
+> @@ -1476,8 +1476,7 @@ static int nvme_rdma_dma_map_req(struct ib_device *ibdev, struct request *rq,
+>         if (ret)
+>                 return -ENOMEM;
+>
+> -       req->data_sgl.nents = blk_rq_map_sg(rq->q, rq,
+> -                                           req->data_sgl.sg_table.sgl);
+> +       req->data_sgl.nents = blk_rq_map_sg(rq, req->data_sgl.sg_table.sgl);
+>
+>         *count = ib_dma_map_sg(ibdev, req->data_sgl.sg_table.sgl,
+>                                req->data_sgl.nents, rq_dma_dir(rq));
+> diff --git a/drivers/nvme/target/loop.c b/drivers/nvme/target/loop.c
+> index a9d112d34d4f..a5c41144667c 100644
+> --- a/drivers/nvme/target/loop.c
+> +++ b/drivers/nvme/target/loop.c
+> @@ -162,7 +162,7 @@ static blk_status_t nvme_loop_queue_rq(struct blk_mq_hw_ctx *hctx,
+>                 }
+>
+>                 iod->req.sg = iod->sg_table.sgl;
+> -               iod->req.sg_cnt = blk_rq_map_sg(req->q, req, iod->sg_table.sgl);
+> +               iod->req.sg_cnt = blk_rq_map_sg(req, iod->sg_table.sgl);
+>                 iod->req.transfer_len = blk_rq_payload_bytes(req);
+>         }
+>
+> diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+> index f1cfe0bb89b2..0d29470e86b0 100644
+> --- a/drivers/scsi/scsi_lib.c
+> +++ b/drivers/scsi/scsi_lib.c
+> @@ -1149,7 +1149,7 @@ blk_status_t scsi_alloc_sgtables(struct scsi_cmnd *cmd)
+>          * Next, walk the list, and fill in the addresses and sizes of
+>          * each segment.
+>          */
+> -       count = __blk_rq_map_sg(rq->q, rq, cmd->sdb.table.sgl, &last_sg);
+> +       count = __blk_rq_map_sg(rq, cmd->sdb.table.sgl, &last_sg);
+>
+>         if (blk_rq_bytes(rq) & rq->q->limits.dma_pad_mask) {
+>                 unsigned int pad_len =
+> diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+> index fa2a76cc2f73..f2eff998913d 100644
+> --- a/include/linux/blk-mq.h
+> +++ b/include/linux/blk-mq.h
+> @@ -1165,14 +1165,13 @@ static inline unsigned short blk_rq_nr_discard_segments(struct request *rq)
+>         return max_t(unsigned short, rq->nr_phys_segments, 1);
+>  }
+>
+> -int __blk_rq_map_sg(struct request_queue *q, struct request *rq,
+> -               struct scatterlist *sglist, struct scatterlist **last_sg);
+> -static inline int blk_rq_map_sg(struct request_queue *q, struct request *rq,
+> -               struct scatterlist *sglist)
+> +int __blk_rq_map_sg(struct request *rq, struct scatterlist *sglist,
+> +               struct scatterlist **last_sg);
+> +static inline int blk_rq_map_sg(struct request *rq, struct scatterlist *sglist)
+>  {
+>         struct scatterlist *last_sg = NULL;
+>
+> -       return __blk_rq_map_sg(q, rq, sglist, &last_sg);
+> +       return __blk_rq_map_sg(rq, sglist, &last_sg);
+>  }
+>  void blk_dump_rq_flags(struct request *, char *);
+>
+> --
+> 2.25.1
+>
 
