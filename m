@@ -1,79 +1,63 @@
-Return-Path: <linux-kernel+bounces-559574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE7D9A5F5A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:15:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF04A5F5C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:18:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EF383BCDAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:12:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D54119C5701
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB53267F5C;
-	Thu, 13 Mar 2025 13:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874C626772F;
+	Thu, 13 Mar 2025 13:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HB9Wajep"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivTQH25/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B05267B16;
-	Thu, 13 Mar 2025 13:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26731754B;
+	Thu, 13 Mar 2025 13:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741871533; cv=none; b=gVK7WjiL/uqUOcwTiKrfUJMRIlSmyTYZleFvEIGUupucBvjtatF0ATx0HQVVZTBgHl3f8swVA+nejm6Lmf8nuIqlcDWIe6UCmBKCtTwwmKVYgrEP9OYHMakNqgptPJU+LFG23x3r3423oSN2XbgYdWVtb+Kzl0YN6OuuDJWpzJU=
+	t=1741871515; cv=none; b=aexollZ2XLe8wWImZp4ISM7SKKR7+7AyD/MI1opMHqdnJpeGReneBy5YbJ9Vvbqqv+iBFxGrrQd513hImEXdAhIm12UlWkKduUDsmtqmGhKCeB2YVG47c5Bz2iUqwJzc3B1pXqk2U//JjAURGlpiIACD9X78jGmWmGJtpLnJJFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741871533; c=relaxed/simple;
-	bh=9w1ScaeSlWhq6L0g6c/1U2BXB6YORXYaIQ7F9hz9/qY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OjnuUEsEYjBSw2eQUyYokU6DmYPQ37F8EfGPb0rWJrzCmiIaGYP+kOtnkS4Cb4WpYYjmSkfmH5enZUP5n7ptEJaPAu+Kg/uDD7eD3pp1Cjnc7dYLA3pUCkWlLmnBql407JI85XXWFLI7QQqjvZjGjM8uxw4rSl2ZR9+cqPPjACM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HB9Wajep; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ff85fec403so3683198a91.1;
-        Thu, 13 Mar 2025 06:12:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741871531; x=1742476331; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VwYK1vtIGu8AKr7d5DZZujGnya4yaossipP8/xTscq4=;
-        b=HB9WajepFATDdmUJw8koTd6cHjVTCR/yBl7vdrLrfWZMaSqi0MTQL2GRfJoCELGuFA
-         6bskLXCWdwI3GjOTaPG2US9ykhLiUXlFj6CErvkEr3zxdZ+U+xeYV5WzqZufvWP43eQT
-         JqNyUgR7Fp0lPB64LYRKRwKD0zUETDeKiB/eZUdexSGYvQaulMHRuCiIGkexugTWGJpk
-         i7Y9N0P3aoSJ0abSpN2SZMftJr/2w9S9WiVU7dJrI31h6vSE7wyzAjBuamhMau//rik9
-         GpItUg4HuvM4CZdcdSdZoKsBfoclqJCmb54uFoGaTfpdeC9WOhXncIVF8WH70Y4UNUd8
-         KAWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741871531; x=1742476331;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VwYK1vtIGu8AKr7d5DZZujGnya4yaossipP8/xTscq4=;
-        b=A8sSGLJhKMJiBbXWHng4/6A04NfAk8qACJ+25B0h4RaucOx71ATn/zS9GD8Bx5IOIC
-         2fX0RQEI/GW0Gcd7FQZ0JLlaz0kvdSVIaNDWKjyqqTZKfT2ASEMW2kmtDCPQGbtqpihH
-         M7oY0kdeqEKLSN5DkK2jd/Es5RdwO7MJrwF3eDTwOmGRLXEE3rVVudvkB11y4P//50v4
-         ZwmVFZ9CsH3UU1PorXYd/40MrHBX7h/1teLIRWv7MqQexyGKuXdc1TwZFUIXE6PC2FsA
-         RPDkjZUiWko8QMHW0yOpDbnW3M0rEuaQV+lq+fKGgaJHsPQA0nlv6p74+rzuWZPWIpYL
-         tA4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW3g0YzBM17xTWN1YClQ+FR1uc7/oXKyyIeuA/VVLW0nEZhVIUdbbb+CX8oCghTzwjU7m5jB0MI2/lMvxk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6IsbgQZtMOeraA6/fbCvu4NM9nfVBgV3Yo0Hpgpyb6kXcEcaE
-	FX6zh0EHCmT9nnLoorJr/B6uDKUIyA/YEK5F6Zm4p6AS6OWdjxAq
-X-Gm-Gg: ASbGncuG4j5lGqTrp2BkjNqxCag1aVUTaorDmjU3YXjy6wlaDpGYzLISZqCs9Fw2bia
-	qsaCh3ywQCQNWc+rirkICyHM28vnvqLamwkoUfq6UxENKdvyEZWcd+uioseDNM4t+31e0DvA9Um
-	4rRq3Wt4FpZleLEmdbE/ZD49FZL/NhvOcNAnVhsbtfAhPATi7KoGgb74FCp5Ak/BvTDqrK0BU9L
-	Nk9vs8uXp4yPCIJaG/ahwaU508v6nLbY2SfXVFCd47H0mTHVMoMu/UPIvYznpvvBHWpctfQACZq
-	O7DZfH9z/jC4M8CpUzmt7qloBNs790qAiC8=
-X-Google-Smtp-Source: AGHT+IEgH0CG5aSgef06SzCJvmgMptc8klfdSuHRJlwjKBRgnlA8cLsLiRUzsG4uJ77t6uFQlEZL9Q==
-X-Received: by 2002:a17:90b:4c48:b0:2fa:603e:905c with SMTP id 98e67ed59e1d1-30135e7dd3bmr3491447a91.2.1741871530193;
-        Thu, 13 Mar 2025 06:12:10 -0700 (PDT)
-Received: from [198.18.0.9] ([2a0f:7803:fac5:a7b6::1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6d52sm12539615ad.116.2025.03.13.06.12.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 06:12:09 -0700 (PDT)
-From: Zixian Zeng <sycamoremoon376@gmail.com>
-Date: Thu, 13 Mar 2025 21:11:50 +0800
-Subject: [PATCH v3 2/2] riscv: sophgo: dts: Add spi controller for SG2042
+	s=arc-20240116; t=1741871515; c=relaxed/simple;
+	bh=7i8lFQHEUpDr08x6KdoFcD/Thz3PnkKOQjF8h2Byw3M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=H3kkqPVkxQRj5Cwxxqb6o651jowc4poMx/k9KbA/QG5wTpKIfaOg4lTt+EJlYSroHVO2Tr3R7PTdEg1Mh2B4A3VSyJJzM0Ld2STWj+Oy6+Xuvc87ruKjCe7OVbCPsAyK7CD+cDr79v4yY4CerX2Vu6lQGoRvLsY2ENxXojCzf+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivTQH25/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36AA7C4CEDD;
+	Thu, 13 Mar 2025 13:11:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741871514;
+	bh=7i8lFQHEUpDr08x6KdoFcD/Thz3PnkKOQjF8h2Byw3M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ivTQH25/HXRvQ4owiM3+ef8YXwFdiaiUJZ9gzd4GQ9VD58DxR6538nmYeitCWuwDs
+	 PN4FNiRGRcvma+coJfos67eI7jiYPAwpEh+LhsGLQhj65FmM9Ccr0wuKbC3dM8jWjg
+	 PMaxDoHGKxS3lfgibLLSFUKtI4ebCPvQWpfeTQCjw8ETLFraosc0eHGmpONaemW59G
+	 pQIGdjBUDiJ8lMwTCZo8jJGMHiXr1fdNQvxEDvjhBJvkTPEA6AvaFMdeZb8FcLLVom
+	 8GNPKPYwiOrsB8zTuSxrosdZSh0Cqo5OFtaChfsvNNRa7K19VjcTSyxOJ7rZt80jfQ
+	 lhXZRqH34i2BA==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>, 
+ Abel Vesa <abel.vesa@linaro.org>
+Cc: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Kamal Wadhwa <quic_kamalw@quicinc.com>, 
+ Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Johan Hovold <johan@kernel.org>, 
+ Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+ linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org
+In-Reply-To: <20250305-leds-qcom-lpg-fix-max-pwm-on-hi-res-v4-0-bfe124a53a9f@linaro.org>
+References: <20250305-leds-qcom-lpg-fix-max-pwm-on-hi-res-v4-0-bfe124a53a9f@linaro.org>
+Subject: Re: [PATCH v4 0/3] leds: rgb: leds-qcom-lpg: PWM fixes
+Message-Id: <174187151094.3638901.18192450967481384067.b4-ty@kernel.org>
+Date: Thu, 13 Mar 2025 13:11:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,76 +65,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250313-sfg-spi-v3-2-e686427314b2@gmail.com>
-References: <20250313-sfg-spi-v3-0-e686427314b2@gmail.com>
-In-Reply-To: <20250313-sfg-spi-v3-0-e686427314b2@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>, 
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, sophgo@lists.linux.dev, chao.wei@sophgo.com, 
- xiaoguang.xing@sophgo.com, dlan@gentoo.org, 
- Zixian Zeng <sycamoremoon376@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741871512; l=1436;
- i=sycamoremoon376@gmail.com; s=20250113; h=from:subject:message-id;
- bh=9w1ScaeSlWhq6L0g6c/1U2BXB6YORXYaIQ7F9hz9/qY=;
- b=y6IxyvvuwFXWUchI1WelHOu7+mju3xNDsy3WvdI9VAq511ux6fzKK48wfDsf6hrr+pVYC/vJ3
- fD4fM4zDZdgAqOqp0ypkHLmYA1Iz+IPORpPRGe7/8lHkv6KavaPjD+5
-X-Developer-Key: i=sycamoremoon376@gmail.com; a=ed25519;
- pk=OYfH6Z2Nx3aU1r0UZdvhskmddV6KC6V1nyFjsQQt4J8=
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-510f9
 
-Add spi controllers for SG2042.
+On Wed, 05 Mar 2025 15:09:03 +0200, Abel Vesa wrote:
+> The PWM allow configuring the PWM resolution from 8 bits PWM
+> values up to 15 bits values, for the Hi-Res PWMs, and then either
+> 6-bit or 9-bit for the normal PWMs. The current implementation loops
+> through all possible resolutions (PWM sizes), for the PWM subtype, on top
+> of the already existing process of determining the prediv, exponent and
+> refclk.
+> 
+> [...]
 
-SG2042 uses the upstreamed Synopsys DW SPI IP.
+Applied, thanks!
 
-Signed-off-by: Zixian Zeng <sycamoremoon376@gmail.com>
----
- arch/riscv/boot/dts/sophgo/sg2042.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+[1/3] leds: rgb: leds-qcom-lpg: Fix pwm resolution max for normal PWMs
+      commit: d3fd20cecf7fcdada938429ad525daf5b2217a7a
+[2/3] leds: rgb: leds-qcom-lpg: Fix pwm resolution max for Hi-Res PWMs
+      commit: 638fc32c056aa62c7add071205de6acc479ee37d
+[3/3] leds: rgb: leds-qcom-lpg: Fix calculation of best period Hi-Res PWMs
+      commit: 227fc065ae9e707af9c7d346458f43fd25cf310a
 
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-index e62ac51ac55abd922b5ef796ba8c2196383850c4..9e0ec64e91a2330698aea202c8f0a2ca1f7e0919 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-@@ -545,5 +545,31 @@ sd: mmc@704002b000 {
- 				      "timer";
- 			status = "disabled";
- 		};
-+
-+		spi0: spi@7040004000 {
-+			compatible = "sophgo,sg2042-spi", "snps,dw-apb-ssi";
-+			reg = <0x70 0x40004000 0x00 0x1000>;
-+			clocks = <&clkgen GATE_CLK_APB_SPI>;
-+			interrupt-parent = <&intc>;
-+			interrupts = <110 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			num-cs = <2>;
-+			resets = <&rstgen RST_SPI0>;
-+			status = "disabled";
-+		};
-+
-+		spi1: spi@7040005000 {
-+			compatible = "sophgo,sg2042-spi", "snps,dw-apb-ssi";
-+			reg = <0x70 0x40005000 0x00 0x1000>;
-+			clocks = <&clkgen GATE_CLK_APB_SPI>;
-+			interrupt-parent = <&intc>;
-+			interrupts = <111 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			num-cs = <2>;
-+			resets = <&rstgen RST_SPI1>;
-+			status = "disabled";
-+		};
- 	};
- };
-
--- 
-2.48.1
+--
+Lee Jones [李琼斯]
 
 
