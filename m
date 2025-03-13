@@ -1,253 +1,159 @@
-Return-Path: <linux-kernel+bounces-560118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 685DCA5FDF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:37:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688E0A5FDD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:34:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F03347ADB2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:36:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A751F16F00E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0591D63E4;
-	Thu, 13 Mar 2025 17:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF85187554;
+	Thu, 13 Mar 2025 17:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y1NGj7YI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0CctoGQm";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y1NGj7YI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0CctoGQm"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVQyU8mB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DBE1EE7D6
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4590514386D;
+	Thu, 13 Mar 2025 17:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741887335; cv=none; b=NChCZxy/T+kI7MCt7DROE7xFkyYsB1ERwTijbIg0Ju4GlBaAfpO8Oq3W+muHo3YbUWauLAMHEI/+VbrVYk+rOfmUpz26lFhwe1KoRSMCMv1aNSaEZEepSeEiKQz9taeyKQPkMusWEQNbXcn6oUDv8ofZLzHsDHE8QhWemBssUjc=
+	t=1741887290; cv=none; b=GJErdFHPvtD4HSGVNIDl0olPMVlTvVnspaz/MnC25+L2fASURAGn9+Jamq9viDw82U+Xr05FxjuYMYmqyO7SSssL7vSyU1fDsRkYU4J4wz5c5hyiPJU5WqQ++HapcDStNkWWH2oKFaxpDAaG0vLVpA5k2hRHD4RVWZsXdmXNrHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741887335; c=relaxed/simple;
-	bh=vQdoq9CEvtCoxe0/XgIj7OuZW3qXJ4NL8kAMzq1rRbM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aR57/3JsemVybuBv45uiunh52o1aOg2EQbmwg9233x30dyY40qtN74R7ygq33QFxNUe5r3Q+xso2obDe28gncypfMGUBIOnUhF0L8iuu3v3iXfwKKc7z1b6MX5FwwN/NllexxmbFCAM4oxcKwoO+sjWTxYIdDMgOJNMERJgjTzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y1NGj7YI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0CctoGQm; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y1NGj7YI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0CctoGQm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 712A01F76B;
-	Thu, 13 Mar 2025 17:35:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741887332; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AssL4APWosYRwux5Sl/5PXBGFriuHOGNHF7c4W1mHz4=;
-	b=y1NGj7YI236QfMjWfjyv7LrwSGiLStdfqnuRlM/CfAdhXKWKN4iTh2TRCrHzstePyZi12z
-	+jPHKtd85Q3xbppcEPJoFHJ0lt4wfypY2T3zUTirUov+7hJc6c1pcTe1z9M99oouxg3cE+
-	33y7xP7FMuqZBEhC8J2ZIqGLP+JiiAU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741887332;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AssL4APWosYRwux5Sl/5PXBGFriuHOGNHF7c4W1mHz4=;
-	b=0CctoGQmht81QUlHsTv3wXnswkFWaKpZaDxclDD902ge4IuSoD8+Egh84CnLffg3g3M+9p
-	gGX9yD+fq9CwKVDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741887332; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AssL4APWosYRwux5Sl/5PXBGFriuHOGNHF7c4W1mHz4=;
-	b=y1NGj7YI236QfMjWfjyv7LrwSGiLStdfqnuRlM/CfAdhXKWKN4iTh2TRCrHzstePyZi12z
-	+jPHKtd85Q3xbppcEPJoFHJ0lt4wfypY2T3zUTirUov+7hJc6c1pcTe1z9M99oouxg3cE+
-	33y7xP7FMuqZBEhC8J2ZIqGLP+JiiAU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741887332;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AssL4APWosYRwux5Sl/5PXBGFriuHOGNHF7c4W1mHz4=;
-	b=0CctoGQmht81QUlHsTv3wXnswkFWaKpZaDxclDD902ge4IuSoD8+Egh84CnLffg3g3M+9p
-	gGX9yD+fq9CwKVDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6105E137BA;
-	Thu, 13 Mar 2025 17:35:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uzqGFmQX02cwQwAAD6G6ig
-	(envelope-from <nstange@suse.de>); Thu, 13 Mar 2025 17:35:32 +0000
-From: Nicolai Stange <nstange@suse.de>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
+	s=arc-20240116; t=1741887290; c=relaxed/simple;
+	bh=OoAvfSAO5M3PHg1qgT00ibdT5WETqpo45KH3DuoIfjE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jwQrJOBkl4kLo9sPaxrhgdY/8Dbo39d7uSvcXl5HwHIXt6fSF7pTIOBLNfduuaK/29XckIuN9uDHW//8/UyacH6YaMDqOW67rUIP2DGixdwC4ECHzTs99koMhjoP5ynO4JiPcSmK3Fu4mH3tv5yHRfgKbqnYXrrvIxybWr9+J9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVQyU8mB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7B6BC4CEEA;
+	Thu, 13 Mar 2025 17:34:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741887289;
+	bh=OoAvfSAO5M3PHg1qgT00ibdT5WETqpo45KH3DuoIfjE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VVQyU8mBAHNp06f4PUy8OQ441a3jzB0w7cdr7DECxbtEliMh01cQUWRWvFYU3Jez5
+	 RkdnI1LCoaG7yppGd9vje1fEdUoHzs3A5HH0zBqE+yFMcbOswaG7PGNAVDbtVbGQuG
+	 rHqqNwL2pbQFRBc4kq3PgxHk6Gd6btpLtWNO3AMV9bD1DfPOaerkp3DgRE1PuAxdTW
+	 18+vvZB5PhAsHJrLYHTMEzzeCEOV2/D+wJby5pXwes6nzXzoOmetd5UFctZLD4jsNu
+	 0SiX1C1WDorGyJZy5/32/g2HlM+ZisCfcYi5uy3ilNb6Go6TvGn3h39aDHO31lyI43
+	 8eQsG2/A/ZsFw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tsmSE-00DJ4E-TQ;
+	Thu, 13 Mar 2025 17:34:47 +0000
+Date: Thu, 13 Mar 2025 17:34:46 +0000
+Message-ID: <86ikocomvd.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: =?UTF-8?B?TWlrb8WCYWo=?= Lenczewski <miko.lenczewski@arm.com>
+Cc: ryan.roberts@arm.com,
+	suzuki.poulose@arm.com,
+	yang@os.amperecomputing.com,
+	corbet@lwn.net,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	jean-philippe@linaro.org,
+	robin.murphy@arm.com,
+	joro@8bytes.org,
+	akpm@linux-foundation.org,
+	mark.rutland@arm.com,
+	joey.gouly@arm.com,
+	james.morse@arm.com,
+	broonie@kernel.org,
+	anshuman.khandual@arm.com,
+	oliver.upton@linux.dev,
+	ioworker0@gmail.com,
+	baohua@kernel.org,
+	david@redhat.com,
+	jgg@ziepe.ca,
+	shameerali.kolothum.thodi@huawei.com,
+	nicolinc@nvidia.com,
+	mshavit@google.com,
+	jsnitsel@redhat.com,
+	smostafa@google.com,
+	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Nicolai Stange <nstange@suse.de>
-Subject: [RFC PATCH v1 7/7] ima: make SHA1 non-mandatory
-Date: Thu, 13 Mar 2025 18:33:39 +0100
-Message-ID: <20250313173339.3815589-8-nstange@suse.de>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250313173339.3815589-1-nstange@suse.de>
-References: <20250313173339.3815589-1-nstange@suse.de>
+	linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev
+Subject: Re: [PATCH v3 1/3] arm64: Add BBM Level 2 cpu feature
+In-Reply-To: <20250313104111.24196-3-miko.lenczewski@arm.com>
+References: <20250313104111.24196-2-miko.lenczewski@arm.com>
+	<20250313104111.24196-3-miko.lenczewski@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[linux.ibm.com,huawei.com,gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Spam-Score: -5.30
-X-Spam-Flag: NO
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: miko.lenczewski@arm.com, ryan.roberts@arm.com, suzuki.poulose@arm.com, yang@os.amperecomputing.com, corbet@lwn.net, catalin.marinas@arm.com, will@kernel.org, jean-philippe@linaro.org, robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org, mark.rutland@arm.com, joey.gouly@arm.com, james.morse@arm.com, broonie@kernel.org, anshuman.khandual@arm.com, oliver.upton@linux.dev, ioworker0@gmail.com, baohua@kernel.org, david@redhat.com, jgg@ziepe.ca, shameerali.kolothum.thodi@huawei.com, nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com, smostafa@google.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-For CONFIG_IMA_COMPAT_FALLBACK_TPM_EXTEND=n, SHA-1 is not a hard
-requirement anymore. Make ima_init_crypto() continue on SHA-1
-instantiation errors.
+On Thu, 13 Mar 2025 10:41:10 +0000,
+Miko=C5=82aj Lenczewski <miko.lenczewski@arm.com> wrote:
+>=20
+> diff --git a/arch/arm64/kernel/pi/idreg-override.c b/arch/arm64/kernel/pi=
+/idreg-override.c
+> index c6b185b885f7..9728faa10390 100644
+> --- a/arch/arm64/kernel/pi/idreg-override.c
+> +++ b/arch/arm64/kernel/pi/idreg-override.c
+> @@ -209,6 +209,7 @@ static const struct ftr_set_desc sw_features __prel64=
+_initconst =3D {
+>  		FIELD("nokaslr", ARM64_SW_FEATURE_OVERRIDE_NOKASLR, NULL),
+>  		FIELD("hvhe", ARM64_SW_FEATURE_OVERRIDE_HVHE, hvhe_filter),
+>  		FIELD("rodataoff", ARM64_SW_FEATURE_OVERRIDE_RODATA_OFF, NULL),
+> +		FIELD("nobbml2", ARM64_SW_FEATURE_OVERRIDE_NOBBML2, NULL),
+>  		{}
+>  	},
+>  };
+> @@ -246,6 +247,7 @@ static const struct {
+>  	{ "rodata=3Doff",			"arm64_sw.rodataoff=3D1" },
+>  	{ "arm64.nolva",		"id_aa64mmfr2.varange=3D0" },
+>  	{ "arm64.no32bit_el0",		"id_aa64pfr0.el0=3D1" },
+> +	{ "arm64.nobbml2",		"arm64_sw.nobbml2=3D1" },
 
-Note that the configure ima_hash must still be available. If that
-happened to be set to SHA-1 and SHA-1 was missing, then IMA would
-still fail to initialize.
+Why is that a SW feature? This looks very much like a HW feature to
+me, and you should instead mask out ID_AA64MMFR2_EL1.BBM, and be done
+with it. Something like:
 
-Signed-off-by: Nicolai Stange <nstange@suse.de>
----
- security/integrity/ima/ima_crypto.c | 60 ++++++++++++++---------------
- 1 file changed, 28 insertions(+), 32 deletions(-)
+diff --git a/arch/arm64/kernel/pi/idreg-override.c b/arch/arm64/kernel/pi/i=
+dreg-override.c
+index c6b185b885f70..803a0c99f7b46 100644
+--- a/arch/arm64/kernel/pi/idreg-override.c
++++ b/arch/arm64/kernel/pi/idreg-override.c
+@@ -102,6 +102,7 @@ static const struct ftr_set_desc mmfr2 __prel64_initcon=
+st =3D {
+ 	.override	=3D &id_aa64mmfr2_override,
+ 	.fields		=3D {
+ 		FIELD("varange", ID_AA64MMFR2_EL1_VARange_SHIFT, mmfr2_varange_filter),
++		FIELD("bbm", ID_AA64MMFR2_EL1_BBM_SHIFT, NULL),
+ 		{}
+ 	},
+ };
+@@ -246,6 +247,7 @@ static const struct {
+ 	{ "rodata=3Doff",			"arm64_sw.rodataoff=3D1" },
+ 	{ "arm64.nolva",		"id_aa64mmfr2.varange=3D0" },
+ 	{ "arm64.no32bit_el0",		"id_aa64pfr0.el0=3D1" },
++	{ "arm64.nobbml2",		"id_aa64mmfr2.bbm=3D0" },
+ };
+=20
+ static int __init parse_hexdigit(const char *p, u64 *v)
 
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 118ea15d737b..f68435f2679f 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -147,56 +147,51 @@ int __init ima_init_crypto(void)
- 		goto out;
- 	}
- 
-+	ima_algo_array[ima_hash_algo_idx].tfm = ima_shash_tfm;
-+	ima_algo_array[ima_hash_algo_idx].algo = ima_hash_algo;
-+
-+	if (ima_hash_algo != HASH_ALGO_SHA1) {
-+		ima_algo_array[ima_sha1_idx].tfm =
-+			ima_alloc_tfm(HASH_ALGO_SHA1);
-+		if (IS_ERR(ima_algo_array[ima_sha1_idx].tfm)) {
-+#if IS_ENABLED(CONFIG_IMA_COMPAT_FALLBACK_TPM_EXTEND)
-+			/*
-+			 * For backwards compatible fallback PCR
-+			 * extension, SHA1 is the fallback for missing
-+			 * algos.
-+			 */
-+			rc = PTR_ERR(ima_algo_array[ima_sha1_idx].tfm);
-+			goto out_array;
-+#endif
-+			ima_algo_array[ima_sha1_idx].tfm = NULL;
-+			ima_unsupported_tpm_banks_mask |= BIT(ima_sha1_idx);
-+		}
-+		ima_algo_array[ima_sha1_idx].algo = HASH_ALGO_SHA1;
-+	}
-+
- 	for (i = 0; i < NR_BANKS(ima_tpm_chip); i++) {
- 		algo = ima_tpm_chip->allocated_banks[i].crypto_id;
- 		ima_algo_array[i].algo = algo;
- 
-+		/* Initialized separately above. */
-+		if (i == ima_hash_algo_idx || i == ima_sha1_idx)
-+			continue;
-+
- 		/* unknown TPM algorithm */
- 		if (algo == HASH_ALGO__LAST) {
- 			ima_unsupported_tpm_banks_mask |= BIT(i);
- 			continue;
- 		}
- 
--		if (algo == ima_hash_algo) {
--			ima_algo_array[i].tfm = ima_shash_tfm;
--			continue;
--		}
--
- 		ima_algo_array[i].tfm = ima_alloc_tfm(algo);
- 		if (IS_ERR(ima_algo_array[i].tfm)) {
--			if (algo == HASH_ALGO_SHA1) {
--				rc = PTR_ERR(ima_algo_array[i].tfm);
--				ima_algo_array[i].tfm = NULL;
--				goto out_array;
--			}
--
- 			ima_algo_array[i].tfm = NULL;
- 			ima_unsupported_tpm_banks_mask |= BIT(i);
- 		}
- 	}
- 
--	if (ima_sha1_idx >= NR_BANKS(ima_tpm_chip)) {
--		if (ima_hash_algo == HASH_ALGO_SHA1) {
--			ima_algo_array[ima_sha1_idx].tfm = ima_shash_tfm;
--		} else {
--			ima_algo_array[ima_sha1_idx].tfm =
--						ima_alloc_tfm(HASH_ALGO_SHA1);
--			if (IS_ERR(ima_algo_array[ima_sha1_idx].tfm)) {
--				rc = PTR_ERR(ima_algo_array[ima_sha1_idx].tfm);
--				goto out_array;
--			}
--		}
--
--		ima_algo_array[ima_sha1_idx].algo = HASH_ALGO_SHA1;
--	}
--
--	if (ima_hash_algo_idx >= NR_BANKS(ima_tpm_chip) &&
--	    ima_hash_algo_idx != ima_sha1_idx) {
--		ima_algo_array[ima_hash_algo_idx].tfm = ima_shash_tfm;
--		ima_algo_array[ima_hash_algo_idx].algo = ima_hash_algo;
--	}
--
- 	return 0;
-+#if IS_ENABLED(CONFIG_IMA_COMPAT_FALLBACK_TPM_EXTEND)
- out_array:
- 	for (i = 0; i < NR_BANKS(ima_tpm_chip) + ima_extra_slots; i++) {
- 		if (!ima_algo_array[i].tfm ||
-@@ -206,6 +201,7 @@ int __init ima_init_crypto(void)
- 		crypto_free_shash(ima_algo_array[i].tfm);
- 	}
- 	kfree(ima_algo_array);
-+#endif
- out:
- 	crypto_free_shash(ima_shash_tfm);
- 	return rc;
--- 
-2.47.1
 
+Thanks,
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
 
