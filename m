@@ -1,151 +1,162 @@
-Return-Path: <linux-kernel+bounces-560147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E45D7A5FEA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:55:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D7FA5FEAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:56:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25B1217AB20
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:55:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 068433BB429
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733C61EA7D4;
-	Thu, 13 Mar 2025 17:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2CE61E9B26;
+	Thu, 13 Mar 2025 17:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uFZ1UBSP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DaZ5+jSl"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="eI9yPqdT"
+Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5356615DBC1;
-	Thu, 13 Mar 2025 17:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7668F15DBC1;
+	Thu, 13 Mar 2025 17:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741888516; cv=none; b=AOVUsziZpvXmp0D9MrXWXPX2cM40Dln6vf/ycTmC4xXMLkPVfrYbPqohkgrfA8a56ojSERvTwML9u9L4lxsoJQs1dm+MrcglcwUGdQPWvGgIpTAY27aPIw4d2C/N5I4tlDGEL6uzniQ5zEcy7YF0/K7UgmJD4KuSQtQeAQzmEv4=
+	t=1741888582; cv=none; b=QSlkbepSohYXPLVWUf8td/i8cf7n8v/NO8ib83v/BhQTva/goIZ+qlzpospAPbzCBEO/7LIQXEAk8O6R95byeNbnvNsXqY/+5rj3UrWI5ijpHheNqQJEd1rKurm3qRlWTbP7rVe9y/vanBz/wR04vA5CWLZESdHiV+gVngzZCsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741888516; c=relaxed/simple;
-	bh=Tt71LYU6EhXq+PF34rquse8y+1HkrL6YTObHYDTEgC4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=j7BiZ3nLGQkcK1PPOPZgGbhh70fZUK5S0NwiZ/xzK9Q58bByvXyFegdhCJL6yNOV0rMwBONYzsPo/X8oppKcIxA4DbB6vfP1eqtj6zKjyeJodeF+KrSwghw7G4zLXBjfKDvAQiIH4gNHKV24bMzKynPUvxNSJ31uGr0i6HrIKJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uFZ1UBSP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DaZ5+jSl; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741888513;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+PI1SXUEUlOflpG5mqedjH0tAMTUnOBBlzLm30n5Uuc=;
-	b=uFZ1UBSPIOZgTqTqDPp+hhu/m7GcOkIt1v3H07rmD4Ul7VL35J6jWDvJIA+deMFrBrOnbr
-	8ynwe7rivWoT25DDOIcKFqTlsUHbHlBmYIb1TLN91juJY9FmyXTCXZr5OEP4FJWRQJRcrF
-	OoZQaJr9kQvLeLhWezSO18uv67r3WIgHGxe4u4mh4hNj0o3F3bh+1vYNFz22NcT7tkTOIl
-	og+qd1C2OI0B6igXtHcKG2JJlrAQdE2Arpkbd1UkgQDpUVePa9LPRdlZs+NCkvxTQmUet3
-	UhOf8ztb+kp+188qw6+Z+WIKy9JFx+dvkdWZgF0blzeIBmRdkZxk5ukei3qmuA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741888513;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+PI1SXUEUlOflpG5mqedjH0tAMTUnOBBlzLm30n5Uuc=;
-	b=DaZ5+jSlfrg02yOuP/NlnEIu8fr+/VfyCADOXZFaNyu2YS2F1MFQ+giIy2PvmK5hrryHIc
-	SNt0bHYWB8QiwtCw==
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <maz@kernel.org>, Bjorn
- Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Peter Zijlstra
- <peterz@infradead.org>, Nishanth Menon <nm@ti.com>, Dhruva Gole
- <d-gole@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
- <ssantosh@kernel.org>, Logan Gunthorpe <logang@deltatee.com>, Dave Jiang
- <dave.jiang@intel.com>, Jon Mason <jdmason@kudzu.us>, Allen Hubbe
- <allenbh@gmail.com>, ntb@lists.linux.dev, Michael Kelley
- <mhklinux@outlook.com>, Wei Liu <wei.liu@kernel.org>, Haiyang Zhang
- <haiyangz@microsoft.com>, linux-hyperv@vger.kernel.org, Wei Huang
- <wei.huang2@amd.com>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, Jonathan Cameron
- <Jonathan.Cameron@huwei.com>
-Subject: Re: [patch V2 05/10] PCI/MSI: Switch to MSI descriptor locking to
- guard()
-In-Reply-To: <20250313155015.000037f5@huawei.com>
-References: <20250313130212.450198939@linutronix.de>
- <20250313130321.695027112@linutronix.de>
- <20250313155015.000037f5@huawei.com>
-Date: Thu, 13 Mar 2025 18:55:12 +0100
-Message-ID: <87ldt86cjj.ffs@tglx>
+	s=arc-20240116; t=1741888582; c=relaxed/simple;
+	bh=eKGeJ/7PkvBa4gfMByuavEkwT81cYgPP5CC5AR6prxc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Su9ynNtZm75rqRSiA+3IVkn7JFwFy0XpIuNxlCCHcHBTQmS3COxJ/I+ugDs6TS3bZQE64IpRcm0kkNdz2OVPhbpyKkQbbIEZ+c/6tVLBkMNARLHHon0/hMVTXitUHtbHlGLzw1HeW7pUDaFIQ2uSA4gmDGwKDgEYiOqaMzDKo90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=eI9yPqdT; arc=none smtp.client-ip=52.95.48.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1741888581; x=1773424581;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=H7PC9O0Oe+JtOuUKRMpYKPaCohfXryNIVIN9579z+1U=;
+  b=eI9yPqdTOaw45c7llHzzvA3vd5shN2nhlZqmr+eMLTA0gpOGB7lHzMVR
+   VkRN7sJmAxgTWd/VnaUbasJ19rxI0xJ2+uTLRebhB+5UWeDl76plg2aT+
+   NYEAJ/OFHDf4UPEcGEjlj74R8HqHsgQRMDcCgdCyh8KyJzdsAKbQ3NVJu
+   o=;
+X-IronPort-AV: E=Sophos;i="6.14,245,1736812800"; 
+   d="scan'208";a="470861813"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 17:56:17 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.7.35:45090]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.5.243:2525] with esmtp (Farcaster)
+ id 4e61084a-f171-486c-b205-4f509d0bffc1; Thu, 13 Mar 2025 17:56:16 +0000 (UTC)
+X-Farcaster-Flow-ID: 4e61084a-f171-486c-b205-4f509d0bffc1
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 13 Mar 2025 17:56:15 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.142.242.222) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 13 Mar 2025 17:56:12 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <sdf@fomichev.me>
+CC: <andrew+netdev@lunn.ch>, <atenart@kernel.org>, <davem@davemloft.net>,
+	<edumazet@google.com>, <enjuk@amazon.com>, <horms@kernel.org>,
+	<jasowang@redhat.com>, <jdamato@fastly.com>, <kory.maincent@bootlin.com>,
+	<kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<willemdebruijn.kernel@gmail.com>
+Subject: Re: [PATCH net-next v2 2/2] net: reorder dev_addr_sem lock
+Date: Thu, 13 Mar 2025 10:56:00 -0700
+Message-ID: <20250313175603.17045-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250312190513.1252045-3-sdf@fomichev.me>
+References: <20250312190513.1252045-3-sdf@fomichev.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: EX19D040UWA004.ant.amazon.com (10.13.139.93) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Thu, Mar 13 2025 at 15:50, Jonathan Cameron wrote:
->> +	guard(msi_descs_lock)(&dev->dev);
->> +	int ret = __msix_setup_interrupts(dev, entries, nvec, masks);
->> +	if (ret)
->> +		pci_free_msi_irqs(dev);
->
-> It's not immediately obvious what this is undoing (i.e. where the alloc
-> is).  I think it is at least mostly the pci_msi_setup_msi_irqs in
-> __msix_setup_interrupts
+From: Stanislav Fomichev <sdf@fomichev.me>
+Date: Wed, 12 Mar 2025 12:05:13 -0700
+> Lockdep complains about circular lock in 1 -> 2 -> 3 (see below).
+> 
+> Change the lock ordering to be:
+> - rtnl_lock
+> - dev_addr_sem
+> - netdev_ops (only for lower devices!)
+> - team_lock (or other per-upper device lock)
+> 
+> 1. rtnl_lock -> netdev_ops -> dev_addr_sem
+> 
+> rtnl_setlink
+>   rtnl_lock
+>     do_setlink IFLA_ADDRESS on lower
+>       netdev_ops
+>         dev_addr_sem
+> 
+> 2. rtnl_lock -> team_lock -> netdev_ops
+> 
+> rtnl_newlink
+>   rtnl_lock
+>     do_setlink IFLA_MASTER on lower
+>       do_set_master
+>         team_add_slave
+>           team_lock
+>             team_port_add
+> 	      dev_set_mtu
+> 	        netdev_ops
+> 
+> 3. rtnl_lock -> dev_addr_sem -> team_lock
+> 
+> rtnl_newlink
+>   rtnl_lock
+>     do_setlink IFLA_ADDRESS on upper
+>       dev_addr_sem
+>         netif_set_mac_address
+>           team_set_mac_address
+>             team_lock
+> 
+> 4. rtnl_lock -> netdev_ops -> dev_addr_sem
+> 
+> rtnl_lock
+>   dev_ifsioc
+>     dev_set_mac_address_user
+> 
+> __tun_chr_ioctl
+>   rtnl_lock
+>     dev_set_mac_address_user
+> 
+> tap_ioctl
+>   rtnl_lock
+>     dev_set_mac_address_user
+> 
+> dev_set_mac_address_user
+>   netdev_lock_ops
+>     netif_set_mac_address_user
+>       dev_addr_sem
+> 
+> v2:
+> - move lock reorder to happen after kmalloc (Kuniyuki)
 
-It's a universal cleanup for all possible error cases.
+My intention was move kmalloc() and memcpy() out of both
+netdev_lock and dev_addr_sem like
 
-> Why not handle the error in __msix_setup_interrupts and make that function
-> side effect free.  Does require gotos but in a function that isn't
-> doing any cleanup magic so should be fine.
+  netdev_ops_unlock()
+  kmalloc()
+  memcpy()
+  down_write()
 
-I had the gotos first and then hated them. But you are right, it's better
-to have them than having the magic clean up at the call site.
+, but not a big deal :)
 
-I'll fold the delta patch below.
+> 
+> Cc: Kohei Enju <enjuk@amazon.com>
+> Fixes: df43d8bf1031 ("net: replace dev_addr_sem with netdev instance lock")
+> Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
 
-Thanks,
-
-        tglx
----
---- a/drivers/pci/msi/msi.c
-+++ b/drivers/pci/msi/msi.c
-@@ -671,19 +671,23 @@ static int __msix_setup_interrupts(struc
- 	int ret = msix_setup_msi_descs(dev, entries, nvec, masks);
- 
- 	if (ret)
--		return ret;
-+		goto fail;
- 
- 	ret = pci_msi_setup_msi_irqs(dev, nvec, PCI_CAP_ID_MSIX);
- 	if (ret)
--		return ret;
-+		goto fail;
- 
- 	/* Check if all MSI entries honor device restrictions */
- 	ret = msi_verify_entries(dev);
- 	if (ret)
--		return ret;
-+		goto fail;
- 
- 	msix_update_entries(dev, entries);
- 	return 0;
-+
-+fail:
-+	pci_free_msi_irqs(dev);
-+	return ret;
- }
- 
- static int msix_setup_interrupts(struct pci_dev *dev, struct msix_entry *entries,
-@@ -693,10 +697,7 @@ static int msix_setup_interrupts(struct
- 		affd ? irq_create_affinity_masks(nvec, affd) : NULL;
- 
- 	guard(msi_descs_lock)(&dev->dev);
--	int ret = __msix_setup_interrupts(dev, entries, nvec, masks);
--	if (ret)
--		pci_free_msi_irqs(dev);
--	return ret;
-+	return __msix_setup_interrupts(dev, entries, nvec, masks);
- }
- 
- /**
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
