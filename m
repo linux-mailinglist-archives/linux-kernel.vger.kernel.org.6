@@ -1,200 +1,120 @@
-Return-Path: <linux-kernel+bounces-560474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B3FA604E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:59:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 278DEA60501
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:02:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ED1E3BFC7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:59:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98F0F19C56CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD5B1F8BAA;
-	Thu, 13 Mar 2025 22:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Np3p0fQU"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4CD1F8AE2;
+	Thu, 13 Mar 2025 23:02:16 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316301F03C7;
-	Thu, 13 Mar 2025 22:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5784E18DB0B;
+	Thu, 13 Mar 2025 23:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741906754; cv=none; b=GGECkrNKpmA1SH11PjXsBFX3G1iwIR7IwoYjQ7oj2iUO9YDVQBejTidnMQUj8b3tPRWb5z5Mcq9c3R3Zl9DtnyzL4YdBTk3drwR4aZIzgITW0AFYEpNblvcor41oz1xtDnE7g/o0/bEFfGO69IwS3CptSdEYRD+DKR1nT7JCa5k=
+	t=1741906936; cv=none; b=WSsP46EQOVlqbG2C7hNxsJpeih2u9DOQB+wrKy7YKQ7XJwzXNJ5GpzxalNL1ilqYYR9Dps6hJwaAE9j1PAy2oPGrLwjwO48ay2yHgAjmrAc0c+s5uHSNB84x51fiLRstjbu/5R92rOHP4VOfTKdUinb4gMyx6slrwu/inwQEoxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741906754; c=relaxed/simple;
-	bh=Kguls8axKBoFrO5AjCFJKOoiclf1DanVRt6JAyteZ2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XcVAn0ly8ABVkp67JzK3uxc4y5JP/nZfjWezsRxhO1IaC94Yc0/WZpnUqcAw4GD2fG+4UQiZ3VbU6yVhPd9+UNTNCu1oxh5wsfgDCytMhgBfkisTM74dBVM7BzQg26RvchaEW91IajFW9PXtQBf5WboG4Lo3MXX4X3t+g5ItkMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Np3p0fQU; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38f2f391864so869036f8f.3;
-        Thu, 13 Mar 2025 15:59:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741906750; x=1742511550; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yO5kyBpcT0BbdxDO5L56bH6b4vFcrtwYw7f0yDEAAbM=;
-        b=Np3p0fQU8Kc44QhxBBwE5isK2G6SH645xuza6aTT5n778if/L83GCmswTVTr4xQAZI
-         8funiuiy+foL1l79bhe7aoZPOkPjYmnq5NkLARmCeyIVzBFFrAyoJ9D12qX6USv9JrEO
-         LxPi5fFHZ1a1Vu2f/P/DpYDPIgNKPIQVBaZASTm5mxBzwa+N4CJfyFD7l20BE7geFy1z
-         SRnLyfz8MGhw/XDHJ+OP0I0iUaeO4aAMIXFFDdATKP/cP2/pZ2NIdzxF1OG1n/ZtYPaP
-         0UJOVMgqPlYAjPwDqHNNJk5Nnyjaf04+7+A94fwduIn1EGu9H3564H73RRxbVQCP0x4V
-         O5pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741906750; x=1742511550;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yO5kyBpcT0BbdxDO5L56bH6b4vFcrtwYw7f0yDEAAbM=;
-        b=qe/WEYFrs9n8uTrUeRgv/Vei0qCpWSFuKzrt5URwKy4UK6qTd+yHhb55gtciaBkWLr
-         CjsEHjEbyCjnvq6gbQYg9Qjy+EfrmAMhOl4/zeXaMQn3W0uOr2S2CSUVBTw97WvD+7jG
-         Hy/u1cwoWFpwLg8aRqNnZT22ZeG4x+fEo5FNTE9z5HSDH471hySwgLhtypfk4AVgWNX8
-         o4JI21INvYXz/v+QtRrgWuT74OshY28v2FR256OIZ7lFW2YE8ZRhnX+uQsZN3BZ7RBBp
-         c3+hjxL2j/IxXW0AmJFW4IqA1MU5swM+yyxqk50lvMouugmfXOLtH5z+KdUdKHGQoZOv
-         0TFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVR2tEN0E8W6iX+tozVN4qdrLHzSv1pTUAGFrKL7Gu0DJ5NhY6egDpwdRI49UgioiV727sbhLvtrONKqcQ@vger.kernel.org, AJvYcCX/C7WU7kCT8Tdg86Xs+plAlp+jMAmF3hvcnG0er3zdvjKIS3cn1S1M9Z1O2F0MgGZ9qsLZSYbxrAWSkpyf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxxdh9ZmNf/agNANi3e26xqcVFUVQZE4zGDQyNFpSffcaTbJyrx
-	Z7WOjMOkBhvmGAUyrIM6aU8bXzJ53kyBfEiFIqXov4lvGebCK8Q=
-X-Gm-Gg: ASbGnctowXzFWDN/+IL8SBKA6lJlQJCE/kHNKQeXSsqKctJJyYzUSnfECaox7AeFeHa
-	r/hzGKohWCswJAUydP/RBsUQSU//0K9dKh4eL5ZxxzgafKRryrVqfTdl8j2ztoK0dz3EaZqaxhr
-	w312cA2lEZKqLBqBwTnDXxDuarM65SOwcUJboZ8ERuzQGeAvzh9dSUAdFtnr30fWe1LbCGk2thv
-	bomkFwo6e7fXTcfQ8lBYjXNO2VKdKFDmwrTHyCukBUNZcH20YXTyTr7yK0cLcFVKckFnW6EDNNF
-	j6VTa5DnIKOs4jvLqgex6pt19oxOodnMwUbGu4OgCGOsC9nWF1DBcSD2aT4bOf5RkyYepIE15uV
-	AX2v2j35MfdM=
-X-Google-Smtp-Source: AGHT+IEEcr5tLlHRCwRgIm81YAO79o0KXmqFBuZsB1QvlKMuOiqa3CoD7fSJfWVzyXEVc8D0DoWmIQ==
-X-Received: by 2002:a05:6000:1865:b0:391:275a:273f with SMTP id ffacd0b85a97d-3971d1349a3mr141997f8f.4.1741906750151;
-        Thu, 13 Mar 2025 15:59:10 -0700 (PDT)
-Received: from [192.168.20.171] (adsl-178-39-53-103.adslplus.ch. [178.39.53.103])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb318a3dsm3503210f8f.74.2025.03.13.15.59.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 15:59:09 -0700 (PDT)
-Message-ID: <990c38f8-0e7a-4e06-afa7-41d7c63bbc1e@gmail.com>
-Date: Thu, 13 Mar 2025 23:59:08 +0100
+	s=arc-20240116; t=1741906936; c=relaxed/simple;
+	bh=FvWhX3hOtt44gKakSeJitzPaf1braPvr1GZPWAgKvOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ATeKkv1tPimiSPmiDlnrDYru644ZwW8ZE93Ri+YYUhaMg44KGZS9OEc21ZeDQlzvlKhNPdtbxPKSFHSA5nfW0e+qTjKcOCF/71A0eryymC48wP1+AKE8O3KMUZIfF/lTXsuWmzPnZY+UlD2uk25PyCNfbFA/AIcdvbtXWh16AoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1tsrYj-000000005c9-1YGc;
+	Thu, 13 Mar 2025 23:01:49 +0000
+Date: Thu, 13 Mar 2025 23:01:45 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Chris Packham <Chris.Packham@alliedtelesis.co.nz>,
+	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"markus.stockhausen@gmx.de" <markus.stockhausen@gmx.de>,
+	"sander@svanheule.net" <sander@svanheule.net>,
+	netdev <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10] net: mdio: Add RTL9300 MDIO driver
+Message-ID: <Z9Nj2ZRnh8ZABklp@makrotopia.org>
+References: <20250313010726.2181302-1-chris.packham@alliedtelesis.co.nz>
+ <f7c7f28b-f2b0-464a-a621-d4b2f815d206@lunn.ch>
+ <5ea333ec-c2e4-4715-8a44-0fd2c77a4f3c@alliedtelesis.co.nz>
+ <be39bb63-446e-4c6a-9bb9-a823f0a482be@lunn.ch>
+ <539762a3-b17d-415c-9316-66527bfc6219@alliedtelesis.co.nz>
+ <6a98ba41-34ee-4493-b0ea-0c24d7e979b1@lunn.ch>
+ <6ae8b7c6-8e75-4bfc-9ea3-302269a26951@alliedtelesis.co.nz>
+ <f6165df5-eedb-4a11-add0-2ae4d4052d6a@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] drm/msm/dp: Introduce link training per-segment
- for LTTPRs
-To: Stefan Schmidt <stefan.schmidt@linaro.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- laurentiu.tudor1@dell.com, abel.vesa@linaro.org, johan@kernel.org
-References: <20250311234109.136510-1-alex.vinarskis@gmail.com>
- <CAEvtbusre2PUwNiD42d-xTCVf4dV0npN-5UxxwrjriVOsbj0Fg@mail.gmail.com>
-Content-Language: en-US
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-In-Reply-To: <CAEvtbusre2PUwNiD42d-xTCVf4dV0npN-5UxxwrjriVOsbj0Fg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f6165df5-eedb-4a11-add0-2ae4d4052d6a@lunn.ch>
 
-
-
-On 3/12/25 22:16, Stefan Schmidt wrote:
-> Hello Aleksandrs,
+On Thu, Mar 13, 2025 at 11:07:55PM +0100, Andrew Lunn wrote:
+> > I'm pretty sure it would upset the hardware polling mechanism which 
+> > unfortunately we can't disable (earlier I thought we could but there are 
+> > various switch features that rely on it).
 > 
-> On Wed, 12 Mar 2025 at 00:41, Aleksandrs Vinarskis
-> <alex.vinarskis@gmail.com> wrote:
->>
->> Recently added Initial LTTPR support in msm/dp has configured LTTPR(s)
->> to non-transparent mode to enable video output on X1E-based devices
->> that come with LTTPR on the motherboards. However, video would not work
->> if additional LTTPR(s) are present between sink and source, which is
->> the case for USB Type-C docks (eg. Dell WD19TB/WD22TB4), and at least
->> some universal Thunderbolt/USB Type-C monitors (eg. Dell U2725QE).
->>
->> First, take into account LTTPR capabilities when computing max link
->> rate, number of lanes. Take into account previous discussion on the
->> lists - exit early if reading DPCD caps failed. This also fixes
->> "*ERROR* panel edid read failed" on some monitors which seems to be
->> caused by msm_dp_panel_read_sink_caps running before LTTPR(s) are
->> initialized.
->>
->> Finally, implement link training per-segment. Pass lttpr_count to all
->> required helpers.
->> This seems to also partially improve UI (Wayland) hanging when
->> changing external display's link parameters (resolution, framerate):
->> * Prior to this series, via direct USB Type-C to display connection,
->>    attempt to change resolution or framerate hangs the UI, setting does
->>    not stick. Some back and forth replugging finally sets desired
->>    parameters.
->> * With this series, via direct USB Type-C to display connection,
->>    changing parameters works most of the time, without UI freezing. Via
->>    docking station/multiple LTTPRs the setting again does not stick.
->> * On Xorg changing link paramaters works in all combinations.
->>
->> These appear to be mainlink initialization related, as in all cases LT
->> passes successfully.
->>
->> Test matrix:
->> * Dell XPS 9345, Ubuntu 24.10, Gnome 47, Wayland
->>          * Left USB Type-C, Right USB Type-C
->>          * Direct monitor connection, Dell WD19TB, Dell WD22TB4, USB
->>            Type-C to HDMI dongle, USB Type-C to DP dongle
->>          * Dell AW3423DWF, Samsung LS24A600, dual Samsung LS24A600 (one
->>            monitor per USB Type-C connector)
->> * Dell XPS 9345, Ubuntu 24.10, Gnome 47, Wayland
->>          * Left USB Type-C, Right USB Type-C
->>          * Direct monitor connection
->>          * Samsung S34BG85 (USB Type-C), Dell U2725QE (universal
->>            Thunderbolt/USB Type-C, probes with an LTTPR when in USB
->>            Type-C/DP Alt mode)
-> 
-> You can  add the following:
-> * Dell XPS 9345, Debian trixie/sid, Gnome 48, Wayland
->          * Left USB Type-C, Right USB Type-C
->          * Dell WD15 Dock with DisplayPort connected
->          * Dell HD22Q dock with HDMI connected
->          * USB Type-C to HDMI dongle
->          * Dell U3417W
+> So we need to get a better understanding of that polling. How are you
+> telling it about the aquantia PHY features? How does it know it needs
+> to get the current link rate from MDIO_MMD_AN, MDIO_AN_TX_VEND_STATUS1
+> which is a vendor register, not a standard C45 register? How do you
+> teach it to decode bits in that register?
 
-Hi,
+There are several registers of the MDIO controller to control which
+non-standard registers are polled as well as information about the
+register layout [1].
 
-Thanks for testing, will add on next re-spin.
+There are lots of constraints which is why not all PHYs can even be
+used at all with those switch SoCs -- PHYs which are more or less
+standard C45 are easy to support, all one got to do is define MMD
+device and registers as well as register layouts for things which
+aren't covered by the C45 standard (1G Master/Slave status and control,
+as well as a way to access the equivalent of C22 register 0).
 
-> 
->> In both cases, "Thunderbot Support"/"USB4 PCIE Tunneling" was disabled
->> in UEFI to force universal Thunderbolt/USB Type-C devices to work in
->> DP Alt mode.
->> In both cases laptops had HBR3 patches applied [1], resulting in
->> maximum successful link at 3440x1440@100hz and 4k@60hz respectively.
->> When using Dell WD22TB4/U2725QE, USB Type-C pin assigment D got enabled
->> and USB3.0 devices were working in parallel to video ouput.
->>
->> Known issues:
->> * As mentioned above, it appears that on Gnome+Wayland framerate and
->>    resolution parameter adjustment is not stable.
-> 
-> I can confirm this on Gnome 48 + Wayland as well. Sometimes the resolution
-> change from gnome settings gets stuck and does not apply. It normally works
-> here around every third try or so when using a dock.
+But C22 PHYs which aren't RealTek's won't ever work.
+Anything which doesn't use register 0x1f for paging is disqualified and
+can't be used. I've also just never seen any of those SoCs being used with
+anything else than RealTek's 1000Base-T or 2500Base-T PHYs.
 
-Good to know that it isn't issue only on my side :)
+Only for 10GBase-T you will find variation, Marvell, Aquantia and some
+with Broadcom.
 
-Alex
+Obviously that's all largely incompatible with Linux' approach to PHY
+drivers. Luckily *most* (but not all) switches based on those RealTek
+SoC's initialize the PHY polling registers in U-Boot, so usually Linux
+doesn't have to touch that (that's why usually we have to make sure
+that 'rtk network on' is called in RealTek's U-Boot before launching
+Linux).
 
-> 
->> Due to lack of access to the official DisplayPort specfication, changes
->> were primarily inspired by/reverse engineered from Intel's i915 driver.
->>
->> [1] https://lore.kernel.org/all/20250226231436.16138-2-alex.vinarskis@gmail.com/
->>
->> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-> 
-> Tested-by: Stefan Schmidt <stefan.schmidt@linaro.org>
-> 
-> regards
-> Stefan Schmidt
 
+[1]: There is a very useful reverse-engineered register documentation for
+those RealTek SoCs which also covers those registers of the RTL9300:
+
+https://svanheule.net/realtek/longan/feature/mac_control
+
+See SMI_REG_CHK_* and everything with 'POLL' in the register name to get
+an idea...
+
+For illustation see the default value of SMI_10GPHY_POLLING_SEL_0 which
+is 0x001f_a434. So that's what is called 'RTL_VND2_PHYSR' in the Linux
+driver for RealTek PHYs...
 
