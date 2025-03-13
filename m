@@ -1,203 +1,148 @@
-Return-Path: <linux-kernel+bounces-559836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6DBA5FA75
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:52:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28837A5FA76
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:53:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E248F189F43F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:52:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3F5D19C1FC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE5F268C76;
-	Thu, 13 Mar 2025 15:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F87026869F;
+	Thu, 13 Mar 2025 15:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="irWk5vig"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fUrQTPSQ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0437D145A11
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F32A145A11
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741881144; cv=none; b=PioWJMjC5q4cwkJk2sethrHhRjiPnx9jnYXGYb7C6xY9CO4Q88C1PaiExEJLkZoCnYvSxdg+ejIoQOTKq4Y1yszCZ1elZyTm6PqaCWqJS8vaeJM7XFbSbyG2k3Vnw0OrY3fvtLoqxep9b+EjD2pIYs3oZQx0pcuaUYcSQh5mv6A=
+	t=1741881177; cv=none; b=Bu+4KD9wcF0/zVVRoXfW6DoRXrzn/zqUCgV+KZXJN/9lrSW2w68ELCJ8mc3xBWhhOJ/LQ/fUUObJqFqw7c0LbVjd63D/BgNEdMVdvtgU4Pofo9rX02HZPNkh+ZpZJJp7L7LWPrzKAUwyYLlTR6LhKUePYacO6twYNpiJk+bOHQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741881144; c=relaxed/simple;
-	bh=A8AtJQ9TXJXCum6G19u7JfO6nSprHwo4DLUis4JKzdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pg1pvS5KO+Td0B/dkOvkJFWQ8pAu5Xg92Qovo4AP73wqBXrZxdx/5tLr7afmmmUkTmk6Ssi6LBOOtCNGIa0lqNpyE6rtGd/nORTLwdYre5KkmptDWTi53hki7EMcNtYNPzDs8D1FZjaY97M2KauNWekU1r11t8Ie2ugIWI9g2aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=irWk5vig; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-46c8474d8f6so10304611cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:52:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1741881141; x=1742485941; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4w37FL3B+Ve9xBUgAXtVYhnw9ChVr8Pqzg/e4uFmP8Q=;
-        b=irWk5vigg7fORmZoRWqpPeLUaDAN45YovRW/66jhxR/2xAquXaqFgpd6uUdmys7t7l
-         d4Oo1tq1RrUC+9OeXJtzQZbJVZ1WFsVdTRVz5dWXEp1nO3hVJ6OTTj1pgOmzXlWBwJb+
-         4ohIebc/XcH0muc6t0lbKcEzws/eyP9JK54a/2gJUSb5+lwsFeQMqNbDrTgjihofgq2p
-         jhKNs9UG1Hfcvxl6i7N5RwM30jCWC5EvBsWtRmDUMbj9TIsUlq0fkgqpbFAdaTPZ6bQ8
-         q5ixIT0pH97SBXTQ83kwGtJVFHOUWvvRHGTEQeYWKwlRgWwaO9vdRfb6WqW7o9p68p+j
-         hbxg==
+	s=arc-20240116; t=1741881177; c=relaxed/simple;
+	bh=BuAVugaGPUa0YOrWMOyfotBl7rFWr6L2tdgK1RgnWcc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VihX3VFXM0PSxitE+k9wXXCz5r0peXZ54+Io0dVMdfiioKyg8hW7wYI0Qtm/xhiKT6cpMByCoc3l2RvxaRUE0cQ+NnYePngKgwn93fPaaKum0J4YCaOKYI8uxeOdpmxXnbWofNxpjFJkXmXyJDrPhh0XGUdDrkTtuaYXjkz/ElU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fUrQTPSQ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DAtMtd031670
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:52:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DAyFW6s9ZOdByZVdgGm+NCgHT40nuNamPjDacuh/RHM=; b=fUrQTPSQsOtzwCQg
+	W1SJ0TNeVdRHn/tMF7VV4YGLgqxE3MFk3fmTgcnE55jbxfzZ6IHhubI4P/Kaz9fV
+	t0YHnHLj/RX5Ykhat3+8BjJTksNp1zs9/aTxlr90O8ribK9BZXJgtCk9wQN4r6qO
+	nbJ6DfQ4HpstI2XuvTB3rNikT8MqnaHw/JTXSQp8zNfytgqa0rFRqXCi0Wfuz4Y6
+	bV8Od4MJXpyjlC9CGGWgy+nnq2OD0Hee8MC1T0YxrVq5IVe8XGQ8FkHEfSb6MeVg
+	JlSZxJi+OPhmSy2QpW4BXa77IhM/sCh2EwUTrLJ6eozbJ0IqOfAImeDi0cE79Bye
+	u2Ug/A==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45bx1jgtjw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:52:54 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff581215f7so1913922a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:52:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741881141; x=1742485941;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4w37FL3B+Ve9xBUgAXtVYhnw9ChVr8Pqzg/e4uFmP8Q=;
-        b=p0t5JsGvKk3tQdnoc9GenS+xdCEFYEDaHn6uaw8hF0+o0tok/fDwhaZagfJzaNdeaQ
-         XFXxJVdeMfFRSHMrHQulAoY54ZJOm842vARYsZyirujXU1btqOFsm9RSSxSbngSXwfNF
-         3fZyHaXWTX7+CTqbV/OWXI537u8Dm0ksPJPzEL3104s4eOpGpkNxcmljRpB3P0qpM3S3
-         R9L1Q6O4uehs+GjfFWVrEu+ydf8U+mKrW9Z5Wl9lAdZNBBp5GrIS9yuiKvAvOSgBSdzj
-         uQ8eNHgzywOTqjHpyd4QpCWVCHOVUyR+8lCm4z3AYsCsHAkcllFGRzAgvZMulNXCn4DQ
-         uiVg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9PyTPOO5ac8Goa3i9VDo3lGh+iLuQVR/UfK6bJWUDfg88TcZxyFhV+DEmf0VG3Hbr+bwvg55gx8wQN/w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMRczP4f+DeKF9X8GMZ8T9nvleavXH9/aNlwIi7gzvJhtEcqrv
-	p/nw0EY/nQEsasKdpsw0NeyZG0m8RDvOqqiuZhVv5iVbCfR4aGP7/GBojhfvQ2c=
-X-Gm-Gg: ASbGncumPQL4bnwbdJNDqgcx2dCjeS0O9zvTj3Wqd468lJmOeqDrwWLXxvgK93NsEgz
-	+1kVsP/W2kOj1ZTJMBvq2mxztPRVV0yZOpdzxgSkXiwcAkKZvpyxzO3XBTZHNBtqPAz4iCIllSc
-	pnGhg7znUiDG0j+6RVmZaXuQnNrEFUzb1cprKaQOxMKWxcFi3bttBKhXLGY7f/S3xIIEuUOcxMc
-	/n0yr84NOjk0j2FpFpf2X/svsifEtUMAU0XX4qo93G0MC0wnh4tuJ5QGdWqPaQ8sfcmYhyXQ+/7
-	M8qIsOpFGng0MOY8jqIFTKFpATBsyMQZXQ/QAcBipaClmMPDMaRGI3h+0x4QlHDXzoLG6WbUUjY
-	Eb2do/ehgaCC0s2x5bomTgAKW6P0=
-X-Google-Smtp-Source: AGHT+IEsoyWweiNgBmaWSKSfpN7pyNhVfLT8lOAAvmtKf+Ddah15RIIeIcih94D/NjT9dh4sWhGcyw==
-X-Received: by 2002:a05:620a:43aa:b0:7c5:5909:18f3 with SMTP id af79cd13be357-7c55e90fe47mr2004594185a.37.1741881140875;
-        Thu, 13 Mar 2025 08:52:20 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573d89815sm112187185a.91.2025.03.13.08.52.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 08:52:20 -0700 (PDT)
-Date: Thu, 13 Mar 2025 11:52:18 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Rakie Kim <rakie.kim@sk.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
-	joshua.hahnjy@gmail.com, dan.j.williams@intel.com,
-	ying.huang@linux.alibaba.com, kernel_team@skhynix.com,
-	honggyu.kim@sk.com, yunjeong.mun@sk.com
-Subject: Re: [PATCH v2 1/4] mm/mempolicy: Fix memory leaks in
- mempolicy_sysfs_init()
-Message-ID: <Z9L_MgjuhrploEUm@gourry-fedora-PF4VCD3F>
-References: <Z9Gs8i1FhJJ0eaiA@gourry-fedora-PF4VCD3F>
- <20250313063247.681-1-rakie.kim@sk.com>
+        d=1e100.net; s=20230601; t=1741881174; x=1742485974;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DAyFW6s9ZOdByZVdgGm+NCgHT40nuNamPjDacuh/RHM=;
+        b=XSooKqBB8rNFvYO1Z3H3ITDIkn+WnqLSNGZv+MKJlIKjhmuzagy83BiGUjCvuhpjVw
+         dUyeDleqIgMn6FY+882wDDjCRv6A4FIc5sRdn7uS8E4R/ZHpgk/kMogmOwyKJB7CyPdM
+         MXA2JL2e2XDitFysRnljyD680LfSOQCA1Msmf1+jC7xRbWKxPyRW0pw5fhaF8gYYKjx2
+         E2SYgr+zbmwpPJ4EJwHMAfF4ppAtkfJ1sjnTObKobaa2oC4ztXI/z9WvdooxrwhJQEol
+         Yc63jMRiCW4707YqRw0MfpfEu2K3xiImFVqq7drxpHcmMPX1uFidHNa4OoK9XSw1iEbH
+         ZgmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLYh0nVSnarPaKWL+jPDzJsD9u6G3anygDcvK6yjiM7xJbh8LcHp9FiB4wXBl58QdDDZvuQZ1EK1PABCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNBuYkatgyarYC7DjlLDneW2Zsrzy8K858yFRenNN8K6W1/eA7
+	G1bVl0GEWkdGNJlMSXdXTL9XZNku2Oe4AgJNlIsJIcgbAILpOLdD85JePDiD9r8cVnSIBdHbrNl
+	mJj8dCTUld+rLzdndh0lvhMNWZ3Rp17djouzaPQ3+XCcjbM1At1tErr9FRZs1v/I=
+X-Gm-Gg: ASbGncs8rH7UOgLuYVZa3fwr/v2/isQLkiJterEw3d5qUhUYkKXAJNZJGmE82m1qDRy
+	d/hvTj1pH9CKJ7hEP+zQnhY5xCu641jXaIdgnXlnEcXz7PsxbepmdHVaBwqtzrVImY4b3lfuAEg
+	53WZhkxulbPL7nYOct5DwPkyEz2CJEL+OwO6zMoJhkaATWtUI3MQ+7Mh8oRLrKyhVIZwzOCuUbg
+	5W7UbHbbDnw1pj4fXngdqWMm8Oy+TIXWWIK78WkhTBTgKlLCiSGNp0uw+RXZkbr1/m9vAYK8jQg
+	AsZxgyEWECYIS/qQ0gRWX4eNT1fU/5HpjH9UFqHC0zCk/dpm1zLNrdn3tndWN2WukPuCm+gIMW1
+	dGT9Wtc7r
+X-Received: by 2002:a05:6a21:46c4:b0:1f5:839e:ecdd with SMTP id adf61e73a8af0-1f5bd77e205mr414627637.9.1741881174132;
+        Thu, 13 Mar 2025 08:52:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFxJ6KrfBFxtdVoI5JAAZUs42RAHXWqeboT7py2FAoiim99470SY7JOSvZRH0obsHEP1AtQaw==
+X-Received: by 2002:a05:6a21:46c4:b0:1f5:839e:ecdd with SMTP id adf61e73a8af0-1f5bd77e205mr414583637.9.1741881173566;
+        Thu, 13 Mar 2025 08:52:53 -0700 (PDT)
+Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56e9c9e54sm1239916a12.9.2025.03.13.08.52.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 08:52:53 -0700 (PDT)
+Message-ID: <1e8a650d-dd87-4ff3-ad83-da9e7f33a915@oss.qualcomm.com>
+Date: Thu, 13 Mar 2025 08:52:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313063247.681-1-rakie.kim@sk.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nls: Fix utf32_to_utf8 parameter type in declaration and
+ definition
+To: ye.xingchen@zte.com.cn, brauner@kernel.org
+Cc: jack@suse.cz, linux-kernel@vger.kernel.org
+References: <202503131601265834sSbkAuqH0NUydxGXf-Fa@zte.com.cn>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <202503131601265834sSbkAuqH0NUydxGXf-Fa@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=CNQqXQrD c=1 sm=1 tr=0 ts=67d2ff56 cx=c_pps a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=e70TP3dOR9hTogukJ0528Q==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=1RTuLK3dAAAA:8 a=RLfexGi2h6N7ieUIB9gA:9 a=QEXdDO2ut3YA:10
+ a=uKXjsCUrEbL0IQVhDsJ9:22 a=kRpfLKi8w9umh8uBmg1i:22
+X-Proofpoint-ORIG-GUID: _2zQjwtVTA4_mqT3mhnUixbJ1kmT8rMN
+X-Proofpoint-GUID: _2zQjwtVTA4_mqT3mhnUixbJ1kmT8rMN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_07,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=999 impostorscore=0 mlxscore=0 priorityscore=1501
+ suspectscore=0 phishscore=0 malwarescore=0 clxscore=1015 bulkscore=0
+ adultscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503130123
 
-On Thu, Mar 13, 2025 at 03:31:38PM +0900, Rakie Kim wrote:
-> > Is this correct? If kobject_init_and_add fails, from other examples we
-> > need only free the mempolicy_kobj - because it failed to initialize and
-> > therefore should not have any references.  I think this causes an
-> > underflow.
+On 3/13/2025 1:01 AM, ye.xingchen@zte.com.cn wrote:
+> From: YeXingchen <ye.xingchen@zte.com.cn>
 > 
-> Regarding the reordering of mempolicy_kobj allocation:
-> 1) In kobject_init_and_add(), kobject_init() is always called, which
-
-Quite right, mea culpa.
-
+> The declaration of utf32_to_utf8 in the header file uses
+> bool maxlen as the parameter type, while the definition uses bool maxout.
 > 
-> 2) The release function for mempolicy_kobj is responsible for freeing
->    associated memory:
+> This patch aligns the parameter name in the definition with the
+> declaration,changing maxout to maxlen to ensure consistency.
 > 
->    static void mempolicy_kobj_release(struct kobject *kobj)
->    {
->        ...
->        kfree(ngrp->nattrs);
->        kfree(ngrp);
->        kfree(kobj);
->    }
+> Signed-off-by: YeXingchen <ye.xingchen@zte.com.cn>
+> ---
+>  fs/nls/nls_base.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/fs/nls/nls_base.c b/fs/nls/nls_base.c
+> index 18d597e49a19..1dc2f8c8916e 100644
+> --- a/fs/nls/nls_base.c
+> +++ b/fs/nls/nls_base.c
+> @@ -83,7 +83,7 @@ int utf8_to_utf32(const u8 *s, int inlen, unicode_t *pu)
+>  }
+>  EXPORT_SYMBOL(utf8_to_utf32);
+> 
+> -int utf32_to_utf8(unicode_t u, u8 *s, int maxout)
+> +int utf32_to_utf8(unicode_t u, u8 *s, int maxlen)
+>  {
+>  	unsigned long l;
+>  	int c, nc;
 
-I see what you're trying to do now after looking at the free-ordering
-at little closer.
-
-Lets do the following:
-
-1) allocate node_attrs and mempolicy_kobj up front and keep your
-   reordering, this lets us clean up allocations on failure before
-   kobject_init is called
-
-2) after this remove all the other code and just let
-   mempolicy_kobj_release clean up node_attrs
-
-3) Add a (%d) to the error message to differentiate failures
-
-This is a little bit cleaner and is a bit less code. (Not built or
-tested, just a recommendation).
-
-I'd recommend submitting this patch by itself to mm-stable, since the
-remainder of the patch line changes functionality and this fixes a bug
-in LTS kernels.
-
-~Gregory
-
----
-
-
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 530e71fe9147..05a410db08b4 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -3541,38 +3541,34 @@ static int __init mempolicy_sysfs_init(void)
- 	int err;
- 	static struct kobject *mempolicy_kobj;
-
--	mempolicy_kobj = kzalloc(sizeof(*mempolicy_kobj), GFP_KERNEL);
--	if (!mempolicy_kobj) {
-+	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
-+			     GFP_KERNEL);
-+	if (!node_attrs) {
- 		err = -ENOMEM;
- 		goto err_out;
- 	}
-
--	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
--			     GFP_KERNEL);
--	if (!node_attrs) {
-+	mempolicy_kobj = kzalloc(sizeof(*mempolicy_kobj), GFP_KERNEL);
-+	if (!mempolicy_kobj) {
- 		err = -ENOMEM;
--		goto mempol_out;
-+		kfree(node_attrs);
-+		goto err_out;
- 	}
-
- 	err = kobject_init_and_add(mempolicy_kobj, &mempolicy_ktype, mm_kobj,
- 				   "mempolicy");
- 	if (err)
--		goto node_out;
-+		goto mempol_out;
-
- 	err = add_weighted_interleave_group(mempolicy_kobj);
--	if (err) {
--		pr_err("mempolicy sysfs structure failed to initialize\n");
--		kobject_put(mempolicy_kobj);
--		return err;
--	}
-+	if (err)
-+		goto mempol_out;
-
--	return err;
--node_out:
--	kfree(node_attrs);
-+	return 0;
- mempol_out:
--	kfree(mempolicy_kobj);
-+	kobject_put(mempolicy_kobj);
- err_out:
--	pr_err("failed to add mempolicy kobject to the system\n");
-+	pr_err("mempolicy sysfs structure failed to initialize (%d)\n", err);
- 	return err;
- }
+It is obvious you didn't compile this code since the implementation still uses
+maxout. Note that a less intrusive change would be to rename parameters in the
+prototype.
 
 
