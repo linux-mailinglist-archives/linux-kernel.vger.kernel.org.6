@@ -1,161 +1,161 @@
-Return-Path: <linux-kernel+bounces-559209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D5C7A5F0ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:31:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3EFAA5F0F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:32:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C170917501A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:31:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C08E419C14D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D92B265CB7;
-	Thu, 13 Mar 2025 10:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705EE1FBC87;
+	Thu, 13 Mar 2025 10:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QWMuSpED"
-Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s74rCBe2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B488925FA25
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C503F16BE17;
+	Thu, 13 Mar 2025 10:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741861877; cv=none; b=GkLLeP4+RjYpxorgQWMVJbHS7oiFaCaOF5KmaQciBLvN9PZYPgwXO0/2bmatChlBObYK/MxEW7Jr8jvDFGSi1KxjOXBZdImM13W65FgRxkXn2j6Jjp/WjJ90ORGsVCElAb83qSPCqIUdsylVNqolsZf+6RgnoUrr4ObsBxbdm9Q=
+	t=1741861929; cv=none; b=U+96F2K2L3403TqY0IV+xLfoij0ER6bCeLg4eTSj3lmJLcj6sTl/78tZPU6wyPJnCeCkNSIrs6XQJN9Rg1Pk8nxmG3YaKck0lnbOvjo2ZATYaTGU2gD2noBdRYKR1rmtfXzuVluoWpW4cygLkY3AKu2WaO23UxPk/k/8rldj2I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741861877; c=relaxed/simple;
-	bh=+Qc1/rhEavEwxsG3hKdFM0w5lhAAqdDttjw6g+YQ8mg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lkElGu8qpUn+oIGkglsOuClBFDc//N5/SeEMWNL6DKvKmuVZ0BYhsMRjcp5ZIZIalE6o13Mlul464bn52HJoNMyLgALo3NJdFWzGxR1EilFTGCtB6dzQDzLWg2UI1xZMnpB2hFomwX8gdk66y2TqGK83ag6WnIOpSQn3E8HScns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QWMuSpED; arc=none smtp.client-ip=209.85.221.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-39127512371so453035f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 03:31:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741861873; x=1742466673; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Qc1/rhEavEwxsG3hKdFM0w5lhAAqdDttjw6g+YQ8mg=;
-        b=QWMuSpEDetsgtiuuFcbZJ2jMMxP3+kX5OgKgbwxmQW6sUGE8IjDwWuD/ep184RU4XP
-         BD2F9eMCwAnSns+1NQAs4b4H/nomuwTywijY2xjJybA6xPRGPTyQl4o+ef3fyYpAtbts
-         bwqG7XxKhlj2xXx9IvMYD1VKjQGVud02yvfi5eAR/VzUWU8ABMEfOkh2ftp7Pzt39LLJ
-         0wwhiFwh5oOh26mNNWvNJvHlYr/Iqk02Tic0tdSZtuvjGbyvzIbl3bXgAu6u/qXmAN0+
-         Bdd9rJU+2e9ANA/yJ21A4K+a0871DFhkdUDc1hVhXSlxtFVbnnqL2h1kIMIvSpEVWWWe
-         zDgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741861873; x=1742466673;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+Qc1/rhEavEwxsG3hKdFM0w5lhAAqdDttjw6g+YQ8mg=;
-        b=Do8+dXXvuS3myai+LB71C5qYsYzfsQqO7rOkvkZ/SPZmW8Gt8JQbNA3abBqtog+AeB
-         paiDtH41Sq15A/Xq9pcCu5k84csrR2CNw136QxdUYIutXJ8iZ/Z7FMQznCqpE3KZX+Zs
-         77QVx+SPuRr83OCubQDNxSbom+9tpQ98HKbizfgahuJZfLm3h0NmoB2jwCApTLQOth9u
-         B6cYrDdgNA4uj6FI2px+KIGCAdYO+rblRT45fd0tF3AgSafhpkPL9tP+VgeWHyU+qpTn
-         LZztiovvvz0Z+PoEHoS9n2qTSsbsJE4caTcJN3uwtWNn6c2/otRrvK2ZKLeBm/mIPLtl
-         J5Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXZuL7072p3F4QPItnul2KgYzKF5VxMXvJTTxRo1Yuozn+fCjnvFyuGVxfo0/MVIPelK4GQvXdRmxwzao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUrv6eDWNfl1qYwz37cJgzb6ib1xzt4bXMfCkGwnfNXKJDXZSB
-	0g5M9scgNeGi49Aa6m99NirrX6iLyaKZuSOrgGgXRn7OLv2NR/sQFv6+kVBbrXY=
-X-Gm-Gg: ASbGnct8Yq/zQjFOeWizUDv9byytNh2sMnQUwCpWn6Ni7D4OE9WEznYEWPovsZ6ezJI
-	giDt3MI386tifKP4C2UlCdkWNB7AijAjVRJ3etYp56Kf50Ck6rOj8qEzsR7CEqG15SpFTc3r6/q
-	AcC9s4yBc1baq9MKhV+RphKKf99anul9nGPG+HFU2HqOVW5PEuA4K0T9kUSU6MfI/gMj/Zs41G+
-	mVdB6IB4rJ5Of7wgQBqOF/ACkTciYYOAA9My0GxVk7Hi3tX2P9VvvRb4n42P35MzSF5ezKFEqFA
-	WMgRmtU5eSJCKJWKRJiWyRK/+iIOt7FvLErm+PRBvZL2wMI=
-X-Google-Smtp-Source: AGHT+IGutrF+qhtpUeJyR+v5dxXEJQUHmE/j1jQ80iIR/51IL4Oi+Mu0pGNz5DfWd0qOs62NuhFHZQ==
-X-Received: by 2002:a5d:6dad:0:b0:390:de66:cc0c with SMTP id ffacd0b85a97d-3926c69b260mr11326833f8f.46.1741861872973;
-        Thu, 13 Mar 2025 03:31:12 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c7df31f6sm1651918f8f.6.2025.03.13.03.31.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 03:31:12 -0700 (PDT)
-Date: Thu, 13 Mar 2025 11:31:10 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc: kuniyu@amazon.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, cgroups@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>, 
-	Leon Romanovsky <leon@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Luca Boccassi <bluca@debian.org>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH net-next 0/4] Add getsockopt(SO_PEERCGROUPID) and fdinfo
- API to retreive socket's peer cgroup id
-Message-ID: <m73uknqti2uvh2sdak6fs75ms7ud6yken6cgaotbq3hllg7wmt@hgqewykjxkfn>
-References: <20250309132821.103046-1-aleksandr.mikhalitsyn@canonical.com>
+	s=arc-20240116; t=1741861929; c=relaxed/simple;
+	bh=vp6bg26NerLSUUazGPvHxcQQKRGzcjqFPiWbFTYAPUg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FVgpH3azSYZASpAqg6PrzYKHGKB3qb6SRjbvjwR8EZLpttwrt1f3WpvzrbMamKkCSrzJ7ViaUYKOkqJfVTUtZWirJVZfssWth1dlp4lxpO49+Oh3E0OeooyGo2Gt/xFLEzj/J07Qoff+lefVX4hiO0KxRQ20K7vmSsrYUARzW9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s74rCBe2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DE2AC4CEE3;
+	Thu, 13 Mar 2025 10:32:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741861929;
+	bh=vp6bg26NerLSUUazGPvHxcQQKRGzcjqFPiWbFTYAPUg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=s74rCBe2kZErmamJ64chid1yW8ZYtbFI3u6bw5hIAy0FYbQA2dT2xe+R41Uzxx8Ss
+	 IuceNnTx9WoCV20ZCFUKn6kjMBjhGlvOqCyDeUuEgU0d10e10hiH8XDXDLhPibDzXn
+	 YDa5KCUVCagPFma868xh1L1m87p6AeLitN4UpdF4wVicLSKDk/bWpnRuQXB322FJ1r
+	 5w13FJVyelw+xpMV+h4H0IotkN8R3AqwzlVtowRyFTw8d1yFX9Lvsw8eVy+uRQmxtj
+	 90sKWTIhWgDCONEzKBnmRVXdInZtXHxdoLeGGqbic2TWd3qx3cS27erJ/sPM78SWo+
+	 J+GVPw3OQEl+w==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5499b18d704so816752e87.0;
+        Thu, 13 Mar 2025 03:32:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUHT1im+F7Z5NfnuOsnxNCzcYmRMd2+C04AiaWVNHMsC/w/tFLyFnq8YHaZK4LSl7wQQuqyQ4dqT71o7bE=@vger.kernel.org, AJvYcCVOcx+C5Ruu5vdu6ksztX6tTvRlhOFgyfxBn4AaDeODkWi3HFi/l+uDHHQ4xQZSnLZcdmORLTe8oduy+sKO@vger.kernel.org
+X-Gm-Message-State: AOJu0YzapQROo+rwfvgeHzsSNRbo4yk7eioPJYIBCqWjn/Cl6pOA21ul
+	qRNEuN1Bl212v7dS5L44glBGH36H6qw8MBC+vlOZf5kQz8G7m16HNMu2AWfoKd0t8iQlx6qSqLM
+	WC7w/BqXvjSfUQU0G9byoxa32FBI=
+X-Google-Smtp-Source: AGHT+IF2/LdlU/BnRk012EhhZfmR8/aa57N7syCRBT5UlFEM1Nc/v9y1tqWaAAoouuiCXuBEOM+bLfqRMkDtWuyVRpc=
+X-Received: by 2002:a05:6512:3d15:b0:549:78bd:6b9f with SMTP id
+ 2adb3069b0e04-54990e676damr9169540e87.30.1741861927881; Thu, 13 Mar 2025
+ 03:32:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gn5un3rlxk2imiai"
-Content-Disposition: inline
-In-Reply-To: <20250309132821.103046-1-aleksandr.mikhalitsyn@canonical.com>
-
-
---gn5un3rlxk2imiai
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250224132132.1765115-6-ardb+git@google.com> <CAMj1kXHamiZ8u4YO9FnrWhpcotUkAusDF_db_5H2qaVD85qmVA@mail.gmail.com>
+ <CAK7LNATLf2iXNGi-UKRg=+PRRqgmxry5QQnQ4GUNsuVmDBAnmw@mail.gmail.com>
+ <CAMj1kXGVe-R7VF1nHmRx+UB4FuhSjiwMU=n_uWCLC99rTTa5ZQ@mail.gmail.com>
+ <CAK7LNATkaTvAwPmNM3kSOCkCptW-bo9Ko6asWyFVcGYgu5rHtw@mail.gmail.com>
+ <CAMj1kXHCia-gQy7fkVC5SgMyFqz6rRgpVbz6_W7e9jk7ENaQxA@mail.gmail.com>
+ <Z81j8EguDyz_uesu@gmail.com> <CAK7LNATb40pkqXXH+o_CXW6Vf3zavAj8oSeWnpGfXq6SCto4kw@mail.gmail.com>
+ <CAMj1kXEAw7qqRSPCnKj+sO5QEtWsFQ2P7gkxuNQhssWd3E6S=Q@mail.gmail.com>
+In-Reply-To: <CAMj1kXEAw7qqRSPCnKj+sO5QEtWsFQ2P7gkxuNQhssWd3E6S=Q@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 13 Mar 2025 19:31:30 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATh=si9Gc6r0_g66YPmoV8qWkqFAbVhLwUbsjTkhRAEbQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JpN9yY182aIhb9AHHOX73O0I8d6jIFYZOgavTeL_hQ5Jy5s66K_fuCwmjA
+Message-ID: <CAK7LNATh=si9Gc6r0_g66YPmoV8qWkqFAbVhLwUbsjTkhRAEbQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/4] x86/build: Get rid of vmlinux postlink step
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	linux-kbuild@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH net-next 0/4] Add getsockopt(SO_PEERCGROUPID) and fdinfo
- API to retreive socket's peer cgroup id
-MIME-Version: 1.0
 
-Hello.
+On Tue, Mar 11, 2025 at 3:40=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
+ote:
+>
+> On Tue, 11 Mar 2025 at 03:39, Masahiro Yamada <masahiroy@kernel.org> wrot=
+e:
+> >
+> > On Sun, Mar 9, 2025 at 6:48=E2=80=AFPM Ingo Molnar <mingo@kernel.org> w=
+rote:
+> > >
+> > >
+> > > * Ard Biesheuvel <ardb@kernel.org> wrote:
+> > >
+> > > > On Sat, 8 Mar 2025 at 17:17, Masahiro Yamada <masahiroy@kernel.org>=
+ wrote:
+> > > > >
+> > > > ...
+> > > > > I do not think it is broken.
+> > > > > As I mentioned above, I regard vmlinux.relocs as a byproduct
+> > > > > of the atomic build rule of vmlinux. This works.
+> > >
+> > > Except when it doesn't work, such as when an intermediate linking ste=
+p
+> > > fails, and intermediate build products are lost and cannot be recreat=
+ed
+> > > easily (or at all without modifying the source)?
+> > >
+> > > And the thing is, there should be no such thing as an 'atomic build
+> > > rule of vmlinux' if it means lost information when the build is broke=
+n
+> > > at an intermediate step. What purpose does it have?
+> > >
+> > > > There is no make rule for vmlinux.relocs, and so
+> > > >
+> > > > - if it gets deleted, it cannot be rebuilt and even though the buil=
+d
+> > > > does not break, the relocation data is missing from the compressed
+> > > > image, and this could potentially break the kaslr startup code,
+> > > > - it vmlinux.relocs is older than vmlinux for some reason, make wil=
+l
+> > > > not notice and silently reuse the outdated version,
+> > > > - when creating vmlinux.relocs from vmlinux and an error occurs,
+> > > > vmlinux is deleted, making it difficult to diagnose the problem.
+> > > >
+> > > > I think this is badly broken, but if you think this is all working =
+as
+> > > > it should, I am not going to debate this further, and you can consi=
+der
+> > > > the patch series withdrawn.
+> > >
+> > > That's very sad, as both the simplification is substantial:
+> > >
+> > >   19 files changed, 52 insertions(+), 87 deletions(-)
+> > >
+> > > and the increase in debuggability is substantial as well.
+> > >
+> > > Thanks,
+> > >
+> > >         Ingo
+> >
+> > When a byproduct is accidentally lost
+> > (for example, manually deleted), it is not automatically restored.
+> > Running 'rm vmlinux' or 'make clean' is needed.
+> >
+>
+> Exactly. Make cannot detect this situation, and so the build breaks in so=
+me way.
+>
+> > vmlinux.relocs is one such byproduct.
+> > Another is the map file when CONFIG_VMLINUX_MAP=3Dy is enabled.
+> >
+>
+> The linker map is not depended upon by other build targets, and is
+> typically for human debug consumption, so while not ideal, it is not
+> as broken as for the unstripped vmlinux.
 
-On Sun, Mar 09, 2025 at 02:28:11PM +0100, Alexander Mikhalitsyn <aleksandr.=
-mikhalitsyn@canonical.com> wrote:
-> As we don't add any new state to the socket itself there is no potential =
-locking issues
-> or performance problems. We use already existing sk->sk_cgrp_data.
+Now you learned this statement is wrong.
 
-This is the cgroup where the socket was created in. If such a socket is
-fd-passed to another cgroup, SO_PEERCGROUPID may not be what's expected.
 
-> We already have analogical interfaces to retrieve this
-> information:
-> - inet_diag: INET_DIAG_CGROUP_ID
-> - eBPF: bpf_sk_cgroup_id
->=20
-> Having getsockopt() interface makes sense for many applications, because =
-using eBPF is
-> not always an option, while inet_diag has obvious complexety and performa=
-nce drawbacks
-> if we only want to get this specific info for one specific socket.
-
-I'm not that familiar with INET_DIAG_CGROUP_ID but that one sounds like
-fit for the purpose of obtaining socket creator's cgroup whereas what is
-desired here is slightly different thing -- cgroup of actual sender
-through the socket.
-
-> Idea comes from UAPI kernel group:
-> https://uapi-group.org/kernel-features/
-
-In theory shortlived (sending) program may reside in shortlived cgroup
-and the consumer of SO_PEERCGROUPID (even if it is real sender) would
-only have that number to work with.
-It doesn't guarantee existence of original cgroup or stable translation
-to cgroup path. I think having something like this could be useful but
-consumers must still be aware of limitations (and possible switch from
-path-oriented to id-oriented work with cgroups).
-
-Thanks,
-Michal
-
---gn5un3rlxk2imiai
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ9Kz2gAKCRAt3Wney77B
-Sbf6AP9fsNpqSW9pup+OWVUAqnwAa4Rv5tCANUaEBtzokfTACwD7BDGhFEavKmvp
-9jS3uaw95+lDb7W2z0WEmZBKQ0regAs=
-=CHE+
------END PGP SIGNATURE-----
-
---gn5un3rlxk2imiai--
+--=20
+Best Regards
+Masahiro Yamada
 
