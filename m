@@ -1,144 +1,128 @@
-Return-Path: <linux-kernel+bounces-559302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E00A5F220
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:15:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C4DA5F222
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:15:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B73C13BD00E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:15:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42B9019C1FDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B8A266B7E;
-	Thu, 13 Mar 2025 11:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB39266EF5;
+	Thu, 13 Mar 2025 11:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JWWdOsYO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="K57RJVVr"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DFC266B5E;
-	Thu, 13 Mar 2025 11:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FEC266B5E;
+	Thu, 13 Mar 2025 11:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741864474; cv=none; b=VXraKhkP5RBsmP9c3UnBPQFDKyN/OSTUvFayxdocYr/LMGFEVb2mkPRDXg+tgO8tO2pU/J3mct2hiMEk5+dBieL00NQz30W4gsxyrtHscfkEedI/dg3hXbJPt020neBRoodbSRCK03ypsIJk6XY550KUjYAdDXtcAs+hO7KHxxY=
+	t=1741864481; cv=none; b=VoWA+U73cH+IOE2qQcd3XMqbd2MFK0XiOSgmzCws6rWOcAzGCWmG85BNJ7NvSj33jj0cjaDhn7+y3iAb3gFCIANjqlyPexBzlLO4FpP2vP5E4CVzzZEx0O2thvW4y5kYmmoC1844ZWDTr+hF/0I2RoZqbJQ0EY6YLMe4tXDnstA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741864474; c=relaxed/simple;
-	bh=NxVG45wTpdPZ/Obv3Kr2Se1EVcNx/LZU2Sydvgf2/6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gBIAyjk/nyY6nJJFzhNYcnli4R0wy8mOJ82BSAcBSKsS8XT2qtFRLKXG4Xo6K2dmgVEK0kQmrpromlFzRA6usToSrc6YjqLD2AVvP6S7bL5yDlIOsD17qFxHtEb9S/Ttx/TfH3MdHs8GQqd5JmCO5SC/K9QraVzpIk38LN6inng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JWWdOsYO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D8gsSL018627;
-	Thu, 13 Mar 2025 11:14:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8H+J0BFpbMXoJ7F6ridgaVy2HeTxs9EwAQi0GNwJ2xg=; b=JWWdOsYOkzEmXeDv
-	bK+PhAzgerILG8cJQHvu1YpZFkqGUmI2WsvU7MyZmN1XVB/mtyzB6grqJIAM6R/c
-	xGjVUBrpwKpGS11pA0mksqoKjGa7aqRNbFJr1LdHDXFWIYypFHkzD0uAvPZIulCx
-	jhYGm9dXzdUXk2rfokSG5T5tL9ICW85+wMBl+taHQmBsfjmHk40or9JIdWWaJToW
-	a40g+IPoG3xgbS9ddSIKCiBqyLxIDvZsnrUqUQb0E4u+iWqLthP66AU1wsKIRlGb
-	MAK6d4Va1bHeg+9t+lUYgIlqHZOW83HXRZNXgn96bNHOk5riXpIe6JkebdZi8CFo
-	Mpqamw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2nwp0m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 11:14:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52DBEMwR026259
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 11:14:22 GMT
-Received: from [10.152.204.0] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
- 2025 04:14:19 -0700
-Message-ID: <165b479b-a3ec-7176-52bb-a5fcf4398c4b@quicinc.com>
-Date: Thu, 13 Mar 2025 16:44:16 +0530
+	s=arc-20240116; t=1741864481; c=relaxed/simple;
+	bh=GxZRHUz0odpMCAdOXDZV2Gewb34GcPHensWB6qpYNW0=;
+	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:Mime-Version:
+	 References:In-Reply-To; b=j99ihb3n1sPxb52OGt6UQudmhDvL0zFqnw5g9gJBf/2vvZZg49xjn6H1Lib4USiIxa5kKmOOmzfjiR1DN+pqyScwL2MKcpVxs3S72SPHxuPmzOjIOn38wjR1SM0cf1yrY+5961txstcxlqGjBLQxBqOXUXr+ATbdGL2YSTCA3hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=K57RJVVr; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D6C2343152;
+	Thu, 13 Mar 2025 11:14:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741864470;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GxZRHUz0odpMCAdOXDZV2Gewb34GcPHensWB6qpYNW0=;
+	b=K57RJVVry+aqhLyQrVxSO4IAxED4+E2G+7+fkUvNhgvK7Q9jpbbOqar2SDtepqXnrMWaVB
+	LTT8Tn/GX2Q/yC3FHeXUxH1TrSQXNYQU+WJslfCY6/o6XRlpdl9RQbp1xtO0wDFIOfpORM
+	itwbhKXW/COXgf3O68gErM3szNiCucaOtDlksnV+sv/rm4eVQ8kZn1EoUQE8D+gujujYZC
+	G9acDWmdcUhDRR4QZksDRmrXpGOBpumVsOUYlRgUAT71aGXP3DaNy7KjArTC7vGRYOO2KJ
+	qe/dqoT6aTaBp8x0FASOVeSyE91RzsvOKDRM51E8m4Uzi6OyGgeYDCySyDIRBQ==
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 13 Mar 2025 12:14:26 +0100
+Message-Id: <D8F3F4YLD0ZM.19X0451BIIDVO@bootlin.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: arm: fsl: Add VAR-SOM-MX6UL SoM and
+ Concerto board
+Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Shawn Guo" <shawnguo@kernel.org>, "Sascha
+ Hauer" <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
+ <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>,
+ <linux-arm-kernel@lists.infradead.org>
+From: "Antonin Godard" <antonin.godard@bootlin.com>
+To: "Konstantin Ryabitsev" <konstantin@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH ath-next] wifi: ath12k: limit WMI_SCAN_CHAN_LIST_CMDID
- argument size
-Content-Language: en-US
-To: Mantas <mantas@8devices.com>, <ath12k@lists.infradead.org>
-CC: Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson
-	<jjohnson@kernel.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250310-limit-wmi-chanlist-v1-1-8f0fb45459a7@8devices.com>
- <a44f064f-19fd-16ea-222f-058486698951@quicinc.com>
- <187c8be7-23ef-4bcb-9ac1-cf1882fe3e62@8devices.com>
-From: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
-In-Reply-To: <187c8be7-23ef-4bcb-9ac1-cf1882fe3e62@8devices.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: trRjhveMuRcEl85R3bKieOlGvGyLwJLd
-X-Authority-Analysis: v=2.4 cv=Q4XS452a c=1 sm=1 tr=0 ts=67d2be0f cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=qC_FGOx9AAAA:8 a=ltzDYh-tZQuVNFrIBZYA:9 a=QEXdDO2ut3YA:10
- a=fsdK_YakeE02zTmptMdW:22
-X-Proofpoint-ORIG-GUID: trRjhveMuRcEl85R3bKieOlGvGyLwJLd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_05,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- lowpriorityscore=0 mlxscore=0 clxscore=1015 phishscore=0 malwarescore=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130089
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250310-varsom6ul-concerto-dts-v3-0-551e60713523@bootlin.com>
+ <20250310-varsom6ul-concerto-dts-v3-1-551e60713523@bootlin.com>
+ <63f8aa7d-fcd4-450f-b3a1-44886a29fc7e@kernel.org>
+ <cd2f3c97-53bb-42f5-a3cd-4385bfda5dc7@kernel.org>
+ <D8CQAAKOZ1O5.8JVESQPJSSM8@bootlin.com>
+ <20250311-omniscient-fiery-bison-8e7feb@lemur>
+In-Reply-To: <20250311-omniscient-fiery-bison-8e7feb@lemur>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdejkedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegtfffkufevhffvggfgofhfjgesthhqredtredtjeenucfhrhhomhepfdetnhhtohhnihhnucfiohgurghrugdfuceorghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefhueejkedugfefffektddtvdehheeuieeggfetgfdvveeftdehudduteffgfevgfenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeejtgehtgemiegruggvmeejleegkeemgedtheelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeejtgehtgemiegruggvmeejleegkeemgedtheelpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrnhhtohhnihhnrdhgohgurghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepkhhonhhsthgrnhhtihhnsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepkhhriihksehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshhesk
+ hgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshdrhhgruhgvrhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvg
+X-GND-Sasl: antonin.godard@bootlin.com
 
+Hi Konstantin,
 
+On Tue Mar 11, 2025 at 7:34 PM CET, Konstantin Ryabitsev wrote:
+> On Mon, Mar 10, 2025 at 05:31:32PM +0100, Antonin Godard wrote:
+>> > And now I noticed you used b4, so I really do not get how the tags can
+>> > be missing here. :/
+>>=20
+>> Sorry, that's totally my fault here, I forgot to run 'b4 trailers -u' be=
+fore
+>> sending... :/ And I don't think it's part of the prep checks?
+>
+> Mostly, because there's no clear picture of how this would work reliably.=
+ All
+> other checks are on a "ran since modifications to the series" basis, but =
+this
+> one would have to be time-based.
+>
+> Should it check if the trailer updates have been run in the past XX minut=
+es
+> (and how long should that XX be?).
 
-On 3/13/2025 3:40 PM, Mantas wrote:
-> On 2025-03-13 11:45, Vasanthakumar Thiagarajan wrote:
->>
->>
->> On 3/10/2025 6:58 PM, Mantas Pucka wrote:
->>> When using BDF with both 5GHz and 6GHz bands enabled on QCN9274, interface
->>> fails to start. It happens because FW fails to process
->>> WMI_SCAN_CHAN_LIST_CMDID with argument size >2048, resulting in a command
->>> timeout. The current code allows splitting channel list across multiple WMI
->>> commands but uses WMI max_msg_len (4096) as chunk size, which is still too
->>
->> Did you have any private changes to increase the message_len from current
->> 2048 ot 4096 bytes? As mentioned in a reply for your other patch, multi-band
->> in qcn9274 requires additional changes in driver, only scan mode is supported
->> even with those changes.
->>
-> No private changes, using unmodified FW from:
-> 
-> https://git.codelinaro.org/clo/ath-firmware/ath12k-firmware/-/tree/main/QCN9274/hw2.0/1.4.1/WLAN.WBE.1.4.1-00199-QCAHKSWPL_SILICONZ-1
-> 
-> max_msg_len comes from FW initialization message:
-> 
-> ath12k_htc_connect_service max_msg_len=0 flags_len=0x0 assigned_eid=0
-> boot htc service 'Control' ul pipe 0 dl pipe 1 eid 0 ready
-> ath12k_htc_connect_service max_msg_len=2040 flags_len=0x7f80100 assigned_eid=1
-> boot htc service 'HTT Data' ul pipe 4 dl pipe 1 eid 1 ready
-> ath12k_htc_connect_service max_msg_len=4088 flags_len=0xff80200 assigned_eid=2
-> boot htc service 'WMI' ul pipe 3 dl pipe 2 eid 2 ready
-> 
+Had some thoughts about this the past few days.
 
-Ah, I see. It looks like firmware does not strictly honor the host configuration
-in some cases.
+What about checking if it was run at least once between vX and vX+1? Maybe
+during the `b4 send` command? In case it wasn't run, give a hint/warning to=
+ the
+user before proceeding?
 
-> 
-> Is support for multi-band AP/STA limited by FW? AFAIK it works with proprietary driver.
-> 
+This could also be enforced with an b4 config option like
+b4.force-trailers-update - either set by the user or the project configurat=
+ion.
+Not so sure about this one though...
 
-There are no validations done with multi-band AP/STA mode configurations.
-So we can not really claim the support.
+Now if I were to speak for myself, I would love to have an option that just
+fetches the new trailers during `b4 send` and errors out / warns me about
+it if there's anything new that isn't part of my series. Which could be als=
+o
+ignored with --ignore-trailer-errors or something like that, in any case.
 
-Vasanth
+Antonin
+
+--=20
+Antonin Godard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
