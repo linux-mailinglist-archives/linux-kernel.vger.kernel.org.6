@@ -1,97 +1,130 @@
-Return-Path: <linux-kernel+bounces-558795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C70CA5EB49
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:48:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4D01A5EB4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:49:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A712D3B63A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 05:48:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E35601765CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 05:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F1C1B21BD;
-	Thu, 13 Mar 2025 05:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187701F9A85;
+	Thu, 13 Mar 2025 05:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ISR4blKM"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bHBwYGrR"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240D71519AD
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 05:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5372126C1E;
+	Thu, 13 Mar 2025 05:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741844912; cv=none; b=c/9wR5WJJma4rRZij3ifuS0OQlzDy6OCm9CwuOZaQ8MNxfXFtperCVn5ZV1mDsgMzjCP4C8p8HBI8YJd0zYkbj9jWEjhQsjpSKvP0odGQU1AHpfTjAYcZClBKy/D4WAruu80TpxCqDzS8NxqgGhfxAlvhm69+jtLVRUyrAt7BAg=
+	t=1741844955; cv=none; b=TImY1OxNqTjMAMpakftX8Vw4spp0MlgzYfu+o7H7ASuRM/hdxgMdrUDAbEhW6nxG86OkJD+93ZZOCqJsNxS1zrFdcyLfYu0qJHLl2cFl+RufiLsaHPx3goaIfYD1asSSjUSedqRw2AVN3IaQ2VLKN7SO7H6WYpbfsRSk6xwM7s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741844912; c=relaxed/simple;
-	bh=Y81T/0tN+oB0qmAPDllz5PACPLuoxGpwd/0r1MySa+g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cOjuJ6EW+7Bl9pvL8MUCTSAMORYGce8MJSfwa46HU77LwyQ50CfXy7OuU4r4lgdIYPIFlvo74lbhSr6QNZeCYLlmWeW9dB9KZTbWyk//Ca9ssmcx8aSZjbAPJHFetFz4iW7z9ODUneSvIRle9I8mq4GtjXtFNB52dJs37Wqu3cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ISR4blKM; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741844898;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=+8crqbD29LSFVEIGtcAdrNxdm4twGCIk3Dwd45ote5E=;
-	b=ISR4blKMWbn1Gw1Y7OO9kCorcO7ZLrAbHXWZBgblKZdMfChIsp8oZ1KwNGXICgyCG38BPX
-	0Z/0WjlHlK29AG2uiilYcnTyeRlGdojdRdlwDiSLkNCnJfXSemQu69HF3w08qj+UWdqKcv
-	L3W+SoYDjwVURSZnGuHYcx7xUGhNjRY=
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	linux-mm@kvack.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: [PATCH] memcg: avoid refill_stock for root memcg
-Date: Wed, 12 Mar 2025 22:48:12 -0700
-Message-ID: <20250313054812.2185900-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1741844955; c=relaxed/simple;
+	bh=LgVHIOpYFYiFMvOVhlqsYaX605qc/jDixS9WUqzPivI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CBngYnUCrneueR8c2HcYJni/IcKXv5tpyp6RD69tG5k1XMny5jdCs49ABZxMpI5XwRnb2J73tcjMudSQkpFgRSz6EW5Ibx5uBUdlpU5UShgrcgRn6mD5a/uO0f0jY0Rlyg9Nd40/iI23/oBV4/eSShpAi5FNhLCb9d9yCL0V8tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bHBwYGrR; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1741844949;
+	bh=aN7QLqLK6AYHIXig8XICcnCy+W2u83IoAFjYeIfcN0E=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bHBwYGrRP/sAE4hBE8OJduqroRQgeRAbpmLP8m/7IkrrlXeBBZck//H1M3rxGjgBY
+	 HemA4zbMzVg+g6Y1t13WKsj/0WVlWQ6/BrR/qTFBtrUoIQz3dUtg5qklV3itMPCokA
+	 xpW0YxW/C+nfKYj+tsBMh8Ns5jTfJqk71bZ+W6+8fuKDSGcMi1sufxIXe/OqLGJVKu
+	 C2NTAkqs0YKX5swD1eJRf6MQxWP7vyPhszZj2+Kc0kKGyTxpVaA9Jizl18q3+4wGqe
+	 zsuOGBqZjP9IlxEyQ4D7CNqvNE448EX+E8SsDr+Tds/LgUUBSpkwbPR/Kioouj4ozd
+	 NNFJ/jaSjzeWA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZCxQD23RXz4x04;
+	Thu, 13 Mar 2025 16:49:08 +1100 (AEDT)
+Date: Thu, 13 Mar 2025 16:49:06 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, Joel
+ Granados <joel.granados@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>, Kaixiong Yu
+ <yukaixiong@huawei.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the sysctl tree with the ext3 tree
+Message-ID: <20250313164906.6d6ff001@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; boundary="Sig_/UW=m8+dzg/QGJ8+e/KX80a.";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-We never charge the page counters of root memcg, so there is no need to
-put root memcg in the memcg stock. At the moment, refill_stock() can be
-called from try_charge_memcg(), obj_cgroup_uncharge_pages() and
-mem_cgroup_uncharge_skmem().
+--Sig_/UW=m8+dzg/QGJ8+e/KX80a.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The try_charge_memcg() and mem_cgroup_uncharge_skmem() are never called
-with root memcg, so those are fine. However obj_cgroup_uncharge_pages()
-can potentially call refill_stock() with root memcg if the objcg object
-has been reparented over to the root memcg. Let's just avoid
-refill_stock() from obj_cgroup_uncharge_pages() for root memcg.
+Hi all,
 
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
----
- mm/memcontrol.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Today's linux-next merge of the sysctl tree got a conflict in:
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e08ce52caabd..393b73aec6dd 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2643,7 +2643,8 @@ static void obj_cgroup_uncharge_pages(struct obj_cgroup *objcg,
- 
- 	mod_memcg_state(memcg, MEMCG_KMEM, -nr_pages);
- 	memcg1_account_kmem(memcg, -nr_pages);
--	refill_stock(memcg, nr_pages);
-+	if (!mem_cgroup_is_root(memcg))
-+		refill_stock(memcg, nr_pages);
- 
- 	css_put(&memcg->css);
- }
--- 
-2.47.1
+  mm/filemap.c
 
+between commit:
+
+  e6529028f9ac ("Revert "fsnotify: generate pre-content permission event on=
+ page fault"")
+
+from the ext3 tree and commit:
+
+  73aa354af21d ("mm: filemap: move sysctl to mm/filemap.c")
+
+from the sysctl tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc mm/filemap.c
+index 1911d43b319e,004d78767804..000000000000
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@@ -47,6 -47,8 +47,7 @@@
+  #include <linux/splice.h>
+  #include <linux/rcupdate_wait.h>
+  #include <linux/sched/mm.h>
++ #include <linux/sysctl.h>
+ -#include <linux/fsnotify.h>
+  #include <asm/pgalloc.h>
+  #include <asm/tlbflush.h>
+  #include "internal.h"
+
+--Sig_/UW=m8+dzg/QGJ8+e/KX80a.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfScdIACgkQAVBC80lX
+0Gw37Af7BqDElLXXxieWbiFDk9qd4lLNDKFLGa/B7JYFzCjrm2i/y5UBi9zQe2kR
+UtR25RzxlAfy9qFco6lXIoOpiYKNdXfVS1uJlFRR51oMMV9b5xXWKOEiP+iFQER0
+T6bnSJWManox7LYrpECK3guvCp5PGf5bFmG9zaUP7U9zIxVknluvmJi+VZtxQfKJ
+DfqInUXFmfaNo/hZTxKyPLQmfIKIsezxY0lgNdiJ1pJkdtCZAQhgi+mmPlr+XijW
+DSPRruq70tDAvGbkVQeu9wKwX/O9pBax0RZf7OJhjtpHviTrkdQnHg0BRRMT6Ntp
+0q7RyKoTBjVvvtOJqMq3jsBiM7sEwg==
+=DFkd
+-----END PGP SIGNATURE-----
+
+--Sig_/UW=m8+dzg/QGJ8+e/KX80a.--
 
