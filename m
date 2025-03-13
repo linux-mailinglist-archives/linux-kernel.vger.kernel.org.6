@@ -1,91 +1,143 @@
-Return-Path: <linux-kernel+bounces-558934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5FFA5ED4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:50:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D1FA5ED53
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:52:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 022F018957D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:50:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E75E189C8C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E7525FA2C;
-	Thu, 13 Mar 2025 07:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0168725FA21;
+	Thu, 13 Mar 2025 07:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rVg1DQEK"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mlRobX8o"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747001FC7DF;
-	Thu, 13 Mar 2025 07:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763FF136658;
+	Thu, 13 Mar 2025 07:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741852197; cv=none; b=n+ICXGbaHqa8t0NVgE2mU0rX5ti89kMQ1irry9vX+WJiHsfbHHFn0KsxStAqcMmgg2BQHedf93cjHCpv73wxVRBCvkAlv+DkzKz5k5Onj2Xu+QF92Xs5rRZ1tUITCZbYG9fuvxtWu4A/XnGugSRmPGYlqkfQX/CB1hYx8Pnjr5o=
+	t=1741852317; cv=none; b=dkUVDYdaSQ3KI51f1twFkpwCe6PPMqCFHGfPzCsNmT3ShFt4J0CZQzOydjgh8pAlw08t/usHezEz4I1hYwRneafFsu/aja/1/PqE6a0Bcpt6OOPZBrf8SB06PCW4EntwsE/NWcLIahinwheu0WlUgZGh4Bgup0/kh0VpM+U7u1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741852197; c=relaxed/simple;
-	bh=qJBrQq+wMWURkJTyU+w6+UJySQVvyy/REz89R90hjN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o1GSqiX30Dj8vljdNdn0KJKKeCkSClkseizwAvBnkBaIEagUcbxIRd8S22jeXSuITcAJZrn9Cq3tx4ZuNBH0agSyXroj31LvLqE6aYqlZJqBNZGFxEeWy2QKgDkO8E77cyB7N1j7KwnUZ3Cxp32YT5mjzLzF4NNy4poszftEWB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rVg1DQEK; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=k3Nn6n3g1wXsYRYpnhW/1DaXud78T6FnU7X6TEVVMcQ=; b=rVg1DQEKcPPCyN5HEpNDMiWl7f
-	Kgx6n/9Ziw0wrSnavFYGyScW7T+PGFo8yYQmevFCPPy/bEsPxIxWikdh5ShXIYpG/UDE0QwCbLPuQ
-	qiMYC/GhmjSiRzDXOdwpgBNWOBybap8X9qjKC+Pr/k4cwlOo0+pdXF7VvsVSwXMRIuC9cRXPiLNSv
-	kZqePLKOkxr6UZWzPnJ+TY91o78sjxj8ndsPDLzxpTEQfXBVoajElIKxEVS4zc6W428TfyUBqJJXX
-	DCvYL60MH2Ag0lfvAeG+E9TdISAV/LlM0wZmk0fD4am7BQmR7XSzQjLUGEtZ0prhxzCovdM/DMola
-	Ch3uauGA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsdKE-0000000ARCi-3Fkb;
-	Thu, 13 Mar 2025 07:49:54 +0000
-Date: Thu, 13 Mar 2025 00:49:54 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Dave Chinner <david@fromorbit.com>, brauner@kernel.org,
-	djwong@kernel.org, cem@kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH RFC v5 10/10] iomap: Rename ATOMIC flags again
-Message-ID: <Z9KOItsOJykGzI-F@infradead.org>
-References: <20250310183946.932054-1-john.g.garry@oracle.com>
- <20250310183946.932054-11-john.g.garry@oracle.com>
- <Z9E0JqQfdL4nPBH-@infradead.org>
- <Z9If-X3Iach3o_l3@dread.disaster.area>
- <85074165-4e56-421d-970b-0963da8de0e2@oracle.com>
- <Z9KC7UHOutY61C5K@infradead.org>
- <3aeb1d0e-6c74-4bfe-914d-22ba4152bc7f@oracle.com>
+	s=arc-20240116; t=1741852317; c=relaxed/simple;
+	bh=tKuCtmvXOdt+AmllmsoMKicAwHKejG4OsQunB/NEQzE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XzW3Kwck1JGdF/dONfosYgDZbNpgtnQDdnjX7Z87Jr+I9PLZVLuR44JG6VhvLA4v/TpMSfdNjzJAtI6fWfYnqPzorn9C571d6jbmRIW6CEBI5QbmF69FeZJKJyJYRpNhzrSgctR7vL0MM3xdPTe/TnPCkBO6kdK35XG33bHkPlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mlRobX8o; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CKpsiT001694;
+	Thu, 13 Mar 2025 07:51:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=cuS3jWuXoeuyqn3bc3ZtJaqyJqW7eyviiq59ToDvh
+	4w=; b=mlRobX8oSd4dho5GemY11hLtnfz5vX/aY5CHMbIUYOaZqMi29QW56Y9W0
+	LtzVQnPVRZzauSx/RUzRZD4fCDo+YmwJkvS6EOODjt+xM6JQ04pj1vqt/VqPzFdv
+	4Rigc7yBZSOjDPFZBTmsv8TVszFFlVAS+4HzFmVvvRuS27oI+4kYzR6Ap6eZD3c9
+	2RpapYhUuCVB0UJyf1klPnkH/5ASLZoZDf5ZvrLnmno7/P9J5hWHeNFefIhJ0IgP
+	Dm6x1TrdQqKVrtTuybnZULxZWN66BpLrmtWsRjSFZHgYZjeEzS9C2B1S4kh7dt7C
+	ZdC9kHuaPmWDMUmfKRpkkdmVn73KA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45bhp5a9we-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 07:51:40 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52D7ceZe006960;
+	Thu, 13 Mar 2025 07:51:40 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45bhp5a9wb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 07:51:40 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52D57tdG012259;
+	Thu, 13 Mar 2025 07:51:39 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45atsrgjr8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 07:51:39 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52D7pbm755116226
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Mar 2025 07:51:37 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7176C2004D;
+	Thu, 13 Mar 2025 07:51:37 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0760E2004B;
+	Thu, 13 Mar 2025 07:51:35 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.in.ibm.com (unknown [9.204.206.66])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 13 Mar 2025 07:51:34 +0000 (GMT)
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com
+Cc: Gautam Menghani <gautam@linux.ibm.com>, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/3] Introduce a C extension module to allow libperf usage from python
+Date: Thu, 13 Mar 2025 13:21:21 +0530
+Message-ID: <20250313075126.547881-1-gautam@linux.ibm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3aeb1d0e-6c74-4bfe-914d-22ba4152bc7f@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: IF02UFWGKyGJ7jdDIdZnYsaAFye6aSy_
+X-Proofpoint-ORIG-GUID: UArhdnRPi98sG5T0--iKaEKp1kXVuPIu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_03,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ mlxlogscore=888 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503130058
 
-On Thu, Mar 13, 2025 at 07:41:11AM +0000, John Garry wrote:
-> So how about this (I would re-add the write through comment):
+In this RFC series, we are introducing a C extension module to allow
+python programs to call the libperf API functions. Currently libperf can
+be used by C programs, but expanding the support to python is beneficial
+for python users.
 
-This looks roughly sane.  You'd probably want to turn the
-iomap_dio_bio_opflags removal into a prep path, though.
+The structure of the patch series is as follows:
+1. Patch 1 : Create wrappers for the perf structs which are used by
+examples/counting.c
 
-> -     blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
+2. Patch 2: Create the C extension module that maps and exposes the
+libperf functions to python programs
 
-This good lost and should move to the bio_opf declaration now.
+2. Patch 3: A python variant of counting.c - counting.py to demonstrate
+the usage of libperf from python
 
-> +		    (bdev_fua(iomap->bdev) || !bdev_write_cache(iomap->bdev))) {
-> +			bio_opf |= REQ_FUA; //reads as well?
+We have not added support for entire libperf, as we want to get
+community feedback on the approach taken in this series.
 
-REQ_FUA is not defined for reads in Linux  Some of the storage standards
-define it for reads, but the semantics are pretty nonsensical.
+Gautam Menghani (3):
+  libperf: Introduce wrappers for perf structs to be exposed to python
+  libperf: Introduce a C extension module for python
+  libperf: Add counting.py example to demonstrate libperf usage from
+    python
+
+ tools/lib/perf/Build                          |   1 +
+ .../perf/Documentation/examples/counting.py   |  74 +++
+ tools/lib/perf/Makefile                       |  12 +-
+ tools/lib/perf/include/perf/py_perf.h         | 431 ++++++++++++++++++
+ tools/lib/perf/libperf.map                    |   1 +
+ tools/lib/perf/py_perf.c                      | 262 +++++++++++
+ 6 files changed, 779 insertions(+), 2 deletions(-)
+ create mode 100755 tools/lib/perf/Documentation/examples/counting.py
+ create mode 100644 tools/lib/perf/include/perf/py_perf.h
+ create mode 100644 tools/lib/perf/py_perf.c
+
+-- 
+2.47.0
 
 
