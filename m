@@ -1,132 +1,126 @@
-Return-Path: <linux-kernel+bounces-560189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7930A5FF1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:22:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D74DA5FF21
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:22:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 161FA19C49EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:22:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74C0E3B97B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411B91EDA0B;
-	Thu, 13 Mar 2025 18:22:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE5C1EBA14;
-	Thu, 13 Mar 2025 18:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84EB51EE7BD;
+	Thu, 13 Mar 2025 18:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HT/0e16J"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AB6189915
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741890129; cv=none; b=uag3m9SHMLTkbg1NSzhJB3NtZfyXMXw/9ZwYe+3I7ioJae21pDfc6ylUQ4e4xu4R183JOTr1z6uAUwXk7JcYLuQ/pln8b2hK1R3YBLQ+lT6O2iUm6s/UuvGB0E31EmzlS6drXZd1RZbWAKAPE7dJAqXfNEy+o+/dJqfYox+YpxI=
+	t=1741890167; cv=none; b=W4wyxDDmGfwoGsaw1iNxjL+8l/CgCrPwY/zS7jJ6JxB7Cm6mCrHA3MkdS5dieWflGacm/Ts0quQDRqeZjjrgl4zY/bNt+MRkPb5smtuk/iw3MqlMmBE6yCrJHtV5JDBj5xXmRkfvJf7lWLHcLFHzJA6Ol32k9y7gfttSPdkO5Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741890129; c=relaxed/simple;
-	bh=dSLOfULCK1nvX6fb6LcmM+RyZWiKWlg/3qr7YVmQ6/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hfpXc6/bHIx9YyY/Cm60phM8gVy+P+55Z52Rqzbq4/CO6I/dajgT7YtlVw0Sd6s7GMkJDAK37OOB6EyTbdgCc8loUke6435kghHo8O6Uu2pevOxivcuzxDTn9dgfPttGAp1mnYs32cFPlCaerncIeqnKUbHYFE7Iy8Pp9L5smNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 332BC1477;
-	Thu, 13 Mar 2025 11:22:17 -0700 (PDT)
-Received: from [10.57.85.159] (unknown [10.57.85.159])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 10FAC3F694;
-	Thu, 13 Mar 2025 11:22:01 -0700 (PDT)
-Message-ID: <f244c20e-e11c-477b-9487-cb6738c028ca@arm.com>
-Date: Thu, 13 Mar 2025 18:22:00 +0000
+	s=arc-20240116; t=1741890167; c=relaxed/simple;
+	bh=7nYCE9T0OKDIgmF1DPJwJqcapaUy9aKr/ysB5+DUnj4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pHy237nMTNylnhIXVSg37gs5wbS/QzbtI0Xv7MsdgKkyNHMfo9+ZMDDQXc57Id08kkpf8WKcoaeAVHjd2XAO3Jjmk1395TrTwbpda4lONV5P6Gh0v57KR+uGbR0mrAwb6FDWKvt3rMwZ96pZKShGHOxuntI9Bteg0aMxDydPNy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HT/0e16J; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6feab7c5f96so12039897b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:22:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741890159; x=1742494959; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ejbR4Lv2ZaXknZh8BlEm9Au1Z944R57x9A5ac0N7Rqo=;
+        b=HT/0e16J+CmqGtQ7hOjkFjJXfK4HCNQm6CEPluPivtE7yT/Bt4VaR+kwCTUdOtSsOB
+         iygVY5Gx7Zl+mAzUCKKis/LPAAdw89sHQuFkUmfvV8W5BdeGWFHRI4uIleSsuv9idUVX
+         NF/NJQU9yX6SGMEN8rO8VefCUdj9meEIqovVOEKtF+c0yiiD1TEufx58xji94VjDPe1h
+         MUTGetlJmiGtDynrp8FpoFpgirhvA1S+VOdyk3Q/KKf8crw/cwmsrNy0X+UZbcOfSNTa
+         UX09OupcDgduDI1Bhm6IJisiSXQ4L0PxTwVkIIOeg+6aSL8SiLAfyRLW4wKKV6s5uxH6
+         nPbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741890159; x=1742494959;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ejbR4Lv2ZaXknZh8BlEm9Au1Z944R57x9A5ac0N7Rqo=;
+        b=h0Os9sJbRGhZtm0ok6LC45uWhn2jFyO1nS77yROf8dRwnXz0mnysn/tz3JsuR3LP4p
+         2nfaTC65u1D08CEtS7sTQHKEZI6g/h9TGyqZ5Omyf2FTVZOQMzIETiUh+FQTob+orD25
+         tNDNcFmx3dJ5yMMekhvtl/FBw+yqIP8galT1gLOjVpx2wGyijko8L3ljTitSLI74ORoF
+         /63wjlEOXz1cm8/ZhyqXqkVSSNzUlwTzGT+ws3ST0NkzJ2QQDNU2KCli9ePLRsd2sh1M
+         JikN0FAym5L3SjdnTJKXFIUTLMrVb84s2ef4LFenQhwh2a0DPusE2pSXqy8Nwyn/LnXR
+         32IQ==
+X-Gm-Message-State: AOJu0YyMAzqjg7DeIuSWRPTKh6XicgEqgdB8uI/hTQrieS/Gj4uSc/5K
+	XMRzvpYniYX0owEcGyFF5+C4UUZXQZ6VtgZBG6UpFaYGK/35OW6483ST
+X-Gm-Gg: ASbGncsn6D1NNfWIczlBpAImepkHs3NR/wprpxeMAttQDKQ4jpept62STaJwnAF5WVW
+	2A+HAIHxGj8QlNNQYQpMfhpTblQpToyEvXgjK90hPlYjfKZ+q79QyZYZru/zCrk1425zGmavzko
+	+0wGbN1OGkaM8sWUXETJtGwPmos9RaGHr7dtHe2vg3Eypu+TGZdI+gW4rtCGw7qez3UBLdzCBOL
+	Mp/WBGzGpzj1TqkAn+L1TOCWF+XyyoJ8X/WYbAb6pbHweu7pKnbNt3vu6QSqrOs/ES3vIj0tvm0
+	ok61kb1iUZ1tZ7xqkZsC8NrPaQ==
+X-Google-Smtp-Source: AGHT+IE0p4A5ZIJGH0hsvyfp68wcycD8yTR04IzcbRmr96W7maZKNQmusI7DhABZAhzQTGrbGjWVTw==
+X-Received: by 2002:a05:690c:4b87:b0:6fe:af27:33f8 with SMTP id 00721157ae682-6ff421263d6mr8826647b3.30.1741890159409;
+        Thu, 13 Mar 2025 11:22:39 -0700 (PDT)
+Received: from citadel.lan ([2600:6c4a:4d3f:6d5c::1019])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ff3288f0absm4910347b3.54.2025.03.13.11.22.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 11:22:38 -0700 (PDT)
+From: Brian Gerst <brgerst@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Andy Lutomirski <luto@kernel.org>,
+	Juergen Gross <jgross@suse.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Brian Gerst <brgerst@gmail.com>
+Subject: [PATCH 0/5] x86/entry: Break up common.c
+Date: Thu, 13 Mar 2025 14:22:31 -0400
+Message-ID: <20250313182236.655724-1-brgerst@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] arm64: Add BBM Level 2 cpu feature
-Content-Language: en-GB
-To: Marc Zyngier <maz@kernel.org>,
- =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>
-Cc: suzuki.poulose@arm.com, yang@os.amperecomputing.com, corbet@lwn.net,
- catalin.marinas@arm.com, will@kernel.org, jean-philippe@linaro.org,
- robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org,
- mark.rutland@arm.com, joey.gouly@arm.com, james.morse@arm.com,
- broonie@kernel.org, anshuman.khandual@arm.com, oliver.upton@linux.dev,
- ioworker0@gmail.com, baohua@kernel.org, david@redhat.com, jgg@ziepe.ca,
- shameerali.kolothum.thodi@huawei.com, nicolinc@nvidia.com,
- mshavit@google.com, jsnitsel@redhat.com, smostafa@google.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev
-References: <20250313104111.24196-2-miko.lenczewski@arm.com>
- <20250313104111.24196-3-miko.lenczewski@arm.com>
- <86ikocomvd.wl-maz@kernel.org>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <86ikocomvd.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 13/03/2025 17:34, Marc Zyngier wrote:
-> On Thu, 13 Mar 2025 10:41:10 +0000,
-> Mikołaj Lenczewski <miko.lenczewski@arm.com> wrote:
->>
->> diff --git a/arch/arm64/kernel/pi/idreg-override.c b/arch/arm64/kernel/pi/idreg-override.c
->> index c6b185b885f7..9728faa10390 100644
->> --- a/arch/arm64/kernel/pi/idreg-override.c
->> +++ b/arch/arm64/kernel/pi/idreg-override.c
->> @@ -209,6 +209,7 @@ static const struct ftr_set_desc sw_features __prel64_initconst = {
->>  		FIELD("nokaslr", ARM64_SW_FEATURE_OVERRIDE_NOKASLR, NULL),
->>  		FIELD("hvhe", ARM64_SW_FEATURE_OVERRIDE_HVHE, hvhe_filter),
->>  		FIELD("rodataoff", ARM64_SW_FEATURE_OVERRIDE_RODATA_OFF, NULL),
->> +		FIELD("nobbml2", ARM64_SW_FEATURE_OVERRIDE_NOBBML2, NULL),
->>  		{}
->>  	},
->>  };
->> @@ -246,6 +247,7 @@ static const struct {
->>  	{ "rodata=off",			"arm64_sw.rodataoff=1" },
->>  	{ "arm64.nolva",		"id_aa64mmfr2.varange=0" },
->>  	{ "arm64.no32bit_el0",		"id_aa64pfr0.el0=1" },
->> +	{ "arm64.nobbml2",		"arm64_sw.nobbml2=1" },
-> 
-> Why is that a SW feature? This looks very much like a HW feature to
-> me, and you should instead mask out ID_AA64MMFR2_EL1.BBM, and be done
-> with it. Something like:
+The syscall dispatch code originally was put into entry/common.c so that
+common code for entry from and exit to userspace could be inlined.  That
+entry code has since been moved to the core kernel.  There is no longer
+a need to keep this code together, so move it to more appropriate
+places.
 
-I think this implies that we would expect the BBM field to be advertising BBML2
-support normally and we would check for that as part of the cpufeature
-detection. That's how Miko was doing it in v2, but Yang pointed out that
-AmpereOne, which supports BBML2+NOABORT semantics, doesn't actually advertise
-BBML2 in its MMFR2. So we don't want to check that field, and instead rely
-solely on the MIDR allow-list + a command line override. It was me that
-suggested putting that in the SW feature register, and I think that still sounds
-like the right solution for this situation?
+This is code reorganization only, no functional changes.
 
-Thanks,
-Ryan
+Brian Gerst (5):
+  x86/xen: Move Xen upcall handler
+  x86/syscall/32: Move 32-bit syscall dispatch code
+  x86/syscall/64: Move 64-bit syscall dispatch code
+  x86/syscall/x32: Move x32 syscall table
+  x86/syscall: Move sys_ni_syscall()
 
-> 
-> diff --git a/arch/arm64/kernel/pi/idreg-override.c b/arch/arm64/kernel/pi/idreg-override.c
-> index c6b185b885f70..803a0c99f7b46 100644
-> --- a/arch/arm64/kernel/pi/idreg-override.c
-> +++ b/arch/arm64/kernel/pi/idreg-override.c
-> @@ -102,6 +102,7 @@ static const struct ftr_set_desc mmfr2 __prel64_initconst = {
->  	.override	= &id_aa64mmfr2_override,
->  	.fields		= {
->  		FIELD("varange", ID_AA64MMFR2_EL1_VARange_SHIFT, mmfr2_varange_filter),
-> +		FIELD("bbm", ID_AA64MMFR2_EL1_BBM_SHIFT, NULL),
->  		{}
->  	},
->  };
-> @@ -246,6 +247,7 @@ static const struct {
->  	{ "rodata=off",			"arm64_sw.rodataoff=1" },
->  	{ "arm64.nolva",		"id_aa64mmfr2.varange=0" },
->  	{ "arm64.no32bit_el0",		"id_aa64pfr0.el0=1" },
-> +	{ "arm64.nobbml2",		"id_aa64mmfr2.bbm=0" },
->  };
->  
->  static int __init parse_hexdigit(const char *p, u64 *v)
-> 
-> 
-> Thanks,
-> 
-> 	M.
-> 
+ arch/x86/entry/Makefile      |   8 +-
+ arch/x86/entry/common.c      | 524 -----------------------------------
+ arch/x86/entry/syscall_32.c  | 336 +++++++++++++++++++++-
+ arch/x86/entry/syscall_64.c  | 116 +++++++-
+ arch/x86/entry/syscall_x32.c |  25 --
+ arch/x86/kernel/process.c    |   5 +
+ arch/x86/xen/enlighten_pv.c  |  46 +++
+ include/xen/xen-ops.h        |  19 ++
+ 8 files changed, 522 insertions(+), 557 deletions(-)
+ delete mode 100644 arch/x86/entry/common.c
+ delete mode 100644 arch/x86/entry/syscall_x32.c
+
+
+base-commit: d08c0d55110b7cbac186e5fa94b0c6d5f4d7905e
+-- 
+2.48.1
 
 
