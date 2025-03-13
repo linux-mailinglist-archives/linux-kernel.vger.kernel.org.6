@@ -1,122 +1,108 @@
-Return-Path: <linux-kernel+bounces-559554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D81A5F57C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:09:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E5F5A5F537
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:04:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6106B164846
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:08:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 456053BFBC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19600267710;
-	Thu, 13 Mar 2025 13:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86151267AF4;
+	Thu, 13 Mar 2025 13:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="pegRD4Il"
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W3n7WI2+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715E0261396;
-	Thu, 13 Mar 2025 13:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920BA267B13;
+	Thu, 13 Mar 2025 13:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741871303; cv=none; b=pZIHdFh/b/Vy5fBT6e9bDy8A7QudNG7w4y+dDLtRt8aHSp/6NQnTwBXb9nVV1ccFxjtxgytvBZd2Zwjs1WIBD2Y86HOmUj5cm5yiniZA66/OQA3rnXHY1Yk+251sfHtrqjlIdmR+YgGnZmaYjXgbCrNJnb02BKXl0CCkMUreos4=
+	t=1741871024; cv=none; b=Xa2vtqLJL5L+pnMi7JHf0IOiLX2IiVTj/mgyh+ANN2sFRaCMn3Hfoi17oAfhPR4B2JpM3iEpERUUBEYyh8XCwigfw8gjjNxLxqI21UZkMh3Uo6caTwO1XXMMR4W+Gq/tYZC8OKyzfZXZXmFme6JlXQGbnXb4plDmTNmO4Tpbg/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741871303; c=relaxed/simple;
-	bh=l7/nvKtdJpfEE3FPoJjanh1QHvfzO9GOB6E4aJRGnec=;
-	h=From:Date:Subject:To:Cc:Message-Id; b=Kr7wNpQ2pliwutVLb9nHRhJgz+LvOLZ2FIT+eL5FYZ1q/aCsPiPonr/6qrDhgf5NQ+AZbSuMlXss6/kSja31cb3m69ALu8yTND7Ggox4yu3hdFF1BlD/KtuoP8AJvaxqetoQ1C2jhj7NWc8D7dVV3pFoio9+TkBe7yPIu/d2tp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=kylie.crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=pegRD4Il; arc=none smtp.client-ip=5.189.157.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylie.crudebyte.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crudebyte.com; s=kylie; h=Message-Id:Cc:To:Subject:Date:From:Content-Type:
-	Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Content-ID:
-	Content-Description; bh=twJYDBirwmXLVr0Fm4IHc5rcNUlk8rsVDi+Ys8RdkGk=; b=pegRD
-	4IlhFymvfrjnQ+CF8n55HWAnPouP4MBYWqn3+GutaVxp5cJgwmNmmGETgSJlRGR9ewXtXjPa4vqk2
-	3CKg/BaKYb4dYQRiye8BXRhDgKTV3AqbD2p4tyuHMjL3Yy8H67seJre0c4T0K73FBEsUQC6Ae5Wfz
-	d8YQtqmPVDX3oJyUU4v/M+tPCeAmT9QLJ2UAMw68e5IxI2CtJQS7LCzGoQO0atmnKA5bfGBt2nssT
-	fMku+Q8fpjgmy/XfxSFFN9RMt2f3Iwgh6x4PV3CNj1imWpL1rWuB3CfiCF66DF8aTyivrm/5wr991
-	rZgG9npZnYPxbqIbW2+ZqmmYysFdymwZWmR9+5eWsUFzKD8PVxzXedNiS+YWGV20o4HzXJ7cxXJJR
-	UmZdOO6/QhQYtiYCj/rPUkhCdHwdMz4LsXQiFUg1Cwhp0C9boEa1X2uQsheOfV6fmEZ7qSw1hwYLm
-	J5CeAye4rzxjIm7f3Nr1dUQkH+C5Xo8x56AM0ZDwk2K5b8XFCamU6TtVbmSaU0+U0ZgnYPDwGA/04
-	ewh1ymfPtpGM+0uo7jLPK8MOHkJOVnW9AJRjcjsK8R4Pl3BSJCPP4HgfOMcUScy7SNvOD6GOCBzFQ
-	2J8vM19On2pLV97qOqlYDdIpGh+1PGS3qa6Ay7/bZMXflasdN5sbitfD46Oj+8=;
-From: Christian Schoenebeck <linux_oss@crudebyte.com>
-Date: Thu, 13 Mar 2025 13:59:32 +0100
-Subject: [PATCH] fs/9p: fix NULL pointer dereference on mkdir
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
-    Latchesar Ionkov <lucho@ionkov.net>,
-    v9fs@lists.linux.dev,
-    linux-kernel@vger.kernel.org,
-    syzbot <syzbot+5b667f9a1fee4ba3775a@syzkaller.appspotmail.com>
-Message-Id: <E1tsiI6-002iMG-Kh@kylie.crudebyte.com>
+	s=arc-20240116; t=1741871024; c=relaxed/simple;
+	bh=cSyffy+PWmVQesGeNOfjRD3854cMxOy2XIo3+guxtEk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nSpF6ydcVzqrFewG8iJvKy9K8bXE5fSTuSU9I7GhLr1wVttOh9vJaA/UASPTIrXtWw7sGDB6+K00BVcMisNgVbooyyuVjwEj2ObwvlhsVOZLDVg6Wi0IBJpcVzWLYhYzshzmjypd4aMwBlI86rEX5kLgJSx41Bzxgjr3CrFXRMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W3n7WI2+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D6E8C4CEDD;
+	Thu, 13 Mar 2025 13:03:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741871024;
+	bh=cSyffy+PWmVQesGeNOfjRD3854cMxOy2XIo3+guxtEk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=W3n7WI2+kNBRhRstzjeL3M06/rCnf1LzWx2YyBLD01j8VmFJANn56CrImwA8yW2+T
+	 S0sch8ELktEv1lgKKdJE8batVk23w+yl7Go8YUO4NPYFP3oR+x6ZlO7uJb/jlanFvX
+	 S7ZjZTXv/idYIrZSik396jx+G+Yrzt4aKXk/agPeTHfga4jUvCgUIBaYVPj9qEB7u9
+	 zFE7QK8bZEplyvWlCoOpYD10A3xrxtVXiRkIZRvB6lxI7GnFZqr67QFT9R/jWP/dS4
+	 BRO2/qxom67N+cLtVTodyDfZllKLzMgiaZThXp0n9imUIQcuY7xDNHmMOvwHFRcqNF
+	 SCzy9gFfTB/iA==
+From: Lee Jones <lee@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Will Deacon <will@kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
+ Andrew Morton <akpm@linux-foundation.org>, Nick Piggin <npiggin@gmail.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Herbert Xu <herbert@gondor.apana.org.au>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Johannes Berg <johannes@sipsolutions.net>, 
+ Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, 
+ Jiri Pirko <jiri@resnulli.us>, Jason Gunthorpe <jgg@ziepe.ca>, 
+ Leon Romanovsky <leon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>, 
+ Thomas Graf <tgraf@suug.ch>, Christoph Hellwig <hch@lst.de>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Robin Murphy <robin.murphy@arm.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Zijun Hu <quic_zijuhu@quicinc.com>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-arch@vger.kernel.org, 
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ linux-crypto@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-wireless@vger.kernel.org, linux-rdma@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
+ linux-mtd@lists.infradead.org
+In-Reply-To: <20250221-rmv_return-v1-15-cc8dff275827@quicinc.com>
+References: <20250221-rmv_return-v1-0-cc8dff275827@quicinc.com>
+ <20250221-rmv_return-v1-15-cc8dff275827@quicinc.com>
+Subject: Re: (subset) [PATCH *-next 15/18] mfd: db8500-prcmu: Remove
+ needless return in three void APIs
+Message-Id: <174187101580.3629935.6842247156301298100.b4-ty@kernel.org>
+Date: Thu, 13 Mar 2025 13:03:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-510f9
 
-When a 9p tree was mounted with option 'posixacl', parent directory had a
-default ACL set for its subdirectories, e.g.:
+On Fri, 21 Feb 2025 05:02:20 -0800, Zijun Hu wrote:
+> Remove needless 'return' in the following void APIs:
+> 
+>  prcmu_early_init()
+>  prcmu_system_reset()
+>  prcmu_modem_reset()
+> 
+> Since both the API and callee involved are void functions.
+> 
+> [...]
 
-  setfacl -m default:group:simpsons:rwx parentdir
+Applied, thanks!
 
-then creating a subdirectory crashed 9p client, as v9fs_fid_add() call in
-function v9fs_vfs_mkdir_dotl() sets the passed 'fid' pointer to NULL
-(since dafbe689736) even though the subsequent v9fs_set_create_acl() call
-expects a valid non-NULL 'fid' pointer:
+[15/18] mfd: db8500-prcmu: Remove needless return in three void APIs
+        commit: ccf5c7a8e5b9fe7c36d8c384f8f7c495f45c63a0
 
-  [   37.273191] BUG: kernel NULL pointer dereference, address: 0000000000000000
-  ...
-  [   37.322338] Call Trace:
-  [   37.323043]  <TASK>
-  [   37.323621]  ? __die+0x1f/0x60
-  [   37.324448]  ? page_fault_oops+0x158/0x470
-  [   37.325532]  ? search_module_extables+0x4a/0x80
-  [   37.326742]  ? p9_client_walk+0x1c/0x2c0 [9pnet]
-  [   37.328006]  ? search_bpf_extables+0x5b/0x80
-  [   37.329142]  ? exc_page_fault+0x72/0x190
-  [   37.330196]  ? asm_exc_page_fault+0x22/0x30
-  [   37.331330]  ? p9_client_walk+0x1c/0x2c0 [9pnet]
-  [   37.332562]  ? v9fs_fid_xattr_get+0x59/0x120 [9p]
-  [   37.333824]  v9fs_fid_xattr_set+0x6f/0x130 [9p]
-  [   37.335077]  v9fs_set_acl+0x82/0xc0 [9p]
-  [   37.336112]  v9fs_set_create_acl+0x41/0x60 [9p]
-  [   37.337326]  v9fs_vfs_mkdir_dotl+0x20d/0x2e0 [9p]
-  [   37.338590]  vfs_mkdir+0x192/0x250
-  [   37.339535]  do_mkdirat+0x135/0x160
-  [   37.340465]  __x64_sys_mkdir+0x42/0x60
-  [   37.341455]  do_syscall_64+0x4b/0x110
-  [   37.342447]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-Fix this by simply swapping the sequence of these two calls in
-v9fs_vfs_mkdir_dotl(), i.e. calling v9fs_set_create_acl() before
-v9fs_fid_add().
-
-Fixes: dafbe689736 ('9p fid refcount: cleanup p9_fid_put calls')
-Reported-by: syzbot+5b667f9a1fee4ba3775a@syzkaller.appspotmail.com
-Signed-off-by: Christian Schoenebeck <linux_oss@crudebyte.com>
----
- fs/9p/vfs_inode_dotl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index 143ac03b7425..3397939fd2d5 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -407,8 +407,8 @@ static int v9fs_vfs_mkdir_dotl(struct mnt_idmap *idmap,
- 			 err);
- 		goto error;
- 	}
--	v9fs_fid_add(dentry, &fid);
- 	v9fs_set_create_acl(inode, fid, dacl, pacl);
-+	v9fs_fid_add(dentry, &fid);
- 	d_instantiate(dentry, inode);
- 	err = 0;
- 	inc_nlink(dir);
--- 
-2.39.5
+--
+Lee Jones [李琼斯]
 
 
