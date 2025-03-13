@@ -1,136 +1,117 @@
-Return-Path: <linux-kernel+bounces-559834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E50AA5FA6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:50:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A6AA5FA74
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:52:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07EBF3B63D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:50:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A239A3B63EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D636268FFA;
-	Thu, 13 Mar 2025 15:50:23 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E3D268FF1;
+	Thu, 13 Mar 2025 15:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QlR0uuZW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DEB523A;
-	Thu, 13 Mar 2025 15:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF15523A;
+	Thu, 13 Mar 2025 15:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741881023; cv=none; b=EId1+mUz7rivyWrCXMJmQcVfd+0dGdLLMssQ+eqx2EznzC9TSXRx50iLuFcL/cQDKzeM8CrAeOyoguVqoBpcZeirakLa2FcKcHZHMEjq5yh+KuABoUePMemF5AdDTSbxp5LaVbVa3R3LA+2jbREnv8MEtT1ZbEqlQpXzHs57KDE=
+	t=1741881131; cv=none; b=gtvGtlSaT/B9HexqJf+9rpyZQtggPCWf2DLnEpXPqXWEfGEUIJ3R5zAdrRvQoA/CgSc/mcSmkeG8/S1tE0SBp3XfxScJWwXukcA0fgTa6QjytuRAkM7GzTowM6Wq5Ruw2iJg9X3c2T/m7RDDkTdg2z1fucWSHYMhAJR3HwXGnoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741881023; c=relaxed/simple;
-	bh=0e4Lg37IEBkCL1+ibNYCc8zaO1GLTw8DLiQ36F9M068=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VYGDh8QREGkparpFyn1tuDsHGCnszz+ID1Q5zpIxegzxASUkyy6ypHopQMQCZLTWgLKvS5VFR8mv9EEU+5cQt9kscfSdsNimkGqSALNsz6bDXNTpINxLqzQUttgxq0rhsyLpJrFYdP8yM+8IjHsomHhToUVvRKlTG1J4zSLA/Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDBhC5Z6vz6H8mQ;
-	Thu, 13 Mar 2025 23:47:07 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id AC32B1400CA;
-	Thu, 13 Mar 2025 23:50:17 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Mar
- 2025 16:50:16 +0100
-Date: Thu, 13 Mar 2025 15:50:15 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-CC: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <maz@kernel.org>, Bjorn
- Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>, "Peter Zijlstra"
-	<peterz@infradead.org>, Nishanth Menon <nm@ti.com>, Dhruva Gole
-	<d-gole@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
-	<ssantosh@kernel.org>, Logan Gunthorpe <logang@deltatee.com>, Dave Jiang
-	<dave.jiang@intel.com>, Jon Mason <jdmason@kudzu.us>, Allen Hubbe
-	<allenbh@gmail.com>, <ntb@lists.linux.dev>, Michael Kelley
-	<mhklinux@outlook.com>, Wei Liu <wei.liu@kernel.org>, Haiyang Zhang
-	<haiyangz@microsoft.com>, <linux-hyperv@vger.kernel.org>, Wei Huang
-	<wei.huang2@amd.com>, Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>, "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
-	<martin.petersen@oracle.com>, <linux-scsi@vger.kernel.org>, Jonathan Cameron
-	<Jonathan.Cameron@huwei.com>
-Subject: Re: [patch V2 05/10] PCI/MSI: Switch to MSI descriptor locking to
- guard()
-Message-ID: <20250313155015.000037f5@huawei.com>
-In-Reply-To: <20250313130321.695027112@linutronix.de>
-References: <20250313130212.450198939@linutronix.de>
-	<20250313130321.695027112@linutronix.de>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1741881131; c=relaxed/simple;
+	bh=DZtz8/3fa+WFrihLsc4sh46ZOpu6MY1qmLDNbK59iUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eC4NGlKokXxJSsDYgBdcaAoJyKfK34TPlv6IYjMjvgvcJBw9ATxrfKuhTYHXvA2dxVKkrD9oAoJ2ECvqhy0yG14Pz364v1Ri+908JorGFQsqJnVqHwd/bmI1OOvMU/7hHk5n50AW3ULYCRTSyWL4wc1RQCxBhoErL6FGFe2SG8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QlR0uuZW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 328F6C4CEE9;
+	Thu, 13 Mar 2025 15:52:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741881130;
+	bh=DZtz8/3fa+WFrihLsc4sh46ZOpu6MY1qmLDNbK59iUE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QlR0uuZWUOhyc0abfXi0pJd4hzfsPInN2i+kewAX6nuCKSrY+fZFWeGicoJfgL8ef
+	 ApQ2Plhiq+sAx39Kl9VvwO0eMtQzsDGF5BM5WbWEpQ9LaymP3pvcETcsWczzwkstEK
+	 YOM8wKq9zgoERqs3u91PuT6Tm8tQvEVKQEnqPJr3Bve3cpWUV5ApIIxxZchKAKIh+I
+	 qz5YzhyA4jzZOOJclEFa91wDLEkSLro/6OWzhsXvxSH3QuO3BjWA3Y9q+8l/DyP7nf
+	 Vwg+Y05Ck9qRQldGn4tABwYzjjZW4iRWeOTDb0WZmodQLYIrMtb4Zs9KyUKXQ67U7F
+	 mwhCCDB7D2mbw==
+Date: Thu, 13 Mar 2025 16:52:05 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Ruiwu Chen <rwchen404@gmail.com>, corbet@lwn.net, 
+	keescook@chromium.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, zachwade.k@gmail.com
+Subject: Re: [PATCH v2] drop_caches: re-enable message after disabling
+Message-ID: <db2zm4c5p5octh6garrnvlg3qzhvaqxtoz33f5ksegwupcbegk@jidbmdepvn57>
+References: <Z7tZTCsQop1Oxk_O@bombadil.infradead.org>
+ <20250308080549.14464-1-rwchen404@gmail.com>
+ <zaiqpjvkekhgipcs7smqhbb7hqt5dcneyoyndycofjepitxznf@q22hsykugpme>
+ <Z9IQ2jam9hkXnPhg@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9IQ2jam9hkXnPhg@bombadil.infradead.org>
 
-On Thu, 13 Mar 2025 14:03:44 +0100 (CET)
-Thomas Gleixner <tglx@linutronix.de> wrote:
-
-> Convert the code to use the new guard(msi_descs_lock).
+On Wed, Mar 12, 2025 at 03:55:22PM -0700, Luis Chamberlain wrote:
+> On Mon, Mar 10, 2025 at 02:51:11PM +0100, Joel Granados wrote:
+> > On Sat, Mar 08, 2025 at 04:05:49PM +0800, Ruiwu Chen wrote:
+> > > >> When 'echo 4 > /proc/sys/vm/drop_caches' the message is disabled,
+> > > >> but there is no interface to enable the message, only by restarting
+> > > >> the way, so add the 'echo 0 > /proc/sys/vm/drop_caches' way to
+> > > >> enabled the message again.
+> > > >> 
+> > > >> Signed-off-by: Ruiwu Chen <rwchen404@gmail.com>
+> > > >
+> > > > You are overcomplicating things, if you just want to re-enable messages
+> > > > you can just use:
+> > > >
+> > > > -		stfu |= sysctl_drop_caches & 4;
+> > > > +		stfu = sysctl_drop_caches & 4;
+> > > >
+> > > > The bool is there as 4 is intended as a bit flag, you can can figure
+> > > > out what values you want and just append 4 to it to get the expected
+> > > > result.
+> > > >
+> > > >  Luis
+> > > 
+> > > Is that what you mean ?
+> > > 
+> > > -               stfu |= sysctl_drop_caches & 4;
+> > > +               stfu ^= sysctl_drop_caches & 4;
+> > > 
+> > > 'echo 4 > /sys/kernel/vm/drop_caches' can disable or open messages,
+> > > This is what I originally thought, but there is uncertainty that when different operators execute the command,
+> > > It is not possible to determine whether this time is enabled or turned on unless you operate it twice.
+> > 
+> > So can you use ^= or not?
 > 
-> No functional change intended.
+> No,  ^= does not work, see a boolean truth table.
 > 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: linux-pci@vger.kernel.org
-> ---
-> V2: Remove the gotos - Jonathan
-Hi Thomas,
+> > And what does operate it twice mean?
+> 
+> I think the reporter meant an "sysadmin", say two folks admining a system.
+> Since we this as a flag to enable disabling it easily we can just
+> always check for the flag as I suggested:
+> 
+> stfu = sysctl_drop_caches & 4
+I sent out a new version of this patch. Its a bit late to push it though
+the next merge window, so it is in sysctl-testing until the next cycle
 
+Thx again
 
-There is a bit of the original code that is carried forwards here
-that superficially seemed overly complex.  However as far as I can tell
-this is functionally the same as you intended.  So with that in mind
-if my question isn't complete garbage, maybe a readability issue for
-another day.
+Best
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+-- 
 
-> --- a/drivers/pci/msi/msi.c
-> +++ b/drivers/pci/msi/msi.c
-
-
-
-> +static int msix_setup_interrupts(struct pci_dev *dev, struct msix_entry *entries,
-> +				 int nvec, struct irq_affinity *affd)
-> +{
-> +	struct irq_affinity_desc *masks __free(kfree) =
-> +		affd ? irq_create_affinity_masks(nvec, affd) : NULL;
-> +
-> +	guard(msi_descs_lock)(&dev->dev);
-> +	int ret = __msix_setup_interrupts(dev, entries, nvec, masks);
-> +	if (ret)
-> +		pci_free_msi_irqs(dev);
-
-It's not immediately obvious what this is undoing (i.e. where the alloc
-is).  I think it is at least mostly the pci_msi_setup_msi_irqs in
-__msix_setup_interrupts
-
-Why not handle the error in __msix_setup_interrupts and make that function
-side effect free.  Does require gotos but in a function that isn't
-doing any cleanup magic so should be fine.
-
-Mind you I'm not following the logic in msix_setup_interrupts()
-before this series either. i.e. why doesn't msix_setup_msi_descs()
-clean up after itself on failure (i.e. undo loop iterations that
-weren't failures) as that at least superficially looks like it
-would give more readable code.
-
-So this is the same as current and as such the patch is fine I think.
-
->  	return ret;
->  }
->  
-
-
+Joel Granados
 
