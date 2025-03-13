@@ -1,103 +1,136 @@
-Return-Path: <linux-kernel+bounces-558997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 731A8A5EE2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:38:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 650B0A5EE2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:38:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C6A316D536
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:38:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CFA7189FCF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9B4261371;
-	Thu, 13 Mar 2025 08:38:21 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8331EEA46;
-	Thu, 13 Mar 2025 08:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E9A261376;
+	Thu, 13 Mar 2025 08:38:39 +0000 (UTC)
+Received: from smtp.cecloud.com (unknown [1.203.97.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB1B261373;
+	Thu, 13 Mar 2025 08:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741855101; cv=none; b=Rle7dY+6DDSQBM9tY5ywKQLsHzETjsasm31AMUeiFguQ3ny5OR2D4fg3H47MpZwcKcrUFc66pg/E+Kwb9SD5vO4vcaDpOLrZckpjdmDVP4Er8eJZ3ogkmXtB1H6cXUFHNch3Sy+NUPbZQ0gL6blOlQ4+uEwENrp98TqyqrgoxF4=
+	t=1741855119; cv=none; b=FnK63K/HdpdFYYokfUfhGaz9+sa/LuwPO1rKgG5cUTRLHElUHeJidecyWnPz7ZbUkbNjPtgqIgu23yjs2sjNiUyoAJHZOYGf4O4McdEIRC9GDj8959AkwHzV8WEYHuFx+0BZCe0jH8CUogh+DPRB8+1ltRNtbii5p2H1/VCWh/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741855101; c=relaxed/simple;
-	bh=shItUb0ID8hVaNEfs39fAcAoUpxrrDzvTA9HlZjWGNU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SGQcyCCxkQC8M8R5ZpJKhUg36bt21BpCCAnSY7FowNs3nhk59w/8wl9lBXKP4PFPr9RNdXQ59dmATb+LSn98AUcRoIttluBL3K9wfKfgKUwDNIClk+YtEBs5PA177wq54VH+zhi5Nsy01mnnZw/0P3yWVuvDn4dxfHvYEziZOAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-03 (Coremail) with SMTP id rQCowAB3fNhxmdJnPaXWFA--.22502S2;
-	Thu, 13 Mar 2025 16:38:11 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: dmitry.torokhov@gmail.com,
-	bentiss@kernel.org,
-	jeff@labundy.com
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] Input: fix error handling in input_register_device()
-Date: Thu, 13 Mar 2025 16:38:03 +0800
-Message-Id: <20250313083803.307646-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741855119; c=relaxed/simple;
+	bh=9R1EiGAgQe25MrWNKrF2WevN9VUMvqqUyAGKWCs4Slw=;
+	h=Date:From:To:Cc:Subject:References:Mime-Version:Message-ID:
+	 Content-Type; b=PoTBt0oKxRk3SWU7hudI5ObFcRiJv8zYvNlRvvNZkXTiBRtLxhN5DOrjNNb3BeuMFVbSGhFT25MWlbpcjoDCi1AiOvCWKF83yehOaeXeLBXIF/psRh4QsYaAqJqb02m/PORjRXiy852bDcWbMtIvKzEMrK6qljpDbWCY7Hb8b1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; arc=none smtp.client-ip=1.203.97.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.cecloud.com (Postfix) with ESMTP id F031E900114;
+	Thu, 13 Mar 2025 16:38:34 +0800 (CST)
+X-MAIL-GRAY:0
+X-MAIL-DELIVERY:1
+X-SKE-CHECKED:1
+X-ABS-CHECKED:1
+X-ANTISPAM-LEVEL:2
+Received: from desktop-n31qu50 (unknown [39.156.73.12])
+	by smtp.cecloud.com (postfix) whith ESMTP id P3907749T281457503039856S1741855113830797_;
+	Thu, 13 Mar 2025 16:38:34 +0800 (CST)
+X-IP-DOMAINF:1
+X-RL-SENDER:zhang.guanghui@cestc.cn
+X-SENDER:zhang.guanghui@cestc.cn
+X-LOGIN-NAME:zhang.guanghui@cestc.cn
+X-FST-TO:hare@suse.de
+X-RCPT-COUNT:10
+X-LOCAL-RCPT-COUNT:0
+X-MUTI-DOMAIN-COUNT:0
+X-SENDER-IP:39.156.73.12
+X-ATTACHMENT-NUM:0
+X-UNIQUE-TAG:<708528d4f6f342195498421eb54f3467>
+X-System-Flag:0
+Date: Thu, 13 Mar 2025 16:38:33 +0800
+From: "zhang.guanghui@cestc.cn" <zhang.guanghui@cestc.cn>
+To: "Hannes Reinecke" <hare@suse.de>, 
+	"Maurizio Lombardi" <mlombard@bsdbackstore.eu>, 
+	sagi <sagi@grimberg.me>, 
+	mgurtovoy <mgurtovoy@nvidia.com>, 
+	kbusch <kbusch@kernel.org>, 
+	sashal <sashal@kernel.org>, 
+	chunguang.xu <chunguang.xu@shopee.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-nvme <linux-nvme@lists.infradead.org>, 
+	linux-block <linux-block@vger.kernel.org>
+Subject: =?UTF-8?B?UmU6IFJlOiBudm1lLXRjcDogZml4IGEgcG9zc2libGUgVUFGIHdoZW4gZmFpbGluZyB0byBzZW5kIHJlcXVlc3TjgJDor7fms6jmhI/vvIzpgq7ku7bnlLFzYWdpZ3JpbUBnbWFpbC5jb23ku6Plj5HjgJE=?=
+References: <2025021015413817916143@cestc.cn>, 
+	<aed9dde7-3271-4b97-9632-8380d37505d9@grimberg.me>, 
+	<202503071810452687957@cestc.cn>, 
+	<D8DDP6LIPOKB.2ACTHLE9FPI2A@bsdbackstore.eu>, 
+	<2025031309485746586710@cestc.cn>, 
+	<deb1584c-67b8-4543-9017-9ca18a9ee7d8@suse.de>
+X-Priority: 3
+X-GUID: 66D57D25-E26A-4CB3-B730-BF52186BB060
+X-Has-Attach: no
+X-Mailer: Foxmail 7.2.25.331[cn]
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAB3fNhxmdJnPaXWFA--.22502S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7GF13GrWUGF4kuFW8CF1xZrb_yoWDJrX_W3
-	4Sv3s7Xr18tw1kKFnxAFnxZrn7KFsFqrWrur43trn5Wa4rXFZru34kWr40vr1jqa17AF1D
-	J3WUGr48Aw4rWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
-	0VAGYxC7MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
-	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
-	C2KfnxnUUI43ZEXa7VUbE1v3UUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Mime-Version: 1.0
+Message-ID: <2025031316383284926527@cestc.cn>
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-Once device_add() failed, we should call put_device() to decrement
-reference count for cleanup. Or it could cause memory leak.
+SGksCgoKCsKgIGluIGZhY3QsIHRoZSBudm1lX3RjcF90cnlfc2VuZCgpIGZhaWx1cmUsIHRoZSB0
+YXJnZXQgbWF5IHNlbmQgQzJIVGVybVJlcSBpbW1lZGlhdGVseS4gd2hpbGUgdGhlIGhvc3QgcmVj
+ZWl2ZXMgdGhlIEMySFRlcm1SZXEgYW5kIHN0aWxsIHN0YXJ0aW5nIGVycm9yIHJlY292ZXJ5LsKg
+CgoKCnNvIHdoZW4gcXVldWUtPnJkX2VuYWJsZWQgaXMgZmFsc2UswqAgY2FuIGF2b2lkIHN0YXJ0
+aW5nIGVycm9yIHJlY292ZXJ5IGFnYWdpbi4gVGhhbmtzCgoKCgoKemhhbmcuZ3VhbmdodWlAY2Vz
+dGMuY24KCgoKwqAKCgoK5Y+R5Lu25Lq677yawqBIYW5uZXMgUmVpbmVja2UKCgoK5Y+R6YCB5pe2
+6Ze077yawqAyMDI1LTAzLTEzwqAxNTo1MQoKCgrmlLbku7bkurrvvJrCoHpoYW5nLmd1YW5naHVp
+QGNlc3RjLmNuOyBNYXVyaXppbyBMb21iYXJkaTsgc2FnaTsgbWd1cnRvdm95OyBrYnVzY2g7IHNh
+c2hhbDsgY2h1bmd1YW5nLnh1CgoKCuaKhOmAge+8msKgbGludXgta2VybmVsOyBsaW51eC1udm1l
+OyBsaW51eC1ibG9jawoKCgrkuLvpopjvvJrCoFJlOiBudm1lLXRjcDogZml4IGEgcG9zc2libGUg
+VUFGIHdoZW4gZmFpbGluZyB0byBzZW5kIHJlcXVlc3TjgJDor7fms6jmhI/vvIzpgq7ku7bnlLFz
+YWdpZ3JpbUBnbWFpbC5jb23ku6Plj5HjgJEKCgoKT24gMy8xMy8yNSAwMjo0OCwgemhhbmcuZ3Vh
+bmdodWlAY2VzdGMuY24gd3JvdGU6CgoKCj4gWWVzLCB0aGUgcHJvYmxlbSBoZXJlIGlzIHRoYXQs
+wqAgZGVzcGl0ZSB0aGUgbnZtZV90Y3BfdHJ5X3NlbmQoKSBmYWlsdXJlLCB0aGUgdGFyZ2V0IHNl
+bmRzIGEgcmVzcG9uc2UgY2Fwc3VsZSBmb3IgdGhlIGNvbW1hbmQsIGxlYWRpbmcgdG8gYSBVQUYg
+aW4gdGhlIGhvc3QuCgoKCj4KCgoKPiBJcyBpdCBtb3JlIHJlYXNvbmFibGUgdG8gZGlzYWJsZSBx
+dWV1ZS0+cmRfZW5hYmxlZCB0byBwcmV2ZW50IHJlY2VpdmluZy4gVGhhbmtzCgoKCj7CoMKgCgoK
+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbnZtZS9ob3N0L3RjcC5jIGIvZHJpdmVycy9udm1lL2hv
+c3QvdGNwLmMKCgoKPiBpbmRleCBiZTA0YzVmMzg1NmQuLjE3NDA3ZWIxMmFkOSAxMDA2NDQKCgoK
+PiAtLS0gYS9kcml2ZXJzL252bWUvaG9zdC90Y3AuYwoKCgo+ICsrKyBiL2RyaXZlcnMvbnZtZS9o
+b3N0L3RjcC5jCgoKCj4gQEAgLTEyMDMsOCArMTIwMyw5IEBAIHN0YXRpYyBpbnQgbnZtZV90Y3Bf
+dHJ5X3NlbmQoc3RydWN0IG52bWVfdGNwX3F1ZXVlICpxdWV1ZSkKCgoKPsKgwqDCoMKgwqDCoMKg
+wqDCoCB9IGVsc2UgaWYgKHJldCA8IDApIHsKCgoKPsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgZGV2X2VycihxdWV1ZS0+Y3RybC0+Y3RybC5kZXZpY2UsCgoKCj7CoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAiZmFpbGVkIHRvIHNlbmQg
+cmVxdWVzdCAlZFxuIiwgcmV0KTsKCgoKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBu
+dm1lX3RjcF9mYWlsX3JlcXVlc3QocXVldWUtPnJlcXVlc3QpOwoKCgo+wqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCBudm1lX3RjcF9kb25lX3NlbmRfcmVxKHF1ZXVlKTsKCgoKPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcXVldWUtPnJkX2VuYWJsZWQgPSBmYWxzZTsKCgoK
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbnZtZV90Y3BfZXJyb3JfcmVjb3ZlcnkoJnF1
+ZXVlLT5jdHJsLT5jdHJsKTsKCgoKPsKgwqDCoMKgwqDCoMKgwqDCoCB9CgoKCj7CoMKgIG91dDoK
+CgoKPsKgwqDCoMKgwqDCoMKgwqDCoCBtZW1hbGxvY19ub3JlY2xhaW1fcmVzdG9yZShub3JlY2xh
+aW1fZmxhZyk7CgoKCj4KCgoKPgoKCgo+CgoKCkhtbS4gSW4gcHJpbmNpcGxlLCB5ZXMuIFByb2Js
+ZW0gaXMgdGhhdCBuZXR3b3JrIGlzIGEgYmktZGlyZWN0aW9uYWwKCgoKY29tbXVuaWNhdGlvbiwg
+YW5kIGEgZmFpbHVyZSBvbiBvbmUgc2lkZSBkb2Vzbid0IG5lY2Vzc2FyaWx5IGltcGx5CgoKCmEg
+ZmFpbHVyZSBvbiB0aGUgb3RoZXIuCgoKCkluIHBhcnRpY3VsYXIgd2hlbiB0aGUgc2VuZCBzaWRl
+IGZhaWxzIHdlIHNob3VsZCBfY29udGludWVfIHRvIHJlYWQKCgoKYXMgd2Ugc2hvdWxkIGJlIGZs
+dXNoaW5nIHRoZSByZWFkIHNpZGUgYnVmZmVyIGJlZm9yZSBjbG9zaW5nLgoKCgrCoAoKCgpTbyBJ
+IGFncmVlIHdpdGggc3RhcnRpbmcgZXJyb3IgcmVjb3ZlcnksIGJ1dCBub3Qgd2l0aCBkaXNhYmxp
+bmcgdGhlCgoKCnJlYWRpbmcgc2lkZSAoYXMgd2UgaGF2ZW4ndCBlbmNvdW50ZXJlZCBhIHJlYWQg
+ZXJyb3IpLgoKCgrCoAoKCgpDaGVlcnMsCgoKCsKgCgoKCkhhbm5lcwoKCgotLQoKCgpEci4gSGFu
+bmVzIFJlaW5lY2tlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBLZXJuZWwgU3Rv
+cmFnZSBBcmNoaXRlY3QKCgoKaGFyZUBzdXNlLmRlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKzQ5IDkxMSA3NDA1MyA2ODgKCgoK
+U1VTRSBTb2Z0d2FyZSBTb2x1dGlvbnMgR21iSCwgRnJhbmtlbnN0ci4gMTQ2LCA5MDQ2MSBOw7xy
+bmJlcmcKCgoKSFJCIDM2ODA5IChBRyBOw7xybmJlcmcpLCBHRjogSS4gVG90ZXYsIEEuIE1jRG9u
+YWxkLCBXLiBLbm9ibGljaAoKCgrCoAoKCgrCoAoKCg==
 
-As comment of device_add() says, 'if device_add() succeeds, you should
-call device_del() when you want to get rid of it. If device_add() has
-not succeeded, use only put_device() to drop the reference count'.
 
-Found by code review.
-
-Cc: stable@vger.kernel.org
-Fixes: 0cd587735205 ("Input: preallocate memory to hold event values")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/input/input.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/input/input.c b/drivers/input/input.c
-index c9e3ac64bcd0..2e70f346dadc 100644
---- a/drivers/input/input.c
-+++ b/drivers/input/input.c
-@@ -2424,6 +2424,7 @@ int input_register_device(struct input_dev *dev)
- err_device_del:
- 	device_del(&dev->dev);
- err_devres_free:
-+	put_device(&dev->dev);
- 	devres_free(devres);
- 	return error;
- }
--- 
-2.25.1
 
 
