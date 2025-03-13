@@ -1,128 +1,116 @@
-Return-Path: <linux-kernel+bounces-559576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07C81A5F5B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:16:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D57A5F5D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:21:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C498C3BA6F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:14:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 333E4189DEB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE4A26772D;
-	Thu, 13 Mar 2025 13:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA6D267AE4;
+	Thu, 13 Mar 2025 13:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NkfmqRF0"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CbxcRkr5"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF52724E010;
-	Thu, 13 Mar 2025 13:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F65267735;
+	Thu, 13 Mar 2025 13:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741871700; cv=none; b=DkpPqkU3rrXIuHHtO+NrFyZHtPHZzaOjkv/daQ4oqPLj4kdJ+qNk3kjB8kjkYTXsuBrYUUG8bfX+aXU+aUhFRbD10S9uz0qCpQyv8zc2GwXBHeOI6P/KgV3lKWtLR73U3xJcMGviPdr9HYDhhpd1u+xE5bXk2YhZPV3+Fl6607c=
+	t=1741871869; cv=none; b=GhHMS+rCa+HGrcZh64+LbX9rvu8CkTqMdFlGM7FYU1ahlPlrJVnLxpXmCaS48yAxaSbaV42b1W2xRyj3tVF5RwFCqPzxa9ji/vk9BRatoJOlhSv5qEzG2ey96S3p/2QUYKkKe+2o8U7WpABno4YDcXnEjYcVdLwKzI/Uu9KGRBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741871700; c=relaxed/simple;
-	bh=VLJNg6lVMoooVVl1DScIpAPZZeM78jzK1vkciFNTLM8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TFfObx1D0V6ZUFfKOfABiF+erw8zQRfc+spfBpV2f9I3lilfIfFOsEh+0iCi49c4EKBRjD+RyOtQSBzZb1yJ7XR/z1J7z/8QfI20HcMBttwbwIebpWW9vHTS2UiUv4l7e80b76IYFE1rrOjJEfthnXXZS1Y+cE5QTrHJYWjlSvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NkfmqRF0; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e5e0caa151so1658148a12.0;
-        Thu, 13 Mar 2025 06:14:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741871697; x=1742476497; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pDzKsxJKNgXSp+dU7QY1JBhVYKMUfmTAqfRS6qsK4MU=;
-        b=NkfmqRF0ir4f8I0+PeVl/o4Mb0lyZA3YLhd15S4vXmPbmzlcnQuvC17mHj5EDFzfny
-         be9vgo4DqdninqrR+6/Y1eY063tdalrI/FgAp/wvcEzWzuiY7MsAN7ttlB5khDxowonX
-         RBwWJzWGlNOeAJZly2OAGty+IxjhreqlQDZa4W3uFl9uDOafo7A431qkdUsSgb9M4NRL
-         KrSVp66zLX3MbZx/Yl62+SHpKoa8B3xKXs3hYT1NwbuMhmXCli+mmq4DkYXh8/oEwT8Y
-         n9O4tUd3dr5aWqBpeC7R1Vh86CYGEtHUZWRwiI6udSOFwd/81UC2QA0kmVXBo+PVmdDj
-         0ftg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741871697; x=1742476497;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pDzKsxJKNgXSp+dU7QY1JBhVYKMUfmTAqfRS6qsK4MU=;
-        b=K/M/6Aj0qAUQPsmKM1TiXphL8oQDcNbEOCY1bKHmcIiDG2C4MSUiumZQ1MT3ovB6qV
-         xNZyfev1nN4QhxKduHO2Iz9fLmu/SSBjVK1sNSE4Zp4HfPY2OD4VFDKAKQ/BjpZzwrrI
-         l3stPblmZ/JBcI65Vf9fX8+5oQta+WH/kiEXhbPnKcTribUCj3cuFVv+pYLFOS16lhCC
-         1k3U84vHsH4mt+76P+rZaihMeh9WM0G3nEKkpmgpPQJwsIj5U6FR0T0dU8dG89wEqOT3
-         Swatknnbb9+Gndg6RDjFZMEas2SxBaDUatIXSSSUoMzQCwLCGGMrHJ39CG/pReoY/WNb
-         oM3w==
-X-Forwarded-Encrypted: i=1; AJvYcCV5s55UytItDzx0H36nSyg2h4WBClGV9ruB2cXUZhNWnDL+ntRkJEQRbhye3SojYuF08qjVllmYzEtkD95T@vger.kernel.org, AJvYcCVaoJOwHLhYh6H1ax1V1Ws5eQg/bElu5XmyoER/WB93QtxOYDgHcmJwPdpeKthiMY4FSoFF6klvlA==@vger.kernel.org, AJvYcCXeSmTHFEpEgRxpIel72QZNsQ7vUIt1JL1kvCtw7RApHXKabZT/ecnxAhxq04RBYh+b6VCNXt6UMAWDttY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRpyQ46f8gNI0yx4PgvQyu04q1QZGehmdj/ZjTXFCoUEP+rr3o
-	QMxMpU6GPJMhEUragVApX2VhNqHUJvxBTGG9zSD/pjQnVGKEIb3Y
-X-Gm-Gg: ASbGncvnTY8P9MAkF+Iqci9i4vS9Et+hgmKDIgzaT+wqNGPtSmV2ixFhhUnXxWb/EdW
-	kK1YHu9duZ16NxopjyMUY8q8VXG3bv3akLyaEViNm378qz0wcvtGaK9ewZUqQEJd6v2udf0XpfC
-	RJGsO3Rf+i7QH5CaD0aBRoP0IUXjN+9Tpc5jVc0SUo2GI4p1cH7qcjSR8yTpGnR4Vp+sSsFoa6t
-	JS/fOIbtO7aUoqqp+ObmFmO/36lCvpGXuY+/mh6zCbIJ075OJBH9buLw86H4TBWqJYu344k3+us
-	n8OEpBltEuldV+N8kicJa4heIdA5uFlunhABZ+KqqijItJar824Wpt4AIg==
-X-Google-Smtp-Source: AGHT+IGloPfMpVcyvSI4gSYAfTMqQJN5Evc9ByhQ/i5dxx727NH40uiKtBLFMDYVKpT1JPovCIn/FA==
-X-Received: by 2002:a05:6402:5248:b0:5e7:b081:d6e0 with SMTP id 4fb4d7f45d1cf-5e7b081d955mr9681473a12.19.1741871696725;
-        Thu, 13 Mar 2025 06:14:56 -0700 (PDT)
-Received: from [192.168.116.141] ([148.252.146.254])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e81692e534sm746639a12.1.2025.03.13.06.14.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 06:14:55 -0700 (PDT)
-Message-ID: <95529e8f-ac4d-4530-94fa-488372489100@gmail.com>
-Date: Thu, 13 Mar 2025 13:15:50 +0000
+	s=arc-20240116; t=1741871869; c=relaxed/simple;
+	bh=yDGWynoa4NHLG+/FL8La2c2pXIbj5JLF9ZRJKihaX0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JXeoA3aMiAKgz/9mdvWRAufys9FPB39eL60zrK71s1Y0i66f0kDJkhnDrGgMHQ/v+zQNRLhPBPOTPjQcONX7LRz7pEjWU4xy1NWOt+Qj5ug+1a3Gg75m73VZGXBvqFB2HTHZ01Vcbf0y/rcEbKvvk2U5gKBiTj3f7bYxL4syv0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CbxcRkr5; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=4EvY1LEFvjjHJU3jZAtzphl1AzmykKRYyWCA/SvfCK4=; b=Cb
+	xcRkr5Js6+IwxGpOdQ1oKGkQeF2cq/TMzpc3U5FT2lIMY76EHMFIggsHj8bcQ651yDwsQnnj+ykg/
+	VVeS7E5Fzb19hUdFqt2smal5gYticNcoGaqM1qybqC23066JPaLgcwYgNZK7XSU5DFkTI5Si9hhIM
+	sbyH5zQuUwYlRao=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tsiRD-004zrS-Is; Thu, 13 Mar 2025 14:17:27 +0100
+Date: Thu, 13 Mar 2025 14:17:27 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Michael Klein <michael@fossekall.de>,
+	Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Samuel Holland <samuel@sholland.org>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM: dts: bananapi: add support for PHY LEDs
+Message-ID: <7cf91323-d550-496a-a8ec-ae104c77224d@lunn.ch>
+References: <20250312193629.85417-1-michael@fossekall.de>
+ <20250312193629.85417-2-michael@fossekall.de>
+ <4637912.LvFx2qVVIh@jernej-laptop>
+ <Z9KYqlfUYxRaWnGQ@a98shuttle.de>
+ <20250313104042.694c1856@donnerap.manchester.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 0/2] introduce io_uring_cmd_import_fixed_vec
-To: Sidong Yang <sidong.yang@furiosa.ai>
-Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <20250312142326.11660-1-sidong.yang@furiosa.ai>
- <7a4217ce-1251-452c-8570-fb36e811b234@gmail.com>
- <Z9K2-mU3lrlRiV6s@sidongui-MacBookPro.local>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <Z9K2-mU3lrlRiV6s@sidongui-MacBookPro.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250313104042.694c1856@donnerap.manchester.arm.com>
 
-On 3/13/25 10:44, Sidong Yang wrote:
-> On Thu, Mar 13, 2025 at 08:57:45AM +0000, Pavel Begunkov wrote:
->> On 3/12/25 14:23, Sidong Yang wrote:
->>> This patche series introduce io_uring_cmd_import_vec. With this function,
->>> Multiple fixed buffer could be used in uring cmd. It's vectored version
->>> for io_uring_cmd_import_fixed(). Also this patch series includes a usage
->>> for new api for encoded read in btrfs by using uring cmd.
->>
->> Pretty much same thing, we're still left with 2 allocations in the
->> hot path. What I think we can do here is to add caching on the
->> io_uring side as we do with rw / net, but that would be invisible
->> for cmd drivers. And that cache can be reused for normal iovec imports.
->>
->> https://github.com/isilence/linux.git regvec-import-cmd
->> (link for convenience)
->> https://github.com/isilence/linux/tree/regvec-import-cmd
->>
->> Not really target tested, no btrfs, not any other user, just an idea.
->> There are 4 patches, but the top 3 are of interest.
+On Thu, Mar 13, 2025 at 10:40:42AM +0000, Andre Przywara wrote:
+> On Thu, 13 Mar 2025 09:34:50 +0100
+> Michael Klein <michael@fossekall.de> wrote:
 > 
-> Thanks, I justed checked the commits now. I think cache is good to resolve
-> this without allocation if cache hit. Let me reimpl this idea and test it
-> for btrfs.
+> Hi,
+> 
+> > On Thu, Mar 13, 2025 at 07:07:24AM +0100, Jernej Škrabec wrote:
+> > >Dne sreda, 12. marec 2025 ob 20:36:28 Srednjeevropski standardni čas je Michael Klein napisal(a):  
+> > >> The Bananapi M1 has three LEDs connected to the RTL8211E ethernet PHY.
+> > >> Add the corresponding nodes to the device tree.
+> > >>
+> > >> Signed-off-by: Michael Klein <michael@fossekall.de>  
+> > >
+> > >This is patch 2/2. Which one is patch 1/2? I got only one.  
+> > 
+> > https://patchwork.kernel.org/project/netdevbpf/patch/20250312193629.85417-1-michael@fossekall.de/
+> > 
+> > Sorry for any inconvenience in case I messed up the patch submission.
+> > 
+> > I made two commits for this change and submitted them via `git send-email 
+> > HEAD^^`. The first patch went to netdev@vger.kernel.org, the second 
+> > to linux-arm-kernel@lists.infradead.org, which seems logical. Have I 
+> > done something wrong?
+> 
+> Well, for those really small "series" it's probably better to send all
+> patches to everyone, especially if the first patch gives some context,
+> without which the second leaves people (like me) scratching their head.
 
-Sure, you can just base on top of that branch, hashes might be
-different but it's identical to the base it should be on. Your
-v2 didn't have some more recent merged patches.
+However, netdev does not like pathchsets which contain patches which
+should not be applied to the netdev tree. DT patches generally go
+through a different Maintainer to driver changes implementing the
+binding.
 
--- 
-Pavel Begunkov
+So for your DT patch, you could add to the commit message something
+like:
 
+The RTL8211E ethernet PHY driver has recently gained support for
+controlling PHY LEDs via /sys/class/leds. The Bananapi M1 has three
+LEDs connected to the RTL8211E PHY.  Add the corresponding nodes to
+the device tree.
+
+	Andrew
 
