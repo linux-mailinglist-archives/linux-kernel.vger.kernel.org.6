@@ -1,306 +1,525 @@
-Return-Path: <linux-kernel+bounces-558989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69DD2A5EE10
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:31:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25698A5EE14
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:32:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA877189F68F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:31:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C24E3BC77D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4417230BC2;
-	Thu, 13 Mar 2025 08:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="eIqfnsjR"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D5F2AD22
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18D01FAC57;
+	Thu, 13 Mar 2025 08:32:01 +0000 (UTC)
+Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A188261373;
+	Thu, 13 Mar 2025 08:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741854681; cv=none; b=JWWc71cc/vGTz5lUKybT0yj4fXNrhwQ8XZFCaf9cL3Ay83St28hNvg+hGLZiFH64UmgKpqYGiqgVVJznNsm92isk6/LfII43GCn1CjDLXMMyAKAqGelKtv7430iU6gfwWLfhgAEm4ScVLn9MDSzjszcfw8Nmtf/IxZlqgKF0aAM=
+	t=1741854721; cv=none; b=YqTi5ruRfxPLBSZwZoo0EDmHFmLV3i4QSmf572Xf2IxnsCe05ysDBLI+IwWw7goZSXaB013FqAjrDoDQ+VK0WFmuXzMJHSuyQh6Msl4P8gkSRbL4Dn2xqPIlRvFIz9TbpRtD5s6LXyKcZa8Bv/wgJrh9tnD5Yokcyi3eE/l72I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741854681; c=relaxed/simple;
-	bh=xP+UIduKgLqsiaFIOWyn+CLVZCZlrx/JOSsJVRffH3Q=;
-	h=From:References:Mime-Version:In-Reply-To:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kIMSQFf5fbezl8J92nOs7byhgFESqht0XHVW5X+TR3XC/pao4VTu6V904QHHIVuD4hlsKk/4RxpN67J6CNnyF7S7o/SLFpI249lC+CePlN/m6xSGKeK7TS+xNkVUkajJaJ5CjEzckgLx1Cx4U/Yv8b9J0dukGZdsjV1mrA9wDIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=eIqfnsjR; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e5e22e6ed2so861773a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 01:31:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1741854677; x=1742459477; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:in-reply-to:mime-version:references
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JzZEFr5AJGv65/xqrdfpS/zmTm939A4Bar0S2y41nS8=;
-        b=eIqfnsjRs5OzsSWB4mQktbSUVvITNdpa2y0YnqYiD3HGjaPjas67EapgjcCrPlqDtI
-         CbA/bnl0JC5knBbsJm8E+OGX20eMbg/s9bEczL8Px5w+s3kvSRgZ3TwC9dcjAbvdHPZ1
-         HQ8mIXVNvjpHcGtaKCOAy0/MYUV3WR3D95mt5Mo15yAW3BKirJBil8zP3UrqjCoITeNY
-         c9K68blUPjsy8K/JQ0wBEC52KuWJun29m5xDHK0UYzbICrVEGZiLSXo0Jze9H0Kt5pfI
-         Gc+rrGsbDftGfzaP5nn1Auu0opgW/FfSpl0Kqy1YojTI4YsjccLfLM/88Tq4picoXGXm
-         zMFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741854677; x=1742459477;
-        h=cc:to:subject:message-id:date:in-reply-to:mime-version:references
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JzZEFr5AJGv65/xqrdfpS/zmTm939A4Bar0S2y41nS8=;
-        b=IuI2qIvuOhnI/IcAMUBdWpWz1MMcnp/DCsLZgBtIQXQj/0//GBBk1eYmHM/IMAX6KO
-         57IZuGKzzmzcaDyWQY43Z5SnTcDyiIcUhcmPTDDZfpaV3P9sAnbWshhuaLBuHCUAUWEN
-         PlmlNQI9tkrYmUHOLQnyjhZ8sLZIUZKlNnnDsVp8gGM9BmHHPP5gUIsjewVBxLDMvgNs
-         xxVKlONlkUnvWre3HLovfH7uQc7xYCugY7qquKI+PDoWIe8B6oFAc9dPbF83wDXaQeLW
-         0EL47ZUbSTsPdZ16KIPHbGYE2YVa/TV3gSei7+JXF46mFyNe33jWKB3uooQgYVOowFhS
-         nkUQ==
-X-Gm-Message-State: AOJu0YzGD+wYk1RSA76dUwWcouGY8lm0aBCXNGPUb9jltnjcRBut+RqW
-	oo60Q2nZvy34yYGfFOoEEGeJD/voCMEkOkxw0dnyMNpjto73Y5pFFgYa13cAOpgD1E0fBMQRsKf
-	7nU6Uy38J75Eo//dtfXDyF79/gN0ojnbdu6j2
-X-Gm-Gg: ASbGncvZqOWs/HUUg7UHHFX1orv5rEm9Sv22gSHzDTg6g1BEwNdor0oixFQUVVbcQlU
-	PapT4W+j2Y9InXQWyhWXNDeDsnQSmo4+HhzpHedKvBV4bW5DRkqhc4qWo89QxSWRytaUNAhHrRm
-	/T2qQduUpaMy1C2I604jrh7bGSOyg=
-X-Google-Smtp-Source: AGHT+IGjHYgoaKge4gmbxZEVJocvCSL4WjU6zx9IMgtWnibGLUnZxsWfFQkIRBJVMMXXNaOUiTt6M2bXdyox8kKbD4U=
-X-Received: by 2002:a05:6402:268c:b0:5e6:17fb:d3c6 with SMTP id
- 4fb4d7f45d1cf-5e617fbd730mr24630494a12.25.1741854677194; Thu, 13 Mar 2025
- 01:31:17 -0700 (PDT)
-Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
- Thu, 13 Mar 2025 01:31:16 -0700
-From: Aaron Lu <ziqianlu@bytedance.com>
-References: <CANCG0Gfn-BENDNqJmWC2BCxXLA8pQWrAwNibx22Dv_yUzyNV5g@mail.gmail.com>
+	s=arc-20240116; t=1741854721; c=relaxed/simple;
+	bh=XTTYnmNGgeyrE6yFYiIIQ9QKfgbzEm74hCOrvm7UyiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hP1D1Dlfncmj6vs5WJy6gGuOp/CjPlhQpDzM90nA3Kh1Ac9VJQ/mO232dm85S9n5scrOFabi+l2tE7gdrajY9w8bq+SzN1JLjoyLjRXDE6JpvnG6G88XeAZFduLbZrkv1rYs6kPMrbQW+ay8TEp2a20p9Ia5lnMWqNEw7VFiPjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=129.150.39.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
+Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
+	by hzbj-icmmx-7 (Coremail) with SMTP id AQAAfwCHj6f0l9Jn3NB7CQ--.36558S2;
+	Thu, 13 Mar 2025 16:31:48 +0800 (CST)
+Received: from localhost (unknown [123.150.8.50])
+	by mail (Coremail) with SMTP id AQAAfwCHiYXzl9JnkcVGAA--.16807S2;
+	Thu, 13 Mar 2025 16:31:47 +0800 (CST)
+Date: Thu, 13 Mar 2025 16:31:31 +0800
+From: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+To: Gregory Price <gourry@gourry.net>
+Cc: lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [LSF/MM] CXL Boot to Bash - Section 4: Interleave
+Message-ID: <Z9KX4/zF6/yFdWLQ@phytium.com.cn>
+References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
+ <Z9DQnjPWbkjqrI9n@gourry-fedora-PF4VCD3F>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Original-From: Aaron Lu <ziqianlu@bytedance.com>
-In-Reply-To: <CANCG0Gfn-BENDNqJmWC2BCxXLA8pQWrAwNibx22Dv_yUzyNV5g@mail.gmail.com>
-Date: Thu, 13 Mar 2025 01:31:16 -0700
-X-Gm-Features: AQ5f1JoLNCLegHWoXyHhuFbbpfeRbUbj2h9b52i85emc5NJBVWEPj-dUuBceXX4
-Message-ID: <CANCG0GdOwS7WO0k5Fb+hMd8R-4J_exPTt2aS3-0fAMUC5pVD8g@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] Defer throttle when task exits to user
-To: Valentin Schneider <vschneid@redhat.com>, Ben Segall <bsegall@google.com>, 
-	K Prateek Nayak <kprateek.nayak@amd.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Mel Gorman <mgorman@suse.de>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Chuyi Zhou <zhouchuyi@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9DQnjPWbkjqrI9n@gourry-fedora-PF4VCD3F>
+X-CM-TRANSID:AQAAfwCHiYXzl9JnkcVGAA--.16807S2
+X-CM-SenderInfo: 5zdqw5pxtxt0arstlqxsk13x1xpou0fpof0/1tbiAQAIAWfR6CADVQAGsm
+Authentication-Results: hzbj-icmmx-7; spf=neutral smtp.mail=wangyuquan
+	1236@phytium.com.cn;
+X-Coremail-Antispam: 1Uk129KBjvAXoW3CF4fGryxtFykArW7Kr4Uurg_yoW8GFW3Jo
+	Wjvw1ruw48Wr15Cr1UCF1kJryUZryrJF1xXr47CrWUGFnrWF1UGryUWr4UGF98GF45GFW7
+	J34xJw1DG34UJFs7n29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXasCq-sGcSsGvf
+	J3UbIjqfuFe4nvWSU8nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2KfnxnUUI43ZEXa7xR_UU
+	UUUUUUU==
 
-It appears this mail's message-id is changed and becomes a separate
-thread, I'll check what is going wrong, sorry about this.
+On Tue, Mar 11, 2025 at 08:09:02PM -0400, Gregory Price wrote:
+> 
+> -----------------------------
+> Intra-Host-Bridge Interleave.
+> -----------------------------
+> Now lets consider a system where we've placed 2 CXL devices on the same
+> Host Bridge.  Maybe each CXL device is only capable of x8 PCIE, and we
+> want to make full use of a single x16 link.
+> 
+> This setup only requires the BIOS to create a CEDT CFMWS which reports
+> the entire capacity of all devices under the host bridge, but does not
+> need to set up any interleaving.
+> 
+> In the follow case, the BIOS has configured as single 4GB memory region
+> which only targets the single host bridge, but maps the entire memory
+> capacity of both devices (2GB).
+> 
+> ```
+> CFMWS:
+>           Subtable Type : 01 [CXL Fixed Memory Window Structure]
+>                 Reserved : 00
+>                   Length : 002C
+>                 Reserved : 00000000
+>      Window base address : 0000000300000000   <- Memory Region
+>              Window size : 0000000080000000   <- 2GB
 
-On Thu, Mar 13, 2025 at 02:20:59AM -0500, Aaron Lu wrote:
-> Tests:
-> - A basic test to verify functionality like limit cgroup cpu time and
->   change task group, affinity etc.
+I think is "Window size : 0000000100000000   <- 4GB" here.
 
-Here is the basic test script:
+> Interleave Members (2^n) : 00                 <- No host bridge interleave
+>    Interleave Arithmetic : 00
+>                 Reserved : 0000
+>              Granularity : 00000000
+>             Restrictions : 0006               <- Bit(2) - Volatile
+>                    QtgId : 0001
+>             First Target : 00000007           <- Host Bridge _UID
+> ```
+> 
+> Assuming no other CEDT or SRAT entries exist, this will result in linux
+> creating the following NUMA topology, where all CXL memory is in Node 1.
+> 
+> ```
+> NUMA Structure:
+>         ---------     --------   |    ----------
+>         | cpu0  |-----| DRAM |---|----| Node 0 |
+>         ---------     --------   |    ----------
+>             |                    |
+>          -------                 |    ----------
+>          | HB0 |-----------------|----| Node 1 |
+>          -------                 |    ----------
+>         /       \                |
+>    CXL Dev     CXL Dev           |
+> ```
+> 
+> In this scenario, we program the decoders like so:
+> ```
+> Decoders
+>                            CXL Root
+>                               |
+>                           decoder0.0
+>                          IW:1  IG:256
+>                   [0x300000000, 0x3FFFFFFFF]
+>                               |
+>                           Host Bridge
+>                               |
+>                           decoder1.0
+>                          IW:2  IG:256
+>                    [0x300000000, 0x3FFFFFFFF]
+>                              /   \
+>                    Endpoint 0     Endpoint 1
+>                        |              |
+>                    decoder2.0     decoder3.0
+>                  IW:2  IG:256     IW:2  IG:256
+>     [0x300000000, 0x3FFFFFFFF]    [0x300000000, 0x3FFFFFFFF]
+> ```
+> 
+> The root decoder in this scenario does not participate in interleave,
+> it simply forwards all accesses in this range to the host bridge.
+> 
+> The host bridge then applies the interleave across its connected devices
+> and the decodes apply translation accordingly.
+> 
+> -----------------------
+> Combination Interleave.
+> -----------------------
+> Lets consider now a system where 2 Host Bridges have 2 CXL devices each,
+> and we want to interleave the entire set.  This requires us to make use
+> of both inter and intra host bridge interleave.
+> 
+> First, we can interleave this with the a single CEDT entry, the same as
+> the first inter-host-bridge CEDT (now assuming 1GB per device).
+> 
+> ```
+>            Subtable Type : 01 [CXL Fixed Memory Window Structure]
+>                 Reserved : 00
+>                   Length : 002C
+>                 Reserved : 00000000
+>      Window base address : 0000000300000000   <- Memory Region
+>              Window size : 0000000100000000   <- 4GB
+> Interleave Members (2^n) : 01                 <- 2-way interleave
+>    Interleave Arithmetic : 00
+>                 Reserved : 0000
+>              Granularity : 00000000
+>             Restrictions : 0006               <- Bit(2) - Volatile
+>                    QtgId : 0001
+>             First Target : 00000007           <- Host Bridge _UID
+>              Next Target : 00000006           <- Host Bridge _UID
+> ```
+> 
+> This gives us a NUMA structure as follows:
+> ```
+> NUMA Structure:
+> 
+>          ----------     --------    |   ----------
+>          |  cpu0  |-----| DRAM |----|---| Node 0 |
+>          ----------     --------    |   ----------
+>         /         \                 |
+>     -------     -------             |   ----------
+>     | HB0 |-----| HB1 |-------------|---| Node 1 |
+>     -------     -------             |   ----------
+>       / \         / \               |
+>   CXL0   CXL1  CXL2  CXL3           |
+> ```
+> 
+> And the respective decoder programming looks as follows
+> ```
+> Decoders:
+>                              CXL  Root
+>                                  |
+>                              decoder0.0
+>                             IW:2   IG:256
+>                       [0x300000000, 0x3FFFFFFFF]
+>                              /         \
+>                 Host Bridge 7           Host Bridge 6
+>                 /                                    \
+>            decoder1.0                             decoder2.0
+>           IW:2   IG:512                          IW:2   IG:512
+>   [0x300000000, 0x3FFFFFFFFF]             [0x300000000, 0x3FFFFFFFF]
+>             /    \                                  /    \
+>    endpoint0      endpoint1                endpoint2      endpoint3
+>       |               |                       |               |
+>   decoder3.0      decoder4.0              decoder5.0      decoder6.0
+>           IW:4  IG:256                            IW:4  IG:256
+>   [0x300000000, 0x3FFFFFFFF]              [0x300000000, 0x3FFFFFFFF]
+> ```
+> 
+> Notice at both the root and the host bridge, the Interleave Ways is 2.
+> There are two targets at each level.  The host bridge has a granularity
+> of 512 to capture its parent's ways and granularity (`2*256`).
+> 
+> Each decoder is programmed with the total number of targets (4) and the
+> overall granularity (256B).
 
-pid=$$
-CG_PATH1=/sys/fs/cgroup/1
-CG_PATH2=/sys/fs/cgroup/2
+Is there any relationship between endpoints'decoder setup(IW&IG) and
+others decoder?
 
-[ -d $CG_PATH1 ] && sudo rmdir $CG_PATH1
-[ -d $CG_PATH2 ] && sudo rmdir $CG_PATH2
+> 
+> We might use this setup if each CXL device is capable of x8 PCIE, and
+> we have 2 Host Bridges capable of full x16 - utilizing all bandwidth
+> available.
+> 
+> ---------------------------------------------
+> Nuance: Hardware Interleave and Memory Holes.
+> ---------------------------------------------
+> You may encounter a system which cannot place the entire memory capacity
+> into a single contiguous System Physical Address range.  That's ok,
+> because we can just use multiple decoders to capture this nuance.
+> 
+> Most CXL devices allow for multiple decoders.
+> 
+> This may require an SRAT entry to keep these regions on the same node.
+> (Obviously the relies on your platform vendor's BIOS)
+> 
+> ```
+> CFMWS:
+>          Subtable Type : 01 [CXL Fixed Memory Window Structure]
+>                 Reserved : 00
+>                   Length : 002C
+>                 Reserved : 00000000
+>      Window base address : 0000000300000000   <- Memory Region
+>              Window size : 0000000080000000   <- 2GB
+> Interleave Members (2^n) : 00                 <- No host bridge interleave
+>    Interleave Arithmetic : 00
+>                 Reserved : 0000
+>              Granularity : 00000000
+>             Restrictions : 0006               <- Bit(2) - Volatile
+>                    QtgId : 0001
+>             First Target : 00000007           <- Host Bridge 7
+> 
+>          Subtable Type : 01 [CXL Fixed Memory Window Structure]
+>                 Reserved : 00
+>                   Length : 002C
+>                 Reserved : 00000000
+>      Window base address : 0000000400000000   <- Memory Region
+>              Window size : 0000000080000000   <- 2GB
+> Interleave Members (2^n) : 00                 <- No host bridge interleave
+>    Interleave Arithmetic : 00
+>                 Reserved : 0000
+>              Granularity : 00000000
+>             Restrictions : 0006               <- Bit(2) - Volatile
+>                    QtgId : 0001
+>             First Target : 00000007           <- Host Bridge 7
+> 
+> SRAT:
+>         Subtable Type : 01 [Memory Affinity]
+>                Length : 28
+>      Proximity Domain : 00000001          <- NUMA Node 1
+>             Reserved1 : 0000
+>          Base Address : 0000000300000000  <- Physical Memory Region
+>        Address Length : 0000000080000000  <- first 2GB
+> 
+>         Subtable Type : 01 [Memory Affinity]
+>                Length : 28
+>      Proximity Domain : 00000001          <- NUMA Node 1
+>             Reserved1 : 0000
+>          Base Address : 0000000400000000  <- Physical Memory Region
+>        Address Length : 0000000080000000  <- second 2GB
+> ```
+> 
+> The SRAT entries allow us to keep the regions attached to the same node.
+> ```
+> 
+> NUMA Structure:
+>         ---------     --------   |    ----------
+>         | cpu0  |-----| DRAM |---|----| Node 0 |
+>         ---------     --------   |    ----------
+>             |                    |
+>          -------                 |    ----------
+>          | HB0 |-----------------|----| Node 1 |
+>          -------                 |    ----------
+>         /       \                |
+>    CXL Dev     CXL Dev           |
+> ```
+>
+Hi, Gregory
 
-sudo mkdir -p $CG_PATH1
-sudo mkdir -p $CG_PATH2
+Seeing this, I have an assumption to discuss.
 
-sudo sh -c "echo $pid > $CG_PATH1/cgroup.procs"
+If the same system uses tables like below:
 
-echo "start nop"
-~/src/misc/nop &
-nop_pid=$!
-cat /proc/$nop_pid/cgroup
-pidstat -p $nop_pid 1 &
-sleep 5
+CFMWS:
+         Subtable Type : 01 [CXL Fixed Memory Window Structure]
+                Reserved : 00
+                  Length : 002C
+                Reserved : 00000000
+     Window base address : 0000000300000000   <- Memory Region
+             Window size : 0000000080000000   <- 2GB
+Interleave Members (2^n) : 00                 <- No host bridge interleave
+   Interleave Arithmetic : 00
+                Reserved : 0000
+             Granularity : 00000000
+            Restrictions : 0006               <- Bit(2) - Volatile
+                   QtgId : 0001
+            First Target : 00000007           <- Host Bridge 7
 
-echo "limit $CG_PATH1 to 1/10"
-sudo sh -c "echo 10000 100000 > $CG_PATH1/cpu.max"
-sleep 5
+         Subtable Type : 01 [CXL Fixed Memory Window Structure]
+                Reserved : 00
+                  Length : 002C
+                Reserved : 00000000
+     Window base address : 0000000400000000   <- Memory Region
+             Window size : 0000000080000000   <- 2GB
+Interleave Members (2^n) : 00                 <- No host bridge interleave
+   Interleave Arithmetic : 00
+                Reserved : 0000
+             Granularity : 00000000
+            Restrictions : 0006               <- Bit(2) - Volatile
+                   QtgId : 0001
+            First Target : 00000007           <- Host Bridge 7
 
-echo "limit $CG_PATH1 to 5/10"
-sudo sh -c "echo 50000 100000 > $CG_PATH1/cpu.max"
-sleep 5
+SRAT:
+        Subtable Type : 01 [Memory Affinity]
+               Length : 28
+     Proximity Domain : 00000000          <- NUMA Node 0
+            Reserved1 : 0000
+         Base Address : 0000000300000000  <- Physical Memory Region
+       Address Length : 0000000080000000  <- first 2GB
 
-echo "move to $CG_PATH2"
-sudo sh -c "echo $nop_pid > $CG_PATH2/cgroup.procs"
-sleep 5
+        Subtable Type : 01 [Memory Affinity]
+               Length : 28
+     Proximity Domain : 00000001          <- NUMA Node 1
+            Reserved1 : 0000
+         Base Address : 0000000400000000  <- Physical Memory Region
+       Address Length : 0000000080000000  <- second 2GB
 
-echo "limit $CG_PATH2 to 5/10"
-sudo sh -c "echo 50000 100000 > $CG_PATH2/cpu.max"
-sleep 5
 
-echo "limit $CG_PATH2 to 1/10"
-sudo sh -c "echo 10000 100000 > $CG_PATH2/cpu.max"
-sleep 5
+The first 2GB cxl memory region would locate at node0 with DRAM.
 
-echo "set affinity to cpu3"
-taskset -p 0x8 $nop_pid
-sleep 5
+NUMA Structure:
 
-echo "set affinity to cpu10"
-taskset -p 0x400 $nop_pid
-sleep 5
+        ---------     --------   |            ----------
+        | cpu0  |-----| DRAM |---|------------| Node 0 |
+        ---------     --------   |   /        ----------
+            |                    |  /first 2GB
+         -------                 | /          ----------
+         | HB0 |-----------------|------------| Node 1 |
+         -------                 |second 2GB  ----------
+        /       \                |
+   CXL Dev     CXL Dev           |
+```
 
-echo "unlimit $CG_PATH2"
-sudo sh -c "echo max 100000 > $CG_PATH2/cpu.max"
-sleep 5
+Is above configuration and structure valid?
 
-echo "move to $CG_PATH1"
-sudo sh -c "echo $nop_pid > $CG_PATH1/cgroup.procs"
-sleep 5
+Yuquan
+> And the decoder programming would look like so
+> ```
+> Decoders:
+>                                CXL  Root
+>                              /           \
+>                     decoder0.0           decoder0.1
+>                   IW:1  IG:256           IW:1  IG:256
+>     [0x300000000, 0x37FFFFFFF]           [0x400000000, 0x47FFFFFFF]
+>                              \           /
+>                               Host Bridge
+>                              /           \
+>                     decoder1.0           decoder1.1
+>                   IW:2  IG:256           IW:2  IG:256
+>     [0x300000000, 0x37FFFFFFF]           [0x400000000, 0x47FFFFFFF]
+>               /   \                                /   \
+>     Endpoint 0     Endpoint 1            Endpoint 0     Endpoint 1
+>         |              |                     |              |
+>     decoder2.0     decoder3.0            decoder2.1     decoder3.1
+>             IW:2 IG:256                          IW:2 IG:256
+>     [0x300000000, 0x37FFFFFFF]           [0x400000000, 0x47FFFFFFF]
+> ```
+> 
+> Linux manages decoders in relation to the associated component, so
+> decoders are N.M where N is the component and M is the decoder number.
+> 
+> If you look, you'll see each side of this tree looks individually
+> equivalent to the intra-host-bridge interleave example, just with one
+> half of the total memory each (matching the CFMWS ranges).
+> 
+> Each of the root decoders still has an interleave width of 1 because
+> they both only target one host bridge (despite it being the same one).
+> 
+> 
+> --------------------------------
+> Software Interleave (Mempolicy).
+> --------------------------------
+> Linux provides a software mechanism to allow tasks to to interleave its
+> memory across NUMA nodes - which may have different performance
+> characteristics.  This component is called `mempolicy`, and is primarily
+> operated on with the `set_mempolicy()` and `mbind()` syscalls.
+> 
+> These syscalls take a nodemask (bitmask representing NUMA node ids) as
+> an argument to describe the intended allocation policy of the task.
+> 
+> The following policies are presently supported (as of v6.13)
+> ```
+> enum {
+>         MPOL_DEFAULT,
+>         MPOL_PREFERRED,
+>         MPOL_BIND,
+>         MPOL_INTERLEAVE,
+>         MPOL_LOCAL,
+>         MPOL_PREFERRED_MANY,
+>         MPOL_WEIGHTED_INTERLEAVE,
+> };
+> ```
+> 
+> Let's look at `MPOL_INTERLEAVE` and `MPOL_WEIGHTED_INTERLEAVE`.
+> 
+> To quote the man page:
+> ```
+> MPOL_INTERLEAVE
+>     This  mode  interleaves  page  allocations  across the nodes specified
+>     in nodemask in numeric node ID order.  This optimizes for bandwidth
+>     instead of latency by spreading out pages and memory accesses to those
+>     pages across multiple nodes.  However, accesses to a single page will
+>     still be limited to the memory bandwidth of a single node.
+> 
+> MPOL_WEIGHTED_INTERLEAVE (since Linux 6.9)
+>     This mode interleaves page allocations across the nodes specified in
+>     nodemask according to the weights in
+>         /sys/kernel/mm/mempolicy/weighted_interleave
+>     For example, if bits 0, 2, and 5 are set in nodemask and the contents of
+>         /sys/kernel/mm/mempolicy/weighted_interleave/node0
+>         /sys/ ... /node2
+>         /sys/ ... /node5
+>     are 4, 7, and 9, respectively, then pages in this region will be
+>     allocated on nodes 0, 2, and 5 in a 4:7:9 ratio.
+> ```
+> 
+> To put it simply, MPOL_INTERLEAVE will interleave allocations at a page
+> granularity (4KB, 2MB, etc) across nodes in a 1:1 ratio, while
+> MPOL_WEIGHTED_INTERLEAVE takes into account weights - which presumably
+> map to the bandwidth of each respective node.
+> 
+> Or more concretely:
+> 
+> MPOL_INTERLEAVE
+>     1:1 Interleave between two nodes.
+>     malloc(4096)  ->  node0
+>     malloc(4096)  ->  node1
+>     malloc(4096)  ->  node0
+>     malloc(4096)  ->  node1
+>     ... and so on ...
+> 
+> MPOL_WEIGHTED_INTERLEAVE
+>     2:1 Interleave between two nodes.
+>     malloc(4096)  ->  node0
+>     malloc(4096)  ->  node0
+>     malloc(4096)  ->  node1
+>     malloc(4096)  ->  node0
+>     malloc(4096)  ->  node0
+>     malloc(4096)  ->  node1
+>     ... and so on ...
+> 
+> This is the preferred mechanism for *heterogeneous interleave* on Linux,
+> as it allows for predictable performance based on the explicit (and
+> visible) placement of memory.
+> 
+> It also allows for memory ZONE restrictions to enable better performance
+> predictability (e.g. keeping kernel locks out of CXL while allowing
+> workloads to leverage it for expansion or bandwidth).
+> 
+> ======================
+> Mempolicy Limitations.
+> ======================
+> Mempolicy is a *per-task* allocation policy that is inherited by
+> child-tasks on clone/fork. It can only be changed by the task itself,
+> though cgroups may affect the effective nodemask via cpusets.
+> 
+> This means once a task has been launched, and external actor cannot
+> change the policy of a running task - except possibly by migrating that
+> task between cgroups or changing the cpusets.mems value of the cgroup
+> the task lives in.
+> 
+> Additionally, If capacity on a given node is not available, allocations
+> will fall back to another node in the node mask - which may cause
+> interleave to become unbalanced.
+> 
+> ================================
+> Hardware Interleave Limitations.
+> ================================
+> Granularities:
+>    granularities are limited on hardware
+>    (typically 256B up to 16KB by power of 2)
+> 
+> Ways:
+>    Ways are limited by the CXL configuration to:
+>    2,4,8,16,3,6,12
+> 
+> Balance:
+>    Linux does not allow imbalanced interleave configurations
+>    (e.g. 3-way interleave where 2 targets are on 1 HB and 1 on another)
+> 
+> Depending on your platform vendor and type of interleave, you may not
+> be able to deconstruct an interleave region at all (decoders may be
+> locked).  In this case, you may not have the flexiblity to convert
+> operation from interleaved to non-interleave via the driver interface.
+> 
+> In the scenario where your interleave configuration is entirely driver
+> managed, you cannot adjust the size of an interleave set without
+> deconstructing the entire set.
+> 
+> ------------------------------------------------------------------------
+> 
+> Next we'll discuss how memory allocations occur in a CXL-enabled system,
+> which may be affected by things like Reclaim and Tiering systems.
+> 
+> ~Gregory
 
-echo "change to rr with priority 10"
-sudo chrt -r -p 10 $nop_pid
-sleep 5
-
-echo "change to fifo with priority 10"
-sudo chrt -f -p 10 $nop_pid
-sleep 5
-
-echo "change back to fair"
-sudo chrt -o -p 0 $nop_pid
-sleep 5
-
-echo "unlimit $CG_PATH1"
-sudo sh -c "echo max 100000 > $CG_PATH1/cpu.max"
-sleep 5
-
-kill $nop_pid
-
-note: nop is a cpu hog that does: while (1) spin();
-
-> - A script that tried to mimic a large cgroup setup is used to see how
->   bad it is to unthrottle cfs_rqs and enqueue back large number of tasks
->   in hrtime context.
-
-Here are the test scripts:
-
-CG_ROOT=/sys/fs/cgroup
-
-nr_level1=2
-nr_level2=100
-nr_level3=10
-
-for i in `seq $nr_level1`; do
-	CG_LEVEL1=$CG_ROOT/$i
-	echo "cg_level1: $CG_LEVEL1"
-	[ -d $CG_LEVEL1 ] || sudo mkdir -p $CG_LEVEL1
-	sudo sh -c "echo +cpu > $CG_LEVEL1/cgroup.subtree_control"
-
-	for j in `seq $nr_level2`; do
-		CG_LEVEL2=$CG_LEVEL1/${i}_$j
-		echo "cg_level2: $CG_LEVEL2"
-		[ -d $CG_LEVEL2 ] || sudo mkdir -p $CG_LEVEL2
-		sudo sh -c "echo +cpu > $CG_LEVEL2/cgroup.subtree_control"
-
-		for k in `seq $nr_level3`; do
-			CG_LEVEL3=$CG_LEVEL2/${i}_${j}_$k
-			[ -d $CG_LEVEL3 ] || sudo mkdir -p $CG_LEVEL3
-			~/test/run_in_cg.sh $CG_LEVEL3
-		done
-	done
-done
-
-function set_quota()
-{
-	quota=$1
-
-	for i in `seq $nr_level1`; do
-		CG_LEVEL1=$CG_ROOT/$i
-		sudo sh -c "echo $quota 100000 > $CG_LEVEL1/cpu.max"
-		echo "$CG_LEVEL1: `cat $CG_LEVEL1/cpu.max`"
-	done
-}
-
-while true; do
-	echo "sleep 20"
-	sleep 20
-
-	echo "set 20cpu quota to first level cgroups"
-	set_quota 2000000
-	echo "sleep 20"
-	sleep 20
-
-	echo "set 10cpu quota to first level cgroups"
-	set_quota 1000000
-	echo "sleep 20"
-	sleep 20
-
-	echo "set 5cpu quota to first level cgroups"
-	set_quota 500000
-	echo "sleep 20"
-	sleep 20
-
-	echo "unlimit first level cgroups"
-	set_quota max
-done
-
-run_in_cg.sh:
-
-set -e
-
-CG_PATH=$1
-[ -z "$CG_PATH" ] && {
-	echo "need cgroup path"
-	exit
-}
-
-echo "CG_PATH: $CG_PATH"
-
-sudo sh -c "echo $$ > $CG_PATH/cgroup.procs"
-
-for i in `seq 10`; do
-	~/src/misc/nop &
-done
-
->   The test was done on a 2sockets/384threads AMD CPU with the following
->   cgroup setup: 2 first level cgroups with quota setting, each has 100
->   child cgroups and each child cgroup has 10 leaf child cgroups, with a
->   total number of 2000 cgroups. In each leaf child cgroup, 10 cpu hog
->   tasks are created there. Below is the durations of
->   distribute_cfs_runtime() during a 1 minute window:
-
-@durations:
-[8K, 16K)            274 |@@@@@@@@@@@@@@@@@@@@@                               |
-[16K, 32K)           132 |@@@@@@@@@@                                          |
-[32K, 64K)             6 |                                                    |
-[64K, 128K)            0 |                                                    |
-[128K, 256K)           2 |                                                    |
-[256K, 512K)           0 |                                                    |
-[512K, 1M)           117 |@@@@@@@@@                                           |
-[1M, 2M)             665 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[2M, 4M)              10 |                                                    |
-
-The bpftrace script used to capture this:
-
-kfunc:distribute_cfs_runtime
-{
-	@start[args->cfs_b] = nsecs;
-}
-
-kretfunc:distribute_cfs_runtime
-{
-	if (@start[args->cfs_b]) {
-		$duration = nsecs - @start[args->cfs_b];
-		@durations = hist($duration);
-		delete(@start[args->cfs_b]);
-	}
-}
-
-interval:s:60
-{
-	exit();
-}
-
->   So the biggest duration is in 2-4ms range in this hrtime context. How
->   bad is this number? I think it is acceptable but maybe the setup I
->   created is not complex enough?
->   In older kernels where async unthrottle is not available, the largest
->   time range can be about 100ms+.
 
