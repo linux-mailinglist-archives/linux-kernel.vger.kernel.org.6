@@ -1,168 +1,198 @@
-Return-Path: <linux-kernel+bounces-559976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2747A5FBD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:33:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63289A5FBC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:33:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D241D188568B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:33:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AF537A3CF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665B02676FD;
-	Thu, 13 Mar 2025 16:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9366313BAF1;
+	Thu, 13 Mar 2025 16:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b="ElKU9nVB"
-Received: from mx0a-00300601.pphosted.com (mx0a-00300601.pphosted.com [148.163.146.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JWd7Cop5"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21ECC13BAF1;
-	Thu, 13 Mar 2025 16:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.146.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33713126C03
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 16:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741883602; cv=none; b=XXrBhFyhrpB0WMqtK2FVxHj0eyKuYtGKgjOoPHHAtHQ9tnMc1dZyG/WP0CLmQ9NGpOB2dLvfYdUeR8MKhAaSscFMgk7d5emSR3HX+p6Sr35rJbOxQCflOLLGyIXGHL4NbbS5OSgpjGb4U9qXEolC6ugBXNi7fYoeFKeKe7QRBPc=
+	t=1741883571; cv=none; b=BanHVSTrzJk5Ee5ck4CHFhQHtcHV+YYnVVK4YBqSoeMMFt/i+ANVLTv/LpZqe97HEm1UD+lzP6JxFvpFvVSRD3hlwdM8TdLxAfa2UeHhlYj1GXANxBi/xYuxXiEaezTHJiQlGSwMEUuoTDdtvL/oRvMynk+sq9aDhZD2rOVQ7U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741883602; c=relaxed/simple;
-	bh=Fk1Sw38RsovrWcOEK9Wv4pDEmhMSab8WX+0qeLrb8VA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sCJ8qhVg/RiTpR9w+uGbbNzMTyCf8YHzCeZfosmqMLqj/QPMhxsC6Aq6ZVwDwGSKlxUlvjf5cgM7Q+uzp4EZAD6V7m58HBeyjkylAOk9qDY7sKWOy1L01o3GsvESzCHsnUR2S+O4KdKo7HPuzqB2CSwKJaPzbltArkjDx54B0no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com; spf=pass smtp.mailfrom=ni.com; dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b=ElKU9nVB; arc=none smtp.client-ip=148.163.146.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ni.com
-Received: from pps.filterd (m0142705.ppops.net [127.0.0.1])
-	by mx0b-00300601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DFsWO5018204;
-	Thu, 13 Mar 2025 16:32:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ni.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=PPS11142024;
-	 bh=uGsSM+bjIB67eslV61aUbDQzWP1zi5zWBkuq/pqfoC8=; b=ElKU9nVBZO9a
-	TO35z+DGLtTdFG4BBKbbv4i22PDSFvBBVl6Kylbud3NG7kPxaCAzDRuPWm8U3HEW
-	UM7rqjVfqmIEl2mjB1K3+7JK4/w2LlG9aGudkpowfREqwe7QhYUn3bAN46qnk1Fe
-	58e0RB4dnU1Kh37lrxXxyHIP6OHO6LSYzjY++zMjgxpa2eO9fbcqtG/37BvjiCcI
-	6S5wFySn5X3qtWxPWCx/PV0ToKiV6i76Fvg+XgbhyG8i0S2GOK0108XE5ZSsvAVj
-	reJwm93JVlMheq/EreRr9X/dSXa6lv3hYKqCe8XyIM6fLhdhIADccG8EZVvRT+6H
-	/kJAaXuV1Q==
-Received: from us-aus-excas-p2.ni.corp.natinst.com ([130.164.94.74])
-	by mx0b-00300601.pphosted.com (PPS) with ESMTPS id 45c25ms2cf-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 16:32:25 +0000 (GMT)
-Received: from us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) by
- us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Thu, 13 Mar 2025 11:32:23 -0500
-Received: from ershephe-ubuntu.amer.corp.natinst.com (172.18.68.32) by
- us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) with Microsoft SMTP
- Server id 15.2.1258.28 via Frontend Transport; Thu, 13 Mar 2025 11:32:23
- -0500
-From: Erick Shepherd <erick.shepherd@ni.com>
-To: <adrian.hunter@intel.com>
-CC: <andy-ld.lu@mediatek.com>, <avri.altman@wdc.com>, <cw9316.lee@samsung.com>,
-        <dsimic@manjaro.org>, <erick.shepherd@ni.com>, <keita.aihara@sony.com>,
-        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <quic_jjohnson@quicinc.com>, <ricardo@marliere.net>,
-        <ulf.hansson@linaro.org>, <victor.shih@genesyslogic.com.tw>,
-        <wsa+renesas@sang-engineering.com>
-Subject: Re: [RFC PATCH V2 2/2] mmc: allow card to disable tuning
-Date: Thu, 13 Mar 2025 11:32:23 -0500
-Message-ID: <20250313163223.1514010-1-erick.shepherd@ni.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <65238f8f-46b8-41f2-a992-0d1a150ae8c1@intel.com>
-References: <65238f8f-46b8-41f2-a992-0d1a150ae8c1@intel.com>
+	s=arc-20240116; t=1741883571; c=relaxed/simple;
+	bh=3veIpjO8FY9cGq7h4dDd4e1jM0+O2U93qbLKOByNvLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dnEIjPMIfnancmYr8jx510LBkV0KSAOaHPH4fIro163Zkg3NtQMmhhTVGV0GDQAIP3iRMeltRs/3HCv3MBUPGB7rRmQSjqKwIBWNZ7I3JpiGKAUQW7QzCf5n1HOChCF5HsBraA3lWTStLUZxapJhbpOoPZz6vQ+F3/IY6Wlf5Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JWd7Cop5; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43690d4605dso8443375e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:32:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741883567; x=1742488367; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pk/Fm7AsuFr4JJo8BZ86u/lcrGPbAwJL5zM3d+jgaXU=;
+        b=JWd7Cop5QoaU7zfiVwkD+hpbVl4RYkzVRDKcdDUCpjSwQHB3S1G4m58i4qnMQkywk2
+         G4anDUyJv4nf9BAiG8a+yGBV3J+97k459owgXH///x0XQ9kb0Z9nLQBV9X7/j3mRPtAT
+         SajuhL4V7elPEuSDX4ZUiAE+uyODZ8ZjXYKpDPUXdn1oqHBO2OSXLAT6XHsipA/8RIsY
+         o9dlV/6pvvJOxfHqsGJFgYaMIm+pGUpxxVrToIQG67OYrgwAvl4oRrqHRAICkN+mLO0n
+         5b+w3joM+qfKjM+hYFZC/FFhbL0YuOqCQtnANOwnHbNreWvuAmGSFCSarzl16JTSYySU
+         f8OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741883567; x=1742488367;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pk/Fm7AsuFr4JJo8BZ86u/lcrGPbAwJL5zM3d+jgaXU=;
+        b=if+dZ4C0AZazlgSk/Zusw4wo0HN5vxf9HEJZeROXUkCqHj3MgAdF5ZjG8lLAbbV5Xg
+         IYdVDjwQbB5uU/IBOqAoVRgKMvGuiTcn2mzlu2yOaHDxgBrtYHYKF7Od6jOIpRuks3oD
+         5tnfn5tK1SQbOBK4Q3GVlbxLKFdUKFAI+2LHZwqopxhuUuf0OxuxiMMXwaz5JHnn0n5n
+         rgh/zLwjqUIY/moWpTodZb7qZfaC50XntdAHx5rSxyUcf7R7wERhI8HYU0ywXOQtPgaZ
+         CubLAaGxNyLRiPShGy81IWrKO+4+6KztjIyWfSuYc09s4MR+eYI/raKre2746ylUdRwK
+         fWMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9pmuIIXJp9+CUE3vSYSxy0gVlh8TiSa3i4KoBn5GIv7OdNcAfEoYm/cK/3xBaVhZDVB2uwqRfpZ17iTg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY/jgGy91jnZtm2B4WVzdZERunYsEIQ7wjdLN9XejJ1HaoZp6u
+	3gUSkzASswtbIH6iYvBetWdyJSNidEPYe8y9Ygq7oEkfvfOHNNTkcTJ1e8uZ
+X-Gm-Gg: ASbGnctPL9qhcu7p3q1g5qZYVjB3SjHmronTKHxoDiUY11dtMcGT7xxiMj+egLVrNFx
+	xMGlNjscJETP0hsahECp2c1DSh1KZkSgKrQHTRL3EJM9ySwtupOgXPQZKY0nKefJzzlIt0J5XRO
+	QZexLICh8ZiI0LqzAeFvZ9rFPH/TeJ/1JVE5n6QEEVrVByLrYAlraW7IIQBRS3VorU0+stwq2oG
+	wyKcmsGMDS0y5rHQqDQQDURtrK815oO18Vusj+b1TWllXqCchR26XzNnRsN9IFrv4V+1jsW6mCC
+	cf+pPd5JD+xRBmYxprI+8jnbUzOa3CmY0VvFqDGfhuiGD+uN0UDItHsxBqZ+
+X-Google-Smtp-Source: AGHT+IG/hk48lJj+8hPeuQY7ZauK3kX+fOhVWAQsxMsK5NG87kEnNFiSO3KeVKBv0+Muv22DdhY3yg==
+X-Received: by 2002:a05:600c:1c83:b0:43c:fb36:d296 with SMTP id 5b1f17b1804b1-43d1d8e7dc9mr2479425e9.25.1741883567071;
+        Thu, 13 Mar 2025 09:32:47 -0700 (PDT)
+Received: from egonzo (82-64-73-52.subs.proxad.net. [82.64.73.52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d188b12f3sm26084425e9.4.2025.03.13.09.32.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 09:32:46 -0700 (PDT)
+Date: Thu, 13 Mar 2025 17:32:44 +0100
+From: Dave Penkler <dpenkler@gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: gpib: Add return value to request_control
+Message-ID: <Z9MIrOJ-8NQjtwLA@egonzo>
+References: <20250222202301.3729-1-dpenkler@gmail.com>
+ <f7521c95-e69c-4618-b078-283c156ca594@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-Proofpoint-GUID: XJTHY8tRz9hn534FshcTSJahoLDBL1A3
-X-Proofpoint-ORIG-GUID: XJTHY8tRz9hn534FshcTSJahoLDBL1A3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_07,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
- spamscore=0 lowpriorityscore=0 adultscore=0 phishscore=0 mlxlogscore=938
- impostorscore=0 priorityscore=1501 suspectscore=0 mlxscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130128
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f7521c95-e69c-4618-b078-283c156ca594@stanley.mountain>
 
-How does this look? I confirmed the changes stop the card from tuning=0D
-and prevent the I/O errors. I can submit a new patch since these=0D
-changes are substantially different than my initial ones.=0D
-=0D
-diff --git a/drivers/mmc/core/card.h b/drivers/mmc/core/card.h=0D
-index 3205feb1e8ff..756f80024635 100644=0D
---- a/drivers/mmc/core/card.h=0D
-+++ b/drivers/mmc/core/card.h=0D
-@@ -89,6 +89,7 @@ struct mmc_fixup {=0D
- #define CID_MANFID_MICRON       0x13=0D
- #define CID_MANFID_SAMSUNG      0x15=0D
- #define CID_MANFID_APACER       0x27=0D
-+#define CID_MANFID_SWISSBIT     0x5D=0D
- #define CID_MANFID_KINGSTON     0x70=0D
- #define CID_MANFID_HYNIX	0x90=0D
- #define CID_MANFID_KINGSTON_SD	0x9F=0D
-=0D
-=0D
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c=0D
-index 5241528f8b90..8962992f05aa 100644=0D
---- a/drivers/mmc/core/core.c=0D
-+++ b/drivers/mmc/core/core.c=0D
-@@ -937,6 +937,10 @@ int mmc_execute_tuning(struct mmc_card *card)=0D
- 	if (!host->ops->execute_tuning)=0D
- 		return 0;=0D
- =0D
-+	if ((card->quirks & MMC_QUIRK_NO_UHS_DDR50_TUNING) &&=0D
-+	    host->ios.timing =3D=3D MMC_TIMING_UHS_DDR50)=0D
-+		return 0;=0D
-+=0D
- 	if (host->cqe_on)=0D
- 		host->cqe_ops->cqe_off(host);=0D
-=0D
- =0D
-diff --git a/drivers/mmc/core/quirks.h b/drivers/mmc/core/quirks.h=0D
-index 89b512905be1..7f893bafaa60 100644=0D
---- a/drivers/mmc/core/quirks.h=0D
-+++ b/drivers/mmc/core/quirks.h=0D
-@@ -34,6 +34,16 @@ static const struct mmc_fixup __maybe_unused mmc_sd_fixu=
-ps[] =3D {=0D
- 		   MMC_QUIRK_BROKEN_SD_CACHE | MMC_QUIRK_BROKEN_SD_POWEROFF_NOTIFY,=0D
- 		   EXT_CSD_REV_ANY),=0D
- =0D
-+	/*=0D
-+	 * Swissbit series S46-u cards throw I/O errors during tuning requests=0D
-+	 * after the initial tuning request expectedly times out. This has=0D
-+	 * only been observed on cards manufactured on 01/2019 that are using=0D
-+	 * Bay Trail host controllers.=0D
-+	 */=0D
-+	_FIXUP_EXT("0016G", CID_MANFID_SWISSBIT, 0x5342, 2019, 1,=0D
-+		   0, -1ull, SDIO_ANY_ID, SDIO_ANY_ID, add_quirk_sd,=0D
-+		   MMC_QUIRK_NO_UHS_DDR50_TUNING, EXT_CSD_REV_ANY),=0D
-+=0D
- 	END_FIXUP=0D
- };=0D
-=0D
- =0D
-diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h=0D
-index 526fce581657..ddcdf23d731c 100644=0D
---- a/include/linux/mmc/card.h=0D
-+++ b/include/linux/mmc/card.h=0D
-@@ -329,6 +329,7 @@ struct mmc_card {=0D
- #define MMC_QUIRK_BROKEN_SD_CACHE	(1<<15)	/* Disable broken SD cache suppo=
-rt */=0D
- #define MMC_QUIRK_BROKEN_CACHE_FLUSH	(1<<16)	/* Don't flush cache until th=
-e write has occurred */=0D
- #define MMC_QUIRK_BROKEN_SD_POWEROFF_NOTIFY	(1<<17) /* Disable broken SD p=
-oweroff notify support */=0D
-+#define MMC_QUIRK_NO_UHS_DDR50_TUNING	(1<<18) /* Disable DDR50 tuning */=0D
- =0D
- 	bool			written_flag;	/* Indicates eMMC has been written since power on */=
-=0D
- 	bool			reenable_cmdq;	/* Re-enable Command Queue */=0D
--- =0D
-=0D
-Regards,=0D
-Erick=0D
+On Tue, Feb 25, 2025 at 11:59:56AM +0300, Dan Carpenter wrote:
+> On Sat, Feb 22, 2025 at 09:23:01PM +0100, Dave Penkler wrote:
+> > A number of drivers are unable to release control due to
+> > hardware or software limitations. As request_control was defined
+> > as void - no error could be signalled. Some drivers also did
+> > not implement request_control correctly by setting
+> > controller_in_charge instead of system_controller.
+> > 
+> > This patch changes the prototype of request_control to int
+> > and adds the appropriate checking and returns. In the case
+> > that a board cannot release control EPERM is returned. The
+> > faulty implementations have been corrected.
+> > 
+> 
+> This patch is hard to read because it does several things:
+> 1) It changes the functions from returning void to int.
+>    This is the overwhelming noisiest part of the patch so
+>    it's hard to even see the other changes in amongst the
+>    noise.
+> 2) Returns -EPERM if request_control is false.
+> 3) Changes some stuff like SET_DIR_WRITE(priv); and
+>    ENABLE_IRQ(priv->irq_SRQ, IRQ_TYPE_EDGE_FALLING);  I can't tell if
+>    that's related or not.
+> 
+> You'll need to do it in two or three patches.  The first thing is to
+> just change the void to int.  That's a simple mechanical change.  The
+> only worry is if some functions are returning an error code on failure
+> and I don't know the answer to that.  (That would break git bisect so it
+> would be against the rules, even if it's fixed in patch 2 and 3).
+> 
+> The actual logic changes will hopefully be easier to understand when the
+> diff is smaller.
+> 
+> > -static void agilent_82350b_request_system_control(gpib_board_t *board, int request_control)
+> > +static int agilent_82350b_request_system_control(gpib_board_t *board, int request_control)
+> >  
+> >  {
+> >  	struct agilent_82350b_priv *a_priv = board->private_data;
+> > +	int retval;
+> >  
+> >  	if (request_control) {
+> >  		a_priv->card_mode_bits |= CM_SYSTEM_CONTROLLER_BIT;
+> > @@ -354,7 +355,9 @@ static void agilent_82350b_request_system_control(gpib_board_t *board, int reque
+> >  			writeb(0, a_priv->gpib_base + INTERNAL_CONFIG_REG);
+> >  	}
+> >  	writeb(a_priv->card_mode_bits, a_priv->gpib_base + CARD_MODE_REG);
+> > -	tms9914_request_system_control(board, &a_priv->tms9914_priv, request_control);
+> > +	retval = tms9914_request_system_control(board, &a_priv->tms9914_priv, request_control);
+> > +
+> > +	return retval;
+> 
+> Get rid of the retval variable.  This should be:
+> 
+> 	return tms9914_request_system_control(board, &a_priv->tms9914_priv, request_control);
+> 
+> > diff --git a/drivers/staging/gpib/common/iblib.c b/drivers/staging/gpib/common/iblib.c
+> > index fd2874c2fff4..3d51a093fc8b 100644
+> > --- a/drivers/staging/gpib/common/iblib.c
+> > +++ b/drivers/staging/gpib/common/iblib.c
+> > @@ -418,12 +418,19 @@ int ibsic(gpib_board_t *board, unsigned int usec_duration)
+> >  	return 0;
+> >  }
+> >  
+> > -	/* FIXME make int */
+> > -void ibrsc(gpib_board_t *board, int request_control)
+> > +int ibrsc(gpib_board_t *board, int request_control)
+> >  {
+> > -	board->master = request_control != 0;
+> > +	int retval;
+> > +
+> >  	if (board->interface->request_system_control)
+> > -		board->interface->request_system_control(board, request_control);
+> > +		retval = board->interface->request_system_control(board, request_control);
+> > +	else
+> > +		retval = -EPERM;
+> > +
+> > +	if (!retval)
+> > +		board->master = request_control != 0;
+> > +
+> > +	return retval;
+> >  }
+> >  
+> 
+> It would be better to reverse some of these conditions are return earlier
+> where it's possible.  (Always do failure handling, not success handling).
+> 
+> int ibrsc(gpib_board_t *board, int request_control)
+> {
+>         int ret;
+> 
+>         if (!board->interface->request_system_control)
+>                 return -EPERM;
+>         ret = board->interface->request_system_control(board, request_control);
+>         if (ret)
+>                 return ret;
+> 
+>         board->master = !request_control;
+> 
+>         return 0;
+> }
+> 
+> regards,
+> dan carpenter
+Thanks Dan.
+I will submit separate patches once Greg has merged a new baseline.
+-dave
 
