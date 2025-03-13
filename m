@@ -1,140 +1,149 @@
-Return-Path: <linux-kernel+bounces-559982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E75A5FBE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:36:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C926BA5FBF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:38:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A260D16D562
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:36:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A6783AA96A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D551487D1;
-	Thu, 13 Mar 2025 16:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC080260A4B;
+	Thu, 13 Mar 2025 16:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k7ftf8Tr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="f4tyIOTU"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2ED714901B;
-	Thu, 13 Mar 2025 16:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AABB7FBAC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 16:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741883785; cv=none; b=VEXVCKI64acVy6a8wvZrmzOBCqKYzFFMCY1+akY79o3yVNA9dHzT8yvuTBya3vExlhZmcXgraROwJ8DWJN1txgmiK1C90vl9u0qG+4QYfL490iEwLAP8Qe5i6ZUveCRbVzN1xTX/ggLuyUOyTQpIDql34/0Msg2Zop7oxmDM+0g=
+	t=1741883902; cv=none; b=HOkDcWMf+Z1EcamWHfATee/He+H+r+KOP7E1uff7acjZV1xswy9aFRgIRCGoqoZPOBug6kf04pJMjq08WyK7sbodBQQ8ILO4mWCzF9waa2D5VaWolrv1LS4Nxjhml31zHruWCj5tAQ9jFUeJj/Ng7of6qJqAaItnPTw01aOkxkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741883785; c=relaxed/simple;
-	bh=ZIbywE+IGj8IDtGcnASQ0vVf6RTPSe9bJdsvE2E7ZKI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=onVfd99y46eiVU5NU1RwriKiv6+P5QHKSs16h1nih9uLbEY1Yidti0OzddBHqaxfjMs8Zv7Fj689uMJIBLtI2XWMw1hzW0T/L96qm6wKNv8lYmtPJP8+IZgGd9ok9iRR6cvXSHaSWnD8Tf6brikACN8eBgMJ36TiARpJGguo+Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k7ftf8Tr; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741883784; x=1773419784;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=ZIbywE+IGj8IDtGcnASQ0vVf6RTPSe9bJdsvE2E7ZKI=;
-  b=k7ftf8TrZSEVdiSkXEb1ToCgOxrBjrvDRcHzlz9otyr0iz6qIpI95gcd
-   0MVEeBg7lBYBfL4GLutWFc7iz05RwbB8887WuGlOGJlrzclLyuFlxPBNS
-   wPN5luym7IB2M+ScH04nrxVszXNvjV7TTLw8jikBu4vlwwLfrex1Fu81s
-   st9suCkEXu5cHhKU1F7lwr38ndlUefhGHfjaCRQCvXbz1lN6k9HrfbDgO
-   QHZOFf22LDiXYEd4yYiay6z2w7/TBWtdMriRdneCUjy0bnbGbYmW+ymE8
-   oUcVG/5hUetbHH53rKY4KgCUuy3KzuXs4cmdWOQGvtYLXdGIx49LwCP/C
-   g==;
-X-CSE-ConnectionGUID: qMW4c9lwTamM86aazYxSPw==
-X-CSE-MsgGUID: 6HHwK5LOQq+bxrtDw1sDDQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="43191973"
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="43191973"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 09:36:13 -0700
-X-CSE-ConnectionGUID: okWXdc77TmG7CCS+c6Yj0w==
-X-CSE-MsgGUID: BeuGdPdHSDmwG7tBfuxglA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="121511647"
-Received: from philliph-desk.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.222.83])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 09:36:12 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Nathan Lynch <nathan.lynch@amd.com>, Vinod Koul <vkoul@kernel.org>,
- dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dave.jiang@intel.com, kristen.c.accardi@intel.com, kernel test robot
- <oliver.sang@intel.com>
-Subject: Re: [PATCH v1] dmaengine: dmatest: Fix dmatest waiting less when
- interrupted
-In-Reply-To: <874izx10nx.fsf@AUSNATLYNCH.amd.com>
-References: <20250305230007.590178-1-vinicius.gomes@intel.com>
- <878qpa13fe.fsf@AUSNATLYNCH.amd.com> <87senhoq1k.fsf@intel.com>
- <874izx10nx.fsf@AUSNATLYNCH.amd.com>
-Date: Thu, 13 Mar 2025 09:36:11 -0700
-Message-ID: <87wmcslwg4.fsf@intel.com>
+	s=arc-20240116; t=1741883902; c=relaxed/simple;
+	bh=MsZndZJN945H+TSEHXQR2TQ34k73L3UdembMvA0OQMA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ajPSOJxRsUAVZlPhWnQDpmVNdlMit0Isg5X/2R4mgPpKVDIUfszoK+c/k5yWHaBCa0bVcpJE0vC48FIrzsICl1ZWcwDvpF4aMcM7dA0HAwCxyuAtx2NhE2/FRP/md99HTMVFEQoWisJuMyQGFoihWNzpomxu7M8nMwG0KE3E3ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=f4tyIOTU; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741883897;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+2yrB8FeinZE7HGJ8WItVD3R+avGQQIvePt2DTngpGE=;
+	b=f4tyIOTUJwBuq2R3EnuTnbHRFts1BGoP2TUAGl7zsZbtY1lUP7WFE5mQzWI8U5ggpSw8SR
+	fU011MTGtaSJ+kQcDUzkfaMtIC1p24vQqmt7YaoivN8ytpprMnNqKnoBDS2RyMN3qT/blL
+	RBZ1NCotT2UNW7fU2UEWu1AhvFWZcJw=
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: linux-kernel@vger.kernel.org
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	"Theodore Ts'o" <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: [PATCH] random: get_random_u64_below()
+Date: Thu, 13 Mar 2025 12:38:10 -0400
+Message-ID: <20250313163810.60564-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Nathan Lynch <nathan.lynch@amd.com> writes:
+bcachefs needs this, for sampling devices to read from based on squared
+device latencies.
 
-> Hi Vinicius,
->
-> Vinicius Costa Gomes <vinicius.gomes@intel.com> writes:
->> Nathan Lynch <nathan.lynch@amd.com> writes:
->>> Vinicius Costa Gomes <vinicius.gomes@intel.com> writes:
->>>> Change the "wait for operation finish" logic to take interrupts into
->>>> account.
->>>>
->>>> When using dmatest with idxd DMA engine, it's possible that during
->>>> longer tests, the interrupt notifying the finish of an operation
->>>> happens during wait_event_freezable_timeout(), which causes dmatest to
->>>> cleanup all the resources, some of which might still be in use.
->>>>
->>>> This fix ensures that the wait logic correctly handles interrupts,
->>>> preventing premature cleanup of resources.
->>>>
->>>> Reported-by: kernel test robot <oliver.sang@intel.com>
->>>> Closes: https://lore.kernel.org/oe-lkp/202502171134.8c403348-lkp@intel.com
->>>
->>> Given the report at the URL above I'm struggling to follow the rationale
->>> for this change. It looks like a use-after-free in idxd while
->>> resetting/unbinding the device, and I can't see how changing whether
->>> dmatest threads perform freezeable waits would change this.
->>>
->>
->> I think that the short version is that the reproducition script triggers
->> different problems on different platforms/configurations.
->>
->> The solution I proposed fixes a problem I was seeing on a SPR system, on
->> a GNR system (that I was only able to get later) I see something more similar
->> to this particular splat (currently working on the fix).
->>
->> Seeing this question, I realize that I should have added a note to the
->> commit detailing this.
->>
->> So I am planning on proposing two (this and another) fixes for the same
->> report, hoping that it's not that confusing/unusual.
->
-> I'm still confused... why is wait_event_freezable_timeout() the wrong
-> API for dmatest to use, and how could changing it to
-> wait_event_timeout() cause it to "take interrupts into account" that it
-> didn't before?
->
+this uses the same algorithm as get_random_u32_below: since the multiply
+uses the top and bottom halves separately, it works out fairly well.
 
-My understanding (and testing) is that wait_event_timeout() will block
-for the duration even in the face of interrupts, 'freezable' will not.
+Cc: "Theodore Ts'o" <tytso@mit.edu> (maintainer:RANDOM NUMBER DRIVER)
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com> (maintainer:RANDOM NUMBER DRIVER)
+Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+---
+ drivers/char/random.c  | 22 ++++++++++++++++++++++
+ include/linux/random.h | 22 ++++++++++++++++++++++
+ 2 files changed, 44 insertions(+)
 
-> AFAIK the only change made here is that dmatest threads effectively
-> become unfreezeable, which is contrary to prior authors' intentions:
->
-> commit 981ed70d8e4f ("dmatest: make dmatest threads freezable")
-> commit adfa543e7314 ("dmatest: don't use set_freezable_with_signal()")
->
-
-Cheers,
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 2581186fa61b..84808300044c 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -588,6 +588,28 @@ u32 __get_random_u32_below(u32 ceil)
+ }
+ EXPORT_SYMBOL(__get_random_u32_below);
+ 
++u64 __get_random_u64_below(u64 ceil)
++{
++	if (unlikely(!ceil))
++		return get_random_u64();
++	if (ceil <= U32_MAX)
++		return __get_random_u32_below(ceil);
++
++	u64 rand = get_random_u64();
++	u64 mult = ceil * rand;
++
++	if (unlikely(mult < ceil)) {
++		u64 bound = -ceil % ceil;
++		while (unlikely(mult < bound)) {
++			rand = get_random_u64();
++			mult = ceil * rand;
++		}
++	}
++
++	return mul_u64_u64_shr(ceil, rand, 64);
++}
++EXPORT_SYMBOL(__get_random_u64_below);
++
+ #ifdef CONFIG_SMP
+ /*
+  * This function is called when the CPU is coming up, with entry
+diff --git a/include/linux/random.h b/include/linux/random.h
+index 333cecfca93f..b025bf3d8f27 100644
+--- a/include/linux/random.h
++++ b/include/linux/random.h
+@@ -6,6 +6,7 @@
+ #include <linux/bug.h>
+ #include <linux/kernel.h>
+ #include <linux/list.h>
++#include <linux/math64.h>
+ 
+ #include <uapi/linux/random.h>
+ 
+@@ -90,6 +91,27 @@ static inline u32 get_random_u32_below(u32 ceil)
+ 	}
+ }
+ 
++u64 __get_random_u64_below(u64 ceil);
++
++static inline u64 get_random_u64_below(u32 ceil)
++{
++	if (!__builtin_constant_p(ceil))
++		return __get_random_u64_below(ceil);
++
++	BUILD_BUG_ON_MSG(!ceil, "get_random_u64_below() must take ceil > 0");
++	if (ceil <= 1)
++		return 0;
++	if (ceil <= U32_MAX)
++		return get_random_u32_below(ceil);
++
++	for (;;) {
++		u64 rand = get_random_u64();
++		u64 mult = ceil * rand;
++		if (likely(mult >= -ceil % ceil))
++			return mul_u64_u64_shr(ceil, rand, 64);
++	}
++}
++
+ /*
+  * Returns a random integer in the interval (floor, U32_MAX], with uniform
+  * distribution, suitable for all uses. Fastest when floor is a constant, but
 -- 
-Vinicius
+2.47.2
+
 
