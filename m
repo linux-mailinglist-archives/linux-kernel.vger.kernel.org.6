@@ -1,123 +1,89 @@
-Return-Path: <linux-kernel+bounces-560476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968D0A6050E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:06:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25FCA6051B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:10:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7D1817E7D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:06:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 819837ADBEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671A61F8BBC;
-	Thu, 13 Mar 2025 23:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D50B1F8ADF;
+	Thu, 13 Mar 2025 23:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JsAZIMeS"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="r1LbO++h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52C018DB0B;
-	Thu, 13 Mar 2025 23:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767D018DB0B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 23:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741907208; cv=none; b=o7RvKkVMOpkH0OD1TuvL6cvJIf3IPlcbDTo7ovdywxauyTgzpq4/Dcqa/Ttbr2HUvIVb/OJ3GEQAJIZ4i6ZxHwAkOWGq+qwHRzDkiaEyttM4i6n2CKmmj9OX/9YFPvS008/rtAZpGeWRhIzDn+PFKbN70oKLUOgu1alpE0AsB9A=
+	t=1741907440; cv=none; b=n5BNu2HwTxurl8ggzT1TgI/YdzHpim09EqgBfSCd7v8zx4fPCYczHHOGQGH1mwra3mH9fJCrCoEt0bWRx1VvdDpSg9zLtyCuCiCi8iLUQtdZv1X56LmlLSpFQroaXGbe4Kdnlpsx++gzZiHGuuRN1Gz2HqcfkvABAyZFFAJoXDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741907208; c=relaxed/simple;
-	bh=0UAgLw6E5fMxghBPUcUr1YC5wDKAXkzRKCvdfBrEOek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=duOAElX2MTIXLeDUPdTICukBjDHJNy3WE0LRbg2KewdQheX+Sb/pBilUSrpvoLLGmD8UPFij0oWeGsAclXGM2rR6AxGWcun4q9vC+A1om/rJBfxM7NjD9ZAfaa9Y7767z2UI83Q7wmX57anZD/xDb0Pf9Q8dW8LxoqO1i6rIyjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JsAZIMeS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C70AC4CEDD;
-	Thu, 13 Mar 2025 23:06:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741907208;
-	bh=0UAgLw6E5fMxghBPUcUr1YC5wDKAXkzRKCvdfBrEOek=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JsAZIMeSVGH0xxnfm6a7NU3amHURgBKewUUqNu1qMyXa446UZnn/Vzg7IZdXEX76u
-	 b/pDggX2dzAk3Gzr7actRGVnbUC/eqpy9M6toa1fA2nSiODlwxVxB+Mvv1sP8UZ//X
-	 +5QIIiMJ/8kVL4cZBqXdPobuafnVQoQlY4cQrpiYcy4H9eJJups5TzGPhoxvMuaNnm
-	 kl5O1TKLdmkY3SqHergV/5svibmF1fcVKjGKM4xoOpfy6bQAWczQotzzRoN2blbwjH
-	 gIqRDj1shL8Tjc/NUbENFCdrp3bJKf9pap2y9YHLvMNTcrDj7SgAgJPEM9dUGYpzfo
-	 Xd1hAyU5HFXjg==
-Date: Thu, 13 Mar 2025 18:06:45 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Johan Hovold <johan@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH v2 0/3] arm64: dts: qcom: x1e78100-t14s: Rework
- devicetree for LCD and OLED SKUs
-Message-ID: <t7jqjgkvnu2lynwchyermonuhcrh7ixgw6g65o6ag2lkgi6dwi@rd3vv3j5paws>
-References: <20250310141504.3008517-1-abel.vesa@linaro.org>
+	s=arc-20240116; t=1741907440; c=relaxed/simple;
+	bh=85C5EaLBPcNm+VfXMxlgckNkHScFkxqfwrT4hbCXaS0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=mZvSSmbXRwfxEwyi3fKC/1c0humDSN6raofBKZlcV2nGyQyi3Mcs8/DCbg4zu3XyjpnPK2rxqtbnS9zsw1Do9fIX67H+r/EPWm06CcPIqdUM+9Sd6//sAYk9BOuQOtNf6ntSyYY0c1c5/fttDKoHHtuMvMilOFuNukcpBsXwt7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=r1LbO++h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 839ACC4CEDD;
+	Thu, 13 Mar 2025 23:10:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1741907439;
+	bh=85C5EaLBPcNm+VfXMxlgckNkHScFkxqfwrT4hbCXaS0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=r1LbO++h2zt9ITOCp8zaBNp5bCW3oO8IYrW9fm3oZilRLz2OfzDBHOVialXmivLvD
+	 bsPejXMhoq8EeEH1UfZGgQO5BcyfMZ6opeDWAKOUunCcWeso9WZv2uAjmotrBYRJrB
+	 wRsd1Lld8tuszHDkPkn9GPUZwcBYsR4A0hlP64N8=
+Date: Thu, 13 Mar 2025 16:10:38 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Andrew Donnellan <ajd@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org, x86@kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, pasha.tatashin@soleen.com,
+ sweettea-kernel@dorminy.me
+Subject: Re: [PATCH v13 04/11] mm/page_table_check: Reinstate address
+ parameter in [__]page_table_check_pud_clear()
+Message-Id: <20250313161038.8bd10fa54778e984d8f849d7@linux-foundation.org>
+In-Reply-To: <20250211161404.850215-5-ajd@linux.ibm.com>
+References: <20250211161404.850215-1-ajd@linux.ibm.com>
+	<20250211161404.850215-5-ajd@linux.ibm.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310141504.3008517-1-abel.vesa@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 10, 2025 at 04:15:01PM +0200, Abel Vesa wrote:
-> The Lenovo Thinkpad T14s Gen6 comes in different SKUs when it comes to
-> panels. The only difference that is important is whether it is an OLED
-> or an LCD. The way that backlight is handled in devicetree between OLED
-> and LCD forces the need of two separate DTBs.
-> 
-> So create a common T14s dtsi that describes everything except the
-> backlight handling, by renaming the existent dts to dtsi. Then make the
-> legacy dts the LCD version, while adding a prepended oled dts. Both
-> include the generic T14s dtsi.
-> 
-> For the OLED version, I do not have HW to test it on, so OLED specific
-> bits will come at a later stage. Still, add the OLED dts in order to set
-> the stage for it.
-> 
-> Had to format it using "git format-patch" since b4 doesn't currently
-> support -B when formatting the patch, and the renaming of the dts into
-> dtsi (plus the panel properties being dropped) would've not been visible
-> enough for reviewers.
-> 
-> Changes in v2:
->  - rebased on next-20250307
+On Wed, 12 Feb 2025 03:13:57 +1100 Andrew Donnellan <ajd@linux.ibm.com> wrote:
 
-Sorry, but as requested I seem to have picked the DP enablement (at
-least) since then. Can you please have another rebase?
+> This reverts commit 931c38e16499 ("mm/page_table_check: remove unused
+> parameter in [__]page_table_check_pud_clear").
+> 
+> Reinstate previously unused parameters for the purpose of supporting
+> powerpc platforms, as many do not encode user/kernel ownership of the
+> page in the pte, but instead in the address of the access.
 
-Regards,
-Bjorn
+My x86-64 allmodconfig exploded.
 
->  - Dropped the RFC, as it seems to be agreed upon already
->  - Added dt-bindings patch to document the new oled and lcd compatibles
->  - Added panel variant compatible strings to each dts and included the
->    the panel type into model string as well
->  - Changed backlight PWM period to 4266537 to match exact period the
->    PMIC can do.
->  - Link to v1 (RFC):
->    https://lore.kernel.org/r/20250306090503.724390-1-abel.vesa@linaro.org/
-> 
-> Abel Vesa (3):
->   dt-bindings: arm: qcom: Document Lenovo ThinkPad T14s Gen 6 LCD and
->     OLED
->   arm64: dts: qcom: x1e78100-t14s: Add LCD variant with backlight
->     support
->   arm64: dts: qcom: x1e78100-t14s: Add OLED variant
-> 
->  .../devicetree/bindings/arm/qcom.yaml         |    4 +-
->  arch/arm64/boot/dts/qcom/Makefile             |    1 +
->  .../x1e78100-lenovo-thinkpad-t14s-oled.dts    |   12 +
->  .../qcom/x1e78100-lenovo-thinkpad-t14s.dts    | 1194 +----------------
->  ...dts => x1e78100-lenovo-thinkpad-t14s.dtsi} |    6 +-
->  5 files changed, 77 insertions(+), 1140 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
->  rewrite arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts (98%)
->  copy arch/arm64/boot/dts/qcom/{x1e78100-lenovo-thinkpad-t14s.dts => x1e78100-lenovo-thinkpad-t14s.dtsi} (99%)
-> 
-> -- 
-> 2.34.1
-> 
+./arch/x86/include/asm/pgtable.h: In function 'pudp_establish':
+./arch/x86/include/asm/pgtable.h:1443:46: error: passing argument 2 of 'page_table_check_pud_set' makes integer from pointer without a cast [-Werror=int-conversion]
+ 1443 |         page_table_check_pud_set(vma->vm_mm, pudp, pud);
+      |                                              ^~~~
+      |                                              |
+      |                                              pud_t *
+
+
+
+#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
+static inline pud_t pudp_establish(struct vm_area_struct *vma,
+                unsigned long address, pud_t *pudp, pud_t pud)
+{
+	page_table_check_pud_set(vma->vm_mm, pudp, pud);
+	...
 
