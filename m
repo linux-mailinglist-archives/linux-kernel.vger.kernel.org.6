@@ -1,91 +1,171 @@
-Return-Path: <linux-kernel+bounces-559176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6196A5F06F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:18:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87BFA5F075
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:19:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 795213B61DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:17:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3FD97ABBC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E8F264FBB;
-	Thu, 13 Mar 2025 10:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B3B263C8A;
+	Thu, 13 Mar 2025 10:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D08O7btk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8AIJNXz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A17265600
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64831EE028;
+	Thu, 13 Mar 2025 10:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741861076; cv=none; b=ld/UzDWgf3Yku/Z8u4jb6bYmriwIQFQYlZoMq10i173HlHS+yU5rrCjrsaqSLIRS5dqwt5N4AWtHShdaz/Ullr+//N8Ag2GX/Q6OCNGV1TykOevtjXhZxaByX/fTb8hI/Z8bFZT8FK2F6zBg341N4sXCAXYiiAKjLt8rAQbZN5A=
+	t=1741861135; cv=none; b=RszduTI7lxyu12BTwuJ3VX1Nkh+lbCQ6UV3pLRCg+J3aIdVxr58E+fvMf+E+TYmCfUSSZonWINjocDv9T/ZT5kqfbWh0olIRmsKCtM5xppbkBS0QnmXZ+OCQi1UL3N0MbXow47TuJZZ90dc6rLtWz+oVOLeOd+YMrHgklPL/ngE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741861076; c=relaxed/simple;
-	bh=/Shtpfb7BHCmzgzI2E8QdrJ71iVjmgVHThFuwFqzFtg=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=JSQoGzAWhtUxJKK8fZypBchPmWCmj4eNoKUYFkjF/sBV4qrR/MZBgKJyNeEC+ZM4AYn435EzbUEeQfJSZDVYy1YbjZ1rTSeLaAZZPv1RtZVcB0/dwXEp+H2OgiJO+OpqId1zChnCc0n9oNuuqkHHi7LP8/z3QLXcvXDgPKIHkaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D08O7btk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741861073;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=9PuNOtOdGXpJpaKSTTpElFraHIPQkY93SwNR6N9vnoY=;
-	b=D08O7btkmIbVxm2ihcEgdR/v41ic8sB7EYAutQ3qBBncR+2a1zSMd8w7secNSNPMyLCnUn
-	S94ie9DHsUHtAQ9tPe/21+SR0h8kk2LPjzSYH2SXNlmOii8MOZ1XKwjjgFu2IZZ5bCm3QT
-	ILIIBpgmczRTm4M3vrzZaAa2hSr9D4Y=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-120-x84u6bDdNuuDAdK_8PXEiw-1; Thu,
- 13 Mar 2025 06:17:49 -0400
-X-MC-Unique: x84u6bDdNuuDAdK_8PXEiw-1
-X-Mimecast-MFC-AGG-ID: x84u6bDdNuuDAdK_8PXEiw_1741861068
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 30EB9195608B;
-	Thu, 13 Mar 2025 10:17:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A73AE1800945;
-	Thu, 13 Mar 2025 10:17:43 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
-    Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-    Christian Brauner <brauner@kernel.org>, ceph-devel@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Does ceph_fill_inode() mishandle I_NEW?
+	s=arc-20240116; t=1741861135; c=relaxed/simple;
+	bh=FTKrcyyQeQ7tmBXUmBwOgo7Ir173BAfEtpApsdgjLic=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RxcaTEP7A1r6LiwlhvK+UtdcWeE29Wrkd8TB7Tdzl0z0vnFbzyVd1VW6fN4xOT3THbXnfsCnHgqj7g61u0qwKWON064/NvUVVkC8gdt8vtyy+LmAB/7UDSMtp4lkkd3FFdO/0L4ktucSjF96D0qiCH6n3amOB4Eg5w+h1boTGec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d8AIJNXz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56650C4CEDD;
+	Thu, 13 Mar 2025 10:18:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741861135;
+	bh=FTKrcyyQeQ7tmBXUmBwOgo7Ir173BAfEtpApsdgjLic=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=d8AIJNXzWri+NBCqfzDuCYgLglph1i4Kzqz7c3BHkNAh46Ft3BZy0dqREYAMbaY7M
+	 ypREYs0cDws0cuwN6zSlnpHM8qs0DLbnznTsjLIV7J5mMQ5qoRu99L9rkk/MFB2dF7
+	 OFeMrLAqN+lxf8dCnUj/U+FxM58CXl1rxO/TE7HvRuh/wHt0XLfj3athNF9tVPT05i
+	 Wvf/0vGa08SNKQKDkCNPFJaOSFEcJhqBpu6+PukTNJSq/Rh9KVTkwDaAMPccLEDP8n
+	 ggKPKDbsBQJBw6QYWRkhUktEksrFHo0fdtw362FffeKyU7xdsBI6ANmqzrtBae1zjQ
+	 LAkKs3eCI93sw==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-543d8badc30so910057e87.0;
+        Thu, 13 Mar 2025 03:18:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWN7ucdDF1mJ9VR0lbIINAHdn1flkdjHjreHfLS6iLBVoIY4MO1lAv/IEQd1rWy8k58yC2co+RE1cB52zfm@vger.kernel.org, AJvYcCWULm4v3p7Sg0w1SwKL1ldpJSeYa39yVt3ayszCIdJHcvqaS5bsaRLry7WugeT8qCRWix+XwhjpUHa6hjQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzNWsup8NosY/vN80Y0OJewQ+nkd5+LzbJ7/0FTMFca6p6U416
+	r0opxt84uiFIU9pSFN4O/iD+qvkQyU3ptnJ+oYq9BR4zV53JZrYW86wxbomfyZ5eydv2MM3mc7c
+	BA+4VrEazcZdzO4ndgAyrvR415Ew=
+X-Google-Smtp-Source: AGHT+IHq6Pxry6ZGZaXGGKTZD5Zwxyw3GPMTtp0+b1RPVMC1CiPQCBVU9iDcO+7VZneBYpHoK6uXzY+fg0k0YT26H50=
+X-Received: by 2002:a05:6512:ad1:b0:549:8c2a:3b4 with SMTP id
+ 2adb3069b0e04-54990e5d34dmr8849594e87.13.1741861133701; Thu, 13 Mar 2025
+ 03:18:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1385371.1741861062.1@warthog.procyon.org.uk>
-Date: Thu, 13 Mar 2025 10:17:42 +0000
-Message-ID: <1385372.1741861062@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+References: <20250311110616.148682-9-ardb+git@google.com> <202503131715.Fb6CfjhT-lkp@intel.com>
+ <CAMj1kXGBLV6W7mJcELmsQuDUi0u-DofyD985znmVoHoZKZTuxA@mail.gmail.com>
+In-Reply-To: <CAMj1kXGBLV6W7mJcELmsQuDUi0u-DofyD985znmVoHoZKZTuxA@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 13 Mar 2025 11:18:42 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXEZccymq1OhXErSK+prS3L7sygm7_5_1v+j2cypncQuzA@mail.gmail.com>
+X-Gm-Features: AQ5f1JrT-4J42j4-vPHU-3Mdj-3dgjCJvLxfurRawm2tNjATHJ-QBthpBHMITpU
+Message-ID: <CAMj1kXEZccymq1OhXErSK+prS3L7sygm7_5_1v+j2cypncQuzA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] Kbuild: Create intermediate vmlinux build with
+ relocations preserved
+To: kernel test robot <lkp@intel.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	oe-kbuild-all@lists.linux.dev, linux-kbuild@vger.kernel.org, x86@kernel.org, 
+	Masahiro Yamada <masahiroy@kernel.org>, Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-ceph_fill_inode() seems to be mishandling I_NEW.  It only check I_NEW when
-setting i_mode.  It then goes on to clobber a bunch of things in the inode
-struct and ceph_inode_info struct (granted in some cases it's overwriting with
-the same thing), irrespective of whether the inode is already set up
-(i.e. if I_NEW isn't set).
+On Thu, 13 Mar 2025 at 10:34, Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> On Thu, 13 Mar 2025 at 10:21, kernel test robot <lkp@intel.com> wrote:
+> >
+> > Hi Ard,
+> >
+> > kernel test robot noticed the following build errors:
+> >
+> > [auto build test ERROR on masahiroy-kbuild/for-next]
+> > [also build test ERROR on masahiroy-kbuild/fixes tip/x86/core s390/features linus/master v6.14-rc6 next-20250312]
+> > [If your patch is applied to the wrong git tree, kindly drop us a note.
+> > And when submitting patch, we suggest to use '--base' as documented in
+> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> >
+> > url:    https://github.com/intel-lab-lkp/linux/commits/Ard-Biesheuvel/Kbuild-link-vmlinux-sh-Make-output-file-name-configurable/20250311-190926
+> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git for-next
+> > patch link:    https://lore.kernel.org/r/20250311110616.148682-9-ardb%2Bgit%40google.com
+> > patch subject: [PATCH v2 3/4] Kbuild: Create intermediate vmlinux build with relocations preserved
+> > config: x86_64-randconfig-076-20250313 (https://download.01.org/0day-ci/archive/20250313/202503131715.Fb6CfjhT-lkp@intel.com/config)
+> > compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250313/202503131715.Fb6CfjhT-lkp@intel.com/reproduce)
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202503131715.Fb6CfjhT-lkp@intel.com/
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> > >> gawk: scripts/generate_builtin_ranges.awk:82: fatal: cannot open file `vmlinux.map' for reading: No such file or directory
+> >
+>
+> Hmm it seems I missed some things in link-vmlinux.sh - I will take a look.
 
-It looks like I_NEW has been interpreted as to indicating that the inode is
-being created as a filesystem object (e.g. by mkdir) whereas it's actually
-merely about allocation and initialisation of struct inode in memory.
+We'd need something like the below applied on top - shall I send a v3?
 
-David
+--- a/scripts/link-vmlinux.sh
++++ b/scripts/link-vmlinux.sh
+@@ -46,6 +46,7 @@
 
+ # Link of vmlinux
+ # ${1} - output file
++# ${2} - map file
+ vmlinux_link()
+ {
+        local output=${1}
+@@ -99,7 +100,7 @@ vmlinux_link()
+        fi
+
+        if is_enabled CONFIG_VMLINUX_MAP; then
+-               ldflags="${ldflags} ${wl}-Map=${output}.map"
++               ldflags="${ldflags} ${wl}-Map=${2}"
+        fi
+
+        ${ld} ${ldflags} -o ${output}                                   \
+@@ -185,7 +186,7 @@
+ {
+        rm -f .btf.*
+        rm -f System.map
+-       rm -f vmlinux
++       rm -f ${VMLINUX}
+        rm -f vmlinux.map
+ }
+
+@@ -224,7 +225,7 @@
+                strip_debug=1
+        fi
+
+-       vmlinux_link .tmp_vmlinux1
++       vmlinux_link .tmp_vmlinux1 .tmp_vmlinux1.map
+ fi
+
+ if is_enabled CONFIG_DEBUG_INFO_BTF; then
+@@ -267,19 +268,19 @@
+        sysmap_and_kallsyms .tmp_vmlinux1
+        size1=$(${CONFIG_SHELL} "${srctree}/scripts/file-size.sh" ${kallsymso})
+
+-       vmlinux_link .tmp_vmlinux2
++       vmlinux_link .tmp_vmlinux2 .tmp_vmlinux2.map
+        sysmap_and_kallsyms .tmp_vmlinux2
+        size2=$(${CONFIG_SHELL} "${srctree}/scripts/file-size.sh" ${kallsymso})
+
+        if [ $size1 -ne $size2 ] || [ -n "${KALLSYMS_EXTRA_PASS}" ]; then
+-               vmlinux_link .tmp_vmlinux3
++               vmlinux_link .tmp_vmlinux3 .tmp_vmlinux3.map
+                sysmap_and_kallsyms .tmp_vmlinux3
+        fi
+ fi
+
+ strip_debug=
+
+-vmlinux_link "${VMLINUX}"
++vmlinux_link "${VMLINUX}" vmlinux.map
+
+ # fill in BTF IDs
+ if is_enabled CONFIG_DEBUG_INFO_BTF; then
 
