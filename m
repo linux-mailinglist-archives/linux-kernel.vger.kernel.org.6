@@ -1,102 +1,197 @@
-Return-Path: <linux-kernel+bounces-559925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30509A5FB13
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:16:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE57BA5FB40
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:20:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB0F217BADA
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9690E883340
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCA8269803;
-	Thu, 13 Mar 2025 16:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MNjghZIt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8446D269B0F;
+	Thu, 13 Mar 2025 16:12:34 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0A12690C8;
-	Thu, 13 Mar 2025 16:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA7E2690E6;
+	Thu, 13 Mar 2025 16:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741882340; cv=none; b=QFh13/craXWbau0V6tFmEKIIX24CHMMoGPmlpZm+WJ/M/QQz5N5HzpbKb3lAyy43PYhiOwSX2E239OIlsBhWwg3ehjDNUPnXepxM2mxk93vhSikBgxTBuEt/hmRs+qGkDVp5nyFK5v3Oq5xNk9AD7vCWKRgvzyljIvF4uf/WzJI=
+	t=1741882354; cv=none; b=r1Tw1qJEUm5xwOy9Zjv2NEX9XfD3OoV67vDsdjOMTK8HvAKr95Wiv9j1aytSL86DMY/GWpC/mKj2mHj5EwMwYAnSpKAenhvzT3H/ofvPxithpPLNGxiTW3sJjWmukSbj7J9WMFm2ubTfZGZ+qGitaah4VT43jxZBTwgz/lwCE3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741882340; c=relaxed/simple;
-	bh=snkvbBZaU8YvmmLF3jq2uY8g41RAjJEQT4u/EPstt5Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QEgXNj4MOyKVq3JpzJvOXb32u81Q06lGouONSvRItkH8n0dVmkJpzvnElSR0YU3D8nY45wJrE5ccfaDTqO7+o87SsA2bTVzROoAQnQu40j+8/ckbdmcLB+2FFkZmWZZWdekO7rdZnicihr03yEq2UKAjz+0WR9SM3+qkbudH+fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MNjghZIt; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741882339; x=1773418339;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=snkvbBZaU8YvmmLF3jq2uY8g41RAjJEQT4u/EPstt5Y=;
-  b=MNjghZItnHTDa5q1k6ocN+BiPPzq42QQErj44GdDyCQMUOTeqhPz1CI2
-   LpLv5lLZg+Cd8mlVd8qhV7Lr1CiTlP68jP8Yn5WucdU1I1Fp8pbaqu88B
-   2DambE6fXWfQH3Xcr78WPrKfqW+qnKvYTTDB2g5d8r0Va0QzIjMm7gnZR
-   5APkmfr7+aG0KPCHK8pGrjOF1I4xwuhJPwE08HoVv5z8t8ArY2ONyLZ24
-   Tl0qOA8E+uwrm+Tw+wNkHasPzxqx1KpFz2lLkdZbnK2ftFQX/gOn6zYhj
-   X904LXMgBdkJYoz/raLnYmZH7gG+lzCHXK5YN6nn5hadCgGoB7lEDIMIL
-   w==;
-X-CSE-ConnectionGUID: Sfj0mEdOTwOq7AqDLWZC7g==
-X-CSE-MsgGUID: vlYx0JArQ9yI7hkV5rchNQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="68371032"
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="68371032"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 09:12:18 -0700
-X-CSE-ConnectionGUID: LSwv2W0KQRq7KUSsR3HnPA==
-X-CSE-MsgGUID: WnzUgJ3KSqmwsv2X6/a9YQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="125626042"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa005.fm.intel.com with ESMTP; 13 Mar 2025 09:12:12 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id BBC89156; Thu, 13 Mar 2025 18:12:08 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Vadim Pasternak <vadimp@nvidia.com>,
-	Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>
-Subject: [PATCH v1 1/1] leds: mlxcpld: Remove unused header inclusion
-Date: Thu, 13 Mar 2025 18:12:06 +0200
-Message-ID: <20250313161206.415160-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1741882354; c=relaxed/simple;
+	bh=nJgwZ90lvtn9MB8Orqeey9ZWPMtUlNmbJi/0dOUJIEI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SZWkXTMmDCqO/jLNW0eQ2fLOzSmksi52EQauScZOaiIJuc5NXJggVlBHsrf6VyQGyjQhlIu0IXIf+sQ7lLoi8mYKbcyfDvf3p4JdaqpGvgSJVVU4/DYofEug9vH5dK5Q/xwNDrKMvqAsMlLgME89XfSi4Zh5rbWMsjOQi3Sj67Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDC9p4X3zz6H8mF;
+	Fri, 14 Mar 2025 00:09:18 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 90C2C140391;
+	Fri, 14 Mar 2025 00:12:28 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Mar
+ 2025 17:12:28 +0100
+Date: Thu, 13 Mar 2025 16:12:26 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Gregory Price <gourry@gourry.net>
+CC: <lsf-pc@lists.linux-foundation.org>, <linux-mm@kvack.org>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [LSF/MM] CXL Boot to Bash - Section 1: BIOS, EFI, and Early
+ Boot
+Message-ID: <20250313161226.00000038@huawei.com>
+In-Reply-To: <Z8ZKKwDnuAjtyohz@gourry-fedora-PF4VCD3F>
+References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
+	<Z6LKJZkcdjuit2Ck@gourry-fedora-PF4VCD3F>
+	<Z8ZKKwDnuAjtyohz@gourry-fedora-PF4VCD3F>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-acpi.h is not used by the driver. Remove it.
+On Mon, 3 Mar 2025 19:32:43 -0500
+Gregory Price <gourry@gourry.net> wrote:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/leds/leds-mlxcpld.c | 1 -
- 1 file changed, 1 deletion(-)
+> On Tue, Feb 04, 2025 at 09:17:09PM -0500, Gregory Price wrote:
+> > ------------------------------------------------------------------
+> > Step 2: BIOS / EFI generates the CEDT (CXL Early Detection Table).
+> > ------------------------------------------------------------------
+> > 
+> > This table is responsible for reporting each "CXL Host Bridge" and
+> > "CXL Fixed Memory Window" present at boot - which enables early boot
+> > software to manage those devices and the memory capacity presented
+> > by those devices.
+> > 
+> > Example CEDT Entries (truncated) 
+> >          Subtable Type : 00 [CXL Host Bridge Structure]
+> >               Reserved : 00
+> >                 Length : 0020
+> > Associated host bridge : 00000005
+> > 
+> >          Subtable Type : 01 [CXL Fixed Memory Window Structure]
+> >               Reserved : 00
+> >                 Length : 002C
+> >               Reserved : 00000000
+> >    Window base address : 000000C050000000
+> >            Window size : 0000003CA0000000
+> > 
+> > If this memory is NOT marked "Special Purpose" by BIOS (next section),
+> > you should find a matching entry EFI Memory Map and /proc/iomem
+> > 
+> > BIOS-e820:   [mem 0x000000c050000000-0x000000fcefffffff] usable
+> > /proc/iomem: c050000000-fcefffffff : System RAM
+> > 
+> > 
+> > Observation: This memory is treated as 100% normal System RAM
+> > 
+> >    1) This memory may be placed in any zone (ZONE_NORMAL, typically)
+> >    2) The kernel may use this memory for arbitrary allocations
+> >    4) The driver still enumerates CXL devices and memory regions, but
+> >    3) The CXL driver CANNOT manage this memory (as of today)
+> >       (Caveat: *some* RAS features may still work, possibly)
+> > 
+> > This creates an nuanced management state.
+> > 
+> > The memory is online by default and completely usable, AND the driver
+> > appears to be managing the devices - BUT the memory resources and the
+> > management structure are fundamentally separate.
+> >    1) CXL Driver manages CXL features
+> >    2) Non-CXL SystemRAM mechanisms surface the memory to allocators.
+> >   
+> 
+> Adding some additional context here
+> 
+> -------------------------------------
+> Nuance X: NUMA Nodes and ACPI Tables.
+> -------------------------------------
+> 
+> ACPI Table parsing is partially architecture/platform dependent, but
+> there is common code that affects boot-time creation of NUMA nodes.
+> 
+> NUMA-nodes are not a dynamic resource.  They are (presently, Feb 2025)
+> statically configured during kernel init, and the number of possible
+> NUMA nodes (N_POSSIBLE) may not change during runtime.
+> 
+> CEDT/CFMW and SRAT/Memory Affinity entries describe memory regions
+> associated with CXL devices.  These tables are used to allocate NUMA
+> node IDs during _init.
+> 
+> The "System Resource Affinity Table" has "Memory Affinity" entries
+> which associate memory regions with a "Proximity Domain"
+> 
+>         Subtable Type : 01 [Memory Affinity]
+>                Length : 28
+>      Proximity Domain : 00000001
+>             Reserved1 : 0000
+>          Base Address : 000000C050000000
+>        Address Length : 0000003CA0000000
+> 
+> The "Proximity Domain" utilized by the kernel ACPI driver to match this
+> region with a NUMA node (in most cases, the proximity domains here will
+> directly translate to a NUMA node ID - but not always).
+> 
+> CEDT/CFMWS do not have a proximity domain - so the kernel will assign it
+> a NUMA node association IFF no SRAT Memory Affinity entry is present.
+> 
+> SRAT entries are optional, CFMWS are required for each host bridge.
 
-diff --git a/drivers/leds/leds-mlxcpld.c b/drivers/leds/leds-mlxcpld.c
-index 718f55096e90..f25f68789281 100644
---- a/drivers/leds/leds-mlxcpld.c
-+++ b/drivers/leds/leds-mlxcpld.c
-@@ -32,7 +32,6 @@
-  * POSSIBILITY OF SUCH DAMAGE.
-  */
- 
--#include <linux/acpi.h>
- #include <linux/device.h>
- #include <linux/dmi.h>
- #include <linux/hwmon.h>
--- 
-2.47.2
+They aren't required for each HB.  You could have multiple host bridge and one CFMWS
+as long as you have decided to only support interleave.
+I would only expect to see this where the bios is instantiating CFMWS
+entries to match a specific locked down config though.
+
+> 
+> If SRAT entries are present, one NUMA node is created for each detected
+> proximity domain in the SRAT. Additional NUMA nodes are created for each
+> CFMWS without a matching SRAT entry.
+
+Don't forget the fun of CFMWS covering multiple SRAT entries (I think
+we just go with the first one?)
+
+> 
+> CFMWS describes host-bridge information, and so if SRAT is missing - all
+> devices behind the host bridge will become naturally associated with the
+> same NUMA node.
+
+I wouldn't go with naturally for the reason below.  It happens, but maybe
+not natural :)
+
+> 
+> 
+> big long TL;DR:
+> 
+> This creates the subtle assumption that each host-bridge will have
+> devices with similar performance characteristics if they're intended
+> for use as general purpose memory and/or interleave.
+
+Not just devices, also topologies.  Could well have switches below some
+ports and direct connected devices on others.
+
+> 
+> This means you should expect to have to reboot your machine if a
+> different NUMA topology is needed (for example, if you are physically
+> hotunplugging a volatile device to plug in a non-volatile device).
+If the bios is friendly you should be able to map that to a different
+CFMWS, but sure what bios is that nice?
+> 
+> 
+> 
+> Stay tuned for more Fun and Profit with ACPI tables :]
+:)
+> ~Gregory
+> 
 
 
