@@ -1,114 +1,113 @@
-Return-Path: <linux-kernel+bounces-559709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D5CBA5F86E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:35:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DD7A5F86A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:34:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 315E3188CCDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:34:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F51E1773CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1C7268C6B;
-	Thu, 13 Mar 2025 14:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CAF268FCF;
+	Thu, 13 Mar 2025 14:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/5mtUAa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1VTbWIpA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ac+215+9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64337267B78;
-	Thu, 13 Mar 2025 14:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6862673A4
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741876271; cv=none; b=AWzdbw3wLVn8dAPW0Z0vVWbKube/8ZI9rIIQTM/HL+HkuUiLlzj9UwzjXyhnRNyK++9Xhs88WdvlJatowvzorYuiq7nCfK8ZwVHFsiu4IF5ZU3ajz+N7n4T/6WQJUoRctd2y6tFbkNynr9YegVQzjv+X824uOJSgA09TwdAPURE=
+	t=1741876279; cv=none; b=rKB3WxLPSVWNumwJc38O8Gfulth+jjTnuEmkzMAJWsv5wDgilV40PQ7Dz5kH1sWVCTbsPg7rIhXRqgqsQeufeP1OY3dKxmMYg6/oGw6Je9GEk+CugMDY5AXNElB6PFfWYrdIF4LdXE7uUyfsSH79TJRY8LHi4Gjee2TguZCv6NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741876271; c=relaxed/simple;
-	bh=q7tcXhM/G+j/VE2KX9E2hy+pT9MDKbegYTC6EBQh5HM=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=VGsB6+f1pwxiZldFcj8S8BO4t2My0AdFKSBv7h5DOF2gscJWrLdZMNm7nUv3G4P8KFnk2QrX+40g5/ZXaqrMNCABIgMsC/d3hlobOXXCHHy/rklyZg7GYfhQn7jjKxRFaju5JNl0JBt+xBeUTyZBlHsd1yWVZa7aqfpehVtGe4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/5mtUAa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BFB4C4CEDD;
-	Thu, 13 Mar 2025 14:31:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741876270;
-	bh=q7tcXhM/G+j/VE2KX9E2hy+pT9MDKbegYTC6EBQh5HM=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=i/5mtUAaLkbWg/nIPtp5cJInyu+dncYZuqJPUOt9jcMookYcqt4XIZ6IupkOaDuHm
-	 uLFMF6c4mBtyc5IAXD1F4vO0BBjIaKTk7c9o36jMBCa2H1Q0ZgJjtNYxtkQ2Mp2bJQ
-	 gtQF5ysN0QNxgTZI2w5SeC886c7/LLH/qOtsHJKtnsC9I69Bp+KQYSm00/ngLcduB4
-	 Qyt3kP20zJhSTir8Kj2uH96DEiJO8IV/u2apvPw4SMBF0ztztAWtIQ/VOt0gn+6Cf2
-	 cn1TpIXuLRH+gi1JRC3OqzkArMfgqQNtH6easUrn+/p5MXvwkyYvHtUp4ZJA1XBVAf
-	 yoFuBsIbwuXfg==
-Date: Thu, 13 Mar 2025 09:31:09 -0500
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1741876279; c=relaxed/simple;
+	bh=/fLFxTB9ecUfpGVHxQKM8igbD0q4i9ltUHKLTA5+JtE=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=Mb0TlPmFkJwC98ELA9PaGuXo2CSvHVi5PWXL8wtPIqEl8mjop9Cbw1LZHw5cX1Kwr54c9y7bgeF2+WB5PhwBCgeaner39LBR0hoceBKj5LU97WauXutas/xZkV6lqAVzNbItw7id51gV0foVVTHDNQxdFLAsQUKDjR+nzVYjkb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1VTbWIpA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ac+215+9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250313142404.896902416@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741876274;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=Yzx5UpHw8V/PL6J/OMWpobt6OE0fTBIGAVQq59P+n4w=;
+	b=1VTbWIpAz37X8Wuh3qAnqMVC8op0a8EVcgnp8Vf4AGCPRbUaa3GGudo0/Y0zgMJDHzpGmn
+	jCQV7pdF6cX3YiYkqE+EW0fK/+zhDpjTMEQ277ozwvb1vxymNIwj2TWNMYgAUhOpADO35u
+	j2UAuP+lzLjAnXM0xYlu7BxHdUfdF6XBDXbqsejnwIEQ8VJ7itn1Y5ceeTatykSbFaCS04
+	7YlhrJR01qL/xhd0JfNAWRZqdSO/WdJXoGqWoZ+1dW3gY+lwO29imwS8x9SxUrUEacF81t
+	QdLZnkrm9Om7Q2WXgVa033Xu9ripLI8QLH+bvlJKOCFfG5NF+GEuxCkzqrXkFQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741876274;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=Yzx5UpHw8V/PL6J/OMWpobt6OE0fTBIGAVQq59P+n4w=;
+	b=Ac+215+9uSUVrVSKoJKgJgzoHhrlS1dafaKyrlEybOn32svlQ4GzN1zrcUuYaWW3WmXr4B
+	PE1eDhVRFaVFlUCQ==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Gregory Clement <gregory.clement@bootlin.com>,
+ =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>,
+ Talel Shenhar <talel@amazon.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Guo Ren <guoren@kernel.org>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>
+Subject: [patch 0/7] genirq/generic_chip: Convert locking to guards
+Date: Thu, 13 Mar 2025 15:31:13 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: vigneshr@ti.com, andersson@kernel.org, linux-mtd@lists.infradead.org, 
- miquel.raynal@bootlin.com, conor+dt@kernel.org, agross@kernel.org, 
- krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org, richard@nod.at, 
- dmaengine@vger.kernel.org, vkoul@kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, konradybcio@kernel.org, 
- manivannan.sadhasivam@linaro.org
-To: Kaushal Kumar <quic_kaushalk@quicinc.com>
-In-Reply-To: <20250313130918.4238-2-quic_kaushalk@quicinc.com>
-References: <20250313130918.4238-1-quic_kaushalk@quicinc.com>
- <20250313130918.4238-2-quic_kaushalk@quicinc.com>
-Message-Id: <174187626948.2759710.10340632443652482523.robh@kernel.org>
-Subject: Re: [PATCH 1/6] dt-bindings: mtd: qcom,nandc: Document the SDX75
- NAND
 
+The following series converts the generic chip locking to lock guards,
+which reduces code size and improves readability.
 
-On Thu, 13 Mar 2025 18:39:13 +0530, Kaushal Kumar wrote:
-> Document the QPIC NAND controller v2.1.1 being used in
-> SDX75 SoC and it uses BAM DMA.
-> 
-> SDX75 NAND controller has DMA-coherent and iommu support
-> so define them in the properties section, without which
-> 'dtbs_check' reports the following error:
-> 
->   nand-controller@1cc8000: Unevaluated properties are not
->   allowed ('dma-coherent', 'iommus' were unexpected)
-> 
-> Signed-off-by: Kaushal Kumar <quic_kaushalk@quicinc.com>
-> ---
->  .../devicetree/bindings/mtd/qcom,nandc.yaml   | 23 ++++++++++++++-----
->  1 file changed, 17 insertions(+), 6 deletions(-)
-> 
+The conversion was largely done with Coccinelle.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+The series applies on Linus tree and is available from git:
 
-yamllint warnings/errors:
+    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git irq/generic-chip
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/qcom,nandc.yaml: properties:compatible: 'anyOf' conditional failed, one must be fixed:
-	'OneOf' is not one of ['$ref', 'additionalItems', 'additionalProperties', 'allOf', 'anyOf', 'const', 'contains', 'default', 'dependencies', 'dependentRequired', 'dependentSchemas', 'deprecated', 'description', 'else', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'items', 'if', 'minItems', 'minimum', 'maxItems', 'maximum', 'multipleOf', 'not', 'oneOf', 'pattern', 'patternProperties', 'properties', 'required', 'then', 'typeSize', 'unevaluatedProperties', 'uniqueItems']
-	'type' was expected
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/qcom,nandc.yaml: properties:compatible: Additional properties are not allowed ('OneOf' was unexpected)
-	from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
+Thanks,
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250313130918.4238-2-quic_kaushalk@quicinc.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+	tglx
+---
+ arch/arm/plat-orion/gpio.c             |    6 +---
+ drivers/gpio/gpio-mvebu.c              |   15 +++-------
+ drivers/irqchip/irq-al-fic.c           |   18 +++---------
+ drivers/irqchip/irq-atmel-aic.c        |   19 ++++---------
+ drivers/irqchip/irq-atmel-aic5.c       |   28 +++++--------------
+ drivers/irqchip/irq-bcm7120-l2.c       |   22 ++++++---------
+ drivers/irqchip/irq-brcmstb-l2.c       |    8 +----
+ drivers/irqchip/irq-csky-apb-intc.c    |    3 --
+ drivers/irqchip/irq-dw-apb-ictl.c      |    3 --
+ drivers/irqchip/irq-ingenic-tcu.c      |    9 ++----
+ drivers/irqchip/irq-lan966x-oic.c      |   18 ++++--------
+ drivers/irqchip/irq-loongson-liointc.c |    9 +-----
+ drivers/irqchip/irq-mscc-ocelot.c      |    3 --
+ drivers/irqchip/irq-stm32-exti.c       |   21 ++++----------
+ drivers/irqchip/irq-sunxi-nmi.c        |    9 +-----
+ drivers/irqchip/irq-tb10x.c            |   13 ++-------
+ drivers/soc/dove/pmu.c                 |    3 --
+ include/linux/irq.h                    |   25 -----------------
+ kernel/irq/generic-chip.c              |   47 +++++++++++----------------------
+ 19 files changed, 80 insertions(+), 199 deletions(-)
 
