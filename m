@@ -1,134 +1,191 @@
-Return-Path: <linux-kernel+bounces-560339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63F9A602C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:36:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D0DA6024F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:19:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB48B19C2C9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:36:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0DC816B086
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096A11F5425;
-	Thu, 13 Mar 2025 20:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3791E1F4C85;
+	Thu, 13 Mar 2025 20:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="cVJXQdAL"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1F+Ngtj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9231F462E;
-	Thu, 13 Mar 2025 20:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788F21F460B;
+	Thu, 13 Mar 2025 20:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741898134; cv=none; b=utBtBTP7yWWhI05Rgv34Pfpha91ZYIAzyQBQS6+t7krgxCmcCCkLPzBJHskcgs4MrgFrkec/IAatC5BVTBEEZZqfzVoCxkewiiMhbCX1FXaiI8FC771z3mFT6pQwglDIMfuI1fY9OD2Oht4hfe3gzYo6iaDiWKoBXa9/ZuZojhc=
+	t=1741897092; cv=none; b=fNJxoTSDJTL8loaP97AeZXZXXEOKxCxOcsTfxSg26/idsh/XBPrq0LqD9jnSgjVnGbmDvChUuky3aPP5YDRdg7b31qyEF0dbfCePZ4NBAC+H0RSEd3zZqcT+ciVg17GjNwYAzJ155oBCOA38Ga/nywwdi4fbJXNql8TQ73c8PDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741898134; c=relaxed/simple;
-	bh=n2GShKglS+Ia1CAmYp1RdUj7x9QJWvg9K2CEAXic+iE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Jat6voJXlZ0prr1BSVy0O6GKytBA+YpPINOqg3ySamkgni3h9aqLQb3k+1TWsqZfRZhjj/Xwk2xIsKfpB5bpJcq4l6jlxb39IVFNgF6mN/z64qePmR431Q5BSeJ8eFLjNc761FfVEP5zo8TnAL2zSP7xhu6WScRwfAGmUtKjq3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=cVJXQdAL; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.3.1)
- id 3181bb750b2b3b3b; Thu, 13 Mar 2025 21:35:30 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id D68F98E4517;
-	Thu, 13 Mar 2025 21:35:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1741898130;
-	bh=n2GShKglS+Ia1CAmYp1RdUj7x9QJWvg9K2CEAXic+iE=;
-	h=From:Subject:Date;
-	b=cVJXQdALAXAqDFijkpIvw9bXjdoP8o9ncl/yoUnDJE5zz2mSGVDNrtSjnCGQu6oOt
-	 s/rqQWMCO3ryRw0cKa9tDQfCi4hpMfOyvLSt/EkQIxFtwBVxFj0k7foEFsfwIgpbgZ
-	 S2gyDFbf0rRqgooNI2b2q9X8yOKChIUyXiZZ2osF8PAdVfkODE2fkyZswaubVXivuP
-	 tChgTvEh/ssEIQVjQ43BeN5iDUsmmwSas8VLCaWG1hdBNPx5g4TvZDB9Y5edhVRP8k
-	 psonGHHKqFs6Rx7dGrifDeCJ9LVgSS30fqT6a548JYYHa5zjbMJMyODyb7ejrEDrIM
-	 aX1GDajjXj5fg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
- Johan Hovold <johan@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Jon Hunter <jonathanh@nvidia.com>, Saravana Kannan <saravanak@google.com>
-Subject:
- [PATCH v2 0/3] PM: sleep: Improvements of async suspend and resume of devices
-Date: Thu, 13 Mar 2025 21:17:27 +0100
-Message-ID: <1915694.tdWV9SEqCh@rjwysocki.net>
+	s=arc-20240116; t=1741897092; c=relaxed/simple;
+	bh=g21cefL7pF9/fFzm172iRJmsvYrNq/ZPoflq1jUWDzs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P/6AlpyyA6H/Q54QPSE/XuXSY/b+aMuJ5rFZVjHCDPmMYUwymuUhmGNphMieuBhP3rKDjddGz5L7hMEDiaUerul6v0kOQCmarVkvV6EW2v62Cb46yUAm053f2HVuaay1dB3Byo1OwqYp2s7QvA41UzdcuRDIGGKuaGMdFvBiFzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1F+Ngtj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D915C4CEDD;
+	Thu, 13 Mar 2025 20:18:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741897090;
+	bh=g21cefL7pF9/fFzm172iRJmsvYrNq/ZPoflq1jUWDzs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n1F+NgtjidcUGh6mBJaPQRzQlG+YD0beabaqodcoGRmJvLRQZ/zU/HJS+L1LybYK4
+	 2IH0+MveoL1oeR0/7PWU80IUmCmQ0AW9AtW6CA7EPj2R+YJb/GJl5GUg1XSFqPoM1U
+	 89zwRXtEpW87A0rVGx+n9Qgqn+ojPZ/vEsuVBOWX3+iDWTBZpkduV3yyStvtmdMvWz
+	 SJOZ5Rdxv7ISU970sdbp2eZiL/H1TFqE2O65fPqXcoXzuG6LNTcoyISxoA+ybtAaCU
+	 /3VM6m+/cVD24dpehxVzT7/TUvju//7T6tUcWxiqcXsauEsufVERZ/Hf9ZMZsu/yQD
+	 YH3865qa5NWWw==
+Date: Thu, 13 Mar 2025 13:18:08 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	German Gomez <german.gomez@arm.com>
+Subject: Re: [PATCH v1] perf tests: Harden branch stack sampling test
+Message-ID: <Z9M9gK4VS199CRKh@google.com>
+References: <20250312055846.671522-1-irogers@google.com>
+ <20250312105450.GN9682@e132581.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdekledvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeekpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtvghrnhesrhhofihlrghnugdrhhgrrhhvrghrugdrvgguuhdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdrohhrghdprhgtphhtthhopehjohh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=8 Fuz1=8 Fuz2=8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250312105450.GN9682@e132581.arm.com>
 
-Hi Everyone,
+Hello,
 
-This is a new iteration of the async suspend/resume improvements work:
+On Wed, Mar 12, 2025 at 10:54:50AM +0000, Leo Yan wrote:
+> Hi Ian,
+> 
+> On Tue, Mar 11, 2025 at 10:58:46PM -0700, Ian Rogers wrote:
+> > On continuous testing the perf script output can be empty, or nearly
+> > empty, causing tr/grep to exit and due to "set -e" the test traps and
+> > fails. Add some empty file handling that sets the test to skip and
+> > make grep and other text rewriting failures non-fatal by adding
+> > "|| true".
+> > 
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/tests/shell/test_brstack.sh | 79 +++++++++++++++++++-------
+> >  1 file changed, 59 insertions(+), 20 deletions(-)
+> > 
+> > diff --git a/tools/perf/tests/shell/test_brstack.sh b/tools/perf/tests/shell/test_brstack.sh
+> > index e01df7581393..6f5ae227b3e8 100755
+> > --- a/tools/perf/tests/shell/test_brstack.sh
+> > +++ b/tools/perf/tests/shell/test_brstack.sh
+> > @@ -1,4 +1,4 @@
+> > -#!/bin/sh
+> > +#!/bin/bash
+> >  # Check branch stack sampling
+> >  
+> >  # SPDX-License-Identifier: GPL-2.0
+> > @@ -17,35 +17,54 @@ fi
+> >  
+> >  skip_test_missing_symbol brstack_bench
+> >  
+> > +set -x
+> > +err=0
+> >  TMPDIR=$(mktemp -d /tmp/__perf_test.program.XXXXX)
+> >  TESTPROG="perf test -w brstack"
+> >  
+> >  cleanup() {
+> >  	rm -rf $TMPDIR
+> > +	trap - EXIT TERM INT
+> >  }
+> >  
+> > -trap cleanup EXIT TERM INT
+> > +trap_cleanup() {
+> > +	set +e
+> > +	echo "Unexpected signal in ${FUNCNAME[1]}"
+> > +	cleanup
+> > +	exit 1
+> > +}
+> > +trap trap_cleanup EXIT TERM INT
+> >  
+> >  test_user_branches() {
+> >  	echo "Testing user branch stack sampling"
+> >  
+> > -	perf record -o $TMPDIR/perf.data --branch-filter any,save_type,u -- ${TESTPROG} > /dev/null 2>&1
+> > -	perf script -i $TMPDIR/perf.data --fields brstacksym | tr -s ' ' '\n' > $TMPDIR/perf.script
+> > +	perf record -o "$TMPDIR/perf.data" --branch-filter any,save_type,u -- ${TESTPROG} > "$TMPDIR/record.txt" 2>&1
+> > +	perf script -i "$TMPDIR/perf.data" --fields brstacksym > "$TMPDIR/perf.script"
+> >  
+> >  	# example of branch entries:
+> >  	# 	brstack_foo+0x14/brstack_bar+0x40/P/-/-/0/CALL
+> >  
+> > -	set -x
+> > -	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/IND_CALL/.*$"	$TMPDIR/perf.script
+> > -	grep -E -m1 "^brstack_foo\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
+> > -	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
+> > -	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
+> > -	grep -E -m1 "^brstack_bar\+[^ ]*/brstack_foo\+[^ ]*/RET/.*$"		$TMPDIR/perf.script
+> > -	grep -E -m1 "^brstack_foo\+[^ ]*/brstack_bench\+[^ ]*/RET/.*$"	$TMPDIR/perf.script
+> > -	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_bench\+[^ ]*/COND/.*$"	$TMPDIR/perf.script
+> > -	grep -E -m1 "^brstack\+[^ ]*/brstack\+[^ ]*/UNCOND/.*$"		$TMPDIR/perf.script
+> > -	set +x
+> > -
+> > +	expected=(
+> > +		"^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/IND_CALL/.*$"
+> > +		"^brstack_foo\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"
+> > +		"^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/CALL/.*$"
+> > +		"^brstack_bench\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"
+> > +		"^brstack_bar\+[^ ]*/brstack_foo\+[^ ]*/RET/.*$"
+> > +		"^brstack_foo\+[^ ]*/brstack_bench\+[^ ]*/RET/.*$"
+> > +		"^brstack_bench\+[^ ]*/brstack_bench\+[^ ]*/COND/.*$"
+> > +		"^brstack\+[^ ]*/brstack\+[^ ]*/UNCOND/.*$"
+> > +	)
+> > +	for x in "${expected[@]}"
+> > +	do
+> > +		if ! tr -s ' ' '\n' < "$TMPDIR/perf.script" | grep -E -m1 -q "$x"
+> > +		then
+> > +			echo "Branches missing $x"
+> > +			if [ "x$err" == "x0" ]
+> > +			then
+> > +				err=2
+> 
+> Here it sets "err=2", as a result, if any grep command fails, the script
+> exits while reporting to skip the test.  This seems incorrect to me.
+> 
+> My understanding is the regular expressions above are mandatory to be
+> matched, otherwise, it must be something is wrong.  We should not skip
+> the test in this case.
+> 
+> I can understand that 'perf record' cannot record all branch types, if
+> this is the case, maybe we can improve the recording quality rather
+> than reporting skip?  E.g.,
+> 
+>   cat <<EOF > "$TMPDIR/loop.sh"
+>   for run in {1..5}; do perf test -w brstack; done
+>   EOF
+> 
+>   perf record -o "$TMPDIR/perf.data" --branch-filter any,save_type,u
+>     -- sh $TMPDIR/loop.sh
+> 
+> If we run the test for 5 times, should this can allow us to ensure the
+> branch samples are recorded?
 
-https://lore.kernel.org/linux-pm/13709135.uLZWGnKmhe@rjwysocki.net/
+The brstack (and other workload programs) can take an argument to
+control its duration.  For brstack, it's the number of loop iteration
+and default is 999999.
 
-which includes some rework and fixes of the last 3 patches in the series
-linked above.  The first 2 patches in that series have been applied
-already and are waiting for the 6.15 merge window.
-
-This new iteration is based on linux-pm.git/linux-next and on the recent
-fix related to direct-complete:
-
-https://lore.kernel.org/linux-pm/12627587.O9o76ZdvQC@rjwysocki.net/
-
-The following part of the original cover letter is still applicable:
-
-"Overall, the idea is that instead of starting an async work item for every
-async device upfront, which is not very efficient because the majority of
-those devices will not be able to make progress due to dependencies anyway,
-the async handling is only started upfront for the devices that are likely
-to be able to make progress.  That is, devices without parents in the resume
-path and leaf devices (ie. devices without children or consumers) in the
-suspend path (the underlying observation here is that devices without parents
-are likely to have no suppliers too whereas devices without children that
-have consumers are not unheard of).  This allows to reduce the amount of
-processing that needs to be done to start with.
-
-Then, after processing every device ("async" or "sync"), "async" processing
-is started for some devices that have been "unblocked" by it, which are its
-children in the resume path or its parent and its suppliers in the suspend
-path.  This allows asynchronous handling to start as soon as it makes sense
-without delaying the "async" devices unnecessarily.
-
-Fortunately, the additional plumbing needed to implement this is not
-particularly complicated."
-
-Patch [1/3] deals with the resume path for all device resume phases.  Since
-v1 it's been modified to avoid using dpm_list_mtx for protecting the
-power.work_in_progress flag and a new lock is used specifically for that
-now which should reduce lock contention.
-
-Patch [2/3] optimizes the "suspend" phase which has the most visible effect (on
-the systems in my office the speedup is in the 100 ms range which is around 20%
-of the total device resume time).  Since v1 it's been adjusted to the changes
-in patch [1/3] and two issues in it have been fixed: dpm_async_suspend_superior()
-actually walks the device's suppliers and all devices are moved to the target
-list in dpm_suspend() even if there is an error so that they can be resumed
-properly in that case.
-
-Patch [3/3] extend this to the "suspend late" and "suspend noirq" phases.
-
-Thanks!
-
-
-
-
+Thanks,
+Namhyung
 
 
