@@ -1,161 +1,96 @@
-Return-Path: <linux-kernel+bounces-560049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 751B5A5FD03
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:06:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9CC9A5FD05
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:06:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A4BF3B2E80
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:05:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01107189ACEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44D7267F71;
-	Thu, 13 Mar 2025 17:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880AE250EC;
+	Thu, 13 Mar 2025 17:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJQAnSaJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IhPf2L9/"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD6C15747D;
-	Thu, 13 Mar 2025 17:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12577153801
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741885505; cv=none; b=pwnQAwiv5M5lE6B4vEszl417YUSDpnMoHnIyh+H+p+dZPKuZISkKtWli0VMRGssAhawnQ2S2C/dmvWNh7BYE5bFbe/q2snxO3bVj9TUnmF6hfbcaOWgX4iCHtrUM8gVBOBL+Jy4ESCuzcAQIk4aB0pSUZr4h6u/UAXvTh0/7Tms=
+	t=1741885536; cv=none; b=BCxVFyNGj8gxJpLYLnijIo30J/ilL92WMgnODJhPNPPGqeKUgJRBoWXP+MLTnU5pBsaD39+MrrW+Hg9M9C+LGPf7TnWHcdKkuNfslUx6tehArinQRpABc1uDUUIt9urj9du4c5bGd2jD7Oc+tlw8YCs2lCGmlyous7PQ33MMaxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741885505; c=relaxed/simple;
-	bh=VCw61kDDKPEEVAbOsalb7B/m4QeaA68e6JeTKmVJYao=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=d9LO2tww0lKvyNowjXIAz9unfuEq9BkUo8o0Qfj/CxLOmthYqQDLDBoeCLPKcqv9COXdH2+9RU/WeXd453YLFuoyy340frZhjzIpKx5NlKc32+t3AyCm/f2Sof6p4Z1abPAawVtNhVbnf4Wja0f2YGICltUYuknFNtszRFA+5GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJQAnSaJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A13AC4CEDD;
-	Thu, 13 Mar 2025 17:05:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741885504;
-	bh=VCw61kDDKPEEVAbOsalb7B/m4QeaA68e6JeTKmVJYao=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=oJQAnSaJypK+GCzi7ekXGTtSCo21nK0djOltX04Hrp3bBKT4Hn1eGhXuaUybes1es
-	 bk5Sw7XwbSw/ig1HL1V8NZzlUFt01Pxr2NX6honv21EYaU5UmKPsWpQLsoc143QGFE
-	 YH0VDr7b1wMJZuuDBqt8G4rKz2PTmh4P2RLcc6+qnF/Y5NVF7PgEmanbYMvE2GK5yq
-	 aKxrVLwzZO7qV3SyAhpsYTYY0y59yC2aFp8jOGB5SO7tqcEnpjdB37Xn8qAfDGCknG
-	 6nmgB2vArGJOMhFP2JwiRLc7ztFWDgmfAJrNhaewIz8yeKI5PrhSLbIPhnk7Mi5V5B
-	 GOSBx0CV/uGOw==
-Date: Thu, 13 Mar 2025 12:05:03 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Jeff Johnson <jjohnson@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	mhi@lists.linux.dev, linux-wireless@vger.kernel.org,
-	ath11k@lists.infradead.org, quic_pyarlaga@quicinc.com,
-	quic_vbadigan@quicinc.com, quic_vpernami@quicinc.com,
-	quic_mrana@quicinc.com,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Subject: Re: [PATCH v2 06/10] bus: mhi: host: Add support to read MHI
- capabilities
-Message-ID: <20250313170503.GA738903@bhelgaas>
+	s=arc-20240116; t=1741885536; c=relaxed/simple;
+	bh=0tdzNBsSfj25tqpXiCEQFRH4wScl08lGPpx+Tet1suA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=aNIJnN6xOmqjdIy9KqH5ZzmS9fOocd6NCm3pdSXONGitCLcyGSFAaKhCPZ++bxdF6ddgfX62w9IREfvHY/hslDboHo/QUGdhPAG1pJUFKTlVwXBjt1eztoGRUu2SmVdifGYO3j3ayQLqjzXgN96xnel5LW04oBIfHH6kuW8JPKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IhPf2L9/; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741885521;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aE8hTDMYccjYYSsyTRm8RFsJjGaSnHNKcMncoeQgE20=;
+	b=IhPf2L9/KpHbFHjav7YwIgUmKanxHv2LFY0JAsO4Ldtb8KYr4Yms0f1Zoo0EG+vYcKSVm8
+	xDYgQMDV6RCJJCQmiDnukdwzQbRUFXrSDftOyvtjFnn9aoeFdK8H3jtGorMTyM5LvzD1mX
+	VdWdsvciPzmWizGhHR1bjeuIGZj5A4s=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313-mhi_bw_up-v2-6-869ca32170bf@oss.qualcomm.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
+Subject: Re: [RESEND PATCH] scsi: sd: Use str_on_off() helper in
+ sd_read_write_protect_flag()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <3c32eb12-6879-48cf-9ef6-bd04e759025f@acm.org>
+Date: Thu, 13 Mar 2025 18:05:07 +0100
+Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <9EE4EEC5-52D9-4159-A3B4-4865DA11C6FF@linux.dev>
+References: <20250313142557.36936-2-thorsten.blum@linux.dev>
+ <3c32eb12-6879-48cf-9ef6-bd04e759025f@acm.org>
+To: Bart Van Assche <bvanassche@acm.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Mar 13, 2025 at 05:10:13PM +0530, Krishna Chaitanya Chundru wrote:
-> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
-> 
-> As per MHI spec sec 6.6, MHI has capability registers which are located
-> after the ERDB array. The location of this group of registers is
-> indicated by the MISCOFF register. Each capability has a capability ID to
-> determine which functionality is supported and each capability will point
-> to the next capability supported.
-> 
-> Add a basic function to read those capabilities offsets.
+Hi Bart,
 
-Sounds like an MHI version of pci_find_capability().  Maybe could be
-named similarly too?
+On 13. Mar 2025, at 17:25, Bart Van Assche wrote:
+> On 3/13/25 7:25 AM, Thorsten Blum wrote:
+>> Remove hard-coded strings by using the str_on_off() helper function.
+> 
+> Shouldn't a patch description explain two things: what has been changed
+> and also why a change has been made? I don't see an explanation of why
+> this change has been made.
 
-> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> ---
->  drivers/bus/mhi/common.h    |  4 ++++
->  drivers/bus/mhi/host/init.c | 29 +++++++++++++++++++++++++++++
->  2 files changed, 33 insertions(+)
-> 
-> diff --git a/drivers/bus/mhi/common.h b/drivers/bus/mhi/common.h
-> index dda340aaed95..eedac801b800 100644
-> --- a/drivers/bus/mhi/common.h
-> +++ b/drivers/bus/mhi/common.h
-> @@ -16,6 +16,7 @@
->  #define MHICFG				0x10
->  #define CHDBOFF				0x18
->  #define ERDBOFF				0x20
-> +#define MISCOFF				0x24
->  #define BHIOFF				0x28
->  #define BHIEOFF				0x2c
->  #define DEBUGOFF			0x30
-> @@ -113,6 +114,9 @@
->  #define MHISTATUS_MHISTATE_MASK		GENMASK(15, 8)
->  #define MHISTATUS_SYSERR_MASK		BIT(2)
->  #define MHISTATUS_READY_MASK		BIT(0)
-> +#define MISC_CAP_MASK			GENMASK(31, 0)
-> +#define CAP_CAPID_MASK			GENMASK(31, 24)
-> +#define CAP_NEXT_CAP_MASK		GENMASK(23, 12)
->  
->  /* Command Ring Element macros */
->  /* No operation command */
-> diff --git a/drivers/bus/mhi/host/init.c b/drivers/bus/mhi/host/init.c
-> index a9b1f8beee7b..0b14b665ed15 100644
-> --- a/drivers/bus/mhi/host/init.c
-> +++ b/drivers/bus/mhi/host/init.c
-> @@ -467,6 +467,35 @@ int mhi_init_dev_ctxt(struct mhi_controller *mhi_cntrl)
->  	return ret;
->  }
->  
-> +static int mhi_get_capability_offset(struct mhi_controller *mhi_cntrl, u32 capability, u32 *offset)
-> +{
-> +	u32 val, cur_cap, next_offset;
-> +	int ret;
-> +
-> +	/* get the 1st supported capability offset */
-> +	ret = mhi_read_reg_field(mhi_cntrl, mhi_cntrl->regs, MISCOFF,
-> +				 MISC_CAP_MASK, offset);
-> +	if (ret)
-> +		return ret;
-> +	do {
-> +		if (*offset >= mhi_cntrl->reg_len)
-> +			return -ENXIO;
-> +
-> +		ret = mhi_read_reg(mhi_cntrl, mhi_cntrl->regs, *offset, &val);
-> +		if (ret)
-> +			return ret;
-> +
-> +		cur_cap = FIELD_PREP(CAP_CAPID_MASK, val);
-> +		next_offset = FIELD_PREP(CAP_NEXT_CAP_MASK, val);
-> +		if (cur_cap == capability)
-> +			return 0;
-> +
-> +		*offset = next_offset;
-> +	} while (next_offset);
-> +
-> +	return -ENXIO;
-> +}
-> +
->  int mhi_init_mmio(struct mhi_controller *mhi_cntrl)
->  {
->  	u32 val;
-> 
-> -- 
-> 2.34.1
-> 
+The benefits are explained in linux/string_choices.h and I didn't think
+it would be necessary to repeat them in the commit message:
+
+/*
+ * Here provide a series of helpers in the str_$TRUE_$FALSE format (you can
+ * also expand some helpers as needed), where $TRUE and $FALSE are their
+ * corresponding literal strings. These helpers can be used in the printing
+ * and also in other places where constant strings are required. Using these
+ * helpers offers the following benefits:
+ *  1) Reducing the hardcoding of strings, which makes the code more elegant
+ *     through these simple literal-meaning helpers.
+ *  2) Unifying the output, which prevents the same string from being printed
+ *     in various forms, such as enable/disable, enabled/disabled, en/dis.
+ *  3) Deduping by the linker, which results in a smaller binary file.
+ */
+
+Thanks,
+Thorsten
 
