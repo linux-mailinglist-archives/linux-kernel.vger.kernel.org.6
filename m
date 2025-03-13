@@ -1,444 +1,273 @@
-Return-Path: <linux-kernel+bounces-560371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2DF7A60339
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:08:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D007A60341
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:10:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8044719C357E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:08:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7408F3A6651
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C741F5853;
-	Thu, 13 Mar 2025 21:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2E81F540F;
+	Thu, 13 Mar 2025 21:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="shxmU4oS"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AMKGfFB6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B050F1F584F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 21:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741900033; cv=none; b=HxwZCkSffrgrS/LILeCw/sHqmzxPlYJ+oU5fBRu8/tYiJOigIJIDUPshVIBzE2CUnXaIR12A9YMrQ1gtlsrS2oojLStW5ngIkq7NRRja9MHF2KUUliKS+4J5GmoPcyUdeJsGASdH3NI6Noxvo1qxW4k2YxKOdnTMpJC/DvJhCC8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741900033; c=relaxed/simple;
-	bh=h9NgYKwsAoW1G9lRKhZDPMw2Rwi0/+g2kl3mRilnujQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U/vasiPXiD5K5MWSaCuq4xJ2p+t7qGesiSu+DssANOIvBLoJykzFtsggJMOezLJWHElXhczKKZeUYrJDTWhinxr6QSNcYlFmZhWzW5Mz9dwFY9YeUsgSgMEwVlF23re6lW8OZQE4Li+ldw0Vtui2xv1Y+g+5wGFdmRUq7ZD7Hao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=shxmU4oS; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e8fd49b85eso21058966d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:07:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1741900030; x=1742504830; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=omkCeK6Z+5R8kI2i4e0zD4yPuPDofJe9UMJlISCGlWc=;
-        b=shxmU4oSLlvGmnNyfB8Y/qf5Kq3hvrFHK68nIOuyTZi3GTngiw2sNEW46bceFc+Ydl
-         LbH6xshGxwUS5HQDGiRen+zzqjv2z7Iu/0h8hrQAsvPX3D2xCHSPB87CAMZpyIjdcNyO
-         nZa8Id34C9K2n8MUa++FuLKh3FgGfT7huhPdvmhkm470ojl6Q9fdbH+66swxsR6YS35w
-         GYkvQ5XFuRRZSvIThzrh65azoWP28q4O6MnDL3/voRgousXtMKoe7f2jp44L0vKaEGI2
-         d3lbTxqMCudu2U4N9kJuZATfQ37hzP5vj/HS2wy8wYmGAVwt6hZgD654MqxkE8NTTVQ1
-         25Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741900030; x=1742504830;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=omkCeK6Z+5R8kI2i4e0zD4yPuPDofJe9UMJlISCGlWc=;
-        b=rUh4jCF7WwWi0QbK8ejV8j7s/Mn9RfJku31NKjHkRDmu8GGaITXgWhCsvbIMRh7DXk
-         XtpmavSV0pOyxUJUfqJDDxI7lf2hptwTl2qJfEmkIfbv5pS6dfwJOPXnwheuNY/28Hr/
-         6JKQuFlTMsXc7mJOG8WwymRWau5aVkSO34FnrP8Wpl/cLmly54g/6UoQo31he50vlHWo
-         LMIARI7NTcs/Hy5qAiEmHmZs7RWwnuqwtGU7uyBCuTa58ne/5a2qs2Cq6CnoXZo1gVn9
-         CIwnLCAPgUukdo5v0erVqqBFyKsXCUHvd2mm7D5gXASE8NXPG0nGdVD5u7F0nfE9Bb2G
-         vexg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeI84V417z5okQEGiPYCEIM6nq7LhOEbzf3ucrEgsXwNBp6m5UfZ+TYJN04gyUwJp9Zgpz7pVQQSBq+ws=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6ZOD2CFVuXPovmjfnd0NHylSrwDgpGJJFClyHp7Cj5InqW9AI
-	5cqynZ1zdsYtROMHFBI+LIhn5Ih9bSw7vWKTZAtezVFPnwCJh6Uq00CasXEk4nc=
-X-Gm-Gg: ASbGncuDK9e0NUNRdEaLpCZ85VXTalnwgZ5Aok/xryP2wXSATT5bcOvc50dpSqHEOU1
-	eWTU7Duw7FNlXPzti3+zLEYdILlCx6Dlrx7pRtSn9UvLrtSqAhpKsIkTOKVo0/bfZ+rwfSKSz/q
-	iZOsDx0fvNoOUzbb4xmiIofHqW8b2xfVZUwdp497ojcOYW3FJa8PrFPCPz5l4qssBN8iOeS19oX
-	qziPBeT+Y6yJEevr17/K6pbFg2D8XzVlo/Z7qSb25btMmslecFapfTTghJlEpqTvC0/gNSkSKM9
-	duUphmuOSs79ZmObtTnEMFCqQN4bXB99+ldWpB24YwIMtUh/Ew3tUA==
-X-Google-Smtp-Source: AGHT+IE0pgmpJ7iYZdsbDD5GRPXRpzmD9Mb8iJmN9X7Z8Y97UKXrjLpuHa7ASqYiLMkPwrW1/Ylm4w==
-X-Received: by 2002:a05:6214:212b:b0:6e8:f470:2b0d with SMTP id 6a1803df08f44-6eae7a3f38cmr22090436d6.19.1741900030398;
-        Thu, 13 Mar 2025 14:07:10 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6eade235f9bsm14078246d6.29.2025.03.13.14.07.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 14:07:08 -0700 (PDT)
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	Zi Yan <ziy@nvidia.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] mm: page_alloc: defrag_mode kswapd/kcompactd watermarks
-Date: Thu, 13 Mar 2025 17:05:36 -0400
-Message-ID: <20250313210647.1314586-6-hannes@cmpxchg.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250313210647.1314586-1-hannes@cmpxchg.org>
-References: <20250313210647.1314586-1-hannes@cmpxchg.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C581D63C0;
+	Thu, 13 Mar 2025 21:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741900221; cv=fail; b=lXCK5nCWwHsdsIH+rZzydthT75puMaOPDsAOPWyTG7eT4dk1mmNT0GELsEe+/Ay1noKJV8SckmtakvPnWRrq1knnabG1jxaR8x1yAMRoNmrE75ss2DIyVkTPzQ/mzXyojrYk1FDUtAycr8hUdD+8tLBzWizSuEwApPqRsbf3yrc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741900221; c=relaxed/simple;
+	bh=DgrFpcxtnk79hkhZzOwuhSUsd8sSWyfhwC+GIOPZ77E=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=j7bFkvSXtEO6/FBw7QID7+ycgkjFqM1Kd9bJ57H5X/1RDVaTfpxYROKj+YkH0Ws4H0IMTJhemduqoXmsI8fOY150CPo4FqS62I4h5pC7EKejqG/q+ws9Z1vTa7vFY93z0p1Rmr1TrdREuLBE7Los6+sI0SrH2rsXGur2pGvCvWc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AMKGfFB6; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741900220; x=1773436220;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=DgrFpcxtnk79hkhZzOwuhSUsd8sSWyfhwC+GIOPZ77E=;
+  b=AMKGfFB66nBKoEPc+86OxqN/pPPx5RVjHes3iJL50MhENCUrFVDTDl+M
+   NDI8UHkpQ8Nc8JvvgfwlVHz4x3JvuffU1wQ2ZLpMJL7bTNj10X3yF8ymn
+   l8m8nU1fsSdn4/5+l2gcBXk8U8pEOLl43179kecF54dFaPKl1YFs0+gGr
+   9o8hR+1QkCmmgmipvxtnQuorFmt9l08VFUx1gxYXceBe96M2hTQZnirP9
+   7+HcPAGZLTna9JR/W9Emykw3CKt7MCVrAt83mDQkfWVYJDrg0bdSUieGV
+   4IowRU0jYNJmeayRviaYcU1NHjMD9lCiXZo7s1o3hwWL4HGR/KXisfbrT
+   A==;
+X-CSE-ConnectionGUID: eznO+EYZQTWB6ds6b/BrIQ==
+X-CSE-MsgGUID: Lp8p3MJARaeE30dW+ZM59g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="42766442"
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="42766442"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 14:10:05 -0700
+X-CSE-ConnectionGUID: 7Jk+EKlTTCud49Jq2CsC/Q==
+X-CSE-MsgGUID: lOS3jH3ORRGuIfyct6B2Ng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="120860987"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 14:10:03 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 13 Mar 2025 14:10:02 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 13 Mar 2025 14:10:02 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.169)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 13 Mar 2025 14:10:00 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=C/Z1W1z8ZlHGyQDvBnb8vkT/bDs2mr20Jr4z2+zsHsR7OUVF3YHmn5rQsSqQVYml4B+dS1dealJlkTAQ649p32G3ww+hnBzHeQDuJtpF55dh1HiKfsuvt9uu8yE5+UGV+xjWH+jIpVPA7c4uhQkK4ty95RrN3TtYVrDDqiO8Qhbx0k4QhESwDtBV0PxM4x8T2N+8i3+3qfaGmWrQxt7ipbYuph67USqZJpgucUwABg9vffgNwUiGk/utaBf925sfE0Ds/OB3Xeuo6rTT3ip+yNQJP7AP39lyO8ZdsHdqBsEwo9lySlwKyZfQ9VktMyerRhBG/oF+Mf9ArYQ/PD/ZXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E45ReUDgJlcJOBMmUBMkjqsOf7Q6u6VUkzeBkCoDTsI=;
+ b=YU2aqC8SEyrNocIxqrsRl6uLJKNvf5zuRGIDhW8J91qrNgHOhmV3OXVt2eqcYMv/Yde8RDfjVbHDfIwtdhzsUMMgBuY7NI7icvPvv12LDw5x00kTac6CC9s1mTRkWC98Y1ajqzEk0jAejI/EJYlCngxu6q0DOWmwvgw9xuHPTfrjqOY7s1oufzsFwGVNfUmftGjLUMZCJVfiHtMBqLPDZHDeULq8LtlDerJ52P53+M9sQQM1KZ5Ryq4HApixdJaOa0O9h/u88Qr4wCw0DslrJwXy5BNw48QLaBOpni3WOonLLTOQ7Nlm9a6nbHPCD96cyka4AzI8UJg2q4kPvkPi0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by SJ0PR11MB4992.namprd11.prod.outlook.com (2603:10b6:a03:2d4::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.28; Thu, 13 Mar
+ 2025 21:09:26 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8%4]) with mapi id 15.20.8511.026; Thu, 13 Mar 2025
+ 21:09:26 +0000
+Message-ID: <b2b632cc-ca69-497f-9cf9-782bd02cac79@intel.com>
+Date: Thu, 13 Mar 2025 14:09:24 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 01/16] bitops: Change parity8() return type to bool
+To: "H. Peter Anvin" <hpa@zytor.com>, Yury Norov <yury.norov@gmail.com>
+CC: David Laight <david.laight.linux@gmail.com>, Jiri Slaby
+	<jirislaby@kernel.org>, Ingo Molnar <mingo@kernel.org>, Kuan-Wei Chiu
+	<visitorckw@gmail.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <x86@kernel.org>,
+	<jk@ozlabs.org>, <joel@jms.id.au>, <eajames@linux.ibm.com>,
+	<andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+	<dmitry.torokhov@gmail.com>, <mchehab@kernel.org>, <awalls@md.metrocast.net>,
+	<hverkuil@xs4all.nl>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
+	<vigneshr@ti.com>, <louis.peens@corigine.com>, <andrew+netdev@lunn.ch>,
+	<davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+	<parthiban.veerasooran@microchip.com>, <arend.vanspriel@broadcom.com>,
+	<johannes@sipsolutions.net>, <gregkh@linuxfoundation.org>,
+	<akpm@linux-foundation.org>, <alistair@popple.id.au>,
+	<linux@rasmusvillemoes.dk>, <Laurent.pinchart@ideasonboard.com>,
+	<jonas@kwiboo.se>, <jernej.skrabec@gmail.com>, <kuba@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsi@lists.ozlabs.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-input@vger.kernel.org>,
+	<linux-media@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+	<oss-drivers@corigine.com>, <netdev@vger.kernel.org>,
+	<linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>,
+	<brcm80211-dev-list.pdl@broadcom.com>, <linux-serial@vger.kernel.org>,
+	<bpf@vger.kernel.org>, <jserv@ccns.ncku.edu.tw>, Yu-Chun Lin
+	<eleanor15x@gmail.com>
+References: <20250306162541.2633025-1-visitorckw@gmail.com>
+ <20250306162541.2633025-2-visitorckw@gmail.com>
+ <9d4b77da-18c5-4551-ae94-a2b9fe78489a@kernel.org>
+ <Z8ra0s9uRoS35brb@gmail.com>
+ <a4040c78-8765-425e-a44e-c374dfc02a9c@kernel.org>
+ <20250307193643.28065d2d@pumpkin>
+ <cbb26a91-807b-4227-be81-8114e9ea72cb@intel.com>
+ <0F794C6F-32A9-4F34-9516-CEE24EA4BC49@zytor.com> <Z9MGxknjluvbX19w@thinkpad>
+ <795281B1-9B8A-477F-8012-DECD14CB53E5@zytor.com>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+In-Reply-To: <795281B1-9B8A-477F-8012-DECD14CB53E5@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR04CA0182.namprd04.prod.outlook.com
+ (2603:10b6:303:86::7) To CO1PR11MB5089.namprd11.prod.outlook.com
+ (2603:10b6:303:9b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|SJ0PR11MB4992:EE_
+X-MS-Office365-Filtering-Correlation-Id: 79b10f16-aaa7-4494-8167-08dd6273564e
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?b2xMdC9xZ0lWeDl5dW5sOVZMK1ovSFRPeUpnaUZnd3g2R1c0Wkcza1RjZHQw?=
+ =?utf-8?B?WCtSWnhUMldGN21SR1pmc2xDc0lidXpEZnpzRU1JYkNtbFFNYnVwM1V3R1Az?=
+ =?utf-8?B?bnVzb0EwdklhaVpwd0k0OVI2MVFCQjlKdGIzbG5zeEhURGFvY2ZmQkk4L3Fu?=
+ =?utf-8?B?c2Z4WEdSck4xR04veGdkVFpQNE1NVThaK0Q5WFpwRktFMVJHYmgzYWNQaGRk?=
+ =?utf-8?B?akxLTXJJQmFpOEZhRTBRS3BaYnlMRE1PcExwdWwxTjFtZ1VadkZSRVZYZ0FE?=
+ =?utf-8?B?NWVnakJJakoybGVJR0doQXZRT0loNnR1TG5kRHdRNGJscklwRXI1dnkrVXBk?=
+ =?utf-8?B?bUIrTGFhcCtseEZzQVVtQkYrRTl2bnlqdXF6V2szMVdhQS80M09XeVhTb2Fm?=
+ =?utf-8?B?QXhheVZyc1Ywd2ZqVlhKNUhFTjNpNWYwcnBUVHhibFQ2Sk00aTFmV2tRYTg0?=
+ =?utf-8?B?YmM4Uk1DVFJlMkhoNm1BOHprcmNXL0FZcEtKbytDT1Bzc1JpU3ZsZGhEb1pP?=
+ =?utf-8?B?TENreWpYN0Z4cjNKc2cxRFR5TzBtTHNFVENEK283NnMyMFMzZG9YaHBJL3VH?=
+ =?utf-8?B?SWZseUFXZEpkV3NBOE9yV1lncDRLNHpvdE1wWHRPZmZSR25IeCs1di81S1VF?=
+ =?utf-8?B?ZGIzMVErVU02TXVEVjNrelNnVnd6NTRlYzVwSU10RmVvaHV2RGlzcFFONjQz?=
+ =?utf-8?B?T1EwUzRmTjVYdGdxUTBESnBEaUlzN2tldEViVnM3dW5lcXVkZFNQS3lSdzZa?=
+ =?utf-8?B?ZEtUcmY0TzhOaFpmVFk2NERFQmluV1VqSUFPSktmQVc2S0lPbGxwK210Q3pG?=
+ =?utf-8?B?cXozQnpacExxZ0pwSUV0SGpablJ3NitCV1Npc0gvazlIV01qSnFHbEVzTHZP?=
+ =?utf-8?B?eFRsRUUvM1JJZVBTeHhJRHdiMURJL1hLTTNuVHBFZnd4NE9qWlRES2xNSHZo?=
+ =?utf-8?B?UE0xaEpidXRTV0pDc09uNUk3SWxsS1kzNDRGV2h1Um92eUduSGZzbFArOVhT?=
+ =?utf-8?B?NTF5emRYVStZL0xFd0JVN0ZiMkhlWEFSWHNOWG9ENmZhNTY1Zm13ZjcrMEJL?=
+ =?utf-8?B?enFJNDBVNzAyUkRvTWZ2U1NXNnZWNDFZSENjYWhQZEhuazhNcVJDL2RkaC9V?=
+ =?utf-8?B?V2VyNzFBQmQzVy9tUWdiSTBsc2h1M0JISTFlSTArSnFxK0VHcm81R3hNNmxK?=
+ =?utf-8?B?VUc1bXlyZ2Foa2YvVlhUYTh1Y05jT01CZHdkR0plQTBHVDNGbjR2LzY1QlVm?=
+ =?utf-8?B?dUgzYkYzSGRKNXJFYTRNWmE3cE9VcEFIOFZMNmpnUVhOc2Q1azR5ZlZPOWNJ?=
+ =?utf-8?B?dUVuWVJqRUI0dDNOamhqcXN4T2QvMkFDNjRBSXNxbzJsK2NaSjZDVGU3ODZR?=
+ =?utf-8?B?eDMxRE8zV2FrU2VqY2h1UXljeU0yUlFBSkQxZjJyNmtiODhXdkFPOGlPTGtq?=
+ =?utf-8?B?RE44QTQyeWpZVDFtN3lmSjFsUHdhakxqeDlaL1V0THhmSlVBMjVNb1lIaGtM?=
+ =?utf-8?B?QUIwUnFHeDIvYjlIY3V3QUVrdm1DeWloMmdhRXlCcDQxSk5OM2xzanlxWW5C?=
+ =?utf-8?B?UFJVYUdrZTlmNjV6REo5ciszZTVHR1ZMc2U0MjM4d2dDWC9WUGdLR3J3Rndm?=
+ =?utf-8?B?dE4rRjIzWnFNNWoyM2RCc0dvakVuN2pjQUc3dXVzSm5tOVhzQ0NlTjM1eThu?=
+ =?utf-8?B?OTF1dlJ5MjFKMXpveTBvYzFRQnROd1UvZW5zZ3RqZERzU2pHSFRvT0VUT1NX?=
+ =?utf-8?B?aXltcE5rWmNkZDNSQ09TT29ncHFtaEt3c1RIZ0R2dTVRc25GcEtlMEFTWWR5?=
+ =?utf-8?B?akRCVlgwK1hzaktuK2d4YnJha1h4dzRLdW9JeDlqQ2RiL1hVMGNqdDQxNVZP?=
+ =?utf-8?Q?6djIK3dZhi617?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UmdhTlR2RzdrbXhDcHArRmdPenZqeEhiV2s2YnY0Y01kS3VuRERPdkYyMzhR?=
+ =?utf-8?B?dzd1VlFZYjM1TUVwRGFGcHZmTXF6UkEwWDdSQm1mSGNZQk5NZVhlQWdQRzNI?=
+ =?utf-8?B?VXhPa2tQTnIyMk5EbGI4NFUyei90UzBjSVdzNW9mc0NhNU5RQ1JuREk0Zjc5?=
+ =?utf-8?B?RjBMU2RNeTlVaGxQQkl2OWhNUXBwRFZ0UGYxVGovRWRyQXFaby9EazFNMFVl?=
+ =?utf-8?B?TGRHUFhuUjg5MUJCalJnc2xaMXFBOVJBcGdaQWtWNFBvZGRZOWk1WHpzQWVs?=
+ =?utf-8?B?eStYVmhQSDVxSnhyVCtwUXRwb05yRFJkSnNVR0JGd1ZHZTlCL0dFYUJGK3Zv?=
+ =?utf-8?B?UmowUm81TVNoZFFSWnFIelRORERuWjU1VnkzL2hmeUZuSCtxYXhkNnphSW9H?=
+ =?utf-8?B?VUdUMDdnVTFBeW1WajlVZ2xDR0ttK2FOU1ZQVzQraHNrMlUybHl1VnlTVlh0?=
+ =?utf-8?B?cDU5ZlhiM0N0VnZwSUtRMWJJdXduVFJpQnRUa1ROU3F4YXNselIycHM0MGF1?=
+ =?utf-8?B?RkNtUmx4aE5SUFNuRW9wcjhqdUdyT3g1T2tFUWhYc1JxK0tyRm5nZmJQYXVm?=
+ =?utf-8?B?cEpoamRsZ1hhbCt2Z2ErbnhpdU83L0Jrb2hsMGNGL0RobGlyNzl3UktaWTJT?=
+ =?utf-8?B?Wlp6SGdhWit5eW1PZnNqczlubWpVN3pORWllSDVzVDlmbVNneDd5MG9jTGVT?=
+ =?utf-8?B?bndWS2NveU9FcGUzY05aNlQyV1k3U2RuQ2xETStNUmY3SnJXWEk4S3p4enhB?=
+ =?utf-8?B?b1Z6d0ZLczJPN1NUVmJwZGJDV1ZFWS8xM09xSitPUTdoRklneXU0SHloSkpT?=
+ =?utf-8?B?N2wrYVNaTWFSV1l5c1Y3YzVZRC9lYkJ2K0VLa0pldTRPTGgrZlBIY2laQzYr?=
+ =?utf-8?B?Yno1UW1acXI5eHJLYW4wTlRsTGVBMnp2OTlOWVdBSVdKbjVvUlZ1NHRzZ0dx?=
+ =?utf-8?B?aGh2VzRtY1MvNDNhclhTdXI0ZGdzTXlWbFp3THczdWg2MDl3bFZzQ1I5YkY0?=
+ =?utf-8?B?L3U2ODNiYXQ5OGE3aWRhMUxBMVEwaGVXcThOS2JNeFZJTExma2NXK2lvbkQw?=
+ =?utf-8?B?YzRBazljenZXdURXL2NVU3YrY3FJWWdpc2ZMNzJTSGJCSzJvOEVqbll5bWJY?=
+ =?utf-8?B?WUV3NmNPVThZUWU1SUdxN3hNY01jTnhDV2dMTXoxVGwwL0FCRkk3ZlBmUUhr?=
+ =?utf-8?B?QmdRT1RhaFpCa1VaZkFxbVlwbFVnRlF2Qy9pbHJiR0ZYaHVaZERhNi93Mlg1?=
+ =?utf-8?B?dlJWZGJQcjY1M1AzakJWUGJrRElWamJCRVdKcyt5c0F1R2dVWGVHRlRiekNy?=
+ =?utf-8?B?aXRmMlViUUNMWk4vdGtrQ203d3JaRXd5Q3lkaEI1RFI4aFJLazM5Um5XaFly?=
+ =?utf-8?B?dE8xaUhmMVpoS0xIcGpQYkxOU1pjTys5TVVUNEtYRWFiNitkNDNHWkIyc0RF?=
+ =?utf-8?B?SkZNakhRdU94RE5EaGp3Y3JaZWE0d29VTmUyUktFUEhHOXg1TUNuVmN4TTAv?=
+ =?utf-8?B?UzJBSmY4emFrVkxQUWZpMTNmeHVDV2dWSVk5YUVMN0tENVVQL3grNndwelkr?=
+ =?utf-8?B?Z1R3b0hibkJ4V0laNXlXczM5NnQyWko2bU92WkZTaGVBM25wZk9wbFNpc25R?=
+ =?utf-8?B?MkZrdWpIbjFDRDNjaSt0clRtR21vSXpHdy85NnAzMUhlWWtncVJ3NjV2UGdT?=
+ =?utf-8?B?enBvRnhJYW1hbTRrYUk4YVV3M3lTUmdERDZwRFFxaEg0TW5wdm15ZVIvMnIy?=
+ =?utf-8?B?cU5rWDZBUnp0ZHlUcThPdFlZMlN3MWRDVmdYRy9ocVhQeVJRZXhkTFRjcjBa?=
+ =?utf-8?B?UzF2TDBRUmF4bHh5Zi9ldS9HT3ZKMldBT0JOTVBKb09yYUJ2T0MrcVhxVE5C?=
+ =?utf-8?B?TWp6cjNkd2FvWGVVZTNtdTF6L2tyNC9YZThjWTFQT0pMU1ZscnJCQ0tCQVhV?=
+ =?utf-8?B?d2dMQW9YMVFLejBjQjZhNld0U2dlUXBId2F1dkFoTFFYMmRsdEc3M0NiZ3pj?=
+ =?utf-8?B?MWh4VTRvWGFYYlg5VUZ2UnNzK29CNHBxdTRrdVN3THkyMjYwaUtPOTVVcjBC?=
+ =?utf-8?B?WTdzdGhsOGlFNytwby9keE1XbUdUK2NzVlZDeTlHRGFvSnR5N0NrYk03eHl2?=
+ =?utf-8?B?aHRORXpGUVN2ZzNZelA4bFNuaHJOQnYzWU5EVzNoRDRhZzNDQVRxeGpZeWls?=
+ =?utf-8?B?TGc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 79b10f16-aaa7-4494-8167-08dd6273564e
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 21:09:26.6569
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: l05o3X0cy9v7nJGc+IVjRhjuA1RbK8izJdn9E++fY2m/U5w6Dw8hyFeURYozIl3EdMxdxlYgyXDkRfNbnj4ipUCFlhAAyH/1uuo9rOvl8GA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4992
+X-OriginatorOrg: intel.com
 
-The previous patch added pageblock_order reclaim to kswapd/kcompactd,
-which helps, but produces only one block at a time. Allocation stalls
-and THP failure rates are still higher than they could be.
 
-To adequately reflect ALLOC_NOFRAGMENT demand for pageblocks, change
-the watermarking for kswapd & kcompactd: instead of targeting the high
-watermark in order-0 pages and checking for one suitable block, simply
-require that the high watermark is entirely met in pageblocks.
 
-To this end, track the number of free pages within contiguous
-pageblocks, then change pgdat_balanced() and compact_finished() to
-check watermarks against this new value.
+On 3/13/2025 9:36 AM, H. Peter Anvin wrote:
+> On March 13, 2025 9:24:38 AM PDT, Yury Norov <yury.norov@gmail.com> wrote:
+>> On Wed, Mar 12, 2025 at 05:09:16PM -0700, H. Peter Anvin wrote:
+>>> On March 12, 2025 4:56:31 PM PDT, Jacob Keller <jacob.e.keller@intel.com> wrote:
+>>
+>> [...]
+>>
+>>>> This is really a question of whether you expect odd or even parity as
+>>>> the "true" value. I think that would depend on context, and we may not
+>>>> reach a good consensus.
+>>>>
+>>>> I do agree that my brain would jump to "true is even, false is odd".
+>>>> However, I also agree returning the value as 0 for even and 1 for odd
+>>>> kind of made sense before, and updating this to be a bool and then
+>>>> requiring to switch all the callers is a bit obnoxious...
+>>>
+>>> Odd = 1 = true is the only same definition. It is a bitwise XOR, or sum mod 1.
+>>
+>> The x86 implementation will be "popcnt(val) & 1", right? So if we
+>> choose to go with odd == false, we'll have to add an extra negation.
+>> So because it's a purely conventional thing, let's just pick a simpler
+>> one?
+>>
+>> Compiler's builtin parity() returns 1 for odd.
+>>
+>> Thanks,
+>> Yury
+> 
+> The x86 implementation, no, but there will be plenty of others having that exact definition.
 
-This further reduces THP latencies and allocation stalls, and improves
-THP success rates against the previous patch:
+Makes sense to stick with that existing convention then. Enough to
+convince me.
 
-                                       DEFRAGMODE-ASYNC DEFRAGMODE-ASYNC-WMARKS
-Hugealloc Time mean               34300.36 (    +0.00%)   28904.00 (   -15.73%)
-Hugealloc Time stddev             36390.42 (    +0.00%)   33464.37 (    -8.04%)
-Kbuild Real time                    196.13 (    +0.00%)     196.59 (    +0.23%)
-Kbuild User time                   1234.74 (    +0.00%)    1231.67 (    -0.25%)
-Kbuild System time                   62.62 (    +0.00%)      59.10 (    -5.54%)
-THP fault alloc                   57054.53 (    +0.00%)   63223.67 (   +10.81%)
-THP fault fallback                11581.40 (    +0.00%)    5412.47 (   -53.26%)
-Direct compact fail                 107.80 (    +0.00%)      59.07 (   -44.79%)
-Direct compact success                4.53 (    +0.00%)       2.80 (   -31.33%)
-Direct compact success rate %         3.20 (    +0.00%)       3.99 (   +18.66%)
-Compact daemon scanned migrate  5461033.93 (    +0.00%) 2267500.33 (   -58.48%)
-Compact daemon scanned free     5824897.93 (    +0.00%) 2339773.00 (   -59.83%)
-Compact direct scanned migrate    58336.93 (    +0.00%)   47659.93 (   -18.30%)
-Compact direct scanned free       32791.87 (    +0.00%)   40729.67 (   +24.21%)
-Compact total migrate scanned   5519370.87 (    +0.00%) 2315160.27 (   -58.05%)
-Compact total free scanned      5857689.80 (    +0.00%) 2380502.67 (   -59.36%)
-Alloc stall                        2424.60 (    +0.00%)     638.87 (   -73.62%)
-Pages kswapd scanned            2657018.33 (    +0.00%) 4002186.33 (   +50.63%)
-Pages kswapd reclaimed           559583.07 (    +0.00%)  718577.80 (   +28.41%)
-Pages direct scanned             722094.07 (    +0.00%)  355172.73 (   -50.81%)
-Pages direct reclaimed           107257.80 (    +0.00%)   31162.80 (   -70.95%)
-Pages total scanned             3379112.40 (    +0.00%) 4357359.07 (   +28.95%)
-Pages total reclaimed            666840.87 (    +0.00%)  749740.60 (   +12.43%)
-Swap out                          77238.20 (    +0.00%)  110084.33 (   +42.53%)
-Swap in                           11712.80 (    +0.00%)   24457.00 (  +108.80%)
-File refaults                    143438.80 (    +0.00%)  188226.93 (   +31.22%)
-
-Also of note is that compaction work overall is reduced. The reason
-for this is that when free pageblocks are more readily available,
-allocations are also much more likely to get physically placed in LRU
-order, instead of being forced to scavenge free space here and there.
-This means that reclaim by itself has better chances of freeing up
-whole blocks, and the system relies less on compaction.
-
-Comparing all changes to the vanilla kernel:
-
-                                                VANILLA DEFRAGMODE-ASYNC-WMARKS
-Hugealloc Time mean               52739.45 (    +0.00%)   28904.00 (   -45.19%)
-Hugealloc Time stddev             56541.26 (    +0.00%)   33464.37 (   -40.81%)
-Kbuild Real time                    197.47 (    +0.00%)     196.59 (    -0.44%)
-Kbuild User time                   1240.49 (    +0.00%)    1231.67 (    -0.71%)
-Kbuild System time                   70.08 (    +0.00%)      59.10 (   -15.45%)
-THP fault alloc                   46727.07 (    +0.00%)   63223.67 (   +35.30%)
-THP fault fallback                21910.60 (    +0.00%)    5412.47 (   -75.29%)
-Direct compact fail                 195.80 (    +0.00%)      59.07 (   -69.48%)
-Direct compact success                7.93 (    +0.00%)       2.80 (   -57.46%)
-Direct compact success rate %         3.51 (    +0.00%)       3.99 (   +10.49%)
-Compact daemon scanned migrate  3369601.27 (    +0.00%) 2267500.33 (   -32.71%)
-Compact daemon scanned free     5075474.47 (    +0.00%) 2339773.00 (   -53.90%)
-Compact direct scanned migrate   161787.27 (    +0.00%)   47659.93 (   -70.54%)
-Compact direct scanned free      163467.53 (    +0.00%)   40729.67 (   -75.08%)
-Compact total migrate scanned   3531388.53 (    +0.00%) 2315160.27 (   -34.44%)
-Compact total free scanned      5238942.00 (    +0.00%) 2380502.67 (   -54.56%)
-Alloc stall                        2371.07 (    +0.00%)     638.87 (   -73.02%)
-Pages kswapd scanned            2160926.73 (    +0.00%) 4002186.33 (   +85.21%)
-Pages kswapd reclaimed           533191.07 (    +0.00%)  718577.80 (   +34.77%)
-Pages direct scanned             400450.33 (    +0.00%)  355172.73 (   -11.31%)
-Pages direct reclaimed            94441.73 (    +0.00%)   31162.80 (   -67.00%)
-Pages total scanned             2561377.07 (    +0.00%) 4357359.07 (   +70.12%)
-Pages total reclaimed            627632.80 (    +0.00%)  749740.60 (   +19.46%)
-Swap out                          47959.53 (    +0.00%)  110084.33 (  +129.53%)
-Swap in                            7276.00 (    +0.00%)   24457.00 (  +236.10%)
-File refaults                    138043.00 (    +0.00%)  188226.93 (   +36.35%)
-
-THP allocation latencies and %sys time are down dramatically.
-
-THP allocation failures are down from nearly 50% to 8.5%. And to
-recall previous data points, the success rates are steady and reliable
-without the cumulative deterioration of fragmentation events.
-
-Compaction work is down overall. Direct compaction work especially is
-drastically reduced. As an aside, its success rate of 4% indicates
-there is room for improvement. For now it's good to rely on it less.
-
-Reclaim work is up overall, however direct reclaim work is down. Part
-of the increase can be attributed to a higher use of THPs, which due
-to internal fragmentation increase the memory footprint. This is not
-necessarily an unexpected side-effect for users of THP.
-
-However, taken both points together, there may well be some
-opportunities for fine tuning in the reclaim/compaction coordination.
-
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
----
- include/linux/mmzone.h |  1 +
- mm/compaction.c        | 37 ++++++++++++++++++++++++++++++-------
- mm/internal.h          |  1 +
- mm/page_alloc.c        | 29 +++++++++++++++++++++++------
- mm/vmscan.c            | 15 ++++++++++++++-
- mm/vmstat.c            |  1 +
- 6 files changed, 70 insertions(+), 14 deletions(-)
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index dbb0ad69e17f..37c29f3fbca8 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -138,6 +138,7 @@ enum numa_stat_item {
- enum zone_stat_item {
- 	/* First 128 byte cacheline (assuming 64 bit words) */
- 	NR_FREE_PAGES,
-+	NR_FREE_PAGES_BLOCKS,
- 	NR_ZONE_LRU_BASE, /* Used only for compaction and reclaim retry */
- 	NR_ZONE_INACTIVE_ANON = NR_ZONE_LRU_BASE,
- 	NR_ZONE_ACTIVE_ANON,
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 036353ef1878..4a2ccb82d0b2 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -2329,6 +2329,22 @@ static enum compact_result __compact_finished(struct compact_control *cc)
- 	if (!pageblock_aligned(cc->migrate_pfn))
- 		return COMPACT_CONTINUE;
- 
-+	/*
-+	 * When defrag_mode is enabled, make kcompactd target
-+	 * watermarks in whole pageblocks. Because they can be stolen
-+	 * without polluting, no further fallback checks are needed.
-+	 */
-+	if (defrag_mode && !cc->direct_compaction) {
-+		if (__zone_watermark_ok(cc->zone, cc->order,
-+					high_wmark_pages(cc->zone),
-+					cc->highest_zoneidx, cc->alloc_flags,
-+					zone_page_state(cc->zone,
-+							NR_FREE_PAGES_BLOCKS)))
-+			return COMPACT_SUCCESS;
-+
-+		return COMPACT_CONTINUE;
-+	}
-+
- 	/* Direct compactor: Is a suitable page free? */
- 	ret = COMPACT_NO_SUITABLE_PAGE;
- 	for (order = cc->order; order < NR_PAGE_ORDERS; order++) {
-@@ -2496,13 +2512,19 @@ bool compaction_zonelist_suitable(struct alloc_context *ac, int order,
- static enum compact_result
- compaction_suit_allocation_order(struct zone *zone, unsigned int order,
- 				 int highest_zoneidx, unsigned int alloc_flags,
--				 bool async)
-+				 bool async, bool kcompactd)
- {
-+	unsigned long free_pages;
- 	unsigned long watermark;
- 
-+	if (kcompactd && defrag_mode)
-+		free_pages = zone_page_state(zone, NR_FREE_PAGES_BLOCKS);
-+	else
-+		free_pages = zone_page_state(zone, NR_FREE_PAGES);
-+
- 	watermark = wmark_pages(zone, alloc_flags & ALLOC_WMARK_MASK);
--	if (zone_watermark_ok(zone, order, watermark, highest_zoneidx,
--			      alloc_flags))
-+	if (__zone_watermark_ok(zone, order, watermark, highest_zoneidx,
-+				alloc_flags, free_pages))
- 		return COMPACT_SUCCESS;
- 
- 	/*
-@@ -2558,7 +2580,8 @@ compact_zone(struct compact_control *cc, struct capture_control *capc)
- 		ret = compaction_suit_allocation_order(cc->zone, cc->order,
- 						       cc->highest_zoneidx,
- 						       cc->alloc_flags,
--						       cc->mode == MIGRATE_ASYNC);
-+						       cc->mode == MIGRATE_ASYNC,
-+						       !cc->direct_compaction);
- 		if (ret != COMPACT_CONTINUE)
- 			return ret;
- 	}
-@@ -3062,7 +3085,7 @@ static bool kcompactd_node_suitable(pg_data_t *pgdat)
- 		ret = compaction_suit_allocation_order(zone,
- 				pgdat->kcompactd_max_order,
- 				highest_zoneidx, ALLOC_WMARK_MIN,
--				false);
-+				false, true);
- 		if (ret == COMPACT_CONTINUE)
- 			return true;
- 	}
-@@ -3085,7 +3108,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
- 		.mode = MIGRATE_SYNC_LIGHT,
- 		.ignore_skip_hint = false,
- 		.gfp_mask = GFP_KERNEL,
--		.alloc_flags = ALLOC_WMARK_MIN,
-+		.alloc_flags = ALLOC_WMARK_HIGH,
- 	};
- 	enum compact_result ret;
- 
-@@ -3105,7 +3128,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
- 
- 		ret = compaction_suit_allocation_order(zone,
- 				cc.order, zoneid, cc.alloc_flags,
--				false);
-+				false, true);
- 		if (ret != COMPACT_CONTINUE)
- 			continue;
- 
-diff --git a/mm/internal.h b/mm/internal.h
-index 2f52a65272c1..286520a424fe 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -536,6 +536,7 @@ extern char * const zone_names[MAX_NR_ZONES];
- DECLARE_STATIC_KEY_MAYBE(CONFIG_DEBUG_VM, check_pages_enabled);
- 
- extern int min_free_kbytes;
-+extern int defrag_mode;
- 
- void setup_per_zone_wmarks(void);
- void calculate_min_free_kbytes(void);
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 4a0d8f871e56..c33c08e278f9 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -273,7 +273,7 @@ int min_free_kbytes = 1024;
- int user_min_free_kbytes = -1;
- static int watermark_boost_factor __read_mostly = 15000;
- static int watermark_scale_factor = 10;
--static int defrag_mode;
-+int defrag_mode;
- 
- /* movable_zone is the "real" zone pages in ZONE_MOVABLE are taken from */
- int movable_zone;
-@@ -660,16 +660,20 @@ static inline void __add_to_free_list(struct page *page, struct zone *zone,
- 				      bool tail)
- {
- 	struct free_area *area = &zone->free_area[order];
-+	int nr_pages = 1 << order;
- 
- 	VM_WARN_ONCE(get_pageblock_migratetype(page) != migratetype,
- 		     "page type is %lu, passed migratetype is %d (nr=%d)\n",
--		     get_pageblock_migratetype(page), migratetype, 1 << order);
-+		     get_pageblock_migratetype(page), migratetype, nr_pages);
- 
- 	if (tail)
- 		list_add_tail(&page->buddy_list, &area->free_list[migratetype]);
- 	else
- 		list_add(&page->buddy_list, &area->free_list[migratetype]);
- 	area->nr_free++;
-+
-+	if (order >= pageblock_order && !is_migrate_isolate(migratetype))
-+		__mod_zone_page_state(zone, NR_FREE_PAGES_BLOCKS, nr_pages);
- }
- 
- /*
-@@ -681,24 +685,34 @@ static inline void move_to_free_list(struct page *page, struct zone *zone,
- 				     unsigned int order, int old_mt, int new_mt)
- {
- 	struct free_area *area = &zone->free_area[order];
-+	int nr_pages = 1 << order;
- 
- 	/* Free page moving can fail, so it happens before the type update */
- 	VM_WARN_ONCE(get_pageblock_migratetype(page) != old_mt,
- 		     "page type is %lu, passed migratetype is %d (nr=%d)\n",
--		     get_pageblock_migratetype(page), old_mt, 1 << order);
-+		     get_pageblock_migratetype(page), old_mt, nr_pages);
- 
- 	list_move_tail(&page->buddy_list, &area->free_list[new_mt]);
- 
--	account_freepages(zone, -(1 << order), old_mt);
--	account_freepages(zone, 1 << order, new_mt);
-+	account_freepages(zone, -nr_pages, old_mt);
-+	account_freepages(zone, nr_pages, new_mt);
-+
-+	if (order >= pageblock_order &&
-+	    is_migrate_isolate(old_mt) != is_migrate_isolate(new_mt)) {
-+		if (!is_migrate_isolate(old_mt))
-+			nr_pages = -nr_pages;
-+		__mod_zone_page_state(zone, NR_FREE_PAGES_BLOCKS, nr_pages);
-+	}
- }
- 
- static inline void __del_page_from_free_list(struct page *page, struct zone *zone,
- 					     unsigned int order, int migratetype)
- {
-+	int nr_pages = 1 << order;
-+
-         VM_WARN_ONCE(get_pageblock_migratetype(page) != migratetype,
- 		     "page type is %lu, passed migratetype is %d (nr=%d)\n",
--		     get_pageblock_migratetype(page), migratetype, 1 << order);
-+		     get_pageblock_migratetype(page), migratetype, nr_pages);
- 
- 	/* clear reported state and update reported page count */
- 	if (page_reported(page))
-@@ -708,6 +722,9 @@ static inline void __del_page_from_free_list(struct page *page, struct zone *zon
- 	__ClearPageBuddy(page);
- 	set_page_private(page, 0);
- 	zone->free_area[order].nr_free--;
-+
-+	if (order >= pageblock_order && !is_migrate_isolate(migratetype))
-+		__mod_zone_page_state(zone, NR_FREE_PAGES_BLOCKS, -nr_pages);
- }
- 
- static inline void del_page_from_free_list(struct page *page, struct zone *zone,
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 3370bdca6868..b5c7dfc2b189 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -6724,11 +6724,24 @@ static bool pgdat_balanced(pg_data_t *pgdat, int order, int highest_zoneidx)
- 	 * meet watermarks.
- 	 */
- 	for_each_managed_zone_pgdat(zone, pgdat, i, highest_zoneidx) {
-+		unsigned long free_pages;
-+
- 		if (sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING)
- 			mark = promo_wmark_pages(zone);
- 		else
- 			mark = high_wmark_pages(zone);
--		if (zone_watermark_ok_safe(zone, order, mark, highest_zoneidx))
-+
-+		/*
-+		 * In defrag_mode, watermarks must be met in whole
-+		 * blocks to avoid polluting allocator fallbacks.
-+		 */
-+		if (defrag_mode)
-+			free_pages = zone_page_state(zone, NR_FREE_PAGES_BLOCKS);
-+		else
-+			free_pages = zone_page_state(zone, NR_FREE_PAGES);
-+
-+		if (__zone_watermark_ok(zone, order, mark, highest_zoneidx,
-+					0, free_pages))
- 			return true;
- 	}
- 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 16bfe1c694dd..ed49a86348f7 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1190,6 +1190,7 @@ int fragmentation_index(struct zone *zone, unsigned int order)
- const char * const vmstat_text[] = {
- 	/* enum zone_stat_item counters */
- 	"nr_free_pages",
-+	"nr_free_pages_blocks",
- 	"nr_zone_inactive_anon",
- 	"nr_zone_active_anon",
- 	"nr_zone_inactive_file",
--- 
-2.48.1
-
+Thanks,
+Jake
 
