@@ -1,244 +1,410 @@
-Return-Path: <linux-kernel+bounces-560224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE7B0A5FF84
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:41:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF2AA5FF88
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:42:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9815F19C522E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:42:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FF7B422991
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EECE1EBA14;
-	Thu, 13 Mar 2025 18:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mEAxVzTb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gWi72Z6/";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mEAxVzTb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gWi72Z6/"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA541EFFA9;
+	Thu, 13 Mar 2025 18:42:18 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404B077104
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4843615539A;
+	Thu, 13 Mar 2025 18:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741891310; cv=none; b=eGkGrMx+WtaYpF0X01eosCzC/fBvsjtUhI7IO4C6k7i/pSNEZL9vuqFcioVg2MuxyF/Z+vxenkAzdQwOvFyk2UMk8UtsEF3lJ1PR89z6D7emdY6NLkx3+iKm4ib3mQ0RsakgtjxDplEsR94Scf97ZSfQCTnjNqu+1H2rVJMlDU8=
+	t=1741891337; cv=none; b=WZNYhMEoHexvHs64s56NZLpsA13UWIjnH2eCLncbhCDlAWnX+7NmQcC+RYeDcysNyuMe3wq+vKelaX4IKz7RwxreF8ln3SXIeVFT2N9cp26wBjEciwr8KUdIGN34TV5ivtlybpApqnvgyLDNWdiWUEK1HhlOKqbFlf13Pfnqofw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741891310; c=relaxed/simple;
-	bh=K1ufW1t71/LhbRTS9L3x2kbBKHk7K1sfsb/P4RdG8oQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dq0eZxkxntgWK9p2qHncc5UPLwhZCp04kLmnveaVRHPXiwpJyTbLw1LBxb1pEHxvvT/LWhdJkYjng5Dm77np5o/H6OMcPmbd2ZvrR2nq2qQYjuQDefgjKfe8r7+sIuYHHsU+sa+BsWGw07J4rrp8969RQ7cMs/FmVRdE5CmbKTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mEAxVzTb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gWi72Z6/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mEAxVzTb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gWi72Z6/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 35A5E1F388;
-	Thu, 13 Mar 2025 18:41:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741891307; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K9ZI1osHMrRJiV1DMOXcbTgh24ULb8W1iYmvmy5Cp1c=;
-	b=mEAxVzTbbK1c6ob/mDj7EeatyGXMWMmQY6ivReL6+Mfv4d23tgLUix/KkAxHqBkRQ0xjTk
-	Nv7bmuoapUGjoqHihdVbJncNbBorw+QuTUqxnEtSdN8yJgEKxnLeNB3drPjhXKTWUqfs1o
-	+67ENFtGM4CSHfA79jGiCCA+PEhxrZs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741891307;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K9ZI1osHMrRJiV1DMOXcbTgh24ULb8W1iYmvmy5Cp1c=;
-	b=gWi72Z6/xpwuqvjv5qohD3QU6oqbbkfJQq5PQ7ZTxNEy4V5D6KqUZvF6H45GXEAqUconPy
-	HXz+bjmELAAKlICA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741891307; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K9ZI1osHMrRJiV1DMOXcbTgh24ULb8W1iYmvmy5Cp1c=;
-	b=mEAxVzTbbK1c6ob/mDj7EeatyGXMWMmQY6ivReL6+Mfv4d23tgLUix/KkAxHqBkRQ0xjTk
-	Nv7bmuoapUGjoqHihdVbJncNbBorw+QuTUqxnEtSdN8yJgEKxnLeNB3drPjhXKTWUqfs1o
-	+67ENFtGM4CSHfA79jGiCCA+PEhxrZs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741891307;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K9ZI1osHMrRJiV1DMOXcbTgh24ULb8W1iYmvmy5Cp1c=;
-	b=gWi72Z6/xpwuqvjv5qohD3QU6oqbbkfJQq5PQ7ZTxNEy4V5D6KqUZvF6H45GXEAqUconPy
-	HXz+bjmELAAKlICA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 07DCA13797;
-	Thu, 13 Mar 2025 18:41:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7pSVO+om02fzVgAAD6G6ig
-	(envelope-from <jdelvare@suse.de>); Thu, 13 Mar 2025 18:41:46 +0000
-Date: Thu, 13 Mar 2025 19:41:45 +0100
-From: Jean Delvare <jdelvare@suse.de>
-To: Cyrill Gorcunov <gorcunov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] firmware: dmi: Respect buffer size in get_modalias
-Message-ID: <20250313194145.284d7815@endymion>
-In-Reply-To: <Z7eWSCCqp_HP3iSh@grain>
-References: <Z7eWSCCqp_HP3iSh@grain>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1741891337; c=relaxed/simple;
+	bh=cSKM7WMDjYQP6vbMHEU+txhbqT73iqROLsIvr5+1UUM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RmZqcUOkVffqSfSDTUVhBia32hV7O68ICQvJmBk+MNWVrQDSXoacOHIYDlrRiBuLng+a76KDSBH9RUwevpALSNFECIMTxqJ81Tiz4jHDrA+vBKicATUZ3ihhacpVY0HFy8zHqJLOqGpjfFH61fpjyfrvsc2hn3QXu3nqvP7Zge4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 177C1C4CEDD;
+	Thu, 13 Mar 2025 18:42:14 +0000 (UTC)
+Message-ID: <dcb9d7a5-9144-4c7a-a4f1-d650b6c8e085@xs4all.nl>
+Date: Thu, 13 Mar 2025 19:42:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] drm/display: hdmi: Mention Infoframes testing with
+ edid-decode
+To: Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Jonathan Corbet <corbet@lwn.net>
+Cc: dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250312-drm-hdmi-state-docs-v2-0-6352a5d68d5b@kernel.org>
+ <20250312-drm-hdmi-state-docs-v2-2-6352a5d68d5b@kernel.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20250312-drm-hdmi-state-docs-v2-2-6352a5d68d5b@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCPT_COUNT_TWO(0.00)[2];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MIME_TRACE(0.00)[0:+]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
 
-Hi Cyrill,
-
-On Thu, 20 Feb 2025 23:53:28 +0300, Cyrill Gorcunov wrote:
-> When we collect data from DMI data the result is accumulated either
-> in a page buffer from sysfs entry or from uevent environment buffer.
-> Both are big enough (4K and 2K) and it is hard to imagine that we
-> overflow 4K page with the data, still the situation is different for
-> uevent buffer where buffer may be already filled with data and we
-> possibly may overflow it.
-
-Would it not be a concern if that ever happened?
-
-> Thus lets respect buffer size given by a caller and never write
-> data unconditionally.
-
-On the principle I agree. On the implementation, not quite so.
-
-> CC: Jean Delvare <jdelvare@suse.com>
-> Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
-> ---
->  drivers/firmware/dmi-id.c |   12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
+On 12/03/2025 14:39, Maxime Ripard wrote:
+> edid-decode gained recently support to check that infoframes are
+> compliant and match the EDID the monitor exposes.
 > 
-> Index: linux-tip.git/drivers/firmware/dmi-id.c
-> ===================================================================
-> --- linux-tip.git.orig/drivers/firmware/dmi-id.c
-> +++ linux-tip.git/drivers/firmware/dmi-id.c
-> @@ -103,8 +103,12 @@ static ssize_t get_modalias(char *buffer
->  	char *p;
->  	const struct mafield *f;
->  
-> -	strcpy(buffer, "dmi");
-> -	p = buffer + 3; left = buffer_size - 4;
-> +	l = strscpy(buffer, "dmi", buffer_size);
-> +	if (l < 0)
-> +		return 0;
+> Since the HDMI helpers provide those infoframes in debugfs, it makes it
+> easy to check from userspace that the drivers (and helpers) behave
+> properly.
+> 
+> Let's document it.
+> 
+> Cc: Hans Verkuil <hverkuil@xs4all.nl>
 
-If function get_modalias() now has a return convention, it should be
-documented. But I see a problem which is that the return convention
-isn't clear. It *may* now return 0 on buffer overrun, but not
-necessarily. The rest of the function is best-effort mode and will
-silently drop a part of the modalias string if it doesn't fit. This is
-not consistent.
+Reviewed-by: Hans Verkuil <hverkuil@xs4all.nl>
 
-This is not caused by your patch, but this could actually cause false
-positive matches, so it may be a good idea to fix it while you're here.
-And in my opinion the best thing to do is to return an error rather
-than an half-baked modalias string. If the string doesn't fit as a
-whole, it's going to cause trouble at some point anyway, so we better
-learn about it early and do something about it. And that would be
-consistent.
+Thanks!
 
-I'm also curious why you chose to return 0 on error, rather than the
-more conventional -1 or -ENOMEM?
+	Hans
 
-> +	p = buffer + l; left = buffer_size - l - 1;
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 271 ++++++++++++++++++++++++
+>  1 file changed, 271 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> index 24bfc82bf9b02bf3201d97432e3c239ccc8714b4..4df3d25529071e8e822f1fe00fb22c90860ec97b 100644
+> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> @@ -16,10 +16,281 @@
+>   * in the form of KMS helpers.
+>   *
+>   * It contains TMDS character rate computation, automatic selection of
+>   * output formats, infoframes generation, etc.
+>   *
+> + * Infoframes Compliance
+> + * ~~~~~~~~~~~~~~~~~~~~~
+> + *
+> + * Drivers using the helpers will expose the various infoframes
+> + * generated according to the HDMI specification in debugfs.
+> + *
+> + * Compliance can then be tested using ``edid-decode`` from the ``v4l-utils`` project
+> + * (https://git.linuxtv.org/v4l-utils.git/). A sample run would look like:
+> + *
+> + * .. code-block:: bash
+> + *
+> + *	# edid-decode \
+> + *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/audio \
+> + *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/avi \
+> + *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/hdmi \
+> + *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/hdr_drm \
+> + *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/spd \
+> + *		/sys/class/drm/card1-HDMI-A-1/edid \
+> + *		-c
+> + *
+> + *	edid-decode (hex):
+> + *
+> + *	00 ff ff ff ff ff ff 00 1e 6d f4 5b 1e ef 06 00
+> + *	07 20 01 03 80 2f 34 78 ea 24 05 af 4f 42 ab 25
+> + *	0f 50 54 21 08 00 d1 c0 61 40 45 40 01 01 01 01
+> + *	01 01 01 01 01 01 98 d0 00 40 a1 40 d4 b0 30 20
+> + *	3a 00 d1 0b 12 00 00 1a 00 00 00 fd 00 3b 3d 1e
+> + *	b2 31 00 0a 20 20 20 20 20 20 00 00 00 fc 00 4c
+> + *	47 20 53 44 51 48 44 0a 20 20 20 20 00 00 00 ff
+> + *	00 32 30 37 4e 54 52 4c 44 43 34 33 30 0a 01 46
+> + *
+> + *	02 03 42 72 23 09 07 07 4d 01 03 04 90 12 13 1f
+> + *	22 5d 5e 5f 60 61 83 01 00 00 6d 03 0c 00 10 00
+> + *	b8 3c 20 00 60 01 02 03 67 d8 5d c4 01 78 80 03
+> + *	e3 0f 00 18 e2 00 6a e3 05 c0 00 e6 06 05 01 52
+> + *	52 51 11 5d 00 a0 a0 40 29 b0 30 20 3a 00 d1 0b
+> + *	12 00 00 1a 00 00 00 00 00 00 00 00 00 00 00 00
+> + *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> + *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 c3
+> + *
+> + *	----------------
+> + *
+> + *	Block 0, Base EDID:
+> + *	  EDID Structure Version & Revision: 1.3
+> + *	  Vendor & Product Identification:
+> + *	    Manufacturer: GSM
+> + *	    Model: 23540
+> + *	    Serial Number: 454430 (0x0006ef1e)
+> + *	    Made in: week 7 of 2022
+> + *	  Basic Display Parameters & Features:
+> + *	    Digital display
+> + *	    Maximum image size: 47 cm x 52 cm
+> + *	    Gamma: 2.20
+> + *	    DPMS levels: Standby Suspend Off
+> + *	    RGB color display
+> + *	    First detailed timing is the preferred timing
+> + *	  Color Characteristics:
+> + *	    Red  : 0.6835, 0.3105
+> + *	    Green: 0.2587, 0.6679
+> + *	    Blue : 0.1445, 0.0585
+> + *	    White: 0.3134, 0.3291
+> + *	  Established Timings I & II:
+> + *	    DMT 0x04:   640x480    59.940476 Hz   4:3     31.469 kHz     25.175000 MHz
+> + *	    DMT 0x09:   800x600    60.316541 Hz   4:3     37.879 kHz     40.000000 MHz
+> + *	    DMT 0x10:  1024x768    60.003840 Hz   4:3     48.363 kHz     65.000000 MHz
+> + *	  Standard Timings:
+> + *	    DMT 0x52:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz
+> + *	    DMT 0x10:  1024x768    60.003840 Hz   4:3     48.363 kHz     65.000000 MHz
+> + *	    DMT 0x09:   800x600    60.316541 Hz   4:3     37.879 kHz     40.000000 MHz
+> + *	  Detailed Timing Descriptors:
+> + *	    DTD 1:  2560x2880   59.966580 Hz   8:9    185.417 kHz    534.000000 MHz (465 mm x 523 mm)
+> + *	                 Hfront   48 Hsync  32 Hback  240 Hpol P
+> + *	                 Vfront    3 Vsync  10 Vback  199 Vpol N
+> + *	    Display Range Limits:
+> + *	      Monitor ranges (GTF): 59-61 Hz V, 30-178 kHz H, max dotclock 490 MHz
+> + *	    Display Product Name: 'LG SDQHD'
+> + *	    Display Product Serial Number: '207NTRLDC430'
+> + *	  Extension blocks: 1
+> + *	Checksum: 0x46
+> + *
+> + *	----------------
+> + *
+> + *	Block 1, CTA-861 Extension Block:
+> + *	  Revision: 3
+> + *	  Basic audio support
+> + *	  Supports YCbCr 4:4:4
+> + *	  Supports YCbCr 4:2:2
+> + *	  Native detailed modes: 2
+> + *	  Audio Data Block:
+> + *	    Linear PCM:
+> + *	      Max channels: 2
+> + *	      Supported sample rates (kHz): 48 44.1 32
+> + *	      Supported sample sizes (bits): 24 20 16
+> + *	  Video Data Block:
+> + *	    VIC   1:   640x480    59.940476 Hz   4:3     31.469 kHz     25.175000 MHz
+> + *	    VIC   3:   720x480    59.940060 Hz  16:9     31.469 kHz     27.000000 MHz
+> + *	    VIC   4:  1280x720    60.000000 Hz  16:9     45.000 kHz     74.250000 MHz
+> + *	    VIC  16:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz (native)
+> + *	    VIC  18:   720x576    50.000000 Hz  16:9     31.250 kHz     27.000000 MHz
+> + *	    VIC  19:  1280x720    50.000000 Hz  16:9     37.500 kHz     74.250000 MHz
+> + *	    VIC  31:  1920x1080   50.000000 Hz  16:9     56.250 kHz    148.500000 MHz
+> + *	    VIC  34:  1920x1080   30.000000 Hz  16:9     33.750 kHz     74.250000 MHz
+> + *	    VIC  93:  3840x2160   24.000000 Hz  16:9     54.000 kHz    297.000000 MHz
+> + *	    VIC  94:  3840x2160   25.000000 Hz  16:9     56.250 kHz    297.000000 MHz
+> + *	    VIC  95:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
+> + *	    VIC  96:  3840x2160   50.000000 Hz  16:9    112.500 kHz    594.000000 MHz
+> + *	    VIC  97:  3840x2160   60.000000 Hz  16:9    135.000 kHz    594.000000 MHz
+> + *	  Speaker Allocation Data Block:
+> + *	    FL/FR - Front Left/Right
+> + *	  Vendor-Specific Data Block (HDMI), OUI 00-0C-03:
+> + *	    Source physical address: 1.0.0.0
+> + *	    Supports_AI
+> + *	    DC_36bit
+> + *	    DC_30bit
+> + *	    DC_Y444
+> + *	    Maximum TMDS clock: 300 MHz
+> + *	    Extended HDMI video details:
+> + *	      HDMI VICs:
+> + *	        HDMI VIC 1:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
+> + *	        HDMI VIC 2:  3840x2160   25.000000 Hz  16:9     56.250 kHz    297.000000 MHz
+> + *	        HDMI VIC 3:  3840x2160   24.000000 Hz  16:9     54.000 kHz    297.000000 MHz
+> + *	  Vendor-Specific Data Block (HDMI Forum), OUI C4-5D-D8:
+> + *	    Version: 1
+> + *	    Maximum TMDS Character Rate: 600 MHz
+> + *	    SCDC Present
+> + *	    Supports 12-bits/component Deep Color 4:2:0 Pixel Encoding
+> + *	    Supports 10-bits/component Deep Color 4:2:0 Pixel Encoding
+> + *	  YCbCr 4:2:0 Capability Map Data Block:
+> + *	    VIC  96:  3840x2160   50.000000 Hz  16:9    112.500 kHz    594.000000 MHz
+> + *	    VIC  97:  3840x2160   60.000000 Hz  16:9    135.000 kHz    594.000000 MHz
+> + *	  Video Capability Data Block:
+> + *	    YCbCr quantization: No Data
+> + *	    RGB quantization: Selectable (via AVI Q)
+> + *	    PT scan behavior: Always Underscanned
+> + *	    IT scan behavior: Always Underscanned
+> + *	    CE scan behavior: Always Underscanned
+> + *	  Colorimetry Data Block:
+> + *	    BT2020YCC
+> + *	    BT2020RGB
+> + *	  HDR Static Metadata Data Block:
+> + *	    Electro optical transfer functions:
+> + *	      Traditional gamma - SDR luminance range
+> + *	      SMPTE ST2084
+> + *	    Supported static metadata descriptors:
+> + *	      Static metadata type 1
+> + *	    Desired content max luminance: 82 (295.365 cd/m^2)
+> + *	    Desired content max frame-average luminance: 82 (295.365 cd/m^2)
+> + *	    Desired content min luminance: 81 (0.298 cd/m^2)
+> + *	  Detailed Timing Descriptors:
+> + *	    DTD 2:  2560x2880   29.986961 Hz   8:9     87.592 kHz    238.250000 MHz (465 mm x 523 mm)
+> + *	                 Hfront   48 Hsync  32 Hback   80 Hpol P
+> + *	                 Vfront    3 Vsync  10 Vback   28 Vpol N
+> + *	Checksum: 0xc3  Unused space in Extension Block: 43 bytes
+> + *
+> + *	----------------
+> + *
+> + *	edid-decode 1.29.0-5346
+> + *	edid-decode SHA: c363e9aa6d70 2025-03-11 11:41:18
+> + *
+> + *	Warnings:
+> + *
+> + *	Block 1, CTA-861 Extension Block:
+> + *	  IT Video Formats are overscanned by default, but normally this should be underscanned.
+> + *	  Video Data Block: VIC 1 and the first DTD are not identical. Is this intended?
+> + *	  Video Data Block: All VICs are in ascending order, and the first (preferred) VIC <= 4, is that intended?
+> + *	  Video Capability Data Block: Set Selectable YCbCr Quantization to avoid interop issues.
+> + *	  Video Capability Data Block: S_PT is equal to S_IT and S_CE, so should be set to 0 instead.
+> + *	  Colorimetry Data Block: Set the sRGB colorimetry bit to avoid interop issues.
+> + *	  Display Product Serial Number is set, so the Serial Number in the Base EDID should be 0.
+> + *	EDID:
+> + *	  Base EDID: Some timings are out of range of the Monitor Ranges:
+> + *	    Vertical Freq: 24.000 - 60.317 Hz (Monitor: 59.000 - 61.000 Hz)
+> + *	    Horizontal Freq: 31.250 - 185.416 kHz (Monitor: 30.000 - 178.000 kHz)
+> + *	    Maximum Clock: 594.000 MHz (Monitor: 490.000 MHz)
+> + *
+> + *	Failures:
+> + *
+> + *	Block 1, CTA-861 Extension Block:
+> + *	  Video Capability Data Block: IT video formats are always underscanned, but bit 7 of Byte 3 of the CTA-861 Extension header is set to overscanned.
+> + *	EDID:
+> + *	  CTA-861: Native progressive timings are a mix of several resolutions.
+> + *
+> + *	EDID conformity: FAIL
+> + *
+> + *	================
+> + *
+> + *	InfoFrame of '/sys/kernel/debug/dri/1/HDMI-A-1/infoframes/audio' was empty.
+> + *
+> + *	================
+> + *
+> + *	edid-decode InfoFrame (hex):
+> + *
+> + *	82 02 0d 31 12 28 04 00 00 00 00 00 00 00 00 00
+> + *	00
+> + *
+> + *	----------------
+> + *
+> + *	HDMI InfoFrame Checksum: 0x31
+> + *
+> + *	AVI InfoFrame
+> + *	  Version: 2
+> + *	  Length: 13
+> + *	  Y: Color Component Sample Format: RGB
+> + *	  A: Active Format Information Present: Yes
+> + *	  B: Bar Data Present: Bar Data not present
+> + *	  S: Scan Information: Composed for an underscanned display
+> + *	  C: Colorimetry: No Data
+> + *	  M: Picture Aspect Ratio: 16:9
+> + *	  R: Active Portion Aspect Ratio: 8
+> + *	  ITC: IT Content: No Data
+> + *	  EC: Extended Colorimetry: xvYCC601
+> + *	  Q: RGB Quantization Range: Limited Range
+> + *	  SC: Non-Uniform Picture Scaling: No Known non-uniform scaling
+> + *	  YQ: YCC Quantization Range: Limited Range
+> + *	  CN: IT Content Type: Graphics
+> + *	  PR: Pixel Data Repetition Count: 0
+> + *	  Line Number of End of Top Bar: 0
+> + *	  Line Number of Start of Bottom Bar: 0
+> + *	  Pixel Number of End of Left Bar: 0
+> + *	  Pixel Number of Start of Right Bar: 0
+> + *
+> + *	----------------
+> + *
+> + *	AVI InfoFrame conformity: PASS
+> + *
+> + *	================
+> + *
+> + *	edid-decode InfoFrame (hex):
+> + *
+> + *	81 01 05 49 03 0c 00 20 01
+> + *
+> + *	----------------
+> + *
+> + *	HDMI InfoFrame Checksum: 0x49
+> + *
+> + *	Vendor-Specific InfoFrame (HDMI), OUI 00-0C-03
+> + *	  Version: 1
+> + *	  Length: 5
+> + *	  HDMI Video Format: HDMI_VIC is present
+> + *	  HDMI VIC 1:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
+> + *
+> + *	----------------
+> + *
+> + *	Vendor-Specific InfoFrame (HDMI), OUI 00-0C-03 conformity: PASS
+> + *
+> + *	================
+> + *
+> + *	InfoFrame of '/sys/kernel/debug/dri/1/HDMI-A-1/infoframes/hdr_drm' was empty.
+> + *
+> + *	================
+> + *
+> + *	edid-decode InfoFrame (hex):
+> + *
+> + *	83 01 19 93 42 72 6f 61 64 63 6f 6d 56 69 64 65
+> + *	6f 63 6f 72 65 00 00 00 00 00 00 00 09
+> + *
+> + *	----------------
+> + *
+> + *	HDMI InfoFrame Checksum: 0x93
+> + *
+> + *	Source Product Description InfoFrame
+> + *	  Version: 1
+> + *	  Length: 25
+> + *	  Vendor Name: 'Broadcom'
+> + *	  Product Description: 'Videocore'
+> + *	  Source Information: PC general
+> + *
+> + *	----------------
+> + *
+> + *	Source Product Description InfoFrame conformity: PASS
+> + *
+>   * Testing
+>   * ~~~~~~~
+>   *
+>   * The helpers have unit testing and can be tested using kunit with:
+>   *
+> 
 
-Please split on separate lines for readability. I would also appreciate
-a comment explaining that the "- 1" is to leave room for the trailing
-":" (if I understand that right).
-
-> +	if (left < 0)
-> +		return 0;
->  
->  	for (f = fields; f->prefix && left > 0; f++) {
->  		const char *c;
-> @@ -135,7 +139,7 @@ static ssize_t sys_dmi_modalias_show(str
->  				     struct device_attribute *attr, char *page)
-> {
->  	ssize_t r;
-> -	r = get_modalias(page, PAGE_SIZE-1);
-> +	r = get_modalias(page, PAGE_SIZE-2);
-
-Why? As I read the code, get_modalias() returns the length of the
-string, excluding the trailing '\0'. So it will be, at most, one less
-than the buffer size we passed. So if we pass PAGE_SIZE-1, r is at most
-PAGE_SIZE-2, which leaves exactly the 2 bytes we need for the two lines
-of code below. Am I missing something?
-
-(The last line of get_modalias would probably be clearer as:
-	return (p + 1) - buffer;
-or if p was increased beforehand to actually point to the end of the
-string.)
-
->  	page[r] = '\n';
->  	page[r+1] = 0;
->  	return r+1;
-> @@ -163,7 +167,7 @@ static int dmi_dev_uevent(const struct d
->  		return -ENOMEM;
->  	len = get_modalias(&env->buf[env->buflen - 1],
->  			   sizeof(env->buf) - env->buflen);
-> -	if (len >= (sizeof(env->buf) - env->buflen))
-> +	if (!len || len >= (sizeof(env->buf) - env->buflen))
->  		return -ENOMEM;
-
-I do not like the fact that we check whether get_modalias() returns an
-error here, and not in sys_dmi_modalias_show(). This is inconsistent.
-IMHO both functions should check the return value and return an error
-code on failure.
-
-As a side note, I can't see how the second condition could be true. We
-pass the buffer size to get_modalias() exactly to make sure that it
-won't write past the buffer's end.
-
->  	env->buflen += len;
->  	return 0;
-
-Thanks,
--- 
-Jean Delvare
-SUSE L3 Support
 
