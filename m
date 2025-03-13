@@ -1,174 +1,156 @@
-Return-Path: <linux-kernel+bounces-559417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E65F8A5F3A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:01:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B66AA5F34A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:51:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92C9B17E2B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:01:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4131517E972
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC50F267721;
-	Thu, 13 Mar 2025 12:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CE126B2C4;
+	Thu, 13 Mar 2025 11:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="aiCSNS6/"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b="pXxktJjv"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2071.outbound.protection.outlook.com [40.107.243.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF23267703;
-	Thu, 13 Mar 2025 12:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741867233; cv=none; b=PMqOONtSritL4HW2MN66gPULQAmTv3oW8ighJDYI8A9mAjnJk3g11AasbJ218bXP2x4gNKgC0XdyuHhaFKyF+7iWTf1FS87B0qteR1hq5VAQyrN/+NylaPcoMrhu5pufCgMHg+BVWNLoYkuQVcEpXXTq35pznryJub9wg9h41Nw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741867233; c=relaxed/simple;
-	bh=J5ZnDyYHqXPQNT8PvS6OPC1GJFY+7ztEdCGme2XVaBY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Sy43QrzBzgiabvoDHOb9P5ugQeO4EmIL5hS+ZwB6l9Ls+EMirYPFANeQHRDVP5023gVMN5VmDQvZI5M1zh2k6xkg57tCuDqPCuZ2wRly3wN6pT/zr9UG9Lpdah0SB8RKr2RjhvuJPVsQDgmU7fdl9i+FFaPQPnqljY9awjVsh+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=aiCSNS6/; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc
-	:To:From:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=8ZLxBCJU5+2bbPYm14gJ4+vJIc5p7eAYUKUUoCYfZmk=; b=aiCSNS6/xRj8pUFUH7APA+2zsO
-	D6H1lElRjtZzE6BaWoLJRv46KNDD8Z0Pf15TmkGhCPFCDwBQW94hUXZNqqkAjWvHTSVFR+OtUOndD
-	gie3wYwInOvGWN/NIYuxakRPRRFqT85bpoCtBcxxbIxhqKEE6oyl5x/KfDikjxMt5KzzT5bP5ESso
-	KN6h5nIeWZQJgDfL8YShtVfaWHCYv/p2csAKTQXBAXReCcOct3lQDYQSejdYlBp8hnM817ysb7+mI
-	qEkhOIUOUwexM5Ls+CyInts+wQHf9Hv2kkeLfhT5gSwO28CA6uRCnqfR4+P/p/KOcaCNb5El2RkkR
-	B/QGx1rg==;
-Received: from 89-212-21-243.static.t-2.net ([89.212.21.243]:35000 helo=[192.168.69.52])
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <andrej.picej@norik.com>)
-	id 1tsgzM-0069qp-2C;
-	Thu, 13 Mar 2025 12:44:36 +0100
-Message-ID: <a0d83b69-c84d-4804-abcd-e546be8a2e3d@norik.com>
-Date: Thu, 13 Mar 2025 12:44:33 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7EA26A1C7;
+	Thu, 13 Mar 2025 11:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741866303; cv=fail; b=Ioywuvn7O0RUY7UFMlM61Qoc1VqkCV6gzP/4VasDl0MGEQc0GyFVrMiNd4/Cb67MkLwQLREDRXW+MxBFyyTdVO83ye4EkST9R5RaVD+/T7KVh5QzI9fvtxBdgAwzI1YF1FwrHZfptG3P0mLUg8tqLH7dSul0Iq79QQhhgh4PlGA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741866303; c=relaxed/simple;
+	bh=BmDyOncfwoJF9QuS5fx4hUfvoClzoxAMz6AsrrP8dQc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=kzOWxXWXrVNMzBEA4nc7ay85rxKnyf+dJ5r6cyrHG5rgZm7gqgB3fYj8MlARma0152sza4T9q7Wt9byiRD+bonz+9Oy2uW/XpphrZWKxLvaAcB3rxcoBUnwPJTDyDRNejcdmaMegmsMCO9mu9+lzp50nr097eI3T3ldhmarRI7A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com; spf=pass smtp.mailfrom=gehealthcare.com; dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b=pXxktJjv; arc=fail smtp.client-ip=40.107.243.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gehealthcare.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Br9yIe34eRvp94UMwHzGfwlreD/PUzDpLZFBz0tgVm+mCGz+SllrdL48D6aSsOaIPpSvqb95mcUHDIhVO+GM3oVj9Rr6f1KG9t3RKtRKF6mS/Wjl6VWQ93iX5Swu3pj0hS0a0lFxBF/N7Oglj/ECQLn/yijJva3g7y2jfqLW+LBlazOfihiULGicXyMKGpZ0k32W8+s5DZUpuHjS9CSQeN4wr0V+dKNglqh7nyQU05CEFXp5H7gVNNZiwpDwtPzgV41HOEmg7cEpjMOHHRo8jn2fBT4eakhWeHlPyRcMk/nSe5jttvntymvuv3Ff9Ay0TL8evjN6lMJacCPQlIdAlQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ezU9T2xxKQb9Q8gnog14Fi2fMV3P+Fo12HWvQ2ue3u4=;
+ b=BEF0lzIAJuFxOpF5zsYWpq60fSbWsoplDB9tC/GbX+OWnWtI9x9kOahgz2eV2NHFFlYxGcCuDeK4aAndBSF7dtGkE9ihO7dsRixU9s1QnxNXdS81GEjLkgcmH6C9+7nP/+Uo1GLnqcb2x9cDE4ntz5dAgb9lapw1vd7xuphSDqAlZ1/hkPeqm9Af/ZwfsPqx9h7xDT0wRy6vRshAWRoMomVUdSVueMl7aFkQ31aHmMxQ541DYYB2PR9KE5ykQHzfYjuloQ9TleEamxPMwqShJT5Vmy9EyHNOxmMjujXqfbD1I8TvNdEruOwP0Yjy4ofRGmRuSHOB6lQNaPHCN41ZPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 165.85.157.49) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=gehealthcare.com; dmarc=fail (p=quarantine sp=quarantine
+ pct=100) action=quarantine header.from=gehealthcare.com; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gehealthcare.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ezU9T2xxKQb9Q8gnog14Fi2fMV3P+Fo12HWvQ2ue3u4=;
+ b=pXxktJjv1eKQspr7F+3EfcAo350jNdsy6rcHn11lDQHsQfMbdjUvU5azTPgToCBdBBIzUQVnluJ75SJnUat3suouM/4boFxQGMZxwL8fJZyhkBN2fU6BeFAINFb8kGOIj/UyPkarT0A+b+jdpBICVC0nJ/+QHctxj1MMBZy524HqaUUCMjToc9rY4OgL9PzYZPfzE6wI9Bls4vxehxqwSR8P+7+GxI2Pjq9Il8pn55mGe1LSQh+CMiAE2IoGO6t0pU166hUjg/0cIbT90J8RcAxyVGgG5z/G2wZxUWjEHibp9VYAX1eZxIBSq6tN5SCkKx42V79d6hAiuV1mz5O+iA==
+Received: from BY3PR05CA0027.namprd05.prod.outlook.com (2603:10b6:a03:254::32)
+ by MW5PR22MB3536.namprd22.prod.outlook.com (2603:10b6:303:1cd::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.21; Thu, 13 Mar
+ 2025 11:44:59 +0000
+Received: from SJ1PEPF00002312.namprd03.prod.outlook.com
+ (2603:10b6:a03:254:cafe::f7) by BY3PR05CA0027.outlook.office365.com
+ (2603:10b6:a03:254::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.21 via Frontend Transport; Thu,
+ 13 Mar 2025 11:44:59 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 165.85.157.49)
+ smtp.mailfrom=gehealthcare.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=gehealthcare.com;
+Received-SPF: Fail (protection.outlook.com: domain of gehealthcare.com does
+ not designate 165.85.157.49 as permitted sender)
+ receiver=protection.outlook.com; client-ip=165.85.157.49;
+ helo=mkerelay2.compute.ge-healthcare.net;
+Received: from mkerelay2.compute.ge-healthcare.net (165.85.157.49) by
+ SJ1PEPF00002312.mail.protection.outlook.com (10.167.242.166) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Thu, 13 Mar 2025 11:44:58 +0000
+Received: from 67fd243a5d78.fihel.lab.ge-healthcare.net (zoo13.fihel.lab.ge-healthcare.net [10.168.174.111])
+	by builder1.fihel.lab.ge-healthcare.net (Postfix) with ESMTP id 23385CFB75;
+	Thu, 13 Mar 2025 13:44:55 +0200 (EET)
+From: Ian Ray <ian.ray@gehealthcare.com>
+To: dmitry.torokhov@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: ian.ray@gehealthcare.com,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Input: snvs_pwrkey - add configurable force shutdown time
+Date: Thu, 13 Mar 2025 13:44:51 +0200
+Message-Id: <20250313114453.702-1-ian.ray@gehealthcare.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Upstream] [PATCH v7 3/3] arm64: dts:
- imx8mm-phyboard-polis-peb-av-10: Set lvds-vod-swing
-From: Andrej Picej <andrej.picej@norik.com>
-To: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, marex@denx.de
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
- upstream@lists.phytec.de, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
-References: <20241216085410.1968634-1-andrej.picej@norik.com>
- <20241216085410.1968634-4-andrej.picej@norik.com>
-Content-Language: en-US
-Autocrypt: addr=andrej.picej@norik.com; keydata=
- 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
- xtT/8OxBOVSHvA==
-In-Reply-To: <20241216085410.1968634-4-andrej.picej@norik.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: andrej.picej@norik.com
-X-Authenticated-Sender: cpanel.siel.si: andrej.picej@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002312:EE_|MW5PR22MB3536:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: e1e709d4-a014-4cad-5846-08dd62247bb9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?eoQWSVoQ/p62T6jnw+T4/D5Sa659Ce2hAlw8RCEPOq7ivnSPXH822TQIEIdE?=
+ =?us-ascii?Q?jCnx1zIGNI1ewH/W3K+GvylMU0BbF1R/Vhuirm8ePe+7VBA+mB+53R+HpMng?=
+ =?us-ascii?Q?S3ySqXjyV7ErTOz6qIC8094nF/lKKUInxLWJzwHr7HaKmkMUVld04V2WIMHG?=
+ =?us-ascii?Q?SnxH/N122JsHNm27qx6w3UJcm1DAFOORrKMSgBst8+aG8WbU6Zmo/FVeLpUx?=
+ =?us-ascii?Q?k5NEMBrdw8Sz5NaYIvWZJITYIHRGO1FDo5QX+wV6o7XVLWgcK6nG2Fd75xNL?=
+ =?us-ascii?Q?vMKMBmsd8Bg0hDhHmLTi9G2kOeduBk4I8elLJlNIx50Cpo0OQcar79yLwLZ5?=
+ =?us-ascii?Q?+y6OxLtzNxAA24gSRU7puy9CyCcLzqwgdx/eZK9kZxIAx3wjx38YdNJ7p2IK?=
+ =?us-ascii?Q?AabP6SlSGtkZwRi/5M6V3PbCqiEhTga18VBE+e+0sCIQKiZV7QmE16w+B8K7?=
+ =?us-ascii?Q?ZJXK6Su4WCsq3r8LQOBMfCbBGE5BVckGezDIOla4wcdwDerEoRQT4oZMacDB?=
+ =?us-ascii?Q?MaVT6AwvuZwRrQSX22L/SIpNKj2hTikVSuRIcvIdJz5bpAn+NxH8/KQq3NEf?=
+ =?us-ascii?Q?zK5GGq2ULVnMaY9RnDTIH8bOHHMkBqCRhd4/MlcLSfm2I2btw7qVzJNznOdK?=
+ =?us-ascii?Q?YB73fOiWZZK4TacnCvj6cqkqKZb+OXvSA1zHhtBvO1jDrhk1JOCS3+4kKeDR?=
+ =?us-ascii?Q?J/c2uu9wD2S0mNEvZcclQXGySy9IsGo6wNd/xyHVDeJNqwGiII175ZWSQW5I?=
+ =?us-ascii?Q?PY2MACoirvJNFpeMrJVE3Fi3++9cBfM94H3W9lmxAuvhLTbaiE+KwPgwvEdM?=
+ =?us-ascii?Q?DDl5DNcZTFYlKX6nqzsLohAffnLob4T6h1WEuQ9no6EacuCGg8dT1GwgPcVP?=
+ =?us-ascii?Q?WN1HxtFGfZUUDy9gJDESh3dVh6PmZZkZtv1hTuraIDiMKSmU6cP961hSiZto?=
+ =?us-ascii?Q?vyBuhGfkSHmPbD/h7HBkV3+ocJhjhPAkzyUIcOo0Gb9mGmpUqnJYjvM82buh?=
+ =?us-ascii?Q?pyusTsIFooSIVr7Pci9wvThWUDtH0vWZVwaECg87p+aIiQZaFYSta49LpwdS?=
+ =?us-ascii?Q?LxOWTnypWFYnY/5Wk9B/6yvXMyfrDKHcD/GQMq/5T8m1WJUCgBEL0ZVKrwE4?=
+ =?us-ascii?Q?JZmONX7euJ6bLVc+UUtJ72zqNhI/lgESyb3krzOXce3X3jlw9PvDpNoj9aY3?=
+ =?us-ascii?Q?EAA0vBw5zc6+1ZYzLt03fKdtLkuKttUmfIE9zYl0yh9YXflP5/iQziVVlQjD?=
+ =?us-ascii?Q?JoyWGcIk6EazNiXgwEJj+xYQRaBpwQQA5aP5+XYFPH2jaOWgts6PpHvfjqLT?=
+ =?us-ascii?Q?lbWLi9MovRrU1djyMJPkPVs6XZKYaxyCVdS+cR7WGW7GvVp4TlJc5NNgmstT?=
+ =?us-ascii?Q?ZaX8s7QLwjicDTAMVSzTHWcgIYvji7gOzP9i4GLK/bTXuWt5xD9VEJg/5iMz?=
+ =?us-ascii?Q?9q0449arbfUCgy/p58LgBgneuzbyESM+1uyD1JPpKl0dB713ZiYINA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.85.157.49;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mkerelay2.compute.ge-healthcare.net;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: gehealthcare.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 11:44:58.6036
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1e709d4-a014-4cad-5846-08dd62247bb9
+X-MS-Exchange-CrossTenant-Id: 9a309606-d6ec-4188-a28a-298812b4bbbf
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=9a309606-d6ec-4188-a28a-298812b4bbbf;Ip=[165.85.157.49];Helo=[mkerelay2.compute.ge-healthcare.net]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-SJ1PEPF00002312.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR22MB3536
 
-Hi,
+PATCH 1 - add documentation for new option
+PATCH 2 - add support to driver
 
-is there anything else I need to do, or can this patch now be applied?
+Ian Ray (2):
+  dt-bindings: crypto: fsl,sec-v4.0-mon: add optional force shutdown
+    time property
+  Input: snvs_pwrkey - add configurable force shutdown time
 
-The initial two patches that introduce property support have already 
-been merged, and the patch series that this patch depends on [1] has 
-also been applied.
+ .../bindings/crypto/fsl,sec-v4.0-mon.yaml     |  8 +++++++
+ drivers/input/keyboard/snvs_pwrkey.c          | 24 +++++++++++++++++++
+ 2 files changed, 32 insertions(+)
 
-[1] https://lore.kernel.org/all/Z7rZjdXwN2W+Y2Bd@dragon/
+-- 
+2.39.5
 
-Best regards,
-Andrej
-
-On 16. 12. 24 09:54, Andrej Picej wrote:
-> Set custom differential output voltage for LVDS, to fulfill requirements
-> of the connected display. LVDS differential voltage for data-lanes and
-> clock output has to be between 200 mV and 600 mV.
-> Driver sets 200 Ohm near-end termination by default.
-> 
-> Signed-off-by: Andrej Picej <andrej.picej@norik.com>
-> ---
-> Changes in v7:
-> - no change
-> Changes in v6:
-> - no change
-> Changes in v5:
-> - no change
-> Changes in v4:
-> - no change
-> Changes in v3:
-> - no change
-> Changes in v2:
-> - use new properties from previous patches
-> ---
->   .../boot/dts/freescale/imx8mm-phyboard-polis-peb-av-10.dtso     | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-peb-av-10.dtso b/arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-peb-av-10.dtso
-> index a9de42cf14be..8bf9cc553bea 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-peb-av-10.dtso
-> +++ b/arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-peb-av-10.dtso
-> @@ -186,6 +186,8 @@ port@2 {
->   			reg = <2>;
->   			bridge_out: endpoint {
->   				remote-endpoint = <&panel_in>;
-> +				ti,lvds-vod-swing-clock-microvolt = <200000 600000>;
-> +				ti,lvds-vod-swing-data-microvolt = <200000 600000>;
->   			};
->   		};
->   	};
 
