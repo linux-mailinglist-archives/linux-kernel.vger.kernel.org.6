@@ -1,152 +1,173 @@
-Return-Path: <linux-kernel+bounces-560112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EAEAA5FDE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:35:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC8FA5FDFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:37:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA9CA421C28
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:35:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6BDC19C5582
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A761D5AB5;
-	Thu, 13 Mar 2025 17:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BCF1DACA7;
+	Thu, 13 Mar 2025 17:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IaB2WuN2"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K4m8IFSl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5614616DC28
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247651940A1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741887301; cv=none; b=NdQtPEuGl0NuJb5APdTfLu+xOjtqZFI9hailEVnaQAaK/i/PlwqkHgc3mEUrHZz+bd92tRhXEck8tJjMYg9CYQtyGiW5jAtiU5SWpsb5GWWS6ffJ/KlI1Q8xpTSEQepY3K+ZH1215DTEfGGJzXIQh/ssZGfBUk8pkAce5NFPk8c=
+	t=1741887382; cv=none; b=WczUyGTuH6yblHmBqO5FJuJsyWMQB43oGW5h13Df2Own/nZABrj1Zw6hVd4spEhPQM9bu77BH6innAucoVuWea8oCCFfxZTgyCupBTglbw1rjREqd/ABDXTG0FIu9VNprVuLyeUeXDZdVVtvJO4mENGTjyfzq2vi1SG1vGKJVAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741887301; c=relaxed/simple;
-	bh=teNW5gIZaqNNqnPivdYVGhV0iuN3q+s0pOAIQRfvUdI=;
+	s=arc-20240116; t=1741887382; c=relaxed/simple;
+	bh=74LdO3L2papOXx6onu8X7dux3CgaxYMbpnbfEZf5vfs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FBiP+5IYp7ZBNTAhLj7gWpZ1PLBzDMvAUsjfjcFVjfva3EEQ9+BMEtES+FbJtXNSUKRDOe+uija/f7FABvb9SL2U8VbXk5+177P15gD4chzIi5AvKXVPGU//B2e49Hlki37vDiSsZmYJL9g4MXpP4sPIxQBid9loCfDtuus7DNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IaB2WuN2; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cfe574976so8244565e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:34:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741887298; x=1742492098; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oXkYzz2Ho7HoWYUA45E8jVGK6oEmHJXqvRS4IbzYytA=;
-        b=IaB2WuN2w7gYjcHt1Uwp/c0H3IvM4cm2xe9st2dygFqSTtb8QhJfAaoI4J5/TzekFD
-         8yyo8Gx4O7veB5CKFARZ1cppceVT3zLRZgWEwkAs/vT7sfLq5SKH+wKslk+bxGewCx7M
-         tFmFfB2LA9ujzxcCdQbS/wJuGWs1GL4cetnngLE/BVrdZ6T0tqjSar9DQCHhdFDHH5xE
-         Jv3t7J/7bCs36+OchcNEOnn0LJFw2sJsW/AK4Lhf9CK7aOf0HBVicIxlqxwyL6Q0LNCu
-         bT1UnNAxQ9omQ4NKBlzSaLU/sp/JuD749GEOsa5czywnrJvc/ksKqieZcbiwf4zHP0z6
-         3gOQ==
+	 To:Cc:Content-Type; b=hYr/lnv/Q4DVCPJux0nSi9jmcgMzX+zoUvrHNUOKm0stjhKYbHkEbNnRttM8WQ3eex1EkV/ykBNj5Baw+kanrb/3o5mvbbKhmRQM4aa/UHQvNQZrXLSYKdnHrY9nGejHBniWkBKrBP0tu7Zkj8/UeF9LobxNtRJAqsX3cMppWwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K4m8IFSl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741887380;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=74LdO3L2papOXx6onu8X7dux3CgaxYMbpnbfEZf5vfs=;
+	b=K4m8IFSl+u1sxHRI19hDZU/eQJNFrjhXR3zPY0N6wjPdo8eXgI8ADrY56GA8WQHWpwN7PZ
+	uGu9ASfCU8a+l4PhTWsxaCdncu+8Ixlzc1mHMFEVwlfRTo8Sh4bEp3YUFvo5Tz5fUaOO9m
+	hk4CqZo+62K41BgBlOBlN4bheeyAJ8w=
+Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
+ [209.85.219.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-114-HGRLkXsfP9G-zmaaKivHOg-1; Thu, 13 Mar 2025 13:36:17 -0400
+X-MC-Unique: HGRLkXsfP9G-zmaaKivHOg-1
+X-Mimecast-MFC-AGG-ID: HGRLkXsfP9G-zmaaKivHOg_1741887377
+Received: by mail-yb1-f200.google.com with SMTP id 3f1490d57ef6-e549c458692so2084044276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:36:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741887298; x=1742492098;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oXkYzz2Ho7HoWYUA45E8jVGK6oEmHJXqvRS4IbzYytA=;
-        b=coduOLWLFiURo5JkSmf6iqS4PFvVTVvKMhbubJUGdB6nVg631rHGe/rt6oGjca50xj
-         xrK99rxDW3Y6ubHCgXSnyAGke91AY9C/5gB8Vk05KwadcX6BXqGbzSBGhFmE93rGgNHZ
-         7ZvrTaKk0ODr7wY7Chs7/uVPmZqlQTofsjM4QQST1YiTLaO/jHmJkcILT8JEhGsgVXcD
-         q0oK1y+ujS96SXOWgZC4onAS631Mh2xIeyM/3jViTE8KfgPaUbLXys7h7mont1NoMtKO
-         SmbDlVfx+7BLVPGVHRF4xFSiXMDRkXTBux4E08DzgjwqK/MGJfnH/XgoOgNS7tGGWcTw
-         8jBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVp/4/ohoZYq8/jcHVJMrkfykozuXtcF0tIJxCikq13DS2ELzMoqCcJRlO6DxXWA/mkjR5kgzgjjo8x7yw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweXbVUgGeFaWs6DhAaKLLs4aYk/ClorBRGA8jQKveiSi6Gq5XD
-	Qjm3zeoyvdMArhyQCQKx557dEFx3WtEW63wAQTeXOYhyKmuiMqiXJYkjumuuL10G8aXwOSpe+5h
-	ZsQ+NlUSS6t7SOd65nLSc/mLhjOro7MM4p9/bxw==
-X-Gm-Gg: ASbGncvJhitFTIo41FVEMU8YH+iWaG5/sBBv8CxB4yjUTUbYbCQlD8LRRbRCdWS1WC6
-	eq5Sky9jxmR1il+cMlVUl7kTDI3XxKZSlA0PPrwRx0GITn6o5MReymaT5TkaNQdfy5q6gsxK83y
-	I0fVKBh8iimvAGHpElOrTPMgPvo75QgrrsxVPIto1IihtLgpJnEkvOfpeEsM5HqfVDM5SOAQ==
-X-Google-Smtp-Source: AGHT+IE1c9T0TY/pjJhjtchTkkrxDWqZJglz/azIkv2TkxGPgH3NolVO9vmQFRaJtQOUi7YI3c4g7vzs00zqUmzqNzw=
-X-Received: by 2002:a5d:5989:0:b0:38d:cf33:31d6 with SMTP id
- ffacd0b85a97d-39263b006c5mr11690959f8f.3.1741887297667; Thu, 13 Mar 2025
- 10:34:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741887377; x=1742492177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=74LdO3L2papOXx6onu8X7dux3CgaxYMbpnbfEZf5vfs=;
+        b=jGGYSyviPloT4CsJyiKVd6Oy4762T9SF6KMAOWfYJtxo6GziOHKtmjlOpWeL/nmbTk
+         MnQSbZK5r7WTtVElHhZvtVslG5uRSDz3aQzOQFCR07DZnFn/mFSWO/4Lrw+VGYvNEDu2
+         dD3jpn62awHv1L3NiXq0QM2ZEreURpfao1E8+3AZZOZrt8hc8znjiLUdGkSh9C/w8lyQ
+         LOswzoB6+EqYEahdqSRnse8Bp2lzgZZoUfecMmAzgpun9Fn/n31uTSFA/QTZ2icmcr+x
+         7zgnWFtfU/UE7mXjKDLS4XzZiciwgkgRVQ+wEEmvGjcbIWDRRCVrAwCHQemFxDUPIv6M
+         PwFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPZBxAoIMkblG902oBXWfEkx5+E15N+9sFI0TbjZk7xNewbnFE+LUseaJvsTSEy6dtAaskXtduJ9AdAP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxja4aY2hgY8x2i4bkp5mjjpRHY/qgKUDAdCy8MQaj7ffg6RH+/
+	Ib5dVAJ+xKxojoN0gWniJ5v/eVSoFaFZRJDRkm0lGa13F5w2aqEMYSDCV4CXR37rBb+ms5kWzrf
+	/ZJQspGanJuC5DtB97jvFHzBBPQ9Nbq2Q4nzWEB4OSGHsBfWmWZf6C0ntGpZM0srdfKtfibactB
+	mx6z53Gvlh5CbRuAEIatIHi4g2VOJTtj8E4kwo
+X-Gm-Gg: ASbGnctvOYfHiTlgnTtxNCF27HAjGPEWAhXB38wLooBznrF1mMNd5yoHK2JFpjfJzF7
+	Pkp2iWgbQ87P0i+AKjeaNu2+ZCiP3U6CKDkp8Y3V2wel/ASQSMouyZZEwVydvCzIreW5EXa1fv4
+	CNxmPfihKNuw==
+X-Received: by 2002:a05:6902:11cc:b0:e5d:d6b8:231d with SMTP id 3f1490d57ef6-e63f3c1ab89mr394088276.46.1741887377126;
+        Thu, 13 Mar 2025 10:36:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IESNapqN0/McTxEgf1yThn7lvo6wBYo3eRd0NunIcEjHGxMwrpjR53TwIJsg0lBT1jUk9YB7r7WxOStKAHssG0=
+X-Received: by 2002:a05:6902:11cc:b0:e5d:d6b8:231d with SMTP id
+ 3f1490d57ef6-e63f3c1ab89mr394058276.46.1741887376762; Thu, 13 Mar 2025
+ 10:36:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-v1-1-675b6bc57176@linaro.org>
- <CACr-zFC=mPNeeHMp9XnSby+cMQaPWt_3s8iUiCN+EnVPeGad8Q@mail.gmail.com>
- <uljqxwfgl26txrfqvkvzzpj6qurgmwcbuot7gu2u6rwjaqgncb@jeuyi4mexjff>
- <CACr-zFDSFizYmrVN-dV334n1kq17UB9k4FxrV20NNQCQMhzrwg@mail.gmail.com>
- <92dd35a2-d1cc-4f2b-b3a8-5752ec33b0d3@kernel.org> <CACr-zFCYWEFPO8yExp_8hOQdVtC9Zwu1ZOZNksSeyyS6Ht0e9A@mail.gmail.com>
- <Z9HjMyjzE9XlqrEj@x1>
-In-Reply-To: <Z9HjMyjzE9XlqrEj@x1>
-From: Christopher Obbard <christopher.obbard@linaro.org>
-Date: Thu, 13 Mar 2025 17:34:46 +0000
-X-Gm-Features: AQ5f1JrDO9V43KtazVC9qZW1Wz_qdtZmiVsFJZOGkGi6dHNCT7HLwGuh8qsdaME
-Message-ID: <CACr-zFAHGcQtwSz0EF0kt7_PUXxwi3GZY2BmAVedbLjh3+4LhA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: defconfig: Enable Qualcomm interconnects as built-in
-To: Brian Masney <bmasney@redhat.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org
+References: <20250312000700.184573-1-npache@redhat.com> <20250312000700.184573-2-npache@redhat.com>
+ <c4229ea5-d991-4f5e-a0ff-45dce78a242a@redhat.com> <CAA1CXcCv20TW+Xgn18E0Jn1rbT003+3gR-KAxxE9GLzh=EHNmQ@mail.gmail.com>
+ <e9570319-a766-40f6-a8ea-8d9af5f03f81@redhat.com>
+In-Reply-To: <e9570319-a766-40f6-a8ea-8d9af5f03f81@redhat.com>
+From: Nico Pache <npache@redhat.com>
+Date: Thu, 13 Mar 2025 11:35:49 -0600
+X-Gm-Features: AQ5f1JrzcM5gNtNPl-Fo_pToh0DelHZYtUioYU9wKMINK1ALGT_dvw_uu_EmSak
+Message-ID: <CAA1CXcBsnbj1toxZNbks+NxrR_R_xuUb76X4ANin551Fi0WROA@mail.gmail.com>
+Subject: Re: [RFC 1/5] meminfo: add a per node counter for balloon drivers
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	virtualization@lists.linux.dev, xen-devel@lists.xenproject.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org, 
+	decui@microsoft.com, jerrin.shaji-george@broadcom.com, 
+	bcm-kernel-feedback-list@broadcom.com, arnd@arndb.de, 
+	gregkh@linuxfoundation.org, mst@redhat.com, jasowang@redhat.com, 
+	xuanzhuo@linux.alibaba.com, eperezma@redhat.com, jgross@suse.com, 
+	sstabellini@kernel.org, oleksandr_tyshchenko@epam.com, 
+	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
+	nphamcs@gmail.com, yosry.ahmed@linux.dev, kanchana.p.sridhar@intel.com, 
+	alexander.atanasov@virtuozzo.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Brian,
-
-On Wed, 12 Mar 2025 at 19:40, Brian Masney <bmasney@redhat.com> wrote:
+On Thu, Mar 13, 2025 at 2:22=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
 >
-> Hi Christopher,
+> On 13.03.25 00:04, Nico Pache wrote:
+> > On Wed, Mar 12, 2025 at 4:19=E2=80=AFPM David Hildenbrand <david@redhat=
+.com> wrote:
+> >>
+> >> On 12.03.25 01:06, Nico Pache wrote:
+> >>> Add NR_BALLOON_PAGES counter to track memory used by balloon drivers =
+and
+> >>> expose it through /proc/meminfo and other memory reporting interfaces=
+.
+> >>
+> >> In balloon_page_enqueue_one(), we perform a
+> >>
+> >> __count_vm_event(BALLOON_INFLATE)
+> >>
+> >> and in balloon_page_list_dequeue
+> >>
+> >> __count_vm_event(BALLOON_DEFLATE);
+> >>
+> >>
+> >> Should we maybe simply do the per-node accounting similarly there?
+> >
+> > I think the issue is that some balloon drivers use the
+> > balloon_compaction interface while others use their own.
+> >
+> > This would require unifying all the drivers under a single api which
+> > may be tricky if they all have different behavior
 >
-> On Wed, Mar 12, 2025 at 12:10:56PM +0100, Christopher Obbard wrote:
-> > For reference, I am working on updating initramfs generation tools in
-> > Debian/Fedora to include the required interconnect modules. Currently
-> > the interconnect drivers are built as modules in these distros, but
-> > are not included in the initrd. That is where my confusion initially
-> > stemmed from.
+> Why would that be required? Simply implement it in the balloon
+> compaction logic, and in addition separately in the ones that don't
+> implement it.
+
+Ah ok that makes sense!
+
 >
-> From a Fedora and centos-stream-9/10 perspective, we have dracut
-> updated so that the interconnect modules are included in the initramfs
-> by default.
+> That's the same as how we handle PageOffline today.
 >
-> https://github.com/dracutdevs/dracut/blob/master/modules.d/90kernel-modules/module-setup.sh#L74
+> In summary, we have
 >
-> Let me know if you are seeing a specific issue with the initramfs on
-> Fedora and I can help you.
+> virtio-balloon: balloon compaction
+> hv-balloon: no balloon compaction
+> xen-balloon: no balloon compaction
+> vmx-balloon: balloon compaction
+> pseries-cmm: balloon compaction
 
-Awesome, turns out I am wrong and the interconnect drivers are in fact
-present in the latest nightly Fedora 42 image I am testing:
+I'm having a hard time verifying this... it looks like only
+vmx-balloon uses the balloon_compaction balloon_page_list_enqueue
+function that calls balloon_page_enqueue_one.
 
-$ lsinitramfs initramfs-6.14.0-0.rc3.29.fc42.aarch64.img  | grep interconnect
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/imx
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/imx/imx-interconnect.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/imx/imx8mm-interconnect.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/imx/imx8mn-interconnect.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/imx/imx8mp-interconnect.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/imx/imx8mq-interconnect.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/icc-osm-l3.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/icc-smd-rpm.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-msm8916.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-msm8953.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-msm8996.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-qcm2290.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sa8775p.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sc7280.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sc8180x.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sc8280xp.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sdm845.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sdx75.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sm6115.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sm8150.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sm8250.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-sm8450.ko.xz
-usr/lib/modules/6.14.0-0.rc3.29.fc42.aarch64/kernel/drivers/interconnect/qcom/qnoc-x1e80100.ko.xz
+>
+> So you'd handle 3 balloon drivers in one go.
+>
+> (this series didn't touch pseries-cmm)
+Ah I didn't realize that was a balloon driver. Ill add that one to the todo=
+.
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
-
-
-Thanks,
-
-Chris
 
