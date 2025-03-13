@@ -1,209 +1,261 @@
-Return-Path: <linux-kernel+bounces-560451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F326A6046A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:34:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87516A60472
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:36:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B294E3B3742
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:34:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 122F11895365
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BD81F790F;
-	Thu, 13 Mar 2025 22:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6853E1F8922;
+	Thu, 13 Mar 2025 22:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDrxNl7T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bF3SgeJ1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0C21F12EB;
-	Thu, 13 Mar 2025 22:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5651F8721;
+	Thu, 13 Mar 2025 22:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741905249; cv=none; b=Jx8duipStub6T0Tnlj4rtH4niL8UMTmntdas3uWPADofIP4+K+OgB3F34onIMfI0XgLYc4sTfZF6P2K81cURwIVQLC0h51cT5Lt4iia91v9u3a/UzwjYz1Hv/q8MKDC6EVkQG5VnKIWc8N3pTA+OPULoeA/2SxHIHvyT9PCrm1M=
+	t=1741905376; cv=none; b=i1C3TQMAe9AW2Pue6WRT5jQfJHEAkXI66G5HoQidSZt7ngU94xFuf8O4r3rmZ4PzzJzvPGj9ncm5kF3sbb9yTa3XblHHIXt04OGCpJHReL2+Of/VtUIsWhp5XyVbJE4KSlbNa3XxTJLCMRjwJ3Lo2ee0Z43oQ7PpbmMkANSOhw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741905249; c=relaxed/simple;
-	bh=OH8SKV3EpGTINOyp0l73k/e/saWtSYUO8XFQ+5bYqKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gxMwuuaUowQ3mA9Esl0Xh3rc5h5sPSz3hkv/3KitQLXOpyNwJsC9BhU3jvG3rICv75GRyNsPBHtgJ6/hCLOub8SqANbn6StjxZGAUQQHdjh4E3iLqp0e7aujza1myCzHpAZNA875tb4yO/zdcrmkMurOdmON1X1E+exO9tvx1HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDrxNl7T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78C15C4CEDD;
-	Thu, 13 Mar 2025 22:34:06 +0000 (UTC)
+	s=arc-20240116; t=1741905376; c=relaxed/simple;
+	bh=TWaPls6LeWf6dTny1hQOf8nsOaK1A9CxcB8A/zdVsrU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V1qC05qT8M54lcoNCYnbOYBKRUznzjDmwx9NWDnnhiaShWL3x3yZnLWEV+0H1rx3YqJghlBV9H6CIQC40ogzdbtD5NK9WwJLrWtlwTGHMRmqnUeohxJQwGmoL+lyYN7fkxbFOQ3D9BT0gtAd73YxJGHX7wVBa3xzRr+M6MRuM+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bF3SgeJ1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EBDFC4CEF0;
+	Thu, 13 Mar 2025 22:36:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741905249;
-	bh=OH8SKV3EpGTINOyp0l73k/e/saWtSYUO8XFQ+5bYqKk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jDrxNl7TfU3zY5HAqFwmGLsa5buw1ltxtr8qA+s3P5xsOUe5ymPLy4o9pCQTwx+nX
-	 SF15AFE2kAq2hn62gwhQeGT8CVN1w3oRA3s3DOpk94feJKHx1YLw7HjfrYk823I07H
-	 SQJhYFgkJkvXEaIMZyw2HQyDDaa1B7IN1S20AEC3HN28s7tY/quRoDhAQ6cEKhqPQC
-	 crTeXyu4i0dyQ7VkpFyYOleqNgLrHZ1WP6WYWKVocuAGQY1a3GUnkZZf4sotCpYGie
-	 PuMT4PcEbJzJAXf5W/LFwDfl4xCMIaQ+slWOdW1nHcWgtsKWIJ44iOxequfURRe+yM
-	 I6SCV2Ywlnl8w==
-Date: Thu, 13 Mar 2025 22:34:04 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Nick Hu <nick.hu@sifive.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Anup Patel <anup@brainfault.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: timer: Add SiFive CLINT2
-Message-ID: <20250313-kimono-passport-496a312a849c@spud>
-References: <20250311051903.3825-1-nick.hu@sifive.com>
- <20250311195953.GA14239-robh@kernel.org>
- <20250311-erasure-rival-f68525c21742@spud>
- <CAKddAkBwkVQS7UtVvXCdLxEz6bz1=_X1u1CGUPm-OHiyAD4Dsw@mail.gmail.com>
+	s=k20201202; t=1741905376;
+	bh=TWaPls6LeWf6dTny1hQOf8nsOaK1A9CxcB8A/zdVsrU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bF3SgeJ13m0n3jXgo8FHGE4dSGdPf7G4FfvO4E4U1e8+VsSh+gl7RxL/9DulOFo/M
+	 RIpbqFTi6CQNl/7aVnnAZubG3eUh+5Tia7ZZojG7VqBxJtcq7DNmmbKCqKp1tP1qZS
+	 5tKKsw1BVKiOMC9ScijwPBVxkSQ9uUQYBofR4UsBP2nixOd4pEjcrdUuWdhSoKpvNm
+	 /qhbKQXVhyKXwPBfRTOKmwQyd6GJ9wHcXj7JPOO0nzPrwbm1MmlhmBSQsvfdwaX/QX
+	 ugH+sOD2WET1ytAzBjXBpGVkbO+f+BDeqPvQqbbDNa/fODgp9XTovzD25/CMsAi7Wy
+	 /Pe6SQ1wsrgYQ==
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2c2504fa876so487166fac.0;
+        Thu, 13 Mar 2025 15:36:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUHVNh/nj6iJcVKjPOOVI7XbAmlRjRBlmAi4lyPhHlcFo4uVPiHU1we+yeVjBqTVC/yDuIHQrYwg7isbi0=@vger.kernel.org, AJvYcCVMlKZyTt8wJoI5+rvWq1QVI7XBD4LYHTHKjAUEKblX8j7FYBZTWUQLeg1+7/sXJfrxgGulbc1lDLI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8T/8Ea9iJ0WRAxw+KI4Lpjl+n6hCuCPJ8M2gRVP9cqKQ2gEbN
+	Bg3ciiMR/RPTV+zvtfxmJFq7Awb1OdLTA4EQN8Dd554ZgHbo3AJni4dSO2SmPwAJFnyCJY8bZkf
+	WNK5GxJjAcRweb+15eCT6dLNrblc=
+X-Google-Smtp-Source: AGHT+IGqdyI0yv7lmMd4g8gy1gwTrHv2GtFFQC2VWDk8SLMoUWVy+abKQXhnQtDZXihqEhPV6VFCLVYVHKw2ltFYIIQ=
+X-Received: by 2002:a05:6870:4943:b0:29e:671b:6003 with SMTP id
+ 586e51a60fabf-2c6912275b1mr179213fac.32.1741905375273; Thu, 13 Mar 2025
+ 15:36:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="IrKm9n+XjpE4JIEJ"
-Content-Disposition: inline
-In-Reply-To: <CAKddAkBwkVQS7UtVvXCdLxEz6bz1=_X1u1CGUPm-OHiyAD4Dsw@mail.gmail.com>
-
-
---IrKm9n+XjpE4JIEJ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <1915694.tdWV9SEqCh@rjwysocki.net> <3271724.5fSG56mABF@rjwysocki.net>
+ <CAGETcx8WwG96FEOyKR-qFA=S6GhpH-EKpVtghNtxt-CQ-3UB_g@mail.gmail.com>
+In-Reply-To: <CAGETcx8WwG96FEOyKR-qFA=S6GhpH-EKpVtghNtxt-CQ-3UB_g@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 13 Mar 2025 23:36:04 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0j0kD_HjbVzHb7=5nEYx_5fzwoBupPBQs2Fpfzho_amfg@mail.gmail.com>
+X-Gm-Features: AQ5f1JqGO9urv6h6LSsL5_fBZW8vlWhPh6b43YVtEZRQvEkAFjVW4Sr1oS6dPK4
+Message-ID: <CAJZ5v0j0kD_HjbVzHb7=5nEYx_5fzwoBupPBQs2Fpfzho_amfg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] PM: sleep: Suspend parents and suppliers after
+ suspending subordinates
+To: Saravana Kannan <saravanak@google.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold <johan@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 13, 2025 at 03:58:05PM +0800, Nick Hu wrote:
-> Hi Rob and Conor
->=20
-> Thanks to all your feedback.
->=20
-> On Wed, Mar 12, 2025 at 4:46=E2=80=AFAM Conor Dooley <conor@kernel.org> w=
-rote:
+On Thu, Mar 13, 2025 at 10:17=E2=80=AFPM Saravana Kannan <saravanak@google.=
+com> wrote:
+>
+> On Thu, Mar 13, 2025 at 1:35=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysocki.=
+net> wrote:
 > >
-> > On Tue, Mar 11, 2025 at 02:59:53PM -0500, Rob Herring wrote:
-> > > On Tue, Mar 11, 2025 at 01:19:03PM +0800, Nick Hu wrote:
-> > > > Add compatible string and property for the SiFive CLINT v2.
-> > > >
-> > > > Signed-off-by: Nick Hu <nick.hu@sifive.com>
-> > > > Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
-> > > > ---
-> > > >  .../bindings/timer/sifive,clint.yaml          | 19 +++++++++++++++=
-++++
-> > > >  1 file changed, 19 insertions(+)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/timer/sifive,clint.y=
-aml b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-> > > > index 76d83aea4e2b..93d74c504b5f 100644
-> > > > --- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-> > > > +++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-> > > > @@ -36,6 +36,9 @@ properties:
-> > > >                - starfive,jh7110-clint   # StarFive JH7110
-> > > >                - starfive,jh8100-clint   # StarFive JH8100
-> > > >            - const: sifive,clint0        # SiFive CLINT v0 IP block
-> > >
-> > > Notice that we don't allow clint0 by itself. We shouldn't start now.
-> > >
-> > > > +      - items:
-> > >
-> > > If you don't have a specific one yet, then add '- {}' for the first
-> > > entry.
-> > >
-> Do you suggest something like the following?
->      - items:
->           - {}
->           - const: sifive,clint2        # SiFive CLINT v2 IP block
->         description: SiFive CLINT v2 is the HRT that supports the Zicntr
->=20
-> > > > +          - const: sifive,clint2        # SiFive CLINT v2 IP block
-> > > > +        description: SiFive CLINT v2 is the HRT that supports the =
-Zicntr
-> > > >        - items:
-> > > >            - enum:
-> > > >                - allwinner,sun20i-d1-clint
-> > > > @@ -62,6 +65,22 @@ properties:
-> > > >      minItems: 1
-> > > >      maxItems: 4095
-> > > >
-> > > > +  sifive,fine-ctr-bits:
-> > > > +    description: The width in bits of the fine counter.
-> > >
-> > > maximum: 15
-> > >
-> > > Unless you know of a different maximum in which case why aren't you
-> > > documenting that too?
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > >
-> You are right. It's my bad. The maximum width should always be 15 in
-> sifive,clint2.
-> I should update to:
->  sifive,fine-ctr-bits:
->     maximum: 15
->     description: The width in bits of the fine counter.
->=20
-> if:
->   not:
->     properties:
->       compatible:
->         contains:
->           const: sifive,clint2
-> then:
->   properties:
->     sifive,fine-ctr-bits: false
-
-I think this should be inverted, to
-
-if: properties: compatible: contains: const: sifive,clint2
-then: required: - sifive,fine-counter-bits
-else: sifive,fine-counter-bits: false
-
-since the property has no default.
-
->=20
-> > I'm curious why this is not something that can be discerned from the
-> > compatible. It's max 15, but are there actually versions of this with a
-> > less-than-15-bit width?
+> > In analogy with the previous change affecting the resume path,
+> > make device_suspend() start the async suspend of the device's parent
+> > and suppliers after the device itself has been processed and make
+> > dpm_suspend() start processing "async" leaf devices (that is, devices
+> > without children or consumers) upfront because they don't need to wait
+> > for any other devices.
 > >
-> The width may be various on different platforms so it is possible to
-> have a less-than-15-bit width.
->=20
-> > >
-> > > > +
-> > > > +if:
-> > > > +  properties:
-> > > > +    compatible:
-> > > > +      contains:
-> > > > +        const: sifive,clint2
-> > > > +then:
-> > > > +  properties:
-> > > > +    sifive,fine-ctr-bits:
-> > > > +      maximum: 15
-> > > > +else:
-> > > > +  properties:
-> > > > +    sifive,fine-ctr-bits: false
-> > > > +
-> > > >  additionalProperties: false
-> > > >
-> > > >  required:
-> > > > --
-> > > > 2.17.1
-> > > >
->=20
-> Best Regards,
-> Nick
+> > On the Dell XPS13 9360 in my office, this change reduces the total
+> > duration of device suspend by approximately 100 ms (over 20%).
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > Suggested-by: Saravana Kannan <saravanak@google.com>
+> > ---
+> >
+> > v1 -> v2:
+> >    * Adjust for the changes in patch [1/3].
+> >    * Fix walking suppliers in dpm_async_suspend_superior().
+> >    * Use device links read locking in dpm_async_suspend_superior() (Sar=
+avana).
+> >    * Move all devices to the target list even if there are errors in
+> >      dpm_suspend() so they are properly resumed during rollback (Sarava=
+na).
+> >
+> > ---
+> >  drivers/base/power/main.c |   78 +++++++++++++++++++++++++++++++++++++=
++++++----
+> >  1 file changed, 72 insertions(+), 6 deletions(-)
+> >
+> > --- a/drivers/base/power/main.c
+> > +++ b/drivers/base/power/main.c
+> > @@ -1231,6 +1231,50 @@
+> >
+> >  /*------------------------- Suspend routines -------------------------=
+*/
+> >
+> > +static bool dpm_leaf_device(struct device *dev)
+> > +{
+> > +       struct device *child;
+> > +
+> > +       lockdep_assert_held(&dpm_list_mtx);
+> > +
+> > +       child =3D device_find_any_child(dev);
+> > +       if (child) {
+> > +               put_device(child);
+> > +
+> > +               return false;
+> > +       }
+> > +
+> > +       /*
+> > +        * Since this function is required to run under dpm_list_mtx, t=
+he
+> > +        * list_empty() below will only return true if the device's lis=
+t of
+> > +        * consumers is actually empty before calling it.
+> > +        */
+> > +       return list_empty(&dev->links.consumers);
+> > +}
+>
+> We need the equivalent of this for resume.
 
---IrKm9n+XjpE4JIEJ
-Content-Type: application/pgp-signature; name="signature.asc"
+Maybe.
 
------BEGIN PGP SIGNATURE-----
+> > +
+> > +static void dpm_async_suspend_superior(struct device *dev, async_func_=
+t func)
+> > +{
+> > +       struct device_link *link;
+> > +       int idx;
+> > +
+> > +       mutex_lock(&dpm_list_mtx);
+> > +
+> > +       /* Start processing the device's parent if it is "async". */
+> > +       if (dev->parent)
+> > +               dpm_async_with_cleanup(dev->parent, func);
+> > +
+> > +       mutex_unlock(&dpm_list_mtx);
+> > +
+> > +       idx =3D device_links_read_lock();
+> > +
+> > +       /* Start processing the device's "async" suppliers. */
+> > +       list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
+> > +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
+> > +                       dpm_async_with_cleanup(link->supplier, func);
+>
+> We should check that the rest of the consumers of the supplier are
+> "done" before we queue the supplier. With 386 device links (and the
+> number only increases as we add support for more properties), there's
+> no doubt that we'll hit this often.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ9NdXAAKCRB4tDGHoIJi
-0g0uAPsEXt5V5cLEAAhBAZ5l7d6lhyvuUe5XiNi2ELaP0v6OPgEAzVJEkH+aXiak
-nA/2l4YbUtpVYVh1j3dDZcrVq4FM4wE=
-=SkWm
------END PGP SIGNATURE-----
+And I'm not doing this until I see any data confirming that it makes a
+difference in the order of 10% or more.
 
---IrKm9n+XjpE4JIEJ--
+> > +
+> > +       device_links_read_unlock(idx);
+>
+> Is passing idx to unlock a new (within the past 6 months) thing? I
+> don't remember having to do this in the past.
+
+It's SRCU and it's been there forever.
+
+> > +}
+> > +
+> >  /**
+> >   * resume_event - Return a "resume" message for given "suspend" sleep =
+state.
+> >   * @sleep_state: PM message representing a sleep state.
+> > @@ -1656,6 +1700,8 @@
+> >         device_links_read_unlock(idx);
+> >  }
+> >
+> > +static void async_suspend(void *data, async_cookie_t cookie);
+> > +
+> >  /**
+> >   * device_suspend - Execute "suspend" callbacks for given device.
+> >   * @dev: Device to handle.
+> > @@ -1785,7 +1831,13 @@
+> >
+> >         complete_all(&dev->power.completion);
+> >         TRACE_SUSPEND(error);
+> > -       return error;
+> > +
+> > +       if (error || async_error)
+> > +               return error;
+> > +
+> > +       dpm_async_suspend_superior(dev, async_suspend);
+> > +
+> > +       return 0;
+> >  }
+> >
+> >  static void async_suspend(void *data, async_cookie_t cookie)
+> > @@ -1803,6 +1855,7 @@
+> >  int dpm_suspend(pm_message_t state)
+> >  {
+> >         ktime_t starttime =3D ktime_get();
+> > +       struct device *dev;
+> >         int error =3D 0;
+> >
+> >         trace_suspend_resume(TPS("dpm_suspend"), state.event, true);
+> > @@ -1816,12 +1869,28 @@
+> >
+> >         mutex_lock(&dpm_list_mtx);
+> >
+> > +       /*
+> > +        * Start processing "async" leaf devices upfront because they d=
+on't need
+> > +        * to wait.
+> > +        */
+> > +       list_for_each_entry_reverse(dev, &dpm_prepared_list, power.entr=
+y) {
+> > +               dpm_clear_async_state(dev);
+> > +               if (dpm_leaf_device(dev))
+> > +                       dpm_async_with_cleanup(dev, async_suspend);
+> > +       }
+> > +
+> >         while (!list_empty(&dpm_prepared_list)) {
+> > -               struct device *dev =3D to_device(dpm_prepared_list.prev=
+);
+> > +               dev =3D to_device(dpm_prepared_list.prev);
+> >
+> >                 list_move(&dev->power.entry, &dpm_suspended_list);
+> >
+> > -               dpm_clear_async_state(dev);
+> > +               /*
+> > +                * Move all devices to the target list to resume them p=
+roperly
+> > +                * on errors.
+> > +                */
+>
+> I did this initially on my end, but we have so many devices that
+> looping through them had a measurable impact.
+
+Which I guess is super-important for error handling.  Come on.
+
+> It's better to just splice the lists on error.
+
+On top of this change, yes.
 
