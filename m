@@ -1,270 +1,126 @@
-Return-Path: <linux-kernel+bounces-559074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6290A5EF3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:13:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A42A5EF40
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:13:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F25C91707BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:13:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F35F18943E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F3B263883;
-	Thu, 13 Mar 2025 09:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E941D264626;
+	Thu, 13 Mar 2025 09:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mdU6BL+M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KUrnCwXz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4467B43159;
-	Thu, 13 Mar 2025 09:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377C52641DC;
+	Thu, 13 Mar 2025 09:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741857180; cv=none; b=uuaMAFsjMrl66bSIjHPWuwpI6/ASdflJiuOUJbB+yQvadRyacJDpBxtxwcM+JpXunfW9e94RR0Ad/4M9EV3seHdcae9u65b+6jF1qN6fJOCg2NqaoQgME+tEg5H+aGr6dzEol8KPXbwiBEHE8gAkTxl/iX+l7ofGWv7pnuFtj9s=
+	t=1741857206; cv=none; b=FsedAe2MQJ0wG5KvUhPU+yYqfvaDM7ubLfx/5jOPGiz9heeiiwDi45uMdG2zt/XHyDdPu472GrPJPE4R9Zjze+HLd5gubcnGtdJvWdSDzAACMRRyHgek3MYaSQLFOv/B8Vzqg0zFchsQs65dOJjHU67cQTeSwQGw1oFOlpOgAYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741857180; c=relaxed/simple;
-	bh=5PbUeh6WBXBtwNcFqeXgxXqosFjPNOkIMa6lwYzuAjI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R2RSgUYG45kVSq4E/1zTOjrxyWlJTiX3icjdsZqjLxKNJjYUH8i1TDciYXySq8ldBrRCmO6lTM5teObwVJHYu3ssj+0pQp2tFa2oNJrEsLOqJEOjrVR61wy2pi0j08CTpk4UhwiGqpw1OaNj0R1ODrAFbGngSd/hxlRxGsIgigo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mdU6BL+M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 403D0C4CEDD;
-	Thu, 13 Mar 2025 09:12:56 +0000 (UTC)
+	s=arc-20240116; t=1741857206; c=relaxed/simple;
+	bh=XPChNfFXlAoEhDDQGCfLjaxmtcrf+d26j4cITHrFFaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mpr3+5EiGwc+sQX/rjyxz72J1Gd9o0ZyM78jF1fLsDFlMtu6FfQVLQw+rzh52KNSJcQh8ITHT7DD9XGX+WiyQcmPCjuiNNa6C4w4VP6BFjw9tFr338oAHOeg7sx3tr7A4tKMfnbJM0pGtr467PrfXHu75Z5//6kUwDHpI+KZaMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KUrnCwXz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D330C4CEEB;
+	Thu, 13 Mar 2025 09:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741857180;
-	bh=5PbUeh6WBXBtwNcFqeXgxXqosFjPNOkIMa6lwYzuAjI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mdU6BL+ME64Ci5u78OkfuTG5Qx9oiiF/4K1NM6EPepI+iey9JqeMgciRqlHyOiJAT
-	 Jpj9i1z8/k/pmqr2rFgmi4jW2XjFGuTWyHnZac6iZkk2QvqmexpLuBrs5B9ImSrIC0
-	 0dsFT52fY8/lhFTn/muJYHbCsTc9lf3LlMYtofcjCLOzB5XEpo5SAf+6zIM9byl5MP
-	 N0J7nkIXZ+bSc/j/39aOAo2OV060GxiJkAYgowwGz20zOiDoavZqCAtsVuiWEFHBct
-	 +00MWLiFOIiS/ehfs+n/sdZVk8VMXnV44o0FG10i78nbaV/0w68b0c/cJaC9/rsK8m
-	 AM+bUeaB1a1Yg==
-Date: Thu, 13 Mar 2025 14:42:53 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Jens Wiklander <jens.wiklander@linaro.org>
-Subject: Re: [RFC PATCH 2/3] tpm/tpm_ftpm_tee: use send_recv() op
-Message-ID: <Z9KhlSr7qG6VooeC@sumit-X1>
-References: <20250311100130.42169-1-sgarzare@redhat.com>
- <20250311100130.42169-3-sgarzare@redhat.com>
+	s=k20201202; t=1741857205;
+	bh=XPChNfFXlAoEhDDQGCfLjaxmtcrf+d26j4cITHrFFaM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KUrnCwXzugBobwjVxouwhmGfeB0FbL0KotVpkA+nMiAxJqGLyKPmFarApKHNkvHob
+	 NBBqTG+H3n8kEuaYispMI++tro2enNEwgwCHvE3HAwcl+cDmrkQSf3TOUxVw78ACyr
+	 1bszEhcq0kqU5JCLVKvRguf9sv4DdQ6+0UcOqj4p8ostIK6hyiI10q32LZ/YeWi8fB
+	 Vo8ZfXdk0Qkm3uJkMyHAOlsHHtLUUjV87fbUQHFH91KADNicFupDOIRd9l0rRPCKWA
+	 oDEYuyH6d1DCQ4RgtI0u0u2RWhWp4vcaI607kMeAqoYDldM1GF+r+/vCKyFM4khyD8
+	 ArVvBDc7MMOhg==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Thu, 13 Mar 2025 10:13:15 +0100
+Message-ID: <20250313-vfs-fixes-a0e878b9a930@brauner>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311100130.42169-3-sgarzare@redhat.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1785; i=brauner@kernel.org; h=from:subject:message-id; bh=XPChNfFXlAoEhDDQGCfLjaxmtcrf+d26j4cITHrFFaM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRfWrh6wgGNRy2OD3meL53uFZPjnPrBfMpu2VULE/885 s3el2dS1FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRZ7YM/9Mj5p9mfp/I8t94 6bUy6QNxXrJ28a31JxTWpy2PUzE0OcDwv/zhGf8V2TH8b67wTOzI2v7Z6Gdx17x7jfbMC9KOqe3 7xAsA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-+ Jens
+/* Summary */
 
-Hi Stefano,
+This contains various fixes for this cycle:
 
-On Tue, Mar 11, 2025 at 11:01:29AM +0100, Stefano Garzarella wrote:
-> This driver does not support interrupts, and receiving the response is
-> synchronous with sending the command.
-> 
-> It used an internal buffer to cache the response when .send() is called,
-> and then return it when .recv() is called.
-> 
-> Let's simplify the driver by implementing the new send_recv() op, so that
-> we can also remove the 4KB internal buffer used to cache the response.
+- Bring in an RCU pathwalk fix for afs. This is brought in as a merge
+  from the vfs-6.15.shared.afs branch that needs this commit and other
+  trees already depend on it.
 
-Looks like a nice cleanup to me but it needs to be tested. Jens, can you
-give this patch a try?
+- Fix vboxfs unterminated string handling.
 
-> 
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> ---
-> Note: I don't know how to test this driver, so I just build it.
-> If someone can test it, or tell me how to do, it will be great!
+/* Testing */
 
-The fTPM is now maintained as part of OP-TEE project here [1]. The
-instructions to test it on Qemu can be found here [2] as part of CI
-pipeline.
+gcc version (Debian 14.2.0-8) 14.2.0
+Debian clang version 19.1.4 (1)
 
-[1] https://github.com/OP-TEE/optee_ftpm
-[2] https://github.com/OP-TEE/optee_ftpm/blob/master/.github/workflows/ci.yml
+No build failures or warnings were observed.
 
--Sumit
+/* Conflicts */
 
-> ---
->  drivers/char/tpm/tpm_ftpm_tee.h |  4 --
->  drivers/char/tpm/tpm_ftpm_tee.c | 86 ++++++++-------------------------
->  2 files changed, 21 insertions(+), 69 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_ftpm_tee.h b/drivers/char/tpm/tpm_ftpm_tee.h
-> index f98daa7bf68c..72b2f5c41274 100644
-> --- a/drivers/char/tpm/tpm_ftpm_tee.h
-> +++ b/drivers/char/tpm/tpm_ftpm_tee.h
-> @@ -23,16 +23,12 @@
->   * @chip:     struct tpm_chip instance registered with tpm framework.
->   * @state:    internal state
->   * @session:  fTPM TA session identifier.
-> - * @resp_len: cached response buffer length.
-> - * @resp_buf: cached response buffer.
->   * @ctx:      TEE context handler.
->   * @shm:      Memory pool shared with fTPM TA in TEE.
->   */
->  struct ftpm_tee_private {
->  	struct tpm_chip *chip;
->  	u32 session;
-> -	size_t resp_len;
-> -	u8 resp_buf[MAX_RESPONSE_SIZE];
->  	struct tee_context *ctx;
->  	struct tee_shm *shm;
->  };
-> diff --git a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftpm_tee.c
-> index 139556b21cc6..f0393d843780 100644
-> --- a/drivers/char/tpm/tpm_ftpm_tee.c
-> +++ b/drivers/char/tpm/tpm_ftpm_tee.c
-> @@ -31,45 +31,19 @@ static const uuid_t ftpm_ta_uuid =
->  		  0x82, 0xCB, 0x34, 0x3F, 0xB7, 0xF3, 0x78, 0x96);
->  
->  /**
-> - * ftpm_tee_tpm_op_recv() - retrieve fTPM response.
-> - * @chip:	the tpm_chip description as specified in driver/char/tpm/tpm.h.
-> - * @buf:	the buffer to store data.
-> - * @count:	the number of bytes to read.
-> - *
-> - * Return:
-> - *	In case of success the number of bytes received.
-> - *	On failure, -errno.
-> - */
-> -static int ftpm_tee_tpm_op_recv(struct tpm_chip *chip, u8 *buf, size_t count)
-> -{
-> -	struct ftpm_tee_private *pvt_data = dev_get_drvdata(chip->dev.parent);
-> -	size_t len;
-> -
-> -	len = pvt_data->resp_len;
-> -	if (count < len) {
-> -		dev_err(&chip->dev,
-> -			"%s: Invalid size in recv: count=%zd, resp_len=%zd\n",
-> -			__func__, count, len);
-> -		return -EIO;
-> -	}
-> -
-> -	memcpy(buf, pvt_data->resp_buf, len);
-> -	pvt_data->resp_len = 0;
-> -
-> -	return len;
-> -}
-> -
-> -/**
-> - * ftpm_tee_tpm_op_send() - send TPM commands through the TEE shared memory.
-> + * ftpm_tee_tpm_op_send_recv() - send TPM commands through the TEE shared memory
-> + * and retrieve the response.
->   * @chip:	the tpm_chip description as specified in driver/char/tpm/tpm.h
-> - * @buf:	the buffer to send.
-> - * @len:	the number of bytes to send.
-> + * @buf:	the buffer to send and to store the response.
-> + * @buf_len:	the size of the buffer.
-> + * @cmd_len:	the number of bytes to send.
->   *
->   * Return:
-> - *	In case of success, returns 0.
-> + *	In case of success, returns the number of bytes received.
->   *	On failure, -errno
->   */
-> -static int ftpm_tee_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t len)
-> +static int ftpm_tee_tpm_op_send_recv(struct tpm_chip *chip, u8 *buf,
-> +				     size_t buf_len, size_t cmd_len)
->  {
->  	struct ftpm_tee_private *pvt_data = dev_get_drvdata(chip->dev.parent);
->  	size_t resp_len;
-> @@ -80,16 +54,15 @@ static int ftpm_tee_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t len)
->  	struct tee_param command_params[4];
->  	struct tee_shm *shm = pvt_data->shm;
->  
-> -	if (len > MAX_COMMAND_SIZE) {
-> +	if (cmd_len > MAX_COMMAND_SIZE) {
->  		dev_err(&chip->dev,
->  			"%s: len=%zd exceeds MAX_COMMAND_SIZE supported by fTPM TA\n",
-> -			__func__, len);
-> +			__func__, cmd_len);
->  		return -EIO;
->  	}
->  
->  	memset(&transceive_args, 0, sizeof(transceive_args));
->  	memset(command_params, 0, sizeof(command_params));
-> -	pvt_data->resp_len = 0;
->  
->  	/* Invoke FTPM_OPTEE_TA_SUBMIT_COMMAND function of fTPM TA */
->  	transceive_args = (struct tee_ioctl_invoke_arg) {
-> @@ -103,7 +76,7 @@ static int ftpm_tee_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t len)
->  		.attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT,
->  		.u.memref = {
->  			.shm = shm,
-> -			.size = len,
-> +			.size = cmd_len,
->  			.shm_offs = 0,
->  		},
->  	};
-> @@ -115,7 +88,7 @@ static int ftpm_tee_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t len)
->  		return PTR_ERR(temp_buf);
->  	}
->  	memset(temp_buf, 0, (MAX_COMMAND_SIZE + MAX_RESPONSE_SIZE));
-> -	memcpy(temp_buf, buf, len);
-> +	memcpy(temp_buf, buf, cmd_len);
->  
->  	command_params[1] = (struct tee_param) {
->  		.attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT,
-> @@ -156,38 +129,21 @@ static int ftpm_tee_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t len)
->  			__func__, resp_len);
->  		return -EIO;
->  	}
-> +	if (resp_len > buf_len) {
-> +		dev_err(&chip->dev,
-> +			"%s: Invalid size in recv: buf_len=%zd, resp_len=%zd\n",
-> +			__func__, buf_len, resp_len);
-> +		return -EIO;
-> +	}
->  
-> -	/* sanity checks look good, cache the response */
-> -	memcpy(pvt_data->resp_buf, temp_buf, resp_len);
-> -	pvt_data->resp_len = resp_len;
-> -
-> -	return 0;
-> -}
-> -
-> -static void ftpm_tee_tpm_op_cancel(struct tpm_chip *chip)
-> -{
-> -	/* not supported */
-> -}
-> -
-> -static u8 ftpm_tee_tpm_op_status(struct tpm_chip *chip)
-> -{
-> -	return 0;
-> -}
-> +	memcpy(buf, temp_buf, resp_len);
->  
-> -static bool ftpm_tee_tpm_req_canceled(struct tpm_chip *chip, u8 status)
-> -{
-> -	return false;
-> +	return resp_len;
->  }
->  
->  static const struct tpm_class_ops ftpm_tee_tpm_ops = {
->  	.flags = TPM_OPS_AUTO_STARTUP,
-> -	.recv = ftpm_tee_tpm_op_recv,
-> -	.send = ftpm_tee_tpm_op_send,
-> -	.cancel = ftpm_tee_tpm_op_cancel,
-> -	.status = ftpm_tee_tpm_op_status,
-> -	.req_complete_mask = 0,
-> -	.req_complete_val = 0,
-> -	.req_canceled = ftpm_tee_tpm_req_canceled,
-> +	.send_recv = ftpm_tee_tpm_op_send_recv,
->  };
->  
->  /*
-> -- 
-> 2.48.1
-> 
-> 
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit 00a7d39898c8010bfd5ff62af31ca5db34421b38:
+
+  fs/pipe: add simpler helpers for common cases (2025-03-06 18:25:35 -1000)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-rc7.fixes
+
+for you to fetch changes up to 986a6f5eacb900ea0f6036ef724b26e76be40f65:
+
+  vboxsf: Add __nonstring annotations for unterminated strings (2025-03-11 13:06:39 +0100)
+
+Please consider pulling these changes from the signed vfs-6.14-rc7.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.14-rc7.fixes
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      Merge afs RCU pathwalk fix
+
+David Howells (1):
+      afs: Fix afs_atcell_get_link() to handle RCU pathwalk
+
+Kees Cook (1):
+      vboxsf: Add __nonstring annotations for unterminated strings
+
+ fs/afs/cell.c     | 11 ++++++-----
+ fs/afs/dynroot.c  | 15 +++++++++++++--
+ fs/afs/internal.h |  2 +-
+ fs/afs/proc.c     |  4 ++--
+ fs/vboxsf/super.c |  3 +--
+ 5 files changed, 23 insertions(+), 12 deletions(-)
 
