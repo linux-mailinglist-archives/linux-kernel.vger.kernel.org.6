@@ -1,199 +1,174 @@
-Return-Path: <linux-kernel+bounces-559998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22519A5FC7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:47:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D0DAA5FC7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:48:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57302177375
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:47:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52787179C40
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5336E268FD2;
-	Thu, 13 Mar 2025 16:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4312A268FF4;
+	Thu, 13 Mar 2025 16:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SwV7nezJ"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="d586gfzg"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C884126C03;
-	Thu, 13 Mar 2025 16:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3158126C03
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 16:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741884466; cv=none; b=aTilB/1whKPqMF+zVZaWXmyfurnGMCLOIXB/r/jzTAA1+Fasrae8Z6cWE6u/8iumpRFoSPdJYN5PhZ95uBacxabfbht3Q3YZR7GDxy1J1pe+dev3axfJ3zqhkwQX8v3r+PmXnckLpZahjCpcZrxXRwMeaiEl80Pa3lKpub6sAog=
+	t=1741884487; cv=none; b=q1P/xVOln980r/niSC+580cUMYXmzFc6tEMetgRh4595abGLjeRJ9L4Esux0+XdOIvzIsI5mfP2tdy7okU/2z4QPYd/EXwVZlHEoXMkEenAFjeS+W0KS4T1b8N+VpV3+BzJC9ImctD8YfFLihDj0lb1RcPVjSc6BQchmHR6fRVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741884466; c=relaxed/simple;
-	bh=5g2/bcJFxzetQ5Z89mvaC23u3B8DW3Ez9OXKAPaqN4c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=krypWBNZ4lJCD8FuUBMUoSlL+JDXHahEkheKwJMtx/bL4TN7pZgZr8NXQpYV1YnvUir2QZXzjChksQv4q7555iQzuxGq/A3n+wxBgEFjNzayDw+R8S+FFCmvx1lK5jawsU3R2ZJ7Ywo5NK4QOgls7+KknJuvX2dAj7sjMfv6gnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SwV7nezJ; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e634949074eso153224276.1;
-        Thu, 13 Mar 2025 09:47:44 -0700 (PDT)
+	s=arc-20240116; t=1741884487; c=relaxed/simple;
+	bh=x3SebGT4/hVZ6ltP0nnoHVJ04fj2Ha3ZkDNmZkkZT7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qh6uDZA7D88imzNrWMJjhfv54qYLE0oj1jRxpy0yIHhqAU3OjKOvPyGWnsd2DOEZQ8+XZ/E3yBTBTlldekSki5hHEw7c1yaVv12Nv5FMhfaf0MCtcYOIr9JQCVPmBCE7CJrojpRUUutlhpeubQVr/37PuYXIhFj9VvQ8hqVI9jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=d586gfzg; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c559b3eb0bso72713985a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:48:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741884464; x=1742489264; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7s6eQ4zcP14m0ASOVWCXiFKRHZFfHjNhLuArM6tbgeU=;
-        b=SwV7nezJ7pDUIjyw5tB6BY4N/K7uHn+dGkjsnik9vngPLSQ3kn4lhS/+PlS+LxsfMf
-         LzKubdypybjUH8/4JRiM8fVIFuKqM7N6M6iYR4dmuFBddv/kNG2tBdSjhHLaEhjWVCfT
-         MYz8gWtqjS2RTFuKYlVIch3zjRFzlvWItYR8zou+9/huE0V09M4hKsfyWR6q4haPZiEW
-         +jremhxXA6OSr3KSJUh1RTZFOhypuzMrUiIJtuaw5LLvoyFxcIFg6viqz44l/p75uYw7
-         KsfuO29cO6M10ALOWt0EH+0Ciszxq7A+YXkJmX3E724GZQGa9xcmqdnKZyNz17FMGc7c
-         at0w==
+        d=gourry.net; s=google; t=1741884485; x=1742489285; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6gWJHqAH2Ne74hFxjKFTiD545xNbJagX+7KeghzOK3g=;
+        b=d586gfzgfJyhVxd4XNlQfktvSGS84dn9PeUraszwv1OEJx7IcCbtFXDxvjLQhY5cVu
+         My0MM1JnR4vDVmoLA792wLE8Qy0EFhS5MFeUhwrTtpnVxrOUDiL8TiqEdbBEqz/tOD+u
+         FkdETLEl7q2fVDZti1IggUUOuBH9b8rDGOp2mRjbhkw+mdCUXtAj6saoVlePaaivG95a
+         RxpvGKs+YOyqPPRwkMFPZRxyzlZGzSUkVNqPzrJ+AUfFC7UZoxDF0Z3YfVbZd4nTleba
+         c2Erep2ekCflJVOnd3n7XiiPVH7YvCOUJzB/B9bj1cyHS/TKyf0jhXatHk0UqgYWXkkZ
+         aYQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741884464; x=1742489264;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7s6eQ4zcP14m0ASOVWCXiFKRHZFfHjNhLuArM6tbgeU=;
-        b=LAn4xfp3k+79KhpsDqVgZznEpmdum7dnTSrLB2WtNSTblBckied/BhLVPApVx74465
-         KdMNoofJvwIhfIg2n5+fXmGX1rO1zGCy0LTWAHbQtVcfDYLDTgZQdwZZSXGKPbuiie7Q
-         1OlDJ5KkNv8tHxCAS0uTX/6fwcE6XuKlRppseGyK/pCCJBYpfRXlb3j7HZwmasRLVk4W
-         2VWclU+dXpoGkVmj17/iyOfvE5aFLDw7SXzx8H6TUy22tRIZNEQvfJtcMXw6913vpjHu
-         KBnRx4AwuDPjVMOPiSvt+Fa+s+/xVWrEfrBdlZN/lWayqimMB92kExA4+EXvcx70fK5A
-         i2Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMP8ffvEpNHIKxxRqA/M2dMDophHg3HXB+PdCgW+SBADtNBKE5VctHNY0ViFwQSVtOnGXojS1DgLI=@vger.kernel.org, AJvYcCXrRUnbJafVqqeYXnzhjgEd5JJHMq4zKfvrG8/+gtRBysu5OhXCmPqtpaVAI7zRBdVlZd9JDxl4Tp+MDH4T@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJB044Has3OrOGgatze1rEYFFq3y9TobT/LqKGkA77cyk0k2vB
-	NtV9qQe046UnRvG5SoNjK6RkyUp58Igne8rYMgwJR3YnjkPbrTZN41tjQGunf0XcmoRbz3GMUg7
-	FDxB4dk7q3G76RSX+bLk7Hhb9aNg=
-X-Gm-Gg: ASbGnctoVP3tc5H7efMz4UcY3GwjvEtOL/qASJ7buR5JBIAn9UD4LryZlg9JUM8ZMAX
-	K3H0dYemk3PtPAZFgsQ+5HT4v4qvWz3CFmSsO8N0fqbpr5jVLh0BY4ydjk7lLKYKV/uqfd/26ix
-	bpUpzu1V7PGlMDhodf4lYM92inJQ==
-X-Google-Smtp-Source: AGHT+IH1+WBEwmBZW3PmilqWpln4lPKb6NP8lfia9DAsa0W/TSQjS9ROzwC+hDgwGzG7yn+UZNSN1TtOhctu4wmJWiA=
-X-Received: by 2002:a05:6902:2202:b0:e5d:fa5d:c630 with SMTP id
- 3f1490d57ef6-e63b522982amr7071149276.7.1741884464054; Thu, 13 Mar 2025
- 09:47:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741884485; x=1742489285;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6gWJHqAH2Ne74hFxjKFTiD545xNbJagX+7KeghzOK3g=;
+        b=gL6kqrZKmZP0VsycpS9RxFk9ZGQOhoqWi1saJ9CGMukpNB7k7Klt3ojX2tMXcYQyeb
+         bC/Tf8OfYJn6AsELD8Kqta6HnE7Hmc1Swglx30/EPZriTvvyunCWF88/g6cgkgDZ19kY
+         v57PJrVoFhrUGho0zkmH7X6vtuxRc8d691MK6X8Zz+tRa3VpywpCJvOmH8K2Tra7jArq
+         2YkSm2uRtKqdN4jWIcGjctAsbcdCqMtRWizCcpUANHcKJkVD8C9OXOzvkf59UrfV5O5X
+         f3ZMjbR2RGEZrrOYutCJxSyqZPfiX+pLykBZHUHtwrbtI839hida9yaKhIhWvJ0gvR6k
+         xWuw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsrauKKRiyeNI7z7/obYjBHKx9rhxFHP5ODGZXDd+4IaYXVVKkvS7+SeTvq/V3h0QSb9wILrSorCdOuHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxwpm0kSW96qvHrPdrhBS4n2l4iqo9ePLBDrUKYCAyPqar0a3Eu
+	8HnNTEHamiKvd/+gDZd0W9y2SfhdokqC0r3tPzjpPu8qDy9uOcCXHtE4x/gR1BY=
+X-Gm-Gg: ASbGncstPQPn9/B+mRtVzte8z+1hXYGIrxD8h50FUzB8e9NSrZlSU0cia05LXZpTCP9
+	9VzxEsuldE5SmDyFzpQQgaWvvfRGD5CMa3V1pTO6zzNzP+os2G+io+k2hfveAN4MzTVeIfYdlNV
+	vujoh2Xdin/x9XpZ+rm9M4oh8kpMdtdEf2msUX1tRt7a3kz65orIpIjHeL5/ohjcpMQw3rxZXRW
+	Or8Zv273CfzOMbxY6wm7rhFkQNJNgcdYa6Y4XakXq/NhyZJ4BatFQg46Np3RbfhjiIT/8e+efYA
+	pdaZ+DFLo3bwvCmM8EBv8JAMwFLPkRiC7V1KsMHjWVdw20g4WveAv9co5YS0cy8BukCvRduvTl+
+	PiUl7C6ipkW6x8uqc3wj0+DIBS+M=
+X-Google-Smtp-Source: AGHT+IHxF9ffTb10hBbkPjF4Gy9uvvCTgZFfxO5Mi/avamJ3LWPv9XNw4u9cLuY8UUZaXI1bajEgNQ==
+X-Received: by 2002:a05:620a:618c:b0:7c5:64a5:d17e with SMTP id af79cd13be357-7c579f1eebbmr83505385a.25.1741884484673;
+        Thu, 13 Mar 2025 09:48:04 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573c4f525sm118401585a.20.2025.03.13.09.48.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 09:48:04 -0700 (PDT)
+Date: Thu, 13 Mar 2025 12:48:02 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+Cc: lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [LSF/MM] CXL Boot to Bash - Section 4: Interleave
+Message-ID: <Z9MMQjjw_QaOCxvD@gourry-fedora-PF4VCD3F>
+References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
+ <Z9DQnjPWbkjqrI9n@gourry-fedora-PF4VCD3F>
+ <Z9KX4/zF6/yFdWLQ@phytium.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220104234.40958-1-l.rubusch@gmail.com> <20250220104234.40958-12-l.rubusch@gmail.com>
- <20250304134033.656e4a6a@jic23-huawei>
-In-Reply-To: <20250304134033.656e4a6a@jic23-huawei>
-From: Lothar Rubusch <l.rubusch@gmail.com>
-Date: Thu, 13 Mar 2025 17:47:08 +0100
-X-Gm-Features: AQ5f1JrVq9DmOhDLq8WO6yCEe6V18MM9MDBrFdpjSRezWqEqnDOKJCtyBgI9KyE
-Message-ID: <CAFXKEHYNAL2vRgBo6H8JRHemvGj2vT30y01T_0-jhY-hkumyMA@mail.gmail.com>
-Subject: Re: [PATCH v3 11/15] iio: accel: adxl345: add g-range configuration
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, eraretuya@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9KX4/zF6/yFdWLQ@phytium.com.cn>
 
-On Tue, Mar 4, 2025 at 2:40=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
-wrote:
->
-> On Thu, 20 Feb 2025 10:42:30 +0000
-> Lothar Rubusch <l.rubusch@gmail.com> wrote:
->
-> > Introduce means to configure and work with the available g-ranges
-> > keeping the precision of 13 digits.
-> >
-> > This is in preparation for the activity/inactivity feature.
->
-> I'm not really following why adding range control is anything
-> much to do with that. Mostly we do this to improve accuracy for
-> low accelerations.
+On Thu, Mar 13, 2025 at 04:31:31PM +0800, Yuquan Wang wrote:
+> On Tue, Mar 11, 2025 at 08:09:02PM -0400, Gregory Price wrote:
+> >              Window size : 0000000080000000   <- 2GB
+> 
+> I think is "Window size : 0000000100000000   <- 4GB" here.
 >
 
-As you probably saw the connection comes a bit over the link in
-adjusting the activity/inactivity
-parameters (times and threshold) by a given range in the follow up patches.
+Quite right. I am planning to migrate this all to a github somewhere
+after LSF for edits, so i'll take all the feedback and incorporate it
+then.
 
-If the question is rather why at all adding this g-range control. My
-idea was that adjusting i.e. lowering precision, less odr, etc might
-also help adjusting power consumption. In other words
-from a user perspective I assume there is more configuration
-possibility. I did not pretend to tune
-the implementation for lowest possible power consumption, though. It
-was just an idea.
+> > There are two targets at each level.  The host bridge has a granularity
+> > of 512 to capture its parent's ways and granularity (`2*256`).
+> > 
+> > Each decoder is programmed with the total number of targets (4) and the
+> > overall granularity (256B).
+> 
+> Is there any relationship between endpoints'decoder setup(IW&IG) and
+> others decoder?
+>
 
-[Also, I was curious about implementing it here. My patch here is
-rather meant as a proposal,
-if you strongly oppose the idea, pls let me know.]
+I'm sure there's a mathematical relationship that dictates this up the
+heirarchy, but each endpoint decoder needs to be programmed with the
+same interleave weight and granularity of all other endpoints.
 
-> >
-> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+Technically unbalanced configurations are possible, but Linux does not
+support them.
+
+> Hi, Gregory
+> 
+> Seeing this, I have an assumption to discuss.
+> 
+> If the same system uses tables like below:
+> 
+> CFMWS:
+>          Subtable Type : 01 [CXL Fixed Memory Window Structure]
+>      Window base address : 0000000300000000   <- Memory Region
+>              Window size : 0000000080000000   <- 2GB
+>             First Target : 00000007           <- Host Bridge 7
+> 
+>          Subtable Type : 01 [CXL Fixed Memory Window Structure]
+>      Window base address : 0000000400000000   <- Memory Region
+>              Window size : 0000000080000000   <- 2GB
+>             First Target : 00000007           <- Host Bridge 7
+> 
+> SRAT:
+>         Subtable Type : 01 [Memory Affinity]
+>      Proximity Domain : 00000000          <- NUMA Node 0
+>          Base Address : 0000000300000000  <- Physical Memory Region
+> 
+>         Subtable Type : 01 [Memory Affinity]
+>      Proximity Domain : 00000001          <- NUMA Node 1
+>          Base Address : 0000000400000000  <- Physical Memory Region
+> 
+> 
+> The first 2GB cxl memory region would locate at node0 with DRAM.
+> 
+> NUMA Structure:
+> 
+>         ---------     --------   |            ----------
+>         | cpu0  |-----| DRAM |---|------------| Node 0 |
+>         ---------     --------   |   /        ----------
+>             |                    |  /first 2GB
+>          -------                 | /          ----------
+>          | HB0 |-----------------|------------| Node 1 |
+>          -------                 |second 2GB  ----------
+>         /       \                |
+>    CXL Dev     CXL Dev           |
+> ```
+> 
+> Is above configuration and structure valid?
 >
->
-> > @@ -483,12 +518,48 @@ static int adxl345_set_odr(struct adxl345_state *=
-st, enum adxl345_odr odr)
-> >       return 0;
-> >  }
-> >
-> > +static int adxl345_find_range(struct adxl345_state *st, int val, int v=
-al2,
-> > +                           enum adxl345_range *range)
-> > +{
-> > +     int i;
-> > +
-> > +     for (i =3D 0; i < ARRAY_SIZE(adxl345_fullres_range_tbl); i++)
-> > +             if (val =3D=3D adxl345_fullres_range_tbl[i][0] &&
-> > +                 val2 =3D=3D adxl345_fullres_range_tbl[i][1])
-> > +                     break;
-> Similar to case in earlier patch, maybe set *range and return in here
-> so that any finish of the loop is an error.
-> > +
-> > +     if (i =3D=3D ARRAY_SIZE(adxl345_fullres_range_tbl))
-> > +             return -EINVAL;
-> > +
-> > +     *range =3D i;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int adxl345_set_range(struct adxl345_state *st, enum adxl345_ra=
-nge range)
-> > +{
-> > +     int ret;
-> > +
-> > +     ret =3D regmap_update_bits(st->regmap, ADXL345_REG_DATA_FORMAT,
-> > +                              ADXL345_DATA_FORMAT_RANGE,
-> > +                              FIELD_PREP(ADXL345_DATA_FORMAT_RANGE, ra=
-nge));
-> > +     if (ret)
-> > +             return ret;
-> > +
->
-> return regmap_update_bits() unless this gets more complex in later patch.
->
-> > +     return 0;
-> > +}
-> > +
->
-> > @@ -558,6 +634,7 @@ static int adxl345_write_raw(struct iio_dev *indio_=
-dev,
-> >                            int val, int val2, long mask)
-> >  {
-> >       struct adxl345_state *st =3D iio_priv(indio_dev);
-> > +     enum adxl345_range range;
-> >       enum adxl345_odr odr;
-> >       int ret;
-> >
-> > @@ -581,6 +658,12 @@ static int adxl345_write_raw(struct iio_dev *indio=
-_dev,
-> >                       return ret;
-> >               ret =3D adxl345_set_odr(st, odr);
-> >               break;
-> > +     case IIO_CHAN_INFO_SCALE:
-> > +             ret =3D adxl345_find_range(st, val, val2, &range);
-> > +             if (ret)
-> > +                     return ret;
-> > +             ret =3D adxl345_set_range(st, range);
-> as in previous I'd have the
->                 if (ret)
->                         return ret;
-> here for consistency with the other one immediately above this.
-> > +             break;
-> >       default:
-> >               return -EINVAL;
-> >       }
->
+
+This is correct, the association between memory and numa node is pretty
+much purely logical.
+
+I'm not sure WHY you'd want to do this, but yeah you can do this
+(assuming you can get the BIOS to produce that SRAT).
+
+~Gregory
 
