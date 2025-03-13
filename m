@@ -1,300 +1,153 @@
-Return-Path: <linux-kernel+bounces-559776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 615ECA5F999
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:21:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C0AA5F9A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:22:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91F421895B98
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:20:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B677A3BFB4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2B4269817;
-	Thu, 13 Mar 2025 15:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L5Yzwm/p"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB6626989D;
+	Thu, 13 Mar 2025 15:19:50 +0000 (UTC)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83419269809
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E194269836;
+	Thu, 13 Mar 2025 15:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741879157; cv=none; b=t0UK4GBPvUi1tGgTePZNESrc+DKaubScM/1CSqxqFldzfrUgb2orlFAjWbAqqvGDlx/+loLLXd5JAXreUpY7eCQCqDu/QcfxtBgBCIacUie8JAZLeIAd7JeZ8Cj1VH5FcnAcxvSMDmiuzfTfqJYb7/l6PP1ZrJ/03bSiTijq0MU=
+	t=1741879190; cv=none; b=eoe4bbbVUc/WERR15QC1ltST4AFG4D4pNK2cVPjRPpetb84uamnlRU66jAWDhXcCm7HiBDSJ3EFmupgqu5ISoQ2rX3xpelBEY67h4uEyJGx/LEnnBi9BCqpoUa/OoLhiUOzatl7sUKfFy52cEZZ66LW1pyBovG3rxyCghAv+Lt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741879157; c=relaxed/simple;
-	bh=Dahx4YCeDFazmQDtfk0gy0C6DwC6v3J6Nwvt1/nlFxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oxlcY7QGkh2p1IYTxTGX4gJw4E6Tm2o0Fi8yl/e8/txiekg8mJk4QUprzStY3cZvK0xOuk8sKWS6Wtt9KPjcshMpsrOLm0+Jqnp7Dc82Pg8xNHPhZA4QN2NkWavRAvc9fm2gxCXYGFZJfQkhkTl5KFFSxJw9iAh41Hvii3XZnYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L5Yzwm/p; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741879154;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G9zaHgixonSILPYIqqBFAZyXZsf0jbzyGyxAoGfZOaA=;
-	b=L5Yzwm/pJ7/bMg0dpU007Wuwgc3+b9WN5ersKY0eWqnNuZSM5bkspxA6Xt+COzf8GeNNKj
-	1WILfi8kF1QvhJbJWV/V+Vy/EDM1eUzyhRJEuu5gpPwIqa7DE3fh5NQl/BuC5DjM0jQ2+I
-	Fo9RYoP0Oymevu420KO3VlHWVMK/mOo=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-527-Gji8Z6jlOeSsyoEMH6KeKw-1; Thu,
- 13 Mar 2025 11:19:10 -0400
-X-MC-Unique: Gji8Z6jlOeSsyoEMH6KeKw-1
-X-Mimecast-MFC-AGG-ID: Gji8Z6jlOeSsyoEMH6KeKw_1741879148
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 646961800258;
-	Thu, 13 Mar 2025 15:19:08 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.22.76.11])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 36B5A300376F;
-	Thu, 13 Mar 2025 15:19:03 +0000 (UTC)
-Date: Thu, 13 Mar 2025 11:18:59 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Steve Grubb <sgrubb@redhat.com>
-Cc: Paul Moore <paul@paul-moore.com>,
-	Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>,
-	LKML <linux-kernel@vger.kernel.org>, linux-modules@vger.kernel.org,
-	Linux Kernel Audit Mailing List <audit@vger.kernel.org>,
-	Eric Paris <eparis@parisplace.org>
-Subject: Re: [PATCH v1] audit,module: restore audit logging in load failure
- case
-Message-ID: <Z9L3YwDxHcRI5EWp@madcap2.tricolour.ca>
-References: <999cdd694f951acd2f4ad665fe7ab97d0834e162.1729717542.git.rgb@redhat.com>
- <b7f8e0d11b6cfc7547709c7efc472021@paul-moore.com>
- <Z8oWlAwgKWW+M8yL@madcap2.tricolour.ca>
- <2743964.lGaqSPkdTl@x2>
+	s=arc-20240116; t=1741879190; c=relaxed/simple;
+	bh=FrNrmRF03ghmNEwfL8ovFyb6iLc0RrAEOh0F/ghf4Is=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aHx+3nwO1Csdo6lEFQurksrFtX4kTQY4VahVX/GdQutEeR9xn/Zvn2+OTk47Afx94BKv6zBbOIBC0tzJWby+oTYlq1h6BiQ2PtHYMTy+XvvF5pt7E7md2OpOcajRO8Van9ysRjdObu3ZX8SGU7yQJLtjoOBdnWWGZh/XH/qNjKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac2aeada833so212336066b.0;
+        Thu, 13 Mar 2025 08:19:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741879182; x=1742483982;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1ii1IFZdoC6n5uv3UgvYeObshpXYt3dV3HzZ5zG8DvA=;
+        b=W9QnCpy2z7liragH1HUm59BOqp43q4CXnuBtJa7okYrXzLfXUlfSgWiABJIxYvhGiR
+         JDH9uTWn8ku5l/Y/e5+YblHYEOMLXsElHDQhGQqCcpFgFpPPAWZakGArIezsj4hfPFLq
+         L4hWqC6TznU1DNQtdeqFAW3Kk/7H3omf3p8L+JW3IY1JYATE9WkIoeIOLbhnDFQKahMY
+         FV55avgG6TQ12qjouSdszV1Vcxi5VvxIE3JIMOLnlTaE7UQJyDBtVGqB7Ev/Fc7lRbLq
+         54sMGtCfZV1dnrV6HgfqAPtlbdUO+tXyHKf/4nIBfLYJj3i62gexXYqvvmcnew5cgtKz
+         j/Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCU5KISh44rRVg8UeI6m4/3hBF0JYbNXFKeu6+haEDWi8dzZBNwUAQKSTBTW0t+X4RMIcFx7CnnVEKI=@vger.kernel.org, AJvYcCUCTOSCFLz/UafS4n+JBbfZrAYIKIj4978EmzSxmm1xXhpK8f4sNzPQSDmsl0uVibexvsxJxBzb38e+Q8DD@vger.kernel.org, AJvYcCUSVTeERoHO1QDUxjh8OxFLp58pJ1h6+RDMByONIyp6O6bM8WxKqz+yyOYPV7rAsuRSrK+a5dJV2vxF7Q==@vger.kernel.org, AJvYcCUUer8DlcV9SyIIDL2BQBAG0LjFkZbiUppILBrRki4BFJa74s18ryL7+pbzIQWByznxlhZyinpq3QxxvA==@vger.kernel.org, AJvYcCUsnuDHkVnSa1jrh+le0TH38X5bvX84A1Bxqsij10cpvKG0TruQUjwcRYPHg4bFM/9OkQas45vByml+/w==@vger.kernel.org, AJvYcCVA4Q17TsHc/kkGSlRe83bt62PV4InrJ9JbF+S+Te7w5q2D0XHEJ90misbFY5jJruYjVLcOZwsZyehhgw==@vger.kernel.org, AJvYcCVf2InVGrMmUV6z/T7I/PUyn4ZM45IlafnQzdrp0CqIfIvEg9tAtDwXXrJDrBuXa9w7z4hdmjdusLFBUQ==@vger.kernel.org, AJvYcCWCag+GOpZrhTDyGYXWJXgQ2wB2ORnsk/515EpbxGmJTJQUSNaSov3AhaQBfo25zujhzJDxOIoO3S16ErN9CA==@vger.kernel.org, AJvYcCWnmbojDHfoYQvJDTvB9FNwFDsQHqvI2DCZVsWfCjgd+OQ3xgNOyJSj7wRxz8dtoN9Fv1RBh3LUrHRVhZWl@vger.kernel.org, AJvYcCWz1UjUx3EM
+ LE2Ki9ktZBfQu1JASJTmaagQPPDvz1sU3luAjcSXlRCEW0F9bgqm26SxAS9NGd+u6ILnHL/+3cA=@vger.kernel.org, AJvYcCXGGmh8kNblbmBL2c/6G2Hy3/XwcN6kCPje3VqVAz62+GVb5f1bZVLoc4Qi5exsY9iPmbywvgNlQ4S1Dg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWgYO7kOiIyaHyYhoeez+j4V7J4n0AMZUxyPsOpN/P0fchA1ZK
+	s8Sv3Tk3mwgD4RehXuYomk5fz+RFpGTqbotExG0JwqtthcgGZdEqtrj5vpfNHmU=
+X-Gm-Gg: ASbGncvob5uLOdgDL0EXb9DJotu8lp9EnGkcTNBIOSz4pHdW4zg7MFnSA9RogX6meSy
+	56hfA9NY8JWUUifjlXIjieieYCp+pNLxN7sLxDlAjWC3XwhSRvJ0Qn/tHhcTOlJbvncXRUb3iJb
+	Yoc8Mt1R6Bm1HxshBqmOGxYdswMk+TjJfJreEQZYaCY+/2RnXMcEISN5RxbQCyuX9831b73mGMa
+	65/V9SJM1VFKUTCPlFpMnLZ3oin5tJEg2eewn9hN4oAkdOltIh41nrCIyHlfXtfHTpBNPCgjeOU
+	Fj84hUBEdS5cvsKl0DcOBPEZyPH7umN3jH4pvFacrfsCY8Ns0raEt+qFiOkQcn0IH80fBC9kxcQ
+	GMUzXh7k=
+X-Google-Smtp-Source: AGHT+IHgUEYjZ5BxZpsdAQFv31ablvhsNIXVzxerwIOsXj5v3VRn4dXHs2aiKu8KzFwyZ0I5/MFw7w==
+X-Received: by 2002:a17:907:3892:b0:ac3:88a:a001 with SMTP id a640c23a62f3a-ac3124b2393mr309962466b.19.1741879182378;
+        Thu, 13 Mar 2025 08:19:42 -0700 (PDT)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3149d0b4csm90825166b.122.2025.03.13.08.19.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 08:19:39 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ab771575040so412917966b.1;
+        Thu, 13 Mar 2025 08:19:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUDXUI9Mv0FgHhvu8zT2V8jovCBZO7GjNbjJhKEHzMRM8uSKH5KdUitsEaFYi/PjvzNcAn2w13xfzw=@vger.kernel.org,
+ AJvYcCUIix75VQkA4SJjDdNlrsTJg2tFphfjFdUD1+TlkKdZmL9ATUIQ4gbapZ0KDJCEcwfVWxAkNIVajVTNOw==@vger.kernel.org,
+ AJvYcCUJeX9i2PoaO2fU5F6WcSNnlBqkTE/xOIE4ZooanzOFrfmncX2PAQr3m/Q6Y75uMlTL8rHnVXN8HTC0zqpX9x8=@vger.kernel.org,
+ AJvYcCUJlYg8baevhE/vOvW+4ZUwTL2nzDS8UvVHMnhcO506WvBL15F3HnY2XU/Z4y5nGDowESywSZNXawx8Gw==@vger.kernel.org,
+ AJvYcCV0X9mYYXYjLh5d2UXvAOBoytkeYTnGx48WR38tSZbjmP/mjlXsjbyKtT+IvavEmfCHIcJLje/CBeEs8w==@vger.kernel.org,
+ AJvYcCW9ZE/0EY2DOHLyRU+GBk33IUUI3pbuV90Nx73NIxCIjsYEIEMPfWCWXVFO+NOtgjEGIaeAWIZORLZenA==@vger.kernel.org,
+ AJvYcCWbn7rIRqOxikUEVs9Y4fvK6mPfsnGln+kzM8xvEcM7W6Y8xIAfdM/qdssBObn0LN1fcSuzV46sHhVDuuTz@vger.kernel.org,
+ AJvYcCXAL/Ni4VKzNJIx5AkpjhIVaPqGHkqXYv7y2WAWhLfZA6wjW1VfA1Tuk+O3s+SIslXPD4k6dp/gP01oP+l5@vger.kernel.org,
+ AJvYcCXVzsHh2J+jN++qaY23k/lZG48se5SzkiynXhJ234WGLuhNUO5qzr9KwL3t6IQDIZDcxHz8Lq26bJHN+Q==@vger.kernel.org,
+ AJvYcCXWRO5LIF5na9KQPeoqZHIB8RyP1UTUspe6Ar4TJ49UTNNhkDceg0P2uWd+0ytgV71PLw+9m9nxBWfNOw==@vger.kernel.org,
+ AJvYcCXdG3gS9GiFIi3gM3+YyPr/9+f8OREqJFmSIVMQK60d7cbWq4LZJ8bzZF3MwVDhDC3RnrTQ1AK884zY7s0SoQ==@vger.kernel.org
+X-Received: by 2002:a17:907:9626:b0:ac3:d1c:89ce with SMTP id
+ a640c23a62f3a-ac312305664mr252326866b.9.1741879178133; Thu, 13 Mar 2025
+ 08:19:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2743964.lGaqSPkdTl@x2>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20250313135003.836600-1-rppt@kernel.org> <20250313135003.836600-14-rppt@kernel.org>
+In-Reply-To: <20250313135003.836600-14-rppt@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Mar 2025 16:19:10 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWCBL_cg1NgbHCA3e9GTob_P9mTuN_Tepvigci6rxDmbg@mail.gmail.com>
+X-Gm-Features: AQ5f1Jr9qHWq5jtnIT3-BmFGhQQ_nRM0uVNr9PeQK5Y9eEomJSZyndfwbc1wpbs
+Message-ID: <CAMuHMdWCBL_cg1NgbHCA3e9GTob_P9mTuN_Tepvigci6rxDmbg@mail.gmail.com>
+Subject: Re: [PATCH v2 13/13] arch, mm: make releasing of memory to page
+ allocator more explicit
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"David S. Miller" <davem@davemloft.net>, Dinh Nguyen <dinguyen@kernel.org>, 
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Guo Ren <guoren@kernel.org>, 
+	Heiko Carstens <hca@linux.ibm.com>, Helge Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>, 
+	Ingo Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Mark Brown <broonie@kernel.org>, Matt Turner <mattst88@gmail.com>, 
+	Max Filippov <jcmvbkbc@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, Michal Simek <monstr@monstr.eu>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Richard Weinberger <richard@nod.at>, Russell King <linux@armlinux.org.uk>, 
+	Stafford Horne <shorne@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>, Vineet Gupta <vgupta@kernel.org>, 
+	Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org, 
+	linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-um@lists.infradead.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-03-07 14:41, Steve Grubb wrote:
-> On Thursday, March 6, 2025 4:41:40 PM Eastern Standard Time Richard Guy 
-> Briggs wrote:
-> > On 2024-10-24 16:41, Paul Moore wrote:
-> > > On Oct 23, 2024 Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > The move of the module sanity check to earlier skipped the audit
-> > > > logging
-> > > > call in the case of failure and to a place where the previously used
-> > > > context is unavailable.
-> > > > 
-> > > > Add an audit logging call for the module loading failure case and get
-> > > > the module name when possible.
-> > > > 
-> > > > Link: https://issues.redhat.com/browse/RHEL-52839
-> > > > Fixes: 02da2cbab452 ("module: move check_modinfo() early to
-> > > > early_mod_check()") Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > ---
-> > > > 
-> > > >  kernel/module/main.c | 4 +++-
-> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/kernel/module/main.c b/kernel/module/main.c
-> > > > index 49b9bca9de12..1f482532ef66 100644
-> > > > --- a/kernel/module/main.c
-> > > > +++ b/kernel/module/main.c
-> > > > @@ -3057,8 +3057,10 @@ static int load_module(struct load_info *info,
-> > > > const char __user *uargs,> > 
-> > > >  	 * failures once the proper module was allocated and
-> > > >  	 * before that.
-> > > >  	 */
-> > > > 
-> > > > -	if (!module_allocated)
-> > > > +	if (!module_allocated) {
-> > > > +		audit_log_kern_module(info->name ? info->name : 
-> "(unavailable)");
-> > > > 
-> > > >  		mod_stat_bump_becoming(info, flags);
-> > > > 
-> > > > +	}
-> > > 
-> > > We probably should move the existing audit_log_kern_module() to just
-> > > after the elf_validity_cache_copy() call as both info->name and
-> > > info->mod->name should be as valid as they are going to get at that
-> > > point.  If we do that then we only have two cases we need to worry about,
-> > > a failed module_sig_check() or a failed elf_validity_cache_copy(), and
-> > > in both cases we can use "(unavailable)" without having to check
-> > > info->name first.
-> > 
-> > Fair enough.
-> > 
-> > > However, assuming we move the audit_log_kern_module() call up a bit as
-> > > described above, I'm not sure there is much value in calling
-> > > audit_log_kern_module() with an "(unavailable)" module name in those
-> > > early two cases.  We know it's an attempted module load based on the
-> > > SYSCALL record, seeing an associated "(unavailable)" KERN_MODULE record
-> > > doesn't provide us with any more information than if we had simply
-> > > skipped the KERN_MODULE record.
-> > 
-> > Understood.  I wonder if the absence of the record in the error case
-> > will leave us guessing if we lost a record from the event?  We will have
-> > the error code from the SYSCALL record but not much more than that, and
-> > some of those error codes could just as well be generated after that
-> > point too.  This would be a similar situation to the vanishing fields in
-> > an existing record, but is likely easier to mitigate than a
-> > non-last-field vanishing or shifting around in an existing record.
-> > 
-> > Steve?  Atilla?  Any comments?
-> 
-> We should only get the events if we have syscall rules that would result in 
-> kernel module loading/unloading events. I suppose that by the time audit 
-> loads it's rules, many modules have already loaded. So, I don't think we need 
-> to worry about early cases. But when we do get a kernel module load/unload 
-> event based on the rules, we need it's name - even in failures. We need to be 
-> able to determine what was attempted since this could affect system 
-> integrity.
+On Thu, 13 Mar 2025 at 14:53, Mike Rapoport <rppt@kernel.org> wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+>
+> The point where the memory is released from memblock to the buddy allocator
+> is hidden inside arch-specific mem_init()s and the call to
+> memblock_free_all() is needlessly duplicated in every artiste cure and
+> after introduction of arch_mm_preinit() hook, mem_init() implementation on
+> many architecture only contains the call to memblock_free_all().
+>
+> Pull memblock_free_all() call into mm_core_init() and drop mem_init() on
+> relevant architectures to make it more explicit where the free memory is
+> released from memblock to the buddy allocator and to reduce code
+> duplication in architecture specific code.
+>
+> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>     # x86
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-Ok, yes, agreed.  But that information isn't available yet for a number
-of error cases.  It hasn't even been looked for yet after
-module_sig_check() and can't be reliably found until halfway through
-elf_validity_cache_copy().
+>  arch/m68k/mm/init.c          |  2 --
 
-So, we should provide the record and make a best effort to fill in that
-information if we can.  We could try more aggressively to extract it
-from the info blob, but I don't know if that is worth the effort because
-a number of the steps leading up to it are necessary to check the
-validity and set up structures to extract it.
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org> # m68k
 
-> -Steve
-> 
-> > > Untested, but this is what I'm talking about:
-> > > 
-> > > diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > > index 0050ef288ab3..eaa10e3c7eca 100644
-> > > --- a/include/linux/audit.h
-> > > +++ b/include/linux/audit.h
-> > > @@ -417,7 +417,7 @@ extern int __audit_log_bprm_fcaps(struct linux_binprm
-> > > *bprm,> 
-> > >  extern void __audit_log_capset(const struct cred *new, const struct cred
-> > >  *old); extern void __audit_mmap_fd(int fd, int flags);
-> > >  extern void __audit_openat2_how(struct open_how *how);
-> > > 
-> > > -extern void __audit_log_kern_module(char *name);
-> > > +extern void __audit_log_kern_module(const char *name);
-> > > 
-> > >  extern void __audit_fanotify(u32 response, struct
-> > >  fanotify_response_info_audit_rule *friar); extern void
-> > >  __audit_tk_injoffset(struct timespec64 offset);
-> > >  extern void __audit_ntp_log(const struct audit_ntp_data *ad);
-> > > 
-> > > @@ -519,7 +519,7 @@ static inline void audit_openat2_how(struct open_how
-> > > *how)> 
-> > >                 __audit_openat2_how(how);
-> > >  
-> > >  }
-> > > 
-> > > -static inline void audit_log_kern_module(char *name)
-> > > +static inline void audit_log_kern_module(const char *name)
-> > > 
-> > >  {
-> > >  
-> > >         if (!audit_dummy_context())
-> > >         
-> > >                 __audit_log_kern_module(name);
-> > > 
-> > > @@ -677,7 +677,7 @@ static inline void audit_mmap_fd(int fd, int flags)
-> > > 
-> > >  static inline void audit_openat2_how(struct open_how *how)
-> > >  { }
-> > > 
-> > > -static inline void audit_log_kern_module(char *name)
-> > > +static inline void audit_log_kern_module(const char *name)
-> > > 
-> > >  {
-> > >  }
-> > > 
-> > > diff --git a/kernel/audit.h b/kernel/audit.h
-> > > index a60d2840559e..5156ecd35457 100644
-> > > --- a/kernel/audit.h
-> > > +++ b/kernel/audit.h
-> > > @@ -199,7 +199,7 @@ struct audit_context {
-> > > 
-> > >                         int                     argc;
-> > >                 
-> > >                 } execve;
-> > >                 struct {
-> > > 
-> > > -                       char                    *name;
-> > > +                       const char              *name;
-> > > 
-> > >                 } module;
-> > >                 struct {
-> > >                 
-> > >                         struct audit_ntp_data   ntp_data;
-> > > 
-> > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > > index 0627e74585ce..f79eb3a5a789 100644
-> > > --- a/kernel/auditsc.c
-> > > +++ b/kernel/auditsc.c
-> > > @@ -2870,7 +2870,7 @@ void __audit_openat2_how(struct open_how *how)
-> > > 
-> > >         context->type = AUDIT_OPENAT2;
-> > >  
-> > >  }
-> > > 
-> > > -void __audit_log_kern_module(char *name)
-> > > +void __audit_log_kern_module(const char *name)
-> > > 
-> > >  {
-> > >  
-> > >         struct audit_context *context = audit_context();
-> > > 
-> > > diff --git a/kernel/module/main.c b/kernel/module/main.c
-> > > index 49b9bca9de12..3acb65073c53 100644
-> > > --- a/kernel/module/main.c
-> > > +++ b/kernel/module/main.c
-> > > @@ -2884,6 +2884,8 @@ static int load_module(struct load_info *info,
-> > > const char __user *uargs,> 
-> > >         if (err)
-> > >         
-> > >                 goto free_copy;
-> > > 
-> > > +       audit_log_kern_module(info->name);
-> > > +
-> > > 
-> > >         err = early_mod_check(info, flags);
-> > >         if (err)
-> > >         
-> > >                 goto free_copy;
-> > > 
-> > > @@ -2897,8 +2899,6 @@ static int load_module(struct load_info *info,
-> > > const char __user *uargs,> 
-> > >         module_allocated = true;
-> > > 
-> > > -       audit_log_kern_module(mod->name);
-> > > -
-> > > 
-> > >         /* Reserve our place in the list. */
-> > >         err = add_unformed_module(mod);
-> > >         if (err)
-> > > 
-> > > --
-> > > paul-moore.com
-> > 
-> > - RGB
+Gr{oetje,eeting}s,
 
-- RGB
+                        Geert
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-Upstream IRC: SunRaycer
-Voice: +1.613.860 2354 SMS: +1.613.518.6570
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
