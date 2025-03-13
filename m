@@ -1,272 +1,149 @@
-Return-Path: <linux-kernel+bounces-559619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9050A5F64E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:50:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63153A5F61D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:41:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4963170447
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:50:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D39B17EC87
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2E7267B81;
-	Thu, 13 Mar 2025 13:50:08 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83294267AEC
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6AE267B00;
+	Thu, 13 Mar 2025 13:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="gyJyVrD1"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E77267731;
+	Thu, 13 Mar 2025 13:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741873807; cv=none; b=BW9rguBDMkVHAkDYEeo7AEIOxSvwO2koKER3OT8HLnJM3kasnP/ZQCxvQRJrwomoF7+Gtd9f4GqyCwf8GIlqwZGEGkVv/RubOmfe41sEeeTYMLJohyiRnkV1hEaoLdlnTHypWR4+tce/kmOL4AdfSPB8TDIEgbAPoDf3cN8ndbY=
+	t=1741873257; cv=none; b=eKLNfNzODX/tk/vVIltnQcS8dVUfFB7wh7uiofgeqzwI4j5T9K5SNdU2WV14yi0xUUqpqS7ubQZlIsGrFtmd3tpZPU/5LSJtlJdTb8AQW3E352hIMsROyT2UOLqs475+nbIkE491JtQgfkr+WAzJy575z9ERHbGXBY+7S2vXr6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741873807; c=relaxed/simple;
-	bh=c5BwsiMUEcE3FxlbLKMbbMYxcD4AgL6mpQVpTtKlUJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GnbT6cuQNVgC6KRZTvhzXJ0IJFEykWXZPR5rziKyG+SaApB0VP0wbkeDJ80PYTi4EFfjzuRUVaaEv5BqhS1l7h4cAHXWiVpZMum40O4qyMeTQgcBXPL5lQmw1rBTmPAQgMv5hAexKzsRmaag+4xnqInbcEt/iI6m2PiLTFGKeBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4ZD7qG0qYKz9sSY;
-	Thu, 13 Mar 2025 14:38:02 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id bhtE9KRHTdsR; Thu, 13 Mar 2025 14:38:02 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZD7q91zC1z9sSL;
-	Thu, 13 Mar 2025 14:37:57 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 302D58B779;
-	Thu, 13 Mar 2025 14:37:57 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id WdQEpeFRVBdp; Thu, 13 Mar 2025 14:37:57 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C86C58B770;
-	Thu, 13 Mar 2025 14:37:56 +0100 (CET)
-Message-ID: <362f9392-f891-4a15-9ffd-5f5a6cac41b8@csgroup.eu>
-Date: Thu, 13 Mar 2025 14:37:56 +0100
+	s=arc-20240116; t=1741873257; c=relaxed/simple;
+	bh=fDrllgJwbtF5U+EFRF19R7vCBQLB8dfEURQCxyc9ok0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SscldYA0yr9hyC8YjUOiX5a/gNhv8/BLseTC5i7etbn6OY3+oN0VipNVMY6ebPSLpVCNcDODoFqKGuMhApcnY8UigA/ISO5p9LbYqiWCvhMCGEDsBHH7KVA3vL3f655jQ6nbdKTrHp3YOn/IezuKpm85iBTNjva9f3B4RKyourA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=gyJyVrD1; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=4CWs8MteW/WaidbFLCARB0U29Fg/zJsP3Gsrar0C4Ew=; b=gyJyVrD1SJUsXkw6uxZS3GyW3g
+	yN5gt3IJJom2RAdV08DWMh0KkFwfK18ljaOcqm4qZWt1izix6OXX2Auikxa04YcUR6+zDUNjglmYE
+	VyOyTWb74IUejLowq3DWuBg8J4yF3Iu7EnWN+HGsPGnGEs6RkPFdzXj1ywrAuRwF+vuqlXPKwPckJ
+	VBGZmJMpsIutJjLqs9/Hajm7p8B4mCeJsI/tZ562ePWcQKI9BuQg7GOnAPmGTC2vcj18QIkJMHBtl
+	ubbZMr45dsNr4lewH6/APGmfJ8/G8A3TmiASAJWn+Pzdy/iNaFtiD6URQDxbv8hL3CjX1Xkhsszis
+	iVHssZHQ==;
+Received: from [62.91.42.92] (helo=phil..)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tsine-0008Rg-Vf; Thu, 13 Mar 2025 14:40:39 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: vkoul@kernel.org,
+	kishon@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	quentin.schulz@cherry.de,
+	sebastian.reichel@collabora.com,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	dse@thaumatec.com,
+	heiko@sntech.de
+Subject: [PATCH v8 0/2] MIPI DSI phy for rk3588
+Date: Thu, 13 Mar 2025 14:40:30 +0100
+Message-ID: <20250313134035.278133-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bus: fsl-mc: Remove deadcode
-To: "Dr. David Alan Gilbert" <linux@treblig.org>, ioana.ciornei@nxp.com,
- stuyoder@gmail.com, Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241115152055.279732-1-linux@treblig.org>
- <3f9dbb7b-6527-48e1-9028-b46e5a0c58ce@csgroup.eu>
- <Z9LbwRUsHwFLpBZA@gallifrey>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <Z9LbwRUsHwFLpBZA@gallifrey>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+This adds the phy driver need for DSI output on rk3588.
 
+The phy itself is used for both DSI output and CSI input, though the
+CSI part for the whole chain needs a lot more work, so is left out for
+now and only the DSI part implemented.
 
-Le 13/03/2025 à 14:21, Dr. David Alan Gilbert a écrit :
-> [Vous ne recevez pas souvent de courriers de linux@treblig.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> * Christophe Leroy (christophe.leroy@csgroup.eu) wrote:
->>
->>
->> Le 15/11/2024 à 16:20, linux@treblig.org a écrit :
->>> [Vous ne recevez pas souvent de courriers de linux@treblig.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
->>>
->>> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->>>
->>> fsl_mc_allocator_driver_exit() was added explicitly by
->>> commit 1e8ac83b6caf ("bus: fsl-mc: add fsl_mc_allocator cleanup function")
->>> but was never used.
->>>
->>> Remove it.
->>>
->>> fsl_mc_portal_reset() was added in 2015 by
->>> commit 197f4d6a4a00 ("staging: fsl-mc: fsl-mc object allocator driver")
->>> but was never used.
->>>
->>> Remove it.
->>>
->>> fsl_mc_portal_reset() was the only caller of dpmcp_reset().
->>>
->>> Remove it.
->>>
->>> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
->>
->> Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> 
-> Hi,
->    Can someone pick this old change up please?  I see the PPC patchwork says
->    'handled elsewhere' but doesn't say where.
+This allows the rk3588 with its current VOP support to drive a DSI display
+using the DSI2 controller driver I'll submit in a next step.
 
-MAINTAINERS file says where:
+Only generic phy interfaces are used, so the DSI part is pretty straight
+forward.
 
-QORIQ DPAA2 FSL-MC BUS DRIVER
-M:	Stuart Yoder <stuyoder@gmail.com>
-M:	Laurentiu Tudor <laurentiu.tudor@nxp.com>
-L:	linux-kernel@vger.kernel.org
-S:	Maintained
-F:	Documentation/ABI/stable/sysfs-bus-fsl-mc
-F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
-F: 
-Documentation/networking/device_drivers/ethernet/freescale/dpaa2/overview.rst
-F:	drivers/bus/fsl-mc/
-F:	include/uapi/linux/fsl_mc.h
+changes in v8:
+- add comment that the timing values comes from the vendor kernel (Vinod)
 
-FREESCALE SOC DRIVERS
-M:	Christophe Leroy <christophe.leroy@csgroup.eu>
-L:	linuxppc-dev@lists.ozlabs.org
-L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-S:	Maintained
-F:	Documentation/devicetree/bindings/misc/fsl,dpaa2-console.yaml
-F:	Documentation/devicetree/bindings/soc/fsl/
-F:	drivers/soc/fsl/
-F:	include/linux/fsl/
-F:	include/soc/fsl/
+changes in v7:
+- missing pclk-disable in resume error path
+- replace remaining magic values with actual constants
+- lower-case hex values
+- made lane_disable behave similar to lane_enable wrt. lane count
 
-I acked the 2 line changes in include/linux/fsl/mc.h, the main changes 
-being in the C files which are not under my scope.
+changes in v6:
+- rebase onto 6.14-rc1
+- add Krzysztof binding review
+- v5 was sent at the beginning of december '24, so probably has been lost
 
-Stuart, Laurentiu, can you pick up the patch ?
+changes in v5:
+- add bitfield.h for the FIELD_PROP definition
+  (reported by kernel-test-robot)
+- add Sebastian's Reviewed-by
+- add Conor's Ack to the dt-binding
 
-Christophe
+changes in v4:
+- moved to #phy-cells = 1 as suggested by Sebastian, with the argument
+  denoting the requested phy-type (C-PHY, D-PHY). This works similarly
+  how the Mediatek C/D-PHY already implements this, see mails around:
+  https://lore.kernel.org/all/20230608200552.GA3303349-robh@kernel.org/
+- dropped Krzysztof's review tag from the binding because of this
+- dropped custom UPDATE macro and use FIELD_PREP instead
+- build a FIELD_PREP_HIWORD macro for the GRF settings
+- add received Tested-by tags
 
-> 
-> Thanks,
-> 
-> Dave
->>
->>> ---
->>>    drivers/bus/fsl-mc/dpmcp.c            | 22 ----------------------
->>>    drivers/bus/fsl-mc/fsl-mc-allocator.c |  5 -----
->>>    drivers/bus/fsl-mc/fsl-mc-private.h   |  6 ------
->>>    drivers/bus/fsl-mc/mc-io.c            | 20 --------------------
->>>    include/linux/fsl/mc.h                |  2 --
->>>    5 files changed, 55 deletions(-)
->>>
->>> diff --git a/drivers/bus/fsl-mc/dpmcp.c b/drivers/bus/fsl-mc/dpmcp.c
->>> index 5fbd0dbde24a..7816c0a728ef 100644
->>> --- a/drivers/bus/fsl-mc/dpmcp.c
->>> +++ b/drivers/bus/fsl-mc/dpmcp.c
->>> @@ -75,25 +75,3 @@ int dpmcp_close(struct fsl_mc_io *mc_io,
->>>           /* send command to mc*/
->>>           return mc_send_command(mc_io, &cmd);
->>>    }
->>> -
->>> -/**
->>> - * dpmcp_reset() - Reset the DPMCP, returns the object to initial state.
->>> - * @mc_io:     Pointer to MC portal's I/O object
->>> - * @cmd_flags: Command flags; one or more of 'MC_CMD_FLAG_'
->>> - * @token:     Token of DPMCP object
->>> - *
->>> - * Return:     '0' on Success; Error code otherwise.
->>> - */
->>> -int dpmcp_reset(struct fsl_mc_io *mc_io,
->>> -               u32 cmd_flags,
->>> -               u16 token)
->>> -{
->>> -       struct fsl_mc_command cmd = { 0 };
->>> -
->>> -       /* prepare command */
->>> -       cmd.header = mc_encode_cmd_header(DPMCP_CMDID_RESET,
->>> -                                         cmd_flags, token);
->>> -
->>> -       /* send command to mc*/
->>> -       return mc_send_command(mc_io, &cmd);
->>> -}
->>> diff --git a/drivers/bus/fsl-mc/fsl-mc-allocator.c b/drivers/bus/fsl-mc/fsl-mc-allocator.c
->>> index b5e8c021fa1f..6c3beb82dd1b 100644
->>> --- a/drivers/bus/fsl-mc/fsl-mc-allocator.c
->>> +++ b/drivers/bus/fsl-mc/fsl-mc-allocator.c
->>> @@ -656,8 +656,3 @@ int __init fsl_mc_allocator_driver_init(void)
->>>    {
->>>           return fsl_mc_driver_register(&fsl_mc_allocator_driver);
->>>    }
->>> -
->>> -void fsl_mc_allocator_driver_exit(void)
->>> -{
->>> -       fsl_mc_driver_unregister(&fsl_mc_allocator_driver);
->>> -}
->>> diff --git a/drivers/bus/fsl-mc/fsl-mc-private.h b/drivers/bus/fsl-mc/fsl-mc-private.h
->>> index b3520ea1b9f4..e1b7ec3ed1a7 100644
->>> --- a/drivers/bus/fsl-mc/fsl-mc-private.h
->>> +++ b/drivers/bus/fsl-mc/fsl-mc-private.h
->>> @@ -66,10 +66,6 @@ int dpmcp_close(struct fsl_mc_io *mc_io,
->>>                   u32 cmd_flags,
->>>                   u16 token);
->>>
->>> -int dpmcp_reset(struct fsl_mc_io *mc_io,
->>> -               u32 cmd_flags,
->>> -               u16 token);
->>> -
->>>    /*
->>>     * Data Path Resource Container (DPRC) API
->>>     */
->>> @@ -631,8 +627,6 @@ int dprc_scan_objects(struct fsl_mc_device *mc_bus_dev,
->>>
->>>    int __init fsl_mc_allocator_driver_init(void);
->>>
->>> -void fsl_mc_allocator_driver_exit(void);
->>> -
->>>    void fsl_mc_init_all_resource_pools(struct fsl_mc_device *mc_bus_dev);
->>>
->>>    void fsl_mc_cleanup_all_resource_pools(struct fsl_mc_device *mc_bus_dev);
->>> diff --git a/drivers/bus/fsl-mc/mc-io.c b/drivers/bus/fsl-mc/mc-io.c
->>> index 95b10a6cf307..a0ad7866cbfc 100644
->>> --- a/drivers/bus/fsl-mc/mc-io.c
->>> +++ b/drivers/bus/fsl-mc/mc-io.c
->>> @@ -263,23 +263,3 @@ void fsl_mc_portal_free(struct fsl_mc_io *mc_io)
->>>           dpmcp_dev->consumer_link = NULL;
->>>    }
->>>    EXPORT_SYMBOL_GPL(fsl_mc_portal_free);
->>> -
->>> -/**
->>> - * fsl_mc_portal_reset - Resets the dpmcp object for a given fsl_mc_io object
->>> - *
->>> - * @mc_io: Pointer to the fsl_mc_io object that wraps the MC portal to free
->>> - */
->>> -int fsl_mc_portal_reset(struct fsl_mc_io *mc_io)
->>> -{
->>> -       int error;
->>> -       struct fsl_mc_device *dpmcp_dev = mc_io->dpmcp_dev;
->>> -
->>> -       error = dpmcp_reset(mc_io, 0, dpmcp_dev->mc_handle);
->>> -       if (error < 0) {
->>> -               dev_err(&dpmcp_dev->dev, "dpmcp_reset() failed: %d\n", error);
->>> -               return error;
->>> -       }
->>> -
->>> -       return 0;
->>> -}
->>> -EXPORT_SYMBOL_GPL(fsl_mc_portal_reset);
->>> diff --git a/include/linux/fsl/mc.h b/include/linux/fsl/mc.h
->>> index c90ec889bfc2..37316a58d2ed 100644
->>> --- a/include/linux/fsl/mc.h
->>> +++ b/include/linux/fsl/mc.h
->>> @@ -417,8 +417,6 @@ int __must_check fsl_mc_portal_allocate(struct fsl_mc_device *mc_dev,
->>>
->>>    void fsl_mc_portal_free(struct fsl_mc_io *mc_io);
->>>
->>> -int fsl_mc_portal_reset(struct fsl_mc_io *mc_io);
->>> -
->>>    int __must_check fsl_mc_object_allocate(struct fsl_mc_device *mc_dev,
->>>                                           enum fsl_mc_pool_type pool_type,
->>>                                           struct fsl_mc_device **new_mc_adev);
->>> --
->>> 2.47.0
->>>
->>
-> --
->   -----Open up your eyes, open up your mind, open up your code -------
-> / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \
-> \        dave @ treblig.org |                               | In Hex /
->   \ _________________________|_____ https://eur01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwww.treblig.org%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C707d35bccc9a4949428b08dd6231e98a%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638774688697894005%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=ncMBG9AvSfn4mKmQkFv%2F6UfFYp%2FBMDOna7uejbavhUc%3D&reserved=0   |_______/
+changes in v3:
+- add Krzysztof review tag to the binding
+- address Sebastian's review comments
+  - better error handling
+  - dropping empty function
+  - headers
+  - not using of_match_ptr - this should also make the
+    test-robot happier
+
+changes in v2:
+- fix error in dt-binding example
+- drop unused frequency table
+- pull in some more recent improvements from the vendor-kernel
+  which includes a lot less magic values
+- already include the support for rk3576
+- use dev_err_probe
+
+Heiko Stuebner (2):
+  dt-bindings: phy: Add Rockchip MIPI C-/D-PHY schema
+  phy: rockchip: Add Samsung MIPI D-/C-PHY driver
+
+ .../phy/rockchip,rk3588-mipi-dcphy.yaml       |   87 +
+ drivers/phy/rockchip/Kconfig                  |   12 +
+ drivers/phy/rockchip/Makefile                 |    1 +
+ .../phy/rockchip/phy-rockchip-samsung-dcphy.c | 1719 +++++++++++++++++
+ 4 files changed, 1819 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.yaml
+ create mode 100644 drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c
+
+-- 
+2.47.2
 
 
