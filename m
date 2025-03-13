@@ -1,91 +1,90 @@
-Return-Path: <linux-kernel+bounces-558977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8436EA5EDDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:20:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EACCFA5EDDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:20:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CF5F189F44C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:20:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C1F189F4F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F0E26038A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7F6260A55;
 	Thu, 13 Mar 2025 08:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="jKtdhVlm"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="CachgJnn"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D461DF26F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705C7225A23
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741854043; cv=none; b=dolNpeF3J0BEjpeUaqFj7EN6e8CL31jCGmafDPWrhsZln91IOo0P/8kZkgqoHjTEPtvsPbtGKzwxDfDN0BhnCPhlzG7S9hFvmv/FTMO6l4VRRq1aPAxrYGbLGE7cgPbof/GVO9uNIl0/LzGgLFxRbyjEo+xWF6273DGZIFdSKNw=
+	t=1741854044; cv=none; b=AUoOkZghnq2HZiY4T4Imnne1fCSwB/1kYJiLoXMJbvh4/X3+oY+KuSw5d18OK/mHr6Ll71bP1jWjfjrn4GwnZ+wRfgsTQ35oyKHNSCNqW4Z3XwMDVlEuvRq0iymMqewW1rYquldE0tTdRn17IwYobTKwmdgQ2YWpiPp4owObhQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741854043; c=relaxed/simple;
-	bh=Hy+xSuVofnwueySGzw2wHE0q2UL2HSvh3hUYR0Xn/ko=;
+	s=arc-20240116; t=1741854044; c=relaxed/simple;
+	bh=SjIN5pGdqHItZf6d6Qk2kPvBoUEnKMsk2a3iE+GF1tk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tVBaO8VUbwOcv5GkMxyFj0DFW9K/FtSrIhbMYDaajW4gZcfxvovKbrkx8yBb1I/MtkTkTd8Gg0ASwNThB31p3FmN0fgfTHKqxmohyT74WwIr+J9uZlZvO3Ge1FOhUOe2B/cwJz/QGpH0JFtb9RIxKI34Hep8trjUSuSokrB/sy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=jKtdhVlm; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version:Content-Type; b=jAYzKHxIsn/8N6EZv0HV13BZeJbd5MkmNAVa000A/UtQxprWx1Kp7gJ0diJQIirhaNF1kYacK939/R4GkDan3r0gDcNyaSud+pb34mVrK2Rq3+pCnku9PnOzbqiMLXdVKkZMAeah4H4rrFKMpyTq3CjXUYOENPpgaCqF1ijzAbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=CachgJnn; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so5487045e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 01:20:40 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43948021a45so5335055e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 01:20:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741854039; x=1742458839; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741854040; x=1742458840; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lNbTO5TjicLjBY2S6bO59mh/PAXU4LLxrsvGBXuMbkE=;
-        b=jKtdhVlmMwPyE2+sppV3ay+nJcv+9tPETYnXdKA9fmcG1Gs0fFpC2koFTNVHhyxvLT
-         E5zCacAOaCLUZ1aVWjhv0ME96TbKnOv7BgoQ6KEs8ZqNwcephA4prbe6jms1w3Lt5KcL
-         UN+1Qfv8Yf1ruROCb+54956b5G0WRUUeZjBnzvOBugpsIqYJCpLLvEQu27VE/6D3Z2Kx
-         jfH1SCihNWkaR3V5oaNU0LJS8dm0CxCpS+wFylMKQqMSoQMEjg2q1BSmT23RyyOCFXU1
-         U5n+kdt3BMVjlrHO2BqHGexQY6jbCxTNWBJXSZ2pqsLUuT+Nb+J7VDpE6Ar1t4ZPiOgh
-         +Qgw==
+        bh=KKvZQurkQ9RsE9+DByjOMj/p9v8kGhQoEtP4/SJolog=;
+        b=CachgJnnFBNBciwh4B/R54ffsQ3Z9AjHcsvinEaVUUrGRy0drWzBgVHOO3SScnb/Va
+         puEVVmYq119efB0/nnkErGD2YjQXX5ru3/liePeXRDyYA43yPSIP6PHuStxH2S3oUuFM
+         ttmY43SQdF/4IrfKNdL4YS0XCyo3C6X8U2GD5iDANaZ5C0f9vuifGQJHivkvAXFN/Zw+
+         RoTJ3ezin2nXmBO8dKKJITd6L93rwxMCoXPce1aYLBPJqUq3IWiahTScFZ2h//ND55ee
+         JR3PVjbCmxgroMOFy77gmuKLkIwWYDcCJbCL/hxa7a3pARggnz3+dTjlWLVI7wHAX9Op
+         yrHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741854039; x=1742458839;
+        d=1e100.net; s=20230601; t=1741854040; x=1742458840;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lNbTO5TjicLjBY2S6bO59mh/PAXU4LLxrsvGBXuMbkE=;
-        b=QKU4b8V1aPDJZH+uzAki6+DWB+IrNLlyz04B/rB9QmcROZsifQOvHf6A5nAZbSMgw4
-         v/S+yxHLVr+DJmGlpJx9T1TQ0N0np7O1k4Fxgc5TUQtTgNuSXp+GQZW32ycO4uk+OdH8
-         JTdtgTeavGJjjv8RA4ETnC97K+6CpWCxg57rO4w6s/GCA+9paWU9hPvoLcJQJIpOhQ2c
-         iVD4megcc0XS2Y3YNBomPcVRhvPSXyi2DhBkOfBPcEjRdJJx6CDL9rtb3DClIZRMr/z9
-         JqMItqKJukTmcVjpCsD3lx/sFaLBoEFJyLfM1IVC6l9EdemlW83FpM2tPWPAPNUsHg0P
-         EhNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqbQ9+IU6/t0Yn3TwJI7W0jxicHXORp6Ox9WO6zzF7lVMbvPUsu4wZKQ44zkREXptir/N59+X+TIMsORQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw02qseHuPS98OimvbxwIUHpW8b7z8M/OGmsKDFblcX1iNTWg4H
-	Fotn68FoI0t1otegMSNP9pyMR7Et2dAaofXOVWDvsgpB12C01LDHbKDTSngG9F8=
-X-Gm-Gg: ASbGncvHBfqDRLbm6LzlPKo7mw47EQg/Fu1hysvuBaOQemeOZbA3YE01tRJu/TWxBQ0
-	7yb/rj8fX0fPzXWpYlHOHvdWcmy/crwp7tgcF5l3iykwFGcOZHb2CneNrrPl1y3lq7wwvMYunlc
-	6AN5nBCoSuXLACjMGts8EmdVhcItfZAxfd9T5X24bZvrzUApua0MBy7/W3q/Z4htT8aNRyJKuCP
-	MBu3aCn8Q5I0qKbP6YJT4ERtrS/rw9RkzBE855g5BhwLSKTzCcA1im0M7Lu5O5EavqMtzQQVgGD
-	XEKnzOZ17QawDTrbkPHwEFWeCw/qlevRkAQfu3tjQcIF5wmlLf1wowg=
-X-Google-Smtp-Source: AGHT+IGrcDtQowxkrSkzeof6W2aS9uYKvk3LTW2BB4YIJuRbMAtEH7ewNad2BvzkhFhHtn4QOTOMdA==
-X-Received: by 2002:a05:600c:3554:b0:43c:fffc:787b with SMTP id 5b1f17b1804b1-43cfffc7b0fmr139852135e9.12.1741854039440;
-        Thu, 13 Mar 2025 01:20:39 -0700 (PDT)
+        bh=KKvZQurkQ9RsE9+DByjOMj/p9v8kGhQoEtP4/SJolog=;
+        b=ghlim9pyHRgJrqSIRvtPFhToG5zrvhVHxyeh8NGRivB+GGOb5mQ4e96Y3d0yUr+5mP
+         QjSzE4XqYJ7c68vx9oNEDjYHVr+efJtkXQRZWsMvGNQ+kK0LbldbpJKf+0uMclU+NnA9
+         WgpU2MkTvxiJ2nvb8CloAt4a/jts5rROwr8zvKQ1LoWmBzotIJ5EoxMwGBsO+M/oUY15
+         D90sfoW/jgVnkj6hCJa8W9fyRjWjz3LoK9Qqz/OCLZy+RFaXr0haZE2CQ6KJBRj7VHQK
+         /XY7e6TCYKCPcNyiRm0qeRfNKTI+WhaGtQMB0S7Bz/YkCPIWrCQf6BJkv7Z4wcmvgucX
+         QT2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXdO7HtbZMST53gzfWzZJYNKG03lN+SqZ6aslaYG4UzFKBt+xT2JFUbZgrV4hygL8nmJPkgCjwYcfSbJoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQuYDhOb6CeZZL92LgEe4olBK2SOkymmg0fFn1s1wh+kJLsWUc
+	cLCap5D/VMHkB/vw+JqUksNnPLdo5vP5LBM8suaulrWSwoyHgZmoHO3UxdqLujU=
+X-Gm-Gg: ASbGnctS9+47CeXfTv6XM7A2fE99JGOsfBqgip4rizJk0OwOH3HvNvLLDQ6T+PuG5DO
+	bMftdBs9TR18MlD01KT6hUsgl22pnlL4YGJouLqldyWCPmSV14lgWRRhmfv+q2Wyb1HGs8zbEY3
+	StjOmMq1YjmT9rc4a164ZmgxDQvjcjigLFC9OsF2V8NDRLkFYNLuRFsaTKrazCOEFsI/lDj0U3E
+	YedWHo9XOGjGSzo7kyqlBc9Y/rcPpbvIYgLZJI6d9jZav5gztojFv+gs7/YoCxXlK/2EjApe7Zh
+	ChR0ikj2j73DyYEhGAzDrBDpZTCASbDpG6Q9uEIO5z/f
+X-Google-Smtp-Source: AGHT+IH3kWe07MDhWQnUjptIQdVl9JI8Gu/cjZzOcZrcKaxf93MQMfdXK/RBg6XKCwZ2N8EpQN5fFA==
+X-Received: by 2002:a05:600c:3ca0:b0:43d:aed:f7d0 with SMTP id 5b1f17b1804b1-43d0aee17e8mr36190405e9.28.1741854040459;
+        Thu, 13 Mar 2025 01:20:40 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:90f7:ca4b:a5e1:8693])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a8d068esm45070275e9.33.2025.03.13.01.20.38
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a8d068esm45070275e9.33.2025.03.13.01.20.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 13 Mar 2025 01:20:39 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Genes Lists <lists@sapience.com>,
+To: Kent Gibson <warthog618@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	David Jander <david@protonic.nl>,
 	Bartosz Golaszewski <brgl@bgdev.pl>
 Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
 	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] gpiolib: don't check the retval of get_direction() when registering a chip
-Date: Thu, 13 Mar 2025 09:20:36 +0100
-Message-ID: <174185403526.7115.15257225871449545065.b4-ty@linaro.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFT v2] gpio: cdev: use raw notifier for line state events
+Date: Thu, 13 Mar 2025 09:20:37 +0100
+Message-ID: <174185403526.7115.14841250128287935450.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250311175631.83779-1-brgl@bgdev.pl>
-References: <20250311175631.83779-1-brgl@bgdev.pl>
+In-Reply-To: <20250311-gpiolib-line-state-raw-notifier-v2-1-138374581e1e@linaro.org>
+References: <20250311-gpiolib-line-state-raw-notifier-v2-1-138374581e1e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,23 +97,24 @@ Content-Transfer-Encoding: 8bit
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
-On Tue, 11 Mar 2025 18:56:31 +0100, Bartosz Golaszewski wrote:
-> During chip registration we should neither check the return value of
-> gc->get_direction() nor hold the SRCU lock when calling it. The former
-> is because pin controllers may have pins set to alternate functions and
-> return errors from their get_direction() callbacks. That's alright - we
-> should default to the safe INPUT state and not bail-out. The latter is
-> not needed because we haven't registered the chip yet so there's nothing
-> to protect against dynamic removal. In fact: we currently hit a lockdep
-> splat. Revert to calling the gc->get_direction() callback directly and
-> *not* checking its value.
+On Tue, 11 Mar 2025 15:31:43 +0100, Bartosz Golaszewski wrote:
+> We use a notifier to implement the mechanism of informing the user-space
+> about changes in GPIO line status. We register with the notifier when
+> the GPIO character device file is opened and unregister when the last
+> reference to the associated file descriptor is dropped.
+> 
+> Since commit fcc8b637c542 ("gpiolib: switch the line state notifier to
+> atomic") we use the atomic notifier variant. Atomic notifiers call
+> rcu_synchronize in atomic_notifier_chain_unregister() which caused a
+> significant performance regression in some circumstances, observed by
+> user-space when calling close() on the GPIO device file descriptor.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] gpiolib: don't check the retval of get_direction() when registering a chip
-      commit: 0102fbf52b93e609fec0dab53b1fb4fe69113f5e
+[1/1] gpio: cdev: use raw notifier for line state events
+      commit: dcb73cbaaeb39c9fd00bf2e019f911725945e2fe
 
 Best regards,
 -- 
