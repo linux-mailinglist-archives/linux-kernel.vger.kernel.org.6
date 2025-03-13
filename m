@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-559862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893BBA5FAAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:03:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B9CBA5FAA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:02:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BB4619C4616
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:02:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A21717F3A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF9A26982E;
-	Thu, 13 Mar 2025 15:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7643026AAA1;
+	Thu, 13 Mar 2025 15:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HEECuTeC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Tqy9+HUd"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aIkOL2hm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QN8w/sWM"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0145269D16
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30FB26A1D9
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741881595; cv=none; b=HRLHpSN9CG3bNFa3sxzu4BbWobm3BX2ysezqj4LOsMouO2HrkK3cH3riAAnoszUjgUglehFPkaZ4CNKuDLCsQWqrdC6Sdr95hWa+prRfVVKPmy+CRJbNrEUB8/IpiRINXpDMTGSNQPURqFpQR11kfzIrcqvWM35/02TKEj3twOA=
+	t=1741881597; cv=none; b=VbwhO4/j8RfKb2+PekB7qogBK1O3Hix9jK+7TKjpOlk3yvLw3QzB0KADrnPTiYswitEZK6e9zNVXe4gM5GHrgd7d9fGdihWS5JNmIhrTDwbr8VpS09s3fbizRuBLS3MgpJkdOxi81PzCwyzvDn272qr0qjl82d0kiZUwcqt6yBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741881595; c=relaxed/simple;
-	bh=BSeM3MygPsa2Ki+GyIgTvUBRixtUtAxOAhOHZhKHtT4=;
+	s=arc-20240116; t=1741881597; c=relaxed/simple;
+	bh=DqjGaG060lF4aE2timc47zvNhiw+mtiVztFT0F/eGLg=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=BzTnTYWt5nJFPqKa8YMPGFDcvOlsappY0zPiWJVhGK6VGD9qCuDD83+d8QhC82+WWvM26Oj4dFWjARgufEb5oahN5tN9UQmiBXaXxuWCdqUXuigv5BshIqE7K3flCWevJ9EyvtSlG8mQrmDbXNYuCaz2DvMsbXmicvzWL/drktI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HEECuTeC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Tqy9+HUd; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=Y5N2zNQP4KHt7T+t07+H3NVNcT9EFZWlvkqdCkQtvA+RCdAD0s9K4N5ASEmECS4hw3At9/Gdw5bwdecFbYof0MHWKtlj1yT1s2xFSpYutXmCjtMRts6tyYpxOolcvp5Az3cgUXtZOPTn0eW/55BkQjjOpn9frK4nxM/18nJdWTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aIkOL2hm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QN8w/sWM; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250313155914.276685779@linutronix.de>
+Message-ID: <20250313155914.342607279@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741881592;
+	s=2020; t=1741881594;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=pJ3c2uTRlpYbT0X+Ce70TgQESWwWd+/6IGj70OyJbAY=;
-	b=HEECuTeCAMEgNVsMfcioaBmgcL71RjobCEqeYqRL9tEKubn9CneleMKoXfEejyPkVhay5u
-	ctAVg2APF2RT0qE+vlj1+pqoXs2SWWicjUJk2Hi1LpRFpuYgSYLld2MAlRlZ2xH05ItnKM
-	FEBgQsHFfgMGqUwijDMsaN6n3rSSN4M9eMRddu1LOxdRlTY09BrwL9qg61xY2x/k+nqOla
-	5hPjQvgTSEvRvIwJ2cGD6nUlnuW3WPv6iTznpUNUVoKAKgaNKcEE+ElggVBI02NQK0S2rR
-	N6e4gC1tld5B0DmOPSnRhvXpJNysKmnNcrIo+wDaW9CM0Q2zpuz0yYAl9cUlqA==
+	 references:references; bh=eulrkW/jQcxUqYO5aduwRSys83VZim01riXzxasZFKM=;
+	b=aIkOL2hmvLadgFwu/m/H0lvxHDyXZLhPSU/+Cl7OePQgijFguatGm82yAUHV5vI1QVbGV9
+	uVSFEPnq1fzKuOXP9DuVEoJv539VxAF4Ju1EpeGMQvCRQ7kZfcQhEcKXaMVawRJtylnsCL
+	uiD/rkrDjn9M9D8WUd8CBoq8KZaamdPP6KqptL497Z+tu28tw231JIYyrPj1lbbywrl93B
+	k4Gt2VqDJdZjZQx3NFmZwAQuESXpQs/4xjYVK8PLaIvqXoUDwWBlRveAz1VQXnNgfyxAwr
+	crEcX/yRnph+G9c3rkdLo88htOk3ZRvEwdkuxzHvRiY7GUt1yvDwyH5NWxuOgA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741881592;
+	s=2020e; t=1741881594;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=pJ3c2uTRlpYbT0X+Ce70TgQESWwWd+/6IGj70OyJbAY=;
-	b=Tqy9+HUdO0v/fOr5sk0THam2tXUZ0VxswgOeJZPKnQvMjzF0eYVUyectzgpaU7OZOtJUp/
-	KI7hJD4wnjkzecBg==
+	 references:references; bh=eulrkW/jQcxUqYO5aduwRSys83VZim01riXzxasZFKM=;
+	b=QN8w/sWMR3AKYciupC4gtP2YzscR1AL87lp+RhO2XkG83iMW1toWTUwg/WK0YMpy3w7h7R
+	4jyVrStgnqvRK4Aw==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>,
  Jiri Slaby <jirislaby@kernel.org>
-Subject: [patch 06/46] genirq/proc: Switch to lock guards
+Subject: [patch 07/46] genirq/spurious: Cleanup code
 References: <20250313154615.860723120@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -62,186 +62,200 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 13 Mar 2025 16:59:51 +0100 (CET)
+Date: Thu, 13 Mar 2025 16:59:53 +0100 (CET)
 
-Convert all lock/unlock pairs to guards and tidy up the code.
+Clean up the coding style
 
 No functional change.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- kernel/irq/proc.c |   65 +++++++++++++++++++-----------------------------------
- 1 file changed, 24 insertions(+), 41 deletions(-)
+ kernel/irq/spurious.c |   74 ++++++++++++++++++--------------------------------
+ 1 file changed, 28 insertions(+), 46 deletions(-)
 
---- a/kernel/irq/proc.c
-+++ b/kernel/irq/proc.c
-@@ -81,20 +81,18 @@ static int show_irq_affinity(int type, s
- static int irq_affinity_hint_proc_show(struct seq_file *m, void *v)
+--- a/kernel/irq/spurious.c
++++ b/kernel/irq/spurious.c
+@@ -34,8 +34,9 @@ static atomic_t irq_poll_active;
+  * true and let the handler run.
+  */
+ bool irq_wait_for_poll(struct irq_desc *desc)
+-	__must_hold(&desc->lock)
  {
- 	struct irq_desc *desc = irq_to_desc((long)m->private);
--	unsigned long flags;
- 	cpumask_var_t mask;
++	lockdep_assert_held(&desc->lock);
++
+ 	if (WARN_ONCE(irq_poll_cpu == smp_processor_id(),
+ 		      "irq poll in progress on cpu %d for irq %d\n",
+ 		      smp_processor_id(), desc->irq_data.irq))
+@@ -157,8 +158,7 @@ static void poll_spurious_irqs(struct ti
+ 			 continue;
  
- 	if (!zalloc_cpumask_var(&mask, GFP_KERNEL))
- 		return -ENOMEM;
+ 		/* Racy but it doesn't matter */
+-		state = desc->istate;
+-		barrier();
++		state = READ_ONCE(desc->istate);
+ 		if (!(state & IRQS_SPURIOUS_DISABLED))
+ 			continue;
  
--	raw_spin_lock_irqsave(&desc->lock, flags);
--	if (desc->affinity_hint)
--		cpumask_copy(mask, desc->affinity_hint);
--	raw_spin_unlock_irqrestore(&desc->lock, flags);
-+	scoped_guard (raw_spinlock_irq, &desc->lock) {
-+		if (desc->affinity_hint)
-+			cpumask_copy(mask, desc->affinity_hint);
-+	}
- 
- 	seq_printf(m, "%*pb\n", cpumask_pr_args(mask));
- 	free_cpumask_var(mask);
--
- 	return 0;
- }
- 
-@@ -295,23 +293,18 @@ static int irq_spurious_proc_show(struct
- 
- #define MAX_NAMELEN 128
- 
--static int name_unique(unsigned int irq, struct irqaction *new_action)
-+static bool name_unique(unsigned int irq, struct irqaction *new_action)
- {
- 	struct irq_desc *desc = irq_to_desc(irq);
- 	struct irqaction *action;
--	unsigned long flags;
--	int ret = 1;
- 
--	raw_spin_lock_irqsave(&desc->lock, flags);
-+	guard(raw_spinlock_irq)(&desc->lock);
- 	for_each_action_of_desc(desc, action) {
- 		if ((action != new_action) && action->name &&
--				!strcmp(new_action->name, action->name)) {
--			ret = 0;
--			break;
--		}
-+		    !strcmp(new_action->name, action->name))
-+			return false;
+@@ -168,8 +168,7 @@ static void poll_spurious_irqs(struct ti
  	}
--	raw_spin_unlock_irqrestore(&desc->lock, flags);
--	return ret;
-+	return true;
+ out:
+ 	atomic_dec(&irq_poll_active);
+-	mod_timer(&poll_spurious_irq_timer,
+-		  jiffies + POLL_SPURIOUS_IRQ_INTERVAL);
++	mod_timer(&poll_spurious_irq_timer, jiffies + POLL_SPURIOUS_IRQ_INTERVAL);
  }
  
- void register_handler_proc(unsigned int irq, struct irqaction *action)
-@@ -319,8 +312,7 @@ void register_handler_proc(unsigned int
- 	char name [MAX_NAMELEN];
- 	struct irq_desc *desc = irq_to_desc(irq);
+ static inline int bad_action_ret(irqreturn_t action_ret)
+@@ -195,15 +194,12 @@ static void __report_bad_irq(struct irq_
+ 	struct irqaction *action;
+ 	unsigned long flags;
  
--	if (!desc->dir || action->dir || !action->name ||
--					!name_unique(irq, action))
-+	if (!desc->dir || action->dir || !action->name || !name_unique(irq, action))
+-	if (bad_action_ret(action_ret)) {
+-		printk(KERN_ERR "irq event %d: bogus return value %x\n",
+-				irq, action_ret);
+-	} else {
+-		printk(KERN_ERR "irq %d: nobody cared (try booting with "
+-				"the \"irqpoll\" option)\n", irq);
+-	}
++	if (bad_action_ret(action_ret))
++		pr_err("irq event %d: bogus return value %x\n", irq, action_ret);
++	else
++		pr_err("irq %d: nobody cared (try booting with the \"irqpoll\" option)\n", irq);
+ 	dump_stack();
+-	printk(KERN_ERR "handlers:\n");
++	pr_err("handlers:\n");
+ 
+ 	/*
+ 	 * We need to take desc->lock here. note_interrupt() is called
+@@ -213,11 +209,10 @@ static void __report_bad_irq(struct irq_
+ 	 */
+ 	raw_spin_lock_irqsave(&desc->lock, flags);
+ 	for_each_action_of_desc(desc, action) {
+-		printk(KERN_ERR "[<%p>] %ps", action->handler, action->handler);
++		pr_err("[<%p>] %ps", action->handler, action->handler);
+ 		if (action->thread_fn)
+-			printk(KERN_CONT " threaded [<%p>] %ps",
+-					action->thread_fn, action->thread_fn);
+-		printk(KERN_CONT "\n");
++			pr_cont(" threaded [<%p>] %ps", action->thread_fn, action->thread_fn);
++		pr_cont("\n");
+ 	}
+ 	raw_spin_unlock_irqrestore(&desc->lock, flags);
+ }
+@@ -232,18 +227,17 @@ static void report_bad_irq(struct irq_de
+ 	}
+ }
+ 
+-static inline int
+-try_misrouted_irq(unsigned int irq, struct irq_desc *desc,
+-		  irqreturn_t action_ret)
++static inline bool try_misrouted_irq(unsigned int irq, struct irq_desc *desc,
++				     irqreturn_t action_ret)
+ {
+ 	struct irqaction *action;
+ 
+ 	if (!irqfixup)
+-		return 0;
++		return false;
+ 
+ 	/* We didn't actually handle the IRQ - see if it was misrouted? */
+ 	if (action_ret == IRQ_NONE)
+-		return 1;
++		return true;
+ 
+ 	/*
+ 	 * But for 'irqfixup == 2' we also do it for handled interrupts if
+@@ -251,19 +245,16 @@ try_misrouted_irq(unsigned int irq, stru
+ 	 * traditional PC timer interrupt.. Legacy)
+ 	 */
+ 	if (irqfixup < 2)
+-		return 0;
++		return false;
+ 
+ 	if (!irq)
+-		return 1;
++		return true;
+ 
+ 	/*
+ 	 * Since we don't get the descriptor lock, "action" can
+-	 * change under us.  We don't really care, but we don't
+-	 * want to follow a NULL pointer. So tell the compiler to
+-	 * just load it once by using a barrier.
++	 * change under us.
+ 	 */
+-	action = desc->action;
+-	barrier();
++	action = READ_ONCE(desc->action);
+ 	return action && (action->flags & IRQF_IRQPOLL);
+ }
+ 
+@@ -273,8 +264,7 @@ void note_interrupt(struct irq_desc *des
+ {
+ 	unsigned int irq;
+ 
+-	if (desc->istate & IRQS_POLL_INPROGRESS ||
+-	    irq_settings_is_polled(desc))
++	if (desc->istate & IRQS_POLL_INPROGRESS || irq_settings_is_polled(desc))
  		return;
  
- 	snprintf(name, MAX_NAMELEN, "%s", action->name);
-@@ -347,17 +339,16 @@ void register_irq_proc(unsigned int irq,
- 	 * added, not when the descriptor is created, so multiple
- 	 * tasks might try to register at the same time.
- 	 */
--	mutex_lock(&register_lock);
-+	guard(mutex)(&register_lock);
+ 	if (bad_action_ret(action_ret)) {
+@@ -420,13 +410,12 @@ void note_interrupt(struct irq_desc *des
+ 		/*
+ 		 * Now kill the IRQ
+ 		 */
+-		printk(KERN_EMERG "Disabling IRQ #%d\n", irq);
++		pr_emerg("Disabling IRQ #%d\n", irq);
+ 		desc->istate |= IRQS_SPURIOUS_DISABLED;
+ 		desc->depth++;
+ 		irq_disable(desc);
  
- 	if (desc->dir)
--		goto out_unlock;
+-		mod_timer(&poll_spurious_irq_timer,
+-			  jiffies + POLL_SPURIOUS_IRQ_INTERVAL);
++		mod_timer(&poll_spurious_irq_timer, jiffies + POLL_SPURIOUS_IRQ_INTERVAL);
+ 	}
+ 	desc->irqs_unhandled = 0;
+ }
+@@ -436,11 +425,9 @@ bool noirqdebug __read_mostly;
+ int noirqdebug_setup(char *str)
+ {
+ 	noirqdebug = 1;
+-	printk(KERN_INFO "IRQ lockup detection disabled\n");
 -
--	sprintf(name, "%d", irq);
-+		return;
- 
- 	/* create /proc/irq/1234 */
-+	sprintf(name, "%d", irq);
- 	desc->dir = proc_mkdir(name, root_irq_dir);
- 	if (!desc->dir)
--		goto out_unlock;
-+		return;
- 
- #ifdef CONFIG_SMP
- 	umode_t umode = S_IRUGO;
-@@ -366,31 +357,27 @@ void register_irq_proc(unsigned int irq,
- 		umode |= S_IWUSR;
- 
- 	/* create /proc/irq/<irq>/smp_affinity */
--	proc_create_data("smp_affinity", umode, desc->dir,
--			 &irq_affinity_proc_ops, irqp);
-+	proc_create_data("smp_affinity", umode, desc->dir, &irq_affinity_proc_ops, irqp);
- 
- 	/* create /proc/irq/<irq>/affinity_hint */
- 	proc_create_single_data("affinity_hint", 0444, desc->dir,
--			irq_affinity_hint_proc_show, irqp);
-+				irq_affinity_hint_proc_show, irqp);
- 
- 	/* create /proc/irq/<irq>/smp_affinity_list */
- 	proc_create_data("smp_affinity_list", umode, desc->dir,
- 			 &irq_affinity_list_proc_ops, irqp);
- 
--	proc_create_single_data("node", 0444, desc->dir, irq_node_proc_show,
--			irqp);
-+	proc_create_single_data("node", 0444, desc->dir, irq_node_proc_show, irqp);
- # ifdef CONFIG_GENERIC_IRQ_EFFECTIVE_AFF_MASK
- 	proc_create_single_data("effective_affinity", 0444, desc->dir,
--			irq_effective_aff_proc_show, irqp);
-+				irq_effective_aff_proc_show, irqp);
- 	proc_create_single_data("effective_affinity_list", 0444, desc->dir,
--			irq_effective_aff_list_proc_show, irqp);
-+				irq_effective_aff_list_proc_show, irqp);
- # endif
- #endif
- 	proc_create_single_data("spurious", 0444, desc->dir,
--			irq_spurious_proc_show, (void *)(long)irq);
-+				irq_spurious_proc_show, (void *)(long)irq);
- 
--out_unlock:
--	mutex_unlock(&register_lock);
++	pr_info("IRQ lockup detection disabled\n");
+ 	return 1;
  }
- 
- void unregister_irq_proc(unsigned int irq, struct irq_desc *desc)
-@@ -468,7 +455,6 @@ int show_interrupts(struct seq_file *p,
- 	int i = *(loff_t *) v, j;
- 	struct irqaction *action;
- 	struct irq_desc *desc;
--	unsigned long flags;
- 
- 	if (i > ACTUAL_NR_IRQS)
- 		return 0;
-@@ -487,13 +473,13 @@ int show_interrupts(struct seq_file *p,
- 		seq_putc(p, '\n');
+-
+ __setup("noirqdebug", noirqdebug_setup);
+ module_param(noirqdebug, bool, 0644);
+ MODULE_PARM_DESC(noirqdebug, "Disable irq lockup detection when true");
+@@ -452,12 +439,10 @@ static int __init irqfixup_setup(char *s
+ 		return 1;
  	}
- 
--	rcu_read_lock();
-+	guard(rcu)();
- 	desc = irq_to_desc(i);
- 	if (!desc || irq_settings_is_hidden(desc))
--		goto outsparse;
-+		return 0;
- 
- 	if (!desc->action || irq_desc_is_chained(desc) || !desc->kstat_irqs)
--		goto outsparse;
-+		return 0;
- 
- 	seq_printf(p, "%*d:", prec, i);
- 	for_each_online_cpu(j) {
-@@ -503,7 +489,7 @@ int show_interrupts(struct seq_file *p,
- 	}
- 	seq_putc(p, ' ');
- 
--	raw_spin_lock_irqsave(&desc->lock, flags);
-+	guard(raw_spinlock_irq)(&desc->lock);
- 	if (desc->irq_data.chip) {
- 		if (desc->irq_data.chip->irq_print_chip)
- 			desc->irq_data.chip->irq_print_chip(&desc->irq_data, p);
-@@ -532,9 +518,6 @@ int show_interrupts(struct seq_file *p,
- 	}
- 
- 	seq_putc(p, '\n');
--	raw_spin_unlock_irqrestore(&desc->lock, flags);
--outsparse:
--	rcu_read_unlock();
- 	return 0;
+ 	irqfixup = 1;
+-	printk(KERN_WARNING "Misrouted IRQ fixup support enabled.\n");
+-	printk(KERN_WARNING "This may impact system performance.\n");
+-
++	pr_warn("Misrouted IRQ fixup support enabled.\n");
++	pr_warn("This may impact system performance.\n");
+ 	return 1;
  }
- #endif
+-
+ __setup("irqfixup", irqfixup_setup);
+ module_param(irqfixup, int, 0644);
+ 
+@@ -468,11 +453,8 @@ static int __init irqpoll_setup(char *st
+ 		return 1;
+ 	}
+ 	irqfixup = 2;
+-	printk(KERN_WARNING "Misrouted IRQ fixup and polling support "
+-				"enabled\n");
+-	printk(KERN_WARNING "This may significantly impact system "
+-				"performance\n");
++	pr_warn("Misrouted IRQ fixup and polling support enabled\n");
++	pr_warn("This may significantly impact system performance\n");
+ 	return 1;
+ }
+-
+ __setup("irqpoll", irqpoll_setup);
 
 
