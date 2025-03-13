@@ -1,124 +1,118 @@
-Return-Path: <linux-kernel+bounces-560358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E94A602FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:48:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4992CA602FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:49:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CA81420577
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:48:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15D4A19C2A88
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270541F463F;
-	Thu, 13 Mar 2025 20:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DAE1F4634;
+	Thu, 13 Mar 2025 20:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XU8guPI0"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AaZXZbKU"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7BA145A11;
-	Thu, 13 Mar 2025 20:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04311F3FF1;
+	Thu, 13 Mar 2025 20:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741898920; cv=none; b=BgctLDVc9gqQUwweKYm4tFQh9og3fEgd1eNkRYw3zIKxQMNCr6xOfaW2bbua2GC3lMqL1tYmq8S2Rn/7xJq0Fbjkc6vn3Gcbg+y6VMMhs8IWeU+ua3OMSBE5QIMdU1AQyOhuIMMbm1UB7Xk3fAgUp9QJkwpmeCzs2BanSEloau0=
+	t=1741898976; cv=none; b=M5R8AwaqO6Y+g0Bsv4D8j14Ljd/07afMQRSmC9A+BKEt9O2tZtIHDan7k6FSkbmdJq34y5h9P82TIvaqv5LqEtHgN1AvMGRcs4L9BjPzUsnFxRrEz+/fk/AQGcjRciji5yqBho3iltXpm9m6K1X23ljnuvS7bgeCWRX8uce7CXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741898920; c=relaxed/simple;
-	bh=bzPYKY3lsPVchaKR3bQgaTpUlj8CbHB37ry0Wjb/REM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uTOiNzdtaQ1waJ6z8cCSdtLcc7jRM7gIbVlW6zwAolhNHsfKQFU7okOiN7A1Tg0BDlpVAlwuxO5pkej077Kqc1Xl3sCSYzpfl0JjxIoZLQYw3Ioyns6TyF+m5GayA4dWgcePe9Pu3kwjgWCpK6kROMLJ7OjfY+BPG8DIEyRslxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XU8guPI0; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1741898976; c=relaxed/simple;
+	bh=utdsEU5rR3jj5uhVBxeK6JXJy2lz+au+ixF7Kj06GV0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o0yMpDAsiuWFZvSoD6ge4OOQXws1eq6QJ8CimxzokQrRsjqTi9ASzB1fpB3dUMC6vr49mbsyMEuKOVWNrvvr/u+1U6J2IJkUpg9fCZpvsrvcY+fndA/38c5olzyqqe8twhtAJuoWzYlObA8JDmpYfuWTPFVSIgi2zEcVq48miBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AaZXZbKU; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so13098315e9.2;
-        Thu, 13 Mar 2025 13:48:37 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aaec111762bso297086266b.2;
+        Thu, 13 Mar 2025 13:49:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741898916; x=1742503716; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3M+KzacL88R9fEWhVfWkksQHP3+7Qg3oqYjBVfhgIw0=;
-        b=XU8guPI0JYkUsnTWZGJIOtGbjWQxSO1kWrt5LJscInfjxsMAw7e9FNLDQs3mxm1jF6
-         rg0VLi2kUNUQiZY6jR36WPHCvdLped1SzC57DvgCuGHjE5lkaoFYL2lcPC8oey3FD8b/
-         yEwgJjnzGQZnjLawKN+PmJHBE3qOOUgxDvCKQtDY5Jdpje6v3SVPl0lB3IOp7YnK6JhS
-         4qxtEMUf7HsqKUe9mvWrvO6PNPY1/ejdqDKekwZn2ZFEXykYAxzyTkh3l93/2GfXTRsY
-         Iaw3aX0Be5OcjCTdIl8Xl7vrnxt2gIKwQNX2cm9Wb4+XWxn1pkZ86/mlCz2kFmC0V4Y/
-         nUaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741898916; x=1742503716;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=gmail.com; s=20230601; t=1741898973; x=1742503773; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=3M+KzacL88R9fEWhVfWkksQHP3+7Qg3oqYjBVfhgIw0=;
-        b=v82UTgqVGuW62l0zlcjm3f1jorV/iDvHYRzpvpXWXGZ2rcd+ifbV2osh5cX+6c54ZK
-         f+JL/guTFIh7kLPxEBOn/5gqIWFqzmTM2lE7nR9iWv+iQs3vzBV7cYI+5+LnWI+EvapF
-         j2jUls/8VheY4HiLGLFtFQREOBXqMu4SdhU76ZADbXKJmM2ii4+2c7inLXhv+qZP+87C
-         KpSY/Kjviim/QYy4581qCEEHSwQAuwoUS6Wjp89KECteDnVScgNS/roCZ9nA6PiHprb5
-         68NR6VLVr+toaICdLTnDgZPaIkW8XIUciQGmf8bpCxYlYeo40+IUgQW9UBycO4FAY9FQ
-         hCIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbigMkI4LNN+l4+RlqK4q2n4cSTgOGF6PXKyS6bbxYPxT7Wq46FRpTpR0JoQ8mVL+h+6NaRm+taSM=@vger.kernel.org, AJvYcCV8zUVq4PGRY2IvippysM0X8MP5chTqsBNEUk4rhTnMV0cmLZv32YZe8TVEynRBGCwAFsBl1MpWiXDGJwbo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx09z3vBEaiRQUuIzAckYFDo3IM7+j2U/ZhpOcFYf0hPew9HM4b
-	RrqsTAODsB3g5xBoeHHN27fx1JUhSMrOiXk2fsDdKr7HabqF9Yx6
-X-Gm-Gg: ASbGncumXBOOslC1P2y545niZvyriCGnjXqrAi17rIvoQw71cLMJ4aurSIONA1DEMrU
-	Ct641gxN0kYdJrReMNDZf/JFAC6qKGaQUH3Cj+nidd+7adP5LSawp96nvYUokzOArDBzZktDYzn
-	fCbzdOCtTBPqEAAvXfILqp3D6wFBM2CafXghT861EC0Vij8XwirUfwJqnBG5seFq5fMPhUABLFT
-	SFBL2WhCQGK3HOKmModazT19vaA4TXrDOHGdKA3kjfjdNaRe4qaENK8AP5M37+aBlhDXJQ7oEsu
-	6xrxBoFBUO8Nohqj4vxX0bBDQI+u8bZeo0tLwIhN/zV53vsBsFu5yA5OEVazFU4oLK6q9i/BYnd
-	TEycasfssd9x79pqG6VE=
-X-Google-Smtp-Source: AGHT+IG+XIjsbTUFYLzcvMmKBT0mslsJ4ZGWPf1npQg3tcOd3geNpnyYN8S19XPzvQ4Ty4pJ4BGwAA==
-X-Received: by 2002:a5d:59a3:0:b0:391:38a5:efa with SMTP id ffacd0b85a97d-396c2010f8emr951103f8f.23.1741898916296;
-        Thu, 13 Mar 2025 13:48:36 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c7df339asm3224343f8f.3.2025.03.13.13.48.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 13:48:35 -0700 (PDT)
-Message-ID: <96b2920f2bfd4ac44de73f3f940eb66913996952.camel@gmail.com>
-Subject: Re: [PATCH v1 1/1] iio: amplifiers: hmc425a: Remove not fully
- correct comment
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, David Lechner
-	 <dlechner@baylibre.com>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
-	 <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>
-Date: Thu, 13 Mar 2025 20:48:51 +0000
-In-Reply-To: <20250313162254.416422-1-andriy.shevchenko@linux.intel.com>
-References: <20250313162254.416422-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+        bh=mOSmqPxIDrKqjeBpEW6dlza06ScebCb+hLamX5awbSQ=;
+        b=AaZXZbKURmSExk8uGG0NSYl4Xth0Uoqfs2gMZwrN82JvxZ0iHjQekG6ABw4N6wULpf
+         FHGwpJxTx0+4aHWcBnS08k1YjpjYAEA6ZQf1ufDDwev+aKoGBqx8hy0UqRSEckHpc1ay
+         9XyK7Ehc3faj6yjBeK1cl9b0UUP89Hl78y9q031f+7LnnqbmrLAgzozMOAeXmpsJtnw6
+         rBe87JI1F4gKo8K1SpfJQlhz5vqEX/Sg1OEyUXXblfoTiIZ/cZpgFnl34NtwjyxEFIFl
+         Xx9GwI6vISOthbuSokKimoXKaKoEl2XDWEFBWjIabHSRAsqaeDPBvM8MiQE6pJYOAuJe
+         OJFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741898973; x=1742503773;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mOSmqPxIDrKqjeBpEW6dlza06ScebCb+hLamX5awbSQ=;
+        b=tUxF+yGIOQ8e3Hbjwpq+EgKM9CtogWGRo9Qg7K5cPqDGUwJju4oehJdPXvY/mpHzjy
+         5QsPrpGRhC1obloJ58jU+mJJswbzXAFTx9Nu2pvdjo2lmWcTw+IpWy7vsqTKGXeAu1Kl
+         91nFOBPHq3HhJB4Mi4+u50WotG3a87w4e6nQ36k3W/tt9NdtblumSk9d7CoYW6PXjzzm
+         5iAaS31QbxmIIw3WlzQK8PhBXf06hhMysm14UdrShoiZNZLso2WKm/XzEWnSHaNGrJ6E
+         vJFQfOaayT02xR3UUChtqRDRHNyu1PurJN6t3+t6+J6mKQN0hQiYQD0wU49alswZ5Bc5
+         mc0w==
+X-Forwarded-Encrypted: i=1; AJvYcCU2h+zQ/ZDUe50CInGtM8MmZkfO5oSGFOsDoUKwEkZ6QTSDfDNE+bhq19MLmxRdvcsFOUfRe3Dm895K@vger.kernel.org, AJvYcCVBNsF4g8/oYhbXRaeXmmp0+/2QKGVaDPEDnSRgmEIR8aURA9wLccbdn71NUGOGrjExgszuI+C8/Ckxp5Cs@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPuAjzMU4KK/21YW3QZDqXSHwBEEAN2F6ND57m16Zm4RM/gqYa
+	R22sisZXlHARbV8QXRxxQJCtH1fTU6PMY1bNQueC909Sv+iZDf+7
+X-Gm-Gg: ASbGncum44ejYh5r+/geosRTpe5D4+H8KDBiqFSsYeB1EPpStvUg81lCR+x7hxsfmWV
+	ebC3IvtilulJsh7EKDluzhnEhlT7TPlyYWo5ReTUXwvUr1PHQXml5vz33TOIcAP7WJe/vrcr6D6
+	z+6rYLPOsiboXTOzQFIRSY8McA3a97LWQVVXQY5mSdOqSd8+u+74wH5OT5Dg4XjBC6QQITme1J/
+	v31f/r/sqdGkq9FuamsmFoIjCOCOvV4XEjpj9k9dsxbszdt0ssTF3mtvzGU+/ydPBj58lW7pypZ
+	IHmfud8YQFS0iZFB0V+r8s9oELOGLGelel7TGrtfdwxuQYVvOPLfH8ELEJ/x47Sb5JrhCWAkT55
+	SqdbAPtxX3UukYMw0B9yymg==
+X-Google-Smtp-Source: AGHT+IFmBSCQydVfCelVM6XzdMkt8DVaqTYnfbXEg6vlGdFQDGaNADtO3TQmZb6W9wNLpy48kbZXHA==
+X-Received: by 2002:a17:907:6d06:b0:ac1:e31e:de0a with SMTP id a640c23a62f3a-ac329290a1fmr100133266b.12.1741898972904;
+        Thu, 13 Mar 2025 13:49:32 -0700 (PDT)
+Received: from [192.168.50.244] (83.11.221.132.ipv4.supernova.orange.pl. [83.11.221.132])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147e9bc6sm122154066b.49.2025.03.13.13.49.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 13:49:31 -0700 (PDT)
+Message-ID: <3a235d3c-0d23-4b19-a286-637e710b534e@gmail.com>
+Date: Thu, 13 Mar 2025 21:49:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 00/10] mfd: bcm590xx: Add support for BCM59054
+To: Lee Jones <lee@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Stanislav Jakubek <stano.jakubek@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20250304-bcm59054-v6-0-ae8302358443@gmail.com>
+ <20250313132136.GC3616286@google.com>
+From: Artur Weber <aweber.kernel@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20250313132136.GC3616286@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2025-03-13 at 18:22 +0200, Andy Shevchenko wrote:
-> The OF match table can be used outside of OF-based platforms.
-> Remove the (misleading) comment.
->=20
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
+On 13.03.2025 14:21, Lee Jones wrote:
+> 
+> Besides my one comment, the MFD side looks okay.
+> 
+> So you still need ACKs from Mark and to rework Rob's suggestion.
+> 
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+As far as I can tell, Rob retracted his suggestion and left his
+Reviewed-By tag[1].
 
-> =C2=A0drivers/iio/amplifiers/hmc425a.c | 1 -
-> =C2=A01 file changed, 1 deletion(-)
->=20
-> diff --git a/drivers/iio/amplifiers/hmc425a.c b/drivers/iio/amplifiers/hm=
-c425a.c
-> index d9a359e1388a..e92d7f399e33 100644
-> --- a/drivers/iio/amplifiers/hmc425a.c
-> +++ b/drivers/iio/amplifiers/hmc425a.c
-> @@ -398,7 +398,6 @@ static int hmc425a_probe(struct platform_device *pdev=
-)
-> =C2=A0	return devm_iio_device_register(&pdev->dev, indio_dev);
-> =C2=A0}
-> =C2=A0
-> -/* Match table for of_platform binding */
-> =C2=A0static const struct of_device_id hmc425a_of_match[] =3D {
-> =C2=A0	{ .compatible =3D "adi,hmc425a",
-> =C2=A0	=C2=A0 .data =3D &hmc425a_chip_info_tbl[ID_HMC425A]},
+[1] https://lore.kernel.org/lkml/CAL_Jsq+Qsu-6Z72uXYKwc62idq2K169S1t0nUrrgNOyezgfYsA@mail.gmail.com/
 
+Best regards
+Artur
 
