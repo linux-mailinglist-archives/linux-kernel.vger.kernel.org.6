@@ -1,186 +1,253 @@
-Return-Path: <linux-kernel+bounces-558700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCB64A5E9A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 03:09:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D6AA5E99F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 03:09:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FEFA7A8E96
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:08:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F1EF18979F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3877442AA9;
-	Thu, 13 Mar 2025 02:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pakt/yVy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C27181ACA;
+	Thu, 13 Mar 2025 02:08:57 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4154D8C8;
-	Thu, 13 Mar 2025 02:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75EDEC4;
+	Thu, 13 Mar 2025 02:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741831745; cv=none; b=ZLyAOwZI8iqyvWRmBsfFxYh9AkHpIkGqsjqMEeXtbzxJEwHWmE5YNt25pCBm5nKsd93byi0/hlWWlqJopr0/S5Ox1oFi/0QkNDB3XGh4bVsDI7HWUycSqoes4onGlpN+3SArbNZGgqnNwOy85KSI1t6AxUl+hEQ8cSNnyhC3ugc=
+	t=1741831737; cv=none; b=Gz+rGRTmY0YXcMSmGfNSy6/JbsjHX2vlKjCensM5ikHhlrZ5wQEvHaUR+6kGKhM9P6zuuEOuaPqj8KRi/dIayvL+nK2JLGMjk11Sh9MNuSe9LbVIU2EUOyUCQNXLuZPMOfKycYk0izH9Mrlz2vntBCmQx4W+XBwby08OqvmTjCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741831745; c=relaxed/simple;
-	bh=GngvFBixUC4blVwet87fsiyD246acHkjhZlmbgI45iY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X8TsOkgYDKjjXAWi+0rAWzqHonEc/SQaXgDIpYtBMaH6xerRSm6rqxnhhhvNu0Hs6QBavk+gvaW0AQFHpYy1ta6PG6ahDjxVw8/Fo8zm3yv35ryytufwOHvNg3KE9gpt7gk1Jjcp/MsQ8c1IinBUEK8nyUesiO5WsguSerCvfSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pakt/yVy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F16BBC4CEDD;
-	Thu, 13 Mar 2025 02:09:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741831745;
-	bh=GngvFBixUC4blVwet87fsiyD246acHkjhZlmbgI45iY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pakt/yVyOntTMO64+noyo0RfpzkTor1fq/f1K2nuE2gnj3T1nIS+2lGwhyf/6eX94
-	 JRGhmAU4k2zY5c8yga4lIfbpi7agWosgVbwxv5nSF704AUw2KDkevMVt3AnBVNbxHV
-	 eMRmu9Ly9xYM07MTwUhuPv31BZH0FMhKGHNdSIPGk467StAi1Bp5/CB93O6KsdSdC9
-	 p3OOxTiU6SyiB/ivg9FJCIMnDXzfl1zzQaCtBCLO7glpW2lAqPMqYLaFnZCnmie0xW
-	 vJvfBCpQ0tDndS/M5tmbDipfWviqXKeOzTe+h1oEFQw5/but1eweSslC2dqmo0tbzq
-	 Ds4y1gUwDHbIw==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54996d30bfbso383273e87.2;
-        Wed, 12 Mar 2025 19:09:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWfs83MwdoEcJcZ5Ym0oL3zu9znUlZB0zGTPwftQSesmr/2SZmnl0W/y/BOgnCDuThrujY8efJ80STh7dw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIx2qjbcLD4Skh5/c3X3djwsIPlrC91RC1ei2rdSWthc2UsnVP
-	mGA7fd5PZpi3xaAvVVtEExRKwGKLjt+WTNOKNDF/pkg6J7Qxo9OxdZ3/GTIvjuxZHVq8W6CoNMj
-	5EPuQB6dqqGIK+yl2KP3jqJ1/t0A=
-X-Google-Smtp-Source: AGHT+IFnp+hSv28hh0jo5RO6feHO0dn8GCX7fME6ezbp/fN64DK7Ijlw7+v6mzJ9xFU+XXy/l/7Fn+eJUdqbeCvZLvE=
-X-Received: by 2002:a05:6512:a93:b0:545:2fa9:8cf5 with SMTP id
- 2adb3069b0e04-549910b7c6fmr10035130e87.49.1741831743668; Wed, 12 Mar 2025
- 19:09:03 -0700 (PDT)
+	s=arc-20240116; t=1741831737; c=relaxed/simple;
+	bh=5PXdoVQxoeu0uhvZ98hV7wg/SGuDIsg93giDttYwCLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=W93zw2jn4ype1ZaU75ytNadLLy2Jqy7vvB8JVd18Dn9VV05X4OYUGcNGowJuvltXQAGPAtWr40IK9s8P5SD8eLpYosI2GQhw6Fpll1QY7eIZNBUxW3esiYOhfvQ4zwRvVpeOCNz6m1VbDHi4Gye/DqDoTx2edSHobDLWl6K7FgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZCrRb462YzvWm2;
+	Thu, 13 Mar 2025 10:04:59 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6B8EF1402DB;
+	Thu, 13 Mar 2025 10:08:50 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 13 Mar
+ 2025 10:08:49 +0800
+Message-ID: <537f33c2-ca19-4025-9d22-4ab44f92e8c0@huawei.com>
+Date: Thu, 13 Mar 2025 10:08:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311110616.148682-6-ardb+git@google.com> <20250311110616.148682-10-ardb+git@google.com>
-In-Reply-To: <20250311110616.148682-10-ardb+git@google.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 13 Mar 2025 11:08:27 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASxNhDnCmpuf7yEW4Lcz-vRtitx8HPeoZnGNWdb-6pEsA@mail.gmail.com>
-X-Gm-Features: AQ5f1JoS42g00b7qlbesqtGBrGFfhZQ6QifIEYnappwB45I2PgST6Tm8BEsgSzI
-Message-ID: <CAK7LNASxNhDnCmpuf7yEW4Lcz-vRtitx8HPeoZnGNWdb-6pEsA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] x86: Get rid of Makefile.postlink
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, x86@kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] ext4: avoid journaling sb update on error if
+ journal is destroying
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, Zhang Yi <yi.zhang@huawei.com>, Jan
+ Kara <jack@suse.cz>
+CC: Ritesh Harjani <ritesh.list@gmail.com>, <linux-ext4@vger.kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>, <linux-kernel@vger.kernel.org>, Mahesh Kumar
+	<maheshkumar657g@gmail.com>, Yang Erkun <yangerkun@huawei.com>
+References: <1bf59095d87e5dfae8f019385ba3ce58973baaff.1741270780.git.ojaswin@linux.ibm.com>
+ <87ldtfhmo7.fsf@gmail.com>
+ <Z8xAmyICsNlln4Y3@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <87ecz7hcw0.fsf@gmail.com>
+ <Z8xbLrdN3L1E50-G@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <87cyergyb1.fsf@gmail.com>
+ <Z82EjcExRMc8nz2v@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <871pv5cx6v.fsf@gmail.com>
+ <bct36ajzi6sardnmc6yz4ot4fbpr654b4k2xz54mrtyje7wofq@qpwzbtctwqnf>
+ <Z9GZdSiDL0J80720@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <5ygal3ht47dcpftsxxksmk4lid47al2g4xzlbennmtteeqqsed@uswr3gimu3wc>
+ <ee4156da-e199-443a-9af9-246e8d89559e@huawei.com>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <ee4156da-e199-443a-9af9-246e8d89559e@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
-On Tue, Mar 11, 2025 at 8:06=E2=80=AFPM Ard Biesheuvel <ardb+git@google.com=
-> wrote:
+On 2025/3/13 9:20, Zhang Yi wrote:
+> On 2025/3/13 1:15, Jan Kara wrote:
+>> On Wed 12-03-25 19:56:36, Ojaswin Mujoo wrote:
+>>> On Wed, Mar 12, 2025 at 11:51:03AM +0100, Jan Kara wrote:
+>>>> On Mon 10-03-25 10:13:36, Ritesh Harjani wrote:
+>>>>> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
+>>>>>> On Sun, Mar 09, 2025 at 12:11:22AM +0530, Ritesh Harjani wrote:
+>>>>>>> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
+>>>>>>>> On Sat, Mar 08, 2025 at 06:56:23PM +0530, Ritesh Harjani wrote:
+>>>>>>>>> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
+>>>>>>>>>> On Sat, Mar 08, 2025 at 03:25:04PM +0530, Ritesh Harjani (IBM) wrote:
+>>>>>>>>>>> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
+>>>>>>>>>>>> Presently we always BUG_ON if trying to start a transaction on a journal marked
+>>>>>>>>>>>> with JBD2_UNMOUNT, since this should never happen. However, while ltp running
+>>>>>>>>>>>> stress tests, it was observed that in case of some error handling paths, it is
+>>>>>>>>>>>> possible for update_super_work to start a transaction after the journal is
+>>>>>>>>>>>> destroyed eg:
+>>>>>>>>>>>>
+>>>>>>>>>>>> (umount)
+>>>>>>>>>>>> ext4_kill_sb
+>>>>>>>>>>>>    kill_block_super
+>>>>>>>>>>>>      generic_shutdown_super
+>>>>>>>>>>>>        sync_filesystem /* commits all txns */
+>>>>>>>>>>>>        evict_inodes
+>>>>>>>>>>>>          /* might start a new txn */
+>>>>>>>>>>>>        ext4_put_super
+>>>>>>>>>>>> 	flush_work(&sbi->s_sb_upd_work) /* flush the workqueue */
+>>>>>>>>>>>>          jbd2_journal_destroy
+>>>>>>>>>>>>            journal_kill_thread
+>>>>>>>>>>>>              journal->j_flags |= JBD2_UNMOUNT;
+>>>>>>>>>>>>            jbd2_journal_commit_transaction
+>>>>>>>>>>>>              jbd2_journal_get_descriptor_buffer
+>>>>>>>>>>>>                jbd2_journal_bmap
+>>>>>>>>>>>>                  ext4_journal_bmap
+>>>>>>>>>>>>                    ext4_map_blocks
+>>>>>>>>>>>>                      ...
+>>>>>>>>>>>>                      ext4_inode_error
+>>>>>>>>>>>>                        ext4_handle_error
+>>>>>>>>>>>>                          schedule_work(&sbi->s_sb_upd_work)
+>>>>>>>>>>>>
+>>>>>>>>>>>>                                                 /* work queue kicks in */
+>>>>>>>>>>>>                                                 update_super_work
+>>>>>>>>>>>>                                                   jbd2_journal_start
+>>>>>>>>>>>>                                                     start_this_handle
+>>>>>>>>>>>>                                                       BUG_ON(journal->j_flags &
+>>>>>>>>>>>>                                                              JBD2_UNMOUNT)
+>>>>>>>>>>>>
+>>>>>>>>>>>> Hence, introduce a new sbi flag s_journal_destroying to indicate journal is
+>>>>>>>>>>>> destroying only do a journaled (and deferred) update of sb if this flag is not
+>>>>>>>>>>>> set. Otherwise, just fallback to an un-journaled commit.
+>>>>>>>>>>>>
+>>>>>>>>>>>> We set sbi->s_journal_destroying = true only after all the FS updates are done
+>>>>>>>>>>>> during ext4_put_super() (except a running transaction that will get commited
+>>>>>>>>>>>> during jbd2_journal_destroy()). After this point, it is safe to commit the sb
+>>>>>>>>>>>> outside the journal as it won't race with a journaled update (refer
+>>>>>>>>>>>> 2d01ddc86606).
+>>>>>>>>>>>>
+>>>>>>>>>>>> Also, we don't need a similar check in ext4_grp_locked_error since it is only
+>>>>>>>>>>>> called from mballoc and AFAICT it would be always valid to schedule work here.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Fixes: 2d01ddc86606 ("ext4: save error info to sb through journal if available")
+>>>>>>>>>>>> Reported-by: Mahesh Kumar <maheshkumar657g@gmail.com>
+>>>>>>>>>>>> Suggested-by: Jan Kara <jack@suse.cz>
+>>>>>>>>>>>> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+>>>>>>>>>>>> ---
+>>>>>>>>>>>>   fs/ext4/ext4.h      | 2 ++
+>>>>>>>>>>>>   fs/ext4/ext4_jbd2.h | 8 ++++++++
+>>>>>>>>>>>>   fs/ext4/super.c     | 4 +++-
+>>>>>>>>>>>>   3 files changed, 13 insertions(+), 1 deletion(-)
+>>>>>>>>>>>>
+>>>>>>>>>>>> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+>>>>>>>>>>>> index 2b7d781bfcad..d48e93bd5690 100644
+>>>>>>>>>>>> --- a/fs/ext4/ext4.h
+>>>>>>>>>>>> +++ b/fs/ext4/ext4.h
+>>>>>>>>>>>> @@ -1728,6 +1728,8 @@ struct ext4_sb_info {
+>>>>>>>>>>>>   	 */
+>>>>>>>>>>>>   	struct work_struct s_sb_upd_work;
+>>>>>>>>>>>>   
+>>>>>>>>>>>> +	bool s_journal_destorying;
+>>>>>>>>>>>> +
+>>>>>>>>>>>>   	/* Atomic write unit values in bytes */
+>>>>>>>>>>>>   	unsigned int s_awu_min;
+>>>>>>>>>>>>   	unsigned int s_awu_max;
+>>>>>>>>>>>> diff --git a/fs/ext4/ext4_jbd2.h b/fs/ext4/ext4_jbd2.h
+>>>>>>>>>>>> index 9b3c9df02a39..6bd3ca84410d 100644
+>>>>>>>>>>>> --- a/fs/ext4/ext4_jbd2.h
+>>>>>>>>>>>> +++ b/fs/ext4/ext4_jbd2.h
+>>>>>>>>>>>> @@ -437,6 +437,14 @@ static inline int ext4_journal_destroy(struct ext4_sb_info *sbi, journal_t *jour
+>>>>>>>>>>>>   {
+>>>>>>>>>>>>   	int err = 0;
+>>>>>>>>>>>>   
+>>>>>>>>>>>> +	/*
+>>>>>>>>>>>> +	 * At this point all pending FS updates should be done except a possible
+>>>>>>>>>>>> +	 * running transaction (which will commit in jbd2_journal_destroy). It
+>>>>>>>>>>>> +	 * is now safe for any new errors to directly commit superblock rather
+>>>>>>>>>>>> +	 * than going via journal.
+>>>>>>>>>>>> +	 */
+>>>>>>>>>>>> +	sbi->s_journal_destorying = true;
+>>>>>>>>>>> This is not correct right. I think what we decided to set this flag
+>>>>>>>>>>> before we flush the workqueue. So that we don't schedule any new
+>>>>>>>>>>> work after this flag has been set. At least that is what I understood.
+>>>>>>>>>>>
+>>>>>>>>>>> [1]: https://lore.kernel.org/all/87eczc6rlt.fsf@gmail.com/
+>>>>>>>>>>>
+>>>>>>>>>>> -ritesh
+>>>>>>>>>> Hey Ritesh,
+>>>>>>>>>>
+>>>>>>>>>> Yes that is not correct, I missed that in my patch however we realised
+>>>>>>>>>> that adding it before flush_work() also has issues [1]. More
+>>>>>>>>>> specifically:
+>>>>>>>>> Ohk. right.
+>>>>>>>>>
+>>>>>>>>>>                       **kjournald2**
+>>>>>>>>>>                       jbd2_journal_commit_transaction()
+>>>>>>>>>>                       ...
+>>>>>>>>>>                       ext4_handle_error()
+>>>>>>>>>>                          /* s_journal_destorying is not set */
+>>>>>>>>>>                          if (journal && !s_journal_destorying)
+>>>>>>>>> Then maybe we should not schedule another work to update the superblock
+>>>>>>>>> via journalling, it the error itself occurred while were trying to
+>>>>>>>>> commit the journal txn?
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> -ritesh
+>>>>>>>> Hmm, ideally yes that should not happen, but how can we achieve that?
+>>>>>>>> For example with the trace we saw:
+>>>>>>>>
+>>>>>>>>     **kjournald2**
+>>>>>>>>     jbd2_journal_commit_transaction()
+>>>>>>>>       jbd2_journal_get_descriptor_buffer
+>>>>>>>>         jbd2_journal_bmap
+>>>>>>>>           ext4_journal_bmap
+>>>>>>>>             ext4_map_blocks
+>>>>>>>>               ...
+>>>>>>>>               ext4_inode_error
+>>>>>>>>                 ext4_handle_error
+>>>>>>>>                   schedule_work(&sbi->s_sb_upd_work)
+>>>>>>>>
+>>>>>>>> How do we tell ext4_handle_error that it is in the context of a
+>>>>>>>> committing txn.
+>>>> So I was thinking about this. It is not a problem to determine we are
+>>>> running in kjournald context - it is enough to check
+>>>>
+>>>> 	current == EXT4_SB(sb)->s_journal->j_task
+>>> Oh, right :)
+>>>
+>>>> But I'm not sure checking this in ext4_handle_error() and doing direct sb
+>>>> update instead of scheduling a journalled one is always correct. For
+>>>> example kjournald does also writeback of ordered data and if that hits an
+>>>> error, we do not necessarily abort the journal (well, currently we do as
+>>>> far as I'm checking but it seems a bit fragile to rely on this).
+>>> Okay so IIUC your concern is there might be some codepaths, now or in
+>>> the future, where kjournald might call the FS layer, hit an error and
+>>> still decide to not abort. In which case we would still want to update
+>>> the sb via journal.
+>> Yeah. The reason why I'm a bit concerned about it is mostly the case of
+>> kjournald also handling ordered data and situations like
+>> !(journal->j_flags & JBD2_ABORT_ON_SYNCDATA_ERR) where people want to
+>> continue although ordered data had issues. Or situations where something in
+>> j_commit_callback or another jbd2 hook ends up calling ext4_error()...
+>>
+> Ha, right! This is a case where kjournald triggers an ext4 error but does
+> not abort the journal for now, I forgot this one, and there may be more.
+> Thanks for pointing it out. I would also prefer to use this solution of
+> adding ext4_journal_destory().
 >
-> From: Ard Biesheuvel <ardb@kernel.org>
->
-> Instead of generating the vmlinux.relocs file (needed by the
-> decompressor build to construct the KASLR relocation tables) as a
-> vmlinux postlink step, which is dubious because it depends on data that
-> is stripped from vmlinux before the build completes, generate it from
-> vmlinux.unstripped, which has been introduced specifically for this
-> purpose.
->
-> This ensures that each artifact is rebuilt as needed, rather than as a
-> side effect of another build rule.
->
-> This effectively reverts commit
->
->   9d9173e9ceb6 ("x86/build: Avoid relocation information in final vmlinux=
-")
->
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> ---
->  arch/x86/Makefile.postlink        | 38 --------------------
->  arch/x86/boot/compressed/Makefile |  9 +++--
->  2 files changed, 6 insertions(+), 41 deletions(-)
->
-> diff --git a/arch/x86/Makefile.postlink b/arch/x86/Makefile.postlink
-> deleted file mode 100644
-> index 445fce66630f..000000000000
-> --- a/arch/x86/Makefile.postlink
-> +++ /dev/null
-> @@ -1,38 +0,0 @@
-> -# SPDX-License-Identifier: GPL-2.0
-> -# =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> -# Post-link x86 pass
-> -# =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> -#
-> -# 1. Separate relocations from vmlinux into vmlinux.relocs.
-> -# 2. Strip relocations from vmlinux.
-> -
-> -PHONY :=3D __archpost
-> -__archpost:
-> -
-> --include include/config/auto.conf
-> -include $(srctree)/scripts/Kbuild.include
-> -
-> -CMD_RELOCS =3D arch/x86/tools/relocs
-> -OUT_RELOCS =3D arch/x86/boot/compressed
-> -quiet_cmd_relocs =3D RELOCS  $(OUT_RELOCS)/vmlinux.relocs
-> -      cmd_relocs =3D \
-> -       mkdir -p $(OUT_RELOCS); \
-> -       $(CMD_RELOCS) $@ > $(OUT_RELOCS)/vmlinux.relocs; \
-> -       $(CMD_RELOCS) --abs-relocs $@
-> -
-> -# `@true` prevents complaint when there is nothing to be done
-> -
-> -vmlinux vmlinux.unstripped: FORCE
-> -       @true
-> -ifeq ($(CONFIG_X86_NEED_RELOCS),y)
-> -       $(call cmd,relocs)
-> -endif
-> -
-> -clean:
-> -       @rm -f $(OUT_RELOCS)/vmlinux.relocs
-> -
-> -PHONY +=3D FORCE clean
-> -
-> -FORCE:
-> -
-> -.PHONY: $(PHONY)
-> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed=
-/Makefile
-> index 606c74f27459..5edee7a9786c 100644
-> --- a/arch/x86/boot/compressed/Makefile
-> +++ b/arch/x86/boot/compressed/Makefile
-> @@ -117,9 +117,12 @@ $(obj)/vmlinux.bin: vmlinux FORCE
->
->  targets +=3D $(patsubst $(obj)/%,%,$(vmlinux-objs-y)) vmlinux.bin.all vm=
-linux.relocs
->
-> -# vmlinux.relocs is created by the vmlinux postlink step.
-> -$(obj)/vmlinux.relocs: vmlinux
-> -       @true
-> +CMD_RELOCS =3D arch/x86/tools/relocs
-> +quiet_cmd_relocs =3D RELOCS  $@
-> +      cmd_relocs =3D $(CMD_RELOCS) $< > $@;$(CMD_RELOCS) --abs-relocs $<
-> +
-> +$(obj)/vmlinux.relocs: vmlinux.unstripped FORCE
-> +       $(call if_changed,relocs)
+If we consider the possibility that there might be calls to ext4_error()
+without aborting the journal, although I cannot imagine how this might
+happen, this situation may indeed appear in hidden corners now or in the
+future. Therefore, an extra flag is indeed needed, with which we don't
+have to think so much. 😀
 
-Perhaps, it may make sense to rebuild vmlinux.relocs
-when arch/x86/tools/relocs is changed, but
-I do not see such dependency in the other
-arch/x86/realmode/rm/Makefile.
 
-https://github.com/torvalds/linux/blob/v6.14-rc5/arch/x86/realmode/rm/Makef=
-ile#L61
+Cheers,
+Baokun
 
-
-So, I decided it is ok.
-If you mind, you can send v3.
-
-
-
---=20
-Best Regards
-Masahiro Yamada
 
