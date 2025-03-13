@@ -1,96 +1,148 @@
-Return-Path: <linux-kernel+bounces-560050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9CC9A5FD05
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:06:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D18FA5FCFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:05:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01107189ACEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:05:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 757447A77EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880AE250EC;
-	Thu, 13 Mar 2025 17:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3473926A089;
+	Thu, 13 Mar 2025 17:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IhPf2L9/"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S7k4GJAo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12577153801
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874C6153801;
+	Thu, 13 Mar 2025 17:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741885536; cv=none; b=BCxVFyNGj8gxJpLYLnijIo30J/ilL92WMgnODJhPNPPGqeKUgJRBoWXP+MLTnU5pBsaD39+MrrW+Hg9M9C+LGPf7TnWHcdKkuNfslUx6tehArinQRpABc1uDUUIt9urj9du4c5bGd2jD7Oc+tlw8YCs2lCGmlyous7PQ33MMaxA=
+	t=1741885542; cv=none; b=gkbMVpAJoPym3XmPKWqJvi++R6bXr33kkynBLxAhPr7E9xMn0DA5U4IfoluGWRWXS5z5zXMas+TT5k6NuMz/qbDbF7DlmvQDAh746610kb3AVi0RVfCutOQyW5rrCA1iLyDXtvOgvWC3loyD1wV8iZwZvWLTjyBQJ4YVgDyOvkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741885536; c=relaxed/simple;
-	bh=0tdzNBsSfj25tqpXiCEQFRH4wScl08lGPpx+Tet1suA=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=aNIJnN6xOmqjdIy9KqH5ZzmS9fOocd6NCm3pdSXONGitCLcyGSFAaKhCPZ++bxdF6ddgfX62w9IREfvHY/hslDboHo/QUGdhPAG1pJUFKTlVwXBjt1eztoGRUu2SmVdifGYO3j3ayQLqjzXgN96xnel5LW04oBIfHH6kuW8JPKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IhPf2L9/; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741885521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aE8hTDMYccjYYSsyTRm8RFsJjGaSnHNKcMncoeQgE20=;
-	b=IhPf2L9/KpHbFHjav7YwIgUmKanxHv2LFY0JAsO4Ldtb8KYr4Yms0f1Zoo0EG+vYcKSVm8
-	xDYgQMDV6RCJJCQmiDnukdwzQbRUFXrSDftOyvtjFnn9aoeFdK8H3jtGorMTyM5LvzD1mX
-	VdWdsvciPzmWizGhHR1bjeuIGZj5A4s=
+	s=arc-20240116; t=1741885542; c=relaxed/simple;
+	bh=wSphIq0AwTEWBRgbSG567LFZ6ToB/bMmr7vLR5oQ/M4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B6V669rcHBZ1Kjr9WKTNA7/k3awctwqqyiqKVJX6La1Yoxf3JCKPjFTB/a7ubSk3Tzxflh2RElJfyU2DzW4YBBLQG8BCoLgznwKyphmmnuTd/HqyKMJq9GGa8VqcJ9+n2IlpKYrz9zkWVUFmCm1w57m1w3nQfZZIk84xUrKUqcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S7k4GJAo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D799DC4CEEA;
+	Thu, 13 Mar 2025 17:05:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741885542;
+	bh=wSphIq0AwTEWBRgbSG567LFZ6ToB/bMmr7vLR5oQ/M4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S7k4GJAoPfz8p6m8k15CyINZ1RDSnmgYRX4QysV3ngHMrg253s/TCBOgWSc/NFHx6
+	 Vjbj8UZ0xHq0ZCkO4MTQpWlekrA+gOQTdY2AOdTTV8HmYHElWW/fkbrJymQ25nX9IA
+	 and5y78HC0ObvHvoRZS4PNVzDauqbkCm5sLF+sSGe/YGJgWKB6hHBTpOrmhj+IBuzy
+	 qQ1Wa+SanwYTm5XWPRNL6RYIVS7plBRtAzrWKWj5qVDnp5pieIGrlasQrkLwLJWEzZ
+	 XgaydvJeF3FXPEtLMtF6f9Etr75KzsQLpOy+O4cvsuucsg5upfxSrOmHJkg1alkLBv
+	 z5Kq7xsYP/ARw==
+Date: Thu, 13 Mar 2025 18:05:36 +0100
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Rahul Rameshbabu <sergeantsagara@protonmail.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-input@vger.kernel.org, dri-devel@lists.freedesktop.org, Jiri Kosina <jikos@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH RFC 3/3] rust: hid: demo the core abstractions for probe
+ and remove
+Message-ID: <m2cm4c4m7teaca3tog774tl25ynngicg4eav4i7xiqyrxsqwju@leh5og5d6uba>
+References: <20250313160220.6410-2-sergeantsagara@protonmail.com>
+ <20250313160220.6410-6-sergeantsagara@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [RESEND PATCH] scsi: sd: Use str_on_off() helper in
- sd_read_write_protect_flag()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <3c32eb12-6879-48cf-9ef6-bd04e759025f@acm.org>
-Date: Thu, 13 Mar 2025 18:05:07 +0100
-Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <9EE4EEC5-52D9-4159-A3B4-4865DA11C6FF@linux.dev>
-References: <20250313142557.36936-2-thorsten.blum@linux.dev>
- <3c32eb12-6879-48cf-9ef6-bd04e759025f@acm.org>
-To: Bart Van Assche <bvanassche@acm.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313160220.6410-6-sergeantsagara@protonmail.com>
 
-Hi Bart,
+On Mar 13 2025, Rahul Rameshbabu wrote:
+> This is a very basic "hello, world!" implementation to illustrate that the
+> probe and remove callbacks are working as expected. I chose an arbitrary
+> device I had on hand for populating in the HID device id table.
 
-On 13. Mar 2025, at 17:25, Bart Van Assche wrote:
-> On 3/13/25 7:25 AM, Thorsten Blum wrote:
->> Remove hard-coded strings by using the str_on_off() helper function.
+Nice to see this live :)
+
+Though as I mentioned in the previous patch, I'd prefer having one full
+driver in a single patch and one separate patch with the skeleton in the
+docs.
+
+Do you have any meaningful processing that needs to be done in the
+report fixup or in the .raw_event or .event callbacks?
+
+It would be much more interesting to show how this works together on a
+minimalistic driver.
+
+FWIW, the driver in itself, though incomplete, looks familiar, which is
+a good thing: we've got a probe and a remove. This is common with all
+the other HID drivers, so it's not a brand new thing.
+
+I wonder however how and if we could enforce the remove() to be
+automated by the binding or rust, to not have to deal with resource
+leaking. Because the removal part, especially on failure, is the hardest
+part.
+
+Cheers,
+Benjamin
+
 > 
-> Shouldn't a patch description explain two things: what has been changed
-> and also why a change has been made? I don't see an explanation of why
-> this change has been made.
-
-The benefits are explained in linux/string_choices.h and I didn't think
-it would be necessary to repeat them in the commit message:
-
-/*
- * Here provide a series of helpers in the str_$TRUE_$FALSE format (you can
- * also expand some helpers as needed), where $TRUE and $FALSE are their
- * corresponding literal strings. These helpers can be used in the printing
- * and also in other places where constant strings are required. Using these
- * helpers offers the following benefits:
- *  1) Reducing the hardcoding of strings, which makes the code more elegant
- *     through these simple literal-meaning helpers.
- *  2) Unifying the output, which prevents the same string from being printed
- *     in various forms, such as enable/disable, enabled/disabled, en/dis.
- *  3) Deduping by the linker, which results in a smaller binary file.
- */
-
-Thanks,
-Thorsten
+>   [  +0.012968] monitor_control: Probing HID device vendor: 2389 product: 29204 using Rust!
+>   [  +0.000108] monitor_control: Removing HID device vendor: 2389 product: 29204 using Rust!
+> 
+> Signed-off-by: Rahul Rameshbabu <sergeantsagara@protonmail.com>
+> ---
+>  drivers/hid/hid_monitor_control.rs | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hid/hid_monitor_control.rs b/drivers/hid/hid_monitor_control.rs
+> index 18afd69a56d5..aeb6e4058a6b 100644
+> --- a/drivers/hid/hid_monitor_control.rs
+> +++ b/drivers/hid/hid_monitor_control.rs
+> @@ -8,17 +8,22 @@
+>      Driver,
+>  };
+>  
+> +const USB_VENDOR_ID_NVIDIA: u32 = 0x0955;
+> +const USB_DEVICE_ID_NVIDIA_THUNDERSTRIKE_CONTROLLER: u32 = 0x7214;
+> +
+>  struct HidMonitorControl;
+>  
+>  #[vtable]
+>  impl Driver for HidMonitorControl {
+>      fn probe(dev: &mut hid::Device, id: &hid::DeviceId) -> Result<()> {
+>          /* TODO implement */
+> +        pr_info!("Probing HID device vendor: {} product: {} using Rust!\n", id.vendor(), id.product());
+>          Ok(())
+>      }
+>  
+>      fn remove(dev: &mut hid::Device) {
+>          /* TODO implement */
+> +        pr_info!("Removing HID device vendor: {} product: {} using Rust!\n", dev.vendor(), dev.product());
+>      }
+>  }
+>  
+> @@ -26,8 +31,8 @@ fn remove(dev: &mut hid::Device) {
+>      driver: HidMonitorControl,
+>      id_table: [
+>          kernel::usb_device! {
+> -            vendor: /* TODO fill in */,
+> -            product: /* TODO fill in */,
+> +            vendor: USB_VENDOR_ID_NVIDIA,
+> +            product: USB_DEVICE_ID_NVIDIA_THUNDERSTRIKE_CONTROLLER,
+>          },
+>      ],
+>      name: "monitor_control",
+> -- 
+> 2.47.2
+> 
+> 
 
