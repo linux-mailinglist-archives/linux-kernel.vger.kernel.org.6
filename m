@@ -1,262 +1,327 @@
-Return-Path: <linux-kernel+bounces-559522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6314A5F4F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:52:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8490A5F511
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:59:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CADE1885950
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:51:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 876E5189BA24
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9E0267AF8;
-	Thu, 13 Mar 2025 12:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618762676E9;
+	Thu, 13 Mar 2025 12:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="glEJWqYp"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2074.outbound.protection.outlook.com [40.107.20.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eO/KQ+Ht"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C190F267731;
-	Thu, 13 Mar 2025 12:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741870242; cv=fail; b=aJBajKI1Uaich8BFD4jMfrmd3GAqRLRZt5bw8TtD+YnEtzrprJEOe/2DHzslVlUCW2Uh3w1icc0jUr0jfWQNHFv1luzKZIbDzOGZYkQW6oLdhNzexieHZW2CyPTSZq8GZA8k17AmIfyYvNLgTSNz6MG6YGWzfcEzxwlFJ070dIg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741870242; c=relaxed/simple;
-	bh=12ddnSGbIaWfg7E2TPLFxJakB6OxILOhRRm6gpEsGSs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ksCRhw7fkck+Z+LV2XZIB8/dh8pi3faWo5XJi67Yoasl99vv9FAf+mV+OfZMQoVRptCK2pYJZ0SsyXGql/VyYrTxsbFCzQH/R1gPg9QYMcBH6JzCcNC9Jsjk+j/nQFhxz4BxL8pTpsjfgZ/oNs56LfAWJr4mLaDKKU8P2iRToaw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=glEJWqYp; arc=fail smtp.client-ip=40.107.20.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KgDamm/eQqpnJ0gWTNnayXniVe7yBYsp6njqzwspbllchzE6j82GlDJIaR38g85pJ7JWh/3y/5LelRpmCDmGPYOVCRq4FtyL8G8kPX5GVwOcmdRphATNV/jCBM75zL47szNtvwCN8CH1MDZ8WWj1/5gEra7Q0hQM8NsIg2NctILOyjNP814Qvh+Cy7xQey47wd02+jx7kU2ThgrOJRNGC+po1rU+8wqUpHuG5DsHoKXKBABixoTKgMRjd2JxgimvsS80qTIUYHEN6N+0YSw+/FUSjM3iXJRwHXcy8HRlDwx1aJUKezHZYv5H+WRXvnCY6BqGuMmFi4QpX3dDDF8Nag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8SAS32sWUqrMSSHqOwA3qiSpt4GRQEm8a3yJVSVKFmM=;
- b=byQGw/uITwU6szGIrfW0bulqpvx7jZkWY+75o8yf/dapTiNteF8YopX9eK6RsidokpiFzvF12qksloRvfeS7TL8GgHhXRl6c8UCB/6VEmgacvRJIQCHSC+1T6E+v3rBpTYEwjeDn07Q+ecnwOq1Xh6EvBYBQ32YZ6isF/FFYwYpTHKysq4wlsS6OAreDOa5yA0MoVJEtlf9Vak12w+mn2perwfYPTiYM7/OM6jsyblfcD8xUquzYfBH6u7dWcxMAYKTRela96DSvS7/5oDqj3c9lALw0sqIsxKP4gBAFZoGZy0/4JYKzB1vJm2wEjyFHf+0311kkpfbJxFc0uOF/HQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8SAS32sWUqrMSSHqOwA3qiSpt4GRQEm8a3yJVSVKFmM=;
- b=glEJWqYpSoJFkd0SNRHHxpnOWp0I5cj/wqQRLQPudNn9O9nzBwB42/4pnpzYlgWKbc0kyPqzw06eIv3AInbbZ+AyLPJbAX2Q1uynrjNfAf3jDAmrpWjkUj4/2lEdeCb6SgR6IEhQ0OL8aMaBM7q2tHdM7zYLonxiurMKfpgZZUpp07nMX0scL0T+J7MmR7AhpbN4aZkXMBgLtWoaDIG55en+7DRv+X/6d/Ke/CFXuOf1ff8Icvq9f+pUeVH+Hkwxk++oXDbAPOU90f6MtQeleynbZwYmKyj9UvNIecR00KuT9EcIb9TmS+GhzNYyE98ykhiDlUT5vU6TmregaSs6NQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU7PR04MB11163.eurprd04.prod.outlook.com (2603:10a6:10:5b3::14)
- by VI2PR04MB11025.eurprd04.prod.outlook.com (2603:10a6:800:277::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Thu, 13 Mar
- 2025 12:50:37 +0000
-Received: from DU7PR04MB11163.eurprd04.prod.outlook.com
- ([fe80::3a74:80e4:4144:62db]) by DU7PR04MB11163.eurprd04.prod.outlook.com
- ([fe80::3a74:80e4:4144:62db%4]) with mapi id 15.20.8534.027; Thu, 13 Mar 2025
- 12:50:37 +0000
-From: florin.leotescu@oss.nxp.com
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Shych <michaelsh@nvidia.com>,
-	linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: viorel.suman@nxp.com,
-	carlos.song@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	festevam@gmail.com,
-	Florin Leotescu <florin.leotescu@nxp.com>,
-	Frank Li <Frank.Li@nxp.com>
-Subject: [PATCH v4 3/3] hwmon: emc2305: Use devm_thermal_of_cooling_device_register
-Date: Thu, 13 Mar 2025 14:57:46 +0200
-Message-Id: <20250313125746.2901904-4-florin.leotescu@oss.nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250313125746.2901904-1-florin.leotescu@oss.nxp.com>
-References: <20250313125746.2901904-1-florin.leotescu@oss.nxp.com>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM8P191CA0001.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:20b:21a::6) To DU7PR04MB11163.eurprd04.prod.outlook.com
- (2603:10a6:10:5b3::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85302673A1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741870773; cv=none; b=apGbLT81gqKKVTHeQMLmaUkJNRbmsDEKRWyFSFypZbHr1h5MciK9AmjX+BAhaWdPxopLE+382Vg/T14Kcf3yvp9czYV9A2V+aBKAdVztrJV+cfoq+/WSzaDw9vNYk6RAw63UL0lxjYXgxMLObeuBhFbAhtuVHeQGhrjJ3UknUC4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741870773; c=relaxed/simple;
+	bh=b8PDWFtN7VW1RJ3hnHYp2UvvPQC/mHJQFD/c8LUcmfA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rp0K3j/Wqus698UQc07YhXg3nGoOdjlhRAjQrfluoT3YmHMzq+3eSzJC+2DkxTsrSlz7SMus6Et5KTGwq8G0vHPlb5LX6oE/0HsOY3cvuPcbC5Tv+d+4CLqA7aOV8cTvm4V9nWir2eXKhZYrScuqEyjfk0gWwMALr+NkouzaW+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eO/KQ+Ht; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2c2ada8264aso413387fac.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 05:59:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741870771; x=1742475571; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ogz0107wCBoyIzUm2WAj7fpOqXVECu+Yy2NfUVIc68U=;
+        b=eO/KQ+HtZdDvROsS3tzSm54X91i0fxAu6SYrEag+dVS+Qh0NBSLr4yvs8mTNGiXgfg
+         m/wBzsVoGzDsKpwmvuB9O6PMpNqDJyo31lXdHSTxV+xTBqY8n/GdNJFCsb3hfa+1IM7F
+         2yfgL5NYd+nEycI5xwmJQzgDcXRMjn3YlLDuqCaBKMJOB6Mi+2sQYghzNQyWJBV14tLe
+         Tzv0aOesd7u/uk8Xo9iAjpMqkGq+dw/J8QiEXIjHHB9TmUtggXfb0FYO5gPg+W0R9JrZ
+         shym8upvBb+5GrKnt4g5GyGtLIyF+2CU7Y2/O4Mi32V6cnMXSZGT5j7VMemWLN9v4orI
+         HjXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741870771; x=1742475571;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ogz0107wCBoyIzUm2WAj7fpOqXVECu+Yy2NfUVIc68U=;
+        b=S6EInEOLN6meNyLkClpo9laXEDWiy2bG3er9dvJ2IjKQnGsK22zejUFjP2SXHQr3mg
+         h0JatPQBivcX942ClhwGRrmv+hLoHmOpKXix2S0gKYocDQZPEACtXtG9iDMmX499e6F7
+         lFlITdN242Zly/zcuZ2W/be1ovXLoNcm7y61DqIfb5YnsMW588t8CuvJmChrf+7j8yh3
+         ji4V3M0DmlKbZ8QZvxeFh2NAVsw25Dfr2ksnwr0eV94jLYq9ie7U3lnIjE7bOgduMw+v
+         zmllKzm1+i4ApjiI1tYbpRvZYMPXWfonEdMS4gL0Kb/qz55iUl50KDwOgbdsD9KGORUi
+         Qezw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdQUDIVEMHrms7r3NjU2oKt01w0xPsbLpKIAqD/S5RNkQqWJYQVOlG33+E3Nxsn2nQ00Zvlgyo3U02NKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweB156q0gmBQP/zav+z+abdLfDtqnbRZJsviSg7lRZ2WKle/gR
+	6yk5BVMBpOuWir6gl0uvesMTROxd3N2horR1nE7MB7IQXDMPjsFWqAiNgc0FQEaMsAwfjxHGs8J
+	wdfeNVszqNaLM4+vJz4lXehI4nm/b7YPzoiT0jA==
+X-Gm-Gg: ASbGncsvturHUPZPNmcvuPXXzHfjBve4YS31T+boQfgn5SRna3Kwc+EdoEyw5JOBtre
+	oEq6aMF/2fwQk3MRH3Jg8WcmilMFrrwynOedIVGl6D1etPG421Qhm3yY+X9GG4asRJzGeWdeioj
+	SWmuwXtzKf60CBVgd3JNYpv7Jl3CMGbvmegOR4Kg==
+X-Google-Smtp-Source: AGHT+IGItCSptJgdqi5J7EXCa3KxRsWFiRKiDQgnBam87NkJB/E9GiLhN92LqYo0B2jLkCw73JHjZOKmigZWv27ieOw=
+X-Received: by 2002:a05:6871:7bc1:b0:2c1:6948:d57c with SMTP id
+ 586e51a60fabf-2c26130ad6amr14089798fac.28.1741870770737; Thu, 13 Mar 2025
+ 05:59:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU7PR04MB11163:EE_|VI2PR04MB11025:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4096f8e8-6f0d-4299-f595-08dd622da710
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?8Q28nhDyQu2g5u3l/N99tgwnmc6gNxFzs/R/+DwDRhLbCEPXUnPbCwQNNK?=
- =?iso-8859-1?Q?fIpMcq5ebqP1EODl0DWJ0ai9vnZKLdwR2Y/BRNpFnsQVWe9BFyWaTugbWL?=
- =?iso-8859-1?Q?PS6cS8YGTFHVn95k0sfqRtr3MlucPWaKviN7/bkVzT7IFhbgNEx1G1aVNM?=
- =?iso-8859-1?Q?Utsga3O5I5qUmK0hCscjETt4g2InWesFMR6zYP3rBhHThk7I26wdhwvd5v?=
- =?iso-8859-1?Q?mAuFXFsEROuIjI9hkuZifayKo3vJHDRU1Ce9+wbyRMgzAUPKVd4BOrJwLE?=
- =?iso-8859-1?Q?kxbw4JNeb6P8Vg5KDjBssDYU+f6f0UQ1+NhcZgPy2QgQAoTfqE6qxLiUgf?=
- =?iso-8859-1?Q?yKDzwqGbTFZiesdXD20Yw6tRSCiXnNMGecOmKSKoZNROcZQcfNd+gDNR/W?=
- =?iso-8859-1?Q?QG2/asf4cvIwU1BUHiArWA22g1+eYlPu1coOhVch2013ig+1CtEi4h5v4W?=
- =?iso-8859-1?Q?TnJ46ATlsd++rOpift12uAVT5GOX9iO4Yoof+VTTY0PFT0Gngy3sgQecdt?=
- =?iso-8859-1?Q?l6aYocej2EeoxWCg0zaVKZlkU2+yfQ7VyUQgSZDrdT8jgA5kBDGkTGj0PV?=
- =?iso-8859-1?Q?gB6/7NvXiEweOHmzvPo1XJxAIWj/0LULJUEl0gR9Z3NEYNSl1Knq0g/p0c?=
- =?iso-8859-1?Q?RQfRta1YtImzaaouOFydBiw3uwEz7uwNMCg2Ybt285zLDyREsddwXPF3JP?=
- =?iso-8859-1?Q?298ssPhvbJG8SM7obPv1m31IavgtukwSfkjQFZUOQjybO+3XxKo9nnSB9Z?=
- =?iso-8859-1?Q?/Fi7ER20MOLZ9lfhC6AIqJld/sIS64vyAoCed2SdcNIL49qYoPVW6La379?=
- =?iso-8859-1?Q?Mk2s6h1JWiq3OaZgFhxHgshYMJ55+baYuaVz8RMkJ/iufP2Lu/yaiC1U4K?=
- =?iso-8859-1?Q?QMDz0Ihm+Fg0ft6LTy2qBQ6hcc1toUYsiQx9yFfpI1Uba7JQESzN9Kyn6P?=
- =?iso-8859-1?Q?yfPCevlzc7aikyWpj11yG1nKqx44PFGJVW7AYWIaGqgqN+EwEJvQ7PR1ZX?=
- =?iso-8859-1?Q?o2Sv3xjYoCLLCdpmF/rb52x93jcP9euiOl00nLIp1WRlBUGNvtokbr+nbB?=
- =?iso-8859-1?Q?nIrMRB3EPLWcyFhS/ISRXA9gQfQeHSQVED7jehLYz5XiJDF6NBO5fmZeRq?=
- =?iso-8859-1?Q?HW9NMgGifOQ8oExZrhZPsJW4ysMdUsyuw+DL7/vs4ZUbrqV45TgXs25Qp7?=
- =?iso-8859-1?Q?VK5GZw7Du2o9AVQqs3v6lpbQCWM2DgJpJdDEUS39vX/OcLvYk6jHTut2tH?=
- =?iso-8859-1?Q?+qYlDiaPEqbc5jipnkrOnAU+spRs+PyvCoUZy25PdgA7XKX9WCcGQJZQgJ?=
- =?iso-8859-1?Q?aqDcdgRo6iTdCx1G0G+Dqbd6AbN26VDCcMoVaDhXKmEih7AaN+cbAavOQL?=
- =?iso-8859-1?Q?+QhHuKmHyaYY0unvq+JdtNbCC7np4QXCCBvdJmrvNFP7jPsCeZl7PkxEMZ?=
- =?iso-8859-1?Q?UWUJWe8vHiZCdPKB?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU7PR04MB11163.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?KMS+1SDB0S1hpFb4y7KM0GD4XRvHB9uZ2UqATvmesU8Y0hIx/3GjQ+Fe+v?=
- =?iso-8859-1?Q?SlZCHhNfwYz3WFt6CXl5fXDwy9AxSx3w4arg/J7EdORNMLZNNB+LNpR2Gy?=
- =?iso-8859-1?Q?alE6xKMFJ06O5houqSGW6tQk3SmUbuZ6I22Ki6EeJ1H3SfIvgBLBnAAMFY?=
- =?iso-8859-1?Q?HYFt6TOnAIp4WKgvP0BXcyoZFvyJoKsm6QMpaXAg6/dGT7nQYrLrtCkuIl?=
- =?iso-8859-1?Q?nT8zc+bctsDo+/irCNB+Cnb4pjSvmtSCWj+pg0zE53b+hq71meoZTYcV22?=
- =?iso-8859-1?Q?yB4bJ/7c09S+xWAh8VKNboSdqAsVk65f3Agcau0mK7Mr43/5b/veOzjIcP?=
- =?iso-8859-1?Q?uKPuS581OOFJEWqq39uQdaq2MY1HldE0xHHs73MqTkNi6dOscKIPRIap3B?=
- =?iso-8859-1?Q?5kOSdoYucvT94q0+Pr26P2bxauvwvIbnUfSO44ak4EoyfBWTtkmC2c6R8G?=
- =?iso-8859-1?Q?ayBBXHb3G27jLKpUcmrlEkvJ5kMwFlM/nXM2hPCeLRYIfhksZnbyfdVnmt?=
- =?iso-8859-1?Q?tWgCIvnKqzfnHnnG88/U/TzjqPl1tNZyEoOqdKFCgiDHvtNXMLhbRlVwdQ?=
- =?iso-8859-1?Q?9JpAHvWIlDEqNQp50GbndcvHwKAdANifBwWRk9fTaeP1c2t/UlOUFsCgvw?=
- =?iso-8859-1?Q?VPUOPva4ggSVZwMGHAzr4Xi/mUSo3uXbni/2vOUlg7O0aoMPTCf+BA9TQG?=
- =?iso-8859-1?Q?J22HttQDUnL12ILoGsjHYdoKIDbCTDaIZli9YpvMJThAObOuS6EpWqDdJG?=
- =?iso-8859-1?Q?z2U3F6A2a6YU/3z5ljwn/6F4UCeyQ3J78lsnxokVxFOeq8EWH4xZWnldW5?=
- =?iso-8859-1?Q?WppGf6JFaX2h1rz5+J8YSEuMv9lpOFXMRYzt0K+rSfc4AJe3iGYVFxUdjR?=
- =?iso-8859-1?Q?wmjmqo1Wdjaf9YlGtypW7vaoEx3xTfOf1vQu8UWDb+zyLT5iiFY9DshQmO?=
- =?iso-8859-1?Q?H4iUsW/m/4uxVpb5QkkzhWNzNQi45jvkSLHQxB8f2G2gKesgYAkca/aUha?=
- =?iso-8859-1?Q?PKk6cUG9hrdsg47ga+YvZluONYWtw+SoYcXk9KZnGXyir0cVDFOeajO7o2?=
- =?iso-8859-1?Q?pkpP48ivYb39k5P4W2kzi2dZoGoJcJett3vk2mqJ2L53h+gQnVXLyeLIns?=
- =?iso-8859-1?Q?KtqUjlFhT3DgSJHRQ+XzfASXU+PtARClequV73NVs7tkIMav7jQjNF6QYx?=
- =?iso-8859-1?Q?RoV63UB3O058bXlLe4ZvBZA1jSChr9DYLM96Cnqt4Ft1oHY1Nvfk5DFK04?=
- =?iso-8859-1?Q?TIufoUN2VdWUX9fk3As3GaAQFVFtBWozxOGbgiQVL5Z2cvL68UBs5PSHWC?=
- =?iso-8859-1?Q?twgVHkjti1nztZ+JSMrkNo6DRZDMNgdsRMmJQgW20Fm1Zn0Hf9ubV4jc1E?=
- =?iso-8859-1?Q?gSumJhugbj5rWePNKFX/WI8A9X0FyiOjzktq+6tKFPqv1TCbt4elNySUer?=
- =?iso-8859-1?Q?jNAe+v8V3VYFGb1ffYOYKVPhOstlGNHPfdQmgsNhFJ3/BrINYsU1spgh2V?=
- =?iso-8859-1?Q?ydkUg/KVMgED4OemR1yLbA3uakbPIYFOXksRbewFlw/AskWjJnwgE0IPMd?=
- =?iso-8859-1?Q?H1QtHZ4Tumx1I51tf037vMq7yJn8kQZW0oOPQiWzxj/apbrnsOo9QiA4qa?=
- =?iso-8859-1?Q?YH3NFU3lN7qgsnAa+G5w/WHAfEkQOMPzfqJFKk+BAO1yiAvl1fjyzUpQ?=
- =?iso-8859-1?Q?=3D=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4096f8e8-6f0d-4299-f595-08dd622da710
-X-MS-Exchange-CrossTenant-AuthSource: DU7PR04MB11163.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 12:50:37.3828
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cDL8PskESo6TGKvdajhAQ85K4VlVKdPLyT+FjJEccTl8vHsjdapzukiT5BS6NyeZaGINwaBQb1/0vwdaVKq4mA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB11025
+References: <20250311100130.42169-1-sgarzare@redhat.com> <20250311100130.42169-3-sgarzare@redhat.com>
+ <Z9KhlSr7qG6VooeC@sumit-X1>
+In-Reply-To: <Z9KhlSr7qG6VooeC@sumit-X1>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Thu, 13 Mar 2025 13:59:19 +0100
+X-Gm-Features: AQ5f1JpCe8iKMCdqjakfodHI5iNtzJeZLgGDZKMlZhl7BPX4pCoHReYZK0TPlmk
+Message-ID: <CAHUa44HEpfL8nmG6qZMYUesSJXWUraUmJE_nwFTp5L8qBaC-jA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] tpm/tpm_ftpm_tee: use send_recv() op
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: Stefano Garzarella <sgarzare@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, Peter Huewe <peterhuewe@gmx.de>, 
+	Jason Gunthorpe <jgg@ziepe.ca>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Florin Leotescu <florin.leotescu@nxp.com>
+On Thu, Mar 13, 2025 at 10:13=E2=80=AFAM Sumit Garg <sumit.garg@kernel.org>=
+ wrote:
+>
+> + Jens
+>
+> Hi Stefano,
+>
+> On Tue, Mar 11, 2025 at 11:01:29AM +0100, Stefano Garzarella wrote:
+> > This driver does not support interrupts, and receiving the response is
+> > synchronous with sending the command.
+> >
+> > It used an internal buffer to cache the response when .send() is called=
+,
+> > and then return it when .recv() is called.
+> >
+> > Let's simplify the driver by implementing the new send_recv() op, so th=
+at
+> > we can also remove the 4KB internal buffer used to cache the response.
+>
+> Looks like a nice cleanup to me but it needs to be tested. Jens, can you
+> give this patch a try?
+>
+> >
+> > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> > ---
+> > Note: I don't know how to test this driver, so I just build it.
+> > If someone can test it, or tell me how to do, it will be great!
 
-Prepare the emc2305 driver to use configuration from Device Tree nodes.
-Switch to devm_thermal_of_cooling_device_register to simplify the
-cleanup procedure, allowing the removal of emc2305_unset_tz and
-emc2305_remove, which are no longer needed.
+Tested-by: Jens Wiklander <jens.wiklander@linaro.org>
 
-Signed-off-by: Florin Leotescu <florin.leotescu@nxp.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
----
- drivers/hwmon/emc2305.c | 33 ++++-----------------------------
- 1 file changed, 4 insertions(+), 29 deletions(-)
+Cheers,
+Jens
 
-diff --git a/drivers/hwmon/emc2305.c b/drivers/hwmon/emc2305.c
-index f8a4c76fcadd..234c54956a4b 100644
---- a/drivers/hwmon/emc2305.c
-+++ b/drivers/hwmon/emc2305.c
-@@ -112,8 +112,6 @@ static char *emc2305_fan_name[] = {
- 	"emc2305_fan5",
- };
- 
--static void emc2305_unset_tz(struct device *dev);
--
- static int emc2305_get_max_channel(const struct emc2305_data *data)
- {
- 	return data->pwm_num;
-@@ -293,8 +291,9 @@ static int emc2305_set_single_tz(struct device *dev, int idx)
- 	pwm = data->pwm_min[cdev_idx];
- 
- 	data->cdev_data[cdev_idx].cdev =
--		thermal_cooling_device_register(emc2305_fan_name[idx], data,
--						&emc2305_cooling_ops);
-+		devm_thermal_of_cooling_device_register(dev, dev->of_node,
-+							emc2305_fan_name[idx], data,
-+							&emc2305_cooling_ops);
- 
- 	if (IS_ERR(data->cdev_data[cdev_idx].cdev)) {
- 		dev_err(dev, "Failed to register cooling device %s\n", emc2305_fan_name[idx]);
-@@ -332,24 +331,9 @@ static int emc2305_set_tz(struct device *dev)
- 	for (i = 0; i < data->pwm_num; i++) {
- 		ret = emc2305_set_single_tz(dev, i + 1);
- 		if (ret)
--			goto thermal_cooling_device_register_fail;
-+			return ret;
- 	}
- 	return 0;
--
--thermal_cooling_device_register_fail:
--	emc2305_unset_tz(dev);
--	return ret;
--}
--
--static void emc2305_unset_tz(struct device *dev)
--{
--	struct emc2305_data *data = dev_get_drvdata(dev);
--	int i;
--
--	/* Unregister cooling device. */
--	for (i = 0; i < EMC2305_PWM_MAX; i++)
--		if (data->cdev_data[i].cdev)
--			thermal_cooling_device_unregister(data->cdev_data[i].cdev);
- }
- 
- static umode_t
-@@ -599,14 +583,6 @@ static int emc2305_probe(struct i2c_client *client)
- 	return 0;
- }
- 
--static void emc2305_remove(struct i2c_client *client)
--{
--	struct device *dev = &client->dev;
--
--	if (IS_REACHABLE(CONFIG_THERMAL))
--		emc2305_unset_tz(dev);
--}
--
- static const struct of_device_id of_emc2305_match_table[] = {
- 	{ .compatible = "microchip,emc2305", },
- 	{},
-@@ -619,7 +595,6 @@ static struct i2c_driver emc2305_driver = {
- 		.of_match_table = of_emc2305_match_table,
- 	},
- 	.probe = emc2305_probe,
--	.remove	  = emc2305_remove,
- 	.id_table = emc2305_ids,
- };
- 
--- 
-2.34.1
-
+>
+> The fTPM is now maintained as part of OP-TEE project here [1]. The
+> instructions to test it on Qemu can be found here [2] as part of CI
+> pipeline.
+>
+> [1] https://github.com/OP-TEE/optee_ftpm
+> [2] https://github.com/OP-TEE/optee_ftpm/blob/master/.github/workflows/ci=
+.yml
+>
+> -Sumit
+>
+> > ---
+> >  drivers/char/tpm/tpm_ftpm_tee.h |  4 --
+> >  drivers/char/tpm/tpm_ftpm_tee.c | 86 ++++++++-------------------------
+> >  2 files changed, 21 insertions(+), 69 deletions(-)
+> >
+> > diff --git a/drivers/char/tpm/tpm_ftpm_tee.h b/drivers/char/tpm/tpm_ftp=
+m_tee.h
+> > index f98daa7bf68c..72b2f5c41274 100644
+> > --- a/drivers/char/tpm/tpm_ftpm_tee.h
+> > +++ b/drivers/char/tpm/tpm_ftpm_tee.h
+> > @@ -23,16 +23,12 @@
+> >   * @chip:     struct tpm_chip instance registered with tpm framework.
+> >   * @state:    internal state
+> >   * @session:  fTPM TA session identifier.
+> > - * @resp_len: cached response buffer length.
+> > - * @resp_buf: cached response buffer.
+> >   * @ctx:      TEE context handler.
+> >   * @shm:      Memory pool shared with fTPM TA in TEE.
+> >   */
+> >  struct ftpm_tee_private {
+> >       struct tpm_chip *chip;
+> >       u32 session;
+> > -     size_t resp_len;
+> > -     u8 resp_buf[MAX_RESPONSE_SIZE];
+> >       struct tee_context *ctx;
+> >       struct tee_shm *shm;
+> >  };
+> > diff --git a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftp=
+m_tee.c
+> > index 139556b21cc6..f0393d843780 100644
+> > --- a/drivers/char/tpm/tpm_ftpm_tee.c
+> > +++ b/drivers/char/tpm/tpm_ftpm_tee.c
+> > @@ -31,45 +31,19 @@ static const uuid_t ftpm_ta_uuid =3D
+> >                 0x82, 0xCB, 0x34, 0x3F, 0xB7, 0xF3, 0x78, 0x96);
+> >
+> >  /**
+> > - * ftpm_tee_tpm_op_recv() - retrieve fTPM response.
+> > - * @chip:    the tpm_chip description as specified in driver/char/tpm/=
+tpm.h.
+> > - * @buf:     the buffer to store data.
+> > - * @count:   the number of bytes to read.
+> > - *
+> > - * Return:
+> > - *   In case of success the number of bytes received.
+> > - *   On failure, -errno.
+> > - */
+> > -static int ftpm_tee_tpm_op_recv(struct tpm_chip *chip, u8 *buf, size_t=
+ count)
+> > -{
+> > -     struct ftpm_tee_private *pvt_data =3D dev_get_drvdata(chip->dev.p=
+arent);
+> > -     size_t len;
+> > -
+> > -     len =3D pvt_data->resp_len;
+> > -     if (count < len) {
+> > -             dev_err(&chip->dev,
+> > -                     "%s: Invalid size in recv: count=3D%zd, resp_len=
+=3D%zd\n",
+> > -                     __func__, count, len);
+> > -             return -EIO;
+> > -     }
+> > -
+> > -     memcpy(buf, pvt_data->resp_buf, len);
+> > -     pvt_data->resp_len =3D 0;
+> > -
+> > -     return len;
+> > -}
+> > -
+> > -/**
+> > - * ftpm_tee_tpm_op_send() - send TPM commands through the TEE shared m=
+emory.
+> > + * ftpm_tee_tpm_op_send_recv() - send TPM commands through the TEE sha=
+red memory
+> > + * and retrieve the response.
+> >   * @chip:    the tpm_chip description as specified in driver/char/tpm/=
+tpm.h
+> > - * @buf:     the buffer to send.
+> > - * @len:     the number of bytes to send.
+> > + * @buf:     the buffer to send and to store the response.
+> > + * @buf_len: the size of the buffer.
+> > + * @cmd_len: the number of bytes to send.
+> >   *
+> >   * Return:
+> > - *   In case of success, returns 0.
+> > + *   In case of success, returns the number of bytes received.
+> >   *   On failure, -errno
+> >   */
+> > -static int ftpm_tee_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t=
+ len)
+> > +static int ftpm_tee_tpm_op_send_recv(struct tpm_chip *chip, u8 *buf,
+> > +                                  size_t buf_len, size_t cmd_len)
+> >  {
+> >       struct ftpm_tee_private *pvt_data =3D dev_get_drvdata(chip->dev.p=
+arent);
+> >       size_t resp_len;
+> > @@ -80,16 +54,15 @@ static int ftpm_tee_tpm_op_send(struct tpm_chip *ch=
+ip, u8 *buf, size_t len)
+> >       struct tee_param command_params[4];
+> >       struct tee_shm *shm =3D pvt_data->shm;
+> >
+> > -     if (len > MAX_COMMAND_SIZE) {
+> > +     if (cmd_len > MAX_COMMAND_SIZE) {
+> >               dev_err(&chip->dev,
+> >                       "%s: len=3D%zd exceeds MAX_COMMAND_SIZE supported=
+ by fTPM TA\n",
+> > -                     __func__, len);
+> > +                     __func__, cmd_len);
+> >               return -EIO;
+> >       }
+> >
+> >       memset(&transceive_args, 0, sizeof(transceive_args));
+> >       memset(command_params, 0, sizeof(command_params));
+> > -     pvt_data->resp_len =3D 0;
+> >
+> >       /* Invoke FTPM_OPTEE_TA_SUBMIT_COMMAND function of fTPM TA */
+> >       transceive_args =3D (struct tee_ioctl_invoke_arg) {
+> > @@ -103,7 +76,7 @@ static int ftpm_tee_tpm_op_send(struct tpm_chip *chi=
+p, u8 *buf, size_t len)
+> >               .attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT,
+> >               .u.memref =3D {
+> >                       .shm =3D shm,
+> > -                     .size =3D len,
+> > +                     .size =3D cmd_len,
+> >                       .shm_offs =3D 0,
+> >               },
+> >       };
+> > @@ -115,7 +88,7 @@ static int ftpm_tee_tpm_op_send(struct tpm_chip *chi=
+p, u8 *buf, size_t len)
+> >               return PTR_ERR(temp_buf);
+> >       }
+> >       memset(temp_buf, 0, (MAX_COMMAND_SIZE + MAX_RESPONSE_SIZE));
+> > -     memcpy(temp_buf, buf, len);
+> > +     memcpy(temp_buf, buf, cmd_len);
+> >
+> >       command_params[1] =3D (struct tee_param) {
+> >               .attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT,
+> > @@ -156,38 +129,21 @@ static int ftpm_tee_tpm_op_send(struct tpm_chip *=
+chip, u8 *buf, size_t len)
+> >                       __func__, resp_len);
+> >               return -EIO;
+> >       }
+> > +     if (resp_len > buf_len) {
+> > +             dev_err(&chip->dev,
+> > +                     "%s: Invalid size in recv: buf_len=3D%zd, resp_le=
+n=3D%zd\n",
+> > +                     __func__, buf_len, resp_len);
+> > +             return -EIO;
+> > +     }
+> >
+> > -     /* sanity checks look good, cache the response */
+> > -     memcpy(pvt_data->resp_buf, temp_buf, resp_len);
+> > -     pvt_data->resp_len =3D resp_len;
+> > -
+> > -     return 0;
+> > -}
+> > -
+> > -static void ftpm_tee_tpm_op_cancel(struct tpm_chip *chip)
+> > -{
+> > -     /* not supported */
+> > -}
+> > -
+> > -static u8 ftpm_tee_tpm_op_status(struct tpm_chip *chip)
+> > -{
+> > -     return 0;
+> > -}
+> > +     memcpy(buf, temp_buf, resp_len);
+> >
+> > -static bool ftpm_tee_tpm_req_canceled(struct tpm_chip *chip, u8 status=
+)
+> > -{
+> > -     return false;
+> > +     return resp_len;
+> >  }
+> >
+> >  static const struct tpm_class_ops ftpm_tee_tpm_ops =3D {
+> >       .flags =3D TPM_OPS_AUTO_STARTUP,
+> > -     .recv =3D ftpm_tee_tpm_op_recv,
+> > -     .send =3D ftpm_tee_tpm_op_send,
+> > -     .cancel =3D ftpm_tee_tpm_op_cancel,
+> > -     .status =3D ftpm_tee_tpm_op_status,
+> > -     .req_complete_mask =3D 0,
+> > -     .req_complete_val =3D 0,
+> > -     .req_canceled =3D ftpm_tee_tpm_req_canceled,
+> > +     .send_recv =3D ftpm_tee_tpm_op_send_recv,
+> >  };
+> >
+> >  /*
+> > --
+> > 2.48.1
+> >
+> >
 
