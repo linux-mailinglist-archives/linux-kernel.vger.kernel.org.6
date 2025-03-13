@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-559116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30DD8A5EFB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:39:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BC9FA5EFB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:39:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 307B116CB40
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:39:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 476907A5414
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED25264FB0;
-	Thu, 13 Mar 2025 09:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8307725FA0D;
+	Thu, 13 Mar 2025 09:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nR2LqVIq"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2044.outbound.protection.outlook.com [40.107.237.44])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MEmnSbXQ"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2042.outbound.protection.outlook.com [40.107.243.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C2D264FAF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5292641E1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741858728; cv=fail; b=GBBykzzl0fQg0QuMyPAE182Nx55FOaMLTo11kuawAe2oNhk3/nJArpt4ZcZUZ59wvgKlRtJMQGcH779EEHC7JyPcJ+F6FZcCXgYclR13YJZjJrLfifZgRKm8uNAOq1l6J75s5L+oRVDIFNFVjdzB1q5GezOXv7Qrm398lqfCrcA=
+	t=1741858746; cv=fail; b=gZj+xVR22ThGGqnHpmy/Lg4fqRo8OJXOwgTxfxBU1Q5Q9QGl2B9/VahQWUvO/lmuN0dSH048MdzcVU8zNfxvSMVVQs1dB5EqPY1SqcLT+bIC/LkAItG/VyQR0DrrAmKaCnB2y6EPqZbimjXx9Y6yo2N8ZpkVJ0gI3eAsTHdkepY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741858728; c=relaxed/simple;
-	bh=beoNR2DjWWdAZMCEaieA0dVGdwpnNn5+3YntxgTzqUE=;
+	s=arc-20240116; t=1741858746; c=relaxed/simple;
+	bh=IWPX1jFAVG0dZRgyxTo3T1gUkHa8LndcS9c3lH/p/t4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S++IDHh8Uo3/9ZivWhlQCZpTkwM5mwaqKIKphg+Uet8Du0Z2W9FtDcQh1iQ6uL5Q8uCtJpFxYyo3P5pCwJqc+awnWuYkoXfCsotURd1yMA6sTIqD603cXBq2WCgaKdTDHYOsKRnwHssgbAxo47jG67kspiVAuO5paFPNanQFokM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nR2LqVIq; arc=fail smtp.client-ip=40.107.237.44
+	 MIME-Version:Content-Type; b=O7vxcGg6/HIDoqHntFzMb2pnVR/cJ6ZE0I3IVQPlMJMvcgzYO8ey4Gw/ivHcVK7ne6Yik1+M+grkDNcJ9ZEp3xKm6Yzw3B++lYhcr9rv/GrjvWf6PI9lF4ma4SmgBd7+hbe6ADm5nAlvJz6n9IQHqIAbs1PtjZK8f3rNTxudpy8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MEmnSbXQ; arc=fail smtp.client-ip=40.107.243.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gLeF0l4Va2herFYteQoRIxe0wBYkUrnu4r9Cz192zXJJgrGc9Vaa/PKBGgJgeUJYOim4bP3uBr3qky+AC/+8z0e+YSbwmKxsu5y1WYubCO7yjsEfX0OX8aBb/0gZPyvrIGp6oAlHEm+ZgwkO/zG9qVRauk28jAxb6LZgmhfLpQB9+7607g05FNo/6t61mumhbtiTtvHVjv0d8qovjkSHhLnMI40reCDus/L/9fc5VSbcFZSuzoPl2P098s49rK7v6rJo5IadmEyTDAg8aRFVVRSDXJOuXCUjFPcYVvFls1dJZSEWy0mnJSEAwV2SBVm1V+IiY5X11VXccY0bo77ZfQ==
+ b=D1SgoKFiIc04GUYMjkksFrB/oiGvZ9Hn3cdx9jvgFc5OVZ7MIYRypfM+wELNEWZo0p2qayy4sfCN7Z56W91Xd+Zqys9ORAMn3OEvUQepctKuGHVbjfBGmy6y2rYu6UBgJX8VnRUugnrZvUjy8eh6oURtHQ3WkmZoApfLWeirJNKH6nklU7UBcjuZmOu3d2hQySyg0vZSuGiiHZ5s2a4PclaWgFjapzZIixrQ2oCoqfxE8mQqil+fDGX+IhkMbHc/uK0m/RlmxOIcNoaebnYkVSSnuj3XoBu1WQr/0xQrdW0QzQGcOit/s/8BDDs2r8tbbUNuPogDRgyBojWSf8G90Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IR1T1f8MV2sZYH0x+6dfeth/EPpxARwjEU5Ut2W1Wbc=;
- b=dc1YB3+ih9bPP5MC+jUgNf9qfQYY7GJwON5Jy29U4bVRrnX7N5i/ABGqoX5hGU85Edl4jD+T6Kfk2j+K8aTPA8s4tfS/pOR4F+SyaZ4SxrLGtTYHvvSNx4KNll1t6Hur0mELsuyyJGOgTszhThCiyAB54Eg+GnhwHbgPjh98JKRNuUIJgufrCbKFQpU2cRnCzgASNPsQvEYGe6Up8hPqITCjiASRhvomAnm2TpeWfZlivQ/SNQXAkxDObNxFEbj81jkRYGkO1EnKxPjZcvgdBW+Gb627gArwTca/uIDYkDlFJ2Q/CGqby4Gx2964E3DxX59WO7EF94CxI3sRtlyAwQ==
+ bh=AZHix5/tRJ0uPmqG1bVpzoGeTvzhyuIC+pdwRqUs+P8=;
+ b=OxXaW8Elp7V1/ABMfw52umMuSfG0am0vwDZwL5MeI4lTkLwul09QQZwKyuqqUSHSjorIKxjosFY0RZAiasmqPyOAovpRSLWqVzljzFhtHQDOFv3Va4OpkNR+DlO80Fw42QIdglEQvgs1WDsjD/I5kufwkoZ5MAjNn0qYQVr2SJ68qaMJ1fCdGGwmqi+ogMFxnDJFwgUi6c19XtMzbbZ2g9jf+g+gSCkU3uGG02AbcXn0v61DMM9EyUDt0zO6SEmuhGHhhaJWwvJZxov937RZu/m7QaKpeUzCmOnG93d7oX3dwG4irSxMNRGmsctMPJPhHS64ol2Pv4wRj9cWA7Lhmg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IR1T1f8MV2sZYH0x+6dfeth/EPpxARwjEU5Ut2W1Wbc=;
- b=nR2LqVIqyGiCUs7GVkgK+3Ymdii2H/3nuysKmPl8UhtbyhABx8crYujIJAu6Vhc3iu3qT1eCNApbykEUaPPfqI/rpSE9etXV34wDnO/WCruFgbnVOPdLPZEkBQtjQG2jrfRCyobgAXfNouLy5UrZAXzV4m7JIghz0xqIpAuT/Lw=
-Received: from CY5PR13CA0031.namprd13.prod.outlook.com (2603:10b6:930:11::16)
- by CH0PR12MB8577.namprd12.prod.outlook.com (2603:10b6:610:18b::14) with
+ bh=AZHix5/tRJ0uPmqG1bVpzoGeTvzhyuIC+pdwRqUs+P8=;
+ b=MEmnSbXQuPRUhYRYoIZTC4IxKqd0z9x8+Ahqjs6s69OLEZFCi9sA3Ma9hZLd5uQ7fZjcPe0l3MbgrWOrxPbFcnI/KeWpOTby3Kp+PeIFKJqtLrL6KlYQNMX/j6RwU9DQ+qm/Z+OvrOiwNC/qR1tMIhY24PDhJFy3ndsa4FCTzhg=
+Received: from CY5PR15CA0254.namprd15.prod.outlook.com (2603:10b6:930:66::28)
+ by SA5PPF7D510B798.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8d0) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Thu, 13 Mar
- 2025 09:38:43 +0000
-Received: from CY4PEPF0000E9D9.namprd05.prod.outlook.com
- (2603:10b6:930:11:cafe::94) by CY5PR13CA0031.outlook.office365.com
- (2603:10b6:930:11::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.26 via Frontend Transport; Thu,
- 13 Mar 2025 09:38:43 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.28; Thu, 13 Mar
+ 2025 09:39:00 +0000
+Received: from CY4PEPF0000E9D6.namprd05.prod.outlook.com
+ (2603:10b6:930:66:cafe::9d) by CY5PR15CA0254.outlook.office365.com
+ (2603:10b6:930:66::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.27 via Frontend Transport; Thu,
+ 13 Mar 2025 09:39:00 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000E9D9.mail.protection.outlook.com (10.167.241.72) with Microsoft
+ CY4PEPF0000E9D6.mail.protection.outlook.com (10.167.241.69) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Thu, 13 Mar 2025 09:38:42 +0000
+ 15.20.8534.20 via Frontend Transport; Thu, 13 Mar 2025 09:39:00 +0000
 Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Mar
- 2025 04:38:37 -0500
+ 2025 04:38:55 -0500
 From: K Prateek Nayak <kprateek.nayak@amd.com>
 To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
 	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
@@ -80,9 +80,9 @@ CC: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
 	<void@manifault.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, "Swapnil
  Sapkal" <swapnil.sapkal@amd.com>, Shrikanth Hegde <sshegde@linux.ibm.com>, "K
  Prateek Nayak" <kprateek.nayak@amd.com>
-Subject: [RFC PATCH 2/8] sched/topology: Introduce sg->shared
-Date: Thu, 13 Mar 2025 09:37:40 +0000
-Message-ID: <20250313093746.6760-3-kprateek.nayak@amd.com>
+Subject: [RFC PATCH 3/8] sched/fair: Move "struct sg_lb_stats" and its dependencies to sched.h
+Date: Thu, 13 Mar 2025 09:37:41 +0000
+Message-ID: <20250313093746.6760-4-kprateek.nayak@amd.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250313093746.6760-1-kprateek.nayak@amd.com>
 References: <20250313093746.6760-1-kprateek.nayak@amd.com>
@@ -98,160 +98,224 @@ X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D9:EE_|CH0PR12MB8577:EE_
-X-MS-Office365-Filtering-Correlation-Id: aee2aa5b-b773-4e13-1af9-08dd6212d81a
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D6:EE_|SA5PPF7D510B798:EE_
+X-MS-Office365-Filtering-Correlation-Id: aff0814d-7daa-407b-a465-08dd6212e2a9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|7416014|36860700013|376014;
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IF+lWFupTc5ALRop3Zg5h0IpHdI7q6sTXs32FgTuJofMW2aS+plbK19qAMgQ?=
- =?us-ascii?Q?LQyKHnD3F+AI6M10K9etmJeChT6coWVRJB4tBwRNEjM1DAnKIJfMzn2qEBJj?=
- =?us-ascii?Q?jQcf3GUaQyAWCgiy4QSK/7pL1aTL9N+vA1BS+Auka2irVDcOaB7e2j3DkxGE?=
- =?us-ascii?Q?fiq3tgwefcdJcU+suH1rBwRpv2SLhI0Hh3YP6vK14Wn9EsoPrETcB8liKJHq?=
- =?us-ascii?Q?XRd7ijtobgd9J0N77Sqdf+kkWFeRw0F+KfciiUo28W+HU0Q44UK1i67Y9ZWY?=
- =?us-ascii?Q?9GOvdCBlGg2qAMFouAvhgzVhNUU7+JJ472k5phlNqJuWD4li9wovOiOZc+MX?=
- =?us-ascii?Q?znkAfrTHJfTwuJywFxFRGXaY5/cGynT0mDkM0t2YP3Ctq1jS14w3L+XufBnE?=
- =?us-ascii?Q?M7mVUrkIFfvhbPnXw7A2ipWFRS+h/3riIch8kAR1BlYTpwt4ZWq1I0e08f0O?=
- =?us-ascii?Q?WQZTdzPRGpnTHXAkoMxUfV6fSdXsxp9maG2M6YyxHli8myQbOzJlNKwk7ra0?=
- =?us-ascii?Q?AhiYgzONxs8x6FtNaHPgt5YDzN8ySocFqO1TGb6GOabxcucS2FC3d2c7Xh+O?=
- =?us-ascii?Q?xIjRzJbGXFh5rHxfbOd7VVHyBrtlWZv91yaikCqtp1xyOp1vMwakd0lZe87F?=
- =?us-ascii?Q?mTjdLQnJ89g5WIyy1FwCYi5kjCNnb+aElwmmNKxUd7WmbsY1xmMMuY0/kAFD?=
- =?us-ascii?Q?9odSNefPHs15KmG9mQL9DaWrjWQtvu3hNR7zHIJAQvcu/muJttxxQCMP/eYy?=
- =?us-ascii?Q?2LH6COL4qNCnY63UUNpZPlLWmMZgx6YwNImjGYDIKXKSpxWz4+A0ri7iy9RT?=
- =?us-ascii?Q?GIfEgI35XXTi0mzxtP99pilOXvMUdEvjB8kf50bNGAELLN7fz1Yz0ap61p6M?=
- =?us-ascii?Q?/wlykOCiLtBV7J+XIKI1hb9vkNEPAwlXAviyL/ZKJ3+3rTKqu7XW1pyGGpm2?=
- =?us-ascii?Q?Lil0fyYkcFSvh+lTj+3LG94eleDUmRTNMF1osJ6nzPTNeH4pYhXJRexB7dEg?=
- =?us-ascii?Q?gcbyasYGTmb2Tm+h5REDnu5Ew3ttcMLRNrNzKwcux5uispOlrj9zkWoqSIjv?=
- =?us-ascii?Q?cCw1vhLQVC4RGtxE+9OneySwRrsseyCVbhs1SP05BbrJL7/JEaPc/Eamzc2U?=
- =?us-ascii?Q?5Gv/oXyZ7B3eC2HXnQQtv2gd3LhqeJ9N/6+a1cJ4uIYo1HdRTZBjL2M1BIcD?=
- =?us-ascii?Q?9JIDDpMnwPEk0Zuwf1ISOB5zrLBHpvQIdJADj/8e952Y80Gjo/WZaP3mtc1G?=
- =?us-ascii?Q?EGibjvu11cLbvYT08z6ANVy8ANth1rkH4k5/9ZoAXtnP/n5VWSE03gNG7TwK?=
- =?us-ascii?Q?Xj1KBX3LeKmNJS89bvyH2+KFRo5fhKCd2bAs8k8E6oIDSMH0I22zh7UjI4X4?=
- =?us-ascii?Q?eCWy3VT8jSi7acHiOqWfSc2G7BdM8/kn0eGu0ZX84W6wnSoIwYfEUwD4YQ2i?=
- =?us-ascii?Q?y7D0UOzD9OKDjeDwUXPMdJjYDXISBtCLuSSMdfGzoYomV2lEq+nQDw=3D=3D?=
+	=?us-ascii?Q?e7Tp7ri2wA1bfKFcvQuOknAXj21QZt96zOQD0pldOpbpt2Ax/RM3SZfYJAaG?=
+ =?us-ascii?Q?GCJVvlvrukYswiFqtaYzaxfxbKMbnfN1AhkjsU70nXTCaJHzQuB6qMA/9OFs?=
+ =?us-ascii?Q?7rlrui1XBDnXofE1eiaj5eAuvs33FzRRcCGCPUyQ/Q2v02ZpNc2cGXcE6xBw?=
+ =?us-ascii?Q?X416GA8xT9V7Oo4j5VYLSh8X0vsC+kOjerJ8VheMufeXK35Yie4JzVlOYiCn?=
+ =?us-ascii?Q?kzMVMnbVHN9ArBYgT0iC1sY0dQVOstMoivuJVS9vMy/apnFNrgUMNby4vtXk?=
+ =?us-ascii?Q?HvSdUwkktoDm/LJOSO5oCk3ptNkLBpIs0/fjOdIulPze3wWkz6FvFPimMdxf?=
+ =?us-ascii?Q?cW4BT9pyMzE3gu2xspa0Q6ppPO0lwhknAm6VeuX3Z8Vmb8C7P5LlK3NKY6TN?=
+ =?us-ascii?Q?eAiHSAMaLe+RGnTkdvaKtR2w6I9QxXzzFIqCdDZy41wO41WoVuacBiDKk0NQ?=
+ =?us-ascii?Q?y3blqh+twnXs55mpyhLzCbksgqjnrqNqye5vq3l0syMaZiciwJ/x/FTcBngR?=
+ =?us-ascii?Q?14nXnb2JhkrKB5J3CAgIOsDdcczeMY/6I+Qtg1Oyvkql04UlL3gaaDtEcgNZ?=
+ =?us-ascii?Q?lrp9T/O++hMbfmpHRcS2+cvGCxBlqlsAubLQMNtDyQTcDJu1VApveNr8uyju?=
+ =?us-ascii?Q?SqNrylNX0c/+496F8onJ9KcAyTbkwMa168bCcuv3Cb7lURzwW8GmfJL2jhM+?=
+ =?us-ascii?Q?5k2z5KSUAl+U4k+vnjJIKDo73nOiaKMPt46AMVPcHaeOj68mxS8v5H3/Vv7b?=
+ =?us-ascii?Q?s1Cac63t9wTESwIwnJ4FRfUz2mvXcegn0Cg4sdqr9YEUuaXivU0RCp1IW6RW?=
+ =?us-ascii?Q?DLv1YO52zQk11YvQJEOa/rf3KRmd11cQqOTb4Se0+i4pxVZHH1aGFS4s1ro5?=
+ =?us-ascii?Q?d7ae3yP6WCuvyv4+gkIgFY2o2v1hlzwxU6ie872UHs+eiaFQwRZ7XPOqdpnB?=
+ =?us-ascii?Q?AVJU7SKC76GzaqWcv0ygyUR7NqWZfyZOkUlDKjezbesMpgtoziuV5GS8GNZu?=
+ =?us-ascii?Q?AHLHB5bGHhtg2/HNanTZh7XEypVJK5e0EhlEXBAa12lC76O7+xMztq8VGD87?=
+ =?us-ascii?Q?yHgqedAIAr37SEiBWn2P5f6idfuGS/wxvRRvlxVMUtbFWTAHj4pYSpDrvUdH?=
+ =?us-ascii?Q?c4UscbRWXbS5hK8u0j6pwmoC1EDAaEYRdMu1X9px25Mx389lRNE9e3DqtXAC?=
+ =?us-ascii?Q?Jr/Bju0v4CdoSsa3aYlRSsRgHg07VxSguFy9ITnMEo7jVAKxonDdxsZ80PYU?=
+ =?us-ascii?Q?ivQdgQoJRV6Teo2Iv24kw4OOpzwNFNi7nbQ4xk0wJ+l948CTfqToE9lj62ey?=
+ =?us-ascii?Q?WldWajJN9js/uT50z+4bRHYHZf3cGTB9HCgKV1GneYY9WUeOZEhX9up22F4y?=
+ =?us-ascii?Q?ApM0NYcAp3rD/Vhj+zlbWrWNYLVgNQ+OmdtijV8iNz1QQlTmFf1c8Sm0Js9l?=
+ =?us-ascii?Q?3EI3m35NvigYWUeksQx1iQyW+ikdS2Aa9XI+JBUsbGhR70USbUo2tg=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(36860700013)(376014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 09:38:42.9751
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 09:39:00.6617
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: aee2aa5b-b773-4e13-1af9-08dd6212d81a
+X-MS-Exchange-CrossTenant-Network-Message-Id: aff0814d-7daa-407b-a465-08dd6212e2a9
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9D9.namprd05.prod.outlook.com
+	CY4PEPF0000E9D6.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8577
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPF7D510B798
 
-sched_group(s) of a particular sched_domain are created using the
-sched_domain struct of the child domain. Attach the sched_domain_shared
-struct from the corresponding child domain to the sched_group.
-
-This shared struct will be used to propagate the sched group stats up
-the sched domain hierarchy to optimize load balancing in subsequent
-commits.
+"struct sg_lb_stats" will be embedded into "struct sched_domain_shared"
+to propagate load balancing information up the sched domain hierarchy in
+the subsequent commits. Move it, and the internal types in depends on
+from fair.c to sched.h
 
 Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 ---
- kernel/sched/sched.h    |  3 +++
- kernel/sched/topology.c | 27 +++++++++++++++++++++++++++
- 2 files changed, 30 insertions(+)
+ kernel/sched/fair.c  | 66 --------------------------------------------
+ kernel/sched/sched.h | 66 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 66 insertions(+), 66 deletions(-)
 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 9dafb374d76d..39bee40dde27 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9168,49 +9168,6 @@ static unsigned long __read_mostly max_load_balance_interval = HZ/10;
+ 
+ enum fbq_type { regular, remote, all };
+ 
+-/*
+- * 'group_type' describes the group of CPUs at the moment of load balancing.
+- *
+- * The enum is ordered by pulling priority, with the group with lowest priority
+- * first so the group_type can simply be compared when selecting the busiest
+- * group. See update_sd_pick_busiest().
+- */
+-enum group_type {
+-	/* The group has spare capacity that can be used to run more tasks.  */
+-	group_has_spare = 0,
+-	/*
+-	 * The group is fully used and the tasks don't compete for more CPU
+-	 * cycles. Nevertheless, some tasks might wait before running.
+-	 */
+-	group_fully_busy,
+-	/*
+-	 * One task doesn't fit with CPU's capacity and must be migrated to a
+-	 * more powerful CPU.
+-	 */
+-	group_misfit_task,
+-	/*
+-	 * Balance SMT group that's fully busy. Can benefit from migration
+-	 * a task on SMT with busy sibling to another CPU on idle core.
+-	 */
+-	group_smt_balance,
+-	/*
+-	 * SD_ASYM_PACKING only: One local CPU with higher capacity is available,
+-	 * and the task should be migrated to it instead of running on the
+-	 * current CPU.
+-	 */
+-	group_asym_packing,
+-	/*
+-	 * The tasks' affinity constraints previously prevented the scheduler
+-	 * from balancing the load across the system.
+-	 */
+-	group_imbalanced,
+-	/*
+-	 * The CPU is overloaded and can't provide expected CPU cycles to all
+-	 * tasks.
+-	 */
+-	group_overloaded
+-};
+-
+ enum migration_type {
+ 	migrate_load = 0,
+ 	migrate_util,
+@@ -9916,29 +9873,6 @@ static void sched_balance_update_blocked_averages(int cpu)
+ 
+ /********** Helpers for sched_balance_find_src_group ************************/
+ 
+-/*
+- * sg_lb_stats - stats of a sched_group required for load-balancing:
+- */
+-struct sg_lb_stats {
+-	unsigned long avg_load;			/* Avg load            over the CPUs of the group */
+-	unsigned long group_load;		/* Total load          over the CPUs of the group */
+-	unsigned long group_capacity;		/* Capacity            over the CPUs of the group */
+-	unsigned long group_util;		/* Total utilization   over the CPUs of the group */
+-	unsigned long group_runnable;		/* Total runnable time over the CPUs of the group */
+-	unsigned int sum_nr_running;		/* Nr of all tasks running in the group */
+-	unsigned int sum_h_nr_running;		/* Nr of CFS tasks running in the group */
+-	unsigned int idle_cpus;                 /* Nr of idle CPUs         in the group */
+-	unsigned int group_weight;
+-	enum group_type group_type;
+-	unsigned int group_asym_packing;	/* Tasks should be moved to preferred CPU */
+-	unsigned int group_smt_balance;		/* Task on busy SMT be moved */
+-	unsigned long group_misfit_task_load;	/* A CPU has a task too big for its capacity */
+-#ifdef CONFIG_NUMA_BALANCING
+-	unsigned int nr_numa_running;
+-	unsigned int nr_preferred_running;
+-#endif
+-};
+-
+ /*
+  * sd_lb_stats - stats of a sched_domain required for load-balancing:
+  */
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 023b844159c9..38aa4cba5d1f 100644
+index 38aa4cba5d1f..dc9d6e4c704b 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -2089,6 +2089,9 @@ struct sched_group {
- 	int			asym_prefer_cpu;	/* CPU of highest priority in group */
- 	int			flags;
+@@ -2102,6 +2102,72 @@ struct sched_group {
+ 	unsigned long		cpumask[];
+ };
  
-+	/* sd->shared of the domain from which this group was created */
-+	struct sched_domain_shared *shared;
++/*
++ * 'group_type' describes the group of CPUs at the moment of load balancing.
++ *
++ * The enum is ordered by pulling priority, with the group with lowest priority
++ * first so the group_type can simply be compared when selecting the busiest
++ * group. See update_sd_pick_busiest().
++ */
++enum group_type {
++	/* The group has spare capacity that can be used to run more tasks.  */
++	group_has_spare = 0,
++	/*
++	 * The group is fully used and the tasks don't compete for more CPU
++	 * cycles. Nevertheless, some tasks might wait before running.
++	 */
++	group_fully_busy,
++	/*
++	 * One task doesn't fit with CPU's capacity and must be migrated to a
++	 * more powerful CPU.
++	 */
++	group_misfit_task,
++	/*
++	 * Balance SMT group that's fully busy. Can benefit from migration
++	 * a task on SMT with busy sibling to another CPU on idle core.
++	 */
++	group_smt_balance,
++	/*
++	 * SD_ASYM_PACKING only: One local CPU with higher capacity is available,
++	 * and the task should be migrated to it instead of running on the
++	 * current CPU.
++	 */
++	group_asym_packing,
++	/*
++	 * The tasks' affinity constraints previously prevented the scheduler
++	 * from balancing the load across the system.
++	 */
++	group_imbalanced,
++	/*
++	 * The CPU is overloaded and can't provide expected CPU cycles to all
++	 * tasks.
++	 */
++	group_overloaded
++};
 +
- 	/*
- 	 * The CPUs this group covers.
- 	 *
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 815474823b3f..508ee8aa492b 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -612,6 +612,23 @@ static struct root_domain *alloc_rootdomain(void)
- 	return rd;
- }
- 
-+static void link_sg_shared(struct sched_group *sg, struct sched_domain_shared *sds)
-+{
-+	if (!sds)
-+		return;
++/*
++ * sg_lb_stats - stats of a sched_group required for load-balancing:
++ */
++struct sg_lb_stats {
++	unsigned long avg_load;			/* Avg load            over the CPUs of the group */
++	unsigned long group_load;		/* Total load          over the CPUs of the group */
++	unsigned long group_capacity;		/* Capacity            over the CPUs of the group */
++	unsigned long group_util;		/* Total utilization   over the CPUs of the group */
++	unsigned long group_runnable;		/* Total runnable time over the CPUs of the group */
++	unsigned int sum_nr_running;		/* Nr of all tasks running in the group */
++	unsigned int sum_h_nr_running;		/* Nr of CFS tasks running in the group */
++	unsigned int idle_cpus;                 /* Nr of idle CPUs         in the group */
++	unsigned int group_weight;
++	enum group_type group_type;
++	unsigned int group_asym_packing;	/* Tasks should be moved to preferred CPU */
++	unsigned int group_smt_balance;		/* Task on busy SMT be moved */
++	unsigned long group_misfit_task_load;	/* A CPU has a task too big for its capacity */
++#ifdef CONFIG_NUMA_BALANCING
++	unsigned int nr_numa_running;
++	unsigned int nr_preferred_running;
++#endif
++};
 +
-+	sg->shared = sds;
-+	atomic_inc(&sds->ref);
-+}
-+
-+static void free_sg_shared(struct sched_group *sg)
-+{
-+	if (sg->shared && atomic_dec_and_test(&sg->shared->ref))
-+		kfree(sg->shared);
-+
-+	sg->shared = NULL;
-+}
-+
- static void free_sched_groups(struct sched_group *sg, int free_sgc)
+ static inline struct cpumask *sched_group_span(struct sched_group *sg)
  {
- 	struct sched_group *tmp, *first;
-@@ -626,6 +643,8 @@ static void free_sched_groups(struct sched_group *sg, int free_sgc)
- 		if (free_sgc && atomic_dec_and_test(&sg->sgc->ref))
- 			kfree(sg->sgc);
- 
-+		free_sg_shared(sg);
-+
- 		if (atomic_dec_and_test(&sg->ref))
- 			kfree(sg);
- 		sg = tmp;
-@@ -746,6 +765,9 @@ cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
- 			if (parent->parent) {
- 				parent->parent->child = tmp;
- 				parent->parent->groups->flags = tmp->flags;
-+
-+				free_sg_shared(parent->parent->groups);
-+				link_sg_shared(parent->parent->groups, tmp->shared);
- 			}
- 
- 			/*
-@@ -773,6 +795,7 @@ cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
- 			 * the child is being destroyed.
- 			 */
- 			do {
-+				free_sg_shared(sg);
- 				sg->flags = 0;
- 			} while (sg != sd->groups);
- 
-@@ -972,10 +995,12 @@ build_group_from_child_sched_domain(struct sched_domain *sd, int cpu)
- 	if (!sg)
- 		return NULL;
- 
-+	sg->shared = NULL;
- 	sg_span = sched_group_span(sg);
- 	if (sd->child) {
- 		cpumask_copy(sg_span, sched_domain_span(sd->child));
- 		sg->flags = sd->child->flags;
-+		link_sg_shared(sg, sd->child->shared);
- 	} else {
- 		cpumask_copy(sg_span, sched_domain_span(sd));
- 	}
-@@ -1225,9 +1250,11 @@ static struct sched_group *get_group(int cpu, struct sd_data *sdd)
- 	if (already_visited)
- 		return sg;
- 
-+	sg->shared = NULL;
- 	if (child) {
- 		cpumask_copy(sched_group_span(sg), sched_domain_span(child));
- 		cpumask_copy(group_balance_mask(sg), sched_group_span(sg));
-+		link_sg_shared(sg, child->shared);
- 		sg->flags = child->flags;
- 	} else {
- 		cpumask_set_cpu(cpu, sched_group_span(sg));
+ 	return to_cpumask(sg->cpumask);
 -- 
 2.43.0
 
