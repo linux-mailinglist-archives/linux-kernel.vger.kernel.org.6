@@ -1,112 +1,199 @@
-Return-Path: <linux-kernel+bounces-559997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6264FA5FC67
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:45:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22519A5FC7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:47:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 427C21886620
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:45:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57302177375
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81548268FDA;
-	Thu, 13 Mar 2025 16:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5336E268FD2;
+	Thu, 13 Mar 2025 16:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="texTlXAJ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SwV7nezJ"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9BE2E3390;
-	Thu, 13 Mar 2025 16:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C884126C03;
+	Thu, 13 Mar 2025 16:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741884320; cv=none; b=k/wHzVmZMhl2HTcHnFCjEkJ1rRhk/yWTHywLN/Q3YIjr+KRg+qnrIJtQhnM1QfQND5wi/v/xWzIHsdH65Oyb2bFKR+X8f2Rig8h7FztKeUc7Pl+WdgtXwCCRZvJWhuj+Jw+7OhCugST4Zzytf+SZ4Lh897K7TgByPaUi4jsiB+A=
+	t=1741884466; cv=none; b=aTilB/1whKPqMF+zVZaWXmyfurnGMCLOIXB/r/jzTAA1+Fasrae8Z6cWE6u/8iumpRFoSPdJYN5PhZ95uBacxabfbht3Q3YZR7GDxy1J1pe+dev3axfJ3zqhkwQX8v3r+PmXnckLpZahjCpcZrxXRwMeaiEl80Pa3lKpub6sAog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741884320; c=relaxed/simple;
-	bh=yXFfDtMWoUYUT3rVGeMfA0Hqrwa2RdSN4+ar6+obYrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G55XbOyRagYtnq//85xHNObFZKxJEHGmrrTXjrPfeUaxmsDrTIBle5qhkt31wRn9itS2pvpCCxLlkwzTE5FlLcYUwlB3GnW2vQphWQzqSn436VKw+21m8bTIBkZCkBdQo/MxiQ+uY1SLmataRxyWDPy7qGF4W02R5OOQYByhHug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=texTlXAJ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=pUaSCl3nFYcy99ntWez+f1XirECJo6Y3EAASNBcW508=; b=texTlXAJn8X+d7N+m+hSLXLLzg
-	k5COVHPdihiLw0PO5iIp7gruWR24db/2JiiBmCqIT6p4rZyaVv2pwWDsKE9qBNjMm9BYEOiHbVuqc
-	PB5qghhq+UFe1CymupUHCHrKP61q/Kf1F2fHUpAnOj6c5d+waCVOxV0DXv5NV03SIk6U=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tslg9-0052uA-NV; Thu, 13 Mar 2025 17:45:05 +0100
-Date: Thu, 13 Mar 2025 17:45:05 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Michael Klein <michael@fossekall.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] net: phy: realtek: Add support for PHY LEDs on
- RTL8211E
-Message-ID: <e62af3a7-c228-4523-a1fb-330f4f96f28c@lunn.ch>
-References: <20250312193629.85417-1-michael@fossekall.de>
+	s=arc-20240116; t=1741884466; c=relaxed/simple;
+	bh=5g2/bcJFxzetQ5Z89mvaC23u3B8DW3Ez9OXKAPaqN4c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=krypWBNZ4lJCD8FuUBMUoSlL+JDXHahEkheKwJMtx/bL4TN7pZgZr8NXQpYV1YnvUir2QZXzjChksQv4q7555iQzuxGq/A3n+wxBgEFjNzayDw+R8S+FFCmvx1lK5jawsU3R2ZJ7Ywo5NK4QOgls7+KknJuvX2dAj7sjMfv6gnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SwV7nezJ; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e634949074eso153224276.1;
+        Thu, 13 Mar 2025 09:47:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741884464; x=1742489264; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7s6eQ4zcP14m0ASOVWCXiFKRHZFfHjNhLuArM6tbgeU=;
+        b=SwV7nezJ7pDUIjyw5tB6BY4N/K7uHn+dGkjsnik9vngPLSQ3kn4lhS/+PlS+LxsfMf
+         LzKubdypybjUH8/4JRiM8fVIFuKqM7N6M6iYR4dmuFBddv/kNG2tBdSjhHLaEhjWVCfT
+         MYz8gWtqjS2RTFuKYlVIch3zjRFzlvWItYR8zou+9/huE0V09M4hKsfyWR6q4haPZiEW
+         +jremhxXA6OSr3KSJUh1RTZFOhypuzMrUiIJtuaw5LLvoyFxcIFg6viqz44l/p75uYw7
+         KsfuO29cO6M10ALOWt0EH+0Ciszxq7A+YXkJmX3E724GZQGa9xcmqdnKZyNz17FMGc7c
+         at0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741884464; x=1742489264;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7s6eQ4zcP14m0ASOVWCXiFKRHZFfHjNhLuArM6tbgeU=;
+        b=LAn4xfp3k+79KhpsDqVgZznEpmdum7dnTSrLB2WtNSTblBckied/BhLVPApVx74465
+         KdMNoofJvwIhfIg2n5+fXmGX1rO1zGCy0LTWAHbQtVcfDYLDTgZQdwZZSXGKPbuiie7Q
+         1OlDJ5KkNv8tHxCAS0uTX/6fwcE6XuKlRppseGyK/pCCJBYpfRXlb3j7HZwmasRLVk4W
+         2VWclU+dXpoGkVmj17/iyOfvE5aFLDw7SXzx8H6TUy22tRIZNEQvfJtcMXw6913vpjHu
+         KBnRx4AwuDPjVMOPiSvt+Fa+s+/xVWrEfrBdlZN/lWayqimMB92kExA4+EXvcx70fK5A
+         i2Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMP8ffvEpNHIKxxRqA/M2dMDophHg3HXB+PdCgW+SBADtNBKE5VctHNY0ViFwQSVtOnGXojS1DgLI=@vger.kernel.org, AJvYcCXrRUnbJafVqqeYXnzhjgEd5JJHMq4zKfvrG8/+gtRBysu5OhXCmPqtpaVAI7zRBdVlZd9JDxl4Tp+MDH4T@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJB044Has3OrOGgatze1rEYFFq3y9TobT/LqKGkA77cyk0k2vB
+	NtV9qQe046UnRvG5SoNjK6RkyUp58Igne8rYMgwJR3YnjkPbrTZN41tjQGunf0XcmoRbz3GMUg7
+	FDxB4dk7q3G76RSX+bLk7Hhb9aNg=
+X-Gm-Gg: ASbGnctoVP3tc5H7efMz4UcY3GwjvEtOL/qASJ7buR5JBIAn9UD4LryZlg9JUM8ZMAX
+	K3H0dYemk3PtPAZFgsQ+5HT4v4qvWz3CFmSsO8N0fqbpr5jVLh0BY4ydjk7lLKYKV/uqfd/26ix
+	bpUpzu1V7PGlMDhodf4lYM92inJQ==
+X-Google-Smtp-Source: AGHT+IH1+WBEwmBZW3PmilqWpln4lPKb6NP8lfia9DAsa0W/TSQjS9ROzwC+hDgwGzG7yn+UZNSN1TtOhctu4wmJWiA=
+X-Received: by 2002:a05:6902:2202:b0:e5d:fa5d:c630 with SMTP id
+ 3f1490d57ef6-e63b522982amr7071149276.7.1741884464054; Thu, 13 Mar 2025
+ 09:47:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312193629.85417-1-michael@fossekall.de>
+References: <20250220104234.40958-1-l.rubusch@gmail.com> <20250220104234.40958-12-l.rubusch@gmail.com>
+ <20250304134033.656e4a6a@jic23-huawei>
+In-Reply-To: <20250304134033.656e4a6a@jic23-huawei>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Thu, 13 Mar 2025 17:47:08 +0100
+X-Gm-Features: AQ5f1JrVq9DmOhDLq8WO6yCEe6V18MM9MDBrFdpjSRezWqEqnDOKJCtyBgI9KyE
+Message-ID: <CAFXKEHYNAL2vRgBo6H8JRHemvGj2vT30y01T_0-jhY-hkumyMA@mail.gmail.com>
+Subject: Re: [PATCH v3 11/15] iio: accel: adxl345: add g-range configuration
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, eraretuya@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 12, 2025 at 08:36:27PM +0100, Michael Klein wrote:
-> Like the RTL8211F, the RTL8211E PHY supports up to three LEDs.
-> Add netdev trigger support for them, too.
-> 
-> Signed-off-by: Michael Klein <michael@fossekall.de>
-> ---
->  drivers/net/phy/realtek.c | 120 ++++++++++++++++++++++++++++++++++++--
+On Tue, Mar 4, 2025 at 2:40=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
+wrote:
+>
+> On Thu, 20 Feb 2025 10:42:30 +0000
+> Lothar Rubusch <l.rubusch@gmail.com> wrote:
+>
+> > Introduce means to configure and work with the available g-ranges
+> > keeping the precision of 13 digits.
+> >
+> > This is in preparation for the activity/inactivity feature.
+>
+> I'm not really following why adding range control is anything
+> much to do with that. Mostly we do this to improve accuracy for
+> low accelerations.
+>
 
-What tree is this based on?
+As you probably saw the connection comes a bit over the link in
+adjusting the activity/inactivity
+parameters (times and threshold) by a given range in the follow up patches.
 
-ommit 1416a9b2ba710d31954131c06d46f298e340aa2c
-Author: Heiner Kallweit <hkallweit1@gmail.com>
-Date:   Sat Jan 11 21:50:19 2025 +0100
+If the question is rather why at all adding this g-range control. My
+idea was that adjusting i.e. lowering precision, less odr, etc might
+also help adjusting power consumption. In other words
+from a user perspective I assume there is more configuration
+possibility. I did not pretend to tune
+the implementation for lowest possible power consumption, though. It
+was just an idea.
 
-    net: phy: move realtek PHY driver to its own subdirectory
-    
-    In preparation of adding a source file with hwmon support, move the
-    Realtek PHY driver to its own subdirectory and rename realtek.c to
-    realtek_main.c.
+[Also, I was curious about implementing it here. My patch here is
+rather meant as a proposal,
+if you strongly oppose the idea, pls let me know.]
 
-
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
-
-> +static int rtl8211e_led_hw_control_get(struct phy_device *phydev, u8 index,
-> +				       unsigned long *rules)
-> +{
-> +	int oldpage, ret;
-> +	u16 cr1, cr2;
-> +
-> +	if (index >= RTL8211x_LED_COUNT)
-> +		return -EINVAL;
-> +
-> +	oldpage = phy_select_page(phydev, 0x7);
-> +	if (oldpage < 0)
-> +		goto err_restore_page;
-> +
-> +	ret = __phy_write(phydev, RTL821x_EXT_PAGE_SELECT, 0x2c);
-> +	if (ret)
-> +		goto err_restore_page;
-
-What is happening here? You select page 0x7, and then use
-RTL821x_EXT_PAGE_SELECT to select 0x2c? Does this hardware have pages
-within pages?
-
-       Andrew
+> >
+> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+>
+>
+> > @@ -483,12 +518,48 @@ static int adxl345_set_odr(struct adxl345_state *=
+st, enum adxl345_odr odr)
+> >       return 0;
+> >  }
+> >
+> > +static int adxl345_find_range(struct adxl345_state *st, int val, int v=
+al2,
+> > +                           enum adxl345_range *range)
+> > +{
+> > +     int i;
+> > +
+> > +     for (i =3D 0; i < ARRAY_SIZE(adxl345_fullres_range_tbl); i++)
+> > +             if (val =3D=3D adxl345_fullres_range_tbl[i][0] &&
+> > +                 val2 =3D=3D adxl345_fullres_range_tbl[i][1])
+> > +                     break;
+> Similar to case in earlier patch, maybe set *range and return in here
+> so that any finish of the loop is an error.
+> > +
+> > +     if (i =3D=3D ARRAY_SIZE(adxl345_fullres_range_tbl))
+> > +             return -EINVAL;
+> > +
+> > +     *range =3D i;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int adxl345_set_range(struct adxl345_state *st, enum adxl345_ra=
+nge range)
+> > +{
+> > +     int ret;
+> > +
+> > +     ret =3D regmap_update_bits(st->regmap, ADXL345_REG_DATA_FORMAT,
+> > +                              ADXL345_DATA_FORMAT_RANGE,
+> > +                              FIELD_PREP(ADXL345_DATA_FORMAT_RANGE, ra=
+nge));
+> > +     if (ret)
+> > +             return ret;
+> > +
+>
+> return regmap_update_bits() unless this gets more complex in later patch.
+>
+> > +     return 0;
+> > +}
+> > +
+>
+> > @@ -558,6 +634,7 @@ static int adxl345_write_raw(struct iio_dev *indio_=
+dev,
+> >                            int val, int val2, long mask)
+> >  {
+> >       struct adxl345_state *st =3D iio_priv(indio_dev);
+> > +     enum adxl345_range range;
+> >       enum adxl345_odr odr;
+> >       int ret;
+> >
+> > @@ -581,6 +658,12 @@ static int adxl345_write_raw(struct iio_dev *indio=
+_dev,
+> >                       return ret;
+> >               ret =3D adxl345_set_odr(st, odr);
+> >               break;
+> > +     case IIO_CHAN_INFO_SCALE:
+> > +             ret =3D adxl345_find_range(st, val, val2, &range);
+> > +             if (ret)
+> > +                     return ret;
+> > +             ret =3D adxl345_set_range(st, range);
+> as in previous I'd have the
+>                 if (ret)
+>                         return ret;
+> here for consistency with the other one immediately above this.
+> > +             break;
+> >       default:
+> >               return -EINVAL;
+> >       }
+>
 
