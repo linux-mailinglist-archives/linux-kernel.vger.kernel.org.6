@@ -1,130 +1,176 @@
-Return-Path: <linux-kernel+bounces-559728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A863A5F898
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:38:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 214F2A5F89B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:39:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48DB1421790
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:38:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E81E164A19
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A457267F4D;
-	Thu, 13 Mar 2025 14:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FFF269803;
+	Thu, 13 Mar 2025 14:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ni0N1Vw0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LnfMx7e/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B12D267F7E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88393267F46;
+	Thu, 13 Mar 2025 14:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741876645; cv=none; b=sIS8pKRncdFbns3ScCI6kZq1uMXDENxIvYkGjD2zGvO7T9QZ5DGiSRsfvOxzi2Cl6zB6T96d9Pg2/fIQKygmBEZedlM2exIri6mqNyyn8qolOtZ7BFXVT4JQPeEb8Ny5KawmvFyNiXxuaFw0pFMbmihBxobA8GoSlFXt5umwujA=
+	t=1741876649; cv=none; b=bWgHfrQb6uqUBo76sA2A+1JYBtbrNg6DfksmnXot91BG70g3Eyu4D8ZyFDAD6lg+jVrTF5qWuNy/ezLXgUlHw5y3A7fC01EYpCE9+vymP+AdxLhLTAaCejdW9JQPHNYSrpdpY/keVETHBeFm38y7TxLe5vaucriavqQJgaOn8JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741876645; c=relaxed/simple;
-	bh=+Vnc2/Hj3w94rTEXms9/i3AzD/T69fJGDMl8Wba0QFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZPy92Q1dP582nA4w2JMLRHKjCUSUhSTqqZFCdY+nrzeV7HttOvkj2anD1Y/vWv3t+zJjv7S91YNo6+qo4Voo4YHECc3P5f8MiVd3s98d9VTSLTUR/CzCy7OE9XMobu9ZShw3LkoBEZOle0WHcDB40uGYq8h1x29lUDgTL8TKyjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ni0N1Vw0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DAVHD9016430
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:37:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sihxzLONHjt8Oh4C9n2BqWvtteMvgUGVMwmPo7YJzWU=; b=Ni0N1Vw0FEkaNeqa
-	01t5SuczAihq+8ElIa2m22gvmbHoIov0DCEr815mL99SpHG0hxy5xjZjmjfmGTTk
-	QUd050uMF333VpBgysp8FrU0L1HxbAjwdFi43wTd1e5ntdJI+YdSz3Rppd4ovdHX
-	rBxjhw21Mv0oudq3n/ycSSUtHi8zlYyYJEcdx/yl06eNDfqaxHyceakJAU1hwLUu
-	gbVy0tnpmQ9bJYZdxysZW8ntpimTpxZ4vSaapzBN5PpkYNoQdM3dLo2KF90/Bxif
-	9vC0N3Gk0+QyNTpn2ZzseZev6Zcujil4jepN/1+T8jP8dQkfMvjr8HM2q2lx7iAh
-	QYgoLg==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2nx6ub-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:37:23 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e8fd4ef023so3102946d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:37:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741876642; x=1742481442;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sihxzLONHjt8Oh4C9n2BqWvtteMvgUGVMwmPo7YJzWU=;
-        b=Ky1m4BvX7EAySEVW+k129UN8QT+XfWV2KmiMm2BQxaPuOMyixIIG9GYoy/5a2Tm0CN
-         qFoLkq1tLS5vi5cl1tiqQpcrLVOst+IBX9UiCODJm33hVPkKxAfHPlhzJJOpxcg+2aZc
-         52f+5WabF//DRzbWUR2KJSd6OeLyt2mYILnFcCYy6gHhNmcYLmvtc8Zf5x5RMX/fjB7/
-         R6YpTZrLqXqWbep0D4KPq2M8oxB+jL9P75xzuUjSsPwA4KpyHJ/S+s9Sx6RGwCPyW7vg
-         5JN3BN3TAkUIryrc2iNDrK6UbkQL+uXJYVfM9xLAvuJWy5NaFrtG1OqO5ytyzhopmi26
-         UyRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXinbHzL3Jg8yJ7okhYNJ5CC9RFcnxT7s1mhHAasSxuuazLYue2u5nOG2f/xetSoPTI3JDpu/a/qklxs3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIrmmD5ekw5L9KpU1SQA2tGLNs943JcAdBmrUo/D2FNyQVYb+V
-	dnCxx/F+sQCVtClK+VUWvHz22G/X0kmq350AyQirX5Ag7MEHHDtU0Jgp2IM/dW6Ui9hxSgpxLiv
-	SniTLQuFZPHCf8kMwoQeKFJleFL8GutWQuxbN+bd2XKK8S4Gj1Ds4lQjaTuQ6Y6U=
-X-Gm-Gg: ASbGncsdGEUTnfdKs8ooNlGKZkeIp++PzZbssgIpnc2VMHS+jWoLgByGf0RuKLEZQxX
-	AwZ0X7apueKCdttsKXcWDjfGtiRm3DbkaZ9qNbsEnako3ZD+4zEY8rkJOfltV88lLdrYmWPsmHb
-	mBhKyEVuvuPCGSHJBNEkZ2cc/3N3IWcY8kgz5bNRgOtuqb1yzMtMT+d/iBsWi6yg36BASEPDdHk
-	IUWh7DeMSyMZwSOsAQOM/rwkE1VC5f445ox1IBFtzglSdvaA6c5dyn7+2wWAhJh3q+kf9xsfq/X
-	SkYNZRtBEs0tYVkDvf2uLtjp1XvCuJpmSrDTfMiSJqeEYgSbZL4KxOj7d1FgdsAbJ3frpg==
-X-Received: by 2002:a05:620a:2443:b0:7c0:b7ca:70f6 with SMTP id af79cd13be357-7c55e90cbc0mr638897585a.12.1741876641978;
-        Thu, 13 Mar 2025 07:37:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IERjH7r/ky+QJSZhtuQ428edqrYv/ARSPOHHVI70rPypcSuf+ECqANAAhYxQXbXX/WsiqH7zA==
-X-Received: by 2002:a05:620a:2443:b0:7c0:b7ca:70f6 with SMTP id af79cd13be357-7c55e90cbc0mr638895685a.12.1741876641593;
-        Thu, 13 Mar 2025 07:37:21 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3149cf219sm85801266b.88.2025.03.13.07.37.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 07:37:21 -0700 (PDT)
-Message-ID: <d964117a-6e74-42a9-a7fb-c08e3ab84217@oss.qualcomm.com>
-Date: Thu, 13 Mar 2025 15:37:18 +0100
+	s=arc-20240116; t=1741876649; c=relaxed/simple;
+	bh=LhFMU6K6jQihr1xX62MfXoMmTy9dTr3t2WHAnyeflgI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DHaP0wSJDVL0ygt/M4YVddCQGfqtfWs7WIgDvYwbbJYd3LixNwjQFA5wHiXTdiysgQpuDv49pOH23rduJxCm++TsmtFAe9xTegTjBs2z0SK4BDOaTLy+SM+1JrlAuKTVAUYgU/w0iuR25Bw/9VwMDY+2Sx0mVdxdC66mIowlGMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LnfMx7e/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7289BC4CEEA;
+	Thu, 13 Mar 2025 14:37:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741876649;
+	bh=LhFMU6K6jQihr1xX62MfXoMmTy9dTr3t2WHAnyeflgI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LnfMx7e/Vy0pmVhTtC4kVHNB7nOpLFnTz5tZpq5x3X0hcFojJVrubvEAcKyfNsWcb
+	 1o2LgujMWRoo56m4lkgzgU1fSYXRe6lLndUtT/xx4zyjhkF3gkM1tneA99mwrcNT0Z
+	 yexApPbWx+0iNePTIOJP3pQQDQ/hQlCtFRT4sAyRI7+JSp/dBpN49CG87IIsWE2PgO
+	 TPzcYvdCX2D+s2WXGaUR5cPRM0zWf5T3FJESE/1ZyFQgHzOaAQfwx6eyA9olspu+ND
+	 lRQxzVQ5b+eGJyDsUjMgBnZOe25U5ZpwQABgZQvWPOhz/JS2eWJwJukA1e1EowBkRA
+	 yzWca552DlJxw==
+Date: Thu, 13 Mar 2025 15:37:23 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust/revocable: add try_with() convenience method
+Message-ID: <Z9Lto6tbWS0kR6gK@pollux>
+References: <20250313-try_with-v1-1-adcae7ed98a9@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] ARM: dts: qcom: sdx75-idp: Enable QPIC BAM support
-To: Kaushal Kumar <quic_kaushalk@quicinc.com>, vkoul@kernel.org,
-        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        manivannan.sadhasivam@linaro.org, miquel.raynal@bootlin.com,
-        richard@nod.at, vigneshr@ti.com, andersson@kernel.org,
-        konradybcio@kernel.org, agross@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org
-References: <20250313130918.4238-1-quic_kaushalk@quicinc.com>
- <20250313130918.4238-6-quic_kaushalk@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250313130918.4238-6-quic_kaushalk@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 6HLBiBccgWTDzf2Nc_YsDzAXI3hB5hQp
-X-Authority-Analysis: v=2.4 cv=ZObXmW7b c=1 sm=1 tr=0 ts=67d2eda3 cx=c_pps a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=eg4k1RuA93h8uGKq0ecA:9 a=QEXdDO2ut3YA:10 a=-9l76b1btMQA:10
- a=iYH6xdkBrDN1Jqds4HTS:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 6HLBiBccgWTDzf2Nc_YsDzAXI3hB5hQp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_06,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=727 mlxscore=0
- suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 phishscore=0
- lowpriorityscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
- clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130114
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313-try_with-v1-1-adcae7ed98a9@nvidia.com>
 
-On 3/13/25 2:09 PM, Kaushal Kumar wrote:
-> Enable QPIC BAM devicetree node for Qualcomm SDX75-IDP board.
+Hi Alex,
+
+Thanks for looking into this!
+
+On Thu, Mar 13, 2025 at 09:40:59PM +0900, Alexandre Courbot wrote:
+> Revocable::try_access() returns a guard through which the wrapped object
+> can be accessed. Code that can sleep is not allowed while the guard is
+> held ; thus, it is common that the caller will explicitly need to drop
+> it before running sleepable code, e.g:
 > 
-> Signed-off-by: Kaushal Kumar <quic_kaushalk@quicinc.com>
+>     let b = bar.try_access()?;
+>     let reg = b.readl(...);
+> 
+>     // Don't forget this or things could go wrong!
+>     drop(b);
+> 
+>     something_that_might_sleep();
+> 
+>     let b = bar.try_access()?;
+>     let reg2 = b.readl(...);
+
+Ideally, we get klint to protect us against those kind of mistakes too.
+
+> This is arguably error-prone. try_with() and try_with_ok() provides an
+> arguably safer alternative, by taking a closure that is run while the
+> guard is held, and by dropping the guard automatically after the closure
+> completes. This way, code can be organized more clearly around the
+> critical sections and the risk is forgetting to release the guard when
+> needed is considerably reduced:
+> 
+>     let reg = bar.try_with_ok(|b| b.readl(...))?;
+> 
+>     something_that_might_sleep();
+> 
+>     let reg2 = bar.try_with_ok(|b| b.readl(...))?;
+
+However, that's much more convenient and a great improvement.
+
+Feel free to add
+
+	Acked-by: Danilo Krummrich <dakr@kernel.org>
+
+> 
+> Unlike try_access() which returns an Option, try_with() and
+> try_with_ok() return Err(ENXIO) if the object cannot be acquired. The
+> Option returned by try_access() is typically converted to an error in
+> practice, so this saves one step for the caller.
+> 
+> try_with() requires the callback itself to return a Result that is
+> passed to the caller. try_with_ok() accepts a callback that never fails.
+> 
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+
+Since I proposed something like that in one of the nova threads (and in Zulip),
+feel free to also add
+
+	Suggested-by: Danilo Krummrich <dakr@kernel.org>
+
 > ---
-
-There's not reason for this to be a separate commit
-
-Konrad
+> This is a feature I found useful to have while writing Nova driver code
+> that accessed registers alongside other operations. I would find myself
+> quite confused about whether the guard was held or dropped at a given
+> point of the code, and it felt like walking through a minefield ; this
+> pattern makes things safer and easier to read IMHO.
+> ---
+>  rust/kernel/revocable.rs | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/rust/kernel/revocable.rs b/rust/kernel/revocable.rs
+> index 1e5a9d25c21b279b01f90b02997492aa4880d84f..0157b20373b5b2892cb618b46958bfe095e428b6 100644
+> --- a/rust/kernel/revocable.rs
+> +++ b/rust/kernel/revocable.rs
+> @@ -105,6 +105,28 @@ pub fn try_access(&self) -> Option<RevocableGuard<'_, T>> {
+>          }
+>      }
+>  
+> +    /// Tries to access the wrapped object and run the closure `f` on it with the guard held.
+> +    ///
+> +    /// This is a convenience method to run short non-sleepable code blocks while ensuring the
+> +    /// guard is dropped afterwards. [`Self::try_access`] carries the risk that the caller
+> +    /// will forget to explicitly drop that returned guard before calling sleepable code ; this
+> +    /// method adds an extra safety to make sure it doesn't happen.
+> +    ///
+> +    /// Returns `Err(ENXIO)` if the wrapped object has been revoked, or the result of `f` after it
+> +    /// has been run.
+> +    pub fn try_with<R, F: Fn(&T) -> Result<R>>(&self, f: F) -> Result<R> {
+> +        self.try_access().ok_or(ENXIO).and_then(|t| f(&*t))
+> +    }
+> +
+> +    /// Tries to access the wrapped object and run the closure `f` on it with the guard held.
+> +    ///
+> +    /// This is the same as [`Self::try_with`], with the exception that `f` is expected to
+> +    /// always succeed and thus does not need to return a `Result`. Thus the only error case is if
+> +    /// the wrapped object has been revoked.
+> +    pub fn try_with_ok<R, F: Fn(&T) -> R>(&self, f: F) -> Result<R> {
+> +        self.try_with(|t| Ok(f(t)))
+> +    }
+> +
+>      /// Tries to access the revocable wrapped object.
+>      ///
+>      /// Returns `None` if the object has been revoked and is therefore no longer accessible.
+> 
+> ---
+> base-commit: 4d872d51bc9d7b899c1f61534e3dbde72613f627
+> change-id: 20250313-try_with-cc9f91dd3b60
+> 
+> Best regards,
+> -- 
+> Alexandre Courbot <acourbot@nvidia.com>
+> 
 
