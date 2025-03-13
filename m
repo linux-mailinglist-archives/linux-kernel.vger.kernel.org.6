@@ -1,125 +1,136 @@
-Return-Path: <linux-kernel+bounces-559108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB07CA5EFA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:37:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD128A5EFA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:36:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F2883BA226
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:36:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C55C179CA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33D0264614;
-	Thu, 13 Mar 2025 09:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D801A263F2F;
+	Thu, 13 Mar 2025 09:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ztnmyabv"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IIOXMuRF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1484B26388D;
-	Thu, 13 Mar 2025 09:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927C814900B;
+	Thu, 13 Mar 2025 09:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741858617; cv=none; b=WJvmxhrexOgQ4CV6ZcnpYdjV9IYnGmYdPL4YcBZ7ZZ0QnYr9RIFE9ZA0VZ1+k1zyxvNfN6gFZD8RO272DdKm57oOoNRYrJbr8DPZwBsgN3gLVTCqTYo2iAkz3v57Bq3A1IXt8q8nNm96RT49k9Nh4K5Q/fIvueFLpB+hBPrHuow=
+	t=1741858593; cv=none; b=o+roL9KdWrquOSlH9+OF4/tAU7HT3U8DY443DHKfVqLbtJ/s3gRTw8tTVcNkqPbZ26IiEAsT2IBokM6WKGpgHeUFlRgSPJtHP5J5JFJx0cja+zI1RjAXJxmbXh1H8OiX2g2PIFTB+oAScbs0czHVm9AJqZetKihktJRkQGIC4Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741858617; c=relaxed/simple;
-	bh=ObsR4d09TiK8gM5mzUBcVhmllDBKA2du1QTZ7irUDkQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y699KZOYKG+itQXbUrH1F4YHmPcqZa7ZCEYyGdXxtxLyQHDfuFXbSeKJvL1X4GXtW81mWpSUs3vyFFrd7fuQmCRoELV4DQSPm2dVZorM6dJCFtBYUsT12VkSyPDA1lWGOBmiIMwCsiKao9gk8w5v3IAEzjqNCvxYkN4Gzi3p88c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ztnmyabv; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43948021a45so5960205e9.1;
-        Thu, 13 Mar 2025 02:36:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741858613; x=1742463413; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JvQ7dzhduECDrLpiYmThBQ/FoZ4MRllET4xAKqhw1E8=;
-        b=ZtnmyabvO6l3EGHo7EXzJ2hiq1hz3B+kYFEIWt8BECJtGBsUleC6g3Ehpk4MF9joD0
-         jiqNGm+2lx55jGxRKovm/VFFHXyLbsKAMa05+mVnXwJoCprKAcPA0XtfXoDBMBupC027
-         qxZCcWDy+osvaNbeIvj2Ajb6sFAQ+bsvGR6ika/3pBDlcZgO9gOg+zcsE6OyVo4fbBNu
-         hbD4YBY1B0mVO3z/F22Dgvj5Jd5oTy1lW+L2kLHjKA72uGGzORtMzn6CakqULpDo3I7P
-         4piVyVmY0x6oMnJE8kjYsRehcb89cgUTzzeT8YJ98p5ndtXTg8ACtLUI4b2HHEwn4CVO
-         28ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741858613; x=1742463413;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JvQ7dzhduECDrLpiYmThBQ/FoZ4MRllET4xAKqhw1E8=;
-        b=qUGQRiXJhaZZCQSWzCisNDrP5zCuz+3qY14P2cPCafczZe1Ifg6cOB/Oj0t3lie6dl
-         KoCGvlE5amQRr5w24XAmU0J5X+S6DXqp6t7KPBZoyJPZ1tK2MJPo9hqgs1M2Jk4/RQji
-         Qx5qrHI7Y4QpLxz87KMlI925fgVfeTBMIl5S+3wg6EgOxDszMKFKV17KwYATr86YqW2h
-         NAHNi2VRJXZ2uOVLU38G43YAIdP3PkIExHZufKf1gj87E7v3YmGmi8GOBpxzhEmvDx9S
-         ESmLJKZGHWFOgAOYfO52XtqUvIDWhy5kGn8URE2CTOZsnQxY0TMoBJ1sJNCkWRDiVodK
-         e2mg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLKVMZN0Ohvp0qgVT/yZ65jt+MKVQjYi7UrIyaWKAVAb/wTX3rI2P5k1Nh48xNTnTFkqE/Sdgn@vger.kernel.org, AJvYcCXh8BNpx5XnZXwWeNakqfyAeF3iJJCWjF6vRXwifdsGPNodgSw2ezQEHTLNU+CxWDQONAOpf7q9SowHfIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPe+Cg99DE0S96co2G8oo+h1HaczvqxpcarHKe1ytqVO1vLCZc
-	laOeSUv/RJPBUVyC2ojSQy8mjAwvxEmDuCHi4JUEEUuDqW6XY9c=
-X-Gm-Gg: ASbGnct0fTGaCA03gsugwZI3biDK9tBNCcpbdnt6NFqKt3o+bxPPRw8uZ+wvPIpLOyj
-	qa/SDyK7IehtWAKx+aHU6k1nlEaskfhbTLTIh7byn0eOIIA0VavUiyRoaAGh9AWjIn6X/Rb+bQF
-	095CDjIiL710hhz+LPhQ1YKnDoEwuZbmgHs3l6pFUNTwTpRHrBs4QZyoZulsxHZLNiVL9HuBr8v
-	l+J+XnV1IntzUsheaUzCweJiNvyr3xzaGO3k4foVj+nuqEdKd3zZGDCYFg4E4Bv5R8RcCfI8Vy3
-	Y/ljcAcaVuHvcsSUp/ODF7CKWtiIqo2VDMymwq8CvhT6
-X-Google-Smtp-Source: AGHT+IH4SxyWBmHQREG2JRZBSCpc9n97vp7qOSWmSGUrlsH7EaBDPGRKB6Rc9iE5qfhPMASjZ32mWg==
-X-Received: by 2002:a05:600c:1ca6:b0:43d:9f2:6274 with SMTP id 5b1f17b1804b1-43d09f264eemr53241605e9.14.1741858612924;
-        Thu, 13 Mar 2025 02:36:52 -0700 (PDT)
-Received: from phoenix.rocket.internal ([2a12:26c0:200b:2402::14])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a8c5ccasm47178835e9.26.2025.03.13.02.36.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 02:36:52 -0700 (PDT)
-From: Rui Salvaterra <rsalvaterra@gmail.com>
-To: anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com
-Cc: edumazet@google.com,
-	kuba@kernel.org,
-	intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rui Salvaterra <rsalvaterra@gmail.com>
-Subject: [PATCH iwl-next] igc: enable HW vlan tag insertion/stripping by default
-Date: Thu, 13 Mar 2025 09:35:22 +0000
-Message-ID: <20250313093615.8037-1-rsalvaterra@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741858593; c=relaxed/simple;
+	bh=GvML6AgX10ab6E1bzb6KhMiFXlQJrr6S9oGQPjauKYI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=F/fgphdPAZdsuB4XsCd9ITRGM+rrK9sGPailvrnuD4Hu46/PSTBQyDbDWknIZd8N/jcfijVhFhJv8YFo0jY8O64qxjkGm95x8urA68xQjP4awSpMD6U4JZ5Uu+OK+a/couvSmkiBf/jrp/HRqY2EL2rXtYaE+yMc3Am06JKa/3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IIOXMuRF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CMGa64023865;
+	Thu, 13 Mar 2025 09:36:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0HyeXeAM5I0N01bDf9ebH+DFt5nfOBM5wrbXpzWaBXI=; b=IIOXMuRF15RzT45V
+	fo8DrVQeh9R936qWACLoWyuNZYife0NUiBRIyObDau9jj/gQLgr+Qz+PHh/U1P4y
+	ZHFs1vuxogi7yFGegpVVHqn6uII+OQNL5qLAvsZYIXoyQ0Oo4KOu1GJldAgsX8uL
+	nASxn9aTyF2ullOg/bKF1ee0P7S+pNVjMhVz0DoPqIYuHZf6A4tWNqA1xvB7JKZk
+	3tljtHHd+1ohy+3GDXtJuqsx4fXTVOiOZ7VTIT+E1J6NNybT2E31yC10+QH1Z/q1
+	Uod29X/QtGVpbYm3FD3VkS7o/ZIZHXAM88s/iioaxVrnw7ZvWiUNvWVGM0d/Sa6L
+	Cx8HcA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2mnatt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 09:36:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D9aLae016587
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 09:36:21 GMT
+Received: from [10.152.204.0] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
+ 2025 02:36:19 -0700
+Message-ID: <c10b95de-f3b3-9506-f4eb-3d668faa9165@quicinc.com>
+Date: Thu, 13 Mar 2025 15:06:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] wifi: ath12k: fix 5GHz operation on wideband QCN9274
+ radios
+Content-Language: en-US
+To: Mantas Pucka <mantas@8devices.com>, <ath12k@lists.infradead.org>
+CC: Johannes Berg <johannes@sipsolutions.net>,
+        Jeff Johnson
+	<jjohnson@kernel.org>, <linux-wireless@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250313-ath12-wideband-caps-v1-1-23ac4247cd8a@8devices.com>
+From: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
+In-Reply-To: <20250313-ath12-wideband-caps-v1-1-23ac4247cd8a@8devices.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: sXjcTNW5s4P6bFTfUl4avTYvehS7VKN9
+X-Authority-Analysis: v=2.4 cv=aKnwqa9m c=1 sm=1 tr=0 ts=67d2a716 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=mO_DyvKKAAAA:8 a=LMgdiH69iM9wwdmua80A:9 a=QEXdDO2ut3YA:10
+ a=9yN1G2m4-WCtQnHix7J8:22
+X-Proofpoint-ORIG-GUID: sXjcTNW5s4P6bFTfUl4avTYvehS7VKN9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_04,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1011
+ adultscore=0 malwarescore=0 priorityscore=1501 phishscore=0 spamscore=0
+ bulkscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503130075
 
-This is enabled by default in other Intel drivers I've checked (e1000, e1000e,
-iavf, igb and ice). Fixes an out-of-the-box performance issue when running
-OpenWrt on typical mini-PCs with igc-supported Ethernet controllers and 802.1Q
-VLAN configurations, as ethtool isn't part of the default packages and sane
-defaults are expected.
 
-In my specific case, with an Intel N100-based machine with four I226-V Ethernet
-controllers, my upload performance increased from under 30 Mb/s to the expected
-~1 Gb/s.
 
-Signed-off-by: Rui Salvaterra <rsalvaterra@gmail.com>
----
- drivers/net/ethernet/intel/igc/igc_main.c | 3 +++
- 1 file changed, 3 insertions(+)
+On 3/13/2025 2:30 PM, Mantas Pucka wrote:
+> Currently ath12k_mac_setup_ht_vht_cap() incorrectly assumes that QCN9274
+> radios with 6GHz band can't support 5GHz as well. This prevents the
+> addition of HT and VHT capabilities for the 5GHz band. Since QCN9274 is
+> capable of operating in multiple bands, remove the 6GHz support check and
+> exception for single_pdev_only (i.e. WCN7850).
+> 
+> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.4.1-00199-QCAHKSWPL_SILICONZ-1
+> 
+> Signed-off-by: Mantas Pucka <mantas@8devices.com>
+> ---
+>   drivers/net/wireless/ath/ath12k/mac.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/ath/ath12k/mac.c b/drivers/net/wireless/ath/ath12k/mac.c
+> index dfa05f0ee6c9f7356634ab55a6d9c0b4064645a9..aea3ad01b0671fd236ee70864aee4c1e65f564db 100644
+> --- a/drivers/net/wireless/ath/ath12k/mac.c
+> +++ b/drivers/net/wireless/ath/ath12k/mac.c
+> @@ -6484,9 +6484,7 @@ static void ath12k_mac_setup_ht_vht_cap(struct ath12k *ar,
+>   						    rate_cap_rx_chainmask);
+>   	}
+>   
+> -	if (cap->supported_bands & WMI_HOST_WLAN_5G_CAP &&
+> -	    (ar->ab->hw_params->single_pdev_only ||
+> -	     !ar->supports_6ghz)) {
+> +	if (cap->supported_bands & WMI_HOST_WLAN_5G_CAP) {
+>   		band = &ar->mac.sbands[NL80211_BAND_5GHZ];
+>   		ht_cap = cap->band[NL80211_BAND_5GHZ].ht_cap_info;
+>   		if (ht_cap_info)
+> 
 
-diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-index 84307bb7313e..1cb9ce8aa743 100644
---- a/drivers/net/ethernet/intel/igc/igc_main.c
-+++ b/drivers/net/ethernet/intel/igc/igc_main.c
-@@ -7049,6 +7049,9 @@ static int igc_probe(struct pci_dev *pdev,
- 	netdev->xdp_features = NETDEV_XDP_ACT_BASIC | NETDEV_XDP_ACT_REDIRECT |
- 			       NETDEV_XDP_ACT_XSK_ZEROCOPY;
- 
-+	/* enable HW vlan tag insertion/stripping by default */
-+	netdev->features |= NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_CTAG_RX;
-+
- 	/* MTU range: 68 - 9216 */
- 	netdev->min_mtu = ETH_MIN_MTU;
- 	netdev->max_mtu = MAX_STD_JUMBO_FRAME_SIZE;
--- 
-2.48.1
+NAK
 
+Multi-band configuration is supported for scan radio only even that requires
+additional driver changes.
 
