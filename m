@@ -1,147 +1,222 @@
-Return-Path: <linux-kernel+bounces-560217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19AEA5FF76
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:37:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71409A5FF7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:39:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00D39422678
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:37:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C63B421EE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3EA1F03E5;
-	Thu, 13 Mar 2025 18:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCFB1EE7D9;
+	Thu, 13 Mar 2025 18:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/HNnNqr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eZcbWLAf"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268191EBA09;
-	Thu, 13 Mar 2025 18:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1DA18952C
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741890975; cv=none; b=QTilHRp82VTImzZU0l9vSEjA6oTjiV+9FmpdIZVeelWx2v63271ZCpAZSaMdqr2eNaC3S+SwvdJk1KmYd7YKTc643ZPpW659Whf9eo5VxF3Acrx7zqEttITa39dbPgDx6gcYBYp8k9VNVxNji3fImBFkhaQHjxJaGKmnrTNI6hQ=
+	t=1741891136; cv=none; b=or7TRCDKdBD0MqdU5q4N1hsSGJjByohn+C+VAas50Bc/UpeQTC5I7X2752jQQNfHPRQ2hwHMVNvPFIBsOjMSBZJn3HxhchLwRqh5HNSTaHiL6R/ExIb/MVMeg32AQezZ6xm4r/Y1/X+FDMH55lhHcS+88yTpzEO/rBVPQ68P7JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741890975; c=relaxed/simple;
-	bh=noNqbEqWozEmWb8r+oEsKLOqlleIkAazUiumENMSLF0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ACYZEjPixhbApy7aYWrfe/R0ZqEQcVXzNdwX4ziTGR2EFDZimrGtC+FrJ0dsKDw54MOwmw02ebBetr/vC0hzHbHxwoA05EEwJ8kPwRLNrKcq0Gkpvt47dkqCwXNOT3AAGEqQtfnfHEvThCAKRmthooPyk4ig8/RzB128HBz1eXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/HNnNqr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FAEBC4CEE3;
-	Thu, 13 Mar 2025 18:36:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741890974;
-	bh=noNqbEqWozEmWb8r+oEsKLOqlleIkAazUiumENMSLF0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=h/HNnNqra92rwOtBSLrZYKtv3i4wYf3e0w1wkpDU+50RtKRiaiHiK99B01QMkiV26
-	 4vWx7Bsfkl6b1D2c+z/Q/61EFzU8MmxNMbhxdIxefn0yyO9QogszYYj7RcTNWPHMjV
-	 qIprYoFVtNk7kt1Y5ToOA9NWDet7gBIDZTdeF2zQIgRWciKmbieoXlgZ9f6qwA8N+J
-	 8CrEpbGixi5fOo2MN0WrcUiIjSHYERG06Te4Jo/2VM46BydjX3ntLSE5sbwIqEBpPc
-	 uMOJAfbxtltCqjC3ZlX7TNNh2gpwRMgNN7jSG3TK6iDp0C/NYwLtuptXKQUuQLUeK0
-	 WjRSaEhsPKQCg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tsnPg-00DK9R-1h;
-	Thu, 13 Mar 2025 18:36:12 +0000
-Date: Thu, 13 Mar 2025 18:36:10 +0000
-Message-ID: <86h63wok11.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: =?UTF-8?B?TWlrb8WCYWo=?= Lenczewski <miko.lenczewski@arm.com>,
-	suzuki.poulose@arm.com,	yang@os.amperecomputing.com,	corbet@lwn.net,
-	catalin.marinas@arm.com,	will@kernel.org,	jean-philippe@linaro.org,
-	robin.murphy@arm.com,	joro@8bytes.org,	akpm@linux-foundation.org,
-	mark.rutland@arm.com,	joey.gouly@arm.com,	james.morse@arm.com,
-	broonie@kernel.org,	anshuman.khandual@arm.com,	oliver.upton@linux.dev,
-	ioworker0@gmail.com,	baohua@kernel.org,	david@redhat.com,	jgg@ziepe.ca,
-	shameerali.kolothum.thodi@huawei.com,	nicolinc@nvidia.com,
-	mshavit@google.com,	jsnitsel@redhat.com,	smostafa@google.com,
-	linux-doc@vger.kernel.org,	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,	iommu@lists.linux.dev
-Subject: Re: [PATCH v3 1/3] arm64: Add BBM Level 2 cpu feature
-In-Reply-To: <f244c20e-e11c-477b-9487-cb6738c028ca@arm.com>
-References: <20250313104111.24196-2-miko.lenczewski@arm.com>
-	<20250313104111.24196-3-miko.lenczewski@arm.com>
-	<86ikocomvd.wl-maz@kernel.org>
-	<f244c20e-e11c-477b-9487-cb6738c028ca@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1741891136; c=relaxed/simple;
+	bh=R+6TXmpQQr1smtkdg3jjiiOUU23YO7K/+AmImGT4WPY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mZ0vxAEv4FjxKxwNKrKsWF6bbnynIWWJlEb+6W6QoO2jfQdE51IqhrDfSopHSl4fb00aHS1lsxpJUeex+Mq7drCimQ/MksEuuI2NtlqwdOueMUr25HVwpsZjSdZ3xjKAFAA0Edurysfo4cT1I/T4SDaBApkSQ4HItQ04elfdXrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eZcbWLAf; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=R+6TXmpQQr1smtkdg3jjiiOUU23YO7K/+AmImGT4WPY=; b=eZcbWLAfTLq5W8s5BTHUXfGs6N
+	OHzbCqdboaFUadQsVEUK6GbxdOHjzy2FkTUKSgtk2D4PFq7K2JAl06UDtbdYODUA5W7SjLEIjmnut
+	YG/L+3cgBbp1B4IhVkeLGHpW3luJMZDA/YowVkMWH16ucFcj0cfYVqpGHlG89EXzlH1XXL/g/kvAP
+	JjbOZE7FbgWtij8kYiusEGlraYLyDt2R/MSLVspA1afrsfQFpuWRZQOjQZWPAQQboLAJuLdNqbjWW
+	oEYZaqC/k8eU/r8ecmP1CKcDWxveLtZEXtqo5kK4TNszUq0uxGdOi3W4IgN/OC3F0/2V9QqMGmP6U
+	2+zldIuA==;
+Received: from [172.31.31.145] (helo=u09cd745991455d.ant.amazon.com)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsnS2-00000002mdR-1WbO;
+	Thu, 13 Mar 2025 18:38:38 +0000
+Message-ID: <8d9253eda0fd74595db05eb3449ccc5be2f563be.camel@infradead.org>
+Subject: Re: [PATCH v7 7/8] [DO NOT MERGE] x86/kexec: Add int3 in kexec path
+ for testing
+From: David Woodhouse <dwmw2@infradead.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H . Peter Anvin"
+ <hpa@zytor.com>,  "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>, 
+ linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>, Dave Young
+ <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ jpoimboe@kernel.org,  bsz@amazon.de
+Date: Thu, 13 Mar 2025 18:38:38 +0000
+In-Reply-To: <Z9MQqYbGBAvTz4Ox@gmail.com>
+References: <20250312144257.2348250-1-dwmw2@infradead.org>
+	 <20250312144257.2348250-8-dwmw2@infradead.org> <Z9K3GXSaZUcVr8cb@gmail.com>
+	 <0CDE8ED7-D8D2-4053-AE4B-4CFF59DB56F7@infradead.org>
+	 <Z9MQqYbGBAvTz4Ox@gmail.com>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-cMsUoNzWHQXVIuwFJn1s"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+
+
+--=-cMsUoNzWHQXVIuwFJn1s
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: ryan.roberts@arm.com, miko.lenczewski@arm.com, suzuki.poulose@arm.com, yang@os.amperecomputing.com, corbet@lwn.net, catalin.marinas@arm.com, will@kernel.org, jean-philippe@linaro.org, robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org, mark.rutland@arm.com, joey.gouly@arm.com, james.morse@arm.com, broonie@kernel.org, anshuman.khandual@arm.com, oliver.upton@linux.dev, ioworker0@gmail.com, baohua@kernel.org, david@redhat.com, jgg@ziepe.ca, shameerali.kolothum.thodi@huawei.com, nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com, smostafa@google.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, 13 Mar 2025 18:22:00 +0000,
-Ryan Roberts <ryan.roberts@arm.com> wrote:
+On Thu, 2025-03-13 at 18:06 +0100, Ingo Molnar wrote:
 >=20
-> On 13/03/2025 17:34, Marc Zyngier wrote:
-> > On Thu, 13 Mar 2025 10:41:10 +0000,
-> > Miko=C5=82aj Lenczewski <miko.lenczewski@arm.com> wrote:
-> >>
-> >> diff --git a/arch/arm64/kernel/pi/idreg-override.c b/arch/arm64/kernel=
-/pi/idreg-override.c
-> >> index c6b185b885f7..9728faa10390 100644
-> >> --- a/arch/arm64/kernel/pi/idreg-override.c
-> >> +++ b/arch/arm64/kernel/pi/idreg-override.c
-> >> @@ -209,6 +209,7 @@ static const struct ftr_set_desc sw_features __pre=
-l64_initconst =3D {
-> >>  		FIELD("nokaslr", ARM64_SW_FEATURE_OVERRIDE_NOKASLR, NULL),
-> >>  		FIELD("hvhe", ARM64_SW_FEATURE_OVERRIDE_HVHE, hvhe_filter),
-> >>  		FIELD("rodataoff", ARM64_SW_FEATURE_OVERRIDE_RODATA_OFF, NULL),
-> >> +		FIELD("nobbml2", ARM64_SW_FEATURE_OVERRIDE_NOBBML2, NULL),
-> >>  		{}
-> >>  	},
-> >>  };
-> >> @@ -246,6 +247,7 @@ static const struct {
-> >>  	{ "rodata=3Doff",			"arm64_sw.rodataoff=3D1" },
-> >>  	{ "arm64.nolva",		"id_aa64mmfr2.varange=3D0" },
-> >>  	{ "arm64.no32bit_el0",		"id_aa64pfr0.el0=3D1" },
-> >> +	{ "arm64.nobbml2",		"arm64_sw.nobbml2=3D1" },
+> * David Woodhouse <dwmw2@infradead.org> wrote:
+>=20
+> > The exception handler already returns if the exception was int3, but=
+=20
+> > not for anything else. Less so the "print something warm and fuzzy"
+> > part; it just does the same register dump. But we could change that.
 > >=20
-> > Why is that a SW feature? This looks very much like a HW feature to
-> > me, and you should instead mask out ID_AA64MMFR2_EL1.BBM, and be done
-> > with it. Something like:
+> > I'm less keen on making it unconditional though. Kexec is a=20
+> > performance-critical path when every millisecond is perceived as=20
+> > guest steal time, and the serial output should only happen in=20
+> > production if something goes *wrong*.
+> >=20
+> > And besides, most kexec users don't have early_printk enabled anyway=
+=20
+> > so if we break them, this idea doesn't help.
 >=20
-> I think this implies that we would expect the BBM field to be advertising=
- BBML2
-> support normally and we would check for that as part of the cpufeature
-> detection. That's how Miko was doing it in v2, but Yang pointed out that
-> AmpereOne, which supports BBML2+NOABORT semantics, doesn't actually adver=
-tise
-> BBML2 in its MMFR2. So we don't want to check that field, and instead rely
-> solely on the MIDR allow-list + a command line override. It was me that
-> suggested putting that in the SW feature register, and I think that still=
- sounds
-> like the right solution for this situation?
+> So this check would only cause any real overhead if serial debugging is=
+=20
+> enabled - in which case there's already substantial overhead due to the=
+=20
+> serial console overhead (virtual or otherwise).
+>
+> As to not printing anything unless the early serial console is enabled=
+=20
+> - that's fine, we'd still *break* if something doesn't work in this=20
+> code path, so at least the exception handling machinery is kept=20
+> well-tested. :-)
 
-I think this is mixing two different things:
+I suppose so, although it's also fairly easy to test by adding an int3
+into a kexec-jump test case like http://david.woodhou.se/loadret.c
 
-- preventing BBM-L2 from being visible to the kernel: this is what my
-  suggestion is doing by nuking an architectural feature in the
-  relevant register
+But yeah, it's easy enough to make the int3 register dump a little less
+scary and then remove the 'DO NOT MERGE' tag from the commit which adds
+the unconditional int3.
 
-- random HW not correctly advertising what they are doing: this is an
-  erratum workaround
+I'm still trying to chase down the new objtool warning you noted (which
+I swear I saw once but now can't reproduce), and I note I need to make
+the early_printk hooks depend on (KEXEC_CORE && X86_64) since I removed
+the separate KEXEC_DEBUG option and made it all unconditional.
 
-I'd rather we don't conflate the two things, and make them very
-explicitly distinct.
 
-Thanks,
+--=-cMsUoNzWHQXVIuwFJn1s
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-	M.
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
+ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
+AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
+BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
+MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
+a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
+jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
+GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
+aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
+nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
+8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
+HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
+IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
+KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
+BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
+QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
+QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
+ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
+/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
+uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
+xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
+W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
+c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
+VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
+NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
+DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
+sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
+w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
+i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
+kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
+0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
+ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
+blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
+hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
+VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
+HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
+ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
+AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
+cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
+cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
+AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
+aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
+hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
+iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
+8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
+JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
+xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
+EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
+B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
+MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
+KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
+Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
+nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
+WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
+W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
+nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
+g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
+9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
+9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
+sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
+a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
+ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
+AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
+dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
+MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
+YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
+4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
+6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
+QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
+nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
+MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
+VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
+ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDMxMzE4Mzgz
+OFowLwYJKoZIhvcNAQkEMSIEID96YJ8oYKxUxGGFcam/oCzUnjeRhpMBMor5EX9fBnyAMGQGCSsG
+AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
+cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
+VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
+cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAYb7vhvC2TtuT
+XcqWFBkNg0jXPGegJLkQhnepsXxU8xMgqsWAdxdUMfluM+64IF/hu8tYRcR57jMtYiejFz3t+Mm9
+ryURwY0tVfhzV5lZlNjHiP9drsDZN5OL6lJMVvZhBbsnJVjzcZNUThXvKF7DifpsWXIZpJ9qMATO
+I7ya1zwNuLQB+FDzEye7lEpZPevGkaHoh1AAaV7DJ7kIPSnNglm227xqhBcoYOXxc8zeEGUVhqB4
+5Ikd9J4pRgxHio4ZldoURgHRcfETIGPTfXoxhuMGQlz/3lPoLG3Sy4N3zvnyy8S4MmjVVodizFql
+ypV11MPl58ceIfooScH1/AprihLVAzBAx72P6NuWAIuvdE+UbsU/gbeDNRWby57H74XkoLP8NOgQ
+n2LqxxsjC7ffGxeiEOpP+WMZrcaCLnxm+DyeI4zLRspBI4arzHyV9a6ZHpb7Kwz7v4KFYeV0ras7
+NWwCKsbTF2GbJ2NjqP7xB/lndRVBh7MUHLMzjBjIMlpMaLdSP4TWxO/1gAKnTWkF7e0DpVY+jhOM
+vdLLV2NipJo9aVdqYnFLHji/H0UyCe3Qc73x5ZIAiZXLhCDff55a5aonyIxHwxjsTKAlXPDxFPct
+VIDj3a04tSAGEOqF6QsTqG/sHGA4IwkpNJOE26um+tdscvdwhp+3f2STLGNki1UAAAAAAAA=
 
---=20
-Without deviation from the norm, progress is not possible.
+
+--=-cMsUoNzWHQXVIuwFJn1s--
 
