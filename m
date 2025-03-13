@@ -1,97 +1,82 @@
-Return-Path: <linux-kernel+bounces-559024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380ACA5EE79
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:51:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE8ADA5EE7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:52:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 135CD19C00C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:51:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 633143BB397
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F14D2638A0;
-	Thu, 13 Mar 2025 08:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1262D26158A;
+	Thu, 13 Mar 2025 08:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="dAmceuPX"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqxhjJwb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B434261588
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4C5261573;
+	Thu, 13 Mar 2025 08:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741855882; cv=none; b=nbwBL3JH0fdpLZD9AYuBPVwXv9DfKp/nNWwU/vkFq/WRyxK5TvEb2wBeucg8pDNULgi9JyR16733/YyCxg4tZgU9qjOEi4aHWiQ9E9MqndSXpVQdkhnUL/OHsFaxkMhqwSj2J6JUAeuK8FaUuPy4h6waDSc7U/4t4QoIlmmmON8=
+	t=1741855931; cv=none; b=s2dlduUFhMCjv/8W3YG1psMtYCR0rRr200EvrZIsqEepkVGkWgWVWBTmcfhvpGvOIoCUj5nimikRJ4bnD0wHgZc/fX3YKRv6AbkcuOLo2Bfbn6AfVA89e90wgjMJ2FVeA0yb8T7JLGA4m9s9sCMH6vTBHcZHHwz1aaSlMzFX1XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741855882; c=relaxed/simple;
-	bh=fgep6nm3VTiNPFBIpkJTHVkLiIgi804k7tW0VYVRhgg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JspttmApOhZBhdwgVjt7JCSnZRQb8DWp+th4mCb9+CvmcAS0ygPRwO9GB6nB94uHIG3h8bW9UMB/e6L/wiNpSpkAWjntTYMmoF7Ev3fWqcxGjtSPF0Igh4LWg1dLoejO+t6Iaq3SCx5GHq2H0XIc+erPH0wCGY2zZkOcOMoQgx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=dAmceuPX; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 139FD240029
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:51:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-	t=1741855872; bh=fgep6nm3VTiNPFBIpkJTHVkLiIgi804k7tW0VYVRhgg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 From;
-	b=dAmceuPXGzYmkyQtxQ0DKexexE7KFvaFeD5FSPOLJYkvx/a+CIonXm5lhgV3BTcV2
-	 eiyeMQRay6K6+RTX95vUYOJvAyqS2Y6fr6NYIgdAsCEkTu7Jkk5ab9/IOZKpWibIEc
-	 5zeGpn2X5Wj0laqL5ZNbHtNA+l7dAKIy5bmsdd0ZmJ8QzM4OvTRgdKXtItUkWS6M/a
-	 uU7ThZOOv2BpfNilOHXIi6mhqdd2U4g1/KvPtXBzODVJzde1YRFyz/en7AyOZnU93/
-	 XxWGryDh1ez+JPH01jIs3/UCGJlb5P2rhQgWxA4Wv2ZEIH964mTQetRniabBmM/bZk
-	 6lesnrmYRkGBw==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4ZD1SF28SDz9rxT;
-	Thu, 13 Mar 2025 09:51:09 +0100 (CET)
-From: Charalampos Mitrodimas <charmitro@posteo.net>
-To: Antonio Hickey <contact@antoniohickey.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
-  Boqun Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron <bjorn3_gh@protonmail.com>,  Benno Lossin
- <benno.lossin@proton.me>,  Andreas Hindborg <a.hindborg@kernel.org>,
-  Alice Ryhl <aliceryhl@google.com>,  Trevor Gross <tmgross@umich.edu>,
-  Danilo Krummrich <dakr@kernel.org>,  Benno Lossin
- <y86-dev@protonmai.com>,  rust-for-linux@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] rust: enable `raw_ref_op` feature
-In-Reply-To: <010001958dfeacb5-9039aaab-6114-494a-9f1d-f13982091169-000000@email.amazonses.com>
-	(Antonio Hickey's message of "Thu, 13 Mar 2025 05:33:52 +0000")
-References: <20250313053340.405979-1-contact@antoniohickey.com>
-	<010001958dfeacb5-9039aaab-6114-494a-9f1d-f13982091169-000000@email.amazonses.com>
-Date: Thu, 13 Mar 2025 08:51:08 +0000
-Message-ID: <m234fhco03.fsf@Mac.home>
+	s=arc-20240116; t=1741855931; c=relaxed/simple;
+	bh=jVDomjMBnInaKjiE+S8O3q0/G9g8FyXhVtfxKw22KpQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u+AlF20x2Fd3+fpLtdrIch3crSe60rcHf3NYDIm1i7G94u6LgJ20W90/aMn1JQbELiExoileK1EPORj75QKZy8HsCBbiLdA4bqGX4bme544eYRXOv3V4mbabVxyCKd/yHMJgiqpHeeAL2lIMV4NuoJUTCAAiXqqF9jaTXw3Wdyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oqxhjJwb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC439C4CEDD;
+	Thu, 13 Mar 2025 08:52:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741855929;
+	bh=jVDomjMBnInaKjiE+S8O3q0/G9g8FyXhVtfxKw22KpQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oqxhjJwbxsTE+ZG9tuMPjHFCDI4apXwfJAeCPphLgJb33ABkytCHrPJW3TLgOS/a/
+	 odHpQ0/+cUvgFqE9olNXeoXI1AwoeRVfzn1jt3rRZwgsgYNQpVoo/aVqW6q/FEYG/b
+	 OBGQLoK+yjVRHG5vnmgP9AYXnqym19Ihr6mNjqHv6Th093Ohl9mmFFe//qDizo+N6Y
+	 HiLjVzqXhTFhJu6ISkrd10yUqy7LKxY3pVQodPVA/JvREzyvqpXDdt/N3XFaKigebJ
+	 N/+V4GkGQffH5HrzFN8u01qxBqAyo+9Rgo+qE1YU5C969JAvffgX1+GSibTLlOMTto
+	 W1ldVtIMo8O8w==
+Date: Thu, 13 Mar 2025 09:52:06 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Imran Shaik <quic_imrashai@quicinc.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: cpufreq: cpufreq-qcom-hw: Add QCS8300
+ compatible
+Message-ID: <20250313-valiant-fine-giraffe-c6acdd@krzk-bin>
+References: <20250313-qcs8300-cpufreq-scaling-v1-0-d4cd3bd9c018@quicinc.com>
+ <20250313-qcs8300-cpufreq-scaling-v1-1-d4cd3bd9c018@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250313-qcs8300-cpufreq-scaling-v1-1-d4cd3bd9c018@quicinc.com>
 
-Antonio Hickey <contact@antoniohickey.com> writes:
+On Thu, Mar 13, 2025 at 11:33:39AM +0530, Imran Shaik wrote:
+> Document compatible for cpufreq hardware on Qualcomm QCS8300 platform.
+> 
+> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-> Since Rust 1.82.0 the `raw_ref_op` feature is stable.
->
-> By enabling this feature we can use `&raw place` and `&raw mut place`
-> instead of using `addr_of!(place)` and `addr_of_mut!(place)` macros.
->
-> This will allow us to reduce macro complexity, and improve consistency
-> with existing reference syntax as `&raw`, `&raw mut` is very similar to
-> `&`, `&mut` making it fit more naturally with other existing code.
->
-> Suggested-by: Benno Lossin <y86-dev@protonmai.com>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1148
-> Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Hi Antonio,
+Best regards,
+Krzysztof
 
-Maybe we want a cover letter for this patchset? "--cover-letter" if
-you're using "git send-email".
-
---
-C. Mitrodimas
 
