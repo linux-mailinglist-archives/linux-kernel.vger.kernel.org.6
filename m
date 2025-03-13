@@ -1,257 +1,140 @@
-Return-Path: <linux-kernel+bounces-559315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D32AA5F242
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:24:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D060CA5F243
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:24:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D13B217B505
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:24:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EC3B1890971
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3830426619A;
-	Thu, 13 Mar 2025 11:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A8D266191;
+	Thu, 13 Mar 2025 11:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m9cksqnS"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="o9XOb28U"
+Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA7626618B;
-	Thu, 13 Mar 2025 11:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D487B1E8325;
+	Thu, 13 Mar 2025 11:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741865036; cv=none; b=iBCDHg8MEKycgPz4k6NeQlwxoCVSrlXPCqerfXA9rlExsbLaEvGDxmnrvyeTAjChs0fIQPtvWYnsjR9+dJ3ZCqG5nPwLQranE2KWs7yKBNsBGFFniR5oQcHBHRyOajCvUKXDlZux47J3XospotcU0naoWNd12CnBwPSR8ocdvYI=
+	t=1741865077; cv=none; b=ogvD8KJKIXGFIv1lZ9hoqz+70YMrX5sjqfJQPOiAn4PG4oXpHY/Lgemjpcw/3ncnGzqB/laYlvJS6zmj501nJUSQe9Ed9+8VjdHBrILsyuPjeQHrqAYM8dHMK6vTwUIvB0NZ3IcTEFq0E+Nz4q1IKOUF5Hi220cgmV700joT6bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741865036; c=relaxed/simple;
-	bh=iWUTKHkQdZP7BxfZpPp3pCRlDp42MsDNhvhZU3Pus+8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gOL0fYYGnnZUcx9eCKhIrNfjN6uHucs0/cHdnzmhrEfurIj4Usx9uRJYWylOZUWW3r5QMcQjixn30JLlL9Be9y7jtq08gXRelG0Z9GY+0ZgcxRq0bMl242u3s6/cFr01akTmdwfo76PFxBOxsaz88xS9BIUqs28KtXiBnLfLOS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m9cksqnS; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-523b8881d31so356175e0c.2;
-        Thu, 13 Mar 2025 04:23:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741865033; x=1742469833; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JYGHZxrHmGt3tg9UgmmzojVku2KFnrh2OCRVAJ/Cd9g=;
-        b=m9cksqnSbMVWlb4atbRewfgZq8baL5EHI1wigq3QiDsdl8lfCxrBRBSKU8nPi61Y+B
-         QEr4c4ZU+vtQs6NyEHgpaPuz3HX8cqobevEhuIxIYgXL1rVX6iwWFddj1AIrd4rxFrzn
-         xQ5dHyEClVR6oWmC4u9ipesWkDbQ8w/9GzCNqNerOPVzmqFyWtmE0L2P4BJjaJuFIp08
-         O7LNRqjtZ4HHzlq8pgmj0l2n2BXTMhF8ZmRlZTitT3AtPdxjcZlusIGcODZvJsNRVV5z
-         KUP+tijVWCH7sGVqWXZURed3dRYW2b3QK3WghBfFfaDCvElWnUyITHxXh3l28dprePRI
-         rMvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741865033; x=1742469833;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JYGHZxrHmGt3tg9UgmmzojVku2KFnrh2OCRVAJ/Cd9g=;
-        b=ujbX/iej6jINGcVklDo3KTuatdHVkLzTlXaLobgVamFAf3p/oaRzfyfXOIjDCv74yb
-         LVJEuP3jAlGqprv4iN19EdCPg6dAm7hN4T1GaXlsQj8B2J26Ok6pVxGqSHmrDJupKEg6
-         v9Y3OFXFcfhKjckhBN7/mBv7YqnuiqiLhGiEHT1KQbjgmaDjwoX+pwA8ALypZjEE5O10
-         KpK1uT39alVAnfr3hPRiqX+0Z0vIGAbgIbuOBd8LpHW4L1HpDPw9LIX+AhTZNmXb2L3i
-         o1ekjHVDnugP6RmOkwQRLXOHu+eIPO6xnShtDeHzSh77elq5JeJqQUN6Si63kZFiQQg0
-         IkSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVyjxazSEawfiotVvwA1ScwSZ1ESZ+ovT4hEtnTCS7QKQjOj3hnec20IItV0TcCo20m9FMqconv2fPFBQKL@vger.kernel.org, AJvYcCWoSyhU8ToUe8v+vBv0++VhDvQDU9Wc1spHE/lWiKsMwZir6ZfcqUMg4TVyUPcm8Zx84HPP1oOf6A0p@vger.kernel.org, AJvYcCXQ+ZWA76oODSYY265geHTCGaAjBLJMePG+VYDRlqRzaMHmVXRr786wYHzUAvYl8ouEGR5u/4LZLqFdiAH2ylL13fg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+1JlYz6Ifvdy0+g8qVQHnyxAvDoB+t4OvK6jIbbYRhWEZAFqP
-	RUe3ZHdrnkuGB1L/xW1VE/jJTdMTFRsFqEtgGXgl5uF0lWNJaojoNB31cwkjKRluz/9eeYFEJhI
-	10YHIIAppzIbkSeJ2emev46G87P/v1T1CMS8=
-X-Gm-Gg: ASbGncvPGoqRAM7eDnHqx1t4jOqwTptC5Jgt+Qtd4K7Fgf97LjUGdRjyCATIojZi+VS
-	7gdZcmTjQeDTUeSxRZ3pIEtAfBtd6wXyX7GaertIfs2Nn4WIIy746Se798tfGN1NxmJfzmk+ymw
-	+2Rn6l7h6FDqzFg+LoiUZtBzglw+peFqWscW1l1t9n/oaGjC2yYe94/HJxO5OP69N7yhluTg==
-X-Google-Smtp-Source: AGHT+IHIsFRe6uzLJ5oS7vz1eOo7Dqc1g2VC3nhojAeGCDWYcNcjn7+Appg+Pjyfr484U4LMnCJJ4jxi4uV1aJAg+B0=
-X-Received: by 2002:a05:6122:c86:b0:520:6773:e5bf with SMTP id
- 71dfb90a1353d-523e3ff02fcmr17137944e0c.1.1741865033534; Thu, 13 Mar 2025
- 04:23:53 -0700 (PDT)
+	s=arc-20240116; t=1741865077; c=relaxed/simple;
+	bh=M8MfpkzBK+QuuBiw77xJtMZAqV2FLi/iPiXKGGpQVz0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NXsyfEX9kaxFZgk6KViiEhRuunbLbn8EiTCZ3JoIz/nSLRNuhfKjRBolsS1Dev13tptaaj6b6myFr8mhdnFxmuKpfGI95Po20xVIiNbPdsRRumB1RD5mgdFTsjhZsu8rlE6An+mc57obXw6YQwI4R9atWDW0zbVjnRvIbJXLMbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=o9XOb28U; arc=none smtp.client-ip=49.12.72.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
+From: Fiona Behrens <me@kloenk.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
+	t=1741865073; bh=358kCQRfQ9nI7dbrHfqIs5um/4vIyZLgVmCBk3AJWaM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date;
+	b=o9XOb28UmexJTluixcW9c8DHfE+30BBLV+S2O6Xr3vNkr/6/yk7Fks8oV+LqPrr8W
+	 jke8ZgCWw/X16HNB9RpwB0v0QY+Tpat0/rZJkNnIkEAeYc3hGbo3LbHgVvn9I37j61
+	 H6otCVy60OcaGDZFt9aeehPe/zMjG4HNMIdfdzEs=
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
+  Boqun Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,
+  =?utf-8?Q?Bj=C3=B6rn?=
+ Roy Baron <bjorn3_gh@protonmail.com>,  Andreas Hindborg
+ <a.hindborg@kernel.org>,  Alice Ryhl <aliceryhl@google.com>,  Trevor Gross
+ <tmgross@umich.edu>,  rust-for-linux@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 19/22] rust: pin-init: miscellaneous synchronization
+ with the user-space version
+In-Reply-To: <20250308110339.2997091-20-benno.lossin@proton.me> (Benno
+	Lossin's message of "Sat, 08 Mar 2025 11:05:27 +0000")
+References: <20250308110339.2997091-1-benno.lossin@proton.me>
+	<20250308110339.2997091-20-benno.lossin@proton.me>
+Date: Thu, 13 Mar 2025 12:24:33 +0100
+Message-ID: <m2o6y5xjf2.fsf@kloenk.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305123915.341589-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250305123915.341589-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <30b6841b3ce199488698ab272f103a0364adb000.camel@pengutronix.de>
-In-Reply-To: <30b6841b3ce199488698ab272f103a0364adb000.camel@pengutronix.de>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 13 Mar 2025 11:23:27 +0000
-X-Gm-Features: AQ5f1Jqk_PKanpHcufQJr8175iFxT3WGy7hP1GqX3uhR9SrxujpYuG4THMIQ0Wo
-Message-ID: <CA+V-a8s3t7kAGZszmAL+xrsbpdPcstvyJM_CpcpS26Vp16oM8A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] reset: Add USB2PHY control driver for Renesas RZ/V2H(P)
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi Philipp,
+Benno Lossin <benno.lossin@proton.me> writes:
 
-Thank you for the review.
+> Remove the last differences between the kernel version and the
+> user-space version.
+>
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+> Tested-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-On Thu, Mar 13, 2025 at 8:37=E2=80=AFAM Philipp Zabel <p.zabel@pengutronix.=
-de> wrote:
->
-> On Mi, 2025-03-05 at 12:39 +0000, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add support for the USB2PHY control driver on the Renesas RZ/V2H(P) SoC=
-.
-> > Make the driver handle reset and power-down operations for the USB2PHY.
-> >
-> > Pass OF data to support future SoCs with similar USB2PHY hardware but
-> > different register configurations. Define device-specific initializatio=
-n
-> > values and control register settings in OF data to ensure flexibility
-> > for upcoming SoCs.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >  drivers/reset/Kconfig                    |   7 +
-> >  drivers/reset/Makefile                   |   1 +
-> >  drivers/reset/reset-rzv2h-usb2phy-ctrl.c | 223 +++++++++++++++++++++++
-> >  3 files changed, 231 insertions(+)
-> >  create mode 100644 drivers/reset/reset-rzv2h-usb2phy-ctrl.c
-> >
-> > diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> > index 5b3abb6db248..bac08dae8905 100644
-> > --- a/drivers/reset/Kconfig
-> > +++ b/drivers/reset/Kconfig
-> > @@ -218,6 +218,13 @@ config RESET_RZG2L_USBPHY_CTRL
-> >         Support for USBPHY Control found on RZ/G2L family. It mainly
-> >         controls reset and power down of the USB/PHY.
-> >
-> > +config RESET_RZV2H_USB2PHY_CTRL
-> > +     tristate "Renesas RZ/V2H(P) (and similar SoCs) USB2PHY control dr=
-iver"
-> > +     depends on ARCH_RENESAS || COMPILE_TEST
-> > +     help
-> > +       Support for USB2PHY Control found on the RZ/V2H(P) SoC (and sim=
-ilar SoCs).
-> > +       It mainly controls reset and power down of the USB2 PHY.
-> > +
-> >  config RESET_SCMI
-> >       tristate "Reset driver controlled via ARM SCMI interface"
-> >       depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
-> > diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> > index 677c4d1e2632..3cb3df018cf8 100644
-> > --- a/drivers/reset/Makefile
-> > +++ b/drivers/reset/Makefile
-> > @@ -30,6 +30,7 @@ obj-$(CONFIG_RESET_QCOM_AOSS) +=3D reset-qcom-aoss.o
-> >  obj-$(CONFIG_RESET_QCOM_PDC) +=3D reset-qcom-pdc.o
-> >  obj-$(CONFIG_RESET_RASPBERRYPI) +=3D reset-raspberrypi.o
-> >  obj-$(CONFIG_RESET_RZG2L_USBPHY_CTRL) +=3D reset-rzg2l-usbphy-ctrl.o
-> > +obj-$(CONFIG_RESET_RZV2H_USB2PHY_CTRL) +=3D reset-rzv2h-usb2phy-ctrl.o
-> >  obj-$(CONFIG_RESET_SCMI) +=3D reset-scmi.o
-> >  obj-$(CONFIG_RESET_SIMPLE) +=3D reset-simple.o
-> >  obj-$(CONFIG_RESET_SOCFPGA) +=3D reset-socfpga.o
-> > diff --git a/drivers/reset/reset-rzv2h-usb2phy-ctrl.c b/drivers/reset/r=
-eset-rzv2h-usb2phy-ctrl.c
-> > new file mode 100644
-> > index 000000000000..a6daeaf37e1c
-> > --- /dev/null
-> > +++ b/drivers/reset/reset-rzv2h-usb2phy-ctrl.c
-> > @@ -0,0 +1,223 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Renesas RZ/V2H(P) USB2PHY control driver
-> > + *
-> > + * Copyright (C) 2025 Renesas Electronics Corporation
-> > + */
-> > +
-> > +#include <linux/cleanup.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/io.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/pm_runtime.h>
-> > +#include <linux/reset.h>
-> > +#include <linux/reset-controller.h>
-> > +
-> > +struct rzv2h_usb2phy_regval {
-> > +     u16 reg;
-> > +     u16 val;
-> > +};
-> > +
-> > +struct rzv2h_usb2phy_data {
-> > +     const struct rzv2h_usb2phy_regval *init_vals;
-> > +     unsigned int init_val_count;
-> > +
-> > +     u16 ctrl_reg;
-> > +     u16 ctrl_assert_val;
-> > +     u16 ctrl_deassert_val;
-> > +     u16 ctrl_status_bits;
-> > +     u16 ctrl_release_val;
-> > +
-> > +     u16 ctrl2_reg;
-> > +     u16 ctrl2_acquire_val;
-> > +     u16 ctrl2_release_val;
-> > +};
-> > +
-> > +struct rzv2h_usb2phy_ctrl_priv {
-> > +     const struct rzv2h_usb2phy_data *data;
-> > +     void __iomem *base;
-> > +     struct device *dev;
-> > +     struct reset_controller_dev rcdev;
-> > +     spinlock_t lock;
->
-> Lock without comment.
->
-I will add a comment for it.
+Reviewed-by: Fiona Behrens <me@kloenk.dev>
 
-> > +};
-> > +
-> > +#define rcdev_to_priv(x) container_of(x, struct rzv2h_usb2phy_ctrl_pri=
-v, rcdev)
+> ---
+>  rust/pin-init/internal/src/lib.rs | 5 ++---
+>  rust/pin-init/src/__internal.rs   | 2 +-
+>  rust/pin-init/src/lib.rs          | 2 --
+>  3 files changed, 3 insertions(+), 6 deletions(-)
 >
-> I'd prefer this to be an inline function.
->
-OK, I'll add a rzv2h_usbphy_rcdev_to_priv() inline function.
-
-> > +
-> > +static int rzv2h_usbphy_ctrl_assert(struct reset_controller_dev *rcdev=
-,
-> > +                                 unsigned long id)
-> > +{
-> > +     struct rzv2h_usb2phy_ctrl_priv *priv =3D rcdev_to_priv(rcdev);
-> > +     const struct rzv2h_usb2phy_data *data =3D priv->data;
-> > +     struct device *dev =3D priv->dev;
-> > +     int ret;
-> > +
-> > +     ret =3D pm_runtime_resume_and_get(dev);
-> > +     if (ret) {
-> > +             dev_err(dev, "pm_runtime_resume_and_get failed\n");
-> > +             return ret;
-> > +     }
-> > +     scoped_guard(spinlock, &priv->lock) {
-> > +             writel(data->ctrl2_acquire_val, priv->base + data->ctrl2_=
-reg);
->
-> Comparing to deassert, I wonder why is there no ctrl_acquire_val?
->
-Based on the HW manual there isn't one.
-
-> > +             writel(data->ctrl_assert_val, priv->base + data->ctrl_reg=
-);
-> > +     }
-> > +
-> > +     /* The reset line needs to be asserted for more than 10 microseco=
-nds. */
-> > +     udelay(11);
->
-> Could this be usleep_range() instead?
->
-Mostly the consumers wouldn't call the assert operation in an atomic
-context, so usleep_range() could be used here.
-
-Cheers,
-Prabhakar
+> diff --git a/rust/pin-init/internal/src/lib.rs b/rust/pin-init/internal/src/lib.rs
+> index 30e145f80bc0..babe5e878550 100644
+> --- a/rust/pin-init/internal/src/lib.rs
+> +++ b/rust/pin-init/internal/src/lib.rs
+> @@ -14,6 +14,8 @@
+>  //
+>  // Remove once we have `proc_macro2` in the kernel.
+>  #![allow(clippy::useless_conversion)]
+> +// Documentation is done in the pin-init crate instead.
+> +#![allow(missing_docs)]
+>  
+>  use proc_macro::TokenStream;
+>  
+> @@ -30,19 +32,16 @@
+>  mod pinned_drop;
+>  mod zeroable;
+>  
+> -#[allow(missing_docs)]
+>  #[proc_macro_attribute]
+>  pub fn pin_data(inner: TokenStream, item: TokenStream) -> TokenStream {
+>      pin_data::pin_data(inner.into(), item.into()).into()
+>  }
+>  
+> -#[allow(missing_docs)]
+>  #[proc_macro_attribute]
+>  pub fn pinned_drop(args: TokenStream, input: TokenStream) -> TokenStream {
+>      pinned_drop::pinned_drop(args.into(), input.into()).into()
+>  }
+>  
+> -#[allow(missing_docs)]
+>  #[proc_macro_derive(Zeroable)]
+>  pub fn derive_zeroable(input: TokenStream) -> TokenStream {
+>      zeroable::derive(input.into()).into()
+> diff --git a/rust/pin-init/src/__internal.rs b/rust/pin-init/src/__internal.rs
+> index 7f7744d48575..557b5948cddc 100644
+> --- a/rust/pin-init/src/__internal.rs
+> +++ b/rust/pin-init/src/__internal.rs
+> @@ -14,7 +14,7 @@
+>  ///
+>  /// [nomicon]: https://doc.rust-lang.org/nomicon/subtyping.html
+>  /// [this table]: https://doc.rust-lang.org/nomicon/phantom-data.html#table-of-phantomdata-patterns
+> -pub(super) type Invariant<T> = PhantomData<fn(*mut T) -> *mut T>;
+> +pub(crate) type Invariant<T> = PhantomData<fn(*mut T) -> *mut T>;
+>  
+>  /// Module-internal type implementing `PinInit` and `Init`.
+>  ///
+> diff --git a/rust/pin-init/src/lib.rs b/rust/pin-init/src/lib.rs
+> index a00288133ae3..45880ffa81bb 100644
+> --- a/rust/pin-init/src/lib.rs
+> +++ b/rust/pin-init/src/lib.rs
+> @@ -349,8 +349,6 @@
+>  ///     }
+>  /// }
+>  /// ```
+> -///
+> -/// [`pin_init!`]: crate::pin_init
+>  pub use ::pin_init_internal::pin_data;
+>  
+>  /// Used to implement `PinnedDrop` safely.
 
