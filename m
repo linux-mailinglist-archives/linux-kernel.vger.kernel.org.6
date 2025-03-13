@@ -1,227 +1,249 @@
-Return-Path: <linux-kernel+bounces-559592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEFA4A5F5E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:25:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8E52A5F5E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:24:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B872188443A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:24:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE09117B6B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F79267721;
-	Thu, 13 Mar 2025 13:24:17 +0000 (UTC)
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023094.outbound.protection.outlook.com [40.107.44.94])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8970D267AF4;
+	Thu, 13 Mar 2025 13:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dz+Vjr8P"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EE6264FBB
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741872257; cv=fail; b=iEbmZ+9Exlctm6D+YVXF83NsohcvqfOoMNsI2AaCzWvH0kxfEPs03PupiFOO9YCJpSJ0brx1a+gEDF7HSyvkimC8TgIASk8oYe4pEKy0dQWk/wLKZByX/FTWHA4UQ3JlXHQLcImumOARS+g4KgwsltEC9P7DMtHn22ncfhgenQo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741872257; c=relaxed/simple;
-	bh=SEYA3vXsuzEnBkjQlSTjAVBKn0maHvadEKRJKTxCKrI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=cuNLbh8PJ3UqNk4hHB3P4Fze+mZ+nOwnMn1bJ03RqT/iizcp6aVWlj4o6OpEOYwl5faOv/LkSLSZ7NimxXVZ5Gn/2TjnpRNZpkxERNT2I35IaecipkvMlO3q6bFPNhSns/0C00jfBsuIPWAMbnZUSaeOhm0ZPLGBKHCWy7ACwuo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.44.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UN+ZEdMTsxMw5vwFMhWP16ndbIq+rcucKHH++DYHVNjpcegnoKGl2rlQFjFJZsc50vKqyT2PovA3bvXPAJVZvd2oU6XBKNH/rOKSccXq71BGRVPP25GT3iTazR+nQJx74UG/RV0T68NKIGU9lLGIhWIaPd8Rzxo3P5nuz9CVcKoSYVhgskbgt4Mh2SltF7XJk9Ecy2yQZm9BTyUJclGOHSFnAp8K0rtCoGlkVRftoWCQmtfb40X67hhywlBqiSkVvjpUkcwgMSbJeiukNZuyJE+sDSdEd7jFUGsG/yJ8CL3XMUb+pZ98VQSGPIgyP9xmaVLkO24b5z3rRo4uWgV68g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zCqGBOH3JiEb+5q+tfsxQvcXPvzzP7JdMw6VNDdIhGs=;
- b=s8ZjgLRnKWv4RNh2L21eNK8b8ZS5uJvP+X63Qw35JFRMEF3QC9GFl2s4hPzNyE2jSvjCALM0ddsh07XyTBb2Pxbwv3/WTyLaQGQKZWGCbiSeS6LXk+LEtitz/b+yUUtdMcbRNU17yUoonltEwEIcllYBPldsHfGyuDqWQQZsszVW+yD8XFYvqfPvdj0F8dxN4TfJvUutDC9dAVhr/+4F4KUjgkiBDuHsyBiUA7+XbVbQzx9qT865Y3D7GFvqLmvBznfaeeqsAhYhd+5/5iINPZFOLN76j3K+OYV/tRr7TFyMUilPAeFL9lSvFTn6Fszb6opue4LefJGRkkHIEYIZpQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=cixtech.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SGXP274CA0021.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::33) by
- PUZPR06MB5537.apcprd06.prod.outlook.com (2603:1096:301:ed::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8511.27; Thu, 13 Mar 2025 13:24:09 +0000
-Received: from HK2PEPF00006FB3.apcprd02.prod.outlook.com
- (2603:1096:4:b8:cafe::c2) by SGXP274CA0021.outlook.office365.com
- (2603:1096:4:b8::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.24 via Frontend Transport; Thu,
- 13 Mar 2025 13:24:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- HK2PEPF00006FB3.mail.protection.outlook.com (10.167.8.9) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Thu, 13 Mar 2025 13:24:08 +0000
-Received: from gchen.. (unknown [172.20.64.84])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id D6ECE41C0A00;
-	Thu, 13 Mar 2025 21:24:05 +0800 (CST)
-From: Guomin Chen <guomin.chen@cixtech.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	cix-kernel-upstream@cixtech.com,
-	Guomin Chen <Guomin.Chen@cixtech.com>,
-	Peter Chen <peter.chen@cixtech.com>,
-	Lihua Liu <Lihua.Liu@cixtech.com>
-Subject: [PATCH 1/2] dt-bindings: mailbox: cix: add device tree binding documentation.
-Date: Thu, 13 Mar 2025 13:24:05 +0000
-Message-Id: <20250313132405.742360-1-guomin.chen@cixtech.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C36265610;
+	Thu, 13 Mar 2025 13:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741872264; cv=none; b=P1y5KFJoA3tyreu2U/NgJBIstGWnoONx1lfAvRuK9jNOoiAilUHujISq1ja5kktjcwVpjnhxb8nwxJI9oDxQMRl4bJ4xBCqF/tNYhsF8g8zenARcgFG188+6p3muANVyr/HvZIaKRfJ4EwGjZ9mnXrQ/3GRa0mQJFACoz9OgsBA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741872264; c=relaxed/simple;
+	bh=jCDe7Wc94ba6aJ/MFQbCu86uV8l1MOm2WI7qny2btIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uUrVBPQxyQtDn+0OhPRkza1GpbGYDACLBwlAGxu/iyDS6XhvwNAtxhCFl+57dQVaF2vgDpnmI/IytzoATzdsbm4af9KGUxnVowai82xPyTTRsoOLFFcvM8BhkhyEhZJPJxxmbuDHB5d5U8edTLH+Cg/XgxVmMB7/rJ0Oig5XUA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dz+Vjr8P; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741872263; x=1773408263;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=jCDe7Wc94ba6aJ/MFQbCu86uV8l1MOm2WI7qny2btIY=;
+  b=dz+Vjr8Pivx9Y9nQrD3GImA/al6j1qkNuqv6IN4+fSUOYN5asyJsVJTs
+   RexsZbuSqHR7JIBM2eEjTNVhUuF2Nfv7QxBeD19LHA6JJEAJiSy5QlV98
+   7LXq6cAG/29audJVmC/VFyBlADh/I5NAxGn1rrqQZGFUrqT/8hWd+skwZ
+   H0YaqRQtPN0dGEbMibUxfwhEu/3xRckWr50NOPeHxsno6yO3L+zkdmNtO
+   jOx+sPzf7QLbiRDq2ip3DDqq3HG2GpKrPokUFwbo3ItGawHaUG/MlIF4C
+   aABH5deocTQU1VO+ZgnYeJ1M9ylXJee5DiYy87gwCQ4mSrBdPcomsmNDg
+   w==;
+X-CSE-ConnectionGUID: OzzBWEFFQra20W9g/Zdmgg==
+X-CSE-MsgGUID: VshMdA3iQ/6HFai5gpgbug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="60387877"
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="60387877"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 06:24:22 -0700
+X-CSE-ConnectionGUID: P2b3MLySQXqccd5C+UEwdw==
+X-CSE-MsgGUID: 6BtBIRMqRfu7WFaTVmO00g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="125833934"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 06:24:17 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tsiXl-00000002BIs-16K9;
+	Thu, 13 Mar 2025 15:24:13 +0200
+Date: Thu, 13 Mar 2025 15:24:13 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: Petr Mladek <pmladek@suse.com>, Kees Cook <kees@kernel.org>,
+	Sven Peter <sven@svenpeter.dev>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Aun-Ali Zaidi <admin@kodeit.net>,
+	Maxime Ripard <mripard@kernel.org>,
+	"airlied@redhat.com" <airlied@redhat.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"apw@canonical.com" <apw@canonical.com>,
+	"joe@perches.com" <joe@perches.com>,
+	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
+	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	Hector Martin <marcan@marcan.st>,
+	"asahi@lists.linux.dev" <asahi@lists.linux.dev>
+Subject: Re: [PATCH 1/2] lib/vsprintf: Add support for generic FourCCs by
+ extending %p4cc
+Message-ID: <Z9LcfW8H_0YudtdC@smile.fi.intel.com>
+References: <ff3a9c58-5c7a-4c48-8a9e-cc828a43baed@app.fastmail.com>
+ <PN3PR01MB9597E5C609290DB1A967263CB8D02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <Z9HgVn-XELC065w0@smile.fi.intel.com>
+ <47AE7FCD-0F30-4379-ADE9-090A15ACD58F@live.com>
+ <Z9Kb8zMJgmSP-rgD@smile.fi.intel.com>
+ <PN3PR01MB959780176C0B16C36FBD59C3B8D32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <Z9KdzZUxs3vlwp0Z@smile.fi.intel.com>
+ <PN3PR01MB9597A8F02423B9E4C585F5EBB8D32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <Z9K36SRz7Ja_AyQb@pathway.suse.cz>
+ <D1A20E79-554E-4E91-BE47-B6493BDC3823@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB3:EE_|PUZPR06MB5537:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: a31446a6-052a-49e6-ee5d-08dd623255f5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FkTuzCuJg6RS1un/paeQ027SktZZqQ/vmANqEfrMZ/DM3HTcJ4lPtrg0RS2a?=
- =?us-ascii?Q?fLFM0yerEyTYnrnf/zAzWv7TIEMQjkeuGrc/AAEK90WywpKGGxw8T/kPp60n?=
- =?us-ascii?Q?MfHZOO1HyYF7bhlkGRUjJKN9ui1nL3+QiwBMHP5ooMGWyH58s3cUlkGK1CKY?=
- =?us-ascii?Q?D+t/C7OH/Pz43MucRS/DZ0JtCkuXsTANxarJdIpxKyQq8bXv8nOlp4WqYW7t?=
- =?us-ascii?Q?OFdI+ECa8eFmog0+VdAzK3sg+YwBQ4g3zRqVowKM+bq2xCT4fvDhy8gpoEF7?=
- =?us-ascii?Q?qS88Ocj9RyxIgJSPGNvG88I+1E2pzQu2AgyORHrmW8z6s83Ikaml85aRhRa+?=
- =?us-ascii?Q?M4D6L8jqlGXVa55D0WZC/wZMl/THVtHdNGLW6N/fbE0dQYS6jaEU+MuKrA6h?=
- =?us-ascii?Q?GLMD+ovTneltMm0AJ9UwOYeKSuLaSo0JMiPiBFCuuF1+p0qtk+KkqjacYlML?=
- =?us-ascii?Q?DjjE5E4oFGpVmulQgo4/5sMDxSF5zbYAP9GRhj++V9tbOSHzS40dCwLlnt1K?=
- =?us-ascii?Q?B1fjAj4zvYSJS6lsxQ5y8RmcSW0a84s6c0UYZU/VyIwEmwVKTQHQnCNBElVX?=
- =?us-ascii?Q?nSCvLHEhZc9I2uzzS+2aFcHN7uDRBgadFEb3VfIY6ye/sV1OKvU3Zg4F2Xye?=
- =?us-ascii?Q?gOPGlJPmE9Zknz3piWAnbxV8NhWji6KU0XcDFc/UbGKS6ai2YG/tLJNmDt+9?=
- =?us-ascii?Q?4g+MSbSOCf5zyS6D2/ckWnvavTC3n0yzJ5/bjuq3jp0QIni0zryD5uOI65Qi?=
- =?us-ascii?Q?zbkEkYuQGT2JXpx2ZnaEqwpcCQYd76XEXsvzc5GgbVbFoEx8kmquZCUQrg3e?=
- =?us-ascii?Q?NHzYQaWZYAj3cTRgXkcWJgNYnk9HzbmdfZ4BWnE1HZa51sE01NjjnZi/xw4P?=
- =?us-ascii?Q?hVhfXFEBR9ExzO52W2pYR14ZTeUrTmr1X9eRo6c5iR835r7T0jirAG4SypWf?=
- =?us-ascii?Q?ZJowAz7TsyKPftfxr3zPhzg3HQXWLYP28PbqsW/XJpcvn/4qzjP564aXaMlE?=
- =?us-ascii?Q?P6jUkRglERnd9XXpC9fsh37hYdsOCaPCJHGlV4ETF3GmEFlwZvcZ1kJ0sgJH?=
- =?us-ascii?Q?WLz4sWvzzPCES8rO67N/l2YnUM6Kf+ROWCZB53WiPNz+0/r5DuhG/qS4fTNY?=
- =?us-ascii?Q?7mHRHJn/MuyYDD8WsMMQUsEbnWTmFGdoWwelpWi7AQPTe8B6p9l5pgv7tLci?=
- =?us-ascii?Q?w3LudgT4bcktUtOlPYEKYJXanHg3IWiiG9i7JIAKi6OM9imeMcSh5z2LX90I?=
- =?us-ascii?Q?lRm+gajExuVjQ1bQJPMQRy0wUhOG69KmHrNgzwKNnIybi+rWKvaAf7ZTNzLP?=
- =?us-ascii?Q?yCdIhBBaCRpxNpS4s+bR/8yqx0xavmzEXdIHKjoiSBvl/Nwz2M8XAza6ihK1?=
- =?us-ascii?Q?zNl3/4/5AMqeFQtW+ciEeSF7YrNZQVaMa9opT4RasQCAsjcquPjOc7LuweOa?=
- =?us-ascii?Q?WI8lI2kj2bnUyik5TYb+e30Hq0mx7wpN?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 13:24:08.3889
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a31446a6-052a-49e6-ee5d-08dd623255f5
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource: HK2PEPF00006FB3.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5537
+In-Reply-To: <D1A20E79-554E-4E91-BE47-B6493BDC3823@live.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Guomin Chen <Guomin.Chen@cixtech.com>
+On Thu, Mar 13, 2025 at 11:06:54AM +0000, Aditya Garg wrote:
+> > On 13 Mar 2025, at 4:18 PM, Petr Mladek <pmladek@suse.com> wrote:
+> > On Thu 2025-03-13 09:13:23, Aditya Garg wrote:
+> >>> On 13 Mar 2025, at 2:27 PM, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> >>> On Thu, Mar 13, 2025 at 08:53:28AM +0000, Aditya Garg wrote:
+> >>>>>> On 13 Mar 2025, at 2:19 PM, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> >>>>> On Thu, Mar 13, 2025 at 07:26:05AM +0000, Aditya Garg wrote:
+> >>>>>>>> On 13 Mar 2025, at 12:58 AM, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> >>>>>>> On Wed, Mar 12, 2025 at 07:14:36PM +0000, Aditya Garg wrote:
+> >>>>>>>>> On 12 Mar 2025, at 9:05 PM, Sven Peter <sven@svenpeter.dev> wrote:
+> >>>>>>>>> On Wed, Mar 12, 2025, at 13:03, Aditya Garg wrote:
 
-This patch adds device tree binding for mailbox from Cixtech.
+...
 
-Reviewed-by: Peter Chen <peter.chen@cixtech.com>
-Signed-off-by: Lihua Liu <Lihua.Liu@cixtech.com>
-Signed-off-by: Guomin Chen <Guomin.Chen@cixtech.com>
----
- .../bindings/mailbox/cix-mailbox.yaml         | 74 +++++++++++++++++++
- 1 file changed, 74 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mailbox/cix-mailbox.yaml
+> >>>>>>>>> I don't have a strong opinion either way: for SMC I just need to print
+> >>>>>>>>> FourCC keys for debugging / information in a few places.
+> >>>>>>>>> 
+> >>>>>>>>> I'm preparing the SMC driver for upstreaming again (after a two year delay :-()
+> >>>>>>>>> and was just going to use macros to print the SMC FourCC keys similar to
+> >>>>>>>>> DRM_MODE_FMT/DRM_MODE_ARG for now to keep the series smaller and revisit
+> >>>>>>>>> the topic later.
+> >>>>>>>>> 
+> >>>>>>>>> Right now I have these in my local tree (only compile tested so far):
+> >>>>>>>>> 
+> >>>>>>>>> #define SMC_KEY_FMT "%c%c%c%c (0x%08x)"
+> >>>>>>>>> #define SMC_KEY_ARG(k) (k)>>24, (k)>>16, (k)>>8, (k), (k)
+> >>>>>>>> 
+> >>>>>>>> That seems to be a nice alternative, which I guess Thomas was also suggesting.
+> >>>>>>> 
+> >>>>>>> I don't think it's "nice". Each of the approaches has pros and cons.
+> >>>>>>> You can start from bloat-o-meter here and compare it with your %p extension.
+> >>>>>>> 
+> >>>>>>> Also, can you show the bloat-o-meter output for the vsprintf.c?
+> >>>>>> 
+> >>>>>> Here are your outputs:
+> >>>>> 
+> >>>>> Thank you!
+> >>>>> 
+> >>>>>> ---------------------------------------------------------------------
+> >>>>>> For appletbdrm:
+> >>>>>> 
+> >>>>>> aditya@MacBook:~/linux$ ./scripts/bloat-o-meter $P4 $MACRO
+> >>>>>> add/remove: 0/0 grow/shrink: 1/1 up/down: 64/-19 (45)
+> >>>>>> Function                                     old     new   delta
+> >>>>>> appletbdrm_read_response                     395     459     +64
+> >>>>>> appletbdrm_probe                            1786    1767     -19
+> >>>>>> Total: Before=13418, After=13463, chg +0.34%
+> >>>>> 
+> >>>>> This is enough, no need to repeat this for every parameter.
+> >>>>> 
+> >>>>>> ---------------------------------------------------------------------
+> >>>>>> For vsprintf:
+> >>>>>> 
+> >>>>>> aditya@MacBook:~/linux$ ./scripts/bloat-o-meter $OLD $NEW
+> >>>>>> add/remove: 0/0 grow/shrink: 1/0 up/down: 220/0 (220)
+> >>>>>> Function                                     old     new   delta
+> >>>>>> fourcc_string                                479     699    +220
+> >>>>>> Total: Before=26454, After=26674, chg +0.83%
+> >>>>> 
+> >>>>> So, we get +220 bytes vs +43 bytes. It means if we found 5+ users, it worth
+> >>>>> doing.
+> >>>> 
+> >>>> Will it also depend upon the number of times it's being used? In appletbdrm,
+> >>>> it is being used 3 times. Probably more in Asahi SMC.
+> >>> 
+> >>> Right, it depends on the usage count. Also on different architectures it may
+> >>> give different results. On 32-bit it probably gives better statistics.
+> >> 
+> >> Best to go ahead with vsprintf then. Petr, are you still there?
+> > 
+> > I am here but there were many other things in the queue ;-)
+> > 
+> > I do not have strong opinion. I am not familiar with the FourCC
+> > format and it looks like a magic to me. But it seems that it makes
+> > sense for the users.
+> > 
+> > I personally find the %pcX modifiers a bit less hacky than
+> > the two macros SMC_KEY_FMT/SMC_KEY_ARG.
+> > 
+> > So I am fine with this patch:
+> > 
+> > Reviewed-by: Petr Mladek <pmladek@suse.com>
+> > Tested-by: Petr Mladek <pmladek@suse.com>
+> > 
+> > 
+> > Now, the question is how to get this patch into the mainline.
+> > 
+> > Normally, it would make perfect sense to queue it via the DRM tree
+> > because drivers/gpu/drm/tiny/appletbdrm.c is a new driver...
+> > 
+> > But this time there is a conflicting patchset which is reworking
+> > the entire lib/test_printf.c file, see
+> > 20250307-printf-kunit-convert-v6-0-4d85c361c241@gmail.com
+> 
+> Link seems to be broken
 
-diff --git a/Documentation/devicetree/bindings/mailbox/cix-mailbox.yaml b/Documentation/devicetree/bindings/mailbox/cix-mailbox.yaml
-new file mode 100644
-index 000000000000..85cb54ae2e79
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mailbox/cix-mailbox.yaml
-@@ -0,0 +1,74 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mailbox/cix-mailbox.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Cix mailbox controller
-+
-+maintainers:
-+  - Lihua Liu <Lihua.Liu@cixtech.com>
-+
-+description:
-+  CIX mailbox controller is used to exchange message within
-+  multiple processors, such as AP, AUDIO DSP, SensorHub MCU,
-+  etc. It supports 10 mailbox channels with different operating
-+  mode and every channel is unidirectional.
-+
-+properties:
-+  compatible:
-+    const: cix,sky1-mbox
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  "#mbox-cells":
-+    description: |
-+      <&phandle channel>
-+      phandle   : Label name of controller
-+      channel   : Channel number
-+
-+      This controller supports three types of unidirectional channels, they are
-+      1 register based channel, 1 fifo based channel and 8 fast channels.
-+      A total of 10 channels for each controller. Following types are
-+      supported:
-+      channel 0_7 - Fast channel with 32bit transmit register and IRQ support.
-+      channel 8   - Reg based channel with 32*32bit transsmit register and
-+                    Doorbell+transmit acknowledgment IRQ support
-+      channel 9   - Fifo based channel with 32*32bit depth fifo and IRQ support.
-+    const: 1
-+
-+  cix,mbox-dir:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: Direction of the mailbox (0:TX or 1:RX)
-+    enum: [0, 1]
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - "#mbox-cells"
-+  - cix,mbox-dir
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        mbox0: mailbox@30000000 {
-+            compatible = "cix,sky1-mbox";
-+            reg = <0 0x30000000 0 0x10000>;
-+            interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH 0>;
-+            #mbox-cells = <1>;
-+            cix,mbox-dir = <0>;
-+            status = "okay";
-+        };
-+    };
+It works fine. Because it's not a link, it's Message-ID, you need to add
+https://lore.kernel.org/r/ in front of it.
+
+> > And it will likely be ready for the next merge window as well.
+> > I am going to review it right away.
+> > 
+> > It is even more complicated because the patchset converting
+> > the printf test module to KUNIT depends on another changes
+> > in Kees' tree (moving kunit test modules to lib/tests/).
+> > So it might be easier when it goes via Kees' tree.
+> > 
+> > And it might be easier when even this patch goes via Kees' tree.
+> > 
+> > My proposal:
+> > 
+> > I suggest to separate the fourcc_pointer() test update
+> > to a separate patch and add it later after the merge window
+> > when things settle down.
+> > 
+> > I mean to send the vsprintf.c, checkpatch.pl, and doc update
+> > via DRM tree together with the new appletbdrm.c driver.
+> 
+> Sounds good. At least we can get it working. I’ll make sure the self
+> tests get updated once 6.15-rc1 gets released, or Kees can share
+> his tree, where I can add the tests as well.
+> 
+> I’ll send a v2 so that Thomas can take them up.
+> > 
+> > And update the selftest later when both DRM tree and KUNIT
+> > update reaches mainline.
+> > 
+> > How does that sound, please?
+
+To me sounds good, but I'm not a maintainer involved in all this :-)
+
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
