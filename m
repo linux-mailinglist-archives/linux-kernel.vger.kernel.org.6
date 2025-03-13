@@ -1,138 +1,388 @@
-Return-Path: <linux-kernel+bounces-558995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 306A0A5EE23
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:37:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B97A5EE25
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:37:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C4EF189FA37
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:37:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79785189FBCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B65260A58;
-	Thu, 13 Mar 2025 08:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="JBTrMilk"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC88260A53;
+	Thu, 13 Mar 2025 08:37:16 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9281FAC57
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022F71FAC57
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741855029; cv=none; b=pzF5X2SNKV+C3BOzAsxxJ81iIT7BfcVLKYvKUZ2zJFU45XShvjP4dpZKzfLbGZXu55TJdbEv1EQvk5bKH+tznk3sxy9hiarniTac3iunTMACpDwiw4fZ2G8YNUkMQ3r2HyFmn9hS+0bmQ58rXFz2LIGj0jhsd5s3w0tpsMdzPEs=
+	t=1741855036; cv=none; b=rlkQ2MKuge/uG1pnuJKh/tnnIP6hbzfTrMsHQj3d/wIfidIv4+SgZqeCeZwpVC3pYfvtfEC9lTSYV+li1kvc0YT9c//mJfP5RITinX7G7RaXB46k5igOrW6jL5FWFzSYinWLSrWaxkCTBWNucWhVIr/Pn0/kJXHQX0+hlwbfep4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741855029; c=relaxed/simple;
-	bh=ugQkNECBfRXgcwGIrw7wTjZKexEfnOnVSzCf4Z+ebew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IB+oAqf6BFoeZN4mCyQ5Stc2/FTLTCFL5N7DEZVzsrfQxTpfepMrcL2a45mdPyRDd0z4QmorAF/nltZDeMfPo9BAncxznaSFjqq8U9PYbLMTscsIGZXD+wKjSXousKVn+FY/uhkmOeSGc1C7dAcINooIyxFGA5tM9P/ms9GkHvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=JBTrMilk; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-390fdaf2897so572305f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 01:37:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741855025; x=1742459825; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ugQkNECBfRXgcwGIrw7wTjZKexEfnOnVSzCf4Z+ebew=;
-        b=JBTrMilkuvKTyNH42BIJc+G2g8U1sFQczl/icNGgI53R8s/OGZASAeE7BGNP7DhlvS
-         HYBxrAcHgYIPrI8C/oVsgak5GrfKJ08hkTvzctm18B2aPCzcYriAIkipUWX6iMiPqEiB
-         26fDvUme/hXvhRllqw7zmwyO7voD0EzDyoFkrxgt0J5pNFlG4Q3kNs73GMSOv0G4ZWev
-         UfcrUkXx9ZD+WKUXZXryVkXoFqGp2zsSuy/Y9WbKydEclfGHXF4GyFVVz9CczFPI4M15
-         D7enMRX8fidk1tFuHgxpOpL851CXOqgjeSsFArtxdqr7hJ51yfa+vJTHSN0UwXY6gB4b
-         V5Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741855025; x=1742459825;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ugQkNECBfRXgcwGIrw7wTjZKexEfnOnVSzCf4Z+ebew=;
-        b=v+bh+nrxPhlHN0ENFFWUvPd0MA8sc5A1M2KBroRoyOkoPwNEO5fSY3qWXYtIIxK7p4
-         fv5P7YJYSYCGLqs84Xk5yhmo/YaclwY3v7IBwkOD8FyIkNVDaV+yJRR/30D+pDuEg+At
-         cqrjBUqqZho7XWLitcwj3i6ELZPW2LUBGZ0KqDOHtvluhnJwiUx8bECewlTkBIT9iiqE
-         jNyc7dqHIlhoC/PRssjpw/HQXWi3x4XYnXke0EBXHOBrSYoYSG9EvuIt9a1rU6obPdyH
-         m/z7K6XdzG7NWeQJORhTBXjMa3E7fUWmyOQMEbO3h/ZZe3bdxl7vGqPDEKJ9d8NUZ16J
-         A8tg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5lCbe9BVZxBDSc2L95/5v7heX6HuiV37/4tETz4OccleHFfu6lSOIWaBgqfQeTR+JniRlQ7BSx/3alLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzeTdVuGwtGcZLqykYEr3dnEsxn6rycUNa8tFQPWPWHuPWpmQG
-	wqh669pvWt8GCLL+Ewhvc/NX9t/soTbS3peLu2jA91CDp2B8kqcqyADvHY74m4g=
-X-Gm-Gg: ASbGncuKzDB5hh7vj28s1v+buoALv6gG65/J64TwoBDEVVjTy/657AgDKnofyB8j8k0
-	dq59OFAvMZkJAgpFi8hTblLHiKXyG401+rJuS+cO68IkTsUdvQ0W/swjPmwqQa6FXHeThAnZ6Js
-	oKJT1Zpks2hFMDUNPxqQehtR4B3kKUoM2CIQm5p7DPKzaNeLK5Gzb7zvu2LxFuDCod+FKptHypH
-	3BkkGcRzXY3JZLSXiC/lLi3zkK6kxQTaWqCIKXehv5vXQh48oNngF8e72yBrE5GB1dqu7XBCncN
-	YURPSYGygPuur3HqaPz+Lqpa+R7gLni9GvrP+SHXvIb/gI2FOf1IT+43jaoP8U/jzPiraWQQeaS
-	l36i/bofAT/BqwVE/8YDQLw==
-X-Google-Smtp-Source: AGHT+IGa8APTeQnlwxDKUjS+ax6i5zNtH7Hdestp2aTeidDLtPqJonK/5BqJTKtWco5wTr7shcT4Dw==
-X-Received: by 2002:a5d:47cc:0:b0:391:3049:d58d with SMTP id ffacd0b85a97d-39132b58ad8mr23026970f8f.0.1741855024695;
-        Thu, 13 Mar 2025 01:37:04 -0700 (PDT)
-Received: from localhost (p200300f65f14610400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f14:6104::1b9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8975c6dsm1358884f8f.54.2025.03.13.01.37.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 01:37:04 -0700 (PDT)
+	s=arc-20240116; t=1741855036; c=relaxed/simple;
+	bh=HZEIsCns7sqTp7Ma0UvCw0qlrrLhGqA4e7H2SdN/8+c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lp/jm114IeNRhEYJrNNLx7uadxGTL7rLyGqrPvaUTK3HOOLQdO8Jx/V7K1smDXvIZRcmF8UYYlis3gjPNK3gXd/WomE1jY0u0phKLqzi/orkKmMxFosY/+f03aABCuuEaqk1te0QW0gzB3QSNU8kQFuXPcG5K2OyevIZNGVhrK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tse3r-0007kx-Fj; Thu, 13 Mar 2025 09:37:03 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tse3q-005VPv-1G;
+	Thu, 13 Mar 2025 09:37:02 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tse3q-0003Jw-1B;
+	Thu, 13 Mar 2025 09:37:02 +0100
+Message-ID: <30b6841b3ce199488698ab272f103a0364adb000.camel@pengutronix.de>
+Subject: Re: [PATCH v2 2/2] reset: Add USB2PHY control driver for Renesas
+ RZ/V2H(P)
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Prabhakar <prabhakar.csengg@gmail.com>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Magnus
+ Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Date: Thu, 13 Mar 2025 09:37:02 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Chenyuan Yang <chenyuan0y@gmail.com>
-Cc: rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
-	lukasz.luba@arm.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] thermal: int340x: Add Null check for adev
-Message-ID: <uudh23zxngyi534idmutg6v3aowjnokedomv76iyanuda4nocy@m5xqjtdc47kh>
-References: <20250313043611.1212116-1-chenyuan0y@gmail.com>
+In-Reply-To: <20250305123915.341589-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: 
+	<20250305123915.341589-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	 <20250305123915.341589-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ltu4d5dxxuaxnqmp"
-Content-Disposition: inline
-In-Reply-To: <20250313043611.1212116-1-chenyuan0y@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-
---ltu4d5dxxuaxnqmp
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] thermal: int340x: Add Null check for adev
-MIME-Version: 1.0
-
-Hello,
-
-On Wed, Mar 12, 2025 at 11:36:11PM -0500, Chenyuan Yang wrote:
-> Not all devices have an ACPI companion fwnode, so adev might be NULL.
-> This is similar to the commit cd2fd6eab480
-> ("platform/x86: int3472: Check for adev =3D=3D NULL").
+On Mi, 2025-03-05 at 12:39 +0000, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >=20
-> Add a check for adev not being set and return -ENODEV in that case to
-> avoid a possible NULL pointer deref in int3402_thermal_probe().
+> Add support for the USB2PHY control driver on the Renesas RZ/V2H(P) SoC.
+> Make the driver handle reset and power-down operations for the USB2PHY.
 >=20
-> Note, under the same directory, int3400_thermal_probe() has such a
-> check.
+> Pass OF data to support future SoCs with similar USB2PHY hardware but
+> different register configurations. Define device-specific initialization
+> values and control register settings in OF data to ensure flexibility
+> for upcoming SoCs.
 >=20
-> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  drivers/reset/Kconfig                    |   7 +
+>  drivers/reset/Makefile                   |   1 +
+>  drivers/reset/reset-rzv2h-usb2phy-ctrl.c | 223 +++++++++++++++++++++++
+>  3 files changed, 231 insertions(+)
+>  create mode 100644 drivers/reset/reset-rzv2h-usb2phy-ctrl.c
+>=20
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 5b3abb6db248..bac08dae8905 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -218,6 +218,13 @@ config RESET_RZG2L_USBPHY_CTRL
+>  	  Support for USBPHY Control found on RZ/G2L family. It mainly
+>  	  controls reset and power down of the USB/PHY.
+> =20
+> +config RESET_RZV2H_USB2PHY_CTRL
+> +	tristate "Renesas RZ/V2H(P) (and similar SoCs) USB2PHY control driver"
+> +	depends on ARCH_RENESAS || COMPILE_TEST
+> +	help
+> +	  Support for USB2PHY Control found on the RZ/V2H(P) SoC (and similar S=
+oCs).
+> +	  It mainly controls reset and power down of the USB2 PHY.
+> +
+>  config RESET_SCMI
+>  	tristate "Reset driver controlled via ARM SCMI interface"
+>  	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index 677c4d1e2632..3cb3df018cf8 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -30,6 +30,7 @@ obj-$(CONFIG_RESET_QCOM_AOSS) +=3D reset-qcom-aoss.o
+>  obj-$(CONFIG_RESET_QCOM_PDC) +=3D reset-qcom-pdc.o
+>  obj-$(CONFIG_RESET_RASPBERRYPI) +=3D reset-raspberrypi.o
+>  obj-$(CONFIG_RESET_RZG2L_USBPHY_CTRL) +=3D reset-rzg2l-usbphy-ctrl.o
+> +obj-$(CONFIG_RESET_RZV2H_USB2PHY_CTRL) +=3D reset-rzv2h-usb2phy-ctrl.o
+>  obj-$(CONFIG_RESET_SCMI) +=3D reset-scmi.o
+>  obj-$(CONFIG_RESET_SIMPLE) +=3D reset-simple.o
+>  obj-$(CONFIG_RESET_SOCFPGA) +=3D reset-socfpga.o
+> diff --git a/drivers/reset/reset-rzv2h-usb2phy-ctrl.c b/drivers/reset/res=
+et-rzv2h-usb2phy-ctrl.c
+> new file mode 100644
+> index 000000000000..a6daeaf37e1c
+> --- /dev/null
+> +++ b/drivers/reset/reset-rzv2h-usb2phy-ctrl.c
+> @@ -0,0 +1,223 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Renesas RZ/V2H(P) USB2PHY control driver
+> + *
+> + * Copyright (C) 2025 Renesas Electronics Corporation
+> + */
+> +
+> +#include <linux/cleanup.h>
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/reset.h>
+> +#include <linux/reset-controller.h>
+> +
+> +struct rzv2h_usb2phy_regval {
+> +	u16 reg;
+> +	u16 val;
+> +};
+> +
+> +struct rzv2h_usb2phy_data {
+> +	const struct rzv2h_usb2phy_regval *init_vals;
+> +	unsigned int init_val_count;
+> +
+> +	u16 ctrl_reg;
+> +	u16 ctrl_assert_val;
+> +	u16 ctrl_deassert_val;
+> +	u16 ctrl_status_bits;
+> +	u16 ctrl_release_val;
+> +
+> +	u16 ctrl2_reg;
+> +	u16 ctrl2_acquire_val;
+> +	u16 ctrl2_release_val;
+> +};
+> +
+> +struct rzv2h_usb2phy_ctrl_priv {
+> +	const struct rzv2h_usb2phy_data *data;
+> +	void __iomem *base;
+> +	struct device *dev;
+> +	struct reset_controller_dev rcdev;
+> +	spinlock_t lock;
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
-Fixes: 77e337c6e23e ("Thermal: introduce INT3402 thermal driver")
+Lock without comment.
 
-Best regards
-Uwe
+> +};
+> +
+> +#define rcdev_to_priv(x) container_of(x, struct rzv2h_usb2phy_ctrl_priv,=
+ rcdev)
 
---ltu4d5dxxuaxnqmp
-Content-Type: application/pgp-signature; name="signature.asc"
+I'd prefer this to be an inline function.
 
------BEGIN PGP SIGNATURE-----
+> +
+> +static int rzv2h_usbphy_ctrl_assert(struct reset_controller_dev *rcdev,
+> +				    unsigned long id)
+> +{
+> +	struct rzv2h_usb2phy_ctrl_priv *priv =3D rcdev_to_priv(rcdev);
+> +	const struct rzv2h_usb2phy_data *data =3D priv->data;
+> +	struct device *dev =3D priv->dev;
+> +	int ret;
+> +
+> +	ret =3D pm_runtime_resume_and_get(dev);
+> +	if (ret) {
+> +		dev_err(dev, "pm_runtime_resume_and_get failed\n");
+> +		return ret;
+> +	}
+> +	scoped_guard(spinlock, &priv->lock) {
+> +		writel(data->ctrl2_acquire_val, priv->base + data->ctrl2_reg);
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfSmSwACgkQj4D7WH0S
-/k4m9Qf9F3arLo1S4o0YnlIA3s90IPd/1RuM3dHBs1oXzLpWHkvtrNy+6z0Bb+l8
-IrZMDcMoO43Yn4610voPh2aJS7NVSzU8LW4NYP7skMYS2E65lqFH9maHWT49w8x9
-fm0hCNnS82eev85GZHPaMZmrSGWUCI6l6+8vOifElW1dXbhhr8//RiHK5rEr4O2t
-6TtRYR3uW9vhE3u0827TbScAntRLdiVJ0sC0ZTYav10TooeU2BkflCQcEHPIWna4
-aEylb5kABebeN3peUje2/DuaXu/Y/lWjhyJR0wPfrEjjnROuvrnbRWygLZH2yen3
-zpCPvf2yI7IKBVjF4/ykIN196LjkkQ==
-=1hnP
------END PGP SIGNATURE-----
+Comparing to deassert, I wonder why is there no ctrl_acquire_val?
 
---ltu4d5dxxuaxnqmp--
+> +		writel(data->ctrl_assert_val, priv->base + data->ctrl_reg);
+> +	}
+> +
+> +	/* The reset line needs to be asserted for more than 10 microseconds. *=
+/
+> +	udelay(11);
+
+Could this be usleep_range() instead?
+
+> +	pm_runtime_put(dev);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rzv2h_usbphy_ctrl_deassert(struct reset_controller_dev *rcdev=
+,
+> +				      unsigned long id)
+> +{
+> +	struct rzv2h_usb2phy_ctrl_priv *priv =3D rcdev_to_priv(rcdev);
+> +	const struct rzv2h_usb2phy_data *data =3D priv->data;
+> +	struct device *dev =3D priv->dev;
+> +	int ret;
+> +
+> +	ret =3D pm_runtime_resume_and_get(dev);
+> +	if (ret) {
+> +		dev_err(dev, "pm_runtime_resume_and_get failed\n");
+> +		return ret;
+> +	}
+> +
+> +	scoped_guard(spinlock, &priv->lock) {
+> +		writel(data->ctrl_deassert_val, priv->base + data->ctrl_reg);
+> +		writel(data->ctrl2_release_val, priv->base + data->ctrl2_reg);
+> +		writel(data->ctrl_release_val, priv->base + data->ctrl_reg);
+> +	}
+> +
+> +	pm_runtime_put(dev);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rzv2h_usbphy_ctrl_status(struct reset_controller_dev *rcdev,
+> +				    unsigned long id)
+> +{
+> +	struct rzv2h_usb2phy_ctrl_priv *priv =3D rcdev_to_priv(rcdev);
+> +	struct device *dev =3D priv->dev;
+> +	int ret;
+> +	u32 reg;
+> +
+> +	ret =3D pm_runtime_resume_and_get(dev);
+> +	if (ret) {
+> +		dev_err(dev, "pm_runtime_resume_and_get failed\n");
+> +		return ret;
+> +	}
+> +
+> +	scoped_guard(spinlock, &priv->lock)
+> +		reg =3D readl(priv->base + priv->data->ctrl_reg);
+> +
+> +	pm_runtime_put(dev);
+> +
+> +	return (reg & priv->data->ctrl_status_bits) =3D=3D priv->data->ctrl_sta=
+tus_bits;
+> +}
+> +
+> +static const struct reset_control_ops rzv2h_usbphy_ctrl_reset_ops =3D {
+> +	.assert =3D rzv2h_usbphy_ctrl_assert,
+> +	.deassert =3D rzv2h_usbphy_ctrl_deassert,
+> +	.status =3D rzv2h_usbphy_ctrl_status,
+> +};
+> +
+> +static int rzv2h_reset_of_xlate(struct reset_controller_dev *rcdev,
+> +				const struct of_phandle_args *reset_spec)
+> +{
+> +	/* No special handling needed, we have only one reset line per device *=
+/
+> +	return 0;
+> +}
+> +
+> +static int rzv2h_usb2phy_ctrl_probe(struct platform_device *pdev)
+> +{
+> +	const struct rzv2h_usb2phy_data *data;
+> +	struct rzv2h_usb2phy_ctrl_priv *priv;
+> +	struct device *dev =3D &pdev->dev;
+> +	struct reset_control *rstc;
+> +	int error;
+> +
+> +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	data =3D of_device_get_match_data(dev);
+> +	if (!data)
+> +		return dev_err_probe(dev, -ENODEV,
+> +				     "failed to match device\n");
+> +
+> +	priv->data =3D data;
+> +	priv->dev =3D dev;
+> +	priv->base =3D devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(priv->base))
+> +		return PTR_ERR(priv->base);
+> +
+> +	rstc =3D devm_reset_control_get_shared_deasserted(dev, NULL);
+> +	if (IS_ERR(rstc))
+> +		return dev_err_probe(dev, PTR_ERR(rstc),
+> +				     "failed to get deasserted reset\n");
+> +
+> +	spin_lock_init(&priv->lock);
+> +	dev_set_drvdata(dev, priv);
+> +
+> +	error =3D devm_pm_runtime_enable(dev);
+> +	if (error)
+> +		return dev_err_probe(dev, error, "Failed to enable pm_runtime\n");
+> +
+> +	error =3D pm_runtime_resume_and_get(dev);
+> +	if (error)
+> +		return dev_err_probe(dev, error, "pm_runtime_resume_and_get failed\n")=
+;
+> +
+> +	for (unsigned int i =3D 0; i < data->init_val_count; i++)
+> +		writel(data->init_vals[i].val, priv->base + data->init_vals[i].reg);
+> +
+> +	pm_runtime_put(dev);
+> +
+> +	priv->rcdev.ops =3D &rzv2h_usbphy_ctrl_reset_ops;
+> +	priv->rcdev.of_reset_n_cells =3D 0;
+> +	priv->rcdev.nr_resets =3D 1;
+> +	priv->rcdev.of_xlate =3D rzv2h_reset_of_xlate;
+> +	priv->rcdev.of_node =3D dev->of_node;
+> +	priv->rcdev.dev =3D dev;
+> +
+> +	return devm_reset_controller_register(dev, &priv->rcdev);
+> +}
+> +
+> +static const struct rzv2h_usb2phy_regval rzv2h_init_vals[] =3D {
+> +	{ .reg =3D 0xc10, .val =3D 0x67c },
+> +	{ .reg =3D 0xc14, .val =3D 0x1f },
+> +	{ .reg =3D 0x600, .val =3D 0x909 },
+
+What are these registers and what are those values doing?
+
+> +};
+> +
+> +static const struct rzv2h_usb2phy_data rzv2h_of_data =3D {
+> +	.init_vals =3D rzv2h_init_vals,
+> +	.init_val_count =3D ARRAY_SIZE(rzv2h_init_vals),
+> +	.ctrl_reg =3D 0,
+> +	.ctrl_assert_val =3D 0x206,
+> +	.ctrl_status_bits =3D BIT(2),
+> +	.ctrl_deassert_val =3D 0x200,
+> +	.ctrl_release_val =3D 0x0,
+> +	.ctrl2_reg =3D 0xb04,
+> +	.ctrl2_acquire_val =3D 0x303,
+> +	.ctrl2_release_val =3D 0x3,
+
+This is really opaque. I would have expected some defines for the
+register bits (or fields?) at least.
+
+> +};
+> +
+> +static const struct of_device_id rzv2h_usb2phy_ctrl_match_table[] =3D {
+> +	{ .compatible =3D "renesas,r9a09g057-usb2phy-ctrl", .data =3D &rzv2h_of=
+_data },
+> +	{ /* Sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, rzv2h_usb2phy_ctrl_match_table);
+> +
+> +static struct platform_driver rzv2h_usb2phy_ctrl_driver =3D {
+> +	.driver =3D {
+> +		.name		=3D "rzv2h_usb2phy_ctrl",
+> +		.of_match_table	=3D rzv2h_usb2phy_ctrl_match_table,
+> +	},
+> +	.probe =3D rzv2h_usb2phy_ctrl_probe,
+> +};
+> +module_platform_driver(rzv2h_usb2phy_ctrl_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>")=
+;
+> +MODULE_DESCRIPTION("Renesas RZ/V2H(P) USB2PHY Control");
+
+regards
+Philipp
+
 
