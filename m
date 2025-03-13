@@ -1,137 +1,161 @@
-Return-Path: <linux-kernel+bounces-559641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A24DFA5F70A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:56:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D90A5F715
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:57:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5C31165F35
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20C9C3BDDAD
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCBA267B7C;
-	Thu, 13 Mar 2025 13:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF9B267F4E;
+	Thu, 13 Mar 2025 13:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b="Qe/3eXMb"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="fShdanW6"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD09C267B07
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFDE267B8D
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741874173; cv=none; b=t9/jq0BiJYNnphASoHZ6wcJqumGIlYxjdwM2udrCVcZzMT2U41y9JlPCQ7OXh8JIaTaJQHxBHs+Y1v1b3eo9oXY6vPzkEYTctPq5sx2ByfjHMKSuwn8Kfbw6VucBvQKwxw3AvtDwnruSa0y4FMO6p/vO6VWeCs+0Xib71RWwjYQ=
+	t=1741874178; cv=none; b=PaaZcbeQ/RKMVPQCbxosBOdde9Imhu2dzAzELBjo/wRPPcF+zQoGHI/U2XvBVu81Wc5MfziyBjp96Z7qqH0SvXrn1FXCuiIAm45ZIyO87mZ54J9Z6Q4qQ/IjvBDnaGXaKHd0f4UIJxoJNSYjU/U7Unsyj0om84x3DKLiXFN+IY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741874173; c=relaxed/simple;
-	bh=OXZwBbGFVEFD60c57eDI5cj9JWNWhkxbptmsSKbkSJE=;
+	s=arc-20240116; t=1741874178; c=relaxed/simple;
+	bh=qlYjQkndD+jN2uSnFaoEaumU1+kID5pARueOA2oTUyA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cZ0CNBjLMaKbydV2U6pQP8OMHqgvAuwdeavxupgbHNtYCxNuHRg9QsE5IJcJ1O1Hfo7fqG6SPJoZp7Jvkzs/sK11qXzJfyzqpbFUxmPPfQFpZsweCN/jslxbWNTzfGkeN0M4b79LEhJhVnqjHd2qKKurzrYmUUnTHj28irykyt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b=Qe/3eXMb; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22355618fd9so19094615ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 06:56:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa-ai.20230601.gappssmtp.com; s=20230601; t=1741874170; x=1742478970; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mJWf+2Kk9KeIZXFG3cJ7oE/X0yoKG+h9t1wBj4fhOuw=;
-        b=Qe/3eXMbVcP6ytBYJ76iyF11ZFTjzxBwTRc09YSXvuRg1IYxHKQgV14nktetSYpSH7
-         adaS39IwuERhNLr8a3010uqOF/ybTM2gXqB3OPhSOH16cHJ1N4Wak4de26b4imXn8dpF
-         T6z7cDBgj4ZWNP2DJzvUoVzYv7KUpukZTewf1HR9j7GW7VgbD7WYqzlzcOXllKG070QI
-         r4hVG4okhyBmRCTh4TWudn4gX0zAIjmvDQxG/fSCo3ZSm3tLHGmZSLs6FZMuKcBZznq2
-         SxoxHJZBOAwkBtH8O0gsnm4YdLhiimO5OPLztXLM57gvqyNLgFwE+DJ7jjbOl575Np6/
-         CCww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741874170; x=1742478970;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mJWf+2Kk9KeIZXFG3cJ7oE/X0yoKG+h9t1wBj4fhOuw=;
-        b=NxP8RKxOL94bIEaL3mTO5pWb0vuB6vVVxLvUNq42ziK7zVibDjrRxbWfSucA4wqzHT
-         d1jg8yXJpw1Sq+36XxbWK6lIduAeJa4LbVrRkPGFQp3W8L4rP6v5vdieeRCWwKktQBiS
-         Cddv2s/qqHg43hk8X4fe8RyBsi9k+eX+xFnwEXrJee9UA/e+RELNtd1XcKwQXmzfm6j9
-         xMGqajNGfz/HfeijL4Jg2yo/K70kRgJO+wGiGDZZfpIc3J8OgwVo1y8tAh8gp0rnO7cj
-         fChzRzkvdToo2GW7fQyWrfMcl83e44/IMrxAae/d0nFd7yGSV6JB2msGftnfU6PYfd4X
-         hY9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWkHXjzY+92TD+4COGYiweV1DQc1fBPey2F7viJVjlK+TXsdWM8nCRj9tMUWhrUp8S8A03QwGm+8Iijvm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5uPUuaqlnugskWba7hzVN23mWnb1RAXlE1bGPaJMFd00mDEIx
-	n2NtyTrrRYJjuuuDPRmML4izKTGK3mCObMJX6J3NjdUmrwsw0RkF4HYXjJqvJ4M=
-X-Gm-Gg: ASbGncswpYY4/DZD0FPRj+41kXIkwTAzcfZMjF5UkWzXpAxsGnVhGyCbclTWB9A8dsN
-	iY8aexza5XE86sYP5lmnlUlNxHg4AHyuUfpOfsd7DrYqVFp5JJRtGyn0XUZwY6r6hda3D6F4pGy
-	WrXSZ5TxPDkFgtod7eKNXMIb8xaKPoJ2SREmZlRUQTi+7TW93TQ2/2DvCwbGozkcbOfxqj+UXle
-	sB2yvr67jeYaEI90sbha2w0O4pYpfKRthRHSmmFwFMrOo9qfvuwRM/y7jhbzqnjks3eAUQ9GqZ1
-	nE1a8fs2o9X7EDJgK7HF2jG/30ZICB+XRa3vHk+OANx/msf5vJMZq10wRVdLk08LqzhKWilSjg/
-	D
-X-Google-Smtp-Source: AGHT+IEaZvgrjYn2hacXxym8AfVHesqurCWdjoDGFqV63N73+ZMsWJUmVSIvP/Ou4EEvrvg7tRtGpQ==
-X-Received: by 2002:a05:6a00:6c96:b0:737:9b:582a with SMTP id d2e1a72fcca58-737009b5927mr9817205b3a.24.1741874169929;
-        Thu, 13 Mar 2025 06:56:09 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371152948fsm1365507b3a.16.2025.03.13.06.56.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 06:56:09 -0700 (PDT)
-Date: Thu, 13 Mar 2025 22:56:02 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH v2 0/2] introduce io_uring_cmd_import_fixed_vec
-Message-ID: <Z9Lj8s-pTTEJhMOn@sidongui-MacBookPro.local>
-References: <20250312142326.11660-1-sidong.yang@furiosa.ai>
- <7a4217ce-1251-452c-8570-fb36e811b234@gmail.com>
- <Z9K2-mU3lrlRiV6s@sidongui-MacBookPro.local>
- <95529e8f-ac4d-4530-94fa-488372489100@gmail.com>
- <fd3264c8-02be-4634-bab2-2ad00a40a1b7@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jgoPzvw2QZyLMATFJLzlsnSFnac4ibVzGKXVGTgBVFjlh0dVv8EgL2seFKAPJQ7ULs6HUjBrR0OHYFb6zFyinbjroIrlRBvgxcgiPWTQfEIt35gsaL6/kuc+OX/HCjIls27g6wCCkD/3inHZp+78sWQRgTxtbTXEus0hBPCCROI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=fShdanW6; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=lM0g+et7+koHvwD3M6Xbjrzfe2Oj1PGsMfiK3GoCkb0=; b=fShdanW6PbvuMFwP
+	d1KJgdHaBd9oqatJIw5wA440G9mE87T9T7pcZPbqnEr/U25jvEF/fb9jkBiIllm6yjUBaGXMMQJgQ
+	3riEx4T9FqTUlLmZiGaj/BphArEk5qjlRF7Rd32O8Nk5ugQp+6Rs6nNZ3MgczTvCMMeJf/PhJqqk1
+	M1DTti6LAUeCZ3X732q2w44mc4TrghGxiJFwWclX5/WpD3EcVD9ZBRndSnT32MSTRfq9BaZ/R0ZiT
+	LPvwKn/OT/+x1DBiy/Bku+Tk0CNowUwiHyCcmqWlK7X42Gp5xocQUlZ9yqWJJfN55QiR9kbcqmAIZ
+	R8pIkXl1jwJioPNI7g==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tsj2d-004e9J-1n;
+	Thu, 13 Mar 2025 13:56:07 +0000
+Date: Thu, 13 Mar 2025 13:56:07 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: gregkh@linuxfoundation.org, Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, stuyoder@gmail.com,
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bus: fsl-mc: Remove deadcode
+Message-ID: <Z9Lj9_yM1EK5pKee@gallifrey>
+References: <20241115152055.279732-1-linux@treblig.org>
+ <3f9dbb7b-6527-48e1-9028-b46e5a0c58ce@csgroup.eu>
+ <Z9LbwRUsHwFLpBZA@gallifrey>
+ <362f9392-f891-4a15-9ffd-5f5a6cac41b8@csgroup.eu>
+ <oz65tdekf2ywyzadbntuxntwxulcdzyo33se54qqdsddkogquh@bqnmsmqijfvb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <fd3264c8-02be-4634-bab2-2ad00a40a1b7@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <oz65tdekf2ywyzadbntuxntwxulcdzyo33se54qqdsddkogquh@bqnmsmqijfvb>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 13:54:58 up 309 days,  1:09,  1 user,  load average: 0.13, 0.07,
+ 0.01
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Thu, Mar 13, 2025 at 01:17:44PM +0000, Pavel Begunkov wrote:
-> On 3/13/25 13:15, Pavel Begunkov wrote:
-> > On 3/13/25 10:44, Sidong Yang wrote:
-> > > On Thu, Mar 13, 2025 at 08:57:45AM +0000, Pavel Begunkov wrote:
-> > > > On 3/12/25 14:23, Sidong Yang wrote:
-> > > > > This patche series introduce io_uring_cmd_import_vec. With this function,
-> > > > > Multiple fixed buffer could be used in uring cmd. It's vectored version
-> > > > > for io_uring_cmd_import_fixed(). Also this patch series includes a usage
-> > > > > for new api for encoded read in btrfs by using uring cmd.
-> > > > 
-> > > > Pretty much same thing, we're still left with 2 allocations in the
-> > > > hot path. What I think we can do here is to add caching on the
-> > > > io_uring side as we do with rw / net, but that would be invisible
-> > > > for cmd drivers. And that cache can be reused for normal iovec imports.
-> > > > 
-> > > > https://github.com/isilence/linux.git regvec-import-cmd
-> > > > (link for convenience)
-> > > > https://github.com/isilence/linux/tree/regvec-import-cmd
-> > > > 
-> > > > Not really target tested, no btrfs, not any other user, just an idea.
-> > > > There are 4 patches, but the top 3 are of interest.
-> > > 
-> > > Thanks, I justed checked the commits now. I think cache is good to resolve
-> > > this without allocation if cache hit. Let me reimpl this idea and test it
-> > > for btrfs.
+Hi Greg,
+
+* Ioana Ciornei (ioana.ciornei@nxp.com) wrote:
+> On Thu, Mar 13, 2025 at 02:37:56PM +0100, Christophe Leroy wrote:
 > > 
-> > Sure, you can just base on top of that branch, hashes might be
-> > different but it's identical to the base it should be on. Your
-> > v2 didn't have some more recent merged patches.
+> > 
+> > Le 13/03/2025 à 14:21, Dr. David Alan Gilbert a écrit :
+> > > [Vous ne recevez pas souvent de courriers de linux@treblig.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> > > 
+> > > * Christophe Leroy (christophe.leroy@csgroup.eu) wrote:
+> > > > 
+> > > > 
+> > > > Le 15/11/2024 à 16:20, linux@treblig.org a écrit :
+> > > > > [Vous ne recevez pas souvent de courriers de linux@treblig.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> > > > > 
+> > > > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > > > > 
+> > > > > fsl_mc_allocator_driver_exit() was added explicitly by
+> > > > > commit 1e8ac83b6caf ("bus: fsl-mc: add fsl_mc_allocator cleanup function")
+> > > > > but was never used.
+> > > > > 
+> > > > > Remove it.
+> > > > > 
+> > > > > fsl_mc_portal_reset() was added in 2015 by
+> > > > > commit 197f4d6a4a00 ("staging: fsl-mc: fsl-mc object allocator driver")
+> > > > > but was never used.
+> > > > > 
+> > > > > Remove it.
+> > > > > 
+> > > > > fsl_mc_portal_reset() was the only caller of dpmcp_reset().
+> > > > > 
+> > > > > Remove it.
+> > > > > 
+> > > > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > > > 
+> > > > Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> > > 
+> > > Hi,
+> > >    Can someone pick this old change up please?  I see the PPC patchwork says
+> > >    'handled elsewhere' but doesn't say where.
+> > 
+> > MAINTAINERS file says where:
+> > 
+> > QORIQ DPAA2 FSL-MC BUS DRIVER
+> > M:	Stuart Yoder <stuyoder@gmail.com>
+> > M:	Laurentiu Tudor <laurentiu.tudor@nxp.com>
+> > L:	linux-kernel@vger.kernel.org
+> > S:	Maintained
+> > F:	Documentation/ABI/stable/sysfs-bus-fsl-mc
+> > F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+> > F:
+> > Documentation/networking/device_drivers/ethernet/freescale/dpaa2/overview.rst
+> > F:	drivers/bus/fsl-mc/
+> > F:	include/uapi/linux/fsl_mc.h
+> > 
+> > FREESCALE SOC DRIVERS
+> > M:	Christophe Leroy <christophe.leroy@csgroup.eu>
+> > L:	linuxppc-dev@lists.ozlabs.org
+> > L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> > S:	Maintained
+> > F:	Documentation/devicetree/bindings/misc/fsl,dpaa2-console.yaml
+> > F:	Documentation/devicetree/bindings/soc/fsl/
+> > F:	drivers/soc/fsl/
+> > F:	include/linux/fsl/
+> > F:	include/soc/fsl/
+> > 
+> > I acked the 2 line changes in include/linux/fsl/mc.h, the main changes being
+> > in the C files which are not under my scope.
+> > 
+> > Stuart, Laurentiu, can you pick up the patch ?
 > 
-> Jens' for-6.15/io_uring-reg-vec specifically, but for-next likely
-> has it merged.
+> Stuart and Laurentiu are no longer at NXP. Even when they handled the
+> fsl-mc bus driver, they didn't have a tree themselves to pick patches up
+> but rather, historically, patches on the fsl-mc bus were picked by Greg
+> KH.
 
-Yes, there is commits about io_uring-reg-vec in Jens' for-next. I'll make v3 based
-on the branch.
+OK, copied Greg in.
 
-> 
-> -- 
-> Pavel Begunkov
-> 
+Dave
+
+> Ioana
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
