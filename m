@@ -1,157 +1,100 @@
-Return-Path: <linux-kernel+bounces-559154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDE86A5F027
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:03:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB95A5F02B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:03:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5F8C1894547
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:03:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 784A03A984D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF2A2641DE;
-	Thu, 13 Mar 2025 10:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A72264F8C;
+	Thu, 13 Mar 2025 10:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DWQy/Hfj"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0431D5154;
-	Thu, 13 Mar 2025 10:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qXNFyN4z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44852627E8;
+	Thu, 13 Mar 2025 10:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741860181; cv=none; b=LyWtkg/L0P2cqkdk+Lh4hd60WwuYoYOXyVPgzO1hReqYJVi88fEjTspi6g0uvXH4XYmYyiPAGdMPUkGcCqGvDJcg+G/5ZLu+z0/OCOYxyyCGM+VLMZg3NuL8J+6fi2eQrEAKtaRDyBGvAHY2+Stm9P0ZlpOygbptOUy7uz39r6c=
+	t=1741860204; cv=none; b=b6C/JmWYOiedAeEWyeJ7QupazaB8RmmHvZr3s6hyl3E9Lneb1ej+e5UduFrbZx6ewL3Kb7vGxtN6F/FZmbmapXZ1HfIzRPG6tMJeGytgAkZP7T4ppvY8KdOl2ZcX67VrKmeOosUk/ugf1KLeoVUnLKQ+DpIOHbw1Lz7vwncU5yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741860181; c=relaxed/simple;
-	bh=l0fumYIg0NYCdhTh3a1qt9G3CuZK2lteX+DZEbj+6ZY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BPmW1sXpn02xw+bCAup6iLuWTfayrphC1p77T71SfxcY2wvW2wvzAgkmXAUuPLwIys639Y9JII19gygHPRDPNWHJusp5CaNYpUM8yHfyTLILweW99T9jlNa+vTgnNzPmUUKJepoSPUTYq2Pw7EDK6/QcXqH1fVfpFpf4yKrYVgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DWQy/Hfj; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=Oqs1UZTlRHa6oFrEBtaWOF/mZRqIvWmGezxzzASYwe4=;
-	b=DWQy/HfjO2PcRXIvF4fneEjFCLMWxChmsLupmC0kwSvg+ve/pMSABY+hdXg7s7
-	0kWhI009abuerHYQUCKJbVdr6nZirdLzLv2PNZFjijob4GMtNe3KZ+24uw5veLZ+
-	qbPuIwfMKZVSxSR4yhC2bi69caM6EYVR99G1YIrRV6oCY=
-Received: from [10.42.12.155] (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wAHA2A3rdJniQ73SA--.14057S2;
-	Thu, 13 Mar 2025 18:02:33 +0800 (CST)
-Message-ID: <7e9db4d9-0a22-44b4-a981-0de25d6a2aa4@163.com>
-Date: Thu, 13 Mar 2025 18:02:31 +0800
+	s=arc-20240116; t=1741860204; c=relaxed/simple;
+	bh=GYaVp06ZaRaULqloLZjXtEUGLEokBtVzt5VpPie8xqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sPQMNsq2I+jGwhjTmFcydyFb9ve/deNVfv72sDh3xXgL5tao4QZZ2tzMvcJ3NjD0sGIUWFBsuXPM5cnWeerZxcmCZ7QCvuoSCxPeowJu+Jiu7OrmXX3nX3SkER/ybDUZosqj4LU+9gA+CrQs7cPuJngafaxg3De3CGMhesPyTWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qXNFyN4z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7D2EC4CEDD;
+	Thu, 13 Mar 2025 10:03:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741860204;
+	bh=GYaVp06ZaRaULqloLZjXtEUGLEokBtVzt5VpPie8xqM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qXNFyN4z841SA2NwvCcOMqgxsGxVkuK8mJqBTeuMGjStDz2HnanExDWyg5j250SeO
+	 DBkDLpMMNce0JdMTAXW+i1bft0klKIeF4P6DusvmcJhxBSSyD4FeOiM7wZfwk2jxD8
+	 yYJPYovhC+NjcwPo/pQ75i0XvAqO63VBmZ//4DWk=
+Date: Thu, 13 Mar 2025 11:03:21 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: lduncan@suse.com, cleech@redhat.com, michael.christie@oracle.com,
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+	James.Bottomley@steeleye.com, open-iscsi@googlegroups.com,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] [SCSI] iscsi: fix error handling in iscsi_add_session()
+Message-ID: <2025031316-frail-twitch-7313@gregkh>
+References: <20250313081507.306792-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usbip: Fix the error limitation on max_hw_sectors for
- usbip device
-Content-Language: en-US
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: valentina.manea.m@gmail.com, shuah@kernel.org, i@zenithal.me,
- gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, Zongmin Zhou <zhouzongmin@kylinos.cn>
-References: <20250219092555.112631-1-min_halo@163.com>
- <88b2fb4b-96a4-4d29-bf92-4064d3572fa4@linuxfoundation.org>
- <5a41d6c3.8c78.195371996e0.Coremail.min_halo@163.com>
- <247c7e15-bbff-427f-8315-ca463f8b933b@linuxfoundation.org>
- <4d4035bf.26b9.19556dcc23d.Coremail.min_halo@163.com>
- <c49917d2-5157-4878-9866-be6053b5124d@linuxfoundation.org>
- <6d47fef6.9eef.19565c308e5.Coremail.min_halo@163.com>
- <803b43c6-9aab-4380-9753-fd2efa8061fa@linuxfoundation.org>
-From: Zongmin Zhou <min_halo@163.com>
-In-Reply-To: <803b43c6-9aab-4380-9753-fd2efa8061fa@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAHA2A3rdJniQ73SA--.14057S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZry5uFy7Gw4UurykKF4Uurg_yoW5Ww4fpa
-	s3XFWxKFsrtFyFyFsFkw1rXa4YqrW7KFyUWryDCw1UZws09r1UKrs2k3Z5uFyxXF13Ww12
-	vr4qyF9xurWqyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U3UUbUUUUU=
-X-CM-SenderInfo: pplqsxxdorqiywtou0bp/1tbixwEPq2fSpjyrWgAAs8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313081507.306792-1-make24@iscas.ac.cn>
+
+On Thu, Mar 13, 2025 at 04:15:07PM +0800, Ma Ke wrote:
+> Once device_add() failed, we should call put_device() to decrement
+> reference count for cleanup. Or it could cause memory leak.
+> 
+> As comment of device_add() says, 'if device_add() succeeds, you should
+> call device_del() when you want to get rid of it. If device_add() has
+> not succeeded, use only put_device() to drop the reference count'.
+> 
+> Found by code review.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 8434aa8b6fe5 ("[SCSI] iscsi: break up session creation into two stages")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>  drivers/scsi/scsi_transport_iscsi.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/scsi/scsi_transport_iscsi.c b/drivers/scsi/scsi_transport_iscsi.c
+> index 9c347c64c315..74333e182612 100644
+> --- a/drivers/scsi/scsi_transport_iscsi.c
+> +++ b/drivers/scsi/scsi_transport_iscsi.c
+> @@ -2114,6 +2114,7 @@ int iscsi_add_session(struct iscsi_cls_session *session, unsigned int target_id)
+>  release_dev:
+>  	device_del(&session->dev);
+>  release_ida:
+> +	put_device(&session->dev);
+>  	if (session->ida_used)
+>  		ida_free(&iscsi_sess_ida, session->target_id);
+>  destroy_wq:
+
+How was this tested?
+
+I do not think this change is correct at all, please prove it by showing
+how it was tested.
+
+thanks,
 
 
-On 2025/3/11 00:49, Shuah Khan wrote:
-> On 3/5/25 03:03, Zongmin Zhou wrote:
->> At 2025-03-05 03:45:28, "Shuah Khan" <skhan@linuxfoundation.org> wrote:
->>
->>> On 3/2/25 05:37, Zongmin Zhou wrote:
->>>> Dear shuah,
->>>>
->>>>
->>>> Yes, I agree with you.It would be better if there have a more 
->>>> simpler fixes than This patch.
->>>>
->>>> I can just think of the two possible solutions that mentioned before.
->>>
->>  >What are the two possible solutions?
->> 1. The patch we are discussing now,have to change the API between the 
->> kernel and user-space.
->
-> 2. Simply set vhci-hcd dma mask to 64 by default,just modify the 
-> vhci-hcd driver. Then dma_max_mapping_size() will always return SIZE_MAX.
->
-> I prefer option #2 - What are the downsides if any with this option?
->
-If set vhci-hcd dma mask to 64 by default,I can't predict what will 
-happen when the real USB controller support less than 64bit?
-
-After all, the data flows from vhci-hcd to usbip-host and finally to the 
-USB controller to which the device is actually connected.
-
-the data is ultimately processed through the real USB controller?
-
-However, the default setting to 64-bit is equivalent to eliminating the 
-impact of
-
-the patch(commit d74ffae8b8dd) on usbip protocol devices, sounds feasible?
-
-I am not very professional in this field, waiting for your evaluation.
-
->>>>
->>>>
->>>> If SWIOTLB disabled,dma_max_mapping_size() return SIZE_MAX.
->>>
->>> Right when CONFIG_HAS_DMA, if not it returns 0. Perhaps we
->>  >can ignore CONFIG_HAS_DMA=n for this for this discussion.
->> Yeah, let's ignore that.
->>>
->>>>
->>>> Only if SWIOTLB is active and dma addressing limited will return 
->>>> the swiotlb max mapping size.
->>>>
->>>>
->>>> The swiotlb config seems rely on many other config options like 
->>>> x86_64/IOMMU_SUPPORT and so on,
->>>>
->>>> and the configuration on host and client side only use the default 
->>>> at all,Like the default ubuntu release version.
->>>>
->>>> It seems that switlb is enabled by default on most platforms.
->>>
->>> If understand correctly the problem happens only when SWIOTLB
->>> is enabled on client or host?
->>>
->>> The following combinations are possible:
->>>
->>> SWILTLB enabled on client and disabled on host - rate limited?
->>> SWILTLB enabled on client and enabled on host - rate limited?
->>> SWILTLB disabled on client and enabled on host - rate limited?
->>> SWILTLB disabled on client and disabled on host - not a problem
->>  >
->> This problem happens only when SWIOTLB is enabled on client,have 
->> nothing to do with host setting. Because the USB xhci controller may 
->> set dma mask to 64bit if controllers support. The combinations may 
->> like below: SWILTLB enabled on client and enabled/disabled on host - 
->> rate limited SWILTLB disabled on client and enabled/disabled on host 
->> - not a problem
->
-> Got it. So the problem happens only when SWILTLB enabled on client
->
-Yes.
-> thanks,
-> -- Shuah
-
+greg k-h
 
