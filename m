@@ -1,180 +1,163 @@
-Return-Path: <linux-kernel+bounces-560037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C6EA5FCE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:02:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE461A5FCCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:59:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B838F175DA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:02:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 049FE18936A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150D626B081;
-	Thu, 13 Mar 2025 17:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="npYIFgEt"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF40526A0A7;
+	Thu, 13 Mar 2025 16:59:33 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE25E26AAA2
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BB7268FE6
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 16:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741885287; cv=none; b=OOz7NGpo7UcdC71N0syE9MFMYMcdgRhPpB/4o5FJh/RAnsos4LPBUB1IwtD0Jwjx4h4AXQJ1z/P7dWQSF1xTbNzbGxmqtnjmdANOS/+2NFub/AgS7GLFeL6d2DBDQiQSL+FqdHpyJuZ1wvfJMITmGN5GlPd/tunAPwE9mwWQGzw=
+	t=1741885173; cv=none; b=W7K6Tdk5DNrJErqHieqgkGzrHXHWnqXflXNzl5QPTcMs/KILn3mrYuix9ZT0l0WduOt+SLNCec1u1JNIe5PQ93IfwNCMScfRw+XMTB/S3x0aeZ6D3iMG32w++uleWIXLCKwFLo6QkKfmK0fwPu0bek3oFPMY+OkhMPaJZ4besnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741885287; c=relaxed/simple;
-	bh=NFp+Q2uV9XDHr257rWXEdLfhEuoHWCUowjBWvgSEjKc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J2ZQmyN2bBISE69jj7i5tLeDF15tHdR6LP+w4RAkyHS/2A+su4t8s4xxQ/ibJoJ3q0T6j9l4rky6gcCTssyVRmLlFPYapFilRiVazNaaHnQKeRu6lBnvFpnMYVHkc8pRHaNsxGliUQXIKzH8MgamzVDl2Ts4NU3UeFQYd1aWe3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=npYIFgEt; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22337bc9ac3so25561525ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:01:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741885285; x=1742490085; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=CBQw+jqSF0UF2k99azwHt4J3S+nAnROIiT87OqHHQ/M=;
-        b=npYIFgEt8vmNJF6mKAXSqOpJhbumUFhDMxYfNS4g5amQ3HVIzchbuLC27ia3e7eWNu
-         UppE7lMzPGScTvVJ9kwEP2JObeLSCms2I2f1PK1nuwiA07b1r0ACPIcPjaeH+XhUBD4x
-         2pKwCVriG0VjHNEg6uoiC/uu0tr1V/N6CiL9ahR798wc4JSw+DXNIZ2YirlsBnl91c5R
-         307G/h9w8mQ1j86CwW4XeTcEUcCGQi3XSeR7gpdv9LJ7jP4GGSqAC+wek83aqGLsAMx+
-         9sVqaCm5TALCvi71CiEKQHE1XAmWbumFvWYvQPeqq4EoBuH2yA4S8mbERwfTT4bhMYMt
-         zOXA==
+	s=arc-20240116; t=1741885173; c=relaxed/simple;
+	bh=5plUZokiGNszsQd5jMdJREBDilijqjztiPfhbU0oomI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AFyjtJ0k19cgfh/kBdJBH4GrBqM0wQjKCdMclL8HVOXsRUTVtQKlOunOruQZgwHHUeu1Z0w5INxW12zZXEPRfuxxBiARS4OLIw1ngQDyLBPEOfunINtAf7C7iH9tYuyIfnJoIlCOxOceobS+gXIJc53H5iBBS7Usa+Q6NOaVRBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-85db3356bafso300803739f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:59:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741885285; x=1742490085;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
+        d=1e100.net; s=20230601; t=1741885171; x=1742489971;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=CBQw+jqSF0UF2k99azwHt4J3S+nAnROIiT87OqHHQ/M=;
-        b=qDhggab2MwSCkQZwzfIyMOvLGi2aFH7AaoTyypFQIEIi69/3Ix/fiWelS2vH98S3+D
-         HAy+i1l/lrGb6aFWLjQT+ku9JoqwPSGvclE5+xswU2UJbUGD8S4xjxisHGEpa1eghRx1
-         BIcpnYuzg7Akh7Zdd4SMQwg5QdxBeHxRaMYUqyeWrBE8wAK0z0eQ7Zu+JM/a4BmO8E0a
-         u21p6XJAAL7a5iKH+/rUfVwVMx1MxZUDEVZqpHjVFL1DNhBOu5Ti1UhypBpeFwL0HzCh
-         GDDcVZkUa7JUABa6CeGHVJyN4GdI7X+2W0DfZLYCAOp/GF6P0Dng2WXtAOoaVEgprqlS
-         GSMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwWwE9HDAldRyckJlgwryhNSHj61YI2FT3VsZJ8DNbdcyQw3ZwL06QFUJumSEGfPEoedsI00i3HEatWGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX4dxKfblueYtDkQgqyL06yI7xdkw9YxNhECgh2gfEk63DKLWo
-	OztuAzsaIuNu5gntOrwXmFJqJJYMo8nWZTuXEbayn+8ZTC6gbb4p
-X-Gm-Gg: ASbGncvvtnbmrFgJ62FHx96dxJOWuJe0FScGKEhCufHTNtK0z+6SPqLAJZQRW5RniG5
-	e21V0nITa30l19eaOHAtrUFrbPpu1xGPHtLXnApg8zV3Lzn0E1lI1lxjTPuA0fQ0JrIFb8SA2+E
-	l+9WCJkdS3Zmw+zgbrb8UNEWnj0vQMPoqXK3m5ZPxudm1EPDepO/ifuFie0uBd0haFVNUnue7nf
-	PzIViUNvgWZSp3RNfgTnOGKF069UmWVKLY/iBiDm22utSlfpm9TSHWbPKX7WNJZnHPRquS7ABk7
-	2Cl8rwS6e09/u0hKDhXG7fsi4ARpCT1vT4YpEPNSAKE9mNoNEiOzblffG8egN/VdRL20AXub94i
-	D
-X-Google-Smtp-Source: AGHT+IGt3mQfnAVqFY2K3f10aCR6eUv3elLxAx9cwot21o1/wrOdRjDlzZvktfS1qoxjfYK8Kmbx8g==
-X-Received: by 2002:a05:6a00:88f:b0:736:ab48:5b0 with SMTP id d2e1a72fcca58-736eb7b2f97mr15996283b3a.2.1741885284743;
-        Thu, 13 Mar 2025 10:01:24 -0700 (PDT)
-Received: from KASONG-MC4.tencent.com ([106.37.123.220])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371167df0esm1613529b3a.93.2025.03.13.10.01.19
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 13 Mar 2025 10:01:24 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Chris Li <chrisl@kernel.org>,
-	Barry Song <v-songbaohua@oppo.com>,
-	Hugh Dickins <hughd@google.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Baoquan He <bhe@redhat.com>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>
-Subject: [PATCH v3 2/7] mm, swap: drop the flag TTRS_DIRECT
-Date: Fri, 14 Mar 2025 00:59:30 +0800
-Message-ID: <20250313165935.63303-3-ryncsn@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250313165935.63303-1-ryncsn@gmail.com>
-References: <20250313165935.63303-1-ryncsn@gmail.com>
-Reply-To: Kairui Song <kasong@tencent.com>
+        bh=CAVyUdjA1Fi7LXzB/oZslQ8tsF7/jZYEXnsjntzroqE=;
+        b=Ap7N7f3WNPwgp9oEs9f+fEnKvMr+Vt0dpW3lvhphV42QBel2xmcvFKLFdrU5bmZsyX
+         n/g4HlDC5qNgPwhHkhywOv41bYP0QLu3k+VjJAPH+/lRN/7XhktJJi4h7hAINE5HXXXl
+         IxqgPVj4OBuyEp3CHoCPi/mlYSrJEtI5fAN6Af1jf7caHrDY7vszpmiJxL2XtxhpUeEi
+         Xh5GEVvQqQAFHG9iABCkiNIDp3Id962IPBplkZJ5DXnCpyepn31M0WStOgT6U9aI5X44
+         oyD2kAvQI1nPTUoS1qb5mXMVQ7rrPcdTJ0aYyXgUbhwlUVasRZiSkS0c/b58ebNd3Y2c
+         02iA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGkjl8LZkrwcnzcFaB50axjuSDmNtGcO56ZejIBrkOAF7fiBo5FC2XYzpAG3uPy2rtkil3CFkRaNtE1pY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC1R/jtPcLAsUYX0W8UaHX6mdPGJhYPTFEOKsWmeBgRIqZ7PaZ
+	8MnVUpvws6AUlqc32V5y7+4jWwV0wpJV1a2MQ+TSQ/fBMNO1p0yLNL9mHtYs+NouPYDfO9PpndB
+	Yj+ax9dtv32o8PmEXhH2/RjG1bUtWodaYcjoRNalgzdVKKjMQJPlhKVI=
+X-Google-Smtp-Source: AGHT+IGaGZzlBUeOGaoLnZmW9bgDBCxgtJaE55nziPEvab/sw8+W63R2zUJ4P/BgZbmd5Zz4Rq0ngyXdUb7Mlq/C3Db/n3UoXyQz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:c262:0:b0:3d4:712e:29eb with SMTP id
+ e9e14a558f8ab-3d482051ea1mr6445ab.5.1741885170964; Thu, 13 Mar 2025 09:59:30
+ -0700 (PDT)
+Date: Thu, 13 Mar 2025 09:59:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67d30ef2.050a0220.14e108.003a.GAE@google.com>
+Subject: [syzbot] [input?] [usb?] WARNING in hanwang_open/usb_submit_urb
+From: syzbot <syzbot+9fe8f6caeb5661802ca2@syzkaller.appspotmail.com>
+To: dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Kairui Song <kasong@tencent.com>
+Hello,
 
-This flag exists temporarily to allow the allocator to bypass the slot
-cache during freeing, so reclaiming one slot will free the slot
-immediately.
+syzbot found the following issue on:
 
-But now we have already removed slot cache usage on freeing, so this flag
-has no effect now.
+HEAD commit:    b331a3d8097f xhci: Handle spurious events on Etron host is..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=17db1fa0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f429368eda610a89
+dashboard link: https://syzkaller.appspot.com/bug?extid=9fe8f6caeb5661802ca2
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164a34b7980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11f04664580000
 
-Signed-off-by: Kairui Song <kasong@tencent.com>
-Reviewed-by: Baoquan He <bhe@redhat.com>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6dd3e4d1c59b/disk-b331a3d8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/58f91d593dc0/vmlinux-b331a3d8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6cbf2795aa43/bzImage-b331a3d8.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9fe8f6caeb5661802ca2@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+usb 1-1: BOGUS urb xfer, pipe 1 != type 3
+WARNING: CPU: 0 PID: 2827 at drivers/usb/core/urb.c:503 usb_submit_urb+0xe4b/0x1730 drivers/usb/core/urb.c:503
+Modules linked in:
+CPU: 0 UID: 0 PID: 2827 Comm: acpid Not tainted 6.14.0-rc3-syzkaller-00071-gb331a3d8097f #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:usb_submit_urb+0xe4b/0x1730 drivers/usb/core/urb.c:503
+Code: 84 3c 02 00 00 e8 65 93 ee fc 4c 89 ef e8 fd ca d4 fe 45 89 e0 89 e9 4c 89 f2 48 89 c6 48 c7 c7 00 53 a2 87 e8 f6 a8 b2 fc 90 <0f> 0b 90 90 e9 e9 f8 ff ff e8 37 93 ee fc 49 81 c4 c0 05 00 00 e9
+RSP: 0018:ffffc90001617818 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff888104e85600 RCX: ffffffff813f4dd9
+RDX: ffff8881163eba80 RSI: ffffffff813f4de6 RDI: 0000000000000001
+RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000003
+R13: ffff88810138b0b0 R14: ffff888113321760 R15: ffff888104e8567c
+FS:  00007fd474ef6740(0000) GS:ffff8881f5800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055c4f0adf170 CR3: 00000001163ca000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ hanwang_open+0xa8/0xf0 drivers/input/tablet/hanwang.c:284
+ input_open_device+0x230/0x390 drivers/input/input.c:600
+ evdev_open_device drivers/input/evdev.c:391 [inline]
+ evdev_open+0x52d/0x690 drivers/input/evdev.c:478
+ chrdev_open+0x237/0x6a0 fs/char_dev.c:414
+ do_dentry_open+0x6cb/0x1390 fs/open.c:956
+ vfs_open+0x82/0x3f0 fs/open.c:1086
+ do_open fs/namei.c:3830 [inline]
+ path_openat+0x1e88/0x2d80 fs/namei.c:3989
+ do_filp_open+0x20c/0x470 fs/namei.c:4016
+ do_sys_openat2+0x17a/0x1e0 fs/open.c:1428
+ do_sys_open fs/open.c:1443 [inline]
+ __do_sys_openat fs/open.c:1459 [inline]
+ __se_sys_openat fs/open.c:1454 [inline]
+ __x64_sys_openat+0x175/0x210 fs/open.c:1454
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd474fc09a4
+Code: 24 20 48 8d 44 24 30 48 89 44 24 28 64 8b 04 25 18 00 00 00 85 c0 75 2c 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 60 48 8b 15 55 a4 0d 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007ffd7571ff60 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007ffd75720248 RCX: 00007fd474fc09a4
+RDX: 0000000000080800 RSI: 00007ffd75720148 RDI: 00000000ffffff9c
+RBP: 00007ffd75720148 R08: 00000000000000f4 R09: 00007ffd75720148
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000080800
+R13: 0000000000000020 R14: 00007ffd75720248 R15: 00007ffd75720148
+ </TASK>
+
+
 ---
- mm/swapfile.c | 23 +++--------------------
- 1 file changed, 3 insertions(+), 20 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 5618cd1c4b03..6f2de59c6355 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -158,8 +158,6 @@ static long swap_usage_in_pages(struct swap_info_struct *si)
- #define TTRS_UNMAPPED		0x2
- /* Reclaim the swap entry if swap is getting full */
- #define TTRS_FULL		0x4
--/* Reclaim directly, bypass the slot cache and don't touch device lock */
--#define TTRS_DIRECT		0x8
- 
- static bool swap_only_has_cache(struct swap_info_struct *si,
- 			      unsigned long offset, int nr_pages)
-@@ -257,23 +255,8 @@ static int __try_to_reclaim_swap(struct swap_info_struct *si,
- 	if (!need_reclaim)
- 		goto out_unlock;
- 
--	if (!(flags & TTRS_DIRECT)) {
--		/* Free through slot cache */
--		delete_from_swap_cache(folio);
--		folio_set_dirty(folio);
--		ret = nr_pages;
--		goto out_unlock;
--	}
--
--	xa_lock_irq(&address_space->i_pages);
--	__delete_from_swap_cache(folio, entry, NULL);
--	xa_unlock_irq(&address_space->i_pages);
--	folio_ref_sub(folio, nr_pages);
-+	delete_from_swap_cache(folio);
- 	folio_set_dirty(folio);
--
--	ci = lock_cluster(si, offset);
--	swap_entry_range_free(si, ci, entry, nr_pages);
--	unlock_cluster(ci);
- 	ret = nr_pages;
- out_unlock:
- 	folio_unlock(folio);
-@@ -697,7 +680,7 @@ static bool cluster_reclaim_range(struct swap_info_struct *si,
- 			offset++;
- 			break;
- 		case SWAP_HAS_CACHE:
--			nr_reclaim = __try_to_reclaim_swap(si, offset, TTRS_ANYWAY | TTRS_DIRECT);
-+			nr_reclaim = __try_to_reclaim_swap(si, offset, TTRS_ANYWAY);
- 			if (nr_reclaim > 0)
- 				offset += nr_reclaim;
- 			else
-@@ -849,7 +832,7 @@ static void swap_reclaim_full_clusters(struct swap_info_struct *si, bool force)
- 			if (READ_ONCE(map[offset]) == SWAP_HAS_CACHE) {
- 				spin_unlock(&ci->lock);
- 				nr_reclaim = __try_to_reclaim_swap(si, offset,
--								   TTRS_ANYWAY | TTRS_DIRECT);
-+								   TTRS_ANYWAY);
- 				spin_lock(&ci->lock);
- 				if (nr_reclaim) {
- 					offset += abs(nr_reclaim);
--- 
-2.48.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
