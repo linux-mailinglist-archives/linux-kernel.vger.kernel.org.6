@@ -1,129 +1,121 @@
-Return-Path: <linux-kernel+bounces-558666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0ABBA5E938
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:09:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 467F6A5E93B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:15:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76744189935A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:09:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8892B178126
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0161C6BE;
-	Thu, 13 Mar 2025 01:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25032249EB;
+	Thu, 13 Mar 2025 01:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2RZfHfx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kWST81A1"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76802E3391;
-	Thu, 13 Mar 2025 01:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECA12868B;
+	Thu, 13 Mar 2025 01:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741828176; cv=none; b=OxIBjeKd1Ef+ly4Lw3l/JGwOSKVnOkEJgZ+CI2YI1XrkgpKFqq8l4kvTNM8VJUSvhkkgHn93r862k7Y4R+1koQpJ+qJl7Nx1Eb5RU/BuRSak4Oxfbiy3ZC0hxrBcjXZUTA50CMFiv2YfwCw+SMcQZjGWxpip5vOpIudvNP2CTCw=
+	t=1741828512; cv=none; b=sAK+eppJ50uJWo1mrSlcK58TuS/GL23Mufjdi9ERvj6Bf/MnbYHKLK4YEpYl8ulA+ScNRoFK6xzxTZsVJWMXN94N6d4g5b4DDTrzyPnkrLqEq4s0YJk9mThPPeVLO68u0GJ8nJg59dp8bF3t9a+w9ikLDJtnIJAEZ/+P+PojlfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741828176; c=relaxed/simple;
-	bh=B8HwtBeRaBHX5JkhLaSUnbwXsgTX3Q2lYTiyZCaBn8M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZfD3VMUkST9fex4mq0sqvJub9YP+nzkiAkLsLpx6bLO+1Ru0IIevd+YMFt29UzpbF6iWEWXkG0epu9GTgkhdblbgDd/gqbd4LeY0BILyNU1UNaxfgZrHBrYT9UGFtADz40K7XC+57jlBg3bqnFpFfjP62/Dh/43hP6d9xWOIwVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q2RZfHfx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 641EBC4CEDD;
-	Thu, 13 Mar 2025 01:09:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741828175;
-	bh=B8HwtBeRaBHX5JkhLaSUnbwXsgTX3Q2lYTiyZCaBn8M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Q2RZfHfxspRUmiRDGz1eQYWca14CBctZRqmJ16TJt+kFFcS5rMijsvjUuz6QXnyy6
-	 03om4s121sP8wh4BkrGOBCx1PSYmztOe3U6Zs2MhwXtdyuNL7eMoAGl4GOcyeeT4mG
-	 ZKAj8wEb/IRIsrCvv5tiBt4o1sU+qTTRFOrbzZOVcCIHqnJYIyd0erdB+SNe+CBzyn
-	 e+W7M4vBOwQlkt8577G6sRta4NxBqu62HyUJO+RF9G41aXHpKe9No8hjUFhuAA6+ik
-	 PX3bOwelan9yK0d3uDQcXmKYnuUFDE5+OosGpovScnj4TYxag7SuuTOhPrYnBWDBYg
-	 te/e20T/7s9JA==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54963160818so511420e87.2;
-        Wed, 12 Mar 2025 18:09:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWF0Uu8wfuJflTBVfObuqW88P3NP5WUd2RdQZGglhYov8cpJRjS4Ul27w+gshvj5xwI6XP4Rob8gIliPG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtgWklIvlCa1STkPj0fiysM8pb2gcJkNz/sulyc/8obfjixn3L
-	jEXcXDQxLw++QJ2zSjZtbMUdQg964ZFG+cNLFzpCL4FhIk0+i3pyiQL5XykFTcQ31wvd2Z2L54P
-	J2Sy7I8+3B8SVelSm0LQHqAmDUgw=
-X-Google-Smtp-Source: AGHT+IFcqvfBK68BflSjEsKvxfdHwOVmP0F1TRkLwGsuRvd3qs57522RPwblzli5/mHmSvGhpUo6BT/N+AoOzkTRGxY=
-X-Received: by 2002:a05:6512:2203:b0:545:22ec:8b6b with SMTP id
- 2adb3069b0e04-54990eadb29mr8212477e87.35.1741828174119; Wed, 12 Mar 2025
- 18:09:34 -0700 (PDT)
+	s=arc-20240116; t=1741828512; c=relaxed/simple;
+	bh=P+4AM5HRF2zbjRcn8ySbDfLqoLWfeET2V3x8L7ECH7Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ePcj7+781AjEO4lwMceNTuqG7WgfzcljMTAUwkslxEAxDNjVsN7AeO3NpTfvEMFjavbgQvq19HBA/jbv+QMn6dFBiC6RK2/vdbEdGvBp1+4LtmpjXYPZ0H4jJAfo+RVyAqUmalfbe15UL1qQm3JjKkOm+cL8dTKetXeEr072vbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kWST81A1; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6e241443e8dso717746d6.0;
+        Wed, 12 Mar 2025 18:15:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741828509; x=1742433309; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CplJ4qBm1rlLiAX8XwqfY3czuxTznGHQa5yRNrScf2Q=;
+        b=kWST81A19TNqSIDPcTTVcEgf27QXeAMxLh3jBYhWDGpPdGO+OrGEISiOCcf6RGobyE
+         be3VBHqccI9jcgNZCfreyXPeDnR4JJesVZPy9wGl3uqX5zVN0XdbgbSfZxd6UYDDrQkz
+         eJdvhEMrhB0m8DzbCGNpUwtlfps9xMmO/gDigamfODnNiaPSj4aT/K3cvs+u/6VSErJN
+         WcmaBMpzVjWjlVrsNa1M7tkgq+Fv54j13Ieg1vyVnOr1ZawAcyDC3CcfbAhkQd0091XW
+         u52nzNfKfa3kej7yaqMxqPBsEBRHkZN3Q6gO4GFKEHfBVp824D08ECar9HjIHtAPuFd6
+         AAjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741828509; x=1742433309;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CplJ4qBm1rlLiAX8XwqfY3czuxTznGHQa5yRNrScf2Q=;
+        b=hevr7KIHLIXDdJq29nDQlYFXP/MiMrP63aLPbZXTKuDMcf1E3hQb+wcBhc4oeC6ruJ
+         C6cum8FW8KRuF8qsgHp1rWa5C3xWhac4XvIbkuiYMKUDml1avWU+cXWYuGSPHnDYhtzo
+         5kXluLPB2bvkn0wmcFlOHdAY0ULjndGwqhL15eQtSvpXmSwfJtOm7JsWftdMLuQvQeIu
+         787OZ2Nf/EPy6pRknYlSgR59883BjGPAVmGpprSIS15J0dRAELYIUa/EHWQZlG4YsciT
+         GBCGscSo75Yepv90cBx+p/y7PPQVn4E9ZT4CHIipAnX6QEd5WPEFP38m65n773IpC19s
+         cSXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWaoolD55yslfkMSyodG+5HnXskUG0uYs21ikhiX3SyjfDrkirDjsbR+16mcfX9pIM0RSjGPoAolG9V4Hw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcoyyjC7Ns0hxXCb6BmQcaLHT9i1v2JKA/bkNEDaAt8yLJ43bo
+	3tL1+Gz8xumw01pfXkIgMU3woEXbxPUyqaWmPK/Ibb/WicXzaX8=
+X-Gm-Gg: ASbGncvB8gUWy8eSWjQMRSToBTAYk2Kf/zooq4xTS0cY8PEf7uLyid7JlX68H4F4lZy
+	MjVKic3Xzwk5BCl5/Cksdg+vfxq8DnHv+iRnKs8HItKNvg4T2ZdGDMkknHDZsvU/qwPbhRlZLu3
+	HBVHEtJg8vrHuyyherJ63+O9db8rqrrO7599hjxq3tL79w56Ua0BI1FFR6jfUNpYQccLywOUdzM
+	PIlxGGpO40/nqCVWey7M92UadgaFKXKZ+L0EYwyTNexBm9q3AQMW8DxF1zBLyaaOVHybZn5YZBg
+	CfWQOsWpF1L2faz36+FYq4VnFhEeluou7x3naW+dAA==
+X-Google-Smtp-Source: AGHT+IHkt7gdCvT3sZMm/MUWsh89g+gMdYyxh1jTYIM+y9Ksbzc5TpKWzBj7zvLRqPmZLC8TC+4rDg==
+X-Received: by 2002:a05:622a:2b0c:b0:474:e7de:8595 with SMTP id d75a77b69052e-47666ca49c3mr100937371cf.14.1741828509184;
+        Wed, 12 Mar 2025 18:15:09 -0700 (PDT)
+Received: from ise-alpha.. ([2620:0:e00:550a:642:1aff:fee8:511b])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-476bb6082d1sm2428761cf.12.2025.03.12.18.15.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 18:15:08 -0700 (PDT)
+From: Chenyuan Yang <chenyuan0y@gmail.com>
+To: mkl@pengutronix.de,
+	kernel@pengutronix.de,
+	mailhol.vincent@wanadoo.fr,
+	heiko@sntech.de
+Cc: linux-can@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Chenyuan Yang <chenyuan0y@gmail.com>
+Subject: [PATCH] can: rockchip: bail out if skb cannot be allocated
+Date: Wed, 12 Mar 2025 20:15:05 -0500
+Message-Id: <20250313011506.3132295-1-chenyuan0y@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312033421.2365201-1-xin@zytor.com>
-In-Reply-To: <20250312033421.2365201-1-xin@zytor.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 13 Mar 2025 10:08:56 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATJ4g3OeD1wo+x=P3ZkkT3mG1JTZCzkuT_3F8eHm5xeig@mail.gmail.com>
-X-Gm-Features: AQ5f1JrPBxNEmEklDdxxiwmQPfFeDBzR-Ujh2xOuHw3dw3B0mYVA2_y8zsc15gY
-Message-ID: <CAK7LNATJ4g3OeD1wo+x=P3ZkkT3mG1JTZCzkuT_3F8eHm5xeig@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] kbuild: Add a help message for "headers"
-To: "Xin Li (Intel)" <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	nathan@kernel.org, nicolas@fjasle.eu, bp@alien8.de, hpa@zytor.com, 
-	sraithal@amd.com, n.schier@avm.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 12, 2025 at 12:35=E2=80=AFPM Xin Li (Intel) <xin@zytor.com> wro=
-te:
->
-> Meanwhile explicitly state that the headers are uapi headers.
->
-> Suggested-by: Borislav Petkov <bp@alien8.de>
-> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-> ---
->
+Add NULL pointer check in rkcanfd_handle_error_int() to
+bail out if skb cannot be allocated.
 
-Applied to linux-kbuild.
-Thanks!
+This is similar to the commit f7f0adfe64de
+("can: rockchip: rkcanfd_handle_rx_fifo_overflow_int(): bail out if skb cannot be allocated").
 
+Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+---
+ drivers/net/can/rockchip/rockchip_canfd-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/can/rockchip/rockchip_canfd-core.c b/drivers/net/can/rockchip/rockchip_canfd-core.c
+index d9a937ba126c..90395cbdaab9 100644
+--- a/drivers/net/can/rockchip/rockchip_canfd-core.c
++++ b/drivers/net/can/rockchip/rockchip_canfd-core.c
+@@ -551,7 +551,7 @@ static int rkcanfd_handle_error_int(struct rkcanfd_priv *priv)
+ 
+ 	rkcanfd_handle_error_int_reg_ec(priv, cf, reg_ec);
+ 
+-	if (!cf)
++	if (!cf || !skb)
+ 		return 0;
+ 
+ 	err = can_rx_offload_queue_timestamp(&priv->offload, skb, timestamp);
+-- 
+2.34.1
 
-> Change in v3:
-> * Fix a typo and write uapi in capital letters (Nicolas Schier).
->
-> Changes in v2:
-> * Revise the help message for "headers" (Masahiro Yamada).
-> * Revise the shortlog (Masahiro Yamada).
-> ---
->  Makefile | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/Makefile b/Makefile
-> index 70bdbf2218fc..08918088ab35 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1659,7 +1659,8 @@ help:
->         @echo  '  kernelrelease   - Output the release version string (us=
-e with make -s)'
->         @echo  '  kernelversion   - Output the version stored in Makefile=
- (use with make -s)'
->         @echo  '  image_name      - Output the image name (use with make =
--s)'
-> -       @echo  '  headers_install - Install sanitised kernel headers to I=
-NSTALL_HDR_PATH'; \
-> +       @echo  '  headers         - Build ready-to-install UAPI headers i=
-n usr/include'
-> +       @echo  '  headers_install - Install sanitised kernel UAPI headers=
- to INSTALL_HDR_PATH'; \
->          echo  '                    (default: $(INSTALL_HDR_PATH))'; \
->          echo  ''
->         @echo  'Static analysers:'
->
-> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
-> --
-> 2.48.1
->
-
-
---
-Best Regards
-Masahiro Yamada
 
