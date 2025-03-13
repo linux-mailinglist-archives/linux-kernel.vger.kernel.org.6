@@ -1,162 +1,128 @@
-Return-Path: <linux-kernel+bounces-560232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B4FFA60012
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:55:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2657EA60036
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:57:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 950E67AD78C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:53:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B74F67A4CD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECE31F0E4B;
-	Thu, 13 Mar 2025 18:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6841F0E5B;
+	Thu, 13 Mar 2025 18:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="Jb58RZLs";
-	dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="2ggEdGat"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XbUJ/Vgt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3351CAA6E;
-	Thu, 13 Mar 2025 18:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741892092; cv=pass; b=P08/mESzAGIdXCGQCZrMVNOFyHYJAXienSM+MVf4dFuzyEqF8Fj8CtkYiJOFw8jrBxJJbZ2HT+AxwqWoW7H68/SdQE5czOwMQqB6/4eN0IH81HNB51wC0AquiFSBwyFbLBHIa6NcMR/GguuPEAwCaKJkF2yJKFcvA8zhDtyVODs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741892092; c=relaxed/simple;
-	bh=CaZpgSYtCH4wIyDEkb0dXSqO4VQYc8DrmJcMXYFTx9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UcfDhupkqQFZ6gyNAi/VYOtpoQfjntl0q/MAmMAKTNSv7LgwQbuldhIBxuHN7U9cjmiPUVgBM9OuKr8JMJeXjcrm+9KxSACTehrt7pL91iwzNapNSraZeco8HX+F+XYJpL5r915UecM817JqKU+69sF0K7MZYQ8Vdq05aEJdF6k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de; spf=pass smtp.mailfrom=fossekall.de; dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=Jb58RZLs; dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=2ggEdGat; arc=pass smtp.client-ip=85.215.255.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fossekall.de
-ARC-Seal: i=1; a=rsa-sha256; t=1741892086; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=GcAsiLlvCXj8PHDT+MgcN8oUjG6QswLD7idPFQg3P3EG3vdbTX2qYrPHk+9BFW6COe
-    B5Ju0/lReHYtWSy+MRb2zK0aJtCWlsiiPB+QsuWmoc5BXlJnFhD6g7qXBuxTfmcQHbEw
-    LOhEgOCGNrd/D6C+fS3dMA3Ow3AiyUaZRxfduSjOy14YdBsHX4O94K3g2So1A5iPFyAT
-    Pqr+djnfzpC4ZhjdeDTlM2MNXx6x3329ZGFKr29/A4iJNc1fi4c0WGvBCDJfFwbnXJtd
-    4xD/hgzWqZyhdk4WdmgbvnI7fku/rNfZLBuhOrAO6/R3bSkWIgTkGOMUS0n1QX1WmVW9
-    az5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1741892086;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=SgCrvoN6Qoq9w0OBDlTcNPxcHVbNiRs3HNs+Dd44VXU=;
-    b=NvpkExZiK7u9eNzB1i1l0d/wDWd59UssFxjMo4zf8m7I0vb1SCTRBA0Frhp/ZXW95b
-    WvqrgonmrIR3c870+KAjXhn7OgbETAMPGTwb52kf1er5W9Q418N5mqE6GYa43WfbsHa6
-    BSDFxG5oxO9c2MvK6RslNeK3gd2e9NZ8ce/Pe9f3Ht865RXFFIknBuNr8cIldF9wGoio
-    gy4wBGIpkbXMrLcuuBqFeSmDqo+XfiSx9P/g2sxYSbqcfQcqhdWHv0FgU8/LlZ48Bo2D
-    QAJlfvk6JEzl3tLaYmzZ27JNHIhI6GX/pJUJLdVLwLB9btyqHxvi3KcG2V8Ubr480/m7
-    pXRg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1741892086;
-    s=strato-dkim-0002; d=fossekall.de;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=SgCrvoN6Qoq9w0OBDlTcNPxcHVbNiRs3HNs+Dd44VXU=;
-    b=Jb58RZLsAZHrogGI7vZdiA0B5mur18q7n0UlIwf56hz26vu3Iq6FKI2Shf4yI9CnnR
-    JQ1vc68oC0byb7zZfWEccQ0MXGDKb2Ix4/jHFi4Yo84SB1UJuAX3YonafIWnDgNdSr79
-    IAOtfDDlkSRE965T3m6SDbbpG+gsB9/oO47+Ao8h2Qt2fk52Oebxdz2K5dXaSp3BDzNN
-    PrXen3hovBg9ZtQcBYYIg5ZChVqJYS0jRzgnlAXSuY/kmfUJP4PPkvOcHfYqoeeoTRlt
-    iwvoexhlW4F22ddXcs6QLnz9vzled2sA24ZUsFSmXydIdmvGsdI8iLJaesi+SfeD7kfz
-    aXQw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1741892086;
-    s=strato-dkim-0003; d=fossekall.de;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=SgCrvoN6Qoq9w0OBDlTcNPxcHVbNiRs3HNs+Dd44VXU=;
-    b=2ggEdGatQ1dzUrOq9fDJwBRyAvYALEmFi9mYllcqYFMfGkar1/lLF7IsdIP3+O/086
-    wj8nE11rF0iMw1zHxgBw==
-X-RZG-AUTH: ":O2kGeEG7b/pS1EzgE2y7nF0STYsSLflpbjNKxx7cGrBdao6FTL4AJcMdm+lap4JEHkzok9eyEg=="
-Received: from aerfugl
-    by smtp.strato.de (RZmta 51.3.0 AUTH)
-    with ESMTPSA id f28b3512DIsjqNf
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Thu, 13 Mar 2025 19:54:45 +0100 (CET)
-Received: from koltrast.home ([192.168.1.27] helo=a98shuttle.de)
-	by aerfugl with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <michael@fossekall.de>)
-	id 1tsnhc-0001xg-2p;
-	Thu, 13 Mar 2025 19:54:44 +0100
-Date: Thu, 13 Mar 2025 19:54:43 +0100
-From: Michael Klein <michael@fossekall.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] net: phy: realtek: Add support for PHY LEDs on
- RTL8211E
-Message-ID: <Z9Mp86eWYw3hgt0x@a98shuttle.de>
-References: <20250312193629.85417-1-michael@fossekall.de>
- <e62af3a7-c228-4523-a1fb-330f4f96f28c@lunn.ch>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68F7143895;
+	Thu, 13 Mar 2025 18:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741892263; cv=none; b=BnDV23aiFwIg98MkrdaEjFNE3FiENw7E0b34E3+rxGZw822GxpXZdGz/JFPqTLe7GrErn1D2djkbMno0Y8OL/JCpuIjy0fuuJvzoYVUuzlEIib+IniIZQcBZ2+lwUCv1Yg9QS08AEmZDFJwEY2DnsqoGP68lUEjGcsLpvVqaghM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741892263; c=relaxed/simple;
+	bh=pnM3/eXJlQYbAOmQMatwU3RDryh3qaaZieUTqjGuzcY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UlhO1dA46LkX47DckEfQxlKAvJqiI6PhiVeyBkMZ55AF2f8xwNbtjypYS/13UZAF45fzILiHlZa5nYl40ZNOmDyIWrksPFy4WIsfK5S2ILqr9W55lkgpYlrzXwhY6Docdrbkk+zZto+xyC2HmDBDFO/8rbe2WNYkRyK1AYdUTeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XbUJ/Vgt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45F48C4CEEE;
+	Thu, 13 Mar 2025 18:57:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741892263;
+	bh=pnM3/eXJlQYbAOmQMatwU3RDryh3qaaZieUTqjGuzcY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XbUJ/Vgt4NSdO9qOguXWJRHolBFAbh0mqx2ScE7onbocPyUmW+Y1RZs2bIFR9jOz6
+	 KEp8O/6V58UaOAVIJeYcAh5ryZ+wKk4apH3HPcE4qBJsS2VgF5DHOVwuoVLEAVgqva
+	 jnbveei5ls+7kt/xGLgtFVMsTqYSql/2QUMgsmv/gxL22bKMJOGAEiMdtWmXqQ2Ucg
+	 +bdROyxh/Hrjznj7MJPNTBkcY1MjMm91iv+bp4Cl+7aoV9Quwgwh9t+9ZBT4eOtbS4
+	 juQFIg47kMGZ3ZPIQnUi/Jx/kL27K4ptr5LgfVK851e5MgYpmLWzu8z3N4KzhDCzrN
+	 dGzlaqzqndrPw==
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac25d2b2354so229483766b.1;
+        Thu, 13 Mar 2025 11:57:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUaQ+w6vC9hGN3xCdplWaPofY4dbnY6OLw5YyWiqca722hAi52SXv5BcLJhywnQdKiSEe/aT7CQYtQTFqBoVQ/2@vger.kernel.org, AJvYcCUqCF8QYKMUFOt5PmoTBaOV8NJoY/O6ueQeJB/nA+iSq6u4Zn1tWgkLyMFz9O/fOlv/2x/gYVPu3jY97KEU@vger.kernel.org, AJvYcCWdo4SwihzGwzxCUnnT2ZamebFKYlfGlgc9baD5UmDV19pTHze+L1UqWGRkHBvTn8TLkNhIlFxoBvGC@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlWc9yFx6UKU5C9yXj71CrDHxi6sUdXYu3n5wn/Iicw7SJ85ix
+	e5+yK8qf/U3aQVsJelKmf9R90tHJbhQqEG762XSspY273GIqgxsBuTDIrq5yJBx7svXES9d4x99
+	Sp13co1bD+veHG+Ms//GjYmnQNw==
+X-Google-Smtp-Source: AGHT+IGxvyDPIkZ3HfnSzL4kE9l/WHzwDQwashvlehk6CqU5kYwwwa++MhzGCLauTSyn3LtQmieTQa9VDQRaakTmrE0=
+X-Received: by 2002:a17:907:1ca7:b0:ac1:fa91:2b98 with SMTP id
+ a640c23a62f3a-ac3290b5b89mr57840666b.14.1741892261803; Thu, 13 Mar 2025
+ 11:57:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <e62af3a7-c228-4523-a1fb-330f4f96f28c@lunn.ch>
-Content-Transfer-Encoding: 7bit
+References: <1741874545-19091-1-git-send-email-abhitiwari@linux.microsoft.com>
+In-Reply-To: <1741874545-19091-1-git-send-email-abhitiwari@linux.microsoft.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 13 Mar 2025 13:57:30 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKU8hE=dXdQ+hO0WvU-GuXAjEBgCPJ4rnxef9851zyKMw@mail.gmail.com>
+X-Gm-Features: AQ5f1Jq_oFazuB_slJkD16lfmh_exdSsFXOeEWw1Ss12ha7__KdFDzrMJ1oGPx4
+Message-ID: <CAL_JsqKU8hE=dXdQ+hO0WvU-GuXAjEBgCPJ4rnxef9851zyKMw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: memory: Document linux,usable-memory property
+To: Abhishek Tiwari <abhitiwari@linux.microsoft.com>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, kees@kernel.org, 
+	tony.luck@intel.com, gpiccoli@igalia.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	abhitiwari@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 13, 2025 at 05:45:05PM +0100, Andrew Lunn wrote:
->On Wed, Mar 12, 2025 at 08:36:27PM +0100, Michael Klein wrote:
->> Like the RTL8211F, the RTL8211E PHY supports up to three LEDs.
->> Add netdev trigger support for them, too.
->>
->> Signed-off-by: Michael Klein <michael@fossekall.de>
->> ---
->>  drivers/net/phy/realtek.c | 120 ++++++++++++++++++++++++++++++++++++--
+On Thu, Mar 13, 2025 at 9:03=E2=80=AFAM Abhishek Tiwari
+<abhitiwari@linux.microsoft.com> wrote:
 >
->What tree is this based on?
-
-This was based on mainline, will be addressed in the next version.
-
->> +static int rtl8211e_led_hw_control_get(struct phy_device *phydev, u8 index,
->> +				       unsigned long *rules)
->> +{
->> +	int oldpage, ret;
->> +	u16 cr1, cr2;
->> +
->> +	if (index >= RTL8211x_LED_COUNT)
->> +		return -EINVAL;
->> +
->> +	oldpage = phy_select_page(phydev, 0x7);
->> +	if (oldpage < 0)
->> +		goto err_restore_page;
->> +
->> +	ret = __phy_write(phydev, RTL821x_EXT_PAGE_SELECT, 0x2c);
->> +	if (ret)
->> +		goto err_restore_page;
+> Add Documentation for linux,usable-memory
 >
->What is happening here? You select page 0x7, and then use
->RTL821x_EXT_PAGE_SELECT to select 0x2c? Does this hardware have pages
->within pages?
+> Signed-off-by: Abhishek Tiwari <abhitiwari@linux.microsoft.com>
+> ---
+>  .../bindings/linux,usable-memory.txt          | 32 +++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/linux,usable-memory=
+.txt
+>
+> diff --git a/Documentation/devicetree/bindings/linux,usable-memory.txt b/=
+Documentation/devicetree/bindings/linux,usable-memory.txt
+> new file mode 100644
+> index 000000000000..167054d2e9a2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/linux,usable-memory.txt
+> @@ -0,0 +1,32 @@
+> +linux,usable-memory
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-Kind of; this is from the datasheet:
+This belongs here:
+https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/memo=
+ry.yaml
 
-	6.9.5.  Access to Extension Page (ExtPage)
-	
-	Set MDIO commands as shown below to switch to the Extension Page (ExtPage) 0xXY (in Hex).
-	1. Set Register 31 Data=0x0007 (set to Extension Page)
-	2. Set Register 30 Data=0x00XY (Extension Page XY)
-	3. Set the target Register Data
-	4. Set Register 31 Data=0x0000 (switch to Page 0)
+> +
+> +Description
+> +-----------
+> +The ``linux,usable-memory`` property can be used to restrict usable memo=
+ry
+> +region. This property holds a base address and size, Memory outside of t=
+his
+> +range is not accessible by the kernel. This property is particularly use=
+ful
+> +in specialized hardware platforms where certain memory regions must be
+> +reserved for specific use.
+> +
+> +Common use cases include:
+> +- Allocating ``ramoops`` region
+> +- Reserving memory for hardware-specific needs
+> +- Fake Protecting persistent memory (PMEM)
 
-Register 30 is RTL821x_EXT_PAGE_SELECT, LED config registers are on 
-extension page 0x2c
+All these examples belong in /reserved-memory nodes, not
+linux,usable-memory. Go see the ramoops binding for example.
 
--- 
-Michael
+This was really for the case where you already have 'reg' (in the
+memory node), but need to limit memory while at the same time not
+overwriting 'reg'. Basically, for kexec where you can keep booting
+another kernel forever. If that's not your usecase, you shouldn't be
+using this.
+
+Rob
 
