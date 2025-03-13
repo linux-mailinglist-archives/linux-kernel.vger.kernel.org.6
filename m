@@ -1,102 +1,133 @@
-Return-Path: <linux-kernel+bounces-559003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B5CA5EE38
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:40:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E60A5EE3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:41:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 494AD3B2597
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:40:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAE83171C5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1122620C1;
-	Thu, 13 Mar 2025 08:40:42 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E7E261571;
+	Thu, 13 Mar 2025 08:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="OStm+eJx"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8412F1EA7FC
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55151EA7FC;
+	Thu, 13 Mar 2025 08:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741855241; cv=none; b=C6UNrBcgbpElrFjcvaMk3PAzlIfDnsLr8x2yqd/yW26TW7I3KMSX7Q31MKhiMMRYlXaXutrZyU6duKI1jM6r9QSYVE+fI5/qNo3DE43gWyraVCPgtY2+nzjyrLiWdWZ0eoXhNH8OkPtI4TQComw6fPlEL+J+jh0dRo1zkbY1TxA=
+	t=1741855287; cv=none; b=uyk1cEseu9BofWdUr+2LiR2alqLDRmALIhucLnO+lVMDZooAnRGZhFvc6StCvfdAzE28CCYUgRK90kGDjZUnJb5NTTaaj+pSYUHe/AH2Tbpv/nNPaNFh/Pi23AooE0RcffBa7crqKjGBGf4SUDLP0Sna1P93LcZ6sTCF+kxxXmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741855241; c=relaxed/simple;
-	bh=5hofGVLuvv5HvKXqqs/LTfujpXCIvanrxTC9zjxAsRA=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=jafbkze8dX6bPSaOhyko1o6KDhQwqYWpC8dt+oLq81ol45CZctVIZl/rOpsCQR0Tl1nUs0EzEzZ0iHBru8dAXFIyxFvVIRfIHRlywGLEwxEW+DYe2GhG7OEkExXJBls2eY053hb8kIqAXNHg1+xvfmyTMJebbx/xgXOlMCTP0+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	s=arc-20240116; t=1741855287; c=relaxed/simple;
+	bh=/Am8PS1urBK4vKQNjEf+4rlsiDrz113oLVXfJaO/094=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HAmE4lRM2VDeS4ijODJiT9K86UiDtMxrTl6uhIIN5nfvyhtiZopVbtPRRXCKgDUxYzzXsos7nK45Va02I6pViT3kOCRvvwuS59q3L3kF6Qbfyn7h64jhg/y7CyAMSuO9A3mziieGgh6HEtSAsqdj39Iwojd2CZNFYN0kD53Cn7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=OStm+eJx; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZD1D10pS8z8R044;
-	Thu, 13 Mar 2025 16:40:33 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl2.zte.com.cn with SMTP id 52D8eNQF021947;
-	Thu, 13 Mar 2025 16:40:23 +0800 (+08)
-	(envelope-from ye.xingchen@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid31;
-	Thu, 13 Mar 2025 16:40:25 +0800 (CST)
-Date: Thu, 13 Mar 2025 16:40:25 +0800 (CST)
-X-Zmail-TransId: 2afa67d299f9ffffffffb85-46491
-X-Mailer: Zmail v1.0
-Message-ID: <20250313164025540bRPvAP8qt5DGLTl-W2R_K@zte.com.cn>
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4ZD1Dq63N9z9tD1;
+	Thu, 13 Mar 2025 09:41:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1741855275; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m0s9BXoOXwlavaR7+igiPKZFuNZEvjYPYrMoR9PJJ9U=;
+	b=OStm+eJxJOT29Vjs9GNAVvClQl4ZrJ22/0/f3Ja9wWMbjT9yVJaJbTK6wsNYfKATILNJZZ
+	7APXc+TcCsKMT9bwiTIbs+ChmSaHo4CXt64G7pLc4jb5qcAvc2ZO2cEH9JsCeQpuqHeFGY
+	YPJLcM51YL5PAmsaC7kmVp/eeltE8IRBr4H4rANlaV3P+SjWJlGRlcdBS0X2oCdWKKYjo0
+	2S6XPkqX8nQnISiSVykbX0yq1Ajz7yQRTxB8AzCmC/sfUtD1rUuaESEwUPBqkRvkX/fONW
+	6ztu+gLeXzss5rmkVTOS2+asSDtLFcfEc29Rj3spsIjBJ3bxOWi73le8l1FoHw==
+Message-ID: <91a06e390d6b526bd9e9ba37cb478d337a2294dd.camel@mailbox.org>
+Subject: Re: [PATCH V4] drm/sched: Fix fence reference count leak
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Qianyi Liu <liuqianyi125@gmail.com>, airlied@gmail.com, 
+ ckoenig.leichtzumerken@gmail.com, dakr@kernel.org, daniel@ffwll.ch, 
+ maarten.lankhorst@linux.intel.com, matthew.brost@intel.com,
+ mripard@kernel.org,  phasta@kernel.org, tzimmermann@suse.de
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Date: Thu, 13 Mar 2025 09:41:11 +0100
+In-Reply-To: <20250311060251.4041101-1-liuqianyi125@gmail.com>
+References: <20250311060251.4041101-1-liuqianyi125@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <ye.xingchen@zte.com.cn>
-To: <brauner@kernel.org>
-Cc: <jeff.johnson@oss.qualcomm.com>, <jack@suse.cz>,
-        <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIIHYyXSBubHM6IEZpeCB1dGYzMl90b191dGY4IHBhcmFtZXRlciB0eXBlIGluIGRlY2xhcmF0aW9uIGFuZMKgZGVmaW5pdGlvbg==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 52D8eNQF021947
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D29A01.000/4ZD1D10pS8z8R044
+MIME-Version: 1.0
+X-MBO-RS-META: q1q4tsbu5owia83jckezz1ppzj9i6pga
+X-MBO-RS-ID: 1b049b0e8507b5db404
 
-From: YeXingchen <ye.xingchen@zte.com.cn>
+On Tue, 2025-03-11 at 14:02 +0800, Qianyi Liu wrote:
+> From: qianyi liu <liuqianyi125@gmail.com>
+>=20
+> The last_scheduled fence leaks when an entity is being killed and
+> adding
+> the cleanup callback fails.
+>=20
+> Decrement the reference count of prev when dma_fence_add_callback()
+> fails, ensuring proper balance.
+>=20
+> Cc: stable@vger.kernel.org
+> Fixes: 2fdb8a8f07c2 ("drm/scheduler: rework entity flush, kill and
+> fini")
+> Signed-off-by: qianyi liu <liuqianyi125@gmail.com>
 
-The declaration of utf32_to_utf8 in the header file uses
-bool maxlen as the parameter type, while the definition uses bool maxout.
+Applied to drm-misc-fixes, thank you.
 
-This patch aligns the parameter name in the definition with the
-declaration,changing maxout to maxlen to ensure consistency.
+P.
 
-Signed-off-by: YeXingchen <ye.xingchen@zte.com.cn>
----
-v1 -> v2
-fix the parameter
- fs/nls/nls_base.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> ---
+> v3 -> v4: Improve commit message and add code comments (Philipp)
+> v2 -> v3: Rework commit message (Markus)
+> v1 -> v2: Added 'Fixes:' tag and clarified commit message (Philipp
+> and Matthew)
+> ---
+> =C2=A0drivers/gpu/drm/scheduler/sched_entity.c | 11 +++++++++--
+> =C2=A01 file changed, 9 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/scheduler/sched_entity.c
+> b/drivers/gpu/drm/scheduler/sched_entity.c
+> index 69bcf0e99d57..da00572d7d42 100644
+> --- a/drivers/gpu/drm/scheduler/sched_entity.c
+> +++ b/drivers/gpu/drm/scheduler/sched_entity.c
+> @@ -259,9 +259,16 @@ static void drm_sched_entity_kill(struct
+> drm_sched_entity *entity)
+> =C2=A0		struct drm_sched_fence *s_fence =3D job->s_fence;
+> =C2=A0
+> =C2=A0		dma_fence_get(&s_fence->finished);
+> -		if (!prev || dma_fence_add_callback(prev, &job-
+> >finish_cb,
+> -					=C2=A0=C2=A0
+> drm_sched_entity_kill_jobs_cb))
+> +		if (!prev ||
+> +		=C2=A0=C2=A0=C2=A0 dma_fence_add_callback(prev, &job->finish_cb,
+> +					=C2=A0=C2=A0
+> drm_sched_entity_kill_jobs_cb)) {
+> +			/*
+> +			 * Adding callback above failed.
+> +			 * dma_fence_put() checks for NULL.
+> +			 */
+> +			dma_fence_put(prev);
+> =C2=A0			drm_sched_entity_kill_jobs_cb(NULL, &job-
+> >finish_cb);
+> +		}
+> =C2=A0
+> =C2=A0		prev =3D &s_fence->finished;
+> =C2=A0	}
 
-diff --git a/fs/nls/nls_base.c b/fs/nls/nls_base.c
-index 18d597e49a19..3bae9c201139 100644
---- a/fs/nls/nls_base.c
-+++ b/fs/nls/nls_base.c
-@@ -83,7 +83,7 @@ int utf8_to_utf32(const u8 *s, int inlen, unicode_t *pu)
- }
- EXPORT_SYMBOL(utf8_to_utf32);
-
--int utf32_to_utf8(unicode_t u, u8 *s, int maxout)
-+int utf32_to_utf8(unicode_t u, u8 *s, int maxlen)
- {
- 	unsigned long l;
- 	int c, nc;
-@@ -97,7 +97,7 @@ int utf32_to_utf8(unicode_t u, u8 *s, int maxout)
- 		return -1;
-
- 	nc = 0;
--	for (t = utf8_table; t->cmask && maxout; t++, maxout--) {
-+	for (t = utf8_table; t->cmask && maxlen; t++, maxlen--) {
- 		nc++;
- 		if (l <= t->lmask) {
- 			c = t->shift;
--- 
-2.25.1
 
