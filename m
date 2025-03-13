@@ -1,64 +1,57 @@
-Return-Path: <linux-kernel+bounces-559907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08410A5FAF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:13:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B3A0A5FAE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:11:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A23E6188DEAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:09:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4512D4202C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8371A26A0E2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811FA26A0E1;
 	Thu, 13 Mar 2025 16:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnuYAtXc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m5w9qBku"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8C226980A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8532690CB;
 	Thu, 13 Mar 2025 16:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741881737; cv=none; b=ar3bOgBYovCAC+kyoGsvbizhbIpSt/SIkgjxvFylqfFvukir8N8r6sEZXnP2nE3AP9/uSpW/tWljBerO8NSJM5NKOV0ynnNzCE9Q/FStTCzcRycXKS6gqCPKDZbxfCh6YRTlADue5V2VYy6ZqTxQm0P8ng29P4MaUS2YlMzjm+0=
+	t=1741881737; cv=none; b=eLDGztnWdxymSgxHVjmQ3j6UAR6p5alCB3i6ikItYsXAit0uTvmZuoTj3Iu3SrIIWkvFI9gcMzbm2cLO8HHRZ1J56LsfqAn3VCmh0ZBd0PekBjd/OdGqorUjetAQ5lvksdALOnnsKhtaNOaizBahESIJFYBHCitFMxE/ToNUoaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741881737; c=relaxed/simple;
-	bh=SIwoOnJbCCZD6NLPzZTs8MK5F2JNGdpdSvWQ8Oqdt7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=euEWiLsjkNedMAshNKM5/B7obtDwnOaBDIUo7+fzF6qrhseVA3dl1K4CjPpF2iPs67W12hkaXwPt1HzS8AvUYmruyEnGufIohjWBerXx22gclLpd31Ipt4j1/Lqt9yNRrv6sewR1U+Zg3sNFRF5G0wlUag1TDVaZ8nMwkSnhS0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnuYAtXc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF852C4CEDD;
-	Thu, 13 Mar 2025 16:02:16 +0000 (UTC)
+	bh=yeXHcZgjUGF7P1GdENNOH+WMNLvGwDA1Vl+O4Y03fFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=SA7SGCNIcKK/7Zhk86Ks4cN9juiNcdflNlEUpj/tvxsyvpb776JS+3MriO+p26hdu9o7y/a88eqZoU09q2CC2eMLUfS9QblwDKTESu5AX63z34EHm/T2ngy3/fr+zgMfHBgi/PYdF3IbzDfzpAjlUFbaNxgYlbGux/mp59/5wnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m5w9qBku; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ACE5C4CEEA;
+	Thu, 13 Mar 2025 16:02:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1741881737;
-	bh=SIwoOnJbCCZD6NLPzZTs8MK5F2JNGdpdSvWQ8Oqdt7k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FnuYAtXcv4mrX7gH+rVqZueFOZwmu7zNbeuLL+rzBt0Ym3wTPGutW76g/dTeEgnts
-	 fl/Qx3h2ds9r996R1cLAefj3GAlxTP8ObHpJxxmL2YeBqSXmwSozI+/9S0svALjbrN
-	 YoE+G3mnMJu5tQJYyGSBKyudVzTovgoTyJrtCeJNAvj4cxPZNpd4MZMECI00n8ByBA
-	 my7S6e5iM+Q51hFo1k7l3+tYy7WOAjlIS9eJE0jvqUeq5UDbprCuVrKkE6MPR1QoOU
-	 R+YEeQUj3rfxGdu+xvmdmhGJGW2TBh4PqhzMOc6GAxkY7QOnEfWryU4lDuI54OtsGQ
-	 FAPHAi2E4wa9A==
-Date: Thu, 13 Mar 2025 17:02:12 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Vasily Gorbik <gor@linux.ibm.com>
-Cc: Heiko Carstens <hca@linux.ibm.com>, Kees Cook <kees@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, sparclinux@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] s390: mv s390 sysctls into their own file under
- arch/s390 dir
-Message-ID: <t3q6lsy4tjlp5ngapyguwdzu5arorznl3bgjr3iki3rudetuw5@waddjgfn7vvu>
-References: <20250306-jag-mv_ctltables-v2-0-71b243c8d3f8@kernel.org>
- <20250306-jag-mv_ctltables-v2-6-71b243c8d3f8@kernel.org>
- <20250307152620.9880F75-hca@linux.ibm.com>
- <r73ph4ht5ejeeuj65nxocmqp7pury2mekz2lz3r6fs264s24c4@ransymcrzk2h>
- <your-ad-here.call-01741690967-ext-1293@work.hours>
+	bh=yeXHcZgjUGF7P1GdENNOH+WMNLvGwDA1Vl+O4Y03fFM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=m5w9qBkuDQVNB4YeKXrBEztJzAJGHkUy75sZhJ+lyGei4s3zeKWOv0SZtQO31Gsa9
+	 9zA5dwPqruTyKckVPVI3Sc2CPa9gE2fbKxs/DYBZvmfvZmjuHwYebhNnapwDXYjgiV
+	 +Ru2nP7dQP72CsjCRT8/D0/0G9JAKdUV1QsxuEZEfiAJ85SAHNurCgF+sSUsWpdVo3
+	 zhPn+Jxbv3jJ+xe+TaIpsptYh5bWhvbEA+03S0nIV0ZGEoNybkj3kpr3aGaPNTBxsR
+	 kLyPJeq8zLyfGsv/w3L4UI8oyVPmLWleh4wEsuh06Ft+FLVf9nk7CsKy1c7lySb3X+
+	 2njSxjG5yuz0Q==
+Date: Thu, 13 Mar 2025 11:02:15 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, vigneshr@ti.com,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	bhelgaas@google.com, rogerq@kernel.org, linux-omap@vger.kernel.org,
+	linux-pci@vger.kernel.org, stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	srk@ti.com
+Subject: Re: [PATCH] PCI: j721e: Fix the value of linkdown_irq_regfield for
+ J784S4
+Message-ID: <20250313160215.GA736346@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,47 +60,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <your-ad-here.call-01741690967-ext-1293@work.hours>
+In-Reply-To: <20250313055519.j3bpvsm6govd5ytk@uda0492258>
 
-On Tue, Mar 11, 2025 at 12:02:47PM +0100, Vasily Gorbik wrote:
-> On Mon, Mar 10, 2025 at 02:41:59PM +0100, Joel Granados wrote:
-> > On Fri, Mar 07, 2025 at 04:26:20PM +0100, Heiko Carstens wrote:
-> > > On Thu, Mar 06, 2025 at 12:29:46PM +0100, joel granados wrote:
-> > > > Move s390 sysctls (spin_retry and userprocess_debug) into their own
-> > > > files under arch/s390. We create two new sysctl tables
-> > > > (2390_{fault,spin}_sysctl_table) which will be initialized with
-> > > > arch_initcall placing them after their original place in proc_root_init.
-> > > > 
-> > > > This is part of a greater effort to move ctl tables into their
-> > > > respective subsystems which will reduce the merge conflicts in
-> > > > kernel/sysctl.c.
-> > > > 
-> > > > Signed-off-by: joel granados <joel.granados@kernel.org>
-> > > > ---
-> > > >  arch/s390/lib/spinlock.c | 18 ++++++++++++++++++
-> > > >  arch/s390/mm/fault.c     | 17 +++++++++++++++++
-> > > >  kernel/sysctl.c          | 18 ------------------
-> > > >  3 files changed, 35 insertions(+), 18 deletions(-)
-> > > 
-> > > Acked-by: Heiko Carstens <hca@linux.ibm.com>
-> > > 
-> > > How should this go upstream? Will you take care of this, or should
-> > > this go via the s390 tree?
+On Thu, Mar 13, 2025 at 11:25:19AM +0530, Siddharth Vadapalli wrote:
+> On Wed, Mar 12, 2025 at 11:16:00AM -0500, Bjorn Helgaas wrote:
+> > On Wed, Mar 05, 2025 at 06:50:18PM +0530, Siddharth Vadapalli wrote:
+> > > Commit under Fixes assigned the value of 'linkdown_irq_regfield' for the
+> > > J784S4 SoC as 'LINK_DOWN' which corresponds to BIT(1). However, according
+> > > to the Technical Reference Manual and Register Documentation for the J784S4
+> > > SoC [0], BIT(1) corresponds to "ENABLE_SYS_EN_PCIE_DPA_1" which is __NOT__
+> > > the field for the link-state interrupt. Instead, it is BIT(10) of the
+> > > "PCIE_INTD_ENABLE_REG_SYS_2" register that corresponds to the link-state
+> > > field named as "ENABLE_SYS_EN_PCIE_LINK_STATE".
 > > 
-> > thx for the review
-> > 
-> > It would be great if you can push it through the s390 tree. However, if
-> > it is not possible to do so, please let me know and I'll add it to the
-> > sysctl-next changes.
+> > I guess the reason we want this is that on J784S4, we ignore actual
+> > link-down interrupts (and we don't write STATUS_CLR_REG_SYS_2 to clear
+> > the interrupt indication, so maybe there's an interrupt storm), and we
+> > think some other interrupt (DPA_1, whatever that is) is actually a
+> > link-down interrupt?
 > 
-> I've slightly changed the commit message
-> s390: Move s390 sysctls into their own file under arch/s390
-> 
-> And applied, thank you!
-ok. I'll remove it from my future versions.
-Thx
+> While it is true that actual link-down interrupts are ignored, it is not
+> the case that there's an interrupt storm because the same incorrect macro
+> is used to enable the interrupt line. Since the enables an interrupt for
+> DPA_1 which never fires, we don't run into the situation where we are not
+> clearing the interrupt (the interrupt handler will look for the same
+> incorrect field to clear the interrupt if it does fire for DPA_1, but that
+> doesn't happen). The 'linkdown_irq_regfield' corresponds to the
+> "link-state" field not just in the J784S4 SoC, but in all SoCs supported by
+> the pci-j721e.c driver. It is only in J721E that it is BIT(1)
+> [LINK_DOWN macro], while in all other SoCs (J784S4 included), it is BIT(10)
+> [J7200_LINK_DOWN macro since it was first added for J7200 SoC]. Matt
+> probably referred to J721E's Technical Reference Manual and ended up
+> incorrectly assigning "LINK_DOWN", due to which the driver is enabling
+> the DPA_1 interrupt and the interrupt handler is also going to look for
+> the field corresponding to receiving an interrupt for DPA_1.
 
--- 
+So I guess without this patch, we incorrectly ignore link-down
+interrupts on J784S4.  It's good to have a one-sentence motivation
+like that somewhere in the commit log that we can pull out and include
+in the merge commit log and the pull request.
 
-Joel Granados
+> I can only hope that the URL will redirect to the latest version of
+> the User Guide if at all it becomes invalid.
+
+OK, thanks, I guess there's nothing more to do ;)  I guess that manual
+is not really designed for collaborative development.
+
+Thanks for the patient hand holding!
+
+Bjorn
 
