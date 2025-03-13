@@ -1,210 +1,198 @@
-Return-Path: <linux-kernel+bounces-560022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4150BA5FCC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:58:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C94A5FCC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:58:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E3DD3B33BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:58:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CD3419C0284
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC7E2690ED;
-	Thu, 13 Mar 2025 16:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AF62E3390;
+	Thu, 13 Mar 2025 16:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WL2E4ibY"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwSeryW5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C862E3390;
-	Thu, 13 Mar 2025 16:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAB314D29B;
+	Thu, 13 Mar 2025 16:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741885094; cv=none; b=cIzVto27R2WJyx0DkwmUCp5/3Qw1CjaP48EbAv5lejl8C9bwKxtfgMXs/7pt388irdOIjpXAINNCGv5wjXK1bGt274/7Pr7Q3deQP6lk9lK3EwZH2SGhcqVzvwJK0R2/Ede2HP/nRX974MIc3uLn0+JCD7GJ8Ehrvva2+IAAyQc=
+	t=1741885106; cv=none; b=HHLJiqix0bCWk+hPEllXUggXULjhpJskEK8hZi3FlSZv795qLAjHqi9mLcq2mNedi59ynGIIVuogCF3L1bdB4icMK8bxYHsgR6VZ/xZbDhfv24vqoqOpbdWo/j0asO5GCJcE6rJLSU2AYlJBvj03c6nBBN22wLLLPgJi12ckJ2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741885094; c=relaxed/simple;
-	bh=dOjWRShq6ygvAR2+lt108hDkTe/ci/6IY91umv/ucrM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o4IClWQA2Q5s/HoLDivHh070g9thKvgEJ7dom9ysPW/5AVMbGHJ64tZLIwP4eI7MasCye3z1Uk9mVlOmq8ASgCESxY5QwiL/4wBg37x3sve18mH9Ck/mSUe9zV25CY/iJ+k7QQrEDHfcTyVp/FhgQs3S1yDSbw3GSfUEMlMRn5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WL2E4ibY; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-52413efd0d3so480056e0c.2;
-        Thu, 13 Mar 2025 09:58:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741885092; x=1742489892; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ADIdlKa1fA4/imYaZXygiUs98rCXU1xydtVTW+Hgst4=;
-        b=WL2E4ibY0709AY2OdWGsEKOtJkFt0SpWzAkHkhS59BagW8Wql5JlFBzq0GzFw/FU/q
-         AzpwUnRHmnPuR6mEFQ/1IkLCfeM+IThH7DZ1htO3tiCxOX3+cGD5gkJSLrZ5J2sujip+
-         fr81NSwko2OalXt6F/FoEED0sUzgheQg2vF5nMVRHbgr8Rwn5Z+OVe9hXo/4MXsF5Plv
-         4s/xMNCSGeXw1KB/Vdfk9UU0Ojhg+FRAWlONOOPA27FX4ZMHitqbxhdLo5MEp3tfh2aa
-         fkJwvQjxp6ZLDwbGDJHT+pzGrjsTtipadlPf544M9d/PyjxkwxDRGmDM9RdZaL9OGYSr
-         obOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741885092; x=1742489892;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ADIdlKa1fA4/imYaZXygiUs98rCXU1xydtVTW+Hgst4=;
-        b=V2wTpyFQTU/R+gUIyPjfLILcUzbIK8ujFxA2BI/c+qWWg5bTNzSKJnoXFn+CZNJ1Ur
-         6yscPaTujOAI49dsmc1tvSK1cvI2VjN6iU2REeMtI0Uc5wB4JXbVrf+cY2RTaOWFYB85
-         UcrZgyaY5MtvNuTKJqmTFXIjJVMYoW1zIKjYRjyszePTOF6/cXoaIPrS+VPQKJucEtRw
-         8CNiIzgQGku4ILpa2QYWAwDywBjJ4xZbnabYMj8qFm4dNoWhE1jifY/afyxIJsPbpZPy
-         gO+mGqE7dXcItuifOkAPywDItjiA+QQHXfwDmyGYHOHYNRlmDTmWO611gkVNyojnitiq
-         cEag==
-X-Forwarded-Encrypted: i=1; AJvYcCVO5zags/7mMXSPWsOQDdgX9Wl9Fh+d8hJDIpgx71gfQrGitCOwckmhfJB9bTTlVdlqXuIy/CwLc9miCzBC@vger.kernel.org, AJvYcCWzPJUbkgyDxw5olFOSf4XEIaLvE0UgCxB1KRAlIFY4FCKI8VATnTyuAGQdnS4/hTKdNKPAMp0ohj1T2A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4BFGwHg5ARI64IYtLIsgaYK/x4VgLLb0UY9ppoVm7T1dx/yTX
-	gQVaUrkzJ8oc2O3s0Ys04y2uGNCDXInbOp6jGD4qmaU1Tg8eTiMR2vk4BkOjC/5bLMMiZGeEoZN
-	hPd13sq2I4xKvM+RjUSgyDdEbFY0=
-X-Gm-Gg: ASbGncvE9Yr/djXw3vj4qWml+xB5ICAoY3128yQ315er/c58Rib4285xhS/O8qJYWvc
-	1ByF0eWLBM6HtvRFdV2deLvDFZ7zP0+pzMehHiQHEIKp0ku8KSz6M8p2emvgWf8yFBriRDponkH
-	lIRppMxXGhHOP/Z+t6dHLbCSZbcg==
-X-Google-Smtp-Source: AGHT+IGqd4mPuYQMTlhSCpe62t8tLvAKCPyLobikqm+RE8kQK34379HRDecEtPPNH8Li/NEYmxYtyykiKOTPdHHJXWU=
-X-Received: by 2002:a05:6122:2001:b0:51f:3eee:89f4 with SMTP id
- 71dfb90a1353d-524462587bbmr1339574e0c.9.1741885091858; Thu, 13 Mar 2025
- 09:58:11 -0700 (PDT)
+	s=arc-20240116; t=1741885106; c=relaxed/simple;
+	bh=jJPD3iDu/7Avldh6k6MrUF1w+kcGOzq9GackaM0qxcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gwYnDGbU3tevcbjrcICypYgTww31TgnnY+hM/GI6Ic7Zlk8RzUHS9x3AvZHu5aK4IIZNRuvT/qS3bMcG0gzWNFC3vFAe7ypH69imBsyxOyagQLZd2NyJlAxA6MaRE0oC4jyX8Vl7tfCwdxQ4K4aT27sKpEgU+N4VaNsBj5aD08Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pwSeryW5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD9B1C4CEDD;
+	Thu, 13 Mar 2025 16:58:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741885106;
+	bh=jJPD3iDu/7Avldh6k6MrUF1w+kcGOzq9GackaM0qxcE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pwSeryW5DS+4QEguqURPfb/JnuwqDn+l1Fv9r4CsUSNCO1VRThyuZ1jmvfZwbx4x1
+	 9BMbb6hC1al1Cbn0XcneZZW0QLZBRvBkygPbeLYxd3U0yk6NppemFsds4hJ4roPz2i
+	 nsXy7HCLwph7uUpv40MSHumiA620PY86Rul/cXsqf5tw6l9dHwaIabpvx20QoF9j+R
+	 coVX5d+GiZSvvYZ6bZ4U3JI+ZCkLXpuF+j7t7grRQkel03qA39wi/ZnSnl/M6klE5r
+	 sd229BxDF2gkCMDLDuM9i/ihyxcs73o4mssY4Fpj8UuTFzVf2VHLPjOUzbe8XAK0DW
+	 PjczxkLa1dQYA==
+Date: Thu, 13 Mar 2025 17:58:19 +0100
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Rahul Rameshbabu <sergeantsagara@protonmail.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-input@vger.kernel.org, dri-devel@lists.freedesktop.org, Jiri Kosina <jikos@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Julius Zint <julius@zint.sh>
+Subject: Re: [PATCH RFC 2/3] rust: hid: USB Monitor Control Class driver
+Message-ID: <7ajr2aukrd7bdnns34ur7d37xk4aibaqsjyuoc334uiclay3yt@qiym6ju2kn3c>
+References: <20250313160220.6410-2-sergeantsagara@protonmail.com>
+ <20250313160220.6410-5-sergeantsagara@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307120141.1566673-1-qun-wei.lin@mediatek.com>
- <Z9HOavSkFf01K9xh@google.com> <5gqqbq67th4xiufiw6j3ewih6htdepa4u5lfirdeffrui7hcdn@ly3re3vgez2g>
- <CAGsJ_4xwnVxn1odj=j+z0VXm1DRUmnhugnwCH-coqBLJweDu9Q@mail.gmail.com> <Z9MCwXzYDRJoTiIr@google.com>
-In-Reply-To: <Z9MCwXzYDRJoTiIr@google.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 14 Mar 2025 05:58:00 +1300
-X-Gm-Features: AQ5f1JoQPpin_yzy1xmzTa5CZUM1Y8yc8ZWtftl1w5WEvizQdxmWfzWVnzMz6I0
-Message-ID: <CAGsJ_4yaSx1vEiZdCouBveeH3D-bQDdvrhRpz=Kbvqn30Eh-nA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Improve Zram by separating compression context from kswapd
-To: Minchan Kim <minchan@kernel.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Qun-Wei Lin <qun-wei.lin@mediatek.com>, 
-	Jens Axboe <axboe@kernel.dk>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chris Li <chrisl@kernel.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
-	Kairui Song <kasong@tencent.com>, Dan Schatzberg <schatzberg.dan@gmail.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, 
-	linux-block@vger.kernel.org, nvdimm@lists.linux.dev, linux-mm@kvack.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Casper Li <casper.li@mediatek.com>, Chinwen Chang <chinwen.chang@mediatek.com>, 
-	Andrew Yang <andrew.yang@mediatek.com>, James Hsu <james.hsu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313160220.6410-5-sergeantsagara@protonmail.com>
 
-On Fri, Mar 14, 2025 at 5:07=E2=80=AFAM Minchan Kim <minchan@kernel.org> wr=
-ote:
->
-> On Thu, Mar 13, 2025 at 04:45:54PM +1300, Barry Song wrote:
-> > On Thu, Mar 13, 2025 at 4:09=E2=80=AFPM Sergey Senozhatsky
-> > <senozhatsky@chromium.org> wrote:
-> > >
-> > > On (25/03/12 11:11), Minchan Kim wrote:
-> > > > On Fri, Mar 07, 2025 at 08:01:02PM +0800, Qun-Wei Lin wrote:
-> > > > > This patch series introduces a new mechanism called kcompressd to
-> > > > > improve the efficiency of memory reclaiming in the operating syst=
-em. The
-> > > > > main goal is to separate the tasks of page scanning and page comp=
-ression
-> > > > > into distinct processes or threads, thereby reducing the load on =
-the
-> > > > > kswapd thread and enhancing overall system performance under high=
- memory
-> > > > > pressure conditions.
-> > > > >
-> > > > > Problem:
-> > > > >  In the current system, the kswapd thread is responsible for both
-> > > > >  scanning the LRU pages and compressing pages into the ZRAM. This
-> > > > >  combined responsibility can lead to significant performance bott=
-lenecks,
-> > > > >  especially under high memory pressure. The kswapd thread becomes=
- a
-> > > > >  single point of contention, causing delays in memory reclaiming =
-and
-> > > > >  overall system performance degradation.
-> > > >
-> > > > Isn't it general problem if backend for swap is slow(but synchronou=
-s)?
-> > > > I think zram need to support asynchrnous IO(can do introduce multip=
-le
-> > > > threads to compress batched pages) and doesn't declare it's
-> > > > synchrnous device for the case.
-> > >
-> > > The current conclusion is that kcompressd will sit above zram,
-> > > because zram is not the only compressing swap backend we have.
->
-> Then, how handles the file IO case?
+On Mar 13 2025, Rahul Rameshbabu wrote:
+> This code will eventually contain the logic needed to drive the backlight
+> of displays that implement the USB Monitor Control Class specification.
+> Examples include the Apple Studio Display and Apple Pro Display XDR
+> monitors. USB Monitor Control Class encompasses more than just backlight
+> control, so the driver could be further extended as monitors support more
+> functionality in the specification.
+> 
+> This code is a skeleton currently, where the focus right now is on the core
+> Rust API. The driver skeleton was written before approaching the Rust API
+> and C binding work. This was done to provide a guide for what the Rust API
+> should look like and avoid any rough C binding work from being exposed to
+> Rust HID device drivers.
 
-I didn't quite catch your question :-)
+skeletons are good for documentation, but not really for code review as
+they can not compile.
 
->
-> >
-> > also. it is not good to hack zram to be aware of if it is kswapd
-> > , direct reclaim , proactive reclaim and block device with
-> > mounted filesystem.
->
-> Why shouldn't zram be aware of that instead of just introducing
-> queues in the zram with multiple compression threads?
->
+You should make this patch part of a documentation in
+Documentation/hid/, and squash it with the next one (having a minimal
+full driver instead of skeleton+fill in the voids).
 
-My view is the opposite of yours :-)
+Cheers,
+Benjamin
 
-Integrating kswapd, direct reclaim, etc., into the zram driver
-would violate layering principles. zram is purely a block device
-driver, and how it is used should be handled separately. Callers have
-greater flexibility to determine its usage, similar to how different
-I/O models exist in user space.
-
-Currently, Qun-Wei's patch checks whether the current thread is kswapd.
-If it is, compression is performed asynchronously by threads;
-otherwise, it is done in the current thread. In the future, we may
-have additional reclaim threads, such as for damon or
-madv_pageout, etc.
-
-> >
-> > so i am thinking sth as below
-> >
-> > page_io.c
-> >
-> > if (sync_device or zswap_enabled())
-> >    schedule swap_writepage to a separate per-node thread
->
-> I am not sure that's a good idea to mix a feature to solve different
-> layers. That wouldn't be only swap problem. Such an parallelism under
-> device  is common technique these days and it would help file IO cases.
->
-
-zswap and zram share the same needs, and handling this in page_io
-can benefit both through common code. It is up to the callers to decide
-the I/O model.
-
-I agree that "parallelism under the device" is a common technique,
-but our case is different=E2=80=94the device achieves parallelism with
-offload hardware, whereas we rely on CPUs, which can be scarce.
-These threads may also preempt CPUs that are critically needed
-by other non-compression tasks, and burst power consumption
-can sometimes be difficult to control.
-
-> Furthermore, it would open the chance for zram to try compress
-> multiple pages at once.
-
-We are already in this situation when multiple callers use zram simultaneou=
-sly,
-such as during direct reclaim or with a mounted filesystem.
-
-Of course, this allows multiple pages to be compressed simultaneously,
-even if the user is single-threaded. However, determining when to enable
-these threads and whether they will be effective is challenging, as it
-depends on system load. For example, Qun-Wei's patch chose not to use
-threads for direct reclaim as, I guess,  it might be harmful.
-
-Thanks
-Barry
+> 
+> To go forward with this driver for the purpose of external monitor
+> backlight control, a new DRM backlight API that is scoped per connector
+> will be required. I am currently in the process of developing this new API.
+> I document the details in my related blog posts. The issue with the current
+> backlight API is it was designed on the assumption that only internal
+> panels have controllable backlights. Using this assumption combined with
+> another that there can only ever be a single internal panel, having more
+> than one device register with the backlight interface would confuse
+> userspace applications.
+> 
+> Julius Zint originally tried to implement such a driver a bit more than a
+> year ago with a C driver but was blocked by the limitations of the
+> backlight API. I asked him for permission to continue the work in Rust
+> while accrediting him for the HID report parsing logic for the backlight
+> support in the USB Monitor Control Class specification.
+> 
+> Cc: Julius Zint <julius@zint.sh>
+> Link: https://lore.kernel.org/lkml/20230820094118.20521-1-julius@zint.sh/
+> Link: https://binary-eater.github.io/posts/linux_usb_monitor_control/
+> Link: https://www.usb.org/sites/default/files/usbmon11.pdf
+> Signed-off-by: Rahul Rameshbabu <sergeantsagara@protonmail.com>
+> ---
+>  drivers/hid/Kconfig                |  8 +++++++
+>  drivers/hid/Makefile               |  1 +
+>  drivers/hid/hid_monitor_control.rs | 37 ++++++++++++++++++++++++++++++
+>  3 files changed, 46 insertions(+)
+>  create mode 100644 drivers/hid/hid_monitor_control.rs
+> 
+> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+> index e085964c7ffc..92be13acb956 100644
+> --- a/drivers/hid/Kconfig
+> +++ b/drivers/hid/Kconfig
+> @@ -722,6 +722,14 @@ config RUST_HID_ABSTRACTIONS
+>  	Adds support needed for HID drivers written in Rust. It provides a
+>  	wrapper around the C hid core.
+>  
+> +config HID_MONITOR_CONTROL
+> +	tristate "USB Monitor Control Class support"
+> +	depends on USB_HID
+> +	depends on RUST_HID_ABSTRACTIONS
+> +	help
+> +	Say Y here if you want to enable control over a monitor that uses USB
+> +	Monitor Control Class.
+> +
+>  config HID_REDRAGON
+>  	tristate "Redragon keyboards"
+>  	default !EXPERT
+> diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
+> index 482b096eea28..bf8b096bcf23 100644
+> --- a/drivers/hid/Makefile
+> +++ b/drivers/hid/Makefile
+> @@ -86,6 +86,7 @@ obj-$(CONFIG_HID_MCP2221)	+= hid-mcp2221.o
+>  obj-$(CONFIG_HID_MAYFLASH)	+= hid-mf.o
+>  obj-$(CONFIG_HID_MEGAWORLD_FF)	+= hid-megaworld.o
+>  obj-$(CONFIG_HID_MICROSOFT)	+= hid-microsoft.o
+> +obj-$(CONFIG_HID_MONITOR_CONTROL)	+= hid_monitor_control.o
+>  obj-$(CONFIG_HID_MONTEREY)	+= hid-monterey.o
+>  obj-$(CONFIG_HID_MULTITOUCH)	+= hid-multitouch.o
+>  obj-$(CONFIG_HID_NINTENDO)	+= hid-nintendo.o
+> diff --git a/drivers/hid/hid_monitor_control.rs b/drivers/hid/hid_monitor_control.rs
+> new file mode 100644
+> index 000000000000..18afd69a56d5
+> --- /dev/null
+> +++ b/drivers/hid/hid_monitor_control.rs
+> @@ -0,0 +1,37 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +// Copyright (C) 2025 Rahul Rameshbabu <sergeantsagara@protonmail.com>
+> +
+> +use kernel::prelude::*;
+> +use kernel::hid::{
+> +    self,
+> +    Driver,
+> +};
+> +
+> +struct HidMonitorControl;
+> +
+> +#[vtable]
+> +impl Driver for HidMonitorControl {
+> +    fn probe(dev: &mut hid::Device, id: &hid::DeviceId) -> Result<()> {
+> +        /* TODO implement */
+> +        Ok(())
+> +    }
+> +
+> +    fn remove(dev: &mut hid::Device) {
+> +        /* TODO implement */
+> +    }
+> +}
+> +
+> +kernel::module_hid_driver! {
+> +    driver: HidMonitorControl,
+> +    id_table: [
+> +        kernel::usb_device! {
+> +            vendor: /* TODO fill in */,
+> +            product: /* TODO fill in */,
+> +        },
+> +    ],
+> +    name: "monitor_control",
+> +    author: "Rahul Rameshbabu <sergeantsagara@protonmail.com>",
+> +    description: "Driver for the USB Monitor Control Class",
+> +    license: "GPL",
+> +}
+> -- 
+> 2.47.2
+> 
+> 
 
