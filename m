@@ -1,89 +1,92 @@
-Return-Path: <linux-kernel+bounces-559031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFBE0A5EE8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:54:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 763EFA5EE93
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:55:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E01F16D982
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:54:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86C8B7A38D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B59262D35;
-	Thu, 13 Mar 2025 08:54:45 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72508262D1C;
+	Thu, 13 Mar 2025 08:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rwsincOu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DAF1FBE86
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A88262D35;
+	Thu, 13 Mar 2025 08:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741856085; cv=none; b=NwaryNdiwRx8YqX1vLqm97liA6Ig8YzxXyXu3b7dbIV543poM4+67TETGeo/WKjOAwi0RHoodNt7XJmQOt9/Z6Cf1iYzDLavLXqLu2TyaFzsw3gjSk6oNzlvIKfuKbOYMCEP7OQsSkYQcTHAc/ncD5/LJgLBJex6eiBRcTSeYmA=
+	t=1741856106; cv=none; b=NsMlH1Ob5O1MB/Fmv92/o9paNyIMxSRdUIJZ9KSUkZ7Penuf+xXDyPxdgQDE0HWvix9ZdEiocw9kvZcHMSiJ1kMtLKmLdd72XAASF/r1AeEyq33SidkmKN5mz64J7BpO2l+0gCzbcYG4O3Orx3IhMo0ZIi2zenLSoRsXifR3PGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741856085; c=relaxed/simple;
-	bh=Mtsg04ahUEYyeV5JwVGj733jmCr9/jhyx/vmXj0i19o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ub05ffKyEtXqHi+BMNb2hlMr5bZI2VJopDkmFb3F+AWKM3DGk7GSCg59BrNCpPB4K5uC4lDOir+AfSVK1o6+/1dzUnO1+K7Ek0kBeGwZe7/3CbeHgigijUtzdTE5VTrLKUor5wF2fpCtzZfmGwHGLzmZII8PjqSyqFgEF0HflhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tseKr-00025H-Ib; Thu, 13 Mar 2025 09:54:37 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tseKr-005VRu-10;
-	Thu, 13 Mar 2025 09:54:37 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tseKr-00041e-0i;
-	Thu, 13 Mar 2025 09:54:37 +0100
-Message-ID: <a37615a87d242df0ad858e3926f33e4246bc00ef.camel@pengutronix.de>
-Subject: Re: [PATCH v5 0/8] imx8mp: Add support to Run/Stall DSP via reset
- API
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>, Daniel Baluta
-	 <daniel.baluta@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, shawnguo@kernel.org, 
- devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- conor+dt@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
- festevam@gmail.com, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, andersson@kernel.org,
- Frank.Li@nxp.com,  peng.fan@nxp.com, laurentiu.mihalcea@nxp.com,
- iuliana.prodan@nxp.com,  shengjiu.wang@nxp.com
-Date: Thu, 13 Mar 2025 09:54:37 +0100
-In-Reply-To: <Z9BkbVHlx60VFD7q@p14s>
-References: <20250311085812.1296243-1-daniel.baluta@nxp.com>
-	 <Z9BkbVHlx60VFD7q@p14s>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1741856106; c=relaxed/simple;
+	bh=v/UmHuy4+WdwC6rhInMSg1tPkA5XhywUNIcfydkGDm4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Htg0YPTGIrWqfMcxO4AVhePijEL7asQ42NDVytAfA9QLbHgqtITbzgKlMB3gbVnWOAPNPMAEsDs4KIVYb4kutu9mn2XBn9Jw7iONLviqgcgeeekJgXp6KV0ippeXTCw+qNBLXvAiFj3I/T7DLnJT48QU87njXUSUvEYf/1BLHAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rwsincOu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE8DFC4CEDD;
+	Thu, 13 Mar 2025 08:55:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741856105;
+	bh=v/UmHuy4+WdwC6rhInMSg1tPkA5XhywUNIcfydkGDm4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rwsincOuRDAoSQT7lNAF68R69LNaC03bQM8KuC1oAriCzmL6sVDXq5upuGHB8mOt1
+	 CkI37FUnrMb70XF+CdKUrgp9+FFl3p01wwea0lTg1KcxtoHIyaL+75+BEHsNmjQem1
+	 IMCg57BCyobor7B9pzVU6Rj5kNhExNThXtlzjem6D7VnfkN194mbTJnOIXjMwJAL2C
+	 liZVsUWuMngJ/jQfsC1/tHTXi+H10wyQQ/yPBRRU1/e1C1ixagjBWYS678eeoA97u+
+	 HbJ+TMY4g8Uo2MA40KhDAacGDWw15U+zvXtMAxrKnFw0hO1boWr0bLV6/yse0FYVoP
+	 ze+ZsrcmkAVIA==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: use debug-only asserts around fd allocation and install
+Date: Thu, 13 Mar 2025 09:54:56 +0100
+Message-ID: <20250313-einspannen-auktion-2f2b8e212eaf@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250312161941.1261615-1-mjguzik@gmail.com>
+References: <20250312161941.1261615-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1079; i=brauner@kernel.org; h=from:subject:message-id; bh=v/UmHuy4+WdwC6rhInMSg1tPkA5XhywUNIcfydkGDm4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRfmpsYdDLWv8wpLJdn4yy5tr9uundmaqkH9165VLQj0 6s/03B3RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESSJjH84f831ffCn59PIy5v elW3j+tjYUTuzslMC3gn1T35ZZyos42RYWrTi3kh63vMe3snqq4J8N+1Zkdv2N/967zVn1Tn/To twA8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hi Mathieu,
+On Wed, 12 Mar 2025 17:19:41 +0100, Mateusz Guzik wrote:
+> This also restores the check which got removed in 52732bb9abc9ee5b
+> ("fs/file.c: remove sanity_check and add likely/unlikely in alloc_fd()")
+> for performance reasons -- they no longer apply with a debug-only
+> variant.
+> 
+> 
 
-On Di, 2025-03-11 at 10:27 -0600, Mathieu Poirier wrote:
-> Thanks for the re-spin.  I will wait for Shawn and Sascha to review their
-> respective bits before picking up this set.
+Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.15.misc branch should appear in linux-next soon.
 
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-for merging the whole series via rproc.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-regards
-Philipp
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.15.misc
+
+[1/1] fs: use debug-only asserts around fd allocation and install
+      https://git.kernel.org/vfs/vfs/c/dc530c44cd64
 
