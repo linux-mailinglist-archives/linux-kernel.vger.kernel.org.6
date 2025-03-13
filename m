@@ -1,69 +1,78 @@
-Return-Path: <linux-kernel+bounces-559749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4583A5F913
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:53:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF4C8A5F915
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:54:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D81123BC37A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:53:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CDA73B28CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3AE2686B1;
-	Thu, 13 Mar 2025 14:53:44 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282772686A1;
+	Thu, 13 Mar 2025 14:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qg7rXks3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5B1267F66;
-	Thu, 13 Mar 2025 14:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7D411CA9;
+	Thu, 13 Mar 2025 14:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741877624; cv=none; b=aQf1mFqt8ivrRDeNYlbB4s1FvsyzIXrPRMWEIh8F3EyHAIE/zPfYnyYZKuCqd2RsqFOmMuDiSkmIBELXMzhBqOFLpuUJPVP7+e87y5+08Z8kbNdtCA7FmWpn/6L1O7lHcFv9HqZY4/95yDLacdXTqwbcMbansqas//UG3smHcOk=
+	t=1741877685; cv=none; b=iXb+sue/xYfY7QKy6Npa+N7kW3x4/+4mBxn98ErYAJu3jgw6ef+NU5RBMyslpJwPqN5cpYbCB8WJSwc6lJp4fh8TXij3z5UFDOU90oKPnjWt9bMrcfjHPIxjdwEIQmRx+WEmhYwk/ge6LmyQVOjEw1LWjTPwyAPUgGiv1XsZI6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741877624; c=relaxed/simple;
-	bh=ACNhbo+748s6vuL5VPhC2h+iyzbM6KB6vcaUj5kFuz0=;
+	s=arc-20240116; t=1741877685; c=relaxed/simple;
+	bh=T44nDw2LEfKVsCx2WxvTXGvhUUEfV3wxXQ1+rKA6t7w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=or69RkrpQCLc/yyanyMtbplkNOQ8tGzLgpvR0y9IPd8qRThdYxlLvIzM2gSixi0CNAl7Nk0SFG9xPoV6j0/f7liP/+KnehVmTTnU9D7IvXyxIZI6D2kW2Y1JFi+7+OxmlWBwoE9AjZhPi9AJ6hEyyQdEm+N5TCm0wDSXsD2YGxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: AtykRYgXS5yaaAGAfvyNwg==
-X-CSE-MsgGUID: qYSYWts8Q1KcbUM2+vYGqw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="43200705"
+	 Content-Type:Content-Disposition:In-Reply-To; b=f8k/Rm9kOovgvVXEpVLWy/BPpRj0dT5FFxBAP7+yb94s647de618UMY9hIcDFEUBWDVZjRZvmrSwGDapDWbR+X+FmaHG495FYSgVy2PQSbYXa+JY0VjTx1z+5rzlfsy2xB4wSaNxscnoJKWI8r2W/YT957BIo4YrUctq7vPO3Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qg7rXks3; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741877684; x=1773413684;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=T44nDw2LEfKVsCx2WxvTXGvhUUEfV3wxXQ1+rKA6t7w=;
+  b=Qg7rXks3iPCRpYx34SiOXpsBqtC/aVBCWazEOL7h4ZGaBRLNHzFik+Oe
+   RCuwsoiyPEobEQOBUMFcSW+xGQoRA706vH9yGDbpfEgvMiDepb+g4bmbT
+   9Y7aeIUZZsOozznUKrJFXZwOgmSQsoReFirYxTcYiNdeQreK2iV34xLJe
+   wUJePCu0f5puce2whaH6EYTzuiI7Ss5Wk5t0KYsAvg1NbT/Qdnf/p8owi
+   vM5KE57IDBcwuzKx71i8PEctWMoEAi2awJ0HnDKI0mSaVsiABdNZJICtm
+   4sua8lgt8KuYa8JFmwpnRVYbBLkUJ7PVMDoud5tU+utZ7j8HeWycJ9r/T
+   w==;
+X-CSE-ConnectionGUID: c8FfMZqFRyGRaaHnNMDaBw==
+X-CSE-MsgGUID: uLbu5zK6RUCbXIwBcWqBYw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="53636313"
 X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="43200705"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:53:42 -0700
-X-CSE-ConnectionGUID: qZc8nP1dQoe6521K17bSkw==
-X-CSE-MsgGUID: QIK1RtelSM+yC++UfV4/yQ==
+   d="scan'208";a="53636313"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:54:43 -0700
+X-CSE-ConnectionGUID: OJibDJw0SEKWo9QtAOKErw==
+X-CSE-MsgGUID: Z1sJvMHiSyCSL33+cdl3tA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="120964625"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:53:39 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1tsjwF-00000002D0s-2wpD;
-	Thu, 13 Mar 2025 16:53:35 +0200
-Date: Thu, 13 Mar 2025 16:53:35 +0200
-From: Andy Shevchenko <andy@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Emanuele Ghidoli <ghidoliemanuele@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-i2c@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	soc@kernel.org, Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [RFC PATCH v1 2/2] platform: toradex: add preliminary support
- for Embedded Controller
-Message-ID: <Z9LxbzJ3zf0RT-JS@smile.fi.intel.com>
-References: <20250313144331.70591-1-francesco@dolcini.it>
- <20250313144331.70591-3-francesco@dolcini.it>
+   d="scan'208";a="125601523"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 13 Mar 2025 07:54:41 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tsjxG-0009YK-2M;
+	Thu, 13 Mar 2025 14:54:38 +0000
+Date: Thu, 13 Mar 2025 22:53:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Subu Dwevedi <messigoatcr7nop@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Subu Dwevedi <messigoatcr7nop@gmail.com>,
+	Henrik Rydberg <rydberg@bitmath.org>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] hwmon/applesmc: add fan support for newer macs
+Message-ID: <202503132205.Vf8imlWS-lkp@intel.com>
+References: <20250312123055.1735-3-messigoatcr7nop@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,128 +81,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250313144331.70591-3-francesco@dolcini.it>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250312123055.1735-3-messigoatcr7nop@gmail.com>
 
-On Thu, Mar 13, 2025 at 03:43:31PM +0100, Francesco Dolcini wrote:
+Hi Subu,
 
-> Add new platform driver for the Embedded Controller currently used
-> in Toradex SMARC iMX8MP and SMARC iMX95.
-> It currently provides power-off and restart (reset) handlers.
+kernel test robot noticed the following build warnings:
 
-...
+[auto build test WARNING on groeck-staging/hwmon-next]
+[also build test WARNING on linus/master v6.14-rc6 next-20250313]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-+ array_size.h
-+ device.h
-+ err.h
+url:    https://github.com/intel-lab-lkp/linux/commits/Subu-Dwevedi/hwmon-applesmc-add-MMIO-for-newer-macs/20250312-203248
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
+patch link:    https://lore.kernel.org/r/20250312123055.1735-3-messigoatcr7nop%40gmail.com
+patch subject: [PATCH 2/2] hwmon/applesmc: add fan support for newer macs
+config: i386-randconfig-002-20250313 (https://download.01.org/0day-ci/archive/20250313/202503132205.Vf8imlWS-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250313/202503132205.Vf8imlWS-lkp@intel.com/reproduce)
 
-> +#include <linux/i2c.h>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503132205.Vf8imlWS-lkp@intel.com/
 
-+ mod_devicetable,h
+All warnings (new ones prefixed by >>):
 
-> +#include <linux/module.h>
-> +#include <linux/reboot.h>
-> +#include <linux/regmap.h>
+   drivers/hwmon/applesmc.c: In function 'applesmc_show_fan_manual':
+>> drivers/hwmon/applesmc.c:1155:13: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
+    1155 |         int ret;
+         |             ^~~
 
-+ types.h
 
-...
+vim +/ret +1155 drivers/hwmon/applesmc.c
 
-> +#define EC_CHIP_ID_REG                  0x00
-> +#define EC_VERSION_REG_MAJOR            0x01
-> +#define EC_VERSION_REG_MINOR            0x02
-> +#define EC_CMD_REG                      0xD0
-> +#define EC_REG_MAX                      0xD0
-> +
-> +#define EC_CHIP_ID_SMARC_IMX95          0x11
-> +#define EC_CHIP_ID_SMARC_IMX8MP         0x12
-> +
-> +#define EC_POWEROFF_CMD                 0x01
-> +#define EC_RESET_CMD                    0x02
-
-Can you interleave the register offsets with the values in them, so we can
-easily see the relationship?
-
-...
-
-> +struct tdx_ec {
-
-> +	struct i2c_client *client;
-
-Why do you need this? What for?..
-
-> +	struct regmap *regmap;
-
-...note, the device pointer you may retrieve from the regmap.
-
-> +};
-
-...
-
-> +static int tdx_ec_register_power_off_restart(struct device *dev, struct tdx_ec *ec)
-> +{
-> +	int err;
-> +
-> +	err = devm_register_sys_off_handler(dev, SYS_OFF_MODE_RESTART,
-> +					    SYS_OFF_PRIO_FIRMWARE,
-> +					    tdx_ec_restart, ec);
-> +	if (err)
-> +		return err;
-
-> +	err = devm_register_sys_off_handler(dev, SYS_OFF_MODE_POWER_OFF,
-> +					    SYS_OFF_PRIO_FIRMWARE,
-> +					    tdx_ec_power_off, ec);
-> +	return err;
-
-	return devm_...
-
-> +}
-
-...
-
-> +static int tdx_ec_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	u8 reg_val[EC_ID_VERSION_LEN];
-> +	struct tdx_ec *ec;
-> +	int err;
-> +
-> +	ec = devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
-> +	if (!ec)
-> +		return -ENOMEM;
-> +
-> +	ec->client = client;
-
-> +	i2c_set_clientdata(client, ec);
-
-What for?
-
-> +	ec->regmap = devm_regmap_init_i2c(client, &regmap_config);
-> +	if (IS_ERR(ec->regmap))
-> +		return PTR_ERR(ec->regmap);
-> +
-> +	err = regmap_bulk_read(ec->regmap, EC_CHIP_ID_REG, &reg_val, EC_ID_VERSION_LEN);
-> +	if (err)
-> +		return dev_err_probe(dev, err,
-> +				     "Cannot read id and version registers\n");
-> +
-> +	dev_info(dev, "Toradex Embedded Controller id %x - Firmware %d.%d\n",
-
-Specifiers are semirandom. Why signed? Why x and not %u?
-
-> +		 reg_val[0], reg_val[1], reg_val[2]);
-
-> +	err = tdx_ec_register_power_off_restart(dev, ec);
-> +	if (err)
-> +		return dev_err_probe(dev, err,
-> +				     "Cannot register system restart handler\n");
-> +
-> +	return 0;
-> +}
+6f2fad748ccced5 Nicolas Boichat 2007-05-08  1151  
+6f2fad748ccced5 Nicolas Boichat 2007-05-08  1152  static ssize_t applesmc_show_fan_manual(struct device *dev,
+3eba2bf7c5fb786 Henrik Rydberg  2010-11-09  1153  			struct device_attribute *attr, char *sysfsbuf)
+6f2fad748ccced5 Nicolas Boichat 2007-05-08  1154  {
+6f2fad748ccced5 Nicolas Boichat 2007-05-08 @1155  	int ret;
+6f2fad748ccced5 Nicolas Boichat 2007-05-08  1156  	u16 manual = 0;
+6f2fad748ccced5 Nicolas Boichat 2007-05-08  1157  	u8 buffer[2];
+6f2fad748ccced5 Nicolas Boichat 2007-05-08  1158  
+beab9ce267efe06 Subu Dwevedi    2025-03-12  1159  	if (is_fan_manual_fmt) {
+beab9ce267efe06 Subu Dwevedi    2025-03-12  1160  		ret = applesmc_read_key(FANS_MANUAL_FMT, buffer, 1);
+beab9ce267efe06 Subu Dwevedi    2025-03-12  1161  		manual = buffer[0];
+beab9ce267efe06 Subu Dwevedi    2025-03-12  1162  	} else {
+6f2fad748ccced5 Nicolas Boichat 2007-05-08  1163  		ret = applesmc_read_key(FANS_MANUAL, buffer, 2);
+cecf7560f00a841 Tom Rix         2020-08-20  1164  		manual = ((buffer[0] << 8 | buffer[1]) >> to_index(attr)) & 0x01;
+beab9ce267efe06 Subu Dwevedi    2025-03-12  1165  	}
+1f4d4af4d7a1c79 Guenter Roeck   2021-03-21  1166  	return sysfs_emit(sysfsbuf, "%d\n", manual);
+6f2fad748ccced5 Nicolas Boichat 2007-05-08  1167  }
+6f2fad748ccced5 Nicolas Boichat 2007-05-08  1168  
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
