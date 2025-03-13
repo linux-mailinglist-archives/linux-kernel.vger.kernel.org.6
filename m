@@ -1,95 +1,114 @@
-Return-Path: <linux-kernel+bounces-559220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5D56A5F104
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:35:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 792E1A5F108
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:36:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 163363A91D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:35:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BA763AD4F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4412571BF;
-	Thu, 13 Mar 2025 10:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D51526462C;
+	Thu, 13 Mar 2025 10:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPJDy0Ly"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="kVqxRxG5"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC2B1D5154
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3FA265CA5;
+	Thu, 13 Mar 2025 10:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741862143; cv=none; b=bRIT+CkfTUyr4ed3QQrQkMzO8JQe0D5mzRYKCRf1el4sGO+V93B9dVZRgaKJkI15fMfyGo5CopWmRcnv2KLjzSY0RBaC94d+X7kvOPTh9phbcJChU2HLKf0VNSC6HSCSh/lextj56tu5biintn9XW+Pg5aPhTOLbzBXL8VWyGX8=
+	t=1741862200; cv=none; b=iXsVXwsOtLyiMgWt1OKjsOculL58UyPFrliIngG193Hc8mK0g39Nwgnk81+8Sbxp6vkVwYXyQBtp97c9YITrgyl/IB6OAWkeaYef0tFhDS7FUf5zoExxiNBd0hJHollVPciUyCaUuyFwP6CEpxbfvx4WAcmcAuA5J614be8w8O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741862143; c=relaxed/simple;
-	bh=HwddNMKoRxMnPfOo1Zy1wl6DJgyF9AKmbUbp/4mYZVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AB5/YTcQv3ATC7xGBproBMa1l753gHzTlnum6rFAYsJVvNm6qKkcZd9oMwJoczlAaVQOzIoTItRCBqrvw2hkUTHSwyA5D17FWHidFwYpHrsL7Nh+js37D03D+RdSD9X0MxFp1cJzn2nk6cEMKYuGtorju8f6pJH3pD/AfjjWn64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WPJDy0Ly; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E345BC4CEEE;
-	Thu, 13 Mar 2025 10:35:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741862143;
-	bh=HwddNMKoRxMnPfOo1Zy1wl6DJgyF9AKmbUbp/4mYZVM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WPJDy0LysT8DO/IFgRSu1ybIe0REzyyiM7ojFXE5bnQbKp/p/UVi+89gj4xHJ/5xb
-	 kNhyCFdLobiFV9uQCVwHo9KnJyt3XVHbChLvmqpQFRFt/ZkMwXWCZ7WUwkPNSp5tZm
-	 oyCo4XZ0lea4vWlZctbPFoOdsfZ12Zqxj0a1+fAgOYXpRJPbkjd/MWotqgu/qyiACn
-	 Qs2kiUEkSekfypds2s1uzlFZ81ruIW9OzJ2HCYe1hKacasjBiXAGMl92LCfg1yTHqa
-	 9cA7nttj7NKX20MGggXOpDvVt1SPiaCfhIXCNgwz5X3RnhSOzzCOG+EiQ+RqfJ16Zv
-	 I5azTI4BnjYnQ==
-Date: Thu, 13 Mar 2025 11:35:36 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
-	Dave Young <dyoung@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>, jpoimboe@kernel.org,
-	bsz@amazon.de
-Subject: Re: [PATCH v7 4/8] x86/kexec: Add 8250 serial port output
-Message-ID: <Z9K0-CFdaBkptAJR@gmail.com>
-References: <20250312144257.2348250-1-dwmw2@infradead.org>
- <20250312144257.2348250-5-dwmw2@infradead.org>
+	s=arc-20240116; t=1741862200; c=relaxed/simple;
+	bh=l0DHiZu/JiKMpTLyuC81m4OmC+Na2qkiqog7TlcMWL8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UoSv5n9mHIAhpcK5+eRHMlHwGxNxjFWxaMFGzR1VzfyT2zCcv5R7EyAsux65UG3T4Hqv7N9ZFwx077J+8IFcSBq5V08vwPYT2sbpsdQfN9+D8L8qQGWW/YLUrVBS/nuulAXyi7Z/JiZMkN3h4u61sIIHyfSnblDUgL9j667qLrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=kVqxRxG5; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=uxqSOkreDmEncYOtcr9kowkpb/EgbzfBW4XWcy713g8=; t=1741862197; x=1742466997; 
+	b=kVqxRxG5Q2Nlmmwwa8K9DGSDbFcBJv1RfRTKbRxgU5QPkfefVBB9f7pPa0LEH886uasM4fRuTFq
+	uTbSY258RwlrgVjHJE+khh/G+Eeh5YbaXfwYJg0/ehkRYA14CXAGcsjtkCWvoDryraAyBqCaE9Yeo
+	rsfpgF7EJcpA4t42IXsbKxxQ5jxrl32mP0z6+tNs0ZvcUAM+aW+A4tgjCdsvFww4gKsBDfyw6ZDf/
+	ntvvbCPfov4FyBc0bx91ybzRgO/VdIh3XMGQRaHCxV7PBZQGBprvOBQhQv0CtTkf9aVZ6nsYZFTwK
+	/4D/ZrAs+IttdzqKV2b9WAMg+Qs5FcXuinMg==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1tsfvK-00000002er6-1CbC; Thu, 13 Mar 2025 11:36:22 +0100
+Received: from p5dc5515a.dip0.t-ipconnect.de ([93.197.81.90] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1tsfvK-00000003rl6-0FN1; Thu, 13 Mar 2025 11:36:22 +0100
+Message-ID: <cb1d47ddc86ad1b2235dbd430fed28f6d6cd1c80.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 1/2] sh: align .bss section padding to 8-byte boundary
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Artur Rojek
+	 <contact@artur-rojek.eu>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker
+ <dalias@libc.org>,  Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>,  "D . Jeff
+ Dionne"	 <jeff@coresemi.io>, Rob Landley <rob@landley.net>,
+ linux-sh@vger.kernel.org, 	linux-kernel@vger.kernel.org
+Date: Thu, 13 Mar 2025 11:36:21 +0100
+In-Reply-To: <CAMuHMdVmKk9vML=p1MsnkGATzUh3HD+Pa==7C=QMYjjzqzxk2A@mail.gmail.com>
+References: <20250216175545.35079-1-contact@artur-rojek.eu>
+	 <20250216175545.35079-2-contact@artur-rojek.eu>
+	 <5365422a9715376c76a89e255c978fc39064e243.camel@physik.fu-berlin.de>
+	 <433bc8a0732bf8a63c64c4bf0e6ad4a7@artur-rojek.eu>
+	 <CAMuHMdVmKk9vML=p1MsnkGATzUh3HD+Pa==7C=QMYjjzqzxk2A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312144257.2348250-5-dwmw2@infradead.org>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
+Hi Geert,
 
-* David Woodhouse <dwmw2@infradead.org> wrote:
+On Wed, 2025-03-12 at 09:06 +0100, Geert Uytterhoeven wrote:
+> What about moving (or duplicating, e.g. sbss_align alignment is
+> done before and after __bss_start)  the stop_align alignment
+> from BSS_SECTION() into BSS() instead, i.e. just changing
+> include/asm-generic/vmlinux.lds.h for everyone?  I don't think that
+> would hurt any platforms, while fixing the issue for good.
+> IMHO it is a bit strange that the size of the bss section can differ
+> from __bss_stop - __bss_start.
 
-> From: David Woodhouse <dwmw@amazon.co.uk>
-> 
-> If a serial port was configured for early_printk, use it for debug output
-> from the relocate_kernel exception handler too.
+This sounds reasonable. Could you send a patch? I assume that would go
+through a different tree as we're touching generic code.
 
-Does the early console output something once it's initialized? If not 
-then I'd go one step further here: if early_printk serial debugging was 
-configured, let's output some sort of message as early as it's expected 
-to work. That way if any of this debug codepath regresses for 
-relocate_kernel, the discovery of that regression won't be delayed 
-until something nasty triggers within relocate_kernel that would 
-necessitate a working debug mechanism ...
+> One last question though: what about sbss? How does the TurtleBoard
+> loader handle that?  __bss_stop - __bss_start is not the size of bss,
+> but the sum of the sizes of sbss and bss, plus extra alignment in
+> between. The latter might cause trouble, too.
 
-Also, printing something to the early console using these new 
-relocate_kernel printing functions would be an additional bonus as 
-well, for similar reasons.
+Does the compiler actually generate the SBSS section on SH?
 
-Thanks,
+Adrian
 
-	Ingo
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
