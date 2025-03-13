@@ -1,131 +1,112 @@
-Return-Path: <linux-kernel+bounces-558736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C544AA5EA29
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 04:36:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D553A5EA2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 04:38:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39DB53B78B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 03:35:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B10BC17790B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 03:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47247136347;
-	Thu, 13 Mar 2025 03:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D5C137930;
+	Thu, 13 Mar 2025 03:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b="qI8W0Hka"
-Received: from mx0a-00300601.pphosted.com (mx0a-00300601.pphosted.com [148.163.146.64])
+	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="eOgH9qr9";
+	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="eOgH9qr9"
+Received: from mail.mleia.com (mleia.com [178.79.152.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992C01C32;
-	Thu, 13 Mar 2025 03:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.146.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286171C32;
+	Thu, 13 Mar 2025 03:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.79.152.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741836964; cv=none; b=e7TlMNlofGAT7DbCiX/UWrfgkSBbqR/mtqWve4locxMZKpXG3fYYt/5Vtj0efjoWaOeZ3X3tgffs1K1ckXNIvrn2YAKAtgW2WBAtR9Eg4iRqTjdjiFP2Fwd8vchurwjLRoC0Pdt9lrALlmcOVMLT7zbT2gRSWHM9mp12m04oV7o=
+	t=1741837074; cv=none; b=mnlhJpHzZYCe8J4RB/jNuDHzwmJtvI5I2IkGAxp9i8YSJVQERTBP/ECJV/AahQjDxl/XsCurhk+pMFVAVPDBWUNubJrnuVwg0Exjw62qbIGASXZ8B1p7mQAbMMEBnA6H4j/Av8jE7c9s4+FA9I8uSYRh8kRrTYM9VA/nNOkjldo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741836964; c=relaxed/simple;
-	bh=qgVVV4pLWYSi3Udrx2TJoSwnuOQIHLrJooGwPUr0zFo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LExqq8CGl1cqMeyEzcCXbbvfpnGlssmzlzSCa83ppeLEbaiuAUOJ/ZtSYBcBRWk6dMlxIjnvvHrtzDXcDXtXqQmdJt0+tHpNPKVAd5CEmj/KQTdYxpYhYJNp2HyidVIMB9lXjcsVQbED9sKm2sP9+AV7dE/2cux/ny6T87SQIwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com; spf=pass smtp.mailfrom=ni.com; dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b=qI8W0Hka; arc=none smtp.client-ip=148.163.146.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ni.com
-Received: from pps.filterd (m0359308.ppops.net [127.0.0.1])
-	by mx0b-00300601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D0n9Ek007659;
-	Thu, 13 Mar 2025 03:35:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ni.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=PPS11142024;
-	 bh=AJ7+NYG6VySdhgUp0omQj6TsB98iszwGrWnabWpc/xg=; b=qI8W0HkaJ3sh
-	TbaBGFVCgIe09kksmFB0UvO6mjWOLKLf0N35chkksLs8mvrrCrLHqY7FiB/HuQ/K
-	NKxmr5k9uSPV19m8V4thhCq/vTbGos2mVr2xUNZC9TENxq2MNqs+l80ETBvMsZfx
-	q2KmsJK/wK2bwXiLvmHM2GWDF3I86S0BRGkozp58jUnfLWEkedoTolPtAvBpukTq
-	v4bxo/+XCjDk0o3B3MBtDGtEQdp/SpjnLChNxGIL/aKcqgtdiOUWXEI1GfMJN9ij
-	TKhKwpAS222qjpgtid/FIPvVrxHzoWfJJ+f5/DLNGuHAUgt8Vv4G+6BVxm14RMHB
-	JmrzA6vODg==
-Received: from us-aus-excas-p1.ni.corp.natinst.com ([130.164.94.73])
-	by mx0b-00300601.pphosted.com (PPS) with ESMTPS id 45bn4yhyqn-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 03:35:54 +0000 (GMT)
-Received: from us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) by
- us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Wed, 12 Mar 2025 22:35:52 -0500
-Received: from ershephe-ubuntu.amer.corp.natinst.com (172.18.68.32) by
- us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) with Microsoft SMTP
- Server id 15.2.1258.28 via Frontend Transport; Wed, 12 Mar 2025 22:35:52
- -0500
-From: Erick Shepherd <erick.shepherd@ni.com>
-To: <adrian.hunter@intel.com>
-CC: <brad.mouring@ni.com>, <erick.shepherd@ni.com>,
-        <gratian.crisan@emerson.com>, <kyle.roeschley@ni.com>,
-        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <ulf.hansson@linaro.org>
-Subject: RE: [PATCH] mmc: core: Wait for Vdd to settle on card power off
-Date: Wed, 12 Mar 2025 22:35:52 -0500
-Message-ID: <20250313033552.1505631-1-erick.shepherd@ni.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <a7d1bf5d-6101-4282-92a8-11f9f3569d8b@intel.com>
-References: <a7d1bf5d-6101-4282-92a8-11f9f3569d8b@intel.com>
+	s=arc-20240116; t=1741837074; c=relaxed/simple;
+	bh=qgutmQSJZQTykjOfEgpTzKzrAn+q9wCeu7RgQnJUaIQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aRZIUAnr1631OrhIvncnC/ykc8uSwfx71tM/du8iCrNfHwebQZ0Bp+6WfvIuXqITSrxg3Owlo8754jd2QtxQ+neFMCzaWkNxEnvh1e5ZsUn0vhlezCYOi2Sbj/ENbwA7WKD4kjkdFLfynZEc6mDMrJYg3mN2NJyU2MoBTbV0PVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com; spf=none smtp.mailfrom=mleia.com; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=eOgH9qr9; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=eOgH9qr9; arc=none smtp.client-ip=178.79.152.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mleia.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
+	t=1741837070; bh=qgutmQSJZQTykjOfEgpTzKzrAn+q9wCeu7RgQnJUaIQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eOgH9qr9kfMgykVmloDw+pcglofhsqCzEhv2jUlYsT0iX9iUxDRxH/dp3xKpb3b9K
+	 A+dEr4DllWkLLoica0oSjKuawSTJ7RaR00VYLeiLRi2TjltFxFW5M9GDeEQi7qtrv5
+	 SkOdejjiQfI5oaeySRZH8qYGa3IU/z4asqtXVkIJswSDt4h4rzM2BH+9NK0zLdjGiq
+	 fjwl+oDyrpzlEU8tJ9OZAZhaKIZ4BKwPo34aNEXZQzIfhS8OnrQu23ENPpiW9HfAlE
+	 JqKtXKH2I5zXOOgMHjkr1n1ktkeUNZ2ykh5w1tuX/sTQcLfCfIQndyfGbLciKdTgXG
+	 HBAcNbIk9VtJA==
+Received: from mail.mleia.com (localhost [127.0.0.1])
+	by mail.mleia.com (Postfix) with ESMTP id 3C9DF3A89CC;
+	Thu, 13 Mar 2025 03:37:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
+	t=1741837070; bh=qgutmQSJZQTykjOfEgpTzKzrAn+q9wCeu7RgQnJUaIQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eOgH9qr9kfMgykVmloDw+pcglofhsqCzEhv2jUlYsT0iX9iUxDRxH/dp3xKpb3b9K
+	 A+dEr4DllWkLLoica0oSjKuawSTJ7RaR00VYLeiLRi2TjltFxFW5M9GDeEQi7qtrv5
+	 SkOdejjiQfI5oaeySRZH8qYGa3IU/z4asqtXVkIJswSDt4h4rzM2BH+9NK0zLdjGiq
+	 fjwl+oDyrpzlEU8tJ9OZAZhaKIZ4BKwPo34aNEXZQzIfhS8OnrQu23ENPpiW9HfAlE
+	 JqKtXKH2I5zXOOgMHjkr1n1ktkeUNZ2ykh5w1tuX/sTQcLfCfIQndyfGbLciKdTgXG
+	 HBAcNbIk9VtJA==
+Received: from [192.168.1.228] (74-111-126-194.sta.estpak.ee [194.126.111.74])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.mleia.com (Postfix) with ESMTPSA id 4222A3A8968;
+	Thu, 13 Mar 2025 03:37:48 +0000 (UTC)
+Message-ID: <5b62671c-719a-44f2-b28e-878159859a01@mleia.com>
+Date: Thu, 13 Mar 2025 05:37:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: xUs7Rz_IUqUxOfczl-TEXXmVj0iAQKbO
-X-Proofpoint-GUID: xUs7Rz_IUqUxOfczl-TEXXmVj0iAQKbO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_02,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- clxscore=1015 phishscore=0 mlxscore=0 impostorscore=0 adultscore=0
- mlxlogscore=816 bulkscore=0 lowpriorityscore=0 priorityscore=1501
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503130026
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: pwm: Convert lpc32xx-pwm.txt to YAML
+Content-Language: ru-RU
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Purva Yeshi <purvayeshi550@gmail.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, piotr.wojtaszczyk@timesys.com,
+ linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250312122750.6391-1-purvayeshi550@gmail.com>
+ <57ae63a2-544b-4241-a54d-8fa9917c1e44@mleia.com>
+ <yvljnqnlka3ecw2n3hw2zgfszlldvbww3k7gq72dczmf6jwzfo@4vqnygxuzvk5>
+From: Vladimir Zapolskiy <vz@mleia.com>
+In-Reply-To: <yvljnqnlka3ecw2n3hw2zgfszlldvbww3k7gq72dczmf6jwzfo@4vqnygxuzvk5>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
+X-CRM114-CacheID: sfid-20250313_033750_272654_1B152B05 
+X-CRM114-Status: UNSURE (   7.86  )
+X-CRM114-Notice: Please train this message. 
 
-> What about something like this?=0D
-=0D
-> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-p=
-ci-core.c=0D
-> index 1f0bd723f011..0789df732e93 100644=0D
-> --- a/drivers/mmc/host/sdhci-pci-core.c=0D
-> +++ b/drivers/mmc/host/sdhci-pci-core.c=0D
-> @@ -610,8 +610,11 @@ static void sdhci_intel_set_power(struct sdhci_host =
-*host, unsigned char mode,=0D
- =0D
->  	sdhci_set_power(host, mode, vdd);=0D
- =0D
-> -	if (mode =3D=3D MMC_POWER_OFF)=0D
-> +	if (mode =3D=3D MMC_POWER_OFF) {=0D
-> +		if (slot->chip->pdev->device =3D=3D PCI_DEVICE_ID_INTEL_APL_SD)=0D
-> +			usleep_range(15000, 17500);=0D
->  		return;=0D
-> +	}=0D
- =0D
-> 	/*=0D
-> 	 * Bus power might not enable after D3 -> D0 transition due to the=0D
-=0D
-I talked to one of our digital hardware engineers who worked on this=0D
-issue. He believes that the issue is likely affecting more than just =0D
-Apollo Lake devices and recommended keeping the delay for all of our=0D
-devices. Could something like this work?=0D
-=0D
---- a/drivers/mmc/host/sdhci.c=0D
-+++ b/drivers/mmc/host/sdhci.c=0D
-@@ -2176,6 +2176,9 @@ EXPORT_SYMBOL_GPL(sdhci_set_power_noreg);=0D
- void sdhci_set_power(struct sdhci_host *host, unsigned char mode,=0D
- 		     unsigned short vdd)=0D
- {=0D
-+	if (mode =3D=3D MMC_POWER_OFF)=0D
-+		usleep_range(15000, 17500);=0D
-+=0D
- 	if (IS_ERR(host->mmc->supply.vmmc))=0D
- 		sdhci_set_power_noreg(host, mode, vdd);=0D
- 	else=0D
-  =0D
-Regards,=0D
-Erick=0D
+Hi Uwe,
+
+On 3/13/25 00:56, Uwe Kleine-König wrote:
+> Hello,
+> 
+> On Wed, Mar 12, 2025 at 07:59:21PM +0200, Vladimir Zapolskiy wrote:
+>>> +  "#pwm-cells":
+>>> +    const: 3
+>>
+>> It shall be 1.
+> 
+> No, 3 is the right choice.
+> 
+
+could you please elaborate?
+
+I find that here the only configurable parameter is PWM period, so it
+should be sufficient to have one cell only like in marvell,pxa-pwm.yaml
+or google,cros-ec-pwm.yaml.
+
+--
+Best wishes,
+Vladimir
 
