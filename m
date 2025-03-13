@@ -1,161 +1,124 @@
-Return-Path: <linux-kernel+bounces-559213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3EFAA5F0F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:32:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C41A5F0F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:32:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C08E419C14D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:32:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 353097A3A06
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705EE1FBC87;
-	Thu, 13 Mar 2025 10:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F08826389F;
+	Thu, 13 Mar 2025 10:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s74rCBe2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="RMJ4vkFb"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C503F16BE17;
-	Thu, 13 Mar 2025 10:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C932641D4
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741861929; cv=none; b=U+96F2K2L3403TqY0IV+xLfoij0ER6bCeLg4eTSj3lmJLcj6sTl/78tZPU6wyPJnCeCkNSIrs6XQJN9Rg1Pk8nxmG3YaKck0lnbOvjo2ZATYaTGU2gD2noBdRYKR1rmtfXzuVluoWpW4cygLkY3AKu2WaO23UxPk/k/8rldj2I8=
+	t=1741861938; cv=none; b=eTiuKdHA9AFHRp5UAVVV4IlSwaXXYX6c3FiARuDJnFtz09obwYdUqmJdisfwAL2KXPih68fcd7ofGzDd0upWjBODAO532smBgGw3w57mal7KsQM8dmTuf2RTDKlynrxke9nngP0Uw1nf65wtUa9EKplk+Srs2Zdfj7QTnrUkXx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741861929; c=relaxed/simple;
-	bh=vp6bg26NerLSUUazGPvHxcQQKRGzcjqFPiWbFTYAPUg=;
+	s=arc-20240116; t=1741861938; c=relaxed/simple;
+	bh=IQnwkbJdURJ0nJmN1Yz9ofHPCB3tRF9+FkMCtc6tar4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FVgpH3azSYZASpAqg6PrzYKHGKB3qb6SRjbvjwR8EZLpttwrt1f3WpvzrbMamKkCSrzJ7ViaUYKOkqJfVTUtZWirJVZfssWth1dlp4lxpO49+Oh3E0OeooyGo2Gt/xFLEzj/J07Qoff+lefVX4hiO0KxRQ20K7vmSsrYUARzW9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s74rCBe2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DE2AC4CEE3;
-	Thu, 13 Mar 2025 10:32:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741861929;
-	bh=vp6bg26NerLSUUazGPvHxcQQKRGzcjqFPiWbFTYAPUg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=s74rCBe2kZErmamJ64chid1yW8ZYtbFI3u6bw5hIAy0FYbQA2dT2xe+R41Uzxx8Ss
-	 IuceNnTx9WoCV20ZCFUKn6kjMBjhGlvOqCyDeUuEgU0d10e10hiH8XDXDLhPibDzXn
-	 YDa5KCUVCagPFma868xh1L1m87p6AeLitN4UpdF4wVicLSKDk/bWpnRuQXB322FJ1r
-	 5w13FJVyelw+xpMV+h4H0IotkN8R3AqwzlVtowRyFTw8d1yFX9Lvsw8eVy+uRQmxtj
-	 90sKWTIhWgDCONEzKBnmRVXdInZtXHxdoLeGGqbic2TWd3qx3cS27erJ/sPM78SWo+
-	 J+GVPw3OQEl+w==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5499b18d704so816752e87.0;
-        Thu, 13 Mar 2025 03:32:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUHT1im+F7Z5NfnuOsnxNCzcYmRMd2+C04AiaWVNHMsC/w/tFLyFnq8YHaZK4LSl7wQQuqyQ4dqT71o7bE=@vger.kernel.org, AJvYcCVOcx+C5Ruu5vdu6ksztX6tTvRlhOFgyfxBn4AaDeODkWi3HFi/l+uDHHQ4xQZSnLZcdmORLTe8oduy+sKO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzapQROo+rwfvgeHzsSNRbo4yk7eioPJYIBCqWjn/Cl6pOA21ul
-	qRNEuN1Bl212v7dS5L44glBGH36H6qw8MBC+vlOZf5kQz8G7m16HNMu2AWfoKd0t8iQlx6qSqLM
-	WC7w/BqXvjSfUQU0G9byoxa32FBI=
-X-Google-Smtp-Source: AGHT+IF2/LdlU/BnRk012EhhZfmR8/aa57N7syCRBT5UlFEM1Nc/v9y1tqWaAAoouuiCXuBEOM+bLfqRMkDtWuyVRpc=
-X-Received: by 2002:a05:6512:3d15:b0:549:78bd:6b9f with SMTP id
- 2adb3069b0e04-54990e676damr9169540e87.30.1741861927881; Thu, 13 Mar 2025
- 03:32:07 -0700 (PDT)
+	 To:Cc:Content-Type; b=nSF6xtwW2G1VsAb1QlgaQ6IeWIUjOpnrDpItWx4Rta7vOfdF3ktlgwqzGJ3WaUgO0lc0FhnG29wIwl4j1Rf/ggXbiXNcHCsa4WVRVFGwPB8nM5miTjosjU1zlaIiODNlYmMpra/CO70t8dtYQTScKXuBgaJPa5h48aemQKWkUlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=RMJ4vkFb; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-47690a4ec97so7133941cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 03:32:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1741861935; x=1742466735; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=muAQHFEgNLZMG/SuC+aPWWR+LDpxUfw93H2VEDc/yJA=;
+        b=RMJ4vkFbKAGGNuzOIv0tQXAoF5TOcHFivlAgiBMbpFyn8YLGlr4SJ9G/zKszKrIyO4
+         gmvXDZarph/4GFmlHiMZNhr7IIeCDmvJoHqpFli7xXeFI1CF22i9EC4FUKoBX8puKyGP
+         lQfQiG7Cv/vurRnV2bmy2kpA5qdOMg7SG5Um0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741861935; x=1742466735;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=muAQHFEgNLZMG/SuC+aPWWR+LDpxUfw93H2VEDc/yJA=;
+        b=AzplWkL91XQ/rggQJzRB2AHAdArlrnPUZ3zaPRcBNaZZAiv6drLj2FFlRDh3agXqqB
+         XTfi9HJm+8QQx0ZqDQuVcf5sXzvkZKVqD8GF5/3lH5S9QB10dkuKYi3SU488DSyZ9uG7
+         IpYuuC1FAtux3ar/fA2buPMzcSPq/QGu6qwqTVDNBtEpyExOufi5fa9QWaV0PKI4X9Ev
+         fjn21UyrmEuCA7fSI1ljbdITDlg2+9tHq4Tzm37JryvcK9jNt2XLvQ4SLYMrc7SyDKDn
+         n5jx+bxL9njY6jJGjoACC/hQA2Ufg3vsTJploYD7AUQx6SLBUAH3me/lPSxyri/wwRsa
+         iY9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWrs0QwAk6o0f8rxp0PIqoaP0z+9siydt7Sq3RXwvb9nC7qIUWy9p8H+tlaxG7toSt8pXgRCYvWCtlrr9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqxgFy9jPYzFM2BQ4mNmQYYCGM1Q3PQt+HJqalIvVVlEekni24
+	U777JHSVShg3sTtD7lwHm1rjCbdgKUPu8zWogyeYJkQ7YRkZ2mW5+4JLamU9Kvf3dpghfdLHkE/
+	0rVihQjx/kqdnzGS+Odr476jGIgN1Xo5k4nw9Kg==
+X-Gm-Gg: ASbGncvzlQSmJtYyJXqtUV2TP1k8V6vi0VOeSrhntpkHk7EnwE9VjukJGsBOhhPk726
+	OBicWHekTJ18yWZ7K+hW+SdOk8jdCvg8KJHt7GpkKa00UeH5Rli1d8Rc5tprnucuDWkIEx+hGKO
+	mo2SfBi1DlZbKTi44NOm5LK5Wp9ozeE7lYagOy
+X-Google-Smtp-Source: AGHT+IFvV+R6NB1RTSGjApLwDmw/4hA6BuNsaN2pzZiGmqLxchQfn6CPykE91fBj9CIdL5LgDTEVx0RIRGBSevEA8XQ=
+X-Received: by 2002:a05:622a:164c:b0:476:9296:80c1 with SMTP id
+ d75a77b69052e-4769950dc42mr192797031cf.31.1741861935681; Thu, 13 Mar 2025
+ 03:32:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224132132.1765115-6-ardb+git@google.com> <CAMj1kXHamiZ8u4YO9FnrWhpcotUkAusDF_db_5H2qaVD85qmVA@mail.gmail.com>
- <CAK7LNATLf2iXNGi-UKRg=+PRRqgmxry5QQnQ4GUNsuVmDBAnmw@mail.gmail.com>
- <CAMj1kXGVe-R7VF1nHmRx+UB4FuhSjiwMU=n_uWCLC99rTTa5ZQ@mail.gmail.com>
- <CAK7LNATkaTvAwPmNM3kSOCkCptW-bo9Ko6asWyFVcGYgu5rHtw@mail.gmail.com>
- <CAMj1kXHCia-gQy7fkVC5SgMyFqz6rRgpVbz6_W7e9jk7ENaQxA@mail.gmail.com>
- <Z81j8EguDyz_uesu@gmail.com> <CAK7LNATb40pkqXXH+o_CXW6Vf3zavAj8oSeWnpGfXq6SCto4kw@mail.gmail.com>
- <CAMj1kXEAw7qqRSPCnKj+sO5QEtWsFQ2P7gkxuNQhssWd3E6S=Q@mail.gmail.com>
-In-Reply-To: <CAMj1kXEAw7qqRSPCnKj+sO5QEtWsFQ2P7gkxuNQhssWd3E6S=Q@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 13 Mar 2025 19:31:30 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATh=si9Gc6r0_g66YPmoV8qWkqFAbVhLwUbsjTkhRAEbQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JpN9yY182aIhb9AHHOX73O0I8d6jIFYZOgavTeL_hQ5Jy5s66K_fuCwmjA
-Message-ID: <CAK7LNATh=si9Gc6r0_g66YPmoV8qWkqFAbVhLwUbsjTkhRAEbQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] x86/build: Get rid of vmlinux postlink step
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	linux-kbuild@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+References: <20250226091451.11899-1-luis@igalia.com> <87msdwrh72.fsf@igalia.com>
+ <CAJfpegvcEgJtmRkvHm+WuPQgdyeCQZggyExayc5J9bdxWwOm4w@mail.gmail.com> <87v7sfzux8.fsf@igalia.com>
+In-Reply-To: <87v7sfzux8.fsf@igalia.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 13 Mar 2025 11:32:04 +0100
+X-Gm-Features: AQ5f1Jqnkql6G_Btdn3PdfZNt5_6gSuKgmk5jF61L-Z8GT8L1srjija5P4cysU8
+Message-ID: <CAJfpegvxp6Ah3Br9XUmnz_E5KwfOTC44JTa_Sjt0WGt8cAZKEg@mail.gmail.com>
+Subject: Re: [PATCH v8] fuse: add more control over cache invalidation behaviour
+To: Luis Henriques <luis@igalia.com>
+Cc: Bernd Schubert <bschubert@ddn.com>, Dave Chinner <david@fromorbit.com>, 
+	Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 11, 2025 at 3:40=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
-ote:
->
-> On Tue, 11 Mar 2025 at 03:39, Masahiro Yamada <masahiroy@kernel.org> wrot=
-e:
-> >
-> > On Sun, Mar 9, 2025 at 6:48=E2=80=AFPM Ingo Molnar <mingo@kernel.org> w=
-rote:
-> > >
-> > >
-> > > * Ard Biesheuvel <ardb@kernel.org> wrote:
-> > >
-> > > > On Sat, 8 Mar 2025 at 17:17, Masahiro Yamada <masahiroy@kernel.org>=
- wrote:
-> > > > >
-> > > > ...
-> > > > > I do not think it is broken.
-> > > > > As I mentioned above, I regard vmlinux.relocs as a byproduct
-> > > > > of the atomic build rule of vmlinux. This works.
-> > >
-> > > Except when it doesn't work, such as when an intermediate linking ste=
-p
-> > > fails, and intermediate build products are lost and cannot be recreat=
-ed
-> > > easily (or at all without modifying the source)?
-> > >
-> > > And the thing is, there should be no such thing as an 'atomic build
-> > > rule of vmlinux' if it means lost information when the build is broke=
-n
-> > > at an intermediate step. What purpose does it have?
-> > >
-> > > > There is no make rule for vmlinux.relocs, and so
-> > > >
-> > > > - if it gets deleted, it cannot be rebuilt and even though the buil=
-d
-> > > > does not break, the relocation data is missing from the compressed
-> > > > image, and this could potentially break the kaslr startup code,
-> > > > - it vmlinux.relocs is older than vmlinux for some reason, make wil=
-l
-> > > > not notice and silently reuse the outdated version,
-> > > > - when creating vmlinux.relocs from vmlinux and an error occurs,
-> > > > vmlinux is deleted, making it difficult to diagnose the problem.
-> > > >
-> > > > I think this is badly broken, but if you think this is all working =
-as
-> > > > it should, I am not going to debate this further, and you can consi=
-der
-> > > > the patch series withdrawn.
-> > >
-> > > That's very sad, as both the simplification is substantial:
-> > >
-> > >   19 files changed, 52 insertions(+), 87 deletions(-)
-> > >
-> > > and the increase in debuggability is substantial as well.
-> > >
-> > > Thanks,
-> > >
-> > >         Ingo
-> >
-> > When a byproduct is accidentally lost
-> > (for example, manually deleted), it is not automatically restored.
-> > Running 'rm vmlinux' or 'make clean' is needed.
-> >
->
-> Exactly. Make cannot detect this situation, and so the build breaks in so=
-me way.
->
-> > vmlinux.relocs is one such byproduct.
-> > Another is the map file when CONFIG_VMLINUX_MAP=3Dy is enabled.
-> >
->
-> The linker map is not depended upon by other build targets, and is
-> typically for human debug consumption, so while not ideal, it is not
-> as broken as for the unstripped vmlinux.
+On Tue, 11 Mar 2025 at 12:08, Luis Henriques <luis@igalia.com> wrote:
 
-Now you learned this statement is wrong.
+> Well, the use-case I had in mind is, as I mentioned before, CVMFS.  I
+> think this file system could benefit from using this mechanism.
 
+We need more than just a hunch that this will work.  Having code out
+there that actually uses the new feature is a hard requirement.
 
---=20
-Best Regards
-Masahiro Yamada
+It does not need to be actually committed to the cvmfs repo, but some
+indication that the code will be accepted by the maintainers once the
+kernel part is upstream is needed.
+
+> However, I don't think that measuring the direct benefits is something
+> easily done.  At the moment, it uses a thread that tries to drain the
+> cache using the FUSE_NOTIFY_INVAL_{INODE,ENTRY} operations.  These are,
+> obviously, operations that are much more expensive than the proposed
+> FUSE_NOTIFY_INC_EPOCH.  But, on the other hand, they have *immediate*
+> effect while the new operation does not: without the call to
+> shrink_dcache_sb() it's effect can only be observed in the long run.
+
+How so?  Isn't the advantage of FUSE_NOTIFY_INC_EPOCH that it spares
+the server of having to send out FUSE_NOTIFY_INVAL_ENTRY for *all* of
+the currently looked up dentries?
+
+> I can try to come up with some artificial test case for this, but
+> comparing these operations will always need to be done indirectly.  And I
+> wonder how useful that would be.
+
+Any test is better than no test.
+
+> So, you're proposing something like having a workqueue that would walk
+> through the entries.  And this workqueue would be triggered when the epoch
+> is increased.
+
+Not just.  Also should periodically clean up expired dentries.
+
+Thanks,
+Miklos
 
