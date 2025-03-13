@@ -1,154 +1,213 @@
-Return-Path: <linux-kernel+bounces-560092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D18FA5FD99
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:21:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6372A5FDC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:29:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 525E53BC317
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:20:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 051CB8802C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB32B16DC28;
-	Thu, 13 Mar 2025 17:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915A9189915;
+	Thu, 13 Mar 2025 17:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jQJgM4Cz"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="SQb4+8R3"
+Received: from mx-rz-3.rrze.uni-erlangen.de (mx-rz-3.rrze.uni-erlangen.de [131.188.11.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A1A6F2F2
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F9078F4C;
+	Thu, 13 Mar 2025 17:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741886454; cv=none; b=p0ow0h7nvkgIo1ODSvI1v3ASXdhRnZxVEdRiC4pAgh44v2NXY6xujEgK1O8um7HPRz/Z+6G7+S5U21q5F3IZOiUenBnK+zfTf2clIHVieKhCn6hDbcLeDclyNGilJAus3D2DJcEMpUX0DRAxgUf5R/szDGw5UlDILF4ipiw66yQ=
+	t=1741886981; cv=none; b=C6EYhz7VBHTlF5k+BBu2iGEjQIc6YqzU6MfEQXC4b5CWd1yVB92r8lkFYWh3FhKeF5mO2bYnEJm+7kmZtMTXo6FFbqVrGjDRFw8SUe08vdd18jPwvMi2NabQ6imTgB5W3B6GaQQBE4m0lk2dagbosliX9fmBZpEUkifuDFX8K3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741886454; c=relaxed/simple;
-	bh=OLKBnNsMngGmJm6dpFIEeHln6vIL0XyDfg8TqpsYxEc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XnQe0b1ntNl8T4LRSZIEWdEv8xidzkaxxa9BhWT5bPAxsqFPpnLfZw0c7gEEmJ1GEt6DcByTTa+r/DzyMaRY8pUo0ppw2qB7r0xMzS6g5gebNB9WRUHd6/O3GLLxnAcC7V5J0+i2J2DUmcxEb8jm0XHkZWsbbbkbUl3HgKlnbbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jQJgM4Cz; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-307325f2436so12061161fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:20:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741886450; x=1742491250; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qCGXjrhsE9oWGfXs3bCuaZWdIdJANHhaJh5AOXV0WQw=;
-        b=jQJgM4CzcFv0N5DwwdtB7B3qDIV3gmIi0+wEpY1+O1jhtRNk9cUs5ymrwRC/hUsGCg
-         xpuLDjlxDbYdkWRVSdweFl5VeL/gNCSYqkYEFNOfQusUcRzPxmOoO1ILrF0ezKLbvL1c
-         99lEi8IwdW8d8IAsncQKxKjdHQJrtttipYzhxTvaJgthteWE1fcXzrcmLAdEYiHwSerJ
-         v97A0WCMJZP2ODaPRMkV26fIfuNZT3GsQg5TB8p938L6sLxih4vQYWzT8ff2AXPhQCnT
-         LAB3jMlMiNWiKdSJgsF8TG8Ql3JMUP6jIF7xMXGb/7KRoZrhFqkrM1dUin5I0PE0SEPX
-         Kg3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741886450; x=1742491250;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qCGXjrhsE9oWGfXs3bCuaZWdIdJANHhaJh5AOXV0WQw=;
-        b=w+T6uYQqqREgHguedqpy3Vp02f1kvYTvS+Vn7T0JiK1/m6JpNxS/anZreqs9YfNUWk
-         5RynJjEQCfzL/H8FYPwUBwfJ3c9YDRveygDeqNObbhcgRCB5fVtgMZnAeTKFkZBYid0T
-         ho0Vb+56gkYoey4DVRNC9mob9LUHIkh6vveNb7fsmvnCQc2/8oDwciufUF/MQevUaxy1
-         CCVCi95yMg+mIIJcPXQ72nIevXDZph1ilyGNHLuckaPuXTg47QQEVW7sx+TOgAH/8BZz
-         Ez+Vuajc3Jx+z8ZP5ITXo1aLFphvsPSZ5kRVHSp6JL7tv1wGXl2cGG5ONp1jdswOwo9y
-         AQ/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUupyT33tuDJeKiUeHnYl5A8nlUirkbC1AQI5KAY7iRiqY0C9uKohtYkJ+fzAB4Rc2pTsJXtaq3/h6WvvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiMbV9I5rJbgaGwNUqcZOaEPhXknLkkd+M+GTvD18b78qfsBIJ
-	jCsFU08z2/0/WiN4lteRQJLeTs9hh+njiKdWh24h6mpYmDeNXqoeOxxLHs6406v4eqRJZ+caHoY
-	WxyPu83DvAlDxDZTMd6qCPtIYnxqtmSrD++U=
-X-Gm-Gg: ASbGncueZpDdAKrzLbFBX/ahY4ilc1amDS8Q2hAcmlhQbBoN4xpWhy4ochFmXuN3gFW
-	Qb8JvXgo/szKQQSpid6j9PnoqH2MAAQIM7Tg7o9862nu+lkttqvXDHRIz0P21/ojY0RikCzhpNx
-	8dY8AA3GfPM8lz7EJ0mh85CcrGOBf3rxff8ntsNiAz8f/oXIUiMVUUmfw=
-X-Google-Smtp-Source: AGHT+IE0zMOBZIfP9ij8kToK0CzIWUcde88XYJO2NY52WAFstx8EGXE92pCIM1DFfsWbgoK+lewg6aI6PQ3+Hc21W5Y=
-X-Received: by 2002:a05:6512:2253:b0:545:c7d:1790 with SMTP id
- 2adb3069b0e04-549c09ebe79mr239070e87.22.1741886449936; Thu, 13 Mar 2025
- 10:20:49 -0700 (PDT)
+	s=arc-20240116; t=1741886981; c=relaxed/simple;
+	bh=6KZ4fjAT2bZCwY5Ayu8IzLehBcqStD+SrveP6Nwlt8w=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Nqrd9oh7nj1vOQyUPf+WW6afdQHUYQHo4jKzdoN7U++4apoqXtbqmdin+ywJ4vtEAOsWQ4206UtBhHU85E5WpB3CkpwXFxj7WnbIxEFyGUbR75pO20vK0PH+0dUg/Ep9gCxt7in2mQlx/wCZAPVR4LpJhNSGzR5Phfw3zfcmprE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=SQb4+8R3; arc=none smtp.client-ip=131.188.11.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+	t=1741886518; bh=Vto+5sxnbm5itz1/EdAaR/loDZXRrbOwTv+hhdfdi+g=;
+	h=From:To:Subject:Date:From:To:CC:Subject;
+	b=SQb4+8R3TWR3guJqo8PvChxi/O/yIjyNHMha8Fpu3fcZLoHvqRwGpqOblbKkwQb4r
+	 c1kZod9390FDuTl/vD2BomjUVRQP1SWzWJ1Kxe3IEZwe0JM9RUBuyTsW2CIngIm2Ff
+	 J4boAbcVavk1imK3SNhsdFte8535234fLWDgkYS2AOPn4Hv/PMbnI1wcxOm/Phfdo7
+	 ikZfmJjnQl/8npWntufPP+VLIR2aixi5Yw76YDNFKqdUWqZfdXZgVTDZ7qBHAUIwNK
+	 D9IvoeRve6/e8z3cNM72/+yB/3ui7Q2jN8r/90eJ8YkRJZLAy76bMKUztZskv8MxQ9
+	 woxjQOdGBZnEA==
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-rz-3.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4ZDDnf0gK1z1yGm;
+	Thu, 13 Mar 2025 18:21:58 +0100 (CET)
+X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2001:9e8:3614:2b00:7ee6:68e5:4447:ba92
+Received: from luis-tp.fritz.box (unknown [IPv6:2001:9e8:3614:2b00:7ee6:68e5:4447:ba92])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: U2FsdGVkX19Ijm4+IBM849zk+H8/lYlR6tkKHCOwLNk=)
+	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4ZDDnZ2L1Nz1yN1;
+	Thu, 13 Mar 2025 18:21:54 +0100 (CET)
+From: Luis Gerhorst <luis.gerhorst@fau.de>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Xu Kuohai <xukuohai@huaweicloud.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Hari Bathini <hbathini@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Luis Gerhorst <luis.gerhorst@fau.de>,
+	Henriette Herzog <henriette.herzog@rub.de>,
+	Cupertino Miranda <cupertino.miranda@oracle.com>,
+	Matan Shachnai <m.shachnai@gmail.com>,
+	Dimitar Kanaliev <dimitar.kanaliev@siteground.com>,
+	Shung-Hsi Yu <shung-hsi.yu@suse.com>,
+	Daniel Xu <dxu@dxuuu.xyz>,
+	bpf@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kselftest@vger.kernel.org,
+	George Guo <guodongtai@kylinos.cn>,
+	WANG Xuerui <git@xen0n.name>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: [PATCH bpf-next 00/11] bpf: Mitigate Spectre v1 using barriers
+Date: Thu, 13 Mar 2025 18:21:16 +0100
+Message-ID: <20250313172127.1098195-1-luis.gerhorst@fau.de>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310030004.3705801-1-lei.chen@smartx.com>
-In-Reply-To: <20250310030004.3705801-1-lei.chen@smartx.com>
-From: John Stultz <jstultz@google.com>
-Date: Thu, 13 Mar 2025 10:20:37 -0700
-X-Gm-Features: AQ5f1Jr2mVWGYYs6j6-97VQrjm8ignEgA4W2qr7Gyt-Z_9-pvHrJZ5Iak8URCiQ
-Message-ID: <CANDhNCoRxxA-CxOQ6vxfjf6BDxR-gqCC_QE1wwf4L3gwrvfv6A@mail.gmail.com>
-Subject: Re: [PATCH] Fix rolling back of CLOCK_MONOTONIC_COARSE
-To: Lei Chen <lei.chen@smartx.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Mar 9, 2025 at 8:00=E2=80=AFPM Lei Chen <lei.chen@smartx.com> wrote=
-:
->
-> timekeeping_apply_adjustment try to adjust tkr_mono.mult by @mult_adj.
-> If @mult_adj > 0, tk->tkr_mono.xtime_nsec will be decreased by @offset.
-> Then timekeeping_update flushes shadow_timekeeper to real tk and vdso
-> data region. Then rolling back happens.
->
-> The drawing below illustrates the reason why timekeeping_apply_adjustment
-> descreases tk->tkr_mono.xtime_nsec.
->
->      cycle_interval       offset        clock_delta
-> x-----------------------x----------x---------------------------x
->
-> P0                      P1         P2                         P3
->
-> N(P) means the nano sec count at the point P.
->
-> Assume timekeeping_apply_adjustment runs at P1, with unaccumulated
-> cycles @offset. Then tkr_mono.mult is adjusted from M1 to M2.
->
-> Since offset happens before tkr_mono.mult adjustment, so we want to
-> achieve:
-> N(P3) =3D=3D offset * M1 + clock_delta * M2 + N(P1)   -------- (1)
->
-> But at P3, the code works as following:
-> N(P3) :=3D (offset + clock_delta) * M2 + N(P1)
->        =3D offset * M2 + clock_delta * M2 + N(P1)
->
-> Apprently, N(P3) goes away from equation (1). To correct it, N(P1)
-> should be adjusted at P2:
-> N(P1) -=3D offset * (M2 - M1)
->
-> To fix this issue, the patch accumulates offset into tk, and export
-> N(P2) to real tk and vdso.
->
-> tk.tkr_mono :=3D N(P2) =3D N(P1) + offset * M1
->
-> Then at P3, we calculate N(P3) based on N(P2) instead of N(P1):
-> N(P3) :=3D N(P2) + clock_delta * M2
->
-> Signed-off-by: Lei Chen <lei.chen@smartx.com>
+This improves the expressiveness of unprivileged BPF by inserting
+speculation barriers instead of rejecting the programs.
 
-Thanks for the email and the patch!
+The approach was previously presented at LPC'24 [1] and RAID'24 [2].
 
-So, I'm having a bit of a hard time understanding the issue you're
-actually seeing. It seems to be that you're seeing
-CLOCK_MONOTONIC_COARSE go backwards?
+To mitigate the Spectre v1 (PHT) vulnerability, the kernel rejects
+potentially-dangerous unprivileged BPF programs as of
+commit 9183671af6db ("bpf: Fix leakage under speculation on mispredicted
+branches"). In [2], we have analyzed 364 object files from open source
+projects (Linux Samples and Selftests, BCC, Loxilb, Cilium, libbpf
+Examples, Parca, and Prevail) and found that this affects 31% to 54% of
+programs.
 
-The approach in your proposed patch seems to undo some of the
-cycle_interval chunked accumulation, which was intentionally avoiding
-the multiplication. Instead it tries to accumulate the rest of the
-sub-cycle_interval unaccumulated delta. I don't think this is correct,
-as it likely would cause problems with the error accounting, as we
-accumulate the error in chunks calculated to match the cycle_interval
-chunks.
+To resolve this in the majority of cases this patchset adds a fall-back
+for mitigating Spectre v1 using speculation barriers. The kernel still
+optimistically attempts to verify all speculative paths but uses
+speculation barriers against v1 when unsafe behavior is detected. This
+allows for more programs to be accepted without disabling the BPF
+Spectre mitigations (e.g., by setting cpu_mitigations_off()).
 
-Additionally, your changes are all generic to CLOCK_MONOTONIC, but
-your subject suggests only MONOTONIC_CORASE is having the problem?
-Could you explain in more detail the problem you are observing, and
-how it triggers?
-It seems like reading CLOCK_MONOTONIC_COARSE while making a large
-negative NTP adjustment would be able to reproduce this?
+In [1] we have measured the overhead of this approach relative to having
+mitigations off and including the upstream Spectre v4 mitigations. For
+event tracing and stack-sampling profilers, we found that mitigations
+increase BPF program execution time by 0% to 62%. For the Loxilb network
+load balancer, we have measured a 14% slowdown in SCTP performance but
+no significant slowdown for TCP. This overhead only applies to programs
+that were previously rejected.
 
-thanks
--john
+I reran the expressiveness-evaluation with v6.14 and made sure the main
+results still match those from [1] and [2] (which used v6.5).
+
+Main design decisions are:
+
+* Do not use separate bytecode insns for v1 and v4 barriers. This
+  simplifies the verifier significantly and has the only downside that
+  performance on PowerPC is not as high as it could be.
+
+* Allow archs to still disable v1/v4 mitigations separately by setting
+  bpf_jit_bypass_spec_v1/v4(). This has the benefit that archs can
+  benefit from improved BPF expressiveness / performance if they are not
+  vulnerable (e.g., ARM64 for v4 in the kernel).
+
+* Do not remove the empty BPF_NOSPEC implementation for backends for
+  which it is unknown whether they are vulnerable to Spectre v1.
+
+[1] https://lpc.events/event/18/contributions/1954/ ("Mitigating
+    Spectre-PHT using Speculation Barriers in Linux eBPF")
+[2] https://arxiv.org/pdf/2405.00078 ("VeriFence: Lightweight and
+    Precise Spectre Defenses for Untrusted Linux Kernel Extensions")
+
+Changes:
+* RFC -> v1:
+  - rebase to bpf-next-250313
+  - tests: mark expected successes/new errors
+  - add bpt_jit_bypass_spec_v1/v4() to avoid #ifdef in
+    bpf_bypass_spec_v1/v4()
+  - ensure that nospec with v1-support is implemented for archs for
+    which GCC supports speculation barriers, except for MIPS
+  - arm64: emit speculation barrier
+  - powerpc: change nospec to include v1 barrier
+  - discuss potential security (archs that do not impl. BPF nospec) and
+    performance (only PowerPC) regressions
+
+RFC: https://lore.kernel.org/bpf/20250224203619.594724-1-luis.gerhorst@fau.de/
+
+Luis Gerhorst (11):
+  bpf: Move insn if/else into do_check_insn()
+  bpf: Return -EFAULT on misconfigurations
+  bpf: Return -EFAULT on internal errors
+  bpf, arm64, powerpc: Add bpf_jit_bypass_spec_v1/v4()
+  bpf, arm64, powerpc: Change nospec to include v1 barrier
+  bpf: Rename sanitize_stack_spill to nospec_result
+  bpf: Fall back to nospec for Spectre v1
+  bpf: Allow nospec-protected var-offset stack access
+  bpf: Return PTR_ERR from push_stack()
+  bpf: Fall back to nospec for sanitization-failures
+  bpf: Fall back to nospec for spec path verification
+
+ arch/arm64/net/bpf_jit.h                      |   5 +
+ arch/arm64/net/bpf_jit_comp.c                 |  28 +-
+ arch/powerpc/net/bpf_jit_comp64.c             |  79 +-
+ include/linux/bpf.h                           |  11 +-
+ include/linux/bpf_verifier.h                  |   3 +-
+ include/linux/filter.h                        |   2 +-
+ kernel/bpf/core.c                             |  32 +-
+ kernel/bpf/verifier.c                         | 723 ++++++++++--------
+ .../selftests/bpf/progs/verifier_and.c        |   3 +-
+ .../selftests/bpf/progs/verifier_bounds.c     |  35 +-
+ .../bpf/progs/verifier_bounds_deduction.c     |  43 +-
+ .../selftests/bpf/progs/verifier_map_ptr.c    |  12 +-
+ .../selftests/bpf/progs/verifier_movsx.c      |   6 +-
+ .../selftests/bpf/progs/verifier_unpriv.c     |   3 +-
+ .../bpf/progs/verifier_value_ptr_arith.c      |  50 +-
+ .../selftests/bpf/verifier/dead_code.c        |   3 +-
+ tools/testing/selftests/bpf/verifier/jmp32.c  |  33 +-
+ tools/testing/selftests/bpf/verifier/jset.c   |  10 +-
+ 18 files changed, 630 insertions(+), 451 deletions(-)
+
+
+base-commit: 46d38f489ef02175dcff1e03a849c226eb0729a6
+-- 
+2.48.1
+
 
