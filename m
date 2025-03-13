@@ -1,183 +1,93 @@
-Return-Path: <linux-kernel+bounces-558965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27905A5EDB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:11:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52053A5EDAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:10:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D223189E057
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:11:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBFC83B08A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99AA260375;
-	Thu, 13 Mar 2025 08:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="hmI6P9ZA"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF27725FA37
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4CE26036A;
+	Thu, 13 Mar 2025 08:10:17 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16039260363
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741853461; cv=none; b=YBxEdHExG5MnnFynOlvMEndQickquXwTy6w1tcepwaz1HYZeAYZdWzDkfiQUKj3UTFW7D9b5bpQPld8HM4zBwQS/Rf0L5Pw4+tF5BWIa0K4GE2o4XPooRGp+njCjUAQjf6qPQ/Cu/zjod8HnzHWFDDxhUBHwDuRWXjnWAyhWakA=
+	t=1741853416; cv=none; b=S6Ig2HfG2mmXAegnBgVgSBN1vKdHTNEFjtEX30OgYjzFEZIxuUMJAYsXlfRYz7T6pfW/dSWsRv06V4RB3yeujcDU6vGForq3aZRq9zYZ5CFbeza96QdjJWfhIPOfqyxguasx6e19K4NmB0R/zwZmyC82pZSKLr2rDow5dvBaHUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741853461; c=relaxed/simple;
-	bh=tBbKtFf3feevILgnQG2My4NsYVfIEuDXKpflqnXYV8I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=BTm5/qVXnUolut9PrOgd+LkcBlf2P1iVCjC96iFKKoJUtx6TK8aLJM1sbd6VFvG8lVoQohCggSoRBOgfTzpYR3bxHgFO//ASYxo8KsTB8vhToVVMD9UdXzmUfHSz6JdcoUXrcOqTGoOjP+G/EQ8vWHrBnqGkG5cL7k7IskpXF28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=hmI6P9ZA reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=bkguU/V4vCU7qkUopQGCcdg9rewrqL/s+JyADZ4sIys=; b=h
-	mI6P9ZAZLERAB5f31K7XoakA2asQUTMpvL8+m+ZgWBH2zx8/8eu/3YYo6/UNRObp
-	AJd8rJU+Q5dRDBd1qCwr1AaXfVjGhIzVIgwicsHEOSr9SM6YuWcUEtcg/dcw6ppi
-	4rQb4y5zRxo75TSxli7ppOtmLEt89/w48JomXIod+U=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-146 (Coremail) ; Thu, 13 Mar 2025 16:09:54 +0800
- (CST)
-Date: Thu, 13 Mar 2025 16:09:54 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Maxime Ripard" <mripard@kernel.org>
-Cc: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
-	"Thomas Zimmermann" <tzimmermann@suse.de>,
-	"David Airlie" <airlied@gmail.com>,
-	"Simona Vetter" <simona@ffwll.ch>,
-	"Andrzej Hajda" <andrzej.hajda@intel.com>,
-	"Neil Armstrong" <neil.armstrong@linaro.org>,
-	"Robert Foss" <rfoss@kernel.org>,
-	"Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>,
-	"Jonas Karlman" <jonas@kwiboo.se>,
-	"Jernej Skrabec" <jernej.skrabec@gmail.com>,
-	"Douglas Anderson" <dianders@chromium.org>,
-	"Herve Codina" <herve.codina@bootlin.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	"Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
-	"Simona Vetter" <simona.vetter@ffwll.ch>, lumag@kernel.org
-Subject: Re:Re:[PATCH v5 04/16] drm/atomic: Introduce helper to lookup
- connector by encoder
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <5180089f.a640.19566290538.Coremail.andyshrk@163.com>
-References: <20250304-bridge-connector-v5-0-aacf461d2157@kernel.org>
- <20250304-bridge-connector-v5-4-aacf461d2157@kernel.org>
- <5180089f.a640.19566290538.Coremail.andyshrk@163.com>
-X-NTES-SC: AL_Qu2fA/SevEsi4iibbOkfmkcVgOw9UcO5v/Qk3oZXOJF8jCzr2S86fUFMJXzT+9+ONRCrrheYbT9M6PtxWaRSfYMb9lQmH73zLkFZDqj8NGP+7w==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1741853416; c=relaxed/simple;
+	bh=Gx27QfC5MaFYN7WNYOHNmQnuZwilXKzKa7X85E4GdOw=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=p1Y6iLSECFeCkL0XgHoHV+vulxQb6QeBToBkkjIcpM4Fe9dQYcZwmnuyiU4gbBSkPwkPouXQJJsiqttjOuoGSnrLP1IAckB/0XLvlrHYISTvMET0Ibp6tGDVtkNs25Xf1jkEVZJTif0JvIoS3AVH1VY18JFvibva0k/9POtaqBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZD0Xs2ykDz5B1Gq;
+	Thu, 13 Mar 2025 16:10:05 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl1.zte.com.cn with SMTP id 52D89ufZ028904;
+	Thu, 13 Mar 2025 16:09:56 +0800 (+08)
+	(envelope-from ye.xingchen@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid31;
+	Thu, 13 Mar 2025 16:09:59 +0800 (CST)
+Date: Thu, 13 Mar 2025 16:09:59 +0800 (CST)
+X-Zmail-TransId: 2afa67d292d7ffffffff969-132a8
+X-Mailer: Zmail v1.0
+Message-ID: <20250313160959132rMOoPpNjSNTlB-E6rMOuj@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <608c01c.7716.1958e8d879f.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:kigvCgAXPS7SktJnM7N9AA--.17554W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0hgPXmfSjOJdIQADs-
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Mime-Version: 1.0
+From: <ye.xingchen@zte.com.cn>
+To: <brauner@kernel.org>
+Cc: <jack@suse.cz>, <jeff.johnson@oss.qualcomm.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIXSBubHM6IEZpeCB1dGY4c190b191dGYxNnMgcGFyYW1ldGVyIHR5cGUgaW4gZGVjbGFyYXRpb24gYW5kwqBkZWZpbml0aW9u?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 52D89ufZ028904
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 67D292DD.000/4ZD0Xs2ykDz5B1Gq
 
-CgpIaSBNYXhpbWUsCgpBdCAyMDI1LTAzLTA1IDE5OjU1OjE5LCAiQW5keSBZYW4iIDxhbmR5c2hy
-a0AxNjMuY29tPiB3cm90ZToKPgo+Cj5IaSBNYXhpbWUsCj4KPkF0IDIwMjUtMDMtMDQgMTk6MTA6
-NDcsICJNYXhpbWUgUmlwYXJkIiA8bXJpcGFyZEBrZXJuZWwub3JnPiB3cm90ZToKPj5XaXRoIHRo
-ZSBicmlkZ2VzIHN3aXRjaGluZyBvdmVyIHRvIGRybV9icmlkZ2VfY29ubmVjdG9yLCB0aGUgZGly
-ZWN0Cj4+YXNzb2NpYXRpb24gYmV0d2VlbiBhIGJyaWRnZSBkcml2ZXIgYW5kIGl0cyBjb25uZWN0
-b3Igd2FzIGxvc3QuCj4+Cj4+VGhpcyBpcyBtaXRpZ2F0ZWQgZm9yIGF0b21pYyBicmlkZ2UgZHJp
-dmVycyBieSB0aGUgZmFjdCB5b3UgY2FuIGFjY2Vzcwo+PnRoZSBlbmNvZGVyLCBhbmQgdGhlbiBj
-YWxsIGRybV9hdG9taWNfZ2V0X29sZF9jb25uZWN0b3JfZm9yX2VuY29kZXIoKSBvcgo+PmRybV9h
-dG9taWNfZ2V0X25ld19jb25uZWN0b3JfZm9yX2VuY29kZXIoKSB3aXRoIGRybV9hdG9taWNfc3Rh
-dGUuCj4+Cj4+VGhpcyB3YXMgYWxzbyBtYWRlIGVhc2llciBieSBwcm92aWRpbmcgZHJtX2F0b21p
-Y19zdGF0ZSBkaXJlY3RseSB0byBhbGwKPj5hdG9taWMgaG9va3MgYnJpZGdlcyBjYW4gaW1wbGVt
-ZW50Lgo+Pgo+Pkhvd2V2ZXIsIGJyaWRnZSBkcml2ZXJzIGRvbid0IGhhdmUgYSB3YXkgdG8gYWNj
-ZXNzIGRybV9hdG9taWNfc3RhdGUKPj5vdXRzaWRlIG9mIHRoZSBtb2Rlc2V0IHBhdGgsIGxpa2Ug
-ZnJvbSB0aGUgaG90cGx1ZyBpbnRlcnJ1cHQgcGF0aCBvciBhbnkKPj5pbnRlcnJ1cHQgaGFuZGxl
-ci4KPj4KPj5MZXQncyBpbnRyb2R1Y2UgYSBmdW5jdGlvbiB0byByZXRyaWV2ZSB0aGUgY29ubmVj
-dG9yIGN1cnJlbnRseSBhc3NpZ25lZAo+PnRvIGFuIGVuY29kZXIsIHdpdGhvdXQgdXNpbmcgZHJt
-X2F0b21pY19zdGF0ZSwgdG8gbWFrZSB0aGVzZSBkcml2ZXJzJwo+PmxpZmUgZWFzaWVyLgo+Pgo+
-PlJldmlld2VkLWJ5OiBEbWl0cnkgQmFyeXNoa292IDxkbWl0cnkuYmFyeXNoa292QGxpbmFyby5v
-cmc+Cj4+Q28tZGV2ZWxvcGVkLWJ5OiBTaW1vbmEgVmV0dGVyIDxzaW1vbmEudmV0dGVyQGZmd2xs
-LmNoPgo+PlNpZ25lZC1vZmYtYnk6IE1heGltZSBSaXBhcmQgPG1yaXBhcmRAa2VybmVsLm9yZz4K
-Pj4tLS0KPj4gZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWMuYyB8IDQ1ICsrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4+IGluY2x1ZGUvZHJtL2RybV9hdG9taWMu
-aCAgICAgfCAgMyArKysKPj4gMiBmaWxlcyBjaGFuZ2VkLCA0OCBpbnNlcnRpb25zKCspCj4+Cj4+
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljLmMgYi9kcml2ZXJzL2dwdS9k
-cm0vZHJtX2F0b21pYy5jCj4+aW5kZXggOWVhMjYxMTc3MGY0M2NlN2NjYmE0MTA0MDZkNWYyYzUy
-OGFhYjAyMi4uYjkyNmIxMzI1OTBlNzhmOGQ0MWQ0OGViNGRhNGJjY2YxNzBlZTIzNiAxMDA2NDQK
-Pj4tLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5jCj4+KysrIGIvZHJpdmVycy9ncHUv
-ZHJtL2RybV9hdG9taWMuYwo+PkBAIC05ODUsMTAgKzk4NSw1NSBAQCBkcm1fYXRvbWljX2dldF9u
-ZXdfY29ubmVjdG9yX2Zvcl9lbmNvZGVyKGNvbnN0IHN0cnVjdCBkcm1fYXRvbWljX3N0YXRlICpz
-dGF0ZSwKPj4gCj4+IAlyZXR1cm4gTlVMTDsKPj4gfQo+PiBFWFBPUlRfU1lNQk9MKGRybV9hdG9t
-aWNfZ2V0X25ld19jb25uZWN0b3JfZm9yX2VuY29kZXIpOwo+PiAKPj4rLyoqCj4+KyAqIGRybV9h
-dG9taWNfZ2V0X2Nvbm5lY3Rvcl9mb3JfZW5jb2RlciAtIEdldCBjb25uZWN0b3IgY3VycmVudGx5
-IGFzc2lnbmVkIHRvIGFuIGVuY29kZXIKPj4rICogQGVuY29kZXI6IFRoZSBlbmNvZGVyIHRvIGZp
-bmQgdGhlIGNvbm5lY3RvciBvZgo+PisgKiBAY3R4OiBNb2Rlc2V0IGxvY2tpbmcgY29udGV4dAo+
-PisgKgo+PisgKiBUaGlzIGZ1bmN0aW9uIGZpbmRzIGFuZCByZXR1cm5zIHRoZSBjb25uZWN0b3Ig
-Y3VycmVudGx5IGFzc2lnbmVkIHRvCj4+KyAqIGFuIEBlbmNvZGVyLgo+PisgKgo+PisgKiBSZXR1
-cm5zOgo+PisgKiBUaGUgY29ubmVjdG9yIGNvbm5lY3RlZCB0byBAZW5jb2Rlciwgb3IgYW4gZXJy
-b3IgcG9pbnRlciBvdGhlcndpc2UuCj4+KyAqIFdoZW4gdGhlIGVycm9yIGlzIEVERUFETEssIGEg
-ZGVhZGxvY2sgaGFzIGJlZW4gZGV0ZWN0ZWQgYW5kIHRoZQo+PisgKiBzZXF1ZW5jZSBtdXN0IGJl
-IHJlc3RhcnRlZC4KPj4rICovCj4+K3N0cnVjdCBkcm1fY29ubmVjdG9yICoKPj4rZHJtX2F0b21p
-Y19nZXRfY29ubmVjdG9yX2Zvcl9lbmNvZGVyKGNvbnN0IHN0cnVjdCBkcm1fZW5jb2RlciAqZW5j
-b2RlciwKPj4rCQkJCSAgICAgc3RydWN0IGRybV9tb2Rlc2V0X2FjcXVpcmVfY3R4ICpjdHgpCj4+
-K3sKPj4rCXN0cnVjdCBkcm1fY29ubmVjdG9yX2xpc3RfaXRlciBjb25uX2l0ZXI7Cj4+KwlzdHJ1
-Y3QgZHJtX2Nvbm5lY3RvciAqb3V0X2Nvbm5lY3RvciA9IEVSUl9QVFIoLUVJTlZBTCk7Cj4+Kwlz
-dHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yOwo+PisJc3RydWN0IGRybV9kZXZpY2UgKmRl
-diA9IGVuY29kZXItPmRldjsKPj4rCWludCByZXQ7Cj4+Kwo+PisJcmV0ID0gZHJtX21vZGVzZXRf
-bG9jaygmZGV2LT5tb2RlX2NvbmZpZy5jb25uZWN0aW9uX211dGV4LCBjdHgpOwo+PisJaWYgKHJl
-dCkKPj4rCQlyZXR1cm4gRVJSX1BUUihyZXQpOwo+Cj5JdCBzZWVtcyB0aGF0IHRoaXMgd2lsbCBj
-YXVzZSBhIGRlYWRsb2NrIHdoZW4gY2FsbGVkIGZyb20gYSAgaG90cGx1ZyBoYW5kbGluZyBwYXRo
-LAo+SSBoYXZlIGEgV0lQIERQIGRpdmVyWzBdLCAgd2hpY2ggc3VnZ2VzdGVkIGJ5IERtaXRyeSB0
-byB1c2UgdGhpcyBBUEkgZnJvbSBhIAo+JmRybV9icmlkZ2VfZnVuY3MuZGV0ZWN0IGNhbGxiYWNr
-IHRvIGdldCB0aGUgY29ubmVjdG9yLCAgYXMgZGV0ZWN0IGlzIGNhbGxlZCBieSBkcm1faGVscGVy
-X3Byb2JlX2RldGVjdCwKPndoaWNoIHdpbGwgaG9sZCBjb25uZWN0aW9uX211dGV4IGZpcnN0LCBz
-byB0aGUgZGVha2xvY2sgaGFwcGVuczoKPgo+Cj5kcm1faGVscGVyX3Byb2JlX2RldGVjdChzdHJ1
-Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yLAo+ICAgICAgICAgICAgICAgICAgICAgICAgc3Ry
-dWN0IGRybV9tb2Rlc2V0X2FjcXVpcmVfY3R4ICpjdHgsCj4gICAgICAgICAgICAgICAgICAgICAg
-ICBib29sIGZvcmNlKQo+ewo+ICAgICAgICBjb25zdCBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcl9oZWxw
-ZXJfZnVuY3MgKmZ1bmNzID0gY29ubmVjdG9yLT5oZWxwZXJfcHJpdmF0ZTsKPiAgICAgICAgc3Ry
-dWN0IGRybV9kZXZpY2UgKmRldiA9IGNvbm5lY3Rvci0+ZGV2Owo+ICAgICAgICBpbnQgcmV0Owo+
-Cj4gICAgICAgIGlmICghY3R4KQo+ICAgICAgICAgICAgICAgIHJldHVybiBkcm1faGVscGVyX3By
-b2JlX2RldGVjdF9jdHgoY29ubmVjdG9yLCBmb3JjZSk7Cj4KPiAgICAgICAgcmV0ID0gZHJtX21v
-ZGVzZXRfbG9jaygmZGV2LT5tb2RlX2NvbmZpZy5jb25uZWN0aW9uX211dGV4LCBjdHgpOwo+ICAg
-ICAgICBpZiAocmV0KQo+ICAgICAgICAgICAgICAgIHJldHVybiByZXQ7Cj4KPiAgICAgICAgaWYg
-KGZ1bmNzLT5kZXRlY3RfY3R4KQo+ICAgICAgICAgICAgICAgIHJldCA9IGZ1bmNzLT5kZXRlY3Rf
-Y3R4KGNvbm5lY3RvciwgY3R4LCBmb3JjZSk7Cj4gICAgICAgIGVsc2UgaWYgKGNvbm5lY3Rvci0+
-ZnVuY3MtPmRldGVjdCkKPiAgICAgICAgICAgICAgICByZXQgPSBjb25uZWN0b3ItPmZ1bmNzLT5k
-ZXRlY3QoY29ubmVjdG9yLCBmb3JjZSk7Cj4gICAgICAgIGVsc2UKPiAgICAgICAgICAgICAgICBy
-ZXQgPSBjb25uZWN0b3Jfc3RhdHVzX2Nvbm5lY3RlZDsKPgo+ICAgICAgICBpZiAocmV0ICE9IGNv
-bm5lY3Rvci0+c3RhdHVzKQo+ICAgICAgICAgICAgICAgIGNvbm5lY3Rvci0+ZXBvY2hfY291bnRl
-ciArPSAxOwo+Cj5TbyBJIHdvbmRlciBjYW4gd2UgbGV0IGRybV9icmlkZ2VfZnVuY3MuZGV0ZWN0
-IHBhc3MgYSBjb25uZWN0b3IgZm9yIHRoaXMgY2FzZSA/Cj4KPgo+Cj5bMF1odHRwczovL2xvcmUu
-a2VybmVsLm9yZy9saW51eC1yb2NrY2hpcC8wNDdFRUNGQy03RTU1LTQ0RUMtODk2Ri0xM0ZFMDQz
-MzNFNERAZ21haWwuY29tL1QvI20yNWJjNTNiNzlmNWNjN2JkZGZjYjdhYWU1NjU2ZjY4ZGYzOTZm
-MDk0Cj4+Kwo+PisJZHJtX2Nvbm5lY3Rvcl9saXN0X2l0ZXJfYmVnaW4oZGV2LCAmY29ubl9pdGVy
-KTsKPj4rCWRybV9mb3JfZWFjaF9jb25uZWN0b3JfaXRlcihjb25uZWN0b3IsICZjb25uX2l0ZXIp
-IHsKPj4rCQlpZiAoIWNvbm5lY3Rvci0+c3RhdGUpCj4+KwkJCWNvbnRpbnVlOwo+PisKPj4rCQlp
-ZiAoZW5jb2RlciA9PSBjb25uZWN0b3ItPnN0YXRlLT5iZXN0X2VuY29kZXIpIHsKPj4rCQkJb3V0
-X2Nvbm5lY3RvciA9IGNvbm5lY3RvcjsKCgpXaGVuIHRyeSB0byB1c2UgdGhpcyBwYXRjaCBpbiBt
-eSBicmlkZ2UgZHJpdmVyLCAgSSBmb3VuZCB0aGF0IHRoZSBjb25uZWN0b3ItPnN0YXRlLT5iZXN0
-X2VuY29kZXIgCiBtYXliZSBOVUxMIHdoZW4gICBkcm1fYnJpZGdlX2Z1bmNzLmRldGVjdCBvciBk
-cm1fYnJpZGdlX2Z1bmNzLmRldGVjdF9jdHggaXMgIGNhbGxlZDoKClsgICA1Mi43MTMwMzBdIElu
-dmFsaWQgcmV0dXJuIHZhbHVlIC0yMiBmb3IgY29ubmVjdG9yIGRldGVjdGlvbgpbICAgNTIuNzEz
-NTM5XSBXQVJOSU5HOiBDUFU6IDcgUElEOiAyODggYXQgZHJpdmVycy9ncHUvZHJtL2RybV9wcm9i
-ZV9oZWxwZXIuYzo2MDIgZHJtX2hlbHBlcl9wcm9iZV9zaW5nbGVfY29ubmVjdG9yX21vZGVzKzB4
-NWUwLwoweDYzYwpbICAgNTIuNzE0NTY4XSBNb2R1bGVzIGxpbmtlZCBpbjoKClsgICA1Mi43MjQ1
-NDZdIENhbGwgdHJhY2U6ClsgICA1Mi43MjQ3NjJdICBkcm1faGVscGVyX3Byb2JlX3NpbmdsZV9j
-b25uZWN0b3JfbW9kZXMrMHg1ZTAvMHg2M2MgKFApClsgICA1Mi43MjUzMTldICBkcm1fbW9kZV9n
-ZXRjb25uZWN0b3IrMHgyYTQvMHg0ODgKWyAgIDUyLjcyNTcxMV0gIGRybV9pb2N0bF9rZXJuZWwr
-MHhiNC8weDExYwpbICAgNTIuNzI2MDU3XSAgZHJtX2lvY3RsKzB4MjJjLzB4NTQ0ClsgICA1Mi43
-MjYzNThdICBfX2FybTY0X3N5c19pb2N0bCsweGFjLzB4ZTAKWyAgIDUyLjcyNjcwNl0gIGludm9r
-ZV9zeXNjYWxsKzB4NDQvMHgxMDAKWyAgIDUyLjcyNzAzOV0gIGVsMF9zdmNfY29tbW9uLmNvbnN0
-cHJvcC4wKzB4M2MvMHhkNAoKVGhpcyBpcyBiZWNhdXNlICBiZXN0X2VuY29kZXIgaXMgc2V0IGJ5
-IHNldF9iZXN0X2VuY29kZXIsIHdoaWNoIGlzIGNhbGxlZCBmcm9tCmRybV9hdG9taWNfaGVscGVy
-X2NoZWNrX21vZGVzZXQuIFdoZW4gd2UgY2FsbCBkcm1fbW9kZV9nZXRjb25uZWN0b3IgCmZvciB0
-aGUgZmlyc3QgdGltZSwgdGhlIGZ1bmN0aW9ucyBtZW50aW9uZWQgYWJvdmUgaGF2ZSBub3QgYmVl
-biBjYWxsZWQgeWV0LAp0aGVuIHdlIGNhbid0IG1hdGNoIHRoZSBlbmNvZGVyIGZyb20gY29ubmVj
-dG9yLT5zdGF0ZS0+YmVzdF9lbmNvZGVyIGZvciB0aGlzIGNhc2UuCgoKCj4+KwkJCWJyZWFrOwo+
-PisJCX0KPj4rCX0KPj4rCWRybV9jb25uZWN0b3JfbGlzdF9pdGVyX2VuZCgmY29ubl9pdGVyKTsK
-Pj4rCWRybV9tb2Rlc2V0X3VubG9jaygmZGV2LT5tb2RlX2NvbmZpZy5jb25uZWN0aW9uX211dGV4
-KTsKPj4rCj4+KwlyZXR1cm4gb3V0X2Nvbm5lY3RvcjsKPj4rfQo+PitFWFBPUlRfU1lNQk9MKGRy
-bV9hdG9taWNfZ2V0X2Nvbm5lY3Rvcl9mb3JfZW5jb2Rlcik7Cj4+Kwo+PisKPj4gLyoqCg==
+From: YeXingchen <ye.xingchen@zte.com.cn>
+
+The declaration of utf8s_to_utf16s in the header file uses
+bool maxlen as the parameter type, while the definition uses bool maxout.
+
+This patch aligns the parameter name in the definition with the
+declaration,changing inlen to len,maxout to maxlen to ensure consistency.
+
+Signed-off-by: YeXingchen <ye.xingchen@zte.com.cn>
+---
+ fs/nls/nls_base.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nls/nls_base.c b/fs/nls/nls_base.c
+index 18d597e49a19..547227669348 100644
+--- a/fs/nls/nls_base.c
++++ b/fs/nls/nls_base.c
+@@ -129,8 +129,8 @@ static inline void put_utf16(wchar_t *s, unsigned c, enum utf16_endian endian)
+ 	}
+ }
+
+-int utf8s_to_utf16s(const u8 *s, int inlen, enum utf16_endian endian,
+-		wchar_t *pwcs, int maxout)
++int utf8s_to_utf16s(const u8 *s, int len, enum utf16_endian endian,
++		wchar_t *pwcs, int maxlen)
+ {
+ 	u16 *op;
+ 	int size;
+-- 
+2.25.1
 
