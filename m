@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-560161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C093A5FEE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:11:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD26EA5FEE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:11:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81E4516C6CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:11:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D96716E478
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8DD1EBFE2;
-	Thu, 13 Mar 2025 18:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7971E1EE7C0;
+	Thu, 13 Mar 2025 18:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jg5MYpWb"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VidZKwKu"
 Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B391C8631
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13EF1E8353
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741889503; cv=none; b=WrrFYxL7+u01vMnFuP0PdMYoN4SstjdAi7StqbBhJotcbzzTIE/YuOQZiM+zrPcTI357HxnD+hG+SMsifyCeOr/Iq5hiflXfTuvUWwZkVe7BAVv/zHlKu8v3A2QXcP2WcKLdozJ/6QVtxYl6wI0otlln4L/F5UpNGJyrP+wuf+M=
+	t=1741889505; cv=none; b=jw9OCdJj0/JQYqkrRhqa3zBv7iAnxzebswEXA5lo2fKONRApaf7mJn/IesRF2Db295pUjeYWWIrXmoYcfIkfvKngaq9H/NX3YUArvWvEz2yfo2bMkJWZjdNZQ725LH70Pj4edNqy2IUatrad9PaxPJXCW/pdWz4TLv3nYgthkJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741889503; c=relaxed/simple;
-	bh=ofKUbUs2X58qm+AJW1ciZdf0AOUurV42sokYQDEDN18=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZjRgoJXFaV12ufPAKD9XBs8mW79YxtE7OT8+YQgnxRtYbM9CWmtnX7X1S16UvxrpIlBvrufWWKasfahIWdSghalgSyM+cpz0LossZy4rGK2myVjkKiJWGEuBHNaiCw1/N3PsCXa/KVZDx69ktfxtJcIbbYdBn3z0ZES9rZht+7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jg5MYpWb; arc=none smtp.client-ip=209.85.128.74
+	s=arc-20240116; t=1741889505; c=relaxed/simple;
+	bh=ySyHX086OhKMjV+LGusFiK1XjR1ttUWVQkQVY652QBo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=nGkUUgviWE8I7nWnjhUF57LwVUTonyNQ4BPOYfrJDtrMzWwRjPRYifQH+aWLV3C94YU3PUH6xNxhu85QMjhUhkqJDq/gNDfD9YA7qh7Rg8BOi8qriX5QnwoXbtJy2gcws4egF8JxUxHvKUNKTUF0MZVfyrBXfxVkBj7k4J3x6PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VidZKwKu; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4394c747c72so6571925e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:11:41 -0700 (PDT)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43cec217977so6872045e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:11:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741889500; x=1742494300; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8p30DA53bI6PuiFh/iHxzo25VltyUumdd721+bLC4Pk=;
-        b=Jg5MYpWb4WSLTmKhomDKs3kCu+mXOa6Q1yezElLwk9ROKXvlo8EHy+gNmYfKYyOYe1
-         EEY1+WrtGc3rMlbUOXJdtXsYw0NRUioDm8zjTQItB5IrSpRPWk9yMLdhDP/Ms0EyHgX7
-         ucpYsSnfKQGuGeQNCtnh1bdWFMRmx11AFK8qtSTlFwCSKu1XTh576sU5q8MG7jf9AsBz
-         6uwRiITZObKwbT3ryfZJTyztuWRxM0Ylx1gFBSufKUuqH+wizIquuhmcs5aJVCRLibcO
-         g8cYRHiGFvpkXqHdPH2b0cEji1Zvvrl/0Ucn8cQLqi0WKi+Ry8mXQx/qKC3TPMPBW7v1
-         7rmA==
+        d=google.com; s=20230601; t=1741889502; x=1742494302; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0fZcxWQbpwDGRa6fhxDYyz+3EEc+Y2ZKaTPRMrOqTnk=;
+        b=VidZKwKu6QnKNGVQ43zvHn+n1OZYMJLQh54WWUyXTanyRrw46HJAmmZNJo45P1XgGA
+         WLsvVyn4+M9L035fyLnea4tjidSL0jj/zthS0Y+gx/wJ5z8MWNSY8nmVMQfJ96AgfxTM
+         lnnrqzc9K+h2NS2vqpYyRtLpTB2z3DdfBS71QwIqCtcTrGVb5O4lFlujmnEIf0hvuhKr
+         i17/M9OyWUSLdXmaI9dVc98JQH1SGS9D8YPbSU7oLTidD7kUpF+hqSZjTrFw57qdmnlI
+         N5E9geFu9MeQ5Z3xp69pD58UDFlqPBBk7r3uv9+6Cy9YfPh6vyVldp0+KnlVkUqoYxKi
+         mBcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741889500; x=1742494300;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8p30DA53bI6PuiFh/iHxzo25VltyUumdd721+bLC4Pk=;
-        b=G1JANTaBQ3xxPM2ZW5gVhtTzD3eRESTsMGSzT3QSFg1cnw2GWT3m6OlzpUI8AsFxY7
-         tYHiWrz8ljORLO/LTGOzFDyjb625c0T1IDB29+tVBEkeJqWYNOow1fYXW1B4aZOlxyPp
-         R9KNuc3t61G0sqMPlw2oKVUMPljoJm5umV19V9p9eX7DyZpgWVJotHcCHMBbshLlAB6o
-         9kkzcecNrxxCcndDQjKD14ukus8EEVFWSgEuKUbEk1PKl90H4zNWGXIfTNHlo8DIWkIE
-         C8+1jdsEp/HF37MkhIqnQQ2JEcdQzYn1kdVUf1UsvdbewV5bcyeuShlRccRSpZoQGjOB
-         ScQw==
-X-Gm-Message-State: AOJu0Yw+RWEasKEIfHnEcpYNW0Wa1b+Oxsq2uH+HEWP2FPy45E4O/R+8
-	vEtDQwDk0a1QhaXcqC1/ZGsrnjTU4TXLkChd6ulxE8m3gZqi8WFvop0mqu3le0l36EH61yGn1OH
-	rqNhG4i+1Eg==
-X-Google-Smtp-Source: AGHT+IE4wDnoPc9EOKAgyJOM9+Bkac5viowYsO8CgIONHzVZLkFEl13poXtNAOIIrPh4W5A6xNrV2GgLwMNQJw==
-X-Received: from wmgg26.prod.google.com ([2002:a05:600d:1a:b0:43c:fa87:4fa0])
+        d=1e100.net; s=20230601; t=1741889502; x=1742494302;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0fZcxWQbpwDGRa6fhxDYyz+3EEc+Y2ZKaTPRMrOqTnk=;
+        b=BffRXzb8YrKW8X20X2KkroAVGQKivsldZmCZ6NNaIsomIFK+HCUa+oCP9eLFZ4xjRs
+         atr7l6VnRKuaGlfzKBKOQ1Kl1IxxjZy9A2c5Fa+J2SSgzxjS6aUd0PRtBypteZrJtcbN
+         0HjauqqTG6NZUVYVMX2gWjUMoX1ZB/+uU1b/StoOu0sBVdAUnGmq0nDo11rLviWtl6o2
+         C2DTG2nfWqc+xSB8vgciw9FAibG2gPozUjSiB1wb9KcEW8f9Fq5BrfKloJPG/f08BD69
+         L+m7nPh5xbJQ+8wdSABQ9gHn4cJ6G4u2osL+VlF8vEbdJcNRH9N3kE8tgQndWG4scIAx
+         eHWQ==
+X-Gm-Message-State: AOJu0YyiWtxcGaAaq2IoR6Q1OAhf6WL9SGCseqeGlYgzgy+l7A1zD+Nr
+	uF1Bc3violb7lGCq4ZZDnl0h232ThDKOdpuP5gucZHvWs1Mh8Vn5FKT1HdNLWpBuq/O25aOXIvJ
+	GB2aeoOaLMQ==
+X-Google-Smtp-Source: AGHT+IHiDt1oL77dvdJgK/87oo1nyciMshPbOYF45qDzwy03t12Mx9YK7JD3EmFk7CS3zUEi1Qz1ZwU+UaX2dg==
+X-Received: from wmbbd19.prod.google.com ([2002:a05:600c:1f13:b0:43c:eb09:3784])
  (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:524f:b0:43c:fbba:41ba with SMTP id 5b1f17b1804b1-43d01c25c31mr108057025e9.28.1741889500197;
- Thu, 13 Mar 2025 11:11:40 -0700 (PDT)
-Date: Thu, 13 Mar 2025 18:11:19 +0000
+ 2002:a05:600c:4593:b0:43c:fe15:41dd with SMTP id 5b1f17b1804b1-43d1d87fd9bmr6539185e9.6.1741889502176;
+ Thu, 13 Mar 2025 11:11:42 -0700 (PDT)
+Date: Thu, 13 Mar 2025 18:11:20 +0000
+In-Reply-To: <20250313-asi-page-alloc-v1-0-04972e046cea@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAMcf02cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDY0MD3cTiTN2CRKB4Yk5OfrKuhUFqomGahbGBeYqBElBTQVFqWmYF2MB opSA3Z6XY2loAh7L+lWUAAAA=
-X-Change-Id: 20250310-asi-page-alloc-80ea1f8307d0
+References: <20250313-asi-page-alloc-v1-0-04972e046cea@google.com>
 X-Mailer: b4 0.14.2
-Message-ID: <20250313-asi-page-alloc-v1-0-04972e046cea@google.com>
-Subject: [PATCH RFC 00/11] mm: ASI integration for the page allocator
+Message-ID: <20250313-asi-page-alloc-v1-1-04972e046cea@google.com>
+Subject: [PATCH RFC 01/11] x86/mm: Bare minimum ASI API for page_alloc integration
 From: Brendan Jackman <jackmanb@google.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
@@ -85,159 +85,184 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
 	Yosry Ahmed <yosry.ahmed@linux.dev>
 Content-Type: text/plain; charset="utf-8"
 
-.:: Intro
+This commit serves to provide a minimal framework to present an ASI
+integration into the page allocator, without getting distracted by
+irrelevant details. There's no need to review this actively, just refer
+back to it as-needed when reading the later patches.
 
-This code illustrates the idea I'm proposing at LSF/MM/BPF [0].
-Sorry it's so close to the conference, I was initially quite ambitious
-in what I wanted to show here and tried to implement a more complete
-patch series. Now I've run out of time and I've had to reduce the scope
-and just hack some minimal stuff together. Now, this series is _only_
-supposed to be about page_alloc.c, everything else is just there as
-scaffolding so that allocator code can be discussed.
+In a real [PATCH] series this should be several separate commits.
 
-I've marked the most incomplete patches with [HACKS] in the title to
-illustrate what aspects are less worthy of attention.
+Aside from missing the actual core address-space switching and security
+logic, this is missing runtime-disablement of ASI. If you enable it in
+Kconfig, ASI's mm logic gets run unconditionally. That isn't what we
+want in the real implementation (certainly not in the initial version,
+anyway).
 
-See [0] and also [1] for broader context on the ASI/page_alloc topic.
-See [2] for context about ASI itself. For this RFC the most important
-fact is: ASI requires creating another kernel address space (the
-"restricted address space") that is a subset of that normal one (i.e.
-the "unrestricted address space"). That is, an address space just like
-the normal one, but with holes in it. Pages that are unmapped from the
-restricted address space are called "sensitive".
+- Add CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION. Attempt to follow the
+  proposal by Mike Rapoport here:
+  https://lore.kernel.org/linux-mm/Z8K2B3WJoICVbDj3@kernel.org/
 
-.:: The Idea
+  In this RFC, there's only a small amount of x86-specific logic,
+  perhaps it's possible to implement this logic without any arch/
+  dependency. But, this is absolutely not true of the full ASI
+  implementation. So that's already reflected in the Kconfig stuff
+  here.
 
-What is sensitive (i.e.  where the holes are) is decided at allocation
-time. This illustrates an initial implementation of that capability for
-the direct map. The basic idea of this implementation is to operate at
-pageblock-granularity, and use migratetypes to track sensitivity.  The
-key advantages of this approach are:
+- Introduce struct asi, which is an "ASI domain", i.e. an address space.
+  For now this is nothing but a wrapper for a PGD.
 
-- Migratetypes exist to avoid fragmentation. Using them to index pages
-  by sensitivity takes advantage of this, so that the physmap doesn't
-  get fragmented with respect to sensitivity. This means we can use
-  large TLB entries for the restricted physmap.
-
-- Since pageblocks are never smaller than a PMD mapping, if the
-  restricted physmap is always made of PMDs, we never have to break down
-  mappings while changing sensitivity. This means we don't have
-  difficulties with needing to allocate pagetables in the middle of the
-  allocator.
-
-- Migratetypes already offer indexing capability - that is, there are
-  separate freelists for each migratetype. This means when the user
-  allocates a page with a given sensitivity, all the infrastructure is
-  already in place to look up a page that is already mapped/unmapped as
-  needed (if it exists). This minimizes unnecessary TLB flushes.
-
-This differs from Mike Rapoport's work on __GFP_UNMAPPED [3] in that,
-instead of having a totally separate free area for the pages that are
-unmapped, it aims to pervade the allocator. If it turns out that for all
-nonsensitive (or all sensitive, which seems highly unlikely) pages, a
-access to the full feature set of the page allocator is not needed for a
-performant system, we could certainly do something like Mike's patchset.
-But we don't have any reason to expect a correlation between
-sensitivity and performance needs.
-
-.:: Patchset overview
-
-- Patch 1 adds a minimal subset of the base ASI framework that was
-  introduced by the RFCv2 [2].
-
-- Patches 2-5 add the necessary framework for creating and manipulating
-  the ASI physmap. This is the area where I have had to reduce the scope
-  of this series, I had hoped to present a proper integration here. But
-  instead I've had to just hack something together that kinda works.
-  You can probably skip over this section.
-
-- Patches 6-8 are preparatory hacks and changes to the generic mm code.
-
-- Patches 9-11 are the important bit. The new migratetypes are created.
-  Then logic is added to create nonsensitive pageblocks when needed.
-  Then logic is added to change them back to sensitive pageblocks when
-  needed.
-
-.:: TODOs
-
- - This doesn't let you allocate from MIGRATE_HIGHATOMIC pageblocks
-   unless you have __GFP_SENSITIVE. We probably need to make the
-   pageblock type and per-freelist logic more advanced to be able to
-   account for this.
-
- - When pages transition from sensitive to nonsensitive, they need to be
-   zeroed to prevent any leftover data being leaked. This series doesn't
-   address that requirement at all.
-
- - Although I think the abstract design is OK, the actual implementation
-   of calling asi_map()/asi_unmap() from page_alloc.c is pretty
-   confusing: asi_map() is implicit when calling
-   set_pageblock_migratetype() but asi_unmap() is up to the caller. This
-   requires some refactoring.
-
- - Changes to the unrestricted physmap (page protection changes, memory
-   hotplug) are not properly mirrored into the restricted physmap.
-
- - There's no integration with CMA. The branch at [4] has some minimal
-   integration into alloc_contig_range().
-
-.:: References
-
-[0] https://lore.kernel.org/linux-mm/CA+i-1C169s8pyqZDx+iSnFmftmGfssdQA29+pYm-gqySAYWgpg@mail.gmail.com/
-[1] Some slides I presented in an earlier discussion of this topic:
-    https://docs.google.com/presentation/d/1Ozuan7E4z2YWm4V6uE_fe7YoF2BdS3m5jXjDKO7DVy0/edit#slide=id.g32d28ea451a_0_43
-[2] https://lore.kernel.org/linux-mm/20250110-asi-rfc-v2-v2-0-8419288bc805@google.com/
-[3] https://lore.kernel.org/all/20230308094106.227365-1-rppt@kernel.org/
-[5] https://lore.kernel.org/linux-mm/20250129144320.2675822-1-jackmanb@google.com/
-
-This series is available as a branch with some additional testing here:
-
-[4] https://github.com/bjackman/linux/tree/asi/page-alloc-lsfmmbpf25
-
-This applies to mm-unstable.
+- Introduce the "global nonsensitive" ASI domain. This contains all the
+  mappings that do not need to be protected from any attacker.
+  Maintaining these mappings is the subject of this RFC.
 
 Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
-Brendan Jackman (11):
-      x86/mm: Bare minimum ASI API for page_alloc integration
-      x86/mm: Factor out phys_pgd_init()
-      x86/mm: Add lookup_pgtable_in_pgd()
-      x86/mm/asi: Sync physmap into ASI_GLOBAL_NONSENSITIVE
-      [RFC HACKS] Add asi_map() and asi_unmap()
-      mm/page_alloc: Add __GFP_SENSITIVE and always set it
-      [RFC HACKS] mm/slub: Set __GFP_SENSITIVE for reclaimable slabs
-      [RFC HACKS] mm/page_alloc: Simplify gfp_migratetype()
-      mm/page_alloc: Split MIGRATE_UNMOVABLE by sensitivity
-      mm/page_alloc: Add support for nonsensitive allocations
-      mm/page_alloc: Add support for ASI-unmapping pages
+ arch/Kconfig               | 14 ++++++++++++++
+ arch/x86/Kconfig           |  1 +
+ arch/x86/include/asm/asi.h | 28 ++++++++++++++++++++++++++++
+ arch/x86/mm/Makefile       |  1 +
+ arch/x86/mm/asi.c          |  8 ++++++++
+ arch/x86/mm/init.c         |  3 ++-
+ include/linux/asi.h        | 18 ++++++++++++++++++
+ 7 files changed, 72 insertions(+), 1 deletion(-)
 
- arch/Kconfig                         |  14 ++++
- arch/x86/Kconfig                     |   1 +
- arch/x86/include/asm/asi.h           |  36 ++++++++
- arch/x86/include/asm/pgtable_types.h |   2 +
- arch/x86/mm/Makefile                 |   1 +
- arch/x86/mm/asi.c                    |  85 +++++++++++++++++++
- arch/x86/mm/init.c                   |   3 +-
- arch/x86/mm/init_64.c                |  53 ++++++++++--
- arch/x86/mm/pat/set_memory.c         |  34 ++++++++
- include/linux/asi.h                  |  20 +++++
- include/linux/gfp.h                  |  30 ++++---
- include/linux/gfp_types.h            |  15 +++-
- include/linux/mmzone.h               |  19 ++++-
- include/linux/vmalloc.h              |   4 +
- mm/internal.h                        |   5 ++
- mm/memory_hotplug.c                  |   2 +-
- mm/page_alloc.c                      | 158 +++++++++++++++++++++++++++++++----
- mm/show_mem.c                        |  13 +--
- mm/slub.c                            |   6 +-
- mm/vmalloc.c                         |  32 ++++---
- 20 files changed, 475 insertions(+), 58 deletions(-)
----
-base-commit: 5ee93e1a769230377c3d44edd4917e8df77be566
-change-id: 20250310-asi-page-alloc-80ea1f8307d0
+diff --git a/arch/Kconfig b/arch/Kconfig
+index b8a4ff36558228240080a5677f702d37f4f8d547..871ad0987c8740205ceec675a6b7304c644f28e1 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -17,6 +17,20 @@ config CPU_MITIGATIONS
+ 	def_bool y
+ endif
+ 
++config ARCH_HAS_MITIGATION_ADDRESS_SPACE_ISOLATION
++	bool
++
++config MITIGATION_ADDRESS_SPACE_ISOLATION
++	bool "Allow code to run with a reduced kernel address space"
++	default n
++	depends on ARCH_HAS_MITIGATION_ADDRESS_SPACE_ISOLATION && !PARAVIRT
++	help
++	  This feature provides the ability to run some kernel code
++	  with a reduced kernel address space. This can be used to
++	  mitigate some speculative execution attacks.
++
++	  !PARAVIRT dependency is a temporary hack while ASI has custom
++	  pagetable manipulation code.
+ #
+ # Selected by architectures that need custom DMA operations for e.g. legacy
+ # IOMMUs not handled by dma-iommu.  Drivers must never select this symbol.
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 0e27ebd7e36a9e3d69ad3e77c8db5dcf11ae3016..19ceecf5978bbe62e0742072c192c8ee952082dc 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -36,6 +36,7 @@ config X86_64
+ 	select ARCH_HAS_ELFCORE_COMPAT
+ 	select ZONE_DMA32
+ 	select EXECMEM if DYNAMIC_FTRACE
++	select ARCH_HAS_MITIGATION_ADDRESS_SPACE_ISOLATION
+ 
+ config FORCE_DYNAMIC_FTRACE
+ 	def_bool y
+diff --git a/arch/x86/include/asm/asi.h b/arch/x86/include/asm/asi.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..b8f604df6a36508acbc10710f821d5f95e8cdceb
+--- /dev/null
++++ b/arch/x86/include/asm/asi.h
+@@ -0,0 +1,28 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_X86_ASI_H
++#define _ASM_X86_ASI_H
++
++#include <asm/pgtable_types.h>
++
++#ifdef CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION
++
++extern struct asi __asi_global_nonsensitive;
++#define ASI_GLOBAL_NONSENSITIVE	(&__asi_global_nonsensitive)
++
++/*
++ * An ASI domain (struct asi) represents a restricted address space. The
++ * unrestricted address space (and user address space under PTI) are not
++ * represented as a domain.
++ */
++struct asi {
++	pgd_t *pgd;
++};
++
++static __always_inline pgd_t *asi_pgd(struct asi *asi)
++{
++	return asi ? asi->pgd : NULL;
++}
++
++#endif /* CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION */
++
++#endif /* _ASM_X86_ASI_H */
+diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
+index 690fbf48e8538b62a176ce838820e363575b7897..89ade7363798cc20d5e5643526eba7378174baa0 100644
+--- a/arch/x86/mm/Makefile
++++ b/arch/x86/mm/Makefile
+@@ -61,6 +61,7 @@ obj-$(CONFIG_ACPI_NUMA)		+= srat.o
+ obj-$(CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS)	+= pkeys.o
+ obj-$(CONFIG_RANDOMIZE_MEMORY)			+= kaslr.o
+ obj-$(CONFIG_MITIGATION_PAGE_TABLE_ISOLATION)	+= pti.o
++obj-$(CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION)		+= asi.o
+ 
+ obj-$(CONFIG_X86_MEM_ENCRYPT)	+= mem_encrypt.o
+ obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_amd.o
+diff --git a/arch/x86/mm/asi.c b/arch/x86/mm/asi.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..e5a981a7b3192655cd981633514fbf945b92c9b6
+--- /dev/null
++++ b/arch/x86/mm/asi.c
+@@ -0,0 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <asm/asi.h>
++
++static __aligned(PAGE_SIZE) pgd_t asi_global_nonsensitive_pgd[PTRS_PER_PGD];
++
++struct asi __asi_global_nonsensitive = {
++	.pgd = asi_global_nonsensitive_pgd,
++};
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index 62aa4d66a032d59191e79d34fc0cdaa4f32f88db..44d3dc574881dd23bb48f9af3f6191be309405ef 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -250,7 +250,8 @@ static void __init probe_page_size_mask(void)
+ 	/* By the default is everything supported: */
+ 	__default_kernel_pte_mask = __supported_pte_mask;
+ 	/* Except when with PTI where the kernel is mostly non-Global: */
+-	if (cpu_feature_enabled(X86_FEATURE_PTI))
++	if (cpu_feature_enabled(X86_FEATURE_PTI) ||
++	    IS_ENABLED(CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION))
+ 		__default_kernel_pte_mask &= ~_PAGE_GLOBAL;
+ 
+ 	/* Enable 1 GB linear kernel mappings if available: */
+diff --git a/include/linux/asi.h b/include/linux/asi.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..2d3049d5fe423e139dcce8f3d68cdffcc0ec0bfe
+--- /dev/null
++++ b/include/linux/asi.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _INCLUDE_ASI_H
++#define _INCLUDE_ASI_H
++
++#include <asm/pgtable_types.h>
++
++#ifdef CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION
++#include <asm/asi.h>
++#else
++
++#define ASI_GLOBAL_NONSENSITIVE NULL
++
++struct asi {};
++
++static inline pgd_t *asi_pgd(struct asi *asi) { return NULL; }
++
++#endif /* CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION */
++#endif /* _INCLUDE_ASI_H */
 
-Best regards,
 -- 
-Brendan Jackman <jackmanb@google.com>
+2.49.0.rc1.451.g8f38331e32-goog
 
 
