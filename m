@@ -1,139 +1,221 @@
-Return-Path: <linux-kernel+bounces-559605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53784A5F605
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:34:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B68A3A5F608
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:35:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF3913A9B44
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:34:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CFA6189DF2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2914B26770A;
-	Thu, 13 Mar 2025 13:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B802676CD;
+	Thu, 13 Mar 2025 13:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="27yAvhoh"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08ADD2673A4
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HdNVAvns"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4069537FF
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741872851; cv=none; b=GgjgQ3Bwxr/hUmTQuxMbH8yFqOYOr549xUTXG0zScgh86w+snl0wlbeXEBHTA0hBaD907SaN/1qKWLJSzwz1l8K2xDX0ppMaY5fT+Smi2+ZWBIdfNbGVQvd8XcH9gwarE2YXv9Gvr1B/b1rayCCMa8CXg9tMjl03ts/wojElUT8=
+	t=1741872930; cv=none; b=BjyyRw/k9NBleLz1MMpnvrAI1at8LAgNa0wewuHF7dXGRBHnddlnH7Z4PCaTJ0FiENJpCWYN2n+dginYtZufQx2wOowGKzXFeJfk9GlVUvbvT1NfkvOGdUp6JKbvHS4k2OvgYoey19bfhrXJPNy68+HcBZAQwO7gz0jFDULfxBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741872851; c=relaxed/simple;
-	bh=p9pO1Dh5i1mI+kxl7fBF0Z2buokBUlPWYzwtIDs2ZSs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bEAeE0ME2XT54sVaK9mOuWtXCEnSvqc7kGrl3Ut0FKxuj0/psyQsLgzircrGQjLpicvUXCpOKoP8GETbTQ5THfOwHSWXfTbBCsdp+9PhrEz6CSuaLHnSa3JcpG6OLKtFcT6QjPw+eavx24xOtWrKFZlH4KIxryZ2oODTLosKjQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=27yAvhoh; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 7D8E714C2D3;
-	Thu, 13 Mar 2025 14:34:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1741872842;
+	s=arc-20240116; t=1741872930; c=relaxed/simple;
+	bh=GSvuKDn6GvEj4StlyA9y4pE71cNqRY2cL2gZwvYxJgY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a+23L62LF5e2DLzVTooSTQWm8yPUKt5imwV6Tb64KHapm2UW/WBc7vG1q2AqV0zNxjHocl1ekWW7Ysh5W9LeGXfyszI3ngrO+Ldu2YfIhMeuonocRpptxkuKIoAccu8k89AyX6ebj2LgaTUMwr1cbizjUi1VZu7ZniNxLoHG3RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HdNVAvns; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741872927;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LjTF37SNnxkBpB2MiFl8F1xIEEcE091gYhI+2+SrGcU=;
-	b=27yAvhohID0fWiXqSYo3Za072nv27URh9jKoVEbwbnAN7jZfClvR3DaNVtJpuZMPCs5VKG
-	uO457qloTAPYXSxXDyIm4Ps2sJTaO3PbOnGoy36sQhc4AhlVo6VAtt7qLsenqXDIhGYn+Q
-	QD1aF9MYziobyfQCjzeEmSCrXFQR1RTA/3KuqCtu/IHfXpIglExj2D6Bpis6h808C2wr58
-	8NNlgUX3KlNavcPYR8PK9+H8xDSAphovSqNQJwZ5I7k25MPXwL879KpMBIy2nsEIRCBTRz
-	Xi48ChTaIWio4BkrfbQr9iJtMxLWb4i1p3oE4PgIYLxsNZL0e2xQKmMC1mMMuQ==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id d99e76a3;
-	Thu, 13 Mar 2025 13:33:58 +0000 (UTC)
-Date: Thu, 13 Mar 2025 22:33:43 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	syzbot <syzbot+5b667f9a1fee4ba3775a@syzkaller.appspotmail.com>
-Subject: Re: [PATCH] fs/9p: fix NULL pointer dereference on mkdir
-Message-ID: <Z9Let2cdA4dB7tTe@codewreck.org>
-References: <E1tsiI6-002iMG-Kh@kylie.crudebyte.com>
- <4597443.VRNSQfLuZI@silver>
+	bh=cJptmV2ov9F43XWgGQgvpiN+Bxm0Brgya5E5ifNGox0=;
+	b=HdNVAvnsqLVcILKjBBf7hvbvENUnPnfXFkB3E+H82Fq/nb0PUGh6vLXKvcHHHr1iY0CCBT
+	vvYhfB55wRYY2mNzL/dMgQBhMdomP2nrElK94bynj4x6Gl1/NsTk7k6F4jwime4j3+n/WK
+	XwP/Hosiz4XshEI7dhW6Z6t6wPwpxPE=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-296-KGjL1ptYNkWWD2Vs9RyrpA-1; Thu,
+ 13 Mar 2025 09:35:22 -0400
+X-MC-Unique: KGjL1ptYNkWWD2Vs9RyrpA-1
+X-Mimecast-MFC-AGG-ID: KGjL1ptYNkWWD2Vs9RyrpA_1741872921
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E903D180AF59;
+	Thu, 13 Mar 2025 13:35:20 +0000 (UTC)
+Received: from [192.168.37.1] (unknown [10.22.76.7])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8464F1828AA7;
+	Thu, 13 Mar 2025 13:35:19 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Trond Myklebust <trondmy@hammerspace.com>, anna@kernel.org,
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sunrpc: add a rpc_clnt shutdown control in debugfs
+Date: Thu, 13 Mar 2025 09:35:17 -0400
+Message-ID: <0E1E14E2-BD4B-433B-8355-EEF45384BE83@redhat.com>
+In-Reply-To: <ee74d5920532d81f77e503d6ef8bc5fbfc66d04e.camel@kernel.org>
+References: <20250312-rpc-shutdown-v1-1-cc90d79a71c2@kernel.org>
+ <7906109F-91D2-4ECF-B868-5519B56D2CEE@redhat.com>
+ <997f992f951bd235953c5f0e2959da6351a65adb.camel@kernel.org>
+ <8bf55a6fb64ba9e21a1ec8c5644355ffd6496c6e.camel@hammerspace.com>
+ <ee74d5920532d81f77e503d6ef8bc5fbfc66d04e.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4597443.VRNSQfLuZI@silver>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Christian Schoenebeck wrote on Thu, Mar 13, 2025 at 02:29:42PM +0100:
-> On Thursday, March 13, 2025 1:59:32 PM CET Christian Schoenebeck wrote:
-> > When a 9p tree was mounted with option 'posixacl', parent directory had a
-> > default ACL set for its subdirectories, e.g.:
-> > 
-> >   setfacl -m default:group:simpsons:rwx parentdir
-> > 
-> > then creating a subdirectory crashed 9p client, as v9fs_fid_add() call in
-> > function v9fs_vfs_mkdir_dotl() sets the passed 'fid' pointer to NULL
-> > (since dafbe689736) even though the subsequent v9fs_set_create_acl() call
-> > expects a valid non-NULL 'fid' pointer:
-> > 
-> >   [   37.273191] BUG: kernel NULL pointer dereference, address: 0000000000000000
-> >   ...
-> >   [   37.322338] Call Trace:
-> >   [   37.323043]  <TASK>
-> >   [   37.323621]  ? __die+0x1f/0x60
-> >   [   37.324448]  ? page_fault_oops+0x158/0x470
-> >   [   37.325532]  ? search_module_extables+0x4a/0x80
-> >   [   37.326742]  ? p9_client_walk+0x1c/0x2c0 [9pnet]
-> >   [   37.328006]  ? search_bpf_extables+0x5b/0x80
-> >   [   37.329142]  ? exc_page_fault+0x72/0x190
-> >   [   37.330196]  ? asm_exc_page_fault+0x22/0x30
-> >   [   37.331330]  ? p9_client_walk+0x1c/0x2c0 [9pnet]
-> >   [   37.332562]  ? v9fs_fid_xattr_get+0x59/0x120 [9p]
-> >   [   37.333824]  v9fs_fid_xattr_set+0x6f/0x130 [9p]
-> >   [   37.335077]  v9fs_set_acl+0x82/0xc0 [9p]
-> >   [   37.336112]  v9fs_set_create_acl+0x41/0x60 [9p]
-> >   [   37.337326]  v9fs_vfs_mkdir_dotl+0x20d/0x2e0 [9p]
-> >   [   37.338590]  vfs_mkdir+0x192/0x250
-> >   [   37.339535]  do_mkdirat+0x135/0x160
-> >   [   37.340465]  __x64_sys_mkdir+0x42/0x60
-> >   [   37.341455]  do_syscall_64+0x4b/0x110
-> >   [   37.342447]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> Oops, forgot to decode the trace back:
-> 
-> [   37.322338] Call Trace:
-> [   37.323043]  <TASK>
-> [   37.323621] ? __die (arch/x86/kernel/dumpstack.c:421 arch/x86/kernel/dumpstack.c:434) 
-> [   37.324448] ? page_fault_oops (arch/x86/mm/fault.c:714) 
-> [   37.325532] ? search_module_extables (kernel/module/main.c:3733) 
-> [   37.326742] ? p9_client_walk (net/9p/client.c:1165) 9pnet 
-> [   37.328006] ? search_bpf_extables (kernel/bpf/core.c:804) 
-> [   37.329142] ? exc_page_fault (./arch/x86/include/asm/paravirt.h:686 arch/x86/mm/fault.c:1488 arch/x86/mm/fault.c:1538) 
-> [   37.330196] ? asm_exc_page_fault (./arch/x86/include/asm/idtentry.h:574) 
-> [   37.331330] ? p9_client_walk (net/9p/client.c:1165) 9pnet 
-> [   37.332562] ? v9fs_fid_xattr_get (fs/9p/xattr.c:30) 9p 
-> [   37.333824] v9fs_fid_xattr_set (fs/9p/fid.h:23 fs/9p/xattr.c:121) 9p 
-> [   37.335077] v9fs_set_acl (fs/9p/acl.c:276) 9p 
-> [   37.336112] v9fs_set_create_acl (fs/9p/acl.c:307) 9p 
-> [   37.337326] v9fs_vfs_mkdir_dotl (fs/9p/vfs_inode_dotl.c:411) 9p 
-> [   37.338590] vfs_mkdir (fs/namei.c:4313) 
-> [   37.339535] do_mkdirat (fs/namei.c:4336) 
-> [   37.340465] __x64_sys_mkdir (fs/namei.c:4354) 
-> [   37.341455] do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83) 
-> [   37.342447] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-> 
-> Dominique, do you want me to send a v2 or would you update the commit log on
-> your end?
+On 13 Mar 2025, at 9:15, Jeff Layton wrote:
 
-Thank you for the quick patch!
-I can update the message on my end unless there's another reason to send
-a v2
+> On Wed, 2025-03-12 at 22:31 +0000, Trond Myklebust wrote:
+>> On Wed, 2025-03-12 at 10:37 -0400, Jeff Layton wrote:
+>>> On Wed, 2025-03-12 at 09:52 -0400, Benjamin Coddington wrote:
+>>>> On 12 Mar 2025, at 9:36, Jeff Layton wrote:
+>>>>
+>>>>> There have been confirmed reports where a container with an NFS
+>>>>> mount
+>>>>> inside it dies abruptly, along with all of its processes, but the
+>>>>> NFS
+>>>>> client sticks around and keeps trying to send RPCs after the
+>>>>> networking
+>>>>> is gone.
+>>>>>
+>>>>> We have a reproducer where if we SIGKILL a container with an NFS
+>>>>> mount,
+>>>>> the RPC clients will stick around indefinitely. The orchestrator
+>>>>> does a MNT_DETACH unmount on the NFS mount, and then tears down
+>>>>> the
+>>>>> networking while there are still RPCs in flight.
+>>>>>
+>>>>> Recently new controls were added[1] that allow shutting down an
+>>>>> NFS
+>>>>> mount. That doesn't help here since the mount namespace is
+>>>>> detached from
+>>>>> any tasks at this point.
+>>>>
+>>>> That's interesting - seems like the orchestrator could just reorder
+>>>> its
+>>>> request to shutdown before detaching the mount namespace.  Not an
+>>>> objection,
+>>>> just wondering why the MNT_DETACH must come first.
+>>>>
+>>>
+>>> The reproducer we have is to systemd-nspawn a container, mount up an
+>>> NFS mount inside it, start some I/O on it with fio and then kill -9
+>>> the
+>>> systemd running inside the container. There isn't much the
+>>> orchestrator
+>>> (root-level systemd) can do to at that point other than clean up
+>>> what's
+>>> left.
+>>>
+>>> I'm still working on a way to reliably detect when this has happened.
+>>> For now, we just have to notice that some clients aren't dying.
+>>>
+>>>>> Transplant shutdown_client() to the sunrpc module, and give it a
+>>>>> more
+>>>>> distinct name. Add a new debugfs sunrpc/rpc_clnt/*/shutdown knob
+>>>>> that
+>>>>> allows the same functionality as the one in /sys/fs/nfs, but at
+>>>>> the
+>>>>> rpc_clnt level.
+>>>>>
+>>>>> [1]: commit d9615d166c7e ("NFS: add sysfs shutdown knob").
+>>>>>
+>>>>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+>>>>
+>>>> I have a TODO to patch Documentation/ for this knob mostly to write
+>>>> warnings
+>>>> because there are some potential "gotchas" here - for example you
+>>>> can have
+>>>> shared RPC clients and shutting down one of those can cause
+>>>> problems for a
+>>>> different mount (this is true today with the
+>>>> /sys/fs/nfs/[bdi]/shutdown
+>>>> knob).  Shutting down aribitrary clients will definitely break
+>>>> things in
+>>>> weird ways, its not a safe place to explore.
+>>>>
+>>>
+>>> Yes, you really do need to know what you're doing. 0200 permissions
+>>> are
+>>> essential for this file, IOW. Thanks for the R-b!
+>>
+>> Sorry, but NACK! We should not be adding control mechanisms to debugfs.
+>>
+>
+> Ok. Would adding sunrpc controls under sysfs be more acceptable? I do
+> agree that this is a potential footgun, however. It would be nicer to
+> clean this situation up automagically.
+>
+>> One thing that might work in situations like this is perhaps to make
+>> use of the fact that we are monitoring whether or not rpc_pipefs is
+>> mounted. So if the mount is containerised, and the orchestrator
+>> unmounts everything, including rpc_pipefs, we might take that as a hint
+>> that we should treat any future connection errors as being fatal.
+>>
+>
+> rpc_pipefs isn't being mounted at all in the container I'm using. I
+> think that's not going to be a reliable test for this.
+>
+>> Otherwise, we'd have to be able to monitor the root task, and check if
+>> it is still alive in order to figure out if out containerised world has
+>> collapsed.
+>>
+>
+> If by the root task, you mean the initial task in the container, then
+> that method seems a little sketchy too. How would we determine that
+> from the RPC layer?
+>
+> To be clear: the situation here is that we have a container with a veth
+> device that is communicating with the outside world. Once all of the
+> processes in the container exit, the veth device in the container
+> disappears. The rpc_xprt holds a ref on the netns though, so that
+> sticks around trying to retransmit indefinitely.
+>
+> I think what we really need is a lightweight reference on the netns.
+> Something where we can tell that there are no userland tasks that care
+> about it anymore, so we can be more aggressive about giving up on it.
+>
+> There is a "passive" refcount inside struct net, but that's not quite
+> what we need as it won't keep the sunrpc_net in place.
+>
+> What if instead of holding a netns reference in the xprt, we have it
+> hold a reference on a new refcount_t that lives in sunrpc_net? Then, we
+> add a pre_exit pernet_ops callback that does a shutdown_client() on all
+> of the rpc_clnt's attached to the xprts in that netns. The pre_exit can
+> then just block until the sunrpc_net refcount goes to 0.
+>
+> I think that would allow everything to be cleaned up properly?
 
-Looks good to me, I'll test a bit over the weekend and send to Linus in
-the merge window in a couple of weeks (I guess it could be sent right
-away...)
--- 
-Dominique
+Do you think that might create unwanted behaviors for a netns that might
+still be repairable?   Maybe that doesn't make a lot of sense if there are no
+processes in it, but I imagine a network namespace could be in this state
+and we'd still want to try to use it.
+
+I think there's an out-of-kernel (haven't tried yet) way to do it with udev,
+which, if used, creates an explicit requirement for the orchestrator to
+define exactly what should happen if the veth goes away.  When creating the
+namespace, the orchestrator should insert a rule that says "when this veth
+disappears, we shutdown this fs".
+
+Again, I'm not sure if that's even possible, but I'm willing to muck around
+a bit and give it a try.
+
+Ben
+
 
