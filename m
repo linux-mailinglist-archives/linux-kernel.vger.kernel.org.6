@@ -1,179 +1,103 @@
-Return-Path: <linux-kernel+bounces-559979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF084A5FBDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:35:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB4A4A5FBE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:36:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57DBA1887AEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:35:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01FDF3B3A7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5B52676FD;
-	Thu, 13 Mar 2025 16:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C41268FE4;
+	Thu, 13 Mar 2025 16:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MIbldObm"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="INiw/BY3"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70AB1FBEA8;
-	Thu, 13 Mar 2025 16:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8802E3371;
+	Thu, 13 Mar 2025 16:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741883711; cv=none; b=mD05mfuI7uMiwgPGrf/27PSzDOjGbPz+oedD+oZvzMrL4vgjUC4CpsYtjKR58M1We+nxRxlvmtolxWStRX67QDNtq+0/l0HjkPD4LpoF8Gu2hNTooMv/BiD/DOlIlu/ogwmj722UW04eUQ3YnwyHjaj1TjGRPazLiaGugm9GxIU=
+	t=1741883691; cv=none; b=oT3cEZHWIM60V5bWB3vcPi4555N3wtAaFukQMk2ijuJZjtI6lwnHfjMsTFMM0b7aiZ9RngPeRihmgWUxRVHqK8HWeN3RpWBN8Ymfhd53+vB7THi7asiCywZQAoKkeg9iLRVhvDDushHPYhZ9lQSGNks/ztbJQIA3iJk4sJa1syw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741883711; c=relaxed/simple;
-	bh=EUFN0+/92DTuuEPqcXSlkiCvxxoC8sPdnSBFP/qw8JU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qL7pT61C3I1isgG/gSxZVAG+krajrM+9/c3D0AHgH0cb301YNZtxmr0lnTu9E+FOx1roymYz+2JBd27mNPvwhnu8OJulAzA3Z3QALr3VBTV9TsB1OEgaLPt1tambg0n9i5LBHDT0b/TbxwE/uVtBGV994U+JH4Nsghc2SDan71s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MIbldObm; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e63a7403c4cso137395276.1;
-        Thu, 13 Mar 2025 09:35:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741883709; x=1742488509; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GAQy2kteC6dBKbppouJhbhTfreKvLdgeuUyc0o14mVQ=;
-        b=MIbldObmlYuOuoz/H3tbiQFzEFGPicRsxm9H19nBIWZ5d+ql2pRHYp8oOlqZrEbT0T
-         zrE06IyS09PLkZHUSHsj2uNokG+s5c5WE3oXNdY2xUhLgDixNNvkfSm75MQ93Sn7h8VH
-         1V2bbY7pbG+HOw/sNBpbrQB89dAqzlFK435kKJH3O7QiYcqQ3QGcoQ9T2lfrFW6rnimY
-         uWXmBerLghyu/QTaFNbHDamd0E8UdzqG8+7xGSsubN1YZcwnHmLTE6qNgCq+PRG2+O/o
-         t4Pv5rmjEvxbNx5FgCheQlH6BfiyM4XY7/8+EB5loY0YioYBzNPYQtXV7kUi2q/DOi3l
-         9NYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741883709; x=1742488509;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GAQy2kteC6dBKbppouJhbhTfreKvLdgeuUyc0o14mVQ=;
-        b=NeBrlYW8JwDFgcXKfMouJqhNIomPRZoBqorveoLUcZOehO61K3Xa/zWSyeI7sOPOxL
-         R+IzVkuikBahj1KStWu+0FOQAR1D1hkeZJBwrP2o3Yea6fRk76j2q1KN0dDvyNwOzzrP
-         yK3XZDkEFX8Gphh65h4PKE1udimmGaH8B49Gr5Lc9X3fECgTw0J1D1/+s+yudRHr2J/s
-         gylDBAaTkpVhOwv6MQBdAzsNtQR47eXj43XLdsiRN8BVVzARJyZxeVyPg6jHqvTkvdAK
-         eZ3OY5uKegW656OiME0GySng4KwXypRkgFQnlSV1eNzdkgoeaAegExaYr2UsKUoEf6Z0
-         d82g==
-X-Forwarded-Encrypted: i=1; AJvYcCUS6Yy5Ou6DjJN9ptHdzEEjkICu8BpoJmXHfkSVSVduFwpQ6SVB35kqPFmPhTd0xxdfXsS4la/Tk0s=@vger.kernel.org, AJvYcCUwZmtQQrkREe9WyTRZy/XybLoj+5qIeVAMm2ECawor2boCZXRDto6XvnP4KkYT47HobB3zr32KokAxJRvF@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEPGHCnh1rZVMuc80TJKURTxe9Kcc0gCnHMK/oVa08ExC0Y2dO
-	DVcRKuYx8EQ+EnZWamtvfK7aLlVFZqn++0p0t9IOC81IYUo/9tXes+oRWywHxgc5gTYun0kEU6K
-	OvVQMyl78U8U95QNTdL0WF7zO6wy/LuAo
-X-Gm-Gg: ASbGncvUcnuOstc+ryE/Zq6PIkW0bK4x83AuBLQmrBnHW5SN5ELp8mQQCEdoc/QEReU
-	2M+YCRgTaFGvrIHR6swXX8i4+r9+FxLvCgapVMsIZBlvUkfXzB/il6YJzSB+5pQX7GTwJ9KgRs7
-	gzIpUoo1n+18CuoEdlTEfqqm+crQ==
-X-Google-Smtp-Source: AGHT+IE+3wvqQiUCiFN0C9/KB8zVg8TQLZYHVmyKzY8xspOea4xxIMsTYlci9X0Q6ixeThe/iV6Jv2BEGDpgSwwccRk=
-X-Received: by 2002:a05:6902:2e09:b0:e60:a4f4:7f3 with SMTP id
- 3f1490d57ef6-e63b521320bmr7246707276.6.1741883708733; Thu, 13 Mar 2025
- 09:35:08 -0700 (PDT)
+	s=arc-20240116; t=1741883691; c=relaxed/simple;
+	bh=5OKmSnvCdr1VFgeIsGzSe7XOU1tHtPNOb533sHEAdEA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=X/VjJ0dcbj4crhs4imRDKGVo5fGDgrnuJUGxmzYtq6d87dbZPsI1YXQNQ4yXF8OdMPoFhkSxgjJai027+I4D6l9cz2A36eJuVpg9za6k/b+6HaEBNoSCh6cKs/x4TcijyeB3BVC+Ydm2gjZsO3WCOjzM6Qb/rvgCz6Zvcd5/O24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=INiw/BY3; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=t3tspSjPWzUbZJ39HBMWBiuBDmQruoqd/+DIkFO7DU8=; t=1741883687; x=1742488487; 
+	b=INiw/BY3EmpQ+tFbto5KJqYzmXRysM5GThjAhYsbCynEznpLPDo4LhdzdFBTwL58+EdxgvBmbuM
+	028eFSc0XRN70eRuGNl4Y2n3tb+aKMPUE9fasaiQklBDFXoTAtx9Ivce3cjB6GFD/97A0/6jwFUIi
+	l/pIQXAyGtXecH7fIk5k5+/QcTrpW78si4zwBrnWAlfyF8cJnxUqCdv8G+iOc7XeQTpPIgZ93+y4N
+	2rkc9UKNnWUtUhihlBpWpcMvsN88bgThoKynEPt7g26UsXqe7K/GSSTglFEG0jRiH4HrvS+7n/L11
+	isBuLiQ0KzfVqfA2EKk4XM26Qk5t+Dar76Dw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1tslW3-00000002dFt-2bY1; Thu, 13 Mar 2025 17:34:39 +0100
+Received: from dynamic-078-054-179-053.78.54.pool.telefonica.de ([78.54.179.53] helo=[192.168.178.50])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1tslW3-00000000cJH-1fzt; Thu, 13 Mar 2025 17:34:39 +0100
+Message-ID: <a25daa5d094cf613e2f52fe716a17edf9fb26448.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v3 3/5] tracing: Move trace sysctls into trace.c
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Joel Granados <joel.granados@kernel.org>, Kees Cook <kees@kernel.org>, 
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,  Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, "David S. Miller"
+ <davem@davemloft.net>, Andreas Larsson	 <andreas@gaisler.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, sparclinux@vger.kernel.org
+Date: Thu, 13 Mar 2025 17:34:38 +0100
+In-Reply-To: <20250313-jag-mv_ctltables-v3-3-91f3bb434d27@kernel.org>
+References: <20250313-jag-mv_ctltables-v3-0-91f3bb434d27@kernel.org>
+	 <20250313-jag-mv_ctltables-v3-3-91f3bb434d27@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220104234.40958-1-l.rubusch@gmail.com> <20250220104234.40958-10-l.rubusch@gmail.com>
- <20250304132320.5caad2d2@jic23-huawei>
-In-Reply-To: <20250304132320.5caad2d2@jic23-huawei>
-From: Lothar Rubusch <l.rubusch@gmail.com>
-Date: Thu, 13 Mar 2025 17:34:32 +0100
-X-Gm-Features: AQ5f1JqiITWP0W_H60EGGtAoCn-Qo5ipt0Bvjn02u-pIc8DoaCY08wjyEx8TUjA
-Message-ID: <CAFXKEHb3GehCyNyLh3Z_8yVPNda9V_8KN_RF+hZvHdW8u9zr0Q@mail.gmail.com>
-Subject: Re: [PATCH v3 09/15] iio: accel: adxl345: add freefall feature
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, eraretuya@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Tue, Mar 4, 2025 at 2:23=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
-wrote:
->
-> On Thu, 20 Feb 2025 10:42:28 +0000
-> Lothar Rubusch <l.rubusch@gmail.com> wrote:
->
-> > Add the freefall detection of the sensor together with a threshold and
-> > time parameter. A freefall event is detected if the measuring signal
-> > falls below the threshold.
-> >
-> > Introduce a freefall threshold stored in regmap cache, and a freefall
-> > time, having the scaled time value stored as a member variable in the
-> > state instance.
-> >
-> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> Hi, one thing inline.
->
-> > @@ -855,6 +958,17 @@ static int adxl345_push_event(struct iio_dev *indi=
-o_dev, int int_stat,
-> >                       return ret;
-> >       }
-> >
-> > +     if (FIELD_GET(ADXL345_INT_FREE_FALL, int_stat)) {
-> > +             ret =3D iio_push_event(indio_dev,
-> > +                                  IIO_MOD_EVENT_CODE(IIO_ACCEL, 0,
-> > +                                                     IIO_MOD_X_OR_Y_OR=
-_Z,
-> > +                                                     IIO_EV_TYPE_MAG,
-> > +                                                     IIO_EV_DIR_FALLIN=
-G),
-> > +                                  ts);
-> > +             if (ret)
-> > +                     return ret;
-> > +     }
-> > +
->
-> Seems unlikely to be right. Pushed an event without error yet this functi=
-on
-> is returning an error here?
->
-> >       return -ENOENT;
-> >  }
-> >
+Hi Joel,
 
-"it worked on my machine" - Of course, you're right. So, I tried to
-understand why this "worked". In consequence, I think the best
-solution will be to put also fifo handling based on int_stat into this
-function, which I currently made a separate patch, you'll see that in
-v4.
+On Thu, 2025-03-13 at 17:22 +0100, Joel Granados wrote:
+> Move trace ctl tables into their own const array in
+> kernel/trace/trace.c. The sysctl table register is called with
+> subsys_initcall placing if after its original place in proc_root_init.
+> This is part of a greater effort to move ctl tables into their
+> respective subsystems which will reduce the merge conflicts in
+> kerenel/sysctl.c.
+  ^^^^^^^
 
-> > @@ -954,6 +1068,7 @@ int adxl345_core_probe(struct device *dev, struct =
-regmap *regmap,
-> >                                        ADXL345_DATA_FORMAT_FULL_RES |
-> >                                        ADXL345_DATA_FORMAT_SELF_TEST);
-> >       unsigned int tap_threshold;
-> > +     unsigned int ff_threshold;
-> >       int ret;
-> >
-> >       indio_dev =3D devm_iio_device_alloc(dev, sizeof(*st));
-> > @@ -973,6 +1088,9 @@ int adxl345_core_probe(struct device *dev, struct =
-regmap *regmap,
-> >       st->tap_window_us =3D 64;                 /*   64 [0x40] -> .080 =
-   */
-> >       st->tap_latent_us =3D 16;                 /*   16 [0x10] -> .020 =
-   */
-> >
-> > +     ff_threshold =3D 8;                       /*    8 [0x08]         =
-   */
-> > +     st->ff_time_ms =3D 32;                    /*   32 [0x20] -> 0.16 =
-   */
-> > +
-> >       indio_dev->name =3D st->info->name;
-> >       indio_dev->info =3D &adxl345_info;
-> >       indio_dev->modes =3D INDIO_DIRECT_MODE;
-> > @@ -1049,6 +1167,10 @@ int adxl345_core_probe(struct device *dev, struc=
-t regmap *regmap,
-> >               if (ret)
-> >                       return ret;
-> >
-> > +             ret =3D regmap_write(st->regmap, ADXL345_REG_THRESH_FF, f=
-f_threshold);
-> > +             if (ret)
-> > +                     return ret;
-> > +
-> >               /* FIFO_STREAM mode is going to be activated later */
-> >               ret =3D devm_iio_kfifo_buffer_setup(dev, indio_dev, &adxl=
-345_buffer_ops);
-> >               if (ret)
->
+Typo, exists in patches 4 and 5 of this series.
+
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
