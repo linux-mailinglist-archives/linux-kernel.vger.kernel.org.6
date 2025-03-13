@@ -1,132 +1,242 @@
-Return-Path: <linux-kernel+bounces-559157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 717A0A5F030
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:04:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24600A5F033
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:04:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 821847A71A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:03:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F0BE189C705
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4A0264F90;
-	Thu, 13 Mar 2025 10:04:12 +0000 (UTC)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80140264FBD;
+	Thu, 13 Mar 2025 10:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GZn710ZY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE4E13B5A0;
-	Thu, 13 Mar 2025 10:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEC4263F45
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741860251; cv=none; b=ezJq4GVqy/ICSdQn2NEqQOhH6Ri/IbsSiB91UtxlvL2Ek1t/NFK/opKhl4wiGkwbyxNqNGnNBTC3KrYOrpqZ9y6L3xffqPD4kYu7iyGYxUOz/jo4EF5mxG5hEC5yRAWgFUrPcmwGtVvyZKqvJBPmQPIacQMBZMxaWLhi+SXqzLo=
+	t=1741860261; cv=none; b=IekJGCKvbW4wi2JGVVloTxHhKMADaC2SofdtY+nUzzLLzGw3FjmC11h2ss6ihxqvUG7eLb8fxqvTf4/ahS0qM7G6sgGOJX5qUirqxsK6Mn1sQ727O+OQhagXTySyvzZK8gvC7C7z+IoFzcYvMJVFxUXLz6YCmAPK5vyRz1hqjr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741860251; c=relaxed/simple;
-	bh=1d9rwvR5saCp0EdhYztcjIdDfwg5pjT3HmajtsxKKTc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z7Qy3CrjMjspzipFpJ2j4OOCzowzaza24ucmCqSBU6x1KiQWMCDdBmU/usEMZAKAIZG8xXXWtaoIMRKUJXE0jtiVx+4jnDWsAOEJN8uV1p0aQ5aOqaM7cR2cLbzRxBeUGksYJqypEbyLezxi9glrRDojDd1sgdc+PguXUNTWUbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-223959039f4so13765045ad.3;
-        Thu, 13 Mar 2025 03:04:09 -0700 (PDT)
+	s=arc-20240116; t=1741860261; c=relaxed/simple;
+	bh=wzNceDon8J/X3zofZcOallzw6jXI+2u16F6PZKC+o+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E2i5mBWAx0a2mEXr8qN+4xuy5944X1e+BGVphVFA3MDq3PN8bC15DVlat7dpPnTY5rdlMZ3j/JcYeQpkDncq4fd4l5U5c9kI2xVHSI1GnHWdolzScNLSpk01bTixjmF7SE43AMp92v3VCk5aAXFOUVqbrJ2W7n+N3ldTVUYxrwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GZn710ZY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741860258;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zp7hbJOUv8j+ICa1QmH9m0BekOtVujE7tGDQXjIFMhs=;
+	b=GZn710ZY87bZIcB+tvBbkVlulr/D8b3EtQKxuC9KlS19aocjX4olJ+dWvvOOpa5apAptzc
+	V+r300MR3qhbcKzRp2M9QWNNU6T35QtrIeA9UbhDErgMQk0koCAKUxgyq1BWVQB2wK1fWf
+	SEzo4Fw/+0tOFDWnQPrxI44alPZlmB4=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-470-9-yV9NiLNO2oxNVUxd8Kxg-1; Thu, 13 Mar 2025 06:04:17 -0400
+X-MC-Unique: 9-yV9NiLNO2oxNVUxd8Kxg-1
+X-Mimecast-MFC-AGG-ID: 9-yV9NiLNO2oxNVUxd8Kxg_1741860256
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ac2840b1ee8so82288866b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 03:04:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741860248; x=1742465048;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZTpDb7E7Kgg1mQRDqCTRFcTgplYc3DjbNW4+KhK/wVU=;
-        b=QLLQJyvwr2VRQJ/gcLojzFICuB0zuaawowtTEaD6cza03dF5X4z1ZvpoCts4OxaAtv
-         qKg1JPwnLCGQyPL2Sgxpm5tmCqoOafdAchqHbogzyzrslgkwKJnU9rYgXQQzHaMoypdP
-         GCSr694lST5WOrN7CxyCEn2BSBIi6lIy299dKCvsNJ0dMnt59ATsC0IPHMtfkglrFzDO
-         UWTw7ErScVlddP2pNioKlgYJ2SAGhUVyt+GmD18i9HNSsAKHdMu6qwHZezcDw/bPCKZc
-         AtacE+vr/MNbqWIzpcmejJ9wh1DVA6EfiRNNOELVmeAmtXcqU37zAJwUwXXSacKwvXA5
-         9jyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEZudVDA+gr/BHrnynkdczaN5kQE2PvONfvmNPChsgU/givzY/QlQd8BDssxnJscJgJ4nq276qlbFYo44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzK4sJopXzE/GcbdeEDOUycIw2krR5mjP4+uZoCeT2wIDi3WS9
-	pbiwwRmAnbVYZYzPeaZ+cBAQOclVvGeqYXdHjXbPNXVXbK6lGZzfD151duFrXQ==
-X-Gm-Gg: ASbGncvzBay2D7hSqeIAeAR6vnLxiuqFTQjlaJ2TrKz4FrSC3a2T2aXcq4FvIgjzhk4
-	Q2VxdpwiX2/C6aKOme9KOzYhojg43MmRi9IhCnJ29DSfuo+pY9NNtFDRckRybaNdRp9yOtkhBFR
-	Y0PDwrwD8yzCsK1r/m43YSlCNkTKAZWMU8l1BJylAbAqdxF8W5ar8MAm4hFQaLXHRuNBZ5ROPxR
-	IXqrRzfDWVxJ9Sz6uj8XisYvc2ebMSvXAd90SAWJsVKvFAijDhrd/g7lbll56tE4qTKCOcJzvDn
-	6XK1dxJTvAJkqKpFZxfhrTeN8rjIGKEaX7wVIMsaV0Tt
-X-Google-Smtp-Source: AGHT+IFX6/pa4VhGBivbCC3CtJNwH1YfTlzwX4CCD5m8Y0Zl+Ld8fkpWuWGDaqr+P+mpvgxyketlVQ==
-X-Received: by 2002:a05:6a00:3981:b0:736:a7e3:d4ab with SMTP id d2e1a72fcca58-736aa9d32bemr30744617b3a.5.1741860248431;
-        Thu, 13 Mar 2025 03:04:08 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73711694b72sm983524b3a.133.2025.03.13.03.04.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 03:04:07 -0700 (PDT)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	jhs@mojatatu.com,
-	xiyou.wangcong@gmail.com,
-	jiri@resnulli.us,
-	horms@kernel.org,
-	sdf@fomichev.me
-Subject: [PATCH net-next] net: don't relock netdev when on qdisc_create replay
-Date: Thu, 13 Mar 2025 03:04:07 -0700
-Message-ID: <20250313100407.2285897-1-sdf@fomichev.me>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1741860256; x=1742465056;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zp7hbJOUv8j+ICa1QmH9m0BekOtVujE7tGDQXjIFMhs=;
+        b=p2Fw7y8OGZND/+j3D84i9yD7tGbRLIqc4dFK67gOPSCwOUIH23El9cJHILFnJlUfZI
+         6rIjNHwLBY9UzFDo0Aw38paXmh+S8w0lOXzFIc809Zli0CePWqSwJjwRaUVZkgZrRPTd
+         iirWgMzsDdHq2M+k7mGj/eNXhFYsUrCnlWXMzq/yhN0322mUhaBvgnL7nen0m5/s/7Gq
+         XFhS2V32wCtVYZyvXOLm/yVfW7Bc1CL9wSDpWR0Lpwqq9Jsvs/oOLDNrvpRry3RWPZPP
+         b4zq4hbUZkUl1yc30EaSc2r7RzcK02vQ81ICSBB31c9eHK62xJIKZayPrzDBOoBnJ4VK
+         sDFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGPlMfjInIgZgcWv122zC4m+SVQxG/q4jqs4LRcDxCb0/9YApGjz/nfcB2lHARYb2px7rLJnAoKuQ7rvY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDxkmMv/p4NJeJi4/jQlum/FAFT8PPgvSh7KQGBWL0SaQ2Lhpb
+	sZ52cJKRlZUiJobiWAhNtwVWrTClCeEi4Xr5lUqIyMqFY+1AxcZ+l8zNKGUNplYeneuiMxqjTli
+	UiUpV3AgMkNxH15RK3n+0d5fwZrSsKP19rqnrziXBz5rksh2Pq39AUQwgKU8sOA==
+X-Gm-Gg: ASbGncuYHSB5JvT/7TVBkNPSmMBGpjfYRQVRPlZ97e8JXvsf9e4HbnziiarPmLc2HV+
+	1R8ucA4p7r97bp/kumkiWJDQjfl4mByzik6q+P52phfGnCG0CPp6fz2zfRNFeDQwq7Bn13cQEgp
+	LEFUidFG+UFfbJ/+Ty8IMZQzdvPdKd9feW4meM0GQz7nAugDjvBO+Q/LzKTHUiiC5oyS/V8rKsk
+	4PuFk3rw3NMfqQTZtZJ8eP6miyVrEjOD9VQWLzWMGfacQUmyzEHcrcfv4rsvpR6DMbX26gXOsrA
+	fCzKY6F5Ful6VduOwW4wp6Ft8tflXfPKyBk66Xf7gshqHyqm6AqJYs0pyfrFShWcuW5+QhaEA3w
+	mPjjeylqXBR9iN5Q9lkAwTQP9YYCbQOdn9frn7VMPjk/ak1AY9mo9IU63pZBhBWI9WA==
+X-Received: by 2002:a17:907:1b16:b0:abf:607b:d0d with SMTP id a640c23a62f3a-ac252a884cfmr3339106266b.16.1741860255869;
+        Thu, 13 Mar 2025 03:04:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH2PP7hITPCpcD7bejSrfori1Gcf1IzT/fSj09zWOA3DyhQyDL4CraOrxQAIURoaxeaOxIXCg==
+X-Received: by 2002:a17:907:1b16:b0:abf:607b:d0d with SMTP id a640c23a62f3a-ac252a884cfmr3339101766b.16.1741860255380;
+        Thu, 13 Mar 2025 03:04:15 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147e9bbbsm62889366b.54.2025.03.13.03.04.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 03:04:14 -0700 (PDT)
+Message-ID: <9ac6e1ab-f2af-4bff-9d50-24df68ca1bb9@redhat.com>
+Date: Thu, 13 Mar 2025 11:04:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
+ board type") on reboot (but not cold boot)
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Eric <eric.4.debian@grabatoulnz.fr>,
+ Salvatore Bonaccorso <carnil@debian.org>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Christoph Hellwig <hch@infradead.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Damien Le Moal <dlemoal@kernel.org>, Jian-Hong Pan <jhp@endlessos.org>,
+ regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, linux-ide@vger.kernel.org,
+ Dieter Mummenschanz <dmummenschanz@web.de>
+References: <8763ed79-991a-4a19-abb6-599c47a35514@grabatoulnz.fr>
+ <Z8VLZERz0FpvpchM@x1-carbon>
+ <8b1cbfd4-6877-48ef-b17d-fc10402efbf7@grabatoulnz.fr>
+ <Z8l61Kxss0bdvAQt@ryzen> <Z8l7paeRL9szo0C0@ryzen>
+ <689f8224-f118-47f0-8ae0-a7377c6ff386@grabatoulnz.fr>
+ <Z8rCF39n5GjTwfjP@ryzen> <9c4a635a-ce9f-4ed9-9605-002947490c61@redhat.com>
+ <Z88rtGH39C-S8phk@ryzen> <383d5740-7740-4051-b39a-b8c74b035ec2@redhat.com>
+ <Z9BFSM059Wj2cYX5@ryzen>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <Z9BFSM059Wj2cYX5@ryzen>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Eric reports that by the time we call netdev_lock_ops after
-rtnl_unlock/rtnl_lock, the dev might point to an invalid device.
-Don't relock the device after request_module and don't try
-to unlock it in the caller (tc_modify_qdisc) in case of replay.
+Hi Niklas, Eric,
 
-Fixes: a0527ee2df3f ("net: hold netdev instance lock during qdisc ndo_setup_tc")
-Reported-by: Eric Dumazet <edumazet@google.com>
-Link: https://lore.kernel.org/netdev/20250305163732.2766420-1-sdf@fomichev.me/T/#me8dfd778ea4c4463acab55644e3f9836bc608771
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
----
- net/sched/sch_api.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+On 11-Mar-25 3:14 PM, Niklas Cassel wrote:
+> Hello Hans, Eric,
+> 
+> On Mon, Mar 10, 2025 at 09:12:13PM +0100, Hans de Goede wrote:
+>>
+>> I agree with you that this is a BIOS bug of the motherboard in question
+>> and/or a bad interaction between the ATI SATA controller and Samsung SSD
+>> 870* models. Note that given the age of the motherboard there are likely
+>> not going to be any BIOS updates fixing this though.
+> 
+> Looking at the number of quirks for some of the ATI SB7x0/SB8x0/SB9x0 SATA
+> controllers, they really look like something special (not in a good way):
+> https://github.com/torvalds/linux/blob/v6.14-rc6/drivers/ata/ahci.c#L236-L244
+> 
+> -Ignore SError internal
+> -No MSI
+> -Max 255 sectors
+> -Broken 64-bit DMA
+> -Retry SRST (software reset)
+> 
+> And that is even without the weird "disable NCQ but only for Samsung SSD
+> 8xx drives" quirk when using these ATI controllers.
+> 
+> 
+> What does bother me is that we don't know if it is this specific mobo/BIOS:
+>      Manufacturer: ASUSTeK COMPUTER INC.
+>      Product Name: M5A99X EVO R2.0
+>      Version: Rev 1.xx
+> 
+>      M5A99X EVO R2.0 BIOS 2501
+>      Version 2501
+>      3.06 MB
+>      2014/05/14
+> 
+> 
+> that should have a NOLPM quirk, like we do for specific BIOSes:
+> https://github.com/torvalds/linux/blob/v6.14-rc6/drivers/ata/ahci.c#L1402-L1439
 
-diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
-index abace7665cfe..f1ec6ec0cf05 100644
---- a/net/sched/sch_api.c
-+++ b/net/sched/sch_api.c
-@@ -1278,13 +1278,14 @@ static struct Qdisc *qdisc_create(struct net_device *dev,
- 			 * tell the caller to replay the request.  We
- 			 * indicate this using -EAGAIN.
- 			 * We replay the request because the device may
--			 * go away in the mean time.
-+			 * go away in the mean time. Note that we also
-+			 * don't relock the device because it might
-+			 * be gone at this point.
- 			 */
- 			netdev_unlock_ops(dev);
- 			rtnl_unlock();
- 			request_module(NET_SCH_ALIAS_PREFIX "%s", name);
- 			rtnl_lock();
--			netdev_lock_ops(dev);
- 			ops = qdisc_lookup_ops(kind);
- 			if (ops != NULL) {
- 				/* We will try again qdisc_lookup_ops,
-@@ -1837,9 +1838,10 @@ static int tc_modify_qdisc(struct sk_buff *skb, struct nlmsghdr *n,
- 	replay = false;
- 	netdev_lock_ops(dev);
- 	err = __tc_modify_qdisc(skb, n, extack, dev, tca, tcm, &replay);
--	netdev_unlock_ops(dev);
-+	/* __tc_modify_qdisc returns with unlocked dev in case of replay */
- 	if (replay)
- 		goto replay;
-+	netdev_unlock_ops(dev);
- 
- 	return err;
- }
--- 
-2.48.1
+That seems to be a Lenovo only thing though and with Intel chipsets.
+
+> Or if it this ATI SATA controller that is always broken when it comes
+> to LPM, regardless of the drive, or if it is only Samsung drives.
+
+I'm pretty sure we can assume this will happen on all ATI SATA
+controllers, the new LPM default is pretty recent and these boards are
+getting old, so likely have not that many users who use distros which
+ship cutting edge kernels.
+
+I do agree with you that it is a question if this is another bad
+interaction with Samsung SATA SSDs, or if it is a general ATI SATA
+controller problem, but see below.
+
+> Considering the dmesg comparing cold boot, the Maxtor drive and the
+> ASUS ATAPI device seems to be recognized correctly.
+> 
+> Eric, could you please run:
+> $ sudo hdparm -I /dev/sdX | grep "interface power management"
+> 
+> on both your Samsung and Maxtor drive?
+> (A star to the left of feature means that the feature is enabled)
+> 
+> 
+> 
+> One guess... perhaps it could be Device Initiated PM that is broken with
+> these controllers? (Even though the controller does claim to support it.)
+> 
+> Eric, could you please try this patch:
+> 
+> diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+> index f813dbdc2346..ca690fde8842 100644
+> --- a/drivers/ata/ahci.c
+> +++ b/drivers/ata/ahci.c
+> @@ -244,7 +244,7 @@ static const struct ata_port_info ahci_port_info[] = {
+>  	},
+>  	[board_ahci_sb700] = {	/* for SB700 and SB800 */
+>  		AHCI_HFLAGS	(AHCI_HFLAG_IGN_SERR_INTERNAL),
+> -		.flags		= AHCI_FLAG_COMMON,
+> +		.flags		= AHCI_FLAG_COMMON | ATA_FLAG_NO_DIPM,
+>  		.pio_mask	= ATA_PIO4,
+>  		.udma_mask	= ATA_UDMA6,
+>  		.port_ops	= &ahci_pmp_retry_srst_ops,
+> 
+> 
+> 
+> Normally, I do think that we need more reports, to see if it is just
+> this specific BIOS, or all the ATI SB7x0/SB8x0/SB9x0 SATA controllers
+> that are broken...
+> 
+> ...but, considering how many quirks these ATI controllers have already...
+
+Right in the mean time Eric has reported back that the above patch fixes
+this. Thank you for testing this Eric,
+
+One reason why ATA_QUIRK_NO_NCQ_ON_ATI was introduced is because
+disabling NCQ has severe performance impacts for SSDs, so we did not want
+to do this for all ATI controllers; or for all Samsung drives. Given that
+until the recent LPM default change we did not use DIPM on ATI chipsets
+the above fix IMHO is a good fix, which even keeps the rest of the LPM
+power-savings.
+
+> ...and the fact that the one (Dieter) who reported that his Samsung SSD 870
+> QVO could enter deeper sleep states just fine was running an Intel AHCI
+> controller (with the same FW version as Eric), I would be open to a patch
+> that sets ATA_FLAG_NO_LPM for all these ATI controllers.
+
+Right I think it is save to assume that this is not a Samsung drive problem
+it is an ATI controller problem. The only question is if this only impacts
+ATI <-> Samsung SSD combinations or if it is a general issue with ATI
+controllers. But given the combination of DIPM not having been enabled
+on these controllers by default anyways, combined with the age of these
+motherboards (*) I believe that the above patch is a good compromise to
+fix the regression without needing to wait for more data.
+
+Regards,
+
+Hans
+
+*) And there thus being less users making getting more data hard. And
+alo meaning not having DIPM will impact only the relatively few remaining
+users
+
+
 
 
