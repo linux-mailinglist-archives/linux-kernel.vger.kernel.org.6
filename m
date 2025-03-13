@@ -1,54 +1,63 @@
-Return-Path: <linux-kernel+bounces-559784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F252BA5F9C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:25:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37671A5F9C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:25:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FA4D3BE100
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:25:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB4C57AA2BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0046D268FF6;
-	Thu, 13 Mar 2025 15:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DAE7269803;
+	Thu, 13 Mar 2025 15:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iq8kjZZ8"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="tT+9ntrP"
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9401268FCE;
-	Thu, 13 Mar 2025 15:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7BA268FF2;
+	Thu, 13 Mar 2025 15:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741879524; cv=none; b=fUGT1xuNRyxE3F6uclNJYuEBpPpo7Azv50rMpxsDzvAuARaIZRgl668rwG9svx3KTwzv4W8KEqcFZ6IpFallgOI4Q/pIzEwmOiQ4i4CvyxtO0+EHD6bnA4KHawcQ6y6mX8rShGsZRyzUkEpNE1Ohtv3wu0mkp4oePXXvDzK3/nA=
+	t=1741879526; cv=none; b=dLX2RvOjSZvjEo/atgOMqblvWPOn37Da1N1Mx9Pcp3YS5jJoRpdubYp7d8FP1LC+HlKG1NySpSSk2Jm/7m/cQK7eOK0/pCjGzzxqvIrBu+zrIKHRDJBWE8J3wwTLD+r4CenT3BW/F2u4yqYS89j57aq/6uHToJQcKVEI/iJvpKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741879524; c=relaxed/simple;
-	bh=sErwnx8pcuQQ1tldCxoUyU7bZmGR2ORwpdFakspaE5k=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ku6b/xTg+SlMY/n0dlSdoKZgtWubICeU8vAnahvvqeXueB1YcQ2UeafMX1/SrbYNFtcjfIvTp4G9ttCcTiPHgAYmWxa334xt2wnfFCmey+K1hzoqrGeE6NtM7eeX9vlH89J1Kvikm3ZLXMX25B91SyCUST8Txj0n7zM0H82LQx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iq8kjZZ8; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741879518; x=1742484318; i=markus.elfring@web.de;
-	bh=sErwnx8pcuQQ1tldCxoUyU7bZmGR2ORwpdFakspaE5k=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=iq8kjZZ8ZTlUv5GhCL+PN2vHTPl714hme9UJfTKqYPCCjJzgKKQeopr3wQPykwrf
-	 0yKVj/Trzg7NevDx4VBNdF9i217UFiMBnzkR4aOeWux7Ubp5W54hGclfg8P8zA5BX
-	 4ryogbU++dMHGT/KsPxWgf8w39tAR9EjD8txIUKRp3dSZKujd1CxnAJOsLlWjE4Vv
-	 E5I2fZ2ygoQiLwUSjh5oY+s2an+Qw9CDww2+fsyiOMSQAjNFUehwVi2VBnv4qbMU0
-	 Snt2Pt1t/DVo9ExgcD0KBnIyyluvLox/g8FVcks91uaTyAqQ2PcDt5jhDiIcMX0UG
-	 OPqXAvRLptfoYbz/Lg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.2]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N6sBv-1t97GT28Wl-015YRH; Thu, 13
- Mar 2025 16:25:18 +0100
-Message-ID: <484f85e6-4650-4301-907d-6ba08dfd4e1b@web.de>
-Date: Thu, 13 Mar 2025 16:25:13 +0100
+	s=arc-20240116; t=1741879526; c=relaxed/simple;
+	bh=rokznT4FWbh+ORJibg2wZixX4YyVUU7OJmaMSePE1mk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Bm6bCGzix+vIeETLY7E7nCx/aE0V50RyjuRFDNA7rYofZ+1wioSNZmPpEUXMajPVJxfxkpdkVbD9KDH4qp5eFx8julVXGVQQvY8VEVIDM1sLCoCOho89vbzC5UHsk8wGBhlZXmMUX9/z39RTzt7qYV50DOnUJm2K4JKI2RHg2BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=tT+9ntrP; arc=none smtp.client-ip=52.95.49.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1741879525; x=1773415525;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=+g9gtzsApXHktJfo71oZbOr3PAfG8MTtcFusvXjlKDI=;
+  b=tT+9ntrPFRm9o8oIPgmrhGH4A3YRB5FIoeoXq8cukDnMHdwKYxlQtMsz
+   uStcRACvkBtl9HsZ3vykKd/U8U37o96oLsqUQl//jTnXoYwXqL+tzaw1B
+   Ky+sTF7FW9hvBAO3TnSbaI3WIJ2U/UHeZ1s2Z/ivVPA/GaF2Dv+ZmzPJd
+   I=;
+X-IronPort-AV: E=Sophos;i="6.14,245,1736812800"; 
+   d="scan'208";a="480147088"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 15:25:20 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [10.0.10.100:42458]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.37.123:2525] with esmtp (Farcaster)
+ id 62e0b85a-879e-4398-a400-7c187b7dc5e6; Thu, 13 Mar 2025 15:25:19 +0000 (UTC)
+X-Farcaster-Flow-ID: 62e0b85a-879e-4398-a400-7c187b7dc5e6
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 13 Mar 2025 15:25:19 +0000
+Received: from [192.168.26.168] (10.106.82.15) by
+ EX19D022EUC002.ant.amazon.com (10.252.51.137) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 13 Mar 2025 15:25:18 +0000
+Message-ID: <69dc324f-99fb-44ec-8501-086fe7af9d0d@amazon.com>
+Date: Thu, 13 Mar 2025 15:25:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,61 +65,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: vulab@iscas.ac.cn, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Hawking Zhang <Hawking.Zhang@amd.com>,
- Jack Xiao <Jack.Xiao@amd.com>, Kenneth Feng <kenneth.feng@amd.com>,
- Likun Gao <Likun.Gao@amd.com>, =?UTF-8?B?TWFyZWsgT2zFocOhaw==?=
- <marek.olsak@amd.com>, Simona Vetter <simona@ffwll.ch>,
- Sunil Khatri <sunil.khatri@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>
-References: <20250312063106.772-1-vulab@iscas.ac.cn>
-Subject: Re: [PATCH] drm/amdgpu/gfx12: correct cleanup of 'me' field with
- gfx_v12_0_me_fini()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250312063106.772-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Fwl6wYppUeZIESJ07QfG7R+RHS+ivvTGz91GRCqjvA9QR2nYSaz
- /276/2ni6oKiwwvhaJE+6C6O4AeztAJTEzhau6+vmGZW/5u6EmkjPtUkOKQTJ77xtIFU59C
- +dnOP2SEa8uRBDiqSff4vu1Psxnv4RnCcZLVR3lbD/M2epv4Ei7hgaIE+ybcXH1RjxI9wRU
- 0UlKR4agNoPVi54Os4A6A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PqiBbeSmioQ=;QfebTrW7ygkj+TSSpvMgnbRpo6s
- 08hCEpGEBzMWciTp7Ediy/EfNxNJ+WCvi37FaDUSykSIXTBQR27ybZh8L4jCHqGQqQ/ujDGJN
- ZlUzAzb1lvlTOtQ/y/y1WwBHTSJi75jPT90oVe4YsOVGAVAmpYF8nmaBWuW7IO9q1pxQXGRCv
- 0Zszpn07z07jwePHZ66d5c9or5bz+rJKy7a0nmgREpUjNm8WT8rmi4qBvo/m33TuISwpKVYbO
- 8sj/lktMvrqVXQRJ9PD2xwmkWBWDO8Y3UYHlzw2nwCjiFo98L1K7cBxP+FutrR1yPfiNQHc4y
- Hdqf6LLmMw8hwgNl7DjIaWpZgswQnyNt6oPf9T+kJaep6PKV5/8LR6Fe0NoWP22KAlanj7XEy
- Xy7+hdelz2opzPnimSfsPikABze4Xhpk1Ind7U29tWfxSW1kMmYWANDFltq6Jn6fmHM8MY06b
- tZ5pC//nQd4i+GNvkL4KeLqvoPXVf3OJRuxMCCeD1z09oXwFOgtDbhH+8D9u3exWMqo0reGCZ
- sV+uaNTXZorUOHfkVJehtYevFyl7qTpvfnew10maKpEtDcjU5Lxmzz37OdCs4KelKQ7Yg+ARI
- /FmYcjt0rZaOLesD1uddU+Ek7xtMGXp6d+xJqBtLgMWjFCrbNNWdY8tLwU2wNW6L4anzkSzuD
- U/XXC4FUtmseFWwv/fCsgwXO/tcarZb3wznrqkvnlTV+GPDTGBZ0KkGskRI/Lwf4PwB6WepHL
- MlKcDCZ/MUuib+WgNx5WLB0eOI+euIyisJ6jXpv3awGW7QgE4Efs7s5HOJX6xOFsC+p1B7/ua
- dZs93pnG0kqsz0W5pCucPu1pfa78seRSpahs8UwUBr4+fp8qZuDuVaT+za1MJiWueOqXTYqcM
- jzxe7L1Uspyd++YzyBWzR3YV0SWVkXE3E8gvjnpaaNBMJYPo4YJxy3Ze6vd26XHEXX1k7MTrD
- Buab5bKidyDKFCqJ3WwXXPE+yoXP5Xj+3HF5PPTtFDVgOoSuFlSyw+o0Cbs+pwosqjbYyVKNe
- kxMF3O1OdNj721mKBur0+8eP8qXS33j1/4K2lcnnyV1vPgYs1T77BM65DwW+mzXIptBSLoOEh
- 8rKkbX5dPt6kqDCOSevjr1NXJqui/mRwQU87uH530Eb5gaeapFcUkhHsO0WEwoP1ZNYYtgd+o
- tLgujMk6/WMaNczDwOf6T4GEyFwNYFrBI4GIfxo6jq1Wg5PIjsnJ0HG8Z5kFlS7XD5AbfxCyW
- lYtuNSHTkNbr6SrIkRZXvsMi80IazpnzV+aoBiLKcdanuEZGJKbDr9jcGWKeOAdOCY0V+ws+z
- JykisRMjj8kY8hh/khhjRu4fONeBnJ4E9FIJf1l159wiAxVNp8yMN7EJrVBCJtabbv/wdJnbo
- a4trkTqrDf5MvhTZkih97VQFD6ZshD5S6zbcgMigJBtZVo+dAogjMIKesL4UZQCaY324qlofw
- 2FphBIrwBN46kw527VD/chFzQHw2ycSOB1iap4sw9SO1CqpBW
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [RFC PATCH 0/5] KVM: guest_memfd: support for uffd missing
+To: Peter Xu <peterx@redhat.com>
+CC: James Houghton <jthoughton@google.com>, <akpm@linux-foundation.org>,
+	<pbonzini@redhat.com>, <shuah@kernel.org>, <kvm@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <lorenzo.stoakes@oracle.com>, <david@redhat.com>,
+	<ryan.roberts@arm.com>, <quic_eberman@quicinc.com>, <graf@amazon.de>,
+	<jgowans@amazon.com>, <roypat@amazon.co.uk>, <derekmn@amazon.com>,
+	<nsaenz@amazon.es>, <xmarcalx@amazon.com>
+References: <20250303133011.44095-1-kalyazin@amazon.com>
+ <Z8YfOVYvbwlZST0J@x1.local>
+ <CADrL8HXOQ=RuhjTEmMBJrWYkcBaGrqtXmhzPDAo1BE3EWaBk4g@mail.gmail.com>
+ <Z8i0HXen8gzVdgnh@x1.local> <fdae95e3-962b-4eaf-9ae7-c6bd1062c518@amazon.com>
+ <Z89EFbT_DKqyJUxr@x1.local> <9e7536cc-211d-40ca-b458-66d3d8b94b4d@amazon.com>
+ <Z9GsIDVYWoV8d8-C@x1.local> <7c304c72-1f9c-4a5a-910b-02d0f1514b01@amazon.com>
+ <Z9HhTjEWtM58Zfxf@x1.local>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
+ CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
+ i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
+In-Reply-To: <Z9HhTjEWtM58Zfxf@x1.local>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D012EUA001.ant.amazon.com (10.252.50.122) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
-=E2=80=A6
-> can only release 'pfp' field of 'gfx'. The release function of 'me' fiel=
-d
-> should be gfx_v12_0_me_fini().
 
-Do you care for an imperative wording in such a change description?
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc6#n94
 
-Regards,
-Markus
+On 12/03/2025 19:32, Peter Xu wrote:
+> On Wed, Mar 12, 2025 at 05:07:25PM +0000, Nikita Kalyazin wrote:
+>> However if MISSING is not registered, the kernel will auto-populate with a
+>> clear page, ie there is no way to inject custom content from userspace.  To
+>> explain my use case a bit more, the population thread will be trying to copy
+>> all guest memory proactively, but there will inevitably be cases where a
+>> page is accessed through pgtables _before_ it gets populated.  It is not
+>> desirable for such access to result in a clear page provided by the kernel.
+> 
+> IMHO populating with a zero page in the page cache is fine. It needs to
+> make sure all accesses will go via the pgtable, as discussed below in my
+> previous email [1], then nobody will be able to see the zero page, not
+> until someone updates the content then follow up with a CONTINUE to install
+> the pgtable entry.
+> 
+> If there is any way that the page can be accessed without the pgtable
+> installation, minor faults won't work indeed.
+
+I think I see what you mean now.  I agree, it isn't the end of the world 
+if the kernel clears the page and then userspace overwrites it.
+
+The way I see it is:
+
+@@ -400,20 +401,26 @@ static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
+         if (WARN_ON_ONCE(folio_test_large(folio))) {
+                 ret = VM_FAULT_SIGBUS;
+                 goto out_folio;
+         }
+
+         if (!folio_test_uptodate(folio)) {
+                 clear_highpage(folio_page(folio, 0));
+                 kvm_gmem_mark_prepared(folio);
+         }
+
++       if (userfaultfd_minor(vmf->vma)) {
++               folio_unlock(folio);
++               filemap_invalidate_unlock_shared(inode->i_mapping);
++               return handle_userfault(vmf, VM_UFFD_MISSING);
++       }
++
+         vmf->page = folio_file_page(folio, vmf->pgoff);
+
+  out_folio:
+         if (ret != VM_FAULT_LOCKED) {
+                 folio_unlock(folio);
+                 folio_put(folio);
+         }
+
+On the first fault (cache miss), the kernel will allocate/add/clear the 
+page (as there is no MISSING trap now), and once the page is in the 
+cache, a MINOR event will be sent for userspace to copy its content. 
+Please let me know if this is an acceptable semantics.
+
+Since userspace is getting notified after KVM calls 
+kvm_gmem_mark_prepared(), which removes the page from the direct map 
+[1], userspace can't use write() to populate the content because write() 
+relies on direct map [2].  However userspace can do a plain memcpy that 
+would use user pagetables instead.  This forces userspace to respond to 
+stage-2 and VMA faults in guest_memfd differently, via write() and 
+memcpy respectively.  It doesn't seem like a significant problem though.
+
+I believe, with this approach the original race condition is gone 
+because UFFD messages are only sent on cache hit and it is up to 
+userspace to serialise writes.  Please correct me if I'm wrong here.
+
+[1] 
+https://lore.kernel.org/kvm/20250221160728.1584559-1-roypat@amazon.co.uk/T/#mdf41fe2dc33332e9c500febd47e14ae91ad99724
+[2] 
+https://lore.kernel.org/kvm/20241129123929.64790-1-kalyazin@amazon.com/T/#mf5d794aa31d753cbc73e193628f31e418051983d
+
+>>
+>>> as long as the content can only be accessed from the pgtable (either via
+>>> mmap() or GUP on top of it), then afaiu it could work similarly like
+>>> MISSING faults, because anything trying to access it will be trapped.
+> 
+> [1]
+> 
+> --
+> Peter Xu
+> 
+
 
