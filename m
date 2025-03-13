@@ -1,113 +1,192 @@
-Return-Path: <linux-kernel+bounces-559132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C211A5EFD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:45:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F15A5EFDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:46:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCED43AF834
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:45:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AF26188FC88
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7409026158B;
-	Thu, 13 Mar 2025 09:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C53F264608;
+	Thu, 13 Mar 2025 09:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bbZLkgWp"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DOZ7Cs0s"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA721EF37D;
-	Thu, 13 Mar 2025 09:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D83E1EFF98;
+	Thu, 13 Mar 2025 09:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741859121; cv=none; b=bcc5E+YckDYVikwK6VQRubcYuy3aGaF4LtrQvSwt68ThtQpBNeKMzVCvKqYAoyg8sI+Wwx4bxcWwVvqgWa7IfEwXyaAxEzfFoPgekxE2x3EUBaF8zdWY+8cYbjtBDJO1oFkJ+CJOryyzDKmq18uYmds0Og8qHl1Kb6jKIlN8GOM=
+	t=1741859166; cv=none; b=mOdlpRXy/C+LgUKzUSdbckQAvxOOr+neT4/C1fH+fEXh2LMJK0xWi3LgZk5lrJRjMPoM2zr0DHV4aA3ymt+tvCbZEpCrjk59coSOcAgF9ZPDyq013Kt+4jOFh/LQ10XF7pTOiiUhz5QHJl3MyyVpEGReBiPbeEtHoQJm6h5pMpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741859121; c=relaxed/simple;
-	bh=cmvhZ61KuCH6EtGoYseDt8GjbPbuKre81gGxvuEtC3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NYJDDuJAKeLO73P8uUsIZAUbLPS9stAeuA9xeUiU9KFHEcR/PV3AgY3dlgtLReVBpZTxevq6oxDCdv59RjLjgLNHs96jTJfkwtMQ3wjZu+rfTK9ASmsjFs79E+AehP/UD5J15obXawibReB1mOX/XQ7j/yULVi30VbNdyQL2AjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bbZLkgWp; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D9A5DI018566;
-	Thu, 13 Mar 2025 09:45:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cmvhZ61KuCH6EtGoYseDt8GjbPbuKre81gGxvuEtC3w=; b=bbZLkgWp0RM2P9bz
-	wbHiVUO7Z8sHTU5gLF9H27Ixd5zDKFg5/0lyWQkFp8kzTzWd+aJ/7FCvY6eyCsWf
-	UfljoXThpTVFkR2BCiEvDxQIBy1Iwp2lbKWx8//nLOejAr/Wa5AnLY/vWDskIXB/
-	KfQmXJrbEs4xjk8c3SssoLnYEkUDHaYK48pbSHiKWFpZ1XN2JmH6iCSEJF3GUVkq
-	dxSww+BPwj8d7r0+zRzH5qbMXfWnuEAI3SVsSUz5fkNU/OaqZN4XGS+2dhI+hINR
-	45zW8zqlmkYpWfBxIPOrVa7b0c20PUZD+QUaMTWx6GrhHsTZYjB6rjO1IvsprFO1
-	U6JhhQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2nwdhr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 09:45:12 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D9jBpr002714
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 09:45:11 GMT
-Received: from [10.152.204.0] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
- 2025 02:45:08 -0700
-Message-ID: <a44f064f-19fd-16ea-222f-058486698951@quicinc.com>
-Date: Thu, 13 Mar 2025 15:15:05 +0530
+	s=arc-20240116; t=1741859166; c=relaxed/simple;
+	bh=KnDKEsArudUs0xPOlJ+UrPFKez4u7XPSRF38hrC27AY=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=nETt2K5KH/u4zLniZgdwnNK7xDNFDvkJsls2gwEbfUtakF67r5AJh0g4S9pyBbylPG7+tmKvoXJSPZ2G9Gck6EfI6H6jRVbsgmbGEKGkSpoXQoQfgVVuUm7g+xKLhpjpgllehBcNVC0Qx65eP0fNzsVdFcv0s4A/49yE0hE/KJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DOZ7Cs0s; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741859165; x=1773395165;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=KnDKEsArudUs0xPOlJ+UrPFKez4u7XPSRF38hrC27AY=;
+  b=DOZ7Cs0sRaTKqYvXiRIye7u2Y0gOZ6eDl+Gb1gBrJ9JRYlJC9Mwbxn9J
+   1cC+VjcR9/zhs2C0jiQE4urJKhDMNfw7fWRgN/MjoQ6P6el+SPVLGJWZR
+   XLxqUMpIRTdu0qOluD4iLc222mS4NG8H4G2vHGW3s1Ny1kht5qtJjCcUl
+   saRLyAGPYl0M++zTapDSKz6ULxCPSMBcmYUihJYom6IVUdx1jgAJGAumT
+   ClQUOL+Zq90+YpuESiJb8XLVBqv1GUSOqGIhN3VpWIQhTv9z4bgalOvjl
+   0FMApkSP7hZNdpj4KNiA+9fYxi+R7Ia+dIXzqmigLAQs1nx3gyz+IzMq3
+   w==;
+X-CSE-ConnectionGUID: B7LVfIo+RwOX4f51lj13kQ==
+X-CSE-MsgGUID: 1axMC7G2THqpkKmVxyFK3w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42218666"
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="42218666"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 02:46:04 -0700
+X-CSE-ConnectionGUID: OgZTVnicSw2ndjoz67HmGA==
+X-CSE-MsgGUID: h+IV8g1JRiycZ2xpDz+NkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="121400702"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.195])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 02:45:59 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 13 Mar 2025 11:45:45 +0200 (EET)
+To: =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>
+cc: linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org, 
+    dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
+    Bjorn Helgaas <bhelgaas@google.com>, 
+    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+    Michal Wajdeczko <michal.wajdeczko@intel.com>, 
+    Lucas De Marchi <lucas.demarchi@intel.com>, 
+    =?ISO-8859-15?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, 
+    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+    Maxime Ripard <mripard@kernel.org>, 
+    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+    Simona Vetter <simona@ffwll.ch>, Matt Roper <matthew.d.roper@intel.com>
+Subject: Re: [PATCH v5 1/6] PCI/IOV: Restore VF resizable BAR state after
+ reset
+In-Reply-To: <20250312225949.969716-2-michal.winiarski@intel.com>
+Message-ID: <d6e026ad-4dd4-2e03-6f8b-a10980fa0ce7@linux.intel.com>
+References: <20250312225949.969716-1-michal.winiarski@intel.com> <20250312225949.969716-2-michal.winiarski@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH ath-next] wifi: ath12k: limit WMI_SCAN_CHAN_LIST_CMDID
- argument size
-Content-Language: en-US
-To: Mantas Pucka <mantas@8devices.com>, <ath12k@lists.infradead.org>
-CC: Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson
-	<jjohnson@kernel.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250310-limit-wmi-chanlist-v1-1-8f0fb45459a7@8devices.com>
-From: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
-In-Reply-To: <20250310-limit-wmi-chanlist-v1-1-8f0fb45459a7@8devices.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: KnHX6KE_wvA54Rygmqn7yKA4oBbVvE17
-X-Authority-Analysis: v=2.4 cv=Q4XS452a c=1 sm=1 tr=0 ts=67d2a928 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=HwlXlOyzY4lq39rnBK0A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: KnHX6KE_wvA54Rygmqn7yKA4oBbVvE17
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_04,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- lowpriorityscore=0 mlxscore=0 clxscore=1015 phishscore=0 malwarescore=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130076
+Content-Type: multipart/mixed; boundary="8323328-1098235586-1741859145=:1742"
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+--8323328-1098235586-1741859145=:1742
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On 3/10/2025 6:58 PM, Mantas Pucka wrote:
-> When using BDF with both 5GHz and 6GHz bands enabled on QCN9274, interface
-> fails to start. It happens because FW fails to process
-> WMI_SCAN_CHAN_LIST_CMDID with argument size >2048, resulting in a command
-> timeout. The current code allows splitting channel list across multiple WMI
-> commands but uses WMI max_msg_len (4096) as chunk size, which is still too
+On Wed, 12 Mar 2025, Micha=C5=82 Winiarski wrote:
 
-Did you have any private changes to increase the message_len from current
-2048 ot 4096 bytes? As mentioned in a reply for your other patch, multi-band
-in qcn9274 requires additional changes in driver, only scan mode is supported
-even with those changes.
+> Similar to regular resizable BAR, VF BAR can also be resized, e.g. by
+> the system firmware or the PCI subsystem itself.
+>=20
+> Add the capability ID and restore it as a part of IOV state.
+>=20
+> See PCIe r4.0, sec 9.3.7.4.
+>=20
+> Signed-off-by: Micha=C5=82 Winiarski <michal.winiarski@intel.com>
+> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> ---
+>  drivers/pci/iov.c             | 29 ++++++++++++++++++++++++++++-
+>  include/uapi/linux/pci_regs.h |  1 +
+>  2 files changed, 29 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+> index 121540f57d4bf..eb4d33eacacb8 100644
+> --- a/drivers/pci/iov.c
+> +++ b/drivers/pci/iov.c
+> @@ -7,6 +7,7 @@
+>   * Copyright (C) 2009 Intel Corporation, Yu Zhao <yu.zhao@intel.com>
+>   */
+> =20
+> +#include <linux/bitfield.h>
+>  #include <linux/pci.h>
+>  #include <linux/slab.h>
+>  #include <linux/export.h>
+> @@ -868,6 +869,30 @@ static void sriov_release(struct pci_dev *dev)
+>  =09dev->sriov =3D NULL;
+>  }
+> =20
+> +static void sriov_restore_vf_rebar_state(struct pci_dev *dev)
+> +{
+> +=09unsigned int pos, nbars, i;
+> +=09u32 ctrl;
+> +
+> +=09pos =3D pci_find_ext_capability(dev, PCI_EXT_CAP_ID_VF_REBAR);
+> +=09if (!pos)
+> +=09=09return;
 
-Vasanth
+FYI, the commit f7c9bb759161 ("PCI: Cache offset of Resizable BAR=20
+capability") which is currently in pci/enumeration makes this simpler.
+
+> +=09pci_read_config_dword(dev, pos + PCI_REBAR_CTRL, &ctrl);
+> +=09nbars =3D FIELD_GET(PCI_REBAR_CTRL_NBAR_MASK, ctrl);
+> +
+> +=09for (i =3D 0; i < nbars; i++, pos +=3D 8) {
+> +=09=09int bar_idx, size;
+> +
+> +=09=09pci_read_config_dword(dev, pos + PCI_REBAR_CTRL, &ctrl);
+> +=09=09bar_idx =3D FIELD_GET(PCI_REBAR_CTRL_BAR_IDX, ctrl);
+> +=09=09size =3D pci_rebar_bytes_to_size(dev->sriov->barsz[bar_idx]);
+> +=09=09ctrl &=3D ~PCI_REBAR_CTRL_BAR_SIZE;
+> +=09=09ctrl |=3D FIELD_PREP(PCI_REBAR_CTRL_BAR_SIZE, size);
+> +=09=09pci_write_config_dword(dev, pos + PCI_REBAR_CTRL, ctrl);
+> +=09}
+> +}
+> +
+>  static void sriov_restore_state(struct pci_dev *dev)
+>  {
+>  =09int i;
+> @@ -1027,8 +1052,10 @@ resource_size_t pci_sriov_resource_alignment(struc=
+t pci_dev *dev, int resno)
+>   */
+>  void pci_restore_iov_state(struct pci_dev *dev)
+>  {
+> -=09if (dev->is_physfn)
+> +=09if (dev->is_physfn) {
+> +=09=09sriov_restore_vf_rebar_state(dev);
+>  =09=09sriov_restore_state(dev);
+> +=09}
+>  }
+> =20
+>  /**
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.=
+h
+> index 3c2558b98d225..aadd483c47d6f 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -744,6 +744,7 @@
+>  #define PCI_EXT_CAP_ID_L1SS=090x1E=09/* L1 PM Substates */
+>  #define PCI_EXT_CAP_ID_PTM=090x1F=09/* Precision Time Measurement */
+>  #define PCI_EXT_CAP_ID_DVSEC=090x23=09/* Designated Vendor-Specific */
+> +#define PCI_EXT_CAP_ID_VF_REBAR 0x24=09/* VF Resizable BAR */
+>  #define PCI_EXT_CAP_ID_DLF=090x25=09/* Data Link Feature */
+>  #define PCI_EXT_CAP_ID_PL_16GT=090x26=09/* Physical Layer 16.0 GT/s */
+>  #define PCI_EXT_CAP_ID_NPEM=090x29=09/* Native PCIe Enclosure Management=
+ */
+>=20
+
+--=20
+ i.
+
+--8323328-1098235586-1741859145=:1742--
 
