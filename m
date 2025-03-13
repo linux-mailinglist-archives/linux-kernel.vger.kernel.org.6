@@ -1,106 +1,119 @@
-Return-Path: <linux-kernel+bounces-559354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CC04A5F297
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:40:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8150EA5F29E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:41:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 362341898292
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:41:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F7031899D86
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD9E266566;
-	Thu, 13 Mar 2025 11:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E0D266EEE;
+	Thu, 13 Mar 2025 11:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="W2uSraNg"
-Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p97kCvOs"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0782A1F12F2
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FB8266B47
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741866047; cv=none; b=aaPE+OVcSwL2iTMs7a7kCfFc86xGIxxdwvgWKUDLTby5tvWNRRWRQKHMCoXtUdF6GwXP/2gjSgBSCbThpaX20ogz5auhVIq3nRV832smS8jnMlwq+ePyl50DO6qRi12r7DgVyQFXoLbOcKg9lQ/f3LdN6D5XyfcAqKZ79o86yzI=
+	t=1741866051; cv=none; b=u8l0tAcxAEhS6SwB1H3YbompyaQByT6dN0dVazjjHQLz2hWmKQp8D77jDxKwU4AHlbQIlK50FW8yyO0JMiU0wpOBE613zQvdRTymKghWJgH3GgmAKxFT/RLtk2I7XCOdEpCJCzjVPLuW73woAWLjgv9hjEdT2OZXbi78cAuDlS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741866047; c=relaxed/simple;
-	bh=dADYmb8K9GgDNXQ67bqleLeuvIh2tnN2E1VMVQi0ipQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BNZPrIUFnhbllli/7KONmAtmPIHF5wEDjKtMkzsPskR0A2BRRQqjxBcl9iODSy5HbA1UPJg1Gae+FjWC4FaFx9y3za1z9u9JAFoXetsNpDNq2GmIFbnrMgA4nxV+FDrlyr0W99EtPvr8FCLhIwA57rn776m+Q68s5ijPY2fzQyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=W2uSraNg; arc=none smtp.client-ip=79.135.106.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741866042; x=1742125242;
-	bh=5GnIOlqHCM0sUxmxAzlqwN2j3skyVfL4xNHDIOjyddM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=W2uSraNgBIieSuO6/GlKw/pmpX7M/dfqpiMhk95SMcT4yESAA1nRCLeaWlXhv/3DM
-	 itsXBS92ev8jn7IDnRHqnUSAfThZ4YLKWf1hNzIpM4zVkauWCW8BELF2IKVoj1xOVW
-	 OhBE4b1BOv2zTE0xby5PWOF5Qcs/y0lOyYZIvL1twsPr/E7TOH8TDHkVe8bc62f1UY
-	 +/XYNP3/wIE8I9lpDJrhH9I9Q5A1f0CLDQF4iQWUeB5Od6tx56G9J6bhCuVqudsnMl
-	 j8mw01o/KDl99mWCwi0ROwz/eLRKunE57mnrXFxNi41T7yx9YYIF7LkgCJQWrd0Vlu
-	 0rkipZSFel1Qg==
-Date: Thu, 13 Mar 2025 11:40:34 +0000
-To: Antonio Hickey <contact@antoniohickey.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Benno Lossin <y86-dev@protonmai.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] rust: enable `raw_ref_op` feature
-Message-ID: <D8F3Z37118Y6.QO0BF41MVCU2@proton.me>
-In-Reply-To: <010001958dfeacb5-9039aaab-6114-494a-9f1d-f13982091169-000000@email.amazonses.com>
-References: <20250313053340.405979-1-contact@antoniohickey.com> <010001958dfeacb5-9039aaab-6114-494a-9f1d-f13982091169-000000@email.amazonses.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 4f6bdb05c03d50b522e9bc0f97bda7718c72ac8a
+	s=arc-20240116; t=1741866051; c=relaxed/simple;
+	bh=Eh3Y5LXG17wzb3mkSprvbBwR21QXQxiAZRBUjytc0qM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ELL9rCNx3Jh4N+DNAauyDc8ND0qIvoPmCOOWtceyTuyvY5M+wwS1Sgq364sD0IkRkC52ioM7FW0ZswHhkprsuBSkdQ/CHHBPJn0/kV9PS0Me7VkDKvqV5r4sMPRd3wtgzh++miBGhnrI+7R8dSgfFyxG+bOKeVO78OH0VtGMSsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p97kCvOs; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43bd0586b86so6128735e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 04:40:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741866047; x=1742470847; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/j+Oz7cHBDK6gF/9kTqWJDu+O9+gPpwr8SGXRwE61TQ=;
+        b=p97kCvOsfmhgnv7dWmMGxMl7+iq3LCXnMrVraXlnjfgBWouaK0In368SJsEm75bm54
+         6duEomrl20LYdlcJ4Qz1ThpHWGSZR0/9OvkAxJHdM2eVWyoaMERV/STfnX5hKaMs4yZE
+         YjOfqSovj4s7lX3DIx5qys62wD6YvkR4G8VT++P2J/FzMGucmhZxIMAckRUpj6QrH/Ur
+         LyK/mZT0+GA6p8EjMgLBq+OEuzkUeuFqzKFohFkw3S+wMINt1oi0qlHK9kO3XHMvCM7t
+         tSb3dk+zsPHCoJYHddj9vuPuw10HuBugf7TxAYMGzZjPIW6l7KR+KW1n9iSsg1gfAW0z
+         5TLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741866047; x=1742470847;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/j+Oz7cHBDK6gF/9kTqWJDu+O9+gPpwr8SGXRwE61TQ=;
+        b=MGin1Zo9uPMQtyJpDibaqMLIijZMUdpqZ5uBJdgk2WrTXhu+OGs6frLnwFE321mQcL
+         iiVC9XRVOLLiUSlfsuvNZ0p4/OjYjs5C0GEelfAxtPdFR8Ih4aAh11oSzGbvq3j03P+4
+         ZmY+cuz4V01vGcPB+QnjniT6YGSUuzCGJcx/Ue75hn8nLOhbjbOirEeoWsGObJfRxQFg
+         DhMYJuOqqt6L76/gG76cWitEwLIbe2ijfWc5u816mEdEO1eGRCUZ0ulchbq9aw6nOmXh
+         q9r2d3sBLZZ+a8ola5fW6qXzGLefw7R/E64dWO+ZBKe/3wbVAc75miPF/CwYq4M9zTZ7
+         1wYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfKKtVUX23d36pm1vwgLAaVR4LcPwbkN7khMxaBOGge5GlqBoEsqqxJyrIqXeoCgyPesAO+xweo9lK23c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL3hVaXvXTbGQJqvkBkPhVrzqno1kxjiTgxLXgcmjcQlivl+F0
+	QErPK1IDbtSZmxmTpffD1pHQYdHcD5vY6MjD7ccCSv8ifsqpW2ku+8qF+0vk5OO/LYASh9Ntczc
+	lsMYI6ucV6Qwa0RZ2gQ==
+X-Google-Smtp-Source: AGHT+IHT/XL50MODZw7JAAt6rGzgQd+Y4OENiN5kXRm9oqFCYFwRAIdO78t5s5DxhHV14BZpOtcnvF2TqxK+OAfE
+X-Received: from wmbbi10.prod.google.com ([2002:a05:600c:3d8a:b0:43d:abd:278f])
+ (user=vdonnefort job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:5618:b0:43b:ce3c:19d0 with SMTP id 5b1f17b1804b1-43cdfb7db88mr180301615e9.29.1741866047681;
+ Thu, 13 Mar 2025 04:40:47 -0700 (PDT)
+Date: Thu, 13 Mar 2025 11:40:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
+Message-ID: <20250313114038.1502357-1-vdonnefort@google.com>
+Subject: [PATCH v4 0/3] Count pKVM stage-2 usage in secondary pagetable stat
+From: Vincent Donnefort <vdonnefort@google.com>
+To: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, 
+	suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, 
+	will@kernel.org
+Cc: qperret@google.com, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	Vincent Donnefort <vdonnefort@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu Mar 13, 2025 at 6:33 AM CET, Antonio Hickey wrote:
-> Since Rust 1.82.0 the `raw_ref_op` feature is stable.
->
-> By enabling this feature we can use `&raw place` and `&raw mut place`
-> instead of using `addr_of!(place)` and `addr_of_mut!(place)` macros.
->
-> This will allow us to reduce macro complexity, and improve consistency
-> with existing reference syntax as `&raw`, `&raw mut` is very similar to
+This series allows to count stage-2 related memory when using pKVM. The
+value can be found in the /proc/meminfo field SecPageTables.
 
-One more thing, it has to be `&raw const` instead of `&raw`, I missed
-that in the original issue, sorry!
+Changes since v3: https://lore.kernel.org/all/20250307113411.469018-1-vdonnefort@google.com/
+  - Remove unnecessary void * cast (Marc)
+  - Rename reclaim_guest_pages() -> reclaim_pgtable_pages() (Marc)
+  - Remove unnecessary PAGE_ALIGN(pgd_sz)
 
-This also needs to be fixed in the other two patches.
+Changes since v2: https://lore.kernel.org/all/20250304134347.369854-1-vdonnefort@google.com/
+  - Pass a pointer to kvm_hyp_memcache instead of just the flags
+    (Oliver)
 
----
-Cheers,
-Benno
+Changes since v1: https://lore.kernel.org/all/20250228121355.1377891-1-vdonnefort@google.com/
+  - Flags to kvm_hyp_memcache
+  - Separate stage-2 memcache
+  - Account for PGD
 
-> `&`, `&mut` making it fit more naturally with other existing code.
->
-> Suggested-by: Benno Lossin <y86-dev@protonmai.com>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1148
-> Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
-> ---
->  rust/kernel/lib.rs | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 398242f92a96..1d078f69bb19 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -19,6 +19,8 @@
->  #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(unsize))]
->  #![feature(inline_const)]
->  #![feature(lint_reasons)]
-> +// Stable in Rust 1.82
-> +#![feature(raw_ref_op)]
->  // Stable in Rust 1.83
->  #![feature(const_maybe_uninit_as_mut_ptr)]
->  #![feature(const_mut_refs)]
+Vincent Donnefort (3):
+  KVM: arm64: Add flags to kvm_hyp_memcache
+  KVM: arm64: Distinct pKVM teardown memcache for stage-2
+  KVM: arm64: Count pKVM stage-2 usage in secondary pagetable stats
 
+ arch/arm64/include/asm/kvm_host.h             |  4 ++++
+ arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |  2 +-
+ arch/arm64/kvm/hyp/nvhe/mem_protect.c         |  2 +-
+ arch/arm64/kvm/hyp/nvhe/pkvm.c                |  8 +++----
+ arch/arm64/kvm/mmu.c                          | 22 ++++++++++++++-----
+ arch/arm64/kvm/pkvm.c                         |  5 +++++
+ 6 files changed, 32 insertions(+), 11 deletions(-)
+
+
+base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
+-- 
+2.49.0.rc0.332.g42c0ae87b1-goog
 
 
