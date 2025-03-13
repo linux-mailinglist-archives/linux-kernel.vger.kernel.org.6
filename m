@@ -1,63 +1,57 @@
-Return-Path: <linux-kernel+bounces-560475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 278DEA60501
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:02:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 968D0A6050E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:06:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98F0F19C56CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:02:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7D1817E7D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4CD1F8AE2;
-	Thu, 13 Mar 2025 23:02:16 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671A61F8BBC;
+	Thu, 13 Mar 2025 23:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JsAZIMeS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5784E18DB0B;
-	Thu, 13 Mar 2025 23:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52C018DB0B;
+	Thu, 13 Mar 2025 23:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741906936; cv=none; b=WSsP46EQOVlqbG2C7hNxsJpeih2u9DOQB+wrKy7YKQ7XJwzXNJ5GpzxalNL1ilqYYR9Dps6hJwaAE9j1PAy2oPGrLwjwO48ay2yHgAjmrAc0c+s5uHSNB84x51fiLRstjbu/5R92rOHP4VOfTKdUinb4gMyx6slrwu/inwQEoxQ=
+	t=1741907208; cv=none; b=o7RvKkVMOpkH0OD1TuvL6cvJIf3IPlcbDTo7ovdywxauyTgzpq4/Dcqa/Ttbr2HUvIVb/OJ3GEQAJIZ4i6ZxHwAkOWGq+qwHRzDkiaEyttM4i6n2CKmmj9OX/9YFPvS008/rtAZpGeWRhIzDn+PFKbN70oKLUOgu1alpE0AsB9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741906936; c=relaxed/simple;
-	bh=FvWhX3hOtt44gKakSeJitzPaf1braPvr1GZPWAgKvOA=;
+	s=arc-20240116; t=1741907208; c=relaxed/simple;
+	bh=0UAgLw6E5fMxghBPUcUr1YC5wDKAXkzRKCvdfBrEOek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ATeKkv1tPimiSPmiDlnrDYru644ZwW8ZE93Ri+YYUhaMg44KGZS9OEc21ZeDQlzvlKhNPdtbxPKSFHSA5nfW0e+qTjKcOCF/71A0eryymC48wP1+AKE8O3KMUZIfF/lTXsuWmzPnZY+UlD2uk25PyCNfbFA/AIcdvbtXWh16AoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1tsrYj-000000005c9-1YGc;
-	Thu, 13 Mar 2025 23:01:49 +0000
-Date: Thu, 13 Mar 2025 23:01:45 +0000
-From: Daniel Golle <daniel@makrotopia.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Chris Packham <Chris.Packham@alliedtelesis.co.nz>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"markus.stockhausen@gmx.de" <markus.stockhausen@gmx.de>,
-	"sander@svanheule.net" <sander@svanheule.net>,
-	netdev <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10] net: mdio: Add RTL9300 MDIO driver
-Message-ID: <Z9Nj2ZRnh8ZABklp@makrotopia.org>
-References: <20250313010726.2181302-1-chris.packham@alliedtelesis.co.nz>
- <f7c7f28b-f2b0-464a-a621-d4b2f815d206@lunn.ch>
- <5ea333ec-c2e4-4715-8a44-0fd2c77a4f3c@alliedtelesis.co.nz>
- <be39bb63-446e-4c6a-9bb9-a823f0a482be@lunn.ch>
- <539762a3-b17d-415c-9316-66527bfc6219@alliedtelesis.co.nz>
- <6a98ba41-34ee-4493-b0ea-0c24d7e979b1@lunn.ch>
- <6ae8b7c6-8e75-4bfc-9ea3-302269a26951@alliedtelesis.co.nz>
- <f6165df5-eedb-4a11-add0-2ae4d4052d6a@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=duOAElX2MTIXLeDUPdTICukBjDHJNy3WE0LRbg2KewdQheX+Sb/pBilUSrpvoLLGmD8UPFij0oWeGsAclXGM2rR6AxGWcun4q9vC+A1om/rJBfxM7NjD9ZAfaa9Y7767z2UI83Q7wmX57anZD/xDb0Pf9Q8dW8LxoqO1i6rIyjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JsAZIMeS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C70AC4CEDD;
+	Thu, 13 Mar 2025 23:06:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741907208;
+	bh=0UAgLw6E5fMxghBPUcUr1YC5wDKAXkzRKCvdfBrEOek=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JsAZIMeSVGH0xxnfm6a7NU3amHURgBKewUUqNu1qMyXa446UZnn/Vzg7IZdXEX76u
+	 b/pDggX2dzAk3Gzr7actRGVnbUC/eqpy9M6toa1fA2nSiODlwxVxB+Mvv1sP8UZ//X
+	 +5QIIiMJ/8kVL4cZBqXdPobuafnVQoQlY4cQrpiYcy4H9eJJups5TzGPhoxvMuaNnm
+	 kl5O1TKLdmkY3SqHergV/5svibmF1fcVKjGKM4xoOpfy6bQAWczQotzzRoN2blbwjH
+	 gIqRDj1shL8Tjc/NUbENFCdrp3bJKf9pap2y9YHLvMNTcrDj7SgAgJPEM9dUGYpzfo
+	 Xd1hAyU5HFXjg==
+Date: Thu, 13 Mar 2025 18:06:45 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Johan Hovold <johan@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH v2 0/3] arm64: dts: qcom: x1e78100-t14s: Rework
+ devicetree for LCD and OLED SKUs
+Message-ID: <t7jqjgkvnu2lynwchyermonuhcrh7ixgw6g65o6ag2lkgi6dwi@rd3vv3j5paws>
+References: <20250310141504.3008517-1-abel.vesa@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,55 +60,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f6165df5-eedb-4a11-add0-2ae4d4052d6a@lunn.ch>
+In-Reply-To: <20250310141504.3008517-1-abel.vesa@linaro.org>
 
-On Thu, Mar 13, 2025 at 11:07:55PM +0100, Andrew Lunn wrote:
-> > I'm pretty sure it would upset the hardware polling mechanism which 
-> > unfortunately we can't disable (earlier I thought we could but there are 
-> > various switch features that rely on it).
+On Mon, Mar 10, 2025 at 04:15:01PM +0200, Abel Vesa wrote:
+> The Lenovo Thinkpad T14s Gen6 comes in different SKUs when it comes to
+> panels. The only difference that is important is whether it is an OLED
+> or an LCD. The way that backlight is handled in devicetree between OLED
+> and LCD forces the need of two separate DTBs.
 > 
-> So we need to get a better understanding of that polling. How are you
-> telling it about the aquantia PHY features? How does it know it needs
-> to get the current link rate from MDIO_MMD_AN, MDIO_AN_TX_VEND_STATUS1
-> which is a vendor register, not a standard C45 register? How do you
-> teach it to decode bits in that register?
+> So create a common T14s dtsi that describes everything except the
+> backlight handling, by renaming the existent dts to dtsi. Then make the
+> legacy dts the LCD version, while adding a prepended oled dts. Both
+> include the generic T14s dtsi.
+> 
+> For the OLED version, I do not have HW to test it on, so OLED specific
+> bits will come at a later stage. Still, add the OLED dts in order to set
+> the stage for it.
+> 
+> Had to format it using "git format-patch" since b4 doesn't currently
+> support -B when formatting the patch, and the renaming of the dts into
+> dtsi (plus the panel properties being dropped) would've not been visible
+> enough for reviewers.
+> 
+> Changes in v2:
+>  - rebased on next-20250307
 
-There are several registers of the MDIO controller to control which
-non-standard registers are polled as well as information about the
-register layout [1].
+Sorry, but as requested I seem to have picked the DP enablement (at
+least) since then. Can you please have another rebase?
 
-There are lots of constraints which is why not all PHYs can even be
-used at all with those switch SoCs -- PHYs which are more or less
-standard C45 are easy to support, all one got to do is define MMD
-device and registers as well as register layouts for things which
-aren't covered by the C45 standard (1G Master/Slave status and control,
-as well as a way to access the equivalent of C22 register 0).
+Regards,
+Bjorn
 
-But C22 PHYs which aren't RealTek's won't ever work.
-Anything which doesn't use register 0x1f for paging is disqualified and
-can't be used. I've also just never seen any of those SoCs being used with
-anything else than RealTek's 1000Base-T or 2500Base-T PHYs.
-
-Only for 10GBase-T you will find variation, Marvell, Aquantia and some
-with Broadcom.
-
-Obviously that's all largely incompatible with Linux' approach to PHY
-drivers. Luckily *most* (but not all) switches based on those RealTek
-SoC's initialize the PHY polling registers in U-Boot, so usually Linux
-doesn't have to touch that (that's why usually we have to make sure
-that 'rtk network on' is called in RealTek's U-Boot before launching
-Linux).
-
-
-[1]: There is a very useful reverse-engineered register documentation for
-those RealTek SoCs which also covers those registers of the RTL9300:
-
-https://svanheule.net/realtek/longan/feature/mac_control
-
-See SMI_REG_CHK_* and everything with 'POLL' in the register name to get
-an idea...
-
-For illustation see the default value of SMI_10GPHY_POLLING_SEL_0 which
-is 0x001f_a434. So that's what is called 'RTL_VND2_PHYSR' in the Linux
-driver for RealTek PHYs...
+>  - Dropped the RFC, as it seems to be agreed upon already
+>  - Added dt-bindings patch to document the new oled and lcd compatibles
+>  - Added panel variant compatible strings to each dts and included the
+>    the panel type into model string as well
+>  - Changed backlight PWM period to 4266537 to match exact period the
+>    PMIC can do.
+>  - Link to v1 (RFC):
+>    https://lore.kernel.org/r/20250306090503.724390-1-abel.vesa@linaro.org/
+> 
+> Abel Vesa (3):
+>   dt-bindings: arm: qcom: Document Lenovo ThinkPad T14s Gen 6 LCD and
+>     OLED
+>   arm64: dts: qcom: x1e78100-t14s: Add LCD variant with backlight
+>     support
+>   arm64: dts: qcom: x1e78100-t14s: Add OLED variant
+> 
+>  .../devicetree/bindings/arm/qcom.yaml         |    4 +-
+>  arch/arm64/boot/dts/qcom/Makefile             |    1 +
+>  .../x1e78100-lenovo-thinkpad-t14s-oled.dts    |   12 +
+>  .../qcom/x1e78100-lenovo-thinkpad-t14s.dts    | 1194 +----------------
+>  ...dts => x1e78100-lenovo-thinkpad-t14s.dtsi} |    6 +-
+>  5 files changed, 77 insertions(+), 1140 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
+>  rewrite arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts (98%)
+>  copy arch/arm64/boot/dts/qcom/{x1e78100-lenovo-thinkpad-t14s.dts => x1e78100-lenovo-thinkpad-t14s.dtsi} (99%)
+> 
+> -- 
+> 2.34.1
+> 
 
