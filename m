@@ -1,367 +1,362 @@
-Return-Path: <linux-kernel+bounces-560121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F47AA5FE09
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:38:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97245A5FE47
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:41:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 499317AB732
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:37:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC1BA18927F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AED155CBD;
-	Thu, 13 Mar 2025 17:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B891DB125;
+	Thu, 13 Mar 2025 17:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="RkVUDFeC"
-Received: from mx-rz-1.rrze.uni-erlangen.de (mx-rz-1.rrze.uni-erlangen.de [131.188.11.20])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="m2IZ91E1"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2121.outbound.protection.outlook.com [40.107.223.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638A515747C;
-	Thu, 13 Mar 2025 17:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741887502; cv=none; b=R05qKgppiu3x2wpzh/rOtILNzBfp+hZsrPJTT4scr4A7OJXxilxH1xgc2gMrDhFOLKIfXPKISKqhb6QkjBQ77Q3odKehQdTWBD49HO23htoVH1b+Zl+j2KuD9iSe5mdOLTuQBz0vu6n5GqO3UqsQCYBpEUvi4SF05MqHg+BZECg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741887502; c=relaxed/simple;
-	bh=5KfbacWLsULiNldo/LNtihIo5NNdJMWDhB1poyd8VG8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D29fTjIksaJH2edZLNjEFGGMLa3DHIhuUCnwg63q6/ZKSDb/0BOw0MffNRzQ3CRKx6u0uxMch2Eg1yO9YY1ZfxM60Dj9X50XvYQ+GYnztG9uwcznWaeyrGIOZfSa75wZv0AVbL4abHADeh2M8BN82Fh64+D1KYzxpzese1QDMQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=RkVUDFeC; arc=none smtp.client-ip=131.188.11.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
-	t=1741887495; bh=eW2eeHETzxLvUsqrL+MZ6GPGt+BC/MD7zKOadcpo8Do=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From:To:CC:
-	 Subject;
-	b=RkVUDFeCqnNBBaG5C75KZpud4BNHX8/rUi7LoeN0oVbcbEEOdpFFNH9OwgsGyhwKK
-	 YKHSGnBUmSbjTqs5V55VW168gBiQiuWN4G+Q2sk8R4EAULKPfGzeBLVGhBva77gc+K
-	 2EQ5GlymrUjABSITyHNdB2mjKIJ/D3SfYuD7dJOiJ8z+Cnx7eAV0vP1RRY/gCbWSmO
-	 tUoqfUUzxGJHKgb4WLbXeVTJngp9ZzOHLd0gip1/Xjp8BzHaq8HHWfbONKYP6H1V4k
-	 gOMwY9IVXylAH9eGScatUBcytoJozVMx33VrIcTWa8ltkjFG9UR6n2KMCPw+bQyu9K
-	 Me3ttBDDWzLgA==
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-rz-1.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4ZDF8Q6MJ3z8srZ;
-	Thu, 13 Mar 2025 18:38:14 +0100 (CET)
-X-Virus-Scanned: amavisd-new at boeck1.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 2001:9e8:3614:2b00:7ee6:68e5:4447:ba92
-Received: from luis-tp.fritz.box (unknown [IPv6:2001:9e8:3614:2b00:7ee6:68e5:4447:ba92])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: U2FsdGVkX19lS0EV9t6hwL0QN4CCoE3W3J8ymvf/Hn8=)
-	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4ZDF8L5L85z8sjS;
-	Thu, 13 Mar 2025 18:38:10 +0100 (CET)
-From: Luis Gerhorst <luis.gerhorst@fau.de>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Xu Kuohai <xukuohai@huaweicloud.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Hari Bathini <hbathini@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Luis Gerhorst <luis.gerhorst@fau.de>,
-	Henriette Herzog <henriette.herzog@rub.de>,
-	Cupertino Miranda <cupertino.miranda@oracle.com>,
-	Matan Shachnai <m.shachnai@gmail.com>,
-	Dimitar Kanaliev <dimitar.kanaliev@siteground.com>,
-	Shung-Hsi Yu <shung-hsi.yu@suse.com>,
-	Daniel Xu <dxu@dxuuu.xyz>,
-	bpf@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kselftest@vger.kernel.org,
-	George Guo <guodongtai@kylinos.cn>,
-	WANG Xuerui <git@xen0n.name>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Maximilian Ott <ott@cs.fau.de>,
-	Milan Stephan <milan.stephan@fau.de>
-Subject: [PATCH bpf-next 05/11] bpf, arm64, powerpc: Change nospec to include v1 barrier
-Date: Thu, 13 Mar 2025 18:38:08 +0100
-Message-ID: <20250313173808.1109600-1-luis.gerhorst@fau.de>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250313172127.1098195-1-luis.gerhorst@fau.de>
-References: <20250313172127.1098195-1-luis.gerhorst@fau.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1014E1714B7
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.121
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741887608; cv=fail; b=tD7OxZa0Ug6M1zKXlodvDMkiWeM9hIC6biUUkjpTBTGVMHZdy83UqcqIHO3QfF844PJE2DvnYt6iXJYAQTe+o3nxQU11WYc9tGw2D982Gx7lUJ8zsMxqcE4NCvtA0un6CGRm9rMCsAA5wSqNJitCylBa4dCwlLbo/CE/9+LA2Zo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741887608; c=relaxed/simple;
+	bh=BSOFf+KpN4KLfQwqR4EzLLxr1dIc/WljyPAUfLiu6OM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=d+5SKQ6IBfwGrYYQXvVdV7m303UEj2/oCwpoxAQhlTOpyQhN4mpeMSiIbRCv+0WwQPhobhdn4i98HHImDOnWiluRCST/65o3jJzvI4bmX2rKbW6F2/SMB6b3gKnNXzWdKuF6q3Uw9fCRHE5KaWWnVuBbk5TrjRqFSBsizxJRS7M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=m2IZ91E1; arc=fail smtp.client-ip=40.107.223.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=F/MpFDWbHdFbegdU/I4PjdJ7lBmcycVVzj5oBBMME8M6fDACmi5Qm7Fq47jXCc/NuCLnDhDKOjr63acY1HDh9UByI8Q+v8VK6d8AlKFMK29ZEE7Ssk6Yl6iTnQ9AoVvoFtMRFOwkHYpbm4L2vOubZ0KhY4cd/XeitF7CecgZfeBu4Y/JU7cbh2wfqW3JL3eTPueaJhtPZ7j5ZxpKH/OC6rShT3wnB8vOvvVSeliwVY66cbcW7u/ETUDeBACJ8RJ5IUhvuyhd/Nc7EBUaaROpveUDbqJWx61kuFH70SRi1BrPEsB+eDenwgcY7wJjmI8BihqDI+NwwIHQv13TbyaK9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dOH1QR7hmSXdBEl61xNct5k1RCTrldiP1K/mgZiEPDI=;
+ b=q4d2jqa+LTzQtGxyMnoid91zOwktEMBXUdFEHQaFnnxwh9x/zx7457M0yQj/rPD7TepB9z+rko6cJMnZFLcW3NGPE91nTNKYp4rPIj88CiG+T8z3bkkS4XMXhdYhoLzw5lu/Hp/eMjgO09VPC/gSRTt3Fj+HikI9wtmep3AXqmcSYEKMai0cell7Ci+VKf+w8rgimUDSSqu5XBRleFPMmMI2W3O9OYiqHHXtYWL+m+hDTV+E6aCNsg+CJA8DcEnX4lVQannwh7ZPKhBe0uUKJTIF9pFpF1AfqXRXWiqRjaqvIWVcIlUpqsndUesRydOLVFAKumxsUqDMcE2ugeE16g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dOH1QR7hmSXdBEl61xNct5k1RCTrldiP1K/mgZiEPDI=;
+ b=m2IZ91E1QOmlOcfGKlkUKEF6/BssAZY4TZoXrQjjaMxKpMEEZjyIqXb1BtEpFCCqTedamwQ9Pi8dfVCBwtXBV0O29afcE/x73nQjWZCe7JkCBmBRnRG1kLAfKBsEcPVGPsdh/+tEbRh8UUXO+FwzUAP6hLGhq2Yf34jlcykQY3Q=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
+ CY1PR01MB9266.prod.exchangelabs.com (2603:10b6:930:105::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.28; Thu, 13 Mar 2025 17:40:04 +0000
+Received: from CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460%4]) with mapi id 15.20.8511.026; Thu, 13 Mar 2025
+ 17:40:04 +0000
+Message-ID: <22b53cff-00db-48f1-b1e8-b11a54ebb147@os.amperecomputing.com>
+Date: Thu, 13 Mar 2025 10:40:00 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v3 PATCH 0/6] arm64: support FEAT_BBM level 2 and large block
+ mapping when rodata=full
+To: Ryan Roberts <ryan.roberts@arm.com>, will@kernel.org,
+ catalin.marinas@arm.com, Miko.Lenczewski@arm.com,
+ scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250304222018.615808-1-yang@os.amperecomputing.com>
+ <3750d3f8-17c6-4bb8-8107-215d442e4ec3@os.amperecomputing.com>
+ <2fb974bb-1470-4a5f-90d5-97456140c98f@arm.com>
+Content-Language: en-US
+From: Yang Shi <yang@os.amperecomputing.com>
+In-Reply-To: <2fb974bb-1470-4a5f-90d5-97456140c98f@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: CY5PR15CA0205.namprd15.prod.outlook.com
+ (2603:10b6:930:82::23) To CH0PR01MB6873.prod.exchangelabs.com
+ (2603:10b6:610:112::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|CY1PR01MB9266:EE_
+X-MS-Office365-Filtering-Correlation-Id: 80f0979e-0d72-40e3-d545-08dd6256166d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L2VuUHFxdllyRlB1RkhhQUJWQk1rbG5yOGFmS2RPaFpiRDNUUXZXbkRTTVpL?=
+ =?utf-8?B?eC9kV05iQ0RYYWVwYmsrWmFPUkU2VVRwVTdObXQrOGJCN25XZVcyckNNbkR6?=
+ =?utf-8?B?a2lqOWFnWmR3RzB1eGdMeFZaK2hjRDdKcFcxalY4OWRINkNBakpTTEZaRm1z?=
+ =?utf-8?B?TW1zL0d6N1dwWDE0SldZaEFlZ1BGbjlZVjNYSXhYeWNwRkVyWk9KaU9jcndW?=
+ =?utf-8?B?WjBPa2hTdGF3K0t2bGo4NUNYamQvK3dRbW4xNVBCbXFxd2o0T2JyWFVNSHRW?=
+ =?utf-8?B?Y0hiNEcvV2ZMeFM3SFVFV3BpWGx6azFzVVdqditHN3lJREtBQ3BaSlEydGxw?=
+ =?utf-8?B?Z0lhbmI0bUhaOFFMRElEL2J1c3M0M240cGNYUGVYUGszZ1VnQ09CY1hWeENZ?=
+ =?utf-8?B?RFVUT1gxYWtNS1BoVGRrRmh0bDRHdzJDR1AyeDUreXBHaEZwaU55c0FESHli?=
+ =?utf-8?B?Q3JlMURnM2djMUdERGVibmw5czFOKzUvVS9IT3IxQnpUSDV0MDFyRmp0VjNj?=
+ =?utf-8?B?TExJTEN6NmZkRWU5ZG00ZFVsWDFCOXZYcXpqektmSXpGUjhkSjVoVXYydjNE?=
+ =?utf-8?B?TjBoTm5XTmI4QlIxb25zaU0zTm5oQ21XeW5hUFBhSW5FemI5VjNMak1Gdksx?=
+ =?utf-8?B?MXBGT2xsZTkxKyt0cUxSOG40cHVVam9PM25lazJtTWZST3hOT0hqK3RGR0Va?=
+ =?utf-8?B?cEF2SkhDYlZqdmNyVWx5d3ZxWFM2NUxXTGhiRGpGV0VlN2FmcHdJc1ZVd0pp?=
+ =?utf-8?B?NEcwMVdqWkhBcGdMMVFWeU8vaW5CZ3I5VkFYVy9tMU94YTdscnlKUFM0bS9v?=
+ =?utf-8?B?T3RieEZSSlNwZDFTNWNRdWxEN2gvbSs4bnFoQ21TL2NYVEphUURkY21GN3pX?=
+ =?utf-8?B?UlpXL256ZzhPTXNJYjdCMzB1VUh3eG5NeU4zUy85eUtsZXQ3akp4bUEwNmJC?=
+ =?utf-8?B?Y2VXbDdxaGNzYnlQbS9Ramd6L3ZTQ0NlRnYrSmYyMzlmdCtzS3FYRWIwOHZG?=
+ =?utf-8?B?dkVzVTk3eGRPY3V0RzAxUDc1SUNqNVJKU0hLQWVUUzRRbjN6SVZnQmt5aFcx?=
+ =?utf-8?B?OENwU2xEbnY0UjRvbWxTWDRqb0tmUy85a1JTcFNpOEt5MVB6Z0VnclFHR1py?=
+ =?utf-8?B?WDRnTEJxSCtuWWFWVWZXMHlPa2E1MXdWbkFDbU1naXRNTjlkaHA4TSs3ZlZv?=
+ =?utf-8?B?NlhqeE1zTEVBck03dFVIbTBGVlE0NE4wNngxWitkeXY5UFpPVTVuMmY2d2hy?=
+ =?utf-8?B?SW8zNk9aaXhVcE1RMnBGdG9tUkx2UkNzODEwSGExcmhOSjNGZnJsRlBTZUNQ?=
+ =?utf-8?B?U1J1VXoyNWxMeVM0MGZZUW51ektvcGlUelJrZ0hOSHNpU1c5eFBueVU5YUk5?=
+ =?utf-8?B?YzZYRFlpVmpIUSthSWNpSGlrTzRzWkFhcnZxY3hSNTl4cG15Q1VwOGhPOTM3?=
+ =?utf-8?B?eGZjVUFkN2MzVjd5c0d2M1NhN0dYaTVLZnRoMGVDZk9NalA3TWZKUURQR0JD?=
+ =?utf-8?B?UXVwSURxRDQ5Ymp0NmQrZEFjb1lDM21uQkdvMTR6V0I0cTA3ZkVzUEN4d01W?=
+ =?utf-8?B?MFNyeVA1cW15Y1JMNmxiaDRiVmRMVWJqOWM0K01PdktNZHV1S055MnVMOXU4?=
+ =?utf-8?B?V3RTUkdyaUp5Z0NnM0hrQ0ViYnFlN3hkVXNCeTZPc1g5WFl3b0M3Q3JvOHlj?=
+ =?utf-8?B?Z1JPNWFzNUNaSmwzU0tyS0R6NytlcSs4Z0JJbHZCdVhPM3hNTUkrZTdNL2Y5?=
+ =?utf-8?B?ZEc1WklmMldNd3RxWWJmd0dWSVFpYkNZYmVIV2p5bThyeEtJcGptYXowRXB4?=
+ =?utf-8?B?N2EzNVNKNSt4SGJVaFhrMXFQUS9uT2tvTzkzKzRHb2Jlbm0vNExYTnRwMG94?=
+ =?utf-8?Q?CmrHHhBS8XQtd?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cHQvd0hySllWT1dlaXg3VmhLOUlMWkhtSkpkd29UbzU0N1hNS0tnQlR4ZEtU?=
+ =?utf-8?B?WlZiN3RqWHhIZ2lVMU5RN1RUVWtjaDN6YWFnVDN1cG13WFlibTk2N1NBTFhx?=
+ =?utf-8?B?TWNFYnkvYzYremNvbmIrZmN5Yjc4b3ozcit3WVp2YXhlUW14TE5FK3UwUm5i?=
+ =?utf-8?B?WElPTlhMbkNSalg5anRNODB4eEdHaFJSS1JkTDU3ci9WVmlzV1lsQlRsU1NM?=
+ =?utf-8?B?V2NncDlhVWFIcEdDODlvSGRESE1XS2Q4YmFpakJoSDAwWjZJMkRKQmtuVmRi?=
+ =?utf-8?B?blQvWUZWYzBuZThYV1RoZWlDZks4cUhJUlJSaXRESVY5VjM1UWtLT2VYV042?=
+ =?utf-8?B?dGNyVzFkRnpwcVZOenVHcURHZWFpQUNyOWdyeVFVa2VlU1NQUUl3eWN0MERZ?=
+ =?utf-8?B?WWxxcDNuQVgzUHJrTVB5ak1uazcvcURWR1F2Z0VRYlVvNnBqVThhY2VpTVJV?=
+ =?utf-8?B?cEhiQVZ1LzJYL2dFQTFtOUE2Sko1MDNtKzFwcHlFZGxhb3k4bXc1WFVsSjg5?=
+ =?utf-8?B?d1hlZmkyQ3NUSXpDS3l3WU1TS3dzNWoxOVBMWkQ1L3ZRaU5DYnkvN2N0R1l3?=
+ =?utf-8?B?OS94Y0I2aW5IUmduSytwbU5mbHRvVDRYV1FSTWFQS3JabTJ4RjFWYkpLLzFz?=
+ =?utf-8?B?QnVSZ2MzYkhLdndBbkVRMTBnWHlOZHdjcmRBc0lFWVhzRE5QUVJMNk8vYmZ0?=
+ =?utf-8?B?bDFZRDI0dHB2U2E2bml5KzhJWndUTS9KbjJIa3BuWE5TT1pjUWhoYmhlWWlJ?=
+ =?utf-8?B?M3Eyd3Jxc1BramdaZzlTNVpiS3lHcXQzYTBsRStQdTBFTzRRdVQ4RFlZaUo0?=
+ =?utf-8?B?MW5Wb0QzZ3lXM0t5TXJVMElCOGRwLytTWXJESE1iU1hnZHd5ODlhWk1rS0J4?=
+ =?utf-8?B?VithOVhEWTFUMHU3d0h3RCsra0o2Y3hiQmtqZVlTWXRVVDVrR3krdEJ1MFo4?=
+ =?utf-8?B?TnFpc0JzWW5rVllZV0ZrZjNpdkl4dzhpaGI3YkFzQWZaZkNsTE9kemE2UW9p?=
+ =?utf-8?B?eUFGeWlYSXl0N3MrR3V4SzQ1VTNWOVlEbXAwaHFSYlBjUGpXcTdCZFkwaG9R?=
+ =?utf-8?B?dnprZmJkaktzYUh2MHFpMkV0TFlrVmlnK3V5dm1uM05FdFpCeGJBTloySWN0?=
+ =?utf-8?B?K1ovbHdaSFdmZG9KYTFDemxUd3JwOFVuZ3JmcDNzbEJzRlcyMjdOR0xmRU5q?=
+ =?utf-8?B?MEU2UXExM3AzWVFxRFp4UEw5QTJDV0U1WTJmdWdaS3hUczNackExWXVCRVIz?=
+ =?utf-8?B?a3BoVTJnYk5ZRmFjT3dnTnpNRDZiZkVZb1hmc2d4Zk8yWGEzYTJxbklEbDM1?=
+ =?utf-8?B?bHBmMDhacXl6NGRpcEVPa0RYeGhjeTRPSXhteTJ1L3JnUFN1RkhHcmV6SFF2?=
+ =?utf-8?B?SzVsVTNNUFBOWVFuWHBkdWpFYXlZMHhkYVM4RnByY0pVdG9QaUlZRTMyWXYx?=
+ =?utf-8?B?QUNQSlM4UW1HN0hzQnhGaTl0VXlkalVNSmZHNG9jcGNDYldpUmxkU0V6Kzg0?=
+ =?utf-8?B?MS9yekVKSU1Za1RPMXhlTG0zSTJJbmN0ZkRzMXBzNEc3dFZWQi9hM2x1eUhC?=
+ =?utf-8?B?ZGJvWWkxa1FEaUVpcUI0SGtHRnZHYit2MUcvWXNGM0JhTjgxc28xNWZKYzNQ?=
+ =?utf-8?B?dWNrRnlBTjRGZzIyallxS09HdjA4bFhEc0Qrb0VKaXZQSDY5U1orMDc5dUJl?=
+ =?utf-8?B?cGtvTytSQ2E2RUQ3WDErOEYxVGk1WWwzdU9paFAvaWs1OEtGaVd6Tkd4RjVq?=
+ =?utf-8?B?aXQrYlRaZXdWSUdYbURqZzVqT1ZncFZmdkwrVkZ2MzhFK1VzL1F4bVRHL3Zo?=
+ =?utf-8?B?VWlPSVhGWDV0NmlqN2dqWU1OMDJRZC9UMDJmZHVmdDJwYjZnSDNRT1c4MzBY?=
+ =?utf-8?B?QUM4UFR3UThWU0FKa1paUi9jWStMM3krbmxCbVBkOStnQ1ZSSFdVelJSK0pQ?=
+ =?utf-8?B?U0t3aHJ2WUcvMXFSZk5kZGlxaUYrMkFmWDVhTnJIMS85OUFPVzJqaFlmVzlQ?=
+ =?utf-8?B?aXdmS1ZpbHgyK04vb0ptM1d2U0tuVUJ0RTJIT09IN2JEZ29SYkZZN3ZGWDMw?=
+ =?utf-8?B?dHpFNXVXbDQ4NmZNZ3R1aGRKRTdZTE8yYnAvQWl3MGNXS3IwY2xhYzFqaXN2?=
+ =?utf-8?B?dzN6OXdJMWFQL3djR1NtblZSZCthdTFCNnJ1WU1oNW1ZbTMwbVE5aVdrMDJM?=
+ =?utf-8?Q?dxcS/QM9o2nXCjxelm9cJPI=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 80f0979e-0d72-40e3-d545-08dd6256166d
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 17:40:04.0579
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: woJ9XMeFaalQYziWtIYm3igopb/uSaK9qREPe88owrBY9RrGj8uGmBc/K8zZX2RfjIbv4JrIy9dtfbpwCydunW1XqlATS+dZ+9WybbBjugo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR01MB9266
 
-This changes the semantics of BPF_NOSPEC (previously a v4-only barrier)
-to always emit a speculation barrier that works against both Spectre v1
-AND v4. If mitigation is not needed on an architecture, the backend
-should set bpf_jit_bypass_spec_v4/v1().
 
-As of now, this commit only has the user-visible implication that unpriv
-BPF's performance on PowerPC is reduced. This is required because we
-have emit additional v1 barrier instructions for BPF_NOSPEC.
 
-This commit is required for a future commit to allow us to rely on
-BPF_NOSPEC for Spectre v1 mitigation. As of this commit, the feature
-that nospec acts as a v1 barrier is unused.
+On 3/13/25 10:36 AM, Ryan Roberts wrote:
+> On 13/03/2025 17:28, Yang Shi wrote:
+>> Hi Ryan,
+>>
+>> I saw Miko posted a new spin of his patches. There are some slight changes that
+>> have impact to my patches (basically check the new boot parameter). Do you
+>> prefer I rebase my patches on top of his new spin right now then restart review
+>> from the new spin or review the current patches then solve the new review
+>> comments and rebase to Miko's new spin together?
+> Hi Yang,
+>
+> Sorry I haven't got to reviewing this version yet, it's in my queue!
+>
+> I'm happy to review against v3 as it is. I'm familiar with Miko's series and am
+> not too bothered about the integration with that; I think it's pretty straight
+> forward. I'm more interested in how you are handling the splitting, which I
+> think is the bulk of the effort.
 
-Commit f5e81d111750 ("bpf: Introduce BPF nospec instruction for
-mitigating Spectre v4") noted that mitigation instructions for v1 and v4
-might be different on some archs. While this would potentially offer
-improved performance on PowerPC, it was dismissed after the following
-considerations:
+Yeah, sure, thank you.
 
-* Only having one barrier simplifies the verifier and allows us to
-  easily rely on v4-induced barriers for reducing the complexity of
-  v1-induced speculative path verification.
+>
+> I'm hoping to get to this next week before heading out to LSF/MM the following
+> week (might I see you there?)
 
-* For the architectures that implemented BPF_NOSPEC, only PowerPC has
-  distinct instructions for v1 and v4. Even there, some insns may be
-  shared between the barriers for v1 and v4 (e.g., 'ori 31,31,0' and
-  'sync'). If this is still found to impact performance in an
-  unacceptable way, BPF_NOSPEC can be split into BPF_NOSPEC_V1 and
-  BPF_NOSPEC_V4 later. As an optimization, we can already skip v1/v4
-  insns from being emitted for PowerPC with this setup if
-  bypass_spec_v1/v4 is set.
+Unfortunately I can't make it this year. Have a fun!
 
-Vulnerability-status for BPF_NOSPEC-based Spectre mitigations (v4 as of
-this commit, v1 in the future) is therefore:
+Thanks,
+Yang
 
-* x86 (32-bit and 64-bit), ARM64, and PowerPC (64-bit): Mitigated - This
-  patch implements BPF_NOSPEC for these architectures. The previous
-  v4-only version was supported since commit f5e81d111750 ("bpf:
-  Introduce BPF nospec instruction for mitigating Spectre v4") and
-  commit b7540d625094 ("powerpc/bpf: Emit stf barrier instruction
-  sequences for BPF_NOSPEC").
-
-* LoongArch: Not Vulnerable - Commit a6f6a95f2580 ("LoongArch, bpf: Fix
-  jit to skip speculation barrier opcode") is the only other past commit
-  related to BPF_NOSPEC and indicates that the insn is not required
-  there.
-
-* MIPS: Vulnerable (if unprivileged BPF is enabled) -
-  Commit a6f6a95f2580 ("LoongArch, bpf: Fix jit to skip speculation
-  barrier opcode") indicates that it is not vulnerable but this
-  contradicts the kernel and Debian documentation. Therefore I assume
-  that there exist vulnerable MIPS CPUs (but maybe not from Loongson?).
-  In the future, BPF_NOSPEC could be implemented for MIPS based on the
-  GCC speculation_barrier [1]. For now, we rely on unprivileged BPF
-  being disabled by default.
-
-* Other: Unknown - To the best of my knowledge there is no definitive
-  information available that indicates that any other arch is
-  vulnerable. They are therefore left untouched (BPF_NOSPEC is not
-  implemented, but bypass_spec_v1/v4 is also not set).
-
-I did the following testing to ensure the insn encoding is correct:
-
-* ARM64:
-  * 'dsb nsh; isb' was successfully tested with the BPF CI in [2]
-  * 'sb' locally using QEMU v7.2.15 -cpu max (emitted sb insn is
-    executed for example with './test_progs -t verifier_array_access')
-
-* PowerPC: The following configs were tested locally with ppc64le QEMU
-  v8.2 '-machine pseries -cpu POWER9':
-  * STF_BARRIER_EIEIO + CONFIG_PPC_BOOK32_64
-  * STF_BARRIER_SYNC_ORI (forced on) + CONFIG_PPC_BOOK32_64
-  * STF_BARRIER_FALLBACK (forced on) + CONFIG_PPC_BOOK32_64
-  * CONFIG_PPC_E500 (forced on) + STF_BARRIER_EIEIO
-  * CONFIG_PPC_E500 (forced on) + STF_BARRIER_SYNC_ORI (forced on)
-  * CONFIG_PPC_E500 (forced on) + STF_BARRIER_FALLBACK (forced on)
-  * CONFIG_PPC_E500 (forced on) + STF_BARRIER_NONE (forced on)
-  Most of those cobinations should not occur in practice, but I was not
-  able to get an PPC e6500 rootfs (for testing PPC_E500 without forcing
-  it on). In any case, this should ensure that there are no unexpected
-  conflicts between the insns when combined like this. Individual v1/v4
-  barriers were already emitted elsewhere.
-
-[1] https://gcc.gnu.org/git/?p=gcc.git;a=commit;h=29b74545531f6afbee9fc38c267524326dbfbedf
-    ("MIPS: Add speculation_barrier support")
-[2] https://github.com/kernel-patches/bpf/pull/8576
-
-Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
-Cc: Henriette Herzog <henriette.herzog@rub.de>
-Cc: Maximilian Ott <ott@cs.fau.de>
-Cc: Milan Stephan <milan.stephan@fau.de>
----
- arch/arm64/net/bpf_jit.h          |  5 +++
- arch/arm64/net/bpf_jit_comp.c     |  9 +++--
- arch/powerpc/net/bpf_jit_comp64.c | 58 ++++++++++++++++++++++---------
- include/linux/filter.h            |  2 +-
- kernel/bpf/core.c                 | 17 ++++-----
- 5 files changed, 64 insertions(+), 27 deletions(-)
-
-diff --git a/arch/arm64/net/bpf_jit.h b/arch/arm64/net/bpf_jit.h
-index a3b0e693a125..bbea4f36f9f2 100644
---- a/arch/arm64/net/bpf_jit.h
-+++ b/arch/arm64/net/bpf_jit.h
-@@ -325,4 +325,9 @@
- #define A64_MRS_SP_EL0(Rt) \
- 	aarch64_insn_gen_mrs(Rt, AARCH64_INSN_SYSREG_SP_EL0)
- 
-+/* Barriers */
-+#define A64_SB aarch64_insn_get_sb_value()
-+#define A64_DSB_NSH (aarch64_insn_get_dsb_base_value() | 0x7 << 8)
-+#define A64_ISB aarch64_insn_get_isb_value()
-+
- #endif /* _BPF_JIT_H */
-diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
-index 0f617b55866e..ccd6a2f31e35 100644
---- a/arch/arm64/net/bpf_jit_comp.c
-+++ b/arch/arm64/net/bpf_jit_comp.c
-@@ -1581,9 +1581,14 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx,
- 			return ret;
- 		break;
- 
--	/* speculation barrier */
-+	/* speculation barrier against v1 and v4 */
- 	case BPF_ST | BPF_NOSPEC:
--		/* See bpf_jit_bypass_spec_v4() */
-+		if (alternative_has_cap_likely(ARM64_HAS_SB)) {
-+			emit(A64_SB, ctx);
-+		} else {
-+			emit(A64_DSB_NSH, ctx);
-+			emit(A64_ISB, ctx);
-+		}
- 		break;
- 
- 	/* ST: *(size *)(dst + off) = imm */
-diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
-index b5339c541283..c00951e2a50e 100644
---- a/arch/powerpc/net/bpf_jit_comp64.c
-+++ b/arch/powerpc/net/bpf_jit_comp64.c
-@@ -800,26 +800,52 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
- 
- 		/*
- 		 * BPF_ST NOSPEC (speculation barrier)
-+		 *
-+		 * The following must act as a barrier against both Spectre v1
-+		 * and v4 if we requested both mitigations. Therefore, also emit
-+		 * 'isync; sync' on E500 or 'ori31' on BOOK3S_64 in addition to
-+		 * the insns needed for a Spectre v4 barrier.
-+		 *
-+		 * If we requested only !bypass_spec_v1 OR only !bypass_spec_v4,
-+		 * we can skip the respective other barrier type as an
-+		 * optimization.
- 		 */
- 		case BPF_ST | BPF_NOSPEC:
--			switch (stf_barrier) {
--			case STF_BARRIER_EIEIO:
--				EMIT(PPC_RAW_EIEIO() | 0x02000000);
--				break;
--			case STF_BARRIER_SYNC_ORI:
-+			bool sync_emitted = false;
-+			bool ori31_emitted = false;
-+#ifdef CONFIG_PPC_E500
-+			if (!bpf_jit_bypass_spec_v1()) {
-+				EMIT(PPC_RAW_ISYNC());
- 				EMIT(PPC_RAW_SYNC());
--				EMIT(PPC_RAW_LD(tmp1_reg, _R13, 0));
--				EMIT(PPC_RAW_ORI(_R31, _R31, 0));
--				break;
--			case STF_BARRIER_FALLBACK:
--				ctx->seen |= SEEN_FUNC;
--				PPC_LI64(_R12, dereference_kernel_function_descriptor(bpf_stf_barrier));
--				EMIT(PPC_RAW_MTCTR(_R12));
--				EMIT(PPC_RAW_BCTRL());
--				break;
--			case STF_BARRIER_NONE:
--				break;
-+				sync_emitted = true;
-+			}
-+#endif
-+			if (!bpf_jit_bypass_spec_v4()) {
-+				switch (stf_barrier) {
-+				case STF_BARRIER_EIEIO:
-+					EMIT(PPC_RAW_EIEIO() | 0x02000000);
-+					break;
-+				case STF_BARRIER_SYNC_ORI:
-+					if (!sync_emitted)
-+						EMIT(PPC_RAW_SYNC());
-+					EMIT(PPC_RAW_LD(tmp1_reg, _R13, 0));
-+					EMIT(PPC_RAW_ORI(_R31, _R31, 0));
-+					ori31_emitted = true;
-+					break;
-+				case STF_BARRIER_FALLBACK:
-+					ctx->seen |= SEEN_FUNC;
-+					PPC_LI64(_R12, dereference_kernel_function_descriptor(bpf_stf_barrier));
-+					EMIT(PPC_RAW_MTCTR(_R12));
-+					EMIT(PPC_RAW_BCTRL());
-+					break;
-+				case STF_BARRIER_NONE:
-+					break;
-+				}
- 			}
-+#ifdef CONFIG_PPC_BOOK3S_64
-+			if (!bpf_jit_bypass_spec_v1() && !ori31_emitted)
-+				EMIT(PPC_RAW_ORI(_R31, _R31, 0));
-+#endif
- 			break;
- 
- 		/*
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index 590476743f7a..9b933d459b7a 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -82,7 +82,7 @@ struct ctl_table_header;
- #define BPF_CALL_ARGS	0xe0
- 
- /* unused opcode to mark speculation barrier for mitigating
-- * Speculative Store Bypass
-+ * Spectre v1 and v4
-  */
- #define BPF_NOSPEC	0xc0
- 
-diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index a3e434851614..eda82877169e 100644
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -2102,14 +2102,15 @@ static u64 ___bpf_prog_run(u64 *regs, const struct bpf_insn *insn)
- #undef COND_JMP
- 	/* ST, STX and LDX*/
- 	ST_NOSPEC:
--		/* Speculation barrier for mitigating Speculative Store Bypass.
--		 * In case of arm64, we rely on the firmware mitigation as
--		 * controlled via the ssbd kernel parameter. Whenever the
--		 * mitigation is enabled, it works for all of the kernel code
--		 * with no need to provide any additional instructions here.
--		 * In case of x86, we use 'lfence' insn for mitigation. We
--		 * reuse preexisting logic from Spectre v1 mitigation that
--		 * happens to produce the required code on x86 for v4 as well.
-+		/* Speculation barrier for mitigating Speculative Store Bypass,
-+		 * Bounds-Check Bypass and Type Confusion. In case of arm64, we
-+		 * rely on the firmware mitigation as controlled via the ssbd
-+		 * kernel parameter. Whenever the mitigation is enabled, it
-+		 * works for all of the kernel code with no need to provide any
-+		 * additional instructions here. In case of x86, we use 'lfence'
-+		 * insn for mitigation. We reuse preexisting logic from Spectre
-+		 * v1 mitigation that happens to produce the required code on
-+		 * x86 for v4 as well.
- 		 */
- 		barrier_nospec();
- 		CONT;
--- 
-2.48.1
+>
+> Thanks,
+> Ryan
+>
+>
+>> Thanks,
+>> Yang
+>>
+>>
+>> On 3/4/25 2:19 PM, Yang Shi wrote:
+>>> Changelog
+>>> =========
+>>> v3:
+>>>     * Rebased to v6.14-rc4.
+>>>     * Based on Miko's BBML2 cpufeature patch (https://lore.kernel.org/linux-
+>>> arm-kernel/20250228182403.6269-3-miko.lenczewski@arm.com/).
+>>>       Also included in this series in order to have the complete patchset.
+>>>     * Enhanced __create_pgd_mapping() to handle split as well per Ryan.
+>>>     * Supported CONT mappings per Ryan.
+>>>     * Supported asymmetric system by splitting kernel linear mapping if such
+>>>       system is detected per Ryan. I don't have such system to test, so the
+>>>       testing is done by hacking kernel to call linear mapping repainting
+>>>       unconditionally. The linear mapping doesn't have any block and cont
+>>>       mappings after booting.
+>>>
+>>> RFC v2:
+>>>     * Used allowlist to advertise BBM lv2 on the CPUs which can handle TLB
+>>>       conflict gracefully per Will Deacon
+>>>     * Rebased onto v6.13-rc5
+>>>     * https://lore.kernel.org/linux-arm-kernel/20250103011822.1257189-1-
+>>> yang@os.amperecomputing.com/
+>>>
+>>> RFC v1: https://lore.kernel.org/lkml/20241118181711.962576-1-
+>>> yang@os.amperecomputing.com/
+>>>
+>>> Description
+>>> ===========
+>>> When rodata=full kernel linear mapping is mapped by PTE due to arm's
+>>> break-before-make rule.
+>>>
+>>> A number of performance issues arise when the kernel linear map is using
+>>> PTE entries due to arm's break-before-make rule:
+>>>     - performance degradation
+>>>     - more TLB pressure
+>>>     - memory waste for kernel page table
+>>>
+>>> These issues can be avoided by specifying rodata=on the kernel command
+>>> line but this disables the alias checks on page table permissions and
+>>> therefore compromises security somewhat.
+>>>
+>>> With FEAT_BBM level 2 support it is no longer necessary to invalidate the
+>>> page table entry when changing page sizes.  This allows the kernel to
+>>> split large mappings after boot is complete.
+>>>
+>>> This patch adds support for splitting large mappings when FEAT_BBM level 2
+>>> is available and rodata=full is used. This functionality will be used
+>>> when modifying page permissions for individual page frames.
+>>>
+>>> Without FEAT_BBM level 2 we will keep the kernel linear map using PTEs
+>>> only.
+>>>
+>>> If the system is asymmetric, the kernel linear mapping may be repainted once
+>>> the BBML2 capability is finalized on all CPUs.  See patch #6 for more details.
+>>>
+>>> We saw significant performance increases in some benchmarks with
+>>> rodata=full without compromising the security features of the kernel.
+>>>
+>>> Testing
+>>> =======
+>>> The test was done on AmpereOne machine (192 cores, 1P) with 256GB memory and
+>>> 4K page size + 48 bit VA.
+>>>
+>>> Function test (4K/16K/64K page size)
+>>>     - Kernel boot.  Kernel needs change kernel linear mapping permission at
+>>>       boot stage, if the patch didn't work, kernel typically didn't boot.
+>>>     - Module stress from stress-ng. Kernel module load change permission for
+>>>       linear mapping.
+>>>     - A test kernel module which allocates 80% of total memory via vmalloc(),
+>>>       then change the vmalloc area permission to RO, this also change linear
+>>>       mapping permission to RO, then change it back before vfree(). Then launch
+>>>       a VM which consumes almost all physical memory.
+>>>     - VM with the patchset applied in guest kernel too.
+>>>     - Kernel build in VM with guest kernel which has this series applied.
+>>>     - rodata=on. Make sure other rodata mode is not broken.
+>>>     - Boot on the machine which doesn't support BBML2.
+>>>
+>>> Performance
+>>> ===========
+>>> Memory consumption
+>>> Before:
+>>> MemTotal:       258988984 kB
+>>> MemFree:        254821700 kB
+>>>
+>>> After:
+>>> MemTotal:       259505132 kB
+>>> MemFree:        255410264 kB
+>>>
+>>> Around 500MB more memory are free to use.  The larger the machine, the
+>>> more memory saved.
+>>>
+>>> Performance benchmarking
+>>> * Memcached
+>>> We saw performance degradation when running Memcached benchmark with
+>>> rodata=full vs rodata=on.  Our profiling pointed to kernel TLB pressure.
+>>> With this patchset we saw ops/sec is increased by around 3.5%, P99
+>>> latency is reduced by around 9.6%.
+>>> The gain mainly came from reduced kernel TLB misses.  The kernel TLB
+>>> MPKI is reduced by 28.5%.
+>>>
+>>> The benchmark data is now on par with rodata=on too.
+>>>
+>>> * Disk encryption (dm-crypt) benchmark
+>>> Ran fio benchmark with the below command on a 128G ramdisk (ext4) with disk
+>>> encryption (by dm-crypt).
+>>> fio --directory=/data --random_generator=lfsr --norandommap --randrepeat 1 \
+>>>       --status-interval=999 --rw=write --bs=4k --loops=1 --ioengine=sync \
+>>>       --iodepth=1 --numjobs=1 --fsync_on_close=1 --group_reporting --thread \
+>>>       --name=iops-test-job --eta-newline=1 --size 100G
+>>>
+>>> The IOPS is increased by 90% - 150% (the variance is high, but the worst
+>>> number of good case is around 90% more than the best number of bad case).
+>>> The bandwidth is increased and the avg clat is reduced proportionally.
+>>>
+>>> * Sequential file read
+>>> Read 100G file sequentially on XFS (xfs_io read with page cache populated).
+>>> The bandwidth is increased by 150%.
+>>>
+>>>
+>>> Mikołaj Lenczewski (1):
+>>>         arm64: Add BBM Level 2 cpu feature
+>>>
+>>> Yang Shi (5):
+>>>         arm64: cpufeature: add AmpereOne to BBML2 allow list
+>>>         arm64: mm: make __create_pgd_mapping() and helpers non-void
+>>>         arm64: mm: support large block mapping when rodata=full
+>>>         arm64: mm: support split CONT mappings
+>>>         arm64: mm: split linear mapping if BBML2 is not supported on secondary
+>>> CPUs
+>>>
+>>>    arch/arm64/Kconfig                  |  11 +++++
+>>>    arch/arm64/include/asm/cpucaps.h    |   2 +
+>>>    arch/arm64/include/asm/cpufeature.h |  15 ++++++
+>>>    arch/arm64/include/asm/mmu.h        |   4 ++
+>>>    arch/arm64/include/asm/pgtable.h    |  12 ++++-
+>>>    arch/arm64/kernel/cpufeature.c      |  95 +++++++++++++++++++++++++++++++++++++
+>>>    arch/arm64/mm/mmu.c                 | 397 ++++++++++++++++++++++++++++++++++
+>>> ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>> ++++++++++++++++++++++-------------------
+>>>    arch/arm64/mm/pageattr.c            |  37 ++++++++++++---
+>>>    arch/arm64/tools/cpucaps            |   1 +
+>>>    9 files changed, 518 insertions(+), 56 deletions(-)
+>>>
+>>>
 
 
