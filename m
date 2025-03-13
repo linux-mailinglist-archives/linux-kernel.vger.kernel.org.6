@@ -1,130 +1,136 @@
-Return-Path: <linux-kernel+bounces-560205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E0AA5FF46
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:31:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E74A5FF49
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:31:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AD48188208A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:31:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD8444225BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A087C1EFF83;
-	Thu, 13 Mar 2025 18:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDA818952C;
+	Thu, 13 Mar 2025 18:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dff/ayra"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CsaHEtIX"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F0618952C;
-	Thu, 13 Mar 2025 18:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5BD1DB154;
+	Thu, 13 Mar 2025 18:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741890676; cv=none; b=gHJBT816EVEx71dcW0OOvCdiwmD8akBAnBcdBHthaMLCgT0TeFwm0euGe24QoISo+vK3en+oAtxiPJhjk1WPpDpCT9L5Fm5qeB0R+MnG6C45IFtfwci0bt5LeZ3bv721G7UHGjNC2GV7+pR2OKHbHqZ1oux1zlN+vqhfitVQuUM=
+	t=1741890703; cv=none; b=KmMl8Bp5ktSVpvKqoNihu/Z9q5NYCVFebYzfqU0Pu+0ZDwAd9PE4LVv8cCJmJJUD12tqSusiDsUAT6JIa+3ZVTvwljw/uSIFUgnn4GuE76fYBE47urwaP88nSXegIFQqKinRz71oIx4tnahthLfUw9jyITlyfppiS0RcVwUcS8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741890676; c=relaxed/simple;
-	bh=R7IKmWAfEV6dguBunqVGGqHpFRfFDM8SuXUyyQU9jxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sGlOWe324XwVpGMBJ6QFPV52UW2QfT7liW2i03E35dmYoDPRWY7X20f6GVSJ52DeggmO8muwDFHfvzIF+0Dy69vtLnVZTHmJ4AJQekAsJZg6Cec2tg14sWOEH2oWtxmRC+4qtbRSKwBrFyY9EmPqbGLqbSb5Dmwmcyn8Y7V5kjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dff/ayra; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1741890703; c=relaxed/simple;
+	bh=APtOrAMu55p9anUFRahuUI9e/7uvcdKCe8tXSAK61wY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VydXhs+rOue6qQRORh08/I3YYre7otAA5v5PvSWF2l36KJZNpPm3lyE83aLbXtwCKDI5tA0TlJfKbPQA0l7XPZlAcOHs5ZGGnzf2N3XmjICfYFD7ODYr5lHIC4QFIxNwSHBnrxqRlhdeoT6EPk/hBiJRcOlZaB7I6CyiaMZE3wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CsaHEtIX; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22403cbb47fso27007075ad.0;
-        Thu, 13 Mar 2025 11:31:14 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac2bfcd2a66so227940066b.0;
+        Thu, 13 Mar 2025 11:31:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741890674; x=1742495474; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jt5WSssG+OEvsuPkFz6BZY4vYElG8JeyaALVDa3jMX0=;
-        b=dff/ayraWXwHg6p5rLQCltUtU/IfTflDLBIUaXJyRSlk57Wm1AbrhmRr0PVMVHsAha
-         F6DE+WtNPHZmlLvyW4UBTt/OwjTVRTfc/qfQYrMa7G1j0bqwKSDr3Oe9tqpQnc8kxwvM
-         4waY2BbSmxWMxRnCIoQ3z0ivEWTaflEeTCFelcpGiABIgRN9AkhJX/eCCu7iqQaXX6AG
-         kdCqkplArE49svpeJReu9Lu4ZU+K6CSisnnSPrGDq8yjSqlGpV23bLX5dW4rE2NWRtD+
-         n1FEjfguBv2IfUfnNJRXg90J5c0bUlpJagZPXeMCJM2b5DqEgRgRyuG0My9KSX3VeeWc
-         UiDQ==
+        d=gmail.com; s=20230601; t=1741890700; x=1742495500; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sYVge1fJWhW6G78HzfBQJjKWAy1dCSFLRmTto5QH1Os=;
+        b=CsaHEtIXJam7b4c9uXvVbi0of3F3FM4Na38WSKfY8CmbKem72BxZb+BMh60bdMDYGT
+         bqvTENKXcoXPksLXubuyNoKNmYJA3uHMsugikhge3rsiY4uWQh+e4Mhheno6yww8Xe7O
+         5l/QQsPioEUsq3C3ReUoxoEjrBEibu9/iRUSGXfZlazxBbjb24Xn5S0/QOFRnkzDIWUu
+         HroW5ADGrI30mZlogpoOK1NnTaTwRH+TgbhQUamjm65VWyu9m5mampIOYG5nWZNxGufx
+         HIws2hr0WKdsBw+QDWvA9ddv72yM0w0AGAN/1gUqmVUX3rrs9fpb52ZEIewUCEJ4r0Er
+         1sRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741890674; x=1742495474;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jt5WSssG+OEvsuPkFz6BZY4vYElG8JeyaALVDa3jMX0=;
-        b=rsowbsunLTIiH0jbdGJXsmR/MM5Q/AVzeCSpdSh4/jpGrN8GRTxFVh+WgqOXk8Q780
-         rwfWNto0HMK75bRWaUx7bw6nmsUJVJ5rNFW7X2UckrYHuquVEyMuzgsk0ehDKgaBWiF6
-         HpBAm1zwErZcI+XRRDLFeb5oRaMdQAvDS+nWteQv+yj1njzTYd5DmMrdqB25UF6Qs6wz
-         rPKTBktnSzRi6HcKDw+D4I7XVCqnZWE07orBi5U/lKn1VBkr8Ga4DQTjOelziiPo146j
-         eDN0/u+v6h/eYrSygHGFW83V2Rq1J1JWmhtXeUxGN5rEt9BB+bDgTfufpYkgI//uinBh
-         3fqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUImNb7MkHMTBjXdvHNY0EXGH9BMGNHprXVAMf+gT/2CH2YmVyk7FfvloHZUPGZB8xslh/HvxTPBVQlThiLEGMg@vger.kernel.org, AJvYcCUrGnr29cMpHGmhE0ycHOK8AsKpsPiND074iCE3BEwyonEYY13ZiwONAiRaJj4f5nIuSNrYREuz5Z8=@vger.kernel.org, AJvYcCVR6mFPW43MtfhW4JyPt6klpjBFx4r87d7kUw/h/UeJ+uSFcNQagVWrDrvzGjqZfIOvQsTUABNtwMsTQxJU@vger.kernel.org, AJvYcCWVJvpdi+eLgH1Ofo9X62XKzUdfpnNPawnw1HQLvDeyGpQy1qpSNzX1ERvuqT8GXziKNq7b5WZptF2d@vger.kernel.org, AJvYcCXIj2oyBIvf4gWeufYtUtkRY3rJYeHDLGbq5dhA4GYi0U4Wme7Rj0pTuk7IcdmPHB5SVO/7NWS4HKOz1Q==@vger.kernel.org, AJvYcCXZdAn4kbT6LtpspRLSWF5Cwp9+T2p+5Nnh+wGKuCtAvrWqtQW0WluD1qNyhPsZx6m0LD4OG24uSljh0fT8@vger.kernel.org, AJvYcCXn6PaI1SVup/bV48s5z7r5XVsONOs76go4Ay35TXDZ6lQVm//S4M6GV03JOCv+3YtOZF+BZHhzmWHm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbWnl5NeA0GSRt7wB2hnzRQn8F9Zr7+ZOw2Jgs/n2JC0Pit5wy
-	l1sVjprXJFVcVKbhe3rVo75iV1qiIx/6AQrrmwcW/yf2dS9RN7TJ
-X-Gm-Gg: ASbGncuu5XTUUEkl3CP5/txGMxGJs6XxxLXABNaLqRFgw0sZVZcxq2Lz6rmEIlTQ2Q+
-	/st1MO6SuW59FwxeRWSgpWcJeqoQqS//Zl6+kaR2Uy998yUXV2cmvgWFUEfuxvsGQp0ovCcDv5f
-	t+nAok/Vk9NKIlIaos+0bL51SNlEiyu30FGlCl1HFDv+jqtgg7Qvh2tucIz8r8qCAZvmol+y+NB
-	/DodUZ82F36+9nPPeboERoRE5yZ85eXBEDfpD+QmeMzvXE5xtwfL/vsQc6uF53nbZsjIUS9Nvyw
-	Az2k56nCjzOT+/Y3Po1Ct6uBxqT9RDj+QkG4nJWgw5m8wBH1g+fD+Kw5qA==
-X-Google-Smtp-Source: AGHT+IHUyL3JZBiKaHL1hLSTeQrgywlLwwEUN5of1N0Gy8TC0X3IRTq509SX5+fcaAZt7Xsc6jRvwQ==
-X-Received: by 2002:a17:902:d48f:b0:220:fb23:48df with SMTP id d9443c01a7336-225dd8ed442mr5472005ad.36.1741890673680;
-        Thu, 13 Mar 2025 11:31:13 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3011926599csm4185647a91.35.2025.03.13.11.31.12
+        d=1e100.net; s=20230601; t=1741890700; x=1742495500;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sYVge1fJWhW6G78HzfBQJjKWAy1dCSFLRmTto5QH1Os=;
+        b=E1i8d8h4o9XQWyEOUIgohEmlcllYPo6CedxIChf/QOos/1ZOuTQm6kIVeb74+g/chp
+         K0EMckPH8eRNccB6AAZOO70ft7Sj/dGJ3yKzIIw3c+nICkKC3/MBk7QbRDSqgqxdGZDi
+         aKvwII73/MY2kkc2idxX4Hqov+PqexLhBSMQ8jw47uqjQK8K7WuI/i4PLmbCQUQhc3zL
+         iwFcuyvcvdyZtVfR1aU3lGgxmxbWvtX6HxM+pubcB6h2Vr319c1/cinFsONF58J1dFiG
+         PcuVqEyeUSnSeMBloTapxB3Ah2AahhID+rpLnVZrXyDu0wvV9kSI58ixOi6gwRZV38ap
+         2sxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwKfZQ8DnPkWIAOmJAeCxmSjnXsv8V17zlnPkcMoZBSySjrKfRMN+4vrvH27qn3UBwljvIeeCwzYKO460=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa5QTir3pQy0glwYXbtZuLRBbGWI4aYcPbEDsWq+mGe9K3lunE
+	dZ2gR+UcW9sPQPQil+4a0GltOueu7s/ftkliYCDxRbZAjZii55A4
+X-Gm-Gg: ASbGncsY9LhM0Yql0ZcDNKsfQblkT8rUdAdQ4OKHO70KVcsYgilfZVhWRqHnxsEdoGF
+	DIKLgu8X1BTdGjtLdKDacQp5mIx51phPUzvRMBLww1+VgBOsScMDPm8WKJnBoatFTGSftJGImNR
+	h6+yqaR+rtfFAOUCt/Notv+tqRlujo/p77W4FtgH6JyNJTivx/iU2PliP0YEj86D2EW6JFQ46XR
+	2NUje1RgO+9cxG/zSAKcaS3bzH82M1Il6Vl2/VgChcI6E3AJZRkHUqLcDan+hwAbRg6mYz2gGgK
+	U/QgEjt/BlZ01TMmzmqwzHfuh687/pbyl1A+RSlq/X7rW7tMyQGmMBOoC0OCHFWJ6bQRBs3PRw=
+	=
+X-Google-Smtp-Source: AGHT+IH5igbuEzQC5N8OUm5Jleti7EpnGN43pb7SHo4H5tZdYX/+X1Lsw1he29WPdx7wgQmoITksFg==
+X-Received: by 2002:a17:906:be2:b0:ac2:d0e1:235a with SMTP id a640c23a62f3a-ac2d0e12ad1mr1034633666b.39.1741890699616;
+        Thu, 13 Mar 2025 11:31:39 -0700 (PDT)
+Received: from [169.254.110.2] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-ac314a3e0a1sm111573866b.140.2025.03.13.11.31.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 11:31:13 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 13 Mar 2025 11:31:12 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Alessandro Carminati <acarmina@redhat.com>,
-	linux-kselftest@vger.kernel.org, David Airlie <airlied@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Daniel Diaz <daniel.diaz@linaro.org>,
-	David Gow <davidgow@google.com>,
-	Arthur Grillo <arthurgrillo@riseup.net>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Alessandro Carminati <alessandro.carminati@gmail.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-sh@vger.kernel.org, loongarch@lists.linux.dev, x86@kernel.org
-Subject: Re: [PATCH v4 00/14] Add support for suppressing warning backtraces
-Message-ID: <c8287bde-fa1c-4113-af22-4701d40d386e@roeck-us.net>
-References: <20250313114329.284104-1-acarmina@redhat.com>
- <202503131016.5DCEAEC945@keescook>
- <20250313-abiding-vivid-robin-159dfa@houat>
+        Thu, 13 Mar 2025 11:31:39 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Date: Thu, 13 Mar 2025 19:31:21 +0100
+Subject: [PATCH next] spi: spi-qpic-snand: avoid memleak in
+ qcom_spi_ecc_init_ctx_pipelined()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313-abiding-vivid-robin-159dfa@houat>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250313-qpic-snand-memleak-fix-v1-1-e54e78d1da3a@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAHgk02cC/x2MQQqEMBAEvyJzdsBoFNyviIcQWx3UWU2WRRD/b
+ vBYBVUXRQRBpE92UcBfonw1gckz8rPTCSxDYiqLsi4qU/Gxi+eoTgfesK1wC49ysh0NrGus8U1
+ LKd4Dkn7HHSnOH/X3/QDEMb9mbgAAAA==
+X-Change-ID: 20250313-qpic-snand-memleak-fix-4f1e4a641c69
+To: Mark Brown <broonie@kernel.org>, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
+ Md Sadre Alam <quic_mdalam@quicinc.com>, 
+ Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.14.2
 
-On Thu, Mar 13, 2025 at 06:24:25PM +0100, Maxime Ripard wrote:
-> > 
-> > Yeah, as with my prior review, I'm a fan of this. It makes a bunch of my
-> > very noisy tests much easier to deal with.
-> 
-> And for the record, we're also affected by this in DRM and would very
-> much like to get it merged in one shape or another.
-> 
+When the allocation of the OOB buffer fails, the
+qcom_spi_ecc_init_ctx_pipelined() function returns without freeing
+the memory allocated for 'ecc_cfg' thus it can cause a memory leak.
 
-I was unable to get maintainers of major architectures interested enough
-to provide feedback, and did not see a path forward. Maybe Alessandro
-has more success than me.
+Call kfree() to free 'ecc_cfg' before returning from the function
+to avoid that.
 
-Guenter
+Fixes: 7304d1909080 ("spi: spi-qpic: add driver for QCOM SPI NAND flash Interface")
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+---
+ drivers/spi/spi-qpic-snand.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-qpic-snand.c b/drivers/spi/spi-qpic-snand.c
+index ffb2b6ec685ce3e0b6c56fa38988c5de011445e7..fbba7741a9bf336deed1c07eab8d5a94204878d7 100644
+--- a/drivers/spi/spi-qpic-snand.c
++++ b/drivers/spi/spi-qpic-snand.c
+@@ -263,8 +263,10 @@ static int qcom_spi_ecc_init_ctx_pipelined(struct nand_device *nand)
+ 		return -ENOMEM;
+ 	snandc->qspi->oob_buf = kzalloc(mtd->writesize + mtd->oobsize,
+ 					GFP_KERNEL);
+-	if (!snandc->qspi->oob_buf)
++	if (!snandc->qspi->oob_buf) {
++		kfree(ecc_cfg);
+ 		return -ENOMEM;
++	}
+ 
+ 	memset(snandc->qspi->oob_buf, 0xff, mtd->writesize + mtd->oobsize);
+ 
+
+---
+base-commit: cce2200dacd6d7e0501c3811f24f5216710968fb
+change-id: 20250313-qpic-snand-memleak-fix-4f1e4a641c69
+
+Best regards,
+-- 
+Gabor Juhos <j4g8y7@gmail.com>
+
 
