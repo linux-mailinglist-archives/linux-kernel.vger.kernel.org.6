@@ -1,109 +1,130 @@
-Return-Path: <linux-kernel+bounces-560204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A7F5A5FF3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:29:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E0AA5FF46
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:31:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DD3D4217D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:29:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AD48188208A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08361EF39C;
-	Thu, 13 Mar 2025 18:28:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CF91E8353;
-	Thu, 13 Mar 2025 18:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A087C1EFF83;
+	Thu, 13 Mar 2025 18:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dff/ayra"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F0618952C;
+	Thu, 13 Mar 2025 18:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741890539; cv=none; b=i2JvKND2jA3V38GIk/OrNp2ND2DzMy/C3Z9iCrS6IVxdJ6CeeBVvYcfse1/OV5uHYlKU7uBX53oR6ChbBMyaDngj3EDrTDdXSypIZhm+gUR2hO63wXYEMV96dR6p6f7PfSMqkgRyscaAPYEAB2ehn8BaVgeVpJ/gR7M+hViLKA4=
+	t=1741890676; cv=none; b=gHJBT816EVEx71dcW0OOvCdiwmD8akBAnBcdBHthaMLCgT0TeFwm0euGe24QoISo+vK3en+oAtxiPJhjk1WPpDpCT9L5Fm5qeB0R+MnG6C45IFtfwci0bt5LeZ3bv721G7UHGjNC2GV7+pR2OKHbHqZ1oux1zlN+vqhfitVQuUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741890539; c=relaxed/simple;
-	bh=tx9JS9G/kHbaD5Ns9JpObQjxriVwr2WEuboziKWYE04=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U6hudZrdq8W22UwSPeqGI+/qn+AkWhnQVwVwbhNFBsG9RfEhj1Tfl/JNatMgGSzQskm46J/Cj+lg0hDSyHqd6KeJ+b0CWf+rSXDIim97m9kF8arRceIKcO9H1Hfvymx0ziPVLzSbXio1qLZoHjeYuTOeFZKC497R1FkVUEj8Z2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 99AB01477;
-	Thu, 13 Mar 2025 11:29:07 -0700 (PDT)
-Received: from [10.163.42.238] (unknown [10.163.42.238])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F3953F694;
-	Thu, 13 Mar 2025 11:28:52 -0700 (PDT)
-Message-ID: <495ec80f-6cf1-4be8-bc2a-9115562fe60d@arm.com>
-Date: Thu, 13 Mar 2025 23:58:48 +0530
+	s=arc-20240116; t=1741890676; c=relaxed/simple;
+	bh=R7IKmWAfEV6dguBunqVGGqHpFRfFDM8SuXUyyQU9jxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sGlOWe324XwVpGMBJ6QFPV52UW2QfT7liW2i03E35dmYoDPRWY7X20f6GVSJ52DeggmO8muwDFHfvzIF+0Dy69vtLnVZTHmJ4AJQekAsJZg6Cec2tg14sWOEH2oWtxmRC+4qtbRSKwBrFyY9EmPqbGLqbSb5Dmwmcyn8Y7V5kjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dff/ayra; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22403cbb47fso27007075ad.0;
+        Thu, 13 Mar 2025 11:31:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741890674; x=1742495474; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jt5WSssG+OEvsuPkFz6BZY4vYElG8JeyaALVDa3jMX0=;
+        b=dff/ayraWXwHg6p5rLQCltUtU/IfTflDLBIUaXJyRSlk57Wm1AbrhmRr0PVMVHsAha
+         F6DE+WtNPHZmlLvyW4UBTt/OwjTVRTfc/qfQYrMa7G1j0bqwKSDr3Oe9tqpQnc8kxwvM
+         4waY2BbSmxWMxRnCIoQ3z0ivEWTaflEeTCFelcpGiABIgRN9AkhJX/eCCu7iqQaXX6AG
+         kdCqkplArE49svpeJReu9Lu4ZU+K6CSisnnSPrGDq8yjSqlGpV23bLX5dW4rE2NWRtD+
+         n1FEjfguBv2IfUfnNJRXg90J5c0bUlpJagZPXeMCJM2b5DqEgRgRyuG0My9KSX3VeeWc
+         UiDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741890674; x=1742495474;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Jt5WSssG+OEvsuPkFz6BZY4vYElG8JeyaALVDa3jMX0=;
+        b=rsowbsunLTIiH0jbdGJXsmR/MM5Q/AVzeCSpdSh4/jpGrN8GRTxFVh+WgqOXk8Q780
+         rwfWNto0HMK75bRWaUx7bw6nmsUJVJ5rNFW7X2UckrYHuquVEyMuzgsk0ehDKgaBWiF6
+         HpBAm1zwErZcI+XRRDLFeb5oRaMdQAvDS+nWteQv+yj1njzTYd5DmMrdqB25UF6Qs6wz
+         rPKTBktnSzRi6HcKDw+D4I7XVCqnZWE07orBi5U/lKn1VBkr8Ga4DQTjOelziiPo146j
+         eDN0/u+v6h/eYrSygHGFW83V2Rq1J1JWmhtXeUxGN5rEt9BB+bDgTfufpYkgI//uinBh
+         3fqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUImNb7MkHMTBjXdvHNY0EXGH9BMGNHprXVAMf+gT/2CH2YmVyk7FfvloHZUPGZB8xslh/HvxTPBVQlThiLEGMg@vger.kernel.org, AJvYcCUrGnr29cMpHGmhE0ycHOK8AsKpsPiND074iCE3BEwyonEYY13ZiwONAiRaJj4f5nIuSNrYREuz5Z8=@vger.kernel.org, AJvYcCVR6mFPW43MtfhW4JyPt6klpjBFx4r87d7kUw/h/UeJ+uSFcNQagVWrDrvzGjqZfIOvQsTUABNtwMsTQxJU@vger.kernel.org, AJvYcCWVJvpdi+eLgH1Ofo9X62XKzUdfpnNPawnw1HQLvDeyGpQy1qpSNzX1ERvuqT8GXziKNq7b5WZptF2d@vger.kernel.org, AJvYcCXIj2oyBIvf4gWeufYtUtkRY3rJYeHDLGbq5dhA4GYi0U4Wme7Rj0pTuk7IcdmPHB5SVO/7NWS4HKOz1Q==@vger.kernel.org, AJvYcCXZdAn4kbT6LtpspRLSWF5Cwp9+T2p+5Nnh+wGKuCtAvrWqtQW0WluD1qNyhPsZx6m0LD4OG24uSljh0fT8@vger.kernel.org, AJvYcCXn6PaI1SVup/bV48s5z7r5XVsONOs76go4Ay35TXDZ6lQVm//S4M6GV03JOCv+3YtOZF+BZHhzmWHm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbWnl5NeA0GSRt7wB2hnzRQn8F9Zr7+ZOw2Jgs/n2JC0Pit5wy
+	l1sVjprXJFVcVKbhe3rVo75iV1qiIx/6AQrrmwcW/yf2dS9RN7TJ
+X-Gm-Gg: ASbGncuu5XTUUEkl3CP5/txGMxGJs6XxxLXABNaLqRFgw0sZVZcxq2Lz6rmEIlTQ2Q+
+	/st1MO6SuW59FwxeRWSgpWcJeqoQqS//Zl6+kaR2Uy998yUXV2cmvgWFUEfuxvsGQp0ovCcDv5f
+	t+nAok/Vk9NKIlIaos+0bL51SNlEiyu30FGlCl1HFDv+jqtgg7Qvh2tucIz8r8qCAZvmol+y+NB
+	/DodUZ82F36+9nPPeboERoRE5yZ85eXBEDfpD+QmeMzvXE5xtwfL/vsQc6uF53nbZsjIUS9Nvyw
+	Az2k56nCjzOT+/Y3Po1Ct6uBxqT9RDj+QkG4nJWgw5m8wBH1g+fD+Kw5qA==
+X-Google-Smtp-Source: AGHT+IHUyL3JZBiKaHL1hLSTeQrgywlLwwEUN5of1N0Gy8TC0X3IRTq509SX5+fcaAZt7Xsc6jRvwQ==
+X-Received: by 2002:a17:902:d48f:b0:220:fb23:48df with SMTP id d9443c01a7336-225dd8ed442mr5472005ad.36.1741890673680;
+        Thu, 13 Mar 2025 11:31:13 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3011926599csm4185647a91.35.2025.03.13.11.31.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 11:31:13 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 13 Mar 2025 11:31:12 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Alessandro Carminati <acarmina@redhat.com>,
+	linux-kselftest@vger.kernel.org, David Airlie <airlied@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Daniel Diaz <daniel.diaz@linaro.org>,
+	David Gow <davidgow@google.com>,
+	Arthur Grillo <arthurgrillo@riseup.net>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Alessandro Carminati <alessandro.carminati@gmail.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org, loongarch@lists.linux.dev, x86@kernel.org
+Subject: Re: [PATCH v4 00/14] Add support for suppressing warning backtraces
+Message-ID: <c8287bde-fa1c-4113-af22-4701d40d386e@roeck-us.net>
+References: <20250313114329.284104-1-acarmina@redhat.com>
+ <202503131016.5DCEAEC945@keescook>
+ <20250313-abiding-vivid-robin-159dfa@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Update mask post pxd_clear_bad()
-To: jroedel@suse.de, akpm@linux-foundation.org
-Cc: ryan.roberts@arm.com, david@redhat.com, willy@infradead.org, hch@lst.de,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250313181414.78512-1-dev.jain@arm.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20250313181414.78512-1-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313-abiding-vivid-robin-159dfa@houat>
 
-
-
-On 13/03/25 11:44 pm, Dev Jain wrote:
-> Since pxd_clear_bad() is an operation changing the state of the page tables,
-> we should call arch_sync_kernel_mappings() post this.
+On Thu, Mar 13, 2025 at 06:24:25PM +0100, Maxime Ripard wrote:
+> > 
+> > Yeah, as with my prior review, I'm a fan of this. It makes a bunch of my
+> > very noisy tests much easier to deal with.
 > 
-> Fixes: e80d3909be42 ("mm: track page table modifications in __apply_to_page_range()")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> ---
->   mm/memory.c | 4 ++++
->   1 file changed, 4 insertions(+)
+> And for the record, we're also affected by this in DRM and would very
+> much like to get it merged in one shape or another.
 > 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 78c7ee62795e..9a4a8c710be0 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -2987,6 +2987,7 @@ static int apply_to_pmd_range(struct mm_struct *mm, pud_t *pud,
->   			if (!create)
->   				continue;
->   			pmd_clear_bad(pmd);
-> +			*mask = PGTBL_PMD_MODIFIED;
 
-Oh well, I guess these should have been *mask |= PGTBL_PMD_MODIFIED.
+I was unable to get maintainers of major architectures interested enough
+to provide feedback, and did not see a path forward. Maybe Alessandro
+has more success than me.
 
-
->   		}
->   		err = apply_to_pte_range(mm, pmd, addr, next,
->   					 fn, data, create, mask);
-> @@ -3023,6 +3024,7 @@ static int apply_to_pud_range(struct mm_struct *mm, p4d_t *p4d,
->   			if (!create)
->   				continue;
->   			pud_clear_bad(pud);
-> +			*mask = PGTBL_PUD_MODIFIED;
->   		}
->   		err = apply_to_pmd_range(mm, pud, addr, next,
->   					 fn, data, create, mask);
-> @@ -3059,6 +3061,7 @@ static int apply_to_p4d_range(struct mm_struct *mm, pgd_t *pgd,
->   			if (!create)
->   				continue;
->   			p4d_clear_bad(p4d);
-> +			*mask = PGTBL_P4D_MODIFIED;
->   		}
->   		err = apply_to_pud_range(mm, p4d, addr, next,
->   					 fn, data, create, mask);
-> @@ -3095,6 +3098,7 @@ static int __apply_to_page_range(struct mm_struct *mm, unsigned long addr,
->   			if (!create)
->   				continue;
->   			pgd_clear_bad(pgd);
-> +			mask = PGTBL_PGD_MODIFIED;
->   		}
->   		err = apply_to_p4d_range(mm, pgd, addr, next,
->   					 fn, data, create, &mask);
-
+Guenter
 
