@@ -1,96 +1,256 @@
-Return-Path: <linux-kernel+bounces-558985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2604CA5EDF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:25:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 404E3A5EE04
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:28:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68CB117B878
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:25:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96F0D173024
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E7D261375;
-	Thu, 13 Mar 2025 08:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6277A261363;
+	Thu, 13 Mar 2025 08:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RdstcLdE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SEUDXEFx"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB044260A27
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D648341C6A;
+	Thu, 13 Mar 2025 08:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741854342; cv=none; b=obTBtgUZr0Ex2uyD16v6AUj0LWAUDlg/upzvxXSMk44yywhGU69gSRRGIvaHyoUgfAedhSxgas3gKvSkaUdIQ7qbSE1b4kLtDtYrxiMR2WVkC62KaILEUsYpzQAMy6pWJtsqpYHRBdj9HN+z3VzSkB7TWmfiLC3Ohh8p0YO3hig=
+	t=1741854508; cv=none; b=KwbqC8y5uiN5oc9HhJAaWF70wGy0KVWi9+ZB7xhuRg4+LEw6++qMTN5EWj44WuO6dcNO0eTgqNqnZmz5WQadZm9Vm1Wu/K/gAFseSio2QD5yOdxAbm3clUMZmlZdGMKwtj5FNC3Z6/KoZ6d+fCoSlSUssGyex+0ROoMtu2CRJ6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741854342; c=relaxed/simple;
-	bh=QljnaP8b0o+u3UuwJdMOMNTGRKJYYW3WKMH5vkZKcHc=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=naiYRhPfb9hMWB7u8cyzi74igYzJ54ob36AhQakunaUuC0r7PRYk75XlnvxgLS0e3Wu2k2+RZPuL6OuN5qOoGcjwl86xV082kok01z+EuykFQFqKhCbwtTXblJjSJkZ5MdC1HfCdMH33uoDOnGEOhRHawttbZzdpaxOxvYBLdHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RdstcLdE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741854338;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AFbXV6wQm1jW/3xJcOUdaz2XhjqGU0ni5DQO1sddI98=;
-	b=RdstcLdEvkT2utlkRmVckCHtq8Sf2mYrwpo+6k6g7b4WkBwISXYIJ2P5VApDWMX0Vd5ySQ
-	Wt0Z+95drTVlaT7tvqgvncLVqLIXuG8ZTA8szhi6zhAEpxW4fzSeeY4tcifaLOi6+Fve3B
-	Uimh8oif+t6BarGfvOBM34eKgla6tGY=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-410-OssFLTJ2N0O8kUzooC6wjQ-1; Thu,
- 13 Mar 2025 04:25:34 -0400
-X-MC-Unique: OssFLTJ2N0O8kUzooC6wjQ-1
-X-Mimecast-MFC-AGG-ID: OssFLTJ2N0O8kUzooC6wjQ_1741854333
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 440F3195605A;
-	Thu, 13 Mar 2025 08:25:33 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9140718001EF;
-	Thu, 13 Mar 2025 08:25:29 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <458de992be8760c387f7a4e55a1e42a021090a02.camel@ibm.com>
-References: <458de992be8760c387f7a4e55a1e42a021090a02.camel@ibm.com> <1243044.1741776431@warthog.procyon.org.uk>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: dhowells@redhat.com, "slava@dubeyko.com" <slava@dubeyko.com>,
-    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-    Alex Markuze <amarkuze@redhat.com>, Xiubo Li <xiubli@redhat.com>,
-    "brauner@kernel.org" <brauner@kernel.org>,
-    "idryomov@gmail.com" <idryomov@gmail.com>,
-    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ceph: Fix incorrect flush end position calculation
+	s=arc-20240116; t=1741854508; c=relaxed/simple;
+	bh=DvWuJfjmgUQumFhUBPHmnLuk6AHmzJ+//r0q3UIu1GQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VUglwr6dzKfXM82bMtkrOtqJPy1JPjrY/lsAZUqZGIKlHwWszmwUsB5l3j6QdXEdRaJNvN/DFeWB475y3S79Z3cJvpcimgFAakP1qclmoc032Dr6xI2fsVuzdLhDvRFJpYSk1Zu9+Da7EDTVRaDNo8+z6OYgu6BoX0rrdPd6vII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SEUDXEFx; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=b6KNOVUaxcdWmu5AUMxEucEw+/70bLXDtl+S2Y1dcw4=; b=SEUDXEFxiKYfgm29hwsFR0WbAu
+	mnGn6iiaAQnulG5cZEuxZgQ1FT5vpPdqDp4Ubpb38wR5STF09c36/syvn8Z1Fed4dreLRAL5CYbCS
+	q2ELCEAiqQEbVErDRX1x9nLSlJEHgchoK9nbI0SfvMNhYU4XLSDYB9/LAOlGqINdqeezSp9hXsuJi
+	cVH95iWgTsBhruVXTsZFzybs6jewNoez+ltvda7A5LX9TQSMISpvhyzswpx3jI2FRon4isJDkX3K9
+	nNASYT/uh/W9m1rYJsrwI0euP1mfe68Oai4vSRoRmXmemmPEYcXfaWWXQdhD0prU5cD1SLMAu6J7+
+	YGiXEFhQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsdvW-0000000AY5G-0RFl;
+	Thu, 13 Mar 2025 08:28:26 +0000
+Date: Thu, 13 Mar 2025 01:28:26 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Dave Chinner <david@fromorbit.com>, brauner@kernel.org,
+	djwong@kernel.org, cem@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH RFC v5 10/10] iomap: Rename ATOMIC flags again
+Message-ID: <Z9KXKolrBObAlL8y@infradead.org>
+References: <20250310183946.932054-11-john.g.garry@oracle.com>
+ <Z9E0JqQfdL4nPBH-@infradead.org>
+ <Z9If-X3Iach3o_l3@dread.disaster.area>
+ <85074165-4e56-421d-970b-0963da8de0e2@oracle.com>
+ <Z9KC7UHOutY61C5K@infradead.org>
+ <3aeb1d0e-6c74-4bfe-914d-22ba4152bc7f@oracle.com>
+ <Z9KOItsOJykGzI-F@infradead.org>
+ <157f42f1-1bad-4320-b708-2397ab773e34@oracle.com>
+ <Z9KSsxIkUbEx5y2L@infradead.org>
+ <Z9KU0gJwSW8IdPH2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1307971.1741854328.1@warthog.procyon.org.uk>
-Date: Thu, 13 Mar 2025 08:25:28 +0000
-Message-ID: <1307972.1741854328@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9KU0gJwSW8IdPH2@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
+On Thu, Mar 13, 2025 at 01:18:26AM -0700, Christoph Hellwig wrote:
+> Something like this (untestested):
 
-> Do we know easy way to reproduce the issue?
+In fact this can be further simplified, as the clearing of
+IOMAP_DIO_CALLER_COMP has duplicate logic, and only applies to writes.
 
-I found it by inspection of the code.  Quite possibly the issue will never
-arise in actuality because whilst the code only specifies a flush of at least
-a few bytes of the tail page, it will be rounded up to the full page/eof.
+So something like this would do even better:
 
-David
-
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 5299f70428ef..e9b03b9dae9e 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -312,27 +312,20 @@ static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+ }
+ 
+ /*
+- * Figure out the bio's operation flags from the dio request, the
+- * mapping, and whether or not we want FUA.  Note that we can end up
+- * clearing the WRITE_THROUGH flag in the dio request.
++ * Use a FUA write if we need datasync semantics and this is a pure data I/O
++ * that doesn't require any metadata updates (including after I/O completion
++ * such as unwritten extent conversion) and the underlying device either
++ * doesn't have a volatile write cache or supports FUA.
++ * This allows us to avoid cache flushes on I/O completion.
+  */
+-static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+-		const struct iomap *iomap, bool use_fua, bool atomic_hw)
++static inline bool iomap_dio_can_use_fua(const struct iomap *iomap,
++		struct iomap_dio *dio)
+ {
+-	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
+-
+-	if (!(dio->flags & IOMAP_DIO_WRITE))
+-		return REQ_OP_READ;
+-
+-	opflags |= REQ_OP_WRITE;
+-	if (use_fua)
+-		opflags |= REQ_FUA;
+-	else
+-		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
+-	if (atomic_hw)
+-		opflags |= REQ_ATOMIC;
+-
+-	return opflags;
++	if (iomap->flags & (IOMAP_F_SHARED | IOMAP_F_DIRTY))
++		return false;
++	if (!(dio->flags & IOMAP_DIO_WRITE_THROUGH))
++		return false;
++	return !bdev_write_cache(iomap->bdev) || bdev_fua(iomap->bdev);
+ }
+ 
+ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+@@ -340,52 +333,59 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+ 	const struct iomap *iomap = &iter->iomap;
+ 	struct inode *inode = iter->inode;
+ 	unsigned int fs_block_size = i_blocksize(inode), pad;
+-	bool atomic_hw = iter->flags & IOMAP_ATOMIC_HW;
+ 	const loff_t length = iomap_length(iter);
+ 	loff_t pos = iter->pos;
+-	blk_opf_t bio_opf;
++	blk_opf_t bio_opf = REQ_SYNC | REQ_IDLE;
+ 	struct bio *bio;
+ 	bool need_zeroout = false;
+-	bool use_fua = false;
+ 	int nr_pages, ret = 0;
+ 	u64 copied = 0;
+ 	size_t orig_count;
+ 
+-	if (atomic_hw && length != iter->len)
+-		return -EINVAL;
+-
+ 	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
+ 	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
+ 		return -EINVAL;
+ 
+-	if (iomap->type == IOMAP_UNWRITTEN) {
+-		dio->flags |= IOMAP_DIO_UNWRITTEN;
+-		need_zeroout = true;
+-	}
++	if (dio->flags & IOMAP_DIO_WRITE) {
++		bio_opf |= REQ_OP_WRITE;
++
++		if (iter->flags & IOMAP_ATOMIC_HW) {
++			if (length != iter->len)
++				return -EINVAL;
++			bio_opf |= REQ_ATOMIC;
++		}
++
++		if (iomap->type == IOMAP_UNWRITTEN) {
++			dio->flags |= IOMAP_DIO_UNWRITTEN;
++			need_zeroout = true;
++		}
+ 
+-	if (iomap->flags & IOMAP_F_SHARED)
+-		dio->flags |= IOMAP_DIO_COW;
++		if (iomap->flags & IOMAP_F_SHARED)
++			dio->flags |= IOMAP_DIO_COW;
+ 
+-	if (iomap->flags & IOMAP_F_NEW) {
+-		need_zeroout = true;
+-	} else if (iomap->type == IOMAP_MAPPED) {
++		if (iomap->flags & IOMAP_F_NEW) {
++			need_zeroout = true;
++		} else if (iomap->type == IOMAP_MAPPED) {
++			if (iomap_dio_can_use_fua(iomap, dio))
++				bio_opf |= REQ_FUA;
++			else
++				dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
++		}
++	
+ 		/*
+-		 * Use a FUA write if we need datasync semantics, this is a pure
+-		 * data IO that doesn't require any metadata updates (including
+-		 * after IO completion such as unwritten extent conversion) and
+-		 * the underlying device either supports FUA or doesn't have
+-		 * a volatile write cache. This allows us to avoid cache flushes
+-		 * on IO completion. If we can't use writethrough and need to
+-		 * sync, disable in-task completions as dio completion will
+-		 * need to call generic_write_sync() which will do a blocking
+-		 * fsync / cache flush call.
++		 * We can only do deferred completion for pure overwrites that
++		 * don't require additional I/O at completion time.
++		 *
++		 * This rules out writes that need zeroing or extent conversion,
++		 * extend the file size, or issue metadata I/O or cache flushes
++		 * during completion processing.
+ 		 */
+-		if (!(iomap->flags & (IOMAP_F_SHARED|IOMAP_F_DIRTY)) &&
+-		    (dio->flags & IOMAP_DIO_WRITE_THROUGH) &&
+-		    (bdev_fua(iomap->bdev) || !bdev_write_cache(iomap->bdev)))
+-			use_fua = true;
+-		else if (dio->flags & IOMAP_DIO_NEED_SYNC)
++		if (need_zeroout || (pos >= i_size_read(inode)) ||
++		    ((dio->flags & IOMAP_DIO_NEED_SYNC) &&
++		     !(bio_opf & REQ_FUA)))
+ 			dio->flags &= ~IOMAP_DIO_CALLER_COMP;
++	} else {
++		bio_opf |= REQ_OP_READ;
+ 	}
+ 
+ 	/*
+@@ -399,18 +399,6 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+ 	if (!iov_iter_count(dio->submit.iter))
+ 		goto out;
+ 
+-	/*
+-	 * We can only do deferred completion for pure overwrites that
+-	 * don't require additional IO at completion. This rules out
+-	 * writes that need zeroing or extent conversion, extend
+-	 * the file size, or issue journal IO or cache flushes
+-	 * during completion processing.
+-	 */
+-	if (need_zeroout ||
+-	    ((dio->flags & IOMAP_DIO_NEED_SYNC) && !use_fua) ||
+-	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode)))
+-		dio->flags &= ~IOMAP_DIO_CALLER_COMP;
+-
+ 	/*
+ 	 * The rules for polled IO completions follow the guidelines as the
+ 	 * ones we set for inline and deferred completions. If none of those
+@@ -428,8 +416,6 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+ 			goto out;
+ 	}
+ 
+-	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic_hw);
+-
+ 	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
+ 	do {
+ 		size_t n;
+@@ -461,7 +447,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+ 		}
+ 
+ 		n = bio->bi_iter.bi_size;
+-		if (WARN_ON_ONCE(atomic_hw && n != length)) {
++		if (WARN_ON_ONCE((bio_opf & REQ_ATOMIC) && n != length)) {
+ 			/*
+ 			 * This bio should have covered the complete length,
+ 			 * which it doesn't, so error. We may need to zero out
 
