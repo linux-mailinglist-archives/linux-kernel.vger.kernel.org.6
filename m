@@ -1,153 +1,127 @@
-Return-Path: <linux-kernel+bounces-559778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C0AA5F9A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:22:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A6CA5F9A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:21:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B677A3BFB4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:20:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68F273BF635
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB6626989D;
-	Thu, 13 Mar 2025 15:19:50 +0000 (UTC)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E194269836;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665352690C8;
 	Thu, 13 Mar 2025 15:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hjQzFTK3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B823E268C7A;
+	Thu, 13 Mar 2025 15:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741879190; cv=none; b=eoe4bbbVUc/WERR15QC1ltST4AFG4D4pNK2cVPjRPpetb84uamnlRU66jAWDhXcCm7HiBDSJ3EFmupgqu5ISoQ2rX3xpelBEY67h4uEyJGx/LEnnBi9BCqpoUa/OoLhiUOzatl7sUKfFy52cEZZ66LW1pyBovG3rxyCghAv+Lt0=
+	t=1741879186; cv=none; b=o4fFjKB4uI3BuuMIeUT1i71FeQxG+hK2sDNJGeHjOIpqel7uP/N41O5Hp997KUWeyyY+k7u70J2bMF7jYnqC52Q/SP8OO6H7eeIGWJjAMhETTV5bTga6L0AOaAfG3nC+eh4If3XhAR9dZVcnPwbjWbIE/2WABnh+/g9HrQcQCaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741879190; c=relaxed/simple;
-	bh=FrNrmRF03ghmNEwfL8ovFyb6iLc0RrAEOh0F/ghf4Is=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aHx+3nwO1Csdo6lEFQurksrFtX4kTQY4VahVX/GdQutEeR9xn/Zvn2+OTk47Afx94BKv6zBbOIBC0tzJWby+oTYlq1h6BiQ2PtHYMTy+XvvF5pt7E7md2OpOcajRO8Van9ysRjdObu3ZX8SGU7yQJLtjoOBdnWWGZh/XH/qNjKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac2aeada833so212336066b.0;
-        Thu, 13 Mar 2025 08:19:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741879182; x=1742483982;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1ii1IFZdoC6n5uv3UgvYeObshpXYt3dV3HzZ5zG8DvA=;
-        b=W9QnCpy2z7liragH1HUm59BOqp43q4CXnuBtJa7okYrXzLfXUlfSgWiABJIxYvhGiR
-         JDH9uTWn8ku5l/Y/e5+YblHYEOMLXsElHDQhGQqCcpFgFpPPAWZakGArIezsj4hfPFLq
-         L4hWqC6TznU1DNQtdeqFAW3Kk/7H3omf3p8L+JW3IY1JYATE9WkIoeIOLbhnDFQKahMY
-         FV55avgG6TQ12qjouSdszV1Vcxi5VvxIE3JIMOLnlTaE7UQJyDBtVGqB7Ev/Fc7lRbLq
-         54sMGtCfZV1dnrV6HgfqAPtlbdUO+tXyHKf/4nIBfLYJj3i62gexXYqvvmcnew5cgtKz
-         j/Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCU5KISh44rRVg8UeI6m4/3hBF0JYbNXFKeu6+haEDWi8dzZBNwUAQKSTBTW0t+X4RMIcFx7CnnVEKI=@vger.kernel.org, AJvYcCUCTOSCFLz/UafS4n+JBbfZrAYIKIj4978EmzSxmm1xXhpK8f4sNzPQSDmsl0uVibexvsxJxBzb38e+Q8DD@vger.kernel.org, AJvYcCUSVTeERoHO1QDUxjh8OxFLp58pJ1h6+RDMByONIyp6O6bM8WxKqz+yyOYPV7rAsuRSrK+a5dJV2vxF7Q==@vger.kernel.org, AJvYcCUUer8DlcV9SyIIDL2BQBAG0LjFkZbiUppILBrRki4BFJa74s18ryL7+pbzIQWByznxlhZyinpq3QxxvA==@vger.kernel.org, AJvYcCUsnuDHkVnSa1jrh+le0TH38X5bvX84A1Bxqsij10cpvKG0TruQUjwcRYPHg4bFM/9OkQas45vByml+/w==@vger.kernel.org, AJvYcCVA4Q17TsHc/kkGSlRe83bt62PV4InrJ9JbF+S+Te7w5q2D0XHEJ90misbFY5jJruYjVLcOZwsZyehhgw==@vger.kernel.org, AJvYcCVf2InVGrMmUV6z/T7I/PUyn4ZM45IlafnQzdrp0CqIfIvEg9tAtDwXXrJDrBuXa9w7z4hdmjdusLFBUQ==@vger.kernel.org, AJvYcCWCag+GOpZrhTDyGYXWJXgQ2wB2ORnsk/515EpbxGmJTJQUSNaSov3AhaQBfo25zujhzJDxOIoO3S16ErN9CA==@vger.kernel.org, AJvYcCWnmbojDHfoYQvJDTvB9FNwFDsQHqvI2DCZVsWfCjgd+OQ3xgNOyJSj7wRxz8dtoN9Fv1RBh3LUrHRVhZWl@vger.kernel.org, AJvYcCWz1UjUx3EM
- LE2Ki9ktZBfQu1JASJTmaagQPPDvz1sU3luAjcSXlRCEW0F9bgqm26SxAS9NGd+u6ILnHL/+3cA=@vger.kernel.org, AJvYcCXGGmh8kNblbmBL2c/6G2Hy3/XwcN6kCPje3VqVAz62+GVb5f1bZVLoc4Qi5exsY9iPmbywvgNlQ4S1Dg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWgYO7kOiIyaHyYhoeez+j4V7J4n0AMZUxyPsOpN/P0fchA1ZK
-	s8Sv3Tk3mwgD4RehXuYomk5fz+RFpGTqbotExG0JwqtthcgGZdEqtrj5vpfNHmU=
-X-Gm-Gg: ASbGncvob5uLOdgDL0EXb9DJotu8lp9EnGkcTNBIOSz4pHdW4zg7MFnSA9RogX6meSy
-	56hfA9NY8JWUUifjlXIjieieYCp+pNLxN7sLxDlAjWC3XwhSRvJ0Qn/tHhcTOlJbvncXRUb3iJb
-	Yoc8Mt1R6Bm1HxshBqmOGxYdswMk+TjJfJreEQZYaCY+/2RnXMcEISN5RxbQCyuX9831b73mGMa
-	65/V9SJM1VFKUTCPlFpMnLZ3oin5tJEg2eewn9hN4oAkdOltIh41nrCIyHlfXtfHTpBNPCgjeOU
-	Fj84hUBEdS5cvsKl0DcOBPEZyPH7umN3jH4pvFacrfsCY8Ns0raEt+qFiOkQcn0IH80fBC9kxcQ
-	GMUzXh7k=
-X-Google-Smtp-Source: AGHT+IHgUEYjZ5BxZpsdAQFv31ablvhsNIXVzxerwIOsXj5v3VRn4dXHs2aiKu8KzFwyZ0I5/MFw7w==
-X-Received: by 2002:a17:907:3892:b0:ac3:88a:a001 with SMTP id a640c23a62f3a-ac3124b2393mr309962466b.19.1741879182378;
-        Thu, 13 Mar 2025 08:19:42 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3149d0b4csm90825166b.122.2025.03.13.08.19.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 08:19:39 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ab771575040so412917966b.1;
-        Thu, 13 Mar 2025 08:19:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUDXUI9Mv0FgHhvu8zT2V8jovCBZO7GjNbjJhKEHzMRM8uSKH5KdUitsEaFYi/PjvzNcAn2w13xfzw=@vger.kernel.org,
- AJvYcCUIix75VQkA4SJjDdNlrsTJg2tFphfjFdUD1+TlkKdZmL9ATUIQ4gbapZ0KDJCEcwfVWxAkNIVajVTNOw==@vger.kernel.org,
- AJvYcCUJeX9i2PoaO2fU5F6WcSNnlBqkTE/xOIE4ZooanzOFrfmncX2PAQr3m/Q6Y75uMlTL8rHnVXN8HTC0zqpX9x8=@vger.kernel.org,
- AJvYcCUJlYg8baevhE/vOvW+4ZUwTL2nzDS8UvVHMnhcO506WvBL15F3HnY2XU/Z4y5nGDowESywSZNXawx8Gw==@vger.kernel.org,
- AJvYcCV0X9mYYXYjLh5d2UXvAOBoytkeYTnGx48WR38tSZbjmP/mjlXsjbyKtT+IvavEmfCHIcJLje/CBeEs8w==@vger.kernel.org,
- AJvYcCW9ZE/0EY2DOHLyRU+GBk33IUUI3pbuV90Nx73NIxCIjsYEIEMPfWCWXVFO+NOtgjEGIaeAWIZORLZenA==@vger.kernel.org,
- AJvYcCWbn7rIRqOxikUEVs9Y4fvK6mPfsnGln+kzM8xvEcM7W6Y8xIAfdM/qdssBObn0LN1fcSuzV46sHhVDuuTz@vger.kernel.org,
- AJvYcCXAL/Ni4VKzNJIx5AkpjhIVaPqGHkqXYv7y2WAWhLfZA6wjW1VfA1Tuk+O3s+SIslXPD4k6dp/gP01oP+l5@vger.kernel.org,
- AJvYcCXVzsHh2J+jN++qaY23k/lZG48se5SzkiynXhJ234WGLuhNUO5qzr9KwL3t6IQDIZDcxHz8Lq26bJHN+Q==@vger.kernel.org,
- AJvYcCXWRO5LIF5na9KQPeoqZHIB8RyP1UTUspe6Ar4TJ49UTNNhkDceg0P2uWd+0ytgV71PLw+9m9nxBWfNOw==@vger.kernel.org,
- AJvYcCXdG3gS9GiFIi3gM3+YyPr/9+f8OREqJFmSIVMQK60d7cbWq4LZJ8bzZF3MwVDhDC3RnrTQ1AK884zY7s0SoQ==@vger.kernel.org
-X-Received: by 2002:a17:907:9626:b0:ac3:d1c:89ce with SMTP id
- a640c23a62f3a-ac312305664mr252326866b.9.1741879178133; Thu, 13 Mar 2025
- 08:19:38 -0700 (PDT)
+	s=arc-20240116; t=1741879186; c=relaxed/simple;
+	bh=UZl2eySzgvti4sdsWwp2Dk/0CKN1XppUcUujjzMHwNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gl/CukD1TK81KdxhC01uFeco2Ic5WWG9P2lH25ONWxiNL3bkotBsNEUhlvEgMJSzFguYCCR8YvA4DVBfZLrOmUZwi+fqyxDUbz5dou+GTy1m02G/uecv/bdCLul2q+RZ11kLcCKbYdTwG2PwDmKRxeBaqkGwC4XTwwLN8VR3gGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hjQzFTK3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFF1EC4CEE9;
+	Thu, 13 Mar 2025 15:19:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741879186;
+	bh=UZl2eySzgvti4sdsWwp2Dk/0CKN1XppUcUujjzMHwNM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hjQzFTK3CGSGmVT3D0g6Eid4TfdOW4xp1sfycRsShneM2wAqc1EZD2HgLz8LIhASA
+	 WhvKTbrTd5WtGKCD0tmzqToIGXYiXr0hiZu/EzvhFzURTx7mJWF1GFn94fzAnt2za0
+	 7wqVoY3Mtv5brmZRMoVSPqJt/SWkpvjuFdOT7sPwCBBZB6FHxIFVp5RmzoqCt/qrYZ
+	 WVBsxP2zuZj2DjXHmR5g0iwwfd6wdtxnpdQtWhNqmk20BW9BBFRBzFY26y/NGy29le
+	 awxoUW+Qy/rxPwXHF8yPYo+IocHX46L+iYtlz6yw00aSi0j5hjN7T5/SAW0MgCZPr2
+	 /SDUA2TwdVwPw==
+Date: Thu, 13 Mar 2025 16:19:40 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Ruiwu Chen <rwchen404@gmail.com>, corbet@lwn.net, 
+	keescook@chromium.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, zachwade.k@gmail.com
+Subject: Re: [PATCH v2] drop_caches: re-enable message after disabling
+Message-ID: <t3h7ciq4vn3uqwfgroisfkrh7xymgr6hlnsgyutwi2azkbuhcz@yu5c4xyzi32f>
+References: <Z7tZTCsQop1Oxk_O@bombadil.infradead.org>
+ <20250308080549.14464-1-rwchen404@gmail.com>
+ <zaiqpjvkekhgipcs7smqhbb7hqt5dcneyoyndycofjepitxznf@q22hsykugpme>
+ <Z9IQ2jam9hkXnPhg@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313135003.836600-1-rppt@kernel.org> <20250313135003.836600-14-rppt@kernel.org>
-In-Reply-To: <20250313135003.836600-14-rppt@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Mar 2025 16:19:10 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWCBL_cg1NgbHCA3e9GTob_P9mTuN_Tepvigci6rxDmbg@mail.gmail.com>
-X-Gm-Features: AQ5f1Jr9qHWq5jtnIT3-BmFGhQQ_nRM0uVNr9PeQK5Y9eEomJSZyndfwbc1wpbs
-Message-ID: <CAMuHMdWCBL_cg1NgbHCA3e9GTob_P9mTuN_Tepvigci6rxDmbg@mail.gmail.com>
-Subject: Re: [PATCH v2 13/13] arch, mm: make releasing of memory to page
- allocator more explicit
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"David S. Miller" <davem@davemloft.net>, Dinh Nguyen <dinguyen@kernel.org>, 
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Guo Ren <guoren@kernel.org>, 
-	Heiko Carstens <hca@linux.ibm.com>, Helge Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Mark Brown <broonie@kernel.org>, Matt Turner <mattst88@gmail.com>, 
-	Max Filippov <jcmvbkbc@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, Michal Simek <monstr@monstr.eu>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Richard Weinberger <richard@nod.at>, Russell King <linux@armlinux.org.uk>, 
-	Stafford Horne <shorne@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>, Vineet Gupta <vgupta@kernel.org>, 
-	Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org, 
-	linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-um@lists.infradead.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9IQ2jam9hkXnPhg@bombadil.infradead.org>
 
-On Thu, 13 Mar 2025 at 14:53, Mike Rapoport <rppt@kernel.org> wrote:
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
->
-> The point where the memory is released from memblock to the buddy allocator
-> is hidden inside arch-specific mem_init()s and the call to
-> memblock_free_all() is needlessly duplicated in every artiste cure and
-> after introduction of arch_mm_preinit() hook, mem_init() implementation on
-> many architecture only contains the call to memblock_free_all().
->
-> Pull memblock_free_all() call into mm_core_init() and drop mem_init() on
-> relevant architectures to make it more explicit where the free memory is
-> released from memblock to the buddy allocator and to reduce code
-> duplication in architecture specific code.
->
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>     # x86
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+On Wed, Mar 12, 2025 at 03:55:22PM -0700, Luis Chamberlain wrote:
+> On Mon, Mar 10, 2025 at 02:51:11PM +0100, Joel Granados wrote:
+> > On Sat, Mar 08, 2025 at 04:05:49PM +0800, Ruiwu Chen wrote:
+> > > >> When 'echo 4 > /proc/sys/vm/drop_caches' the message is disabled,
+> > > >> but there is no interface to enable the message, only by restarting
+> > > >> the way, so add the 'echo 0 > /proc/sys/vm/drop_caches' way to
+> > > >> enabled the message again.
+> > > >> 
+> > > >> Signed-off-by: Ruiwu Chen <rwchen404@gmail.com>
+> > > >
+> > > > You are overcomplicating things, if you just want to re-enable messages
+> > > > you can just use:
+> > > >
+> > > > -		stfu |= sysctl_drop_caches & 4;
+> > > > +		stfu = sysctl_drop_caches & 4;
+> > > >
+> > > > The bool is there as 4 is intended as a bit flag, you can can figure
+> > > > out what values you want and just append 4 to it to get the expected
+> > > > result.
+> > > >
+> > > >  Luis
+> > > 
+> > > Is that what you mean ?
+> > > 
+> > > -               stfu |= sysctl_drop_caches & 4;
+> > > +               stfu ^= sysctl_drop_caches & 4;
+> > > 
+> > > 'echo 4 > /sys/kernel/vm/drop_caches' can disable or open messages,
+> > > This is what I originally thought, but there is uncertainty that when different operators execute the command,
+> > > It is not possible to determine whether this time is enabled or turned on unless you operate it twice.
+> > 
+> > So can you use ^= or not?
+> 
+> No,  ^= does not work, see a boolean truth table.
+> 
+> > And what does operate it twice mean?
+> 
+> I think the reporter meant an "sysadmin", say two folks admining a system.
+> Since we this as a flag to enable disabling it easily we can just
+> always check for the flag as I suggested:
+> 
+> stfu = sysctl_drop_caches & 4
+Thx for the clarification.
 
->  arch/m68k/mm/init.c          |  2 --
+I see what is happening:
+Once you turn the message off, its off for ever because of the or.
+Removing the "or" allows turning the message on off based on the 4th
+bit.
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org> # m68k
+I'll take your fix @Luis
 
-Gr{oetje,eeting}s,
+Thx.
 
-                        Geert
+Best
+
+
+> 
+>   Luis
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Joel Granados
 
