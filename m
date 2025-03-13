@@ -1,208 +1,308 @@
-Return-Path: <linux-kernel+bounces-560108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D03A5FDD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:33:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 520D3A5FE48
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:41:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB4A03BBE8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:33:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66F1117075F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78F8172767;
-	Thu, 13 Mar 2025 17:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DD91940A1;
+	Thu, 13 Mar 2025 17:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glfl0tST"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="KDraUYEZ"
+Received: from mx-rz-2.rrze.uni-erlangen.de (mx-rz-2.rrze.uni-erlangen.de [131.188.11.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A8614386D;
-	Thu, 13 Mar 2025 17:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8F22AC17;
+	Thu, 13 Mar 2025 17:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741887183; cv=none; b=BVr8glYBvPIZ2WSNwIusdrqLTnFHuFiD1zXFVB44Msc3mh5PoGba6s54OC5t0905lTL7BaMDcskXPSFI1UymY/eEeS0KtSs8jNY7hcUpIJq3SV7YHUTzzt6n4hwCYM7sCSfF9TEO30PGOFGbAAL+K2S3LCBmFwwKsJ46ykm9QLo=
+	t=1741887647; cv=none; b=HkNBJz/u/HttkUIMi9U/An8cSWbuGropaKgfbcpYgY0g4XLQcwPmA9TXm73e1EImQ+BA+4q0Af3qu1PaKdW468qUuozy7MmUzBi1CjyHXxTfPL81F82el6NJpXsa1t3vqpRuA5FO10GnZNtRMXF6A+27qpYNhAlOIVamMK/UHfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741887183; c=relaxed/simple;
-	bh=KufBf6SNVV2/+3f+j7cVUdlgE/k57oz+yacfQZgVu0o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D2VyhC+jqrVJ5SXFHLcooViHTooJh+pHm/6ULxDzFVIgehYMptTmp0qeNjKgaRroVf/oeUc6ezyU3+v1U/SebRELj0R2RGYSE+CQQYd8p8h3vOe9HZ5oeDIzV6tb5LaOpCrtyVD0qQIQp1M0DIwBgKeWcA3ifK8DkOi8HXHFTy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glfl0tST; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8795C4CEDD;
-	Thu, 13 Mar 2025 17:33:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741887182;
-	bh=KufBf6SNVV2/+3f+j7cVUdlgE/k57oz+yacfQZgVu0o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=glfl0tSTDarf5KmqF2WaDKQ2aRgXTC2tuZCMgPixsObeC0jAFrgN3rInTUWfn0763
-	 IbTUdLElP7hTrnIqxhoBOjbuQXmNvzO62AXUJpkcz7ojHEH0Qq552EN6lP6+5kKVyO
-	 21XKi5XV0757FEkmF1hVr4jd6GhrGaVTCaCeieCwv+wcygHRTVyzpNB879d6cmtUqG
-	 2XEPCXesdn3A0vr6fnke/W1ltXLgodm8hgyjYbkS5uwwIrVXs0feJbcqowtqo1ahnP
-	 H9qaMyKjyptQvO5fkVzqDZuvO7MC82StGOKEqbR7pykgPK9Zy85yxzTBBaKBG4Lvkz
-	 6MfRNnXGGfTqw==
-Date: Thu, 13 Mar 2025 10:33:00 -0700
-From: Minchan Kim <minchan@kernel.org>
-To: Barry Song <21cnbao@gmail.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Qun-Wei Lin <qun-wei.lin@mediatek.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chris Li <chrisl@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	Kairui Song <kasong@tencent.com>,
-	Dan Schatzberg <schatzberg.dan@gmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Casper Li <casper.li@mediatek.com>,
-	Chinwen Chang <chinwen.chang@mediatek.com>,
-	Andrew Yang <andrew.yang@mediatek.com>,
-	James Hsu <james.hsu@mediatek.com>
-Subject: Re: [PATCH 0/2] Improve Zram by separating compression context from
- kswapd
-Message-ID: <Z9MWzDUxUigJrZXt@google.com>
-References: <20250307120141.1566673-1-qun-wei.lin@mediatek.com>
- <Z9HOavSkFf01K9xh@google.com>
- <5gqqbq67th4xiufiw6j3ewih6htdepa4u5lfirdeffrui7hcdn@ly3re3vgez2g>
- <CAGsJ_4xwnVxn1odj=j+z0VXm1DRUmnhugnwCH-coqBLJweDu9Q@mail.gmail.com>
- <Z9MCwXzYDRJoTiIr@google.com>
- <CAGsJ_4yaSx1vEiZdCouBveeH3D-bQDdvrhRpz=Kbvqn30Eh-nA@mail.gmail.com>
+	s=arc-20240116; t=1741887647; c=relaxed/simple;
+	bh=NljnDF1ptI8MrArLGgxOOOg/fv6JfCGSuFKXFaJkvrs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AzLFnPzTLMYSBoRkRZB4EQMWSGKFsvQRf321qoHUuZ028tcJNInBJj9b0mro2W8/vVsLmCCMMzB38o80ZhkY0Q1xKIo33wmXlu7b3ji1r+7YdVubAL57lvG09Us+b95ayrunKoB+yORI0hrzoVtZlBLkb7fPK+z9SWs2nJgCHi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=KDraUYEZ; arc=none smtp.client-ip=131.188.11.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+	t=1741887218; bh=Y1DOnX2JqDlvXo0v4abKlFrNsrTuBn8d3h80W5GVeMU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From:To:CC:
+	 Subject;
+	b=KDraUYEZj08wYyGge2yYQeZ08Io6+NhgHBGqTQx2ngYoKH8jyIFaHHHGik/5wAEYd
+	 Tbvu+DW3X41M9iLKxr+opECPLEUmDQFuiNEO4+4KXIE2KSMLCLDfO8VSzGTcCSGPLD
+	 ouJsaeixrgyp3yLBfbAVXQT1nNqLaXOOHF9nlrNM30VFyKwpfZpTIwCisvnm3Q4U87
+	 olRR3K2Q40ADXPUi3t28pYwx4EpnpNCEs7qWiF/0xqZfrhCAMhCgBwzQcQ1MGX9K0X
+	 M56j9ejKEmRPybwJBP2hXsYBrIVR9FvuUAtwfPeVHWs16OhYjqLJWR+26DVfBmSSB3
+	 QryxQ08M3+Y+g==
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-rz-2.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4ZDF356DzbzPkPP;
+	Thu, 13 Mar 2025 18:33:37 +0100 (CET)
+X-Virus-Scanned: amavisd-new at boeck2.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2001:9e8:3614:2b00:7ee6:68e5:4447:ba92
+Received: from luis-tp.fritz.box (unknown [IPv6:2001:9e8:3614:2b00:7ee6:68e5:4447:ba92])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: U2FsdGVkX1+CRvjFnd3baUo54DHPURixEK/pOHcbyc0=)
+	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4ZDF320p7kzPjt6;
+	Thu, 13 Mar 2025 18:33:34 +0100 (CET)
+From: Luis Gerhorst <luis.gerhorst@fau.de>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Xu Kuohai <xukuohai@huaweicloud.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Hari Bathini <hbathini@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Luis Gerhorst <luis.gerhorst@fau.de>,
+	Henriette Herzog <henriette.herzog@rub.de>,
+	Cupertino Miranda <cupertino.miranda@oracle.com>,
+	Matan Shachnai <m.shachnai@gmail.com>,
+	Dimitar Kanaliev <dimitar.kanaliev@siteground.com>,
+	Shung-Hsi Yu <shung-hsi.yu@suse.com>,
+	Daniel Xu <dxu@dxuuu.xyz>,
+	bpf@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kselftest@vger.kernel.org,
+	George Guo <guodongtai@kylinos.cn>,
+	WANG Xuerui <git@xen0n.name>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Maximilian Ott <ott@cs.fau.de>,
+	Milan Stephan <milan.stephan@fau.de>
+Subject: [PATCH bpf-next 04/11] bpf, arm64, powerpc: Add bpf_jit_bypass_spec_v1/v4()
+Date: Thu, 13 Mar 2025 18:33:26 +0100
+Message-ID: <20250313173326.1106442-1-luis.gerhorst@fau.de>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250313172127.1098195-1-luis.gerhorst@fau.de>
+References: <20250313172127.1098195-1-luis.gerhorst@fau.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGsJ_4yaSx1vEiZdCouBveeH3D-bQDdvrhRpz=Kbvqn30Eh-nA@mail.gmail.com>
 
-On Fri, Mar 14, 2025 at 05:58:00AM +1300, Barry Song wrote:
-> On Fri, Mar 14, 2025 at 5:07 AM Minchan Kim <minchan@kernel.org> wrote:
-> >
-> > On Thu, Mar 13, 2025 at 04:45:54PM +1300, Barry Song wrote:
-> > > On Thu, Mar 13, 2025 at 4:09 PM Sergey Senozhatsky
-> > > <senozhatsky@chromium.org> wrote:
-> > > >
-> > > > On (25/03/12 11:11), Minchan Kim wrote:
-> > > > > On Fri, Mar 07, 2025 at 08:01:02PM +0800, Qun-Wei Lin wrote:
-> > > > > > This patch series introduces a new mechanism called kcompressd to
-> > > > > > improve the efficiency of memory reclaiming in the operating system. The
-> > > > > > main goal is to separate the tasks of page scanning and page compression
-> > > > > > into distinct processes or threads, thereby reducing the load on the
-> > > > > > kswapd thread and enhancing overall system performance under high memory
-> > > > > > pressure conditions.
-> > > > > >
-> > > > > > Problem:
-> > > > > >  In the current system, the kswapd thread is responsible for both
-> > > > > >  scanning the LRU pages and compressing pages into the ZRAM. This
-> > > > > >  combined responsibility can lead to significant performance bottlenecks,
-> > > > > >  especially under high memory pressure. The kswapd thread becomes a
-> > > > > >  single point of contention, causing delays in memory reclaiming and
-> > > > > >  overall system performance degradation.
-> > > > >
-> > > > > Isn't it general problem if backend for swap is slow(but synchronous)?
-> > > > > I think zram need to support asynchrnous IO(can do introduce multiple
-> > > > > threads to compress batched pages) and doesn't declare it's
-> > > > > synchrnous device for the case.
-> > > >
-> > > > The current conclusion is that kcompressd will sit above zram,
-> > > > because zram is not the only compressing swap backend we have.
-> >
-> > Then, how handles the file IO case?
-> 
-> I didn't quite catch your question :-)
+JITs can set bpf_jit_bypass_spec_v1/v4() if they want the verifier to
+skip analysis/patching for the respective vulnerability. For v4, this
+will reduce the number of barriers the verifier inserts. For v1, it
+allows more programs to be accepted.
 
-Sorry for not clear.
+The primary motivation for this is to not regress unpriv BPF's
+performance on ARM64 in a future commit where BPF_NOSPEC is also used
+against Spectre v1.
 
-What I meant was zram is also used for fs backend storage, not only
-for swapbackend. The multiple simultaneous compression can help the case,
-too.
+This has the user-visible change that v1-induced rejections on
+non-vulnerable PowerPC CPUs are avoided.
 
-> 
-> >
-> > >
-> > > also. it is not good to hack zram to be aware of if it is kswapd
-> > > , direct reclaim , proactive reclaim and block device with
-> > > mounted filesystem.
-> >
-> > Why shouldn't zram be aware of that instead of just introducing
-> > queues in the zram with multiple compression threads?
-> >
-> 
-> My view is the opposite of yours :-)
-> 
-> Integrating kswapd, direct reclaim, etc., into the zram driver
-> would violate layering principles. zram is purely a block device
+For now, this does not change the semantics of BPF_NOSPEC. It is still a
+v4-only barrier and must not be implemented if bypass_spec_v4 is always
+true for the arch. Changing it to a v1 AND v4-barrier is done in a
+future commit.
 
-That's the my question. What's the reason zram need to know about
-kswapd, direct_reclaim and so on? I didn't understand your input.
+As an alternative to bypass_spec_v1/v4, one could introduce NOSPEC_V1
+AND NOSPEC_V4 instructions and allow backends to skip their lowering as
+suggested by commit f5e81d111750 ("bpf: Introduce BPF nospec instruction
+for mitigating Spectre v4"). Adding bpf_jit_bypass_spec_v1/v4() was
+found to be preferrable for the following reason:
 
-> driver, and how it is used should be handled separately. Callers have
-> greater flexibility to determine its usage, similar to how different
-> I/O models exist in user space.
-> 
-> Currently, Qun-Wei's patch checks whether the current thread is kswapd.
-> If it is, compression is performed asynchronously by threads;
-> otherwise, it is done in the current thread. In the future, we may
+* bypass_spec_v1/v4 benefits non-vulnerable CPUs: Always performing the
+  same analysis (not taking into account whether the current CPU is
+  vulnerable), needlessly restricts users of CPUs that are not
+  vulnerable. The only usecase for this would be portability-testing,
+  but this can later be added easily when needed by allowing users to
+  force bypass_spec_v1/v4 to false.
 
-Okay, then, why should we do that without following normal asynchrnous
-disk storage? VM justs put the IO request and sometimes congestion
-control. Why is other logic needed for the case?
+* Portability is still acceptable: Directly disabling the analysis
+  instead of skipping the lowering of BPF_NOSPEC(_V1/V4) might allow
+  programs on non-vulnerable CPUs to be accepted while the program will
+  be rejected on vulnerable CPUs. With the fallback to speculation
+  barriers for Spectre v1 implemented in a future commit, this will only
+  affect programs that do variable stack-accesses or are very complex.
 
-> have additional reclaim threads, such as for damon or
-> madv_pageout, etc.
-> 
-> > >
-> > > so i am thinking sth as below
-> > >
-> > > page_io.c
-> > >
-> > > if (sync_device or zswap_enabled())
-> > >    schedule swap_writepage to a separate per-node thread
-> >
-> > I am not sure that's a good idea to mix a feature to solve different
-> > layers. That wouldn't be only swap problem. Such an parallelism under
-> > device  is common technique these days and it would help file IO cases.
-> >
-> 
-> zswap and zram share the same needs, and handling this in page_io
-> can benefit both through common code. It is up to the callers to decide
-> the I/O model.
-> 
-> I agree that "parallelism under the device" is a common technique,
-> but our case is different—the device achieves parallelism with
-> offload hardware, whereas we rely on CPUs, which can be scarce.
-> These threads may also preempt CPUs that are critically needed
-> by other non-compression tasks, and burst power consumption
-> can sometimes be difficult to control.
+For PowerPC, the SEC_FTR checking in bpf_jit_bypass_spec_v4() is based
+on the check that was previously located in the BPF_NOSPEC case.
 
-That's general problem for common resources in the system and always
-trace-off domain in the workload areas. Eng folks has tried to tune
-them statically/dynamically depending on system behavior considering
-what they priorites.
+For LoongArch, it would likely be safe to set both
+bpf_jit_bypass_spec_v1() and _v4() according to
+commit a6f6a95f2580 ("LoongArch, bpf: Fix jit to skip speculation
+barrier opcode"). This is omitted here as I am unable to do any testing
+for LoongArch.
 
-> 
-> > Furthermore, it would open the chance for zram to try compress
-> > multiple pages at once.
-> 
-> We are already in this situation when multiple callers use zram simultaneously,
-> such as during direct reclaim or with a mounted filesystem.
-> 
-> Of course, this allows multiple pages to be compressed simultaneously,
-> even if the user is single-threaded. However, determining when to enable
-> these threads and whether they will be effective is challenging, as it
-> depends on system load. For example, Qun-Wei's patch chose not to use
-> threads for direct reclaim as, I guess,  it might be harmful.
+Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
+Cc: Henriette Herzog <henriette.herzog@rub.de>
+Cc: Maximilian Ott <ott@cs.fau.de>
+Cc: Milan Stephan <milan.stephan@fau.de>
+---
+ arch/arm64/net/bpf_jit_comp.c     | 21 ++++++++++++---------
+ arch/powerpc/net/bpf_jit_comp64.c | 21 +++++++++++++++++----
+ include/linux/bpf.h               | 11 +++++++++--
+ kernel/bpf/core.c                 | 15 +++++++++++++++
+ 4 files changed, 53 insertions(+), 15 deletions(-)
 
-Direct reclaim is already harmful and that's why VM has the logic 
-to throttle writeback or other special logics for kswapd or direct
-reclaim path for th IO, which could be applied into the zram, too.
+diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+index 70d7c89d3ac9..0f617b55866e 100644
+--- a/arch/arm64/net/bpf_jit_comp.c
++++ b/arch/arm64/net/bpf_jit_comp.c
+@@ -1583,15 +1583,7 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx,
+ 
+ 	/* speculation barrier */
+ 	case BPF_ST | BPF_NOSPEC:
+-		/*
+-		 * Nothing required here.
+-		 *
+-		 * In case of arm64, we rely on the firmware mitigation of
+-		 * Speculative Store Bypass as controlled via the ssbd kernel
+-		 * parameter. Whenever the mitigation is enabled, it works
+-		 * for all of the kernel code with no need to provide any
+-		 * additional instructions.
+-		 */
++		/* See bpf_jit_bypass_spec_v4() */
+ 		break;
+ 
+ 	/* ST: *(size *)(dst + off) = imm */
+@@ -2762,6 +2754,17 @@ bool bpf_jit_supports_percpu_insn(void)
+ 	return true;
+ }
+ 
++bool bpf_jit_bypass_spec_v4(void)
++{
++	/* In case of arm64, we rely on the firmware mitigation of Speculative
++	 * Store Bypass as controlled via the ssbd kernel parameter. Whenever
++	 * the mitigation is enabled, it works for all of the kernel code with
++	 * no need to provide any additional instructions. Therefore, skip
++	 * inserting nospec insns against Spectre v4.
++	 */
++	return true;
++}
++
+ bool bpf_jit_inlines_helper_call(s32 imm)
+ {
+ 	switch (imm) {
+diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
+index 233703b06d7c..b5339c541283 100644
+--- a/arch/powerpc/net/bpf_jit_comp64.c
++++ b/arch/powerpc/net/bpf_jit_comp64.c
+@@ -363,6 +363,23 @@ static int bpf_jit_emit_tail_call(u32 *image, struct codegen_context *ctx, u32 o
+ 	return 0;
+ }
+ 
++bool bpf_jit_bypass_spec_v1(void)
++{
++#if defined(CONFIG_PPC_E500) || defined(CONFIG_PPC_BOOK3S_64)
++	return !(security_ftr_enabled(SEC_FTR_FAVOUR_SECURITY) &&
++		 security_ftr_enabled(SEC_FTR_BNDS_CHK_SPEC_BAR));
++#else
++	return true;
++#endif
++}
++
++bool bpf_jit_bypass_spec_v4(void)
++{
++	return !(security_ftr_enabled(SEC_FTR_FAVOUR_SECURITY) &&
++		 security_ftr_enabled(SEC_FTR_STF_BARRIER) &&
++		 stf_barrier_type_get() != STF_BARRIER_NONE);
++}
++
+ /*
+  * We spill into the redzone always, even if the bpf program has its own stackframe.
+  * Offsets hardcoded based on BPF_PPC_STACK_SAVE -- see bpf_jit_stack_local()
+@@ -785,10 +802,6 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
+ 		 * BPF_ST NOSPEC (speculation barrier)
+ 		 */
+ 		case BPF_ST | BPF_NOSPEC:
+-			if (!security_ftr_enabled(SEC_FTR_FAVOUR_SECURITY) ||
+-					!security_ftr_enabled(SEC_FTR_STF_BARRIER))
+-				break;
+-
+ 			switch (stf_barrier) {
+ 			case STF_BARRIER_EIEIO:
+ 				EMIT(PPC_RAW_EIEIO() | 0x02000000);
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index 7d55553de3fc..9a21e356e04e 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -2439,14 +2439,21 @@ static inline bool bpf_allow_uninit_stack(const struct bpf_token *token)
+ 	return bpf_token_capable(token, CAP_PERFMON);
+ }
+ 
++bool bpf_jit_bypass_spec_v1(void);
++bool bpf_jit_bypass_spec_v4(void);
++
+ static inline bool bpf_bypass_spec_v1(const struct bpf_token *token)
+ {
+-	return cpu_mitigations_off() || bpf_token_capable(token, CAP_PERFMON);
++	return bpf_jit_bypass_spec_v1() ||
++		cpu_mitigations_off() ||
++		bpf_token_capable(token, CAP_PERFMON);
+ }
+ 
+ static inline bool bpf_bypass_spec_v4(const struct bpf_token *token)
+ {
+-	return cpu_mitigations_off() || bpf_token_capable(token, CAP_PERFMON);
++	return bpf_jit_bypass_spec_v4() ||
++		cpu_mitigations_off() ||
++		bpf_token_capable(token, CAP_PERFMON);
+ }
+ 
+ int bpf_map_new_fd(struct bpf_map *map, int flags);
+diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+index 62cb9557ad3b..a3e434851614 100644
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -3024,6 +3024,21 @@ bool __weak bpf_jit_needs_zext(void)
+ 	return false;
+ }
+ 
++/* By default, enable the verifier's mitigations against Spectre v1 and v4 for
++ * all archs. The value returned must not change at runtime as there is
++ * currently no support for reloading programs that were loaded without
++ * mitigations.
++ */
++bool __weak bpf_jit_bypass_spec_v1(void)
++{
++	return false;
++}
++
++bool __weak bpf_jit_bypass_spec_v4(void)
++{
++	return false;
++}
++
+ /* Return true if the JIT inlines the call to the helper corresponding to
+  * the imm.
+  *
+-- 
+2.48.1
+
 
