@@ -1,722 +1,299 @@
-Return-Path: <linux-kernel+bounces-560526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DB53A60620
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:47:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11061A6061E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:47:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EB1B3A4772
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:47:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B705719C63B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CDE1FBEA7;
-	Thu, 13 Mar 2025 23:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A8D1EFF95;
+	Thu, 13 Mar 2025 23:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="dCIk4QpW"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gehplF6K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C071FBEB7
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 23:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235B21F91C7;
+	Thu, 13 Mar 2025 23:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741909103; cv=none; b=gEAeFsvY+htkNtMtSU7MI5IiXIhGoZlruwl23Ci6+igZWm3eYycPYWPwTYuzmKNCLpqPQpk8KoLgRU36JgfEjYX6vfz8xZ2Lrwui+K0ZTtM/UViFU383tOXFVtzRusL4ajHI0qDiLWL1aCEOhZLZ11MaL0uzd6vcxzufSaRIRso=
+	t=1741909194; cv=none; b=mcljoPeuz3jBrIeOIXUWj8JS6DrtKlck83xxF8c8Sp+89kljCYsv4xgjMlsZ4LGZ67Jt5vHVFMrEErVyVWAt4C628AB2FNq4wsQnER17BMe2In9vlYbCFa2fzgcagxl+dppeOqWaU8MH3GQRLGNix5zFeEeofQVcGmQcOnfynNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741909103; c=relaxed/simple;
-	bh=0AcXGh0kC0v8DeiHW1WW5p/P0XsR8DjXRjaLcoTBZgk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kIA6BFR3KLedL7UCnBN6ewxuB471iWSsNeZFGCZVzQCq5XXX2QDgTaAWHW6DHd3fDdpl3sD6+KDeudyxbmigQ3ti+qPx5TIvZvVE+pKZXN2GVU99q+lHqf7OVrAW3+SQLf8hREexU/An58viZCMgA4ZjwaWMvrKYWzoi5YkCUVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=dCIk4QpW; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 6A4342C04F5;
-	Fri, 14 Mar 2025 12:38:16 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1741909096;
-	bh=BLSl+2qWA1apdTj279et8BFrU4OAygmbVPTZVczn7AE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=dCIk4QpWHqNCFlLVrwnOdGqvjnIdjae1lGcvBPcI9vNoOHl5IziYT0X1/nWDnHgV4
-	 +Rb9lBmh5FImFBIY48ndysiR2x0f8hztt2sljgfG1+UHnc5vNyCD/aP7o+wXSIFAbG
-	 mB8HzTOgIZ6QbqjGwgwo2D6P8D7uFV07Q5sxfK8sD9ZKrRbyDJjtkrEXx/DhreB/B8
-	 cDGcoqiXwF9gpVbUInSLOIQYmfaoLVuZ9DD8QsMOdAn+1ZjaS6PejdVExRiO6tddKT
-	 ZsL7YKSW4A0O/9rnoLdpY5DiaOPzCMlnFDpOQ8SHebLpf0QwcqkuUq7x8C2O8LapKq
-	 T93/M88HzfdRw==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B67d36c680000>; Fri, 14 Mar 2025 12:38:16 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 238C013ED8D;
-	Fri, 14 Mar 2025 12:38:16 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id 1F2C32804B6; Fri, 14 Mar 2025 12:38:16 +1300 (NZDT)
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: andrew@lunn.ch,
-	hkallweit1@gmail.com,
-	linux@armlinux.org.uk,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	sander@svanheule.net,
-	markus.stockhausen@gmx.de,
-	daniel@makrotopia.org
-Cc: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH net-next v11] net: mdio: Add RTL9300 MDIO driver
-Date: Fri, 14 Mar 2025 12:38:11 +1300
-Message-ID: <20250313233811.3280255-1-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741909194; c=relaxed/simple;
+	bh=2z6ezAeNvjahNZFYCeyRYH8PF3ZV80Mda54e9RYJ4lc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sgyWZH09/H8Uoy2NMi03o9dz1YHPqg+zoRMgeKRTpIAnbd/yfm3u9HpBTv7A1qU332KbzfOLP8dOSB5wYVNhBKeADhzLFGvKBdJsay/e7URrUbNlVHHp/LFVeqPl6+ksmZdjZ2oJS3JztpPaQ+LUVBJKo3CdPczIVGWVlG6T83g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gehplF6K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A954C4CEDD;
+	Thu, 13 Mar 2025 23:39:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741909192;
+	bh=2z6ezAeNvjahNZFYCeyRYH8PF3ZV80Mda54e9RYJ4lc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gehplF6Kr094W2laWojCAjVVZde9HUHvIjfCgZvzyJngfZhs4l0uAUXg29wXsV+ZN
+	 ig/371z3sEYSRRq342+7qbQfCdakmwa3MXV+SdmWzp5zCPbsrY7SH1B8Gb7e33cgss
+	 Xu/yLTASQ3MDuNQSojFg/rPHSHSQYw7ViNbTBNlM5i18EvPS6TjWCDLF613o7aN4mr
+	 Mvzxnwp8hmbseP8GifmaXZKh9kyo9b08QX/t4ff0/c3BEiJBiuMuLDRD1sSxxMFArp
+	 nJq9gTceI94W+5og0J5plRjU4nPNydm5TB93O9j0nQFhPIbyExS7JmN8nT+g2BAw2Y
+	 BeX+y0Li4e4/Q==
+Date: Thu, 13 Mar 2025 18:39:49 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 01/10] clk: qcom: clk-alpha-pll: Add support for
+ dynamic update for slewing PLLs
+Message-ID: <r6xikx2idlzwc4xl7doap3v5ug3a6qtg65jwqjuekiv7tvbwzn@5nk4c7nl2zws>
+References: <20250313-qcs615-v5-mm-cc-v6-0-ebf4b9a5e916@quicinc.com>
+ <20250313-qcs615-v5-mm-cc-v6-1-ebf4b9a5e916@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Ko7u2nWN c=1 sm=1 tr=0 ts=67d36c68 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=Vs1iUdzkB0EA:10 a=9Gwt-9lJYL7y1dJVOWsA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313-qcs615-v5-mm-cc-v6-1-ebf4b9a5e916@quicinc.com>
 
-Add a driver for the MDIO controller on the RTL9300 family of Ethernet
-switches with integrated SoC. There are 4 physical SMI interfaces on the
-RTL9300 however access is done using the switch ports. The driver takes
-the MDIO bus hierarchy from the DTS and uses this to configure the
-switch ports so they are associated with the correct PHY. This mapping
-is also used when dealing with software requests from phylib.
+On Thu, Mar 13, 2025 at 12:29:38PM +0530, Taniya Das wrote:
+> The alpha PLLs which slew to a new frequency at runtime would require
+> the PLL to calibrate at the mid point of the VCO. Add the new PLL ops
+> which can support the slewing of the PLL to a new frequency.
+> 
+> Reviewed-by: Imran Shaik <quic_imrashai@quicinc.com>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>  drivers/clk/qcom/clk-alpha-pll.c | 170 +++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/qcom/clk-alpha-pll.h |   1 +
+>  2 files changed, 171 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> index cec0afea8e446010f0d4140d4ef63121706dde47..7d784db8b7441e886d94ded1d3e3258dda46674c 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.c
+> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> @@ -2960,3 +2960,173 @@ const struct clk_ops clk_alpha_pll_regera_ops = {
+>  	.set_rate = clk_zonda_pll_set_rate,
+>  };
+>  EXPORT_SYMBOL_GPL(clk_alpha_pll_regera_ops);
+> +
+> +static int clk_alpha_pll_slew_update(struct clk_alpha_pll *pll)
+> +{
+> +	int ret;
+> +	u32 val;
+> +
+> +	regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_UPDATE, PLL_UPDATE);
+> +	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
+> +
+> +	ret = wait_for_pll_update(pll);
+> +	if (ret)
+> +		return ret;
+> +	/*
+> +	 * Hardware programming mandates a wait of at least 570ns before polling the LOCK
+> +	 * detect bit. Have a delay of 1us just to be safe.
+> +	 */
+> +	mb();
+> +	udelay(1);
+> +
+> +	return wait_for_pll_enable_lock(pll);
+> +}
+> +
+> +static int clk_alpha_pll_slew_set_rate(struct clk_hw *hw, unsigned long rate,
+> +					unsigned long parent_rate)
+> +{
+> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> +	unsigned long freq_hz;
+> +	const struct pll_vco *curr_vco, *vco;
+> +	u32 l, alpha_width = pll_alpha_width(pll);
+> +	u64 a;
+> +
+> +	freq_hz =  alpha_pll_round_rate(rate, parent_rate, &l, &a, alpha_width);
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
+Double space here.
 
-Notes:
-    As requested I've split this out to a single patch for net-next.
-   =20
-    Changes in v11:
-    - Add comment about clause 45 support
-    - Note I managed to mess up sending v10 so it didn't go to the netdev
-      mailing list.
-    Changes in v10:
-    - Check for duplicate ports when parsing device tree
-    - Use __set_bit() instead of bitmap_set()
-    - I haven't looked into the request from the openWRT folks about deal=
-ing
-      with the paged clause 22 phys. That will need to be done on top of
-      this.
-    Changes in v9:
-    - More reverse Christmas tree
-    - Use manual mutex_lock/unlock instead of guard
-    Changes in v8:
-    - Fix typo in user visible string
-    Changes in v7:
-    - Update out of date comment
-    - Use for_each_set_bit() instead of open-coded iteration
-    - Use FIELD_PREP() in a few more places
-    - Add #defines for register field masks
-    Changes in v6:
-    - Parse port->phy mapping from devicetree removing the need for the
-      realtek,port property
-    - Remove erroneous code dealing with SMI_POLL_CTRL. When actually
-      implemented this stops the LED unit from updating correctly.
-    Changes in v5:
-    - Reword out of date comment
-    - Use GENMASK/FIELD_PREP where appropriate
-    - Introduce port validity bitmap.
-    - Use more obvious names for PHY_CTRL_READ/WRITE and
-      PHY_CTRL_TYPE_C45/C22
-    Changes in v4:
-    - rename to realtek-rtl9300
-    - s/realtek_/rtl9300_/
-    - add locking to support concurrent access
-    - The dtbinding now represents the MDIO bus hierarchy so we consume t=
-his
-      information and use it to configure the switch port to MDIO bus+add=
-r.
-    Changes in v3:
-    - Fix (another) off-by-one error
-    Changes in v2:
-    - Add clause 22 support
-    - Remove commented out code
-    - Formatting cleanup
-    - Set MAX_PORTS correctly for MDIO interface
-    - Fix off-by-one error in pn check
+> +	if (freq_hz != rate) {
+> +		pr_err("alpha_pll: Call clk_set_rate with rounded rates!\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	curr_vco = alpha_pll_find_vco(pll, clk_hw_get_rate(hw));
+> +	if (!curr_vco) {
+> +		pr_err("alpha pll: not in a valid vco range\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	vco = alpha_pll_find_vco(pll, freq_hz);
+> +	if (!vco) {
+> +		pr_err("alpha pll: not in a valid vco range\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/*
+> +	 * Dynamic pll update will not support switching frequencies across
+> +	 * vco ranges. In those cases fall back to normal alpha set rate.
+> +	 */
+> +	if (curr_vco->val != vco->val)
+> +		return clk_alpha_pll_set_rate(hw, rate, parent_rate);
+> +
+> +	a = a << (ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH);
 
- drivers/net/mdio/Kconfig                |   7 +
- drivers/net/mdio/Makefile               |   1 +
- drivers/net/mdio/mdio-realtek-rtl9300.c | 516 ++++++++++++++++++++++++
- 3 files changed, 524 insertions(+)
- create mode 100644 drivers/net/mdio/mdio-realtek-rtl9300.c
+Above this function is written to deal with both alpha bitwidths, but
+here it's assumed to only be one of the cases.
 
-diff --git a/drivers/net/mdio/Kconfig b/drivers/net/mdio/Kconfig
-index 4a7a303be2f7..058fcdaf6c18 100644
---- a/drivers/net/mdio/Kconfig
-+++ b/drivers/net/mdio/Kconfig
-@@ -185,6 +185,13 @@ config MDIO_IPQ8064
- 	  This driver supports the MDIO interface found in the network
- 	  interface units of the IPQ8064 SoC
-=20
-+config MDIO_REALTEK_RTL9300
-+	tristate "Realtek RTL9300 MDIO interface support"
-+	depends on MACH_REALTEK_RTL || COMPILE_TEST
-+	help
-+	  This driver supports the MDIO interface found in the Realtek
-+	  RTL9300 family of Ethernet switches with integrated SoC.
-+
- config MDIO_REGMAP
- 	tristate
- 	help
-diff --git a/drivers/net/mdio/Makefile b/drivers/net/mdio/Makefile
-index 1015f0db4531..c23778e73890 100644
---- a/drivers/net/mdio/Makefile
-+++ b/drivers/net/mdio/Makefile
-@@ -19,6 +19,7 @@ obj-$(CONFIG_MDIO_MOXART)		+=3D mdio-moxart.o
- obj-$(CONFIG_MDIO_MSCC_MIIM)		+=3D mdio-mscc-miim.o
- obj-$(CONFIG_MDIO_MVUSB)		+=3D mdio-mvusb.o
- obj-$(CONFIG_MDIO_OCTEON)		+=3D mdio-octeon.o
-+obj-$(CONFIG_MDIO_REALTEK_RTL9300)	+=3D mdio-realtek-rtl9300.o
- obj-$(CONFIG_MDIO_REGMAP)		+=3D mdio-regmap.o
- obj-$(CONFIG_MDIO_SUN4I)		+=3D mdio-sun4i.o
- obj-$(CONFIG_MDIO_THUNDER)		+=3D mdio-thunder.o
-diff --git a/drivers/net/mdio/mdio-realtek-rtl9300.c b/drivers/net/mdio/m=
-dio-realtek-rtl9300.c
-new file mode 100644
-index 000000000000..176fce8b944b
---- /dev/null
-+++ b/drivers/net/mdio/mdio-realtek-rtl9300.c
-@@ -0,0 +1,516 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * MDIO controller for RTL9300 switches with integrated SoC.
-+ *
-+ * The MDIO communication is abstracted by the switch. At the software l=
-evel
-+ * communication uses the switch port to address the PHY. We work out th=
-e
-+ * mapping based on the MDIO bus described in device tree and phandles o=
-n the
-+ * ethernet-ports property.
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/bitmap.h>
-+#include <linux/bits.h>
-+#include <linux/find.h>
-+#include <linux/mdio.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/mutex.h>
-+#include <linux/of_mdio.h>
-+#include <linux/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
-+#include <linux/regmap.h>
-+
-+#define SMI_GLB_CTRL			0xca00
-+#define   GLB_CTRL_INTF_SEL(intf)	BIT(16 + (intf))
-+#define SMI_PORT0_15_POLLING_SEL	0xca08
-+#define SMI_ACCESS_PHY_CTRL_0		0xcb70
-+#define SMI_ACCESS_PHY_CTRL_1		0xcb74
-+#define   PHY_CTRL_REG_ADDR		GENMASK(24, 20)
-+#define   PHY_CTRL_PARK_PAGE		GENMASK(19, 15)
-+#define   PHY_CTRL_MAIN_PAGE		GENMASK(14, 3)
-+#define   PHY_CTRL_WRITE		BIT(2)
-+#define   PHY_CTRL_READ			0
-+#define   PHY_CTRL_TYPE_C45		BIT(1)
-+#define   PHY_CTRL_TYPE_C22		0
-+#define   PHY_CTRL_CMD			BIT(0)
-+#define   PHY_CTRL_FAIL			BIT(25)
-+#define SMI_ACCESS_PHY_CTRL_2		0xcb78
-+#define   PHY_CTRL_INDATA		GENMASK(31, 16)
-+#define   PHY_CTRL_DATA			GENMASK(15, 0)
-+#define SMI_ACCESS_PHY_CTRL_3		0xcb7c
-+#define   PHY_CTRL_MMD_DEVAD		GENMASK(20, 16)
-+#define   PHY_CTRL_MMD_REG		GENMASK(15, 0)
-+#define SMI_PORT0_5_ADDR_CTRL		0xcb80
-+
-+#define MAX_PORTS       28
-+#define MAX_SMI_BUSSES  4
-+#define MAX_SMI_ADDR	0x1f
-+
-+struct rtl9300_mdio_priv {
-+	struct regmap *regmap;
-+	struct mutex lock; /* protect HW access */
-+	DECLARE_BITMAP(valid_ports, MAX_PORTS);
-+	u8 smi_bus[MAX_PORTS];
-+	u8 smi_addr[MAX_PORTS];
-+	bool smi_bus_is_c45[MAX_SMI_BUSSES];
-+	struct mii_bus *bus[MAX_SMI_BUSSES];
-+};
-+
-+struct rtl9300_mdio_chan {
-+	struct rtl9300_mdio_priv *priv;
-+	u8 mdio_bus;
-+};
-+
-+static int rtl9300_mdio_phy_to_port(struct mii_bus *bus, int phy_id)
-+{
-+	struct rtl9300_mdio_chan *chan =3D bus->priv;
-+	struct rtl9300_mdio_priv *priv;
-+	int i;
-+
-+	priv =3D chan->priv;
-+
-+	for_each_set_bit(i, priv->valid_ports, MAX_PORTS)
-+		if (priv->smi_bus[i] =3D=3D chan->mdio_bus &&
-+		    priv->smi_addr[i] =3D=3D phy_id)
-+			return i;
-+
-+	return -ENOENT;
-+}
-+
-+static int rtl9300_mdio_wait_ready(struct rtl9300_mdio_priv *priv)
-+{
-+	struct regmap *regmap =3D priv->regmap;
-+	u32 val;
-+
-+	lockdep_assert_held(&priv->lock);
-+
-+	return regmap_read_poll_timeout(regmap, SMI_ACCESS_PHY_CTRL_1,
-+					val, !(val & PHY_CTRL_CMD), 10, 1000);
-+}
-+
-+static int rtl9300_mdio_read_c22(struct mii_bus *bus, int phy_id, int re=
-gnum)
-+{
-+	struct rtl9300_mdio_chan *chan =3D bus->priv;
-+	struct rtl9300_mdio_priv *priv;
-+	struct regmap *regmap;
-+	int port;
-+	u32 val;
-+	int err;
-+
-+	priv =3D chan->priv;
-+	regmap =3D priv->regmap;
-+
-+	port =3D rtl9300_mdio_phy_to_port(bus, phy_id);
-+	if (port < 0)
-+		return port;
-+
-+	mutex_lock(&priv->lock);
-+	err =3D rtl9300_mdio_wait_ready(priv);
-+	if (err)
-+		goto out_err;
-+
-+	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_2, FIELD_PREP(PHY_CTRL=
-_INDATA, port));
-+	if (err)
-+		goto out_err;
-+
-+	val =3D FIELD_PREP(PHY_CTRL_REG_ADDR, regnum) |
-+	      FIELD_PREP(PHY_CTRL_PARK_PAGE, 0x1f) |
-+	      FIELD_PREP(PHY_CTRL_MAIN_PAGE, 0xfff) |
-+	      PHY_CTRL_READ | PHY_CTRL_TYPE_C22 | PHY_CTRL_CMD;
-+	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_1, val);
-+	if (err)
-+		goto out_err;
-+
-+	err =3D rtl9300_mdio_wait_ready(priv);
-+	if (err)
-+		goto out_err;
-+
-+	err =3D regmap_read(regmap, SMI_ACCESS_PHY_CTRL_2, &val);
-+	if (err)
-+		goto out_err;
-+
-+	mutex_unlock(&priv->lock);
-+	return FIELD_GET(PHY_CTRL_DATA, val);
-+
-+out_err:
-+	mutex_unlock(&priv->lock);
-+	return err;
-+}
-+
-+static int rtl9300_mdio_write_c22(struct mii_bus *bus, int phy_id, int r=
-egnum, u16 value)
-+{
-+	struct rtl9300_mdio_chan *chan =3D bus->priv;
-+	struct rtl9300_mdio_priv *priv;
-+	struct regmap *regmap;
-+	int port;
-+	u32 val;
-+	int err;
-+
-+	priv =3D chan->priv;
-+	regmap =3D priv->regmap;
-+
-+	port =3D rtl9300_mdio_phy_to_port(bus, phy_id);
-+	if (port < 0)
-+		return port;
-+
-+	mutex_lock(&priv->lock);
-+	err =3D rtl9300_mdio_wait_ready(priv);
-+	if (err)
-+		goto out_err;
-+
-+	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_0, BIT(port));
-+	if (err)
-+		goto out_err;
-+
-+	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_2, FIELD_PREP(PHY_CTRL=
-_INDATA, value));
-+	if (err)
-+		goto out_err;
-+
-+	val =3D FIELD_PREP(PHY_CTRL_REG_ADDR, regnum) |
-+	      FIELD_PREP(PHY_CTRL_PARK_PAGE, 0x1f) |
-+	      FIELD_PREP(PHY_CTRL_MAIN_PAGE, 0xfff) |
-+	      PHY_CTRL_WRITE | PHY_CTRL_TYPE_C22 | PHY_CTRL_CMD;
-+	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_1, val);
-+	if (err)
-+		goto out_err;
-+
-+	err =3D regmap_read_poll_timeout(regmap, SMI_ACCESS_PHY_CTRL_1,
-+				       val, !(val & PHY_CTRL_CMD), 10, 100);
-+	if (err)
-+		goto out_err;
-+
-+	if (val & PHY_CTRL_FAIL) {
-+		err =3D -ENXIO;
-+		goto out_err;
-+	}
-+
-+	mutex_unlock(&priv->lock);
-+	return 0;
-+
-+out_err:
-+	mutex_unlock(&priv->lock);
-+	return err;
-+}
-+
-+static int rtl9300_mdio_read_c45(struct mii_bus *bus, int phy_id, int de=
-v_addr, int regnum)
-+{
-+	struct rtl9300_mdio_chan *chan =3D bus->priv;
-+	struct rtl9300_mdio_priv *priv;
-+	struct regmap *regmap;
-+	int port;
-+	u32 val;
-+	int err;
-+
-+	priv =3D chan->priv;
-+	regmap =3D priv->regmap;
-+
-+	port =3D rtl9300_mdio_phy_to_port(bus, phy_id);
-+	if (port < 0)
-+		return port;
-+
-+	mutex_lock(&priv->lock);
-+	err =3D rtl9300_mdio_wait_ready(priv);
-+	if (err)
-+		goto out_err;
-+
-+	val =3D FIELD_PREP(PHY_CTRL_INDATA, port);
-+	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_2, val);
-+	if (err)
-+		goto out_err;
-+
-+	val =3D FIELD_PREP(PHY_CTRL_MMD_DEVAD, dev_addr) |
-+	      FIELD_PREP(PHY_CTRL_MMD_REG, regnum);
-+	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_3, val);
-+	if (err)
-+		goto out_err;
-+
-+	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_1,
-+			   PHY_CTRL_READ | PHY_CTRL_TYPE_C45 | PHY_CTRL_CMD);
-+	if (err)
-+		goto out_err;
-+
-+	err =3D rtl9300_mdio_wait_ready(priv);
-+	if (err)
-+		goto out_err;
-+
-+	err =3D regmap_read(regmap, SMI_ACCESS_PHY_CTRL_2, &val);
-+	if (err)
-+		goto out_err;
-+
-+	mutex_unlock(&priv->lock);
-+	return FIELD_GET(PHY_CTRL_DATA, val);
-+
-+out_err:
-+	mutex_unlock(&priv->lock);
-+	return err;
-+}
-+
-+static int rtl9300_mdio_write_c45(struct mii_bus *bus, int phy_id, int d=
-ev_addr,
-+				  int regnum, u16 value)
-+{
-+	struct rtl9300_mdio_chan *chan =3D bus->priv;
-+	struct rtl9300_mdio_priv *priv;
-+	struct regmap *regmap;
-+	int port;
-+	u32 val;
-+	int err;
-+
-+	priv =3D chan->priv;
-+	regmap =3D priv->regmap;
-+
-+	port =3D rtl9300_mdio_phy_to_port(bus, phy_id);
-+	if (port < 0)
-+		return port;
-+
-+	mutex_lock(&priv->lock);
-+	err =3D rtl9300_mdio_wait_ready(priv);
-+	if (err)
-+		goto out_err;
-+
-+	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_0, BIT(port));
-+	if (err)
-+		goto out_err;
-+
-+	val =3D FIELD_PREP(PHY_CTRL_INDATA, value);
-+	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_2, val);
-+	if (err)
-+		goto out_err;
-+
-+	val =3D FIELD_PREP(PHY_CTRL_MMD_DEVAD, dev_addr) |
-+	      FIELD_PREP(PHY_CTRL_MMD_REG, regnum);
-+	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_3, val);
-+	if (err)
-+		goto out_err;
-+
-+	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_1,
-+			   PHY_CTRL_TYPE_C45 | PHY_CTRL_WRITE | PHY_CTRL_CMD);
-+	if (err)
-+		goto out_err;
-+
-+	err =3D regmap_read_poll_timeout(regmap, SMI_ACCESS_PHY_CTRL_1,
-+				       val, !(val & PHY_CTRL_CMD), 10, 100);
-+	if (err)
-+		goto out_err;
-+
-+	if (val & PHY_CTRL_FAIL) {
-+		err =3D -ENXIO;
-+		goto out_err;
-+	}
-+
-+	mutex_unlock(&priv->lock);
-+	return 0;
-+
-+out_err:
-+	mutex_unlock(&priv->lock);
-+	return err;
-+}
-+
-+static int rtl9300_mdiobus_init(struct rtl9300_mdio_priv *priv)
-+{
-+	u32 glb_ctrl_mask =3D 0, glb_ctrl_val =3D 0;
-+	struct regmap *regmap =3D priv->regmap;
-+	u32 port_addr[5] =3D { 0 };
-+	u32 poll_sel[2] =3D { 0 };
-+	int i, err;
-+
-+	/* Associate the port with the SMI interface and PHY */
-+	for_each_set_bit(i, priv->valid_ports, MAX_PORTS) {
-+		int pos;
-+
-+		pos =3D (i % 6) * 5;
-+		port_addr[i / 6] |=3D (priv->smi_addr[i] & 0x1f) << pos;
-+
-+		pos =3D (i % 16) * 2;
-+		poll_sel[i / 16] |=3D (priv->smi_bus[i] & 0x3) << pos;
-+	}
-+
-+	/* Put the interfaces into C45 mode if required */
-+	glb_ctrl_mask =3D GENMASK(19, 16);
-+	for (i =3D 0; i < MAX_SMI_BUSSES; i++)
-+		if (priv->smi_bus_is_c45[i])
-+			glb_ctrl_val |=3D GLB_CTRL_INTF_SEL(i);
-+
-+	err =3D regmap_bulk_write(regmap, SMI_PORT0_5_ADDR_CTRL,
-+				port_addr, 5);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_bulk_write(regmap, SMI_PORT0_15_POLLING_SEL,
-+				poll_sel, 2);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_update_bits(regmap, SMI_GLB_CTRL,
-+				 glb_ctrl_mask, glb_ctrl_val);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
-+static int rtl9300_mdiobus_probe_one(struct device *dev, struct rtl9300_=
-mdio_priv *priv,
-+				     struct fwnode_handle *node)
-+{
-+	struct rtl9300_mdio_chan *chan;
-+	struct fwnode_handle *child;
-+	struct mii_bus *bus;
-+	u32 mdio_bus;
-+	int err;
-+
-+	err =3D fwnode_property_read_u32(node, "reg", &mdio_bus);
-+	if (err)
-+		return err;
-+
-+	/* The MDIO interfaces are either in GPHY (i.e. clause 22) or 10GPHY
-+	 * mode (i.e. clause 45). We select 10GPHY mode if there is a PHY that
-+	 * declares compatible =3D "ethernet-phy-ieee802.3-c45". This does mean
-+	 * we can't support both c45 and c22 on the same MDIO bus.
-+	 */
-+	fwnode_for_each_child_node(node, child)
-+		if (fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45"))
-+			priv->smi_bus_is_c45[mdio_bus] =3D true;
-+
-+	bus =3D devm_mdiobus_alloc_size(dev, sizeof(*chan));
-+	if (!bus)
-+		return -ENOMEM;
-+
-+	bus->name =3D "Realtek Switch MDIO Bus";
-+	bus->read =3D rtl9300_mdio_read_c22;
-+	bus->write =3D rtl9300_mdio_write_c22;
-+	bus->read_c45 =3D rtl9300_mdio_read_c45;
-+	bus->write_c45 =3D  rtl9300_mdio_write_c45;
-+	bus->parent =3D dev;
-+	chan =3D bus->priv;
-+	chan->mdio_bus =3D mdio_bus;
-+	chan->priv =3D priv;
-+
-+	snprintf(bus->id, MII_BUS_ID_SIZE, "%s-%d", dev_name(dev), mdio_bus);
-+
-+	err =3D devm_of_mdiobus_register(dev, bus, to_of_node(node));
-+	if (err)
-+		return dev_err_probe(dev, err, "cannot register MDIO bus\n");
-+
-+	return 0;
-+}
-+
-+/* The mdio-controller is part of a switch block so we parse the sibling
-+ * ethernet-ports node and build a mapping of the switch port to MDIO bu=
-s/addr
-+ * based on the phy-handle.
-+ */
-+static int rtl9300_mdiobus_map_ports(struct device *dev)
-+{
-+	struct rtl9300_mdio_priv *priv =3D dev_get_drvdata(dev);
-+	struct device *parent =3D dev->parent;
-+	struct fwnode_handle *port;
-+	int err;
-+
-+	struct fwnode_handle *ports __free(fwnode_handle) =3D
-+		device_get_named_child_node(parent, "ethernet-ports");
-+	if (!ports)
-+		return dev_err_probe(dev, -EINVAL, "%pfwP missing ethernet-ports\n",
-+				     dev_fwnode(parent));
-+
-+	fwnode_for_each_child_node(ports, port) {
-+		struct device_node *mdio_dn;
-+		u32 addr;
-+		u32 bus;
-+		u32 pn;
-+
-+		struct device_node *phy_dn __free(device_node) =3D
-+			of_parse_phandle(to_of_node(port), "phy-handle", 0);
-+		/* skip ports without phys */
-+		if (!phy_dn)
-+			continue;
-+
-+		mdio_dn =3D phy_dn->parent;
-+		/* only map ports that are connected to this mdio-controller */
-+		if (mdio_dn->parent !=3D dev->of_node)
-+			continue;
-+
-+		err =3D fwnode_property_read_u32(port, "reg", &pn);
-+		if (err)
-+			return err;
-+
-+		if (pn >=3D MAX_PORTS)
-+			return dev_err_probe(dev, -EINVAL, "illegal port number %d\n", pn);
-+
-+		if (test_bit(pn, priv->valid_ports))
-+			return dev_err_probe(dev, -EINVAL, "duplicated port number %d\n", pn)=
-;
-+
-+		err =3D of_property_read_u32(mdio_dn, "reg", &bus);
-+		if (err)
-+			return err;
-+
-+		if (bus >=3D MAX_SMI_BUSSES)
-+			return dev_err_probe(dev, -EINVAL, "illegal smi bus number %d\n", bus=
-);
-+
-+		err =3D of_property_read_u32(phy_dn, "reg", &addr);
-+		if (err)
-+			return err;
-+
-+		__set_bit(pn, priv->valid_ports);
-+		priv->smi_bus[pn] =3D bus;
-+		priv->smi_addr[pn] =3D addr;
-+	}
-+
-+	return 0;
-+}
-+
-+static int rtl9300_mdiobus_probe(struct platform_device *pdev)
-+{
-+	struct device *dev =3D &pdev->dev;
-+	struct rtl9300_mdio_priv *priv;
-+	struct fwnode_handle *child;
-+	int err;
-+
-+	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	err =3D devm_mutex_init(dev, &priv->lock);
-+	if (err)
-+		return err;
-+
-+	priv->regmap =3D syscon_node_to_regmap(dev->parent->of_node);
-+	if (IS_ERR(priv->regmap))
-+		return PTR_ERR(priv->regmap);
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	err =3D rtl9300_mdiobus_map_ports(dev);
-+	if (err)
-+		return err;
-+
-+	device_for_each_child_node(dev, child) {
-+		err =3D rtl9300_mdiobus_probe_one(dev, priv, child);
-+		if (err)
-+			return err;
-+	}
-+
-+	err =3D rtl9300_mdiobus_init(priv);
-+	if (err)
-+		return dev_err_probe(dev, err, "failed to initialise MDIO bus controll=
-er\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rtl9300_mdio_ids[] =3D {
-+	{ .compatible =3D "realtek,rtl9301-mdio" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, rtl9300_mdio_ids);
-+
-+static struct platform_driver rtl9300_mdio_driver =3D {
-+	.probe =3D rtl9300_mdiobus_probe,
-+	.driver =3D {
-+		.name =3D "mdio-rtl9300",
-+		.of_match_table =3D rtl9300_mdio_ids,
-+	},
-+};
-+
-+module_platform_driver(rtl9300_mdio_driver);
-+
-+MODULE_DESCRIPTION("RTL9300 MDIO driver");
-+MODULE_LICENSE("GPL");
---=20
-2.48.1
+It would be nice to get this cleaned up somehow, because we now have
+this shift 6 times in slightly different forms.
 
+> +
+> +	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
+> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll), a >> 32);
+
+In a number of places in the driver alpha_width is compared to 32 bits
+to see if this should be written or not. Perhaps that's not applicable
+here, but again, if so then why is it dynamic above?
+
+
+Also, how about upper_32_bits() and lower_32_bits() to make it clear
+what's going on here?
+
+> +
+> +	/* Ensure that the write above goes through before proceeding. */
+
+That's not what mb() does.
+
+Regards,
+Bjorn
+
+> +	mb();
+> +
+> +	if (clk_hw_is_enabled(hw))
+> +		return clk_alpha_pll_slew_update(pll);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Slewing plls should be bought up at frequency which is in the middle of the
+> + * desired VCO range. So after bringing up the pll at calibration freq, set it
+> + * back to desired frequency(that was set by previous clk_set_rate).
+> + */
+> +static int clk_alpha_pll_calibrate(struct clk_hw *hw)
+> +{
+> +	unsigned long calibration_freq, freq_hz;
+> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> +	struct clk_hw *parent;
+> +	const struct pll_vco *vco;
+> +	u32 l, alpha_width = pll_alpha_width(pll);
+> +	int rc;
+> +	u64 a;
+> +
+> +	parent = clk_hw_get_parent(hw);
+> +	if (!parent) {
+> +		pr_err("alpha pll: no valid parent found\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	vco = alpha_pll_find_vco(pll, clk_hw_get_rate(hw));
+> +	if (!vco) {
+> +		pr_err("alpha pll: not in a valid vco range\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/*
+> +	 * As during slewing plls vco_sel won't be allowed to change, vco table
+> +	 * should have only one entry table, i.e. index = 0, find the
+> +	 * calibration frequency.
+> +	 */
+> +	calibration_freq = (pll->vco_table[0].min_freq + pll->vco_table[0].max_freq) / 2;
+> +
+> +	freq_hz = alpha_pll_round_rate(calibration_freq, clk_hw_get_rate(parent),
+> +					&l, &a, alpha_width);
+> +	if (freq_hz != calibration_freq) {
+> +		pr_err("alpha_pll: call clk_set_rate with rounded rates!\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Setup PLL for calibration frequency */
+> +	a <<= (ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH);
+> +
+> +	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
+> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll), a >> 32);
+> +
+> +	regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll), PLL_VCO_MASK << PLL_VCO_SHIFT,
+> +				vco->val << PLL_VCO_SHIFT);
+> +
+> +	/* Bringup the pll at calibration frequency */
+> +	rc = clk_alpha_pll_enable(hw);
+> +	if (rc) {
+> +		pr_err("alpha pll calibration failed\n");
+> +		return rc;
+> +	}
+> +
+> +	/*
+> +	 * PLL is already running at calibration frequency.
+> +	 * So slew pll to the previously set frequency.
+> +	 */
+> +	freq_hz = alpha_pll_round_rate(clk_hw_get_rate(hw),
+> +			clk_hw_get_rate(parent), &l, &a, alpha_width);
+> +
+> +	pr_debug("pll %s: setting back to required rate %lu, freq_hz %ld\n",
+> +		clk_hw_get_name(hw), clk_hw_get_rate(hw), freq_hz);
+> +
+> +	/* Setup the PLL for the new frequency */
+> +	a <<= (ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH);
+> +
+> +	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
+> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll), a >> 32);
+> +
+> +	regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll), PLL_ALPHA_EN, PLL_ALPHA_EN);
+> +
+> +	return clk_alpha_pll_slew_update(pll);
+> +}
+> +
+> +static int clk_alpha_pll_slew_enable(struct clk_hw *hw)
+> +{
+> +	int rc;
+> +
+> +	rc = clk_alpha_pll_calibrate(hw);
+> +	if (rc)
+> +		return rc;
+> +
+> +	return clk_alpha_pll_enable(hw);
+> +}
+> +
+> +const struct clk_ops clk_alpha_pll_slew_ops = {
+> +	.enable = clk_alpha_pll_slew_enable,
+> +	.disable = clk_alpha_pll_disable,
+> +	.recalc_rate = clk_alpha_pll_recalc_rate,
+> +	.round_rate = clk_alpha_pll_round_rate,
+> +	.set_rate = clk_alpha_pll_slew_set_rate,
+> +};
+> +EXPORT_SYMBOL(clk_alpha_pll_slew_ops);
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+> index 79aca8525262211ae5295245427d4540abf1e09a..1d19001605eb10fd8ae8041c56d951e928cbbe9f 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.h
+> +++ b/drivers/clk/qcom/clk-alpha-pll.h
+> @@ -204,6 +204,7 @@ extern const struct clk_ops clk_alpha_pll_rivian_evo_ops;
+>  #define clk_alpha_pll_postdiv_rivian_evo_ops clk_alpha_pll_postdiv_fabia_ops
+>  
+>  extern const struct clk_ops clk_alpha_pll_regera_ops;
+> +extern const struct clk_ops clk_alpha_pll_slew_ops;
+>  
+>  void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>  			     const struct alpha_pll_config *config);
+> 
+> -- 
+> 2.48.1
+> 
 
