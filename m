@@ -1,909 +1,235 @@
-Return-Path: <linux-kernel+bounces-560406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189FAA603B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:53:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBBAFA603B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:55:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD03E7A9E33
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:52:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 179653BC1C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CAC61F5830;
-	Thu, 13 Mar 2025 21:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9221F5828;
+	Thu, 13 Mar 2025 21:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="Ux6Ibz0a"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OU/TCx1S"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2062.outbound.protection.outlook.com [40.107.92.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF521EA7C9;
-	Thu, 13 Mar 2025 21:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741902786; cv=none; b=ldHoYFPewkRQnaCTKUJB4vgA8Q/ntEXAG+YOTVOMn9en4DT8aIdrdcKFuyabj6eQL9UA2ZsdHVGGOuBmy/aTGXWZ9YUoehaEI12Va4MrNOKnzS8qi+ORPsxu8DE+fiorbijnlnnBiV4xqzSn3LN28C8hz90vkj/v+Sna6UsxOlg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741902786; c=relaxed/simple;
-	bh=Ytsz+eb/V2e3IFloeeFyzf/rS0Opend8bNj7Uv9CZZA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n7KHJjupsuxDyfR+hWQKwSz7UQbJ7OP7SWZmLb+cHATh0hM+JiuaXh3bNZsKy4/f4NtX1yGHy5+8w85kIU2RUvcLKmGBCra1GmkG/gJx6IQps0ljIY/iqMGYqG1dPOpjexvU5JQgOaLaKmH2/ntN045ZTpMjqSJMgDMzhSTeJ2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=Ux6Ibz0a; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (p5b164989.dip0.t-ipconnect.de [91.22.73.137])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 344E12FC0189;
-	Thu, 13 Mar 2025 22:52:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1741902773;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SejSD+YTwnCmoBSo6r27lIcgsx3S7MG2E9N2kdc8cto=;
-	b=Ux6Ibz0aveKI+bfpnymg5PAZA0NrcNPgA+5YzNg3BldjL8ktM+Zb2EyJXjDXHpfcT6EcWs
-	eF70IYPIar0fBlD2M62y9XZtkpm8Q2aPT7U1Ltgo9UzrmRGY21f9zWuMbzEhhwRVD8w25e
-	Nif/jB084TINlQdraVZfhY8U2HirfD8=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <75556900-5fe3-4083-b81b-240994e4f8e0@tuxedocomputers.com>
-Date: Thu, 13 Mar 2025 22:52:52 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7757E1F30C3
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 21:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741902900; cv=fail; b=UOjd1ftfgAEwup50eoeEJhQ9k8w4QXZwF6y9YZyfJHXZf2wr/mQEFFu/OlY8mDl6NNi+ybYe//ZxGHUGw8elxkUwHpXheS2dr79oJdBIWBkRUw6h5quveV0pU5iaW/gGSh8VccvlVICpivVEaKSVPak9YpTxhZucWDyi3IfRghI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741902900; c=relaxed/simple;
+	bh=VrE/8SiMhLtsVHDgMHBdscveJir6Phc6bg/dL/GX1p8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=iHOb+GlhB1QJkQKgJzDv8FuJl806O7aoYdyYlF0nZvqRwEivLjpVqn0COoiltxC2a62y4BLahFBG4LdkGCCZYHe9FgawD1Xb5OYGNIqQItSbqWALT5hTSOySBOoEMQBXS3Ctw4JCzVJEfUSfUp4WTaCtlQ8WROEs5Vpt7sE+2Y4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OU/TCx1S; arc=fail smtp.client-ip=40.107.92.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rFSWm6Yr8CgoOK0I1l1jpLY0hbMDjTo78qq5OL296+lpwezJ294I+8Z3hsFTyZxPcOxplNEo4EHYyO+kR2pHf4Y5O/fMLe4CLFvGhw0Fwfkm0nBM4Ak4YnFZ2YvukuMYdhjA1Zdlvggzhp7LAxd4/qHOWGPDx53eYVUoOqvfZZFae2O3/Q7ZTcEbF/vBoNw/Mjaf3xu+Ux7yhoAdEBv818iEw2JFlO1sRjr+ey0QjSE4QmBfjf7efzoBsJqhRvqM1MuYIZQYmVQdDyQBIsLSuB4ixNEnmdCkkcT4axzeKd9/isZVLHo7e+pO/vEHaR4mT5B0HjP01o0PO8t7Ox7F0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/oLMirMPdWs7zIbvpEPE5OqfaT582h0RWalj5hoYfIo=;
+ b=qgsjeWBS1u2LIbtD/HsxssEaOjkQlXu4T35cQb2UmwJ9Xdd1kpL9/UhKqF3G/gFucrQAkbOeGn/jw0ThnSLz9hoTzolCYDT9zqSx5rmsZ9h2WUK6Rm1Ry3eSEJ8T5qB1N42f4ILt652RCcQxXMNIfLSslUaBwoGd05pwvNYU/w4V5yD9uAPMQzCx8CWHAU1liKHy+2SJ5JIN6bMjO1HhKrLfMvbGjTKL1Gc18JLVluRC7MFhfbnq0zk7LWPV+lzUwZ3G71YOh3ZrIfpb2397iREU/QPxz2a9795xXrw0JUaAN0DXWJFFSEkXm4aZiEBwD0AU6l57iGr8JcxZ7CWKkQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/oLMirMPdWs7zIbvpEPE5OqfaT582h0RWalj5hoYfIo=;
+ b=OU/TCx1SQ1MifU6awfLDN7zTqBtQEVlGR9pI81um+/469BJ7qlFnSBkp0A/BpjNG/Dki8lM08Iq+z2GWEFG/u8dMAwEJ+WEBqO4odGZ2fplBUBwWzw37N7YpXizGOLaZAyZiVZq6oKXsjBEon4iOukmMe52T1T7nrTUPyP7xNsPkLBQiofZJ501pTwkF9LPW5aEJ4Odlvxs1+WNMR4E64hagAnzGSIsJYDiS8YU9OnwepcuqlPj6oph2YkGeEAJJYOTOVek9Kw6Qz9xZFxWpk54UdjS/BpGPtsAigWwKEPac/urHmHUAuYeHzorPxqpWlX80jznSXEc0om5gLhmvSg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SA1PR12MB7272.namprd12.prod.outlook.com (2603:10b6:806:2b6::7)
+ by DS7PR12MB8229.namprd12.prod.outlook.com (2603:10b6:8:ea::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.28; Thu, 13 Mar
+ 2025 21:54:54 +0000
+Received: from SA1PR12MB7272.namprd12.prod.outlook.com
+ ([fe80::a970:b87e:819a:1868]) by SA1PR12MB7272.namprd12.prod.outlook.com
+ ([fe80::a970:b87e:819a:1868%7]) with mapi id 15.20.8511.026; Thu, 13 Mar 2025
+ 21:54:52 +0000
+Message-ID: <b63b1de8-7eec-4235-b61e-e654e78543ba@nvidia.com>
+Date: Fri, 14 Mar 2025 08:54:47 +1100
+User-Agent: Mozilla Thunderbird
+Subject: Re: commit 7ffb791423c7 breaks steam game
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Andy Lutomirski <luto@kernel.org>,
+ linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org
+References: <20250310112206.4168-1-spasswolf@web.de>
+ <951f9d13-72e4-41c3-9ace-8639e2a9485d@nvidia.com>
+ <ce940e2a-632d-41be-9f13-e5b11d49b0db@nvidia.com>
+ <09131c563332c892284ec7fb4ce706996131db8c.camel@web.de>
+ <9a5df5627d3d72b2a97f501dfb7d944cc1e9920f.camel@web.de>
+ <fdea59fe-f570-489f-bf88-1ffd47119cac@nvidia.com>
+ <414f4deb8c7670a159854006b0c410ce05a6049e.camel@web.de>
+ <12d950ee-4152-4ad6-b93e-7c5b75804b1a@nvidia.com>
+ <705e95cec3dc5181ca2aa73722e6b84f63f3e91d.camel@web.de>
+ <20b5823e-247a-456a-bb55-d50f212a9f5a@nvidia.com>
+ <a34a1ae0b1d226b1bac7d73daa24da8e5899cb3e.camel@web.de>
+ <c7bb0bd1-529d-466d-9cce-abbac4b480ab@nvidia.com>
+ <146277bb0ecbb392d490683c424b8ae0dfa82838.camel@web.de>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <146277bb0ecbb392d490683c424b8ae0dfa82838.camel@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY3PR03CA0022.namprd03.prod.outlook.com
+ (2603:10b6:a03:39a::27) To SA1PR12MB7272.namprd12.prod.outlook.com
+ (2603:10b6:806:2b6::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] platform/x86/tuxedo: Implement TUXEDO TUXI ACPI TFAN
- via hwmon
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, LKML <linux-kernel@vger.kernel.org>,
- platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org
-References: <20250306132639.642369-1-wse@tuxedocomputers.com>
- <70633701-31d2-c2ab-f4f4-043dd186f485@linux.intel.com>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <70633701-31d2-c2ab-f4f4-043dd186f485@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR12MB7272:EE_|DS7PR12MB8229:EE_
+X-MS-Office365-Filtering-Correlation-Id: c81febf3-024c-45b9-28d4-08dd6279aed3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RmNmMTRGMEJCYXVmcDU5amNvWW5rU2FITzZzM1VQNSt1Rm1ySTQ1bzdWTGlD?=
+ =?utf-8?B?cnRGVjloZlplZHpDeXBLNzN6T2YyRGZ4YmpkMzUvR0xlNmo1ZXd3cXhQZVRp?=
+ =?utf-8?B?T3dwdG5ZdXVIOEF4QTk0NU9tWWcrdmgyVjNiaktFWkl5YWN4YjYwL2lmUjFr?=
+ =?utf-8?B?ZERGSUNNalN1ZlNjZjRWT3JzUkQ0azVlUUx4dVIremtYOVYrRGFiNEx1Q2ZO?=
+ =?utf-8?B?dUdRaUhoZlNDY1gzMW1wb0tMa2t6cEtiK1psUzdrMTZiMnVEOXBnQTZXYUJx?=
+ =?utf-8?B?TnNzbDVnemJBVjh0Tk5OVnZKNUNLd3UyeVprK1NXUnIrOEV5SEJMamtNNGNO?=
+ =?utf-8?B?TkFHdXN5ZXR6TTJEaTNNTlFjZjhmdzBQUEFrbkh1bTlrVWJRL3dWRTdRS1Rw?=
+ =?utf-8?B?Tlp2dDcwbUJTS1BvQVc2WWNEQTZOMDkrS3dmMTRoNHdra2piSlk4QW9NNFBS?=
+ =?utf-8?B?MnBlcnUrdWdkZ29QVnVlcTgxcTFhVkU0U3l0eFI2L3JxbmJxOFdLeEZMdW9v?=
+ =?utf-8?B?cGpRczNMR29qTDVoRFpyMGU2WnJta0tuajlPcjJXMHFtV0ZSWDZpVDc4N0s4?=
+ =?utf-8?B?N0Q3VkI2ai9TbnYwVi9aNEs1RGpkMmFGdUo0Y3hnTFUzY1ZPNCsyMFlzcXRk?=
+ =?utf-8?B?RFVtQ1JkekdGazl2MXNFQllpckkzb3pBVzRnWU5UTEpDQlVmbVFScUZuVkFZ?=
+ =?utf-8?B?bFh6MXRUemtsQktNbmxOVGVQTVU5dDJHV2JsVUs3alNMTjhQRXlLK0w5Tk9o?=
+ =?utf-8?B?MTdtRjU3YmhMYmMwb1pRdnVOVUhoNml0aHU3U2lvVUI1M0VmMzNtMWQrckJS?=
+ =?utf-8?B?d1hvaU9NNm4wU0FLcmY3M25zaHk0UGJnWGxRcW9MNnhrNWNMUVBKSHlJbkIr?=
+ =?utf-8?B?ek9GLzNGUFVGbnVYY0hOUU9jU0tuK0QyR1pPZXJBSGFubWVLQllFbnNOL0JS?=
+ =?utf-8?B?WC9FMjdVa283bk9jR0JwZ0l0SGQvMStJRVRKdzk0WGlFa08ybHcrSERJenk1?=
+ =?utf-8?B?eTVUdVZNbkZLWmxGYUhsQzNhR3hMY2hFYTNzblhGRDc2RkJraFEzWjhVeG03?=
+ =?utf-8?B?UEoweUF4SWRKSnJPQ1Z3MnVjK2VsdnNyaTBmV2h5aDJyN1RWQmUrTFJBRVda?=
+ =?utf-8?B?YUV0YkNueHgzQmw5ZVJudzJhOEpSUWdhUlJ4L0FIV2w3azQ0dkJ3U1hmVGpE?=
+ =?utf-8?B?N3ZOVDdxSDhaZ25hK3Z5Q21zKzRIMG1ubkJaYWZkMWdTcEtnYmdiaUFxanp6?=
+ =?utf-8?B?TGF2M2N2d1hOOWcxUmdGYWpBR2Q1Q0x4ajhDdzFxekZlM2NQanlTalBaZllK?=
+ =?utf-8?B?cFVtWHlGTFdabjVROStoaTcwa045NHB4VmloMWNPakZsdlRMVUZWa0YzMGx5?=
+ =?utf-8?B?cWFmL3R4ZCtWL0o5V3RReXJMa1IwLzQ5d1N3eWpqYml2VGpWTXBYOEREeG5r?=
+ =?utf-8?B?U3hmbElpRFd5STZtTjdQcFEvN0JNR0lGQ0JENEg0dWp2SlN1a05mb0NTL2Q1?=
+ =?utf-8?B?V1hXbk5acm1ZZWpXR3owdDV2MXFhTEJEVENLVSt0c3JPcXFkQkVlNEc0TzZE?=
+ =?utf-8?B?UnBhRSs5VWwwRnkxQUNGVXJsdHczWVhnRHk3N1d3T3R6eEFWM1JIaTZsOUNO?=
+ =?utf-8?B?UDFNeUZ0V2ZFRzJCNVVKTTBqOW55RGFrT0E5OVY5VE1JZHU5R3hXcnF0UHRT?=
+ =?utf-8?B?UkRRRnFVWUZBNkI2WGFwSnJ1ZWl2S1RNNlE5SHNlR3BSZm52TzROdnhCSjlD?=
+ =?utf-8?B?aUppZHpScTNhVitpeEZCVEkzeTluVVFuSWx4d0l5cTFHU1ByaGM0cmVTaFVW?=
+ =?utf-8?B?NTlTYWtSc1g2OGpGZjVHcDJGYXJiNU9MNmVSN3RyR09BUTVOZWUwVUxJVWs4?=
+ =?utf-8?Q?0icZtpn4p06Y9?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB7272.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MFhMdjg1Nmd4TkQ5M1lEdFU2Um9ZQktNbm5sbU1TOGNXTElvT2dKZEpjRjIw?=
+ =?utf-8?B?OGVJU1hPUDJ4TitnaEhCYXJkcjFJVjFFTFdQYjI3R2dBdHBmWkFVRi9YRHFF?=
+ =?utf-8?B?ZWZUa0lwRG9BYUYyQmlOT3Fhdzk1WHhhbFMvWVhCNDhoTElGRVdXb0tRdC84?=
+ =?utf-8?B?SzdwQVFjb3dvRzFjWVA5MkgwOUpQZzR1MWxsd1lyWlllNFhnN0d2VElyd2FM?=
+ =?utf-8?B?SFpQZVlBbTNEdXJlZ3VUV1hSWlJpYVhhM3NPVGpqeWQvOEkzMlBuMHB4dEpF?=
+ =?utf-8?B?QWxpT3poQnlTZ01QenRINzZFL3lySFh1QU9lWjZOeFg5aWJ5Mnl1UkRTd2py?=
+ =?utf-8?B?dFpwWmxRYmRiNmtUUEhycEFjZWVDKzhmK0UwWFJSU1N4SThmbXZIWjNNYVJD?=
+ =?utf-8?B?RzVYbTdLSjNnb3lLTGZHcDdLTWYzdXhRSTNZaFBvMkVCNGI1KzQwZzNkUGh1?=
+ =?utf-8?B?aHl3ajVQN1BORTZUUm1vdW53YytoSUxNUi9iUjk1bS9zMjFXbk9SaVVYekNK?=
+ =?utf-8?B?VEVFb3lRYlpyS0d4NnlhN2tNMkJkeEV2V29VR0Jvc1hBaytEbmFId2VkdC9G?=
+ =?utf-8?B?OEFEWG51VkdYbkM2bzBpY3VsdkFlRnVEeHNyQ0MvQ1ZnOVV6YXprWHI3aUxO?=
+ =?utf-8?B?cjlpMkV2ZGpFZEJYb0dhdm1xWDJSNkwvT2RYVFF4NGF3OE96bFFDYU5Lc2NU?=
+ =?utf-8?B?N0phUlQrUmdhd2w0MUF0djM4VDhtRGFzM1M1THM3a3JwRXVVT2pEOExMTTNy?=
+ =?utf-8?B?OENtNVJ0Q3pRS2tPcnd5SkxwZExNWVhyaGVmNjNzUWovdTZzRWR4dTZiUlli?=
+ =?utf-8?B?cHBSOWNFelFqUW1ZUHJvZkhCY2o5V3d1bDVLRFJ3RDhGM3YvYlM5TDBtNW1Z?=
+ =?utf-8?B?Zml2NnptMU1YOVpLd1FEekFYR2VFbWF4dFVxdWNWWFVyTVZxbGRmcWVSMm9z?=
+ =?utf-8?B?UmtNQWsyZFJOY3hkRVlBQUFNdlhYVTNDMjBUSWszVlVhcHlNeEViS2JhT3RK?=
+ =?utf-8?B?LzJHQXVRUjBBTTNBb0xLaVR3MEVzaFRodW1nTVFQcDhjUTdrcjBUYVI2Vm40?=
+ =?utf-8?B?NUFKY3FFdnh2QjFjQjlEZWNGb2lGeWcrK0pBNWt0Qm9XbFBnaHJiYWdlUDBn?=
+ =?utf-8?B?ckJmbkNqVHVSVC9HWG9ma1pMZDNhRnZKb25IMUtZeTgxekl3MFJ6eDBmTnR1?=
+ =?utf-8?B?YXp5TW8wNWRsVWcvYnloczJVRzE5aFlLckg0QVRpc1kzWklQODN1VklTSGhQ?=
+ =?utf-8?B?aTNDRTVCQzRscFozQXNwdmwxZk1EMVVLbHdaNEx3Si8va2Zkdnc4N1Qxc0hh?=
+ =?utf-8?B?cmNYQmVCS0lVWkIwNnVCbExTVzI3SjdrUjYxdmtuM3ZYbngwTS93MlRDQ1RG?=
+ =?utf-8?B?RTRRQnFwRXBZc1BYWStmdUVWZTRBMnZVZzBqYkdVMCtMRllyU2ZiY3JKeFBw?=
+ =?utf-8?B?SjUzeXRwMFo3SFBTcktMRzFkK0JGS1JySE9VazBiRmtialdDdXFFdGtwZ28y?=
+ =?utf-8?B?YWpYYnZSRXkvdlpXblVuRFQ1QWlHZkhQSVBqUkdaaTlPeVhVL2ZZRzl5V2Vs?=
+ =?utf-8?B?NVVCdG5ldWVKMDFvUzQ1V0NCaFJnQjluQkpCRHlORS9EQXJZNURVRzhRRmwv?=
+ =?utf-8?B?ek1XNFFtVDJGRktSRERsOE1vbndXUHhpbytubzA5UUcxb0x0dEJ3dUZHT2I5?=
+ =?utf-8?B?V0xwYnA3cDJNOEN5dFJ6ZUFGSERzVWhRUGpidXkwK1NTdzd6by85R21YdlRX?=
+ =?utf-8?B?aEFWSEpxWmlBWmd3UXd3NEdvUCtkUEFwRnhKSmRiUkRHVmpVOXJjVlNXNkZM?=
+ =?utf-8?B?c0VFNGJaZ1hZM3dQSVZxaUpZeUR1NWFmMDNUbFBMOVZobGs1VHNPdkNJdldt?=
+ =?utf-8?B?OFdKOUtnSkZta0pwOGltbzcwZUNqc2NzY2pDcGRVcFVDYlF6a08vclRSUkRG?=
+ =?utf-8?B?ajNUTitxWENwR1ByT3o4WjBxVExjV3ZQdUF1NzhLcjBnWjh1SjRqOFAzR2lq?=
+ =?utf-8?B?TXZuUHVVdTFsam5EcDVHcjdFN0pWK1IxWDBseExzNWVWNGFYREJUYkVjaE5p?=
+ =?utf-8?B?L2NhT0x3d3ViMzB1aXp5alJWTDI3dGZDQ2h5d1hOME5YbWt0MG02ZU5sdHhC?=
+ =?utf-8?Q?U0Rr3BEb2R2gRRvv8RiOX9VLk?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c81febf3-024c-45b9-28d4-08dd6279aed3
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB7272.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 21:54:52.1451
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: c9lVey/gUy0QCAW6HVIWUWCHK9I6x7eqj0T1AiZ34gWq2+XL0StkeMXchcIZlaanuwogWQPQTBUpct8jXPhTcQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8229
 
-Hi Ilpo,
-
-Am 13.03.25 um 14:47 schrieb Ilpo Järvinen:
-> On Thu, 6 Mar 2025, Werner Sembach wrote:
->
->> The TUXEDO Sirius 16 Gen1 & Gen2 have the custom TUXEDO Interface (TUXI)
->> ACPI interface which currently consists of the TFAN device. This has ACPI
->> functions to control the built in fans and monitor fan speeds and CPU and
->> GPU temprature.
-> temperature
-thx for spotting
->
->> This driver implements this TFAN device via the hwmon subsystem with an
->> added temprature check that ensure a minimum fanspeed at certain
-> temperature
-thx for spotting
->
->> temperatures. This allows userspace controlled, but hardware safe, custom
->> fan curves.
+On 3/14/25 05:12, Bert Karwatzki wrote:
+> Am Donnerstag, dem 13.03.2025 um 22:47 +1100 schrieb Balbir Singh:
 >>
->> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
->> ---
->>   MAINTAINERS                                  |   6 +
->>   drivers/platform/x86/Kconfig                 |   2 +
->>   drivers/platform/x86/Makefile                |   3 +
->>   drivers/platform/x86/tuxedo/Kbuild           |   6 +
->>   drivers/platform/x86/tuxedo/Kconfig          |   6 +
->>   drivers/platform/x86/tuxedo/nbxx/Kbuild      |   7 +
->>   drivers/platform/x86/tuxedo/nbxx/Kconfig     |  13 +
->>   drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.c | 578 +++++++++++++++++++
->>   8 files changed, 621 insertions(+)
->>   create mode 100644 drivers/platform/x86/tuxedo/Kbuild
->>   create mode 100644 drivers/platform/x86/tuxedo/Kconfig
->>   create mode 100644 drivers/platform/x86/tuxedo/nbxx/Kbuild
->>   create mode 100644 drivers/platform/x86/tuxedo/nbxx/Kconfig
->>   create mode 100644 drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.c
 >>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 8e0736dc2ee0e..7139c32e96dc7 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -24190,6 +24190,12 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git turbostat
->>   F:	tools/power/x86/turbostat/
->>   F:	tools/testing/selftests/turbostat/
->>   
->> +TUXEDO DRIVERS
->> +M:	Werner Sembach <wse@tuxedocomputers.com>
->> +L:	platform-driver-x86@vger.kernel.org
->> +S:	Supported
->> +F:	drivers/platform/x86/tuxedo/
->> +
->>   TW5864 VIDEO4LINUX DRIVER
->>   M:	Bluecherry Maintainers <maintainers@bluecherrydvr.com>
->>   M:	Andrey Utkin <andrey.utkin@corp.bluecherry.net>
->> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
->> index 0258dd879d64b..58b258cde4fdb 100644
->> --- a/drivers/platform/x86/Kconfig
->> +++ b/drivers/platform/x86/Kconfig
->> @@ -1186,6 +1186,8 @@ config SEL3350_PLATFORM
->>   	  To compile this driver as a module, choose M here: the module
->>   	  will be called sel3350-platform.
->>   
->> +source "drivers/platform/x86/tuxedo/Kconfig"
->> +
->>   endif # X86_PLATFORM_DEVICES
->>   
->>   config P2SB
->> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
->> index e1b1429470674..1562dcd7ad9a5 100644
->> --- a/drivers/platform/x86/Makefile
->> +++ b/drivers/platform/x86/Makefile
->> @@ -153,3 +153,6 @@ obj-$(CONFIG_WINMATE_FM07_KEYS)		+= winmate-fm07-keys.o
->>   
->>   # SEL
->>   obj-$(CONFIG_SEL3350_PLATFORM)		+= sel3350-platform.o
->> +
->> +# TUXEDO
->> +obj-y					+= tuxedo/
->> diff --git a/drivers/platform/x86/tuxedo/Kbuild b/drivers/platform/x86/tuxedo/Kbuild
->> new file mode 100644
->> index 0000000000000..0de6c7871db95
->> --- /dev/null
->> +++ b/drivers/platform/x86/tuxedo/Kbuild
->> @@ -0,0 +1,6 @@
->> +# SPDX-License-Identifier: GPL-2.0-or-later
->> +#
->> +# TUXEDO X86 Platform Specific Drivers
->> +#
->> +
->> +obj-y	+= nbxx/
->> diff --git a/drivers/platform/x86/tuxedo/Kconfig b/drivers/platform/x86/tuxedo/Kconfig
->> new file mode 100644
->> index 0000000000000..34aa2e89f00ba
->> --- /dev/null
->> +++ b/drivers/platform/x86/tuxedo/Kconfig
->> @@ -0,0 +1,6 @@
->> +# SPDX-License-Identifier: GPL-2.0-or-later
->> +#
->> +# TUXEDO X86 Platform Specific Drivers
->> +#
->> +
->> +source "drivers/platform/x86/tuxedo/nbxx/Kconfig"
->> diff --git a/drivers/platform/x86/tuxedo/nbxx/Kbuild b/drivers/platform/x86/tuxedo/nbxx/Kbuild
->> new file mode 100644
->> index 0000000000000..10ddef3564d84
->> --- /dev/null
->> +++ b/drivers/platform/x86/tuxedo/nbxx/Kbuild
->> @@ -0,0 +1,7 @@
->> +# SPDX-License-Identifier: GPL-2.0-or-later
->> +#
->> +# TUXEDO X86 Platform Specific Drivers
->> +#
->> +
->> +tuxedo_nbxx_acpi_tuxi-y			:= acpi_tuxi.o
->> +obj-$(CONFIG_TUXEDO_NBXX_ACPI_TUXI)	+= tuxedo_nbxx_acpi_tuxi.o
->> diff --git a/drivers/platform/x86/tuxedo/nbxx/Kconfig b/drivers/platform/x86/tuxedo/nbxx/Kconfig
->> new file mode 100644
->> index 0000000000000..827c65c410fb2
->> --- /dev/null
->> +++ b/drivers/platform/x86/tuxedo/nbxx/Kconfig
->> @@ -0,0 +1,13 @@
->> +# SPDX-License-Identifier: GPL-2.0-or-later
->> +#
->> +# TUXEDO X86 Platform Specific Drivers
->> +#
->> +
->> +config TUXEDO_NBXX_ACPI_TUXI
->> +	tristate "TUXEDO NBxx ACPI TUXI Platform Driver"
->> +	help
->> +	  This driver implements the ACPI TUXI device found on some TUXEDO
->> +	  Notebooks. Currently this consists only of the TFAN subdevice which is
->> +	  implemented via hwmon.
->> +
->> +	  When compiled as a module it will be called tuxedo_nbxx_acpi_tuxi
->> diff --git a/drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.c b/drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.c
->> new file mode 100644
->> index 0000000000000..f42311f119956
->> --- /dev/null
->> +++ b/drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.c
->> @@ -0,0 +1,578 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +/*
->> + * Copyright (C) 2024-2025 Werner Sembach wse@tuxedocomputers.com
->> + */
->> +
->> +#include <linux/acpi.h>
->> +#include <linux/device.h>
->> +#include <linux/hwmon.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/slab.h>
->> +#include <linux/units.h>
->> +#include <linux/workqueue.h>
->> +
->> +#define TUXI_SAFEGUARD_PERIOD 1000      // 1s
->> +#define TUXI_PWM_FAN_ON_MIN_SPEED 0x40  // ~25%
->> +#define TUXI_TEMP_LEVEL_HYSTERESIS 1500 // 1.5°C
->> +#define TUXI_FW_TEMP_OFFSET 2730        // Kelvin to Celsius
->> +#define TUXI_MAX_FAN_COUNT 16           /* If this is increased, new lines must
->> +					 * be added to hwmcinfo below.
->> +					 */
-> Please use static_assert() to actually enforce what the comment says.
-
-I actually struggle to come up with how to do this for the array length because 
-of the macro and the pointer
-
-`static_assert(TUXI_MAX_FAN_COUNT <= ARRAY_SIZE(hwmcinfo[0]->config));` doesn't work
-
->
->> +
->> +static const struct acpi_device_id acpi_device_ids[] = {
->> +	{"TUXI0000", 0},
->> +	{"", 0}
->> +};
->> +MODULE_DEVICE_TABLE(acpi, acpi_device_ids);
->> +
->> +struct tuxi_driver_data_t {
->> +	acpi_handle tfan_handle;
->> +	struct device *hwmdev;
->> +};
->> +
->> +struct tuxi_hwmon_driver_data_t {
->> +	struct delayed_work work;
->> +	struct device *hwmdev;
->> +	u8 fan_count;
->> +	const char *fan_types[TUXI_MAX_FAN_COUNT];
->> +	u8 temp_level[TUXI_MAX_FAN_COUNT];
->> +	u8 curr_speed[TUXI_MAX_FAN_COUNT];
->> +	u8 want_speed[TUXI_MAX_FAN_COUNT];
->> +	u8 pwm_enabled;
->> +};
->> +
->> +struct tuxi_temp_high_config_t {
->> +	long temp;
->> +	u8 min_speed;
->> +};
->> +
->> +/* Speed values in this table must be >= TUXI_PWM_FAN_ON_MIN_SPEED to avoid
->> + * undefined behaviour.
->> + */
->> +static const struct tuxi_temp_high_config_t temp_levels[] = {
->> +	{  80000, 0x4d }, // ~30%
->> +	{  90000, 0x66 }, // ~40%
->> +	{ 100000, 0xff }, // 100%
->> +	{ }
->> +};
->> +
->> +/*
->> + * Set fan speed target
->> + *
->> + * Set a specific fan speed (needs manual mode)
->> + *
->> + * Arg0: Fan index
->> + * Arg1: Fan speed as a fraction of maximum speed (0-255)
->> + */
->> +#define TUXI_TFAN_METHOD_SET_FAN_SPEED		"SSPD"
->> +
->> +/*
->> + * Get fan speed target
->> + *
->> + * Arg0: Fan index
->> + * Returns: Current fan speed target a fraction of maximum speed (0-255)
->> + */
->> +#define TUXI_TFAN_METHOD_GET_FAN_SPEED		"GSPD"
->> +
->> +/*
->> + * Get fans count
->> + *
->> + * Returns: Number of individually controllable fans
->> + */
->> +#define TUXI_TFAN_METHOD_GET_FAN_COUNT		"GCNT"
->> +
->> +/*
->> + * Set fans mode
->> + *
->> + * Arg0: 0 = auto, 1 = manual
->> + */
->> +#define TUXI_TFAN_METHOD_SET_FAN_MODE		"SMOD"
->> +
->> +/*
->> + * Get fans mode
->> + *
->> + * Returns: 0 = auto, 1 = manual
->> + */
->> +#define TUXI_TFAN_METHOD_GET_FAN_MODE		"GMOD"
->> +
->> +/*
->> + * Get fan type/what the fan is pointed at
->> + *
->> + * Arg0: Fan index
->> + * Returns: 0 = general, 1 = CPU, 2 = GPU
->> + */
->> +#define TUXI_TFAN_METHOD_GET_FAN_TYPE		"GTYP"
->> +
->> +static const char * const tuxi_fan_type_labels[] = {
->> +	"general",
->> +	"cpu",
->> +	"gpu"
->> +};
->> +
->> +/*
->> + * Get fan temperature/temperature of what the fan is pointed at
->> + *
->> + * Arg0: Fan index
->> + * Returns: Temperature sensor value in 10ths of degrees kelvin
->> + */
->> +#define TUXI_TFAN_METHOD_GET_FAN_TEMPERATURE	"GTMP"
->> +
->> +/*
->> + * Get actual fan speed in RPM
->> + *
->> + * Arg0: Fan index
->> + * Returns: Speed sensor value in revolutions per minute
->> + */
->> +#define TUXI_TFAN_METHOD_GET_FAN_RPM		"GRPM"
->> +
->> +static int tuxi_tfan_method(struct acpi_device *device, acpi_string method,
->> +			    unsigned long long *params, u32 pcount,
->> +			    unsigned long long *retval)
->> +{
->> +	struct tuxi_driver_data_t *driver_data = dev_get_drvdata(&device->dev);
->> +	acpi_handle handle = driver_data->tfan_handle;
->> +	union acpi_object *obj __free(kfree) = NULL;
-> Please add linux/cleanup.h include.
-ack
->
->> +	struct acpi_object_list arguments;
->> +	unsigned long long data;
->> +	acpi_status status;
->> +	unsigned int i;
->> +
->> +	if (pcount > 0) {
->> +		obj = kcalloc(pcount, sizeof(*arguments.pointer), GFP_KERNEL);
->> +
->> +		arguments.count = pcount;
->> +		arguments.pointer = obj;
->> +		for (i = 0; i < pcount; ++i) {
->> +			arguments.pointer[i].type = ACPI_TYPE_INTEGER;
->> +			arguments.pointer[i].integer.value = params[i];
->> +		}
->> +	}
->> +	status = acpi_evaluate_integer(handle, method,
->> +				       pcount ? &arguments : NULL, &data);
->> +	if (ACPI_FAILURE(status))
->> +		return_ACPI_STATUS(status);
->> +
->> +	if (retval)
->> +		*retval = data;
->> +
->> +	return 0;
->> +}
->> +
->> +static umode_t hwm_is_visible(const void *data, enum hwmon_sensor_types type,
->> +			      u32 __always_unused attr, int channel)
->> +{
->> +	struct tuxi_hwmon_driver_data_t const *driver_data = data;
->> +
->> +	if (channel >= driver_data->fan_count)
->> +		return 0;
->> +
->> +	switch (type) {
->> +	case hwmon_fan:
->> +		return 0444;
->> +	case hwmon_pwm:
->> +		return 0644;
->> +	case hwmon_temp:
->> +		return 0444;
->> +	default:
->> +		break;
->> +	}
->> +
->> +	return -EOPNOTSUPP;
->> +}
->> +
->> +static int hwm_read(struct device *dev, enum hwmon_sensor_types type, u32 attr,
->> +		    int channel, long *val)
->> +{
->> +	struct tuxi_hwmon_driver_data_t *driver_data = dev_get_drvdata(dev);
->> +	struct acpi_device *pdev = to_acpi_device(dev->parent);
->> +	unsigned long long params[2], retval;
->> +	int ret;
->> +
->> +	switch (type) {
->> +	case hwmon_fan:
->> +		params[0] = channel;
->> +		ret = tuxi_tfan_method(pdev,
->> +				       TUXI_TFAN_METHOD_GET_FAN_RPM,
-> These fit to same line.
-ack
->
->> +				       params, 1, &retval);
->> +		*val = retval > S32_MAX ? S32_MAX : retval;
->> +		return ret;
->> +	case hwmon_pwm:
->> +		switch (attr) {
->> +		case hwmon_pwm_input:
->> +			if (driver_data->pwm_enabled) {
->> +				*val = driver_data->curr_speed[channel];
->> +				return 0;
->> +			}
->> +			params[0] = channel;
->> +			ret = tuxi_tfan_method(pdev,
->> +					       TUXI_TFAN_METHOD_GET_FAN_SPEED,
->> +					       params, 1, &retval);
->> +			*val = retval > S32_MAX ? S32_MAX : retval;
->> +			return ret;
->> +		case hwmon_pwm_enable:
->> +			*val = driver_data->pwm_enabled;
->> +			return ret;
->> +		}
->> +		break;
->> +	case hwmon_temp:
->> +		params[0] = channel;
->> +		ret = tuxi_tfan_method(pdev,
->> +				       TUXI_TFAN_METHOD_GET_FAN_TEMPERATURE,
->> +				       params, 1, &retval);
->> +		*val = retval > S32_MAX / 100 ?
-> Add linux/limits.h include.
-
-ack
-
-It is included in kernel.h, so I read from this that kernel.h should not be used 
-but the parts of it directly?
-
->
->> +			S32_MAX : (retval - TUXI_FW_TEMP_OFFSET) * 100;
-> Is the math wrong, as you do retval - TUXI_FW_TEMP_OFFSET before
-> multiplying?
-No, retval is in 10th of °K (but the last number is always 0) so is 
-TUXI_FW_TEMP_OFFSET which is there to convert it to 10th of °C, the * 100 is 
-then to bring it in line with hwmon wanting to output milli degrees
-> Shouldn't it be like this:
->
-> 		retval -= TUXI_FW_TEMP_OFFSET;
-> 		*val = min(retval * 100, (unsigned long long)S32_MAX);
-As retval is unsigned this would not work with (theoretical) negative °C.
->
-> + add include for min().
-
-And for max() used elsewere in the code -> ack
-
->
->> +		return ret;
->> +	default:
->> +		break;
->> +	}
->> +
->> +	return -EOPNOTSUPP;
->> +}
->> +
->> +static int hwm_read_string(struct device *dev,
->> +			   enum hwmon_sensor_types __always_unused type,
->> +			   u32 __always_unused attr, int channel,
->> +			   const char **str)
->> +{
->> +	struct tuxi_hwmon_driver_data_t *driver_data = dev_get_drvdata(dev);
->> +
->> +	*str = driver_data->fan_types[channel];
->> +
->> +	return 0;
->> +}
->> +
->> +static int write_speed(struct device *dev, int channel, u8 val, bool force)
->> +{
->> +	struct tuxi_hwmon_driver_data_t *driver_data = dev_get_drvdata(dev);
->> +	struct acpi_device *pdev = to_acpi_device(dev->parent);
->> +	unsigned long long params[2];
->> +	u8 temp_level;
->> +	int ret;
->> +
->> +	params[0] = channel;
->> +
->> +	/* The heatpipe across the DRMs is shared between both fans and the DRMs
-> In multi-line comments:
->
-> 	/*
-> 	 * Text starts here...
-Ack
->
-> What are DRMs? I guess it's neither Digital Rights Managements nor Direct
-> Rendering Managers :-).
-Sorry brainfail, wanted to write VRMs. Good that I failed twice xD.
->
->> +	 * are the most likely to go up in smoke. So it's better to apply the
->> +	 * minimum fan speed to all fans if either CPU or GPU is working hard.
->> +	 */
->> +	temp_level = max_array(driver_data->temp_level, driver_data->fan_count);
->> +	if (temp_level)
->> +		params[1] = max_t(u8, val,
->> +				  temp_levels[temp_level - 1].min_speed);
-> Both are already u8 so why you need max_t(), max() should be sufficient
-> when types are already right.
->
-> Include is missing.
->
->> +	else if (val < TUXI_PWM_FAN_ON_MIN_SPEED / 2)
->> +		params[1] = 0;
->> +	else if (val < TUXI_PWM_FAN_ON_MIN_SPEED)
->> +		params[1] = TUXI_PWM_FAN_ON_MIN_SPEED;
->> +	else
->> +		params[1] = val;
->> +
->> +	if (force || params[1] != driver_data->curr_speed[channel])
->> +		ret = tuxi_tfan_method(pdev, TUXI_TFAN_METHOD_SET_FAN_SPEED,
->> +				       params, 2, NULL);
->> +	if (ret)
->> +		return ret;
-> Please indent this to the correct level.
-ack
->
->> +
->> +	driver_data->curr_speed[channel] = params[1];
-> The use of params[1] obfuscates meaning, please use local variable with a
-> proper name and only assign it into params[1] for the tuxi_tfan_method call.
-ack
->
->> +
->> +	return 0;
->> +}
->> +
->> +static int hwm_write(struct device *dev,
->> +		     enum hwmon_sensor_types __always_unused type, u32 attr,
->> +		     int channel, long val)
->> +{
->> +	struct tuxi_hwmon_driver_data_t *driver_data = dev_get_drvdata(dev);
->> +	struct acpi_device *pdev = to_acpi_device(dev->parent);
->> +	unsigned long long params[2];
->> +	unsigned int i;
->> +	int ret;
->> +
->> +	switch (attr) {
->> +	case hwmon_pwm_input:
->> +		if (val > U8_MAX || val < 0)
->> +			return -EINVAL;
->> +
->> +		if (driver_data->pwm_enabled) {
->> +			driver_data->want_speed[channel] = val;
->> +			return write_speed(dev, channel, val, false);
->> +		}
->> +
->> +		return 0;
->> +	case hwmon_pwm_enable:
->> +		params[0] = val ? 1 : 0;
-> Can those two literals be named with defines?
-ack
->
->> +		ret = tuxi_tfan_method(pdev, TUXI_TFAN_METHOD_SET_FAN_MODE,
->> +				       params, 1, NULL);
->> +		if (ret)
->> +			return ret;
->> +
->> +		driver_data->pwm_enabled = val;
->> +
->> +		/* Activating PWM sets speed to 0. Alternative design decision
->> +		 * could be to keep the current value. This would require proper
->> +		 * setting of driver_data->curr_speed for example.
->> +		 */
->> +		if (val)
-> Consider:
-> 		if (!val)
-> 			return 0;
->
-> So you can deindent the loop by one level.
-Imho it makes the logic harder to follow and considering the only short code 
-lines following after, I don't really see the benefit.
->
->> +			for (i = 0; i < driver_data->fan_count; ++i) {
->> +				ret = write_speed(dev, i, 0, true);
->> +				if (ret)
->> +					return ret;
->> +			}
->> +
->> +		return 0;
->> +	}
->> +
->> +	return -EOPNOTSUPP;
->> +}
->> +
->> +static const struct hwmon_ops hwmops = {
->> +	.is_visible = hwm_is_visible,
->> +	.read = hwm_read,
->> +	.read_string = hwm_read_string,
->> +	.write = hwm_write,
->> +};
->> +
->> +static const struct hwmon_channel_info * const hwmcinfo[] = {
->> +	HWMON_CHANNEL_INFO(fan,
->> +			   HWMON_F_INPUT | HWMON_F_LABEL,
->> +			   HWMON_F_INPUT | HWMON_F_LABEL,
->> +			   HWMON_F_INPUT | HWMON_F_LABEL,
->> +			   HWMON_F_INPUT | HWMON_F_LABEL,
->> +			   HWMON_F_INPUT | HWMON_F_LABEL,
->> +			   HWMON_F_INPUT | HWMON_F_LABEL,
->> +			   HWMON_F_INPUT | HWMON_F_LABEL,
->> +			   HWMON_F_INPUT | HWMON_F_LABEL,
->> +			   HWMON_F_INPUT | HWMON_F_LABEL,
->> +			   HWMON_F_INPUT | HWMON_F_LABEL,
->> +			   HWMON_F_INPUT | HWMON_F_LABEL,
->> +			   HWMON_F_INPUT | HWMON_F_LABEL,
->> +			   HWMON_F_INPUT | HWMON_F_LABEL,
->> +			   HWMON_F_INPUT | HWMON_F_LABEL,
->> +			   HWMON_F_INPUT | HWMON_F_LABEL,
->> +			   HWMON_F_INPUT | HWMON_F_LABEL),
->> +	HWMON_CHANNEL_INFO(pwm,
->> +			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
->> +			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
->> +			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
->> +			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
->> +			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
->> +			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
->> +			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
->> +			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
->> +			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
->> +			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
->> +			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
->> +			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
->> +			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
->> +			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
->> +			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
->> +			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE),
->> +	HWMON_CHANNEL_INFO(temp,
->> +			   HWMON_T_INPUT | HWMON_T_LABEL,
->> +			   HWMON_T_INPUT | HWMON_T_LABEL,
->> +			   HWMON_T_INPUT | HWMON_T_LABEL,
->> +			   HWMON_T_INPUT | HWMON_T_LABEL,
->> +			   HWMON_T_INPUT | HWMON_T_LABEL,
->> +			   HWMON_T_INPUT | HWMON_T_LABEL,
->> +			   HWMON_T_INPUT | HWMON_T_LABEL,
->> +			   HWMON_T_INPUT | HWMON_T_LABEL,
->> +			   HWMON_T_INPUT | HWMON_T_LABEL,
->> +			   HWMON_T_INPUT | HWMON_T_LABEL,
->> +			   HWMON_T_INPUT | HWMON_T_LABEL,
->> +			   HWMON_T_INPUT | HWMON_T_LABEL,
->> +			   HWMON_T_INPUT | HWMON_T_LABEL,
->> +			   HWMON_T_INPUT | HWMON_T_LABEL,
->> +			   HWMON_T_INPUT | HWMON_T_LABEL,
->> +			   HWMON_T_INPUT | HWMON_T_LABEL),
->> +	NULL
->> +};
->> +
->> +static const struct hwmon_chip_info hwminfo = {
->> +	.ops = &hwmops,
->> +	.info = hwmcinfo
->> +};
->> +
->> +static u8 tuxi_get_temp_level(struct tuxi_hwmon_driver_data_t *driver_data,
->> +			      u8 fan_id, long temp)
->> +{
->> +	long temp_low, temp_high;
->> +	unsigned int i;
->> +	int ret;
->> +
->> +	ret = driver_data->temp_level[fan_id];
->> +
->> +	for (i = 0; temp_levels[i].temp; ++i) {
->> +		temp_low = i == 0 ? S32_MIN : temp_levels[i - 1].temp;
->> +		temp_high = temp_levels[i].temp;
->> +		if (ret > i)
->> +			temp_high -= TUXI_TEMP_LEVEL_HYSTERESIS;
->> +
->> +		if (temp >= temp_low && temp < temp_high)
->> +			ret = i;
-> Why you cannot return i; immediately here?
-
-leftover from when the loop wasn't it's own function
-
-ack
-
->
->> +	}
->> +	if (temp >= temp_high)
->> +		ret = i;
->> +
->> +	return ret;
->> +}
->> +
->> +static void tuxi_periodic_hw_safeguard(struct work_struct *work)
->> +{
->> +	struct tuxi_hwmon_driver_data_t *driver_data = container_of(work,
->> +								    struct tuxi_hwmon_driver_data_t,
->> +								    work.work);
->> +	struct device *dev = driver_data->hwmdev;
->> +	struct acpi_device *pdev = to_acpi_device(dev->parent);
->> +	unsigned long long params[2], retval;
->> +	unsigned int i;
->> +	long temp;
->> +	int ret;
->> +
->> +	for (i = 0; i < driver_data->fan_count; ++i) {
->> +		params[0] = i;
->> +		ret = tuxi_tfan_method(pdev,
->> +				       TUXI_TFAN_METHOD_GET_FAN_TEMPERATURE,
->> +				       params, 1, &retval);
->> +		/* If reading the temprature fails, default to a high value to
-> temperature
-thx for spotting
->
->> +		 * be on the safe side in the worst case.
->> +		 */
->> +		if (ret)
->> +			retval = 2720 + 1200;
-> TUXI_FW_TEMP_OFFSET + 1200 ?
->
-> Why it doesn't match to that define??
-Typo and from before the define existed, fixed.
->
->> +
->> +		temp = retval > S32_MAX / 100 ?
->> +			S32_MAX : (retval - TUXI_FW_TEMP_OFFSET) * 100;
-> Same math issue comment as above.
->
-> Why is the read+conversion code duplicated into two places?
-because here it is with special error handling and didn't thought about an own 
-function for a defacto 2 liner
->
->> +
->> +		driver_data->temp_level[i] = tuxi_get_temp_level(driver_data, i,
->> +								 temp);
->> +	}
->> +
->> +	// Reapply want_speeds to respect eventual new temp_levels
->> +	for (i = 0; i < driver_data->fan_count; ++i)
->> +		write_speed(dev, i, driver_data->want_speed[i], false);
->> +
->> +	schedule_delayed_work(&driver_data->work, TUXI_SAFEGUARD_PERIOD);
->> +}
->> +
->> +static int tuxi_hwmon_add_devices(struct acpi_device *pdev, struct device **hwmdev)
->> +{
->> +	struct tuxi_hwmon_driver_data_t *driver_data;
->> +	unsigned long long params[2], retval;
->> +	unsigned int i;
->> +	int ret;
->> +
->> +	/* The first version of TUXI TFAN didn't have the Get Fan Temperature
->> +	 * method which is integral to this driver. So probe for existence and
->> +	 * abort otherwise.
->> +	 *
->> +	 * The Get Fan Speed method is also missing in that version, but was
->> +	 * added in the same version so it doesn't have to be probe separately.
->> +	 */
->> +	params[0] = 0;
->> +	ret = tuxi_tfan_method(pdev, TUXI_TFAN_METHOD_GET_FAN_TEMPERATURE,
->> +			       params, 1, &retval);
->> +	if (ret)
->> +		return ret;
->> +
->> +	driver_data = devm_kzalloc(&pdev->dev, sizeof(*driver_data), GFP_KERNEL);
->> +	if (!driver_data)
->> +		return -ENOMEM;
->> +
->> +	/* Loading this module sets the fan mode to auto. Alternative design
->> +	 * decision could be to keep the current value. This would require
->> +	 * proper initialization of driver_data->curr_speed for example.
->> +	 */
->> +	params[0] = 0;
-> Is this 0 ..._MODE_AUTO? Please use a named define if that's the case.
-ack
->
->> +	ret = tuxi_tfan_method(pdev, TUXI_TFAN_METHOD_SET_FAN_MODE, params, 1,
->> +			       NULL);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = tuxi_tfan_method(pdev, TUXI_TFAN_METHOD_GET_FAN_COUNT, NULL, 0,
->> +			       &retval);
->> +	if (ret)
->> +		return ret;
->> +	if (retval > TUXI_MAX_FAN_COUNT)
->> +		return -EINVAL;
->> +	driver_data->fan_count = retval;
->> +
->> +	for (i = 0; i < driver_data->fan_count; ++i) {
->> +		params[0] = i;
->> +		ret = tuxi_tfan_method(pdev, TUXI_TFAN_METHOD_GET_FAN_TYPE,
->> +				       params, 1, &retval);
->> +		if (ret)
->> +			return ret;
->> +		else if (retval >= ARRAY_SIZE(tuxi_fan_type_labels))
-> No need for else as there's return.
-ack
->
->> +			return -EOPNOTSUPP;
->> +		driver_data->fan_types[i] = tuxi_fan_type_labels[retval];
->> +	}
->> +
->> +	*hwmdev = devm_hwmon_device_register_with_info(&pdev->dev,
->> +						       "tuxedo_nbxx_acpi_tuxi",
->> +						       driver_data, &hwminfo,
->> +						       NULL);
->> +	ret = PTR_ERR_OR_ZERO(*hwmdev);
->> +	if (ret)
-> This obfuscates what you're doing here as you do not actually use 0 at
-> all. Please use this instead:
->
-> 	if (IS_ERR(*hwmdev))
-> 		return PTR_ERR(*hwmdev);
-ack
->
->> +		return ret;
->> +
->> +	driver_data->hwmdev = *hwmdev;
->> +
->> +	INIT_DELAYED_WORK(&driver_data->work, tuxi_periodic_hw_safeguard);
->> +	schedule_delayed_work(&driver_data->work, TUXI_SAFEGUARD_PERIOD);
->> +
->> +	return 0;
->> +}
->> +
->> +static void tuxi_hwmon_remove_devices(struct device *hwmdev)
->> +{
->> +	struct tuxi_hwmon_driver_data_t *driver_data = dev_get_drvdata(hwmdev);
->> +	struct acpi_device *pdev = to_acpi_device(hwmdev->parent);
->> +	unsigned long long params[2];
->> +
->> +	cancel_delayed_work_sync(&driver_data->work);
->> +
->> +	params[0] = 0;
-> Use a named define?
-ack
->
->> +	tuxi_tfan_method(pdev, TUXI_TFAN_METHOD_SET_FAN_MODE, params, 1, NULL);
->> +}
->> +
->> +static int tuxi_add(struct acpi_device *device)
->> +{
->> +	struct tuxi_driver_data_t *driver_data;
->> +	acpi_status status;
->> +
->> +	driver_data = devm_kzalloc(&device->dev, sizeof(*driver_data),
->> +				   GFP_KERNEL);
->> +	if (!driver_data)
->> +		return -ENOMEM;
->> +
->> +	// Find subdevices
->> +	status = acpi_get_handle(device->handle, "TFAN",
->> +				 &driver_data->tfan_handle);
->> +	if (ACPI_FAILURE(status))
->> +		return_ACPI_STATUS(status);
->> +
->> +	dev_set_drvdata(&device->dev, driver_data);
->> +
->> +	return tuxi_hwmon_add_devices(device, &driver_data->hwmdev);
->> +}
->> +
->> +static void tuxi_remove(struct acpi_device *device)
->> +{
->> +	struct tuxi_driver_data_t *driver_data = dev_get_drvdata(&device->dev);
->> +
->> +	tuxi_hwmon_remove_devices(driver_data->hwmdev);
->> +}
->> +
->> +static struct acpi_driver acpi_driver = {
->> +	.name = "tuxedo_nbxx_acpi_tuxi",
->> +	.ids = acpi_device_ids,
->> +	.ops = {
->> +		.add = tuxi_add,
->> +		.remove = tuxi_remove,
->> +	},
->> +};
->> +
->> +module_acpi_driver(acpi_driver);
->> +
->> +MODULE_DESCRIPTION("TUXEDO TUXI");
-> Perhaps this could be made a more specific to the actual functionality?
-yes overlooked this, was still a placeholder from the very beginning of writing 
-this code.
->
->> +MODULE_AUTHOR("Werner Sembach <wse@tuxedocomputers.com>");
->> +MODULE_LICENSE("GPL");
+>> Anyway, I think the nokaslr result is interesting, it seems like with nokaslr
+>> even the older kernels have problems with the game
 >>
-v3 incomming
+>> Could you confirm if with nokaslr
+>>
+> Now I've tested kernel 6.8.12 with nokaslr
+> 
+>> 1. Only one single game stellaris is not working?
+>> 2. The entire laptop does not work?
+>> 3. Laptop works and other games work? Just one game is not working as
+> expected?
+> 
+> 
+> Stellaris is showing the input lag and the entire graphical user interface shows
+> the same input lag as long as stellaris is running.
+> Civilization 6 shows the same input lag as stellaris, probably even worse.
+> Magic the Gathering: Arena (with wine) works normally.
+> Valheim also works normally.
+> Crusader Kings 2 works normally
+> Rogue Heroes: Ruins of Tasos (a Zelda lookalike) works normally.
+> Baldur's Gate I & II and Icewind Dale work normally.
+> 
+> Also the input lag is only in the GUI, if I switch to a text console (ctrl + alt
+> + Fn), input works normally even while the affected games are running.
+> 
+> Games aside everything else (e.g. compiling kernels) seems to work with nokaslr.
+> 
 
-Best regards,
+Would it be fair to assume that anything Xorg/Wayland is working fine
+when the game is not running, even with nokaslr?
 
-Werner
++amd-gfx@lists.freedesktop.org to see if there are known issues with
+nokaslr and the games you mentioned.
 
+
+Balbir Singh
+
+PS: I came across an interesting link
+https://www.alex-ionescu.com/behind-windows-x64s-44-bit-memory-addressing-limit/
+
+I think SLIST_HEADER is used by wine as well for user space and I am not sure
+if in this situation the game is hitting this scenario, but surprisingly the other
+games are not. This is assuming the game uses wine. I am not sure it's related,
+but the 44 bits caught my attention.
 
