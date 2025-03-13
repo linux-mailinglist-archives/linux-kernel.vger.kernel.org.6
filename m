@@ -1,121 +1,90 @@
-Return-Path: <linux-kernel+bounces-559430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE61A5F3B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:04:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD6FCA5F3B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:04:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52E601894FCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:04:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C91757A55F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BED267384;
-	Thu, 13 Mar 2025 12:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE2C2676CF;
+	Thu, 13 Mar 2025 12:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="vpCyCZ4k"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hK6mGsH3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C8D1DA5F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E19267399;
+	Thu, 13 Mar 2025 12:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741867396; cv=none; b=IzrkSPo49xNWRvKJY8l66jpCnDzOq5p/WG7S5hAjxjFGpGpMJeBUmg/MCHY24lwWVLNQJrTZ3K8IPXfPGPdpSpq4IIaYBo1UM/dSbrxVvO+VO6fHt3iuBAJhJu6P99a/AUwGZhq3C26jtsCNCEjpMKW1i9BHyeFh9JwOQNStN/Q=
+	t=1741867408; cv=none; b=MOGYJ5X8pBcK3oXdRorC8oj1mQw+QoqUw2zTwV5TIwypqJU4Y/lSQ3YxyHiZxTRB9KYE/GJWEAI03Oh4JG4cQQ3gGfxAsfb/1cH84xiX5olxOH+lk347dHUkdo5PFDUuLaPgZuWEXjuWq0QGjO7APotIeYbsljaGX/9zPHTQvz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741867396; c=relaxed/simple;
-	bh=bZNNGOED+1l8XZ/zYpoer0VQ2XGh/RdyKEnP1jUgGFc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VkdB8dNOpXLCgrIsyJJqIPRytcU6dsi/mpPIr8RW8AMx4qso76gWMrehr5bes4kqqTi4c05zuLzAJWR0TMmZvgeFj5uoVmLPx1xBIBHXdEV8IZqazTX8gTLhvokY1s535fAcZSk2IKDeA/44fye1PaL/IHTKAWij8sHX9BhHcd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=vpCyCZ4k; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1741867393;
- bh=bZAbj6+NmXSfWd9Y3ZYRj3CY/kM/CunfChIIkSXsoRg=;
- b=vpCyCZ4khpNqoDvqJU9TMENoRt+h8k/WjOOPJFrgrXSasDIKUaHDmGYBDQz3IYnBHpd9100Km
- /f0Cn43B4d1zOPMk9v+lghttUOgFaqw2kUbq1+ZmxuJppsEu/EXPS5uv3XZCtIbuj/VSLJfORDQ
- nZiUP8FRRx52Z3zr6lQ1wasdy5qkxnt+QKKzKCgmw9NjgK1JRJ/S5Q2m5oWlE5Uqxemn3PP4elt
- 5Ni/iCWmnoCH60jg4rDkfAWEg1sHKodzQ+suYuJjlP2MvR/hnhSd9rCZnGwZusDzmVIfpTzZZ9y
- 5ZqHbYgjO4xtw5anN2b79xgQZb7mDePo2Qw3tJ5uctzA==
-X-Forward-Email-ID: 67d2c97dc524b8270342b1d9
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <22d849c3-8a0d-4704-b69c-8019c7f70ca7@kwiboo.se>
-Date: Thu, 13 Mar 2025 13:03:04 +0100
+	s=arc-20240116; t=1741867408; c=relaxed/simple;
+	bh=CPtuIJFPbVn0H1c4e5GFM0xMz0llPlIszfF5oAWZMQs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JVzHQ1wSC9/klSk8w62HlArMU8ydlyPMdyntvgV7uYomK3yevpqSxe2Coh7/AhnRy9QnCs/dasZ3Kclb7/W3BEIW33vtYSAeZXhABhfdm0MF0/3qyJ1CExNlRrl55TR9Cd7d7KrVcITeKutnXzplQPO2Qa6zY/yw6+HzI7qOHVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hK6mGsH3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCCBDC4CEDD;
+	Thu, 13 Mar 2025 12:03:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741867407;
+	bh=CPtuIJFPbVn0H1c4e5GFM0xMz0llPlIszfF5oAWZMQs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=hK6mGsH3rg4vRaCqNpeuDMLvnHjtrzA8hEOrVGlDuIMCXElvLAdF+pCTVgk4GzDUD
+	 AlMr/OsZUbPc61VpeBcung5hoDwP3QKeHWTm3aa09PtvYRx4VWif5eqxAhAqhKiZF2
+	 5VuiDyX0VebFTq6FRmcaJBaAvItv1UQa9MwQOZHXGJ9vmM1MEETfmK5LI9hY6+pRQL
+	 UlHzuS3ahTwu2nnXtUNwLzhVSrIIyijRN3D9JykbtQDJXB7zOSql3aTM0e3rGFTsjL
+	 t3dB0FZlzrz3FlRHqVkQ1YX8JPHaV27jawP4V3jCjPV2wvA3NKXNRzFPMRyQrLO/9b
+	 1wMLrMgm8Q4cQ==
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>, 
+ Konstantin Taranov <kotaranov@microsoft.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ longli@linuxonhyperv.com
+Cc: linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+ Long Li <longli@microsoft.com>
+In-Reply-To: <1741821332-9392-1-git-send-email-longli@linuxonhyperv.com>
+References: <1741821332-9392-1-git-send-email-longli@linuxonhyperv.com>
+Subject: Re: [patch rdma-next v6 1/2] net: mana: Change the function
+ signature of mana_get_primary_netdev_rcu
+Message-Id: <174186740244.531606.4287471152182071574.b4-ty@kernel.org>
+Date: Thu, 13 Mar 2025 08:03:22 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] arm64: dts: rockchip: Add pwm nodes for RK3528
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de,
- krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-References: <60065c0b-4597-4976-b74b-172556c4e156@kwiboo.se>
- <20250313090109.1910997-1-amadeus@jmu.edu.cn>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20250313090109.1910997-1-amadeus@jmu.edu.cn>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-Hi,
 
-On 2025-03-13 10:01, Chukun Pan wrote:
-> Hi,
+On Wed, 12 Mar 2025 16:15:31 -0700, longli@linuxonhyperv.com wrote:
+> Change mana_get_primary_netdev_rcu() to mana_get_primary_netdev(), and
+> return the ndev with refcount held. The caller is responsible for dropping
+> the refcount.
 > 
->> I have not seen any issue with PWM using the merged patch having
->> pinctrl-names=default.
->>
->> Please see my Linux tree [1] and U-Boot tree [2], those are little ahead
->> of what has been posted on ML, e.g. it has working USB2.0 host, CPU opp,
->> Hantro VPU, GPU + opp, arm and logic pwm regulators for E20C, ROCK 2A/2F
->> and Sige1.
->>
->> Please see my Linux tree [1] and U-Boot tree [2], those are little ahead
->> of what has been posted on ML, e.g. it has working USB2.0 host, CPU opp,
->> Hantro VPU, GPU + opp, arm and logic pwm regulators for E20C, ROCK 2A/2F
->> and Sige1.
->> ...
->> [1] https://github.com/Kwiboo/linux-rockchip/commits/next-20250311-rk3528/
->> [2] https://source.denx.de/u-boot/contributors/kwiboo/u-boot/-/commits/rk3528
+> Also drop the check for IFF_SLAVE as it is not necessary if the upper
+> device is present.
 > 
-> I tested your kernel device tree on E20C earlier today and still have
-> the same issue. But if I replace u-boot with the link [2] you provided,
-> it will work fine. For reference, I was using v2025.01 plus this series
-> of patches [3]. So it looks like u-boot does something and kernel doesn't?
+> [...]
 
-Interesting, good that it works with the updated U-Boot. Main change
-compared to v1 is that it now use clock/reset id and DT closer to what
-has been merged in mainline Linux. It also has DT params to help
-initialize the two pwm regulators used by these boards.
+Applied, thanks!
 
-I will try with the old v1 U-Boot series and see if I can replicated
-your issue.
+[1/2] net: mana: Change the function signature of mana_get_primary_netdev_rcu
+      https://git.kernel.org/rdma/rdma/c/a8445cfec101c4
+[2/2] RDMA/mana_ib: Handle net event for pointing to the current netdev
+      https://git.kernel.org/rdma/rdma/c/bee35b7161aaae
 
-Regards,
-Jonas
-
-> 
-> [3] https://lore.kernel.org/u-boot/20250123224844.3104592-1-jonas@kwiboo.se/
-> 
-> Thanks,
-> Chukun
-> 
-> --
-> 2.25.1
-> 
+Best regards,
+-- 
+Leon Romanovsky <leon@kernel.org>
 
 
