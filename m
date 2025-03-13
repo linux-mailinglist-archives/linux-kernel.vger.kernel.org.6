@@ -1,124 +1,124 @@
-Return-Path: <linux-kernel+bounces-560422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E9C0A603DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:02:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5AA0A603EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:05:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F13D919C4F25
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:02:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 941F8421EEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB9F1F63FE;
-	Thu, 13 Mar 2025 22:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42171F6679;
+	Thu, 13 Mar 2025 22:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="vFgcnF91"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aM7+DADa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410CD7FBAC;
-	Thu, 13 Mar 2025 22:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B105F1F63D6;
+	Thu, 13 Mar 2025 22:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741903317; cv=none; b=X8zR3SnijwULf+DxTH7iC8u/qCIRBHJsPoivAWox96oevpb7MT/yEIMkE+OyKybxSd+2X2w/DkSA0j9B4ZusPqCt+RP/8/cTqnJL+DABASjNg6G9EaNIETgebMA2jwiKrEZdvvMy7zBUodftcKib0Z7ZVSMmeAPXOfhvx1GjTh0=
+	t=1741903520; cv=none; b=Z1mET73Arkj4wZir1ian/IJyHVLFDb+0f6FFafHgY8Lwm6x4siGeiuEVHayzQT8QHh7tCO1WsKDuJmFaaW7n2uRTg69UPFrILy0DFk7LKHhdIMsmkX0s1SCBuR7W3JsAkHfXPhf/rLhVvCgFCfyfZVYhwzW7MXxtCkcpfAMhZgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741903317; c=relaxed/simple;
-	bh=Xl5XZkRzyHK1ICtN1r6YQrbroSsa44PrhiPDBMEXYWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ObpqQOR6EIPpxsk/dCHBFrUmboifkXUScGm2p1tBySIi5jUm5St2uY3yfKXvKHrtbHExEVj25BO4Fdrn8f8TFHE90LlpuPxmeN9vjrkuWCMTn3rX9dCy4N9+K46NV0BPO1Bdjm3a0QtoVw5cwTEDVLnSNetxGzrKntdCRXMMHYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=vFgcnF91; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=rno9OMXiXAURQ7qP4ybw0rYOr4Xj/xylSi9vradBspI=; b=vFgcnF91xKT49B1jJtvYniByP/
-	BBsCeh77OH1VaD+LpsV1Or85YgaYrAqZF3iWNbMAQkR2SN3aCv2WxkBUb0XWKcEPuOxWabVsDuUQc
-	kvRJpe3ayVZlvrSf9lAOzr2ZJLkEYnD/80pce/vETN9fbpcYhNUCRj1AAFO+iGHNXW4GiVDH5V1hm
-	Ptn4SMhx0TdkyI/3UD4exWGrnur1MkDE11Fz+d9XTomg/+ZB2AVVCufl7irLS5IGZtRH02ps0wYtt
-	xg7+63HPSfu5SBKqo7B19V00sPb8fPzw8ZsuNQywmBG9Y0jHtdXxtE6UAn76Hkx5tmpyEmtTicWOK
-	9jApPauA==;
-Date: Thu, 13 Mar 2025 23:01:48 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
-Cc: "rogerq@kernel.org" <rogerq@kernel.org>, "tony@atomide.com"
- <tony@atomide.com>, "aaro.koskinen@iki.fi" <aaro.koskinen@iki.fi>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
- "khilman@baylibre.com" <khilman@baylibre.com>
-Subject: Re: [PATCH] Revert "bus: ti-sysc: Probe for l4_wkup and l4_cfg
- interconnect devices first"
-Message-ID: <20250313230148.792f224b@akair>
-In-Reply-To: <6348326299702a12ed4faa6ea25ee8bbe5e232aa.camel@siemens.com>
-References: <20250313094708.1003092-1-alexander.sverdlin@siemens.com>
-	<20250313202129.0dcfc44e@akair>
-	<6348326299702a12ed4faa6ea25ee8bbe5e232aa.camel@siemens.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741903520; c=relaxed/simple;
+	bh=/qID/VJTvjXyKUcft2ck54TEmpFJ7EugT3z1mM/v51A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GEeXVxnkcjHj1uxa4Ax8zZ0KcLLDqKz8xzLa6XLNI+8iEb7VX5t3F0K7yuW7Ukr16yEGBysxO/I7T2xoVD6Vmt6LUYxTzpI1N3Rrj6lZm3Zp2XLcXnm8syUAHMLzw90MWItNpAWzVBmcx+Y1n6W6tk1iddxS/WytAnxw0E/08mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aM7+DADa; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741903518; x=1773439518;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/qID/VJTvjXyKUcft2ck54TEmpFJ7EugT3z1mM/v51A=;
+  b=aM7+DADabt8EiwrQsBnFn0c26NzV4tyfW/zCTuqUkgEsCRf2U446MAKz
+   uLyJAqqKRGweQhPKHara9fYz3Aezv/rx8aE/tHCNl+lN44RKLJ/8LKLIi
+   VG2Q45MKUx2BvR+VbIeOrlmlkfRMnTehbgc0ePVmwsafz1cpPkkwjzhfP
+   U4SMKjf3HXR8HL3wnbRTfZ9SjWBy2gSFiIqBzlHzCPaCiaDSvfDW7nR/l
+   dP7hLSfQL5LcDIWMNXEUotpUciD5Fry1hyE1ro1Gbbp/GVQOdum3R10KK
+   7NkfAJ4Lq/P85cai7bbZjlMphCGiB0fTTs9UB5KVyuOWesJHw79Mloj7E
+   A==;
+X-CSE-ConnectionGUID: OHy1MrqIQKqsMtd9JzpB7Q==
+X-CSE-MsgGUID: yp47F3FKRfuDNHEOhTQUBw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="45813444"
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="45813444"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 15:04:40 -0700
+X-CSE-ConnectionGUID: EiacCQtMSiy4kHroew28yA==
+X-CSE-MsgGUID: jA7u+aJNQsaZZVOWbh/5yg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="121788862"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.108.96])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 15:04:40 -0700
+Date: Thu, 13 Mar 2025 15:04:38 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Chenyuan Yang <chenyuan0y@gmail.com>
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com,
+	dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cxl/acpi: Add Null check for adev
+Message-ID: <Z9NWdob3CSy9UDq5@aschofie-mobl2.lan>
+References: <20250313190753.450546-1-chenyuan0y@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313190753.450546-1-chenyuan0y@gmail.com>
 
-Am Thu, 13 Mar 2025 20:42:23 +0000
-schrieb "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>:
+On Thu, Mar 13, 2025 at 02:07:53PM -0500, Chenyuan Yang wrote:
+> Not all devices have an ACPI companion fwnode, so adev might be NULL.
+> This is similar to the commit cd2fd6eab480
+> ("platform/x86: int3472: Check for adev == NULL").
+> 
+> Add a check for adev not being set and return -ENODEV in that case to
+> avoid a possible NULL pointer deref in cxl_acpi_probe().
+> 
 
-> Hi Andreas!
->=20
-> On Thu, 2025-03-13 at 20:21 +0100, Andreas Kemnade wrote:
-> > > This reverts commit 4700a00755fb5a4bb5109128297d6fd2d1272ee6.
-> > >=20
-> > > It brakes target-module@2b300050 ("ti,sysc-omap2") probe on AM62x in =
-a case
-> > > when minimally-configured system tries to network-boot:
-> > >  =20
-> > brakes or breaks? To unterstand the severity of the issue... =20
->=20
-> Thanks for the correction, it should have been "breaks"...
->=20
-> > > [=C2=A0=C2=A0=C2=A0 6.888776] probe of 2b300050.target-module returne=
-d 517 after 258 usecs
-> > > [=C2=A0=C2=A0 17.129637] probe of 2b300050.target-module returned 517=
- after 708 usecs
-> > > [=C2=A0=C2=A0 17.137397] platform 2b300050.target-module: deferred pr=
-obe pending: (reason unknown)
-> > > [=C2=A0=C2=A0 26.878471] Waiting up to 100 more seconds for network.
-> > >=20
-> > > Arbitrary 10 deferrals is really not a solution to any problem. =20
-> >=20
-> > So there is a point where no more probe of anything pending are
-> > triggered and therefore things are not probed? =20
->=20
-> Because there is a point indeed (if we configure quite minimal set of dri=
-vers just
-> enough to mount NFS) when deferred probes are not triggered any longer.
->=20
-> > > Stable mmc enumeration can be achiever by filling /aliases node prope=
-rly
-> > > (4700a00755fb commit's rationale).
-> > >  =20
-> > yes, it does not look like a clean solution. And we have the
-> > proper aliases node in many places. What I am a bit wondering about is
-> > what kind of sleeping dogs we are going to wake up by this revert. So I
-> > think this should be tested a lot esp. about possible pm issues.
-> >=20
-> > Not every dependency in the sysc probe area is properly defined. =20
->=20
-> But the patch I propose to revert is really not a solution for missing
-> dependencies on syscons. I'm fine with not propagating this to stable,
-> but reverting in master should give enough time for older SoCs to test,
-> WDYT?
->
-I am not against your revert proposal and not against propagating it
-to stable, I would just like to see some Tested-Bys before it gets
-applied to anything. If anything nasty pops up, it should be solved in a
-cleaner way then with the offending patch.
+Avoiding the NULL ptr deref seems obvious as ACPI_COMPANION() return
+is routinely checked throughout the kernel. Why the reference to the
+other commit? Do these devices have something in common?
 
-Regards,
-Andreas
+I'm curious as to when *this* specific adev can be NULL.
+
+Looks good to check it like you do here, or if someone chimes in that
+it can never be NULL, just add a code comment saying so.
+
+Perhaps emit a message on NULL too.
+
+
+
+> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> ---
+>  drivers/cxl/acpi.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> index cb14829bb9be..9195001db3c1 100644
+> --- a/drivers/cxl/acpi.c
+> +++ b/drivers/cxl/acpi.c
+> @@ -823,6 +823,9 @@ static int cxl_acpi_probe(struct platform_device *pdev)
+>  	struct acpi_device *adev = ACPI_COMPANION(host);
+>  	struct cxl_cfmws_context ctx;
+>  
+> +	if (!adev)
+> +		return -ENODEV;
+> +
+>  	device_lock_set_class(&pdev->dev, &cxl_root_key);
+>  	rc = devm_add_action_or_reset(&pdev->dev, cxl_acpi_lock_reset_class,
+>  				      &pdev->dev);
+> -- 
+> 2.34.1
+> 
 
