@@ -1,163 +1,149 @@
-Return-Path: <linux-kernel+bounces-559945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07525A5FB6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:24:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB54A5FB75
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:24:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1BF188A7A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:21:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4243418844CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2074269819;
-	Thu, 13 Mar 2025 16:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617ED269CE6;
+	Thu, 13 Mar 2025 16:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="ibNrTaek";
-	dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="jYIi6SJG"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.53])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="l0B1d5pb"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33484CB5B;
-	Thu, 13 Mar 2025 16:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741882840; cv=pass; b=GA7uEB1qIkUTiAIrc1o1MEo7Lb/9sonzzB1QUW5pwkAoGyrzr1ftO71rhyjc8Kop+dD+284Uyq73rY9G2OrWixJ/yBy0wxSpy0y7LbXZrlxPg2w/Fkk+JbLqE+8zV+4WF2OY8UsU35sgOuhIerdt51LsH5wKC/fSM54bqHRRpss=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741882840; c=relaxed/simple;
-	bh=uJuy6cbGWaVFPgMZ51upwkH1TGfDddUyofGuoQ3/DL8=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779B12690D1;
+	Thu, 13 Mar 2025 16:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741882900; cv=none; b=RtTzUHdaht0OyJ996R1S4sAa+07pS1F14N3jx2uSHAU56NOJ+UC/tafgFI3/tp8MWTpV9rKZWmP1IO4d7EoPWlFml8xUfeKkqI/x2bHtkkC3+NtOUbq+JpsIycf0KhMnJqZlIcPouaNQBW/XJcCNVILCsTg7rJhquYGjmVgL+kM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741882900; c=relaxed/simple;
+	bh=pIdrKnu27Vmv3K9OVG1yp+XFNGqgzV025wRS26XTe74=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=by3so9Dcf193r1/YetZOk5ICQB6t3cTcRET+szwQfjKdYTkRE+JUY5T7T5UhnVCeieDJZxUhREelbc8HpSpc4gxynpq0BrOJRMFw3oMujzf2Wo0mUgXN8Gfutc9TF/lPdoi1thtHLiqXQvtTH/K7M0XaQ0oixrBy/NXlOxQInQ8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de; spf=pass smtp.mailfrom=fossekall.de; dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=ibNrTaek; dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=jYIi6SJG; arc=pass smtp.client-ip=85.215.255.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fossekall.de
-ARC-Seal: i=1; a=rsa-sha256; t=1741882828; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=cNuTcV3wc70G1bwoTfovS9OnAa8+G1W+DWZn9JvVy7eyCUX9r0bLPzSo5FZP9RNP+O
-    DDkiX4EknTB8OBvFgnhUKsaBgiCQ4iARy7jiJ3gu5flh1DCOEsDaldEHROmwhGUcyczB
-    7cd9SUH7EYq2qbqLPIgitoCu98bjbwnsIhfjaf/9pXr4bvAoPxVl/wbHXoDorumLwz9Z
-    BsTWJP5gDVpB1B1CkTSES5MqKt6fpGJK/FHQUCOzsB9cgefEtN+WEH5BVAdG99TEES5U
-    QF5fdCrrdFf4XA5zxCBuVZUoSV3GerhxcdUWn9VPgvy2IgUut7G3mU7jTmZIqe/0OD4n
-    dIPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1741882828;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=gP4fMJNb3zv1AitbCQSn1pjlRysOlMPHj4XRBVuNy1Q=;
-    b=qwLpM/Kgjap3eMtqOc/ifvtNGfG20UR9bwyfWZZ7jLVHr8rvJfLZoUPstrH+AozDQd
-    lENvQ6lxd+DkprJyTo2isPYKEAiVGIihnCfHjCuydvMTpOd2/ITSWUiOqseJxm6C0Tn4
-    h4BrDffX9HhYbmKb0FIjLzEzwFbUgtDyo8GlXNkBtC/BviMwpTD0IqTrWQ1W34XkdI/g
-    eLL2PS3XsFLNwHq5nXX6X7YTGw6Ozv1YZNxDloIpco7J0xtH2B0bS7JmuVgX1Haq2rvE
-    A4kLrAb3hvrGP2BzLn9Gf5kiINBG8juY8iDgBSlcRMIYyrbehH7vN8tHP2Bk4z+jWahA
-    71hQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1741882828;
-    s=strato-dkim-0002; d=fossekall.de;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=gP4fMJNb3zv1AitbCQSn1pjlRysOlMPHj4XRBVuNy1Q=;
-    b=ibNrTaekradQzlbtQYUK2gUwxHlTrZlXEMVGzjE23HQK132Sv3X0fixFNydGIzHaTe
-    vYIPQx+lo+JDKeYznEm/fbXH9mImoU71Q37swIbgXRTuVBtAd9xChgxe8vFYlwv6LaOl
-    xuPowJiu0KWGvLZsg2+em5BhZNjZ6tzTAaJLLagu+1w7+tI7IbUsAiGNkLfHXvOX5Dx0
-    3CPaSsLSvI2ViEA+Iwq7uYX7u1RirZIP959af543s8r3peR0Ub9wpIKqrtcmWy7vVn+t
-    v1zxQfOkZdjSX3Xh+m3Dg/E3jJ98DZ87+06znMUzdU294Qh0fdUtJ3n+CdegMLea8u/6
-    P4gQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1741882828;
-    s=strato-dkim-0003; d=fossekall.de;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=gP4fMJNb3zv1AitbCQSn1pjlRysOlMPHj4XRBVuNy1Q=;
-    b=jYIi6SJGrt1CFfwL2f0m2ONhy+C3qPthFrIk3kvIlSyTBIuKCvro16nMTlhdgR8+Oo
-    +QybSxPaAvtt3LB12GCQ==
-X-RZG-AUTH: ":O2kGeEG7b/pS1EzgE2y7nF0STYsSLflpbjNKxx7cGrBdao6FTL4AJcMdm+lap4JEHkzok9eyEg=="
-Received: from aerfugl
-    by smtp.strato.de (RZmta 51.3.0 AUTH)
-    with ESMTPSA id f28b3512DGKRpon
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Thu, 13 Mar 2025 17:20:27 +0100 (CET)
-Received: from koltrast.home ([192.168.1.27] helo=a98shuttle.de)
-	by aerfugl with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <michael@fossekall.de>)
-	id 1tslIJ-0005U0-0S;
-	Thu, 13 Mar 2025 17:20:27 +0100
-Date: Thu, 13 Mar 2025 17:20:25 +0100
-From: Michael Klein <michael@fossekall.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Andre Przywara <andre.przywara@arm.com>,
-	Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Samuel Holland <samuel@sholland.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: dts: bananapi: add support for PHY LEDs
-Message-ID: <Z9MFyWGG5iNUmRNq@a98shuttle.de>
-References: <20250312193629.85417-1-michael@fossekall.de>
- <20250312193629.85417-2-michael@fossekall.de>
- <4637912.LvFx2qVVIh@jernej-laptop>
- <Z9KYqlfUYxRaWnGQ@a98shuttle.de>
- <20250313104042.694c1856@donnerap.manchester.arm.com>
- <7cf91323-d550-496a-a8ec-ae104c77224d@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XttMGtQMIzM0CjzuQnc3Uc65vyWjAT15pZUFybx6sCI9F7SUe8oCB9vT25eXKodR3wAKlDleJ4pMMUhTi7iHcOMLTMb7zYI7VSO831YGlH4KEdFsPeQ4NXmXt9X7qLU7WmktLNwS9+/F5UAwvr3w1mIvyMV13Nx6fUjntDYgAzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=l0B1d5pb; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1741882896;
+	bh=pIdrKnu27Vmv3K9OVG1yp+XFNGqgzV025wRS26XTe74=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l0B1d5pb1l+OsAxpemclLqzQUFCVvY9K5DfzM2sJ9LHR4MyeXpkSSmG/PfS09Jtr/
+	 fVGku/hSIuWeiHaYNJFe4HdykYe2Xxbe08jjc0cIBAA1EUJUu4yayq+/KKiblwEznY
+	 a/e51tDVYDbi/y5+rf1qyXHBEZG3xiergNshzBvo=
+Date: Thu, 13 Mar 2025 17:21:35 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@weissschuh.net>
+To: Sung-Chi Li <lschyi@chromium.org>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+	chrome-platform@lists.linux.dev, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] hwmon: (cros_ec) Add setting target fan RPM function
+Message-ID: <714be928-a655-4561-98fb-800bcb15cbfb@t-8ch.de>
+References: <20250313-extend_ec_hwmon_fan-v1-0-5c566776f2c4@chromium.org>
+ <20250313-extend_ec_hwmon_fan-v1-1-5c566776f2c4@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7cf91323-d550-496a-a8ec-ae104c77224d@lunn.ch>
+In-Reply-To: <20250313-extend_ec_hwmon_fan-v1-1-5c566776f2c4@chromium.org>
 
-On Thu, Mar 13, 2025 at 02:17:27PM +0100, Andrew Lunn wrote:
->On Thu, Mar 13, 2025 at 10:40:42AM +0000, Andre Przywara wrote:
->> On Thu, 13 Mar 2025 09:34:50 +0100
->> Michael Klein <michael@fossekall.de> wrote:
->> > On Thu, Mar 13, 2025 at 07:07:24AM +0100, Jernej Škrabec wrote:
->> > >Dne sreda, 12. marec 2025 ob 20:36:28 Srednjeevropski standardni čas je Michael Klein napisal(a):
->> > >> The Bananapi M1 has three LEDs connected to the RTL8211E ethernet PHY.
->> > >> Add the corresponding nodes to the device tree.
->> > >>
->> > >> Signed-off-by: Michael Klein <michael@fossekall.de>
->> > >
->> > >This is patch 2/2. Which one is patch 1/2? I got only one.
->> >
->> > https://patchwork.kernel.org/project/netdevbpf/patch/20250312193629.85417-1-michael@fossekall.de/
->> >
->> > Sorry for any inconvenience in case I messed up the patch submission.
->> >
->> > I made two commits for this change and submitted them via `git send-email
->> > HEAD^^`. The first patch went to netdev@vger.kernel.org, the second
->> > to linux-arm-kernel@lists.infradead.org, which seems logical. Have I
->> > done something wrong?
->>
->> Well, for those really small "series" it's probably better to send all
->> patches to everyone, especially if the first patch gives some context,
->> without which the second leaves people (like me) scratching their head.
->
->However, netdev does not like pathchsets which contain patches which
->should not be applied to the netdev tree. DT patches generally go
->through a different Maintainer to driver changes implementing the
->binding.
->
->So for your DT patch, you could add to the commit message something
->like:
->
->The RTL8211E ethernet PHY driver has recently gained support for
->controlling PHY LEDs via /sys/class/leds. The Bananapi M1 has three
->LEDs connected to the RTL8211E PHY.  Add the corresponding nodes to
->the device tree.
+On 2025-03-13 12:47:42+0800, Sung-Chi Li wrote:
+> Implement the functionality of setting the target fan RPM to ChromeOS
+> embedded controller under hwmon framework.
+> 
+> Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
+> ---
+>  drivers/hwmon/cros_ec_hwmon.c | 34 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+> 
+> diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
+> index 9991c3fa020ac859cbbff29dfb669e53248df885..b2fec0768301f116f49c57b8dbfb042b98a573e1 100644
+> --- a/drivers/hwmon/cros_ec_hwmon.c
+> +++ b/drivers/hwmon/cros_ec_hwmon.c
+> @@ -52,6 +52,26 @@ static int cros_ec_hwmon_read_temp(struct cros_ec_device *cros_ec, u8 index, u8
+>  	return 0;
+>  }
+>  
+> +static int cros_ec_hwmon_set_fan_rpm(struct cros_ec_device *cros_ec, u8 index, u16 val)
+> +{
+> +	struct ec_params_pwm_set_fan_target_rpm_v1 p_v1 = {
 
-Thanks, this totally makes sense. I'll split the patch series then and 
-follow-up here with the updated commit message when the netdev change is 
-accepted.
+The v1 protocol was "only" introduces in 2014.
+Could it be possible that devices without that command are still in use?
+If so the presence of the command should be probed.
 
--- 
-Michael
+What is the name p_v1 supposed to mean? Call it "req", like other parts
+of the driver.
+
+> +		.rpm = val,
+> +		.fan_idx = index,
+> +	};
+> +
+> +	return cros_ec_cmd(cros_ec, 1, EC_CMD_PWM_SET_FAN_TARGET_RPM, &p_v1, sizeof(p_v1), NULL, 0);
+
+cros_ec_cmd() signals success with an exitcode >= 0, while the hwmon
+APIs only expect 0. In this specific case the success value will also
+always be zero, as no response is sent by the EC, but for clarity I
+prefer to have an explicit check.
+
+> +}
+> +
+> +static int cros_ec_hwmon_write_fan(struct cros_ec_device *cros_ec, u32 attr, int channel, long rpm)
+> +{
+> +	switch (attr) {
+> +	case hwmon_fan_target:
+> +		return cros_ec_hwmon_set_fan_rpm(cros_ec, channel, rpm);
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+> +
+>  static bool cros_ec_hwmon_is_error_fan(u16 speed)
+>  {
+>  	return speed == EC_FAN_SPEED_NOT_PRESENT || speed == EC_FAN_SPEED_STALLED;
+> @@ -140,6 +160,19 @@ static umode_t cros_ec_hwmon_is_visible(const void *data, enum hwmon_sensor_type
+>  	return 0;
+>  }
+>  
+> +static int cros_ec_hwmon_write(struct device *dev, enum hwmon_sensor_types type,
+> +			      u32 attr, int channel, long val)
+> +{
+> +	struct cros_ec_hwmon_priv *priv = dev_get_drvdata(dev);
+> +
+> +	switch (type) {
+> +	case hwmon_fan:
+> +		return cros_ec_hwmon_write_fan(priv->cros_ec, attr, channel, val);
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+> +
+>  static const struct hwmon_channel_info * const cros_ec_hwmon_info[] = {
+>  	HWMON_CHANNEL_INFO(chip, HWMON_C_REGISTER_TZ),
+>  	HWMON_CHANNEL_INFO(fan,
+> @@ -179,6 +212,7 @@ static const struct hwmon_ops cros_ec_hwmon_ops = {
+>  	.read = cros_ec_hwmon_read,
+>  	.read_string = cros_ec_hwmon_read_string,
+>  	.is_visible = cros_ec_hwmon_is_visible,
+> +	.write = cros_ec_hwmon_write,
+
+Move the .write directly after .read_string.
+
+>  };
+>  
+>  static const struct hwmon_chip_info cros_ec_hwmon_chip_info = {
+> 
+> -- 
+> 2.49.0.rc0.332.g42c0ae87b1-goog
+> 
 
