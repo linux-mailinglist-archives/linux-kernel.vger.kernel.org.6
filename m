@@ -1,227 +1,104 @@
-Return-Path: <linux-kernel+bounces-559953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6796A5FBAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:28:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B7CA5FBB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:29:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EAF4882F39
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:23:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC8193B7A75
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE4B26AAA2;
-	Thu, 13 Mar 2025 16:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF514269832;
+	Thu, 13 Mar 2025 16:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pCji8syH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jJfMsnKe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8364269839;
-	Thu, 13 Mar 2025 16:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A582D1EF0A5;
+	Thu, 13 Mar 2025 16:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741882958; cv=none; b=AyFntcLd5KX7pgY/gRLn1AvUjNvZHykFWBNMehForoFOfmjg+PkB+Y0vG9SnL77Q9Fn3hy1e6atv36G4hAoYFqAw51+ERCG2o2kvMRSLAqlFYzCapxvSv9vbtR8yzdioKgqrZjY3rN3EQ1cG6yqHj7wWHC/19xQF4KrJhxzYHbg=
+	t=1741882981; cv=none; b=ksxnkXuRWHhGnwgJEPRa2m61Y7vS0fvUUfuX0g81B2L4j3ZjvgQtBxhC/1s3j6bZmN6Yujgz5LCgTsdLI2uBVbGE4bK6QjtCpxYd1BemLkVXp+ia0k5t5oQoWJwSGk4OBM+TGqXbq+JHxqQ1jxmHmw+MlFwW6zjvKmjXVc1AZGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741882958; c=relaxed/simple;
-	bh=hkSbq8mw9Uv98PWKXr8NFUOiogiYljqa0LH7OwMpcTY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FfQAqjNP0VwM/iC0gfi8CNVMz85KMaRDEDLBLqWTiiGwFjbgQEbmdeLOPNPVKl2XoeCk7q1dEg+9viyGxAkm9izIb4sNtF0+RohRgA8AEdOAwvcc+MmfcXvVoYmn/pyXzuSgpZNNgnpngcdc+Brt/uPcUORlNQV0ZRC00kQvekQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pCji8syH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 70FE6C4CEF5;
-	Thu, 13 Mar 2025 16:22:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741882957;
-	bh=hkSbq8mw9Uv98PWKXr8NFUOiogiYljqa0LH7OwMpcTY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=pCji8syHUUiP/wNAh7ynqqKZAytlDyNabA4+4ZatFkYGeoZDhJUOjYA7yO3csvZa2
-	 bL9uwd4EzajibFO43DqTSESeFZah3pcG+Klqpng/nFGpP5jRH1aZ7k1LRlk9OrL9ou
-	 N6hvzY8ZIhHFs2mJxxst8iBhtW3aYHZPkXI0fhwqiIT/6b5a9P1CCMppA8gCsNbLfL
-	 plWbB7onqnlLOF/QHJRdxO+dvtCmNYZarhfs+P1Nd2INpIR+VTsjEgLdyGphbcWfvd
-	 hbGR5hQgbdGCIocbtCfQGSYMUtQNK3OB711U1lWv1bKNDkfBC93djrgMDiETwED6PW
-	 teh59i6U8K+kg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A01C35FF4;
-	Thu, 13 Mar 2025 16:22:37 +0000 (UTC)
-From: Joel Granados <joel.granados@kernel.org>
-Date: Thu, 13 Mar 2025 17:22:27 +0100
-Subject: [PATCH v3 5/5] sparc: mv sparc sysctls into their own file under
- arch/sparc/kernel
+	s=arc-20240116; t=1741882981; c=relaxed/simple;
+	bh=P5R3F0s5D5HlzbFQP8b72oupiPY/dzZzf3y7zl8VGxU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t5f9JfCJi7VVwjTsw5Ww+jfYWRq6cQS0aJC43KThFip1sqSV9WY2v4T0ZQU0DRV6FfOnLXRHpZk9ivXFBCVWQpFQp9NQ5MUhZqc7flkwHfZ2Ses2wme4H4w4UYqJ3nAlmDTvr3ple8rNg0JHYN+F6efUnZ/1utHP/lA53zEoTWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jJfMsnKe; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741882979; x=1773418979;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=P5R3F0s5D5HlzbFQP8b72oupiPY/dzZzf3y7zl8VGxU=;
+  b=jJfMsnKerzn3vRKVpc3VB4YU3zkdyNdLVqZDBfhFJmz+4wOndess3CRi
+   0S1V4TmAXL60X4aRXNOlNMUyrAKf2aRWmEy/fiaS99ONkC9ZqYtPrf5An
+   eMHtX2fDFtphAyQGvhOyeKy6p4XTIp9oY8BYGK2jZ7KyaoAPm9IEWVW9Q
+   dyb54MF6vKcTfNd0lGbP8CQ4G+7KBXk/MwBGQDmTBRYkmf+iGzPoeFIe6
+   B7PAx46tPW7Dc1foPuhDgTqpTMo5GN2d0dxWzq5o1xscqhz+qTE2A7BLx
+   x42qHK8Z6Rdi3bfTw0zXJI2E5bELlGUxgjBL01ASqvMnMetUfHo9RWEVS
+   w==;
+X-CSE-ConnectionGUID: LmnpfIPhTECPsfzL4JnqLg==
+X-CSE-MsgGUID: fazMzV6TT/OcjboDgjtLSQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="46800124"
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="46800124"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 09:22:58 -0700
+X-CSE-ConnectionGUID: 3spZhGmWTZCTemtFuHZ1zQ==
+X-CSE-MsgGUID: BgKOe3xMRiSkev+0VQhWTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="151859277"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa002.jf.intel.com with ESMTP; 13 Mar 2025 09:22:57 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id C3080156; Thu, 13 Mar 2025 18:22:54 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: David Lechner <dlechner@baylibre.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] iio: amplifiers: hmc425a: Remove not fully correct comment
+Date: Thu, 13 Mar 2025 18:22:53 +0200
+Message-ID: <20250313162254.416422-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250313-jag-mv_ctltables-v3-5-91f3bb434d27@kernel.org>
-References: <20250313-jag-mv_ctltables-v3-0-91f3bb434d27@kernel.org>
-In-Reply-To: <20250313-jag-mv_ctltables-v3-0-91f3bb434d27@kernel.org>
-To: Kees Cook <kees@kernel.org>, Joel Granados <joel.granados@kernel.org>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Andreas Larsson <andreas@gaisler.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, sparclinux@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3848;
- i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=hkSbq8mw9Uv98PWKXr8NFUOiogiYljqa0LH7OwMpcTY=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGfTBkv27n1nFXAthabFOHvM68bJ7QLsY2p7Z
- 2GlQp3/K7or0YkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJn0wZLAAoJELqXzVK3
- lkFPUhwL/2L01Xy0xGbZwBGfwHQRvlt1wWnyv/infvtLOHz9wdgdnBlNC3pvAkzHy4Ol0Ms43D0
- bKmhqK3wIpxatgwTtisllTMk3HbaZ88S+ANApw2u7Max2h44bNgZGBRGdA1IWUnRyUmK+xux3R4
- PsRFA1VTpEVHX3PFQBlT8NgMv++7caoGXPdoev7W2LDE+oiLUnDcwWZrf8pOp6ZJIO3vzYCQ6e2
- B0KgnnBRroxlfKrFB6vpo9Pvt0p9o89lpy/XvIWUGmf0BrqZxkkq2nHiWlD39S0pEHtmHtByVj1
- f94j+LpSpdkghRicozTt+wBq3cT1Lr5ayKbErr0f7ThqiZlDEcG8L3tM6IhitN3aJ/1dcxspu1W
- pqp0y2jxQthhRHlRyeKtqI7w+jHeDN58x8hBeOL2KYV8Tj8uEGDkiSigndBHygE9Wvw6UnHeE8s
- XOkGBmRH+gP4lgJkbPvj/Yg39jbL+P/+lrXk4EE++CPW9CxgiCZYNvZIDsijNyolW5oH2DgAAW6
- No=
-X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
- fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
-X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
- auth_id=239
+Content-Transfer-Encoding: 8bit
 
-Move sparc sysctls (reboot-cmd, stop-a, scons-poweroff and tsb-ratio)
-into a new file (arch/sparc/kernel/setup.c). This file will be included
-for both 32 and 64 bit sparc. Leave "tsb-ratio" under SPARC64 ifdef as
-it was in kernel/sysctl.c. The sysctl table register is called with
-arch_initcall placing it after its original place in proc_root_init.
+The OF match table can be used outside of OF-based platforms.
+Remove the (misleading) comment.
 
-This is part of a greater effort to move ctl tables into their
-respective subsystems which will reduce the merge conflicts in
-kerenel/sysctl.c.
-
-Signed-off-by: Joel Granados <joel.granados@kernel.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- arch/sparc/kernel/Makefile |  1 +
- arch/sparc/kernel/setup.c  | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- kernel/sysctl.c            | 35 -----------------------------------
- 3 files changed, 47 insertions(+), 35 deletions(-)
+ drivers/iio/amplifiers/hmc425a.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/sparc/kernel/Makefile b/arch/sparc/kernel/Makefile
-index 58ea4ef9b622bd18f2160b34762c69b48f3de8c6..3453f330e363cffe430806cd00a32b06202088b3 100644
---- a/arch/sparc/kernel/Makefile
-+++ b/arch/sparc/kernel/Makefile
-@@ -35,6 +35,7 @@ obj-y                   += process.o
- obj-y                   += signal_$(BITS).o
- obj-y                   += sigutil_$(BITS).o
- obj-$(CONFIG_SPARC32)   += ioport.o
-+obj-y                   += setup.o
- obj-y                   += setup_$(BITS).o
- obj-y                   += idprom.o
- obj-y                   += sys_sparc_$(BITS).o
-diff --git a/arch/sparc/kernel/setup.c b/arch/sparc/kernel/setup.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..4975867d9001b63b25770334116f2038a561c28c
---- /dev/null
-+++ b/arch/sparc/kernel/setup.c
-@@ -0,0 +1,46 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <asm/setup.h>
-+#include <linux/sysctl.h>
-+
-+static const struct ctl_table sparc_sysctl_table[] = {
-+	{
-+		.procname	= "reboot-cmd",
-+		.data		= reboot_command,
-+		.maxlen		= 256,
-+		.mode		= 0644,
-+		.proc_handler	= proc_dostring,
-+	},
-+	{
-+		.procname	= "stop-a",
-+		.data		= &stop_a_enabled,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+	{
-+		.procname	= "scons-poweroff",
-+		.data		= &scons_pwroff,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+#ifdef CONFIG_SPARC64
-+	{
-+		.procname	= "tsb-ratio",
-+		.data		= &sysctl_tsb_ratio,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+#endif
-+};
-+
-+
-+static int __init init_sparc_sysctls(void)
-+{
-+	register_sysctl_init("kernel", sparc_sysctl_table);
-+	return 0;
-+}
-+
-+arch_initcall(init_sparc_sysctls);
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index dc3747cc72d470662879e4f2b7f2651505b7ca90..0dc41eea1dbd34396c323118cfd0e3133c6993a1 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -70,9 +70,6 @@
- #include <asm/nmi.h>
- #include <asm/io.h>
- #endif
--#ifdef CONFIG_SPARC
--#include <asm/setup.h>
--#endif
- #ifdef CONFIG_RT_MUTEXES
- #include <linux/rtmutex.h>
- #endif
-@@ -1623,38 +1620,6 @@ static const struct ctl_table kern_table[] = {
- 		.extra2		= SYSCTL_ONE,
- 	},
- #endif
--#ifdef CONFIG_SPARC
--	{
--		.procname	= "reboot-cmd",
--		.data		= reboot_command,
--		.maxlen		= 256,
--		.mode		= 0644,
--		.proc_handler	= proc_dostring,
--	},
--	{
--		.procname	= "stop-a",
--		.data		= &stop_a_enabled,
--		.maxlen		= sizeof (int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--	{
--		.procname	= "scons-poweroff",
--		.data		= &scons_pwroff,
--		.maxlen		= sizeof (int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--#endif
--#ifdef CONFIG_SPARC64
--	{
--		.procname	= "tsb-ratio",
--		.data		= &sysctl_tsb_ratio,
--		.maxlen		= sizeof (int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--#endif
- #ifdef CONFIG_PARISC
- 	{
- 		.procname	= "soft-power",
-
+diff --git a/drivers/iio/amplifiers/hmc425a.c b/drivers/iio/amplifiers/hmc425a.c
+index d9a359e1388a..e92d7f399e33 100644
+--- a/drivers/iio/amplifiers/hmc425a.c
++++ b/drivers/iio/amplifiers/hmc425a.c
+@@ -398,7 +398,6 @@ static int hmc425a_probe(struct platform_device *pdev)
+ 	return devm_iio_device_register(&pdev->dev, indio_dev);
+ }
+ 
+-/* Match table for of_platform binding */
+ static const struct of_device_id hmc425a_of_match[] = {
+ 	{ .compatible = "adi,hmc425a",
+ 	  .data = &hmc425a_chip_info_tbl[ID_HMC425A]},
 -- 
 2.47.2
-
 
 
