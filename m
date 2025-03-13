@@ -1,189 +1,150 @@
-Return-Path: <linux-kernel+bounces-559151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF001A5F01C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:59:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA40DA5F01A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:59:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC513A4861
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:59:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDA063A4C58
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A6A26560E;
-	Thu, 13 Mar 2025 09:59:21 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64234264F9A;
-	Thu, 13 Mar 2025 09:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8DC264F86;
+	Thu, 13 Mar 2025 09:59:18 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2608714900B;
+	Thu, 13 Mar 2025 09:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741859961; cv=none; b=hTnw6YiGocEYotwVc41fE5rUwOJ5zfhybFoBOxZmmMtCioc6fmPtvYUl8A72Jmb7Eh6yts/2iHraa0ngtJaXBDgOP6SiFADve7RSeekSjad6omIcBTprjmIqH1XA9/3W0Igi05i9Q0bpZkRtZ7kQ+FoIXSkU6cSM/8TIaqaQVa4=
+	t=1741859958; cv=none; b=D9Z4viSqwZB2y1PFj9v8zbRplhbA4okYCS+IKhepoPxr7beds9r+owMVYltGE/H8cA2aC3Iku7WHo+g/SAjl/eagdB6euBmdi6dKOZH1vuvMqLbtC7ST8kARIVfoBUVhRq9ssg7JN+bcH0N8lfyQ9/jdfc9Aoc+++0d7nNRG8W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741859961; c=relaxed/simple;
-	bh=pyKfBjqDAN4P+9rSQW/SVJRyKIFw6ExLmm2iZO2gyuA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PpF4TQRg5Y1+aNdsRzX9sFWic6lS1MGqv4vOuaRJAA4TXLaK8ophALDPngDaapcDrcuwkaGEMA6tNjd6+2CoY0qMZgAVi+EqtpnzFZu5Ff7LKMfPHUtsRdnZixyw1AaZJlp3GGO9noAfRoYLrDD6I9c8Va6sZhGU8TZP54qfzgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZD2vC6gdJz6H8fC;
-	Thu, 13 Mar 2025 17:56:07 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7BF471403A2;
-	Thu, 13 Mar 2025 17:59:17 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Mar
- 2025 10:59:16 +0100
-Date: Thu, 13 Mar 2025 09:59:15 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Zaid Alali <zaidal@os.amperecomputing.com>
-CC: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
-	<tony.luck@intel.com>, <bp@alien8.de>, <robert.moore@intel.com>,
-	<dan.j.williams@intel.com>, <Benjamin.Cheatham@amd.com>,
-	<Avadhut.Naik@amd.com>, <viro@zeniv.linux.org.uk>, <arnd@arndb.de>,
-	<ira.weiny@intel.com>, <dave.jiang@intel.com>,
-	<sthanneeru.opensrc@micron.com>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <acpica-devel@lists.linux.dev>
-Subject: Re: [PATCH v4 9/9] ACPI: APEI: EINJ: Update the documentation for
- EINJv2 support
-Message-ID: <20250313095915.00000847@huawei.com>
-In-Reply-To: <20250306234810.75511-10-zaidal@os.amperecomputing.com>
-References: <20250306234810.75511-1-zaidal@os.amperecomputing.com>
-	<20250306234810.75511-10-zaidal@os.amperecomputing.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1741859958; c=relaxed/simple;
+	bh=WjRjfxpFxzqgg5E0INrZzM956AAlPjFd6i9LRa6N/58=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=rYg03kkjtVj5bMg9DQwxTbQ9i65nSQ8PyyOAB2IsHgkLNPjwNPVmjf9tTpQA8Bn8EdSmoftt2GXDJuVvI22GgwS1hEMa0pIhgSgO3O6tC0lwC4iErb2RZCueNsnu9RI4PeBXfr9DeB2ya/q4RNE/C7fuSC9k4e0Uvg+V6EJzbG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.164])
+	by gateway (Coremail) with SMTP id _____8Axz3NvrNJnW8uUAA--.56211S3;
+	Thu, 13 Mar 2025 17:59:11 +0800 (CST)
+Received: from [10.20.42.164] (unknown [10.20.42.164])
+	by front1 (Coremail) with SMTP id qMiowMBxrMZqrNJnNlJIAA--.19194S2;
+	Thu, 13 Mar 2025 17:59:09 +0800 (CST)
+Subject: Re: [PATCH v5 0/6] Drivers for Loongson security engine
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: lee@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net,
+ peterhuewe@gmx.de, jarkko@kernel.org, linux-kernel@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-crypto@vger.kernel.org, jgg@ziepe.ca,
+ linux-integrity@vger.kernel.org, pmenzel@molgen.mpg.de
+References: <20250313090508.21252-1-zhaoqunqin@loongson.cn>
+ <CAAhV-H5f1k4_bVybMcK9QXhaVxLOM=b_8n0sA+0r=gyCP4YQRA@mail.gmail.com>
+From: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Message-ID: <d77a36a3-3b74-76a9-38de-1a40ffb58374@loongson.cn>
+Date: Thu, 13 Mar 2025 17:59:16 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
-
-On Thu,  6 Mar 2025 15:48:10 -0800
-Zaid Alali <zaidal@os.amperecomputing.com> wrote:
-
-> Add documentation for the updated ACPI specs for EINJv2(1)(2)
-> 
-> (1)https://bugzilla.tianocore.org/show_bug.cgi?id=4615
-> (2)https://bugzilla.tianocore.org/attachment.cgi?id=1446
-> 
-> Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
-> ---
->  .../firmware-guide/acpi/apei/einj.rst         | 41 ++++++++++++++++++-
->  1 file changed, 39 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/firmware-guide/acpi/apei/einj.rst b/Documentation/firmware-guide/acpi/apei/einj.rst
-> index c52b9da08fa9..31c848183af0 100644
-> --- a/Documentation/firmware-guide/acpi/apei/einj.rst
-> +++ b/Documentation/firmware-guide/acpi/apei/einj.rst
-> @@ -59,6 +59,9 @@ The following files belong to it:
->    0x00000200        Platform Correctable
->    0x00000400        Platform Uncorrectable non-fatal
->    0x00000800        Platform Uncorrectable fatal
-> +  V2_0x00000001     EINJV2 Processor Error
-> +  V2_0x00000002     EINJV2 Memory Error
-> +  V2_0x00000004     EINJV2 PCI Express Error
->    ================  ===================================
->  
->    The format of the file contents are as above, except present are only
-> @@ -85,9 +88,11 @@ The following files belong to it:
->      Bit 0
->        Processor APIC field valid (see param3 below).
->      Bit 1
-> -      Memory address and mask valid (param1 and param2).
-> +      Memory address and range valid (param1 and param2).
-
-So was this a bug technically before?  If it was maybe separate
-patch.
+In-Reply-To: <CAAhV-H5f1k4_bVybMcK9QXhaVxLOM=b_8n0sA+0r=gyCP4YQRA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:qMiowMBxrMZqrNJnNlJIAA--.19194S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxGFykGF47WrWUuryxXw4xGrX_yoW5GFy8pF
+	45AFyrCFWUJF47G34ftFyUCFy5Xas3Xry3Ka9Fqw13Wr9xAa47J3y7CFy7CFZrAr1fGryI
+	vFZ3Cr45CF1Yy3cCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUP2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
+	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
+	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r
+	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
+	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26F4j6r4UJwCI
+	42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Dl1DUUUU
+	U==
 
 
->      Bit 2
->        PCIe (seg,bus,dev,fn) valid (see param4 below).
-> +    Bit 3
-> +      EINJv2 extension structure is valid
->  
->    If set to zero, legacy behavior is mimicked where the type of
->    injection specifies just one bit set, and param1 is multiplexed.
-> @@ -110,6 +115,7 @@ The following files belong to it:
->    Used when the 0x1 bit is set in "flags" to specify the APIC id
->  
->  - param4
-> +
-This also shouldn't really be in a patch adding new stuff.
-We should treat docs in similar fashion to code - if it is just whitespace
-separate patch.
+在 2025/3/13 下午5:26, Huacai Chen 写道:
+> You haven't seen my comments in previous version?
+>
+> https://lore.kernel.org/loongarch/CAAhV-H5xyRrF1_=E7rLM3dHeYAEBdMufYQvgoxAq6+d6s5U4Eg@mail.gmail.com/
 
->    Used when the 0x4 bit is set in "flags" to specify target PCIe device
->  
->  - notrigger
-> @@ -122,6 +128,18 @@ The following files belong to it:
->    this actually works depends on what operations the BIOS actually
->    includes in the trigger phase.
->  
-> +- einjv2_component_count
-> +
-> +  The value from this file is used to set the "Component Array Count"
-> +  field of EINJv2 Extension Structure.
+I am very sorry that I didn't notice your reply.
 
-Can we not parse this from the provided component array?  Why is separate
-parameter useful?  You don't seem to write it below in the example.
+I don't think it is necessary to change the driver file name. But if you 
+insist, I will do the change below  in  next revision .
+
+"MFD_LS6000SE -> MFD_LOONGSON_SE,  ls6000se.c -> loongson-se.c
+CRYPTO_DEV_LS6000SE_RNG -> CRYPTO_DEV_LOONGSON_RNG, ls6000se-rng.c 
+->loongson-rng.c
+TCG_LSSE -> TCG_LOONGSON, tpm_lsse.c ->tpm_loongson.c"
 
 
-> +
-> +- einjv2_component_array
-> +
-> +  The contents of this file are used to set the "Component Array" field
-> +  of the EINJv2 Extension Structure. The expected format is hex values
-> +  for component id and syndrome separated by space, and multiple
-> +  components are separated by new line.
-> +
->  CXL error types are supported from ACPI 6.5 onwards (given a CXL port
->  is present). The EINJ user interface for CXL error types is at
->  <debugfs mount point>/cxl. The following files belong to it:
-> @@ -139,7 +157,6 @@ is present). The EINJ user interface for CXL error types is at
->    under <debugfs mount point>/apei/einj, while CXL 1.1/1.0 port injections
->    must use this file.
->  
-> -
+BR, Qunqin.
 
-Another white space change that shouldn't be in this patch in my view.
-
->  BIOS versions based on the ACPI 4.0 specification have limited options
->  in controlling where the errors are injected. Your BIOS may support an
->  extension (enabled with the param_extension=1 module parameter, or boot
-> @@ -194,6 +211,26 @@ An error injection example::
->    # echo 0x8 > error_type			# Choose correctable memory error
->    # echo 1 > error_inject			# Inject now
->  
-> +An EINJv2 error injection example::
-> +
-> +  # cd /sys/kernel/debug/apei/einj
-> +  # cat available_error_type			# See which errors can be injected
-> +  0x00000002	Processor Uncorrectable non-fatal
-> +  0x00000008	Memory Correctable
-> +  0x00000010	Memory Uncorrectable non-fatal
-> +  0x00000001	EINJV2 Processor Error
-> +  0x00000002	EINJV2 Memory Error
-> +
-> +  # echo 0x12345000 > param1			# Set memory address for injection
-> +  # echo 0xfffffffffffff000 > param2		# Range - anywhere in this page
-> +  # comp_arr="0x1 0x2				# Fill in the component array
-> +    >0x1 0x4
-> +    >0x2 0x4"
-> +  # echo "$comp_arr" > einjv2_component_array
-> +  # echo V2_0x2 > error_type			# Choose EINJv2 memory error
-> +  # echo 0xa > flags				# set flags to indicate EINJv2
-> +  # echo 1 > error_inject			# Inject now
-> +
->  You should see something like this in dmesg::
->  
->    [22715.830801] EDAC sbridge MC3: HANDLING MCE MEMORY ERROR
+>
+> Huacai
+>
+> On Thu, Mar 13, 2025 at 5:05 PM Qunqin Zhao <zhaoqunqin@loongson.cn> wrote:
+>> Loongson security engine supports random number generation, hash,
+>> symmetric encryption and asymmetric encryption. Based on these
+>> encryption functions, TPM2 have been implemented in it.
+>>
+>> mfd is the baser driver, crypto and tpm are users.
+>>
+>> v5: Registered "ls6000se-rng" device in mfd driver.
+>> v4: Please look at changelog in tpm and MAINTAINERS. No changes to mfd
+>>      and crypto.
+>> v3: Put the updates to the MAINTAINERS in a separate patch.
+>> v2: Removed misc driver. Added tpm driver.
+>>
+>> Qunqin Zhao (6):
+>>    mfd: Add support for Loongson Security Module
+>>    MAINTAINERS: Add entry for Loongson Security Module driver
+>>    crypto: loongson - add Loongson RNG driver support
+>>    MAINTAINERS: Add entry for Loongson RNG driver
+>>    tpm: Add a driver for Loongson TPM device
+>>    MAINTAINERS: Add tpm_lsse.c to LOONGSON CRYPTO DRIVER entry
+>>
+>>   MAINTAINERS                            |  14 +
+>>   drivers/char/tpm/Kconfig               |   9 +
+>>   drivers/char/tpm/Makefile              |   1 +
+>>   drivers/char/tpm/tpm_lsse.c            | 103 +++++++
+>>   drivers/crypto/Kconfig                 |   1 +
+>>   drivers/crypto/Makefile                |   1 +
+>>   drivers/crypto/loongson/Kconfig        |   6 +
+>>   drivers/crypto/loongson/Makefile       |   2 +
+>>   drivers/crypto/loongson/ls6000se-rng.c | 190 +++++++++++++
+>>   drivers/mfd/Kconfig                    |  10 +
+>>   drivers/mfd/Makefile                   |   2 +
+>>   drivers/mfd/ls6000se.c                 | 374 +++++++++++++++++++++++++
+>>   include/linux/mfd/ls6000se.h           |  75 +++++
+>>   13 files changed, 788 insertions(+)
+>>   create mode 100644 drivers/char/tpm/tpm_lsse.c
+>>   create mode 100644 drivers/crypto/loongson/Kconfig
+>>   create mode 100644 drivers/crypto/loongson/Makefile
+>>   create mode 100644 drivers/crypto/loongson/ls6000se-rng.c
+>>   create mode 100644 drivers/mfd/ls6000se.c
+>>   create mode 100644 include/linux/mfd/ls6000se.h
+>>
+>>
+>> base-commit: 6a8f122c5f073c8610c32636663f2512514b1270
+>> --
+>> 2.43.0
+>>
+>>
 
 
