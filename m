@@ -1,100 +1,88 @@
-Return-Path: <linux-kernel+bounces-560424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2123EA603EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:05:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D4B7A6048E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:42:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C8273BEE3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:05:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76E2B3BAE84
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75411F7069;
-	Thu, 13 Mar 2025 22:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65191F872D;
+	Thu, 13 Mar 2025 22:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="vNslcPvd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wXb11wbo"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABD41F461C;
-	Thu, 13 Mar 2025 22:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED0618B48B;
+	Thu, 13 Mar 2025 22:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741903507; cv=none; b=ncaL53BSyPj3adE7I3N0RsDA23UNBeWRjb4XthZpJJqyQHaJfdDe1I7gwT8mW0EI9RB3pQzcQ9zjQKxePULdDVMZNfbPmL5dqRpQI5OPj+GZ4kLmIEX+idLGPTgTs7bwcC56GcsXKaI5HCx8GBVLENf/nZeKgua0AyLwrILVdos=
+	t=1741905715; cv=none; b=HF6ahW+VMUSyniWyBLPOUXJBExV22p56KQOtqIGFvN7ICeI8qrBYSAIKqcGu9A/RJUh9dNfHjBuxJhAR7JW0+Gbb3WJIX331AMwP+8QvxS58EQqLPQKqjDbySjhQjjoi64GcvB3Mv1Wy7q51YlGT7uyDeCYVtONfmzkTrXcnImM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741903507; c=relaxed/simple;
-	bh=GxNzFgXlCVEFcpDf3VLptEglWoUTczleCr4VuzyQIr4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=bM6b1vDwiwZCyuulZaq9A3/GVreeojBgyeGdU3lhESOmjWp57ZfnL6/C9N0J2hvd3q6ar9I0EDctkbMkFdPntl7rNUtLkENKiY//qb69xdws1tgM7QGQafGP5WM1eOuXSA3GlvlG50nt6Rgv4fXiC14j2WCMHL1hoSbsZ+uQee8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=vNslcPvd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6615C4CEE5;
-	Thu, 13 Mar 2025 22:05:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1741903506;
-	bh=GxNzFgXlCVEFcpDf3VLptEglWoUTczleCr4VuzyQIr4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vNslcPvdVPNB7E9fplso2uwQWydxF0LuafyC8Ekj6LJ17WeoKPzAu1lWUeLyq4wyx
-	 YSG2VtnirdV4PAoDW58QNKBURHFBXAkymAmOjx0cdlO9qH75IKZQbVpmmhcAjZ7EP7
-	 0n/ABlCGS0sNpOunuAQvLiC/vVhLZ4IVMsVmABVs=
-Date: Thu, 13 Mar 2025 15:05:05 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Maxime Ripard <mripard@kernel.org>, Kees Cook <kees@kernel.org>,
- Alessandro Carminati <acarmina@redhat.com>,
- linux-kselftest@vger.kernel.org, David Airlie <airlied@gmail.com>, Arnd
- Bergmann <arnd@arndb.de>, =?ISO-8859-1?Q?Ma=EDra?= Canal
- <mcanal@igalia.com>, Dan Carpenter <dan.carpenter@linaro.org>, Daniel Diaz
- <daniel.diaz@linaro.org>, David Gow <davidgow@google.com>, Arthur Grillo
- <arthurgrillo@riseup.net>, Brendan Higgins <brendan.higgins@linux.dev>,
- Naresh Kamboju <naresh.kamboju@linaro.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Ville =?ISO-8859-1?Q?Syrj=E4l=E4?=
- <ville.syrjala@linux.intel.com>, Daniel Vetter <daniel@ffwll.ch>, Thomas
- Zimmermann <tzimmermann@suse.de>, Alessandro Carminati
- <alessandro.carminati@gmail.com>, Jani Nikula <jani.nikula@intel.com>,
- dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
- linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, loongarch@lists.linux.dev, x86@kernel.org
-Subject: Re: [PATCH v4 00/14] Add support for suppressing warning backtraces
-Message-Id: <20250313150505.cf1568bf7197a52a8ab302e6@linux-foundation.org>
-In-Reply-To: <c8287bde-fa1c-4113-af22-4701d40d386e@roeck-us.net>
-References: <20250313114329.284104-1-acarmina@redhat.com>
-	<202503131016.5DCEAEC945@keescook>
-	<20250313-abiding-vivid-robin-159dfa@houat>
-	<c8287bde-fa1c-4113-af22-4701d40d386e@roeck-us.net>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741905715; c=relaxed/simple;
+	bh=kmQLpP1H/8R9Re5ysO3RWYCNcQwK9I9FBWIQICank4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fZLLLN6PMpGDKaajB5Cb2LxB7L+G/XGynUM0zwUaSMoeEcRjkim5TRZFerXlHwaNh1OU8hI8ZlwhvkzNnlmuBv6LxQU7ZhKKxS/T8m9+PM+VcNYBbkh3N9vs7SB7x2/vaduLRJjv+dSOHBG96ns4v806CmeIBbbrTqq09GsSbeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wXb11wbo; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=o/1Mh0o88Dsb3LEqDeTz/KouVD4jeGs3U4MDb1Mlz1A=; b=wXb11wboAunMU07oXJuhWFbgd5
+	aJpj/k9vObm1zqZS3szTeZFJROQeX+GijsnYf3MJ7cNndJ+PplW9sF9Uedl/Os4phaLpsR2zUhc0I
+	JKHIBOFvidUdzs1JU1E/lRadZjY1ACecfk+uHw5IitYJRWy5G5mS/DTXg4ajGIUFhUhA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tsqiZ-0057P3-LD; Thu, 13 Mar 2025 23:07:55 +0100
+Date: Thu, 13 Mar 2025 23:07:55 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"daniel@makrotopia.org" <daniel@makrotopia.org>,
+	"markus.stockhausen@gmx.de" <markus.stockhausen@gmx.de>,
+	"sander@svanheule.net" <sander@svanheule.net>,
+	netdev <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10] net: mdio: Add RTL9300 MDIO driver
+Message-ID: <f6165df5-eedb-4a11-add0-2ae4d4052d6a@lunn.ch>
+References: <20250313010726.2181302-1-chris.packham@alliedtelesis.co.nz>
+ <f7c7f28b-f2b0-464a-a621-d4b2f815d206@lunn.ch>
+ <5ea333ec-c2e4-4715-8a44-0fd2c77a4f3c@alliedtelesis.co.nz>
+ <be39bb63-446e-4c6a-9bb9-a823f0a482be@lunn.ch>
+ <539762a3-b17d-415c-9316-66527bfc6219@alliedtelesis.co.nz>
+ <6a98ba41-34ee-4493-b0ea-0c24d7e979b1@lunn.ch>
+ <6ae8b7c6-8e75-4bfc-9ea3-302269a26951@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6ae8b7c6-8e75-4bfc-9ea3-302269a26951@alliedtelesis.co.nz>
 
-On Thu, 13 Mar 2025 11:31:12 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+> I'm pretty sure it would upset the hardware polling mechanism which 
+> unfortunately we can't disable (earlier I thought we could but there are 
+> various switch features that rely on it).
 
-> On Thu, Mar 13, 2025 at 06:24:25PM +0100, Maxime Ripard wrote:
-> > > 
-> > > Yeah, as with my prior review, I'm a fan of this. It makes a bunch of my
-> > > very noisy tests much easier to deal with.
-> > 
-> > And for the record, we're also affected by this in DRM and would very
-> > much like to get it merged in one shape or another.
-> > 
-> 
-> I was unable to get maintainers of major architectures interested enough
-> to provide feedback, and did not see a path forward. Maybe Alessandro
-> has more success than me.
+So we need to get a better understanding of that polling. How are you
+telling it about the aquantia PHY features? How does it know it needs
+to get the current link rate from MDIO_MMD_AN, MDIO_AN_TX_VEND_STATUS1
+which is a vendor register, not a standard C45 register? How do you
+teach it to decode bits in that register?
 
-I'll put them into mm.git, to advance things a bit.
-
-If someone wants to merge via a different tree, please speak up.
-
-Hopefully the various arch maintainers will review at least their parts
-of the series.
-
+	Andrew
 
