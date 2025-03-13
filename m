@@ -1,115 +1,74 @@
-Return-Path: <linux-kernel+bounces-559503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00E56A5F4A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:35:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26DC3A5F4A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:36:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2733C1735C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:35:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61B54173198
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED140266F00;
-	Thu, 13 Mar 2025 12:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93B9267393;
+	Thu, 13 Mar 2025 12:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VLkathLw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="phFYyKUU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36686EB7C;
-	Thu, 13 Mar 2025 12:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DD2266F1B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741869321; cv=none; b=MZAHirVQjfPfYkA5eAJ8MiE8tpndqxIgQc6f2Kt3nWI1tgTS4kwXCKAbngS78yf6gaqn+sGRWKmKPfh0HosbagxtNkIinMenjG8+7nXbDzXtfEEIKmSNzUkezwjT8ZiZLL6szXvl5c53BVuAsUrm8Ev0Qidh9JG+xSlXzyZKQiQ=
+	t=1741869365; cv=none; b=NvBz07sD5b+eYeH9pFiQ/dBRiHl3yUK5uSGI6RsF2j5ZoQTopQ7UQXef2B+vMynRMheo7LS92nHbDGJDk3/j5GpmMxhJfMw5QRqjaR76+FAdKPrL6zm5pMq1W0OC/z0qAUlzEmPKYzJ5XKKEV8Q360SDMe0iKIT7uvJnFQ/Q5wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741869321; c=relaxed/simple;
-	bh=PhTETEVW/Hp3YYNn7mzXNielvRoPM7TY9acHre9g67c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DGiGXjEvquhGV17BVUwCyRpGKzTDdZUP7kd2gPWJQ4s0m86MwyTJoz0GvxkL+Sne3Ob95TgEgs3EzYLkWahmoGbep9ykCuJAbsaKn/Cj8R+vPTzOZLEQ/APry7/BbkV+b5fhlvhfbyaQiZxEpfVsTB3o+KQwSNGebqmI2xE0Nso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VLkathLw; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741869320; x=1773405320;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PhTETEVW/Hp3YYNn7mzXNielvRoPM7TY9acHre9g67c=;
-  b=VLkathLw4bKSsmxUilTI6boWpRhDe/CkRKCBRLgOoBmIPEN6tK7PuHHO
-   ukjcXQw7gA4ImvxrpG6Lrff9/EIUmIY9en4WqFj7Ntfk9op+8WpLPjDwr
-   IzC0Gmp4dugB3O3OtVs42nTFXPekkH47wlOlZg5Bo3j+jOkQiKx55fmvq
-   l8m2W0BOX7ajor3AlEwxgGuJoEq3JR1IhE/1hzzuMEwbz1EuQolIZafuL
-   8Zu4+/jOXyUN+gEPocN4N4kXErDH8u4zk6FRniX9pXzewo3opvwDBDtnl
-   VoQ71fJTURmhLrwRSidgj6N85W0YmqS9Rgu7nUo60UI3w1rzj2pTR1aV9
-   A==;
-X-CSE-ConnectionGUID: XmBGa6nPR+aTuZuufc/wwg==
-X-CSE-MsgGUID: vM3FY2m+TBGECBmu3uiszg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="53619443"
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="53619443"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 05:35:19 -0700
-X-CSE-ConnectionGUID: B+RhSLqZQE6wlexCjdJ3dQ==
-X-CSE-MsgGUID: X1HyK6sSQ0+4jGi51J558w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="120933692"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 05:35:15 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tshmJ-00000002Aer-2VdL;
-	Thu, 13 Mar 2025 14:35:11 +0200
-Date: Thu, 13 Mar 2025 14:35:11 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v7 net-next 09/10] net: gianfar: Use
- device_get_child_node_count_named()
-Message-ID: <Z9LQ__rJiRsZOr7-@smile.fi.intel.com>
-References: <cover.1741849323.git.mazziesaccount@gmail.com>
- <b587e36467941f27e1273a9cf2cf3b0783bbb5fc.1741849323.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1741869365; c=relaxed/simple;
+	bh=ExXY6AL45vxP8X4XDgr390U/+EulvSnEOgFDIP9X6zw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=r4aso7zll09H5k2qSW4PayZ37FRm8uP8hXw82UDvOQjRcppjWwRgiFWJVRPCnOmAv3p6+dvCIjSghVZ9wDJS4zQV5een3uwqnD7a1HT0NEoz5IBiQs9kDzjL/3Ekee9B625ALgt5y8PV7yr+6QW28FvOMT1NycKfHmJSC8DG8zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=phFYyKUU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61374C4CEDD;
+	Thu, 13 Mar 2025 12:36:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741869365;
+	bh=ExXY6AL45vxP8X4XDgr390U/+EulvSnEOgFDIP9X6zw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=phFYyKUUxvu0FZN4uHqgnx+XziwagzLuMdUOXeMBd0JCOcPEOAELpyDt7VeW5TJip
+	 OcvR5FlMckw05htkPI32lIlVSqyqvX2wuAaQUo6KP8+JCWT8cYbhxQcW+Dk1Ho28dj
+	 K0u8J+/FreQB4debVUVWsw7lSVUqUFVfwMJn/itDizcM4CJf4DhsEDuCpQOzlNNRuQ
+	 prBScf65elNNJRzMvKJJq+rWTwCrz6lwwEoK90Z8AGi575OQERsb+OsnnGs0inVhmU
+	 magHKYGeRDAyt0TIoVt4j/seIwebhwaHX24NlNm7WteT4Mu+0LHSw1Yqr2S2cRQpaT
+	 bR2STchLDTBog==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Aaron Kling <webgeek1234@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+In-Reply-To: <20250228-max77620-module-v2-1-eb686216437c@gmail.com>
+References: <20250228-max77620-module-v2-1-eb686216437c@gmail.com>
+Subject: Re: (subset) [PATCH v2] mfd: max77620: Allow building as a module
+Message-Id: <174186936414.3607024.14008739699568475990.b4-ty@kernel.org>
+Date: Thu, 13 Mar 2025 12:36:04 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b587e36467941f27e1273a9cf2cf3b0783bbb5fc.1741849323.git.mazziesaccount@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-510f9
 
-On Thu, Mar 13, 2025 at 09:20:10AM +0200, Matti Vaittinen wrote:
-> We can avoid open-coding the loop construct which counts firmware child
-> nodes with a specific name by using the newly added
-> device_get_child_node_count_named().
+On Fri, 28 Feb 2025 09:24:26 -0600, Aaron Kling wrote:
+> The driver works fine as a module, so allowing building as such.
 > 
-> The gianfar driver has such open-coded loop. Replace it with the
-> device_get_child_node_count_named().
+> 
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Applied, thanks!
 
--- 
-With Best Regards,
-Andy Shevchenko
+[1/1] mfd: max77620: Allow building as a module
+      commit: 13cefded0104ee24494fb8cff90ae3e4485d74cc
 
+--
+Lee Jones [李琼斯]
 
 
