@@ -1,82 +1,96 @@
-Return-Path: <linux-kernel+bounces-558984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44CB2A5EDF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:25:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2604CA5EDF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:25:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA895189DD57
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:25:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68CB117B878
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7201B261371;
-	Thu, 13 Mar 2025 08:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E7D261375;
+	Thu, 13 Mar 2025 08:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NL/EN3ET"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RdstcLdE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC351EA7FC;
-	Thu, 13 Mar 2025 08:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB044260A27
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741854308; cv=none; b=LpT5g59fNJcs+ZkvveT8SLwz1wCYstf3pCXEvsbOmS02zNltf2JXgAMHDJ88yaSPMNJUH8U+IimbN3zqh7pD0FZa+HONkDrbMNxAJpbz9nE6ExsinadrbvDX619yeg+ymuU1EIq5J6P2PTITqih6dMU7WDtgf3DvSaU9bKwm9OA=
+	t=1741854342; cv=none; b=obTBtgUZr0Ex2uyD16v6AUj0LWAUDlg/upzvxXSMk44yywhGU69gSRRGIvaHyoUgfAedhSxgas3gKvSkaUdIQ7qbSE1b4kLtDtYrxiMR2WVkC62KaILEUsYpzQAMy6pWJtsqpYHRBdj9HN+z3VzSkB7TWmfiLC3Ohh8p0YO3hig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741854308; c=relaxed/simple;
-	bh=tP7pYcJ7IaS/Md1BK9deqaULsuj+tHBEOo4Z7ziQAkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fFVkNh4WAsnkrREJJYYRb5gFrBlaNWnmV5GrzSHR71h/QjyY1dAEgpu6smVnsmF/Ni2s/teOtJNL2+AG+TGfX0n4mGrkFxhRuHA/iqNFXdxH3NlWkBumUgtUGSWdcg0anQ/Cr0Ya0jsPzMnDrhrGEEnm43HaPodynKQuc5ZI8vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NL/EN3ET; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CEBAC4CEDD;
-	Thu, 13 Mar 2025 08:25:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741854308;
-	bh=tP7pYcJ7IaS/Md1BK9deqaULsuj+tHBEOo4Z7ziQAkY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NL/EN3ETQnY+Lz19/9hMJ+OGvvE3x/RWN3cE++EjFWmiPKO2VWc17YDgkqU7jHUhZ
-	 akNjOqPnK/HBghunrcZXXkWXN3tnq37IF33FljFlzOv6ne9wX3CNFqmTi5e942R2yi
-	 CczyHgyQ+o+nuF57BGEK25KVtBcxhn8V7zJ3qxgmWSniA968DR3M90meO5LKQwX75Y
-	 LDPe7AnucVsGwLxJaacHVdqW3isQj4EjfXPWD5uXBdqSe7v6MSCQys7sEoBNv70Hq4
-	 J2fqzNAWKTtE33cnG6TsabQzsnu58qMCexpuhWG7H0l4bsov8uXYrTa6ZbHJyIb3UH
-	 gdkeK+qdUIewg==
-Date: Thu, 13 Mar 2025 09:25:04 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 04/10] dt-bindings: clock: Add Qualcomm QCS615 Display
- clock controller
-Message-ID: <20250313-mottled-quoll-of-vastness-3f3c6b@krzk-bin>
-References: <20250313-qcs615-v5-mm-cc-v6-0-ebf4b9a5e916@quicinc.com>
- <20250313-qcs615-v5-mm-cc-v6-4-ebf4b9a5e916@quicinc.com>
+	s=arc-20240116; t=1741854342; c=relaxed/simple;
+	bh=QljnaP8b0o+u3UuwJdMOMNTGRKJYYW3WKMH5vkZKcHc=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=naiYRhPfb9hMWB7u8cyzi74igYzJ54ob36AhQakunaUuC0r7PRYk75XlnvxgLS0e3Wu2k2+RZPuL6OuN5qOoGcjwl86xV082kok01z+EuykFQFqKhCbwtTXblJjSJkZ5MdC1HfCdMH33uoDOnGEOhRHawttbZzdpaxOxvYBLdHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RdstcLdE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741854338;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AFbXV6wQm1jW/3xJcOUdaz2XhjqGU0ni5DQO1sddI98=;
+	b=RdstcLdEvkT2utlkRmVckCHtq8Sf2mYrwpo+6k6g7b4WkBwISXYIJ2P5VApDWMX0Vd5ySQ
+	Wt0Z+95drTVlaT7tvqgvncLVqLIXuG8ZTA8szhi6zhAEpxW4fzSeeY4tcifaLOi6+Fve3B
+	Uimh8oif+t6BarGfvOBM34eKgla6tGY=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-410-OssFLTJ2N0O8kUzooC6wjQ-1; Thu,
+ 13 Mar 2025 04:25:34 -0400
+X-MC-Unique: OssFLTJ2N0O8kUzooC6wjQ-1
+X-Mimecast-MFC-AGG-ID: OssFLTJ2N0O8kUzooC6wjQ_1741854333
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 440F3195605A;
+	Thu, 13 Mar 2025 08:25:33 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9140718001EF;
+	Thu, 13 Mar 2025 08:25:29 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <458de992be8760c387f7a4e55a1e42a021090a02.camel@ibm.com>
+References: <458de992be8760c387f7a4e55a1e42a021090a02.camel@ibm.com> <1243044.1741776431@warthog.procyon.org.uk>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: dhowells@redhat.com, "slava@dubeyko.com" <slava@dubeyko.com>,
+    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+    Alex Markuze <amarkuze@redhat.com>, Xiubo Li <xiubli@redhat.com>,
+    "brauner@kernel.org" <brauner@kernel.org>,
+    "idryomov@gmail.com" <idryomov@gmail.com>,
+    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ceph: Fix incorrect flush end position calculation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250313-qcs615-v5-mm-cc-v6-4-ebf4b9a5e916@quicinc.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1307971.1741854328.1@warthog.procyon.org.uk>
+Date: Thu, 13 Mar 2025 08:25:28 +0000
+Message-ID: <1307972.1741854328@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Thu, Mar 13, 2025 at 12:29:41PM +0530, Taniya Das wrote:
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +  - '#power-domain-cells'
+Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
 
-Also no qcom,gcc.yaml. Why?
+> Do we know easy way to reproduce the issue?
 
-Best regards,
-Krzysztof
+I found it by inspection of the code.  Quite possibly the issue will never
+arise in actuality because whilst the code only specifies a flush of at least
+a few bytes of the tail page, it will be rounded up to the full page/eof.
+
+David
 
 
