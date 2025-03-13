@@ -1,236 +1,180 @@
-Return-Path: <linux-kernel+bounces-559761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3895DA5F939
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:08:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8138A5F93F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:08:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64F65169145
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:08:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 952981723F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915552686BE;
-	Thu, 13 Mar 2025 15:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5237268FD2;
+	Thu, 13 Mar 2025 15:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eyGFkwUQ"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2085.outbound.protection.outlook.com [40.107.102.85])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KLP97L+u"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF0628691;
-	Thu, 13 Mar 2025 15:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741878500; cv=fail; b=jZSLcgZO0D7V2Eg+MVqUCOJtoQZxe8tVTWH8dXmv66ZXdxdNspD9ctqdwJeeistTgctO6S5vzoa7d8+L71a7fJm45cLGXlMaN7ZibzhmlzCskZ8rXysdsEDRtHDA63BzcncwNoNBR6daTyWk+7hAjxoyWeo6ZPlfhpXUTdcCcoM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741878500; c=relaxed/simple;
-	bh=Y2YBa4fqbcxlE7tnmOb+q0kp3IKwY+a96dPXkYAm9Cw=;
-	h=Content-Type:Date:Message-Id:Subject:From:To:Cc:References:
-	 In-Reply-To:MIME-Version; b=BlDwegeS6dIAz6p2qS53aSR82wHH7wCO6UG0igkUK+XQnEEYeCA7GyT6mpt215IUa+yvLLoV9mRtCTkNftIEPc/O2swbyS1fO+tzO1U2Dh8UrzZE8Gz6wjFVUB7NGR5owAZ//bm790PLUCARDJGMpk6awznmzZyty601VZBjip8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eyGFkwUQ; arc=fail smtp.client-ip=40.107.102.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NDclJZ3yoEbr5b9j7YR69fxp9u24lmXV+WGDVsQaogj61SNX5CutO+FQyjo/vLyDcyyBP219pGqifZn+KbwbsWGTTRChoGtCRCgUIbg+mUqGEw+36U/2iVpElC9ukSB8GoY7RCOORDorzgqrRB6bjYHmKy/Ik6HBKhsWSwtUzxJ7nWVQGupTqlr/SrozhbkaDu0tqvut81n02gtcxS8sYjRjNd1XwS7Arf5Iu2WhB2bcOe7IkeR0xbAImTnDHctk/O4hyRKtYBZytGkQp+AcJ+5KjatD14q3tS8mG/3t90jyMTNHbjLAqhQUpeU/ufDeNfUXK0cvtE4b/9FmyP8XjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ey3GN34wfX/7yNncAA66LuwFrZj/sMrJ9vCS0KAyZIo=;
- b=Yl+MAKUVQYFLAYG1S//WFLF+7u373LJTZUGxAG7slyRtkRtVH3TS7H2yWfK+bD6qBPGiuQSq+6hPEgnRXvVY6fmzV7alT2J9qMv+DYnpcxgSVBf6t2T1O0HWWSFqy39aHrIl1yLwLpSxcSk7YlUjTByD2s20L16abdnNW3FeUiPRARV58APuBuHlfTMtjotN4VfGCAJIAijziNieXBeYs6daavG0lxKzJONOjPzc7dU3hK1hd5dPZN0pDUPAclY3kS36l6Iortodb0RadsjNO5i+RVIWQxH5eykLKIYshAeIzBf//26uIjzZRHe3rSNye7ZbJi4eJCt+ced0m98MKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ey3GN34wfX/7yNncAA66LuwFrZj/sMrJ9vCS0KAyZIo=;
- b=eyGFkwUQdD49tfHxg/KwiR2V/zelYY7VwXV3Sg++c36n8dZV/3Q7Mg/pgn29z6EQTBmRPrUdHH6Y3IlewqDV8VBAvNLzvzk3CMr/n0IZVNcFLjxL2YPQL8ejYWBUex+g4lb9LXBMz024d0GasF64ZM66UR4TwUKe5LFzpjwCjTqLY/mRFkJ92Mb6/qpNmMcq90nmGGinFMOdyR3F3myHjyg3M7ShvUqn8DakXzAH/TvI2lDITXVGTyQmOuFKXWKbOjNK8bjygEj+3FbBKbHpLWBHWCOQ1k5Qf4aAdmt+hAlBjb1pZ/1nze2onSPs9mJyzYcmpzgGHlAozeeBumi9mQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by CY8PR12MB7316.namprd12.prod.outlook.com (2603:10b6:930:50::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Thu, 13 Mar
- 2025 15:08:16 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%6]) with mapi id 15.20.8511.026; Thu, 13 Mar 2025
- 15:08:16 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 14 Mar 2025 00:08:13 +0900
-Message-Id: <D8F8E4PBHK7O.399Y83M1L3XK3@nvidia.com>
-Subject: Re: [PATCH] rust/revocable: add try_with() convenience method
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Benno Lossin" <benno.lossin@proton.me>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, "Danilo Krummrich"
- <dakr@kernel.org>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250313-try_with-v1-1-adcae7ed98a9@nvidia.com>
- <D8F7D2RPRVAO.2EF39MZXM6FPR@proton.me>
-In-Reply-To: <D8F7D2RPRVAO.2EF39MZXM6FPR@proton.me>
-X-ClientProxiedBy: TYAPR01CA0048.jpnprd01.prod.outlook.com
- (2603:1096:404:28::36) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC2F268C5B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741878505; cv=none; b=FKxjpMl/R7Q9RjHDw18cTH5kUvvbbZW3M0VR7tTdec5wBnBtXBgsn4mkcdW0GSKvjP+gyBhFIuhiMY5ga8i3+QS+FfW0MyDGjyoVZE4pGqTr6hVxJOKao0o8RRaP9oYS33L2iKCfdeJ0hmTBejsQMl/XlETRdPSsadPbF88HBbg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741878505; c=relaxed/simple;
+	bh=BZmdNCZ5/qRxlx0SPeoGB47Ed8FZNgHI2espj13qmpI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=safF0Me/vSjEApoLOFPgvP7lOrKsSApebQfmQAHKBFCJ2+QKIGM8BFJBWV+5P+316d+NBTQEAjsWWz7rgFlpHkGQEuPsDL3lfKzlTtq6anyLtJm1ANmNOgCsnfldXLsPds5NgI6oRzalL7h3ipz6bcbp9Leh7A8r0Vn3p4+ezGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KLP97L+u; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741878502;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HVXcsr7GZMEAmniMdC/b6umj6ZIH2ElXr2xetOJBYLo=;
+	b=KLP97L+ur7IF0kX5QAIe25pMsw9XN+ZUlCCQA3JCQTc1uzOGdFkpDFKKy+CRflqReP8fd3
+	NkPc0HySGhELp6PU5DeOC00aW6RQfjdE8CMA5NgYgyyJ0gvYNNRWw2L2sM96/muaOJMSzk
+	WH/hl6kZBUWGExmoNd6vvsLCST0hMIo=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-530--gk7Uy5KPBew8xS-vzpQsA-1; Thu, 13 Mar 2025 11:08:21 -0400
+X-MC-Unique: -gk7Uy5KPBew8xS-vzpQsA-1
+X-Mimecast-MFC-AGG-ID: -gk7Uy5KPBew8xS-vzpQsA_1741878500
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5e636b06d34so1125074a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:08:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741878500; x=1742483300;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HVXcsr7GZMEAmniMdC/b6umj6ZIH2ElXr2xetOJBYLo=;
+        b=Z3jH13QDHgionYoAMf+99381SKL7xl+2y3J6K1Obac/yyMa0+E4luzRJpdGa0qF6lB
+         kr2ezottCSbh6/M9/BFJkZAiy+SdEzOYWvPBk7NY4qLGf3RKjg0qOBFXPH2K4maZrKgu
+         RxrcFIMFpexrgeyEIFaM4OPE4wLlLh/CWtIPWV4Ov1lsli8xLw6AZmMCo02y71qkTohA
+         1zXV7XueQIlyKo1S5wVR7+KW+PAe558iQIdNAnz2Wscv6ekI4uHg9V/A6tFjRHIDX0tG
+         346jFLChELQDS2bIyJgFrmratFogEXaqzm6CqCEvBzgfcoNiEKv4lVT+9JgWNi8/DUmr
+         4zgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVaL/cuPCGOWqdCdZbr/A3Jw0Hs0j0TyOp1nFHML9vbqaXHOFWvRynQWPrcc/bKSmXmOYRvkk7A589+ppA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzrd7sHGGUqGERNO5vkS92faXsxO1psjUsBh9CxB6Qhpmq/4GRg
+	Fh1cFWr5xFuliM6OpHalI0dUsIL1bwa3RP3lz8YV34APWUbmYj73BdZhf8VZp+Z9sI7RGwZ60VQ
+	N/a47Q7NieouuwX0GTmgLk3b1Jn0osNUJPDq+GYO5wCIkvGnf3bFq7Mpmb1ZrVw==
+X-Gm-Gg: ASbGnctROPzFiakgMvJaM1ouklFgxKOBHYWs5HbA1M+Op3GPh74uytDeU3m+NqYKFlY
+	mtfMdWD+fgzSj2zO1Hsoqx0SbowP1cOLbB1TkGdmESa98aU1h3rm10NkuiHduRlGoKef+M6z41W
+	O22oxksLC8RybjsDrJV0FRGSGYfFvhYtAzx5jgu+FK41hfck5N4oSb0clZUszMFKeD4tTKEaPh2
+	MMIHv+kulhGlRwBnKbFBq6QNGwB31hbrj/iJE9nCleF+31xePgOUMd85BZmi1VPHOmrcF2wthl2
+	tNsxb2X92HO2IfXn/aVnzZ3jwGhqloe2ztHbU9GDlz/89uF3UpVhdZhoE3dJbIOZ1sIgT6yK5vM
+	TtGjjCMwpOHIijAQXbViWRWYsT9nAGvC7DrlyKAW/eHIPziTcHK85SuIni3h0IAbR6w==
+X-Received: by 2002:a17:907:94ce:b0:abf:69e6:4372 with SMTP id a640c23a62f3a-ac252749adcmr3564775166b.4.1741878498244;
+        Thu, 13 Mar 2025 08:08:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFfz8dFEUeqIRmnyOekkf1jHZOOgVGjHfESNlROwH3AaptJBdPv/biPGWbLkHziULBAePb/Lg==
+X-Received: by 2002:a17:907:94ce:b0:abf:69e6:4372 with SMTP id a640c23a62f3a-ac252749adcmr3564747666b.4.1741878496272;
+        Thu, 13 Mar 2025 08:08:16 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac32510726csm9933266b.127.2025.03.13.08.08.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 08:08:15 -0700 (PDT)
+Message-ID: <4596db59-51fc-4497-9e94-670e9533e7aa@redhat.com>
+Date: Thu, 13 Mar 2025 16:08:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CY8PR12MB7316:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c4f5e1a-8949-46ea-2126-08dd6240e1f9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|10070799003|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UEc2UjJwTHcxeVRSQnJ3VE1mNUQ3emlTTllUbFByOG9CenV5aS9NSkpnT0FT?=
- =?utf-8?B?SUNYZFRmbjYvQ2VXa0VQc1hmVWlkOFczZWJydG1oMmpCdDlIRVFzSHh5VU5j?=
- =?utf-8?B?c2QwVVlwcG90alp5YjlCUzVwM0FnYWZYM2ZtL3M4MVQzVWJtMUJmVUtvbG1l?=
- =?utf-8?B?YjhveDYxdUNPRk1JY3puRHlabzRwTkJGWmFmNWhubGtnOWZPZC95N1hPV2ty?=
- =?utf-8?B?SHVoNmNKWmozeGNRa1VhUi9PYjB4QmdYaGU3VzRjdThrQ0NERktkdE5BT1Ev?=
- =?utf-8?B?YVZPcnJwcUVUbVlqd2tXSWtNV09zdFh5aytLQW01RHRzMjU2QzhMbVkvYnYy?=
- =?utf-8?B?NmR4RG9GOGVESkF5U212QWpWTGJJU3ZReHRsN1krZEJwTjEreDI1dmg0VGd6?=
- =?utf-8?B?NlBCOCtDbWo5cUo1amFyblFoT0JMd2hhVFk5bERpZFFkekU5L3hQanB1MHlV?=
- =?utf-8?B?cmhPRkcxdWZHMFFJTkpObDdjcVNGNlV3dFh2bktVczZVVCtpUVNYNnkzazRx?=
- =?utf-8?B?OFZ3dURtTllHZGRJWnA2eGhUT3VQUTNKWjV5RVJBTTJ4Wk1icXNqVFY4NXhl?=
- =?utf-8?B?d0F1VGpXZDJNUFVvWDdTUTk0M3lRM2FpZWEyTHlLMFdkam96eC95MmwxbXZV?=
- =?utf-8?B?SlJJMVFieFNhYm0yNzZpNEU2L3RvS3RVbzFZcVJFdnNFSE1jSmFzZ09YbEcy?=
- =?utf-8?B?dFBwcCswNzdYUERROFk1VGZVamdjV0JuMlFSVitEeC9MdmhXMG5MN3N0Yk1q?=
- =?utf-8?B?aHYrZ2xXYWJ6bUpDemMrak51elNwOWpDNU0vTGcrZjhhR25VZ2xVZlRHdktj?=
- =?utf-8?B?aUJ2VXRqcUNTMGxXNENJM3ZIMEExT0ZZeHFQTjJKMy95WFZ3K2ROUnFkdmdJ?=
- =?utf-8?B?MnZOK2FpL0VSa3JnUzcyMGZ4dzRNUldoaUgySnlCM24wallGS0crUGFaelZJ?=
- =?utf-8?B?MGJrWnUzSHE2SUpMdFllSUhMVVBjTTBIU29XQ2VMbkV2VXlZZ0U5Y0FESFIv?=
- =?utf-8?B?cG8zRVltZHRLQ0VxWW1nemJtZitad1AwdDVRbS8xSGY2SmxwbUZncUJQbEFq?=
- =?utf-8?B?enprMk5rUldkVWhQMisyY01pSWJlamllTU16Zllrc2JLbUtHbmRoRUFEbFdJ?=
- =?utf-8?B?ckUzUSttdXorWmxBODVuOHB2d2pJeUF2WGZENHE2OCtTM3JUSnkvRUZkcFN2?=
- =?utf-8?B?N3YyZEdpaWlVRDVhcHBjTk50bWhrcUlPbjZldVNFK0F2ZkJ5eEVYMHJDem1a?=
- =?utf-8?B?TlRYODRPSUpRMktTaHpKNUE5QXFDdEJjZm9JMVc2NTJzekR2aHdwUGxta0I0?=
- =?utf-8?B?QWwxTmVlQ2N1bWVXSFE1MTd1K2xiREVFVE9jQzhjWmw5Q0tqMW5wL3JXREw0?=
- =?utf-8?B?TnFld09vL0RBTXBmbEw0MGN6UkYrRlBZREcrYU9rdkdNWEpkNWU1SEo1Snhh?=
- =?utf-8?B?RWtQcjEvK3RPajU2TmJJYUgvWnd6L0ZZVzgxcGZqVVoyVTJLYlR2a1pGOHl1?=
- =?utf-8?B?OExxT2tnSlE2Y2JGVVprR1pFTU1RZk93ZVBscnlsbXc0OXAxT3VzL1BJVStt?=
- =?utf-8?B?ODN0cE5sVmFYbjY0d1VaWWk2dDQrRUdlenpTL0NSTHI2YjVJczNyTVJtVHpm?=
- =?utf-8?B?dkZoRkdJanUxOEFnNVh6Ymh5cDBqOUtDYzZnaXkydGk4d0Z1bjBacjgvOVBQ?=
- =?utf-8?B?QzJmbnB2ekZrU0hQaDJPYXdSQkwxU2UvbEVqZVR6UnI3Rm93WlQxL3ZranlY?=
- =?utf-8?B?bC9QK21MVGF0YU8zN213V0JDZytkekFuV211a09QMVVvVUZXcEN4Y0pwTnF1?=
- =?utf-8?B?NDFtbktTU0tabmRiUW8zdW54dlhKMnpxbmppUHlXeUdHNlF6Vk9FVFlNR01q?=
- =?utf-8?B?OU9CYkNKY3RrV2hzTGhNTXdUaC9MTG9MU3JGVFAwYXJaNkc1ZXVMK0M2VGRo?=
- =?utf-8?Q?mSZTLVciFGA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SjE4bUVvc2xubGVHczhZc0RYNG0xb0REM3pXS3RjUFhadC9aN2NJL3NzbHc3?=
- =?utf-8?B?d0NUR0lVZktFUytuczBQOTJpeDRYZ0pDSTJZZVQ3ZDlSMlJZRk9lVW8yV1hS?=
- =?utf-8?B?eGtxemJDdUhGaDhyeTJLSFNvNmZSV0N6NjczZHZMTGIvMXM2M0kzZUlkU3V4?=
- =?utf-8?B?dVQxb2Z5RW5DdUFmamUrUEVpazF1OVRCT3JnVU9NYlNvMzNINXRzdndOKzJv?=
- =?utf-8?B?b0tXUWVvZHk4WGs2UWFWVE9oT0NHOXIzTUJyR2k4RFY1N3g5UU5tRXlUN1BU?=
- =?utf-8?B?eXdBQ2FKQ1c2RXFhblB6Qk9tKzNmZWxGeGFEbkx2Z3JDQnBuSk96WjMxWk9y?=
- =?utf-8?B?QytDeUNWbzJaT2RQL1diRWwweWpSR2FQNHJ1b1FNS2RSYVZZZjlHVm5UL1ZP?=
- =?utf-8?B?ejhoK2JRbG8zSnRIYzVYUi9kZHVGcVovMWViU2lSNERQTGhpbXlEL2RyMnA3?=
- =?utf-8?B?SUJQa0tQNVlGRXRoZDRxa0tHR2ZkT1RTZjBYZHpqMnV6SUMxc2o3VnptcDFF?=
- =?utf-8?B?ODNacDU1cmlvR2RSdHZBYmtXKzRFZEdxaUZBeU9zaSttUkxJclUwM1FVMjBO?=
- =?utf-8?B?ckpDM29lSTB1WXBmNEtTcEpHZ3gvYXNwc2xvQ3BnWDIwbzZHYmVSbGxsWitV?=
- =?utf-8?B?S2lIeDZvemsxZWR3MkVibzV4NUJYeFBKMEJpQjhkRU5jSGtGQ0JBMGhnSm0x?=
- =?utf-8?B?L1pBdUNCakpvUWhXU0d3T2RFMnRXWCsvdGZIVkJULzdlVm1jeUZURzU2Z0xY?=
- =?utf-8?B?eXFvTHpVZy9KSDJQOXpVZ2lsK0dyM2V6aWY4cllLVzdXdldOODdHdkhEbHVw?=
- =?utf-8?B?L3JNWDZWME9nUEc4RUJLVDRMQ2QwSWo4emk3SmhudGJMN204ZHFXNDNNOW5x?=
- =?utf-8?B?a2FVOXNKOFBCdHBVYWFZKzA2UG5VVG05RUV5R081eE1QUjhhakFuY25JNWR5?=
- =?utf-8?B?amQxNHB3UHQrQ2t1SWhONFkyNlRNcWR0dHZqMXRNRUE0cVdXTDBHSjVNaEc2?=
- =?utf-8?B?c2VDSVBGajgzdjEzQVFva041VE5PNXlIUkpQQXRNZ2VNQ01sZDEyQ3lZSWZ1?=
- =?utf-8?B?Qkl4RzVZbWxUV0c3UmorbmZKL0NUYjJHQmJxZzJNOFNlYmlIWjJDVTR0eFBJ?=
- =?utf-8?B?VGRZdnJpRFpUTGRtd2d4REYrcGFHYVhIS21RS0h5V3htOGN1ZDYzQXF4QWlL?=
- =?utf-8?B?SzM3K2pXdUlySlN4UTZnNnl2M2RtNTZNcmgxMnp6NW02Mkk5K2hHYlkzbW93?=
- =?utf-8?B?Ti9IRTBCdTV3cWlkNVB1RzBkMitZcXZmWXpJOVJOQzNKTFZWZ0ZrQ0lUUGVq?=
- =?utf-8?B?NnJnSzNKOTlKdnlKYmpqYzUzcjBXSms0eFZNclZQYzNnYXpoRzFpV3AvOGFa?=
- =?utf-8?B?MEhFMHRwemhpUGdoaEZGLzNXZUpwNDdNWklwbWRYTUwzWFVDOUxjbjM4OUtS?=
- =?utf-8?B?aUg1VEYvZWpCWkNicVJiNHVuekU5N3VCMnR3dTZFVTM2UE1wUHpLSm53Um12?=
- =?utf-8?B?WEE4dmllT1BtNTZWM3dNWk5helJxVzVYS0krVDhQOThsRUE1dXFqK3RMYXRl?=
- =?utf-8?B?U0EyaEtVNkxJTU5sQW5BS28yVkwrelc3dTlaeVY0NUVUM3BvdDlkRWREZGZm?=
- =?utf-8?B?QlgraG5ncDBhTjJjbjhKZ2UraFl1RFlvK2pqUTRLZVVtNExnWnFta3VTSEY2?=
- =?utf-8?B?SDhzYk0rT0dncnJNbkJBcmVpaUtNMEErL3lqb0RMNllTOVpSOUlUczJzNWtl?=
- =?utf-8?B?WjcyaDV3WnJndjFqL21ScDl3YXpOcjliTit3OXFrUEJMNGNBOGF2czJ6WFZQ?=
- =?utf-8?B?V1kzS3hoT3dLb0NsSldEeXQwNURONUcvODhReDk5am5iYXVjdXIvNGM0Tmlu?=
- =?utf-8?B?RDRLRzRxUWwzSGdib2ZXdUZ6bzJTYXk2U1g1RkdNakUxRjJRR1E0YyttLzFM?=
- =?utf-8?B?dlR2T3JwbGpiN2R3MHNVdDBtZmJ4eE50TkFyRUkxemVtYkJIWDJadlVMamxj?=
- =?utf-8?B?VzJ4T0h3YzdZSHdUb1BvRmJTR0dkM2JBSk01YlM2b1YyTEp2SHBnTzBpYnNq?=
- =?utf-8?B?TU4zYXlnYmJ5RGZWMUtJbDBvWGdaUDZnbEJDZzZBbzZocmlqa0RVZ2tYNmJj?=
- =?utf-8?B?VnZ0N05jdkRGQjZETCsyM0xQWTFoMDRuL1JWKzRrc2hVbm1JVFBIOHdPZ1oz?=
- =?utf-8?Q?6Mw7CcYmV3V/ipIVLqTdtUrWyp/ikv8yBQxx7Q4oClRf?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c4f5e1a-8949-46ea-2126-08dd6240e1f9
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 15:08:16.6296
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L3k3ZjkNEXnjBg3vrnfxtFxUroLfd4DHdP4CwEJ7oaxMrxkfO+mtN354c+e9cuG0M/kIi+nGFmdnMI0Z6AcFcQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7316
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 0/2] platform: toradex: Add toradex embedded
+ controller
+To: Francesco Dolcini <francesco@dolcini.it>,
+ Emanuele Ghidoli <ghidoliemanuele@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+ Emanuele Ghidoli <emanuele.ghidoli@toradex.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, soc@kernel.org,
+ Andy Shevchenko <andy@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20250313144331.70591-1-francesco@dolcini.it>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20250313144331.70591-1-francesco@dolcini.it>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu Mar 13, 2025 at 11:19 PM JST, Benno Lossin wrote:
-> On Thu Mar 13, 2025 at 1:40 PM CET, Alexandre Courbot wrote:
->> diff --git a/rust/kernel/revocable.rs b/rust/kernel/revocable.rs
->> index 1e5a9d25c21b279b01f90b02997492aa4880d84f..0157b20373b5b2892cb618b4=
-6958bfe095e428b6 100644
->> --- a/rust/kernel/revocable.rs
->> +++ b/rust/kernel/revocable.rs
->> @@ -105,6 +105,28 @@ pub fn try_access(&self) -> Option<RevocableGuard<'=
-_, T>> {
->>          }
->>      }
->> =20
->> +    /// Tries to access the wrapped object and run the closure `f` on i=
-t with the guard held.
->> +    ///
->> +    /// This is a convenience method to run short non-sleepable code bl=
-ocks while ensuring the
->> +    /// guard is dropped afterwards. [`Self::try_access`] carries the r=
-isk that the caller
->> +    /// will forget to explicitly drop that returned guard before calli=
-ng sleepable code ; this
->
-> Space after `;`?
->
->> +    /// method adds an extra safety to make sure it doesn't happen.
->
-> To be clear, you still can call a sleeping function form within the
-> closure and have the same issue, but I agree that that should not happen
-> accidentally (or at least not as often).
+Hi Francesco,
 
-Yes, this is by no means a complete solution to the problem, just a way
-to better cope with it.
+On 13-Mar-25 3:43 PM, Francesco Dolcini wrote:
+> From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> 
+> This series adds support for the Toradex Embedded Controller, currently used
+> on Toradex SMARC iMX95 and iMX8MP boards, with more to come in the future.
+> 
+> The EC provides board power-off, reset and GPIO expander functionalities.
+> 
+> Sending it as an RFC to gather initial feedback on it before investing more
+> time in testing and adding the remaining functionalities, with that said both
+> the code and the binding are in condition to be wholly reviewed.
+> 
+> Emanuele Ghidoli (2):
+>   dt-bindings: firmware: add toradex,embedded-controller
+>   platform: toradex: add preliminary support for Embedded Controller
 
->
->> +    ///
->> +    /// Returns `Err(ENXIO)` if the wrapped object has been revoked, or=
- the result of `f` after it
->> +    /// has been run.
->> +    pub fn try_with<R, F: Fn(&T) -> Result<R>>(&self, f: F) -> Result<R=
-> {
->
-> This (and below) can be a `FnOnce(&T) -> Result<R>`.
+Thank you for your patches.
 
-Indeed, thanks!
+2 remarks, as Andy already hinted at drivers/platform/arm64/ likely
+is a better location for this.
 
->
-> Would it make sense to not use `Result` here and continue with `Option`?
+But as the commit first adding that directory indicates:
 
-We would have to return an Option<Result<R>> in this case. The current
-code folds the closure's Result into the one of the guard's acquisition
-for convenience.
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=363c8aea25728604537b170a1cc24e2f46844896
 
-Actually, I don't think I have ever used try_access() a single time
-without converting its returned Option into a Result. Wouldn't it make
-sense to do the opposite, i.e. make try_access() return Err(ENXIO) when
-the guard cannot be acquired and document this behavior?
+The reason for having ARM EC drivers there is that these are for
+x86-pc-like laptops with all the typical laptops bells and whistles
+like EC handled battery charging limits / spk/mic mute-leds built
+into keys on the keyboards. Special key handling (like mute, kbd
+backlight) done by the EC etc.
+
+Since all the experience for dealing with those laptop-esque features
+and exporting them to userspace with a consistent userspace API is
+in hands of the maintainers of drivers/platform/x86 it was decided to
+add a new drivers/platform/arm64 directory maintained by the same folks.
+
+If this EC driver's only functionality is: "The EC provides board
+power-off, reset and GPIO expander functionalities." I'm not sure
+that drivers/platform/arm64 is the best place for this.
+
+Also you mention GPIO expander, but that does not seem to be
+supported yet? The GPIO functionality really should be in its
+own GPIO driver. So it seems to me that what would be a better
+fit here would be:
+
+1. A drivers/mfd/ MFD driver with the regmap stuff,
+   registering "board-reset" and "gpio" cells
+
+2. A drivers/power/reset/ driver for the "board-reset" cell,
+quoting from the Kconfig help text for that dir:
+
+menuconfig POWER_RESET
+        bool "Board level reset or power off"
+        help
+          Provides a number of drivers which either reset a complete board
+          or shut it down, by manipulating the main power supply on the board.
+
+          Say Y here to enable board reset and power off
+
+which seems to match exactly with your current EC driver functionality
+
+3. A drivers/gpio/ driver to expose the GPIOs using the standard
+GPIO framework, this can be added later in a follow up patch.
+
+Regards,
+
+Hans
+
 
 
