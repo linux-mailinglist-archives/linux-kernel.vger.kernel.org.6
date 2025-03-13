@@ -1,134 +1,122 @@
-Return-Path: <linux-kernel+bounces-559450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87998A5F3E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:10:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D81A5F57C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:09:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BA613AF516
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:10:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6106B164846
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BBA267AE1;
-	Thu, 13 Mar 2025 12:09:32 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19600267710;
+	Thu, 13 Mar 2025 13:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="pegRD4Il"
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F81266B67
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715E0261396;
+	Thu, 13 Mar 2025 13:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741867771; cv=none; b=UbqtY/TcjydMiMkKeJbtNzajQx3Cxwz2yOrF76EDhrkUgVtB/FTv1IoCiyEdmyfU8New2doA48FpOeoHuKmkGuMSc1zoxbZApLvXQ5ur5d+nZDiqM2Xbi78QQ+rI7yfabeF1tzaP3CIpxGZsQ7hPT+XTPdn+5tGh4YiO67E5Jvk=
+	t=1741871303; cv=none; b=pZIHdFh/b/Vy5fBT6e9bDy8A7QudNG7w4y+dDLtRt8aHSp/6NQnTwBXb9nVV1ccFxjtxgytvBZd2Zwjs1WIBD2Y86HOmUj5cm5yiniZA66/OQA3rnXHY1Yk+251sfHtrqjlIdmR+YgGnZmaYjXgbCrNJnb02BKXl0CCkMUreos4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741867771; c=relaxed/simple;
-	bh=+RFdnEFAFri2hpkX/ZUNN4h/qboM5E7p1+9yls2oJg4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gyqQSIAv0VGFtDsM/HSJK6qPNbPYdCxWNXbxv2WfgKcWYUoERHMMot29TAeJCnt8Pbh81XtKuQePZ5lRsTc4egHNgZKqxXugpdT+E/H2Odt98YNM7NdjrfQNuCIJybmMKRZM/lPFeSxQdvMQBR6WFgFYUdLZMg4a5N5la855acI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZD5rc10f1z4f3jrd
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 20:09:04 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 8EF9E1A1697
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 20:09:26 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP2 (Coremail) with SMTP id Syh0CgCnsGPyytJnTaZeGQ--.9643S11;
-	Thu, 13 Mar 2025 20:09:26 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: akpm@linux-foundation.org
-Cc: kasong@tencent.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] mm: swap: replace cluster_swap_free_nr() with swap_entries_put_[map/cache]()
-Date: Fri, 14 Mar 2025 05:05:15 +0800
-Message-Id: <20250313210515.9920-10-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250313210515.9920-1-shikemeng@huaweicloud.com>
-References: <20250313210515.9920-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1741871303; c=relaxed/simple;
+	bh=l7/nvKtdJpfEE3FPoJjanh1QHvfzO9GOB6E4aJRGnec=;
+	h=From:Date:Subject:To:Cc:Message-Id; b=Kr7wNpQ2pliwutVLb9nHRhJgz+LvOLZ2FIT+eL5FYZ1q/aCsPiPonr/6qrDhgf5NQ+AZbSuMlXss6/kSja31cb3m69ALu8yTND7Ggox4yu3hdFF1BlD/KtuoP8AJvaxqetoQ1C2jhj7NWc8D7dVV3pFoio9+TkBe7yPIu/d2tp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=kylie.crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=pegRD4Il; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylie.crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Message-Id:Cc:To:Subject:Date:From:Content-Type:
+	Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Content-ID:
+	Content-Description; bh=twJYDBirwmXLVr0Fm4IHc5rcNUlk8rsVDi+Ys8RdkGk=; b=pegRD
+	4IlhFymvfrjnQ+CF8n55HWAnPouP4MBYWqn3+GutaVxp5cJgwmNmmGETgSJlRGR9ewXtXjPa4vqk2
+	3CKg/BaKYb4dYQRiye8BXRhDgKTV3AqbD2p4tyuHMjL3Yy8H67seJre0c4T0K73FBEsUQC6Ae5Wfz
+	d8YQtqmPVDX3oJyUU4v/M+tPCeAmT9QLJ2UAMw68e5IxI2CtJQS7LCzGoQO0atmnKA5bfGBt2nssT
+	fMku+Q8fpjgmy/XfxSFFN9RMt2f3Iwgh6x4PV3CNj1imWpL1rWuB3CfiCF66DF8aTyivrm/5wr991
+	rZgG9npZnYPxbqIbW2+ZqmmYysFdymwZWmR9+5eWsUFzKD8PVxzXedNiS+YWGV20o4HzXJ7cxXJJR
+	UmZdOO6/QhQYtiYCj/rPUkhCdHwdMz4LsXQiFUg1Cwhp0C9boEa1X2uQsheOfV6fmEZ7qSw1hwYLm
+	J5CeAye4rzxjIm7f3Nr1dUQkH+C5Xo8x56AM0ZDwk2K5b8XFCamU6TtVbmSaU0+U0ZgnYPDwGA/04
+	ewh1ymfPtpGM+0uo7jLPK8MOHkJOVnW9AJRjcjsK8R4Pl3BSJCPP4HgfOMcUScy7SNvOD6GOCBzFQ
+	2J8vM19On2pLV97qOqlYDdIpGh+1PGS3qa6Ay7/bZMXflasdN5sbitfD46Oj+8=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+Date: Thu, 13 Mar 2025 13:59:32 +0100
+Subject: [PATCH] fs/9p: fix NULL pointer dereference on mkdir
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+    Latchesar Ionkov <lucho@ionkov.net>,
+    v9fs@lists.linux.dev,
+    linux-kernel@vger.kernel.org,
+    syzbot <syzbot+5b667f9a1fee4ba3775a@syzkaller.appspotmail.com>
+Message-Id: <E1tsiI6-002iMG-Kh@kylie.crudebyte.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgCnsGPyytJnTaZeGQ--.9643S11
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFy7Wr47tryrJryDJr1rtFb_yoW8Aw18pF
-	93Wr1DKr4fJr1fKw4Ivw4DZrWav3ykGw1UJF9rWr1Fy3Z7tryIgF1vkrWxu345Gr95urZI
-	kanrt3srWrs8tr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
-	8IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAv
-	FVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJw
-	A2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE
-	3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr2
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2
-	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
-	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0x
-	vE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
-	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIL05UUUUU
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-Replace cluster_swap_free_nr() with swap_entries_put_[map/cache]() to
-remove repeat code and leverage batch-remove for entries with last flag.
+When a 9p tree was mounted with option 'posixacl', parent directory had a
+default ACL set for its subdirectories, e.g.:
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+  setfacl -m default:group:simpsons:rwx parentdir
+
+then creating a subdirectory crashed 9p client, as v9fs_fid_add() call in
+function v9fs_vfs_mkdir_dotl() sets the passed 'fid' pointer to NULL
+(since dafbe689736) even though the subsequent v9fs_set_create_acl() call
+expects a valid non-NULL 'fid' pointer:
+
+  [   37.273191] BUG: kernel NULL pointer dereference, address: 0000000000000000
+  ...
+  [   37.322338] Call Trace:
+  [   37.323043]  <TASK>
+  [   37.323621]  ? __die+0x1f/0x60
+  [   37.324448]  ? page_fault_oops+0x158/0x470
+  [   37.325532]  ? search_module_extables+0x4a/0x80
+  [   37.326742]  ? p9_client_walk+0x1c/0x2c0 [9pnet]
+  [   37.328006]  ? search_bpf_extables+0x5b/0x80
+  [   37.329142]  ? exc_page_fault+0x72/0x190
+  [   37.330196]  ? asm_exc_page_fault+0x22/0x30
+  [   37.331330]  ? p9_client_walk+0x1c/0x2c0 [9pnet]
+  [   37.332562]  ? v9fs_fid_xattr_get+0x59/0x120 [9p]
+  [   37.333824]  v9fs_fid_xattr_set+0x6f/0x130 [9p]
+  [   37.335077]  v9fs_set_acl+0x82/0xc0 [9p]
+  [   37.336112]  v9fs_set_create_acl+0x41/0x60 [9p]
+  [   37.337326]  v9fs_vfs_mkdir_dotl+0x20d/0x2e0 [9p]
+  [   37.338590]  vfs_mkdir+0x192/0x250
+  [   37.339535]  do_mkdirat+0x135/0x160
+  [   37.340465]  __x64_sys_mkdir+0x42/0x60
+  [   37.341455]  do_syscall_64+0x4b/0x110
+  [   37.342447]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+Fix this by simply swapping the sequence of these two calls in
+v9fs_vfs_mkdir_dotl(), i.e. calling v9fs_set_create_acl() before
+v9fs_fid_add().
+
+Fixes: dafbe689736 ('9p fid refcount: cleanup p9_fid_put calls')
+Reported-by: syzbot+5b667f9a1fee4ba3775a@syzkaller.appspotmail.com
+Signed-off-by: Christian Schoenebeck <linux_oss@crudebyte.com>
 ---
- mm/swapfile.c | 21 ++-------------------
- 1 file changed, 2 insertions(+), 19 deletions(-)
+ fs/9p/vfs_inode_dotl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 343b34eb2a81..c27cf09d84a6 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -1570,21 +1570,6 @@ static void swap_entries_free(struct swap_info_struct *si,
- 	__swap_entries_free(si, ci, entry, nr_pages);
- }
- 
--static void cluster_swap_free_nr(struct swap_info_struct *si,
--		unsigned long offset, int nr_pages,
--		unsigned char usage)
--{
--	struct swap_cluster_info *ci;
--	unsigned long end = offset + nr_pages;
--
--	ci = lock_cluster(si, offset);
--	do {
--		swap_entry_put_locked(si, ci, swp_entry(si->type, offset),
--				      usage);
--	} while (++offset < end);
--	unlock_cluster(ci);
--}
--
- /*
-  * Caller has made sure that the swap device corresponding to entry
-  * is still around or has not been recycled.
-@@ -1601,7 +1586,7 @@ void swap_free_nr(swp_entry_t entry, int nr_pages)
- 
- 	while (nr_pages) {
- 		nr = min_t(int, nr_pages, SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
--		cluster_swap_free_nr(sis, offset, nr, 1);
-+		swap_entries_put_map(sis, swp_entry(sis->type, offset), nr);
- 		offset += nr;
- 		nr_pages -= nr;
+diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+index 143ac03b7425..3397939fd2d5 100644
+--- a/fs/9p/vfs_inode_dotl.c
++++ b/fs/9p/vfs_inode_dotl.c
+@@ -407,8 +407,8 @@ static int v9fs_vfs_mkdir_dotl(struct mnt_idmap *idmap,
+ 			 err);
+ 		goto error;
  	}
-@@ -3632,9 +3617,7 @@ int swapcache_prepare(swp_entry_t entry, int nr)
- 
- void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry, int nr)
- {
--	unsigned long offset = swp_offset(entry);
--
--	cluster_swap_free_nr(si, offset, nr, SWAP_HAS_CACHE);
-+	swap_entries_put_cache(si, entry, nr);
- }
- 
- struct swap_info_struct *swp_swap_info(swp_entry_t entry)
+-	v9fs_fid_add(dentry, &fid);
+ 	v9fs_set_create_acl(inode, fid, dacl, pacl);
++	v9fs_fid_add(dentry, &fid);
+ 	d_instantiate(dentry, inode);
+ 	err = 0;
+ 	inc_nlink(dir);
 -- 
-2.30.0
+2.39.5
 
 
