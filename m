@@ -1,189 +1,140 @@
-Return-Path: <linux-kernel+bounces-558931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA63AA5ED41
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:47:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 122F4A5ED49
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:49:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF5E27A3399
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:46:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE566189571F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50E61FBCA9;
-	Thu, 13 Mar 2025 07:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC7625FA1E;
+	Thu, 13 Mar 2025 07:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sTWg1cgk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pclCVUex"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73BB1FC0FE;
-	Thu, 13 Mar 2025 07:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5693A8D2;
+	Thu, 13 Mar 2025 07:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741852059; cv=none; b=KPBo4LydK51cHc1EIANkzAoKda0gYhaFBLsyxQ4SEulWxdL0Rx7rcXN9kqQm3L6ms6dGmXQxxIAhe8ZC8B7r6cgt6HMq/BtiWEvGbfYgvrdfUhE04eq28DO77bnpfkPk9rp60GzQmXEAGIyywOAhDS86g9blcpXhBwBqNlbh72Q=
+	t=1741852183; cv=none; b=tTPgznD9L0pjvlTrpLVZPxqhPXQF/vNbFphLXx/FsZ+iGUjKJ2m0Kid6El6/WvseyDr368dnvA96zmD2hTOBk6OxZkwM6wNcNrwQJSqD7mIzx1+x3xlX/jmpSgDqgFlfSLHFwv6Aeqhfa/7XO5pgmQBEzIpKtV9kMzMY2yqAfqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741852059; c=relaxed/simple;
-	bh=8hHJ/HFvfkEZ6i76S/7Osadp/4nyw/q4ACUf+uYItAQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rM67MzzmX+cU7GElhdxwuWCgCtJvNqWTrxHRx1+VcW5VAVFhsjGcDjuJ0KdzKSR9m2cvxpoiYAY/NB4tMj8EEzYW7quewdEqSuPwbz67MXQ/zADwnvr1B2KpXqik84KENUeyAGJIy55HNxSMSvepS+qgp3V97KODlQpnDl0izQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sTWg1cgk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E734C4CEE9;
-	Thu, 13 Mar 2025 07:47:38 +0000 (UTC)
+	s=arc-20240116; t=1741852183; c=relaxed/simple;
+	bh=o35p9Z9/CQVaHsgcveY0IeFK4hZ0kI/IIcoIsnG4WNA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nMa/rpsRAO/jvMVViyha5L6N5sgFvEZyleQTbG7FDF166UUp4F0V0IDsUPMDqqkDH0uyNpPCgEhutCNw1D678yd30Qj2B7QCLJ9TFOhvhQJyHyN3m4/zVlTcbuq4iOGvnRhpuGGlDplw9EBtlNoAUitJXpn/AsblhlzVpevIzUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pclCVUex; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AF2AC4CEDD;
+	Thu, 13 Mar 2025 07:49:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741852058;
-	bh=8hHJ/HFvfkEZ6i76S/7Osadp/4nyw/q4ACUf+uYItAQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sTWg1cgkF0HN+R3Lg8H/q/Qfjx3ASKAcsERfvzaHk+wqZXINU/PpwXojnwHctHxN2
-	 pnwecDDH1dZYi/0IudVv/vq/4AWn5X0Ie/cc/iqapwIqu7FlJGBgNSjAY6sAdCbmHQ
-	 mFrbh/bGD8i/JyODx1v8kBN72mqfabTlCLWwDl3EAoFmGrYHXSL+ayydujC3gDNVgU
-	 QDRyGK745K9PoW6FwPtlizS+JwHawvlwVFOZk28JB3TcIj5Vk2ZnJNXfkzzaimDUWB
-	 m1OWmFSQqL7n+KU5/4MHY8BXqtiEmpyUl/kv+vtCVXbeqlFj4Buv7Mf2dy7f0fDqlP
-	 dJSfRcH8a4W0A==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5495078cd59so667389e87.1;
-        Thu, 13 Mar 2025 00:47:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWec4tYNnT2JKvbELdE3pxEOT+bVBDFZNJK8xx8FJGHhvcOOlErORrxjgwDVu00Gran7u6DgE0I5Qzc8Ryy@vger.kernel.org, AJvYcCX6TJ5GGCULGUtKzmHjDuYMZdG1GZrZ7sVt63AxCPBrRpLMDSm6FPkG3re5ekV+Z+4ZtJezQ+EZQoXZyS4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz46vLHowm8AwyOkx5fF1Yt8CXOsFkhdDrxczOF26/NtDGtMdrF
-	I3NKOu2Pzmfm8CWDcoSHcZpUcbje4cOFX2UTUHlSi3BUehydT2nWuPQ393pT3eGlCj3oC9wi3MG
-	nz9OvJb6KKQ/xxxoOApT0clKfCS8=
-X-Google-Smtp-Source: AGHT+IFLgYAj/1b+D8/tOT9N04CdBa+1enXtS6QVrZnRpM8XirsjiCQj5kY6LGKs43WUlwcKAqmgm6k6rbNO5qrbN90=
-X-Received: by 2002:a05:6512:3d19:b0:549:4d78:2418 with SMTP id
- 2adb3069b0e04-549abacd211mr3858294e87.27.1741852056477; Thu, 13 Mar 2025
- 00:47:36 -0700 (PDT)
+	s=k20201202; t=1741852182;
+	bh=o35p9Z9/CQVaHsgcveY0IeFK4hZ0kI/IIcoIsnG4WNA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pclCVUexl34Sf4d3JYaDM/8vCMr/osk+VJZQa2J0jsc0lJyOAKq+cTjqnO+9sjZrH
+	 dZ/yOleRG7/CB7WVKFaciJpVkpYw+27pMCq3G3St/+3hn+195RV5nStx5VteaYCQfH
+	 NFo9lqG8j9w5SyB+4P25d8q8Bi5GCmobTeM3iycVMVsGOoazer8RJcI/8kEjTrwNTo
+	 PYJI20UhNvWbJm0+jBqqVN8xxQ89yk3jsP7D9SqU9xExUJSQTUezFYq1ZeMQJwfpn+
+	 WcF4hAC4E6XKo7yt+cRUnOHFvYQZnjSu4S9H93lRQL2BZhaVHn0cNiMQz66RFXEwhH
+	 7JkuwdgMEiExw==
+Message-ID: <43506f83-13d7-46c5-b022-473ac78f0cab@kernel.org>
+Date: Thu, 13 Mar 2025 08:49:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311110616.148682-6-ardb+git@google.com> <20250311110616.148682-10-ardb+git@google.com>
- <CAK7LNASxNhDnCmpuf7yEW4Lcz-vRtitx8HPeoZnGNWdb-6pEsA@mail.gmail.com>
-In-Reply-To: <CAK7LNASxNhDnCmpuf7yEW4Lcz-vRtitx8HPeoZnGNWdb-6pEsA@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 13 Mar 2025 08:47:24 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXFXo1dkh4iE=hnuPoQF61g2YPaeuG0Swp7CxSP4FYgvQQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JrHAxVQxXq5RYt8jcT41tgYQ48AFEtuc3b0FjorUifa7uvMV9EZ8TqwqHI
-Message-ID: <CAMj1kXFXo1dkh4iE=hnuPoQF61g2YPaeuG0Swp7CxSP4FYgvQQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] x86: Get rid of Makefile.postlink
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, x86@kernel.org, Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] drivers/thermal/exymos: Use guard notation when
+ acquiring mutex
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
+ "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
+ "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250310143450.8276-1-linux.amoon@gmail.com>
+ <20250310143450.8276-5-linux.amoon@gmail.com>
+ <25fa661b-98e4-468b-bb4d-4a2c95f32b71@kernel.org>
+ <CANAwSgTeZ83oqatrsWQxT+4RYwEtEqma=R4XX_iGrP2N=phz9Q@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <CANAwSgTeZ83oqatrsWQxT+4RYwEtEqma=R4XX_iGrP2N=phz9Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 13 Mar 2025 at 03:09, Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> On Tue, Mar 11, 2025 at 8:06=E2=80=AFPM Ard Biesheuvel <ardb+git@google.c=
-om> wrote:
-> >
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > Instead of generating the vmlinux.relocs file (needed by the
-> > decompressor build to construct the KASLR relocation tables) as a
-> > vmlinux postlink step, which is dubious because it depends on data that
-> > is stripped from vmlinux before the build completes, generate it from
-> > vmlinux.unstripped, which has been introduced specifically for this
-> > purpose.
-> >
-> > This ensures that each artifact is rebuilt as needed, rather than as a
-> > side effect of another build rule.
-> >
-> > This effectively reverts commit
-> >
-> >   9d9173e9ceb6 ("x86/build: Avoid relocation information in final vmlin=
-ux")
-> >
-> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > ---
-> >  arch/x86/Makefile.postlink        | 38 --------------------
-> >  arch/x86/boot/compressed/Makefile |  9 +++--
-> >  2 files changed, 6 insertions(+), 41 deletions(-)
-> >
-> > diff --git a/arch/x86/Makefile.postlink b/arch/x86/Makefile.postlink
-> > deleted file mode 100644
-> > index 445fce66630f..000000000000
-> > --- a/arch/x86/Makefile.postlink
-> > +++ /dev/null
-> > @@ -1,38 +0,0 @@
-> > -# SPDX-License-Identifier: GPL-2.0
-> > -# =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-> > -# Post-link x86 pass
-> > -# =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-> > -#
-> > -# 1. Separate relocations from vmlinux into vmlinux.relocs.
-> > -# 2. Strip relocations from vmlinux.
-> > -
-> > -PHONY :=3D __archpost
-> > -__archpost:
-> > -
-> > --include include/config/auto.conf
-> > -include $(srctree)/scripts/Kbuild.include
-> > -
-> > -CMD_RELOCS =3D arch/x86/tools/relocs
-> > -OUT_RELOCS =3D arch/x86/boot/compressed
-> > -quiet_cmd_relocs =3D RELOCS  $(OUT_RELOCS)/vmlinux.relocs
-> > -      cmd_relocs =3D \
-> > -       mkdir -p $(OUT_RELOCS); \
-> > -       $(CMD_RELOCS) $@ > $(OUT_RELOCS)/vmlinux.relocs; \
-> > -       $(CMD_RELOCS) --abs-relocs $@
-> > -
-> > -# `@true` prevents complaint when there is nothing to be done
-> > -
-> > -vmlinux vmlinux.unstripped: FORCE
-> > -       @true
-> > -ifeq ($(CONFIG_X86_NEED_RELOCS),y)
-> > -       $(call cmd,relocs)
-> > -endif
-> > -
-> > -clean:
-> > -       @rm -f $(OUT_RELOCS)/vmlinux.relocs
-> > -
-> > -PHONY +=3D FORCE clean
-> > -
-> > -FORCE:
-> > -
-> > -.PHONY: $(PHONY)
-> > diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compress=
-ed/Makefile
-> > index 606c74f27459..5edee7a9786c 100644
-> > --- a/arch/x86/boot/compressed/Makefile
-> > +++ b/arch/x86/boot/compressed/Makefile
-> > @@ -117,9 +117,12 @@ $(obj)/vmlinux.bin: vmlinux FORCE
-> >
-> >  targets +=3D $(patsubst $(obj)/%,%,$(vmlinux-objs-y)) vmlinux.bin.all =
-vmlinux.relocs
-> >
-> > -# vmlinux.relocs is created by the vmlinux postlink step.
-> > -$(obj)/vmlinux.relocs: vmlinux
-> > -       @true
-> > +CMD_RELOCS =3D arch/x86/tools/relocs
-> > +quiet_cmd_relocs =3D RELOCS  $@
-> > +      cmd_relocs =3D $(CMD_RELOCS) $< > $@;$(CMD_RELOCS) --abs-relocs =
-$<
-> > +
-> > +$(obj)/vmlinux.relocs: vmlinux.unstripped FORCE
-> > +       $(call if_changed,relocs)
->
-> Perhaps, it may make sense to rebuild vmlinux.relocs
-> when arch/x86/tools/relocs is changed, but
-> I do not see such dependency in the other
-> arch/x86/realmode/rm/Makefile.
->
-> https://github.com/torvalds/linux/blob/v6.14-rc5/arch/x86/realmode/rm/Mak=
-efile#L61
->
->
-> So, I decided it is ok.
-> If you mind, you can send v3.
->
+On 12/03/2025 15:59, Anand Moon wrote:
+>>
+>>> +          mutex_lock(&_T->lock), mutex_unlock(&_T->lock))
+>>> +
+>>>  /*
+>>>   * TMU treats temperature as a mapped temperature code.
+>>>   * The temperature is converted differently depending on the calibration type.
+>>> @@ -256,7 +260,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>>>       unsigned int status;
+>>>       int ret = 0;
+>>>
+>>> -     mutex_lock(&data->lock);
+>>> +     guard(mutex)(&data->lock);
+>>
+>> Which you do not use... Please don't use cleanup.h if you do not know
+>> it. It leads to bugs.
+>>
+> Ok, I will drop this include of cleanup.h.
 
-No I think that's fine: this patch reverts the changes to
-arch/x86/boot/compressed/Makefile; if we need to improve it, it should
-be a separate change in any case.
+So the guards as well...
+
+Best regards,
+Krzysztof
 
