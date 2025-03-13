@@ -1,176 +1,177 @@
-Return-Path: <linux-kernel+bounces-559275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FA5EA5F1A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:58:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F48A5F1A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:59:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70F903ABEA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:58:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 776CF17E753
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FA0265CD2;
-	Thu, 13 Mar 2025 10:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BDB265CB7;
+	Thu, 13 Mar 2025 10:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ppwTBLzy"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W0DAQ8s/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755BE1EEA28
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E41D260382;
+	Thu, 13 Mar 2025 10:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741863489; cv=none; b=ItJnngLNlDaBEvCfpLYcsoF5ZmBMDeeA/3THHhXhUTXz6y6AWZJwG76mtD3m2yuOoqVNdAd2bx3f3HjT3B8d1o5zGXes314qSFuhFp0QTyr6PY/FSc2j+pPaRRTayINWmZtnNSVEGYA0se9OxISHKFdStxTrVWTV2Eh2i3GTx90=
+	t=1741863505; cv=none; b=OEm6kBqmhzW1vUEjnVmRvrf+w9AmE1TPRL1BvdgeWk7zfJmNGGtZwtKvCj0KItWsaYyHv3v2PW3kYt3lLLC75QAALQKkvCvBqYbwrydiSb5BdRxdWMDaVCcoVAUVtmQ+5xXVy2cgpTxw16OStoayLuFL+QxUViXq+12DGA0WXAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741863489; c=relaxed/simple;
-	bh=18a6aB3ysXITDtqLaWnoSIFBLyGi0m4WbEg/Q5ny3J8=;
+	s=arc-20240116; t=1741863505; c=relaxed/simple;
+	bh=jeW+psbkp0X5CYfJk63izerCs5l1XzDNrmU1BWAE47w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MW8RQpUAiPXU1goRBQzCAdqrbXZxeYZENRQarXTYbrIEAsn5iGJMSC2/wzobIBx7+rvHkVi4FYa8gsmBW0IleoyVj/ZA0dU61N7ZznAdSjj4vHjG9UaXfIEOEu+z3tRDphnoEszCtwvdHWvxiQGZPErEF38ekGzR20KyhpqMr4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ppwTBLzy; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5499c8fa0f3so929776e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 03:58:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741863485; x=1742468285; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nfraL4ls4afXFZxrK0JTl5qc8dinoEXS1gCWnzcYrdw=;
-        b=ppwTBLzyMxYid5s8zTeEXZxUPAT7IcLxAEnffnqr5YpcWGbqkgPzQInDHejUtQDZEP
-         n9c+sxcFV0M9geU4Y6wPJZ3gQEW1f5hAoKAW2qy8VLHapIsKw1+M8DTXm6jtGIRtP9zz
-         k7xXpUna04h2pH4L5SJ9jV3kMylJ/wXUqFu60kPlG3ibxvttIx5ISWdc3IYyy70zqTd8
-         X7HeSwSBLI58gXNLefGdf1X5aRPafiVOSkaY6EXnJG2E+YLUqdee2xgTBt+ervoUCen/
-         IEYobEwLmdf5MufXfnDS2x4SB+Ow/GdzYJVuM7tCyZ2Ld70habVcOKzz4/MS2Kk+XEQr
-         M4mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741863485; x=1742468285;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nfraL4ls4afXFZxrK0JTl5qc8dinoEXS1gCWnzcYrdw=;
-        b=cmo1HNzyXy3CEKwh49Lcveo6v9QVvz1/qF2mWhJyTa0VTpG1ISeRhgiExH/vUrgVGO
-         03jMkrNK3ki1IMBzvpj0W3Ln7jVuR/6v6Y+DXWBH8Dsp7gCqRmk4Ldo/q6KPqEZVAuPM
-         erwb/AeyN1d8rKUkRVxEkCzfYLMyxATZ+ScWeoHAHKM+Du2Xl3uOk01wzI6WWeBUEgsR
-         N2G6wEif/Zfiw7foZ9gOWW8Z+dQodRWDp2YN47hmxevP/CRrzcOChVpEhYXo/Y2Azhxz
-         F9w9UhCreaCDrtr9MB/896LSWn5QLGUcQsnIWlNnkV45/tihRCNKOyY1+/S60Y89jinH
-         A/GA==
-X-Forwarded-Encrypted: i=1; AJvYcCXos8KvJsTr5+/t92a3x7Z+sakjL96CCpUOtCtgcmIRhoxodNZLMeLU/dJPHq4014ccdQYL1+lq81As2hs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0hv4SjtJAEZ8a8lmFQ3yo2f63J49UJZliPiBEWIqBCsd7uj36
-	H7pBjqV/PgcYOa3LJsiPGKVHEcdApplBmEPuhjziLJZ0tDf0ZVxtAaKpPgkhekqS86W83lKkZQ7
-	B2QOBYzS6hjio5ZzWbEcbp/oyPKhArS0m7ymh/w==
-X-Gm-Gg: ASbGnctTDOiYsMk75qBH/qSHhZE9fG8TYotuApdribJVIke8OKmThh0HkWfxJ7rW2lQ
-	Vi1WWLhx6LLqIQPtplMr7xM4Npod+/AE5n1BuXL/gwLQIQC3l2Bi1C7H70hczH3F/rnCeO5vn7+
-	p5SK5eX7IdG4nYL/lYaTnN2YwosB0tUGg=
-X-Google-Smtp-Source: AGHT+IFnBWuCgWpM4+ZNcUZn/hTAnsFOuA7LoK2vMek+02/ml9yd7xOrqc8RyImF6BLtOSo2zjib5D/ShTEGIZst4OQ=
-X-Received: by 2002:a05:6512:ad1:b0:545:48c:6352 with SMTP id
- 2adb3069b0e04-549910cc141mr9841158e87.43.1741863485303; Thu, 13 Mar 2025
- 03:58:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=hmwEbDY8ygJaIjpSvNvToZj2RIckxJgg0TIXna6pYp2Jb6uZLxGzOd483HSZiE14zL8vTXW6+xjEVvJq4/l11J6BsHoxG9E+0jRFat/6AGWuUAsCr+paVW/hdXdXfF27fud/u3p3nBTU6AM6IZjBVuH5n2fnAv9diJkTcugQbvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W0DAQ8s/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB9B0C4CEF2;
+	Thu, 13 Mar 2025 10:58:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741863504;
+	bh=jeW+psbkp0X5CYfJk63izerCs5l1XzDNrmU1BWAE47w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=W0DAQ8s/qeQp0UHPaFpP3z278kkdcDbMqQJ4Wbrj5/mV4rf0UcGvMzdCfTbRDFq0r
+	 g/ZGQLIwm8MV+BXRoGIHerRcBm7vi5C2Qe7NoX8OG5QaVCa2bgrzrsXyvhwKuDpLPN
+	 ExnQiMYYgXH38t/wHLq/8WAyRysQ47roQIX/svjHEJGnXqIqCuyB6ERA9CxSEMYF7O
+	 dg5wWe38Q7dFjM5c4Y2yKXu0sWuqe+V4Jtj9PGVTuHSc9nM7Uu08khfZmcpxkKZubs
+	 T0xvaKL/tOVT3ZvmUp6ZURHSSXYEjieKfVBheDJ8pPyqPfeZNFFoscvnrgT8/v25D1
+	 Dl0OWgAPiy6WQ==
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2bcf9d9b60aso277451fac.3;
+        Thu, 13 Mar 2025 03:58:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW0Vp/GtDjPiJERBLxMNAe7pc8XNcDAttcwzaHjYJD0s2eknLSJpopZTjQW23reQ+bAL1GDVVoMZLY=@vger.kernel.org, AJvYcCWHXTI9shWsMZybbXR6E4HCiPRwowFjq+nspwfSSlyRtzL6nPXH3tBB9iPYfmErlnAs9SnbYFZerAel+1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWyXNU0Qirk/Ym1iWJModE+W4vkRwO3z0JiO7m6wxav9hqSIiQ
+	9tRR10rtwv/To59+nwkCFxzduCeYMcj85Y7BD67FqZf7gYdfNzOETP5KwlwhWlp04dVokTwOuuz
+	UaSTgDK4HVU+Pd3wOYENiimBgyLs=
+X-Google-Smtp-Source: AGHT+IH5VgwEr030Ww2EchojMfp/Pq2TbnAhHwlAI1RwUOaNtv+tV6cUuAViSi47ZQQyjH0yHIlOxWnvWXBmD04NdrU=
+X-Received: by 2002:a05:6870:498a:b0:29e:3bea:7e67 with SMTP id
+ 586e51a60fabf-2c2e89c8b02mr6030659fac.38.1741863503990; Thu, 13 Mar 2025
+ 03:58:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313051953.4064532-1-baolu.lu@linux.intel.com> <CABQgh9HKaDyDQXGB5ZEGg5q4a9ak_8OB9XQ+TpUNcZd_ZMeCAQ@mail.gmail.com>
-In-Reply-To: <CABQgh9HKaDyDQXGB5ZEGg5q4a9ak_8OB9XQ+TpUNcZd_ZMeCAQ@mail.gmail.com>
-From: Zhangfei Gao <zhangfei.gao@linaro.org>
-Date: Thu, 13 Mar 2025 18:57:54 +0800
-X-Gm-Features: AQ5f1JovvZMXW9DEK2jouMs3ywPla5tfQLVxQ45E7WGPoXzvDONCBJ637fQc5_g
-Message-ID: <CABQgh9G=7q+FQ0ECZ60UjawgkAM2aeNEb6hXgndEv8S9_4CuPw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] iommu: Remove IOMMU_DEV_FEAT_SVA/_IOPF
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>, 
-	Fenghua Yu <fenghuay@nvidia.com>, Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
+References: <20241114220921.2529905-1-saravanak@google.com>
+ <20241114220921.2529905-2-saravanak@google.com> <CAJZ5v0grG7eSJ7_c73i9-bXaFhm5rfE2WmxtR6yLB-MGkd7sVg@mail.gmail.com>
+ <CAJZ5v0i42ZczVpDWQD4_OuduuHb3LDMmn0FJ9_XoqL8Frx9MEw@mail.gmail.com> <CAGETcx83c2bDROcNWOiL9Dry4k2BWVzftncObCAzdftHY0u_NQ@mail.gmail.com>
+In-Reply-To: <CAGETcx83c2bDROcNWOiL9Dry4k2BWVzftncObCAzdftHY0u_NQ@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 13 Mar 2025 11:58:12 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hhiO24_pSqshzfycP=kwJPOC4mjFstrPreO6uMCR9ACQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JrfgqAeo2LHBR9yLWu0b4lESl4svGygXKADzhyOu3Ey2E_L_awDQTV92dg
+Message-ID: <CAJZ5v0hhiO24_pSqshzfycP=kwJPOC4mjFstrPreO6uMCR9ACQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/5] PM: sleep: Fix runtime PM issue in dpm_resume()
+To: Saravana Kannan <saravanak@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Segall <bsegall@google.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, kernel-team@android.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 13 Mar 2025 at 17:51, Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
+On Thu, Mar 13, 2025 at 2:50=E2=80=AFAM Saravana Kannan <saravanak@google.c=
+om> wrote:
 >
-> Hi, Baolu
->
-> On Thu, 13 Mar 2025 at 13:19, Lu Baolu <baolu.lu@linux.intel.com> wrote:
+> On Tue, Mar 11, 2025 at 3:47=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
 > >
-> > The new method for driver fault reporting support relies on the domain
-> > to specify a iopf_handler. The driver should detect this and setup the
-> > HW when fault capable domains are attached.
+> > On Wed, Dec 4, 2024 at 1:53=E2=80=AFPM Rafael J. Wysocki <rafael@kernel=
+.org> wrote:
+> > >
+> > > Trim CC list.
+> > >
+> > > On Thu, Nov 14, 2024 at 11:09=E2=80=AFPM Saravana Kannan <saravanak@g=
+oogle.com> wrote:
+> > > >
+> > > > Some devices might have their is_suspended flag set to false. In th=
+ese
+> > > > cases, dpm_resume() should skip doing anything for those devices.
+> > >
+> > > Not really.  This is particularly untrue for devices with
+> > > power.direct_complete set that have power.is_suspended clear.
+> > >
+> > > > However, runtime PM enable and a few others steps are done before
+> > > > checking for this flag. Fix it so that we do things in the right or=
+der.
+> > >
+> > > I don't see the bug this is fixing, but I can see bugs introduced by =
+it.
 > >
-> > Move SMMUv3 to use this method and have VT-D validate support during
-> > attach so that all three fault capable drivers have a no-op FEAT_SVA and
-> > _IOPF. Then remove them.
+> > So AFAICS the bug is in the error path when dpm_suspend() fails in
+> > which case some devices with direct_complete set may not have been
+> > handled by device_suspend().  Since runtime PM has not been disabled
+> > for those devices yet, it doesn't make sense to re-enable runtime PM
+> > for them (and if they had runtime PM disabled to start with, this will
+> > inadvertently enable runtime PM for them).
 > >
-> > This was initiated by Jason. I'm following up to remove FEAT_IOPF and
-> > further clean up.
+> > However, two changes are needed to fix this issue:
+> > (1) power.is_suspended needs to be set for the devices with
+> > direct_complete set in device_suspend().
+> > (2) The power.is_suspended check needs to be moved after the
+> > power.syscore one in device_resume().
 > >
-> > The whole series is also available at github:
-> > https://github.com/LuBaolu/intel-iommu/commits/iommu_no_feat-v4
+> > The patch below only does (2) which is insufficient and it introduces
+> > a functional issue for the direct_complete devices with runtime PM
+> > disabled because it will cause runtime PM to remain disabled for them
+> > permanently.
+> >
+> > > I think that you want power.is_suspended to be checked before waiting
+> > > for the superiors.  Fair enough, since for devices with
+> > > power.is_suspended clear, there should be no superiors to wait for, s=
+o
+> > > the two checks can be done in any order and checking
+> > > power.is_suspended first would be less overhead.  And that's it
+> > > AFAICS.
+> > >
+> > > > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> > > > ---
+> > > >  drivers/base/power/main.c | 6 +++---
+> > > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> > > > index 4a67e83300e1..86e51b9fefab 100644
+> > > > --- a/drivers/base/power/main.c
+> > > > +++ b/drivers/base/power/main.c
+> > > > @@ -913,6 +913,9 @@ static void device_resume(struct device *dev, p=
+m_message_t state, bool async)
+> > > >         if (dev->power.syscore)
+> > > >                 goto Complete;
+> > > >
+> > > > +       if (!dev->power.is_suspended)
+> > > > +               goto Unlock;
+> >
+> > And this should be "goto Complete" because jumping to Unlock
+> > introduces a device locking imbalance.
+> >
+> > > > +
+> > > >         if (dev->power.direct_complete) {
+> > > >                 /* Match the pm_runtime_disable() in __device_suspe=
+nd(). */
+> > > >                 pm_runtime_enable(dev);
+> > > > @@ -931,9 +934,6 @@ static void device_resume(struct device *dev, p=
+m_message_t state, bool async)
+> > > >          */
+> > > >         dev->power.is_prepared =3D false;
+> > > >
+> > > > -       if (!dev->power.is_suspended)
+> > > > -               goto Unlock;
+> > > > -
+> > > >         if (dev->pm_domain) {
+> > > >                 info =3D "power domain ";
+> > > >                 callback =3D pm_op(&dev->pm_domain->ops, state);
+> > > > --
+> >
+> > If you want to submit a new version of this patch, please do so by the
+> > end of the week or I will send my fix because I want this issue to be
+> > addressed in 6.15.
 >
-> I got an issue on this branch.
->
-> Linux 6.14-rc4 + iommu_no_feat-v2
-> drivers/pci/quirks.c
-> quirk_huawei_pcie_sva will set dma-can-stall first
-> arm_smmu_probe_device will check dma-can-stall and set stall_enabled
-> accordingly.
+> Please do ahead with the fix for this. I'm not too comfortable with
+> the direct_complete logic yet.
 
-This working branch arm_smmu_probe_device is called from pci_bus_add_device
-So pci_fixup_device is called first
-
-[ 1121.314405]  arm_smmu_probe_device+0x48/0x450
-[ 1121.314410]  __iommu_probe_device+0xc4/0x3c8
-[ 1121.314412]  iommu_probe_device+0x40/0x90
-[ 1121.314414]  acpi_dma_configure_id+0xb4/0x100
-[ 1121.314417]  pci_dma_configure+0xf8/0x108
-[ 1121.314421]  really_probe+0x78/0x278
-[ 1121.314425]  __driver_probe_device+0x80/0x140
-[ 1121.314427]  driver_probe_device+0x48/0x130
-[ 1121.314430]  __device_attach_driver+0xc0/0x108
-[ 1121.314432]  bus_for_each_drv+0x8c/0xf8
-[ 1121.314435]  __device_attach+0x104/0x1a0
-[ 1121.314437]  device_attach+0x1c/0x30
-[ 1121.314440]  pci_bus_add_device+0xb8/0x1f0
-[ 1121.314442]  pci_iov_add_virtfn+0x2ac/0x300
-[ 1121.314446]  sriov_enable+0x204/0x468
-[ 1121.314447]  pci_enable_sriov+0x20/0x40
-
-
->
-> This branch
-> arm_smmu_probe_device happens first, when dma-can-stall = 0, so
-> stall_enabled =0.
-> Then drivers/pci/quirks.c: quirk_xxx happens
-
-This not working branch: Linux 6.14-rc6 + iommu_no_feat-v4
-arm_smmu_probe_device is called by pci_device_add
-Then call pci_bus_add_device -> pci_fixup_device
-
-  215.072859]  arm_smmu_probe_device+0x48/0x450
-[  215.072871]  __iommu_probe_device+0xc0/0x468
-[  215.072875]  iommu_probe_device+0x40/0x90
-[  215.072877]  iommu_bus_notifier+0x38/0x68
-[  215.072879]  notifier_call_chain+0x80/0x148
-[  215.072886]  blocking_notifier_call_chain+0x50/0x80
-[  215.072889]  bus_notify+0x44/0x68
-[  215.072896]  device_add+0x580/0x768
-[  215.072898]  pci_device_add+0x1e8/0x568
-[  215.072906]  pci_iov_add_virtfn+0x198/0x300
-[  215.072910]  sriov_enable+0x204/0x468
-[  215.072912]  pci_enable_sriov+0x20/0x40
-
-pci_iov_add_virtfn:
-pci_device_add(virtfn, virtfn->bus);
-pci_bus_add_device(virtfn); -> pci_fixup_device(pci_fixup_final, dev);
-
-
-
->
-> Still in checking.
->
-> And this branch does not need these two patches, right?
-> c7b1397bef3c iommu/arm-smmu-v3: Implement arm_smmu_get_msi_mapping_domain
-> 5cd34634a73e iommu/dma: Support MSIs through nested domains
->
-> Thanks
+OK, I will, thank you!
 
