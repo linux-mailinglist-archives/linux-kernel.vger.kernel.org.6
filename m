@@ -1,216 +1,132 @@
-Return-Path: <linux-kernel+bounces-559098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89127A5EF87
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:26:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AB6EA5EF8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:26:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3913419C1104
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:26:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E9C41735CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3E02641D4;
-	Thu, 13 Mar 2025 09:26:08 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32604264A7E;
+	Thu, 13 Mar 2025 09:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SyUGk8yp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0652620EA
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0DB2C80;
+	Thu, 13 Mar 2025 09:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741857968; cv=none; b=kNQZ5T16Hr0tvRQ0G9sAZ6dQJ/ClyPlmfNhOInPr1v+GPdR+hy4kAFrqIEOVH8NeU9In2BV9BGVHtzzIEqRg2HD9jiFE9qDS/bNz8ApMfvpvaoPRhg/6AOY5Z/hNtwFc9wMKHb+C3qV+y259TNZsaHZwf+MTgm+5pHWlNFkcXYY=
+	t=1741857974; cv=none; b=svlGWjk1QmGiOWltk8+1V1v+nnXo/9sLULoyCgKZVl10pnjqJB06+ZL4YnQJ0GfSZDPsO35V3hIPRgH7ShbO1dUw8G52iQj+FtDUgiacwR6OCJvAv0WSftbBAVXDlJYJJC+NDh9wQRGLjQUTc5W6I3x70BGmyQoAYAdlJyK8GEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741857968; c=relaxed/simple;
-	bh=tEX4EaouPo4A9H7gFAjw7VKY1e59Qd+m8eTVByRoHS8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=h83S6ko7SPc2xSXZ6qEd3QQt2+7LPo7ojkflWUq2QooNKmiXALcBTs9PsU7F6WxZh/uXz3Y25BPIGYw4v+aw8kuymS3iRbKJ04DfNDZ16VZsgK6hUzBv8M8vGbB7/j8IGXzuOMA6dlfH2cbUlu6WsqPx/d9iBgeGWAgayhODCHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tseov-0007i3-LS; Thu, 13 Mar 2025 10:25:41 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tseou-005VlU-0j;
-	Thu, 13 Mar 2025 10:25:40 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tseou-00058F-0Q;
-	Thu, 13 Mar 2025 10:25:40 +0100
-Message-ID: <aacd03a071dce7b340d7170eae59d662d58f23b1.camel@pengutronix.de>
-Subject: Re: [PATCH v1 4/4] clk: thead: Add GPU clock gate control with
- CLKGEN reset support
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Michal Wilczynski <m.wilczynski@samsung.com>, Stephen Boyd
- <sboyd@kernel.org>, alex@ghiti.fr, aou@eecs.berkeley.edu,
- conor+dt@kernel.org,  drew@pdp7.com, guoren@kernel.org, jszhang@kernel.org,
- krzk+dt@kernel.org,  m.szyprowski@samsung.com, mturquette@baylibre.com,
- palmer@dabbelt.com,  paul.walmsley@sifive.com, robh@kernel.org,
- wefu@redhat.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Date: Thu, 13 Mar 2025 10:25:40 +0100
-In-Reply-To: <4c035603-4c11-4e71-8ef3-b857a81bf5ef@samsung.com>
-References: <20250303143629.400583-1-m.wilczynski@samsung.com>
-	 <CGME20250303143637eucas1p1a3abdea520ab88688de1263a5f07bba0@eucas1p1.samsung.com>
-	 <20250303143629.400583-5-m.wilczynski@samsung.com>
-	 <de50dd55e1285726e8d5ebae73877486.sboyd@kernel.org>
-	 <4c035603-4c11-4e71-8ef3-b857a81bf5ef@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1741857974; c=relaxed/simple;
+	bh=Zi5CdwayLfpbTu+FW1B3QtpWXXMH5McpvDDdKaOoLH4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z5Mn//+CL6HX3klCAna4BmHk1sToSxH8/Iis8dem/kPjPb8dcprreMbq2aYTWZUFAFsZKFKTvlsDoUUG5zPdKN7xD9ZDH9QEOdzQSbzzrgshqr73CaPIjWHJvibhwb6pPOq0hoYMS7EAc8c0wGAt+7BYFhMwQYtuHFMkwXBh+Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SyUGk8yp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2C03C4CEEB;
+	Thu, 13 Mar 2025 09:26:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741857973;
+	bh=Zi5CdwayLfpbTu+FW1B3QtpWXXMH5McpvDDdKaOoLH4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SyUGk8ypg1sOx97CdpeB64AOQUwNgPsXCgStv2uTbH6FtxFJvJCoAEyTNv/UgUcpp
+	 bCQZFOyK2OPXu6j8vPK5HyJKZV7mA1A9MbqVZ5NaXuik1SQahN+xUM/BeA5XP0rVNQ
+	 efk5yznuMSeMtY1F8Aaw1q5xz7mj4zC66mGJkBLX3m+cJmCoP369ZPWWnRuPH0uV69
+	 QLTc/wYqrFWchggPOs5wilG8QEwfPka6GRa8YZ+Vs5Ukd8x4fEncXjfu2Hn3JO3jDh
+	 nFSa4/9ytNO0ceYFSFFClojCIbFNuYhEBO8KUqNQOVGxchc3Sbt+gWL7TAETN2LAoi
+	 56ph/EW9KxM9Q==
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aaec61d0f65so140670566b.1;
+        Thu, 13 Mar 2025 02:26:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVkjtiV3/IgCFbp5wIgVFJtR6TFqt22cSpHHDeSJwxTaGbxz2FOh3Mpg0bNTNtHVFaUxqU/qRg/F4ipLdg/G+zs@vger.kernel.org, AJvYcCWMT1yknkE74sGFNnN/xHFERGNyfx6H9H4AZ2kK6PMe4frFak49s+8FhQ61F4kj1VppbfPQ6nAMMdFd70tF@vger.kernel.org, AJvYcCXgTAOd/zofsTTqAG1OxzEsk75quk2yu5bctvbyHo7ENfoDNSQ8DO51/MM+yxpfl+0azN15b7skL/uqTkQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzJL/BraVRmZizMIoMmJuX4gd+/GVIn20gmHIcVh4fHAKBerfc
+	DW/sXF78fAMPJQM2G6meYGfU0o5P46dmTKEU2NjvHC7g9NBawYNPu42vjLY4WhOeQlQJIO3Gdra
+	ioDRnk5TvWe9xFTxR3HXCpAjIGFw=
+X-Google-Smtp-Source: AGHT+IEFkgdRx4Lqq1hH8UK+RojzhFuWHGArJwcsexUdAHEfPhEcGWZIPozZgLbdBa+CJV2H2bxYIYGWPYNAWjh9GRY=
+X-Received: by 2002:a17:907:7f92:b0:abf:49de:36de with SMTP id
+ a640c23a62f3a-ac2525b9adfmr3206142266b.1.1741857972249; Thu, 13 Mar 2025
+ 02:26:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20250313090508.21252-1-zhaoqunqin@loongson.cn>
+In-Reply-To: <20250313090508.21252-1-zhaoqunqin@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 13 Mar 2025 17:26:00 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5f1k4_bVybMcK9QXhaVxLOM=b_8n0sA+0r=gyCP4YQRA@mail.gmail.com>
+X-Gm-Features: AQ5f1JrOvE_lpnr7QXpbsHNsBtKqDY2pcat5n23R5svAqVqhsGgSekvEA7HZN6A
+Message-ID: <CAAhV-H5f1k4_bVybMcK9QXhaVxLOM=b_8n0sA+0r=gyCP4YQRA@mail.gmail.com>
+Subject: Re: [PATCH v5 0/6] Drivers for Loongson security engine
+To: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Cc: lee@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net, 
+	peterhuewe@gmx.de, jarkko@kernel.org, linux-kernel@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-crypto@vger.kernel.org, jgg@ziepe.ca, 
+	linux-integrity@vger.kernel.org, pmenzel@molgen.mpg.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Do, 2025-03-06 at 17:43 +0100, Michal Wilczynski wrote:
->=20
-> On 3/6/25 00:47, Stephen Boyd wrote:
-> > Quoting Michal Wilczynski (2025-03-03 06:36:29)
-> > > The T-HEAD TH1520 has three GPU clocks: core, cfg, and mem. The mem
-> > > clock gate is marked as "Reserved" in hardware, while core and cfg ar=
-e
-> > > configurable. In order for these clock gates to work properly, the
-> > > CLKGEN reset must be managed in a specific sequence.
-> > >=20
-> > > Move the CLKGEN reset handling to the clock driver since it's
-> > > fundamentally a clock-related workaround [1]. This ensures that clk_e=
-nabled
-> > > GPU clocks stay physically enabled without external interference from
-> > > the reset driver.  The reset is now deasserted only when both core an=
-d
-> > > cfg clocks are enabled, and asserted when either of them is disabled.
-> > >=20
-> > > The mem clock is configured to use nop operations since it cannot be
-> > > controlled.
-> > >=20
-> > > Link: https://lore.kernel.org/all/945fb7e913a9c3dcb40697328b7e9842b75=
-fea5c.camel@pengutronix.de [1]
-> > >=20
-> > > Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> > [...]
-> > > diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/cl=
-k-th1520-ap.c
-> > > index ea96d007aecd..1dfcde867233 100644
-> > > --- a/drivers/clk/thead/clk-th1520-ap.c
-> > > +++ b/drivers/clk/thead/clk-th1520-ap.c
-> > > @@ -862,17 +863,70 @@ static CCU_GATE(CLK_SRAM1, sram1_clk, "sram1", =
-axi_aclk_pd, 0x20c, BIT(3), 0);
-> > [...]
-> > > =20
-> > >  static CCU_GATE_CLK_OPS(CLK_GPU_MEM, gpu_mem_clk, "gpu-mem-clk",
-> > >                         video_pll_clk_pd, 0x0, BIT(2), 0, clk_nop_ops=
-);
-> > > +static CCU_GATE_CLK_OPS(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk",
-> > > +                       video_pll_clk_pd, 0x0, BIT(3), 0, ccu_gate_gp=
-u_ops);
-> > > +static CCU_GATE_CLK_OPS(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-acl=
-k",
-> > > +                       video_pll_clk_pd, 0x0, BIT(4), 0, ccu_gate_gp=
-u_ops);
-> > > +
-> > > +static void ccu_gpu_clk_disable(struct clk_hw *hw)
-> > > +{
-> > > +       struct ccu_gate *cg =3D hw_to_ccu_gate(hw);
-> > > +       unsigned long flags;
-> > > +
-> > > +       spin_lock_irqsave(&gpu_reset_lock, flags);
-> > > +
-> > > +       ccu_disable_helper(&cg->common, cg->enable);
-> > > +
-> > > +       if ((cg =3D=3D &gpu_core_clk &&
-> > > +            !clk_hw_is_enabled(&gpu_cfg_aclk.common.hw)) ||
-> > > +           (cg =3D=3D &gpu_cfg_aclk &&
-> > > +            !clk_hw_is_enabled(&gpu_core_clk.common.hw)))
-> > > +               reset_control_assert(gpu_reset);
-> >=20
-> > Why can't the clk consumer control the reset itself? Doing this here is
-> > not ideal because we hold the clk lock when we try to grab the reset
-> > lock. These are all spinlocks that should be small in lines of code
-> > where the lock is held, but we're calling into an entire other framewor=
-k
-> > under a spinlock. If an (unrelated) reset driver tries to grab the clk
-> > lock it will deadlock.
->=20
-> So in our case the clk consumer is the drm/imagination driver. Here is
-> the comment from the maintainer for my previous attempt to use a reset
-> driver to abstract the GPU init sequence [1]:
->=20
-> "Do you know what this resets? From our side, the GPU only has a single
-> reset line (which I assume to be GPU_RESET)."
->=20
-> "I don't love that this procedure appears in the platform reset driver.
-> I appreciate it may not be clear from the SoC TRM, but this is the
-> standard reset procedure for all IMG Rogue GPUs. The currently
-> supported TI SoC handles this in silicon, when power up/down requests
-> are sent so we never needed to encode it in the driver before.
->=20
-> Strictly speaking, the 32 cycle delay is required between power and
-> clocks being enabled and the reset line being deasserted. If nothing
-> here touches power or clocks (which I don't think it should), the delay
-> could potentially be lifted to the GPU driver."=20
->=20
-> From the drm/imagination maintainers point of view their hardware has
-> only one reset, the extra CLKGEN reset is SoC specific.
+You haven't seen my comments in previous version?
 
-If I am understanding correctly, the CLKGEN reset doesn't reset
-anything in the GPU itself, but holds the GPU clock generator block in
-reset, effectively disabling the three GPU clocks as a workaround for
-the always-ungated GPU_MEM clock.
+https://lore.kernel.org/loongarch/CAAhV-H5xyRrF1_=3DE7rLM3dHeYAEBdMufYQvgox=
+Aq6+d6s5U4Eg@mail.gmail.com/
 
-> Also the reset driver maintainer didn't like my way of abstracting two
-> resets ("GPU" and and SoC specific"CLKGEN") into one reset
+Huacai
 
-That is one part of it. The other is that (according to my
-understanding as laid out above), the combined GPU+CLKGEN reset would
-effectively disable all three GPU clocks for a while, after the GPU
-driver has already requested them to be enabled.
-
-> to make it
-> seem to the consumer driver drm/imagination like there is only one
-> reset and suggested and attempt to code the re-setting in the clock
-> driver [2]. Even though he suggested a different way of achieving that:=
-=20
->=20
-> "In my mind it shouldn't be much: the GPU clocks could all share the
-> same refcounted implementation. The first clock to get enabled would
-> ungate both GPU_CORE and GPU_CFG_ACLK gates and deassert
-> GPU_SW_CLKGEN_RST, all in one place. The remaining enable(s) would be
-> no-ops. Would that work?"
->=20
-> The above would have similar effect, but I felt like enabling both
-> clocks in single .enable callback could be confusing so I ended up with
-> the current approach. This could be easily re-done if you feel this
-> would be better.
->=20
-> I agree that using spinlocks here is dangerous, but looking at the code
-> of the reset_control_deassert and reset_control_assert, it doesn't seem
-> like any spinlocks are acquired/relased in that code flow, unless the
-> driver ops would introduce that. So in this specific case deadlock
-> shouldn't happen ?
-
-There are no spinlocks in the reset_control_(de)assert paths in the
-reset framework, but in general there could be in the driver. The thead
-driver [1], uses regmap_update_bits() on a regmap with .fast_io =3D true,
-which uses the internal struct regmap::spinlock.
-
-[1] https://lore.kernel.org/all/20250303152511.494405-3-m.wilczynski@samsun=
-g.com/
-
-
-regards
-Philipp
+On Thu, Mar 13, 2025 at 5:05=E2=80=AFPM Qunqin Zhao <zhaoqunqin@loongson.cn=
+> wrote:
+>
+> Loongson security engine supports random number generation, hash,
+> symmetric encryption and asymmetric encryption. Based on these
+> encryption functions, TPM2 have been implemented in it.
+>
+> mfd is the baser driver, crypto and tpm are users.
+>
+> v5: Registered "ls6000se-rng" device in mfd driver.
+> v4: Please look at changelog in tpm and MAINTAINERS. No changes to mfd
+>     and crypto.
+> v3: Put the updates to the MAINTAINERS in a separate patch.
+> v2: Removed misc driver. Added tpm driver.
+>
+> Qunqin Zhao (6):
+>   mfd: Add support for Loongson Security Module
+>   MAINTAINERS: Add entry for Loongson Security Module driver
+>   crypto: loongson - add Loongson RNG driver support
+>   MAINTAINERS: Add entry for Loongson RNG driver
+>   tpm: Add a driver for Loongson TPM device
+>   MAINTAINERS: Add tpm_lsse.c to LOONGSON CRYPTO DRIVER entry
+>
+>  MAINTAINERS                            |  14 +
+>  drivers/char/tpm/Kconfig               |   9 +
+>  drivers/char/tpm/Makefile              |   1 +
+>  drivers/char/tpm/tpm_lsse.c            | 103 +++++++
+>  drivers/crypto/Kconfig                 |   1 +
+>  drivers/crypto/Makefile                |   1 +
+>  drivers/crypto/loongson/Kconfig        |   6 +
+>  drivers/crypto/loongson/Makefile       |   2 +
+>  drivers/crypto/loongson/ls6000se-rng.c | 190 +++++++++++++
+>  drivers/mfd/Kconfig                    |  10 +
+>  drivers/mfd/Makefile                   |   2 +
+>  drivers/mfd/ls6000se.c                 | 374 +++++++++++++++++++++++++
+>  include/linux/mfd/ls6000se.h           |  75 +++++
+>  13 files changed, 788 insertions(+)
+>  create mode 100644 drivers/char/tpm/tpm_lsse.c
+>  create mode 100644 drivers/crypto/loongson/Kconfig
+>  create mode 100644 drivers/crypto/loongson/Makefile
+>  create mode 100644 drivers/crypto/loongson/ls6000se-rng.c
+>  create mode 100644 drivers/mfd/ls6000se.c
+>  create mode 100644 include/linux/mfd/ls6000se.h
+>
+>
+> base-commit: 6a8f122c5f073c8610c32636663f2512514b1270
+> --
+> 2.43.0
+>
+>
 
