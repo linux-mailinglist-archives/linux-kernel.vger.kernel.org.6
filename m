@@ -1,234 +1,189 @@
-Return-Path: <linux-kernel+bounces-558932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21279A5ED45
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:48:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA63AA5ED41
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:47:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FEC1179272
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:48:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF5E27A3399
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A44260370;
-	Thu, 13 Mar 2025 07:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50E61FBCA9;
+	Thu, 13 Mar 2025 07:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PggQ7cNO"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sTWg1cgk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5791C84AA;
-	Thu, 13 Mar 2025 07:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73BB1FC0FE;
+	Thu, 13 Mar 2025 07:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741852070; cv=none; b=uJ8y9kooR3EICvreQUQdmQqv8q3DzI8tv7WDhxMn6OtQK3WZc912+ts7Lu+65snJzXgQZFdNXAlMdiD/M2a6kIs+q2mXf4+ioipKPirzm6CuMKWLSuDwcqeZeyDhvJ/N9lqfNqjFvd/BTj0+M1uOl0H4DSCQ1wG+GPLXOFWIemk=
+	t=1741852059; cv=none; b=KPBo4LydK51cHc1EIANkzAoKda0gYhaFBLsyxQ4SEulWxdL0Rx7rcXN9kqQm3L6ms6dGmXQxxIAhe8ZC8B7r6cgt6HMq/BtiWEvGbfYgvrdfUhE04eq28DO77bnpfkPk9rp60GzQmXEAGIyywOAhDS86g9blcpXhBwBqNlbh72Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741852070; c=relaxed/simple;
-	bh=W3UPsC0myzOAp3Fllix+rHiBPdE0rsYU/7717F4GDZk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iOOLIXa8tzWJ8Am1iDAwVxY24u7MC9PhHDTftq2aqVDxy0LbLZXwP3+lWEBnGK4tAv5X3GxPrvc8em0Rizzssbgkmrx1oYza5WHQgJro3btAzkG4lIUWfBAzbJlxcmhzSMT9g5QNwYLdIJRbDBPQ43YjqX5vIrst8c4SNmZ5XXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PggQ7cNO; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CKZoIu026642;
-	Thu, 13 Mar 2025 07:47:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=6KKLZv
-	+Ah3wluN0jEfHqdNL/PYQ+sFgKqpAxlzMlagg=; b=PggQ7cNOWRJXkg4gBqwZnR
-	lLAkdI8ACoWhJJ6/QN+fMzdfX5GY6wHp9ox8q/BqvFAWNrV0pfUwDLSqBTkXbq7K
-	pl1J758W3YxKSJpRnXwsSeGVYKo33NjQTodJm/2iMb8+mYssMVt6nggsmD43L//H
-	7wl3v3pmr8x/MZwCh8lv37ZUYlKsVU21X7Rdr6tV/RdPiPQ6a/xs4DjKMMLdkO5n
-	tpeSEyyAYmfzkrJGJdtmsXCg1yeiy7q8FALgza+O931Jn30DHtnOT9xnWQbK9N26
-	llDtRzAvMrhhoOdUL2zTQj0MJEkNCu2PU2F+x7fHzsF5NO62rcWuLWirYFpKQZ+A
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45bhepj9gv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 07:47:41 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52D7VU1H017576;
-	Thu, 13 Mar 2025 07:47:40 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45bhepj9gs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 07:47:40 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52D4mhNq026166;
-	Thu, 13 Mar 2025 07:47:39 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atspgjva-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 07:47:39 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52D7lccr28770854
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Mar 2025 07:47:38 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 197405806F;
-	Thu, 13 Mar 2025 07:47:38 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1424758087;
-	Thu, 13 Mar 2025 07:46:58 +0000 (GMT)
-Received: from [9.179.27.216] (unknown [9.179.27.216])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 13 Mar 2025 07:46:57 +0000 (GMT)
-Message-ID: <80afe99b-ca14-4b21-a200-1d695ed6ae63@linux.ibm.com>
-Date: Thu, 13 Mar 2025 08:46:57 +0100
+	s=arc-20240116; t=1741852059; c=relaxed/simple;
+	bh=8hHJ/HFvfkEZ6i76S/7Osadp/4nyw/q4ACUf+uYItAQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rM67MzzmX+cU7GElhdxwuWCgCtJvNqWTrxHRx1+VcW5VAVFhsjGcDjuJ0KdzKSR9m2cvxpoiYAY/NB4tMj8EEzYW7quewdEqSuPwbz67MXQ/zADwnvr1B2KpXqik84KENUeyAGJIy55HNxSMSvepS+qgp3V97KODlQpnDl0izQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sTWg1cgk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E734C4CEE9;
+	Thu, 13 Mar 2025 07:47:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741852058;
+	bh=8hHJ/HFvfkEZ6i76S/7Osadp/4nyw/q4ACUf+uYItAQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sTWg1cgkF0HN+R3Lg8H/q/Qfjx3ASKAcsERfvzaHk+wqZXINU/PpwXojnwHctHxN2
+	 pnwecDDH1dZYi/0IudVv/vq/4AWn5X0Ie/cc/iqapwIqu7FlJGBgNSjAY6sAdCbmHQ
+	 mFrbh/bGD8i/JyODx1v8kBN72mqfabTlCLWwDl3EAoFmGrYHXSL+ayydujC3gDNVgU
+	 QDRyGK745K9PoW6FwPtlizS+JwHawvlwVFOZk28JB3TcIj5Vk2ZnJNXfkzzaimDUWB
+	 m1OWmFSQqL7n+KU5/4MHY8BXqtiEmpyUl/kv+vtCVXbeqlFj4Buv7Mf2dy7f0fDqlP
+	 dJSfRcH8a4W0A==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5495078cd59so667389e87.1;
+        Thu, 13 Mar 2025 00:47:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWec4tYNnT2JKvbELdE3pxEOT+bVBDFZNJK8xx8FJGHhvcOOlErORrxjgwDVu00Gran7u6DgE0I5Qzc8Ryy@vger.kernel.org, AJvYcCX6TJ5GGCULGUtKzmHjDuYMZdG1GZrZ7sVt63AxCPBrRpLMDSm6FPkG3re5ekV+Z+4ZtJezQ+EZQoXZyS4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz46vLHowm8AwyOkx5fF1Yt8CXOsFkhdDrxczOF26/NtDGtMdrF
+	I3NKOu2Pzmfm8CWDcoSHcZpUcbje4cOFX2UTUHlSi3BUehydT2nWuPQ393pT3eGlCj3oC9wi3MG
+	nz9OvJb6KKQ/xxxoOApT0clKfCS8=
+X-Google-Smtp-Source: AGHT+IFLgYAj/1b+D8/tOT9N04CdBa+1enXtS6QVrZnRpM8XirsjiCQj5kY6LGKs43WUlwcKAqmgm6k6rbNO5qrbN90=
+X-Received: by 2002:a05:6512:3d19:b0:549:4d78:2418 with SMTP id
+ 2adb3069b0e04-549abacd211mr3858294e87.27.1741852056477; Thu, 13 Mar 2025
+ 00:47:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] net/smc: use the correct ndev to find pnetid
- by pnetid table
-To: Guangguan Wang <guangguan.wang@linux.alibaba.com>, pasic@linux.ibm.com,
-        jaka@linux.ibm.com, alibuda@linux.alibaba.com,
-        tonylu@linux.alibaba.com, guwen@linux.alibaba.com,
-        mjambigi@linux.ibm.com, sidraya@linux.ibm.com
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, horms@kernel.org, linux-rdma@vger.kernel.org,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250304124304.13732-1-guangguan.wang@linux.alibaba.com>
-Content-Language: en-US
-From: Wenjia Zhang <wenjia@linux.ibm.com>
-In-Reply-To: <20250304124304.13732-1-guangguan.wang@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: BEvM-THc_fy69j_TOkPvOEkro3aniTba
-X-Proofpoint-ORIG-GUID: 7Ruz8LHPlvLXZIsG537MxOl_DWe-m7js
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_03,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 impostorscore=0 bulkscore=0 phishscore=0 spamscore=0
- suspectscore=0 mlxscore=0 malwarescore=0 clxscore=1011 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503130058
+References: <20250311110616.148682-6-ardb+git@google.com> <20250311110616.148682-10-ardb+git@google.com>
+ <CAK7LNASxNhDnCmpuf7yEW4Lcz-vRtitx8HPeoZnGNWdb-6pEsA@mail.gmail.com>
+In-Reply-To: <CAK7LNASxNhDnCmpuf7yEW4Lcz-vRtitx8HPeoZnGNWdb-6pEsA@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 13 Mar 2025 08:47:24 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXFXo1dkh4iE=hnuPoQF61g2YPaeuG0Swp7CxSP4FYgvQQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JrHAxVQxXq5RYt8jcT41tgYQ48AFEtuc3b0FjorUifa7uvMV9EZ8TqwqHI
+Message-ID: <CAMj1kXFXo1dkh4iE=hnuPoQF61g2YPaeuG0Swp7CxSP4FYgvQQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] x86: Get rid of Makefile.postlink
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, x86@kernel.org, Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, 13 Mar 2025 at 03:09, Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> On Tue, Mar 11, 2025 at 8:06=E2=80=AFPM Ard Biesheuvel <ardb+git@google.c=
+om> wrote:
+> >
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > Instead of generating the vmlinux.relocs file (needed by the
+> > decompressor build to construct the KASLR relocation tables) as a
+> > vmlinux postlink step, which is dubious because it depends on data that
+> > is stripped from vmlinux before the build completes, generate it from
+> > vmlinux.unstripped, which has been introduced specifically for this
+> > purpose.
+> >
+> > This ensures that each artifact is rebuilt as needed, rather than as a
+> > side effect of another build rule.
+> >
+> > This effectively reverts commit
+> >
+> >   9d9173e9ceb6 ("x86/build: Avoid relocation information in final vmlin=
+ux")
+> >
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > ---
+> >  arch/x86/Makefile.postlink        | 38 --------------------
+> >  arch/x86/boot/compressed/Makefile |  9 +++--
+> >  2 files changed, 6 insertions(+), 41 deletions(-)
+> >
+> > diff --git a/arch/x86/Makefile.postlink b/arch/x86/Makefile.postlink
+> > deleted file mode 100644
+> > index 445fce66630f..000000000000
+> > --- a/arch/x86/Makefile.postlink
+> > +++ /dev/null
+> > @@ -1,38 +0,0 @@
+> > -# SPDX-License-Identifier: GPL-2.0
+> > -# =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> > -# Post-link x86 pass
+> > -# =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> > -#
+> > -# 1. Separate relocations from vmlinux into vmlinux.relocs.
+> > -# 2. Strip relocations from vmlinux.
+> > -
+> > -PHONY :=3D __archpost
+> > -__archpost:
+> > -
+> > --include include/config/auto.conf
+> > -include $(srctree)/scripts/Kbuild.include
+> > -
+> > -CMD_RELOCS =3D arch/x86/tools/relocs
+> > -OUT_RELOCS =3D arch/x86/boot/compressed
+> > -quiet_cmd_relocs =3D RELOCS  $(OUT_RELOCS)/vmlinux.relocs
+> > -      cmd_relocs =3D \
+> > -       mkdir -p $(OUT_RELOCS); \
+> > -       $(CMD_RELOCS) $@ > $(OUT_RELOCS)/vmlinux.relocs; \
+> > -       $(CMD_RELOCS) --abs-relocs $@
+> > -
+> > -# `@true` prevents complaint when there is nothing to be done
+> > -
+> > -vmlinux vmlinux.unstripped: FORCE
+> > -       @true
+> > -ifeq ($(CONFIG_X86_NEED_RELOCS),y)
+> > -       $(call cmd,relocs)
+> > -endif
+> > -
+> > -clean:
+> > -       @rm -f $(OUT_RELOCS)/vmlinux.relocs
+> > -
+> > -PHONY +=3D FORCE clean
+> > -
+> > -FORCE:
+> > -
+> > -.PHONY: $(PHONY)
+> > diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compress=
+ed/Makefile
+> > index 606c74f27459..5edee7a9786c 100644
+> > --- a/arch/x86/boot/compressed/Makefile
+> > +++ b/arch/x86/boot/compressed/Makefile
+> > @@ -117,9 +117,12 @@ $(obj)/vmlinux.bin: vmlinux FORCE
+> >
+> >  targets +=3D $(patsubst $(obj)/%,%,$(vmlinux-objs-y)) vmlinux.bin.all =
+vmlinux.relocs
+> >
+> > -# vmlinux.relocs is created by the vmlinux postlink step.
+> > -$(obj)/vmlinux.relocs: vmlinux
+> > -       @true
+> > +CMD_RELOCS =3D arch/x86/tools/relocs
+> > +quiet_cmd_relocs =3D RELOCS  $@
+> > +      cmd_relocs =3D $(CMD_RELOCS) $< > $@;$(CMD_RELOCS) --abs-relocs =
+$<
+> > +
+> > +$(obj)/vmlinux.relocs: vmlinux.unstripped FORCE
+> > +       $(call if_changed,relocs)
+>
+> Perhaps, it may make sense to rebuild vmlinux.relocs
+> when arch/x86/tools/relocs is changed, but
+> I do not see such dependency in the other
+> arch/x86/realmode/rm/Makefile.
+>
+> https://github.com/torvalds/linux/blob/v6.14-rc5/arch/x86/realmode/rm/Mak=
+efile#L61
+>
+>
+> So, I decided it is ok.
+> If you mind, you can send v3.
+>
 
-
-On 04.03.25 13:43, Guangguan Wang wrote:
-> When using smc_pnet in SMC, it will only search the pnetid in the
-> base_ndev of the netdev hierarchy(both HW PNETID and User-defined
-> sw pnetid). This may not work for some scenarios when using SMC in
-> container on cloud environment.
-> In container, there have choices of different container network,
-> such as directly using host network, virtual network IPVLAN, veth,
-> etc. Different choices of container network have different netdev
-> hierarchy. Examples of netdev hierarchy show below. (eth0 and eth1
-> in host below is the netdev directly related to the physical device).
->              _______________________________
->             |   _________________           |
->             |  |POD              |          |
->             |  |                 |          |
->             |  | eth0_________   |          |
->             |  |____|         |__|          |
->             |       |         |             |
->             |       |         |             |
->             |   eth1|base_ndev| eth0_______ |
->             |       |         |    | RDMA  ||
->             | host  |_________|    |_______||
->             ---------------------------------
->       netdev hierarchy if directly using host network
->             ________________________________
->             |   _________________           |
->             |  |POD  __________  |          |
->             |  |    |upper_ndev| |          |
->             |  |eth0|__________| |          |
->             |  |_______|_________|          |
->             |          |lower netdev        |
->             |        __|______              |
->             |   eth1|         | eth0_______ |
->             |       |base_ndev|    | RDMA  ||
->             | host  |_________|    |_______||
->             ---------------------------------
->              netdev hierarchy if using IPVLAN
->              _______________________________
->             |   _____________________       |
->             |  |POD        _________ |      |
->             |  |          |base_ndev||      |
->             |  |eth0(veth)|_________||      |
->             |  |____________|________|      |
->             |               |pairs          |
->             |        _______|_              |
->             |       |         | eth0_______ |
->             |   veth|base_ndev|    | RDMA  ||
->             |       |_________|    |_______||
->             |        _________              |
->             |   eth1|base_ndev|             |
->             | host  |_________|             |
->             ---------------------------------
->               netdev hierarchy if using veth
-> Due to some reasons, the eth1 in host is not RDMA attached netdevice,
-> pnetid is needed to map the eth1(in host) with RDMA device so that POD
-> can do SMC-R. Because the eth1(in host) is managed by CNI plugin(such
-> as Terway, network management plugin in container environment), and in
-> cloud environment the eth(in host) can dynamically be inserted by CNI
-> when POD create and dynamically be removed by CNI when POD destroy and
-> no POD related to the eth(in host) anymore. It is hard to config the
-> pnetid to the eth1(in host). But it is easy to config the pnetid to the
-> netdevice which can be seen in POD. When do SMC-R, both the container
-> directly using host network and the container using veth network can
-> successfully match the RDMA device, because the configured pnetid netdev
-> is a base_ndev. But the container using IPVLAN can not successfully
-> match the RDMA device and 0x03030000 fallback happens, because the
-> configured pnetid netdev is not a base_ndev. Additionally, if config
-> pnetid to the eth1(in host) also can not work for matching RDMA device
-> when using veth network and doing SMC-R in POD.
-> 
-> To resolve the problems list above, this patch extends to search user
-> -defined sw pnetid in the clc handshake ndev when no pnetid can be found
-> in the base_ndev, and the base_ndev take precedence over ndev for backward
-> compatibility. This patch also can unify the pnetid setup of different
-> network choices list above in container(Config user-defined sw pnetid in
-> the netdevice can be seen in POD).
-> 
-> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-> ---
->   net/smc/smc_pnet.c | 8 +++++---
->   1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/net/smc/smc_pnet.c b/net/smc/smc_pnet.c
-> index 716808f374a8..b391c2ef463f 100644
-> --- a/net/smc/smc_pnet.c
-> +++ b/net/smc/smc_pnet.c
-> @@ -1079,14 +1079,16 @@ static void smc_pnet_find_roce_by_pnetid(struct net_device *ndev,
->   					 struct smc_init_info *ini)
->   {
->   	u8 ndev_pnetid[SMC_MAX_PNETID_LEN];
-> +	struct net_device *base_ndev;
->   	struct net *net;
->   
-> -	ndev = pnet_find_base_ndev(ndev);
-> +	base_ndev = pnet_find_base_ndev(ndev);
->   	net = dev_net(ndev);
-> -	if (smc_pnetid_by_dev_port(ndev->dev.parent, ndev->dev_port,
-> +	if (smc_pnetid_by_dev_port(base_ndev->dev.parent, base_ndev->dev_port,
->   				   ndev_pnetid) &&
-> +	    smc_pnet_find_ndev_pnetid_by_table(base_ndev, ndev_pnetid) &&
->   	    smc_pnet_find_ndev_pnetid_by_table(ndev, ndev_pnetid)) {
-> -		smc_pnet_find_rdma_dev(ndev, ini);
-> +		smc_pnet_find_rdma_dev(base_ndev, ini);
->   		return; /* pnetid could not be determined */
->   	}
->   	_smc_pnet_find_roce_by_pnetid(ndev_pnetid, ini, NULL, net);
-
-Hi Guangguan,
-
-sorry for the late answer! It looks good to me. Here is my R-b:
-
-Reviewed-by: Wenjia Zhang <wenjia@linux.ibm.com>
-
-Btw. could you give Halil some time for the review? He also wants to 
-have a look.
-
-Thanks,
-Wenjia
-
+No I think that's fine: this patch reverts the changes to
+arch/x86/boot/compressed/Makefile; if we need to improve it, it should
+be a separate change in any case.
 
