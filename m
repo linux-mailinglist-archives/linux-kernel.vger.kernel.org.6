@@ -1,184 +1,306 @@
-Return-Path: <linux-kernel+bounces-558988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465CBA5EE0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:31:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69DD2A5EE10
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:31:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7963716EBAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:31:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA877189F68F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067741EA7E1;
-	Thu, 13 Mar 2025 08:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4417230BC2;
+	Thu, 13 Mar 2025 08:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tHn90uYL"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="eIqfnsjR"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7962AD22
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D5F2AD22
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741854668; cv=none; b=MMvH5if08zu/NDRA+6BK3fOAn+uZsx+GeaxV5ONUSi4NMDds1UGQ+TrLgO3qfPe/r7bB2f1azLFAh5M1G9gEfPZx4PvtZi0OcAp2rMhnYvcxibHy5rVbtc3fZivQ8SL7hDzZsX9FmWSxWtB8c35AVs/eZ+oGReYS8u9DRt0PK9Q=
+	t=1741854681; cv=none; b=JWWc71cc/vGTz5lUKybT0yj4fXNrhwQ8XZFCaf9cL3Ay83St28hNvg+hGLZiFH64UmgKpqYGiqgVVJznNsm92isk6/LfII43GCn1CjDLXMMyAKAqGelKtv7430iU6gfwWLfhgAEm4ScVLn9MDSzjszcfw8Nmtf/IxZlqgKF0aAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741854668; c=relaxed/simple;
-	bh=mWbOTSol0MyDP27LIYjii2hqCECw/9Xax7O2bzqkVNc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=pFpwyLmkpt12VwbnZ7U8S/ByyyHZNi1wPngI8N4INU2TreYJHnXb6leI/wzbOaGy7FpvOpFzvgkZVYU/wNEOpuRBWFqVh26/CFszePy5KGu45xLsd1zE/hUmbHIeiXn+/xVY0EmAB1IwhzdSG88NyePHAsqtGECHIaJStKczwoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tHn90uYL; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D3juqk006498;
-	Thu, 13 Mar 2025 08:30:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ZIxn5+
-	UITCK9OeEIVawSSkakfVKn1aznBzydd/3IBGU=; b=tHn90uYLpYTA7q4WGaBsax
-	ezmR1Nsm2U+xuuCULaKF0ZqBf+c/vPpW+/856b5WpDKFeHAc75JQFJacNLoi+U1v
-	aWhR4bdetORAzqqwJy5wf6M+iJt3fBlyYZMnv8z5ORfs7YMUhOtJg9W1UGtxHb+0
-	vvqkYKwk++svP8JLiPKQc8maQ/O75/z7/okiMgcXak4ZV7agzeeqGDtoJ+IxMDty
-	X0x6qp+ARuWoyUvSyXjYhZSJiytZdbN4WtQttst/ff3jQ/W6YtKA/Pzq8OOkNVkw
-	4N/VnysZlu0E538vXDo3N84l9wPCfU/wPh990ItWq2CxInOjEhN6bqhW8japraSw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45bqr91464-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 08:30:43 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52D8S5ed000395;
-	Thu, 13 Mar 2025 08:30:42 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45bqr9145v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 08:30:42 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52D5FgdT027045;
-	Thu, 13 Mar 2025 08:30:41 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45atsr0qj8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 08:30:41 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52D8UdfC15729228
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Mar 2025 08:30:39 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 92ECF5805E;
-	Thu, 13 Mar 2025 08:30:40 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F1F1358043;
-	Thu, 13 Mar 2025 08:30:35 +0000 (GMT)
-Received: from [9.204.206.228] (unknown [9.204.206.228])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 13 Mar 2025 08:30:35 +0000 (GMT)
-Message-ID: <3e31e4b7-d4de-4e23-a208-50effb4894a5@linux.ibm.com>
-Date: Thu, 13 Mar 2025 14:00:34 +0530
+	s=arc-20240116; t=1741854681; c=relaxed/simple;
+	bh=xP+UIduKgLqsiaFIOWyn+CLVZCZlrx/JOSsJVRffH3Q=;
+	h=From:References:Mime-Version:In-Reply-To:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kIMSQFf5fbezl8J92nOs7byhgFESqht0XHVW5X+TR3XC/pao4VTu6V904QHHIVuD4hlsKk/4RxpN67J6CNnyF7S7o/SLFpI249lC+CePlN/m6xSGKeK7TS+xNkVUkajJaJ5CjEzckgLx1Cx4U/Yv8b9J0dukGZdsjV1mrA9wDIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=eIqfnsjR; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e5e22e6ed2so861773a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 01:31:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1741854677; x=1742459477; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:in-reply-to:mime-version:references
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JzZEFr5AJGv65/xqrdfpS/zmTm939A4Bar0S2y41nS8=;
+        b=eIqfnsjRs5OzsSWB4mQktbSUVvITNdpa2y0YnqYiD3HGjaPjas67EapgjcCrPlqDtI
+         CbA/bnl0JC5knBbsJm8E+OGX20eMbg/s9bEczL8Px5w+s3kvSRgZ3TwC9dcjAbvdHPZ1
+         HQ8mIXVNvjpHcGtaKCOAy0/MYUV3WR3D95mt5Mo15yAW3BKirJBil8zP3UrqjCoITeNY
+         c9K68blUPjsy8K/JQ0wBEC52KuWJun29m5xDHK0UYzbICrVEGZiLSXo0Jze9H0Kt5pfI
+         Gc+rrGsbDftGfzaP5nn1Auu0opgW/FfSpl0Kqy1YojTI4YsjccLfLM/88Tq4picoXGXm
+         zMFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741854677; x=1742459477;
+        h=cc:to:subject:message-id:date:in-reply-to:mime-version:references
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JzZEFr5AJGv65/xqrdfpS/zmTm939A4Bar0S2y41nS8=;
+        b=IuI2qIvuOhnI/IcAMUBdWpWz1MMcnp/DCsLZgBtIQXQj/0//GBBk1eYmHM/IMAX6KO
+         57IZuGKzzmzcaDyWQY43Z5SnTcDyiIcUhcmPTDDZfpaV3P9sAnbWshhuaLBuHCUAUWEN
+         PlmlNQI9tkrYmUHOLQnyjhZ8sLZIUZKlNnnDsVp8gGM9BmHHPP5gUIsjewVBxLDMvgNs
+         xxVKlONlkUnvWre3HLovfH7uQc7xYCugY7qquKI+PDoWIe8B6oFAc9dPbF83wDXaQeLW
+         0EL47ZUbSTsPdZ16KIPHbGYE2YVa/TV3gSei7+JXF46mFyNe33jWKB3uooQgYVOowFhS
+         nkUQ==
+X-Gm-Message-State: AOJu0YzGD+wYk1RSA76dUwWcouGY8lm0aBCXNGPUb9jltnjcRBut+RqW
+	oo60Q2nZvy34yYGfFOoEEGeJD/voCMEkOkxw0dnyMNpjto73Y5pFFgYa13cAOpgD1E0fBMQRsKf
+	7nU6Uy38J75Eo//dtfXDyF79/gN0ojnbdu6j2
+X-Gm-Gg: ASbGncvZqOWs/HUUg7UHHFX1orv5rEm9Sv22gSHzDTg6g1BEwNdor0oixFQUVVbcQlU
+	PapT4W+j2Y9InXQWyhWXNDeDsnQSmo4+HhzpHedKvBV4bW5DRkqhc4qWo89QxSWRytaUNAhHrRm
+	/T2qQduUpaMy1C2I604jrh7bGSOyg=
+X-Google-Smtp-Source: AGHT+IGjHYgoaKge4gmbxZEVJocvCSL4WjU6zx9IMgtWnibGLUnZxsWfFQkIRBJVMMXXNaOUiTt6M2bXdyox8kKbD4U=
+X-Received: by 2002:a05:6402:268c:b0:5e6:17fb:d3c6 with SMTP id
+ 4fb4d7f45d1cf-5e617fbd730mr24630494a12.25.1741854677194; Thu, 13 Mar 2025
+ 01:31:17 -0700 (PDT)
+Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
+ Thu, 13 Mar 2025 01:31:16 -0700
+From: Aaron Lu <ziqianlu@bytedance.com>
+References: <CANCG0Gfn-BENDNqJmWC2BCxXLA8pQWrAwNibx22Dv_yUzyNV5g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Subject: Re: [PATCH v2 3/3] sched/fair: Update comments regarding last and
- skip buddy
-To: Adam Li <adamli@os.amperecomputing.com>
-Cc: peterz@infradead.org, mingo@redhat.com, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        vschneid@redhat.com, linux-kernel@vger.kernel.org,
-        patches@amperecomputing.com, cl@linux.com, christian.loehle@arm.com,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-References: <20241127055610.7076-1-adamli@os.amperecomputing.com>
- <20241127055610.7076-4-adamli@os.amperecomputing.com>
-Content-Language: en-US
-In-Reply-To: <20241127055610.7076-4-adamli@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 2pSgbXXuHDKbgk0yVl5s-yGEY_U90MEC
-X-Proofpoint-ORIG-GUID: 240dtEDCWCvb_LamnoVI6VcerzrLHjB3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_04,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- priorityscore=1501 impostorscore=0 adultscore=0 clxscore=1011
- suspectscore=0 phishscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503130066
+Mime-Version: 1.0
+X-Original-From: Aaron Lu <ziqianlu@bytedance.com>
+In-Reply-To: <CANCG0Gfn-BENDNqJmWC2BCxXLA8pQWrAwNibx22Dv_yUzyNV5g@mail.gmail.com>
+Date: Thu, 13 Mar 2025 01:31:16 -0700
+X-Gm-Features: AQ5f1JoLNCLegHWoXyHhuFbbpfeRbUbj2h9b52i85emc5NJBVWEPj-dUuBceXX4
+Message-ID: <CANCG0GdOwS7WO0k5Fb+hMd8R-4J_exPTt2aS3-0fAMUC5pVD8g@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/7] Defer throttle when task exits to user
+To: Valentin Schneider <vschneid@redhat.com>, Ben Segall <bsegall@google.com>, 
+	K Prateek Nayak <kprateek.nayak@amd.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Mel Gorman <mgorman@suse.de>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Chuyi Zhou <zhouchuyi@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Adam,
+It appears this mail's message-id is changed and becomes a separate
+thread, I'll check what is going wrong, sorry about this.
 
-On 27/11/24 11:26, Adam Li wrote:
-> Commit 5e963f2bd465 ("sched/fair: Commit to EEVDF") removed the "last"
-> and "skip" buddy. Update comments in pick_next_entity().
-> 
-> Signed-off-by: Adam Li <adamli@os.amperecomputing.com>
-> Reviewed-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-> ---
->  kernel/sched/fair.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index d5a3b5589e4e..259c56dcdff6 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5602,17 +5602,11 @@ set_next_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
->  
->  static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags);
->  
-> -/*
-> - * Pick the next process, keeping these things in mind, in this order:
-> - * 1) keep things fair between processes/task groups
-> - * 2) pick the "next" process, since someone really wants that to run
-> - * 3) pick the "last" process, for cache locality
-> - * 4) do not run the "skip" process, if something else is available
-> - */
->  static struct sched_entity *
->  pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
->  {
->  	/*
-> +	 * Pick the "next" buddy, since someone really wants that to run.
->  	 * Enabling NEXT_BUDDY will affect latency but not fairness.
->  	 */
->  	if (sched_feat(NEXT_BUDDY) &&
+On Thu, Mar 13, 2025 at 02:20:59AM -0500, Aaron Lu wrote:
+> Tests:
+> - A basic test to verify functionality like limit cgroup cpu time and
+>   change task group, affinity etc.
 
-There is one more reference to LAST_BUDDY in check_preempt_wakeup_fair.
+Here is the basic test script:
 
-Regarding pick_next_entity, the first two points are still valid, so only
-points 3 and 4 could be removed?
+pid=$$
+CG_PATH1=/sys/fs/cgroup/1
+CG_PATH2=/sys/fs/cgroup/2
 
-Something like below
+[ -d $CG_PATH1 ] && sudo rmdir $CG_PATH1
+[ -d $CG_PATH2 ] && sudo rmdir $CG_PATH2
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 9dafb374d76d..379dbcbb24e9 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5578,8 +5578,6 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags);
-  * Pick the next process, keeping these things in mind, in this order:
-  * 1) keep things fair between processes/task groups
-  * 2) pick the "next" process, since someone really wants that to run
-- * 3) pick the "last" process, for cache locality
-- * 4) do not run the "skip" process, if something else is available
-  */
- static struct sched_entity *
- pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
-@@ -8780,9 +8778,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
-         *
-         * Note: this also catches the edge-case of curr being in a throttled
-         * group (e.g. via set_curr_task), since update_curr() (in the
--        * enqueue of curr) will have resulted in resched being set.  This
--        * prevents us from potentially nominating it as a false LAST_BUDDY
--        * below.
-+        * enqueue of curr) will have resulted in resched being set.
-         */
-        if (test_tsk_need_resched(rq->curr))
-                return;
+sudo mkdir -p $CG_PATH1
+sudo mkdir -p $CG_PATH2
 
-Thanks,
-Madadi Vineeth Reddy
+sudo sh -c "echo $pid > $CG_PATH1/cgroup.procs"
+
+echo "start nop"
+~/src/misc/nop &
+nop_pid=$!
+cat /proc/$nop_pid/cgroup
+pidstat -p $nop_pid 1 &
+sleep 5
+
+echo "limit $CG_PATH1 to 1/10"
+sudo sh -c "echo 10000 100000 > $CG_PATH1/cpu.max"
+sleep 5
+
+echo "limit $CG_PATH1 to 5/10"
+sudo sh -c "echo 50000 100000 > $CG_PATH1/cpu.max"
+sleep 5
+
+echo "move to $CG_PATH2"
+sudo sh -c "echo $nop_pid > $CG_PATH2/cgroup.procs"
+sleep 5
+
+echo "limit $CG_PATH2 to 5/10"
+sudo sh -c "echo 50000 100000 > $CG_PATH2/cpu.max"
+sleep 5
+
+echo "limit $CG_PATH2 to 1/10"
+sudo sh -c "echo 10000 100000 > $CG_PATH2/cpu.max"
+sleep 5
+
+echo "set affinity to cpu3"
+taskset -p 0x8 $nop_pid
+sleep 5
+
+echo "set affinity to cpu10"
+taskset -p 0x400 $nop_pid
+sleep 5
+
+echo "unlimit $CG_PATH2"
+sudo sh -c "echo max 100000 > $CG_PATH2/cpu.max"
+sleep 5
+
+echo "move to $CG_PATH1"
+sudo sh -c "echo $nop_pid > $CG_PATH1/cgroup.procs"
+sleep 5
+
+echo "change to rr with priority 10"
+sudo chrt -r -p 10 $nop_pid
+sleep 5
+
+echo "change to fifo with priority 10"
+sudo chrt -f -p 10 $nop_pid
+sleep 5
+
+echo "change back to fair"
+sudo chrt -o -p 0 $nop_pid
+sleep 5
+
+echo "unlimit $CG_PATH1"
+sudo sh -c "echo max 100000 > $CG_PATH1/cpu.max"
+sleep 5
+
+kill $nop_pid
+
+note: nop is a cpu hog that does: while (1) spin();
+
+> - A script that tried to mimic a large cgroup setup is used to see how
+>   bad it is to unthrottle cfs_rqs and enqueue back large number of tasks
+>   in hrtime context.
+
+Here are the test scripts:
+
+CG_ROOT=/sys/fs/cgroup
+
+nr_level1=2
+nr_level2=100
+nr_level3=10
+
+for i in `seq $nr_level1`; do
+	CG_LEVEL1=$CG_ROOT/$i
+	echo "cg_level1: $CG_LEVEL1"
+	[ -d $CG_LEVEL1 ] || sudo mkdir -p $CG_LEVEL1
+	sudo sh -c "echo +cpu > $CG_LEVEL1/cgroup.subtree_control"
+
+	for j in `seq $nr_level2`; do
+		CG_LEVEL2=$CG_LEVEL1/${i}_$j
+		echo "cg_level2: $CG_LEVEL2"
+		[ -d $CG_LEVEL2 ] || sudo mkdir -p $CG_LEVEL2
+		sudo sh -c "echo +cpu > $CG_LEVEL2/cgroup.subtree_control"
+
+		for k in `seq $nr_level3`; do
+			CG_LEVEL3=$CG_LEVEL2/${i}_${j}_$k
+			[ -d $CG_LEVEL3 ] || sudo mkdir -p $CG_LEVEL3
+			~/test/run_in_cg.sh $CG_LEVEL3
+		done
+	done
+done
+
+function set_quota()
+{
+	quota=$1
+
+	for i in `seq $nr_level1`; do
+		CG_LEVEL1=$CG_ROOT/$i
+		sudo sh -c "echo $quota 100000 > $CG_LEVEL1/cpu.max"
+		echo "$CG_LEVEL1: `cat $CG_LEVEL1/cpu.max`"
+	done
+}
+
+while true; do
+	echo "sleep 20"
+	sleep 20
+
+	echo "set 20cpu quota to first level cgroups"
+	set_quota 2000000
+	echo "sleep 20"
+	sleep 20
+
+	echo "set 10cpu quota to first level cgroups"
+	set_quota 1000000
+	echo "sleep 20"
+	sleep 20
+
+	echo "set 5cpu quota to first level cgroups"
+	set_quota 500000
+	echo "sleep 20"
+	sleep 20
+
+	echo "unlimit first level cgroups"
+	set_quota max
+done
+
+run_in_cg.sh:
+
+set -e
+
+CG_PATH=$1
+[ -z "$CG_PATH" ] && {
+	echo "need cgroup path"
+	exit
+}
+
+echo "CG_PATH: $CG_PATH"
+
+sudo sh -c "echo $$ > $CG_PATH/cgroup.procs"
+
+for i in `seq 10`; do
+	~/src/misc/nop &
+done
+
+>   The test was done on a 2sockets/384threads AMD CPU with the following
+>   cgroup setup: 2 first level cgroups with quota setting, each has 100
+>   child cgroups and each child cgroup has 10 leaf child cgroups, with a
+>   total number of 2000 cgroups. In each leaf child cgroup, 10 cpu hog
+>   tasks are created there. Below is the durations of
+>   distribute_cfs_runtime() during a 1 minute window:
+
+@durations:
+[8K, 16K)            274 |@@@@@@@@@@@@@@@@@@@@@                               |
+[16K, 32K)           132 |@@@@@@@@@@                                          |
+[32K, 64K)             6 |                                                    |
+[64K, 128K)            0 |                                                    |
+[128K, 256K)           2 |                                                    |
+[256K, 512K)           0 |                                                    |
+[512K, 1M)           117 |@@@@@@@@@                                           |
+[1M, 2M)             665 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+[2M, 4M)              10 |                                                    |
+
+The bpftrace script used to capture this:
+
+kfunc:distribute_cfs_runtime
+{
+	@start[args->cfs_b] = nsecs;
+}
+
+kretfunc:distribute_cfs_runtime
+{
+	if (@start[args->cfs_b]) {
+		$duration = nsecs - @start[args->cfs_b];
+		@durations = hist($duration);
+		delete(@start[args->cfs_b]);
+	}
+}
+
+interval:s:60
+{
+	exit();
+}
+
+>   So the biggest duration is in 2-4ms range in this hrtime context. How
+>   bad is this number? I think it is acceptable but maybe the setup I
+>   created is not complex enough?
+>   In older kernels where async unthrottle is not available, the largest
+>   time range can be about 100ms+.
 
