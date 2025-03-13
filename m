@@ -1,135 +1,154 @@
-Return-Path: <linux-kernel+bounces-559552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E0EA5F57B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:09:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2A1A5F56D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:08:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29C763AE0CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:07:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E46EC7A83F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EAF26772D;
-	Thu, 13 Mar 2025 13:07:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2E1267701;
-	Thu, 13 Mar 2025 13:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA6F267AF5;
+	Thu, 13 Mar 2025 13:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="pOF+MY8E"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B882267730
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741871229; cv=none; b=URLBvAtyUqRz4z6hs/RxDx0fX6tG4gGWkCx5zFjkgaLCb2JaSLxYASce7ZqyfJhte5RnVvl+G0ewh0H+LGnE4Wzf7lCYNLruKnt3zUOVNbcALdaePEyeChcZuoLmW69I6kwX3KY2XjGksNBEAI/77/VMGFnyU/IjAoAP9M4HnI8=
+	t=1741871243; cv=none; b=LTCXdbemhpGXp9z9rYhlpk6R5c6yhHQ7cQaGDukx67ksPup4ngQVjaGbCvnIZcduodxn0HZ1ECuGZfcnH+/0KNENNBdrFiLucK4Jg1b884WulnCP6K13EENJkphObNKnvpa+e/ODHZ90+STB42yxUtYPL7Ygu6gCAcwpDF6hchY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741871229; c=relaxed/simple;
-	bh=IZFUBqt/PcENGjFiftwrfryoSFoDuDYzzj7uu2pIxSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EB8vt2lx9bLbjFB4y/K5GaNAgi3xmqyO5BcsH2k1EPxqZFpRXz8/SOWPtWjyQAdaGFDaZXss1V7zqKcjxVFDGzSRo8cmYenKdzG7Z/riVpwoYA5L4uPP+4TMydpwhuRxYZ+xOTClDqG2PSkx1h4Ec7tVASdBhC7rJxOVLLaXppM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EE6571C00;
-	Thu, 13 Mar 2025 06:07:15 -0700 (PDT)
-Received: from [10.57.40.246] (unknown [10.57.40.246])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AA07C3F673;
-	Thu, 13 Mar 2025 06:07:01 -0700 (PDT)
-Message-ID: <016bb7ca-f0d3-464e-ac74-46e6f78e90d7@arm.com>
-Date: Thu, 13 Mar 2025 13:06:59 +0000
+	s=arc-20240116; t=1741871243; c=relaxed/simple;
+	bh=ePOGO+hf+gquyZ0RYyw7U39AF4wEnWB02GOCC4MwDag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gZw+CukPWfaMu6wqk7fotqfRSgvQkCcn5pgCHm/qCJ5JDhtKDkqWBE24iTOFySm49wR4lqdx2595qAT6xCT1GCoo30wd3kjaFxiP8bLLH9PnNLTFQO7RindLnHLb8Bk3MHGH61hRBf141VY1dmLeQId9qFg694IHzLuXpKo1904=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=pOF+MY8E; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3912e96c8e8so562421f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 06:07:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1741871239; x=1742476039; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kL64DFiTXok1q71S+zi/kYHeS1QK7/sbz4oMoXWMASU=;
+        b=pOF+MY8EZRyPaaP7WZ3sOxNWl3uNUObMOz4vWlBTP3DowPKgOJq3FTev1pEYNbDmvs
+         RsN1h31pTtEWX4/hu0dEJF7JtSNA5RAPeEmi1k8QRNh72iGDGyOfOhsLt8vC6MpsQomY
+         Ex/WVwdj+YLjeEDcHx+VGele3Qe8o6uy79svrcFp1zOMzBLr1U2wO/fl6/pe+MyfuMbS
+         81+LGnKkA4J/oHlS+MqoHrimRBK3l7QxVtydJ9bsSUO3debEti2lLX8ueghjoGsvZDa5
+         s08nw2+okNl1ZMygu24qJzgXFO80YjfPTe3awzICSBlre8voBGkQtC+wEgX23S/r0SX1
+         aK6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741871239; x=1742476039;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kL64DFiTXok1q71S+zi/kYHeS1QK7/sbz4oMoXWMASU=;
+        b=lxrlwTe8XNWjK3ekdbm8G7kqUpuOAX0xtc2n0cugc0SbWdLO8lxqw01GKtzZq7MhND
+         Fj6xpW7gvZdxiG+luzftigU+OIv6AXCDUVe8VI05D229Otr3a7I7qDAFQOEQWnolbuB9
+         HGtUobw9tupylMW/b7Wqks6U2cRG/o9GU7TVa8ptKt0/XBQgBeBzBuYI2GDVlKQu0Vgm
+         OF11DmkkUezHrJsb2c+lueB8uaBHcNC48X/YZIypATqimR/8G7/MFYfZcZJP+ZdZXRr4
+         14ZDwOh8zMZpBZc25wghpcS3vKM0EQkXdvZImMDl/NrMqy5pNlFW8WWZAsx2uVFxLDFd
+         Pigg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbuBqiIvTvrJYDn07UPclxXNNcPUpv1Te96yy1N3shM9Ekn5gJO/DGjLiXHBFwBvun4RZX00pkpHIPax8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTdRBeWzCqTXLeazjHyYFonJJ5PrpTi56rVMUWb6kAOWDLC3om
+	ziCUCdWQ/nvQvWTAQc53xld3Tks+0RtBTbSOJqPYHjFAV4l8sTsSZgB/b4lJ6H0=
+X-Gm-Gg: ASbGnctAdIWFYAwl0t0fyru1Q/y/7qtsiy2Y0n6kJlxBf40BO5UMsSUHbTtPdYr6U22
+	VQYbvgoEoJVqilJfGiaZtKwa8ncgyxLde288onZEGdCBXNbpEmO4woNo9JZccujykxQ/EsbT5l/
+	xpsBKZfli8N6JHmpn6ZSvBVOzRS/iqOBx/9fUxj88PQ4nP1+MJHI0DKo5byxF8QHTJo7gA1MRbX
+	du5KkOrIRqrekaAN9eNFlEOHTeDypTERSlVq4uNJkdHXomI8Vf1bOhtapPFiOG1SIWs5966w3zm
+	6hcHakcpY/8A1PVHsbicViSS79w5a11f
+X-Google-Smtp-Source: AGHT+IFa3kUJDoicJ8fhht/dP0MNLzwH7jshhQs0/MiP3cN1RHdBOvdNu6RA1GEeL6KH0hkbmig8fQ==
+X-Received: by 2002:a05:6000:18a3:b0:390:e7c1:59d3 with SMTP id ffacd0b85a97d-39132d16de1mr20255337f8f.2.1741871239342;
+        Thu, 13 Mar 2025 06:07:19 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200::59a5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb7ebbc3sm2013164f8f.88.2025.03.13.06.07.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 06:07:18 -0700 (PDT)
+Date: Thu, 13 Mar 2025 14:07:18 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, 
+	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+	Samuel Holland <samuel.holland@sifive.com>
+Subject: Re: [PATCH v3 07/17] riscv: misaligned: move emulated access
+ uniformity check in a function
+Message-ID: <20250313-89b46bd06fbea0072ac4932f@orel>
+References: <20250310151229.2365992-1-cleger@rivosinc.com>
+ <20250310151229.2365992-8-cleger@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] iommu: Get DT/ACPI parsing into the proper probe
- path
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Russell King <linux@armlinux.org.uk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Stuart Yoder <stuyoder@gmail.com>,
- Laurentiu Tudor <laurentiu.tudor@nxp.com>, Nipun Gupta
- <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
- Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
- Charan Teja Kalla <quic_charante@quicinc.com>
-References: <cover.1740753261.git.robin.murphy@arm.com>
- <e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com>
- <CGME20250313095633eucas1p29cb55f2504b4bcf67c16b3bd3fa9b8cd@eucas1p2.samsung.com>
- <9b358d68-332e-404e-9a75-740297f7b28d@samsung.com>
- <417d6f59-0d78-4e81-ad0b-e06846f786b0@arm.com>
- <bf2adf5d-1432-4bb7-846c-e1bcfa84858b@samsung.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <bf2adf5d-1432-4bb7-846c-e1bcfa84858b@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250310151229.2365992-8-cleger@rivosinc.com>
 
-On 2025-03-13 12:23 pm, Marek Szyprowski wrote:
-> On 13.03.2025 12:01, Robin Murphy wrote:
->> On 2025-03-13 9:56 am, Marek Szyprowski wrote:
->> [...]
->>> This patch landed in yesterday's linux-next as commit bcb81ac6ae3c
->>> ("iommu: Get DT/ACPI parsing into the proper probe path"). In my tests I
->>> found it breaks booting of ARM64 RK3568-based Odroid-M1 board
->>> (arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts). Here is the
->>> relevant kernel log:
->>
->> ...and the bug-flushing-out begins!
->>
->>> Unable to handle kernel NULL pointer dereference at virtual address
->>> 00000000000003e8
->>> Mem abort info:
->>>      ESR = 0x0000000096000004
->>>      EC = 0x25: DABT (current EL), IL = 32 bits
->>>      SET = 0, FnV = 0
->>>      EA = 0, S1PTW = 0
->>>      FSC = 0x04: level 0 translation fault
->>> Data abort info:
->>>      ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->>>      CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->>>      GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->>> [00000000000003e8] user address but active_mm is swapper
->>> Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
->>> Modules linked in:
->>> CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.14.0-rc3+ #15533
->>> Hardware name: Hardkernel ODROID-M1 (DT)
->>> pstate: 00400009 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->>> pc : devm_kmalloc+0x2c/0x114
->>> lr : rk_iommu_of_xlate+0x30/0x90
->>> ...
->>> Call trace:
->>>     devm_kmalloc+0x2c/0x114 (P)
->>>     rk_iommu_of_xlate+0x30/0x90
->>
->> Yeah, looks like this is doing something a bit questionable which can't
->> work properly. TBH the whole dma_dev thing could probably be cleaned up
->> now that we have proper instances, but for now does this work?
+On Mon, Mar 10, 2025 at 04:12:14PM +0100, Cl�ment L�ger wrote:
+> Split the code that check for the uniformity of misaligned accesses
+> performance on all cpus from check_unaligned_access_emulated_all_cpus()
+> to its own function which will be used for delegation check. No
+> functional changes intended.
 > 
-> Yes, this patch fixes the problem I've observed.
+> Signed-off-by: Cl�ment L�ger <cleger@rivosinc.com>
+> ---
+>  arch/riscv/kernel/traps_misaligned.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
 > 
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> BTW, this dma_dev idea has been borrowed from my exynos_iommu driver and
-> I doubt it can be cleaned up.
+> diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/traps_misaligned.c
+> index 7fe25adf2539..db31966a834e 100644
+> --- a/arch/riscv/kernel/traps_misaligned.c
+> +++ b/arch/riscv/kernel/traps_misaligned.c
+> @@ -673,10 +673,20 @@ static int cpu_online_check_unaligned_access_emulated(unsigned int cpu)
+>  	return 0;
+>  }
+>  
+> -bool check_unaligned_access_emulated_all_cpus(void)
+> +static bool all_cpus_unaligned_scalar_access_emulated(void)
+>  {
+>  	int cpu;
+>  
+> +	for_each_online_cpu(cpu)
+> +		if (per_cpu(misaligned_access_speed, cpu) !=
+> +		    RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED)
+> +			return false;
+> +
+> +	return true;
+> +}
+> +
+> +bool check_unaligned_access_emulated_all_cpus(void)
+> +{
+>  	/*
+>  	 * We can only support PR_UNALIGN controls if all CPUs have misaligned
+>  	 * accesses emulated since tasks requesting such control can run on any
+> @@ -684,10 +694,8 @@ bool check_unaligned_access_emulated_all_cpus(void)
+>  	 */
+>  	on_each_cpu(check_unaligned_access_emulated, NULL, 1);
+>  
+> -	for_each_online_cpu(cpu)
+> -		if (per_cpu(misaligned_access_speed, cpu)
+> -		    != RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED)
+> -			return false;
+> +	if (!all_cpus_unaligned_scalar_access_emulated())
+> +		return false;
+>  
+>  	unaligned_ctl = true;
+>  	return true;
+> -- 
+> 2.47.2
+>
 
-On the contrary I suspect they both can - it all dates back to when we 
-had the single global platform bus iommu_ops and the SoC drivers were 
-forced to bodge their own notion of multiple instances, but with the 
-modern core code, ops are always called via a valid IOMMU instance or 
-domain, so in principle it should always be possible to get at an 
-appropriate IOMMU device now. IIRC it was mostly about allocating and 
-DMA-mapping the pagetables in domain_alloc, where the private notion of 
-instances didn't have enough information, but domain_alloc_paging solves 
-that.
-
-Cheers,
-Robin.
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
