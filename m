@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-560478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B83A7A6051F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:11:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E806AA60521
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:11:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DD7119C4605
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:11:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B13CF7ADC8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85BF1F8BDF;
-	Thu, 13 Mar 2025 23:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C141F941B;
+	Thu, 13 Mar 2025 23:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3PDUsXS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a59F3BN1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F3D1F8ADF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0641F8BC0;
 	Thu, 13 Mar 2025 23:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741907461; cv=none; b=NSgBYxzGN8UmpfZtTdeOiC5OKaXgCf5ByCWqV/naN/ZcjAk3qrdWX1Uq/PJdufH11px4HlzBjSqoTx45Jja8/UGqFWji8SXHT7kxd+Y+5wYQ+CIve6QjtxnppASVhTIpd3ftbQincdJ78KT+ra40YAtQpsDGxDX3j9NjPV1PR2Q=
+	t=1741907461; cv=none; b=mn7crtWpYK5F2xfjvi4X1g2yCuBHEsICzoNgMtZkkfELPkw2AsPCnL3wBg2FgTxJkJv+AhKACKg4N32MiNpVGuFGMOLG/uEgiLe4T/XWUTayMR22513yBr6ZF5QPrWfYjvThZWRVtvgWh1kb9wa6jJLq6PLYw0vJ2YcikL2bqxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741907461; c=relaxed/simple;
-	bh=cXVyoRypaze7f+Lz1yx3qPNU5d4wDrkDtX8Re+XtxgY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KxTfybOAAhz8jJNp0cHL7S38xq3ZnKqOTvKqwkUQiAcTQyMwuql3vfxBkWvyRtKpdwN0PfD3TNxTAZjBY3DtCpoTHEem3KCzMMwu/Ki9J1G5Kz1YaXuJy7mbygX/FKo6gxoTZkoAoyNnM2AVsBogwKcIWUaUjqGCOVaXtP1kT2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b3PDUsXS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 16169C4CEDD;
+	bh=KS2yDSQRD5SU3vS+jOOmaz2xUBc5Ay1LiOZbJ7uVdFk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=uXBS+SYIfAu8oZCOQyblfWCGPMHEwNSzwd0jza5Y1hfmD/Kefs0CTLTJg19A+vRGgKpv5AramS9BaxyUOcSNu/2335aWWhh+Wz+FWbZZjmz5RFl7zEL31hhg/s+WHyX7dv4SM7jHfw6oSZArDojAViRLqur1+NcAz6G3kvo1jkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a59F3BN1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2E3B9C4CEEA;
 	Thu, 13 Mar 2025 23:11:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1741907461;
-	bh=cXVyoRypaze7f+Lz1yx3qPNU5d4wDrkDtX8Re+XtxgY=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=b3PDUsXSUn4yAJcNWG/UXUc0yTU2grWPne5L7CY4r0ziVQNimoEZalJ2v2D1Cnt+N
-	 bhKxgn+aVCQC5eOV7Uf3JwFlm/FciXA2d2l6+pUxPGVmXGYzDh1l55RBi5m8CDSfqE
-	 DCUgxvG26/YLBE/zb5B5wpt6LtjKQCabjMzo0AbxwoeH6xwc0zuummcpKf0oZ+MgVo
-	 5Uyt3g8FLu4pX2d9g8yZcffGUWw5r9s/SXpSyPXasQVnKKaGqpPBAnqDGcEuQw6Ph8
-	 KH4+eCerg5HuLf/l1KbNtF7iGJfDsQgz4Vsc+ulpURv6/gb/KUDc2id/+MHRLEOHKS
-	 EtFQ5F/A+oJlA==
+	bh=KS2yDSQRD5SU3vS+jOOmaz2xUBc5Ay1LiOZbJ7uVdFk=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=a59F3BN171SoZoup7W9FWYHJcR8PQGpl6JPxtnoxyZPBNUjWX6rbyR5Zu8vUTs0dL
+	 xDTyYTJVxLzo6fJsnxgq8j/xXYfawBkAVLJViLcpnrbQhf+aUieNVKa5WOP8GDtjQJ
+	 LdkTVIl6BjSgVU2KZd4c9hx11KNuv232dgdYMm7aQuhT/ZveugX3t7hgO11CMQ2r3e
+	 CO+nZkt+tjBBdn04FXZ6ICJHAv8PWgdSMnl5AoFGbCgd0umHu0eMU4hpYxDkAY+Ppc
+	 9/7pjZlrHrw7WJkZ99quN7C7gqQLSjvy5OU/bzpzlnTcLFuPqnnte1tObQL+Aqieol
+	 Ynoat3pThlyWQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 067F0C282DE;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15474C35FF1;
 	Thu, 13 Mar 2025 23:11:01 +0000 (UTC)
 From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Subject: [PATCH v2 0/2] arm64: Device Tree for Ugoos AM3 board
-Date: Fri, 14 Mar 2025 00:10:58 +0100
-Message-Id: <20250314-ugoos-am3-v2-0-422104b0cec5@posteo.net>
+Date: Fri, 14 Mar 2025 00:10:59 +0100
+Subject: [PATCH v2 1/2] dt-bindings: arm: amlogic: Add Ugoos AM3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,10 +54,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAAJm02cC/03MQQ6DIBCF4auYWZcGBlDrqvdoXKAdlUXBADVtD
- HcvtZsu/5eXb4dIwVKErtoh0Gaj9a4EnioYF+NmYvZeGpCj5ojInrP3kZmHZFPdKCHbmiupoPz
- XQJN9HdatL73YmHx4H/QmvutPkfzyp2yCcSbb0QzaqAb1cF19TOTPjhL0OecPNrVgyKMAAAA=
-X-Change-ID: 20250222-ugoos-am3-f67413860434
+Message-Id: <20250314-ugoos-am3-v2-1-422104b0cec5@posteo.net>
+References: <20250314-ugoos-am3-v2-0-422104b0cec5@posteo.net>
+In-Reply-To: <20250314-ugoos-am3-v2-0-422104b0cec5@posteo.net>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
  Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -68,11 +67,11 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741907460; l=1015;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741907460; l=1023;
  i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=cXVyoRypaze7f+Lz1yx3qPNU5d4wDrkDtX8Re+XtxgY=;
- b=EMJcVnU8xlRkgiTfuaF1TgDC/Cipw+ftS76kCrZ0lMvFf5GpTyGf5oOolGy6r7AhJM4pXhZCI
- yQvY8GnkHuzBGf7CLT58q9JRTOPS6BKhzJVs76y6QepwJkvBXX3UV/L
+ bh=5cSMNKg21bi7irPRvrIi1guYYUp67v6kD7IHJg+8xbU=;
+ b=S/2RElaFOIwhwBy1p6gnq2FHNtTl0Uwx3R6e3so2rZAQV8z0N2wsMMgJYBCTdflA9hpgYFjTm
+ AQ6jHvEW98wCFgHgmzwBOhBDYAHDhGe0ZIp8jON8TyS/urBQ8mzmEyr
 X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
  pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
 X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
@@ -80,34 +79,38 @@ X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
 X-Original-From: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
 Reply-To: j.ne@posteo.net
 
-This patchset adds a device tree for Ugoos AM3, an Android TV box from
-2018. Most hardware functionality has been tested, as noted in patch 2/2.
+From: "J. Neuschäfer" <j.ne@posteo.net>
 
+The Ugoos AM3 is a small set-top box based on the Amlogic S912 SoC.
+
+  https://ugoos.com/ugoos-am3-16g
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
 ---
-Changes in v2:
-- fix vendor name in patch subjects
-- fix mistake that made wifi not work
-- apply Krzysztof's ACK to patch 1/2
-- Link to v1: https://lore.kernel.org/r/20250309-ugoos-am3-v1-0-38cab5a4725b@posteo.net
 
+V2:
+- fix vendor name in patch subject
+- add Krzysztof's ACK
 ---
-J. Neuschäfer (2):
-      dt-bindings: arm: amlogic: Add Ugoos AM3
-      arm64: dts: amlogic: Add Ugoos AM3
+ Documentation/devicetree/bindings/arm/amlogic.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
- Documentation/devicetree/bindings/arm/amlogic.yaml |  1 +
- arch/arm64/boot/dts/amlogic/Makefile               |  1 +
- .../arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi |  2 +-
- .../arm64/boot/dts/amlogic/meson-gxm-ugoos-am3.dts | 91 ++++++++++++++++++++++
- 4 files changed, 94 insertions(+), 1 deletion(-)
----
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-change-id: 20250222-ugoos-am3-f67413860434
+diff --git a/Documentation/devicetree/bindings/arm/amlogic.yaml b/Documentation/devicetree/bindings/arm/amlogic.yaml
+index 0647851ae1f55a27bfb148252532bcf15ca905bf..779568f158ce985e1d12fbee73418549cfc58705 100644
+--- a/Documentation/devicetree/bindings/arm/amlogic.yaml
++++ b/Documentation/devicetree/bindings/arm/amlogic.yaml
+@@ -127,6 +127,7 @@ properties:
+               - minix,neo-u9h
+               - nexbox,a1
+               - tronsmart,vega-s96
++              - ugoos,am3
+               - videostrong,gxm-kiii-pro
+               - wetek,core2
+           - const: amlogic,s912
 
-Best regards,
 -- 
-J. Neuschäfer <j.ne@posteo.net>
+2.48.0.rc1.219.gb6b6757d772
 
 
 
