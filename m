@@ -1,182 +1,135 @@
-Return-Path: <linux-kernel+bounces-559536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E873FA5F51F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:02:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABC37A5F525
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:04:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DCFD3B36C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:02:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1F4016C454
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FFE2676F2;
-	Thu, 13 Mar 2025 13:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DB9267715;
+	Thu, 13 Mar 2025 13:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uy5yJGUL"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xu9B6jX0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dmm9pipc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1C71754B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB81C1754B;
+	Thu, 13 Mar 2025 13:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741870961; cv=none; b=Ch2tJ29+HuCx1OiozZwCn46pCpq4hCqjhN6lDYG6VzUwwm1LYlFsa0ljfwpHbNaY0AbZn+T3SwU1K6zoLyKKTpxHcd2KdtoZJpzfJtKMQbn5LD2ndUm9wasa0nqZ7ba23IlH5nMXW/5zuUlmKaNQv2hEsYPEDQvjCn6XE2tJI9w=
+	t=1741871020; cv=none; b=tjhpvw3M12+WS2LdYCkfL0As8LWFGIHaIdUpvNZJhxfwQPAgsGj3ZkZqFCkOpMRMp8yJ7XGr+KFdNG2swk16Bw+/2kHs9HLUomO2qzv7JeSTXBAKpd/40zmd0Ehau378KoX70hzwpJDZWncW1FCxbOrDSoLJVA/PxZ0Zdo6Ttg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741870961; c=relaxed/simple;
-	bh=o0DclmRwlFXyQgT3v5Tk9sYeNUcxfabNF9fq01Et8hE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jz1oXlyAHyf8SMcQ+IL8vXIxUwSIRWZ8uSKz9c3ZAKbdEf0pcEtrVxE6u9YWAaMZGw/QbAISXbvRE2GNl0ZMCQhmCZsIQy794KAU979KKZDiG8ERK2kSp2gpic9LyZRvHypDHAcvvxvtGQqs+pAOrv3n+DeKV7lpoBRBsB+h3Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uy5yJGUL; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac2ed007aacso191992766b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 06:02:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741870958; x=1742475758; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=n3LY/SRYvxlV4NEg6utLUEJ9zrccG6OpFAv04Yl9fx4=;
-        b=Uy5yJGULkrGj+Q7eInV6EefsIDCqjjbbiuUji6ORt1Ct3j6VMjXsvLeEiN83jCObZo
-         gN7gTru6UBdtgd3hmlORDIz+sET+yuGfk7mEjgiCyb5fcsymlMOfnKO9ZBGTn8AFiKfn
-         LDVm1wGqjCWoKcVuiyXnHN3IVlMiNMifBTOC9zN4H8+HmfD/vG27xE8j95/cNwY3ckRl
-         6SQB9Y9debDS2Jf0iF14wfnU1t6varcXHSd3OtMGhOS3Ymrh9j1LBZX+seO94GvElCCI
-         YfSSocXDge8v66wSahQ7JGI6iUwNJuA0zDnJG+mANAyzqfh/LQWuszApFu26xkf5MaiU
-         miNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741870958; x=1742475758;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n3LY/SRYvxlV4NEg6utLUEJ9zrccG6OpFAv04Yl9fx4=;
-        b=hk7uUcRwY+j8xGlZXzONshhZA6JobcVzh/7T1JH2kKGB4EdbeATHROZuKcVw97O3XS
-         B+A/lprY/MfMM9NJKYjqmQR0EUB0qOKYVR7K7xoUUyRvyr/i1JCq4FmM94H+ELILhvpL
-         dmHo9VJM/wXresw7KOnpcjl5nBVdZkcZba02qSIxaEcUlT2IPUl85kML43Af/bZDHs6P
-         XwfZ09JrCqrcwlcYggWlX6PgiaWx4tM3xRwE4GBHDwEJeiTDrEEZWKsTyuuwr1a15jQW
-         GwXBX4Q+8fxrCJHZ+wUHFNWYrXAZntnUzNAoX92MTCDhCsA4x0d/HcHLQ0CfcrucCgNp
-         mSKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJD0WcVwpNnvKd8IhHMvle4KDMKI2Q9nKB4jHp8/iCvgHt4RgVcHKOv3v8xlCH1MiZH8JPI1bxBjwPGNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxpc41oDv+ZaGSIcobMMIN3yIyc6XUM237YX0kOaORGZsP9503g
-	cYLrhs+q8vud29KNEgF3ZzzguLz37U5tPg1bQlCi+1MEqhYNB4L8
-X-Gm-Gg: ASbGncsQZ5Xh1eC2XhBplbNIatjjFhBtzYl8jg3j9qlWFZ1e+c2W+JFyOp35I9kI6aW
-	bD6rDoO/zEABpY4tL8fCNGVffi16gRGBmw9qUPwfylmgCW4MqaRgBoBnZWJ4GkyKlKX814YAAXZ
-	d3fhavGKFaMhskTX6fhpW0dY2h3nrUiMnv9TD44xqJl1bpM/kXgRuik9WIAIfIwDVI0x1Y/RF6K
-	UkSxLb4VOdF5mN62aSZ9VEqlf6rCfRwDrBooMKhLYwg5dlfwHHOxk0uzR5cfGwFSBQ4EBBAq6qg
-	tVYxEj6UQheOUtgHw8nh30/um+B+3HWgWiQe
-X-Google-Smtp-Source: AGHT+IEYIgRhvf9h4wG2PQf1gAsvv+5/KkAAYYriEsdqfpLq/LWfDieYAzMMnL5sD5vPAc+uZEP1gw==
-X-Received: by 2002:a17:907:6d25:b0:ac2:2ba5:5471 with SMTP id a640c23a62f3a-ac2b9de98d7mr1551417166b.24.1741870956853;
-        Thu, 13 Mar 2025 06:02:36 -0700 (PDT)
-Received: from fedora.. ([193.77.86.199])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3149d0bcdsm79041766b.90.2025.03.13.06.02.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 06:02:36 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH] x86/fpu: Use XSAVE{,OPT,C,S} and XRSTOR{,S} mnemonics in xstate.h
-Date: Thu, 13 Mar 2025 14:02:27 +0100
-Message-ID: <20250313130251.383204-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741871020; c=relaxed/simple;
+	bh=itf7yPjVu4MDdvOWYPG+ta0dwjJEz7i5UcsuklyablM=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=hgAOza3XL5qUC48687S9ggWi3gKkxVFCnpTOu+NxhHtUQ2iUxi04fQ2kHBvazg7hQDp8LW5Jy0nP+pdP8vaxjrys73HKNsafbVbFkwQL4Ylq1fSVlnZUNQKE/sced/i4gIrgYFYyFIktUO4fmeF1xglOOsADTEt3SnT4ZJqXUYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xu9B6jX0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dmm9pipc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250313130212.450198939@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741871016;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=xPY90hzZgcytKWwY72qh7D+Sw/TVwHNJaHMkC6cM7Tk=;
+	b=xu9B6jX0BitUNzaISeFeThEJnp7Seq4R6IOnTZdLDeCbyqddtCIJZ6mZF4NEFznX8REBDg
+	klHluoz+jf3dHBAG1uhG6aU1xKomYyz4oznZnY8I/ppEYJBo4NqALgVg8LtqAzLV53VJ6m
+	Rbbg5wwxU1049pFZfESGAGzaI5EPCw6fWFMSvi9RqCNUVBCodu+oI7icNaRj59Oas8V8rs
+	of/HpIIjdzWftq62usw2x2Pzuj0K7pwMXMgVHcJ6LzHHx4Nrp/93CrD8ytIDMk+J/78weE
+	cR7oJxhjgfWWugEG96AiyfW6JhgPNDJCZzfw+Y2ehCb/uyscj1TAHAe6/7xIBg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741871016;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=xPY90hzZgcytKWwY72qh7D+Sw/TVwHNJaHMkC6cM7Tk=;
+	b=dmm9pipcXb6n8F9sdeZ6O1motxtWkyA4tc/Ln7g9jEpLmDYQUomQgAPMieHs1PDkordDEK
+	LtZ/GMy3hhl6RtCw==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Nishanth Menon <nm@ti.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Dhruva Gole <d-gole@ti.com>,
+ Tero Kristo <kristo@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>,
+ Logan Gunthorpe <logang@deltatee.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Jon Mason <jdmason@kudzu.us>,
+ Allen Hubbe <allenbh@gmail.com>,
+ ntb@lists.linux.dev,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ linux-pci@vger.kernel.org,
+ Michael Kelley <mhklinux@outlook.com>,
+ Wei Liu <wei.liu@kernel.org>,
+ Haiyang Zhang <haiyangz@microsoft.com>,
+ linux-hyperv@vger.kernel.org,
+ Wei Huang <wei.huang2@amd.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-scsi@vger.kernel.org,
+ Jonathan Cameron <Jonathan.Cameron@huwei.com>
+Subject: [patch V2 00/10] genirq/msi: Spring cleaning
+Date: Thu, 13 Mar 2025 14:03:36 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Current minimum required version of binutils is 2.25, which
-supports XSAVE{,OPT,C,S} and XRSTOR{,S} instruction mnemonics.
+This is version 2 of the cleanup work. The previous version can be found
+here:
 
-Replace the byte-wise specification of XSAVE{,OPT,C,S}
-and XRSTOR{,S} with these proper mnemonics.
+   https://lore.kernel.org/all/20250309083453.900516105@linutronix.de
 
-No functional change intended.
+While converting the MSI descriptor locking to a lock guard() I stumbled
+over various abuse of MSI descriptors (again).
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
+The following series cleans up the offending code and converts the MSI
+descriptor locking over to lock guards.
+
+Changes vs. V1:
+
+   - Introduce retain_ptr() to allow using __free() when the allocation is
+     consumed by a called function (on success) and therefore no_free_ptr()
+     can't be used.
+
+   - Rework the PCI/MSI changes to avoid gotos in guard sections
+
+   - Drop patch 1 as it's already applied
+
+   - Collect Reviewed/Tested/Acked-by tags where appropriate
+
+Patches 3,4,6-10 are unmodifed.
+
+The series applies on:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/msi
+
+and is available from git:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git irq/msi
+
+Thanks,
+
+	tglx
 ---
- arch/x86/kernel/fpu/xstate.h | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+ drivers/ntb/msi.c                   |   22 +---
+ drivers/pci/controller/pci-hyperv.c |   14 ---
+ drivers/pci/msi/api.c               |    6 -
+ drivers/pci/msi/msi.c               |  168 ++++++++++++++++++++++--------------
+ drivers/pci/pci.h                   |    9 +
+ drivers/pci/tph.c                   |   44 ---------
+ drivers/soc/ti/ti_sci_inta_msi.c    |   10 --
+ drivers/ufs/host/ufs-qcom.c         |   75 ++++++++--------
+ include/linux/cleanup.h             |   17 +++
+ include/linux/irqdomain.h           |    2 
+ include/linux/msi.h                 |    7 +
+ kernel/irq/msi.c                    |  125 ++++++++++----------------
+ 12 files changed, 247 insertions(+), 252 deletions(-)
 
-diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
-index aa16f1a1bbcf..1418423bc4c9 100644
---- a/arch/x86/kernel/fpu/xstate.h
-+++ b/arch/x86/kernel/fpu/xstate.h
-@@ -94,18 +94,17 @@ static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u64 ma
- /* XSAVE/XRSTOR wrapper functions */
- 
- #ifdef CONFIG_X86_64
--#define REX_PREFIX	"0x48, "
-+#define REX_SUFFIX	"64"
- #else
--#define REX_PREFIX
-+#define REX_SUFFIX
- #endif
- 
--/* These macros all use (%edi)/(%rdi) as the single memory argument. */
--#define XSAVE		".byte " REX_PREFIX "0x0f,0xae,0x27"
--#define XSAVEOPT	".byte " REX_PREFIX "0x0f,0xae,0x37"
--#define XSAVEC		".byte " REX_PREFIX "0x0f,0xc7,0x27"
--#define XSAVES		".byte " REX_PREFIX "0x0f,0xc7,0x2f"
--#define XRSTOR		".byte " REX_PREFIX "0x0f,0xae,0x2f"
--#define XRSTORS		".byte " REX_PREFIX "0x0f,0xc7,0x1f"
-+#define XSAVE		"xsave" REX_SUFFIX " %[xa]"
-+#define XSAVEOPT	"xsaveopt" REX_SUFFIX " %[xa]"
-+#define XSAVEC		"xsavec" REX_SUFFIX " %[xa]"
-+#define XSAVES		"xsaves" REX_SUFFIX " %[xa]"
-+#define XRSTOR		"xrstor" REX_SUFFIX " %[xa]"
-+#define XRSTORS		"xrstors" REX_SUFFIX " %[xa]"
- 
- /*
-  * After this @err contains 0 on success or the trap number when the
-@@ -114,10 +113,10 @@ static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u64 ma
- #define XSTATE_OP(op, st, lmask, hmask, err)				\
- 	asm volatile("1:" op "\n\t"					\
- 		     "xor %[err], %[err]\n"				\
--		     "2:\n\t"						\
-+		     "2:\n"						\
- 		     _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT_MCE_SAFE)	\
- 		     : [err] "=a" (err)					\
--		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
-+		     : [xa] "m" (*(st)), "a" (lmask), "d" (hmask)	\
- 		     : "memory")
- 
- /*
-@@ -137,12 +136,12 @@ static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u64 ma
- 				   XSAVEOPT, X86_FEATURE_XSAVEOPT,	\
- 				   XSAVEC,   X86_FEATURE_XSAVEC,	\
- 				   XSAVES,   X86_FEATURE_XSAVES)	\
--		     "\n"						\
-+		     "\n\t"						\
- 		     "xor %[err], %[err]\n"				\
- 		     "3:\n"						\
- 		     _ASM_EXTABLE_TYPE_REG(1b, 3b, EX_TYPE_EFAULT_REG, %[err]) \
- 		     : [err] "=r" (err)					\
--		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
-+		     : [xa] "m" (*(st)), "a" (lmask), "d" (hmask)	\
- 		     : "memory")
- 
- /*
-@@ -156,7 +155,7 @@ static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u64 ma
- 		     "3:\n"						\
- 		     _ASM_EXTABLE_TYPE(1b, 3b, EX_TYPE_FPU_RESTORE)	\
- 		     :							\
--		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
-+		     : [xa] "m" (*(st)), "a" (lmask), "d" (hmask)	\
- 		     : "memory")
- 
- #if defined(CONFIG_X86_64) && defined(CONFIG_X86_DEBUG_FPU)
--- 
-2.48.1
 
 
