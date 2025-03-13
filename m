@@ -1,155 +1,101 @@
-Return-Path: <linux-kernel+bounces-559227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BAE6A5F114
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:41:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 009F7A5F111
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:41:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DEC43BA3B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:41:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8F45189F12B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05082661A3;
-	Thu, 13 Mar 2025 10:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6FC5265618;
+	Thu, 13 Mar 2025 10:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PfEt84p1"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zg/z8ohw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEBA16BE17
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E3B25FA25;
+	Thu, 13 Mar 2025 10:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741862469; cv=none; b=gfJdfaZCxenX3NYaxB0u44wEcNDTJHgK8m4UOh7cabZBKaDDgOufNKIV4ZfBb37f93sJyGOCIlk6Y5KdfK1dgS05Dy49AUop9JcO645/ispot7kEDbn8AmENpPq6LShZLPp8S3RA/wrlv0ukH2QJ8+mvma/W9HAIAPobSLpeArk=
+	t=1741862466; cv=none; b=JrLhgj+7FLLxHrCPfsUH7A4wXIVzf0Zv67ePA6AJJn9urPLHIvDQbsspRRLkrP1BtZ0BGC5bqWhYkwTdZGdE4rU2qB46if69vAm+L3Cah0+WBNdBAIEPCBal/opsGkZRDnYgTIqKYCIXp2AANI5nvoJp7lUVa63w5GATi50awo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741862469; c=relaxed/simple;
-	bh=B4PeGgHerya/ypCQctpvLUdzWEYx1SfxUJjgPQeWpVM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rzC3zw9FaQdvMqn7RB8M6r5UQci4MXd+QtK+qGNfD4Zufk+7HGuNzYmKVZyouZri4/33IV5HV9m4LLXkThTT1vC4Eq7e7AJsb/rq7oYR1CLYyalbjD0Nko7V9ZSh0KLRXmE+z5dgBXCXmrrIdNv1vhoHatIf0Og4B2ESfIImszs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PfEt84p1; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-390f5f48eafso417896f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 03:41:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741862466; x=1742467266; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WG3mrCWjA/jdn3B8Lxgjj/yj35ADNCa7bCKVTgPxU0U=;
-        b=PfEt84p1jV4VPZmqsKvgV9PgAkTNX05R//av5yHs7en0SU0PC7yb14/XJ6d2JCdE51
-         IKNqNL2OPVB+oD7Zui2GVpdFRthvTRSgcFMMES1VUXxFVbXETDtChExN3tC3mOnlI7rl
-         znVFzy+Q+xlEV6a1L9MgprX49YcPS2xxIpKnFfOiNNcvlJVE/4SYpvvRF/gXs7Mhcm4H
-         a4We+/I0cuU06oBQWBpxVc14JKTvHw3GAhZSBtrp9+ZjAbZOgg0cWH9HT2TbPhGtpSS9
-         OgihY3KFsMtRQMDaQ0T2u1PJxWJUiBkNBAFQqvcbhYeEvfPB6uiFBtaA6QCON0mo25V9
-         173g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741862466; x=1742467266;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WG3mrCWjA/jdn3B8Lxgjj/yj35ADNCa7bCKVTgPxU0U=;
-        b=YljZIQVIycf4EiqZO3SEf/yrvmF911oSgJljZghLt+uvOr9p4OfOHjblr8CSz8B/HG
-         qbzweRyzKazSasSFKA44mpsM51O4yhZOTDexHpjB1IgSl3VUi4w6hERsAE7V7ZCIyDCL
-         oxWwJejif+XMPKQEfFwIOFDWg2zamSwSXdFE0LqwU2766aSOwP1DX+JrtY9EMMj/xZKw
-         9YuI8v/CanPX8JpODrmdXoz1wiOS9GKNi25/nhRtJEqRmOZT3ix00s+zGnI8eYivQD1h
-         w+do45y3yeATWCjZFE1pOyfHVsNsvzasydAa7Ir8ywos4XOoP76jZobUOugzv6CxBNOL
-         ERlg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5OCeX1UaLHj8KuzcNz68PStCAPfF2VprYvBjXzI75l60tT33vpomKWRDVhbdCAzKIUytKwYWIIVps6Kc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvkSP0fPfKyh4oQfIFxuV3OY/oWTeL29SGfxUScVmIX9qsnOCb
-	4YCH4wv1xz+QfXcDPwf0HsySVwKdo9X3az15DSG58XPatMKaLfM1g2+C5Dz4SKHZ1SeC0Ub4uYa
-	+y464QxhlmSQ/pwMfVBic+57m2IAh0FRDCc3YcQq3bv37KS8hgOwZYSs=
-X-Gm-Gg: ASbGncs5oJyBui8F5zjqREVUIQuOed8BzgBaJIrK5ucdWFktkUSt2lTCz8Xu+g3fT6t
-	3hmq/a6l0FhZrdtaky264emQfoDE+jAOuz+H/RTTQrQIc+WISDTMJgntqfHKfuKGHOMzxqiyikN
-	p2UDlRqFGdX9lmpsF1gnfJrP9XxQ==
-X-Google-Smtp-Source: AGHT+IGp49aBKepNuEzvpjEvmTqHX3EMV9vuhJzotSDGPDAqAgNEYI+FJ2y17HXElqJzyuEjBM3VMBZBmPnVmlrUQco=
-X-Received: by 2002:a05:6000:156e:b0:391:3d97:bd33 with SMTP id
- ffacd0b85a97d-3913d97be31mr17037810f8f.13.1741862465823; Thu, 13 Mar 2025
- 03:41:05 -0700 (PDT)
+	s=arc-20240116; t=1741862466; c=relaxed/simple;
+	bh=A10PaF7SMYGMs3Gp/it3dF15h0gkDON52e3DjkxQH0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O5n88HV0r1XJjUOrXDBysM+eTdBZ18NXkiQPqgmSXbPn5muaIn8sP/vQqvnxQA+UwYfJPVVJJriQMfezqtgiNQ0kve+lfhxO2MLaC0lNMG028WOFKFtJoylWpVu2zIkNWzmPS7h+RVmDaPvDvEwclxHISVtgrwjrpFdpbM1Qy8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zg/z8ohw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E81AC4CEDD;
+	Thu, 13 Mar 2025 10:41:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741862465;
+	bh=A10PaF7SMYGMs3Gp/it3dF15h0gkDON52e3DjkxQH0E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zg/z8ohwPjuM7X+cqGI203Ti1jcueE4TnNQiuZ3HRxzHfw0J4+UBq3uE4NowqK7dp
+	 Bo4A2l/0Tjo1hQaYxZ7RJf/Qp19p5gGIcpxUgkJyOAfFDrvgO2JywhAkM7ILwHv4Sn
+	 dXGVxd3pU4SrSt1Ry59T2okruy9ri3ThjBuSacbvH85hzM+X9T1pfHDAqwDhvkyloX
+	 tT3049WazKopHrLD2eEFGe2UxGLr4sqOgv4T43bGpuomueiM0+05akDEXnGTuZrdTS
+	 ftJwukDTHYZh+9PurYycWiTtL0bpjMKRly/7Jy++5mS80fmiLrYYPv64a/jJRwrm5x
+	 09/me4xe0g2NQ==
+Date: Thu, 13 Mar 2025 11:41:00 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org,
+	aliceryhl@google.com, tmgross@umich.edu,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 2/4] rust: device: implement device context marker
+Message-ID: <Z9K2PJEoymuhamT-@pollux>
+References: <20250313021550.133041-1-dakr@kernel.org>
+ <20250313021550.133041-3-dakr@kernel.org>
+ <D8F2GQ4WYT7Z.172Z7R7V8BIGR@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313102604.1491732-1-masahiroy@kernel.org>
-In-Reply-To: <20250313102604.1491732-1-masahiroy@kernel.org>
-From: Ard Biesheuvel <ardb@google.com>
-Date: Thu, 13 Mar 2025 11:40:54 +0100
-X-Gm-Features: AQ5f1JrkVfGGQqKaJpeLOnmf-DmZZ5mdNP2AwlW5dbvBeYHSD4cZ2fyycQE6lzA
-Message-ID: <CAGnOC3Y9OYZKB+7aQsDcq5pN4jJYkL8QRwXgH3jpLQkVwD-kTQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: do not generate .tmp_vmlinux*.map when CONFIG_VMLINUX_MAP=y
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ard Biesheuvel <ardb+git@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D8F2GQ4WYT7Z.172Z7R7V8BIGR@proton.me>
 
-On Thu, Mar 13, 2025 at 11:26=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
->
-> Commit 5cc124720461 ("kbuild: add CONFIG_VMLINUX_MAP expert option")
-> mentioned that "the .map file can be rather large (several MB), and
-> that's a waste of space when one isn't interested in these things."
->
-> If that is the case, generating map files for the intermediate
-> tmp_vmlinux* files is also a waste of space. It is unlikely that
-> anyone would be interested in the .tmp_vmlinux.map* files.
->
-> This commit stops passing the -Map=3D option when linking the .tmp_vmlinu=
-x*
-> intermediates.
->
-> I also hard-coded the file name 'vmlinux.map' instead of ${output}.map
-> because a later commit will introduce vmlinux.unstripped but I want to
-> keep the name of the map file.
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+On Thu, Mar 13, 2025 at 10:29:35AM +0000, Benno Lossin wrote:
+> On Thu Mar 13, 2025 at 3:13 AM CET, Danilo Krummrich wrote:
+> > +/// Marker trait for the context of a bus specific device.
+> > +///
+> > +/// Some functions of a bus specific device should only be called from a certain context, i.e. bus
+> > +/// callbacks, such as `probe()`.
+> > +///
+> > +/// This is the marker trait for structures representing the context of a bus specific device.
+> > +pub trait DeviceContext {}
+> 
+> I would make this trait sealed. ie:
+> 
+>     pub trait DeviceContext: private::Sealed {}
+>     
+>     mod private {
+>         pub trait Sealed {}
+> 
+>         impl Sealed for super::Core {}
+>         impl Sealed for super::Normal {}
+>     }
+> 
+> Since currently a user can create a custom context (it will be useless,
+> but then I think it still is better to give them a compile error).
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+That is intentional, some busses have bus specific callbacks, hence we may want
+a bus specific context at some point.
 
-> ---
->
->  scripts/link-vmlinux.sh | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-> index e55026128e05..7cbbfa3efbca 100755
-> --- a/scripts/link-vmlinux.sh
-> +++ b/scripts/link-vmlinux.sh
-> @@ -98,8 +98,8 @@ vmlinux_link()
->                 ldflags=3D"${ldflags} ${wl}--strip-debug"
->         fi
->
-> -       if is_enabled CONFIG_VMLINUX_MAP; then
-> -               ldflags=3D"${ldflags} ${wl}-Map=3D${output}.map"
-> +       if [ -n "${generate_map}" ];  then
-> +               ldflags=3D"${ldflags} ${wl}-Map=3Dvmlinux.map"
->         fi
->
->         ${ld} ${ldflags} -o ${output}                                   \
-> @@ -211,6 +211,7 @@ fi
->  btf_vmlinux_bin_o=3D
->  kallsymso=3D
->  strip_debug=3D
-> +generate_map=3D
->
->  if is_enabled CONFIG_KALLSYMS; then
->         true > .tmp_vmlinux0.syms
-> @@ -279,6 +280,10 @@ fi
->
->  strip_debug=3D
->
-> +if is_enabled CONFIG_VMLINUX_MAP; then
-> +       generate_map=3D1
-> +fi
-> +
->  vmlinux_link "${VMLINUX}"
->
->  # fill in BTF IDs
-> --
-> 2.43.0
->
+However, we can always change visibility as needed, so I'm fine making it sealed
+for now.
+
+> 
+> If you make it sealed,
+> 
+> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
