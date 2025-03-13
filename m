@@ -1,148 +1,109 @@
-Return-Path: <linux-kernel+bounces-559517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B94A5F4DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:49:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E16AA5F4EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:51:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315B63ADAC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:48:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB31B19C2A84
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A338266F06;
-	Thu, 13 Mar 2025 12:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C574F2673A1;
+	Thu, 13 Mar 2025 12:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6itznTc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hHjw2pig"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0F442052;
-	Thu, 13 Mar 2025 12:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F14F24E010
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741870117; cv=none; b=YS/5UWkwUi2Kw0Fg1Vd7dmUITzn0kX1cGmDsrxYY1Vww7jGhNqDWaLMpsoW8XV0Xv29lNy7RI9fkXeY+elOmU0lX6h3usfth+EdcKZyf2rtOmfxu/x/sKkU/1V2BP7ouyYiG7cstigMiRqFX9k+cluQ54lk8bpEgm6UBRlvKC6Y=
+	t=1741870176; cv=none; b=Jr27wUs+uMyJ0YC6Sk53fQzVv5qgW7nE1cjMYUq0vtMRBQiO1Kv7/3dgkvv/Vu7GVDy/aEQlFlXdS1KJCYmVcsaXc1HiJSFbzbc7bVZsd2C1q+1bgQV/MMw7r1X4bTrl5AOhD1q7EJAv0YyRMzHg+/YREKms13v9GFbnxExo9gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741870117; c=relaxed/simple;
-	bh=UNE+vU3R9oLbhE4BG8lFJqiNkX+7iAaAVQvqiE7RCwg=;
+	s=arc-20240116; t=1741870176; c=relaxed/simple;
+	bh=ldBDGgTkPPYuyTRF2v5+H50f0Ki5xayYC0ECnthlcf0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nYerXc/XQGILRbWOh3nZe//S6ss78Dd57XI5s4bxkvhEqwT5SMqVCW+adNFCAecYDA22yOdSFDWSiyhQUcdq0LPYWdT+Lm9sWQIcPIPQ7sEkxeUh5SgnVMMnPmhM2qLLmVHxl5SHbsPq5SeVUHMILMtG+dJTaFvSfnSxGDVo9ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u6itznTc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8348EC4CEE5;
-	Thu, 13 Mar 2025 12:48:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741870117;
-	bh=UNE+vU3R9oLbhE4BG8lFJqiNkX+7iAaAVQvqiE7RCwg=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=f2amFgmumfJqaMRkVunW9YqHCezppCv4k84Ru+84UegWD+3sw4kAggPbB00tysyZfKMyN4ojvkmu912oHIwOsvcGE7yZ96mulH1BgEd675OLqNIZgtsDkPA3Nnv2dxzFHZc7k/FLWtFD4iS/65hcjxgVnFlOaiIM2w7TS65/hR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hHjw2pig; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741870172;
+	bh=ldBDGgTkPPYuyTRF2v5+H50f0Ki5xayYC0ECnthlcf0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u6itznTcpLqcC5Z2YYE9Yl6RW89lSt0Be8C91ZCIZwZZlIQDdXcBy/Zu/AbJ4vvfH
-	 a1XFMWBa0Y4PMuBxPaguS+vuz2BUjLMw6hMakVk6wdzywSKnR1ryrUWs5OeFIuGwvr
-	 t8pwikkak4CYIAzx06MEhi2xyrjXBGYVjSZ0hFMBEWqo9UqZ2BRQi95xIqBZDjIMzU
-	 NWwfKSGaTFW5p0xHQQo1GizC6V7K3OMgwQVgdTMipNEPoJZfYHBhGqCQFeAY/WtyEA
-	 tslADMiBEKaKU7F/5zpQCHQmkiJc7uDJL1esr0kWAlBCXGqHob0Zz9ZezF0RAJ/0ha
-	 cgScLLSFoFW7A==
-Date: Thu, 13 Mar 2025 13:48:31 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Eric <eric.4.debian@grabatoulnz.fr>,
-	Salvatore Bonaccorso <carnil@debian.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Jian-Hong Pan <jhp@endlessos.org>, regressions@lists.linux.dev,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	Dieter Mummenschanz <dmummenschanz@web.de>
-Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
- board type") on reboot (but not cold boot)
-Message-ID: <Z9LUH2IkwoMElSDg@ryzen>
-References: <8b1cbfd4-6877-48ef-b17d-fc10402efbf7@grabatoulnz.fr>
- <Z8l61Kxss0bdvAQt@ryzen>
- <Z8l7paeRL9szo0C0@ryzen>
- <689f8224-f118-47f0-8ae0-a7377c6ff386@grabatoulnz.fr>
- <Z8rCF39n5GjTwfjP@ryzen>
- <9c4a635a-ce9f-4ed9-9605-002947490c61@redhat.com>
- <Z88rtGH39C-S8phk@ryzen>
- <383d5740-7740-4051-b39a-b8c74b035ec2@redhat.com>
- <Z9BFSM059Wj2cYX5@ryzen>
- <9ac6e1ab-f2af-4bff-9d50-24df68ca1bb9@redhat.com>
+	b=hHjw2pigsG5DsBzm/jEYPomMS3pE9MEp3/MLzh/rHvopa2pA6QJsSXsqK/CqL2TTX
+	 jwVZDNMymLABCy7ct0McWzze8s6ps5RQQKiCh3YgLnd59nvlAEqIEtT/g/qxsa5j7V
+	 DTvSO2bH19OcPuM8BvagGbnDSMLF/Ld7gevIk/wq2s8cjRJW005pKFqCEKnv0+NwIi
+	 qIrBOUwrWM0ziTER+j0hdkHznr0F6UaPA9tWzLGIdxxBDEqspB/2sUnlwIiUmauKSX
+	 m+c5m3+R4Yj8HiPleDFrUdj5SSD0b1dPEkzZ+o9U633FnEI9UnUz8QCzk3msE9u3gG
+	 P6l4pp4dTkwjA==
+Received: from notapiano (unknown [70.107.117.78])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A653617E09AA;
+	Thu, 13 Mar 2025 13:49:28 +0100 (CET)
+Date: Thu, 13 Mar 2025 09:49:26 -0300
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Vignesh Raman <vignesh.raman@collabora.com>
+Cc: linux-mediatek@lists.infradead.org, chunkuang.hu@kernel.org,
+	p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
+	krzk@kernel.org, daniels@collabora.com, airlied@gmail.com,
+	simona.vetter@ffwll.ch, arnd@kernel.org, ck.hu@mediatek.com,
+	laura.nao@collabora.com, matthias.bgg@gmail.com,
+	tzimmermann@suse.de, mripard@kernel.org, lumag@kernel.org,
+	ville.syrjala@linux.intel.com, jani.nikula@intel.com, arnd@arndb.de,
+	geert+renesas@glider.be, wenst@chromium.org,
+	linux-arm-kernel@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] arm64: defconfig: mediatek: enable PHY drivers
+Message-ID: <986ad850-3e7c-43f4-84f0-cbce888676fe@notapiano>
+References: <20250313040855.62259-1-vignesh.raman@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9ac6e1ab-f2af-4bff-9d50-24df68ca1bb9@redhat.com>
+In-Reply-To: <20250313040855.62259-1-vignesh.raman@collabora.com>
 
-Hello Hans,
-
-On Thu, Mar 13, 2025 at 11:04:13AM +0100, Hans de Goede wrote:
+On Thu, Mar 13, 2025 at 09:38:24AM +0530, Vignesh Raman wrote:
+> The mediatek display driver fails to probe on mt8173-elm-hana and
+> mt8183-kukui-jacuzzi-juniper-sku16 in v6.14-rc4 due to missing PHY
+> configurations.
 > 
-> I do agree with you that it is a question if this is another bad
-> interaction with Samsung SATA SSDs, or if it is a general ATI SATA
-> controller problem, but see below.
-
-(snip)
-
-> Right in the mean time Eric has reported back that the above patch fixes
-> this. Thank you for testing this Eric,
+> Commit [1] stopped selecting the MediaTek PHY drivers, requiring them
+> to be explicitly enabled in defconfig.
 > 
-> One reason why ATA_QUIRK_NO_NCQ_ON_ATI was introduced is because
-> disabling NCQ has severe performance impacts for SSDs, so we did not want
-> to do this for all ATI controllers; or for all Samsung drives. Given that
-> until the recent LPM default change we did not use DIPM on ATI chipsets
-> the above fix IMHO is a good fix, which even keeps the rest of the LPM
-> power-savings.
+> Enable the following PHY drivers for MediaTek platforms:
+> - CONFIG_PHY_MTK_HDMI=m for HDMI display
+> - CONFIG_PHY_MTK_MIPI_DSI=m for DSI display
+> - CONFIG_PHY_MTK_DP=m for DP display
+> 
+> [1] commit 924d66011f24 ("drm/mediatek: stop selecting foreign drivers")
 
-One slightly interesting thing was that neither the Maxtor or the Samsung
-drive reported support for Host-Initiated Power Management (HIPM).
+Usually this would go directly in the paragraph, like so:
 
-Both drives supported Device-Initiated Power Management (DIPM), and we
-could see that DIPM was enabled on both drives.
+  Commit 924d66011f24 ("drm/mediatek: stop selecting foreign drivers") stopped
+  selecting the MediaTek PHY drivers, requiring them to be explicitly enabled in
+  defconfig.
 
-We already know that LPM works on the Samsung drive with an Intel AHCI
-controller. (But since the device does not report support for HIPM, even
-on Intel, only DIPM will be used/enabled.)
-
+But that's just so you know in the future, you don't need to send a new version
+just for that.
 
 > 
-> Right I think it is safe to assume that this is not a Samsung drive problem
-> it is an ATI controller problem. The only question is if this only impacts
-> ATI <-> Samsung SSD combinations or if it is a general issue with ATI
-> controllers. But given the combination of DIPM not having been enabled
-> on these controllers by default anyways, combined with the age of these
-> motherboards (*) I believe that the above patch is a good compromise to
-> fix the regression without needing to wait for more data.
-> 
-> Regards,
-> 
-> Hans
-> 
-> *) And there thus being less users making getting more data hard. And
-> alo meaning not having DIPM will impact only the relatively few remaining
-> users
+> Fixes: 924d66011f24 ("drm/mediatek: stop selecting foreign drivers")
+> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
 
-I'm still not 100% sure with the best way forward.
+Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-The ATI SATA controller reports that it supports ALPM (i.e. also HIPM).
-It also reports support for slumber and partial, which means that it must
-support both host initiated and device initiated requests to these states.
-(See AHCI spec 3.1.1 - Offset 00h: CAP â€“ HBA Capabilities,
-CAP.PSC and CAP.SSC fields.)
-
-Considering that DIPM seems to work fine on the Maxtor drive, I guess your
-initial suggestion of a Samsung only quirk which only disables LPM on ATI
-is the best way?
-
-It seems that ATI and Samsung must have interpreted some spec differently
-from each other, otherwise, I don't understand why this combination
-specificially seems to be so extremely bad, ATI + anything other than
-Samsung, or Samsung + anything other than ATI seems to work.
-
-
-Kind regards,
-Niklas
+Thanks,
+Nícolas
 
