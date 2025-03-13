@@ -1,121 +1,158 @@
-Return-Path: <linux-kernel+bounces-559839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 392CEA5FA7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:54:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18044A5FA82
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:56:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D1D2189BCBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:54:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58EB0172BA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47087268FFC;
-	Thu, 13 Mar 2025 15:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50263268FFA;
+	Thu, 13 Mar 2025 15:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FMlhzKxn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C43613AA2F;
-	Thu, 13 Mar 2025 15:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qSExLbcP"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3878413AA2F;
+	Thu, 13 Mar 2025 15:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741881247; cv=none; b=Q3jlbCyTyW50vRTS3gs/YKvt6JZhrO3H4f1R8eJVTcowMpEl1tLT9uihoYxSOU29mgZz96u6Nh6G1vU2FkKDXByOOuGKhhlYw7F6v/Y07wIS6sValqJYQX7SE36YKleG8gqjVo6rKB4VDSh+2JaBgD8l2B38ZJQvLV1XMi8kBGs=
+	t=1741881381; cv=none; b=XnS4eT0vhjQ/HlcDSjVxGhG8A5fpmrkcyC0s4ATQyBGKlLP9HcWiSQ2ePFanm9ROqr3fJxWOt0pw4HxXIzjeg6ANBLTqUDigevF1Jt4TB2JYRGMednpYlDDpWi71PohgcWeVE+Yz6766u9ZrsK30yV5MJXBHdhCBMk+eAYc1aCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741881247; c=relaxed/simple;
-	bh=CxnWivVLQ4Dd/EZfTFOz5IGyCXEdZefIUY9yz1Sn8wg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d1hI1CRKXjru7wsgpr+DjAhS/VtQn2G7oVGqiTFuniCU7ajTqBSmEOpAC5WSzNzndVg/vphd93v/sXtyfX8r/7REe/OJSQG8OC2ByTBDJdwls3zJl3SVhvhE8HfKtjMSJBU1xNaZU95qIyhxcXMEljavFakXTZQmDTrxrzeOCNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FMlhzKxn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB496C4CEDD;
-	Thu, 13 Mar 2025 15:54:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741881247;
-	bh=CxnWivVLQ4Dd/EZfTFOz5IGyCXEdZefIUY9yz1Sn8wg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FMlhzKxnDDFp+p+D6fevC/6hJa7GAGc2DzpSRvIdBaRWvKoPQcrp4qXysM7ohbIjw
-	 oQFs9H4s9wve7/Y7Cdo7PTCztDorpuDUrIAxz3t8yO3mcYE3RSVETjnXAJ3HuRJXgh
-	 puNxN+IowhJV1hDMd/JPvACKfenccChxY0UaEw2EL51xZ5ECNB5waXXICx5f8itmkK
-	 mRdOlUemv3ne8HKgylK+BKMg4oE0EEfA465YC13osOd5kRESAXcNpG9FJzI665OBnm
-	 OJm9nG/e0AtlGw26Qcr5XmFtxxqezcTaHKvHShLs4jy73HwD8JCcX23bt52Hcac2ky
-	 sQ7B7pgO5u/9w==
-Date: Thu, 13 Mar 2025 16:54:01 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Ruiwu Chen <rwchen404@gmail.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: [PATCH] drop_caches: Allow re-enabling message after disabling
-Message-ID: <znixmeryizgqkb273xidczsgdh52tw3pv4ehfyoj6m2tcxycch@xal6ntp5f5mt>
-References: <20250313-jag-drop_caches_msg-v1-1-c2e4e7874b72@kernel.org>
+	s=arc-20240116; t=1741881381; c=relaxed/simple;
+	bh=VRCNpQ+gYSMmUOaP6EeWWGfuArP8Afr8y8nsymijPXM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jdf711EtNtiXiWHU+mlXNC0h4hGXmRTjMEu3/6ZDUJRBrV5zN4fDJhNC441heETb+FH2GVb43rvTTWw2nvQIp3kHXZotNYxTy/W/SVukV6LEFPwUGm8D5z7Sj/HlrRqBf3/dv7gjpVhL042Zti6ivusjMTo0Z7n16OoK7T1m/Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qSExLbcP; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id D11BC2033428;
+	Thu, 13 Mar 2025 08:56:18 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D11BC2033428
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741881379;
+	bh=LKcLmiNNi+InVHi7szN5VvzBxGJ1ZV4koF9yq2Mj56E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qSExLbcPE0nUhHTgfvpnil9EmZuIMMSMVTDhe2uERE4lfle83/MgTG/KdG0Y29IBw
+	 dFMT3xgTbiqrd2QyplZgYbBU+EfyIBNbGBcD8Xh1V7EdpBIjZR5ZNZ4gTi/C/AsMs1
+	 j4PyUkiW1dba5UiyKnL1QfdZk2Ow5UZhErEHVqKU=
+Message-ID: <6ba21efb-7065-44d7-9cee-265a0c137f0c@linux.microsoft.com>
+Date: Thu, 13 Mar 2025 08:56:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313-jag-drop_caches_msg-v1-1-c2e4e7874b72@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 07/10] Drivers: hv: Introduce per-cpu event ring tail
+To: Tianyu Lan <ltykernel@gmail.com>
+Cc: linux-hyperv@vger.kernel.org, x86@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org, kys@microsoft.com,
+ haiyangz@microsoft.com, wei.liu@kernel.org, mhklinux@outlook.com,
+ decui@microsoft.com, catalin.marinas@arm.com, will@kernel.org,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org,
+ joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de,
+ jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
+ skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
+ ssengar@linux.microsoft.com, apais@linux.microsoft.com,
+ Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
+ gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
+ muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
+ lenb@kernel.org, corbet@lwn.net
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-8-git-send-email-nunodasneves@linux.microsoft.com>
+ <CAMvTesAW-9Mo0oY6UUh2anp6DQCSsVCUhBiV2-bKp2VD_N0DYw@mail.gmail.com>
+ <5e3e8c30-912c-4fe3-bfac-1ae21242473b@linux.microsoft.com>
+ <CAMvTesAPeLBfYVa5TGx-o6p+0g_Q1bn6s+nZK5i7NK8QGyfbTA@mail.gmail.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <CAMvTesAPeLBfYVa5TGx-o6p+0g_Q1bn6s+nZK5i7NK8QGyfbTA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 13, 2025 at 04:46:36PM +0100, Joel Granados wrote:
-> After writing "4" to /proc/sys/vm/drop_caches there was no way to
-> re-enable the drop_caches kernel message. By removing the "or" logic for
-> the stfu variable in drop_cache_sysctl_handler, it is now possible to
-> toggle the message on and off by setting the 4th bit in
-> /proc/sys/vm/drop_caches.
+On 3/13/2025 12:34 AM, Tianyu Lan wrote:
+> On Thu, Mar 13, 2025 at 3:45 AM Nuno Das Neves
+> <nunodasneves@linux.microsoft.com> wrote:
+>>
+>> On 3/10/2025 6:01 AM, Tianyu Lan wrote:
+>>> On Thu, Feb 27, 2025 at 7:09 AM Nuno Das Neves
+>>> <nunodasneves@linux.microsoft.com> wrote:
+>>>>
+>>>> Add a pointer hv_synic_eventring_tail to track the tail pointer for the
+>>>> SynIC event ring buffer for each SINT.
+>>>>
+>>>> This will be used by the mshv driver, but must be tracked independently
+>>>> since the driver module could be removed and re-inserted.
+>>>>
+>>>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>>>> Reviewed-by: Wei Liu <wei.liu@kernel.org>
+>>>
+>>> It's better to expose a function to check the tail instead of exposing
+>>> hv_synic_eventring_tail directly.
+>>>
+>> What is the advantage of using a function for this? We need to both set
+>> and get the tail.
 > 
-> Signed-off-by: Joel Granados <joel.granados@kernel.org>
-> ---
->  Documentation/admin-guide/sysctl/vm.rst | 2 +-
->  fs/drop_caches.c                        | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> We may add lock or check to avoid race conditions and this depends on the
+> user case. This is why I want to see how mshv driver uses it.
 > 
-> diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-> index f48eaa98d22d2b575f6e913f437b0d548daac3e6..75a032f8cbfb4e05f04610cca219d154bd852789 100644
-> --- a/Documentation/admin-guide/sysctl/vm.rst
-> +++ b/Documentation/admin-guide/sysctl/vm.rst
-> @@ -266,7 +266,7 @@ used::
->  	cat (1234): drop_caches: 3
->  
->  These are informational only.  They do not mean that anything is wrong
-> -with your system.  To disable them, echo 4 (bit 2) into drop_caches.
-> +with your system.  To toggle them, echo 4 (bit 2) into drop_caches.
->  
->  enable_soft_offline
->  ===================
-> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-> index d45ef541d848a73cbd19205e0111c2cab3b73617..501b9f690445e245f88cbb31a5123b2752e2e7ce 100644
-> --- a/fs/drop_caches.c
-> +++ b/fs/drop_caches.c
-> @@ -73,7 +73,7 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
->  				current->comm, task_pid_nr(current),
->  				sysctl_drop_caches);
->  		}
-> -		stfu |= sysctl_drop_caches & 4;
-> +		stfu = sysctl_drop_caches & 4;
->  	}
->  	return 0;
->  }
+>>
+>>> BTW, how does mshv driver use hv_synic_eventring_tail? Which patch
+>>> uses it in this series?
+>>>
+>> This variable stores indices into the synic eventring page (one for each
+>> SINT, and per-cpu). Each SINT has a ringbuffer of u32 messages. The tail
+>> index points to the latest one.
+>>
+>> This is only used for doorbell messages today. The message in this case is
+>> a port number which is used to lookup and invoke a callback, which signals
+>> ioeventfd(s), to notify the VMM of a guest MMIO write.
+>>
+>> It is used in patch 10.
 > 
-> ---
-> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
-> change-id: 20250313-jag-drop_caches_msg-c4fbfedb51f3
+> I found "extern u8 __percpu **hv_synic_eventring_tail;" in the
+> drivers/hv/mshv_root.h of patch 10.
+> I seem to miss the code to use it.
 > 
-> Best regards,
-> -- 
-> Joel Granados <joel.granados@kernel.org>
+> +int hv_call_unmap_stat_page(enum hv_stats_object_type type,
+> +                           const union hv_stats_object_identity *identity);
+> +int hv_call_modify_spa_host_access(u64 partition_id, struct page **pages,
+> +                                  u64 page_struct_count, u32 host_access,
+> +                                  u32 flags, u8 acquire);
+> +
+> +extern struct mshv_root mshv_root;
+> +extern enum hv_scheduler_type hv_scheduler_type;
+> +extern u8 __percpu **hv_synic_eventring_tail;
+> +
+> +#endif /* _MSHV_ROOT_H_ */
 > 
-> 
-In case you are curious:
-This is a V3 of what was discussed in https://lore.kernel.org/20250216100514.3948-1-rwchen404@gmail.com
-My bad for forgetting to tag it V3 :(.
-Best
 
+It is used in mshv_synic.c in synic_event_ring_get_queued_port():
 
--- 
-
-Joel Granados
+diff --git a/drivers/hv/mshv_synic.c b/drivers/hv/mshv_synic.c
+new file mode 100644
+index 000000000000..e7782f92e339
+--- /dev/null
++++ b/drivers/hv/mshv_synic.c
+@@ -0,0 +1,665 @@
+<snip>
++static u32 synic_event_ring_get_queued_port(u32 sint_index)
++{
++	struct hv_synic_event_ring_page **event_ring_page;
++	volatile struct hv_synic_event_ring *ring;
++	struct hv_synic_pages *spages;
++	u8 **synic_eventring_tail;
++	u32 message;
++	u8 tail;
++
++	spages = this_cpu_ptr(mshv_root.synic_pages);
++	event_ring_page = &spages->synic_event_ring_page;
++	synic_eventring_tail = (u8 **)this_cpu_ptr(hv_synic_eventring_tail);
++	tail = (*synic_eventring_tail)[sint_index];
 
