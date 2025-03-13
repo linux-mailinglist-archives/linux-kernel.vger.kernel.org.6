@@ -1,251 +1,255 @@
-Return-Path: <linux-kernel+bounces-559161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E513A5F03E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:07:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB71BA5F040
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:07:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D891B1887F36
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:07:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22C6E3AA7D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51FD264630;
-	Thu, 13 Mar 2025 10:07:01 +0000 (UTC)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C6D24EF69;
+	Thu, 13 Mar 2025 10:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gFaS1/5k"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2062.outbound.protection.outlook.com [40.107.237.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838451BC5C;
-	Thu, 13 Mar 2025 10:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741860421; cv=none; b=nROh+aCkgMFw1zGqZSkk9xm7Lpti1x6pl/m6nCyueJFA3OAcNZbJOcGFbLcVb2HLeBLO3uTn8obgj53BNp9EGhvbPvjlbqI9tepw73cQJHWZkYnvxZ5WdRhIAgf/htJZJaLPMrDeb0XmKg1Sorxz0yHFBpKFPCp1i5/W1kTRaEM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741860421; c=relaxed/simple;
-	bh=65gBC8vVsR7qor0JuxGG+QI1XCDxJ2tQG+ydTJTf4z0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QqCkHvRirZvvVAxCc/OlV/hJESo/4lU8Qf3WrSQ0TO/7OnrlOJahvfeH5zbzJ4QBh5GzL9g7e61I3SDaXGCpyVmHkTEV/sb0I3DUV/2e/iz9a25AI46Z5aG6lJD7uDmwhhjVoD5MXv6SPO4o11ukAoZ4KzymPe1MxKW1FcB5tZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-223959039f4so13813405ad.3;
-        Thu, 13 Mar 2025 03:06:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741860418; x=1742465218;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mMBvlXRT1Oo/H4YKVe6JB8JizDFwNkTh0Z35MmnnpUc=;
-        b=Ux8mwMQcAZXsT/5Z5XYlrrStWP/bt4Mvj8EuLg3JZdd54qFcHNTc+rbh7r+L+t3Xcs
-         B0Np6I67vil+rT+WtO6B+ygB2ouCtPl9g9PVtGzATaZhTunm7atY9sNKmFJmz0cuHakw
-         TZaztgAG8QoJtKWehU3UBLtFljdUfI82qONsVWP9sChau8Bd+vRqNKyghleG8E5xlrhp
-         RoRlFum4+lrQoikC6w9cq2m/oQ4U9GDKA5rsWupu06Oa6xTp6mXu3iF3MGxL/kYg7xrh
-         nelUpzuYftUk24a8QirEIRyj5QlmeCPkd+NWd3Gg3omzTKDuaPje9HF7wl/cxSfE0zir
-         /Huw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbwngz+FyYany83fsHxTeXra26SKf1kNHd3FFTOBi//px0y5PB61cPTKosIhcM3ZU4BPmFU9vbSG1SJnQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN4Fmeec7tlQ+qbVQ+FSLlhe2XaKQWS+IxumyU17st6GAihgE8
-	v7KEj2dbLrOzsLdFFFq71zlJcMz9Ej8NA4k4M+U+UIt2lNHoR6Yd69NkgNWmjA==
-X-Gm-Gg: ASbGncsN7wnv4cfXZJ46i94dLA/1kdQjfRCrstrVQeHpEvzg49YUzugSHMCMhWW1sZ/
-	vTePkXRQrp4rDRUtGks2YED9KQOuVIUFPE/zdBrJgXk3MIq5dOxkIdn+8bABdy/CEL6X03ZxUQh
-	PHLRXtd+iq3TubEu+2i0ss9A0K8246MznMGRlg7a+6GrTOtF4V2mjLD431MhDgOyqP9bi0DLAqa
-	tThGGuwKZ8p8ALr1u3YIhIR93BYTurLpPHrNi9lo+l8KgIZgeS9nR0GOzv8AtSSLhI8w+bXH+/g
-	RW3Qubz520lJ4MDkU++bk7vxv2jLt85AYY3H05CRuEnB
-X-Google-Smtp-Source: AGHT+IGwsJBF2/gXtYew93eBcbsKnhL0lvSZAwInngLo3nUQoo0Ij243GewaPLjKmCxycgqHABl/Lw==
-X-Received: by 2002:a17:902:f68a:b0:216:7926:8d69 with SMTP id d9443c01a7336-22428bf1731mr287204785ad.47.1741860418347;
-        Thu, 13 Mar 2025 03:06:58 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-225c6bbfb5asm9635835ad.209.2025.03.13.03.06.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 03:06:57 -0700 (PDT)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	horms@kernel.org,
-	sdf@fomichev.me,
-	aleksander.lobakin@intel.com,
-	syzbot+b0c03d76056ef6cd12a6@syzkaller.appspotmail.com
-Subject: [PATCH net-next] net: vlan: don't propagate flags on open
-Date: Thu, 13 Mar 2025 03:06:57 -0700
-Message-ID: <20250313100657.2287455-1-sdf@fomichev.me>
-X-Mailer: git-send-email 2.48.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8A81F9F70
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741860451; cv=fail; b=NPxvJz1PFfJ8uo57RIQjKrTtKplNzURqeBSFAmX8SXEmsDqFoyuRxiPPyLn5BTl3mL8B8tMeW5YH/0K0ckGXPiCpJ00RusOBjHYs7bqccgdgGQR0ztrofLOcPVGm0LPxQuDi8Y51UZZJ15Zdl0GHiMCkhUGJtsbzGq8b5pYRhkQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741860451; c=relaxed/simple;
+	bh=r9QhK59LWdXTBKYpIwF+ZwGFts0frYcpN71OtYXYTbo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pKduq3aKhE5SRD93AIg28iwPKex8p4qCAt/QDJteiQ/FPlXFqX0iUcsf5zSmLoZiGCdKS4HjhymhSNmT6JNB+osSP9fBMnLwoOJa2EkFs/Tsf+eU9GeCHmvt9epACicM2r28D8cno3GFrfyqhzTyzZHNdV081yUbtiKxZq+qpAo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gFaS1/5k; arc=fail smtp.client-ip=40.107.237.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=v/jTV46vm4S/fbVd40x98HuowHstroe0PZv2z0w0BRVyYeHNb+UTbg1dAicQ3S/6l6d6fvplnIjCOB4X7wG+08FHhz5Cph2lUgGRbAQ6FDsh6cb2QldH0nksr2rW0fBocjIuhDVmxIbWHkMbALG1LL6497s7wJ30mYJ/HXz+37ktW8NTp99YahNWxuC9vYXWnJ1V1kkZ609kQ9dKDR1rFagtYVfWHFRjDvvpTlQBLMzmK/4RRUHzdd9Dy3Lqevn6d6q3WYgrg3zRUi9sYSas2m9/iM4efQLgrhSupYCQVOzJK0H875YWymkjcjVsV4LuJY2Tiwf+QO+ZoRJPLlaQCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OckP4Gg/lzIdiNJjeurIPaQr28SiJnbt9scVABz2lJg=;
+ b=Jil/qSLrIq6r0xS3cF1OKGtWUIOuisagtCdcIRPv5jOd6PmsBPde6xz/2CLQYzF0vaHxM/51wMorvKhQNJWbVBpH6uXTEX58JqbfzOurOeoOCuOGZSb/1cPV9jTueuksUVHdVeMZnEvWEi+myiVa0/lyHuyo7gug2NTywdHcKip7rvfarC/zrVHZRxoVsHh/KLg5HA1t8MPbD6er4W2UhAVwmHrG5onBkK+1GVBdNR/rSfVL0MisQ5lMrs9bBhfCYzCRL1V/SZOz0ZIDWVN5feCZJ+fc6JbdtBBlX4457lKGgJznYO2zUNVyrKKd67BD1dG/5Y6uIassvirkzvmPKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OckP4Gg/lzIdiNJjeurIPaQr28SiJnbt9scVABz2lJg=;
+ b=gFaS1/5k1qS/3ge3XQP3kaQJjRo2SqA+AZtMOc23t5oUjHNxWZU1swirIFTrFICew9uPXMRkGZYjzyVJrO0XKGyPYkcnbzZmtG/mg4w+aGvO7sm9sYb5OrSDTU4YNMCXqz6SJeA9VDPExxfWNkPcKKqdlE+BYKzxWtTcTEnqwlQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by SJ0PR12MB7034.namprd12.prod.outlook.com (2603:10b6:a03:449::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Thu, 13 Mar
+ 2025 10:07:26 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8511.026; Thu, 13 Mar 2025
+ 10:07:26 +0000
+Message-ID: <d02a205a-c7e7-45a5-bcba-b5a5a6bebf4e@amd.com>
+Date: Thu, 13 Mar 2025 11:07:20 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/sched: Clarify docu concerning drm_sched_job_arm()
+To: Philipp Stanner <phasta@kernel.org>,
+ Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250313093053.65001-2-phasta@kernel.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20250313093053.65001-2-phasta@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0036.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c7::9) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SJ0PR12MB7034:EE_
+X-MS-Office365-Filtering-Correlation-Id: d55b2a24-ecda-450f-859e-08dd6216db11
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VXJzMWlMbFJaRmIwQW04NFVJU2srTTZxNEZUZFpMd28wMlRNem5PQTBlZVVR?=
+ =?utf-8?B?RitBV1JrRjVjV0pMSGdLa0JtM3hpcENESGlnM0Q3REpSbURvZmh3VjNKdXdw?=
+ =?utf-8?B?QkxUKytLaUwvMjh6cmExYS8wRXloTklzallCeHBqNStjdXlwU016aEIzKzJm?=
+ =?utf-8?B?QWlUOUxhRTlOY1RERmRBeEhXdkNtVDB0WFpTZlkweDJuaHhGZ0xMOVY1Skd1?=
+ =?utf-8?B?L2NrWVd3dC9waEZLc2l2WXErdTMrenV3SkJlL2hBUTRZTTJlc1p0NjAyNUxD?=
+ =?utf-8?B?YkJ0cFd0dTVzMW9kVG1KL2c5Wjk0UnlhNWw5M1I0QUhlbmovZFFBRFJKWHFH?=
+ =?utf-8?B?bGtHZi9QZzN6WSsxQjZ6Z2h2MG4zOGE0VlZKdkp0VGJRSXBieG5Xeis0eGhP?=
+ =?utf-8?B?NVBPTjFuZHdzR1htRFU5Y1dqUkdzS2dwb2FHQlBwUCtFZGNBV0RPQXJDNmho?=
+ =?utf-8?B?K3JVVklFbXhabkwwMFo1M2hoK1ZoOEt1UEF1dDVsT2RyOGxxQityalVXZlBP?=
+ =?utf-8?B?RXppTEUyMkp4QXVHaDljclZCRmQ2cDZpWVBMMzcyL2FxY1lzaVpXc1E2bkJR?=
+ =?utf-8?B?V2NGMXpsNmdNczg3OWdzL2JDamhNaEpmeDNlL0VESHIrNjIxaW1ralMzajBx?=
+ =?utf-8?B?TmdCaTBuNlM5TnZjSWQ5U2JHRWZXQUdVMVg3TGFxUzNleGV6V2pRQ1BjWmxK?=
+ =?utf-8?B?VThaUFpsWWl2Uk5RVUZWeFVqZU5JN0tZeVFoMEJacVJnelBudWdGeWVkL2E4?=
+ =?utf-8?B?THVNK2FkRTNPTU5tWHppNGI1RFJiRHJoYVlhT2Q3ajVEb0dWTXFoWDE3ZldJ?=
+ =?utf-8?B?N3pJTitFV0EyWDZsbHY1SUhWaHlJSkp1ODFYRjRZdFlYOU9GdFlTR2tWdGs2?=
+ =?utf-8?B?eDN1R1V5eGxKNnBSZitNeWRMM1N5em1GSTUyNURtS3o2OURqY1BPdE0zNWtT?=
+ =?utf-8?B?aUY1bjkrdzdVd2U5NEtMeHUvN1VVSFAwN3M0Q0NMTzhTenhocWd1UitVTU80?=
+ =?utf-8?B?MVlhdTdCV0R5L0xCTHlvaHJxZEhUYWxoTkxvSVM2MUlCQ2Q4eWljYVRnLzFr?=
+ =?utf-8?B?U2hzVVpOQVRmaUh0a1ljRFFsdUN5SjFDZnN0aUlBZmNFQjlWUC9tdG12bU9C?=
+ =?utf-8?B?TnF5TndjMzcvODM0bDFlZ3ZpVXhQTDdnYXhpSHRSeXdUTGN1NUF3d2hCbnh4?=
+ =?utf-8?B?V0haZUN6YTl5cytmblI3Wk9kS0VYZ3hlaU9jWWN0R3lTU0laWTdYNVdZejJM?=
+ =?utf-8?B?clhRNkJCMElWYnkvTGpRKzhlZDA0cTIzUTVQSUoyL2Vxb1dNY2pMd0FJOVZL?=
+ =?utf-8?B?bkJRZUM0R0FKem5QYkc2QjRqRStxelFTU0RUUVNWRE01bytQd2JRb3FuYTVw?=
+ =?utf-8?B?dFA5ZCthZVlvUXF0ZTZLeGx1b3Y0UWNlckV6T2JCdjFYK2ozQVFHTlN1R2ho?=
+ =?utf-8?B?cVNZUlJHZ1ordEtuVWNsTUFDWC9PMjdhRjhtK1o0ajJHQi8vZUdDUUdad3JP?=
+ =?utf-8?B?UmZBdE90YUdnSzAyVFlWT3BFU1hFSWx6c0Z5N2N1dkVhUlkvK3dDdUlZZ2o2?=
+ =?utf-8?B?cFFtVlFNekpLTUx3THltQkVBSTZoWStJRjV1QTFFNnFseHZFYW1JR1JxMzJN?=
+ =?utf-8?B?VklzbVlLU0xvTDVhWjNHcXBvaXZKN25OcW9uSlYzTXV4TTZhTDJ2dHNDbm9p?=
+ =?utf-8?B?MFh6UG5QRE5tMkxKVWM3MDZ1NmNsYVZVMFVDVEJpRVFEK2dmaFY1TVhCNkl5?=
+ =?utf-8?B?RjZDbEdXb0R4cTZGVHlYMmkyS2V6bUN1MmZhRm1Qb1UwakNVanFoRnhKakhy?=
+ =?utf-8?B?SWR1eVpwZUxKd2w0RUlSQkdUZlI5VWQrMGdJVkUyd1dlaTZwK0d3UFZCZ1VK?=
+ =?utf-8?Q?Vj+q3skFTF8CN?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SFhsdzVXS0puQkwwSGVVNjZnU2FWbUc2bXBCeHpPSVpuWlpHeGRIMm5uclpK?=
+ =?utf-8?B?MDVSeXdxOEQwZHFZNlcyUElCY20rK3RGaFJJMlpkWE1jSGRLT09VWUFMb1hG?=
+ =?utf-8?B?eURpT0xlNUR3eEtEYlFOTWt5UkZWYVdRRUF0ZWhSL2oyTmpqellNaUFWdDgv?=
+ =?utf-8?B?STY3d3ZvbE5Ja2Q5VUFzOVdwZDVzMTY1MlNyZ0didUxlSTV1SzZveWV3RTBj?=
+ =?utf-8?B?eGpUNCtyb0pxRDNqaVcveHlIcGJmUDA1VExZVFdndW9ncnB0MGtiTGhPVDI5?=
+ =?utf-8?B?OW91c2NvRUxXVkpESnUyTnJBUzUzMjFYSG5YUnpma1g1TlVsTUQvUndoRlVh?=
+ =?utf-8?B?Y3ZtTEdxaVpNNkdVNlNWaXlRZXpwaU40QzJuTDVSL0hxWXNLb2x5R2M3Mk8w?=
+ =?utf-8?B?YWRRcmhOK3VWUGI3MDVpc3FHOS93MGoyV1p3cFVBdWRmc1VoZ2d2TGc4L0NM?=
+ =?utf-8?B?TnQvUDlId1BMWjJLZGNRTGhwQkFsWGkySHd3STE5OVBHQ2g3ZG5VaWhnOERY?=
+ =?utf-8?B?Q0tnZHNXTVd1aWFJUjRPUGhOU1N4b1BlUFFyMkNFU1BheUZOeVByNldQZmlz?=
+ =?utf-8?B?RzU3OXgwaitGcWJQbW1LNlBvRjhiZFEzWFdEa0JEbFc3N0IxZHZ4SkxQSWlF?=
+ =?utf-8?B?N3BGenRTNmxsM2lNL1hwQW9VSlpBajJqYUNjMzZSR2tEQ0o1czVrcmhRYTlH?=
+ =?utf-8?B?YVN2UE5yRjlzTUpybGFndW5meUM2M0pvR1Y4VVpmR09UdWpxa2tIMnNvb3FS?=
+ =?utf-8?B?RXNsOGs4b241ck5xWVBzNmdtSUhBYlM3WVZxSlg5SlgxK1gvSW1CODhyL2RT?=
+ =?utf-8?B?SS9VYkgwN0VYQ3RjRkpTTHRnYUw5dWEwQVZQZENrSytVekdkeitoTnluZUU0?=
+ =?utf-8?B?MVBxVlV0WjJXd0R1cDJyYVpreFRzUHFCN0o3N2pyaXNtalVqMEN5QmYxNnA3?=
+ =?utf-8?B?czgydUJBS0IvK3N1c3RJYko4NElGN2FrS1F6NlZpRnFWbDZJckc0aS9hRmVP?=
+ =?utf-8?B?NUtFSG1PUkNpb0FvQUJpMG9wYi9WbjZjeDB1ZHZyMXVvV3VUSlhXZnUrMkZX?=
+ =?utf-8?B?d3hGY3Rwa04yVVlQY3dWWXBWS1JET24zOUwvWUk3dUhNbVFIalZ6emJCL2Fq?=
+ =?utf-8?B?Qmx3TjVkdG5WS3VGMEFLaVgzQm93aGUwYmdlN2hKS3g0aGQ5K0RmdFp5bVlk?=
+ =?utf-8?B?MGpJYkYrbmZYM1pPV0Q0UkpzS3E5VEI2cWxpcmFXL25pc1p1TWh1ei9jVFE5?=
+ =?utf-8?B?ZjlKdXhtNlNZMFhVY0crUWJ6N2hOQngwMitwVVZyTVpUdHhqR3AwekhCTUJi?=
+ =?utf-8?B?ekpMTitXVTBBbUhNbWhXeC8zdjMwUmtpK2ZsL3F6VmxRVkc5Ly9qL2pJUHVv?=
+ =?utf-8?B?aUxUay9wTnRJWXg2TElqV3hXbVl3L2xhUUV3RllqSXhoVEorUHV1N1h0bDUz?=
+ =?utf-8?B?eG5jdnJzVTltNTIwc1YxWDdIdGcrQ1k5ZWJtN3Q1d24velBYK2R3RzFVa2Rz?=
+ =?utf-8?B?KzR5N25qL1ZMWHYwV2tFanp4b3lYZEgxaXlaU2k3L1JzRjRjL01VNlNGQ3Uv?=
+ =?utf-8?B?dC81VTNvbi9SWW50VURXMHUxL0l1SDd6L2ZScFVDU1Q2ejBpak8rZjVEQkJx?=
+ =?utf-8?B?d1pFNHpwT29ZMHFRdHJWNFJWQXk3c0VQRUtkQ2dGc3lZSzZxZWh1N01jTCtM?=
+ =?utf-8?B?ci9Xd2QveWdvMnZsODA3OEE2QVdwT3hXa3ROckJmQnRwSnJoMVpsM2dXNEkr?=
+ =?utf-8?B?TW5YZHhoaUZLem91cFZURGVJSlErQTErVmFEM2psVTRTUUhjNUVPQTgzVkdN?=
+ =?utf-8?B?UGpwL1N5QmJwTTBDOGtZRC9VQXhBNlBLZyt0ankwTVQxNHJnZ1ptRHpURDdY?=
+ =?utf-8?B?Y1JIbUpoVlpkMXVTZFd5SFhKNDF2Z3VDUkNBOUdNMGVWUEZxK2FDTEFIOG13?=
+ =?utf-8?B?dlkvazVUamQ3eVZxNTVTUEtBbEgvbHQyS3BxWGVKTWhVK1MzSjlBSzN6ZzhN?=
+ =?utf-8?B?bXUzZDhqRFMzWnEvbkdZSFpzSDI3SEUzcmdDcEVHYyt3Nzk4MEJYYjFxd2hC?=
+ =?utf-8?B?ekRDbUtWYWxXMHRBMUxwQUVKaTBGS0ZCS05UZ28wTWFncVZ1WGVmN1lScE5v?=
+ =?utf-8?Q?eMZQ=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d55b2a24-ecda-450f-859e-08dd6216db11
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 10:07:26.3454
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rBxGDn0htkIISmi4IUWGtnR/ekRg75Y9OmkXotxUIRePoeZmS1NuWomqFWlneakL
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7034
 
-With the device instance lock, there is now a possibility of a deadlock:
+Am 13.03.25 um 10:30 schrieb Philipp Stanner:
+> The documentation for drm_sched_job_arm() and especially
+> drm_sched_job_cleanup() does not make it very clear why
+> drm_sched_job_arm() is a point of no return, which it indeed is.
+>
+> Make the nature of drm_sched_job_arm() in the docu as clear as possible.
+>
+> Suggested-by: Christian König <christian.koenig@amd.com>
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
 
-[    1.211455] ============================================
-[    1.211571] WARNING: possible recursive locking detected
-[    1.211687] 6.14.0-rc5-01215-g032756b4ca7a-dirty #5 Not tainted
-[    1.211823] --------------------------------------------
-[    1.211936] ip/184 is trying to acquire lock:
-[    1.212032] ffff8881024a4c30 (&dev->lock){+.+.}-{4:4}, at: dev_set_allmulti+0x4e/0xb0
-[    1.212207]
-[    1.212207] but task is already holding lock:
-[    1.212332] ffff8881024a4c30 (&dev->lock){+.+.}-{4:4}, at: dev_open+0x50/0xb0
-[    1.212487]
-[    1.212487] other info that might help us debug this:
-[    1.212626]  Possible unsafe locking scenario:
-[    1.212626]
-[    1.212751]        CPU0
-[    1.212815]        ----
-[    1.212871]   lock(&dev->lock);
-[    1.212944]   lock(&dev->lock);
-[    1.213016]
-[    1.213016]  *** DEADLOCK ***
-[    1.213016]
-[    1.213143]  May be due to missing lock nesting notation
-[    1.213143]
-[    1.213294] 3 locks held by ip/184:
-[    1.213371]  #0: ffffffff838b53e0 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock+0x1b/0xa0
-[    1.213543]  #1: ffffffff84e5fc70 (&net->rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock+0x37/0xa0
-[    1.213727]  #2: ffff8881024a4c30 (&dev->lock){+.+.}-{4:4}, at: dev_open+0x50/0xb0
-[    1.213895]
-[    1.213895] stack backtrace:
-[    1.213991] CPU: 0 UID: 0 PID: 184 Comm: ip Not tainted 6.14.0-rc5-01215-g032756b4ca7a-dirty #5
-[    1.213993] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.16.3-1-1 04/01/2014
-[    1.213994] Call Trace:
-[    1.213995]  <TASK>
-[    1.213996]  dump_stack_lvl+0x8e/0xd0
-[    1.214000]  print_deadlock_bug+0x28b/0x2a0
-[    1.214020]  lock_acquire+0xea/0x2a0
-[    1.214027]  __mutex_lock+0xbf/0xd40
-[    1.214038]  dev_set_allmulti+0x4e/0xb0 # real_dev->flags & IFF_ALLMULTI
-[    1.214040]  vlan_dev_open+0xa5/0x170 # ndo_open on vlandev
-[    1.214042]  __dev_open+0x145/0x270
-[    1.214046]  __dev_change_flags+0xb0/0x1e0
-[    1.214051]  netif_change_flags+0x22/0x60 # IFF_UP vlandev
-[    1.214053]  dev_change_flags+0x61/0xb0 # for each device in group from dev->vlan_info
-[    1.214055]  vlan_device_event+0x766/0x7c0 # on netdevsim0
-[    1.214058]  notifier_call_chain+0x78/0x120
-[    1.214062]  netif_open+0x6d/0x90
-[    1.214064]  dev_open+0x5b/0xb0 # locks netdevsim0
-[    1.214066]  bond_enslave+0x64c/0x1230
-[    1.214075]  do_set_master+0x175/0x1e0 # on netdevsim0
-[    1.214077]  do_setlink+0x516/0x13b0
-[    1.214094]  rtnl_newlink+0xaba/0xb80
-[    1.214132]  rtnetlink_rcv_msg+0x440/0x490
-[    1.214144]  netlink_rcv_skb+0xeb/0x120
-[    1.214150]  netlink_unicast+0x1f9/0x320
-[    1.214153]  netlink_sendmsg+0x346/0x3f0
-[    1.214157]  __sock_sendmsg+0x86/0xb0
-[    1.214160]  ____sys_sendmsg+0x1c8/0x220
-[    1.214164]  ___sys_sendmsg+0x28f/0x2d0
-[    1.214179]  __x64_sys_sendmsg+0xef/0x140
-[    1.214184]  do_syscall_64+0xec/0x1d0
-[    1.214190]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[    1.214191] RIP: 0033:0x7f2d1b4a7e56
+Reviewed-by: Christian König <christian.koenig@amd.com>
 
-Device setup:
+I'm currently looking into how to fix the amdgpu CS path for gang submission regarding this.
 
-     netdevsim0 (down)
-     ^        ^
-  bond        netdevsim1.100@netdevsim1 allmulticast=on (down)
+Any objections that I add a preload function to allocate the memory for the XA outside of the critical section?
 
-When we enslave the lower device (netdevsim0) which has a vlan, we
-propagate vlan's allmuti/promisc flags during ndo_open. This causes
-(re)locking on of the real_dev.
+Regards,
+Christian.
 
-Propagate allmulti/promisc on flags change, not on the open. There
-is a slight semantics change that vlans that are down now propagate
-the flags, but this seems unlikely to result in the real issues.
-
-Reproducer:
-
-  echo 0 1 > /sys/bus/netdevsim/new_device
-
-  dev_path=$(ls -d /sys/bus/netdevsim/devices/netdevsim0/net/*)
-  dev=$(echo $dev_path | rev | cut -d/ -f1 | rev)
-
-  ip link set dev $dev name netdevsim0
-  ip link set dev netdevsim0 up
-
-  ip link add link netdevsim0 name netdevsim0.100 type vlan id 100
-  ip link set dev netdevsim0.100 allmulticast on down
-  ip link add name bond1 type bond mode 802.3ad
-  ip link set dev netdevsim0 down
-  ip link set dev netdevsim0 master bond1
-  ip link set dev bond1 up
-  ip link show
-
-Reported-by: syzbot+b0c03d76056ef6cd12a6@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/netdev/Z9CfXjLMKn6VLG5d@mini-arch/T/#m15ba130f53227c883e79fb969687d69d670337a0
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
----
- net/8021q/vlan_dev.c | 31 ++++---------------------------
- 1 file changed, 4 insertions(+), 27 deletions(-)
-
-diff --git a/net/8021q/vlan_dev.c b/net/8021q/vlan_dev.c
-index 770a4dcf7f63..fbf296137b09 100644
---- a/net/8021q/vlan_dev.c
-+++ b/net/8021q/vlan_dev.c
-@@ -274,17 +274,6 @@ static int vlan_dev_open(struct net_device *dev)
- 			goto out;
- 	}
- 
--	if (dev->flags & IFF_ALLMULTI) {
--		err = dev_set_allmulti(real_dev, 1);
--		if (err < 0)
--			goto del_unicast;
--	}
--	if (dev->flags & IFF_PROMISC) {
--		err = dev_set_promiscuity(real_dev, 1);
--		if (err < 0)
--			goto clear_allmulti;
--	}
--
- 	ether_addr_copy(vlan->real_dev_addr, real_dev->dev_addr);
- 
- 	if (vlan->flags & VLAN_FLAG_GVRP)
-@@ -298,12 +287,6 @@ static int vlan_dev_open(struct net_device *dev)
- 		netif_carrier_on(dev);
- 	return 0;
- 
--clear_allmulti:
--	if (dev->flags & IFF_ALLMULTI)
--		dev_set_allmulti(real_dev, -1);
--del_unicast:
--	if (!ether_addr_equal(dev->dev_addr, real_dev->dev_addr))
--		dev_uc_del(real_dev, dev->dev_addr);
- out:
- 	netif_carrier_off(dev);
- 	return err;
-@@ -316,10 +299,6 @@ static int vlan_dev_stop(struct net_device *dev)
- 
- 	dev_mc_unsync(real_dev, dev);
- 	dev_uc_unsync(real_dev, dev);
--	if (dev->flags & IFF_ALLMULTI)
--		dev_set_allmulti(real_dev, -1);
--	if (dev->flags & IFF_PROMISC)
--		dev_set_promiscuity(real_dev, -1);
- 
- 	if (!ether_addr_equal(dev->dev_addr, real_dev->dev_addr))
- 		dev_uc_del(real_dev, dev->dev_addr);
-@@ -489,12 +468,10 @@ static void vlan_dev_change_rx_flags(struct net_device *dev, int change)
- {
- 	struct net_device *real_dev = vlan_dev_priv(dev)->real_dev;
- 
--	if (dev->flags & IFF_UP) {
--		if (change & IFF_ALLMULTI)
--			dev_set_allmulti(real_dev, dev->flags & IFF_ALLMULTI ? 1 : -1);
--		if (change & IFF_PROMISC)
--			dev_set_promiscuity(real_dev, dev->flags & IFF_PROMISC ? 1 : -1);
--	}
-+	if (change & IFF_ALLMULTI)
-+		dev_set_allmulti(real_dev, dev->flags & IFF_ALLMULTI ? 1 : -1);
-+	if (change & IFF_PROMISC)
-+		dev_set_promiscuity(real_dev, dev->flags & IFF_PROMISC ? 1 : -1);
- }
- 
- static void vlan_dev_set_rx_mode(struct net_device *vlan_dev)
--- 
-2.48.1
+> ---
+>  drivers/gpu/drm/scheduler/sched_main.c | 24 ++++++++++++++++++------
+>  1 file changed, 18 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+> index 4d4219fbe49d..829579c41c6b 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -828,11 +828,15 @@ EXPORT_SYMBOL(drm_sched_job_init);
+>   *
+>   * This arms a scheduler job for execution. Specifically it initializes the
+>   * &drm_sched_job.s_fence of @job, so that it can be attached to struct dma_resv
+> - * or other places that need to track the completion of this job.
+> + * or other places that need to track the completion of this job. It also
+> + * initializes sequence numbers, which are fundamental for fence ordering.
+>   *
+>   * Refer to drm_sched_entity_push_job() documentation for locking
+>   * considerations.
+>   *
+> + * Once this function was called, you *must* submit @job with
+> + * drm_sched_entity_push_job().
+> + *
+>   * This can only be called if drm_sched_job_init() succeeded.
+>   */
+>  void drm_sched_job_arm(struct drm_sched_job *job)
+> @@ -1017,9 +1021,12 @@ EXPORT_SYMBOL(drm_sched_job_has_dependency);
+>   * Drivers should call this from their error unwind code if @job is aborted
+>   * before drm_sched_job_arm() is called.
+>   *
+> - * After that point of no return @job is committed to be executed by the
+> - * scheduler, and this function should be called from the
+> - * &drm_sched_backend_ops.free_job callback.
+> + * drm_sched_job_arm() is a point of no return since it initializes the fences
+> + * and their sequence number etc. Once that function has been called, you *must*
+> + * submit it with drm_sched_entity_push_job() and cannot simply abort it by
+> + * calling drm_sched_job_cleanup().
+> + *
+> + * This function should be called in the &drm_sched_backend_ops.free_job callback.
+>   */
+>  void drm_sched_job_cleanup(struct drm_sched_job *job)
+>  {
+> @@ -1027,10 +1034,15 @@ void drm_sched_job_cleanup(struct drm_sched_job *job)
+>  	unsigned long index;
+>  
+>  	if (kref_read(&job->s_fence->finished.refcount)) {
+> -		/* drm_sched_job_arm() has been called */
+> +		/* The job has been processed by the scheduler, i.e.,
+> +		 * drm_sched_job_arm() and drm_sched_entity_push_job() have
+> +		 * been called.
+> +		 */
+>  		dma_fence_put(&job->s_fence->finished);
+>  	} else {
+> -		/* aborted job before committing to run it */
+> +		/* The job was aborted before it has been committed to be run;
+> +		 * notably, drm_sched_job_arm() has not been called.
+> +		 */
+>  		drm_sched_fence_free(job->s_fence);
+>  	}
+>  
 
 
