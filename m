@@ -1,146 +1,175 @@
-Return-Path: <linux-kernel+bounces-558637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C10A5E8E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:06:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A191A5E8F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:13:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9695D3B872F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:06:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 582533B8287
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74C528F4;
-	Thu, 13 Mar 2025 00:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826B18C1E;
+	Thu, 13 Mar 2025 00:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mkHn3aH3"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="JP9c4+NI"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9153C17E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 00:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BC217E;
+	Thu, 13 Mar 2025 00:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741824395; cv=none; b=IuTwJDI40eveBEr7/MnOuNYu6LiyUtGh46uXZ+sO636DgLhFEn6a/ezvjsrtVnHLHxPt7B+AlAqnuc1gjNncJ00POlnd5C5dNC0hLqZYPUuQxwcf0gnx6MxT3ar/qbj/FZgOV9ErYq/ilU7LPakUWgHT1GpsAaXm36AfSTiu/FA=
+	t=1741824817; cv=none; b=P46VO8yBf1qfzUZC/XKCoZehmFiTnoEAHvdNEA74FUE6/kD2MhLWucVzXhbaTIXVbEga//3jAP4maPNgxba7dKvRn4upQpnBdM1AE63dThZUg3YhNtihUWydVpcnccUi+XsDw1zkDg8F5V2+PVJJlrrJbN5tcfNikkc7stM2tBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741824395; c=relaxed/simple;
-	bh=23GDT0Rk8r3jrPpap9e9b1IjBBxLwjDYfdQD/VF0D2Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jbwp2T0ZG9tjuMaZEBUh552RCW8dAiwyp95tRh8Jp21izuiOzSafDXklHX45gy5pH0O1qVrWfp/XshU0ev+Ylqe/j6YwvgUfWUPM16mjp9UJALEkYjuTN9BSRajgWjIyp6T8SHY407rK/jt1aTxikASAJc5eB+93m+UyZCCifXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mkHn3aH3; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5dbf5fb2c39so52046a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 17:06:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741824392; x=1742429192; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LTBXSAZcTlB0kyn5reMeVRSItQEZmzd639cfqrTnQ5g=;
-        b=mkHn3aH3M2uC5/LU/AWh63mq41v8aULFRTIVrLUTUEToY/ze5BbQ9FEDQoMBFHjpUZ
-         rEep7UJNXq4Jx7VpmKxPxw4HsWZrl59n1gicz4mdWuprgLTsib/L+0UOpTlSMj9j3onY
-         FpYkUdId5fIiIbe4o/QUG91/C39BRcSazrFH0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741824392; x=1742429192;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LTBXSAZcTlB0kyn5reMeVRSItQEZmzd639cfqrTnQ5g=;
-        b=WNXKe/vUAiWVq0fKloh/9qYLh6vzRR6YRwYoe/qGPBE63Zl8H40gqF9PNuWm4TLEiQ
-         ZbEFE/M8hNdJM0clFIljkS4EGiZjquED26t6ilciSDk4/Td+Lp7EXylzupA6Dmg1cpP7
-         1jbtzbvWC6wzvQ/zi42q61LOpRpu/+4Flm9VdbDkHhVCczUu6lxAPvsU269RqquV7Fas
-         0ukngF9/C6RvrLZyxITgXzfFaJ+R1QPCfVDr2gAtW/XHRJ+2FGexDFlOFaLoIeXlxoAn
-         uyzN6ZzBHMekJbZV4ItlsNgXDGPp9A2AiPQ8+vx7dTFm6fNPFFz/gMDOYqgRmCZRo5YS
-         g8Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGpddDNhz+kG+t0VR7Yf8f/FzRCfoA0yCggav3SeeA74+hR82B1IWWMvK+2iclKrdZCSWZ/wK03BYhgSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqxJvYCFBx0sLLg25A30+ceDFB0tHTlVg9oszbGrurH1H+ZT+z
-	njAEjK+8wQPtuXPpop2vZkoX98BLPPO8n369UAsPxlVTRU0Gp9QRvRwRZe1/tA==
-X-Gm-Gg: ASbGncuXaod04+sf6k5FgGsSWJv/W6Epe5S19Xbyem/D91WlFDLtncOs4d4XKa7D1Ig
-	DM8K0NomHrwtB5Q+AmV4iQmF751CwLVOpAYL041DaHT0xIVq6hXIOpoGZXccSviHnOWE5UElnDF
-	RMjoBrdBPkVc8FG9LoaKkUtu1/CiBff2zVzfrCNvUTkgy2NTc3vGEzyt1MOYf0LDuObiy0Y2cBE
-	J73ZSqLpaV0AFZKEBP5QAM7pkXRcJ14umDFo2s6V333igUqRhe+4uXMnz6K4JGc/Am2lsgJvfk3
-	uEZkvZZFJ9JBvoBRGMtcjKwEWirWFFyMN59IuafMxDSNTFSRNroKr6aaXYPcMNiom1aV/22cJPu
-	d
-X-Google-Smtp-Source: AGHT+IF2hsLGbRFexw4cBQVMbT4+nYhN0RM3ql6SWU6N3Q/kqXvpffne9qXzzhEiJHBV/0VVycU7Sw==
-X-Received: by 2002:a17:907:3e8f:b0:abf:7a26:c489 with SMTP id a640c23a62f3a-ac2b9ea164cmr368075466b.9.1741824391899;
-        Wed, 12 Mar 2025 17:06:31 -0700 (PDT)
-Received: from cfish.c.googlers.com.com (40.162.204.35.bc.googleusercontent.com. [35.204.162.40])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a3fc7asm7404766b.135.2025.03.12.17.06.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 17:06:31 -0700 (PDT)
-From: jeffxu@chromium.org
-To: jeffxu@chromium.org,
-	akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com,
-	agordeev@linux.ibm.com,
-	borntraeger@linux.ibm.com,
-	gor@linux.ibm.com,
-	hca@linux.ibm.com,
-	kees@kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com,
-	svens@linux.ibm.com,
-	thomas.weissschuh@linutronix.de
-Subject: [PATCH] mseal sysmap: add arch-support txt
-Date: Thu, 13 Mar 2025 00:06:23 +0000
-Message-ID: <20250313000623.3192896-1-jeffxu@google.com>
-X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
+	s=arc-20240116; t=1741824817; c=relaxed/simple;
+	bh=8dEfo6LCVjShHE42wf1ejHBUNUNXIYH6qPYnJMKcwbs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=e+Z9mNW2E+fjkzEZatNWaCuhXNrgU27+PcKSN5Q0zdE/Nv20yul0jHxfUvkAdQNwZCNu9a/WaE3hM+iwwsJ9fxa3dUZXLG2CT0mYr+Y3MvYq2ErQj3GDqRMZclzt+ZD4o4+BNNtTFTBssKRbBlHB7u7kglEqyehze6zu49LFAg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=JP9c4+NI; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52D09Gjf2730497
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 12 Mar 2025 17:09:16 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52D09Gjf2730497
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1741824561;
+	bh=pOuTjU0DLlw9muSdV/bvRsUk/zEVswSeTDmcSBtrmzk=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=JP9c4+NI9BKncKU+1PsEB9cZeQpNxCxpJ0LmRuYoHNmwWD/IZKSycv5sN9IICpIEz
+	 fR/hn+rQhnfZM1uUiHFsG6gUoBL9neiS+JGil7wI30UkDhHcG1QRaLCxVEOb8Avej8
+	 KQCseXzhw1xoqlckAoMQLS0jGXtjlqSg5eaOuTyA+VT8jx0ImUcERkYzUzACSp2jWz
+	 iveP8ZtK+pI4qfkTCfKTJm+BI905HMMN61AY3/MbPJkw2r62IkxWg6XH1CtdvGTrlr
+	 6CALlw7rm8dk1ZxjmoEuThEn4j6+yLh7OqapigzBfq/66ixFRWdc3P5KvqHGfpwwnf
+	 wFX8jsnXRMF2A==
+Date: Wed, 12 Mar 2025 17:09:16 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Jacob Keller <jacob.e.keller@intel.com>,
+        David Laight <david.laight.linux@gmail.com>,
+        Jiri Slaby <jirislaby@kernel.org>
+CC: Ingo Molnar <mingo@kernel.org>, Kuan-Wei Chiu <visitorckw@gmail.com>,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, jk@ozlabs.org,
+        joel@jms.id.au, eajames@linux.ibm.com, andrzej.hajda@intel.com,
+        neil.armstrong@linaro.org, rfoss@kernel.org,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+        dmitry.torokhov@gmail.com, mchehab@kernel.org, awalls@md.metrocast.net,
+        hverkuil@xs4all.nl, miquel.raynal@bootlin.com, richard@nod.at,
+        vigneshr@ti.com, louis.peens@corigine.com, andrew+netdev@lunn.ch,
+        davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+        parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
+        johannes@sipsolutions.net, gregkh@linuxfoundation.org,
+        yury.norov@gmail.com, akpm@linux-foundation.org, alistair@popple.id.au,
+        linux@rasmusvillemoes.dk, Laurent.pinchart@ideasonboard.com,
+        jonas@kwiboo.se, jernej.skrabec@gmail.com, kuba@kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsi@lists.ozlabs.org,
+        dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+        oss-drivers@corigine.com, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+        brcm80211-dev-list.pdl@broadcom.com, linux-serial@vger.kernel.org,
+        bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+        Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: Re: [PATCH v3 01/16] bitops: Change parity8() return type to bool
+User-Agent: K-9 Mail for Android
+In-Reply-To: <cbb26a91-807b-4227-be81-8114e9ea72cb@intel.com>
+References: <20250306162541.2633025-1-visitorckw@gmail.com> <20250306162541.2633025-2-visitorckw@gmail.com> <9d4b77da-18c5-4551-ae94-a2b9fe78489a@kernel.org> <Z8ra0s9uRoS35brb@gmail.com> <a4040c78-8765-425e-a44e-c374dfc02a9c@kernel.org> <20250307193643.28065d2d@pumpkin> <cbb26a91-807b-4227-be81-8114e9ea72cb@intel.com>
+Message-ID: <0F794C6F-32A9-4F34-9516-CEE24EA4BC49@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Jeff Xu <jeffxu@chromium.org>
+On March 12, 2025 4:56:31 PM PDT, Jacob Keller <jacob=2Ee=2Ekeller@intel=2E=
+com> wrote:
+>
+>
+>On 3/7/2025 11:36 AM, David Laight wrote:
+>> On Fri, 7 Mar 2025 12:42:41 +0100
+>> Jiri Slaby <jirislaby@kernel=2Eorg> wrote:
+>>=20
+>>> On 07=2E 03=2E 25, 12:38, Ingo Molnar wrote:
+>>>>
+>>>> * Jiri Slaby <jirislaby@kernel=2Eorg> wrote:
+>>>>  =20
+>>>>> On 06=2E 03=2E 25, 17:25, Kuan-Wei Chiu wrote: =20
+>>>>>> Change return type to bool for better clarity=2E Update the kernel =
+doc
+>>>>>> comment accordingly, including fixing "@value" to "@val" and adjust=
+ing
+>>>>>> examples=2E Also mark the function with __attribute_const__ to allo=
+w
+>>>>>> potential compiler optimizations=2E
+>>>>>>
+>>>>>> Co-developed-by: Yu-Chun Lin <eleanor15x@gmail=2Ecom>
+>>>>>> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail=2Ecom>
+>>>>>> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail=2Ecom>
+>>>>>> ---
+>>>>>>    include/linux/bitops=2Eh | 10 +++++-----
+>>>>>>    1 file changed, 5 insertions(+), 5 deletions(-)
+>>>>>>
+>>>>>> diff --git a/include/linux/bitops=2Eh b/include/linux/bitops=2Eh
+>>>>>> index c1cb53cf2f0f=2E=2E44e5765b8bec 100644
+>>>>>> --- a/include/linux/bitops=2Eh
+>>>>>> +++ b/include/linux/bitops=2Eh
+>>>>>> @@ -231,26 +231,26 @@ static inline int get_count_order_long(unsign=
+ed long l)
+>>>>>>    /**
+>>>>>>     * parity8 - get the parity of an u8 value
+>>>>>> - * @value: the value to be examined
+>>>>>> + * @val: the value to be examined
+>>>>>>     *
+>>>>>>     * Determine the parity of the u8 argument=2E
+>>>>>>     *
+>>>>>>     * Returns:
+>>>>>> - * 0 for even parity, 1 for odd parity
+>>>>>> + * false for even parity, true for odd parity =20
+>>>>>
+>>>>> This occurs somehow inverted to me=2E When something is in parity me=
+ans that
+>>>>> it has equal number of 1s and 0s=2E I=2Ee=2E return true for even di=
+stribution=2E
+>>>>> Dunno what others think? Or perhaps this should be dubbed odd_parity=
+() when
+>>>>> bool is returned? Then you'd return true for odd=2E =20
+>>>>
+>>>> OTOH:
+>>>>
+>>>>   - '0' is an even number and is returned for even parity,
+>>>>   - '1' is an odd  number and is returned for odd  parity=2E =20
+>>>
+>>> Yes, that used to make sense for me=2E For bool/true/false, it no long=
+er=20
+>>> does=2E But as I wrote, it might be only me=2E=2E=2E
+>>=20
+>> No me as well, I've made the same comment before=2E
+>> When reading code I don't want to have to look up a function definition=
+=2E
+>> There is even scope for having parity_odd() and parity_even()=2E
+>> And, with the version that shifts a constant right you want to invert
+>> the constant!
+>>=20
+>> 	David
+>
+>This is really a question of whether you expect odd or even parity as
+>the "true" value=2E I think that would depend on context, and we may not
+>reach a good consensus=2E
+>
+>I do agree that my brain would jump to "true is even, false is odd"=2E
+>However, I also agree returning the value as 0 for even and 1 for odd
+>kind of made sense before, and updating this to be a bool and then
+>requiring to switch all the callers is a bit obnoxious=2E=2E=2E
 
-Add Documentation/features/core/mseal_sys_mappings/arch-support.txt
-
-Signed-off-by: Jeff Xu <jeffxu@chromium.org>
----
- .../core/mseal_sys_mappings/arch-support.txt  | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 Documentation/features/core/mseal_sys_mappings/arch-support.txt
-
-diff --git a/Documentation/features/core/mseal_sys_mappings/arch-support.txt b/Documentation/features/core/mseal_sys_mappings/arch-support.txt
-new file mode 100644
-index 000000000000..8db637254de9
---- /dev/null
-+++ b/Documentation/features/core/mseal_sys_mappings/arch-support.txt
-@@ -0,0 +1,30 @@
-+#
-+# Feature name:          mseal-system-mappings
-+#         Kconfig:       ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
-+#         description:   arch supports mseal system mappings
-+#
-+    -----------------------
-+    |         arch |status|
-+    -----------------------
-+    |       alpha: | TODO |
-+    |         arc: | TODO |
-+    |         arm: |  N/A |
-+    |       arm64: |  ok  |
-+    |        csky: | TODO |
-+    |     hexagon: | TODO |
-+    |   loongarch: | TODO |
-+    |        m68k: | TODO |
-+    |  microblaze: | TODO |
-+    |        mips: | TODO |
-+    |       nios2: | TODO |
-+    |    openrisc: | TODO |
-+    |      parisc: | TODO |
-+    |     powerpc: | TODO |
-+    |       riscv: | TODO |
-+    |        s390: |  ok  |
-+    |          sh: | TODO |
-+    |       sparc: | TODO |
-+    |          um: | TODO |
-+    |         x86: |  ok  |
-+    |      xtensa: | TODO |
-+    -----------------------
--- 
-2.49.0.rc0.332.g42c0ae87b1-goog
-
+Odd =3D 1 =3D true is the only same definition=2E It is a bitwise XOR, or =
+sum mod 1=2E
 
