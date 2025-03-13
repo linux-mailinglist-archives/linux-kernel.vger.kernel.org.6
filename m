@@ -1,62 +1,76 @@
-Return-Path: <linux-kernel+bounces-560179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F627A5FF04
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:16:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 384E1A5FF06
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:16:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 569223ABCB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:15:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0311D3AE938
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9901EE7BB;
-	Thu, 13 Mar 2025 18:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1557B1EEA27;
+	Thu, 13 Mar 2025 18:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="KKtQvRO8"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="41nGl47/"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2061.outbound.protection.outlook.com [40.107.244.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F106E1E8353;
-	Thu, 13 Mar 2025 18:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741889699; cv=none; b=CUzxs7c0GjNHxB8uYybLTZyslhxCk9xgPoeTBi1rTuODkfRR23djhFJXdpToSU4WWOUGzip6IKJfNxSxmfjrp3+fJuxw7xEOmPKQas9dBkrSRvlddJnPS3ogKuXtkQFawKG4BZtv/u6Q66i5YDo0rIm0766d6nYpxq0WExJBkvk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741889699; c=relaxed/simple;
-	bh=hIBH78mE6GO1MejE6dr+XaQJGM2c3fwjbfirYnMXDGo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FjEtX98sz39ff3KDmsDQft/xMgvS2adS0S40QsYMW0ox5IUCqZvCr3D3aY6UW42g5VQP79UEmuffs46Mhh8NW7J+R7aB+pIWgXVMWAk6330+597OKjMpiNtbtmTjcfBAqsOOxGS83ts1Wi93FRIGB0xc4H6yKCHLkNfWqIAgSKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=KKtQvRO8; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZDFym5cLGzlxY1w;
-	Thu, 13 Mar 2025 18:14:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1741889693; x=1744481694; bh=LV8qgu4HNhR4DJaiWiuYUDp2
-	+uUqQ+GBcNS/EVeGX+8=; b=KKtQvRO8z/4Nb47g/yEcTK7W6yIYi2zh4o+BlHcF
-	Xxq0QgPiRUKWg0VtVwmsTbUdAmOlrOgDTjUvZWheXNlLoNKRoYR/qBPztpOFBrVf
-	b4v/eswekj3vLOPQjxMjyiS1HZY5QpwAFPl+b87nN/UgT4lv+bSo8kqh79wgaEdi
-	EVX+mn6EfShJ9N7kr2NPdsxDQcJgohBBQUj1A3S516xz9ZzIh/CoDW4E5kntjQkR
-	c28jtFiAJPz7KemUtZQB7Prqpm60Z285fwVkzsqqLU+rq7waKVuQOmxpyPf8nmYS
-	n4fy/o+Hb5HSpP7L6VkB5xcaknZhBSnV84HJzaJPU8HwdQ==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id RfCfv0FjJaMb; Thu, 13 Mar 2025 18:14:53 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZDFyR13KlzlxY1r;
-	Thu, 13 Mar 2025 18:14:37 +0000 (UTC)
-Message-ID: <41678800-470f-4ea2-802c-f9f4d21817f6@acm.org>
-Date: Thu, 13 Mar 2025 11:14:37 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F2B1F0E27
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741889714; cv=fail; b=a+6JxVIn7TLHrREXdyjMfme0WA0yBMaVli5Kj27WUXNzyky4uuAbNe3Ms8++q94Y8HPu21+FkRjloFsDWwK4iaxlzD8Uj3D9cikRUABFVcT51X1sD8/IsU4QYIOUPbzWOmoPWGSD95HvxKVJd5jtWmaKNdRZD6usMwynXEmIBSc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741889714; c=relaxed/simple;
+	bh=fi/WTZAYQPQLuqHMKgE7vkmY526crvUvCfq6rZAEMNE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=E/mruk7yJXfYxIcoNDdIwRiWBtfHjLa43iE9yFQaZ9i17yxNiYR0CR1PnrXBeB1PQykWSii8IQXE9wr+xzXK8SutN0pKouPzk+fVJgaKGRwJkZOQgRuNr4ScBhPSTYSqcuy9SX/vdbyYVfUnIs28OYA2crxtC4JpdKaJj3Vk2iA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=41nGl47/; arc=fail smtp.client-ip=40.107.244.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T4uS9au/Ph6p5bPZs+p62RIqH6hgtvM61reCP0Ly8Zf2fkMJcukQp6WAUqRDhs0F4LkyXDBzWmmZWFwANiRAeZp4c+1qXauOnCgFkmaDRp5sLZ3NjzcvvM7LRvk7aQvVEydMvB8Kf0KoV+CtZXHwby4FDa9W/Y/1Qeet8tr/cwEzqojBtBT8rnm/UrUpPrTWN8g6HiL8gsBLKvw4hrFXV0nVGpZkYC2ghBTqiutpz0LIwC/OKZRSaoSwmBAz1zNWiQdZU9VHkyWpSPevkA//yo17i49VbG1lWb1FEZWfVwyrnOxr29KjiuP0jPt2Lp7SoEZe40LoWDoCZyGWqFDYmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xmFaiIWoEMVzk08vBUW3BM6kwDDw9O6do6x3Rsy42eo=;
+ b=x/koPgGsh8pT0lWxz6ajpIXGEdHKcojPTGARduC1/3FurwuR/DG7IskjtcsnDWqdHp9BNFo0PUWA/2EBSW1Zbgm5CRwULOKR2tCn35Vo0LtHd2D/xihGOZGa6qseRPeaTYRvzREpXKFOq4GaQFNdlmy6X5dAOWIPbAJZbOMu9l4XLh42yE3WtGTYOO/tKk/JzJJsGueOayVl9iUDmTg1Am54iHhEQrWCA9eMyaeqif2oREnFxJfcAW8V1BW4bX4a7nXjs3o+YkHlUwB9YYaiHyoKbbJ8NElnTDZKEudt1ttExAz8vgCT0ySpZQ+p4brWnTfjghAJ5w5ZJjVGLYgnJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=bytedance.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xmFaiIWoEMVzk08vBUW3BM6kwDDw9O6do6x3Rsy42eo=;
+ b=41nGl47/061tcym7J1ga08PeMI56sTDeC5nJKpb9BkBroZimB/1GONZ042R5z3edtk2vqlV5N1kvEFma0C9Ks2sHVXErRSW5SBzktmnB5KirEwqS1IgT62bsVZTXlu1RG3I3bW8j7LPYt42xBdHf+tWuaNkNpPXpk4DoQJ3JrrU=
+Received: from CY8PR11CA0003.namprd11.prod.outlook.com (2603:10b6:930:48::29)
+ by MN0PR12MB6293.namprd12.prod.outlook.com (2603:10b6:208:3c2::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.28; Thu, 13 Mar
+ 2025 18:14:58 +0000
+Received: from CY4PEPF0000EE3C.namprd03.prod.outlook.com
+ (2603:10b6:930:48:cafe::c4) by CY8PR11CA0003.outlook.office365.com
+ (2603:10b6:930:48::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.24 via Frontend Transport; Thu,
+ 13 Mar 2025 18:14:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000EE3C.mail.protection.outlook.com (10.167.242.13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Thu, 13 Mar 2025 18:14:56 +0000
+Received: from [172.31.188.187] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Mar
+ 2025 13:14:51 -0500
+Message-ID: <c9b1d117-2824-4238-bb8c-6390ec3e931b@amd.com>
+Date: Thu, 13 Mar 2025 23:44:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,111 +78,195 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] scsi: ufs: core: add device level exception
- support
-To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>, quic_cang@quicinc.com,
- quic_nitirawa@quicinc.com, avri.altman@wdc.com, peter.wang@mediatek.com,
- manivannan.sadhasivam@linaro.org, minwoo.im@samsung.com,
- adrian.hunter@intel.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Bean Huo <beanhuo@micron.com>, Ziqi Chen <quic_ziqichen@quicinc.com>,
- Keoseong Park <keosung.park@samsung.com>,
- Gwendal Grignou <gwendal@chromium.org>, Al Viro <viro@zeniv.linux.org.uk>,
- Eric Biggers <ebiggers@google.com>, open list <linux-kernel@vger.kernel.org>
-References: <772730b9a036a33bebc27cb854576a012e76ca91.1741282081.git.quic_nguyenb@quicinc.com>
+Subject: Re: [RFC PATCH 2/7] sched/fair: Handle throttle path for task based
+ throttle
+To: Aaron Lu <ziqianlu@bytedance.com>, Valentin Schneider
+	<vschneid@redhat.com>, Ben Segall <bsegall@google.com>, Peter Zijlstra
+	<peterz@infradead.org>, Josh Don <joshdon@google.com>, Ingo Molnar
+	<mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
+	<rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>, Chengming Zhou
+	<chengming.zhou@linux.dev>, Chuyi Zhou <zhouchuyi@bytedance.com>
+References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
+ <CANCG0GcFF7cnR4rCbU5MmY1Gq3M+r4gPXv39QPXXC=Cdr6sRww@mail.gmail.com>
 Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <772730b9a036a33bebc27cb854576a012e76ca91.1741282081.git.quic_nguyenb@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <CANCG0GcFF7cnR4rCbU5MmY1Gq3M+r4gPXv39QPXXC=Cdr6sRww@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE3C:EE_|MN0PR12MB6293:EE_
+X-MS-Office365-Filtering-Correlation-Id: ebb01a8b-ba4a-489e-4048-08dd625af5f5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NlRiRmF6UUNzOXNxZGF6c0JBcjlkYWZ3d1NOZHV6QW1ZdGFVV2UrWWJiUmdC?=
+ =?utf-8?B?SVFEZ2lHR2ZXaHFEU1BLdHV0bXlDRXNmU21YOVErcklCcThlMWJsWnExOFhv?=
+ =?utf-8?B?aTBoL1hpNUlwSno2R2crRlJlSFJxcnlpV1oxSjVVK1l6aE55Z1ptNThYMGJz?=
+ =?utf-8?B?S0FVdnFudEVCNUVNdGtaVHRVL1N2VGp2SFg5NjRYcWp4OXljbTZMR1ZrTmRD?=
+ =?utf-8?B?bEZIdnRpWTIxSGFDMnZYRHcyNFpsRHcwQXM3MzYwOVdpaGRzbGM0YTZ6eHV4?=
+ =?utf-8?B?VHpabUlkcStQUVd3SmpzUDVwTDM4SndtMytOWUN4blhpUFdvTnRYWGN4aHdj?=
+ =?utf-8?B?MnVOTVc2OXM5cWJWL1BWbTdYVHNEQVBIQzNUT2tEZWtOOTZ3N3U4ODJ1T2tN?=
+ =?utf-8?B?aE9sN0NVYTc0Z2U3cC9QbkR1ZmYrL2FNMko2ZUx4eDFrMS9lWHR1WFlRdWtk?=
+ =?utf-8?B?ZzcvMlhLVDN5aGUxakVxbitaMWFFeU1KSFlJQSt1OGdGVkVuUWJESDZIbnU0?=
+ =?utf-8?B?NDVGMUlHSHBHc2czeVdsN0xGbUZsSVdHMUFSbFB3WWpLbnc3ZGxMaG9aWXkx?=
+ =?utf-8?B?em96dnU4d011Rmd3ODNZL2lCbFVOaUs5S3dqelBYTWZicVVXSm5aOGxBTnVt?=
+ =?utf-8?B?bVloZUtLZC9EUkVaVWdiajdvU0tSSURrU05GNHc2Rm9lb3dleUhod1N4WUhP?=
+ =?utf-8?B?eDJDQUtOWWd5WE9aSDlCdVVJUXhUb3RTQ2pVYTFZQ3pZOFl0eGVJOEJvdXBE?=
+ =?utf-8?B?TE9xbmtJZk1aSmc4VVV3aGE1dW80ZXNLWkpSYzlHQzI0ZDNDdDV4KzVFaGd3?=
+ =?utf-8?B?akZLbmtGRVpXZ3JJS1g3ZnBBZExhak4wdGJoYllBRVpYR2krT0M2eEhGRktl?=
+ =?utf-8?B?UHZyMFZsaUNGV2RNenUyZVU5SHdzOGhyNDdISFkyQXYvU2w2TzZXdTJQUjdY?=
+ =?utf-8?B?T1JwMFA5ZWY3UGxpeGJjL1FmOUd4L3RtQ2RBRlBOSTNRUW44SWFySlBSTXRa?=
+ =?utf-8?B?ZlVyZlgrT0RKa3Azd25xNEZJaEZSQXdUR2tHdlJ5bGh3bno3N0NqcThsc0NR?=
+ =?utf-8?B?WE5HM3NWSUt4RjRYM3ZkZ1B2anl0Ty9Ua09GWk5nWGt1b2Znd3RSTjlCaGJX?=
+ =?utf-8?B?QjFlaEx6ZVQ2U2RaaVk3WTJNYlRRdmpNTE51aWxFaTdNaU5iL0lxWUZ4dnRo?=
+ =?utf-8?B?aDRyWUJBdzJkdjVTSUxTOTBBcm5ubzQzOUwyUkplNytvaXQ1Vk5iYWdYRzZ6?=
+ =?utf-8?B?dU9TUFIwREg4Z1duT01GWE5TcHdPOHFGc2xBTjV5aStHTGNVNGFYOG5yaG5B?=
+ =?utf-8?B?R0drRFJHYjZSaFFPV0NDcXBKckkvYkJpK245WGlBNkxNaG9BWk1Xa3cxOFdT?=
+ =?utf-8?B?bFpGNUdaMW5mQ3hsT1JTMGY3MnNRT3hIOUJNVTZ5UlppaEx2bXBHc0RVSGtp?=
+ =?utf-8?B?SElieWd1WkpScnFHbDNhRUhHZCs2aGs3bjNKQ0hlRHlxTVQzS0lZZE5sTHpM?=
+ =?utf-8?B?eFhOUWI5MkhNSkdBTm5lWDA2V0tKeWk4WmVzTzZ5MndwRldyT1prOGEwVEZG?=
+ =?utf-8?B?MU1NWUl4Y1BKL1Y2ZkZYdGZSNVQvbGt6VTRBUVRKWXIxVVcwQ2ZnRDB1STdi?=
+ =?utf-8?B?MklqakJiaTRFSTExbVJ0eE9nWFNmekRNdnJCQ1NmSEJMTU1teXBabThFaStl?=
+ =?utf-8?B?Q3poRThxMklOSXkxWjcxUlpsM2Y4SEV5dzVMZ3F6R1BDQlE2S3MwRjF2cGZL?=
+ =?utf-8?B?dWNtTjR2TWxBMytHZVlGKy9iTUxkQnkwMitOQ3YrUTE4K0kzQ3BZZ09iRWJ0?=
+ =?utf-8?B?WlRoaEZ2OU5ZOFNTaVN1RW1iNFhGQk9adGJJYnZ0bXJsdS9pcEY4YWhvdWt4?=
+ =?utf-8?B?TTB3V2EwbTdBSThiazMxMFZCaHpBVmZ1SGZoVHVrVWhvZTRiekZwcDVZUG1H?=
+ =?utf-8?B?ZEtKTnJVWXpWb0pGN1dBRm9xc25NQ1AxUG5MNFBncmlCQ28xbUFqSHI1dUgw?=
+ =?utf-8?B?UUJBOUszdStnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 18:14:56.8141
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebb01a8b-ba4a-489e-4048-08dd625af5f5
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE3C.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6293
 
-On 3/6/25 9:31 AM, Bao D. Nguyen wrote:
-> +What:		/sys/bus/platform/drivers/ufshcd/*/device_lvl_exception
-> +What:		/sys/bus/platform/devices/*.ufs/device_lvl_exception
-> +Date:		March 2025
-> +Contact:	Bao D. Nguyen <quic_nguyenb@quicinc.com>
-> +Description:
-> +		The device_lvl_exception is a counter indicating the number
-> +		of times the device level exceptions have occurred since the
-> +		last time this variable is reset. Read the device_lvl_exception_id
-> +		sysfs node to know more information about the exception.
-> +		The file is read only.
+Hello Aaron,
 
-Shouldn't this sysfs attribute have a "_count" suffix to make it clear
-that it represents a count?
+P.S. I've fixed the wrapped lines and have been testing the series. So
+far I haven't run into any issues yet on my machine. Will report back if
+anything surface.
 
-Additionally, here and below, please change "file" into "attribute".
+I've few comments inlined below.
 
-> +What:		/sys/bus/platform/drivers/ufshcd/*/device_lvl_exception_id
-> +What:		/sys/bus/platform/devices/*.ufs/device_lvl_exception_id
-> +Date:		March 2025
-> +Contact:	Bao D. Nguyen <quic_nguyenb@quicinc.com>
-> +Description:
-> +		Reading the device_lvl_exception_id returns the device JEDEC
-> +		standard's qDeviceLevelExceptionID attribute. The definition of the
-> +		qDeviceLevelExceptionID is the ufs device vendor specific design.
-> +		Refer to the device manufacturer datasheet for more information
-> +		on the meaning of the qDeviceLevelExceptionID attribute value.
-> +		The file is read only.
+On 3/13/2025 12:51 PM, Aaron Lu wrote:
 
-I'm not sure it is useful to export vendor-specific information to
-sysfs.
+[..snip..]
 
-> diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
-> index 90b5ab6..0248288a 100644
-> --- a/drivers/ufs/core/ufs-sysfs.c
-> +++ b/drivers/ufs/core/ufs-sysfs.c
-> @@ -466,6 +466,56 @@ static ssize_t critical_health_show(struct device *dev,
->   	return sysfs_emit(buf, "%d\n", hba->critical_health_count);
->   }
->   
-> +static ssize_t device_lvl_exception_show(struct device *dev,
-> +					 struct device_attribute *attr,
-> +					 char *buf)
+> +static inline void task_throttle_setup_work(struct task_struct *p)
 > +{
-> +	struct ufs_hba *hba = dev_get_drvdata(dev);
+> +	/*
+> +	 * Kthreads and exiting tasks don't return to userspace, so adding the
+> +	 * work is pointless
+> +	 */
+> +	if ((p->flags & (PF_EXITING | PF_KTHREAD)))
+> +		return;
 > +
-> +	if (hba->dev_info.wspecversion < 0x410)
-> +		return -EOPNOTSUPP;
+> +	if (task_has_throttle_work(p))
+> +		return;
 > +
-> +	return sysfs_emit(buf, "%u\n", hba->dev_lvl_exception_count);
+> +	task_work_add(p, &p->sched_throttle_work, TWA_RESUME);
+
+Does it make sense to add a throttle work to a delayed task? It may be
+dequeued soon and when it is queued back, the throttle situation might
+have changed but the work is unnecessarily run. Could the throttle work
+be instead added at the point of enqueue for delayed tasks?
+
 > +}
-
-The preferred approach for sysfs attributes that are not supported is to 
-make these invisible rather than returning an error code.
-
-> +static ssize_t device_lvl_exception_id_show(struct device *dev,
-> +					    struct device_attribute *attr,
-> +					    char *buf)
-> +{
-> +	struct ufs_hba *hba = dev_get_drvdata(dev);
-> +	u64 exception_id;
-> +	int err;
 > +
-> +	ufshcd_rpm_get_sync(hba);
-> +	err = ufshcd_read_device_lvl_exception_id(hba, &exception_id);
-> +	ufshcd_rpm_put_sync(hba);
+>   static int tg_throttle_down(struct task_group *tg, void *data)
+>   {
+>   	struct rq *rq = data;
+>   	struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
+> +	struct task_struct *p;
+> +	struct rb_node *node;
 > +
-> +	if (err)
-> +		return err;
+> +	cfs_rq->throttle_count++;
+> +	if (cfs_rq->throttle_count > 1)
+> +		return 0;
+> 
+>   	/* group is entering throttled state, stop time */
+> -	if (!cfs_rq->throttle_count) {
+> -		cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
+> -		list_del_leaf_cfs_rq(cfs_rq);
+> +	cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
+
+Once cencern here is that the PELT is seemingly frozen despite the
+hierarchy being runnable. I've still not tracked down whether it'll
+cause any problems once unthrottled and all throttled time is negated
+from the pelt clock but is there any concerns here?
+
+Maybe this can be done at dequeue when cfs_rq->nr_queued on a
+throttled_hierarchy() reached 0.
+
+> +	list_del_leaf_cfs_rq(cfs_rq);
+> 
+> -		SCHED_WARN_ON(cfs_rq->throttled_clock_self);
+> -		if (cfs_rq->nr_queued)
+> -			cfs_rq->throttled_clock_self = rq_clock(rq);
+> +	SCHED_WARN_ON(cfs_rq->throttled_clock_self);
+> +	if (cfs_rq->nr_queued)
+> +		cfs_rq->throttled_clock_self = rq_clock(rq);
 > +
-> +	hba->dev_lvl_exception_id = exception_id;
-> +	return sysfs_emit(buf, "%llu\n", exception_id);
-> +}
-
-Just like device_lvl_exception, this attribute shouldn't be visible if
-device level exceptions are not supported.
-
-> +	if (status & hba->ee_drv_mask & MASK_EE_DEV_LVL_EXCEPTION) {
-> +		hba->dev_lvl_exception_count++;
-> +		sysfs_notify(&hba->dev->kobj, NULL, "device_lvl_exception");
+> +	WARN_ON_ONCE(!list_empty(&cfs_rq->throttled_limbo_list));
+> +	/*
+> +	 * rq_lock is held, current is (obviously) executing this in kernelspace.
+> +	 *
+> +	 * All other tasks enqueued on this rq have their saved PC at the
+> +	 * context switch, so they will go through the kernel before returning
+> +	 * to userspace. Thus, there are no tasks-in-userspace to handle, just
+> +	 * install the task_work on all of them.
+> +	 */
+> +	node = rb_first(&cfs_rq->tasks_timeline.rb_root);
+> +	while (node) {
+> +		struct sched_entity *se = __node_2_se(node);
+> +
+> +		if (!entity_is_task(se))
+> +			goto next;
+> +
+> +		p = task_of(se);
+> +		task_throttle_setup_work(p);
+> +next:
+> +		node = rb_next(node);
 > +	}
+> +
+> +	/* curr is not in the timeline tree */
+> +	if (cfs_rq->curr && entity_is_task(cfs_rq->curr)) {
 
-sysfs_notify() may sleep and hence must not be called from an interrupt
-handler.
+I believe we can reach here from pick_next_task_fair() ->
+check_cfs_rq_runtime() -> throttle_cfs_rq() in which case cfs_rq->curr
+will still be set despite the task being blocked since put_prev_entity()
+has not been called yet.
 
-Thanks,
+I believe there should be a check for task_on_rq_queued() here for the
+current task.
 
-Bart.
+> +		p = task_of(cfs_rq->curr);
+> +		task_throttle_setup_work(p);
+>   	}
+> -	cfs_rq->throttle_count++;
+> 
+>   	return 0;
+>   }
+> 
+
+[..snip..]
+
+-- 
+Thanks and Regards,
+Prateek
+
 
