@@ -1,147 +1,90 @@
-Return-Path: <linux-kernel+bounces-558913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E82A5ED00
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:29:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9A1AA5ED07
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:30:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 624FD3B2C7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:29:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2870B1748BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56CC3222589;
-	Thu, 13 Mar 2025 07:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dw6NfMQk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8A822DFA2;
+	Thu, 13 Mar 2025 07:30:24 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E341FBE9C;
-	Thu, 13 Mar 2025 07:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DA322DF95
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741850947; cv=none; b=FFZsBYiUN297hh410+D2Q3ODlLlbQS45rBd6pwaTt9dBm42YfOKcOxk3QOGJLr+81INlrUTDALfS8xfEtNeQGa49TgxLGnNeMFEN2e8sS/tdz4wAhotg1mvVcuVgpZQeij3Z7kSuLogg7bn7X/bcBhsHm+qWkkt3NekD/JgFfjk=
+	t=1741851024; cv=none; b=JWtZn5DFqQnaVQiHw1nQlU/r/0hYwTR3sndfZhXRXZt+lnt4mMYl1dtuy9azKht3r1zKXRrEfoa9g0avlGpZ7CgX8etM3fH8GKSMfXsPYhfmfmQlUy9qCBBK0+qVk1NuhkXtfTbRv7MMLi9eT8yXusbga+gWaVyfW2eqg0rF3hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741850947; c=relaxed/simple;
-	bh=bXd5Zvd7dZCJ4R1puUhsaSnoSdsh9qOuJCYZlCWoGgg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jti9vEUTJoKX7SJty8uZoxC3N+F/1MwYrVlTDDwTpa4vR7pU/L6y+LjzlQDSdCoMMv53OAOWb4TD/rIa8IaOjSJoo/qIF2smC73BXWWduTm1bpRt27DAwMsvmjdciKPLz/TfxD80d+WbBJZlztqY1r2riwnor/BDoL/MSo3LwHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dw6NfMQk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCDF2C4CEDD;
-	Thu, 13 Mar 2025 07:29:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741850947;
-	bh=bXd5Zvd7dZCJ4R1puUhsaSnoSdsh9qOuJCYZlCWoGgg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dw6NfMQko4STR5OR0+dkKeiLiHPVnPVIwaPlVHIXrgH/3QvFEp4FDClO9lW3KPBbo
-	 XNYNgGRRu9VX2X/iw47GZ+v8N3O0jMdxo4Egj88CjCFiLkhgBaE4EeXfm0Xt8JaT3N
-	 B4dw0g90oNdwfWgHb+tD4O7PrCxnUNEyk+Xcajep5EfUMRDuyG6HPS2IC3hGmLrVAf
-	 97+oYBs2OwbmBJU2X5xDFvUD8nqdJtSG7n3BuMf1ZPcUmSpVBNAcaJ8zz4p/gHjTia
-	 r+WZOwBAP/kdqFX1NnIFeH8q0CS6q4EkhEMD8sxpk09tAdacrLzMj0QempPAvCP+7o
-	 sK0rCcYjRT1Tg==
-Date: Thu, 13 Mar 2025 00:29:05 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH 3/3] perf hist stdio: Do bounds check when printing
- callchains to avoid UB with new gcc versions
-Message-ID: <Z9KJQdUkEel3OP1X@google.com>
-References: <20250310194534.265487-1-acme@kernel.org>
- <20250310194534.265487-4-acme@kernel.org>
- <Z89f6JbpZUQoi2hR@google.com>
+	s=arc-20240116; t=1741851024; c=relaxed/simple;
+	bh=LgcwkCtuF2Bj7bpRCoqVugs+6167YT67viU1v7T1oS4=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=BZiL6KYSCUfB9IKmgevDOTF4jMzG7lGSC16kPOM6lwJkPTQMWh8YesOsjgLTyy+UcMcA/ELFWyGXgSyuYwwDRfDVpUr/8WejhbBbR0fBvAvcaGVJZL+beIo38fPBR7gFYZjiaoAt80+fBZ+FKxGyV5Jdrdx3+kqMOb8IgR8QCBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZCzfv649Dz8R04F;
+	Thu, 13 Mar 2025 15:30:15 +0800 (CST)
+Received: from xaxapp02.zte.com.cn ([10.88.97.241])
+	by mse-fl2.zte.com.cn with SMTP id 52D7U4F9001072;
+	Thu, 13 Mar 2025 15:30:04 +0800 (+08)
+	(envelope-from ye.xingchen@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid31;
+	Thu, 13 Mar 2025 15:30:06 +0800 (CST)
+Date: Thu, 13 Mar 2025 15:30:06 +0800 (CST)
+X-Zmail-TransId: 2afb67d2897e712-c609d
+X-Mailer: Zmail v1.0
+Message-ID: <202503131530063539XBMkqa4y8t8Gbdie-DRn@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z89f6JbpZUQoi2hR@google.com>
+Mime-Version: 1.0
+From: <ye.xingchen@zte.com.cn>
+To: <tglx@linutronix.de>
+Cc: <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIIHYyXSBnZW5pcnE6IEZpeCBwYXJhbWV0ZXIgdHlwZSBpbiBkZWNsYXJhdGlvbiBhbmQgZGVmaW5pdGlvbg==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 52D7U4F9001072
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 67D28987.002/4ZCzfv649Dz8R04F
 
-On Mon, Mar 10, 2025 at 02:55:52PM -0700, Namhyung Kim wrote:
-> On Mon, Mar 10, 2025 at 04:45:33PM -0300, Arnaldo Carvalho de Melo wrote:
-> > From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > 
-> > Do a simple bounds check to avoid this on new gcc versions:
-> > 
-> >   31    15.81 fedora:rawhide                : FAIL gcc version 15.0.1 20250225 (Red Hat 15.0.1-0) (GCC)
-> >     In function 'callchain__fprintf_left_margin',
-> >         inlined from 'callchain__fprintf_graph.constprop' at ui/stdio/hist.c:246:12:
-> >     ui/stdio/hist.c:27:39: error: iteration 2147483647 invokes undefined behavior [-Werror=aggressive-loop-optimizations]
-> 
-> Hmm.. does it warn about a signed integer overflow?
-> 
-> 2147483647 is 0x7fffffff in hex and it should be INT_MAX.
-> I'm not sure what is the problem.
+From: YeXingchen <ye.xingchen@zte.com.cn>
 
-Maybe the aggressive loop optimization can unroll the loop more than the
-INT_MAX...?  Anyway the fix is simple and makes sense.
+The declaration of irq_set_irqchip_state in the header file uses
+bool state as the parameter type, while the definition uses bool val.
 
-> 
-> 
-> >        27 |         for (i = 0; i < left_margin; i++)
-> >           |                                      ~^~
-> >     ui/stdio/hist.c:27:23: note: within this loop
-> >        27 |         for (i = 0; i < left_margin; i++)
-> >           |                     ~~^~~~~~~~~~~~~
-> >     cc1: all warnings being treated as errors
-> >     --
-> >     util/units.c: In function 'unit_number__scnprintf':
-> >     util/units.c:67:24: error: initializer-string for array of 'char' is too long [-Werror=unterminated-string-initialization]
-> >        67 |         char unit[4] = "BKMG";
-> >           |                        ^~~~~~
-> >     cc1: all warnings being treated as errors
-> 
-> This part belongs to the previous commit. :)
+This patch aligns the parameter name in the definition with the
+declaration,changing val to state to ensure consistency.
 
-I'll drop this part.
+Signed-off-by: YeXingchen <ye.xingchen@zte.com.cn>
+---
+ kernel/irq/manage.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Namhyung
-
-> 
-> > 
-> > Cc: Adrian Hunter <adrian.hunter@intel.com>
-> > Cc: Ian Rogers <irogers@google.com>
-> > Cc: James Clark <james.clark@linaro.org>
-> > Cc: Jiri Olsa <jolsa@kernel.org>
-> > Cc: Kan Liang <kan.liang@linux.intel.com>
-> > Cc: Namhyung Kim <namhyung@kernel.org>
-> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > ---
-> >  tools/perf/ui/stdio/hist.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/tools/perf/ui/stdio/hist.c b/tools/perf/ui/stdio/hist.c
-> > index 74b2c619c56c8ba3..7ac4b98e28bca82e 100644
-> > --- a/tools/perf/ui/stdio/hist.c
-> > +++ b/tools/perf/ui/stdio/hist.c
-> > @@ -1,4 +1,5 @@
-> >  // SPDX-License-Identifier: GPL-2.0
-> > +#include <limits.h>
-> >  #include <stdio.h>
-> >  #include <stdlib.h>
-> >  #include <linux/string.h>
-> > @@ -24,6 +25,9 @@ static size_t callchain__fprintf_left_margin(FILE *fp, int left_margin)
-> >  	int i;
-> >  	int ret = fprintf(fp, "            ");
-> >  
-> > +	if (left_margin > USHRT_MAX)
-> > +		left_margin = USHRT_MAX;
-> > +
-> >  	for (i = 0; i < left_margin; i++)
-> >  		ret += fprintf(fp, " ");
-> >  
-> > -- 
-> > 2.48.1
-> > 
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index f300bb6be3bd..fc44c2df8d01 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -2860,7 +2860,7 @@ EXPORT_SYMBOL_GPL(irq_get_irqchip_state);
+  *	interrupt controller has per-cpu registers.
+  */
+ int irq_set_irqchip_state(unsigned int irq, enum irqchip_irq_state which,
+-			  bool val)
++			  bool state)
+ {
+ 	struct irq_desc *desc;
+ 	struct irq_data *data;
+-- 
+2.25.1
 
