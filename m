@@ -1,129 +1,138 @@
-Return-Path: <linux-kernel+bounces-559646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1EFFA5F720
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:00:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71635A5F722
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:00:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76ED117FB4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:00:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E4613A5B41
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E94267AEA;
-	Thu, 13 Mar 2025 14:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nZJJeY8A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00C426770E;
-	Thu, 13 Mar 2025 14:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351D07346D;
+	Thu, 13 Mar 2025 14:00:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C2A26AF6
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741874408; cv=none; b=kpYTei+y2ea8wkgNaBqGbvXZ72M7mGO5c+skQIgS/Y2MLXysJIzeMRXs9yY7QMGKdChM3xqtstYVkHkrQZDHxI9VNC3yKcDANyErOllfl3eydgUFtJk/Sy3QfRU9UWSwXxJ1WvNkjP4mLqjlJ+q85T+mCK2FNTEpz4Uvc/yzMuI=
+	t=1741874429; cv=none; b=kHge1JO19tHS/gM/9edkrZe838eJm+ccfcv+pnWuf0hSTqPXNJ3imSfFRbkZbx8dxLjXOC+bO+16EzvAUi9HZDNx0XrrxCzIRk38Zqtzzzvn/3VyErtj5Edt7v5MhgvCjJoOUG9UrlE/xmxCKPMQ01oWWDHNFW8fB4PX3PamqL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741874408; c=relaxed/simple;
-	bh=sUVQ7XZyhgDlaxx4SkEh499D6uLm9wuMV2Qxd21NbIY=;
+	s=arc-20240116; t=1741874429; c=relaxed/simple;
+	bh=eretv0LIR39IzkiHxmfUE3MrQAkp3aA1zPmW1cyB2oE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ekc9tDYKAj5//rC2cBS2krkTRUwxp+CK12e/V3Hsd8xZByxA75tbMiPAsuDs7qtSSmraGhPumx3oxDUTJ7y9FGYsBDlcodO0TfqbXgIBjBzgCKM4AXXNqfm4V5yYsN8dVc473L92dIB08thX/wBg7P2EYb26edAIC19uNUX7tjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nZJJeY8A; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741874407; x=1773410407;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sUVQ7XZyhgDlaxx4SkEh499D6uLm9wuMV2Qxd21NbIY=;
-  b=nZJJeY8AwXAC3tJ9QerQsJX9XSUpP5mp11wnGZ7WLc0grvWbWG0/Ah4a
-   g/mhyD7W46DTnkGcsaCB5lFy+ILijTibzShKHhlZh3zSdtioOZfOL8xts
-   OVRKxIe9MC1Lz1ffQsMpMCwa0/KkrTNRUN15OW7LGFZJqZBChNUrEugKP
-   m+XGy32qaeySQRZ7EhmnW2yfkpb2muRaLd89z+bYVU8tipVdwMabyW7E/
-   vAfT4RDU4VFnAzO28KZ4JaPqvQQmvlqFfW3ekRbKuVjIRV19ZnduJVoQG
-   cdjSrZKRXHhJ0QX2VFRTHaBBsQgxi8fAjMQGFY0PLrH2UZMLeH629trMn
-   A==;
-X-CSE-ConnectionGUID: 7OYyNStwT82I0BFGz3Xpnw==
-X-CSE-MsgGUID: Rh5ebv9oTAuApUXZVjQG7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="42241543"
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="42241543"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:00:06 -0700
-X-CSE-ConnectionGUID: XsgXMK46TvO1CDi73/STDg==
-X-CSE-MsgGUID: lFO0idrySbibY47t/qecbA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="120953904"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:00:05 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tsj6P-00000002C2v-2hJi;
-	Thu, 13 Mar 2025 16:00:01 +0200
-Date: Thu, 13 Mar 2025 16:00:01 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
-	raymond.tan@intel.com, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] gpio: elkhartlake: depend on
- MFD_INTEL_EHL_PSE_GPIO
-Message-ID: <Z9Lk4e_09UbGFnid@smile.fi.intel.com>
-References: <20250307052231.551737-1-raag.jadav@intel.com>
- <20250307052231.551737-3-raag.jadav@intel.com>
- <Z8_aJqNKK9AgBnK8@black.fi.intel.com>
- <Z9FpU0Ik_4yCU9XB@smile.fi.intel.com>
- <Z9G-RSfcRmALtgJe@black.fi.intel.com>
- <Z9HTU2BlXIa95S0V@smile.fi.intel.com>
- <Z9KjIAMfRIegA2vI@black.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KMUQ5qS6ti2GQwOavJyovLANKCIKakOSxE7/40qa08q386+nuVZLaElUYBZ1XfYPMHF6r9ssI9d7GTJ0CMXehY3IVECydPu36i0rdac/hqHCVkZFXL915KzQ/vVubX73mOYhZP3kjfWJqeXz1LMr2xxN5USSZf4e/Q3jHULkxqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C62F91424;
+	Thu, 13 Mar 2025 07:00:37 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD2283F694;
+	Thu, 13 Mar 2025 07:00:24 -0700 (PDT)
+Date: Thu, 13 Mar 2025 14:00:21 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Will Deacon <will@kernel.org>
+Cc: Sebastian Ene <sebastianene@google.com>, catalin.marinas@arm.com,
+	Sudeep Holla <sudeep.holla@arm.com>, joey.gouly@arm.com,
+	maz@kernel.org, oliver.upton@linux.dev, snehalreddy@google.com,
+	suzuki.poulose@arm.com, vdonnefort@google.com, yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	Andrei Homescu <ahomescu@google.com>
+Subject: Re: [PATCH v2 4/4] KVM: arm64: Release the ownership of the hyp rx
+ buffer to Trustzone
+Message-ID: <Z9Lk9QwAGhYxk8lC@bogus>
+References: <20250227181750.3606372-1-sebastianene@google.com>
+ <20250227181750.3606372-5-sebastianene@google.com>
+ <20250305004522.GC31667@willie-the-truck>
+ <20250305094104.vctshdtgdukno2aj@bogus>
+ <20250305193425.GA32246@willie-the-truck>
+ <Z8ltm55D1jrv8QtX@bogus>
+ <20250313121559.GB7356@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z9KjIAMfRIegA2vI@black.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250313121559.GB7356@willie-the-truck>
 
-On Thu, Mar 13, 2025 at 11:19:28AM +0200, Raag Jadav wrote:
-> On Wed, Mar 12, 2025 at 08:32:51PM +0200, Andy Shevchenko wrote:
-> > On Wed, Mar 12, 2025 at 07:03:01PM +0200, Raag Jadav wrote:
-> > > On Wed, Mar 12, 2025 at 01:00:35PM +0200, Andy Shevchenko wrote:
-> > > > On Tue, Mar 11, 2025 at 08:37:26AM +0200, Raag Jadav wrote:
-> > > > > On Fri, Mar 07, 2025 at 10:52:28AM +0530, Raag Jadav wrote:
-> > > > > > Now that we have Intel MFD driver for PSE GPIO, depend on it.
-> > > > 
-> > > > > Andy, any guidance on GPIO?
-> > > > 
-> > > > I'm not sure what we are waiting here from me. Hadn't I reviewed your GPIO
-> > > > part already?
-> > > 
-> > > Ah, I added MFD dependency for leaf drivers after your v1 review.
-> > > So this one seems missing the tag. Can I add it?
-> > 
-> > I see, but this can be added later on.
-> > And on the second thought, do we accept the configurations
-> > when user wants to have GPIO on EHL, and doesn't care about TIO?
-> 
-> Yes, here we're making the leaf driver (GPIO) depend on MFD regardless
-> of what TIO config is.
-> 
-> > Maybe this patch is not needed after all?
-> 
-> My understanding is that GPIO should depend on MFD. Not much point in
-> adding a standalone leaf driver right?
+On Thu, Mar 13, 2025 at 12:15:59PM +0000, Will Deacon wrote:
+> On Thu, Mar 06, 2025 at 09:40:43AM +0000, Sudeep Holla wrote:
+> > On Wed, Mar 05, 2025 at 07:34:26PM +0000, Will Deacon wrote:
+> > > On Wed, Mar 05, 2025 at 09:41:04AM +0000, Sudeep Holla wrote:
+> > > > On Wed, Mar 05, 2025 at 12:45:23AM +0000, Will Deacon wrote:
+> > > > > Hmm, the FFA spec is characteristically unclear as to whether or not we
+> > > > > need to release the rx buffer in the case that the flags indicate use of
+> > > > > the rx buffer but the returned partition count is 0.
+> > > > >
+> > > > > Sudeep -- do you know what we should be doing in that case?
+> > > > >
+> > > >
+> > > > We need to call RX_RELEASE here. I went back to the spec to confirm the
+> > > > same again.
+> > > >
+> > > > v1.2 EAC0 spec Section 7.2.2.4.2 Transfer of buffer ownership
+> > > > (Or just look for the section title in any version of the spec)
+> > > > "
+> > > > 2. Ownership transfer for the RX buffer takes place as follows.
+> > > >     2. For a framework message,
+> > > >        1. Completion of the FFA_PARTITION_INFO_GET ABI transfers the ownership
+> > > >        of the caller’s RX buffer from the Producer to the Consumer.
+> > > > 3. For both types of messages, an invocation of the following FF-A ABIs
+> > > >     transfers the ownership from the Consumer to the Producer.
+> > > >        1. FFA_MSG_WAIT ...
+> > > >        2. FFA_RX_RELEASE.
+> > > > "
+> > > >
+> > > > Hope that helps, can dig deeper if there are any ambiguities around this.
+> > >
+> > > Thanks Sudeep, but that also makes it sound like we need the RX_RELEASE
+> > > even if we're not using the RX buffer per the input flags. :/
+> > >
+> >
+> > Good spot, I had forgotten about the input flags that can avoid using the
+> > buffer. I will see if we can improve the spec in that regards.
+>
+> Thanks. In the meantime, what do you think is the correct behaviour in that
+> case? I guess _not_ doing the release when the flags don't request the RX
+> buffer? In other words:
+>
+>
+> 	if (flags & PARTITION_INFO_GET_RETURN_COUNT_ONLY)
+> 		goto out_unlock;
+>
+> 	if (!count)
+> 		goto release_rx;
+>
+> 	[...]
+>
+> 	if (copy_sz > KVM_FFA_MBOX_NR_PAGES * PAGE_SIZE) {
+> 		ffa_to_smccc_res(res, FFA_RET_ABORTED);
+> 		goto release_rx;
+> 	}
+>
+> 	memcpy(host_buffers.rx, hyp_buffers.rx, copy_sz);
+> release_rx:
+> 	ffa_rx_release(&_res);
+> out_unlock:
+> 	hyp_spin_unlock(&host_buffers.lock);
+> }
+>
+>
+> What do you reckon?
 
-Ah, indeed, we have no other means to enumerate it (as we don't have any board
-file that does direct creation of the device), this patch is correct.
-
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Yes matches my understanding. I also cross checked with FF-A spec authors
+to be sure. Now I got to fix that in the driver, currently it releases
+buffer unconditionally which is wrong 🙁.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Regards,
+Sudeep
 
