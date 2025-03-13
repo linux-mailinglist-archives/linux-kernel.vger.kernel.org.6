@@ -1,149 +1,98 @@
-Return-Path: <linux-kernel+bounces-559650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B5EA5F727
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:01:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F553A5F72D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:02:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4E913A448A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:01:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC4E54200B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32F1267B69;
-	Thu, 13 Mar 2025 14:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20536267AE9;
+	Thu, 13 Mar 2025 14:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="p+TXWiZM"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gHyC3yRy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF32B70813
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF347346D;
+	Thu, 13 Mar 2025 14:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741874481; cv=none; b=L64p+nJXwk9+uuY2nLvKn1s90hpT/7g2MDElwK8IWO0DMliYr7zvDY6Kkx/5zRxoW4DO/mmw3ON+x9RW6ywhN7gEWNi1WrGDKZIBiAGiUyqssnZ1XFcmH9WU80pbqKGTxaYxEZxqV+0ju/esKm6IPEDp5xNhr1yx0zDDC6bU8xA=
+	t=1741874515; cv=none; b=O0zyULSPQD9zNNNmo/+VBCBaz/+UYB1zWBLQQig73dBuqpU+jb8XZ/7d706vTRLJfDcSCBr5JCcftuB6s2PRo2LjYslpYTguFiQhCCaqJiduGbc5I4qTrpOktEuRtKRMeVEoID9VOo9O4k++jW9lU9jWl5w6mbgU+BpYAEVJChA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741874481; c=relaxed/simple;
-	bh=oKH7Elamr+t/LNBhDFaCjq8k3Yhh1qOu2+6iErHVUsk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L0vswnjP31vmdnEbYRYuwwE4O0DGNZNIZHm1UmXs1BXLhgDLRtynKz3h0T513xknyYBT89RotO/dQ1x9sIfbb6HkOMW1PlUZhB9X9y+X6YUkFWfLGB4D/DGtMPqjbXBOuPs477HrLLRi7y+zgL1cha+10qmk49QK7W0XOtgqazU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=p+TXWiZM; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d0465a8d34so9013125ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:01:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1741874477; x=1742479277; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qDdThx9JUgAoiyQ7U+14OO8Q3xFSMds/LhAjusQXTgE=;
-        b=p+TXWiZMTo1ccrCIfpXiRSLOKVeuqEjQzc2yy5y3GKljD2dbKVZHiLRVJE94abI9XX
-         rjMnCmu6TXd1LRA+2jlnyDzkLvj8vric9AL9a9RhVMHE5lL9i6T3ZJt/HupHFdz6P2qE
-         MyOFszdLRy2wilPtY7rBgJjGdvZv13VOQK45YML8Tcqu8H1ByIttR3mSY5lF0HQRbXoc
-         Qscc5STMQP7Yz7E+VJKc7XGOXa8zOJva29dBjIrWD8KKMAO/z5u7GU39uSw06vSFhKc7
-         yOXZuq+yh2ICuptKYK0CnRKtWAHqz/WqZZ4Uei+qEDHGlZg6NnfxXaT25qTK+07ACvyw
-         YN7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741874477; x=1742479277;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qDdThx9JUgAoiyQ7U+14OO8Q3xFSMds/LhAjusQXTgE=;
-        b=uqySu2SO11oIUJVDRO81OZIEVZoDXBiUhHqTUXu6w6POvai2iP/Z5r8s72ovij8F+T
-         ltggdkWuyRrr3qRYo/tLY/yOntdb5JyWx9Gu2+XdDTxwKWTZUvi87NiNAvLU8F7Or6uF
-         90vfVBEEPeSB38M8ckMlDqzCHJPMsmpH2+KIv+61/BEV3RfkFbbqUVXmXvXXul1d8P7l
-         VuoXU/vI6SF2teXEdK4tCG964gmcU/6FNPvdqXbhfVSprp/8+/LUdcszd4K9iBhVEsYM
-         +NTukB3HyFe4qsjJiX89LOhU1/EiX1XP8mjf6bZ7c+hLqdhdUHhvsmKs4PB0JaHlDz6Q
-         /6Og==
-X-Forwarded-Encrypted: i=1; AJvYcCVtOFLmuwauuUm45DtCrMHDuyxwXwIUA6bm0atketSIZTsoHzR+mB28bRuJ1iLJGH1Mfo2MmEQwoJldUPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7yyI8QdDjn9Yr/3qs0B2Mys74nT5/FDwZPWark4i1wXjEPBXu
-	T3hzBB9PdVwzd+c0RytNS/Goc8m+0OpsWtODmgjGj2sXSz2ZArhjOPGRHZUktb0=
-X-Gm-Gg: ASbGncvYg7lyBNqZ5Fj2Vq3HxfRA6wdCD1PcJUSfkarADwdYYd/h0kg113V/3OuVulO
-	khx7m05d9P9MB8FySY8hNkL362yycVc3mX1xhrpqo9sIh1vOwAtqGm+rgIKxEXtErDbI0RABLBt
-	zkZav6rHW+3n0LsaE32+EM77JFGijkPkDEYLWeCuLeliZyrKe2/3ikfc3y5V0MkTwpO5bLB0nnC
-	jzDUBvzDIrLQxOsfI5lI8wSY17UcIfqABsF+rvOVcik2Bvhhht1IVtJigMfVjS+/7rjRGAGnRB5
-	knUEfi4rKrvJOKGi57AhLj4KVKmGnimbtBpTE7Ym
-X-Google-Smtp-Source: AGHT+IH8vt8kGcYmo8u1W+6aiVlKe9rMFhsAav1CA7QhsLQdsuy10Ep5nNiDNFdUkL+dAak9/7QM2A==
-X-Received: by 2002:a05:6e02:1a24:b0:3d2:b72d:a507 with SMTP id e9e14a558f8ab-3d46899ef10mr119104955ab.19.1741874476689;
-        Thu, 13 Mar 2025 07:01:16 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d47a67f5d5sm4164385ab.41.2025.03.13.07.01.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 07:01:15 -0700 (PDT)
-Message-ID: <ab277f0b-fdf6-4f20-9fe0-0e0a1ebcc906@kernel.dk>
-Date: Thu, 13 Mar 2025 08:01:15 -0600
+	s=arc-20240116; t=1741874515; c=relaxed/simple;
+	bh=UQJd59E6gmYMorGBrKuxpH2LfzIAgPkg97I9q5PiEec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jn0ZU63bpp+WNnQk46A6bjiKQjGnkSEQK16pp/8nplwhliok645NUPOs551NrvsigeJwg92ef1Ue2d95RDKzdz3BDHjAdU6eAlfobVIdxhnaI3VU9m98scIcHSMmWt/BA3AZjJMOKLO/koYW6MYNfwAWo59oxr5RyXsHt/PZB+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gHyC3yRy; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741874515; x=1773410515;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UQJd59E6gmYMorGBrKuxpH2LfzIAgPkg97I9q5PiEec=;
+  b=gHyC3yRyoRHrCoqEmSL1T5OcdzjbFth0JvRuCKkqRirynFXZ4FwaJlq3
+   GvLM6XWfrCB2OVQLT0dCdM3CCvFpgmh2wohEgRD75/anBQ40oYSLKKCda
+   yu4+pzXK2LMT+z7i1HdTzC5N/sjRmH/gfoKAGwF27745IkM/H29f/vzNO
+   rd63Nu/bmtFI2xMR0x+/JsqYDQG74IqVnMay+HeHHojJMqh1kwr4MjC4C
+   JYPClXFzOiPOioABgyRXSUW0Y90Ld3zMip/znQqwqWEenPRJig8semmL6
+   71tLrbKg6uEkfRKUh0CXS7rZvz3I89TdHt/SO7PG+/8qIcXs/cExF8bc5
+   A==;
+X-CSE-ConnectionGUID: WtypmPDhQXGIs6h+T0TXmA==
+X-CSE-MsgGUID: e8YgJr+HTQCMjJ4ZVEbxdQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="43093363"
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="43093363"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:01:54 -0700
+X-CSE-ConnectionGUID: Wpao57hOS6mRoQigZrL1vw==
+X-CSE-MsgGUID: UiAD3bjaS/GJXieHF//i5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="120750166"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:01:52 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tsj8A-00000002C55-00qX;
+	Thu, 13 Mar 2025 16:01:50 +0200
+Date: Thu, 13 Mar 2025 16:01:49 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>
+Subject: Re: [PATCH v1 1/1] spi: Use inclusive language
+Message-ID: <Z9LlTflb1HQMyEv2@smile.fi.intel.com>
+References: <20250313111442.322850-1-andriy.shevchenko@linux.intel.com>
+ <1c49edb2-2ffc-419e-be5e-7e15669a7839@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 0/2] introduce io_uring_cmd_import_fixed_vec
-To: Sidong Yang <sidong.yang@furiosa.ai>,
- Pavel Begunkov <asml.silence@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org
-References: <20250312142326.11660-1-sidong.yang@furiosa.ai>
- <7a4217ce-1251-452c-8570-fb36e811b234@gmail.com>
- <Z9K2-mU3lrlRiV6s@sidongui-MacBookPro.local>
- <95529e8f-ac4d-4530-94fa-488372489100@gmail.com>
- <fd3264c8-02be-4634-bab2-2ad00a40a1b7@gmail.com>
- <Z9Lj8s-pTTEJhMOn@sidongui-MacBookPro.local>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <Z9Lj8s-pTTEJhMOn@sidongui-MacBookPro.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1c49edb2-2ffc-419e-be5e-7e15669a7839@sirena.org.uk>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 3/13/25 7:56 AM, Sidong Yang wrote:
-> On Thu, Mar 13, 2025 at 01:17:44PM +0000, Pavel Begunkov wrote:
->> On 3/13/25 13:15, Pavel Begunkov wrote:
->>> On 3/13/25 10:44, Sidong Yang wrote:
->>>> On Thu, Mar 13, 2025 at 08:57:45AM +0000, Pavel Begunkov wrote:
->>>>> On 3/12/25 14:23, Sidong Yang wrote:
->>>>>> This patche series introduce io_uring_cmd_import_vec. With this function,
->>>>>> Multiple fixed buffer could be used in uring cmd. It's vectored version
->>>>>> for io_uring_cmd_import_fixed(). Also this patch series includes a usage
->>>>>> for new api for encoded read in btrfs by using uring cmd.
->>>>>
->>>>> Pretty much same thing, we're still left with 2 allocations in the
->>>>> hot path. What I think we can do here is to add caching on the
->>>>> io_uring side as we do with rw / net, but that would be invisible
->>>>> for cmd drivers. And that cache can be reused for normal iovec imports.
->>>>>
->>>>> https://github.com/isilence/linux.git regvec-import-cmd
->>>>> (link for convenience)
->>>>> https://github.com/isilence/linux/tree/regvec-import-cmd
->>>>>
->>>>> Not really target tested, no btrfs, not any other user, just an idea.
->>>>> There are 4 patches, but the top 3 are of interest.
->>>>
->>>> Thanks, I justed checked the commits now. I think cache is good to resolve
->>>> this without allocation if cache hit. Let me reimpl this idea and test it
->>>> for btrfs.
->>>
->>> Sure, you can just base on top of that branch, hashes might be
->>> different but it's identical to the base it should be on. Your
->>> v2 didn't have some more recent merged patches.
->>
->> Jens' for-6.15/io_uring-reg-vec specifically, but for-next likely
->> has it merged.
+On Thu, Mar 13, 2025 at 12:47:32PM +0000, Mark Brown wrote:
+> On Thu, Mar 13, 2025 at 01:14:42PM +0200, Andy Shevchenko wrote:
+> > Replace "master" by "[host] controller" in the SPI core code and comments.
+> > All the similar to the "slave" by "target [device]" changes.
 > 
-> Yes, there is commits about io_uring-reg-vec in Jens' for-next. I'll
-> make v3 based on the branch.
+> This doesn't apply against current code, please check and resend.
 
-Basing patches on that is fine, just never base branches on it. My
-for-next branch is just a merge point for _everything_ that's queued for
-the next release, io_uring and block related. The right branch to base
-on for this case would be for-6.15/io_uring-reg-vec, which is also in my
-for-next branch.
-
-This is more of a FYI than anything, as you're not doing a pull request.
-Using for-next for patches is fine.
+Hmm... It's based on the spi/for-next. Should I use another branch?
 
 -- 
-Jens Axboe
+With Best Regards,
+Andy Shevchenko
+
+
 
