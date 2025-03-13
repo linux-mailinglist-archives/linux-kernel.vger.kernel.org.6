@@ -1,159 +1,129 @@
-Return-Path: <linux-kernel+bounces-558665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD496A5E935
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:08:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0ABBA5E938
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:09:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEE127A6C7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:07:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76744189935A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082562AF04;
-	Thu, 13 Mar 2025 01:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0161C6BE;
+	Thu, 13 Mar 2025 01:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CEkj/tol"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2RZfHfx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0756610C;
-	Thu, 13 Mar 2025 01:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76802E3391;
+	Thu, 13 Mar 2025 01:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741828105; cv=none; b=kCQdHZL7i4uglo9rhvZj+Z/ttRnCjIXdIIirWK2dFB/jD7t7AbiwVuD1f0hODlWmSarhMXQh6gY/EONZm/OqkSJswNO8UI29+5G2FZEUq1hOy+9ulbii6m5SYCuvH6Ar5imAkCPSeb+2TK52U3pEwUFBtrkmRmdP57EeUY6fpCg=
+	t=1741828176; cv=none; b=OxIBjeKd1Ef+ly4Lw3l/JGwOSKVnOkEJgZ+CI2YI1XrkgpKFqq8l4kvTNM8VJUSvhkkgHn93r862k7Y4R+1koQpJ+qJl7Nx1Eb5RU/BuRSak4Oxfbiy3ZC0hxrBcjXZUTA50CMFiv2YfwCw+SMcQZjGWxpip5vOpIudvNP2CTCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741828105; c=relaxed/simple;
-	bh=L1B1sJ7YjsET1pMUISc3uxnEi8mM0HBOJ1+5dS36kws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ewA6ch/bDaWzgzdUGmU/Gq9rsmgibik6JXqmaJbAi6Y508BLyLleqUSwYkOBl8XmXIy9JcZ9lWRtvW7nN8yfEVUqENdrfYy1uSuK9iYkrXKE8nHrA9YHGLMf8GLpm1PdQ6Sn7APcPIe6XJFOLFEn/sTZIyKAPyWzOICl3wwpv24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CEkj/tol; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6e8f06e13a4so13941826d6.0;
-        Wed, 12 Mar 2025 18:08:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741828102; x=1742432902; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yB3aa4DZXOqG8FkpT/yFPtGsJ00G9GKgyRtQ/0BrqTg=;
-        b=CEkj/tolOH87SB9A6lBvONehnZ2RdeghXNP2ndY2+Xpwl4wySkcyvST2LBuv1/UXsJ
-         GvFjmXIre6aB0E3boblxCbAazgHFigQhdrS08AO7xlF0vQ0tV7jfm6HKJeRpODNFRaoE
-         F+ioCv3Xj2lzek4h60W5QzA27KHHimZxulZ6y4eeiQw3xcGB+doEAV9wvJkmRcjUXbAp
-         TUyz6CnHgFtCmsBqqQ2+q7KaOK/HRDMBcVQ+/HEgn+F6zYlFD8xC3c8d3AsXC7jdcq5a
-         oWPDh7v/44lyTK6Rv/ISHGCzrxdLg6eXLSby7eavnEslyuwz8mYHMAyk0Bd9BUVEIDdV
-         G+Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741828102; x=1742432902;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yB3aa4DZXOqG8FkpT/yFPtGsJ00G9GKgyRtQ/0BrqTg=;
-        b=u3BIqDO5vyt7oPHCTwTZcNiAL5zS+0E71cAV35Sy5uTuBNT910jKum1/D+Ee8Dnx4X
-         bAn/WJPbrpLgmIH5wzUym8uv+FeUqpuLwI1KpaCeGdm+jW6f1W41FO5yAbwvXg9tf+zL
-         wu+o+c+ScEhsfIWYtmKqMsEjjgb+58Egc6U6DwMLztuLMspLbMW1zyWcfb/mcjhvOzOT
-         /CmPhufgFmoAy92Wkgf4jvMBIa3kk03LoZFdMO1xOIetMzffBp/ndUsG4Nx3/WZ56pai
-         ATZ+PSCNXTkKJF842whj3t/PUUJgGG+CxipH9l51y63toh5iBxOerffdzoqlaZI7Rexd
-         zBvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0fO28+5PDfyWwkmUJaCDDR+2no4K6/LVsWIabigNlZDhY6X/C/wLoue9djhv7xWbkX4xMiR+8t2d9TC4M@vger.kernel.org, AJvYcCVW5y0fs7m7d0CultXhraa2d65ZH9gr5uNE2GjOyI2gXHKByEESAsNFWpmGYLAw4u609L96xvUL9FUg@vger.kernel.org, AJvYcCWvbyWJ/CTv4ktZT/SGb/11w00k+xT+e5lJIPRZLrgeZ8TyY5dFiZigVV+3Y07mPwpNXLKayIsQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXsJ1nvbqTvjmjdFiHEL1i4rj6axomFveFn3U0FrtdWsxpwVFM
-	vJMjseYfwrwBZch6sCM3vgeBlH89u+KY4ea1X46SvEaxRs2glezJ
-X-Gm-Gg: ASbGncs/v+x9PE6FxEbYYDNQ0dit5hSyLTfXifjMfqT12GEMnGLCijEi8vkW5jOAsJ/
-	+dO1pG6uAbDNpxqHRV/PfMHlhue4xVhbM3O4GzeU+Se6erYLDyAZym70o/OMFr8aFi4JX3myrit
-	hF2OPtj5DzyTKtfnRDd2cgtrCoP1rku315eCTqRcstgflwP+UI7IPf7ris1rwZYUGYAbJyis7ba
-	KfIGMYhDcsd3+KXhnHm33TZDOVfwwzltk1dXzBTLZWMDDXfPsFFIc0RIdqGBZ6HcFGXG81waEs5
-	g2CuupFidNcqJvQa7mKtus8MWGPJ0y4=
-X-Google-Smtp-Source: AGHT+IErHgyMMC0gxpFbF0+ltzHlALBkq84d33gqNkyZ9Lj204hZXdZSKp7DGFvJyo8iPJlxvm7WCw==
-X-Received: by 2002:a05:6214:5c47:b0:6e6:5c26:afe3 with SMTP id 6a1803df08f44-6eaddfbb91cmr8764046d6.17.1741828102495;
-        Wed, 12 Mar 2025 18:08:22 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6eade34beb0sm2540506d6.105.2025.03.12.18.08.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 18:08:21 -0700 (PDT)
-Date: Thu, 13 Mar 2025 09:08:11 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Stephen Boyd <sboyd@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@gmail.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Richard Cochran <richardcochran@gmail.com>, Rob Herring <robh@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: sophgo: add clock controller
- for SG2044
-Message-ID: <nxvuxo7lsljsir24brvghblk2xlssxkb3mfgx6lbjahmgr4kep@fvpmciimfikg>
-References: <20250226232320.93791-1-inochiama@gmail.com>
- <20250226232320.93791-2-inochiama@gmail.com>
- <2c00c1fba1cd8115205efe265b7f1926.sboyd@kernel.org>
- <epnv7fp3s3osyxbqa6tpgbuxdcowahda6wwvflnip65tjysjig@3at3yqp2o3vp>
- <f1d5dc9b8f59b00fa21e8f9f2ac3794b.sboyd@kernel.org>
- <x43v3wn5rp2mkhmmmyjvdo7aov4l7hnus34wjw7snd2zbtzrbh@r5wrvn3kxxwv>
- <b816b3d1f11b4cc2ac3fa563fe5f4784.sboyd@kernel.org>
+	s=arc-20240116; t=1741828176; c=relaxed/simple;
+	bh=B8HwtBeRaBHX5JkhLaSUnbwXsgTX3Q2lYTiyZCaBn8M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZfD3VMUkST9fex4mq0sqvJub9YP+nzkiAkLsLpx6bLO+1Ru0IIevd+YMFt29UzpbF6iWEWXkG0epu9GTgkhdblbgDd/gqbd4LeY0BILyNU1UNaxfgZrHBrYT9UGFtADz40K7XC+57jlBg3bqnFpFfjP62/Dh/43hP6d9xWOIwVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q2RZfHfx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 641EBC4CEDD;
+	Thu, 13 Mar 2025 01:09:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741828175;
+	bh=B8HwtBeRaBHX5JkhLaSUnbwXsgTX3Q2lYTiyZCaBn8M=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Q2RZfHfxspRUmiRDGz1eQYWca14CBctZRqmJ16TJt+kFFcS5rMijsvjUuz6QXnyy6
+	 03om4s121sP8wh4BkrGOBCx1PSYmztOe3U6Zs2MhwXtdyuNL7eMoAGl4GOcyeeT4mG
+	 ZKAj8wEb/IRIsrCvv5tiBt4o1sU+qTTRFOrbzZOVcCIHqnJYIyd0erdB+SNe+CBzyn
+	 e+W7M4vBOwQlkt8577G6sRta4NxBqu62HyUJO+RF9G41aXHpKe9No8hjUFhuAA6+ik
+	 PX3bOwelan9yK0d3uDQcXmKYnuUFDE5+OosGpovScnj4TYxag7SuuTOhPrYnBWDBYg
+	 te/e20T/7s9JA==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54963160818so511420e87.2;
+        Wed, 12 Mar 2025 18:09:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWF0Uu8wfuJflTBVfObuqW88P3NP5WUd2RdQZGglhYov8cpJRjS4Ul27w+gshvj5xwI6XP4Rob8gIliPG4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtgWklIvlCa1STkPj0fiysM8pb2gcJkNz/sulyc/8obfjixn3L
+	jEXcXDQxLw++QJ2zSjZtbMUdQg964ZFG+cNLFzpCL4FhIk0+i3pyiQL5XykFTcQ31wvd2Z2L54P
+	J2Sy7I8+3B8SVelSm0LQHqAmDUgw=
+X-Google-Smtp-Source: AGHT+IFcqvfBK68BflSjEsKvxfdHwOVmP0F1TRkLwGsuRvd3qs57522RPwblzli5/mHmSvGhpUo6BT/N+AoOzkTRGxY=
+X-Received: by 2002:a05:6512:2203:b0:545:22ec:8b6b with SMTP id
+ 2adb3069b0e04-54990eadb29mr8212477e87.35.1741828174119; Wed, 12 Mar 2025
+ 18:09:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b816b3d1f11b4cc2ac3fa563fe5f4784.sboyd@kernel.org>
+References: <20250312033421.2365201-1-xin@zytor.com>
+In-Reply-To: <20250312033421.2365201-1-xin@zytor.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 13 Mar 2025 10:08:56 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATJ4g3OeD1wo+x=P3ZkkT3mG1JTZCzkuT_3F8eHm5xeig@mail.gmail.com>
+X-Gm-Features: AQ5f1JrPBxNEmEklDdxxiwmQPfFeDBzR-Ujh2xOuHw3dw3B0mYVA2_y8zsc15gY
+Message-ID: <CAK7LNATJ4g3OeD1wo+x=P3ZkkT3mG1JTZCzkuT_3F8eHm5xeig@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] kbuild: Add a help message for "headers"
+To: "Xin Li (Intel)" <xin@zytor.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	nathan@kernel.org, nicolas@fjasle.eu, bp@alien8.de, hpa@zytor.com, 
+	sraithal@amd.com, n.schier@avm.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 12, 2025 at 04:43:51PM -0700, Stephen Boyd wrote:
-> Quoting Inochi Amaoto (2025-03-12 16:29:43)
-> > On Wed, Mar 12, 2025 at 04:14:37PM -0700, Stephen Boyd wrote:
-> > > Quoting Inochi Amaoto (2025-03-11 16:31:29)
-> > > > 
-> > > > > or if that syscon node should just have the #clock-cells property as
-> > > > > part of the node instead.
-> > > > 
-> > > > This is not match the hardware I think. The pll area is on the middle
-> > > > of the syscon and is hard to be separated as a subdevice of the syscon
-> > > > or just add  "#clock-cells" to the syscon device. It is better to handle
-> > > > them in one device/driver. So let the clock device reference it.
-> > > 
-> > > This happens all the time. We don't need a syscon for that unless the
-> > > registers for the pll are both inside the syscon and in the register
-> > > space 0x50002000. Is that the case? 
-> > 
-> > Yes, the clock has two areas, one in the clk controller and one in
-> > the syscon, the vendor said this design is a heritage from other SoC.
-> 
-> My question is more if the PLL clk_ops need to access both the syscon
-> register range and the clk controller register range. What part of the
-> PLL clk_ops needs to access the clk controller at 0x50002000?
-> 
+On Wed, Mar 12, 2025 at 12:35=E2=80=AFPM Xin Li (Intel) <xin@zytor.com> wro=
+te:
+>
+> Meanwhile explicitly state that the headers are uapi headers.
+>
+> Suggested-by: Borislav Petkov <bp@alien8.de>
+> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+> ---
+>
 
-The PLL clk_ops does nothing, but there is an implicit dependency:
-When the PLL change rate, the mux attached to it must switch to 
-another source to keep the output clock stable. This is the only
-thing it needed.
+Applied to linux-kbuild.
+Thanks!
 
-> > 
-> > > This looks like you want there to be  one node for clks on the system
-> > > because logically that is clean, when the reality is that there is a
-> > > PLL block exposed in the syscon (someone forgot to put it in the clk
-> > > controller?) and a non-PLL block for the other clks.
-> > 
-> > That is true, I prefer to keep clean and make less mistakes. Although
-> > the PLL is exposed in the syscon, the pll need to be tight with other
-> > clocks in the space 0x50002000 (especially between the PLL and mux).
-> > In this view, it is more like a mistake made by the hardware design.
-> > And I prefer not to add a subnode for the syscon.
-> 
-> Ok. You wouldn't add a subnode for the syscon. You would just have
-> #clock-cells in that syscon node and register an auxiliary device to
-> provide the PLL(s) from there. Then in drivers/clk we would have an
-> auxiliary driver that uses a regmap or gets an iomem pointer from the
-> parent device somehow so that we can logically put the PLL code in
-> drivers/clk while having one node in DT for the "miscellaneous register
-> area" where the hardware engineer had to expose the PLL control to
-> software.
 
-Cool, I understand what you mean. It is a good idea,
-I will have a try.
 
-Regards,
-Inochi
+> Change in v3:
+> * Fix a typo and write uapi in capital letters (Nicolas Schier).
+>
+> Changes in v2:
+> * Revise the help message for "headers" (Masahiro Yamada).
+> * Revise the shortlog (Masahiro Yamada).
+> ---
+>  Makefile | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/Makefile b/Makefile
+> index 70bdbf2218fc..08918088ab35 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1659,7 +1659,8 @@ help:
+>         @echo  '  kernelrelease   - Output the release version string (us=
+e with make -s)'
+>         @echo  '  kernelversion   - Output the version stored in Makefile=
+ (use with make -s)'
+>         @echo  '  image_name      - Output the image name (use with make =
+-s)'
+> -       @echo  '  headers_install - Install sanitised kernel headers to I=
+NSTALL_HDR_PATH'; \
+> +       @echo  '  headers         - Build ready-to-install UAPI headers i=
+n usr/include'
+> +       @echo  '  headers_install - Install sanitised kernel UAPI headers=
+ to INSTALL_HDR_PATH'; \
+>          echo  '                    (default: $(INSTALL_HDR_PATH))'; \
+>          echo  ''
+>         @echo  'Static analysers:'
+>
+> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+> --
+> 2.48.1
+>
+
+
+--
+Best Regards
+Masahiro Yamada
 
