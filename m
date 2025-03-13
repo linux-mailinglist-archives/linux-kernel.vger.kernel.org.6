@@ -1,113 +1,108 @@
-Return-Path: <linux-kernel+bounces-559058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE1A9A5EEFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:07:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 112E6A5EEEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:05:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 434373B01A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:06:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D4327ACCC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDB2264619;
-	Thu, 13 Mar 2025 09:05:58 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8D2263F35;
-	Thu, 13 Mar 2025 09:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED04260A3C;
+	Thu, 13 Mar 2025 09:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dA+wqG7a"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CADB262D1C;
+	Thu, 13 Mar 2025 09:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741856758; cv=none; b=ENymPpL6VQKeXc8N5TgXOi/khaDQSsk+kgPHfZEDelK4R/Ytatz7NgnnDsOSV59uwnCu+d0J+q0slt+ZALPKUMEnARiRfTZn/APk8LaWbKvNAe8mt9ALDTIMO0AzImDUnMrzPkGzSPewiR6MkKMR1vWB8/HL007of3nIdDH44jQ=
+	t=1741856730; cv=none; b=D3drOVTMxHqKVLRP1bnZ9sP9FU4YiAyz9ZfnAe0PbvwogJmJASr9WbyTotwFC7EkHWHRXee8MrWn6OwpTK8PDweBCQiMZIPqT2MAMlSaM4sZYDJ5jktWearGN4Aht/bjhwiX/it8MrVAcVAym+JlLxctUellMLYzXWccpGv/YLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741856758; c=relaxed/simple;
-	bh=V0ZxxEfH9CYatyd+B4xa1QlX9Akbesz8Vc0+Uwr3HS0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VI/dYji/SWoqEi9CmWMB/iDPg5VCmiME32sSxCVA7Ts/wghWqZg+C4cahiAulwjAXqbK5Y9JG/1oUH2ePR235sK3M0jVZCpIg6AG4rU8MN+FmW6buO3UoIvfnW/WydHFhTCAMFSE5GKEdnbCFRy+V4McZwRlq0AFKk6BZYSXbKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.40.54.90])
-	by gateway (Coremail) with SMTP id _____8CxyuDun9Jn8LyUAA--.56387S3;
-	Thu, 13 Mar 2025 17:05:50 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.40.54.90])
-	by front1 (Coremail) with SMTP id qMiowMCx_cban9JnUDlIAA--.8065S6;
-	Thu, 13 Mar 2025 17:05:37 +0800 (CST)
-From: Qunqin Zhao <zhaoqunqin@loongson.cn>
-To: lee@kernel.org,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	peterhuewe@gmx.de,
-	jarkko@kernel.org
+	s=arc-20240116; t=1741856730; c=relaxed/simple;
+	bh=HWLWuVRAruMFY8gJ7PUSLj6g/W5wMg9slfTaZDMeLH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UKBMahoET9VYHFW2d5N/JZe1GMuZ7QpunK4Q+3jyUjAcxjgFV1IHyxMakLm0blyDYdCy1bgEiivQiCrTQDo3P6nNUsgDirNeDDB53oBalCyHLH5Skncptnt1to7dnDtD+GH4PBDZzvK6qUqSAtNjll6Xm8+k6/JMfAPKjEI0Adk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dA+wqG7a; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741856728; x=1773392728;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HWLWuVRAruMFY8gJ7PUSLj6g/W5wMg9slfTaZDMeLH4=;
+  b=dA+wqG7aTWdM6Xbq5u0rlEHrnGcY2NqFKEfaIsCngUHnwfwJqP/l/tag
+   u3iUVtS9qlgVJi7PYlwwo347yEwBVPOQV4bgXO4mfBN6Jr34QPi3QPvB5
+   35ZgBaNPe1tONK+j+zrvsaSgsWjqd5haO4WFzKcRyp+E84iomAJbQkZJc
+   9niUHJTTAOZ7wWBsKPQ+fGzl/bfJS+DYOSwTAcTdWec2kc0GZZUlMp/X1
+   mRSJXjG9Z7TqiQPRSzOi21PKWsAFYK1EUeow0tY7TMyDvSOEd/8MNJSB5
+   gCi75DsP56QAhPuWXTA9Z52Zy3qIGcPwtHOAfjRoYoFPdWi37nH/CNYUJ
+   A==;
+X-CSE-ConnectionGUID: s3Rwdy7mQvSJQ6UelCtjKQ==
+X-CSE-MsgGUID: 054DvXLgQS65pA+c0hZ1EA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42842926"
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="42842926"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 02:05:27 -0700
+X-CSE-ConnectionGUID: +kKVKGMjTry8NiyH63vxsg==
+X-CSE-MsgGUID: cyICXEtuQK+Amz3Nj2A8bA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="125964428"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 02:05:26 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tseVH-000000027q5-3njP;
+	Thu, 13 Mar 2025 11:05:23 +0200
+Date: Thu, 13 Mar 2025 11:05:23 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-media@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-crypto@vger.kernel.org,
-	jgg@ziepe.ca,
-	linux-integrity@vger.kernel.org,
-	pmenzel@molgen.mpg.de,
-	Qunqin Zhao <zhaoqunqin@loongson.cn>
-Subject: [PATCH v5 4/6] MAINTAINERS: Add entry for Loongson RNG driver
-Date: Thu, 13 Mar 2025 17:05:06 +0800
-Message-Id: <20250313090508.21252-5-zhaoqunqin@loongson.cn>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250313090508.21252-1-zhaoqunqin@loongson.cn>
-References: <20250313090508.21252-1-zhaoqunqin@loongson.cn>
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [v2,1/1] media: =?iso-8859-1?Q?v4l2-co?=
+ =?iso-8859-1?Q?re=3A_Replace_the_check_for_firmware_registered_I=B2?=
+ =?iso-8859-1?Q?C?= devices
+Message-ID: <Z9Kf06nLg86jmcqI@smile.fi.intel.com>
+References: <20250312192528.95838-1-andriy.shevchenko@linux.intel.com>
+ <67d1f748.050a0220.353790.339b@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCx_cban9JnUDlIAA--.8065S6
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj9xXoW7Xr1UZryUGrWxZFyxJr15Jrc_yoWfJrc_J3
-	y7Ka97XF4kJFn2yayxuFn7Aryaqw4fX3Wfu3Z7tw4fZa4qyasxAryqyFy7Gw15CrWYgF43
-	XayxGr97ur17ZosvyTuYvTs0mTUanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbSxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	WxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26rWY6Fy7
-	McIj6I8E87Iv67AKxVWxJVW8Jr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
-	8JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26c
-	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26F4j6r4UJwCI42IY6I8E87Iv6xkF7I0E
-	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUI0eHUUUUU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67d1f748.050a0220.353790.339b@mx.google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-This patch adds an entry for Loongson RNG driver in the list of
-maintainers.
+On Wed, Mar 12, 2025 at 02:06:16PM -0700, Patchwork Integration wrote:
+> Dear Andy Shevchenko:
+> 
+> Thanks for your patches! Unfortunately the Media CI robot detected some
+> issues:
+> 
+> # Test media-patchstyle:./0001-media-v4l2-core-Replace-the-check-for-firmware-regis.patch media style
+> ERROR: ./0001-media-v4l2-core-Replace-the-check-for-firmware-regis.patch: Missing 'media:' prefix in Subject
 
-Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
----
-v5: None
-v4: Changed tile to "Add entry for ...".
-    Lowcased "Maintainers" in commit message.
+LOL, what?
 
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+> Please fix your series, and upload a new version. If you have a patchwork
+> account, do not forget to mark the current series as Superseded.
+> 
+> For more details, check the full report at:
+> https://linux-media.pages.freedesktop.org/-/users/patchwork/-/jobs/72774130/artifacts/report.htm .
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1b741b20f8..3f04f43ffe 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13602,6 +13602,12 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
- F:	drivers/gpio/gpio-loongson-64bit.c
- 
-+LOONGSON CRYPTO DRIVER
-+M:	Qunqin Zhao <zhaoqunqin@loongson.com>
-+L:	linux-crypto@vger.kernel.org
-+S:	Maintained
-+F:	drivers/crypto/loongson/
-+
- LOONGSON-2 APB DMA DRIVER
- M:	Binbin Zhou <zhoubinbin@loongson.cn>
- L:	dmaengine@vger.kernel.org
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
