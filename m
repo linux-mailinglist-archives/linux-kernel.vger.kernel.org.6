@@ -1,128 +1,149 @@
-Return-Path: <linux-kernel+bounces-559140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7E92A5EFF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:51:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7423EA5EFF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:52:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C05A3B139C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:51:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5588A3AED17
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367BA2641D4;
-	Thu, 13 Mar 2025 09:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LtRo/dIf"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BBF26462C;
+	Thu, 13 Mar 2025 09:52:29 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE26E1EFF95
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A15262D0F;
+	Thu, 13 Mar 2025 09:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741859504; cv=none; b=IW/ulZ5HELvsUcFO2GKWUPXk38R7wdFXqFq2BjM6KdKYOYC50jUDsNg36z2pUT+QPBPGvdtKJGbwPcuUiHQCp7wMPR3XAO3dQ0y00xsSxgHfy8yLIl9b79OLaNdk1SIEqb6zBxs1Zx/bFmwUvv/h2CZHMAtBpJFKZs1D4XxMD6A=
+	t=1741859548; cv=none; b=GoI3NzndJioDsJ1R4lpgdX46SeKngcRmREgy1fiL55dIO/RHjaf/Rc/zN0DmdkpyACTBI/3JZu54HuiB3ELMG1qgGMugKwmRaGe3+shYy+aw48K7fpqsB8d1y5etLtx0bpQ7sccAHRRYMC+MlrVFwECinp3UTE4E9xK4Gc9wauY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741859504; c=relaxed/simple;
-	bh=QgYfWBbjniwPDhzWoyGsOU37LL+wBsYx4FA84RaPSfo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=scwaAuOfgbVbXzG4AzyJNDi6F4A05rk5UWDovtTc1PhudIOloA4bhGA02V5ZB+w/HtV/3CbLFdf6kgClcOMuCNV3qIyTDduhI16ySzAx1TqtL8Mx9wb9bN6c6WS5765mvzpj6x5A63icSAVqMbfoGtNMqYIo7c28DgCFbfnF7Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LtRo/dIf; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-549a4a4400aso857422e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 02:51:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741859500; x=1742464300; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QgYfWBbjniwPDhzWoyGsOU37LL+wBsYx4FA84RaPSfo=;
-        b=LtRo/dIfsWYMJQT5ln6pwRHdVIumv/esAbki/zje09+sexV5+Zd+0X5G+KDC54LkKz
-         9DdB7GPwGQHccIIITH1Y3aTJo4a3j8Q0Q94K8YVWvJXC14MFJej9k1eub0mI+S1hjRzO
-         1xUoazG10QyOd38pBrwwmL3gH8WPBlCij3JhHU0yqVebBSBBPnTnOsSViO7EQJ+0Eu+P
-         xb3AOHDuTMQBWRNlT2HkVWh7qy1vEI+Nc5KQBbAHF4CZ7S5zZIXlZKHR2vs4zU+shi92
-         RK4gvf9Q+lBwFRcDiyt7AEhzwESD1t/vN5L1izWilDTgV5whON7PS+7svi1AHew8wGzl
-         HJ+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741859500; x=1742464300;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QgYfWBbjniwPDhzWoyGsOU37LL+wBsYx4FA84RaPSfo=;
-        b=B1nNvJFPq4gQHh98G1PGjxJyudGpHtY2znYNW9sIVT84e/MmZepD0vAnlGYcSXzoim
-         HjPitasuQqA0Jbc0l9/ZnHkinKwRjKQsaqSdhsx/xu5VBNq0VksNcej3KEu8CoSHbHLM
-         sbOX+FyZWE8tcoM66IsjR1frtkgw+suRVw6+OSpc+FP3ywR/9OiyfCMGubXTy+hJ3TYf
-         plnZKDOlUZW0LBV/4/yAHVsBBy5WKiaRrgVXU3LoEXc4cQCtyi976cp7aq4vyqSR54AO
-         cULtUFWPMZdWtBp4s1EIU9SESW7BaBHybt6NvXgJsY7EG7R2mOMk/kjqWdsaG9YjvsK0
-         GOQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVL5P+Ro7KXWWcM6I1TNT6Es3ArKZhBS+GuJ+aqSzWCeYwg5VWo0ILQB6nPxMcyp2Wu0iHimMlGw+hExG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwBZr1r0yhCv74GVvlhmNfx5lh1NLibMfPgQdMZiIYN0kUpZAB
-	BZ57COjivWTsqkzAdmBcUsMME36Z3cf4pNQOsikKDcAMohN/SO+h0f9cpzF7yPV13tUBqOl8Gub
-	ZnDecTDiqI1qodrtmpbAxnlInHL+LsLWD0Zuq7g==
-X-Gm-Gg: ASbGncs6nbuXXBIqaQr9qmMCYlO9P12+DSSJHeHewsRg1aXBdgr6eWiDrnVyrxG2zdk
-	4ChFG16cEo1h8fDgO02TtuF0lAQB0LIIiRhfG8OW2Aap8thr7Z+KlbzySz5I4fHj/482KN6JPqi
-	fxMqSF8V9QeJcUrORoKPGDNVxAWTNF1yg=
-X-Google-Smtp-Source: AGHT+IG3yO5UKX7BvX8TOnQpocO31aqeIzqAIGkMVMg/xWmE6h9YKu7EryZASHPYLGHFC2RM9d53W/G30tx+Snpz0hA=
-X-Received: by 2002:a19:f810:0:b0:549:91bc:67a9 with SMTP id
- 2adb3069b0e04-549abaacaaamr3300696e87.9.1741859499720; Thu, 13 Mar 2025
- 02:51:39 -0700 (PDT)
+	s=arc-20240116; t=1741859548; c=relaxed/simple;
+	bh=zRYtyMuFiy3b8Jg3MYqQJnxiHD2o/QMJSfyzNrER9NM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MtmaRf5B29CxIdoa64gX+Wvrf8/Uv5Tyfktq4x5qORQfoIwTpWMj0BVE/ltQTdaRZagv4SkVn7kJWjsNSW6MHgC/039jZIjHdEsbvi2wsyLHd647jGO5YeIZSjhzEz4FU0hZ5J5R384Z5o/RaLyGGc322LFeTGxLz6tduURC3vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F5ECC4CEDD;
+	Thu, 13 Mar 2025 09:52:27 +0000 (UTC)
+Message-ID: <4633173e-111a-4659-945d-149e3857896c@xs4all.nl>
+Date: Thu, 13 Mar 2025 10:52:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313051953.4064532-1-baolu.lu@linux.intel.com>
-In-Reply-To: <20250313051953.4064532-1-baolu.lu@linux.intel.com>
-From: Zhangfei Gao <zhangfei.gao@linaro.org>
-Date: Thu, 13 Mar 2025 17:51:28 +0800
-X-Gm-Features: AQ5f1Jqrdmo7VWV6PyLD1e4rhSBwqyKwJOXS2K4j0MErxoy_ssJnjuYFCbVU2qM
-Message-ID: <CABQgh9HKaDyDQXGB5ZEGg5q4a9ak_8OB9XQ+TpUNcZd_ZMeCAQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] iommu: Remove IOMMU_DEV_FEAT_SVA/_IOPF
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>, 
-	Fenghua Yu <fenghuay@nvidia.com>, Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: =?UTF-8?Q?Re=3A_=5Bv2=2C1/1=5D_media=3A_v4l2-core=3A_Replace_the_ch?=
+ =?UTF-8?Q?eck_for_firmware_registered_I=C2=B2C_devices?=
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Ricardo Ribalda <ribalda@chromium.org>
+Cc: linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ linux-media@vger.kernel.org
+References: <20250312192528.95838-1-andriy.shevchenko@linux.intel.com>
+ <67d1f748.050a0220.353790.339b@mx.google.com>
+ <Z9Kf06nLg86jmcqI@smile.fi.intel.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <Z9Kf06nLg86jmcqI@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi, Baolu
+On 13/03/2025 10:05, Andy Shevchenko wrote:
+> On Wed, Mar 12, 2025 at 02:06:16PM -0700, Patchwork Integration wrote:
+>> Dear Andy Shevchenko:
+>>
+>> Thanks for your patches! Unfortunately the Media CI robot detected some
+>> issues:
+>>
+>> # Test media-patchstyle:./0001-media-v4l2-core-Replace-the-check-for-firmware-regis.patch media style
+>> ERROR: ./0001-media-v4l2-core-Replace-the-check-for-firmware-regis.patch: Missing 'media:' prefix in Subject
+> 
+> LOL, what?
 
-On Thu, 13 Mar 2025 at 13:19, Lu Baolu <baolu.lu@linux.intel.com> wrote:
->
-> The new method for driver fault reporting support relies on the domain
-> to specify a iopf_handler. The driver should detect this and setup the
-> HW when fault capable domains are attached.
->
-> Move SMMUv3 to use this method and have VT-D validate support during
-> attach so that all three fault capable drivers have a no-op FEAT_SVA and
-> _IOPF. Then remove them.
->
-> This was initiated by Jason. I'm following up to remove FEAT_IOPF and
-> further clean up.
->
-> The whole series is also available at github:
-> https://github.com/LuBaolu/intel-iommu/commits/iommu_no_feat-v4
+Hmm, the 'I²C' bit in the Subject header causes it to be UTF-8. The Subject line in
+patchwork (1) is now:
 
-I got an issue on this branch.
+Subject: [PATCH v2 1/1] =?utf-8?q?media=3A_v4l2-core=3A_Replace_the_check_fo?=
+        =?utf-8?q?r_firmware_registered_I=C2=B2C_devices?=
 
-Linux 6.14-rc4 + iommu_no_feat-v2
-drivers/pci/quirks.c
-quirk_huawei_pcie_sva will set dma-can-stall first
-arm_smmu_probe_device will check dma-can-stall and set stall_enabled
-accordingly.
+so the check for the 'media:' prefix in the Subject line fails.
 
-This branch
-arm_smmu_probe_device happens first, when dma-can-stall = 0, so
-stall_enabled =0.
-Then drivers/pci/quirks.c: quirk_xxx happens
+Interestingly, if I commit the patch (git am) to a test branch, then run
+'git format-patch -n1' the Subject line now reads:
 
-Still in checking.
+Subject: [PATCH 1/1] =?UTF-8?q?media:=20v4l2-core:=20Replace=20the=20check?=
+ =?UTF-8?q?=20for=20firmware=20registered=20I=C2=B2C=20devices?=
 
-And this branch does not need these two patches, right?
-c7b1397bef3c iommu/arm-smmu-v3: Implement arm_smmu_get_msi_mapping_domain
-5cd34634a73e iommu/dma: Support MSIs through nested domains
+and that restored the ':'.
 
-Thanks
+Ricardo, can you look at this?
+
+I also noticed that the v1 and v2 patches ended up in my spam folder. Whether that
+is related to UTF-8 in the Subject is not clear (my provider marks way too many
+legit posts as spam).
+
+Andy, can you post a v3 with just 'I2C' in the subject instead of 'I²C'? If nothing
+else, I'd like to know if that's the reason it ended up in my spam folder.
+
+Regards,
+
+	Hans
+
+(1) https://patchwork.linuxtv.org/project/linux-media/patch/20250312192528.95838-1-andriy.shevchenko@linux.intel.com/
+
+> 
+>> Please fix your series, and upload a new version. If you have a patchwork
+>> account, do not forget to mark the current series as Superseded.
+>>
+>> For more details, check the full report at:
+>> https://linux-media.pages.freedesktop.org/-/users/patchwork/-/jobs/72774130/artifacts/report.htm .
+> 
+
 
