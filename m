@@ -1,130 +1,178 @@
-Return-Path: <linux-kernel+bounces-559238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D12BFA5F12F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:44:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29135A5F132
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:45:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC8027AC587
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:43:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB6B517E068
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D96265CCA;
-	Thu, 13 Mar 2025 10:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5C3265CDC;
+	Thu, 13 Mar 2025 10:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b="W5ZpnldR"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="B92emiyE"
+Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C972641DD
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5184E25FA25;
+	Thu, 13 Mar 2025 10:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741862661; cv=none; b=qNeoUd/LicOldJ2IJclCrRuEyfZrpe4i/DcJ580y8Bnm5VxINKg4gjd5DMU6w+BA53ocbmGlvWB6XpiRIU+lYfS4cZVmNqZsWWX7iaHJJxK4nzD2xWZ5LShXKfiaN93w80ByRbRF0ZX6tb5oAXfn1a9i46X/7FmdI5ihZTsrG9g=
+	t=1741862695; cv=none; b=WXIUpNYk0gsmvrZNO3rnUm28x7gajpKQaQUZmJ4YYQ/TLUeWFALeQug9T4h4WcBHydgQ0sX+5mtNc7Au4GDB8lLpOxgJYvXJ3VcUElwlhGp95wDcobnUpQSVEu84kJnYPuaqWg28pchxLaVA9tq58hRQQ9lni4Sl2dBT7WdUlxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741862661; c=relaxed/simple;
-	bh=cdJZRMBGrkonFB3hvNUzys+FuUKN9910SmSB9F1d9xE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FlPeFJKUx8meD+y5ltE93He9kOcPTftAN1Fl+o5jsTfoDgCMi0ReZZYOHFPSH9jhPRXTSCSdcAkakneKo/vkfqkNYUGPKQ4x8Z7CH9GrFX2ogomTCZmriIrH3Kzy1gboeJAmDb1EJbasE9AFkQvS0rSOKVsWiGy+Ort7610VtUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b=W5ZpnldR; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ff694d2d4dso1430324a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 03:44:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa-ai.20230601.gappssmtp.com; s=20230601; t=1741862659; x=1742467459; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ek1S1M2Z/3jRrIpDz7olPRb3vs2yw04VJj39Sas7Xhc=;
-        b=W5ZpnldRQfxcSJJinZVeOcGGXQfAX49Kypw13lm1k9ifGsLkO2alZ2e/WEcN9RxQA0
-         D54te9B60rKU0TItcrivmXHWUgw1+VNTi8TWTL5aKNhu5bG+Kgh+VAFPGdgdWLJmn2Qa
-         G/Gbn5Il1b+KVPrdM0fE4ECOns6zvhuEugCN4+FLA+kBK2UIeLIP8ZGTOllycjybHD19
-         PsVKL7TGiKDcRtt8dLu8RG4snOzZvJtt0MpH1BIHlDk3GO67DZElgpaNPXtAyKBlG+86
-         TXwhrYFzhZNyYQVZjN8e/IyxV/caOpcn8ev4/g2wrzLGAeslKn0TUkfI+lPtF2TIyu+y
-         hkrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741862659; x=1742467459;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ek1S1M2Z/3jRrIpDz7olPRb3vs2yw04VJj39Sas7Xhc=;
-        b=EhchCKNhIcWahm6hPPdn99Qx8VAFUrIYJnNaISlDng4KIayYSJ8UcE1NnOAIjHWW0i
-         zdw3JP120OoZXQr4oo/6r8GrCKwrcsu91cdFOj27iV7zh+MWIE5H5GnJwwh7W00hS14f
-         BXb+SbqUhbkbcs7ejSZlvA7ImQxXD2Y8jm6TqPoLaBas1tHvEQB6Zu4C4RFR+JG/QThb
-         pyvqUwCt5qLbsJRDfn1WllI5ob8q57kStQE4Qdj0fVUebFCFHUzmi/zuZ3CcsBC3uNjF
-         Jlz+u3QlWsspSsgOzs2cKbyjMlxIxQTGkBdO5CKhO0JE8H79EIx/0rzhp5/MAARgEU8s
-         tAgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWv7f5541QG1vQLIrXVKtoixNRS3KoubyZkDJd8jLoQBp3HhQajM3qQWR04UEK2FqBEQgH103Lc1ef/6Iw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+JAC1c/RmFj0VAFFXJMfnkGLE+kCtPdTWKizxwO4Wy5Z1Hqws
-	K26g2R7Hz9iGJREn+/gYiQ6X+0vJQtxDt7KXbdsrU74vooO3O6Q3AMXw1ybWM94=
-X-Gm-Gg: ASbGnctYQec2OTxdVa6TPjBbkqQxTaTzBqwrnflfiH3MWj0CKLvtmY5tLqX/BgjPR6P
-	xoM0SPDlligbhF8lJceZTZVcAOqd4Qs9xF80jqsp13c5O7i4M/RpY/uVIVRTn7MSye9dY0KMqdp
-	yiRSmKWGmZDpSL9nwHs2ccXCWh0Cm7Gn6DhTqs6y0M7CMksj0LpqW92j1dHvpwRUETvs3aytprJ
-	VE/ED68UKCwuCM215Llv4VTvTrTmD4Xd00n8p8w5mjzZfj/aNnkMQYet5TA5TmjJ/AwxAsZXHcY
-	VVFRNldXiZOuUTg4fvyAROyTXxCHTrfHy4IhO09yxTMRwlWL74b3aN5lE54rgzMqTdVnt4VqlZi
-	X
-X-Google-Smtp-Source: AGHT+IHsVelts5SRr/WJziCKIuWWVYPcap8L5SU4CGAcvx6m6TS5z81715eoW1D7sFPeTWFvFyFeiA==
-X-Received: by 2002:a17:90b:17d0:b0:2ee:ee5e:42fb with SMTP id 98e67ed59e1d1-2ff7ce7abc1mr36460554a91.13.1741862658705;
-        Thu, 13 Mar 2025 03:44:18 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([221.148.76.1])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3011928706bsm3493605a91.46.2025.03.13.03.44.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 03:44:18 -0700 (PDT)
-Date: Thu, 13 Mar 2025 19:44:10 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH v2 0/2] introduce io_uring_cmd_import_fixed_vec
-Message-ID: <Z9K2-mU3lrlRiV6s@sidongui-MacBookPro.local>
-References: <20250312142326.11660-1-sidong.yang@furiosa.ai>
- <7a4217ce-1251-452c-8570-fb36e811b234@gmail.com>
+	s=arc-20240116; t=1741862695; c=relaxed/simple;
+	bh=buE1atiYPYQ607nxgunbzSf/tfSUHJlGFsw5PTuvC/k=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QjO6Qssgqg0T4gmEdh8Z7ZeBm9BM8zVlS+PgpNrHVWdKwLGhgbsi4VoR3BvD76/RnHeyuLL/sFJqvCXugHENMxpeSC+MbF8/N1QWqbP0W7aKjHc0tq3akjWTPWD8XiA94aWazXCjqOhsCg6gD9LCq6QThZZWjffWQTiVvbTL6+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=B92emiyE; arc=none smtp.client-ip=79.135.106.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741862685; x=1742121885;
+	bh=cEp0z9a1YFho7EAFWzdcM9E6nSuKjT0pUbaWukOFjiE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=B92emiyE4n0MDgfkevUR+bMzJG4iQTRtouqNmwaNhuRkELHDxE2SoIBB2mhg+2qAv
+	 OVgWcCVhHTP3dns3k5g5CoNhUpmhcP6YD2F+WUYRN21ft52tsrehwEqAg//x8ShXgO
+	 yf4MmXVrNqkQmjekJIpjkUlhf68ejUEccqc+aEP9Vq9PiZufTwnCC+82dwQvcJQwa2
+	 DikqHHoRbk5pHfG+MAUiQgp0a74WucxZZvewBQa1mhLMapVUwn2yKePeT1jXLULumO
+	 yqP8BvVH/GZlzPtmpby4qGS5fVBOvIu046BVv6kLDaWiUFOGcjpU5nCvT8S1hpv3Z6
+	 kr3cTSHrMg0Lw==
+Date: Thu, 13 Mar 2025 10:44:38 +0000
+To: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 3/4] rust: pci: fix unrestricted &mut pci::Device
+Message-ID: <D8F2S8YNYGZP.3JQKC7ZMRAB2C@proton.me>
+In-Reply-To: <20250313021550.133041-4-dakr@kernel.org>
+References: <20250313021550.133041-1-dakr@kernel.org> <20250313021550.133041-4-dakr@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 89a882be85537588231892a321560284113bea8d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7a4217ce-1251-452c-8570-fb36e811b234@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 13, 2025 at 08:57:45AM +0000, Pavel Begunkov wrote:
-> On 3/12/25 14:23, Sidong Yang wrote:
-> > This patche series introduce io_uring_cmd_import_vec. With this function,
-> > Multiple fixed buffer could be used in uring cmd. It's vectored version
-> > for io_uring_cmd_import_fixed(). Also this patch series includes a usage
-> > for new api for encoded read in btrfs by using uring cmd.
-> 
-> Pretty much same thing, we're still left with 2 allocations in the
-> hot path. What I think we can do here is to add caching on the
-> io_uring side as we do with rw / net, but that would be invisible
-> for cmd drivers. And that cache can be reused for normal iovec imports.
-> 
-> https://github.com/isilence/linux.git regvec-import-cmd
-> (link for convenience)
-> https://github.com/isilence/linux/tree/regvec-import-cmd
-> 
-> Not really target tested, no btrfs, not any other user, just an idea.
-> There are 4 patches, but the top 3 are of interest.
+On Thu Mar 13, 2025 at 3:13 AM CET, Danilo Krummrich wrote:
+> As by now, pci::Device is implemented as:
+>
+> =09#[derive(Clone)]
+> =09pub struct Device(ARef<device::Device>);
+>
+> This may be convenient, but has the implication that drivers can call
+> device methods that require a mutable reference concurrently at any
+> point of time.
 
-Thanks, I justed checked the commits now. I think cache is good to resolve
-this without allocation if cache hit. Let me reimpl this idea and test it
-for btrfs.
+Which methods take mutable references? The `set_master` method you
+mentioned also took a shared reference before this patch.
 
-> 
-> Another way would be to cache in btrfs, but then btrfs would need to
-> care about locking for the cache and some other bits, and we wouldn't
-> be able to reuse it for other drivers.
+> Instead define pci::Device as
+>
+> =09pub struct Device<Ctx: DeviceContext =3D Normal>(
+> =09=09Opaque<bindings::pci_dev>,
+> =09=09PhantomData<Ctx>,
+> =09);
+>
+> and manually implement the AlwaysRefCounted trait.
+>
+> With this we can implement methods that should only be called from
+> bus callbacks (such as probe()) for pci::Device<Core>. Consequently, we
+> make this type accessible in bus callbacks only.
+>
+> Arbitrary references taken by the driver are still of type
+> ARef<pci::Device> and hence don't provide access to methods that are
+> reserved for bus callbacks.
+>
+> Fixes: 1bd8b6b2c5d3 ("rust: pci: add basic PCI device / driver abstractio=
+ns")
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Agreed, it could be better to reuse it for other driver.
+Two small nits below, but it already looks good:
 
-Thanks,
-Sidong
-> 
-> -- 
-> Pavel Begunkov
-> 
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+
+> ---
+>  drivers/gpu/nova-core/driver.rs |   4 +-
+>  rust/kernel/pci.rs              | 126 ++++++++++++++++++++------------
+>  samples/rust/rust_driver_pci.rs |   8 +-
+>  3 files changed, 85 insertions(+), 53 deletions(-)
+>
+
+> @@ -351,20 +361,8 @@ fn deref(&self) -> &Self::Target {
+>  }
+> =20
+>  impl Device {
+
+One alternative to implementing `Deref` below would be to change this to
+`impl<Ctx: DeviceContext> Device<Ctx>`. But then one would lose the
+ability to just do `&pdev` to get a `Device` from a `Device<Core>`... So
+I think the deref way is better. Just wanted to mention this in case
+someone re-uses this pattern.
+
+> -    /// Create a PCI Device instance from an existing `device::Device`.
+> -    ///
+> -    /// # Safety
+> -    ///
+> -    /// `dev` must be an `ARef<device::Device>` whose underlying `bindin=
+gs::device` is a member of
+> -    /// a `bindings::pci_dev`.
+> -    pub unsafe fn from_dev(dev: ARef<device::Device>) -> Self {
+> -        Self(dev)
+> -    }
+> -
+>      fn as_raw(&self) -> *mut bindings::pci_dev {
+> -        // SAFETY: By the type invariant `self.0.as_raw` is a pointer to=
+ the `struct device`
+> -        // embedded in `struct pci_dev`.
+> -        unsafe { container_of!(self.0.as_raw(), bindings::pci_dev, dev) =
+as _ }
+> +        self.0.get()
+>      }
+> =20
+>      /// Returns the PCI vendor ID.
+
+>  impl AsRef<device::Device> for Device {
+>      fn as_ref(&self) -> &device::Device {
+> -        &self.0
+> +        // SAFETY: By the type invariant of `Self`, `self.as_raw()` is a=
+ pointer to a valid
+> +        // `struct pci_dev`.
+> +        let dev =3D unsafe { addr_of_mut!((*self.as_raw()).dev) };
+> +
+> +        // SAFETY: `dev` points to a valid `struct device`.
+> +        unsafe { device::Device::as_ref(dev) }
+
+Why not use `&**self` instead (ie go through the `Deref` impl)?
+
+> @@ -77,7 +77,7 @@ fn probe(pdev: &mut pci::Device, info: &Self::IdInfo) -=
+> Result<Pin<KBox<Self>>>
+> =20
+>          let drvdata =3D KBox::new(
+>              Self {
+> -                pdev: pdev.clone(),
+> +                pdev: (&**pdev).into(),
+
+It might be possible to do:
+
+    impl From<&pci::Device<Core>> for ARef<pci::Device> { ... }
+
+Then this line could become `pdev: pdev.into()`.
+
+---
+Cheers,
+Benno
+
+>                  bar,
+>              },
+>              GFP_KERNEL,
+
+
 
