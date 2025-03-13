@@ -1,134 +1,162 @@
-Return-Path: <linux-kernel+bounces-560231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6BBEA6000F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:50:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B4FFA60012
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:55:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB2C84224DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:50:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 950E67AD78C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90311F0E40;
-	Thu, 13 Mar 2025 18:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECE31F0E4B;
+	Thu, 13 Mar 2025 18:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/wG2510"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="Jb58RZLs";
+	dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="2ggEdGat"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418E31531C5;
-	Thu, 13 Mar 2025 18:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741891851; cv=none; b=W/CxhHw/0N0E7E1Ji4hHP/O3FCKG2UtBsxz+XXVczqP5xGDxBbJzKgQvzWpLV184UZeoL760e1ksy87ac89QzlOHJhuLVg6m4vTPcTl5ffSstdOmSU+vZsROhc7LfJD+u+Xl4fUNeJHXt+Iq1nufKNZHLCc1Wc6QYBzT/Urpa3M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741891851; c=relaxed/simple;
-	bh=wOmk2LDYhQbCJnXD67llNF+qbQsOwKFG1CXJpP8kogQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s6UX13tf3e1/O786nA/ovKKfy0oPJ7p9cb7ot+MxYqNnKLo4Qo5qyu7BpIsigrSsq4xbaZLmQsJh3hTt7ifsrdYOdcU44rKo+jfm+5J5POVl7+LtxRrsbvk8CWfqWcCBNrn/l5ocI7UkFWMZW4oB+vJjaxAr7k0V/ggfZ32SamI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P/wG2510; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5CCBC4CEE3;
-	Thu, 13 Mar 2025 18:50:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741891850;
-	bh=wOmk2LDYhQbCJnXD67llNF+qbQsOwKFG1CXJpP8kogQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=P/wG2510pSGVe3vmk+Np22K3hJype6nlIRoPWA++SjfwMGXz+M7DB+23CdGUyQwaY
-	 TyzAWOl23Z/h3uNgWupzEstKMwdB14BgCitRsWaL0Gnz9hliZYE02rQO6jbVyROzCR
-	 CtQIzFDN5lg/6Eq2cizH4Y6EjyB8YVHBABWwlG6j3Wx3hDcg2R1v70X87mlfZ+zt4g
-	 5Y0gZef789uuW4NR0sFLY2zSORi7uHwMnX8HjZFj/byMqHfgKTHzTI1gBVqKUVU+5i
-	 fVsiBVdGBZDhKys27I1zswi6VdEAvi+gV4GaJEzdpnb+HvsyO2aXVaozTzDB8xa7DG
-	 MGWpgqRf0wuEQ==
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3f682a2c3c8so685609b6e.1;
-        Thu, 13 Mar 2025 11:50:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWp4R/GhQaGyQ7cC6ezSX1LbNmutLHjKl6m24KYpudAbTr+zNqGlBzNTsjCY7L0KJSaHsDOczu76G4=@vger.kernel.org, AJvYcCXiUyGpLt3Qn9yf72aQk0chLAykBTr2kfqNQ2xiSFd7UaL85veC7S87ERyiPCtj3dZUGwQfPV29Aa5Ye+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsPXKvK0CnI6VXP9y0RgLlItPTV7+WUbOBdz56Xa0NsQnbVCYQ
-	CdFkbGc+fXLlGh0TLocZadjAu8f9VUa8SLaNDaBMOkTafAaAlfJuKWpgD7CN/zSqsBIaIneVIhv
-	BuHc++4I7PAqhOzyMlPXEJmkbkcI=
-X-Google-Smtp-Source: AGHT+IGH7HtqwRS4eHXUymOx7wiwoh5XsHbMbmkNjEqwS7ZKOLQ5FH43VVXhEKixxxhGxJbuaKjDkS4IbwPBSmW1mzg=
-X-Received: by 2002:a05:6808:148d:b0:3f8:1df6:413 with SMTP id
- 5614622812f47-3fda15429f2mr491212b6e.1.1741891849972; Thu, 13 Mar 2025
- 11:50:49 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3351CAA6E;
+	Thu, 13 Mar 2025 18:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741892092; cv=pass; b=P08/mESzAGIdXCGQCZrMVNOFyHYJAXienSM+MVf4dFuzyEqF8Fj8CtkYiJOFw8jrBxJJbZ2HT+AxwqWoW7H68/SdQE5czOwMQqB6/4eN0IH81HNB51wC0AquiFSBwyFbLBHIa6NcMR/GguuPEAwCaKJkF2yJKFcvA8zhDtyVODs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741892092; c=relaxed/simple;
+	bh=CaZpgSYtCH4wIyDEkb0dXSqO4VQYc8DrmJcMXYFTx9I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UcfDhupkqQFZ6gyNAi/VYOtpoQfjntl0q/MAmMAKTNSv7LgwQbuldhIBxuHN7U9cjmiPUVgBM9OuKr8JMJeXjcrm+9KxSACTehrt7pL91iwzNapNSraZeco8HX+F+XYJpL5r915UecM817JqKU+69sF0K7MZYQ8Vdq05aEJdF6k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de; spf=pass smtp.mailfrom=fossekall.de; dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=Jb58RZLs; dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=2ggEdGat; arc=pass smtp.client-ip=85.215.255.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fossekall.de
+ARC-Seal: i=1; a=rsa-sha256; t=1741892086; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=GcAsiLlvCXj8PHDT+MgcN8oUjG6QswLD7idPFQg3P3EG3vdbTX2qYrPHk+9BFW6COe
+    B5Ju0/lReHYtWSy+MRb2zK0aJtCWlsiiPB+QsuWmoc5BXlJnFhD6g7qXBuxTfmcQHbEw
+    LOhEgOCGNrd/D6C+fS3dMA3Ow3AiyUaZRxfduSjOy14YdBsHX4O94K3g2So1A5iPFyAT
+    Pqr+djnfzpC4ZhjdeDTlM2MNXx6x3329ZGFKr29/A4iJNc1fi4c0WGvBCDJfFwbnXJtd
+    4xD/hgzWqZyhdk4WdmgbvnI7fku/rNfZLBuhOrAO6/R3bSkWIgTkGOMUS0n1QX1WmVW9
+    az5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1741892086;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=SgCrvoN6Qoq9w0OBDlTcNPxcHVbNiRs3HNs+Dd44VXU=;
+    b=NvpkExZiK7u9eNzB1i1l0d/wDWd59UssFxjMo4zf8m7I0vb1SCTRBA0Frhp/ZXW95b
+    WvqrgonmrIR3c870+KAjXhn7OgbETAMPGTwb52kf1er5W9Q418N5mqE6GYa43WfbsHa6
+    BSDFxG5oxO9c2MvK6RslNeK3gd2e9NZ8ce/Pe9f3Ht865RXFFIknBuNr8cIldF9wGoio
+    gy4wBGIpkbXMrLcuuBqFeSmDqo+XfiSx9P/g2sxYSbqcfQcqhdWHv0FgU8/LlZ48Bo2D
+    QAJlfvk6JEzl3tLaYmzZ27JNHIhI6GX/pJUJLdVLwLB9btyqHxvi3KcG2V8Ubr480/m7
+    pXRg==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1741892086;
+    s=strato-dkim-0002; d=fossekall.de;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=SgCrvoN6Qoq9w0OBDlTcNPxcHVbNiRs3HNs+Dd44VXU=;
+    b=Jb58RZLsAZHrogGI7vZdiA0B5mur18q7n0UlIwf56hz26vu3Iq6FKI2Shf4yI9CnnR
+    JQ1vc68oC0byb7zZfWEccQ0MXGDKb2Ix4/jHFi4Yo84SB1UJuAX3YonafIWnDgNdSr79
+    IAOtfDDlkSRE965T3m6SDbbpG+gsB9/oO47+Ao8h2Qt2fk52Oebxdz2K5dXaSp3BDzNN
+    PrXen3hovBg9ZtQcBYYIg5ZChVqJYS0jRzgnlAXSuY/kmfUJP4PPkvOcHfYqoeeoTRlt
+    iwvoexhlW4F22ddXcs6QLnz9vzled2sA24ZUsFSmXydIdmvGsdI8iLJaesi+SfeD7kfz
+    aXQw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1741892086;
+    s=strato-dkim-0003; d=fossekall.de;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=SgCrvoN6Qoq9w0OBDlTcNPxcHVbNiRs3HNs+Dd44VXU=;
+    b=2ggEdGatQ1dzUrOq9fDJwBRyAvYALEmFi9mYllcqYFMfGkar1/lLF7IsdIP3+O/086
+    wj8nE11rF0iMw1zHxgBw==
+X-RZG-AUTH: ":O2kGeEG7b/pS1EzgE2y7nF0STYsSLflpbjNKxx7cGrBdao6FTL4AJcMdm+lap4JEHkzok9eyEg=="
+Received: from aerfugl
+    by smtp.strato.de (RZmta 51.3.0 AUTH)
+    with ESMTPSA id f28b3512DIsjqNf
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Thu, 13 Mar 2025 19:54:45 +0100 (CET)
+Received: from koltrast.home ([192.168.1.27] helo=a98shuttle.de)
+	by aerfugl with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <michael@fossekall.de>)
+	id 1tsnhc-0001xg-2p;
+	Thu, 13 Mar 2025 19:54:44 +0100
+Date: Thu, 13 Mar 2025 19:54:43 +0100
+From: Michael Klein <michael@fossekall.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] net: phy: realtek: Add support for PHY LEDs on
+ RTL8211E
+Message-ID: <Z9Mp86eWYw3hgt0x@a98shuttle.de>
+References: <20250312193629.85417-1-michael@fossekall.de>
+ <e62af3a7-c228-4523-a1fb-330f4f96f28c@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <22640172.EfDdHjke4D@rjwysocki.net> <2028801.yKVeVyVuyW@rjwysocki.net>
- <1411c47998e44f1509f91e83d0379775db3d4779.camel@linux.intel.com>
-In-Reply-To: <1411c47998e44f1509f91e83d0379775db3d4779.camel@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 13 Mar 2025 19:50:38 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0ghVNKKWbLnwhbriotbgtujy6_G0yiFm1PiCK2KyCPR+A@mail.gmail.com>
-X-Gm-Features: AQ5f1JoJ-sAMGdDzTT2tNHTl5OTvg2Ur5mBrNphzDGgoFpqstqiSERAYNxXHiVI
-Message-ID: <CAJZ5v0ghVNKKWbLnwhbriotbgtujy6_G0yiFm1PiCK2KyCPR+A@mail.gmail.com>
-Subject: Re: [RFC][PATCH v0.3 6/6] cpufreq: intel_pstate: EAS support for
- hybrid platforms
-To: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Peter Zijlstra <peterz@infradead.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, 
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
-	Pierre Gondois <pierre.gondois@arm.com>, Christian Loehle <christian.loehle@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <e62af3a7-c228-4523-a1fb-330f4f96f28c@lunn.ch>
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 13, 2025 at 7:46=E2=80=AFPM Tim Chen <tim.c.chen@linux.intel.co=
-m> wrote:
+On Thu, Mar 13, 2025 at 05:45:05PM +0100, Andrew Lunn wrote:
+>On Wed, Mar 12, 2025 at 08:36:27PM +0100, Michael Klein wrote:
+>> Like the RTL8211F, the RTL8211E PHY supports up to three LEDs.
+>> Add netdev trigger support for them, too.
+>>
+>> Signed-off-by: Michael Klein <michael@fossekall.de>
+>> ---
+>>  drivers/net/phy/realtek.c | 120 ++++++++++++++++++++++++++++++++++++--
 >
-> On Fri, 2025-03-07 at 20:42 +0100, Rafael J. Wysocki wrote:
-> >
-> >
-> > --- a/drivers/cpufreq/intel_pstate.c
-> > +++ b/drivers/cpufreq/intel_pstate.c
-> > @@ -44,6 +44,8 @@
-> >  #define INTEL_CPUFREQ_TRANSITION_DELAY_HWP   5000
-> >  #define INTEL_CPUFREQ_TRANSITION_DELAY               500
-> >
-> > +#define INTEL_PSTATE_CORE_SCALING            100000
-> > +
->
-> Minor nits.
->
-> Suggest move the above define to
->
-> #define HYBRID_SCALING_FACTOR_ADL       78741
-> #define HYBRID_SCALING_FACTOR_MTL       80000
-> #define HYBRID_SCALING_FACTOR_LNL       86957
-> #define INTEL_PSTATE_CORE_SCALING       100000
->
-> to keep the scaling factors at the same place.
+>What tree is this based on?
 
-It may be needed earlier, but I see your point.  Keeping them together
-will make sense.
+This was based on mainline, will be addressed in the next version.
 
+>> +static int rtl8211e_led_hw_control_get(struct phy_device *phydev, u8 index,
+>> +				       unsigned long *rules)
+>> +{
+>> +	int oldpage, ret;
+>> +	u16 cr1, cr2;
+>> +
+>> +	if (index >= RTL8211x_LED_COUNT)
+>> +		return -EINVAL;
+>> +
+>> +	oldpage = phy_select_page(phydev, 0x7);
+>> +	if (oldpage < 0)
+>> +		goto err_restore_page;
+>> +
+>> +	ret = __phy_write(phydev, RTL821x_EXT_PAGE_SELECT, 0x2c);
+>> +	if (ret)
+>> +		goto err_restore_page;
 >
-> > @@ -3425,6 +3539,8 @@
-> >
-> >               cpufreq_unregister_driver(intel_pstate_driver);
-> >               intel_pstate_driver_cleanup();
-> > +             /* Trigger EAS support reconfiguration in case it was use=
-d. */
->
-> May be clearer to say
->
->                 /* Disable EAS support in case it was used */
+>What is happening here? You select page 0x7, and then use
+>RTL821x_EXT_PAGE_SELECT to select 0x2c? Does this hardware have pages
+>within pages?
 
-Sure.
+Kind of; this is from the datasheet:
 
-> My first read of the comment thought that we are enabling EAS support.
->
-> > +             rebuild_sched_domains_energy();
-> >               return 0;
-> >       }
-> >
->
-> Rest of patch looks good.
+	6.9.5.  Access to Extension Page (ExtPage)
+	
+	Set MDIO commands as shown below to switch to the Extension Page (ExtPage) 0xXY (in Hex).
+	1. Set Register 31 Data=0x0007 (set to Extension Page)
+	2. Set Register 30 Data=0x00XY (Extension Page XY)
+	3. Set the target Register Data
+	4. Set Register 31 Data=0x0000 (switch to Page 0)
 
-Thanks for the review!
+Register 30 is RTL821x_EXT_PAGE_SELECT, LED config registers are on 
+extension page 0x2c
+
+-- 
+Michael
 
