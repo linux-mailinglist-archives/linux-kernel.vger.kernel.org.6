@@ -1,110 +1,128 @@
-Return-Path: <linux-kernel+bounces-559141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFDBAA5EFF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:52:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7E92A5EFF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:51:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F30A117DBE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:52:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C05A3B139C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DAE2641EA;
-	Thu, 13 Mar 2025 09:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367BA2641D4;
+	Thu, 13 Mar 2025 09:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="USXOlYhG"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LtRo/dIf"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA841EFF95;
-	Thu, 13 Mar 2025 09:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE26E1EFF95
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741859531; cv=none; b=fnNVyAO6bc0iEenZGizdthL513SebK69TtVXrPEHexv645/rcb6efqoeDAdoSqFYHd6MiXLi4ExcWIHFmdnUXfxf0h8ymm6v101YGJaTDsHLm5U6cQk/xjWYhkQa5+RMtZSaCz0zgXDMMxXZQhCKzGVG1nZo3MtdcADWub5bnVU=
+	t=1741859504; cv=none; b=IW/ulZ5HELvsUcFO2GKWUPXk38R7wdFXqFq2BjM6KdKYOYC50jUDsNg36z2pUT+QPBPGvdtKJGbwPcuUiHQCp7wMPR3XAO3dQ0y00xsSxgHfy8yLIl9b79OLaNdk1SIEqb6zBxs1Zx/bFmwUvv/h2CZHMAtBpJFKZs1D4XxMD6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741859531; c=relaxed/simple;
-	bh=RImN1egxLchm1OT4LIp3YQNEJIdkxcWAKbh1WlvMwro=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O0MXeqU8p1t+PtjKBW92JvRZSBwLmALFRhw/9QeZHUuab77DVO8yBYIf9RGxGVNbqpENmrVXQ3bpza+Y/SiTjTePRhRIgas+gwqC825/1S3HeyFciP8mXCA2htcSg7K30RvTnFLb/jX3hv8rBfxZc94ex5Qhc4i26J1cldh2n3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=USXOlYhG; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741859525;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=TM8qKG71XU2PpI8GcJlKeLnN9Dz9qQxF9PPdUnLxAQ4=;
-	b=USXOlYhG8LNwCtDKk+I7M2S0G3tn39sxx2ppKNtg3HxS5AfvC49bqJNgf/iDT/zluxuTTx
-	/eZnn2FotMOW13djKC7p5kBVr6ww1kO3zWsbo7T1psBnxZPUMjUTlKigrlUIPKSNhnpj72
-	W+K04HUgkMnwRJtXvrgJGozCnk2o+UQ=
-From: Kunwu Chan <kunwu.chan@linux.dev>
-To: ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com,
-	morbo@google.com,
-	justinstitt@google.com
-Cc: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	Kunwu Chan <kunwu.chan@hotmail.com>,
-	Grace Deng <Grace.Deng006@Gmail.com>
-Subject: [PATCH] rust: optimize rust symbol generation for SeqFile
-Date: Thu, 13 Mar 2025 17:51:19 +0800
-Message-ID: <20250313095120.820334-1-kunwu.chan@linux.dev>
+	s=arc-20240116; t=1741859504; c=relaxed/simple;
+	bh=QgYfWBbjniwPDhzWoyGsOU37LL+wBsYx4FA84RaPSfo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=scwaAuOfgbVbXzG4AzyJNDi6F4A05rk5UWDovtTc1PhudIOloA4bhGA02V5ZB+w/HtV/3CbLFdf6kgClcOMuCNV3qIyTDduhI16ySzAx1TqtL8Mx9wb9bN6c6WS5765mvzpj6x5A63icSAVqMbfoGtNMqYIo7c28DgCFbfnF7Qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LtRo/dIf; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-549a4a4400aso857422e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 02:51:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741859500; x=1742464300; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QgYfWBbjniwPDhzWoyGsOU37LL+wBsYx4FA84RaPSfo=;
+        b=LtRo/dIfsWYMJQT5ln6pwRHdVIumv/esAbki/zje09+sexV5+Zd+0X5G+KDC54LkKz
+         9DdB7GPwGQHccIIITH1Y3aTJo4a3j8Q0Q94K8YVWvJXC14MFJej9k1eub0mI+S1hjRzO
+         1xUoazG10QyOd38pBrwwmL3gH8WPBlCij3JhHU0yqVebBSBBPnTnOsSViO7EQJ+0Eu+P
+         xb3AOHDuTMQBWRNlT2HkVWh7qy1vEI+Nc5KQBbAHF4CZ7S5zZIXlZKHR2vs4zU+shi92
+         RK4gvf9Q+lBwFRcDiyt7AEhzwESD1t/vN5L1izWilDTgV5whON7PS+7svi1AHew8wGzl
+         HJ+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741859500; x=1742464300;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QgYfWBbjniwPDhzWoyGsOU37LL+wBsYx4FA84RaPSfo=;
+        b=B1nNvJFPq4gQHh98G1PGjxJyudGpHtY2znYNW9sIVT84e/MmZepD0vAnlGYcSXzoim
+         HjPitasuQqA0Jbc0l9/ZnHkinKwRjKQsaqSdhsx/xu5VBNq0VksNcej3KEu8CoSHbHLM
+         sbOX+FyZWE8tcoM66IsjR1frtkgw+suRVw6+OSpc+FP3ywR/9OiyfCMGubXTy+hJ3TYf
+         plnZKDOlUZW0LBV/4/yAHVsBBy5WKiaRrgVXU3LoEXc4cQCtyi976cp7aq4vyqSR54AO
+         cULtUFWPMZdWtBp4s1EIU9SESW7BaBHybt6NvXgJsY7EG7R2mOMk/kjqWdsaG9YjvsK0
+         GOQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVL5P+Ro7KXWWcM6I1TNT6Es3ArKZhBS+GuJ+aqSzWCeYwg5VWo0ILQB6nPxMcyp2Wu0iHimMlGw+hExG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwBZr1r0yhCv74GVvlhmNfx5lh1NLibMfPgQdMZiIYN0kUpZAB
+	BZ57COjivWTsqkzAdmBcUsMME36Z3cf4pNQOsikKDcAMohN/SO+h0f9cpzF7yPV13tUBqOl8Gub
+	ZnDecTDiqI1qodrtmpbAxnlInHL+LsLWD0Zuq7g==
+X-Gm-Gg: ASbGncs6nbuXXBIqaQr9qmMCYlO9P12+DSSJHeHewsRg1aXBdgr6eWiDrnVyrxG2zdk
+	4ChFG16cEo1h8fDgO02TtuF0lAQB0LIIiRhfG8OW2Aap8thr7Z+KlbzySz5I4fHj/482KN6JPqi
+	fxMqSF8V9QeJcUrORoKPGDNVxAWTNF1yg=
+X-Google-Smtp-Source: AGHT+IG3yO5UKX7BvX8TOnQpocO31aqeIzqAIGkMVMg/xWmE6h9YKu7EryZASHPYLGHFC2RM9d53W/G30tx+Snpz0hA=
+X-Received: by 2002:a19:f810:0:b0:549:91bc:67a9 with SMTP id
+ 2adb3069b0e04-549abaacaaamr3300696e87.9.1741859499720; Thu, 13 Mar 2025
+ 02:51:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250313051953.4064532-1-baolu.lu@linux.intel.com>
+In-Reply-To: <20250313051953.4064532-1-baolu.lu@linux.intel.com>
+From: Zhangfei Gao <zhangfei.gao@linaro.org>
+Date: Thu, 13 Mar 2025 17:51:28 +0800
+X-Gm-Features: AQ5f1Jqrdmo7VWV6PyLD1e4rhSBwqyKwJOXS2K4j0MErxoy_ssJnjuYFCbVU2qM
+Message-ID: <CABQgh9HKaDyDQXGB5ZEGg5q4a9ak_8OB9XQ+TpUNcZd_ZMeCAQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] iommu: Remove IOMMU_DEV_FEAT_SVA/_IOPF
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>, 
+	Fenghua Yu <fenghuay@nvidia.com>, Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Kunwu Chan <kunwu.chan@hotmail.com>
+Hi, Baolu
 
-When build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
-with ARCH=arm64, the following symbols are generated:
+On Thu, 13 Mar 2025 at 13:19, Lu Baolu <baolu.lu@linux.intel.com> wrote:
+>
+> The new method for driver fault reporting support relies on the domain
+> to specify a iopf_handler. The driver should detect this and setup the
+> HW when fault capable domains are attached.
+>
+> Move SMMUv3 to use this method and have VT-D validate support during
+> attach so that all three fault capable drivers have a no-op FEAT_SVA and
+> _IOPF. Then remove them.
+>
+> This was initiated by Jason. I'm following up to remove FEAT_IOPF and
+> further clean up.
+>
+> The whole series is also available at github:
+> https://github.com/LuBaolu/intel-iommu/commits/iommu_no_feat-v4
 
-$nm vmlinux | grep ' _R'.*SeqFile | rustfilt
-ffff8000805b78ac T <kernel::seq_file::SeqFile>::call_printf
+I got an issue on this branch.
 
-This Rust symbol is trivial wrappers around the C functions seq_printf.
-It doesn't make sense to go through a trivial wrapper for its functions,
-so mark it inline.
+Linux 6.14-rc4 + iommu_no_feat-v2
+drivers/pci/quirks.c
+quirk_huawei_pcie_sva will set dma-can-stall first
+arm_smmu_probe_device will check dma-can-stall and set stall_enabled
+accordingly.
 
-After doing so, the above symbol will not in output.
+This branch
+arm_smmu_probe_device happens first, when dma-can-stall = 0, so
+stall_enabled =0.
+Then drivers/pci/quirks.c: quirk_xxx happens
 
-Signed-off-by: Kunwu Chan <kunwu.chan@hotmail.com>
-Co-developed-by: Grace Deng <Grace.Deng006@Gmail.com>
-Signed-off-by: Grace Deng <Grace.Deng006@Gmail.com>
----
- rust/kernel/seq_file.rs | 1 +
- 1 file changed, 1 insertion(+)
+Still in checking.
 
-diff --git a/rust/kernel/seq_file.rs b/rust/kernel/seq_file.rs
-index 04947c672979..efc4dd09850a 100644
---- a/rust/kernel/seq_file.rs
-+++ b/rust/kernel/seq_file.rs
-@@ -30,6 +30,7 @@ pub unsafe fn from_raw<'a>(ptr: *mut bindings::seq_file) -> &'a SeqFile {
-     }
- 
-     /// Used by the [`seq_print`] macro.
-+    #[inline]
-     pub fn call_printf(&self, args: core::fmt::Arguments<'_>) {
-         // SAFETY: Passing a void pointer to `Arguments` is valid for `%pA`.
-         unsafe {
--- 
-2.43.0
+And this branch does not need these two patches, right?
+c7b1397bef3c iommu/arm-smmu-v3: Implement arm_smmu_get_msi_mapping_domain
+5cd34634a73e iommu/dma: Support MSIs through nested domains
 
+Thanks
 
