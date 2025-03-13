@@ -1,114 +1,215 @@
-Return-Path: <linux-kernel+bounces-559770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BEC2A5F957
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:14:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D39A9A5F968
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:15:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8C40179AE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:14:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC9A1895DD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1224F26869C;
-	Thu, 13 Mar 2025 15:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9537F26138E;
+	Thu, 13 Mar 2025 15:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WoqK02lK"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bz0tk6r4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384401D8A0A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E69EFC08;
+	Thu, 13 Mar 2025 15:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741878860; cv=none; b=qzeyLdcahWXJ0qGQ9qOUYSvb78082i2W2ZCIk4aciSBb5Dr3hK2aVZ7louM2Yt0HaMy+zuOO5FL6IG/5zQ8Ke6r3VzbWldoSKTUmClQynHzWZoV6LtUqAjfH2LMry/QwqJo5UlzUntIjN/VZHMqqYbmtbwumObcWgU6EnHdA9/Q=
+	t=1741878949; cv=none; b=YWKxJ+csezdzhtU+SeDmke/c71S+2ZKMgN0TvwOnZK3UXFMD1S1FAoqmZdm0Vtwzgn7dnGEbyPwS40wF70WkR9urQQEl9Xs3ZNaL+eMozGz5tx8jf/oD3s2ukmL5AbLdMHv0pN6xLZcZ4oSdrsQbcoV7YbetqBgHvoNdLqaRhfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741878860; c=relaxed/simple;
-	bh=1P9eAXy79yGLdU5tp3zlyGps03BkUiPsqFBCm2cxcMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Bjcy6l1XfNGvI2lsBWCdnHJpsb2UbOegs2t239xG6odCBBR70Fl9ecynSRZkyi366Gd4eQSpa7qKkLHDMJGRJ68+ATwoQnUhpvbB8Dks7aUsw5yuUS928ZDbeAf601fqOL4X9h/YxMEJu27K5rjNBhioEb+GRDdUYC3r4I3Dycw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WoqK02lK; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 55B084421A;
-	Thu, 13 Mar 2025 15:14:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741878855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9luUN/dEXHB6yOQaOu/R2VJ4c9o/k4HnO8bdSVrfaX8=;
-	b=WoqK02lKedHD6pknpCYD3wUB4cb9WBWsuwqfmbaKjvYll+hAiPLQmsK6HdnqxeRBw0G+F/
-	2Vm4bYCBgcp+gcP45FoiM+iSwf3GJKg7st/NGTxFgxI/19ZdFWH/jUfNSt2b0lZXoggZcE
-	KzKYF67mIrT703ucVzNH/d7+o9VZyV8PPDYzJSloqiHkdz2TRzUroJDdPTFqoR0QXRwmY8
-	eBVkyPZ4wThW7j4SCO8112nd/u05O6RelraW+/8LQd+cvXsx1kv2STr7wCd8RyPSs0YH+V
-	/fRWGqn3nj9tWiihFo16iNAFzAXf/SETaUAVOcJ7Atd1rO1aulo8ojcvl2RqYA==
-Date: Thu, 13 Mar 2025 16:14:11 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Dario Binacchi
- <dario.binacchi@amarulasolutions.com>, Michael Trimarchi
- <michael@amarulasolutions.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/mxsfb: fix missing rollback on failure in
- mxsfb_probe()
-Message-ID: <20250313161411.4604a1a1@booty>
-In-Reply-To: <468c6352-3301-4f0b-a2d4-d6a013417a0e@suse.de>
-References: <20250313-mxsfb_probe-fix-rollback-on-error-v1-1-ad2fb79de4cb@bootlin.com>
-	<468c6352-3301-4f0b-a2d4-d6a013417a0e@suse.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1741878949; c=relaxed/simple;
+	bh=DxYmwRKpDd0tnQCFVByN7y7sngics+dT8oStdDQf0DI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t4Q8KjVcNrakZjFA2FwLaEp2L0yup8h54lm4iuR4SBjAEsAdzm74bbKfuscUNFF/C1FWYWLP1K9Ve2ZNVujZyjnOF5ay4EWtdKHcIOqqC+sx3rH9M0RqDFOoRjY7YWCrmq4cg5DVDENHmNsFXv7l4IVByyGcilPXKQ0nhhHE1dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bz0tk6r4; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741878947; x=1773414947;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DxYmwRKpDd0tnQCFVByN7y7sngics+dT8oStdDQf0DI=;
+  b=Bz0tk6r4Vd//cRCV6rlE3NlMcWj9pT6sZEmjyIdfKvw/XYYxCbEyv+yP
+   x29BKbjxfnq1qFiQ14mGhgkxEpgTMglDstXzaqxNn3UawFPzyI+X5iP0y
+   bG6ls/UuWGl9r5Eriy2wKRZovnLSvNTI16bYNrbDkBeL6Wjo2IPoDrHwP
+   wW/1Ve4JA/+1TCl4gDdd1sZQA+Yv7EIWOT48MptZR9dn0Lt3YiI5xcgfR
+   W65v7lx2n7SEkmbF3e1w9AWXkyhXBac/3HWYUuxxTc6IqVnDxznMGS8eN
+   9otg7C0gdufuQtn/xJnuhl7F93cVtZT7UndWFe+2NDD8akjGOnqgseQ2G
+   Q==;
+X-CSE-ConnectionGUID: 93Zn59xqTei1ZB6Ya8FNsw==
+X-CSE-MsgGUID: OoaCOZ+OTc6UlMkZQMgMiQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="46904145"
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="46904145"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 08:15:46 -0700
+X-CSE-ConnectionGUID: sj4BoNyoQW6FajNRPC0JWw==
+X-CSE-MsgGUID: i4AIluP9SHGwIipTSk7DSg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="121491205"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 13 Mar 2025 08:15:42 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tskHc-0009Yy-1K;
+	Thu, 13 Mar 2025 15:15:40 +0000
+Date: Thu, 13 Mar 2025 23:15:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nam Cao <namcao@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>,
+	Gabriele Monaco <gmonaco@redhat.com>, john.ogness@linutronix.de,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Nam Cao <namcao@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH 04/10] rv: Add rtapp_block monitor
+Message-ID: <202503132244.Azu340js-lkp@intel.com>
+References: <c8a1658c6da343b6055cbfcd6ee5ddea48335d31.1741708239.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdekvdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemrgdttddvmedusggrjeemgeekfhejmedulegtheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemrgdttddvmedusggrjeemgeekfhejmedulegthedphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopehmrghrvgigseguvghngidruggvpdhrtghpthhtohepshhtvghfrghnsegrghhnvghrrdgthhdprhgtphhtthhopehmrggrr
- hhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c8a1658c6da343b6055cbfcd6ee5ddea48335d31.1741708239.git.namcao@linutronix.de>
 
-Hello Thomas,
+Hi Nam,
 
-On Thu, 13 Mar 2025 15:40:43 +0100
-Thomas Zimmermann <tzimmermann@suse.de> wrote:
+kernel test robot noticed the following build warnings:
 
-> > @@ -365,9 +365,10 @@ static int mxsfb_probe(struct platform_device *pdev)
-> >   	 * located anywhere in RAM
-> >   	 */
-> >   	ret = aperture_remove_all_conflicting_devices(mxsfb_driver.name);
-> > -	if (ret)
-> > -		return dev_err_probe(&pdev->dev, ret,
-> > -				     "can't kick out existing framebuffers\n");
-> > +	if (ret) {
-> > +		dev_err_probe(&pdev->dev, ret, "can't kick out existing framebuffers\n");
-> > +		goto err_unload;
-> > +	}  
-> 
-> I must have missed that when I reviewed the patch. But this call should 
-> happen much earlier. right at the top of the probe function before 
-> drm_dev_alloc(). Conflicting drivers need to be kicked out before 
-> setting up DRM. Could you please send a patch to move the call to the 
-> top? No extra cleanup would be required then.
+[auto build test WARNING on trace/for-next]
+[also build test WARNING on tip/x86/core tip/x86/mm linus/master v6.14-rc6 next-20250313]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Sure, sending v2 in a moment.
+url:    https://github.com/intel-lab-lkp/linux/commits/Nam-Cao/rv-Add-undef-TRACE_INCLUDE_FILE/20250312-011043
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/c8a1658c6da343b6055cbfcd6ee5ddea48335d31.1741708239.git.namcao%40linutronix.de
+patch subject: [PATCH 04/10] rv: Add rtapp_block monitor
+config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20250313/202503132244.Azu340js-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250313/202503132244.Azu340js-lkp@intel.com/reproduce)
 
-Luca
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503132244.Azu340js-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:91:53: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
+      91 | static void handle_rt_mutex_wake_waiter_begin(void *, struct task_struct *task)
+         |                                                     ^
+   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:96:51: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
+      96 | static void handle_rt_mutex_wake_waiter_end(void *, struct task_struct *task)
+         |                                                   ^
+   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:101:45: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
+     101 | static void handle_sched_kthread_stop(void *, struct task_struct *task)
+         |                                             ^
+   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:109:49: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
+     109 | static void handle_sched_kthread_stop_ret(void *, int)
+         |                                                 ^
+   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:109:54: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
+     109 | static void handle_sched_kthread_stop_ret(void *, int)
+         |                                                      ^
+   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:117:39: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
+     117 | static void handle_sched_wakeup(void *, struct task_struct *task)
+         |                                       ^
+   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:164:2: error: call to undeclared function 'check_trace_callback_type_sys_enter'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     164 |         rv_attach_trace_probe("rtapp_block", sys_enter, handle_sys_enter);
+         |         ^
+   include/rv/instrumentation.h:18:3: note: expanded from macro 'rv_attach_trace_probe'
+      18 |                 check_trace_callback_type_##tp(rv_handler);                             \
+         |                 ^
+   <scratch space>:8:1: note: expanded from here
+       8 | check_trace_callback_type_sys_enter
+         | ^
+   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:164:2: error: call to undeclared function 'register_trace_sys_enter'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   include/rv/instrumentation.h:19:13: note: expanded from macro 'rv_attach_trace_probe'
+      19 |                 WARN_ONCE(register_trace_##tp(rv_handler, NULL),                        \
+         |                           ^
+   <scratch space>:9:1: note: expanded from here
+       9 | register_trace_sys_enter
+         | ^
+   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:165:2: error: call to undeclared function 'check_trace_callback_type_sys_exit'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     165 |         rv_attach_trace_probe("rtapp_block", sys_exit, handle_sys_exit);
+         |         ^
+   include/rv/instrumentation.h:18:3: note: expanded from macro 'rv_attach_trace_probe'
+      18 |                 check_trace_callback_type_##tp(rv_handler);                             \
+         |                 ^
+   <scratch space>:14:1: note: expanded from here
+      14 | check_trace_callback_type_sys_exit
+         | ^
+   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:165:2: error: call to undeclared function 'register_trace_sys_exit'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   include/rv/instrumentation.h:19:13: note: expanded from macro 'rv_attach_trace_probe'
+      19 |                 WARN_ONCE(register_trace_##tp(rv_handler, NULL),                        \
+         |                           ^
+   <scratch space>:15:1: note: expanded from here
+      15 | register_trace_sys_exit
+         | ^
+   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:165:2: note: did you mean 'register_ftrace_direct'?
+   include/rv/instrumentation.h:19:13: note: expanded from macro 'rv_attach_trace_probe'
+      19 |                 WARN_ONCE(register_trace_##tp(rv_handler, NULL),                        \
+         |                           ^
+   <scratch space>:15:1: note: expanded from here
+      15 | register_trace_sys_exit
+         | ^
+   include/linux/ftrace.h:535:19: note: 'register_ftrace_direct' declared here
+     535 | static inline int register_ftrace_direct(struct ftrace_ops *ops, unsigned long addr)
+         |                   ^
+   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:180:2: error: call to undeclared function 'unregister_trace_sys_enter'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     180 |         rv_detach_trace_probe("rtapp_block", sys_enter, handle_sys_enter);
+         |         ^
+   include/rv/instrumentation.h:28:3: note: expanded from macro 'rv_detach_trace_probe'
+      28 |                 unregister_trace_##tp(rv_handler, NULL);                                \
+         |                 ^
+   <scratch space>:29:1: note: expanded from here
+      29 | unregister_trace_sys_enter
+         | ^
+   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:181:2: error: call to undeclared function 'unregister_trace_sys_exit'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     181 |         rv_detach_trace_probe("rtapp_block", sys_exit, handle_sys_exit);
+         |         ^
+   include/rv/instrumentation.h:28:3: note: expanded from macro 'rv_detach_trace_probe'
+      28 |                 unregister_trace_##tp(rv_handler, NULL);                                \
+         |                 ^
+   <scratch space>:30:1: note: expanded from here
+      30 | unregister_trace_sys_exit
+         | ^
+   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:181:2: note: did you mean 'unregister_ftrace_direct'?
+   include/rv/instrumentation.h:28:3: note: expanded from macro 'rv_detach_trace_probe'
+      28 |                 unregister_trace_##tp(rv_handler, NULL);                                \
+         |                 ^
+   <scratch space>:30:1: note: expanded from here
+      30 | unregister_trace_sys_exit
+         | ^
+   include/linux/ftrace.h:539:19: note: 'unregister_ftrace_direct' declared here
+     539 | static inline int unregister_ftrace_direct(struct ftrace_ops *ops, unsigned long addr,
+         |                   ^
+   6 warnings and 6 errors generated.
+
+
+vim +91 kernel/trace/rv/monitors/rtapp_block/rtapp_block.c
+
+    90	
+  > 91	static void handle_rt_mutex_wake_waiter_begin(void *, struct task_struct *task)
+    92	{
+    93		rv_rtapp_block_atom_update(task, RT_MUTEX_WAKING_WAITER, true);
+    94	}
+    95	
 
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
