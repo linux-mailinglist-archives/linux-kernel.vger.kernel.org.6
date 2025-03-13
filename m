@@ -1,125 +1,110 @@
-Return-Path: <linux-kernel+bounces-560344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6C1A602D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:39:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73B39A602D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:40:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 164757AD690
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:38:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 578C6189F664
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9781F4606;
-	Thu, 13 Mar 2025 20:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9564C1F4615;
+	Thu, 13 Mar 2025 20:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EOlMPu7Q"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FELOkDWy"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C7E6F2F2;
-	Thu, 13 Mar 2025 20:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583776F2F2;
+	Thu, 13 Mar 2025 20:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741898352; cv=none; b=XEIOb59DLjmm5LjO1ZQAPvhT/t2fgQDNscpFvzS/Dav38jQ45fzcnVLk7iB76CRMDNoe9mlY1ptoNCPn96j4Macs6zbVnjEYT3FGjuR0UI7G3arpZpu+phUcxfpGN9xPQMxirTnN4rmY4drB28gsg9VrGTO5ziLjVhYPWGup5t8=
+	t=1741898447; cv=none; b=JvPR0hAVK4VHnxUW87yV4s+YaGguAa6hdHZQIaZuEpFamTbqWE3kr19LBqQ2Gy/d4gCUJssoOfMH3GV02sAkIX0vZTRJtufvyHx0w2+J0wa61T1VuZM+j81y/FjAGDmovRS0ZQcGBZT91/iH/15YxbV4TH8IaN1InU2wEqHSVVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741898352; c=relaxed/simple;
-	bh=oHVA6a2AKNa2vHiRWvGEv+uMrhVRRyUqCTD1yNo12m8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WJrL/SQBGVK7x7BCJoajoBiMZeQb9T+/rVuKyfZbsgFQCmalXIJi/M8lx/BTO7bDO7rPqcyjCF4K4mLmb6nsDvXLZ6vPDw/7PaoAW3gw6JEXYJa4kI4VaZ+i1+gsCJS1UopmFYE5NlXAq3JB64x4BSv3s5BHz1/8I6b2GePz10o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EOlMPu7Q; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac2aeada833so270735466b.0;
-        Thu, 13 Mar 2025 13:39:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741898349; x=1742503149; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y80nSXH6gqqrmRGM3IsXoDQwjoa1+dDg8jnx+cu1UCA=;
-        b=EOlMPu7QGW9gZ4j4cdHb2pU02+X8Uv7Q3WPVOQ5jZq4uHK/t2naEtgma4d/nI0Q0o8
-         EtbLbZSpsJoYxqwMhkde+AY5QdKpwwKuseLUzLZzi7yhjKbdviJLIWqllcTbAhrKjhqP
-         EZfWhKXiuwMTkj0Sehha65qO54gJKebNt/J3wHFNOiTen+F/7XzVMTfNwMXi+urMfakM
-         ncE7CwH1lwnsnZhKLS0s2yEyrOGICAPKHBqt4j6/pyXMQ6223xROtI7XmdTBMFAvXXiA
-         2q7KS7/TY5s7AnC5ljp0qfcOv0FNf7O0quwzELsBbjP/DbbgaLDVMd3O1nEp+rGI//JL
-         cT1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741898349; x=1742503149;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y80nSXH6gqqrmRGM3IsXoDQwjoa1+dDg8jnx+cu1UCA=;
-        b=tSOfa+z3bIYoJlI8OEqwpzKJXwfYUP2Y+185TcnLT40qTHjL1JkOZycQCfXilInmUG
-         3cT79/afKhasYMcXm14CBUhOXtTdK5Pyxh8MYox9L4n5OlKIumsIfjqi16gUz+U153U1
-         okmbs8N8Vi6D9h+sjITaiNz99qQXMSuM1oky4Nt1BshOoukZ1C4BY1GWenU4UWuJzebU
-         OhvZWxT4HkDZtQk/7CE9aYCd1hOcexSsaJjuzI4+ePDvJF8PjYi+jBg6oWmruABmxnd1
-         QTurzTZxaAMKsNKCcc5DUfTwBjyiRvE1ugIU55pN+n0wcQ28qUhaLehgw2Z4UgAjONsm
-         jQ6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUwYMif/Xer0pNiEsL25do4d1yMWSSBGPlByvR+INEkij/rK3JY+RAdTL+d1Eh6DZfFhESkkDGu2D3u@vger.kernel.org, AJvYcCWrNvR2CuhykrdYfeNnHF/EtBuqtRRq2KQSkehjK48xYLPLsSKX0mkcUAaEJ8rzjmthBesw9eE8RUsCx1pp@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSD87OS4BDtb1Q3uM4yKeEH11mz1UeP/pGNGo74GhIuJPL4qbD
-	b5z6A2eVF1nTKA2HjzhkAAuBbZopDTkXNovgT9M1VcFRWPAn9N+j
-X-Gm-Gg: ASbGncvLYteYpQdwZ9l9nODMPmoD2VMfhdXcku2qlHhHLb2Gqu0U3nN7muKkER9KAf9
-	ZLwlZR+K2IKwq/H76mKteoA8gOxmO1iPcGjtc+tbr6HLI/aarHSlDthHYWu1cAkIv+CNRbq2pJl
-	+sw4AcNsXB0BIwfLG8ibXzZ690loABoE2ZcLH7P4+nlmpyMz5aTW8HltTvCpkmp7r6G7jKnRdea
-	rV8X0tGaN538zRctyqauRhU38SGtrZOcxir8mpZqTtdw0pTiCO4MnY5Ld4w4jda8/S8Q3tO+31w
-	zsLcTMNsTCTws87IsCZWHvoV6HDNNF7GycEYW/PCqTpdGHaywvF2Og1RGABECreJEHtqJwF1UGb
-	Wt2gpBjpvuxATDPJeJpFI9w==
-X-Google-Smtp-Source: AGHT+IGgXzCvFKIwuNzp9fqTkDSNxicFmg1nWVCw8cSfyB1nRxtqRIguRpztRQZovtRqtEoojZxR6A==
-X-Received: by 2002:a17:906:a297:b0:ac3:14e1:27a5 with SMTP id a640c23a62f3a-ac314e128d6mr343436266b.1.1741898349044;
-        Thu, 13 Mar 2025 13:39:09 -0700 (PDT)
-Received: from [192.168.50.244] (83.11.221.132.ipv4.supernova.orange.pl. [83.11.221.132])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a489c9sm122016566b.152.2025.03.13.13.39.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 13:39:08 -0700 (PDT)
-Message-ID: <f363c1ce-8612-476e-a5d5-c3cb358bf50a@gmail.com>
-Date: Thu, 13 Mar 2025 21:39:05 +0100
+	s=arc-20240116; t=1741898447; c=relaxed/simple;
+	bh=UKF09hZbujuv4/nwID9bGnTQz9unLs7XP7f9Qo0EhYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cGprSsIRUSpTFJJgpxBtNyb505SkqN+3SsNr9vD00UtFJhdtv5TiVQqy6LnoP48aZsO8QExfla1G2VfNWOn3JOp01TpKQvOAThJf3wH4vLATNlhUZUS9aLxuiNClr/EEWLA05pTrJEqWwMO49dgJf4p74FKM1Wxt3+fNd3qeXBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=FELOkDWy; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=3RF2WHNo1aasNoNcp5hUTGc/NdE/rBvS9KHkHJd4Tbw=; b=FELOkDWySR3lZkOkOW7/wfRt2Y
+	djHCIoy8Akoy5Z1S0cLfWM4EdOh+XR9eveE/ZAN1+0iaqXNx+xKLhlld3OrOGvmEzY58PqsbYMIp8
+	MJtm75Au81Cr+7u3z1jGGOO26w5qfukoqa5GzNusHL9BfmfBiwGeXAtPrNmur2GD1XyA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tspLv-0056JO-H6; Thu, 13 Mar 2025 21:40:27 +0100
+Date: Thu, 13 Mar 2025 21:40:27 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"daniel@makrotopia.org" <daniel@makrotopia.org>,
+	"markus.stockhausen@gmx.de" <markus.stockhausen@gmx.de>,
+	"sander@svanheule.net" <sander@svanheule.net>,
+	netdev <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10] net: mdio: Add RTL9300 MDIO driver
+Message-ID: <6a98ba41-34ee-4493-b0ea-0c24d7e979b1@lunn.ch>
+References: <20250313010726.2181302-1-chris.packham@alliedtelesis.co.nz>
+ <f7c7f28b-f2b0-464a-a621-d4b2f815d206@lunn.ch>
+ <5ea333ec-c2e4-4715-8a44-0fd2c77a4f3c@alliedtelesis.co.nz>
+ <be39bb63-446e-4c6a-9bb9-a823f0a482be@lunn.ch>
+ <539762a3-b17d-415c-9316-66527bfc6219@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 06/10] mfd: bcm590xx: Add PMU ID/revision parsing
- function
-To: Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Stanislav Jakubek <stano.jakubek@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <20250304-bcm59054-v6-0-ae8302358443@gmail.com>
- <20250304-bcm59054-v6-6-ae8302358443@gmail.com>
- <20250313132036.GB3616286@google.com>
- <ef190ba8-a5c7-4a1a-90e6-2610de00e4ed@sirena.org.uk>
-From: Artur Weber <aweber.kernel@gmail.com>
-Content-Language: en-US
-In-Reply-To: <ef190ba8-a5c7-4a1a-90e6-2610de00e4ed@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <539762a3-b17d-415c-9316-66527bfc6219@alliedtelesis.co.nz>
 
-On 13.03.2025 14:25, Mark Brown wrote:
-> On Thu, Mar 13, 2025 at 01:20:36PM +0000, Lee Jones wrote:
->> On Tue, 04 Mar 2025, Artur Weber wrote:
+On Thu, Mar 13, 2025 at 08:37:18PM +0000, Chris Packham wrote:
+> On 14/03/2025 09:35, Andrew Lunn wrote:
+> > On Thu, Mar 13, 2025 at 07:54:39PM +0000, Chris Packham wrote:
+> >> +cc netdev, lkml
+> >>
+> >> On 14/03/2025 01:34, Andrew Lunn wrote:
+> >>>> +	/* Put the interfaces into C45 mode if required */
+> >>>> +	glb_ctrl_mask = GENMASK(19, 16);
+> >>>> +	for (i = 0; i < MAX_SMI_BUSSES; i++)
+> >>>> +		if (priv->smi_bus_is_c45[i])
+> >>>> +			glb_ctrl_val |= GLB_CTRL_INTF_SEL(i);
+> >>>> +
+> >>>> +	fwnode_for_each_child_node(node, child)
+> >>>> +		if (fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45"))
+> >>>> +			priv->smi_bus_is_c45[mdio_bus] = true;
+> >>>> +
+> >>> This needs more explanation. Some PHYs mix C22 and C45, e.g. the > 1G
+> >>> speed support registers are in the C45 address space, but <= 1G is in
+> >>> the C22 space. And 1G PHYs which support EEE need access to C45 space
+> >>> for the EEE registers.
+> >> Ah good point. The MDIO interfaces are either in GPHY (i.e. clause 22)
+> >> or 10GPHY mode (i.e. clause 45). This does mean we can't support support
+> >> both c45 and c22 on the same MDIO bus (whether that's one PHY that
+> >> supports both or two different PHYs). I'll add a comment to that effect
+> >> and I should probably only provide bus->read/write or
+> >> bus->read_c45/write_c45 depending on the mode.
+> > Is there more to it than this? Because why not just set the mode per
+> > bus transaction?
 > 
->>> +	if (id != bcm590xx->pmu_id) {
->>> +		dev_err(bcm590xx->dev,
->>> +			"Incorrect ID for %s: expected %x, got %x. Check your DT compatible.\n",
->>
->> Isn't it more likely that the H/W this is being executed on is
->> unsupported?  If so, say that instead.
-> 
-> Given that the compatibles are device specific the driver shouldn't be
-> binding if the device is unsupported.
+> It's a bus level setting at init time. You can't dynamically switch modes.
 
-Yes, the intention here is just to make sure that the DT compatible and
-hardware ID match. Unsupported hardware would not have a DT compatible.
+Why not? The bus is only every doing one transaction at a time, so why
+not switch it per transaction?
 
-Best regards
-Artur
+	Andrew
 
