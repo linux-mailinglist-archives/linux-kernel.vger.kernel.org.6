@@ -1,65 +1,55 @@
-Return-Path: <linux-kernel+bounces-559838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A465A5FA77
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:53:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 392CEA5FA7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:54:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78AB19C1FCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:53:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D1D2189BCBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9837523A;
-	Thu, 13 Mar 2025 15:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47087268FFC;
+	Thu, 13 Mar 2025 15:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WiNMdv87"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FMlhzKxn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD62145A11;
-	Thu, 13 Mar 2025 15:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C43613AA2F;
+	Thu, 13 Mar 2025 15:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741881182; cv=none; b=B8473S2HENHnV5S+y/CwGulG5NutL/OM9488c7/a0az8aKvsHFpzLKd/Twd/c2WMplZOUWkAvN2PyYJFw5f2OV9Vj0HmLlHq+j8muVTokVAnJhp7/pwStY9Slyw7fkBPcztt2H1NKO5V9XTAIDc7PuIAstvYwOQkDEBw9lz6jbI=
+	t=1741881247; cv=none; b=Q3jlbCyTyW50vRTS3gs/YKvt6JZhrO3H4f1R8eJVTcowMpEl1tLT9uihoYxSOU29mgZz96u6Nh6G1vU2FkKDXByOOuGKhhlYw7F6v/Y07wIS6sValqJYQX7SE36YKleG8gqjVo6rKB4VDSh+2JaBgD8l2B38ZJQvLV1XMi8kBGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741881182; c=relaxed/simple;
-	bh=B+iodccQAAWWFeaau0E85WS8h8bYx85cuP8vx0wMJMY=;
+	s=arc-20240116; t=1741881247; c=relaxed/simple;
+	bh=CxnWivVLQ4Dd/EZfTFOz5IGyCXEdZefIUY9yz1Sn8wg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zse6xmCq2HolC082BpI+U7XBqCSk0kD8nb0XLlnHxFu5Su51zVlyQ6AzqeWeYJnOKPij/yhdkByWenmtfgac7AebWdALnq2DMzHJZkiYYSxOHbZDcLlr6ab8bVdHZjXIln+liOfMjZsj+9VWwxIVCIVeT17maJaNAL8SLBREh50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WiNMdv87; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9697AC4CEEB;
-	Thu, 13 Mar 2025 15:52:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=d1hI1CRKXjru7wsgpr+DjAhS/VtQn2G7oVGqiTFuniCU7ajTqBSmEOpAC5WSzNzndVg/vphd93v/sXtyfX8r/7REe/OJSQG8OC2ByTBDJdwls3zJl3SVhvhE8HfKtjMSJBU1xNaZU95qIyhxcXMEljavFakXTZQmDTrxrzeOCNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FMlhzKxn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB496C4CEDD;
+	Thu, 13 Mar 2025 15:54:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741881182;
-	bh=B+iodccQAAWWFeaau0E85WS8h8bYx85cuP8vx0wMJMY=;
+	s=k20201202; t=1741881247;
+	bh=CxnWivVLQ4Dd/EZfTFOz5IGyCXEdZefIUY9yz1Sn8wg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WiNMdv87YueAruvkGnE+vHiU2Cax7A7/JPg9r7g9qO3CfD5beA5i830uQg+jPqTnA
-	 1hKpjZ4/nyBNfH3XzPeQBF3nPsiQBK36talzarQDaKv6BdHD1Jr8Acb33HQLysx2m2
-	 k9mzjLTpskpqopmwnCcCIpf++eD67Lpci2ioyT2IiDwqq1PoXKHXlPCFRiUQG1reXd
-	 ZsczD+7XeoYLvd0s9B4XlcJnUN/7S7IiZcdV8LEiHW3sSS/WcudRH27xM5g8qiGmjM
-	 aXrZPj24e2OfgVnE/dPpf+WCLC8ywF+vrCgmkauGzJXy4l9ntyUaTWMBYe6pDTXoOz
-	 wEA7xYRy3j3Dw==
-Date: Thu, 13 Mar 2025 16:52:55 +0100
-From: Nathan Chancellor <nathan@kernel.org>
-To: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
-Cc: broonie@kernel.org, alsa-devel@alsa-project.org,
-	Mario.Limonciello@amd.com, Vijendar.Mukunda@amd.com,
-	Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com,
-	ssabakar@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Murad Masimov <m.masimov@maxima.ru>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	"open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 05/14] ASoC: amd: acp: Refactor acp machine select
-Message-ID: <20250313155255.GA2477963@ax162>
-References: <20250310183201.11979-1-venkataprasad.potturu@amd.com>
- <20250310183201.11979-6-venkataprasad.potturu@amd.com>
+	b=FMlhzKxnDDFp+p+D6fevC/6hJa7GAGc2DzpSRvIdBaRWvKoPQcrp4qXysM7ohbIjw
+	 oQFs9H4s9wve7/Y7Cdo7PTCztDorpuDUrIAxz3t8yO3mcYE3RSVETjnXAJ3HuRJXgh
+	 puNxN+IowhJV1hDMd/JPvACKfenccChxY0UaEw2EL51xZ5ECNB5waXXICx5f8itmkK
+	 mRdOlUemv3ne8HKgylK+BKMg4oE0EEfA465YC13osOd5kRESAXcNpG9FJzI665OBnm
+	 OJm9nG/e0AtlGw26Qcr5XmFtxxqezcTaHKvHShLs4jy73HwD8JCcX23bt52Hcac2ky
+	 sQ7B7pgO5u/9w==
+Date: Thu, 13 Mar 2025 16:54:01 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Ruiwu Chen <rwchen404@gmail.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>
+Subject: Re: [PATCH] drop_caches: Allow re-enabling message after disabling
+Message-ID: <znixmeryizgqkb273xidczsgdh52tw3pv4ehfyoj6m2tcxycch@xal6ntp5f5mt>
+References: <20250313-jag-drop_caches_msg-v1-1-c2e4e7874b72@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,219 +58,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250310183201.11979-6-venkataprasad.potturu@amd.com>
+In-Reply-To: <20250313-jag-drop_caches_msg-v1-1-c2e4e7874b72@kernel.org>
 
-Hi Venkata,
-
-On Tue, Mar 11, 2025 at 12:01:52AM +0530, Venkata Prasad Potturu wrote:
-> Refactor and move acp machine select function from acp platform
-> driver to acp pci driver and assign platform specific acpi machines
-> to chip->machines.
+On Thu, Mar 13, 2025 at 04:46:36PM +0100, Joel Granados wrote:
+> After writing "4" to /proc/sys/vm/drop_caches there was no way to
+> re-enable the drop_caches kernel message. By removing the "or" logic for
+> the stfu variable in drop_cache_sysctl_handler, it is now possible to
+> toggle the message on and off by setting the 4th bit in
+> /proc/sys/vm/drop_caches.
 > 
-> Signed-off-by: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
-...
-> diff --git a/sound/soc/amd/acp/amd.h b/sound/soc/amd/acp/amd.h
-> index be1aa405a14a..b7a1b4aa8fef 100644
-> --- a/sound/soc/amd/acp/amd.h
-> +++ b/sound/soc/amd/acp/amd.h
-> @@ -149,6 +149,8 @@ struct acp_chip_info {
->  	struct platform_device *chip_pdev;
->  	struct platform_device *dmic_codec_dev;
->  	struct platform_device *acp_plat_dev;
-> +	struct platform_device *mach_dev;
-> +	struct snd_soc_acpi_mach *machines;
->  	u32 addr;
->  	unsigned int flag;	/* Distinguish b/w Legacy or Only PDM */
->  	bool is_pdm_dev;	/* flag set to true when ACP PDM controller exists */
-> @@ -195,7 +197,6 @@ struct acp_dev_data {
->  	struct list_head stream_list;
->  	spinlock_t acp_lock;
+> Signed-off-by: Joel Granados <joel.granados@kernel.org>
+> ---
+>  Documentation/admin-guide/sysctl/vm.rst | 2 +-
+>  fs/drop_caches.c                        | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+> index f48eaa98d22d2b575f6e913f437b0d548daac3e6..75a032f8cbfb4e05f04610cca219d154bd852789 100644
+> --- a/Documentation/admin-guide/sysctl/vm.rst
+> +++ b/Documentation/admin-guide/sysctl/vm.rst
+> @@ -266,7 +266,7 @@ used::
+>  	cat (1234): drop_caches: 3
 >  
-> -	struct snd_soc_acpi_mach *machines;
->  	struct platform_device *mach_dev;
+>  These are informational only.  They do not mean that anything is wrong
+> -with your system.  To disable them, echo 4 (bit 2) into drop_caches.
+> +with your system.  To toggle them, echo 4 (bit 2) into drop_caches.
 >  
->  	u32 bclk_div;
-> @@ -245,13 +246,89 @@ enum acp_config {
->  	ACP_CONFIG_20,
->  };
->  
-> +struct snd_soc_acpi_codecs amp_rt1019 = {
-> +	.num_codecs = 1,
-> +	.codecs = {"10EC1019"}
-> +};
-> +
-> +struct snd_soc_acpi_codecs amp_max = {
-> +	.num_codecs = 1,
-> +	.codecs = {"MX98360A"}
-> +};
-> +
-> +struct snd_soc_acpi_mach snd_soc_acpi_amd_acp_machines[] = {
-> +	{
-> +		.id = "10EC5682",
-> +		.drv_name = "acp3xalc56821019",
-> +		.machine_quirk = snd_soc_acpi_codec_list,
-> +		.quirk_data = &amp_rt1019,
-> +	},
-> +	{
-> +		.id = "RTL5682",
-> +		.drv_name = "acp3xalc5682sm98360",
-> +		.machine_quirk = snd_soc_acpi_codec_list,
-> +		.quirk_data = &amp_max,
-> +	},
-> +	{
-> +		.id = "RTL5682",
-> +		.drv_name = "acp3xalc5682s1019",
-> +		.machine_quirk = snd_soc_acpi_codec_list,
-> +		.quirk_data = &amp_rt1019,
-> +	},
-> +	{
-> +		.id = "AMDI1019",
-> +		.drv_name = "renoir-acp",
-> +	},
-> +	{
-> +		.id = "ESSX8336",
-> +		.drv_name = "acp3x-es83xx",
-> +	},
-> +	{},
-> +};
-> +
-> +struct snd_soc_acpi_mach snd_soc_acpi_amd_rmb_acp_machines[] = {
-> +	{
-> +		.id = "10508825",
-> +		.drv_name = "rmb-nau8825-max",
-> +		.machine_quirk = snd_soc_acpi_codec_list,
-> +		.quirk_data = &amp_max,
-> +	},
-> +	{
-> +		.id = "AMDI0007",
-> +		.drv_name = "rembrandt-acp",
-> +	},
-> +	{
-> +		.id = "RTL5682",
-> +		.drv_name = "rmb-rt5682s-rt1019",
-> +		.machine_quirk = snd_soc_acpi_codec_list,
-> +		.quirk_data = &amp_rt1019,
-> +	},
-> +	{},
-> +};
-> +
-> +struct snd_soc_acpi_mach snd_soc_acpi_amd_acp63_acp_machines[] = {
-> +	{
-> +		.id = "AMDI0052",
-> +		.drv_name = "acp63-acp",
-> +	},
-> +	{},
-> +};
-> +
-> +struct snd_soc_acpi_mach snd_soc_acpi_amd_acp70_acp_machines[] = {
-> +	{
-> +		.id = "AMDI0029",
-> +		.drv_name = "acp70-acp",
-> +	},
-> +	{},
-> +};
-> +
->  extern const struct snd_soc_dai_ops asoc_acp_cpu_dai_ops;
->  extern const struct snd_soc_dai_ops acp_dmic_dai_ops;
->  
->  int acp_platform_register(struct device *dev);
->  int acp_platform_unregister(struct device *dev);
->  
-> -int acp_machine_select(struct acp_dev_data *adata);
-> +int acp_machine_select(struct acp_chip_info *chip);
->  
->  int acp_init(struct acp_chip_info *chip);
->  int acp_deinit(struct acp_chip_info *chip);
+>  enable_soft_offline
+>  ===================
+> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+> index d45ef541d848a73cbd19205e0111c2cab3b73617..501b9f690445e245f88cbb31a5123b2752e2e7ce 100644
+> --- a/fs/drop_caches.c
+> +++ b/fs/drop_caches.c
+> @@ -73,7 +73,7 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+>  				current->comm, task_pid_nr(current),
+>  				sysctl_drop_caches);
+>  		}
+> -		stfu |= sysctl_drop_caches & 4;
+> +		stfu = sysctl_drop_caches & 4;
+>  	}
+>  	return 0;
+>  }
+> 
+> ---
+> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+> change-id: 20250313-jag-drop_caches_msg-c4fbfedb51f3
+> 
+> Best regards,
 > -- 
-> 2.39.2
+> Joel Granados <joel.granados@kernel.org>
 > 
+> 
+In case you are curious:
+This is a V3 of what was discussed in https://lore.kernel.org/20250216100514.3948-1-rwchen404@gmail.com
+My bad for forgetting to tag it V3 :(.
+Best
 
-I have not done a formal bisect but it seems like this hunk introduces
-build errors when certain drivers are built into the same image
-together, as these structures will be externally visible.
 
-$ make -skj"$(nproc)" ARCH=x86_64 CROSS_COMPILE=x86_64-linux- mrproper allyesconfig vmlinux
-x86_64-linux-ld: sound/soc/amd/acp/acp-i2s.o:(.data+0x3e0): multiple definition of `snd_soc_acpi_amd_acp70_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x20): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-i2s.o:(.data+0x580): multiple definition of `snd_soc_acpi_amd_acp63_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x1c0): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-i2s.o:(.data+0x720): multiple definition of `snd_soc_acpi_amd_rmb_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x360): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-i2s.o:(.data+0xf00): multiple definition of `amp_max'; sound/soc/amd/acp/acp-platform.o:(.data+0xb40): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-i2s.o:(.data+0xf40): multiple definition of `amp_rt1019'; sound/soc/amd/acp/acp-platform.o:(.data+0xb80): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-i2s.o:(.data+0xa40): multiple definition of `snd_soc_acpi_amd_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x680): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-i2s.o:(.data+0xf80): multiple definition of `acp70_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xbc0): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-i2s.o:(.data+0xfc0): multiple definition of `acp63_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc00): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-i2s.o:(.data+0x1000): multiple definition of `rmb_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc40): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-i2s.o:(.data+0x1040): multiple definition of `rn_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc80): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pdm.o:(.data+0xa0): multiple definition of `snd_soc_acpi_amd_acp70_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x20): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pdm.o:(.data+0x240): multiple definition of `snd_soc_acpi_amd_acp63_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x1c0): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pdm.o:(.data+0x3e0): multiple definition of `snd_soc_acpi_amd_rmb_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x360): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pdm.o:(.data+0xbc0): multiple definition of `amp_max'; sound/soc/amd/acp/acp-platform.o:(.data+0xb40): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pdm.o:(.data+0xc00): multiple definition of `amp_rt1019'; sound/soc/amd/acp/acp-platform.o:(.data+0xb80): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pdm.o:(.data+0x700): multiple definition of `snd_soc_acpi_amd_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x680): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pdm.o:(.data+0xc40): multiple definition of `acp70_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xbc0): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pdm.o:(.data+0xc80): multiple definition of `acp63_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc00): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pdm.o:(.data+0xcc0): multiple definition of `rmb_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc40): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pdm.o:(.data+0xd00): multiple definition of `rn_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc80): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-legacy-common.o:(.data+0x1a0): multiple definition of `snd_soc_acpi_amd_acp70_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x20): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-legacy-common.o:(.data+0x340): multiple definition of `snd_soc_acpi_amd_acp63_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x1c0): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-legacy-common.o:(.data+0x4e0): multiple definition of `snd_soc_acpi_amd_rmb_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x360): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-legacy-common.o:(.data+0xcc0): multiple definition of `amp_max'; sound/soc/amd/acp/acp-platform.o:(.data+0xb40): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-legacy-common.o:(.data+0xd00): multiple definition of `amp_rt1019'; sound/soc/amd/acp/acp-platform.o:(.data+0xb80): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-legacy-common.o:(.data+0x800): multiple definition of `snd_soc_acpi_amd_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x680): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-legacy-common.o:(.data+0xd40): multiple definition of `acp70_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xbc0): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-legacy-common.o:(.data+0xd80): multiple definition of `acp63_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc00): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-legacy-common.o:(.data+0xdc0): multiple definition of `rmb_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc40): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-legacy-common.o:(.data+0xe00): multiple definition of `rn_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc80): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pci.o:(.data+0xe60): multiple definition of `rn_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc80): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pci.o:(.data+0x860): multiple definition of `snd_soc_acpi_amd_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x680): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pci.o:(.data+0xde0): multiple definition of `acp63_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc00): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pci.o:(.data+0x3a0): multiple definition of `snd_soc_acpi_amd_acp63_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x1c0): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pci.o:(.data+0xe20): multiple definition of `rmb_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc40): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pci.o:(.data+0x540): multiple definition of `snd_soc_acpi_amd_rmb_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x360): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pci.o:(.data+0xda0): multiple definition of `acp70_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xbc0): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pci.o:(.data+0x200): multiple definition of `snd_soc_acpi_amd_acp70_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x20): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pci.o:(.data+0xd20): multiple definition of `amp_max'; sound/soc/amd/acp/acp-platform.o:(.data+0xb40): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-pci.o:(.data+0xd60): multiple definition of `amp_rt1019'; sound/soc/amd/acp/acp-platform.o:(.data+0xb80): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-renoir.o:(.data+0x360): multiple definition of `snd_soc_acpi_amd_acp70_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x20): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-renoir.o:(.data+0x500): multiple definition of `snd_soc_acpi_amd_acp63_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x1c0): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-renoir.o:(.data+0x6a0): multiple definition of `snd_soc_acpi_amd_rmb_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x360): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-renoir.o:(.data+0xe80): multiple definition of `amp_max'; sound/soc/amd/acp/acp-platform.o:(.data+0xb40): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-renoir.o:(.data+0xec0): multiple definition of `amp_rt1019'; sound/soc/amd/acp/acp-platform.o:(.data+0xb80): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-renoir.o:(.data+0x9c0): multiple definition of `snd_soc_acpi_amd_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x680): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-renoir.o:(.data+0xf00): multiple definition of `acp70_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xbc0): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-renoir.o:(.data+0xf40): multiple definition of `acp63_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc00): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-renoir.o:(.data+0xf80): multiple definition of `rmb_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc40): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-renoir.o:(.data+0xfc0): multiple definition of `rn_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc80): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-rembrandt.o:(.data+0x4c0): multiple definition of `snd_soc_acpi_amd_acp70_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x20): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-rembrandt.o:(.data+0x660): multiple definition of `snd_soc_acpi_amd_acp63_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x1c0): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-rembrandt.o:(.data+0x800): multiple definition of `snd_soc_acpi_amd_rmb_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x360): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-rembrandt.o:(.data+0xfe0): multiple definition of `amp_max'; sound/soc/amd/acp/acp-platform.o:(.data+0xb40): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-rembrandt.o:(.data+0x1020): multiple definition of `amp_rt1019'; sound/soc/amd/acp/acp-platform.o:(.data+0xb80): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-rembrandt.o:(.data+0xb20): multiple definition of `snd_soc_acpi_amd_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x680): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-rembrandt.o:(.data+0x1060): multiple definition of `acp70_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xbc0): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-rembrandt.o:(.data+0x10a0): multiple definition of `acp63_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc00): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-rembrandt.o:(.data+0x10e0): multiple definition of `rmb_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc40): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp-rembrandt.o:(.data+0x1120): multiple definition of `rn_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc80): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp63.o:(.data+0x4c0): multiple definition of `snd_soc_acpi_amd_acp70_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x20): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp63.o:(.data+0x660): multiple definition of `snd_soc_acpi_amd_acp63_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x1c0): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp63.o:(.data+0x800): multiple definition of `snd_soc_acpi_amd_rmb_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x360): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp63.o:(.data+0xfe0): multiple definition of `amp_max'; sound/soc/amd/acp/acp-platform.o:(.data+0xb40): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp63.o:(.data+0x1020): multiple definition of `amp_rt1019'; sound/soc/amd/acp/acp-platform.o:(.data+0xb80): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp63.o:(.data+0xb20): multiple definition of `snd_soc_acpi_amd_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x680): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp63.o:(.data+0x1060): multiple definition of `acp70_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xbc0): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp63.o:(.data+0x10a0): multiple definition of `acp63_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc00): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp63.o:(.data+0x10e0): multiple definition of `rmb_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc40): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp63.o:(.data+0x1120): multiple definition of `rn_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc80): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp70.o:(.data+0x420): multiple definition of `snd_soc_acpi_amd_acp70_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x20): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp70.o:(.data+0x5c0): multiple definition of `snd_soc_acpi_amd_acp63_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x1c0): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp70.o:(.data+0x760): multiple definition of `snd_soc_acpi_amd_rmb_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x360): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp70.o:(.data+0xf40): multiple definition of `amp_max'; sound/soc/amd/acp/acp-platform.o:(.data+0xb40): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp70.o:(.data+0xf80): multiple definition of `amp_rt1019'; sound/soc/amd/acp/acp-platform.o:(.data+0xb80): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp70.o:(.data+0xa80): multiple definition of `snd_soc_acpi_amd_acp_machines'; sound/soc/amd/acp/acp-platform.o:(.data+0x680): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp70.o:(.data+0xfc0): multiple definition of `acp70_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xbc0): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp70.o:(.data+0x1000): multiple definition of `acp63_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc00): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp70.o:(.data+0x1040): multiple definition of `rmb_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc40): first defined here
-x86_64-linux-ld: sound/soc/amd/acp/acp70.o:(.data+0x1080): multiple definition of `rn_rsrc'; sound/soc/amd/acp/acp-platform.o:(.data+0xc80): first defined here
+-- 
 
-Cheers,
-Nathan
+Joel Granados
 
