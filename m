@@ -1,122 +1,94 @@
-Return-Path: <linux-kernel+bounces-559148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A48A5F012
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:58:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3001A5F016
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:58:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D48F19C13D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:58:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 923C019C1359
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CED264F8A;
-	Thu, 13 Mar 2025 09:58:19 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E563265638;
+	Thu, 13 Mar 2025 09:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ruhIPBuu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C825E263C8A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2A5263C8A;
+	Thu, 13 Mar 2025 09:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741859899; cv=none; b=p84HaHevcdXvCob/Iaw+EhrCFuo6e0vp3llu/HSUgW7PdqEsEmqPbVK1Anw8bewA380o7jNuCrhSr4DjlS5Oz5E8BjXXE2OMItG2kxDSNSIIeVTLKAOCEYR9wTSHi9rLGfmLv6Zdu/yg9f8OfYWXlKfkhs8gZnNaSm2NMKPjkDg=
+	t=1741859900; cv=none; b=nabc7EAT0JPHXhNiiSzkX3tfshPPBhg71DEbwhI16bN3CtpVzGILet3JH7DYidVh9Cp/QvPaCkNempCay1zDeVBJdTD/JiHp4c0nK6Rv7Zg1Uf0UYE6pVpPcA8i2qFcHRt04uH3rMrSZxsJyVzjhTIt7ND/Wj5KpBtpH3obS2uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741859899; c=relaxed/simple;
-	bh=Hq9CSFW4OLk9g/ymdHCTxYNqoYjVud9AM9/SURafbNw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C64gYIq20HZfUwjCUubGRyklWxOV9rxRvO2RCwk9qwstrJDWH81o4p4JfjnYQKZ5Oqnt2AgfTgM85ChKZ8gEKebGNwiSmA+Zwjtx4dqgI6pJnjTrXSRi8NG+Uky1qbc8w0MC4JqjmNlydtMAYJADXwK/pRggPxDPmFOvTU5+QQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: a8a3dbc2fff111efa216b1d71e6e1362-20250313
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:3de06487-e397-4f0a-86da-1bab374ecafa,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:2d9882719783582ce917f1dc80192fb1,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:5,IP:n
-	il,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LE
-	S:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: a8a3dbc2fff111efa216b1d71e6e1362-20250313
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangheng@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 656145711; Thu, 13 Mar 2025 17:58:05 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 234BFE008902;
-	Thu, 13 Mar 2025 17:58:05 +0800 (CST)
-X-ns-mid: postfix-67D2AC2C-8975662165
-Received: from kylin-pc.. (unknown [172.25.130.133])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 0D53AE008901;
-	Thu, 13 Mar 2025 17:58:03 +0800 (CST)
-From: Zhang Heng <zhangheng@kylinos.cn>
-To: miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com,
-	han.xu@nxp.com,
-	hs@denx.de,
-	david@protonic.nl,
-	jre@pengutronix.de
-Cc: linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	Zhang Heng <zhangheng@kylinos.cn>
-Subject: [PATCH 2/2] mtd: mchp48l640: Use str_enable_disable() in mchp48l640_write_prepare()
-Date: Thu, 13 Mar 2025 17:57:56 +0800
-Message-ID: <20250313095756.945890-2-zhangheng@kylinos.cn>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250313095756.945890-1-zhangheng@kylinos.cn>
-References: <20250313095756.945890-1-zhangheng@kylinos.cn>
+	s=arc-20240116; t=1741859900; c=relaxed/simple;
+	bh=cuy3wdeUkqjYr5LUbKSKDKjMf1F2kQtjs1UZvwSxQts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bNu6+rk5nl5Xb46Prc3EC3hwmA5Yngmn5ayV+mfQnrrRbcU+jIIVPvdhZ7TGmfaCilW2Zi5N7cbaWwoFEYxDvGQqbPTnJqDL/wCJFEcw+PeY1jhUGAiOEGovrLmGDyNrA5XSQNLqgq60jw39Lz6gumAbMQt/H84QqC8O1yP5lmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ruhIPBuu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8690BC4CEFA;
+	Thu, 13 Mar 2025 09:58:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741859900;
+	bh=cuy3wdeUkqjYr5LUbKSKDKjMf1F2kQtjs1UZvwSxQts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ruhIPBuuhy04aY+GzopKjQXlQkBEg/msZwU2IW8670KDT3HZ6PgJrNEQy2y3rcU8G
+	 o52jFa8GcXBC1JZyYUuA8fV0bYliGko9220RiDftkvB6FCllOfGExY6hDf2j1xhEry
+	 +d4KBW+Id+UyEtaXdPwRUeCQT82yHAFQti4gfbWQ=
+Date: Thu, 13 Mar 2025 10:58:17 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, jdamato@fastly.com,
+	aleksander.lobakin@intel.com, quic_zijuhu@quicinc.com,
+	andriy.shevchenko@linux.intel.com, wanghai26@huawei.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] net-sysfs: fix error handling in
+ netdev_register_kobject()
+Message-ID: <2025031355-legend-liftoff-63bc@gregkh>
+References: <20250313075528.306019-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313075528.306019-1-make24@iscas.ac.cn>
 
-Remove hard-coded strings by using the str_enable_disable() helper
-function.
+On Thu, Mar 13, 2025 at 03:55:28PM +0800, Ma Ke wrote:
+> Once device_add() failed, we should call put_device() to decrement
+> reference count for cleanup. Or it could cause memory leak.
+> 
+> As comment of device_add() says, 'if device_add() succeeds, you should
+> call device_del() when you want to get rid of it. If device_add() has
+> not succeeded, use only put_device() to drop the reference count'.
+> 
+> Found by code review.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 8ed633b9baf9 ("Revert "net-sysfs: Fix memory leak in netdev_register_kobject"")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>  net/core/net-sysfs.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
+> index 07cb99b114bd..f443eacc9237 100644
+> --- a/net/core/net-sysfs.c
+> +++ b/net/core/net-sysfs.c
+> @@ -2169,6 +2169,7 @@ int netdev_register_kobject(struct net_device *ndev)
+>  
+>  	error = device_add(dev);
+>  	if (error)
+> +		put_device(dev);
+>  		return error;
 
-Signed-off-by: Zhang Heng <zhangheng@kylinos.cn>
----
- drivers/mtd/devices/mchp48l640.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+You obviously did not test this :(
 
-diff --git a/drivers/mtd/devices/mchp48l640.c b/drivers/mtd/devices/mchp4=
-8l640.c
-index 7584d0ba9396..4af9208f9690 100644
---- a/drivers/mtd/devices/mchp48l640.c
-+++ b/drivers/mtd/devices/mchp48l640.c
-@@ -23,6 +23,7 @@
- #include <linux/spi/flash.h>
- #include <linux/spi/spi.h>
- #include <linux/of.h>
-+#include <linux/string_choices.h>
-=20
- struct mchp48_caps {
- 	unsigned int size;
-@@ -128,11 +129,11 @@ static int mchp48l640_write_prepare(struct mchp48l6=
-40_flash *flash, bool enable)
- 	mutex_unlock(&flash->lock);
-=20
- 	if (ret)
--		dev_err(&flash->spi->dev, "write %sable failed ret: %d",
--			(enable ? "en" : "dis"), ret);
-+		dev_err(&flash->spi->dev, "write %s failed ret: %d",
-+			str_enable_disable(enable), ret);
-=20
--	dev_dbg(&flash->spi->dev, "write %sable success ret: %d",
--		(enable ? "en" : "dis"), ret);
-+	dev_dbg(&flash->spi->dev, "write %s success ret: %d",
-+		str_enable_disable(enable), ret);
- 	if (enable)
- 		return mchp48l640_waitforbit(flash, MCHP48L640_STATUS_WEL, true);
-=20
---=20
-2.47.1
-
+Please be more careful in the future.
 
