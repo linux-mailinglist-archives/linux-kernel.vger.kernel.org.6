@@ -1,145 +1,151 @@
-Return-Path: <linux-kernel+bounces-559440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73A5A5F3D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:07:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B52A5F3E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:11:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0824F1890880
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:07:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 591DB17F7F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA2D266F02;
-	Thu, 13 Mar 2025 12:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249BE266EF5;
+	Thu, 13 Mar 2025 12:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GxCw559e"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXj8mXD5"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9D6266EF0;
-	Thu, 13 Mar 2025 12:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E68267B9A;
+	Thu, 13 Mar 2025 12:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741867646; cv=none; b=ml+FOGpUv1uAGe05xytw1r1JhIfkybD1cKzM3BbegkgIhRbcqfC1UMPjmNAA7r2XANG3mtySFpLpen86saeTikjScGIpx8N9nZaVJbT0fFN5Yu4vrlCNkr1xYB++/NIv5moC7hxpHcds4hh30rPfl1jAhh/VfHZDmCZz0O+8SxM=
+	t=1741867781; cv=none; b=dV9DvPQjebNFeLBGHwpCyi/HwP10+iCH9ahETVWcN9SYa6f9h9jPKAZ8R+H2nYyruVMbPn6s+OAcHlswZXqm55hLNG3Zm9QABmMGK1g4BgWRiaq8TkGMtff3+WbIiCkY8dLgV8jY4mI47dmEmqYHNKfrkCyJXYNmoYCtB51XZ2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741867646; c=relaxed/simple;
-	bh=Ne9bu4AIDTj8Q9X7Md4hyfZO5+zIRYhUdbapdiAxKLA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OHF5IFxnMDXh6dO7q0qebhXd11wJbOdA0WJRXLm+mt2S0Lp0rGifFIDXywXinCtVzZJn82QqS2/FHZQBByEmncXjkguwuEDzXiJhe56h4HzRaK2IiPoizDV24jazoT57f0juDakvJcUai903n1r2sMtmx2OK6nTbfA+Kh4xWPo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GxCw559e; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52DC74d11863344
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Mar 2025 07:07:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741867624;
-	bh=jjf48QJ5dtYgMD1JQM2Mlfhy8pxv4LcRNvoLveym56k=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=GxCw559eoPGYb9fX3q4TLyLRN2QNZ3S0+Mp0sJZ0CVOXqdHZDb5zRTXy1y8DLJ+2P
-	 vACo6EtyFGTCaD2I++3Gnwe4mxvcpytLATrP20+FeQTeYzyCjN/VdoNbrl27qUk+y/
-	 DDCtbO8j/X+ta/0pgoes46okh5M1FIKNP9GCZwlc=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52DC74bk004764
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 13 Mar 2025 07:07:04 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 13
- Mar 2025 07:07:04 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 13 Mar 2025 07:07:04 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.226])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52DC73mJ113302;
-	Thu, 13 Mar 2025 07:07:04 -0500
-Date: Thu, 13 Mar 2025 17:37:03 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-CC: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <maz@kernel.org>,
-        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Santosh
- Shilimkar <ssantosh@kernel.org>, Jon Mason <jdmason@kudzu.us>,
-        Dave Jiang
-	<dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
-        <ntb@lists.linux.dev>, Bjorn Helgaas <bhelgaas@google.com>,
-        <linux-pci@vger.kernel.org>, Haiyang Zhang <haiyangz@microsoft.com>,
-        Wei Liu
-	<wei.liu@kernel.org>, <linux-hyperv@vger.kernel.org>,
-        Wei Huang
-	<wei.huang2@amd.com>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen"
-	<martin.petersen@oracle.com>,
-        <linux-scsi@vger.kernel.org>
-Subject: Re: [patch 03/10] soc: ti: ti_sci_inta_msi: Switch MSI descriptor
- locking to guard()
-Message-ID: <20250313120703.nchgmrvgx2dt5fjc@lcpd911>
-References: <20250309083453.900516105@linutronix.de>
- <20250309084110.330984023@linutronix.de>
+	s=arc-20240116; t=1741867781; c=relaxed/simple;
+	bh=/jdmrrYLryvXv8srvg9uxHzbJWZOpIDvDn8UcNKJvRU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kchj63MhXbnaArDqydjvGI4QeaK93e2RWIpJqCTwSGxb3QCciqkMXVDyYfOh9wd+1w356ffvD2i2UoMxgNM03gM4ul8g+hyPXefkFFMmP40ik9ggo4l7Xvx8WNPYTSC+yL6nSWvviL/nkz/KiilytYeHbY76GuIgU3tBSnsFFkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXj8mXD5; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c5675dec99so101016585a.0;
+        Thu, 13 Mar 2025 05:09:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741867779; x=1742472579; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3mAU+08l83PeGzw4/E2OYnPhEcr7Ovsn8UVQNoJ5/84=;
+        b=BXj8mXD5ey3FQ6DsQ0dMKFE+CXyiscSwaiwOyuYoW4EMkUMq3bQnEVIkdzzIO8k2Oa
+         4NIvkIiPbDu42p/UPnZkEPzrsAeH5lIiv1z1YL+TGvo+5rXxhUVjbiPb2HpHEtv7XSgV
+         a2z7sd6rNMSL1WXl8RwS2MZN+uFgbFUtwtYPczn64WGLj0ux6SkkjVhtMh5qnPp6n6YS
+         nmFcT2nvxuvUL8CDOFWOZ69/YFqVEN0dHX6FaLoN3PCOSbhNKREyGsUS3s+bAxfgaK6J
+         95FO+rPdTGod+4px42KnJmIRCSgbG99lkV5UeEVHiTk27T75I3pKTpCyf/1PCYpyt7x/
+         F6gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741867779; x=1742472579;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3mAU+08l83PeGzw4/E2OYnPhEcr7Ovsn8UVQNoJ5/84=;
+        b=drW7b4hPoqVyjnWnMslxzK6fwSRskMpYqg0fP67QhZBrKxW2wXZoeWMwPTVgZPnqWS
+         lmaL9n5qZRw51u7WdMR7bLvAioFFxOUa2B9oEpXBPPhTLQFxSVu8bhG1xfgRMsmwyvb/
+         XLffvFomlg3pUKDvPnBvx7ilAf+o+K+2x9PHES732LdrBV3UTemkHmUjXAggWMIjG1V9
+         8aiRhma9WqkjzCizkxdWhxx5wCTmsB0iStQC3vt2CzLlnUOejAWbc67aQ2+5Q2u4Qe2M
+         ceD03AI/WTEG1a4yN7wC/i7pR5nyir2KToO6c7fYkiDejZzSH4p/5dus6DW6p1ZG8+Cc
+         Ldlw==
+X-Forwarded-Encrypted: i=1; AJvYcCULoxDrVIsPBmH2rvZDIcRkIK86i0RwI/8+AF7RinDmoOQ0rY9LROtTQ3mCHnX2miGhNxpXE1H9u09+OUo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2sJ0cpsIrsv8LaX2dga8UFEdxC32ok9YNLYgSZKdPdZPOE0eM
+	0GGyIP+0wHza0/GbHP1HPbE+Kgd8vfIpZI42lWh4ophS9Lnue6ny
+X-Gm-Gg: ASbGncsXnjxBhwFoPQ2syWCtHemzP5SgVhXN76QvV6QQVyt4ur1aiwiFB9jLIfnI6VL
+	aYPjqgqaD4qJmZRUdz29VE5tNnES+wh4mF4zH44oZFyODWwR4GYXjSiOXi9BPSYJ9QzvQEjJvZl
+	l/Hc5EiOLdR4C7Gf/PHr83FUlG5e/IwNx7M3o/FHIqNuIbgW8vi+T2sTV2k/9X3Wzggah/Mzh6u
+	Uz+cTBCJ1z7ZNQzbBWjqqKZ/dRW0COvQxua6829476KPOg7NLDJKZW9HgZiq4MSo87EUr+uRUUq
+	OFQJIaTw3MZ/Zu1ucpDDui9FL+gPtr/sywfUW1vkSbRkgTMTHPrbzZq6xkJnhre3FA==
+X-Google-Smtp-Source: AGHT+IGq64HwIW8ZLXRexo/Sl5uDNfM++bQIWTjMTwM82E+RoVIQzUTxWYCM+6Co70rfhftuvEqa8w==
+X-Received: by 2002:a05:6214:daa:b0:6e6:646e:a0f8 with SMTP id 6a1803df08f44-6e9005f899emr405651506d6.16.1741867778783;
+        Thu, 13 Mar 2025 05:09:38 -0700 (PDT)
+Received: from nerdopolis2.localnet ([2600:4040:5e66:a800:1190:f8d0:801f:5e0a])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade334d02sm8728466d6.80.2025.03.13.05.09.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 05:09:38 -0700 (PDT)
+From: Adam Simonelli <adamsimonelli@gmail.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ John Ogness <john.ogness@linutronix.de>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v8 1/4] ttynull: Always initialize console index to -1
+Date: Thu, 13 Mar 2025 08:09:36 -0400
+Message-ID: <4810112.n0HT0TaD9V@nerdopolis2>
+In-Reply-To: <Z9Gcg-iMMCAhLUJf@pathway.suse.cz>
+References:
+ <20250311033133.1859963-1-adamsimonelli@gmail.com>
+ <20250311033133.1859963-2-adamsimonelli@gmail.com>
+ <Z9Gcg-iMMCAhLUJf@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250309084110.330984023@linutronix.de>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mar 09, 2025 at 09:41:46 +0100, Thomas Gleixner wrote:
-> Convert the code to use the new guard(msi_descs_lock).
+On Wednesday, March 12, 2025 10:38:59 AM EDT Petr Mladek wrote:
+> On Mon 2025-03-10 23:31:30, adamsimonelli@gmail.com wrote:
+> > From: Adam Simonelli <adamsimonelli@gmail.com>
+> > 
+> > This allows ttynull to be considered in console selection.
 > 
-> No functional change intended.
+> This is not true. It should be possible to register ttynull even
+> when .index == 0.
 > 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Nishanth Menon <nm@ti.com>
-> Cc: Tero Kristo <kristo@kernel.org>
-> Cc: Santosh Shilimkar <ssantosh@kernel.org>
-> ---
->  drivers/soc/ti/ti_sci_inta_msi.c |   10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
+> The .index is important only for drivers which support more devices,
+> e.g. the serial port or virtual terminal.
+> 
+> > 
+> > Suggested-by: Petr Mladek <pmladek@suse.com>
+> > Signed-off-by: Adam Simonelli <adamsimonelli@gmail.com>
+> > ---
+> >  drivers/tty/ttynull.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/tty/ttynull.c b/drivers/tty/ttynull.c
+> > index 6b2f7208b564..d8b51edde628 100644
+> > --- a/drivers/tty/ttynull.c
+> > +++ b/drivers/tty/ttynull.c
+> > @@ -57,6 +57,7 @@ static struct tty_driver *ttynull_device(struct console *c, int *index)
+> >  static struct console ttynull_console = {
+> >  	.name = "ttynull",
+> >  	.device = ttynull_device,
+> > +	.index = -1,
+> 
+> There is only one "/dev/ttynull". And its index is initialized to "0".
+> At least it seems to be the last parameter in:
+> 
+> static int __init ttynull_init(void)
+> {
+> [...]
+> 	tty_port_link_device(&ttynull_port, driver, 0);
+> [...]
+> }
+> 
+> So, I believe this it should be perfectly fine to keep the default "0"
+> here. Note that it is special for ttynull because it is only one...
+> 
+> IMHO, this patch adds more harm than good :-)
+> 
+> Best Regards,
+> Petr
+> 
+Understood, thanks for the explanation about that.
 
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
 
-> 
-> --- a/drivers/soc/ti/ti_sci_inta_msi.c
-> +++ b/drivers/soc/ti/ti_sci_inta_msi.c
-> @@ -103,19 +103,15 @@ int ti_sci_inta_msi_domain_alloc_irqs(st
->  	if (ret)
->  		return ret;
->  
-> -	msi_lock_descs(dev);
-> +	guard(msi_descs_lock)(dev);
->  	nvec = ti_sci_inta_msi_alloc_descs(dev, res);
-> -	if (nvec <= 0) {
-> -		ret = nvec;
-> -		goto unlock;
-> -	}
-> +	if (nvec <= 0)
-> +		return nvec;
->  
->  	/* Use alloc ALL as it's unclear whether there are gaps in the indices */
->  	ret = msi_domain_alloc_irqs_all_locked(dev, MSI_DEFAULT_DOMAIN, nvec);
->  	if (ret)
->  		dev_err(dev, "Failed to allocate IRQs %d\n", ret);
-> -unlock:
-> -	msi_unlock_descs(dev);
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(ti_sci_inta_msi_domain_alloc_irqs);
-> 
-> 
 
--- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
 
