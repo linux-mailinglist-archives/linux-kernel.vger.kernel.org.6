@@ -1,136 +1,251 @@
-Return-Path: <linux-kernel+bounces-559106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD128A5EFA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:36:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D933CA5EFA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:37:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C55C179CA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:36:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21EEB189C935
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D801A263F2F;
-	Thu, 13 Mar 2025 09:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC328264617;
+	Thu, 13 Mar 2025 09:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IIOXMuRF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VS3yr2Tl"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927C814900B;
-	Thu, 13 Mar 2025 09:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7ADB14900B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741858593; cv=none; b=o+roL9KdWrquOSlH9+OF4/tAU7HT3U8DY443DHKfVqLbtJ/s3gRTw8tTVcNkqPbZ26IiEAsT2IBokM6WKGpgHeUFlRgSPJtHP5J5JFJx0cja+zI1RjAXJxmbXh1H8OiX2g2PIFTB+oAScbs0czHVm9AJqZetKihktJRkQGIC4Q8=
+	t=1741858616; cv=none; b=TgjIej5s+nFVSQ6f6wllA9qfKjLhz+5iBIkveAJPPJs4sxvnodjTV/6ddmKjeBiyZaGel0moanCK1KsUFwd0uhlhJZDGclvXSqybjQTi7bwEt2ehH9PBNL5jw8qgcWelBfnof99/SD4JV93LDFNy5A0QbBprlBIILB/RKUdeyLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741858593; c=relaxed/simple;
-	bh=GvML6AgX10ab6E1bzb6KhMiFXlQJrr6S9oGQPjauKYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=F/fgphdPAZdsuB4XsCd9ITRGM+rrK9sGPailvrnuD4Hu46/PSTBQyDbDWknIZd8N/jcfijVhFhJv8YFo0jY8O64qxjkGm95x8urA68xQjP4awSpMD6U4JZ5Uu+OK+a/couvSmkiBf/jrp/HRqY2EL2rXtYaE+yMc3Am06JKa/3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IIOXMuRF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CMGa64023865;
-	Thu, 13 Mar 2025 09:36:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0HyeXeAM5I0N01bDf9ebH+DFt5nfOBM5wrbXpzWaBXI=; b=IIOXMuRF15RzT45V
-	fo8DrVQeh9R936qWACLoWyuNZYife0NUiBRIyObDau9jj/gQLgr+Qz+PHh/U1P4y
-	ZHFs1vuxogi7yFGegpVVHqn6uII+OQNL5qLAvsZYIXoyQ0Oo4KOu1GJldAgsX8uL
-	nASxn9aTyF2ullOg/bKF1ee0P7S+pNVjMhVz0DoPqIYuHZf6A4tWNqA1xvB7JKZk
-	3tljtHHd+1ohy+3GDXtJuqsx4fXTVOiOZ7VTIT+E1J6NNybT2E31yC10+QH1Z/q1
-	Uod29X/QtGVpbYm3FD3VkS7o/ZIZHXAM88s/iioaxVrnw7ZvWiUNvWVGM0d/Sa6L
-	Cx8HcA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2mnatt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 09:36:21 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D9aLae016587
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 09:36:21 GMT
-Received: from [10.152.204.0] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
- 2025 02:36:19 -0700
-Message-ID: <c10b95de-f3b3-9506-f4eb-3d668faa9165@quicinc.com>
-Date: Thu, 13 Mar 2025 15:06:15 +0530
+	s=arc-20240116; t=1741858616; c=relaxed/simple;
+	bh=IhOhrSlxnKxVcldcxXlp8ols+uH5O4m44LWa+1opQtk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nIZ6k7EulCh3awZ6e7q2e7HYP+YbFNMZtNzDpazaNpZS1wZqZPwpSScVZ+6m2Srj/9MaeRQbE5uprkz5NDljafTwFMAluZX2Xu1B4/pNyrVNZTBwd0LQGUxPTw13AJAQPOn2HdSIw/MGRvK+3rTsNNpJzXK+QKuHqhA/KDBwaAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VS3yr2Tl; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 538B240E020E;
+	Thu, 13 Mar 2025 09:36:43 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Ezr2xfWOvaST; Thu, 13 Mar 2025 09:36:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741858598; bh=uNcgx3nJkSQVLH76uZj0J408nXFmhO/9yySOGft4o9k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VS3yr2TlyC0wrfRay563yevuhnuEcvQ5oSspuN37j8AX8eiff3mKoEEioqK1u2Vo6
+	 d5wOCcncn0cD7SHD+reNjs+mzXqIZmx1/X6L8uJnQGwWY2Y4N0hGSlcLQ6fAU53oj/
+	 xLxgCGOIeVX8DkDXaI36V1nk/u5JkRnOizFq0b+VuD7DaDp0R9WmXfXlEI60b70VMi
+	 20Qh4tMtzl/JxtTlp67amw1rPcjqEtDRUrdP5VhzEEG1HE46d6xjDs236nnExqDwfB
+	 Y1Oy3CnzIOESjHw/xRIfvCAxn3iw7R9d7hkoO1ymE3ogCNmIPh/grQF/8V/AMxQ5/E
+	 i1cGH5CAfLgDKj5dpT6w4RcASMch/IHLC3tGQDLpSdzq+1WKc/oEihH41x+69pCaeU
+	 r7oL2zf5ZyheYjyNcQRBcU2JFJp3fWyLNsqhzlT2mASZYF25o0fHz5OI0e4HuaR90R
+	 kzST9WKY0DvkMzbfDOGpQGkXKs/BLmQvg8siOj7CNJ7Bx4t+du8RANTrzuvvSlE9+h
+	 wvMg8dgPll4mKRzWdM5Ill6ztRj1kcGB3dhz7F/wKj0iCWpbAQsevGvkx8osxmeFj8
+	 Upyi/Gzuq3RZYrpymVFAqN4ldvcHwEgqJ9ezZbxIkzUZRLe87ouVKecScDKYydhVzp
+	 zLcGavq+hS8cf7tds+eP31nI=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1E20A40E023C;
+	Thu, 13 Mar 2025 09:36:26 +0000 (UTC)
+Date: Thu, 13 Mar 2025 10:36:17 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: David Kaplan <david.kaplan@amd.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+	Brendan Jackman <jackmanb@google.com>,
+	Derek Manwaring <derekmn@amazon.com>
+Subject: Re: [PATCH v4 03/36] x86/bugs: Restructure mmio mitigation
+Message-ID: <20250313093617.GHZ9KnEXpdM4dwLYFz@fat_crate.local>
+References: <20250310164023.779191-1-david.kaplan@amd.com>
+ <20250310164023.779191-4-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] wifi: ath12k: fix 5GHz operation on wideband QCN9274
- radios
-Content-Language: en-US
-To: Mantas Pucka <mantas@8devices.com>, <ath12k@lists.infradead.org>
-CC: Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson
-	<jjohnson@kernel.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250313-ath12-wideband-caps-v1-1-23ac4247cd8a@8devices.com>
-From: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
-In-Reply-To: <20250313-ath12-wideband-caps-v1-1-23ac4247cd8a@8devices.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: sXjcTNW5s4P6bFTfUl4avTYvehS7VKN9
-X-Authority-Analysis: v=2.4 cv=aKnwqa9m c=1 sm=1 tr=0 ts=67d2a716 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=mO_DyvKKAAAA:8 a=LMgdiH69iM9wwdmua80A:9 a=QEXdDO2ut3YA:10
- a=9yN1G2m4-WCtQnHix7J8:22
-X-Proofpoint-ORIG-GUID: sXjcTNW5s4P6bFTfUl4avTYvehS7VKN9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_04,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1011
- adultscore=0 malwarescore=0 priorityscore=1501 phishscore=0 spamscore=0
- bulkscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0 suspectscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130075
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250310164023.779191-4-david.kaplan@amd.com>
 
+On Mon, Mar 10, 2025 at 11:39:50AM -0500, David Kaplan wrote:
+> @@ -511,24 +516,60 @@ static void __init mmio_select_mitigation(void)
+>  		return;
+>  	}
+>  
+> -	if (mmio_mitigation == MMIO_MITIGATION_OFF)
+> -		return;
+> +	/* Microcode will be checked in mmio_update_mitigation(). */
+> +	if (mmio_mitigation == MMIO_MITIGATION_AUTO)
+> +		mmio_mitigation = MMIO_MITIGATION_VERW;
+>  
+>  	/*
+>  	 * Enable CPU buffer clear mitigation for host and VMM, if also affected
+> -	 * by MDS or TAA. Otherwise, enable mitigation for VMM only.
+> +	 * by MDS or TAA.
+>  	 */
+> -	if (boot_cpu_has_bug(X86_BUG_MDS) || (boot_cpu_has_bug(X86_BUG_TAA) &&
+> -					      boot_cpu_has(X86_FEATURE_RTM)))
+> -		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF);
+> +	if (boot_cpu_has_bug(X86_BUG_MDS) || taa_vulnerable())
+> +		verw_mitigation_selected = true;
+> +}
 
+So applied this reads strange:
 
-On 3/13/2025 2:30 PM, Mantas Pucka wrote:
-> Currently ath12k_mac_setup_ht_vht_cap() incorrectly assumes that QCN9274
-> radios with 6GHz band can't support 5GHz as well. This prevents the
-> addition of HT and VHT capabilities for the 5GHz band. Since QCN9274 is
-> capable of operating in multiple bands, remove the 6GHz support check and
-> exception for single_pdev_only (i.e. WCN7850).
-> 
-> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.4.1-00199-QCAHKSWPL_SILICONZ-1
-> 
-> Signed-off-by: Mantas Pucka <mantas@8devices.com>
-> ---
->   drivers/net/wireless/ath/ath12k/mac.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath12k/mac.c b/drivers/net/wireless/ath/ath12k/mac.c
-> index dfa05f0ee6c9f7356634ab55a6d9c0b4064645a9..aea3ad01b0671fd236ee70864aee4c1e65f564db 100644
-> --- a/drivers/net/wireless/ath/ath12k/mac.c
-> +++ b/drivers/net/wireless/ath/ath12k/mac.c
-> @@ -6484,9 +6484,7 @@ static void ath12k_mac_setup_ht_vht_cap(struct ath12k *ar,
->   						    rate_cap_rx_chainmask);
->   	}
->   
-> -	if (cap->supported_bands & WMI_HOST_WLAN_5G_CAP &&
-> -	    (ar->ab->hw_params->single_pdev_only ||
-> -	     !ar->supports_6ghz)) {
-> +	if (cap->supported_bands & WMI_HOST_WLAN_5G_CAP) {
->   		band = &ar->mac.sbands[NL80211_BAND_5GHZ];
->   		ht_cap = cap->band[NL80211_BAND_5GHZ].ht_cap_info;
->   		if (ht_cap_info)
-> 
+        if (mmio_mitigation == MMIO_MITIGATION_AUTO)
+                mmio_mitigation = MMIO_MITIGATION_VERW;
 
-NAK
+        if (boot_cpu_has_bug(X86_BUG_MDS) || taa_vulnerable())
+                verw_mitigation_selected = true;
 
-Multi-band configuration is supported for scan radio only even that requires
-additional driver changes.
+I'd expect to see:
+
+	if (mmio_mitigation == MMIO_MITIGATION_AUTO) {
+                mmio_mitigation = MMIO_MITIGATION_VERW;
+		verw_mitigation_selected = true;
+	}
+
+        if (boot_cpu_has_bug(X86_BUG_MDS) || taa_vulnerable())
+                verw_mitigation_selected = true;
+
+because the above branch already selected MMIO_MITIGATION_VERW so we might as
+well set verw_mitigation_selected, right?
+
+> +static void __init mmio_update_mitigation(void)
+> +{
+> +	if (!boot_cpu_has_bug(X86_BUG_MMIO_STALE_DATA) || cpu_mitigations_off())
+> +		return;
+> +
+> +	if (verw_mitigation_selected)
+> +		mmio_mitigation = MMIO_MITIGATION_VERW;
+
+... and the above change would obviate this one.
+
+Looking at that verw_mitigation_selected switch - that seems like the higher
+prio thing we should be looking at first as in: *something* selected VERW
+mitigation so we must honor it.
+
+And then the *_select_mitigation() functions will simply use the respective
+*_mitigation variable to perhaps override it only when really needed.
+
+I think.
+
+Or maybe I'm missing an aspect.
+
+Because if we make verw_mitigation_selected the higher prio thing, we can
+remove some of that additional checking.
+
+Or?
+
+> +
+> +	if (mmio_mitigation == MMIO_MITIGATION_VERW) {
+
+I.e., in mmio_update_mitigation(), the only check you need to do is:
+
+	if (verw_mitigation_selected)
+
+and then adjust mmio_mitigation depending on microcode presence or not.
+
+> +		/*
+> +		 * Check if the system has the right microcode.
+> +		 *
+> +		 * CPU Fill buffer clear mitigation is enumerated by either an explicit
+> +		 * FB_CLEAR or by the presence of both MD_CLEAR and L1D_FLUSH on MDS
+> +		 * affected systems.
+> +		 */
+> +		if (!((x86_arch_cap_msr & ARCH_CAP_FB_CLEAR) ||
+> +		      (boot_cpu_has(X86_FEATURE_MD_CLEAR) &&
+> +		       boot_cpu_has(X86_FEATURE_FLUSH_L1D) &&
+> +		     !(x86_arch_cap_msr & ARCH_CAP_MDS_NO))))
+> +			mmio_mitigation = MMIO_MITIGATION_UCODE_NEEDED;
+
+... as you do here.
+
+> +	}
+> +
+> +	if (boot_cpu_has_bug(X86_BUG_MMIO_UNKNOWN))
+
+Btw, that UNKNOWN thing is just silly. Looking at git history:
+
+7df548840c49 ("x86/bugs: Add "unknown" reporting for MMIO Stale Data")
+
+this was added just so that it doesn't say "Not affected" about those CPUs but
+"unknown."
+
+But
+
+  "Mitigation is not deployed when the status is unknown."
+
+so if it is only about reporting, I think we can synthesize the logic of this:
+
+        if (!arch_cap_mmio_immune(x86_arch_cap_msr)) {
+                if (cpu_matches(cpu_vuln_blacklist, MMIO))
+                        setup_force_cpu_bug(X86_BUG_MMIO_STALE_DATA);
+                else if (!cpu_matches(cpu_vuln_whitelist, NO_MMIO))
+                        setup_force_cpu_bug(X86_BUG_MMIO_UNKNOWN);
+        }
+
+into a separate function and get rid of that X86_BUG_MMIO_UNKNOWN thing.
+
+Pawan?
+
+I'll try to whack it later to see how ugly it gets.
+
+> +		pr_info("Unknown: No mitigations\n");
+> +	else
+> +		pr_info("%s\n", mmio_strings[mmio_mitigation]);
+> +}
+> +
+> +static void __init mmio_apply_mitigation(void)
+> +{
+> +	if (mmio_mitigation == MMIO_MITIGATION_OFF)
+> +		return;
+>  
+>  	/*
+> -	 * X86_FEATURE_CLEAR_CPU_BUF could be enabled by other VERW based
+> -	 * mitigations, disable KVM-only mitigation in that case.
+> +	 * Only enable the VMM mitigation if the CPU buffer clear mitigation is
+> +	 * not being used.
+
+So this comment doesn't fit with what the code now does...
+
+>  	 */
+> -	if (boot_cpu_has(X86_FEATURE_CLEAR_CPU_BUF))
+> +	if (verw_mitigation_selected) {
+
+... which is to check whether something enabled the VERW mitigation...
+
+> +		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF);
+>  		static_branch_disable(&mmio_stale_data_clear);
+> -	else
+> +	} else
+>  		static_branch_enable(&mmio_stale_data_clear);
+
+{ } around the else branch too pls.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
