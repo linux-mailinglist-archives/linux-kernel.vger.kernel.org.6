@@ -1,130 +1,102 @@
-Return-Path: <linux-kernel+bounces-559844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053A7A5FA89
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:58:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5AE9A5FA86
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:57:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B749189B6CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:58:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 350B9174AB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0687D268FF4;
-	Thu, 13 Mar 2025 15:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580DF268FF9;
+	Thu, 13 Mar 2025 15:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="sSREnVQW"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfygOIBn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B785269810
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B8513AA2F;
+	Thu, 13 Mar 2025 15:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741881478; cv=none; b=GqmjlffW6KebjUVvkvtMJfcbGHisk9zcRzJaV296MTSpZqwaVIDpNo/zPCrpRl9CpBZ2jI/SuFAgvwL6Af/DJlopSQmE/+xVVzcj60JZl2CoNE6dcqsnTW6HDlwF+32n2Er+rmqC8ORuDXa6dFQS7YtEsajzfP/F5vx/oHNOijc=
+	t=1741881469; cv=none; b=UNxCGlIEE+hVt9bNtTT0uXYItlrFzA8MCYWOywGeZeLHc6a5xRak1i2P4TFTrtUZ5Yn0j1phlxUXr87ITgLXiQwrBcF2734KLzOx3YnOMbxzvufSmnFG6CAhqmBqSJpIcDSyOGTOI9Tvwgs2aUeH+HUWQBpqS3OAde3+xI4pwmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741881478; c=relaxed/simple;
-	bh=AoT76DpyfUVv2OctLsrdD/71kB8chHAZJqR9fipJwnw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ojbguinaCd+4k1jGT5YdoP5ttofQnq3CY6ZEP9YqrDe/8MH6UNWNHajnKsX3+2+jVHYuY5QX92BPjObdpnn8Tnxn/SQw3QgWnEow1Ti53GpVQESVJ2yhFCc0xs0HFanbldy0J5L+o+F3jbA18L9mWbnmzPbZcYN1ed1L7KiPeN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=sSREnVQW; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1741881466;
-	bh=AoT76DpyfUVv2OctLsrdD/71kB8chHAZJqR9fipJwnw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=sSREnVQWINwTHbRmvmV75Cf7VeCsnwPmwYgqJ585+6vFzSUkcuZPSAqkoEgv72aQ/
-	 GXVTpCV25+6fcDQ3dkp3PslDSQBne2LngPdNOhpv9U8MUUMkmj13d1KxiqCIe42OG/
-	 7HkyQ9pepeD5eG655V7o8+fW/LwPyx7EjWZw3u78=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Thu, 13 Mar 2025 16:57:45 +0100
-Subject: [PATCH v2 1/6] sysfs: constify bin_attribute argument of
- bin_attribute::read/write()
+	s=arc-20240116; t=1741881469; c=relaxed/simple;
+	bh=8xF8Ve++MFLvn3va/Rkql+bAxSWGx5T39bOEbMiYWV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=umN390nSe9zL+NNTE/G23dr4ySTTFREqbMHKy/RFSvmU15wLTNVgE+Dmv4ABtcOicQwi39nqzF/8IDLuD73ahESjLy/VuwPWU85Wr8QBs7X7zuoNk0CwzRtnRSLS1Qa/NLyd6fKlWwsLorIQwbXtJudwGdnZEQ3QPqu9dc/6QoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfygOIBn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A190C4CEEA;
+	Thu, 13 Mar 2025 15:57:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741881469;
+	bh=8xF8Ve++MFLvn3va/Rkql+bAxSWGx5T39bOEbMiYWV4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kfygOIBn+MElPBdc8pLT3Y2c7WzZIBn7MwCaeyRVq8JDPiauPA9nRZiYIya9SUAxU
+	 /uGdfziFVrBA9My39MJlD4IakdbB4AcT3vpHhycx3vscpZhSpfTIFKdQGRa/eo+I+B
+	 mJICM4n7Z9F1wzVsXv7FSgcTjJAq99Z65T5PNPbXuD7kDCAdVfxlzduSa0iICnXkE2
+	 IBei5DyA3F1zZboSFbuByEpXXdC8Gre4XW5jp2qNooksCDufLa/jGl3lTxA9cOT0/O
+	 GcafZDMAJNjtosrTrQQJkO4+ZYMBl+F+vHFWCNzKKIkQe+ZSJ4PXbHNeZLg+9/h1UW
+	 zvUlnzxXZxBTg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tskwM-000000000Xu-0yWw;
+	Thu, 13 Mar 2025 16:57:46 +0100
+Date: Thu, 13 Mar 2025 16:57:46 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Miaoqing Pan <quic_miaoqing@quicinc.com>
+Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	ath11k@lists.infradead.org, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, johan+linaro@kernel.org
+Subject: Re: [PATCH v2 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
+ length
+Message-ID: <Z9MAehaipGtwge8p@hovoldconsulting.com>
+References: <20250310010217.3845141-1-quic_miaoqing@quicinc.com>
+ <20250310010217.3845141-3-quic_miaoqing@quicinc.com>
+ <Z866cCj8SWyZjCoP@hovoldconsulting.com>
+ <7b1c5e40-b11d-421b-8c8b-117a2a53298b@quicinc.com>
+ <c0cdcaf2-655b-4d22-a949-1519c552e6a4@oss.qualcomm.com>
+ <72d95d77-674e-4ae7-83b0-ab58748b8251@quicinc.com>
+ <Z9G5zEOcTdGKm7Ei@hovoldconsulting.com>
+ <8251fc50-5df4-4a3f-91bf-40c09c33cf6e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250313-sysfs-const-bin_attr-final-v2-1-96284e1e88ce@weissschuh.net>
-References: <20250313-sysfs-const-bin_attr-final-v2-0-96284e1e88ce@weissschuh.net>
-In-Reply-To: <20250313-sysfs-const-bin_attr-final-v2-0-96284e1e88ce@weissschuh.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
-Cc: linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741881465; l=2405;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=AoT76DpyfUVv2OctLsrdD/71kB8chHAZJqR9fipJwnw=;
- b=v4thEqYFx8nP4MS9x5efRRsKLeqKcaRQZqJvwn9KVwQhfSEWMRQHBJhwjj7JjQntGa2GKBkHv
- YpcwBrDbBTlCMNFdcu0EbX3YZ4a6n7qX33YgBl192/s+C9Uc7VPbgOt
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8251fc50-5df4-4a3f-91bf-40c09c33cf6e@quicinc.com>
 
-All callback implementers have been moved to the const variant of the
-callbacks. The signature of the original callbacks can now be changed.
-Also remove the now unnecessary transition machinery inside __BIN_ATTR().
+On Thu, Mar 13, 2025 at 09:41:51AM +0800, Miaoqing Pan wrote:
+> On 3/13/2025 12:43 AM, Johan Hovold wrote:
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- include/linux/sysfs.h | 25 ++++---------------------
- 1 file changed, 4 insertions(+), 21 deletions(-)
+> > I've taken a closer look at the driver and it seems like we're missing a
+> > read barrier to make sure that the updated descriptor is not read until
+> > after the head pointer.
+> > 
+> > Miaoqing, could you try the below patch with your reproducer and see if
+> > it is enough to fix the corruption?
+>
+> Sure, the stress test is running.
 
-diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
-index 18f7e1fd093c9179a86aaa16f3f8851338778b0b..576b8b3c60afb382e4ce18247fd5a3d50f08d579 100644
---- a/include/linux/sysfs.h
-+++ b/include/linux/sysfs.h
-@@ -306,11 +306,11 @@ struct bin_attribute {
- 	size_t			size;
- 	void			*private;
- 	struct address_space *(*f_mapping)(void);
--	ssize_t (*read)(struct file *, struct kobject *, struct bin_attribute *,
-+	ssize_t (*read)(struct file *, struct kobject *, const struct bin_attribute *,
- 			char *, loff_t, size_t);
- 	ssize_t (*read_new)(struct file *, struct kobject *, const struct bin_attribute *,
- 			    char *, loff_t, size_t);
--	ssize_t (*write)(struct file *, struct kobject *, struct bin_attribute *,
-+	ssize_t (*write)(struct file *, struct kobject *, const struct bin_attribute *,
- 			 char *, loff_t, size_t);
- 	ssize_t (*write_new)(struct file *, struct kobject *,
- 			     const struct bin_attribute *, char *, loff_t, size_t);
-@@ -332,28 +332,11 @@ struct bin_attribute {
-  */
- #define sysfs_bin_attr_init(bin_attr) sysfs_attr_init(&(bin_attr)->attr)
- 
--typedef ssize_t __sysfs_bin_rw_handler_new(struct file *, struct kobject *,
--					   const struct bin_attribute *, char *, loff_t, size_t);
--
- /* macros to create static binary attributes easier */
- #define __BIN_ATTR(_name, _mode, _read, _write, _size) {		\
- 	.attr = { .name = __stringify(_name), .mode = _mode },		\
--	.read = _Generic(_read,						\
--		__sysfs_bin_rw_handler_new * : NULL,			\
--		default : _read						\
--	),								\
--	.read_new = _Generic(_read,					\
--		__sysfs_bin_rw_handler_new * : _read,			\
--		default : NULL						\
--	),								\
--	.write = _Generic(_write,					\
--		__sysfs_bin_rw_handler_new * : NULL,			\
--		default : _write					\
--	),								\
--	.write_new = _Generic(_write,					\
--		__sysfs_bin_rw_handler_new * : _write,			\
--		default : NULL						\
--	),								\
-+	.read = _read,							\
-+	.write = _write,						\
- 	.size	= _size,						\
- }
- 
+Thanks.
 
--- 
-2.48.1
+> > If so I can resend with the warning removed and include a corresponding
+> > fix for ath12k (it looks like there are further places where barriers
+> > are missing too).
 
+> If the DMA read barrier works, do you think my submitted patch series is 
+> still needed? Because the error handling is incorrect.
+
+Yeah, it would still be good to fix up the error handling even if you
+don't expect to ever see a descriptor with length 0.
+
+But unless the device is doing something wrong here, there shouldn't be
+a need for peeking at the descriptor and retrying.
+
+Johan
 
