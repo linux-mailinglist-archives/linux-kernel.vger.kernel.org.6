@@ -1,96 +1,124 @@
-Return-Path: <linux-kernel+bounces-560357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BFADA602F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:48:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26E94A602FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:48:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 900647A6CD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:47:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CA81420577
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264791F463F;
-	Thu, 13 Mar 2025 20:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270541F463F;
+	Thu, 13 Mar 2025 20:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSXM1u0K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XU8guPI0"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782AF1F4627;
-	Thu, 13 Mar 2025 20:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7BA145A11;
+	Thu, 13 Mar 2025 20:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741898900; cv=none; b=XdreskWik4CV/GQXEhrolnhz2AVqDQ3eUgqK6RZopxHSibWRDhqb8r1k2uTgrwaVx6H5MSpeJzIeYoSo7PxbrduHiK1grmL7zWgDhZdOhXzTiRHs5vpMsqpQzcedTYmHqcaab1aSb1gvVxYbzoKsER2Cb3N37ZUCNGCLxsWk5wU=
+	t=1741898920; cv=none; b=BgctLDVc9gqQUwweKYm4tFQh9og3fEgd1eNkRYw3zIKxQMNCr6xOfaW2bbua2GC3lMqL1tYmq8S2Rn/7xJq0Fbjkc6vn3Gcbg+y6VMMhs8IWeU+ua3OMSBE5QIMdU1AQyOhuIMMbm1UB7Xk3fAgUp9QJkwpmeCzs2BanSEloau0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741898900; c=relaxed/simple;
-	bh=14wY1siKGZ3820aBaKNXQVIAz+KjbbyY897XAg4KGjI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mzHJwt7iWs5IeXfONUEU0HDpUiS0dG9DmNHw1r79l//7Pwyowec0I7/4j7iNdr5z6Yv8pR4IXiQ2Nbj5UWmpg5WTY1El+xBXflEwajO+wXl0Euhu/uBFlSQA8xYukO3M6rJTFWiMGqhWjXDndVrUTXuxepdS3tf0bjNkIE45/2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSXM1u0K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B4BC4CEF0;
-	Thu, 13 Mar 2025 20:48:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741898899;
-	bh=14wY1siKGZ3820aBaKNXQVIAz+KjbbyY897XAg4KGjI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SSXM1u0KQfURC0D2gVK2tBDBA4MOQUTMv4fZGDxheNu1d7BhRNX37jWKaitB4cwXT
-	 ucO7byoMmh70Yno0Pfj3uv+p52IEwXTGvbm7hj+Dd4KkIb7Bev3JapSTlHX58xcBeS
-	 M7bx2svpoeSdjB4NJsjM3VBAgT47r9Xi9kvsU1GmQJs8DS5lHaNPEwtfC0RsO9lsD4
-	 cXyyd4Ss/r2npoDnsVkCOwA0EvdCy3rCQUAMNyTwD/fLwqNJXYH33UAj21vtuATq18
-	 uulIDvEfoiQ7/ts+9tR1nsaN37VG8pMFXQW8q9DSstMuhRJ2sSTcEr/avRg7A55IS1
-	 UGY4ONIRSReeg==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2c68fd223bcso17484fac.1;
-        Thu, 13 Mar 2025 13:48:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUC+wRp/hz59Y/q2NQFKF19TW0QoyHf7k9IRkR6ujO9vXexHhTQtItOQ75UDEp4i3y4aU/kJg3/FtSLfcQ=@vger.kernel.org, AJvYcCXvuFNWc2SkZP5tpK02rgsas4uYcVj30L9753Lc4+FA/PNKSgiO8aeB2kMIeNHV2l3fK0cSpp4WXe0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwRmsTDx0AvG4IcAKBhJ9Yj7cYbWkp9qXLCaY1ZFLe3FRaBqEs
-	cTpxDWOWqV4ZWalgWMuVEvsyzc6UM91m1UA8Os1sFXFInxFbK291XUVDuDu0y+aa5upQOv3J2fO
-	vDfbHU3TuysAOJEYLoksNROhKFhs=
-X-Google-Smtp-Source: AGHT+IE4t6npoBFzHNSjity518d09fPiG5ev38y3yQv/EjExH31/wKbxPjuEeKqHNnHUVzTS7UFHOTwKh4qDxs1DL9A=
-X-Received: by 2002:a05:6870:46a2:b0:2a7:d345:c0bb with SMTP id
- 586e51a60fabf-2c6911416a2mr8350fac.27.1741898899165; Thu, 13 Mar 2025
- 13:48:19 -0700 (PDT)
+	s=arc-20240116; t=1741898920; c=relaxed/simple;
+	bh=bzPYKY3lsPVchaKR3bQgaTpUlj8CbHB37ry0Wjb/REM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uTOiNzdtaQ1waJ6z8cCSdtLcc7jRM7gIbVlW6zwAolhNHsfKQFU7okOiN7A1Tg0BDlpVAlwuxO5pkej077Kqc1Xl3sCSYzpfl0JjxIoZLQYw3Ioyns6TyF+m5GayA4dWgcePe9Pu3kwjgWCpK6kROMLJ7OjfY+BPG8DIEyRslxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XU8guPI0; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so13098315e9.2;
+        Thu, 13 Mar 2025 13:48:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741898916; x=1742503716; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3M+KzacL88R9fEWhVfWkksQHP3+7Qg3oqYjBVfhgIw0=;
+        b=XU8guPI0JYkUsnTWZGJIOtGbjWQxSO1kWrt5LJscInfjxsMAw7e9FNLDQs3mxm1jF6
+         rg0VLi2kUNUQiZY6jR36WPHCvdLped1SzC57DvgCuGHjE5lkaoFYL2lcPC8oey3FD8b/
+         yEwgJjnzGQZnjLawKN+PmJHBE3qOOUgxDvCKQtDY5Jdpje6v3SVPl0lB3IOp7YnK6JhS
+         4qxtEMUf7HsqKUe9mvWrvO6PNPY1/ejdqDKekwZn2ZFEXykYAxzyTkh3l93/2GfXTRsY
+         Iaw3aX0Be5OcjCTdIl8Xl7vrnxt2gIKwQNX2cm9Wb4+XWxn1pkZ86/mlCz2kFmC0V4Y/
+         nUaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741898916; x=1742503716;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3M+KzacL88R9fEWhVfWkksQHP3+7Qg3oqYjBVfhgIw0=;
+        b=v82UTgqVGuW62l0zlcjm3f1jorV/iDvHYRzpvpXWXGZ2rcd+ifbV2osh5cX+6c54ZK
+         f+JL/guTFIh7kLPxEBOn/5gqIWFqzmTM2lE7nR9iWv+iQs3vzBV7cYI+5+LnWI+EvapF
+         j2jUls/8VheY4HiLGLFtFQREOBXqMu4SdhU76ZADbXKJmM2ii4+2c7inLXhv+qZP+87C
+         KpSY/Kjviim/QYy4581qCEEHSwQAuwoUS6Wjp89KECteDnVScgNS/roCZ9nA6PiHprb5
+         68NR6VLVr+toaICdLTnDgZPaIkW8XIUciQGmf8bpCxYlYeo40+IUgQW9UBycO4FAY9FQ
+         hCIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbigMkI4LNN+l4+RlqK4q2n4cSTgOGF6PXKyS6bbxYPxT7Wq46FRpTpR0JoQ8mVL+h+6NaRm+taSM=@vger.kernel.org, AJvYcCV8zUVq4PGRY2IvippysM0X8MP5chTqsBNEUk4rhTnMV0cmLZv32YZe8TVEynRBGCwAFsBl1MpWiXDGJwbo@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx09z3vBEaiRQUuIzAckYFDo3IM7+j2U/ZhpOcFYf0hPew9HM4b
+	RrqsTAODsB3g5xBoeHHN27fx1JUhSMrOiXk2fsDdKr7HabqF9Yx6
+X-Gm-Gg: ASbGncumXBOOslC1P2y545niZvyriCGnjXqrAi17rIvoQw71cLMJ4aurSIONA1DEMrU
+	Ct641gxN0kYdJrReMNDZf/JFAC6qKGaQUH3Cj+nidd+7adP5LSawp96nvYUokzOArDBzZktDYzn
+	fCbzdOCtTBPqEAAvXfILqp3D6wFBM2CafXghT861EC0Vij8XwirUfwJqnBG5seFq5fMPhUABLFT
+	SFBL2WhCQGK3HOKmModazT19vaA4TXrDOHGdKA3kjfjdNaRe4qaENK8AP5M37+aBlhDXJQ7oEsu
+	6xrxBoFBUO8Nohqj4vxX0bBDQI+u8bZeo0tLwIhN/zV53vsBsFu5yA5OEVazFU4oLK6q9i/BYnd
+	TEycasfssd9x79pqG6VE=
+X-Google-Smtp-Source: AGHT+IG+XIjsbTUFYLzcvMmKBT0mslsJ4ZGWPf1npQg3tcOd3geNpnyYN8S19XPzvQ4Ty4pJ4BGwAA==
+X-Received: by 2002:a5d:59a3:0:b0:391:38a5:efa with SMTP id ffacd0b85a97d-396c2010f8emr951103f8f.23.1741898916296;
+        Thu, 13 Mar 2025 13:48:36 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c7df339asm3224343f8f.3.2025.03.13.13.48.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 13:48:35 -0700 (PDT)
+Message-ID: <96b2920f2bfd4ac44de73f3f940eb66913996952.camel@gmail.com>
+Subject: Re: [PATCH v1 1/1] iio: amplifiers: hmc425a: Remove not fully
+ correct comment
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, David Lechner
+	 <dlechner@baylibre.com>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+	 <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>
+Date: Thu, 13 Mar 2025 20:48:51 +0000
+In-Reply-To: <20250313162254.416422-1-andriy.shevchenko@linux.intel.com>
+References: <20250313162254.416422-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313043611.1212116-1-chenyuan0y@gmail.com> <uudh23zxngyi534idmutg6v3aowjnokedomv76iyanuda4nocy@m5xqjtdc47kh>
-In-Reply-To: <uudh23zxngyi534idmutg6v3aowjnokedomv76iyanuda4nocy@m5xqjtdc47kh>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 13 Mar 2025 21:48:07 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0iMs7tsu+XXQbO=NoEY=zf1YRbJ8SFP+FAWyVVxFs=xxg@mail.gmail.com>
-X-Gm-Features: AQ5f1JrQ5TjWinvVL6c8_rqj_TtBDp3oYbJQ99w2FM47tghI9ARPqp3QcjtJWOc
-Message-ID: <CAJZ5v0iMs7tsu+XXQbO=NoEY=zf1YRbJ8SFP+FAWyVVxFs=xxg@mail.gmail.com>
-Subject: Re: [PATCH] thermal: int340x: Add Null check for adev
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Chenyuan Yang <chenyuan0y@gmail.com>
-Cc: daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 13, 2025 at 9:37=E2=80=AFAM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@baylibre.com> wrote:
->
-> Hello,
->
-> On Wed, Mar 12, 2025 at 11:36:11PM -0500, Chenyuan Yang wrote:
-> > Not all devices have an ACPI companion fwnode, so adev might be NULL.
-> > This is similar to the commit cd2fd6eab480
-> > ("platform/x86: int3472: Check for adev =3D=3D NULL").
-> >
-> > Add a check for adev not being set and return -ENODEV in that case to
-> > avoid a possible NULL pointer deref in int3402_thermal_probe().
-> >
-> > Note, under the same directory, int3400_thermal_probe() has such a
-> > check.
-> >
-> > Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
->
-> Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-> Fixes: 77e337c6e23e ("Thermal: introduce INT3402 thermal driver")
+On Thu, 2025-03-13 at 18:22 +0200, Andy Shevchenko wrote:
+> The OF match table can be used outside of OF-based platforms.
+> Remove the (misleading) comment.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
 
-Applied as 6.15 material, thanks!
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+
+> =C2=A0drivers/iio/amplifiers/hmc425a.c | 1 -
+> =C2=A01 file changed, 1 deletion(-)
+>=20
+> diff --git a/drivers/iio/amplifiers/hmc425a.c b/drivers/iio/amplifiers/hm=
+c425a.c
+> index d9a359e1388a..e92d7f399e33 100644
+> --- a/drivers/iio/amplifiers/hmc425a.c
+> +++ b/drivers/iio/amplifiers/hmc425a.c
+> @@ -398,7 +398,6 @@ static int hmc425a_probe(struct platform_device *pdev=
+)
+> =C2=A0	return devm_iio_device_register(&pdev->dev, indio_dev);
+> =C2=A0}
+> =C2=A0
+> -/* Match table for of_platform binding */
+> =C2=A0static const struct of_device_id hmc425a_of_match[] =3D {
+> =C2=A0	{ .compatible =3D "adi,hmc425a",
+> =C2=A0	=C2=A0 .data =3D &hmc425a_chip_info_tbl[ID_HMC425A]},
+
 
