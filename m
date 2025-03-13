@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-559378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E218A5F2ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:47:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F68A5F2F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:47:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D383117A2A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:47:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB33517A162
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB62267710;
-	Thu, 13 Mar 2025 11:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B42269823;
+	Thu, 13 Mar 2025 11:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LkWUjHb0"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FwpDlrnj"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B38266581;
-	Thu, 13 Mar 2025 11:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE665266581;
+	Thu, 13 Mar 2025 11:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741866157; cv=none; b=VCrt1ggPfFENtN9mu18t75s/8Pqr5aQvhJvdGpvMb8Ae8D3UxXOChY27ljjy6WcQ/hA+DGZxf/Y+5TSiIMAJb1x4rqu+ff5njx83BHqeyZtFy4KvkyTqSEqCW3nvUtHkjP/uylGemL8WNSrMm7VihVeIXkhNRSUljiNeogtaLBc=
+	t=1741866166; cv=none; b=Hg7SrcMDrAIcPIE26iYRTjonmJSQ+bmKXb+hh81QeDMu3Ah4WZIrCFC6MsSWAjlcBZnAeybMM9E5FHlREjVEAsuty8+Z98PpzRSFS6j6V6LSJftWAtdG92hccFvSJseayoGesaPdLvOacPQmGUDvRmDu93lne7jnPzjWq1/FcXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741866157; c=relaxed/simple;
-	bh=gEZsW84KSRTbb8/iOjCTIobbJO86XYFBZlSxnfEdS3g=;
+	s=arc-20240116; t=1741866166; c=relaxed/simple;
+	bh=n6wNWcY7Bz2eTob/jQtTQRLVyt1c9Lrqrdo99HUboJE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RlZyTXyaE01YU3fVIR2Bpxgc62B9A9qe+V5Xv507VyP8twh9hKxQmqPgN8JYkrvwnE6vp/wFNxdjA1KPfsxqKKa85Xy3D8TuF/210djzMgjZCWhFk1w6Jf2uSZmPuGOo/txI4/oi+zD2PFmjZHgDpOp1e93hx5tAv6h5FO/asCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LkWUjHb0; arc=none smtp.client-ip=209.85.208.175
+	 Content-Type:Content-Disposition:In-Reply-To; b=rw50UJvN7iejka+CME+mcTPcWjSGLNLdQ1YX9qG53cdTwOO/5ULc5z0uKG1Olrq65LKI2g8cJZeNGVRrOzEo4aF1A69j0wkY7XCeuWMUw8D6LuT1Kzo/4w7E8Gom8/7hTG41FfbmP3UJ5G8fx+xqMmf+JRHro62dfcPbrSJeKhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FwpDlrnj; arc=none smtp.client-ip=209.85.208.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-307d1ab59c6so8342731fa.1;
-        Thu, 13 Mar 2025 04:42:32 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30c2d427194so9244041fa.0;
+        Thu, 13 Mar 2025 04:42:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741866151; x=1742470951; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741866163; x=1742470963; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=B6cp6hjH+KnP19Nuy4w684+loWFmmEL9LwPPePF5PPM=;
-        b=LkWUjHb08ZS4/28lAiLnWZpwYs7mzQmcodisS1ehK5tEmQ7rMN/4zb3CTv+M7zHuwU
-         TMDG6S9RSZI72GY0EQ93Yr3gg+naV92Rz97k/v8LJLyngm5r8OAJlvCDJ3FlIWP9LLrl
-         Zg1yDg0DBvh+c4EXs8zN1rC1wAnqC6f8ESC9d4MSrNHNRwbOY4RUQ3kw8xvvMOjYJ6oA
-         rjuS/+iPbUv0CoRmJdqrZgIdd8WkoRN7NOsrFx1VwoqUQPTqOs1nribxlCKboDVUFRm4
-         32a8IYWEpC9wocN5QJi9PznwUgl59D/PoouFbjqLCkR5rT9T7dcjVldghbIiz/xqV6/h
-         Jdpg==
+        bh=6sH1CSeQqxMsaxepK0ektoX2EV0nlFdc3GsF7udPglQ=;
+        b=FwpDlrnjRln/ZK//Itz4VzBwROD87JTmNpb/1Ydldo7EDWoOLnfxdu0u4mU6rqIFd/
+         B9OesGymVLbK2GDbCL6QSuwzAAM33eW5g/9X48GiwCD7QabxLGdMuKogJ8OCDTVWACIR
+         mtpdyjPHV6CDjqvZpXOy1ZuNYXZdFk+ksSDjagGdvCSlcMoE72/lNrrV5mDGlNVP84X4
+         LAYWE+jfD+t6l0MU65QrcU68DpvuNiQxanKjzDlJtOV6rVOANpm8Crln2Yz85fjhkQ62
+         EeBXgS9osoo8sw3iCVNW3dggQid8ehZ16jz/qeX9aKUz53asQ1Qpk3xMUsR/8upELSU+
+         7gtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741866151; x=1742470951;
+        d=1e100.net; s=20230601; t=1741866163; x=1742470963;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=B6cp6hjH+KnP19Nuy4w684+loWFmmEL9LwPPePF5PPM=;
-        b=qn7roiif04f0oA5tz//LteS6ZelWk9qNLB0o/4N4HegjhpzFu/cWKIHzobHNVWdYtP
-         gXh3mCavtq26pYcqjyWoKaOhK/vrp3i/L74hCsKyvcdYpF+gL1jATbodarkhJ8JYeoMY
-         FPEPidf20CJuvxVjVdjKZ7ehu5AJAhkioSndm4dziLXGQFFcICkrdxHCggLnfuuGeja1
-         UpsjKj9DfKObRGMF9P3vldQMLu4bAYck20GdiCMpXqPnskZSMLc/sdGn47xRT+cug0Gl
-         OXfZVQNrVouYOrn7qzv9B0JzzQuqI6ph+qViA2OLV4vvULt165gJGpvlPFrhGAa8Uuwl
-         PFCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwLMVYVLAB9X2XTD19ZB2IgkkGg8bt6A7fdoGQzTzl2aVISPh6kuOeAVS2fQm9dlBK0SzCkDuRbCQO@vger.kernel.org, AJvYcCXTVkkSChdFdVIQTVZeUQAL4eOG71QJJNQm5Fe2Pk5P0wh+KxHoqVPwkOAdr5dDyGztAGPybz9vgTeV6UZx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJwU0azS3qwNjC5LW4/FKBzNCRuPm7Q/jqd4C7ypSmQU6aFLDb
-	4H8TB3Ms5WbZVL5fdXjZlD1fI9Sh/ZK6ze4VAbUFiPplsULrswQ02aEqgQ==
-X-Gm-Gg: ASbGncuZ0M2fF2MtphG71S4FvOH8G1olIJTlSbbUb0MEPmN7k+Wrv1jezzCxe8ZpJif
-	cus2RpjOFmDLujqjNLo7cgKrN1AOPEaI4ndn6/V8gLYhBXfjA32L0hr2DLRzb7kapGtbVpG9UV/
-	+B+f9ffnpNeHyuLyrjKdZYAQtQKMl2yj0HBzPqXxJslqZtfJPTwmQQyp19eh55ApTqiBLDRUse3
-	ZkBILUYdpoiBymXlQe4Jy2hgoR8AmYFX2rc6TlllAVKFjLpV03xzpqmLsIjEOsxVA2ZMUDY6ipS
-	UY1tkoozOLIsY67e9TwYEhNYxVPTgv/IIA5S0FNMFYI+3u/Eadw=
-X-Google-Smtp-Source: AGHT+IFm1ef52d45ujU1nC7i1hNeg9lC5Ia4GNDK+OOX5dgZJXxq4u3gAesVN0fOVfZivDaaio4FXA==
-X-Received: by 2002:a2e:be13:0:b0:30b:9813:afe1 with SMTP id 38308e7fff4ca-30bf45ec43amr108096771fa.25.1741866150587;
-        Thu, 13 Mar 2025 04:42:30 -0700 (PDT)
+        bh=6sH1CSeQqxMsaxepK0ektoX2EV0nlFdc3GsF7udPglQ=;
+        b=YUnTqTej6j6oIB6nMFMXIkJnHiYF09Xs13vSUNLxDXjObRivk+w6G0nxAnu/sGLK8i
+         Al6bZVIenLRdwju8oglirx6imlyOFlcmSA3s7STlgBu8XsVdIAGt++5O7wwa6wOfi/sH
+         6yI/Mp/qaE2Pml7NDBKsLEiNHzcVvyebpdC5g7cl0G6/6Y6scvRqc8yfnAoYhYoV3DB5
+         S44auY5JKDyFy/bcyPRpcvKo+o2DoUd7VnjaJiNybas4csfebOl/jXbX7vXgwrebcNBJ
+         ibCtSSoLIMWxm2VQ8w4lBwhtYGtl1pOaee21zWl1C4eHyI1YSrFCMF+5zT9f1mB3rJeI
+         xV1w==
+X-Forwarded-Encrypted: i=1; AJvYcCW4Fo8BcnZB2sR9HsvJ7ScoYyZkvuAH6/nb2sIA2oilJWL5Xep0nWhC2aLAEZwmxzyvewIB14QGHaPB@vger.kernel.org, AJvYcCXfuRooKcKcbVS2Nsh4W+u4r5VNYO9dMXUfYue7bBwaqUCU0dJC5xD5MD0xIZEScReAwQRHMI3yfE/C9g5Y@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw83XTCRhSm1c+AgtqgmGSfqHVU0SHQsGLGFErU7vL5FGw6oqJe
+	5+S7h/yxxwSNF/6QPPHg6vI6hrnejv48NLkQsa/fzSsZ66DParvz
+X-Gm-Gg: ASbGncujdiZ+tNgy6Sac0wp9MJN9pb/EISdEyoPeWqb49NUFuKzdHLh9dDkxoNhyjmL
+	DYN98fHkrTrOLJUcR6DGQaQIbTBbub6z1VfeeHomjLzuMKBJYmWZHhQ5XuKFUp7zayQjQQF6Gm9
+	UHoWbRnXMMvaWXLm1TADws6Mj4vuxzctdTt1k7odk1Rtll0UHJCrIC41TWFSLf5I7P7roStNt3b
+	U15Vsgy5bKE7Yd/8FqPBq3ZpXiALZY8nx3NCxsuGhL4rX1aab+IGog/fhBdbOA3FlFW6TZBVmQG
+	y70XwNmqM3eKGFluRCWX1IA3wxoamVQVnK657QJO2zpZRlh3JVvBbk2gEoWxHw==
+X-Google-Smtp-Source: AGHT+IFVSgzozeE1pLfn5k8ldUKdmkLtw8E4M/X+0NMyOfLVUef47XgWQ2YiaRCPJRCVZttw5XJjrw==
+X-Received: by 2002:a05:6512:3b0b:b0:549:38eb:d694 with SMTP id 2adb3069b0e04-549abacbcc7mr3681187e87.26.1741866162634;
+        Thu, 13 Mar 2025 04:42:42 -0700 (PDT)
 Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f1c217dsm1845351fa.65.2025.03.13.04.42.28
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba864d7dsm183850e87.130.2025.03.13.04.42.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 04:42:28 -0700 (PDT)
-Date: Thu, 13 Mar 2025 13:42:24 +0200
+        Thu, 13 Mar 2025 04:42:41 -0700 (PDT)
+Date: Thu, 13 Mar 2025 13:42:37 +0200
 From: Matti Vaittinen <mazziesaccount@gmail.com>
 To: Matti Vaittinen <mazziesaccount@gmail.com>,
 	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
@@ -81,8 +81,8 @@ Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
 	Mark Brown <broonie@kernel.org>,
 	Matti Vaittinen <mazziesaccount@gmail.com>,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 08/14] mfd: rohm-bd96801: Support ROHM BD96802
-Message-ID: <7afe2699c382f1d9da2d8341f0c10733030d1164.1741864404.git.mazziesaccount@gmail.com>
+Subject: [PATCH 09/14] regulator: bd96801: Support ROHM BD96802
+Message-ID: <c6ef2373d7ea2891065bcbaf208978046cc469d9.1741864404.git.mazziesaccount@gmail.com>
 References: <cover.1741864404.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -91,515 +91,233 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KhowQEei6lKDF70+"
+	protocol="application/pgp-signature"; boundary="DMYhEBtsz2RVNr/C"
 Content-Disposition: inline
 In-Reply-To: <cover.1741864404.git.mazziesaccount@gmail.com>
 
 
---KhowQEei6lKDF70+
+--DMYhEBtsz2RVNr/C
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-The ROHM BD96802 PMIC looks from software point of view a lot like ROHM
-BD96801 PMIC. Just with reduced number of voltage rails. Both PMICs
-provide two physical IRQ lines referred as INTB and ERRB and contain
-blocks implementing regulator controls and a weatchdog. Hence it makes
-sense to use same MFD core for both PMICs.
+The ROHM BD96802 PMIC is primarily intended to be used as a companion
+PMIC extending the capabilities of the BD96802 but it can be used on
+it's own as well. When used as a companion PMIC, the start-up and
+shut-down sequences are usually intitiated by the master PMIC using IF
+pins.
 
-Add support for ROHM BD96802 scalable companion PMIC to the BD96801
-core driver.
+The BD96802 looks from the digital interface point of view pretty much
+like a reduced version of BD96801. It includes only 2 BUCKs and provides
+the same error protection/detection mechanisms as the BD96801. Also, the
+voltage control logic is same up to the register addresses.
+
+Add support for controlling BD96802 using the BD96801 driver.
 
 Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 ---
- drivers/mfd/rohm-bd96801.c       | 238 ++++++++++++++++++++++++++++++-
- include/linux/mfd/rohm-bd96801.h |   2 +
- include/linux/mfd/rohm-bd96802.h |  74 ++++++++++
- 3 files changed, 309 insertions(+), 5 deletions(-)
- create mode 100644 include/linux/mfd/rohm-bd96802.h
+ drivers/regulator/bd96801-regulator.c | 92 ++++++++++++++++++++++++---
+ 1 file changed, 83 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/mfd/rohm-bd96801.c b/drivers/mfd/rohm-bd96801.c
-index 47c77ed3d343..2438cfdeecf9 100644
---- a/drivers/mfd/rohm-bd96801.c
-+++ b/drivers/mfd/rohm-bd96801.c
-@@ -38,6 +38,7 @@
- #include <linux/types.h>
-=20
- #include <linux/mfd/rohm-bd96801.h>
-+#include <linux/mfd/rohm-bd96802.h>
- #include <linux/mfd/rohm-generic.h>
-=20
- struct bd968xx_chip_data {
-@@ -113,6 +114,36 @@ static const struct resource bd96801_reg_errb_irqs[] =
-=3D {
- 	DEFINE_RES_IRQ_NAMED(BD96801_LDO7_SHDN_ERR_STAT, "ldo7-shdn-err"),
+diff --git a/drivers/regulator/bd96801-regulator.c b/drivers/regulator/bd96=
+801-regulator.c
+index 48cdd583e92d..893efdd92008 100644
+--- a/drivers/regulator/bd96801-regulator.c
++++ b/drivers/regulator/bd96801-regulator.c
+@@ -302,6 +302,7 @@ struct bd96801_pmic_data {
+ 	struct bd96801_regulator_data regulator_data[BD96801_NUM_REGULATORS];
+ 	struct regmap *regmap;
+ 	int fatal_ind;
++	int num_regulators;
  };
 =20
-+static const struct resource bd96802_reg_errb_irqs[] =3D {
-+	DEFINE_RES_IRQ_NAMED(BD96802_OTP_ERR_STAT, "otp-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_DBIST_ERR_STAT, "dbist-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_EEP_ERR_STAT, "eep-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_ABIST_ERR_STAT, "abist-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_PRSTB_ERR_STAT, "prstb-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_DRMOS1_ERR_STAT, "drmoserr1"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_DRMOS1_ERR_STAT, "drmoserr2"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_SLAVE_ERR_STAT, "slave-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_VREF_ERR_STAT, "vref-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_TSD_ERR_STAT, "tsd"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_UVLO_ERR_STAT, "uvlo-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_OVLO_ERR_STAT, "ovlo-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_OSC_ERR_STAT, "osc-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_PON_ERR_STAT, "pon-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_POFF_ERR_STAT, "poff-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_CMD_SHDN_ERR_STAT, "cmd-shdn-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_INT_SHDN_ERR_STAT, "int-shdn-err"),
-+
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK1_PVIN_ERR_STAT, "buck1-pvin-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK1_OVP_ERR_STAT, "buck1-ovp-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK1_UVP_ERR_STAT, "buck1-uvp-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK1_SHDN_ERR_STAT, "buck1-shdn-err"),
-+
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK2_PVIN_ERR_STAT, "buck2-pvin-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK2_OVP_ERR_STAT, "buck2-ovp-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK2_UVP_ERR_STAT, "buck2-uvp-err"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK2_SHDN_ERR_STAT, "buck2-shdn-err"),
-+};
-+
- static const struct resource bd96801_reg_intb_irqs[] =3D {
- 	DEFINE_RES_IRQ_NAMED(BD96801_TW_STAT, "core-thermal"),
-=20
-@@ -157,6 +188,24 @@ static const struct resource bd96801_reg_intb_irqs[] =
-=3D {
- 	DEFINE_RES_IRQ_NAMED(BD96801_LDO7_UVD_STAT, "ldo7-undervolt"),
- };
-=20
-+static const struct resource bd96802_reg_intb_irqs[] =3D {
-+	DEFINE_RES_IRQ_NAMED(BD96802_TW_STAT, "core-thermal"),
-+
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK1_OCPH_STAT, "buck1-overcurr-h"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK1_OCPL_STAT, "buck1-overcurr-l"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK1_OCPN_STAT, "buck1-overcurr-n"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK1_OVD_STAT, "buck1-overvolt"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK1_UVD_STAT, "buck1-undervolt"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK1_TW_CH_STAT, "buck1-thermal"),
-+
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK2_OCPH_STAT, "buck2-overcurr-h"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK2_OCPL_STAT, "buck2-overcurr-l"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK2_OCPN_STAT, "buck2-overcurr-n"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK2_OVD_STAT, "buck2-overvolt"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK2_UVD_STAT, "buck2-undervolt"),
-+	DEFINE_RES_IRQ_NAMED(BD96802_BUCK2_TW_CH_STAT, "buck2-thermal"),
-+};
-+
- enum {
- 	WDG_CELL =3D 0,
- 	REGULATOR_CELL,
-@@ -167,6 +216,11 @@ static struct mfd_cell bd96801_cells[] =3D {
- 	[REGULATOR_CELL] =3D { .name =3D "bd96801-regulator", },
- };
-=20
-+static struct mfd_cell bd96802_cells[] =3D {
-+	[WDG_CELL] =3D { .name =3D "bd96801-wdt", },
-+	[REGULATOR_CELL] =3D { .name =3D "bd96802-regulator", },
-+};
-+
- static const struct regmap_range bd96801_volatile_ranges[] =3D {
- 	/* Status registers */
- 	regmap_reg_range(BD96801_REG_WD_FEED, BD96801_REG_WD_FAILCOUNT),
-@@ -184,11 +238,28 @@ static const struct regmap_range bd96801_volatile_ran=
-ges[] =3D {
- 	regmap_reg_range(BD96801_LDO5_VOL_LVL_REG, BD96801_LDO7_VOL_LVL_REG),
- };
-=20
--static const struct regmap_access_table volatile_regs =3D {
-+static const struct regmap_range bd96802_volatile_ranges[] =3D {
-+	/* Status regs */
-+	regmap_reg_range(BD96801_REG_WD_FEED, BD96801_REG_WD_FAILCOUNT),
-+	regmap_reg_range(BD96801_REG_WD_ASK, BD96801_REG_WD_ASK),
-+	regmap_reg_range(BD96801_REG_WD_STATUS, BD96801_REG_WD_STATUS),
-+	regmap_reg_range(BD96801_REG_PMIC_STATE, BD96801_REG_INT_BUCK2_ERRB),
-+	regmap_reg_range(BD96801_REG_INT_SYS_INTB, BD96801_REG_INT_BUCK2_INTB),
-+	/* Registers which do not update value unless PMIC is in STBY */
-+	regmap_reg_range(BD96801_REG_SSCG_CTRL, BD96801_REG_SHD_INTB),
-+	regmap_reg_range(BD96801_REG_BUCK_OVP, BD96801_REG_BOOT_OVERTIME),
-+};
-+
-+static const struct regmap_access_table bd96801_volatile_regs =3D {
- 	.yes_ranges =3D bd96801_volatile_ranges,
- 	.n_yes_ranges =3D ARRAY_SIZE(bd96801_volatile_ranges),
- };
-=20
-+static const struct regmap_access_table bd96802_volatile_regs =3D {
-+	.yes_ranges =3D bd96802_volatile_ranges,
-+	.n_yes_ranges =3D ARRAY_SIZE(bd96802_volatile_ranges),
-+};
-+
- /*
-  * For ERRB we need main register bit mapping as bit(0) indicates active I=
-RQ
-  * in one of the first 3 sub IRQ registers, For INTB we can use default 1 =
-to 1
-@@ -203,7 +274,7 @@ static unsigned int bit5_offsets[] =3D {7};	/* LDO 5 st=
-at */
- static unsigned int bit6_offsets[] =3D {8};	/* LDO 6 stat */
- static unsigned int bit7_offsets[] =3D {9};	/* LDO 7 stat */
-=20
--static const struct regmap_irq_sub_irq_map errb_sub_irq_offsets[] =3D {
-+static const struct regmap_irq_sub_irq_map bd96801_errb_sub_irq_offsets[] =
-=3D {
- 	REGMAP_IRQ_MAIN_REG_OFFSET(bit0_offsets),
- 	REGMAP_IRQ_MAIN_REG_OFFSET(bit1_offsets),
- 	REGMAP_IRQ_MAIN_REG_OFFSET(bit2_offsets),
-@@ -214,6 +285,12 @@ static const struct regmap_irq_sub_irq_map errb_sub_ir=
-q_offsets[] =3D {
- 	REGMAP_IRQ_MAIN_REG_OFFSET(bit7_offsets),
- };
-=20
-+static const struct regmap_irq_sub_irq_map bd96802_errb_sub_irq_offsets[] =
-=3D {
-+	REGMAP_IRQ_MAIN_REG_OFFSET(bit0_offsets),
-+	REGMAP_IRQ_MAIN_REG_OFFSET(bit1_offsets),
-+	REGMAP_IRQ_MAIN_REG_OFFSET(bit2_offsets),
-+};
-+
- static const struct regmap_irq bd96801_errb_irqs[] =3D {
- 	/* Reg 0x52 Fatal ERRB1 */
- 	REGMAP_IRQ_REG(BD96801_OTP_ERR_STAT, 0, BD96801_OTP_ERR_MASK),
-@@ -274,6 +351,39 @@ static const struct regmap_irq bd96801_errb_irqs[] =3D=
- {
- 	REGMAP_IRQ_REG(BD96801_LDO7_SHDN_ERR_STAT, 9, BD96801_OUT_SHDN_ERR_MASK),
- };
-=20
-+static const struct regmap_irq bd96802_errb_irqs[] =3D {
-+	/* Reg 0x52 Fatal ERRB1 */
-+	REGMAP_IRQ_REG(BD96802_OTP_ERR_STAT, 0, BD96801_OTP_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_DBIST_ERR_STAT, 0, BD96801_DBIST_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_EEP_ERR_STAT, 0, BD96801_EEP_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_ABIST_ERR_STAT, 0, BD96801_ABIST_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_PRSTB_ERR_STAT, 0, BD96801_PRSTB_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_DRMOS1_ERR_STAT, 0, BD96801_DRMOS1_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_DRMOS2_ERR_STAT, 0, BD96801_DRMOS2_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_SLAVE_ERR_STAT, 0, BD96801_SLAVE_ERR_MASK),
-+	/* 0x53 Fatal ERRB2 */
-+	REGMAP_IRQ_REG(BD96802_VREF_ERR_STAT, 1, BD96801_VREF_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_TSD_ERR_STAT, 1, BD96801_TSD_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_UVLO_ERR_STAT, 1, BD96801_UVLO_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_OVLO_ERR_STAT, 1, BD96801_OVLO_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_OSC_ERR_STAT, 1, BD96801_OSC_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_PON_ERR_STAT, 1, BD96801_PON_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_POFF_ERR_STAT, 1, BD96801_POFF_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_CMD_SHDN_ERR_STAT, 1, BD96801_CMD_SHDN_ERR_MASK),
-+	/* 0x54 Fatal INTB shadowed to ERRB */
-+	REGMAP_IRQ_REG(BD96802_INT_SHDN_ERR_STAT, 2, BD96801_INT_SHDN_ERR_MASK),
-+	/* Reg 0x55 BUCK1 ERR IRQs */
-+	REGMAP_IRQ_REG(BD96802_BUCK1_PVIN_ERR_STAT, 3, BD96801_OUT_PVIN_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_BUCK1_OVP_ERR_STAT, 3, BD96801_OUT_OVP_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_BUCK1_UVP_ERR_STAT, 3, BD96801_OUT_UVP_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_BUCK1_SHDN_ERR_STAT, 3, BD96801_OUT_SHDN_ERR_MASK),
-+	/* Reg 0x56 BUCK2 ERR IRQs */
-+	REGMAP_IRQ_REG(BD96802_BUCK2_PVIN_ERR_STAT, 4, BD96801_OUT_PVIN_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_BUCK2_OVP_ERR_STAT, 4, BD96801_OUT_OVP_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_BUCK2_UVP_ERR_STAT, 4, BD96801_OUT_UVP_ERR_MASK),
-+	REGMAP_IRQ_REG(BD96802_BUCK2_SHDN_ERR_STAT, 4, BD96801_OUT_SHDN_ERR_MASK),
-+};
-+
- static const struct regmap_irq bd96801_intb_irqs[] =3D {
- 	/* STATUS SYSTEM INTB */
- 	REGMAP_IRQ_REG(BD96801_TW_STAT, 0, BD96801_TW_STAT_MASK),
-@@ -322,6 +432,69 @@ static const struct regmap_irq bd96801_intb_irqs[] =3D=
- {
- 	REGMAP_IRQ_REG(BD96801_LDO7_UVD_STAT, 7, BD96801_LDO_UVD_STAT_MASK),
- };
-=20
-+static const struct regmap_irq bd96802_intb_irqs[] =3D {
-+	/* STATUS SYSTEM INTB */
-+	REGMAP_IRQ_REG(BD96802_TW_STAT, 0, BD96801_TW_STAT_MASK),
-+	REGMAP_IRQ_REG(BD96802_WDT_ERR_STAT, 0, BD96801_WDT_ERR_STAT_MASK),
-+	REGMAP_IRQ_REG(BD96802_I2C_ERR_STAT, 0, BD96801_I2C_ERR_STAT_MASK),
-+	REGMAP_IRQ_REG(BD96802_CHIP_IF_ERR_STAT, 0, BD96801_CHIP_IF_ERR_STAT_MASK=
-),
-+	/* STATUS BUCK1 INTB */
-+	REGMAP_IRQ_REG(BD96802_BUCK1_OCPH_STAT, 1, BD96801_BUCK_OCPH_STAT_MASK),
-+	REGMAP_IRQ_REG(BD96802_BUCK1_OCPL_STAT, 1, BD96801_BUCK_OCPL_STAT_MASK),
-+	REGMAP_IRQ_REG(BD96802_BUCK1_OCPN_STAT, 1, BD96801_BUCK_OCPN_STAT_MASK),
-+	REGMAP_IRQ_REG(BD96802_BUCK1_OVD_STAT, 1, BD96801_BUCK_OVD_STAT_MASK),
-+	REGMAP_IRQ_REG(BD96802_BUCK1_UVD_STAT, 1, BD96801_BUCK_UVD_STAT_MASK),
-+	REGMAP_IRQ_REG(BD96802_BUCK1_TW_CH_STAT, 1, BD96801_BUCK_TW_CH_STAT_MASK),
-+	/* BUCK 2 INTB */
-+	REGMAP_IRQ_REG(BD96802_BUCK2_OCPH_STAT, 2, BD96801_BUCK_OCPH_STAT_MASK),
-+	REGMAP_IRQ_REG(BD96802_BUCK2_OCPL_STAT, 2, BD96801_BUCK_OCPL_STAT_MASK),
-+	REGMAP_IRQ_REG(BD96802_BUCK2_OCPN_STAT, 2, BD96801_BUCK_OCPN_STAT_MASK),
-+	REGMAP_IRQ_REG(BD96802_BUCK2_OVD_STAT, 2, BD96801_BUCK_OVD_STAT_MASK),
-+	REGMAP_IRQ_REG(BD96802_BUCK2_UVD_STAT, 2, BD96801_BUCK_UVD_STAT_MASK),
-+	REGMAP_IRQ_REG(BD96802_BUCK2_TW_CH_STAT, 2, BD96801_BUCK_TW_CH_STAT_MASK),
-+};
-+
-+/*
-+ * The IRQ stuff is a bit hairy. The BD96801 / BD96802 provide two physical
-+ * IRQ lines called INTB and ERRB. They share the same main status registe=
-r.
-+ *
-+ * For ERRB, mapping from main status to sub-status is such that the
-+ * 'global' faults are mapped to first 3 sub-status registers - and indica=
-ted
-+ * by the first bit[0] in main status reg.
-+ *
-+ * Rest of the status registers are for indicating stuff for individual
-+ * regulators, 1 sub register / regulator and 1 main status register bit /
-+ * regulator, starting from bit[1].
-+ *
-+ * Eg, regulator specific stuff has 1 to 1 mapping from main-status to sub
-+ * registers but 'global' ERRB IRQs require mapping from main status bit[0=
-] to
-+ * 3 status registers.
-+ *
-+ * Furthermore, the BD96801 has 7 regulators where the BD96802 has only 2.
-+ *
-+ * INTB has only 1 sub status register for 'global' events and then own sub
-+ * status register for each of the regulators. So, for INTB we have direct
-+ * 1 to 1 mapping - BD96801 just having 5 register and 5 main status bits
-+ * more than the BD96802.
-+ *
-+ * Sharing the main status bits could be a problem if we had both INTB and
-+ * ERRB IRQs asserted but for different sub-status offsets. This might lead
-+ * IRQ controller code to go read a sub status register which indicates no
-+ * active IRQs. I assume this occurring repeteadly might lead the IRQ to be
-+ * disabled by core as a result of repeteadly returned IRQ_NONEs.
-+ *
-+ * I don't consider this as a fatal problem for now because:
-+ *	a) Having ERRB asserted leads to PMIC fault state which will kill
-+ *	   the SoC powered by the PMIC. (So, relevant only for potential
-+ *	   case of not powering the processor with this PMIC).
-+ *	b) Having ERRB set without having respective INTB is unlikely
-+ *	   (haven't actually verified this).
-+ *
-+ * So, let's proceed with main status enabled for both INTB and ERRB. We c=
-an
-+ * later disable main-status usage on systems where this ever proves to be
-+ * a problem.
-+ */
-+
- static const struct regmap_irq_chip bd96801_irq_chip_errb =3D {
- 	.name =3D "bd96801-irq-errb",
- 	.domain_suffix =3D "errb",
-@@ -335,7 +508,23 @@ static const struct regmap_irq_chip bd96801_irq_chip_e=
-rrb =3D {
- 	.init_ack_masked =3D true,
- 	.num_regs =3D 10,
- 	.irq_reg_stride =3D 1,
--	.sub_reg_offsets =3D &errb_sub_irq_offsets[0],
-+	.sub_reg_offsets =3D &bd96801_errb_sub_irq_offsets[0],
-+};
-+
-+static const struct regmap_irq_chip bd96802_irq_chip_errb =3D {
-+	.name =3D "bd96802-irq-errb",
-+	.domain_suffix =3D "errb",
-+	.main_status =3D BD96801_REG_INT_MAIN,
-+	.num_main_regs =3D 1,
-+	.irqs =3D &bd96802_errb_irqs[0],
-+	.num_irqs =3D ARRAY_SIZE(bd96802_errb_irqs),
-+	.status_base =3D BD96801_REG_INT_SYS_ERRB1,
-+	.mask_base =3D BD96801_REG_MASK_SYS_ERRB,
-+	.ack_base =3D BD96801_REG_INT_SYS_ERRB1,
-+	.init_ack_masked =3D true,
-+	.num_regs =3D 5,
-+	.irq_reg_stride =3D 1,
-+	.sub_reg_offsets =3D &bd96802_errb_sub_irq_offsets[0],
- };
-=20
- static const struct regmap_irq_chip bd96801_irq_chip_intb =3D {
-@@ -353,10 +542,32 @@ static const struct regmap_irq_chip bd96801_irq_chip_=
-intb =3D {
- 	.irq_reg_stride =3D 1,
- };
-=20
-+static const struct regmap_irq_chip bd96802_irq_chip_intb =3D {
-+	.name =3D "bd96802-irq-intb",
-+	.domain_suffix =3D "intb",
-+	.main_status =3D BD96801_REG_INT_MAIN,
-+	.num_main_regs =3D 1,
-+	.irqs =3D &bd96802_intb_irqs[0],
-+	.num_irqs =3D ARRAY_SIZE(bd96802_intb_irqs),
-+	.status_base =3D BD96801_REG_INT_SYS_INTB,
-+	.mask_base =3D BD96801_REG_MASK_SYS_INTB,
-+	.ack_base =3D BD96801_REG_INT_SYS_INTB,
-+	.init_ack_masked =3D true,
-+	.num_regs =3D 3,
-+	.irq_reg_stride =3D 1,
-+};
-+
- static const struct regmap_config bd96801_regmap_config =3D {
- 	.reg_bits =3D 8,
- 	.val_bits =3D 8,
--	.volatile_table =3D &volatile_regs,
-+	.volatile_table =3D &bd96801_volatile_regs,
-+	.cache_type =3D REGCACHE_MAPLE,
-+};
-+
-+static const struct regmap_config bd96802_regmap_config =3D {
-+	.reg_bits =3D 8,
-+	.val_bits =3D 8,
-+	.volatile_table =3D &bd96802_volatile_regs,
- 	.cache_type =3D REGCACHE_MAPLE,
- };
-=20
-@@ -374,6 +585,20 @@ static const struct bd968xx_chip_data bd96801_chip_dat=
-a =3D {
- 	.unlock_val =3D BD96801_UNLOCK,
- };
-=20
-+static struct bd968xx_chip_data bd96802_chip_data =3D {
-+	.errb_irqs =3D bd96802_reg_errb_irqs,
-+	.intb_irqs =3D bd96802_reg_intb_irqs,
-+	.num_errb_irqs =3D ARRAY_SIZE(bd96802_reg_errb_irqs),
-+	.num_intb_irqs =3D ARRAY_SIZE(bd96802_reg_intb_irqs),
-+	.errb_irq_chip =3D &bd96802_irq_chip_errb,
-+	.intb_irq_chip =3D &bd96802_irq_chip_intb,
-+	.regmap_config =3D &bd96802_regmap_config,
-+	.cells =3D bd96802_cells,
-+	.num_cells =3D ARRAY_SIZE(bd96802_cells),
-+	.unlock_reg =3D BD96801_LOCK_REG,
-+	.unlock_val =3D BD96801_UNLOCK,
-+};
-+
- static int bd96801_i2c_probe(struct i2c_client *i2c)
- {
- 	struct regmap_irq_chip_data *intb_irq_data, *errb_irq_data;
-@@ -388,8 +613,10 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
- 	int i, ret;
-=20
- 	cd =3D device_get_match_data(&i2c->dev);
--	if (!cd)
-+	if (!cd) {
-+		dev_err(&i2c->dev, "No data\n");
- 		return -ENODEV;
-+	}
-=20
- 	fwnode =3D dev_fwnode(&i2c->dev);
- 	if (!fwnode)
-@@ -481,6 +708,7 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
-=20
- static const struct of_device_id bd96801_of_match[] =3D {
- 	{ .compatible =3D "rohm,bd96801", .data =3D &bd96801_chip_data, },
-+	{ .compatible =3D "rohm,bd96802", .data =3D &bd96802_chip_data, },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, bd96801_of_match);
-diff --git a/include/linux/mfd/rohm-bd96801.h b/include/linux/mfd/rohm-bd96=
-801.h
-index e2d9e10b6364..68c8ac8ad409 100644
---- a/include/linux/mfd/rohm-bd96801.h
-+++ b/include/linux/mfd/rohm-bd96801.h
-@@ -40,7 +40,9 @@
-  * INTB status registers are at range 0x5c ... 0x63
+ static int ldo_map_notif(int irq, struct regulator_irq_data *rid,
+@@ -503,6 +504,70 @@ static int bd96801_walk_regulator_dt(struct device *de=
+v, struct regmap *regmap,
+  * case later. What we can easly do for preparing is to not use static glo=
+bal
+  * data for regulators though.
   */
- #define BD96801_REG_INT_SYS_ERRB1	0x52
-+#define BD96801_REG_INT_BUCK2_ERRB	0x56
- #define BD96801_REG_INT_SYS_INTB	0x5c
-+#define BD96801_REG_INT_BUCK2_INTB	0x5e
- #define BD96801_REG_INT_LDO7_INTB	0x63
++static const struct bd96801_pmic_data bd96802_data =3D {
++	.regulator_data =3D {
++	{
++		.desc =3D {
++			.name =3D "buck1",
++			.of_match =3D of_match_ptr("buck1"),
++			.regulators_node =3D of_match_ptr("regulators"),
++			.id =3D BD96801_BUCK1,
++			.ops =3D &bd96801_buck_ops,
++			.type =3D REGULATOR_VOLTAGE,
++			.linear_ranges =3D bd96801_tune_volts,
++			.n_linear_ranges =3D ARRAY_SIZE(bd96801_tune_volts),
++			.n_voltages =3D BD96801_BUCK_VOLTS,
++			.enable_reg =3D BD96801_REG_ENABLE,
++			.enable_mask =3D BD96801_BUCK1_EN_MASK,
++			.enable_is_inverted =3D true,
++			.vsel_reg =3D BD96801_BUCK1_VSEL_REG,
++			.vsel_mask =3D BD96801_BUCK_VSEL_MASK,
++			.ramp_reg =3D BD96801_BUCK1_VSEL_REG,
++			.ramp_mask =3D BD96801_MASK_RAMP_DELAY,
++			.ramp_delay_table =3D &buck_ramp_table[0],
++			.n_ramp_values =3D ARRAY_SIZE(buck_ramp_table),
++			.owner =3D THIS_MODULE,
++		},
++		.init_ranges =3D bd96801_buck_init_volts,
++		.num_ranges =3D ARRAY_SIZE(bd96801_buck_init_volts),
++		.irq_desc =3D {
++			.irqinfo =3D (struct bd96801_irqinfo *)&buck1_irqinfo[0],
++			.num_irqs =3D ARRAY_SIZE(buck1_irqinfo),
++		},
++	},
++	{
++		.desc =3D {
++			.name =3D "buck2",
++			.of_match =3D of_match_ptr("buck2"),
++			.regulators_node =3D of_match_ptr("regulators"),
++			.id =3D BD96801_BUCK2,
++			.ops =3D &bd96801_buck_ops,
++			.type =3D REGULATOR_VOLTAGE,
++			.linear_ranges =3D bd96801_tune_volts,
++			.n_linear_ranges =3D ARRAY_SIZE(bd96801_tune_volts),
++			.n_voltages =3D BD96801_BUCK_VOLTS,
++			.enable_reg =3D BD96801_REG_ENABLE,
++			.enable_mask =3D BD96801_BUCK2_EN_MASK,
++			.enable_is_inverted =3D true,
++			.vsel_reg =3D BD96801_BUCK2_VSEL_REG,
++			.vsel_mask =3D BD96801_BUCK_VSEL_MASK,
++			.ramp_reg =3D BD96801_BUCK2_VSEL_REG,
++			.ramp_mask =3D BD96801_MASK_RAMP_DELAY,
++			.ramp_delay_table =3D &buck_ramp_table[0],
++			.n_ramp_values =3D ARRAY_SIZE(buck_ramp_table),
++			.owner =3D THIS_MODULE,
++		},
++		.irq_desc =3D {
++			.irqinfo =3D (struct bd96801_irqinfo *)&buck2_irqinfo[0],
++			.num_irqs =3D ARRAY_SIZE(buck2_irqinfo),
++		},
++		.init_ranges =3D bd96801_buck_init_volts,
++		.num_ranges =3D ARRAY_SIZE(bd96801_buck_init_volts),
++	},
++	},
++	.num_regulators =3D 2,
++};
++
+ static const struct bd96801_pmic_data bd96801_data =3D {
+ 	.regulator_data =3D {
+ 	{
+@@ -688,11 +753,13 @@ static const struct bd96801_pmic_data bd96801_data =
+=3D {
+ 		.ldo_vol_lvl =3D BD96801_LDO7_VOL_LVL_REG,
+ 	},
+ 	},
++	.num_regulators =3D 7,
+ };
 =20
- /* MASK registers */
-diff --git a/include/linux/mfd/rohm-bd96802.h b/include/linux/mfd/rohm-bd96=
-802.h
-new file mode 100644
-index 000000000000..bf4b77944edf
---- /dev/null
-+++ b/include/linux/mfd/rohm-bd96802.h
-@@ -0,0 +1,74 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ * Copyright (C) 2025 ROHM Semiconductors
-+ *
-+ * The digital interface of trhe BD96802 PMIC is a reduced version of the
-+ * BD96801. Hence the BD96801 definitions are used for registers and masks
-+ * while this header only holds the IRQ definitions - mainly to avoid gaps=
- in
-+ * IRQ numbers caused by the lack of some BUCKs / LDOs and their respective
-+ * IRQs.
-+ */
+-static int initialize_pmic_data(struct device *dev,
++static int initialize_pmic_data(struct platform_device *pdev,
+ 				struct bd96801_pmic_data *pdata)
+ {
++	struct device *dev =3D &pdev->dev;
+ 	int r, i;
+=20
+ 	/*
+@@ -700,7 +767,7 @@ static int initialize_pmic_data(struct device *dev,
+ 	 * wish to modify IRQ information independently for each driver
+ 	 * instance.
+ 	 */
+-	for (r =3D 0; r < BD96801_NUM_REGULATORS; r++) {
++	for (r =3D 0; r < pdata->num_regulators; r++) {
+ 		const struct bd96801_irqinfo *template;
+ 		struct bd96801_irqinfo *new;
+ 		int num_infos;
+@@ -866,6 +933,7 @@ static int bd96801_probe(struct platform_device *pdev)
+ {
+ 	struct regulator_dev *ldo_errs_rdev_arr[BD96801_NUM_LDOS];
+ 	struct regulator_dev *all_rdevs[BD96801_NUM_REGULATORS];
++	struct bd96801_pmic_data *pdata_template;
+ 	struct bd96801_regulator_data *rdesc;
+ 	struct regulator_config config =3D {};
+ 	int ldo_errs_arr[BD96801_NUM_LDOS];
+@@ -878,12 +946,16 @@ static int bd96801_probe(struct platform_device *pdev)
+=20
+ 	parent =3D pdev->dev.parent;
+=20
+-	pdata =3D devm_kmemdup(&pdev->dev, &bd96801_data, sizeof(bd96801_data),
++	pdata_template =3D (struct bd96801_pmic_data *)platform_get_device_id(pde=
+v)->driver_data;
++	if (!pdata_template)
++		return -ENODEV;
 +
-+#ifndef __LINUX_MFD_BD96802_H__
-+#define __LINUX_MFD_BD96802_H__
++	pdata =3D devm_kmemdup(&pdev->dev, pdata_template, sizeof(bd96801_data),
+ 			     GFP_KERNEL);
+ 	if (!pdata)
+ 		return -ENOMEM;
+=20
+-	if (initialize_pmic_data(&pdev->dev, pdata))
++	if (initialize_pmic_data(pdev, pdata))
+ 		return -ENOMEM;
+=20
+ 	pdata->regmap =3D dev_get_regmap(parent, NULL);
+@@ -906,11 +978,11 @@ static int bd96801_probe(struct platform_device *pdev)
+ 		use_errb =3D true;
+=20
+ 	ret =3D bd96801_walk_regulator_dt(&pdev->dev, pdata->regmap, rdesc,
+-					BD96801_NUM_REGULATORS);
++					pdata->num_regulators);
+ 	if (ret)
+ 		return ret;
+=20
+-	for (i =3D 0; i < ARRAY_SIZE(pdata->regulator_data); i++) {
++	for (i =3D 0; i < pdata->num_regulators; i++) {
+ 		struct regulator_dev *rdev;
+ 		struct bd96801_irq_desc *idesc =3D &rdesc[i].irq_desc;
+ 		int j;
+@@ -923,6 +995,7 @@ static int bd96801_probe(struct platform_device *pdev)
+ 				rdesc[i].desc.name);
+ 			return PTR_ERR(rdev);
+ 		}
 +
-+/* ERRB IRQs */
-+enum {
-+	/* Reg 0x52, 0x53, 0x54 - ERRB system IRQs */
-+	BD96802_OTP_ERR_STAT,
-+	BD96802_DBIST_ERR_STAT,
-+	BD96802_EEP_ERR_STAT,
-+	BD96802_ABIST_ERR_STAT,
-+	BD96802_PRSTB_ERR_STAT,
-+	BD96802_DRMOS1_ERR_STAT,
-+	BD96802_DRMOS2_ERR_STAT,
-+	BD96802_SLAVE_ERR_STAT,
-+	BD96802_VREF_ERR_STAT,
-+	BD96802_TSD_ERR_STAT,
-+	BD96802_UVLO_ERR_STAT,
-+	BD96802_OVLO_ERR_STAT,
-+	BD96802_OSC_ERR_STAT,
-+	BD96802_PON_ERR_STAT,
-+	BD96802_POFF_ERR_STAT,
-+	BD96802_CMD_SHDN_ERR_STAT,
-+	BD96802_INT_SHDN_ERR_STAT,
-+
-+	/* Reg 0x55 BUCK1 ERR IRQs */
-+	BD96802_BUCK1_PVIN_ERR_STAT,
-+	BD96802_BUCK1_OVP_ERR_STAT,
-+	BD96802_BUCK1_UVP_ERR_STAT,
-+	BD96802_BUCK1_SHDN_ERR_STAT,
-+
-+	/* Reg 0x56 BUCK2 ERR IRQs */
-+	BD96802_BUCK2_PVIN_ERR_STAT,
-+	BD96802_BUCK2_OVP_ERR_STAT,
-+	BD96802_BUCK2_UVP_ERR_STAT,
-+	BD96802_BUCK2_SHDN_ERR_STAT,
-+};
-+
-+/* INTB IRQs */
-+enum {
-+	/* Reg 0x5c (System INTB) */
-+	BD96802_TW_STAT,
-+	BD96802_WDT_ERR_STAT,
-+	BD96802_I2C_ERR_STAT,
-+	BD96802_CHIP_IF_ERR_STAT,
-+
-+	/* Reg 0x5d (BUCK1 INTB) */
-+	BD96802_BUCK1_OCPH_STAT,
-+	BD96802_BUCK1_OCPL_STAT,
-+	BD96802_BUCK1_OCPN_STAT,
-+	BD96802_BUCK1_OVD_STAT,
-+	BD96802_BUCK1_UVD_STAT,
-+	BD96802_BUCK1_TW_CH_STAT,
-+
-+	/* Reg 0x5e (BUCK2 INTB) */
-+	BD96802_BUCK2_OCPH_STAT,
-+	BD96802_BUCK2_OCPL_STAT,
-+	BD96802_BUCK2_OCPN_STAT,
-+	BD96802_BUCK2_OVD_STAT,
-+	BD96802_BUCK2_UVD_STAT,
-+	BD96802_BUCK2_TW_CH_STAT,
-+};
-+
-+#endif
+ 		all_rdevs[i] =3D rdev;
+ 		/*
+ 		 * LDOs don't have own temperature monitoring. If temperature
+@@ -972,14 +1045,15 @@ static int bd96801_probe(struct platform_device *pde=
+v)
+=20
+ 	if (use_errb)
+ 		return bd96801_global_errb_irqs(pdev, all_rdevs,
+-						ARRAY_SIZE(all_rdevs));
++						pdata->num_regulators);
+=20
+ 	return 0;
+ }
+=20
+ static const struct platform_device_id bd96801_pmic_id[] =3D {
+-	{ "bd96801-regulator", },
+-	{ }
++	{ "bd96801-regulator", (kernel_ulong_t)&bd96801_data },
++	{ "bd96802-regulator", (kernel_ulong_t)&bd96802_data },
++	{ },
+ };
+ MODULE_DEVICE_TABLE(platform, bd96801_pmic_id);
+=20
 --=20
 2.48.1
 
 
---KhowQEei6lKDF70+
+--DMYhEBtsz2RVNr/C
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfSxKAACgkQeFA3/03a
-ocWHIwf/a/FyGH9w3SbTExddgEDlMMFJZ3J5mTBIcQNYoEQ0BvKosJZPDq+TdL/O
-/fmIkAKMfZeViAgMe0psnWQX2ZoObWOtqLrKla5somGpzfUcdM8tufnZTDi8i/dc
-HFKv72RPI4SqqqDiqHwibaBP8bh/LnvMm+uKZvqX7m4PVQ/cec2sCN+Ge28FqFcF
-35YCuhd3bDgUWup42GhpefIe/H9NQl1yZ8Szdl45DVJtqtvkq46lOtlHGC2ceJis
-P3cAnDK5WUDIqy52JC/nq7SIpCt45a6eRKxeLTtnSX3bdReaJNCaCpJ3cg8gGZ/6
-8DL4vCBEeMfEhfiXZ52Roy92B00uLA==
-=KysR
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfSxK0ACgkQeFA3/03a
+ocVWWAf+MWAF+YNyN4Iv63yWdEBesOmBhO6AoS0syLd6cpogfUNLhK3Lw5HyV5Lg
+eODt91bHWv73fa/f3iDtvYbN+H7IA1rT4PEj97UJn5UpijDNRM6F2+nd72CsgL6/
+D9PDTGDn/7P4XiJQ9rnqZnSzTVxa6hgpmBNJbQmBuJ75TotDKcYbsvCmm+jKgHSR
+KxPzDoguYqozGGTefgpUWO8AvT2nqqe9g6tP7MCcFDk8yyT6nOF7B51MJ4vBAF7A
+tjH1hcjWbw9S9jlwRppTpgO21jMdV0lC3HYWjqjFTAFHcJSUJuJbkqMWKTOTdHcz
+vlySGuutU7+b0W9AIFEkb+vNxld1Bw==
+=ozfp
 -----END PGP SIGNATURE-----
 
---KhowQEei6lKDF70+--
+--DMYhEBtsz2RVNr/C--
 
