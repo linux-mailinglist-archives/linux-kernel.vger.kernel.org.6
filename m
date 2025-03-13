@@ -1,79 +1,45 @@
-Return-Path: <linux-kernel+bounces-558832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47289A5EBD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:42:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7592A5EBDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:43:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AC771756CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:42:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D08217586E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 06:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB4E1FBCB0;
-	Thu, 13 Mar 2025 06:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cItZmtyw"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C4B1FBC96;
+	Thu, 13 Mar 2025 06:43:50 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCBF1E86E;
-	Thu, 13 Mar 2025 06:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F292E3366;
+	Thu, 13 Mar 2025 06:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741848146; cv=none; b=hoi6+OcCkaQwbebUt8Y5+Ey1M6O1G6uGRLb3I2L7hiLgiHeQnP92/TavaHkzbShhJpJL+TAINQwoZiJiQuR9yoITW7t/s7Gxv/ZI153kRod0mKsrVAAwDEW6z8MVw5yiA/PxZiuqSgEgjWCGwZEiBx2orp8u2qUoi/MZqDYXJIk=
+	t=1741848230; cv=none; b=f6GW1GLqevzT292VkfDtpBXRZUYenlNKDJtcXP8xPJ7zaA3GhSJ34OMPyOpZ9mH3gzkRQI7JGA0HJTKm/gobNw4Xe32Bumj8iH65dJG1dv57zih8jXVhT7ZtfIQwTxFqS5YdJHtg60u1X4OCqxYRCyTWJWFpLrXSKQ8Zk8l+TfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741848146; c=relaxed/simple;
-	bh=L1dW+WkJK2qErjeOxZivl2sTcN5KUbykHuN0wgmt3zw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jwDFQzhJQmegrCzJ+aeDjLpd/vyNOAIFTQqk2GOaYpdFklLRERB3/k/mDgwdiXEmzIZ9apfTXo90tGA01Fh2bZ4nkgpGx6wKG8K30mzZKHie9zVFnVnyBPXquFMcir1XhKl0ACq2afxhSXhlij6gVQOH6QY/c2YwaCimfP6/7Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cItZmtyw; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30bf251025aso5579761fa.1;
-        Wed, 12 Mar 2025 23:42:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741848143; x=1742452943; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1Bb/WvokO3a+F9ijuFm3j+AhkORbeEOG67zAt8VEtuw=;
-        b=cItZmtywcOMjr1LjgI2bBjVkOMmTmYPcAgkVeK0ohaqrTpaEMTsULRgC5UgqSd9nSq
-         X0SeC1JmonU5nwZE5VG3Zb3Iegbm+CM7hUnRI6XTR4Nn3pMIac2/aoSYSaqws9/h/nkO
-         lXgUSuCT3KQKt9W1/TwhOJSgqACh+LI2dv0nApjvulqPWkgqZauYvhI9/mslF3f0ZexL
-         S3ogd90s8mWa0wXo0HqhmFN8IByvSrvOC1fQuiScTZflGVCiulL32UsPDKI9l5LEv0tr
-         s6uq5pXzQaz2uiC9NWKTKhsLGsiuEA+FuRRIlh8nkz/hlt51fW2p9gawfUt4XQiqNhz6
-         kXzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741848143; x=1742452943;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Bb/WvokO3a+F9ijuFm3j+AhkORbeEOG67zAt8VEtuw=;
-        b=IA9hoXYEXlMBCFzeT/67WpN9Ou06MDEm1wxwzN7NjL2u+9vOtplFSQgh78c0q0xiWx
-         WwJnCya85YNEuWVNeH/CGSN1fSrcFNV7/GB+rE2ScY2qhaVsQRRH/TsLKkFFd29k2w+e
-         ZaDVVCUwSWcIgGRXtmmeZQi1c40OTOF4Xnzh2vFOieDlzhdPRCvmNsd24jUTjzvw59Hs
-         0t5wjbri05q8lHGdC2QkTuHbb1lQxwoMqn1Q32T0qqGyfXQrae+SGyEOPzJ5BNmrZSGb
-         mxsjpANTovgZW6XIApegFKujiz3tAfCUN+zHt+1+eU1BteZwQfNfcxpF6skAqBxJZFOG
-         c2SA==
-X-Forwarded-Encrypted: i=1; AJvYcCW57c9b0St9kFc8oOiXVJr0Xbugz8m3LV2XfIA9hhRssgLQVtnQdlRuyhjLQvG09C+LdiVP6FjFFSHO@vger.kernel.org, AJvYcCWjdttCpvWCSUx3z0LlW8sdgpQ0Wtdm3tvtxT6IFdTOXfh9KTOqLhkVDf8KEygCXWj0dIgeDhtI04yMVw==@vger.kernel.org, AJvYcCX8kfNZ0/FAN4p1LuuYFTq2k0wkwcf59OhNDMuawmKpiujIeV40lu56A7NBpsCQpwCefV+b1+9n@vger.kernel.org, AJvYcCXSLm1SaqMtFgZ4APJA8L4PjHvm5SnsxzpEv8kG/AwfRQWmJyKP5+HM9OskrbIedVN8wNbLezt14mxl@vger.kernel.org, AJvYcCXSoVfNcZPw3xuW1QYEelAwb7QoZjc52ZSUUhlUK/5QrRlbdMbRrSSe78nAK3N3Am1bNEgu4ll47Q1z3Ey+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu3K1799Z1VB7QgZc/HQUWGyrluTCd//YtbaLNE0XaBItq5qA2
-	GSHqanxjJEGF320OyUS21e3e+wtK7sx5WOIEswL4jvUuSaIh/FxWSHiM0g==
-X-Gm-Gg: ASbGncvPIxxbBScLMTQxcg7H3qI5TJApV4w12Rr22a58tyw1WNksc7xfjVNYp7+xLAL
-	cGqJBD027mZxDBNm5Zkef2mJX/GZx/dKk8g1zbfoe6fbs7u4I8Eh6GxXPzebQhJwqzHmo4WJ4VS
-	6/jnURsv+Kb+TlEueSgn8/50MAIwzmHcH8WYWo5YOSCq38f6Yf7Rqv8uNuFYCyUg8V6/J8Shhr3
-	QXFHxGLH1/j7GeqhXDXV9K//Av19hOeuq0H7Q2kDcFtNDb+oVcgDImaowSrx1TH729c+B/qxt84
-	Xwxv+4orRuof++3MTtxt0l+/ojvdw5q4bs/mQEtvpKbuygATPxOVE5twXKeNcCknSjudrKEGO7N
-	AOLTOL6KkN86Qy043GzcI66SB2A==
-X-Google-Smtp-Source: AGHT+IE+OmPAgLJI5hoG5MVo05FbMb3W5ebh03ZGiu8M6k6II9S3GFcUBywTrp6tUWknS9ZS93l0Uw==
-X-Received: by 2002:a05:651c:221e:b0:30b:f469:47ef with SMTP id 38308e7fff4ca-30bf4694fa1mr94365151fa.23.1741848142350;
-        Wed, 12 Mar 2025 23:42:22 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f100c39sm1094501fa.48.2025.03.12.23.42.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 23:42:21 -0700 (PDT)
-Message-ID: <2cb99c3d-6ea5-4c47-9e6c-d1a3966ad7ff@gmail.com>
-Date: Thu, 13 Mar 2025 08:42:18 +0200
+	s=arc-20240116; t=1741848230; c=relaxed/simple;
+	bh=myXCDHw0bLHm619ltOWy39pwMC6nWrYL2K/nbhJE5AA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PWgi3OTACfFSW/gD/YJrjq20qBY0ia4LGOb1aN6PZJpC/DsW9HMviVtehnuDcHbuZnxBNK83n8W2ePvf33X1fzyMNuZac+5+uE0SKWXSzkh5r7PSkNVP2YtoNwsNhd7l/wUybu7RRpGFc78OyssW0W5rwCWcgsy9RVV1Ntm8Fy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4ZCyX92LhXz1f0fv;
+	Thu, 13 Mar 2025 14:39:21 +0800 (CST)
+Received: from kwepemg200005.china.huawei.com (unknown [7.202.181.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 88393140380;
+	Thu, 13 Mar 2025 14:43:44 +0800 (CST)
+Received: from [10.174.176.70] (10.174.176.70) by
+ kwepemg200005.china.huawei.com (7.202.181.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 13 Mar 2025 14:43:43 +0800
+Message-ID: <7cdd692b-6325-4969-919f-7606c83391c9@huawei.com>
+Date: Thu, 13 Mar 2025 14:43:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,59 +47,197 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 02/10] property: Add functions to iterate named child
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Claudiu Manoil <claudiu.manoil@nxp.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org, netdev@vger.kernel.org
-References: <cover.1741610847.git.mazziesaccount@gmail.com>
- <ff924f640feeb87819d40557f12a04e607894682.1741610847.git.mazziesaccount@gmail.com>
- <Z872bHMRtSglB8pf@smile.fi.intel.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <Z872bHMRtSglB8pf@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH net] infiniband: fix use-after-free when rename device
+ name
+To: Leon Romanovsky <leon@kernel.org>
+CC: <jgg@ziepe.ca>, <cmeiohas@nvidia.com>, <michaelgur@nvidia.com>,
+	<huangjunxian6@hisilicon.com>, <liyuyu6@huawei.com>, <markzhang@nvidia.com>,
+	<linux@treblig.org>, <jbi.octave@gmail.com>, <dsahern@kernel.org>,
+	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250310064516.3633612-1-wangliang74@huawei.com>
+ <20250310101410.GB7027@unreal>
+ <946cac23-6348-4b18-bb94-58f470bb5a6c@huawei.com>
+ <20250312134931.GD1322339@unreal>
+From: Wang Liang <wangliang74@huawei.com>
+In-Reply-To: <20250312134931.GD1322339@unreal>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemg200005.china.huawei.com (7.202.181.32)
 
-Hi Andy,
 
-Thanks for the review.
+在 2025/3/12 21:49, Leon Romanovsky 写道:
+> On Tue, Mar 11, 2025 at 10:55:42AM +0800, Wang Liang wrote:
+>> 在 2025/3/10 18:14, Leon Romanovsky 写道:
+>>> On Mon, Mar 10, 2025 at 02:45:16PM +0800, Wang Liang wrote:
+>>>> Syzbot reported a slab-use-after-free with the following call trace:
+>>>>
+>>>> ==================================================================
+>>>> BUG: KASAN: slab-use-after-free in nla_put+0xd3/0x150 lib/nlattr.c:1099
+>>>> Read of size 5 at addr ffff888140ea1c60 by task syz.0.988/10025
+>>>>
+>>>> CPU: 0 UID: 0 PID: 10025 Comm: syz.0.988 Not tainted 6.14.0-rc4-syzkaller-00859-gf77f12010f67 #0
+>>>> Hardware name: Google Compute Engine, BIOS Google 02/12/2025
+>>>> Call Trace:
+>>>>    <TASK>
+>>>>    __dump_stack lib/dump_stack.c:94 [inline]
+>>>>    dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>>>>    print_address_description mm/kasan/report.c:408 [inline]
+>>>>    print_report+0x16e/0x5b0 mm/kasan/report.c:521
+>>>>    kasan_report+0x143/0x180 mm/kasan/report.c:634
+>>>>    kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+>>>>    __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
+>>>>    nla_put+0xd3/0x150 lib/nlattr.c:1099
+>>>>    nla_put_string include/net/netlink.h:1621 [inline]
+>>>>    fill_nldev_handle+0x16e/0x200 drivers/infiniband/core/nldev.c:265
+>>>>    rdma_nl_notify_event+0x561/0xef0 drivers/infiniband/core/nldev.c:2857
+>>>>    ib_device_notify_register+0x22/0x230 drivers/infiniband/core/device.c:1344
+>>>>    ib_register_device+0x1292/0x1460 drivers/infiniband/core/device.c:1460
+>>>>    rxe_register_device+0x233/0x350 drivers/infiniband/sw/rxe/rxe_verbs.c:1540
+>>>>    rxe_net_add+0x74/0xf0 drivers/infiniband/sw/rxe/rxe_net.c:550
+>>>>    rxe_newlink+0xde/0x1a0 drivers/infiniband/sw/rxe/rxe.c:212
+>>>>    nldev_newlink+0x5ea/0x680 drivers/infiniband/core/nldev.c:1795
+>>>>    rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
+>>>>    rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
+>>>>    netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+>>>>    netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
+>>>>    netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
+>>>>    sock_sendmsg_nosec net/socket.c:709 [inline]
+>>>>    __sock_sendmsg+0x221/0x270 net/socket.c:724
+>>>>    ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
+>>>>    ___sys_sendmsg net/socket.c:2618 [inline]
+>>>>    __sys_sendmsg+0x269/0x350 net/socket.c:2650
+>>>>    do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>>>>    do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>>>>    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>>> RIP: 0033:0x7f42d1b8d169
+>>>> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 ...
+>>>> RSP: 002b:00007f42d2960038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+>>>> RAX: ffffffffffffffda RBX: 00007f42d1da6320 RCX: 00007f42d1b8d169
+>>>> RDX: 0000000000000000 RSI: 00004000000002c0 RDI: 000000000000000c
+>>>> RBP: 00007f42d1c0e2a0 R08: 0000000000000000 R09: 0000000000000000
+>>>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+>>>> R13: 0000000000000000 R14: 00007f42d1da6320 R15: 00007ffe399344a8
+>>>>    </TASK>
+>>>>
+>>>> Allocated by task 10025:
+>>>>    kasan_save_stack mm/kasan/common.c:47 [inline]
+>>>>    kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+>>>>    poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+>>>>    __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+>>>>    kasan_kmalloc include/linux/kasan.h:260 [inline]
+>>>>    __do_kmalloc_node mm/slub.c:4294 [inline]
+>>>>    __kmalloc_node_track_caller_noprof+0x28b/0x4c0 mm/slub.c:4313
+>>>>    __kmemdup_nul mm/util.c:61 [inline]
+>>>>    kstrdup+0x42/0x100 mm/util.c:81
+>>>>    kobject_set_name_vargs+0x61/0x120 lib/kobject.c:274
+>>>>    dev_set_name+0xd5/0x120 drivers/base/core.c:3468
+>>>>    assign_name drivers/infiniband/core/device.c:1202 [inline]
+>>>>    ib_register_device+0x178/0x1460 drivers/infiniband/core/device.c:1384
+>>>>    rxe_register_device+0x233/0x350 drivers/infiniband/sw/rxe/rxe_verbs.c:1540
+>>>>    rxe_net_add+0x74/0xf0 drivers/infiniband/sw/rxe/rxe_net.c:550
+>>>>    rxe_newlink+0xde/0x1a0 drivers/infiniband/sw/rxe/rxe.c:212
+>>>>    nldev_newlink+0x5ea/0x680 drivers/infiniband/core/nldev.c:1795
+>>>>    rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
+>>>>    rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
+>>>>    netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+>>>>    netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
+>>>>    netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
+>>>>    sock_sendmsg_nosec net/socket.c:709 [inline]
+>>>>    __sock_sendmsg+0x221/0x270 net/socket.c:724
+>>>>    ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
+>>>>    ___sys_sendmsg net/socket.c:2618 [inline]
+>>>>    __sys_sendmsg+0x269/0x350 net/socket.c:2650
+>>>>    do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>>>>    do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>>>>    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>>>
+>>>> Freed by task 10035:
+>>>>    kasan_save_stack mm/kasan/common.c:47 [inline]
+>>>>    kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+>>>>    kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
+>>>>    poison_slab_object mm/kasan/common.c:247 [inline]
+>>>>    __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+>>>>    kasan_slab_free include/linux/kasan.h:233 [inline]
+>>>>    slab_free_hook mm/slub.c:2353 [inline]
+>>>>    slab_free mm/slub.c:4609 [inline]
+>>>>    kfree+0x196/0x430 mm/slub.c:4757
+>>>>    kobject_rename+0x38f/0x410 lib/kobject.c:524
+>>>>    device_rename+0x16a/0x200 drivers/base/core.c:4525
+>>>>    ib_device_rename+0x270/0x710 drivers/infiniband/core/device.c:402
+>>>>    nldev_set_doit+0x30e/0x4c0 drivers/infiniband/core/nldev.c:1146
+>>>>    rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
+>>>>    rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
+>>>>    netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+>>>>    netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
+>>>>    netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
+>>>>    sock_sendmsg_nosec net/socket.c:709 [inline]
+>>>>    __sock_sendmsg+0x221/0x270 net/socket.c:724
+>>>>    ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
+>>>>    ___sys_sendmsg net/socket.c:2618 [inline]
+>>>>    __sys_sendmsg+0x269/0x350 net/socket.c:2650
+>>>>    do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>>>>    do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>>>>    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>>>
+>>>> This is because if rename device happens, the old name is freed in
+>>>> ib_device_rename() with lock, but fill_nldev_handle() may visit the dev
+>>>> name locklessly triggered by rxe_newlink().
+>>>>
+>>>> Fix this by add lock around rdma_nl_notify_event() in
+>>>> ib_device_notify_register().
+>>>>
+>>>> Reported-by: syzbot+f60349ba1f9f08df349f@syzkaller.appspotmail.com
+>>>> Closes: https://syzkaller.appspot.com/bug?extid=25bc6f0ed2b88b9eb9b8
+>>>> Fixes: 9cbed5aab5ae ("RDMA/nldev: Add support for RDMA monitoring")
+>>>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+>>>> ---
+>>>>    drivers/infiniband/core/device.c | 2 ++
+>>>>    1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
+>>>> index 0ded91f056f3..4536621ada0d 100644
+>>>> --- a/drivers/infiniband/core/device.c
+>>>> +++ b/drivers/infiniband/core/device.c
+>>>> @@ -1341,7 +1341,9 @@ static void ib_device_notify_register(struct ib_device *device)
+>>>>    	u32 port;
+>>>>    	int ret;
+>>>> +	down_write(&devices_rwsem);
+>>> The analysis looks correct to me, however this should be down_read(&devices_rwsem)
+>>> together with comment about possible race with RDMA netlink, which can change
+>>> internals of struct ib_device.
+>>>
+>>> I wonder if this read semaphore should be hold for whole
+>>> ib_device_notify_register() function and not only for RDMA_REGISTER_EVENT event.
+>>>
+>>> Thanks
+>> Yes, you are right! The RDMA_NETDEV_ATTACH_EVENT event in function
+>> ib_device_notify_register() can also visit the dev name locklessly:
+>>
+>> ......
+>>
+>> So only hold devices_rwsem for whole ib_device_notify_register() may be not
+>> enough.
+>>
+>> How about add down_read(&devices_rwsem) around
+>> fill_dev_info()/fill_port_info()/
+>> fill_res_info()/ib_device_notify_register().
+> I don't think so, as all flows in nldev.c except rdma_nl_notify_event() are
+> single threaded and call to ib_device_rename() will make sure that no
+> other RDMA_NLDEV_CMD_* commands are executed.
+>
+> In your case call to rdma_nl_notify_event() can happen in parallel to
+> device_rename only.
+>
+> Thanks
 
-On 10/03/2025 16:25, Andy Shevchenko wrote:
-> On Mon, Mar 10, 2025 at 02:55:53PM +0200, Matti Vaittinen wrote:
 
-...
+Thanks for all your comments.
 
->> +#define fwnode_for_each_named_child_node(fwnode, child, name)		\
->> +		fwnode_for_each_child_node(fwnode, child)		\
-> 
-> One TAB too much.
-> 
->> +			if (!fwnode_name_eq(child, name)) { } else
-> 
-> Ditto.
-> 
-> Note, I believe this won't get v6.15-rc1, so there will be for_each_if()
-> available and these will become
 
-I'll use for_each_if() if I'll have to rebase this to the v6.15-rc1.
+I will send a new patch later, and hold the devices_rwsem for whole 
+ib_device_notify_register().
 
-> But see above the proposed additional patch that you may include in your next
-> version.
-
-Seems like you sent it as it's own series. I believe it's better that way.
-
-Yours,
-	-- Matti
+Please check it. Thanks.
 
