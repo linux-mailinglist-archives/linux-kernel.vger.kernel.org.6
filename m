@@ -1,98 +1,102 @@
-Return-Path: <linux-kernel+bounces-559001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2593A5EE33
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:40:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B5CA5EE38
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EDCF3B1B2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:39:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 494AD3B2597
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6091D260A30;
-	Thu, 13 Mar 2025 08:39:56 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1122620C1;
+	Thu, 13 Mar 2025 08:40:42 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5947F261565
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8412F1EA7FC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741855196; cv=none; b=Sl63XlAD8BCoUqzoKYzv8r0pypYY4kqfdPoiSvttCOJQSB2LaHTQIksHI0tRRcqoMEXAKYDFkve48YXsuLFc9qy5xqfEnOEaU6OX52pQv2My0ht1TpiXIpMt2jvy4RKEg2zVdGHsQRo4Uvg3inLksJyxbBU0QZpgtG5JA6q2gCg=
+	t=1741855241; cv=none; b=C6UNrBcgbpElrFjcvaMk3PAzlIfDnsLr8x2yqd/yW26TW7I3KMSX7Q31MKhiMMRYlXaXutrZyU6duKI1jM6r9QSYVE+fI5/qNo3DE43gWyraVCPgtY2+nzjyrLiWdWZ0eoXhNH8OkPtI4TQComw6fPlEL+J+jh0dRo1zkbY1TxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741855196; c=relaxed/simple;
-	bh=Cf6rsk3OuercVA9uw+yCpjusH9Si5XFM6JJkapDMcXE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Z6UzlXLq87y6pdL2II6dFaiN8zDH0kpM5sqg8y/Et8mHOJolBieCXa5Q4NrTFPyi+byc3p0gsPDPCDMxXmeojTEji+4tg7xQjpyekiJeU9/W9vQTKUgqm7yzgQThpgH3pCRpDPboDfuUEV0R/AgpsVQzhUdgokzl6fNNd0L3hyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tse6J-00085z-03; Thu, 13 Mar 2025 09:39:35 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tse6H-005VQC-0X;
-	Thu, 13 Mar 2025 09:39:33 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tse6H-0003PA-0M;
-	Thu, 13 Mar 2025 09:39:33 +0100
-Message-ID: <5849017e43db7ece72463f5c84854386aa7d8e9d.camel@pengutronix.de>
-Subject: Re: [PATCH v3 02/12] reset: imx: Add SCU reset driver for i.MX8QXP
- and i.MX8QM
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Dong
- Aisheng <aisheng.dong@nxp.com>,  Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Laurent
- Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>,  Rui Miguel Silva <rmfrfs@gmail.com>, Martin
- Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-media@vger.kernel.org, Robert Chiras <robert.chiras@nxp.com>, 
-	"Guoniu.zhou" <guoniu.zhou@nxp.com>
-Date: Thu, 13 Mar 2025 09:39:33 +0100
-In-Reply-To: <20250210-8qxp_camera-v3-2-324f5105accc@nxp.com>
-References: <20250210-8qxp_camera-v3-0-324f5105accc@nxp.com>
-	 <20250210-8qxp_camera-v3-2-324f5105accc@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1741855241; c=relaxed/simple;
+	bh=5hofGVLuvv5HvKXqqs/LTfujpXCIvanrxTC9zjxAsRA=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=jafbkze8dX6bPSaOhyko1o6KDhQwqYWpC8dt+oLq81ol45CZctVIZl/rOpsCQR0Tl1nUs0EzEzZ0iHBru8dAXFIyxFvVIRfIHRlywGLEwxEW+DYe2GhG7OEkExXJBls2eY053hb8kIqAXNHg1+xvfmyTMJebbx/xgXOlMCTP0+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZD1D10pS8z8R044;
+	Thu, 13 Mar 2025 16:40:33 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl2.zte.com.cn with SMTP id 52D8eNQF021947;
+	Thu, 13 Mar 2025 16:40:23 +0800 (+08)
+	(envelope-from ye.xingchen@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid31;
+	Thu, 13 Mar 2025 16:40:25 +0800 (CST)
+Date: Thu, 13 Mar 2025 16:40:25 +0800 (CST)
+X-Zmail-TransId: 2afa67d299f9ffffffffb85-46491
+X-Mailer: Zmail v1.0
+Message-ID: <20250313164025540bRPvAP8qt5DGLTl-W2R_K@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+From: <ye.xingchen@zte.com.cn>
+To: <brauner@kernel.org>
+Cc: <jeff.johnson@oss.qualcomm.com>, <jack@suse.cz>,
+        <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIIHYyXSBubHM6IEZpeCB1dGYzMl90b191dGY4IHBhcmFtZXRlciB0eXBlIGluIGRlY2xhcmF0aW9uIGFuZMKgZGVmaW5pdGlvbg==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 52D8eNQF021947
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 67D29A01.000/4ZD1D10pS8z8R044
 
-On Mo, 2025-02-10 at 15:59 -0500, Frank Li wrote:
-> Add System Controller Firmware(SCU) reset driver for i.MX8QM and i.MX8QXP=
-.
-> SCU Manage resets for peripherals such as MIPI CSI. Currently, support tw=
-o
-> reset sources: IMX_SC_R_CSI_0 and IMX_SC_R_CSI_1.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+From: YeXingchen <ye.xingchen@zte.com.cn>
 
-Applied to reset/next, thanks!
+The declaration of utf32_to_utf8 in the header file uses
+bool maxlen as the parameter type, while the definition uses bool maxout.
 
-[01/12] dt-bindings: firmware: imx: add property reset-controller
-        https://git.pengutronix.de/cgit/pza/linux/commit/?id=3D778752759bd0
-[02/12] reset: imx: Add SCU reset driver for i.MX8QXP and i.MX8QM
-        https://git.pengutronix.de/cgit/pza/linux/commit/?id=3D6b64fde5c183
+This patch aligns the parameter name in the definition with the
+declaration,changing maxout to maxlen to ensure consistency.
 
-regards
-Philipp
+Signed-off-by: YeXingchen <ye.xingchen@zte.com.cn>
+---
+v1 -> v2
+fix the parameter
+ fs/nls/nls_base.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nls/nls_base.c b/fs/nls/nls_base.c
+index 18d597e49a19..3bae9c201139 100644
+--- a/fs/nls/nls_base.c
++++ b/fs/nls/nls_base.c
+@@ -83,7 +83,7 @@ int utf8_to_utf32(const u8 *s, int inlen, unicode_t *pu)
+ }
+ EXPORT_SYMBOL(utf8_to_utf32);
+
+-int utf32_to_utf8(unicode_t u, u8 *s, int maxout)
++int utf32_to_utf8(unicode_t u, u8 *s, int maxlen)
+ {
+ 	unsigned long l;
+ 	int c, nc;
+@@ -97,7 +97,7 @@ int utf32_to_utf8(unicode_t u, u8 *s, int maxout)
+ 		return -1;
+
+ 	nc = 0;
+-	for (t = utf8_table; t->cmask && maxout; t++, maxout--) {
++	for (t = utf8_table; t->cmask && maxlen; t++, maxlen--) {
+ 		nc++;
+ 		if (l <= t->lmask) {
+ 			c = t->shift;
+-- 
+2.25.1
 
