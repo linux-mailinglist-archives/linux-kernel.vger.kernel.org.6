@@ -1,118 +1,207 @@
-Return-Path: <linux-kernel+bounces-559789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E981EA5F9D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:28:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 380D0A5F9D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:29:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3909317F512
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:28:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F3B9189A5F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5F5268FC7;
-	Thu, 13 Mar 2025 15:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ykaaz8Ev"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2809063B9;
-	Thu, 13 Mar 2025 15:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E09268FE4;
+	Thu, 13 Mar 2025 15:29:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23000268684;
+	Thu, 13 Mar 2025 15:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741879726; cv=none; b=B6h0R2I8xmT09SGQjJYMdIq3Mz1cNScD+Dx73YpekeWGFnMfN13DoGKd9nHfTUx9QwGlB0EYAvAoIjFziFowNRApIzlU7QO4Z25iyq80qzoi5mPyRwwDH+5qeT3YksGvNl74kUwVrEJeON6I3+dNIitjTUOs6cWqclNBIZ/C7F8=
+	t=1741879754; cv=none; b=Y1el33amSolpelrte+yyZehlGjTkk0NUQ+63CmFY+htaeSZ9AB5nbOet4qqotgShRxkH5vXqViTTdlR0d0QOy9Laa/nCs5iCe7bvlMFPpDQZhUQ6LYojWZhKelsxL8ssxWtGKVpGu5AVmP4S9vl0Rw49//NZFV2tWvBShM2ZRBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741879726; c=relaxed/simple;
-	bh=lIR/mv+/T4+eBiXevpWk0XOQ03DNNvzlfMdH31gNmlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tL877RvwjuG4/t+4XXPo0F9GqEFnXgodDUInauYwk3jYifW4ehp8des+e8J2NB4+LSU9M5SxyFzmQCMhI2VPaselhnoA3H1zdjYdmic3+PGU6IHtk02+H4LDXzdQfYzH4yGEjnLfyeNcwzwU8iUbtNLvDP+6U8ep/u2jdbCNVvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ykaaz8Ev; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA68AC4CEDD;
-	Thu, 13 Mar 2025 15:28:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741879724;
-	bh=lIR/mv+/T4+eBiXevpWk0XOQ03DNNvzlfMdH31gNmlM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ykaaz8EvwLRjauOJ+9BWqbCFqAkEq/lowFZEgJ8fdld3+mMuGiXUq6vbHShELnjyt
-	 FUvY1RZhb/t4w8oi2rgaUXBitPJruildi5uyHmGDuZ+FKy9GYU3AJVPxU1MXVTKNgy
-	 UZWBVfUGiBHTqUtwhc+gYm9QyMpfvBjAWhPw51QM2QXySvKkKDqqCBoFxjA60ud7bj
-	 7PUSLMOgUpzwSQPI+jVfDh5ypOjp0d2bVs0wiOTf05UpN3t4Z2ORbhxXxKLtA/PmYE
-	 uDi+kRyRhU9+oAKSLxcnvDbfRFWc8fNMMGfWJC/fH5sUk9oDqDGZdZLYi0sNNNHXX5
-	 QlX1ysmilFdKQ==
-Date: Thu, 13 Mar 2025 16:28:39 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Eric <eric.4.debian@grabatoulnz.fr>,
-	Salvatore Bonaccorso <carnil@debian.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Jian-Hong Pan <jhp@endlessos.org>, regressions@lists.linux.dev,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	Dieter Mummenschanz <dmummenschanz@web.de>
-Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
- board type") on reboot (but not cold boot)
-Message-ID: <Z9L5p6hTp6MATJ80@ryzen>
-References: <Z8l7paeRL9szo0C0@ryzen>
- <689f8224-f118-47f0-8ae0-a7377c6ff386@grabatoulnz.fr>
- <Z8rCF39n5GjTwfjP@ryzen>
- <9c4a635a-ce9f-4ed9-9605-002947490c61@redhat.com>
- <Z88rtGH39C-S8phk@ryzen>
- <383d5740-7740-4051-b39a-b8c74b035ec2@redhat.com>
- <Z9BFSM059Wj2cYX5@ryzen>
- <9ac6e1ab-f2af-4bff-9d50-24df68ca1bb9@redhat.com>
- <Z9LUH2IkwoMElSDg@ryzen>
- <d5470665-4fee-432a-9cb7-fff9813b3e97@redhat.com>
+	s=arc-20240116; t=1741879754; c=relaxed/simple;
+	bh=zdbR99QGJYPC1f34tuZXVggykQp/849xlZYMuWUfaQ0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=L3KvWViQuuZzJvVvipYw9+2rq9Vn4Ks/j8CsmKzAzArIo4X/JBtxse9N1KgX9FHEDR+bA4Kd/m8sH4HvCBYQe0/7U5yV+9kVYm3WOZ3FdWjM5XAGcVcog8dsrtoBhTeNVaeZMACPFApSjJH2OacIkSw++V1UbV7eJmtNtkX3OhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CDCB11477;
+	Thu, 13 Mar 2025 08:29:21 -0700 (PDT)
+Received: from e133711.arm.com (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 72EE13F694;
+	Thu, 13 Mar 2025 08:29:09 -0700 (PDT)
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: [PATCH v3 00/13] mailbox: pcc: Fixes and cleanup/refactoring
+Date: Thu, 13 Mar 2025 15:28:46 +0000
+Message-Id: <20250313-pcc_fixes_updates-v3-0-019a4aa74d0f@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d5470665-4fee-432a-9cb7-fff9813b3e97@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIALL50mcC/33Nyw6CMBAF0F8hs7amTyCu+A9jSB+DdMEjLTYaw
+ r9b2OjCuLw3c+6sEDF4jHApVgiYfPTTmIM4FWB7Pd6ReJczcMoVFVSQ2dq280+M7WN2esFIlNK
+ s6hyvsSohuzngcZDZ9ZZz7+MyhdfxIrG9/beWGKFEGCk74ZiQhjU6DGc7DbBvJf7t1S/Ps2eG1
+ ZwbW1ey/Pht297ekLDt8AAAAA==
+X-Change-ID: 20250303-pcc_fixes_updates-55a17fd28e76
+To: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>, 
+ Jassi Brar <jassisinghbrar@gmail.com>, Huisong Li <lihuisong@huawei.com>, 
+ Adam Young <admiyo@os.amperecomputing.com>, 
+ Robbie King <robbiek@xsightlabs.com>, Andi Shyti <andi.shyti@kernel.org>, 
+ linux-i2c@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, 
+ Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, 
+ "Rafael J. Wysocki" <rafael@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5426; i=sudeep.holla@arm.com;
+ h=from:subject:message-id; bh=zdbR99QGJYPC1f34tuZXVggykQp/849xlZYMuWUfaQ0=;
+ b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBn0vnDYCUZPlafqDSwEs9LsaePtULqedBwfFF2d
+ ad3xsVEwIOJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ9L5wwAKCRAAQbq8MX7i
+ mBFHD/4oiodnKGh1JYmVO/F1ApXy+9binXe5A4h09BA30dSOLyXe3VXXDBg1aeQz79QugzSDr36
+ 9LsEZqSvlupZ9HbGWvHc8bz5upqwBbeLe/Gyg4fYrDFInoARWw692IqltBivm4WuALKTwcs+kE+
+ Q6RU+FzkL2v2iYJ1rzKpjB/Leb/Goguk3hPv3ZXkPs1bbtFfB/Nh8MFrjt2ETrLQLtqFiyrsLPr
+ caKVfPodbnaiCCeO9qhMky0hXb6B5mP05DnIKpXZV31snNzyoikvexR5Fd+i1Nu6gPwkjeIqPpi
+ IE736y+quX/+hm6M4rAiVy6WZNvtBhCnIkzebSlbLp4V7RMrqOOzIDFk2lU6kARI7aFRQpXMJLr
+ LZLGuNjOG7lXHltmw3yOHzoshjj0NFhC0/qHpDDuLqDmuBmun97wY8y4AKFI9BYUZq17sUCVo7Q
+ 1Eh33l7XZppgt1k9D8CX5jijkFH4/Cm429GsASaas0xfeqers/uvGYfbCxCl244TWtnmuaVxBT/
+ n1wuItVkgwoRIKnhPyIRTGRmfqNOoBfcsh96+JPZISu948w1x1G2IVFv4PhXRNC6qrmEAkh7DGV
+ QNhh/dn8TZL6sdV5prtBTzJPWFjuFQN3yXTaci8GUPATj3FAUaWwAC4c4/5oppOqLRb0LeQyEJB
+ Oeou6XJvIC/z8BQ==
+X-Developer-Key: i=sudeep.holla@arm.com; a=openpgp;
+ fpr=7360A21742ADF5A11767C1C139CFD4755FE2D5B4
 
-Hello Hans,
+Here is a summary of the changes in this patch series:
 
-On Thu, Mar 13, 2025 at 04:13:24PM +0100, Hans de Goede wrote:
-> > 
-> > Considering that DIPM seems to work fine on the Maxtor drive, I guess your
-> > initial suggestion of a Samsung only quirk which only disables LPM on ATI
-> > is the best way?
-> 
-> I have no objections against going that route, except that I guess this
-> should then be something like ATA_QUIRK_NO_DIPM_ON_ATI to not loose the
-> other LPM modes / savings? AFAIK/IIRC there still is quite some powersaving
-> to be had without DIPM.
+1. Fix for race condition in updating of the chan_in_use flag
 
-I was thinking like your original suggestion, i.e. setting:
-ATA_QUIRK_NO_LPM_ON_ATI
+   Ensures correct updating of the chan_in_use flag to avoid potential race
+   conditions.
 
-for all the Samsung devices that currently have:
-ATA_QUIRK_NO_NCQ_ON_ATI
+2. Interrupt handling fix
 
-Considering that this Samsung device only supports DIPM
-(and not HIPM), I'm guessing the same is true for the other
-Samsung devices as well.
+   Ensures platform acknowledgment interrupts are always cleared to avoid
+   leaving the interrupt asserted forever.
 
-So we might as well just do:
-ATA_QUIRK_NO_LPM_ON_ATI
+3. Endian conversion cleanup
 
-to disable both HIPM and DIPM
-(since only DIPM would have been enabled without this quirk anyway).
+   Removes unnecessary endianness conversion in the PCC mailbox driver.
 
+4. Memory mapping improvements
 
-> Yes the most severe problems do seem to come from that specific mix,
-> although the long list of other ATI controller quirks also shows those
-> controllers are somewhat finicky.
+   Uses acpi_os_ioremap() instead of direct mapping methods for better ACPI
+   compatibility.
 
-Definitely!
+5. Return early if the command complete register is absent
 
+   Ensures that if no GAS (Generic Address Structure) register is available,
+   the function exits early.
 
-Kind regards,
-Niklas
+6. Refactor IRQ handler and move error handling to a separate function
+
+   Improves readability of error handling in the PCC mailbox driver’s
+   interrupt handler.
+
+7. Shared memory mapping refactoring/enhancements
+
+   Ensures the shared memory is always mapped and unmapped in the PCC
+   mailbox driver when the PCC channel is requested and release.
+
+8. Refactored check_and_ack() Function
+
+   Simplifies and improves the logic for handling type4 platform notification
+   acknowledgments.
+
+09-13. Shared memory handling simplifications across multiple drivers
+
+    Simplifies shared memory handling in:
+        Kunpeng HCCS driver (soc: hisilicon)
+        Apm X-Gene Slimpro I2C driver
+        X-Gene hardware monitoring driver (hwmon)
+        ACPI PCC driver
+        ACPI CPPC driver
+
+The X-gene related changes now change the mapping attributes to align
+with ACPI specification. There are possibilities for more cleanups on
+top of these changes around how the shmem is accessed within these
+driver.
+
+Also, my main aim is to get 1-8 merged first and target 9-13 for
+following merge window through respective tree.
+
+Overall, the patch series focuses on improving correctness, efficiency, and
+maintainability of the PCC mailbox driver and related components by fixing
+race conditions, optimizing memory handling, simplifying shared memory
+interactions, and refactoring code for clarity.
+
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+---
+Jassi,
+
+Please take patch [1-8]/13 through the mailbox tree if and when you are
+happy with the changes. I haven't got Ack from I2C still, but if you are
+happy to take [9-13]/13, I can check with I2C maintainer. Or else I am
+happy to take it individually later once the PCC changes are merged. I
+am still keeping it together if anyone is interested in testing.
+
+Changes in v3:
+- Updated the comment around updation of chan_in_use flag to keep it
+  appropriate even after acknowledging the interrupt as first action
+  in the irq handler
+- Added all the review/ack/tested-by tags from Huisong Li, Adam Young
+  and Robbie King
+- Added a note that double mapping introduced temporarily will not
+  impact any existing mbox client drivers as all the drivers move to
+  using new and only mapping after all the changes
+- s/pcc_chan_check_and_ack/pcc_chan_acknowledge/ which was originally
+  check_and_ack()
+- Link to v2: https://lore.kernel.org/r/20250305-pcc_fixes_updates-v2-0-1b1822bc8746@arm.com
+
+Changes in v2:
+- Improved time vs flow graph for the platform ack interrupt
+  acknowledgment issue in patch 2
+- Replaced PCC_ACK_FLAG_MASK with PCC_CMD_COMPLETION_NOTIFY in patch 3
+- Fixed return value check from pcc_mbox_error_check_and_clear() in patch 6
+- Dropped the change moving the function pcc_mbox_ioremap()
+- Adjusted error message in kunpeng_hccs driver after the change
+- Added the received ack/review tags
+- Link to v1: https://lore.kernel.org/r/20250303-pcc_fixes_updates-v1-0-3b44f3d134b1@arm.com
+
+---
+Huisong Li (1):
+      mailbox: pcc: Fix the possible race in updation of chan_in_use flag
+
+Sudeep Holla (12):
+      mailbox: pcc: Always clear the platform ack interrupt first
+      mailbox: pcc: Drop unnecessary endianness conversion of pcc_hdr.flags
+      mailbox: pcc: Return early if no GAS register from pcc_mbox_cmd_complete_check
+      mailbox: pcc: Use acpi_os_ioremap() instead of ioremap()
+      mailbox: pcc: Refactor error handling in irq handler into separate function
+      mailbox: pcc: Always map the shared memory communication address
+      mailbox: pcc: Refactor and simplify check_and_ack()
+      soc: hisilicon: kunpeng_hccs: Simplify PCC shared memory region handling
+      i2c: xgene-slimpro: Simplify PCC shared memory region handling
+      hwmon: (xgene-hwmon) Simplify PCC shared memory region handling
+      ACPI: PCC: Simplify PCC shared memory region handling
+      ACPI: CPPC: Simplify PCC shared memory region handling
+
+ drivers/acpi/acpi_pcc.c                |  13 +---
+ drivers/acpi/cppc_acpi.c               |  16 +----
+ drivers/hwmon/xgene-hwmon.c            |  40 ++----------
+ drivers/i2c/busses/i2c-xgene-slimpro.c |  39 ++----------
+ drivers/mailbox/pcc.c                  | 113 ++++++++++++++++-----------------
+ drivers/soc/hisilicon/kunpeng_hccs.c   |  42 +++++-------
+ drivers/soc/hisilicon/kunpeng_hccs.h   |   2 -
+ include/acpi/pcc.h                     |   6 --
+ 8 files changed, 84 insertions(+), 187 deletions(-)
+---
+base-commit: 4d872d51bc9d7b899c1f61534e3dbde72613f627
+change-id: 20250303-pcc_fixes_updates-55a17fd28e76
+-- 
+Regards,
+Sudeep
+
 
