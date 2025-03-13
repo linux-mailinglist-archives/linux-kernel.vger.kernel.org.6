@@ -1,67 +1,76 @@
-Return-Path: <linux-kernel+bounces-559917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B6DDA5FAE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:12:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40206A5FB10
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:16:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD6CB7A528A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:11:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D86F18823E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D6D26D5DC;
-	Thu, 13 Mar 2025 16:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F2C26E15B;
+	Thu, 13 Mar 2025 16:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocuFDpji"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UjKy5Mzq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CC02690C8;
-	Thu, 13 Mar 2025 16:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CAF26A084;
+	Thu, 13 Mar 2025 16:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741882011; cv=none; b=Bx7mhlwPHogboAaw8dnVCAtf0zOCmXr8+q3PILrh961f6sgf6elQTYCW39OxP4HflUa+qw3E/YvKl6H/ebs3phP37S+rXBm4/Pke++pQ0H3J3qA7n8gqvUN5ZUCZTZ8EwHAbP9Onv/O2L3LXkPX67OLMpv40BpKCAufU9dPZAuI=
+	t=1741882052; cv=none; b=F8W67FZwYyiN3Re1ahpTrGOeTfZVd8kPleHJbJY6g/JJiIExMvJh9A0p/jE8rrGKezrufg76ui/iaH4+FDE7hekGiQv8CVOPBAB6XGXiM4JhtBl98LJZyoZho4/cSAZOR/UykarO/lemcQFjhLYMpiYS2mf979X66oK6ujAF41k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741882011; c=relaxed/simple;
-	bh=Mx/+tLwb7T1JrZ/ABp2sKGt2Jj7jvlKNBLxVpfOsVnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=DjiNSwh4gksj4LcirrkAS+M9NWm44jHUAcWl+rgdq766w8SzkzLUayyoEB0zw7la7tcBTEHagy0WUG+FdoPdH0Yx8J8LLQaZn92B342qB9qIsF1FAe4KwS9oAWEliqqEwGiMTFgPwPrMzQlDPSAHKs7spj0igM0wEE+IfL/o7bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocuFDpji; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24824C4CEDD;
-	Thu, 13 Mar 2025 16:06:50 +0000 (UTC)
+	s=arc-20240116; t=1741882052; c=relaxed/simple;
+	bh=BQXFOxNso8FIR8jzDbLHKPtOvTBzr+ixEF9OdVlcvsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V2VVbz7wmdjqBhqaD/jN8RTVoY1bij1bHIn5h0rjxhYtTpMY5b3HhsABOJQ8De9ZmGgbM4Jk/6yOWXRqhxWceQ3llnsNe4zzWqBXSjH3rYHtKDv5iD0a1eITcEcHOwBSF6pd0d9daCFofv3+hgQksPRXAEwvPEnIhVcJih4mxns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UjKy5Mzq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A13F2C4CEDD;
+	Thu, 13 Mar 2025 16:07:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741882010;
-	bh=Mx/+tLwb7T1JrZ/ABp2sKGt2Jj7jvlKNBLxVpfOsVnI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ocuFDpjice0CwzZV+U1r2wGc/B4uqAhc1SLsAhGo3hZOCubtpYEujpWK0xMah00Qx
-	 Nkhy4eoJwBeQ04rISAQUc07RqNf8z1clfjRrJjXlpOXTOS0tYGyED432lopKTutbS5
-	 IerUm1HplPYC5RsM7OpEJvov9V+kvXHi8PJcKfWfaOj3ht7GfIPTwdVBwyDGfdqHOR
-	 KHp/fJsQB7u0+joeFsu3ruw68crrUu/wdrUniAW8SwtRtG+5E9HKiSlR4JHSA0iviI
-	 tfjWtOg4fPJTNvZbMJi0Mzuqn/PskRw2flaNg6mxClK5//ywkFwTQgQ36xUL35JB+x
-	 iKuTzrcXpm0Ww==
-Date: Thu, 13 Mar 2025 11:06:48 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Frank Li <Frank.li@nxp.com>, Hongxing Zhu <hongxing.zhu@nxp.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"kw@linux.com" <kw@linux.com>,
-	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
-	"bhelgaas@google.com" <bhelgaas@google.com>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 2/2] PCI: imx6: Use domain number replace the hardcodes
-Message-ID: <20250313160648.GA736867@bhelgaas>
+	s=k20201202; t=1741882051;
+	bh=BQXFOxNso8FIR8jzDbLHKPtOvTBzr+ixEF9OdVlcvsU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UjKy5MzqzIf+Yh8yvIA5cYhQvCRvJOMZGRgCouhY4XQbqEPhgnpvqfobojD4k3n12
+	 wPZl/IJFvxCMgknbhUHC+PUev3Ir7M5Nui+VNqJaWgxmhq8wH6oM576OYZdo8TCy3r
+	 8jyrewO1JtE5lPWCVMoJCbFdZPhfzDPFlU5DxzBUq2kVXaupL89bbPA/R7b7owqkcP
+	 9Xo/T9lSdTEOGxVaomzVn47eKegUTlGozpbyswaqQH7fTy1maVjz7LnbGNj+lF3JE9
+	 A3L76Vy6ZidOs89C/z2g+3iPgSIemcEcrtz7AsPycCV8qmThcg/FZuqazBQ7P5ckJO
+	 TOm/z9TRq2JZQ==
+Date: Thu, 13 Mar 2025 09:07:29 -0700
+From: Minchan Kim <minchan@kernel.org>
+To: Barry Song <baohua@kernel.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Qun-Wei Lin <qun-wei.lin@mediatek.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chris Li <chrisl@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	Kairui Song <kasong@tencent.com>,
+	Dan Schatzberg <schatzberg.dan@gmail.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Casper Li <casper.li@mediatek.com>,
+	Chinwen Chang <chinwen.chang@mediatek.com>,
+	Andrew Yang <andrew.yang@mediatek.com>,
+	James Hsu <james.hsu@mediatek.com>
+Subject: Re: [PATCH 0/2] Improve Zram by separating compression context from
+ kswapd
+Message-ID: <Z9MCwXzYDRJoTiIr@google.com>
+References: <20250307120141.1566673-1-qun-wei.lin@mediatek.com>
+ <Z9HOavSkFf01K9xh@google.com>
+ <5gqqbq67th4xiufiw6j3ewih6htdepa4u5lfirdeffrui7hcdn@ly3re3vgez2g>
+ <CAGsJ_4xwnVxn1odj=j+z0VXm1DRUmnhugnwCH-coqBLJweDu9Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,141 +80,59 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b425a7c7a7d6508daf23fe7046864a498029a7ac.camel@pengutronix.de>
+In-Reply-To: <CAGsJ_4xwnVxn1odj=j+z0VXm1DRUmnhugnwCH-coqBLJweDu9Q@mail.gmail.com>
 
-On Thu, Mar 13, 2025 at 09:54:25AM +0100, Lucas Stach wrote:
-> Am Mittwoch, dem 12.03.2025 um 10:22 -0400 schrieb Frank Li:
-> > On Wed, Mar 12, 2025 at 09:28:02AM +0100, Lucas Stach wrote:
-> > > Am Mittwoch, dem 12.03.2025 um 04:05 +0000 schrieb Hongxing Zhu:
-> > > > > -----Original Message-----
-> > > > > From: Bjorn Helgaas <helgaas@kernel.org>
-> > > > > Sent: 2025年3月11日 23:55
-> > > > > To: Hongxing Zhu <hongxing.zhu@nxp.com>
-> > > > > Cc: robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
-> > > > > shawnguo@kernel.org; l.stach@pengutronix.de; lpieralisi@kernel.org;
-> > > > > kw@linux.com; manivannan.sadhasivam@linaro.org; bhelgaas@google.com;
-> > > > > s.hauer@pengutronix.de; festevam@gmail.com; devicetree@vger.kernel.org;
-> > > > > linux-pci@vger.kernel.org; imx@lists.linux.dev; kernel@pengutronix.de;
-> > > > > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> > > > > Subject: Re: [PATCH v1 2/2] PCI: imx6: Use domain number replace the
-> > > > > hardcodes
-> > > > > 
-> > > > > On Tue, Mar 11, 2025 at 01:11:04AM +0000, Hongxing Zhu wrote:
-> > > > > > > -----Original Message-----
-> > > > > > > From: Bjorn Helgaas <helgaas@kernel.org>
-> > > > > > > Sent: 2025年3月10日 23:11
-> > > > > > > To: Hongxing Zhu <hongxing.zhu@nxp.com>
-> > > > > > > Cc: robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
-> > > > > > > shawnguo@kernel.org; l.stach@pengutronix.de; lpieralisi@kernel.org;
-> > > > > > > kw@linux.com; manivannan.sadhasivam@linaro.org;
-> > > > > bhelgaas@google.com;
-> > > > > > > s.hauer@pengutronix.de; festevam@gmail.com;
-> > > > > > > devicetree@vger.kernel.org; linux-pci@vger.kernel.org;
-> > > > > > > imx@lists.linux.dev; kernel@pengutronix.de;
-> > > > > > > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> > > > > > > Subject: Re: [PATCH v1 2/2] PCI: imx6: Use domain number replace the
-> > > > > > > hardcodes
-> > > > > > > 
-> > > > > > > On Wed, Feb 26, 2025 at 10:42:56AM +0800, Richard Zhu wrote:
-> > > > > > > > Use the domain number replace the hardcodes to uniquely identify
-> > > > > > > > different controller on i.MX8MQ platforms. No function changes.
-> > > > > > > > 
-> > > > > > > > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> > > > > > > > ---
-> > > > > > > >  drivers/pci/controller/dwc/pci-imx6.c | 14 ++++++--------
-> > > > > > > >  1 file changed, 6 insertions(+), 8 deletions(-)
-> > > > > > > > 
-> > > > > > > > diff --git a/drivers/pci/controller/dwc/pci-imx6.c
-> > > > > > > > b/drivers/pci/controller/dwc/pci-imx6.c
-> > > > > > > > index 90ace941090f..ab9ebb783593 100644
-> > > > > > > > --- a/drivers/pci/controller/dwc/pci-imx6.c
-> > > > > > > > +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> > > > > > > > @@ -41,7 +41,6 @@
-> > > > > > > >  #define IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE	BIT(11)
-> > > > > > > >  #define IMX8MQ_GPR_PCIE_VREG_BYPASS		BIT(12)
-> > > > > > > >  #define IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE	GENMASK(11,
-> > > > > 8)
-> > > > > > > > -#define IMX8MQ_PCIE2_BASE_ADDR			0x33c00000
-> > > > > > > > 
-> > > > > > > >  #define IMX95_PCIE_PHY_GEN_CTRL			0x0
-> > > > > > > >  #define IMX95_PCIE_REF_USE_PAD			BIT(17)
-> > > > > > > > @@ -1474,7 +1473,6 @@ static int imx_pcie_probe(struct
-> > > > > > > > platform_device
-> > > > > > > *pdev)
-> > > > > > > >  	struct dw_pcie *pci;
-> > > > > > > >  	struct imx_pcie *imx_pcie;
-> > > > > > > >  	struct device_node *np;
-> > > > > > > > -	struct resource *dbi_base;
-> > > > > > > >  	struct device_node *node = dev->of_node;
-> > > > > > > >  	int i, ret, req_cnt;
-> > > > > > > >  	u16 val;
-> > > > > > > > @@ -1515,10 +1513,6 @@ static int imx_pcie_probe(struct
-> > > > > > > platform_device *pdev)
-> > > > > > > >  			return PTR_ERR(imx_pcie->phy_base);
-> > > > > > > >  	}
-> > > > > > > > 
-> > > > > > > > -	pci->dbi_base = devm_platform_get_and_ioremap_resource(pdev,
-> > > > > 0,
-> > > > > > > &dbi_base);
-> > > > > > > > -	if (IS_ERR(pci->dbi_base))
-> > > > > > > > -		return PTR_ERR(pci->dbi_base);
-> > > > > > > 
-> > > > > > > This makes me wonder.
-> > > > > > > 
-> > > > > > > IIUC this means that previously we set controller_id to
-> > > > > > > 1 if the first item in devicetree "reg" was 0x33c00000,
-> > > > > > > and now we will set controller_id to 1 if the devicetree
-> > > > > > > "linux,pci-domain" property is 1.  This is good, but I
-> > > > > > > think this new dependency on the correct
-> > > > > > > "linux,pci-domain" in devicetree should be mentioned in
-> > > > > > > the commit log.
-> > > > > > > 
-> > > > > > > My bigger worry is that we no longer set pci->dbi_base
-> > > > > > > at all.  I see that the only use of pci->dbi_base in
-> > > > > > > pci-imx6.c was to determine the controller_id, but this
-> > > > > > > is a DWC-based driver, and the DWC core certainly uses
-> > > > > > > pci->dbi_base.  Are we sure that none of those DWC core
-> > > > > > > paths are important to pci-imx6.c?
-> > > > > >
-> > > > > > Thanks for your concerns.  Don't worry about the
-> > > > > > assignment of pci->dbi_base.  If pci-imx6.c driver doesn't
-> > > > > > set it. DWC core driver would set it when
-> > > > > >  dw_pcie_get_resources() is invoked.
-> > > > > 
-> > > > > Great, thanks!  Maybe we can amend the commit log to mention
-> > > > > that and the new "linux,pci-domain" dependency.
+On Thu, Mar 13, 2025 at 04:45:54PM +1300, Barry Song wrote:
+> On Thu, Mar 13, 2025 at 4:09 PM Sergey Senozhatsky
+> <senozhatsky@chromium.org> wrote:
+> >
+> > On (25/03/12 11:11), Minchan Kim wrote:
+> > > On Fri, Mar 07, 2025 at 08:01:02PM +0800, Qun-Wei Lin wrote:
+> > > > This patch series introduces a new mechanism called kcompressd to
+> > > > improve the efficiency of memory reclaiming in the operating system. The
+> > > > main goal is to separate the tasks of page scanning and page compression
+> > > > into distinct processes or threads, thereby reducing the load on the
+> > > > kswapd thread and enhancing overall system performance under high memory
+> > > > pressure conditions.
 > > > >
-> > > > How about the following updates of the commit log?
-> > > > 
-> > > > Use the domain number replace the hardcodes to uniquely
-> > > > identify different controller on i.MX8MQ platforms. No
-> > > > function changes.  Please make sure the " linux,pci-domain" is
-> > > > set for i.MX8MQ correctly, since  the controller id is relied
-> > > > on it totally.
-> > > > 
-> > > This breaks running a new kernel on an old DT without the
-> > > linux,pci-domain property, which I'm absolutely no fan of. We
-> > > tried really hard to keep this way around working in the i.MX
-> > > world.
-> > 
-> > 8MQ already add linux,pci-domain since Jan, 2021
-> > 
-> > commit c0b70f05c87f3b09b391027c6f056d0facf331ef
-> > Author: Peng Fan <peng.fan@nxp.com>
-> > Date:   Fri Jan 15 11:26:57 2021 +0800
-> > 
-> > Only missed is pcie-ep side, which have not been used at all boards dts
-> > file in upstream.
+> > > > Problem:
+> > > >  In the current system, the kswapd thread is responsible for both
+> > > >  scanning the LRU pages and compressing pages into the ZRAM. This
+> > > >  combined responsibility can lead to significant performance bottlenecks,
+> > > >  especially under high memory pressure. The kswapd thread becomes a
+> > > >  single point of contention, causing delays in memory reclaiming and
+> > > >  overall system performance degradation.
+> > >
+> > > Isn't it general problem if backend for swap is slow(but synchronous)?
+> > > I think zram need to support asynchrnous IO(can do introduce multiple
+> > > threads to compress batched pages) and doesn't declare it's
+> > > synchrnous device for the case.
+> >
+> > The current conclusion is that kcompressd will sit above zram,
+> > because zram is not the only compressing swap backend we have.
+
+Then, how handles the file IO case?
+
 > 
-> I wasn't aware of this. 2021 is quite a while ago, so I suspect that
-> nobody is going to run a new kernel with a DT this old. I retract my
-> objection.
+> also. it is not good to hack zram to be aware of if it is kswapd
+> , direct reclaim , proactive reclaim and block device with
+> mounted filesystem.
 
-Sounds good, thanks, Lucas.  We really do want to avoid breaking old
-DTs, so I appreciate your highlighting of it.  Even if we believe none
-of them will break, I think it's worth mentioning the
-'linux,pci-domain' dependency and the commit that added it to the
-.dtsi in the commit log.
+Why shouldn't zram be aware of that instead of just introducing
+queues in the zram with multiple compression threads?
 
-Bjorn
+> 
+> so i am thinking sth as below
+> 
+> page_io.c
+> 
+> if (sync_device or zswap_enabled())
+>    schedule swap_writepage to a separate per-node thread
+
+I am not sure that's a good idea to mix a feature to solve different
+layers. That wouldn't be only swap problem. Such an parallelism under
+device  is common technique these days and it would help file IO cases.
+
+Furthermore, it would open the chance for zram to try compress
+multiple pages at once.
 
