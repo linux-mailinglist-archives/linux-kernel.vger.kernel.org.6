@@ -1,126 +1,150 @@
-Return-Path: <linux-kernel+bounces-560263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD5D3A60126
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:28:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07BD3A60138
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:30:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C5F717F2CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:28:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A81617A7A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DA01F3D49;
-	Thu, 13 Mar 2025 19:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA331F2BAD;
+	Thu, 13 Mar 2025 19:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rXN9Jwju"
-Received: from mail-qt1-f202.google.com (mail-qt1-f202.google.com [209.85.160.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EU+WoIA1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8001F192E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 19:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296235464E;
+	Thu, 13 Mar 2025 19:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741894047; cv=none; b=Q21hchcudMDRGFw4qmgSX5r3MTov+KTkSBQHVCR5p2s4/BeZaja4EyQ+qMxqLcRHT6hCqBP9ikxYTSrYtAQjuC6R7853pmO/clX71gkrIN2b5OwGHb4Se32ZdccqJakaOke9B6UPxVvEDgg81Yr7qgt2RQzlS0jme/3x9Sz1J5Y=
+	t=1741894231; cv=none; b=UblSNkXmpL8d/xKPdpPCpLDHmU3c/EDNiW1ECLNrB4/LIbA8IrJbtiRfduSmaCVt44Ap8e6WjQu7QqWawoDa0VeNDadAgved62R2ZXy7sxu+Ahd+pRU7Ha6HzdK57Ow6fit8eT75hsXcsjIEaffEseHRHh2k5nuPPm7oAMc9zmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741894047; c=relaxed/simple;
-	bh=KrBlLCuENNqmAXVG7c3+/aqpGnMQ9/bc/NOxjGDGs0U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NiiOgsWSjTPZFz8BPEQynUjGPcsNeKo04uInJob0RAAoiXoh3tuy33VcS7LO24L5cR/q39GTXC8VEHkcIsBIDvzVQ5nooZxeObKlH4+i9g1hw2bNhb8OcgGZlje0S4Y8VyjVoidYYpR5On94vRfBwNsGP9H9TVfmK2M4ASQUwiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rXN9Jwju; arc=none smtp.client-ip=209.85.160.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com
-Received: by mail-qt1-f202.google.com with SMTP id d75a77b69052e-4768eed4649so27671521cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:27:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741894044; x=1742498844; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QZ3Mm17hODYwuzWnxvtURLhRnjoSjhRLoip0t8b11co=;
-        b=rXN9Jwjubd6oyzjen+mmS9k4ogZ6tjRnMp+PIB1GrgklTIcowcerWR0XQwTt1YF1xU
-         pntxHPA68VpL1qZI0zxoOqnWvQ6WjIjVX46wB6KiexmprVTFeP0He8EEJpHO5IxheN37
-         1wAiLH94tI7szTbtqshesuf0PboiFBNR20egXOeuFozLFkujG8w7sfbiusvUnp02ttSX
-         U9UyKz9ej0OP/zPiX5tsalzzr1kFEGJQ3AdItCb/0EEQiDisa5lQmCAQSLr8hcgyDdme
-         Nx1RwObfwJNdgAIGGMm8gAPbRYOczSSCUivpu4gCtnyJhrM6hjh/i2zPAAE4H9FoTdGM
-         DlTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741894044; x=1742498844;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QZ3Mm17hODYwuzWnxvtURLhRnjoSjhRLoip0t8b11co=;
-        b=wTNAOXvm88HmAgGUqRWxyCdbSfRGjNQUFiaeiRYXQSpWS6Kf7bsn8W7gs5bD6IdJ+c
-         mYYMvdlkEsDoAXuYosa49ENCRUisrng24p1ii8zdNs4HyHwtG3oZfji8+TEddypO8X8O
-         hKIkgl7MWYmjY3ie0F0ukI/fUiFE+41E+nwOfcjvJY4azZDayHxYVO+U+ghPuYv8D8Uv
-         2eYGdeuGEA9IDH8K5zB1zL+TnJ+UGK9PBK1a1MUe1nVbsqxVwCV+dxPbrJ9TXTvYBk8r
-         dbtwxCkax6aJGU0fK9ptoJBu2bcHgmCom3WwZfuzyfpvcuo7ipqZFK0kWoDMHWJ2oQYH
-         w/Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUn7fxn+Qk2/0gDIDWNOUOfs8eMpXAoWNi/m0+oimMSGyJfFHuAc6BratfZVA8ieeKwKHMG0ZTMrdG14lI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz25IWNacBgx/G0tUGAS+iRi7mFnaNSKUdrQDi5lC/QCspqeIK3
-	OlZBh30bzmk8iGm+q96eDkMo/CyQKPjVBBlqs202PSv92Fi+do0G3nEODVziSWxouzeEsZKnow=
-	=
-X-Google-Smtp-Source: AGHT+IHUUkUlx830CBpJPHMfzFNdP1ycZ9vkfSY6GnZkeGYCtQvF2FUhUcJ6pbIDO6vFgtx9ZVgMs/nRng==
-X-Received: from qtbhj5.prod.google.com ([2002:a05:622a:6205:b0:476:7266:9db9])
- (user=rmoar job=prod-delivery.src-stubby-dispatcher) by 2002:a05:622a:1a1e:b0:474:f5fb:b11a
- with SMTP id d75a77b69052e-476ba8b317bmr46779441cf.3.1741894044398; Thu, 13
- Mar 2025 12:27:24 -0700 (PDT)
-Date: Thu, 13 Mar 2025 19:27:14 +0000
-In-Reply-To: <20250313192714.1380005-1-rmoar@google.com>
+	s=arc-20240116; t=1741894231; c=relaxed/simple;
+	bh=5i7L0CPrSTHSEEB5ouokAnkbT/b1kxYKe1/8pJ+B+Ks=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QjIkT1iMFX9nO4ZuJEW/pBVFtb97Hz11PF+zvMzq1xWqqBr2Nis/zb5jEiQJLdODj420fP5KGQQeFnCjFJXyPOWKPUvVj+Y1Z9ja6eN/0AAsmjYW3Tr9FyYnFUiKQ6ehuSUjjbLM5JjV7dHC8FMTWCoRqcLsd/T54ek6QEeZkNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EU+WoIA1; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741894229; x=1773430229;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=5i7L0CPrSTHSEEB5ouokAnkbT/b1kxYKe1/8pJ+B+Ks=;
+  b=EU+WoIA1jKB9RJyPXHGZ8kTT0CTZz0cvsdWCS6IMoUtOUew1ENJOW8ci
+   nDf8WbCgUGbkF9ZsWN5ZGT/a4DjHmM9no4K0eZku/W57ZJw68LWB2hRyG
+   iS2zipLNIUKq/8vvajOewlf90+jmHVeIYmUt/WfjbprjRhP0Y/bN5ujq2
+   XPIIkUfi7rhAZmdjX9zH6u+kTkhup+Kh226V1X9iEU5F9Z9UX8d5LYM2V
+   NMXralH86kYbLnyQkSnczFfGIrTRjBB5KfL+iU/j3amaiUFPe4V23D7Ll
+   P4E3Knc9DzEI7D6AJVxF/QuMWB4CQAAMct8fnSs4sEGivqLSXHrM0At20
+   g==;
+X-CSE-ConnectionGUID: DeqwY4yKQReoijyF8+ikwQ==
+X-CSE-MsgGUID: VGcx8kWeTtGQWSaY1rgeJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="43237111"
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="43237111"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 12:30:28 -0700
+X-CSE-ConnectionGUID: 1Z6KhG5BRK2/qF2MLY/e+g==
+X-CSE-MsgGUID: PtCIMKBvSFSsODgmSyZ/4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="151988212"
+Received: from vverma7-desk1.amr.corp.intel.com (HELO [192.168.1.200]) ([10.125.108.107])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 12:30:27 -0700
+From: Vishal Verma <vishal.l.verma@intel.com>
+Subject: [PATCH 0/4] KVM: TDX: Cleanup the kvm_x86_ops structure for
+ vmx/tdx
+Date: Thu, 13 Mar 2025 13:30:00 -0600
+Message-Id: <20250313-vverma7-cleanup_x86_ops-v1-0-0346c8211a0c@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250313192714.1380005-1-rmoar@google.com>
-X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
-Message-ID: <20250313192714.1380005-2-rmoar@google.com>
-Subject: [PATCH v3 2/2] kunit: tool: add test to check parsing late test plan
-From: Rae Moar <rmoar@google.com>
-To: shuah@kernel.org, davidgow@google.com
-Cc: jackmanb@google.com, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	Rae Moar <rmoar@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADgy02cC/4WNQQ6CMBBFr0JmbU2nSkFW3sMQgmWQSaAlLTYYw
+ t2tXMDle8l/f4NAnilAlW3gKXJgZxPgKQMztPZFgrvEoKTK5QVRxEh+agthRmrte27WUjduDsJ
+ oRbmka4FKQ1rPnnpej/KjTjxwWJz/HEcRf/Z/M6KQ4qaeRH2JutP9ne1C49m4Cep9379tTPBOv
+ gAAAA==
+X-Change-ID: 20250311-vverma7-cleanup_x86_ops-c62e50e47126
+To: Sean Christopherson <seanjc@google.com>, 
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+ Vishal Verma <vishal.l.verma@intel.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2457;
+ i=vishal.l.verma@intel.com; h=from:subject:message-id;
+ bh=5i7L0CPrSTHSEEB5ouokAnkbT/b1kxYKe1/8pJ+B+Ks=;
+ b=owGbwMvMwCXGf25diOft7jLG02pJDOmXjYKrPMqPdV3sfdShOss+jrFM89CsKd///SmrX//sq
+ 5dOFVtGRykLgxgXg6yYIsvfPR8Zj8ltz+cJTHCEmcPKBDKEgYtTACZi0sLwz24xv+HTHbty57xb
+ o3Jc6tNKM5t57CLtbkn/LnWl+Fpd2cLwV/xKlmui54lLX+7O8XwQo5Bk/HO6gMz0zrV/vUxmzA1
+ ZxQUA
+X-Developer-Key: i=vishal.l.verma@intel.com; a=openpgp;
+ fpr=F8682BE134C67A12332A2ED07AFA61BEA3B84DFF
 
-Add test to check for the infinite loop caused by the inability
-to parse a late test plan.
+This is a cleanup that should follow the initial TDX base support (i.e.
+not an immediate fix needed for kvm-coco-queue).
 
-The test parses the following output:
- TAP version 13
- ok 4 test4
- 1..4
+In [1], Sean points out that the kvm_x86_ops structure and its
+associated helpers and wrappers can be cleaned up a lot by -
 
-Signed-off-by: Rae Moar <rmoar@google.com>
+1. Putting the wrappers under CONFIG_KVM_INTEL_TDX, and
+2. Defining the helpers with macros that switch between the tdx and
+   non-tdx case, as well as NULL out the TDX-only stubs when needed.
+
+This cleans up the generated code by completely removing trampolines
+that would otherwise be left behind in the CONFIG_KVM_INTEL_TDX=n case.
+
+[1]: https://lore.kernel.org/kvm/Z6v9yjWLNTU6X90d@google.com/
+
+For example, looking at vt_refresh_apicv_exec_ctrl(), before this cleanup,
+when CONFIG_KVM_INTEL_TDX=n, the following asm is generated:
+
+0000000000036490 <vt_refresh_apicv_exec_ctrl>:
+   36490:       f3 0f 1e fa             endbr64
+   36494:       e8 00 00 00 00          call   36499 <vt_refresh_apicv_exec_ctrl+0x9>
+                        36495: R_X86_64_PLT32   __fentry__-0x4
+   36499:       e9 00 00 00 00          jmp    3649e <vt_refresh_apicv_exec_ctrl+0xe>
+                        3649a: R_X86_64_PLT32   vmx_refresh_apicv_exec_ctrl-0x4
+   3649e:       66 90                   xchg   %ax,%ax
+
+But with these patches, it goes away completely.
+
+These patches have been tested with TDX kvm-unit-tests, booting a Linux
+TD, TDX enhanced KVM selftests, and building and examining the generated
+assembly (or lack thereof) with both CONFIG_KVM_INTEL_TDX=y and
+CONFIG_KVM_INTEL_TDX=n
+
+Based on a patch by Sean Christopherson <seanjc@google.com>
+
+Signed-off-by: Vishal Verma <vishal.l.verma@intel.com>
 ---
-Changes since v2:
-- Adds this patch to add a test for this behavior
+Vishal Verma (4):
+      KVM: TDX: Move apicv_pre_state_restore to posted_intr.c
+      KVM: VMX: Move x86_ops wrappers under CONFIG_KVM_INTEL_TDX
+      KVM: VMX: Make naming consistent for kvm_complete_insn_gp via define
+      KVM: VMX: Clean up and macrofy x86_ops
 
- tools/testing/kunit/kunit_tool_test.py | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/x86/kvm/vmx/posted_intr.h |   1 +
+ arch/x86/kvm/vmx/tdx.h         |   2 +-
+ arch/x86/kvm/vmx/x86_ops.h     |  68 +-------------
+ arch/x86/kvm/vmx/main.c        | 204 ++++++++++++++++++++---------------------
+ arch/x86/kvm/vmx/posted_intr.c |   8 ++
+ 5 files changed, 113 insertions(+), 170 deletions(-)
+---
+base-commit: 85c9490bbed74b006a614e542da404a55ff5938f
+change-id: 20250311-vverma7-cleanup_x86_ops-c62e50e47126
 
-diff --git a/tools/testing/kunit/kunit_tool_test.py b/tools/testing/kunit/kunit_tool_test.py
-index 0bcb0cc002f8..5ff4f6ffd873 100755
---- a/tools/testing/kunit/kunit_tool_test.py
-+++ b/tools/testing/kunit/kunit_tool_test.py
-@@ -363,6 +363,17 @@ class KUnitParserTest(unittest.TestCase):
- 		self.print_mock.assert_any_call(StrContains('  Indented more.'))
- 		self.noPrintCallContains('not ok 1 test1')
- 
-+	def test_parse_late_test_plan(self):
-+		output = """
-+		TAP version 13
-+		ok 4 test4
-+		1..4
-+		"""
-+		result = kunit_parser.parse_run_tests(output.splitlines(), stdout)
-+		# Missing test results after test plan should alert a suspected test crash.
-+		self.assertEqual(kunit_parser.TestStatus.TEST_CRASHED, result.status)
-+		self.assertEqual(result.counts, kunit_parser.TestCounts(passed=1, crashed=1, errors=1))
-+
- def line_stream_from_strs(strs: Iterable[str]) -> kunit_parser.LineStream:
- 	return kunit_parser.LineStream(enumerate(strs, start=1))
- 
+Best regards,
 -- 
-2.49.0.rc1.451.g8f38331e32-goog
+Vishal Verma <vishal.l.verma@intel.com>
 
 
