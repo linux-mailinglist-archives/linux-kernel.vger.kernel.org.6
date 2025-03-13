@@ -1,209 +1,139 @@
-Return-Path: <linux-kernel+bounces-559610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E9E9A5F635
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:44:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A88CA5F636
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:44:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C2163A4DF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:42:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00C6F164880
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E284267F73;
-	Thu, 13 Mar 2025 13:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24AA267B13;
+	Thu, 13 Mar 2025 13:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F1NGxhMM"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GH08m7js"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26009267F69;
-	Thu, 13 Mar 2025 13:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42859267AEC;
+	Thu, 13 Mar 2025 13:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741873343; cv=none; b=pbJTuuQpmmQz9XIAgx4ICiUDifTHF6ZuKhqwnyTAvz6M5JalB+8gMjXggUZeo2EDj+1SwFx8NsNTwqUpEdXOjuYjWSTE89FjdzzL5zvFh+H6EppksWRnjNCdrhRoV96FN0wbS/9nYkWUu3Q9YvN+FCkP8CHrqHY4QlihQe/beGY=
+	t=1741873403; cv=none; b=LONaNUJLlWpNoNpuHTO0ijzd+8BdX2yDfPre3MwWaKx8eVx4ijnU/53gHkS1AUyXze3Xa4L/Mwow3h659ZYBU0/mzgoyKX+W0+Y/uTahWJCN30pWOpheBQG1NlW4XOJ1NvebXx6DcZUPhZY9i+116pgjTOYlLXDjiCHOHR1a3T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741873343; c=relaxed/simple;
-	bh=vUkq154MmTaNbeX5y7IT9dR2ZPaTMgiIWHfWmT6YVTY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=entJbOoxBvzG3ThUE2AdAomKlZvecrQUdfvKRYOeD7tuizqzJmiOhTSDuI5gkEdSzuewNexWcqc1RepfZIWQffI9pAVfn/a+7VmnDHvbU/hBWQ+a34TK9fdwgEOHUn6BN94PHTwKISFxaxnBL8kg8pDzj40xClk/MBbG7z4UjzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F1NGxhMM; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac2b10bea16so193654666b.0;
-        Thu, 13 Mar 2025 06:42:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741873340; x=1742478140; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wBLvcn2Uam1JAy1524VS7X2idt5McDCng0CemJjL7a0=;
-        b=F1NGxhMMa3f9IUx3PUVpb8pvSeOEVILer4e+L8lUR7C0Lva0KvxuELtuayCYwatZ+W
-         4NeiPfBoU8k2jTxqDOI0eosgvazWzv+mn3p8YE9z2RlZQjyQ+EjnXNnn5hUN1KazjtrO
-         yc1QdRNcNWiNUI2mGkB2dX1OADh5TOn75jvobe26hGP1aA34p0BLyHkitswviA/eV+vP
-         txZvOeddD4AuSED12n8lAaEugjzUY5mKQqyewpK2n49EJQWkSOM+Il2j1hQYnG965bJA
-         aJ5QW0rYac1aBiHDjpvbl5dGImhufJcd16d9EsOoQNhbzZ8nDs5hlKt6q7wv+wnDYEx+
-         U0PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741873340; x=1742478140;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wBLvcn2Uam1JAy1524VS7X2idt5McDCng0CemJjL7a0=;
-        b=AWbJzWEX54Kpncoe6qhUvKeYi1eEcB1AKJZWMxJzIDwyKSHxeEk3VxtLSGpvJWHnfn
-         OHPap+Q/iLAjggvi60Opw0wdu5gYc+6E4CkvhrH44pc0K5kJd/nuaoFIFOS+Pu2OJeWM
-         02rwhwGPrIgy8Z9MAgXxum6ZEChSi9nZ4jqvh//aFF0Epigrmf9+EyqJQMgwICEdd5dD
-         Uo5hX/43veUUXZKOURkEfTXlp0A1oqS9X5UwunJjf16G/Y7gDbFR5igJyhgczX+vNP6N
-         DvmKzO1dp5TKxGdBpd0uXluxypbisYIEum4NUbECtSsYhU1Ovt8nvXJcUZ1AUvLw0+P8
-         dOYw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/PrtS2ZOtLYEyqlVqo58/Fh2+NktxMqKDzClRASBd7f09fk3kadcsuEH+8fEMviAsEdkYWWyIpZoZjLw9@vger.kernel.org, AJvYcCXRYsJszs8IW8+U+K419vyeIS+n3n5MLBnefnuA+gY8IiVwrR5jIW7WJcbb8oKkNcVBIUC24vLukUOCVFH+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmUwrr/ugNJ01+JCuZsLf4eDI2Mv0/ACqEIqv0SZAqJ6Sln4/b
-	Wux+8oho8dlirPPTI00dyZPppzqf32jgAaFB83/n7KP558ekyZ8JDoIFX51HjZYlP+gnBfPAFnA
-	nhbx/avJmomME5PLbN/7QLo8aios=
-X-Gm-Gg: ASbGncu0OiF0C6x4kVeazTS54qLwHTUQF5q0eSco8uwNyxLrGAXlMPicOjshXySAMSQ
-	gk/SjKVUnq7+gsTK2DFYQg7FgVMN+uTvbxbvC6FSoAtx2a1L2+/FTN6BJ17tVSo4kA/6i652tMt
-	m57fAack8lX8I6fA6UjTHxBR+2bNYDDY+J/83i
-X-Google-Smtp-Source: AGHT+IGWBSsc+O/YuFhR0njb/WLjHHgpbm1hSTx2SbTnF9ieqhehKsU8LlMbq7GD6Xb0rr+23dIp/4C9LhfLOGYsDpc=
-X-Received: by 2002:a17:907:9815:b0:ac3:115f:453a with SMTP id
- a640c23a62f3a-ac3115f4b06mr311008966b.36.1741873340065; Thu, 13 Mar 2025
- 06:42:20 -0700 (PDT)
+	s=arc-20240116; t=1741873403; c=relaxed/simple;
+	bh=vOk4S332xlilcD3/5Zv5IewZwOgUvqlBp4xafVFonoI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l+CCHzyc32eEtLGoss9Z7K8gIi6Dv6wNqQV/N/AE4pRFiTqf0+IpAaaf/iRj1ZW2+u6dbnGabX8pnxv8rioz56lYOhwdeSBnmzIHGG90JgoSpo4Rb3quvvE8f0inhiR0SWyERPEMy7ukE7U1WJ8WZF5IwZ7ZjMbtxFnP+PKLphc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GH08m7js; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7148C4CEDD;
+	Thu, 13 Mar 2025 13:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741873402;
+	bh=vOk4S332xlilcD3/5Zv5IewZwOgUvqlBp4xafVFonoI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GH08m7jsuEG03/Km/P1ykpmdUS0tYG8qyuhFyFRHNkd6x87erTWJMHMvvoTaoXwgC
+	 hYI5M3WjKINt1lqlBvkYSn/cpUsERKf3Z66cGzybskguPNsN1wEgN3pRkT6pP6j7Md
+	 V+PMIn9RwLNzuqgREavht47cLfhN7BVxrMx08UUdo8K9birzgeEBWvKe8lmgztRcbv
+	 HVxWUPJG+TeZ+tC37rAhAtfdRgRZZTCgAeEXd8ak4uS487NjdRpDG9Dj3QYkbHcYh9
+	 MButCVTcHMeR2O6GZLxQZ4P90NVjJYcLX65lEL7hQIIiAIdHwROz5tiBStyioe6g/D
+	 OuYHO4ShEkD6Q==
+Message-ID: <1e775b14-7c72-4a3c-90bf-0e63627325e6@kernel.org>
+Date: Thu, 13 Mar 2025 14:43:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313123159.1315079-1-mjguzik@gmail.com>
-In-Reply-To: <20250313123159.1315079-1-mjguzik@gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 13 Mar 2025 14:42:08 +0100
-X-Gm-Features: AQ5f1Jp2-UxP4o98nSzqpUXcu1D_gn-dVfmJJSDDOaJ5GCHtpweyY4kgroxH8mo
-Message-ID: <CAGudoHGqnCJb+=DgO7Y3yxO2q=MU+QBJ2m9_EqUr+b_nPycudw@mail.gmail.com>
-Subject: Re: [PATCH] fs: consistently deref the files table with rcu_access_pointer()
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] spi: dt-bindings: snps,dw-apb-ssi: Add compatible
+ for SOPHGO SG2042 SoC
+To: Zixian Zeng <sycamoremoon376@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>,
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, sophgo@lists.linux.dev, chao.wei@sophgo.com,
+ xiaoguang.xing@sophgo.com, dlan@gentoo.org
+References: <20250313-sfg-spi-v3-0-e686427314b2@gmail.com>
+ <20250313-sfg-spi-v3-1-e686427314b2@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250313-sfg-spi-v3-1-e686427314b2@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 13, 2025 at 1:32=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> ... except when the table is known to be only used by one thread.
->
-> A file pointer can get installed at any moment despite the ->file_lock
-> being held since the following:
-> 8a81252b774b53e6 ("fs/file.c: don't acquire files->file_lock in fd_instal=
-l()")
->
-> Accesses subject to such a race can in principle suffer load tearing.
->
-> While here redo the comment in dup_fd() as it only covered a race against
-> files showing up, still assuming fd_install() takes the lock.
->
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+On 13/03/2025 14:11, Zixian Zeng wrote:
+> add compatible property to include "sophgo,sg2042-spi" for
+> the SOPHGO SG2042 SoC SPI Controller.
+> 
+> Signed-off-by: Zixian Zeng <sycamoremoon376@gmail.com>
 > ---
->
-> I confirmed the possiblity of the problem with this:
-> https://lwn.net/Articles/793253/#Load%20Tearing
->
-> Granted, the article being 6 years old might mean some magic was added
-> by now to prevent this particular problem.
->
-> While technically this classifies as a bugfix, given that nothing blew
-> up and this is more of a "just in case" change, I don't think this
-> warrants any backports. Thus I'm not adding a Fixes: tag to prevent this
-> from being picked by autosel.
->
->  fs/file.c | 26 +++++++++++++++++---------
->  1 file changed, 17 insertions(+), 9 deletions(-)
->
-> diff --git a/fs/file.c b/fs/file.c
-> index 6c159ede55f1..52010ecb27b8 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -423,17 +423,25 @@ struct files_struct *dup_fd(struct files_struct *ol=
-df, struct fd_range *punch_ho
->         old_fds =3D old_fdt->fd;
->         new_fds =3D new_fdt->fd;
->
-> +       /*
-> +        * We may be racing against fd allocation from other threads usin=
-g this
-> +        * files_struct, despite holding ->file_lock.
-> +        *
-> +        * alloc_fd() might have already claimed a slot, while fd_install=
-()
-> +        * did not populate it yet. Note the latter operates locklessly, =
-so
-> +        * the file can show up as we are walking the array below.
-> +        *
-> +        * At the same time we know no files will disappear as all other
-> +        * operations take the lock.
-> +        *
-> +        * Instead of trying to placate userspace racing with itself, we
-> +        * ref the file if we see it and mark the fd slot as unused other=
-wise.
-> +        */
->         for (i =3D open_files; i !=3D 0; i--) {
-> -               struct file *f =3D *old_fds++;
-> +               struct file *f =3D rcu_access_pointer(*old_fds++);
+>  Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+> index bccd00a1ddd0ad92b437eed5b525a6ea1963db57..33fb21267df2594e68419cfb980a40909868e337 100644
+> --- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+> +++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+> @@ -92,6 +92,10 @@ properties:
+>          items:
+>            - const: thead,th1520-spi
+>            - const: snps,dw-apb-ssi
+> +      - description: SOPHGO SG2042 SoC SPI Controller
 
-sigh, that happens to work but is technically bogus -- I thought I did
-rcu_deference, but instead had rcu_access_pointer in my fingers from
-the assert thing. Thanks for Mathieu for noticing.
-
-That is to say the patch has to s/rcu_access_pointer/rcu_dereference.
-
-However, willy suggested also adding the check. So perhaps this can
-instead use the _check variant with lockdep_is_held(&fdt->file_lock)
-as the argument.
-
-I don't have an opinion on this bit -- the accesses are next to the
-lock acquire, so perhaps this only serves an uglifier.
-
-That said, if you want the assert, I'll post a v2. Otherwise please
-run the sed :->
-
->                 if (f) {
->                         get_file(f);
->                 } else {
-> -                       /*
-> -                        * The fd may be claimed in the fd bitmap but not=
- yet
-> -                        * instantiated in the files array if a sibling t=
-hread
-> -                        * is partway through open().  So make sure that =
-this
-> -                        * fd is available to the new process.
-> -                        */
->                         __clear_open_fd(open_files - i, new_fdt);
->                 }
->                 rcu_assign_pointer(*new_fds++, f);
-> @@ -684,7 +692,7 @@ struct file *file_close_fd_locked(struct files_struct=
- *files, unsigned fd)
->                 return NULL;
->
->         fd =3D array_index_nospec(fd, fdt->max_fds);
-> -       file =3D fdt->fd[fd];
-> +       file =3D rcu_access_pointer(fdt->fd[fd]);
->         if (file) {
->                 rcu_assign_pointer(fdt->fd[fd], NULL);
->                 __put_unused_fd(files, fd);
-> @@ -1252,7 +1260,7 @@ __releases(&files->file_lock)
->          */
->         fdt =3D files_fdtable(files);
->         fd =3D array_index_nospec(fd, fdt->max_fds);
-> -       tofree =3D fdt->fd[fd];
-> +       tofree =3D rcu_access_pointer(fdt->fd[fd]);
->         if (!tofree && fd_is_open(fd, fdt))
->                 goto Ebusy;
->         get_file(file);
-> --
-> 2.43.0
->
+Please do not add things to the end - it increases conflicts and makes
+it difficult to find entries when reading the code. Place it after Renesas.
 
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Best regards,
+Krzysztof
 
