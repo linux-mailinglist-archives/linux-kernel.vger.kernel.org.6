@@ -1,165 +1,157 @@
-Return-Path: <linux-kernel+bounces-559601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01C4EA5F5F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:30:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A870DA5F5F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:30:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60E5C3BB544
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:29:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF39718886B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D195267B09;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A0726772C;
 	Thu, 13 Mar 2025 13:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LUOQWDVp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="fQbnOpSb"
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6463B267721;
-	Thu, 13 Mar 2025 13:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F3D267701;
+	Thu, 13 Mar 2025 13:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741872590; cv=none; b=buS6rXhtfyorUufdFA9R1AAsEgzUeczMGhUkc/x/rscN9k9g/HUhimL6xRzBWz2i9C7Oe+uT2dhZ6XQlW4+98Cf5aYTsQTK41mqyO23mEWUXn9MZ4v/V8DZOR4Bx+uJmDFmj4U/2d2BVSx8CgNLIFXstajIdMIfoAczJ0rDLyok=
+	t=1741872589; cv=none; b=WWPm66freWgMxIEjg3nRR8WFb///mc8nETgtEzKG3P5y4m5JqC9er8r1uuaXST006kywRVt74iBqk3qt/GdStcBc6/0+gfui0pqk1B+2ycf0/f67govVA9iMWdcv89ZTSkkDfcHLHM1wTEgnUPFwlvJw/0+D6ySiIWCIvaiiaFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741872590; c=relaxed/simple;
-	bh=3R5NqPG75eCifry1xE8jCo+Ba/RPNsND3Th6ewF0DW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mbJBe+/PMZmtXxKsJhn18ZUxwtkuvjw6WbOJVK15ot0cM6E8aRcpx8cvDpAXWdoLqojrWFy+QexSMiL2HEx4Fd9h4XW+FA8tbPNPiATRpf6fVFsB00c5giWV6Ql4ehLdZLW2mFKIe+CRNE+CN70NxFgEb6xGRopk+tre5M+qo/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LUOQWDVp; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741872588; x=1773408588;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3R5NqPG75eCifry1xE8jCo+Ba/RPNsND3Th6ewF0DW8=;
-  b=LUOQWDVpcOi8PI2qbyByY+2qScKBOOZtthpREA7utobv+e4OSJ9vhNSy
-   pYTVOP2t+jxFIuYYwDYJ8rF7EujzPCkqTyjUwbwv1AALqiB5O5vO5InMp
-   Sr1Ij9n8iQoe1rHbCS7orbAiFaCcnpPdld8YplDbk/ZSiYbedVwldkH13
-   4K756Ohf1jMeQ+rx7Zu9U+QMd9Tw+jcy0O8o/W5u58Nsn/Y0W7RoN7/aB
-   Mlvpqqtr9Isa/ebhOt5eQ5EddubBZhhN6WQhY1KNoEdz4MOca5RO4sax0
-   BNvSwae4hDe49XBZEqxYoHT9vpTgpuCvIMZop4JjI8IpDZrT82sPKe0PZ
-   Q==;
-X-CSE-ConnectionGUID: AmIDVn6mT9Sd1lrJ62tyPQ==
-X-CSE-MsgGUID: v/kLCct7RkyfoMQuyGhNrg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="43119151"
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="43119151"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 06:29:47 -0700
-X-CSE-ConnectionGUID: 04qS8wQPRn6wZVe4oTPTzg==
-X-CSE-MsgGUID: 4xEfR6NSTcGJ84TSNnC6hg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="120669500"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 06:29:42 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tsid0-00000002BNc-0muS;
-	Thu, 13 Mar 2025 15:29:38 +0200
-Date: Thu, 13 Mar 2025 15:29:37 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Guillaume Stols <gstols@baylibre.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v7 03/10] iio: adc: add helpers for parsing ADC nodes
-Message-ID: <Z9LdwUVBOEx-Tbvr@smile.fi.intel.com>
-References: <cover.1741849323.git.mazziesaccount@gmail.com>
- <c8899e8c535a1d93cd7588b7c160eb0fae5d26d2.1741849323.git.mazziesaccount@gmail.com>
- <Z9LQFqSweiV-zT3b@smile.fi.intel.com>
- <bca95d63-fb6e-4d6c-8ab6-df67f0e697e6@gmail.com>
+	s=arc-20240116; t=1741872589; c=relaxed/simple;
+	bh=SWcBEiDC6xd/PujYJvpj52/K9l9YFvwj3Xw6G6hAUuw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MFwaTTVD265Dxq5p4rOB3AkjMT64rqLKhLpDG634QLR/Q+nix/qTHJ7Nz6jiuHEoOxzp3zhHNYL6BbhuPOZIDxUsWtfphMmmagMRBbMmcmLX5pEmuNxbD3tQE0BiTj9ze9X3lcBHgCzOT8Ul9DU3O7DqJQvZPpdqkPyjTZSeqfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=fQbnOpSb; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=ITLasxmQDerXuSjwxhFppjXCgBmI89lbRmvF9Iy20jA=; b=fQbnOpSbDJIJdf3sQaILolccPG
+	DQWcJ4ixHQF2Kts21kpaZ64J6HoOt0b/6kEwDpofSKO9VBIcTVZRFASmIImcSQ5Vp7NgGFxPNDgKa
+	Qu+UD+6qVeVbg42s+Rm2o/LBPu95oyy/x6yic9ETZhWh+mxoft7vEqaN8f93kX7DsqG6bBXI89NKt
+	5wddGm4BYPbOlP0Q910pGiRRgXxFiW1tdyectSqVfpWVx9Ura3YcwTE8C6vLGLBlfGCEaclwCXhjP
+	On39TH1+c8xdIsdp68i/Rl8caM7n8yU9BWRPtXDWhCKxYhXPou8ZcYjBnXh4E4/Vt9wMSgCgTjBBG
+	dON0V5WfUNQE7qCBMN6vaG4sHaBWkPpw+belxDr7nQwBshraDyf5yLa9QrRiTcUtd7KDMo8rGDoOD
+	pJPPdWTgeZMkroEO/AJJ3JuFHaVT0gPM3YUOV+G+xPFyjK4+5hvL8ojs8E3gLyiv8BpI0wmz8U65x
+	FFyHNlLbjJl2YhOhBkbIpcpRq9TM9TvTcgVgQaIxN5DhN1At9Wg76dpSQ0DaDPuNpJFf+ECuOvs8D
+	b81ZvExbeezTTh32CFm4WjXSYAgx5CMQRoPQgUHWwy0Io8VmUhTB/OQ838EXZI8FPaEMy0zGE3vfg
+	cp/fQn7qK5BhAImvwwIOWGsLaprnsXNLaT6F6XqB8=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+ Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ syzbot <syzbot+5b667f9a1fee4ba3775a@syzkaller.appspotmail.com>
+Subject: Re: [PATCH] fs/9p: fix NULL pointer dereference on mkdir
+Date: Thu, 13 Mar 2025 14:29:42 +0100
+Message-ID: <4597443.VRNSQfLuZI@silver>
+In-Reply-To: <E1tsiI6-002iMG-Kh@kylie.crudebyte.com>
+References: <E1tsiI6-002iMG-Kh@kylie.crudebyte.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bca95d63-fb6e-4d6c-8ab6-df67f0e697e6@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Mar 13, 2025 at 03:17:27PM +0200, Matti Vaittinen wrote:
-> On 13/03/2025 14:31, Andy Shevchenko wrote:
-> > On Thu, Mar 13, 2025 at 09:18:18AM +0200, Matti Vaittinen wrote:
-
-...
-
-> > > +	num_chan = iio_adc_device_num_channels(dev);
-> > > +	if (num_chan < 1)
-> > > +		return num_chan;
-> > 
-> > This is really interesting code. So, if the above returns negative error code,
-> > we return it, if it returns 0, we return success (but 0 channels)?
+On Thursday, March 13, 2025 1:59:32 PM CET Christian Schoenebeck wrote:
+> When a 9p tree was mounted with option 'posixacl', parent directory had a
+> default ACL set for its subdirectories, e.g.:
 > 
-> Yes. I don't think it's that interesting though. Checking the devicetree
-> succeeded while no channels were found. I think returning 0 is very much
-> aligned with this.
-
-Right, but as I suggested, let's follow already established APIs that return
--ENOENT and never 0 in similar cases.
-
-> > Shouldn't we do *cs = NULL; at the case of 0 channels if it's a success?
+>   setfacl -m default:group:simpsons:rwx parentdir
 > 
-> I suppose you're right.
+> then creating a subdirectory crashed 9p client, as v9fs_fid_add() call in
+> function v9fs_vfs_mkdir_dotl() sets the passed 'fid' pointer to NULL
+> (since dafbe689736) even though the subsequent v9fs_set_create_acl() call
+> expects a valid non-NULL 'fid' pointer:
 > 
-> But, as you pointed out in review of the 05/10:
-> > Usually in other similar APIs we return -ENOENT. And user won't need
-> > to have an additional check in case of 0 being considered as an error
-> > case too.
+>   [   37.273191] BUG: kernel NULL pointer dereference, address: 0000000000000000
+>   ...
+>   [   37.322338] Call Trace:
+>   [   37.323043]  <TASK>
+>   [   37.323621]  ? __die+0x1f/0x60
+>   [   37.324448]  ? page_fault_oops+0x158/0x470
+>   [   37.325532]  ? search_module_extables+0x4a/0x80
+>   [   37.326742]  ? p9_client_walk+0x1c/0x2c0 [9pnet]
+>   [   37.328006]  ? search_bpf_extables+0x5b/0x80
+>   [   37.329142]  ? exc_page_fault+0x72/0x190
+>   [   37.330196]  ? asm_exc_page_fault+0x22/0x30
+>   [   37.331330]  ? p9_client_walk+0x1c/0x2c0 [9pnet]
+>   [   37.332562]  ? v9fs_fid_xattr_get+0x59/0x120 [9p]
+>   [   37.333824]  v9fs_fid_xattr_set+0x6f/0x130 [9p]
+>   [   37.335077]  v9fs_set_acl+0x82/0xc0 [9p]
+>   [   37.336112]  v9fs_set_create_acl+0x41/0x60 [9p]
+>   [   37.337326]  v9fs_vfs_mkdir_dotl+0x20d/0x2e0 [9p]
+>   [   37.338590]  vfs_mkdir+0x192/0x250
+>   [   37.339535]  do_mkdirat+0x135/0x160
+>   [   37.340465]  __x64_sys_mkdir+0x42/0x60
+>   [   37.341455]  do_syscall_64+0x4b/0x110
+>   [   37.342447]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+Oops, forgot to decode the trace back:
+
+[   37.322338] Call Trace:
+[   37.323043]  <TASK>
+[   37.323621] ? __die (arch/x86/kernel/dumpstack.c:421 arch/x86/kernel/dumpstack.c:434) 
+[   37.324448] ? page_fault_oops (arch/x86/mm/fault.c:714) 
+[   37.325532] ? search_module_extables (kernel/module/main.c:3733) 
+[   37.326742] ? p9_client_walk (net/9p/client.c:1165) 9pnet 
+[   37.328006] ? search_bpf_extables (kernel/bpf/core.c:804) 
+[   37.329142] ? exc_page_fault (./arch/x86/include/asm/paravirt.h:686 arch/x86/mm/fault.c:1488 arch/x86/mm/fault.c:1538) 
+[   37.330196] ? asm_exc_page_fault (./arch/x86/include/asm/idtentry.h:574) 
+[   37.331330] ? p9_client_walk (net/9p/client.c:1165) 9pnet 
+[   37.332562] ? v9fs_fid_xattr_get (fs/9p/xattr.c:30) 9p 
+[   37.333824] v9fs_fid_xattr_set (fs/9p/fid.h:23 fs/9p/xattr.c:121) 9p 
+[   37.335077] v9fs_set_acl (fs/9p/acl.c:276) 9p 
+[   37.336112] v9fs_set_create_acl (fs/9p/acl.c:307) 9p 
+[   37.337326] v9fs_vfs_mkdir_dotl (fs/9p/vfs_inode_dotl.c:411) 9p 
+[   37.338590] vfs_mkdir (fs/namei.c:4313) 
+[   37.339535] do_mkdirat (fs/namei.c:4336) 
+[   37.340465] __x64_sys_mkdir (fs/namei.c:4354) 
+[   37.341455] do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83) 
+[   37.342447] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+
+Dominique, do you want me to send a v2 or would you update the commit log on
+your end?
+
+/Christian
+
+> Fix this by simply swapping the sequence of these two calls in
+> v9fs_vfs_mkdir_dotl(), i.e. calling v9fs_set_create_acl() before
+> v9fs_fid_add().
 > 
-> I don't know whether to agree with you here. For majority of the ADC
-> drivers, having no channels in devicetree is indeed just another error,
-> which I think is not in any ways special.
-
-So...? (I see below your answer :-)
-
-> However, for 33,3333% of the users added in this patch, the "no channels
-> found" is not really an error condition ;) The BD79124 could have all
-> channels used for GPO - although this would probably be very very unusual.
-> (Why buying an ADC chip if you need just a GPO?). Still, this wouldn't be an
-> error. (And I need to handle this better in BD79124 probe - so thanks).
-
-ENOENT check is again established for optional/not_found cases.
-
-> > (Under success I assume that returned values are okay to go with, and cs in
-> > your case will be left uninitialised or contain something we don't control.
+> Fixes: dafbe689736 ('9p fid refcount: cleanup p9_fid_put calls')
+> Reported-by: syzbot+5b667f9a1fee4ba3775a@syzkaller.appspotmail.com
+> Signed-off-by: Christian Schoenebeck <linux_oss@crudebyte.com>
+> ---
+>  fs/9p/vfs_inode_dotl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> I see your point although I wouldn't be concerned with cs not being NULL for
-> as long as number of channels is zero.
+> diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+> index 143ac03b7425..3397939fd2d5 100644
+> --- a/fs/9p/vfs_inode_dotl.c
+> +++ b/fs/9p/vfs_inode_dotl.c
+> @@ -407,8 +407,8 @@ static int v9fs_vfs_mkdir_dotl(struct mnt_idmap *idmap,
+>  			 err);
+>  		goto error;
+>  	}
+> -	v9fs_fid_add(dentry, &fid);
+>  	v9fs_set_create_acl(inode, fid, dacl, pacl);
+> +	v9fs_fid_add(dentry, &fid);
+>  	d_instantiate(dentry, inode);
+>  	err = 0;
+>  	inc_nlink(dir);
 > 
-> Anyway, I think it makes sense to simplify ~67% of callers by returning
-> -ENODEV if there is no channels. The remaining ~33% can then check for the
-> -ENODEV and handle it separately from other returned errors. So, thanks.
-
-Not at all!
-
--- 
-With Best Regards,
-Andy Shevchenko
 
 
 
