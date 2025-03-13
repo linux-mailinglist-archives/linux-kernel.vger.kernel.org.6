@@ -1,129 +1,131 @@
-Return-Path: <linux-kernel+bounces-558735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BBF7A5EA25
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 04:34:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C544AA5EA29
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 04:36:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 106E518991FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 03:34:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39DB53B78B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 03:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF8F78F54;
-	Thu, 13 Mar 2025 03:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47247136347;
+	Thu, 13 Mar 2025 03:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BPnJ1y7J"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b="qI8W0Hka"
+Received: from mx0a-00300601.pphosted.com (mx0a-00300601.pphosted.com [148.163.146.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD73A92E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 03:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992C01C32;
+	Thu, 13 Mar 2025 03:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.146.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741836872; cv=none; b=NNHJD4wZhkRc+u2LUF7by68522eQaYDkr79jGyZl69mJvcIBBsPII+DETH/h5mYC2eRBd51nrXVXB0DqD2BRtVkAf8ddQFISB46+lLoR3kj42qEm50TujAB8y6pZr1jhYbYKNO/ZiFh1EgGbqkp8r7nxuM/6Z7OTnXXojOlf8V0=
+	t=1741836964; cv=none; b=e7TlMNlofGAT7DbCiX/UWrfgkSBbqR/mtqWve4locxMZKpXG3fYYt/5Vtj0efjoWaOeZ3X3tgffs1K1ckXNIvrn2YAKAtgW2WBAtR9Eg4iRqTjdjiFP2Fwd8vchurwjLRoC0Pdt9lrALlmcOVMLT7zbT2gRSWHM9mp12m04oV7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741836872; c=relaxed/simple;
-	bh=TNTg47qZROW0WppXAxZZzNCelLLyziUBjKjAdeuuDYM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=THyKoXmkdhzssGMoNLmMsZ2hHVGCIJi/lLsWWgowOn+oocGW/udQeAPqwr3IkszEfVOoV604fYHRU+ZY7yyits07LJBz9PiYI8Bb1+1100XW/rVz9F4Dnk/wCufyRCLzw6PH7fGBmWlNxy0uK7BVmvezni5KtdY7OjguB/07HXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BPnJ1y7J; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741836868;
-	bh=TNTg47qZROW0WppXAxZZzNCelLLyziUBjKjAdeuuDYM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BPnJ1y7JxkNqwB5O9TwhT/tNs3RtxRBV0KHeFVtwlZe6+1lg0AksfSxutLRLNmv0L
-	 N3d78EnC88eG/3JL4bizSLiZYlvmrLAzAZ8fOp045oSyr8ztO6Vr8pWtjlm6IYlkrO
-	 TdjECDS9TGc2648yJCmokdHVF2Mbn3xW20JbtsX3Iag1vzfyjjv/RNoR8m4GVI+ol3
-	 deFXdwLZEI8nSLI5yvVTMqeQkGBgT8yQATj1K+A/zvkN516n15frFK38NI8lh1SLaF
-	 /P15qaRCPlW83UDp7p8ODwMKD+EfD2izKQExvFGtCMfy8c2AS0xoffxGehBk1xnpVD
-	 3DIipChxDcYRw==
-Received: from [192.168.50.250] (unknown [171.76.87.92])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1E5B817E0B46;
-	Thu, 13 Mar 2025 04:34:25 +0100 (CET)
-Message-ID: <7c39436c-3f23-41cf-97aa-06d9f9d20e61@collabora.com>
-Date: Thu, 13 Mar 2025 09:04:18 +0530
+	s=arc-20240116; t=1741836964; c=relaxed/simple;
+	bh=qgVVV4pLWYSi3Udrx2TJoSwnuOQIHLrJooGwPUr0zFo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LExqq8CGl1cqMeyEzcCXbbvfpnGlssmzlzSCa83ppeLEbaiuAUOJ/ZtSYBcBRWk6dMlxIjnvvHrtzDXcDXtXqQmdJt0+tHpNPKVAd5CEmj/KQTdYxpYhYJNp2HyidVIMB9lXjcsVQbED9sKm2sP9+AV7dE/2cux/ny6T87SQIwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com; spf=pass smtp.mailfrom=ni.com; dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b=qI8W0Hka; arc=none smtp.client-ip=148.163.146.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ni.com
+Received: from pps.filterd (m0359308.ppops.net [127.0.0.1])
+	by mx0b-00300601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D0n9Ek007659;
+	Thu, 13 Mar 2025 03:35:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ni.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=PPS11142024;
+	 bh=AJ7+NYG6VySdhgUp0omQj6TsB98iszwGrWnabWpc/xg=; b=qI8W0HkaJ3sh
+	TbaBGFVCgIe09kksmFB0UvO6mjWOLKLf0N35chkksLs8mvrrCrLHqY7FiB/HuQ/K
+	NKxmr5k9uSPV19m8V4thhCq/vTbGos2mVr2xUNZC9TENxq2MNqs+l80ETBvMsZfx
+	q2KmsJK/wK2bwXiLvmHM2GWDF3I86S0BRGkozp58jUnfLWEkedoTolPtAvBpukTq
+	v4bxo/+XCjDk0o3B3MBtDGtEQdp/SpjnLChNxGIL/aKcqgtdiOUWXEI1GfMJN9ij
+	TKhKwpAS222qjpgtid/FIPvVrxHzoWfJJ+f5/DLNGuHAUgt8Vv4G+6BVxm14RMHB
+	JmrzA6vODg==
+Received: from us-aus-excas-p1.ni.corp.natinst.com ([130.164.94.73])
+	by mx0b-00300601.pphosted.com (PPS) with ESMTPS id 45bn4yhyqn-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 03:35:54 +0000 (GMT)
+Received: from us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) by
+ us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Wed, 12 Mar 2025 22:35:52 -0500
+Received: from ershephe-ubuntu.amer.corp.natinst.com (172.18.68.32) by
+ us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) with Microsoft SMTP
+ Server id 15.2.1258.28 via Frontend Transport; Wed, 12 Mar 2025 22:35:52
+ -0500
+From: Erick Shepherd <erick.shepherd@ni.com>
+To: <adrian.hunter@intel.com>
+CC: <brad.mouring@ni.com>, <erick.shepherd@ni.com>,
+        <gratian.crisan@emerson.com>, <kyle.roeschley@ni.com>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <ulf.hansson@linaro.org>
+Subject: RE: [PATCH] mmc: core: Wait for Vdd to settle on card power off
+Date: Wed, 12 Mar 2025 22:35:52 -0500
+Message-ID: <20250313033552.1505631-1-erick.shepherd@ni.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <a7d1bf5d-6101-4282-92a8-11f9f3569d8b@intel.com>
+References: <a7d1bf5d-6101-4282-92a8-11f9f3569d8b@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: defconfig: mediatek: enable PHY drivers
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, chunkuang.hu@kernel.org,
- p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
- krzk@kernel.org, daniels@collabora.com, airlied@gmail.com,
- simona.vetter@ffwll.ch, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250312041943.25676-1-vignesh.raman@collabora.com>
- <5706c76e-7558-4405-a4c6-cab9cb5ddf65@notapiano>
-Content-Language: en-US
-From: Vignesh Raman <vignesh.raman@collabora.com>
-In-Reply-To: <5706c76e-7558-4405-a4c6-cab9cb5ddf65@notapiano>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: xUs7Rz_IUqUxOfczl-TEXXmVj0iAQKbO
+X-Proofpoint-GUID: xUs7Rz_IUqUxOfczl-TEXXmVj0iAQKbO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_02,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
+ clxscore=1015 phishscore=0 mlxscore=0 impostorscore=0 adultscore=0
+ mlxlogscore=816 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503130026
 
-Hi Nícolas,
-
-On 12/03/25 19:55, Nícolas F. R. A. Prado wrote:
-> On Wed, Mar 12, 2025 at 09:49:26AM +0530, Vignesh Raman wrote:
->> The mediatek display driver fails to probe on mt8173-elm-hana and
->> mt8183-kukui-jacuzzi-juniper-sku16 in v6.14-rc4 due to missing PHY
->> configurations.
->>
->> Enable the following PHY drivers for MediaTek platforms:
->> - CONFIG_PHY_MTK_HDMI=m for HDMI display
->> - CONFIG_PHY_MTK_MIPI_DSI=m for DSI display
->> - CONFIG_PHY_MTK_XSPHY=m for USB
->>
->> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
->> ---
->>
->> v2:
->>    - Include board details in the commit message.
->>    - Sort newly added PHY configs in defconfig.
->>
->> ---
->>   arch/arm64/configs/defconfig | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
->> index 1f25423de383..87e8cbd3fd26 100644
->> --- a/arch/arm64/configs/defconfig
->> +++ b/arch/arm64/configs/defconfig
->> @@ -1572,7 +1572,10 @@ CONFIG_PHY_HI6220_USB=y
->>   CONFIG_PHY_HISTB_COMBPHY=y
->>   CONFIG_PHY_HISI_INNO_USB2=y
->>   CONFIG_PHY_MVEBU_CP110_COMPHY=y
->> +CONFIG_PHY_MTK_HDMI=m
->> +CONFIG_PHY_MTK_MIPI_DSI=m
-> 
-> This isn't the expected ordering. I imagine you manually added these configs in
-> the defconfig.
-
-Yes, I added them manually.
-
-> 
-> To get the right ordering, after you've added the configs anywhere in this
-> defconfig, do a 'make defconfig', then a 'make savedefconfig', and copy the
-> generated 'defconfig' file at the root to this location, then you can add just
-> this hunk to the commit, and it'll be in the correct order.
-
-Thanks for the explanation. I will follow this approach.
-
-Regards,
-Vignesh
-
-> 
-> Thanks,
-> Nícolas
-
+> What about something like this?=0D
+=0D
+> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-p=
+ci-core.c=0D
+> index 1f0bd723f011..0789df732e93 100644=0D
+> --- a/drivers/mmc/host/sdhci-pci-core.c=0D
+> +++ b/drivers/mmc/host/sdhci-pci-core.c=0D
+> @@ -610,8 +610,11 @@ static void sdhci_intel_set_power(struct sdhci_host =
+*host, unsigned char mode,=0D
+ =0D
+>  	sdhci_set_power(host, mode, vdd);=0D
+ =0D
+> -	if (mode =3D=3D MMC_POWER_OFF)=0D
+> +	if (mode =3D=3D MMC_POWER_OFF) {=0D
+> +		if (slot->chip->pdev->device =3D=3D PCI_DEVICE_ID_INTEL_APL_SD)=0D
+> +			usleep_range(15000, 17500);=0D
+>  		return;=0D
+> +	}=0D
+ =0D
+> 	/*=0D
+> 	 * Bus power might not enable after D3 -> D0 transition due to the=0D
+=0D
+I talked to one of our digital hardware engineers who worked on this=0D
+issue. He believes that the issue is likely affecting more than just =0D
+Apollo Lake devices and recommended keeping the delay for all of our=0D
+devices. Could something like this work?=0D
+=0D
+--- a/drivers/mmc/host/sdhci.c=0D
++++ b/drivers/mmc/host/sdhci.c=0D
+@@ -2176,6 +2176,9 @@ EXPORT_SYMBOL_GPL(sdhci_set_power_noreg);=0D
+ void sdhci_set_power(struct sdhci_host *host, unsigned char mode,=0D
+ 		     unsigned short vdd)=0D
+ {=0D
++	if (mode =3D=3D MMC_POWER_OFF)=0D
++		usleep_range(15000, 17500);=0D
++=0D
+ 	if (IS_ERR(host->mmc->supply.vmmc))=0D
+ 		sdhci_set_power_noreg(host, mode, vdd);=0D
+ 	else=0D
+  =0D
+Regards,=0D
+Erick=0D
 
