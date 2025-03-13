@@ -1,108 +1,156 @@
-Return-Path: <linux-kernel+bounces-559540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5F5A5F537
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:04:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B47A5F556
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:06:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 456053BFBC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FA1D19C3F7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86151267AF4;
-	Thu, 13 Mar 2025 13:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8061267701;
+	Thu, 13 Mar 2025 13:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W3n7WI2+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="x8loAjsn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TYAEDkqy"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920BA267B13;
-	Thu, 13 Mar 2025 13:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FE626770C;
+	Thu, 13 Mar 2025 13:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741871024; cv=none; b=Xa2vtqLJL5L+pnMi7JHf0IOiLX2IiVTj/mgyh+ANN2sFRaCMn3Hfoi17oAfhPR4B2JpM3iEpERUUBEYyh8XCwigfw8gjjNxLxqI21UZkMh3Uo6caTwO1XXMMR4W+Gq/tYZC8OKyzfZXZXmFme6JlXQGbnXb4plDmTNmO4Tpbg/s=
+	t=1741871027; cv=none; b=uCKrhoPncdUDORYi2mxG26Jww+JgLKGQXtYiknmPgGrCdxdP7vRrzyW6VRWALiboTrpmwQmWv3uk4lTTI8mtOfrIDolX00eiLQ2XQjfS8OiJ0eeK4CYbhZpxTYlgexyxUFGKnlpq58C36E+VxhnIyTuT4/Pao9zLtdkHV82QCTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741871024; c=relaxed/simple;
-	bh=cSyffy+PWmVQesGeNOfjRD3854cMxOy2XIo3+guxtEk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nSpF6ydcVzqrFewG8iJvKy9K8bXE5fSTuSU9I7GhLr1wVttOh9vJaA/UASPTIrXtWw7sGDB6+K00BVcMisNgVbooyyuVjwEj2ObwvlhsVOZLDVg6Wi0IBJpcVzWLYhYzshzmjypd4aMwBlI86rEX5kLgJSx41Bzxgjr3CrFXRMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W3n7WI2+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D6E8C4CEDD;
-	Thu, 13 Mar 2025 13:03:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741871024;
-	bh=cSyffy+PWmVQesGeNOfjRD3854cMxOy2XIo3+guxtEk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=W3n7WI2+kNBRhRstzjeL3M06/rCnf1LzWx2YyBLD01j8VmFJANn56CrImwA8yW2+T
-	 S0sch8ELktEv1lgKKdJE8batVk23w+yl7Go8YUO4NPYFP3oR+x6ZlO7uJb/jlanFvX
-	 S7ZjZTXv/idYIrZSik396jx+G+Yrzt4aKXk/agPeTHfga4jUvCgUIBaYVPj9qEB7u9
-	 zFE7QK8bZEplyvWlCoOpYD10A3xrxtVXiRkIZRvB6lxI7GnFZqr67QFT9R/jWP/dS4
-	 BRO2/qxom67N+cLtVTodyDfZllKLzMgiaZThXp0n9imUIQcuY7xDNHmMOvwHFRcqNF
-	 SCzy9gFfTB/iA==
-From: Lee Jones <lee@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Will Deacon <will@kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
- Andrew Morton <akpm@linux-foundation.org>, Nick Piggin <npiggin@gmail.com>, 
- Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
- Thomas Gleixner <tglx@linutronix.de>, 
- Herbert Xu <herbert@gondor.apana.org.au>, 
- "David S. Miller" <davem@davemloft.net>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Johannes Berg <johannes@sipsolutions.net>, 
- Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, 
- Jiri Pirko <jiri@resnulli.us>, Jason Gunthorpe <jgg@ziepe.ca>, 
- Leon Romanovsky <leon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>, 
- Thomas Graf <tgraf@suug.ch>, Christoph Hellwig <hch@lst.de>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Robin Murphy <robin.murphy@arm.com>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-arch@vger.kernel.org, 
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
- linux-crypto@vger.kernel.org, netdev@vger.kernel.org, 
- linux-wireless@vger.kernel.org, linux-rdma@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
- linux-mtd@lists.infradead.org
-In-Reply-To: <20250221-rmv_return-v1-15-cc8dff275827@quicinc.com>
-References: <20250221-rmv_return-v1-0-cc8dff275827@quicinc.com>
- <20250221-rmv_return-v1-15-cc8dff275827@quicinc.com>
-Subject: Re: (subset) [PATCH *-next 15/18] mfd: db8500-prcmu: Remove
- needless return in three void APIs
-Message-Id: <174187101580.3629935.6842247156301298100.b4-ty@kernel.org>
-Date: Thu, 13 Mar 2025 13:03:35 +0000
+	s=arc-20240116; t=1741871027; c=relaxed/simple;
+	bh=qVLn6ogbWidzSjCJP5XFPquGm5LxCS8oOzQG4fE1OLI=;
+	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Date; b=Tg3M2fRG3q3+NO4U/i3crTCRtgGlsvONPGsMhzdHx0ggpOtC3fQRvcd3Ld2FQdBsDJ8Uu4I3k9SYTHqW6c5ojDYrT/YCUfmJLkNJaSxl6+WDvYME17P1d5dkgeK84zmsHFsU6rD3bGs8x+YUOMFVqsEaUZO+1gZjOmoui9sOeXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=x8loAjsn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TYAEDkqy; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250313130321.631772601@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741871023;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=0CMM5PtULSzUKaKYGBG7pUG78FCDwJRzCxffhXq5CuA=;
+	b=x8loAjsnVC4+kX/UBoY+UQCY47KTWtRjKwJNd74if6qE+aEmn3tRBBLFYou/gQCtAP77uq
+	hLAs+ZEudkMZ1MaP+LF211snLK7ppIm6IAeSxp7qq9OO3ACtLT3+0SZ+xeVUubcQhgqpER
+	fVbloaXfjAE3w40Rzq68bcHe4vXmERWth5cBp2x5SmDxWvXvzIFmVejGbkGF177T7gFh0M
+	hkJN5wED0wl6PK1r3qcvGq6nJKNXBFY7NAmBQJpxQ4IuZ/ySHYbQGZJXxGx8rVWYZLRlhu
+	B4smMLz15X5Q8j2rH5CO33RFm3E9i4hg8NwuuKMGTJ3pXRcxUZ5Z/aTZUyqaRA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741871023;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=0CMM5PtULSzUKaKYGBG7pUG78FCDwJRzCxffhXq5CuA=;
+	b=TYAEDkqytacLpGKxYUYm7ZAusYiccvMKB5B6P75fO7P5fmzI6qkr7Z47WRlzKaCYeTqbPD
+	wSqJvYCamb/whtAg==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Logan Gunthorpe <logang@deltatee.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Jon Mason <jdmason@kudzu.us>,
+ Allen Hubbe <allenbh@gmail.com>,
+ ntb@lists.linux.dev,
+ Peter Zijlstra <peterz@infradead.org>,
+ Nishanth Menon <nm@ti.com>,
+ Dhruva Gole <d-gole@ti.com>,
+ Tero Kristo <kristo@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ linux-pci@vger.kernel.org,
+ Michael Kelley <mhklinux@outlook.com>,
+ Wei Liu <wei.liu@kernel.org>,
+ Haiyang Zhang <haiyangz@microsoft.com>,
+ linux-hyperv@vger.kernel.org,
+ Wei Huang <wei.huang2@amd.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-scsi@vger.kernel.org,
+ Jonathan Cameron <Jonathan.Cameron@huwei.com>
+Subject: [patch V2 04/10] NTB/msi: Switch MSI descriptor locking to lock
+ guard()
+References: <20250313130212.450198939@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-510f9
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 13 Mar 2025 14:03:43 +0100 (CET)
 
-On Fri, 21 Feb 2025 05:02:20 -0800, Zijun Hu wrote:
-> Remove needless 'return' in the following void APIs:
-> 
->  prcmu_early_init()
->  prcmu_system_reset()
->  prcmu_modem_reset()
-> 
-> Since both the API and callee involved are void functions.
-> 
-> [...]
+Convert the code to use the new guard(msi_descs_lock).
 
-Applied, thanks!
+No functional change intended.
 
-[15/18] mfd: db8500-prcmu: Remove needless return in three void APIs
-        commit: ccf5c7a8e5b9fe7c36d8c384f8f7c495f45c63a0
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+Acked-by: Dave Jiang <dave.jiang@intel.com>
+Cc: Jon Mason <jdmason@kudzu.us>
+Cc: Allen Hubbe <allenbh@gmail.com>
+Cc: ntb@lists.linux.dev
 
---
-Lee Jones [李琼斯]
+---
+ drivers/ntb/msi.c |   22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
+
+--- a/drivers/ntb/msi.c
++++ b/drivers/ntb/msi.c
+@@ -106,10 +106,10 @@ int ntb_msi_setup_mws(struct ntb_dev *nt
+ 	if (!ntb->msi)
+ 		return -EINVAL;
+ 
+-	msi_lock_descs(&ntb->pdev->dev);
+-	desc = msi_first_desc(&ntb->pdev->dev, MSI_DESC_ASSOCIATED);
+-	addr = desc->msg.address_lo + ((uint64_t)desc->msg.address_hi << 32);
+-	msi_unlock_descs(&ntb->pdev->dev);
++	scoped_guard (msi_descs_lock, &ntb->pdev->dev) {
++		desc = msi_first_desc(&ntb->pdev->dev, MSI_DESC_ASSOCIATED);
++		addr = desc->msg.address_lo + ((uint64_t)desc->msg.address_hi << 32);
++	}
+ 
+ 	for (peer = 0; peer < ntb_peer_port_count(ntb); peer++) {
+ 		peer_widx = ntb_peer_highest_mw_idx(ntb, peer);
+@@ -289,7 +289,7 @@ int ntbm_msi_request_threaded_irq(struct
+ 	if (!ntb->msi)
+ 		return -EINVAL;
+ 
+-	msi_lock_descs(dev);
++	guard(msi_descs_lock)(dev);
+ 	msi_for_each_desc(entry, dev, MSI_DESC_ASSOCIATED) {
+ 		if (irq_has_action(entry->irq))
+ 			continue;
+@@ -307,17 +307,11 @@ int ntbm_msi_request_threaded_irq(struct
+ 		ret = ntbm_msi_setup_callback(ntb, entry, msi_desc);
+ 		if (ret) {
+ 			devm_free_irq(&ntb->dev, entry->irq, dev_id);
+-			goto unlock;
++			return ret;
+ 		}
+-
+-		ret = entry->irq;
+-		goto unlock;
++		return entry->irq;
+ 	}
+-	ret = -ENODEV;
+-
+-unlock:
+-	msi_unlock_descs(dev);
+-	return ret;
++	return -ENODEV;
+ }
+ EXPORT_SYMBOL(ntbm_msi_request_threaded_irq);
+ 
+
+
 
 
