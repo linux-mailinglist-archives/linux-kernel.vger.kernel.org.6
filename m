@@ -1,215 +1,250 @@
-Return-Path: <linux-kernel+bounces-559771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D39A9A5F968
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:15:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5EC6A5F96B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:17:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC9A1895DD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:16:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DB363BAFC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9537F26138E;
-	Thu, 13 Mar 2025 15:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B162268C49;
+	Thu, 13 Mar 2025 15:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bz0tk6r4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TYbhLtFt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E69EFC08;
-	Thu, 13 Mar 2025 15:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A419CFC08;
+	Thu, 13 Mar 2025 15:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741878949; cv=none; b=YWKxJ+csezdzhtU+SeDmke/c71S+2ZKMgN0TvwOnZK3UXFMD1S1FAoqmZdm0Vtwzgn7dnGEbyPwS40wF70WkR9urQQEl9Xs3ZNaL+eMozGz5tx8jf/oD3s2ukmL5AbLdMHv0pN6xLZcZ4oSdrsQbcoV7YbetqBgHvoNdLqaRhfo=
+	t=1741879017; cv=none; b=SAiG8uRdwXFGOWQrsibMT2L5Ph++GMvd50Z0oTfn+7wdPaVmwbAoXHfR1nFqvoBshzGYIWTRblHsDtmYmIJiyBVNfezrAl6EELalFF5/15Ke1HFgm5gzbuPFdOueUAhyVBJzq0eOyemFLRZc2GXthqs0iR1HLOwt64D1mx0mH0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741878949; c=relaxed/simple;
-	bh=DxYmwRKpDd0tnQCFVByN7y7sngics+dT8oStdDQf0DI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t4Q8KjVcNrakZjFA2FwLaEp2L0yup8h54lm4iuR4SBjAEsAdzm74bbKfuscUNFF/C1FWYWLP1K9Ve2ZNVujZyjnOF5ay4EWtdKHcIOqqC+sx3rH9M0RqDFOoRjY7YWCrmq4cg5DVDENHmNsFXv7l4IVByyGcilPXKQ0nhhHE1dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bz0tk6r4; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741878947; x=1773414947;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DxYmwRKpDd0tnQCFVByN7y7sngics+dT8oStdDQf0DI=;
-  b=Bz0tk6r4Vd//cRCV6rlE3NlMcWj9pT6sZEmjyIdfKvw/XYYxCbEyv+yP
-   x29BKbjxfnq1qFiQ14mGhgkxEpgTMglDstXzaqxNn3UawFPzyI+X5iP0y
-   bG6ls/UuWGl9r5Eriy2wKRZovnLSvNTI16bYNrbDkBeL6Wjo2IPoDrHwP
-   wW/1Ve4JA/+1TCl4gDdd1sZQA+Yv7EIWOT48MptZR9dn0Lt3YiI5xcgfR
-   W65v7lx2n7SEkmbF3e1w9AWXkyhXBac/3HWYUuxxTc6IqVnDxznMGS8eN
-   9otg7C0gdufuQtn/xJnuhl7F93cVtZT7UndWFe+2NDD8akjGOnqgseQ2G
-   Q==;
-X-CSE-ConnectionGUID: 93Zn59xqTei1ZB6Ya8FNsw==
-X-CSE-MsgGUID: OoaCOZ+OTc6UlMkZQMgMiQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="46904145"
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="46904145"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 08:15:46 -0700
-X-CSE-ConnectionGUID: sj4BoNyoQW6FajNRPC0JWw==
-X-CSE-MsgGUID: i4AIluP9SHGwIipTSk7DSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="121491205"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 13 Mar 2025 08:15:42 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tskHc-0009Yy-1K;
-	Thu, 13 Mar 2025 15:15:40 +0000
-Date: Thu, 13 Mar 2025 23:15:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nam Cao <namcao@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>,
-	Gabriele Monaco <gmonaco@redhat.com>, john.ogness@linutronix.de,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Nam Cao <namcao@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH 04/10] rv: Add rtapp_block monitor
-Message-ID: <202503132244.Azu340js-lkp@intel.com>
-References: <c8a1658c6da343b6055cbfcd6ee5ddea48335d31.1741708239.git.namcao@linutronix.de>
+	s=arc-20240116; t=1741879017; c=relaxed/simple;
+	bh=DyKj9OAa2ndB89I7PHXBVdazlTpuCK87qB36+y9pYA0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EAplMSkqZB0Vh3eyfmPx+3t5nDV3U5vi6O+sMOFkjtelQbh7ifxtpjgdskTfLdSOppb2A4XctQeS9qa2/se9Dmm5BedXMWqCpymdbjTCR/9HClK9hxcJL3BJPT1w5TN03dZhHemtpL+tA/CI9KMFi2N5/92FPTlKl6XPkFd6tIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TYbhLtFt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22346C4CEEF;
+	Thu, 13 Mar 2025 15:16:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741879017;
+	bh=DyKj9OAa2ndB89I7PHXBVdazlTpuCK87qB36+y9pYA0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TYbhLtFtYEXK+uv1q24tILG+lYtNYIrd4pQNa/9SmlklHialPyIYiXsFTDJBNg4sc
+	 xrA6Xv/yfEopEB+Wlg/lbKykvoNr5jDhLXWxMuovb3HCZ2NZUFiIx2ltDfJFgvbWw3
+	 KLimv7QyOmx09xrVrb9nDdFh4wt64xW/tPEkhIwmC55J6G/ONqXIC41crJOGADT90x
+	 sRwEYyo0KwkXXtu1XanD2FZ4pM5zAnBmic1HriWUONdNdMZ+2ZwOBR8OCoGZYGBRtI
+	 wXPVpl1QLDqvZHh68wJQ1R7rzdPbtbjok2SxtO7G+YYLGQbpwnqlzKJV+10GXnvKHc
+	 nVkjwV7dZCHRw==
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2bcf9d9b60aso375602fac.3;
+        Thu, 13 Mar 2025 08:16:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUDMebEWuT9H7Numxqn40i7t86W+zCiKtveIrZwPp6fvxNMsD/UuRayUdy3meNcMEpUtB4FMunj0xP8ACE=@vger.kernel.org, AJvYcCVNSilFGpBnfemmE3IaAvFU/N/Kfz7x8/L4baWSJPT2yYF1lhR9FgZ05Y2zFk/QkQi/azjefrfIYCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyZN1mOskWgJX8NTQpPevW/HeNM15TudO1H4RQ71XS4J3DDBbL
+	XlTkBL/vT+3idsFei2ob/d0W+Pw8RSnrL/cv+gcK1NMJWBXI90rr8RrjwDK4rkupPeDenOiZ7ZI
+	lJa0Xxswk2oLXWa0EpeFQHXIAnHI=
+X-Google-Smtp-Source: AGHT+IGDbZclqQ1GbUjtmZyTVw+IYyTYwSB+gf+fjqifHQkYzUUn3GyZrK/a0wZ8fqz076tKmAztOClVvit2aC01ztw=
+X-Received: by 2002:a05:6870:9a1a:b0:29e:2caf:8cc with SMTP id
+ 586e51a60fabf-2c2e89c517fmr6263469fac.37.1741879016219; Thu, 13 Mar 2025
+ 08:16:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c8a1658c6da343b6055cbfcd6ee5ddea48335d31.1741708239.git.namcao@linutronix.de>
+References: <13709135.uLZWGnKmhe@rjwysocki.net> <1819312.VLH7GnMWUR@rjwysocki.net>
+ <CAGETcx86f+8cGBxMixgoOy2fwgtEO_ysN1q-h9PACxdRjRiFPw@mail.gmail.com>
+In-Reply-To: <CAGETcx86f+8cGBxMixgoOy2fwgtEO_ysN1q-h9PACxdRjRiFPw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 13 Mar 2025 16:16:45 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jWEVU=68hnSiFRSmmF=5cne0ev1U8ebftvYN2NkhJ=UA@mail.gmail.com>
+X-Gm-Features: AQ5f1JoKYOrAq2WDF2VauXThtL-C_IrV9ksQwFiE2m5IInRPHNvIiDGbh-Vh_fs
+Message-ID: <CAJZ5v0jWEVU=68hnSiFRSmmF=5cne0ev1U8ebftvYN2NkhJ=UA@mail.gmail.com>
+Subject: Re: [PATCH v1 3/5] PM: sleep: Resume children right after resuming
+ the parent
+To: Saravana Kannan <saravanak@google.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold <johan@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nam,
+On Thu, Mar 13, 2025 at 2:47=E2=80=AFAM Saravana Kannan <saravanak@google.c=
+om> wrote:
+>
+> Sorry for the delay, I wanted to double, triple, multiple check my
+> replies to make sure I didn't get it wrong. I hope I didn't.
+>
+> On Tue, Feb 25, 2025 at 8:46=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.=
+net> wrote:
+> >
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > According to [1], the handling of device suspend and resume, and
+> > particularly the latter, involves unnecessary overhead related to
+> > starting new async work items for devices that cannot make progress
+> > right away because they have to wait for other devices.
+> >
+> > To reduce this problem in the resume path, use the observation that
+> > starting the async resume of the children of a device after resuming
+> > the parent is likely to produce less scheduling and memory management
+> > noise than starting it upfront while at the same time it should not
+> > increase the resume duration substantially.
+> >
+> > Accordingly, modify the code to start the async resume of the device's
+> > children when the processing of the parent has been completed in each
+> > stage of device resume and only start async resume upfront for devices
+> > without parents.
+> >
+> > Also make it check if a given device can be resumed asynchronously
+> > before starting the synchronous resume of it in case it will have to
+> > wait for another that is already resuming asynchronously.
+> >
+> > In addition to making the async resume of devices more friendly to
+> > systems with relatively less computing resources, this change is also
+> > preliminary for analogous changes in the suspend path.
+> >
+> > On the systems where it has been tested, this change by itself does
+> > not affect the overall system resume duration in a measurable way.
+> >
+> > Link: https://lore.kernel.org/linux-pm/20241114220921.2529905-1-saravan=
+ak@google.com/ [1]
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  drivers/base/power/main.c |   72 +++++++++++++++++++++++++++++++++++++=
++++------
+> >  1 file changed, 63 insertions(+), 9 deletions(-)
+> >
+> > --- a/drivers/base/power/main.c
+> > +++ b/drivers/base/power/main.c
+> > @@ -621,12 +621,41 @@
+> >         return false;
+> >  }
+> >
+> > +static int dpm_async_unless_in_progress(struct device *dev, void *fn)
+> > +{
+> > +       async_func_t func =3D fn;
+> > +
+> > +       if (!dev->power.work_in_progress)
+> > +               dpm_async_fn(dev, func);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static void dpm_async_resume_children(struct device *dev, async_func_t=
+ func)
+> > +{
+> > +       mutex_lock(&dpm_list_mtx);
+> > +
+> > +       /*
+> > +        * Start processing "async" children of the device unless it's =
+been
+> > +        * started already for them.
+> > +        *
+> > +        * This could have been done for the device's "async" consumers=
+ too, but
+> > +        * they either need to wait for their parents or the processing=
+ has
+> > +        * already started for them after their parents were processed.
+> > +        */
+> > +       device_for_each_child(dev, func, dpm_async_unless_in_progress);
+>
+> Is there a reason you aren't resuming the consumers? Or checking that
+> the children won't block on any suppliers?
 
-kernel test robot noticed the following build warnings:
+This is deliberate and the above comment is about it.
 
-[auto build test WARNING on trace/for-next]
-[also build test WARNING on tip/x86/core tip/x86/mm linus/master v6.14-rc6 next-20250313]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+At this point, all of the consumers either still need to wait for
+their parents, in which case it is not useful to queue them up, or
+their parent's have already completed the resume and started their
+processing, if they are async.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nam-Cao/rv-Add-undef-TRACE_INCLUDE_FILE/20250312-011043
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/c8a1658c6da343b6055cbfcd6ee5ddea48335d31.1741708239.git.namcao%40linutronix.de
-patch subject: [PATCH 04/10] rv: Add rtapp_block monitor
-config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20250313/202503132244.Azu340js-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250313/202503132244.Azu340js-lkp@intel.com/reproduce)
+Checking if children won't block can be added here, but then (a) the
+code will need to track their dependencies and (b) walking the
+consumers would become necessary which is extra overhead.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503132244.Azu340js-lkp@intel.com/
+Arguably, there are no devices with tons of children, so adding
+several async work items that will just wait until they get unblocked
+here should not add too much overhead.
 
-All warnings (new ones prefixed by >>):
+> Not dealing with device links might be ok for systems where there
+> aren't a lot of device links, but in DT based systems with fw_devlink
+> this patch will not make much of a difference. There'll still be a ton
+> of "sleep and try again" issues because of the supplier/consumer
+> dependencies.
 
->> kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:91:53: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
-      91 | static void handle_rt_mutex_wake_waiter_begin(void *, struct task_struct *task)
-         |                                                     ^
-   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:96:51: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
-      96 | static void handle_rt_mutex_wake_waiter_end(void *, struct task_struct *task)
-         |                                                   ^
-   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:101:45: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
-     101 | static void handle_sched_kthread_stop(void *, struct task_struct *task)
-         |                                             ^
-   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:109:49: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
-     109 | static void handle_sched_kthread_stop_ret(void *, int)
-         |                                                 ^
-   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:109:54: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
-     109 | static void handle_sched_kthread_stop_ret(void *, int)
-         |                                                      ^
-   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:117:39: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
-     117 | static void handle_sched_wakeup(void *, struct task_struct *task)
-         |                                       ^
-   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:164:2: error: call to undeclared function 'check_trace_callback_type_sys_enter'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     164 |         rv_attach_trace_probe("rtapp_block", sys_enter, handle_sys_enter);
-         |         ^
-   include/rv/instrumentation.h:18:3: note: expanded from macro 'rv_attach_trace_probe'
-      18 |                 check_trace_callback_type_##tp(rv_handler);                             \
-         |                 ^
-   <scratch space>:8:1: note: expanded from here
-       8 | check_trace_callback_type_sys_enter
-         | ^
-   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:164:2: error: call to undeclared function 'register_trace_sys_enter'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-   include/rv/instrumentation.h:19:13: note: expanded from macro 'rv_attach_trace_probe'
-      19 |                 WARN_ONCE(register_trace_##tp(rv_handler, NULL),                        \
-         |                           ^
-   <scratch space>:9:1: note: expanded from here
-       9 | register_trace_sys_enter
-         | ^
-   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:165:2: error: call to undeclared function 'check_trace_callback_type_sys_exit'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     165 |         rv_attach_trace_probe("rtapp_block", sys_exit, handle_sys_exit);
-         |         ^
-   include/rv/instrumentation.h:18:3: note: expanded from macro 'rv_attach_trace_probe'
-      18 |                 check_trace_callback_type_##tp(rv_handler);                             \
-         |                 ^
-   <scratch space>:14:1: note: expanded from here
-      14 | check_trace_callback_type_sys_exit
-         | ^
-   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:165:2: error: call to undeclared function 'register_trace_sys_exit'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-   include/rv/instrumentation.h:19:13: note: expanded from macro 'rv_attach_trace_probe'
-      19 |                 WARN_ONCE(register_trace_##tp(rv_handler, NULL),                        \
-         |                           ^
-   <scratch space>:15:1: note: expanded from here
-      15 | register_trace_sys_exit
-         | ^
-   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:165:2: note: did you mean 'register_ftrace_direct'?
-   include/rv/instrumentation.h:19:13: note: expanded from macro 'rv_attach_trace_probe'
-      19 |                 WARN_ONCE(register_trace_##tp(rv_handler, NULL),                        \
-         |                           ^
-   <scratch space>:15:1: note: expanded from here
-      15 | register_trace_sys_exit
-         | ^
-   include/linux/ftrace.h:535:19: note: 'register_ftrace_direct' declared here
-     535 | static inline int register_ftrace_direct(struct ftrace_ops *ops, unsigned long addr)
-         |                   ^
-   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:180:2: error: call to undeclared function 'unregister_trace_sys_enter'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     180 |         rv_detach_trace_probe("rtapp_block", sys_enter, handle_sys_enter);
-         |         ^
-   include/rv/instrumentation.h:28:3: note: expanded from macro 'rv_detach_trace_probe'
-      28 |                 unregister_trace_##tp(rv_handler, NULL);                                \
-         |                 ^
-   <scratch space>:29:1: note: expanded from here
-      29 | unregister_trace_sys_enter
-         | ^
-   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:181:2: error: call to undeclared function 'unregister_trace_sys_exit'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     181 |         rv_detach_trace_probe("rtapp_block", sys_exit, handle_sys_exit);
-         |         ^
-   include/rv/instrumentation.h:28:3: note: expanded from macro 'rv_detach_trace_probe'
-      28 |                 unregister_trace_##tp(rv_handler, NULL);                                \
-         |                 ^
-   <scratch space>:30:1: note: expanded from here
-      30 | unregister_trace_sys_exit
-         | ^
-   kernel/trace/rv/monitors/rtapp_block/rtapp_block.c:181:2: note: did you mean 'unregister_ftrace_direct'?
-   include/rv/instrumentation.h:28:3: note: expanded from macro 'rv_detach_trace_probe'
-      28 |                 unregister_trace_##tp(rv_handler, NULL);                                \
-         |                 ^
-   <scratch space>:30:1: note: expanded from here
-      30 | unregister_trace_sys_exit
-         | ^
-   include/linux/ftrace.h:539:19: note: 'unregister_ftrace_direct' declared here
-     539 | static inline int unregister_ftrace_direct(struct ftrace_ops *ops, unsigned long addr,
-         |                   ^
-   6 warnings and 6 errors generated.
+That IMO really needs to be evaluated because it all depends on how
+much it takes to resume individual devices.
 
+> And when you include device links, it's a dependency graph and no longer
+> a dependency tree. So things become a bit more complicated.
 
-vim +91 kernel/trace/rv/monitors/rtapp_block/rtapp_block.c
+They are, but all I said above still holds I believe.
 
-    90	
-  > 91	static void handle_rt_mutex_wake_waiter_begin(void *, struct task_struct *task)
-    92	{
-    93		rv_rtapp_block_atom_update(task, RT_MUTEX_WAKING_WAITER, true);
-    94	}
-    95	
+> Also, not taking device links isn't consideration when kicking off
+> async work is not just about additional sleep/wake cycles, but it'll
+> also cause more thread creation because blocked "async" worker threads
+> will quickly use up the worker thread pool and more threads need to be
+> created.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Again, this needs to be evaluated and an actual system.  It would have
+been the case if devices had taken no time to actually resume, but it
+is far from reality AFAICS.
+
+[skip]
+
+> >  }
+> >
+> >  static void async_resume_early(void *data, async_cookie_t cookie)
+> > @@ -875,19 +915,24 @@
+> >         mutex_lock(&dpm_list_mtx);
+> >
+> >         /*
+> > -        * Trigger the resume of "async" devices upfront so they don't =
+have to
+> > -        * wait for the "non-async" ones they don't depend on.
+> > +        * Start processing "async" devices without parents upfront so =
+they
+> > +        * don't wait for the "sync" devices they don't depend on.
+> >          */
+> >         list_for_each_entry(dev, &dpm_late_early_list, power.entry) {
+> >                 dpm_clear_async_state(dev);
+>
+> I initially thought that there could be a race here, but it's not the
+> case because you are using the dpm_list_mtx here. However, since you
+> are grabbing the dpm_list_mtx lock before you loop through and kick
+> off the async threads for child devices it'll cause a lot of
+> unnecessary lock contention/waiting.
+
+I don't think this is what happens here.  It is only processing the
+devices without parents which are not too many.
+
+> Which is what this series is trying to avoid in the first place.
+>
+> If you take device links into consideration (which we need to do for
+> this patch series to improve suspend/resume for DT based systems),
+> there is an even higher chance of racing (or more lock contention)
+> because multiple threads might attempt to resume the same device.
+> Which is why in my patch series, I try to use the device links read
+> lock than using the single dpm_list_mtx mutex.
+
+I think that you are talking about acquiring dpm_list_mtx in
+dpm_async_resume_children().
+
+The reason for acquiring it there is dpm_async_unless_in_progress()
+and particularly the power.work_in_progress check in it and the
+invocation of dpm_async_fn() which manipulates power.work_in_progress.
+
+If dpm_list_mtx is too contentious for this, the device's power.lock
+can be used for protecting the power.work_in_progress accesses in
+principle, but that would mean more complexity in the code.
+
+This is unrelated to whether or not device links are walked in
+dpm_async_resume_children() (well, if they were, it would need to be
+renamed), though.
 
