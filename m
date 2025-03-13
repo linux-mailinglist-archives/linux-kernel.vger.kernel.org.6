@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-558729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488E9A5EA15
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 04:13:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42341A5EA1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 04:17:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B48E175F51
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 03:13:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1968618972BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 03:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B94126C1E;
-	Thu, 13 Mar 2025 03:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDF54CB5B;
+	Thu, 13 Mar 2025 03:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OxjSIy1M"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RTvPH7Cw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB2327468;
-	Thu, 13 Mar 2025 03:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00534C9D;
+	Thu, 13 Mar 2025 03:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741835583; cv=none; b=puyQZUHNk65JcaVXyDYmnvrdHynP6sZKE6X5MeRRKO5pln070GG1Tv3sN53ecwH1zrePTaA7coS1tCrsANQ1yEuf5hiv8kFn4904Sv8pRGwl1oMkXKMzrUpBRGijbBlCn8ABkvqDDw0g1nKos6GF98h3EcfiZXKkdAzRY91hIVI=
+	t=1741835852; cv=none; b=geEJJdeA4npu0nYqdUDVqyuQnKM3cRk6C/2bR3fsLvq2HWS70RuLHmvzv9fJYU+4QEgYmWYHr8jrFjZ+Ir0AJB3uk7Dn64U60S+pZc92Uj+IDyPa3bA0tDyHNdY68/WgJ93so4DXFA0RDSUIEsjUbSXX6kmZtljqg5ngI4DFB48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741835583; c=relaxed/simple;
-	bh=9rDegvgEk6XpNnqqtMo5IqY/zy/Wkr4CTQx+RbYCi9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=q6qbNcUBkOrpAVbzlLSX+I9/bu0i67csWgEZJ5wxlPqxf4sYXO7tZLx09oHWquk4ZwRZwnl0UkandhvAn2jAReJwJVHvtA0Vt/GW0Kloz7AbaKogiOMhfKR0wXtXHbHaSl0i4QSEnLzv9RZoLgfTVz57U3d+pF0isCMbv+z7fqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=OxjSIy1M; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741835575;
-	bh=umnF84Dfi3Nfa6Na8lFbRSU0J6LQFik/70/YubuMr4o=;
-	h=Date:From:To:Cc:Subject:From;
-	b=OxjSIy1MmXeePd5sIIGR9eQJJUTQlK/MMC5GIO6h0rJhjI70fgqpdTyrsd49sPv2T
-	 CP0Y0D8uyHSh9gmldX3iJ/ZLYZ83WogH2T9YW66rLHntyCFtt7lOZ/v8otlgI0ADBj
-	 4UgDJC/Rj9qGvofmzdffJNFJ91CsTf9veDNH21dr9eIp0jDOJ/qtM3uvBsj5dtyjzW
-	 smV3RruxnjLUh/IwCE3MljFWhqn4DMc1gCnx9pi4ivYr8FwWIpRoMPGM8L3LNWrl6c
-	 SsFl4xfSWJ2LHMlxdHgQ0jZW2aUnB/C1SZjiu/3JJOtCTX+T30bhe6vqDLsm8Ul0gK
-	 gVZt2aCTGj7fA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZCsxy6lWZz4wgp;
-	Thu, 13 Mar 2025 14:12:54 +1100 (AEDT)
-Date: Thu, 13 Mar 2025 14:12:53 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Dave Airlie <airlied@redhat.com>
-Cc: DRI <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Lucas De Marchi <lucas.demarchi@intel.com>,
- Nam Cao <namcao@linutronix.de>
-Subject: linux-next: manual merge of the tip tree with the drm tree
-Message-ID: <20250313141253.0c5a7520@canb.auug.org.au>
+	s=arc-20240116; t=1741835852; c=relaxed/simple;
+	bh=OekOGraYs0om9dmnsshqjY3GsKEuJkwsR5qh+YYbmLY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k+FSNnHMFY5ociIFa6fKy7V9W4ynEHKZ9lq+VWrWBNJ/+sh6wQ1h6jGKdNwr1w576gNk7DEMsyPZO10Kd8kO+yf85k7QOIgyw7Bs1VKLizEZnrWfwaZBHDUS/DWLT0rq2uVbp9pkM9YR/ltrhrfoM4fVZ2srVPNxstOej8coDaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RTvPH7Cw; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741835851; x=1773371851;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=OekOGraYs0om9dmnsshqjY3GsKEuJkwsR5qh+YYbmLY=;
+  b=RTvPH7Cwa+rNuxVfXkSp5GNa9ZwdyqNhFG4xJg10bXkF/fwn65fr1t8g
+   fbuSEZNREfP+vqVqb5ZDv3CeRBhyc5UlU6aNwA+gPY91986ZiWcMa8JV6
+   jzZ3U8/U8mfjjGZlio5TqaIZ7y8jU4i78byQHIZofwc2iE/IgC9E1ppME
+   TJeBpyWDX0HfU1qkUxQHxYuMg2YZagmZnQv9xRQiFqXnRH9ma3N2fsWZH
+   LbIW/AzQNNYAidu3lbgiRfkQgzVY3P+Cp8LTZpQcxPCcWPlyAFOudSxdB
+   H+NEqFkqIX6H9RSIMfQXIi0GzteqcCmgxa3Qxl0AGPbqJr8uUK5iwAtuB
+   w==;
+X-CSE-ConnectionGUID: v7P7r4mPSWyJq0wInVxiIQ==
+X-CSE-MsgGUID: 2JQUSwunRhejJ0+wQuGNrQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42191047"
+X-IronPort-AV: E=Sophos;i="6.14,243,1736841600"; 
+   d="scan'208";a="42191047"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 20:17:30 -0700
+X-CSE-ConnectionGUID: rCQUFmT8S9qU0Aa5lpreBw==
+X-CSE-MsgGUID: jQv7TTHYTS6Ff69EiBx4kg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,243,1736841600"; 
+   d="scan'208";a="125899547"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 20:17:28 -0700
+Message-ID: <91208627-74a6-4d19-9eef-cc8da7b0a4dc@intel.com>
+Date: Thu, 13 Mar 2025 11:17:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/pZeEYs9fPa13vl4Du59hHnf";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/10] KVM: TDX: restore host xsave state when exit
+ from the guest TD
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ adrian.hunter@intel.com, seanjc@google.com, rick.p.edgecombe@intel.com,
+ Isaku Yamahata <isaku.yamahata@intel.com>
+References: <20250307212053.2948340-1-pbonzini@redhat.com>
+ <20250307212053.2948340-6-pbonzini@redhat.com>
+ <405c30e9-73be-4812-86dc-6791b08ba43c@intel.com>
+ <CABgObfZOhNtk0DKq+nB2UC+FFhsEkyiysngZoovoJP-vF43bYA@mail.gmail.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <CABgObfZOhNtk0DKq+nB2UC+FFhsEkyiysngZoovoJP-vF43bYA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---Sig_/pZeEYs9fPa13vl4Du59hHnf
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 3/12/2025 7:36 PM, Paolo Bonzini wrote:
+> On Mon, Mar 10, 2025 at 8:24 AM Xiaoyao Li <xiaoyao.li@intel.com> wrote:
+>>
+>> On 3/8/2025 5:20 AM, Paolo Bonzini wrote:
+>>> From: Isaku Yamahata <isaku.yamahata@intel.com>
+>>>
+>>> On exiting from the guest TD, xsave state is clobbered; restore it.
+>>
+>> I prefer the implementation as this patch, which is straightforward.
+>> (I would be much better if the changelog can describe more)
+> 
+> Ok:
+> 
+> Do not use kvm_load_host_xsave_state(), as it relies on vcpu->arch
+> to find out whether other KVM_RUN code has loaded guest state into
+> XCR0/PKRU/XSS or not.  In the case of TDX, the exit values are known
+> independent of the guest CR0 and CR4, and in fact the latter are not
+> available.
 
-Hi all,
+In fact, I expected some description of how xsave state is clobbered and 
+what value of them after TD exit.
 
-Today's linux-next merge of the tip tree got a conflict in:
+   After return from TDH.VP.ENTER, XCR0 is set to TD's user-mode feature
+   bits of XFAM and MSR_IA32_XSS is set to TD's supervisor-mode feature
+   bits of XFAM. PKRU keeps unchanged if the TD is not exposed with PKU
+   in XFAM or PKRU is set to 0 when XFAM.PKE(bit 9) is 1.
 
-  drivers/gpu/drm/i915/i915_pmu.c
+If the changelog has the description of TDX module, it indeed can help 
+people understand the code.
 
-between commit:
+> Thanks!
+> 
+> Paolo
+> 
 
-  87b593d79864 ("drm/i915/pmu: Drop custom hotplug code")
-
-from the drm tree and commit:
-
-  82ad584eed8b ("drm/i915/pmu: Switch to use hrtimer_setup()")
-
-from the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/i915/i915_pmu.c
-index 69a109d02116,0ce87f188d11..000000000000
---- a/drivers/gpu/drm/i915/i915_pmu.c
-+++ b/drivers/gpu/drm/i915/i915_pmu.c
-@@@ -1155,8 -1264,8 +1155,7 @@@ void i915_pmu_register(struct drm_i915_
-  	int ret =3D -ENOMEM;
- =20
-  	spin_lock_init(&pmu->lock);
-- 	hrtimer_init(&pmu->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-- 	pmu->timer.function =3D i915_sample;
-+ 	hrtimer_setup(&pmu->timer, i915_sample, CLOCK_MONOTONIC, HRTIMER_MODE_RE=
-L);
- -	pmu->cpuhp.cpu =3D -1;
-  	init_rc6(pmu);
- =20
-  	if (IS_DGFX(i915)) {
-
---Sig_/pZeEYs9fPa13vl4Du59hHnf
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfSTTUACgkQAVBC80lX
-0GwYpQf/SKAOOH/Oph01KSqzkDqHAGb9+XkiZ+ZoEEa+RaxaUjuAfbE3V5i7e+2k
-h89+AoELiv+kwMCrx6wAMqVCyikB1578QZah4eN1BR9mZZQ7oLpywlNQ6duTH7Ad
-EdeP4E5Se/GBbgTVcDR6bfhpc94wlLtmWe2JTq03eAJpg/X7siYFyoLP9icK+xh6
-Son0p1Q7lSdZMFfqqRl0YW25QFfejrCFOM1TaBhEPQvuKEmUOV89wO4tCck9o6ai
-NQaXs6KeJYk+uUnvpk8Mbm+q98lPLR3PsXfG5uBL8aNEyS7mbQhZd/I3qub0CnYr
-+M6+juEg9pFXSPs5QH2T+uGeDPBMoQ==
-=WiEi
------END PGP SIGNATURE-----
-
---Sig_/pZeEYs9fPa13vl4Du59hHnf--
 
