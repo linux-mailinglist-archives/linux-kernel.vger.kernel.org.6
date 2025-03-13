@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-560162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD26EA5FEE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:11:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76D68A5FEE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:12:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D96716E478
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:11:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 039617A3791
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7971E1EE7C0;
-	Thu, 13 Mar 2025 18:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147DD1EF393;
+	Thu, 13 Mar 2025 18:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VidZKwKu"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NNYbY42D"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13EF1E8353
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C331EDA0B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741889505; cv=none; b=jw9OCdJj0/JQYqkrRhqa3zBv7iAnxzebswEXA5lo2fKONRApaf7mJn/IesRF2Db295pUjeYWWIrXmoYcfIkfvKngaq9H/NX3YUArvWvEz2yfo2bMkJWZjdNZQ725LH70Pj4edNqy2IUatrad9PaxPJXCW/pdWz4TLv3nYgthkJg=
+	t=1741889507; cv=none; b=DImIOeshHs9n6Vai0PPj6wKEar8guSPLQu2qpqpqBI5Kw4XnITuNmq6Hp6IALOGqC5bD6qYvbSGjpdAj2sByI5vLJv43FB0fxkR1D1wOdUxZdvlPeKQLxccvkJEqYS6Lwf8fNJDKaIsJe8XzpHbu2UsxNuNi81zBXzqMPE7Gnmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741889505; c=relaxed/simple;
-	bh=ySyHX086OhKMjV+LGusFiK1XjR1ttUWVQkQVY652QBo=;
+	s=arc-20240116; t=1741889507; c=relaxed/simple;
+	bh=QoFHdORegggk6C1oj4h2wdr/nyVe2zV7VnrZowp+f2o=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nGkUUgviWE8I7nWnjhUF57LwVUTonyNQ4BPOYfrJDtrMzWwRjPRYifQH+aWLV3C94YU3PUH6xNxhu85QMjhUhkqJDq/gNDfD9YA7qh7Rg8BOi8qriX5QnwoXbtJy2gcws4egF8JxUxHvKUNKTUF0MZVfyrBXfxVkBj7k4J3x6PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VidZKwKu; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=flSuz76KghgyaikbeieG78q9fRyej4YuEIHrGBIH1WIOWuKT7GXivIbMXZaok2g63GREObcWtj2k1VmfUX1lrEm02sxjQFyVrSgvP9id9SpiWJczLS7CE7lsnWMwK7i0RB7gagv9UhAJXLocLlSdI0k87I/melRcavygR1hHwSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NNYbY42D; arc=none smtp.client-ip=209.85.221.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43cec217977so6872045e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:11:43 -0700 (PDT)
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3914bc0cc4aso715436f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:11:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741889502; x=1742494302; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1741889504; x=1742494304; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0fZcxWQbpwDGRa6fhxDYyz+3EEc+Y2ZKaTPRMrOqTnk=;
-        b=VidZKwKu6QnKNGVQ43zvHn+n1OZYMJLQh54WWUyXTanyRrw46HJAmmZNJo45P1XgGA
-         WLsvVyn4+M9L035fyLnea4tjidSL0jj/zthS0Y+gx/wJ5z8MWNSY8nmVMQfJ96AgfxTM
-         lnnrqzc9K+h2NS2vqpYyRtLpTB2z3DdfBS71QwIqCtcTrGVb5O4lFlujmnEIf0hvuhKr
-         i17/M9OyWUSLdXmaI9dVc98JQH1SGS9D8YPbSU7oLTidD7kUpF+hqSZjTrFw57qdmnlI
-         N5E9geFu9MeQ5Z3xp69pD58UDFlqPBBk7r3uv9+6Cy9YfPh6vyVldp0+KnlVkUqoYxKi
-         mBcg==
+        bh=Yd3MTUJa5EaKKcsOqm6EUTHveqQqPDqzenzbNHF0zNE=;
+        b=NNYbY42DBvqILpRNc4ZmVT1AWj+z3pnxHvCazzJFSu8MQw+ygRVnPJeHQ4/Xkw3W7s
+         AzDfm5ziIK654UUOWbq1YV3E914d2LWTlLXXznhd8nAOdeai7+T1YX5a6qh6LOypVdsy
+         X3IUDaSzKbt852Qlkckvf591OU3ed1yzb5M2gbdwgsQ2NH6ztff+Zx8BhMfE+rSnO7IL
+         fwZD91qJ0LaL0W/c+HDADBSNEgEwHbGxq/9K1Ari3LlvzPapXO0jy5BDs00ov/jL3hqV
+         jq5lYl2yghm4UVw74HObrWD/yed+uwZ3GCSMOwakUS+3TVcqmiRtwYGJyCdctp2/gSKZ
+         GGaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741889502; x=1742494302;
+        d=1e100.net; s=20230601; t=1741889504; x=1742494304;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0fZcxWQbpwDGRa6fhxDYyz+3EEc+Y2ZKaTPRMrOqTnk=;
-        b=BffRXzb8YrKW8X20X2KkroAVGQKivsldZmCZ6NNaIsomIFK+HCUa+oCP9eLFZ4xjRs
-         atr7l6VnRKuaGlfzKBKOQ1Kl1IxxjZy9A2c5Fa+J2SSgzxjS6aUd0PRtBypteZrJtcbN
-         0HjauqqTG6NZUVYVMX2gWjUMoX1ZB/+uU1b/StoOu0sBVdAUnGmq0nDo11rLviWtl6o2
-         C2DTG2nfWqc+xSB8vgciw9FAibG2gPozUjSiB1wb9KcEW8f9Fq5BrfKloJPG/f08BD69
-         L+m7nPh5xbJQ+8wdSABQ9gHn4cJ6G4u2osL+VlF8vEbdJcNRH9N3kE8tgQndWG4scIAx
-         eHWQ==
-X-Gm-Message-State: AOJu0YyiWtxcGaAaq2IoR6Q1OAhf6WL9SGCseqeGlYgzgy+l7A1zD+Nr
-	uF1Bc3violb7lGCq4ZZDnl0h232ThDKOdpuP5gucZHvWs1Mh8Vn5FKT1HdNLWpBuq/O25aOXIvJ
-	GB2aeoOaLMQ==
-X-Google-Smtp-Source: AGHT+IHiDt1oL77dvdJgK/87oo1nyciMshPbOYF45qDzwy03t12Mx9YK7JD3EmFk7CS3zUEi1Qz1ZwU+UaX2dg==
-X-Received: from wmbbd19.prod.google.com ([2002:a05:600c:1f13:b0:43c:eb09:3784])
+        bh=Yd3MTUJa5EaKKcsOqm6EUTHveqQqPDqzenzbNHF0zNE=;
+        b=lDrLHFW/2V7qs/tcpezg4Zpevvz49SSNNdHh7wWn2IFov1z+8Ndtg9BxPM1QFvqh9C
+         2zIx3Nqa3ZsxnrkiYvWDMRgl2QXomFkneUD2sK+NJ9U/Yw06hVoZ98zId/iWWQRLJcV8
+         jTzBwfUQmfju9lxfnJXBY6f8hJdB/knzZt1Io+rM+Esx+SO+uFrlag1VOrd7ZfRiEAAi
+         w9ByFukthOhpeDDE8ADP7oB3JF8t9IthIzEc0/cVxzSca/z15beNuDeN6Z94Y/aMRwIR
+         vQWOBQ5/uMGEpRrpiMu6dSTs18Ozpj2MxkIg7B1djeqWqq9im80MTsOw7lrA3jsLV16x
+         GJSg==
+X-Gm-Message-State: AOJu0Yz6JBH3tWEJnBsNPH8+k+MONJTxwtvkJKkxtjbjk37IFgjmhFRc
+	2ciOP5wkvmkHS6i/oKnL17kSuZgLQ/ZdKlpk9JL4NquRX/tKiR3ubW0lAA8aVHs4uVnoqXpGcCb
+	i7amaMbnX+A==
+X-Google-Smtp-Source: AGHT+IFsOBeq83+HmwcjVeSsK8GiNED4UzJeglwlfgEFKTnF1muToCLx1a+QuwroI+KWJKQsz/7UlqSE3IjxUQ==
+X-Received: from wmbfp13.prod.google.com ([2002:a05:600c:698d:b0:43c:fb36:c419])
  (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4593:b0:43c:fe15:41dd with SMTP id 5b1f17b1804b1-43d1d87fd9bmr6539185e9.6.1741889502176;
- Thu, 13 Mar 2025 11:11:42 -0700 (PDT)
-Date: Thu, 13 Mar 2025 18:11:20 +0000
+ 2002:adf:8b45:0:b0:391:9b2:f49a with SMTP id ffacd0b85a97d-396c3e16b07mr499843f8f.55.1741889504104;
+ Thu, 13 Mar 2025 11:11:44 -0700 (PDT)
+Date: Thu, 13 Mar 2025 18:11:21 +0000
 In-Reply-To: <20250313-asi-page-alloc-v1-0-04972e046cea@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,8 +72,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250313-asi-page-alloc-v1-0-04972e046cea@google.com>
 X-Mailer: b4 0.14.2
-Message-ID: <20250313-asi-page-alloc-v1-1-04972e046cea@google.com>
-Subject: [PATCH RFC 01/11] x86/mm: Bare minimum ASI API for page_alloc integration
+Message-ID: <20250313-asi-page-alloc-v1-2-04972e046cea@google.com>
+Subject: [PATCH RFC 02/11] x86/mm: Factor out phys_pgd_init()
 From: Brendan Jackman <jackmanb@google.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
@@ -85,182 +85,80 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
 	Yosry Ahmed <yosry.ahmed@linux.dev>
 Content-Type: text/plain; charset="utf-8"
 
-This commit serves to provide a minimal framework to present an ASI
-integration into the page allocator, without getting distracted by
-irrelevant details. There's no need to review this actively, just refer
-back to it as-needed when reading the later patches.
-
-In a real [PATCH] series this should be several separate commits.
-
-Aside from missing the actual core address-space switching and security
-logic, this is missing runtime-disablement of ASI. If you enable it in
-Kconfig, ASI's mm logic gets run unconditionally. That isn't what we
-want in the real implementation (certainly not in the initial version,
-anyway).
-
-- Add CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION. Attempt to follow the
-  proposal by Mike Rapoport here:
-  https://lore.kernel.org/linux-mm/Z8K2B3WJoICVbDj3@kernel.org/
-
-  In this RFC, there's only a small amount of x86-specific logic,
-  perhaps it's possible to implement this logic without any arch/
-  dependency. But, this is absolutely not true of the full ASI
-  implementation. So that's already reflected in the Kconfig stuff
-  here.
-
-- Introduce struct asi, which is an "ASI domain", i.e. an address space.
-  For now this is nothing but a wrapper for a PGD.
-
-- Introduce the "global nonsensitive" ASI domain. This contains all the
-  mappings that do not need to be protected from any attacker.
-  Maintaining these mappings is the subject of this RFC.
+__kernel_physical_mapping_init() will soon need to work on multiple
+PGDs, so factor out something similar to phys_p4d_init() and friends,
+which takes the base of the PGD as an argument.
 
 Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
- arch/Kconfig               | 14 ++++++++++++++
- arch/x86/Kconfig           |  1 +
- arch/x86/include/asm/asi.h | 28 ++++++++++++++++++++++++++++
- arch/x86/mm/Makefile       |  1 +
- arch/x86/mm/asi.c          |  8 ++++++++
- arch/x86/mm/init.c         |  3 ++-
- include/linux/asi.h        | 18 ++++++++++++++++++
- 7 files changed, 72 insertions(+), 1 deletion(-)
+ arch/x86/mm/init_64.c | 33 +++++++++++++++++++++++----------
+ 1 file changed, 23 insertions(+), 10 deletions(-)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index b8a4ff36558228240080a5677f702d37f4f8d547..871ad0987c8740205ceec675a6b7304c644f28e1 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -17,6 +17,20 @@ config CPU_MITIGATIONS
- 	def_bool y
- endif
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index 01ea7c6df3036bd185cdb3f54ddf244b79cbce8c..8f75274fddd96b8285aff48493ebad93e30daebe 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -731,21 +731,20 @@ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
+ }
  
-+config ARCH_HAS_MITIGATION_ADDRESS_SPACE_ISOLATION
-+	bool
-+
-+config MITIGATION_ADDRESS_SPACE_ISOLATION
-+	bool "Allow code to run with a reduced kernel address space"
-+	default n
-+	depends on ARCH_HAS_MITIGATION_ADDRESS_SPACE_ISOLATION && !PARAVIRT
-+	help
-+	  This feature provides the ability to run some kernel code
-+	  with a reduced kernel address space. This can be used to
-+	  mitigate some speculative execution attacks.
-+
-+	  !PARAVIRT dependency is a temporary hack while ASI has custom
-+	  pagetable manipulation code.
- #
- # Selected by architectures that need custom DMA operations for e.g. legacy
- # IOMMUs not handled by dma-iommu.  Drivers must never select this symbol.
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 0e27ebd7e36a9e3d69ad3e77c8db5dcf11ae3016..19ceecf5978bbe62e0742072c192c8ee952082dc 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -36,6 +36,7 @@ config X86_64
- 	select ARCH_HAS_ELFCORE_COMPAT
- 	select ZONE_DMA32
- 	select EXECMEM if DYNAMIC_FTRACE
-+	select ARCH_HAS_MITIGATION_ADDRESS_SPACE_ISOLATION
+ static unsigned long __meminit
+-__kernel_physical_mapping_init(unsigned long paddr_start,
+-			       unsigned long paddr_end,
+-			       unsigned long page_size_mask,
+-			       pgprot_t prot, bool init)
++phys_pgd_init(pgd_t *pgd_page, unsigned long paddr_start, unsigned long paddr_end,
++	      unsigned long page_size_mask, pgprot_t prot, bool init, bool *pgd_changed)
+ {
+-	bool pgd_changed = false;
+ 	unsigned long vaddr, vaddr_start, vaddr_end, vaddr_next, paddr_last;
  
- config FORCE_DYNAMIC_FTRACE
- 	def_bool y
-diff --git a/arch/x86/include/asm/asi.h b/arch/x86/include/asm/asi.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..b8f604df6a36508acbc10710f821d5f95e8cdceb
---- /dev/null
-+++ b/arch/x86/include/asm/asi.h
-@@ -0,0 +1,28 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_X86_ASI_H
-+#define _ASM_X86_ASI_H
++	*pgd_changed = false;
 +
-+#include <asm/pgtable_types.h>
-+
-+#ifdef CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION
-+
-+extern struct asi __asi_global_nonsensitive;
-+#define ASI_GLOBAL_NONSENSITIVE	(&__asi_global_nonsensitive)
-+
-+/*
-+ * An ASI domain (struct asi) represents a restricted address space. The
-+ * unrestricted address space (and user address space under PTI) are not
-+ * represented as a domain.
-+ */
-+struct asi {
-+	pgd_t *pgd;
-+};
-+
-+static __always_inline pgd_t *asi_pgd(struct asi *asi)
+ 	paddr_last = paddr_end;
+ 	vaddr = (unsigned long)__va(paddr_start);
+ 	vaddr_end = (unsigned long)__va(paddr_end);
+ 	vaddr_start = vaddr;
+ 
+ 	for (; vaddr < vaddr_end; vaddr = vaddr_next) {
+-		pgd_t *pgd = pgd_offset_k(vaddr);
++		pgd_t *pgd = pgd_offset_pgd(pgd_page, vaddr);
+ 		p4d_t *p4d;
+ 
+ 		vaddr_next = (vaddr & PGDIR_MASK) + PGDIR_SIZE;
+@@ -771,15 +770,29 @@ __kernel_physical_mapping_init(unsigned long paddr_start,
+ 					  (pud_t *) p4d, init);
+ 
+ 		spin_unlock(&init_mm.page_table_lock);
+-		pgd_changed = true;
++		*pgd_changed = true;
+ 	}
+ 
+-	if (pgd_changed)
+-		sync_global_pgds(vaddr_start, vaddr_end - 1);
+-
+ 	return paddr_last;
+ }
+ 
++static unsigned long __meminit
++__kernel_physical_mapping_init(unsigned long paddr_start,
++			       unsigned long paddr_end,
++			       unsigned long page_size_mask,
++			       pgprot_t prot, bool init)
 +{
-+	return asi ? asi->pgd : NULL;
++	bool pgd_changed;
++	unsigned long paddr_last;
++
++	paddr_last = phys_pgd_init(init_mm.pgd, paddr_start, paddr_end, page_size_mask,
++				   prot, init, &pgd_changed);
++	if (pgd_changed)
++		sync_global_pgds((unsigned long)__va(paddr_start),
++				 (unsigned long)__va(paddr_end) - 1);
++
++	return paddr_last;
 +}
-+
-+#endif /* CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION */
-+
-+#endif /* _ASM_X86_ASI_H */
-diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
-index 690fbf48e8538b62a176ce838820e363575b7897..89ade7363798cc20d5e5643526eba7378174baa0 100644
---- a/arch/x86/mm/Makefile
-+++ b/arch/x86/mm/Makefile
-@@ -61,6 +61,7 @@ obj-$(CONFIG_ACPI_NUMA)		+= srat.o
- obj-$(CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS)	+= pkeys.o
- obj-$(CONFIG_RANDOMIZE_MEMORY)			+= kaslr.o
- obj-$(CONFIG_MITIGATION_PAGE_TABLE_ISOLATION)	+= pti.o
-+obj-$(CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION)		+= asi.o
  
- obj-$(CONFIG_X86_MEM_ENCRYPT)	+= mem_encrypt.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_amd.o
-diff --git a/arch/x86/mm/asi.c b/arch/x86/mm/asi.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..e5a981a7b3192655cd981633514fbf945b92c9b6
---- /dev/null
-+++ b/arch/x86/mm/asi.c
-@@ -0,0 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <asm/asi.h>
-+
-+static __aligned(PAGE_SIZE) pgd_t asi_global_nonsensitive_pgd[PTRS_PER_PGD];
-+
-+struct asi __asi_global_nonsensitive = {
-+	.pgd = asi_global_nonsensitive_pgd,
-+};
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index 62aa4d66a032d59191e79d34fc0cdaa4f32f88db..44d3dc574881dd23bb48f9af3f6191be309405ef 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -250,7 +250,8 @@ static void __init probe_page_size_mask(void)
- 	/* By the default is everything supported: */
- 	__default_kernel_pte_mask = __supported_pte_mask;
- 	/* Except when with PTI where the kernel is mostly non-Global: */
--	if (cpu_feature_enabled(X86_FEATURE_PTI))
-+	if (cpu_feature_enabled(X86_FEATURE_PTI) ||
-+	    IS_ENABLED(CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION))
- 		__default_kernel_pte_mask &= ~_PAGE_GLOBAL;
- 
- 	/* Enable 1 GB linear kernel mappings if available: */
-diff --git a/include/linux/asi.h b/include/linux/asi.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..2d3049d5fe423e139dcce8f3d68cdffcc0ec0bfe
---- /dev/null
-+++ b/include/linux/asi.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _INCLUDE_ASI_H
-+#define _INCLUDE_ASI_H
-+
-+#include <asm/pgtable_types.h>
-+
-+#ifdef CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION
-+#include <asm/asi.h>
-+#else
-+
-+#define ASI_GLOBAL_NONSENSITIVE NULL
-+
-+struct asi {};
-+
-+static inline pgd_t *asi_pgd(struct asi *asi) { return NULL; }
-+
-+#endif /* CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION */
-+#endif /* _INCLUDE_ASI_H */
+ /*
+  * Create page table mapping for the physical memory for specific physical
 
 -- 
 2.49.0.rc1.451.g8f38331e32-goog
