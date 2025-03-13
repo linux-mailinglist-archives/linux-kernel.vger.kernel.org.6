@@ -1,484 +1,182 @@
-Return-Path: <linux-kernel+bounces-560385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8689A60362
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:24:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8334A60367
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:26:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7732A19C550C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:24:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41A453AC451
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365991F4CBA;
-	Thu, 13 Mar 2025 21:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8421F4CA2;
+	Thu, 13 Mar 2025 21:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtyegRGZ"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DPAyuHcT"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031CB126C1E;
-	Thu, 13 Mar 2025 21:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68592126C1E
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 21:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741901047; cv=none; b=R5CxGuv1ciTyCEtnXlxYmg3XiodnqDuRHul10dXGIAhnH9S41PAssCXGdwl9r7ShLQaBeWKqDk9HaE/fTKXItgr6nUTPLaiQzP30m96PNC3f+gOgxuS2LFtyrIxEo2TbCdMHzIeaVspHLqIvO1Az+YI8TF41lAhwdu5j0uLTdes=
+	t=1741901170; cv=none; b=uen77ZCH/Pn9M172u3c3E+RkMZCwvOdfW9tgvdsdTWhF1uNGagStbqkmOwIfes3/ZO7c47Glgg/+1UtL7PmJTwnezArF+ywVwVCc3rr+rCA/LpT9v6Kep21S9DcnaBgoGMe/PtJpBFxmhdChy+/5zkWPuHbXmPWV9jW9eoqMXb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741901047; c=relaxed/simple;
-	bh=E9QCYF5QPMYuyOJGMqe6mw0hBHhOYcpSln7oUw7TDkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CWb3xfzjJJaKI6hRpJ+78MpMtDJ5ELiVXCNC6CcCQaTKagYeitvceHrSJQyJBoMdC3AlAGMp0xZjzBknjqBT7KoaUHAoAOlNekwcIWci/Or7OaLOEurOBftbSSCW0CdroRjpGOWbD6uyR2nWmUMRm/VgyBXyS85yeIvfoticqMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtyegRGZ; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so13564855e9.3;
-        Thu, 13 Mar 2025 14:24:04 -0700 (PDT)
+	s=arc-20240116; t=1741901170; c=relaxed/simple;
+	bh=UfXACb8VfYItqeVlsi0BGbqMyOFIDyF57IXGiKf6dfU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HJ7MTfmF4E4bEE9P+DoNfli7ij2ZQfmDsHpVQdFwzzO9KLbggfp7qAdQS0BKOk4BPIeRpa6yVFuuWMt3bzJcdKMT5aHcw7EFgeCPLtTngQf0aw9UWEalGRh6PyyQZEN8WpHYSbWVeiiwa3XYt1YEfYVSr8SlDpLcppT+rcCCnfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DPAyuHcT; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54993c68ba0so1611249e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:26:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741901043; x=1742505843; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SvyF9nfx6DHlfNKd21yJvFRMaOsL9CnP6cGeibghQmI=;
-        b=dtyegRGZms5qDJjzTo1y792u2gQsyKoWKT4k3TluwdctUterGiGnLP9AtqLOG+7lfp
-         9Q5VKbV9DFbkthcsccNHd3OhnM2n5HEnZ2HXXppAfabynhrX5ah5sjZiMVRkFK+lRiQN
-         K91iWZ4GYyJEOAK8oGC9+HqkkymdVilljOKsOUjzxpNSLLVhXKYOY/IDBS4eSZ9lCucU
-         U1KqpGeU0YnfWadwiIwKLasRGlWVz9yV609u4UsmMjtYmgvPAcVDgSlygIuVq1XZZzgD
-         N1PHt1qsUK7Kn5ELQJ+ashdYjsStq88lOid4HeshgdV76KzfgtCNyJwyFIsx2Vdhp1hG
-         4BQQ==
+        d=google.com; s=20230601; t=1741901166; x=1742505966; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lEvSm/qV/gA4924ww+yiikc6EOcgXf2+Ryx6VfqPSVs=;
+        b=DPAyuHcThzY62v6CJT6aaJ+huGprvPxXkR/ZArExmMykVNg+JuOMayLor2+vOPG/Kq
+         MtGyyyqh77u2bkTLUF2VfWhEOAA41o+i/r6hRlO1hTrMMY4Mp1SuP2CDBmbcbvIktLDs
+         dF5dBHI4SEKRHUGN/qTgMIdbwECQEbV9cquWd2xij9y7k9pY/IyaMlgS6VbcxNktMDHk
+         AUZu5A6Rj53LxTnYeq6IgPpauvvl9vHvhfUHjNU6Xg9uzZBC/Exu0gcv91uu9hXPJfsW
+         ovj199aneCD4e9MxNShTfWgxt3cRyRYX9G3oqD4YvEc/+oqO7JG3m3hJzDaKQaQwpU2F
+         0Piw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741901043; x=1742505843;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SvyF9nfx6DHlfNKd21yJvFRMaOsL9CnP6cGeibghQmI=;
-        b=FtaH7rl/NtjiTIfh2de1beXLyBbyMRD/C8RiRYqfq3ct06v0cUxQk7so8IKfNPksRS
-         G/envfRNXAzVCmGqv62HFTuoAXoMmyi3raA6Og7yfKT8WGgpjpbp0Rj/cqI+q501a8Xo
-         hcoR0AhbGIURuRSLDcA0XGnH0H++YVJPaqYUvA1nP0VR5q29v7sEllCGuDLExlM1xf9y
-         QbLgYG9fROSkiKDRAqFm7E2Hh1/PInn36emQs8E1G3E2a7TmKJoVksoH+pS+ZbikHX2D
-         s1gZTEun9cuMV2JlHF8xbx6YxGr41sYV4gJ9uchjtC6ssHGVXA18tvxunZ6DO0X+1FwW
-         bzVA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6q6XHGX+LgfU2SnpHy2l1/vUYsUXRFGU5yVpapnrOZfoj1xInkDCd4jwYIW4a7WNyoC4arMpeCDtKeJk=@vger.kernel.org, AJvYcCVlrVfSemOMfCA1xa4cM1l/hCIW8Vw4xxiVA9eanE+MfPVrzEUKzHd5/4Q5SwMD21AXx0qOT2y0f/5hYTRQjEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWQwWo4los/8PVOQ9qqOOZG9YzHq3DhtdAQF2IvrgZcBupeH1x
-	gdMHPwoiPt97DGsF5umkIhNiI/PHGJEZ1Y77HboJ/RaCG262Jzyy
-X-Gm-Gg: ASbGncsyEqCfVgF83ePVANXgR3hS1OBKmtbOJbE+7bynnCmlFf9IbISs08j5bzyzQIn
-	P/RSc9wZ8OsU0LaldbVZp38Ut+msLVOY3oKRP8s6ES9739bfPFBhXL9TK/cjEIQURqcGFE0EZOS
-	GuvGDeevU91hAiGOsakJ6UaEgxYDxrWR7ABmL6r3LZSDHCT3brYIQw92nhg/xiuMmfSWTYJ0Q3/
-	T7RO0gziiLxE2Vy/HGB3MiHg71wIZOY/46M6kItEh4I/R2vlBOx5CAfEj8pzo65P7RI9Fp5tpSX
-	i/LJqhthRWg6h7QDcu3ITYn91ckLNBEDxXZg3a6NkgOPBPp4jIOAMTfBbItbp+tWWlnsMeRW5Xd
-	QtxfEfb3u
-X-Google-Smtp-Source: AGHT+IE9bzVBDfeqI+0tVTqcX2KIEcyK18x/iW1GlrrVw8/hIDs1mTWCRmCXoZWv0gJWzxt802AL2Q==
-X-Received: by 2002:a05:600c:3b02:b0:43c:fc00:f94f with SMTP id 5b1f17b1804b1-43d1ecd8723mr1232425e9.23.1741901042998;
-        Thu, 13 Mar 2025 14:24:02 -0700 (PDT)
-Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a8d0af7sm64994745e9.35.2025.03.13.14.24.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 14:24:01 -0700 (PDT)
-Date: Thu, 13 Mar 2025 21:24:00 +0000
-From: Stafford Horne <shorne@gmail.com>
-To: Sahil Siddiq <icegambit91@gmail.com>
-Cc: jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
-	sahilcdq@proton.me, linux-openrisc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC] openrisc: Add cacheinfo support
-Message-ID: <Z9NM8K92M8kS6t4k@antec>
-References: <20250310191358.67912-1-sahilcdq@proton.me>
+        d=1e100.net; s=20230601; t=1741901166; x=1742505966;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lEvSm/qV/gA4924ww+yiikc6EOcgXf2+Ryx6VfqPSVs=;
+        b=vaDLneG+LypbcewcICTcc5peGErzrsgKfhyT/fpliRfFDTfawQ1CR4RoUpxklryjrV
+         L0fT9pprZiqyMAa6zUj5emOzEiwM38RLirTjNZH6DbBW8mOUhwG+m9qwKEDzyaUSnkK7
+         gpxylJhbsKUzcQNgJscVfJlWqm29CYlPEReqd9CRFr1U3tMiwp3EpxDrxXfPypbluTEn
+         hp86TtU4OeO6nXNbDWss8fH6qX1Wm3CCPXHZTl1N2BmWEv0ZaPF/oFbK5McRJs1r1Bao
+         gXmxVE4CbW2raiqvniTE+bN2sMtVoETLZ5z/0JH7cc4V5WM8dc+gmAOK9z4RWfl76ehU
+         aweQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsnfAzocg9N5jFXfzn3hCuUZqgSJNdpRSwqOWHbGz6gubkeSkl+g74Zp4Ofm/jvfMYR427FP/9wHX3N0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrBgaJYArWlbyuKG21i3zjW0u5eGz/m5bGY2QIaaSQTC3+5lsd
+	fU+1jJaTEVHRfmtIWCapSHqv613deQERooyT2fjJgbwSPODbn7AjterkGiCO85Mvm1papXjt3SS
+	a0KSgLe7jabmA4eb0SnSAv660hlT/nstgvoLg
+X-Gm-Gg: ASbGncv8gMh5ewV6Za2ExOzQk8vK83+OZ10xXXHRxMA3WL3sA6Gk5jJrGKf09vw4xqG
+	VKHthFp+NS4EcdpQpouRLXjdhryGgIUNjG3YcRI/9a1bw8BfG1SWJurQKHcvdt9V92tJLgAJIGz
+	kxsBlT6Uhs1jxzuNcq1wkAYFzps+qEi+0Mw0seL/90enM/0pIKTulLjCgWrallo98=
+X-Google-Smtp-Source: AGHT+IEUpl49m15csoisl4xdaOkvHB8pMtPnENRpafG0hTYq79/CSmqGTNA7Wf/Eyj58fOjm/pwvBRSNin5jsVrWKfM=
+X-Received: by 2002:a05:6512:ac6:b0:545:225d:6463 with SMTP id
+ 2adb3069b0e04-549c3989a09mr7738e87.42.1741901166311; Thu, 13 Mar 2025
+ 14:26:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250310191358.67912-1-sahilcdq@proton.me>
+References: <12627587.O9o76ZdvQC@rjwysocki.net>
+In-Reply-To: <12627587.O9o76ZdvQC@rjwysocki.net>
+From: Saravana Kannan <saravanak@google.com>
+Date: Thu, 13 Mar 2025 14:25:29 -0700
+X-Gm-Features: AQ5f1Jqh94uLmKYTj2Ojq8OmsbxaVGGM4qAQ2zcuSBghRC-ys5SVAMfqNlmaOJs
+Message-ID: <CAGETcx-sydVJcigqin-zO=ANc65kuz5F3X51a8-SnM0X2zKhMw@mail.gmail.com>
+Subject: Re: [PATCH v1] PM: sleep: Fix handling devices with direct_complete
+ set on errors
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 11, 2025 at 12:43:57AM +0530, Sahil Siddiq wrote:
-> Add cacheinfo support for OpenRISC.
-> 
-> Currently, a few CPU cache attributes pertaining to OpenRISC processors
-> are exposed along with other unrelated CPU attributes in the procfs file
-> system (/proc/cpuinfo). However, a few cache attributes remain unexposed.
-> An attempt is also made to pull these CPU cache attributes without
-> detecting if the relevant cache exists.
-> 
-> This patch provides a mechanism that the generic cacheinfo infrastructure
-> can employ to expose these attributes via the sysfs file system. These
-> attributes are exposed in /sys/devices/system/cpu/cpuX/cache/indexN.
-> Cache attributes are pulled only when the cache component is detected.
-> 
-> The implementation to pull cache attributes from the processor's
-> registers has been moved from arch/openrisc/kernel/setup.c with a few
-> modifications.
-> 
-> The patch also moves cache-related fields out of struct cpuinfo_or1k and
-> into its own struct to keep the implementation straightforward. This
-> reduces duplication of cache-related fields while keeping cpuinfo_or1k
-> extensible in case more cache descriptors are added in the future.
-> 
-> This implementation is based on similar work done for MIPS and LoongArch.
-> 
-> Signed-off-by: Sahil Siddiq <sahilcdq@proton.me>
-> ---
-> Before applying these changes, there is no "cache" directory in
-> /sys/devices/system/cpu/cpu0. After applying these changes, the
-> cache directory is present and has the following hierarchy.
-> 
-> ~ # tree /sys/devices/system/cpu/cpu0/cache/
-> /sys/devices/system/cpu/cpu0/cache/
-> ├── index0
-> │   ├── coherency_line_size
-> │   ├── level
-> │   ├── number_of_sets
-> │   ├── shared_cpu_list
-> │   ├── shared_cpu_map
-> │   ├── size
-> │   ├── type
-> │   ├── uevent
-> │   ├── ways_of_associativity
-> │   └── write_policy
-> ├── index1
-> │   ├── coherency_line_size
-> │   ├── level
-> │   ├── number_of_sets
-> │   ├── shared_cpu_list
-> │   ├── shared_cpu_map
-> │   ├── size
-> │   ├── type
-> │   ├── uevent
-> │   └── ways_of_associativity
-> └── uevent
-> 
-> The newly implemented "init_cache_level()" pulls the cache details by
-> reading the processor's special registers as it was being done in
-> setup.c.
-> 
-> None of the functions in drivers/base/cacheinfo.c that are capable of
-> pulling these details (e.g.: cache_size) have been used. This is because
-> they pull these details by reading properties present in the device tree
-> file. In setup.c, for example, the value of "clock-frequency" is pulled
-> from the device tree file.
-> 
-> Cache related properties are currently not present in OpenRISC's device
-> tree files.
-
-If we want to add L2 caches and define them in the device tree would
-it "just work" or is more work needed?
-
-> Regarding the "shared_cpu_map" cache attribute, I wasn't able to find
-> anything in the OpenRISC architecture manual to indicate that processors
-> in a multi-processor system may share the same cache component. MIPS uses
-> "globalnumber" to detect siblings. LoongArch uses a "CACHE_PRIVATE" flag
-> to detect siblings sharing the same cache.
-
-In SMP environment the L1 caches are not shared they are specific to each CPU.
-
-Also, we do not have hyperthreading in OpenRISC so shared_cpu_map should be a
-1-to-1 mapping with the cpu.  Do you need to do extra work to setup that
-mapping?
-
-> I am running with the assumption that every OpenRISC core has its own
-> icache and dcache. Given that OpenRISC does not support a multi-level
-> cache architecture and that icache and dcache are like L1 caches, I
-> think this assumption is reasonable. What are your thoughts on this?
-
-Currently this is the case, but it could be possible to create an SoC with L2
-caches.  I could imagine these would be outside of the CPU and we could define
-them with the device tree.
-
-> Another issue I noticed is that the unit used in ...cache/indexN/size
-> is KB. The actual value of the size is right-shifted by 10 before being
-> reported. When testing these changes using QEMU (and without making any
-> modifications to the values stored in DCCFGR and ICCFGR), the cache size
-> is far smaller than 1KB. Consequently, this is reported as 0K. For cache
-> sizes smaller than 1KB, should something be done to report it in another
-> unit? Reporting 0K seems a little misleading.
-
-I think this is fine, as long as we pass in the correct size in bytes.
-
-> Thanks,
-> Sahil
-> 
->  arch/openrisc/include/asm/cpuinfo.h |  16 +++--
->  arch/openrisc/kernel/Makefile       |   2 +-
->  arch/openrisc/kernel/cacheinfo.c    | 104 ++++++++++++++++++++++++++++
->  arch/openrisc/kernel/dma.c          |   6 +-
->  arch/openrisc/kernel/setup.c        |  45 ------------
->  5 files changed, 117 insertions(+), 56 deletions(-)
->  create mode 100644 arch/openrisc/kernel/cacheinfo.c
-> 
-> diff --git a/arch/openrisc/include/asm/cpuinfo.h b/arch/openrisc/include/asm/cpuinfo.h
-> index 5e4744153d0e..82f5d4c06314 100644
-> --- a/arch/openrisc/include/asm/cpuinfo.h
-> +++ b/arch/openrisc/include/asm/cpuinfo.h
-> @@ -15,16 +15,18 @@
->  #ifndef __ASM_OPENRISC_CPUINFO_H
->  #define __ASM_OPENRISC_CPUINFO_H
->  
-> +struct cache_desc {
-> +	u32 size;
-> +	u32 sets;
-> +	u32 block_size;
-> +	u32 ways;
-> +};
-> +
->  struct cpuinfo_or1k {
->  	u32 clock_frequency;
->  
-> -	u32 icache_size;
-> -	u32 icache_block_size;
-> -	u32 icache_ways;
-> -
-> -	u32 dcache_size;
-> -	u32 dcache_block_size;
-> -	u32 dcache_ways;
-> +	struct cache_desc icache;
-> +	struct cache_desc dcache;
->  
->  	u16 coreid;
->  };
-> diff --git a/arch/openrisc/kernel/Makefile b/arch/openrisc/kernel/Makefile
-> index 79129161f3e0..e4c7d9bdd598 100644
-> --- a/arch/openrisc/kernel/Makefile
-> +++ b/arch/openrisc/kernel/Makefile
-> @@ -7,7 +7,7 @@ extra-y	:= vmlinux.lds
->  
->  obj-y	:= head.o setup.o or32_ksyms.o process.o dma.o \
->  	   traps.o time.o irq.o entry.o ptrace.o signal.o \
-> -	   sys_call_table.o unwinder.o
-> +	   sys_call_table.o unwinder.o cacheinfo.o
->  
->  obj-$(CONFIG_SMP)		+= smp.o sync-timer.o
->  obj-$(CONFIG_STACKTRACE)	+= stacktrace.o
-> diff --git a/arch/openrisc/kernel/cacheinfo.c b/arch/openrisc/kernel/cacheinfo.c
-> new file mode 100644
-> index 000000000000..515969896c20
-> --- /dev/null
-> +++ b/arch/openrisc/kernel/cacheinfo.c
-> @@ -0,0 +1,104 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * OpenRISC cacheinfo support
-> + *
-> + * Based on work done for MIPS and LoongArch. All original copyrights
-> + * apply as per the original source declaration.
-> + *
-> + * OpenRISC implementation:
-> + * Copyright (C) 2025 Sahil Siddiq <sahilcdq@proton.me>
-> + */
-> +
-> +#include <linux/cacheinfo.h>
-> +#include <asm/cpuinfo.h>
-> +#include <asm/spr.h>
-> +#include <asm/spr_defs.h>
-> +
-> +static inline void ci_leaf_init(struct cacheinfo *this_leaf, enum cache_type type,
-> +				unsigned int level, struct cache_desc *cache, int cpu)
-> +{
-> +	this_leaf->type = type;
-> +	this_leaf->level = level;
-> +	this_leaf->coherency_line_size = cache->block_size;
-> +	this_leaf->number_of_sets = cache->sets;
-> +	this_leaf->ways_of_associativity = cache->ways;
-> +	this_leaf->size = cache->size;
-> +	cpumask_set_cpu(cpu, &this_leaf->shared_cpu_map);
-> +}
-> +
-> +int init_cache_level(unsigned int cpu)
-> +{
-> +	struct cpuinfo_or1k *cpuinfo = &cpuinfo_or1k[smp_processor_id()];
-> +	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
-> +	int leaves = 0, levels = 0;
-> +	unsigned long upr = mfspr(SPR_UPR);
-> +	unsigned long iccfgr, dccfgr;
-> +
-> +	if (!(upr & SPR_UPR_UP)) {
-> +		printk(KERN_INFO
-> +		       "-- no UPR register... unable to detect configuration\n");
-> +		return -ENOENT;
-> +	}
-> +
-> +	if (upr & SPR_UPR_DCP) {
-> +		dccfgr = mfspr(SPR_DCCFGR);
-> +		cpuinfo->dcache.ways = 1 << (dccfgr & SPR_DCCFGR_NCW);
-> +		cpuinfo->dcache.sets = 1 << ((dccfgr & SPR_DCCFGR_NCS) >> 3);
-> +		cpuinfo->dcache.block_size = 16 << ((dccfgr & SPR_DCCFGR_CBS) >> 7);
-> +		cpuinfo->dcache.size =
-> +		    cpuinfo->dcache.sets * cpuinfo->dcache.ways * cpuinfo->dcache.block_size;
-> +		leaves += 1;
-> +		printk(KERN_INFO
-> +		       "-- dcache: %4d bytes total, %2d bytes/line, %d way(s)\n",
-> +		       cpuinfo->dcache.size, cpuinfo->dcache.block_size,
-> +		       cpuinfo->dcache.ways);
-
-Can we print the number of sets here too?  Also is there a reason to pad these
-int's with 4 and 2 spaces? I am not sure the padding is needed.
-
-> +	} else
-> +		printk(KERN_INFO "-- dcache disabled\n");
-> +
-> +	if (upr & SPR_UPR_ICP) {
-> +		iccfgr = mfspr(SPR_ICCFGR);
-> +		cpuinfo->icache.ways = 1 << (iccfgr & SPR_ICCFGR_NCW);
-> +		cpuinfo->icache.sets = 1 << ((iccfgr & SPR_ICCFGR_NCS) >> 3);
-> +		cpuinfo->icache.block_size = 16 << ((iccfgr & SPR_ICCFGR_CBS) >> 7);
-> +		cpuinfo->icache.size =
-> +		    cpuinfo->icache.sets * cpuinfo->icache.ways * cpuinfo->icache.block_size;
-> +		leaves += 1;
-> +		printk(KERN_INFO
-> +		       "-- icache: %4d bytes total, %2d bytes/line, %d way(s)\n",
-> +		       cpuinfo->icache.size, cpuinfo->icache.block_size,
-> +		       cpuinfo->icache.ways);
-
-Same here.
-
-> +	} else
-> +		printk(KERN_INFO "-- icache disabled\n");
-> +
-> +	if (!leaves)
-> +		return -ENOENT;
-> +
-> +	levels = 1;
-> +
-> +	this_cpu_ci->num_leaves = leaves;
-> +	this_cpu_ci->num_levels = levels;
-> +
-> +	return 0;
-> +}
-> +
-> +int populate_cache_leaves(unsigned int cpu)
-> +{
-> +	struct cpuinfo_or1k *cpuinfo = &cpuinfo_or1k[smp_processor_id()];
-> +	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
-> +	struct cacheinfo *this_leaf = this_cpu_ci->info_list;
-> +	int level = 1;
-> +
-> +	if (cpuinfo->dcache.ways) {
-> +		ci_leaf_init(this_leaf, CACHE_TYPE_DATA, level, &cpuinfo->dcache, cpu);
-> +		this_leaf->attributes = ((mfspr(SPR_DCCFGR) & SPR_DCCFGR_CWS) >> 8) ?
-> +					CACHE_WRITE_BACK : CACHE_WRITE_THROUGH;
-> +		this_leaf++;
-> +	}
-> +
-> +	if (cpuinfo->icache.ways)
-> +		ci_leaf_init(this_leaf, CACHE_TYPE_INST, level, &cpuinfo->icache, cpu);
-> +
-> +	this_cpu_ci->cpu_map_populated = true;
-> +
-> +	return 0;
-> +}
-> diff --git a/arch/openrisc/kernel/dma.c b/arch/openrisc/kernel/dma.c
-> index b3edbb33b621..5864c4c7a8b8 100644
-> --- a/arch/openrisc/kernel/dma.c
-> +++ b/arch/openrisc/kernel/dma.c
-> @@ -36,7 +36,7 @@ page_set_nocache(pte_t *pte, unsigned long addr,
->  	flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
->  
->  	/* Flush page out of dcache */
-> -	for (cl = __pa(addr); cl < __pa(next); cl += cpuinfo->dcache_block_size)
-> +	for (cl = __pa(addr); cl < __pa(next); cl += cpuinfo->dcache.block_size)
->  		mtspr(SPR_DCBFR, cl);
->  
->  	return 0;
-> @@ -105,13 +105,13 @@ void arch_sync_dma_for_device(phys_addr_t addr, size_t size,
->  	case DMA_TO_DEVICE:
->  		/* Flush the dcache for the requested range */
->  		for (cl = addr; cl < addr + size;
-> -		     cl += cpuinfo->dcache_block_size)
-> +		     cl += cpuinfo->dcache.block_size)
->  			mtspr(SPR_DCBFR, cl);
->  		break;
->  	case DMA_FROM_DEVICE:
->  		/* Invalidate the dcache for the requested range */
->  		for (cl = addr; cl < addr + size;
-> -		     cl += cpuinfo->dcache_block_size)
-> +		     cl += cpuinfo->dcache.block_size)
->  			mtspr(SPR_DCBIR, cl);
->  		break;
->  	default:
-> diff --git a/arch/openrisc/kernel/setup.c b/arch/openrisc/kernel/setup.c
-> index be56eaafc8b9..38172c0989cf 100644
-> --- a/arch/openrisc/kernel/setup.c
-> +++ b/arch/openrisc/kernel/setup.c
-> @@ -107,27 +107,6 @@ static void print_cpuinfo(void)
->  	printk(KERN_INFO "CPU: OpenRISC-%x (revision %d) @%d MHz\n",
->  	       version, revision, cpuinfo->clock_frequency / 1000000);
->  
-> -	if (!(upr & SPR_UPR_UP)) {
-> -		printk(KERN_INFO
-> -		       "-- no UPR register... unable to detect configuration\n");
-> -		return;
-> -	}
-> -
-> -	if (upr & SPR_UPR_DCP)
-> -		printk(KERN_INFO
-> -		       "-- dcache: %4d bytes total, %2d bytes/line, %d way(s)\n",
-> -		       cpuinfo->dcache_size, cpuinfo->dcache_block_size,
-> -		       cpuinfo->dcache_ways);
-> -	else
-> -		printk(KERN_INFO "-- dcache disabled\n");
-> -	if (upr & SPR_UPR_ICP)
-> -		printk(KERN_INFO
-> -		       "-- icache: %4d bytes total, %2d bytes/line, %d way(s)\n",
-> -		       cpuinfo->icache_size, cpuinfo->icache_block_size,
-> -		       cpuinfo->icache_ways);
-> -	else
-> -		printk(KERN_INFO "-- icache disabled\n");
-> -
->  	if (upr & SPR_UPR_DMP)
->  		printk(KERN_INFO "-- dmmu: %4d entries, %lu way(s)\n",
->  		       1 << ((mfspr(SPR_DMMUCFGR) & SPR_DMMUCFGR_NTS) >> 2),
-> @@ -155,8 +134,6 @@ static void print_cpuinfo(void)
->  void __init setup_cpuinfo(void)
->  {
->  	struct device_node *cpu;
-> -	unsigned long iccfgr, dccfgr;
-> -	unsigned long cache_set_size;
->  	int cpu_id = smp_processor_id();
->  	struct cpuinfo_or1k *cpuinfo = &cpuinfo_or1k[cpu_id];
->  
-> @@ -164,20 +141,6 @@ void __init setup_cpuinfo(void)
->  	if (!cpu)
->  		panic("Couldn't find CPU%d in device tree...\n", cpu_id);
->  
-> -	iccfgr = mfspr(SPR_ICCFGR);
-> -	cpuinfo->icache_ways = 1 << (iccfgr & SPR_ICCFGR_NCW);
-> -	cache_set_size = 1 << ((iccfgr & SPR_ICCFGR_NCS) >> 3);
-> -	cpuinfo->icache_block_size = 16 << ((iccfgr & SPR_ICCFGR_CBS) >> 7);
-> -	cpuinfo->icache_size =
-> -	    cache_set_size * cpuinfo->icache_ways * cpuinfo->icache_block_size;
-> -
-> -	dccfgr = mfspr(SPR_DCCFGR);
-> -	cpuinfo->dcache_ways = 1 << (dccfgr & SPR_DCCFGR_NCW);
-> -	cache_set_size = 1 << ((dccfgr & SPR_DCCFGR_NCS) >> 3);
-> -	cpuinfo->dcache_block_size = 16 << ((dccfgr & SPR_DCCFGR_CBS) >> 7);
-> -	cpuinfo->dcache_size =
-> -	    cache_set_size * cpuinfo->dcache_ways * cpuinfo->dcache_block_size;
-> -
->  	if (of_property_read_u32(cpu, "clock-frequency",
->  				 &cpuinfo->clock_frequency)) {
->  		printk(KERN_WARNING
-> @@ -320,14 +283,6 @@ static int show_cpuinfo(struct seq_file *m, void *v)
->  		seq_printf(m, "revision\t\t: %d\n", vr & SPR_VR_REV);
->  	}
->  	seq_printf(m, "frequency\t\t: %ld\n", loops_per_jiffy * HZ);
-> -	seq_printf(m, "dcache size\t\t: %d bytes\n", cpuinfo->dcache_size);
-> -	seq_printf(m, "dcache block size\t: %d bytes\n",
-> -		   cpuinfo->dcache_block_size);
-> -	seq_printf(m, "dcache ways\t\t: %d\n", cpuinfo->dcache_ways);
-> -	seq_printf(m, "icache size\t\t: %d bytes\n", cpuinfo->icache_size);
-> -	seq_printf(m, "icache block size\t: %d bytes\n",
-> -		   cpuinfo->icache_block_size);
-> -	seq_printf(m, "icache ways\t\t: %d\n", cpuinfo->icache_ways);
->  	seq_printf(m, "immu\t\t\t: %d entries, %lu ways\n",
->  		   1 << ((mfspr(SPR_DMMUCFGR) & SPR_DMMUCFGR_NTS) >> 2),
->  		   1 + (mfspr(SPR_DMMUCFGR) & SPR_DMMUCFGR_NTW));
-> -- 
-> 2.48.1
+On Thu, Mar 13, 2025 at 9:00=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.ne=
+t> wrote:
 >
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> When dpm_suspend() fails, some devices with power.direct_complete set
+> may not have been handled by device_suspend() yet, so runtime PM has
+> not been disabled for them yet even though power.direct_complete is set.
+>
+> Since device_resume() expects that runtime PM has been disabled for all
+> devices with power.direct_complete set, it will attempt to reenable
+> runtime PM for the devices that have not been processed by device_suspend=
+()
+> which does not make sense.  Had those devices had runtime PM disabled
+> before device_suspend() had run, device_resume() would have inadvertently
+> enable runtime PM for them, but this is not expected to happen because
+> it would require ->prepare() callbacks to return positive values for
+> devices with runtime PM disabled, which would be invalid.
+>
+> In practice, this issue is most likely benign because pm_runtime_enable()
+> will not allow the "disable depth" counter to underflow, but it causes a
+> warning message to be printed for each affected device.
+>
+> To allow device_resume() to distinguish the "direct complete" devices
+> that have been processed by device_suspend() from those which have not
+> been handled by it, make device_suspend() set power.is_suspended for
+> "direct complete" devices.
+>
+> Next, move the power.is_suspended check in device_resume() before the
+> power.direct_complete check in it to make it skip the "direct complete"
+> devices that have not been handled by device_suspend().
+>
+> This change is based on a preliminary patch from Saravana Kannan.
+>
+> Fixes: aae4518b3124 ("PM / sleep: Mechanism to avoid resuming runtime-sus=
+pended devices unnecessarily")
+> Link: https://lore.kernel.org/linux-pm/20241114220921.2529905-2-saravanak=
+@google.com/
+> Reported-by: Saravana Kannan <saravanak@google.com>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-This pretty much looks ok to me.
+Reviewed-by: Saravana Kannan <saravanak@google.com>
 
-Thanks,
-
--Stafford
+> ---
+>  drivers/base/power/main.c |    8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -938,6 +938,9 @@
+>         if (dev->power.syscore)
+>                 goto Complete;
+>
+> +       if (!dev->power.is_suspended)
+> +               goto Complete;
+> +
+>         if (dev->power.direct_complete) {
+>                 /*
+>                  * Allow new children to be added under the device after =
+this
+> @@ -963,9 +966,6 @@
+>          */
+>         dev->power.is_prepared =3D false;
+>
+> -       if (!dev->power.is_suspended)
+> -               goto Unlock;
+> -
+>         if (dev->pm_domain) {
+>                 info =3D "power domain ";
+>                 callback =3D pm_op(&dev->pm_domain->ops, state);
+> @@ -1005,7 +1005,6 @@
+>         error =3D dpm_run_callback(callback, dev, state, info);
+>         dev->power.is_suspended =3D false;
+>
+> - Unlock:
+>         device_unlock(dev);
+>         dpm_watchdog_clear(&wd);
+>
+> @@ -1669,6 +1668,7 @@
+>                         pm_runtime_disable(dev);
+>                         if (pm_runtime_status_suspended(dev)) {
+>                                 pm_dev_dbg(dev, state, "direct-complete "=
+);
+> +                               dev->power.is_suspended =3D true;
+>                                 goto Complete;
+>                         }
+>
+>
+>
+>
 
