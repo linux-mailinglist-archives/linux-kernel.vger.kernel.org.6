@@ -1,149 +1,231 @@
-Return-Path: <linux-kernel+bounces-559281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 372BCA5F1C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:02:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41FC0A5F1D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:04:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2075819C1C4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:02:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7454F176EB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D8F266195;
-	Thu, 13 Mar 2025 11:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11DF265CB3;
+	Thu, 13 Mar 2025 11:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4vc/t03D";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wJt5pLFK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Pj0IMRvL"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2061.outbound.protection.outlook.com [40.107.102.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FABE1E8325;
-	Thu, 13 Mar 2025 11:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741863753; cv=none; b=ZxbEquzM2dVOxvaUIwj8pUl3kV2oNeRcAhBzUFEmj75EZ5ZSwg9IZzsB2xQzmYqy9zIZjw8jFy5OoXywgYnPHkPC3aKvLDPbQo/D7zotfXX7fKsMCiCTEUhhnk9RVJaXgfx+5Yo61YzGcfbhvY9mJ3348ia0ZdhpPbK4plIv5tg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741863753; c=relaxed/simple;
-	bh=/1X1OejHJ7+mHLpFxyP8mgS/XfgKwuughi5RsNew5Jo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=MRrvPlqVvSz/RVqOFBJ93w3pau9SC9InNjd9eNVDJYKXlloO2gaX7DQqrBDheQdoIQ/H2n7Gnj2wPOPj9w2xIF3GrJQ9cK59QYNIEFfWmza5ONKf2i/G7Nvjby9Z5bujYup+X/FsKozVTuejL3OUN2OUmnP8J+ZZoz0bkjXGVwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4vc/t03D; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wJt5pLFK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 13 Mar 2025 11:02:25 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741863746;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yksDjSd2s2G6MkV6YGFRqtwNo2kniQFahpf1acUStls=;
-	b=4vc/t03DXOc2RoZVFUf0QFQ2BjnwHtq4C1+NsVY2ASP5efHpp6Ps1TbQju1o7jFGUC21MP
-	HDYUU8hcxHBSX/VP1p6z2XvtVciZWakIbW8Xnv9hgKIC5NJtG/RLouzsxzgzTPdAK7whu/
-	9cIRNycKBNC9375k8f4nKZg8r9+eE50yc2dBGd1Uo3RB0ms9F2T92i8TS1ztl2k7Fj2G+z
-	KcR4NNuShxXkAdpUnqKaVvdm6bbIh5z5aU6mjbsrtXcaSID9tThBlnaWUb8u6NdHk/IY0p
-	5d1RH4TIoHVSfKW6yu+a85RBScTQUqw9qUAyvbpsTLE1OUqkDYqzbsE/TV4G0g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741863746;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yksDjSd2s2G6MkV6YGFRqtwNo2kniQFahpf1acUStls=;
-	b=wJt5pLFKXbydnKUTwleLYZ2X4hOkVlXMUyPKv9deKy0jCs8dIcyP1BkAF7qIN1kiWGuuXN
-	g+4BDgornnOTUlBA==
-From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/asm] x86/asm: Use CLFLUSHOPT and CLWB mnemonics in
- <asm/special_insns.h>
-Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250313102715.333142-1-ubizjak@gmail.com>
-References: <20250313102715.333142-1-ubizjak@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E161EEA57
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741863849; cv=fail; b=JGHO5vXYsPFyiPSz2px4QB+eZkVajQAWaVduGVOojUwnMY2DxM0c49I4Ig4qtumsdfnN3XIhY7jL5fgRfUbyDSpr3qb8+lgTdjqlISKiXq/UbcRy2ZYmCqE8MnVBL6jINbnPlxB0jPz6Y7ojsniGZmuZC/N9aUyDDuy4HCOxGkQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741863849; c=relaxed/simple;
+	bh=kYgXgsHTIe/1+iJvZ2EEUczseY95ncx+B8EsQiCfT0o=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=bvrZJ62tnXeFDTraY80Q8Dr4KnXJo+q6+xVdNoi+VReJ1MSadL1cTM5IGXZXmraRH55+ff7uCxwdjagsW7PX4RW5SfSec64Sb+GKxcvd5jTBrFThG/S6nFr0SjcbCYPmiCO7vVXYHAuZD/Bsg5a2h2R55uKXLRlaLCNcSt21toc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Pj0IMRvL; arc=fail smtp.client-ip=40.107.102.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B0Og0jMsv6MbB8ct6WlLKxjHVhnyPtZsCxgqYpV8VvLe1Q/blhM5WZinzqYxtArMjjLRWI+6FhtLW/pz5ywQ0nL1XGE9cFO03tnVmnS5eiUH/GX+51XZpaUfCiYMWNN9ISNUJlj3LjMh5eeLfe5kANg+9l7mGUWV7m9WslUaqtttMVnLXvy9gzoESF+LFqgOUs+RWaiC/9Ue5gx1Wg3P290CzvwsNEbBMsBpebV80PxffGjWU68/GNoSOJka+L7P+nMS+kSu5mm0BPA96zdfap381xiUHpCJfA2vGPZeYk810Ro4RVariEJZy97nsGGpuoeP7Lq6leUs16nuAZJGvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eBm6mnueTios2v9gePW2PEmD7KfqCKWex3uAboeRAn4=;
+ b=orhbo5NfzaUCi9EVoolMHlB8knYxvqm7kWa6Zl3jbOKLdfUBvxjfYTLjKy9kcPHs8ylnoLW1IJxENRr1s6hsVIg/BNJcDb1PZ7hE4uWJ6YZ7dJYFNq2GbpgAmT/kHi5lP5VP2VmAd1AJ0U/W79YtpJ1+nNVQstxc2iMU8Neq6PeAdfnySo1GWu0Q7oM+ZfVKZeE70fEk5SaPheUC8SnPwTV2R7ag57l9X0eMrp0JvGfOH6noPFlFuSVf/k7MWHmbJD31aTVTttEa+UQg9c+04HQLdWc/7VCHSeqOoHWUOHVmQ48NptwYLvBOV+GOXM8aRwAOCVd4tGqH6OKDis9ULw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eBm6mnueTios2v9gePW2PEmD7KfqCKWex3uAboeRAn4=;
+ b=Pj0IMRvLxVSrBhMLHAEikgkHtfBtMqsc6G/sHR66EHG3umISq35CE1dCdRPsTji8XUHXJmeu0rlIXU7HQkM6/cJmQZJM2o28ujjriPyo0TiGWCwLSh6IYTbwX9+icDRdpt0d/sCLfb2MGTNmxDiKw1NyDqQc0HQvmYTrCVTE6fo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
+ CH3PR12MB9172.namprd12.prod.outlook.com (2603:10b6:610:198::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8511.28; Thu, 13 Mar 2025 11:04:06 +0000
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5%4]) with mapi id 15.20.8534.028; Thu, 13 Mar 2025
+ 11:04:06 +0000
+Message-ID: <d5dc3ba1-187c-4ce4-b7a9-eea95a7f043f@amd.com>
+Date: Thu, 13 Mar 2025 16:33:58 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/8] iommu/amd: Add debugfs support to dump IRT Table
+To: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>,
+ joro@8bytes.org, suravee.suthikulpanit@amd.com, will@kernel.org,
+ robin.murphy@arm.com, linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+References: <20250206060003.685-1-dheerajkumar.srivastava@amd.com>
+ <20250206060003.685-8-dheerajkumar.srivastava@amd.com>
+Content-Language: en-US
+From: Vasant Hegde <vasant.hegde@amd.com>
+In-Reply-To: <20250206060003.685-8-dheerajkumar.srivastava@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0102.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:27::17) To IA1PR12MB6043.namprd12.prod.outlook.com
+ (2603:10b6:208:3d5::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174186374591.14745.4656117553319645080.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|CH3PR12MB9172:EE_
+X-MS-Office365-Filtering-Correlation-Id: a7867c37-1d45-4a90-b9bd-08dd621ec528
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SHllMGtmRVhOd1p5WXM1UXhYbzZiUklwNUpubjY5bXRBYVp5a08vNW14QzN4?=
+ =?utf-8?B?SVdJZDM5eHZoUllJbldkQlM4Z3RyUm9BUE1TWHFzTEdXY1RUOUt0eXNQZlh3?=
+ =?utf-8?B?NVhod3ZwNDBLZms3b2YvRjlRRzhQUlhGYmI2QmcwVFJUbFBCdGdDSXJyWW9i?=
+ =?utf-8?B?MlVScmhZL0hkTWhPTzdYdk96TnpMcVFKU0ZzdDFXekVhUkE1MU1kUU5JNGZk?=
+ =?utf-8?B?NjJRd2p5c0tZRk5pUW5jYjJJbVplWGx0bzFuMXVJVTNaOGVXUEVuVlIyeUI3?=
+ =?utf-8?B?UnRDNldnbFpaanR3WDNmMi9zSG96UStmbFEyNWl3QVdjNGMzZWo3UGowdGxl?=
+ =?utf-8?B?MURTMnRLK3pJQk1saldpUm5WMVMrUXo3eHZHdWlsa2dNNWEvMGcvcXUyNGpQ?=
+ =?utf-8?B?TFZBNVd1cGpwbXE2aEd0bS8zTHdjNENKQ3RPQ2FPNWg0M0FFZFJaVEJaMVd1?=
+ =?utf-8?B?dEZLVUFUc0F5OVkwT0NuaWR2NHBmZWRZVURld0g1RWRVODFPeWszRjF1UG5h?=
+ =?utf-8?B?cXZHK3hHZzZxMXBObUc1MDd6TCtQK3RhTnVCV21CMXFQWUV2SUpDbEpFT3FC?=
+ =?utf-8?B?ZnU1L2hWZUxlNjV6a2ZzRHgwaE5zQmRhQUZ0blE0VkQxcG5ualRKM2ZLL2lL?=
+ =?utf-8?B?bmoramFocUNKTTVwd0FDOU05WUs1Nm1BTzVCL2JmY2Rob3Yyak5rL2tET0hq?=
+ =?utf-8?B?czloUGVoSDNmSldNTEJscFVMcW5ITFFwVVNzRVJ2WTM0V3pjeklneDJTRFJn?=
+ =?utf-8?B?S1M1WUgwQ1NsY050T0tGc1JOaWVRU1ZUYVJ1RXNUaEVYMlo2Q3ZUYUFXZGFT?=
+ =?utf-8?B?bGh6NnFLZGpnYW44WUlrR0dhSng5WXZwbVEzSytLenl2MU0yUUNCNzZ1Skph?=
+ =?utf-8?B?enhzL2pLdUVZbENCSlp5Mi9Fd2JnaFNlZ0NLT1hhMmhZZnhhbFl0aVNWL00v?=
+ =?utf-8?B?RU1acGl0TzJ6MVF4NWpwNkJnWlBoRis4bGthTm5RRHU0YUFpK0IwV1RTQ1V5?=
+ =?utf-8?B?Ung3REtkcmpiM0RFLzdsQm1hekdnQjQrT1FXSlpwQVNsZnRjd2ZRdEVyaXdZ?=
+ =?utf-8?B?elhPczBRK0pETzhqYUpLTi9CNHBWUjQvNVVYdlV5ME1mbmpnVytGWHVWSmpo?=
+ =?utf-8?B?NlI2T2ZHOEdYOXdCbXdPd1VDU2NFbTlINmVYQU1HcVNzUGZHWmhIYkxrWVhq?=
+ =?utf-8?B?eGJGc0xaRE5HV3hhb09JTDlzYWF3ODM5amZDT3JaQXF5NFBXUjJyRXd5SEw0?=
+ =?utf-8?B?a01MWk1EczJtUS9GR3czZjNEZDVWa1RpUW0xS3VMQXBBeU16T0haMWJQWDBP?=
+ =?utf-8?B?WC9uZFhGSGJLd3RUclhBOEN5eGJHSlMwZ1V4U0k3WkRHRUxSZ2ZYekg0L3Jy?=
+ =?utf-8?B?WlNvQ0hrRnZ1MHNmbk91cXVCTkVLT1RzY1F4bFZrbGo5UkRoMFlOWlZDb0ZY?=
+ =?utf-8?B?OWFVaG5RTFZaWkdvbHU4WlRESW13dXlFR1BsZmdHUURpQmZUSFVScW9uWDFp?=
+ =?utf-8?B?VEF2NzROVzlqMWRLaFltOTl5TlkrTkxaQXJDbmp0MWNFRmszWnZsWno0RWl0?=
+ =?utf-8?B?YWx2djlWOGVHRTlFMXBTVlplQmRVbUZYMGlBNzVuck4rNkExYUhYVDNISWhm?=
+ =?utf-8?B?NjlhemlxN0pJTzJ0VWIrOUhubkR5cTRsbG0zaVI3eFJ2aWU1SWR4M3I5LzFT?=
+ =?utf-8?B?ZEV1emRtOUh1RkVQZThWdURuQ0N4cGVMWTRJdmpvdWxZSnhZS3dqQUpZd1lr?=
+ =?utf-8?B?akZqcW9Lc21NQzhPNEpJTlBHb1Y5Q3dJWFlyYWZ4S1JWSHhLSXZqTEkveVZO?=
+ =?utf-8?B?SCthN2ZKMDMwL2cwbUE5QWlJT0wxRDhpYVhhL3JmcXlVc3BYc0JHa2UwNi9M?=
+ =?utf-8?Q?EeH8UU4yJhrqh?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?T3JKcGR6bW5JV2ZuWFIwdHFLNXlWWWZKdmhWK1Z0dklwUVBoelBZUGJqbDNY?=
+ =?utf-8?B?NDBYbVVuNGlic0t3MFphZ0JCUnpXR0NySVZ3aGEzbTlVLyt1RXJ4WEUvRHow?=
+ =?utf-8?B?M1RPRGJ3YWRCN0YzM0YraUZLeWwxRldYZXo0TTlLRXgxVmtiQkhVRzdyR3g1?=
+ =?utf-8?B?UFpaajdpRXVPSEkyMVNJa3VwdTRuK3NKRThZNm05MG9UMXBSajBra3dnQkp4?=
+ =?utf-8?B?WFZmc3ZDR25BSzFUbSs5OFpSSjJhWVJ1VHhYRXBweHl2SVN1MGhnbC9jWTJi?=
+ =?utf-8?B?cEpCZWs5c1NiZEt3cDJyOTRvTmVCRENNc3NZM2xVa0lJSTZnZFVLSndPN09D?=
+ =?utf-8?B?RXhXazNENW50YkZPaDNNem1NTno0N0RnajdMa29VakRzNDdDL2JadzdVNFFn?=
+ =?utf-8?B?MkxBRlBxbHM3WkdCZUZBY3k3ZThSMVc1TEFnQk5meVFDa1lsVDlMOUd2L2ly?=
+ =?utf-8?B?ZXc0TjIzUml6clpuRUx1MnU0bEZzQzlnZUdEQmcvMUdDa0JEUjRtdGE0ZGZY?=
+ =?utf-8?B?ai9qUUc1TXJjRmxTaVBIVHg3SkdMOXJQS2wrY3ZtQUl6VUd1aEhDZ2dVc01F?=
+ =?utf-8?B?dnJ6Wm5LT2lJM2Y3S1E3RjlJZEJpUkl3djZLUm1nR0FhbGJPeFRiN2QyWEtG?=
+ =?utf-8?B?MlVWNFVQcG5ENk5zU0NFejRQVXY1WFZuMHhRT2Zta0M2elV3ZU9ld25yS3N0?=
+ =?utf-8?B?bW9yVDJiY0lSQ253aUdnbDdBZ1pxTEpKa09XVGRMRDRNaElEbm1ZTS9wU0RT?=
+ =?utf-8?B?Z0VabDdJYjFickp0QkMzeUdTWTNsUVJOQXpmNjFic1N5cVc3S1NOb0Y3VTJE?=
+ =?utf-8?B?MEw5a1dEWVpKTHF5eUtCUWQvOEZ3OVVlUjkzclkzclVjWFp0amM2RzJ6VU1y?=
+ =?utf-8?B?dFlGQmhCbHB3MFNYRVpCNk5KN1FUZWRTSHpEbHZGck4rNkwrSE1ETGhaSk9I?=
+ =?utf-8?B?SFhkcWErbU9QZzJXK2dZcDlTM0p3M09PMFlYTTd6ejlxYzZ6NXNSZU5ZMlhU?=
+ =?utf-8?B?YkhsYWJZS2ZMSDdWRUx0MXFkR0g3UUsyNkJ3a3RCWVRRb2NPRngzTnRZZm5K?=
+ =?utf-8?B?RUNVMkdGRWUyK3pYTlkvdFIrT01lVDJuTngwZ05kR3lLQlVWazJmQjZyZDZu?=
+ =?utf-8?B?TjZmaVlJZVROdHJRMWJoTE4rMXdRZVV1emxUT21veDU4a1lJTXl6TERScFk2?=
+ =?utf-8?B?LzZTaENPcmNXL2lES28rWm4ycmxEYTFQMVc5NHF1SzhLRktiRStJR1VkYXNN?=
+ =?utf-8?B?dG82bW1CUGJUcmNONnVrNllDb1FaMWdIMytodGg3TWlqVWI1QmlGMHdzVkFy?=
+ =?utf-8?B?eTRWaTFHT3h0M2kvYVlhM25YTWltbHp1b0tqQU95UzJqbkc1U0hTdjFpRUpR?=
+ =?utf-8?B?VUwxMHA0WjR5ajZnTVRIOVMzNnBPaGJFYUZqMzBGL0xCYWZPdVFJZTNoVlJ1?=
+ =?utf-8?B?UmpYTlVRNmcwVnBDeHlxL1UwRVcrczF1ZkRzQkM5c2wrUmdGVmsxODkxTWhR?=
+ =?utf-8?B?bWcrQmhiQkczMUZGRjZ3N0V4MFFUZlMya3lsUW81MkR6V3gyYy9ITzlmVWEr?=
+ =?utf-8?B?WWhZYjJjTjlFeVNja2ttWUlnYmduYmtYZTFGa0pRNnBNOVF2VThOZ0xLZlc0?=
+ =?utf-8?B?Y3BqWlBFbkhBQmJaRzBsNURzb2xlWm9LRGVYOFRZeVIveTYzWnZ6Z0xLZUdm?=
+ =?utf-8?B?YVFtOHBQVkE0bE5veEtzU3NSQUdzcVVIbFNmUDlNVHdnZ2lXTzY2S2NDV0Ri?=
+ =?utf-8?B?SmtNRlRJWS9FeEQ2ZEdyZXJwSnpkWFlHTnhMNU5DMERkRmFyNFEzSVVDeXNr?=
+ =?utf-8?B?SHFyUWdHdUd0UWFjejEwdTdBK29mQVMrd3poNDlWeTVCdDVpbjVqeUpSbzh2?=
+ =?utf-8?B?ZldiUURYNUlmbTB1U3pEVGQ1eWlubDJBUk54ang4RFl5WGxRRXczZzRyUVpJ?=
+ =?utf-8?B?ZDZ1TkpDY0JYSFlCQ01RYy9wRjJZMGtTRnI5K2h0ZEZneHFmNDRyZ0RpREFZ?=
+ =?utf-8?B?UklrSkdFVHVZeWo1SkV4RXdBemxPSktJNXRZM1pCb1VLMWVGdkZlQTR6M041?=
+ =?utf-8?B?N2xEaEl1bEw2UFZvQm94VjNBRTVJdFZHakpJZkNpWGRXMUhxSk5uWE5lMEty?=
+ =?utf-8?Q?c6hUTBdpV31kBRpsKx4FFjRqa?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7867c37-1d45-4a90-b9bd-08dd621ec528
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6043.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 11:04:06.1199
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: M/Mfg6vUTVAxqEvIj2PrOmgYRvAjikAPb6B8naF82ydcn52duMD0SGy25RmGQu+ynyR2VSL5tMeon7Z2HzzGiA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9172
 
-The following commit has been merged into the x86/asm branch of tip:
+Hi,
 
-Commit-ID:     cc2e9e09d1a3c59cfb138a0fc6ad6f624f3d4ac8
-Gitweb:        https://git.kernel.org/tip/cc2e9e09d1a3c59cfb138a0fc6ad6f624f3d4ac8
-Author:        Uros Bizjak <ubizjak@gmail.com>
-AuthorDate:    Thu, 13 Mar 2025 11:26:55 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 13 Mar 2025 11:50:14 +01:00
 
-x86/asm: Use CLFLUSHOPT and CLWB mnemonics in <asm/special_insns.h>
+On 2/6/2025 11:30 AM, Dheeraj Kumar Srivastava wrote:
+> In cases where we have an issue in the device interrupt path with IOMMU
+> interrupt remapping enabled, dumping valid IRT table entries for the device
+> is very useful and good input for debugging the issue.
+> 
+> eg.
+> To dump irte entries for a particular device
+>    #echo "c4:00.0" > /sys/kernel/debug/iommu/amd/devid
+>    #cat /sys/kernel/debug/iommu/amd/irqtbl | less
+> 
+>    or
+> 
+>    #echo "0000:c4:00.0" > /sys/kernel/debug/iommu/amd/devid
+>    #cat /sys/kernel/debug/iommu/amd/irqtbl | less
+> 
+> Signed-off-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+> ---
+>  drivers/iommu/amd/debugfs.c | 89 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 89 insertions(+)
+> 
+> diff --git a/drivers/iommu/amd/debugfs.c b/drivers/iommu/amd/debugfs.c
+> index 1377795814d1..0aff1d616108 100644
+> --- a/drivers/iommu/amd/debugfs.c
+> +++ b/drivers/iommu/amd/debugfs.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/pci.h>
+>  
+>  #include "amd_iommu.h"
+> +#include "../irq_remapping.h"
+>  
+>  static struct dentry *amd_iommu_debugfs;
+>  
+> @@ -250,6 +251,92 @@ static int iommu_devtbl_show(struct seq_file *m, void *unused)
+>  }
+>  DEFINE_SHOW_ATTRIBUTE(iommu_devtbl);
+>  
+> +static void dump_128_irte(struct seq_file *m, struct irq_remap_table *table)
+> +{
+> +	struct irte_ga *ptr, *irte;
+> +	int index;
+> +
+> +	for (index = 0; index < MAX_IRQS_PER_TABLE; index++) {
+> +		ptr = (struct irte_ga *)table->table;
+> +		irte = &ptr[index];
+> +
+> +		if (AMD_IOMMU_GUEST_IR_VAPIC(amd_iommu_guest_ir) &&
+> +		    !irte->lo.fields_vapic.valid)
+> +			continue;
+> +		else if (!irte->lo.fields_remap.valid)
+> +			continue;
+> +		seq_printf(m, "IRT[%04d] %016llx%016llx\n", index, irte->hi.val, irte->lo.val);
 
-Current minimum required version of binutils is 2.25,
-which supports CLFLUSHOPT and CLWB instruction mnemonics.
+Can you please space between words so that its easy to read?
 
-Replace the byte-wise specification of CLFLUSHOPT and
-CLWB with these proper mnemonics.
+-Vasant
 
-No functional change intended.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250313102715.333142-1-ubizjak@gmail.com
----
- arch/x86/include/asm/special_insns.h | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
-
-diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-index 03e7c2d..856d4ad 100644
---- a/arch/x86/include/asm/special_insns.h
-+++ b/arch/x86/include/asm/special_insns.h
-@@ -176,9 +176,8 @@ static __always_inline void clflush(volatile void *__p)
- 
- static inline void clflushopt(volatile void *__p)
- {
--	alternative_io(".byte 0x3e; clflush %0",
--		       ".byte 0x66; clflush %0",
--		       X86_FEATURE_CLFLUSHOPT,
-+	alternative_io("ds clflush %0",
-+		       "clflushopt %0", X86_FEATURE_CLFLUSHOPT,
- 		       "+m" (*(volatile char __force *)__p));
- }
- 
-@@ -187,13 +186,10 @@ static inline void clwb(volatile void *__p)
- 	volatile struct { char x[64]; } *p = __p;
- 
- 	asm volatile(ALTERNATIVE_2(
--		".byte 0x3e; clflush (%[pax])",
--		".byte 0x66; clflush (%[pax])", /* clflushopt (%%rax) */
--		X86_FEATURE_CLFLUSHOPT,
--		".byte 0x66, 0x0f, 0xae, 0x30",  /* clwb (%%rax) */
--		X86_FEATURE_CLWB)
--		: [p] "+m" (*p)
--		: [pax] "a" (p));
-+		"ds clflush %0",
-+		"clflushopt %0", X86_FEATURE_CLFLUSHOPT,
-+		"clwb %0", X86_FEATURE_CLWB)
-+		: "+m" (*p));
- }
- 
- #ifdef CONFIG_X86_USER_SHADOW_STACK
 
