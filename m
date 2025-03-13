@@ -1,199 +1,110 @@
-Return-Path: <linux-kernel+bounces-559139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E3A0A5EFEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:50:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFDBAA5EFF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:52:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AF50189D437
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:51:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F30A117DBE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0770D261583;
-	Thu, 13 Mar 2025 09:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DAE2641EA;
+	Thu, 13 Mar 2025 09:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cUEiE9cd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="USXOlYhG"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980751FBCAE;
-	Thu, 13 Mar 2025 09:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA841EFF95;
+	Thu, 13 Mar 2025 09:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741859448; cv=none; b=ebE95CtvNr1p7ttnq68mvmr/oOg8qmVoPKBxGL1X6tFEZFXLcHQHsQf9DMHgwoOMO3ty8jApmaItELMHoGmKeSRZYUhJmcKst4bhE9a7JRDnfkpu/jA1IUuZIAanNHAdDFP9pOER7Gfz8AMkDcXTrOx/hk+P/qHPV4qKXY/ku7U=
+	t=1741859531; cv=none; b=fnNVyAO6bc0iEenZGizdthL513SebK69TtVXrPEHexv645/rcb6efqoeDAdoSqFYHd6MiXLi4ExcWIHFmdnUXfxf0h8ymm6v101YGJaTDsHLm5U6cQk/xjWYhkQa5+RMtZSaCz0zgXDMMxXZQhCKzGVG1nZo3MtdcADWub5bnVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741859448; c=relaxed/simple;
-	bh=kQra7Uax2xjWGj1Bg2SDrSkgORCccpcYXbO386VNAo0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=MEPWtoq0fNP974oIMROmktB8YLU2ePDYJ8G0u2pWPXADCKM/L5+I4JxLuLEBtypo7hk6iVSnQDlxgcZb4SdwRBjE8LtxWn5lVhbZRpgqNMv5V2xgBjUooCGbSkWGgusmB87IdSYEsuw1IjFJ5N4AEo+Q9ytlbHrLkQ2zkQIk1KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cUEiE9cd; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741859447; x=1773395447;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=kQra7Uax2xjWGj1Bg2SDrSkgORCccpcYXbO386VNAo0=;
-  b=cUEiE9cdXDy9WFli5Hqejedb27tKGjliyF/oCVPb5bR62/QSlz+HFtrc
-   4eGqm8ikp/0blpHfw46kZOq9O4l+M+8pSDjLPgthtoM2tC5o8oDkqQNZB
-   1dcMybxrr0MrCyIcHQtQLQFLLDBaDhQtrbmZgJgyOwjxBVw4s9RwtYPE8
-   DuLwzXVCB6KaO2sfkahkyqg1GF4w6udgohPI9THH//4YHVUoZuGVhZgdV
-   9Ly6s5fNrKOllUSuEJux6M/KjRQ3ofx8ZpJqm4fnJCobAC22fhGRwRrpP
-   EAaTU6jxfw84o1xaOFst355WDlEhETTKbQXfwBVjaXL3zkzQqgZ+uGD9f
-   Q==;
-X-CSE-ConnectionGUID: 72gRccuqTD+Eajwciae+vg==
-X-CSE-MsgGUID: jv3OWKjDSvOF6kei3ex+tw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="54348230"
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="54348230"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 02:50:46 -0700
-X-CSE-ConnectionGUID: csq7WghwQo6RD1sHs7pLvw==
-X-CSE-MsgGUID: xjhmYOwJRd67+TeGwsLPVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="120894564"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.195])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 02:50:41 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 13 Mar 2025 11:50:37 +0200 (EET)
-To: =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>
-cc: linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org, 
-    dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
-    Bjorn Helgaas <bhelgaas@google.com>, 
-    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-    Michal Wajdeczko <michal.wajdeczko@intel.com>, 
-    Lucas De Marchi <lucas.demarchi@intel.com>, 
-    =?ISO-8859-15?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, 
-    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-    Maxime Ripard <mripard@kernel.org>, 
-    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-    Simona Vetter <simona@ffwll.ch>, Matt Roper <matthew.d.roper@intel.com>
-Subject: Re: [PATCH v5 1/6] PCI/IOV: Restore VF resizable BAR state after
- reset
-In-Reply-To: <d6e026ad-4dd4-2e03-6f8b-a10980fa0ce7@linux.intel.com>
-Message-ID: <f99f1533-2dd7-7ba8-3a5c-f68e45b1e8b6@linux.intel.com>
-References: <20250312225949.969716-1-michal.winiarski@intel.com> <20250312225949.969716-2-michal.winiarski@intel.com> <d6e026ad-4dd4-2e03-6f8b-a10980fa0ce7@linux.intel.com>
+	s=arc-20240116; t=1741859531; c=relaxed/simple;
+	bh=RImN1egxLchm1OT4LIp3YQNEJIdkxcWAKbh1WlvMwro=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O0MXeqU8p1t+PtjKBW92JvRZSBwLmALFRhw/9QeZHUuab77DVO8yBYIf9RGxGVNbqpENmrVXQ3bpza+Y/SiTjTePRhRIgas+gwqC825/1S3HeyFciP8mXCA2htcSg7K30RvTnFLb/jX3hv8rBfxZc94ex5Qhc4i26J1cldh2n3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=USXOlYhG; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741859525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TM8qKG71XU2PpI8GcJlKeLnN9Dz9qQxF9PPdUnLxAQ4=;
+	b=USXOlYhG8LNwCtDKk+I7M2S0G3tn39sxx2ppKNtg3HxS5AfvC49bqJNgf/iDT/zluxuTTx
+	/eZnn2FotMOW13djKC7p5kBVr6ww1kO3zWsbo7T1psBnxZPUMjUTlKigrlUIPKSNhnpj72
+	W+K04HUgkMnwRJtXvrgJGozCnk2o+UQ=
+From: Kunwu Chan <kunwu.chan@linux.dev>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	Kunwu Chan <kunwu.chan@hotmail.com>,
+	Grace Deng <Grace.Deng006@Gmail.com>
+Subject: [PATCH] rust: optimize rust symbol generation for SeqFile
+Date: Thu, 13 Mar 2025 17:51:19 +0800
+Message-ID: <20250313095120.820334-1-kunwu.chan@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-873385725-1741859437=:1742"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Kunwu Chan <kunwu.chan@hotmail.com>
 
---8323328-873385725-1741859437=:1742
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+When build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
+with ARCH=arm64, the following symbols are generated:
 
-On Thu, 13 Mar 2025, Ilpo J=C3=A4rvinen wrote:
+$nm vmlinux | grep ' _R'.*SeqFile | rustfilt
+ffff8000805b78ac T <kernel::seq_file::SeqFile>::call_printf
 
-> On Wed, 12 Mar 2025, Micha=C5=82 Winiarski wrote:
->=20
-> > Similar to regular resizable BAR, VF BAR can also be resized, e.g. by
-> > the system firmware or the PCI subsystem itself.
-> >=20
-> > Add the capability ID and restore it as a part of IOV state.
-> >=20
-> > See PCIe r4.0, sec 9.3.7.4.
-> >=20
-> > Signed-off-by: Micha=C5=82 Winiarski <michal.winiarski@intel.com>
-> > Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> > Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
-> > ---
-> >  drivers/pci/iov.c             | 29 ++++++++++++++++++++++++++++-
-> >  include/uapi/linux/pci_regs.h |  1 +
-> >  2 files changed, 29 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-> > index 121540f57d4bf..eb4d33eacacb8 100644
-> > --- a/drivers/pci/iov.c
-> > +++ b/drivers/pci/iov.c
-> > @@ -7,6 +7,7 @@
-> >   * Copyright (C) 2009 Intel Corporation, Yu Zhao <yu.zhao@intel.com>
-> >   */
-> > =20
-> > +#include <linux/bitfield.h>
-> >  #include <linux/pci.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/export.h>
-> > @@ -868,6 +869,30 @@ static void sriov_release(struct pci_dev *dev)
-> >  =09dev->sriov =3D NULL;
-> >  }
-> > =20
-> > +static void sriov_restore_vf_rebar_state(struct pci_dev *dev)
-> > +{
-> > +=09unsigned int pos, nbars, i;
-> > +=09u32 ctrl;
-> > +
-> > +=09pos =3D pci_find_ext_capability(dev, PCI_EXT_CAP_ID_VF_REBAR);
-> > +=09if (!pos)
-> > +=09=09return;
->=20
-> FYI, the commit f7c9bb759161 ("PCI: Cache offset of Resizable BAR=20
-> capability") which is currently in pci/enumeration makes this simpler.
+This Rust symbol is trivial wrappers around the C functions seq_printf.
+It doesn't make sense to go through a trivial wrapper for its functions,
+so mark it inline.
 
-I'm sorry, I realized it's not the same capability but you should do=20
-similar thing for VF rebar capability as caching the value of=20
-pci_find_ext_capability() avoids some slowness during save/restore.
+After doing so, the above symbol will not in output.
 
---=20
- i.
+Signed-off-by: Kunwu Chan <kunwu.chan@hotmail.com>
+Co-developed-by: Grace Deng <Grace.Deng006@Gmail.com>
+Signed-off-by: Grace Deng <Grace.Deng006@Gmail.com>
+---
+ rust/kernel/seq_file.rs | 1 +
+ 1 file changed, 1 insertion(+)
 
-> > +=09pci_read_config_dword(dev, pos + PCI_REBAR_CTRL, &ctrl);
-> > +=09nbars =3D FIELD_GET(PCI_REBAR_CTRL_NBAR_MASK, ctrl);
-> > +
-> > +=09for (i =3D 0; i < nbars; i++, pos +=3D 8) {
-> > +=09=09int bar_idx, size;
-> > +
-> > +=09=09pci_read_config_dword(dev, pos + PCI_REBAR_CTRL, &ctrl);
-> > +=09=09bar_idx =3D FIELD_GET(PCI_REBAR_CTRL_BAR_IDX, ctrl);
-> > +=09=09size =3D pci_rebar_bytes_to_size(dev->sriov->barsz[bar_idx]);
-> > +=09=09ctrl &=3D ~PCI_REBAR_CTRL_BAR_SIZE;
-> > +=09=09ctrl |=3D FIELD_PREP(PCI_REBAR_CTRL_BAR_SIZE, size);
-> > +=09=09pci_write_config_dword(dev, pos + PCI_REBAR_CTRL, ctrl);
-> > +=09}
-> > +}
-> > +
-> >  static void sriov_restore_state(struct pci_dev *dev)
-> >  {
-> >  =09int i;
-> > @@ -1027,8 +1052,10 @@ resource_size_t pci_sriov_resource_alignment(str=
-uct pci_dev *dev, int resno)
-> >   */
-> >  void pci_restore_iov_state(struct pci_dev *dev)
-> >  {
-> > -=09if (dev->is_physfn)
-> > +=09if (dev->is_physfn) {
-> > +=09=09sriov_restore_vf_rebar_state(dev);
-> >  =09=09sriov_restore_state(dev);
-> > +=09}
-> >  }
-> > =20
-> >  /**
-> > diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_reg=
-s.h
-> > index 3c2558b98d225..aadd483c47d6f 100644
-> > --- a/include/uapi/linux/pci_regs.h
-> > +++ b/include/uapi/linux/pci_regs.h
-> > @@ -744,6 +744,7 @@
-> >  #define PCI_EXT_CAP_ID_L1SS=090x1E=09/* L1 PM Substates */
-> >  #define PCI_EXT_CAP_ID_PTM=090x1F=09/* Precision Time Measurement */
-> >  #define PCI_EXT_CAP_ID_DVSEC=090x23=09/* Designated Vendor-Specific */
-> > +#define PCI_EXT_CAP_ID_VF_REBAR 0x24=09/* VF Resizable BAR */
-> >  #define PCI_EXT_CAP_ID_DLF=090x25=09/* Data Link Feature */
-> >  #define PCI_EXT_CAP_ID_PL_16GT=090x26=09/* Physical Layer 16.0 GT/s */
-> >  #define PCI_EXT_CAP_ID_NPEM=090x29=09/* Native PCIe Enclosure Manageme=
-nt */
-> >=20
->=20
->=20
---8323328-873385725-1741859437=:1742--
+diff --git a/rust/kernel/seq_file.rs b/rust/kernel/seq_file.rs
+index 04947c672979..efc4dd09850a 100644
+--- a/rust/kernel/seq_file.rs
++++ b/rust/kernel/seq_file.rs
+@@ -30,6 +30,7 @@ pub unsafe fn from_raw<'a>(ptr: *mut bindings::seq_file) -> &'a SeqFile {
+     }
+ 
+     /// Used by the [`seq_print`] macro.
++    #[inline]
+     pub fn call_printf(&self, args: core::fmt::Arguments<'_>) {
+         // SAFETY: Passing a void pointer to `Arguments` is valid for `%pA`.
+         unsafe {
+-- 
+2.43.0
+
 
