@@ -1,115 +1,205 @@
-Return-Path: <linux-kernel+bounces-559327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67EC6A5F25F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:31:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE5CA5F261
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:31:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4608B19C0A58
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:31:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD40F3BE318
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9796264629;
-	Thu, 13 Mar 2025 11:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F153266B4B;
+	Thu, 13 Mar 2025 11:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yq7yI8KO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0QpustUL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+0CrINsq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37E1259C;
-	Thu, 13 Mar 2025 11:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482612661BA;
+	Thu, 13 Mar 2025 11:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741865483; cv=none; b=ICs6jRM3fjdcgXZ1tw9PH2AHTM/SRHksehtrf0d5QOpposf3jeRsMnKiG/GWslzcFhlJyRidlELap9VVdAlLphsgS73ndGFhhf3moJVLDO07NIlgp4AySleQ0SkSvG03IrrB7O73MF+Orb92PFO60YxV+RtPGOodHUCJqPTU9i8=
+	t=1741865486; cv=none; b=cnRD08pOkdQTKftzvhuQiSvyIZOSA9Qmr5pmsEu56lw/rVFRnFsg4He18NMMYysk7ZGNsXZ+LeHTosYnQQhVQ3dXg2Mkpl17FXUr4CVzS2r/fjXwDAHJlLiuvzaFiQ93O2ThjezOGFcw1cw7wfGpQucYVVrBI0jhCo/NoX+ex2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741865483; c=relaxed/simple;
-	bh=R0ywN4y+vCuEHyh+Zpf+KmFkgvUzY+xymGv7fHAtZJc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=htJ4itSl8GEa3fhm+Lk42tHwDwSlDvulCwUP7qu1pQymiIeiaLnVPOG4F9kCdFcfIP0k9iL99wmmnnWhExnmYDWm6P+LAytzj6B9ABL4sZzI603pxujkGnsIPcRaXw0jgVawBIdcm19oPjgwyJCYC34iKZEO3oDUUwMjrpPuu/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yq7yI8KO; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741865482; x=1773401482;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=R0ywN4y+vCuEHyh+Zpf+KmFkgvUzY+xymGv7fHAtZJc=;
-  b=Yq7yI8KOxr+2WwDq0W7+OD9SrtoaVmQMAbFg0vd6osqa/eXdBVgUjbp+
-   Iu2xtA8a0mtR3UumMEbmbT1jDvM2M0N5yThnsb6DhPaLjAL989FvNMkL3
-   3TixakFoeDNdYJjmjWoqRgOOzQ7RjtEhJ86uTOOgiN6wrycP0KyvlkXQr
-   paQ2pFBuRXXa6TcRJ9eyT2PImdwvNXx0mUxE8xylgnEXW38p6KMT1cDRF
-   qWiA/cBab01FVK37GuyKuwkPwnbkI2f/XumjgbGkLhPi1ffWgJr2CT8Cc
-   QTL/m2NcJz95qf8ZpYjsV913GcW7ruojLA+kHZTVlkuvOAxVh+x2FJq5f
-   g==;
-X-CSE-ConnectionGUID: ejtY3dFJSEOtIh9B1b7hPQ==
-X-CSE-MsgGUID: WWunYxF/S2yqX+QLVatOZg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="46629182"
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="46629182"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 04:31:21 -0700
-X-CSE-ConnectionGUID: E8WMDJRxTJ2+Tj0bXEwENA==
-X-CSE-MsgGUID: ISfEeGz8ShiqV7BLHEDoYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="121425180"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 13 Mar 2025 04:31:20 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id E6987214; Thu, 13 Mar 2025 13:31:18 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3 1/1] media: v4l2-core: Replace the check for firmware registered I2C devices
-Date: Thu, 13 Mar 2025 13:30:34 +0200
-Message-ID: <20250313113115.359942-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1741865486; c=relaxed/simple;
+	bh=0UuLfETs+59rPjN0rcHLPYU/CZL6XyOzdYIcbkXrkg4=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=X3szFDesBztsnfEcKprdbpn2tuAmiV4Gs2uC59oiFRDwwk88lgD23cUR+x2GtjORoUgXkAAKKv+moIpN6IrSDxBjrbtjr/TPllVTCZCeiX+tvZVrQ3p/+Kku1DP3p5TeZdXv88XB/r29BuGkV1SBSKw8XFqpayx5FSsAlfKW6KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0QpustUL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+0CrINsq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 13 Mar 2025 11:31:19 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741865482;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dqK3kZyCHT0jvTPKaSP5MkWN9c+Y2ErD5GwaMRu/8VQ=;
+	b=0QpustULOXQ3N2C6IS/ts1qt2742jQAdQ+thuSabR8XR9uEXSKx8QtzKrC1fLgTIgJoNHg
+	kCJ5DOI1fONG7lVRQ7JuAM8fZR29Em6597awTF7HJAUF80bbk+hhFPXPG8hii+mwPAV726
+	gSh52lb/6PXAzMRNz71WCqRZIAhWGxuEb7b/ucqXMwWPr7TF3ZkLZUs93sfxmQt8ghBC4w
+	uJDKqB3JUgsrCQiFHW1WOJXIAp2p14KSyiq8YyMlxJPZfjO4EFicuF9ogOvJDf3/bYH3IO
+	CDMJ4c0usk8kzOly66KREDsWh7P3rHHO/Zrzxev2xgK0ny09iIU7iyvD02bQJA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741865482;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dqK3kZyCHT0jvTPKaSP5MkWN9c+Y2ErD5GwaMRu/8VQ=;
+	b=+0CrINsqy0sbhVH+K+VqejJrmR5ZV6AMHrUZKCVOE7F0XBoYgWD5D6wnNDc09YJ34K/cBd
+	50hoz3naXecQnoAw==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] selftests/timers/posix-timers: Add a test for
+ exact allocation mode
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <8734fl2tkx.ffs@tglx>
+References: <8734fl2tkx.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <174186547979.14745.7358143447479798419.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Replace the check for firmware registered I²C devices as the firmware node
-independently on type should be retrieved via dev_fwnode().
+The following commit has been merged into the timers/core branch of tip:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Commit-ID:     8e63360d869913265e5e4b623dcd23feff9fd000
+Gitweb:        https://git.kernel.org/tip/8e63360d869913265e5e4b623dcd23feff9fd000
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Mon, 10 Mar 2025 09:11:42 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 13 Mar 2025 12:07:18 +01:00
+
+selftests/timers/posix-timers: Add a test for exact allocation mode
+
+The exact timer ID allocation mode is used by CRIU to restore timers with a
+given ID. Add a test case for it.
+
+It's skipped on older kernels when the prctl() fails.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Link: https://lore.kernel.org/all/8734fl2tkx.ffs@tglx
+
 ---
+ tools/testing/selftests/timers/posix_timers.c | 73 +++++++++++++++++-
+ 1 file changed, 72 insertions(+), 1 deletion(-)
 
-v3: Use ASCII in the Subject (Hans)
-v2: fixed obvious typo (media CI)
-
- drivers/media/v4l2-core/v4l2-i2c.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/v4l2-core/v4l2-i2c.c b/drivers/media/v4l2-core/v4l2-i2c.c
-index 586c46544255..ffc64e10fcae 100644
---- a/drivers/media/v4l2-core/v4l2-i2c.c
-+++ b/drivers/media/v4l2-core/v4l2-i2c.c
-@@ -5,6 +5,7 @@
- 
- #include <linux/i2c.h>
- #include <linux/module.h>
-+#include <linux/property.h>
- #include <media/v4l2-common.h>
- #include <media/v4l2-device.h>
- 
-@@ -24,7 +25,7 @@ void v4l2_i2c_subdev_unregister(struct v4l2_subdev *sd)
- 	 * registered by us, and would not be
- 	 * re-created by just probing the V4L2 driver.
- 	 */
--	if (client && !client->dev.of_node && !client->dev.fwnode)
-+	if (client && !dev_fwnode(&client->dev))
- 		i2c_unregister_device(client);
+diff --git a/tools/testing/selftests/timers/posix_timers.c b/tools/testing/selftests/timers/posix_timers.c
+index 9814b3a..f0eceb0 100644
+--- a/tools/testing/selftests/timers/posix_timers.c
++++ b/tools/testing/selftests/timers/posix_timers.c
+@@ -7,6 +7,7 @@
+  * Kernel loop code stolen from Steven Rostedt <srostedt@redhat.com>
+  */
+ #define _GNU_SOURCE
++#include <sys/prctl.h>
+ #include <sys/time.h>
+ #include <sys/types.h>
+ #include <stdio.h>
+@@ -599,14 +600,84 @@ static void check_overrun(int which, const char *name)
+ 			 "check_overrun %s\n", name);
  }
  
--- 
-2.47.2
-
++#include <sys/syscall.h>
++
++static int do_timer_create(int *id)
++{
++	return syscall(__NR_timer_create, CLOCK_MONOTONIC, NULL, id);
++}
++
++static int do_timer_delete(int id)
++{
++	return syscall(__NR_timer_delete, id);
++}
++
++#ifndef PR_TIMER_CREATE_RESTORE_IDS
++# define PR_TIMER_CREATE_RESTORE_IDS		77
++# define PR_TIMER_CREATE_RESTORE_IDS_OFF	 0
++# define PR_TIMER_CREATE_RESTORE_IDS_ON		 1
++# define PR_TIMER_CREATE_RESTORE_IDS_GET	 2
++#endif
++
++static void check_timer_create_exact(void)
++{
++	int id;
++
++	if (prctl(PR_TIMER_CREATE_RESTORE_IDS, PR_TIMER_CREATE_RESTORE_IDS_ON, 0, 0, 0)) {
++		switch (errno) {
++		case EINVAL:
++			ksft_test_result_skip("check timer create exact, not supported\n");
++			return;
++		default:
++			ksft_test_result_skip("check timer create exact, errno = %d\n", errno);
++			return;
++		}
++	}
++
++	if (prctl(PR_TIMER_CREATE_RESTORE_IDS, PR_TIMER_CREATE_RESTORE_IDS_GET, 0, 0, 0) != 1)
++		fatal_error(NULL, "prctl(GET) failed\n");
++
++	id = 8;
++	if (do_timer_create(&id) < 0)
++		fatal_error(NULL, "timer_create()");
++
++	if (do_timer_delete(id))
++		fatal_error(NULL, "timer_delete()");
++
++	if (prctl(PR_TIMER_CREATE_RESTORE_IDS, PR_TIMER_CREATE_RESTORE_IDS_OFF, 0, 0, 0))
++		fatal_error(NULL, "prctl(OFF)");
++
++	if (prctl(PR_TIMER_CREATE_RESTORE_IDS, PR_TIMER_CREATE_RESTORE_IDS_GET, 0, 0, 0) != 0)
++		fatal_error(NULL, "prctl(GET) failed\n");
++
++	if (id != 8) {
++		ksft_test_result_fail("check timer create exact %d != 8\n", id);
++		return;
++	}
++
++	/* Validate that it went back to normal mode and allocates ID 9 */
++	if (do_timer_create(&id) < 0)
++		fatal_error(NULL, "timer_create()");
++
++	if (do_timer_delete(id))
++		fatal_error(NULL, "timer_delete()");
++
++	if (id == 9)
++		ksft_test_result_pass("check timer create exact\n");
++	else
++		ksft_test_result_fail("check timer create exact. Disabling failed.\n");
++}
++
+ int main(int argc, char **argv)
+ {
+ 	ksft_print_header();
+-	ksft_set_plan(18);
++	ksft_set_plan(19);
+ 
+ 	ksft_print_msg("Testing posix timers. False negative may happen on CPU execution \n");
+ 	ksft_print_msg("based timers if other threads run on the CPU...\n");
+ 
++	check_timer_create_exact();
++
+ 	check_itimer(ITIMER_VIRTUAL, "ITIMER_VIRTUAL");
+ 	check_itimer(ITIMER_PROF, "ITIMER_PROF");
+ 	check_itimer(ITIMER_REAL, "ITIMER_REAL");
 
