@@ -1,223 +1,188 @@
-Return-Path: <linux-kernel+bounces-560101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AEF7A5FDC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:28:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57CEAA5FDC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:28:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D722288008B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:28:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390EA1738C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3783919D084;
-	Thu, 13 Mar 2025 17:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767E618A6D3;
+	Thu, 13 Mar 2025 17:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zgphnUfa"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQ2DxQ6s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEF2154C04
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE45158868;
+	Thu, 13 Mar 2025 17:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741886916; cv=none; b=MlphzhG4JZad27ipbygsytJVoqbazsOsn/NXhpqPO0iVxFlPA8ZTvOB9rkwEOAbLsLoriV3Q8mcxin1oz030jpgovChkB/lF6HUNTwMDaf9jyXODdwzYhnj7c60Sw6iuJx/zYWoJpPvBpzfCnow7CEcrycvwMZgltEVHEeEtumc=
+	t=1741886910; cv=none; b=b0NpawxaFzeeIa/f4Bq11NEGTP5lB04LmPS8hwV7yz8g0qBi9tC0moc/p5Kxdnhk8Cq1vVsrB7cJM3aFDCGiuHb8llGK7rv51+4vr/BGALQPOtFPVBBjz9ad3pKPEa9ED4jm6C05ts3ZNokQP5VzJQ4/kUK7JR0hDoMFx1hcTog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741886916; c=relaxed/simple;
-	bh=uATKcbHrr4oTJE/cn4lhLMPPtuzpNY/82PPgYbeOaKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cuS/c02xohcPmczkeseCmdAijKLl0oCIoVoNpguZHg1WgKTz67ZExs2xGXt2sM4EQkVomOp9gyUwEhRAPiDSD7zZwnsnc1T10Mok5Zw1KGqdNuOQ4aJ3t+wTLLJwMtCGdQX/hVFL4hsE+5iaXDCO5Z8wjOMkVWfi5hJRzAWkefY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zgphnUfa; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ff65d88103so2212160a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:28:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741886914; x=1742491714; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HZrGVNwUQ5jJGSVofb8QOBJpSOkJrQt8IsuJ+7RddHI=;
-        b=zgphnUfabVju1LN+pQ09wRKtcqsLT0YY7Uwtz5nCkkbctLSlck3KwcRQO7RNNmbHzE
-         E4Om9pINvxGeDVF91NcRGVLRBxoQXpD2mqZrDp0kgsXd1+ZGdta+nZFwEwCMYEGsxZRt
-         FOe2c5kHtOvqicG7sRXMdVKFlZMiF6XtOu3gQ/7+1/poDVFJQMMQT33aVYAXYganrYLz
-         8SQF80029uIdlM1FG6pXObyx77RbIPu1TUdNuSq8Jy0+yQfHHfPDhA/jpi7cl3jBrJDs
-         VNmt6pvf8qo8NHPFhcgA8fXt3KIK+VHyy8J5kLUOBG52dwLiAGXw1cPASoByrh6ZdwH9
-         2ODA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741886914; x=1742491714;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HZrGVNwUQ5jJGSVofb8QOBJpSOkJrQt8IsuJ+7RddHI=;
-        b=euF8cPs0wsEDGSQqRnaQ5U/40oOKcjY7e3jM5nRxCWWAcKEz1Ct4gKbjcuEhAm55eg
-         ov4z5yP5Fltifgffrl6sPk2nSc+DI/3oaWCuIfHWsbcq0NzlVKwR9Ma+AoVLuC15NaGQ
-         PXNZeVFzL+Y8kXi0xnaPMjJFSL8Ff3e9MilwxJ+Ia03fjCTrI131flUY0oFm3MYj0m+Z
-         Gruq9D0LDqZ9hrcmkdPCD/H4x2CZpn7BFxKNg0NXwg0ZrsmnSpJyCJxsHVQ5wAPtJKa4
-         +y3kpEyF+79bAoCERzwBh+28SkkqT1pOnW7Du0Csvdt1wp1P0QKLPtn1nqSojAeWYrrf
-         JRNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKZEUa8ff6ACpzAcPN7cdkhAOMkb0XasfReIkZmgyb/UG+0kv/bAn+nqrdcOfzFmFHEBTk/HPcrUObFJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzECoOKH/k09Gf7KiCx4PDVtVMOISs1m0zLt6FCpXtf+4ZWzI2I
-	C/iPEsyjVKukCePTtkmdBGMebAkJI6+d+HT5m6pqHBe66SwTQjzt6g5bAEKgSw==
-X-Gm-Gg: ASbGncthOYlIn0FdbEpJXerXXzAOkwAl3hckeJXs1QjnqU2q0MYzifLsnqf3aoDF0yr
-	iM9vHG3FyAS1CxcBbZv07PQzrkT4Gp5JGzMpKzegG45/vDfUpIgOL4QlaxCoQf5ctNbYBbK+GUK
-	wdPza5dkgD0uKsgul+H0BmptUhmWo3GJN7lUOvP3mwCuzwgSFvbMOo17ExTorNCLAEyL+xwMmQk
-	zWLONTJc8/FJQIOIY7VEl4sjeyuQfghRnVNs5sSyyDzHgBgUDlaQKQNDlihhtR2sVLl6drlwTSq
-	+uNWSx2+dBIn0fq+kAYY7qnYWVkneJhFSKPo4QFsbFo5m6koqOUzRg==
-X-Google-Smtp-Source: AGHT+IEggtRzx3PbFGQOkRuQrNEotEzfOz11JYuzd2X6Iwabnvc8Zf8QuXU1XcSuu/NAfUiKCrzDgw==
-X-Received: by 2002:a05:6a21:9188:b0:1f5:9024:3246 with SMTP id adf61e73a8af0-1f5bd7d2271mr844783637.17.1741886914092;
-        Thu, 13 Mar 2025 10:28:34 -0700 (PDT)
-Received: from thinkpad ([120.60.60.84])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56ea93e1dsm1538175a12.69.2025.03.13.10.28.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 10:28:33 -0700 (PDT)
-Date: Thu, 13 Mar 2025 22:58:26 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
-Cc: quic_cang@quicinc.com, quic_nitirawa@quicinc.com, bvanassche@acm.org,
-	avri.altman@wdc.com, peter.wang@mediatek.com, minwoo.im@samsung.com,
-	adrian.hunter@intel.com, martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	Bean Huo <beanhuo@micron.com>,
-	Ziqi Chen <quic_ziqichen@quicinc.com>,
-	Keoseong Park <keosung.park@samsung.com>,
-	Gwendal Grignou <gwendal@chromium.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Eric Biggers <ebiggers@google.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/1] scsi: ufs: core: add device level exception
- support
-Message-ID: <20250313172826.xzqkrx5rzuqpvz7j@thinkpad>
-References: <772730b9a036a33bebc27cb854576a012e76ca91.1741282081.git.quic_nguyenb@quicinc.com>
+	s=arc-20240116; t=1741886910; c=relaxed/simple;
+	bh=ysZJy/pStSvMTNKpMrLF6jzCLOYDpj1uIdVrASzzEoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=f3d7SyDKBtFlqB6a+fvCPFbMtkxPxbZhlBIoroAxyAhToYf4/FMIaoijH90AMVSvW+oWtIJIa3u0ezu1oqStTNARE3Zvznsfc190v3/4oryb4dq6+K2P62adLsxiQfX6aUBS3jLdxeINub1KgUYEZXGE9Rnn0ldBrKgALsaRMVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dQ2DxQ6s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20167C4CEDD;
+	Thu, 13 Mar 2025 17:28:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741886910;
+	bh=ysZJy/pStSvMTNKpMrLF6jzCLOYDpj1uIdVrASzzEoY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=dQ2DxQ6sIpOoITZl4zyHIxnBnbZyOGDZNCdr6pjx83cxo7HKyABB0MY5WSzJPQMiy
+	 3ol/5oSMjL14PA0/ckuboggAjr77NDLlyW/cF4PCSVOSERWtWivHsQYmquJI5Reogs
+	 HM7bSJ5Xii3T05scdfAqplAxvpe8MfMcdZoOUm1paIPCyvWEzJO3msis1SJCp4K1cu
+	 ccxcBkbSQ0hqb0svtmMvC8pQ8gomopQTsJ6IY3MkcJ50NnDR9gbOoogZ29hSAaGpyo
+	 C7Z1Z+K13kh2VAUFqfC76Fp9gcjIaawMMPBmhHRhM7iyhlimU3im7nE91MoZikvLpk
+	 ZsUdRxHkoL0iA==
+Date: Thu, 13 Mar 2025 12:28:28 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jeff Johnson <jjohnson@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	mhi@lists.linux.dev, linux-wireless@vger.kernel.org,
+	ath11k@lists.infradead.org, quic_pyarlaga@quicinc.com,
+	quic_vbadigan@quicinc.com, quic_vpernami@quicinc.com,
+	quic_mrana@quicinc.com,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	Miaoqing Pan <quic_miaoqing@quicinc.com>
+Subject: Re: [PATCH v2 10/10] wifi: ath11k: add support for MHI bandwidth
+ scaling
+Message-ID: <20250313172828.GA740705@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <772730b9a036a33bebc27cb854576a012e76ca91.1741282081.git.quic_nguyenb@quicinc.com>
+In-Reply-To: <20250313-mhi_bw_up-v2-10-869ca32170bf@oss.qualcomm.com>
 
-On Thu, Mar 06, 2025 at 09:31:06AM -0800, Bao D. Nguyen wrote:
-> The device JEDEC standard version 4.1 adds support for the device
-> level exception events. To support this new device level exception
-> feature, expose two new sysfs nodes below to provide
-> the user space access to the device level exception information.
-> /sys/bus/platform/drivers/ufshcd/*/device_lvl_exception
-> /sys/bus/platform/drivers/ufshcd/*/device_lvl_exception_id
+On Thu, Mar 13, 2025 at 05:10:17PM +0530, Krishna Chaitanya Chundru wrote:
+> From: Miaoqing Pan <quic_miaoqing@quicinc.com>
 > 
-> The device_lvl_exception sysfs node reports the number of
-> device level exceptions that have occurred since the last time
-> this variable is reset.
-> The device_lvl_exception_id sysfs node reports the exception ID
-> which is the JEDEC standard qDeviceLevelExceptionID attribute.
-> The user space application can query these sysfs nodes to get more
-> information about the device level exception.
-> 
-> Signed-off-by: Bao D. Nguyen <quic_nguyenb@quicinc.com>
+> Add support for MHI bandwidth scaling, which will reduce power consumption
+> if WLAN operates with lower bandwidth. This feature is only enabled for
+> QCA6390.
+
+What is the event that initiates bandwidth scaling or reduces power
+consumption?  Is there any kind of user interface like a sysfs knob
+an administrator can use?
+
+Does this happen based on ath11k usage?  Battery or thermal status?  
+
+I guess reducing power consumption or reducing heat is probably the
+driving factor since we would always use max performance if power and
+heat were not issues?
+
+Some hints here would be useful.
+
+> Tested-on: WCN6855 hw2.1 PCI WLAN.HSP.1.1-04546-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
+> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
 > ---
->  Documentation/ABI/testing/sysfs-driver-ufs | 23 +++++++++++
->  drivers/ufs/core/ufs-sysfs.c               | 54 ++++++++++++++++++++++++++
->  drivers/ufs/core/ufshcd-priv.h             |  1 +
->  drivers/ufs/core/ufshcd.c                  | 61 ++++++++++++++++++++++++++++++
->  include/uapi/scsi/scsi_bsg_ufs.h           |  9 +++++
->  include/ufs/ufs.h                          |  5 ++-
->  include/ufs/ufshcd.h                       |  5 +++
->  7 files changed, 157 insertions(+), 1 deletion(-)
+>  drivers/net/wireless/ath/ath11k/mhi.c | 41 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
-> index ae01912..5cf3f43 100644
-> --- a/Documentation/ABI/testing/sysfs-driver-ufs
-> +++ b/Documentation/ABI/testing/sysfs-driver-ufs
-> @@ -1604,3 +1604,26 @@ Description:
->  		prevent the UFS from frequently performing clock gating/ungating.
+> diff --git a/drivers/net/wireless/ath/ath11k/mhi.c b/drivers/net/wireless/ath/ath11k/mhi.c
+> index 6e45f464a429..74769c0993ae 100644
+> --- a/drivers/net/wireless/ath/ath11k/mhi.c
+> +++ b/drivers/net/wireless/ath/ath11k/mhi.c
+> @@ -20,6 +20,7 @@
+>  #define MHI_TIMEOUT_DEFAULT_MS	20000
+>  #define RDDM_DUMP_SIZE	0x420000
+>  #define MHI_CB_INVALID	0xff
+> +#define MHI_BW_SCALE_CHAN_DB 126
 >  
->  		The attribute is read/write.
-> +
-> +What:		/sys/bus/platform/drivers/ufshcd/*/device_lvl_exception
-> +What:		/sys/bus/platform/devices/*.ufs/device_lvl_exception
-> +Date:		March 2025
-> +Contact:	Bao D. Nguyen <quic_nguyenb@quicinc.com>
-> +Description:
-> +		The device_lvl_exception is a counter indicating the number
-> +		of times the device level exceptions have occurred since the
-> +		last time this variable is reset. Read the device_lvl_exception_id
-> +		sysfs node to know more information about the exception.
-> +		The file is read only.
-
-No. This attribute is RW and the write of 0 will reset the counter. Please
-change it here and also in commit message.
-
-Also document the spec version requirement for these attributes.
-
-> +
-> +What:		/sys/bus/platform/drivers/ufshcd/*/device_lvl_exception_id
-> +What:		/sys/bus/platform/devices/*.ufs/device_lvl_exception_id
-> +Date:		March 2025
-> +Contact:	Bao D. Nguyen <quic_nguyenb@quicinc.com>
-> +Description:
-> +		Reading the device_lvl_exception_id returns the device JEDEC
-> +		standard's qDeviceLevelExceptionID attribute. The definition of the
-> +		qDeviceLevelExceptionID is the ufs device vendor specific design.
-> +		Refer to the device manufacturer datasheet for more information
-> +		on the meaning of the qDeviceLevelExceptionID attribute value.
-> +		The file is read only.
-> diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
-> index 90b5ab6..0248288a 100644
-> --- a/drivers/ufs/core/ufs-sysfs.c
-> +++ b/drivers/ufs/core/ufs-sysfs.c
-> @@ -466,6 +466,56 @@ static ssize_t critical_health_show(struct device *dev,
->  	return sysfs_emit(buf, "%d\n", hba->critical_health_count);
+>  static const struct mhi_channel_config ath11k_mhi_channels_qca6390[] = {
+>  	{
+> @@ -73,6 +74,17 @@ static struct mhi_event_config ath11k_mhi_events_qca6390[] = {
+>  		.client_managed = false,
+>  		.offload_channel = false,
+>  	},
+> +	{
+> +		.num_elements = 8,
+> +		.irq_moderation_ms = 0,
+> +		.irq = 1,
+> +		.mode = MHI_DB_BRST_DISABLE,
+> +		.data_type = MHI_ER_BW_SCALE,
+> +		.priority = 2,
+> +		.hardware_event = false,
+> +		.client_managed = false,
+> +		.offload_channel = false,
+> +	},
+>  };
+>  
+>  static const struct mhi_controller_config ath11k_mhi_config_qca6390 = {
+> @@ -313,6 +325,33 @@ static void ath11k_mhi_op_write_reg(struct mhi_controller *mhi_cntrl,
+>  	writel(val, addr);
 >  }
 >  
-
-[...]
-
-> +int ufshcd_read_device_lvl_exception_id(struct ufs_hba *hba, u64 *exception_id)
+> +static int ath11k_mhi_op_get_misc_doorbell(struct mhi_controller *mhi_cntrl,
+> +					   enum mhi_er_data_type type)
 > +{
-> +	struct utp_upiu_query_response_v4_0 *upiu_resp;
-> +	struct ufs_query_req *request = NULL;
-> +	struct ufs_query_res *response = NULL;
-> +	int err;
+> +	if (type == MHI_ER_BW_SCALE)
+> +		return MHI_BW_SCALE_CHAN_DB;
 > +
-> +	if (hba->dev_info.wspecversion < 0x410)
-> +		return -EOPNOTSUPP;
-> +
-> +	ufshcd_hold(hba);
-> +	mutex_lock(&hba->dev_cmd.lock);
-> +
-> +	ufshcd_init_query(hba, &request, &response,
-> +			  UPIU_QUERY_OPCODE_READ_ATTR,
-> +			  QUERY_ATTR_IDN_DEV_LVL_EXCEPTION_ID, 0, 0);
-> +
-> +	request->query_func = UPIU_QUERY_FUNC_STANDARD_READ_REQUEST;
-> +
-> +	err = ufshcd_exec_dev_cmd(hba, DEV_CMD_TYPE_QUERY, QUERY_REQ_TIMEOUT);
-> +
-> +	if (err) {
-> +		dev_err(hba->dev, "%s: failed to read device level exception %d\n",
-> +			__func__, err);
-> +		goto out;
-> +	}
-> +
-> +	upiu_resp = (struct utp_upiu_query_response_v4_0 *)response;
-> +	*exception_id = get_unaligned_be64(&upiu_resp->value);
-> +
-> +out:
-> +	mutex_unlock(&hba->dev_cmd.lock);
-> +	ufshcd_release(hba);
-> +
-> +	return err;
+> +	return -EINVAL;
 > +}
-> +EXPORT_SYMBOL_GPL(ufshcd_read_device_lvl_exception_id);
+> +
+> +static int ath11k_mhi_op_bw_scale(struct mhi_controller *mhi_cntrl,
+> +				  struct mhi_link_info *link_info)
+> +{
+> +	enum pci_bus_speed speed = pci_lnkctl2_bus_speed(link_info->target_link_speed);
+> +	struct ath11k_base *ab = dev_get_drvdata(mhi_cntrl->cntrl_dev);
+> +	struct pci_dev *pci_dev = to_pci_dev(ab->dev);
+> +	struct pci_dev *pdev;
+> +
+> +	if (!pci_dev)
+> +		return -EINVAL;
+> +
+> +	pdev = pci_upstream_bridge(pci_dev);
+> +	if (!pdev)
+> +		return -ENODEV;
+> +
+> +	return pcie_set_target_speed(pdev, speed, true);
 
-There is no need to export this function.
+Seems kind of unfortunate that:
 
-- Mani
+  1) The endpoint driver needs to be involved here, even though it
+  does nothing that is endpoint-specific, and
 
--- 
-மணிவண்ணன் சதாசிவம்
+  2) The endpoint driver twiddles something in *another* device (the
+  upstream bridge).  There's a potential locking issue here and
+  potential conflict with any other devices that may be below that
+  bridge.
+
+> +}
+> +
+>  static int ath11k_mhi_read_addr_from_dt(struct mhi_controller *mhi_ctrl)
+>  {
+>  	struct device_node *np;
+> @@ -389,6 +428,8 @@ int ath11k_mhi_register(struct ath11k_pci *ab_pci)
+>  	mhi_ctrl->status_cb = ath11k_mhi_op_status_cb;
+>  	mhi_ctrl->read_reg = ath11k_mhi_op_read_reg;
+>  	mhi_ctrl->write_reg = ath11k_mhi_op_write_reg;
+> +	mhi_ctrl->bw_scale = ath11k_mhi_op_bw_scale;
+> +	mhi_ctrl->get_misc_doorbell = ath11k_mhi_op_get_misc_doorbell;
+>  
+>  	switch (ab->hw_rev) {
+>  	case ATH11K_HW_QCN9074_HW10:
+> 
+> -- 
+> 2.34.1
+> 
 
