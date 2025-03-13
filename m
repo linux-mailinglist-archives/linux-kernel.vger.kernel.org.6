@@ -1,175 +1,97 @@
-Return-Path: <linux-kernel+bounces-558639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A191A5E8F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:13:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF4FA5E8E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:10:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 582533B8287
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:13:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B17F1766F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826B18C1E;
-	Thu, 13 Mar 2025 00:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F6A3234;
+	Thu, 13 Mar 2025 00:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="JP9c4+NI"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j8YYd/W1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BC217E;
-	Thu, 13 Mar 2025 00:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C4417E;
+	Thu, 13 Mar 2025 00:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741824817; cv=none; b=P46VO8yBf1qfzUZC/XKCoZehmFiTnoEAHvdNEA74FUE6/kD2MhLWucVzXhbaTIXVbEga//3jAP4maPNgxba7dKvRn4upQpnBdM1AE63dThZUg3YhNtihUWydVpcnccUi+XsDw1zkDg8F5V2+PVJJlrrJbN5tcfNikkc7stM2tBY=
+	t=1741824627; cv=none; b=Taz5P67+3cmwxehino1nJqcNyO3ApepKLmu3zlBiuSkZl0hoNtL0gXe2ENhAOb2xVzOMOATSY8l+Q4uikGTW8MQTHzosxiaCdduQU8jIRXqW22XZgFOhtgEgkDs822U/bZn3xwsqNF7oYCCCBiWrK3O+NyvpSZ9XNtFHmkhLZc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741824817; c=relaxed/simple;
-	bh=8dEfo6LCVjShHE42wf1ejHBUNUNXIYH6qPYnJMKcwbs=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=e+Z9mNW2E+fjkzEZatNWaCuhXNrgU27+PcKSN5Q0zdE/Nv20yul0jHxfUvkAdQNwZCNu9a/WaE3hM+iwwsJ9fxa3dUZXLG2CT0mYr+Y3MvYq2ErQj3GDqRMZclzt+ZD4o4+BNNtTFTBssKRbBlHB7u7kglEqyehze6zu49LFAg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=JP9c4+NI; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52D09Gjf2730497
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 12 Mar 2025 17:09:16 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52D09Gjf2730497
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1741824561;
-	bh=pOuTjU0DLlw9muSdV/bvRsUk/zEVswSeTDmcSBtrmzk=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=JP9c4+NI9BKncKU+1PsEB9cZeQpNxCxpJ0LmRuYoHNmwWD/IZKSycv5sN9IICpIEz
-	 fR/hn+rQhnfZM1uUiHFsG6gUoBL9neiS+JGil7wI30UkDhHcG1QRaLCxVEOb8Avej8
-	 KQCseXzhw1xoqlckAoMQLS0jGXtjlqSg5eaOuTyA+VT8jx0ImUcERkYzUzACSp2jWz
-	 iveP8ZtK+pI4qfkTCfKTJm+BI905HMMN61AY3/MbPJkw2r62IkxWg6XH1CtdvGTrlr
-	 6CALlw7rm8dk1ZxjmoEuThEn4j6+yLh7OqapigzBfq/66ixFRWdc3P5KvqHGfpwwnf
-	 wFX8jsnXRMF2A==
-Date: Wed, 12 Mar 2025 17:09:16 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Jacob Keller <jacob.e.keller@intel.com>,
-        David Laight <david.laight.linux@gmail.com>,
-        Jiri Slaby <jirislaby@kernel.org>
-CC: Ingo Molnar <mingo@kernel.org>, Kuan-Wei Chiu <visitorckw@gmail.com>,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, jk@ozlabs.org,
-        joel@jms.id.au, eajames@linux.ibm.com, andrzej.hajda@intel.com,
-        neil.armstrong@linaro.org, rfoss@kernel.org,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-        dmitry.torokhov@gmail.com, mchehab@kernel.org, awalls@md.metrocast.net,
-        hverkuil@xs4all.nl, miquel.raynal@bootlin.com, richard@nod.at,
-        vigneshr@ti.com, louis.peens@corigine.com, andrew+netdev@lunn.ch,
-        davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-        parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
-        johannes@sipsolutions.net, gregkh@linuxfoundation.org,
-        yury.norov@gmail.com, akpm@linux-foundation.org, alistair@popple.id.au,
-        linux@rasmusvillemoes.dk, Laurent.pinchart@ideasonboard.com,
-        jonas@kwiboo.se, jernej.skrabec@gmail.com, kuba@kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsi@lists.ozlabs.org,
-        dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
-        oss-drivers@corigine.com, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
-        brcm80211-dev-list.pdl@broadcom.com, linux-serial@vger.kernel.org,
-        bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
-        Yu-Chun Lin <eleanor15x@gmail.com>
-Subject: Re: [PATCH v3 01/16] bitops: Change parity8() return type to bool
-User-Agent: K-9 Mail for Android
-In-Reply-To: <cbb26a91-807b-4227-be81-8114e9ea72cb@intel.com>
-References: <20250306162541.2633025-1-visitorckw@gmail.com> <20250306162541.2633025-2-visitorckw@gmail.com> <9d4b77da-18c5-4551-ae94-a2b9fe78489a@kernel.org> <Z8ra0s9uRoS35brb@gmail.com> <a4040c78-8765-425e-a44e-c374dfc02a9c@kernel.org> <20250307193643.28065d2d@pumpkin> <cbb26a91-807b-4227-be81-8114e9ea72cb@intel.com>
-Message-ID: <0F794C6F-32A9-4F34-9516-CEE24EA4BC49@zytor.com>
+	s=arc-20240116; t=1741824627; c=relaxed/simple;
+	bh=8soeqXNN5au4hvLPUpIInyAV09m1jrjYWHYC7wip3jI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RIC36/G081J+qcaWhJuzBQvRKcGGSYt83fKei33hhH4y/ek6OIVPa3Plql8DY01+ikCEnOpdh1dfD6xki+E61NEqcnISmxM7AzHyBxolCC1VmdpgwvR31oSD6bUZCjq+qWqguqtYJtjrfRev/wNZs2mdnjQUcTcQcs/0MlNJogI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j8YYd/W1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC902C4CEDD;
+	Thu, 13 Mar 2025 00:10:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741824626;
+	bh=8soeqXNN5au4hvLPUpIInyAV09m1jrjYWHYC7wip3jI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j8YYd/W1Va4DqX+vWN/hqTBRjVKF52OQw9S5xTtXKNEZEaKCZKKvvpARrh7h4KA37
+	 NdGwZajanvod9BZutuW0zg316W5OPu8BLBYfMIv7Al3se+N/DZz8E+aHXldMkdViXA
+	 dC9SjaKMbmCPHdlEoRGQEVM9RJ/M4ajF27khsvyzXlUYikoFPBfL3CHLsenxxQdlzG
+	 DVMHdVSBT4kBJnNgzRb+GG6O4n34K0EcgF3oflK3Pw9HQpTydjHL0eY+g8CPNOjI1X
+	 QwNIevz66YQRxs9YN761dVFpdo6raXh+t+9q1Y7gurd3sd7F7zOYppaGe8O0S52gI8
+	 5EQZGS3NJ8cJA==
+Date: Thu, 13 Mar 2025 01:10:11 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: Troy Mitchell <troymitchell988@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, linux-riscv@lists.infradead.org, 
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	spacemit@lists.linux.dev, Guodong Xu <guodong@riscstar.com>
+Subject: Re: [PATCH v6 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
+Message-ID: <nrmoj7gookedlz2e3fgu3hvn3s5fc6vrxgjueynyp5orj63k4b@cqlhflioxv7h>
+References: <20250307-k1-i2c-master-v6-0-34f17d2dae1c@gmail.com>
+ <20250307-k1-i2c-master-v6-2-34f17d2dae1c@gmail.com>
+ <7d9e90ba-8c23-44dc-b64f-80213216faf7@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7d9e90ba-8c23-44dc-b64f-80213216faf7@riscstar.com>
 
-On March 12, 2025 4:56:31 PM PDT, Jacob Keller <jacob=2Ee=2Ekeller@intel=2E=
-com> wrote:
->
->
->On 3/7/2025 11:36 AM, David Laight wrote:
->> On Fri, 7 Mar 2025 12:42:41 +0100
->> Jiri Slaby <jirislaby@kernel=2Eorg> wrote:
->>=20
->>> On 07=2E 03=2E 25, 12:38, Ingo Molnar wrote:
->>>>
->>>> * Jiri Slaby <jirislaby@kernel=2Eorg> wrote:
->>>>  =20
->>>>> On 06=2E 03=2E 25, 17:25, Kuan-Wei Chiu wrote: =20
->>>>>> Change return type to bool for better clarity=2E Update the kernel =
-doc
->>>>>> comment accordingly, including fixing "@value" to "@val" and adjust=
-ing
->>>>>> examples=2E Also mark the function with __attribute_const__ to allo=
-w
->>>>>> potential compiler optimizations=2E
->>>>>>
->>>>>> Co-developed-by: Yu-Chun Lin <eleanor15x@gmail=2Ecom>
->>>>>> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail=2Ecom>
->>>>>> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail=2Ecom>
->>>>>> ---
->>>>>>    include/linux/bitops=2Eh | 10 +++++-----
->>>>>>    1 file changed, 5 insertions(+), 5 deletions(-)
->>>>>>
->>>>>> diff --git a/include/linux/bitops=2Eh b/include/linux/bitops=2Eh
->>>>>> index c1cb53cf2f0f=2E=2E44e5765b8bec 100644
->>>>>> --- a/include/linux/bitops=2Eh
->>>>>> +++ b/include/linux/bitops=2Eh
->>>>>> @@ -231,26 +231,26 @@ static inline int get_count_order_long(unsign=
-ed long l)
->>>>>>    /**
->>>>>>     * parity8 - get the parity of an u8 value
->>>>>> - * @value: the value to be examined
->>>>>> + * @val: the value to be examined
->>>>>>     *
->>>>>>     * Determine the parity of the u8 argument=2E
->>>>>>     *
->>>>>>     * Returns:
->>>>>> - * 0 for even parity, 1 for odd parity
->>>>>> + * false for even parity, true for odd parity =20
->>>>>
->>>>> This occurs somehow inverted to me=2E When something is in parity me=
-ans that
->>>>> it has equal number of 1s and 0s=2E I=2Ee=2E return true for even di=
-stribution=2E
->>>>> Dunno what others think? Or perhaps this should be dubbed odd_parity=
-() when
->>>>> bool is returned? Then you'd return true for odd=2E =20
->>>>
->>>> OTOH:
->>>>
->>>>   - '0' is an even number and is returned for even parity,
->>>>   - '1' is an odd  number and is returned for odd  parity=2E =20
->>>
->>> Yes, that used to make sense for me=2E For bool/true/false, it no long=
-er=20
->>> does=2E But as I wrote, it might be only me=2E=2E=2E
->>=20
->> No me as well, I've made the same comment before=2E
->> When reading code I don't want to have to look up a function definition=
-=2E
->> There is even scope for having parity_odd() and parity_even()=2E
->> And, with the version that shifts a constant right you want to invert
->> the constant!
->>=20
->> 	David
->
->This is really a question of whether you expect odd or even parity as
->the "true" value=2E I think that would depend on context, and we may not
->reach a good consensus=2E
->
->I do agree that my brain would jump to "true is even, false is odd"=2E
->However, I also agree returning the value as 0 for even and 1 for odd
->kind of made sense before, and updating this to be a bool and then
->requiring to switch all the callers is a bit obnoxious=2E=2E=2E
+Hi,
 
-Odd =3D 1 =3D true is the only same definition=2E It is a bitwise XOR, or =
-sum mod 1=2E
+On Tue, Mar 11, 2025 at 08:46:31PM -0500, Alex Elder wrote:
+> On 3/7/25 7:13 AM, Troy Mitchell wrote:
+> > This patch introduces basic I2C support for the SpacemiT K1 SoC,
+> > utilizing interrupts for transfers.
+> > 
+> > The driver has been tested using i2c-tools on a Bananapi-F3 board,
+> > and basic I2C read/write operations have been confirmed to work.
+> > 
+> > Signed-off-by: Troy Mitchell <troymitchell988@gmail.com>
+> 
+> I have a bunch of really small suggestions.  Please consider
+> them, but whatever you choose to do this looks good to me.
+> 
+> Reviewed-by: Alex Elder <elder@riscstar.com>
+
+thanks Alex for reviewing, I will wait for a v7 with your
+suggestions.
+
+Overall the patch looks good to me, as well, even though I have
+to give some credit to Wolfram's previous comments about the
+i2c-pxa similarities.
+
+I checked the two drivers last night and I can see some
+similarities, on the other hand I also understand that it might
+require some extra effort.
+
+I want to check it again, though, before applying.
+
+Andi
 
