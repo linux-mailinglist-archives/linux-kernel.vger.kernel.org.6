@@ -1,198 +1,107 @@
-Return-Path: <linux-kernel+bounces-559295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1027FA5F204
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:08:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA436A5F20D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:10:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB21619C1C0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:08:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C290719C17B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4CA265CD2;
-	Thu, 13 Mar 2025 11:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82880265CC7;
+	Thu, 13 Mar 2025 11:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gljrNtU0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFpakx8q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7251EE028
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E971E8325;
+	Thu, 13 Mar 2025 11:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741864085; cv=none; b=iHO7bbMBQh5PaixyopNpefC33QoKwzH1kZ2jIHUJUpXxMx9zLqqGwpu91qj8YfZtyb8+Xjz2xTufJ2sEu6KNmXIwOrkUan7Tg8JN1qvutcA6mVEvOeMsipGf4uFSH4fmzzYgq8KqAo+XUQvydJnhPes6+Yai38bvDHtfAr6G4No=
+	t=1741864197; cv=none; b=Fup8I/DzyoszZH7U8rN5qTp4orubCwV3I5h2a4nj8gWLC+hH4LoQC+pICBGq/63cVgDQdXVmAF3x3n6DXO24y+vHSHC9g2i7CEXZjAEuJGlX/QGgC6uaJfv0TezMXS0haF9emUoxsviZBd00isblx3i3LN5byVH5rPLzNK6HZjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741864085; c=relaxed/simple;
-	bh=DtTOfbnkAVccKUuDS63awzbFYBh5j1+96WX5yegVUyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZcYkh6Q10YkMNL4dyd49/DJs3OiqYa4AnE3/KSz5KsHb8uA9LxSFO77a/digyoJY/ga/jr/MYDcxH8PQIFj//yaLYJIVqZ6ormxw0r8t778KSN6ri6VbvC6vP363GUW+hF9tEkllPXx71gPqGxZxm1bt2CWPm6gkJsABas7AUEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gljrNtU0; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741864084; x=1773400084;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=DtTOfbnkAVccKUuDS63awzbFYBh5j1+96WX5yegVUyc=;
-  b=gljrNtU01sg/b0uPMfHahFh+tVZns/QyWMxIubt13CXLKbok5UmX05Kk
-   Kr2vhhITtDddVlhVGPztHKWvDFUDgLshP9Upf2C1iSyBJkBGCUcyj8JRA
-   f2/WIci7m/Ggf3mph8Sw12pqcXoAPQb83Ggds6gpTo9Jc9wi27gZVO7YI
-   ka9X73U4Qpc/COQlkcJJHS7ep1Zi094rSRnxWAQQg/l8FkbGiqipgZ8Be
-   qW9Xsr0MKiQgfIDYMTidn0nJH/Qq/8F+Txmo1ZQyRL5OI30J0yGIHTip4
-   uwtCbob/pgcPG02/Q0wPa/EkA+ZyHg8oMCvzgUbJ+UDWuFjr0SIqlHXSK
-   Q==;
-X-CSE-ConnectionGUID: nqwWGK2tQWCJjD45HTkOcg==
-X-CSE-MsgGUID: y0LPDQH0TCaXKtrvw6VpEg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="68328793"
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="68328793"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 04:08:03 -0700
-X-CSE-ConnectionGUID: AjktYhLsRsm6vhAxfAix0w==
-X-CSE-MsgGUID: syYFaxW2RVyXWMwPukIlaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="158080593"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 04:07:59 -0700
-Date: Thu, 13 Mar 2025 13:07:56 +0200
-From: Raag Jadav <raag.jadav@intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com, amd-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	Alex Deucher <alexander.deucher@amd.com>,
-	'Christian =?iso-8859-1?Q?K=F6nig'?= <christian.koenig@amd.com>,
-	siqueira@igalia.com, airlied@gmail.com, simona@ffwll.ch,
-	rodrigo.vivi@intel.com, jani.nikula@linux.intel.com,
-	lucas.demarchi@intel.com, Xaver Hugl <xaver.hugl@kde.org>,
-	Pierre-Loup Griffais <pgriffais@valvesoftware.com>
-Subject: Re: [PATCH 1/2] drm: Create an app info option for wedge events
-Message-ID: <Z9K8jHVoOKPoXyuv@black.fi.intel.com>
-References: <20250228121353.1442591-1-andrealmeid@igalia.com>
- <20250228121353.1442591-2-andrealmeid@igalia.com>
- <Z8HGFRGOYvyCCWWu@black.fi.intel.com>
- <58763d8e-46a1-4753-9401-987fb3dac50b@igalia.com>
- <Z8KgwswQQyGxhsR1@black.fi.intel.com>
- <db27ee44-f480-475b-be7e-710bd30eb7a5@igalia.com>
- <Z9BuU3RzMkEE_FL1@black.fi.intel.com>
- <Z9FcmDzSmBbVAsqD@black.fi.intel.com>
- <ef926ea5-ac0e-4f95-b260-84c4102c93ad@igalia.com>
+	s=arc-20240116; t=1741864197; c=relaxed/simple;
+	bh=y5Rt/A3I0puk2tWJqwdD+VS9AYs8xTcIZQZ75uLi/aQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ak3AvlsujpbijMrwkx+O0KoHYJufdLd7x4RCTmpJlurlFyLclg3H3KzjFOil0vputju417HmDXnO9Vdh8OLKbNj2SZhDFgi9CBp+ivLKJUhEC3XArFPwB1kNbEJS5xes7IuRZa7TFxKpNDBJ0mMUviPrTYST2yo/nGPRwRustrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFpakx8q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38B53C4CEDD;
+	Thu, 13 Mar 2025 11:09:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741864196;
+	bh=y5Rt/A3I0puk2tWJqwdD+VS9AYs8xTcIZQZ75uLi/aQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=OFpakx8qWuEP5hs9WCekvz25n4fnw63dd3zf1Hsha7Gk7+1cmshaz6E6oE8d6Ieh+
+	 tBzkhdDKSaYH1OgAoNK+7jfD0fdJN4xQ1W2eZZQZ9HelvNaxoDzMiG4MttBJXWwp8t
+	 OYQ48FdLg1Aw9IqOqJEj0BBUa8qX6V/9YjFqw9jvVKWW22JNwRMHhG8JnhrlhbaW6S
+	 29uLDOm+zyzCye6P/FtsnHmuM8tJKNGUgYdVxO1sAeEi7yoQhyS/YRufPMcwDeeXtg
+	 ax/RpzUJ7Toj8NLazkxeVIel3BUqwjK+RCDn16ltaxBF+hnLwAAfRjkh+iPS9k7Pz+
+	 SWDFtToOpr/aQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB6693806651;
+	Thu, 13 Mar 2025 11:10:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ef926ea5-ac0e-4f95-b260-84c4102c93ad@igalia.com>
+Subject: Re: [PATCH net-next] dt-bindings: net: Define interrupt constraints for
+ DWMAC vendor bindings
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174186423076.1466791.15724461347771862891.git-patchwork-notify@kernel.org>
+Date: Thu, 13 Mar 2025 11:10:30 +0000
+References: <20250309003301.1152228-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250309003301.1152228-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, neil.armstrong@linaro.org, khilman@baylibre.com,
+ jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, heiko@sntech.de, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com, nobuhiro1.iwamatsu@toshiba.co.jp,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ vineetha.g.jaya.kumaran@intel.com, biao.huang@mediatek.com,
+ xiaoning.wang@nxp.com, linux-imx@nxp.com, david.wu@rock-chips.com,
+ christophe.roullier@foss.st.com, rmk+kernel@armlinux.org.uk,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-rockchip@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-mediatek@lists.infradead.org,
+ prabhakar.mahadev-lad.rj@bp.renesas.com
 
-On Wed, Mar 12, 2025 at 06:59:33PM -0300, André Almeida wrote:
-> Em 12/03/2025 07:06, Raag Jadav escreveu:
-> > On Tue, Mar 11, 2025 at 07:09:45PM +0200, Raag Jadav wrote:
-> > > On Mon, Mar 10, 2025 at 06:27:53PM -0300, André Almeida wrote:
-> > > > Em 01/03/2025 02:53, Raag Jadav escreveu:
-> > > > > On Fri, Feb 28, 2025 at 06:54:12PM -0300, André Almeida wrote:
-> > > > > > Hi Raag,
-> > > > > > 
-> > > > > > On 2/28/25 11:20, Raag Jadav wrote:
-> > > > > > > Cc: Lucas
-> > > > > > > 
-> > > > > > > On Fri, Feb 28, 2025 at 09:13:52AM -0300, André Almeida wrote:
-> > > > > > > > When a device get wedged, it might be caused by a guilty application.
-> > > > > > > > For userspace, knowing which app was the cause can be useful for some
-> > > > > > > > situations, like for implementing a policy, logs or for giving a chance
-> > > > > > > > for the compositor to let the user know what app caused the problem.
-> > > > > > > > This is an optional argument, when `PID=-1` there's no information about
-> > > > > > > > the app caused the problem, or if any app was involved during the hang.
-> > > > > > > > 
-> > > > > > > > Sometimes just the PID isn't enough giving that the app might be already
-> > > > > > > > dead by the time userspace will try to check what was this PID's name,
-> > > > > > > > so to make the life easier also notify what's the app's name in the user
-> > > > > > > > event.
-> > > > > > > > 
-> > > > > > > > Signed-off-by: André Almeida <andrealmeid@igalia.com>
-> > > > 
-> > > > [...]
-> > > > 
-> > > > > > > >     	len = scnprintf(event_string, sizeof(event_string), "%s", "WEDGED=");
-> > > > > > > > @@ -562,6 +564,14 @@ int drm_dev_wedged_event(struct drm_device *dev, unsigned long method)
-> > > > > > > >     	drm_info(dev, "device wedged, %s\n", method == DRM_WEDGE_RECOVERY_NONE ?
-> > > > > > > >     		 "but recovered through reset" : "needs recovery");
-> > > > > > > > +	if (info) {
-> > > > > > > > +		snprintf(pid_string, sizeof(pid_string), "PID=%u", info->pid);
-> > > > > > > > +		snprintf(comm_string, sizeof(comm_string), "APP=%s", info->comm);
-> > > > > > > > +	} else {
-> > > > > > > > +		snprintf(pid_string, sizeof(pid_string), "%s", "PID=-1");
-> > > > > > > > +		snprintf(comm_string, sizeof(comm_string), "%s", "APP=none");
-> > > > > > > > +	}
-> > > > > > > This is not much use for wedge cases that needs recovery, since at that point
-> > > > > > > the userspace will need to clean house anyway.
-> > > > > > > 
-> > > > > > > Which leaves us with only 'none' case and perhaps the need for standardization
-> > > > > > > of "optional telemetry collection".
-> > > > > > > 
-> > > > > > > Thoughts?
-> > > > > > 
-> > > > > > I had the feeling that 'none' was already meant to be used for that. Do you
-> > > > > > think we should move to another naming? Given that we didn't reach the merge
-> > > > > > window yet we could potentially change that name without much damage.
-> > > > > 
-> > > > > No, I meant thoughts on possible telemetry data that the drivers might
-> > > > > think is useful for userspace (along with PID) and can be presented in
-> > > > > a vendor agnostic manner (just like wedged event).
-> > > > 
-> > > > I'm not if I agree that this will only be used for telemetry and for the
-> > > > `none` use case. As stated by Xaver, there's use case to know which app
-> > > > caused the device to get wedged (like switching to software rendering) and
-> > > > to display something for the user after the recovery is done (e.g. "The game
-> > > > <app name> stopped working and Plasma has reset").
-> > > 
-> > > Sure, but since this information is already available in coredump, I was
-> > > hoping to have something like a standardized DRM level coredump with both
-> > > vendor specific and agnostic sections, which the drivers can (and hopefully
-> > > transition to) use in conjunction with wedged event to provide wider
-> > > telemetry and is useful for all wedge cases.
-> > 
-> > This is more useful because,
-> > 
-> > 1. It gives drivers an opportunity to present the telemetry that they are
-> >     interested in without needing to add a new event string (like PID or APP)
-> >     for their case.
-> > 
-> > 2. When we consider wedging as a usecase, there's a lot more that goes
-> >     into it than an application that might be behaving strangely. So a wider
-> >     telemetry is what I would hope to look at in such a scenario.
-> > 
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Sun,  9 Mar 2025 00:33:01 +0000 you wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> I agree that coredump is the way to go for telemetry, we already have the
-> name and PID of the guilty app there, along with more information about the
-> GPU state. But I don't think it should be consumed like an uAPI. Even if we
-> wire up some common DRM code for that, I don't think we can guarantee the
-> stability of it as we can do for an uevent. coredump can be disabled and by
-> default is only accessible by root.
+> The `snps,dwmac.yaml` binding currently sets `maxItems: 3` for the
+> `interrupts` and `interrupt-names` properties, but vendor bindings
+> selecting `snps,dwmac.yaml` do not impose these limits.
+> 
+> Define constraints for `interrupts` and `interrupt-names` properties in
+> various DWMAC vendor bindings to ensure proper validation and consistency.
+> 
+> [...]
 
-Hm, this made me curious about how a pid of a specific user will be dealt
-with in a multi-user scenario. I know it's not a common scenario for the
-usercase but setting the rules to avoid side-effects (or could there be
-any?) might be a good idea.
+Here is the summary with links:
+  - [net-next] dt-bindings: net: Define interrupt constraints for DWMAC vendor bindings
+    https://git.kernel.org/netdev/net-next/c/5a1dddd29444
 
-> So I think that coredump is really good after the fact and if the user is
-> willing to go ahead and report a bug somewhere. But for the goal of
-> notifying the compositor, the same uevent that the compositor is already
-> listening to will have everything they need to deal with this reset.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-I agree that having to deal with coredump will be cumbersome for the
-usecase. Although I'm still leaning towards the idea that we should
-consider the room for new usecases that probably want to expose new data,
-and having to add a new string each time might not be the best of the
-approach.
 
-But that's just my opinion and we should probably wait for wider feedback.
-
-Raag
 
