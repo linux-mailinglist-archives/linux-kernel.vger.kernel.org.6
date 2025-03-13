@@ -1,121 +1,91 @@
-Return-Path: <linux-kernel+bounces-558950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38969A5ED74
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:59:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4944AA5ED75
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:02:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BCBB173DFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:59:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31F167A30B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFC125FA37;
-	Thu, 13 Mar 2025 07:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MUnPelFL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PcLhGXH5"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4451D63C2;
+	Thu, 13 Mar 2025 08:02:02 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10ADD1F755B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B852C2E3391
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741852769; cv=none; b=BjJ3pCIBEhKilIuru6GGwLPx4mmkahyhorDK3rVTs2N55NXwplfRfd+wmHmZRQlTIUWbbMV/IeQ/1lbUG8cBpKgtxExRzps1Q/D+1ehAc0slKwQhbb3wFNfIttPJ+4ZTqXmt9Au33dAIyjJFISmaIBD4B52ji3yUlDno7cpDXVw=
+	t=1741852922; cv=none; b=i9pcs80UGLiVSg22RRRnJIfGmtfPqc1+1Tpk5WeZgrElW1RK6MnWLJQ3c0x/RgF63JuQG68DZg7wqULpLdrvlElFKfuef1Nhs7rRKc0xZoj+vyeeAzgUdEBqSXfe4oWr+4+75CfvuWk4QDPNHPGCOHJa4Z8RZWiAwPK83fDwwjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741852769; c=relaxed/simple;
-	bh=e0npNEEjX/utUW3cZBUcJMvYNMAeFt+qoNkbCAFK+aw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FSUvhf2zqUIcswDuabN9I/IpGE9POWESLgfa1Ie7wx5TiD/PEiTqsZWmF2XVnd6hOlwj1K6t14i/shK27D4MeMMRU6nxCBG3zXgar+VG0nHNlz/36UBCGdLpa4D/Rr6M16revbcd2xKy2vyPnbFgOvcNq0qvTW3Ue4W9prNlvCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MUnPelFL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PcLhGXH5; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 13 Mar 2025 08:59:24 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741852765;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OsKP8joiC/AFQkri/bU6lzIAtOi6ZEtSVz09/Tvs7uU=;
-	b=MUnPelFLHF2+ZJUe6YgeQ7EU/mn9xiiIFm8Yb0qlTvYpect/PnhtRMCDDPjo+7Xo0oTnwq
-	BYpbUq9u+PTrxtPUoTYSTqA+iHswg0gzrVBi70IQs0GZM6bSxzdq/cuTIe52J4KggT3OF3
-	ksrAkt5axY358I+NiMnvFFaCWG+P/e4TG857Wt67vqnImbPNN6+0pnamxsrd1HWihS7fzI
-	7sUdjx2X5rirTgAj24+nxwDix1AKWUCcFU6yJHXuZL3BtjTN3WIWdWmDCWV2191SQ9aoX/
-	666MjTvh3FujRVo/KtoSw8qqsksSCopIvY/K5ut+ah9jZLYxtNqLHnbaxHymmQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741852765;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OsKP8joiC/AFQkri/bU6lzIAtOi6ZEtSVz09/Tvs7uU=;
-	b=PcLhGXH5Fm2ECNrwOxHtfjfA9b93KJHm76F2MCNyjLR1Cxg7SK9DBRUsTIgEE/ZLT+2Ls7
-	aNv2gFWW1gUUe0Ag==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
-	Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v10 19/21] mm: Add vmalloc_huge_node()
-Message-ID: <20250313075924.qulV64zL@linutronix.de>
-References: <20250312151634.2183278-1-bigeasy@linutronix.de>
- <20250312151634.2183278-20-bigeasy@linutronix.de>
- <20250312150206.54afabcf993bbc55f0066886@linux-foundation.org>
+	s=arc-20240116; t=1741852922; c=relaxed/simple;
+	bh=81NE1tzJhmPFRrYpB9Bhj1MdMf5ZTyJLVw86l8UtWkw=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=h0qQ4VX5C/ijaH5rmEv57Wb2bgc0KWFuvVZIcep4RhN7g+oTauQYQEJzXOYvSBK9E039+Dma35QKZi0HCLmtQyBVSHVeidDyRUIt9KHTTHX9s8a7Zb2j551hF4Qp41aLfSBKqwBsRAmxhHxcSIrt+PhPlmlfOWZCY2bfD6/bWeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4ZD0ML6Q7xz50FXX;
+	Thu, 13 Mar 2025 16:01:50 +0800 (CST)
+Received: from xaxapp02.zte.com.cn ([10.88.97.241])
+	by mse-fl2.zte.com.cn with SMTP id 52D81OQ4061308;
+	Thu, 13 Mar 2025 16:01:24 +0800 (+08)
+	(envelope-from ye.xingchen@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid31;
+	Thu, 13 Mar 2025 16:01:26 +0800 (CST)
+Date: Thu, 13 Mar 2025 16:01:26 +0800 (CST)
+X-Zmail-TransId: 2af967d290d6ffffffffc1c-704fe
+X-Mailer: Zmail v1.0
+Message-ID: <202503131601265834sSbkAuqH0NUydxGXf-Fa@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250312150206.54afabcf993bbc55f0066886@linux-foundation.org>
+Mime-Version: 1.0
+From: <ye.xingchen@zte.com.cn>
+To: <brauner@kernel.org>
+Cc: <jack@suse.cz>, <jeff.johnson@oss.qualcomm.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIXSBubHM6IEZpeCB1dGYzMl90b191dGY4IHBhcmFtZXRlciB0eXBlIGluIGRlY2xhcmF0aW9uIGFuZMKgZGVmaW5pdGlvbg==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 52D81OQ4061308
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 67D290EE.004/4ZD0ML6Q7xz50FXX
 
-On 2025-03-12 15:02:06 [-0700], Andrew Morton wrote:
-> On Wed, 12 Mar 2025 16:16:32 +0100 Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
-> 
-> > From: Peter Zijlstra <peterz@infradead.org>
-> > 
-> > To enable node specific hash-tables.
-> 
-> "... using huge pages if possible"?
-> 
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -3966,6 +3966,13 @@ void *vmalloc_huge_noprof(unsigned long size, gfp_t gfp_mask)
-> >  }
-> >  EXPORT_SYMBOL_GPL(vmalloc_huge_noprof);
-> >  
-> > +void *vmalloc_huge_node_noprof(unsigned long size, gfp_t gfp_mask, int node)
-> > +{
-> > +	return __vmalloc_node_range_noprof(size, 1, VMALLOC_START, VMALLOC_END,
-> > +					   gfp_mask, PAGE_KERNEL, VM_ALLOW_HUGE_VMAP,
-> > +					   node, __builtin_return_address(0));
-> > +}
-> > +
-> 
-> kerneldoc please?
+From: YeXingchen <ye.xingchen@zte.com.cn>
 
-Okay.
+The declaration of utf32_to_utf8 in the header file uses
+bool maxlen as the parameter type, while the definition uses bool maxout.
 
-> 
-> I suppose we can now simplify vmalloc_huge_noprof() to use this:
-> 
-> static inline void *vmalloc_huge_noprof(unsigned long size, gfp_t gfp_mask)
-> {
-> 	return vmalloc_huge_node_noprof(size, gfp_mask, NUMA_NO_NODE);
-> }
+This patch aligns the parameter name in the definition with the
+declaration,changing maxout to maxlen to ensure consistency.
 
-Do you want me to stash this into this one or as a follow up?
+Signed-off-by: YeXingchen <ye.xingchen@zte.com.cn>
+---
+ fs/nls/nls_base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sebastian
+diff --git a/fs/nls/nls_base.c b/fs/nls/nls_base.c
+index 18d597e49a19..1dc2f8c8916e 100644
+--- a/fs/nls/nls_base.c
++++ b/fs/nls/nls_base.c
+@@ -83,7 +83,7 @@ int utf8_to_utf32(const u8 *s, int inlen, unicode_t *pu)
+ }
+ EXPORT_SYMBOL(utf8_to_utf32);
+
+-int utf32_to_utf8(unicode_t u, u8 *s, int maxout)
++int utf32_to_utf8(unicode_t u, u8 *s, int maxlen)
+ {
+ 	unsigned long l;
+ 	int c, nc;
+-- 
+2.25.1
 
