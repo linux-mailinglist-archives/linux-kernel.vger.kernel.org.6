@@ -1,132 +1,236 @@
-Return-Path: <linux-kernel+bounces-559598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19B4A5F5F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:28:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B19A5F5F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:29:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79CB71884B30
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:28:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E11D17A37CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A34267731;
-	Thu, 13 Mar 2025 13:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA14267B00;
+	Thu, 13 Mar 2025 13:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eYLjxB9n"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JB0Fw2dn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4041F2641FD
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82752641FD
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741872516; cv=none; b=s7TxruCez0MEYcYVyers5XzemqwhP5We0vonsT70e/4TK0I5YRl1ZbPsQsUAvl2NeGNqCpKs6vIbrvInP+yY46veS/7nfih6t6WcXbQ7P4FyNh8Yql0q9HrGHWih6qlZLeafUuzHGLpdM0RJmUDIs0C5xkiRCJrBrFo8EN2nLDo=
+	t=1741872524; cv=none; b=u5BbCV8Gan1vRMRpDGloOTf3yx4s+JV5tm5oTzLCDyoYtIhcmvUkfw5fZMml4VJrVSr5D5Ct2a2R1X43hTF7+I+aCKeW0ZnW7FCE3Uz2h4iL6EcIGzwMB24g5vNy8bxcUGgg/q7vFW6DTEHSVDp1hEu40r9CfHeKbX7xGtx3Nxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741872516; c=relaxed/simple;
-	bh=Ibh63Cc9hvzyDUgJiiuJB7Zg93I8n7Kb3hQB2he5yfM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j7ZOKf8pfgWQnUTxWHkXwXww8dUi/HJ8xMWx1+PQvSXMfjm6ylhA/Mg3j6ow81gHtmNNoZaOLzzi0bY0YQziqN6m22Pl1IV7mZD2DAbrGbYFbYQ49hl5k3Af8QduY5dPyX9wupwBVj27RietWoAH80DBe7C55olwJ4mZ3UwPOS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eYLjxB9n; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e5b56fc863so1294551a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 06:28:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741872513; x=1742477313; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=21+yrU9yGO9isu/UiB7h5VTDLe1lgFL6lFq3DMWFhU0=;
-        b=eYLjxB9n9DCHYaS/J5zB+HIc0jMWTTqYm1pGFGa1Xaw7uvlidhEH5dPT08Ch7LXyrX
-         rarK4Vte2anqZH037lSaDrfvaKmKXJGWE9bYMqgDrakifn1qXCoqNClYr3Cou8Cm3Q6I
-         sIQMrLqefoF4n5LpEqg5bTGbislaZDfZ1NKu6ZKoB1SZ5ofN6ZKY5Wn3IyclgEO7Xtct
-         VbAwBtOFAhJrZxB2jYeRZyw4Kv8UTk1jQdLd4yD7U+hVRQ7Cul9/kU+foc0x1grEyw4L
-         6cVBjAw3GCEKZMU21Q2ewaSRcz11ICt9lnyOTns4mzCnPmNBLOynj1GnwVUHwJpnqHif
-         N3MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741872513; x=1742477313;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=21+yrU9yGO9isu/UiB7h5VTDLe1lgFL6lFq3DMWFhU0=;
-        b=I/5mtEXEykc8H+HwkBtk44v/UhE9pFcmIGbYsoo9hfzNaAomFBem0KPVkOJUI5kRK6
-         7fnLS3mF5XX+FPf9vdV605mVkytZxPbwronN60gEaja+NNLqhx15hmSV3xK+/yCUw6Lf
-         /WEVRbvdBw1t4aGhCq7vrmak5jAQhQWTClPhiE9hyKckJMMj7cKcb8JwZEMU6LxWYZ0r
-         aIVeFGaIdEOlcuxF+Fs8/q/cMLMRawTIkkPSQ1JuQWtdLJNe5pL4eP94ws3es6Os/DGF
-         cpR0qyiZC9rcKzYugS6FF9X2x3V5IcTvtXtbj07dMGThEAHBfTrqLwAB/usM4e39dTQ2
-         fJsQ==
-X-Gm-Message-State: AOJu0Yz6QaP9Ho1OShbhaScixO+LrqcWETpWP2yDcEmH3mU7SyshlU5x
-	Ksn6qHUy2sfk5/4CJCybk6FpzEhH4zgfoTK3+UQtKE0ieU5MqMuFCvSPCA==
-X-Gm-Gg: ASbGncvvYRq+oISZxVmQRX8in1Wl5m8qs//pCiFYB4ixeNO4t5obCVmNp2GBOO8y/rA
-	2R+5SMikltKmCtulkRAbfyqt3/ulGgXX7yQVnfNHpKpww6KJWRMPRc8oRPXJKgxU99zUa0r9obp
-	FZgeZmTgsJ81+Zk3n9LpmbrNfDiJq1krveBZ+YyOHpIDVW3Z59OcSzugOGYd+P0drrbDvkCW/1x
-	FRDjUb9x6epJOZYmPDYc29uWfZ+9WTcDoKfZTgIb10pgx8p8Y6oo5VbwqQPA70S/ob6JyXBFQlZ
-	wb0Yt3930MEJ4mwOpGcPfuqjopx3e+ax2LptnXfOdHAOht3tSLJuFesy
-X-Google-Smtp-Source: AGHT+IGIDNcQXGKVFw4f5sbUHzsaOfKCmeDEH8uRzVD/6M0uqLjjp3ePOoYFBmun7sBmtFYIrPcTqw==
-X-Received: by 2002:a05:6402:1e88:b0:5de:dd6b:a7b0 with SMTP id 4fb4d7f45d1cf-5e75de57dd4mr14483661a12.1.1741872513200;
-        Thu, 13 Mar 2025 06:28:33 -0700 (PDT)
-Received: from localhost.localdomain ([46.53.242.22])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5e816ad27c1sm747705a12.59.2025.03.13.06.28.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 06:28:32 -0700 (PDT)
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-To: broonie@kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: regmap-irq.c: correct way to unmask interrupt in driver?
-Date: Thu, 13 Mar 2025 16:28:30 +0300
-Message-Id: <20250313132830.2514224-1-dsankouski@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1741872524; c=relaxed/simple;
+	bh=iqxmpqxwezW/E0wQ2/ag0wQd5oigAqsm5H9ZXnRt95Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IcMLeVNhlgXstz1WgXP2wDrQqoI8noPUh9HW94AOodAuF4MpsRcd2vBkE5DJqiT7HuYEdjQaI8sA2sMSYbfxMOgXi5MGkZ7GBOjvP8/uvrj3QWBpmnCOIH1yXTTngdMOAMkxlp4z7zTu09N8YDf0TW7URz3Ehjwlp84NgNgr2bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JB0Fw2dn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C56EC4CEEE;
+	Thu, 13 Mar 2025 13:28:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741872523;
+	bh=iqxmpqxwezW/E0wQ2/ag0wQd5oigAqsm5H9ZXnRt95Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JB0Fw2dnKEi8allw1f9x9jy6Rklb2BEA5hll8CoHT4vJeaooCf11PN0qFIytQpemr
+	 WPH85qa4jn6kTjVQ+DmDVCiddEGsJEkt/7s3ZgSMQl5wbl48zC9knG0Raw4/Yb/QHn
+	 Gjy82N3arJDKlQOH1eftxrDNTJq8DieQKgAR3WKDckWww6jSmPTVwwkOGM/jNCV6J/
+	 6bmVORSGSZfEXyEpP/4HgPNPHT8t4rTISecLCP0g2hCrrfVEG6go/2up2M/wCyEXRA
+	 7O6gLnXzXSSKaZ/Ygfxg7523qo+5M4VMVE09vC+h4K9qb5Q4XwE+44GvC2GlRXpoU5
+	 wiSTyhJyDMWZw==
+Message-ID: <27cf6dab-da29-458a-b376-4013c05434ab@kernel.org>
+Date: Thu, 13 Mar 2025 14:28:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: mailbox: cix: add device tree binding
+ documentation.
+To: Guomin Chen <guomin.chen@cixtech.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
+ Peter Chen <peter.chen@cixtech.com>, Lihua Liu <Lihua.Liu@cixtech.com>
+References: <20250313132405.742360-1-guomin.chen@cixtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250313132405.742360-1-guomin.chen@cixtech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-My device interrupts is described with `struct regmap_irq_chip` and
-`struct regmap_irq` [1]. After driver probe, all interrupts is masked by
-`regmap_add_irq_chip_fwnode` function.
+On 13/03/2025 14:24, Guomin Chen wrote:
+> From: Guomin Chen <Guomin.Chen@cixtech.com>
+> 
+> This patch adds device tree binding for mailbox from Cixtech.
 
-I tried to unmask by writing INT_A_ENABLE_L_REG, and interrupt is unmasked
-and fired, but it is NOT cleared, i.e. INT_A_CLEAR_L_REG is not written. It
-happens, because `regmap_irq_thread` still thinks that interrupt is masked.
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
 
-What is a correct way to unmask?
+A nit, subject: drop second/last, redundant "device tree binding
+documentation.". The "dt-bindings" prefix is already stating that these
+are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
-[1]: device interrupts declarations:
+Also, no full stop in the subject.
 
-```
-static const struct regmap_irq p9320_irqs_a[] = {
-	{ .mask = IRQA_H_TRX_DATA_RECEIVED_MASK, .reg_offset = 1 },
-	{ .mask = IRQA_H_TX_OCP_MASK, .reg_offset = 1 },
-	{ .mask = IRQA_H_TX_MODE_RX_NOT_DET_MASK, .reg_offset = 1 },
-	{ .mask = IRQA_H_TX_FOD_MASK, .reg_offset = 1 },
-	{ .mask = IRQA_H_TX_CON_DISCON_MASK, .reg_offset = 1 },
-	{ .mask = IRQA_H_AC_MISSING_DET_MASK, .reg_offset = 1 },
-	{ .mask = IRQA_H_ADT_RECEIVED_MASK, .reg_offset = 1 },
-	{ .mask = IRQA_H_ADT_SENT_MASK, .reg_offset = 1 },
-	{ .mask = IRQA_L_STAT_VOUT_MASK },
-	{ .mask = IRQA_L_STAT_VRECT_MASK },
-	{ .mask = IRQA_L_OP_MODE_MASK },
-	{ .mask = IRQA_L_OVER_VOL_MASK },
-	{ .mask = IRQA_L_OVER_CURR_MASK },
-	{ .mask = IRQA_L_OVER_TEMP_MASK },
-	{ .mask = IRQA_L_TXCONFLICT_MASK },
-	{ .mask = IRQA_L_RESERVED0_MASK },
-};
+> 
+> Reviewed-by: Peter Chen <peter.chen@cixtech.com>
+> Signed-off-by: Lihua Liu <Lihua.Liu@cixtech.com>
+> Signed-off-by: Guomin Chen <Guomin.Chen@cixtech.com>
+> ---
+>  .../bindings/mailbox/cix-mailbox.yaml         | 74 +++++++++++++++++++
 
-static struct regmap_irq_chip idt_p9320_charger_irq_a_chip = {
-	.name			= "wpc-irq-a",
-	.status_base		= INT_A_L_REG,
-	.unmask_base		= INT_A_ENABLE_L_REG,
-	.ack_base		= INT_A_CLEAR_L_REG,
-	.handle_pre_irq	=	mfc_wpc_irq_thread,
-	.handle_post_irq	= mfc_wpc_post_irq_thread,
-	.num_regs		= 2,
-	.irqs			= p9320_irqs_a,
-	.num_irqs		= ARRAY_SIZE(p9320_irqs_a),
-};
-```
+Filename matching compatible.
 
-best regards, Dzmitry
+>  1 file changed, 74 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/cix-mailbox.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/mailbox/cix-mailbox.yaml b/Documentation/devicetree/bindings/mailbox/cix-mailbox.yaml
+> new file mode 100644
+> index 000000000000..85cb54ae2e79
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mailbox/cix-mailbox.yaml
+> @@ -0,0 +1,74 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mailbox/cix-mailbox.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Cix mailbox controller
+> +
+> +maintainers:
+> +  - Lihua Liu <Lihua.Liu@cixtech.com>
+> +
+> +description:
+> +  CIX mailbox controller is used to exchange message within
+> +  multiple processors, such as AP, AUDIO DSP, SensorHub MCU,
+> +  etc. It supports 10 mailbox channels with different operating
+> +  mode and every channel is unidirectional.
+
+uni but configurable or each channel has specific direction?
+
+> +
+> +properties:
+> +  compatible:
+> +    const: cix,sky1-mbox
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  "#mbox-cells":
+> +    description: |
+> +      <&phandle channel>
+> +      phandle   : Label name of controller
+> +      channel   : Channel number
+
+Drop above and explain what the cell argument is.
+
+> +
+> +      This controller supports three types of unidirectional channels, they are
+> +      1 register based channel, 1 fifo based channel and 8 fast channels.
+> +      A total of 10 channels for each controller. Following types are
+> +      supported:
+> +      channel 0_7 - Fast channel with 32bit transmit register and IRQ support.
+> +      channel 8   - Reg based channel with 32*32bit transsmit register and
+> +                    Doorbell+transmit acknowledgment IRQ support
+> +      channel 9   - Fifo based channel with 32*32bit depth fifo and IRQ support.
+> +    const: 1
+> +
+> +  cix,mbox-dir:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Direction of the mailbox (0:TX or 1:RX)
+> +    enum: [0, 1]
+
+I don't understand why do you need it. By not sending us driver patch,
+you are not making it easier. Why would provider care how consumers use
+the mbox channel? Maybe consumer should choose the direction?
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - "#mbox-cells"
+> +  - cix,mbox-dir
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        mbox0: mailbox@30000000 {
+> +            compatible = "cix,sky1-mbox";
+> +            reg = <0 0x30000000 0 0x10000>;
+> +            interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH 0>;
+> +            #mbox-cells = <1>;
+> +            cix,mbox-dir = <0>;
+> +            status = "okay";
+
+Drop
+
+> +        };
+> +    };
+
+
+Best regards,
+Krzysztof
 
