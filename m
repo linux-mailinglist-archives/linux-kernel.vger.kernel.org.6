@@ -1,131 +1,98 @@
-Return-Path: <linux-kernel+bounces-559318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3200A5F247
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:25:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD63A5F249
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:26:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 652403A9AF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:25:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E3A57A9FED
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A302661A4;
-	Thu, 13 Mar 2025 11:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="DcVzWZ5D"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B123C2661A0;
+	Thu, 13 Mar 2025 11:25:54 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98430265CAB;
-	Thu, 13 Mar 2025 11:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E611FBEB0;
+	Thu, 13 Mar 2025 11:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741865128; cv=none; b=BbmgOP3e+bNwFkOv3gnfd+XGuR8X4bEigLNOAwTiGOugTNElXs/RIiA3yaL44Y4APUoQ3702/oPjLEnzXYnt5e4Kcdm3DTAoXHGojfhsESqOBLj0dpk2Szrlk4eVSc2jRMcx3BvjHapWw3ULrC+mLf5ojfTgIiuYVWnJH+PWyf4=
+	t=1741865154; cv=none; b=Zo/fSNRr4ULCSOveP6fijl1bBpgQM028VvovD9JyuEfvoYC6dHu4fwkkbzWB73yMb3CwRPZUUZEVgs6j3Zc1FHL6vCuFgYhWBlc8IxNj9aDC33vy2bWRD6M/4cJ1KfsjAX5eGfo3ZZR5dKoujr+X1BNG3R8vKsmUaJT+SHqQ/ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741865128; c=relaxed/simple;
-	bh=lpdT6EuS/H1sa1OQ6p60/cl6fo3TSDytyl+T2mRRsXg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IsR5ZEsaR5yqLLhN8mnmUjRp2jIZeQLBDGIX5XdSYVVP1t6bhDa3zjC7CxrhtkpaRn33tbAmsjEvRdL+0MW66McKZnGp7O0E/3SQVCEu6mer6ni+5VCpF20scZCgsozfOdlsNnUzRqmFCJTYkrG+zf1hzz4vy8r5R4UHmvFT6QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=DcVzWZ5D; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=/SunrS3w6dQfvYQsXSmakzUccOtFtCfoI+mtBuq8dl0=; b=DcVzWZ5DJmMEbLWRixu2GEZx3E
-	QR2XIfCih+w+8N0ydGXfwYHplq7Qg8Cnfc8xk+w6a9TbkRUJyfzqgoATygQexnYaOqCiSmWv6tlAP
-	OwLGW1ktcqFh6AyjpvCeu3HIKOpDbpUqi9+F1U6HNsnSIfT6JhuANxfyTY3R6Wlh3GpuWYSUSQdbS
-	vouPJg0MfBwGTNIqalz0jWqLYNyM9MqHmfKB8H9Kw8GXg7soc/Uh+28zzTGK6EreT/mvfny0+tzXf
-	RS7s+T21MN0WNGgt+C+CGkBwbPei9SYIetdyn3XnnFjqS3+BCFiF9Csch1lnKMW6zapn/fipcB1WC
-	BFbiXF6A==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tsggU-0084OU-SL; Thu, 13 Mar 2025 12:25:12 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bschubert@ddn.com>,  Dave Chinner <david@fromorbit.com>,
-  Matt Harvey <mharvey@jumptrading.com>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8] fuse: add more control over cache invalidation
- behaviour
-In-Reply-To: <CAJfpegvxp6Ah3Br9XUmnz_E5KwfOTC44JTa_Sjt0WGt8cAZKEg@mail.gmail.com>
-	(Miklos Szeredi's message of "Thu, 13 Mar 2025 11:32:04 +0100")
-References: <20250226091451.11899-1-luis@igalia.com>
-	<87msdwrh72.fsf@igalia.com>
-	<CAJfpegvcEgJtmRkvHm+WuPQgdyeCQZggyExayc5J9bdxWwOm4w@mail.gmail.com>
-	<87v7sfzux8.fsf@igalia.com>
-	<CAJfpegvxp6Ah3Br9XUmnz_E5KwfOTC44JTa_Sjt0WGt8cAZKEg@mail.gmail.com>
-Date: Thu, 13 Mar 2025 11:25:06 +0000
-Message-ID: <875xkdfa0d.fsf@igalia.com>
+	s=arc-20240116; t=1741865154; c=relaxed/simple;
+	bh=YpYglxxRz7tATMDjDJpYUkT2GzRqVlbut1UJgnIcBz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=OiwQCQgXuKLuGXRHuhpeDB36ZSVE44oua5bDzKfSpnKgvalZaVYsUsX6RsHj/FSY6CvBYSI28m1iwyi+WIdLMlq8kGEMXiX3jzWpx4vvQgO1xtsus2LuXeHe2sq4xxcrQsUF6BC+R0UXZo83QOC+GaQm6epKfSNOOBgHksBUgDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BF03C4CEDD;
+	Thu, 13 Mar 2025 11:25:52 +0000 (UTC)
+Date: Thu, 13 Mar 2025 07:25:50 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH] tracing: Initialize scratch_size to zero to prevent UB
+Message-ID: <20250313072550.4027402a@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 13 2025, Miklos Szeredi wrote:
+From: Steven Rostedt <rostedt@goodmis.org>
 
-> On Tue, 11 Mar 2025 at 12:08, Luis Henriques <luis@igalia.com> wrote:
->
->> Well, the use-case I had in mind is, as I mentioned before, CVMFS.  I
->> think this file system could benefit from using this mechanism.
->
-> We need more than just a hunch that this will work.  Having code out
-> there that actually uses the new feature is a hard requirement.
->
-> It does not need to be actually committed to the cvmfs repo, but some
-> indication that the code will be accepted by the maintainers once the
-> kernel part is upstream is needed.
+In allocate_trace_buffer() the following code:
 
-OK, makes sense.  I do have a local cvmfs patch to use this new
-notification.  For now it's just a hack to replace the current code.  It
-has to be cleaned-up so that it uses FUSE_NOTIFY_INC_EPOCH only when it's
-available in libfuse.  My plan was to do this only after the kernel patch
-was merged, but I can try to share an earlier version of it.
+  buf->buffer = ring_buffer_alloc_range(size, rb_flags, 0,
+				      tr->range_addr_start,
+				      tr->range_addr_size,
+				      struct_size(tscratch, entries, 128));
 
->> However, I don't think that measuring the direct benefits is something
->> easily done.  At the moment, it uses a thread that tries to drain the
->> cache using the FUSE_NOTIFY_INVAL_{INODE,ENTRY} operations.  These are,
->> obviously, operations that are much more expensive than the proposed
->> FUSE_NOTIFY_INC_EPOCH.  But, on the other hand, they have *immediate*
->> effect while the new operation does not: without the call to
->> shrink_dcache_sb() it's effect can only be observed in the long run.
->
-> How so?  Isn't the advantage of FUSE_NOTIFY_INC_EPOCH that it spares
-> the server of having to send out FUSE_NOTIFY_INVAL_ENTRY for *all* of
-> the currently looked up dentries?
+  tscratch = ring_buffer_meta_scratch(buf->buffer, &scratch_size);
+  setup_trace_scratch(tr, tscratch, scratch_size);
 
-Well, I guess I misunderstood you.  I can use my hacked cvmfs to measure
-the improvement of removing this loop and replace it with a single
-FUSE_NOTIFY_INC_EPOCH.  Obviously, the performance improvements will
-depend on how many dentries were cached.
+has undefined behavior if ring_buffer_alloc_range() fails because
+"scratch_size" is not initialize. If the allocation fails, then
+buf->buffer will be NULL. The ring_buffer_meta_scratch() will return
+NULL immediately if it is passed a NULL buffer and it will not update
+scratch_size. Then setup_trace_scratch() will return immediately if
+tscratch is NULL.
 
->> I can try to come up with some artificial test case for this, but
->> comparing these operations will always need to be done indirectly.  And I
->> wonder how useful that would be.
->
-> Any test is better than no test.
->
->> So, you're proposing something like having a workqueue that would walk
->> through the entries.  And this workqueue would be triggered when the epo=
-ch
->> is increased.
->
-> Not just.  Also should periodically clean up expired dentries.
+Although there's no real issue here, but it is considered undefined
+behavior to pass an uninitialized variable to a function as input, and
+UBSan may complain about it.
 
-Hmmm... And would you like this to be done in fuse?  Or do you expect this
-to me a more generic mechanism in dcache, available for other filesystems
-as well?
+Just initialize scratch_size to zero to make the code defined behavior and
+a little more robust.
 
-Cheers,
---=20
-Lu=C3=ADs
+Link: https://lore.kernel.org/all/44c5deaa-b094-4852-90f9-52f3fb10e67a@stanley.mountain/
+
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index c3c79908766e..66dc62233393 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -9387,7 +9387,7 @@ allocate_trace_buffer(struct trace_array *tr, struct array_buffer *buf, int size
+ {
+ 	enum ring_buffer_flags rb_flags;
+ 	struct trace_scratch *tscratch;
+-	unsigned int scratch_size;
++	unsigned int scratch_size = 0;
+ 
+ 	rb_flags = tr->trace_flags & TRACE_ITER_OVERWRITE ? RB_FL_OVERWRITE : 0;
+ 
+-- 
+2.47.2
+
 
