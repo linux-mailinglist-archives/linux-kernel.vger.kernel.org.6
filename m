@@ -1,321 +1,239 @@
-Return-Path: <linux-kernel+bounces-559649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4AE4A5F726
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:01:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C20A5F5FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:32:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6729F19C275D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:00:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1CFC3BBF21
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C21267B90;
-	Thu, 13 Mar 2025 14:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34E1267701;
+	Thu, 13 Mar 2025 13:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="PVxGFlht"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O7dwPxh8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81802E3379;
-	Thu, 13 Mar 2025 14:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C258101E6;
+	Thu, 13 Mar 2025 13:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741874438; cv=none; b=TOYnyYB81OIYa6PZ8s3r3xpmJdPpAwQnQJ0K0bNqwqS4VOgDAKCd1UZ4cBoklwAzYrkCjDxnx61gSAOLjKVj1sskS62KQAU2fyiOXXwU1jrQrw1I3r938RvcupxTX+itsWWfoQ/tCCapSQs4wqLo1TTwozczaxzPXmSfBUtlK+o=
+	t=1741872730; cv=none; b=gFlj8NXFNQisA99VyHB2PyLH9KKOxN9rhs9kfmuDznrWiEMCkTSJjdAbLD57Hv4sB3/v//s8hHwBTUOBg+v3+Y24xC2cty1BU+nVzxJ/EpRFmEJsTiLwMm/fv3z/rv6jbnnjxcpqVWeb5H+mL0gOLUl42aaxrpw8eWnoS/r9EQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741874438; c=relaxed/simple;
-	bh=qlDdxQVPiN4FfSZtOodyeHeFyKktDhsIsXoROIRuojg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E4Eu7/vDB6TCiSgiIDD5UaIV3+1U6aJbi8PBT0YxYzDH3KPuxf0mPZNkpO7aU+doyQciJfPFLSl435R6FtO216Cz5YuOWOSOJLiPz55GdlhzV613aW24D0tBUfEYteWL0SFWIN174sD8MWGAMr1GKKSYaJYHHQWrbGhpMaVoj6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=PVxGFlht; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from wse-pc.fritz.box (p5b164989.dip0.t-ipconnect.de [91.22.73.137])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 799FC2FC018C;
-	Thu, 13 Mar 2025 15:00:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1741874432;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/Yysuw7xCmQaKFIpjurEZ28pwfZ7+hYBT3cxLVCQV+M=;
-	b=PVxGFlht9nCZXgG1Zs0iFNE9UOKAv5tmfzRGln8Im69ZnvSTIgbIdMtBV1N0meYSATSHDK
-	Q7dW1PGoTZK4psuvN8TokCT+5KUUcXZHa8xlCGuw1cjqb1/bdMoqWu/lKQ0gQByhsrHjh3
-	re1o64FCc3MVytKqOmcWRudO1adodts=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: ilpo.jarvinen@linux.intel.com,
-	hdegoede@redhat.com,
-	Werner Sembach <wse@tuxedocomputers.com>
-Cc: linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH v4 1/1] Input: atkbd - Fix TUXEDO NB02 notebook keyboards touchpad toggle key
-Date: Thu, 13 Mar 2025 14:31:48 +0100
-Message-ID: <20250313140028.617291-2-wse@tuxedocomputers.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250313140028.617291-1-wse@tuxedocomputers.com>
-References: <20250313140028.617291-1-wse@tuxedocomputers.com>
+	s=arc-20240116; t=1741872730; c=relaxed/simple;
+	bh=lv9WD/LyfzkEiwc6v8Z5TUZKz9TC2fvHQxlDBZKxZIc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JgPl/a+zYmKiTMrKZLj5F7LbnEFMzgTQsQI9usfV984FPFKSjbklURUmLMY334xZjM6NuwQTFlPaiQU+RhOuiG5nifux/1jinmRPFZX3frcnv6GelItCb2lBTWiOx0z4KVHtMwZTaBouo/7e/XbesKHTrhGxhvEFWEfuuWSjwn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O7dwPxh8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D9SZ84028501;
+	Thu, 13 Mar 2025 13:32:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	C7BMESZ1albT009zS/aJeY7GPt60TCH4RI2gYZnDsn4=; b=O7dwPxh8+xa+D257
+	SoABzQ62NyFOR2Ex/VVRqQEjKQF+iu1BhK4FjpbXRFVRJciGjIMUb4Xsf9oFUU5e
+	d8Xl+4jT5+VwHsHXRStlK14doLUZDK7fXgifplk5CEllRiP2XeisWGfqyjBMg+/m
+	3QDbtSyvnQ1pxCl9+Bt9UGC6GNV5q6Fy4CqYxaWvJH3svH4hPmJWhVAbxEdrpfuY
+	DeoA/lc174hgHHqtWgHw2LUl7+9CjMrgd+dEM9mVbPhBMvxpjwX8ZRSyLkgrQQ0l
+	DwiG129nMxQ33wbabPCaCzyuFHyNuCLG8HLvKB8YbhU790o38bKFxzMw9H2eK1Cl
+	XEUEBg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2px03c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 13:32:03 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52DDW2Aa026700
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 13:32:02 GMT
+Received: from [10.253.32.44] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
+ 2025 06:32:00 -0700
+Message-ID: <8ea7fe7c-7b4d-4a6f-ae03-b9ca127c23f8@quicinc.com>
+Date: Thu, 13 Mar 2025 21:31:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
+ length
+To: Johan Hovold <johan@kernel.org>
+CC: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, <ath11k@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <johan+linaro@kernel.org>
+References: <20250310010217.3845141-1-quic_miaoqing@quicinc.com>
+ <20250310010217.3845141-3-quic_miaoqing@quicinc.com>
+ <Z866cCj8SWyZjCoP@hovoldconsulting.com>
+ <7b1c5e40-b11d-421b-8c8b-117a2a53298b@quicinc.com>
+ <c0cdcaf2-655b-4d22-a949-1519c552e6a4@oss.qualcomm.com>
+ <72d95d77-674e-4ae7-83b0-ab58748b8251@quicinc.com>
+ <Z9G5zEOcTdGKm7Ei@hovoldconsulting.com>
+Content-Language: en-US
+From: Miaoqing Pan <quic_miaoqing@quicinc.com>
+In-Reply-To: <Z9G5zEOcTdGKm7Ei@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=P506hjAu c=1 sm=1 tr=0 ts=67d2de53 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=POYSu9ou3bP9OeXHj2YA:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: zzDgsTmd8_OvdzKPbx0FA4Ze8PppLFIs
+X-Proofpoint-ORIG-GUID: zzDgsTmd8_OvdzKPbx0FA4Ze8PppLFIs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_06,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ mlxscore=0 spamscore=0 bulkscore=0 priorityscore=1501 impostorscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=999 lowpriorityscore=0
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503130106
 
-The TUXEDO NB02 notebook keyboards touchpad toggle key sends the PS/2
-scancode sequence:
-0xe0, 0x5b, // Super down
-0x1d,       // Control down
-0x76,       // KEY_ZENKAKUHANKAKU down
-0xf6,       // KEY_ZENKAKUHANKAKU up
-0x9d,       // Control up
-0xe0, 0xdb  // Super up
 
-This driver listens to the Control + Super + Hangaku/Zenkaku key sequence
-to suppresses the Hangaku/Zenkaku keypress and sends a F21 keypress
-afterwards to conform with established userspace defaults. Note that the
-Hangaku/Zenkaku scancode used here is usually unused, with real
-Hangaku/Zenkaku keys using the tilde scancode.
 
-Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
----
- MAINTAINERS                                 |   6 ++
- drivers/platform/x86/Kconfig                |   2 +
- drivers/platform/x86/Makefile               |   3 +
- drivers/platform/x86/tuxedo/Kbuild          |   8 ++
- drivers/platform/x86/tuxedo/Kconfig         |   8 ++
- drivers/platform/x86/tuxedo/nb02/Kbuild     |   9 ++
- drivers/platform/x86/tuxedo/nb02/Kconfig    |  17 ++++
- drivers/platform/x86/tuxedo/nb02/platform.c | 107 ++++++++++++++++++++
- 8 files changed, 160 insertions(+)
- create mode 100644 drivers/platform/x86/tuxedo/Kbuild
- create mode 100644 drivers/platform/x86/tuxedo/Kconfig
- create mode 100644 drivers/platform/x86/tuxedo/nb02/Kbuild
- create mode 100644 drivers/platform/x86/tuxedo/nb02/Kconfig
- create mode 100644 drivers/platform/x86/tuxedo/nb02/platform.c
+On 3/13/2025 12:43 AM, Johan Hovold wrote:
+> On Wed, Mar 12, 2025 at 09:11:45AM +0800, Miaoqing Pan wrote:
+>> On 3/11/2025 11:20 PM, Jeff Johnson wrote:
+>>> On 3/11/2025 1:29 AM, Miaoqing Pan wrote:
+>>>> On 3/10/2025 6:09 PM, Johan Hovold wrote:
+>>>>> I'm still waiting for feedback from one user that can reproduce the
+>>>>> ring-buffer corruption very easily, but another user mentioned seeing
+>>>>> multiple zero-length descriptor warnings over the weekend when running
+>>>>> with this patch:
+>>>>>
+>>>>> 	ath11k_pci 0006:01:00.0: rxed invalid length (nbytes 0, max 2048)
+>>>>>
+>>>>> Are there ever any valid reasons for seeing a zero-length descriptor
+>>>>> (i.e. unrelated to the race at hand)? IIUC the warning would only be
+>>>>> printed when processing such descriptors a second time (i.e. when
+>>>>> is_desc_len0 is set).
+>>>>
+>>>> That's exactly the logic, only can see the warning in a second time. For
+>>>> the first time, ath12k_ce_completed_recv_next() returns '-EIO'.
+>>>
+>>> That didn't answer Johan's first question:
+>>> Are there ever any valid reasons for seeing a zero-length descriptor?
+>>
+>> The events currently observed are all firmware logs. The discarded
+>> packets will not affect normal operation. I will adjust the logging to
+>> debug level.
+> 
+> That still does not answer the question whether there are ever any valid
+> reasons for seeing zero-length descriptors. I assume there are none?
+> 
+>>> We have an issue that there is a race condition where hardware updates the
+>>> pointer before it has filled all the data. The current solution is just to
+>>> read the data a second time. But if that second read also occurs before
+>>> hardware has updated the data, then the issue isn't fixed.
+>>   
+>> Thanks for the addition.
+>>
+>>> So should there be some forced delay before we read a second time?
+>>> Or should we attempt to read more times?
+>>
+>> The initial fix was to keep waiting for the data to be ready. The
+>> observed phenomenon is that when the second read fails, subsequent reads
+>> will continue to fail until the firmware's CE2 ring is full and triggers
+>> an assert after timeout. However, this situation is relatively rare, and
+>> in most cases, the second read will succeed. Therefore, adding a delay
+>> or multiple read attempts is not useful.
+> 
+> The proposed fix is broken since ath11k_hal_ce_dst_status_get_length()
+> not just reads the length but also sets it to zero so that the updated
+> length may indeed never be seen.
+> 
+> I've taken a closer look at the driver and it seems like we're missing a
+> read barrier to make sure that the updated descriptor is not read until
+> after the head pointer.
+> 
+> Miaoqing, could you try the below patch with your reproducer and see if
+> it is enough to fix the corruption?
+> 
+> If so I can resend with the warning removed and include a corresponding
+> fix for ath12k (it looks like there are further places where barriers
+> are missing too).
+> 
+> Johan
+> 
+> 
+>  From 656dbd0894741445aeb16ee8357e6fef51b6084c Mon Sep 17 00:00:00 2001
+> From: Johan Hovold <johan+linaro@kernel.org>
+> Date: Wed, 12 Mar 2025 16:49:20 +0100
+> Subject: [PATCH] wifi: ath11k: fix ring-buffer corruption
+> 
+> Users of the Lenovo ThinkPad X13s have reported that Wi-Fi sometimes
+> breaks and the log fills up with errors like:
+> 
+> 	ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1484, expected 1492
+> 	ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
+> 
+> which based on a quick look at the driver seemed to indicate some kind
+> of ring-buffer corruption.
+> 
+> Miaoqing Pan tracked it down to the host seeing the updated destination
+> ring head pointer before the updated descriptor, and the error handling
+> for that in turn leaves the ring buffer in an inconsistent state.
+> 
+> Add the missing the read barrier to make sure that the descriptor is
+> read after the head pointer to address the root cause of the corruption.
+> 
+> The error handling can be fixed separately in case there can ever be
+> actual zero-length descriptors.
+> 
+> FIXME: remove WARN_ON_ONCE() added for verification purposes
+> 
+> Tested-on: WCN6855 hw2.1 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
+> 
+> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218623
+> Link: https://lore.kernel.org/20250310010217.3845141-3-quic_miaoqing@quicinc.com
+> Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>
+> Cc: stable@vger.kernel.org	# 5.6
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>   drivers/net/wireless/ath/ath11k/ce.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/net/wireless/ath/ath11k/ce.c b/drivers/net/wireless/ath/ath11k/ce.c
+> index e66e86bdec20..423b970e288c 100644
+> --- a/drivers/net/wireless/ath/ath11k/ce.c
+> +++ b/drivers/net/wireless/ath/ath11k/ce.c
+> @@ -393,8 +393,12 @@ static int ath11k_ce_completed_recv_next(struct ath11k_ce_pipe *pipe,
+>   		goto err;
+>   	}
+>   
+> +	/* Make sure descriptor is read after the head pointer. */
+> +	dma_rmb();
+> +
+>   	*nbytes = ath11k_hal_ce_dst_status_get_length(desc);
+>   	if (*nbytes == 0) {
+> +		WARN_ON_ONCE(1);	// FIXME: remove
+>   		ret = -EIO;
+>   		goto err;
+>   	}
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8e0736dc2ee0e..7139c32e96dc7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -24190,6 +24190,12 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git turbostat
- F:	tools/power/x86/turbostat/
- F:	tools/testing/selftests/turbostat/
- 
-+TUXEDO DRIVERS
-+M:	Werner Sembach <wse@tuxedocomputers.com>
-+L:	platform-driver-x86@vger.kernel.org
-+S:	Supported
-+F:	drivers/platform/x86/tuxedo/
-+
- TW5864 VIDEO4LINUX DRIVER
- M:	Bluecherry Maintainers <maintainers@bluecherrydvr.com>
- M:	Andrey Utkin <andrey.utkin@corp.bluecherry.net>
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 0258dd879d64b..9b78a1255c08e 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1199,3 +1199,5 @@ config P2SB
- 	  The main purpose of this library is to unhide P2SB device in case
- 	  firmware kept it hidden on some platforms in order to access devices
- 	  behind it.
-+
-+source "drivers/platform/x86/tuxedo/Kconfig"
-diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index e1b1429470674..1562dcd7ad9a5 100644
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@ -153,3 +153,6 @@ obj-$(CONFIG_WINMATE_FM07_KEYS)		+= winmate-fm07-keys.o
- 
- # SEL
- obj-$(CONFIG_SEL3350_PLATFORM)		+= sel3350-platform.o
-+
-+# TUXEDO
-+obj-y					+= tuxedo/
-diff --git a/drivers/platform/x86/tuxedo/Kbuild b/drivers/platform/x86/tuxedo/Kbuild
-new file mode 100644
-index 0000000000000..1c79b80744d1b
---- /dev/null
-+++ b/drivers/platform/x86/tuxedo/Kbuild
-@@ -0,0 +1,8 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+#
-+# Copyright (C) 2025 Werner Sembach wse@tuxedocomputers.com
-+#
-+# TUXEDO X86 Platform Specific Drivers
-+#
-+
-+obj-y	+= nb02/
-diff --git a/drivers/platform/x86/tuxedo/Kconfig b/drivers/platform/x86/tuxedo/Kconfig
-new file mode 100644
-index 0000000000000..13b484999e333
---- /dev/null
-+++ b/drivers/platform/x86/tuxedo/Kconfig
-@@ -0,0 +1,8 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+#
-+# Copyright (C) 2025 Werner Sembach wse@tuxedocomputers.com
-+#
-+# TUXEDO X86 Platform Specific Drivers
-+#
-+
-+source "drivers/platform/x86/tuxedo/nb02/Kconfig"
-diff --git a/drivers/platform/x86/tuxedo/nb02/Kbuild b/drivers/platform/x86/tuxedo/nb02/Kbuild
-new file mode 100644
-index 0000000000000..f56629c8b9dd8
---- /dev/null
-+++ b/drivers/platform/x86/tuxedo/nb02/Kbuild
-@@ -0,0 +1,9 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+#
-+# Copyright (C) 2025 Werner Sembach wse@tuxedocomputers.com
-+#
-+# TUXEDO X86 Platform Specific Drivers
-+#
-+
-+tuxedo_nb02_platform-y			:= platform.o
-+obj-$(CONFIG_TUXEDO_NB02_PLATFORM)	+= tuxedo_nb02_platform.o
-diff --git a/drivers/platform/x86/tuxedo/nb02/Kconfig b/drivers/platform/x86/tuxedo/nb02/Kconfig
-new file mode 100644
-index 0000000000000..38cd60c9d4f03
---- /dev/null
-+++ b/drivers/platform/x86/tuxedo/nb02/Kconfig
-@@ -0,0 +1,17 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+#
-+# Copyright (C) 2025 Werner Sembach wse@tuxedocomputers.com
-+#
-+# TUXEDO X86 Platform Specific Drivers
-+#
-+
-+menuconfig TUXEDO_NB02_PLATFORM
-+	tristate "TUXEDO NB02 Platform Driver"
-+	help
-+	  This driver implements miscellaneous things found on TUXEDO Notebooks
-+	  with board vendor NB02. For the time being this is only remapping the
-+	  touchpad toggle key to something supported by most Linux distros
-+	  out-of-the-box and suppressing an unsupported scancode from the
-+	  FN-key.
-+
-+	  When compiled as a module it will be called tuxedo_nb02_platform.
-diff --git a/drivers/platform/x86/tuxedo/nb02/platform.c b/drivers/platform/x86/tuxedo/nb02/platform.c
-new file mode 100644
-index 0000000000000..da67a91a4a129
---- /dev/null
-+++ b/drivers/platform/x86/tuxedo/nb02/platform.c
-@@ -0,0 +1,107 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (C) 2025 Werner Sembach wse@tuxedocomputers.com
-+ */
-+
-+#include <linux/cleanup.h>
-+#include <linux/container_of.h>
-+#include <linux/dmi.h>
-+#include <linux/i8042.h>
-+#include <linux/input.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/serio.h>
-+
-+struct input_dev *idev;
-+
-+static void tux_nb02_f21(struct work_struct *work __always_unused)
-+{
-+	input_report_key(idev, KEY_F21, 1);
-+	input_report_key(idev, KEY_F21, 0);
-+	input_sync(idev);
-+}
-+DECLARE_WORK(tux_nb02_f21_work, tux_nb02_f21);
-+
-+static const u8 tux_nb02_touchp_toggle_seq[] = {
-+	0xe0, 0x5b, // Super down
-+	0x1d,       // Control down
-+	0x76,       // KEY_ZENKAKUHANKAKU down
-+	0xf6,       // KEY_ZENKAKUHANKAKU up
-+	0x9d,       // Control up
-+	0xe0, 0xdb  // Super up
-+};
-+
-+static bool tux_nb02_i8042_filter(unsigned char data,
-+				  unsigned char str,
-+				  struct serio *port __always_unused,
-+				  void *context __always_unused)
-+{
-+	static u8 seq_pos;
-+
-+	if (unlikely(str & I8042_STR_AUXDATA))
-+		return false;
-+
-+	if (unlikely(data == tux_nb02_touchp_toggle_seq[seq_pos])) {
-+		++seq_pos;
-+		if (unlikely(data == 0x76 || data == 0xf6)) {
-+			return true;
-+		} else if (unlikely(seq_pos == ARRAY_SIZE(tux_nb02_touchp_toggle_seq))) {
-+			schedule_work(&tux_nb02_f21_work);
-+			seq_pos = 0;
-+		}
-+		return false;
-+	}
-+
-+	seq_pos = 0;
-+	return false;
-+}
-+
-+static const struct dmi_system_id tux_nb02_dmi_string_match[] __initconst = {
-+	{
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "TUXEDO"),
-+			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "NB02"),
-+		},
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(dmi, tux_nb02_dmi_string_match);
-+
-+static int __init tux_nb02_plat_init(void)
-+{
-+	int ret;
-+
-+	if (!dmi_check_system(tux_nb02_dmi_string_match))
-+		return -ENODEV;
-+
-+	idev = input_allocate_device();
-+	if (!idev)
-+		return -ENOMEM;
-+
-+	idev->name = "TUXEDO NB02 Platform Keyboard";
-+	set_bit(EV_KEY, idev->evbit);
-+	set_bit(KEY_F21, idev->keybit);
-+
-+	ret = input_register_device(idev);
-+	if (ret) {
-+		input_free_device(idev);
-+		return ret;
-+	}
-+
-+	i8042_install_filter(tux_nb02_i8042_filter, NULL);
-+
-+	return 0;
-+}
-+
-+static void __exit tux_nb02_plat_exit(void)
-+{
-+	i8042_remove_filter(tux_nb02_i8042_filter);
-+	input_unregister_device(idev);
-+}
-+
-+module_init(tux_nb02_plat_init);
-+module_exit(tux_nb02_plat_exit);
-+
-+MODULE_DESCRIPTION("Keyboard fix for TUXEDO NB02 devices");
-+MODULE_AUTHOR("Werner Sembach <wse@tuxedocomputers.com>");
-+MODULE_LICENSE("GPL");
--- 
-2.43.0
+This issue can still be reproduced.
+
+[ 3283.687469] WARNING: CPU: 0 PID: 0 at 
+/drivers/net/wireless/ath/ath11k/ce.c:405 
+ath11k_ce_per_engine_service+0x228/0x3e4 [ath11k]
+
+[ 3283.688685] Call trace:
+[ 3283.688692]  ath11k_ce_per_engine_service+0x228/0x3e4 [ath11k]
+[ 3283.688807]  ath11k_pcic_ce_tasklet+0x34/0x54 [ath11k]
+[ 3283.688920]  tasklet_action_common.isra.0+0xec/0x338
+[ 3283.688958]  tasklet_action+0x28/0x34
+[ 3283.688972]  handle_softirqs+0x120/0x36c
 
 
