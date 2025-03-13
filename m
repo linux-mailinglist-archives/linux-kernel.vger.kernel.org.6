@@ -1,128 +1,157 @@
-Return-Path: <linux-kernel+bounces-560283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2616BA601A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:54:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77309A601B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:56:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 600B9421E3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:54:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC8DA421E00
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EAE11F3FE8;
-	Thu, 13 Mar 2025 19:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813111F3FD9;
+	Thu, 13 Mar 2025 19:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BNMKGuhu"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tayN66tO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6AEEADA;
-	Thu, 13 Mar 2025 19:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E92EADA;
+	Thu, 13 Mar 2025 19:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741895687; cv=none; b=PbBmBZ9riAOXeGWhbk9fSeb0MZnpl8jgCLtyRf9EX0MRdK+7RjDxGCxXHh+UpLVYN4GzIZXRy1Cd6cvWwksOaVVzIvZj87QMKRqFdc0yQwPhrduNiyRbkVWgpzkE4vaCM8FT964VLadmchCKAzi5kYD1SWOwdSjHbb+3UEeQ4aA=
+	t=1741895759; cv=none; b=m4ndWVTS7mCNnUbN+7WK7BWks7Chg4wyRwi6nai04Jr+G1bAHCzmVFi0CREtXwFQm7cX6JX8bqJLfCKlB4wZVGPOfi6OmnUanf9b4hWr7bYn2XWKlKVzU0GEJ9j9PU4wWudyej8GndRMn7CcO+Mr3L6kCROfqn/S39oy2UqrCQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741895687; c=relaxed/simple;
-	bh=n+WE2e1+CornPIYCL0FJAGHEjkt3BbG8jB/zF/vKQlc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jM7QJV3JjM3i1olB6h6sKqqm7Jf1rIrnEKc5OcT54f6FYS7j2e43r7WUsq8pjeT8J03h101QcMIQi54/g8qgUai0lJvd2AQce8wzriek2CrD+8yXQxcfRPdh7BBEVrnzxm7QKgpP10z9mx2AqCieaCUTk+T3+Uy2QlIH8kvYseU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BNMKGuhu; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-472368b50d6so338121cf.2;
-        Thu, 13 Mar 2025 12:54:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741895685; x=1742500485; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XGLO2paAdzUxnzkAjPVsZKGAI+FEFQuCi8XTZqvAoxs=;
-        b=BNMKGuhusWl2r4N8SId9Lq6hdj28mqgOTn//zHExL8OR/FElvdcasDWY5ji1O10mXB
-         BymOp6wtG47PbgQ4P6L6X9q6ofL7WsHSBdDqaK3Rgr1MjO9dLYKkjL9o9cMzObstMU2Q
-         xa+26xB1/L/vDoJt3POmI+JWFZXB8lXaiBMn62X+Al8AM1WdxgohZ0DAGyZGSi+L99eP
-         uI3g4jm+7H1D72bXoNmZwVkRe79W+9vfN+PzjeN6P7fbTJrPXbh/a01QXxgkgT3nOaRl
-         0CKzcd/OV/Al0h6yGCsdasXYiiQZNfbPiU5whwnvo62gb79m40npKVP6dmiuVlQmG5bt
-         n4kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741895685; x=1742500485;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XGLO2paAdzUxnzkAjPVsZKGAI+FEFQuCi8XTZqvAoxs=;
-        b=AWg1yF0M5uOT7Ylf8yzEYGJ+KYXOqJZ8aIj1C7Y97zD5h4pVSvat1QY4l1R6IVBz3A
-         zX8h+NsMbWzz9kEBycdE8AVgDV2kkRGvMDH/K0Bie8enwNTmOwKN02eaXrUbL9duRKPJ
-         ErNA81cG0DJo60e7ro0uhQ2Vw5gjCEDrv0tXuhv4H9kq2jHiLymjnAdykYLr5GCIhUgb
-         SWZmTTCPEpbwJPWvhZyaN9erKQ0yLUpxs07yceITpVhFlwYCu8qXPc2P2MOxRG3c9Sbz
-         4ts6+DM33pAH1cXnYMsir4fwODs6ZjBoMlusTN4ZFyFEQXx/0+RRiCa9o2WMrFzTThOx
-         IjVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKx9M6nXod/FjmpddpGYAMA1sYXLYKgaC4AJ9/qZzzRNpglFPI263W9U6JZH5J5e2i2lLUygGF@vger.kernel.org, AJvYcCXUR4w8zEw8trJUwOAlH9HuZAblpaBkJVUExueNVs6sQelm87mD1G0y6miIjbm7WMPCnflmawA7Yc7LXyM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfGd/EygNJQbiUTJJ4RsFerZm4ZL2G+/1kewBeXwgQ+cahdIi9
-	vTyc1gZ8AAHvhsFmnrwCbjW+bhuSuqveYFRBX/NjjQVZLPCK4Hfc8KCEdLQ=
-X-Gm-Gg: ASbGncv0jC7CVZ77R89Ut1mkQGs3AaUUMdvN2fpCGBR4r5dfEgjjHFzPCmyh8XtcF4u
-	tEWUg0YuTUflKHaegBFjtvSHUa9B3Asxo3jXcpaot5VfN2RCnS2LVY4J4ElAx8RDzZF4L7wixRC
-	AjPRd0ipKAVqrKOEZppckHsuypSPy2Ba6n9+4jrpU5QighZrUsfjhUfgMvt6JkEJU3GA957Fe29
-	uAy8QBQbVG/6nh8Gy2T6mVnKOKZvf1SipVHCjAt3P52I3zilPQfZkCClMsrNAMqpdj39x9KzUBB
-	EmVf4YmiN1heeHCIQzT6VvKS9wqm7iEiou0MpLswlQ==
-X-Google-Smtp-Source: AGHT+IG+sFRc0BbtzznoFbw3LS6WnCpgI30gRX6xy1ivIdThQI9VEpo1hDVok8W6MQRhqUayCtE8kQ==
-X-Received: by 2002:a05:622a:5e8a:b0:472:2122:5a43 with SMTP id d75a77b69052e-476665885eamr116028291cf.1.1741895684780;
-        Thu, 13 Mar 2025 12:54:44 -0700 (PDT)
-Received: from ise-alpha.. ([2620:0:e00:550a:642:1aff:fee8:511b])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573c9be96sm136377985a.61.2025.03.13.12.54.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 12:54:44 -0700 (PDT)
-From: Chenyuan Yang <chenyuan0y@gmail.com>
-To: pablo@netfilter.org,
-	kadlec@netfilter.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org
-Cc: netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chenyuan Yang <chenyuan0y@gmail.com>
-Subject: [PATCH] net: Initialize ctx to avoid memory allocation error
-Date: Thu, 13 Mar 2025 14:54:41 -0500
-Message-Id: <20250313195441.515267-1-chenyuan0y@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741895759; c=relaxed/simple;
+	bh=fYqkeQRnWF5f+DKytRvz15lVWn76of85/QsqfnCc3FQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NUKnpIQOpM6OZa0YK4bvPtvo/ckuSQ0e0rvUhwboADzhFEvpkGPSV/5lHXtgKAN2FrE5FGGsAn5SMOhf78sCqWZgkkVHCTZNpYq+7Wd+jnM74CgwJP8w/4lhTOetq/gNjDX5RxqcZ4p+drQhTi9erzPD2yjzTYQDcs54Pk4rRJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tayN66tO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5735BC4CEDD;
+	Thu, 13 Mar 2025 19:55:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741895759;
+	bh=fYqkeQRnWF5f+DKytRvz15lVWn76of85/QsqfnCc3FQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tayN66tOOF6jMNqkZ5ePRkN7Ee8y31+K7eOP673REb6XV5zLOulLsRfo22a7MqFoR
+	 r05dup9BfCoNTPi13Zt83sIUdU+jQp+O6qGxWwhxvO9rqtQzqhlgsYmC6J6o96heGe
+	 tEZKHpS32417/8hRF8VY9nI86YAlkqCylsTC58mV+N6MaC89xKmr+Fw0aYT1thVWVD
+	 kLLQq6AjOM3w5/E47TIz0UotatLlZ8zec9LhnkXbtISpJG7a5wnaa24YnUNxeOXM36
+	 xdRBDo37cTFAdPfkCSrUG1AI/Z2PyR8BcDXtw87iq3W7zxnUfCSnwF40tvVk3JMEPq
+	 vPcac02Z+5zwA==
+Date: Thu, 13 Mar 2025 12:55:56 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	guoren <guoren@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+	linux-riscv@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v5 09/11] perf syscalltbl: Use lookup table containing
+ multiple architectures
+Message-ID: <Z9M4TIY9HstTLzNs@google.com>
+References: <20250308003209.234114-1-irogers@google.com>
+ <20250308003209.234114-10-irogers@google.com>
+ <Z9MwQJ5bRu6-N43w@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z9MwQJ5bRu6-N43w@x1>
 
-It is possible that ctx in nfqnl_build_packet_message() could be used
-before it is properly initialize, which is only initialized
-by nfqnl_get_sk_secctx().
+On Thu, Mar 13, 2025 at 04:21:36PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Fri, Mar 07, 2025 at 04:32:07PM -0800, Ian Rogers wrote:
+> > Switch to use the lookup table containing all architectures rather
+> > than tables matching the perf binary.
+> > 
+> > This fixes perf trace when executed on a 32-bit i386 binary on an
+> > x86-64 machine. Note in the following the system call names of the
+> > 32-bit i386 binary as seen by an x86-64 perf.
+> > 
+> 
+> Reproduced the results here:
+> 
+> root@number:/home/acme/c# file faccessat2
+> faccessat2: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2, BuildID[sha1]=8dafcc1549658d57248dce883e8ec7eea3d6e8a5, for GNU/Linux 3.2.0, not stripped
+> root@number:/home/acme/c#
+> 
+> root@number:/home/acme/c# strace ./faccessat2 |& head 
+> execve("./faccessat2", ["./faccessat2"], 0x7ffce63265e0 /* 39 vars */) = 0
+> [ Process PID=2552445 runs in 32 bit mode. ]
+> brk(NULL)                               = 0x849a000
+> mmap2(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xf7fb3000
+> access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+> openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_LARGEFILE|O_CLOEXEC) = 3
+> statx(3, "", AT_STATX_SYNC_AS_STAT|AT_NO_AUTOMOUNT|AT_EMPTY_PATH, STATX_BASIC_STATS, {stx_mask=STATX_ALL|STATX_MNT_ID|STATX_SUBVOL, stx_attributes=0, stx_mode=S_IFREG|0644, stx_size=85091, ...}) = 0
+> mmap2(NULL, 85091, PROT_READ, MAP_PRIVATE, 3, 0) = 0xf7f9e000
+> close(3)                                = 0
+> openat(AT_FDCWD, "/lib/libc.so.6", O_RDONLY|O_LARGEFILE|O_CLOEXEC) = 3
+> root@number:/home/acme/c#
+> 
+> Before:
+> 
+> root@number:/home/acme/c# perf trace ./faccessat2 |& head
+> faccessat2(123, (null), X_OK, AT_EACCESS | AT_SYMLINK_NOFOLLOW) = -1
+>          ? (         ): faccessat2/2552543  ... [continued]: munmap())                                           = 0
+>      0.024 ( 0.002 ms): faccessat2/2552543 recvfrom(ubuf: 0x2, size: 4159848428, flags: DONTROUTE|CTRUNC|TRUNC|DONTWAIT|EOR|WAITALL|FIN|SYN|CONFIRM|RST|ERRQUEUE|SOCK_DEVMEM|ZEROCOPY|FASTOPEN|CMSG_CLOEXEC|0x91f20000, addr: 0xe30, addr_len: 0xffcda98c) = 138993664
+>      0.047 ( 0.006 ms): faccessat2/2552543 lgetxattr(name: "", value: 0x3, size: 34)                             = 4159602688
+>      0.063 ( 0.003 ms): faccessat2/2552543 dup2(oldfd: -135160188, newfd: 4)                                     = -1 ENOENT (No such file or directory)
+>      0.071 ( 0.023 ms): faccessat2/2552543 preadv(fd: 4294967196, vec: 0xf7f16420, vlen: 557056, pos_h: 4159848428) = 3
+>      0.098 ( 0.004 ms): faccessat2/2552543 lgetxattr(name: "", value: 0x1, size: 2)                              = 4159516672
+>      0.104 ( 0.001 ms): faccessat2/2552543 lstat(filename: "", statbuf: 0x14c63)                                 = 0
+>      0.114 ( 0.004 ms): faccessat2/2552543 preadv(fd: 4294967196, vec: 0xf7ee8380, vlen: 557056, pos_h: 4159848428) = 3
+>      0.118 ( 0.002 ms): faccessat2/2552543 close(fd: 3)                                                          = 512
+> root@number:/home/acme/c# 
+> 
+> After:
+> 
+> root@number:/home/acme/c# perf trace ./faccessat2 |& head
+> faccessat2(123, (null), X_OK, AT_EACCESS | AT_SYMLINK_NOFOLLOW) = -1
+> sh: line 1: perf-read-vdso32: command not found
+>          ? (         ): faccessat2/2556897  ... [continued]: execve())                                           = 0
+>      0.028 ( 0.002 ms): faccessat2/2556897 brk()                                                                 = 0x8fe4000
+>      0.068 ( 0.003 ms): faccessat2/2556897 access(filename: 0xf7ff2e84, mode: R)                                 = -1 ENOENT (No such file or directory)
+>      0.080 ( 0.005 ms): faccessat2/2556897 openat(dfd: CWD, filename: "/etc/ld.so.cache", flags: RDONLY|CLOEXEC|LARGEFILE) = 3
+>      0.094 ( 0.001 ms): faccessat2/2556897 close(fd: 3)                                                          = 0
+>      0.103 ( 0.003 ms): faccessat2/2556897 openat(dfd: CWD, filename: "/lib/libc.so.6", flags: RDONLY|CLOEXEC|LARGEFILE) = 3
+>      0.108 ( 0.002 ms): faccessat2/2556897 read(fd: 3, buf: 0xffdd84b0, count: 512)                              = 512
+>      0.216 ( 0.001 ms): faccessat2/2556897 close(fd: 3)                                                          = 0
+> root@number:/home/acme/c#
+> 
+> And interestingly the openat syscall got its contents obtained via the
+> BPF augmenter... better to test this more thoroughly, but I think it
+> should come after this series lands.
 
-This patch corrects this problem by initializing the lsmctx to a safe
-value when it is declared.
+Right, I don't see the filename in openat() in my tests.
 
-This is similar to the commit 35fcac7a7c25
-("audit: Initialize lsmctx to avoid memory allocation error").
+openat() is 295 on i386 and that's preadv() on x86_64 so BPF won't try
+to augment the argument.  I wonder how it can get the filename.  But
+anyway we can take a look later.
 
-Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
----
- net/netfilter/nfnetlink_queue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
-index 5c913987901a..8b7b39d8a109 100644
---- a/net/netfilter/nfnetlink_queue.c
-+++ b/net/netfilter/nfnetlink_queue.c
-@@ -567,7 +567,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
- 	enum ip_conntrack_info ctinfo = 0;
- 	const struct nfnl_ct_hook *nfnl_ct;
- 	bool csum_verify;
--	struct lsm_context ctx;
-+	struct lsm_context ctx = { NULL, 0, 0 };
- 	int seclen = 0;
- 	ktime_t tstamp;
- 
--- 
-2.34.1
+Thanks,
+Namhyung
 
 
