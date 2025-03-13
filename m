@@ -1,221 +1,272 @@
-Return-Path: <linux-kernel+bounces-559606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B68A3A5F608
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:35:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9050A5F64E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CFA6189DF2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:35:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4963170447
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B802676CD;
-	Thu, 13 Mar 2025 13:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HdNVAvns"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4069537FF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2E7267B81;
+	Thu, 13 Mar 2025 13:50:08 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83294267AEC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741872930; cv=none; b=BjyyRw/k9NBleLz1MMpnvrAI1at8LAgNa0wewuHF7dXGRBHnddlnH7Z4PCaTJ0FiENJpCWYN2n+dginYtZufQx2wOowGKzXFeJfk9GlVUvbvT1NfkvOGdUp6JKbvHS4k2OvgYoey19bfhrXJPNy68+HcBZAQwO7gz0jFDULfxBI=
+	t=1741873807; cv=none; b=BW9rguBDMkVHAkDYEeo7AEIOxSvwO2koKER3OT8HLnJM3kasnP/ZQCxvQRJrwomoF7+Gtd9f4GqyCwf8GIlqwZGEGkVv/RubOmfe41sEeeTYMLJohyiRnkV1hEaoLdlnTHypWR4+tce/kmOL4AdfSPB8TDIEgbAPoDf3cN8ndbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741872930; c=relaxed/simple;
-	bh=GSvuKDn6GvEj4StlyA9y4pE71cNqRY2cL2gZwvYxJgY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a+23L62LF5e2DLzVTooSTQWm8yPUKt5imwV6Tb64KHapm2UW/WBc7vG1q2AqV0zNxjHocl1ekWW7Ysh5W9LeGXfyszI3ngrO+Ldu2YfIhMeuonocRpptxkuKIoAccu8k89AyX6ebj2LgaTUMwr1cbizjUi1VZu7ZniNxLoHG3RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HdNVAvns; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741872927;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cJptmV2ov9F43XWgGQgvpiN+Bxm0Brgya5E5ifNGox0=;
-	b=HdNVAvnsqLVcILKjBBf7hvbvENUnPnfXFkB3E+H82Fq/nb0PUGh6vLXKvcHHHr1iY0CCBT
-	vvYhfB55wRYY2mNzL/dMgQBhMdomP2nrElK94bynj4x6Gl1/NsTk7k6F4jwime4j3+n/WK
-	XwP/Hosiz4XshEI7dhW6Z6t6wPwpxPE=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-296-KGjL1ptYNkWWD2Vs9RyrpA-1; Thu,
- 13 Mar 2025 09:35:22 -0400
-X-MC-Unique: KGjL1ptYNkWWD2Vs9RyrpA-1
-X-Mimecast-MFC-AGG-ID: KGjL1ptYNkWWD2Vs9RyrpA_1741872921
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E903D180AF59;
-	Thu, 13 Mar 2025 13:35:20 +0000 (UTC)
-Received: from [192.168.37.1] (unknown [10.22.76.7])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8464F1828AA7;
-	Thu, 13 Mar 2025 13:35:19 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Trond Myklebust <trondmy@hammerspace.com>, anna@kernel.org,
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sunrpc: add a rpc_clnt shutdown control in debugfs
-Date: Thu, 13 Mar 2025 09:35:17 -0400
-Message-ID: <0E1E14E2-BD4B-433B-8355-EEF45384BE83@redhat.com>
-In-Reply-To: <ee74d5920532d81f77e503d6ef8bc5fbfc66d04e.camel@kernel.org>
-References: <20250312-rpc-shutdown-v1-1-cc90d79a71c2@kernel.org>
- <7906109F-91D2-4ECF-B868-5519B56D2CEE@redhat.com>
- <997f992f951bd235953c5f0e2959da6351a65adb.camel@kernel.org>
- <8bf55a6fb64ba9e21a1ec8c5644355ffd6496c6e.camel@hammerspace.com>
- <ee74d5920532d81f77e503d6ef8bc5fbfc66d04e.camel@kernel.org>
+	s=arc-20240116; t=1741873807; c=relaxed/simple;
+	bh=c5BwsiMUEcE3FxlbLKMbbMYxcD4AgL6mpQVpTtKlUJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GnbT6cuQNVgC6KRZTvhzXJ0IJFEykWXZPR5rziKyG+SaApB0VP0wbkeDJ80PYTi4EFfjzuRUVaaEv5BqhS1l7h4cAHXWiVpZMum40O4qyMeTQgcBXPL5lQmw1rBTmPAQgMv5hAexKzsRmaag+4xnqInbcEt/iI6m2PiLTFGKeBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4ZD7qG0qYKz9sSY;
+	Thu, 13 Mar 2025 14:38:02 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id bhtE9KRHTdsR; Thu, 13 Mar 2025 14:38:02 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZD7q91zC1z9sSL;
+	Thu, 13 Mar 2025 14:37:57 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 302D58B779;
+	Thu, 13 Mar 2025 14:37:57 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id WdQEpeFRVBdp; Thu, 13 Mar 2025 14:37:57 +0100 (CET)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C86C58B770;
+	Thu, 13 Mar 2025 14:37:56 +0100 (CET)
+Message-ID: <362f9392-f891-4a15-9ffd-5f5a6cac41b8@csgroup.eu>
+Date: Thu, 13 Mar 2025 14:37:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bus: fsl-mc: Remove deadcode
+To: "Dr. David Alan Gilbert" <linux@treblig.org>, ioana.ciornei@nxp.com,
+ stuyoder@gmail.com, Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241115152055.279732-1-linux@treblig.org>
+ <3f9dbb7b-6527-48e1-9028-b46e5a0c58ce@csgroup.eu>
+ <Z9LbwRUsHwFLpBZA@gallifrey>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <Z9LbwRUsHwFLpBZA@gallifrey>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 13 Mar 2025, at 9:15, Jeff Layton wrote:
 
-> On Wed, 2025-03-12 at 22:31 +0000, Trond Myklebust wrote:
->> On Wed, 2025-03-12 at 10:37 -0400, Jeff Layton wrote:
->>> On Wed, 2025-03-12 at 09:52 -0400, Benjamin Coddington wrote:
->>>> On 12 Mar 2025, at 9:36, Jeff Layton wrote:
->>>>
->>>>> There have been confirmed reports where a container with an NFS
->>>>> mount
->>>>> inside it dies abruptly, along with all of its processes, but the
->>>>> NFS
->>>>> client sticks around and keeps trying to send RPCs after the
->>>>> networking
->>>>> is gone.
->>>>>
->>>>> We have a reproducer where if we SIGKILL a container with an NFS
->>>>> mount,
->>>>> the RPC clients will stick around indefinitely. The orchestrator
->>>>> does a MNT_DETACH unmount on the NFS mount, and then tears down
->>>>> the
->>>>> networking while there are still RPCs in flight.
->>>>>
->>>>> Recently new controls were added[1] that allow shutting down an
->>>>> NFS
->>>>> mount. That doesn't help here since the mount namespace is
->>>>> detached from
->>>>> any tasks at this point.
->>>>
->>>> That's interesting - seems like the orchestrator could just reorder
->>>> its
->>>> request to shutdown before detaching the mount namespace.  Not an
->>>> objection,
->>>> just wondering why the MNT_DETACH must come first.
->>>>
->>>
->>> The reproducer we have is to systemd-nspawn a container, mount up an
->>> NFS mount inside it, start some I/O on it with fio and then kill -9
->>> the
->>> systemd running inside the container. There isn't much the
->>> orchestrator
->>> (root-level systemd) can do to at that point other than clean up
->>> what's
->>> left.
->>>
->>> I'm still working on a way to reliably detect when this has happened.
->>> For now, we just have to notice that some clients aren't dying.
->>>
->>>>> Transplant shutdown_client() to the sunrpc module, and give it a
->>>>> more
->>>>> distinct name. Add a new debugfs sunrpc/rpc_clnt/*/shutdown knob
->>>>> that
->>>>> allows the same functionality as the one in /sys/fs/nfs, but at
->>>>> the
->>>>> rpc_clnt level.
->>>>>
->>>>> [1]: commit d9615d166c7e ("NFS: add sysfs shutdown knob").
->>>>>
->>>>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
->>>>
->>>> I have a TODO to patch Documentation/ for this knob mostly to write
->>>> warnings
->>>> because there are some potential "gotchas" here - for example you
->>>> can have
->>>> shared RPC clients and shutting down one of those can cause
->>>> problems for a
->>>> different mount (this is true today with the
->>>> /sys/fs/nfs/[bdi]/shutdown
->>>> knob).  Shutting down aribitrary clients will definitely break
->>>> things in
->>>> weird ways, its not a safe place to explore.
->>>>
->>>
->>> Yes, you really do need to know what you're doing. 0200 permissions
->>> are
->>> essential for this file, IOW. Thanks for the R-b!
+
+Le 13/03/2025 à 14:21, Dr. David Alan Gilbert a écrit :
+> [Vous ne recevez pas souvent de courriers de linux@treblig.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> * Christophe Leroy (christophe.leroy@csgroup.eu) wrote:
 >>
->> Sorry, but NACK! We should not be adding control mechanisms to debugfs.
 >>
->
-> Ok. Would adding sunrpc controls under sysfs be more acceptable? I do
-> agree that this is a potential footgun, however. It would be nicer to
-> clean this situation up automagically.
->
->> One thing that might work in situations like this is perhaps to make
->> use of the fact that we are monitoring whether or not rpc_pipefs is
->> mounted. So if the mount is containerised, and the orchestrator
->> unmounts everything, including rpc_pipefs, we might take that as a hint
->> that we should treat any future connection errors as being fatal.
+>> Le 15/11/2024 à 16:20, linux@treblig.org a écrit :
+>>> [Vous ne recevez pas souvent de courriers de linux@treblig.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+>>>
+>>> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>>>
+>>> fsl_mc_allocator_driver_exit() was added explicitly by
+>>> commit 1e8ac83b6caf ("bus: fsl-mc: add fsl_mc_allocator cleanup function")
+>>> but was never used.
+>>>
+>>> Remove it.
+>>>
+>>> fsl_mc_portal_reset() was added in 2015 by
+>>> commit 197f4d6a4a00 ("staging: fsl-mc: fsl-mc object allocator driver")
+>>> but was never used.
+>>>
+>>> Remove it.
+>>>
+>>> fsl_mc_portal_reset() was the only caller of dpmcp_reset().
+>>>
+>>> Remove it.
+>>>
+>>> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 >>
->
-> rpc_pipefs isn't being mounted at all in the container I'm using. I
-> think that's not going to be a reliable test for this.
->
->> Otherwise, we'd have to be able to monitor the root task, and check if
->> it is still alive in order to figure out if out containerised world has
->> collapsed.
+>> Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> 
+> Hi,
+>    Can someone pick this old change up please?  I see the PPC patchwork says
+>    'handled elsewhere' but doesn't say where.
+
+MAINTAINERS file says where:
+
+QORIQ DPAA2 FSL-MC BUS DRIVER
+M:	Stuart Yoder <stuyoder@gmail.com>
+M:	Laurentiu Tudor <laurentiu.tudor@nxp.com>
+L:	linux-kernel@vger.kernel.org
+S:	Maintained
+F:	Documentation/ABI/stable/sysfs-bus-fsl-mc
+F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+F: 
+Documentation/networking/device_drivers/ethernet/freescale/dpaa2/overview.rst
+F:	drivers/bus/fsl-mc/
+F:	include/uapi/linux/fsl_mc.h
+
+FREESCALE SOC DRIVERS
+M:	Christophe Leroy <christophe.leroy@csgroup.eu>
+L:	linuxppc-dev@lists.ozlabs.org
+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+S:	Maintained
+F:	Documentation/devicetree/bindings/misc/fsl,dpaa2-console.yaml
+F:	Documentation/devicetree/bindings/soc/fsl/
+F:	drivers/soc/fsl/
+F:	include/linux/fsl/
+F:	include/soc/fsl/
+
+I acked the 2 line changes in include/linux/fsl/mc.h, the main changes 
+being in the C files which are not under my scope.
+
+Stuart, Laurentiu, can you pick up the patch ?
+
+Christophe
+
+> 
+> Thanks,
+> 
+> Dave
 >>
->
-> If by the root task, you mean the initial task in the container, then
-> that method seems a little sketchy too. How would we determine that
-> from the RPC layer?
->
-> To be clear: the situation here is that we have a container with a veth
-> device that is communicating with the outside world. Once all of the
-> processes in the container exit, the veth device in the container
-> disappears. The rpc_xprt holds a ref on the netns though, so that
-> sticks around trying to retransmit indefinitely.
->
-> I think what we really need is a lightweight reference on the netns.
-> Something where we can tell that there are no userland tasks that care
-> about it anymore, so we can be more aggressive about giving up on it.
->
-> There is a "passive" refcount inside struct net, but that's not quite
-> what we need as it won't keep the sunrpc_net in place.
->
-> What if instead of holding a netns reference in the xprt, we have it
-> hold a reference on a new refcount_t that lives in sunrpc_net? Then, we
-> add a pre_exit pernet_ops callback that does a shutdown_client() on all
-> of the rpc_clnt's attached to the xprts in that netns. The pre_exit can
-> then just block until the sunrpc_net refcount goes to 0.
->
-> I think that would allow everything to be cleaned up properly?
-
-Do you think that might create unwanted behaviors for a netns that might
-still be repairable?   Maybe that doesn't make a lot of sense if there are no
-processes in it, but I imagine a network namespace could be in this state
-and we'd still want to try to use it.
-
-I think there's an out-of-kernel (haven't tried yet) way to do it with udev,
-which, if used, creates an explicit requirement for the orchestrator to
-define exactly what should happen if the veth goes away.  When creating the
-namespace, the orchestrator should insert a rule that says "when this veth
-disappears, we shutdown this fs".
-
-Again, I'm not sure if that's even possible, but I'm willing to muck around
-a bit and give it a try.
-
-Ben
+>>> ---
+>>>    drivers/bus/fsl-mc/dpmcp.c            | 22 ----------------------
+>>>    drivers/bus/fsl-mc/fsl-mc-allocator.c |  5 -----
+>>>    drivers/bus/fsl-mc/fsl-mc-private.h   |  6 ------
+>>>    drivers/bus/fsl-mc/mc-io.c            | 20 --------------------
+>>>    include/linux/fsl/mc.h                |  2 --
+>>>    5 files changed, 55 deletions(-)
+>>>
+>>> diff --git a/drivers/bus/fsl-mc/dpmcp.c b/drivers/bus/fsl-mc/dpmcp.c
+>>> index 5fbd0dbde24a..7816c0a728ef 100644
+>>> --- a/drivers/bus/fsl-mc/dpmcp.c
+>>> +++ b/drivers/bus/fsl-mc/dpmcp.c
+>>> @@ -75,25 +75,3 @@ int dpmcp_close(struct fsl_mc_io *mc_io,
+>>>           /* send command to mc*/
+>>>           return mc_send_command(mc_io, &cmd);
+>>>    }
+>>> -
+>>> -/**
+>>> - * dpmcp_reset() - Reset the DPMCP, returns the object to initial state.
+>>> - * @mc_io:     Pointer to MC portal's I/O object
+>>> - * @cmd_flags: Command flags; one or more of 'MC_CMD_FLAG_'
+>>> - * @token:     Token of DPMCP object
+>>> - *
+>>> - * Return:     '0' on Success; Error code otherwise.
+>>> - */
+>>> -int dpmcp_reset(struct fsl_mc_io *mc_io,
+>>> -               u32 cmd_flags,
+>>> -               u16 token)
+>>> -{
+>>> -       struct fsl_mc_command cmd = { 0 };
+>>> -
+>>> -       /* prepare command */
+>>> -       cmd.header = mc_encode_cmd_header(DPMCP_CMDID_RESET,
+>>> -                                         cmd_flags, token);
+>>> -
+>>> -       /* send command to mc*/
+>>> -       return mc_send_command(mc_io, &cmd);
+>>> -}
+>>> diff --git a/drivers/bus/fsl-mc/fsl-mc-allocator.c b/drivers/bus/fsl-mc/fsl-mc-allocator.c
+>>> index b5e8c021fa1f..6c3beb82dd1b 100644
+>>> --- a/drivers/bus/fsl-mc/fsl-mc-allocator.c
+>>> +++ b/drivers/bus/fsl-mc/fsl-mc-allocator.c
+>>> @@ -656,8 +656,3 @@ int __init fsl_mc_allocator_driver_init(void)
+>>>    {
+>>>           return fsl_mc_driver_register(&fsl_mc_allocator_driver);
+>>>    }
+>>> -
+>>> -void fsl_mc_allocator_driver_exit(void)
+>>> -{
+>>> -       fsl_mc_driver_unregister(&fsl_mc_allocator_driver);
+>>> -}
+>>> diff --git a/drivers/bus/fsl-mc/fsl-mc-private.h b/drivers/bus/fsl-mc/fsl-mc-private.h
+>>> index b3520ea1b9f4..e1b7ec3ed1a7 100644
+>>> --- a/drivers/bus/fsl-mc/fsl-mc-private.h
+>>> +++ b/drivers/bus/fsl-mc/fsl-mc-private.h
+>>> @@ -66,10 +66,6 @@ int dpmcp_close(struct fsl_mc_io *mc_io,
+>>>                   u32 cmd_flags,
+>>>                   u16 token);
+>>>
+>>> -int dpmcp_reset(struct fsl_mc_io *mc_io,
+>>> -               u32 cmd_flags,
+>>> -               u16 token);
+>>> -
+>>>    /*
+>>>     * Data Path Resource Container (DPRC) API
+>>>     */
+>>> @@ -631,8 +627,6 @@ int dprc_scan_objects(struct fsl_mc_device *mc_bus_dev,
+>>>
+>>>    int __init fsl_mc_allocator_driver_init(void);
+>>>
+>>> -void fsl_mc_allocator_driver_exit(void);
+>>> -
+>>>    void fsl_mc_init_all_resource_pools(struct fsl_mc_device *mc_bus_dev);
+>>>
+>>>    void fsl_mc_cleanup_all_resource_pools(struct fsl_mc_device *mc_bus_dev);
+>>> diff --git a/drivers/bus/fsl-mc/mc-io.c b/drivers/bus/fsl-mc/mc-io.c
+>>> index 95b10a6cf307..a0ad7866cbfc 100644
+>>> --- a/drivers/bus/fsl-mc/mc-io.c
+>>> +++ b/drivers/bus/fsl-mc/mc-io.c
+>>> @@ -263,23 +263,3 @@ void fsl_mc_portal_free(struct fsl_mc_io *mc_io)
+>>>           dpmcp_dev->consumer_link = NULL;
+>>>    }
+>>>    EXPORT_SYMBOL_GPL(fsl_mc_portal_free);
+>>> -
+>>> -/**
+>>> - * fsl_mc_portal_reset - Resets the dpmcp object for a given fsl_mc_io object
+>>> - *
+>>> - * @mc_io: Pointer to the fsl_mc_io object that wraps the MC portal to free
+>>> - */
+>>> -int fsl_mc_portal_reset(struct fsl_mc_io *mc_io)
+>>> -{
+>>> -       int error;
+>>> -       struct fsl_mc_device *dpmcp_dev = mc_io->dpmcp_dev;
+>>> -
+>>> -       error = dpmcp_reset(mc_io, 0, dpmcp_dev->mc_handle);
+>>> -       if (error < 0) {
+>>> -               dev_err(&dpmcp_dev->dev, "dpmcp_reset() failed: %d\n", error);
+>>> -               return error;
+>>> -       }
+>>> -
+>>> -       return 0;
+>>> -}
+>>> -EXPORT_SYMBOL_GPL(fsl_mc_portal_reset);
+>>> diff --git a/include/linux/fsl/mc.h b/include/linux/fsl/mc.h
+>>> index c90ec889bfc2..37316a58d2ed 100644
+>>> --- a/include/linux/fsl/mc.h
+>>> +++ b/include/linux/fsl/mc.h
+>>> @@ -417,8 +417,6 @@ int __must_check fsl_mc_portal_allocate(struct fsl_mc_device *mc_dev,
+>>>
+>>>    void fsl_mc_portal_free(struct fsl_mc_io *mc_io);
+>>>
+>>> -int fsl_mc_portal_reset(struct fsl_mc_io *mc_io);
+>>> -
+>>>    int __must_check fsl_mc_object_allocate(struct fsl_mc_device *mc_dev,
+>>>                                           enum fsl_mc_pool_type pool_type,
+>>>                                           struct fsl_mc_device **new_mc_adev);
+>>> --
+>>> 2.47.0
+>>>
+>>
+> --
+>   -----Open up your eyes, open up your mind, open up your code -------
+> / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \
+> \        dave @ treblig.org |                               | In Hex /
+>   \ _________________________|_____ https://eur01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwww.treblig.org%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C707d35bccc9a4949428b08dd6231e98a%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638774688697894005%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=ncMBG9AvSfn4mKmQkFv%2F6UfFYp%2FBMDOna7uejbavhUc%3D&reserved=0   |_______/
 
 
