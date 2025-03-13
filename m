@@ -1,198 +1,144 @@
-Return-Path: <linux-kernel+bounces-559973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB88BA5FBBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:30:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75F56A5FBDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:35:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC992169B69
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 451293A3245
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF6A2690F0;
-	Thu, 13 Mar 2025 16:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1402676FD;
+	Thu, 13 Mar 2025 16:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BdSHNCwS"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pfUdbEav"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D8E13B58A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 16:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D36944F;
+	Thu, 13 Mar 2025 16:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741883424; cv=none; b=TreS1GF/EttUUd1pLad2Xlh7YcXFwXd5tTscMr0Ua8NrjHXBqdQdZtUj5edyU4xpkgJr+P60odDtA44nj5X6JS6Bge30+Vei002kOAHpqXhsTeonuZKjLm31EKtlByBYuZk6ZraplCRMDK0toRJHWgvztBrjTnSsBv6YbUuxaug=
+	t=1741883519; cv=none; b=ovu9xVDJdagMaXAJ+y3cD+iqBBNxo+wzlk7K+9L0LjUSdsL69ifyInnxQdaTz3+GK8b80jqGOYvg4+pRggRlFBfjmkLKguvBsDGXC0y+ITHd2KEDKHqlu+VcH86jWoki2Kc4Y9ame6+PNUV2WlvQP4I66Qi6Rkn5yZJOwLp3ik8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741883424; c=relaxed/simple;
-	bh=4hhdqF3Rp1vH31nmCsGM4U9PNPxQFzWtChioTmpUmgE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u4azSGd9qlx1MKjlyaCfcnTpvuBUi4Ois4eaefwJ2sVUc/z28BuVyw9TMJNTJqc4IMbzz7vxAANxFl1WcPanfKyCEL84y4jCvTE7WsxDmIxUfovlTZQO+tHlkBz2VYKFiSA4E8SilNyzLXvpSc7M0UgtYeOecnv8FjsHqoGMuXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BdSHNCwS; arc=none smtp.client-ip=217.140.110.172; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54953b2c112so123355e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:30:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741883420; x=1742488220; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:user-agent:mime-version
-         :list-unsubscribe:list-subscribe:list-id:precedence:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aFrAK725pGLGAzrUp2Rsi/GlBUn5vFqjGk9jd1UKZys=;
-        b=BdSHNCwSAeeL5Y3xTG/X+vUoIFihijZZoWuYcRRMTHFIRnsBz4De3p6QtmdcHbrb3Y
-         16F1R4C+ZCbk4YBFzW3fXK0CV5BR5BpPaUfnTf615Lflxjhcup3I9ZQqhc+TCDRxbGEq
-         RtVJnuC3ZKo4tDm5GL76ZfoPvN4MJrn3WVaujV50V5L9sfjEfFKirOx1AZ86PJqDFT/v
-         /PsMoNS+jNceKIuS4QmqRoFqYYNSDhw0Vf8NTF6ypP6ZtP3DQuJK7d4YrFMJz11EBsXl
-         mzP81WvgtvLLUYJxKUX6Oyk5o/nXoo9wksUJaImn7aG3/KZmRKly2eCYKXfnWpAW92KG
-         3V/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741883420; x=1742488220;
-        h=content-transfer-encoding:content-language:user-agent:mime-version
-         :list-unsubscribe:list-subscribe:list-id:precedence:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aFrAK725pGLGAzrUp2Rsi/GlBUn5vFqjGk9jd1UKZys=;
-        b=bBdnl3pSN+HT9P5LX4e8hAuBAMa1W2SBGYM9JyChGQTg5yJ06Iim8Kjqq7VvsdvW8Z
-         3Q5YWi3VHcdKkYdzDMEiGhH/iBIlvSsOrcU0P0LgDnJOkxsSaoLUQO4v1gGPjo+p5i3h
-         I0GgVSfX9QsqFYKC6M8A/kf5x6tNR2TWxM2klWdsCA3+XVKq5txdjU36BA878DVixlo2
-         hys1fKkbbFlSMeJrR84SJUIIjsIf8egtmelE9RYNSCH6MWl3kMeAqru87ljoOFFe4sSO
-         Vd4bBfVsEMffOfARegUARrcfqCcKIAC0gZjfIZc46/69wGS8jwt706LODVs2mnM4HXxa
-         wORw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPKeH5HuiquSsvr1zfFp0oa2ZhZCQ8GNiVMNgotaosG+3cHpjB1iRRyC/UQB8oQhfvCLJtqj1HKQqGfoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHQ1KOMx4OgJwT1Jw58Yq6Oi4GTi0DFxLRIzYhSAnqtkfR4hHT
-	3/2VfBLSHKNRMe5rDAypH3RLhcKCQFsAn40ZNM9Lqrft/HfcZUGtCjO2pAzWMqo=
-X-Gm-Gg: ASbGncsHrSwYbkzo3jL+bQ5RSAhkCFCOcMNOoav2Dg7EPVd4SnXRR+6YFmJ2R6znqyg
-	WJIYPXYyeIg/enYS59hIiNM8+hsYk6FJREMmqMPVNjdFSSiC1cVH9MH9l7KAbphc5Fg3GDexpop
-	uJQHzQJmatn3eNJTFFuhi02pSrU7acgyiqEiHbumm7wiwIp4vzXAksJoV4aLLVwvnRsgCxZA2sw
-	/xCYm32Cpfc3gQi8IThdYZ+rgRIiq1BY51jLykZMJscagjZC7sNJ4KnR4FbkcwWwjTh1K6A7o0R
-	pOd1X10FKHokiM8WQRXc3VYKCCnnR1UfRQ/n60Un9BQW6o1ni+vURaSroYnWfH9neCJpMYa7zhu
-	YVwM7XveKVWX5Iuu8aQ==
-X-Google-Smtp-Source: AGHT+IGtn9WumNOaMuo9cAzRTdloUKB5tTLRLe9/61uA56u97uNJuHXYLD/mRuofS9RqJFSJqixgYg==
-X-Received: by 2002:a05:6512:b0a:b0:549:8f39:3e63 with SMTP id 2adb3069b0e04-549abaea8b6mr1524832e87.9.1741883419995;
-        Thu, 13 Mar 2025 09:30:19 -0700 (PDT)
-Received: from localhost (c-85-229-14-155.bbcust.telenor.se. [85.229.14.155])
-        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-549ba8851e1sm256528e87.201.2025.03.13.09.30.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 09:30:18 -0700 (PDT)
-From: Anders Roxell <anders.roxell@linaro.org>
-To: robin.murphy@arm.com,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Stuart Yoder <stuyoder@gmail.com>,
-	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-	Nipun Gupta <nipun.gupta@amd.com>,
-	Nikhil Agarwal <nikhil.agarwal@amd.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Cc: devicetree@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	quic_charante@quicinc.com,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH v2 4/4] iommu: Get DT/ACPI parsing into the proper probe path
-Date: Thu, 13 Mar 2025 17:30:11 +0100
-Message-ID: <417d6f59-0d78-4e81-ad0b-e06846f786b0@arm.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <9b358d68-332e-404e-9a75-740297f7b28d@samsung.com>
-References: <cover.1740753261.git.robin.murphy@arm.com> <e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com> <CGME20250313095633eucas1p29cb55f2504b4bcf67c16b3bd3fa9b8cd@eucas1p2.samsung.com> <9b358d68-332e-404e-9a75-740297f7b28d@samsung.com>
-Received: from foss.arm.com (foss.arm.com [217.140.110.172]) by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FBD1EE7A7 for <iommu@lists.linux.dev>; Thu, 13 Mar 2025 11:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14]) by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 21D5E1516; Thu, 13 Mar 2025 04:01:50 -0700 (PDT)
-Received: from [10.57.40.246] (unknown [10.57.40.246]) by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C60353F673; Thu, 13 Mar 2025 04:01:35 -0700 (PDT)
-Precedence: bulk
+	s=arc-20240116; t=1741883519; c=relaxed/simple;
+	bh=D1wJYQ4E1c6EX9Y7XAzWUJGTuFgvctcFIgyy0djnxcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AicGiqp4rYpisxL0LMNXTBHBNFjd2cNtsafdULJ2J8D3V4arycJAE/AU/QWQEnGIx15kAtkB6zx9hX5Abjx1UYjS/OPmtfAOU5Jf+DzqlMs6wSnnV47DpVv+kR5c8vR9TSJ0cKJe/1s1RBoT7KF/P8EMGX6iqh37C/+Z5TvQWR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pfUdbEav; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2901BC4CEEB;
+	Thu, 13 Mar 2025 16:31:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741883519;
+	bh=D1wJYQ4E1c6EX9Y7XAzWUJGTuFgvctcFIgyy0djnxcY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pfUdbEavUcaxItWtO14JhEGoMOStRWraM6Cg5fbkwenfkqVFwHwVSaAG7rwvG4c4I
+	 h1v/NqSIluz2CpaxKqgI1v8hl8/C8sucDxg8/g4ViLwNzYoB6tx06JVfQfZWQGbeDo
+	 rLDVY6dkNG46MKi5/Nf/oDuKgCFvLEiT67KGzZ6PEyxKLEm7lh2VWEFVTewNMqdvoN
+	 v3UISxZiz1yJF3+vEDqNXvJyNE2BrT1kFLiqIE6goUGS7lPwVYGcTW3uFrqW3yI/Dm
+	 nmexUvJE8NoHEznGvOdvTEFXz6tPZDOXaDq6QrA4gcD+o23kAWeXsatMvI+TAVhD3s
+	 vjSOLWhiNJL2Q==
+Date: Thu, 13 Mar 2025 17:31:53 +0100
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Rahul Rameshbabu <sergeantsagara@protonmail.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-input@vger.kernel.org, dri-devel@lists.freedesktop.org, Jiri Kosina <jikos@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH RFC 0/3] Initial work for Rust abstraction for HID device
+ driver development
+Message-ID: <f6rizzlygznuebh22psrdkzfki7jfjzfaamuolobvpbgxoxjoi@gfu2eyzrm5wl>
+References: <20250313160220.6410-2-sergeantsagara@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313160220.6410-2-sergeantsagara@protonmail.com>
 
-From: Robin Murphy <robin.murphy@arm.com>
+Hi,
 
-> On 2025-03-13 9:56 am, Marek Szyprowski wrote:
-> [...]
-> > This patch landed in yesterday's linux-next as commit bcb81ac6ae3c
-> > ("iommu: Get DT/ACPI parsing into the proper probe path"). In my tests I
-> > found it breaks booting of ARM64 RK3568-based Odroid-M1 board
-> > (arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts). Here is the
-> > relevant kernel log:
-> 
-> ...and the bug-flushing-out begins!
-> 
-> > Unable to handle kernel NULL pointer dereference at virtual address
-> > 00000000000003e8
-> > Mem abort info:
-> >     ESR = 0x0000000096000004
-> >     EC = 0x25: DABT (current EL), IL = 32 bits
-> >     SET = 0, FnV = 0
-> >     EA = 0, S1PTW = 0
-> >     FSC = 0x04: level 0 translation fault
-> > Data abort info:
-> >     ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> >     CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> >     GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> > [00000000000003e8] user address but active_mm is swapper
-> > Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> > Modules linked in:
-> > CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.14.0-rc3+ #15533
-> > Hardware name: Hardkernel ODROID-M1 (DT)
-> > pstate: 00400009 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > pc : devm_kmalloc+0x2c/0x114
-> > lr : rk_iommu_of_xlate+0x30/0x90
-> > ...
-> > Call trace:
-> >    devm_kmalloc+0x2c/0x114 (P)
-> >    rk_iommu_of_xlate+0x30/0x90
-> 
-> Yeah, looks like this is doing something a bit questionable which can't
-> work properly. TBH the whole dma_dev thing could probably be cleaned up
-> now that we have proper instances, but for now does this work?
-> 
-> (annoyingly none of my Rockchip boards are set up for testing right now, 
-> but I might have time to dig one out later)
-> 
-> Thanks,
-> Robin.
-> 
-> ----->8-----
-> 
-> Subject: [PATCH] iommu/rockchip: Allocate per-device data sensibly
-> 
-> Now that DT-based probing is finally happening in the right order again,
-> it reveals an issue in Rockchip's of_xlate, which can now be called
-> during registration, but is using the global dma_dev which is only
-> assigned later. However, this makes little sense when we're already
-> looking up the correct IOMMU device, who should logically be the owner
-> of the devm allocation anyway.
-> 
-> Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe 
-> path")
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+[quick reply because I am completely under the water for the next 2
+weeks]
 
-This patch fixed the boot on rockpi4.
-Applied it ontop of next-20250313
+On Mar 13 2025, Rahul Rameshbabu wrote:
+> Hello,
+> 
+> I am a hobbyist developer who has been working on a project to create a new Rust
+> HID device driver and the needed core abstractions for writing more HID device
+> drivers in Rust. My goal is to support the USB Monitor Control Class needed for
+> functionality such as backlight control for monitors like the Apple Studio
+> Display and Apple Pro Display XDR. A new backlight API will be required to
+> support multiple backlight instances and will be mapped per DRM connector. The
+> current backlight API is designed around the assumption of only a single
+> internal panel being present. I am currently working on making this new API for
+> DRM in parallel to my work on the HID side of the stack for supporting these
+> displays.
 
-Tested-by: Anders Roxell <anders.roxell@linaro.org>
+Thanks a lot for this work, though I wonder if your goal is not too big,
+too far from the HID point of view. HID is simple, and there is only a
+few bindings that you would need to be able to make "simple" HID
+drivers.
+
+My assumption would be to introduce the binding with a functional but
+small driver (like one that just changes the report descriptor, or does
+a sime raw event processing). Then we can look at integrating with the
+DRM interface.
+
+Though it's up to you to decide how you want to play ;)
+
+> 
+>   https://binary-eater.github.io/tags/usb-monitor-control/
+> 
+> Julius Zint had attempted to do so a year ago with a C HID driver but was gated
+> by the lack of an appropriate backlight API for external displays. I asked him
+> for permission to do the work need in Rust and plan to accredit him for the HID
+> report handling for backlight in the USB Monitor Control Class standard.
+> 
+>   https://lore.kernel.org/lkml/f95da7ff-06dd-2c0e-d563-7e5ad61c3bcc@redhat.com/
+> 
+> I was hoping to get initial feedback on this work to make sure I am on the right
+> path for making a Rust HID abstraction that would be acceptable upstream. The
+> patches compile with WERROR being disabled. This is necessary since Rust treats
+> missing documentation comments as warnings (which is a good thing). I also need
+> to go in and add more SAFETY comments.
+
+K, I'll give you my opinion in the patches as the HID co-maintainer. I
+do have a very little rust experience, but this is my first in kernel,
+so I hope the more experience rust people here will chime in as well.
 
 Cheers,
-Anders
+Benjamin
+
+> 
+> Thanks,
+> Rahul Rameshbabu
+> 
+> Rahul Rameshbabu (3):
+>   rust: core abstractions for HID drivers
+>   rust: hid: USB Monitor Control Class driver
+>   rust: hid: demo the core abstractions for probe and remove
+> 
+>  drivers/hid/Kconfig                |  16 ++
+>  drivers/hid/Makefile               |   1 +
+>  drivers/hid/hid_monitor_control.rs |  42 +++++
+>  rust/bindings/bindings_helper.h    |   1 +
+>  rust/kernel/hid.rs                 | 245 +++++++++++++++++++++++++++++
+>  rust/kernel/lib.rs                 |   2 +
+>  6 files changed, 307 insertions(+)
+>  create mode 100644 drivers/hid/hid_monitor_control.rs
+>  create mode 100644 rust/kernel/hid.rs
+> 
+> -- 
+> 2.47.2
+> 
+> 
 
