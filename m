@@ -1,244 +1,98 @@
-Return-Path: <linux-kernel+bounces-558748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92648A5EA7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 05:16:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C6B9A5EA87
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 05:25:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7A4517624C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 04:16:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF451174699
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 04:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4738A7DA6A;
-	Thu, 13 Mar 2025 04:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22B313A26D;
+	Thu, 13 Mar 2025 04:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eNN6wwPe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="dGE+CHhX"
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3A72B9A8
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 04:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741839375; cv=fail; b=fdUZLT0YOumQ8XSBj6hzRPQObt37UfTJpNF1s3mYpbDNi6UiwaQqra3WlftQtmJHxbn4HtVMz8dqhM5q4Y3xnYcb4AUfvmWwv9bJ4+JwKlysGQJ2yZNFuFQOHI0IVm6GIMxraJA3PLBXmrvNobqo8HaxFM7jZLWyEpKW+acx8FY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741839375; c=relaxed/simple;
-	bh=wKXFFXCQI/kDzrVQai/VyjtJh0Poq/rTZZ8jDr0XiuU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=LZ1bTaU5tiXqRVNyfpW0M1zeonOQR4++mt94Xf0hMgbOC+UvP7FkUc3KTEJ76R0beENHtVC8TY2nKmMLRmG3DggRwTt3SgeFr5Y0j+jo4wCuo9JJ5lG87TLbQhENteDtMNdXqJFJU+uL7+oBSGK5sUWohK+Bi2UF6QpAF5cpEAs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eNN6wwPe; arc=fail smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741839373; x=1773375373;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=wKXFFXCQI/kDzrVQai/VyjtJh0Poq/rTZZ8jDr0XiuU=;
-  b=eNN6wwPeaAAjAGhFZ9gkkP0yjWaB3KsAn0g8LT3FotQ3FWwLRMUUMwLd
-   fdjjvl+/km+kJ8vCGIjHQ03yyv7ecdvxSWAqwn1br01yzqTYWz3b/XNkT
-   TqPFDMb7na6xKGsPhqWwQlKPll2zkN5LKa8Vy6BYhCzOuRnDVsPYmu+kA
-   2B+Zs7CtmIcoP+88+3I1UA0CYO+waCV4aZPyzV6SADtKTQoUhLDjos8Vi
-   7R7bTQNNeVBT/I66kHa/GITH0l/vyuXJdBt617JpVHCUqHzVTl9nD+sNr
-   Tsc204bZPiO/gMfUxEo5ni9R2l2M76Msftxm9AEaMNLXzSlmWU9WoQAlx
-   g==;
-X-CSE-ConnectionGUID: SmzACYAfTAqzmCYKZsXKrg==
-X-CSE-MsgGUID: rAjmL9zhQLmZO6cG+pkMkA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42819538"
-X-IronPort-AV: E=Sophos;i="6.14,243,1736841600"; 
-   d="scan'208";a="42819538"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 21:16:10 -0700
-X-CSE-ConnectionGUID: DyBWuByOTTKx9BnWTGXNJA==
-X-CSE-MsgGUID: /ApawI7eQSaCjniJ69KAsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,243,1736841600"; 
-   d="scan'208";a="124992926"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Mar 2025 21:16:10 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 12 Mar 2025 21:16:09 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Wed, 12 Mar 2025 21:16:09 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.49) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 12 Mar 2025 21:16:09 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Zs3vOLMThL4D3NbZSV2MVTulkr8l9Ng5EY2Oj2LaFvUNrglrXVALrT+cpJM9fcdr9XTmhq7W8zFRZqY5+k+gk8/IGWlXFP27M7Mbxw/Zr3mS/FQTV06Yrm4AxolHrietcAhcAZnpC7W/N3MFgh7Zd+WkdbfFFAX4Xlqn8fpYXDNjeDmbicnMZOoMMNGiXVWAyc5scyHAsVcnWEf/lJm91dBcEoKAZaheRYbHcJg2GOT4cDUR7jm0kfB3ZzOHrONydgP5M/QEQ1YVikGnIibjrH8XzZvHyH5HXPkC3DeghYWuPIMZQ3KJFxaknqgIpnHOq3YCt8ocnjDnPZIb1F6O8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TYlyt0Kf4IODawiqOUlEhhLnVPqtZ876pzWmtHopLcc=;
- b=NGJky2P6z6dYxOjk+EAyNPfeAm8adcTp9nioVoe9wgG3BITRnmSYPIKvcUudS8Ai+wQu0HTpu2zmGeg8ls8kaw5ow6+o7fwg+kIoYxxP9lgwBgDXnl4tXOhd9gsdffRhWgRMKE4m115fB1y9YnmChGFx7JHdvvaK6hsmr3X39gj+iUU4PKmWxvLEPERlLer4fcrCh3tpqBRdlz78XgUzRqwXwRRE+Yr1uYC1lz83IVDdNRtopljzu7utPzgP1sMt6GQ0SA+uGOQ12Oqp2uYkpGhV3NTtZ8S+ml2Eqo8k1hkRzkGsgRnMAuvoTG2UHJePLEejbvsq5dAy0/aElKJ4MQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN0PR11MB6135.namprd11.prod.outlook.com (2603:10b6:208:3c9::9)
- by DS0PR11MB7925.namprd11.prod.outlook.com (2603:10b6:8:f8::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.28; Thu, 13 Mar
- 2025 04:16:07 +0000
-Received: from MN0PR11MB6135.namprd11.prod.outlook.com
- ([fe80::3225:d4ad:74a:6d7a]) by MN0PR11MB6135.namprd11.prod.outlook.com
- ([fe80::3225:d4ad:74a:6d7a%7]) with mapi id 15.20.8511.026; Thu, 13 Mar 2025
- 04:16:07 +0000
-Date: Wed, 12 Mar 2025 23:16:00 -0500
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-CC: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes
-	<linux@rasmusvillemoes.dk>, Jani Nikula <jani.nikula@linux.intel.com>,
-	"Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi
-	<rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-	<intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>, "Andi
- Shyti" <andi.shyti@linux.intel.com>, David Laight <David.Laight@aculab.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v5 1/7] bits: split the definition of the asm and non-asm
- GENMASK()
-Message-ID: <72jcyshw2tp7tu3toxpjmm6rc673o6ai3tlryp6vkayheoe4ow@k25nln2qajh3>
-References: <20250306-fixed-type-genmasks-v5-0-b443e9dcba63@wanadoo.fr>
- <20250306-fixed-type-genmasks-v5-1-b443e9dcba63@wanadoo.fr>
- <fao7tp2y66f7nuep4nl6kz5zenfpzswp3hwqiw325uitgu6u6u@7dipwr3vjui7>
- <f15eac8c-567c-4ae5-bf9b-bb3964c83846@wanadoo.fr>
-Content-Type: text/plain; charset="iso-8859-1"; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f15eac8c-567c-4ae5-bf9b-bb3964c83846@wanadoo.fr>
-X-ClientProxiedBy: MW4PR04CA0172.namprd04.prod.outlook.com
- (2603:10b6:303:85::27) To MN0PR11MB6135.namprd11.prod.outlook.com
- (2603:10b6:208:3c9::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9BAF4FA
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 04:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741839907; cv=none; b=J/8w8MNXMiUV1gkqikuo5Cm4/6H0nAdmUTXIqBnqcS30G2zoJuVBt81tpNIDipBiZhvfjWxakqexJHo98AC07yaYFF3tBGwg9WTxmvDx2mrc2g3PyH2wR0hkqBnkPXHUHR4bn5tu4g96W5Cjov0PX5ltUgjPtovJHVzHLqb3ESI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741839907; c=relaxed/simple;
+	bh=uOmNbrGMfropRywYdxYE8WWIPfslWOr4+goJLmUglPY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bjGa1RTWNhSeWaJmRlUotIsS3hon+8U04BbeWC99uXcu71XTZFOWpkiWj0p1f2llPKbpzLL8WFmmkXaD/99ZteIqx59i4xXhkUR96qX0JDiks31O3v7gvMLiSvB/o1HYdJqFJ+SQnTKIEHwe/g6cineCYMapG1aQfSQpDT8z5hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=dGE+CHhX; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from localhost.localdomain (unknown [10.101.200.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 35E6B3F942;
+	Thu, 13 Mar 2025 04:17:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1741839463;
+	bh=c+lwiNEeZKR7bI4cisdbs6du9vDi2xjExAwAe2kT2pU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=dGE+CHhX76Bjsezh7k3+mUoKnaOtigHVK8ZgjC3t+JdL598zHcLvL+cEbBWMBVhrC
+	 I9hqbl5AxOeN6xgdOr5eERdLUfCZwNgbx+tKBQs/DS49ye20oc9jK421R2BxxxjfEN
+	 /t/GDbo4f2Ev77VWm4OhNH432h+XFEYMYF4JEyNVLqXSrx7+f6Usgeg2RX98otPtU5
+	 FxnRl4iGXKzD7NGj1logg0lXeZ9D/9SvxDS9dAD+B2HiPOZG+2ynkgPvwV4OpuOMYy
+	 FMjkRcw5KwG2KXErJxXLJcz/mEeVm83d+XR3pEQeaSN5pWOFwcIRGedFYXP09hPrVv
+	 VWMPFSEveZHsQ==
+From: "Yo-Jung (Leo) Lin" <leo.lin@canonical.com>
+To: 
+Cc: leo.lin@canonical.com,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm: add .hdrtest to .gitignore under drm directories
+Date: Thu, 13 Mar 2025 12:16:56 +0800
+Message-ID: <20250313041711.872378-1-leo.lin@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR11MB6135:EE_|DS0PR11MB7925:EE_
-X-MS-Office365-Filtering-Correlation-Id: 674eaacc-5f7d-4f38-4ca5-08dd61e5c716
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?H5GuaGwgSlHoTQsyWxJ33EgV153xF5zjz/TFt16yhSJpsyd64oPqSlAMkB?=
- =?iso-8859-1?Q?YXGOJyl8X1rEFMikP1FQgiLDI0DAsPVdWECOqjJpGEpr1z/QJVh6rB+AWB?=
- =?iso-8859-1?Q?azUMB1FWGU09MgS8LWqU/8P9wamt6rmX9WKuEbLWB4Gz//3dTZRZ1nYOy3?=
- =?iso-8859-1?Q?iwLIWaKz7IozZiAofpmkTPry4BjAjvic/Va+lPdaDEO09X8g7YBO36EdtO?=
- =?iso-8859-1?Q?9/xDT7qqpwtIZY49QKGXQZVuqd8DHEAPxVeKWxoI4Be63BtvNS4Wp9gcSt?=
- =?iso-8859-1?Q?pTobVDkB1Cqi3sg7EU8RG995M6BZRXlaRqQZECIQShkdIRieEvCiPevRd5?=
- =?iso-8859-1?Q?aoTQHe+7m6Wx2epp2D8mv4vE/O+zB6fOCnVnnVmZc2BSCq/CUt4dx4iTKs?=
- =?iso-8859-1?Q?PQ7smB4ddyRwRFUqjLXRKkN5RDvB5d6XIBoaYqW/t+0tiKi4YUTj4zwXx4?=
- =?iso-8859-1?Q?4gV+byhoUeHnQr28l6bvYDAL6+0zH8HTSDO2bh6GiBkyoaiUs16mnKLjnC?=
- =?iso-8859-1?Q?lYnL9/3Touw8PsC5es8ch2kh34yNTiNaHQoRq8teS9iDe7n3DjfUdYtvGN?=
- =?iso-8859-1?Q?VhVzp50SGFRZ1nHZ/elpFl/MnkSeg5nN9CtDgJ6KXyVTAhNSEZYfHYdedp?=
- =?iso-8859-1?Q?rEo+VZ+FGu0lQllPkrzS3z6opkS2KxllVXd7nkNIf0AkYTDifKBaTuQjAR?=
- =?iso-8859-1?Q?60ulIODAXg6pR3c5wBYS+wBQaPWHumaw9xIgq5NrXjWqgiWFujxNkOnxVO?=
- =?iso-8859-1?Q?V3waHGArKKmz5dNISk3evYDUMrAawuc8sa/HnwgpWWozY6uzOm9ColRZzF?=
- =?iso-8859-1?Q?XqIGj2JoDv6d0HQd7X5wvkVgSKqmtQuW/jFWsIfUZB7jd8OCi3h8KKsoDV?=
- =?iso-8859-1?Q?y/awCDv5l/eJjT/p2L6tojz96D5VzQUftZm6YQy5yvkfZebPehN0baHrlm?=
- =?iso-8859-1?Q?UvOaq2uiSy9iXHqQg3YD0xXyLMvubeww1xl9yumNS5HZIFec6O+Tylf8F+?=
- =?iso-8859-1?Q?qOnXOAUDv5JtMCC4QzvP7j+z408iVuogbpPL4bMVQst+YZU8jHMOXJocsZ?=
- =?iso-8859-1?Q?9beAEX74pYK1AHQhAdNW5wWdeVsJdvyRYftQbQpBDORpvwKgEJ/IpdTtYV?=
- =?iso-8859-1?Q?fxkAWCHeRNRF4TqXAmsP9T7rH1XqRVZkLrebB0oD8NMCXr5ihPJ7zKERFS?=
- =?iso-8859-1?Q?3xn2RB4G030JF6VHiA/deCN2SlOaWAVFajU1zDsEvKKEoN4sSNap5MIke1?=
- =?iso-8859-1?Q?bjOg004UWM6dBKUgUzwDuMUbdadm11qU9A/yAGHY4f4yx5+y23zsA+E1kp?=
- =?iso-8859-1?Q?kM9gAuBi6H66nooNl84lhsmRDX4uYCny44UjUNejTXQXqXILfdiVrsfP1N?=
- =?iso-8859-1?Q?Rkz+bbEsji1+xlq7r7ExmiSS3TWyruY26tz8A7qqyqVmQ03AeG5O+usK+5?=
- =?iso-8859-1?Q?k3b55Ns2K8OmmLHr?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6135.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?sFGBa++1yI4rW0xbG3Evq/ODqyF3qI+rEIOZHBxHRk9kP0+fPKspdzX635?=
- =?iso-8859-1?Q?YsFPgue+ULVDW5hf2Y03n1NZXZnavtltIVdAKNNFEkvktdn5tDxtW+LgB0?=
- =?iso-8859-1?Q?Hz09SuHpmcNtzV9P+5Mthlrnq52adyBQ5KANjxmmQg2MJnhoV1+Ujlu2Fm?=
- =?iso-8859-1?Q?FuWmWsEZxlYdw7e60SZx/q83ReI9JxnmW4jtLzwZQtj9ZRUFC35Qo4LJf3?=
- =?iso-8859-1?Q?7U69xSU5TIkI7uZiltCB8BtYp63jyaUVXRw+P5LmBYCiG5hM2Upk7OGDn4?=
- =?iso-8859-1?Q?YjlJjuQ9090Z4DSVPOFWKK67UA/k00arxjG2ymk1nclnWJWq5685nKOUZP?=
- =?iso-8859-1?Q?9IROqn3mGJW3b7W/B0pi7Sj47cKONlBjh/L+s/RJdw0xHoWcMnAcK4+cVX?=
- =?iso-8859-1?Q?QUaPehO43Dky53E0inwUIC85Tx78kJ7bqigzT2/wGWxpsCxdfrTZjs/Zmz?=
- =?iso-8859-1?Q?MP7EFQinHrXv4RK8BVu62voJCnVf2ccguqQXJsf18iqg747zFZ9XuC7gjn?=
- =?iso-8859-1?Q?iwu7Jxc8EfjqkFdctu1Czl3/5bMZtPG+qGSySCa+Ubj0FTUfA9VPQz2+tW?=
- =?iso-8859-1?Q?3ZbiOqt0qr4pPNrAHlpHkSRuwMbk5ei6vRsc1tOuPs0eiXuEdZ03ISToLW?=
- =?iso-8859-1?Q?NLQ9o2VB6VOoseJe2x+nKu4kdW/T8BLtqJSWv+JxkYWSxUZmE/dCDvsgdR?=
- =?iso-8859-1?Q?4IWU3vjUYv5mdI+qUfmxWj7Saot9w0+xFvjIfEzDzjZ00J29za7Yk1jLLb?=
- =?iso-8859-1?Q?QPqVFG58vJxcebckgC8uz6/KCxbXAh8AknlsnhwrEcReQfCkzsUsDqo2mk?=
- =?iso-8859-1?Q?HWN49tfO+64iwQNDL+YOzpQrtN+2GaPb4hrC2ThIkDeuhiWdbAaR25+zld?=
- =?iso-8859-1?Q?r5pZi7Xi2rT3YY4/hlIcnkrDdRBJp22WA9FJp+3riakIxLVG/ubgp6gZv2?=
- =?iso-8859-1?Q?1n1uM4h4c9KCLr44OJ+Y5JCB78mL7KKM5O84vFhKSTgghqROFoX03NDZJx?=
- =?iso-8859-1?Q?QmExhzigMlbrfKQHjm7G9fj/ZftZF8pnlrMODRInDlo9bXl7Ppl5/5Rth0?=
- =?iso-8859-1?Q?ANTk2S16h2BnDro7axwASHXw3oA4mCBhmTXkx1ca0wiB0KTR90eFx8l+a8?=
- =?iso-8859-1?Q?ow6x+QJW+mvV9Io23Ek/Xsd6DgXWhLPEiTPveZoPwhKCrHBga713SO143E?=
- =?iso-8859-1?Q?wSmLcqQctU7CkZZ9XTjCZZGk29rduPRRs5FT1owN08F6ZX5Z9u29X3Wrr3?=
- =?iso-8859-1?Q?VruXiGcEk7wfbzpCMlm30OJmFo0Wk02+sCmtI07gJdeTzU4DtKPJspKrt0?=
- =?iso-8859-1?Q?Cnuf4xwAQgnsSIdYgTreOY+qePa3RaxMY7yXfKFDam5Dfjd3brzRrgef+r?=
- =?iso-8859-1?Q?FjITf6r0S1o6zrwRQdml7XCE8E4kIjLcaNfQ2mAgMuiT25jEV0+gOejHzx?=
- =?iso-8859-1?Q?OSh+IFXC8SzwlZ0yzE5y57Ih4HOSPk9l6gxdzfUTD4F+fN50crtSTT3eJf?=
- =?iso-8859-1?Q?rvnb86TR8aer9BHZp5z1KCFttBRITMjWI5umxhet8rwRC6E2aO5wxB45SX?=
- =?iso-8859-1?Q?9PtuwWXvC1NOJS+qX70sQ6klICq2f22m8wlPxQ95phRuvpIVokHYjQPsE3?=
- =?iso-8859-1?Q?UjQyZ4yYxnh/zlHWWrPjyrddx9mEDRUyjq1+dFMHEQmyARxF1J7Jl1Og?=
- =?iso-8859-1?Q?=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 674eaacc-5f7d-4f38-4ca5-08dd61e5c716
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6135.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 04:16:07.3976
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dSMyHyeZAUJako01sOaevcbGEgstqvnkSA6TlNUW7lUtpB2FfuvKqh7B113ieLn9SGf2mbXPSgHoN2vzu4IekWQbWK1BLexi8tIxWLxxD/M=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7925
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 07, 2025 at 02:10:28AM +0900, Vincent Mailhol wrote:
->On 06/03/2025 at 23:34, Lucas De Marchi wrote:
->> On Thu, Mar 06, 2025 at 08:29:52PM +0900, Vincent Mailhol via B4 Relay
->> wrote:
->
->(...)
->
->> it seems we now have 1 inconsistency that we comment why
->> GENMASK_U128() is not available in asm, but we don't comment why
->> GENMASK_INPUT_CHECK() is not available there. Maybe move this comment on
->> top of GENMASK_INPUT_CHECK().
->
->I will restore the comment in v6 and put it next to the asm definition,
->c.f. my reply to Andy.
->
->> Anyway,
->>
->>     Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
->
->Is this only valid for the first patch or for the full series? If this
->is for the full series, would you mind replying to the cover letter with
->your review tag?
+The header self-contained tests in drm may leave .hdrtest files in
+include/drm/ and drivers/gpu/drm/. Omit them by adding .gitignore
 
-only for this patch. I'm the author of some of the patches and also add
-my s-o-b in others. I'm not sure what b4 is going to do with those - it
-would be weird if it added a r-b on my own patch.
+Signed-off-by: Yo-Jung (Leo) Lin <leo.lin@canonical.com>
+---
+ drivers/gpu/drm/.gitignore | 1 +
+ include/drm/.gitignore     | 1 +
+ 2 files changed, 2 insertions(+)
+ create mode 100644 drivers/gpu/drm/.gitignore
+ create mode 100644 include/drm/.gitignore
 
-Now I added r-b in some and comments in another.
+diff --git a/drivers/gpu/drm/.gitignore b/drivers/gpu/drm/.gitignore
+new file mode 100644
+index 000000000000..d9a77f3b59b2
+--- /dev/null
++++ b/drivers/gpu/drm/.gitignore
+@@ -0,0 +1 @@
++*.hdrtest
+diff --git a/include/drm/.gitignore b/include/drm/.gitignore
+new file mode 100644
+index 000000000000..d9a77f3b59b2
+--- /dev/null
++++ b/include/drm/.gitignore
+@@ -0,0 +1 @@
++*.hdrtest
+-- 
+2.43.0
 
-thanks
-Lucas De Marchi
-
->
->> thanks for picking up this series.
->
->You are welcome!
->
->> Lucas De Marchi
->
->(...)
->
->Yours sincerely,
->Vincent Mailhol
->
 
