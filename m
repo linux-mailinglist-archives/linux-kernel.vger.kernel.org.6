@@ -1,125 +1,132 @@
-Return-Path: <linux-kernel+bounces-559156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB33A5F02E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:03:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 717A0A5F030
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:04:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 191B13B9079
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:03:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 821847A71A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456A8264A7C;
-	Thu, 13 Mar 2025 10:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OvlHZTNn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4A0264F90;
+	Thu, 13 Mar 2025 10:04:12 +0000 (UTC)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B1B1FBC87;
-	Thu, 13 Mar 2025 10:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE4E13B5A0;
+	Thu, 13 Mar 2025 10:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741860229; cv=none; b=s6X8Ar0eCDWPDA2sv8joCFTZOA0L4dw9RMsH09ljjDPU6wwTK4wCtPON4zY9I0KYGbk7f2e+DvtoKTMYg1s4zwC3P3hD+KfmEO7pE+nNMgF9l+DMIQLx9flDIiuY42P8VcSxNlUA38o6pIoNz3YqFu19ABcmhkNOvMB1htRwivk=
+	t=1741860251; cv=none; b=ezJq4GVqy/ICSdQn2NEqQOhH6Ri/IbsSiB91UtxlvL2Ek1t/NFK/opKhl4wiGkwbyxNqNGnNBTC3KrYOrpqZ9y6L3xffqPD4kYu7iyGYxUOz/jo4EF5mxG5hEC5yRAWgFUrPcmwGtVvyZKqvJBPmQPIacQMBZMxaWLhi+SXqzLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741860229; c=relaxed/simple;
-	bh=CLLzytuL5wZjpWyJAxGxKy9CkVm8IFe+rMtUa4CBlrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L9U8H9UqGmEECVGxgMzKNJPBSvEOSMDPorQmoSzsG6LPXo3xi8AGYAe8j53WrX7qM8/bFzYgMR7DwAfvwK3Fc3zoED78aDQlm/m0WOS7URI4oQrl1S/Q6LGiskcMfAGOqTD1SNuyWjN6hSoO8sp6YMaWW6HceLPv3qlCHC8h1Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OvlHZTNn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4B47C4CEDD;
-	Thu, 13 Mar 2025 10:03:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741860229;
-	bh=CLLzytuL5wZjpWyJAxGxKy9CkVm8IFe+rMtUa4CBlrQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OvlHZTNnjHqRe6bIQ/w9qx8nv/I6itkqipucKtu2IBAfhTN7+E56AHzBLYIyNB6bY
-	 zZ+4RSBFiXSWpfXxeDnvll+NM9N5X2s57wxOEMRAKWzq+smv8+uohZBnWP2EtdUU/B
-	 xLXo62e22XsacsM4MBo5SdguWCGiNH7r0UxWxTIw=
-Date: Thu, 13 Mar 2025 11:03:46 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable <stable@vger.kernel.org>
-Subject: Re: [PATCH v1] remoteproc: Add device awake calls in rproc boot and
- shutdown path
-Message-ID: <2025031340-crux-nectar-b62c@gregkh>
-References: <20250303090852.301720-1-quic_schowdhu@quicinc.com>
- <ec46a72f-f31b-c306-e57d-9bb7f58b24a2@quicinc.com>
+	s=arc-20240116; t=1741860251; c=relaxed/simple;
+	bh=1d9rwvR5saCp0EdhYztcjIdDfwg5pjT3HmajtsxKKTc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z7Qy3CrjMjspzipFpJ2j4OOCzowzaza24ucmCqSBU6x1KiQWMCDdBmU/usEMZAKAIZG8xXXWtaoIMRKUJXE0jtiVx+4jnDWsAOEJN8uV1p0aQ5aOqaM7cR2cLbzRxBeUGksYJqypEbyLezxi9glrRDojDd1sgdc+PguXUNTWUbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-223959039f4so13765045ad.3;
+        Thu, 13 Mar 2025 03:04:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741860248; x=1742465048;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZTpDb7E7Kgg1mQRDqCTRFcTgplYc3DjbNW4+KhK/wVU=;
+        b=QLLQJyvwr2VRQJ/gcLojzFICuB0zuaawowtTEaD6cza03dF5X4z1ZvpoCts4OxaAtv
+         qKg1JPwnLCGQyPL2Sgxpm5tmCqoOafdAchqHbogzyzrslgkwKJnU9rYgXQQzHaMoypdP
+         GCSr694lST5WOrN7CxyCEn2BSBIi6lIy299dKCvsNJ0dMnt59ATsC0IPHMtfkglrFzDO
+         UWTw7ErScVlddP2pNioKlgYJ2SAGhUVyt+GmD18i9HNSsAKHdMu6qwHZezcDw/bPCKZc
+         AtacE+vr/MNbqWIzpcmejJ9wh1DVA6EfiRNNOELVmeAmtXcqU37zAJwUwXXSacKwvXA5
+         9jyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEZudVDA+gr/BHrnynkdczaN5kQE2PvONfvmNPChsgU/givzY/QlQd8BDssxnJscJgJ4nq276qlbFYo44=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzK4sJopXzE/GcbdeEDOUycIw2krR5mjP4+uZoCeT2wIDi3WS9
+	pbiwwRmAnbVYZYzPeaZ+cBAQOclVvGeqYXdHjXbPNXVXbK6lGZzfD151duFrXQ==
+X-Gm-Gg: ASbGncvzBay2D7hSqeIAeAR6vnLxiuqFTQjlaJ2TrKz4FrSC3a2T2aXcq4FvIgjzhk4
+	Q2VxdpwiX2/C6aKOme9KOzYhojg43MmRi9IhCnJ29DSfuo+pY9NNtFDRckRybaNdRp9yOtkhBFR
+	Y0PDwrwD8yzCsK1r/m43YSlCNkTKAZWMU8l1BJylAbAqdxF8W5ar8MAm4hFQaLXHRuNBZ5ROPxR
+	IXqrRzfDWVxJ9Sz6uj8XisYvc2ebMSvXAd90SAWJsVKvFAijDhrd/g7lbll56tE4qTKCOcJzvDn
+	6XK1dxJTvAJkqKpFZxfhrTeN8rjIGKEaX7wVIMsaV0Tt
+X-Google-Smtp-Source: AGHT+IFX6/pa4VhGBivbCC3CtJNwH1YfTlzwX4CCD5m8Y0Zl+Ld8fkpWuWGDaqr+P+mpvgxyketlVQ==
+X-Received: by 2002:a05:6a00:3981:b0:736:a7e3:d4ab with SMTP id d2e1a72fcca58-736aa9d32bemr30744617b3a.5.1741860248431;
+        Thu, 13 Mar 2025 03:04:08 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73711694b72sm983524b3a.133.2025.03.13.03.04.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 03:04:07 -0700 (PDT)
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	jhs@mojatatu.com,
+	xiyou.wangcong@gmail.com,
+	jiri@resnulli.us,
+	horms@kernel.org,
+	sdf@fomichev.me
+Subject: [PATCH net-next] net: don't relock netdev when on qdisc_create replay
+Date: Thu, 13 Mar 2025 03:04:07 -0700
+Message-ID: <20250313100407.2285897-1-sdf@fomichev.me>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec46a72f-f31b-c306-e57d-9bb7f58b24a2@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 13, 2025 at 02:42:10PM +0530, Souradeep Chowdhury wrote:
-> Gentle Reminder.
-> 
-> 
-> On 3/3/2025 2:38 PM, Souradeep Chowdhury wrote:
-> > Add device awake calls in case of rproc boot and rproc shutdown path.
-> > Currently, device awake call is only present in the recovery path
-> > of remoteproc. If a user stops and starts rproc by using the sysfs
-> > interface, then on pm suspension the firmware loading fails. Keep the
-> > device awake in such a case just like it is done for the recovery path.
-> > 
-> > Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
-> > ---
-> >   drivers/remoteproc/remoteproc_core.c | 6 +++++-
-> >   1 file changed, 5 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > index c2cf0d277729..908a7b8f6c7e 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -1916,7 +1916,8 @@ int rproc_boot(struct rproc *rproc)
-> >   		pr_err("invalid rproc handle\n");
-> >   		return -EINVAL;
-> >   	}
-> > -
-> > +	
-> > +	pm_stay_awake(rproc->dev.parent);
-> >   	dev = &rproc->dev;
-> >   	ret = mutex_lock_interruptible(&rproc->lock);
-> > @@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
-> >   		atomic_dec(&rproc->power);
-> >   unlock_mutex:
-> >   	mutex_unlock(&rproc->lock);
-> > +	pm_relax(rproc->dev.parent);
-> >   	return ret;
-> >   }
-> >   EXPORT_SYMBOL(rproc_boot);
-> > @@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
-> >   	struct device *dev = &rproc->dev;
-> >   	int ret = 0;
-> > +	pm_stay_awake(rproc->dev.parent);
-> >   	ret = mutex_lock_interruptible(&rproc->lock);
-> >   	if (ret) {
-> >   		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
-> > @@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
-> >   	rproc->table_ptr = NULL;
-> >   out:
-> >   	mutex_unlock(&rproc->lock);
-> > +	pm_relax(rproc->dev.parent);
-> >   	return ret;
-> >   }
-> >   EXPORT_SYMBOL(rproc_shutdown);
-> 
-> 
+Eric reports that by the time we call netdev_lock_ops after
+rtnl_unlock/rtnl_lock, the dev might point to an invalid device.
+Don't relock the device after request_module and don't try
+to unlock it in the caller (tc_modify_qdisc) in case of replay.
 
-<formletter>
+Fixes: a0527ee2df3f ("net: hold netdev instance lock during qdisc ndo_setup_tc")
+Reported-by: Eric Dumazet <edumazet@google.com>
+Link: https://lore.kernel.org/netdev/20250305163732.2766420-1-sdf@fomichev.me/T/#me8dfd778ea4c4463acab55644e3f9836bc608771
+Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+---
+ net/sched/sch_api.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
+diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
+index abace7665cfe..f1ec6ec0cf05 100644
+--- a/net/sched/sch_api.c
++++ b/net/sched/sch_api.c
+@@ -1278,13 +1278,14 @@ static struct Qdisc *qdisc_create(struct net_device *dev,
+ 			 * tell the caller to replay the request.  We
+ 			 * indicate this using -EAGAIN.
+ 			 * We replay the request because the device may
+-			 * go away in the mean time.
++			 * go away in the mean time. Note that we also
++			 * don't relock the device because it might
++			 * be gone at this point.
+ 			 */
+ 			netdev_unlock_ops(dev);
+ 			rtnl_unlock();
+ 			request_module(NET_SCH_ALIAS_PREFIX "%s", name);
+ 			rtnl_lock();
+-			netdev_lock_ops(dev);
+ 			ops = qdisc_lookup_ops(kind);
+ 			if (ops != NULL) {
+ 				/* We will try again qdisc_lookup_ops,
+@@ -1837,9 +1838,10 @@ static int tc_modify_qdisc(struct sk_buff *skb, struct nlmsghdr *n,
+ 	replay = false;
+ 	netdev_lock_ops(dev);
+ 	err = __tc_modify_qdisc(skb, n, extack, dev, tca, tcm, &replay);
+-	netdev_unlock_ops(dev);
++	/* __tc_modify_qdisc returns with unlocked dev in case of replay */
+ 	if (replay)
+ 		goto replay;
++	netdev_unlock_ops(dev);
+ 
+ 	return err;
+ }
+-- 
+2.48.1
 
-</formletter>
 
