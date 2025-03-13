@@ -1,133 +1,134 @@
-Return-Path: <linux-kernel+bounces-560230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F569A5FFEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:49:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6BBEA6000F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:50:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1501B42244E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:49:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB2C84224DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D061EFFAE;
-	Thu, 13 Mar 2025 18:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90311F0E40;
+	Thu, 13 Mar 2025 18:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OsR2FsKb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/wG2510"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F051EF099
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418E31531C5;
+	Thu, 13 Mar 2025 18:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741891750; cv=none; b=UN/zIKyPjPhOTCeQGeuNKaqyIWaV/kWEPmj+a0ZunqXuKMZQY6SH5c74cm3mEE070CgqMiZjqfBcJ9PgvCQYx26UNRn6HfApAB9a1qRpHkeu9FyY1EQ4Qds7uHck9Zc+c+1Zt7Zg4rYjdnVtgHwFrKKDqczUMR/9JFj9cvwHXRY=
+	t=1741891851; cv=none; b=W/CxhHw/0N0E7E1Ji4hHP/O3FCKG2UtBsxz+XXVczqP5xGDxBbJzKgQvzWpLV184UZeoL760e1ksy87ac89QzlOHJhuLVg6m4vTPcTl5ffSstdOmSU+vZsROhc7LfJD+u+Xl4fUNeJHXt+Iq1nufKNZHLCc1Wc6QYBzT/Urpa3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741891750; c=relaxed/simple;
-	bh=vGaveTKeKgCxAmnC9EQ4sn2CMv/qBrgjuvuYfa1RVkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jg086jadta+51sb/1I4FWneQFcMyB94ATODwU/c4H7dKrRrKNcLTnjk1U/GCtW9L0P+GQIjFDmVyCElwqYKWCNawR25pGriu614SumYdBE7KhY4+xiYUifj4Xfaj0mEz3jMvoZhI2l46tpQEUtohMWkYP2J6wR4hHovJp7zKZ2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OsR2FsKb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741891748;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D9aZe+iaudDpMDo0mPe7/sxlSIcMfnUdZ2EM2OaZ1sk=;
-	b=OsR2FsKbcKOIQ2NO4ex2AUaP5RsapStbiaazWEwSaJI3x0ur/4z7BSVRJy4rBGzCH0efS8
-	1snKELsbtOIENb1Y8N+LZNabBmNlKE/rr1rAK4CKRTF3UpzOGvTeApt9FD5H+OTL1WSEqJ
-	qRjLccObvjzXHRfrobdaIctnzZokzug=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-326-qlzTh5TPOmqmEFhs5n00aA-1; Thu, 13 Mar 2025 14:49:04 -0400
-X-MC-Unique: qlzTh5TPOmqmEFhs5n00aA-1
-X-Mimecast-MFC-AGG-ID: qlzTh5TPOmqmEFhs5n00aA_1741891738
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4394c747c72so6720785e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:49:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741891738; x=1742496538;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D9aZe+iaudDpMDo0mPe7/sxlSIcMfnUdZ2EM2OaZ1sk=;
-        b=XGSM+sYlFKxXL4e8O53KuBw8ZBmBzsMWjMXzz8OxDBfd2Lzw+ZCcms/sC6KIL0oS5l
-         VbLSSXcWtLEIWROo+dTe8e5aTZ/o2YmgpO638nYlFrTK/QQK3ZrzrqmSY/I3LPTnoeF0
-         4Qbiq+bHqoiqeNgjbuNGStsA8HBWar2pyJNnLvIlssPbtnZoUwCE1RQG7HflN5b4QKHc
-         lPQUZYFZJiyfvn9JapSpq/OEamUaJGvVOH6Vq1vGDElqfuD4NEGuBfR6y8qmAstLKdx+
-         6tGV2oZSlY2MJYEL57HBhAvtM7ZjZHqLXs4kGVYzeRDeMHc0PgUvOjcczB0Uk0b9xFRC
-         9DZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVnh+dlCrbAy99ZlT1fmPXaY38x8hmypwLc7Ps4rXo5ZeYutIB79nzqHWeo0oofmYUsNMT3TXicqRG8tE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHmV1vy/ZiaXg3TOocAwmLPk7HAnTfgHvcVz+jiKOs/ywgaVVM
-	9IjOLW0QOC4RbL36rMXHOL5h8czHAOWXWh5k1Hr3PDsF0ev/gvWyq7tKeTIW9Z3br7wC1Qg1wt1
-	6GojQi2K4sK/fi/nZImRPzU/W+20fUT0f9HTUMHqAuybtRfRRU5j5Uh0XL4U7Sw==
-X-Gm-Gg: ASbGncu6IbtUQEJAhy80ME9yOEJwXk+Bf4+31Ja4X4dwsz8IDquezytfjmWYlK1oRit
-	EgOMk9nRtO4Ivb7V0vkPVcVb9qesRxF/9IiAHebmjUM4uucZ0ztkxTLSle3qlE4hlptGyvo7o3M
-	n3VGa9+SmsEc/mn2lHUq9OHIlG8HbsOPXhSRvehSFLZk2ldh92beCayqEKve0b0jq7+moELwK+N
-	V6HqOB4DdafkmvqQJtsgzw2ESXRyrLRtx/tzeExjG0DClk74ao7OIGzw+fy71d61via3cmorfiQ
-	7iIZzkWmdg==
-X-Received: by 2002:a05:6000:178b:b0:391:c78:8895 with SMTP id ffacd0b85a97d-396eb8c4c24mr52385f8f.50.1741891738540;
-        Thu, 13 Mar 2025 11:48:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEFiTFy8KH7Dv3eYYsTrcbBbEoTNapIuB3vn5zSLGQGf/vt0sASshS9p0fTfDPLfBsj9yQoDA==
-X-Received: by 2002:a05:6000:178b:b0:391:c78:8895 with SMTP id ffacd0b85a97d-396eb8c4c24mr52362f8f.50.1741891738209;
-        Thu, 13 Mar 2025 11:48:58 -0700 (PDT)
-Received: from fedora ([2a01:e0a:257:8c60:80f1:cdf8:48d0:b0a1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c7df3506sm3076694f8f.11.2025.03.13.11.48.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 11:48:57 -0700 (PDT)
-Date: Thu, 13 Mar 2025 19:48:55 +0100
-From: Matias Ezequiel Vara Larsen <mvaralar@redhat.com>
-To: Harald Mommer <harald.mommer@opensynergy.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Mikhail Golubev-Ciuchea <Mikhail.Golubev-Ciuchea@opensynergy.com>,
-	Wolfgang Grandegger <wg@grandegger.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Damir Shaikhutdinov <Damir.Shaikhutdinov@opensynergy.com>,
-	linux-kernel@vger.kernel.org, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, virtualization@lists.linux.dev
-Subject: Re: [PATCH v5] can: virtio: Initial virtio CAN driver.
-Message-ID: <Z9Molw9U+1MYCtFh@fedora>
-References: <20240108131039.2234044-1-Mikhail.Golubev-Ciuchea@opensynergy.com>
- <a366f529-c901-4cd1-a1a6-c3958562cace@wanadoo.fr>
- <0878aedf-35c2-4901-8662-2688574dd06f@opensynergy.com>
+	s=arc-20240116; t=1741891851; c=relaxed/simple;
+	bh=wOmk2LDYhQbCJnXD67llNF+qbQsOwKFG1CXJpP8kogQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s6UX13tf3e1/O786nA/ovKKfy0oPJ7p9cb7ot+MxYqNnKLo4Qo5qyu7BpIsigrSsq4xbaZLmQsJh3hTt7ifsrdYOdcU44rKo+jfm+5J5POVl7+LtxRrsbvk8CWfqWcCBNrn/l5ocI7UkFWMZW4oB+vJjaxAr7k0V/ggfZ32SamI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P/wG2510; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5CCBC4CEE3;
+	Thu, 13 Mar 2025 18:50:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741891850;
+	bh=wOmk2LDYhQbCJnXD67llNF+qbQsOwKFG1CXJpP8kogQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=P/wG2510pSGVe3vmk+Np22K3hJype6nlIRoPWA++SjfwMGXz+M7DB+23CdGUyQwaY
+	 TyzAWOl23Z/h3uNgWupzEstKMwdB14BgCitRsWaL0Gnz9hliZYE02rQO6jbVyROzCR
+	 CtQIzFDN5lg/6Eq2cizH4Y6EjyB8YVHBABWwlG6j3Wx3hDcg2R1v70X87mlfZ+zt4g
+	 5Y0gZef789uuW4NR0sFLY2zSORi7uHwMnX8HjZFj/byMqHfgKTHzTI1gBVqKUVU+5i
+	 fVsiBVdGBZDhKys27I1zswi6VdEAvi+gV4GaJEzdpnb+HvsyO2aXVaozTzDB8xa7DG
+	 MGWpgqRf0wuEQ==
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3f682a2c3c8so685609b6e.1;
+        Thu, 13 Mar 2025 11:50:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWp4R/GhQaGyQ7cC6ezSX1LbNmutLHjKl6m24KYpudAbTr+zNqGlBzNTsjCY7L0KJSaHsDOczu76G4=@vger.kernel.org, AJvYcCXiUyGpLt3Qn9yf72aQk0chLAykBTr2kfqNQ2xiSFd7UaL85veC7S87ERyiPCtj3dZUGwQfPV29Aa5Ye+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsPXKvK0CnI6VXP9y0RgLlItPTV7+WUbOBdz56Xa0NsQnbVCYQ
+	CdFkbGc+fXLlGh0TLocZadjAu8f9VUa8SLaNDaBMOkTafAaAlfJuKWpgD7CN/zSqsBIaIneVIhv
+	BuHc++4I7PAqhOzyMlPXEJmkbkcI=
+X-Google-Smtp-Source: AGHT+IGH7HtqwRS4eHXUymOx7wiwoh5XsHbMbmkNjEqwS7ZKOLQ5FH43VVXhEKixxxhGxJbuaKjDkS4IbwPBSmW1mzg=
+X-Received: by 2002:a05:6808:148d:b0:3f8:1df6:413 with SMTP id
+ 5614622812f47-3fda15429f2mr491212b6e.1.1741891849972; Thu, 13 Mar 2025
+ 11:50:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0878aedf-35c2-4901-8662-2688574dd06f@opensynergy.com>
+References: <22640172.EfDdHjke4D@rjwysocki.net> <2028801.yKVeVyVuyW@rjwysocki.net>
+ <1411c47998e44f1509f91e83d0379775db3d4779.camel@linux.intel.com>
+In-Reply-To: <1411c47998e44f1509f91e83d0379775db3d4779.camel@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 13 Mar 2025 19:50:38 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0ghVNKKWbLnwhbriotbgtujy6_G0yiFm1PiCK2KyCPR+A@mail.gmail.com>
+X-Gm-Features: AQ5f1JoJ-sAMGdDzTT2tNHTl5OTvg2Ur5mBrNphzDGgoFpqstqiSERAYNxXHiVI
+Message-ID: <CAJZ5v0ghVNKKWbLnwhbriotbgtujy6_G0yiFm1PiCK2KyCPR+A@mail.gmail.com>
+Subject: Re: [RFC][PATCH v0.3 6/6] cpufreq: intel_pstate: EAS support for
+ hybrid platforms
+To: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Peter Zijlstra <peterz@infradead.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
+	Pierre Gondois <pierre.gondois@arm.com>, Christian Loehle <christian.loehle@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 01, 2024 at 07:57:45PM +0100, Harald Mommer wrote:
-> Hello,
-> 
-> I thought there would be some more comments coming and I could address
-> everything in one chunk. Not the case, besides your comments silence.
-> 
-> On 08.01.24 20:34, Christophe JAILLET wrote:
-> > 
-> > Hi,
-> > a few nits below, should there be a v6.
-> > 
-> 
-> I'm sure there will be but not so soon. Probably after acceptance of the
-> virtio CAN specification or after change requests to the specification are
-> received and the driver has to be adapted to an updated draft.
-> 
+On Thu, Mar 13, 2025 at 7:46=E2=80=AFPM Tim Chen <tim.c.chen@linux.intel.co=
+m> wrote:
+>
+> On Fri, 2025-03-07 at 20:42 +0100, Rafael J. Wysocki wrote:
+> >
+> >
+> > --- a/drivers/cpufreq/intel_pstate.c
+> > +++ b/drivers/cpufreq/intel_pstate.c
+> > @@ -44,6 +44,8 @@
+> >  #define INTEL_CPUFREQ_TRANSITION_DELAY_HWP   5000
+> >  #define INTEL_CPUFREQ_TRANSITION_DELAY               500
+> >
+> > +#define INTEL_PSTATE_CORE_SCALING            100000
+> > +
+>
+> Minor nits.
+>
+> Suggest move the above define to
+>
+> #define HYBRID_SCALING_FACTOR_ADL       78741
+> #define HYBRID_SCALING_FACTOR_MTL       80000
+> #define HYBRID_SCALING_FACTOR_LNL       86957
+> #define INTEL_PSTATE_CORE_SCALING       100000
+>
+> to keep the scaling factors at the same place.
 
-What are the changes in the specification that should be taken into
-account for the next series?
+It may be needed earlier, but I see your point.  Keeping them together
+will make sense.
 
-Thanks, Matias.
+>
+> > @@ -3425,6 +3539,8 @@
+> >
+> >               cpufreq_unregister_driver(intel_pstate_driver);
+> >               intel_pstate_driver_cleanup();
+> > +             /* Trigger EAS support reconfiguration in case it was use=
+d. */
+>
+> May be clearer to say
+>
+>                 /* Disable EAS support in case it was used */
 
+Sure.
+
+> My first read of the comment thought that we are enabling EAS support.
+>
+> > +             rebuild_sched_domains_energy();
+> >               return 0;
+> >       }
+> >
+>
+> Rest of patch looks good.
+
+Thanks for the review!
 
