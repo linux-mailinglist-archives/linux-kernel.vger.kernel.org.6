@@ -1,143 +1,146 @@
-Return-Path: <linux-kernel+bounces-558860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50AE3A5EC37
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:04:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F74A5EC03
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:00:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D45F1887B44
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:04:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AD39175194
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80EF71FF619;
-	Thu, 13 Mar 2025 07:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C351FBC93;
+	Thu, 13 Mar 2025 07:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mRsg621n"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="kcqKEMp5"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7762E1FF609;
-	Thu, 13 Mar 2025 07:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB541FBCB5
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741849255; cv=none; b=U2VHitr8i45oeEfxs8Fu6NutfqankvjrV5DC0B/5dLM7XZQ2sPjeO6osfw7Di7DEwUa7UatXoGi3fpnDuunLb/RWXYXySdJmoXkc4YMbDy0GbLd6uySh1b9MEuqdFxuJr6RagVtduCLMkJJm8frjz2zTcLslVf8B8dQezc4aNik=
+	t=1741849209; cv=none; b=LmSz6TPBvqIB7BlCpfCjae5bc2KImjgPsZ/Zjxs9cPsbSfnfztpIbrUU7TSmHnQ0S3LGjRBUU1mztOa+PBiS4RJShdk/ATBCdKvdDATAYCfl8x24fmjBT1fgDUwnvzC5PO2Z73Ems5AzDb8WPNBMAHjizNVtM8StvZtBKqWmEAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741849255; c=relaxed/simple;
-	bh=QHOp3L1T9sIWlzRmGY/11HmxDsOhavJm8Tdw4sgMY1k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=o9CCOPhTzbDECQYsCGQSQT6LTDAHFa8fGzOsIaPpxdOfFjr8ICHHB45XjCMshbEehjLenPCdTu8elop3BkqmIUQVvMsR7/DU+FKrnJ/k0AOjZVS56LzrAUuYaIArjmokXcdtqqyZ/kJ/biyzZZCBLNVA++8wbsg52zy6USQO2qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mRsg621n; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CMvKt5020069;
-	Thu, 13 Mar 2025 07:00:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jPFBtGSXAlz4/lfCcoNkM9udX2GBFZ4aKQxUw6UsjGs=; b=mRsg621nMUg2HbSY
-	xnDv1BGHXD9kpq/C3UFeIDc1KHIG+NvEVqbnxrhXb5EN/LOGHZQ7rT/tx/dTP9MV
-	RUGBb3/Te8dH1LN1IvZYnKkUFBH7/JNW6UZuyFaDBXp3Iehxbnqnbm7DZ/DYyZN1
-	Yp+3fpYLwzpnspjFtTR0Ef3fK0iSJWIFkgUYk9Qx9v8GTRfK4Y6khFv7bS5RObNj
-	S4wWkY6jutSFXi3wwMXkLGeetE5hrCcifjDKpSP1Tkyu7q0sXiZ/cXS/Fr8iwM9e
-	nrPXpi4f9KzOdbmLtwa89wJlOQ4c6cIx4rQsgPPNpCxbWms3FfgJMUqSCFBibxrm
-	N3cOvw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2p4x01-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 07:00:45 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D70iYZ002376
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 07:00:44 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 13 Mar 2025 00:00:39 -0700
-From: Taniya Das <quic_tdas@quicinc.com>
-Date: Thu, 13 Mar 2025 12:29:47 +0530
-Subject: [PATCH v6 10/10] arm64: defconfig: Enable QCS615 clock controllers
+	s=arc-20240116; t=1741849209; c=relaxed/simple;
+	bh=BGUCEjt5SlMT9vb21bPFbp/fyZs2TbJTxwJnm4lO8Iw=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=mPVcSDHUBtdBnaR4Q2qDELBEsnMUTqET7a4DmXZHp5zOpKu16751mT63Bnp94CBHejiNDiILakJyXeFzt3hDlgu6822RJ8YFxs4qznl7dER1YfoHT6IQti/12RcUghwWp1pye93Fio1nZVrv3pLO94qDj2t6o7pVG843j0sAuXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=kcqKEMp5; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1741849200; x=1742108400;
+	bh=djQl18gs7ugtrECL7LEUFfDha//AOWkZdwb0B2q5pVg=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=kcqKEMp5ddPpX7OXgTYtafMds2IU3pKu+hkM+W5ecg654TwMaAVS7fTYVaRMhh+TP
+	 8zVp9nNJZuWpNXI4VYHCzhTIKPajBv2LGRGZRi7xDIjAvS+MJoyzmhwZejKebk5kBq
+	 UrMgqtkJgVoohp57ujT7RYu4IAQqwpIAugeMJjwAhiXAtdBeRDw71LosB5n4i2VtmX
+	 kLwHIzxjMrjJMOt3rbYDc01hD9Ms/kmyVTQ++fXorLQaMZ3f00jYQTxe832oAcRmwt
+	 r2a2Ikrvr+1QAqldCkSte5fFeC+5YH6J7nL2l2+6qd+Jb0y21GmXZo76qbM6LalcIg
+	 BW0JqGAajkwmA==
+Date: Thu, 13 Mar 2025 06:59:57 +0000
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina@asahilina.net>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Oliver Mangold <oliver.mangold@pm.me>
+Subject: [PATCH v8 0/4] New trait OwnableRefCounted for ARef<->Owned conversion.
+Message-ID: <20250313-unique-ref-v8-0-3082ffc67a31@pm.me>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: 77ac3587ed09bd5c63a3d260b1af78a4da19e7b9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250313-qcs615-v5-mm-cc-v6-10-ebf4b9a5e916@quicinc.com>
-References: <20250313-qcs615-v5-mm-cc-v6-0-ebf4b9a5e916@quicinc.com>
-In-Reply-To: <20250313-qcs615-v5-mm-cc-v6-0-ebf4b9a5e916@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=HP/DFptv c=1 sm=1 tr=0 ts=67d2829d cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=AElZlkIX1ip-SmTVEvQA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: M3IY-5AmGK3BMFnGuxllxqwlgxdQx8-B
-X-Proofpoint-GUID: M3IY-5AmGK3BMFnGuxllxqwlgxdQx8-B
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_03,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=720
- clxscore=1015 priorityscore=1501 adultscore=0 impostorscore=0
- malwarescore=0 spamscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
- mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130054
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Enable the QCS615 display, video, camera and graphics clock controller
-for their respective functionalities on the Qualcomm QCS615 ride
-platform.
+This allows to convert between ARef<T> and Owned<T> by
+implementing the new trait OwnedRefCounted.
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+This way we will have a shared/unique reference counting scheme
+for types with built-in refcounts in analogy to Arc/UniqueArc.
+
+Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
 ---
- arch/arm64/configs/defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+Changes in v8:
+- Fix Co-developed-by and Suggested-by tags as suggested by Miguel and Boqu=
+n
+- Some small documentation fixes in Owned/Ownable patch
+- removing redundant trait constraint on DerefMut for Owned as suggested by=
+ Boqun Feng
+- make SimpleOwnedRefCounted no longer implement RefCounted as suggested by=
+ Boqun Feng
+- documentation for RefCounted as suggested by Boqun Feng
+- Link to v7: https://lore.kernel.org/r/20250310-unique-ref-v7-0-4caddb78aa=
+05@pm.me
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index a1cc3814b09b31ee659536a64b7db704153d6fe9..14e5ae9f9562b1b2bec2fe2702dbf6647ca1daa1 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1343,11 +1343,15 @@ CONFIG_MSM_GCC_8998=y
- CONFIG_MSM_MMCC_8998=m
- CONFIG_QCM_GCC_2290=y
- CONFIG_QCM_DISPCC_2290=m
-+CONFIG_QCS_DISPCC_615=m
-+CONFIG_QCS_CAMCC_615=m
- CONFIG_QCS_GCC_404=y
- CONFIG_QCS_GCC_615=y
- CONFIG_QCS_GCC_8300=y
- CONFIG_SC_CAMCC_7280=m
- CONFIG_SA_CAMCC_8775P=m
-+CONFIG_QCS_GPUCC_615=m
-+CONFIG_QCS_VIDEOCC_615=m
- CONFIG_QDU_GCC_1000=y
- CONFIG_SC_CAMCC_8280XP=m
- CONFIG_SC_DISPCC_7280=m
+Changes in v7:
+- Squash patch to make Owned::from_raw/into_raw public into parent
+- Added Signed-off-by to other people's commits
+- Link to v6: https://lore.kernel.org/r/20250310-unique-ref-v6-0-1ff5355861=
+7e@pm.me
 
--- 
-2.48.1
+Changes in v6:
+- Changed comments/formatting as suggested by Miguel Ojeda
+- Included and used new config flag RUSTC_HAS_DO_NOT_RECOMMEND,
+  thus no changes to types.rs will be needed when the attribute
+  becomes available.
+- Fixed commit message for Owned patch.
+- Link to v5: https://lore.kernel.org/r/20250307-unique-ref-v5-0-bffeb63327=
+7e@pm.me
+
+Changes in v5:
+- Rebase the whole thing on top of the Ownable/Owned traits by Asahi Lina.
+- Rename AlwaysRefCounted to RefCounted and make AlwaysRefCounted a
+  marker trait instead to allow to obtain an ARef<T> from an &T,
+  which (as Alice pointed out) is unsound when combined with UniqueRef/Owne=
+d.
+- Change the Trait design and naming to implement this feature,
+  UniqueRef/UniqueRefCounted is dropped in favor of Ownable/Owned and
+  OwnableRefCounted is used to provide the functions to convert
+  between Owned and ARef.
+- Link to v4: https://lore.kernel.org/r/20250305-unique-ref-v4-1-a8fdef7b1c=
+2c@pm.me
+
+Changes in v4:
+- Just a minor change in naming by request from Andreas Hindborg,
+  try_shared_to_unique() -> try_from_shared(),
+  unique_to_shared() -> into_shared(),
+  which is more in line with standard Rust naming conventions.
+- Link to v3: https://lore.kernel.org/r/Z8Wuud2UQX6Yukyr@mango
+
+---
+Asahi Lina (1):
+      rust: types: Add Ownable/Owned types
+
+Miguel Ojeda (1):
+      rust: kbuild: provide `RUSTC_HAS_DO_NOT_RECOMMEND` symbol
+
+Oliver Mangold (2):
+      rust: rename AlwaysRefCounted to RefCounted
+      rust: adding OwnableRefCounted and SimpleOwnableRefCounted
+
+ init/Kconfig                    |   3 +
+ rust/kernel/block/mq/request.rs |  10 +-
+ rust/kernel/cred.rs             |   8 +-
+ rust/kernel/device.rs           |   8 +-
+ rust/kernel/fs/file.rs          |  10 +-
+ rust/kernel/pid_namespace.rs    |   8 +-
+ rust/kernel/task.rs             |   6 +-
+ rust/kernel/types.rs            | 404 ++++++++++++++++++++++++++++++++++++=
+++--
+ 8 files changed, 426 insertions(+), 31 deletions(-)
+---
+base-commit: 4b2ee22fe32ea9b255926effbb6f26450607c391
+change-id: 20250305-unique-ref-29fcd675f9e9
+
+Best regards,
+--=20
+Oliver Mangold <oliver.mangold@pm.me>
+
 
 
