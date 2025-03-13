@@ -1,83 +1,86 @@
-Return-Path: <linux-kernel+bounces-558896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B91C5A5ECD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:21:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D426A5ECD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:21:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79C0C18997B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:21:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F16189991E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856F91FC7D6;
-	Thu, 13 Mar 2025 07:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A031FC0FF;
+	Thu, 13 Mar 2025 07:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="YVkyf/rE"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="HDSzFFUg"
 Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0181FC115
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2191FC7F2
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741850464; cv=none; b=E5Qs0e/v3RuqX78ItzVUe3QpQTaq4nI3QcI17eRY8aWGHI6cxEA2hhnzhMgdaS0SLj7C16u72OGDrPcwQ7iRBRiGe+vVs3CQmCrYIARZjXE/hLQNGwLLF14PqlGD1kanoQWAw+dIrLvSfPo144VjXc/CpXeW+bnkk1BbGQSdz+w=
+	t=1741850474; cv=none; b=axciPMSmWGvhMesGhl4f12ceZ5DB6XELtswzJD5SBIVcSbqv5MXFX+Axav1S3XkmPc/LgegJL4FBC0GFU8nqUNXbpKmX1Aq3cydXag/aXQInYwrlkBOucZs3FwdkY36qC1s0CKQaiNFqQMV/wvv1taCrTemK2kxO0ET4viCWJ58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741850464; c=relaxed/simple;
-	bh=WIGP6c7pZI3O7KpjjWTotO+yvTTuYyAJpgqOBOyp8gY=;
-	h=From:Mime-Version:Date:Message-ID:Subject:To:Cc:Content-Type; b=NEXdh8t0HHZ5H3pK3v+6+bfF4YOwrBPdfBlXXkygsvez7TPFVx6LAR6hI8F/PD7yiC3psZ3a0TgVkwx254ukqiljHZHXfiWeHFOvBn24oW3FNxPQurmx49GI1wmhvM6q7zFZpcbcA8TLKLsWM2StcfZThv28mS88gr1t3T/6n1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=YVkyf/rE; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1741850474; c=relaxed/simple;
+	bh=gHPiJK6HRckmlXxxye7eG/CgOKv8DfBqUI+lI52Wxcc=;
+	h=From:References:In-Reply-To:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TGjkFF0jRbncn8dNJTQZ2t//e7G9Kmfm5HSWYCaDmAVfRi/znYR4aIKJM8WGlh2/mxwRSNlWf2C8XrTqT7Zc79el5xNc2oZ4wG+tZ/GyeXj/rdcRwpKudbHHvIkpT6MsIk9nbOwH51PRTwTXAlq+IsL4nYEO0gUjo8gL7u1xsEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=HDSzFFUg; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e6ff035e9aso1292905a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 00:21:01 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so1217653a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 00:21:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1741850460; x=1742455260; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:mime-version:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=mb3Bt/L4MdFutbv6VVq0j5BWvIHVvycjsyPwMxwTSVE=;
-        b=YVkyf/rEIq4G+0mjtKjW6SKc75QD6VjpQQFZ4iP9FkHJa63qm3XW3RMZgGnSQSyVKO
-         2dnEu+Wfaq/eme/qMKAL3wLqof1fH6L8kWxJ2o2AQkr271wIs9+gwomHKaqyTZLRQCQ1
-         EQQ21bQVYqzIlIaSfBcsQL1hPzgY2vGLidcbvEg6lTg/IStFdv9UFgNVOQ4X1N2snDnF
-         Y+wF3X1lKPGlVXHLRoExnaz3vMAXF9x83my0+3PLijYfYQwTFPWw6POz/VpYivXwRlI1
-         abqcK4GP+oUvpsXXc7v7h34eVVxu8yvRFJEbOQrjdyrbChg9DVTkPotTe6HveV+GR8Tw
-         VtEg==
+        d=bytedance.com; s=google; t=1741850471; x=1742455271; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=29ZMaOlzLLl8W5L5LLXlHyP6nAGcgQli4bqNsuL0SBE=;
+        b=HDSzFFUg2sbtR2XKpWnOY4+3Ls8GYrdI/rc7iYtUKg4Fkf/rarJ0eSCw29Dljo+JDR
+         eWQJRpH2XOJWyILOW51qTpIsIVbGYu8s3j5lE6Hq7XmWowrdQH4mdiftBl2Fa1kZ4JlT
+         1QVeYkaXa8l7h2/MjeauehY5jlbmqN7jz6VjrrAHiXbgq4tuCqHU5mHUt3i0lCX8FWKY
+         gVc80YvBx7bQb3hrh5JfVW8RI2Y5p++cikiWK866KTQ/7kg4FVIgzbZVfKucbyn7sOv9
+         LGjoqSklwZLiri9DfFoMtmSS74eoqS30eLq8UOyeMSSzmHIqAEsUT3tIG6hrSs3eS5J8
+         5DoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741850460; x=1742455260;
-        h=cc:to:subject:message-id:date:mime-version:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mb3Bt/L4MdFutbv6VVq0j5BWvIHVvycjsyPwMxwTSVE=;
-        b=hSf+OOhispxaYtet75qquXRSgwEDeNkYFskfTGBcK0FK/YWjkPFP9TP8gc2HG342L+
-         3ZEGLjrz0Gxpc52+6E8oYPAX1gsqINjGd5xjxu3cSop9P6RhRVkIsglUWSRlLLJFBlsu
-         uuKzmZV9JjmHr+vk4kMp0v0BNKqjsmHXwcADxZQkQChxSGJGPbZOxalCD5al4KHy0UgX
-         WKIv0RlUE6yHEsvpVQL3Bm0Bh1HS3/z7SHwXVJENWcNEc0jeM/B7u2TuSsDvd61HBLY+
-         s+MdCEwS6c5kSgSWn8awzdibE/TL8RoLZwQIGeER1Ox59n8sJEovGLcgY2TCkGiwkvvG
-         AQlA==
-X-Gm-Message-State: AOJu0YweUIrjIA9v3AgO/lOWXKcczW5EJApUa8JpAuBZY5Y0jNIBnyyK
-	itvcw4xR2bvuiz3jjVrRCYt7xIh/uCmOcGsDXubSAsKxrQYUfNsFdFhpvIudZ3UMtpoftuwKIcb
-	2PQrTTzsGY/KIU94+s5HYHfQOGtoUDKeXQ8zM
-X-Gm-Gg: ASbGncsxlwkCvMTJh9YO0lz/0qMcHpkUPir+f1Sx64BSUEKYDlWuF7FZHQdWjXUhzts
-	MsTFPFZCmmKM14v2PgzUVpG03T2b8mWbXB/Xz1cYZKqwaKYB5+dbHes/uS8fCOn4D9e0F5vMvmK
-	B39vzT7qZvWs7Ms2ZXvKGArAMdFaI=
-X-Google-Smtp-Source: AGHT+IERlEVj3mE2Hy5QG0uYVmlj+6xc3jcRkKGk/VCX2hZvznrMEDQOpTktFKZqRLDONhEEnwt8+8tRuhlC6y2ywvc=
-X-Received: by 2002:a50:cc0c:0:b0:5e7:8827:2c33 with SMTP id
- 4fb4d7f45d1cf-5e788272ca4mr9539592a12.11.1741850460222; Thu, 13 Mar 2025
- 00:21:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741850471; x=1742455271;
+        h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=29ZMaOlzLLl8W5L5LLXlHyP6nAGcgQli4bqNsuL0SBE=;
+        b=lMhaEgaZA+crsnYxp/cD7Jf88lwqt27S5SLUVWFT6u9ejpB83403DSOWPfqUOpTJTx
+         pNp0QZj87QBX/9T2ChXAtMu1tz802dnIhC4i5mPnjPsY3mDwihsXYeLC5yoVNV0anme8
+         kKJQZ/tvIYISjBOuOhKAyuQxLNbntNLX9npvCiFa+iikrJQ3YS9V2k75N3VtAv7bfcaC
+         JX4/PQ0R0VtQ0vvsfg7BIqFzVxgW8j9SFFPbhEXOqswYbIqkfNziVy9jnqUUKtWoo7x/
+         tiFC0SqK1+wE1AzfRAyL7/PW7X33nAjR4DPgTRh95uXE45aE5Rajr5p2ohKDvZUd+hYu
+         nrew==
+X-Gm-Message-State: AOJu0YwOUyzu6gu4+HU/GaEzuOeWfyrO7NyY3pWE8aVwmbTVbLvVhU4/
+	AdNCDhdQvPXtTx8YTgN6khsrX1+yoU7PsZQwqsskUBYLL054LwqDYg8i+l5iKFFThykBIznKIHk
+	415uFGmz4PAQAptIxz8rIRELEiMthBJmd1YFS
+X-Gm-Gg: ASbGnctbZSCYYv8a3yS5pyUVEpKCipdNNhBrZAiaN4qBM8Rd+y+IghooKmraxn9CXEy
+	5/gGN/N/gACIgXMVEAttkin4e875F1OGuGmljAODgVEOlqGREGLt7jRNPPiyJwq0w0ywDi5PyN4
+	HH26KbwvGMnwV+JThXDupasplKSnhguf5HfJ+fQw==
+X-Google-Smtp-Source: AGHT+IHxkyL3RCMezoLUpX6NVM2XBBM8muoFF88BBs6ttBOc0pZ9L/+IsvBgykrUwA39mrtGeeqUoWafaGRMCC+z0EM=
+X-Received: by 2002:a50:cd5e:0:b0:5e7:87ea:b18c with SMTP id
+ 4fb4d7f45d1cf-5e814ee5d15mr1105266a12.15.1741850470812; Thu, 13 Mar 2025
+ 00:21:10 -0700 (PDT)
 Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
- Thu, 13 Mar 2025 02:20:59 -0500
+ Thu, 13 Mar 2025 02:21:10 -0500
 From: Aaron Lu <ziqianlu@bytedance.com>
+References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
+In-Reply-To: <20250313072030.1032893-1-ziqianlu@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-Mailer: git-send-email 2.39.5
 X-Original-From: Aaron Lu <ziqianlu@bytedance.com>
-Date: Thu, 13 Mar 2025 02:20:59 -0500
-X-Gm-Features: AQ5f1JrQjfSy-mFfh2-ULrAKsV_fUeB6HXQoUOKf9a2vBVkInMOCWuwIlG7L1h8
-Message-ID: <CANCG0Gfn-BENDNqJmWC2BCxXLA8pQWrAwNibx22Dv_yUzyNV5g@mail.gmail.com>
-Subject: [RFC PATCH 0/7] Defer throttle when task exits to user
+X-Mailer: git-send-email 2.39.5
+Date: Thu, 13 Mar 2025 02:21:10 -0500
+X-Gm-Features: AQ5f1Jqo4tNhOWmDkvlNOQeUbc53LvIH-F5HqukIKZbZifT-c4YHJ4guYgUDFVo
+Message-ID: <CANCG0GcxLJOnNSZgYVYYh_Ug-sVpCOmsf3VATELrKrs_6jovQw@mail.gmail.com>
+Subject: [RFC PATCH 1/7] sched/fair: Add related data structure for task based throttle
 To: Valentin Schneider <vschneid@redhat.com>, Ben Segall <bsegall@google.com>, 
 	K Prateek Nayak <kprateek.nayak@amd.com>, Peter Zijlstra <peterz@infradead.org>, 
 	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>, 
@@ -88,140 +91,89 @@ Cc: linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
 	Chuyi Zhou <zhouchuyi@bytedance.com>
 Content-Type: text/plain; charset="UTF-8"
 
-This is a continuous work based on Valentin Schneider's posting here:
-Subject: [RFC PATCH v3 00/10] sched/fair: Defer CFS throttle to user entry
-https://lore.kernel.org/lkml/20240711130004.2157737-1-vschneid@redhat.com/
+From: Valentin Schneider <vschneid@redhat.com>
 
-Valentin has described the problem very well in the above link. We also
-have task hung problem from time to time in our environment due to cfs quota.
-It is mostly visible with rwsem: when a reader is throttled, writer comes in
-and has to wait, the writer also makes all subsequent readers wait,
-causing problems of priority inversion or even whole system hung.
+Add related data structures for this new throttle functionality.
 
-Changes I've made since Valentin's v3:
-- Use enqueue_task_fair() and dequeue_task_fair() in cfs_rq's throttle
-  and unthrottle path;
-- Get rid of irq_work, since the task work that is supposed to throttle
-  the task can figure things out and do things accordingly, so no need
-  to have a irq_work to cancel a no longer needed task work;
-- Several fix like taking care of task group change, sched class change
-  etc. for throttled task;
-- tasks_rcu fix with this task based throttle.
+[aaronlu: extracted from Valentin's original patches]
+Signed-off-by: Valentin Schneider <vschneid@redhat.com>
+Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
+---
+ include/linux/sched.h |  4 ++++
+ kernel/sched/core.c   |  3 +++
+ kernel/sched/fair.c   | 12 ++++++++++++
+ kernel/sched/sched.h  |  2 ++
+ 4 files changed, 21 insertions(+)
 
-Tests:
-- A basic test to verify functionality like limit cgroup cpu time and
-  change task group, affinity etc.
-- A script that tried to mimic a large cgroup setup is used to see how
-  bad it is to unthrottle cfs_rqs and enqueue back large number of tasks
-  in hrtime context.
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 9632e3318e0d6..eec9087232660 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -858,6 +858,10 @@ struct task_struct {
 
-  The test was done on a 2sockets/384threads AMD CPU with the following
-  cgroup setup: 2 first level cgroups with quota setting, each has 100
-  child cgroups and each child cgroup has 10 leaf child cgroups, with a
-  total number of 2000 cgroups. In each leaf child cgroup, 10 cpu hog
-  tasks are created there. Below is the durations of
-  distribute_cfs_runtime() during a 1 minute window:
-  @durations:
-  [8K, 16K)            274 |@@@@@@@@@@@@@@@@@@@@@
-         |
-  [16K, 32K)           132 |@@@@@@@@@@
-         |
-  [32K, 64K)             6 |
-         |
-  [64K, 128K)            0 |
-         |
-  [128K, 256K)           2 |
-         |
-  [256K, 512K)           0 |
-         |
-  [512K, 1M)           117 |@@@@@@@@@
-         |
-  [1M, 2M)             665
-|@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-  [2M, 4M)              10 |
-         |
-  So the biggest duration is in 2-4ms range in this hrtime context. How
-  bad is this number? I think it is acceptable but maybe the setup I
-  created is not complex enough?
-  In older kernels where async unthrottle is not available, the largest
-  time range can be about 100ms+.
+ #ifdef CONFIG_CGROUP_SCHED
+ 	struct task_group		*sched_task_group;
++#ifdef CONFIG_CFS_BANDWIDTH
++	struct callback_head		sched_throttle_work;
++	struct list_head		throttle_node;
++#endif
+ #endif
 
-Patches:
-The patchset is arranged to get the basic functionality done first and
-then deal with special cases. I hope this can make it easier to review.
 
-Patch1 is preparation work;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 621cfc731c5be..56e2ea14ac3b4 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4493,6 +4493,9 @@ static void __sched_fork(unsigned long
+clone_flags, struct task_struct *p)
 
-Patch2-3 provide the main functionality.
-Patch2 deals with throttle path: when a cfs_rq is to be throttled, add a
-task work to each of its tasks so that when those tasks return to user, the
-task work can throttle it by dequeuing the task and remember this by
-adding the task to its cfs_rq's limbo list;
-Patch3 deals with unthrottle path: when a cfs_rq is to be unthrottled,
-enqueue back those tasks in limbo list;
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 	p->se.cfs_rq			= NULL;
++#ifdef CONFIG_CFS_BANDWIDTH
++	init_cfs_throttle_work(p);
++#endif
+ #endif
 
-Patch4-5 deal with special cases.
-Patch4 deals with task migration: if a task migrates to a throttled
-cfs_rq, setup throttle work for it. If otherwise a task that already has
-task work added migrated to a not throttled cfs_rq, its task work will
-remain: the work handler will figure things out and skip the throttle.
-This also deals with setting throttle task work for tasks that switched
-to fair class, changed group etc. because all these things need enqueue
-the task to the target cfs_rq;
-Patch5 deals with the dequeue path when task changes group, sched class
-etc. Task that is throttled is dequeued in fair, but task->on_rq is
-still set so when it changes task group, sched class or has affinity
-setting change, core will firstly dequeue it. But since this task is
-already dequeued in fair class, this patch handle this situation.
+ #ifdef CONFIG_SCHEDSTATS
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 9dafb374d76d9..60eb5329bf526 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5832,6 +5832,18 @@ static inline int throttled_lb_pair(struct
+task_group *tg,
+ 	       throttled_hierarchy(dest_cfs_rq);
+ }
 
-Patch6-7 are two fixes while doing test. I can also fold them in if that
-is better.
-Patch6 makes CONFIG_TASKS_RCU happy. Throttled tasks get scheduled in
-tasks_work_run() by cond_resched() but that is a preempt schedule and
-doesn't mark a task rcu quiescent state, so I add a schedule call in
-throttle task work directly.
-Patch7 fixed a problem where unthrottle path can cause throttle to
-happen again when enqueuing task.
++static void throttle_cfs_rq_work(struct callback_head *work)
++{
++}
++
++void init_cfs_throttle_work(struct task_struct *p)
++{
++	init_task_work(&p->sched_throttle_work, throttle_cfs_rq_work);
++	/* Protect against double add, see throttle_cfs_rq() and
+throttle_cfs_rq_work() */
++	p->sched_throttle_work.next = &p->sched_throttle_work;
++	INIT_LIST_HEAD(&p->throttle_node);
++}
++
+ static int tg_unthrottle_up(struct task_group *tg, void *data)
+ {
+ 	struct rq *rq = data;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 023b844159c94..c8bfa3d708081 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2724,6 +2724,8 @@ extern bool sched_rt_bandwidth_account(struct
+rt_rq *rt_rq);
 
-All the patches changelogs are written by me, so if the changelogs look
-poor, it's my bad.
+ extern void init_dl_entity(struct sched_dl_entity *dl_se);
 
-Comments are welcome. If you see any problems or issues with this
-approach, please feel free to let me know, thanks.
-
-Base commit: tip/sched/core, commit fd881d0a085f("rseq: Fix segfault on
-registration when rseq_cs is non-zero").
-
-Known issues:
-- !CONFIG_CFS_BANDWIDTH is totally not tested yet;
-- task_is_throttled_fair() could probably be replaced with
-  task_is_throttled() now but I'll leave this to next version.
-- cfs_rq's pelt clock is stopped on throttle while it can still have
-  tasks running(like some task is still running in kernel space).
-  It's also possible to keep its pelt clock running till its last task
-  is throttled/dequeued, but in this way, this cfs_rq's load may be
-  decreased too much since many of its tasks are throttled. For now,
-  keep it simple by keeping the current behavior.
-
-Aaron Lu (4):
-  sched/fair: Take care of migrated task for task based throttle
-  sched/fair: Take care of group/affinity/sched_class change for
-    throttled task
-  sched/fair: fix tasks_rcu with task based throttle
-  sched/fair: Make sure cfs_rq has enough runtime_remaining on
-    unthrottle path
-
-Valentin Schneider (3):
-  sched/fair: Add related data structure for task based throttle
-  sched/fair: Handle throttle path for task based throttle
-  sched/fair: Handle unthrottle path for task based throttle
-
- include/linux/sched.h |   4 +
- kernel/sched/core.c   |   3 +
- kernel/sched/fair.c   | 380 +++++++++++++++++++++++-------------------
- kernel/sched/sched.h  |   3 +
- 4 files changed, 216 insertions(+), 174 deletions(-)
-
++extern void init_cfs_throttle_work(struct task_struct *p);
++
+ #define BW_SHIFT		20
+ #define BW_UNIT			(1 << BW_SHIFT)
+ #define RATIO_SHIFT		8
 -- 
 2.39.5
 
