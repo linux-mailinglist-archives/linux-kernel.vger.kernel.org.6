@@ -1,466 +1,181 @@
-Return-Path: <linux-kernel+bounces-559583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4174AA5F5C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:19:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06CFBA5F5CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:19:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76AAB16C95F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:19:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6599E3ACA21
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F8F267711;
-	Thu, 13 Mar 2025 13:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6293D26770A;
+	Thu, 13 Mar 2025 13:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hSqpxpsD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Fya+B5uv"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15071265610;
-	Thu, 13 Mar 2025 13:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C520B266EF1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741871961; cv=none; b=aJb+WK868o8AswJG+ZNBsFlK4MC0Qhrjv5Gvmvt33AztcAjUiqUDwI89rF3Xydt8dNTpQEXLTQ3+9vkwqjcKmUmfP3AU/yUmsnv5Dxwy96hS5whUvQW63NDI47SKvGVDbhuz1d0SSrR8KNeJzDfOo4MyA6HXtXn/T+p4drDAM5g=
+	t=1741871977; cv=none; b=mKBGlAViaj4/kArnL3Df78NazGqFOoIj7n4W47odaW3Ri3HxmazdC4T/m9+wy9kyIBpH8LzQ3BF451/06agROqtkxCvY+7ucDcMeIKQgXl2nf58S/73pCDl6CdqHQubSsKPmCD+9/nfS2QONnZ/TpioMMBEH8gCxtq0DAJmhg/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741871961; c=relaxed/simple;
-	bh=kSLuroUKtiymbJTkEMP0+//NaZasHJELsrGBlpl58Ow=;
+	s=arc-20240116; t=1741871977; c=relaxed/simple;
+	bh=Gdz8UJhWShBn1LGKb52FUKgFJdhhJNGhVtNjQr+Ljhw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SdzyKs1PAhPnwlAFLJbsyZqcweW7Odf6LhDjpmPd+y8iMeqPOCTKhqDFuBsEosZ5b7WTMl/wzE00TxUNtQNsz4YKx9OrxeUJANU4EE0dq/L4HFpXfHTTwayiPb/ujLP8SjRR4cLqaO6mbkRuh8A+IdHaP5H7N8DKTaqMT1sCyC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hSqpxpsD; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741871959; x=1773407959;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kSLuroUKtiymbJTkEMP0+//NaZasHJELsrGBlpl58Ow=;
-  b=hSqpxpsDBByFbaQ5n2kGyGaa5317b6LiVfMDsCaVWgkT5W9y9oNMnyik
-   1Arb1KTupkR8seLx81qfokXXCdDtVddWTsD5e67QgMKjZgMsxwGYuvz1B
-   pVN/oTM9Ahn42yK2wyxrPeKlG33OEV8878lUBbyt83OHO04vafk97dGRc
-   EgKAZwG2+EUP/p18DV/S3g91HX5kbbiY/G8iRg/HCjLveKniwGzww13Bm
-   JHmKbgpCCcbbtylVDGZ7ha+dsi4/f7DUW65GJlCb13yMZk1w8avfYzjPe
-   94XLS1IuadY1QDaoUSvrMBAQt8dQFxqys406ZMnMzaqrf34PorklXIxst
-   A==;
-X-CSE-ConnectionGUID: ctfUBktRT2yZUYQeqjzy8A==
-X-CSE-MsgGUID: fiBHTIdJRKeTQvoDymhmlg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="43166149"
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="43166149"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 06:19:19 -0700
-X-CSE-ConnectionGUID: nso5IsKiR4WPNcwdQX+9/A==
-X-CSE-MsgGUID: WDwmSTWVRle4y6cCHMs9SA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="151799809"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 06:19:15 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tsiSt-00000002BCV-2g2Q;
-	Thu, 13 Mar 2025 15:19:11 +0200
-Date: Thu, 13 Mar 2025 15:19:11 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Nuno Sa <nuno.sa@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Guillaume Stols <gstols@baylibre.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH v7 06/10] iio: adc: Support ROHM BD79124 ADC
-Message-ID: <Z9LbT1BvPEIp7U2N@smile.fi.intel.com>
-References: <cover.1741849323.git.mazziesaccount@gmail.com>
- <b6c02a5d75a20bbbf8c3370ccee615d269620117.1741849323.git.mazziesaccount@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SQuRI4ys2/wXAKOYhMAou80cXr2q9cV3krZpHeFXiY1Vi+QpiEByUIfMSqsCiMOroEK3hp0aBO864YSyX3c+fadYwGJcsFxETAyolZAo7aRIaQRTGGx3I5lHab5hSC+62LvI64xYY9RYlOcDnVxDzp6TfcSR0y7HFgvJwVuzR8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Fya+B5uv; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac2a9a74d9cso208628166b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 06:19:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1741871974; x=1742476774; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SLwI9+XgDvx6y1QmCRm2s349AXzMPGhMLML8/FN0xLk=;
+        b=Fya+B5uvMaBWg05/ZRaooO28oARMieTKejYuRJHRQIjyrXOuvQoFXtsyZGxHLoiqGL
+         3dxTmbWsHoc/LO3ACZs+ovLFovc85/cZDAFlz4Dr+Np2mRFz+D/XMy6Yy9Fdx2qs84ny
+         rp5uIw5CRIrGOkqHeFwdv8DUsSLZ0RAdaeJqNgnjynazmIg3FDYRa0vOpHiRwZFKJH5/
+         G3CEBRjEzjPipxd+Xx25UTJa6oXICPZLQ+CcujMNWwKjyhV7QnxyM0+/J8XoKLvkDpQp
+         C9w2NQYJDA9rpmIe5YofDyga9OrNItLRekWl+/h9p0E9oAN+c48I94bUQRMPo8p4ISfU
+         YbBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741871974; x=1742476774;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SLwI9+XgDvx6y1QmCRm2s349AXzMPGhMLML8/FN0xLk=;
+        b=r2oEhfxhqmPHVrueRCYpV8MbIGCfrRfJwalbTlnL/1FhPRqGp9jjs5W33xQ3WUPFDS
+         tzTbOsxYVXO8mYTb5X76aIegsV94BgfWxf3+PTV8p35ps3G/C/PXVR5osEh+IDQdIhYs
+         IU9N9h5hN3kNncJLGyiCD5S9CwUH+nmbaJ8zChpE0YypC4UkrWhTg4QI2tXQdbNhDyQ0
+         u/T7jjapn1wUARpeQk4CcRIN+VxjiHfOcVHcsOv7LyGG82Z0QvWcKCtdieIQkepXg/HH
+         HsdUqpDZcFjkrkO/fnwM0unUrl87qEqibdUCLp+fBhxljGJQ1xBrXbJ9BpyHmcW8EUlz
+         NdZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJhFsORAvDZwbftdjUTrj70jxmRpr2seiXSXJRNHR8lIK0AwAd0FnNdj4TeIDS5xEVXmVyQe5i5b4HTYg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN6uyd+n+7Vc2s7MWgGQo8eu7oSpQzr634lM/8mcn+ZUZ7REwj
+	lHY26u3s+WxW6rZs69tHNrhqbDkV5nCM6uCo9v9amX0OnqSmEMsX1w+fa2NX7Ko=
+X-Gm-Gg: ASbGncuUbFgvz18fNbdfhqzSRz+dooMjgTJC37DxaaQmWd/Zzfr4j3XSfJZjdnjatsQ
+	jaIk7OdzHRugPZJ17GeKVMbI3WMH0oHrSqT5X0TarAlC6HzwR/9kkMDjfJmTsIo5ore3RZ3Yj7f
+	xBiMrPB61X1U/vl3BPAjrI79asBMGhpMoBVGsdIGUgLGMaPT7IS/nmZbV8RlhsB1f+RgYX3kDNE
+	syTfo3mFE1EDq6faj3oC9ZXtE9j3jjXVNgq7KcrVX7KseGm5jMh58ENiCBQspqjb2xqmFS3AHId
+	E/E9/2uUnvl5vaPd880glwRmMfMvzEhS
+X-Google-Smtp-Source: AGHT+IF3RjvN3caMGccSNmH1eaKCAyeC0UKLdIujqC0Ubvi5/eGttJVhWRGqhwIRTen+UtV+e2lwpQ==
+X-Received: by 2002:a17:907:7da8:b0:ac1:dd6f:f26c with SMTP id a640c23a62f3a-ac2b9ede2f5mr1499361666b.46.1741871973986;
+        Thu, 13 Mar 2025 06:19:33 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200::59a5])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147ead1dsm81138266b.58.2025.03.13.06.19.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 06:19:33 -0700 (PDT)
+Date: Thu, 13 Mar 2025 14:19:32 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, 
+	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+	Samuel Holland <samuel.holland@sifive.com>
+Subject: Re: [PATCH v3 08/17] riscv: misaligned: add a function to check
+ misalign trap delegability
+Message-ID: <20250313-4bea400c5770a5a5d3d70b38@orel>
+References: <20250310151229.2365992-1-cleger@rivosinc.com>
+ <20250310151229.2365992-9-cleger@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <b6c02a5d75a20bbbf8c3370ccee615d269620117.1741849323.git.mazziesaccount@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250310151229.2365992-9-cleger@rivosinc.com>
 
-On Thu, Mar 13, 2025 at 09:19:03AM +0200, Matti Vaittinen wrote:
-> The ROHM BD79124 is a 12-bit, 8-channel, SAR ADC. The ADC supports
-> an automatic measurement mode, with an alarm interrupt for out-of-window
-> measurements. The window is configurable for each channel.
+On Mon, Mar 10, 2025 at 04:12:15PM +0100, Clément Léger wrote:
+> Checking for the delegability of the misaligned access trap is needed
+> for the KVM FWFT extension implementation. Add a function to get the
+> delegability of the misaligned trap exception.
 > 
-> The I2C protocol for manual start of the measurement and data reading is
-> somewhat peculiar. It requires the master to do clock stretching after
-> sending the I2C slave-address until the slave has captured the data.
-> Needless to say this is not well suopported by the I2C controllers.
+> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+> ---
+>  arch/riscv/include/asm/cpufeature.h  |  5 +++++
+>  arch/riscv/kernel/traps_misaligned.c | 17 +++++++++++++++--
+>  2 files changed, 20 insertions(+), 2 deletions(-)
 > 
-> Thus the driver does not support the BD79124's manual measurement mode
-> but implements the measurements using automatic measurement mode relying
-> on the BD79124's ability of storing latest measurements into register.
-> 
-> The driver does also support configuring the threshold events for
-> detecting the out-of-window events.
-> 
-> The BD79124 keeps asserting IRQ for as long as the measured voltage is
-> out of the configured window. Thus the driver masks the received event
-> for a fixed duration (1 second) when an event is handled. This prevents
-> the user-space from choking on the events
-> 
-> The ADC input pins can be also configured as general purpose outputs.
-> Those pins which don't have corresponding ADC channel node in the
-> device-tree will be controllable as GPO.
-
-...
-
-> +#define BD79124_REG_SYSTEM_STATUS	0x0
-
-I would expect to see 0x00
-
-> +#define BD79124_REG_GEN_CFG		0x01
-> +#define BD79124_REG_OPMODE_CFG		0x04
-> +#define BD79124_REG_PINCFG		0x05
-> +#define BD79124_REG_GPO_VAL		0x0B
-> +#define BD79124_REG_SEQUENCE_CFG	0x10
-> +#define BD79124_REG_MANUAL_CHANNELS	0x11
-> +#define BD79124_REG_AUTO_CHANNELS	0x12
-> +#define BD79124_REG_ALERT_CH_SEL	0x14
-> +#define BD79124_REG_EVENT_FLAG		0x18
-> +#define BD79124_REG_EVENT_FLAG_HI	0x1a
-> +#define BD79124_REG_EVENT_FLAG_LO	0x1c
-> +#define BD79124_REG_HYSTERESIS_CH0	0x20
-> +#define BD79124_REG_EVENTCOUNT_CH0	0x22
-> +#define BD79124_REG_RECENT_CH0_LSB	0xa0
-> +#define BD79124_REG_RECENT_CH7_MSB	0xaf
-
-...
-
-Wouldn't be better...
-
-> +#define BD79124_MASK_CONV_MODE GENMASK(6, 5)
-> +#define BD79124_MASK_AUTO_INTERVAL GENMASK(1, 0)
-> +#define BD79124_CONV_MODE_MANSEQ 0
-> +#define BD79124_CONV_MODE_AUTO 1
-> +#define BD79124_INTERVAL_750_US 0
-
-To group masks and values of the same bitfields?
-
-#define BD79124_MASK_CONV_MODE GENMASK(6, 5)
-#define BD79124_CONV_MODE_MANSEQ 0
-#define BD79124_CONV_MODE_AUTO 1
-#define BD79124_MASK_AUTO_INTERVAL GENMASK(1, 0)
-#define BD79124_INTERVAL_750_US 0
-
-> +#define BD79124_MASK_DWC_EN BIT(4)
-> +#define BD79124_MASK_STATS_EN BIT(5)
-> +#define BD79124_MASK_SEQ_START BIT(4)
-> +#define BD79124_MASK_SEQ_MODE GENMASK(1, 0)
-> +#define BD79124_MASK_SEQ_MANUAL 0
-> +#define BD79124_MASK_SEQ_SEQ 1
-> +
-> +#define BD79124_MASK_HYSTERESIS GENMASK(3, 0)
-> +#define BD79124_LOW_LIMIT_MIN 0
-> +#define BD79124_HIGH_LIMIT_MAX GENMASK(11, 0)
-
-These masks are not named after registers (or I don't see it clearly), it's
-hard to understand which one relates to which register. Also, why not using
-bitfield.h?
-
-...
-
-> + * These macros return the address of the 1.st reg for the given channel
-
-first
-
-(and missing period at the end).
-
-> +#define BD79124_GET_HIGH_LIMIT_REG(ch) (BD79124_REG_HYSTERESIS_CH0 + (ch) * 4)
-> +#define BD79124_GET_LOW_LIMIT_REG(ch) (BD79124_REG_EVENTCOUNT_CH0 + (ch) * 4)
-> +#define BD79124_GET_LIMIT_REG(ch, dir) ((dir) == IIO_EV_DIR_RISING ?		\
-> +		BD79124_GET_HIGH_LIMIT_REG(ch) : BD79124_GET_LOW_LIMIT_REG(ch))
-> +#define BD79124_GET_RECENT_RES_REG(ch) (BD79124_REG_RECENT_CH0_LSB + (ch) * 2)
-
-Don't we want to have something in bitfield.h for arrays in the register, i.e.
-when register(s) is(are) split to 2+ bits per an element in an array of the
-same semantics. Would be nice to eliminate such a boilerplate here and in many
-other drivers.
-
-> +/*
-> + * The hysteresis for a channel is stored in the same register where the
-> + * 4 bits of high limit reside.
-> + */
-> +#define BD79124_GET_HYSTERESIS_REG(ch) BD79124_GET_HIGH_LIMIT_REG(ch)
-> +
-> +#define BD79124_MAX_NUM_CHANNELS 8
-> +
-> +struct bd79124_data {
-> +	s64 timestamp;
-> +	struct regmap *map;
-> +	struct device *dev;
-> +	int vmax;
-> +	/*
-> +	 * Keep measurement status so read_raw() knows if the measurement needs
-> +	 * to be started.
-> +	 */
-> +	int alarm_monitored[BD79124_MAX_NUM_CHANNELS];
-> +	/*
-> +	 * The BD79124 does not allow disabling/enabling limit separately for
-> +	 * one direction only. Hence, we do the disabling by changing the limit
-> +	 * to maximum/minimum measurable value. This means we need to cache
-> +	 * the limit in order to maintain it over the time limit is disabled.
-> +	 */
-> +	u16 alarm_r_limit[BD79124_MAX_NUM_CHANNELS];
-> +	u16 alarm_f_limit[BD79124_MAX_NUM_CHANNELS];
-> +	/* Bitmask of disabled events (for rate limiting) for each channel. */
-> +	int alarm_suppressed[BD79124_MAX_NUM_CHANNELS];
-> +	/*
-> +	 * The BD79124 is configured to run the measurements in the background.
-> +	 * This is done for the event monitoring as well as for the read_raw().
-> +	 * Protect the measurement starting/stopping using a mutex.
-> +	 */
-> +	struct mutex mutex;
-> +	struct delayed_work alm_enable_work;
-> +	struct gpio_chip gc;
-> +	u8 gpio_valid_mask;
-> +};
-
-...
-
-> +static void bd79124gpo_set(struct gpio_chip *gc, unsigned int offset, int value)
-
-You should use .set_rv()
-
-...
-
-> +static void bd79124gpo_set_multiple(struct gpio_chip *gc, unsigned long *mask,
-> +				    unsigned long *bits)
-
-Ditto, .set_multiple_rv().
-
+> diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm/cpufeature.h
+> index ad7d26788e6a..8b97cba99fc3 100644
+> --- a/arch/riscv/include/asm/cpufeature.h
+> +++ b/arch/riscv/include/asm/cpufeature.h
+> @@ -69,12 +69,17 @@ int cpu_online_unaligned_access_init(unsigned int cpu);
+>  #if defined(CONFIG_RISCV_SCALAR_MISALIGNED)
+>  void unaligned_emulation_finish(void);
+>  bool unaligned_ctl_available(void);
+> +bool misaligned_traps_can_delegate(void);
+>  DECLARE_PER_CPU(long, misaligned_access_speed);
+>  #else
+>  static inline bool unaligned_ctl_available(void)
+>  {
+>  	return false;
+>  }
+> +static inline bool misaligned_traps_can_delegate(void)
 > +{
-> +	int ret, val;
-
-Here and everywhere else, the returned value by regmap is unsigned int.
-
-> +	struct bd79124_data *data = gpiochip_get_data(gc);
-> +
-> +	/* Ensure all GPIOs in 'mask' are set to be GPIOs */
-> +	ret = regmap_read(data->map, BD79124_REG_PINCFG, &val);
-> +	if (ret)
-> +		return;
-> +
-> +	if ((val & *mask) != *mask) {
-> +		dev_dbg(data->dev, "Invalid mux config. Can't set value.\n");
-> +		/* Do not set value for pins configured as ADC inputs */
-> +		*mask &= val;
-> +	}
-> +
-> +	regmap_update_bits(data->map, BD79124_REG_GPO_VAL, *mask, *bits);
+> +	return false;
 > +}
-
-...
-
-> +struct bd79124_raw {
-> +	u8 bit0_3; /* Is set in high bits of the byte */
-> +	u8 bit4_11;
-> +};
-> +#define BD79124_RAW_TO_INT(r) ((r.bit4_11 << 4) | (r.bit0_3 >> 4))
-
-And how this is different from treating it as __le16? Needs a good comment
-about bit layout.
-
-...
-
-> +static int bd79124_write_int_to_reg(struct bd79124_data *data, int reg,
-> +				    unsigned int val)
-> +{
-> +	struct bd79124_raw raw;
-> +	int ret, tmp;
-
-> +	raw.bit4_11 = (u8)(val >> 4);
-> +	raw.bit0_3 = (u8)(val << 4);
-
-Why casting?
-
-
-Make sense to have a symmetrical macro instead of hiding it in the code.
-
-> +	ret = regmap_read(data->map, reg, &tmp);
-> +	if (ret)
-> +		return ret;
+>  #endif
+>  
+>  bool check_vector_unaligned_access_emulated_all_cpus(void);
+> diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/traps_misaligned.c
+> index db31966a834e..a67a6e709a06 100644
+> --- a/arch/riscv/kernel/traps_misaligned.c
+> +++ b/arch/riscv/kernel/traps_misaligned.c
+> @@ -716,10 +716,10 @@ static int cpu_online_check_unaligned_access_emulated(unsigned int cpu)
+>  }
+>  #endif
+>  
+> -#ifdef CONFIG_RISCV_SBI
+> -
+>  static bool misaligned_traps_delegated;
+>  
+> +#ifdef CONFIG_RISCV_SBI
 > +
-> +	raw.bit0_3 |= (0xf & tmp);
-
-GENMASK() ?
-
-> +	return regmap_bulk_write(data->map, reg, &raw, sizeof(raw));
-> +}
-
-...
-
-> +		/*
-> +		 * The data-sheet says the hysteresis register value needs to be
-> +		 * sifted left by 3
-
-Missing period.
-
-> +		 */
-
-...
-
-> +	return (data->alarm_monitored[chan->channel] & BIT(dir));
-
-Unneeded parentheses.
-
-...
-
-> +	case IIO_EV_INFO_HYSTERESIS:
-> +		reg = BD79124_GET_HYSTERESIS_REG(chan->channel);
-> +		val >>= 3;
-
-Second time I see this. Perhaps you need a macro to explain this right shift?
-
-> +		return regmap_update_bits(data->map, reg, BD79124_MASK_HYSTERESIS,
-> +					  val);
-
-Can be one line.
-
-...
-
-> +static irqreturn_t bd79124_event_handler(int irq, void *priv)
-> +{
-> +	int ret, i_hi, i_lo, i;
-> +	struct iio_dev *iio_dev = priv;
-> +	struct bd79124_data *data = iio_priv(iio_dev);
+>  static int cpu_online_sbi_unaligned_setup(unsigned int cpu)
+>  {
+>  	if (sbi_fwft_set(SBI_FWFT_MISALIGNED_EXC_DELEG, 1, 0) &&
+> @@ -761,6 +761,7 @@ static int cpu_online_sbi_unaligned_setup(unsigned int cpu __always_unused)
+>  {
+>  	return 0;
+>  }
 > +
+>  #endif
+>  
+>  int cpu_online_unaligned_access_init(unsigned int cpu)
+> @@ -773,3 +774,15 @@ int cpu_online_unaligned_access_init(unsigned int cpu)
+>  
+>  	return cpu_online_check_unaligned_access_emulated(cpu);
+>  }
+> +
+> +bool misaligned_traps_can_delegate(void)
+> +{
 > +	/*
-> +	 * Return IRQ_NONE if bailing-out without acking. This allows the IRQ
-> +	 * subsystem to disable the offending IRQ line if we get a hardware
-> +	 * problem. This behaviour has saved my poor bottom a few times in the
-> +	 * past as, instead of getting unusably unresponsive, the system has
-> +	 * spilled out the magic words "...nobody cared".
+> +	 * Either we successfully requested misaligned traps delegation for all
+> +	 * CPUS or the SBI does not implemented FWFT extension but delegated the
+> +	 * exception by default.
 > +	 */
-> +	ret = regmap_read(data->map, BD79124_REG_EVENT_FLAG_HI, &i_hi);
-> +	if (ret)
-> +		return IRQ_NONE;
-> +
-> +	ret = regmap_read(data->map, BD79124_REG_EVENT_FLAG_LO, &i_lo);
-> +	if (ret)
-> +		return IRQ_NONE;
-
-Only I don't get why you can't use bulk read here.
-The registers seem to be sequential.
-
-> +	if (!i_lo && !i_hi)
-> +		return IRQ_NONE;
-> +
-> +	for (i = 0; i < BD79124_MAX_NUM_CHANNELS; i++) {
-> +		u64 ecode;
-> +
-> +		if (BIT(i) & i_hi) {
-> +			ecode = IIO_UNMOD_EVENT_CODE(IIO_VOLTAGE, i,
-> +						     IIO_EV_TYPE_THRESH,
-> +						     IIO_EV_DIR_RISING);
-> +
-> +			iio_push_event(iio_dev, ecode, data->timestamp);
-> +			/*
-> +			 * The BD79124 keeps the IRQ asserted for as long as
-> +			 * the voltage exceeds the threshold. It causes the IRQ
-> +			 * to keep firing.
-> +			 *
-> +			 * Disable the event for the channel and schedule the
-> +			 * re-enabling the event later to prevent storm of
-> +			 * events.
-> +			 */
-> +			ret = bd79124_event_ratelimit_hi(data, i);
-> +			if (ret)
-> +				return IRQ_NONE;
-> +		}
-> +		if (BIT(i) & i_lo) {
-> +			ecode = IIO_UNMOD_EVENT_CODE(IIO_VOLTAGE, i,
-> +						     IIO_EV_TYPE_THRESH,
-> +						     IIO_EV_DIR_FALLING);
-> +
-> +			iio_push_event(iio_dev, ecode, data->timestamp);
-> +			ret = bd79124_event_ratelimit_lo(data, i);
-> +			if (ret)
-> +				return IRQ_NONE;
-> +		}
-> +	}
-> +
-> +	ret = regmap_write(data->map, BD79124_REG_EVENT_FLAG_HI, i_hi);
-> +	if (ret)
-> +		return IRQ_NONE;
-> +
-> +	ret = regmap_write(data->map, BD79124_REG_EVENT_FLAG_LO, i_lo);
-> +	if (ret)
-> +		return IRQ_NONE;
-
-In the similar way bulk write.
-
-> +	return IRQ_HANDLED;
+> +	return misaligned_traps_delegated ||
+> +	       all_cpus_unaligned_scalar_access_emulated();
 > +}
+> +EXPORT_SYMBOL_GPL(misaligned_traps_can_delegate);
+> \ No newline at end of file
 
-...
+Check your editor settings.
 
-> +static int bd79124_chan_init(struct bd79124_data *data, int channel)
-> +{
-> +	int ret;
-> +
-> +	ret = regmap_write(data->map, BD79124_GET_HIGH_LIMIT_REG(channel), 4095);
+> -- 
+> 2.47.2
 
-BD79124_HIGH_LIMIT_MAX ?
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_write(data->map, BD79124_GET_LOW_LIMIT_REG(channel), 0);
-
-BD79124_HIGH_LIMIT_MIN ?
-
-> +}
-
-...
-
-> +	for (i = 0; i < BD79124_MAX_NUM_CHANNELS; i++) {
-> +		ret = bd79124_chan_init(data, i);
-> +		if (ret)
-> +			return ret;
-> +		data->alarm_r_limit[i] = 4095;
-
-As per above?
-
-> +	}
-
-...
-
-> +	gpio_pins = bd79124_get_gpio_pins(iio_dev->channels,
-> +					  iio_dev->num_channels);
-
-It may be a single line (84 characters).
-
-...
-
-> +static const struct i2c_device_id bd79124_id[] = {
-> +	{ "bd79124", },
-
-Redundant inner comma.
-
-> +	{ }
-> +};
-
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
