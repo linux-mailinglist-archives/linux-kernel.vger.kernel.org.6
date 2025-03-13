@@ -1,124 +1,134 @@
-Return-Path: <linux-kernel+bounces-560152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F95A5FEC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:03:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5495A5FEC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:05:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2C5416C76C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:03:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 874DE3BB997
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B491EBFE2;
-	Thu, 13 Mar 2025 18:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D641E8353;
+	Thu, 13 Mar 2025 18:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PIuuieoy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="DmnWTjLG"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C86218C937;
-	Thu, 13 Mar 2025 18:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FB215B0EF
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741889013; cv=none; b=YvkHnJPaV9tmTTgLKRlDfnJsglDBsPwnTAAjwzBwWHI31vSBeWphcXuIGhhLQwlpk3YE1g2/ZUKT4fqDK5IZUZm0nDs/FTvW6Gmd+hafsWMivokxL5KBYLa93ouaD/v3vp8bm4h1djelRpSQ4RwmuTeu8vfa0ZJ40393NUqBM4s=
+	t=1741889109; cv=none; b=ZvEKwSV/+P2hsd99y1pxwGSugdeZGsWR7qT3D/VQBs0AKwz87qJLNOnRGHVmm7wnxAbZiJJt4iBphpqr/QUpEYAFMjut/G33RWvAPQSaJK4k9apnHv14nmDXt188kx4Y0jFV/y1SsFVyv2ziT5cmDhVlEP+tfSEFICXvxHe6EOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741889013; c=relaxed/simple;
-	bh=vDUTFucENehaO2/dGws27eo3GkBWJKTnEa3Wd3e6NSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J40j6RRFEEqaxpQ4csX8DwBQ+niBWDhlMMNIgO2jzqVZDevsrxcbsb0BmJOk6tK9Vsq4LexjYMoGQiJsdb4TMFoFuFMjVTfEUucUbQQ3BEtGTutiApxQT9hCdAraOP3zRmfUPyxlIM9bkzjRY4s5KZMeyFq1Jptvcpvq9uiYyLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PIuuieoy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2902C4CEEA;
-	Thu, 13 Mar 2025 18:03:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741889012;
-	bh=vDUTFucENehaO2/dGws27eo3GkBWJKTnEa3Wd3e6NSo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PIuuieoy6ezhHOOiLjQtLrKmNN5YG0ilUYQQm8bcik750zk+PtW9ztnJtqL2Y7TAn
-	 WYK8YKuxS2RBW3yN3h4FmXoj/Wz+xyL399VPmpYllceyvmWfT0Kj48dIcE3v1oPDad
-	 Sqq+92I2Q+akBWvNcxM6UkZv2cBxgqaBdxOuHp1o14sFza2dTIa1ngxYVl2mEaVXJC
-	 V+8IdYPfbI+6Z8guPtx7XapUgmJIfBxkumeib2dBJy3N+j1xGREFAs6HrPCQGcKmt4
-	 u34m4Ykplgzr47t06U0st9WqONABxytd+I2Prtum4M7vp4Sq6gY1/AqV50pWhaLj8r
-	 ag1kJziDnVhEw==
-Date: Thu, 13 Mar 2025 11:03:32 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v6 09/13] xfs: add XFS_REFLINK_ALLOC_EXTSZALIGN
-Message-ID: <20250313180332.GY2803749@frogsfrogsfrogs>
-References: <20250313171310.1886394-1-john.g.garry@oracle.com>
- <20250313171310.1886394-10-john.g.garry@oracle.com>
+	s=arc-20240116; t=1741889109; c=relaxed/simple;
+	bh=viGHo9ETpG/2DHpXss2Awi+GjkBOpxh1L3SAnyML+kM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YYcn1xOJ58BgUGNTwC6/D+JuNgUWlYRY5gdDC7WP4hpE3AU1L+whF9dbbMXkBk3+ZhX9pqvbfICvA+PE69fD0yZyG6bh1zqY6HhRwyFRnfvigl1UFtZPPGoK6/p5GrWYrKtPTwBa4DcOYQnHGWzt63RNiTQLPVPQ8P2QLcUdiAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=DmnWTjLG; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741889098; x=1742148298;
+	bh=9b03ylqnCWBlZqF6+aU54k6mZhdi9vmbjM7AV8/K78g=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=DmnWTjLG1qtcBMXLMjHOST55G3FQ8b+VId9W82uRiF1LHBZII7ZOv5t2IsQyBlwlC
+	 f7onev26XCGLCtLhhW6tFO0JwVG7fihCF2MzvD8+ijbGXRdK/vPqUSCKnfdE85l6dR
+	 cI0wrNbC7VIDQHryO4fF1JJI6cb0Yejk4LAr3BjT1IKxrd43fnFrR778LZHnweW/z8
+	 MGubxSfNlw/fjPLi2mhL+ykRz/dUXwqH5xo5j8a1ysrSuTjArW67AgX4l5//wYPmVn
+	 DxjbCMRIADSaeAIliXlR2kSrT+5Cv0tdpzkDEZjbDDddAK57XVyGp6DMjjrLGnUCPd
+	 JTxskY6uEQ3gA==
+Date: Thu, 13 Mar 2025 18:04:54 +0000
+To: Rahul Rameshbabu <sergeantsagara@protonmail.com>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-input@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH RFC 0/3] Initial work for Rust abstraction for HID device driver development
+Message-ID: <D8FC5C8BR1Q4.16X95BO48L6WF@proton.me>
+In-Reply-To: <20250313160220.6410-2-sergeantsagara@protonmail.com>
+References: <20250313160220.6410-2-sergeantsagara@protonmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: bd99d68b154b7741299e49349e3cb3b15723c133
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313171310.1886394-10-john.g.garry@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 13, 2025 at 05:13:06PM +0000, John Garry wrote:
-> Add a flag for the xfs_reflink_allocate_cow() API to allow the caller
-> indirectly set XFS_BMAPI_EXTSZALIGN.
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
+On Thu Mar 13, 2025 at 5:02 PM CET, Rahul Rameshbabu wrote:
+> Hello,
+>
+> I am a hobbyist developer who has been working on a project to create a n=
+ew Rust
+> HID device driver and the needed core abstractions for writing more HID d=
+evice
+> drivers in Rust. My goal is to support the USB Monitor Control Class need=
+ed for
+> functionality such as backlight control for monitors like the Apple Studi=
+o
+> Display and Apple Pro Display XDR. A new backlight API will be required t=
+o
+> support multiple backlight instances and will be mapped per DRM connector=
+. The
+> current backlight API is designed around the assumption of only a single
+> internal panel being present. I am currently working on making this new A=
+PI for
+> DRM in parallel to my work on the HID side of the stack for supporting th=
+ese
+> displays.
+>
+>   https://binary-eater.github.io/tags/usb-monitor-control/
+>
+> Julius Zint had attempted to do so a year ago with a C HID driver but was=
+ gated
+> by the lack of an appropriate backlight API for external displays. I aske=
+d him
+> for permission to do the work need in Rust and plan to accredit him for t=
+he HID
+> report handling for backlight in the USB Monitor Control Class standard.
+>
+>   https://lore.kernel.org/lkml/f95da7ff-06dd-2c0e-d563-7e5ad61c3bcc@redha=
+t.com/
+>
+> I was hoping to get initial feedback on this work to make sure I am on th=
+e right
+> path for making a Rust HID abstraction that would be acceptable upstream.=
+ The
+> patches compile with WERROR being disabled. This is necessary since Rust =
+treats
+> missing documentation comments as warnings (which is a good thing). I als=
+o need
+> to go in and add more SAFETY comments.
+>
+> Thanks,
+> Rahul Rameshbabu
+>
+> Rahul Rameshbabu (3):
+>   rust: core abstractions for HID drivers
+>   rust: hid: USB Monitor Control Class driver
+>   rust: hid: demo the core abstractions for probe and remove
+>
+>  drivers/hid/Kconfig                |  16 ++
+>  drivers/hid/Makefile               |   1 +
+>  drivers/hid/hid_monitor_control.rs |  42 +++++
+>  rust/bindings/bindings_helper.h    |   1 +
+>  rust/kernel/hid.rs                 | 245 +++++++++++++++++++++++++++++
+>  rust/kernel/lib.rs                 |   2 +
+>  6 files changed, 307 insertions(+)
+>  create mode 100644 drivers/hid/hid_monitor_control.rs
+>  create mode 100644 rust/kernel/hid.rs
 
-Looks pretty straightforward to me...
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+I have taken a very quick look and haven't seen any big problems,
+there are some minor things, but not worth mentioning for an RFC.
 
---D
+---
+Cheers,
+Benno
 
-> ---
->  fs/xfs/xfs_reflink.c | 8 ++++++--
->  fs/xfs/xfs_reflink.h | 2 ++
->  2 files changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
-> index 690b1eefeb0e..9a419af89949 100644
-> --- a/fs/xfs/xfs_reflink.c
-> +++ b/fs/xfs/xfs_reflink.c
-> @@ -444,6 +444,11 @@ xfs_reflink_fill_cow_hole(
->  	int			nimaps;
->  	int			error;
->  	bool			found;
-> +	uint32_t		bmapi_flags = XFS_BMAPI_COWFORK |
-> +					      XFS_BMAPI_PREALLOC;
-> +
-> +	 if (flags & XFS_REFLINK_ALLOC_EXTSZALIGN)
-> +		bmapi_flags |= XFS_BMAPI_EXTSZALIGN;
->  
->  	resaligned = xfs_aligned_fsb_count(imap->br_startoff,
->  		imap->br_blockcount, xfs_get_cowextsz_hint(ip));
-> @@ -477,8 +482,7 @@ xfs_reflink_fill_cow_hole(
->  	/* Allocate the entire reservation as unwritten blocks. */
->  	nimaps = 1;
->  	error = xfs_bmapi_write(tp, ip, imap->br_startoff, imap->br_blockcount,
-> -			XFS_BMAPI_COWFORK | XFS_BMAPI_PREALLOC, 0, cmap,
-> -			&nimaps);
-> +			bmapi_flags, 0, cmap, &nimaps);
->  	if (error)
->  		goto out_trans_cancel;
->  
-> diff --git a/fs/xfs/xfs_reflink.h b/fs/xfs/xfs_reflink.h
-> index f4115836064b..0ab1857074e5 100644
-> --- a/fs/xfs/xfs_reflink.h
-> +++ b/fs/xfs/xfs_reflink.h
-> @@ -13,6 +13,8 @@
->  #define XFS_REFLINK_CONVERT_UNWRITTEN		(1u << 0)
->  /* force a new COW mapping to be allocated */
->  #define XFS_REFLINK_FORCE_COW			(1u << 1)
-> +/* request block allocations aligned to extszhint */
-> +#define XFS_REFLINK_ALLOC_EXTSZALIGN		(1u << 2)
->  
->  /*
->   * Check whether it is safe to free COW fork blocks from an inode. It is unsafe
-> -- 
-> 2.31.1
-> 
-> 
 
