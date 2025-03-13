@@ -1,199 +1,153 @@
-Return-Path: <linux-kernel+bounces-560373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F7D7A60343
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:11:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F93A60345
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:11:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCD213AF0C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:10:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B18853B00ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFAA1F4CB0;
-	Thu, 13 Mar 2025 21:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E6F1F4CA5;
+	Thu, 13 Mar 2025 21:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ReEIlaHG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GhC8ko50"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C851D63C0;
-	Thu, 13 Mar 2025 21:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E401F03E5;
+	Thu, 13 Mar 2025 21:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741900236; cv=none; b=Ydr+04Od1+tzkiiGKopKMhUV+O+3rsTTTHZC10YVUn7ZMMqyiutxlVFCYEIVCP0eQqObDXAsWG+x44btATPYmB+JSLxs1/LvZR8vtNa4NJvcrOVss+uRNC81/o2R4voDTepc3vbnDdvbrRm8EAwiRUjx2fA5kRSEC7K8zJkVZGw=
+	t=1741900268; cv=none; b=sFkpVxUSC1TjJ6QjSFS4UsJzxm3hbJ5sN/asy4vzDwq082+uS9cdGp4SDk/pR1QkUYhQJVJTWXy73oOh/QAJNbMDQDgaFaEVXj6GjvripfkvoZJ5FnNjs1G/vXWjoJwDdCnoNIU0myHbIju8MMeMrqXANv6CsEzHIOuTbZkby54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741900236; c=relaxed/simple;
-	bh=ROM3SdFIzgvkI1IS6srM22blKUbcX+5wtdU4dr8hSI8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LqpMBvJGlxoeP1CLRGhkFWUvOiVNe0TIvpp/ni9O/2pt1DCGPlw6zWcNAHhZmQm6hYyNboYjNNxmCz7y4uTzTBKhQDculZPTLcEk9JWD28DZJ3W1jdaac/BpPWTEajsiNIl6vpMyDmFbzbBgeEtjSpKtaW3Tfjsx+2ikyL+EhC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ReEIlaHG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DAAW6n009842;
-	Thu, 13 Mar 2025 21:09:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	A0iiiEsDajgMqBQFp2JjpICx9bPSEbZxDCtl8PcArW0=; b=ReEIlaHGHDlFxI3c
-	GRteMTaOkqrj5u6hXJI1Reh9LOlmtfic1+tU+U790URJpGP4BoDZ8yKP2XlKN2tG
-	cY3R5xOYJDdx2LIHSBHU1iqDyX5MAx2eUemErTOgPSPOsvVHwqE5NTFSDGvD4OE5
-	pKgT6C/vbWpC8IhRhYSFMXJ2+6Ih/7qxEYHEtl+9vloUjH0tWM3xDfxTBcpBvGqA
-	w08g53tJNB+V3c+cNBqY3/Ud8LJprJTb5NKBcywL3pmyZShZDrMWzQoBtact6aVi
-	rGhpgup28pIPYm15AaUqt3l83gKnep+d36qMzn7Kb2gAylSgJ/n4sJOkB3IZWVbs
-	18NP5w==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2rf5p3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 21:09:42 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52DL9fOg009554
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 21:09:41 GMT
-Received: from [10.46.162.103] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
- 2025 14:09:40 -0700
-Message-ID: <f45667a0-d629-a150-2b9f-db11f03a9833@quicinc.com>
-Date: Thu, 13 Mar 2025 14:09:32 -0700
+	s=arc-20240116; t=1741900268; c=relaxed/simple;
+	bh=6HZ2YTMBpk/Q9Cg8wMOfmtmm0pvwEds6k6sTnkPON2s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=udp8TdDmIt64b3/YH68H+btntTfk/15+YtQzzSiKhEWl4KkKy5la0kuLwZrKh2W1eaiAzbNoiGk/H7aqpW8EXq6ey2BTI/JB8rSAbsyEZ6d+mo2Z35NTbwlLr3zWSeSBiPoiWzOqthdw6hBIKfh+5Xoz5l4hPjTpzqKgye4tHBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GhC8ko50; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso13258335e9.3;
+        Thu, 13 Mar 2025 14:11:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741900265; x=1742505065; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6HZ2YTMBpk/Q9Cg8wMOfmtmm0pvwEds6k6sTnkPON2s=;
+        b=GhC8ko50bmOwm7z6sm41CFGIc80Ar7zmM2eq+nyPQfK8ZXjczJEqNzC+2qbq7JiAYl
+         4fGic7DYJtVuSwBC+c6pH0A4I8FN+XXqj/1GZ8NaKK1oROtZ6hGRVPAkxlP3gV49jc4z
+         tfxqbw6z/n4JFfVkB+uPdnUV0JAKx5BmI2YqXVZk2csD+41wFpgrWKFofHRRLIpQR42R
+         Fqr8hNkVT2vhBXMDux1fV9sS4YZJREIlYWM/M4IwllDQaPD2sH0sEvWbVRmyWmGGCk6W
+         wrqguYnHGhAr1AzHprx0NJNEaLPIHnsZUjn/WnZ4edzvz0mcbp1tqfsokpi2cAqU3uSq
+         J3oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741900265; x=1742505065;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6HZ2YTMBpk/Q9Cg8wMOfmtmm0pvwEds6k6sTnkPON2s=;
+        b=CEAYKQ1MtylUvLiJuxxj/QxMLqeQMiv6BchZdaow8TuGKwE9PKLDCaiCJOLqvLJEpX
+         phrJ7pY9arLCclae340HUIdiknSNqMISYeS+i3+/h2E5/21ScTBkLSpxwKnOwqcy4hYR
+         0TYjDM+7OGqK2AibTlSPl5ii2wnryV0+FHFrQcctiQmnOlzFQZwZRcaF9Kxqu3Ss+UY6
+         lcSCZvNV/F+1pVn5ihdjlV0YPjreqZEUnHLxkpwrR/oDMHHxhyMYmiA87eP7yam5FXEj
+         45zgspFymSDuDYkUm8cijoSntkW51HCLEu3E+hFzqDh6TIoMA8+w36xbHPK4Z3YcoEhy
+         +n9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVtrxzt3KRBM6/6OXHGujUqgX/smf/w1NmTwonipCfmV61+P12iQEhkzERqc00EN6TGDevYLI0QhisYVVDZ@vger.kernel.org, AJvYcCW/hkaM36/iwZvH2hE381FWUG/P2nTWrrxGH92GmAXwDhzCt9YD2d4PBKcuf2O3JFfcdPtfBI152tY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkwEkDxoSBvQ2sa1St93i4CiXSu9MpURfy8SDwSUZc1sOec1yK
+	thCDYklXQhmPvtP6Sk8IdtM7Ku2Uw6vW1qmOLL64HZai7wvHW6cDoB5aLlC5RuU=
+X-Gm-Gg: ASbGncupyRYx4Dx0YXudtth3Yom5jClJ/hxngdSFvhfVGLCKyzlPW/tSVX5g3U61b+9
+	n/Og87nlDBqVy1Big5KMBDJ7XA9GPNTCPOnN/0cMDO+XlpJDt+1kKodSb7+E6vMU1sTa6W2LFO6
+	ZDYAOgCjXWEfWyVvjgtJvBg4bXYy+vDBpTYnjDQOZT6ymEbTzzuETSwhjvzlIbami7xui4Q+815
+	89U3ku08gj6QTLpLDLYqFPNZ7uc7shGTgbRoKN0/IZzpWHfg8FjrSiND4FkKNydiwRe+7B44z25
+	BGLHsIzep9o1dyquy412HY1hGQynm1phbOmumqP4vgVzp0eP5U43IEvFSGYNIVLVTg5HXul3IQc
+	IScGnM9An9GlAohKteCyONPz63Hp4iw==
+X-Google-Smtp-Source: AGHT+IFv+4Q/bw1LQKXtxs7Pd7TKMGokY73iqxAJMGTQJKKytpl/jgQinttGOfHBkAV5D2IK/Otx6Q==
+X-Received: by 2002:a05:600c:1c01:b0:43c:fe5e:f03b with SMTP id 5b1f17b1804b1-43d1ed06ae9mr1053265e9.30.1741900264416;
+        Thu, 13 Mar 2025 14:11:04 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d18a2aab1sm32176615e9.31.2025.03.13.14.11.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 14:11:03 -0700 (PDT)
+Message-ID: <111613449ea7effdcbea1c987c66f927182d8395.camel@gmail.com>
+Subject: Re: [PATCH 00/11] iio: adc: ad7606: improvements and ad7606c
+ parallel interface support
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
+ <jic23@kernel.org>,  linux-iio@vger.kernel.org
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Angelo Dureghello
+ <adureghello@baylibre.com>, Alexandru Ardelean <aardelean@baylibre.com>, 
+ Beniamin Bia <beniamin.bia@analog.com>, Stefan Popa
+ <stefan.popa@analog.com>, linux-kernel@vger.kernel.org
+Date: Thu, 13 Mar 2025 21:11:19 +0000
+In-Reply-To: <20250312-iio-adc-ad7606-improvements-v1-0-d1ec04847aea@baylibre.com>
+References: 
+	<20250312-iio-adc-ad7606-improvements-v1-0-d1ec04847aea@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v1 1/1] scsi: ufs: core: add device level exception
- support
-Content-Language: en-US
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: <quic_cang@quicinc.com>, <quic_nitirawa@quicinc.com>, <bvanassche@acm.org>,
-        <avri.altman@wdc.com>, <peter.wang@mediatek.com>,
-        <minwoo.im@samsung.com>, <adrian.hunter@intel.com>,
-        <martin.petersen@oracle.com>, <linux-scsi@vger.kernel.org>,
-        Alim Akhtar
-	<alim.akhtar@samsung.com>,
-        "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>,
-        Bean Huo <beanhuo@micron.com>,
-        "Ziqi
- Chen" <quic_ziqichen@quicinc.com>,
-        Keoseong Park <keosung.park@samsung.com>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Eric Biggers <ebiggers@google.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <772730b9a036a33bebc27cb854576a012e76ca91.1741282081.git.quic_nguyenb@quicinc.com>
- <20250313172826.xzqkrx5rzuqpvz7j@thinkpad>
-From: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
-In-Reply-To: <20250313172826.xzqkrx5rzuqpvz7j@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=D6NHKuRj c=1 sm=1 tr=0 ts=67d34996 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=yC2W1mGafNBLVvU0_wwA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: V-EFZZvFL1VdnoHenuuF24dEpuL-G_5T
-X-Proofpoint-ORIG-GUID: V-EFZZvFL1VdnoHenuuF24dEpuL-G_5T
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_10,2025-03-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- priorityscore=1501 mlxscore=0 spamscore=0 lowpriorityscore=0 phishscore=0
- adultscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015 impostorscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130163
 
-On 3/13/2025 10:28 AM, Manivannan Sadhasivam wrote:
->> +
->> +What:		/sys/bus/platform/drivers/ufshcd/*/device_lvl_exception
->> +What:		/sys/bus/platform/devices/*.ufs/device_lvl_exception
->> +Date:		March 2025
->> +Contact:	Bao D. Nguyen <quic_nguyenb@quicinc.com>
->> +Description:
->> +		The device_lvl_exception is a counter indicating the number
->> +		of times the device level exceptions have occurred since the
->> +		last time this variable is reset. Read the device_lvl_exception_id
->> +		sysfs node to know more information about the exception.
->> +		The file is read only.
-> 
-> No. This attribute is RW and the write of 0 will reset the counter. Please
-> change it here and also in commit message.
-> 
-> Also document the spec version requirement for these attributes.
-> 
-Thank you Mani. I will make corrections.
+On Wed, 2025-03-12 at 20:15 -0500, David Lechner wrote:
+> The main purpose of this series is to add support for the AD7606C chips
+> using a parallel interface. Along the way quite a few improvements were
+> made to the driver which in the end made adding the additional chips
+> trivial.
+>=20
+> The first 3 patches are fixes. The next 6 are some minor cleanups. The
+> 2nd to last patch is the big one. As explained in the respective commit
+> message, the channel data structures were getting out of hand and only
+> going to get worse with the addition of SPI offload support. Instead, we
+> are opting to dynamically allocate the channel data structures to avoid
+> a bunch of the existing complexity in the driver.
+>=20
+> I have limited access to hardware, so I was only able to test this with
+> ad7606c-18.
+>=20
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
 
->> +
->> +What:		/sys/bus/platform/drivers/ufshcd/*/device_lvl_exception_id
->> +What:		/sys/bus/platform/devices/*.ufs/device_lvl_exception_id
->> +Date:		March 2025
->> +Contact:	Bao D. Nguyen <quic_nguyenb@quicinc.com>
->> +Description:
->> +		Reading the device_lvl_exception_id returns the device JEDEC
->> +		standard's qDeviceLevelExceptionID attribute. The definition of the
->> +		qDeviceLevelExceptionID is the ufs device vendor specific design.
->> +		Refer to the device manufacturer datasheet for more information
->> +		on the meaning of the qDeviceLevelExceptionID attribute value.
->> +		The file is read only.
->> diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
->> index 90b5ab6..0248288a 100644
->> --- a/drivers/ufs/core/ufs-sysfs.c
->> +++ b/drivers/ufs/core/ufs-sysfs.c
->> @@ -466,6 +466,56 @@ static ssize_t critical_health_show(struct device *dev,
->>   	return sysfs_emit(buf, "%d\n", hba->critical_health_count);
->>   }
->>   
-> 
-> [...]
-> 
->> +int ufshcd_read_device_lvl_exception_id(struct ufs_hba *hba, u64 *exception_id)
->> +{
->> +	struct utp_upiu_query_response_v4_0 *upiu_resp;
->> +	struct ufs_query_req *request = NULL;
->> +	struct ufs_query_res *response = NULL;
->> +	int err;
->> +
->> +	if (hba->dev_info.wspecversion < 0x410)
->> +		return -EOPNOTSUPP;
->> +
->> +	ufshcd_hold(hba);
->> +	mutex_lock(&hba->dev_cmd.lock);
->> +
->> +	ufshcd_init_query(hba, &request, &response,
->> +			  UPIU_QUERY_OPCODE_READ_ATTR,
->> +			  QUERY_ATTR_IDN_DEV_LVL_EXCEPTION_ID, 0, 0);
->> +
->> +	request->query_func = UPIU_QUERY_FUNC_STANDARD_READ_REQUEST;
->> +
->> +	err = ufshcd_exec_dev_cmd(hba, DEV_CMD_TYPE_QUERY, QUERY_REQ_TIMEOUT);
->> +
->> +	if (err) {
->> +		dev_err(hba->dev, "%s: failed to read device level exception %d\n",
->> +			__func__, err);
->> +		goto out;
->> +	}
->> +
->> +	upiu_resp = (struct utp_upiu_query_response_v4_0 *)response;
->> +	*exception_id = get_unaligned_be64(&upiu_resp->value);
->> +
->> +out:
->> +	mutex_unlock(&hba->dev_cmd.lock);
->> +	ufshcd_release(hba);
->> +
->> +	return err;
->> +}
->> +EXPORT_SYMBOL_GPL(ufshcd_read_device_lvl_exception_id);
-> 
-> There is no need to export this function.
->
-I will make the correction.
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
-> - Mani
-> 
+> David Lechner (11):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7606_spi: check error in ad760=
+6B_sw_mode_config()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7606: check for NULL before ca=
+lling sw_mode_config()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7606: fix scales_available att=
+ributes
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7606: add missing max sample r=
+ates
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7606: use devm_mutex_init()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7606: fix kernel-doc comments
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7606: use kernel identifier na=
+me style
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7606: don't use address field
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7606: drop ch param from ad760=
+6_scale_setup_cb_t
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7606: dynamically allocate cha=
+nnel info
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7606_par: add ad7606c chips
+>=20
+> =C2=A0drivers/iio/adc/ad7606.c=C2=A0=C2=A0=C2=A0=C2=A0 | 313 ++++++++++++=
+++++++++-----------------------
+> =C2=A0drivers/iio/adc/ad7606.h=C2=A0=C2=A0=C2=A0=C2=A0 | 171 +++++++-----=
+-----------
+> =C2=A0drivers/iio/adc/ad7606_par.c |=C2=A0 37 +----
+> =C2=A0drivers/iio/adc/ad7606_spi.c |=C2=A0 98 ++------------
+> =C2=A04 files changed, 211 insertions(+), 408 deletions(-)
+> ---
+> base-commit: 97fe5f8a4299e4b8601ecb62c9672c27f2d2ccce
+> change-id: 20250311-iio-adc-ad7606-improvements-997d7af218e3
+>=20
+> Best regards,
 
 
