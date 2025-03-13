@@ -1,151 +1,138 @@
-Return-Path: <linux-kernel+bounces-559065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96261A5EF0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:09:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4C1A5EF13
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:09:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0939B3AB433
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:08:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33ACF19C08F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF330264FBB;
-	Thu, 13 Mar 2025 09:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334A8264608;
+	Thu, 13 Mar 2025 09:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b4QRz7V6"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wgzPQA3h"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355C5263F31;
-	Thu, 13 Mar 2025 09:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AED2641E5
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741856899; cv=none; b=dntR7IpYoHOqnj8mOpufFhxx+8rVUqEjQT8TBDpOeOo66kW6/5buoVswhJcTCCA8ZQ6YN10lA3484KoWA3sE3d79T1v+4WTvaPou5ZmXV2uuEZeyDO5MfeE3wGUv+c1qi5OwXwnt9NF/zXQi7VqIMvEvyveTkUx3P0Is/INhr8s=
+	t=1741856913; cv=none; b=cusgGzkkyMkPH0cHvzcmZ766YwwQX4n/+uKU873WoBpC5AWLi9hKMdqQ0EgOJVN2FNGfXTnbTyeqrZ8GPD/0HHiNDmZ+ZYWTvTww9VAk2uY11GUtzahHh+c5yqH5kmlkwxY9y+Wt3uilIPKejoiQLlrWMbFv4k3ABgwZgPkOoHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741856899; c=relaxed/simple;
-	bh=Y46uAjc2WwsYW0kvpCtRMIkFelQx1ayGujrqPyP8wFw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rkSBQJuGEmcitUljNHYTx8E3k0f7MAjJGdg0YDOVOTzSb2sLPgESpM0JC1cyZha9yjr8u6gOm4CTJ+orE2MtetgiEhDHffoB5Ntz2QX42Pxo4kuAfOY1I+74X7OvnPLOjbtHF0QYUz/KzbSSuTj3gxCmh7pgE1yizfhIatBk72s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b4QRz7V6; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso3779835e9.2;
-        Thu, 13 Mar 2025 02:08:15 -0700 (PDT)
+	s=arc-20240116; t=1741856913; c=relaxed/simple;
+	bh=PbxNz4j52RrqJPz3GT+LV4bF8qpe/4u+tr9NI95kvIA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WHohFMeJrJkzbec442fOC751p1ZQw8EMjMtm4Pz9JPyzaAfourcOB9yshOmeIuEnYXrS4UffwuCTvyKFTVcRmqRVZ7LxrIt8BFk53ydQAvDjmFzsk1lIQYNrWXoOQNsaiABMKL+fc12dPUpxjTFLKGQYdLaUSdH3XjgtfyHOAiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wgzPQA3h; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3912b75c0f2so31399f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 02:08:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741856894; x=1742461694; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qq8chwA6KqjCz+471khnFvPik6MocooRpqaoLoCyprM=;
-        b=b4QRz7V65Kl19ymt5Ju6lb4Yck6QCXLx7hB5NJCwAg8i6CFvlDEIWlWTOvpfnYTvTk
-         1ED/dZK8Tk2FH0Z4+Xg2dra+1tuLJ6/zooPjEqKb2Az7aIO7v5zWqL+VO/wrLHmJBtvk
-         O7OCprWC/3JWMTjwK/+mXY185IljtfJu6FTHLHnK7XNSJkyzbo85S3YN18Z+QXjgdQiG
-         l6ZYt8rFHhq8Nz9kS2XGSE+00RFKrQiRTCYDV0jqJUvidCUsii97x7SjA23Iublx90+h
-         81RuE7wOoTUJ++EkD3iLLWB49wcXMyiRpM3OqFl4Nw5+9gpfO1Vu50bKfavwthDQVCnT
-         bqBA==
+        d=linaro.org; s=google; t=1741856909; x=1742461709; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zn1R+ATmllHTaRGwoGw1k9ifxjjFI13zCAnW3ZbN+Lc=;
+        b=wgzPQA3hc7pjyxw1zYkpD0WCSoapMWYjrJBI+Y6WI/k9X5V1VJStS7kv7NaI9W8Ekv
+         fURVQiK2LWNI/OKQOs9fi1B3iUDP8udB1oJvnWbfdta+5h3upi4nWt2t4Kz7WMDaOGJu
+         S8LF3IGdS+84C7zU5QREFduh2DU5cjgDa9NEVYRNBypnUEspBndLe/jMm53DZdZDFZCu
+         UvE4Q9GujOjFOTZjiZpjzPtOVEAzqzZ6dD5vPJVNnVN0a81JQRHGwagMOtCzLJbVar1/
+         41qaa8aUB37TspDzOaQAUgb5R6v4fE4r/1rUoBwtL6yM3lGN6NCh8JYnDc4kLMmSic/X
+         oFVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741856894; x=1742461694;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qq8chwA6KqjCz+471khnFvPik6MocooRpqaoLoCyprM=;
-        b=vJEsmbyao1Fz5A8SFvvYfJCxQY6u5DzkMErDWq3xULRKLLTYZwIffDpXeD1dOko5H/
-         +yokKuVdeiPJmUky8VtonBfgdQkLTdvBrnIJiPQcHkDH4WD09WHGzbEuHit4KrOKp0Fv
-         69BgheJlGJI+YjUWuHz6/z8/6Bo+XqTR27Kr8XaRyc7VZabxLMtSsJTEHE7rn1JuFU5Z
-         WmPNkb6ZMcxpnVgcsxmOHlEdXPUktVq3skVd1wfrN595cVPW//yGH0J2OnAf1fu1Wd50
-         74Tl//ueTeSGl6ZCiaY/iA4KGw3Fd0ZvZ29TWfkLJ0dFc0WOwCA3T/unGYAhpGb0Oyz9
-         VbHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLrk7jZzf6cpEP6Sg4ITa6qcQ+W9g3zqpDCCzdCs47Nm9N9QX4jdezgt9sHm/s902DAcVDIoiw@vger.kernel.org, AJvYcCWuwmJxbILG1qpFtQtI6Ht4OKjW0C1IhKnUiQO/dEnnkedYduNsNuSyN/TB8CKQrZafWcWBaHVq/i4EJA==@vger.kernel.org, AJvYcCXxojT443RBH6RtYikP9Y0qxlgY5MmAoK57H1GS+XlMF5V/OjLYO6pj62Zc5/+24VzZLjO0B6AJhtt1Mpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLgZxdrDOkdBn9Q+D9/vUc0GAMBLL4Ba/PQ1N0sEJNmO9y9xd4
-	PGsY0qz02mKaQHSwfKJGpgnkj1g8IVeXdHOY20hgagsv5PNfEiOI
-X-Gm-Gg: ASbGnctJwfICNHzv+NKO6y315gexSeM2g6qb2EW2dXnUAv8665+HRIMkeQkpwUNWasN
-	JJ0OBxEAZ6wLyVbi4OPSwHxk9SISwozicjLoS08209I6q7vc0jHJU5RczRH56PiLQfIx+Tu84hC
-	BrKYJC0A67BSACYeCkGSG5cBJn5diC+T7gHPCIPBpZ6IxYSEQ2BQwEQEHfeFNvj1GlyqzjkxaB5
-	HhX9RskrhOHFcK//tnWB1k7qY+6NXiw4/j3bsfEmbXaf0nuNDKWHmg8H5e/kynGL0rcDPZBpH11
-	kAtVsB3ZrO1UwL5t6xOBSIDqC5b44GM6+SWto0bnI7292E6pomcE+fBJyNeJatsP1Q==
-X-Google-Smtp-Source: AGHT+IEx/vxoywpLDtliIf06LUvxQQPA669OYg9JK8g+lJBkZEhkeL9LDTGRU2nz7ga7JcF45nzaAw==
-X-Received: by 2002:a05:600c:1d1d:b0:43c:f8fc:f687 with SMTP id 5b1f17b1804b1-43d01c25c75mr90143395e9.27.1741856893725;
-        Thu, 13 Mar 2025 02:08:13 -0700 (PDT)
-Received: from [172.27.56.126] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a73127esm47706005e9.8.2025.03.13.02.08.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 02:08:13 -0700 (PDT)
-Message-ID: <a26fd105-deae-4efd-8d77-d5d9e0cac13a@gmail.com>
-Date: Thu, 13 Mar 2025 11:08:08 +0200
+        d=1e100.net; s=20230601; t=1741856909; x=1742461709;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Zn1R+ATmllHTaRGwoGw1k9ifxjjFI13zCAnW3ZbN+Lc=;
+        b=qxxVOXzB6l/G4joOr0QkCctumU/sUxCMz6wZDEfszhArhREuaPNqsdM40jzuryf2Xq
+         SJgf7Yx0RJ1DNXfaUHEFjiIoow94nWB4pPRLywSHfjy9rCgX/OtAC6mQNx/T3sYGWE3G
+         0Faxv1/1NSYLbG5vx1bTfXs0R2JujerTNIxOl2Or0kazjE/SK1X215YmepCIrM2aXziQ
+         kUn3oTIzFbfqJQDDoZht1B/7y7+aqLae6rzeaQJXofijYT689hoGXrlNRrZ81aEGKvS5
+         6/NQow6zPHLjqLbA8if8YpxRohE6bOhedXJqy2nVLcgL91nGiYfe88PmSqlpyeNwxH5n
+         o/zg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvibpa2/G9WN3d8nPpPkZ/OnBD9Q+qzRIQQj1dMJoTS+kNDcGrWqPzYcz7SBLfmlSL7X4P4ESuAzEcE7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd1ROolhPha5nYOhjbGMVEbpA+X4Vg4lgAbwM7nP3fWxmrV3HI
+	9Ruwe8f2i1f3OZNf9CUvXLO5oLK+m3W0fmtibqxkf9D191ToiQfThnMPrehfl50=
+X-Gm-Gg: ASbGncvUQL8WOknAacdxskTuvusSbGYU5AVf/Gtd03nrw78g7adlq+x69DdOeE1+OlW
+	L4KlETBqiy9+GlfA6tNdF0S2tY3HbPuGOYg0zE7K7iLwIM0dBe7MruvsiJ9n0zFgrR7vTIbul2Q
+	LX2WVbANTsgJ866squcGgCwIg+x77onVqoNqLjrsuQhXMQBWrbD//2M3NLMXcTsRmpw5dCDRhN6
+	zZEzxUeuE2mKarDvadsGpMshb7fz5k64PxBbDbn8C/3X8NL1AZI0rgsjx9jQ0Dhn/bwJIutUhID
+	PKfUDI/eQDlUUJcwA6ITvePgqO5TGpXCZbvm8oBEYvpJLoF2sVhWee7MOOhakkGqGgUqvw==
+X-Google-Smtp-Source: AGHT+IFoNWWC1jaAyf8PqpUOd5VBK1Mdfej/CVTPRp+XRscWnB9HJyYphIssmDKBjrAxKD2HrwinzA==
+X-Received: by 2002:a05:6000:1b92:b0:394:d0c3:da7a with SMTP id ffacd0b85a97d-394d0c3dbb3mr897240f8f.3.1741856909510;
+        Thu, 13 Mar 2025 02:08:29 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.198.86])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb40cd78sm1414706f8f.78.2025.03.13.02.08.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 02:08:28 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/3] dt-bindings: cpufreq: cpufreq-qcom-hw: Few
+ improvements
+Date: Thu, 13 Mar 2025 10:08:19 +0100
+Message-Id: <20250313-dt-bindings-cpufreq-qcom-epss-v1-0-62b0f96ba888@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [pull-request] mlx5-next updates 2025-03-10
-To: Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>
-Cc: patchwork-bot+netdevbpf@kernel.org, davem@davemloft.net,
- edumazet@google.com, andrew+netdev@lunn.ch, leon@kernel.org,
- saeedm@nvidia.com, gal@nvidia.com, mbloch@nvidia.com, moshe@nvidia.com,
- linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, leonro@nvidia.com, ychemla@nvidia.com,
- Tariq Toukan <tariqt@nvidia.com>
-References: <1741608293-41436-1-git-send-email-tariqt@nvidia.com>
- <174168972325.3890771.16087738431627229920.git-patchwork-notify@kernel.org>
- <9960fce1-991e-4aa3-b2a9-b3b212a03631@gmail.com>
- <20250312212942.56d778e7@kernel.org>
- <f30ee793-6538-4ec8-b90d-90e7513a5b3c@gmail.com>
- <2ff2d876-84b4-4f2f-a8cc-5eeb0affed2b@redhat.com>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <2ff2d876-84b4-4f2f-a8cc-5eeb0affed2b@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIOg0mcC/x3MwQ5EMBAA0F+ROZuEsg1+Rfag7ZQ5qOpYkYh/1
+ +zxXd4NQolJYChuSHSy8BYy6rIAu0xhJmSXDapSn6qpG3QHGg6Owyxo488n2nG324oURbCfjG5
+ 75zutNOQjJvJ8/f/x+zwvNdUxpW8AAAA=
+X-Change-ID: 20250313-dt-bindings-cpufreq-qcom-epss-9ab649df8626
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=715;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=PbxNz4j52RrqJPz3GT+LV4bF8qpe/4u+tr9NI95kvIA=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBn0qCFReYcPk/t6a0zPxCQJuEofxDw8vS8HVb04
+ QGJW9zcSYqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ9KghQAKCRDBN2bmhouD
+ 17erD/wOx59i1A3edFPIxjPPHYLwR/Vtp9fBve6w0yseMAocRe42ct5wCLh1k4HtdrULcR3xdEi
+ uqGSa02il4AVPSxVi/WxvCMdWZW2UIiRCuH6XYcuvnZZM1udPnjj91QAuha0bFauMmDOhGQJVm3
+ Ral9PO/KYPjVZStmnPnI49VMe2kps5IT7OiPNly5kNSAepnqICdj9EWbXnsQi+kD3O4jBYUddhq
+ dYKp22qs12FdwG9TuwCq3dg7UTkfbrCQ5W0/ihIJxt9uay2xMsuiwjXAsWMrmvIcduTL7qb5Qlq
+ fTz02MaujkQ5hNSUQwQ4yUELRlal6G1NUAZZFZnRUJEPWCCpRd6JTfWb31TIzHzThGSsoZdf0Mu
+ K5F4Jop2GxaNis2Zgq0bn6DNr8mUyCN0dQRlsoN9yxVfHcOtF5DfyZUfOifszYM6/XwDlOOn1Oz
+ +4+JFZk3DfzqRzdssywzs1M7GvrkEQCW7dBwgOzhD9BZb/BEtvwKdqSDwOkiFhhcqwXz62xYVkj
+ CCS8JgGJhZlT67Vx1wpE6z5xfIX+laI22v2ZJZDol49PhC0h4/QqfMTVpSxR2dD0AVniMUgbPLr
+ BxKVrKHeGoXMxwO3dHktPn3OJkIFRe1jXVP5K0m5pLrCFKq76m5wS9cmDHKqDMW3CVbXs+oJrTF
+ 1M2nQ5tKlgFk3XA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
+Make the cpufreq-epss/hw schema a bit stricter for each variant.
 
+Best regards,
+Krzysztof
 
-On 13/03/2025 10:56, Paolo Abeni wrote:
-> On 3/13/25 9:07 AM, Tariq Toukan wrote:
->> On 12/03/2025 22:29, Jakub Kicinski wrote:
->>> On Tue, 11 Mar 2025 22:50:24 +0200 Tariq Toukan wrote:
->>>>> This pull request was applied to bpf/bpf-next.git (net)
->>>>
->>>> Seems to be mistakenly applied to bpf-next instead of net-next.
->>>
->>> The bot gets confused. You should probably throw the date into the tag
->>> to make its job a little easier.
->>
->> It did not pull the intended patch in this PR:
->> f550694e88b7 net/mlx5: Add IFC bits for PPCNT recovery counters group
->>
->> Anything wrong with the PR itself?
->> Or it is bot issue?
->>
->>> In any case, the tag pulls 6 commits
->>> for me now.. (I may have missed repost, I'm quite behind on the ML
->>> traffic)
->>
->> How do we get the patch pulled?
-> 
-> My [limited] understanding is as follow: nobody actually processed the
-> PR yet, the bot was just confused by the generic tag name.
-> 
-> I can pull the tag right now/soon, if you confirm that this tag:
-> 
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux.git/log/?h=mlx5-next
-> 
-> is still valid/correct.
-> 
+---
+Krzysztof Kozlowski (3):
+      dt-bindings: cpufreq: cpufreq-qcom-hw: Add missing constraint for interrupt-names
+      dt-bindings: cpufreq: cpufreq-qcom-hw: Drop redundant minItems:1
+      dt-bindings: cpufreq: cpufreq-qcom-hw: Narrow properties on SDX75, SA8775p and SM8650
 
-Yes please. Confirmed. Thank you.
+ .../bindings/cpufreq/cpufreq-qcom-hw.yaml          | 33 +++++++++++++++++++---
+ 1 file changed, 29 insertions(+), 4 deletions(-)
+---
+base-commit: eea255893718268e1ab852fb52f70c613d109b99
+change-id: 20250313-dt-bindings-cpufreq-qcom-epss-9ab649df8626
 
->> It's necessary for my next feature in queue...
-> 
-> Please note that due to the concurrent NetDev conference we are
-> processing patches with limited capacity, please expect considerable delay.
-> 
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Of course! That's totally expected.
-I wouldn't nudge pulling this without the bot's weird misleading reply.
-
-Regards,
-Tariq
 
