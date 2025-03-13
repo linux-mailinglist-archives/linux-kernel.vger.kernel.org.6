@@ -1,161 +1,92 @@
-Return-Path: <linux-kernel+bounces-558890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6696AA5ECC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:20:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C5AA5ECD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:21:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 126423B32D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:20:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B48D13B5EC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08E31FCD06;
-	Thu, 13 Mar 2025 07:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+cl27qf"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3FA1FC7FD;
+	Thu, 13 Mar 2025 07:20:26 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672A31FCCF6;
-	Thu, 13 Mar 2025 07:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6DA1FC7EC;
+	Thu, 13 Mar 2025 07:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741850382; cv=none; b=Ez+qJykACE/Qu3I617T3lmUDtw2m8kZHC3Ltxj9nG1cGNwcviqdpKBZoLvSnyC2L81W+bFsCankYBJ4i2zhjRsvLTX6ypHHOnDG47ibEy/z27jx9lrL5iLu+ExVpjx3fyFvUaD82KowilpiY6456YuuQMsB3FxSzwJZ6QGtChfw=
+	t=1741850425; cv=none; b=ThUwS2jPBHBkj2qXM1WrClA5HcDAQRh31HGrtkW6ODM+PHO0X4olCYpjK86+ZzL3E2iS9HuOxoVuo1pO7YfWlfYliS9tzohhRmw4dFkQcLtPItdEnMbhZmmGi7M+e0SeLUZjbK+D259cDI+eUfVH/goBINl8Odn4d8ydUFLWey0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741850382; c=relaxed/simple;
-	bh=n0SVsHyR6EoCcFAY2/LAsmGhJrUUQYSj8Chmf9am4lk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FRXrg/nID3ylYdLsXJnCX/fZvqXg7IFjfx99NylL0vWLPzLZZVxGAj5mpAft2MGKhLJ8L67WKQzbAx5giXmovoAWNP/N2Cw/V44QLnbFz9FjQdzudF1BhT7kSJU6K4Y1CHACErXWWSfxc+dhI+OWGjQ7dDrAMwyZDy11r2db8WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+cl27qf; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30bd11bfec6so7069181fa.0;
-        Thu, 13 Mar 2025 00:19:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741850378; x=1742455178; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+sGRfKfkSMXdVNodt1qncjZLVCs8iVRcv5gAdLNHn/k=;
-        b=O+cl27qfe09gAEKdJ5HT1iVFjnNiL3nEcyXSqjelAf9tJ64IgPWEJWdZcji3nPdldS
-         +9zVZFD6REmyElDDhkTD4zK9/kFyvQEb28qLLglQ9uIvOWTA3mEIOb4yxPfojyFymNR4
-         Q5jv2w+Wb6WmIzh9OUDYKbHZoW+bbGp/jwXTkr9Z7fbamyu1LevH4bdIw5hBlOzMfOqq
-         wX3FMo9BIuzimRChHNa79DdL1+c4pgtR7KO9TUVUQg2CGqOIlTZBWaU/OEU9bkVFALUI
-         2BGdFXrTSEScldvkZiAbSBqlpmhaqePd2W5EiKkkZNqCtR9MzEIxo2WQ+PW6dvSbgRLn
-         CKgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741850378; x=1742455178;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+sGRfKfkSMXdVNodt1qncjZLVCs8iVRcv5gAdLNHn/k=;
-        b=Hhw7lgmr40w3s9NZpGu4676bPfEK+iOnfptwrt4EEts5Q2Nv7rzeHaN8M2z/Jafgcu
-         6Im8hXztmRL7o9659yrk/YevIpwDfw8OhNufSdl14SZB4JB56zj013rqfYzBt35W8DO+
-         r9RHtSBdUYXaPj30keDtfAULpisrWshPfG/WZXLfFACzVVRfsbNlveii3/H0hsFB6/IR
-         hpjJZ0gpk9wJcYU7bWojQLHWkUsxSNgMArxDnYVpvlCqGQhOMDvjoEtssyq97W2tduMm
-         h+31vW8/88gnODTEGwIHmU8FqMCYAqhdgxhy2og4ezZeJpwxPwZJ0RF3gBml1EWHc3hN
-         fvnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYmYGHGn9H73fVtyOHtbEzmUJhoj+U09Hye9dFW+NDBXvkl5lxV1V7wK7WBpBGBcDMCETD0IHyOOE=@vger.kernel.org, AJvYcCXIGJF4bfp1qbxOtJdDWL1uf5vklO7TyIpZNFZn3IQFaxz5nTyR4Eo9ISpbPvzAAqdjN1DP9caui8BcN+OH@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWxA1OaW7ov9tVQYhJxKUn1NS4oYAA9qbW1TxzVHVLkyUq7fjN
-	u2SJgaL2XQmXKN0BpfB+mLLmk5K/LeGCmIlLk3EXfsrTv9f2UXMV
-X-Gm-Gg: ASbGncu+VmGSJpst0uNsn2bp0SWfoATHUDClIQ/bPvTym/NKNtJSlqa0Y2zaWBxGWS3
-	Q/55bls3Jd+ogiZrGNMg5ApfdjfHi2MmJlUd6wb2zTc7ZK9+5xD+We+6OqIFIeVivrsyq0Zmmj1
-	9KAeJDdRbIZ8rmOoRtXDEa/Q5eAYdHDc+eCtQKU7KPSgSoBWTxnStBwLPMyOOpNzlsIxmJsVGII
-	F1Pz+YrtY50DC6/erM0KWS7A1q6gqeJXbFLgMQOABUYBW9a1fTGF174/j0SA2tQunCgIAiTHvpX
-	CA87teGRHEOon+vucbw6xR+yhBcsjHdhJlwpNPkoVm4SPrQkf1Y=
-X-Google-Smtp-Source: AGHT+IGQybJME/eHLwFuV27tvE9BUSfRm63u84/I2lmI9Ho+q0jC6ylUarSomK4/MrCpR7FZdqAJjA==
-X-Received: by 2002:a05:651c:1504:b0:30b:d0d5:1fee with SMTP id 38308e7fff4ca-30c20517ce9mr49485861fa.0.1741850378293;
-        Thu, 13 Mar 2025 00:19:38 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f0d1df4sm1220641fa.5.2025.03.13.00.19.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 00:19:36 -0700 (PDT)
-Date: Thu, 13 Mar 2025 09:19:31 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Guillaume Stols <gstols@baylibre.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: [PATCH v7 08/10] MAINTAINERS: Add ROHM BD79124 ADC/GPO
-Message-ID: <ad536f7172afe26191ffe53a79f476fe7f308617.1741849323.git.mazziesaccount@gmail.com>
-References: <cover.1741849323.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1741850425; c=relaxed/simple;
+	bh=onhJ+nONIJs1EuDIxEdIje8LeS5+gvvtViDW3yW6veo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bJzOGLJ7YZuYRa0sOeYNKd5DIuDRXQXvo5YAGwdTjdBYojAJsgcd+sIdBO1ugFi3IuwdWa6cd/qPIxFJGNI+ROtC2HZqrDHDFZZutKBIq46hQXXaGaY+j8+zHQn4lRsY9RDvqiE0gAQfa3mEWNiHFY9kZ3rN7VQXhjuLp/uQDfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZCzPN21GKz1R6XP;
+	Thu, 13 Mar 2025 15:18:32 +0800 (CST)
+Received: from kwepemg500006.china.huawei.com (unknown [7.202.181.43])
+	by mail.maildlp.com (Postfix) with ESMTPS id C7AE61A016C;
+	Thu, 13 Mar 2025 15:20:13 +0800 (CST)
+Received: from huawei.com (10.50.165.33) by kwepemg500006.china.huawei.com
+ (7.202.181.43) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 13 Mar
+ 2025 15:20:13 +0800
+From: Longfang Liu <liulongfang@huawei.com>
+To: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <jonathan.cameron@huawei.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@openeuler.org>, <liulongfang@huawei.com>
+Subject: [PATCH v5 0/5]  bugfix some driver issues
+Date: Thu, 13 Mar 2025 15:20:05 +0800
+Message-ID: <20250313072010.57199-1-liulongfang@huawei.com>
+X-Mailer: git-send-email 2.24.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iIbLP7dRMJm7ztNJ"
-Content-Disposition: inline
-In-Reply-To: <cover.1741849323.git.mazziesaccount@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemg500006.china.huawei.com (7.202.181.43)
 
+As the test scenarios for the live migration function become
+more and more extensive. Some previously undiscovered driver
+issues were found.
+Update and fix through this patchset.
 
---iIbLP7dRMJm7ztNJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Change v4 -> v5
+	Update version matching strategy
 
-Add undersigned as a maintainer for the ROHM BD79124 ADC/GPO driver.
+Change v3 -> v4
+	Modify version matching scheme
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
-Revision history:
-v2 =3D>
- - No changes
-RFC v1 =3D> v2:
- - Drop MFD and pinmux drivers
----
- MAINTAINERS | 5 +++++
- 1 file changed, 5 insertions(+)
+Change v2 -> v3
+	Modify the magic digital field segment
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5b96fb864227..2e4416b59930 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20547,6 +20547,11 @@ S:	Supported
- F:	drivers/power/supply/bd99954-charger.c
- F:	drivers/power/supply/bd99954-charger.h
-=20
-+ROHM BD79124 ADC / GPO IC
-+M:	Matti Vaittinen <mazziesaccount@gmail.com>
-+S:	Supported
-+F:	drivers/iio/adc/rohm-bd79124.c
-+
- ROHM BH1745 COLOUR SENSOR
- M:	Mudit Sharma <muditsharma.info@gmail.com>
- L:	linux-iio@vger.kernel.org
---=20
-2.48.1
+Change v1 -> v2
+	Add fixes line for patch comment
 
+Longfang Liu (5):
+  hisi_acc_vfio_pci: fix XQE dma address error
+  hisi_acc_vfio_pci: add eq and aeq interruption restore
+  hisi_acc_vfio_pci: bugfix cache write-back issue
+  hisi_acc_vfio_pci: bugfix the problem of uninstalling driver
+  hisi_acc_vfio_pci: bugfix live migration function without VF device
+    driver
 
---iIbLP7dRMJm7ztNJ
-Content-Type: application/pgp-signature; name="signature.asc"
+ .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 97 +++++++++++++++----
+ .../vfio/pci/hisilicon/hisi_acc_vfio_pci.h    | 14 ++-
+ 2 files changed, 89 insertions(+), 22 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.24.0
 
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfShwMACgkQeFA3/03a
-ocU06QgAgdNvKYKZvtObcBtJwd35/z1TwFVNAaDnUXtFosVDStPPIBM8v1TDxJ/R
-fcxaAPQ7TA12KWIoHQ1BCS+XI/FbmbX7YWJxmCb8Cmtvf9izmZqVtAmbR2hwK7b+
-kALcbclH2OZ8mBLEMuRcptbu/JCw/BYZRB820JLrHlpP4sCFm3LG+7Q9b84ZnlCw
-oq/mxZVgAzeR+xy/FC6/KCI0/TC6/bCnc3gjUestHfegsIGzLJKJtwSlHdy0mKoa
-4WcNliTvCkUI5JTiNen7puMk4qYP0ENo12yqlrxt5ZkmH/r44NhGVN3C0ZQNf8bi
-gLiC0J1/NjUI9ZV1cD9vpJCKoWV6cw==
-=IRuL
------END PGP SIGNATURE-----
-
---iIbLP7dRMJm7ztNJ--
 
