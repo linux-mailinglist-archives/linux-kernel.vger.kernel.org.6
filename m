@@ -1,177 +1,135 @@
-Return-Path: <linux-kernel+bounces-559938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB266A5FB1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:17:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49BECA5FB56
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:22:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56D107ACA47
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:16:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99AF01884516
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B471C2690C8;
-	Thu, 13 Mar 2025 16:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EB9269817;
+	Thu, 13 Mar 2025 16:18:26 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DAFE267F77
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 16:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480D92EAF7;
+	Thu, 13 Mar 2025 16:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741882630; cv=none; b=Azt3iGpHNDgOUyKX/3Cmc7fM8F4+dk+PEU1Bg2uj9Q6GGPfaeskhCgPHVOxGhDLgkHUCfHiSXnsYFacW8xNDWoJpC4F+P93+0yeTbPXKzD/WKZzzO/OUoJcK5L7hPD8Uy/DnO5Hrzv/CnlrAnG4uHAWRoQns7M2qbnIaouKdqoQ=
+	t=1741882705; cv=none; b=kSCiZb2onR40iGCGGkF9lA/iN1ZnQF5ItSUJmBRqOWLXBFVrroQW0i9949GUMklCV6iWSLct6Nlg7avx4axGth06vCLrmNWqTNNYQAtpaFAzUnJCrdWFVE+4xLFbLiCBCENxIf2A5xpeVngo0/Bn0mC2odTxAwRnTzzN0bI8jPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741882630; c=relaxed/simple;
-	bh=34Kut0PPFO8fOJAQ+5sa0rnEBxjSW2YfDDiXJ2uVdew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fp9rnlBxRNc2qblE/itvvPZQ96KRzdnCB+16s3c+Hetwh6DfRHbWlHVRDxKNHnp86gZDYndU99CackpuqjlpkaXpCXCY2p9mUPGLJ9JvAzyrIePoy7TL3PrfFjzNTZPc9jIUmAzxieJZLPXibSXr1YVWayDPAiNjBgsv3Fuu+EQ=
+	s=arc-20240116; t=1741882705; c=relaxed/simple;
+	bh=emhOxbt8ayK8YAjk5FgUv/PSIwEYDr74r6dRQTxBPCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=UpUdLLp6h7dJuwO/ACfE//iG7alsDedzoNFtZInaXgDLZmH1Ir5jgQpNc1t+xFqHHrkIDVhBQftzUO2yDdmUoaQSHDHKaSlbafgODEsFb95zEBm5E0yhk25i3dYVtiolMPwcxgt2huteD2TLQL4BiXg862rkg9+FC67gtEfBn3Y=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 18D86150C;
-	Thu, 13 Mar 2025 09:17:18 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5DA353F673;
-	Thu, 13 Mar 2025 09:17:07 -0700 (PDT)
-Date: Thu, 13 Mar 2025 16:17:02 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: lcherian@marvell.com, coresight@lists.linaro.org,
-	Mike Leach <mike.leach@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 7/7] coresight: Remove extern from function declarations
-Message-ID: <20250313161702.GT9682@e132581.arm.com>
-References: <20250211103945.967495-1-james.clark@linaro.org>
- <20250211103945.967495-8-james.clark@linaro.org>
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4F80150C;
+	Thu, 13 Mar 2025 09:18:33 -0700 (PDT)
+Received: from [10.57.85.159] (unknown [10.57.85.159])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3F4C23F673;
+	Thu, 13 Mar 2025 09:18:14 -0700 (PDT)
+Message-ID: <07c36889-10d3-4944-a039-3a30fbdca883@arm.com>
+Date: Thu, 13 Mar 2025 16:18:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211103945.967495-8-james.clark@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] iommu/arm: Add BBM Level 2 smmu feature
+Content-Language: en-GB
+To: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
+ suzuki.poulose@arm.com, yang@os.amperecomputing.com, corbet@lwn.net,
+ catalin.marinas@arm.com, will@kernel.org, jean-philippe@linaro.org,
+ robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org,
+ mark.rutland@arm.com, joey.gouly@arm.com, maz@kernel.org,
+ james.morse@arm.com, broonie@kernel.org, anshuman.khandual@arm.com,
+ oliver.upton@linux.dev, ioworker0@gmail.com, baohua@kernel.org,
+ david@redhat.com, jgg@ziepe.ca, shameerali.kolothum.thodi@huawei.com,
+ nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
+ smostafa@google.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ iommu@lists.linux.dev
+References: <20250313104111.24196-2-miko.lenczewski@arm.com>
+ <20250313104111.24196-4-miko.lenczewski@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250313104111.24196-4-miko.lenczewski@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 11, 2025 at 10:39:43AM +0000, James Clark wrote:
+On 13/03/2025 10:41, Mikołaj Lenczewski wrote:
+> For supporting BBM Level 2 for userspace mappings, we want to ensure
+> that the smmu also supports its own version of BBM Level 2. Luckily, the
+> smmu spec (IHI 0070G 3.21.1.3) is stricter than the aarch64 spec (DDI
+> 0487K.a D8.16.2), so already guarantees that no aborts are raised when
+> BBM level 2 is claimed.
 > 
-> Function declarations are extern by default so remove the extra noise
-> and inconsistency.
+> Add the feature and testing for it under arm_smmu_sva_supported().
+> 
+> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
 
-This change is consistent with the coding-style.rst:
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
 
-  "Do not use the ``extern`` keyword with function declarations as
-   this makes lines longer and isn't strictly necessary."
-
-Reviewed-by: Leo Yan <leo.yan@arm.com>
-
-> Signed-off-by: James Clark <james.clark@linaro.org>
 > ---
->  drivers/hwtracing/coresight/coresight-priv.h | 14 ++++-----
->  include/linux/coresight.h                    | 33 +++++++++-----------
->  2 files changed, 21 insertions(+), 26 deletions(-)
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c | 3 +++
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c     | 3 +++
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h     | 4 ++++
+>  3 files changed, 10 insertions(+)
 > 
-> diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
-> index a83113225797..e09071a720f0 100644
-> --- a/drivers/hwtracing/coresight/coresight-priv.h
-> +++ b/drivers/hwtracing/coresight/coresight-priv.h
-> @@ -57,10 +57,8 @@ struct cs_off_attribute {
->         u32 off;
->  };
-> 
-> -extern ssize_t coresight_simple_show32(struct device *_dev,
-> -                                    struct device_attribute *attr, char *buf);
-> -extern ssize_t coresight_simple_show_pair(struct device *_dev,
-> -                                    struct device_attribute *attr, char *buf);
-> +ssize_t coresight_simple_show32(struct device *_dev, struct device_attribute *attr, char *buf);
-> +ssize_t coresight_simple_show_pair(struct device *_dev, struct device_attribute *attr, char *buf);
-> 
->  #define coresight_simple_reg32(name, offset)                           \
->         (&((struct cs_off_attribute[]) {                                \
-> @@ -155,8 +153,8 @@ void coresight_remove_links(struct coresight_device *orig,
->  u32 coresight_get_sink_id(struct coresight_device *csdev);
-> 
->  #if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM3X)
-> -extern int etm_readl_cp14(u32 off, unsigned int *val);
-> -extern int etm_writel_cp14(u32 off, u32 val);
-> +int etm_readl_cp14(u32 off, unsigned int *val);
-> +int etm_writel_cp14(u32 off, u32 val);
->  #else
->  static inline int etm_readl_cp14(u32 off, unsigned int *val) { return 0; }
->  static inline int etm_writel_cp14(u32 off, u32 val) { return 0; }
-> @@ -167,8 +165,8 @@ struct cti_assoc_op {
->         void (*remove)(struct coresight_device *csdev);
->  };
-> 
-> -extern void coresight_set_cti_ops(const struct cti_assoc_op *cti_op);
-> -extern void coresight_remove_cti_ops(void);
-> +void coresight_set_cti_ops(const struct cti_assoc_op *cti_op);
-> +void coresight_remove_cti_ops(void);
-> 
->  /*
->   * Macros and inline functions to handle CoreSight UCI data and driver
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index 11808aee9d1d..2b43698c0b25 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -642,26 +642,23 @@ static inline void coresight_set_mode(struct coresight_device *csdev,
->         local_set(&csdev->mode, new_mode);
->  }
-> 
-> -extern struct coresight_device *
-> -coresight_register(struct coresight_desc *desc);
-> -extern void coresight_unregister(struct coresight_device *csdev);
-> -extern int coresight_enable_sysfs(struct coresight_device *csdev);
-> -extern void coresight_disable_sysfs(struct coresight_device *csdev);
-> -extern int coresight_timeout(struct csdev_access *csa, u32 offset,
-> -                            int position, int value);
-> -
-> -extern int coresight_claim_device(struct coresight_device *csdev);
-> -extern int coresight_claim_device_unlocked(struct coresight_device *csdev);
-> -
-> -extern void coresight_disclaim_device(struct csdev_access *csa);
-> -extern void coresight_disclaim_device_unlocked(struct csdev_access *csa);
-> +struct coresight_device *coresight_register(struct coresight_desc *desc);
-> +void coresight_unregister(struct coresight_device *csdev);
-> +int coresight_enable_sysfs(struct coresight_device *csdev);
-> +void coresight_disable_sysfs(struct coresight_device *csdev);
-> +int coresight_timeout(struct csdev_access *csa, u32 offset, int position, int value);
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
+> index 9ba596430e7c..6ba182572788 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
+> @@ -222,6 +222,9 @@ bool arm_smmu_sva_supported(struct arm_smmu_device *smmu)
+>  		feat_mask |= ARM_SMMU_FEAT_VAX;
+>  	}
+>  
+> +	if (system_supports_bbml2_noabort())
+> +		feat_mask |= ARM_SMMU_FEAT_BBML2;
 > +
-> +int coresight_claim_device(struct coresight_device *csdev);
-> +int coresight_claim_device_unlocked(struct coresight_device *csdev);
+>  	if ((smmu->features & feat_mask) != feat_mask)
+>  		return false;
+>  
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> index 358072b4e293..dcee0bdec924 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> @@ -4406,6 +4406,9 @@ static int arm_smmu_device_hw_probe(struct arm_smmu_device *smmu)
+>  	if (FIELD_GET(IDR3_RIL, reg))
+>  		smmu->features |= ARM_SMMU_FEAT_RANGE_INV;
+>  
+> +	if (FIELD_GET(IDR3_BBML, reg) == IDR3_BBML2)
+> +		smmu->features |= ARM_SMMU_FEAT_BBML2;
 > +
-> +void coresight_disclaim_device(struct csdev_access *csa);
-> +void coresight_disclaim_device_unlocked(struct csdev_access *csa);
->  int coresight_reset_claim_unlocked(struct csdev_access *csa);
->  int coresight_reset_claim(struct csdev_access *csa);
-> 
-> -extern char *coresight_alloc_device_name(struct coresight_dev_list *devs,
-> -                                        struct device *dev);
-> +char *coresight_alloc_device_name(struct coresight_dev_list *devs, struct device *dev);
-> 
-> -extern bool coresight_loses_context_with_cpu(struct device *dev);
-> +bool coresight_loses_context_with_cpu(struct device *dev);
-> 
->  u32 coresight_relaxed_read32(struct coresight_device *csdev, u32 offset);
->  u32 coresight_read32(struct coresight_device *csdev, u32 offset);
-> @@ -674,8 +671,8 @@ void coresight_relaxed_write64(struct coresight_device *csdev,
->                                u64 val, u32 offset);
->  void coresight_write64(struct coresight_device *csdev, u64 val, u32 offset);
-> 
-> -extern int coresight_get_cpu(struct device *dev);
-> -extern int coresight_get_static_trace_id(struct device *dev, u32 *id);
-> +int coresight_get_cpu(struct device *dev);
-> +int coresight_get_static_trace_id(struct device *dev, u32 *id);
-> 
->  struct coresight_platform_data *coresight_get_platform_data(struct device *dev);
->  struct coresight_connection *
-> --
-> 2.34.1
-> 
-> _______________________________________________
-> CoreSight mailing list -- coresight@lists.linaro.org
-> To unsubscribe send an email to coresight-leave@lists.linaro.org
+>  	/* IDR5 */
+>  	reg = readl_relaxed(smmu->base + ARM_SMMU_IDR5);
+>  
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> index bd9d7c85576a..85eaf3ab88c2 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> @@ -60,6 +60,9 @@ struct arm_smmu_device;
+>  #define ARM_SMMU_IDR3			0xc
+>  #define IDR3_FWB			(1 << 8)
+>  #define IDR3_RIL			(1 << 10)
+> +#define IDR3_BBML			GENMASK(12, 11)
+> +#define IDR3_BBML1			(1 << 11)
+> +#define IDR3_BBML2			(2 << 11)
+>  
+>  #define ARM_SMMU_IDR5			0x14
+>  #define IDR5_STALL_MAX			GENMASK(31, 16)
+> @@ -754,6 +757,7 @@ struct arm_smmu_device {
+>  #define ARM_SMMU_FEAT_HA		(1 << 21)
+>  #define ARM_SMMU_FEAT_HD		(1 << 22)
+>  #define ARM_SMMU_FEAT_S2FWB		(1 << 23)
+> +#define ARM_SMMU_FEAT_BBML2		(1 << 24)
+>  	u32				features;
+>  
+>  #define ARM_SMMU_OPT_SKIP_PREFETCH	(1 << 0)
+
 
