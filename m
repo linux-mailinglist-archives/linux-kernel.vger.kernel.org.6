@@ -1,165 +1,114 @@
-Return-Path: <linux-kernel+bounces-559769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD69A5F953
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:13:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BEC2A5F957
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:14:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D2C3B450E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:13:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8C40179AE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169A6268C49;
-	Thu, 13 Mar 2025 15:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1224F26869C;
+	Thu, 13 Mar 2025 15:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GOK0sdbG"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WoqK02lK"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18D122612
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384401D8A0A
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741878823; cv=none; b=q9LB5S4feqzG+/dAHqrYw4aoJb28txLJBsDmHSmbz8KuVGx7w0fXtcRHYPNuL4XPuM8W/JlUXeZzVap/qlEAYmpeyd6A4eIhrAykBxusbTJv8Q6UCPIn3slgxypDV3x2FR2zuK/gXJ7MW4Afs/emJ1Ya86yGhEvqfNtpBn/zXdg=
+	t=1741878860; cv=none; b=qzeyLdcahWXJ0qGQ9qOUYSvb78082i2W2ZCIk4aciSBb5Dr3hK2aVZ7louM2Yt0HaMy+zuOO5FL6IG/5zQ8Ke6r3VzbWldoSKTUmClQynHzWZoV6LtUqAjfH2LMry/QwqJo5UlzUntIjN/VZHMqqYbmtbwumObcWgU6EnHdA9/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741878823; c=relaxed/simple;
-	bh=fJxfW2SO60LSZjE08ryPgcw3EaJ/8K92lDP2S5xhGvA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UdcGMsC3+h89VcNHfXebbVYkBGNfgrBegs8SmiGDeV1zMU+ezdrzJd0+1+YfqsIGjR1RGUKkvoWcMnZybJhdYtqogE7nzuFNP8p+WkgsFo27qEcaEU6yb5TUOKe0Ujq9BVWzh9AkO/hNKqXJWSV06vaLxfpwagvrh5HK1YO+9lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GOK0sdbG; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-223fd89d036so23266065ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:13:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1741878821; x=1742483621; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=LtjPSYCYextd8p+081cZMv9XSGQU1Zsd9DWrufPXUHg=;
-        b=GOK0sdbG11u5OurIiq3TpSuv/nEG91FWuRhy/KO1o2me9bJTV4nNsMNHTn8AFIytpb
-         8xoheskVv4kgI+05jin+Wx7gq7BL1pQrY6xYlMVNa6CBG9jiU0jUfybt3+xvtJdZ9WXZ
-         Y7KQvzaKo+N6C2eszX5gtCYUeITNRfsPTMKH0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741878821; x=1742483621;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LtjPSYCYextd8p+081cZMv9XSGQU1Zsd9DWrufPXUHg=;
-        b=TfkuKc9PPRZtj/SWm+qpzrY7Dusp77sn0UxIIQO3OsMzrKi2pV96TbLaZJmF5skEx3
-         +/oR/9838N4sKLDM5wI3oIYZvi5QGO8bYvfvGe41Hzvo41MgtfXYUGQHkKVJ9F7E+VbE
-         JOAaCwnrHup/2KRaoUw9vIHt+5WoWpNGl6Q/yPvMVaDGpnBYo7SMdIKdG1CMCm4nQvhU
-         GlMFaVk5Q2za6m8rjXCPaGhLIzSDRFBNnuspBC94NUc9KUOeQat7V++AQqJpF+8cwUnG
-         iGm+X00KlisMSvFYS72OD7C5JxWyd6nVtIcaQ9BsR/9jt1Rz9oHEaaLNXkGIHcPBU/gp
-         zp0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVP78YCC2YMJAwHjuTEah3oU0080DBRwtPPkP1ZXXGxh95fuYdu3OtWnZCXG6IcmVQzSwpWcHuuTtTBrJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPtfjhBCwWtSWoy0jp6IJRj/hPbDt6jFyvHx86xc9yObm1I9Wm
-	zdu43vCCasCHndn9DmYbE0IkSROFAJVqg3glyigwwx2GonCya4XNqNwh4hRpPg==
-X-Gm-Gg: ASbGncuW43UExdVihayvdcOwa4TR3/9smpL6Eoa81+wBvkEyHhFsth2ytfk2iNRlpus
-	PlkGaBYe30noqggVDwQi5moEoMXkzX4ipdrMIlvNeDxjqKwnPA5ifywLQUIH1bWbyWvKA2KdMM4
-	EfcXyI5qR/ZIaTqmjh4vq9NdXqaLvP9338SCHqNAAfuYAG+gwMebDaWwbt6rEwpUQOngahPmm63
-	vpPSK2R/klLZ2JMdMOTVboAXIJoP2mdnVfNHdnD4XLrVNQxRa8xxCo9V8zHh1v467I0vOpkJ64P
-	HKBKywh4awng/05QBS0VedQvFDjMADxkSAtLw8LPZivhRw024ms8le3S3NGsg4YSb4qHIAoB24F
-	YbRRwjCP+7oEUAHenhlI=
-X-Google-Smtp-Source: AGHT+IH6rVvz6wUlxxNUwr/JAWpyXdb7amienre/dUzOfRJnNc3NkCdr7ltThD0dYTVCfDPZwdv9wQ==
-X-Received: by 2002:a17:902:ef4e:b0:223:628c:199 with SMTP id d9443c01a7336-22428c1cca9mr373944625ad.52.1741878821152;
-        Thu, 13 Mar 2025 08:13:41 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbebebsm14416825ad.201.2025.03.13.08.13.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 08:13:39 -0700 (PDT)
-Message-ID: <06ee4b30-e4c8-4670-9054-b30827ca8931@broadcom.com>
-Date: Thu, 13 Mar 2025 08:13:39 -0700
+	s=arc-20240116; t=1741878860; c=relaxed/simple;
+	bh=1P9eAXy79yGLdU5tp3zlyGps03BkUiPsqFBCm2cxcMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bjcy6l1XfNGvI2lsBWCdnHJpsb2UbOegs2t239xG6odCBBR70Fl9ecynSRZkyi366Gd4eQSpa7qKkLHDMJGRJ68+ATwoQnUhpvbB8Dks7aUsw5yuUS928ZDbeAf601fqOL4X9h/YxMEJu27K5rjNBhioEb+GRDdUYC3r4I3Dycw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WoqK02lK; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 55B084421A;
+	Thu, 13 Mar 2025 15:14:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741878855;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9luUN/dEXHB6yOQaOu/R2VJ4c9o/k4HnO8bdSVrfaX8=;
+	b=WoqK02lKedHD6pknpCYD3wUB4cb9WBWsuwqfmbaKjvYll+hAiPLQmsK6HdnqxeRBw0G+F/
+	2Vm4bYCBgcp+gcP45FoiM+iSwf3GJKg7st/NGTxFgxI/19ZdFWH/jUfNSt2b0lZXoggZcE
+	KzKYF67mIrT703ucVzNH/d7+o9VZyV8PPDYzJSloqiHkdz2TRzUroJDdPTFqoR0QXRwmY8
+	eBVkyPZ4wThW7j4SCO8112nd/u05O6RelraW+/8LQd+cvXsx1kv2STr7wCd8RyPSs0YH+V
+	/fRWGqn3nj9tWiihFo16iNAFzAXf/SETaUAVOcJ7Atd1rO1aulo8ojcvl2RqYA==
+Date: Thu, 13 Mar 2025 16:14:11 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Dario Binacchi
+ <dario.binacchi@amarulasolutions.com>, Michael Trimarchi
+ <michael@amarulasolutions.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/mxsfb: fix missing rollback on failure in
+ mxsfb_probe()
+Message-ID: <20250313161411.4604a1a1@booty>
+In-Reply-To: <468c6352-3301-4f0b-a2d4-d6a013417a0e@suse.de>
+References: <20250313-mxsfb_probe-fix-rollback-on-error-v1-1-ad2fb79de4cb@bootlin.com>
+	<468c6352-3301-4f0b-a2d4-d6a013417a0e@suse.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mmc: sdhci-brcmstb: add cqhci suspend/resume to PM ops
-To: Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20250311165946.28190-1-kamal.dasu@broadcom.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250311165946.28190-1-kamal.dasu@broadcom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdekvdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemrgdttddvmedusggrjeemgeekfhejmedulegtheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemrgdttddvmedusggrjeemgeekfhejmedulegthedphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopehmrghrvgigseguvghngidruggvpdhrtghpthhtohepshhtvghfrghnsegrghhnvghrrdgthhdprhgtphhtthhopehmrggrr
+ hhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
+Hello Thomas,
 
+On Thu, 13 Mar 2025 15:40:43 +0100
+Thomas Zimmermann <tzimmermann@suse.de> wrote:
 
-On 3/11/2025 9:59 AM, Kamal Dasu wrote:
-> cqhci timeouts observed on brcmstb platforms during suspend:
->    ...
->    [  164.832853] mmc0: cqhci: timeout for tag 18
->    ...
+> > @@ -365,9 +365,10 @@ static int mxsfb_probe(struct platform_device *pdev)
+> >   	 * located anywhere in RAM
+> >   	 */
+> >   	ret = aperture_remove_all_conflicting_devices(mxsfb_driver.name);
+> > -	if (ret)
+> > -		return dev_err_probe(&pdev->dev, ret,
+> > -				     "can't kick out existing framebuffers\n");
+> > +	if (ret) {
+> > +		dev_err_probe(&pdev->dev, ret, "can't kick out existing framebuffers\n");
+> > +		goto err_unload;
+> > +	}  
 > 
-> Adding cqhci_suspend()/resume() calls to disable cqe
-> in sdhci_brcmstb_suspend()/resume() respectively to fix
-> CQE timeouts seen on PM suspend.
-> 
-> Fixes: d46ba2d17f90 ("mmc: sdhci-brcmstb: Add support for Command Queuing (CQE)")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Kamal Dasu <kamal.dasu@broadcom.com>
-> ---
->   drivers/mmc/host/sdhci-brcmstb.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci-brcmstb.c
-> index 0ef4d578ade8..48cdcba0f39c 100644
-> --- a/drivers/mmc/host/sdhci-brcmstb.c
-> +++ b/drivers/mmc/host/sdhci-brcmstb.c
-> @@ -503,8 +503,15 @@ static int sdhci_brcmstb_suspend(struct device *dev)
->   	struct sdhci_host *host = dev_get_drvdata(dev);
->   	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->   	struct sdhci_brcmstb_priv *priv = sdhci_pltfm_priv(pltfm_host);
-> +	int ret;
+> I must have missed that when I reviewed the patch. But this call should 
+> happen much earlier. right at the top of the probe function before 
+> drm_dev_alloc(). Conflicting drivers need to be kicked out before 
+> setting up DRM. Could you please send a patch to move the call to the 
+> top? No extra cleanup would be required then.
 
-Hopefully this won't be causing a possibly uninitialized warning.
+Sure, sending v2 in a moment.
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Luca
+
 -- 
-Florian
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
