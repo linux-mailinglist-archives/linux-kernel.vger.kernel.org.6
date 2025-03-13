@@ -1,94 +1,104 @@
-Return-Path: <linux-kernel+bounces-558731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 985F0A5EA1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 04:30:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2310CA5EA20
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 04:31:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59383B6AF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 03:29:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00B131898EEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 03:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB7426ACD;
-	Thu, 13 Mar 2025 03:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XpyCoBJY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F0A126C05;
+	Thu, 13 Mar 2025 03:31:09 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE23E127E18
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 03:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96BED26ACD;
+	Thu, 13 Mar 2025 03:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741836608; cv=none; b=pazfrTmDpoYPGUTra8c8zjn4Q8bHqrUIqaxkZnotgztlNwa3rChvdXpslRTlvLZMiQthuCQfM6l3OodXGk5JITZROVwxsql7D9HS8/aDJMsMNz6Knyrmb67IqiUGAjnW6znawIV3lvtpIAATCmpVtXpI/zBhREM99b9wQCoNXz4=
+	t=1741836669; cv=none; b=BMztJl/ag99p/HWSuVep7zXJ53F0cztBoGkOg3TYEH0lbud58p2nqjAdUld4M5oWQ1RovFqK3rKE5i2zevXbjnpD6EvHPqexD7bM1zBrj2w78MUBaSI7g/s/P4mj9hfDWcOk8ZjCcErMeASd8MIdP7Ehkv5L4yNVCbDi+ppmM38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741836608; c=relaxed/simple;
-	bh=bbBZi6MVy7nlRnL/DgCQhanz6APDqugq2ukfGiqGxyE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qP1nHtnSIzyYe1NrcZNqQCCwupCY4cy/LTYn8y0FE1v4cG2TQdtj9M5EpUuNqASEdTlYIy8YYQqaKEQT6o3OKBvoYbKU044P0QWkKCXgbgbcH1Z6/1xjKor0PfqlOy8o/cB2AT0d6ewa8OTQ/b5VOfWjp7A4s7WH5v+BF8v8gDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XpyCoBJY; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741836606; x=1773372606;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=bbBZi6MVy7nlRnL/DgCQhanz6APDqugq2ukfGiqGxyE=;
-  b=XpyCoBJYrIKdwjrObShLt1scT5z7le1ZxSOT4Tx/CKQ9b792Zuo6wRvA
-   cqe1iknO8eFIUIjeUpIpoXM+CAwbTteKbRe4aciuKaTvfmTtJXkeH78HQ
-   +uNJMvbic+csokLNTlkh3UBONlNnlaHzF9LTDaCtuHXwXhlgIAm1UBpqu
-   reY3NoYjJnW5QsP9TCzuZo2FYKK88m2YUuX2ONn0ZvBTuG/ErU4B//uET
-   009XZk2IWb6XDqtNIf/baiSgUDhXkw+cLiSPfJLe+JCy8AbeoKQOrcdd2
-   jlo9yl7B8QpNlSXzNj/9Qd/mmCfQw+pQBr/QEFTfYDkhoS+oc8BE+97Y5
-   w==;
-X-CSE-ConnectionGUID: zHxoy6aDSkCr1IvnZbj2Og==
-X-CSE-MsgGUID: PNAqLR8rQfuNNQ+tUIwIpA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="43119429"
-X-IronPort-AV: E=Sophos;i="6.14,243,1736841600"; 
-   d="scan'208";a="43119429"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 20:30:06 -0700
-X-CSE-ConnectionGUID: fRmeCmNuQYSezUKtRI/7Hw==
-X-CSE-MsgGUID: dq7yv8nzQDuSJpU21wn95A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,243,1736841600"; 
-   d="scan'208";a="126006587"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 20:30:04 -0700
-Message-ID: <1b0badd7-c046-466c-8261-ecfb85248b7a@linux.intel.com>
-Date: Thu, 13 Mar 2025 11:26:47 +0800
+	s=arc-20240116; t=1741836669; c=relaxed/simple;
+	bh=6j+CW8n+AP9HuqY8JnQFaZKjkOcDpC5b/YgSGjy0TLE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W3FPOb4i7L4YWY4i06x4Nz8lGoNI63hohb6Wed1JVnvec71T02oyvhGvF/AsLv2SqSZ5GpDHEo8rJpKiGSPSaI8qKpED7ujZqIbGD+Fc8lCX7EZaIUFXlM+ZNpj9UyAyJItiJciF84c/87kBpsU9DxyzC32UNinrAqCjHmA/MNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowAAnLw9qUdJnXpnEFA--.18983S2;
+	Thu, 13 Mar 2025 11:30:50 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: cem@kernel.org,
+	djwong@kernel.org,
+	hch@lst.de
+Cc: linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>,
+	Carlos Maiolino <cmaiolino@redhat.com>
+Subject: [PATCH -next V2] xfs: remove unnecessary NULL check before kvfree()
+Date: Thu, 13 Mar 2025 11:28:59 +0800
+Message-Id: <20250313032859.2094462-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu: Don't warn prematurely about dodgy probes
-To: Robin Murphy <robin.murphy@arm.com>, joro@8bytes.org, will@kernel.org
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <72a4853e7ef36e7c1c4ca171ed4ed8e1a463a61a.1741791691.git.robin.murphy@arm.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <72a4853e7ef36e7c1c4ca171ed4ed8e1a463a61a.1741791691.git.robin.murphy@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAAnLw9qUdJnXpnEFA--.18983S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtr45CFWkur4fXrWUZryxXwb_yoW3Xrc_Ca
+	n7t3Z7Ww4UArnrJw1DJwsY9w4qva1xJFs7Xws3tF43tryDA3WUWwnrXrWrtry7WFZIkF1U
+	Gas7KFZIvry8ujkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+	0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbV
+	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AF
+	wI0_Jw0_GFylc2xSY4AK67AK6r48MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa
+	73UjIFyTuYvjfUedgADUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On 3/12/25 23:01, Robin Murphy wrote:
-> The warning for suspect probe conditions inadvertently got moved too
-> early in a prior respin - it happened to work out OK for fwspecs, but in
-> general still needs to be after the ops->probe_device call so drivers
-> which filter devices for themselves have a chance do do that.
-> 
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+Remove unnecessary NULL check before kvfree() reported by
+Coccinelle/coccicheck and the semantic patch at
+scripts/coccinelle/free/ifnullfree.cocci.
 
-Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe 
-path")
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
+---
+Changelog:
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+v1 -> v2:
 
-Thanks,
-baolu
+1. rebase it on top of for-next.
+---
+ fs/xfs/xfs_rtalloc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/xfs/xfs_rtalloc.c b/fs/xfs/xfs_rtalloc.c
+index 9a99629d7de4..3aa222ea9500 100644
+--- a/fs/xfs/xfs_rtalloc.c
++++ b/fs/xfs/xfs_rtalloc.c
+@@ -1212,8 +1212,7 @@ xfs_growfs_rtg(
+ 			goto out_error;
+ 	}
+ 
+-	if (old_rsum_cache)
+-		kvfree(old_rsum_cache);
++	kvfree(old_rsum_cache);
+ 	goto out_rele;
+ 
+ out_error:
+-- 
+2.25.1
+
 
