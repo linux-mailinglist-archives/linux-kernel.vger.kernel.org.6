@@ -1,158 +1,243 @@
-Return-Path: <linux-kernel+bounces-559231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D98EA5F11E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:42:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82625A5F120
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:43:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFE6D3AF0BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:42:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAD3B19C0163
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B011EE013;
-	Thu, 13 Mar 2025 10:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6328264F83;
+	Thu, 13 Mar 2025 10:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RoBKK+Rs";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vb+9PQhI"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="ecwBlwCK"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DA9265CA5;
-	Thu, 13 Mar 2025 10:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E006B2571BF;
+	Thu, 13 Mar 2025 10:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741862542; cv=none; b=gyB/oLx6b6029nkwGw+y1TPWDZJACWBPF0S11OzcB1jxlHRE0CMuae05rtwkUWyqAPObdHnaQkRWJsMePCQJZvY1jRePhajx8JrHuBrPMglrgWSbRZiexN+P24taInt+nCeW2SusjMwlK6I1QnTYUUT/UOMKJ/Q0B5K7bpDwO0I=
+	t=1741862550; cv=none; b=H8xTZr8RmBzik3R/kFffBCKnobeOGLwWTaQ2NXGwkWRn3DvBHO3xn4T5xKPysBopNOWJoPlpiyxUo4zG9AMJN3lGH/iEmAJZlUQdGqSLgjQmnzLenptb4zlwjLTM3B+G3VbpskNvE3l6RqnMPm9Vh84IGsXa6AiQfdjUCAcfWYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741862542; c=relaxed/simple;
-	bh=89frrpae59407/seHN/aD3rSRAGpNQPZqXGHx1V5aA4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=mq31UH/ErTqHBMbz85CokbVSqH4plIIpaqIF9lH+OC4nyMK5DDS3diC2xojepbRQ1FzOPOKjqznhopacBIAmwgeIEASS2R0m2JmDgR/73qF8owHKnCdhBgPuWQQafXijjBQO8fcSmGB/2ey6kP+bWwKDJVvDm8cLQnwU77YqY+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RoBKK+Rs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vb+9PQhI; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 13 Mar 2025 10:42:16 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741862536;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HmnHQgUoVSCfRTrbeU9Vm3AHKaQxKZYU1I4ZxcDroyE=;
-	b=RoBKK+RsXVnVH3HP1rwXZpzQPgUmexMunXKnoyjNiB7G3Pczs1O1A/SnBk4sQ69PRV/rB0
-	rc2ON8JSCqfdJr6Gi1wnlK7GSxJp+LGIKToJTL0MxnYmLWZwOp19MvSgo5hoceR8wMa/Dq
-	/lGdFXfK7BO98d61CL8WSs5t4EMJVGL9rx6UoogRrOlncTgKe6cxKgipdy8aW479t8JBjF
-	TIrypp5zdbicUxhSDaXXhEOovmlO7hkJuLKPcr7RZNKzxG8O0Y4Pd4ULP9R/rP82/dJVyA
-	153lgfOEB37eE5feosiyKYy/QloyNslg1k6VyQnaGf+5r1OqFRMuPE9PQ4vV4Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741862536;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HmnHQgUoVSCfRTrbeU9Vm3AHKaQxKZYU1I4ZxcDroyE=;
-	b=vb+9PQhIDNoB/D1MfPw1JNAj0BUC+TPZtryIPSf3/7/DGzqdeVRw24T0xnm1SjwI/v4TgI
-	GsRo4VmBYL4iXxDw==
-From: "tip-bot2 for David Woodhouse" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/boot] x86/kexec: Add relocate_kernel() debugging support:
- Load a GDT
-Cc: David Woodhouse <dwmw@amazon.co.uk>, Ingo Molnar <mingo@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>,
- Ard Biesheuvel <ardb@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250312144257.2348250-2-dwmw2@infradead.org>
-References: <20250312144257.2348250-2-dwmw2@infradead.org>
+	s=arc-20240116; t=1741862550; c=relaxed/simple;
+	bh=Fmjr2+soZpmLJ/Pog2M9SWWtJSsDEl2ShGVhMKgUWf4=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=LvqY4d6hNtId0ETThfhL4gWPkdu1Sy1OdSVO7C3VcdzC41deaGZH7Mnhunb1w41BI3UwYqbGkb1J2SkvFfjPvPeYR9+PhcDI4QsRyog6LEUC74qNkkxM11tEQrar6FNBT5JQ2rGQZDu6D2FDqF/JVRfKqL0hvrmohwYOelHpTlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=ecwBlwCK; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174186253602.14745.9025061893846353110.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1741862539;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LFm3KsmAW7VDcqDfFUvV8TrvWBGDHYSxcO8XpMmIi+o=;
+	b=ecwBlwCKU6P8di9N2w737dS2NNAKJ9CyOCuMtbfDwzW9u69CT/TRIeJEFxjk/182gVtIzR
+	se7/9NEMVL1oLKstEyNFEECefTHeCNqkAlqHz/SdZeUWGGOxeUbE0/baIX/9Sm0z8Qg7qo
+	2AY+7InpS1r2CjHAFmc2VKC/1nqlM8hW73X3y1o9iFWOZuFH9B2OZO/gcoKP/ls7Xu2zld
+	LLZ+LfRFH/Hv4Y66qW1WfAgQ0x7tjTCF80CxqqHvrFJWmk7pkInWXwBXR5ZG7PpOyR1cxE
+	S3CXyNn85silJPhR6hoGeO0jIwQCF3PnTaI2VqP2iEzbFQdlTBEsuJUtMT15/A==
+Date: Thu, 13 Mar 2025 11:42:17 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: Quentin Schulz <quentin.schulz@cherry.de>
+Cc: Alexey Charkov <alchark@gmail.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Viresh Kumar
+ <viresh.kumar@linaro.org>, Chen-Yu Tsai <wens@kernel.org>, Diederik de Haas
+ <didi.debian@cknow.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Kever Yang <kever.yang@rock-chips.com>
+Subject: Re: [PATCH v5 7/8] arm64: dts: rockchip: Add OPP data for CPU cores
+ on RK3588j
+In-Reply-To: <a56b59a21dc3c21192fe45197eee4865@manjaro.org>
+References: <20240617-rk-dts-additions-v5-0-c1f5f3267f1e@gmail.com>
+ <d8ce8db2-1717-40f8-b53e-24cc71a758c9@cherry.de>
+ <CABjd4Yw-r-ogfwcrph4K1wbkybS25gk6LFg8wpqLG27uWdybNA@mail.gmail.com>
+ <2914631.KiezcSG77Q@diego>
+ <CABjd4YxF4N1tAgGUZk-oKkMUO+Q9rWHZsas9gMQdJ+TF4A1=NA@mail.gmail.com>
+ <e55125ed-64fb-455e-b1e4-cebe2cf006e4@cherry.de>
+ <a56b59a21dc3c21192fe45197eee4865@manjaro.org>
+Message-ID: <2cf3889741f84584d8f23a4407fed08e@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-The following commit has been merged into the x86/boot branch of tip:
+Hello all,
 
-Commit-ID:     afb305d6831b930571b5413cec239289ef164b55
-Gitweb:        https://git.kernel.org/tip/afb305d6831b930571b5413cec239289ef164b55
-Author:        David Woodhouse <dwmw@amazon.co.uk>
-AuthorDate:    Wed, 12 Mar 2025 14:34:13 
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 13 Mar 2025 11:23:31 +01:00
+On 2025-03-12 11:34, Dragan Simic wrote:
+> On 2025-03-12 11:15, Quentin Schulz wrote:
+>> On 2/16/25 1:32 PM, Alexey Charkov wrote:
+>>> On Sat, Feb 15, 2025 at 11:30 PM Heiko Stübner <heiko@sntech.de> 
+>>> wrote:
+>>>> Am Samstag, 15. Februar 2025, 19:59:44 MEZ schrieb Alexey Charkov:
+>>>>> On Tue, Feb 11, 2025 at 7:32 PM Quentin Schulz 
+>>>>> <quentin.schulz@cherry.de> wrote:
+>>>>>> On 6/17/24 8:28 PM, Alexey Charkov wrote:
+>> [...]
+>>>>>>> +     };
+>>>>>>> +
+>>>>>>> +     cluster2_opp_table: opp-table-cluster2 {
+>>>>>>> +             compatible = "operating-points-v2";
+>>>>>>> +             opp-shared;
+>>>>>>> +
+>>>>>>> +             opp-1416000000 {
+>>>>>>> +                     opp-hz = /bits/ 64 <1416000000>;
+>>>>>>> +                     opp-microvolt = <750000 750000 950000>;
+>>>>>>> +                     clock-latency-ns = <40000>;
+>>>>>>> +             };
+>>>>>>> +             opp-1608000000 {
+>>>>>>> +                     opp-hz = /bits/ 64 <1608000000>;
+>>>>>>> +                     opp-microvolt = <787500 787500 950000>;
+>>>>>>> +                     clock-latency-ns = <40000>;
+>>>>>>> +             };
+>>>>>>> +             opp-1800000000 {
+>>>>>>> +                     opp-hz = /bits/ 64 <1800000000>;
+>>>>>>> +                     opp-microvolt = <875000 875000 950000>;
+>>>>>>> +                     clock-latency-ns = <40000>;
+>>>>>>> +             };
+>>>>>>> +             opp-2016000000 {
+>>>>>>> +                     opp-hz = /bits/ 64 <2016000000>;
+>>>>>>> +                     opp-microvolt = <950000 950000 950000>;
+>>>>>>> +                     clock-latency-ns = <40000>;
+>>>>>>> +             };
+>>>>>> 
+>>>>>> opp-1800000000 and opp-2016000000 should be removed as well.
+>>>>>> 
+>>>>>> Did I misunderstand what Rockchip did here? Adding Kever in Cc at 
+>>>>>> least
+>>>>>> for awareness on Rockchip side :)
+>>>>>> 
+>>>>>> I guess another option could be to mark those above as
+>>>>>> 
+>>>>>> turbo-mode;
+>>>>>> 
+>>>>>> though no clue what this would entail. From a glance at cpufreq, 
+>>>>>> it
+>>>>>> seems that for Rockchip since we use the default cpufreq-dt, it 
+>>>>>> would
+>>>>>> mark those as unusable, so essentially a no-op, so better remove 
+>>>>>> them
+>>>>>> entirely?
+>>>>> 
+>>>>> I believe the opp core just marks 'turbo-mode' opps as
+>>>>> CPUFREQ_BOOST_FREQ, and cpufreq-dt only passes that flag along to 
+>>>>> the
+>>>>> cpufreq core. But then to actually use those boost frequencies I 
+>>>>> would
+>>>>> guess the governor needs to somehow know the power/thermal 
+>>>>> constraints
+>>>>> of the chip?.. Don't know where that is defined.
+>>>> 
+>>>> personally I don't believe in "boost" frequencies - except when they 
+>>>> are
+>>>> declared officially.
+>>>> 
+>>>> Rockchip for the longest time maintains that running the chip 
+>>>> outside
+>>>> the declared power/rate envelope can reduce its overall lifetime.
+>>>> 
+>>>> So for Rockchip in mainline a "it runs stable for me" has never been 
+>>>> a
+>>>> suitable reasoning ;-) .
+>>> 
+>>> My key concern here was perhaps that we are looking at a file inside
+>>> the Rockchip source tree which looks relevant by the name of it, but
+>>> doesn't actually get included anywhere for any of the boards. This 
+>>> may
+>>> or may not constitute an endorsement by Rockchip of any OPPs listed
+>>> there :-D
+>> 
+>> Rockchip support stated:
+>> 
+>> """
+>> If you run overdrive mode, you do not need to include rk3588j.dtsi,
+>> and you can change it to #incldue rk3588.dtsi to ensure that the
+>> maximum frequency can reach 2GHz
+>> 
+>> below picture from datasheet.
+>> """
+>> 
+>> The picture is the table 3-2 Recommended operating conditions, page 30
+>> from the RK3588J datasheet, e.g.
+>> https://www.lcsc.com/datasheet/lcsc_datasheet_2403201054_Rockchip-RK3588J_C22364189.pdf
+>> 
+>> What is overdrive?
+>> 
+>> """
+>> Overdrive mode brings higher frequency, and the voltage will increase
+>> accordingly. Under
+>> the overdrive mode for a long time, the chipset may shorten the
+>> lifetime, especially in high temperature condition
+>> """
+>> 
+>> according to the same datasheet, end of the same table, page 31.
+>> 
+>> so this seems like a turbo-mode frequency to me.
+>> 
+>> Additionally, the note for the "normal mode" (the one with the lower
+>> freqs) states:
+>> 
+>> """
+>> Normal mode means the chipset works under safety voltage and 
+>> frequency. For the
+>> industrial environment, highly recommend to keep in normal mode, the 
+>> lifetime is
+>> reasonably guaranteed.
+>> """
+>> 
+>> I believe "industrial environment" means RK3588J used in the
+>> temperatures that aren't OK for the standard RK3588 variant?
+> 
+> Thanks a lot for obtaining these clarifications!
+> 
+> Yes, I'd say that in this case "industrial environment" boils down
+> to the extended temperature range for the RK3588J variant.
+> 
+>>> I haven't seen a TRM for the J variant, nor do I have a board with
+>>> RK3588J to run tests, so it would be great if Kever could chime in
+>>> with how these OPPs are different from the others (or not).
+>>> 
+>>>> So while the situation might be strange for the rk3588j, I really 
+>>>> only want
+>>>> correct frequencies here please - not any pseudo "turbo freqs".
+>>>> 
+>>>> I don't care that much what people do on their own device{s/trees}, 
+>>>> but
+>>>> the devicetrees we supply centrally (and to u-boot, etc) should only
+>>>> contain frequencies vetted by the manufacturer.
+>>> 
+>>> Fair enough. Let's just try and get another data point on whether
+>>> these frequencies are vetted or not.
+>> 
+>> So the higher freqs seems to be vetted (and used by default on
+>> Rockchip's BSP kernel), it just feels like you aren't really supposed
+>> to run those higher frequencies all the time? And especially not in
+>> "industrial environment"?
+>> 
+>> I would assume we want to stay on the safer side and remove those
+>> higher frequencies? Heiko?
+> 
+> I agree, we should remove the higher-frequency OPPs.  I'd like
+> to go through everything once again in detail and prepare a patch
+> that removes the unsafe OPPs, and you could review it once it's
+> on the ML, to make sure it's fine.
 
-x86/kexec: Add relocate_kernel() debugging support: Load a GDT
-
-There are some failure modes which lead to triple-faults in the
-relocate_kernel() function, which is fairly much undebuggable
-for normal mortals.
-
-Adding a GDT in the relocate_kernel() environment is step 1 towards
-being able to catch faults and do something more useful.
-
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250312144257.2348250-2-dwmw2@infradead.org
----
- arch/x86/kernel/relocate_kernel_64.S | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
-
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index b44d886..ac05897 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -40,6 +40,16 @@ SYM_DATA(kexec_pa_table_page, .quad 0)
- SYM_DATA(kexec_pa_swap_page, .quad 0)
- SYM_DATA_LOCAL(pa_backup_pages_map, .quad 0)
- 
-+	.balign 16
-+SYM_DATA_START_LOCAL(kexec_debug_gdt)
-+	.word   kexec_debug_gdt_end - kexec_debug_gdt - 1
-+	.long   0
-+	.word   0
-+	.quad   0x00cf9a000000ffff      /* __KERNEL32_CS */
-+	.quad   0x00af9a000000ffff      /* __KERNEL_CS */
-+	.quad   0x00cf92000000ffff      /* __KERNEL_DS */
-+SYM_DATA_END_LABEL(kexec_debug_gdt, SYM_L_LOCAL, kexec_debug_gdt_end)
-+
- 	.section .text..relocate_kernel,"ax";
- 	.code64
- SYM_CODE_START_NOALIGN(relocate_kernel)
-@@ -116,6 +126,19 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
- 	/* store the start address on the stack */
- 	pushq   %rdx
- 
-+	/* Create a GDTR (16 bits limit, 64 bits addr) on stack */
-+	leaq	kexec_debug_gdt(%rip), %rax
-+	pushq	%rax
-+	pushw	(%rax)
-+
-+	/* Load the GDT, put the stack back */
-+	lgdt	(%rsp)
-+	addq	$10, %rsp
-+
-+	/* Test that we can load segments */
-+	movq	%ds, %rax
-+	movq	%rax, %ds
-+
- 	/*
- 	 * Clear X86_CR4_CET (if it was set) such that we can clear CR0_WP
- 	 * below.
+Just as a note, everything above (and even a bit more) is confirmed
+and clearly described in the publicly available RK3588J datasheet,
+which I'll provide as a reference in my upcoming patch.
 
