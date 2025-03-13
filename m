@@ -1,324 +1,120 @@
-Return-Path: <linux-kernel+bounces-560342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87D45A602CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:37:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E693A602CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:37:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCF9317EA46
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:37:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E5914220E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD1E1F4606;
-	Thu, 13 Mar 2025 20:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152451F4716;
+	Thu, 13 Mar 2025 20:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SNv6MEaH"
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="FLL7YZxX"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B7E42AA9;
-	Thu, 13 Mar 2025 20:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92E61F4619
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 20:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741898239; cv=none; b=vDoQpLg9hN8v0ZQQ/QkwOQgJsqqEnT7b+VcgkDkfeL4G87CxudXOqb/UecC5eWXaGVHfO7pdAhbvcutjqp+KNKPABQxC9iEVhu2EKgsgZ2X6a6qCXdUJt/DXYHjNhJQYtpmnvF2DOu2SZYLF+sbKJgriK46UzFDmmeqFCCQ8ekQ=
+	t=1741898243; cv=none; b=Tw0fgYjrJQefv5Imc9nenvysdiELZayBBti7zIyoruCrHbWo86IiTVeyuOrKMy1FzGwGzLkAtqPm9N1D2meJRJ9hE1XAKVpIsbfv1ItCEvRiP8OI6mjxog1vaA2uWgbSb+3mb0ILkSv/oSsewdO+ddtyHQ/35JfzJblKmjRVFCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741898239; c=relaxed/simple;
-	bh=Riz+i4ewUvQbitF11daR+1wtTdMa52JWkEbn8u2OGD4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SsqSD2Qm1iE6Punh31rbOIZhGu7pKGbRBTOPlSeDDmoIkL8wWQLPGNVNsMO1P9ogUcgzs5KaKosPkemupYh5u7Ea8ImSmD/8ZhFHxnhi17+oN3EUztOL/JTtUkF2H5akpVZYaAmMGESIejElQa7xeLONEjNombRQKnzfwqvoka0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SNv6MEaH; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5240a432462so1046437e0c.1;
-        Thu, 13 Mar 2025 13:37:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741898236; x=1742503036; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dqu3z7xLiOSf+mcYINqf8wHjgnmfkNcGWDDBMVjmjy8=;
-        b=SNv6MEaH88zCJ4pyJsxTgCPq6+kVf4xuPJ4wZkr48TZDfg+oPY+NJzAfXjAEk9EA9F
-         mHPwREdc5JBpYuA/8cf01EBmL5xjP9Oo63A+Y2qznNpTN6MXXSQdSifeXOIcUPN7yvuh
-         umUb/OaxfWBBnivl2v5OM0ed7tQYFiwiRlejaOFZM1dJ/Y3AaQvvsG5ZunqDhKDlHsK4
-         sy4/4pHICXglEMwmuqTxNFPXpChl7jpL9RtwX4KZ+7BtOz7yn3vWFmgZeM+QcyG5/iTk
-         dE519rLgwhKW4HvrA0PB/tRdcZxayqKP6Xwp4dVhEUSQ4SWLU8wfihNkOrWU2kJh0d9x
-         Y50g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741898236; x=1742503036;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dqu3z7xLiOSf+mcYINqf8wHjgnmfkNcGWDDBMVjmjy8=;
-        b=Q3gzvZFG/zZcI413FyB+ZozCe1Gq7nTqZjqNMkWugZnavq2N0aPgndnC7ZzG8G2k/8
-         LBw7ISxmj6lrJgMyfpfTw2Y2SaSfrXoURzP/qFsVrwXM1HbLR3MsW5aX4FrAFXHXXz+b
-         z7z220edkMZy6QK5HtlEC7PWIX7cZOMGcIACcDPg0RJX0Fzn46cQGcm17Wobu85YgrrU
-         eFRpRAES3xqrX1CAwYVCNO0QHapBV4ANjzYTIukbIBMFYidlOQQJZnT9qcHS2glQXdGa
-         L0FmsfASI+3jH3yT3YJIkxv9i9aT4A2rJIbMbIZFYH0N4MxDi467z6cAJgcL9dY20xgH
-         +6fw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHxRoidEShsUfx/AktgG8LXXTNLWUKDuoWMM8DZevJfk7iynibXdRiAM/m+Uv/cl5qnnM+u4SknPcxZsxU@vger.kernel.org, AJvYcCVgtt+kYVphZmrJMHV3rB++F1Vto+zIFWpXH/qZCVuVoPy/zKQHwOemXDvR/Q2LRCRxIvPwW3iHloUxpQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWFTK69Nm9utydg4nr8imXxBwF+FYfA3cxvRQFK41cbHURtTE3
-	YAys8fv9dfmCGoH9oeK4JYuE+Xq6DOrDQ6W6opek9cWAT8bDDO6P0xxqaE2zsacTJYnN2g3hE03
-	P/oYDfdDF0ez5HmQ8OUsiaN95AQw=
-X-Gm-Gg: ASbGncvEYS7J+2/hryx0qdzer3C/Zm91+p/vauPvgdFVD78X39s9wsym0+4AM7PkKCT
-	NvM9a9JO0rCKpAzxyXhtzyfwMMX2VORpnyQdhPBhjCFSPw+gIjQAzNOMhA2A0SlQmYh6VMQZa4E
-	JV6P2a6TKbuwpd4UiQCJAkjxQpdA==
-X-Google-Smtp-Source: AGHT+IGhWPno/cBlLy5i4JFgfTgN4go/KloyhLNpBTEj6UkmZZkGZMKDNDN1ix3of11Oz/UJSScIn1QWnKmOTjaulGI=
-X-Received: by 2002:a05:6122:3115:b0:523:6eef:af62 with SMTP id
- 71dfb90a1353d-5243a4082e2mr4188850e0c.4.1741898235977; Thu, 13 Mar 2025
- 13:37:15 -0700 (PDT)
+	s=arc-20240116; t=1741898243; c=relaxed/simple;
+	bh=l+j0vvaZeVM2v7Ka3DYAJXzdNboINqUX/0oCRnIWjSU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HClmMsuRe2aaDqhWF89DFsW0BqIyr4JI/hpf15dnttrT8WcNq8BNkOMyPlcLeOnwseUHJwrc0gnwAnWY4NZ6T3npGxIZ1J6CTEGRoePfJq6M/eEJiufdnECPSkKcWRgpnNanAF1AnvkTVNon8Br8TYSs8AIeo1mbT6awaKx4jRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=FLL7YZxX; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 5587F2C04C6;
+	Fri, 14 Mar 2025 09:37:18 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1741898238;
+	bh=l+j0vvaZeVM2v7Ka3DYAJXzdNboINqUX/0oCRnIWjSU=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=FLL7YZxXer/UklMBX6Bu5Zfqq/uGN1g0A49z4to72uMmHkxrgswa19wF7P0WVM3D8
+	 mRI/IG8yPhVYrrkH0uuyNl51C9g48W4s4fU78s3FTY7e1/kb9VqB40vcMBN0QL1vlw
+	 B7HTi8KWxxwnR0VzU3fBDU70fDNGU+5k4SdgGa4q72SRKdrSUyfGcf8xaCFmOX6XjX
+	 k6mt0uVlNVYEk6TOo5AL4RRMqkFwLW3rvZDCPrhWF5P2Eiy9osiIRuawZmqXu6DYsY
+	 x/t5cSWeOVVwVB0eQxqA0bDoPlpWMPBEHR3uxFGcWfX4mNSLQnVrA/Kqd2J/LQkhp4
+	 EzyzyLWA3Y6LA==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B67d341fe0001>; Fri, 14 Mar 2025 09:37:18 +1300
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 14 Mar 2025 09:37:18 +1300
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.014; Fri, 14 Mar 2025 09:37:18 +1300
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: "hkallweit1@gmail.com" <hkallweit1@gmail.com>, "linux@armlinux.org.uk"
+	<linux@armlinux.org.uk>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"daniel@makrotopia.org" <daniel@makrotopia.org>, "markus.stockhausen@gmx.de"
+	<markus.stockhausen@gmx.de>, "sander@svanheule.net" <sander@svanheule.net>,
+	netdev <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10] net: mdio: Add RTL9300 MDIO driver
+Thread-Topic: [PATCH v10] net: mdio: Add RTL9300 MDIO driver
+Thread-Index: AQHbk7RQMlEBwbSVuE+Te7ZjHwH5gbNwJygAgAB7A4CAAAtMgIAAAJ2A
+Date: Thu, 13 Mar 2025 20:37:18 +0000
+Message-ID: <539762a3-b17d-415c-9316-66527bfc6219@alliedtelesis.co.nz>
+References: <20250313010726.2181302-1-chris.packham@alliedtelesis.co.nz>
+ <f7c7f28b-f2b0-464a-a621-d4b2f815d206@lunn.ch>
+ <5ea333ec-c2e4-4715-8a44-0fd2c77a4f3c@alliedtelesis.co.nz>
+ <be39bb63-446e-4c6a-9bb9-a823f0a482be@lunn.ch>
+In-Reply-To: <be39bb63-446e-4c6a-9bb9-a823f0a482be@lunn.ch>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0851C2E639F79C47B16845917206FBDB@alliedtelesis.co.nz>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307120141.1566673-1-qun-wei.lin@mediatek.com>
- <Z9HOavSkFf01K9xh@google.com> <5gqqbq67th4xiufiw6j3ewih6htdepa4u5lfirdeffrui7hcdn@ly3re3vgez2g>
- <CAGsJ_4xwnVxn1odj=j+z0VXm1DRUmnhugnwCH-coqBLJweDu9Q@mail.gmail.com>
- <Z9MCwXzYDRJoTiIr@google.com> <CAGsJ_4yaSx1vEiZdCouBveeH3D-bQDdvrhRpz=Kbvqn30Eh-nA@mail.gmail.com>
- <Z9MWzDUxUigJrZXt@google.com>
-In-Reply-To: <Z9MWzDUxUigJrZXt@google.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 14 Mar 2025 09:37:04 +1300
-X-Gm-Features: AQ5f1JogIHzZmp31Tn9SRX0wI-8utb1OhKH-ruNw33einw0Y1Le7Sq_FlEtZGgo
-Message-ID: <CAGsJ_4z9pSt=LdfDUmQ7YhNocE6CJGxEwighSygGZrDFSyKU+A@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Improve Zram by separating compression context from kswapd
-To: Minchan Kim <minchan@kernel.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Qun-Wei Lin <qun-wei.lin@mediatek.com>, 
-	Jens Axboe <axboe@kernel.dk>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chris Li <chrisl@kernel.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
-	Kairui Song <kasong@tencent.com>, Dan Schatzberg <schatzberg.dan@gmail.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, 
-	linux-block@vger.kernel.org, nvdimm@lists.linux.dev, linux-mm@kvack.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Casper Li <casper.li@mediatek.com>, Chinwen Chang <chinwen.chang@mediatek.com>, 
-	Andrew Yang <andrew.yang@mediatek.com>, James Hsu <james.hsu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Ko7u2nWN c=1 sm=1 tr=0 ts=67d341fe a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=bmUEovISKhIOwPBmBJcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-On Fri, Mar 14, 2025 at 6:33=E2=80=AFAM Minchan Kim <minchan@kernel.org> wr=
-ote:
->
-> On Fri, Mar 14, 2025 at 05:58:00AM +1300, Barry Song wrote:
-> > On Fri, Mar 14, 2025 at 5:07=E2=80=AFAM Minchan Kim <minchan@kernel.org=
-> wrote:
-> > >
-> > > On Thu, Mar 13, 2025 at 04:45:54PM +1300, Barry Song wrote:
-> > > > On Thu, Mar 13, 2025 at 4:09=E2=80=AFPM Sergey Senozhatsky
-> > > > <senozhatsky@chromium.org> wrote:
-> > > > >
-> > > > > On (25/03/12 11:11), Minchan Kim wrote:
-> > > > > > On Fri, Mar 07, 2025 at 08:01:02PM +0800, Qun-Wei Lin wrote:
-> > > > > > > This patch series introduces a new mechanism called kcompress=
-d to
-> > > > > > > improve the efficiency of memory reclaiming in the operating =
-system. The
-> > > > > > > main goal is to separate the tasks of page scanning and page =
-compression
-> > > > > > > into distinct processes or threads, thereby reducing the load=
- on the
-> > > > > > > kswapd thread and enhancing overall system performance under =
-high memory
-> > > > > > > pressure conditions.
-> > > > > > >
-> > > > > > > Problem:
-> > > > > > >  In the current system, the kswapd thread is responsible for =
-both
-> > > > > > >  scanning the LRU pages and compressing pages into the ZRAM. =
-This
-> > > > > > >  combined responsibility can lead to significant performance =
-bottlenecks,
-> > > > > > >  especially under high memory pressure. The kswapd thread bec=
-omes a
-> > > > > > >  single point of contention, causing delays in memory reclaim=
-ing and
-> > > > > > >  overall system performance degradation.
-> > > > > >
-> > > > > > Isn't it general problem if backend for swap is slow(but synchr=
-onous)?
-> > > > > > I think zram need to support asynchrnous IO(can do introduce mu=
-ltiple
-> > > > > > threads to compress batched pages) and doesn't declare it's
-> > > > > > synchrnous device for the case.
-> > > > >
-> > > > > The current conclusion is that kcompressd will sit above zram,
-> > > > > because zram is not the only compressing swap backend we have.
-> > >
-> > > Then, how handles the file IO case?
-> >
-> > I didn't quite catch your question :-)
->
-> Sorry for not clear.
->
-> What I meant was zram is also used for fs backend storage, not only
-> for swapbackend. The multiple simultaneous compression can help the case,
-> too.
-
-I agree that multiple asynchronous threads might transparently improve
-userspace read/write performance with just one thread or a very few threads=
-.
-However, it's unclear how genuine the requirement is. On the other hand,
-in such cases, userspace can always optimize read/write bandwidth, for
-example, by using aio_write() or similar methods if they do care about
-the read/write bandwidth.
-
-Once the user has multiple threads (close to the number of CPU cores),
-asynchronous multi-threading won't offer any benefit and will only result
-in increased context switching. I guess that is caused by the fundamental
-difference between zram and other real devices with hardware offloads -
-that zram always relies on the CPU and operates synchronously(no
-offload, no interrupt from HW to notify the completion of compression).
-
->
-> >
-> > >
-> > > >
-> > > > also. it is not good to hack zram to be aware of if it is kswapd
-> > > > , direct reclaim , proactive reclaim and block device with
-> > > > mounted filesystem.
-> > >
-> > > Why shouldn't zram be aware of that instead of just introducing
-> > > queues in the zram with multiple compression threads?
-> > >
-> >
-> > My view is the opposite of yours :-)
-> >
-> > Integrating kswapd, direct reclaim, etc., into the zram driver
-> > would violate layering principles. zram is purely a block device
->
-> That's the my question. What's the reason zram need to know about
-> kswapd, direct_reclaim and so on? I didn't understand your input.
-
-Qun-Wei's patch 2/2, which modifies the zram driver, contains the following
-code within the zram driver:
-
-+int schedule_bio_write(void *mem, struct bio *bio, compress_callback cb)
-+{
-+ ...
-+
-+        if (!nr_kcompressd || !current_is_kswapd())
-+                 return -EBUSY;
-+
-+}
-
-It's clear that Qun-Wei decided to disable asynchronous threading unless
-the user is kswapd. Qun-Wei might be able to provide more insight on this
-decision.
-
-My guess is:
-
-1. Determining the optimal number of threads is challenging due to varying
-CPU topologies and software workloads. For example, if there are 8 threads
-writing to zram, the default 4 threads might be slower than using all 8 thr=
-eads
-synchronously. For servers, we could have hundreds of CPUs.
-On the other hand, if there is only one thread writing to zram, using 4 thr=
-eads
-might interfere with other workloads too much and cause the phone to heat u=
-p
-quickly.
-
-2. kswapd is the user that truly benefits from asynchronous threads. Since
-it handles asynchronous memory reclamation, speeding up its process
-reduces the likelihood of entering slowpath / direct reclamation. This is
-where it has the greatest potential to make a positive impact.
-
->
-> > driver, and how it is used should be handled separately. Callers have
-> > greater flexibility to determine its usage, similar to how different
-> > I/O models exist in user space.
-> >
-> > Currently, Qun-Wei's patch checks whether the current thread is kswapd.
-> > If it is, compression is performed asynchronously by threads;
-> > otherwise, it is done in the current thread. In the future, we may
->
-> Okay, then, why should we do that without following normal asynchrnous
-> disk storage? VM justs put the IO request and sometimes congestion
-> control. Why is other logic needed for the case?
-
-It seems there is still some uncertainty about why current_is_kswapd()
-is necessary, so let's get input from Qun-Wei as well.
-
-Despite all the discussions, one important point remains: zswap might
-also need this asynchronous thread. For months, Yosry and Nhat have
-been urging the zram and zswap teams to collaborate on those shared
-requirements. Having one per-node thread for each kswapd could be the
-low-hanging fruit for both zswap and zram.
-
-Additionally, I don't see how the prototype I proposed here [1] would confl=
-ict
-with potential future optimizations in zram, particularly those aimed at
-improving filesystem read/write performance through multiple asynchronous
-threads, if that is indeed a valid requirement.
-
-[1] https://lore.kernel.org/lkml/20250313093005.13998-1-21cnbao@gmail.com/
-
->
-> > have additional reclaim threads, such as for damon or
-> > madv_pageout, etc.
-> >
-> > > >
-> > > > so i am thinking sth as below
-> > > >
-> > > > page_io.c
-> > > >
-> > > > if (sync_device or zswap_enabled())
-> > > >    schedule swap_writepage to a separate per-node thread
-> > >
-> > > I am not sure that's a good idea to mix a feature to solve different
-> > > layers. That wouldn't be only swap problem. Such an parallelism under
-> > > device  is common technique these days and it would help file IO case=
-s.
-> > >
-> >
-> > zswap and zram share the same needs, and handling this in page_io
-> > can benefit both through common code. It is up to the callers to decide
-> > the I/O model.
-> >
-> > I agree that "parallelism under the device" is a common technique,
-> > but our case is different=E2=80=94the device achieves parallelism with
-> > offload hardware, whereas we rely on CPUs, which can be scarce.
-> > These threads may also preempt CPUs that are critically needed
-> > by other non-compression tasks, and burst power consumption
-> > can sometimes be difficult to control.
->
-> That's general problem for common resources in the system and always
-> trace-off domain in the workload areas. Eng folks has tried to tune
-> them statically/dynamically depending on system behavior considering
-> what they priorites.
-
-Right, but haven't we yet taken on the task of tuning multi-threaded zram?
-
->
-> >
-> > > Furthermore, it would open the chance for zram to try compress
-> > > multiple pages at once.
-> >
-> > We are already in this situation when multiple callers use zram simulta=
-neously,
-> > such as during direct reclaim or with a mounted filesystem.
-> >
-> > Of course, this allows multiple pages to be compressed simultaneously,
-> > even if the user is single-threaded. However, determining when to enabl=
-e
-> > these threads and whether they will be effective is challenging, as it
-> > depends on system load. For example, Qun-Wei's patch chose not to use
-> > threads for direct reclaim as, I guess,  it might be harmful.
->
-> Direct reclaim is already harmful and that's why VM has the logic
-> to throttle writeback or other special logics for kswapd or direct
-> reclaim path for th IO, which could be applied into the zram, too.
-
-I'm not entirely sure that the existing congestion or throttled writeback
-can automatically tune itself effectively with non-offload resources. For
-offload resources, the number of queues and the bandwidth remain stable,
-but for CPUs, they fluctuate based on changes in system workloads.
-
-Thanks
-Barry
+T24gMTQvMDMvMjAyNSAwOTozNSwgQW5kcmV3IEx1bm4gd3JvdGU6DQo+IE9uIFRodSwgTWFyIDEz
+LCAyMDI1IGF0IDA3OjU0OjM5UE0gKzAwMDAsIENocmlzIFBhY2toYW0gd3JvdGU6DQo+PiArY2Mg
+bmV0ZGV2LCBsa21sDQo+Pg0KPj4gT24gMTQvMDMvMjAyNSAwMTozNCwgQW5kcmV3IEx1bm4gd3Jv
+dGU6DQo+Pj4+ICsJLyogUHV0IHRoZSBpbnRlcmZhY2VzIGludG8gQzQ1IG1vZGUgaWYgcmVxdWly
+ZWQgKi8NCj4+Pj4gKwlnbGJfY3RybF9tYXNrID0gR0VOTUFTSygxOSwgMTYpOw0KPj4+PiArCWZv
+ciAoaSA9IDA7IGkgPCBNQVhfU01JX0JVU1NFUzsgaSsrKQ0KPj4+PiArCQlpZiAocHJpdi0+c21p
+X2J1c19pc19jNDVbaV0pDQo+Pj4+ICsJCQlnbGJfY3RybF92YWwgfD0gR0xCX0NUUkxfSU5URl9T
+RUwoaSk7DQo+Pj4+ICsNCj4+Pj4gKwlmd25vZGVfZm9yX2VhY2hfY2hpbGRfbm9kZShub2RlLCBj
+aGlsZCkNCj4+Pj4gKwkJaWYgKGZ3bm9kZV9kZXZpY2VfaXNfY29tcGF0aWJsZShjaGlsZCwgImV0
+aGVybmV0LXBoeS1pZWVlODAyLjMtYzQ1IikpDQo+Pj4+ICsJCQlwcml2LT5zbWlfYnVzX2lzX2M0
+NVttZGlvX2J1c10gPSB0cnVlOw0KPj4+PiArDQo+Pj4gVGhpcyBuZWVkcyBtb3JlIGV4cGxhbmF0
+aW9uLiBTb21lIFBIWXMgbWl4IEMyMiBhbmQgQzQ1LCBlLmcuIHRoZSA+IDFHDQo+Pj4gc3BlZWQg
+c3VwcG9ydCByZWdpc3RlcnMgYXJlIGluIHRoZSBDNDUgYWRkcmVzcyBzcGFjZSwgYnV0IDw9IDFH
+IGlzIGluDQo+Pj4gdGhlIEMyMiBzcGFjZS4gQW5kIDFHIFBIWXMgd2hpY2ggc3VwcG9ydCBFRUUg
+bmVlZCBhY2Nlc3MgdG8gQzQ1IHNwYWNlDQo+Pj4gZm9yIHRoZSBFRUUgcmVnaXN0ZXJzLg0KPj4g
+QWggZ29vZCBwb2ludC4gVGhlIE1ESU8gaW50ZXJmYWNlcyBhcmUgZWl0aGVyIGluIEdQSFkgKGku
+ZS4gY2xhdXNlIDIyKQ0KPj4gb3IgMTBHUEhZIG1vZGUgKGkuZS4gY2xhdXNlIDQ1KS4gVGhpcyBk
+b2VzIG1lYW4gd2UgY2FuJ3Qgc3VwcG9ydCBzdXBwb3J0DQo+PiBib3RoIGM0NSBhbmQgYzIyIG9u
+IHRoZSBzYW1lIE1ESU8gYnVzICh3aGV0aGVyIHRoYXQncyBvbmUgUEhZIHRoYXQNCj4+IHN1cHBv
+cnRzIGJvdGggb3IgdHdvIGRpZmZlcmVudCBQSFlzKS4gSSdsbCBhZGQgYSBjb21tZW50IHRvIHRo
+YXQgZWZmZWN0DQo+PiBhbmQgSSBzaG91bGQgcHJvYmFibHkgb25seSBwcm92aWRlIGJ1cy0+cmVh
+ZC93cml0ZSBvcg0KPj4gYnVzLT5yZWFkX2M0NS93cml0ZV9jNDUgZGVwZW5kaW5nIG9uIHRoZSBt
+b2RlLg0KPiBJcyB0aGVyZSBtb3JlIHRvIGl0IHRoYW4gdGhpcz8gQmVjYXVzZSB3aHkgbm90IGp1
+c3Qgc2V0IHRoZSBtb2RlIHBlcg0KPiBidXMgdHJhbnNhY3Rpb24/DQoNCkl0J3MgYSBidXMgbGV2
+ZWwgc2V0dGluZyBhdCBpbml0IHRpbWUuIFlvdSBjYW4ndCBkeW5hbWljYWxseSBzd2l0Y2ggbW9k
+ZXMuDQo=
 
