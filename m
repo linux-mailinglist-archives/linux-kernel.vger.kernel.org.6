@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-558716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D4A1A5E9ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 03:25:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 999F3A5E9EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 03:26:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FF1B177BCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:25:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2B0A3B82D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65941547F5;
-	Thu, 13 Mar 2025 02:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3F312F399;
+	Thu, 13 Mar 2025 02:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GoREUbwN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JMlPLUxG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BB214F104;
-	Thu, 13 Mar 2025 02:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F17D86337;
+	Thu, 13 Mar 2025 02:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741832718; cv=none; b=Do8BSe7Xze+1wa0tHaT3IQlToAkQiMY9w8UOK3KTVtew2kY3HMYW3t1mcoybtPLxn/i/pJBTfPeRYTdLXugeFgntcqOqOMLvwjnHXTebNXFWjXSheFxBN7BM8uOotM92HMAXxX7oI/BEPIHyyQyGFNTKAKb9T99vPn47pxgGFD4=
+	t=1741832722; cv=none; b=DXWV6DTSDUyibzFP2JL8vB6vDp7MShKOjQ86o5Cw5z2viQ+5lzYJFVsVVBcYwXUmW2QDoO7XUT2Pc+QqOqiPJiHKcfVZ1uRySZT43CWK/g/vqpRqgcRcTSTNW6xxzTa8pqHgnNf4oVrslh9D4o5kQLo7BDxZLtHy8Q4cwlpPnJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741832718; c=relaxed/simple;
-	bh=mRjn7t2jHMHtB96VgOXZtXcTYYnXiNhOPeFk/L6/47M=;
+	s=arc-20240116; t=1741832722; c=relaxed/simple;
+	bh=7ZHcfwmXglPcdBnoQum2qB39BlKwc7b+WZDqmaPQyQo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MrZeI3kK6WoZPlOEiDRP69dqHnACMNcBjhX1YAg+iMS1u6Ql5ah5QymKtGMYhqXo300Az6ONdo+71kuFdaHfW7p6TMKCiObPXniiswpFnlmOCQpek7ICBRNz7qdC6c61o1vqTX0L7vpYmRur8XzNCelA+sn5G4NEJt34V6Bcp2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GoREUbwN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C83B8C4CEED;
-	Thu, 13 Mar 2025 02:25:14 +0000 (UTC)
+	 MIME-Version; b=iBsMFmIbzhPizivhcMlaJLMjWNH2Oj0NiO9txkUivlZ5Fg6RT0bWT2th+bjK+ejQxatVBRkSn3m6H3I+EDn9zjocFNLfIt8kK+T5VUUdXGm+h5G06rRXSmUfMWVTy9fk/fbg9A/dFe97npQ+oo4ogCrQ7RokHhUPtCe2TkOL5os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JMlPLUxG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9129BC4CEF1;
+	Thu, 13 Mar 2025 02:25:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741832718;
-	bh=mRjn7t2jHMHtB96VgOXZtXcTYYnXiNhOPeFk/L6/47M=;
+	s=k20201202; t=1741832721;
+	bh=7ZHcfwmXglPcdBnoQum2qB39BlKwc7b+WZDqmaPQyQo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GoREUbwN+wsBYSLOL+Z9nnauvNf0NQh2IgaCaS1s2LbAeJqyj1NgtD78sroKAOuqo
-	 v/6SiTglJyWphx+VuMkEg7C+2qLdFRlc5/OgtWggAJapXkpRwu17Po8MjNs2jv/byb
-	 xWRY7Cd3I4Ssp44f7fSto0ahEYYVlwKRhOSmExYMB2pZsmIyh8Bs6stMMHo0DznOQP
-	 AbYwwnwkReUwP+NrkoZsPO8D6Pcl6YVHKoiYMC4bs69lm1+5dKfhhrt1tCWnpA5so2
-	 2+ia4izMFoO4ueRjKlhyOCLTFmlp9MUpLLYe8epLCGw5mMLFvrFSmVucMPxUH0FmIQ
-	 C5M3DVg2kg9/w==
+	b=JMlPLUxG8NyJYz8YJhrVbA+eEw/VIsZZoPCpbCNR+OzML5QDi6DG0krQT8J7Y0ad6
+	 AEd1kEWSmZ2cvGxs5wKDIyUwm6HUqdopd6Gq9D+WC2jhwoW7eWp/qcY+2QGUEhu/Az
+	 VNdOL0BGoL2JHwNU6syzx96/ndbSkV151f7MijaD8jAqLDyrIVF1aSPW6bmXfIfx8w
+	 mbGYXFa1o4cgb3T9dp8PO+0XJl+Hm/juIzCNbAfgm3TIVIfYxD4fLHf/u2XS7oK0eR
+	 KSazG0kLaMYlRYjCgU3NfAAOC1oWbfH7/gIBXf7X5rE4TTDz2zZ8XknPysYguL8UhC
+	 8cwszwD8UST8w==
 From: Danilo Krummrich <dakr@kernel.org>
 To: gregkh@linuxfoundation.org,
 	rafael@kernel.org,
@@ -58,9 +58,9 @@ To: gregkh@linuxfoundation.org,
 Cc: linux-kernel@vger.kernel.org,
 	rust-for-linux@vger.kernel.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v2 3/4] rust: auxiliary: add auxiliary registration
-Date: Thu, 13 Mar 2025 03:23:52 +0100
-Message-ID: <20250313022454.147118-4-dakr@kernel.org>
+Subject: [PATCH v2 4/4] samples: rust: add Rust auxiliary driver sample
+Date: Thu, 13 Mar 2025 03:23:53 +0100
+Message-ID: <20250313022454.147118-5-dakr@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250313022454.147118-1-dakr@kernel.org>
 References: <20250313022454.147118-1-dakr@kernel.org>
@@ -72,115 +72,172 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implement the `auxiliary::Registration` type, which provides an API to
-create and register new auxiliary devices in the system.
+Add a sample Rust auxiliary driver based on a PCI driver for QEMU's
+"pci-testdev" device.
+
+The PCI driver only registers an auxiliary device, in order to make the
+corresponding auxiliary driver probe.
 
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- rust/kernel/auxiliary.rs | 80 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 79 insertions(+), 1 deletion(-)
+ MAINTAINERS                           |  1 +
+ samples/rust/Kconfig                  | 12 ++++
+ samples/rust/Makefile                 |  1 +
+ samples/rust/rust_driver_auxiliary.rs | 99 +++++++++++++++++++++++++++
+ 4 files changed, 113 insertions(+)
+ create mode 100644 samples/rust/rust_driver_auxiliary.rs
 
-diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
-index e453f821f7cb..fc4bb5388a9b 100644
---- a/rust/kernel/auxiliary.rs
-+++ b/rust/kernel/auxiliary.rs
-@@ -5,7 +5,7 @@
- //! C header: [`include/linux/auxiliary_bus.h`](srctree/include/linux/auxiliary_bus.h)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0a737b28cdfa..6ec20e4f715d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7121,6 +7121,7 @@ F:	rust/kernel/devres.rs
+ F:	rust/kernel/driver.rs
+ F:	rust/kernel/faux.rs
+ F:	rust/kernel/platform.rs
++F:	samples/rust/rust_driver_auxiliary.rs
+ F:	samples/rust/rust_driver_platform.rs
+ F:	samples/rust/rust_driver_faux.rs
  
- use crate::{
--    bindings, device,
-+    bindings, container_of, device,
-     device_id::RawDeviceId,
-     driver,
-     error::{to_result, Result},
-@@ -219,6 +219,16 @@ pub fn id(&self) -> u32 {
-         // `struct auxiliary_device`.
-         unsafe { (*self.as_raw()).id }
-     }
-+
-+    extern "C" fn release(dev: *mut bindings::device) {
-+        // SAFETY: By the type invariant `self.0.as_raw` is a pointer to the `struct device`
-+        // embedded in `struct auxiliary_device`.
-+        let adev = unsafe { container_of!(dev, bindings::auxiliary_device, dev) }.cast_mut();
-+
-+        // SAFETY: `adev` points to the memory that has been allocated in `Registration::new`, via
-+        // `KBox::new(Opaque::<bindings::auxiliary_device>::zeroed(), GFP_KERNEL)`.
-+        let _ = unsafe { KBox::<Opaque<bindings::auxiliary_device>>::from_raw(adev.cast()) };
-+    }
- }
+diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+index 3b6eae84b297..413216da1b70 100644
+--- a/samples/rust/Kconfig
++++ b/samples/rust/Kconfig
+@@ -71,6 +71,18 @@ config SAMPLE_RUST_DRIVER_FAUX
  
- impl Deref for Device<device::Core> {
-@@ -265,3 +275,71 @@ fn as_ref(&self) -> &device::Device {
-         unsafe { device::Device::as_ref(dev) }
-     }
- }
+ 	  If unsure, say N.
+ 
++config SAMPLE_RUST_DRIVER_AUXILIARY
++	tristate "Auxiliary Driver"
++	depends on AUXILIARY_BUS
++	depends on PCI
++	help
++	  This option builds the Rust auxiliary driver sample.
 +
-+/// The registration of an auxiliary device.
-+///
-+/// This type represents the registration of a [`struct auxiliary_device`]. When an instance of this
-+/// type is dropped, its respective auxiliary device will be unregistered from the system.
-+///
-+/// # Invariants
-+///
-+/// `self.0` always holds a valid pointer to an initialized and registered
-+/// [`struct auxiliary_device`].
-+pub struct Registration(NonNull<bindings::auxiliary_device>);
++	  To compile this as a module, choose M here:
++	  the module will be called rust_driver_auxiliary.
 +
-+impl Registration {
-+    /// Create and register a new auxiliary device.
-+    pub fn new(parent: &device::Device, name: &CStr, id: u32, modname: &CStr) -> Result<Self> {
-+        let boxed = KBox::new(Opaque::<bindings::auxiliary_device>::zeroed(), GFP_KERNEL)?;
-+        let adev = boxed.get();
++	  If unsure, say N.
 +
-+        // SAFETY: It's safe to set the fields of `struct auxiliary_device` on initialization.
-+        unsafe {
-+            (*adev).dev.parent = parent.as_raw();
-+            (*adev).dev.release = Some(Device::release);
-+            (*adev).name = name.as_char_ptr();
-+            (*adev).id = id;
-+        }
+ config SAMPLE_RUST_HOSTPROGS
+ 	bool "Host programs"
+ 	help
+diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+index 0dbc6d90f1ef..30a8809d0a15 100644
+--- a/samples/rust/Makefile
++++ b/samples/rust/Makefile
+@@ -7,6 +7,7 @@ obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_FAUX)		+= rust_driver_faux.o
++obj-$(CONFIG_SAMPLE_RUST_DRIVER_AUXILIARY)	+= rust_driver_auxiliary.o
+ 
+ rust_print-y := rust_print_main.o rust_print_events.o
+ 
+diff --git a/samples/rust/rust_driver_auxiliary.rs b/samples/rust/rust_driver_auxiliary.rs
+new file mode 100644
+index 000000000000..416af6210e10
+--- /dev/null
++++ b/samples/rust/rust_driver_auxiliary.rs
+@@ -0,0 +1,99 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+        // SAFETY: `adev` is guaranteed to be a valid pointer to a `struct auxiliary_device`,
-+        // which has not been initialized yet.
-+        unsafe { bindings::auxiliary_device_init(adev) };
++//! Rust auxiliary driver sample (based on a PCI driver for QEMU's `pci-testdev`).
++//!
++//! To make this driver probe, QEMU must be run with `-device pci-testdev`.
 +
-+        // Now that `adev` is initialized, leak the `Box`; the corresponding memory will be freed
-+        // by `Device::release` when the last reference to the `struct auxiliary_device` is dropped.
-+        let _ = KBox::into_raw(boxed);
++use kernel::{
++    auxiliary, bindings, c_str, device::Core, driver, error::Error, init, pci, prelude::*,
++    str::CStr, InPlaceModule,
++};
 +
-+        // SAFETY:
-+        // - `adev` is guaranteed to be a valid pointer to a `struct auxiliary_device`, which has
-+        //   been initialialized,
-+        // - `modname.as_char_ptr()` is a NULL terminated string.
-+        let ret = unsafe { bindings::__auxiliary_device_add(adev, modname.as_char_ptr()) };
-+        if ret != 0 {
-+            // SAFETY: `adev` is guaranteed to be a valid pointer to a `struct auxiliary_device`,
-+            // which has been initialialized.
-+            unsafe { bindings::auxiliary_device_uninit(adev) };
++const MODULE_NAME: &CStr = <LocalModule as kernel::ModuleMetadata>::NAME;
++const AUXILIARY_NAME: &CStr = c_str!("auxiliary");
 +
-+            return Err(Error::from_errno(ret));
-+        }
++struct AuxiliaryDriver;
 +
-+        // SAFETY: `adev` is guaranteed to be non-null, since the `KBox` was allocated successfully.
-+        //
-+        // INVARIANT: The device will remain registered until `auxiliary_device_delete()` is called,
-+        // which happens in `Self::drop()`.
-+        Ok(Self(unsafe { NonNull::new_unchecked(adev) }))
++kernel::auxiliary_device_table!(
++    AUX_TABLE,
++    MODULE_AUX_TABLE,
++    <AuxiliaryDriver as auxiliary::Driver>::IdInfo,
++    [(auxiliary::DeviceId::new(MODULE_NAME, AUXILIARY_NAME), ())]
++);
++
++impl auxiliary::Driver for AuxiliaryDriver {
++    type IdInfo = ();
++
++    const ID_TABLE: auxiliary::IdTable<Self::IdInfo> = &AUX_TABLE;
++
++    fn probe(adev: &auxiliary::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>> {
++        dev_info!(
++            adev.as_ref(),
++            "Probing auxiliary driver for auxiliary device with id={}\n",
++            adev.id()
++        );
++
++        let this = KBox::new(Self, GFP_KERNEL)?;
++
++        Ok(this.into())
 +    }
 +}
 +
-+impl Drop for Registration {
-+    fn drop(&mut self) {
-+        // SAFETY: By the type invariant of `Self`, `self.0.as_ptr()` is a valid registered
-+        // `struct auxiliary_device`.
-+        unsafe { bindings::auxiliary_device_delete(self.0.as_ptr()) };
++struct PciDriver {
++    _reg: [auxiliary::Registration; 2],
++}
 +
-+        // This drops the reference we acquired through `auxiliary_device_init()`.
-+        //
-+        // SAFETY: By the type invariant of `Self`, `self.0.as_ptr()` is a valid registered
-+        // `struct auxiliary_device`.
-+        unsafe { bindings::auxiliary_device_uninit(self.0.as_ptr()) };
++kernel::pci_device_table!(
++    PCI_TABLE,
++    MODULE_PCI_TABLE,
++    <PciDriver as pci::Driver>::IdInfo,
++    [(
++        pci::DeviceId::from_id(bindings::PCI_VENDOR_ID_REDHAT, 0x5),
++        ()
++    )]
++);
++
++impl pci::Driver for PciDriver {
++    type IdInfo = ();
++
++    const ID_TABLE: pci::IdTable<Self::IdInfo> = &PCI_TABLE;
++
++    fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>> {
++        let this = KBox::new(
++            Self {
++                _reg: [
++                    auxiliary::Registration::new(pdev.as_ref(), AUXILIARY_NAME, 0, MODULE_NAME)?,
++                    auxiliary::Registration::new(pdev.as_ref(), AUXILIARY_NAME, 1, MODULE_NAME)?,
++                ],
++            },
++            GFP_KERNEL,
++        )?;
++
++        Ok(this.into())
 +    }
++}
++
++#[pin_data]
++struct SampleModule {
++    #[pin]
++    _pci_driver: driver::Registration<pci::Adapter<PciDriver>>,
++    #[pin]
++    _aux_driver: driver::Registration<auxiliary::Adapter<AuxiliaryDriver>>,
++}
++
++impl InPlaceModule for SampleModule {
++    fn init(module: &'static kernel::ThisModule) -> impl init::PinInit<Self, Error> {
++        try_pin_init!(Self {
++            _pci_driver <- driver::Registration::new(MODULE_NAME, module),
++            _aux_driver <- driver::Registration::new(MODULE_NAME, module),
++        })
++    }
++}
++
++module! {
++    type: SampleModule,
++    name: "rust_driver_auxiliary",
++    author: "Danilo Krummrich",
++    description: "Rust auxiliary driver",
++    license: "GPL v2",
 +}
 -- 
 2.48.1
