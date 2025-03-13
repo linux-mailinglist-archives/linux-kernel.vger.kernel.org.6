@@ -1,134 +1,221 @@
-Return-Path: <linux-kernel+bounces-560275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A86DA60171
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:41:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D28A60174
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:42:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68C12189766C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:41:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B896619C4926
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DB61F3B98;
-	Thu, 13 Mar 2025 19:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F86E1F37C3;
+	Thu, 13 Mar 2025 19:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAyhe5lB"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SiGp1dL2"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2049.outbound.protection.outlook.com [40.107.94.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147781F2B90;
-	Thu, 13 Mar 2025 19:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741894879; cv=none; b=GRR0pEHDzUs+aZEihxcpQ3JukvfwFQIJcoZD8nTgePL0/ebYI+5rrRdLWNFHctvv/Q8VGGy+ubOXv5+8rwB01yyeEBL/Zj0FNVqxfdNcqjKXPH6rkFjS2G04BdRdfY8axpm3AnQIQuNUhvlnG1zqQvW9sh52Up0OKqZkhryN7Ig=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741894879; c=relaxed/simple;
-	bh=WUH2ocflO1cNKNmhbkDZJYgN2wbCaTQAVsBuQZ+M57g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l5d5vgYtZGcNhXAbk4IZ+DblXpopktAwql7iEH80AME/Q+J5bETqMDdQ6ie7w7z1o4F/8LKM1/T+7kfEBLwJ0j7iFAIvNCOrDNt4ZIScFMKhm3McOCPLPz9BM2Fa9LZ1X8FXJ67D5ZOm/cn4O+FF5WNO1OAK+mtQA2Sk9aWt+nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MAyhe5lB; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e5e1a38c1aso1688152a12.2;
-        Thu, 13 Mar 2025 12:41:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741894876; x=1742499676; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FXEzxEd8+oNnzMOAtWoRdYumhlynnfDozmjfwkSl2KA=;
-        b=MAyhe5lB55KauvkpIW17ZW5VLS9mjTjg+rfwtDww0VZ5ORu+z+bJ0h10PVruk3CMwj
-         kfXMamr1J2V6RZNr3b1WXyYyTdI4an3RcvCm7mY+F+l+iDTYdQdweXLjtweLGeoZ+VLO
-         414O1YUsP2db+So9s5DGeIR8TYuBZns9PExvRZfY9ldcuxl7RBA5duaYNiGanrSyhvFP
-         HOAemBDr1aVvtz1muI6ybc8hEFOO1WqTw8Jkh2XTjgHqrMwyszX5q7XVnA433e+Tr7kD
-         jmqgORXUT1JMtwJkus4Q+yXxtns1JKaJBeNpAyNF0VUOlJ12v70pc+UHbEdNWRQGAa6t
-         NnjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741894876; x=1742499676;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FXEzxEd8+oNnzMOAtWoRdYumhlynnfDozmjfwkSl2KA=;
-        b=ekqVkKmVc2AySKwffkSiQHyTxMtdih1hkHNvk+Ghs1P21s15mp2HODHXkTjhX1I77Y
-         hgvHStMeJvVPf9ic10W3+xJbDV9KDJMtVXosbIhBPPab39pWZWtBzHY45mre9xDk9ikG
-         Ov3pM8A8U/D6bI8EARj6We6bJbdRX0/PDG0l9joDSW2ZmIKttC2mupJ+5Fnxa7rC8xMZ
-         Pp3cp9VKCcVWTc4DLh4xAwDFM0PETCOzHRxMpFlk+hOpIb+JzPs7NpHZvt/ciZ51FlR4
-         SZ/yX4MHQiujgxx1/mUYnd76VppX0EC5jkaRn1BWWQc9dlRQLcGkzMnxVtMnvAkDcbBO
-         nvIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBioa0wGptYbcq6UDvVGYhtZVPdHP5Bjte8nK2eGL9ZGkwnYGlTInEOUWn8wlIkHTLYKVgjXMMXGD7izw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDK67GXNR/OR/jrIeDb1fDDqZpkvhGLYuQjyoK0bM9ZKdvIBgU
-	60BmQqmKTuhUBzssFMurt4nkrMSltEt9O4c+StWgbPPsp1p7WEL5
-X-Gm-Gg: ASbGncuhUC2Qt288YhyDouVIpbe6PsDybkpFEyyx+a3aZ7AtkZ2UVCgXalvNnJQqAXN
-	w1UkOFVqGFtG/1ey3guM8pcl7J1wGrwaQsmdLKk8rQMYeF0XSi1gWcDbhVKUPZK3FDHpx96ob3W
-	BpMwUEkA1oT/oBBsCIAOrubMWSQH+OmWI8LEMnakyn7H+vBIWsvnJijo0pbsBCLa9CPggjyQ6a1
-	nThS0jQ5BOoQt/kZstbjaBdjQux+FQJ7yZofZgYkApON6qvmnal2iHvvUGn6vo6tjwdRTRE+hdN
-	d4xApeKWNVR7fDq7H8QS5LlskRXqcvAGd1zAeSTEWWBck1UBG9aSa9SbxA==
-X-Google-Smtp-Source: AGHT+IGVbzc4ZfepwBe4lwL/vFzF6ib86XY2NgsOo+OqcPI5LcBFDNIpsOtJiAgTucImNxYYSmd+dg==
-X-Received: by 2002:a05:6402:348d:b0:5e0:49e4:2180 with SMTP id 4fb4d7f45d1cf-5e87c45f948mr637025a12.25.1741894875982;
-        Thu, 13 Mar 2025 12:41:15 -0700 (PDT)
-Received: from ?IPV6:2001:871:22a:99c5::1ad1? ([2001:871:22a:99c5::1ad1])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816afdfd0sm1072154a12.75.2025.03.13.12.41.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 12:41:15 -0700 (PDT)
-Message-ID: <9a516b5f-8509-4643-9c54-26caadc42348@gmail.com>
-Date: Thu, 13 Mar 2025 20:41:13 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA6B1F2BAD;
+	Thu, 13 Mar 2025 19:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741894936; cv=fail; b=hJrUxuSwlCX8FpMpEUVU2tbi3SRlUOnInD3oFH4SzdwhPBT0oq04EkzlwnCIq0TyG0iOVoBoHx23BQQtL5TZfeuKnoqWYL3Ow9WB+eCO7VXxHB36nx5gMenCDJdCNUnb5mDPeR06rmmDFSXzWVpbNusunoLINeoo2zGDwjNHrYo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741894936; c=relaxed/simple;
+	bh=8YXwIblioDcyz0pQoNmaJ9lZk0qZNkNZD2A+zj3qgRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=U9sc0eIRT8id+z4/Bg0B6TRi9OvQyh5hgjJyipziQzBBf+G7T3q+GIO1q4l0ZjrabnC0g72llQv19tHOF4tzPG4JpsT/QwJiCk49ay/Ce/ELFxkQd1GCSptVros5L6+EQvjxiX3EYxYoVtcGUK1xZpGxqjVGap+v/ehGlBxEZS0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SiGp1dL2; arc=fail smtp.client-ip=40.107.94.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hUJsdG7R/nbzt8MTjMByQr3P4Dpb9xJ3YaU8cr0OPOCAT21r1iEufYtr6CuAE2friXoSOLE02GLY/5cIPmmaTP/Lg55G2o1Mu2bMlDgrw49T8SiiUK7glpj2pUX+rXdeIST356kx2l+aq+C6+mWDk2OxI3HDKXkkf0evxJuLGGc5dX/MwqTfaywpIHHSUDpUbggLcyPQa3TEl+8Z45Cyvkz7Tm3yjusdNfJ+tD4p93mW5FEfYvCVQvSd5IJORXtzsQZVg5ZWHkJl6At6864BUNyLqoEMphETVggPiBttSRnnVQax8QRBha+51EDF2BGMVR1qMCNgElVV60AMMxtaKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4tuN1UCCe6yex95yZh8aJW5ZLDJ6olgu1n3aHES3Vnk=;
+ b=RfKNhthOiz1PxFakYR3YNfSAqmiG+O263FMa4mBLNRwP/tOYpw183beq1AkOo3gTN+02C8QkfMIAeiRBWFSYJHbRm/+hafPeYV96X9MbdqQrTRN5oMu4vLu7IAKV4dNQ0fbsPBXyNtn51+pUN6i+2W9WHOONcPwvCGzk4qCeBziWccYJlVgNd+Tup9Mtdk8J/Ppni1WzsAt2/vm1jGJW9J12UxOPFPwrKHwsm7w9hIdLIAAUK/1BHZXYMV2BuRhgNqGAK3A8iwKW7LVHm0KUimYZlURc5J11RSWRIiF1C4luocpW1y1w8qKFctsp+YDDXI91zQvcmor11iHcOQFf3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4tuN1UCCe6yex95yZh8aJW5ZLDJ6olgu1n3aHES3Vnk=;
+ b=SiGp1dL2glepxhuTN+v4I4wjrf/0IIOQPhh01zwytcKHm7+iaAHMzWW88cTEXxHVhU+ogCNW7bF237xLd3VIfIn6LrCtvHCNr4ySdR3cvv4drCrnZD+H0GBvmoedKWoH0frQUuHpl6uWasEDcQPd3zNQtEpb94DE7RtW0F2GnLTOiChuqaQnrLPvsdlZq/x+Oe4f5pzXBU6PWtC/MDh7YDcRwK92Mr/UAHfql7DryhUy6Ssw6z+uFUqitTeb9RlfMyhqYfDZ2MCfI8+Ee00bPOsY3Vr6WYXhBE/OjAIu1mPJTvCrJGBPnSZhhQMW/FDMhf1HlMI9m8EHPxVBXphWgg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SA3PR12MB7901.namprd12.prod.outlook.com (2603:10b6:806:306::12)
+ by MN6PR12MB8516.namprd12.prod.outlook.com (2603:10b6:208:46f::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Thu, 13 Mar
+ 2025 19:42:08 +0000
+Received: from SA3PR12MB7901.namprd12.prod.outlook.com
+ ([fe80::66fc:f8a2:1bfb:6de8]) by SA3PR12MB7901.namprd12.prod.outlook.com
+ ([fe80::66fc:f8a2:1bfb:6de8%7]) with mapi id 15.20.8534.027; Thu, 13 Mar 2025
+ 19:42:06 +0000
+Date: Thu, 13 Mar 2025 21:41:55 +0200
+From: Ido Schimmel <idosch@nvidia.com>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch,
+	chenlinxuan@uniontech.com, czj2441@163.com, davem@davemloft.net,
+	edumazet@google.com, guanwentao@uniontech.com, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	niecheng1@uniontech.com, petrm@nvidia.com, zhanjun@uniontech.com
+Subject: Re: [PATCH net 1/2] mlxsw: spectrum_acl_bloom_filter: Expand
+ chunk_key_offsets[chunk_index]
+Message-ID: <Z9M1A8lOuXE4UkyR@shredder>
+References: <484364B641C901CD+20250311141025.1624528-1-wangyuli@uniontech.com>
+ <78951564F9FEA017+20250311141701.1626533-1-wangyuli@uniontech.com>
+ <Z9GKE-mP3qbmK9cL@shredder>
+ <70a2fa44-c0cf-4dd4-8c17-8cc7abf1fbce@redhat.com>
+ <Z9L43xpibqHZ07vW@shredder>
+ <8563032ED2B6B840+7af17f62-992a-4275-80c7-ac7ef5276ae7@uniontech.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8563032ED2B6B840+7af17f62-992a-4275-80c7-ac7ef5276ae7@uniontech.com>
+X-ClientProxiedBy: LO4P265CA0182.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:311::12) To SA3PR12MB7901.namprd12.prod.outlook.com
+ (2603:10b6:806:306::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] rust: task: mark Task methods inline
-To: Panagiotis Foliadis <pfoliadis@posteo.net>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev
-References: <20250311-inline-c-wrappers-v2-1-72c99d35ff33@posteo.net>
-Content-Language: en-US, de-DE
-From: Christian Schrefl <chrisi.schrefl@gmail.com>
-In-Reply-To: <20250311-inline-c-wrappers-v2-1-72c99d35ff33@posteo.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA3PR12MB7901:EE_|MN6PR12MB8516:EE_
+X-MS-Office365-Filtering-Correlation-Id: 766c3df7-227d-48a8-b5d6-08dd62672311
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?M7tgLZSQ/+Fv4bJzyZgSujkg6w3dV+HyWHkDfR+uEa6XgQeYeZKGcTKMSExT?=
+ =?us-ascii?Q?kJXCBgCZBlikevwA34shui6CyiZBFKAeEtZlVG+bEP5YENYs2gFcsX/JP7q3?=
+ =?us-ascii?Q?L4uqwGo8nQLTKI12pb+Lo0ONLJWC53uhZzq2hDpExb/HRRzkzfO48fDdidn+?=
+ =?us-ascii?Q?iesByco2izeNuQS5rBjNXLjtSUAkZQl7EY3pL9r4L3rO/DSek8FZb5J1OvtL?=
+ =?us-ascii?Q?vR0KAV+T2/3Z545nKHMaHG3jFkBwmK+saZpLo27ZoXjH4X7FIlWPNG0YPjo0?=
+ =?us-ascii?Q?gCIlkjnfVLgSLpVwanalmFFhJy18KYaQfScIm/4fGrHe+11dF4DbCJYLr8KB?=
+ =?us-ascii?Q?Nzqi5OvBhs0fGLUqKnorfj30kYgiYhF1ZmTeQax/xL91PJfEvEdmmI41kl4l?=
+ =?us-ascii?Q?bxIRr7+1O7INnHxzN1HRbNuG4CR+LhodaCMsKNEL9SVqHrfWyPTXiquGfqY3?=
+ =?us-ascii?Q?pz3btm6sUi/HLcU8Dx2/zpobw6SeSB7pk308Mb9n2rql4qePFLwFuoqNgznI?=
+ =?us-ascii?Q?Z0TON7l/l7CAyK+L5HThsiEU3MaKYq885NY2H+j/0hf+s4g7YfLUhJxcqQ53?=
+ =?us-ascii?Q?u1Aei0i0RSlxYInIFG6rx1300CAOPtAoPUWYnDagItKCdLiKaXW+dwuKhPWU?=
+ =?us-ascii?Q?uWdAC+bZEbII+YBO4KHsWYAwO8udtMt4fBns3clNfQL5Z5zY59nFG99b+Ee9?=
+ =?us-ascii?Q?s991LnwMXSSNOXyVsT9cVdZO5/m05YB5TnwA9KoeiKktpQ4GVoli4zLxPGou?=
+ =?us-ascii?Q?SRR5Zs0sq6+7FqQId8yZ/bpw5drFx6vseUHZx0EvHQQkEhkrlYGpkL2XUSWK?=
+ =?us-ascii?Q?I+xd2E+qOL2VqxCFCSt2pqi+9ohsjdqhKNeH8oaruLDfRo8RjR6uKxQnF9s7?=
+ =?us-ascii?Q?aJLwMlU0AUOtYsbZuD0AgwF+eHxIVbGrIGgVNBKJlj3aK4BH6KGiAf4qvK8o?=
+ =?us-ascii?Q?gaxNeb4/UifYavnFaAHUwhKCwrEiiceWGxK/wLZa1uFqlsn8O7IBVDvfPzaU?=
+ =?us-ascii?Q?oh74HjWJLCgVKgLUKHgH96OSo+2atLlIbk8V6JY1wzx/19Qqivp12XKswXBr?=
+ =?us-ascii?Q?Fz3lZl0ODv6YgGyk64wPtl/k3kjWKpOkq2xyZPIzs1wq9XHkv8dTQcD51ZA/?=
+ =?us-ascii?Q?uOLPVZvTNVxdHIN8ctX0RMTx6KNO2RUeYfxaLXOhwRmsfsif9Hj4c4ABdW1r?=
+ =?us-ascii?Q?Eu5GTFfHQpNQ305Ex7Kku9Gn+c7gpKZ7yO/vKWF7JqenWHAniS6hw5C1iQg5?=
+ =?us-ascii?Q?DHu4ywSy9mboU0SIK6SQegvwnJ7DJ+L6HN5bbENFL/3NRAXU4umMZnoh8CF5?=
+ =?us-ascii?Q?Xdbid7rWvRTFITZdyayJlXe22anxtRGgKFKXFZiJjjIkOoPSmmMiBGaE6MwR?=
+ =?us-ascii?Q?O6aj/OAnwkdDoHNNKOXcQK8EsrDs?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR12MB7901.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ZTDQTMHktyK7f4Ui57/AW6J1IV19KiXr1upKGIA0hDiZxwageyXTkYfLDDPK?=
+ =?us-ascii?Q?z0wl9W2y9V4+oT837d4wAi4g3Uax1y2xInSFnXTqTIQDav+dtEnrYM0NwjLB?=
+ =?us-ascii?Q?QydJ9ZN3S4foWl1HZgYExK7HWDwwIYQHSoi0/rzxD1YuGEz+2oIzXf/Yswiw?=
+ =?us-ascii?Q?ttjCApX6ogzZk+HQFWATt6uDZrGW5geffUCa68Xn/LZpdXglW7jmnP+Lg4GH?=
+ =?us-ascii?Q?Wol2KE5UCHxO3WuOLYT36V3Ka3M5DTdmZwuVR2fejpL3Pcb0KFBC0auXMCOb?=
+ =?us-ascii?Q?ak3eKMcaa9pCxSbrshyYndDCj5eI7sF7kLB29vBk7Ztvmc57U3vSxR2IiJPr?=
+ =?us-ascii?Q?sJaId+um7Aq7fUTyKQljQ/MiQY8LPyHGSbqqIJ3BDjPrQUDRfwbRUm8j3Y1f?=
+ =?us-ascii?Q?oJCK/sIb8cWvNOyaeaZccb3PaEqXV8M2Am486F0aYckJzpkxB8TpKDac9QAa?=
+ =?us-ascii?Q?6eE+eRDWbOXRWh4Fcsge/XX76EPrmYDU5cdyaQOLXvZ5pKRfswNuHRIQsvfp?=
+ =?us-ascii?Q?+kgWhv5bz1lRiu+1vjqRlGPG958XUrCHDt8BiXxqpyJF0Dt7ITM9loTwZ4F/?=
+ =?us-ascii?Q?UzkdfsdCDgYlvWITrUQMPpSiyP9oz/ZL8FHaJJDqb4SaOzLb9RHilWqiueaz?=
+ =?us-ascii?Q?gpkaESVIBdG8UgvLmg8Y/dtIEmZZplIQ8WCJLqnS1dox6goqetmhIdx+EWrM?=
+ =?us-ascii?Q?mQreCGS5j1013Pl7zX9L9/W/CzI1yyfaeaSFIUDB6w8qwGMfmCHNvIRz8s18?=
+ =?us-ascii?Q?Y1Si1kEBsovhnX28PNNHO54TWabWWiEW2eAuKM0hk+ipeBicSt9TZAzHZHA+?=
+ =?us-ascii?Q?4bvTLKNOwtx2BcoptD+K6ACdCTAGJ+BvLA+iIA6GBSBqzbACjp4ww2Yd3r7V?=
+ =?us-ascii?Q?fiA3AU8c1XTWPJYl+AIb1vcg8T8eyQ2aulnR3gOeRllI4jJiViuX1vBF6DJd?=
+ =?us-ascii?Q?eD6EY42GsMgxPdnR5Yz4rqma0AaOdYU6b8zFDj+kOKOadyY5uBKtGzOQLXTz?=
+ =?us-ascii?Q?kxJF9oiR2kYeGMwW1KmvKwlB6tjQdFmvopvyGZ/zpIX8aDNYm+BA/JetyFH+?=
+ =?us-ascii?Q?zgFBViDlBZbj/MV6K7K5hM6pD/yuN0uEBSpvpG2/LZkWo4DzuB5kKx7ly91s?=
+ =?us-ascii?Q?fdBXWAXTDHM/XySPuGegLpxbeegYThfL14LZuNCT0D70QlHxEdhWX950UIRs?=
+ =?us-ascii?Q?atW1oS5zNzwQDGqvGg6Gi1lmr4mNro7x+y+nP6lxft2/rUtxF41tGJa4Fhpq?=
+ =?us-ascii?Q?bsLnkgr16JgRdbRbRak6XUSJ0LPVcnvZ+6BlAoFQO57G5cEdf6PM0b0ywfil?=
+ =?us-ascii?Q?u/BuHBK/4MTKPuSD9EQDjv2d8A7AuuttcWrxSf8LsrwTE9JE4sv5nziICqc2?=
+ =?us-ascii?Q?INv2Pn2T6aQRGsehAIHTfHefYHuEdtgYNEJcRgkXHO4ieTNPq9HpKBkTivRg?=
+ =?us-ascii?Q?WA1XYT3dwTOWZ4qevqJQ3VJSNe/gtjplfqF2utB2AVMJ583yL8ItmivZuJvn?=
+ =?us-ascii?Q?SUJXhS3OL9rKv1hD62LOI50kFqT5uhdRkdXU1OU37eiCA+I3185mqNYSpW3M?=
+ =?us-ascii?Q?vBaK/mDalOC7GwAW/It2B8WSTHb4Kw7pSQSL4UPE?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 766c3df7-227d-48a8-b5d6-08dd62672311
+X-MS-Exchange-CrossTenant-AuthSource: SA3PR12MB7901.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 19:42:06.8109
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TZ+b0LYJlEHM4sGsvubt5Rbl3++ePv1fit3Nw7rGUecwTBXoS/AYL8acaSdkPRNynmf0qyLT+dsjMm75bMNzww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8516
 
-On 11.03.25 4:05 PM, Panagiotis Foliadis wrote:
-> When you build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
-> toolchain provided by kernel.org, the following symbols are generated:
-> 
-> $ nm vmlinux | grep ' _R'.*Task | rustfilt
-> ffffffff817b2d30 T <kernel::task::Task>::get_pid_ns
-> ffffffff817b2d50 T <kernel::task::Task>::tgid_nr_ns
-> ffffffff817b2c90 T <kernel::task::Task>::current_pid_ns
-> ffffffff817b2d00 T <kernel::task::Task>::signal_pending
-> ffffffff817b2cc0 T <kernel::task::Task>::uid
-> ffffffff817b2ce0 T <kernel::task::Task>::euid
-> ffffffff817b2c70 T <kernel::task::Task>::current
-> ffffffff817b2d70 T <kernel::task::Task>::wake_up
-> ffffffff817b2db0 T <kernel::task::Task as kernel::types::AlwaysRefCounted>::dec_ref
-> ffffffff817b2d90 T <kernel::task::Task as kernel::types::AlwaysRefCounted>::inc_ref
-> 
-> These Rust symbols are trivial wrappers around the C functions
-> get_pid_ns, task_tgid_nr_ns, task_active_pid_ns, signal_pending, uid,
-> euid, get_current, wake_up, get_task_struct and put_task_struct.It
-> doesn't make sense to go through a trivial wrapper for these
-> functions, so mark them inline.
-> 
-> After applying this patch, the above command will produce no output.
-> 
-> Link: https://github.com/Rust-for-Linux/linux/issues/1145
-> Signed-off-by: Panagiotis Foliadis <pfoliadis@posteo.net>
-> ---
+Please use plain text emails.
 
-Reviewed-by: Christian Schrefl <chrisi.schrefl@gmail.com>
+On Fri, Mar 14, 2025 at 12:10:42AM +0800, WangYuli wrote:
+> My tests still show the same compilation failing.
 
-Cheers
-Christian
+It passed with clang 18 on Fedora 40, but now I tested with clang 19 on
+Fedora 41 and it's indeed failing.
+
+How about [1]? It's similar to yours and passes with both clang
+versions.
+
+Thanks
+
+[1]
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c
+index a54eedb69a3f..9c54dba5ad12 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c
+@@ -212,7 +212,22 @@ static const u8 mlxsw_sp4_acl_bf_crc6_tab[256] = {
+  * This array defines key offsets for easy access when copying key blocks from
+  * entry key to Bloom filter chunk.
+  */
+-static const u8 chunk_key_offsets[MLXSW_BLOOM_KEY_CHUNKS] = {2, 20, 38};
++static char *
++mlxsw_sp_acl_bf_enc_key_get(struct mlxsw_sp_acl_atcam_entry *aentry,
++                           u8 chunk_index)
++{
++       switch (chunk_index) {
++       case 0:
++               return &aentry->ht_key.enc_key[2];
++       case 1:
++               return &aentry->ht_key.enc_key[20];
++       case 2:
++               return &aentry->ht_key.enc_key[38];
++       default:
++               WARN_ON_ONCE(1);
++               return &aentry->ht_key.enc_key[0];
++       }
++}
+ 
+ static u16 mlxsw_sp2_acl_bf_crc16_byte(u16 crc, u8 c)
+ {
+@@ -245,12 +260,13 @@ __mlxsw_sp_acl_bf_key_encode(struct mlxsw_sp_acl_atcam_region *aregion,
+                                   (aregion->region->id << 4));
+        for (chunk_index = max_chunks - chunk_count; chunk_index < max_chunks;
+             chunk_index++) {
++               char *enc_key;
++
+                memset(chunk, 0, pad_bytes);
+                memcpy(chunk + pad_bytes, &erp_region_id,
+                       sizeof(erp_region_id));
+-               memcpy(chunk + key_offset,
+-                      &aentry->ht_key.enc_key[chunk_key_offsets[chunk_index]],
+-                      chunk_key_len);
++               enc_key = mlxsw_sp_acl_bf_enc_key_get(aentry, chunk_index);
++               memcpy(chunk + key_offset, enc_key, chunk_key_len);
+                chunk += chunk_len;
+        }
+        *len = chunk_count * chunk_len;
 
