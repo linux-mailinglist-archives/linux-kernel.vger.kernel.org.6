@@ -1,441 +1,345 @@
-Return-Path: <linux-kernel+bounces-560019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B2B7A5FCBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:55:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE40A5FCBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:55:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95BC53B372D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:55:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62DE416689F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E971B82866;
-	Thu, 13 Mar 2025 16:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kkAGfLuU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8AC268FE6;
+	Thu, 13 Mar 2025 16:55:47 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0907114F121;
-	Thu, 13 Mar 2025 16:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40332E3390;
+	Thu, 13 Mar 2025 16:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741884904; cv=none; b=RXfb8BbnSUb2rw8pFN/TIabjKSYJtbu87rQy/tSc9mUkoaXs12wzPWsFFX8qjHk3+fZO0QltG0WKjkWoTvTcMCXBFpeMROFOFW9a6GmAxSV/rX8WqhiluwFYgs/hF3nEugnKBcAUGp/Yt9HDjii7neEk6Ssuhi+5gid4KsOzqHs=
+	t=1741884947; cv=none; b=XmMHKEG8RnOiukz4lfiOFbsspJGGIrGQJoT66eV1znHGdDaDn5GdSP+UrQ5kbO6pIeLCSC4oJsuNN/aQHHyw+XOvMz/HavxBa1i+qV/Vk5o6y9WD0KJr2aPuCAWxt2Syboj80g8EuLJ1WlBblpwjqzWrU/Fohy0I9EQy9ucSs9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741884904; c=relaxed/simple;
-	bh=G1h9jvt0+jldq7TLjoq8Jf7dRNT0Ko06Xk2sclw2PKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TwBKOzvu2+U6na/T1uRQmac4i5SUwwJ6O4P0oY8C8FxhDACcFDXw0fiMvCk6dh9/eQzj0KoMqUjszqtn/Ur+rZOu5hVB1eAd+1DhrXbuKT7OQDzK7wX4X5t1LZxWS8WOuZJBTaInAhVum+vCAlWWWbcZlfHzKoXuyuFdcP9p4R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kkAGfLuU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60125C4CEDD;
-	Thu, 13 Mar 2025 16:55:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741884903;
-	bh=G1h9jvt0+jldq7TLjoq8Jf7dRNT0Ko06Xk2sclw2PKQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kkAGfLuUFraq9896+u7XIt5x1VhThOnaf6Kl8wWg2Utsj3fVhiBb6Qv5JSiyq1lbY
-	 QpwunPjKyV1idhFvQXQk5dWspA2EsTJ5pv2NCoLSjrLaGZ6vvEovdj6F3DJKXLVYmL
-	 8KDBtrdcB1LulnJbwLjxQQ/827owZb4DVGdtkBnneQ/3+2gD3hch8iDz0zwKzZMuJe
-	 Hud05Kgn40UL5GOt28W5+ZB/pjS274GafiU8VTuvNUo3tzfhTj7jDu7/j71vmtHhf9
-	 7wKgS++W3/JKGebaWnIMhaS+fhjGgKcg3Qpq0Cluum3/4m51BG2UeEk7bApXnJUKOZ
-	 T+I3BILho4D+Q==
-Date: Thu, 13 Mar 2025 17:54:57 +0100
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Rahul Rameshbabu <sergeantsagara@protonmail.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-input@vger.kernel.org, dri-devel@lists.freedesktop.org, Jiri Kosina <jikos@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH RFC 1/3] rust: core abstractions for HID drivers
-Message-ID: <c553saxi6iq67tew5emn6ofghjb6haaosyi2hv5zzz66ol7pup@5fwshcz3jxh5>
-References: <20250313160220.6410-2-sergeantsagara@protonmail.com>
- <20250313160220.6410-4-sergeantsagara@protonmail.com>
+	s=arc-20240116; t=1741884947; c=relaxed/simple;
+	bh=aS+t1t51Ah30hbf5nUrtvEU3QDfoP/N2cxXyCUIYhYY=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fY5xmeBPezOqCjhRN5AwGxioXemntzbt2s69N0QJy0wHxMlB0Y2Et4Lnw0LqR7mj97KJ7ogGJ7ktItcXnbNUocUptgYHXnXLSIyTahQRRgZiqMkJ4ZSxs3O30r7Waj7HaqG34f0/FPi77lrJP3ONyPK/Juii7ALpm4L9v5ibim8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDD7g3xDLz6M4Px;
+	Fri, 14 Mar 2025 00:52:31 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 86D671404F5;
+	Fri, 14 Mar 2025 00:55:41 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Mar
+ 2025 17:55:41 +0100
+Date: Thu, 13 Mar 2025 16:55:39 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Gregory Price <gourry@gourry.net>
+CC: <lsf-pc@lists.linux-foundation.org>, <linux-mm@kvack.org>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [LSF/MM] CXL Boot to Bash - Section 0: ACPI and Linux Resources
+Message-ID: <20250313165539.000001f4@huawei.com>
+In-Reply-To: <Z8jORKIWC3ZwtzI4@gourry-fedora-PF4VCD3F>
+References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
+	<Z8jORKIWC3ZwtzI4@gourry-fedora-PF4VCD3F>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313160220.6410-4-sergeantsagara@protonmail.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mar 13 2025, Rahul Rameshbabu wrote:
-> These abstractions enable the development of HID drivers in Rust by binding
-> with the HID core C API. They provide Rust types that map to the
-> equivalents in C. In this initial draft, only hid_device and hid_device_id
-> are provided direct Rust type equivalents. hid_driver is specially wrapped
-> with a custom Driver type. The module_hid_driver! macro provides analogous
-> functionality to its C equivalent.
+On Wed, 5 Mar 2025 17:20:52 -0500
+Gregory Price <gourry@gourry.net> wrote:
+
+> --------------------
+> Part 0: ACPI Tables.
+> --------------------
+> I considered publishing this section first, or at least under
+> "Platform", but I've found this information largely useful in
+> debugging interleave configurations and tiering mechanisms -
+> which are higher level concepts.
 > 
-> Future work for these abstractions would include more bindings for common
-> HID-related types, such as hid_field, hid_report_enum, and hid_report.
-
-Yes, but you can also bypass this as a first step in the same way we do
-for HID-BPF: we just consider everything to be a stream of bytes, and
-we only care about .report_fixup() and .raw_event().
-
-> Providing Rust equivalents to useful core HID functions will also be
-> necessary for HID driver development in Rust.
-
-Yeah, you'll need the back and forth communication with the HID device,
-but this can come in later.
-
+> Much of the information in this section is most relevant to
+> Interleave (yet to be published Section 4).
 > 
-> Some concerns with this initial draft
->   - The need for a DeviceId and DeviceIdShallow type.
->     + DeviceIdShallow is used to guarantee the safety requirement for the
->       Sync trait.
->   - The create_hid_driver call in the module_hid_driver! macro does not use
->     Pin semantics for passing the ID_TABLE. I could not get Pin semantics
->     to work in a const fn. I get a feeling this might be safe but need help
->     reviewing this.
+> I promise not to simply regurgitate the entire ACPI specification
+> and limit this to necessary commentary to describe how these tables
+> relate to actual Linux resources (like numa nodes and tiers).
 > 
-> Signed-off-by: Rahul Rameshbabu <sergeantsagara@protonmail.com>
-> ---
->  drivers/hid/Kconfig             |   8 ++
->  rust/bindings/bindings_helper.h |   1 +
->  rust/kernel/hid.rs              | 245 ++++++++++++++++++++++++++++++++
->  rust/kernel/lib.rs              |   2 +
->  4 files changed, 256 insertions(+)
->  create mode 100644 rust/kernel/hid.rs
-> 
-> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-> index b53eb569bd49..e085964c7ffc 100644
-> --- a/drivers/hid/Kconfig
-> +++ b/drivers/hid/Kconfig
-> @@ -714,6 +714,14 @@ config HID_MEGAWORLD_FF
->  	Say Y here if you have a Mega World based game controller and want
->  	to have force feedback support for it.
->  
-> +config RUST_HID_ABSTRACTIONS
-> +	bool "Rust HID abstractions support"
-> +	depends on RUST
-> +	depends on HID=y
-
-naive question: does it has to be 'y', some distributions are using 'm'.
-
-> +	help
-> +	Adds support needed for HID drivers written in Rust. It provides a
-> +	wrapper around the C hid core.
-> +
->  config HID_REDRAGON
->  	tristate "Redragon keyboards"
->  	default !EXPERT
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> index 55354e4dec14..e2e95afe9f4a 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -16,6 +16,7 @@
->  #include <linux/file.h>
->  #include <linux/firmware.h>
->  #include <linux/fs.h>
-> +#include <linux/hid.h>
->  #include <linux/jiffies.h>
->  #include <linux/jump_label.h>
->  #include <linux/mdio.h>
-> diff --git a/rust/kernel/hid.rs b/rust/kernel/hid.rs
-> new file mode 100644
-> index 000000000000..f13476b49e7d
-> --- /dev/null
-> +++ b/rust/kernel/hid.rs
-> @@ -0,0 +1,245 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +// Copyright (C) 2025 Rahul Rameshbabu <sergeantsagara@protonmail.com>
-> +
-> +use crate::{error::*, prelude::*, types::Opaque};
-> +use core::marker::PhantomData;
-> +
-> +#[repr(transparent)]
-> +pub struct Device(Opaque<bindings::hid_device>);
-> +
-> +impl Device {
-> +    unsafe fn from_ptr<'a>(ptr: *mut bindings::hid_device) -> &'a mut Self {
-> +        let ptr = ptr.cast::<Self>();
-> +
-> +        unsafe { &mut *ptr }
-> +    }
-> +
-> +    pub fn vendor(&self) -> u32 {
-> +        let hdev = self.0.get();
-> +
-> +        unsafe { (*hdev).vendor }
-> +    }
-> +
-> +    pub fn product(&self) -> u32 {
-> +        let hdev = self.0.get();
-> +
-> +        unsafe { (*hdev).product }
-> +    }
-
-I know this is a RFC, but there are a lot more of interesting fields
-you'll want to export.
-
-Can/Should this be automated somehow?
-
-> +}
-> +
-> +#[repr(transparent)]
-> +pub struct DeviceIdShallow(Opaque<bindings::hid_device_id>);
-> +
-> +// SAFETY: `DeviceIdShallow` doesn't expose any &self method to access internal data, so it's safe to
-> +// share `&DriverVTable` across execution context boundaries.
-> +unsafe impl Sync for DeviceIdShallow {}
-> +
-> +impl DeviceIdShallow {
-
-I have a hard time understanding the "DeviceId" part.
-
-In struct hid_device, we have a .id field which is incremented for every
-new device. I assume this is different, but this still confuses me.
-
-If that's the rust way of doing it that's fine of course.
-
-[few minutes later] Oh, so you are mapping struct hid_device_id :)
-Why dropping the 'HID' in front?
-
-I guess the docs would explain that in the actual submission.
-
-
-> +    pub const fn new() -> Self {
-> +        DeviceIdShallow(Opaque::new(bindings::hid_device_id {
-> +            // SAFETY: The rest is zeroed out to initialize `struct hid_device_id`,
-> +            // sets `Option<&F>` to be `None`.
-> +            ..unsafe { ::core::mem::MaybeUninit::<bindings::hid_device_id>::zeroed().assume_init() }
-> +        }))
-> +    }
-> +
-> +    pub const fn new_usb(vendor: u32, product: u32) -> Self {
-
-We probably need the group here as well.
-
-> +        DeviceIdShallow(Opaque::new(bindings::hid_device_id {
-> +            bus: 0x3, /* BUS_USB */
-
-group???
-
-> +            vendor: vendor,
-> +            product: product,
-> +            // SAFETY: The rest is zeroed out to initialize `struct hid_device_id`,
-> +            // sets `Option<&F>` to be `None`.
-> +            ..unsafe { ::core::mem::MaybeUninit::<bindings::hid_device_id>::zeroed().assume_init() }
-> +        }))
-> +    }
-> +
-> +    const unsafe fn as_ptr(&self) -> *const bindings::hid_device_id {
-> +        self.0.get()
-> +    }
-> +}
-> +
-> +#[repr(transparent)]
-> +pub struct DeviceId(Opaque<bindings::hid_device_id>);
-> +
-> +impl DeviceId {
-> +    unsafe fn from_ptr<'a>(ptr: *mut bindings::hid_device_id) -> &'a mut Self {
-> +        let ptr = ptr.cast::<Self>();
-> +
-> +        unsafe { &mut *ptr }
-> +    }
-> +
-> +    unsafe fn from_const_ptr<'a>(ptr: *const bindings::hid_device_id) -> &'a Self {
-> +        let ptr = ptr.cast::<Self>();
-> +
-> +        unsafe { &(*ptr) }
-> +    }
-> +
-> +    pub fn vendor(&self) -> u32 {
-> +        let hdev_id = self.0.get();
-> +
-> +        unsafe { (*hdev_id).vendor }
-> +    }
-> +
-> +    pub fn product(&self) -> u32 {
-> +        let hdev_id = self.0.get();
-> +
-> +        unsafe { (*hdev_id).product }
-> +    }
-
-Again, you need the group and the bus at least.
-
-> +}
-> +
-> +/*
-> +#[repr(transparent)]
-> +pub struct Field(Opaque<bindings::hid_field>);
-> +
-> +#[repr(transparent)]
-> +pub struct ReportEnum(Opaque<bindings::hid_report_enum>);
-> +
-> +#[repr(transparent)]
-> +pub struct Report(Opaque<bindings::hid_report>);
-> +*/
-> +
-> +#[vtable]
-> +pub trait Driver {
-> +    fn probe(_dev: &mut Device, _id: &DeviceId) -> Result {
-> +        build_error!(VTABLE_DEFAULT_ERROR)
-> +    }
-> +
-> +    fn remove(_dev: &mut Device) {
-> +    }
-> +}
-> +
-> +struct Adapter<T: Driver> {
-> +    _p: PhantomData<T>,
-> +}
-> +
-> +impl<T: Driver> Adapter<T> {
-> +    unsafe extern "C" fn probe_callback(
-> +        hdev: *mut bindings::hid_device,
-> +        hdev_id: *const bindings::hid_device_id,
-> +    ) -> crate::ffi::c_int {
-> +        from_result(|| {
-> +            let dev = unsafe { Device::from_ptr(hdev) };
-> +            let dev_id = unsafe { DeviceId::from_const_ptr(hdev_id) };
-> +            T::probe(dev, dev_id)?;
-> +            Ok(0)
-> +        })
-> +    }
-> +
-> +    unsafe extern "C" fn remove_callback(hdev: *mut bindings::hid_device) {
-> +        let dev = unsafe { Device::from_ptr(hdev) };
-> +        T::remove(dev);
-> +    }
-> +}
-> +
-> +#[repr(transparent)]
-> +pub struct DriverVTable(Opaque<bindings::hid_driver>);
-> +
-> +// SAFETY: `DriverVTable` doesn't expose any &self method to access internal data, so it's safe to
-> +// share `&DriverVTable` across execution context boundaries.
-> +unsafe impl Sync for DriverVTable {}
-> +
-> +pub const fn create_hid_driver<T: Driver>(
-> +    name: &'static CStr,
-> +    id_table: &'static DeviceIdShallow,
-> +) -> DriverVTable {
-> +    DriverVTable(Opaque::new(bindings::hid_driver {
-> +        name: name.as_char_ptr().cast_mut(),
-> +        id_table: unsafe { id_table.as_ptr() },
-> +        probe: if T::HAS_PROBE {
-> +            Some(Adapter::<T>::probe_callback)
-> +        } else {
-> +            None
-> +        },
-> +        remove: if T::HAS_REMOVE {
-> +            Some(Adapter::<T>::remove_callback)
-> +        } else {
-> +            None
-> +        },
-> +        // SAFETY: The rest is zeroed out to initialize `struct hid_driver`,
-> +        // sets `Option<&F>` to be `None`.
-> +        ..unsafe { core::mem::MaybeUninit::<bindings::hid_driver>::zeroed().assume_init() }
-> +    }))
-> +}
-> +
-> +pub struct Registration {
-> +    driver: Pin<&'static mut DriverVTable>,
-> +}
-> +
-> +unsafe impl Send for Registration {}
-> +
-> +impl Registration {
-> +    pub fn register(
-> +        module: &'static crate::ThisModule,
-> +        driver: Pin<&'static mut DriverVTable>,
-> +        name: &'static CStr,
-> +    ) -> Result<Self> {
-> +        to_result(unsafe {
-> +            bindings::__hid_register_driver(driver.0.get(), module.0, name.as_char_ptr())
-> +        })?;
-> +
-> +        Ok(Registration { driver })
-> +    }
-> +}
-> +
-> +impl Drop for Registration {
-> +    fn drop(&mut self) {
-> +        unsafe {
-> +            bindings::hid_unregister_driver(self.driver.0.get())
-> +        };
-> +    }
-> +}
-> +
-> +#[macro_export]
-> +macro_rules! usb_device {
-> +    (vendor: $vendor:expr, product: $product:expr $(,)?) => {
-> +        $crate::hid::DeviceIdShallow::new_usb($vendor, $product)
-> +    }
-> +}
-> +
-> +#[macro_export]
-> +macro_rules! module_hid_driver {
-> +    (@replace_expr $_t:tt $sub:expr) => {$sub};
-> +
-> +    (@count_devices $($x:expr),*) => {
-> +        0usize $(+ $crate::module_hid_driver!(@replace_expr $x 1usize))*
-> +    };
-> +
-> +    (driver: $driver:ident, id_table: [$($dev_id:expr),+ $(,)?], name: $name:tt, $($f:tt)*) => {
-> +        struct Module {
-> +            _reg: $crate::hid::Registration,
-> +        }
-> +
-> +        $crate::prelude::module! {
-> +            type: Module,
-> +            name: $name,
-> +            $($f)*
-> +        }
-> +
-> +        const _: () = {
-> +            static NAME: &$crate::str::CStr = $crate::c_str!($name);
-> +
-> +            static ID_TABLE: [$crate::hid::DeviceIdShallow;
-> +                $crate::module_hid_driver!(@count_devices $($dev_id),+) + 1] = [
-> +                $($dev_id),+,
-> +                $crate::hid::DeviceIdShallow::new(),
-> +            ];
-> +
-> +            static mut DRIVER: $crate::hid::DriverVTable =
-> +                $crate::hid::create_hid_driver::<$driver>(NAME, unsafe { &ID_TABLE[0] });
-> +
-> +            impl $crate::Module for Module {
-> +                fn init(module: &'static $crate::ThisModule) -> Result<Self> {
-> +                    let driver = unsafe { &mut DRIVER };
-> +                    let mut reg = $crate::hid::Registration::register(
-> +                        module,
-> +                        ::core::pin::Pin::static_mut(driver),
-> +                        NAME,
-> +                    )?;
-> +                    Ok(Module { _reg: reg })
-> +                }
-> +            }
-> +        };
-> +    }
-> +}
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 496ed32b0911..51b8c2689264 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -49,6 +49,8 @@
->  #[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
->  pub mod firmware;
->  pub mod fs;
-> +#[cfg(CONFIG_RUST_HID_ABSTRACTIONS)]
-> +pub mod hid;
->  pub mod init;
->  pub mod io;
->  pub mod ioctl;
-> -- 
-> 2.47.2
+> At the very least, if you find yourself trying to figure out why
+> your CXL system isn't producing NUMA nodes, memory tiers, root
+> decoders, memory regions - etc - I would check these tables
+> first for aberrations.  Almost all my personal strife has been
+> associated with ACPI table misconfiguration.
 > 
 > 
+> ACPI tables can be inspected with the `acpica-tools` package.
+>    mkdir acpi_tables && cd acpi_tables
+>    acpidump -b
+>    iasl -d *
+>    -- inpect the *.dsl files
+> 
+> ====
+> CEDT
+> ====
+> The CXL Early Discovery Table is generated by BIOS to describe
+> the CXL devices present and configured (to some extent) at boot
+> by the BIOS.
+> 
+> # CHBS
+> The CXL Host Bridge Structure describes CXL host bridges.  Other
+> than describing device register information, it reports the specific
+> host bridge UID for this host bridge.  These host bridge ID's will
+> be referenced in other tables.
+> 
+> Debug hint: check that the host bridge IDs between tables are
+>             consistent - stuff breaks oddly if they're not!
+> 
+> ```
+>          Subtable Type : 00 [CXL Host Bridge Structure]
+>               Reserved : 00
+>                 Length : 0020
+> Associated host bridge : 00000007    <- Host bridge _UID
+>  Specification version : 00000001
+>               Reserved : 00000000
+>          Register base : 0000010370400000
+>        Register length : 0000000000010000
+> ```
+> 
+> # CFMWS
+> The CXL Fixed Memory Window structure describes a memory region
+> associated with one or more CXL host bridges (as described by the
+> CHBS).  It additionally describes any inter-host-bridge interleave
+> configuration that may have been programmed by BIOS. (Section 4)
+> 
+> ```
+>            Subtable Type : 01 [CXL Fixed Memory Window Structure]
+>                 Reserved : 00
+>                   Length : 002C
+>                 Reserved : 00000000
+>      Window base address : 000000C050000000   <- Memory Region
+>              Window size : 0000003CA0000000
+> Interleave Members (2^n) : 01               <- Interleave configuration
+>    Interleave Arithmetic : 00
+>                 Reserved : 0000
+>              Granularity : 00000000
+>             Restrictions : 0006
+>                    QtgId : 0001
+>             First Target : 00000007         <- Host Bridge _UID
+>              Next Target : 00000006         <- Host Bridge _UID
+> ```
+> 
+> INTER-host-bridge interleave (multiple devices on one host bridge) is
+> NOT reported in this structure, and is solely defined via CXL device
+> decoder programming (host bridge and endpoint decoders).  This will be
+> described later (Section 4 - Interleave)
+> 
+> 
+> ====
+> SRAT
+> ====
+> The System/Static Resource Affinity Table describes resource (CPU,
+> Memory) affinity to "Proximity Domains". This table is technically
+> optional, but for performance information (see "HMAT") to be enumerated
+> by linux it must be present.
+> 
+> 
+> # Proximity Domain
+> A proximity domain is ROUGHLY equivalent to "NUMA Node" - though a
+> 1-to-1 mapping is not guaranteed.  There are scenarios where "Proximity
+> Domain 4" may map to "NUMA Node 3", for example.  (See "NUMA Node Creation")
+> 
+> # Memory Affinity
+> Generally speaking, if a host does any amount of CXL fabric (decoder)
+> programming in BIOS - an SRAT entry for that memory needs to be present.
+> 
+> ```
+>         Subtable Type : 01 [Memory Affinity]
+>                Length : 28
+>      Proximity Domain : 00000001          <- NUMA Node 1
+>             Reserved1 : 0000
+>          Base Address : 000000C050000000  <- Physical Memory Region
+>        Address Length : 0000003CA0000000
+>             Reserved2 : 00000000
+> Flags (decoded below) : 0000000B
+>              Enabled : 1
+>        Hot Pluggable : 1
+>         Non-Volatile : 0
+> ```
+> 
+> # Generic Initiator / Port
+> In the scenario where CXL devices are not present or configured by
+> BIOS, we may still want to generate proximity domain configurations
+> for those devices.   The Generic Initiator interfaces are intended to
+> fill this gap, so that performance information can still be utilized
+> when the devices become available at runtime.
+> 
+> I won't cover the details here, for now, but I will link to the
+> proosal from Dan Williams and Jonathan Cameron if you would like
+proposal
 
-Cheers,
-Benjamin
+> more information.
+> https://lore.kernel.org/all/e1a52da9aec90766da5de51b1b839fd95d63a5af.camel@intel.com/
+
+I know you said you'd not say more, but this is a bit misleading.
+
+Maybe ignore Generic Initiators for this doc.  They are relevant for
+CXL but in the fabric they only matter for type 1 / 2 devices not
+memory and only if the BIOS wants to do HMAT for end to end.  Gets
+more fun when they are in the host side of the root bridge.
+
+# Generic Port
+
+In the scenario where CXL memory devices are not present at boot, or
+not configured by the BIOS or he BIOS has not provided full HMAT
+descriptions for the configured memory, we may still want to
+generate proximity domain configurations for those devices.
+The Generic Port structures are intended to fill this gap, so
+that performance information can still be utilized when the
+devices are available at runtime by combining host information
+with that discovered from devices.
+
+Or just 
+# Generic Ports
+
+These are fun ;)
+
+> 
+> ====
+> HMAT
+> ====
+> The Heterogeneous Memory Attributes Table contains information such as
+> cache attributes and bandwidth and latency details for memory proximity
+> domains.  For the purpose of this document, we will only discuss the
+> SSLIB entry.
+
+No fun. You miss Intel's extensions to memory-side caches ;)
+(which is wise!)
+
+> 
+> # SLLBI
+> The System Locality Latency and Bandwidth Information records latency
+> and bandwidth information for proximity domains. This table is used by
+> Linux to configure interleave weights and memory tiers.
+> 
+> ```
+> Heavily truncated for brevity
+>               Structure Type : 0001 [SLLBI]
+>                    Data Type : 00         <- Latency
+> Target Proximity Domain List : 00000000
+> Target Proximity Domain List : 00000001
+>                        Entry : 0080       <- DRAM LTC
+>                        Entry : 0100       <- CXL LTC
+> 
+>               Structure Type : 0001 [SLLBI]
+>                    Data Type : 03         <- Bandwidth
+> Target Proximity Domain List : 00000000
+> Target Proximity Domain List : 00000001
+>                        Entry : 1200       <- DRAM BW
+>                        Entry : 0200       <- CXL BW
+> ```
+> 
+> 
+> ---------------------------------
+> Part 00: Linux Resource Creation.
+> ---------------------------------
+> 
+> ==================
+> NUMA node creation
+> ===================
+> NUMA nodes are *NOT* hot-pluggable.  All *POSSIBLE* NUMA nodes are
+> identified at `__init` time, more specifically during `mm_init`.
+> 
+> What this means is that the CEDT and SRAT must contain sufficient
+> `proximity domain` information for linux to identify how many NUMA
+> nodes are required (and what memory regions to associate with them).
+
+Is it worth talking about what is effectively a constraint of the spec
+and what is a Linux current constraint?
+
+SRAT is only ACPI defined way of getting Proximity nodes. Linux chooses
+to at most map those 1:1 with NUMA nodes. 
+CEDT adds on description of SPA ranges where there might be memory that Linux
+might want to map to 1 or more NUMA nodes
+
+> 
+> The relevant code exists in: linux/drivers/acpi/numa/srat.c
+> ```
+> static int __init
+> acpi_parse_memory_affinity(union acpi_subtable_headers *header,
+>                            const unsigned long table_end)
+> {
+> ... heavily truncated for brevity
+>         pxm = ma->proximity_domain;
+>         node = acpi_map_pxm_to_node(pxm);
+>         if (numa_add_memblk(node, start, end) < 0)
+>             ....
+>         node_set(node, numa_nodes_parsed);    <--- mark node N_POSSIBLE
+> }
+> 
+> static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
+>                                    void *arg, const unsigned long table_end)
+> {
+> ... heavily truncated for brevity
+>         /*
+>          * The SRAT may have already described NUMA details for all,
+>          * or a portion of, this CFMWS HPA range. Extend the memblks
+>          * found for any portion of the window to cover the entire
+>          * window.
+>          */
+>         if (!numa_fill_memblks(start, end))
+>                 return 0;
+> 
+>         /* No SRAT description. Create a new node. */
+>         node = acpi_map_pxm_to_node(*fake_pxm);
+>         if (numa_add_memblk(node, start, end) < 0)
+> 	        ....
+>         node_set(node, numa_nodes_parsed);    <--- mark node N_POSSIBLE
+> }
+> 
+> int __init acpi_numa_init(void)
+> {
+> ...
+>     if (!acpi_table_parse(ACPI_SIG_SRAT, acpi_parse_srat)) {
+>         cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
+>                                     acpi_parse_memory_affinity, 0);
+>     }
+>     /* fake_pxm is the next unused PXM value after SRAT parsing */
+>     acpi_table_parse_cedt(ACPI_CEDT_TYPE_CFMWS, acpi_parse_cfmws,
+>                           &fake_pxm);
+> 
+> ```
+> 
+> Basically, the heuristic is as follows:
+> 1) Add one NUMA node per Proximity Domain described in SRAT
+
+    if it contains, memory, CPU or generic initiator. 
+
+> 2) If the SRAT describes all memory described by all CFMWS
+>    - do not create nodes for CFMWS
+> 3) If SRAT does not describe all memory described by CFMWS
+>    - create a node for that CFMWS
+> 
+> Generally speaking, you will see one NUMA node per Host bridge, unless
+> inter-host-bridge interleave is in use (see Section 4 - Interleave).
+
+I just love corners: QoS concerns might mean multiple CFMWS and hence
+multiple nodes per host bridge (feel free to ignore this one - has
+anyone seen this in the wild yet?)  Similar mess for properties such
+as persistence, sharing etc.
+
+J
+
 
