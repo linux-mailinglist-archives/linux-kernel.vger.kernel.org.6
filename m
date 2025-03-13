@@ -1,132 +1,117 @@
-Return-Path: <linux-kernel+bounces-559541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA66A5F52F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:04:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF6A1A5F3DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:09:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58C987A3345
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:03:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C60823A98E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B1C267F48;
-	Thu, 13 Mar 2025 13:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jBCOqsEs";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Tjt6d8fp"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22873266EFE;
+	Thu, 13 Mar 2025 12:09:30 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C7F267AF2;
-	Thu, 13 Mar 2025 13:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A46F146585
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741871025; cv=none; b=M21eff7Y8O1NpCylBBlbwq44y2TwxPhEecp1lzopW/RD+rcAQXEYzvy60j3uwKcf6vQ0SRpkjuxj+w/Ive64eflSo+urY7nHU/gpi7/bhl/BKY9Dz7QH+4CvjGx9MSuQwuTscZJasYECw0W/ypI75PZRpjdcUW5FE6ci2Sgky2k=
+	t=1741867769; cv=none; b=qr1aGr6XHydFRuOuX5Xzi/Nmt8nOka31+uA0SUxjkhIHg9t5S9ZPBTQ0dJddayi0lXO5C9VtjYxMX2f9umDmjT4ZM20KK6+IjqYjHnN0LpESLK0dX/YVKpi8rl7CvhrApYMeWxsam3sfFXoVDnmjt0vD2gNJ7g3zbOdkmi7hFWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741871025; c=relaxed/simple;
-	bh=YA+xRKQ1bCPwCGf288P1mFx8wbPz0YHxLW7XpjZA9Ts=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=lAt4zYhpM2Mt9w/CIAh6H4bar81lnaYG5lnCkBFUYZrrZ7MoWNvWIBQpJ8luKr2Of/gTT3b4o0vlRECpQ4dYvdju9OrFiraHe6IPCKml9+oX8vu31+zBZk7A3+35o7gJNXpEf+z+65Uf3c9DnNnahu8TWTFApGZ3uMzQXW3flIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jBCOqsEs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Tjt6d8fp; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250313130321.568379110@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741871021;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=JAGxU1SGJ7l/lZ3n/Ga0dDjuWkVfIFFiS2EUui8rZ10=;
-	b=jBCOqsEsxbelusapNiCzQLbiVnibMNRVP4P0m03xXCnNAGcxhfGotGn/oKERzj+BT4sLeT
-	PcCaYx7mTe1jPEoz0KiN9644Gn1wfg4bKWQVx6ZmsAb9Tcy+Iv6pjJZKhGF8jrtdZaVlaV
-	eVfbEtv125ieSf5if20k/mlXOndg7Y8tf+2FQHsM7F6yYdsS3IZYmnPJjiNo8huhPBSDDt
-	OtHRMsXE3fQi4ncmOHWhjCHo17b81+gMRGUqQ5WDtIO24iROQ2Om0ZReORUmRyWCXFhOp/
-	osAlJDaoKta/Z84RkgbOs1hiY5SEpg03QIxaFuELBLtMGhs1lRmjJdrsbfcWTg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741871021;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=JAGxU1SGJ7l/lZ3n/Ga0dDjuWkVfIFFiS2EUui8rZ10=;
-	b=Tjt6d8fpY/80LWp3IWDxeLCOK/2i0mfgvBm22dduGxRY3Cj8Ppf02XfF5NlP4O5Jl9kPYS
-	Kb+NbJsIpsmP6YBA==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>,
- Nishanth Menon <nm@ti.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Dhruva Gole <d-gole@ti.com>,
- Tero Kristo <kristo@kernel.org>,
- Santosh Shilimkar <ssantosh@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Logan Gunthorpe <logang@deltatee.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Jon Mason <jdmason@kudzu.us>,
- Allen Hubbe <allenbh@gmail.com>,
- ntb@lists.linux.dev,
- Bjorn Helgaas <bhelgaas@google.com>,
- linux-pci@vger.kernel.org,
- Michael Kelley <mhklinux@outlook.com>,
- Wei Liu <wei.liu@kernel.org>,
- Haiyang Zhang <haiyangz@microsoft.com>,
- linux-hyperv@vger.kernel.org,
- Wei Huang <wei.huang2@amd.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- linux-scsi@vger.kernel.org,
- Jonathan Cameron <Jonathan.Cameron@huwei.com>
-Subject: [patch V2 03/10] soc: ti: ti_sci_inta_msi: Switch MSI descriptor
- locking to guard()
-References: <20250313130212.450198939@linutronix.de>
+	s=arc-20240116; t=1741867769; c=relaxed/simple;
+	bh=Toe05CGuFIzZSAtZ+R/jLB87y//iL+v6NXBc4JHjgL4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=alCGIipOqq+m2a3ae/oSqDx65VKNISboZLAnHmQ9sApX5fWp11ASeuavubzgC2858NkGstkmeGYuynKQN6+tLirS3zBGGf/I7EXE/7dSpCi/gMz1t9KBY7dNazxXToh9kbMObJr1boF3uLfySItB14T8jdr2/vF0SJf/5DXkF1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZD5rX2XGrz4f3mHV
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 20:09:00 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 407631A1195
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 20:09:24 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.101.6])
+	by APP2 (Coremail) with SMTP id Syh0CgCnsGPyytJnTaZeGQ--.9643S2;
+	Thu, 13 Mar 2025 20:09:24 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: akpm@linux-foundation.org
+Cc: kasong@tencent.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/9] Minor cleanups and improvements to swap freeing code
+Date: Fri, 14 Mar 2025 05:05:06 +0800
+Message-Id: <20250313210515.9920-1-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 13 Mar 2025 14:03:41 +0100 (CET)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgCnsGPyytJnTaZeGQ--.9643S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZF43AF1DZw1fWF45Xw48tFb_yoW8ZF1fpF
+	W3uwnxGF18JrnaywsxAw10qryrX3yrKF47G3W7ur18Zw43uF18XryjyrZ5ZFyDA395JrWq
+	qF48K34UuF4YvrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
+	8lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_
+	tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r
+	xl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv
+	0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z2
+	80aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28I
+	cxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2
+	IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI
+	42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42
+	IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
+	aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUsBMNUUUUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-Convert the code to use the new guard(msi_descs_lock).
+Hi All,
+This series contains some cleanups and improvements which are made
+during learning swapfile. Here is a summary of the changes:
+1. Function nameing improvments.
+-Use "put" instead of "free" to name functions which only do actual free
+when count drops to zero.
+-Use "entry" to name function only frees one swap slot. Use "entries" to
+name function could may free multi swap slots within one cluster. Use
+"_nr" suffix to name function which could free multi swap slots spanning
+cross multi clusters.
+2. Eliminate the need to set swap slot to intermediate SWAP_HAS_CACHE
+value before do actual free by using swap_entry_range_free()
+3. Add helpers swap_entries_put_map() and swap_entries_put_cache() as a
+general-purpose routine to free swap entries within a single cluster
+which will try batch-remove first and fallback to put eatch entry
+indvidually with cluster lock acquired/released only once. By using 
+these helpers, we could remove repeated code, levarage batch-remove in
+more cases and aoivd to acquire/release cluster lock for each single
+swap entry.
 
-No functional change intended.
+Kemeng Shi (9):
+  mm: swap: rename __swap_[entry/entries]_free[_locked] to
+    swap_[entry/entries]_put[_locked]
+  mm: swap: factor out the actual swap entry freeing logic to new helper
+  mm: swap: use __swap_entry_free() to free swap entry in
+    swap_entry_put_locked()
+  mm: swap: remove unneeded VM_BUG_ON(*map != SWAP_HAS_CACHE) in
+    swap_entry_range_free()
+  mm: swap: use swap_entries_free() drop last 1 flag in
+    swap_entries_put_nr()
+  mm: swap: drop last SWAP_MAP_SHMEM flag in batch in
+    swap_entries_put_nr()
+  mm: swap: free each cluster individually in swap_entries_put_map_nr()
+  mm: swap: factor out helper to drop cache of entries within a single
+    cluster
+  mm: swap: replace cluster_swap_free_nr() with
+    swap_entries_put_[map/cache]()
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Nishanth Menon <nm@ti.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
-Cc: Tero Kristo <kristo@kernel.org>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>
----
- drivers/soc/ti/ti_sci_inta_msi.c |   10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ mm/swapfile.c | 173 +++++++++++++++++++++++++-------------------------
+ 1 file changed, 86 insertions(+), 87 deletions(-)
 
---- a/drivers/soc/ti/ti_sci_inta_msi.c
-+++ b/drivers/soc/ti/ti_sci_inta_msi.c
-@@ -103,19 +103,15 @@ int ti_sci_inta_msi_domain_alloc_irqs(st
- 	if (ret)
- 		return ret;
- 
--	msi_lock_descs(dev);
-+	guard(msi_descs_lock)(dev);
- 	nvec = ti_sci_inta_msi_alloc_descs(dev, res);
--	if (nvec <= 0) {
--		ret = nvec;
--		goto unlock;
--	}
-+	if (nvec <= 0)
-+		return nvec;
- 
- 	/* Use alloc ALL as it's unclear whether there are gaps in the indices */
- 	ret = msi_domain_alloc_irqs_all_locked(dev, MSI_DEFAULT_DOMAIN, nvec);
- 	if (ret)
- 		dev_err(dev, "Failed to allocate IRQs %d\n", ret);
--unlock:
--	msi_unlock_descs(dev);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(ti_sci_inta_msi_domain_alloc_irqs);
-
-
+-- 
+2.30.0
 
 
