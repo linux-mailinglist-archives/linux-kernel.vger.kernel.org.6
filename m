@@ -1,135 +1,138 @@
-Return-Path: <linux-kernel+bounces-558994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55152A5EE20
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:36:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306A0A5EE23
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:37:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 802FB17B8C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:36:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C4EF189FA37
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC91260360;
-	Thu, 13 Mar 2025 08:36:19 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B65260A58;
+	Thu, 13 Mar 2025 08:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="JBTrMilk"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43A31F9A86
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9281FAC57
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741854979; cv=none; b=q8HPaWnIHCq0bst9Q1a3P5KJ4GbS6mmjEVGcVIlJx7h/OPbzEoBnGX0Cxkw0f339NqF0E6vIiKEYtlHdY0LRbh7xcQOp4+g0eKM4kHO5xZds7Cwyxk6QN2CJCum3xcbYG9NutDfexhvKegJ/OJuoevtq6FHmwvHOp6+uF8UwaOM=
+	t=1741855029; cv=none; b=pzF5X2SNKV+C3BOzAsxxJ81iIT7BfcVLKYvKUZ2zJFU45XShvjP4dpZKzfLbGZXu55TJdbEv1EQvk5bKH+tznk3sxy9hiarniTac3iunTMACpDwiw4fZ2G8YNUkMQ3r2HyFmn9hS+0bmQ58rXFz2LIGj0jhsd5s3w0tpsMdzPEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741854979; c=relaxed/simple;
-	bh=dmlN4JUiD9wMEg2qdzgPhDxOT3/tp0H5J+YHmxyj5lM=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=scLZQbc3dID80S4zSYXisgssDjRVuwseueKC4ETcERTPkEgZQs9PSY9dwna5eLu3PV1sDmYq5R1qu6GpqBVHCbb4a/IrqaoJsi4iuADXL6bcbY4816UbXgSUTQXXRozs84GCAyE/blKEwEvt1vh6RVUYkE25MJFtTec24Z0uJVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZD17205bDz5B1Hg;
-	Thu, 13 Mar 2025 16:36:14 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl1.zte.com.cn with SMTP id 52D8ZweF063484;
-	Thu, 13 Mar 2025 16:35:58 +0800 (+08)
-	(envelope-from ye.xingchen@zte.com.cn)
-Received: from mapi (xaxapp05[null])
-	by mapi (Zmail) with MAPI id mid31;
-	Thu, 13 Mar 2025 16:36:01 +0800 (CST)
-Date: Thu, 13 Mar 2025 16:36:01 +0800 (CST)
-X-Zmail-TransId: 2afc67d298f1ffffffffe6d-39786
-X-Mailer: Zmail v1.0
-Message-ID: <20250313163601139fRqick9X3NNePcVQzW3na@zte.com.cn>
+	s=arc-20240116; t=1741855029; c=relaxed/simple;
+	bh=ugQkNECBfRXgcwGIrw7wTjZKexEfnOnVSzCf4Z+ebew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IB+oAqf6BFoeZN4mCyQ5Stc2/FTLTCFL5N7DEZVzsrfQxTpfepMrcL2a45mdPyRDd0z4QmorAF/nltZDeMfPo9BAncxznaSFjqq8U9PYbLMTscsIGZXD+wKjSXousKVn+FY/uhkmOeSGc1C7dAcINooIyxFGA5tM9P/ms9GkHvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=JBTrMilk; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-390fdaf2897so572305f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 01:37:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741855025; x=1742459825; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ugQkNECBfRXgcwGIrw7wTjZKexEfnOnVSzCf4Z+ebew=;
+        b=JBTrMilkuvKTyNH42BIJc+G2g8U1sFQczl/icNGgI53R8s/OGZASAeE7BGNP7DhlvS
+         HYBxrAcHgYIPrI8C/oVsgak5GrfKJ08hkTvzctm18B2aPCzcYriAIkipUWX6iMiPqEiB
+         26fDvUme/hXvhRllqw7zmwyO7voD0EzDyoFkrxgt0J5pNFlG4Q3kNs73GMSOv0G4ZWev
+         UfcrUkXx9ZD+WKUXZXryVkXoFqGp2zsSuy/Y9WbKydEclfGHXF4GyFVVz9CczFPI4M15
+         D7enMRX8fidk1tFuHgxpOpL851CXOqgjeSsFArtxdqr7hJ51yfa+vJTHSN0UwXY6gB4b
+         V5Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741855025; x=1742459825;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ugQkNECBfRXgcwGIrw7wTjZKexEfnOnVSzCf4Z+ebew=;
+        b=v+bh+nrxPhlHN0ENFFWUvPd0MA8sc5A1M2KBroRoyOkoPwNEO5fSY3qWXYtIIxK7p4
+         fv5P7YJYSYCGLqs84Xk5yhmo/YaclwY3v7IBwkOD8FyIkNVDaV+yJRR/30D+pDuEg+At
+         cqrjBUqqZho7XWLitcwj3i6ELZPW2LUBGZ0KqDOHtvluhnJwiUx8bECewlTkBIT9iiqE
+         jNyc7dqHIlhoC/PRssjpw/HQXWi3x4XYnXke0EBXHOBrSYoYSG9EvuIt9a1rU6obPdyH
+         m/z7K6XdzG7NWeQJORhTBXjMa3E7fUWmyOQMEbO3h/ZZe3bdxl7vGqPDEKJ9d8NUZ16J
+         A8tg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5lCbe9BVZxBDSc2L95/5v7heX6HuiV37/4tETz4OccleHFfu6lSOIWaBgqfQeTR+JniRlQ7BSx/3alLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzeTdVuGwtGcZLqykYEr3dnEsxn6rycUNa8tFQPWPWHuPWpmQG
+	wqh669pvWt8GCLL+Ewhvc/NX9t/soTbS3peLu2jA91CDp2B8kqcqyADvHY74m4g=
+X-Gm-Gg: ASbGncuKzDB5hh7vj28s1v+buoALv6gG65/J64TwoBDEVVjTy/657AgDKnofyB8j8k0
+	dq59OFAvMZkJAgpFi8hTblLHiKXyG401+rJuS+cO68IkTsUdvQ0W/swjPmwqQa6FXHeThAnZ6Js
+	oKJT1Zpks2hFMDUNPxqQehtR4B3kKUoM2CIQm5p7DPKzaNeLK5Gzb7zvu2LxFuDCod+FKptHypH
+	3BkkGcRzXY3JZLSXiC/lLi3zkK6kxQTaWqCIKXehv5vXQh48oNngF8e72yBrE5GB1dqu7XBCncN
+	YURPSYGygPuur3HqaPz+Lqpa+R7gLni9GvrP+SHXvIb/gI2FOf1IT+43jaoP8U/jzPiraWQQeaS
+	l36i/bofAT/BqwVE/8YDQLw==
+X-Google-Smtp-Source: AGHT+IGa8APTeQnlwxDKUjS+ax6i5zNtH7Hdestp2aTeidDLtPqJonK/5BqJTKtWco5wTr7shcT4Dw==
+X-Received: by 2002:a5d:47cc:0:b0:391:3049:d58d with SMTP id ffacd0b85a97d-39132b58ad8mr23026970f8f.0.1741855024695;
+        Thu, 13 Mar 2025 01:37:04 -0700 (PDT)
+Received: from localhost (p200300f65f14610400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f14:6104::1b9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8975c6dsm1358884f8f.54.2025.03.13.01.37.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 01:37:04 -0700 (PDT)
+Date: Thu, 13 Mar 2025 09:37:02 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Chenyuan Yang <chenyuan0y@gmail.com>
+Cc: rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
+	lukasz.luba@arm.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] thermal: int340x: Add Null check for adev
+Message-ID: <uudh23zxngyi534idmutg6v3aowjnokedomv76iyanuda4nocy@m5xqjtdc47kh>
+References: <20250313043611.1212116-1-chenyuan0y@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <ye.xingchen@zte.com.cn>
-To: <brauner@kernel.org>
-Cc: <jeff.johnson@oss.qualcomm.com>, <jack@suse.cz>,
-        <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIIHYyXSBubHM6IEZpeCB1dGY4c190b191dGYxNnMgcGFyYW1ldGVyIHR5cGUgaW4gZGVjbGFyYXRpb24gYW5kwqBkZWZpbml0aW9u?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 52D8ZweF063484
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D298FD.004/4ZD17205bDz5B1Hg
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ltu4d5dxxuaxnqmp"
+Content-Disposition: inline
+In-Reply-To: <20250313043611.1212116-1-chenyuan0y@gmail.com>
 
-From: YeXingchen <ye.xingchen@zte.com.cn>
 
-The declaration of utf8s_to_utf16s in the header file uses
-bool maxlen as the parameter type, while the definition uses bool maxout.
+--ltu4d5dxxuaxnqmp
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] thermal: int340x: Add Null check for adev
+MIME-Version: 1.0
 
-This patch aligns the parameter name in the definition with the
-declaration,changing inlen to len,maxout to maxlen to ensure consistency.
+Hello,
 
-Signed-off-by: YeXingchen <ye.xingchen@zte.com.cn>
----
-v1->v2
-fix the parameter
- fs/nls/nls_base.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+On Wed, Mar 12, 2025 at 11:36:11PM -0500, Chenyuan Yang wrote:
+> Not all devices have an ACPI companion fwnode, so adev might be NULL.
+> This is similar to the commit cd2fd6eab480
+> ("platform/x86: int3472: Check for adev =3D=3D NULL").
+>=20
+> Add a check for adev not being set and return -ENODEV in that case to
+> avoid a possible NULL pointer deref in int3402_thermal_probe().
+>=20
+> Note, under the same directory, int3400_thermal_probe() has such a
+> check.
+>=20
+> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
 
-diff --git a/fs/nls/nls_base.c b/fs/nls/nls_base.c
-index 18d597e49a19..fcce6ff1380a 100644
---- a/fs/nls/nls_base.c
-+++ b/fs/nls/nls_base.c
-@@ -129,24 +129,24 @@ static inline void put_utf16(wchar_t *s, unsigned c, enum utf16_endian endian)
- 	}
- }
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+Fixes: 77e337c6e23e ("Thermal: introduce INT3402 thermal driver")
 
--int utf8s_to_utf16s(const u8 *s, int inlen, enum utf16_endian endian,
--		wchar_t *pwcs, int maxout)
-+int utf8s_to_utf16s(const u8 *s, int len, enum utf16_endian endian,
-+		wchar_t *pwcs, int maxlen)
- {
- 	u16 *op;
- 	int size;
- 	unicode_t u;
+Best regards
+Uwe
 
- 	op = pwcs;
--	while (inlen > 0 && maxout > 0 && *s) {
-+	while (len > 0 && maxlen > 0 && *s) {
- 		if (*s & 0x80) {
--			size = utf8_to_utf32(s, inlen, &u);
-+			size = utf8_to_utf32(s, len, &u);
- 			if (size < 0)
- 				return -EINVAL;
- 			s += size;
--			inlen -= size;
-+			len -= size;
+--ltu4d5dxxuaxnqmp
+Content-Type: application/pgp-signature; name="signature.asc"
 
- 			if (u >= PLANE_SIZE) {
--				if (maxout < 2)
-+				if (maxlen < 2)
- 					break;
- 				u -= PLANE_SIZE;
- 				put_utf16(op++, SURROGATE_PAIR |
-@@ -156,15 +156,15 @@ int utf8s_to_utf16s(const u8 *s, int inlen, enum utf16_endian endian,
- 						SURROGATE_LOW |
- 						(u & SURROGATE_BITS),
- 						endian);
--				maxout -= 2;
-+				maxlen -= 2;
- 			} else {
- 				put_utf16(op++, u, endian);
--				maxout--;
-+				maxlen--;
- 			}
- 		} else {
- 			put_utf16(op++, *s++, endian);
--			inlen--;
--			maxout--;
-+			len--;
-+			maxlen--;
- 		}
- 	}
- 	return op - pwcs;
--- 
-2.25.1
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfSmSwACgkQj4D7WH0S
+/k4m9Qf9F3arLo1S4o0YnlIA3s90IPd/1RuM3dHBs1oXzLpWHkvtrNy+6z0Bb+l8
+IrZMDcMoO43Yn4610voPh2aJS7NVSzU8LW4NYP7skMYS2E65lqFH9maHWT49w8x9
+fm0hCNnS82eev85GZHPaMZmrSGWUCI6l6+8vOifElW1dXbhhr8//RiHK5rEr4O2t
+6TtRYR3uW9vhE3u0827TbScAntRLdiVJ0sC0ZTYav10TooeU2BkflCQcEHPIWna4
+aEylb5kABebeN3peUje2/DuaXu/Y/lWjhyJR0wPfrEjjnROuvrnbRWygLZH2yen3
+zpCPvf2yI7IKBVjF4/ykIN196LjkkQ==
+=1hnP
+-----END PGP SIGNATURE-----
+
+--ltu4d5dxxuaxnqmp--
 
