@@ -1,179 +1,181 @@
-Return-Path: <linux-kernel+bounces-559644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73187A5F713
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:57:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40982A5F71B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:59:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A35175F0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7453A3BC9FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2A1267B64;
-	Thu, 13 Mar 2025 13:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D38267B64;
+	Thu, 13 Mar 2025 13:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kFXDZy9U"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kXafg86c"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7734D2E3366;
-	Thu, 13 Mar 2025 13:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDA3266EF5;
+	Thu, 13 Mar 2025 13:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741874257; cv=none; b=N+FgOgdnTsSJdN0VatuLGPzMxJ1fW86aE43b54wuBv/5u0Ax8viLmdGfbfAR6xb++tcmPH6qkFgkvtPciAEusONTXVt/FwimR7NKfkmKL/ltZzmLqnAyBa4qzDr6huaV7eBNl5sqmq9k8Z1kbe8bL1BF+EwVbVcF6M//pD4rjLg=
+	t=1741874370; cv=none; b=C8XnG+WwBpyRQpHzYKDDYZIFh5NhTuRxCg5clqrZK2qwLi6vRdClxLglLEAfAO2NjvPlfggbA/LUIU/lLaQ3pEMCnbpE1e8nypjkaBiyBsz3JdabGbmOC3F4NCyo8d/PGm0uo4e+r6h5MegLk+wzTZc/rrtmM0Z6joWajoxLF9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741874257; c=relaxed/simple;
-	bh=DLhdMLDCZ73yAePjjb/7mUh8NxxMFNMkE9CVvGT2MkE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dMvJGkYy0AJUH2+LTk7SGccXKnr9FLZO0M5Lg7d9YqU1y0WfzIceUsY1/qAm+FC5M3CVfPPg9v5pbvEI2zU600B4BkWqHBlMT2ggQEJvF9Xi3bjFM7dAGfpSiy1iPRaGTh9o2D8FyRhB6XSeM6cEs6AsMI+d3MS3Xn+OjRiPRhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kFXDZy9U; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1741874370; c=relaxed/simple;
+	bh=THm6FaQQgLW/8m8yRNpcmIzkqlxy2yVeotJDAywN9dQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dEA134UIS2846jr0XvVG/Bg9njJRVec6ui0UJVKcyczYshwfBh0D0nk9U1I/Af7wW3vor0JqjaYghk0UGVqpmVNnb9pQCTtD8dTxlIF/ReIqbsMgG9Ldxn0msu2zui2SfYWKVMTfchH9uGRFDAayAfQEIs2vpmtf2Z4kQZNlKfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kXafg86c; arc=none smtp.client-ip=209.85.210.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e5e1a38c1aso1218269a12.2;
-        Thu, 13 Mar 2025 06:57:35 -0700 (PDT)
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-72726a65cbaso676457a34.0;
+        Thu, 13 Mar 2025 06:59:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741874254; x=1742479054; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3C6MvGOiTRxWRu0SbR4M4R9huU60gsGYQ5fIHw+vGNM=;
-        b=kFXDZy9U6kIfwz5uBqv771ya78rJKthaQ6hGux7/mSrLdt7fWN1k+nb2tqly1gZHA3
-         i9ozyNbuZuM0CyQxLLLAZRgBupYE5za+oxsSIt0Ovyxy99BuGs+gmVWJ68Yhn7JLAI5Z
-         KelyoqbMy43sPh4zNRVVkqpT2+peVaCtXgIGw4BV6ixX26pwQV59KzVMn7SOLAMJBHgn
-         vdmonjYJBJtMM4Nzkz7cjejRuUcNYmu8NdW0PDp/KGzpua1gPtXHcGzKdkdGE5QPJVwB
-         vtCNMXDeApeaSbBczM34mZ8P/d4ca8PrbgdR3AfsYXYEu0ryWsyxYfHfnlPsbQFWXeuE
-         lvoA==
+        d=gmail.com; s=20230601; t=1741874367; x=1742479167; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=5OPl5i71ZdSAzYa7F6yiKwtJ4dNnBEhCh3JI29+eh4I=;
+        b=kXafg86c3znNijlZUJFbsAyKY+KXSh/QX8z8cOEND+QgglyvVF8DpY7AEfOGmT/oo2
+         5+afZJwRetGmII8d9RoR8MHgRYEerOu4lkMS5GdC0R53NTQGzfgzoJNjbfEkS/haGo8k
+         4uVK8IVBjzDk5aX4S9CdH9kvYIjnLvQtR+uCyms+mlfM/LtQXFaNK5aJvx3vpsO6L0vy
+         Ljp2davnbABh0a4wNWy+D/ZEYPPw8nDxrTHXI6WdupeNB0njhQnTpJhShsrUM5tDOMeZ
+         s/lEmAz/kncuDfmt3vqZLfjMteVMIn9fUkul2+FYBuWp9aTm19rp1sHwb/sOayIvH4C7
+         KR6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741874254; x=1742479054;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3C6MvGOiTRxWRu0SbR4M4R9huU60gsGYQ5fIHw+vGNM=;
-        b=AAuXUWytcSM8lpVhEswSuu6UR8x/aROgwVBj/N/bep1SLD4y3TvQwFW66CpcAfz6gc
-         myAfh9oJIgPTR9b6TZ5ViMV69rZwlXFxVw9jeffD0SAU+tebQBMpf923Q/aOVPSxgWhL
-         vm/M9yCHImmV0PwF+7UF6bfQywQLzeti9rZHtrYlXDpLKo0pJ2n7+xrMkNpGmLr/lfAv
-         qe4EZidBOQ2jrQ78RyrEM6TCy8EP8Li9b1TlnAphhCuFZ9+R+ydOF23A/9hICGEIIoAD
-         LYpJ1tD8PVvC1pFIHwu5Ia9oJSkfg43e2X/L+42fpxhf63v0JivP0dl8htVkKHZRXI4Q
-         e1rg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTX1/dRsg1pdErBnzWb1W/4xDZtUxvgfhXPwUt8qGJUmPB4inqTPgUoqHw3yBikSHBNMP7/NoWIGOIx2Xi@vger.kernel.org, AJvYcCXODw4eg0+PCR7ZvTzhExviDOvWGneSO8HClidrqLpYF+qeNzQp0XMKH2RSWLcZx79YxHvU0GX8YRRHLZHu@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP90CYFUllSna7PZ3gLaE87+Pd+OON3AWfxsoa2DVoMcpGak1q
-	Vga4wt4EcB6FtIGHfW49AR/L2SWxhhhcDAu6fCqfv5oX8aX/rHBR
-X-Gm-Gg: ASbGncv06D75L6+jz4BgIBgAc8Jdal3ktoCewM2/fEaR6NQ7XgWMt6TgKlVQdMdRZpv
-	lSG1afbbUPUyfGUjMiFIoSHMs/hwui0O9yxO0asQ+YUJP69uUrIrTrSRmGrs8/L/oiHV5S6kyk7
-	uXGH0uhYXNYH1WfC3ZBLEiXNxJHpuHtHzAoAkRvBXUb1u7+nV6sHLrtgnACTNRMWG+jKXGW7YL3
-	PWzMMHY75ULQ30fDpbHjRG2clMDTEBuIOOlmp9tNBljwqAkcKqUKCy4XrF4FVFlzg4v2A8sxUIS
-	JyASQBsjYleJRqSdDN0YR4T8SwAsC7Sbfg6Bi2sa3Dg5loBfMv08MgnWwg3cNTM=
-X-Google-Smtp-Source: AGHT+IFTSYm/DNS4AaQAvsgnUraYtTjUiIkJZHr41UqEt7kAOX90x8URH7OuDcPRdqHQyVA59ibtvg==
-X-Received: by 2002:a05:6402:42c2:b0:5dc:7374:261d with SMTP id 4fb4d7f45d1cf-5e5e22a3716mr51358629a12.7.1741874253310;
-        Thu, 13 Mar 2025 06:57:33 -0700 (PDT)
-Received: from f.. (cst-prg-90-242.cust.vodafone.cz. [46.135.90.242])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816974900sm753210a12.25.2025.03.13.06.57.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 06:57:32 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v2] fs: consistently deref the files table with rcu_dereference_raw()
-Date: Thu, 13 Mar 2025 14:57:25 +0100
-Message-ID: <20250313135725.1320914-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1741874367; x=1742479167;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5OPl5i71ZdSAzYa7F6yiKwtJ4dNnBEhCh3JI29+eh4I=;
+        b=BnJySQO7p/xVtU+/zSEVKaaZKdSWoT1NAdai82mEsudKrIYQTvUkXJS8Aela0w0umE
+         ojzlprK6gDMN5UFJkYLJLCAB9b0Q1VD+4yppABXwx/B6fxLazzljDJMsQwjF3oy4pPEb
+         kkK+vHMTXRSyZQFcBnVrRyuJg8rfRXph3WsWyZ+F7Cd7cYt93L5WRklOBTaTHsfMfcSQ
+         wUhMuat+u5DFjsMxsy/ZA7s8ZTqX/NAmzYFFrYBIpeHzvBENhvWGq64SPOCMvOhOYZnz
+         e5aOEb7AYKPMh0TrH+kD9kdKuqVI9Z+B/5RiLI1UkaNfn6ZIau1KbKFktzoTETy99kMr
+         ZBDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ5gYdRwblKFLLh8x1+xkgCWyW2LJq+Tx2YstAdTurSsqhSYcKYgX4uQFjsUD8KHkV3oluUCQ8lAT/fdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMd2jfMqcuORoI5YIAAMnucEvvJ0k2pgciw9GeHbu3wF0R6drK
+	7WRkQuukmwtB/AuyUTsBLcJ/FGCeGQXrNCnTQLfuKvjiC3vfuxGp
+X-Gm-Gg: ASbGnct5wJN4Nsc/LIqarY8ThcSUo+R+8bdqXgrnWTzBmLmDhgoZzDn/RojbfdrAYvO
+	1wbrflc/pTjoxQPeZfC6LHurPIQs7wdeRey04KAYUh/meCyZjaIcqsczjC30IaZaisa3lIzxLT5
+	2onU+05zrsnZ+Q9kiJd/s+K/PQkjOs0PGs4ROHMxUG22PWTUGkQr6ESRdATlM0ET6933cMTCdvR
+	u+rBFX1grfJuc6OljrYyQ051SlZY3R4SRum132RdR3+B2j+XV2Z0HQohf0abfd206xB56apqEIq
+	6b3K1N5xAbM8UvB+nUYSZXZFBFNMtQjOk3H+QrVoiRxcPo25Cs47vLlaK+o4cW9Z1U5yIt3oKHv
+	wXGPqSek=
+X-Google-Smtp-Source: AGHT+IHvFoab+GDvaJG+xkWK0e3xxY4hzqJWEGrTyUuy0qbkjGICwxHCh6DPBxJ+i2yexq/5R3XwHA==
+X-Received: by 2002:a05:6830:6e99:b0:72b:8a8b:e02d with SMTP id 46e09a7af769-72b9b319d94mr6962019a34.5.1741874367573;
+        Thu, 13 Mar 2025 06:59:27 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72bb269dfbesm213185a34.22.2025.03.13.06.59.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 06:59:26 -0700 (PDT)
+Message-ID: <603b3f10-6ad9-46af-8b31-d11e46f4698a@gmail.com>
+Date: Thu, 13 Mar 2025 06:59:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.4 000/328] 5.4.291-rc1 review
+To: Naresh Kamboju <naresh.kamboju@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250311145714.865727435@linuxfoundation.org>
+ <CA+G9fYtG9K8ywO4w2ys=UEuD_r1LgOuZhG4cg62YKAX0qK35cg@mail.gmail.com>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <CA+G9fYtG9K8ywO4w2ys=UEuD_r1LgOuZhG4cg62YKAX0qK35cg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-... except when the table is known to be only used by one thread.
 
-A file pointer can get installed at any moment despite the ->file_lock
-being held since the following:
-8a81252b774b53e6 ("fs/file.c: don't acquire files->file_lock in fd_install()")
 
-Accesses subject to such a race can in principle suffer load tearing.
+On 3/13/2025 12:19 AM, Naresh Kamboju wrote:
+> On Tue, 11 Mar 2025 at 20:33, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+>>
+>> This is the start of the stable review cycle for the 5.4.291 release.
+>> There are 328 patches in this series, all will be posted as a response
+>> to this one.  If anyone has any issues with these being applied, please
+>> let me know.
+>>
+>> Responses should be made by Thu, 13 Mar 2025 14:56:14 +0000.
+>> Anything received after that time might be too late.
+>>
+>> The whole patch series can be found in one patch at:
+>>          https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.291-rc1.gz
+>> or in the git tree and branch at:
+>>          git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+>> and the diffstat can be found below.
+>>
+>> thanks,
+>>
+>> greg k-h
+> 
+> Results from Linaro’s test farm.
+> No regressions on arm64, arm, x86_64, and i386.
+> 
+> Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> NOTE:
+> The following build errors noticed on arm, arm64 and x86 builds
+> net/ipv4/udp.c: In function 'udp_send_skb':
+> include/linux/kernel.h:843:43: warning: comparison of distinct pointer
+> types lacks a cast
+>    843 |                 (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+>        |                                           ^~
+>   Link:
+>    - ttps://storage.tuxsuite.com/public/linaro/anders/builds/2uDcpdUQnEV7etYkHnVyp963joS/
 
-While here redo the comment in dup_fd -- it only covered a race against
-files showing up, still assuming fd_install() takes the lock.
+Yep, this is seen with net/ipv6/udp.c for the same reasons, see my 
+comment here:
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
-
-v2: s/rcu_access_pointer/rcu_dererence_raw/
-
-I confirmed the possiblity of the problem with this:
-https://lwn.net/Articles/793253/#Load%20Tearing
-
-Granted, the article being 6 years old might mean some magic was added
-by now to prevent this particular problem.
-
-While technically this classifies as a bugfix, given that nothing blew
-up and this is more of a "just in case" change, I don't think this
-warrants any backports. Thus I'm not adding a Fixes: tag to prevent this
-from being picked by autosel.
-
- fs/file.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
-
-diff --git a/fs/file.c b/fs/file.c
-index 6c159ede55f1..58ff50094525 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -423,17 +423,25 @@ struct files_struct *dup_fd(struct files_struct *oldf, struct fd_range *punch_ho
- 	old_fds = old_fdt->fd;
- 	new_fds = new_fdt->fd;
- 
-+	/*
-+	 * We may be racing against fd allocation from other threads using this
-+	 * files_struct, despite holding ->file_lock.
-+	 *
-+	 * alloc_fd() might have already claimed a slot, while fd_install()
-+	 * did not populate it yet. Note the latter operates locklessly, so
-+	 * the file can show up as we are walking the array below.
-+	 *
-+	 * At the same time we know no files will disappear as all other
-+	 * operations take the lock.
-+	 *
-+	 * Instead of trying to placate userspace racing with itself, we
-+	 * ref the file if we see it and mark the fd slot as unused otherwise.
-+	 */
- 	for (i = open_files; i != 0; i--) {
--		struct file *f = *old_fds++;
-+		struct file *f = rcu_dereference_raw(*old_fds++);
- 		if (f) {
- 			get_file(f);
- 		} else {
--			/*
--			 * The fd may be claimed in the fd bitmap but not yet
--			 * instantiated in the files array if a sibling thread
--			 * is partway through open().  So make sure that this
--			 * fd is available to the new process.
--			 */
- 			__clear_open_fd(open_files - i, new_fdt);
- 		}
- 		rcu_assign_pointer(*new_fds++, f);
-@@ -684,7 +692,7 @@ struct file *file_close_fd_locked(struct files_struct *files, unsigned fd)
- 		return NULL;
- 
- 	fd = array_index_nospec(fd, fdt->max_fds);
--	file = fdt->fd[fd];
-+	file = rcu_dereference_raw(fdt->fd[fd]);
- 	if (file) {
- 		rcu_assign_pointer(fdt->fd[fd], NULL);
- 		__put_unused_fd(files, fd);
-@@ -1252,7 +1260,7 @@ __releases(&files->file_lock)
- 	 */
- 	fdt = files_fdtable(files);
- 	fd = array_index_nospec(fd, fdt->max_fds);
--	tofree = fdt->fd[fd];
-+	tofree = rcu_dereference_raw(fdt->fd[fd]);
- 	if (!tofree && fd_is_open(fd, fdt))
- 		goto Ebusy;
- 	get_file(file);
+https://lore.kernel.org/all/0f5c904f-e9e3-405f-a54d-d81d56dc797e@gmail.com/
 -- 
-2.43.0
+Florian
 
 
