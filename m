@@ -1,94 +1,119 @@
-Return-Path: <linux-kernel+bounces-560144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45BE2A5FE97
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:51:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB71A5FE9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:53:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 303B03AB27A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:51:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D65E43BB4A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC961E9B37;
-	Thu, 13 Mar 2025 17:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEA415DBC1;
+	Thu, 13 Mar 2025 17:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="1GAOOj8p"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="O1URm7vD"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB871E3762;
-	Thu, 13 Mar 2025 17:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E1D8635C
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741888275; cv=none; b=kgxMUELDb32WhRQFOGM4DanseRiofjLRtUoHI2waGsQnKoS+UcjkI2SYuMTe5fEkuszvs0O/hxaawpDELffozY9PV4vwkytX/gFBZHG60ww1fmMTYWUNw8B/Lzpfp2Go88L/Hi4lab0if2vKSMRzZ7SBQPF2VmQDQbBFqYaDzig=
+	t=1741888378; cv=none; b=jGayUSTYV13tJp0nu2nrKLE7NAdvtyB+bKaQ7LZu0CvfjH9cKyjOAVYttcKMZc1AmDfE5xJa6MlgeIknEOuOjwfeGt2q+c3PQ9vumIv1GZtHohZ5JFYjKG4Aa/eBQCIOqdDxSAyFov3F5yHrDy4fCbA7GUddOJ3KRGtNgK0HU+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741888275; c=relaxed/simple;
-	bh=b1ncFgJE+Q11VK9Q5kCYHXIewMDxWiAi9A4kfUnXZxc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mgi6rkNwAuAsAglGJgTQ1dAEt3cYpAU5FCPG+g1OOBIxsZ5JLvmYbCELdGx7MlnmN6yHVuuiUMCwEWc3d01HKEYlW/JuDWrgYZxgx4PLKemK2t8y77U6REHJejYT+MX75ozvC9K75KvxHgJzj34EPklz+Ct2b3S4racaU+gG7DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=1GAOOj8p; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ZDFRN29sHzm0yVD;
-	Thu, 13 Mar 2025 17:51:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1741888271; x=1744480272; bh=Pkp4vIP/zdg7auq8Q6zaiu6R
-	2VVT1oIEMcUH/wxUMZY=; b=1GAOOj8pFD1MKpx/ewj0xP/Of0Mdrbi1nAesCzud
-	J2nuMM4CCiHGqY7YvvNCTSvnzf67akJSVpdtltUY1g9mkyCLZMAGCcOt9XBoLyrY
-	MrrUn6RgzOGhzNq3EG2MLuxz+WCuQKBUbnQgza855D79ZHdW0jHWoCVBkBhz1F6z
-	oW83hGzGLXYqMoxR7bs6sHhWTyF8cZIq41R7bM6WrqBfETyXahjzSrYwtESF34Zg
-	BEC1I1sEg/pss714ZDqZ2CQyX7gdsioFfiy9380VohxfivXXxk9AbsbjnJi+ZeUY
-	UIWxUVcr5s4e5Vu1scTsv9X3S1XQni0nBdD9kzaOYgJiUg==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id VA7nIBrfjrQy; Thu, 13 Mar 2025 17:51:11 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
+	s=arc-20240116; t=1741888378; c=relaxed/simple;
+	bh=qta9zjCgN7jZ+PWtJVuJ3fMLrb2Pvtnoo7xNpROmcGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WRaxNmZQWaIfAw9G69LFPDGQ0+cpIntCQ2EF3dpAFXLS/Brrsdk4UdFDXdJstnexeFbAxVaLTbLahEfBv/z8tfe1AQb0w/5UsSpp95EdP+/AoZamA7ut2ztfb/mb/oyB8fzYdTRXFjqAKByrV+bxFs+ozeVEFD6iD1FLyLgfOaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=O1URm7vD; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CD51B40E0232;
+	Thu, 13 Mar 2025 17:52:54 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id mRNq1ZtsJE5L; Thu, 13 Mar 2025 17:52:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741888369; bh=tPEJDRMG2yx1Hj/lqU3Fh9xedOg7UYhyq7ITvKKAv6I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O1URm7vDn7ESzL4QE+cS3IvAjioyjwddWdd41W9iDIy2N612TbijoQ+4ic+nUXzTN
+	 a3/jQHKTHG1uT2zthR664pk5KFS+eHxfxjQAVhAxV0zTE6QgB12gace55CktZVBoH8
+	 5jYw4rp4ifmqkf/5rEzQEjBWK2j+162VSHKxZuz6UE2NS7E6dE7Hj+Lq8dPliNXS6a
+	 K2lZPbpGP844E56X2zK8h4OcTE31Q6g8BREWrTwy77c1jcOlgjk2FJGfGeWiL/Y7fC
+	 TELT3KicLf8zjAVt9hxBSPWsAGOTf6DqnbYvOd7j4qUYBkn44Xkz7bXPjFYUWDD3tB
+	 nwZVnr6Pn+SGm2F87ipu9LamC0YptivNf5EjWde/H5WyBZZPmLR740ET5eFHNB6VZE
+	 cWVM6m1Us19NvYmCF8QXjUuAlBotNpzeNVI7gDUh7Gt17OfbHvpcND+hPIsK4Q5Xgj
+	 lgOtyLozc9dxe6iwz7Hy11tyebg1p7P3k80ZTj4r71leVZIt9KlqG2X+ycityBmjgl
+	 GpC0/LoAVHoKs5t89mOIc71F944sA8/7ZkNmGN3EfDqBShcKP5NWGV1DflYEOphaxE
+	 e6rSlyFGplTh4kt3D0wcTdNwhqx9OIAg+cWtKLICQUs/NfjIlS6WxvTiZwtoFR+Uyg
+	 uKQrRO0wiKPtZKMpc+w8oH2Y=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ZDFRJ1TMmzm2XgY;
-	Thu, 13 Mar 2025 17:51:07 +0000 (UTC)
-Message-ID: <729e2906-d3a7-426a-90cc-15e98657141f@acm.org>
-Date: Thu, 13 Mar 2025 10:51:06 -0700
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 810F640E0213;
+	Thu, 13 Mar 2025 17:52:32 +0000 (UTC)
+Date: Thu, 13 Mar 2025 18:52:26 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Ajay Kaher <ajay.kaher@broadcom.com>
+Cc: thomas.lendacky@amd.com, alexey.makhalov@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com, bo.gan@broadcom.com,
+	dave.hansen@linux.intel.com, florian.fainelli@broadcom.com,
+	hpa@zytor.com, kevinloughlin@google.com,
+	linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+	vamsi-krishna.brahmajosyula@broadcom.com,
+	vasavi.sirnapalli@broadcom.com, virtualization@lists.linux.dev,
+	x86@kernel.org, ye.li@broadcom.com
+Subject: Re: [PATCH v2] sev-snp: parse MP tables for VMware hypervisor
+Message-ID: <20250313175226.GEZ9MbWuPkPQweJo1U@fat_crate.local>
+References: <20250313173111.10918-1-ajay.kaher@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH] scsi: sd: Use str_on_off() helper in
- sd_read_write_protect_flag()
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250313142557.36936-2-thorsten.blum@linux.dev>
- <3c32eb12-6879-48cf-9ef6-bd04e759025f@acm.org>
- <9EE4EEC5-52D9-4159-A3B4-4865DA11C6FF@linux.dev>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <9EE4EEC5-52D9-4159-A3B4-4865DA11C6FF@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250313173111.10918-1-ajay.kaher@broadcom.com>
 
-On 3/13/25 10:05 AM, Thorsten Blum wrote:
->   *  3) Deduping by the linker, which results in a smaller binary file.
+On Thu, Mar 13, 2025 at 05:31:11PM +0000, Ajay Kaher wrote:
+> For VMware hypervisor, SEV-SNP enabled VM's could boot without UEFI.
 
-Hmm ... I'm not sure that using functions like str_on_off() will result
-in a smaller binary file since the str_on_off() function (and other
-similar helper functions) have been declared inline. Additionally, isn't
-a linker supposed to deduplicate literal strings even if str_on_off()
-is not used? Isn't the compiler assumed to merge identical literal
-strings if -fmerge-constants has been specified? From the GCC
-documentation about that option: "Enabled at levels -O1, -O2, -O3, -Os."
+VMs
 
-Bart.
+mingo, pls fix up while applying.
+
+> In this case, mpparse_find_mptable() has to be called to parse MP
+> tables which contains boot information.
+> 
+> Fixes: 0f4a1e80989a ("x86/sev: Skip ROM range scans and validation for SEV-SNP guests")
+> Co-developed-by: Ye Li <ye.li@broadcom.com>
+> Signed-off-by: Ye Li <ye.li@broadcom.com>
+> Signed-off-by: Ajay Kaher <ajay.kaher@broadcom.com>
+> Tested-by: Ye Li <ye.li@broadcom.com>
+> Reviewed-by: Kevin Loughlin <kevinloughlin@google.com>
+> ---
+> Changes since v1:
+> https://lore.kernel.org/lkml/20241219114400.858980-1-ajay.kaher@broadcom.com/
+>         - use cc_platform_has(CC_ATTR_GUEST_SEV_SNP) instead of
+>           (sev_status & MSR_AMD64_SEV_SNP_ENABLED)
+> 	- remove unwanted header files
+> ---
+>  arch/x86/kernel/cpu/vmware.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+
+Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
