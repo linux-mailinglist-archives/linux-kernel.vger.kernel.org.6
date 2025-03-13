@@ -1,339 +1,341 @@
-Return-Path: <linux-kernel+bounces-560341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7B2AA602C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:36:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9B7A60219
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:13:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18C7A420532
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:36:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B23C880BF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BCD71F4612;
-	Thu, 13 Mar 2025 20:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B40F1F4180;
+	Thu, 13 Mar 2025 20:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B2CxPUzz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="tdilPyni";
+	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="ifVa4l3P"
+Received: from mx0a-002c1b01.pphosted.com (mx0a-002c1b01.pphosted.com [148.163.151.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464D542AA9;
-	Thu, 13 Mar 2025 20:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741898200; cv=none; b=cJl6zq787hWP6YNa1/mj4WIbMldNrImbAbYP+ZiSZK3+fMrhox1x5oPcyRED/t04BKK1ZS0/nYNulEn6dBoJB8Sl8rOz7n5TbHZad7119VXc8z6Hp1UI5B7rZ8WOU4O+OD7Z3k0b5wGoUg6owAKzh/9xYdZIxEjF8lKBQhypTN8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741898200; c=relaxed/simple;
-	bh=mLAlCqYCbYi8Tz7gyZwo2pmMdHDEESJWMN8CkQrRVgI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SPnW1kBpZHZhXmxbBcpiX/fDy1Qmcx1u0Qc/4ug/TRUlTJqVAzfkwpgJeNG8VELB00S2mI73MJaotnW6LzPTQ6YijGwvEtMcTuaF047vArkhEQgjqlT8TJFnN7CJ48sNWRptWDgofCh9iglmtDFW2WpEMRbg8gxRif2Ewbmy7DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B2CxPUzz; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741898198; x=1773434198;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mLAlCqYCbYi8Tz7gyZwo2pmMdHDEESJWMN8CkQrRVgI=;
-  b=B2CxPUzzwIA7Or/79hbGlhMwhVMhH0DIc8hYFWtzZ5ygvpSoVVxyhgSR
-   9XR3DSTNpUm6VB2C52QB7iJIUtuAj7j7fnvJao2M3PaVjJWxRdzjMQQEX
-   xS1qCkM78OKpdfwVz7JxVcVShvy3n1EzUHTtHVUonVWLwRer0UWhAmhiK
-   QM6wyYl8mbXT/6PNLsghHHn5G1xI5J964Blqtez/kY1M56iZaYDAs7bmJ
-   crqpv+BVPYww7hUyiKtlDdmhXzXJ/XutjGYKsbA7zgiTxt8IqMltgtBEJ
-   IJsAiaxi2uXCnhElQMiPJ7uZOd18s56QybNe4E+Yadwe+XRZ7ihe7BBj8
-   A==;
-X-CSE-ConnectionGUID: X1tI+qqqRBa9pXHNyXGtcQ==
-X-CSE-MsgGUID: iQP0V+wySqqOtLhhWdHz1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="42945407"
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="42945407"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 13:36:37 -0700
-X-CSE-ConnectionGUID: vjmZss9dQii/lO6d73MReA==
-X-CSE-MsgGUID: zXm1khAJSWaao1/Zy1PU3A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="122000600"
-Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 13:36:37 -0700
-Date: Thu, 13 Mar 2025 13:36:35 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: "Moger, Babu" <babu.moger@amd.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	"Moger, Babu" <bmoger@amd.com>,
-	Peter Newman <peternewman@google.com>,
-	Dave Martin <Dave.Martin@arm.com>, corbet@lwn.net,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	paulmck@kernel.org, akpm@linux-foundation.org, thuth@redhat.com,
-	rostedt@goodmis.org, xiongwei.song@windriver.com,
-	pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com,
-	jpoimboe@kernel.org, perry.yuan@amd.com, sandipan.das@amd.com,
-	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com,
-	xin3.li@intel.com, andrew.cooper3@citrix.com, ebiggers@google.com,
-	mario.limonciello@amd.com, james.morse@arm.com,
-	tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
-	eranian@google.com
-Subject: Re: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
- Monitoring Counters (ABMC)
-Message-ID: <Z9NB0wd8ZewLjNAd@agluck-desk3>
-References: <Z890Q2GoP6GecwW4@agluck-desk3>
- <04e47d0e-6447-451e-98e4-7ea65187d370@amd.com>
- <6508cf67-3263-432e-892c-9b502b3c6cd4@intel.com>
- <f8a20ed8-6e30-4cff-a96b-8df89a605081@amd.com>
- <d07a70f5-b1ca-4766-a1d9-53988dd9164f@intel.com>
- <14c14b11-5b45-4810-8e46-019c8a67fc90@amd.com>
- <1db8ad73-5194-4821-844a-8fd7cac72ad4@intel.com>
- <9b8653a3-c6fd-4748-a4b5-94d5598d180f@amd.com>
- <20ec195a-c4dd-48d9-89f6-4d48fd438fe8@intel.com>
- <be6d23c8-3e93-4bdc-8b33-d3af7df7cc94@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3ED31F4CAB;
+	Thu, 13 Mar 2025 20:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.151.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741896641; cv=fail; b=ZyPmKKVAXy2vJIwGcYlS2x9TNlIkNPyRoOMvlX6H1jhmTs0wEq276YY/pWgcvDZqXBe8pLSzcNNgNOBwIjbNoIF1V3QrPxjTudx7j1SbHlEx++Ri9KdpHmPfBH7mthe9g4Kp5DISLV4H8nwOJugrOF52cUGTSQ57Oc4edaKQE6E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741896641; c=relaxed/simple;
+	bh=Qjd9ENq8dsCIMA18rfKc918wPCdXWmANk3S2DDy5v/I=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=pZvj6xMxsDo22Q7jXJGxGWfK5ZX83XC90xGZ4dI6W1h6RLwSv2fvm5oxuZj8RzcibjmM6NrY12Y1nf2P6udRxeGYoFUi+CTBad653rj8r7gaKxtHSTtNWFkcHqskEysmOTcEolYyoD1uwhMv51Vc+2uigYNi/euVqPI0JVfJjMc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com; spf=pass smtp.mailfrom=nutanix.com; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=tdilPyni; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=ifVa4l3P; arc=fail smtp.client-ip=148.163.151.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nutanix.com
+Received: from pps.filterd (m0127838.ppops.net [127.0.0.1])
+	by mx0a-002c1b01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DEkL3G008473;
+	Thu, 13 Mar 2025 13:09:58 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=proofpoint20171006; bh=gprSYzdNxg65W
+	VMJDyclY6H2sc631LXxfLygD2zCcSw=; b=tdilPyni6OtcRj+1Hkslz9ssJer2E
+	3abuBSt3kbP90Y9cqfeL7OoNsJ9QmqMGkS/SxHKmW0CjehP8AecTF1UEaAQbONyY
+	7QOGJkAPKtGcYoWg1xJc9t1lmqUzxyYrDNvhfNX/5AmSbtbYD/vxC85WY4Q+Jcq4
+	3XnVfvIKzDjFSrow/TcA0j67q8eh7Nj9vWcs3rYr0zCtu7PXTHNBFrcCQBjl2f92
+	ieNXJvUdwLcS1s16wKQcGt++m4Z5dmBFMT06yX7NtqLn5ti+j+ZCZy+0JiQrLaaz
+	lQB2hfvQYD5l91erp7JO3ZSdwUB21D8vitQdDMdNWdgQqhRRGdUr0trpw==
+Received: from sa9pr02cu001.outbound.protection.outlook.com (mail-southcentralusazlp17011026.outbound.protection.outlook.com [40.93.14.26])
+	by mx0a-002c1b01.pphosted.com (PPS) with ESMTPS id 45au9gp937-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 13:09:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jAN/huGRW07WZ31hZ//U3ckDAdJ0POi79tYHD7nOfz2/aHphWvTDRgsQHXowoN3YqVDS3/jw2l+sKtQ7u9g1nbiLvWBZYv7Vxf/W3lp3hHOTHeUXPqhUyCF/UVlzTi5CBSrBJXw7fd6E4D08nckxT9qjuoyg1lqlCFt1sfkRdVh6x23CEuA9jYBSbj6p4BRD5GKB+radHgCA2Pq0LxfteHDWytYNTCPJwXKOq8DlUVOhYBAStGAdkwJZdQznyftd/wp6F42L/7pkLMTx6PcjgQU7nGPn3eXPBEl5FJgqYUMNwYb1M33QtCNlrKbf27Oh1X0SIK1WRamxKC7pbTRwkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gprSYzdNxg65WVMJDyclY6H2sc631LXxfLygD2zCcSw=;
+ b=t2eOl3Vk0ITMByHyNaAiyMZW2rdwyonNOuapuZJ79oY7KBPJqSm+TIzWBecseifPZd++vGkM0sxfCvSvK/KswomdTaWFYmSRvz1n/ZGnrYnfXD/a/TqUyzMCwqt7L3aYhkXnH4SLgz9fIiYvZQq7L6xTGiRsr0Je0p9Argfa6HQNyvlqCZbcr/Wn7uV75G6AKU4M/wg4lf2DViAwpc7RBbdTlUQGi/dYdnXXneVLZqnqSIhIvat31RVYx25X9a0a8eG7EWE0dsRTLLTVhXGlTfCJPDI5G/AMcbXmxcai6qlFOnl/NtUVwAeTutwk6XSJmvRErBSjYCvSFRGCD74qPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
+ dkim=pass header.d=nutanix.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gprSYzdNxg65WVMJDyclY6H2sc631LXxfLygD2zCcSw=;
+ b=ifVa4l3Phw7MMyLYZrdSmA9fmxLuPVHZTDH5ZPy3043o+elGfks3sjrkY/o3wFXBlYqNJp3mt8ZyYYSnF6I+JlLeGoJ2SAT1ludxfYXlq4/b2pDrSdgZR1HefiSlplI7s1qCg+ifc2CJm3HPyDRcSo7zwJHv5lMhQlGmddpSGUCWG35P3z9jUfgBve8AglR85DytUOnWpOIJ8XwP8QeXggNAKMui85G2l0QPMVertulcgiGN980NeXihg01kOUi5YoTOSuqdTPyPBHj+CJXCXtQeSfEG7ZXqEBRUhOsUOSXYzohoa8Tl593wtH9lPVW9P2XjTr9coh+4FvtdImTN+A==
+Received: from LV8PR02MB10287.namprd02.prod.outlook.com
+ (2603:10b6:408:1fa::10) by PH0PR02MB9384.namprd02.prod.outlook.com
+ (2603:10b6:510:280::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.28; Thu, 13 Mar
+ 2025 20:09:51 +0000
+Received: from LV8PR02MB10287.namprd02.prod.outlook.com
+ ([fe80::b769:6234:fd94:5054]) by LV8PR02MB10287.namprd02.prod.outlook.com
+ ([fe80::b769:6234:fd94:5054%4]) with mapi id 15.20.8534.028; Thu, 13 Mar 2025
+ 20:09:50 +0000
+From: Jon Kohler <jon@nutanix.com>
+To: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+        x86@kernel.org, hpa@zytor.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Jon Kohler <jon@nutanix.com>,
+        Alexander Grest <Alexander.Grest@microsoft.com>,
+        Nicolas Saenz Julienne <nsaenz@amazon.es>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Tao Su <tao1.su@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
+        Zhao Liu <zhao1.liu@intel.com>
+Subject: [RFC PATCH 00/18] KVM: VMX: Introduce Intel Mode-Based Execute Control (MBEC)
+Date: Thu, 13 Mar 2025 13:36:39 -0700
+Message-ID: <20250313203702.575156-1-jon@nutanix.com>
+X-Mailer: git-send-email 2.43.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PH8PR02CA0007.namprd02.prod.outlook.com
+ (2603:10b6:510:2d0::18) To LV8PR02MB10287.namprd02.prod.outlook.com
+ (2603:10b6:408:1fa::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <be6d23c8-3e93-4bdc-8b33-d3af7df7cc94@amd.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR02MB10287:EE_|PH0PR02MB9384:EE_
+X-MS-Office365-Filtering-Correlation-Id: c9646193-ceef-44ce-f74b-08dd626b02fb
+x-proofpoint-crosstenant: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|1800799024|376014|7416014|366016|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TnJUOWJqYjFJMWdyWUpTeDFaK0lTNHg0NTQ0cW1oS1g0eUdvclRUUWJOdzFa?=
+ =?utf-8?B?RzdPdDhyRHlwWTgwN0xTSEMzWHNKMHhucmI2Y0RCOWRpV0h2VGszWkxvckFE?=
+ =?utf-8?B?aG4vY3V6bXQ5eDV5MzVZS1R6VFl1NFFYdVFVR2lHSDIwQ0xWN2cwTE0zVlQz?=
+ =?utf-8?B?NzEwdEhqcU1HT3FyT0Uwb1BZa01UdFlhaElMYjI2SmFTYjBIczZKV2xkaXdK?=
+ =?utf-8?B?bitWZ3ROQ29YelpnOEdUdGlseVdkZ2tMNDgydDY3b3ZVMEJ1ZExvdWhsMVBV?=
+ =?utf-8?B?K29IOGNZU3VFSmF0U2lhalNTYnllZXlqeEtMRkpPbHVUZVVKQ2RIRzl6ejYz?=
+ =?utf-8?B?c29lMG1hWk05c0RvRUQ3Skk2N0wxdGZLZkhCOW44NExTQTZIdjVZYWwxY3Fu?=
+ =?utf-8?B?U2Fkc1UvMmhESWZ2UWswQmN4NXlWQmswQXJjbXJrNjdobE55bklXTm9YNity?=
+ =?utf-8?B?VHhtV2VHcUVOZkozWk9GRFdSWTk0MTZjKzVJQit5OWVrNC96NHh6V0RBUmlx?=
+ =?utf-8?B?L2s1Q3h6SHRNditxRDdsc1VoK2JSUE5VV3JHTnBZV3ZMMFdkbnZrVHdFejFp?=
+ =?utf-8?B?T2dFMEpDYVVsbjQxS0hDVHRDMjJxdXJoQWZ4Sm0waEl6SDBJVm83ZGI1Q3lk?=
+ =?utf-8?B?V1FwQ2tlTnl2dVpFZnB5ZDlWWFZ6amRsYXJhb0lsYXI0OWlxczRzbS90b2t6?=
+ =?utf-8?B?S0RQc0hxQ3liUHg2L0ZwSytRaEFGaTk4bWxKM1dsbzBhT091RitRNWloYWVR?=
+ =?utf-8?B?YTEyNW5aTm45dHNYOThqYTN6ZTQ2aEl5d0pDY24wUGp6Umk1bit1ZkpnVURk?=
+ =?utf-8?B?bGdET25kaVRLQTFTdmhxcHlEekp1SndnYXJHOCs2ZG96NVBvMURHS3VRenRS?=
+ =?utf-8?B?R1FqcFFiVkl5bEU1QUZnZWpRREl1U2tjRjA0RTlvRjk0bGk1ZlQ5UnpOeU5h?=
+ =?utf-8?B?elVFbGpMUWtSR2o0U3dqWXNDeXUrZEpZODUvQlVDUkFsOHlWUXBHMzEvS25S?=
+ =?utf-8?B?UVBRREFMT0VZRndWaWptc0l6c0huR3J0cUduN2lQZ05nenEwbms2YUs5WDN1?=
+ =?utf-8?B?OXZrSHhneVNCRGdhQjBMeDhNQ040NFJGV1dCTWluNC9uVWxmaDFweDc1R0VT?=
+ =?utf-8?B?OHRiRmZRNy9VTFRXZ1EvV0JTUWI0RHFNazVUS1orc1czVnpTUUlkSWMwZlVz?=
+ =?utf-8?B?cXQ5dEtDU01FekJ5K01LOU9iV2o5b2t0MDExRThweG9VdUZHd0ljMU1kaGlp?=
+ =?utf-8?B?cGo0RnBmM0xtTStYWEYyU2srbzQ5eHNjQitobjlQaEpDZnZnM3hJR0hBQ2hx?=
+ =?utf-8?B?UEJGZ1FzWUV0V3o5UlVYVEl5U0V0UVFjUklMRTlRdXhtYk9BKzIzdW1mditB?=
+ =?utf-8?B?cjg2aUp2VElLaHZ4YXV2V0ViaDB1dkZxa0RGNGMxWW9HOUF0dmdad3E5T3Nn?=
+ =?utf-8?B?eHkwLy9nTUphN2FHOC9zRkN3Rk1Ud1pvamNmaDhQS3g3VUFhQ0lVL09oYm52?=
+ =?utf-8?B?bjhKb3RWQ1ByV1gyYytKUDVQRnAxSkJJZ3p6ZFRLT3M4UGN3TjZORzBhTmIv?=
+ =?utf-8?B?V1ZSQVh0RmllNTRBdlJzUFV2WjJVSVZEa1VIdy9teTJBZWJnTlYyQWlRb1Jp?=
+ =?utf-8?B?RjZvbG4wNm9zeWtUVGVGa0xNQ3p4SlR1NHpjdHhyNTlGMFdDMDMyaUdzdUJE?=
+ =?utf-8?B?UG5IZ05HRXFUZTBkTGU3cjd1ZEdaa3g2Y2hxZVljcktoUEhHUnpzQXhSWlRa?=
+ =?utf-8?B?R1p2Q0tIRUhURVRHZ3k4TUdEN0I4VEZhemRYd2pUN09LT0hqUkE2WGJGSHND?=
+ =?utf-8?B?TGE5K05VR1h3VldqMGlydzdIbWhsaHREVzJwbHovTDJRbWw3OHZBWjRhSTJL?=
+ =?utf-8?B?RGU0VDBxb2UyQjllWXFRMndoM2JJYWsxOVhiY2JQaXlWb2c9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR02MB10287.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(376014)(7416014)(366016)(921020)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eDFTdVVlQ0Q2WHVabU81VldIei95QlRGeUpRYVdCZHNjZ3pLTDF1c2VOSWY4?=
+ =?utf-8?B?Z2V6dWxDSjg0RHRIN0JSYlVDR2ZpYk5ERFNLOWRuSldkRjBPQjc0alNmRDBr?=
+ =?utf-8?B?K0tGNXp4dmlNNjY5UTJSVGRnSVZ1dGhLSUxQMEVNSVdlaWhPb1Bnc1ZXamdD?=
+ =?utf-8?B?VjV1blo4Wjl6M1BkRThSMFV2RytIcWlaRmZQYW9nOGt5bFUwNDVla2YyQXp4?=
+ =?utf-8?B?SlgreGEyWjBaSUY1YlA0Vy9MSXVZNjJVLzZEczRVRmhUeTUrdC9rcnY5NWpt?=
+ =?utf-8?B?elozMnRmMUU3R1ZzYkFnaW1rSUZtdjAzekxVaWFUdUVEVEM2T1VqN2FUbzZB?=
+ =?utf-8?B?SUU3UWNOaGZCSEhSWkVKZjV4dENUUXdWeHFRb1N3STdBYjhQTTJQTmRCVjFq?=
+ =?utf-8?B?cEI0YmlVbnNGWlUzd0h0QVgrYUhWNktXR01ESEVlalFWNTByY29iKzFtY3JM?=
+ =?utf-8?B?L3hOcjZHY1k2YUxhZlNreG11QmpDL2ZnaEtpdWsrNFluRThHZS9VZjh2amY5?=
+ =?utf-8?B?bVN5NlFZeWZvYklDNnV2SzJ4a0hBZ1JZbUpzTk10Z2xSKzVxNVBTeEJRWm5a?=
+ =?utf-8?B?NXBQY1U1SVpibGpVRzQxQ3lKZUdhZzBUdEZIV29JNWRtZUZKaDZJODhrWjhq?=
+ =?utf-8?B?UldYei9WczRtY2NxRUFuKytwUWJwRjROam54S29JeUJ2Zis5UzdJeTdvc3F0?=
+ =?utf-8?B?RnV4cXc1UzM3WTczSENrR2JEd2dWV21yNFZ4cjdZdG1lcXh1Q09HS25tN3pS?=
+ =?utf-8?B?ajl6T0RNQkdMZmhwVGFYelRzcGM0WmNlcm40SnVoY3M3ZEpjeENON1hzSzAz?=
+ =?utf-8?B?c010MUV1U2ozTHRxaHVYSlRNT0hkcHpxeUF4WmdPUHpDZnRsM0NyM2VrZmJ4?=
+ =?utf-8?B?VkVORUFNU1ZYdFJBaHZQOURrQzA5MUhxVHFlNnVFYy9OTGR5VEdJRlZtdmpl?=
+ =?utf-8?B?MSs5aitnNHdLekpCdWIreGpiS2U5bE1FbmNXTHZiMnpDMVgyRHpwUFVMeWI1?=
+ =?utf-8?B?V2tKN1J4OUNUc0VWdXY3UnluSGs2cmhVcTVHeVdxNUJWcm1RVzJPZk9kTEpq?=
+ =?utf-8?B?OHhtKzdTTzFIRVBmOWpteVZxTjg1Rm5PazkvZTUxbkVmN2ZQdCt0WGoxQkk2?=
+ =?utf-8?B?UUl6ZXZDYytjN0gzVkJDekR4cWRXdVlrMU1YZnJmblF4WTBZa0lTbnkxQnJR?=
+ =?utf-8?B?NEpaMTR2K3lTTWZ2R1NiSW9VeWRtQnBhWWVZa29rc2IrUHRMRjZSMHY0S2pw?=
+ =?utf-8?B?dXRzYlpqbDlLL2NFVzREVTB0Qlpwa1NmUnh0K2NFc2NFWmk2MVlTWmp1VzEz?=
+ =?utf-8?B?d3JrVjdYS1Y1ZE5uMTJTSUl4SnpySzhmaXl3QTdDckpvWm1aL1NOU2VDd2dN?=
+ =?utf-8?B?U0hpaWhkMnVwcTZJNlQ2UzhhMzRaWHF1ZnI1RHJUNVRjYjQvcVM0OUg0dUlv?=
+ =?utf-8?B?cmd5SEx6SG9QMEhyNGtLMVg3Mkt2Y0lmeGF1NnM4azdpTUlyOURwMGswTjVY?=
+ =?utf-8?B?cGErNHpYRFdUQnRXNWFxNkQrYlNtRWNMbVR2aS92RTc2VGQ3c1JSaFJ3aUJz?=
+ =?utf-8?B?VzhYWWdDQU1pZXhhellLZlhLQXZXeExDVGtja0VYYXQ4NjZHRXVpYktON045?=
+ =?utf-8?B?dzcwcHd0SDZIaXc3blh6b0ZZQ0JPNWdTVzhiamFlWG05M0ROb3p1M25ibHZu?=
+ =?utf-8?B?My9hbEd5MFpIYTRJcnpWUzRCeHFFTjEwemIyMXJCVHdXeUJ6cUFsYjNlTzh3?=
+ =?utf-8?B?aWV2UjYxNmdUL0NITkMyaHQ3NkJ5NGk1bUpUMzdDZUMvSFIrMHlnNmd3SlBX?=
+ =?utf-8?B?eVJOMmRzZUFjNFVkVGc4Z2NaTXBQb0h3T3g4dHhXelBPRmxJaVVsSGNYVXBZ?=
+ =?utf-8?B?NTJWNzE1eGhlQm16c0ZjM0MxMnQrT1dZQWdYV1c2ZnpORlVzeFlpdlJNOEFC?=
+ =?utf-8?B?SWpvZ3lXQW9BZG1vL09QazBlSDYzVlE4OUpsU1JzWDU3cEFTYnV5czBQempT?=
+ =?utf-8?B?cWhrdm5oempodGlVU3ZUZjB4bzZKN2ROTVZHZTBvd2Fmdk1ObmEwRXBxUmw2?=
+ =?utf-8?B?M2lJblF3ZWE0RTRHSjdROUNQem1wUkpBT1VpYk5pZCtNajU5TWpMdWs1TFht?=
+ =?utf-8?B?Ry91UVYwWW1GMlBCR25OTWpmNy9pUk05TFU3MWhKR0VIMGdhRUo3N3Y1UkFI?=
+ =?utf-8?B?SFE9PQ==?=
+X-OriginatorOrg: nutanix.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9646193-ceef-44ce-f74b-08dd626b02fb
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR02MB10287.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 20:09:50.9090
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bb047546-786f-4de1-bd75-24e5b6f79043
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LK5gsI+zvFRAgWC261+TCqYDY41cXPZ3CYL5om5K+aAoIgAEDLikTjOilkefZDq6arXXSRVPbu+RaDpUBlm+6l97PMlnTUnz+LbOzab0/Ws=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR02MB9384
+X-Proofpoint-GUID: XC-QTZygNlX-hm52BqdRuEW_Gh6tUXYx
+X-Proofpoint-ORIG-GUID: XC-QTZygNlX-hm52BqdRuEW_Gh6tUXYx
+X-Authority-Analysis: v=2.4 cv=WMl/XmsR c=1 sm=1 tr=0 ts=67d33b95 cx=c_pps a=GnUjYDbtZuq/T0BoTQNfSw==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=Vs1iUdzkB0EA:10 a=H5OGdu5hBBwA:10 a=0kUYKlekyDsA:10 a=yMhMjlubAAAA:8 a=VwQbUJbxAAAA:8 a=edGIuiaXAAAA:8 a=NEAV23lmAAAA:8 a=QyXUC8HyAAAA:8 a=Xiv-YnGf6EIgopWwbTwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=4kyDAASA-Eebq_PzFVE6:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_09,2025-03-13_01,2024-11-22_01
+X-Proofpoint-Spam-Reason: safe
 
-On Thu, Mar 13, 2025 at 03:13:32PM -0500, Moger, Babu wrote:
-> Hi Reinette,
-> 
-> On 3/13/25 11:08, Reinette Chatre wrote:
-> > Hi Babu,
-> > 
-> > On 3/12/25 11:14 AM, Moger, Babu wrote:
-> >> Hi Reinette,
-> >>
-> >> On 3/12/25 12:14, Reinette Chatre wrote:
-> >>> Hi Babu,
-> >>>
-> >>> On 3/12/25 9:03 AM, Moger, Babu wrote:
-> >>>> Hi Reinette,
-> >>>>
-> >>>> On 3/12/25 10:07, Reinette Chatre wrote:
-> >>>>> Hi Babu,
-> >>>>>
-> ..
-> 
-> >>>>>> We can add the mkdir support later. That way we can provide basic ABMC
-> >>>>>> support without too much code complexity with mkdir support.
-> >>>>>
-> >>>>> This is not clear to me how you envision the "first phase". Is it what you
-> >>>>> proposed above, for example:
-> >>>>>       #echo "LclFill, LclNTWr, RmtFill" >
-> >>>>>          /sys/fs/resctrl/info/L3_MON/counter_configs/mbm_local_bytes
-> >>>>>
-> >>>>> In above the counter configuration name is a file. 
-> >>>>
-> >>>> Yes. That is correct.
-> >>>>
-> >>>> There will be two configuration files by default when resctrl is mounted
-> >>>> when ABMC is enabled.
-> >>>> /sys/fs/resctrl/info/L3_MON/counter_configs/mbm_total_bytes
-> >>>> /sys/fs/resctrl/info/L3_MON/counter_configs/mbm_local_bytes
-> >>>>
-> >>>>>
-> >>>>> How could mkdir support be added to this later if there are already files present?
-> >>>>
-> >>>> We already have these directories when resctrl is mounted.
-> >>>> /sys/fs/resctrl/test/mon_data/mon_L3_00/mbm_total_bytes
-> >>>> /sys/fs/resctrl/test/mon_data/mon_L3_00/mbm_local_bytes
-> >>>> /sys/fs/resctrl/test/mon_data/mon_L3_01/mbm_total_bytes
-> >>>> /sys/fs/resctrl/test/mon_data/mon_L3_01/mbm_local_bytes
-> >>>>
-> >>>> We dont need "mkdir" support for default  configurations.
-> >>>
-> >>> I was referring to the "mkdir" support for additional configurations that
-> >>> I understood you are thinking about adding later. For example,
-> >>> (copied from Peter's message
-> >>> https://lore.kernel.org/lkml/CALPaoCiii0vXOF06mfV=kVLBzhfNo0SFqt4kQGwGSGVUqvr2Dg@mail.gmail.com/):
-> >>>
-> >>>
-> >>>  # mkdir info/L3_MON/counter_configs/mbm_local_bytes
-> >>>  # echo LclFill > info/L3_MON/counter_configs/mbm_local_bytes/event_filter
-> >>>  # echo LclNTWr > info/L3_MON/counter_configs/mbm_local_bytes/event_filter
-> >>>  # echo LclSlowFill > info/L3_MON/counter_configs/mbm_local_bytes/event_filter
-> >>>  # cat info/L3_MON/counter_configs/mbm_local_bytes/event_filter
-> >>> LclFill
-> >>> LclNTWr
-> >>> LclSlowFill
-> >>>
-> >>> Any "later" work needs to be backward compatible with the first phase.
-> >>
-> >> Actually, we dont need extra file "event_filter".
-> >> This was discussed here.
-> >> https://lore.kernel.org/lkml/CALPaoChLL8p49eANYgQ0dJiFs7G=223fGae+LJyx3DwEhNeR8A@mail.gmail.com/
-> > 
-> > I undestand from that exchange that it is possible to read/write from
-> > an *existing* kernfs file but it is not obvious to me how that file is
-> > planned to be created.
-> 
-> My bad.. I misspoke here. We need "event_filter" file under each
-> configuration.
-> 
-> 
-> > 
-> > My understanding of the motivation behind support for "mkdir" is to enable
-> > user space to create custom counter configurations.
-> > 
-> 
-> That is correct.
-> 
-> > I understand that ABMC support aims to start with existing mbm_total_bytes/mbm_local_bytes
-> > configurations but I believe the consensus is that custom configurations need
-> > to be supported in the future.
-> > If resctrl starts with support where counter configuration as
-> > managed with a *file*, for example:
-> > /sys/fs/resctrl/info/L3_MON/counter_configs/mbm_total_bytes
-> > how will user space create future custom configurations?
-> > As I understand that is only possible with mkdir.
-> > 
-> >>
-> >> # echo LclFill > info/L3_MON/counter_configs/mbm_local_bytes
-> >> # echo LclNTWr > info/L3_MON/counter_configs/mbm_local_bytes
-> >> # echo LclSlowFill > info/L3_MON/counter_configs/mbm_local_bytes
-> >> # cat info/L3_MON/counter_configs/mbm_local_bytes
-> >>  LclFill
-> >>  LclNTWr
-> >>  LclSlowFill
-> >>
-> >> In the future, we can add mkdir support.
-> >>
-> >> # mkdir info/L3_MON/counter_configs/mbm_read_only
-> > 
-> > This is exactly my concern. resctrl should not start with a user space where
-> > a counter configuration is a file (mbm_local_bytes/mbm_total_bytes) and then
-> > switch user space interface to have counter configuration be done with
-> > directories.
-> > 
-> >> # echo LclFill > info/L3_MON/counter_configs/mbm_read_only
-> >> # cat info/L3_MON/counter_configs/mbm_read_only
-> >>   LclFill
-> > 
-> > ... wait ... user space writes to the directory?
-> > 
-> 
-> My bad. This is wrong. Let me rewrite the steps below.
-> 
-> > 
-> > 
-> >>
-> >> #echo mbm_read_only > test/mon_data/mon_L3_00/assign_exclusive
-> >>
-> >> Which would result in the creation of test/mon_data/mon_L3_*/mbm_read_only
-> >>
-> >> So, there is not breakage of backword compatibility.
-> > 
-> > The way I understand it I am seeing many incompatibilities. Perhaps I am missing
-> > something. Could you please provide detailed steps of how first phase and
-> > second phase would look?
-> 
-> No. You didn't miss anything. I misspoke on few steps.
-> 
-> Here are the steps. Just copying steps from Peters proposal.
-> https://lore.kernel.org/lkml/CALPaoCiii0vXOF06mfV=kVLBzhfNo0SFqt4kQGwGSGVUqvr2Dg@mail.gmail.com/
-> 
-> 
-> 1. Mount the resctrl
->    mount -t resctrl resctrl /sys/fs/resctrl
-> 
-> 2. When ABMC is supported two default configurations will be created.
-> 
->   a. info/L3_MON/counter_configs/mbm_total_bytes/event_filter
->   b. info/L3_MON/counter_configs/mbm_local_bytes/event_filter
-> 
->   These files will be populated with default total and local events
->   # cat info/L3_MON/counter_configs/mbm_total_bytes/event_filter
->     VictimBW
->     RmtSlowFill
->     RmtNTWr
->     RmtFill
->     LclFill
->     LclNTWr
->     LclSlowFill
-> 
->   # cat info/L3_MON/counter_configs/mbm_local_bytes/event_filter
->    LclFill,
->    LclNTWr
->    LclSlowFill
-> 
-> 3. Users will have options to update the event configuration.
->    echo LclFill > info/L3_MON/counter_configs/mbm_local_bytes/event_filter
+## Summary
+This series introduces support for Intel Mode-Based Execute Control
+(MBEC) to KVM and nested VMX virtualization, aiming to significantly
+reduce VMexits and improve performance for Windows guests running with
+Hypervisor-Protected Code Integrity (HVCI).
 
-Once the "mkdir" support described below is implemented users will not
-need to redefine these legacy event file names. That makes me happy.
+## What?
+Intel MBEC is a hardware feature, introduced in the Kabylake
+generation, that allows for more granular control over execution
+permissions. MBEC enables the separation and tracking of execution
+permissions for supervisor (kernel) and user-mode code. It is used as
+an accelerator for Microsoft's Memory Integrity [1] (also known as
+hypervisor-protected code integrity or HVCI).
 
-> 
-> 4. As usual the events can be read from the mon_data directories.
->    #mkdir /sys/fs/resctrl/test
->    #cd   /sys/fs/resctr/test
->    #cat  test/mon_data/mon_data/mon_L3_00/mbm_tota_bytes
->    101010
->    #cat   test/mon_data/mon_data/mon_L3_00/mbm_local_bytes
->    32323
-> 
-> 5. There will be 3 files created in each group's mon_data directory when
-> ABMC is supported.
-> 
->    a. test/mon_data/mon_L3_00/assign_exclusive
->    b. test/mon_data/mon_L3_00/assign_shared
->    c. test/mon_data/mon_L3_00/unassign
-> 
-> 
-> 6. Events can be assigned/unassigned by these commands
-> 
->  # echo mbm_total_bytes > test/mon_data/mon_L3_00/assign_exclusive
->  # echo mbm_local_bytes > test/mon_data/mon_L3_01/assign_exclusive
->  # echo mbm_local_bytes > test/mon_data/mon_L3_01/unassign
-> 
-> 
-> Note:
-> I feel 3 files are excessive here. We can probably achieve everything in
-> just one file.
+## Why?
+The primary reason for this feature is performance.
 
-Maybe the one file could look like:
+Without hardware-level MBEC, enabling Windows HVCI runs a 'software
+MBEC' known as Restricted User Mode, which imposes a runtime overhead
+due to increased state transitions between the guest's L2 root
+partition and the L2 secure partition for running kernel mode code
+integrity operations.
 
-# cat mon_L3_assignments
-mbm_total_bytes: exclusive
-mbm_local_bytes: shared
-mbm_read_only: unassigned
+In practice, this results in a significant number of exits. For
+example, playing a YouTube video within the Edge Browser produces
+roughly 1.2 million VMexits/second across an 8 vCPU Windows 11 guest.
 
-with new lines appearing when mkdir creates new events, and the obvious
-write semantics:
+Most of these exits are VMREAD/VMWRITE operations, which can be
+emulated with Enlightened VMCS (eVMCS). However, even with eVMCS, this
+configuration still produces around 200,000 VMexits/second.
 
-# echo "mbm_total_bytes: unassigned" > mon_L3_assignments
+With MBEC exposed to the L1 Windows Hypervisor, the same scenario
+results in approximately 50,000 VMexits/second, a *24x* reduction from
+the baseline.
 
-to make updates.
+Not a typo, 24x reduction in VMexits.
 
-> Not sure about mbm_assign_control interface as there are concerns with
-> group listing holding the lock for long.
-> 
-> -----------------------------------------------------------------------
-> Second phase, we can add support for "mkdir"
-> 
-> 1. mkdir info/L3_MON/counter_configs/mbm_read_only
-> 
-> 2. mkdir option will create "event_filter" file.
->    info/L3_MON/counter_configs/mbm_read_only/event_filter
-> 
-> 3. Users can modify event configuration.
->    echo LclFill > info/L3_MON/counter_configs/mbm_read_only/event_filter
-> 
-> 4. Users can assign the events
-> 
->   echo mbm_read_only > test/mon_data/mon_L3_00/assign_exclusive
-> 
-> 5. Events can be read in
-> 
->    test/mon_data/mon_data/mon_L3_00/mbm_read_only
+## How?
+This series implements core KVM support for exposing the MBEC bit in
+secondary execution controls (bit 22) to L1 and L2, based on
+configuration from user space and a module parameter
+'enable_pt_guest_exec_control'. The inspiration for this series
+started with Mickaël's series for Heki [3], where we've extracted,
+refactored, and extended the MBEC-specific use case to be
+general-purpose.
 
-Is there a matching "rmdir" to make this go away again?
+MBEC, which appears in Linux /proc/cpuinfo as ept_mode_based_exec,
+splits the EPT exec bit (bit 2 in PTE) into two bits. When secondary
+execution control bit 22 is set, PTE bit 2 reflects supervisor mode
+executable, and PTE bit 10 reflects user mode executable.
 
-> -- 
-> Thanks
-> Babu Moger
+The semantics for EPT violation qualifications also change when MBEC
+is enabled, with bit 5 reflecting supervisor/kernel mode execute
+permissions and bit 6 reflecting user mode execute permissions.
+This ultimately serves to expose this feature to the L1 hypervisor,
+which consumes MBEC and informs the L2 partitions not to use the
+software MBEC by removing bit 14 in 0x40000004 EAX [4].
+
+## Where?
+Enablement spans both VMX code and MMU code to teach the shadow MMU
+about the different execution modes, as well as user space VMM to pass
+secondary execution control bit 22. A patch for QEMU enablement is
+available [5].
+
+## Testing
+Initial testing has been on done on 6.12-based code with:
+  Guests
+    - Windows 11 24H2 26100.2894
+    - Windows Server 2025 24H2 26100.2894
+    - Windows Server 2022 W1H2 20348.825
+  Processors:
+    - Intel Skylake 6154
+    - Intel Sapphire Rapids 6444Y
+
+## Acknowledgements
+Special thanks to all contributors and reviewers who have provided
+valuable feedback and support for this patch series.
+
+[1] https://learn.microsoft.com/en-us/windows/security/hardware-security/enable-virtualization-based-protection-of-code-integrity
+[2] https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/nested-virtualization#enlightened-vmcs-intel
+[3] https://patchwork.kernel.org/project/kvm/patch/20231113022326.24388-6-mic@digikod.net/
+[4] https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery#implementation-recommendations---0x40000004
+[5] https://github.com/JonKohler/qemu/tree/mbec-rfc-v1
+
+Cc: Alexander Grest <Alexander.Grest@microsoft.com>
+Cc: Nicolas Saenz Julienne <nsaenz@amazon.es>
+Cc: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
+Cc: Mickaël Salaün <mic@digikod.net>
+Cc: Tao Su <tao1.su@linux.intel.com>
+Cc: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Zhao Liu <zhao1.liu@intel.com>
+
+Jon Kohler (11):
+  KVM: x86: Add module parameter for Intel MBEC
+  KVM: x86: Add pt_guest_exec_control to kvm_vcpu_arch
+  KVM: VMX: Wire up Intel MBEC enable/disable logic
+  KVM: x86/mmu: Remove SPTE_PERM_MASK
+  KVM: VMX: Extend EPT Violation protection bits
+  KVM: x86/mmu: Introduce shadow_ux_mask
+  KVM: x86/mmu: Adjust SPTE_MMIO_ALLOWED_MASK to understand MBEC
+  KVM: x86/mmu: Extend make_spte to understand MBEC
+  KVM: nVMX: Setup Intel MBEC in nested secondary controls
+  KVM: VMX: Allow MBEC with EVMCS
+  KVM: x86: Enable module parameter for MBEC
+
+Mickaël Salaün (5):
+  KVM: VMX: add cpu_has_vmx_mbec helper
+  KVM: VMX: Define VMX_EPT_USER_EXECUTABLE_MASK
+  KVM: x86/mmu: Extend access bitfield in kvm_mmu_page_role
+  KVM: VMX: Enhance EPT violation handler for PROT_USER_EXEC
+  KVM: x86/mmu: Extend is_executable_pte to understand MBEC
+
+Nikolay Borisov (1):
+  KVM: VMX: Remove EPT_VIOLATIONS_ACC_*_BIT defines
+
+Sean Christopherson (1):
+  KVM: nVMX: Decouple EPT RWX bits from EPT Violation protection bits
+
+ arch/x86/include/asm/kvm_host.h | 13 +++++----
+ arch/x86/include/asm/vmx.h      | 45 ++++++++++++++++++++---------
+ arch/x86/kvm/mmu.h              |  3 +-
+ arch/x86/kvm/mmu/mmu.c          | 13 +++++----
+ arch/x86/kvm/mmu/mmutrace.h     | 23 ++++++++++-----
+ arch/x86/kvm/mmu/paging_tmpl.h  | 19 +++++++++---
+ arch/x86/kvm/mmu/spte.c         | 51 ++++++++++++++++++++++++++++-----
+ arch/x86/kvm/mmu/spte.h         | 36 +++++++++++++++--------
+ arch/x86/kvm/mmu/tdp_mmu.c      |  2 +-
+ arch/x86/kvm/vmx/capabilities.h |  6 ++++
+ arch/x86/kvm/vmx/hyperv.c       |  5 +++-
+ arch/x86/kvm/vmx/hyperv_evmcs.h |  1 +
+ arch/x86/kvm/vmx/nested.c       |  4 +++
+ arch/x86/kvm/vmx/vmx.c          | 21 ++++++++++++--
+ arch/x86/kvm/vmx/vmx.h          |  7 +++++
+ arch/x86/kvm/x86.c              |  4 +++
+ 16 files changed, 192 insertions(+), 61 deletions(-)
+
+-- 
+2.43.0
+
 
