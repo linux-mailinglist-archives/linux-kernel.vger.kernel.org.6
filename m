@@ -1,106 +1,131 @@
-Return-Path: <linux-kernel+bounces-559035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E143A5EE98
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:55:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88072A5EE9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:56:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C6827ABF83
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:54:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0D6F16FE94
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D04B2641D4;
-	Thu, 13 Mar 2025 08:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA4E263C6F;
+	Thu, 13 Mar 2025 08:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MmSuLQqD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WRfBU0Ax"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F514263F35;
-	Thu, 13 Mar 2025 08:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB00262D1C;
+	Thu, 13 Mar 2025 08:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741856126; cv=none; b=jKsSaYuPGrmndYaBq2CaS1lvW+rfGo+I0IMu1XLI2a9+a3a3vKvCfehe3xE8GFBMAPTbkLAbbNPQDIC+MrLHD6FjE3IUd8JbDB39IKH/Nul/qMxSubZSoW/HA2W/dCPhtQH7nWQ4lTYszMl3ax52t5WIQC7CXTPopAhyaYICtaU=
+	t=1741856149; cv=none; b=f+3mO8IHvwkcD921Y+LTD7ATN0WLcWEWufeeMIZyikFLZtuFEHMRyorMy3Zv8JQC3YVjT7Cl/rlaEW7RGK765b28NNdwm3ELQMy46QHhMYZuyVPnt9C6crzqC+ccQK+e2NoQ7p0mYotFMpZqrsfTfPwy5WAJhXbsqu0BhwXbdag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741856126; c=relaxed/simple;
-	bh=Khg9W2offMS1wtesP5x0nwj9KQm+80HBQi3YVnQnuKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bGah1ZUGOM7OeJphGJEIxdSgVbedA2KvOp4dZhYbwofS4f29ARx17d1pEAFoYD0s1QOZEKlsom36PTuvXuzqUfbHAoNhudJ1ADHhp8yUolRBAD0FpUjY5mWfNBBd/8OYd8oScE91jfNDSXksdXbp2xpO/J67ApGfEMCj0PedV6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MmSuLQqD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D6C7C4CEE3;
-	Thu, 13 Mar 2025 08:55:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741856125;
-	bh=Khg9W2offMS1wtesP5x0nwj9KQm+80HBQi3YVnQnuKY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MmSuLQqDjpJj9Z4YYsn5v43IbfdoQ+Ompp/WNlil3vR1uINTcWqpiDd2oPltWcwML
-	 Q0GNX9CHp77ZwhmtIkM79IOnLPiVJae6wOAZBeyBo4KFR3B88cqK2fxYDHhnzCI2Xw
-	 V7pJhHBcJv7aRvD6I9CJIDNFN7OPr+uZ+2gqH3RW5Nl3EBRpFl2N5+BDs+KSfPTzG4
-	 uHg7iGq6lGCu8FyWEVqJamlvNEGNidYBVWuj6AELnPwfvS9RAyUUdUt/Qj23pDS+V+
-	 nNNNldXuDXh8Le79R2zkS/yoXryeticYplCtP+sx8iGkTc1BS29SdDagrrvRsVj587
-	 TOGZEQGYVg31A==
-Date: Thu, 13 Mar 2025 09:55:17 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: use debug-only asserts around fd allocation and
- install
-Message-ID: <20250313-rufnummer-fehlen-1184066edf75@brauner>
-References: <20250312161941.1261615-1-mjguzik@gmail.com>
- <CAGudoHFH70YpLYXnhJq4MDtjJ6FiY59Xn-D_kTB9xsE2UTJD_g@mail.gmail.com>
+	s=arc-20240116; t=1741856149; c=relaxed/simple;
+	bh=TWVmCd9sRlFWNOJvA/h/A4jXKCn/9mMzGzNHPLXP+1k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=los0roy5MMZhnfT2mIxPtcQeAqtqQ91kqUzC+WwxP/sUDXHuv0/V2Hv9muYDxxKyGbeNpaksWDqW+B3q9DHWGcHdTcLd2issJpCbJcROZTYwv+06oemx89oIDpWYn3vSgYs9KsSWXTiEXiZLNnajSnGnUveWZNXVaHG8pHRsq5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WRfBU0Ax; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741856148; x=1773392148;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TWVmCd9sRlFWNOJvA/h/A4jXKCn/9mMzGzNHPLXP+1k=;
+  b=WRfBU0Ax5bAWYNMKQLKUG6HrpE3CmTjiZ03of/cgYyvGzkdITFeBs4t/
+   eg/xpnoF0WJe20aQqJPbjzBf4ncfLK/RgkPar4+fXKpKAHd2WgZgN7KFP
+   TTorg3JeLXaSgi9p5HGgcGMpKvjTBeIf78Y5nFqmCsyHCTzHzLC83bzHw
+   Bwd+men9jxCABxxaBPtzNFueom2Jt51G0qa0znUNWQYakdJtSd+AvNINA
+   bsnCs4WpeNtVl+IJzavfjlFnl2Sm6OdATkPuHOmkCN9AcGEyHtn6YIJUc
+   n/Wnzqit/DPB/10tKkTEMGpHCLZfID8wCkHWo8QQZLYP7TjeB6/cBl8/r
+   Q==;
+X-CSE-ConnectionGUID: ooSg8m3DS+yJMMsn7ZvqGw==
+X-CSE-MsgGUID: zRab3DTLQ6+Dmp1UG2AAvg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="46614470"
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="46614470"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 01:55:47 -0700
+X-CSE-ConnectionGUID: FgaI41hzTSSUUxLvpp8RKQ==
+X-CSE-MsgGUID: CmCKwnOfTOuPDcdafuHmwA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="120691590"
+Received: from yongliang-ubuntu20-ilbpg12.png.intel.com ([10.88.227.39])
+  by fmviesa006.fm.intel.com with ESMTP; 13 Mar 2025 01:55:45 -0700
+From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	David E Box <david.e.box@linux.intel.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] platform/x86: intel_pmc_ipc: add option to build without ACPI
+Date: Thu, 13 Mar 2025 16:55:26 +0800
+Message-Id: <20250313085526.1439092-1-yong.liang.choong@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHFH70YpLYXnhJq4MDtjJ6FiY59Xn-D_kTB9xsE2UTJD_g@mail.gmail.com>
 
-On Wed, Mar 12, 2025 at 06:21:01PM +0100, Mateusz Guzik wrote:
-> On Wed, Mar 12, 2025 at 5:19 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >
-> > This also restores the check which got removed in 52732bb9abc9ee5b
-> > ("fs/file.c: remove sanity_check and add likely/unlikely in alloc_fd()")
-> > for performance reasons -- they no longer apply with a debug-only
-> > variant.
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > ---
-> >
-> > I have about 0 opinion whether this should be BUG or WARN, the code was
-> > already inconsistent on this front. If you want the latter, I'll have 0
-> > complaints if you just sed it and commit as yours.
-> >
-> > This reminded me to sort out that litmus test for smp_rmb, hopefully
-> > soon(tm) as it is now nagging me.
-> >
-> >  fs/file.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/file.c b/fs/file.c
-> > index 6c159ede55f1..09460ec74ef8 100644
-> > --- a/fs/file.c
-> > +++ b/fs/file.c
-> > @@ -582,6 +582,7 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
-> >
-> >         __set_open_fd(fd, fdt, flags & O_CLOEXEC);
-> >         error = fd;
-> > +       VFS_BUG_ON(rcu_access_pointer(fdt->fd[fd]) != NULL);
-> >
-> 
-> when restoring this check i dutifully copy-pasted the original. I only
-> now mentally registered it uses a rcu primitive to do the load, while
-> the others do a plain load. arguably the former is closer to being
-> correct and it definitely does not hurt
-> 
-> so this line should replace the other 2 lines below. i can send a v2
-> to that effect, but given the triviality of the edit, perhaps you will
-> be happy to sort it out
+From: David E. Box <david.e.box@linux.intel.com>
 
-Yes, sure. Done!
+Introduce a configuration option that allows users to build the
+intel_pmc_ipc driver without ACPI support. This is useful for
+systems where ACPI is not available or desired.
+
+Based on the discussion from the patch [1], it was necessary to
+provide this option to accommodate specific use cases.
+
+Link: https://patchwork.kernel.org/project/netdevbpf/patch/20250227121522.1802832-6-yong.liang.choong@linux.intel.com/#26280764 [1]
+
+Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+Co-developed-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+
+---
+v2 Changes:
+- Updated the patch description based on the comment
+- Update the author correctly
+- Used "#ifdef" instead of "#if" for CONFIG_ACPI
+- Placed "#ifdef" inside the function
+
+v1: https://patchwork.kernel.org/project/platform-driver-x86/patch/20250312022955.1418234-1-yong.liang.choong@linux.intel.com/
+---
+---
+ include/linux/platform_data/x86/intel_pmc_ipc.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/include/linux/platform_data/x86/intel_pmc_ipc.h b/include/linux/platform_data/x86/intel_pmc_ipc.h
+index 6e603a8c075f..1d34435b7001 100644
+--- a/include/linux/platform_data/x86/intel_pmc_ipc.h
++++ b/include/linux/platform_data/x86/intel_pmc_ipc.h
+@@ -36,6 +36,7 @@ struct pmc_ipc_rbuf {
+  */
+ static inline int intel_pmc_ipc(struct pmc_ipc_cmd *ipc_cmd, struct pmc_ipc_rbuf *rbuf)
+ {
++#ifdef CONFIG_ACPI
+ 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+ 	union acpi_object params[PMC_IPCS_PARAM_COUNT] = {
+ 		{.type = ACPI_TYPE_INTEGER,},
+@@ -89,6 +90,9 @@ static inline int intel_pmc_ipc(struct pmc_ipc_cmd *ipc_cmd, struct pmc_ipc_rbuf
+ 	}
+ 
+ 	return 0;
++#else
++	return -ENODEV;
++#endif /* CONFIG_ACPI */
+ }
+ 
+ #endif /* INTEL_PMC_IPC_H */
+-- 
+2.34.1
+
 
