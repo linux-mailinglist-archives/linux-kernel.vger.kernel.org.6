@@ -1,122 +1,166 @@
-Return-Path: <linux-kernel+bounces-559966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062B6A5FBCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:33:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDFDA5FBCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A88623AC8ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:28:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B10F83B0C8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B141269812;
-	Thu, 13 Mar 2025 16:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137452698AC;
+	Thu, 13 Mar 2025 16:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a62nGLGB"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fazykuw/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DAD13B280;
-	Thu, 13 Mar 2025 16:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5E32690E6;
+	Thu, 13 Mar 2025 16:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741883316; cv=none; b=FlIKGC49NxVtR2uvY2zRjDuP7i4m4QERJunRut6ELS2NqXAha2MUct8Kk84EYSE9ecAm8881XdjclZwzMR5hilIuM19z2Trg0lhu+cOFh4f8uYmerH8x5eZwMu3kE2ERj4N7qxK7WM1ZV/tPMNkkgCYqnw4RwM9HqF5sDjlb+gc=
+	t=1741883341; cv=none; b=XkjmbZm9fN2N58M8DYM00rM1RVnCzI6/Ph27pDD1fbNXRm0yNEuKZyECTQYJW6hUNpBUvnnMKROEQ2Zh0rVzaaEIy0hf3hqtZ7IyQsTnorLFObQLD4gqfRavNmTCFII+vY5i6qFCFlZfkA9FL5e0hwsCou7uVarr4vTzEU8Lq+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741883316; c=relaxed/simple;
-	bh=tXHlN/vZaT3vrheBggtmIQEZ2sR6fVrJjqBtDYhsxyI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rD18LuB2L+e8ux+SspyP9jtX7CJxcldkRBvToE0f3kessmHQ2Q/IIjOxdOQQ0LVCx68fzVPt12T8lat75Si+NBDf0N68rdGYjwMpdyF3hLjon2xtnQOm3kTWFXqb0trWKPNUxSIwcqwdPjue8TD+02FD5bABzShoZ/pGsQ/PKg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a62nGLGB; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e241443e8dso2144196d6.0;
-        Thu, 13 Mar 2025 09:28:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741883313; x=1742488113; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F+rzi9Cs1mysyZu/RVktFl1DJomxhH9G8QJ0f6e3ElM=;
-        b=a62nGLGBP4/PFQl8/5dW5JV+G+zEIR4GsQsRq4omnf3KPS6VHcBDuGHdxvY+XaG4cv
-         Gx5zwDrnTh2lAHS0RhVU9bSZAueKs2tjz5InLXYy9jwaUEtLmTN1W6ah979pKou/umjA
-         SYQBO2U41r7vAbVeExhrjMydH9c4v5iDlCuSNg905VJGB/Q0YmjcQPwCLzI92ldhkVhs
-         KDHJxFilMffgRjzBdtZx/M/P/LGjelL5n53sT0R/gSkJYth9CaHmYPtmdoQPPtAu0Yxp
-         okjB/1sBuYmm/yw0A+8T2wBbDeGq85Q+CCLhBDOXBHUgT7wY3G/Jnw5YOR3WJStR4xQO
-         E8Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741883313; x=1742488113;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F+rzi9Cs1mysyZu/RVktFl1DJomxhH9G8QJ0f6e3ElM=;
-        b=tvHBchzEZHb+qFnhnxhZNrmhy4MhHipDMuWAwhY9a8kcndLZzzcBIMmjnrvA/yRIoA
-         2Kz9ccvMvsWlP7gZrUYFTh7/8igGG7DMda1UhLosBhUaT7z+tweNwuXNq/te1aHn0gaq
-         qd8uSe4lyNpVYtT3kE8GsOTCK9z6Y6WYLWYxpKpp4vnVtLmX3fiXYaeZJijTGI+TTZwC
-         zCH4CxgV0kecxfm7yyp0YTgyxMsTnH1OPkzJh+H0IWKvUEq1Imp7CWn4LIQpZjR4QhMO
-         XvW24NoaVmtHcvMHxSFro/x9gJyfXdBJPvYAvA97mYrl1EfC1Wb5718fAwvxXIOoAdHS
-         VUfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKpQSG8DmXqIcmKuGRc/FINr9BrgJmT2Vs6bY8ipMtASLsDJPm2E82MeTOyP7BEyqHUa+072FrjSnB5EU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaMkgyeMszOAEz5euMyeVTGZxIgwtkNDkMM6o2/2tm9yAVMGlc
-	IvnBudtuECwws+FbkAXdks4dVRzyiRfBFp6EVGoxBO5b17vXHANZIHxE
-X-Gm-Gg: ASbGncvfUXV4IkdDKdF15AaeSa3WBKAV2tibvNCoDQik54BQN0MhuzByntpzM1IubUg
-	pbGjdhSpMG5nlmvhfVA7ncFchVrHAt1RCGXuL9HAXZm2xNg0lRgqhhLttNUt0wLiiMRzLd6STVM
-	41ilefjuQzq1vPlLfEjyqeoAKslR2DQEY/KKhCGP5lWcoXFwycSzvWcBND4r6UieabPfeIWBVi+
-	j7PMYeNSiHxxDm+BHEpSLk846lgkxKFCW1m+iMPZg/aC7yWyLKQc4SXX+3dO3zFD2SxsP+ib6aH
-	S1R080MJyfE+N8lq5pVaDbwIoZ18/2kaEC1+LNkZBw==
-X-Google-Smtp-Source: AGHT+IGC+14nXQfNX07ccYgxn4C7VYfVsX63xsHWJGYDCFdwepARsok0fgZ4rWNamxi+RO+7wfyN1w==
-X-Received: by 2002:a05:622a:5e8a:b0:472:2122:5a43 with SMTP id d75a77b69052e-476665885eamr112495941cf.1.1741883311524;
-        Thu, 13 Mar 2025 09:28:31 -0700 (PDT)
-Received: from ise-alpha.. ([2620:0:e00:550a:642:1aff:fee8:511b])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-476bb66070esm10969721cf.39.2025.03.13.09.28.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 09:28:30 -0700 (PDT)
-From: Chenyuan Yang <chenyuan0y@gmail.com>
-To: W_Armin@gmx.de,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chenyuan Yang <chenyuan0y@gmail.com>
-Subject: [PATCH] platform/x86: wmi: Add Null check for device
-Date: Thu, 13 Mar 2025 11:28:20 -0500
-Message-Id: <20250313162820.3688298-1-chenyuan0y@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741883341; c=relaxed/simple;
+	bh=3Y/eakNnsmh65MrzAH4cER1Z1Z+jb7p5eK8T1XTASY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XH3dzKM8eougF7pQJZWq53pPh9aXYqoIs60VZXh6OdjoCzxst8B6DhNZpg9WRt8pxp7XO7JYSCItP+ec6TKBHvKsm/iVcwtok5HyVsqg+qLppu2aL2p8EtSnvEfXtcGZlNEuFNpBKbdCX42xdNy6lzNAJfuSwylnl6TmsSu9mf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fazykuw/; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741883340; x=1773419340;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3Y/eakNnsmh65MrzAH4cER1Z1Z+jb7p5eK8T1XTASY4=;
+  b=Fazykuw/T0uga3mLbAWmWHU/VtL1Q+Y9H4hduhtbTpeVsuiTQa+hmIj+
+   74vK/60P63GqSle+mNqYtVE0ogpMRY5VIktnWSpGVtjK78yLFTTcEBI0j
+   fp1qGOaW9LZUWzissv3RuqLHdpL5TlcBuXPZKan2ys4GUPpcULvr7+tJm
+   D/21L8GiHlJGFu/ldYA6qVC9ZGqZFUJdqPBSpa15NJfVjhiLbaqayUvNf
+   RzUAJDbbzCBjw3thX6KAzwaagzTqVstDevdZc1nDgy0Gac2yjEl4SMLza
+   KM4j07V0rTD9fdJnwF/jcgn00+6YILgoiuFoiUtF9h83RhhptY77XdpBj
+   w==;
+X-CSE-ConnectionGUID: p+BgED3QRYCzzxtwzmTLxA==
+X-CSE-MsgGUID: 2uUcfhD0RNym+PqX+0l9wQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="42897193"
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="42897193"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 09:28:49 -0700
+X-CSE-ConnectionGUID: 5mNvFJCwSGiCj+4H9GUFsQ==
+X-CSE-MsgGUID: 27ex/FQqQ2+R9CovM2FI7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="144198762"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.108.96])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 09:28:49 -0700
+Date: Thu, 13 Mar 2025 09:28:46 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+Cc: rafael@kernel.org, lenb@kernel.org, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com,
+	dan.j.williams@intel.com, rrichter@amd.com, bfaccini@nvidia.com,
+	rppt@kernel.org, haibo1.xu@intel.com, chenbaozi@phytium.com.cn,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org
+Subject: Re: [PATCH v2] ACPI: NUMA: debug invalid unused PXM value for CFMWs
+Message-ID: <Z9MHvp6GA_iGwfg0@aschofie-mobl2.lan>
+References: <20250313060907.2381416-1-wangyuquan1236@phytium.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313060907.2381416-1-wangyuquan1236@phytium.com.cn>
 
-Not all devices have an ACPI companion fwnode, so device might be NULL.
-This is similar to the commit cd2fd6eab480
-("platform/x86: int3472: Check for adev == NULL").
+On Thu, Mar 13, 2025 at 02:09:07PM +0800, Yuquan Wang wrote:
+> The absence of SRAT would cause the fake_pxm to be -1 and increment
+> to 0, then send to acpi_parse_cfmws(). If there exists CXL memory
+> ranges that are defined in the CFMWS and not already defined in the
+> SRAT, the new node (node0) for the CXL memory would be invalid, as
+> node0 is already in "used".
+> 
+> This utilizes disable_srat() & srat_disabled() to fail CXL init.
 
-Add a check for device not being set and return -ENODEV in that case to
-avoid a possible NULL pointer deref in parse_wdg().
+Seems like this fixup has drifted from adjusting the fake_pxm to 
+shutting down CXL parsing. More below -
 
-Note, acpi_wmi_probe() under the same file has such a check.
+> 
+> Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+> ---
+> 
+> Changes in v2:
+> - Add disable_srat() when fake_pxm is invalid
+> - Add srat_disabled() check in cxl_acpi_probe() and acpi_parse_cfmws()
+> 
+> 
+>  drivers/acpi/numa/srat.c | 10 ++++++++++
+>  drivers/cxl/acpi.c       |  4 ++++
+>  2 files changed, 14 insertions(+)
+> 
+> diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
+> index 00ac0d7bb8c9..2dac25c9258a 100644
+> --- a/drivers/acpi/numa/srat.c
+> +++ b/drivers/acpi/numa/srat.c
+> @@ -441,6 +441,11 @@ static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
+>  	start = cfmws->base_hpa;
+>  	end = cfmws->base_hpa + cfmws->window_size;
+>  
+> +	if (srat_disabled()) {
+> +		pr_err("SRAT is missing or bad while processing CFMWS.\n");
+> +		return -EINVAL;
+> +	}
+> +
 
-Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
----
- drivers/platform/x86/wmi.c | 3 +++
- 1 file changed, 3 insertions(+)
+This goes too far by shutting down cfmws parsing for lack of SRAT.
 
-diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-index 646370bd6b03..54e697838c1e 100644
---- a/drivers/platform/x86/wmi.c
-+++ b/drivers/platform/x86/wmi.c
-@@ -1091,6 +1091,9 @@ static int parse_wdg(struct device *wmi_bus_dev, struct platform_device *pdev)
- 	u32 i, total;
- 	int retval;
- 
-+	if (!device)
-+		return -ENODEV;
-+
- 	status = acpi_evaluate_object(device->handle, "_WDG", NULL, &out);
- 	if (ACPI_FAILURE(status))
- 		return -ENXIO;
--- 
-2.34.1
+>  	/*
+>  	 * The SRAT may have already described NUMA details for all,
+>  	 * or a portion of, this CFMWS HPA range. Extend the memblks
+> @@ -646,6 +651,11 @@ int __init acpi_numa_init(void)
+>  		if (node_to_pxm_map[i] > fake_pxm)
+>  			fake_pxm = node_to_pxm_map[i];
+>  	}
+> +
+> +	/* Make sure CFMWs fake nodes start at node[1] */
+> +	if (fake_pxm < 0)
+> +		disable_srat();
+> +
 
+How does the code above make sure fake node starts at node[1]?
+Would an explicit adjustment like this work?
+
+-       last_real_pxm = fake_pxm;
+-       fake_pxm++;
++       fake_pxm = max(fake_pxm, 1);
++       last_real_pxm = fake_pxm--;
+
+>  	last_real_pxm = fake_pxm;
+>  	fake_pxm++;
+>  	acpi_table_parse_cedt(ACPI_CEDT_TYPE_CFMWS, acpi_parse_cfmws,
+> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> index cb14829bb9be..e75a8ead99f6 100644
+> --- a/drivers/cxl/acpi.c
+> +++ b/drivers/cxl/acpi.c
+> @@ -829,6 +829,10 @@ static int cxl_acpi_probe(struct platform_device *pdev)
+>  	if (rc)
+>  		return rc;
+>  
+> +	/* CXL must be in a NUMA system */
+> +	if (srat_disabled())
+> +		return -EINVAL;
+> +
+>  	cxl_res = devm_kzalloc(host, sizeof(*cxl_res), GFP_KERNEL);
+>  	if (!cxl_res)
+>  		return -ENOMEM;
+> -- 
+> 2.34.1
+> 
 
