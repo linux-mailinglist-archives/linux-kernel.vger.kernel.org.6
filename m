@@ -1,447 +1,322 @@
-Return-Path: <linux-kernel+bounces-558899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B30A5ECDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:22:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 160A9A5ECDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:22:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96E4C179774
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:22:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA7C118998C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846C51FCD0C;
-	Thu, 13 Mar 2025 07:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C581FDE08;
+	Thu, 13 Mar 2025 07:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="MGCg9nMT"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="d4XWC24e"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BAB1FCFF6
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCD21FCFC1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741850485; cv=none; b=m5fkGg6GLi/vZTeeIcBJLZ5s8sThiu2S2zvxvTEOuyfdOeT107EMDz/aMV44zSCMr0gBr0o3kFsrkYYsr+mQRIR9e0kklF7/BPiOn8UvWsigWfqBH31jD5iyPyt2NmXCfrp9o8ER2EIZp0bhjoaUARYdksgwZGfuPhvZrT48QBk=
+	t=1741850495; cv=none; b=IsmD5B7FiqxeXcOE1OkcBL1ARCp4ztSI8ptDVgZvmHv3UClKcyZmbRV7dWegmEUUsykrAf0th8RBJTyvTMv77o8MOcJKf+gMBisXwu0QivMYlSZoUA350Jkz73vwbFl0NSrCZy0gZy4OWW5j2QUFduxf3aYcx6SKgo5RQer3RnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741850485; c=relaxed/simple;
-	bh=FPYrVMdzMgoRn0ykyVlfROJr6GOBCIwlvqj8+tF+pR0=;
-	h=Mime-Version:From:References:In-Reply-To:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=logENHshvxZbBVWb2dud8D7+MIIqiD+pYGopGQp5uzROzNiu5njhJIK2VtGE/WwE3Gx5vZoFsd4t0jZ7eD531Q2vtI36v6p3PJZj1hItd0AQSLrXVdvOJhIPmRyPNx1WGoSMKzHoKKIPdHPFWkCTZ31ilLxvj4/JIVjNU+63iTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=MGCg9nMT; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e6ff035e9aso1293567a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 00:21:23 -0700 (PDT)
+	s=arc-20240116; t=1741850495; c=relaxed/simple;
+	bh=fubdDPNtjd16g9f8WnsxZv+fL2VwT4oyIziapKYzHwA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hn8HDUABcuVNn4YRR36QNfTYYLy+RaPh+IsVg/JzgZ0dvKMrvDi1OEPntsub4Mi+4og30QeEWRXcB93z3+06vRLK5aGJSTYdX3/re8GxB0dsloaXk19FV51o+Zei/kxf1SimGmO7YtlEYybi8bp2Fulpvdwg58lbzJFSjtS00Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=d4XWC24e; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22401f4d35aso11718015ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 00:21:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1741850482; x=1742455282; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:in-reply-to:references:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9X3j/Al+E0qt3CF0NzuCOMM22tcAbBsDeUSDt8lyYIc=;
-        b=MGCg9nMTOUvY/LeQmcs7y7uHuZpQdbHtPO4j0ssibi1/kdVaVtGMNf99mlVb+j236T
-         cRIVnKisdZLQzQFZr2m2zXGwiNZSN/GqxjCOydTbRTtPX8MaZXnwmzEiOOW3gpioYKy/
-         yLVX5Ia2ciT4GZ1+e6+TON5Z39Sh7ozCe6OCArmYed+4NYBx7kb8Un225+J2pMIW/84d
-         Y6PGhZOasvKbxdENmh/9Cu8PgScZp68wAUo97Lsv+zZIbJ4xToVU+Q2sZ0/ch1N/Oo/7
-         9XkrgOPgbyhuXC2aZFGQQHXriR8NlH4MjGxqufj1BOfKjy8C+p4/xc23+24lpHgFpk0I
-         ZO3g==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1741850493; x=1742455293; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jk0LIgS/3SxMrP4L8WiUiKlVeO7G2UKoXRUIJ8IOHSc=;
+        b=d4XWC24eGkM3IJY+OBI5afSd9tF7Qf/oxhPr3lD9LfY2Hf7TXEnNUgkB0qf/yAO0aV
+         tC76wsU48HgtQB97E4IDO8ZegRstNM9fi2tSMGmi5KwfjS0jVz1AQfo8YIVRks1HoeeB
+         MgIY2cowhN+McArwwrP5GH1Su1dCcHN6y176VSMxIh1ZAQ9REK4xIehPLw48kplZ4Cgq
+         kB4q5WqsU//F9pk6zDGv7THWGkfVY4ajTWTJv/SOz45hfTZdNxfyIcouZuNy0kT62XMp
+         7tR/ZK7Z8tgs/PEBnfHyf1UWthoGOx//IYFLOMhJsnaNhqxkeurdjg1uYxuvrg306ZJS
+         n6oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741850482; x=1742455282;
-        h=cc:to:subject:message-id:date:in-reply-to:references:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9X3j/Al+E0qt3CF0NzuCOMM22tcAbBsDeUSDt8lyYIc=;
-        b=GDMx5gsmnEzVkreqmkG8CmRPvXT/+6SAE0Dc/z4wC0tSgpYzRpvacyMW9lO0QknxbS
-         p93LEOsKmM9IBg/Gr4XVMVRTyZ1EbQadCZ4NKEZvpRU1uod3H48wg+RPd1tJFT/43BQ/
-         BlaLYK2PTGOmTtlhzNTYtERRU+OqUIPVcu+Wa3mJRa6hGko9ibaM94nSjumyjd5eD4cw
-         brE44+8p6YJ9FbQizvt7ruXDkSonANqoCRVjhzqEsf01JEisE8l52ROVRmgMFdXfFKAv
-         OS2SK8YgYF37lxegSutnrI+jVEZe1BENn18OTq/T9spPHbj00afkFu52BBfj83FaeGxR
-         Axhw==
-X-Gm-Message-State: AOJu0Ywa7BpAApGVG9HDOVnpGtbzCcHP1vISNZasiWuGPtMUsrDBHLU5
-	tz6P72N7g+ssRZWFYdxDtny5KN/B1EY8AAM8R5UvPmBGl5ZOFEfwGME9IWDtQG2kojq4twAcwPW
-	wUpSqDdXWj/mkQ2XnkHmkwR3NqmTr+rYByBe1
-X-Gm-Gg: ASbGncvjFhM/DeK7Aje6ASOZaJluZyjNvZ5OU7wAj3YEm5FG3yUIwnKy/U8EE34gll1
-	9OknpSz+6SqOiWhwbcyFs/1Sb++X8L5cppU/MngFvVX7nSKwQRSBeJnwQSrbcm3RffymTZKBB2I
-	3NttOdNZe8kI+6AawI2lgv7D26bys=
-X-Google-Smtp-Source: AGHT+IGgnZtSATN2Xo2VvJvcktGSwzPWv0X85+vVzQIddh/0WYEeN2pnG6/EtCQih1PN3DJ8ZncETihAEApQQDvIAeI=
-X-Received: by 2002:a05:6402:d08:b0:5e6:60da:dc45 with SMTP id
- 4fb4d7f45d1cf-5e75f987950mr12486383a12.31.1741850481603; Thu, 13 Mar 2025
- 00:21:21 -0700 (PDT)
-Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
- Thu, 13 Mar 2025 07:21:21 +0000
+        d=1e100.net; s=20230601; t=1741850493; x=1742455293;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jk0LIgS/3SxMrP4L8WiUiKlVeO7G2UKoXRUIJ8IOHSc=;
+        b=ImXZ0Vre8QeCYHp3sI00Xjygy5CqOqxo7csJsaEzo4HVJ+Eh/BwTlIrP+9QVJil+Yx
+         rYc15kUtrkbeklLVrbuEGDbcpyEsrRgcbrKTYegKUNq4mnvQYyIAWM0/WmpYoXb69MWD
+         mDzPFtdqpXUvp1sG6ccPEBhwlGXD2ZrqP051FyGK8+TrdwOaYj/XZEwuUHfv3lx+bwbq
+         3Hazw/GxKqrbS09/mpETcq/xXe8IxP4x8w0BpfuMLS6Gw8CEXxoWmERNFKHYtLEFla9k
+         9/MTiISYyH8xqj6C8lAb2DI9XpKzacUtK+0mmxRacbQ6pMLEahwDwSt1vSPlDV9TG1Hd
+         wxRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLYpYp58t1md6FwWkbNEVSeZqkNl0ygLaqCZRVycr6E/B2kSuq9jveWDbg9ODEnySoOGBVhnoDYLi6mB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjXXnd5ZzhcwjD6LWrPiEEBnj+scyB6U7FErRkiEoUHeq8mA99
+	Ur630oick6wU4JYi9a1RH337xziNiJQyikBeF+Z5lqMGkqIvWxQ4zJbOhR2GHbo=
+X-Gm-Gg: ASbGncsiaQ5Y66d72gNNvyLBzE3hwbot0cagnD+cbD0IprbeCHDrgPe3/nPDWJwhCXj
+	wLNxqi0lQATOSEnpy9qQnK4sT2SFgrpmz5otk9fVeEHH8NpMM5xHbAn8t/HuUnk7xLZ569PEnHf
+	FHBXhLQWkYRasdtiMfRLXcRrKNe5p9Zlke/ogAw+ehH4RWR3oqgkXwshmGPtr3Ch+92VulMeleN
+	shxrYF2B575RyMYspXPrdYU/Cb4oHDF4irq+Pu/8+vJMQTzGa6rxc118wVcoL7Ze8JBSkGGuEse
+	nGq2+Sf05Bd3dQCH1mNNvRjr1hpSjSLJcYMepL29ly4iM4jlkYyq0fwPXGNCih6ALFI5BDhGj7w
+	X0F0ScViChjeCMkWJhpjw
+X-Google-Smtp-Source: AGHT+IGmIGI/JFXTYYX6f4SlsL6WHOgA3BDQ86vTgOi7TwmcIlxDuyTd2476PvQNC1bZhxlfr2XV8A==
+X-Received: by 2002:a17:902:c949:b0:224:78e:4ebe with SMTP id d9443c01a7336-22593183ec4mr143037515ad.33.1741850492997;
+        Thu, 13 Mar 2025 00:21:32 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c688e15fsm6962195ad.18.2025.03.13.00.21.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 00:21:32 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tscsj-0000000CU6d-0U1G;
+	Thu, 13 Mar 2025 18:21:29 +1100
+Date: Thu, 13 Mar 2025 18:21:29 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
+	cem@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v5 03/10] xfs: Refactor xfs_reflink_end_cow_extent()
+Message-ID: <Z9KHeVmH1SyPVb5j@dread.disaster.area>
+References: <20250310183946.932054-1-john.g.garry@oracle.com>
+ <20250310183946.932054-4-john.g.garry@oracle.com>
+ <Z9E2kSQs-wL2a074@infradead.org>
+ <589f2ce0-2fd8-47f6-bbd3-28705e306b68@oracle.com>
+ <Z9FHSyZ7miJL7ZQM@infradead.org>
+ <20250312154636.GX2803749@frogsfrogsfrogs>
+ <Z9I0Ab5TyBEdkC32@dread.disaster.area>
+ <20250313045121.GE2803730@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Original-From: Aaron Lu <ziqianlu@bytedance.com>
-From: Aaron Lu <ziqianlu@bytedance.com>
-References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250313072030.1032893-1-ziqianlu@bytedance.com>
-Date: Thu, 13 Mar 2025 07:21:21 +0000
-X-Gm-Features: AQ5f1JooU-arp1lqIqQdw18F33sXyJhPom3vRV1LsqGgNxWZpG0iLVAjL4pOIm0
-Message-ID: <CANCG0GcFF7cnR4rCbU5MmY1Gq3M+r4gPXv39QPXXC=Cdr6sRww@mail.gmail.com>
-Subject: [RFC PATCH 2/7] sched/fair: Handle throttle path for task based throttle
-To: Valentin Schneider <vschneid@redhat.com>, Ben Segall <bsegall@google.com>, 
-	K Prateek Nayak <kprateek.nayak@amd.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Mel Gorman <mgorman@suse.de>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Chuyi Zhou <zhouchuyi@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313045121.GE2803730@frogsfrogsfrogs>
 
-From: Valentin Schneider <vschneid@redhat.com>
+On Wed, Mar 12, 2025 at 09:51:21PM -0700, Darrick J. Wong wrote:
+> On Thu, Mar 13, 2025 at 12:25:21PM +1100, Dave Chinner wrote:
+> > On Wed, Mar 12, 2025 at 08:46:36AM -0700, Darrick J. Wong wrote:
+> > > > > > On Mon, Mar 10, 2025 at 06:39:39PM +0000, John Garry wrote:
+> > > > > > > Refactor xfs_reflink_end_cow_extent() into separate parts which process
+> > > > > > > the CoW range and commit the transaction.
+> > > > > > > 
+> > > > > > > This refactoring will be used in future for when it is required to commit
+> > > > > > > a range of extents as a single transaction, similar to how it was done
+> > > > > > > pre-commit d6f215f359637.
+> > > > > > 
+> > > > > > Darrick pointed out that if you do more than just a tiny number
+> > > > > > of extents per transactions you run out of log reservations very
+> > > > > > quickly here:
+> > > > > > 
+> > > > > > https://urldefense.com/v3/__https://lore.kernel.org/all/20240329162936.GI6390@frogsfrogsfrogs/__;!!ACWV5N9M2RV99hQ!PWLcBof1tKimKUObvCj4vOhljWjFmjtzVHLx9apcU5Rah1xZnmp_3PIq6eSwx6TdEXzMLYYyBfmZLgvj$
+> > > > > > 
+> > > > > > how does your scheme deal with that?
+> > > > > > 
+> > > > > The resblks calculation in xfs_reflink_end_atomic_cow() takes care of this,
+> > > > > right? Or does the log reservation have a hard size limit, regardless of
+> > > > > that calculation?
+> > > > 
+> > > > The resblks calculated there are the reserved disk blocks
+> > 
+> > Used for btree block allocations that might be needed during the
+> > processing of the transaction.
+> > 
+> > > > and have
+> > > > nothing to do with the log reservations, which comes from the
+> > > > tr_write field passed in.  There is some kind of upper limited to it
+> > > > obviously by the log size, although I'm not sure if we've formalized
+> > > > that somewhere.  Dave might be the right person to ask about that.
+> > > 
+> > > The (very very rough) upper limit for how many intent items you can
+> > > attach to a tr_write transaction is:
+> > > 
+> > > per_extent_cost = (cui_size + rui_size + bui_size + efi_size + ili_size)
+> > > max_blocks = tr_write::tr_logres / per_extent_cost
+> > > 
+> > > (ili_size is the inode log item size)
+> > 
+> > That doesn't sound right. The number of intents we can log is not
+> > dependent on the aggregated size of all intent types. We do not log
+> > all those intent types in a single transaction, nor do we process
+> > more than one type of intent in a given transaction. Also, we only
+> > log the inode once per transaction, so that is not a per-extent
+> > overhead.
+> > 
+> > Realistically, the tr_write transaction is goign to be at least a
+> > 100kB because it has to be big enough to log full splits of multiple
+> > btrees (e.g. BMBT + both free space trees). Yeah, a small 4kB
+> > filesystem spits out:
+> > 
+> > xfs_trans_resv_calc:  dev 7:0 type 0 logres 193528 logcount 5 flags 0x4
+> > 
+> > About 190kB.
+> > 
+> > However, intents are typically very small - around 32 bytes in size
+> > plus another 12 bytes for the log region ophdr.
+> > 
+> > This implies that we can fit thousands of individual intents in a
+> > single tr_write log reservation on any given filesystem, and the
+> > number of loop iterations in a transaction is therefore dependent
+> > largely on how many intents are logged per iteration.
+> > 
+> > Hence if we are walking a range of extents in the BMBT to unmap
+> > them, then we should only be generating 2 intents per loop - a BUI
+> > for the BMBT removal and a CUI for the shared refcount decrease.
+> > That means we should be able to run at least a thousand iterations
+> > of that loop per transaction without getting anywhere near the
+> > transaction reservation limits.
+> > 
+> > *However!*
+> > 
+> > We have to relog every intent we haven't processed in the deferred
+> > batch every-so-often to prevent the outstanding intents from pinning
+> > the tail of the log. Hence the larger the number of intents in the
+> > initial batch, the more work we have to do later on (and the more
+> > overall log space and bandwidth they will consume) to relog them
+> > them over and over again until they pop to the head of the
+> > processing queue.
+> > 
+> > Hence there is no real perforamce advantage to creating massive intent
+> > batches because we end up doing more work later on to relog those
+> > intents to prevent journal space deadlocks. It also doesn't speed up
+> > processing, because we still process the intent chains one at a time
+> > from start to completion before moving on to the next high level
+> > intent chain that needs to be processed.
+> > 
+> > Further, after the first couple of intent chains have been
+> > processed, the initial log space reservation will have run out, and
+> > we are now asking for a new resrevation on every transaction roll we
+> > do. i.e. we now are now doing a log space reservation on every
+> > transaction roll in the processing chain instead of only doing it
+> > once per high level intent chain.
+> > 
+> > Hence from a log space accounting perspective (the hottest code path
+> > in the journal), it is far more efficient to perform a single high
+> > level transaction per extent unmap operation than it is to batch
+> > intents into a single high level transaction.
+> > 
+> > My advice is this: we should never batch high level iterative
+> > intent-based operations into a single transaction because it's a
+> > false optimisation.  It might look like it is an efficiency
+> > improvement from the high level, but it ends up hammering the hot,
+> > performance critical paths in the transaction subsystem much, much
+> > harder and so will end up being slower than the single transaction
+> > per intent-based operation algorithm when it matters most....
+> 
+> How specifically do you propose remapping all the extents in a file
+> range after an untorn write?
 
-Once a cfs_rq gets throttled, for all tasks belonging to this cfs_rq,
-add a task work to them so that when those tasks return to user, the
-actual throttle/dequeue can happen.
+Sorry, I didn't realise that was the context of the question that
+was asked - there was not enough context in the email I replied to
+to indicate this important detail. hence it just looked like a
+question about "how many intents can we batch into a single write
+transaction reservation".
 
-Note that since the throttle/dequeue always happens on a task basis when
-it returns to user, it's no longer necessary for check_cfs_rq_runtime()
-to return a value and pick_task_fair() acts differently according to that
-return value, so check_cfs_rq_runtime() is changed to not return a
-value.
+I gave that answer (thousands) and then recommended against doing
+batching like this as an optimisation. Batching operations into a
+single context is normally done as an optimisation, so that is what
+I assumed was being talked about here....
 
-[aaronlu: extracted from Valentin's original patches.
- Fixed a problem that curr is not in timeline tree and has to be dealed
- with explicitely;
- Make check_cfs_rq_runtime() void.]
-Signed-off-by: Valentin Schneider <vschneid@redhat.com>
-Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
----
- kernel/sched/fair.c  | 201 ++++++++++++++++++++++++-------------------
- kernel/sched/sched.h |   1 +
- 2 files changed, 112 insertions(+), 90 deletions(-)
+> The regular cow ioend does a single
+> transaction per extent across the entire ioend range and cannot deliver
+> untorn writes.  This latest proposal does, but now you've torn that idea
+> down too.
+>
+> At this point I have run out of ideas and conclude that can only submit
+> to your superior intellect.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 60eb5329bf526..ab403ff7d53c8 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5607,7 +5607,7 @@ pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
- 	return se;
- }
+I think you're jumping to incorrect conclusions, and then making
+needless personal attacks. This is unacceptable behaviour, Darrick,
+and if you keep it up you are going to end up having to explain
+yourself to the CoC committee....
 
--static bool check_cfs_rq_runtime(struct cfs_rq *cfs_rq);
-+static void check_cfs_rq_runtime(struct cfs_rq *cfs_rq);
+Anyway....
 
- static void put_prev_entity(struct cfs_rq *cfs_rq, struct sched_entity *prev)
- {
-@@ -5832,8 +5832,49 @@ static inline int throttled_lb_pair(struct
-task_group *tg,
- 	       throttled_hierarchy(dest_cfs_rq);
- }
+Now I understand the assumed context was batching for atomicity and
+not optimisation, I'll address that aspect of the suggested
+approach: overloading the existing write reservation with a special
+case like this is the wrong way to define a new atomic operation.
 
-+static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags);
- static void throttle_cfs_rq_work(struct callback_head *work)
- {
-+	struct task_struct *p = container_of(work, struct task_struct,
-sched_throttle_work);
-+	struct sched_entity *se;
-+	struct cfs_rq *cfs_rq;
-+	struct rq *rq;
-+	struct rq_flags rf;
-+
-+	WARN_ON_ONCE(p != current);
-+	p->sched_throttle_work.next = &p->sched_throttle_work;
-+
-+	/*
-+	 * If task is exiting, then there won't be a return to userspace, so we
-+	 * don't have to bother with any of this.
-+	 */
-+	if ((p->flags & PF_EXITING))
-+		return;
-+
-+	rq = task_rq_lock(p, &rf);
-+
-+	se = &p->se;
-+	cfs_rq = cfs_rq_of(se);
-+
-+	/* Raced, forget */
-+	if (p->sched_class != &fair_sched_class)
-+		goto out_unlock;
-+
-+	/*
-+	 * If not in limbo, then either replenish has happened or this task got
-+	 * migrated out of the throttled cfs_rq, move along
-+	 */
-+	if (!cfs_rq->throttle_count)
-+		goto out_unlock;
-+
-+	update_rq_clock(rq);
-+	WARN_ON_ONCE(!list_empty(&p->throttle_node));
-+	list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
-+	dequeue_task_fair(rq, p, DEQUEUE_SLEEP | DEQUEUE_SPECIAL);
-+	resched_curr(rq);
-+
-+out_unlock:
-+	task_rq_unlock(rq, p, &rf);
- }
+That is: trying to infer limits of special case behaviour by adding
+a heuristic based calculation based on the write log reservation
+is poor design.
 
- void init_cfs_throttle_work(struct task_struct *p)
-@@ -5873,32 +5914,81 @@ static int tg_unthrottle_up(struct task_group
-*tg, void *data)
- 	return 0;
- }
+The write reservation varies according to the current filesystem's
+geometry (filesystem block size, AG size, capacity, etc) and kernel
+version. Hence the batch size supported for atomic writes would then
+vary unpredictably from filesystem to filesystem and even within the
+same filesystem over time.
 
-+static inline bool task_has_throttle_work(struct task_struct *p)
-+{
-+	return p->sched_throttle_work.next != &p->sched_throttle_work;
-+}
-+
-+static inline void task_throttle_setup_work(struct task_struct *p)
-+{
-+	/*
-+	 * Kthreads and exiting tasks don't return to userspace, so adding the
-+	 * work is pointless
-+	 */
-+	if ((p->flags & (PF_EXITING | PF_KTHREAD)))
-+		return;
-+
-+	if (task_has_throttle_work(p))
-+		return;
-+
-+	task_work_add(p, &p->sched_throttle_work, TWA_RESUME);
-+}
-+
- static int tg_throttle_down(struct task_group *tg, void *data)
- {
- 	struct rq *rq = data;
- 	struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
-+	struct task_struct *p;
-+	struct rb_node *node;
-+
-+	cfs_rq->throttle_count++;
-+	if (cfs_rq->throttle_count > 1)
-+		return 0;
+Given that we have to abort atomic writes up front if the mapping
+covering the atomic write range is more fragmented than this
+calculated value, this unpredicable limit will be directly exposed
+to userspace via the errors it generates.
 
- 	/* group is entering throttled state, stop time */
--	if (!cfs_rq->throttle_count) {
--		cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
--		list_del_leaf_cfs_rq(cfs_rq);
-+	cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
-+	list_del_leaf_cfs_rq(cfs_rq);
+We do not want anything even vaguely related to transaction
+reservation sizes exposed to userspace. They are, and should always
+be, entirely internal filesystem implementation details.
 
--		SCHED_WARN_ON(cfs_rq->throttled_clock_self);
--		if (cfs_rq->nr_queued)
--			cfs_rq->throttled_clock_self = rq_clock(rq);
-+	SCHED_WARN_ON(cfs_rq->throttled_clock_self);
-+	if (cfs_rq->nr_queued)
-+		cfs_rq->throttled_clock_self = rq_clock(rq);
-+
-+	WARN_ON_ONCE(!list_empty(&cfs_rq->throttled_limbo_list));
-+	/*
-+	 * rq_lock is held, current is (obviously) executing this in kernelspace.
-+	 *
-+	 * All other tasks enqueued on this rq have their saved PC at the
-+	 * context switch, so they will go through the kernel before returning
-+	 * to userspace. Thus, there are no tasks-in-userspace to handle, just
-+	 * install the task_work on all of them.
-+	 */
-+	node = rb_first(&cfs_rq->tasks_timeline.rb_root);
-+	while (node) {
-+		struct sched_entity *se = __node_2_se(node);
-+
-+		if (!entity_is_task(se))
-+			goto next;
-+
-+		p = task_of(se);
-+		task_throttle_setup_work(p);
-+next:
-+		node = rb_next(node);
-+	}
-+
-+	/* curr is not in the timeline tree */
-+	if (cfs_rq->curr && entity_is_task(cfs_rq->curr)) {
-+		p = task_of(cfs_rq->curr);
-+		task_throttle_setup_work(p);
- 	}
--	cfs_rq->throttle_count++;
+A much better way to define an atomic unmap operation is to set a
+fixed maximum number of extents that a batched atomic unmap
+operation needs to support. With a fixed extent count, we can then
+base the transaction reservation size required for the operation on
+this number.
 
- 	return 0;
- }
+We know that the write length is never going to be larger than 2GB
+due to MAX_RW_COUNT bounding of user IO. Hence there is a maximum
+number of extents that a single write can map to. Whether that's the
+size we try to support is separate discussion, but I point it out as
+a hard upper maximum.
 
--static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
-+static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
- {
- 	struct rq *rq = rq_of(cfs_rq);
- 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
--	struct sched_entity *se;
--	long queued_delta, runnable_delta, idle_delta, dequeue = 1;
--	long rq_h_nr_queued = rq->cfs.h_nr_queued;
-+	int dequeue = 1;
+Regardless of what we define as the maximum number of extents for
+the atomic unmap, we can now calculate the exact log space
+reservation the an unmap intents will require. We can then max()
+that with the log space reservation that any of those specific
+intents will require to process. Now we have an exact log
+reservation to an atomic unmap of a known, fixed number of extents.
 
- 	raw_spin_lock(&cfs_b->lock);
- 	/* This will start the period timer if necessary */
-@@ -5919,74 +6009,13 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
- 	raw_spin_unlock(&cfs_b->lock);
+Then we can look at what the common unmap behaviour is (e.g. through
+tracing various test cases) are, and determine how many extents we
+are typically going to convert in a single atomic unmap operation.
+That then guides us to an optimal log count for the atomic unmap
+reservation.
 
- 	if (!dequeue)
--		return false;  /* Throttle no longer required. */
--
--	se = cfs_rq->tg->se[cpu_of(rq_of(cfs_rq))];
-+		return;  /* Throttle no longer required. */
+This gives us a single log space reservation that can handle a known,
+fixed number of extents on any filesystem. 
 
- 	/* freeze hierarchy runnable averages while throttled */
- 	rcu_read_lock();
- 	walk_tg_tree_from(cfs_rq->tg, tg_throttle_down, tg_nop, (void *)rq);
- 	rcu_read_unlock();
+It gives us an optimised log count to minimise the number of log
+space reservations the common case code is going to need.
 
--	queued_delta = cfs_rq->h_nr_queued;
--	runnable_delta = cfs_rq->h_nr_runnable;
--	idle_delta = cfs_rq->h_nr_idle;
--	for_each_sched_entity(se) {
--		struct cfs_rq *qcfs_rq = cfs_rq_of(se);
--		int flags;
--
--		/* throttled entity or throttle-on-deactivate */
--		if (!se->on_rq)
--			goto done;
--
--		/*
--		 * Abuse SPECIAL to avoid delayed dequeue in this instance.
--		 * This avoids teaching dequeue_entities() about throttled
--		 * entities and keeps things relatively simple.
--		 */
--		flags = DEQUEUE_SLEEP | DEQUEUE_SPECIAL;
--		if (se->sched_delayed)
--			flags |= DEQUEUE_DELAYED;
--		dequeue_entity(qcfs_rq, se, flags);
--
--		if (cfs_rq_is_idle(group_cfs_rq(se)))
--			idle_delta = cfs_rq->h_nr_queued;
--
--		qcfs_rq->h_nr_queued -= queued_delta;
--		qcfs_rq->h_nr_runnable -= runnable_delta;
--		qcfs_rq->h_nr_idle -= idle_delta;
--
--		if (qcfs_rq->load.weight) {
--			/* Avoid re-evaluating load for this entity: */
--			se = parent_entity(se);
--			break;
--		}
--	}
--
--	for_each_sched_entity(se) {
--		struct cfs_rq *qcfs_rq = cfs_rq_of(se);
--		/* throttled entity or throttle-on-deactivate */
--		if (!se->on_rq)
--			goto done;
--
--		update_load_avg(qcfs_rq, se, 0);
--		se_update_runnable(se);
--
--		if (cfs_rq_is_idle(group_cfs_rq(se)))
--			idle_delta = cfs_rq->h_nr_queued;
--
--		qcfs_rq->h_nr_queued -= queued_delta;
--		qcfs_rq->h_nr_runnable -= runnable_delta;
--		qcfs_rq->h_nr_idle -= idle_delta;
--	}
--
--	/* At this point se is NULL and we are at root level*/
--	sub_nr_running(rq, queued_delta);
--
--	/* Stop the fair server if throttling resulted in no runnable tasks */
--	if (rq_h_nr_queued && !rq->cfs.h_nr_queued)
--		dl_server_stop(&rq->fair_server);
--done:
- 	/*
- 	 * Note: distribution will already see us throttled via the
- 	 * throttled-list.  rq->lock protects completion.
-@@ -5995,7 +6024,7 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
- 	SCHED_WARN_ON(cfs_rq->throttled_clock);
- 	if (cfs_rq->nr_queued)
- 		cfs_rq->throttled_clock = rq_clock(rq);
--	return true;
-+	return;
- }
+It gives us a reservation size that will contribute to defining the
+minimum supported log size for the features enabled in the
+filesystem.
 
- void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
-@@ -6471,22 +6500,22 @@ static void sync_throttle(struct task_group
-*tg, int cpu)
- }
+It gives us a consistent behaviour that we can directly exercise
+from userspace with relatively simple test code based on constant
+values.
 
- /* conditionally throttle active cfs_rq's from put_prev_entity() */
--static bool check_cfs_rq_runtime(struct cfs_rq *cfs_rq)
-+static void check_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- {
- 	if (!cfs_bandwidth_used())
--		return false;
-+		return;
+It means the high level unmap code doesn't rely on heuristics to
+prevent transaction reservation overflows.
 
- 	if (likely(!cfs_rq->runtime_enabled || cfs_rq->runtime_remaining > 0))
--		return false;
-+		return;
+It means the high level code can use bound loops and compile time
+constants without having to worry that they will ever overrun the
+capability of the underlying filesystem or kernel.
 
- 	/*
- 	 * it's possible for a throttled entity to be forced into a running
- 	 * state (e.g. set_curr_task), in this case we're finished.
- 	 */
- 	if (cfs_rq_throttled(cfs_rq))
--		return true;
-+		return;
+Simple, huh?
 
--	return throttle_cfs_rq(cfs_rq);
-+	throttle_cfs_rq(cfs_rq);
- }
-
- static enum hrtimer_restart sched_cfs_slack_timer(struct hrtimer *timer)
-@@ -6582,6 +6611,7 @@ static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- 	cfs_rq->runtime_enabled = 0;
- 	INIT_LIST_HEAD(&cfs_rq->throttled_list);
- 	INIT_LIST_HEAD(&cfs_rq->throttled_csd_list);
-+	INIT_LIST_HEAD(&cfs_rq->throttled_limbo_list);
- }
-
- void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
-@@ -7117,10 +7147,6 @@ static int dequeue_entities(struct rq *rq,
-struct sched_entity *se, int flags)
- 		if (cfs_rq_is_idle(cfs_rq))
- 			h_nr_idle = h_nr_queued;
-
--		/* end evaluation on encountering a throttled cfs_rq */
--		if (cfs_rq_throttled(cfs_rq))
--			return 0;
--
- 		/* Don't dequeue parent if it has other entities besides us */
- 		if (cfs_rq->load.weight) {
- 			slice = cfs_rq_min_slice(cfs_rq);
-@@ -7157,10 +7183,6 @@ static int dequeue_entities(struct rq *rq,
-struct sched_entity *se, int flags)
-
- 		if (cfs_rq_is_idle(cfs_rq))
- 			h_nr_idle = h_nr_queued;
--
--		/* end evaluation on encountering a throttled cfs_rq */
--		if (cfs_rq_throttled(cfs_rq))
--			return 0;
- 	}
-
- 	sub_nr_running(rq, h_nr_queued);
-@@ -8869,8 +8891,7 @@ static struct task_struct *pick_task_fair(struct rq *rq)
- 		if (cfs_rq->curr && cfs_rq->curr->on_rq)
- 			update_curr(cfs_rq);
-
--		if (unlikely(check_cfs_rq_runtime(cfs_rq)))
--			goto again;
-+		check_cfs_rq_runtime(cfs_rq);
-
- 		se = pick_next_entity(rq, cfs_rq);
- 		if (!se)
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index c8bfa3d708081..5c2af5a70163c 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -742,6 +742,7 @@ struct cfs_rq {
- 	int			throttle_count;
- 	struct list_head	throttled_list;
- 	struct list_head	throttled_csd_list;
-+	struct list_head	throttled_limbo_list;
- #endif /* CONFIG_CFS_BANDWIDTH */
- #endif /* CONFIG_FAIR_GROUP_SCHED */
- };
+-Dave.
 -- 
-2.39.5
+Dave Chinner
+david@fromorbit.com
 
