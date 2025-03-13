@@ -1,163 +1,210 @@
-Return-Path: <linux-kernel+bounces-560026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE461A5FCCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:59:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 771EDA5FCE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:02:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 049FE18936A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:59:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33F5C7A3885
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF40526A0A7;
-	Thu, 13 Mar 2025 16:59:33 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED55926B0A1;
+	Thu, 13 Mar 2025 17:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dBqi/Wat"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BB7268FE6
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 16:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D5126AAA2
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741885173; cv=none; b=W7K6Tdk5DNrJErqHieqgkGzrHXHWnqXflXNzl5QPTcMs/KILn3mrYuix9ZT0l0WduOt+SLNCec1u1JNIe5PQ93IfwNCMScfRw+XMTB/S3x0aeZ6D3iMG32w++uleWIXLCKwFLo6QkKfmK0fwPu0bek3oFPMY+OkhMPaJZ4besnI=
+	t=1741885293; cv=none; b=BU8o6d/NJha3ugwf5P0Wg00eBbLTw+ShfBGkKFhXuauy0iC0BWC8jxK25m1RU8MijOqiC9yAaofh2plPCC2oqKYRt3OPkTMKqN9OJlX8by0zcsDrxlCpMv7ZLmR0MXtmJRgiqeW3syWbML+e/pGTnk64FqQLudyCLSBX77Ss3MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741885173; c=relaxed/simple;
-	bh=5plUZokiGNszsQd5jMdJREBDilijqjztiPfhbU0oomI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AFyjtJ0k19cgfh/kBdJBH4GrBqM0wQjKCdMclL8HVOXsRUTVtQKlOunOruQZgwHHUeu1Z0w5INxW12zZXEPRfuxxBiARS4OLIw1ngQDyLBPEOfunINtAf7C7iH9tYuyIfnJoIlCOxOceobS+gXIJc53H5iBBS7Usa+Q6NOaVRBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-85db3356bafso300803739f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 09:59:31 -0700 (PDT)
+	s=arc-20240116; t=1741885293; c=relaxed/simple;
+	bh=RHI3AKJ18YJQw15g5mIoicSngTlptd4/6GkNMVoIGN0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RXJiv8iDj2t7oKLbiRFp0rQPka7YihcEWlpcyylY7c0o0dGN+LiYSY7rRW6GHqfhW2zDYXtr+ND259EY2S/i7V8yXIqbuaKdB0yOWOAjZpveLlIAJRClcQQiw1fBSKYjSwUlKMoiiQVlEFTdk2vwFEIYCU2gXBalpQDB3fiU95Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dBqi/Wat; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-225a28a511eso22998165ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:01:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741885291; x=1742490091; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FKRxUK1y7Id83Wc7nB4qFch4/Nkz0/Hx3e5OqBZUaiQ=;
+        b=dBqi/WatOSBtZI3ThLPSk7ks0rfTbT0/pDjl5yn1gASx3srV38nZQIeAIgUUpPnVGm
+         wGR25xfEja5/dTHkJSWL3HpJYyNdmr++C9rmfjRMpJ54quqF0eK0t7Bn9fu4mUd8IraA
+         dqLybALdqDP1pl78ng32pU5G/ljd+zvEsHOuLXx1QUEF+Yu4YWJ/b2QOAt9UY4MxQ5KK
+         FLgDtqDDBHboNXcasZaEr7Jgzt2UnunhDMw4Z8aObgRsyFt9obH9ADeYhpK2ywoz2hxg
+         bwvo9S5aHfPbaR53xCSUjlLRy62yvB9ISa4AnFqErFyj00yVYddsAcwwklzbPEq3OBxT
+         24wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741885171; x=1742489971;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        d=1e100.net; s=20230601; t=1741885291; x=1742490091;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=CAVyUdjA1Fi7LXzB/oZslQ8tsF7/jZYEXnsjntzroqE=;
-        b=Ap7N7f3WNPwgp9oEs9f+fEnKvMr+Vt0dpW3lvhphV42QBel2xmcvFKLFdrU5bmZsyX
-         n/g4HlDC5qNgPwhHkhywOv41bYP0QLu3k+VjJAPH+/lRN/7XhktJJi4h7hAINE5HXXXl
-         IxqgPVj4OBuyEp3CHoCPi/mlYSrJEtI5fAN6Af1jf7caHrDY7vszpmiJxL2XtxhpUeEi
-         Xh5GEVvQqQAFHG9iABCkiNIDp3Id962IPBplkZJ5DXnCpyepn31M0WStOgT6U9aI5X44
-         oyD2kAvQI1nPTUoS1qb5mXMVQ7rrPcdTJ0aYyXgUbhwlUVasRZiSkS0c/b58ebNd3Y2c
-         02iA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGkjl8LZkrwcnzcFaB50axjuSDmNtGcO56ZejIBrkOAF7fiBo5FC2XYzpAG3uPy2rtkil3CFkRaNtE1pY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC1R/jtPcLAsUYX0W8UaHX6mdPGJhYPTFEOKsWmeBgRIqZ7PaZ
-	8MnVUpvws6AUlqc32V5y7+4jWwV0wpJV1a2MQ+TSQ/fBMNO1p0yLNL9mHtYs+NouPYDfO9PpndB
-	Yj+ax9dtv32o8PmEXhH2/RjG1bUtWodaYcjoRNalgzdVKKjMQJPlhKVI=
-X-Google-Smtp-Source: AGHT+IGaGZzlBUeOGaoLnZmW9bgDBCxgtJaE55nziPEvab/sw8+W63R2zUJ4P/BgZbmd5Zz4Rq0ngyXdUb7Mlq/C3Db/n3UoXyQz
+        bh=FKRxUK1y7Id83Wc7nB4qFch4/Nkz0/Hx3e5OqBZUaiQ=;
+        b=UNCKBf8HocED6SMzGYnvNO/1dIjPVylUbO5orY23v43mxmrquTaVnrA+FjTii66/eh
+         rc1m8oMH0UZqF2ivuBp0tsvwPDlX7M/QXgeDJpti5csdvmyWrBS3Y9rmV4WayhIuCWi8
+         f4oQOhdLpcGcIEF8i8Z7+wsaE66dkPRLKatrUvJ47Zh59KMi6AqyISEEBeIx2va5JbDO
+         gJPIwFjxlrl2EHT6Yufk+ob0p1nY9ysi2budOluXFWVvK05q6iF6F3FQ9S6j8mMTJttB
+         B1o+lCqjxqzNlXC41sO008PlGDqgAAP/CGr3zC1k9wVDpG1wpmMK0D/Qn0c3iZjaYDdh
+         Wo0w==
+X-Forwarded-Encrypted: i=1; AJvYcCV010RugwOYbBccWzyaVrDfZ1ENu5FJd0J/Xw2ql0iE7XG6YNtFJqsbWheBnlnwJoYk8WaUSwqmQXnjBeo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx2YDlNomtA9YCZyuAekuNL53zNYdnd/A/I3LVRqnz9w4/8Krr
+	U0jkbUAO9sl+9m7GEo0G3Ay8eNx+1sAJpIt7CkqO1MzjvNWECqru
+X-Gm-Gg: ASbGncuJeVpexvPCHUVwVNuujIJM2ZgHDvtsXrUiGRhojaY3VGdE3t7OSX0kQpypujW
+	cgu3yXVqLf3FaapX25thtKQR3ORHnNz4qZ5PwqTSLI1k4zgGmc7foUbsCkujMcGzjnBNZZ+q9ly
+	TMVPuHYjuMszva6PGk4U6rNJZI5acmrpxl19Waqg+ZTWoJP50u/KtAA398PjsZiBLlWNBO7jj10
+	6qEwAIBSU1kQ/YDQRUiviMv0DgdumBvfxdmWqeKGxUjj1GiRmIzQZA/oQCYLV433XQfUlj74WbK
+	Mf7wYjO66VvqK8p9kpU9YqeTTfwuIoU1giE8YcbEGpARvEoETiNTJQT41waLpi16qMYETIml0NJ
+	F
+X-Google-Smtp-Source: AGHT+IE/NjRSkW5y7+0MzcGG6ioih4/hqPl9Wj5CnaKDtJUm8hn8RvTkO7mg55Bhe4Ik+x9Cr+r9SQ==
+X-Received: by 2002:a17:903:2b0f:b0:223:6657:5001 with SMTP id d9443c01a7336-225dd8b9881mr3214035ad.40.1741885290866;
+        Thu, 13 Mar 2025 10:01:30 -0700 (PDT)
+Received: from KASONG-MC4.tencent.com ([106.37.123.220])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371167df0esm1613529b3a.93.2025.03.13.10.01.25
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 13 Mar 2025 10:01:30 -0700 (PDT)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Chris Li <chrisl@kernel.org>,
+	Barry Song <v-songbaohua@oppo.com>,
+	Hugh Dickins <hughd@google.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Baoquan He <bhe@redhat.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>
+Subject: [PATCH v3 3/7] mm, swap: avoid redundant swap device pinning
+Date: Fri, 14 Mar 2025 00:59:31 +0800
+Message-ID: <20250313165935.63303-4-ryncsn@gmail.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250313165935.63303-1-ryncsn@gmail.com>
+References: <20250313165935.63303-1-ryncsn@gmail.com>
+Reply-To: Kairui Song <kasong@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c262:0:b0:3d4:712e:29eb with SMTP id
- e9e14a558f8ab-3d482051ea1mr6445ab.5.1741885170964; Thu, 13 Mar 2025 09:59:30
- -0700 (PDT)
-Date: Thu, 13 Mar 2025 09:59:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d30ef2.050a0220.14e108.003a.GAE@google.com>
-Subject: [syzbot] [input?] [usb?] WARNING in hanwang_open/usb_submit_urb
-From: syzbot <syzbot+9fe8f6caeb5661802ca2@syzkaller.appspotmail.com>
-To: dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Kairui Song <kasong@tencent.com>
 
-syzbot found the following issue on:
+Currently __read_swap_cache_async() has get/put_swap_device() calls to
+increase/decrease a swap device reference to prevent swapoff.  While some
+of its callers have already held the swap device reference, e.g in
+do_swap_page() and shmem_swapin_folio() where __read_swap_cache_async()
+will finally called.  Now there are only two callers not holding a swap
+device reference, so make them hold a reference instead.  And drop the
+get/put_swap_device calls in __read_swap_cache_async.  This should reduce
+the overhead for swap in during page fault slightly.
 
-HEAD commit:    b331a3d8097f xhci: Handle spurious events on Etron host is..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=17db1fa0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f429368eda610a89
-dashboard link: https://syzkaller.appspot.com/bug?extid=9fe8f6caeb5661802ca2
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164a34b7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11f04664580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6dd3e4d1c59b/disk-b331a3d8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/58f91d593dc0/vmlinux-b331a3d8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6cbf2795aa43/bzImage-b331a3d8.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9fe8f6caeb5661802ca2@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-usb 1-1: BOGUS urb xfer, pipe 1 != type 3
-WARNING: CPU: 0 PID: 2827 at drivers/usb/core/urb.c:503 usb_submit_urb+0xe4b/0x1730 drivers/usb/core/urb.c:503
-Modules linked in:
-CPU: 0 UID: 0 PID: 2827 Comm: acpid Not tainted 6.14.0-rc3-syzkaller-00071-gb331a3d8097f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:usb_submit_urb+0xe4b/0x1730 drivers/usb/core/urb.c:503
-Code: 84 3c 02 00 00 e8 65 93 ee fc 4c 89 ef e8 fd ca d4 fe 45 89 e0 89 e9 4c 89 f2 48 89 c6 48 c7 c7 00 53 a2 87 e8 f6 a8 b2 fc 90 <0f> 0b 90 90 e9 e9 f8 ff ff e8 37 93 ee fc 49 81 c4 c0 05 00 00 e9
-RSP: 0018:ffffc90001617818 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffff888104e85600 RCX: ffffffff813f4dd9
-RDX: ffff8881163eba80 RSI: ffffffff813f4de6 RDI: 0000000000000001
-RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000003
-R13: ffff88810138b0b0 R14: ffff888113321760 R15: ffff888104e8567c
-FS:  00007fd474ef6740(0000) GS:ffff8881f5800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055c4f0adf170 CR3: 00000001163ca000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- hanwang_open+0xa8/0xf0 drivers/input/tablet/hanwang.c:284
- input_open_device+0x230/0x390 drivers/input/input.c:600
- evdev_open_device drivers/input/evdev.c:391 [inline]
- evdev_open+0x52d/0x690 drivers/input/evdev.c:478
- chrdev_open+0x237/0x6a0 fs/char_dev.c:414
- do_dentry_open+0x6cb/0x1390 fs/open.c:956
- vfs_open+0x82/0x3f0 fs/open.c:1086
- do_open fs/namei.c:3830 [inline]
- path_openat+0x1e88/0x2d80 fs/namei.c:3989
- do_filp_open+0x20c/0x470 fs/namei.c:4016
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1428
- do_sys_open fs/open.c:1443 [inline]
- __do_sys_openat fs/open.c:1459 [inline]
- __se_sys_openat fs/open.c:1454 [inline]
- __x64_sys_openat+0x175/0x210 fs/open.c:1454
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd474fc09a4
-Code: 24 20 48 8d 44 24 30 48 89 44 24 28 64 8b 04 25 18 00 00 00 85 c0 75 2c 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 60 48 8b 15 55 a4 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007ffd7571ff60 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007ffd75720248 RCX: 00007fd474fc09a4
-RDX: 0000000000080800 RSI: 00007ffd75720148 RDI: 00000000ffffff9c
-RBP: 00007ffd75720148 R08: 00000000000000f4 R09: 00007ffd75720148
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000080800
-R13: 0000000000000020 R14: 00007ffd75720248 R15: 00007ffd75720148
- </TASK>
-
-
+Signed-off-by: Kairui Song <kasong@tencent.com>
+Reviewed-by: Baoquan He <bhe@redhat.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ mm/swap_state.c | 14 ++++++++------
+ mm/zswap.c      |  6 ++++++
+ 2 files changed, 14 insertions(+), 6 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index a54b035d6a6c..50840a2887a5 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -426,17 +426,13 @@ struct folio *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 		struct mempolicy *mpol, pgoff_t ilx, bool *new_page_allocated,
+ 		bool skip_if_exists)
+ {
+-	struct swap_info_struct *si;
++	struct swap_info_struct *si = swp_swap_info(entry);
+ 	struct folio *folio;
+ 	struct folio *new_folio = NULL;
+ 	struct folio *result = NULL;
+ 	void *shadow = NULL;
+ 
+ 	*new_page_allocated = false;
+-	si = get_swap_device(entry);
+-	if (!si)
+-		return NULL;
+-
+ 	for (;;) {
+ 		int err;
+ 		/*
+@@ -532,7 +528,6 @@ struct folio *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 	put_swap_folio(new_folio, entry);
+ 	folio_unlock(new_folio);
+ put_and_return:
+-	put_swap_device(si);
+ 	if (!(*new_page_allocated) && new_folio)
+ 		folio_put(new_folio);
+ 	return result;
+@@ -552,11 +547,16 @@ struct folio *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 		struct vm_area_struct *vma, unsigned long addr,
+ 		struct swap_iocb **plug)
+ {
++	struct swap_info_struct *si;
+ 	bool page_allocated;
+ 	struct mempolicy *mpol;
+ 	pgoff_t ilx;
+ 	struct folio *folio;
+ 
++	si = get_swap_device(entry);
++	if (!si)
++		return NULL;
++
+ 	mpol = get_vma_policy(vma, addr, 0, &ilx);
+ 	folio = __read_swap_cache_async(entry, gfp_mask, mpol, ilx,
+ 					&page_allocated, false);
+@@ -564,6 +564,8 @@ struct folio *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 
+ 	if (page_allocated)
+ 		swap_read_folio(folio, plug);
++
++	put_swap_device(si);
+ 	return folio;
+ }
+ 
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 7d8d684e54d4..c470073c17cc 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -1055,15 +1055,21 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
+ 	struct folio *folio;
+ 	struct mempolicy *mpol;
+ 	bool folio_was_allocated;
++	struct swap_info_struct *si;
+ 	struct writeback_control wbc = {
+ 		.sync_mode = WB_SYNC_NONE,
+ 	};
+ 	int ret = 0;
+ 
+ 	/* try to allocate swap cache folio */
++	si = get_swap_device(swpentry);
++	if (!si)
++		return -EEXIST;
++
+ 	mpol = get_task_policy(current);
+ 	folio = __read_swap_cache_async(swpentry, GFP_KERNEL, mpol,
+ 				NO_INTERLEAVE_INDEX, &folio_was_allocated, true);
++	put_swap_device(si);
+ 	if (!folio)
+ 		return -ENOMEM;
+ 
+-- 
+2.48.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
