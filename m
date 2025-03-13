@@ -1,148 +1,131 @@
-Return-Path: <linux-kernel+bounces-558634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC144A5E8DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:00:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2EA3A5E8E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:00:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EE6D18996AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:00:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65E60189B5D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60181F30DD;
-	Wed, 12 Mar 2025 23:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AAE1F1526;
+	Thu, 13 Mar 2025 00:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="efgLDDwf"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WVFDvl3d"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A951EB5D7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 23:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C23070818;
+	Thu, 13 Mar 2025 00:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741823999; cv=none; b=FCebC1/uKr5pr3N5HjWkEwlIeniKZmZe+onsqWRnEEQ6qELZdLTVBHuBNHQVem9QVtZZKMDS67IoYQDnt+uKXN4rBYFFnr2D8uM8e8EMhCXKdTkqUix38kRA1FOPLeSiDKDEBkqRdnhBVDAvXEeXvxi92zDPXUrJQRqHJMp5T7A=
+	t=1741824036; cv=none; b=rzUJE1di/5en67Dxzwb3h0UJrLLf60MvGJ5x9AtoD04LVuY9frde2WG4fIN95nyopDwcQyCb+1WJL+fznPN3MNKl3PZ9PPrzAU02uLmGD3IYBpdKWwAlLfi4OveB99XW2w+pG0ts/PXnM6nK6hPZ7NzDQ5xcVxMNtrhHYlhflPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741823999; c=relaxed/simple;
-	bh=t0tZTSGtr4UWsHEiOdyc/1GE5qfFf7wDTtBzSRIEYng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ku70a5e87qRsagmho2Woz8qcQkSV9J245a5oV3wyIbcILXFL8W1yV0L2hX1ybaVRvpCeNtI3yx1Ye9ZfmOVPxNRQVcEWb6inin5uohFIe8eiLDQ6CWmwa2oQz3LiKXX4irIKmb6J6k81+DMTdar8SQ21j9ZNZOeEyGmDTJoSMoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=efgLDDwf; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2239aa5da08so7037505ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:59:57 -0700 (PDT)
+	s=arc-20240116; t=1741824036; c=relaxed/simple;
+	bh=4BMK/YpzzNp5PxalzBToe0ubZNqxp6ZnKRn7zN/f8i0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MI3SBor0vuED9Pe0ms/7+mTZQzzo1HWJe0mY5jN4W/SKxY6gJ7/lTIcEhBtVkV9DyLFeCz2+5sZbX0juCZpsxQl5brUHJ6RAazDdvl+IoqCNXFA/9hq6r+kqY0YdGPdv4pS0nnRv21GTG2DWxcg6pGBYTx8xzCsemw0iDdOsYuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WVFDvl3d; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so2750505e9.3;
+        Wed, 12 Mar 2025 17:00:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1741823997; x=1742428797; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yytaLmBYctbIRkoKABXnhpi2qYihFcFQJbj0+Q55xFU=;
-        b=efgLDDwfCH9znTe26cuC83tVPXAlx6Mu+UmDx7nv5tQ51iV887eFj1MvlRNyaQ3wZO
-         PArU9JIPVeHbX1HzJ0gMVgAoFtoKBtV/VwKFrSMu1ahZ4CFofjLH5VszIFGkuDvsFBzC
-         mvxmDQgJ62I10pY4ocxC6lh5cYOp3xZ9SE+ViL5Z034Lp4P7fyPy9hQ3o3lwmhLw1++d
-         qaKr0o5iwwiqTvpVuEZMmTONsKvtVhx8C2F1Crrvxqr6+qJnu1hmKmJXHkosPJ7aDxTb
-         77zjx/3ISpJ8P3AGxtSj73k1RKVcFcLn9Ru9GV1Jg+VYqXoRGtn/DdRHeAPEfOPyhv4+
-         HvKw==
+        d=gmail.com; s=20230601; t=1741824033; x=1742428833; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ejuNv8rYCw+E9SmKdhuUEutSZ7Cxi43XWQoJBcNyrcs=;
+        b=WVFDvl3dQ4f9Ck3VGepuHLJ6XcxQvw/qiGMdtgpjzVXgQ3DbW4Lx01gADrIdYkUzBy
+         HJMl0KUQ82qDbnPXbh3xEzivUmraAki6miEpa2zWxBD4qmjvK4CWIwaw9SpJkZeBNEGl
+         PyzGRqCWcDUObh+EXz0rUNyNTajq8Y4WBJtWe9wLFjV0HrExO6lDuqEzipG3X/WPBxP+
+         NbPmsFHyKgshYqhGqcBHbi5pvVudlkxTIPfMr1GwszacRNEDYECjvOfeAte52IcVbduK
+         slxsaMaqJfa5S6UVj4OLUYHANonPNSxNHrsLfSbDOjPNlNitPgLd7854K3lWCDO7Ak0r
+         vF0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741823997; x=1742428797;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yytaLmBYctbIRkoKABXnhpi2qYihFcFQJbj0+Q55xFU=;
-        b=P3ljBL+O2H1pRnZ8H1g6WJQdegE3L+wAYhh4pbrIejdUOBR/2VpHJB5j4vB9wVuLWJ
-         3XzBNJok1oSu1/jpADsb2iFIlsUjaj3VGsOUSmOPQVbieTkIrOA2Zpvxak2xa2hyzoy/
-         Fd0k+2MQAzCbRo0DgWu0Xubz5y9z+0g7myjymsW0ktvCZNCGPzEskKwqx0VTdtHLqSnF
-         nLjRdhDOlW7CUqKtTpUQNBsEEONpmh3A0KZUPT1VJu+s3sYQq5hoSgU1TnLAoZV4bW7l
-         RSkK8NZAd/h6JNfFresQjNvS95OnlPT5ALB4F770+x2sqtD/UQhYqPcHfF7zIUF6d5xR
-         t9LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUG79NJpBUHostNe+oeuAu278htqe3j5JPEn79c6rD6x1kXxmnVWC8yWB0dhTIcG6iky4qMjoUa9MkZ0YY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHYHFtEJAzlZzkXvzRFKqeRMqPRAnvQPaJa9a4SnNL/PXe7WkJ
-	qEAqBZ/uzQrJwYrcmiivEmuEGIBKtJE5guVaQOFRBCSKSarSOn/QjIoiOSJDrU4=
-X-Gm-Gg: ASbGncsEW9VxP2cWnRT5G04aZ4ULz06MyfSeYYRPrZNy6tTpBorvsu3TtxNTPmBd8n5
-	j/gzlNqcKjkISroKpWD+21XWsGZgLt87TRa3iMn0kH7/x91+Fb94ZLRhfmibWOmtZR8fVXSum7C
-	TUpTDVXOk9lT/V5rncjLN0/lOhLLcgEttXymW8xhp9sWmXIE5SJfeNyWyxinaO0brwGf7hg55Mu
-	4aiaGHzgXO8Xx3bWD9K6c2WN4g6oRLMxpJ03xGgDbGd7fGL7i8BrkAF6+tC6wiTFXJUBvw0hc1O
-	lG50zTNCFxprPyXGydmX6qXHJe5EPJk30uIRqkoHkN8U8MTnKlnv1FV827B+o70n0sRif/K/Bql
-	kFnehPwJKFzbhAHZwPySvf8pcjURJbKU=
-X-Google-Smtp-Source: AGHT+IG4RCxcrmTYAq5F1HE82NxgYxY0Zc/jsHH0E4Gd1id1R+9jO5XGlN+xR0DEb3WE960pzuGqyw==
-X-Received: by 2002:a17:902:e5d2:b0:223:66bc:f1de with SMTP id d9443c01a7336-22428a9810dmr352747475ad.21.1741823996781;
-        Wed, 12 Mar 2025 16:59:56 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30138f8ca8fsm38113a91.31.2025.03.12.16.59.56
+        d=1e100.net; s=20230601; t=1741824033; x=1742428833;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ejuNv8rYCw+E9SmKdhuUEutSZ7Cxi43XWQoJBcNyrcs=;
+        b=D03VIRL+zg/0h5lgLzgc3WOmExLN+ZS4pB676uMJEk4ViuH7N+ty+1idY8bcRxaofR
+         dSJ67Pnp9vI/Rt0XIu/gOHvAO8VC/oMP/npX1FXnpH4pvc1Ga/dHwO8YrJMBD00rVk5p
+         0CiSEDXiHpvx61AuPxMttfd4GDhccis0o2yCjEaV/uYEt1Ojuor7rqopvvHVkom8aNic
+         wOw+raSaDqlshVNYHd3gJugIT/vWazqVj0zVgLslrQoG7DfGAyTcuc77dKBaY2owSKTz
+         nVBpphhdnZIjVQY7e/JgkvXnr9bd3sUpylTmimk5YYpB2CeHH71mNCHnI9wOl9IrteGv
+         04vw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHzpMwi3hq2WEz5TLoyfUqSlV7XMGyJcHzX0zyVmVVg9ahE/xTRGMIhK63ioQxqyTu6OFSVtRFZljtC14=@vger.kernel.org, AJvYcCUvcJf8HX8BAOF47DngRB4ijd6nDOK5FB/V3SoKw87mxuSaxHMBoCCgi2yKQFyFG2q3rvY5bRqX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2LW3aAyt8pUtRnTcjHUeXp/o4Ff7SXCmsuypl+G39Wie531gI
+	QnnjrYDhpRc7VhztKYG06kfghECUoYOHsK46FaUxKUgOsteb6XWo5DnFBA==
+X-Gm-Gg: ASbGncuq4Y0p9W56SMV7Oi15fLY+ZXMbKwtnvEc5hv+k/nWVaiEepyRRkKhN9mP+G2p
+	X6ifmyeGwW2hYnaf9Z5PzfOz8aRbT1VMgJNMp4Hfc+IAXvRSDPyCoGe/PJMkfZm2DnC4mwti2xw
+	CSfMdGjCabEKPVFb+N8q74IWsD9fvXlcwQVQTEafos7450kkWUYx9MC1Kh5r+5JOeHnQknXNHxZ
+	bYZSa6p6dOkW9EYH1UwfL/xL1qzSc5kPti06chKESf1yjmrd+v19fYIPIJQpolS4cGDn3m0n/V7
+	KKnEXgKtSfHcbSjozm+paR7/WYD3CHEVQgODIj83FKI2sSR/odRWa/qTUA==
+X-Google-Smtp-Source: AGHT+IFuo61yCvipm5hMZjaeumpbpltoRjoRDM1oIDlSvOgzJUvZEvB+rFPlQ299bPySriHs/yZzGw==
+X-Received: by 2002:a05:600c:4fd5:b0:43c:fb5b:84d8 with SMTP id 5b1f17b1804b1-43cfb5b8569mr133512285e9.16.1741824032931;
+        Wed, 12 Mar 2025 17:00:32 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:c7c:6696:8300:d012:c3ec:2d3:844b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a8d0e01sm35770955e9.39.2025.03.12.17.00.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 16:59:56 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tsVzN-0000000CMFO-0mqW;
-	Thu, 13 Mar 2025 10:59:53 +1100
-Date: Thu, 13 Mar 2025 10:59:53 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
-	djwong@kernel.org, cem@kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH RFC v5 10/10] iomap: Rename ATOMIC flags again
-Message-ID: <Z9If-X3Iach3o_l3@dread.disaster.area>
-References: <20250310183946.932054-1-john.g.garry@oracle.com>
- <20250310183946.932054-11-john.g.garry@oracle.com>
- <Z9E0JqQfdL4nPBH-@infradead.org>
+        Wed, 12 Mar 2025 17:00:31 -0700 (PDT)
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: adilger.kernel@dilger.ca,
+	tytso@mit.edu,
+	shikemeng@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] ext4: Fix potential NULL pointer dereferences in test_mb_mark_used() and test_mb_free_blocks()
+Date: Thu, 13 Mar 2025 00:00:21 +0000
+Message-Id: <20250313000021.18170-1-qasdev00@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9E0JqQfdL4nPBH-@infradead.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 12, 2025 at 12:13:42AM -0700, Christoph Hellwig wrote:
-> On Mon, Mar 10, 2025 at 06:39:46PM +0000, John Garry wrote:
-> > Dave Chinner thought that names IOMAP_ATOMIC_HW and IOMAP_ATOMIC_SW were
-> > not appropopiate. Specifically because IOMAP_ATOMIC_HW could actually be
-> > realised with a SW-based method in the block or md/dm layers.
-> > 
-> > So rename to IOMAP_ATOMIC_BIO and IOMAP_ATOMIC_FS.
-> 
-> Looking over the entire series and the already merged iomap code:
-> there should be no reason at all for having IOMAP_ATOMIC_FS.
-> The only thing it does is to branch out to
-> xfs_atomic_write_sw_iomap_begin from xfs_atomic_write_iomap_begin.
-> 
-> You can do that in a much simpler and nicer way by just having
-> different iomap_ops for the bio based vs file system based atomics.
+test_mb_mark_used() and test_mb_free_blocks() call kunit_kzalloc() to 
+allocate memory, however both fail to ensure that the allocations 
+succeeded. If kunit_kzalloc() returns NULL, then dereferencing the 
+corresponding pointer without checking for NULL will lead to 
+a NULL pointer dereference.
 
-Agreed - I was going to suggest that, but got distracted by
-something else and then forgot about it when I got back to writing
-the email...
+To fix this call KUNIT_ASSERT_NOT_ERR_OR_NULL() to ensure 
+the allocation succeeded.
 
-> I agree with dave that bio is a better term for the bio based
-> atomic, but please use the IOMAP_ATOMIC_BIO name above instead
-> of the IOMAP_BIO_ATOMIC actually used in the code if you change
-> it.
+Fixes: ac96b56a2fbd ("ext4: Add unit test for mb_mark_used")
+Fixes: b7098e1fa7bc ("ext4: Add unit test for mb_free_blocks")
+Cc: stable@vger.kernel.org
+Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+---
+ fs/ext4/mballoc-test.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Works for me.
-
-> >   */
-> >  static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
-> > -		const struct iomap *iomap, bool use_fua, bool atomic_hw)
-> > +		const struct iomap *iomap, bool use_fua, bool bio_atomic)
-> 
-> Not new here, but these two bools are pretty ugly.
-> 
-> I'd rather have a
-> 
->     blk_opf_t extra_flags;
-> 
-> in the caller that gets REQ_FUA and REQ_ATOMIC assigned as needed,
-> and then just clear 
-
-Yep, that is cleaner..
-
--Dave.
+diff --git a/fs/ext4/mballoc-test.c b/fs/ext4/mballoc-test.c
+index bb2a223b207c..d634c12f1984 100644
+--- a/fs/ext4/mballoc-test.c
++++ b/fs/ext4/mballoc-test.c
+@@ -796,6 +796,7 @@ static void test_mb_mark_used(struct kunit *test)
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buddy);
+ 	grp = kunit_kzalloc(test, offsetof(struct ext4_group_info,
+ 				bb_counters[MB_NUM_ORDERS(sb)]), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, grp);
+ 
+ 	ret = ext4_mb_load_buddy(sb, TEST_GOAL_GROUP, &e4b);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+@@ -860,6 +861,7 @@ static void test_mb_free_blocks(struct kunit *test)
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buddy);
+ 	grp = kunit_kzalloc(test, offsetof(struct ext4_group_info,
+ 				bb_counters[MB_NUM_ORDERS(sb)]), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, grp);
+ 
+ 	ret = ext4_mb_load_buddy(sb, TEST_GOAL_GROUP, &e4b);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
 -- 
-Dave Chinner
-david@fromorbit.com
+2.39.5
+
 
