@@ -1,67 +1,51 @@
-Return-Path: <linux-kernel+bounces-559765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE768A5F947
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:09:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16A1A5F949
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:10:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 861DD1897A4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:10:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8B98169ACD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08DB2686B0;
-	Thu, 13 Mar 2025 15:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="sDK6ZTzc"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB9A265610;
-	Thu, 13 Mar 2025 15:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C73268C7E;
+	Thu, 13 Mar 2025 15:09:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D35B268C5B;
+	Thu, 13 Mar 2025 15:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741878590; cv=none; b=o/KP4v/8GCWia75EdZyZajRe3Ci6+wzP2xr3+lY8Y2oZ1wfEl0GHpDJ/OCy9UGViiPJiUFKwPLHJfcHcK+L0ec52MjfumDcaDC5trRx+GAbHhP0y7cnjv7X5V/E8JfOC4qp1uqUuAUif7UmV1lA3APtp/APvkG4aQan7HhtUm0U=
+	t=1741878594; cv=none; b=ljAk43PiKhhzAw/E4BffHs53HTCmUGzWozwXHbWKJEwwoinTOFajKFukLkSnu+8LbnZ3SwBA+kCMxLW5NPaZ4YPLJPFHsK3UvaaV4kuOMEBKqAz7sDMqHxo18IiNpAE2kVjuf470wgDMXLIVrlpg1cvMhuHew2ovol2dkIQbhPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741878590; c=relaxed/simple;
-	bh=E7eyBx9xODfh0uwwIetnaRVmvl/0FhTfpwqqlgl5ces=;
+	s=arc-20240116; t=1741878594; c=relaxed/simple;
+	bh=+iiUyL202c0si2LthRlsePbrvSQoTqyqBToD03RD0Hk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rfXV9N2OvgyEzfeM0jjv3lqsWoRncXB+N86FuNT+sMwfHPA2T9VWj5kTNKx2o6uVkgAbQ52o1Hza+fu2FMYagqIveu2137T5863fuojgHH2pOxshNILs7hBoH5g7V9QSk9E9e/WPL8DjK9wR0f2OBWDIFpC7bDNq6gHnph+Q3II=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=sDK6ZTzc; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=XKJ6YJ+k4bRcn7NwtnnaihcpZH+mbOj9M7iA6AJDKQA=; b=sDK6ZTzcteIwWLs4VYFWDFD5ia
-	0KqsFyThxH+NIGr64zZqSdDmetMPR/P88GZ9M7MFez3Nn9S1MbrNs/4CM8siQ6QFb6kmh5SzC2daj
-	qiDtXku22JxP1C6aMAGghAmSD2SPVjH7x12RpeHB3AXkk6VVgF8sWBrlr/KQv5CwjjoThdFRIzdkd
-	oLuGzYM7iconXUd1cLX3hEWuy8Ks08yuvGe8mH8imH2k1j4u3xgwzl9Tx7OuyzCwf/uOqlDE7Y+0M
-	1Gpw/HHI9y9F04dB9CgWBmSXgMZDbUoBEajKHz0LlrCgYp/lCYQNfzQm2xcTm288WaXleXbqwDK0A
-	aX4vN1SQ==;
-Received: from d162-157-58-14.abhsia.telus.net ([162.157.58.14] helo=maloca.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tskBj-008DME-4S; Thu, 13 Mar 2025 16:09:41 +0100
-Date: Thu, 13 Mar 2025 09:09:34 -0600
-From: Rodrigo Siqueira <siqueira@igalia.com>
-To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, 
-	Alex Hung <alex.hung@amd.com>, Aurabindo Pillai <aurabindo.pillai@amd.com>, 
-	Leo Li <sunpeng.li@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Tom Chung <chiahsuan.chung@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, kernel-dev@igalia.com, stable@vger.kernel.org, 
-	Daniel Wheeler <daniel.wheeler@amd.com>
-Subject: Re: [PATCH] drm/amd/display: avoid NPD when ASIC does not support
- DMUB
-Message-ID: <d7wpyhwzbed7i57dby7x5vn2iivu32cpitlgvfzjz4fprxm7o3@trspjo4vqkap>
-References: <20250205-amdgpu-dmub-v1-1-88151fe565d8@igalia.com>
- <Z9LBt2ePtxJ0Nzz4@quatroqueijos>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zw9M9BNLF3OJ+icequMHYtOlFqorjKD30J0yAfTkFqfwGm/HLBXQRBrw6zCsBygkTzcN5bsUT1wmRt8JK4pVgJ3DP0mLXgLOsL4D4vmdz1azebjbfdC17/+o3kGbxxIaltUiRLL02uUtpxxsNP2nxjYZjQIxm+bp0b2gm0dzjOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C940113E;
+	Thu, 13 Mar 2025 08:10:02 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D48BB3F694;
+	Thu, 13 Mar 2025 08:09:50 -0700 (PDT)
+Date: Thu, 13 Mar 2025 15:09:48 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Robbie King <robbiek@xsightlabs.com>
+Cc: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Huisong Li <lihuisong@huawei.com>,
+	Adam Young <admiyo@os.amperecomputing.com>
+Subject: Re: [PATCH v2 02/13] mailbox: pcc: Always clear the platform ack
+ interrupt first
+Message-ID: <Z9L1PD8lDjwM7L3l@bogus>
+References: <20250305-pcc_fixes_updates-v2-0-1b1822bc8746@arm.com>
+ <20250305-pcc_fixes_updates-v2-2-1b1822bc8746@arm.com>
+ <4ef4df06-c6f8-4151-96e1-78be58f32f54@xsightlabs.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,170 +54,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z9LBt2ePtxJ0Nzz4@quatroqueijos>
+In-Reply-To: <4ef4df06-c6f8-4151-96e1-78be58f32f54@xsightlabs.com>
 
-On 03/13, Thadeu Lima de Souza Cascardo wrote:
-> On Wed, Feb 05, 2025 at 10:06:38AM -0300, Thadeu Lima de Souza Cascardo wrote:
-> > ctx->dmub_srv will de NULL if the ASIC does not support DMUB, which is
-> > tested in dm_dmub_sw_init.
+On Thu, Mar 13, 2025 at 11:08:04AM -0400, Robbie King wrote:
+> On 3/5/2025 11:38 AM, Sudeep Holla wrote:
+> > The PCC mailbox interrupt handler (pcc_mbox_irq()) currently checks
+> > for command completion flags and any error status before clearing the
+> > interrupt.
 > > 
-> > However, it will be dereferenced in dmub_hw_lock_mgr_cmd if
-> > should_use_dmub_lock returns true.
+> > The below sequence highlights an issue in the handling of PCC mailbox
+> > interrupts, specifically when dealing with doorbell notifications and
+> > acknowledgment between the OSPM and the platform where type3 and type4
+> > channels are sharing the interrupt.
 > > 
-> > This has been the case since dmub support has been added for PSR1.
+> > -------------------------------------------------------------------------
+> > | T |       Platform Firmware         |    OSPM/Linux PCC driver        |
+> > |---|---------------------------------|---------------------------------|
+> > | 1 |                                 | Build message in shmem          |
+> > | 2 |                                 | Ring Type3 chan doorbell        |
+> > | 3 | Receives the doorbell interrupt |                                 |
+> > | 4 | Process the message from OSPM   |                                 |
+> > | 5 | Build response for the message  |                                 |
+> > | 6 | Ring Platform ACK interrupt on  |                                 |
+> > |   |  Type3 chan to OSPM             | Received the interrupt          |
+> > | 7 | Build Notification in Type4 Chan|                                 |
+> > | 8 |                                 | Start processing interrupt in   |
+> > |   |                                 |  pcc_mbox_irq() handler         |
+> > | 9 |                                 | Enter PCC handler for Type4 chan|
+> > |10 |                                 | Check command complete cleared  |
+> > |11 |                                 | Read the notification           |
+> > |12 |                                 | Clear Platform ACK interrupt    |
+> > |   | No effect from the previous step yet as the Platform ACK          |
+> > |   |  interrupt has not yet been triggered for this channel            |
+> > |13 | Ring Platform ACK interrupt on  |                                 |
+> > |   | Type4 chan to OSPM              |                                 |
+> > |14 |                                 | Enter PCC handler for Type3 chan|
+> > |15 |                                 | Command complete is set.        |
+> > |16 |                                 | Read the response.              |
+> > |17 |                                 | Clear Platform ACK interrupt    |
+> > |18 |                                 | Leave PCC handler for Type3     |
+> > |19 |                                 | Leave pcc_mbox_irq() handler    |
+> > |20 |                                 | Re-enter pcc_mbox_irq() handler |
+> > |21 |                                 | Enter PCC handler for Type4 chan|
+> > |22 |                                 | Leave PCC handler for Type4 chan|
+> > |23 |                                 | Enter PCC handler for Type3 chan|
+> > |24 |                                 | Leave PCC handler for Type3 chan|
+> > |25 |                                 | Leave pcc_mbox_irq() handler    |
+> > -------------------------------------------------------------------------
+> > 
+> > The key issue occurs when OSPM tries to acknowledge platform ack
+> > interrupt for a notification which is ready to be read and processed
+> > but the interrupt itself is not yet triggered by the platform.
+> > 
+> > This ineffective acknowledgment leads to an issue later in time where
+> > the interrupt remains pending as we exit the interrupt handler without
+> > clearing the platform ack interrupt as there is no pending response or
+> > notification. The interrupt acknowledgment order is incorrect.
+> > 
+> > To resolve this issue, the platform acknowledgment interrupt should
+> > always be cleared before processing the interrupt for any notifications
+> > or response.
+> > 
+> > Reported-by: Robbie King <robbiek@xsightlabs.com>
+> > Reviewed-by: Huisong Li <lihuisong@huawei.com>
+> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 > 
-> This bug has landed on stable trees. Any chance for a review here?
+> Tested-by: Robbie King <robbiek@xsightlabs.com>
 > 
-> Thanks.
-> Cascardo.
-> 
-> > 
-> > Fix this by checking for dmub_srv in should_use_dmub_lock.
-> > 
-> > [   37.440832] BUG: kernel NULL pointer dereference, address: 0000000000000058
-> > [   37.447808] #PF: supervisor read access in kernel mode
-> > [   37.452959] #PF: error_code(0x0000) - not-present page
-> > [   37.458112] PGD 0 P4D 0
-> > [   37.460662] Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
-> > [   37.465553] CPU: 2 UID: 1000 PID: 1745 Comm: DrmThread Not tainted 6.14.0-rc1-00003-gd62e938120f0 #23 99720e1cb1e0fc4773b8513150932a07de3c6e88
-> > [   37.478324] Hardware name: Google Morphius/Morphius, BIOS Google_Morphius.13434.858.0 10/26/2023
-> > [   37.487103] RIP: 0010:dmub_hw_lock_mgr_cmd+0x77/0xb0
-> > [   37.492074] Code: 44 24 0e 00 00 00 00 48 c7 04 24 45 00 00 0c 40 88 74 24 0d 0f b6 02 88 44 24 0c 8b 01 89 44 24 08 85 f6 75 05 c6 44 24 0e 01 <48> 8b 7f 58 48 89 e6 ba 01 00 00 00 e8 08 3c 2a 00 65 48 8b 04 5
-> > [   37.510822] RSP: 0018:ffff969442853300 EFLAGS: 00010202
-> > [   37.516052] RAX: 0000000000000000 RBX: ffff92db03000000 RCX: ffff969442853358
-> > [   37.523185] RDX: ffff969442853368 RSI: 0000000000000001 RDI: 0000000000000000
-> > [   37.530322] RBP: 0000000000000001 R08: 00000000000004a7 R09: 00000000000004a5
-> > [   37.537453] R10: 0000000000000476 R11: 0000000000000062 R12: ffff92db0ade8000
-> > [   37.544589] R13: ffff92da01180ae0 R14: ffff92da011802a8 R15: ffff92db03000000
-> > [   37.551725] FS:  0000784a9cdfc6c0(0000) GS:ffff92db2af00000(0000) knlGS:0000000000000000
-> > [   37.559814] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [   37.565562] CR2: 0000000000000058 CR3: 0000000112b1c000 CR4: 00000000003506f0
-> > [   37.572697] Call Trace:
-> > [   37.575152]  <TASK>
-> > [   37.577258]  ? __die_body+0x66/0xb0
-> > [   37.580756]  ? page_fault_oops+0x3e7/0x4a0
-> > [   37.584861]  ? exc_page_fault+0x3e/0xe0
-> > [   37.588706]  ? exc_page_fault+0x5c/0xe0
-> > [   37.592550]  ? asm_exc_page_fault+0x22/0x30
-> > [   37.596742]  ? dmub_hw_lock_mgr_cmd+0x77/0xb0
-> > [   37.601107]  dcn10_cursor_lock+0x1e1/0x240
-> > [   37.605211]  program_cursor_attributes+0x81/0x190
-> > [   37.609923]  commit_planes_for_stream+0x998/0x1ef0
-> > [   37.614722]  update_planes_and_stream_v2+0x41e/0x5c0
-> > [   37.619703]  dc_update_planes_and_stream+0x78/0x140
-> > [   37.624588]  amdgpu_dm_atomic_commit_tail+0x4362/0x49f0
-> > [   37.629832]  ? srso_return_thunk+0x5/0x5f
-> > [   37.633847]  ? mark_held_locks+0x6d/0xd0
-> > [   37.637774]  ? _raw_spin_unlock_irq+0x24/0x50
-> > [   37.642135]  ? srso_return_thunk+0x5/0x5f
-> > [   37.646148]  ? lockdep_hardirqs_on+0x95/0x150
-> > [   37.650510]  ? srso_return_thunk+0x5/0x5f
-> > [   37.654522]  ? _raw_spin_unlock_irq+0x2f/0x50
-> > [   37.658883]  ? srso_return_thunk+0x5/0x5f
-> > [   37.662897]  ? wait_for_common+0x186/0x1c0
-> > [   37.666998]  ? srso_return_thunk+0x5/0x5f
-> > [   37.671009]  ? drm_crtc_next_vblank_start+0xc3/0x170
-> > [   37.675983]  commit_tail+0xf5/0x1c0
-> > [   37.679478]  drm_atomic_helper_commit+0x2a2/0x2b0
-> > [   37.684186]  drm_atomic_commit+0xd6/0x100
-> > [   37.688199]  ? __cfi___drm_printfn_info+0x10/0x10
-> > [   37.692911]  drm_atomic_helper_update_plane+0xe5/0x130
-> > [   37.698054]  drm_mode_cursor_common+0x501/0x670
-> > [   37.702600]  ? __cfi_drm_mode_cursor_ioctl+0x10/0x10
-> > [   37.707572]  drm_mode_cursor_ioctl+0x48/0x70
-> > [   37.711851]  drm_ioctl_kernel+0xf2/0x150
-> > [   37.715781]  drm_ioctl+0x363/0x590
-> > [   37.719189]  ? __cfi_drm_mode_cursor_ioctl+0x10/0x10
-> > [   37.724165]  amdgpu_drm_ioctl+0x41/0x80
-> > [   37.728013]  __se_sys_ioctl+0x7f/0xd0
-> > [   37.731685]  do_syscall_64+0x87/0x100
-> > [   37.735355]  ? vma_end_read+0x12/0xe0
-> > [   37.739024]  ? srso_return_thunk+0x5/0x5f
-> > [   37.743041]  ? find_held_lock+0x47/0xf0
-> > [   37.746884]  ? vma_end_read+0x12/0xe0
-> > [   37.750552]  ? srso_return_thunk+0x5/0x5f
-> > [   37.754565]  ? lock_release+0x1c4/0x2e0
-> > [   37.758406]  ? vma_end_read+0x12/0xe0
-> > [   37.762079]  ? exc_page_fault+0x84/0xe0
-> > [   37.765921]  ? srso_return_thunk+0x5/0x5f
-> > [   37.769938]  ? lockdep_hardirqs_on+0x95/0x150
-> > [   37.774303]  ? srso_return_thunk+0x5/0x5f
-> > [   37.778317]  ? exc_page_fault+0x84/0xe0
-> > [   37.782163]  entry_SYSCALL_64_after_hwframe+0x55/0x5d
-> > [   37.787218] RIP: 0033:0x784aa5ec3059
-> > [   37.790803] Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10 c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00 00 0f 05 <41> 89 c0 3d 00 f0 ff ff 77 1d 48 8b 45 c8 64 48 2b 04 25 28 00 0
-> > [   37.809553] RSP: 002b:0000784a9cdf90e0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> > [   37.817121] RAX: ffffffffffffffda RBX: 0000784a9cdf917c RCX: 0000784aa5ec3059
-> > [   37.824256] RDX: 0000784a9cdf917c RSI: 00000000c01c64a3 RDI: 0000000000000020
-> > [   37.831391] RBP: 0000784a9cdf9130 R08: 0000000000000100 R09: 0000000000ff0000
-> > [   37.838525] R10: 0000000000000000 R11: 0000000000000246 R12: 0000025c01606ed0
-> > [   37.845657] R13: 0000025c00030200 R14: 00000000c01c64a3 R15: 0000000000000020
-> > [   37.852799]  </TASK>
-> > [   37.854992] Modules linked in:
-> > [   37.864546] gsmi: Log Shutdown Reason 0x03
-> > [   37.868656] CR2: 0000000000000058
-> > [   37.871979] ---[ end trace 0000000000000000 ]---
-> > [   37.880976] RIP: 0010:dmub_hw_lock_mgr_cmd+0x77/0xb0
-> > [   37.885954] Code: 44 24 0e 00 00 00 00 48 c7 04 24 45 00 00 0c 40 88 74 24 0d 0f b6 02 88 44 24 0c 8b 01 89 44 24 08 85 f6 75 05 c6 44 24 0e 01 <48> 8b 7f 58 48 89 e6 ba 01 00 00 00 e8 08 3c 2a 00 65 48 8b 04 5
-> > [   37.904703] RSP: 0018:ffff969442853300 EFLAGS: 00010202
-> > [   37.909933] RAX: 0000000000000000 RBX: ffff92db03000000 RCX: ffff969442853358
-> > [   37.917068] RDX: ffff969442853368 RSI: 0000000000000001 RDI: 0000000000000000
-> > [   37.924201] RBP: 0000000000000001 R08: 00000000000004a7 R09: 00000000000004a5
-> > [   37.931336] R10: 0000000000000476 R11: 0000000000000062 R12: ffff92db0ade8000
-> > [   37.938469] R13: ffff92da01180ae0 R14: ffff92da011802a8 R15: ffff92db03000000
-> > [   37.945602] FS:  0000784a9cdfc6c0(0000) GS:ffff92db2af00000(0000) knlGS:0000000000000000
-> > [   37.953689] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [   37.959435] CR2: 0000000000000058 CR3: 0000000112b1c000 CR4: 00000000003506f0
-> > [   37.966570] Kernel panic - not syncing: Fatal exception
-> > [   37.971901] Kernel Offset: 0x30200000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-> > [   37.982840] gsmi: Log Shutdown Reason 0x02
-> > 
-> > Fixes: b5c764d6ed55 ("drm/amd/display: Use HW lock mgr for PSR1")
-> > Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-> > Cc: stable@vger.kernel.org
-> > Cc: Sun peng Li <sunpeng.li@amd.com>
-> > Cc: Tom Chung <chiahsuan.chung@amd.com>
-> > Cc: Daniel Wheeler <daniel.wheeler@amd.com>
-> > Cc: Alex Deucher <alexander.deucher@amd.com>
-> > ---
-> >  drivers/gpu/drm/amd/display/dc/dce/dmub_hw_lock_mgr.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/amd/display/dc/dce/dmub_hw_lock_mgr.c b/drivers/gpu/drm/amd/display/dc/dce/dmub_hw_lock_mgr.c
-> > index 5bb8b78bf250a0e56c3e99ce7c99ed7f70c8f0f6..eef817a4c580aca2ebc7fb1b77cfc0377d477bdc 100644
-> > --- a/drivers/gpu/drm/amd/display/dc/dce/dmub_hw_lock_mgr.c
-> > +++ b/drivers/gpu/drm/amd/display/dc/dce/dmub_hw_lock_mgr.c
-> > @@ -63,6 +63,9 @@ void dmub_hw_lock_mgr_inbox0_cmd(struct dc_dmub_srv *dmub_srv,
-> >  
-> >  bool should_use_dmub_lock(struct dc_link *link)
-> >  {
-> > +	/* ASIC doesn't support DMUB */
-> > +	if (!link->ctx->dmub_srv)
-> > +		return false;
-> >  	if (link->psr_settings.psr_version == DC_PSR_VERSION_SU_1 ||
-> >  	    link->psr_settings.psr_version == DC_PSR_VERSION_1)
-> >  		return true;
-> > 
-> > ---
-> > base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-> > change-id: 20250205-amdgpu-dmub-3fc25a0bc68e
-> > 
-> > Best regards,
-> > -- 
-> > Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-> > 
->
 
-It looks like the patch pointed in the "Fixed" tag was reverted.
-However, this patch is still valid. The should_use_dmub_lock() could be
-called in a context without DMUB.
-
-(+Other display folks)
-
-Reviewed-by: Rodrigo Siqueira <siqueira@igalia.com>
-
-Thanks
+Thanks Robbie for reporting the issue and testing the fix. Much appreciated!
 
 -- 
-Rodrigo Siqueira
+Regards,
+Sudeep
 
