@@ -1,116 +1,126 @@
-Return-Path: <linux-kernel+bounces-559679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DF37A5F7F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:25:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF16A5F7F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B38B420444
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:25:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 701774209ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A00267F5F;
-	Thu, 13 Mar 2025 14:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E2D267F4F;
+	Thu, 13 Mar 2025 14:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nScF/ei3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KMEKgBVl"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3C4267F45;
-	Thu, 13 Mar 2025 14:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECAF265CDC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741875919; cv=none; b=DWJWjmjcYxCAbxiveqoEdutrt/c/IXzAONpuTQQ/hNoB5Wca8UCFIe37K4IEsoGXWRgii+bkEi1c5Wn+7LAsTarGhFiXH6tpt/N/YERf80dlqvmAoBBXwHe28aVuqGu+r9QHZyOwMrsFKnjfZl6piq8CRkb6FZNe0rNjigN/r3s=
+	t=1741875948; cv=none; b=Q9nnNAfoxfwcz8T4UJ2//J0VkZ4y72WnOLWaOSZ2QT+65IaoJom4iumJgVkpwSV4W1Lb4AsN2NHbnM2Gups6xb89DQzBqjyDikUNFWkMuvrg6kIUean6Xa5JpkRifCjwWm+fk6687XubTQsRt1jBmBNWJX2sseKaEeuBJYAPxMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741875919; c=relaxed/simple;
-	bh=KGmJrceDamjRYmfBqz65BHjaNIf+vVNxlgv1SUPYziw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VCQs+h526PpAJm2SZuuMxvNAwYX0G0MO9ezpH2RdCSVPMbmtop0MX1HTOFsn7/+T9mCHqIwuKqmZ/pyBfANUwoiIshI4ZAItAfoe463HuhTNCAkPs3x+9fw3imCGsfLMgSCJHVvnv4ftn9XAbBJpj1F/E63CHVTv5mjvgUog+rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nScF/ei3; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741875918; x=1773411918;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KGmJrceDamjRYmfBqz65BHjaNIf+vVNxlgv1SUPYziw=;
-  b=nScF/ei3BVzw8q1KQ96U3PyfgKia1Ruuoo7g37RjrKD8RhsNXMLYM0S4
-   FJoU5rdOTGLcxnKb9dY1t60CISoMZt8rlafGnvnKv8mdnU/GchDGoYfyU
-   TDSlsUUKdLQeJiOF9XjE0yAN6TtABfttYP4fD+FNk/sPJo2vXNNR54RkR
-   aiGB6/A412TSDfr38jSybEGdn9Ou7y0IY03CudN6efy+smgC4J7EEi2RG
-   XvBf+cyNLalI9cgy9GmsFAkMXbHpamjomhvhjV0b3AmaCeS5kT3UUGksq
-   7YqqymUanfXG6zZucSXVAqLeRBHyiAk5T0Iev2WT5mcFJJSoTtR9e5GFd
-   g==;
-X-CSE-ConnectionGUID: 9TRemX/tSlWl53iByr9Vhw==
-X-CSE-MsgGUID: 1/Mt6bV9R2K1OURd71dcHA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="43173763"
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="43173763"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:25:18 -0700
-X-CSE-ConnectionGUID: KmOb6IzoQve4rBYyMtpT7Q==
-X-CSE-MsgGUID: xwpBqq35QGqpHdkmv4DpIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="121470355"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:25:16 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tsjUn-00000002CZB-1ykw;
-	Thu, 13 Mar 2025 16:25:13 +0200
-Date: Thu, 13 Mar 2025 16:25:13 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>
-Subject: Re: [PATCH v1 1/1] spi: Use inclusive language
-Message-ID: <Z9LqyWr4GH4RX6Nj@smile.fi.intel.com>
-References: <20250313111442.322850-1-andriy.shevchenko@linux.intel.com>
- <1c49edb2-2ffc-419e-be5e-7e15669a7839@sirena.org.uk>
- <Z9LlTflb1HQMyEv2@smile.fi.intel.com>
- <e329812d-90a5-456e-9a00-abb5c2c8d25d@sirena.org.uk>
+	s=arc-20240116; t=1741875948; c=relaxed/simple;
+	bh=QJ0RYlYw7SiEQC+4LWZiDgWcZNOAvSBGt8/GVYykKZ4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=m/jsy+87WhdECt1ZYcjKXAZl5ldRb7qFaOVmpij9WFalthOnTaV2inu4xNbqKuLQGqfwtF9XlrraWwhm/K40w3r3Y9vmpRm7j5s4O/DFT6KQBCGCDcN4qJqmBMjuTL/hDX4FXirxD/N6gHf1rtH2+5ttO8QIlFsfdknUqcRICGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KMEKgBVl; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 70D27444F4;
+	Thu, 13 Mar 2025 14:25:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741875937;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vrsRvrI2fVkzeaX8UjmDzn0XjDjCg6WTOhzziOVkric=;
+	b=KMEKgBVls9RbWZlGt4UHN2T0cibIhnQ4oQxSR9n5eSq2UlsemvsVLgxzZtRhUHqGlZk3PO
+	pBScKqn59/3RGZdiZmr2bD857dG620+Vjqk3jrEFOoAQAvFDxjDnYF470hoQVgQCmMIwcr
+	LpS3qx8TOFzc5hep5vyjXHLNtwZ4piXeh6c9q/ikQeVduy0uG560Jyyj48oTJrWlx6d6aF
+	0sj7fHbaojLRTtSdXXsJ8FhGdGTNl+LVZOROCcHV+tMTu2aXAcS8oGDcNx50ID/DFP/go2
+	sUMJkoa/UayqKhELoKovvpUjNt7dWfSKOsxjNLterwauL1PrAy+5HeFlnkSWEQ==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Date: Thu, 13 Mar 2025 15:25:17 +0100
+Subject: [PATCH] drm/mxsfb: fix missing rollback on failure in
+ mxsfb_probe()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e329812d-90a5-456e-9a00-abb5c2c8d25d@sirena.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250313-mxsfb_probe-fix-rollback-on-error-v1-1-ad2fb79de4cb@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAMzq0mcC/x2N0QqDMAwAf0XybCBaZW6/IjKspjPMNZLCEMR/t
+ /h4cNwdkNiEE7yKA4z/kkRjhqosYFrG+GGUOTPUVLfkKoe/PQX/3kw9Y5AdTdfVj9MXNSKbqaG
+ jR+Of1FFwDeTOZpzF+9EP53kBBQ8OK3MAAAA=
+X-Change-ID: 20250313-mxsfb_probe-fix-rollback-on-error-3074b9080f34
+To: Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
+ Michael Trimarchi <michael@amarulasolutions.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdekudekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefghfffgeekhfdtveffheeuudeltefhfeduteekleffvefgfffgkeevfeejtdekkeenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegrtddtvdemudgsrgejmeegkehfjeemudeltgehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegrtddtvdemudgsrgejmeegkehfjeemudeltgehpdhhvghloheplgduledvrdduieekrddujeekrdejhegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudelpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtohepthhhohhmrghsrdhpvghtr
+ giiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehimhigsehlihhsthhsrdhlihhnuhigrdguvghv
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Thu, Mar 13, 2025 at 02:12:29PM +0000, Mark Brown wrote:
-> On Thu, Mar 13, 2025 at 04:01:49PM +0200, Andy Shevchenko wrote:
-> > On Thu, Mar 13, 2025 at 12:47:32PM +0000, Mark Brown wrote:
-> 
-> > > This doesn't apply against current code, please check and resend.
-> 
-> > Hmm... It's based on the spi/for-next. Should I use another branch?
-> 
-> I did try to apply it against that in case there were fixes that needed
-> merging up, it didn't apply.  Are you sure you're using an up to date
-> copy?  I have ebd50ac3cd97ecae231f92b2d64b68d3c66b3474.
+When aperture_remove_all_conflicting_devices() fails, the current code
+returns without going through the rollback actions at the end of the
+function, thus the actions done by drm_dev_alloc() and mxsfb_load() are not
+undone.
 
-87a228960033 spi: Use inclusive language
-0d9a21198453 defconfig: enable SERIAL_MULTI_INSTANTIATE
-90485ebfb4b3 defconfig: enable SPI_TOPCLIFF_PCH
-6d91e1fce386 defconfig: enable EEPROM_AT24 and EEPROM_AT25
-331ffc354c53 defconfig: enable GPIO_PCH
-d519315d6bed Merge remote-tracking branch 'spi/for-next' into HEAD
-ebd50ac3cd97 (spi/for-next) Merge remote-tracking branch 'spi/for-6.15' into spi-next
+Fix by using a goto statament, as done for the previous and following error
+conditions.
 
-Yes, the base where it was merged to is eds-acpi branch of my public GH [1],
-which has no SPI stuff in there.
+Fixes: c8e7b185d45b ("drm/mxsfb: Remove generic DRM drivers in probe function")
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+The offending commit is not yet merged into master, and even less in a
+released kernel, so this does not need to go through stable.
+---
+ drivers/gpu/drm/mxsfb/mxsfb_drv.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-[1]: https://github.com/andy-shev/linux/commits/eds-acpi/
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+index c183b1112bc4e9fe4f3b048a2b6e4c98d1d47cb3..b4273e678d26dbc3dee2014266d61470da4e8010 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
++++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+@@ -365,9 +365,10 @@ static int mxsfb_probe(struct platform_device *pdev)
+ 	 * located anywhere in RAM
+ 	 */
+ 	ret = aperture_remove_all_conflicting_devices(mxsfb_driver.name);
+-	if (ret)
+-		return dev_err_probe(&pdev->dev, ret,
+-				     "can't kick out existing framebuffers\n");
++	if (ret) {
++		dev_err_probe(&pdev->dev, ret, "can't kick out existing framebuffers\n");
++		goto err_unload;
++	}
+ 
+ 	ret = drm_dev_register(drm, 0);
+ 	if (ret)
 
+---
+base-commit: f9f087d946266bc5da7c3a17bd8fd9d01969e3cf
+change-id: 20250313-mxsfb_probe-fix-rollback-on-error-3074b9080f34
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
 
