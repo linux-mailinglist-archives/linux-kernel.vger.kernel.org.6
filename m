@@ -1,267 +1,235 @@
-Return-Path: <linux-kernel+bounces-558880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D37D7A5ECA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:17:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFD8CA5ECAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:18:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A3CA16F242
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:17:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBC637A699D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F294A1FC0E2;
-	Thu, 13 Mar 2025 07:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C321FBEA9;
+	Thu, 13 Mar 2025 07:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ce3CRrmd"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="gGKltulN"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4EB1FAC3B;
-	Thu, 13 Mar 2025 07:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE831FBE8B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741850250; cv=none; b=V1mXvyLwKFroK3o2gpKzsjVw1xjPa1BacTsJHlZj/9NeviYavhOhyCfDNZZFJF+rUf6FvCWgCvLug7LDPlX6zXAtpN02KZ/U3mwOhGfDwOKCmRvATOlQDZuwKzcnM2Zn0Fi12hl1yzn8VT4POsuKl6R0kkNW+3eP0vKuOmyOSGE=
+	t=1741850286; cv=none; b=FzfA04MzMkM+XNs/s7XsTWlWIZdtbVbSApDnA+5QxSBODgk01z6TMUp6z5b9D2UZBQuT/4b2Xu1DToAunzn8hGpPG0UKf+DDOBDA1ogrPZWeY+K50nJNibRNEZPtGhc1+gGLya8rLaknSFEpXlg6VPzYFnpxqyHq8VHpvXgJu4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741850250; c=relaxed/simple;
-	bh=4p6Gfor/SOc4asbcBSEH69X2wY3cJibrS9BOl5THn7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b3z4BEAFZLeGUdC3LTvb5JlsvjSSEAKxSWPZMTzWOlE1OJPCuPgmricy29IL/rb5AVYnKSXpQeua98fMYNDPQejE7TAXdYE5nueGnSadpv1AM3xbA0jPmBuKzp6qGNOKVzQ+17rH5YchRR4P/oB9iZ6bHilJ1N2S2oifTJYoS94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ce3CRrmd; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-54998f865b8so561549e87.3;
-        Thu, 13 Mar 2025 00:17:28 -0700 (PDT)
+	s=arc-20240116; t=1741850286; c=relaxed/simple;
+	bh=GTnODKllfbkIpy4mE21uawSsrtvqe6QZjdMD5c1tN+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dcCPGaRvWcgUMLlfKdr0MitsAiCjEAb6W+FmdE+iNDnIMeDF9Z4lMC2dB8IRn2MAr0NmYuSKzlQLOxyFzfj+vd9eYuz2DMGCi9o+HQ4c4I9YAG2is2NbNL8caMOS72DBnmE24WlJwViwAUghN71po9NfcryoyvhCY2Rp8ZxXGyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=gGKltulN; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ff7cf59a8fso170677a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 00:18:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741850246; x=1742455046; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wSr6AMaC8K2l4k/tfNq/2fUjBVTyE/z7zvPNDZY9oNQ=;
-        b=Ce3CRrmd1IUZgwB9vzZeEGOccsVa7rZ8MsjICmjipj4svAlKihTGr+rSiT9KsNjgJy
-         jkYi0trQ9wZkR0tYve/looB1+F5uTrFWD757t+I32OzBEwaC/WkjfXk9Kq/aPyOdY9mY
-         8/VoH7T2Vyq8gLEBpnbb8aP1QsV94vvZxy3hp9GKjCXDR3TnHcXxNGtATsbpqYff2h6f
-         kd2JW+MrAw/b2wou6Ho+YbJQkOabQN7+szF3WkTBtTz8BTG6y7Kk93FLY23a449AVMxp
-         zk6oMfgyvVWW91SoSCo9Wp04lKtFKbXJxlfEyFsGpo4fm+dMmh4oHAjun3ot873b3dMU
-         98bw==
+        d=bytedance.com; s=google; t=1741850284; x=1742455084; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dGjKqsO6HawZIpt2W9rS9J2PwQQ3cuTohX7JJbhwEv8=;
+        b=gGKltulNbrzaxF1RCGZdGRblJWxuDzRqLdA3mYsOvjSrAh1JyLnbIFcgjNfdFLG8Nn
+         1/jGFGtoOYMutfx+1IkMgsnx221rNN9j8FbP9fQZYTEhV6mlH3gpmeIhOYVfxwv2BV8G
+         VgnyShWCVsVE/QzjTIE6JHFe/aChCozNBz9Cw0NFl0E6SOkWwaqofiqEBBN8lLzc6Cg9
+         AYGqcUs6NcGKDrW+01SLaYXoOnJLTcbhTeiex+lZQnoErdSPEpQCul3SDKWx+WPLVJwk
+         w2SlgqSOXGu5CfKpf1TCWsGG+N84HdRdfsUfpel5IQKuFXK93bYljtkmxyrklGU4shAd
+         CvFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741850246; x=1742455046;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wSr6AMaC8K2l4k/tfNq/2fUjBVTyE/z7zvPNDZY9oNQ=;
-        b=UdYREsi2f3tyoaCuZgU0t20pvAkMUbQAtuuxYVk1+KK617lVn4ntlYj+eoj99R7myJ
-         n9yWfygL1WRDHa6xxbZD6BqOtrANF0aV9QH55i6A2O2rlPsYsxMo23LrSIVNmt/ptVUv
-         tyhsgwQMk7qgHaEOYHLQ4gxr9XkQJWw5t8gXPfgUdthJjum3vtUq59I6nN86LcP5tZIj
-         TdfSbC9Orc6WTfiPG7mZJXfol5soN/FM540A9hBF93x6I4vVfvLFS4tpTjryX/ZpU+Gv
-         e6RKGOyGz2tSZehApNxCqpkhdEUmvZlwYvuqlsV+FNGyMW1qARXNvyXSlNiQRJetOO8m
-         3j7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVCAFR065kvYI2oCe0tByH9oJ2uGFaStMJ+3VCMB39n0HYaDoruyQtNBJAum6lrFg9Naaui9V6hH0v7@vger.kernel.org, AJvYcCVMQJlNIRHk4SwTkDzNNCWxOTCQJvMoGi+X9XFUs4MnBR8ovOv67xXpy/LGKotLZZbtesHmYQnKAzuXFuGi@vger.kernel.org, AJvYcCVhhV++8SjHQMe591zrCy0IBWMqYeNu0GRtud5J0rIkalOmFOyrsl38D1KvkMAKDhWU9gJlWwIOyTLb@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaxB6K2imofT5zlp2S4eUlhZTGP2qQyXsTw9fzQKycVSaMbZJk
-	qGTQ0RBlAPSPISB/c4KGawv1zUvzizDltqnMXbdeNNNk2W1BmDxegQ+MTQ==
-X-Gm-Gg: ASbGncvB2RKFctqF2opN2u3TVJ0crlW1ZkwOraPLjj7pffNwh7KIelj+7DBwBBZMik6
-	jPQqYjzZeCkbh00hlMQu5NsNIf1hh2NECgUmSpcalaG1+q5g1vic8QGWqWgwUwhKUv5J+tpWU0Q
-	2x8sdFiedXghD2w43RVtfthjIgZztUDZaSjQaAkEw3LW5eqWAqWlWtyYa10q8vz0YdTUIPrcyQE
-	UkaXkL3Uq2TNavzsrmyAhzT3xNTiKKZY8TwzvuyNEg1CuYzJXZInt6J+WeCp43TkZk+tSCVl8Mr
-	5f/BgS67UzhwGMBLpkizOga1rIZK5n2OiiALfkRNrPtRZ9ldU20=
-X-Google-Smtp-Source: AGHT+IFw+3SXgvCsmWZmhytQtFza8X3PaBFUnEOSUnPTiiz6PPcy/w1QxUoBPbfOR3HugnkElttR7w==
-X-Received: by 2002:a05:6512:118a:b0:540:1f7d:8bce with SMTP id 2adb3069b0e04-54990eadb4amr7628734e87.38.1741850246236;
-        Thu, 13 Mar 2025 00:17:26 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7a884esm120722e87.11.2025.03.13.00.17.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 00:17:24 -0700 (PDT)
-Date: Thu, 13 Mar 2025 09:17:17 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v7 01/10] dt-bindings: ROHM BD79124 ADC/GPO
-Message-ID: <7ea6dc5e04f0a72b071d373c4b44e279243566d5.1741849323.git.mazziesaccount@gmail.com>
-References: <cover.1741849323.git.mazziesaccount@gmail.com>
+        d=1e100.net; s=20230601; t=1741850284; x=1742455084;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dGjKqsO6HawZIpt2W9rS9J2PwQQ3cuTohX7JJbhwEv8=;
+        b=qSC1dSqx7P+K7yG+Ga3yLmCJJTQIxLrF2i9W4qfWAmeLgemtlm5sNFRgNdxn3lfS+U
+         rztTNkxwe0vpbQq5oXmTuP2Mac/SRW9yE+2toLO4MlBjy5CM2JtsiV0bk1eZSfy9ivq3
+         8hFxlaBZwzLEibZB7IPvoCLOLreLTEqaNetGUj027VNtdeV7LaoryjxH9LIsnhZhPLdM
+         z8wWW40Xs24aTPeFtfGuPU+OB74hT8f4hUBl6ra2RnQ5HwwdPkCKFr3AaCHah3RkJVR7
+         4sahrtv+q871LvFog/e3QEowgH4HeJEU/4tmpapMsreLP4dvu3+uz3N91UIre9/JZYcQ
+         Sakg==
+X-Forwarded-Encrypted: i=1; AJvYcCXt/f9jTVjbGpZoUeUUIUSYvMM2qPmggUCx0QB5xsNV18cR7YFV00s/A+0r0Wc10/SQCzF1G1a9F6jiZzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiQVm3AAQGdcGyyZLeSC3+Do+NTdoclUNy5syUfp0EuxZQ2/TO
+	khlfjK9f7yn9ZAaGR6qsRlAzUFS7FooZL3Eva7QmeqopaU5G4GuWeP8VJQFPH3g=
+X-Gm-Gg: ASbGnctfMfctLdNwSSSPduwl47K4InfASsdvLgNRxMHusvrWizmZRcTuqmZwbOQQipr
+	/6e/8jtmIcX58hSj40y4MN6hz8ZRsWJNaRj0y1J2/6uDiPpC+WlXi/qGE2ZGE3AXVYSC9Pe7f3P
+	UsDxOEVnJF8YTYGZ5vhWDXj6x44V4P6urUXKCXRuu8hmhtg6osjdwtocoB1LYSp4ZDqt3X4i9eo
+	B+Tp4PfoBcV2Ony5FSS+dF7dIZ527qQCKrDJGvevduUwXTd7XxKpDXzAftplh2Vf0eozS4obPLw
+	tz2Cf7ZEFdhqIdoNo55ZARUKAo/cwfcHmkfGQBwGV8hqb1p70BKSApi//ynolmKTC7jCLqr/bGQ
+	svw==
+X-Google-Smtp-Source: AGHT+IHdDANhdEWHZICUDuI7pdvt5musG+Bo7/VcGat/Im47ZMPB3pItJC3DdH15KGUifr9jRQLbMg==
+X-Received: by 2002:a17:90b:1649:b0:2ff:5759:549a with SMTP id 98e67ed59e1d1-300ff7245bdmr5271939a91.1.1741850283863;
+        Thu, 13 Mar 2025 00:18:03 -0700 (PDT)
+Received: from [10.254.33.33] ([139.177.225.226])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30102718e71sm3142267a91.0.2025.03.13.00.17.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 00:18:03 -0700 (PDT)
+Message-ID: <e4ad9841-5ba2-4704-95f2-3d8affee9afa@bytedance.com>
+Date: Thu, 13 Mar 2025 15:17:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7FQYMfPmZM+y/XN7"
-Content-Disposition: inline
-In-Reply-To: <cover.1741849323.git.mazziesaccount@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Re: [RFC PATCH 1/2] Revert "sched/fair: Make sched-idle CPU
+ selection consistent throughout"
+Content-Language: en-US
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Josh Don <joshdon@google.com>, Tianchen Ding <dtcccc@linux.alibaba.com>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ "open list:SCHEDULER" <linux-kernel@vger.kernel.org>
+References: <20250310074044.3656-1-wuyun.abel@bytedance.com>
+ <20250310074044.3656-2-wuyun.abel@bytedance.com>
+ <CAKfTPtA3k7oXqKjX6bNsjG1BCjq4TB6fWvTH1RV425iK01xA2A@mail.gmail.com>
+From: Abel Wu <wuyun.abel@bytedance.com>
+In-Reply-To: <CAKfTPtA3k7oXqKjX6bNsjG1BCjq4TB6fWvTH1RV425iK01xA2A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi Vincent,
 
---7FQYMfPmZM+y/XN7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 3/12/25 12:58 AM, Vincent Guittot wrote:
+> On Mon, 10 Mar 2025 at 08:41, Abel Wu <wuyun.abel@bytedance.com> wrote:
+>>
+>> This reverts commit 17346452b25b98acfb395d2a82ec2e4ad0cb7a01.
+>>
+>> The above commit tried to unify selection policy between idle cpus
+>> and SCHED_IDLE ones in fast- and slow-path of select_task_rq_fair()
+>> by treating them equally (although the SCHED_IDLE cpus are turned
+>> to be given more preference in slowpath). The test results seemed
+>> solid, but the setup didn't take cgroup hierarchy into account,
+>> which actually made some of our important services get affected.
+>>
+>> The cgroup hierarchy in our production environment looks like below,
+>> which might be common in modern containerized setup:
+>>
+>>                            root
+>>                          /       \
+>>                  kubepods        system.slice
+>>                  /       \\              \
+>>          guaranteed      besteffort      containerd
+>>
+>>          (where 'X=A' means A is SCHED_IDLE cgroup)
+>>
+>> The cpu is treated as SCHED_IDLE if only besteffort is running, which
+>> is given at least equal preference as the idle cpus when deciding where
+>> to run a newly woken task. But the SCHED_IDLE cpus do not necessarily
+>> mean they can be preempted soon enough to start serving the wakee, and
+> 
+> Could you give us more details why the SCHED_IDLE cpu which runs only
+> besteffort can't be preempted soon enough ?
+> 
+> because kubepods vs system.slice is not sched_idle when comparing the
 
-Add binding document for the ROHM BD79124 ADC / GPO.
+Yes, exactly. What's worse is that kubepods.weight is the sum of all its
+children and can easily reach ~3000, while system.weight is default to
+100. The weight configuration can be optimized, but it's another topic.
 
-ROHM BD79124 is a 8-channel, 12-bit ADC. The input pins can also be used
-as general purpose outputs.
+> entities ? some maybe the definition of sched_idle_cpu should be fixed
+> instead
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
----
-Revision history:
-v3 =3D>
- - No changes
-v2 =3D> v3:
- - Restrict channel numbers to 0-7 as suggested by Conor
-RFC v1 =3D> v2:
- - drop MFD and represent directly as ADC
- - drop pinmux and treat all non ADC channel pins as GPOs
----
- .../bindings/iio/adc/rohm,bd79124.yaml        | 114 ++++++++++++++++++
- 1 file changed, 114 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/rohm,bd79124.=
-yaml
+Yes, there are at least two ways to fix it:
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/rohm,bd79124.yaml b/=
-Documentation/devicetree/bindings/iio/adc/rohm,bd79124.yaml
-new file mode 100644
-index 000000000000..503285823376
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/rohm,bd79124.yaml
-@@ -0,0 +1,114 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/adc/rohm,bd79124.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ROHM BD79124 ADC/GPO
-+
-+maintainers:
-+  - Matti Vaittinen <mazziesaccount@gmail.com>
-+
-+description: |
-+  The ROHM BD79124 is a 12-bit, 8-channel, SAR ADC. The ADC supports
-+  an automatic measurement mode, with an alarm interrupt for out-of-window
-+  measurements. ADC input pins can be also configured as general purpose
-+  outputs.
-+
-+properties:
-+  compatible:
-+    const: rohm,bd79124
-+
-+  reg:
-+    description:
-+      I2C slave address.
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  gpio-controller: true
-+
-+  "#gpio-cells":
-+    const: 1
-+    description:
-+      The pin number.
-+
-+  vdd-supply: true
-+
-+  iovdd-supply: true
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+patternProperties:
-+  "^channel@[0-7]+$":
-+    type: object
-+    $ref: /schemas/iio/adc/adc.yaml#
-+    description: Represents ADC channel.
-+
-+    properties:
-+      reg:
-+        description: AIN pin number
-+        minimum: 0
-+        maximum: 7
-+
-+    required:
-+      - reg
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - iovdd-supply
-+  - vdd-supply
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/leds/common.h>
-+    i2c {
-+        #address-cells =3D <1>;
-+        #size-cells =3D <0>;
-+        adc: adc@10 {
-+            compatible =3D "rohm,bd79124";
-+            reg =3D <0x10>;
-+
-+            interrupt-parent =3D <&gpio1>;
-+            interrupts =3D <29 8>;
-+
-+            vdd-supply =3D <&dummyreg>;
-+            iovdd-supply =3D <&dummyreg>;
-+
-+            #address-cells =3D <1>;
-+            #size-cells =3D <0>;
-+
-+            channel@0 {
-+                reg =3D <0>;
-+            };
-+            channel@1 {
-+                reg =3D <1>;
-+            };
-+            channel@2 {
-+                reg =3D <2>;
-+            };
-+            channel@3 {
-+                reg =3D <3>;
-+            };
-+            channel@4 {
-+                reg =3D <4>;
-+            };
-+            channel@5 {
-+                reg =3D <5>;
-+            };
-+            channel@6 {
-+                reg =3D <6>;
-+            };
-+        };
-+    };
---=20
-2.48.1
+  1) Let sched_idle_cpu() depends on a specific task, just like Josh
+     mentioned in the reply of 2nd patch. So if sched_idle_cpu(cpu, p)
+     returns true, then
 
+	a) this rq only contains hierarchical idle tasks, and
+	b) p can preempt current immediately
 
---7FQYMfPmZM+y/XN7
-Content-Type: application/pgp-signature; name="signature.asc"
+     Please see my reply to Josh to check the details.
 
------BEGIN PGP SIGNATURE-----
+  2) Or get rid of sched_idle_cpu() entirely. This needs some careful
+     rework. Now the users of cfs_rq::h_nr_idle are two parts:
 
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfShn0ACgkQeFA3/03a
-ocXYLAgAzblEWxUU32W28Y2HNzrxheKDM7NdLnMpBH9UNB4NZyhrXUbKSW/Y1gaU
-mZaNgM68V919J5zqjPYXV2pJsb0AWkRJC7dQK9aJ+eNyqUHf64otNJXA0zklxc1A
-7TQ6j/NDJj3YkrkdFq1sQ53W5Jzw0w9n6AuJa53f7D5IMPHkUf99JfgN0Orcs/tT
-KqDrBydswg74/wg9/R2tbTnQggm12wr7WpUXldjoKLIdj4vwXe2Ha09WKdx5K4Nk
-PtdDYPw6x4YhapD30qYQtJCvYzfrBZS+J4Yput0rxp4hZkC5ZCkYk4Hj1taBeZOh
-eHZag5NF9w7coZWILxMQjm0B9D4P0w==
-=g/Vg
------END PGP SIGNATURE-----
+	a) select_task_rq, including sched_balance_find_dst_group_cpu()
+	   and select_idle_*(). The former is handled by this series by
+	   simply ignoring sched_idle_cpus, which should be safe since
+	   sched_idle_cpus do not always follow the goal of the slowpath
+	   to find a least loaded cpu to help load balancing. While the
+	   latter is roughly designed as following:
 
---7FQYMfPmZM+y/XN7--
+	   - Must search within target LLC domain, since L3$ miss is
+	     much more costly than L1/L2$
+	   - To use cache more wisely, start searching from the L1/L2$
+	     cache hot cpus like prev/recent_used/..
+	   - Cheers if found an idle cpu that can preempt immediately.
+	     This helps maximize using cpu bandwidth, hence improving
+	     total throughput
+	   - (?)
+	   - Return target anyway, at least it might be cache hot
+
+	   It could be less optimal if simply remove sched_idle_cpu and
+	   return @target if no idle cpu available, because @target can
+	   be heavy loaded and the cache may not hot any longer when the
+	   wakee finally hit cpu. So in order not to fight with the load
+	   balancing, shall we tiebreak on cpu_load() for the non-idle
+	   cpus?
+
+	b) load balance: sched_balance_domains() and dequeue_entities().
+	   We could leave this as-is, but I would propose using h_idle
+	   instead: if the on_cpu task is hierarchically idle when
+	   triggering normal load balancing, then we guess it's a less
+	   loaded cpu and can reduce balance interval. The rationale
+	   behind is that the idle entities usually get very limited
+	   bandwidth if any hierarchically non-idle tasks available.
+	   The heuristics may have false positives which can generally
+	   be divided into 3 cases:
+
+		(The numbers represents hierarchical shares%)
+
+						   C
+		   A		   B		  / \
+		 /  \\		 /  \\		 80  20
+		99    1		50   50		// \
+					      100  (X)
+
+	   - Case A) The hierarchical share of h_idle tasks is indeed
+	     small. So in this case they are just get scheduled to take
+	     some breath, and the possibility of false positive is low
+	     enough to be safely ignored.
+
+	   - Case B) The h_idle & !h_idle tasks equally share bandwidth
+	     which usually means the !h_idle part becomes less loaded
+	     and pulling some load might be preferred.
+
+	   - Case C) The hierarchical share of h_idle tasks dominates
+	     which usually means their !h_idle parents are allowed to
+	     use a big portion of bandwidth. In this case speedup the
+	     balance is still fine because we could pull some !h_idle
+	     tasks for the most 'important' cgroup.
+
+	   So the heuristics of using rq->curr's h_idle to judge the need
+	   of pulling (load balancing) seems fine.
+
+     And as a result cfs_rq::h_nr_idle can be removed and its maintenance
+     cost in hotpath can be saved.
+
+Which way do you prefer? It would be much appreciated if you can shed some
+light on this.
+
+> 
+> a sched_idle_cpu should be preempted immediately otherwise it's not a
+> sched idle cpu and the definition is meaningless
+
+Agree.
+
+Thanks!
+	Abel
+
 
