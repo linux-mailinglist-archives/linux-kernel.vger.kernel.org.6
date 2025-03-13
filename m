@@ -1,222 +1,89 @@
-Return-Path: <linux-kernel+bounces-559032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C747A5EE92
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:55:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFBE0A5EE8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:54:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 258827A8B35
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:54:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E01F16D982
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B30E263886;
-	Thu, 13 Mar 2025 08:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B59262D35;
+	Thu, 13 Mar 2025 08:54:45 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14BB1BDCF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DAF1FBE86
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741856095; cv=none; b=obHYHwa53XMdQR1yqwrmh318xcHOKUDv2TciwXBowWO/N1/ibLE22JaY3S2kfMICBt0m35o91V00r/zHpa7mqC7bKD708gqXBc6ZZQhssT7k8dWaT7XjLRbGaiwr1EmMYr44rzWitbrkiCqjHBNVY3eQY/depzP8PZUvBFLNQIY=
+	t=1741856085; cv=none; b=NwaryNdiwRx8YqX1vLqm97liA6Ig8YzxXyXu3b7dbIV543poM4+67TETGeo/WKjOAwi0RHoodNt7XJmQOt9/Z6Cf1iYzDLavLXqLu2TyaFzsw3gjSk6oNzlvIKfuKbOYMCEP7OQsSkYQcTHAc/ncD5/LJgLBJex6eiBRcTSeYmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741856095; c=relaxed/simple;
-	bh=z4kFVAh8ZwdeetGifHupttht3HiRwRg8if5+O9Ubfv4=;
+	s=arc-20240116; t=1741856085; c=relaxed/simple;
+	bh=Mtsg04ahUEYyeV5JwVGj733jmCr9/jhyx/vmXj0i19o=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=vDodm/l2xbu/+/AUy6SRqBYEctZcij/peW8LOWngBGzBr0p1DNL7QOvyOTsYypeaY1lAIjgZ+NTxN5jvz6yLko4rGk8bkjFWyfCf+W4SDUE+zOA9wtwrJ/FUIPa6GngZNunJzD7uEgBxEIxnpEkUesREH5T/puXMGN+QU5lvyVg=
+	 Content-Type:MIME-Version; b=Ub05ffKyEtXqHi+BMNb2hlMr5bZI2VJopDkmFb3F+AWKM3DGk7GSCg59BrNCpPB4K5uC4lDOir+AfSVK1o6+/1dzUnO1+K7Ek0kBeGwZe7/3CbeHgigijUtzdTE5VTrLKUor5wF2fpCtzZfmGwHGLzmZII8PjqSyqFgEF0HflhE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1tseKg-00021i-Us; Thu, 13 Mar 2025 09:54:26 +0100
-Message-ID: <b425a7c7a7d6508daf23fe7046864a498029a7ac.camel@pengutronix.de>
-Subject: Re: [PATCH v1 2/2] PCI: imx6: Use domain number replace the
- hardcodes
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Hongxing Zhu <hongxing.zhu@nxp.com>, Bjorn Helgaas <helgaas@kernel.org>,
-  "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>,  "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "shawnguo@kernel.org" <shawnguo@kernel.org>,  "lpieralisi@kernel.org"
- <lpieralisi@kernel.org>, "kw@linux.com" <kw@linux.com>, 
- "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
- "bhelgaas@google.com" <bhelgaas@google.com>,  "s.hauer@pengutronix.de"
- <s.hauer@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,  "kernel@pengutronix.de"
- <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Date: Thu, 13 Mar 2025 09:54:25 +0100
-In-Reply-To: <Z9GYm/jp9VIhCEeY@lizhi-Precision-Tower-5810>
-References: 
-	<AS8PR04MB8676E66BD40C37B2A7E390178CD12@AS8PR04MB8676.eurprd04.prod.outlook.com>
-	 <20250311155452.GA629749@bhelgaas>
-	 <DU2PR04MB8677AC699DF11D847AB768708CD02@DU2PR04MB8677.eurprd04.prod.outlook.com>
-	 <fcb5f09f8e4311c7a6ef60aaf3cb4e3f05a8f05e.camel@pengutronix.de>
-	 <Z9GYm/jp9VIhCEeY@lizhi-Precision-Tower-5810>
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tseKr-00025H-Ib; Thu, 13 Mar 2025 09:54:37 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tseKr-005VRu-10;
+	Thu, 13 Mar 2025 09:54:37 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tseKr-00041e-0i;
+	Thu, 13 Mar 2025 09:54:37 +0100
+Message-ID: <a37615a87d242df0ad858e3926f33e4246bc00ef.camel@pengutronix.de>
+Subject: Re: [PATCH v5 0/8] imx8mp: Add support to Run/Stall DSP via reset
+ API
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, Daniel Baluta
+	 <daniel.baluta@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, shawnguo@kernel.org, 
+ devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ conor+dt@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+ festevam@gmail.com, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, andersson@kernel.org,
+ Frank.Li@nxp.com,  peng.fan@nxp.com, laurentiu.mihalcea@nxp.com,
+ iuliana.prodan@nxp.com,  shengjiu.wang@nxp.com
+Date: Thu, 13 Mar 2025 09:54:37 +0100
+In-Reply-To: <Z9BkbVHlx60VFD7q@p14s>
+References: <20250311085812.1296243-1-daniel.baluta@nxp.com>
+	 <Z9BkbVHlx60VFD7q@p14s>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Am Mittwoch, dem 12.03.2025 um 10:22 -0400 schrieb Frank Li:
-> On Wed, Mar 12, 2025 at 09:28:02AM +0100, Lucas Stach wrote:
-> > Am Mittwoch, dem 12.03.2025 um 04:05 +0000 schrieb Hongxing Zhu:
-> > > > -----Original Message-----
-> > > > From: Bjorn Helgaas <helgaas@kernel.org>
-> > > > Sent: 2025=E5=B9=B43=E6=9C=8811=E6=97=A5 23:55
-> > > > To: Hongxing Zhu <hongxing.zhu@nxp.com>
-> > > > Cc: robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
-> > > > shawnguo@kernel.org; l.stach@pengutronix.de; lpieralisi@kernel.org;
-> > > > kw@linux.com; manivannan.sadhasivam@linaro.org; bhelgaas@google.com=
-;
-> > > > s.hauer@pengutronix.de; festevam@gmail.com; devicetree@vger.kernel.=
-org;
-> > > > linux-pci@vger.kernel.org; imx@lists.linux.dev; kernel@pengutronix.=
-de;
-> > > > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> > > > Subject: Re: [PATCH v1 2/2] PCI: imx6: Use domain number replace th=
-e
-> > > > hardcodes
-> > > >=20
-> > > > On Tue, Mar 11, 2025 at 01:11:04AM +0000, Hongxing Zhu wrote:
-> > > > > > -----Original Message-----
-> > > > > > From: Bjorn Helgaas <helgaas@kernel.org>
-> > > > > > Sent: 2025=E5=B9=B43=E6=9C=8810=E6=97=A5 23:11
-> > > > > > To: Hongxing Zhu <hongxing.zhu@nxp.com>
-> > > > > > Cc: robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
-> > > > > > shawnguo@kernel.org; l.stach@pengutronix.de; lpieralisi@kernel.=
-org;
-> > > > > > kw@linux.com; manivannan.sadhasivam@linaro.org;
-> > > > bhelgaas@google.com;
-> > > > > > s.hauer@pengutronix.de; festevam@gmail.com;
-> > > > > > devicetree@vger.kernel.org; linux-pci@vger.kernel.org;
-> > > > > > imx@lists.linux.dev; kernel@pengutronix.de;
-> > > > > > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.=
-org
-> > > > > > Subject: Re: [PATCH v1 2/2] PCI: imx6: Use domain number replac=
-e the
-> > > > > > hardcodes
-> > > > > >=20
-> > > > > > On Wed, Feb 26, 2025 at 10:42:56AM +0800, Richard Zhu wrote:
-> > > > > > > Use the domain number replace the hardcodes to uniquely ident=
-ify
-> > > > > > > different controller on i.MX8MQ platforms. No function change=
-s.
-> > > > > > >=20
-> > > > > > > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> > > > > > > ---
-> > > > > > > =C2=A0drivers/pci/controller/dwc/pci-imx6.c | 14 ++++++------=
---
-> > > > > > > =C2=A01 file changed, 6 insertions(+), 8 deletions(-)
-> > > > > > >=20
-> > > > > > > diff --git a/drivers/pci/controller/dwc/pci-imx6.c
-> > > > > > > b/drivers/pci/controller/dwc/pci-imx6.c
-> > > > > > > index 90ace941090f..ab9ebb783593 100644
-> > > > > > > --- a/drivers/pci/controller/dwc/pci-imx6.c
-> > > > > > > +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> > > > > > > @@ -41,7 +41,6 @@
-> > > > > > > =C2=A0#define IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE	BIT(11)
-> > > > > > > =C2=A0#define IMX8MQ_GPR_PCIE_VREG_BYPASS		BIT(12)
-> > > > > > > =C2=A0#define IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE	GENMASK(11,
-> > > > 8)
-> > > > > > > -#define IMX8MQ_PCIE2_BASE_ADDR			0x33c00000
-> > > > > > >=20
-> > > > > > > =C2=A0#define IMX95_PCIE_PHY_GEN_CTRL			0x0
-> > > > > > > =C2=A0#define IMX95_PCIE_REF_USE_PAD			BIT(17)
-> > > > > > > @@ -1474,7 +1473,6 @@ static int imx_pcie_probe(struct
-> > > > > > > platform_device
-> > > > > > *pdev)
-> > > > > > > =C2=A0	struct dw_pcie *pci;
-> > > > > > > =C2=A0	struct imx_pcie *imx_pcie;
-> > > > > > > =C2=A0	struct device_node *np;
-> > > > > > > -	struct resource *dbi_base;
-> > > > > > > =C2=A0	struct device_node *node =3D dev->of_node;
-> > > > > > > =C2=A0	int i, ret, req_cnt;
-> > > > > > > =C2=A0	u16 val;
-> > > > > > > @@ -1515,10 +1513,6 @@ static int imx_pcie_probe(struct
-> > > > > > platform_device *pdev)
-> > > > > > > =C2=A0			return PTR_ERR(imx_pcie->phy_base);
-> > > > > > > =C2=A0	}
-> > > > > > >=20
-> > > > > > > -	pci->dbi_base =3D devm_platform_get_and_ioremap_resource(pd=
-ev,
-> > > > 0,
-> > > > > > &dbi_base);
-> > > > > > > -	if (IS_ERR(pci->dbi_base))
-> > > > > > > -		return PTR_ERR(pci->dbi_base);
-> > > > > >=20
-> > > > > > This makes me wonder.
-> > > > > >=20
-> > > > > > IIUC this means that previously we set controller_id to 1 if th=
-e
-> > > > > > first item in devicetree "reg" was 0x33c00000, and now we will =
-set
-> > > > > > controller_id to 1 if the devicetree "linux,pci-domain" propert=
-y is 1.
-> > > > > > This is good, but I think this new dependency on the correct
-> > > > > > "linux,pci-domain" in devicetree should be mentioned in the com=
-mit log.
-> > > > > >=20
-> > > > > > My bigger worry is that we no longer set pci->dbi_base at all. =
- I
-> > > > > > see that the only use of pci->dbi_base in pci-imx6.c was to
-> > > > > > determine the controller_id, but this is a DWC-based driver, an=
-d the
-> > > > > > DWC core certainly uses
-> > > > > > pci->dbi_base.  Are we sure that none of those DWC core paths a=
-re
-> > > > > > important to pci-imx6.c?
-> > > > > Hi Bjorn:
-> > > > > Thanks for your concerns.
-> > > > > Don't worry about the assignment of pci->dbi_base.
-> > > > > If pci-imx6.c driver doesn't set it. DWC core driver would set it=
- when
-> > > > > =C2=A0dw_pcie_get_resources() is invoked.
-> > > >=20
-> > > > Great, thanks!  Maybe we can amend the commit log to mention that a=
-nd
-> > > > the new "linux,pci-domain" dependency.
-> > > How about the following updates of the commit log?
-> > >=20
-> > > Use the domain number replace the hardcodes to uniquely identify
-> > > different controller on i.MX8MQ platforms. No function changes.
-> > > Please make sure the " linux,pci-domain" is set for i.MX8MQ correctly=
-, since
-> > > =C2=A0the controller id is relied on it totally.
-> > >=20
-> > This breaks running a new kernel on an old DT without the
-> > linux,pci-domain property, which I'm absolutely no fan of. We tried
-> > really hard to keep this way around working in the i.MX world.
->=20
-> 8MQ already add linux,pci-domain since Jan, 2021
->=20
-> commit c0b70f05c87f3b09b391027c6f056d0facf331ef
-> Author: Peng Fan <peng.fan@nxp.com>
-> Date:   Fri Jan 15 11:26:57 2021 +0800
->=20
-> Only missed is pcie-ep side, which have not been used at all boards dts
-> file in upstream.
+Hi Mathieu,
 
-I wasn't aware of this. 2021 is quite a while ago, so I suspect that
-nobody is going to run a new kernel with a DT this old. I retract my
-objection.
+On Di, 2025-03-11 at 10:27 -0600, Mathieu Poirier wrote:
+> Thanks for the re-spin.  I will wait for Shawn and Sascha to review their
+> respective bits before picking up this set.
 
-Regards,
-Lucas
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+for merging the whole series via rproc.
+
+regards
+Philipp
 
