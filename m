@@ -1,171 +1,127 @@
-Return-Path: <linux-kernel+bounces-560288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96407A601B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:58:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E60A601B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:00:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2C8319C1B61
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:58:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6AD19C5382
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518DB1F4169;
-	Thu, 13 Mar 2025 19:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1BF1F418B;
+	Thu, 13 Mar 2025 20:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ldIsv9ef"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="VpQH5icP"
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED30EADA;
-	Thu, 13 Mar 2025 19:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0ED1F417E
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 20:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741895914; cv=none; b=fCrup6f21AKhkeXcCkaloA6BXno8W3tVqWEq2tEdEIwGEm0tnmwGtMLynNhk6xggS7vrMKnfhMkOBp01ujEzmbDQWCYOIsFmxIeuzKrpSGngUgACQcM6yZVC/Pb5kDV3HH//yisL+qW0gIbXAeIGR5YzP3MKalZVokPU1ytycsw=
+	t=1741896005; cv=none; b=rRHQnzkor/W6mgNlWVcjAEULJ4IT/ILuVcsm6KUJaqK0zk5dGk6bZiTXvXCzUIV6Oe1+lpvB/3MxLu/nY2G4WcmbhUmI4BHr9GBYkqD320tyEXFFXIm7FTwJL5nDuUoChegjHcR96XbkhHy3aKrpmpN7z7GCnnpN/Y8OocQtAts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741895914; c=relaxed/simple;
-	bh=DYc4V0dV0L0bru9dNz6I4X8FiM0jnOWw5XEeeV3iSLE=;
+	s=arc-20240116; t=1741896005; c=relaxed/simple;
+	bh=8FPGb/YadvHr8SNwanMMuST8IvaIB2I6i5+G0qB8Vwk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XbsLy/efNShRs+H/U0y1Rqlll9X4fy+zM6xjcvjraxedtUGI30Gsyj3btDa3SeIdUbvs6MuW5xHdd3NKLHuhN/+4bHIF56Vz/cSBEp6bY/yUJZ9biVJwQqfXHCrxDftns8AV0RKSzvXNULq0thnwv9Ln6hCK4D5lDSZTzCc7Idk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ldIsv9ef; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741895913; x=1773431913;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=DYc4V0dV0L0bru9dNz6I4X8FiM0jnOWw5XEeeV3iSLE=;
-  b=ldIsv9efbig1QSAjQLjmiXuLs5e3Ho+Ik8mzUvYkRzrVBWZY+U+KmJJ1
-   mA1Wo+vRDstLytYsOkOrK9cJwL+LUTvoqZ42JpwH99xxyFDNrqlaxiJXL
-   aAplxiA/3qwdNlpQCsaa3MWLasKnGSoZJaSiDU9JCtBQQqn3KANk7IEIe
-   uy2+9pWR/FjTCrQQkSsGOTfwlF/Roke3s8INdUs0cUOnKv/EMkPUDztKX
-   Nmv+fBepNKFYxXzHdUXuVDuO/c+4ZNHBVjXwWhVz/KffeDsStOf+5d9N2
-   5CS1u5QRLAA0v4EnCoxVVMuLybtWPoSqR7BBDSLVNHOrni7T93CBZS5mI
-   w==;
-X-CSE-ConnectionGUID: v6PtWAHmSDOKkp3yJU19eQ==
-X-CSE-MsgGUID: CYSIcQd1T6SlvoT1aQD7rA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="53670841"
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="53670841"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 12:58:32 -0700
-X-CSE-ConnectionGUID: 7XCm7Sv/RPibPi302npB+Q==
-X-CSE-MsgGUID: cE08E2m/SBio8NW1WX0X5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="126235700"
-Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.108.86]) ([10.125.108.86])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 12:58:31 -0700
-Message-ID: <ac3720e3-2fa4-4fb5-9344-ae31f1a6643f@intel.com>
-Date: Thu, 13 Mar 2025 12:58:30 -0700
+	 In-Reply-To:Content-Type; b=ahy/zaAlCOz2840hGEX59NmBeNI31wBrWXmqAMjzJh54LJy83XBABRBbzj8Dq9q3YpU2tL+sFtEMTW0Ej+D9LOa5lg+Tn7g5QEFcd60GUT6Nr9SWig/24GoCOip+XQvwun7K+WZ8PiH0oJBrGWKKHEcwC64Xfg3KKhGyylmNOW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=VpQH5icP; arc=none smtp.client-ip=185.136.65.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20250313195955aff4238d474db45646
+        for <linux-kernel@vger.kernel.org>;
+        Thu, 13 Mar 2025 20:59:56 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=diogo.ivo@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=NDfjYY/U1OQvpRpujwRTPoXFd7EYoHPyoCvKTvmLJiU=;
+ b=VpQH5icPDynYf8fghHSeGSrUCiPCMjOiAxrCgKIAwXq25nqoSQXEcQQo3DeNLJmYLvITDX
+ Msh+7cSmLHIz9IRbl57ffJcXVAiAUKTjuKtb5kkhP7fzybZqBhb4ZxaBAubk+T0rIbroJVRv
+ zWqcPCHJ31Qi87s6KzYw2xvrOEz0FJoxsiXa9JJx1w5L/C4awSTGfjknonfuVIrNbKuGLgRH
+ 0u4HpxkCBZdh1jvMfMqwDTzYGtuBx92AogEhgvaZSnxP1ZuIPbTAWnXldGUSDOL63NcVqNT7
+ /8ngKNORoY4xRIsfCKMiZMt6OmsxH4aFx/QXFpDufPyk2TEVi7xhKh9Q==;
+Message-ID: <b842cfe5-f4ee-435b-acbd-6bc24069bcc1@siemens.com>
+Date: Thu, 13 Mar 2025 19:59:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 0/2] acpi/ghes, cper, cxl: Process CXL CPER Protocol
- errors
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Yazen Ghannam <yazen.ghannam@amd.com>, Terry Bowman <terry.bowman@amd.com>,
- "Luck, Tony" <tony.luck@intel.com>, Li Ming <ming.li@zohomail.com>
-References: <20250310223839.31342-1-Smita.KoralahalliChannabasappa@amd.com>
+Subject: Re: [PATCH v2 2/2] ACPI: PNP: Add Intel OC Watchdog IDs to non-PNP
+ device list
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>,
+ Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ jan.kiszka@siemens.com, benedikt.niedermayr@siemens.com
+References: <20250312-ivo-intel_oc_wdt-v2-0-52d09738cd0b@siemens.com>
+ <20250312-ivo-intel_oc_wdt-v2-2-52d09738cd0b@siemens.com>
+ <CAJZ5v0iBcxGcqp88kHN64WddvmC-y6F1XaFeSNHFYuQnayg7dQ@mail.gmail.com>
+ <63e69331-bb8f-45f6-adb8-872f594fa02e@siemens.com>
+ <CAJZ5v0ij0UyLr+tBBia-M4Y7grs+w3fhxnuvRCh67YXPe3h=ig@mail.gmail.com>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250310223839.31342-1-Smita.KoralahalliChannabasappa@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Diogo Ivo <diogo.ivo@siemens.com>
+In-Reply-To: <CAJZ5v0ij0UyLr+tBBia-M4Y7grs+w3fhxnuvRCh67YXPe3h=ig@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1328357:519-21489:flowmailer
 
+On 3/13/25 3:29 PM, Rafael J. Wysocki wrote:
+> Hi,
+> 
+> On Thu, Mar 13, 2025 at 11:28 AM Diogo Ivo <diogo.ivo@siemens.com> wrote:
+>>
+>> Hi Rafael,
+>>
+>> On 3/12/25 7:31 PM, Rafael J. Wysocki wrote:
+>>> On Wed, Mar 12, 2025 at 4:46 PM Diogo Ivo <diogo.ivo@siemens.com> wrote:
+>>>>
+>>>> With the kernel having an ACPI driver for these watchdog devices add
+>>>> their IDs to the known non-PNP device list. Note that this commit is
+>>>> not a complete list of all the possible watchdog IDs.
+>>>>
+>>>> Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
+>>>> ---
+>>>>    drivers/acpi/acpi_pnp.c | 2 ++
+>>>>    1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/drivers/acpi/acpi_pnp.c b/drivers/acpi/acpi_pnp.c
+>>>> index 01abf26764b00c86f938dea2ed138424f041f880..3f5a1840f573303c71f5d579e32963a5b29d2587 100644
+>>>> --- a/drivers/acpi/acpi_pnp.c
+>>>> +++ b/drivers/acpi/acpi_pnp.c
+>>>> @@ -355,8 +355,10 @@ static bool acpi_pnp_match(const char *idstr, const struct acpi_device_id **matc
+>>>>     * device represented by it.
+>>>>     */
+>>>>    static const struct acpi_device_id acpi_nonpnp_device_ids[] = {
+>>>> +       {"INT3F0D"},
+>>>>           {"INTC1080"},
+>>>>           {"INTC1081"},
+>>>> +       {"INTC1099"},
+>>>>           {""},
+>>>>    };
+>>>>
+>>>>
+>>>> --
+>>>
+>>> Is there a particular reason for this patch?
+>>
+>> Yes, since the ACPI tables for these watchdogs have both a PNP0C02 CID and
+>> and then an HID (such as INT3F0D or INTC1099) without this patch the driver
+>> in patch 01 will not bind to the device because PNP will bind to it first.
+>> My understanding is that this table was added to solve exactly this problem
+>> so I added these HIDs here, but if this is wrong and I misunderstood
+>> please let me know.
+> 
+> You are right, but the above information is missing from the
+> changelog.  Please add it there.
 
+I'll add it and send v3 after receiving feedback on the other patch in
+the series.
 
-On 3/10/25 3:38 PM, Smita Koralahalli wrote:
-> This patchset adds logging support for CXL CPER endpoint and port Protocol
-> errors.
-> 
-> Based on top of cxl-next.
-
-Applied to cxl/next with change suggested by Ming.
-
-
-> 
-> Link to v7:
-> https://lore.kernel.org/linux-cxl/20250226221157.149406-1-Smita.KoralahalliChannabasappa@amd.com
-> 
-> Changes in v7 -> v8:
-> [Yazen]: Moved guard() after !pdev check.
-> [Ira]: Included ras.o in test build file.
-> [Alison]: Naming consistency: devname -> device, parent -> host.
-> 
-> Changes in v6 -> v7:
-> Reworked to move registration and protocol error handling into a new
-> file inside CXL core. (cxl/core/ras.c).
-> 
-> Changes in v5 -> v6:
-> [Dave, Jonathan, Ira]: Reviewed-by tags.
-> [Dave]: Check for cxlds before assigning fe.
-> Merge one of the patches (Port error trace logging) from Terry's Port
-> error handling.
-> Rename host -> parent.
-> 
-> Changes in v4 -> v5:
-> [Dave]: Reviewed-by tags.
-> [Jonathan]: Remove blank line.
-> [Jonathan, Ira]: Change CXL -> "CXL".
-> [Ira]: Fix build error for CONFIG_ACPI_APEI_PCIEAER.
-> 
-> Changes in v3 -> v4:
-> [Ira]: Use memcpy() for RAS Cap struct.
-> [Jonathan]: Commit description edits.
-> [Jonathan]: Use separate work registration functions for protocol and
-> component errors.
-> [Jonathan, Ira]: Replace flags with separate functions for port and
-> device errors.
-> [Jonathan]: Use goto for register and unregister calls.
-> 
-> Changes in v2 -> v3:
-> [Dan]: Define a new workqueue for CXL CPER Protocol errors and avoid
-> reusing existing workqueue which handles CXL CPER events.
-> [Dan] Update function and struct names.
-> [Ira] Don't define common function get_cxl_devstate().
-> [Dan] Use switch cases rather than defining array of structures.
-> [Dan] Pass the entire cxl_cper_prot_err struct for CXL subsystem.
-> [Dan] Use pr_err_ratelimited().
-> [Dan] Use AER_ severities directly. Don't define CXL_ severities.
-> [Dan] Limit either to Device ID or Agent Info check.
-> [Dan] Validate size of RAS field matches expectations.
-> 
-> Changes in v2 -> v1:
-> [Jonathan] Refactor code for trace support. Rename get_cxl_dev()
-> to get_cxl_devstate().
-> [Jonathan] Cleanups for get_cxl_devstate().
-> [Alison, Jonathan]: Define array of structures for Device ID and Serial
-> number comparison.
-> [Dave] p_err -> rec/p_rec.
-> [Jonathan] Remove pr_warn.
-> 
-> Smita Koralahalli (2):
->   acpi/ghes, cxl/pci: Process CXL CPER Protocol Errors
->   cxl/pci: Add trace logging for CXL PCIe Port RAS errors
-> 
->  drivers/acpi/apei/ghes.c  |  49 +++++++++++++++
->  drivers/cxl/core/Makefile |   1 +
->  drivers/cxl/core/core.h   |   3 +
->  drivers/cxl/core/port.c   |   7 +++
->  drivers/cxl/core/ras.c    | 123 ++++++++++++++++++++++++++++++++++++++
->  drivers/cxl/core/trace.h  |  47 +++++++++++++++
->  include/cxl/event.h       |  15 +++++
->  tools/testing/cxl/Kbuild  |   1 +
->  8 files changed, 246 insertions(+)
->  create mode 100644 drivers/cxl/core/ras.c
-> 
-
+Best regards,
+Diogo
 
