@@ -1,236 +1,165 @@
-Return-Path: <linux-kernel+bounces-559599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B19A5F5F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:29:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C4EA5F5F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:30:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E11D17A37CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:27:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60E5C3BB544
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA14267B00;
-	Thu, 13 Mar 2025 13:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D195267B09;
+	Thu, 13 Mar 2025 13:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JB0Fw2dn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LUOQWDVp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82752641FD
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6463B267721;
+	Thu, 13 Mar 2025 13:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741872524; cv=none; b=u5BbCV8Gan1vRMRpDGloOTf3yx4s+JV5tm5oTzLCDyoYtIhcmvUkfw5fZMml4VJrVSr5D5Ct2a2R1X43hTF7+I+aCKeW0ZnW7FCE3Uz2h4iL6EcIGzwMB24g5vNy8bxcUGgg/q7vFW6DTEHSVDp1hEu40r9CfHeKbX7xGtx3Nxo=
+	t=1741872590; cv=none; b=buS6rXhtfyorUufdFA9R1AAsEgzUeczMGhUkc/x/rscN9k9g/HUhimL6xRzBWz2i9C7Oe+uT2dhZ6XQlW4+98Cf5aYTsQTK41mqyO23mEWUXn9MZ4v/V8DZOR4Bx+uJmDFmj4U/2d2BVSx8CgNLIFXstajIdMIfoAczJ0rDLyok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741872524; c=relaxed/simple;
-	bh=iqxmpqxwezW/E0wQ2/ag0wQd5oigAqsm5H9ZXnRt95Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IcMLeVNhlgXstz1WgXP2wDrQqoI8noPUh9HW94AOodAuF4MpsRcd2vBkE5DJqiT7HuYEdjQaI8sA2sMSYbfxMOgXi5MGkZ7GBOjvP8/uvrj3QWBpmnCOIH1yXTTngdMOAMkxlp4z7zTu09N8YDf0TW7URz3Ehjwlp84NgNgr2bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JB0Fw2dn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C56EC4CEEE;
-	Thu, 13 Mar 2025 13:28:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741872523;
-	bh=iqxmpqxwezW/E0wQ2/ag0wQd5oigAqsm5H9ZXnRt95Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JB0Fw2dnKEi8allw1f9x9jy6Rklb2BEA5hll8CoHT4vJeaooCf11PN0qFIytQpemr
-	 WPH85qa4jn6kTjVQ+DmDVCiddEGsJEkt/7s3ZgSMQl5wbl48zC9knG0Raw4/Yb/QHn
-	 Gjy82N3arJDKlQOH1eftxrDNTJq8DieQKgAR3WKDckWww6jSmPTVwwkOGM/jNCV6J/
-	 6bmVORSGSZfEXyEpP/4HgPNPHT8t4rTISecLCP0g2hCrrfVEG6go/2up2M/wCyEXRA
-	 7O6gLnXzXSSKaZ/Ygfxg7523qo+5M4VMVE09vC+h4K9qb5Q4XwE+44GvC2GlRXpoU5
-	 wiSTyhJyDMWZw==
-Message-ID: <27cf6dab-da29-458a-b376-4013c05434ab@kernel.org>
-Date: Thu, 13 Mar 2025 14:28:36 +0100
+	s=arc-20240116; t=1741872590; c=relaxed/simple;
+	bh=3R5NqPG75eCifry1xE8jCo+Ba/RPNsND3Th6ewF0DW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mbJBe+/PMZmtXxKsJhn18ZUxwtkuvjw6WbOJVK15ot0cM6E8aRcpx8cvDpAXWdoLqojrWFy+QexSMiL2HEx4Fd9h4XW+FA8tbPNPiATRpf6fVFsB00c5giWV6Ql4ehLdZLW2mFKIe+CRNE+CN70NxFgEb6xGRopk+tre5M+qo/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LUOQWDVp; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741872588; x=1773408588;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3R5NqPG75eCifry1xE8jCo+Ba/RPNsND3Th6ewF0DW8=;
+  b=LUOQWDVpcOi8PI2qbyByY+2qScKBOOZtthpREA7utobv+e4OSJ9vhNSy
+   pYTVOP2t+jxFIuYYwDYJ8rF7EujzPCkqTyjUwbwv1AALqiB5O5vO5InMp
+   Sr1Ij9n8iQoe1rHbCS7orbAiFaCcnpPdld8YplDbk/ZSiYbedVwldkH13
+   4K756Ohf1jMeQ+rx7Zu9U+QMd9Tw+jcy0O8o/W5u58Nsn/Y0W7RoN7/aB
+   Mlvpqqtr9Isa/ebhOt5eQ5EddubBZhhN6WQhY1KNoEdz4MOca5RO4sax0
+   BNvSwae4hDe49XBZEqxYoHT9vpTgpuCvIMZop4JjI8IpDZrT82sPKe0PZ
+   Q==;
+X-CSE-ConnectionGUID: AmIDVn6mT9Sd1lrJ62tyPQ==
+X-CSE-MsgGUID: v/kLCct7RkyfoMQuyGhNrg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="43119151"
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="43119151"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 06:29:47 -0700
+X-CSE-ConnectionGUID: 04qS8wQPRn6wZVe4oTPTzg==
+X-CSE-MsgGUID: 4xEfR6NSTcGJ84TSNnC6hg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="120669500"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 06:29:42 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tsid0-00000002BNc-0muS;
+	Thu, 13 Mar 2025 15:29:38 +0200
+Date: Thu, 13 Mar 2025 15:29:37 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Guillaume Stols <gstols@baylibre.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v7 03/10] iio: adc: add helpers for parsing ADC nodes
+Message-ID: <Z9LdwUVBOEx-Tbvr@smile.fi.intel.com>
+References: <cover.1741849323.git.mazziesaccount@gmail.com>
+ <c8899e8c535a1d93cd7588b7c160eb0fae5d26d2.1741849323.git.mazziesaccount@gmail.com>
+ <Z9LQFqSweiV-zT3b@smile.fi.intel.com>
+ <bca95d63-fb6e-4d6c-8ab6-df67f0e697e6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: mailbox: cix: add device tree binding
- documentation.
-To: Guomin Chen <guomin.chen@cixtech.com>,
- Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
- Peter Chen <peter.chen@cixtech.com>, Lihua Liu <Lihua.Liu@cixtech.com>
-References: <20250313132405.742360-1-guomin.chen@cixtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250313132405.742360-1-guomin.chen@cixtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bca95d63-fb6e-4d6c-8ab6-df67f0e697e6@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 13/03/2025 14:24, Guomin Chen wrote:
-> From: Guomin Chen <Guomin.Chen@cixtech.com>
+On Thu, Mar 13, 2025 at 03:17:27PM +0200, Matti Vaittinen wrote:
+> On 13/03/2025 14:31, Andy Shevchenko wrote:
+> > On Thu, Mar 13, 2025 at 09:18:18AM +0200, Matti Vaittinen wrote:
+
+...
+
+> > > +	num_chan = iio_adc_device_num_channels(dev);
+> > > +	if (num_chan < 1)
+> > > +		return num_chan;
+> > 
+> > This is really interesting code. So, if the above returns negative error code,
+> > we return it, if it returns 0, we return success (but 0 channels)?
 > 
-> This patch adds device tree binding for mailbox from Cixtech.
+> Yes. I don't think it's that interesting though. Checking the devicetree
+> succeeded while no channels were found. I think returning 0 is very much
+> aligned with this.
 
-Please do not use "This commit/patch/change", but imperative mood. See
-longer explanation here:
-https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+Right, but as I suggested, let's follow already established APIs that return
+-ENOENT and never 0 in similar cases.
 
-A nit, subject: drop second/last, redundant "device tree binding
-documentation.". The "dt-bindings" prefix is already stating that these
-are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
-Also, no full stop in the subject.
-
+> > Shouldn't we do *cs = NULL; at the case of 0 channels if it's a success?
 > 
-> Reviewed-by: Peter Chen <peter.chen@cixtech.com>
-> Signed-off-by: Lihua Liu <Lihua.Liu@cixtech.com>
-> Signed-off-by: Guomin Chen <Guomin.Chen@cixtech.com>
-> ---
->  .../bindings/mailbox/cix-mailbox.yaml         | 74 +++++++++++++++++++
-
-Filename matching compatible.
-
->  1 file changed, 74 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/cix-mailbox.yaml
+> I suppose you're right.
 > 
-> diff --git a/Documentation/devicetree/bindings/mailbox/cix-mailbox.yaml b/Documentation/devicetree/bindings/mailbox/cix-mailbox.yaml
-> new file mode 100644
-> index 000000000000..85cb54ae2e79
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mailbox/cix-mailbox.yaml
-> @@ -0,0 +1,74 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mailbox/cix-mailbox.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Cix mailbox controller
-> +
-> +maintainers:
-> +  - Lihua Liu <Lihua.Liu@cixtech.com>
-> +
-> +description:
-> +  CIX mailbox controller is used to exchange message within
-> +  multiple processors, such as AP, AUDIO DSP, SensorHub MCU,
-> +  etc. It supports 10 mailbox channels with different operating
-> +  mode and every channel is unidirectional.
+> But, as you pointed out in review of the 05/10:
+> > Usually in other similar APIs we return -ENOENT. And user won't need
+> > to have an additional check in case of 0 being considered as an error
+> > case too.
+> 
+> I don't know whether to agree with you here. For majority of the ADC
+> drivers, having no channels in devicetree is indeed just another error,
+> which I think is not in any ways special.
 
-uni but configurable or each channel has specific direction?
+So...? (I see below your answer :-)
 
-> +
-> +properties:
-> +  compatible:
-> +    const: cix,sky1-mbox
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  "#mbox-cells":
-> +    description: |
-> +      <&phandle channel>
-> +      phandle   : Label name of controller
-> +      channel   : Channel number
+> However, for 33,3333% of the users added in this patch, the "no channels
+> found" is not really an error condition ;) The BD79124 could have all
+> channels used for GPO - although this would probably be very very unusual.
+> (Why buying an ADC chip if you need just a GPO?). Still, this wouldn't be an
+> error. (And I need to handle this better in BD79124 probe - so thanks).
 
-Drop above and explain what the cell argument is.
+ENOENT check is again established for optional/not_found cases.
 
-> +
-> +      This controller supports three types of unidirectional channels, they are
-> +      1 register based channel, 1 fifo based channel and 8 fast channels.
-> +      A total of 10 channels for each controller. Following types are
-> +      supported:
-> +      channel 0_7 - Fast channel with 32bit transmit register and IRQ support.
-> +      channel 8   - Reg based channel with 32*32bit transsmit register and
-> +                    Doorbell+transmit acknowledgment IRQ support
-> +      channel 9   - Fifo based channel with 32*32bit depth fifo and IRQ support.
-> +    const: 1
-> +
-> +  cix,mbox-dir:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: Direction of the mailbox (0:TX or 1:RX)
-> +    enum: [0, 1]
+> > (Under success I assume that returned values are okay to go with, and cs in
+> > your case will be left uninitialised or contain something we don't control.
+> 
+> I see your point although I wouldn't be concerned with cs not being NULL for
+> as long as number of channels is zero.
+> 
+> Anyway, I think it makes sense to simplify ~67% of callers by returning
+> -ENODEV if there is no channels. The remaining ~33% can then check for the
+> -ENODEV and handle it separately from other returned errors. So, thanks.
 
-I don't understand why do you need it. By not sending us driver patch,
-you are not making it easier. Why would provider care how consumers use
-the mbox channel? Maybe consumer should choose the direction?
+Not at all!
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - "#mbox-cells"
-> +  - cix,mbox-dir
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        mbox0: mailbox@30000000 {
-> +            compatible = "cix,sky1-mbox";
-> +            reg = <0 0x30000000 0 0x10000>;
-> +            interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH 0>;
-> +            #mbox-cells = <1>;
-> +            cix,mbox-dir = <0>;
-> +            status = "okay";
-
-Drop
-
-> +        };
-> +    };
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-Best regards,
-Krzysztof
 
