@@ -1,85 +1,47 @@
-Return-Path: <linux-kernel+bounces-559277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF217A5F1AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:59:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53976A5F1C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:02:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B47A0171278
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:59:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91C403A9E98
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB75E265CD5;
-	Thu, 13 Mar 2025 10:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB36E265CCF;
+	Thu, 13 Mar 2025 11:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iVLZfptD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMua3U26"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C5D260382
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D051EDA17;
+	Thu, 13 Mar 2025 11:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741863544; cv=none; b=NNcKq5zWKD8EnC6os4JtDkuImyvxJ7rYnHqIyz7mdBEqY1rkX6k7tHc5IEwnTqUO1f28p0lwyoLGl8L9GB2hUNFII/2EVbLUTHpv2ypOxJQUw3xSqT7iFS0FLQlLDBqapdydR9XXTSR+MiV2cVnaePjDbhRXkD+xotVXvU4JCjA=
+	t=1741863722; cv=none; b=SckAuFiMjIPKNO2DTg9YkGL79OYS7afpdGSfwMuHl5cP8Zo3Ri1irQvDGczc05BDcH7Nax+RoRQEtL2kPD8nsbAekRXWXgeMKjQpyylftuaMeTvk8trk7XzSG76B5wYRLQ9Y1jT6UVSwlnvgjhDPeFKWV4C0HhVxyVanVEC6tnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741863544; c=relaxed/simple;
-	bh=37LJNif6aGyyhlJh5h8ixFPgluvePWafJrCynYtE1IE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DU+jtQuPRhTCZ17YDXaRrkh1c2UiEp5ML2XFXeiGiH+KUzb8KtGLzygPHcq6WvaVgtaSLjNm0Yt0zT1sfeBxXd4Ijej71Y3jEj8unYCp++AGyYopDKyysARQQrYNjyVntahoXtVcAsQHKuufYDnl6Fj7D5B/NT1hNH3ofq8yV3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iVLZfptD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741863541;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I8+KGKdJ4EK24n18Z2V3Wf8YYaN68pwFttwmHD5FeXs=;
-	b=iVLZfptD+pn64iyDSyI9HvKJqVIM7VARZHxcm78tK7bXK16d5pvAEVqfSAZ+i/8WL45NFP
-	aPWFUwTjTeAcgfyqPAK6tfAFSlncRiHt6fnRxCRDA0tfz23QQmF7w305BVYFt5RPOx90Nj
-	Aay6tMPBv48kV7h3ux+IRm/SmWV6868=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-246-EfhqeiNJNl2uDd9GbiEKvg-1; Thu, 13 Mar 2025 06:59:00 -0400
-X-MC-Unique: EfhqeiNJNl2uDd9GbiEKvg-1
-X-Mimecast-MFC-AGG-ID: EfhqeiNJNl2uDd9GbiEKvg_1741863539
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43cf446681cso4043495e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 03:58:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741863539; x=1742468339;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I8+KGKdJ4EK24n18Z2V3Wf8YYaN68pwFttwmHD5FeXs=;
-        b=KEs/NeB2rf5FN+wKZmlQ/6TafeM/+yn9wdLpx9qv3eD/KiZhIQBFD+vbot5v4tin33
-         P25/NxeG+fT1l7UJ4HgGACN8j023+3on3jYaPTmaLwYrhqJQllAz9bZAYhiARNLAL3js
-         ybT/b4QUBbjHy8P9+C8lKKqBNHAx6YvnKpeguCSFZT8OlWWNAaL/t0VT/gqpQrja9CMN
-         nRUtYmpHlSTYlaTyBGyiwGKmK8CPwsnNb82BofsN7nLzc4ueHm46lIS02qeNyDpjHqWv
-         7YAy/O54Y8Xyk50TgJwDsnvJyPyNz/89QMYkgbat2X8leCSoEY1rojBK9c2MbpBy/6tu
-         Fjbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXX3NNgh4Ddvh4gkYvL1K40EV+n7eGtuRXRjYXMJ+aTLR3gniOp7p1gh4dwaNYGi123mMLheqIr31YGLbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHKXfQCyegiql1ltehMR8dQfObu1vsQ/R2FNSgxMI7trL207aq
-	1wxjwq4o4NweBYnXx0nAxxmnfONTEArFS7M/qdp7lvb6WtHj/Dd+RAJTA2T5DC7Ef3NcRInjEOc
-	iFmFwzbm7D4hgIXpwxrG6Dv6z9nHHsyAMEj4wa0VnJOkGHoQivBsJfux/5F0tIw==
-X-Gm-Gg: ASbGncsbZRW6PXFaQMxsZcJ6T5ikJpSvNrj6b0SLoKt++6Qint2diQZZ0kEVBn6ACQT
-	v0fmCQKZK6v2kryX/gMw3DHnKdgPLbCqD5w8d4ydX0fLU1OAfgg36ohCfSXSIISPJ/WlwzOVVFb
-	TCCJJBQkCBdGWBqe2FTQ9igmOoo+PgA4aTqpECrnW5MaLAqcpRY/YVZpOpKGPaftflE2UbhYTII
-	OCogkeCGBEF5+EVHMZobz+WTSRDlgn06qYUbPKdAm764eS7RiAWWw4YfmQDJyMwedXChXemP+cA
-	9tNxXASVnZzlLtgMK3awRF6rjFUPpiSszrRjIEo9
-X-Received: by 2002:a05:6000:1aca:b0:390:f738:246b with SMTP id ffacd0b85a97d-39132d1cc3fmr19536594f8f.15.1741863538703;
-        Thu, 13 Mar 2025 03:58:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFl5a/zzB4j/bQzrh0zOYukq0rCxpL/1iN9vmTUtNgl3blwOPgCRfDtKqTKHkVbblM4clhX9A==
-X-Received: by 2002:a05:6000:1aca:b0:390:f738:246b with SMTP id ffacd0b85a97d-39132d1cc3fmr19536568f8f.15.1741863538262;
-        Thu, 13 Mar 2025 03:58:58 -0700 (PDT)
-Received: from [192.168.88.253] (146-241-6-87.dyn.eolo.it. [146.241.6.87])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a7582absm49566905e9.17.2025.03.13.03.58.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 03:58:57 -0700 (PDT)
-Message-ID: <b62ea2ac-aff3-4a00-bc3a-960c28bc5522@redhat.com>
-Date: Thu, 13 Mar 2025 11:58:54 +0100
+	s=arc-20240116; t=1741863722; c=relaxed/simple;
+	bh=6fXXt/3cDZHVxJFNL/uvCTgJsMXqszNu+UtcajQ7TuY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mBDdoMTkPmymNMHyZv9gjiLMFrnbn5GTbIBnpdWMaUc844zP2g+Iti8G/YDieX/DGMDak8vg2JTDLBmVKO57pY8hXm3AZAq5d8baRFT6IvCb3Z1ELgzk+SDRmAieyLcx66MGvi2BGZWbuQ+haRopWr9UBqE/5s3RA7DnTSMx1bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMua3U26; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8C30C4CEDD;
+	Thu, 13 Mar 2025 11:01:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741863721;
+	bh=6fXXt/3cDZHVxJFNL/uvCTgJsMXqszNu+UtcajQ7TuY=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=dMua3U26ci96bicnYHnC2RuBdO1MvULUUplJI9p8CTuMNivno0WGArxt2UwKxJHLN
+	 K+1zygXfe4BA1oAUemXR7eAgKsyfxM1fH1/4zknKt6UglK0Ha79cYuElNDJOWeADHf
+	 nNAqJ0i4oz8b3cHnR1bnjrOfQyX17YQC2bL2xoLdA4Qkumi7f3aPBzP4ziePWMbu/t
+	 cehS5bnS2w4JJ8HJpo/TpogrsYBaj3ZfGmz6tXvszCFNUpaSvJrBjtkSo6YIpkLa7Z
+	 cvlVbLWK7xs87eKzsXIUJCT6XITIiq9FULbIPiybxuTLtKEH0ZsUQ9nHCJXqul+JJ3
+	 b0h+23l8pp0DA==
+Message-ID: <1c88f01b-4414-4f02-91ed-572a9261543a@kernel.org>
+Date: Thu, 13 Mar 2025 12:01:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,89 +49,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v7 8/9] net: check for driver support in netmem
- TX
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kvm@vger.kernel.org, virtualization@lists.linux.dev,
- linux-kselftest@vger.kernel.org
-Cc: Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski
- <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Jeroen de Borst <jeroendb@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn
- <willemb@google.com>, David Ahern <dsahern@kernel.org>,
- Neal Cardwell <ncardwell@google.com>, Stefan Hajnoczi <stefanha@redhat.com>,
- Stefano Garzarella <sgarzare@redhat.com>, "Michael S. Tsirkin"
- <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Shuah Khan <shuah@kernel.org>, sdf@fomichev.me,
- asml.silence@gmail.com, dw@davidwei.uk, Jamal Hadi Salim <jhs@mojatatu.com>,
- Victor Nogueira <victor@mojatatu.com>, Pedro Tammela
- <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
-References: <20250308214045.1160445-1-almasrymina@google.com>
- <20250308214045.1160445-9-almasrymina@google.com>
+Subject: Re: [PATCH v13 1/4] dt-bindings: PCI: qcom: Add MHI registers for
+ IPQ9574
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, bhelgaas@google.com,
+ lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250313080600.1719505-1-quic_varada@quicinc.com>
+ <20250313080600.1719505-2-quic_varada@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250308214045.1160445-9-almasrymina@google.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250313080600.1719505-2-quic_varada@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 3/8/25 10:40 PM, Mina Almasry wrote:
-> We should not enable netmem TX for drivers that don't declare support.
-> 
-> Check for driver netmem TX support during devmem TX binding and fail if
-> the driver does not have the functionality.
-> 
-> Check for driver support in validate_xmit_skb as well.
-> 
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
-> Acked-by: Stanislav Fomichev <sdf@fomichev.me>
-> 
-> ---
-> 
-> v5: https://lore.kernel.org/netdev/20250227041209.2031104-8-almasrymina@google.com/
-> - Check that the dmabuf mappings belongs to the specific device the TX
->   is being sent from (Jakub)
-> 
-> v4:
-> - New patch
-> 
-> ---
->  net/core/dev.c         | 33 +++++++++++++++++++++++++++++++++
->  net/core/devmem.h      |  6 ++++++
->  net/core/netdev-genl.c |  7 +++++++
->  3 files changed, 46 insertions(+)
-> 
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index 1cb134ff7327..5553947123a0 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -3868,10 +3868,43 @@ int skb_csum_hwoffload_help(struct sk_buff *skb,
->  }
->  EXPORT_SYMBOL(skb_csum_hwoffload_help);
->  
-> +static struct sk_buff *validate_xmit_unreadable_skb(struct sk_buff *skb,
-> +						    struct net_device *dev)
-> +{
-> +	struct skb_shared_info *shinfo;
-> +	struct net_iov *niov;
-> +
-> +	if (likely(skb_frags_readable(skb)))
-> +		goto out;
-> +
-> +	if (likely(!dev->netmem_tx))
+On 13/03/2025 09:05, Varadarajan Narayanan wrote:
+> Append the MHI register range to IPQ9574. This is an optional range used
 
-Minor nit: I think the above is actually unlikely. The skb is
-unreadable: is supposed to be transmitted on a device supporting
-netmem_tx, otherwise we are in exceptional/error path.
+Same question, you still did not answer - does hardware have this range?
+Which hardware has it?
 
-No need to repost just for this.
+I pointed out that you affect at least two other variants. Your commit
+msg must explain that. For example what if they do not have this range?
+Then this change is just wrong.
 
-Thanks,
+Start documenting the hardware, not your drivers.
 
-Paolo
-
+Best regards,
+Krzysztof
 
