@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-559611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A88CA5F636
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:44:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F21DFA5F638
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00C6F164880
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:43:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1785A3AA46D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24AA267B13;
-	Thu, 13 Mar 2025 13:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E8B267B1D;
+	Thu, 13 Mar 2025 13:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GH08m7js"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxieW2h6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42859267AEC;
-	Thu, 13 Mar 2025 13:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F10C2641FD;
+	Thu, 13 Mar 2025 13:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741873403; cv=none; b=LONaNUJLlWpNoNpuHTO0ijzd+8BdX2yDfPre3MwWaKx8eVx4ijnU/53gHkS1AUyXze3Xa4L/Mwow3h659ZYBU0/mzgoyKX+W0+Y/uTahWJCN30pWOpheBQG1NlW4XOJ1NvebXx6DcZUPhZY9i+116pgjTOYlLXDjiCHOHR1a3T4=
+	t=1741873439; cv=none; b=SikeZ37ItkQucKsWYQ4UH5a7tw6QWLVFDah5ZWqGKmNFzFO4In43G9+vbxuh8QKPiyQeWGBsqRut+5KNtChUZUK+nLgKv5wJk35c4THuNyFyzoR3eZ9+qyYRNl7bJjTeCQrtuf35UaLq3m+7jwfUKmRNKgbPKBSwCqceEMo9ojg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741873403; c=relaxed/simple;
-	bh=vOk4S332xlilcD3/5Zv5IewZwOgUvqlBp4xafVFonoI=;
+	s=arc-20240116; t=1741873439; c=relaxed/simple;
+	bh=XnfzLvPWLAssRS90aQXqy6BPWCvs9KKiuSagZ8ODCZE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l+CCHzyc32eEtLGoss9Z7K8gIi6Dv6wNqQV/N/AE4pRFiTqf0+IpAaaf/iRj1ZW2+u6dbnGabX8pnxv8rioz56lYOhwdeSBnmzIHGG90JgoSpo4Rb3quvvE8f0inhiR0SWyERPEMy7ukE7U1WJ8WZF5IwZ7ZjMbtxFnP+PKLphc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GH08m7js; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7148C4CEDD;
-	Thu, 13 Mar 2025 13:43:16 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=mSekfKNTOLe1EUfIAij24Khxbr0U7avhiMoYUpqMTljInxpmgPnh422pTvfS5LTNb22LSG+wI0tMIAd+eCvqI08melmDX/2BxHEOYYA1iQB0nM+KJKw/bNJirPWvbaCK46mDov3naCS10rLJVw+sjYl50YjdtoC1o6uCe+crJU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxieW2h6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D78D6C4CEDD;
+	Thu, 13 Mar 2025 13:43:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741873402;
-	bh=vOk4S332xlilcD3/5Zv5IewZwOgUvqlBp4xafVFonoI=;
+	s=k20201202; t=1741873439;
+	bh=XnfzLvPWLAssRS90aQXqy6BPWCvs9KKiuSagZ8ODCZE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GH08m7jsuEG03/Km/P1ykpmdUS0tYG8qyuhFyFRHNkd6x87erTWJMHMvvoTaoXwgC
-	 hYI5M3WjKINt1lqlBvkYSn/cpUsERKf3Z66cGzybskguPNsN1wEgN3pRkT6pP6j7Md
-	 V+PMIn9RwLNzuqgREavht47cLfhN7BVxrMx08UUdo8K9birzgeEBWvKe8lmgztRcbv
-	 HVxWUPJG+TeZ+tC37rAhAtfdRgRZZTCgAeEXd8ak4uS487NjdRpDG9Dj3QYkbHcYh9
-	 MButCVTcHMeR2O6GZLxQZ4P90NVjJYcLX65lEL7hQIIiAIdHwROz5tiBStyioe6g/D
-	 OuYHO4ShEkD6Q==
-Message-ID: <1e775b14-7c72-4a3c-90bf-0e63627325e6@kernel.org>
-Date: Thu, 13 Mar 2025 14:43:14 +0100
+	b=BxieW2h6rFT5GjUIhCyE3lJAo+c8bdnBN8vqsXAJrIRa1fPuSnMscKcFotdhVq5lZ
+	 zk74jPwDdFPWfSbkvnzwzFijjw4+dRdwfd3u1UO5rUbq0+0ajHWoKUes9bSzgbxUsh
+	 dITMTo4m6NN6lJdDWB9+AJSQmNBSuCLgxFHQwNpgpaOIN9cIXtqkzoWaK4ut1sGeY6
+	 gMXLTUDled8FH4p/Dl0ZODuI8MpWycA/EsZchonZezMtIO2tYoI4wFShR0xQCfP1uJ
+	 yv9xMgqURPOYMxpSFpGEC+hpdD5nrE5h+bAikXbXSzt5RRxXVyWjVSws51BCW+Ud8a
+	 qxtOLbMO/twNA==
+Message-ID: <6262dfd2-9e0b-402e-bb03-a2174d544923@kernel.org>
+Date: Thu, 13 Mar 2025 14:43:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] spi: dt-bindings: snps,dw-apb-ssi: Add compatible
- for SOPHGO SG2042 SoC
+Subject: Re: [PATCH v3 2/2] riscv: sophgo: dts: Add spi controller for SG2042
 To: Zixian Zeng <sycamoremoon376@gmail.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
@@ -61,7 +60,7 @@ Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
  linux-kernel@vger.kernel.org, sophgo@lists.linux.dev, chao.wei@sophgo.com,
  xiaoguang.xing@sophgo.com, dlan@gentoo.org
 References: <20250313-sfg-spi-v3-0-e686427314b2@gmail.com>
- <20250313-sfg-spi-v3-1-e686427314b2@gmail.com>
+ <20250313-sfg-spi-v3-2-e686427314b2@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,31 +106,32 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250313-sfg-spi-v3-1-e686427314b2@gmail.com>
+In-Reply-To: <20250313-sfg-spi-v3-2-e686427314b2@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 13/03/2025 14:11, Zixian Zeng wrote:
-> add compatible property to include "sophgo,sg2042-spi" for
-> the SOPHGO SG2042 SoC SPI Controller.
+> Add spi controllers for SG2042.
+> 
+> SG2042 uses the upstreamed Synopsys DW SPI IP.
 > 
 > Signed-off-by: Zixian Zeng <sycamoremoon376@gmail.com>
 > ---
->  Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
+>  arch/riscv/boot/dts/sophgo/sg2042.dtsi | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-> index bccd00a1ddd0ad92b437eed5b525a6ea1963db57..33fb21267df2594e68419cfb980a40909868e337 100644
-> --- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-> @@ -92,6 +92,10 @@ properties:
->          items:
->            - const: thead,th1520-spi
->            - const: snps,dw-apb-ssi
-> +      - description: SOPHGO SG2042 SoC SPI Controller
+> diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
+> index e62ac51ac55abd922b5ef796ba8c2196383850c4..9e0ec64e91a2330698aea202c8f0a2ca1f7e0919 100644
+> --- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
+> +++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
+> @@ -545,5 +545,31 @@ sd: mmc@704002b000 {
+>  				      "timer";
+>  			status = "disabled";
+>  		};
+> +
+> +		spi0: spi@7040004000 {
 
-Please do not add things to the end - it increases conflicts and makes
-it difficult to find entries when reading the code. Place it after Renesas.
+Does not look like you keep order by unit address (see DTS coding style).
 
 
 Best regards,
