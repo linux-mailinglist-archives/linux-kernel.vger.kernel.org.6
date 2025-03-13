@@ -1,283 +1,187 @@
-Return-Path: <linux-kernel+bounces-560207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811BAA5FF4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:33:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25EF9A5FF5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:35:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D97743BF04E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:33:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 801DA3BF00F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5251DDC3B;
-	Thu, 13 Mar 2025 18:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7A71EF363;
+	Thu, 13 Mar 2025 18:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FWyPum2I"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uLaYrYGi"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2071.outbound.protection.outlook.com [40.107.244.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F3118952C;
-	Thu, 13 Mar 2025 18:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741890786; cv=none; b=G60wKyJIEAQYN/4aD57R9Pr+5LIVbUxrN1L4foDlp3INAVLpLGtbvek3iZ5ukUErsbSMQ/t3nV+B/R1KAPbYg55Kn+BiHT8hYYPjg3d81fhZT9XdnNYZrxv75sTdIjSBVaKmnO8RuuGpJLjqXoJlBObW5GCc4dQH7GWh74vnq68=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741890786; c=relaxed/simple;
-	bh=NNfdweyltKpfxEYdB4dJuUUgTK30BjFlrikEsqHw4SA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HxO9nWkGCHkXldREO8efwI2AZnauPE1EqSEtQ8ACl2ZrVYFK3LJ30DnC2KH2o64Kz0UNHfUWjt0gNT4JOwyExl8Pb0imzEbsb6grOYHc0e3fDHPyhFuxBNG7m0HB5bqgvq+RmVvZdBkO1kl7UhQT2FlMsAC82oM+zyMdmjlKpZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FWyPum2I; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741890785; x=1773426785;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NNfdweyltKpfxEYdB4dJuUUgTK30BjFlrikEsqHw4SA=;
-  b=FWyPum2IuqRFFAf8Qs9te8FCnEbQTsxQiIFiKyVt4UUmtUJWk2Aa9ZuA
-   pRl0NRcAPS55l1wY4vyBxNYvgPk3NM7q4GuUyz3rAHGZHnLFkgq+byJmO
-   k6xTOlV6uZBo0bZ9nA/W7LDmNKneul9V1FUVt4/nleaml1QzVQI5Kt0L+
-   iW+b9sfrAgDzvVq2WHJXv53yszZUNaaOXun3y6wqo3F2Fi/8n+xpgslWT
-   9IOpKkt3gjYurTeqq5wUFNIIYa3NEMeX9e41JLhf68GydEE2+6/XSAYLv
-   n1WLbpKbgBKlF9sZASxyn08xUYlZ5jHIpKJANxvLy6vu0Ijo+cvSIQwxU
-   Q==;
-X-CSE-ConnectionGUID: uZBVAx66SDe9Gt/LGSN3Lg==
-X-CSE-MsgGUID: 0+ElCedaRl6xyASiroZu4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="42911425"
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="42911425"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 11:33:04 -0700
-X-CSE-ConnectionGUID: FWRYxOsiSAeJW66tDYLG0A==
-X-CSE-MsgGUID: gmOubHMERIa2gAR7Sa2tyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="125663989"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 13 Mar 2025 11:33:02 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tsnMZ-0009lE-2a;
-	Thu, 13 Mar 2025 18:32:59 +0000
-Date: Fri, 14 Mar 2025 02:32:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Subu Dwevedi <messigoatcr7nop@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Subu Dwevedi <messigoatcr7nop@gmail.com>,
-	Henrik Rydberg <rydberg@bitmath.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] hwmon/applesmc: add MMIO for newer macs
-Message-ID: <202503140229.R49CaAYj-lkp@intel.com>
-References: <20250312123055.1735-2-messigoatcr7nop@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B971CAA6E;
+	Thu, 13 Mar 2025 18:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741890915; cv=fail; b=K0oFNSSKlXqIwjS3OM1Gt/ceJ13Gg2KNV8kNDduv1MkCRBsRNZCTWLqjjEweNiXxyRClcECm3AF7USc6qMdG3jQPNXBPpcKjWfGXSpmN9fTjZbbCiZc/sfPrCA1M4MVZq7zvNuqDzpU7A+VY/dx56oK2r7V41T0rlwIhhPWjOQ8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741890915; c=relaxed/simple;
+	bh=0OxZh1SYFCmWhgSwvuZr6KpInYaegb2X53US5Ujf9CA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dpbuCJ+Tas+enMLVKauGq86AirLhnG8JDHDg6lNHyQ/E7fLRI+EbsktAGOCq67+SSKICZUZOtUAbzAtl7o+trv7AS9sUJvKLUtPkyk5NzZjpQC1h0LXp/AfMAeNk6Vg+DuHzF5Fwv+zWa6Msf3OeXQalktHw2Ls4GySnzTqvf48=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uLaYrYGi; arc=fail smtp.client-ip=40.107.244.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xfELhR73D3bfz+I0v49yAcz1CRL81AELPpvjxLqn98qDyxwHpB/4nWaA2sIZgVf+sFVHw9MkoLxC5IR2wFyKN46vNooXgVmrDOPo8EHA/zk0YPj05w91nikSRZ0ro1TNlf49Rj4Ogf7vQzpORTLAyYw5HPvvqI3fSJReoOhPAWV1gbTB0uNrrgeRQw+jCxD+SyVpyVZS2E5FRpaA3Pw6HbhanMobfUZYGtMwOx5tZvUH/L3j2zswlLCAEeNCPfJcSN0Kz0xFock60uD/AUtlyyABQN9omT84kd8x5PMmiSEBAitvrH7jXNSY+DkMPf0NJd4nU1FwARtM+czsAsrA5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=33j75SVLPOYq8kZS3B+LSq6VNfTJwRlbIUo/UWr8H/Q=;
+ b=CidT9QxKclvYpdnu9Q0f85zZfBL1YB8xTrLLrtcqa1OnCtQW575MLkyx/grm2nFaYDK2dveGKgi1M1E4jYEE3ctLl8W0mTKhCQOMsWbA2FvtBVz8tlxYCanXNM/mGakYfi94fIQl40AxGZDkEfqTVjkB3U1gPtRhrobDbpX51urWy0rXVoa45SnPJcPZo21sgBSOa/4FwiNVJUXWmXiy4i8yZ1Uz4LNDilYqtQ1b0FO6BYnQIY/7uvgk/iDwrDDAzmXnox8bkLEjtM5k1covK4E0lUB2DOqg0r71mwoadBXTmbbVupqLorDbm9c+28vPebzg3ZBHU6ZJ8A951tCIHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=33j75SVLPOYq8kZS3B+LSq6VNfTJwRlbIUo/UWr8H/Q=;
+ b=uLaYrYGiawKd1BxJngEmHt58lDxfoTeoeZIdXwxos4iND7/5IEOa/xi1lpH5PFTRgIVgaUcJ+5jPjxiiXk3sxTiD0HwGAIICewID7X0leSc/qlkyRKNrPNd4AW6Vj2OLJeEsDnuMTfrkm1izHf42pwCeRIuIv8QEg4rgzOu3q04=
+Received: from SA9PR11CA0006.namprd11.prod.outlook.com (2603:10b6:806:6e::11)
+ by IA0PR12MB8278.namprd12.prod.outlook.com (2603:10b6:208:3dc::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.28; Thu, 13 Mar
+ 2025 18:35:06 +0000
+Received: from SN1PEPF000397B2.namprd05.prod.outlook.com
+ (2603:10b6:806:6e:cafe::47) by SA9PR11CA0006.outlook.office365.com
+ (2603:10b6:806:6e::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.26 via Frontend Transport; Thu,
+ 13 Mar 2025 18:35:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF000397B2.mail.protection.outlook.com (10.167.248.56) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Thu, 13 Mar 2025 18:35:05 +0000
+Received: from airavat.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Mar
+ 2025 13:35:02 -0500
+From: Raju Rangoju <Raju.Rangoju@amd.com>
+To: <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <Raju.Rangoju@amd.com>, <krishnamoorthi.m@amd.com>,
+	<akshata.mukundshetty@amd.com>
+Subject: [PATCH 00/10] spi: Add driver to support AMD eSPI controller
+Date: Fri, 14 Mar 2025 00:04:30 +0530
+Message-ID: <20250313183440.261872-1-Raju.Rangoju@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312123055.1735-2-messigoatcr7nop@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397B2:EE_|IA0PR12MB8278:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7721f096-ef6c-430d-7ee4-08dd625dc627
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9MdU1KkbdxlqUcnF7R6QoUGZb8N6UnyIWlnLBdYyiKMnkaoEtc7EF29cpwJI?=
+ =?us-ascii?Q?R3DthGUFgeUKNCl6MnFv5nfTrBmg0J/em6sdMFqp5BI7+yDmO8yvO4yeF+uv?=
+ =?us-ascii?Q?HnD6tcVg35YvKIBIDgwIAcQ5rwpZki6z+jV0qqEnv6B0G1Fa6uRDXzsBQcjw?=
+ =?us-ascii?Q?7E0uVbc4QJUucOYTTccqdEi+CeAwcZsch0uodhyY+xBQnKQsHkl+pKNqXEoG?=
+ =?us-ascii?Q?xFwvzsBWvANjX/r5T1habmc1NsUvI20jYzshIByTJs8Jy6DqzK9q4lmIeAmY?=
+ =?us-ascii?Q?64hR4ChwfqFLbxP0s70Po7Z5l0xxEnHMEzJwwsZPL4wjbU2toqQhrL90gqg3?=
+ =?us-ascii?Q?xcABm3pJjgTDmFBZc2BIC5MiuVkHDmV+DjemO6Z9eM4nLVvABIuqCBPo2BZS?=
+ =?us-ascii?Q?2KciHClbSP0OBrhGKlZMz384OZ6Js0T47zWu5kW43vG5vIdmxE08zV0Tf0Tl?=
+ =?us-ascii?Q?ECI3d4pEkEULQB2IppDJyzn8BQZQHzQo3ysL6NP2GGeHB0WPzXDBqSfcPkBe?=
+ =?us-ascii?Q?PEvuNs0d1SYIHR1bqgC0T5yWMtKfDM1xXop/vp3l3IjiO+bh0xVzkx34TNbz?=
+ =?us-ascii?Q?jHa7IDdhniyyPI3SDKyQZ6sSEqqODEzuOaeU/6dc6iIYjyMbyczX4rTcoDFS?=
+ =?us-ascii?Q?Y2/I2b5viJqRPxYfoxaP6Lf4zdUxwLLxzbGkd1dv3rvk81bGp6+H4hvMPolS?=
+ =?us-ascii?Q?t0ysDcvNxaioJTPhA1bpCWw+fgsxLhLX05KiCdxujpGaIlz/7xNJ9f343Ni/?=
+ =?us-ascii?Q?Pu153urzranCO9xAgcoF1mi6eUpd/he9fO0oOhJ+X1OCi2a6XSHrzr9H6lXz?=
+ =?us-ascii?Q?F9HYw4R8MjOTllQRyX7O34NarNb5aR1SOAnTgYoCNXFCGrf7IE7DCVJQTQqK?=
+ =?us-ascii?Q?5ucpwkw+G1I2Pk1vrPdUChTsB5STSGMd6+EPZzR6gvhoYTr3nHIVRb0Owbnb?=
+ =?us-ascii?Q?Ued3FHf4xAZKy1OkHywihpIuOkKMkROtCgMicuMr9QGkc/OZb3mDN5TxslSg?=
+ =?us-ascii?Q?jMyPiZHJSIOlqbBOILzYaW7+NiUWnsiWetrBEIAG5WMaXxeHpUrmblMqT19f?=
+ =?us-ascii?Q?0sKUINF4WHoCjguWIMqKqNEnNdC66jsZch2LI573VjawDXKGZoIlqPWx8vh0?=
+ =?us-ascii?Q?vRbzf2xiBLkfMxipgPNgMYJ3/gmO8XNeJdEu5CWOJav1e8icdWutE60WM+sr?=
+ =?us-ascii?Q?lbG1BumLGMOoq9H4ap6yVipLtyyvu7zl2tqq29Wiqw24HCUOV/49IzSbT9NA?=
+ =?us-ascii?Q?IcfPaBRkBdm3DgL8h7PHzTnhZlCWnf4d6+H81Zsybl1hW2U0T2YzxM/WKdhK?=
+ =?us-ascii?Q?OxmHni3ByAsyzWPoLjNjZ4/NqH0bruA+pA/M07Zg6dMzycW48jYYXvLOiGwG?=
+ =?us-ascii?Q?+Ynch7fkGaXFniHHHrAMVLFnJVpXqm/piHZpX0bRPwrxW7hnhpfCfWonYSuk?=
+ =?us-ascii?Q?q3Y0lqJZWY77AGWRxBaW/R6/S1a1UQWMG3U/WNLtCswlqh0EBFZXdA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 18:35:05.1967
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7721f096-ef6c-430d-7ee4-08dd625dc627
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000397B2.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8278
 
-Hi Subu,
+The eSPI protocol serves as a communication interface between the main
+processor and peripheral devices in computer systems. It offers several
+advantages over the traditional LPC bus, including higher data transfer
+rates, increased scalability and improved system management capabilities.
+The eSPI protocol supports multiple channels, each serving a specific
+purpose in the communication process.
 
-kernel test robot noticed the following build errors:
+AMD SOCs feature multiple SPI controllers, including a dedicated eSPI
+controller. This controller is responsible for managing the communication
+between the main processor and peripheral devices using the eSPI protocol.
+It provides support for various channels, including Peripheral channel(PC),
+Virtual Wire(VW), Out-Of-Band(OOB) message, and Flash access channels.
 
-[auto build test ERROR on groeck-staging/hwmon-next]
-[also build test ERROR on linus/master v6.14-rc6 next-20250313]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This patch series implements new AMD eSPI driver aims to comprehensive
+support for the eSPI protocol, including initialization of eSPI controller
+and slave devices. It also adds functionality for channel-independent eSPI
+commands and support for I/O and MMIO read/write operations on PC
+channels.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Subu-Dwevedi/hwmon-applesmc-add-MMIO-for-newer-macs/20250312-203248
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
-patch link:    https://lore.kernel.org/r/20250312123055.1735-2-messigoatcr7nop%40gmail.com
-patch subject: [PATCH 1/2] hwmon/applesmc: add MMIO for newer macs
-config: x86_64-buildonly-randconfig-002-20250313 (https://download.01.org/0day-ci/archive/20250314/202503140229.R49CaAYj-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250314/202503140229.R49CaAYj-lkp@intel.com/reproduce)
+Raju Rangoju (10):
+  spi: espi_amd: Add AMD eSPI controller driver support
+  spi: espi_amd: Add eSPI set config IOCTL command
+  spi: espi_amd: Add eSPI get config IOCTL command
+  spi: espi_amd: Add eSPI inband-reset IOCTL command
+  spi: espi_amd: Add eSPI set IO mode IOCTL command
+  spi: espi_amd: Add eSPI set channel IOCTL command
+  spi: espi_amd: Add eSPI set frequency IOCTL command
+  spi: espi_amd: Add support for IO/MMIO configuration
+  spi: espi_amd: Add eSPI PC channel IO read/write IOCTL commands
+  spi: espi_amd: Add eSPI PC channel MMIO read/write IOCTL commands
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503140229.R49CaAYj-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/hwmon/applesmc.c:717:42: error: incomplete definition of type 'struct acpi_device'
-     717 |         status = acpi_get_current_resources(adev->handle, &buffer);
-         |                                             ~~~~^
-   include/linux/acpi.h:801:8: note: forward declaration of 'struct acpi_device'
-     801 | struct acpi_device;
-         |        ^
-   1 error generated.
-
-
-vim +717 drivers/hwmon/applesmc.c
-
-   678	
-   679	static int applesmc_init_index(struct applesmc_registers *s)
-   680	{
-   681		const struct applesmc_entry *entry;
-   682		unsigned int i;
-   683	
-   684		if (s->index)
-   685			return 0;
-   686	
-   687		s->index = kcalloc(s->temp_count, sizeof(s->index[0]), GFP_KERNEL);
-   688		if (!s->index)
-   689			return -ENOMEM;
-   690	
-   691		for (i = s->temp_begin; i < s->temp_end; i++) {
-   692			entry = applesmc_get_entry_by_index(i);
-   693			if (IS_ERR(entry))
-   694				continue;
-   695			if (strcmp(entry->type, TEMP_SENSOR_TYPE))
-   696				continue;
-   697			s->index[s->index_count++] = entry->key;
-   698		}
-   699	
-   700		return 0;
-   701	}
-   702	/*
-   703	 * applesmc_init_mmio_try - Try to initialize MMIO
-   704	 */
-   705	static int applesmc_init_mmio_try(void)
-   706	{
-   707		u8 ldkn_version;
-   708		acpi_status status;
-   709		struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
-   710		struct acpi_device *adev;
-   711		struct acpi_resource *res;
-   712	
-   713		adev = acpi_dev_get_first_match_dev("APP0001", NULL, -1);
-   714		if (!adev)
-   715			return -ENXIO;
-   716	
- > 717		status = acpi_get_current_resources(adev->handle, &buffer);
-   718		if (ACPI_FAILURE(status))
-   719			return -ENXIO;
-   720	
-   721		res = buffer.pointer;
-   722		while (res->type != ACPI_RESOURCE_TYPE_END_TAG) {
-   723			if (res->type == ACPI_RESOURCE_TYPE_FIXED_MEMORY32) {
-   724				if (res->data.fixed_memory32.address_length < 0x4006)
-   725					return -ENXIO;
-   726	
-   727				mmio_base_addr = res->data.fixed_memory32.address;
-   728				mmio_base_size = res->data.fixed_memory32.address_length;
-   729				is_mmio = true;
-   730				break;
-   731			}
-   732			res = ACPI_NEXT_RESOURCE(res);
-   733		}
-   734		kfree(buffer.pointer);
-   735		acpi_dev_put(adev);
-   736	
-   737		if (!is_mmio)
-   738			return -ENXIO;
-   739	
-   740		mmio_base = ioremap(mmio_base_addr, mmio_base_size);
-   741	
-   742		if (!mmio_base)
-   743			return -ENXIO;
-   744	
-   745		if (ioread8(mmio_base + 0x4005) == 0xFF)
-   746			goto out;
-   747	
-   748		if (read_smc(APPLESMC_READ_CMD, "LDKN", &ldkn_version, 1))
-   749			goto out;
-   750	
-   751		if (ldkn_version < 2)
-   752			goto out;
-   753	
-   754		return 0;
-   755	out:
-   756		pr_warn("cannot enable MMIO will use PMIO\n");
-   757		iounmap(mmio_base);
-   758		return -ENXIO;
-   759	}
-   760	/*
-   761	 * applesmc_init_smcreg_try - Try to initialize register cache. Idempotent.
-   762	 */
-   763	static int applesmc_init_smcreg_try(void)
-   764	{
-   765		struct applesmc_registers *s = &smcreg;
-   766		bool left_light_sensor = false, right_light_sensor = false;
-   767		unsigned int count;
-   768		u8 tmp[1];
-   769		int ret;
-   770	
-   771		if (s->init_complete)
-   772			return 0;
-   773	
-   774		ret = read_register_count(&count);
-   775		if (ret)
-   776			return ret;
-   777	
-   778		if (s->cache && s->key_count != count) {
-   779			pr_warn("key count changed from %d to %d\n",
-   780				s->key_count, count);
-   781			kfree(s->cache);
-   782			s->cache = NULL;
-   783		}
-   784		s->key_count = count;
-   785	
-   786		if (!s->cache)
-   787			s->cache = kcalloc(s->key_count, sizeof(*s->cache), GFP_KERNEL);
-   788		if (!s->cache)
-   789			return -ENOMEM;
-   790	
-   791		ret = applesmc_read_key(FANS_COUNT, tmp, 1);
-   792		if (ret)
-   793			return ret;
-   794		s->fan_count = tmp[0];
-   795		if (s->fan_count > 10)
-   796			s->fan_count = 10;
-   797	
-   798		ret = applesmc_get_lower_bound(&s->temp_begin, "T");
-   799		if (ret)
-   800			return ret;
-   801		ret = applesmc_get_lower_bound(&s->temp_end, "U");
-   802		if (ret)
-   803			return ret;
-   804		s->temp_count = s->temp_end - s->temp_begin;
-   805	
-   806		ret = applesmc_init_index(s);
-   807		if (ret)
-   808			return ret;
-   809	
-   810		ret = applesmc_has_key(LIGHT_SENSOR_LEFT_KEY, &left_light_sensor);
-   811		if (ret)
-   812			return ret;
-   813		ret = applesmc_has_key(LIGHT_SENSOR_RIGHT_KEY, &right_light_sensor);
-   814		if (ret)
-   815			return ret;
-   816		ret = applesmc_has_key(MOTION_SENSOR_KEY, &s->has_accelerometer);
-   817		if (ret)
-   818			return ret;
-   819		ret = applesmc_has_key(BACKLIGHT_KEY, &s->has_key_backlight);
-   820		if (ret)
-   821			return ret;
-   822	
-   823		s->num_light_sensors = left_light_sensor + right_light_sensor;
-   824		s->init_complete = true;
-   825	
-   826		pr_info("key=%d fan=%d temp=%d index=%d acc=%d lux=%d kbd=%d\n",
-   827		       s->key_count, s->fan_count, s->temp_count, s->index_count,
-   828		       s->has_accelerometer,
-   829		       s->num_light_sensors,
-   830		       s->has_key_backlight);
-   831	
-   832		return 0;
-   833	}
-   834	
+ MAINTAINERS                  |    6 +
+ drivers/spi/Kconfig          |   10 +
+ drivers/spi/Makefile         |    2 +
+ drivers/spi/espi-amd-core.c  | 1215 ++++++++++++++++++++++++++++++++++
+ drivers/spi/espi-amd-dev.c   |  584 ++++++++++++++++
+ drivers/spi/espi-amd-err.h   |   50 ++
+ drivers/spi/espi-amd-slave.h |  109 +++
+ drivers/spi/espi-amd.h       |  416 ++++++++++++
+ 8 files changed, 2392 insertions(+)
+ create mode 100644 drivers/spi/espi-amd-core.c
+ create mode 100644 drivers/spi/espi-amd-dev.c
+ create mode 100644 drivers/spi/espi-amd-err.h
+ create mode 100644 drivers/spi/espi-amd-slave.h
+ create mode 100644 drivers/spi/espi-amd.h
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
