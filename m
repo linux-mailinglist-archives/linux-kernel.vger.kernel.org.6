@@ -1,136 +1,129 @@
-Return-Path: <linux-kernel+bounces-558906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E80A1A5ECED
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:24:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C98CA5ECF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:25:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83C643AE24D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:23:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29E223A9889
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D217B1FCD0C;
-	Thu, 13 Mar 2025 07:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11051FF5EB;
+	Thu, 13 Mar 2025 07:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="hZH9EzLM"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZZIQ0Zf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955D61FDA86
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86D01FF1C8;
+	Thu, 13 Mar 2025 07:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741850537; cv=none; b=obBYPLM2yZJUpz7DFmxGSUoR94OXaEMkcAPd50p8pRuno8B5jGotdz/UZzVqRY5wgwIuzzOTOaKeqEMZmxufp4YKfzuqj+teV7vKe3iEtI2ytgdVKQw2Td/1/bo/pCR82eAIHa+x6UFEfCSmC/dvQ7WbMyE4E/16d8Ep6+Uwt3A=
+	t=1741850576; cv=none; b=r5XviWtap9hY0rv/GimEB3/Y+FJYGorKn+63AO2FVg5QDYx+mVhHZIVUM4BSBC68onxovcDAA6f48NjNXkcIWqm3RSMjsZaMQIzKw2cFXLUN9deMf1N0Pc2hyKRyJyaukhMRQIhFG64pXuwrDaazfod6vBomq4sBXNUWOGz/Xpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741850537; c=relaxed/simple;
-	bh=AE5A2NiuhhYdM1sWAknuDe5X1OFs+sj0hwKEzFeDmoU=;
-	h=Mime-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qr46QaKZDScUZVfLxYlRC10xsa4f/detuqhIA30zV9CAs8fsSAOYxzqtTrp+FMjNYFM6XMAVy7P+DK1x+t2jSIm995zZrVbJ8GUwy8/oM/czpytriVuxqBLiXAJ7dZ/UYBoBabdKw1b89MdZ7zEUBWsFq2eppkDacE0fJIlgJPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=hZH9EzLM; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aaeec07b705so100378666b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 00:22:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1741850534; x=1742455334; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vpEzXfsqBkoX4MatYvv/s6fQuJuNm6IXmUv71NmaMxI=;
-        b=hZH9EzLMG1zuEgH0KFLAGmFJ/cotpjsWT/Ssy91D2uwi8hwyAefuARJ+0HjrcRbniW
-         ZOAT+wR15Akbeo6yh7jdBxYrVM45yHtAZjd4/B5E7luifn/p8EXJu5WuPBDB/t4Jxp3v
-         4zIiU9KydcW1s1x75BvASN8Herg3uRixS9DMQB87IjcxEGy1nRXYbqetZdyORHDQp9Zf
-         eqdpoUqiaQqYOKgIDY4EReUgFQT+5Iqih6GgbCySbjUeJK1OcO7fCbDUGLnJpLgMr7Bd
-         PyTtFqI7XS2ozavRf//w0qW6bZEfFwjfOOhBV9qJSuYZgNPPvz3i008m1BjPBrLmaI3e
-         hsmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741850534; x=1742455334;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vpEzXfsqBkoX4MatYvv/s6fQuJuNm6IXmUv71NmaMxI=;
-        b=Dlr3qChzUoO+lxTcwzhAW8HqMbFW7/noibd+/XawDFgq7yq/oZYCH3Chu+g01opRb8
-         8MCGm67EY0lnG61E/mPcnTOWdSCaOlofRZ73a9MBCgGsJcKDMziUHSnjdLUPOqnO4lYa
-         41x1jlJuK9tv8C+OILKC/moPbyxQk75ozDZhA1P8zi1+hFIeqKA7x4F12FQIOP0NY4gV
-         Y4vDXwS46lOL0A5v1c55aXVWddSFByYdxIc+Q/OfIrRHnW+3FE3GT4P68fJ2siJgxgYB
-         j+b3PflmklDPJyLJ4CwLTx7RED6ZcHAIy/k0sX9cjL0ZJdzc/jmFDsbD7VOtonLNYK4O
-         OHHQ==
-X-Gm-Message-State: AOJu0YzR7zAHMsSRpxMd5CDg4LlyHRxl4Q1rUGGGlK49k8Gc6dlnaENJ
-	lgvb6wIXwT91ZBOYvi0m2IZxnnLkMHP0JXS6gLtB9qEGBGIPvGLNwiDNSWztHH4S4R47tnoIAtI
-	F1YbHKhn0GzWbNwbCvdTb8fVImgHFp6ozJOI7
-X-Gm-Gg: ASbGncvAPjLiD/+XVs5PJE8rDImV4abikgNHgvk+lyMNRPzhMVwFdjRm2YECjs99de3
-	losuC44EKLlowqOMruncfJWyGDfuZU6SyCim3jQRSkdROXzvb2WMtd7zNrvvNwoRFqDqONgvz3E
-	ZCj3sx+yhB9WhcuK4P4jpHXZ6FzKE=
-X-Google-Smtp-Source: AGHT+IHhlNrNpiMA7L0JPZsP3KNrZZ1fOZ0mF1oPxXrCVJMx5bfO95h7bBq14Q+DG2+I0K7s3DVDmcJBTCJXGgDAuEw=
-X-Received: by 2002:a17:907:1c15:b0:abf:7406:a5c3 with SMTP id
- a640c23a62f3a-ac2b9ee8733mr1323584666b.51.1741850534007; Thu, 13 Mar 2025
- 00:22:14 -0700 (PDT)
-Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
- Thu, 13 Mar 2025 00:22:13 -0700
+	s=arc-20240116; t=1741850576; c=relaxed/simple;
+	bh=aFeZ0mb9JxHxNrB2IY5dAI8W9F+KCqBlNLKvYHsoUrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MmWXsKLkQNgM5cWGmnT6V7MhRxbMtnfyg2C0+ShnzDPWHxihsULwF9bFDxOU4bziC7u8p2/1hUd+OburF3vYHFs5UlmpMv/MpiPwZKKwoHK7EyabB93o/YeAjwPva8VmLkuEE5qYfh4FHPt2qYKvxx8mLkh22gQId5hDEuYCYbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BZZIQ0Zf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 989D6C4CEDD;
+	Thu, 13 Mar 2025 07:22:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741850576;
+	bh=aFeZ0mb9JxHxNrB2IY5dAI8W9F+KCqBlNLKvYHsoUrk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BZZIQ0Zf+Wn/FHwFCF0brh5DPmkCHW1BS1cd1iNC0PhnojOpCR/hvAjs0T6TxsxIO
+	 iYSZC7Udi+50z/MBOeevkqK7QJp4VeX+v3NUceNdYMHz33m13zbCIeMq2qaKOqyqwG
+	 wDmbuyZTBgLUcuwr/H628jKCmOxqY6hbVEoYz2NCKWpYsqaEunNpOro4cnoMnE11iB
+	 jwEM+kVFyyPhZ1nKZVDURvDd23e+APOdGjr/9AEwv8r1i96E94z2dIgxgFgCeJ47SK
+	 jqpDIoc2pPRFxF/6LAys8KcKhhtbUfPTDjUnCx0+sD73qovvh5eXxlwXL+EiQqYXwq
+	 lHyfdJQqgS0NQ==
+Date: Thu, 13 Mar 2025 08:22:53 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Purva Yeshi <purvayeshi550@gmail.com>, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, piotr.wojtaszczyk@timesys.com, 
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: pwm: Convert lpc32xx-pwm.txt to YAML
+Message-ID: <b2nlqt3gp4sk7cax722n7t7xonnrjzi6amsfrhylxmurctytiy@yqp7qpttyc5h>
+References: <20250312122750.6391-1-purvayeshi550@gmail.com>
+ <57ae63a2-544b-4241-a54d-8fa9917c1e44@mleia.com>
+ <yvljnqnlka3ecw2n3hw2zgfszlldvbww3k7gq72dczmf6jwzfo@4vqnygxuzvk5>
+ <5b62671c-719a-44f2-b28e-878159859a01@mleia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250313072030.1032893-1-ziqianlu@bytedance.com>
-From: Aaron Lu <ziqianlu@bytedance.com>
-X-Original-From: Aaron Lu <ziqianlu@bytedance.com>
-Date: Thu, 13 Mar 2025 00:22:13 -0700
-X-Gm-Features: AQ5f1JqvOOWc7Eu5kkoNljS6MLk_wH52rWSn_S_LjFzatT5ufD9JuvWltz5Q9LA
-Message-ID: <CANCG0Gf2ZbnffwNVoBSu_+y4sq0MoMYPwwgsnfg53Pf2enwJZw@mail.gmail.com>
-Subject: [RFC PATCH 7/7] sched/fair: Make sure cfs_rq has enough
- runtime_remaining on unthrottle path
-To: Valentin Schneider <vschneid@redhat.com>, Ben Segall <bsegall@google.com>, 
-	K Prateek Nayak <kprateek.nayak@amd.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Mel Gorman <mgorman@suse.de>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Chuyi Zhou <zhouchuyi@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fbj5kzio535yua6p"
+Content-Disposition: inline
+In-Reply-To: <5b62671c-719a-44f2-b28e-878159859a01@mleia.com>
 
-It's possible unthrottle_cfs_rq() is called with !runtime_remaining
-due to things like user changed quota setting(see tg_set_cfs_bandwidth())
-or async unthrottled us with a positive runtime_remaining but other still
-running entities consumed those runtime before we reach there.
 
-Anyway, we can't unthrottle this cfs_rq without any runtime remaining
-because task enqueue during unthrottle can immediately trigger a throttle
-by check_enqueue_throttle(), which should never happen.
+--fbj5kzio535yua6p
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] dt-bindings: pwm: Convert lpc32xx-pwm.txt to YAML
+MIME-Version: 1.0
 
-Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
----
- kernel/sched/fair.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Hello Vladimir,
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index be96f7d32998c..d646451d617c1 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6058,6 +6058,19 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
- 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
- 	struct sched_entity *se = cfs_rq->tg->se[cpu_of(rq)];
+On Thu, Mar 13, 2025 at 05:37:44AM +0200, Vladimir Zapolskiy wrote:
+> On 3/13/25 00:56, Uwe Kleine-K=F6nig wrote:
+> > Hello,
+> >=20
+> > On Wed, Mar 12, 2025 at 07:59:21PM +0200, Vladimir Zapolskiy wrote:
+> > > > +  "#pwm-cells":
+> > > > +    const: 3
+> > >=20
+> > > It shall be 1.
+> >=20
+> > No, 3 is the right choice.
+> >=20
+>=20
+> could you please elaborate?
+>=20
+> I find that here the only configurable parameter is PWM period, so it
+> should be sufficient to have one cell only like in marvell,pxa-pwm.yaml
+> or google,cros-ec-pwm.yaml.
 
-+	/*
-+	 * It's possible we are called with !runtime_remaining due to things
-+	 * like user changed quota setting(see tg_set_cfs_bandwidth()) or async
-+	 * unthrottled us with a positive runtime_remaining but other still
-+	 * running entities consumed those runtime before we reach here.
-+	 *
-+	 * Anyway, we can't unthrottle this cfs_rq without any runtime remaining
-+	 * because any enqueue below will immediately trigger a throttle, which
-+	 * is not supposed to happen on unthrottle path.
-+	 */
-+	if (cfs_rq->runtime_enabled && !cfs_rq->runtime_remaining)
-+		return;
-+
- 	cfs_rq->throttled = 0;
+These two bindings are special snow-flakes and the only drivers that
+have #pwm-cells =3D <1>. Most other bindings use 3 and since commit
+895fe4537cc8 ("pwm: Add upgrade path to #pwm-cells =3D <3> for users of
+of_pwm_single_xlate()") (which was created for the pxa driver) the pxa
+driver also supports 3 cells. The cros-ec driver even has comment about
+that being ugly.=20
 
- 	update_rq_clock(rq);
--- 
-2.39.5
+I intend to convert all bindings to use 3 soon.
+
+While that isn't necessary for each individual piece of hardware to
+provide 3 values, having a uniform binding for PWMs provides a nice user
+experience and also simplifies matters with nexus nodes (see
+e71e46a6f19c ("pwm: Add support for pwm nexus dt bindings")).
+
+Best regards
+Uwe
+
+--fbj5kzio535yua6p
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfSh8oACgkQj4D7WH0S
+/k4vDgf/ehubFXBJkC/7G707LTPd9SMCRiU7yo8xzDN/MgRlnqjDQxNaFFrE8xN5
+7MIZqJNGy4dCdHGnGsbN6Nk7bpY/gNm/vXJhQepGVo2gBnpNyHrHVHoDsTNVz/Ka
+61FazZfuGm6K6sHgwu1RploF6vajrJUYnxf4/+fRJWjLYWbwquaVC0sRrM1k7BXM
+97aF6PQYAGMxDLQI4j5CS5Bmn3k4MtOgbgXu2GaPyIIkLP7f9AWy4ZQDmOR96MxN
+10z2K223iXO02U8fyRVWwSbu5ya0KZ/q8IANcX/LEmh1gAuaJg56TFQCEDkxkuX4
+6RESqFawU5aKcNqipOGIYitK3rzR3g==
+=5IFd
+-----END PGP SIGNATURE-----
+
+--fbj5kzio535yua6p--
 
