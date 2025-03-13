@@ -1,148 +1,198 @@
-Return-Path: <linux-kernel+bounces-559294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D12A5F20E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:10:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1027FA5F204
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:08:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26EEE7A962F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:06:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB21619C1C0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA910266591;
-	Thu, 13 Mar 2025 11:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4CA265CD2;
+	Thu, 13 Mar 2025 11:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oXW1dn1U"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gljrNtU0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328A426656F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7251EE028
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741864043; cv=none; b=YdKfJKnGp5tvB2I+Lur4bsRNpxJb7zKhREgYCiqnK4etXEIAwX8LI0ZvBANoGdmPOKe/YFRECumMSchzuY4PdH8XoiO/bMLCF7LWMjIm3tnPuyxGCaXLSpIJdgZWNSPNcJHwGbzD1lTsZp9b1YrZovWPIPuD2Nl/6XJROJLNL9A=
+	t=1741864085; cv=none; b=iHO7bbMBQh5PaixyopNpefC33QoKwzH1kZ2jIHUJUpXxMx9zLqqGwpu91qj8YfZtyb8+Xjz2xTufJ2sEu6KNmXIwOrkUan7Tg8JN1qvutcA6mVEvOeMsipGf4uFSH4fmzzYgq8KqAo+XUQvydJnhPes6+Yai38bvDHtfAr6G4No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741864043; c=relaxed/simple;
-	bh=iIZBfLwd/+EVr7vdpUWWGrQpCbn7rfw0UCu2ooXu9MA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=IBAIU6HE6ObhMPFcGgRKNQSGjBQGIK6ZT7juf7IdIivJ39OMc5ytca/rNNrCCjpFJ47H/EUMaLMGohDn1Jjq9XtPKxgfsdYxkNWxutPkV5eUveTYSAWmZ5AKglii56Uim9DsEX2PaYTeEMtltnCp/O4dea27wOwOfvCTPKDYN0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oXW1dn1U; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=9nPndKlBGpH1HfaiZ5n3YxHPWhlkltTY0RUhZkucvjE=; b=oXW1dn1UyLafqicb66AvNufzZs
-	zcDQWeFnkmPIj4gumX1oAL887APOCqgJZXn01jyKr6UCfy1dGxOA3e4QnIikmglbF7enPCDUJuD9r
-	+r5tsD6GZQOYHeeOxSk4d5CVI6wK0bRwcgWIJPw1lkjA35cOIzbZYDirQdwZds3wT+935TROeFyji
-	XpgiY3vQ6y4EoHpQ6fCrbzqy8QsIkX8gaH/KiN+mOtJGq4fUqDldK8B+VmGXx/P6bqaOAX7aYQRDT
-	9hKHCiR+VcRkWpYwM5K0k3IB/2i7FWzlakI1WTsKayD0c9ycZUFofJr3bhAd9OVXcRwVxAxpuEw+9
-	1SWHOP3Q==;
-Received: from [31.94.26.103] (helo=[127.0.0.1])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsgP0-00000002aGf-1kCR;
-	Thu, 13 Mar 2025 11:07:03 +0000
-Date: Thu, 13 Mar 2025 12:06:58 +0100
-From: David Woodhouse <dwmw2@infradead.org>
-To: Ingo Molnar <mingo@kernel.org>
-CC: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H . Peter Anvin" <hpa@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
- linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
- Dave Young <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- jpoimboe@kernel.org, bsz@amazon.de
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v7_7/8=5D_=5BDO_NOT_MERGE=5D_x86/k?=
- =?US-ASCII?Q?exec=3A_Add_int3_in_kexec_path_for_testing?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <Z9K3GXSaZUcVr8cb@gmail.com>
-References: <20250312144257.2348250-1-dwmw2@infradead.org> <20250312144257.2348250-8-dwmw2@infradead.org> <Z9K3GXSaZUcVr8cb@gmail.com>
-Message-ID: <0CDE8ED7-D8D2-4053-AE4B-4CFF59DB56F7@infradead.org>
+	s=arc-20240116; t=1741864085; c=relaxed/simple;
+	bh=DtTOfbnkAVccKUuDS63awzbFYBh5j1+96WX5yegVUyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZcYkh6Q10YkMNL4dyd49/DJs3OiqYa4AnE3/KSz5KsHb8uA9LxSFO77a/digyoJY/ga/jr/MYDcxH8PQIFj//yaLYJIVqZ6ormxw0r8t778KSN6ri6VbvC6vP363GUW+hF9tEkllPXx71gPqGxZxm1bt2CWPm6gkJsABas7AUEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gljrNtU0; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741864084; x=1773400084;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=DtTOfbnkAVccKUuDS63awzbFYBh5j1+96WX5yegVUyc=;
+  b=gljrNtU01sg/b0uPMfHahFh+tVZns/QyWMxIubt13CXLKbok5UmX05Kk
+   Kr2vhhITtDddVlhVGPztHKWvDFUDgLshP9Upf2C1iSyBJkBGCUcyj8JRA
+   f2/WIci7m/Ggf3mph8Sw12pqcXoAPQb83Ggds6gpTo9Jc9wi27gZVO7YI
+   ka9X73U4Qpc/COQlkcJJHS7ep1Zi094rSRnxWAQQg/l8FkbGiqipgZ8Be
+   qW9Xsr0MKiQgfIDYMTidn0nJH/Qq/8F+Txmo1ZQyRL5OI30J0yGIHTip4
+   uwtCbob/pgcPG02/Q0wPa/EkA+ZyHg8oMCvzgUbJ+UDWuFjr0SIqlHXSK
+   Q==;
+X-CSE-ConnectionGUID: nqwWGK2tQWCJjD45HTkOcg==
+X-CSE-MsgGUID: y0LPDQH0TCaXKtrvw6VpEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="68328793"
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="68328793"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 04:08:03 -0700
+X-CSE-ConnectionGUID: AjktYhLsRsm6vhAxfAix0w==
+X-CSE-MsgGUID: syYFaxW2RVyXWMwPukIlaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="158080593"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 04:07:59 -0700
+Date: Thu, 13 Mar 2025 13:07:56 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com, amd-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	Alex Deucher <alexander.deucher@amd.com>,
+	'Christian =?iso-8859-1?Q?K=F6nig'?= <christian.koenig@amd.com>,
+	siqueira@igalia.com, airlied@gmail.com, simona@ffwll.ch,
+	rodrigo.vivi@intel.com, jani.nikula@linux.intel.com,
+	lucas.demarchi@intel.com, Xaver Hugl <xaver.hugl@kde.org>,
+	Pierre-Loup Griffais <pgriffais@valvesoftware.com>
+Subject: Re: [PATCH 1/2] drm: Create an app info option for wedge events
+Message-ID: <Z9K8jHVoOKPoXyuv@black.fi.intel.com>
+References: <20250228121353.1442591-1-andrealmeid@igalia.com>
+ <20250228121353.1442591-2-andrealmeid@igalia.com>
+ <Z8HGFRGOYvyCCWWu@black.fi.intel.com>
+ <58763d8e-46a1-4753-9401-987fb3dac50b@igalia.com>
+ <Z8KgwswQQyGxhsR1@black.fi.intel.com>
+ <db27ee44-f480-475b-be7e-710bd30eb7a5@igalia.com>
+ <Z9BuU3RzMkEE_FL1@black.fi.intel.com>
+ <Z9FcmDzSmBbVAsqD@black.fi.intel.com>
+ <ef926ea5-ac0e-4f95-b260-84c4102c93ad@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ef926ea5-ac0e-4f95-b260-84c4102c93ad@igalia.com>
 
-On 13 March 2025 11:44:41 CET, Ingo Molnar <mingo@kernel=2Eorg> wrote:
->
->* David Woodhouse <dwmw2@infradead=2Eorg> wrote:
->
->> From: David Woodhouse <dwmw@amazon=2Eco=2Euk>
->>=20
->> Signed-off-by: David Woodhouse <dwmw@amazon=2Eco=2Euk>
->> ---
->>  arch/x86/kernel/relocate_kernel_64=2ES | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>=20
->> diff --git a/arch/x86/kernel/relocate_kernel_64=2ES b/arch/x86/kernel/r=
-elocate_kernel_64=2ES
->> index 17d41e6e1a4b=2E=2E2b7fc59af373 100644
->> --- a/arch/x86/kernel/relocate_kernel_64=2ES
->> +++ b/arch/x86/kernel/relocate_kernel_64=2ES
->> @@ -158,7 +158,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
->>  	lidt	(%rsp)
->>  	addq	$10, %rsp
->> =20
->> -	//int3
->> +	int3
->
->So this is all boot-serialized functionality with no SMP concerns=20
->whatsoever, right?
->
->If yes then we could use something like this:
->
->	static int exception_selftest =3D 1;
->
->and add the INT3 point:
->
->	int3
->=2Eglobl after_int3
->after_int3:
->
->And do this in the early exception handler:
->
->	=2E=2E=2E
->=09
->	if (exception_selftest) {
->		exception_selftest =3D 0;
->
->		print_something_warm_and_fuzzy();
->
->		IRET-to-after_int3;
->	}
->
->	=2E=2E=2E
->
->	=2E=2E=2E regular exception path =2E=2E=2E
->
->=2E=2E=2E but all in assembly or so ;-)
->
->This would make it reasonably certain that the most complex bits of=20
->this new debuging code are in working order, all the time=2E
->
->Thanks,
->
->	Ingo
+On Wed, Mar 12, 2025 at 06:59:33PM -0300, André Almeida wrote:
+> Em 12/03/2025 07:06, Raag Jadav escreveu:
+> > On Tue, Mar 11, 2025 at 07:09:45PM +0200, Raag Jadav wrote:
+> > > On Mon, Mar 10, 2025 at 06:27:53PM -0300, André Almeida wrote:
+> > > > Em 01/03/2025 02:53, Raag Jadav escreveu:
+> > > > > On Fri, Feb 28, 2025 at 06:54:12PM -0300, André Almeida wrote:
+> > > > > > Hi Raag,
+> > > > > > 
+> > > > > > On 2/28/25 11:20, Raag Jadav wrote:
+> > > > > > > Cc: Lucas
+> > > > > > > 
+> > > > > > > On Fri, Feb 28, 2025 at 09:13:52AM -0300, André Almeida wrote:
+> > > > > > > > When a device get wedged, it might be caused by a guilty application.
+> > > > > > > > For userspace, knowing which app was the cause can be useful for some
+> > > > > > > > situations, like for implementing a policy, logs or for giving a chance
+> > > > > > > > for the compositor to let the user know what app caused the problem.
+> > > > > > > > This is an optional argument, when `PID=-1` there's no information about
+> > > > > > > > the app caused the problem, or if any app was involved during the hang.
+> > > > > > > > 
+> > > > > > > > Sometimes just the PID isn't enough giving that the app might be already
+> > > > > > > > dead by the time userspace will try to check what was this PID's name,
+> > > > > > > > so to make the life easier also notify what's the app's name in the user
+> > > > > > > > event.
+> > > > > > > > 
+> > > > > > > > Signed-off-by: André Almeida <andrealmeid@igalia.com>
+> > > > 
+> > > > [...]
+> > > > 
+> > > > > > > >     	len = scnprintf(event_string, sizeof(event_string), "%s", "WEDGED=");
+> > > > > > > > @@ -562,6 +564,14 @@ int drm_dev_wedged_event(struct drm_device *dev, unsigned long method)
+> > > > > > > >     	drm_info(dev, "device wedged, %s\n", method == DRM_WEDGE_RECOVERY_NONE ?
+> > > > > > > >     		 "but recovered through reset" : "needs recovery");
+> > > > > > > > +	if (info) {
+> > > > > > > > +		snprintf(pid_string, sizeof(pid_string), "PID=%u", info->pid);
+> > > > > > > > +		snprintf(comm_string, sizeof(comm_string), "APP=%s", info->comm);
+> > > > > > > > +	} else {
+> > > > > > > > +		snprintf(pid_string, sizeof(pid_string), "%s", "PID=-1");
+> > > > > > > > +		snprintf(comm_string, sizeof(comm_string), "%s", "APP=none");
+> > > > > > > > +	}
+> > > > > > > This is not much use for wedge cases that needs recovery, since at that point
+> > > > > > > the userspace will need to clean house anyway.
+> > > > > > > 
+> > > > > > > Which leaves us with only 'none' case and perhaps the need for standardization
+> > > > > > > of "optional telemetry collection".
+> > > > > > > 
+> > > > > > > Thoughts?
+> > > > > > 
+> > > > > > I had the feeling that 'none' was already meant to be used for that. Do you
+> > > > > > think we should move to another naming? Given that we didn't reach the merge
+> > > > > > window yet we could potentially change that name without much damage.
+> > > > > 
+> > > > > No, I meant thoughts on possible telemetry data that the drivers might
+> > > > > think is useful for userspace (along with PID) and can be presented in
+> > > > > a vendor agnostic manner (just like wedged event).
+> > > > 
+> > > > I'm not if I agree that this will only be used for telemetry and for the
+> > > > `none` use case. As stated by Xaver, there's use case to know which app
+> > > > caused the device to get wedged (like switching to software rendering) and
+> > > > to display something for the user after the recovery is done (e.g. "The game
+> > > > <app name> stopped working and Plasma has reset").
+> > > 
+> > > Sure, but since this information is already available in coredump, I was
+> > > hoping to have something like a standardized DRM level coredump with both
+> > > vendor specific and agnostic sections, which the drivers can (and hopefully
+> > > transition to) use in conjunction with wedged event to provide wider
+> > > telemetry and is useful for all wedge cases.
+> > 
+> > This is more useful because,
+> > 
+> > 1. It gives drivers an opportunity to present the telemetry that they are
+> >     interested in without needing to add a new event string (like PID or APP)
+> >     for their case.
+> > 
+> > 2. When we consider wedging as a usecase, there's a lot more that goes
+> >     into it than an application that might be behaving strangely. So a wider
+> >     telemetry is what I would hope to look at in such a scenario.
+> > 
+> 
+> I agree that coredump is the way to go for telemetry, we already have the
+> name and PID of the guilty app there, along with more information about the
+> GPU state. But I don't think it should be consumed like an uAPI. Even if we
+> wire up some common DRM code for that, I don't think we can guarantee the
+> stability of it as we can do for an uevent. coredump can be disabled and by
+> default is only accessible by root.
 
-The exception handler already returns if the exception was int3, but not f=
-or anything else=2E Less so the "print something warm and fuzzy" part; it j=
-ust does the same register dump=2E But we could change that=2E
+Hm, this made me curious about how a pid of a specific user will be dealt
+with in a multi-user scenario. I know it's not a common scenario for the
+usercase but setting the rules to avoid side-effects (or could there be
+any?) might be a good idea.
 
-I'm less keen on making it unconditional though=2E Kexec is a performance-=
-critical path when every millisecond is perceived as guest steal time, and =
-the serial output should only happen in production if something goes *wrong=
-*=2E
+> So I think that coredump is really good after the fact and if the user is
+> willing to go ahead and report a bug somewhere. But for the goal of
+> notifying the compositor, the same uevent that the compositor is already
+> listening to will have everything they need to deal with this reset.
 
-And besides, most kexec users don't have early_printk enabled anyway so if=
- we break them, this idea doesn't help=2E
+I agree that having to deal with coredump will be cumbersome for the
+usecase. Although I'm still leaning towards the idea that we should
+consider the room for new usecases that probably want to expose new data,
+and having to add a new string each time might not be the best of the
+approach.
+
+But that's just my opinion and we should probably wait for wider feedback.
+
+Raag
 
