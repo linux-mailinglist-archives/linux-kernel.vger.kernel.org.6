@@ -1,181 +1,129 @@
-Return-Path: <linux-kernel+bounces-559645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40982A5F71B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:59:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1EFFA5F720
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:00:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7453A3BC9FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:59:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76ED117FB4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D38267B64;
-	Thu, 13 Mar 2025 13:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E94267AEA;
+	Thu, 13 Mar 2025 14:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kXafg86c"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nZJJeY8A"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDA3266EF5;
-	Thu, 13 Mar 2025 13:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00C426770E;
+	Thu, 13 Mar 2025 14:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741874370; cv=none; b=C8XnG+WwBpyRQpHzYKDDYZIFh5NhTuRxCg5clqrZK2qwLi6vRdClxLglLEAfAO2NjvPlfggbA/LUIU/lLaQ3pEMCnbpE1e8nypjkaBiyBsz3JdabGbmOC3F4NCyo8d/PGm0uo4e+r6h5MegLk+wzTZc/rrtmM0Z6joWajoxLF9A=
+	t=1741874408; cv=none; b=kpYTei+y2ea8wkgNaBqGbvXZ72M7mGO5c+skQIgS/Y2MLXysJIzeMRXs9yY7QMGKdChM3xqtstYVkHkrQZDHxI9VNC3yKcDANyErOllfl3eydgUFtJk/Sy3QfRU9UWSwXxJ1WvNkjP4mLqjlJ+q85T+mCK2FNTEpz4Uvc/yzMuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741874370; c=relaxed/simple;
-	bh=THm6FaQQgLW/8m8yRNpcmIzkqlxy2yVeotJDAywN9dQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dEA134UIS2846jr0XvVG/Bg9njJRVec6ui0UJVKcyczYshwfBh0D0nk9U1I/Af7wW3vor0JqjaYghk0UGVqpmVNnb9pQCTtD8dTxlIF/ReIqbsMgG9Ldxn0msu2zui2SfYWKVMTfchH9uGRFDAayAfQEIs2vpmtf2Z4kQZNlKfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kXafg86c; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-72726a65cbaso676457a34.0;
-        Thu, 13 Mar 2025 06:59:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741874367; x=1742479167; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=5OPl5i71ZdSAzYa7F6yiKwtJ4dNnBEhCh3JI29+eh4I=;
-        b=kXafg86c3znNijlZUJFbsAyKY+KXSh/QX8z8cOEND+QgglyvVF8DpY7AEfOGmT/oo2
-         5+afZJwRetGmII8d9RoR8MHgRYEerOu4lkMS5GdC0R53NTQGzfgzoJNjbfEkS/haGo8k
-         4uVK8IVBjzDk5aX4S9CdH9kvYIjnLvQtR+uCyms+mlfM/LtQXFaNK5aJvx3vpsO6L0vy
-         Ljp2davnbABh0a4wNWy+D/ZEYPPw8nDxrTHXI6WdupeNB0njhQnTpJhShsrUM5tDOMeZ
-         s/lEmAz/kncuDfmt3vqZLfjMteVMIn9fUkul2+FYBuWp9aTm19rp1sHwb/sOayIvH4C7
-         KR6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741874367; x=1742479167;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5OPl5i71ZdSAzYa7F6yiKwtJ4dNnBEhCh3JI29+eh4I=;
-        b=BnJySQO7p/xVtU+/zSEVKaaZKdSWoT1NAdai82mEsudKrIYQTvUkXJS8Aela0w0umE
-         ojzlprK6gDMN5UFJkYLJLCAB9b0Q1VD+4yppABXwx/B6fxLazzljDJMsQwjF3oy4pPEb
-         kkK+vHMTXRSyZQFcBnVrRyuJg8rfRXph3WsWyZ+F7Cd7cYt93L5WRklOBTaTHsfMfcSQ
-         wUhMuat+u5DFjsMxsy/ZA7s8ZTqX/NAmzYFFrYBIpeHzvBENhvWGq64SPOCMvOhOYZnz
-         e5aOEb7AYKPMh0TrH+kD9kdKuqVI9Z+B/5RiLI1UkaNfn6ZIau1KbKFktzoTETy99kMr
-         ZBDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ5gYdRwblKFLLh8x1+xkgCWyW2LJq+Tx2YstAdTurSsqhSYcKYgX4uQFjsUD8KHkV3oluUCQ8lAT/fdE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMd2jfMqcuORoI5YIAAMnucEvvJ0k2pgciw9GeHbu3wF0R6drK
-	7WRkQuukmwtB/AuyUTsBLcJ/FGCeGQXrNCnTQLfuKvjiC3vfuxGp
-X-Gm-Gg: ASbGnct5wJN4Nsc/LIqarY8ThcSUo+R+8bdqXgrnWTzBmLmDhgoZzDn/RojbfdrAYvO
-	1wbrflc/pTjoxQPeZfC6LHurPIQs7wdeRey04KAYUh/meCyZjaIcqsczjC30IaZaisa3lIzxLT5
-	2onU+05zrsnZ+Q9kiJd/s+K/PQkjOs0PGs4ROHMxUG22PWTUGkQr6ESRdATlM0ET6933cMTCdvR
-	u+rBFX1grfJuc6OljrYyQ051SlZY3R4SRum132RdR3+B2j+XV2Z0HQohf0abfd206xB56apqEIq
-	6b3K1N5xAbM8UvB+nUYSZXZFBFNMtQjOk3H+QrVoiRxcPo25Cs47vLlaK+o4cW9Z1U5yIt3oKHv
-	wXGPqSek=
-X-Google-Smtp-Source: AGHT+IHvFoab+GDvaJG+xkWK0e3xxY4hzqJWEGrTyUuy0qbkjGICwxHCh6DPBxJ+i2yexq/5R3XwHA==
-X-Received: by 2002:a05:6830:6e99:b0:72b:8a8b:e02d with SMTP id 46e09a7af769-72b9b319d94mr6962019a34.5.1741874367573;
-        Thu, 13 Mar 2025 06:59:27 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72bb269dfbesm213185a34.22.2025.03.13.06.59.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 06:59:26 -0700 (PDT)
-Message-ID: <603b3f10-6ad9-46af-8b31-d11e46f4698a@gmail.com>
-Date: Thu, 13 Mar 2025 06:59:24 -0700
+	s=arc-20240116; t=1741874408; c=relaxed/simple;
+	bh=sUVQ7XZyhgDlaxx4SkEh499D6uLm9wuMV2Qxd21NbIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ekc9tDYKAj5//rC2cBS2krkTRUwxp+CK12e/V3Hsd8xZByxA75tbMiPAsuDs7qtSSmraGhPumx3oxDUTJ7y9FGYsBDlcodO0TfqbXgIBjBzgCKM4AXXNqfm4V5yYsN8dVc473L92dIB08thX/wBg7P2EYb26edAIC19uNUX7tjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nZJJeY8A; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741874407; x=1773410407;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sUVQ7XZyhgDlaxx4SkEh499D6uLm9wuMV2Qxd21NbIY=;
+  b=nZJJeY8AwXAC3tJ9QerQsJX9XSUpP5mp11wnGZ7WLc0grvWbWG0/Ah4a
+   g/mhyD7W46DTnkGcsaCB5lFy+ILijTibzShKHhlZh3zSdtioOZfOL8xts
+   OVRKxIe9MC1Lz1ffQsMpMCwa0/KkrTNRUN15OW7LGFZJqZBChNUrEugKP
+   m+XGy32qaeySQRZ7EhmnW2yfkpb2muRaLd89z+bYVU8tipVdwMabyW7E/
+   vAfT4RDU4VFnAzO28KZ4JaPqvQQmvlqFfW3ekRbKuVjIRV19ZnduJVoQG
+   cdjSrZKRXHhJ0QX2VFRTHaBBsQgxi8fAjMQGFY0PLrH2UZMLeH629trMn
+   A==;
+X-CSE-ConnectionGUID: 7OYyNStwT82I0BFGz3Xpnw==
+X-CSE-MsgGUID: Rh5ebv9oTAuApUXZVjQG7A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="42241543"
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="42241543"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:00:06 -0700
+X-CSE-ConnectionGUID: XsgXMK46TvO1CDi73/STDg==
+X-CSE-MsgGUID: lFO0idrySbibY47t/qecbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="120953904"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 07:00:05 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tsj6P-00000002C2v-2hJi;
+	Thu, 13 Mar 2025 16:00:01 +0200
+Date: Thu, 13 Mar 2025 16:00:01 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
+	raymond.tan@intel.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] gpio: elkhartlake: depend on
+ MFD_INTEL_EHL_PSE_GPIO
+Message-ID: <Z9Lk4e_09UbGFnid@smile.fi.intel.com>
+References: <20250307052231.551737-1-raag.jadav@intel.com>
+ <20250307052231.551737-3-raag.jadav@intel.com>
+ <Z8_aJqNKK9AgBnK8@black.fi.intel.com>
+ <Z9FpU0Ik_4yCU9XB@smile.fi.intel.com>
+ <Z9G-RSfcRmALtgJe@black.fi.intel.com>
+ <Z9HTU2BlXIa95S0V@smile.fi.intel.com>
+ <Z9KjIAMfRIegA2vI@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.4 000/328] 5.4.291-rc1 review
-To: Naresh Kamboju <naresh.kamboju@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250311145714.865727435@linuxfoundation.org>
- <CA+G9fYtG9K8ywO4w2ys=UEuD_r1LgOuZhG4cg62YKAX0qK35cg@mail.gmail.com>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- xsDiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
- xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
- X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
- AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
- ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
- SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
- nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
- qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz80nRmxvcmlhbiBG
- YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+wmYEExECACYCGyMGCwkIBwMCBBUCCAME
- FgIDAQIeAQIXgAUCZ7gLLgUJMbXO7gAKCRBhV5kVtWN2DlsbAJ9zUK0VNvlLPOclJV3YM5HQ
- LkaemACgkF/tnkq2cL6CVpOk3NexhMLw2xzOw00ESM+4EhAQAL/o09boR9D3Vk1Tt7+gpYr3
- WQ6hgYVON905q2ndEoA2J0dQxJNRw3snabHDDzQBAcqOvdi7YidfBVdKi0wxHhSuRBfuOppu
- pdXkb7zxuPQuSveCLqqZWRQ+Cc2QgF7SBqgznbe6Ngout5qXY5Dcagk9LqFNGhJQzUGHAsIs
- hap1f0B1PoUyUNeEInV98D8Xd/edM3mhO9nRpUXRK9Bvt4iEZUXGuVtZLT52nK6Wv2EZ1TiT
- OiqZlf1P+vxYLBx9eKmabPdm3yjalhY8yr1S1vL0gSA/C6W1o/TowdieF1rWN/MYHlkpyj9c
- Rpc281gAO0AP3V1G00YzBEdYyi0gaJbCEQnq8Vz1vDXFxHzyhgGz7umBsVKmYwZgA8DrrB0M
- oaP35wuGR3RJcaG30AnJpEDkBYHznI2apxdcuTPOHZyEilIRrBGzDwGtAhldzlBoBwE3Z3MY
- 31TOpACu1ZpNOMysZ6xiE35pWkwc0KYm4hJA5GFfmWSN6DniimW3pmdDIiw4Ifcx8b3mFrRO
- BbDIW13E51j9RjbO/nAaK9ndZ5LRO1B/8Fwat7bLzmsCiEXOJY7NNpIEpkoNoEUfCcZwmLrU
- +eOTPzaF6drw6ayewEi5yzPg3TAT6FV3oBsNg3xlwU0gPK3v6gYPX5w9+ovPZ1/qqNfOrbsE
- FRuiSVsZQ5s3AAMFD/9XjlnnVDh9GX/r/6hjmr4U9tEsM+VQXaVXqZuHKaSmojOLUCP/YVQo
- 7IiYaNssCS4FCPe4yrL4FJJfJAsbeyDykMN7wAnBcOkbZ9BPJPNCbqU6dowLOiy8AuTYQ48m
- vIyQ4Ijnb6GTrtxIUDQeOBNuQC/gyyx3nbL/lVlHbxr4tb6YkhkO6shjXhQh7nQb33FjGO4P
- WU11Nr9i/qoV8QCo12MQEo244RRA6VMud06y/E449rWZFSTwGqb0FS0seTcYNvxt8PB2izX+
- HZA8SL54j479ubxhfuoTu5nXdtFYFj5Lj5x34LKPx7MpgAmj0H7SDhpFWF2FzcC1bjiW9mjW
- HaKaX23Awt97AqQZXegbfkJwX2Y53ufq8Np3e1542lh3/mpiGSilCsaTahEGrHK+lIusl6mz
- Joil+u3k01ofvJMK0ZdzGUZ/aPMZ16LofjFA+MNxWrZFrkYmiGdv+LG45zSlZyIvzSiG2lKy
- kuVag+IijCIom78P9jRtB1q1Q5lwZp2TLAJlz92DmFwBg1hyFzwDADjZ2nrDxKUiybXIgZp9
- aU2d++ptEGCVJOfEW4qpWCCLPbOT7XBr+g/4H3qWbs3j/cDDq7LuVYIe+wchy/iXEJaQVeTC
- y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJn
- uAtCBQkxtc7uAAoJEGFXmRW1Y3YOJHUAoLuIJDcJtl7ZksBQa+n2T7T5zXoZAJ9EnFa2JZh7
- WlfRzlpjIPmdjgoicA==
-In-Reply-To: <CA+G9fYtG9K8ywO4w2ys=UEuD_r1LgOuZhG4cg62YKAX0qK35cg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9KjIAMfRIegA2vI@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-
-
-On 3/13/2025 12:19 AM, Naresh Kamboju wrote:
-> On Tue, 11 Mar 2025 at 20:33, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
->>
->> This is the start of the stable review cycle for the 5.4.291 release.
->> There are 328 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Thu, 13 Mar 2025 14:56:14 +0000.
->> Anything received after that time might be too late.
->>
->> The whole patch series can be found in one patch at:
->>          https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.291-rc1.gz
->> or in the git tree and branch at:
->>          git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
->> and the diffstat can be found below.
->>
->> thanks,
->>
->> greg k-h
+On Thu, Mar 13, 2025 at 11:19:28AM +0200, Raag Jadav wrote:
+> On Wed, Mar 12, 2025 at 08:32:51PM +0200, Andy Shevchenko wrote:
+> > On Wed, Mar 12, 2025 at 07:03:01PM +0200, Raag Jadav wrote:
+> > > On Wed, Mar 12, 2025 at 01:00:35PM +0200, Andy Shevchenko wrote:
+> > > > On Tue, Mar 11, 2025 at 08:37:26AM +0200, Raag Jadav wrote:
+> > > > > On Fri, Mar 07, 2025 at 10:52:28AM +0530, Raag Jadav wrote:
+> > > > > > Now that we have Intel MFD driver for PSE GPIO, depend on it.
+> > > > 
+> > > > > Andy, any guidance on GPIO?
+> > > > 
+> > > > I'm not sure what we are waiting here from me. Hadn't I reviewed your GPIO
+> > > > part already?
+> > > 
+> > > Ah, I added MFD dependency for leaf drivers after your v1 review.
+> > > So this one seems missing the tag. Can I add it?
+> > 
+> > I see, but this can be added later on.
+> > And on the second thought, do we accept the configurations
+> > when user wants to have GPIO on EHL, and doesn't care about TIO?
 > 
-> Results from Linaro’s test farm.
-> No regressions on arm64, arm, x86_64, and i386.
+> Yes, here we're making the leaf driver (GPIO) depend on MFD regardless
+> of what TIO config is.
 > 
-> Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > Maybe this patch is not needed after all?
 > 
-> NOTE:
-> The following build errors noticed on arm, arm64 and x86 builds
-> net/ipv4/udp.c: In function 'udp_send_skb':
-> include/linux/kernel.h:843:43: warning: comparison of distinct pointer
-> types lacks a cast
->    843 |                 (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
->        |                                           ^~
->   Link:
->    - ttps://storage.tuxsuite.com/public/linaro/anders/builds/2uDcpdUQnEV7etYkHnVyp963joS/
+> My understanding is that GPIO should depend on MFD. Not much point in
+> adding a standalone leaf driver right?
 
-Yep, this is seen with net/ipv6/udp.c for the same reasons, see my 
-comment here:
+Ah, indeed, we have no other means to enumerate it (as we don't have any board
+file that does direct creation of the device), this patch is correct.
 
-https://lore.kernel.org/all/0f5c904f-e9e3-405f-a54d-d81d56dc797e@gmail.com/
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
 -- 
-Florian
+With Best Regards,
+Andy Shevchenko
+
 
 
