@@ -1,52 +1,116 @@
-Return-Path: <linux-kernel+bounces-559958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D012EA5FB8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:26:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE52A5FB99
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:26:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC43F1696A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:25:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DDB6165962
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112582690F0;
-	Thu, 13 Mar 2025 16:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E7D26A0E7;
+	Thu, 13 Mar 2025 16:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="JeJ7S+2E"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bfgra5tU"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75E1267F77;
-	Thu, 13 Mar 2025 16:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D4C2690E6;
+	Thu, 13 Mar 2025 16:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741883072; cv=none; b=uV99exeYS9Y4cpt2dPhDtTTUtxEPkIG0G6YjI9NPOsRcG72gMHIC/F07l5MDIoYvKE7BzZh21HSvulOafK8Q1YwNYrEzY8PYPGH/8A//ASHcjIMRcn8LFdHLZuIfewRqAzmPd1ana086pxZTxPFgf/vj6VKDpOuo6t54GOwlzP8=
+	t=1741883084; cv=none; b=FRM+q+ANf7FThtbcNNXSVJtJ01fyahCaQaXyd1Bo47SyFJQVDhFS946yqoAYT9Ybr673UPYLG2jkMgqDv/TXFTjxU298mwlFnYnhqT6EISTgWCijgwll0Ipgch6U9LEdyiIhqUruXQDEUP8u5SooA9oF0dzf1kyX7fSmzM3nbB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741883072; c=relaxed/simple;
-	bh=Qukw+Dbpf77fOn6Kq4jSk8A0o1PHU9Moj+IMqcryrGw=;
+	s=arc-20240116; t=1741883084; c=relaxed/simple;
+	bh=qRKmvdz41Z9reFxLxCZQ5RSEmJTdaZd8ctgs5m87/cU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IZm2y32cxdaYqctKui+pPQQQ+lMR41hLfAqww2CzevhDavo/kihNddG/aHQ2fAExd/g8Grzlc30SfL5/c5+h+Jt279R8Ecppb5ZKFEYPZmebuXnn00NBcLknUVbvTjvsSMFqzEOGLaBZJoqJHFDxKkNIt8CjVPIFf06nF/GiYTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=JeJ7S+2E; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1741883068;
-	bh=Qukw+Dbpf77fOn6Kq4jSk8A0o1PHU9Moj+IMqcryrGw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JeJ7S+2EFqV4tuX1Y058rQF8a0kWQYKi8UEtSY6kj+y2mwk9GqKU7GLB9SwCJ/YK/
-	 v2L1G1fUz3vkC/TSXhyQiuRRrg3KO8HL1rTjjyhBo8+HpjX3ypV6/m0JkCDanSuIFc
-	 /xhwernHvbp5DjLlHlRyvAXxaKOrBuJtbI3+l0D4=
-Date: Thu, 13 Mar 2025 17:24:28 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@weissschuh.net>
-To: Sung-Chi Li <lschyi@chromium.org>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
-	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
-	chrome-platform@lists.linux.dev, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] hwmon: (cros_ec) Add reading target fan RPM function
-Message-ID: <782e6319-2082-4f05-9987-fa68439701ef@t-8ch.de>
-References: <20250313-extend_ec_hwmon_fan-v1-0-5c566776f2c4@chromium.org>
- <20250313-extend_ec_hwmon_fan-v1-2-5c566776f2c4@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T8QrlLM1alUUg/I8SBoygQwS5VkcNC5IITPGcDNppFscESx3muC15P4A8zzUzd5f+uWOrUyo5s1vW/SYQAZS8dKaM2mfoG2MtkC/EX16LOLlcX6o0Zi2i9uGmTAMZiZnrcw8jD8MX6GSZqLe51Occo1shzjGVMd7UUi1TUBviZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bfgra5tU; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22337bc9ac3so24733415ad.1;
+        Thu, 13 Mar 2025 09:24:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741883082; x=1742487882; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gfjeDfcFtBUkNo/zS3F1TWi9ohbnRv2k3DpKMTE74P8=;
+        b=Bfgra5tUYaxBQx2HPm502vUBmU7+dQuyCk/r0b2QoKLZNGYc7uqoVBLUJkcQDnykDm
+         4gAAW7gkKEnTWK3KSPZ5j8lRDH/eg+hYOBd+wovTXyI4ttOyUg1hqg298pehyKIpB3+2
+         Ld3NKA4DX0P252IZbXFIRBkoqa2xOAaakKXW0HrxFsGaOQX94kjpNDXbIvVS7OVURaNN
+         6y5yv82rjwZ2yaFzkQR4nCkvVHoaHbPllj04xnK7Njfq1zKhSYpQgYsr/QDp6yZlIQR2
+         L6tUhxGaHTVZQYWrt/IEmMVCdp+rYnZUye02wHx5O3Ev83bm7frolthpmeco/t4k7Tpg
+         ezQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741883082; x=1742487882;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gfjeDfcFtBUkNo/zS3F1TWi9ohbnRv2k3DpKMTE74P8=;
+        b=P6BTkGekvAp6UHjUez47VmZ6MKEpiJnW05QstSM4O7TbBzpjc65xHLF6xj+WFr1e6S
+         c0SzRgu46HI5VXLi9TJKw3u5Yy7ycAYlmcduQ48QoFOQBiFMELU/K6ppL8rkXfYjCVES
+         /q8i5QPfQttux0Y5dl+ydkswf+HykZ3HrBg32IXX0jrzxeM/1ZlGyHuWvNPd5vbyUnWr
+         MMoKb8dUZwpO5Ss6IKs9jOFGD1vk+wmeF3AOwuxASl6hGEwSM9Q+prg1PVL0oiwXyDEt
+         bHDRowq41Icuzr7vmnTqi4a+g3vUkXlcPj1QMxGg9kX4LKz6BiESX8OoKfaZXZ5JB6uK
+         3KjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIypO6g9Xjot2MA4TGFHP2lcXACBMjtgY065dtLk2H5TWNm6Hw15FxWO74hgrDMvf+tkJZEUg5Sma8K3cT@vger.kernel.org, AJvYcCVguatFknKpHaQ98RQZGZ23PiIb3R0W21ldgnqUX8Os2k5Oqosx7GyYMwE+agBI5d+64MgB2EYG@vger.kernel.org, AJvYcCVuxK/jzeR9cGqYGJ8iE0nv8syAGwi48qrnMwr3iuRQezblEIgJXiNfswl+D0JNOFs7gWWN66WNI8BTOpEw@vger.kernel.org, AJvYcCWZzDvT/xItXfL+IntLocj/2iacIqLa5N1PR4Qw3F/aqpdyblIlt/uXl2QXHwoxyNutDDF8iDVao/lsPa3ieBU=@vger.kernel.org, AJvYcCX08Z+A7o1VEEUw1w4sOBgfBkcRGn6KCVEP1hj9dNgnXnuun3UFkCITCfer0av5rpRdnS4=@vger.kernel.org, AJvYcCXAXy7F3M6EbHyVwETvOwzQepHXX0HT9WyO3Q7NeNctlbL/UGjxvPb4wSpwb1ilGyVWsj6/JMp6jjB3Ofc=@vger.kernel.org, AJvYcCXCzPWCd0cDCj+PHQdZbFhCgjhWE/nxI/Wr8fd4CsQKYY7kI3Ot/PH3RmCmIlv+Fns5Ahc2kymNPg/1jgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5R8FJFARqP1rqOx/CdZ3czOKdTiuvPdq8T6yNMFeJK7fkyPgb
+	210Uepht7Ia0o4U9byDyAsCNq7pCAEwDAc8zZEZHxAEEy5NzE7YH
+X-Gm-Gg: ASbGncs3yPmPEOogCuMN0UwGF58b2+UIpeO76YXNsTOMuT65oiMvosmJ5Koau6vcfi/
+	6ZOcQivqV4g+MPiR1M2RWwKkG+WcMBQ/Z1rtiG8zyMrFhF3FWU/0Cz5IHuc4sVN6QQ2nW6dmqTg
+	oqHDgkpHa4Au76oX19z6VhtR2Wd0Pzt1FQNc8GX9submCxsJmqNZ3J3Fn2Jg/k8Bz5z1biuaTgw
+	M3XZLB3aF7XVq4de1AYaDSqN/fJyexS6o1IgTw+HO214FXKpTYJJh0xUrpV7ZRDKZoCnUpchPDK
+	y/5/bRo0PKXxlPk3XUrje7T8LeLw19fiJFQT5DWvR/BZQjKbhO3h14I=
+X-Google-Smtp-Source: AGHT+IEhm2UlrxnESPtEwBvMI/fgf4613dWJojNHjH0dA0YyQIoHXBBX22mwSMAlbcl6B7SrptBmaw==
+X-Received: by 2002:a17:902:f552:b0:224:216e:332f with SMTP id d9443c01a7336-225931ad2bemr163943215ad.48.1741883081419;
+        Thu, 13 Mar 2025 09:24:41 -0700 (PDT)
+Received: from localhost ([216.228.125.129])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbcba7sm15241975ad.173.2025.03.13.09.24.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 09:24:40 -0700 (PDT)
+Date: Thu, 13 Mar 2025 12:24:38 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Jacob Keller <jacob.e.keller@intel.com>,
+	David Laight <david.laight.linux@gmail.com>,
+	Jiri Slaby <jirislaby@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Kuan-Wei Chiu <visitorckw@gmail.com>, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, jk@ozlabs.org, joel@jms.id.au,
+	eajames@linux.ibm.com, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	dmitry.torokhov@gmail.com, mchehab@kernel.org,
+	awalls@md.metrocast.net, hverkuil@xs4all.nl,
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	louis.peens@corigine.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
+	johannes@sipsolutions.net, gregkh@linuxfoundation.org,
+	akpm@linux-foundation.org, alistair@popple.id.au,
+	linux@rasmusvillemoes.dk, Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se, jernej.skrabec@gmail.com, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsi@lists.ozlabs.org,
+	dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+	oss-drivers@corigine.com, netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com, linux-serial@vger.kernel.org,
+	bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+	Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: Re: [PATCH v3 01/16] bitops: Change parity8() return type to bool
+Message-ID: <Z9MGxknjluvbX19w@thinkpad>
+References: <20250306162541.2633025-1-visitorckw@gmail.com>
+ <20250306162541.2633025-2-visitorckw@gmail.com>
+ <9d4b77da-18c5-4551-ae94-a2b9fe78489a@kernel.org>
+ <Z8ra0s9uRoS35brb@gmail.com>
+ <a4040c78-8765-425e-a44e-c374dfc02a9c@kernel.org>
+ <20250307193643.28065d2d@pumpkin>
+ <cbb26a91-807b-4227-be81-8114e9ea72cb@intel.com>
+ <0F794C6F-32A9-4F34-9516-CEE24EA4BC49@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,76 +119,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250313-extend_ec_hwmon_fan-v1-2-5c566776f2c4@chromium.org>
+In-Reply-To: <0F794C6F-32A9-4F34-9516-CEE24EA4BC49@zytor.com>
 
-On 2025-03-13 12:47:43+0800, Sung-Chi Li wrote:
-> Implement the functionality of reading the target fan RPM setting from
-> ChromeOS embedded controller under framework.
+On Wed, Mar 12, 2025 at 05:09:16PM -0700, H. Peter Anvin wrote:
+> On March 12, 2025 4:56:31 PM PDT, Jacob Keller <jacob.e.keller@intel.com> wrote:
+
+[...]
+
+> >This is really a question of whether you expect odd or even parity as
+> >the "true" value. I think that would depend on context, and we may not
+> >reach a good consensus.
+> >
+> >I do agree that my brain would jump to "true is even, false is odd".
+> >However, I also agree returning the value as 0 for even and 1 for odd
+> >kind of made sense before, and updating this to be a bool and then
+> >requiring to switch all the callers is a bit obnoxious...
 > 
-> Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
-> ---
->  drivers/hwmon/cros_ec_hwmon.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
-> index b2fec0768301f116f49c57b8dbfb042b98a573e1..73bfcbbaf9531be6b753cfef8045fd5dab5b2ab3 100644
-> --- a/drivers/hwmon/cros_ec_hwmon.c
-> +++ b/drivers/hwmon/cros_ec_hwmon.c
-> @@ -36,6 +36,19 @@ static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index
->  	return 0;
->  }
->  
-> +static int cros_ec_hwmon_read_fan_target(struct cros_ec_device *cros_ec, u8 index, int32_t *speed)
+> Odd = 1 = true is the only same definition. It is a bitwise XOR, or sum mod 1.
 
-int32_t is a userspace type. In the kernel use i32, or even better u32.
+The x86 implementation will be "popcnt(val) & 1", right? So if we
+choose to go with odd == false, we'll have to add an extra negation.
+So because it's a purely conventional thing, let's just pick a simpler
+one?
 
-> +{
-> +	int ret;
-> +	struct ec_response_pwm_get_fan_rpm r;
+Compiler's builtin parity() returns 1 for odd.
 
-Switch the variable declarations around.
-Also call the request "req".
-
-> +
-> +	ret = cros_ec_cmd(cros_ec, 0, EC_CMD_PWM_GET_FAN_TARGET_RPM, NULL, 0, &r, sizeof(r));
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	*speed = le32_to_cpu(r.rpm);
-
-r.rpm is not marked as __le32, I'm not sure if sparse will complain
-about the usage of le32_to_cpu().
-
-> +	return 0;
-> +}
-> +
->  static int cros_ec_hwmon_read_temp(struct cros_ec_device *cros_ec, u8 index, u8 *temp)
->  {
->  	unsigned int offset;
-> @@ -95,6 +108,7 @@ static int cros_ec_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
->  {
->  	struct cros_ec_hwmon_priv *priv = dev_get_drvdata(dev);
->  	int ret = -EOPNOTSUPP;
-> +	int32_t target_rpm;
-
-Also u32.
-
->  	u16 speed;
->  	u8 temp;
->  
-> @@ -111,6 +125,10 @@ static int cros_ec_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
->  			ret = cros_ec_hwmon_read_fan_speed(priv->cros_ec, channel, &speed);
->  			if (ret == 0)
->  				*val = cros_ec_hwmon_is_error_fan(speed);
-> +		} else if (attr == hwmon_fan_target) {
-> +			ret = cros_ec_hwmon_read_fan_target(priv->cros_ec, channel, &target_rpm);
-> +			if (ret == 0)
-> +				*val = target_rpm;
->  		}
->  	} else if (type == hwmon_temp) {
->  		if (attr == hwmon_temp_input) {
-> 
-> -- 
-> 2.49.0.rc0.332.g42c0ae87b1-goog
-> 
+Thanks,
+Yury
 
