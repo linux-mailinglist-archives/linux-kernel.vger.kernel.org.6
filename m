@@ -1,140 +1,169 @@
-Return-Path: <linux-kernel+bounces-560281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332CCA60197
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:50:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB6B3A601A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:55:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 760A5421CED
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:50:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6300519C1DB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783A31F3D3E;
-	Thu, 13 Mar 2025 19:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F821F4624;
+	Thu, 13 Mar 2025 19:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jnviFxIo"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2F24wbF"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E941DDC3B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 19:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31191F3FD0;
+	Thu, 13 Mar 2025 19:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741895439; cv=none; b=gmMiEsfkIV9bNNcAFohJBj5ALqWXhTq/DmDlsb0YBmhy4MyeWrd7Y0xcL5K19agmhs17I+y15iyXQTl7HNQY4A/PTmTloHkc3ctNlGM6F/cGyA2AjRB5Z1Uq9ZuiMvtEW/XlNWKxRcddE2X8h2FYyBiRGEGMB6wGxnf1G+0oYTc=
+	t=1741895695; cv=none; b=FyL5ZhekO0oAcQMSZUiBUkLvlbyfZxSJSMhzTSDiwZkYFTzkVmye5mztIRa1od9zIojjSzyj8+jY3XH/XaRO630VqnIGdFOlMdSIZAZ7rKYN4kj26RDyOUCjqyxVlS9DdL6CbFiEMsyhNngF/LU6l0YLikOP4/FTzrF/8OxYauY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741895439; c=relaxed/simple;
-	bh=Ts3jP2ArueQlgldeR09Pb3+hNmIbgrEP/89WpBtfDns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UkrcMeuof/Z5VRkfLWv9obaS6qYea8e217F93wPxGsp7jS715TE+b6+uzJYIyIVqi/pvUt91DV3VvgVBKuBSl5mI2v1JGtmadEIS+bBrZlpb7BmRXCh3Qp6IWE6BjaGTkTkKwecBpMw9W7eIC/rEo8F5NPGGUeo4LlLzmHVF9U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jnviFxIo; arc=none smtp.client-ip=209.85.208.173
+	s=arc-20240116; t=1741895695; c=relaxed/simple;
+	bh=OD+/u621mwUN73ktY519JVVMPBtMQmjjQicMrkJACVk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MrKvPjAcgYNFuv7CDXc4BVebJ/ozZqvt8vkVQ4VcwuUw3Oow14LuQmO6VsoOLB7EyC49gRb7GeJfdrcdmdgvL5VDi4TV9sJdLx3tEYx8Zt8M2sEFahBm2DhDtLMiTWfZkJxwM8+pwHoRmYbscAQJJ9N5JvmlQw6OgQxwHnHgSCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2F24wbF; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30bee1cb370so14468901fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:50:37 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22355618fd9so29224285ad.3;
+        Thu, 13 Mar 2025 12:54:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741895436; x=1742500236; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ly8ES0URP3TPz3x62rhvM0L5MQNB2ADkDO/Kyyc8PoA=;
-        b=jnviFxIoIBISLgfXtLQPClntc/xEdeHI/vLlnUM0YHsXhU5qr5syXIiwsMfrEd55jL
-         S2BNqxbh2F+DRQfdoRSQEvJNQijYCq1AoJb6EZNrlGKAW2BDgIkDqwlZ5z9lqfhJhLwI
-         /Q9QOtpYe3I/V3W/CvMhX3S7obItLiUGtSYeE83NxxMeg7aCrHU5I++2kXevhVrasBLM
-         YOUgHNJjFO23xEpA+bJ+1ysyZvuShQhkKzWG+tDA+whESx44Gi2qXK0PgL+eF3eqALz9
-         Z4DXkm/rDsXL8yxpMYgz+99NrQdo6ZsBmZcQj4DD7gh2gQDk6/TK+jrqUFEPV5BNqvJ6
-         RcCQ==
+        d=gmail.com; s=20230601; t=1741895693; x=1742500493; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wHH4myFoiuxDS6apQJvZG9O0Yk3Qnm1cC4Wjl8gE+b0=;
+        b=T2F24wbFln/ZBk7Qfe+faMRbJFEkNXKNeqvinnooj8eHrXTVpi1ZY0rjfgFU/iHIDv
+         7n1CovnE5qsq0QvTBt9dxpuLcn83oyHPmP6L34qwoadER7sVzlAZOMjcz7Mp9n14zDug
+         aYwIuq6EDQc8M616a/IGbFXMZKT0XaU4AoVaROaA4txP823DXAqx9PyPLK9+ZecTiIDg
+         8pyLU06CtI1uIXhCWzO4VeGC+XIDQpNpNdIWJDXnMQ9sy8LIxv2LxyW00YvPaQc0SB2g
+         h5/+j7VqfbWPN8HgHgKoexgUlxa5x2sDbpMEY6wafAFbJGVI2c0YhtUpknIZIU2xDtbo
+         DKlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741895436; x=1742500236;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ly8ES0URP3TPz3x62rhvM0L5MQNB2ADkDO/Kyyc8PoA=;
-        b=mJAMT7yUOWrEHSso00qy4+CuKNyMBD58Zvy1ejky0ePYmJ7NXwnJA9y6OtTnh0J55K
-         MjLj9+K4v2oigEv5kG+tfwzJQJrE6+fLF2O6N/aKxCutpYonhtzT6cNOEXFDn6aPXjgA
-         xDgajVrUCHDdJZByQOUJ5OodAF67p9+Ewtv9GlnXIAWD5bIygqf0+HJd1Sg33OTZMxBF
-         wYgGeNyTWnyxC6SlcOFwtbwRkF868bvfn863ulOWDPJoPgbeWmWunfHwV9695xwS2l+l
-         zZfotFIcMyNRF/VpdD8j/MOHcyU/DqLKzNlu1d2mx0QLRwE3YPQYFBEvg2Am1ubYdu9h
-         7lDA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+muxx3jn5E9H06ZZp8nO339HEk3JUD6HmjVWwTWYoiSi76yaIqmyV/IRolxgs8V6llcg1E/YqUj91TKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxo1Xl7wxsnAIZ1TV7nkI2TNL8mWnpiV6Gu8B6MaaSy8UwQsDq
-	bnbvllCwBDrSz/n3A1TfeNtr8cLlhC8TeZFRnamQkC4dtoHYELbHurxNUTVeXn+vunrYuQ9osJU
-	46rZ5vMhktRxiUoMQlHt16GR52hc=
-X-Gm-Gg: ASbGnctVOm77saVdvQk13sjusPpL/lwc7R9L7lb67psz12szG92jU/M4DdJKQtEzlnx
-	v5A4JFQE89D7T/UmQqJmjcLhifdbEk+wWjjae5mmFomnx+ATS9XwPJGIB78Epksw/kI0fO13NPU
-	rZfNukAB4ukxIFHk4usg1xjW54Mg==
-X-Google-Smtp-Source: AGHT+IHrJLILcK30rlMOs+0dzGBtusj7nZ+d0y33vH2xkFFpUcUdt1ayPvwnuhWE9Xh2j4CWi9VMwHDL4v2EkwBT5yk=
-X-Received: by 2002:a2e:b544:0:b0:30b:be53:bdd4 with SMTP id
- 38308e7fff4ca-30c46b57330mr3785971fa.20.1741895435929; Thu, 13 Mar 2025
- 12:50:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741895693; x=1742500493;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wHH4myFoiuxDS6apQJvZG9O0Yk3Qnm1cC4Wjl8gE+b0=;
+        b=EzcyEe1YZbYvq6k5Q84apybrCt1l4vvA2WA4+PaWpieMRfrgWGpCxQG8KS9w6h0wlX
+         VuJBs8IWpy1C/DKgVlFt+3bUWMuf1DINb7R8tq5RTbVhFHr0/+GORYRWPZaRHfGdFSSU
+         aY5mhF+f2RhYyVkGXq+pBVxNRJkA7XtalI32dq0k2JVaOliwEP5o2ZuoPR4+TQyH+lHO
+         Kd+5WXqDCKx2y2sIpHOEYtVmXg5tOB58HBceZLxwfYRcYRZParHdtQiBOWY4c66xUNZZ
+         wd2DE0Hej0Y/30xuYjTTPArG11+8oxUbFO7cml0owyF5f91I6uANtCjOZUiPcJWI0Jn8
+         ivTg==
+X-Gm-Message-State: AOJu0YxYeRpcWSM8t73koGW9jC34h/5wtV+65+a8rg4xEdOmE+nabngK
+	f0yjuwARH8pWCPIOBEJ355/07IyGDl1fxkEfqStZsOuYJnFSgFQWrN3teanU1xQ=
+X-Gm-Gg: ASbGnctB2DxCh1AFT8Y7MxHwBZX/Ya2yC4R+nnfiwFYHDk6L32UE+SoIIp9tJk2Wc4y
+	bJwDprC/QKNoHKz8xkIOcqAqzP3mUXwjJaphMio/Do6izKerNH1d6i/Xg3iyDWzRVGEtzFa/ZdI
+	Zncqo8NU72fwZPzOvTXZ57pW6WfI2VnAhndJuW8OM1N4y+2YtlfR1Zf3p7HUJAtpY7wFHRAhp/6
+	CUQHL8A+1xbPYup99WSTYBN+iJKoDkBME98TxZZ54gnQc12C85BIu6wDyHLgcl9bzVuSeYv1Y1S
+	eRf+jC5xE55BJ3CxQfaGGHQF1bNKnlGV9HqbHJ9PaQ==
+X-Google-Smtp-Source: AGHT+IGYW/k2YlFAjqkFNaFWxXE5BZL1uTyV8DQEqt8Utpg9j1U75c1XYijGakd2K6eWuDEhHRwpRg==
+X-Received: by 2002:a17:903:1b03:b0:215:4a4e:9262 with SMTP id d9443c01a7336-225df2d700emr3225495ad.8.1741895693013;
+        Thu, 13 Mar 2025 12:54:53 -0700 (PDT)
+Received: from fedora.. ([2409:40f2:357:8702:7d06:7e16:a88a:f1b5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6c76sm17397275ad.148.2025.03.13.12.54.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 12:54:52 -0700 (PDT)
+From: Siddharth Menon <simeddon@gmail.com>
+To: linux-iio@vger.kernel.org,
+	lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	jic23@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	Siddharth Menon <simeddon@gmail.com>,
+	Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Subject: [PATCH] iio: frequency: ad9832: Use FIELD_PREP macro to set bit fields
+Date: Fri, 14 Mar 2025 01:24:17 +0530
+Message-ID: <20250313195442.30264-1-simeddon@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313191828.83855-1-ubizjak@gmail.com> <96E2026E-CEF1-4A4C-B107-7FCE2CD9121F@alien8.de>
-In-Reply-To: <96E2026E-CEF1-4A4C-B107-7FCE2CD9121F@alien8.de>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Thu, 13 Mar 2025 20:50:24 +0100
-X-Gm-Features: AQ5f1JqdKZhakWoSaLE_Y9BqKQ8iRQWHNvfC1epGbfqWUTwDTHTidxjd851RBlE
-Message-ID: <CAFULd4ZTkBwFo3nWXNZKXSKiy4dgPoZ8i95nj3UdtQPApKdj3g@mail.gmail.com>
-Subject: Re: [PATCH] x86/asm: Use asm_inline() instead of asm() in amd_clear_divider()
-To: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 13, 2025 at 8:26=E2=80=AFPM Borislav Petkov <bp@alien8.de> wrot=
-e:
->
-> On March 13, 2025 8:18:09 PM GMT+01:00, Uros Bizjak <ubizjak@gmail.com> w=
-rote:
-> >Use asm_inline() to instruct the compiler that the size of asm()
-> >is the minimum size of one instruction, ignoring how many instructions
-> >the compiler thinks it is. ALTERNATIVE macro that expands to several
-> >pseudo directives causes instruction length estimate to count
-> >more than 20 instructions.
-> >
-> >bloat-o-meter reports no code size changes.
-> >
-> >Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> >Cc: Thomas Gleixner <tglx@linutronix.de>
-> >Cc: Ingo Molnar <mingo@kernel.org>
-> >Cc: Borislav Petkov <bp@alien8.de>
-> >Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> >Cc: "H. Peter Anvin" <hpa@zytor.com>
-> >---
-> > arch/x86/include/asm/processor.h | 2 +-
-> > 1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> >diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/pro=
-cessor.h
-> >index 5d2f7e5aff26..06e499ba4fe8 100644
-> >--- a/arch/x86/include/asm/processor.h
-> >+++ b/arch/x86/include/asm/processor.h
-> >@@ -707,7 +707,7 @@ static inline u32 per_cpu_l2c_id(unsigned int cpu)
-> >  */
-> > static __always_inline void amd_clear_divider(void)
-> > {
-> >-      asm volatile(ALTERNATIVE("", "div %2\n\t", X86_BUG_DIV0)
-> >+      asm_inline volatile(ALTERNATIVE("", "div %2", X86_BUG_DIV0)
-> >                    :: "a" (0), "d" (0), "r" (1));
-> > }
-> >
->
-> So there's no point for this one...
+Refactor code to use the FIELD_PREP macro for setting bit fields
+instead of manual bit manipulation.
 
-Not at its current usage sites, but considering that
-amd_clear_divider() and two levels of small functions that include it
-( amd_clear_divider(), arch_exit_to_user_mode() and
-exit_to_user_mode() ) all need to be decorated with __always_inline
-indicates that the issue is not that benign.
+Suggested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Signed-off-by: Siddharth Menon <simeddon@gmail.com>
+---
+ drivers/staging/iio/frequency/ad9832.c | 39 ++++++++++++++------------
+ 1 file changed, 21 insertions(+), 18 deletions(-)
 
-It also triggers my search scripts, so I thought I should convert this
-one as well and put the issue at rest.
+diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
+index 140ee4f9c137..bbde1f0e84ff 100644
+--- a/drivers/staging/iio/frequency/ad9832.c
++++ b/drivers/staging/iio/frequency/ad9832.c
+@@ -70,6 +70,9 @@
+ #define AD9832_FREQ_BITS	32
+ #define AD9832_PHASE_BITS	12
+ #define RES_MASK(bits)		((1 << (bits)) - 1)
++#define DATA_MASK       0xFF
++#define CMD_MASK        (0xF << CMD_SHIFT)
++#define ADD_MASK        (0xF << ADD_SHIFT)
+ 
+ /**
+  * struct ad9832_state - driver instance specific data
+@@ -139,18 +142,18 @@ static int ad9832_write_frequency(struct ad9832_state *st,
+ 
+ 	regval = ad9832_calc_freqreg(clk_freq, fout);
+ 
+-	st->freq_data[0] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
+-					(addr << ADD_SHIFT) |
+-					((regval >> 24) & 0xFF));
+-	st->freq_data[1] = cpu_to_be16((AD9832_CMD_FRE16BITSW << CMD_SHIFT) |
+-					((addr - 1) << ADD_SHIFT) |
+-					((regval >> 16) & 0xFF));
+-	st->freq_data[2] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
+-					((addr - 2) << ADD_SHIFT) |
+-					((regval >> 8) & 0xFF));
+-	st->freq_data[3] = cpu_to_be16((AD9832_CMD_FRE16BITSW << CMD_SHIFT) |
+-					((addr - 3) << ADD_SHIFT) |
+-					((regval >> 0) & 0xFF));
++	st->freq_data[0] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE8BITSW) |
++					FIELD_PREP(ADD_MASK, addr) |
++					FIELD_PREP(DATA_MASK, (regval >> 24) & 0xFF));
++	st->freq_data[1] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE16BITSW) |
++					FIELD_PREP(ADD_MASK, (addr - 1)) |
++					FIELD_PREP(DATA_MASK, (regval >> 16) & 0xFF));
++	st->freq_data[2] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE8BITSW) |
++					FIELD_PREP(ADD_MASK, (addr - 2)) |
++					FIELD_PREP(DATA_MASK, (regval >> 8) & 0xFF));
++	st->freq_data[3] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE16BITSW) |
++					FIELD_PREP(ADD_MASK, (addr - 3)) |
++					FIELD_PREP(DATA_MASK, (regval >> 0) & 0xFF));
+ 
+ 	return spi_sync(st->spi, &st->freq_msg);
+ }
+@@ -161,12 +164,12 @@ static int ad9832_write_phase(struct ad9832_state *st,
+ 	if (phase >= BIT(AD9832_PHASE_BITS))
+ 		return -EINVAL;
+ 
+-	st->phase_data[0] = cpu_to_be16((AD9832_CMD_PHA8BITSW << CMD_SHIFT) |
+-					(addr << ADD_SHIFT) |
+-					((phase >> 8) & 0xFF));
+-	st->phase_data[1] = cpu_to_be16((AD9832_CMD_PHA16BITSW << CMD_SHIFT) |
+-					((addr - 1) << ADD_SHIFT) |
+-					(phase & 0xFF));
++	st->phase_data[0] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_PHA8BITSW) |
++					FIELD_PREP(ADD_MASK, addr) |
++					FIELD_PREP(DATA_MASK, (phase >> 8) & 0xFF));
++	st->phase_data[1] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_PHA16BITSW) |
++					FIELD_PREP(ADD_MASK, (addr - 1)) |
++					FIELD_PREP(DATA_MASK, phase & 0xFF));
+ 
+ 	return spi_sync(st->spi, &st->phase_msg);
+ }
+-- 
+2.48.1
 
-Uros.
 
