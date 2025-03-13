@@ -1,197 +1,204 @@
-Return-Path: <linux-kernel+bounces-560104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7C2DA5FDCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:30:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB52BA5FDCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:31:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDA2A17A6A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:30:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 974FE189DBD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0435218A6D3;
-	Thu, 13 Mar 2025 17:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A87814386D;
+	Thu, 13 Mar 2025 17:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Fs2aRRl5"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Bxu/CBGh"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9935D1714D0
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4404FAD5E
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741887001; cv=none; b=C/oKYkLduAo2ZAP6cONrPzNcph7kH++25oIj6tIP2bFjDwIKeyqVSHL4Hhwdr2xkMTGJ07lap6LVXGXrreroogl0KSsjm5hVjrhiminX/kcROhIMF6qsysdKaESwTRe3zQxlC8pcox0lxzsVj2kD57jMdGt1YRTy2DzmyYgws60=
+	t=1741887065; cv=none; b=pCVprxa5BQ41ThglpusLl5Hi0EbLUlhZay9fKRRZaTQupNmy4R7HawsdYuJ7jqLtpslNjoKQiElP3T6hiETn1+pQktlhn61WekGaaD5w6vjuV/hOMautwjn9ELZTY5xYO4srgRQcUEwr3OK9y/ENHRhQ3DdW/La6VsRa83LSi9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741887001; c=relaxed/simple;
-	bh=HmRa1m3tXTPbBXhjbC00+GsyFNYue27NTEWKBIJHeaQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eVpDLZ7YmwtFGiIdrY7nPYzSq4t5YQ+b144jKLoPUWcgPq3075zqYEMREtH4XGJbYu84I6/zYA2p1Og/5WQxunx8PLUl4Y6NZQTEqTxsGkf13giz4LJOedMW0803V7Kt30Nsorqyb7rs5RbIOwKgC8yirjjIh4PAWmZX8ocitvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Fs2aRRl5; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D9Dg8P017514
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:29:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	awOPnnsbd+ZITDDV/+JLRdAlqUsZWoQ4R77EaysafPU=; b=Fs2aRRl5KVkinpOp
-	HDdew9bXb3MLMqoaPfl1Yg8hIq22hLlUFwd5DMitu/g4zIwo5Rk7IsNDNq2FIK7P
-	jt3WQT+tvfhKkI/tD978Fb6V0Y8ezSlqS6enzQw51MDarjjRHOKY0Na/yuT/yDFt
-	YJrAD6P2OD7bLWOVx6NsOt9g8qNO6VV6PooGCm7gEvEs5JrAY2kjbQtMfrWfX+bZ
-	s2ij7Ircmlup0VIQ3q/1VsrgM3X6veip0gXKCstyyOVpD9z5Mu+soI3bIhvs/9OD
-	LnDI+NDlEc/VS3EqZba5Xwc4pWfkGbfsY790lXktLDxhmrPbQLFQJEgDwO1G48Xz
-	2txrHA==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2nxpat-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:29:58 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2242ca2a4a5so16629655ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:29:58 -0700 (PDT)
+	s=arc-20240116; t=1741887065; c=relaxed/simple;
+	bh=6NuaKrlJwzqSDKDjBHf+Cx4W/xW2kBVGqK/Gow+UQ3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NsIMwRQ7QeztqijeY1twIDHkG0Fel9663o38hg01sqDxBol/McbsSbO2tz9CpgXXokx/SJB3PqnHnP8rxT3vKmaGDjW/0PPtiABDOTmOmmL8FPU6AYrJkNJ1luSgQev10/P3vrAj6MCvFB8oKGjJQIqMz0I3fEmNNA6Yxynyf8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Bxu/CBGh; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e8fb83e137so11254386d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:31:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1741887061; x=1742491861; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=O83EJQJInxOlaXTG5L5nMhpQUXrgmfAXio9XKQcNg+E=;
+        b=Bxu/CBGh1pVH5fT0NdtdDxQhTO/pJDlrkGJbdAIvv8FvPP/bvdScXcnGaLIsDMAvQs
+         yuyS+90g3Q2E+9ZmAmDmeHAy0imuT/3I3n650YVGnggUbZ6IBgpFwr8YFhE0mIWsyOrp
+         hAs548NQtxzVcwVdu7T8AAQEpYajbhMXyoxoy7DO0S5dEXqkdQvCuVJpuz7BI4j5nUw8
+         /9hsiplD/eX2Xlp0l1p119LtByn6QTY5LT1p0e8WUa//zzS4CqHoNFOYZg4bpTJOnH9G
+         n9KJnQrbpO3sBxisoNkowHb+n22z1V8VcH/TozRwoWWmofq53D8vKCcXARMzRIr+tmYh
+         HGPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741886997; x=1742491797;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=awOPnnsbd+ZITDDV/+JLRdAlqUsZWoQ4R77EaysafPU=;
-        b=BI3xxp8h0RnxdosEzMXS8DjuT2SFXjrdSeUInYpFWSKFMLnm1lr/9iaAfxw9NXD0MJ
-         Z+3ywhMN8UNcN6Ab2/FyDE6+pO7K9UFxmjY8bDklE9EmkuYUNHdqlRIrSnkTu/QzlB+U
-         DeVUYKs8Ma7Ox3yHVxLYoar855ThK892Jx++PIWvFCdWLn6oQ/YBAOvYNWH0aVfHwBaw
-         6z2/SlvY+ozpbpFDj0YNs3NlnoQTkJN5jmSrUhByrAnmc+3fzkTp9g+8e+YA9f/gljym
-         iYWYGuUgK5IMEZyWpDxJXM8WyHhRwAOLaHcbAlyM2kCfVIUn3i2bXqTCNgXv2yV8LOKJ
-         S5Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3P1qWlkompTqv6uoxaiPPk1+hYNxUsPaWBWnq0hgc3bedXKbLe+iSiVW/rgYKgNdpnheB2y4AbvdqDio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuMgdNnYfatvnrRfoC7VKz7vVf/oM5lRnWyzK4CyjvOwtUxNvH
-	AoZ1+AR4fGqkAaUmBerKcmnas86LPxYBgn9gz+Cap05c3hYBKPSKD0WTjK2z9r+ruFJ3kF0E2Zh
-	81aT9kX0lQehag4r3Nfxulx0mdcl14E4mAv9c6OWQRRi3UUMOzyy66431KuXawWk=
-X-Gm-Gg: ASbGncv69A/T+HrhLq6j/ySDgFTcLAH3piPhjcY4EloXjH5sXKIkU8uiUPYKQh98Q5/
-	L0ZWZLjTU3e50o6WWPSF76XzAcLSNrfIeFyDA7lVzDxuvO8/vAtKeSH+4ivVi6Dp4tdqyF/acnJ
-	jTmSblpveKEo0Ka2nN4qOr7u8/I5Fn3cXkap3l56p2G3ARNZcUj44dqk8vCd/b/Pm2yfnvW8JRF
-	k+K+ur4hR0Ivrpno6b65ktOIEdWwVBAl/erypvLNrGjXuDpJMdAU2UGNsuQoiifXj2HxXOeaTDn
-	9ftLsyQ8solgfuyLx37wZ31Vo0udPnIH7RZLFniPb5jErzGc4hPM+Dvr1G1n9IdqtcFgLfEwZZF
-	R9M6k4InF
-X-Received: by 2002:a05:6a00:8d2:b0:736:339b:8296 with SMTP id d2e1a72fcca58-7371f17e455mr494948b3a.18.1741886997436;
-        Thu, 13 Mar 2025 10:29:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGPhq47TWkIDcRQxoDx44xKFXPM4TKX8MLJNf13Xta2UOYeZHJ1f+/yEahV1YT+F1aEcUgnFQ==
-X-Received: by 2002:a05:6a00:8d2:b0:736:339b:8296 with SMTP id d2e1a72fcca58-7371f17e455mr494906b3a.18.1741886996826;
-        Thu, 13 Mar 2025 10:29:56 -0700 (PDT)
-Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73711529531sm1608998b3a.2.2025.03.13.10.29.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 10:29:56 -0700 (PDT)
-Message-ID: <fdaab417-62b7-4151-be35-34fb7a354eae@oss.qualcomm.com>
-Date: Thu, 13 Mar 2025 10:29:55 -0700
+        d=1e100.net; s=20230601; t=1741887061; x=1742491861;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O83EJQJInxOlaXTG5L5nMhpQUXrgmfAXio9XKQcNg+E=;
+        b=scxove4aHIUumMzhVJCHOFhLl9Qzux/Ttj0ShIcj0hZnEo0y77Z72y0lEF5G3WUO+w
+         xKU3HE9DQXRw4CDW4ynmqM250j39m6gnlHoQ9Gic5dd2qMwKdITa0QsWyTQAcjMIXEIf
+         sTKpbCMTrtrzQ0HKRHCcw1+A3dta4Q1u0lbc7i8yGBRzVLfhxO77Hei9ZfbVggFZawsx
+         u07juKT+niTkuMKuEGRdvAj8EtET5004wnKjLymFo/tdTUMhtGeCm/WgwCBFMTe8CV7p
+         nVh7TyI08D2EPa+1ZUi84uk9r95Moe/5De1AjefmMZGffoN0HzvsNWKqQdVmLOrtkKvS
+         Gf8A==
+X-Forwarded-Encrypted: i=1; AJvYcCX0k/vLh/Qz/a92Zg3dioCExBirfHuBnNXHCcMS2k8esJE6UQxuA5aSIsPV/LH+ld7LcVFUYWclxBtydV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXKWPLtu+C/z2sA1hDpbhqUmC4M7xrjRfeiI9uGgs+3p35tta0
+	fnFSYCuwiiOK17rpDGr6zbnvIdLfunlWRS1Ij4WKGildkRzX91el+H0a6uPhir4=
+X-Gm-Gg: ASbGncu6PfJ8sX09Oh0Y0UOD8s6u4o8WK5CH8mEbmMHGYi2jQB4p1YciiiD96DkJpAo
+	/QKzL4smtMtxeKueTUn4P22M+21Y/D9JUnUwfe9I7r1EB1ioiVQqO1ubzBPJg4vdKaLYkFHYiwy
+	PvoJC4A45EDZy7CiOdWYlBJblO8VveWWJzdZhYfku+ptl3SGaDaQ/6L/l9BjDEA/Jfk7Mp/MHPZ
+	jHS1EAqigYIkLmoTi2Ws1YQjc5zUvtWFnWvXuctpKsseTfuXl5MKup4BJEg6fUpohIltQVvLPUc
+	cxjbMm6/43rpK9nNz9hmsmvqmajxvFTyRozxsekem0r1RtWmNqDlVBHKnVQQDzwrQ2HVVn2Lgpp
+	BaHcRDwL3pcuONVQTnUp79gZVeXC6uDthw+cAMg==
+X-Google-Smtp-Source: AGHT+IHuylmJfYk7wLLXX/2M7mKuROyvy47bvGrvCnuvmNFtINIICBzR6GpKU9pV+TBfiu9Nbi1ktg==
+X-Received: by 2002:ad4:4ee9:0:b0:6e4:4484:f35b with SMTP id 6a1803df08f44-6eae7aa22d7mr6914286d6.30.1741887061046;
+        Thu, 13 Mar 2025 10:31:01 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-476bb663603sm11829221cf.43.2025.03.13.10.30.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 10:31:00 -0700 (PDT)
+Date: Thu, 13 Mar 2025 13:30:58 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [LSF/MM] CXL Boot to Bash - Section 0: ACPI and Linux Resources
+Message-ID: <Z9MWUhHmZ5ND0b_e@gourry-fedora-PF4VCD3F>
+References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
+ <Z8jORKIWC3ZwtzI4@gourry-fedora-PF4VCD3F>
+ <20250313165539.000001f4@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: ath10k: Drop of_get_property() call
-To: "Rob Herring (Arm)" <robh@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20250312234228.1243477-1-robh@kernel.org>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <20250312234228.1243477-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: LMMueeNCk3Yy7bkAq0SGNsyVp5g_Sz5h
-X-Authority-Analysis: v=2.4 cv=ZObXmW7b c=1 sm=1 tr=0 ts=67d31616 cx=c_pps a=JL+w9abYAAE89/QcEU+0QA==:117 a=e70TP3dOR9hTogukJ0528Q==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=syD-WeZVJwOIrOENAgcA:9 a=QEXdDO2ut3YA:10
- a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-ORIG-GUID: LMMueeNCk3Yy7bkAq0SGNsyVp5g_Sz5h
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_08,2025-03-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=998 mlxscore=0
- suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 phishscore=0
- lowpriorityscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
- clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130133
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313165539.000001f4@huawei.com>
 
-On 3/12/2025 4:42 PM, Rob Herring (Arm) wrote:
-> There's no need to check the property presence and length before calling
-> of_property_read_u8_array() as it will return an error if the property
-> is missing or the length is too small. The return errno doesn't matter
-> to the caller, so no change in behavior there.
+On Thu, Mar 13, 2025 at 04:55:39PM +0000, Jonathan Cameron wrote:
 > 
-> Change of_property_read_u8_array() to of_property_read_variable_u8_array()
-> as the former allows properties to be longer than the requested length.
-> Now the property has to be the exact length requested as the removed
-> check required.
+> Maybe ignore Generic Initiators for this doc.  They are relevant for
+> CXL but in the fabric they only matter for type 1 / 2 devices not
+> memory and only if the BIOS wants to do HMAT for end to end.  Gets
+> more fun when they are in the host side of the root bridge.
+>
+
+Fair, I wanted to reference the proposals but I personally don't have a
+strong understanding of this yet. Dave Jiang mentioned wanting to write
+some info on CDAT with some reference to the Generic Port work as well.
+
+Some help understanding this a little better would be very much
+appreciated, but I like your summary below. Noted for updated version.
+
+> # Generic Port
 > 
-> This part of a larger effort to remove DT functions like
-> of_get_property() and of_find_property() which return raw DT data
-> having no reference counting.
+> In the scenario where CXL memory devices are not present at boot, or
+> not configured by the BIOS or he BIOS has not provided full HMAT
+> descriptions for the configured memory, we may still want to
+> generate proximity domain configurations for those devices.
+> The Generic Port structures are intended to fill this gap, so
+> that performance information can still be utilized when the
+> devices are available at runtime by combining host information
+> with that discovered from devices.
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  drivers/net/wireless/ath/ath10k/core.c | 22 ++++++----------------
->  1 file changed, 6 insertions(+), 16 deletions(-)
+> Or just 
+> # Generic Ports
 > 
-> diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
-> index b3294287bce1..db7444af251d 100644
-> --- a/drivers/net/wireless/ath/ath10k/core.c
-> +++ b/drivers/net/wireless/ath/ath10k/core.c
-> @@ -1889,7 +1889,7 @@ static int ath10k_download_cal_file(struct ath10k *ar,
->  static int ath10k_download_cal_dt(struct ath10k *ar, const char *dt_name)
->  {
->  	struct device_node *node;
-> -	int data_len;
-> +	int data_len = ar->hw_params.cal_data_len;
->  	void *data;
->  	int ret;
->  
-> @@ -1900,28 +1900,18 @@ static int ath10k_download_cal_dt(struct ath10k *ar, const char *dt_name)
->  		 */
->  		return -ENOENT;
->  
-> -	if (!of_get_property(node, dt_name, &data_len)) {
-> -		/* The calibration data node is optional */
-> -		return -ENOENT;
-> -	}
+> These are fun ;)
+>
 
-note that there is one instance where .cal_data_len = 0
+> > 
+> > ====
+> > HMAT
+> > ====
+> > The Heterogeneous Memory Attributes Table contains information such as
+> > cache attributes and bandwidth and latency details for memory proximity
+> > domains.  For the purpose of this document, we will only discuss the
+> > SSLIB entry.
+> 
+> No fun. You miss Intel's extensions to memory-side caches ;)
+> (which is wise!)
+> 
 
-so i suggest that there still needs to be an early return here to avoid
-kmalloc(0):
+Yes yes, but I'm trying to be nice. I'm debating on writing the Section
+4 interleave addendum on Zen5 too :P
 
-	if (!data_len)
-		return -ENOENT;
+> > ==================
+> > NUMA node creation
+> > ===================
+> > NUMA nodes are *NOT* hot-pluggable.  All *POSSIBLE* NUMA nodes are
+> > identified at `__init` time, more specifically during `mm_init`.
+> > 
+> > What this means is that the CEDT and SRAT must contain sufficient
+> > `proximity domain` information for linux to identify how many NUMA
+> > nodes are required (and what memory regions to associate with them).
+> 
+> Is it worth talking about what is effectively a constraint of the spec
+> and what is a Linux current constraint?
+> 
+> SRAT is only ACPI defined way of getting Proximity nodes. Linux chooses
+> to at most map those 1:1 with NUMA nodes. 
+> CEDT adds on description of SPA ranges where there might be memory that Linux
+> might want to map to 1 or more NUMA nodes
+>
 
-> -
-> -	if (data_len != ar->hw_params.cal_data_len) {
-> -		ath10k_warn(ar, "invalid calibration data length in DT: %d\n",
-> -			    data_len);
-> -		ret = -EMSGSIZE;
-> -		goto out;
-> -	}
-> -
->  	data = kmalloc(data_len, GFP_KERNEL);
->  	if (!data) {
->  		ret = -ENOMEM;
->  		goto out;
->  	}
->  
-> -	ret = of_property_read_u8_array(node, dt_name, data, data_len);
-> +	ret = of_property_read_variable_u8_array(node, dt_name, data, data_len, data_len);
->  	if (ret) {
-> -		ath10k_warn(ar, "failed to read calibration data from DT: %d\n",
-> -			    ret);
-> +		/* Don't warn if optional property not found  */
-> +		if (ret != -EINVAL)
-> +			ath10k_warn(ar, "failed to read calibration data from DT: %d\n",
-> +				    ret);
->  		goto out_free;
->  	}
->  
+Rather than asking if it's worth talking about, I'll spin that around
+and ask what value the distinction adds.  The source of the constraint
+seems less relevant than "All nodes must be defined during mm_init by
+something - be it ACPI or CXL source data".
 
-this could made even cleaner using cleanup.h functionality (all of the gotos
-could disappear). perhaps I'll do that as a follow-up patch on top of your patch.
+Maybe if this turns into a book, it's worth breaking it out for
+referential purposes (pointing to each point in each spec).
 
-/jeff
+> > 
+> > Basically, the heuristic is as follows:
+> > 1) Add one NUMA node per Proximity Domain described in SRAT
+> 
+>     if it contains, memory, CPU or generic initiator. 
+> 
+
+noted
+
+> > 2) If the SRAT describes all memory described by all CFMWS
+> >    - do not create nodes for CFMWS
+> > 3) If SRAT does not describe all memory described by CFMWS
+> >    - create a node for that CFMWS
+> > 
+> > Generally speaking, you will see one NUMA node per Host bridge, unless
+> > inter-host-bridge interleave is in use (see Section 4 - Interleave).
+> 
+> I just love corners: QoS concerns might mean multiple CFMWS and hence
+> multiple nodes per host bridge (feel free to ignore this one - has
+> anyone seen this in the wild yet?)  Similar mess for properties such
+> as persistence, sharing etc.
+
+This actually come up as a result of me writing this - this does exist
+in the wild and is causing all kinds of fun on the weighted_interleave
+functionality.
+
+I plan to come back and add this as an addendum, but probably not until
+after LSF.
+
+We'll probably want to expand this into a library of case studies that
+cover these different choices - in hopes of getting some set of
+*suggested* configurations for platform vendors to help play nice with
+linux (especially for things that actually consume these blasted nodes).
+
+~Gregory
 
