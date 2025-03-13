@@ -1,251 +1,179 @@
-Return-Path: <linux-kernel+bounces-560362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ECD0A60328
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:03:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAD76A6032C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:04:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B06E67A9A11
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:02:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDF34881259
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09FD1F4C83;
-	Thu, 13 Mar 2025 21:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC471F4739;
+	Thu, 13 Mar 2025 21:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJ9RsEmp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PNxrL32/"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F252945948;
-	Thu, 13 Mar 2025 21:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F941F4717;
+	Thu, 13 Mar 2025 21:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741899813; cv=none; b=ZtFPev2252PkrKyXLfLNNja9XsBGOe+bINklevPHwlLQ4A9X+0SwVsRL+T68vNnX8KKuFKgKvfeHhezYSIpijjm6OGfHUgzwANhU/87+bSaJ7wbiyaPc+1QBlRexFFElyxcYDVTjaTmuHothTmIqMTAg1mXOk0YUCMVTN1ETveA=
+	t=1741899839; cv=none; b=bZag3J0RSj9nwmLRUy1m/NNkem3pxW0BISAJdnVjo+5qFWFcatewZe6Wo6epij7A90Bc81FfSaTsJl9JHmR9vlmsnW5hWHO6Pa47kSEnXtGt5lLp6E97aQw54a/IVdO2m0V+nP84msO69Hd71A2aAmdqEP2MvMpLJxpEnezsCMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741899813; c=relaxed/simple;
-	bh=FMKfqv6jRr1fYhjht5XVCh7cRsPq1e2AMVhPlkaHSLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d1/1XZAjGFJr5aP+pF3n3P9FEarp3VntsLpaof2vxiIPTm7eJ3kQwNJgPS4nrdRr/DVDoJgTGWRVdzbOvVBed4+XMSWhb8L48VmkNPb2o7bO4GLaYCxnfxkLdbSro7yQdHOSxFVkdYJZHXM1eS+wwtcaHRm6/oaT+ylq6SLklqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJ9RsEmp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4E80C4CEDD;
-	Thu, 13 Mar 2025 21:03:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741899810;
-	bh=FMKfqv6jRr1fYhjht5XVCh7cRsPq1e2AMVhPlkaHSLM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aJ9RsEmp+F4rW4SSK+hS9s9FtOwkooxWCR8/i4oRD7XqDdTV0RMispdtOSNpRDrAw
-	 30FKwvR4bAQagYjbkE8n04WPJszMweTJDQabrL4rZbGS4JK2t0aWKaB+gVk8rF6hBR
-	 DPQvCGH5LdU7uw//IqdBYwab9jv3aL/OWv90NDuLqwQY8ufoyhcmv2MekOL0Fl1jCo
-	 o1PqB+6AWO5KvH/YJfkMjyaayUcAEBqZ0tmdEFxS0IzI3mAY5s7N8yVYvggmSX+eb1
-	 u7gZID03OU4jF+lQLJf0aaI/OrKCk/iOjIZ0/pdW/CZC9LlcUdKGg8slxlvhc655m3
-	 1h8Je48uMSPCQ==
-Date: Thu, 13 Mar 2025 22:03:27 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: mathieu.dubois-briand@bootlin.com, 
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Kamel Bouhara <kamel.bouhara@bootlin.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Michael Walle <mwalle@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, andriy.shevchenko@intel.com, 
-	=?utf-8?Q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 03/10] pwm: max7360: Add MAX7360 PWM support
-Message-ID: <e7epeegrp6cz27s63gnqe7b6me7h3rn5d6mo7mbd6rwgnwyys6@j7f6cy4uy3wq>
-References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
- <20250214-mdb-max7360-support-v4-3-8a35c6dbb966@bootlin.com>
+	s=arc-20240116; t=1741899839; c=relaxed/simple;
+	bh=At0jJxy8GE0BGJdO4YufDmadX/ZXkkXRWG1zgn/ffJI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bi4RqeQUvQE6qKmqigRLl6MYE8tAqQkgv6nknt6G2E0Fo9EpCcBwFw00GaqspEa97noxeDqDjk3wj+qmiSwJf3SUDdBR7DKaT4eNVTs0Sfbohq95/P9psaLMXl8Fp05nePqFIluQmwe1k5tdEQ3lCQGwyEDH4cefe1Iy4xAMJuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PNxrL32/; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-476b89782c3so17058031cf.1;
+        Thu, 13 Mar 2025 14:03:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741899835; x=1742504635; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3F9JfhhpLd0DiMMN5ZTXTTxN5dp3duXWr88AR4TSCTI=;
+        b=PNxrL32/2Ad+jJPiIqAnMCfpnrHSHRbg9AZs00uxgvPfdUvMIeJHRTSwaR6YigbPCw
+         vWxYLqlnxas52SsgG50Y0RsRqmdfWFS834Q95O0kyXGe9RRIp2Oc6pvqzWO+slE5PCfe
+         O7p9xudQRVdJsstLXpLv4xmzZ9O25TD1krZ5A/mhLG2RvjTMzmlHr5Tz2fSR2D9+rC8j
+         Sg8w0DTrGS+gf2bedv2naTYemyEr1SP4LmkDHwG4VajvoT9gA9ByjocpxKwjk5/bqyhT
+         LxgMklP2W6zVugcJOwpoJSk4QVroDFVkTYNT00uOU0V4V1xwzvvtYcmT6m6MeMDwXBVO
+         dZrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741899835; x=1742504635;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3F9JfhhpLd0DiMMN5ZTXTTxN5dp3duXWr88AR4TSCTI=;
+        b=AJ4NDW76NT6f+wn2vmD8UvBJeJxKpgFrWHD91h7HeNpGMh7OccKnKbd2aCYbO3Bq4K
+         GPl0DQGSD6XYUS6g52BzbGkGIhH1VaesRDKDf6rA/3jwsUcjj0U7mmWbWdD57aFyWlyC
+         YowojQ4dKWPyT2kT8KXweMK4vbfZseQ7U0TBMuVhW/IHamGGRyKuFvxe02+06iFcx0B7
+         ZEQJNBeClb80CCcAsCdGyhb2Bp9nA/S/xU/wiaK2JJ4bI92honriGm8b5UZZiHjBE32F
+         BhdTO6/ZAIGwYCIjmRjqwwakgJ7Ofu9yQe92eb4mC+F+WHDoGXYZ3KiiYKCbqvVVrI1L
+         CQlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDVhVp04F3k1Rdqi8DTqsXgwwKQyPvh8L6ctREhc1mPjZ9vlkox+PFQBl0CQ8m+rIeRirKfzNQO1UxBNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYrxoSDm5Y0kvwW+L2eR/mImHoXzHFImZSKjcTj3pcsgjTZX/W
+	t+yG76LUCekGSf9A/HygGEEX0T2OQPOzx8XxAjyzP/lBRk5A1Sg0UiFHYoXE
+X-Gm-Gg: ASbGncuGcxEUTagBic/tGjqYqXx5X2l/PYDuj3u6w4CSVjHKTzJavo5PsM2DjEVRdYu
+	m19pAENzZWgTiJM1XobqgrFLbEdAGjElP5Fo8TByQf8evg3Mdwa6W9KzeESzbPUlE4ArbHz+rYk
+	MQ7PQMxuPqp2sAnE6AwnVpDQ8IHRTRY7mw0DZhYzXKOo0LkEZboked2CZZs15MQmHRLh3racIog
+	YMXJT5aNREuYo6Zck6fuRGeglq/XmzfOquM5WpdygE6xGGKYtTIAJ2tzQ9eqyo9XX5aQVTcKMa6
+	LpH/SugKfMRmEQBYX3tqmeISFCk1jdKeVHhSoq9CZTI0nKaR6Hoj3LRqbjN9XplsWQUSc2WfEcN
+	2Ze/0WUUoWi9aQVQ1uA==
+X-Google-Smtp-Source: AGHT+IHbBE3KuCwZqo9MW0GUgiFHzWms8CY/ImiDM0hMcuxQrJEy1obM4IL7fWSg/ywYH4gRIkuM6Q==
+X-Received: by 2002:a05:622a:58d:b0:472:139c:3b50 with SMTP id d75a77b69052e-476c8149bb8mr1592661cf.13.1741899835198;
+        Thu, 13 Mar 2025 14:03:55 -0700 (PDT)
+Received: from nerdopolis2.mynetworksettings.com ([2600:4040:5e66:a800:1190:f8d0:801f:5e0a])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-476bb63f3a4sm13223601cf.30.2025.03.13.14.03.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 14:03:54 -0700 (PDT)
+From: adamsimonelli@gmail.com
+To: linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Petr Mladek <pmladek@suse.com>
+Cc: Adam Simonelli <adamsimonelli@gmail.com>
+Subject: [PATCH v9 0/1] Optionally allow ttynull to be selected as a default console
+Date: Thu, 13 Mar 2025 17:03:46 -0400
+Message-ID: <20250313210347.2987535-1-adamsimonelli@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rbw3oslor4q675uu"
-Content-Disposition: inline
-In-Reply-To: <20250214-mdb-max7360-support-v4-3-8a35c6dbb966@bootlin.com>
+Content-Transfer-Encoding: 8bit
 
+From: Adam Simonelli <adamsimonelli@gmail.com>
 
---rbw3oslor4q675uu
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v4 03/10] pwm: max7360: Add MAX7360 PWM support
-MIME-Version: 1.0
+When switching to a CONFIG_VT=n world, at least on x86 systems,
+/dev/console becomes /dev/ttyS0. This can cause some undesired effects.
+/dev/console's behavior is now tied to the physical /dev/ttyS0, which when
+disconnected can cause isatty() to fail when /dev/ttyS0 is disconnected,
+and users who upgrade to a theoretical vt-less kernel from their
+distribution who have a device such as a science instrument connected to
+their /dev/ttyS0 port will suddenly see it receive kernel log messages.
 
-Hello Mathieu,
+When the new CONFIG_NULL_TTY_DEFAULT_CONSOLE option is turned on, this will
+allow the ttynull device to be leveraged as the default console. Distributions
+that had CONFIG_VT turned on before will be able to leverage this option
+to where /dev/console is still backed by a pseudo device, avoiding these
+issues, without needing to enable the entire VT subsystem.
 
-On Fri, Feb 14, 2025 at 12:49:53PM +0100, mathieu.dubois-briand@bootlin.com wrote:
-> diff --git a/drivers/pwm/pwm-max7360.c b/drivers/pwm/pwm-max7360.c
-> new file mode 100644
-> index 000000000000..f1257c20add2
-> --- /dev/null
-> +++ b/drivers/pwm/pwm-max7360.c
-> @@ -0,0 +1,213 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright 2024 Bootlin
-> + *
-> + * Author: Kamel BOUHARA <kamel.bouhara@bootlin.com>
-> + * Author: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> + *
-> + * Limitations:
-> + * - Only supports normal polarity.
-> + * - The period is fixed to 2 ms.
-> + * - Only the duty cycle can be changed, new values are applied at the beginning
-> + *   of the next cycle.
-> + * - When disabled, the output is put in Hi-Z.
-> + */
-> +#include <linux/err.h>
-> +#include <linux/math.h>
-> +#include <linux/mfd/max7360.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pwm.h>
-> +#include <linux/regmap.h>
-> +
-> +#define MAX7360_NUM_PWMS			8
-> +#define MAX7360_PWM_MAX_RES			255
-> +#define MAX7360_PWM_PERIOD_NS			2000000 /* 500 Hz */
-> +#define MAX7360_PWM_COMMON_PWN			BIT(5)
-> +#define MAX7360_PWM_CTRL_ENABLE(n)		BIT(n)
-> +#define MAX7360_PWM_PORT(n)			BIT(n)
-> +
-> +struct max7360_pwm {
-> +	struct device *parent;
-> +	struct regmap *regmap;
-> +};
-> +
-> +struct max7360_pwm_waveform {
-> +	u8 duty_steps;
-> +};
-> +
-> +static inline struct max7360_pwm *max7360_pwm_from_chip(struct pwm_chip *chip)
-> +{
-> +	return pwmchip_get_drvdata(chip);
-> +}
-> +
-> +static int max7360_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
-> +{
-> +	struct max7360_pwm *max7360_pwm;
-> +	int ret;
-> +
-> +	max7360_pwm = max7360_pwm_from_chip(chip);
-> +	ret = max7360_port_pin_request(max7360_pwm->parent, pwm->hwpwm, true);
-> +	if (ret) {
-> +		dev_warn(&chip->dev, "failed to request pwm-%d\n", pwm->hwpwm);
+v2:
+    rebase
 
-Please drop this warning, just returning ret here is fine. (The rule of
-thumb is: Emit runtime messages only in probe, not during usage.)
+v3:
+    Clarify commit messages.
 
-> +		return ret;
-> +	}
-> +
-> +	ret = regmap_write_bits(max7360_pwm->regmap,
-> +				MAX7360_REG_PWMCFG(pwm->hwpwm),
-> +				MAX7360_PWM_COMMON_PWN,
-> +				0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_write_bits(max7360_pwm->regmap, MAX7360_REG_PORTS,
-> +				 MAX7360_PWM_PORT(pwm->hwpwm),
-> +				 MAX7360_PWM_PORT(pwm->hwpwm));
-> +}
-> +
-> +static void max7360_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
-> +{
-> +	struct max7360_pwm *max7360_pwm;
-> +
-> +	max7360_pwm = max7360_pwm_from_chip(chip);
-> +	max7360_port_pin_request(max7360_pwm->parent, pwm->hwpwm, false);
+    Guard the all the register_console()s in ttynull to prevent it from being
+    registered twice.
 
-Would be nice if pinmuxing would be abstracted as a pinctrl driver. Not
-sure how much effort that is. Maybe Linus has an idea?
+    Only change the link order if CONFIG_NULL_TTY_CONSOLE is enabled, otherwise
+    use the existing order for ttynull if only CONFIG_NULL_TTY is enabled.
 
-> +}
-> +
-> [...]
-> +
-> +static int max7360_pwm_write_waveform(struct pwm_chip *chip,
-> +				      struct pwm_device *pwm,
-> +				      const void *_wfhw)
-> +{
-> +	const struct max7360_pwm_waveform *wfhw = _wfhw;
-> +	struct max7360_pwm *max7360_pwm;
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	max7360_pwm = max7360_pwm_from_chip(chip);
-> +
-> +	val = (wfhw->duty_steps == 0) ? 0 : MAX7360_PWM_CTRL_ENABLE(pwm->hwpwm);
+    Document why the link order changes in the drivers/tty/Makefile file.
 
-Does not setting MAX7360_PWM_CTRL_ENABLE result in the pin going to
-Hi-Z? If yes: That's wrong. You're only supposed to do that if
-period_length_ns = 0 was requested. If no: This needs a comment why
-duty_steps = 0 is special here.
+    Replace #ifdefs
 
-> +	ret = regmap_write_bits(max7360_pwm->regmap, MAX7360_REG_GPIOCTRL,
-> +				MAX7360_PWM_CTRL_ENABLE(pwm->hwpwm), val);
-> +
-> +	if (!ret && wfhw->duty_steps != 0) {
-> +		ret = regmap_write(max7360_pwm->regmap, MAX7360_REG_PWM(pwm->hwpwm),
-> +				   wfhw->duty_steps);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int max7360_pwm_read_waveform(struct pwm_chip *chip,
-> +				     struct pwm_device *pwm,
-> +				     void *_wfhw)
-> +{
-> +	struct max7360_pwm_waveform *wfhw = _wfhw;
-> +	struct max7360_pwm *max7360_pwm;
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	max7360_pwm = max7360_pwm_from_chip(chip);
-> +
-> +	ret = regmap_read(max7360_pwm->regmap, MAX7360_REG_GPIOCTRL, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (val & MAX7360_PWM_CTRL_ENABLE(pwm->hwpwm)) {
-> +		ret = regmap_read(max7360_pwm->regmap, MAX7360_REG_PWM(pwm->hwpwm),
-> +				  &val);
-> +		val = wfhw->duty_steps;
+v4:
+    Remember to actually include the changes to v3 in the cover letter.
 
-wfhw->duty_steps = val;
+v5:
+    Correct code formatting in Makefile comment.
 
-> +	} else {
-> +		wfhw->duty_steps = 0;
-> +	}
-> +
-> +	return ret;
-> +}
+v6:
+    Change to CONFIG_NULL_TTY_DEFAULT_CONSOLE
 
-Best regards
-Uwe
+    Set the index to -1, and don't set the flags
 
---rbw3oslor4q675uu
-Content-Type: application/pgp-signature; name="signature.asc"
+    Use add_preferred_console() instead of register_console() in ttynull's
+    console_initcall when CONFIG_NULL_TTY_DEFAULT_CONSOLE is enabled
 
------BEGIN PGP SIGNATURE-----
+v7
+    Add a commit message to the first commit, and the Suggested-by
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfTSBwACgkQj4D7WH0S
-/k6Q6gf/XjsQoHf9RBzxgyUlezFotMDPpH1zwZOGLGbyQ1EN58ltZOo2a44SokYF
-R7TtXX47mBqKHhdlCgShc8153LM8sBwcDS+9HqaaHS/rR+5URMszklQSdAIh+nqW
-bZHXKmLGWNrHvdLZlb0NFK+fKNs+AJmABFVrYH0dLXRc5OPlD4/GrrtGFXbkPjha
-1KWUVnceG6eZn+WsgYRN8ki+Gv4AwpxyvCovuKHpur3e2dXpF0rXBeMKRLSDX2Ox
-Hi6YnfKxukcqf6JRljStl29d1xOBrMy6FZpcMEYBnMCAM9pVYLFFo+Wbnki2qt1O
-890RD9gfXgLYaeC7AlejZxp1dkkarg==
-=NVYJ
------END PGP SIGNATURE-----
+    Correct Kconfig tabs/spaces formatting
 
---rbw3oslor4q675uu--
+    Invert the console_set_on_cmdline check
+
+v8
+    Update Documentation.
+
+    Remove the "CONFIG_" in the help text when mentioning other configuration
+    options.
+
+    Update commit message
+
+v9
+    Spell pseudo correctly in the cover letter.
+
+    Use more clear, and suggested help text for NULL_TTY_DEFAULT_CONSOLE.
+
+    Do not set ttynull's index to -1 anymore.
+
+    Do not rely on link order, call add_preferred_console() in console_init().
+
+    Merge the Documentation/admin-guide/serial-console.rst change into one commit.
+
+Adam Simonelli (1):
+  printk: Add an option to allow ttynull to be a default console device
+
+ Documentation/admin-guide/serial-console.rst |  4 +++-
+ drivers/tty/Kconfig                          | 19 ++++++++++++++++++-
+ kernel/printk/printk.c                       |  5 +++++
+ 3 files changed, 26 insertions(+), 2 deletions(-)
+
+-- 
+2.45.2
+
 
