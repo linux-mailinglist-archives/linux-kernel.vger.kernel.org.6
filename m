@@ -1,90 +1,121 @@
-Return-Path: <linux-kernel+bounces-559005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00631A5EE3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:42:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E367A5EE41
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:44:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6937F3A7647
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:42:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7091017CD5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D0A261566;
-	Thu, 13 Mar 2025 08:42:24 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338FE2620C0;
+	Thu, 13 Mar 2025 08:44:07 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCF51EA7FC
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED1A261566;
+	Thu, 13 Mar 2025 08:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741855344; cv=none; b=MDu7gku6503bDdFwLtErcXMkdAoltmmmKCxQb9ySlNMfEqRDEisHfmUwsLPZE3MlSMT4ptLk/BQFgG+t0J/pHIIE8pv+EelvLF6bOoyDS6caqCvXNWL1hYx3SIMGExA4B4wPsDPVc2Dt1f5tgqqqdjb3iwHiMnu1PH5sguODnQM=
+	t=1741855446; cv=none; b=sRIElvRG5UOVyAG7slWV1vDkTK5YZHOgEVcTlOEENSClNvBIpsepJL/zaSbJ7td89RP7QiYzEAExcbConUN72Ne5t4xkVf4R356ke32/tOHVLbM81TBX9YM3mJQ7Jz5YdrevIfbxr9lwNvzhXaLfr67E72UvphB4Mhf+3+hcOzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741855344; c=relaxed/simple;
-	bh=vA5wxjoYQ18CfQhj0cxn1zrY/iSsxfanXpxr9W6PPY4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XOMMoFA76REOJgOfisEn5+CJk7j5aE6GkjY4+lX892v/u7f4elVcPT5gkLZy2jvOFoHgXi5z/7skYiKRR7BcFb6CATyOMhXr0H35ywiMDvrDmzanRPtgnkUvtLsS+1whNBbTR8KYcw0MpUtwSyVqZlCsebhMSSBXJcBRrFIKdzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tse8t-00007I-JV; Thu, 13 Mar 2025 09:42:15 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tse8t-005VQP-19;
-	Thu, 13 Mar 2025 09:42:15 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tse8t-0003Y4-10;
-	Thu, 13 Mar 2025 09:42:15 +0100
-Message-ID: <dbdbc1f6c30cba1e0e1445de09564864dfdb8b58.camel@pengutronix.de>
-Subject: Re: [PATCH v4] reset: mchp: sparx5: Fix for lan966x
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	Steen.Hegelund@microchip.com, daniel.machon@microchip.com, 
-	UNGLinuxDriver@microchip.com, herve.codina@bootlin.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Thu, 13 Mar 2025 09:42:15 +0100
-In-Reply-To: <20250227105502.25125-1-horatiu.vultur@microchip.com>
-References: <20250227105502.25125-1-horatiu.vultur@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1741855446; c=relaxed/simple;
+	bh=LPTBbVCgJ3gNYRoorgbuJ2GD+DCqzyI7DNJWUsahgSY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QONJblFTdu1UPSCD0MXDzxpoLfxFWoZgb9j/KN2oaXXd/DqkpMPA7OOShc6Xr8w14HzIX8o2miBbgRnmWYz4zBfGGpwSGL3204VcEfkzfrg4OL8IdMELkCneW9++FVBL/U317nxtySaI4iDRrESV/rJWQ1pdbAo4lvDwLGEfHoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowAD3_dHMmtJn8KHUFA--.4201S2;
+	Thu, 13 Mar 2025 16:43:56 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: avifishman70@gmail.com,
+	tmaimon77@gmail.com,
+	tali.perry1@gmail.com,
+	venture@google.com,
+	yuenn@google.com,
+	benjaminfair@google.com,
+	wim@linux-watchdog.org,
+	linux@roeck-us.net
+Cc: openbmc@lists.ozlabs.org,
+	linux-watchdog@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] watchdog: npcm: Remove unnecessary NULL check before clk_prepare_enable/clk_disable_unprepare
+Date: Thu, 13 Mar 2025 16:43:32 +0800
+Message-Id: <20250313084333.2481712-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAD3_dHMmtJn8KHUFA--.4201S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw15tFWDXr1rCr48Ary7Jrb_yoW8JFWxpF
+	WIyrWSvFW7tFWYqw43Jw4DAr1FkF42yFyfZryUCa4rWwn0yryFvFyFy34j9Fs8ArWfC3WY
+	va1jyrWDC3WjyFJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxV
+	WxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2Wl
+	Yx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4
+	AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY
+	1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_GFyl42xK82IYc2
+	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
+	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU5l1vDUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Do, 2025-02-27 at 11:55 +0100, Horatiu Vultur wrote:
-> With the blamed commit it seems that lan966x doesn't seem to boot
-> anymore when the internal CPU is used.
-> The reason seems to be the usage of the devm_of_iomap, if we replace
-> this with devm_ioremap, this seems to fix the issue as we use the same
-> region also for other devices.
->=20
-> Fixes: 0426a920d6269c ("reset: mchp: sparx5: Map cpu-syscon locally in ca=
-se of LAN966x")
-> Reviewed-by: Herve Codina <herve.codina@bootlin.com>
-> Tested-by: Herve Codina <herve.codina@bootlin.com>
-> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+clk_prepare_enable() and clk_disable_unprepare() already checked
+NULL clock parameter.Remove unneeded NULL check for clk here.
 
-Applied to reset/fixes, thanks!
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/watchdog/npcm_wdt.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-[1/1] reset: mchp: sparx5: Fix for lan966x
-      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3D0e2268f88bb2
+diff --git a/drivers/watchdog/npcm_wdt.c b/drivers/watchdog/npcm_wdt.c
+index a5dd1c230137..e62ea054bc61 100644
+--- a/drivers/watchdog/npcm_wdt.c
++++ b/drivers/watchdog/npcm_wdt.c
+@@ -68,8 +68,7 @@ static int npcm_wdt_start(struct watchdog_device *wdd)
+ 	struct npcm_wdt *wdt = to_npcm_wdt(wdd);
+ 	u32 val;
+ 
+-	if (wdt->clk)
+-		clk_prepare_enable(wdt->clk);
++	clk_prepare_enable(wdt->clk);
+ 
+ 	if (wdd->timeout < 2)
+ 		val = 0x800;
+@@ -105,8 +104,7 @@ static int npcm_wdt_stop(struct watchdog_device *wdd)
+ 
+ 	writel(0, wdt->reg);
+ 
+-	if (wdt->clk)
+-		clk_disable_unprepare(wdt->clk);
++	clk_disable_unprepare(wdt->clk);
+ 
+ 	return 0;
+ }
+@@ -156,8 +154,7 @@ static int npcm_wdt_restart(struct watchdog_device *wdd,
+ 	struct npcm_wdt *wdt = to_npcm_wdt(wdd);
+ 
+ 	/* For reset, we start the WDT clock and leave it running. */
+-	if (wdt->clk)
+-		clk_prepare_enable(wdt->clk);
++	clk_prepare_enable(wdt->clk);
+ 
+ 	writel(NPCM_WTR | NPCM_WTRE | NPCM_WTE, wdt->reg);
+ 	udelay(1000);
+-- 
+2.25.1
 
-regards
-Philipp
 
