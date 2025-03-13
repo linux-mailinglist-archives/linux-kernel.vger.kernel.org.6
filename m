@@ -1,105 +1,125 @@
-Return-Path: <linux-kernel+bounces-559105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADCE7A5EF9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:34:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB07CA5EFA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:37:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 171713BA109
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:34:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F2883BA226
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77C5263C8E;
-	Thu, 13 Mar 2025 09:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33D0264614;
+	Thu, 13 Mar 2025 09:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJ3v/KQb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ztnmyabv"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94511FC3;
-	Thu, 13 Mar 2025 09:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1484B26388D;
+	Thu, 13 Mar 2025 09:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741858463; cv=none; b=pMEi45WRAiDIen6ndggbdUArrzuMCVRrO4//+gG5fYEKgVmbp6MpO4PkNRLvg5Yl9VwMpG0ubrwE54ZViETNCU6OIcflNtLdCPqkVrgGzKIlsXW6xwMbS7tasR80oarc+CTHDT+KUr/KDdbn7kO/sEhqZ77wq18twU4KPFjQ+Zw=
+	t=1741858617; cv=none; b=WJvmxhrexOgQ4CV6ZcnpYdjV9IYnGmYdPL4YcBZ7ZZ0QnYr9RIFE9ZA0VZ1+k1zyxvNfN6gFZD8RO272DdKm57oOoNRYrJbr8DPZwBsgN3gLVTCqTYo2iAkz3v57Bq3A1IXt8q8nNm96RT49k9Nh4K5Q/fIvueFLpB+hBPrHuow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741858463; c=relaxed/simple;
-	bh=vZoJDpDTmWHWIWAu2WSeOEgGu9mMhdvsQC0d26Wi4EE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NuIL6pFNSnvQPkJNJBUk6u9ze2HZANGbRyOT8ZX2FHKhw0iWh9Ki+5VuPos0CmoDfV47AxdcYMlCeTaWxD7ECoR036oDWXYrb9v2pUaA/B7rhU4QXGvKkd+GrjxuupOTI0e8tTJgjGfXu4Ao2MYHj7v6CleYrPlrw1b7tEEP1Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJ3v/KQb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE0FDC4CEDD;
-	Thu, 13 Mar 2025 09:34:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741858462;
-	bh=vZoJDpDTmWHWIWAu2WSeOEgGu9mMhdvsQC0d26Wi4EE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uJ3v/KQbtHiRxiHdK+WMSahSOVWk23CN1xtmsNpXhXafJuxBYtYFCxuKoRD9Zxj7b
-	 SpuM+892PUms50X1x+iLuWZ9qSh+q75FBjEQR3MTUvkPM/plj8a+JjDdroehSku2/J
-	 DjvT4+Zr8mN9qWW1x1WGnuyE2N40p/y6AhCCeCaFkz3WKsx/T3Ae5015PMD2SzP4hY
-	 l95kFUEDO5JwiQ7FMI2/t9fL2+VFjqH2kZ2p8vX/IisjEwVS3uc/LVPPIGKeunOd/b
-	 DRUyKEKW50XBBKK18ItYM9m8SrIVh9Wh+NdatGuHYDSEukc4bc22Y1ZpCvEizd6r6X
-	 FlO4rxUezCgMw==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5499bd3084aso741127e87.0;
-        Thu, 13 Mar 2025 02:34:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVFYMwO04dvnj5wJWPym6cnM8ppsbdcgVg+NaRHSHvxL4HcETk+pI3LKrykL0E25FD0mtXvus6dNGwmi6U=@vger.kernel.org, AJvYcCWXRBLy9AHi6fM4dpO+viwxbzQoWbmrGe6yhYmPHaerR2Z7A8ZiSiY+b72wAciVadbziyz+JnSikiOoRPoa@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf2swWHrNyrpefE8cyP1IjXtr/I+OUR5ON0+7Q0cfSEVmWUKF1
-	uKfkjCErjMdUVWXoJ1CI2Dwoog6UiJ3ciNhILayjNTfDB/lEZOMnP2MlbbMp73T1tmdDm6zZQR/
-	s2LwHEKrdR+kKGr7o5ED3dIfjeCU=
-X-Google-Smtp-Source: AGHT+IGiizjDd9U50PgmaruU6eXHUHi2xPUqWWSNcGHullv/aaClM9lkBlv5Mu+wibAEsAHWg3V8TSdK+NMBcnDEej4=
-X-Received: by 2002:a05:6512:159a:b0:545:6fa:bf60 with SMTP id
- 2adb3069b0e04-54990e4a822mr9816194e87.19.1741858461061; Thu, 13 Mar 2025
- 02:34:21 -0700 (PDT)
+	s=arc-20240116; t=1741858617; c=relaxed/simple;
+	bh=ObsR4d09TiK8gM5mzUBcVhmllDBKA2du1QTZ7irUDkQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y699KZOYKG+itQXbUrH1F4YHmPcqZa7ZCEYyGdXxtxLyQHDfuFXbSeKJvL1X4GXtW81mWpSUs3vyFFrd7fuQmCRoELV4DQSPm2dVZorM6dJCFtBYUsT12VkSyPDA1lWGOBmiIMwCsiKao9gk8w5v3IAEzjqNCvxYkN4Gzi3p88c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ztnmyabv; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43948021a45so5960205e9.1;
+        Thu, 13 Mar 2025 02:36:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741858613; x=1742463413; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JvQ7dzhduECDrLpiYmThBQ/FoZ4MRllET4xAKqhw1E8=;
+        b=ZtnmyabvO6l3EGHo7EXzJ2hiq1hz3B+kYFEIWt8BECJtGBsUleC6g3Ehpk4MF9joD0
+         jiqNGm+2lx55jGxRKovm/VFFHXyLbsKAMa05+mVnXwJoCprKAcPA0XtfXoDBMBupC027
+         qxZCcWDy+osvaNbeIvj2Ajb6sFAQ+bsvGR6ika/3pBDlcZgO9gOg+zcsE6OyVo4fbBNu
+         hbD4YBY1B0mVO3z/F22Dgvj5Jd5oTy1lW+L2kLHjKA72uGGzORtMzn6CakqULpDo3I7P
+         4piVyVmY0x6oMnJE8kjYsRehcb89cgUTzzeT8YJ98p5ndtXTg8ACtLUI4b2HHEwn4CVO
+         28ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741858613; x=1742463413;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JvQ7dzhduECDrLpiYmThBQ/FoZ4MRllET4xAKqhw1E8=;
+        b=qUGQRiXJhaZZCQSWzCisNDrP5zCuz+3qY14P2cPCafczZe1Ifg6cOB/Oj0t3lie6dl
+         KoCGvlE5amQRr5w24XAmU0J5X+S6DXqp6t7KPBZoyJPZ1tK2MJPo9hqgs1M2Jk4/RQji
+         Qx5qrHI7Y4QpLxz87KMlI925fgVfeTBMIl5S+3wg6EgOxDszMKFKV17KwYATr86YqW2h
+         NAHNi2VRJXZ2uOVLU38G43YAIdP3PkIExHZufKf1gj87E7v3YmGmi8GOBpxzhEmvDx9S
+         ESmLJKZGHWFOgAOYfO52XtqUvIDWhy5kGn8URE2CTOZsnQxY0TMoBJ1sJNCkWRDiVodK
+         e2mg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLKVMZN0Ohvp0qgVT/yZ65jt+MKVQjYi7UrIyaWKAVAb/wTX3rI2P5k1Nh48xNTnTFkqE/Sdgn@vger.kernel.org, AJvYcCXh8BNpx5XnZXwWeNakqfyAeF3iJJCWjF6vRXwifdsGPNodgSw2ezQEHTLNU+CxWDQONAOpf7q9SowHfIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPe+Cg99DE0S96co2G8oo+h1HaczvqxpcarHKe1ytqVO1vLCZc
+	laOeSUv/RJPBUVyC2ojSQy8mjAwvxEmDuCHi4JUEEUuDqW6XY9c=
+X-Gm-Gg: ASbGnct0fTGaCA03gsugwZI3biDK9tBNCcpbdnt6NFqKt3o+bxPPRw8uZ+wvPIpLOyj
+	qa/SDyK7IehtWAKx+aHU6k1nlEaskfhbTLTIh7byn0eOIIA0VavUiyRoaAGh9AWjIn6X/Rb+bQF
+	095CDjIiL710hhz+LPhQ1YKnDoEwuZbmgHs3l6pFUNTwTpRHrBs4QZyoZulsxHZLNiVL9HuBr8v
+	l+J+XnV1IntzUsheaUzCweJiNvyr3xzaGO3k4foVj+nuqEdKd3zZGDCYFg4E4Bv5R8RcCfI8Vy3
+	Y/ljcAcaVuHvcsSUp/ODF7CKWtiIqo2VDMymwq8CvhT6
+X-Google-Smtp-Source: AGHT+IH4SxyWBmHQREG2JRZBSCpc9n97vp7qOSWmSGUrlsH7EaBDPGRKB6Rc9iE5qfhPMASjZ32mWg==
+X-Received: by 2002:a05:600c:1ca6:b0:43d:9f2:6274 with SMTP id 5b1f17b1804b1-43d09f264eemr53241605e9.14.1741858612924;
+        Thu, 13 Mar 2025 02:36:52 -0700 (PDT)
+Received: from phoenix.rocket.internal ([2a12:26c0:200b:2402::14])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a8c5ccasm47178835e9.26.2025.03.13.02.36.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 02:36:52 -0700 (PDT)
+From: Rui Salvaterra <rsalvaterra@gmail.com>
+To: anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com
+Cc: edumazet@google.com,
+	kuba@kernel.org,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rui Salvaterra <rsalvaterra@gmail.com>
+Subject: [PATCH iwl-next] igc: enable HW vlan tag insertion/stripping by default
+Date: Thu, 13 Mar 2025 09:35:22 +0000
+Message-ID: <20250313093615.8037-1-rsalvaterra@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311110616.148682-9-ardb+git@google.com> <202503131715.Fb6CfjhT-lkp@intel.com>
-In-Reply-To: <202503131715.Fb6CfjhT-lkp@intel.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 13 Mar 2025 10:34:09 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGBLV6W7mJcELmsQuDUi0u-DofyD985znmVoHoZKZTuxA@mail.gmail.com>
-X-Gm-Features: AQ5f1JrdY_O-dpd_Fst91bV8iY8Z5VXs88uikfiDeXUEQK3ipIbyhHsPjZh6oPs
-Message-ID: <CAMj1kXGBLV6W7mJcELmsQuDUi0u-DofyD985znmVoHoZKZTuxA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] Kbuild: Create intermediate vmlinux build with
- relocations preserved
-To: kernel test robot <lkp@intel.com>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	oe-kbuild-all@lists.linux.dev, linux-kbuild@vger.kernel.org, x86@kernel.org, 
-	Masahiro Yamada <masahiroy@kernel.org>, Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 13 Mar 2025 at 10:21, kernel test robot <lkp@intel.com> wrote:
->
-> Hi Ard,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on masahiroy-kbuild/for-next]
-> [also build test ERROR on masahiroy-kbuild/fixes tip/x86/core s390/features linus/master v6.14-rc6 next-20250312]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Ard-Biesheuvel/Kbuild-link-vmlinux-sh-Make-output-file-name-configurable/20250311-190926
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git for-next
-> patch link:    https://lore.kernel.org/r/20250311110616.148682-9-ardb%2Bgit%40google.com
-> patch subject: [PATCH v2 3/4] Kbuild: Create intermediate vmlinux build with relocations preserved
-> config: x86_64-randconfig-076-20250313 (https://download.01.org/0day-ci/archive/20250313/202503131715.Fb6CfjhT-lkp@intel.com/config)
-> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250313/202503131715.Fb6CfjhT-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202503131715.Fb6CfjhT-lkp@intel.com/
->
-> All errors (new ones prefixed by >>):
->
-> >> gawk: scripts/generate_builtin_ranges.awk:82: fatal: cannot open file `vmlinux.map' for reading: No such file or directory
->
+This is enabled by default in other Intel drivers I've checked (e1000, e1000e,
+iavf, igb and ice). Fixes an out-of-the-box performance issue when running
+OpenWrt on typical mini-PCs with igc-supported Ethernet controllers and 802.1Q
+VLAN configurations, as ethtool isn't part of the default packages and sane
+defaults are expected.
 
-Hmm it seems I missed some things in link-vmlinux.sh - I will take a look.
+In my specific case, with an Intel N100-based machine with four I226-V Ethernet
+controllers, my upload performance increased from under 30 Mb/s to the expected
+~1 Gb/s.
+
+Signed-off-by: Rui Salvaterra <rsalvaterra@gmail.com>
+---
+ drivers/net/ethernet/intel/igc/igc_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+index 84307bb7313e..1cb9ce8aa743 100644
+--- a/drivers/net/ethernet/intel/igc/igc_main.c
++++ b/drivers/net/ethernet/intel/igc/igc_main.c
+@@ -7049,6 +7049,9 @@ static int igc_probe(struct pci_dev *pdev,
+ 	netdev->xdp_features = NETDEV_XDP_ACT_BASIC | NETDEV_XDP_ACT_REDIRECT |
+ 			       NETDEV_XDP_ACT_XSK_ZEROCOPY;
+ 
++	/* enable HW vlan tag insertion/stripping by default */
++	netdev->features |= NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_CTAG_RX;
++
+ 	/* MTU range: 68 - 9216 */
+ 	netdev->min_mtu = ETH_MIN_MTU;
+ 	netdev->max_mtu = MAX_STD_JUMBO_FRAME_SIZE;
+-- 
+2.48.1
+
 
