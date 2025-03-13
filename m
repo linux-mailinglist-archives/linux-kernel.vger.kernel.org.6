@@ -1,133 +1,132 @@
-Return-Path: <linux-kernel+bounces-559009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53DACA5EE4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:45:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F424A5EE4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:46:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 973B317CCA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:45:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61D5B17CE52
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96932620C0;
-	Thu, 13 Mar 2025 08:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FD1260A3F;
+	Thu, 13 Mar 2025 08:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gomj9xJP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WciwiNyG"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5494B20EB;
-	Thu, 13 Mar 2025 08:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71B020EB
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741855535; cv=none; b=B6+MdOeWr1zwWIIxkysNl8vRPuO4oemcEWx3mTL6RA+iKE9c7t27gzQqhbpLie4KkAgAlekr/juZ3N1zojGHldvIrlxcDjFW6Hnd2VhNkLyQmXKfr0cTWHRPgylQMP2zf5E7GnWqZ2Wkb2bbsTAEgIWzPeFGo2jVKTek6dlkvtY=
+	t=1741855588; cv=none; b=cuXEEzCiiWvVidmIf26QTkL8TzyVYtbJ+FNvyAVaLnjJGbdZ1Dq1C5mOlW5VEvmo95qSxojRwRVzv8DFJ6wsqTNIKLePQgwhhqplYRgwdAdpIis/dqNOMTXfEH8L/p8ghB1rXsRv/mbrif5HvukS513vTpsHk7mq9VzQ/7JL8G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741855535; c=relaxed/simple;
-	bh=dDUCrjfcCkHy+Qdllu2qarusbsI9b0jhw5izoFx1sdg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AgOneh/47EOVoUo52zohzpPD8ESwDPK/aOgyY/VPjrWt6S+rCEU+Tcj6O1DHD+nWVwlY7WlUdXud468lOa301OPTe4PSNDzEDKdEjQKRJ8NMnFF1JRpf7MeWWhA2HqxGkt6vq0xLcejjOi0pKJZzXvjNQ9NUelkYkGUgpfPAk+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gomj9xJP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CLTIoO023249;
-	Thu, 13 Mar 2025 08:45:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	weOhNTocqMWkV4mh4HfuZvoaWYclgVYAQAFMBUCSfGw=; b=Gomj9xJPCHYtMKiJ
-	kvRw7zKf3tLe9ypJTI9T/QdNyDKCkKrNNgKPbVuX3RwQMbBl2h9cDzbUewg9VkRC
-	SG8Gw3Buoc1BFOLOPSpznCVCl7G/chmDz9ggwbkMtc6fxqeMWQswkvRwwflWFt/s
-	1mR9mvt3fJ5uIBq+utxlZuzjyTsMVXXPgrTv5/qzOf+5uY40NFORn+jlVT79dbP4
-	PRPOpZZrNhIOe0lDUDT6H4dYUfb+pFRk4+4YnlIQSv9d5vmJsM4SUQu3DWNBy6O+
-	2UT4E5srxbSnbHdfFG3giApthSu+n9gd9u1kq3fAJeW4YkAD7ZOUfkaKQH55PCd4
-	2nvCrA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2mn5ws-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 08:45:19 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D8jIpD024973
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 08:45:18 GMT
-Received: from [10.217.216.178] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
- 2025 01:45:13 -0700
-Message-ID: <4f3161da-a11b-464f-bf78-45c830b2ea82@quicinc.com>
-Date: Thu, 13 Mar 2025 14:15:10 +0530
+	s=arc-20240116; t=1741855588; c=relaxed/simple;
+	bh=fq6ekP8eUxjdXANo/WduXK/rQgvhx776zl5jczANHmw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PINZ2wYOzC6gbyuhfDcdMVr3D0oM+lCgwehWQkMbTOPiOpaYC/LwY67qwa2ALO4+1fb9HAMFwDab+LBdLE8E33t7F1EuJe2FMvQxpce+KeqPNecAI9Uzn0BaMHYL1+FNQtVsVPwAIaoN3T4/WYc/kZTP2RVQ2od+fDX7585TvAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WciwiNyG; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741855573;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3RZVs3JN10EHFOTt3fszpgtp+DbwIIZsS1/By/a7Fow=;
+	b=WciwiNyGA6z5mcJyiULh3LKXXDPuJlOeeASqPiBNoLM6HWNdstKiphch+an7hcUmEn/6Fy
+	vuL7ku0bVGXXTdau+KmZVdbUu07Y1lHz72FoAjfVagDKiyNVGfi45WMPSxqssMyQMQOgTp
+	GdNVVa5w79sR43/k0SnWC9f+ZdNszMU=
+From: Kunwu Chan <kunwu.chan@linux.dev>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	Kunwu Chan <kunwu.chan@hotmail.com>,
+	Grace Deng <Grace.Deng006@Gmail.com>
+Subject: [PATCH] rust: file: optimize rust symbol generation for FileDescriptorReservation
+Date: Thu, 13 Mar 2025 16:45:25 +0800
+Message-ID: <20250313084525.773620-1-kunwu.chan@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 04/10] dt-bindings: clock: Add Qualcomm QCS615 Display
- clock controller
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250313-qcs615-v5-mm-cc-v6-0-ebf4b9a5e916@quicinc.com>
- <20250313-qcs615-v5-mm-cc-v6-4-ebf4b9a5e916@quicinc.com>
- <20250313-mottled-quoll-of-vastness-3f3c6b@krzk-bin>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <20250313-mottled-quoll-of-vastness-3f3c6b@krzk-bin>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: cgUiPEMaa_Ew-ApOw3iL_h4kRXSyDY0B
-X-Authority-Analysis: v=2.4 cv=aKnwqa9m c=1 sm=1 tr=0 ts=67d29b1f cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=nJrBSJ152xCAXF4FcqMA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: cgUiPEMaa_Ew-ApOw3iL_h4kRXSyDY0B
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_04,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
- adultscore=0 malwarescore=0 priorityscore=1501 phishscore=0 spamscore=0
- bulkscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0 suspectscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130068
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+From: Kunwu Chan <kunwu.chan@hotmail.com>
 
+When build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
+with ARCH=arm64, the following symbols are generated:
 
-On 3/13/2025 1:55 PM, Krzysztof Kozlowski wrote:
-> On Thu, Mar 13, 2025 at 12:29:41PM +0530, Taniya Das wrote:
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - '#clock-cells'
->> +  - '#reset-cells'
->> +  - '#power-domain-cells'
-> 
-> Also no qcom,gcc.yaml. Why?
-> 
+$ nm vmlinux | grep ' _R'.*FileDescriptorReservation | rustfilt
+ffff8000805b6ef0 T <kernel::fs::file::FileDescriptorReservation>
+						::fd_install
+ffff8000805b6e60 T <kernel::fs::file::FileDescriptorReservation>
+						::get_unused_fd_flags
+ffff8000805b6f08 T <kernel::fs::file::FileDescriptorReservation
+					 as core::ops::drop::Drop>::drop
 
-Sure, will fix the bindings across and resend the patches.
+These Rust symbols are trivial wrappers around the C functions
+fd_install, put_unused_fd and put_task_struct.It
+doesn't make sense to go through a trivial wrapper for these
+functions, so mark them inline.
 
-> Best regards,
-> Krzysztof
-> 
+After doing so, the above symbol will not in output.
+
+Signed-off-by: Kunwu Chan <kunwu.chan@hotmail.com>
+Co-developed-by: Grace Deng <Grace.Deng006@Gmail.com>
+Signed-off-by: Grace Deng <Grace.Deng006@Gmail.com>
+---
+ rust/kernel/fs/file.rs | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
+index e03dbe14d62a..3dda2bfca1a6 100644
+--- a/rust/kernel/fs/file.rs
++++ b/rust/kernel/fs/file.rs
+@@ -392,6 +392,7 @@ pub struct FileDescriptorReservation {
+ 
+ impl FileDescriptorReservation {
+     /// Creates a new file descriptor reservation.
++    #[inline]
+     pub fn get_unused_fd_flags(flags: u32) -> Result<Self> {
+         // SAFETY: FFI call, there are no safety requirements on `flags`.
+         let fd: i32 = unsafe { bindings::get_unused_fd_flags(flags) };
+@@ -413,6 +414,7 @@ pub fn reserved_fd(&self) -> u32 {
+     ///
+     /// The previously reserved file descriptor is bound to `file`. This method consumes the
+     /// [`FileDescriptorReservation`], so it will not be usable after this call.
++    #[inline]
+     pub fn fd_install(self, file: ARef<File>) {
+         // SAFETY: `self.fd` was previously returned by `get_unused_fd_flags`. We have not yet used
+         // the fd, so it is still valid, and `current` still refers to the same task, as this type
+@@ -433,6 +435,7 @@ pub fn fd_install(self, file: ARef<File>) {
+ }
+ 
+ impl Drop for FileDescriptorReservation {
++    #[inline]
+     fn drop(&mut self) {
+         // SAFETY: By the type invariants of this type, `self.fd` was previously returned by
+         // `get_unused_fd_flags`. We have not yet used the fd, so it is still valid, and `current`
+-- 
+2.43.0
 
 
