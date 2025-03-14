@@ -1,143 +1,98 @@
-Return-Path: <linux-kernel+bounces-561741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B14A6158F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:59:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CAAA61594
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:00:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D9DE19C0772
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:00:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 335EA19C0917
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E76200136;
-	Fri, 14 Mar 2025 15:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46142202C55;
+	Fri, 14 Mar 2025 16:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pbdD17BP"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpsXh1NQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D88202C2B
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 15:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10DA1FFC41;
+	Fri, 14 Mar 2025 16:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741967988; cv=none; b=kdsMQ9wG1YojQ1peXsKTFR+/YUXtTyOxtM5IZpdW0g/S338nSGwDssT3IP4mPgEotqwZzLeFlx2nGJhSStU8K94b0dadAvs4LS0OgLa4BrRRtaugVz7m4nkSN+cvQY42KhXdQKRkQqRZy2Y6Fx0zYJSGFrYvu0ck53r7gSlVFnk=
+	t=1741968011; cv=none; b=EWszdYHEIqlQUDTwBbdY/AKsyu+I+EDYJwRAqpvecA4wyg5uH7YNVFFMYbqP2tB0U0mU9fo6h2Xz24lXX7FtXBDMaqORO4slD9bldTb0aSFtWgpba7er29XE2kZF2SG2chLAIP3L7vKA2+cT6YVvPFw0SAPnY5Cih1cTc6pcnnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741967988; c=relaxed/simple;
-	bh=qbAf7RLJv6RsTwMHx91Z6PJ5PYNVMVgiR3uOKlVTE8s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gbGN1KJSq+H5Qj2vpl7fjBd5CeIGJtkvBjYLU4OHtVUE1hpdCDlRqN9BjnPhRcxsF4n0c/NVzxIokZlFMlM7tmHTERAjzGf9AQAY3IEkin6T3KqmchXvgFAtqg/q/MjH08Ow3JorIoXqrEZ5uvxhbtFkFD0LMrVgXUBQ2XJJ4Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pbdD17BP; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43d0618746bso15818345e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:59:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741967985; x=1742572785; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qbAf7RLJv6RsTwMHx91Z6PJ5PYNVMVgiR3uOKlVTE8s=;
-        b=pbdD17BPKnXsMKsBtrq1RoP+o6fqRqO8bb5yu7ddTufgEuzYwiuIDowaw7504uNHPb
-         Wfd4KSKMBcZjA7vr/GwlLg3vyrgB3DDzphXemPHz6+1Hgah13e7Eoa24wka11cjXGp2g
-         f1J861OMCg/JyjPY0RSm4tWuKsS0JcSCygPtLFJ+E+FJXhV8OkgpTkeWPNyvWUnSpZk5
-         2mh+CitzJ3vUXhyhaSkLtIyDlXRe073Kuug7k8HwPyQrhS0+3DnGqkI1QXtap1VlAmnz
-         V7B4aM6HX6hVGIIbROJuMM1pIUQGmGEirmEQJS8vG/bQI2XEbK799RoDOi+vxKmjP1VE
-         CbXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741967985; x=1742572785;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qbAf7RLJv6RsTwMHx91Z6PJ5PYNVMVgiR3uOKlVTE8s=;
-        b=cVHe0xU3nDYiBAYxmTLCFFt9/3Uy0I/zBgSwBN+t9JNU+0xuXm9ykzQV6bR5PNACvO
-         aIJdiEfKnbvz0Gu5r+hVYht9PqUW5sAmZ3y+w7XJEbyTYLYSxYkfmue0GfTklL3MDEAj
-         V75+oOyTSDU0aPv4Zw28om9ZfgCYpwVDYYBrMuosJFcr7/p/gDGbUhK1zeYfy0gtZq4P
-         W0aVhe/0rS6/kr5gheeMJ4xCV/CybWtUurzZ0yGzjD67LquB4mW+HfUPy85tUPpbC6B/
-         lPYdto6IKG2OBVujHrccqTbKHNSh+hbLlvYtZ3wm+SzG4JSWPU5R0NR2iUw1KalFgXKi
-         sRdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVG7OHeVTVzaZdunrCIPpyjxMWnjDhcsHX9mDHMGv2lPpebojVPpm3xZkXIk0+fQorV7Zcu7enIzqH8MUA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx77NFZEOb3nNnLmcPodL/yVXyz0YO6Z/BYA0NNMxM3yFnpK9DU
-	uFV+zNwBGDoOhnx5hDo4YykqCiaApUqn6f7VvPBFq1fXegHy3pU/9AG21k9Snzo=
-X-Gm-Gg: ASbGncvAhZabgoR3mpJKLkH2uNH1SdANmFHN6Uv+ajrLvQq1NB4fea8hig+RYUB1XPM
-	Ch2mSbIwUJIhicChGqTGZoX1hILx3116RNhRDicYAGHKWYlzPxwWcuCiYc5YfUQo+3HyLxvVHBn
-	2ggEpHkQTBiNSv1BpWnCp4Rxawt78VsWk+EKWc8SxtI1NcDqvRRM6ap4jkLwstMN/S47R8XXuTK
-	ER1IJSz1qNH+lJGU0Z35JnQe6nF+hfnrAWFcGJ0jgbhJQwB11SfvrVlXJyLfSOIVyIHWBERE5zY
-	Vc5xFTDpCof6Vrkf/hRphOJsQKdV+t/rPt+6GX/OIVPtV/d3
-X-Google-Smtp-Source: AGHT+IHxwHHx6Fb/u1dWZbQ1qTy60BcLwUz4P4SvmS/UEUbzjpP8/AFJeuPq9qAxmx2U4YpAhe3Dbw==
-X-Received: by 2002:a05:600c:41d3:b0:43c:f689:dd with SMTP id 5b1f17b1804b1-43d20e467c7mr27073105e9.19.1741967985037;
-        Fri, 14 Mar 2025 08:59:45 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d200fac7asm21846905e9.28.2025.03.14.08.59.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 08:59:44 -0700 (PDT)
-Message-ID: <931e5e0b07d598912712b091d99a636b796fe19f.camel@linaro.org>
-Subject: Re: [PATCH 2/2] scsi: ufs: dt-bindings: exynos: add dma-coherent
- property for gs101
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
- <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim
- Akhtar	 <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, Bart
- Van Assche	 <bvanassche@acm.org>, "Martin K. Petersen"
- <martin.petersen@oracle.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, kernel-team@android.com,
- willmcvicker@google.com, 	stable@vger.kernel.org
-Date: Fri, 14 Mar 2025 15:59:43 +0000
-In-Reply-To: <20250314-ufs-dma-coherent-v1-2-bdf9f9be2919@linaro.org>
-References: <20250314-ufs-dma-coherent-v1-0-bdf9f9be2919@linaro.org>
-	 <20250314-ufs-dma-coherent-v1-2-bdf9f9be2919@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.53.2-1 
+	s=arc-20240116; t=1741968011; c=relaxed/simple;
+	bh=HTDMJblu2yYTj5Ay9v5ypRtDQz3GYsPGANq7RB/PtJQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DaS3h25xBJj2RJU1eySYk3Cs75HPj7veVE1VmwWJDxY2ARnkf4k56Er8c9xXZRPPX7qhLfry2kmZEGBH2tTWlDoV/5bNFF6WM1AyDrynOo6Rotx4eGKyK63OUlI9M9wD/7YPXlaDXc1Asf97oPDU0syMXC01zw8vy/ogjZ0jbs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tpsXh1NQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 302BBC4CEE9;
+	Fri, 14 Mar 2025 16:00:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741968011;
+	bh=HTDMJblu2yYTj5Ay9v5ypRtDQz3GYsPGANq7RB/PtJQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tpsXh1NQvO0N9JzLtRf95h8cohlzGsXz1A1UpYrg7/QHNZQVSATERp+wiDXQm3x4U
+	 CzoHM1veuqJovXGank1l5a8r2DTH5tVf5LBNDmwOjyRqvowL9j/3A6jd0gYV8VjM37
+	 pD9IQmbpSSI6ghvZoKjtfj+UGCpb56veoAzqAIu6CG5fpiUV/GuY2JRsGwjB9STlSk
+	 7jXiraRvVe60bTjzk8dAqJEe8iNjelEDAAVgPHn1BwPx2KLsTgntJuWmemhVvuRE2J
+	 bemih7ZlgdWQebSSfC7zwY7V6WpU1e89yiTN0tJVV/EfZnfYmYUk6dk2euEMGvtNZh
+	 E15yZ/DVYLkCQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Akhil R <akhilrajeev@nvidia.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Chen Ridong <chenridong@huawei.com>,
+	linux-crypto@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: tegra: fix size_t format string
+Date: Fri, 14 Mar 2025 16:59:59 +0100
+Message-Id: <20250314160006.346042-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Pete,
+From: Arnd Bergmann <arnd@arndb.de>
 
-On Fri, 2025-03-14 at 15:38 +0000, Peter Griffin wrote:
-> dma-coherent property is required for gs101 as ufs-exynos enables
-> sharability.
->=20
-> Fixes: 438e23b61cd4 ("scsi: ufs: dt-bindings: exynos: Add gs101 compatibl=
-e")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
-> =C2=A0Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml | 2 +=
-+
-> =C2=A01 file changed, 2 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yam=
-l b/Documentation/devicetree/bindings/ufs/samsung,exynos-
-> ufs.yaml
-> index 720879820f6616a30cae2db3d4d2d22e847666c4..5dbb7f6a8c354b82685c521e7=
-0655e106f702a8d 100644
-> --- a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> +++ b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> @@ -96,6 +96,8 @@ allOf:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 minItems: 6
-> =C2=A0
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dma-coherent: true
-> +
+Printing size_t as %lu causes a warning when it is defined as 'unsigned int':
 
-This is allowed globally already in this file. Did you meant to make it 're=
-quired'?
+drivers/crypto/tegra/tegra-se-hash.c:344:22: error: format specifies type 'unsigned long' but the argument has type 'ssize_t' (aka 'int') [-Werror,-Wformat]
+  343 |         dev_dbg(se->dev, "msg len %llu msg left %llu sz %lu cfg %#x",
+      |                                                         ~~~
+      |                                                         %zd
 
-Cheers,
-Andre'
+Use %zu as the proper format string.
 
-> =C2=A0=C2=A0=C2=A0=C2=A0 else:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clocks:
->=20
+Fixes: ff4b7df0b511 ("crypto: tegra - Fix HASH intermediate result handling")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/crypto/tegra/tegra-se-hash.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/tegra/tegra-se-hash.c b/drivers/crypto/tegra/tegra-se-hash.c
+index 65a50f29bd7e..ed86235fe518 100644
+--- a/drivers/crypto/tegra/tegra-se-hash.c
++++ b/drivers/crypto/tegra/tegra-se-hash.c
+@@ -340,7 +340,7 @@ static int tegra_sha_prep_cmd(struct tegra_sha_ctx *ctx, u32 *cpuvaddr,
+ 	cpuvaddr[i++] = host1x_uclass_incr_syncpt_cond_f(1) |
+ 			host1x_uclass_incr_syncpt_indx_f(se->syncpt_id);
+ 
+-	dev_dbg(se->dev, "msg len %llu msg left %llu sz %lu cfg %#x",
++	dev_dbg(se->dev, "msg len %llu msg left %llu sz %zu cfg %#x",
+ 		msg_len, msg_left, rctx->datbuf.size, rctx->config);
+ 
+ 	return i;
+-- 
+2.39.5
 
 
