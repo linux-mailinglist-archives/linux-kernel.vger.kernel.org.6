@@ -1,113 +1,152 @@
-Return-Path: <linux-kernel+bounces-561205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3A9A60EBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:24:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B92C6A60EC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:25:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B7181B6177A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:24:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AA607A6BBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9F51F4619;
-	Fri, 14 Mar 2025 10:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D631F4179;
+	Fri, 14 Mar 2025 10:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="X7tJSFf3"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OjtptIuu"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECD01F5608
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AFB1D5AB5
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741947830; cv=none; b=mW935xL3/u2hkcEv3JKUL2AqV6FQzvFqisV4fi1y3VPZXtiFu9DgQoV354Ii9Vf490rePjV/s9aFD7ywsvb3KL9nWS4fI4H5r0QF0n72VVkDLuNg17erkaUd7VS6FIlyntLIx3vI09DPLIRjcatxweWrMZiPV4O1KHV5kXpqOPU=
+	t=1741947924; cv=none; b=O+uAL/xszcOG+Po02HBxLxvMiVCYL9vwAq2jiKUyYNk/l7OR1ZXe9nq1/GnWVM3AgJ4f4PM72inrqKOCU5/dMqoATC09jT7r8VTN5ZDCAGUD5t310dfM0uLDTWpSs6CeEBcbfgPPhGhdCMZDsnGVNlMEIX3HT0vsUq2OjZM0MiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741947830; c=relaxed/simple;
-	bh=RwHUEFoZdZgr03VzPBr+9AJlrYW+0SA1AtDcxQ3ZAZE=;
+	s=arc-20240116; t=1741947924; c=relaxed/simple;
+	bh=5u1ZkrdqkYX+wTwH8HmCGZQpoR5zbk8KhmDs/eMDIno=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bjuwhzi2Mf1LPfZFPAFhMSjA4nttnpxxYXtBSmLvWdismA1DaR0d/oLUrUjeke8zUBQApKNWJKwcmdbYijh2kXRu1q6G11wRzSQ4APiHDdBfjst2eNBVNuBEay9f053v+RftN1ZZhka6qLhrIVt5UIKHEBkG9Sw+CFYagQSHoTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=X7tJSFf3; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=KOdn
-	diPExjl+FV5Q9Mr9rbep06b2nMpNWpnD6VJnwWM=; b=X7tJSFf3/OEnN2fA1JBU
-	aVFoIp2lPIQsYltmlPAl1547gtlMmdtYZMSx6F0O5e6HGu6v78Ez7q5z8MOAGKhZ
-	BCSVXmxWgGByV0m3X6giowwqoc6FAqTU2asB+FL7HIVmF3BcNMF36jzm/TKdWBWC
-	oAY/s6uMAwjp4kUOtcV27+qdmSytoEgO821tOcRhUlIkdEFm1jTlyBbVs9gMQFxA
-	D4mit4drKyItMNOaEXI7QT96VjQPjYUGGA3YpVDWPRa4OuHE99+6EbvjPAdUtwUv
-	niRkJdgnvcpt4CzL8AeJEjS2R6B7TiBKYwU175G7qMmZsNO1erOscSRdbTGnR1GW
-	Dg==
-Received: (qmail 1971825 invoked from network); 14 Mar 2025 11:23:43 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Mar 2025 11:23:43 +0100
-X-UD-Smtp-Session: l3s3148p1@1a041UowRowgAQnoAFsPACcmk70XhM+l
-Date: Fri, 14 Mar 2025 11:23:42 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] mmc: renesas_sdhi: fix error code in
- renesas_sdhi_probe()
-Message-ID: <Z9QDrs367B_aQZtn@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-References: <dc39e555-8ef7-4a39-9253-65bcf3e50c01@stanley.mountain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qC7GD8epU1VpmV4Cxm+fAo7jHP24poIG8PVV+4w6pnd0wbOwgyS2efDWor8O5JG8vgZRPATVVoGajkD8V84R83G630PLl0prutEK3cEgJFpL0LOhlVipy8UvKaRAINI88q+rGK5Iqy36vJwDYbWRASyVY9N5eEvpEkfFgdQ2V0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OjtptIuu; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 14 Mar 2025 11:25:09 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741947914;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pvHzbCuCDD8ylI8fTMIt04hPeYHC4OaA5IgyIuhTOI0=;
+	b=OjtptIuuWp6g9EEZrDzT1PUFkLtcofVKGG75OTV2rlmf25VKP60kSapqVcHKeIhv6tOxDk
+	qpLpm3JpuzkhfI4dF//REJRN2wvtHTPaVaLPJubh9+Y9sc67AKQUvWy7OpdMhFPmYaA6aC
+	eQFLUued3qJzBM+AwWAK0ymfW3bD1Lg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 1/8] media: v4l: ctrls: add a control for flash/strobe
+ duration
+Message-ID: <bx4p2hycva2rqywgglqluus6o7jbmfa2jjbc4k5d6aw6wsfkxd@zrtckmwtphuq>
+References: <20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev>
+ <20250314-ov9282-flash-strobe-v2-1-14d7a281342d@linux.dev>
+ <Z9P01zU_Kg0U62wa@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="akDpcFiVA4/yEH+2"
-Content-Disposition: inline
-In-Reply-To: <dc39e555-8ef7-4a39-9253-65bcf3e50c01@stanley.mountain>
-
-
---akDpcFiVA4/yEH+2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Z9P01zU_Kg0U62wa@kekkonen.localdomain>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Mar 14, 2025 at 01:11:09PM +0300, Dan Carpenter wrote:
-> If devm_regulator_register() fails then propagate the error code.  Don't
-> return success.
->=20
-> Fixes: fae80a99dc03 ("mmc: renesas_sdhi: Add support for RZ/G3E SoC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Fri, Mar 14, 2025 at 09:20:23AM +0000, Sakari Ailus wrote:
+> Hi Richard,
+> 
+> Thanks for the set.
 
-Thanks for this and maintaining smatch!
+Hi Sakari,
+thanks for the quick response!
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> On Fri, Mar 14, 2025 at 09:49:55AM +0100, Richard Leitner wrote:
+> > Add a control V4L2_CID_FLASH_DURATION to set the duration of a
+> > flash/strobe pulse. This is different to the V4L2_CID_FLASH_TIMEOUT
+> > control, as the timeout defines a limit after which the flash is
+> > "forcefully" turned off again.
+> > 
+> > On the other hand the new V4L2_CID_FLASH_DURATION is the desired length
+> > of the flash/strobe pulse
+> 
+> What's the actual difference between the two? To me they appear the same,
+> just expressed in a different way.
 
+According to FLASH_TIMEOUT documentation:
 
---akDpcFiVA4/yEH+2
-Content-Type: application/pgp-signature; name="signature.asc"
+	Hardware timeout for flash. The flash strobe is stopped after this
+	period of time has passed from the start of the strobe. [1]
 
------BEGIN PGP SIGNATURE-----
+This is a little bit unspecific, but as also discussed with Dave [2]
+according to the documentation of V4L2_FLASH_FAULT_TIMEOUT it seems to
+be targeted at providing a "real timeout" control, not settings the
+desired duration:
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfUA6sACgkQFA3kzBSg
-KbZBVg//Vv3KxGo7LNJe7xCPbiK+z7jY79lgea8ocpbXOhTkEBy0uCP02hAnNrY8
-J99c53f+TENuFdD0zQQtyUvkJ2REO84PiQDUqWG1lGAbAMU7eFErsxSUM756pemW
-e1ytRQtDhcMPWcFKQ6ddlqyidw+42noOtBAYwx1DssHtYtNGJbEcyk477TncD1d2
-p1k4wcA7oYjUBxJpuAQOQPlRYUG/o5fMqkKCwaNsAByhYN5gaxVB7oxmcCv0Z7kB
-J81Xb16R3nZioqT9P5iSYVdHY6vIhQrqJG8LP/iRKQ0P+0+sED2WKy/9N0P4WUuJ
-okReenUz6jlQw30FU5UQ74zkIlx+BFJocsE3CoUhLapX7ijGSkWRDI8UEZKxQZ9k
-GXouiVVO2/1ezHtxrQYOh67HrsmLf8o4q7lGocN4QSGDCLLIl8GolOiPc9Yn0NbQ
-jtfwWlqxYwa2ByIMEe0mbq4pmbR+orf2qvCcpISks4ZkNhAV1KSgyQRAFo4eDSer
-Kb/zOea9Os57p3vvjBgSshggSReOdgY9PpTK0dTOoLf7aXye3meP68Bzftp/ZhbZ
-KA2fRajscilEJRdfiwb+v6nSQtGu16AS9424F1zCVYhjUf9dQ34RVcGx9eYanY2o
-BR2L8zISSWh5DRFJuHNjuYHbAtEun0t2kzY/kTrCZ/hKOAKiLes=
-=lOCa
------END PGP SIGNATURE-----
+	The flash strobe was still on when the timeout set by the user
+	--- V4L2_CID_FLASH_TIMEOUT control --- has expired. Not all flash
+	controllers may set this in all such conditions. [1]
 
---akDpcFiVA4/yEH+2--
+If I understood that wrong, I'm also happy to use FLASH_TIMEOUT for this
+use-case. But tbh I think FLASH_DURATION would be more specific.
+
+As this still seems unclear: Should the documentation be
+changed/rewritten if we stick with the FLASH_DURATION approach?
+
+[1] https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/ext-ctrls-flash.html
+[2] https://lore.kernel.org/lkml/CAPY8ntB8i4OyUWAL8k899yUd5QsRifJXiOfWXKceGQ7TNZ4OUw@mail.gmail.com/
+
+> 
+> > 
+> > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > ---
+> >  drivers/media/v4l2-core/v4l2-ctrls-defs.c | 1 +
+> >  include/uapi/linux/v4l2-controls.h        | 1 +
+> >  2 files changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/media/v4l2-core/v4l2-ctrls-defs.c b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> > index 1ea52011247accc51d0261f56eab1cf13c0624a0..f9ed7273a9f3eafe01c31b638e1c8d9fcf5424af 100644
+> > --- a/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> > +++ b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> > @@ -1135,6 +1135,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+> >  	case V4L2_CID_FLASH_FAULT:		return "Faults";
+> >  	case V4L2_CID_FLASH_CHARGE:		return "Charge";
+> >  	case V4L2_CID_FLASH_READY:		return "Ready to Strobe";
+> > +	case V4L2_CID_FLASH_DURATION:		return "Strobe Duration";
+> >  
+> >  	/* JPEG encoder controls */
+> >  	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
+> > diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> > index 974fd254e57309e6def95b4a4f8e4de13a3972a7..80050cadb8377e3070ebbadc493fcd08b2c12c0b 100644
+> > --- a/include/uapi/linux/v4l2-controls.h
+> > +++ b/include/uapi/linux/v4l2-controls.h
+> > @@ -1173,6 +1173,7 @@ enum v4l2_flash_strobe_source {
+> >  
+> >  #define V4L2_CID_FLASH_CHARGE			(V4L2_CID_FLASH_CLASS_BASE + 11)
+> >  #define V4L2_CID_FLASH_READY			(V4L2_CID_FLASH_CLASS_BASE + 12)
+> > +#define V4L2_CID_FLASH_DURATION			(V4L2_CID_FLASH_CLASS_BASE + 13)
+> >  
+> >  
+> >  /* JPEG-class control IDs */
+> > 
+> 
+> -- 
+> Regards,
+> 
+> Sakari Ailus
+
+Thanks!
+Richard
 
