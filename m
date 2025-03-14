@@ -1,99 +1,80 @@
-Return-Path: <linux-kernel+bounces-561187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C40D2A60E87
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:15:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23533A60E8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:16:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 145EC169A9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:15:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 665C116CFC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236E61E5B8E;
-	Fri, 14 Mar 2025 10:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hHVNfnUV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C841F92E
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585741F30CC;
+	Fri, 14 Mar 2025 10:16:51 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id B1AFC2AF00;
+	Fri, 14 Mar 2025 10:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741947352; cv=none; b=OCFy11W6BNFzFV8HmQoZ1nvi/DA4ghjinz5Ew10flM10G2oLm94n6G6D0iyDVjFkSoZ2+Ttt8YbJwRQAS5vA5mEKwLKUohlRPrh89CURvWOxtgaJKnFZUmsTR/3MGiSyV8l25K5WZVOlSDhgdShQaQmKmHxC28G8hASevZvg2rE=
+	t=1741947411; cv=none; b=atB4AzcW89bNiZybcSMcHz2QAnKRM1yK+4BEd/Kk5pIyokdRwdsgoYXmWZYtaKbiVyAhKaeqETVhhd8v3QArxmoGO9V70gcj3JRw4nusUSL/wdG9WICUzpgrwGJoXKjeSZQSAIDXR4E5+7Rwn3DEg2520wFsX83KNA/VRTgFxB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741947352; c=relaxed/simple;
-	bh=TqKc/XGsjA43ERI7qLEzT2jZaPrsaw5Zt/13YKnNgLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fUsYQPac3MpzI0fRh7VQLmDemnK9TWeRD2V8Sauc3sXnardJgdZDGBeRHY+CZC1seq0D0g63rvLgjSqolkZs4K/ZJA3Z9NGuqgoNzFFDWvIyDmuU5vtKGWy/3zCSRnertkGTrizDm7GJlVeizFLrAnqM8tOITPTOaNh2eEd8tYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hHVNfnUV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70947C4CEE3;
-	Fri, 14 Mar 2025 10:15:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741947351;
-	bh=TqKc/XGsjA43ERI7qLEzT2jZaPrsaw5Zt/13YKnNgLw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hHVNfnUVu1uE3oZuTM9un+2qatUt8E4Thpl3keUHHeQ1IZkfTMrgc9T4cw2Vvw8iI
-	 FioZ94pPw6ixhShcEv3QYLlq1Zm6aZEkIcn5wTBSdNjEJmdGwrgKm/qzCAwEdcHD3M
-	 5uhH0he/4wD+5e2hwpKl1klNuNPfr8AucYZKIilnqcSVOWT2g4/JS+7CFlha2NBGTc
-	 Wwk5DnavfK2jDepStfS23uun8rCojO3f/3BXxMyJr0msv9Zlu6WTx2FGzeSaBfeijT
-	 nqEWigOJ8CbLuRSRAmQ6sCS4/DY6IFdtOvctTALWoyWyIuWPASbc6d+FNRAnKBMMIA
-	 o4g5eTla/SqlA==
-Date: Fri, 14 Mar 2025 11:15:46 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH] x86/asm: Use asm_inline() instead of asm() in
- amd_clear_divider()
-Message-ID: <Z9QB0nP6Mb3ri3mj@gmail.com>
-References: <20250313191828.83855-1-ubizjak@gmail.com>
- <96E2026E-CEF1-4A4C-B107-7FCE2CD9121F@alien8.de>
- <CAFULd4ZTkBwFo3nWXNZKXSKiy4dgPoZ8i95nj3UdtQPApKdj3g@mail.gmail.com>
- <B7AB40CF-165D-448C-963C-787D74BB9042@alien8.de>
+	s=arc-20240116; t=1741947411; c=relaxed/simple;
+	bh=WadiwXRYKhyTQfnziazA1hCza2z+4qJkR+ooXl+2JAA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version; b=q43EWRMPFlrKlF11B0O452cy/mxoxLnQ0PrpIcnWaysmXm3hpxEy2hAQI03PNO7w0wjBdkRdIkyXMWnuMOclSXFS+ZWXVu8vUi2YntROOQ6HT+fE7fN0NjvXklyS9UsRCislEgfI6vnWcednpXmU0tT/mu1W96XCESXuGMf/KHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from liqiong-suma.shanghai.nfschina.local (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 7716F606FFD4C;
+	Fri, 14 Mar 2025 18:16:44 +0800 (CST)
+X-MD-Sfrom: liqiong@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Li Qiong <liqiong@nfschina.com>
+To: Peter Chen <peter.chen@kernel.org>,
+	Pawel Laszczak <pawell@cadence.com>
+Cc: Li Qiong <liqiong@nfschina.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] usb: cdns3: Remove the invalid comment
+Date: Fri, 14 Mar 2025 18:16:38 +0800
+Message-Id: <20250314101639.424013-1-liqiong@nfschina.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20250314070921.355986-1-liqiong@nfschina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <B7AB40CF-165D-448C-963C-787D74BB9042@alien8.de>
+Content-Transfer-Encoding: 8bit
 
+The function don't return value, remove the invalid comment.
 
-* Borislav Petkov <bp@alien8.de> wrote:
+Signed-off-by: Li Qiong <liqiong@nfschina.com>
+---
+v2: Split the first patch to two patches.
+v3: Add changes from the previous version.
 
-> Sorry but this doesn't justify this churn. There's nothing 
-> quantifyingly palpable here to warrant this.
+ drivers/usb/cdns3/cdns3-plat.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-I disagree, asm() is a known-bad inlining interface for fundamentally 
-single-instruction inlines like this one, and there's various 
-performance benefits to cleaning this up, as evidenced by the benchmark 
-numbers and analysis in this pending commit:
+diff --git a/drivers/usb/cdns3/cdns3-plat.c b/drivers/usb/cdns3/cdns3-plat.c
+index 59ec505e198a..735df88774e4 100644
+--- a/drivers/usb/cdns3/cdns3-plat.c
++++ b/drivers/usb/cdns3/cdns3-plat.c
+@@ -179,8 +179,6 @@ static int cdns3_plat_probe(struct platform_device *pdev)
+ /**
+  * cdns3_plat_remove() - unbind drd driver and clean up
+  * @pdev: Pointer to Linux platform device
+- *
+- * Returns 0 on success otherwise negative errno
+  */
+ static void cdns3_plat_remove(struct platform_device *pdev)
+ {
+-- 
+2.30.2
 
-  9628d19e91f1 ("x86/locking/atomic: Improve performance by using asm_inline() for atomic locking instructions")
-
-asm_inline() was implemented by the GCC folks *at our request* to fix 
-such issues.
-
-So these efforts are not "churn", at all - on the contrary.
-
-Not merging such fixes/annotations would be similar to keeping build 
-warnings about unclean code because they don't cause problems right 
-now. While most build warnings are benign with no runtime effect, most 
-of the time they point out an underlying problem.
-
-We also asked Uros to submit careful, finegrained patches that might 
-bloat the kernel, and this patch is the result of that request.
-
-Thanks,
-
-	Ingo
 
