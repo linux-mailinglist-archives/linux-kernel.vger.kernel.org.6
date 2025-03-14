@@ -1,200 +1,135 @@
-Return-Path: <linux-kernel+bounces-561251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E05A60F40
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:44:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C20A60F42
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:45:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 036141B62595
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:44:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30D2F880292
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B92D1FAC46;
-	Fri, 14 Mar 2025 10:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FC81FA85A;
+	Fri, 14 Mar 2025 10:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="erpJGrwQ"
-Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3QCcD2F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225F11FA243
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8D02E3364;
+	Fri, 14 Mar 2025 10:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741949045; cv=none; b=B8hrc8oU86sv70fGYmO07c7I+7NUXt3ZOnJ2RN5mzUkUhSt5lWd1BNnE72tZ66TDKxDpku7G2VDf2sWAnbHPziO14JMGrcOT8rSncduWH4DHSWB2HIntkv8punjsIhtqg9B1slj6PUwUeEQIH5pGRlhn6abaSMzmA0EgReoQ6yM=
+	t=1741949095; cv=none; b=KTxsH8w0ZzcAO0r8e/mBuyfXf5OxeDzqEz9o0N2/ogipfnQbFdB7z3GKNDTXH+ufdV9igqQtb/L6DOJPlILPKUdMrlGYBZzJOkjTCAud8gvdKeH2ki/fQ9FjhVKH4rHHGxbfN7LVgw/YMEFQB4oZF5ajl5yIlpeZt/PjhAAmDPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741949045; c=relaxed/simple;
-	bh=yesTJPNbyIcSw648FltrN+NNbY8HcevtHpGeBr44k7w=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kpSIzwCY46Ijk+HtOhYMzgsxGjV+0WUVE1goULzoKqSV7nLegRDBaNeqgxeqiVc+2nODK6XAJZXdkPrAgijJf/FhK8tvSExgMU0ikVOJhM6mhUAiv0XDKscE8cq70SfOhj/B/pt3rlXGZJL8SPpLMoKuDdQymjGj4MVcgw6UWCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=erpJGrwQ; arc=none smtp.client-ip=209.85.218.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-aaec111762bso417509566b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:44:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1741949042; x=1742553842; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SbEOhoTEEu5x55+fPmrnGoGsT7RQD6j+d3DIIZHJ7QM=;
-        b=erpJGrwQZHOQAyxNmiWCMql0qfG/P2OzWHVGvaYHqFRC4k3EWrtNSoBzOkwEnXjK1T
-         a/YCjf0weFnySN1RDzhX2X1u5uDRNtYrpgOk6+OjnSWaMhlLVkECBAev4ByKOSTamr0H
-         uolwHQKFhPhfMNDUqrQeoh2FK4Le0v7ZExie73cGfBuKPlKUDJOtvqSpp+FbbKx0drGy
-         NYjy3o9TvApR2kx7Vg1CLheXuuE7YiA6VEm2h1pGydCcowDGuQbLOMsnPsAl7WRhmOKv
-         kQG+XC0i9MY/M7iSXVPiLplKNgyQGqrOXKH0bRBUrsFoJvyiq27Oy4nmElKCeHtFXd4K
-         Uwng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741949042; x=1742553842;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SbEOhoTEEu5x55+fPmrnGoGsT7RQD6j+d3DIIZHJ7QM=;
-        b=oZuHtb5uePeWD4iJxJ7loAhisDG95trycHM2R2REPBw6R+H1U9yk03NEFGdp0LdTBR
-         RvyTE/4RpE5BeK8CYX0q6uWFyczjaRtPkiEATWEDcd2Jl6tlo8twTyczJ33CCgue5mvV
-         q6bg/IFc2f40vLFgsUEFXBhUQp8XoD2lsceF++VmQ+M+cn9hgio1dJK1JjtKc+x1N4xl
-         dOpWg5ZmxhSgw9I5WTmmasCq5NwlA5Je9URBJ+zXKrocskd0AQdbXjFvc1l15rOxqo3K
-         3VnnIRB3LRq+en5gNAUvu9Yt+4UqJNS8ezBwJqqobnaxfrlcoKa+hj7epjf7a/nsaHdo
-         l4yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6XYmnQEflnk0aZ/obc80sM3hv2/iQ9gwFTaF64yv7MiFvyYBA6FCdzXMg35+m3UodHPBaj9k+sEucXfk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8l04w6GuBxBGUl5pB4nvmYzrJPIBLzShdM1qGFmD4lJO4Esyd
-	1EXNCODcTBlVmITGyW+JfCsbtoV3nMRZEATGlCZ9buvUSnxTVZEK9RnUwO8EzSw=
-X-Gm-Gg: ASbGncugIzNY4f7tr6RokY4Dh+gxlG20u4YM3059kz6t3pXIJDYrYRR/fu04XG5nM5S
-	UCxVGWkqIdW8EoW/o6t0nq5LfdcJr7w3IhcisUSzjx1dnv1vCYY198GNhEFpBSvUw8a2GomP6eK
-	ln3569meav8Ln66TQXjrNlry75wTEq0EIY6g3sRCv1pjbA4i9+ejv2pYUIuWZIGkrqvYspu5Woh
-	bx4XJ9jWgohu4QKpI5OUzmkM3ZGxxjoWo3ZDkKliuPSCW8WwFA5LcUapgKIlVj04U843RSr4aOE
-	PWJt0PHFCZEdf9MCSfMtlsSNwAXScmcD5e5/qqoa7MOmrw==
-X-Google-Smtp-Source: AGHT+IFSCVQoVEn7iPn/TuwJfbODuInfrvqO1582NK0pYg3MKgyFAbCeHu9p4jsr87CjNZKVjj3cpA==
-X-Received: by 2002:a17:907:3d87:b0:abf:6389:6d19 with SMTP id a640c23a62f3a-ac330258bcamr201708866b.15.1741949042421;
-        Fri, 14 Mar 2025 03:44:02 -0700 (PDT)
-Received: from [10.20.7.108] ([195.29.209.20])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147f0bd3sm210194366b.67.2025.03.14.03.44.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 03:44:01 -0700 (PDT)
-Message-ID: <96a4043b-fdac-4ca1-a7b9-a6352b1d7dfe@blackwall.org>
-Date: Fri, 14 Mar 2025 12:44:00 +0200
+	s=arc-20240116; t=1741949095; c=relaxed/simple;
+	bh=3xXe9cL0jqciAGlNVAvM5pFZkd0H2R4t8V4HdIfECpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=scIaMXTdlPuvcfC/oENV2gRy2QyPqC0gl+rzJOSc0P72y+0dDwqEP5N8uoR/wEDG09Vxq9BFYJpWFnmUjqtaBOB3oaFroUs9FALYrhJQsulSwg6S7tSgV6Rm+vhMSC6n9xaOFVhrN3RU00DrUI75vnR1kjKUJffPc4zNnt+QVIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m3QCcD2F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FE63C4CEE3;
+	Fri, 14 Mar 2025 10:44:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741949094;
+	bh=3xXe9cL0jqciAGlNVAvM5pFZkd0H2R4t8V4HdIfECpE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m3QCcD2FP143X+Wwipr0T0R9vkNiZ57VQOk3kn8gLTRBj3xBE8yqnncAxAeRpjUAR
+	 2jRJV5rXv6OihKzrWBWrWU505xGkQy+lnCmhXtfnRv0KvkeCSrxFBCtKjIN0Ki9lfo
+	 stePMsqsZaKKJyQBZq5wEUtcVkK2hFYPTjadO8Plgdcgy3pRcrsUi+LgOVxUdNjIqf
+	 SKrWZKPonjA6Po69VAP2NgkiulqrMwtFtpTB/PjFBLaSnBFrCObjKqmbbDpNJ0Oe6f
+	 XdapsEuMwnOHXMnZrG4sY3dPuKhUwKa0W5QmgjlvZsLwQ6wObwBOK8QlHbMhyk8nJx
+	 4i47tZurPprxg==
+Date: Fri, 14 Mar 2025 11:44:52 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Lyude Paul <lyude@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
+	Danilo Krummrich <dakr@kernel.org>, mcanal@igalia.com, Alice Ryhl <aliceryhl@google.com>, 
+	Simona Vetter <sima@ffwll.ch>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC v3 03/33] rust: drm/kms: Introduce the main
+ ModeConfigObject traits
+Message-ID: <20250314-friendly-hilarious-axolotl-ccf19e@houat>
+References: <20250305230406.567126-1-lyude@redhat.com>
+ <20250305230406.567126-4-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] bonding: check xdp prog when set bond mode
-From: Nikolay Aleksandrov <razor@blackwall.org>
-To: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
- Wang Liang <wangliang74@huawei.com>, jv@jvosburgh.net,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net,
- hawk@kernel.org, john.fastabend@gmail.com, joamaki@gmail.com
-Cc: yuehaibing@huawei.com, zhangchangzhong@huawei.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-References: <20250314073549.1030998-1-wangliang74@huawei.com>
- <87y0x7rkck.fsf@toke.dk> <21d52659-622a-4b2a-b091-787bf0f5d67f@blackwall.org>
-Content-Language: en-US
-In-Reply-To: <21d52659-622a-4b2a-b091-787bf0f5d67f@blackwall.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ndn5jrobqdpkuzie"
+Content-Disposition: inline
+In-Reply-To: <20250305230406.567126-4-lyude@redhat.com>
 
-On 3/14/25 12:22 PM, Nikolay Aleksandrov wrote:
-> On 3/14/25 12:13 PM, Toke Høiland-Jørgensen wrote:
->> Wang Liang <wangliang74@huawei.com> writes:
->>
->>> Following operations can trigger a warning[1]:
->>>
->>>     ip netns add ns1
->>>     ip netns exec ns1 ip link add bond0 type bond mode balance-rr
->>>     ip netns exec ns1 ip link set dev bond0 xdp obj af_xdp_kern.o sec xdp
->>>     ip netns exec ns1 ip link set bond0 type bond mode broadcast
->>>     ip netns del ns1
->>>
->>> When delete the namespace, dev_xdp_uninstall() is called to remove xdp
->>> program on bond dev, and bond_xdp_set() will check the bond mode. If bond
->>> mode is changed after attaching xdp program, the warning may occur.
->>>
->>> Some bond modes (broadcast, etc.) do not support native xdp. Set bond mode
->>> with xdp program attached is not good. Add check for xdp program when set
->>> bond mode.
->>>
->>>     [1]
->>>     ------------[ cut here ]------------
->>>     WARNING: CPU: 0 PID: 11 at net/core/dev.c:9912 unregister_netdevice_many_notify+0x8d9/0x930
->>>     Modules linked in:
->>>     CPU: 0 UID: 0 PID: 11 Comm: kworker/u4:0 Not tainted 6.14.0-rc4 #107
->>>     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.15.0-0-g2dd4b9b3f840-prebuilt.qemu.org 04/01/2014
->>>     Workqueue: netns cleanup_net
->>>     RIP: 0010:unregister_netdevice_many_notify+0x8d9/0x930
->>>     Code: 00 00 48 c7 c6 6f e3 a2 82 48 c7 c7 d0 b3 96 82 e8 9c 10 3e ...
->>>     RSP: 0018:ffffc90000063d80 EFLAGS: 00000282
->>>     RAX: 00000000ffffffa1 RBX: ffff888004959000 RCX: 00000000ffffdfff
->>>     RDX: 0000000000000000 RSI: 00000000ffffffea RDI: ffffc90000063b48
->>>     RBP: ffffc90000063e28 R08: ffffffff82d39b28 R09: 0000000000009ffb
->>>     R10: 0000000000000175 R11: ffffffff82d09b40 R12: ffff8880049598e8
->>>     R13: 0000000000000001 R14: dead000000000100 R15: ffffc90000045000
->>>     FS:  0000000000000000(0000) GS:ffff888007a00000(0000) knlGS:0000000000000000
->>>     CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>     CR2: 000000000d406b60 CR3: 000000000483e000 CR4: 00000000000006f0
->>>     Call Trace:
->>>      <TASK>
->>>      ? __warn+0x83/0x130
->>>      ? unregister_netdevice_many_notify+0x8d9/0x930
->>>      ? report_bug+0x18e/0x1a0
->>>      ? handle_bug+0x54/0x90
->>>      ? exc_invalid_op+0x18/0x70
->>>      ? asm_exc_invalid_op+0x1a/0x20
->>>      ? unregister_netdevice_many_notify+0x8d9/0x930
->>>      ? bond_net_exit_batch_rtnl+0x5c/0x90
->>>      cleanup_net+0x237/0x3d0
->>>      process_one_work+0x163/0x390
->>>      worker_thread+0x293/0x3b0
->>>      ? __pfx_worker_thread+0x10/0x10
->>>      kthread+0xec/0x1e0
->>>      ? __pfx_kthread+0x10/0x10
->>>      ? __pfx_kthread+0x10/0x10
->>>      ret_from_fork+0x2f/0x50
->>>      ? __pfx_kthread+0x10/0x10
->>>      ret_from_fork_asm+0x1a/0x30
->>>      </TASK>
->>>     ---[ end trace 0000000000000000 ]---
->>>
->>> Fixes: 9e2ee5c7e7c3 ("net, bonding: Add XDP support to the bonding driver")
->>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
->>> ---
->>>  drivers/net/bonding/bond_options.c | 3 +++
->>>  1 file changed, 3 insertions(+)
->>>
->>> diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
->>> index 327b6ecdc77e..127181866829 100644
->>> --- a/drivers/net/bonding/bond_options.c
->>> +++ b/drivers/net/bonding/bond_options.c
->>> @@ -868,6 +868,9 @@ static bool bond_set_xfrm_features(struct bonding *bond)
->>>  static int bond_option_mode_set(struct bonding *bond,
->>>  				const struct bond_opt_value *newval)
->>>  {
->>> +	if (bond->xdp_prog)
->>> +		return -EOPNOTSUPP;
->>> +
->>
->> Should we allow changing as long as the new mode also supports XDP?
->>
->> -Toke
->>
->>
-> 
-> +1
-> I think we should allow it, the best way probably is to add a new option 
-> BOND_VALFLAG_XDP_UNSUPP (for example) as a bond option flag and to set
-> it in bond_options.c for each mode that doesn't support XDP, then you
-> can do the check in a generic way (for any option) in
-> bond_opt_check_deps. Any bond option that can't be changed with XDP prog
 
-err, I meant any bond option's value that isn't supported with XDP, for
-a whole option it would be a bit different
+--ndn5jrobqdpkuzie
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC v3 03/33] rust: drm/kms: Introduce the main
+ ModeConfigObject traits
+MIME-Version: 1.0
 
-> should have that flag set.
-> 
-> Cheers,
->  Nik
-> 
+On Wed, Mar 05, 2025 at 05:59:19PM -0500, Lyude Paul wrote:
+> The KMS API has a very consistent idea of a "mode config object", which
+> includes any object with a drm_mode_object struct embedded in it. These
+> objects have their own object IDs which DRM exposes to userspace, and we
+> introduce the ModeConfigObject trait to represent any object matching the=
+se
+> characteristics.
+>=20
+> One slightly less consistent trait of these objects however: some mode
+> objects have a reference count, while others don't. Since rust requires
+> that we are able to define the lifetime of an object up-front, we introdu=
+ce
+> two other super-traits of ModeConfigObject for this:
 
+I'm not entirely sure what you mean by that, sorry. Would you have a
+small example of the challenge that forced you to split it into two
+separate traits?
+
+> * StaticModeObject - this trait represents any mode object which does not
+>   have a reference count of its own. Such objects can be considered to
+>   share the lifetime of their parent KMS device
+
+I think that part is true for both cases. I'm not aware of any
+reference-counted object that might outlive the DRM device. Do you have
+an example?
+
+> * RcModeObject - this trait represents any mode object which does have its
+>   own reference count. Objects implementing this trait get a free blanket
+>   implementation of AlwaysRefCounted, and as such can be used with the AR=
+ef
+>   container without us having to implement AlwaysRefCounted for each
+>   individual mode object.
+>=20
+> This will be able to handle most lifetimes we'll need with one exception:
+> it's entirely possible a driver may want to hold a "owned" reference to a
+> static mode object.
+
+I guess it kind of derives from the conversation above, but would you
+have an example of a driver wanting to have a reference to a mode object
+that isn't on the same lifetime than the DRM device?
+
+Maxime
+
+--ndn5jrobqdpkuzie
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ9QIngAKCRAnX84Zoj2+
+dgfCAYDJpSkIJQ3BIcvY8iCyi3ZbDQocyJRHjcZWbIu4GbuAmznpS+V/4Vg3uNAj
+I5FNIC8Bf09cFAOnftFn/5P4DEJYaWozLHdDPvRj/vL7WvHwqyLfFjXW7SoF+EGL
+ZNEgAHlSHA==
+=PqlL
+-----END PGP SIGNATURE-----
+
+--ndn5jrobqdpkuzie--
 
