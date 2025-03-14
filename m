@@ -1,124 +1,141 @@
-Return-Path: <linux-kernel+bounces-561891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EFFDA6182D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:39:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 374D2A6183E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:40:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71366188F788
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:39:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71EA9171B61
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36E92045A5;
-	Fri, 14 Mar 2025 17:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE24204874;
+	Fri, 14 Mar 2025 17:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="M0dV2jm6"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="GwW191Fk"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340E52036E0
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741973949; cv=none; b=Ntz/Uo1CHhWRiNyUJ+G0ZY+nA3PRyjZgNtUzxkAP4jjN2B1gddh2muZMaBGQL3Qwar2bUkUs01kosZalfTj6wAfhUFiAO1hnxOwpbsU+iUQsbbkNl2KauN5Cj+Xg7hoyXA3WAdrzWFJqNzE3VN1asVwwvPMSBuyrjYZwKI7PsFo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741973949; c=relaxed/simple;
-	bh=PHdZRWeQ7ylwH9rabg+HUAzgax49mGzBpenAMxiNdf4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OslZmvG1VIWKWmhDtt744zjfpKTYIRhUpodlX8nV3QMO7tBSK6VPThkoX13me675/XVq+wH8tE7UBTo4/LmsojVS1GvhQYWA0Sxb7Igdh9daFYF7hPQJxTrop+0DLFZw8OtbngBfR2/VfmkVtJQG08i5Xm5EcNTfFhgin+HgzrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=M0dV2jm6; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 14 Mar 2025 10:38:35 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741973933;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zWi7wol7URKv7PqbpC5ssfeF0V5pQ7aeDMBGL83Sy1M=;
-	b=M0dV2jm6zRqcXo2yTvwRlrFd66kFmp3T1EBe0FPhfuk266Yh4xxe3+UXMJ4J8eHGWI6y5j
-	jFWv/LCWTuN3IrOTymNDtnKtrVx3Mfuv7nd1B/yKRn4FgoPAz1hiPT1PdwH/5xl0zqBe5R
-	Sm/sbn6H0xD/tOn8l4cYWTQe1HCTRJs=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Tejun Heo <tj@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
-Subject: Re: [RFC PATCH 10/10] memcg: no more irq disabling for stock locks
-Message-ID: <3uyrvm2vvpyplehpbhiroyiebrrpv7hgrv37fuq2vx7yiinfbs@exjiwtjavn52>
-References: <20250314061511.1308152-1-shakeel.butt@linux.dev>
- <20250314061511.1308152-11-shakeel.butt@linux.dev>
- <9e1e3877-55ae-4546-a5c1-08ea730ea638@suse.cz>
- <20250314115802.DESa-C1z@linutronix.de>
- <2c62mvfo4726x3ci3sze7u55encoycbbzbaatzslkbhur2dkvd@wlli7wrcjlik>
- <20250314164234.KHdt_CWt@linutronix.de>
- <t6gqzrhipj3zxmev7pdmxbbbkx76eyscvkn4m66ifwcq3kfqtx@7jmqtzu5bs54>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5982046A8
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741974014; cv=pass; b=b9DHYGSYgekMh98C+1+zqsJegcp58rHssotGuDQOGj6ilXofkOUilfmMWarnrtXrkxw0Ypt7+BTv+IXdLcBbVZzwupWtPaoQufTJv0Z31Nh5qR/YzM8gjx1rGHghFKIHgvMZ7eVkqUX4boI4IfSOawflsiIYT1xQZ1BcY2/C5oQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741974014; c=relaxed/simple;
+	bh=ZEVkdYrZwuWDGFv0lxYx4H3FofUcP30vDBDEBlAeG+Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=trIfg9PRBiqqmRgjfcnLUKZTrs3dQbJs33xjPaqMUAyDj4bbs3swTzQndBA32N94bCgfJ99PZTDhOEjVyzxz8gQm35Cui8HnijG7fLg6jEHj4oc/cFEA0nRad1rPAPxZLq8IifscOc1URUjdNldQmv3IZS/20HZ9bQupZQxJaV8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=GwW191Fk; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741973991; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=STn2tLoFAdxKHSniACbfPt88Ezw71Kcqv5Cn28jOMxbLErTGx0ec0YFqqSZbTMiGVkV8e9qgqOY8MOF+p0lL79vBZ0+jbLFs8Q9VSthG2CjXOQeo45LfR5TyvXjaHFPRIy9f8u8ayx0xe+dOX+DNAEZOrHUXHm7ZCRso8wx1qcU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741973991; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=sQDIjMkW0zXePkXBZSAjC5u5Y+90v6jS96tmTnVEAJ8=; 
+	b=IioC4ycvst7nqIW3iD3Q8ec/vur57V8l+baRxNtoDQFVs2FRZ1QLxmd6CJcipe9pT1BrotaFVVlDt8N1sGfmzCK3+Sxioz/hCbAayMDRPUnKKmwP3rIbejysNqCUmMOBICbSLf9gQnPkD1xTXXskQVOKSQa1JbqW9ExTKAsT4F4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
+	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741973991;
+	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=sQDIjMkW0zXePkXBZSAjC5u5Y+90v6jS96tmTnVEAJ8=;
+	b=GwW191FkLl0RTBQBdFngMyoWExCYnpTyigYl7VPQyBSKciqWmX08BEiU4ZQ7Ggmn
+	utAxfcs6UtYu64NIUS1ds7pkTZxFigl/igbWmvZ+6s+xnw+txI6+2FBzvZYtY5+WXlG
+	Zkt4VhObOfq9CV/kCMZJzODwhsAk2ByCrFTITgds=
+Received: by mx.zohomail.com with SMTPS id 1741973988175634.4562131256724;
+	Fri, 14 Mar 2025 10:39:48 -0700 (PDT)
+From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+To: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: boris.brezillon@collabora.com,
+	robh@kernel.org,
+	steven.price@arm.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	kernel@collabora.com,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	sjoerd@collabora.com,
+	angelogioacchino.delregno@collabora.com,
+	Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Subject: [PATCH v2 0/6] drm/panfrost: Add support for AARCH64_4K page table format
+Date: Fri, 14 Mar 2025 14:38:52 -0300
+Message-ID: <20250314173858.212264-1-ariel.dalessandro@collabora.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <t6gqzrhipj3zxmev7pdmxbbbkx76eyscvkn4m66ifwcq3kfqtx@7jmqtzu5bs54>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Fri, Mar 14, 2025 at 10:02:47AM -0700, Shakeel Butt wrote:
-> On Fri, Mar 14, 2025 at 05:42:34PM +0100, Sebastian Andrzej Siewior wrote:
-> > On 2025-03-14 08:55:51 [-0700], Shakeel Butt wrote:
-> > > On Fri, Mar 14, 2025 at 12:58:02PM +0100, Sebastian Andrzej Siewior wrote:
-> > > > On 2025-03-14 11:54:34 [+0100], Vlastimil Babka wrote:
-> > > > > On 3/14/25 07:15, Shakeel Butt wrote:
-> > > > > > Let's switch all memcg_stock locks acquire and release places to not
-> > > > > > disable and enable irqs. There are two still functions (i.e.
-> > > > > > mod_objcg_state() and drain_obj_stock) which needs to disable irqs to
-> > > > > > update the stats on non-RT kernels. For now add a simple wrapper for
-> > > > > > that functionality.
-> > > > > 
-> > > > > BTW, which part of __mod_objcg_mlstate() really needs disabled irqs and not
-> > > > > just preemption? I see it does rcu_read_lock() anyway, which disables
-> > > > > preemption. Then in __mod_memcg_lruvec_state() we do some __this_cpu_add()
-> > > > > updates. I think these also are fine with just disabled preemption as they
-> > > > > are atomic vs irqs (but don't need LOCK prefix to be atomic vs other cpus
-> > > > > updates).
-> > > > 
-> > > > __this_cpu_add() is not safe if also used in interrupt context. Some
-> > > > architectures (not x86) implemented as read, add, write.
-> > > > this_cpu_add()() does the same but disables interrupts during the
-> > > > operation.
-> > > > So __this_cpu_add() should not be used if interrupts are not disabled
-> > > > and a modification can happen from interrupt context.
-> > > 
-> > > So, if I use this_cpu_add() instead of __this_cpu_add() in
-> > > __mod_memcg_state(), __mod_memcg_lruvec_state(), __count_memcg_events()
-> > > then I can call these functions without disabling interrupts. Also
-> > > this_cpu_add() does not disable interrupts for x86 and arm64, correct?
-> > > For x86 and arm64, can I assume that the cost of this_cpu_add() is the
-> > > same as __this_cpu_add()?
-> > 
-> > on arm64, __this_cpu_add will "load, add, store". preemptible.
-> > this_cpu_add() will "disable preemption, atomic-load, add, atomic-store or
-> > start over with atomic-load. if succeeded enable preemption and move an"
-> 
-> So, this_cpu_add() on arm64 is not protected against interrupts but is
-> protected against preemption. We have a following comment in
-> include/linux/percpu-defs.h. Is this not true anymore?
-> 
-> /*
->  * Operations with implied preemption/interrupt protection.  These
->  * operations can be used without worrying about preemption or interrupt.
->  */
-> ...
-> #define this_cpu_add(pcp, val)          __pcpu_size_call(this_cpu_add_, pcp, val)
-> 
+Hi all,
 
-Just got clarification from Johannes & Tejun that this_cpu_add() is
-indeed safe against irqs on arm64 as well. Basically arm64 uses loop of
-Load Exclusive and Store Exclusive instruction to protect against irqs.
-Defined in __PERCPU_OP_CASE() macro in arch/arm64/include/asm/percpu.h.
+This is a new iteration on Panfrost support for AARCH64_4K page table
+format. The main reason behind this patchset is that MediaTek MT8188 SoC
+(ARM Mali-G57 MC3 GPU) constantly faults due to the actual Panfrost cache
+configuration.
+
+Currently, Panfrost only supports MMU configuration in "LEGACY" (as Bifrost
+calls it) mode, a (modified) version of LPAE "Large Physical Address
+Extension", which in Linux we've called "mali_lpae".
+
+This patchset adds support for conditionally enabling AARCH64_4K page table
+format. To achieve that, a "GPU optional quirks" field was added to
+`struct panfrost_features` with the related flag.
+
+Note that, in order to enable AARCH64_4K mode, the GPU variant must have
+the HW_FEATURE_AARCH64_MMU feature flag present.
+
+The patchset only enables the new format on Mediatek MT8188 and MT8192,
+which have been tested on a Mediatek Genio 700 EVK (MT8390) and Mediatek
+Genio 1200 EVK (MT8395) boards respectively.
+
+Thanks!
+
+Changes in v2:
+* Dropped panfrost_mmu_enable/disable unification.
+* Rename gpu_configs as gpu_quirks.
+* Added error handling on page table not properly aligned.
+* Enabled AARCH64_4K format on MediaTek MT8192 as well.
+* Minor fixes.
+
+Changes in v1:
+* Added "Set IOMMU_CACHE flag" patch.
+* Replaced `panfrost_mmu->enable()` function pointer by `cfg` struct
+prepared during init time.
+* Made mali_lpae/aarch64_4k name more clear.
+* Added GPU_CONFIG_AARCH64_4K flag to enable AARCH64_4K page table
+  format.
+* Enabled AARCH64_4K mode only on mediatek-mt8188.
+
+Ariel D'Alessandro (6):
+  drm/panfrost: Set IOMMU_CACHE flag
+  drm/panfrost: Use GPU_MMU_FEATURES_VA_BITS/PA_BITS macros
+  drm/panfrost: Set HW_FEATURE_AARCH64_MMU feature flag on Bifrost
+    models
+  drm/panfrost: Add support for AARCH64_4K page table format
+  drm/panfrost: Force AARCH64_4K page table format on MediaTek MT8188
+  drm/panfrost: Force AARCH64_4K page table format on MediaTek MT8192
+
+ drivers/gpu/drm/panfrost/panfrost_device.h   |  16 ++
+ drivers/gpu/drm/panfrost/panfrost_drv.c      |   2 +
+ drivers/gpu/drm/panfrost/panfrost_features.h |   3 +
+ drivers/gpu/drm/panfrost/panfrost_mmu.c      | 146 +++++++++++++++++--
+ drivers/gpu/drm/panfrost/panfrost_regs.h     |  36 +++++
+ 5 files changed, 190 insertions(+), 13 deletions(-)
+
+-- 
+2.47.2
+
 
