@@ -1,199 +1,245 @@
-Return-Path: <linux-kernel+bounces-561636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BCD8A61466
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:01:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB58A61465
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:01:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A6FC882BAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:01:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 292BB1B62265
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EFE20127F;
-	Fri, 14 Mar 2025 15:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5779B200119;
+	Fri, 14 Mar 2025 15:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b="VDHb5qu3"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2086.outbound.protection.outlook.com [40.107.21.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OA7htbUY"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB5D3B7A8;
-	Fri, 14 Mar 2025 15:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741964485; cv=fail; b=dsU/vpLB4WV66e1WQYD+O70hH8R54QeP00k0j+1dbxgH+jMxghVHW0hS6RHSWpzfS/zgODs/aV5n4z09poqwAVUursUfxAxmX/8utemRntYQtkbyl9LcQMA2XfPX8GB27ExDwL6RKElq3TV2KmvNLpKfU3oMSItS1tWLbc1YaA0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741964485; c=relaxed/simple;
-	bh=6imy0pr1kmwdGeAcbkCl0IJXwM4Cih9GVnAoBd6d/Cs=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=nfsSvJiR5BMCnaZspUdK5kvw36aqIYs6PkmyWC0d5DugoVtJDBnPWEzTXWdYCuPyDyOQSzr6I9RPAg1YAyxONyGadeRghTT7BreqzWKztxdETzXiWyhGjnD0FK1vlxywyGNj4d3kERuXlTMVeiCqFQ7yWgKxpEy6HLc3jLVvyeA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com; spf=pass smtp.mailfrom=mt.com; dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b=VDHb5qu3; arc=fail smtp.client-ip=40.107.21.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=amv1sLljFbPhL31FsFmZ5TRnejkzQbyJLDr3Iux3Xox7uCQHOYIwSDaa0rRBo8RS4sRvd2cWTqSHEGak8jyyiMdxkMTcqV+3rSLObBddUMDU381Mis/P7T5EcnzBzGWfu9BFykBEhLhKI9r/wPA65Nv+6kH+KdqSgPjLT6Ra/Y5F7IF5U2BDZo585zykV1Ik2433VSah79qbe8lnJRuoSP02OafvshmI0PAr3bzJEGOopo8XUqK6zVWgMQJwc7G9MwQ2SEfUMS/5E1qyAA3GV2TPM4GtzWrXDo+zXoGICdhjfJ28JCPHhPebcMjYL/Dw7uzt4yhlpPXEa7w5hzXtIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=puW2EnqaYvXn7xdz7hgrFsiWv497WSZyjCAHgnWO6x0=;
- b=FufATDEsXHpvmitpAVfhwecCkE6YX9GDm7A/FRTIYe9RV1C25AgGK1KGXma9FetjeSX/fi2Ah0svKpVGzeq/Fq/kNd90taJVR5dl+s4UpZ6S1WPFkY/rBKysAArgLP1PXsfgpPKdHLYeqYvw/nw6K6zU7JhNpNg5Cg3TxKQk7tho9UZbozZcNZgDPbmG0nOm+qjcdkeaYbLxmnnF6sgOuu6aEylL/7dYQ8WcVEXhm4KnYhEn7ABfD051A2m+6RzR4aupUCjYR3SuMh3zJ8TN5XA/Pa79be9fbQVRr6TZ083xegMOmSbsAVnMdU2zvRvHHSzbe2ogZB7m0ZyKBuPgmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mt.com; dmarc=pass action=none header.from=mt.com; dkim=pass
- header.d=mt.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=puW2EnqaYvXn7xdz7hgrFsiWv497WSZyjCAHgnWO6x0=;
- b=VDHb5qu3te/QPpvXXh61FtuGhGtXacKc2CxEpasML5QJovMbTZtGZhjnUEJkbQ511qGFWDYj5TyjnDtpf6P7WIgnSgcnPVDWlWKbuLWppaVIuBDCHN+njSyCRH6m97SLuT1IIcv1yEMTfCenniNlx+hWxxt3GnnnMWoUIjFHVR/4luW0nqhdJaCVqkkIssNawHiYKE8xizjB/proS2Kcxx2alJpviH9kJiMwa60VlLleOndz9AjG9x43V1kMWsunUCYH5Zlbma5P4O9TKGOg+5FSjqXI/wqoS6wKwJ3oDkYEyrkXrtvTiEZ834Yar6j5X8QZFgjsCjYzktmkZIV0Yg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mt.com;
-Received: from DBBPR03MB10396.eurprd03.prod.outlook.com (2603:10a6:10:53a::11)
- by DU0PR03MB8292.eurprd03.prod.outlook.com (2603:10a6:10:320::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Fri, 14 Mar
- 2025 15:01:19 +0000
-Received: from DBBPR03MB10396.eurprd03.prod.outlook.com
- ([fe80::ee3c:c9be:681:c0bf]) by DBBPR03MB10396.eurprd03.prod.outlook.com
- ([fe80::ee3c:c9be:681:c0bf%4]) with mapi id 15.20.8511.026; Fri, 14 Mar 2025
- 15:01:19 +0000
-From: Mathis Foerst <mathis.foerst@mt.com>
-To: linux-kernel@vger.kernel.org
-Cc: Mathis Foerst <mathis.foerst@mt.com>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	manuel.traut@mt.com,
-	mathis.foerst@zuehlke.com
-Subject: [PATCH v3 0/1] media: imx: csi: Parse link configuration from fw_node
-Date: Fri, 14 Mar 2025 16:01:07 +0100
-Message-Id: <20250314150108.254535-1-mathis.foerst@mt.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ZR2P278CA0086.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:65::16) To DBBPR03MB10396.eurprd03.prod.outlook.com
- (2603:10a6:10:53a::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2219B3B7A8;
+	Fri, 14 Mar 2025 15:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741964476; cv=none; b=SIznYn4QB8dddAiD2dE9PDnmdJLdJyjFH/B+gad5KGp+8H6pvUhKLDMgD4Jpi+lTBjrBJ+YMeZ/iBNTPfSdKx21JhT/Ca9ODH7IuVIgPQtiyR2Gm8XX1R/68IVK5tx68tYUaol0L6LxqBpBQBy8XrZy8VFjrNiOWUe9nvRaSpAE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741964476; c=relaxed/simple;
+	bh=GaRu5ERVoPZsrgYIAIhEjraG/SaBYRHYbSm2zGpJ9qw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EWdQIS/mLax9IOF2Y0DAPm6Im2dFcFtnujWoJoQakNWAJiYFIoYQbn9JtTy16jhkTUj9b6n9+PKHyQhmtOuGlUuc7lUfOmh+MX97ef7+yP97jidx3H3AS1dFUEn8jVB7IuaMUoriwtCNi5unLwHFNFWopWZdmYExoxZdi+W1YJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OA7htbUY; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2235189adaeso39858955ad.0;
+        Fri, 14 Mar 2025 08:01:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741964473; x=1742569273; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=dkqIt0dAm4flood+lEBFlTOVHHH/M15qiTxF9ROPp+o=;
+        b=OA7htbUYVwuoblnYieeAnJtXiq9LwQA1lfb+J4dklY4odkzi8BV8OVvKQLtkCTD9oz
+         LwVK3tP6PkoIpQLDjRgvJ93O4g24TgQGzJSHV11n88DOh93LWOw09eGW5SJZT5uwuTle
+         lS62mFWIq1RzZh8sl5duM54jsXxw5u5mN0SoE4jHf4/SVf9SJ+o+tkCTREh/iiq7QnbZ
+         X6WERgReG2svBMYD6ijHXDkAkf5cEElyb3oquh3KinbtokKZfHZ+LV2r/NDL8i4wRrGY
+         B5PgAtovoUAuXKvEBHJrwXLV3AJdK77HSwrphqukpG632z2qk3UZBriJTVU6M5Qzc8x8
+         TKeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741964473; x=1742569273;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dkqIt0dAm4flood+lEBFlTOVHHH/M15qiTxF9ROPp+o=;
+        b=FUc5SAZ9QCq1cabrNDBeocjTCDjaAexJeP22NV+0z8mHUtEvM9DGdsgE4bykVkINgh
+         DvroKAF6yU4Z//QGCqVjTmik85ilElQuNiWWjpEhBjJUx3gtmXKaWfH14gOwfypm4ilW
+         Goo2X5Zab9RbqakR1Ovc035IyS2nXm0WZP4PWgukp/2nUpjWyryGP56gMzYaNkZu8s4i
+         Hma7aD2dwPF1yWNbTk9csS79rBedNvi1DWK0p1Qa3HLSTRjTeh8qcYURpowiK2LJF1tf
+         nEBvqpKSsSJxp3D3uMFdFxDY7mPzR13bB/kONB1Nz4AbCzo/yP/Qwppv9pBtjl6SRt3L
+         jNXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdEHc6uMnH+zP/Bu76n95LZvxK9p+iozrL+C2ESCW/ZVLn4gMtlOSladh/THAyKTxZY8iWciHoK54jlQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwubHT8EDvcEpa0hmsVZsEqom891WxFNGssdEzW6MoeR/4Ufkws
+	kCifkMOYnDq5dv2IpDXmt6j7g7CcT1A1pU4jscxvKOQUVFGNt+ur
+X-Gm-Gg: ASbGnctSrCZBNbuTe7AY2XqvyWPVxXBugFDJuBRivZb7PHkeq3saJB0Qqh1wwHu2dt/
+	UO+eD5ly5R+9OufbXq3Vt1CdoZ0mz1qG3tIsLdH2CFHcTamvIDSTAQIUm6DINOtYgE6m4YkaWu0
+	vq9/Yylw+252gZWoyUTQ0Bre6dGJWSdTXT/QWFFVQP20koidIaztDmbvfEnalOAe3six4V27015
+	U8I5qMKGUN+rBkZw/6l5vZKE8ZpVpa6lsl0lq5HzS8tIwV2oIvH5bs+bNQIdzd10sG3tQ7X4RAx
+	h5l28Jn8o7gsWYXWJxv92Z2uO1e7g7XOWUgfO6p+q0GRUDG643sLqEOQjzua/ZV/H95IY466QFm
+	Buo7+hZkTxAzjKBfWLw==
+X-Google-Smtp-Source: AGHT+IHiTPxk83WFDew56WptLQbTVNUkpAFnbJkjARem9rmckTJEQH7ZKDnJfEiI9D/tmOSaAnxRlw==
+X-Received: by 2002:a17:902:cec4:b0:223:4d5e:7592 with SMTP id d9443c01a7336-225c66cbf5emr89034945ad.21.1741964471781;
+        Fri, 14 Mar 2025 08:01:11 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6888653sm29611615ad.22.2025.03.14.08.01.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Mar 2025 08:01:10 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <899edff7-eba1-49fb-9626-576798452f30@roeck-us.net>
+Date: Fri, 14 Mar 2025 08:01:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DBBPR03MB10396:EE_|DU0PR03MB8292:EE_
-X-MS-Office365-Filtering-Correlation-Id: 29db4e6a-1209-489b-00a4-08dd630913d5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|1800799024|366016|7416014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?tk2wIYKfLrw9GR9oV0TLeZxaFrXcbSFU1NEDW8NXr6+IzpYd9hR3GiVKWVTp?=
- =?us-ascii?Q?I8FMvzMqkasIM2hODvjfdTHOhEKEkJy57v9mDdlNwVROyJXokY1N5jqVI4TG?=
- =?us-ascii?Q?gBQ7J/gJQL6BxfBLsjzecIPzzrX+KyvKy4cfC+CqTl20GicW9GV+wI5y6Khv?=
- =?us-ascii?Q?kUg8gO0a+G+vw7lnlzE5uADuVyQ4fVRMyqjnnqOg/+FX/XuxlSNRxVkOK4s3?=
- =?us-ascii?Q?kD6W3oaj91i568YaqPIoE07v3CTvjGBY2ELGwH9TkoUT1ZsJPy3lPndAJJro?=
- =?us-ascii?Q?Us8zEkFOcxPtCh4PM4ZdythobJJxEXvDu4bQ0mRQXiJzYBbJqNJ1dofGpxIN?=
- =?us-ascii?Q?gRk2iRnzABK0cxtBv5zGFBr/Jma1tRl4zj20MMqSlZbCxknaxDoe9JogwSSF?=
- =?us-ascii?Q?/6TZyiWrk0xTGdqTl6QOf/TKcE39omX9yh3TdNUEo5kgtNSbq42TGV2UNfS8?=
- =?us-ascii?Q?5TNkJl5VgeTqgLIldfHWPrrFs0t9eP6vTNH2WmE64+MLdKqW33us+SfV0TMu?=
- =?us-ascii?Q?stJJK8Zlte0nke6IlV/HQwP3yHNpP/HEux+yTGqpdakCCICrLHQPGbRpuhHE?=
- =?us-ascii?Q?5AEQmXrVLnzRyaHIOpFsgSCxlMEs4VF57ArYpf1mE18d8HaawvYOvFplP3FZ?=
- =?us-ascii?Q?lPu8c8ioaFwl657adSTC3ufsoy5fOYOeb8iEfa+c+eW2Ai28axy0oDtEPntB?=
- =?us-ascii?Q?WtjuXqfvGhHDne7QD7KCmTPICy2AIHi5hDjx43BIP1l0R+7hQ4bhY2KRAaRQ?=
- =?us-ascii?Q?HJZjNxbzz81QCzQUQADKAlBCJdjYF4jDbZY2x7FnlxJcw8b0ntF9AazmeFSM?=
- =?us-ascii?Q?2Yo7LiNnJitE4tQQPbuZR+EcM4XnUP4UR05p8IlfS0O0k18oqgLaSiALmqiB?=
- =?us-ascii?Q?yxy4bXEUdnqoUJPeZlYXuBE/ml4/gyJXl6yvqjpl4Li4gCKDwAaA13N2A72+?=
- =?us-ascii?Q?Q76nqk0G3tO7xfuiKPG4yoHTBr5KgDBwa3CTYxeVdtvvcpgYnShdkgDezQA0?=
- =?us-ascii?Q?Oje1nttaU0R9VaCgznryjGqhp9MSOA5F9RZJ3Fg8A11fCNNjv3n864rnYZaz?=
- =?us-ascii?Q?4tbdpZTLeQEg8TekgqWgykOUCxI8QmFJV2bTDSfpCGriprOd9dmsFeBJoWJP?=
- =?us-ascii?Q?EsVXkEmgOFBzJzR3lz8As+737Rx28ZvDlqnvZIIWMq8c5Y2cME0ZRjksqeGw?=
- =?us-ascii?Q?vBLMllA+kGoAkkgrQGODddeMPZhEWdu9MsAORPlpTCsWbKXAS2B3IFxuF5ud?=
- =?us-ascii?Q?Q0GfLTWrkXiUGv4nbQTe0XDa07Q8rTNRJ8ad2m/w3eT8yeR8nnGU9N1TaGSP?=
- =?us-ascii?Q?gK6bOvidtU/p/yZ92tYV67O1QGBbjFwMVmh9uKbforbP2pm/DhQHrol4/x+y?=
- =?us-ascii?Q?EdvbAnDWwv++Km2nctPD8qHlhU2ywNDGDUlOyZJkC8TO35ok8lhImpKl2stx?=
- =?us-ascii?Q?8NTNihbp1IFVerIUR50i3QPn6vcbnKlC?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR03MB10396.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(366016)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JfzDPGpLm3cXblMfxJWl+TJnpTe5uRDHwanVfYbqn7USZlgOG0SZZR0gDQ3T?=
- =?us-ascii?Q?RxMzArLZl7zZbff2PBQrg/t9z8vTwR9sXH7+XTWzRW641miDlHrEgixxhDeE?=
- =?us-ascii?Q?z6Uk3SWF1BH1ggitxLH+s6GreH1YsDvkqhQASTqqznpKzG51T3z1A4HOMJSc?=
- =?us-ascii?Q?7zPYXBgz+CtImvFI9WGw3pXVbbQBSYTRgP7exhLhvSRU06h3nqFVKRjA2XTp?=
- =?us-ascii?Q?iBOH9+9qT5/OnUXgmVrEAU4f2ncEPu4bRA7oz2Kt7r6gnRs2psMztcrXWsxX?=
- =?us-ascii?Q?QmPEALWMPhnp88fy6Li6GpR/8E9/uEAIG/zxPJ06cUppf20AIomAo+VNPc4Q?=
- =?us-ascii?Q?QzT/EVY0K44pdWEpVr9N7NFjeTxV09/akJkZU1qjzQ0c0mOiaWnUsoC+ri31?=
- =?us-ascii?Q?CKQ5ptfBXFtaHJSHO0veRskliebZG+dBZBTmdbndMtlJRntHxXyk1h/dkkmw?=
- =?us-ascii?Q?FRhzTcZiC9W0BIfkkV/JzPn9Wlsyxj6o34dOiBm5BMqJKCGEgPaZXo1w4M2L?=
- =?us-ascii?Q?yzFuNZlKXKPq1OWWjoXPdhYDItXJAqKZgadvXOks3x240YwgffkGmNFi41Ky?=
- =?us-ascii?Q?Jw63GX9knyWtossgksd7aCAL+GBY+jcq60NpBgv4S1wBtv8f9McdlyXN2DoL?=
- =?us-ascii?Q?9/3IXomvfGX5C2Wa1bw0VLYY/i9zSFBo0vhliuiybR5ILTcKuog5GRgLcka2?=
- =?us-ascii?Q?7J5yr6gZ5mxLwwgGFkk7dg2dPF1M3eR7PnFqW/DzEJb4qT49Zi99GjLlI9Sf?=
- =?us-ascii?Q?oRemULf3hzAnmaZtN3XETVlU35ru5igG6dwCNFrUC6oG26sU07dAaZO2SEGY?=
- =?us-ascii?Q?6Xk3J7pd9pmwb6NYxJywyYTzvBak5ZSLHETGyElytbkp5k8+s81vsmoZbsH6?=
- =?us-ascii?Q?oxIC8pMdxJRMs52RsC1FSdFx0JvGPE4RHNqEGN6UgRJnF3FqlmNeYNomzdws?=
- =?us-ascii?Q?ZbIZE/B5FyCMfgRb3FXJoihjK5tdlIkj77ZxRjfr0xtAoqddwJ0aZ2PucBqf?=
- =?us-ascii?Q?kwlEo/oLJMXRaJXkVobUR5JokfB/GxeMeL18xMTnFGbzyi/FiAH7jGDFjvNl?=
- =?us-ascii?Q?/84Rs3WtaXL1TRo2FvDkntAtioHjOGaMXHFra8WC6AeoXYfCQQDOaMVAoSU+?=
- =?us-ascii?Q?vbStgrqzvxnVUenBTdV1M1xppydlGk7qd4HM1T29gXDdWvMPIMR2tqvCOhi0?=
- =?us-ascii?Q?tiekKj/r9goN91iktKohFs6JYfBDu5FrEbobkqnS2BrU+VhUNEhCLANQvMUC?=
- =?us-ascii?Q?WA2mXZvaA/p8I3RUsccFG3CLdJDPFbbaoJqMOYi0GKtuskCNYHRSSUfEDR70?=
- =?us-ascii?Q?T2vVRGRjbj7FF6tQ/w3rwWLWBwwuiHEW9xSpUrjGkhPMPVhWqKuomASSOB1M?=
- =?us-ascii?Q?JNDe4tTiVtf0QkNkIMKYYzGpo6l5Ig2cd1qDM5qVcNs5oQz5A7tdnXjrP3/a?=
- =?us-ascii?Q?WzJeQk/r0D9Nk+1lWO3vYITAdaj80QlcxjjesE6/PPfb/tVsH1Qr2lmIK3zC?=
- =?us-ascii?Q?g0JTQN87OsJdnJvVkoUPNECyAsFGyypZreZdcOLP6WbdOOv22mj8zEvovQMx?=
- =?us-ascii?Q?SWLT47s6ZqmH91jLAGsAP8cjRMt2KNGq50DJFfcC?=
-X-OriginatorOrg: mt.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 29db4e6a-1209-489b-00a4-08dd630913d5
-X-MS-Exchange-CrossTenant-AuthSource: DBBPR03MB10396.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2025 15:01:19.6394
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fb4c0aee-6cd2-482f-a1a5-717e7c02496b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Wp5bE5dJq/sZVqV6bGS7J9vvcOFNrbk51ZfAQOLy2pPN8OJqq55IujCq+PPXMpQ8TQdc+/Usc8YwrWi394a1iw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR03MB8292
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] hwmon: (acpi_power_meter) Replace the deprecated
+ hwmon_device_register
+To: Huisong Li <lihuisong@huawei.com>, jdelvare@suse.com
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, liuyonglong@huawei.com
+References: <20250314081834.3243243-1-lihuisong@huawei.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20250314081834.3243243-1-lihuisong@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 3/14/25 01:18, Huisong Li wrote:
+> When load this mode, we can see the following log:
+> "power_meter ACPI000D:00: hwmon_device_register() is deprecated. Please
+>   convert the driver to use hwmon_device_register_with_info()."
+> 
+> So replace hwmon_device_register with hwmon_device_register_with_info.
+> 
+> These attributes, 'power_accuracy', 'power_cap_hyst', 'power_average_min'
+> and 'power_average_max', should have been placed in hwmon_chip_info as
+> power data type. But these attributes are displayed as string format on
+> the following case:
+> a) power1_accuracy  --> display like '90.0%'
+> b) power1_cap_hyst  --> display 'unknown' when its value is 0xFFFFFFFF
+> c) power1_average_min/max --> display 'unknown' when its value is
+> 			      negative.
+> To avoid any changes in the display of these sysfs interfaces, we can't
+> modifiy the type of these attributes in hwmon core and have to put them
+> to extra_groups.
+> 
+> Please note that the path of these sysfs interfaces are modified
+> accordingly if use hwmon_device_register_with_info():
+> old: all sysfs interfaces are under acpi device, namely,
+>       /sys/class/hwmon/hwmonX/device/
+> now: all sysfs interfaces are under hwmon device, namely,
+>       /sys/class/hwmon/hwmonX/
+> The new ABI does not guarantee that the underlying path remains the same.
+> But we have to accept this change so as to replace the deprecated API.
+> Fortunately, some userspace application, like libsensors, would scan
+> the two path and handles this automatically. So to drop the deprecated
+> message, we can accept this change.
+> 
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>   drivers/hwmon/acpi_power_meter.c | 861 +++++++++++++++----------------
+>   1 file changed, 427 insertions(+), 434 deletions(-)
+> 
+> diff --git a/drivers/hwmon/acpi_power_meter.c b/drivers/hwmon/acpi_power_meter.c
+> index f05986e4f379..46e8a0b6b210 100644
+> --- a/drivers/hwmon/acpi_power_meter.c
+> +++ b/drivers/hwmon/acpi_power_meter.c
+...
+> +
+> +// depend on POWER_METER_CAN_TRIP
 
-this patch fixes the imx-media-csi driver to work with camera drivers that
-do not implement the subdev-pad-operation "get_mbus_format".
+Please di not intermix C++ comments with a driver using C comments.
 
-Changelog:
-v2 -> v3:
-- Factor out the function "csi_parse_upstream_fw_link_config" for better
-readability.
+> +static DEVICE_ATTR_RW(power1_average_max);
+> +static DEVICE_ATTR_RW(power1_average_min);
+> +
+> +// depend on POWER_METER_CAN_CAP
+> +static DEVICE_ATTR_RO(power1_cap_hyst);
+> +
+> +// depend on POWER_METER_CAN_MEASURE
+> +static DEVICE_ATTR_RO(power1_accuracy);
+> +static DEVICE_ATTR_RO(power1_is_battery);
+> +
+> +static DEVICE_ATTR_RO(power1_model_number);
+> +static DEVICE_ATTR_RO(power1_oem_info);
+> +static DEVICE_ATTR_RO(power1_serial_number);
+> +
+> +#define EXTRA_FIRST_DYNAMIC_ATTR_ID	3
+> +#define EXTRA_ATTR_MAX	10
+> +
+> +static struct attribute *power_extra_attrs[EXTRA_ATTR_MAX] = {
+> +	&dev_attr_power1_model_number.attr,
+> +	&dev_attr_power1_oem_info.attr,
+> +	&dev_attr_power1_serial_number.attr,
+> +	NULL
+> +};
+> +
+> +ATTRIBUTE_GROUPS(power_extra);
+> +
+> +static void fill_extra_dynamic_attr(struct attribute *attr)
+> +{
+> +	int idx = EXTRA_FIRST_DYNAMIC_ATTR_ID;
+> +
+> +	for (idx = EXTRA_FIRST_DYNAMIC_ATTR_ID; idx < EXTRA_ATTR_MAX; idx++) {
+> +		if (!power_extra_attrs[idx])
+> +			break;
+> +	}
+> +
+> +	power_extra_attrs[idx] = attr;
+> +}
+> +
 
-v1 -> v2:
-- No changes (I submitted the wrong patch. I'm sorry for that)
+Please use the .is_visible() callback in attribute_group to determine
+attribute visibility.
 
-It's the follow up of this discussion:
-https://lore.kernel.org/linux-media/Z8AoA6WjbXQufqR6@kekkonen.localdomain/
+That means you'll have to code attribute_group manually, but that is
+still better than re-implementing the is_visible() callback.
+Something like
 
-I tested the changes successfully on an i.MX6DL with an MT9M114 and an
-MT9V032 camera. They both use the parallel camera interface.
-Sadly, I don't have the hardware to test with a MIPI CSI-2 camera.
+static const struct attribute_group power_extra_group = {
+	.attrs = power_extra_attrs,
+	.is_visible = power_extra_is_visible;
+};
 
-Best regards,
-Mathis Foerst
+__ATTRIBUTE_GROUPS(power_extra);
 
-Mathis Foerst (1):
-  media: imx: csi: Parse link configuration from fw_node
+should do.
 
- drivers/staging/media/imx/imx-media-csi.c | 45 +++++++++++++++++++++--
- 1 file changed, 42 insertions(+), 3 deletions(-)
-
-
-base-commit: ac9c34d1e45a4c25174ced4fc0cfc33ff3ed08c7
--- 
-2.34.1
+Thanks,
+Guenter
 
 
