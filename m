@@ -1,111 +1,82 @@
-Return-Path: <linux-kernel+bounces-561435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A96A611B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:45:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A27A611B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF36D3AD37A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:45:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AC2C462103
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DC21FECBB;
-	Fri, 14 Mar 2025 12:45:41 +0000 (UTC)
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159CE1FF1A4;
+	Fri, 14 Mar 2025 12:46:01 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FF11D540;
-	Fri, 14 Mar 2025 12:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26521FDE12;
+	Fri, 14 Mar 2025 12:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741956341; cv=none; b=mJZFlMINIrRBWL5E6RkUpNRuG2bCZq4P97K26nRjUsp++xbBIf+9Ty3fQjyv8FN1pMwp2KUW7GFPE58dgEgFo+CqA9RIaHWFUDlNfYp4Jm+qjeTgXcUUTWZAIgLYj2E+OYz5fh9BCHYMFKmwRv6BBmvciyjcveyKPK3gE7ht1/8=
+	t=1741956360; cv=none; b=CgcjrKSsYlK5OHgtUFOAzo5yM93W26sQAtG6vQSotaGbbeeB3niw2KpkWdGhZkzGDDnbW1lk98afLYmelerHfm9e9R0KQMP4l5NAG2zYDQkGDrLVGlDfP0+4H2+5/p3Tud4AGiWEZNgBRYn7xCb4OXhShSx9nlEIA3Pa8PLdkzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741956341; c=relaxed/simple;
-	bh=BK4N5byTmYwxeKm9do0boEpRIRlAppHpvxOCullTRus=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KrQ0DGygCQ3eXCTzIDn5OCTpE4Tx4b+BU7vOYa/7sDqV0hDDbY/MmtOjSWAGZI+PHwnxvgpEnHgbzeaRY1RItDRmmmlsfsSSE7RGhNhi4CMx1TD08gv3qEwcg552BOPk2W37JB2tETHhpyCGvP1TP+PK8mEKkvIpiN0iUWebBks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-86d30787263so893446241.1;
-        Fri, 14 Mar 2025 05:45:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741956336; x=1742561136;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HD/JI9UwYHhsycAtRktaBt8bdYx866iu0zPE3z36whg=;
-        b=m+pE9jF4p1VcXfSB7BFodil56zc/bzEXmx2SQi1gBa1GycQIHm9xGIBi/EiQQFOefe
-         csTspUnK148LGYlqYQWydJuZJn4cWWtAYfn3On/n5wOqMt4PcOv/WZy77UHNeqDgxeK5
-         8gWhzbiZWfKXsyQc6/mxoxl2iSVxop5kiDizVKXKS83Og1h0fHFWSGtgAQV0gMhhpLDg
-         hwJmjki3IamhELxetk8aH/EZt4hd5TconbnsIh9SatQlCKO7ysmoitNwwxY0H6X/cObn
-         IMSwKzxpOIXkMtJPGr+w/OLlWj6LK6d+1Gu8oVIOWjmTgLLdqIeWqhqKzNyNT4anWS/+
-         TokQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHZvxBeQ7ZxKmlv9pzidt6VQxhrV6FfV2SNtsPpxmhFVOwbYx2rMJPi57GnSgnfh9g+9VB/JkO7sSE9TiW@vger.kernel.org, AJvYcCUpWsxeRqK1T+87QxVTp8/vLQzs8f1QP4dZEMWgzGndFkom8je2XPit80ePTaQs2lCICd6QjygswTY=@vger.kernel.org, AJvYcCXTu6E1VrZ85PmYZssMFLBYxCrNpiV9SomOM9zFIYjQJokYYjfXKsRtuc/4+WA2lhMEi78xtTeUp8Cg/SNOM+fY7yM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGlMpALPCL9rnPAZf1fLv7ioGOiBhybWZPhLBpCAjBc4cg6BzO
-	cg+F0Wv4d1DeQTaSmvJxNKu+o4QLViEshmO9LoKWe+Ak9BnJR5CLrrWLXjpuZ+w=
-X-Gm-Gg: ASbGncsNaKa0X6f+3czMbtC7tirmjn4Lcyi7QAJ9mzlz2QZCvJ4ABicF2J9Nn6pO3CM
-	3PM4GoJW8/7NIDF+hTtEHghQuEcE7QjwdD3G049Z9dFZB2F/mVByD3eAUCQlp+GnS7k3D1GJYoL
-	6WrtZG091gSb53S58Jlo33bz7OskyVAQN8of3yCGh+7l17+Y5lmPrv9Y0Wfi9HPnlw3zHYmTZdG
-	hwaqKc2mMnxZJ7UXQGBgHpHiYVoph/O3/+bhQTEdblQF4TrkBnT3aw46f6cDyA/VqDJBjN9ArvD
-	bhqcgp8m3gz/OMMmBRqKPfClJ2Me+lOYogOR7e8ShvrpschTZ4vGojRAWEaRd5s85oqqrKaTNnd
-	N/W1vVG75aAB08VJtAw==
-X-Google-Smtp-Source: AGHT+IGCLzGVAb2Lh15HdBzdbdeXH3JqvpUi3j7DH6TnIHMUVuSfjQUgB1fipEGFUwxNM9Qrv5ImWA==
-X-Received: by 2002:a05:6102:509f:b0:4c1:7d0d:a48c with SMTP id ada2fe7eead31-4c383230108mr892969137.22.1741956336605;
-        Fri, 14 Mar 2025 05:45:36 -0700 (PDT)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86d90dbc93esm524129241.16.2025.03.14.05.45.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 05:45:36 -0700 (PDT)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-8670fd79990so850829241.3;
-        Fri, 14 Mar 2025 05:45:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUKtul9FbCPBWIs5Sa8sybS1T7M1jwZu4zLLVz/w5dz1yhdlj/lQ5c3fnM5y4vv53sRuUPJuQkj1fMa87C2@vger.kernel.org, AJvYcCUNUYi0PMhJ2pjAUjhXxDW8OPN71jEo4V1BHox+Lel/EWRE0GEcSefisfgH5D424zYGs8H+/OzdItrwT329WEwVvaA=@vger.kernel.org, AJvYcCWpQ6D6Gw9PRFfWV7QdxK5oH1MIy4aJSfuHLSc9zGDTGMG+ey/YpGMClOtls8C/zXMQfQSOaQCQQgk=@vger.kernel.org
-X-Received: by 2002:a05:6102:80aa:b0:4ba:971a:41fd with SMTP id
- ada2fe7eead31-4c3831f9b0amr1281433137.19.1741956335951; Fri, 14 Mar 2025
- 05:45:35 -0700 (PDT)
+	s=arc-20240116; t=1741956360; c=relaxed/simple;
+	bh=r1m9tl5OY0Fnl65VVIH1QDHSBTTDaQhfScaVcOSgBaw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dbUfar73JxEPNuQAHEspZA67nIgmbsU1E63jObNQBfch0IHCw0ubV7TijWLzpWDudB3JwIeYXJSkTQVxulzhr8KYgNiWe+OGyrkSoic8HjKwgErJSvt6ALaDzK58MOzksYAMOj03ompefsnp0yLBdUSNEkg2hDgdRjSDJS7J2tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDkYZ2Ys1z6K5pM;
+	Fri, 14 Mar 2025 20:43:14 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4DCC014039F;
+	Fri, 14 Mar 2025 20:45:55 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Mar
+ 2025 13:45:54 +0100
+Date: Fri, 14 Mar 2025 12:45:53 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Robert Richter <rrichter@amd.com>
+CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
+ Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
+ De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
+	<terry.bowman@amd.com>
+Subject: Re: [PATCH v2 08/15] cxl/region: Use the endpoint's SPA range to
+ find a region
+Message-ID: <20250314124553.000077de@huawei.com>
+In-Reply-To: <20250218132356.1809075-9-rrichter@amd.com>
+References: <20250218132356.1809075-1-rrichter@amd.com>
+	<20250218132356.1809075-9-rrichter@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250309211402.80886-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250309211402.80886-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250309211402.80886-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 14 Mar 2025 13:45:24 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXYpy9LPVher4WUoT=nnUw0ktYTm+uQXWJ9CTgQ-+1S_Q@mail.gmail.com>
-X-Gm-Features: AQ5f1JoE1PDnt5PmhECDRD4p8jfQ-p0lv7roAnGfISPIwnb2DkwFMkDDT0-KOJI
-Message-ID: <CAMuHMdXYpy9LPVher4WUoT=nnUw0ktYTm+uQXWJ9CTgQ-+1S_Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] clk: renesas: rzv2h: Remove unused `type` field
- from `struct pll_clk`
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Sun, 9 Mar 2025 at 22:14, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Remove the redundant `type` field from `struct pll_clk`, as it is not used
-> in the PLL clock handling logic.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue, 18 Feb 2025 14:23:49 +0100
+Robert Richter <rrichter@amd.com> wrote:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.16.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> To find the correct region and root port of an endpoint of a system
+> needing address translation, the endpoint's HPA range must be
+> translated to each of the parent port address ranges up to the root
+> decoder.
+> 
+> Use the calculated SPA range of an endpoint to find the endpoint's
+> region.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
