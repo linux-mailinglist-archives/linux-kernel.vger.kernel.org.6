@@ -1,175 +1,187 @@
-Return-Path: <linux-kernel+bounces-562153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D48D0A61D8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:06:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B03E1A61D9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:07:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEC47189B8B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:06:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 802D119C0308
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D691ACED3;
-	Fri, 14 Mar 2025 21:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4152046AC;
+	Fri, 14 Mar 2025 21:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="ppmFsx0t"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RDb8zpg0"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE9419E7D0
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73A8204681
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741986367; cv=none; b=Z8AKzW0SD/gfE5HFF1KGfAjQKdibP9xvu3w5uVumqIAROZpeW8iX/wnbch3Vmoou3zxyjDCnAhj1kDHiZJDpxzQ83qFiY3/Yoz1AmPjp7ouY9vTaYBze78avCqyV/UDLyUfwHWDf9OK4zH3voZLo5hwKWhmic3JEYCGzWJHCWrw=
+	t=1741986415; cv=none; b=fnnJ4vYAWOOJg/NC0soj3U6MUxrM3Ks9nKLFESETzs9WkNzg6J4hlSfkOfGTy/rCchj7GPc9oWnE4vKEGj5xPLqGGEvD1E59HN/GxUblzIoEYWHpJ6RLB1K7mvEPkFLoHHZM3uMNgk7hwGT/3z0ClfHeQSfGTWzIQmwDl/CKrDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741986367; c=relaxed/simple;
-	bh=dODjm/3Gs1B+O1SNWuDcmxAG3onfL3WVYYyd5SsMec0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PF6cYtsbKQ6mhElGo3A7lLisHkA73IPIVbpj3z4jxNC5LQNh2p9YxqQlzdMixp3FMKpoeRIR32KtSNn3Xue7dlbvAsvbGQDLJRz0cw5PA1d5/ZclENGCZZDcGuKB0zQNNRY//WCHpXsv59NeW8Kb8Rd0yNu1y0enR0SYcDx3Xlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=ppmFsx0t; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c54a9d3fcaso253953585a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:06:04 -0700 (PDT)
+	s=arc-20240116; t=1741986415; c=relaxed/simple;
+	bh=EZIOvVzcE/3rVnjN+zLpfwnJoOG7WheSIbDNqh2pozE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d6ritNpyCHOyaNuQXyWGP9kv7M3iDEZZSFtEhsaMBRsG4bboWv2Xr1y8dLM1/JVq9GI1zAmQwHfQ/6qAFiAp0meyyZnb2HW0DDsv/+Fv1UmPgoKr0+VM/RhmbFr+c68LywJJpNvqBxVkCyCfxXUIlh3b/Ocq3jOzK7DoLMCBTdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RDb8zpg0; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5497590ffbbso2641968e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:06:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1741986363; x=1742591163; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wouJWyoqE8ZpbRdKYnwSI+aPBYLXbj4bary9x6Givhk=;
-        b=ppmFsx0tcyuypfsxlgv6+bSpWkB20j68ms53rbXl7+KxJSqEwg2RDMUqekLVSu19X3
-         VRqZdeFPYywkts1y+OQAn/1LRtLlu9XIJjZPgbBq+/UWB9E5mFW64hpCXI4dO9rdNYUr
-         PrlnUKOPPMA0g+3ILV29kMqXhjFfpoUDa866lImYsapTlAA2UhryE4SCKCaHSuJCCuJ4
-         /3MTm5jB0fhwY5Kdh2AUDIi2Os+EHKl3YY3qXBIARt+UBrZKbWk6DAZyDf+XdEN2ePT5
-         0tIvUXnv6E19A9w7AL8Kb1i9GyNW8smoo8aFNflGLAk3wnD855+n1AtIR4n2TQiFN/6c
-         6Vew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741986363; x=1742591163;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1741986412; x=1742591212; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wouJWyoqE8ZpbRdKYnwSI+aPBYLXbj4bary9x6Givhk=;
-        b=R2U2wNSBhX50ePpaOxoVY2kRgvobZqX2cRHkkS5VayFmBscwBaKBcnzdZD0TnDPRFs
-         +bC1wjVTVlBnB/kGr3oye8Z27+MuQT0HTnFDqmCj5wrZaklQixWtQgt/al96v3RrtHxT
-         ZbU2Hm5DbzgOfd6qJDnzOcGK+o2bHAgOz2bg4o37JmR2LNC/6PrnfFygzXIbKEXxtOpY
-         RgqXr2p2AaHrM3ZRPWw3Lb9lfRMEFHiSWCfo2yomkEinR0nzwDFR4xiENyvRArbZLXrf
-         /tT8KvB77fooB/yqq6eeIyl13WPT6vrOjRdGzcLWhFg+oBP5j+xCp+8gW44kSEA99oTC
-         WhPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxbM/4H+FB5wo0tzWuhG9HpGPkoBHzYhWQhDAJWit29SfShIuB26Q8yG+byHah0zV5sv/vE31PSMqhXNc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyktPQTe31jhmiUE1hIPjsLe/kfe9g5vLrXubO8Us5wISwr6XDj
-	1MVWy2kPZlHO552qgzoyv31By4Kl/tKLOJTNTMGEqvWDcuqRQ7lYhSP6E6rhTOQ=
-X-Gm-Gg: ASbGnctGad4uPPLPtew4rAPItHFT4ZIaAhDNevECMwIvK0ZVfkSr//L8kShBHGSrgC7
-	XZ5MbUMdMoqdpxhipwdYeP7H7TPhTAca+2SiCbeWFTOSLc1KIw5O4Np/KsE4OD7MykOskrtA164
-	IgWULZtmdcM3Hh8rd+FhEgb0qGDQwcewBJLehjh/Lvz6WcNLTKkyVnEuynFQtNaYB8H5XF6NEBz
-	yLcTDcHIvIdbL9Jvt5M2AiBXdPkrxog+4vLPRdHFYen+TJQTulF89L1rmpZJnDODfYl3732HNYF
-	GAsHr2V6MH8+bLvxKHFg0KY7LFtCOTOOJX3pn65rkUo=
-X-Google-Smtp-Source: AGHT+IHzAK5TurTbeJNlYYY/Gy5+4Uau1jNFIkO8qge0TCNONcogZCW2HlHi8miPmY46e06XC0SziQ==
-X-Received: by 2002:a05:620a:8003:b0:7c5:4eee:5405 with SMTP id af79cd13be357-7c57c8fc474mr560621285a.35.1741986363439;
-        Fri, 14 Mar 2025 14:06:03 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c573d9256asm296990185a.106.2025.03.14.14.06.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 14:06:02 -0700 (PDT)
-Date: Fri, 14 Mar 2025 17:05:58 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Mel Gorman <mgorman@techsingularity.net>, Zi Yan <ziy@nvidia.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] mm: page_alloc: defrag_mode kswapd/kcompactd
- watermarks
-Message-ID: <20250314210558.GD1316033@cmpxchg.org>
-References: <20250313210647.1314586-1-hannes@cmpxchg.org>
- <20250313210647.1314586-6-hannes@cmpxchg.org>
+        bh=PUyX2OLLDGDNbSS9bFUituZMJ4sdx+0gIOIlvaqGxug=;
+        b=RDb8zpg0NHZPUsyYID+X/cFgKey8abPo9IZfAdbo2ueCdONG8x2eiJuotrWontHXkY
+         WLPVEhDSzdqObvhXN/iQUJZNANYZQhkmzM+Tno0xIlITVUcMxnbV3oEyMbDkCUS0oR3l
+         iDB1tXkvVNEfmavbSLPP8qrNGWu6mUT5HL30gcx446w2ADw03S8mnYZcukV+rLil3TdI
+         4ecexUYoTeVh7wz9c4jn1wOuOO3UlWDo/e+a/DT/ZdOlkVyia8uL59kcfn3KL83C2QJ2
+         y79Yp8EICgB9/2lEzPeTOdfmMJD70dGkdI/ZDSHJetnd5K2yfvQE8QD8EbOVFuwEyfTI
+         R7ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741986412; x=1742591212;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PUyX2OLLDGDNbSS9bFUituZMJ4sdx+0gIOIlvaqGxug=;
+        b=YLkqa3I5xAgEXliexFdyU2pkmdgWUtEFp9M8i/aMx7Ug7F4IiXkunKctH497lndfd2
+         r5PiN7paB2rcf/zm7Bdm4fi0tqFzsDXrjDa7DA7spuVR5WHyuJw651WqY7EtJq2VVvIf
+         ktfAaO8ZqkBg/DlTkVPrGHdh3W4+hbCECmQjdOBKr+htIi01PA3Kk7Tx0LsjsXJB8MTR
+         Pcts+wN0LIVrr2/n3DxoPnBrrD6qSRXpjbZjeOhqhLm8IJ084gr70Iy6HxcfUcbwj/Vk
+         Gm36qLtNRbR9WxOpjAjdlrJfx7NYV3fjRjEdlP/KVyZTMsEeTuZ/ayheITPA8m02ClAG
+         z5+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWCXinAxIxUU1YhSwwQYv/YasVkg31tMXXDT3kDeFI5C3BBlZ10gRnByGDLM3bP9IOGYXZyYaaeQuuA/0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1CkMalGpPID3D+1qfloUeKc1+NnFxeuVK3dFY1MkjJj/AZk43
+	MarnyBgLDUoOmfFXpw2dl4RDpGv03ck3KzAXwGGYH5qFcpdCr6owlYmTyTrqmnuUywM0aEM0qS5
+	ZS0yeKT7y4dXnLHOCJ52YuFe4CkX8lFuCeWGp
+X-Gm-Gg: ASbGnctmSjIDCAUhwaaDnzhQ77cwmKPnxGh1oKIJetDbW+H2p1B1iGOV0HOTMC2Fjgh
+	/120/akdo6XaBBm2mGb0qzzZyt+EcsZ6haT0Lle9FuGojC2XEJr/lr1/spu30A1vYVPyAB8haqZ
+	wvtfNOqumUgmfVe9lOfoAkmfRFXm/z+pZrn5g=
+X-Google-Smtp-Source: AGHT+IHqRlNf/oMWPkXGiZZ/bQyY1Zyz7JykPKV0OzC4Wc0dfe4AMxnxEnKTPIXDC0llj17xKy+nfLfC93GpVvAQMyg=
+X-Received: by 2002:a05:6512:3e14:b0:545:48c:6352 with SMTP id
+ 2adb3069b0e04-549c3988015mr1487985e87.43.1741986411635; Fri, 14 Mar 2025
+ 14:06:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313210647.1314586-6-hannes@cmpxchg.org>
+References: <10629535.nUPlyArG6x@rjwysocki.net>
+In-Reply-To: <10629535.nUPlyArG6x@rjwysocki.net>
+From: Saravana Kannan <saravanak@google.com>
+Date: Fri, 14 Mar 2025 14:06:15 -0700
+X-Gm-Features: AQ5f1JoBBtBAAibKOwIryP0j59INA8ZBHFZCuGpPvRGBvm7KfnRM5xkSK4IkLbU
+Message-ID: <CAGETcx8VmzU9xy39=_QAQ0pf5fZY=EbGOKrdy0_wLEW1pQ2oKw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] PM: sleep: Improvements of async suspend and
+ resume of devices
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Andrew, could you please fold this delta patch?
+On Fri, Mar 14, 2025 at 6:24=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.ne=
+t> wrote:
+>
+> Hi Everyone,
+>
+> This is a new iteration of the async suspend/resume improvements work:
+>
+> https://lore.kernel.org/linux-pm/1915694.tdWV9SEqCh@rjwysocki.net/
+>
+> which includes some rework and fixes of the patches in the series linked
+> above.  The most significant differences are splitting the second patch
+> into two patches and adding a change to treat consumers like children
+> during resume.
+>
+> This new iteration is based on linux-pm.git/linux-next and on the recent
+> fix related to direct-complete:
+>
+> https://lore.kernel.org/linux-pm/12627587.O9o76ZdvQC@rjwysocki.net/
+>
+> The overall idea is still to start async processing for devices that have
+> at least some dependencies met, but not necessarily all of them, to avoid
+> overhead related to queuing too many async work items that will have to
+> wait for the processing of other devices before they can make progress.
+>
+> Patch [1/5] does this in all resume phases, but it just takes children
+> into account (that is, async processing is started upfront for devices
+> without parents and then, after resuming each device, it is started for
+> the device's children).
+>
+> Patches [2/5] does this in the suspend phase of system suspend and only
+> takes parents into account (that is, async processing is started upfront
+> for devices without any children and then, after suspending each device,
+> it is started for the device's parent).
+>
+> Patch [3/5] extends it to the "late" and "noirq" suspend phases.
+>
+> Patch [4/5] adds changes to treat suppliers like parents during suspend.
+> That is, async processing is started upfront for devices without any
+> children or consumers and then, after suspending each device, it is
+> started for the device's parent and suppliers.
+>
+> Patch [5/5] adds changes to treat consumers like children during resume.
+> That is, async processing is started upfront for devices without a parent
+> or any suppliers and then, after resuming each device, it is started for
+> the device's children and consumers.
+>
+> Preliminary test results from one sample system are below.
+>
+> "Baseline" is the linux-pm.git/testing branch, "Parent/child"
+> is that branch with patches [1-3/5] applied and "Device links"
+> is that branch with patches [1-5/5] applied.
+>
+> "s/r" means "regular" suspend/resume, noRPM is "late" suspend
+> and "early" resume, and noIRQ means the "noirq" phases of
+> suspend and resume, respectively.  The numbers are suspend
+> and resume times for each phase, in milliseconds.
+>
+>          Baseline       Parent/child    Device links
+>
+>        Suspend Resume  Suspend Resume  Suspend Resume
+>
+> s/r    427     449     298     450     294     442
+> noRPM  13      1       13      1       13      1
+> noIRQ  31      25      28      24      28      26
+>
+> s/r    408     442     298     443     301     447
+> noRPM  13      1       13      1       13      1
+> noIRQ  32      25      30      25      28      25
+>
+> s/r    408     444     310     450     298     439
+> noRPM  13      1       13      1       13      1
+> noIRQ  31      24      31      26      31      24
+>
+> It clearly shows an improvement in the suspend path after
+> applying patches [1-3/5], easily attributable to patch [2/5],
+> and clear difference after updating the async processing of
+> suppliers and consumers.
+>
+> Note that there are systems where resume times are shorter after
+> patches [1-3/5] too, but more testing is necessary.
+>
+> I do realize that this code can be optimized further, but it is not
+> particularly clear to me that any further optimizations would make
+> a significant difference and the changes in this series are deep
+> enough to do in one go.
 
----
+Thanks for adding patches 4 and 5!
 
-From 3d2ff7b72df9e4f1a31b3cff2ae6a4584c06bdca Mon Sep 17 00:00:00 2001
-From: Johannes Weiner <hannes@cmpxchg.org>
-Date: Fri, 14 Mar 2025 11:38:41 -0400
-Subject: [PATCH] mm: page_alloc: defrag_mode kswapd/kcompactd watermarks fix
+Let me try to test them early next week and compare your patches 1-3,
+1-5 and my series (which does additional checks to make sure
+suppliers/consumers are done). I do about 100 suspend/resume runs for
+each kernel, so please bear with me while I get it.
 
-Fix squawks from rebasing that affect the behavior of !defrag_mode.
-
-FWIW, it seems to actually have slightly helped the vanilla kernel in
-the benchmark. But the point was to not change the default behavior:
-
-                                                VANILLA        WMARKFIX-VANILLA
-Hugealloc Time mean               52739.45 (    +0.00%)   62758.21 (   +19.00%)
-Hugealloc Time stddev             56541.26 (    +0.00%)   76253.41 (   +34.86%)
-Kbuild Real time                    197.47 (    +0.00%)     197.25 (    -0.11%)
-Kbuild User time                   1240.49 (    +0.00%)    1241.33 (    +0.07%)
-Kbuild System time                   70.08 (    +0.00%)      71.00 (    +1.28%)
-THP fault alloc                   46727.07 (    +0.00%)   41492.73 (   -11.20%)
-THP fault fallback                21910.60 (    +0.00%)   27146.53 (   +23.90%)
-Direct compact fail                 195.80 (    +0.00%)     260.93 (   +33.10%)
-Direct compact success                7.93 (    +0.00%)       6.67 (   -14.18%)
-Direct compact success rate %         3.51 (    +0.00%)       2.76 (   -16.78%)
-Compact daemon scanned migrate  3369601.27 (    +0.00%) 3827734.27 (   +13.60%)
-Compact daemon scanned free     5075474.47 (    +0.00%) 5910839.73 (   +16.46%)
-Compact direct scanned migrate   161787.27 (    +0.00%)  168271.13 (    +4.01%)
-Compact direct scanned free      163467.53 (    +0.00%)  222558.33 (   +36.15%)
-Compact total migrate scanned   3531388.53 (    +0.00%) 3996005.40 (   +13.16%)
-Compact total free scanned      5238942.00 (    +0.00%) 6133398.07 (   +17.07%)
-Alloc stall                        2371.07 (    +0.00%)    2478.00 (    +4.51%)
-Pages kswapd scanned            2160926.73 (    +0.00%) 1726204.67 (   -20.12%)
-Pages kswapd reclaimed           533191.07 (    +0.00%)  537963.73 (    +0.90%)
-Pages direct scanned             400450.33 (    +0.00%)  450004.87 (   +12.37%)
-Pages direct reclaimed            94441.73 (    +0.00%)   99193.07 (    +5.03%)
-Pages total scanned             2561377.07 (    +0.00%) 2176209.53 (   -15.04%)
-Pages total reclaimed            627632.80 (    +0.00%)  637156.80 (    +1.52%)
-Swap out                          47959.53 (    +0.00%)   45186.20 (    -5.78%)
-Swap in                            7276.00 (    +0.00%)    7109.40 (    -2.29%)
-File refaults                    138043.00 (    +0.00%)  145238.73 (    +5.21%)
-
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
----
- mm/compaction.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 4a2ccb82d0b2..a481755791a9 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -3075,6 +3075,8 @@ static bool kcompactd_node_suitable(pg_data_t *pgdat)
- 	struct zone *zone;
- 	enum zone_type highest_zoneidx = pgdat->kcompactd_highest_zoneidx;
- 	enum compact_result ret;
-+	unsigned int alloc_flags = defrag_mode ?
-+		ALLOC_WMARK_HIGH : ALLOC_WMARK_MIN;
- 
- 	for (zoneid = 0; zoneid <= highest_zoneidx; zoneid++) {
- 		zone = &pgdat->node_zones[zoneid];
-@@ -3084,7 +3086,7 @@ static bool kcompactd_node_suitable(pg_data_t *pgdat)
- 
- 		ret = compaction_suit_allocation_order(zone,
- 				pgdat->kcompactd_max_order,
--				highest_zoneidx, ALLOC_WMARK_MIN,
-+				highest_zoneidx, alloc_flags,
- 				false, true);
- 		if (ret == COMPACT_CONTINUE)
- 			return true;
-@@ -3108,7 +3110,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
- 		.mode = MIGRATE_SYNC_LIGHT,
- 		.ignore_skip_hint = false,
- 		.gfp_mask = GFP_KERNEL,
--		.alloc_flags = ALLOC_WMARK_HIGH,
-+		.alloc_flags = defrag_mode ? ALLOC_WMARK_HIGH : ALLOC_WMARK_MIN,
- 	};
- 	enum compact_result ret;
- 
--- 
-2.48.1
-
+Thanks,
+Saravana
 
