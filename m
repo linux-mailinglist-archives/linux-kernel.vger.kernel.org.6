@@ -1,191 +1,209 @@
-Return-Path: <linux-kernel+bounces-562102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 454C1A61C1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:13:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 761BEA61C20
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:14:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 629E4460A1D
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35CC9884DBA
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE4620D514;
-	Fri, 14 Mar 2025 20:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F709205AD9;
+	Fri, 14 Mar 2025 20:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KiTM+Tvz"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qjc+zOJw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DAA205519;
-	Fri, 14 Mar 2025 20:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E82205ABB;
+	Fri, 14 Mar 2025 20:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741982854; cv=none; b=pLDsE3Vqudj9LcRQDc/xjdpmaoHE2oMyC6kg1e2OG8ors2yFmsw+a5BD/OtRrza9V5jRPPSWGxvVVYvRPO954vNCvCBvchFNjVEXbjXhLlC1gb4lBU+Q0ESIe8RVwpmGeSdpu3CXfwez1VMKqBUut5gdQP7dYdI43yrY1ML6KIY=
+	t=1741982989; cv=none; b=OSD/H77AQxr8zhFKSA98ecT4dsQZFZ9al5LRf9ZQjMBNZUx3pyX3YEMW70QJYtLaEU9vIB4tPxbiubjitISLIoBgKKo/f8CYAlfazy3uM9bcYQ36FOJH3OUaOGmlfHGbAKb9nHcAuBGDQ1/j/nWGtaSJ6GxXGWIEY54qsMLXE1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741982854; c=relaxed/simple;
-	bh=jMHqGd3lD2mdRD4W8Ylf0vQtB+nL3oICzQVLeqxy5BA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=M7M9+GhvsXapiMk8tHHrSILk8+Szyt/Mh05c99BuNKoc9VawMSVT65bUwFX5lC47Y/sm/IUoje5YolZuGTtnKkMb+vgsupqKYTEeZ4pHn14pL9PZuZlRZFfhGikqaB7sEPSgmiJl8khBg+iCnIRWF9DEzM4XBs/oPRsxOpG0d8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KiTM+Tvz; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52EA65VU029072;
-	Fri, 14 Mar 2025 20:07:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	j2UJCix3JztGr18PVp53iCTYdyjaY6rLNVnankBkSrI=; b=KiTM+TvzAXWFdi00
-	ucgycjwaLCXwbQzcAyR0yni7z0S7Ur+3M7zIxwr96+4UGbec73aJMDdy92bUbgj0
-	Z4Nlto0Wh/MdLEtAfT7uWWZ6nmWCOEkMXEC43pQDCjYM4tJloe20QTAmjwHg6xiC
-	FSp1uh3KeP9ChKhG983Mqb2LZKWL6pgOk8TnPattUaG5agwwVzKHgVQWGXMtPpGT
-	K0UH4mtHAo6Q8+aRfKn+XE/pec25W9XmN1rDS8sCgZRBLUzEdD6FwYZrothpMbKx
-	d3k7Hj9c/Fgk0JpQDb/u3LwhQqI773VJ2BQ9ZJS80Gpato/JdeTsCRDrPQE//a9V
-	nkQtpQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45c6733c5v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Mar 2025 20:07:14 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52EK7EsG028781
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Mar 2025 20:07:14 GMT
-Received: from [10.216.48.58] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 14 Mar
- 2025 13:07:08 -0700
-Message-ID: <4525d045-745a-4d8b-987e-45d3fa9917b5@quicinc.com>
-Date: Sat, 15 Mar 2025 01:37:05 +0530
+	s=arc-20240116; t=1741982989; c=relaxed/simple;
+	bh=bu9YvpGoo7Dv3D4pG2VJn76PECmkfqUMeBgCXk2byN4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Uv5Jr6DgqbIcmxVNyYplbkt7bEYo9JPN/LE6dEfFbCZc+d+rKHLaiEFSC0kGCkjV4D2+UeKok44yjhbNZkR5PwPlwkwkAUArT6wB0LlOjCc85zxoxQd3NXHgT3tZsPwnlGBemN0/PkI+xMTNrD+u/geKkomdSx6AXqwvE3BptyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qjc+zOJw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DF0D0C4CEE9;
+	Fri, 14 Mar 2025 20:09:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741982988;
+	bh=bu9YvpGoo7Dv3D4pG2VJn76PECmkfqUMeBgCXk2byN4=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=qjc+zOJwsJPvcDLkXGuIaxbNs1zNW1HhHZCTfjxU6gPPvDuMe1CrSTxZBssdOGXp2
+	 wj70RuqwnRaSmjtDDWoT4R+3iheesoiEzL/uAEYYPuOEjzmBrmXcsmlfXeH8Pupg/3
+	 KeIfwBbQolzqDDUnJxT2+xlk5EHMXIwD8epnq18tKAdF8ZEXSl24VMQjeKi81rv3bW
+	 cMZI5hV5tiV8i01IwATVofDHKLJdfBUIBl/yz9ZM5HEzCnV7egB3Zjv4KWqurFg2+g
+	 JOwpjKJjjCefI4awc+VBA4kVtpCS7ssB6zhwY1zIawhX7JhsqgjRKmHQ5zZedmMHEC
+	 xBeANlEUPcFSQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B5CC282EC;
+	Fri, 14 Mar 2025 20:09:48 +0000 (UTC)
+From: Denis Mukhin via B4 Relay <devnull+dmukhin.ford.com@kernel.org>
+Date: Fri, 14 Mar 2025 13:09:45 -0700
+Subject: [PATCH v2] x86/early_printk: add MMIO-based UARTs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/msm/a6xx+: Don't let IB_SIZE overflow
-To: Rob Clark <robdclark@gmail.com>, <dri-devel@lists.freedesktop.org>
-CC: <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
-        "Rob
- Clark" <robdclark@chromium.org>,
-        Connor Abbott <cwabbott0@gmail.com>, "Sean
- Paul" <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Abhinav
- Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        "Marijn Suijten" <marijn.suijten@somainline.org>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jordan Crouse
-	<jordan@cosmicpenguin.net>,
-        Jonathan Marek <jonathan@marek.ca>,
-        open list
-	<linux-kernel@vger.kernel.org>
-References: <20250314183455.120824-1-robdclark@gmail.com>
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <20250314183455.120824-1-robdclark@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=a5Iw9VSF c=1 sm=1 tr=0 ts=67d48c72 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=cm27Pg_UAAAA:8 a=pGLkceISAAAA:8 a=8h70kQ2kJuFCpcA7z_cA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: 4Z5HyAAkr8OH45VbzAufHEIhCnbXlY58
-X-Proofpoint-ORIG-GUID: 4Z5HyAAkr8OH45VbzAufHEIhCnbXlY58
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-14_08,2025-03-14_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- suspectscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
- impostorscore=0 clxscore=1011 spamscore=0 mlxscore=0 adultscore=0
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503140155
+Message-Id: <20250314-earlyprintk-v2-1-2bcbe05290b8@ford.com>
+X-B4-Tracking: v=1; b=H4sIAAiN1GcC/23MQQ7CIBCF4as0sxYDNFriyns0XVAY7EQtzdAQm
+ 4a7i127/F/yvh0SMmGCW7MDY6ZEca6hTw24yc4PFORrg5b6IlvVCrT82hameX2KcDWjC0oGHB3
+ Ux8IY6HNo/VB7orRG3g48q9/638lKKGGCUcZ3nTXe30Nkf3bxDUMp5QuxcbaTpQAAAA==
+X-Change-ID: 20250313-earlyprintk-f68bcf10febc
+To: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, 
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+ "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Denis Mukhin <dmukhin@ford.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741982987; l=4186;
+ i=dmukhin@ford.com; s=20241125; h=from:subject:message-id;
+ bh=nRjw5s6qvJdy0IHWC7BFiP/737YxH4rYS8hst3iRRtM=;
+ b=+5cgtBnIGpj9caRMXvhQnolR3F9sf8P0BFHozEvxkBONhdQ/y/htcvvW9uK/LYms512hXpr9i
+ Thl43dAF4clDRASBgrehH9Emf9gz7S1h7TfPTJCNEhMVsKXhCTkZdVp
+X-Developer-Key: i=dmukhin@ford.com; a=ed25519;
+ pk=SsDZ9p39s0fqcpUKQuqKqrbn0rq6EtEAClvpOpzx6+U=
+X-Endpoint-Received: by B4 Relay for dmukhin@ford.com/20241125 with
+ auth_id=287
+X-Original-From: Denis Mukhin <dmukhin@ford.com>
+Reply-To: dmukhin@ford.com
 
-On 3/15/2025 12:04 AM, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
-> 
-> IB_SIZE is only b0..b19.  Starting with a6xx gen3, additional fields
-> were added above the IB_SIZE.  Accidentially setting them can cause
-> badness.  Fix this by properly defining the CP_INDIRECT_BUFFER packet
-> and using the generated builder macro to ensure unintended bits are not
-> set.
-> 
-> v2: add missing type attribute for IB_BASE
-> 
-> Reported-by: Connor Abbott <cwabbott0@gmail.com>
-> Fixes: a83366ef19ea ("drm/msm/a6xx: add A640/A650 to gpulist")
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
-> Backport notes, prior to commit ae22a94997b8 ("drm/msm: import A2xx-A4xx
-> XML display registers database"), just open code, ie:
-> 
->    OUT_RING(ring, submit->cmd[i].size & 0xfffff);
-> 
-> Prior to commit af66706accdf ("drm/msm/a6xx: Add skeleton A7xx
-> support"), a7xx_submit() did not exist so that hunk can be dropped.
-> 
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c               | 8 ++++----
->  drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml | 7 +++++++
->  2 files changed, 11 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> index d3978cfa3f20..ea52b7d0b212 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> @@ -245,10 +245,10 @@ static void a6xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
->  				break;
->  			fallthrough;
->  		case MSM_SUBMIT_CMD_BUF:
-> -			OUT_PKT7(ring, CP_INDIRECT_BUFFER_PFE, 3);
-> +			OUT_PKT7(ring, CP_INDIRECT_BUFFER, 3);
->  			OUT_RING(ring, lower_32_bits(submit->cmd[i].iova));
->  			OUT_RING(ring, upper_32_bits(submit->cmd[i].iova));
-> -			OUT_RING(ring, submit->cmd[i].size);
-> +			OUT_RING(ring, A5XX_CP_INDIRECT_BUFFER_3_IB_SIZE(submit->cmd[i].size));
->  			ibs++;
->  			break;
->  		}
-> @@ -382,10 +382,10 @@ static void a7xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
->  				break;
->  			fallthrough;
->  		case MSM_SUBMIT_CMD_BUF:
-> -			OUT_PKT7(ring, CP_INDIRECT_BUFFER_PFE, 3);
-> +			OUT_PKT7(ring, CP_INDIRECT_BUFFER, 3);
->  			OUT_RING(ring, lower_32_bits(submit->cmd[i].iova));
->  			OUT_RING(ring, upper_32_bits(submit->cmd[i].iova));
-> -			OUT_RING(ring, submit->cmd[i].size);
-> +			OUT_RING(ring, A5XX_CP_INDIRECT_BUFFER_3_IB_SIZE(submit->cmd[i].size));
->  			ibs++;
->  			break;
->  		}
-> diff --git a/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml b/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
-> index 55a35182858c..a71bc6f16cbf 100644
-> --- a/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
-> +++ b/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
-> @@ -2259,5 +2259,12 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
->  	</reg32>
->  </domain>
->  
-> +<domain name="CP_INDIRECT_BUFFER" width="32" varset="chip" prefix="chip" variants="A5XX-">
-> +	<reg64 offset="0" name="IB_BASE" type="address"/>
-> +	<reg32 offset="3" name="3">
+From: Denis Mukhin <dmukhin@ford.com>
 
-Why is the offset 3 here? It looks to me that it doesn't match the code
-above.
+During the bring-up of an x86 board, the kernel was crashing before
+reaching the platform's console driver because of a bug in the firmware,
+leaving no trace of the boot progress.
 
--Akhil.
+It was discovered that the only available method to debug the kernel
+boot process was via the platform's MMIO-based UART, as the board lacked
+an I/O port-based UART, PCI UART, or functional video output.
 
-> +		<bitfield name="IB_SIZE" low="0" high="19"/>
-> +	</reg32>
-> +</domain>
-> +
->  </database>
->  
+Then it turned out that earlyprintk= does not have a knob to configure
+the MMIO-mapped UART.
+
+Extend the early printk facility to support platform MMIO-based UARTs
+on x86 systems, enabling debugging during the system bring-up phase.
+
+The command line syntax to enable platform MMIO-based UART is:
+  earlyprintk=mmio,membase[,{nocfg|baudrate}][,keep]
+
+Note, the change does not integrate MMIO-based UART support to:
+  arch/x86/boot/early_serial_console.c
+
+Signed-off-by: Denis Mukhin <dmukhin@ford.com>
+---
+Changes in v2:
+- Fixed description of early_mmio_serial_init()
+- Link to v1: https://lore.kernel.org/r/20250313-earlyprintk-v1-1-8f818d77a8dd@ford.com
+---
+ Documentation/admin-guide/kernel-parameters.txt |  4 +++
+ arch/x86/kernel/early_printk.c                  | 42 ++++++++++++++++++++++++-
+ 2 files changed, 45 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index fb8752b42ec8582b8750d7e014c4d76166fa2fc1..bee9ee18a506d019dc3d330268e3e1c83434ebba 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1414,11 +1414,15 @@
+ 			earlyprintk=pciserial[,force],bus:device.function[,baudrate]
+ 			earlyprintk=xdbc[xhciController#]
+ 			earlyprintk=bios
++			earlyprintk=mmio,membase[,{nocfg|baudrate}][,keep]
+ 
+ 			earlyprintk is useful when the kernel crashes before
+ 			the normal console is initialized. It is not enabled by
+ 			default because it has some cosmetic problems.
+ 
++			Use "nocfg" to skip UART configuration, assume
++			BIOS/firmware has configured UART correctly.
++
+ 			Append ",keep" to not disable it when the real console
+ 			takes over.
+ 
+diff --git a/arch/x86/kernel/early_printk.c b/arch/x86/kernel/early_printk.c
+index 44f937015e1e25bf41532eb7e1031a6be32a6523..068729a53e87cafd27ea9de1781887dff01d5710 100644
+--- a/arch/x86/kernel/early_printk.c
++++ b/arch/x86/kernel/early_printk.c
+@@ -191,7 +191,6 @@ static __init void early_serial_init(char *s)
+ 	early_serial_hw_init(divisor);
+ }
+ 
+-#ifdef CONFIG_PCI
+ static void mem32_serial_out(unsigned long addr, int offset, int value)
+ {
+ 	u32 __iomem *vaddr = (u32 __iomem *)addr;
+@@ -206,6 +205,42 @@ static unsigned int mem32_serial_in(unsigned long addr, int offset)
+ 	return readl(vaddr + offset);
+ }
+ 
++/*
++ * early_mmio_serial_init() - Initialize MMIO-based early serial console.
++ * @s: MMIO-based serial specification.
++ */
++static __init void early_mmio_serial_init(char *s)
++{
++	unsigned long baudrate;
++	unsigned long membase;
++	char *e;
++
++	if (*s == ',')
++		s++;
++
++	if (!strncmp(s, "0x", 2)) {
++		membase = simple_strtoul(s, &e, 16);
++		early_serial_base = (unsigned long)early_ioremap(membase, PAGE_SIZE);
++		serial_in = mem32_serial_in;
++		serial_out = mem32_serial_out;
++
++		s += strcspn(s, ",");
++		if (*s == ',')
++			s++;
++	}
++
++	if (!strncmp(s, "nocfg", 5))
++		baudrate = 0;
++	else {
++		baudrate = simple_strtoul(s, &e, 0);
++		if (baudrate == 0 || s == e)
++			baudrate = DEFAULT_BAUD;
++	}
++	if (baudrate)
++		early_serial_hw_init(115200 / baudrate);
++}
++
++#ifdef CONFIG_PCI
+ /*
+  * early_pci_serial_init()
+  *
+@@ -352,6 +387,11 @@ static int __init setup_early_printk(char *buf)
+ 	keep = (strstr(buf, "keep") != NULL);
+ 
+ 	while (*buf != '\0') {
++		if (!strncmp(buf, "mmio", 4)) {
++			early_mmio_serial_init(buf + 4);
++			early_console_register(&early_serial_console, keep);
++			buf += 4;
++		}
+ 		if (!strncmp(buf, "serial", 6)) {
+ 			buf += 6;
+ 			early_serial_init(buf);
+
+---
+base-commit: 8aed61b8334e00f4fe5de9f2df1cd183dc328a9d
+change-id: 20250313-earlyprintk-f68bcf10febc
+
+Best regards,
+-- 
+Denis Mukhin <dmukhin@ford.com>
+
 
 
