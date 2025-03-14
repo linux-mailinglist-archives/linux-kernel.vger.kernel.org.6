@@ -1,113 +1,149 @@
-Return-Path: <linux-kernel+bounces-560912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4196A60AEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:12:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BB93A60AEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:13:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51463A261E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:12:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FCF516AC40
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB61198833;
-	Fri, 14 Mar 2025 08:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B95194137;
+	Fri, 14 Mar 2025 08:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FRyWSnqM"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="JgJckKZm"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C6C13E02D
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E1219408C
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741939931; cv=none; b=cwyDhgdueoexTjmNWRYK0qLLdyxNgr4hoHC0Br3BnY2YWmCiYtoMmKpW5YjlkOxDKbVqahBqatEN7l9ZMdOBm+ozDKLX9YXnrmVwpDSirWLlVGqSNU9I7bFBTJxh+HlTbKlzQS6JMmgfXIPlVb6z5aEX4YKXA0VtFwVGJHdEybM=
+	t=1741939993; cv=none; b=dM/UthvQxPQ2kR7CKWIjTkXTBdxuwCxOmMccj2fcMJFlE/HwYBToc630c/Hjt4YavbsReoYgUXTC/qvuFnWYCR9hYjZNhysD0r0CC/3QmkTty2evYWX4pT3Cc/beMapZ/EkUuFWUJCOh2RdpsmOrkX7mWOQDyJMyic7bgRFNaFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741939931; c=relaxed/simple;
-	bh=8cylVulYPsuLj2+UhzkDhFzJQRXHh4cjgiNVztEekzg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FiPPNZjcDerZ1LFK5m6AyikB4+GjJIqWeOeASSaKZkuVDuw5csP436aP8cttTBdx6BHsaKRo0C/DVuHVT0mmKu53QfGPfwE18oe0DMxmfhXHwPtXXsBiZAGldG9uZnYzs3Wqnz30tyVT4a0wqGC1bsujP+pNh975swvS/WIIhL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FRyWSnqM; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54954fa61c9so2235675e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:12:09 -0700 (PDT)
+	s=arc-20240116; t=1741939993; c=relaxed/simple;
+	bh=aBoaIA8pL5dPRNJ/NbTzYxXHLL9HdGISKk2JuLHQGXI=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=bawJ5g1AznYwevIxw997azfOvotdvTPuttZREdzKwwDgHIuNo7hJu7YKgrnm0sEgwKuHUJycYheEzUEbXapL0z3K0S3e3IsY0Bp6sTeOcB/XZan0sTpNgratP9YDZ+4YrpXosQyUshzD88UyXXdmy1NL4iBoH5Fzpy4Q523LimA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=JgJckKZm; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-225d66a4839so18738865ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:13:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741939927; x=1742544727; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8cylVulYPsuLj2+UhzkDhFzJQRXHh4cjgiNVztEekzg=;
-        b=FRyWSnqMEyPY+gP/jY8GMChTQDD7FoaYmdrauibjYspGsEJpAZpgxaKKfkNUczeEcR
-         n29CanJ+CrsFvqe3vIAr9F8Qp7U5bhf48RtP7aa0+K8H3QHt+oiNYj9TtLMreBp6Tdpz
-         EYT6K365tXBiP6Bw4e6AFYc0BmBKUt0b/fmfMYCq23jKWJ3ApVP0TlxcfzlND+if5VT+
-         I8jBv02KNzzKfjwxHKPhnAxmq61HjUPlqOuD8DOADBABX83NCYk01Jhz74qhknMP9pAY
-         6A+MW3txCTp1F5ev2lOic0gowPqPutxDtIR29OzpIZGZ6o6UZlu/adXHAzaVXAYV9+o9
-         JrQA==
+        d=sifive.com; s=google; t=1741939992; x=1742544792; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mIaypJwWB+9Cndggia9exzQ6t2dGjEXmye283vVYlI0=;
+        b=JgJckKZmSp2AP6KqwvTSkWxomm/g8Ffk/KsLG27YD+8UwrApDIo0lX6Q6dFNRdNOXf
+         2Jk4tlGPaBqeJlamdzvvAdYDXjQobXRBQojHAcet0whmJd+IdOwXInPjMO11CFveN6Ub
+         md54E/rPe884+II3J9ZI47FIqFXYUHT9KA5vhMQn7btqE/UN5P+bRgtrv+7Gm4JfNgjE
+         3V0sTIUA0sPKFsmWSUV4LvROY/4btpX/s6S0W7S8BLBCTLjdFyP9rdn7QCAjcrTPMj+l
+         bu6WTG/YUXCdGTa/WceijqlxcfN4mk+5lKLCzuRz3m8sTVMW8UbiEKuYatIKWv5lXF28
+         QDvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741939927; x=1742544727;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8cylVulYPsuLj2+UhzkDhFzJQRXHh4cjgiNVztEekzg=;
-        b=dg8MN7E9qCoLx/6q40P0TbNG41M4ohENld1ouqYmiFfH9zj74+nFYPm+iczAB4SciE
-         xplAXzdU0InnQQTkbnkIE22GKW6lgSz3uvGYjMSkrk3fwX/q+LQyPKQvebokX/KUwF+c
-         +4qHmsAJcz8n8tkiYBJKPGFocuy++lyk5vhNY+UyUaE3sGsOMpN3TKtBDt0dKXTnwAGz
-         9wlskuXjg2NZFDBT85DCS6Ok/9PWhbm2N+3kWaUzKIrgLjTwmH1AgqJhzsSHJdl+gMVv
-         Om+PvI5mls5MKhRLU5jVchTiIliV37gq09fEl812zozrlM8NHxalhK4GN5I1mXrglmZ/
-         GXeg==
-X-Forwarded-Encrypted: i=1; AJvYcCUw7AbKTYq3WNQyLq5fyovieFYtmduKI1DsQdyEJan0hn9LBYrCTXGn/u9JXyH/oDC7LV0rWb/a9R1fb4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMi4YrtpBHkxaPNVWrxq5K2cVbNrBYJQgP+r7csMVVocZOOwzw
-	bPRfwwH7Bz+ObTyczvTmZC7JhsjvB4nwLxZdyv7FF/RynKNL/80q8quafsbXX2JOqa6O4bRj9j3
-	PuFq0DxZtgDMXpw270oxcZb9cCwJMeFqdpukgtQ==
-X-Gm-Gg: ASbGncvkrJSB6ar4+Z6tJ0HlGFDuVmChnKRrrB6OlKBn3/z4d3BDtntKdqTSvvN1ldI
-	QpRRJLx4O272F7q15ZNGsN+f7NMOw5JD3TAwZRd9MNe3C+0ywc1pkyFKDY9xLxx0SVY+wHQjGbn
-	kHClA46Ds9e/tk5IGCU4NRw7ihanRx7J8=
-X-Google-Smtp-Source: AGHT+IHGGeVJFh8IQpmki3V8LS3prqRn4mV+TlJsniBWV8GinnRd8uZ8FEwuJhvhNULLOQP3lZKdtvLj/4wJYkEQLZY=
-X-Received: by 2002:a05:6512:10cd:b0:549:4e88:2e6a with SMTP id
- 2adb3069b0e04-549c38f52b3mr415545e87.6.1741939927425; Fri, 14 Mar 2025
- 01:12:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741939992; x=1742544792;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mIaypJwWB+9Cndggia9exzQ6t2dGjEXmye283vVYlI0=;
+        b=oV+W8CbLjYU+h1r5KZ9H3nq95nBNFifx3FRT3ijlndS2a9PRe0iZh+K4xS0GjKBudu
+         eoj2Hq/xUjWu89eAqGAyBd+swQiTrdOElP6K6U40cpGyTquSNZ9q3Fhm9yry5JNfnkZE
+         c5N5VwP/k906gsWtfEFZ/X+lx2Xu+4+Q1iOhgl+wcM7VE3WYlnWwtPvpVTkscYLb2Lq1
+         4qqygf9e0eGdqSkAgCGQI2BN+1R+JeYcFac6J26FbW7/Bt8a3IixvsfwoPwgEcLv41Bu
+         we/2t6Es/fMRPwAM2cZAOesGm6SYY8h+BmLc2+Ow8Tlm+vypW9uJAKeriRqHZvZLXYf8
+         mgbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWBSFNgVot356Tv9nUmNPKcCtPPsTiSbOFEOVJYKTD7kqZHAYw38bNSF2/Cxs3rIu/KbA98OJuAr7R2Jg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQK5O7nBR4Cyw/ndrYbPzBo/UkXVLn82QTBl6zvS9hJ81QGRPB
+	udpBZ8kkXD1RkpkuypaL2NGW2EYbyPqYV0g/OpwDFGbekKg9NqfjGvQkT9VBdyQ=
+X-Gm-Gg: ASbGncss9/WwZVJyZx4DrCLRoOxnZeCjaqODJ6dd6PB3nZqxko2T95g7pwpEzalGfS6
+	MVeb8CDTTDnhxmGltnbO+XuTNcQfHGAI+igOH3BQgKwEXA7gt9e2mVT1FSkQmfmrpbTpvdhMgxM
+	uJQ8xGgcg2S1WIVPNy6Uc9SCH2ikqXt7kshB2AOlsWkRePOQtHyLsP6c5oynsT3fF4d3HshKZOc
+	HAezwkRvz547UNo9wTNOV9iGo6Dbkjt4AwuWjTUrPhletHF79UCuF1mE1hLgbV3uBcUze7McSAa
+	ObtTxc/UI+aM8w+CznG6oY07dZlMA8GmKp7K8owN0TqZrkkcG/l12ESVdRBDn/2gjN4=
+X-Google-Smtp-Source: AGHT+IEU8f9gJD9fpGi0dkqDON/MFDwlzwvX7/+G8p0jqw7GozR3XpJHe76R/qoNe2N8VD05r7VjlQ==
+X-Received: by 2002:a17:90a:d003:b0:2ff:53d6:2b82 with SMTP id 98e67ed59e1d1-30135f4e5f5mr7721021a91.11.1741939991712;
+        Fri, 14 Mar 2025 01:13:11 -0700 (PDT)
+Received: from hsinchu26.internal.sifive.com ([210.176.154.34])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3015364ec2bsm611920a91.46.2025.03.14.01.13.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 01:13:11 -0700 (PDT)
+From: Nick Hu <nick.hu@sifive.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Anup Patel <anup@brainfault.org>
+Cc: Nick Hu <nick.hu@sifive.com>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v2] dt-bindings: timer: Add SiFive CLINT2
+Date: Fri, 14 Mar 2025 16:12:54 +0800
+Message-Id: <20250314081255.3718-1-nick.hu@sifive.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250313051953.4064532-1-baolu.lu@linux.intel.com>
-In-Reply-To: <20250313051953.4064532-1-baolu.lu@linux.intel.com>
-From: Zhangfei Gao <zhangfei.gao@linaro.org>
-Date: Fri, 14 Mar 2025 16:11:56 +0800
-X-Gm-Features: AQ5f1JoAIzauNjyPIPxiG7nniTwbUahcmK3Y--Iy4ho8pIyBMKTUSfeN7GKy6pY
-Message-ID: <CABQgh9G2kTqWvjDTMupCJ_YNMxTg75PwgooMSsvEuT_hvemvDw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] iommu: Remove IOMMU_DEV_FEAT_SVA/_IOPF
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>, 
-	Fenghua Yu <fenghuay@nvidia.com>, Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
 
-Hi, Baolu
+Add compatible string and property for the SiFive CLINT v2.
 
-On Thu, 13 Mar 2025 at 13:19, Lu Baolu <baolu.lu@linux.intel.com> wrote:
->
-> The new method for driver fault reporting support relies on the domain
-> to specify a iopf_handler. The driver should detect this and setup the
-> HW when fault capable domains are attached.
->
-> Move SMMUv3 to use this method and have VT-D validate support during
-> attach so that all three fault capable drivers have a no-op FEAT_SVA and
-> _IOPF. Then remove them.
->
-> This was initiated by Jason. I'm following up to remove FEAT_IOPF and
-> further clean up.
->
-> The whole series is also available at github:
-> https://github.com/LuBaolu/intel-iommu/commits/iommu_no_feat-v4
+Signed-off-by: Nick Hu <nick.hu@sifive.com>
+Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+---
+- v2 changes:
+  - Don't allow sifive,clint2 by itself. Add '-{}' to the first entry
+  - Mark the sifive,fine-ctr-bits as the required property when
+    the compatible includes the sifive,clint2
 
-I retested this branch, and it works
+ .../bindings/timer/sifive,clint.yaml          | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-https://github.com/Linaro/linux-kernel-uadk/tree/iommu_no_feat-v4
+diff --git a/Documentation/devicetree/bindings/timer/sifive,clint.yaml b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+index 76d83aea4e2b..4b9dad11c1e9 100644
+--- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
++++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+@@ -36,6 +36,10 @@ properties:
+               - starfive,jh7110-clint   # StarFive JH7110
+               - starfive,jh8100-clint   # StarFive JH8100
+           - const: sifive,clint0        # SiFive CLINT v0 IP block
++      - items:
++          - {}
++          - const: sifive,clint2        # SiFive CLINT v2 IP block
++        description: SiFive CLINT v2 is the HRT that supports the Zicntr
+       - items:
+           - enum:
+               - allwinner,sun20i-d1-clint
+@@ -62,6 +66,22 @@ properties:
+     minItems: 1
+     maxItems: 4095
+ 
++  sifive,fine-ctr-bits:
++    maximum: 15
++    description: The width in bits of the fine counter.
++
++if:
++  properties:
++    compatible:
++      contains:
++        const: sifive,clint2
++then:
++  required:
++    - sifive,fine-ctr-bits
++else:
++  properties:
++    sifive,fine-ctr-bits: false
++
+ additionalProperties: false
+ 
+ required:
+-- 
+2.17.1
 
-Thanks
 
