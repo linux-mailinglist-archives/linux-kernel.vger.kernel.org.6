@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-561226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D316A60EFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:33:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BE10A60EFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:33:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1FE33BDD50
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:33:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E64D91702B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA691F4701;
-	Fri, 14 Mar 2025 10:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DC41FBC89;
+	Fri, 14 Mar 2025 10:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="i4nxJ8AB"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oYCLKhCp"
 Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA66B1F9A90
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FD71FAC25
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741948320; cv=none; b=sJ09TmBMrBSJOAZlM2WAlHEYr93ep1XcJ4NknmVedAsOUSSH8ymXqMoXafeA8g7/p79G5r8gasySKVh9qkHntgpv09U0gidi+York8lICtBPemQAJYhnNRyreUVRtddMD62LScmwOyIok9uNS1JM/3iKT1nXPwm+/f5TysrqNfs=
+	t=1741948322; cv=none; b=Vx7G0sDVboYTZ4i2DyRA3aOdJ6g+ty9hBK2EVp2NI5yYYM0d945laQuxsVb3LdkMKJyZwrrrJOCGs7VLrgFwJTgHFYLR8dzFFmYkmwzFRi+S3b6akzY3reDN+lHbVIg1DqV05G8N3TP6uPVW/wikDEwcraoTaiDM8XG3eC/L8Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741948320; c=relaxed/simple;
-	bh=MWEUI/MKv2SQyqU4wPPEukllb7IG0d8BltCdfbjY0zI=;
+	s=arc-20240116; t=1741948322; c=relaxed/simple;
+	bh=ekiRdX9vdVrqgZj/ZjFfDACAiwswC32h4LbUeMmoiR4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fuXQ1VIrVfpXDGDk6lno3GIsWQewGCRBoaUldNRQ/nb+iIwAnkVBtOdQr4khJKZ9bMmbC7lUXRmq5VLSocpVc/33Id1ZOdwAgPhn92ISsRr8iWbApj45CGDebQyJEXPVTrz934WKUagKYmkaRXwqRJ10AJsSmnPcxKVsHNO19qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=i4nxJ8AB; arc=none smtp.client-ip=217.70.183.197
+	 In-Reply-To:To:Cc; b=IQHIPccvCFIjNpqCLUEwEUup5tSvW5WiwY7/fr+eqZB+PS6NfotAVfP4in1Fc8TEn8GzWkHGtR02r7181tso7CcpU6y0AfR+q7c99Y9lpHYo1RDEu66a4sqKI9R9trHRLQmkqGDlP6yfb3/STaXJ6bLJJSqidxpTF/6/FO+AUgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oYCLKhCp; arc=none smtp.client-ip=217.70.183.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D01D843304;
-	Fri, 14 Mar 2025 10:31:54 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3F1EB432F7;
+	Fri, 14 Mar 2025 10:31:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741948317;
+	t=1741948319;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tGazKhnUrz2m3Yxz820940GMFtgH3qDzJRfgzSPMcnk=;
-	b=i4nxJ8AB7jrTrrVAJJ1OPEteX1OYkHVwMelVY7A8E+r7+vxwfgD5ifMdm5aDuFrG1C46rK
-	Xkb513+S0txuw3N9TWjjfP/YDFGH1dRRBQHCFue3E6I/3+C2Sn2tfDB5t+1UQ2ZYPmmK0l
-	GJ0S6/vqtsfgh/SllTn3GFuol5XNPCs8XzWaEpTr7qg4dHh7N1pnEWq0sqJeSGs8QofWEW
-	ycufMnKuZbgqZxq14k7+cUfg91tFKHlVgBGvOztqhdv8WUSU9jRe2j/GcTkPsxIFddiL8E
-	FGZMFUNUwBNOrpwSQWBrtWhvnvS1hjpQa827Wo8KPtdYKgXcsgI9Cyis2SDxQw==
+	bh=/XKer6YRzFC14aGKwfShakn2j9MH1LzXqYnu+85QMDI=;
+	b=oYCLKhCpkUSfVDFsTef4kEEhEtrt57hqo9DiqZimZ+kP38HnpNI+oB/DQdpmG9kslsatL3
+	sf6LLlZdS0sDMYcUedmogR+OtuiDgpznIGj6ZZZo+j0W7E5TnLRQU36nzajyKBEXtnVV3x
+	9Gnf+zwJuYUrAaPQsmchlkh4Uk/Jg4xFoWET6Hyj/Z/y/4YnACduByU1FIBmyq/5BWIZV8
+	eTLnf6x+k7EnXcDO/EEjfszFrhClEp9vbsrIyoFalx1pvYxux5mTykbzxQl4fKi12xiQxp
+	eLts8ukaDXw6JmMvVnWE3Z6LjiSO9fl3FdIw1SLO3kWVP4bSHx3t6acKkTlDRQ==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 14 Mar 2025 11:31:22 +0100
-Subject: [PATCH v7 09/11] drm/probe-helper: put the bridge returned by
- drm_bridge_chain_get_first_bridge()
+Date: Fri, 14 Mar 2025 11:31:23 +0100
+Subject: [PATCH v7 10/11] drm/bridge: ti-sn65dsi83: use dynamic lifetime
+ management
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250314-drm-bridge-refcount-v7-9-152571f8c694@bootlin.com>
+Message-Id: <20250314-drm-bridge-refcount-v7-10-152571f8c694@bootlin.com>
 References: <20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com>
 In-Reply-To: <20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -87,30 +87,49 @@ X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedtiedtucetufdoteggode
  hgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdprhgtphhtthhopehprghulhhksehshihsqdgsrghsvgdrihhopdhrtghpthhtoheprghsrhhivhgrthhssehrvgguhhgrthdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgv
 X-GND-Sasl: luca.ceresoli@bootlin.com
 
-The bridge returned by drm_bridge_chain_get_first_bridge() is
-refcounted. Put it when done.
+Allow this bridge to be removable without dangling pointers and
+use-after-free, together with proper use of drm_bridge_get() and _put() by
+consumers.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
 ---
 
-This patch was added in v7.
----
- drivers/gpu/drm/drm_probe_helper.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v7: none
 
-diff --git a/drivers/gpu/drm/drm_probe_helper.c b/drivers/gpu/drm/drm_probe_helper.c
-index 7ba16323e7c2f4bc7ec61f96b01ddfe28461b6a0..15525124ee66b512979e5c4774dd765618bd15d7 100644
---- a/drivers/gpu/drm/drm_probe_helper.c
-+++ b/drivers/gpu/drm/drm_probe_helper.c
-@@ -119,6 +119,7 @@ drm_mode_validate_pipeline(struct drm_display_mode *mode,
- 		*status = drm_bridge_chain_mode_valid(bridge,
- 						      &connector->display_info,
- 						      mode);
-+		drm_bridge_put(bridge);
- 		if (*status != MODE_OK) {
- 			/* There is also no point in continuing for crtc check
- 			 * here. */
+Changed in v6:
+ - Update to use devm_drm_bridge_alloc(), remove .destroy
+
+This patch was added in v5.
+---
+ drivers/gpu/drm/bridge/ti-sn65dsi83.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+index 5f8bfeeb553f970671a602fcf2594016243b9db2..bc092fb926563439e316c2cb5a817bd938093df4 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+@@ -952,9 +952,9 @@ static int sn65dsi83_probe(struct i2c_client *client)
+ 	struct sn65dsi83 *ctx;
+ 	int ret;
+ 
+-	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+-	if (!ctx)
+-		return -ENOMEM;
++	ctx = devm_drm_bridge_alloc(dev, struct sn65dsi83, bridge, &sn65dsi83_funcs);
++	if (IS_ERR(ctx))
++		return PTR_ERR(ctx);
+ 
+ 	ctx->dev = dev;
+ 	INIT_WORK(&ctx->reset_work, sn65dsi83_reset_work);
+@@ -994,7 +994,6 @@ static int sn65dsi83_probe(struct i2c_client *client)
+ 	dev_set_drvdata(dev, ctx);
+ 	i2c_set_clientdata(client, ctx);
+ 
+-	ctx->bridge.funcs = &sn65dsi83_funcs;
+ 	ctx->bridge.of_node = dev->of_node;
+ 	ctx->bridge.pre_enable_prev_first = true;
+ 	ctx->bridge.type = DRM_MODE_CONNECTOR_LVDS;
 
 -- 
 2.48.1
