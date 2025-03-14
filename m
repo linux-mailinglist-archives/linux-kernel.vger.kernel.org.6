@@ -1,86 +1,99 @@
-Return-Path: <linux-kernel+bounces-562005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC69A61A4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:22:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F365A61A64
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:25:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FC807AA634
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:21:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 897E119C4BC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BE3204F6F;
-	Fri, 14 Mar 2025 19:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA47B204F7C;
+	Fri, 14 Mar 2025 19:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="nHOTwdJm"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803BA204C09;
-	Fri, 14 Mar 2025 19:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lcwAW6o9"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FCC1FF1AF;
+	Fri, 14 Mar 2025 19:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741980141; cv=none; b=qhxiVoY46G9MWJTmlKaaBPb6oc+FSG3+4lqjKP4vFkaB6BeCS4Ij5uz5B8DGAtGBXXKdmlUneI/rBf4KE6aVuHU5hUH0yynDClLQdJEjJKUqVXI4TjzHoyGVT0pcQJgZ8AS7yq2usW/ZMSKTtanKB+tmm6D1WEmD26u1Dc9INJ0=
+	t=1741980342; cv=none; b=Dodr5lIvTlw4GXHVN86dEMd6w4TkvVge6wkCMd4expOdrKEYwJOrVZMtfv0T3nRwXdk0RE+oN7C81HGe/UjgoKWkS9Y5VkamTW/YwqM5+qMAMZQwwLWKvY5vufVq8aVF+ZQvs492orTlnDcBHaJ4Lv0ZFOPzEF4KdLirr080AFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741980141; c=relaxed/simple;
-	bh=5wStfRse0ijF6zcJLGwhrVt53N+8xSvK12PqiJP104I=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W7iSydCqMfi7drZLZJ3VCJJdB/mU1Z7nBG6cgK2T9cRtka4dJw/14kXnuuuRmf9juyKzjwNnsIqYq+miBVElsICI1VjgrWgmYyCtFFinl54KVCUDb1wX3P462a/gmLBS0w49K3VWHLTm8PVd6eF/FekEY2/YaFAeJ+tnyVd95T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=nHOTwdJm; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741980137; x=1742239337;
-	bh=thJECz48gUXx5fCuiQ2QxMOjva1RYIRgnYdCOp04aPY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=nHOTwdJmcWno63mC9jXXayErfsOlb4jB/UTVTv2YFHjVL7+vS4gpYe2ZyPyZrVRnM
-	 XnASK1Wpj3hr8Sjn/DFCl27B/vXILM94ttXwyaJSyhfRYtogn3TCVMJVHvx8iWFGzN
-	 L6qUvw2bIjnWduyVJSzVs1cSM6dR3DofPS0h1VUA4yorSxN3K3mvU0kierHrXIWU1w
-	 9HO1c7PzupM2+KrT6mZOAl3F6C+r5ASTdz2Ksx5ERfGLXD2BWff9+OamPIz2oON7x8
-	 pOh8VmFOg9Y+2lCGcGOB+pWU+CkyHHeR7roTqxBXx9diUlv82TXvPBIh7YewNdYkn1
-	 uD+IuNiAtkWVA==
-Date: Fri, 14 Mar 2025 19:22:09 +0000
-To: Tamir Duberstein <tamird@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH 1/2] rust: retain pointer mut-ness in `container_of!`
-Message-ID: <D8G8F0X59XBY.1ZCW3BOLXCYP5@proton.me>
-In-Reply-To: <20250307-no-offset-v1-1-0c728f63b69c@gmail.com>
-References: <20250307-no-offset-v1-0-0c728f63b69c@gmail.com> <20250307-no-offset-v1-1-0c728f63b69c@gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: a5798fbb667a529e08d919bf50c046bee6c0afa8
+	s=arc-20240116; t=1741980342; c=relaxed/simple;
+	bh=NAjBZOcRL9XA+Uu28PqNgr5pcAL0JKdI0XNjmjZA0Jo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IdH6NXv9yp9le3QT5n6rBhwklvL1fL1nQHAM2p/1HWxhl710NQH/RaH4nPjjJyLpp9Oxgna4frbSkBl99XflVtGMiEHelnSazmp4vfaDMRzgJ9exnCJEbKIyrsev4WQUzfc58aSstI84YJMaAzIPfB4AGge2TKMYqySEfvxqIDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=lcwAW6o9; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.0.107] (76-14-231-56.or.wavecable.com [76.14.231.56])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 068C52033454;
+	Fri, 14 Mar 2025 12:25:33 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 068C52033454
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741980333;
+	bh=uumL/iMZWLeatJCRzK/5OqmHs1yyifX8CVVlfPUqW88=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lcwAW6o9/himPCT2tEXXsKoXHWO8oRb1H+x24X7ywVm5YDb+pGWilcslz1ctKgD2Q
+	 GFC+AqJBc2u+TzfWQJOXhlLuVrZvFJflC3ZhteSn1bhAyI+98O5uSfCvvTUlOFsxju
+	 DJnw4BKFc9L2OEScqPySBUc6fAC0f5am1INgXf3w=
+Message-ID: <c480e790-0abb-41af-a0cb-e358ff7b671f@linux.microsoft.com>
+Date: Fri, 14 Mar 2025 12:25:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 10/10] Drivers: hv: Introduce mshv_root module to
+ expose /dev/mshv to VMMs
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ linux-hyperv@vger.kernel.org, x86@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ mhklinux@outlook.com, decui@microsoft.com, catalin.marinas@arm.com,
+ will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org,
+ joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de,
+ jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
+ skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
+ ssengar@linux.microsoft.com, apais@linux.microsoft.com,
+ Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
+ gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
+ muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
+ lenb@kernel.org, corbet@lwn.net
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-11-git-send-email-nunodasneves@linux.microsoft.com>
+ <fcd132af-03e4-496d-ba70-0097e90a83cf@oss.qualcomm.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <fcd132af-03e4-496d-ba70-0097e90a83cf@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri Mar 7, 2025 at 10:58 PM CET, Tamir Duberstein wrote:
-> Avoid casting the input pointer to `*const _`, allowing the output
-> pointer to be `*mut` if the input is `*mut`. This allows a number of
-> `*const` to `*mut` conversions to be removed at the cost of slightly
-> worse ergonomics when the macro is used with a reference rather than a
-> pointer; the only example of this was in the macro's own doctest.
->
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+On 3/11/2025 11:01 AM, Jeff Johnson wrote:
+> On 2/26/25 15:08, Nuno Das Neves wrote:
+> ...
+>> +
+>> +MODULE_AUTHOR("Microsoft");
+>> +MODULE_LICENSE("GPL");
+>> +
+> 
+> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+> description is missing"), a module without a MODULE_DESCRIPTION() will
+> result in a warning with make W=1. Please add a MODULE_DESCRIPTION()
+> to avoid this warning.
+> 
+> This is a canned review based upon finding a MODULE_LICENSE without a
+> MODULE_DESCRIPTION.
+> 
+> /jeff
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+Thanks Jeff. Fixed in v6.
 
----
-Cheers,
-Benno
-
-> ---
->  rust/kernel/lib.rs      |  5 ++---
->  rust/kernel/pci.rs      |  2 +-
->  rust/kernel/platform.rs |  2 +-
->  rust/kernel/rbtree.rs   | 23 ++++++++++-------------
->  4 files changed, 14 insertions(+), 18 deletions(-)
-
+Nuno
 
