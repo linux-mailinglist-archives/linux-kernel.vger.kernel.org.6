@@ -1,237 +1,218 @@
-Return-Path: <linux-kernel+bounces-561793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D15A6164F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:32:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E43A6165C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:36:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6826E189EAA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:32:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF8BB3A9871
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B3E2036FF;
-	Fri, 14 Mar 2025 16:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7F62036ED;
+	Fri, 14 Mar 2025 16:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Ds8hAQyp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="zQ32XetI"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w7SruKKl"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A09E802;
-	Fri, 14 Mar 2025 16:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA9E802
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741969930; cv=none; b=EGE3e+Dga0QsfzQxAefGIDT/s6TOYosSePuvXMirhqG4mSqCCzW0MuJA4p6WH4zBlcjR8TvPWGukxZ9KwZVurkCGymdKq6fQpiBiF+4UVj1T5oDYh62Fb/247jI8qz9W7x/wnIJ7W0w5PLTmJCu7GeCs4cYzp/kkvUmt3o339zU=
+	t=1741970181; cv=none; b=BigaTixZPbfJfDYatu5lQ3FVyC4L07I/eS//rOupWOBZ/RsEZgmthbyPha94owzylbooZnuXoYfVxvX2IT4n21pdXZY6WuNgFksabLwOd9Uy8wtxT5qMOX4qdrExWFoB/J0eOc++gS94kl9ZlLkoom5W6bV2si4ai4+J1fCCjaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741969930; c=relaxed/simple;
-	bh=10MsDaA2MWO7mJVfaYGM9nyxBpTtfK7KG7Gxr7EwaWU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=U1PnqEvBBLMvHoIjEo1nUDYGEPxy9vTWh/Eg5TO2wwtzbkSLhxTfxtK6uLsog0W21i7NhSUHNlneQxz7FvKPB6Q/BHvCyGqqGTJAD8bb3i2Q7nWnwuSOxO3zDc8KOzE53umDGFC/obgvmeWvlMyRSPb1v8KcgcUYYr+jOVu1AuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Ds8hAQyp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=zQ32XetI; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.phl.internal (Postfix) with ESMTP id 0306E1382C9D;
-	Fri, 14 Mar 2025 12:32:06 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Fri, 14 Mar 2025 12:32:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1741969925;
-	 x=1742056325; bh=FD2VJEjIz3gradIbfAYuUXm+xccGXY9Qu6gKId/0kC4=; b=
-	Ds8hAQypRK544JDNwLw2u6IIKcvUUa7R6ntosZ2MidyztlHRcZAgSqW4RjC1TIaW
-	ouIT4yIAeAAH8mDQ7cIGDPArduGkUyL3XBfaRL4iDq1PYytB2ygGeeWxTo4IYKSl
-	I/OqFnCXkuPHHTYLio2Nm4nnUuqolSmU65rNyvIyp0Xc3qec/vTwrW4UtMHhien6
-	Derm6xcyOv1cRM7BfGcgYpQazwapUXrVnhWxImzWw+mbgEyKV964FVCWRy5gegPs
-	y0YkNYDoqopNCfbt/QUtIPiVySKvQZf8IGxcW5yGuzWPQmbWo33yu0y7EV6cLkYJ
-	B4D4WR36R+TwEvxM10uEbg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741969925; x=
-	1742056325; bh=FD2VJEjIz3gradIbfAYuUXm+xccGXY9Qu6gKId/0kC4=; b=z
-	Q32XetIAN2hHDJkpQSZkyzo/rpF+XhB/mjKToLE5z+Da39DIHBMDocuA2OyhTw6t
-	Sko/3rbfsp8fimUg/m3DrwTpv0hWYMrnNL8/wFAHym5LrmKg0MXG+WnWQKxiTzce
-	XlGRD+GPUrSg+WU+9zeaoKvcM45VBDIzMjSxt+BAG6Yro1DDRkJX9M3uvdLQrave
-	Ir+p6tWvV3h9jIzc6nH/zcb6MMooaBQ99Yuc7/d62fKpqZCjvQDaxaTez1xUHONv
-	dL8YhMlY11F/G4sjFhr46GG5kGudzxFpF3bhJqCKinp+QVjN6OjzZjJOOCkE1DRi
-	2aLZjtsxJh8x/+hJcLG6A==
-X-ME-Sender: <xms:BFrUZ7IR0aZo9ff3gW_0UwYjioNzF6cQV45M3gc9b4t_0VMc1321eA>
-    <xme:BFrUZ_KQ-NAnmPC2Em-Ct44pCbIrvUGk_9vZxc-fn5cGvJ8ClLkerYKGKBSQ3Av4h
-    I5eXWvAFbLDPw74SiI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedufeduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhepgfdtveffgfejfeevteeggffgffeggfdugeek
-    feffudejfedtgfffheefffetheefnecuffhomhgrihhnpehmrghnjedrohhrghenucevlh
-    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghr
-    nhgusgdruggvpdhnsggprhgtphhtthhopedvledpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphhtthho
-    pehmrghrkhdrrhhuthhlrghnugesrghrmhdrtghomhdprhgtphhtthhopehflhhorhhirg
-    hnrdhfrghinhgvlhhlihessghrohgruggtohhmrdgtohhmpdhrtghpthhtoheptghrohhs
-    qdhqtghomhdqughtshdqfigrthgthhgvrhhssegthhhrohhmihhumhdrohhrghdprhgtph
-    htthhopehsfigsohihugestghhrhhomhhiuhhmrdhorhhgpdhrtghpthhtohepvghllhhi
-    ohhtsgefudejsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnuggvrhhsshhonheskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehkohhnrhgrugihsggtihhosehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:BFrUZzt7h746867z5VifeUIhVN1E38o_umyheLXKiBuuv3sOJ8W9CQ>
-    <xmx:BFrUZ0bmreGz-c0iuhwSVG1gAW5Fu08jueAgw6FyIHnhaQ4-1vL52Q>
-    <xmx:BFrUZya0uYzuClpPwBes8mBgGOCLlWngSb3i6tHbNY5WzzhxZH38Ig>
-    <xmx:BFrUZ4B02kq7vWkUblhxQNH79MJIe3sXWjc629hWgepC8f_h3xe6wg>
-    <xmx:BVrUZzEQbjCOZOC9YcdgK3OeEJsVGZgHKtQqkCKLsbhcr-6pmgnOX31Z>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id A7C6F2220072; Fri, 14 Mar 2025 12:32:04 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1741970181; c=relaxed/simple;
+	bh=oTEtLlgPA1kJbFWZbRPOGoLaWhB3dtDOx9QzUEAAGmQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Iaw2RChO4Q++H15wOIrIqm42BjVtx/jDrBUIvihdYVB/vL/iVfDfsPlj6nGbPdXZxzR4Vw0zSgnBvP1/m8sr+g8AfexEqVmah4zmKfwHUiqElqyKBIQPLj1z8bGtweeuDQ73G/b2FKYjyoyroSq1u8OVF3MNgFGm3G+YhEvZenU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w7SruKKl; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43d07ca6a80so15938095e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:36:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741970177; x=1742574977; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CuLOnTq3z0MhOY73qU4I+ilaryLZHI6JYqRsBIZCPzI=;
+        b=w7SruKKlsCJMAj4Ct7wLZO+6LW2fSSgiSZhJrqZ9cPj8WY30FeA/uz73iqMROarjem
+         gLB/vSmL8eE43Cz7hWHBaxFXOxGWO18VHc8UOAET+IcEsW2xgDLFPMhyXDH3d1qSu6hG
+         mGhK4su1fp8IpigGHOK1CFjM0HWxB3WEkL7hIYQ8jgcpB8s46UdKrtqb0eziI5A/RVXW
+         lphkr7falQaZnv58Qj8D/8pu0n++iDPkXTHj8iEmWoHsyhRIcQBWlnbZ7oWhoFjEjnWl
+         Qiz31AR81d2Z9xBlJJjIELOBqaTMRQ8Qfgv85V94dDpVmdo4rDQMOpxBOiiXvzELFe40
+         TBWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741970177; x=1742574977;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CuLOnTq3z0MhOY73qU4I+ilaryLZHI6JYqRsBIZCPzI=;
+        b=AorZXGJ52iNWT/fhMUDjvL+8wXPqaLSpNBC89gP0j1ZLlIY7EjrEm+XvoHCyOwxwyV
+         lZtKsTIkjylpu1azZ4kjnB7Nn9velw/6rTAXWESJcntWHxcmzD4L6ROnShFvZu17EQnG
+         6CJHs6hPeRob9s74/5Wwh+Zw9GLQgRGxGF3Z28aJqQU3+JcGP6zk4hGkNVCJp31c0xCi
+         rIjxknUOIVNDDfE384d6sizkBHf7g6MVwycmGe10sNbK+SWLtT/uRyWHwB33E6BuHixD
+         FaH6XRo74lqCx4ofnJwQX4ZQa+NpLstjLcyqQadvyrJwoLhGuNSpj+nhzeGTTzewuUt+
+         +9Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOzGyYy90/nYfltyd109Lqmt3S5GVMfXrJWifGaSPNqBJA6RvwvYteipb088ow0+LBc9cI0hpVmw7l/3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJxvG1+dnM5/JmAGtsonm2oejo3nECPPnJlpILjbcRHoOtPFy1
+	KY4+dK6s74LW64J61v5+FBYJDrtKBFOUSlyAvNdE9r1yC/02njZHjC60D4gyMg0=
+X-Gm-Gg: ASbGncteM/8Ev3e5u9xxtUS6VGN3t9M8c0Zu0UOo78PYjGA9OXWnb+U+eudtiwYix3w
+	B/a8q4V8zobN0X9v1C1Ea05qBa6IZwkte7vDOnZOMVvDjasFJ6PQskJQP7EBYFDeClhPOZUZMFR
+	Tsp2M0xxgQg9DbIA26FWRuwIw8QCmQwYAkV/9ofl9N5YzLBSuVUnk45vm+x1vZYyiz1gm0JlRc6
+	1MgvHIi4Xh//OTjdUaFN81QP3IgyTpINMmKS3rzV964EKOPiYaWB32n0Ne17dJQw+1q4Y1LTafj
+	RHPAoaibz67BQ8z9LtpisxJRgvhIlUDE0Hirll0fFTaUX1FAdaj6
+X-Google-Smtp-Source: AGHT+IEFwBWPpvkCl4DZ7CS0jvNj8kTM+do+3YtNUp4zuPCxKoQYcsei/04bFUHS9KAyNkC9iea8Hw==
+X-Received: by 2002:a05:6000:1fa7:b0:390:e85b:a8ee with SMTP id ffacd0b85a97d-3971d03ee30mr3657504f8f.1.1741970176984;
+        Fri, 14 Mar 2025 09:36:16 -0700 (PDT)
+Received: from vingu-cube.. ([2a01:e0a:f:6020:329b:9a6:20f4:3754])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb40cd78sm6072925f8f.78.2025.03.14.09.36.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 09:36:16 -0700 (PDT)
+From: Vincent Guittot <vincent.guittot@linaro.org>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	lukasz.luba@arm.com,
+	rafael.j.wysocki@intel.com,
+	pierre.gondois@arm.com,
+	linux-kernel@vger.kernel.org
+Cc: qyousef@layalina.io,
+	hongyan.xia2@arm.com,
+	christian.loehle@arm.com,
+	luis.machado@arm.com,
+	qperret@google.com,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH 0/7 v6] sched/fair: Rework EAS to handle more cases
+Date: Fri, 14 Mar 2025 17:36:07 +0100
+Message-ID: <20250314163614.1356125-1-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 14 Mar 2025 17:31:44 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
- "Elliot Berman" <quic_eberman@quicinc.com>
-Cc: "Bjorn Andersson" <andersson@kernel.org>,
- "Sebastian Reichel" <sre@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Vinod Koul" <vkoul@kernel.org>,
- "Andy Yan" <andy.yan@rock-chips.com>,
- "Mark Rutland" <mark.rutland@arm.com>,
- "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
- "Olof Johansson" <olof@lixom.net>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will@kernel.org>, cros-qcom-dts-watchers@chromium.org,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Konrad Dybcio" <konradybcio@kernel.org>,
- "Srinivas Kandagatla" <srinivas.kandagatla@linaro.org>,
- "Satya Durga Srinivasu Prabhala" <quic_satyap@quicinc.com>,
- "Melody Olvera" <quic_molvera@quicinc.com>,
- "Shivendra Pratap" <quic_spratap@quicinc.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- "Florian Fainelli" <florian.fainelli@broadcom.com>,
- "Stephen Boyd" <swboyd@chromium.org>, linux-pm@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, "Elliot Berman" <elliotb317@gmail.com>,
- "Elliot Berman" <elliot.berman@oss.qualcomm.com>
-Message-Id: <a9d8d9aa-f63c-481e-b051-a3da0adb3c66@app.fastmail.com>
-In-Reply-To: <Z9QQw6BcE7IXzu+r@lpieralisi>
-References: 
- <20250303-arm-psci-system_reset2-vendor-reboots-v9-0-b2cf4a20feda@oss.qualcomm.com>
- <20250303-arm-psci-system_reset2-vendor-reboots-v9-2-b2cf4a20feda@oss.qualcomm.com>
- <Z9QQw6BcE7IXzu+r@lpieralisi>
-Subject: Re: [PATCH v9 2/5] firmware: psci: Read and use vendor reset types
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 14, 2025, at 12:19, Lorenzo Pieralisi wrote:
-> On Mon, Mar 03, 2025 at 01:08:31PM -0800, Elliot Berman wrote:
->> From: Elliot Berman <elliot.berman@oss.qualcomm.com>
->> 
->> SoC vendors have different types of resets and are controlled through
->> various registers. For instance, Qualcomm chipsets can reboot to a
->> "download mode" that allows a RAM dump to be collected. Another example
->> is they also support writing a cookie that can be read by bootloader
->> during next boot. PSCI offers a mechanism, SYSTEM_RESET2, for these
->> vendor reset types to be implemented without requiring drivers for every
->> register/cookie.
->> 
->> Add support in PSCI to statically map reboot mode commands from
->> userspace to a vendor reset and cookie value using the device tree.
->
-> I have managed to discuss a little bit this patchset over the last
-> few days and I think we have defined a plan going forward.
->
-> A point that was raised is:
->
-> https://man7.org/linux/man-pages/man2/reboot.2.html
->
-> LINUX_REBOOT_CMD_RESTART2 *arg command, what is it supposed to
-> represent ?
->
-> Is it the mode the system should reboot into OR it is the
-> actual command to be issued (which is what this patchset
-> implements) ?
->
-> LINUX_REBOOT_CMD_RESTART "..a default restart..."
->
-> It is unclear what "default" means. We wonder whether the
-> reboot_mode variable was introduced to _define_ that "default".
+The current Energy Aware Scheduler has some known limitations which have
+became more and more visible with features like uclamp as an example. This
+serie tries to fix some of those issues:
+- tasks stacked on the same CPU of a PD
+- tasks stuck on the wrong CPU.
 
-I think the reboot_mode predates the 'cmd' argument: linux-2.1.30
-introduced LINUX_REBOOT_CMD_RESTART2 and it already had
-the warm/cold/bios/hard options for i386 reboot. I think the
-argument went unused for a while after it got introduced though.
+Patch 1 fixes the case where a CPU is wrongly classified as overloaded
+whereas it is capped to a lower compute capacity. This wrong classification
+can prevent periodic load balancer to select a group_misfit_task CPU
+because group_overloaded has higher priority.
 
-> So, in short, my aim is trying to decouple reboot_mode from the
-> LINUX_REBOOT_CMD_RESTART2 *arg command.
->
-> I believe that adding a sysfs interface to reboot-mode driver
-> infrastructure would be useful, so that the commands would
-> be exposed to userspace and userspace can set the *arg command
-> specifically to issue a given reset/mode.
->
-> I wonder why this is not already in place for eg syscon-reboot-mode
-> resets, how does user space issue a command in those systems if the
-> available commands aren't exposed to userspace ?
->
-> Is there a kernel entity exposing those "modes" to userspace, somehow ?
+Patch 2 creates a new EM interface that will be used by Patch 3
 
-Don't know one either.
+Patch 3 fixes the issue of tasks being stacked on same CPU of a PD whereas
+others might be a better choice. feec() looks for the CPU with the highest
+spare capacity in a PD assuming that it will be the best CPU from a energy
+efficiency PoV because it will require the smallest increase of OPP.
+This is often but not always true, this policy filters some others CPUs
+which would be as efficients because of using the same OPP but with less
+running tasks as an example.
+In fact, we only care about the cost of the new OPP that will be
+selected to handle the waking task. In many cases, several CPUs will end
+up selecting the same OPP and as a result having the same energy cost. In
+such cases, we can use other metrics to select the best CPU with the same
+energy cost. Patch 3 rework feec() to look 1st for the lowest cost in a PD
+and then the most performant CPU between CPUs. At now, this only tries to
+evenly spread the number of runnable tasks on CPUs but this can be
+improved with other metric like the sched slice duration in a follow up
+series.
 
->> A separate initcall is needed to parse the devicetree, instead of using
->> psci_dt_init because mm isn't sufficiently set up to allocate memory.
->> 
->> Reboot mode framework is close but doesn't quite fit with the
->> design and requirements for PSCI SYSTEM_RESET2. Some of these issues can
->> be solved but doesn't seem reasonable in sum:
->>  1. reboot mode registers against the reboot_notifier_list, which is too
->>     early to call SYSTEM_RESET2. PSCI would need to remember the reset
->>     type from the reboot-mode framework callback and use it
->>     psci_sys_reset.
->>  2. reboot mode assumes only one cookie/parameter is described in the
->>     device tree. SYSTEM_RESET2 uses 2: one for the type and one for
->>     cookie.
->
-> This can be changed and I think it should, so that the reboot modes
-> are exposed to user space and PSCI can use that.
+perf sched pipe on a dragonboard rb5 has been used to compare the overhead
+of the new feec() vs current implementation.
 
-Can we try to call them 'arguments' rather than 'modes' while discussing?
-I think it's way too easy to confuse them otherwise.
+9 iterations of perf bench sched pipe -T -l 80000
+                ops/sec  stdev 
+tip/sched/core  16634    (+/- 0.5%)
++ patches 1-3   17434    (+/- 1.2%)  +4.8%
 
->> +	psci_np = of_find_matching_node(NULL, psci_of_match);
->> +	if (!psci_np)
->> +		return 0;
->> +
->> +	np = of_find_node_by_name(psci_np, "reset-types");
->> +	if (!np)
->> +		return 0;
->
-> Related to my initial question above. If LINUX_REBOOT_CMD_RESTART2 *arg command,
-> is the actual reset to be issued, should we add a default mode "cold"
-> and, if SYSTEM_RESET2 is supported, a "warm" reset mode too ?
->
-> It all boils down to what *arg represents - adding "cold" and "warm"
-> modes would remove the dependency on reboot_mode for resets issued
-> through LINUX_REBOOT_CMD_RESTART2, the question is whether this
-> is the correct thing to do.
->
-> Comments very welcome.
 
-It would make some sense to me to treat all psci reboot as "warm" and
-not do anything here if reboot="cold" is set: those would have to
-be backed by a hardware specific driver.
+Patch 4 removed the now unused em_cpu_energy()
 
-A related problem is how to determine when to use UEFI reboot: at the
-moment arm64 tries the UEFI runtime interface before it even attempts
-any of the notifiers, so PSCI reboot won't ever be used if UEFI is
-present.
+Patch 5 solves another problem with tasks being stuck on a CPU forever
+because it doesn't sleep anymore and as a result never wakeup and call
+feec(). Such task can be detected by comparing util_avg or runnable_avg
+with the compute capacity of the CPU. Once detected, we can call feec() to
+check if there is a better CPU for the stuck task. The call can be done in
+2 places:
+- When the task is put back in the runnnable list after its running slice
+  with the balance callback mecanism similarly to the rt/dl push callback.
+- During cfs tick when there is only 1 running task stuck on the CPU in
+  which case the balance callback can't be used.
 
-     Arnd
+This push callback mecanism with the new feec() algorithm ensures that
+tasks always get a chance to migrate on the best suitable CPU and don't
+stay stuck on a CPU which is no more the most suitable one. As examples:
+- A task waking on a big CPU with a uclamp max preventing it to sleep and
+  wake up, can migrate on a smaller CPU once it's more power efficient.
+- The tasks are spread on CPUs in the PD when they target the same OPP.
+
+Patch 6 adds task misfit migration case in the cfs tick and push callback
+mecanism to prevent waking up an idle cpu unnecessarily.
+
+Patch 7 removes the need of testing uclamp_min in cpu_overutilized to
+trigger the active migration of a task on another CPU.
+
+Compared to v5:
+- Fixed pushable_task for !SMP
+- remove sg_overutlized param from update_sg_lb_stats()
+
+Compared to v4:
+- Fixed check_pushable_task for !SMP
+
+Compared to v3:
+- Fixed the empty functions
+
+Compared to v2:
+- Renamed the push and tick functions to ease understanding what they do.
+  Both are kept in the same patch as they solve the same problem.
+- Created some helper functions
+- Fixing some typos and comments
+- The task_stuck_on_cpu() condition remains unchanged. Pierre suggested to
+  take into account the min capacity of the CPU but the is not directly
+  available right now. It can trigger feec() when uclamp_max is very low
+  compare to the min capacity of the CPU but the feec() should keep 
+  returning the same CPU. This can be handled in a follow on patch
+
+Compared to v1:
+- The call to feec() even when overutilized has been removed
+from this serie and will be adressed in a separate series. Only the case
+of uclamp_min has been kept as it is now handled by push callback and
+tick mecanism.
+- The push mecanism has been cleanup, fixed and simplified.
+
+This series implements some of the topics discussed at OSPM [1]. Other
+topics will be part of an other serie
+
+[1] https://youtu.be/PHEBAyxeM_M?si=ZApIOw3BS4SOLPwp
+
+Vincent Guittot (7):
+  sched/fair: Filter false overloaded_group case for EAS
+  energy model: Add a get previous state function
+  sched/fair: Rework feec() to use cost instead of spare capacity
+  energy model: Remove unused em_cpu_energy()
+  sched/fair: Add push task mechanism for EAS
+  sched/fair: Add misfit case to push task mecanism for EAS
+  sched/fair: Update overutilized detection
+
+ include/linux/energy_model.h | 111 ++----
+ kernel/sched/fair.c          | 727 ++++++++++++++++++++++++-----------
+ kernel/sched/sched.h         |   2 +
+ 3 files changed, 520 insertions(+), 320 deletions(-)
+
+-- 
+2.43.0
+
 
