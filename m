@@ -1,157 +1,117 @@
-Return-Path: <linux-kernel+bounces-562037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 286FDA61AF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:48:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00ED5A61B0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:51:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DD5F19C4901
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:48:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49FF63BFB87
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3B3204C3B;
-	Fri, 14 Mar 2025 19:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8F8204C2B;
+	Fri, 14 Mar 2025 19:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="UvzerCY9"
-Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
+	dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b="lDpoHH65"
+Received: from mx0b-00300601.pphosted.com (mx0b-00300601.pphosted.com [148.163.142.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C251015886C;
-	Fri, 14 Mar 2025 19:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7701624CB;
+	Fri, 14 Mar 2025 19:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.142.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741981678; cv=none; b=gc2Thj5PqGl8VKfZJdtwHpE5eq2n94oz6FfiRIJxJ7NoXYqFy10yJnvK0AB16i3JKKdesrgHUGWbVm6OOGGHO/1JFE5/6FJvg7yewbdWeQnSKNZmIjEsEBigZ+UOQAUqCBcXt5Kx5ETxkFQWpdr2ZYVoswIIiuKADh0CdT6zwuE=
+	t=1741981856; cv=none; b=d8sa9X0piKvznhHJJyQbC+lDlkmxvuLuGikS9gJJls1f0NEWHHRsoC8VdSI0FM3LwgwfIKHPT+y8pGhYbhTJ1P39azSUUrPJCfiia9lhM0z0Tp/Gxx+m1FUMaw48tjhJadzJooFLbMeDFmkphxqG/YhTopsHaInPZdhmBlFckfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741981678; c=relaxed/simple;
-	bh=e0CwORnXr4qlDZ4UPA0Jyl9ZuqiX4PNHCH37wQKEyzM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VE4SZYXqN3i39G72kKEZ3DnoIU/ek+yzf5ZlrNRqeaxQfxdpxjFeJYSf9gtIABe+g3cpGKXBH/Nrn8qN2BcR88q1pGU4M9Q0ddAklK8iOCFSmHsPBLtS5Eubqq8rpn1WRREeuFPqRj8YgmOgJHGQq0UgM2pkn8avtazdjQ8w25g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=UvzerCY9; arc=none smtp.client-ip=52.119.213.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1741981678; x=1773517678;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=m2mKGks0B6xSoyRCe2ik+5vMJ4EmQFjEvSLXFHmgLiM=;
-  b=UvzerCY9NQcAw8lVR9FIhQcYjfC/cOiFgcATm5X2Bh/GO2rAk2/Z/UwC
-   Z6HeQA82Zh5FliQopscQAMAqEDaO39PhU4LjJIG9fHcsSHpRRb70viZKP
-   MiFHDXbVMp1DIOCc6MHVpFG6irFzC9Ko5So1RG/1ql5pc+UvTOCjHtEPE
-   E=;
-X-IronPort-AV: E=Sophos;i="6.14,246,1736812800"; 
-   d="scan'208";a="726905138"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 19:47:54 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:4676]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.52.235:2525] with esmtp (Farcaster)
- id ab966b34-71ec-46db-84fb-89cf4aea1a1e; Fri, 14 Mar 2025 19:47:53 +0000 (UTC)
-X-Farcaster-Flow-ID: ab966b34-71ec-46db-84fb-89cf4aea1a1e
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 14 Mar 2025 19:47:52 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.119.227.109) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 14 Mar 2025 19:47:49 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <annaemesenyiri@gmail.com>
-CC: <aleksandr.mikhalitsyn@canonical.com>, <alexander@mihalicyn.com>,
-	<edumazet@google.com>, <kerneljasonxing@gmail.com>, <kuba@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<vadim.fedorenko@linux.dev>, <willemb@google.com>, <kuniyu@amazon.com>
-Subject: Re: [PATCH net-next] tools headers: Sync uapi/asm-generic/socket.h with the kernel sources
-Date: Fri, 14 Mar 2025 12:45:23 -0700
-Message-ID: <20250314194742.32960-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <CAKm6_RsfA_Ygn4aZQdUxfBujxxgdB=PvgymChDtWSVHhhp6WZQ@mail.gmail.com>
-References: <CAKm6_RsfA_Ygn4aZQdUxfBujxxgdB=PvgymChDtWSVHhhp6WZQ@mail.gmail.com>
+	s=arc-20240116; t=1741981856; c=relaxed/simple;
+	bh=8qJT89Lf6Lbw/1ws3N8JEt2NsZOEWmh6WXL4jB2ewZQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EpKC8WQY/FtAiPvngev38Ic+iwY4m4aFukSPAytQFEGnPq7Uo0vbhSG7Bg670qiBmTh3x8X6qcamNj4CNuO3mIanhN7wBRgrmz8ePNks+8pTvF3wQVkEIERSv1jAP9+jbsPCyxeJu9qvDl3dp5wzWE5QXG6iy/EtnGW0PFpEJS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com; spf=pass smtp.mailfrom=ni.com; dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b=lDpoHH65; arc=none smtp.client-ip=148.163.142.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ni.com
+Received: from pps.filterd (m0144091.ppops.net [127.0.0.1])
+	by mx0b-00300601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52EE814c029599;
+	Fri, 14 Mar 2025 19:50:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ni.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PPS11142024; bh=ZBzgtNtsJfr+jyUfmvSN
+	Q+N6CKgkDldcTnrHXjqMNCI=; b=lDpoHH65PRKIBCKvkrAuYMJjU1qf8GF3qBD7
+	GTOxLz5y9F/OvsbwmQBVM2jX1xAG7xtS++hHGm4lqhb7SSq9E4oH94xbjXLrKtN0
+	+ed1kSvGofIxQj2zAVYx2NJvJsV+ioIdi+Ti9g6DugZlnq7nJ8efA+Wp902qex51
+	gLXMvsDyGOYjhVYDoJhETa0cEz5QWwk7ZU5WQ4y9QeffHlzy8dDQwSXQ9PMiKr03
+	vsQt36bPVBJsAlZlFDgPvUa9siOHnGRckMz2dAqC1dowezV8O9JOt+G/D4Ev8aI4
+	Z2zKxjqV8KJpqUEsgw2Cv430rTtcvHun0+EpKuj9waLYShSCew==
+Received: from us-aus-excas-p2.ni.corp.natinst.com ([130.164.94.74])
+	by mx0b-00300601.pphosted.com (PPS) with ESMTPS id 45cnxtvucn-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 19:50:44 +0000 (GMT)
+Received: from us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) by
+ us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 14 Mar 2025 14:50:33 -0500
+Received: from ershephe-ubuntu.amer.corp.natinst.com (172.18.68.32) by
+ us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) with Microsoft SMTP
+ Server id 15.2.1258.28 via Frontend Transport; Fri, 14 Mar 2025 14:50:33
+ -0500
+From: Erick Shepherd <erick.shepherd@ni.com>
+To: <linux-mmc@vger.kernel.org>
+CC: <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
+        <linux-kernel@vger.kernel.org>, Erick Shepherd <erick.shepherd@ni.com>
+Subject: [PATCH v2] mmc: host: Wait for Vdd to settle on card power off
+Date: Fri, 14 Mar 2025 14:50:21 -0500
+Message-ID: <20250314195021.1588090-1-erick.shepherd@ni.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D036UWC004.ant.amazon.com (10.13.139.205) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: Yc65fUx64uuyvzvsmDWIXLTzRFQj8XRt
+X-Proofpoint-GUID: Yc65fUx64uuyvzvsmDWIXLTzRFQj8XRt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-14_07,2025-03-14_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ mlxlogscore=999 mlxscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0
+ impostorscore=0 clxscore=1015 suspectscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503140153
 
-From: Anna Nyiri <annaemesenyiri@gmail.com>
-Date: Fri, 14 Mar 2025 14:31:34 +0100
-> Alexander Mikhalitsyn <alexander@mihalicyn.com> ezt írta (időpont:
-> 2025. márc. 10., H, 9:22):
-> >
-> > Am Mo., 10. März 2025 um 06:33 Uhr schrieb Jason Xing
-> > <kerneljasonxing@gmail.com>:
-> > >
-> > > On Sun, Mar 9, 2025 at 1:15 PM Alexander Mikhalitsyn
-> > > <aleksandr.mikhalitsyn@canonical.com> wrote:
-> > > >
-> > > > This also fixes a wrong definitions for SCM_TS_OPT_ID & SO_RCVPRIORITY.
-> > > >
-> > > > Accidentally found while working on another patchset.
-> > > >
-> > > > Cc: linux-kernel@vger.kernel.org
-> > > > Cc: netdev@vger.kernel.org
-> > > > Cc: Eric Dumazet <edumazet@google.com>
-> > > > Cc: Jakub Kicinski <kuba@kernel.org>
-> > > > Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-> > > > Cc: Willem de Bruijn <willemb@google.com>
-> > > > Cc: Jason Xing <kerneljasonxing@gmail.com>
-> > > > Cc: Anna Emese Nyiri <annaemesenyiri@gmail.com>
-> > > > Fixes: a89568e9be75 ("selftests: txtimestamp: add SCM_TS_OPT_ID test")
-> > > > Fixes: e45469e594b2 ("sock: Introduce SO_RCVPRIORITY socket option")
-> > > > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-> > >
-> >
-> > Hi Jason,
-> >
-> > Thanks for looking into this!
-> >
-> > > I'm not sure if it's a bug. As you may notice, in
-> > > arch/parisc/include/uapi/asm/socket.h, it has its own management of
-> > > definitions.
-> > >
-> > > I'm worried that since this file is uapi, is it allowed to adjust the
-> > > number like this patch does if it's not a bug.
+The SD spec version 6.0 section 6.4.1.5 requires that Vdd must be
+lowered to less than 0.5V for a minimum of 1 ms when powering off a
+card. Increase wait to 15 ms so that voltage has time to drain down
+to 0.5V and cards can power off correctly. Issues with voltage drain
+time were only observed on Apollo Lake and Bay Trail host controllers
+so this fix is limited to those devices.
 
-The uAPI number definions are different between arch, but strictly,
-files under tools/ are not the source of truth.
+Signed-off-by: Erick Shepherd <erick.shepherd@ni.com>
+---
+ drivers/mmc/host/sdhci-pci-core.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+index 1f0bd723f011..b1f7c11ea61e 100644
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -610,9 +610,12 @@ static void sdhci_intel_set_power(struct sdhci_host *host, unsigned char mode,
+ 
+ 	sdhci_set_power(host, mode, vdd);
+ 
+-	if (mode == MMC_POWER_OFF)
++	if (mode == MMC_POWER_OFF) {
++		if (slot->chip->pdev->device == PCI_DEVICE_ID_INTEL_APL_SD ||
++		    slot->chip->pdev->device == PCI_DEVICE_ID_INTEL_BYT_SD)
++			usleep_range(15000, 17500);
+ 		return;
+-
++	}
+ 	/*
+ 	 * Bus power might not enable after D3 -> D0 transition due to the
+ 	 * present state not yet having propagated. Retry for up to 2ms.
+-- 
+2.43.0
 
-> >
-> > My understanding is that this file (tools/include/uapi/asm-generic/socket.h) is
-> > a mirror copy of the actual UAPI file (uapi/asm-generic/socket.h),
-> > and definitions need to be in sync with it.
-
-Right.
-
-
-> 
-> I don’t completely understand this either—if the definitions need to
-> be in sync, why is there a discrepancy?
-> 
-> Specifically, I am referring to the ones that caused the shift in
-> numbering in uapi/asm-generic/socket.h:
-> #define SO_DEVMEM_LINEAR 78
-> #define SCM_DEVMEM_LINEAR SO_DEVMEM_LINEAR
-> #define SO_DEVMEM_DMABUF 79
-> #define SCM_DEVMEM_DMABUF SO_DEVMEM_DMABUF
-> #define SO_DEVMEM_DONTNEED 80
-> 
-> In the case of SO_RCVPRIORITY, I simply continued the numbering
-> sequence as it was
-
-This should've followed include/uapi/asm-generic/socket.h.
-
-Otherwise, a program compiled with tools/include/uapi/asm-generic/socket.h
-does not work on kernel compiled with include/uapi/asm-generic/socket.h,
-and the prog will invoke syscall with an unintentional number.
-
-So, tools/include/uapi must be synced with include/uapi and fixing
-up wrong definitions under tools/include/uapi is totally fine, and
-this does not cause uAPI breakage, rather it's been broken.
 
