@@ -1,198 +1,147 @@
-Return-Path: <linux-kernel+bounces-560675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE9AA60800
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 05:06:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B67A60801
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 05:09:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A68E1880706
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 04:06:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1994817E6C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 04:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200186F30F;
-	Fri, 14 Mar 2025 04:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8AD133987;
+	Fri, 14 Mar 2025 04:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qOYpWPSr"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2081.outbound.protection.outlook.com [40.107.102.81])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nbhyrKL3"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFFC2D052
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 04:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741925213; cv=fail; b=HPnDK+WY6k4MgtD+YWXqQ1u8+nXnqRFA9q2M7nk5nxv7ZwGbP9bUTiilFypaMDopsegtqaOsIp3VronzreOk8kzHMed10HQM90mMd7JF0iClk0afkEH11kyDQoyx55F5Jz9P2OP170TqalaMJ9hm1k61Z1v9dv5RnIxNdw1ADcY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741925213; c=relaxed/simple;
-	bh=Fpe4I8MxSqWet6kOWiv20J6Tzw25HiFiN23OUcmbjXg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=qeQTrP9pxAkhCUJEmrL3/ZqsBojgelpsbG6HNX2DRW/i+wJd9x5cfWeSyn+lJ1+UI5CtwdnfNR/ugjZDgXDPl1FCIjD1ThycUuhTwK8oqT2CHuMM5S4SxFOTjUEkyHBYUV2MQes31BJWeSYIfAF+mpCD65nCx8WaI32MCVWBgYU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qOYpWPSr; arc=fail smtp.client-ip=40.107.102.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a9+QoCxACp2S9aAjZcfANYPi9CDpTlbEQ1FY22cdLn/6svgvx5+IZ53mX9KKCxKj3nlPDWsbJgIJB602Hmyr1Y9uIOGSjeIg6S0V1KBGjx/QIfxaHclCy7bUGNsvs+AoNoYANTGaCNr+AMA4u7qAk5wZwO31X1HLYXV/fV2zoryivcvP6oExdgFG6dvQfm3oV0zRAJAhecfoR0Di/V2M7R3Ph/KUgFpc+nQweetFq/HD88KyZTA8CUeAYXVjZ8j10M3EUa8oMvGNHRn90yX8zZuvAQ5U10RNTg978pQDu003X9abnTgiW1DUxUbcxA3qX1c4LPpaGLB5JdU8R7AhvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xbpA8fUmxKhW2+FX+Su9i4T1EiCYqa6+2vW696jR2QY=;
- b=RpmN7VgFeD751/X6l83idrIXRCT2H+1fYoffaECo22jmgP/mTyLJAciEBjFKgJ5Jn+35SuuF3w23TpkMSuknaZmf5DRN9NUnZkotYAyxHEhIi5L8B7CPDwxC5j9FopsqFiS0Jsm7cUdwLcn2+E7ELgrmvdqj3XMGKKZQaqvQ4zL+YomHOmpy6rQ0vvxu64jZGdlkkqlZhY/9t+QBNzkzY7uWKpd83Xy7aicIiU1rRztEo71pWq4N4b3GK7WY4NaMp5EAQ4PX03Q7p8TAklNqVxbEmiklVv9xrwH+zQwxVZhhUNDKkzdZ8H6bdHNzfBVtLEDHkVTAvy5SnfC1B5QhOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=bytedance.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xbpA8fUmxKhW2+FX+Su9i4T1EiCYqa6+2vW696jR2QY=;
- b=qOYpWPSrOosih6fOs/Jdr5KuS4vOdbcB/44aeQQs5qwTn+rJGzPGqsfmShkrFKXxNGrOUFhVoJa7d3hi5udpJoArjysS11OYbWf+UxhcuZ6QjbKMd565ryRrqCc2sqF5P+kRtaNIriCZeo13kEGz1Y/hgts9YSqPClSiDYsx1cw=
-Received: from BN9P221CA0013.NAMP221.PROD.OUTLOOK.COM (2603:10b6:408:10a::6)
- by CH3PR12MB8257.namprd12.prod.outlook.com (2603:10b6:610:121::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Fri, 14 Mar
- 2025 04:06:48 +0000
-Received: from BN2PEPF00004FBC.namprd04.prod.outlook.com
- (2603:10b6:408:10a:cafe::6d) by BN9P221CA0013.outlook.office365.com
- (2603:10b6:408:10a::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.24 via Frontend Transport; Fri,
- 14 Mar 2025 04:06:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN2PEPF00004FBC.mail.protection.outlook.com (10.167.243.182) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Fri, 14 Mar 2025 04:06:47 +0000
-Received: from [10.136.37.23] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Mar
- 2025 23:06:44 -0500
-Message-ID: <c4f999f1-6086-4849-92ee-23a5efa2a9d2@amd.com>
-Date: Fri, 14 Mar 2025 09:36:36 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2977932C85
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 04:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741925348; cv=none; b=T1k0szMgRnkFkeAl5nh+2t/wI4wh2s2iy96AnoM+R1qdXZ5J6i4Zdr78XqiwnGuQwA0tm6X+YFkJeCwPJiLi8nt3J3ETa7gD/WJUHWfCjii1nmrRDhHycDCfYBcq893g+PzE1cFXTRxOpIXPj4CHZdIOMmF8HqBnPJAC7RxGQ0A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741925348; c=relaxed/simple;
+	bh=2hm4oFuudjY3leJj97GYOrQEZdMR5g3oXtO6AH/CqLQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gZVjBKfwfm6xjRWj768c5HOPHULHkDyZrDi9hmPZRsq5iBIXQ86FNqXw4FurbXxy/S9e7T/wkVX2FF4RFIlk0k1dnL7cmrprGo9MHNiRlWa9iMoeNM4ZeadSO5H9yR3Aykl+IS5RCon2xRbl4RdBivlU5UFt7usrdE230MD+vIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nbhyrKL3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DMtBgM009129
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 04:09:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=7HOztwl1BlNHje49xqIYzj
+	ekECQIFNxDOobExn87Uhs=; b=nbhyrKL3cJe0R7usQ1kxDqxxHZJAajeJVRfp+/
+	3s3uMhz5GojAUfrpNg+Otw6z5Ir2zW8dgoNobclmXZc22v63RB10Kh7fjNY4GfFW
+	f9Yl/wxM1tj46SOmVxa28e2Ln5xR0By8ZCgYY4YCFTavctlnDtfVd4upkw80ic3m
+	2dUbBrXGIUDtfQGWiKxqbR/do0lqIxPXa4+oxVS6pq48BNBT187DnzkF1/CQKO5x
+	N/ppKSdaB4hTKi/OtzOjKV4g4Y5yneKvdcq0x8812aDFHW2gtV2Vkmv+YnezgXVS
+	x2OR7bU3TRVWodmhpxXrmQ4sXWAUE7jal9pxjeVsouyXmfbw==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2rfy40-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 04:09:05 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2ff82dd6de0so2872626a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 21:09:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741925344; x=1742530144;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7HOztwl1BlNHje49xqIYzjekECQIFNxDOobExn87Uhs=;
+        b=o3Ezktw8oeyewl84P46a2631Rew5sAX4V5k1IR4DVZgfZ3J3Qf8Ver9DrDG5XACo5I
+         ZBCLlYDe3cvA63YfpTARET1zcrhulz8MLi2+xLM7vt2oqFSYyE5ClVOOiLkBjNp+ZJFf
+         Hd3aMB6NLUEzNfKvjppZHDr/Q+LZduw3DFUyCferVMD91wM5NdBJclBowX4uv3jS8KaT
+         v44HjgqAmagE6UnOnAuoPFhJoVZvHphyUNDJsyIwEUIGzcuGKjSFvUMknppmyLqtwwyf
+         v+0DkjPdMG6uonO+AF7LJ8D1FluQdM+fpEMkmrPYYTMpltfzoIVIjCz/X1a8b9yvpRh+
+         GfdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfZZIbqz6Wkg3iditRwxcF5p1NyZme8zjZe+gyO4DVa0G6Iz0FFD4yYMLWT3GE5caB1l00BFxfckI3Prs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZsUcBl4u/UFXecjNsjAjs01EPSnzV4pY+b30U/JynJ3mQ8Ppx
+	suvDdbAbzGN3FTWpJbUNfQnWCOWtZuAOmYFt6J5U/fWRQY7IyLoLdNWo9d4ApnTj5TLnVu16iK0
+	n5HD+FUaUVFSysl3RHt+HZDC5nnUUcPdQRAlF8PrvuhWiGcR08MNZXF40eHUcRMo=
+X-Gm-Gg: ASbGncvXtXSrx81NiBLXv43D6UQXmBvqsublii79v7cRpFpbeocyob5Eq2E+0VB4xyb
+	71dCg6TdNia4X5zWQnWJX2h0I4qeUGrqHLBoGCBL66n3bAPRfU8oWC4zGplp0/dIreA2nhBZ1FW
+	Q184zgAYKDsjNZJQEOTn0AmQPhsEIastXFUQCTeHBNqK1sqEzUuvR2/rHgjO4FsuuCLfipq5qM0
+	lUnA4bm5WMueV6z0eKR+goW7SJjiMXs9+CqpiwL+ZbrkVe/Dm0tFZyQanhno45CxFZG8yGm07mI
+	HTGMDDUD5igfLOJfrF30PIhU5xmTMoK51UUWZPsH4oOpp7Q24sgKzl/lbpXc57eoL0SdclJ13e7
+	Avk9JEswrwxV8dlnIg0L5RZxuh9vK0WTGd+GsE8/Z
+X-Received: by 2002:a17:90b:4fcc:b0:2ee:964e:67ce with SMTP id 98e67ed59e1d1-30151cb5a28mr1471462a91.3.1741925344409;
+        Thu, 13 Mar 2025 21:09:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEsnybzZypWMeFwM4ZeXpdlnGb8H7ZML9GDt2ImhbrZ9r6HLWFnqOnJw24uJpeF5wfbscxSBA==
+X-Received: by 2002:a17:90b:4fcc:b0:2ee:964e:67ce with SMTP id 98e67ed59e1d1-30151cb5a28mr1471433a91.3.1741925344051;
+        Thu, 13 Mar 2025 21:09:04 -0700 (PDT)
+Received: from hu-adisi-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3015364ecf9sm245239a91.48.2025.03.13.21.09.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 21:09:03 -0700 (PDT)
+From: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
+Date: Fri, 14 Mar 2025 09:38:53 +0530
+Subject: [PATCH wireless-next] wifi: nl80211: store chandef on the correct
+ link when starting CAC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 3/7] sched/fair: Handle unthrottle path for task based
- throttle
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-To: Aaron Lu <ziqianlu@bytedance.com>, Valentin Schneider
-	<vschneid@redhat.com>, Ben Segall <bsegall@google.com>, Peter Zijlstra
-	<peterz@infradead.org>, Josh Don <joshdon@google.com>, Ingo Molnar
-	<mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>, Chengming Zhou
-	<chengming.zhou@linux.dev>, Chuyi Zhou <zhouchuyi@bytedance.com>
-References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
- <CANCG0GcAic5QThYG-r9CaXPgZtXJuB0RuCW5Y0SyBn7VyOQi=g@mail.gmail.com>
- <3fdb7163-d1f0-45c8-89fa-7c904b567696@amd.com>
-Content-Language: en-US
-In-Reply-To: <3fdb7163-d1f0-45c8-89fa-7c904b567696@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBC:EE_|CH3PR12MB8257:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6a447b7-90a2-4808-18ac-08dd62ada41b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UUo4N0lFVXhic3JTMjZORlBrb3FLZDJGcXVXZytxRVFnS0tVblpYcWkxSitj?=
- =?utf-8?B?TjI3cUlXR0tKaHZvc3A0c0ZkKysyTko5bmhtSkdZSEZIOVJnV0JLK1REYUVV?=
- =?utf-8?B?T3RZbE0xa3QvZ3RIRG1xKytWOElIZUVlak5QektSRmJJS0NqVnNubndGSW0r?=
- =?utf-8?B?c3NzbE5DcFhnNWx2QS9jUE5zRG42akFKR1FtQzd2Q0tTZ0dvN2w1T0NkbktR?=
- =?utf-8?B?RVlyUzlEQ2ppQWJsYjlMTEZmRnVXSXpBQk1SRHFjblppaWRoSVlWRVhWOUY2?=
- =?utf-8?B?b3lKUUIwSXlpb3BTT0ttKzZEUUJWN09acThpai9CbEU3WlF4azJmOVRQTlZi?=
- =?utf-8?B?WWo4aEJuZmlSYWVnNE1MV2FxSnN3L2lxNE1MTFRBd29oWEs5UzJXa2xFdkh5?=
- =?utf-8?B?THRuYjVKSGJ2OVdibitEZUpoQ3FlTXJKUXZ4OC9yTjU5bXRCSnNPU0UyL2JZ?=
- =?utf-8?B?bUJ2MW5yQWJZU0Z5Y21LbXdLaENiUEtoS0hmdGtSREh0SWNZeE00UkNRQ3dz?=
- =?utf-8?B?eDZ1T2U4TlVCUHJjNWdRRzZiWGJ1VndBS0QyN3h1elpTTkJpNmVHU1AzMVRI?=
- =?utf-8?B?SnUzUWh0MTlqT3VDbFJyeTNVdUFNQ2RGT2x3ZVVSbHhYdkoxYitqRWhpd2xE?=
- =?utf-8?B?OXJ6bGtYM1FkTXB3S2hBcmd1emYvMzhvelQ3akhTdVhublA3Z2ZFY01PVUpJ?=
- =?utf-8?B?NHB2VDBGbmxRZ2FueVJTWjhieXJFQVo4Qmg2MGt4UURRSVBLenFsL3hzZUVr?=
- =?utf-8?B?eUJIOEZEa3g0cWxwdFVhem90WGVjUGxLUUhhUjZJMlUwOS9vUmJRVVJUaFFQ?=
- =?utf-8?B?MUowQVhOWmxsZyszVldDQjFOamxBeTBCRFREMnErNEFXVWFtWDMxRHgyUXd2?=
- =?utf-8?B?Rm50SlZuMjNBZGk0SXBLRUNYTmEwejlEMlFRcW1ZeWdnYTUzMFRlaGdyVWx0?=
- =?utf-8?B?M1hQQUdSaTJDTXMrd2p4WUNjL1B6ZnNtL0lmb09KVzhvcmI4aXZzVUppWm52?=
- =?utf-8?B?c010dGxSRUJFQ0MxUnMyYXBpeVNSVTBpV0ZTcVZRa0M1YkZUanJ4UEwyaVNo?=
- =?utf-8?B?UlR2RUZGMzBDSUVYZElveU1kbXRxWklLWU8vVFprUnFnYVlXVHl2cEpsdU90?=
- =?utf-8?B?TG9TbktKbytFcktab0FFMDZGdVhyeDJ1Z3RrUWZHaTdWc2ltUzVxL05KMmNx?=
- =?utf-8?B?eVBLMzZkMFY3UDd3YmtnT24zeklHUEtXNkRUU0o3bXBhWjVSSTlQNTl4dmtI?=
- =?utf-8?B?WS9SRlhyc0hSclpYTWFudWRGWTZ1UkdUNUZTYTdQazgrVG5zN3ZNdEJ4Rm1F?=
- =?utf-8?B?eHJnWWdqQTJDMk5JazNadHZDNUhrWXZSUmE3dDRlYnQyZUhhWk1wbE1yeTBF?=
- =?utf-8?B?L1RQWStkRTBSaSsxWVREa1FqTkhxdi9wL3g4M01Lbm91aUoyKytoVkxWemNm?=
- =?utf-8?B?ZVVXRGh3bk5aME9xeDdld1p6R29EeFZCcE0rb1dmL01hYnFSMWhEQkhSaTFa?=
- =?utf-8?B?UUNFYkNYUTdzV2lqYjBMU1owMzZlMTloM3RTN2FKRllFUUkwUWtDODdjVkJk?=
- =?utf-8?B?Sk1MSkpkNFNhTnVnUlBxcCszcU1CcFM1Z1hXU1NLYzYvSnRjTnNZS1NoSjRB?=
- =?utf-8?B?RkFXa2Q0ekxTNS9LQlZHNG1jNWtHRk1zTUhOTzBCdGVVMnhiWk9IYXFjMmlp?=
- =?utf-8?B?RExoVFYxMnQ0aXNTR2lyN0g2TjVyNUFwd3YrSmZUSWc3ektkU01mSE95M2NO?=
- =?utf-8?B?R05GaDQ3bGZWK3dSUTYraVZvSnJsdWtmME4vVjVYR0JKS2ZGNHEvdkUxZ00v?=
- =?utf-8?B?VkJqQnRudncza0plS0ljRWhneGNZQmQvb1QwY1Y5bzFQSW5US3lkbzNKdHVE?=
- =?utf-8?B?N0RRYzBNbzFHZjJ0TUYrNUhONG5vejYydXFxWEEySFp1dExZKy9CR2FyQjhO?=
- =?utf-8?B?T3A1eDZCdDlBQVgxSGVsVG9zeGJMK1VIZzFXN1d0OUdJd01uWldDaitoV05p?=
- =?utf-8?Q?zUUdWlIWv/Xd9h+2fyM+e/ZTtelEHU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2025 04:06:47.8113
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6a447b7-90a2-4808-18ac-08dd62ada41b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF00004FBC.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8257
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250314-fix_starting_cac_during_mlo-v1-1-3b51617d7ea5@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIANSr02cC/43NTQ6CMBAF4KuQri1hyk+sK+9hDGnLAE2AagcQQ
+ 7i7lZULY9xMZjIv31sZobdI7BStzONsybohHHCImGnV0CC3VbiZSESepEnOa7uUNCo/2qEpjTJ
+ lNfn32neO19pkkGaZSLVkQbh5DPFdv7CH9dghER9wGdk1vFtLo/PPvXuGPfRXzQwceIV5kYMGm
+ aI6O6L4PqnOuL6Pw9j5WXyQIH6TIpBSSGOqo5a6gC/ktm0vNLiIjS8BAAA=
+X-Change-ID: 20250305-fix_starting_cac_during_mlo-fbc4134423b9
+To: Johannes Berg <johannes@sipsolutions.net>,
+        Aditya Kumar Singh <quic_adisi@quicinc.com>
+Cc: Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Authority-Analysis: v=2.4 cv=D6NHKuRj c=1 sm=1 tr=0 ts=67d3abe1 cx=c_pps a=vVfyC5vLCtgYJKYeQD43oA==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=akwbo0E0F4SoT0UnkgEA:9 a=QEXdDO2ut3YA:10
+ a=rl5im9kqc5Lf4LNbBjHf:22
+X-Proofpoint-GUID: ozHCVSAaQ32gLC2EtRTN_J4Qy4ZWDMKs
+X-Proofpoint-ORIG-GUID: ozHCVSAaQ32gLC2EtRTN_J4Qy4ZWDMKs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-14_01,2025-03-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 lowpriorityscore=0 phishscore=0
+ adultscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015 impostorscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503140030
 
-On 3/14/2025 9:23 AM, K Prateek Nayak wrote:
+Link ID to store chandef is still being used as 0 even in case of MLO which
+is incorrect. This leads to issue during CAC completion where link 0 as well
+gets stopped.
 
-[..snip..]
+Fixes: 0b7798232eee ("wifi: cfg80211/mac80211: use proper link ID for DFS")
+Signed-off-by: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
+---
+ net/wireless/nl80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->>
->> +    /* Re-enqueue the tasks that have been throttled at this level. */
->> +    list_for_each_entry_safe(p, tmp, &cfs_rq->throttled_limbo_list,
->> throttle_node) {
->> +        list_del_init(&p->throttle_node);
->> +        /*
->> +         * FIXME: p may not be allowed to run on this rq anymore
->> +         * due to affinity change while p is throttled.
->> +         */
-> 
-> Using dequeue_task_fair() for throttle should ensure that the core now
-> sees task_on_rq_queued() which should make it go throgh a full dequeue
-> cycle which will remove the task from the "throttled_limbo_list" and
-> the enqueue should put it back on the correct runqueue.
-> 
-> Is the above comment inaccurate with your changes or did I miss
-> something?
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index aee49d43cf862de684194e8f7b40dbc6a1654707..90baa19f4e845443669d9476c49faf426a3bcc77 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -10177,7 +10177,7 @@ static int nl80211_start_radar_detection(struct sk_buff *skb,
+ 	switch (wdev->iftype) {
+ 	case NL80211_IFTYPE_AP:
+ 	case NL80211_IFTYPE_P2P_GO:
+-		wdev->links[0].ap.chandef = chandef;
++		wdev->links[link_id].ap.chandef = chandef;
+ 		break;
+ 	case NL80211_IFTYPE_ADHOC:
+ 		wdev->u.ibss.chandef = chandef;
 
-Please ignore this, I just reached Patch 5. Sorry for the noise.
-
-> 
->> +        enqueue_task_fair(rq_of(cfs_rq), p, ENQUEUE_WAKEUP);
->> +    }
->> +
->> +    /* Add cfs_rq with load or one or more already running entities to the list */
->> +    if (!cfs_rq_is_decayed(cfs_rq))
->> +        list_add_leaf_cfs_rq(cfs_rq);
->> +
->>       return 0;
->>   }
->>
-
--- 
-Thanks and Regards,
-Prateek
+---
+base-commit: 54be64fdf3ba6dbad2f5c48e466e1db43ad74bca
+change-id: 20250305-fix_starting_cac_during_mlo-fbc4134423b9
 
 
