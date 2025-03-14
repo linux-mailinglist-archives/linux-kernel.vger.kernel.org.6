@@ -1,648 +1,123 @@
-Return-Path: <linux-kernel+bounces-561388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4CC2A610BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:18:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508CAA610C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:19:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2E667A4B1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:17:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAD241B60594
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F264E1FE45A;
-	Fri, 14 Mar 2025 12:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F971FE45A;
+	Fri, 14 Mar 2025 12:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kORz1N5j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="X2UdcpvU"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCFA3C6BA;
-	Fri, 14 Mar 2025 12:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138E11C84DB
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 12:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741954690; cv=none; b=ipY0ooa/6FlJcnArQqOMk9SG8QXBKiM7VOpUCFlN7O+yE2uHlqFCepxrTT+GSYf+OimYQjaaFSHHRp2MD4N8CiHWzozEYzZ23DoJ9j9e9OtIsyT71p6rEJHboGgkrf0TAHrG6ag7GF1yDGomY09W7FenYT7buwT+ZqqvWVBuWrw=
+	t=1741954786; cv=none; b=LM+bTnhMynommF1/rTKtsZkwCNLGc2Vcsw0rdMICADLYHcthJSk9jVAgXAZ9Bst05r3+xsLIRC0WeOQ+Rz36iWD5gORYQlPqiYzuOr1WSviJ2SMPVbX31cSmQ0g2svwq5mPq2X3xqfv6oggT45SarBoEfa2TCMyNc2xZWKSud7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741954690; c=relaxed/simple;
-	bh=cNgAtdlNV2722WBqFvdC3FTuHgN0BJtDRIB40TJDbb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a5CEXmR1xY5pjk2Ipal2MpheS/nohAGe1z8qf2DFgMq7ejevc02mRUHznY7IiUV147DZyl51MUeiIPdsooMOtGSkzVDRwqMFJ+/P9mIJDbRajTz047RcZ+lJO7SmH4BVYcYcImvBQVtKzazxw9XUV+OEs2PcUArXfxtaGk7huTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kORz1N5j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D0B0C4CEE3;
-	Fri, 14 Mar 2025 12:18:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741954690;
-	bh=cNgAtdlNV2722WBqFvdC3FTuHgN0BJtDRIB40TJDbb4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kORz1N5jDowb2u9Orwmz6R6i9HRovlXgM5/5u0tETiZO2YtmSvkd1MNhSCklw/+Zk
-	 ARLLvxLcjWaPKgiPpQZd1HYTgQNtAVKO/y8jgJz0BoIvjK+hwixkVm61BOgARbghWZ
-	 yqUkSFxzGK1MmHhmcvqCCWb+TXN8g17A90GfCH+IZtE+QDYSZtfAMyM763ZCkhdIwu
-	 kE3GxCfV0aHL4lK7O93IOND9ICWHxwX68uppO4fn4c1lOzWMCGpOh9+nceWJdv4v4T
-	 /z2iPf6S7ymL8u6fhv64qA9B6KrFvbagCtnqHZcfrBXcnXGj554rUNdKqv7Xp6Abgb
-	 IsbBrW5JCxw1A==
-Date: Fri, 14 Mar 2025 13:18:07 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Lyude Paul <lyude@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
-	Danilo Krummrich <dakr@kernel.org>, mcanal@igalia.com, Alice Ryhl <aliceryhl@google.com>, 
-	Simona Vetter <sima@ffwll.ch>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Asahi Lina <lina@asahilina.net>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC v3 18/33] rust: drm/kms: Add drm_atomic_state bindings
-Message-ID: <20250314-bizarre-pearl-herring-dfeb01@houat>
-References: <20250305230406.567126-1-lyude@redhat.com>
- <20250305230406.567126-19-lyude@redhat.com>
+	s=arc-20240116; t=1741954786; c=relaxed/simple;
+	bh=h1hX18KbVpNPmbTOpsFY+DB6uWmqCs+Nff2SCawByGA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E8FvKMym+EI2F/yoHFsJU3FZcR1Bg2gL3n+vdsGFCPQ622PZVzVfVKcIFR6y5sINF6z3q8c7wiULamSYTRuuBpsJQLnsmC6fhlPxoIrMzo4Pb3jWBQQ1JGQq3QDZMz2S5erQrwTMmRVrzprJkgYWg1EDB5WMfDdvfiB2WjbQnwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=X2UdcpvU; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-549b159c84cso2023923e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 05:19:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741954783; x=1742559583; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h1hX18KbVpNPmbTOpsFY+DB6uWmqCs+Nff2SCawByGA=;
+        b=X2UdcpvU3tV+9KaBi/l+Xt4/hB7/3u90EX2V1sZjxNzJo46WvoTVhVm0pkA3iXKOeZ
+         EJQwHI12qMcTo0/ifdWr/BigsPyfn8OMRCuURggV2lRX4hXHk5vMv70f74wO9Lle29u9
+         dD9od1484UZZI6edRDDFjeAK40rVjbpaO1+WpOemRMa9+G0cxF84FVx0ZWJeXi+JPx+k
+         tu4IJJ6nuiwxJ5b/u3cj5nNsIyRtBPvny2DIzUoMtBenBMBtF8WBNY1Ak3CXta/32Lo+
+         MmX6KaIGpR+kdOrbtKeTWTap/7BHlT0TrEZFxhz5aJgNhFSb7PKgD+0sZHKNn5e0vePB
+         CC4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741954783; x=1742559583;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h1hX18KbVpNPmbTOpsFY+DB6uWmqCs+Nff2SCawByGA=;
+        b=sMuJCGhIL78KVg+mMir+0rmv9azNbah745bwqY68bu6D9GVXi2OGNxgG0Eeb+IRMW+
+         7fFfqp+rOvGXUL0iXeudPAoOJ/hOxXLJ3TReECgKa1RGMmAv//oK/EGOvaZ/+MJgf8/B
+         kFJ1u2j1mK1MuYXEu8ZQRNhEAySDHxt1Em2ENCGWV1Ho7XYiMnaOThbwPEieJ0Da6HyF
+         BaJ2kUlxY4x7eZFwGSCZzwclwvbdNk5wWEUy8aljZFIEQKaM4VzbPy61JYRrQMhwP5rJ
+         zWkxIrQkp2TKk+22sURbtpB9woOl+Zl501k3sD5nrp5aL+W5bLPHuy4HKzb9baG4fhZG
+         rf4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUWksCZaCmu4yNHYxAAldC1SBwj+dzU1KVlKyQMU7EF0QWnzHgVmQbqQ1uLP8kJ8F2VhFXLHlcZ2Q1Mzxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGI82SQtYbSWipERruut+m1kfvN4SkRGs//QXh1BqNuc591zY+
+	ARSxkTfjqQjY6Wbi+5L78ZvS4+SbxyZCcXzljSwdMZTs8gAt7kPBj7Vs9aW2NhXyQX0zXbFN55s
+	ZDbSy0DmhiQePwY9y6SPENR4hGT713cXNqTVOEuaFABkks38Y
+X-Gm-Gg: ASbGncuMPTVa6qRjRAstBkULQYaDJYFUHlZPLjaEhQLJZMs9Us6BYa0uGB4qK7mArqM
+	YxT0tPrwvdhAXd3YgYFCUrgb/bpR57mHdRa+bxyxACPb4beaBufolSPcf290+yTMKMHtOdZs64Y
+	TFogZH7mNH8eM70KhHwbSVC9pCPoCea5u7Enh5QiKI+eQFIoPtdBkpgRFoTA==
+X-Google-Smtp-Source: AGHT+IHUlazwgUqlZgFfrZNU11dRALAC2f4jB8FB+3YipRbXUqsYKKBJIph8mnoYZoKAXAmHTbx2wTkl6nphw9smOAw=
+X-Received: by 2002:a05:6512:2387:b0:549:4e7b:dcf7 with SMTP id
+ 2adb3069b0e04-549c38f5976mr919503e87.3.1741954783089; Fri, 14 Mar 2025
+ 05:19:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="nnpxz5ci3sflqgc6"
-Content-Disposition: inline
-In-Reply-To: <20250305230406.567126-19-lyude@redhat.com>
-
-
---nnpxz5ci3sflqgc6
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <9ded85ef-46f1-4682-aabd-531401b511e5@molgen.mpg.de>
+ <CAMRc=McJpGMgaUDM2fHZUD7YMi2PBMcWhDWN8dU0MAr911BvXw@mail.gmail.com>
+ <36cace3b-7419-409d-95a9-e7c45d335bef@molgen.mpg.de> <CAMRc=Mf-ObnFzau9OO1RvsdJ-pj4Tq2BSjVvCXkHgkK2t5DECQ@mail.gmail.com>
+ <a8c9b81c-bc0d-4ed5-845e-ecbf5e341064@molgen.mpg.de> <CAMRc=MdNnJZBd=eCa5ggATmqH4EwsGW3K6OgcF=oQrkEj_5S_g@mail.gmail.com>
+ <CACRpkdZbu=ii_Aq1rdNN_z+T0SBRpLEm-aoc-QnWW9OnA83+Vw@mail.gmail.com>
+ <Z78ZK8Sh0cOhMEsH@black.fi.intel.com> <Z78bUPN7kdSnbIjW@black.fi.intel.com>
+ <CACMJSevxA8pC2NTQq3jcKCog+o02Y07gVgQydo19YjC9+5Gs6Q@mail.gmail.com>
+ <Z78jjr8LMa165CZP@smile.fi.intel.com> <dd9d62d5-54fc-4e7e-8508-1b8e22ac28d5@molgen.mpg.de>
+In-Reply-To: <dd9d62d5-54fc-4e7e-8508-1b8e22ac28d5@molgen.mpg.de>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 14 Mar 2025 13:19:32 +0100
+X-Gm-Features: AQ5f1Jpc8BQLbO5f_ziXu7q9Ni5SWD-3N0tS5a8gYVuR7dGbfwA8ldlQAZqteb0
+Message-ID: <CAMRc=Mez_3F0NifXLb18_XNH+-Q7D47HVOrYNt37EWsO9z0zgg@mail.gmail.com>
+Subject: Re: Linux logs new warning `gpio gpiochip0: gpiochip_add_data_with_key:
+ get_direction failed: -22`
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	linux-pci@vger.kernel.org, regressions@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC v3 18/33] rust: drm/kms: Add drm_atomic_state bindings
-MIME-Version: 1.0
 
-On Wed, Mar 05, 2025 at 05:59:34PM -0500, Lyude Paul wrote:
-> Next up is introducing bindings that we can use to represent the global D=
-RM
-> atomic state, along with all of the various object states contained withi=
-n.
-> We do this by introducing a few new concepts: borrowed states, atomic sta=
-te
-> mutators, and atomic state composers.
->=20
-> To understand these, we need to quickly touch upon the general life of an
-> atomic commit. Assuming a driver does its own internal atomic commit, the
-> procedure looks something like this:
->=20
-> * Allocate a new atomic state
-> * Duplicate the atomic state of each mode object we want to mutate, and a=
-dd
->   the duplicated state to the new atomic state
-> * Check (possibly more then once) the atomic state, possibly modifying it
->   along the way
-> * Commit the atomic state to software (we'll call this commit time). At
->   this point no new objects can be added to the state
-> * Finish committing the atomic state to hardware asynchronously
->=20
-> With this in mind, we introduce AtomicStateMutator and AtomicStateComposer
-> (along with leaky variants intended for uses in FFI calls). An
-> AtomicStateMutator allows mutating an atomic state but does not allow for
-> adding new objects to the state. Subsequently, an AtomicStateComposer
-> allows for both mutating an atomic state and adding new mode objects. We
-> control when we expose each of these types in order to implement the
-> limitations required by the aforementioned example.
->=20
-> Note as well that AtomicStateComposer is intended to eventually be usable
-> directly by drivers. In this scenario, a driver will be able to create an
-> AtomicStateComposer (the equivalent of allocating an atomic state in C) a=
-nd
-> then commit it by passing it to our DRM bindings by-value, insuring that
-> once the commit process begins it is impossible to keep using the
-> AtomicStateComposer.
->=20
-> The next part of this is allowing users to modify the atomic states of all
-> of the objects contained within an atomic state. Since it's an extremely
-> common usecase for objects to mutate the atomic state of multiple objects
-> at once in an unpredictable order, we need a mechanism that will allow us
-> to hand out &mut references to each state while ensuring at runtime that =
-we
-> do not break rust's data aliasing rules (which disallow us from ever havi=
-ng
-> more then one &mut reference to the same piece of data).
->=20
-> We do this by introducing the concept of a "borrowed" state. This is a ve=
-ry
-> similar concept to RefCell, where it is ensured during runtime that when a
-> &mut reference is taken out another one cannot be created until the
-> corresponding Ref object has been dropped. Our equivalent Ref types are
-> ConnectorState, BorrowedCrtcState, and BorrowedPlaneStateMutator.
->=20
-> Each one of these types can be used in the same manner as a Ref - no
-> additional borrows for an atomic state may be taken until the existing one
-> has been dropped. Subsequently, all of these types implement their
-> respective AsRaw* and FromRaw* counter-parts - and allow dereferencing to
-> each driver-private data structure for fully qualified borrows (like
-> CrtcState<'a, CrtcStateMutator<T>>. This allows a pretty clean way of
-> mutating multiple states at once without ever breaking rust's mutability
-> rules.
->=20
-> We'll use all of these types over the next few commits to begin introduci=
-ng
-> various atomic modeset callbacks to each mode object type.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
->=20
-> ---
->=20
-> V3:
-> * Drop the TODO about printing a kernel error in ConnectorStateMutator
->   I thought this was something we'd want early on in designing this, but
->   since then I'm pretty sure we just want to return None - there are valid
->   cases where we'd get None while doing connector iteration through an
->   atomic state
-> * Improve safety comments in ConnectorStateMutator::new()
-> * Rename Borrowed*State to *StateMutator
->   I think this makes things a lot clearer, as well - cleanup the
->   documentation regarding this.
-> * Drop plane state iterator for now. It's not that we don't need this, it=
-'s
->   just that I haven't actually finished writing these up for all types so
->   I'd rather focus on that later now that we've demonstrated it's a thing
->   that is possible. And it at least shouldn't be needed for getting these
->   bindings/rvkms upstream.
-> * Drop num_plane() for the time being
->   Without the plane state iterator in this patch series there's no current
->   usecase for this, so just drop the function for the time being and we'll
->   reintroduce it when it's ready.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  rust/helpers/drm/atomic.c        |  32 +++
->  rust/helpers/drm/drm.c           |   3 +
->  rust/kernel/drm/kms.rs           |   1 +
->  rust/kernel/drm/kms/atomic.rs    | 359 +++++++++++++++++++++++++++++++
->  rust/kernel/drm/kms/connector.rs | 104 ++++++++-
->  rust/kernel/drm/kms/crtc.rs      | 103 ++++++++-
->  rust/kernel/drm/kms/plane.rs     | 105 ++++++++-
->  7 files changed, 700 insertions(+), 7 deletions(-)
->  create mode 100644 rust/helpers/drm/atomic.c
->  create mode 100644 rust/kernel/drm/kms/atomic.rs
->=20
-> diff --git a/rust/helpers/drm/atomic.c b/rust/helpers/drm/atomic.c
-> new file mode 100644
-> index 0000000000000..fff70053f6943
-> --- /dev/null
-> +++ b/rust/helpers/drm/atomic.c
-> @@ -0,0 +1,32 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <drm/drm_atomic.h>
-> +
-> +void rust_helper_drm_atomic_state_get(struct drm_atomic_state *state)
-> +{
-> +	drm_atomic_state_get(state);
-> +}
-> +
-> +void rust_helper_drm_atomic_state_put(struct drm_atomic_state *state)
-> +{
-> +	drm_atomic_state_put(state);
-> +}
-> +
-> +// Macros for generating one repetitive atomic state accessors (like drm=
-_atomic_get_new_plane_state)
-> +#define STATE_FUNC(type, tense)                                         =
-                            \
-> +	struct drm_ ## type ## _state *rust_helper_drm_atomic_get_ ## tense ## =
-_ ## type ## _state( \
-> +		const struct drm_atomic_state *state,                                 =
-              \
-> +		struct drm_ ## type *type                                             =
-              \
-> +	) {                                                                    =
-                     \
-> +		return drm_atomic_get_## tense ## _ ## type ## _state(state, type);   =
-              \
-> +	}
-> +#define STATE_FUNCS(type) \
-> +	STATE_FUNC(type, new); \
-> +	STATE_FUNC(type, old);
-> +
-> +STATE_FUNCS(plane);
-> +STATE_FUNCS(crtc);
-> +STATE_FUNCS(connector);
-> +
-> +#undef STATE_FUNCS
-> +#undef STATE_FUNC
-> diff --git a/rust/helpers/drm/drm.c b/rust/helpers/drm/drm.c
-> index 028b8ab429572..365f6807774d4 100644
-> --- a/rust/helpers/drm/drm.c
-> +++ b/rust/helpers/drm/drm.c
-> @@ -1,5 +1,8 @@
->  // SPDX-License-Identifier: GPL-2.0
-> =20
-> +#ifdef CONFIG_DRM_KMS_HELPER
-> +#include "atomic.c"
-> +#endif
->  #include "gem.c"
->  #ifdef CONFIG_DRM_GEM_SHMEM_HELPER
->  #include "gem_shmem_helper.c"
-> diff --git a/rust/kernel/drm/kms.rs b/rust/kernel/drm/kms.rs
-> index 1d6ca9c92659a..978bb6712ffbe 100644
-> --- a/rust/kernel/drm/kms.rs
-> +++ b/rust/kernel/drm/kms.rs
-> @@ -2,6 +2,7 @@
-> =20
->  //! KMS driver abstractions for rust.
-> =20
-> +pub mod atomic;
->  pub mod connector;
->  pub mod crtc;
->  pub mod encoder;
-> diff --git a/rust/kernel/drm/kms/atomic.rs b/rust/kernel/drm/kms/atomic.rs
-> new file mode 100644
-> index 0000000000000..3d5c70dbc4274
-> --- /dev/null
-> +++ b/rust/kernel/drm/kms/atomic.rs
-> @@ -0,0 +1,359 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> +
-> +//! [`struct drm_atomic_state`] related bindings for rust.
-> +//!
-> +//! [`struct drm_atomic_state`]: srctree/include/drm/drm_atomic.h
-> +use super::{connector::*, crtc::*, plane::*, KmsDriver, ModeObject};
-> +use crate::{
-> +    bindings,
-> +    drm::device::Device,
-> +    error::{from_err_ptr, to_result},
-> +    prelude::*,
-> +    types::*,
-> +};
-> +use core::{cell::Cell, marker::*, mem::ManuallyDrop, ops::*, ptr::NonNul=
-l};
-> +
-> +/// The main wrapper around [`struct drm_atomic_state`].
-> +///
-> +/// This type is usually embedded within another interface such as an [`=
-AtomicStateMutator`].
-> +///
-> +/// # Invariants
-> +///
-> +/// - The data layout of this type is identical to [`struct drm_atomic_s=
-tate`].
-> +/// - `state` is initialized for as long as this type is exposed to user=
-s.
-> +///
-> +/// [`struct drm_atomic_state`]: srctree/include/drm/drm_atomic.h
-> +#[repr(transparent)]
-> +pub struct AtomicState<T: KmsDriver> {
-> +    pub(super) state: Opaque<bindings::drm_atomic_state>,
-> +    _p: PhantomData<T>,
-> +}
-> +
-> +impl<T: KmsDriver> AtomicState<T> {
-> +    /// Reconstruct an immutable reference to an atomic state from the g=
-iven pointer
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `ptr` must point to a valid initialized instance of [`struct drm=
-_atomic_state`].
-> +    ///
-> +    /// [`struct drm_atomic_state`]: srctree/include/drm/drm_atomic.h
-> +    #[allow(dead_code)]
-> +    pub(super) unsafe fn from_raw<'a>(ptr: *const bindings::drm_atomic_s=
-tate) -> &'a Self {
-> +        // SAFETY: Our data layout is identical
-> +        // INVARIANT: Our safety contract upholds the guarantee that `st=
-ate` is initialized for as
-> +        // long as this type is exposed to users.
-> +        unsafe { &*ptr.cast() }
-> +    }
-> +
-> +    pub(crate) fn as_raw(&self) -> *mut bindings::drm_atomic_state {
-> +        self.state.get()
-> +    }
-> +
-> +    /// Return the [`Device`] associated with this [`AtomicState`].
-> +    pub fn drm_dev(&self) -> &Device<T> {
-> +        // SAFETY:
-> +        // - `state` is initialized via our type invariants.
-> +        // - `dev` is invariant throughout the lifetime of `AtomicState`
-> +        unsafe { Device::borrow((*self.state.get()).dev) }
-> +    }
-> +
-> +    /// Return the old atomic state for `crtc`, if it is present within =
-this [`AtomicState`].
-> +    pub fn get_old_crtc_state<C>(&self, crtc: &C) -> Option<&C::State>
-> +    where
-> +        C: ModesettableCrtc + ModeObject<Driver =3D T>,
-> +    {
-> +        // SAFETY: This function either returns NULL or a valid pointer =
-to a `drm_crtc_state`
-> +        unsafe {
-> +            bindings::drm_atomic_get_old_crtc_state(self.as_raw(), crtc.=
-as_raw())
-> +                .as_ref()
-> +                .map(|p| C::State::from_raw(p))
-> +        }
-> +    }
-> +
-> +    /// Return the old atomic state for `plane`, if it is present within=
- this [`AtomicState`].
-> +    pub fn get_old_plane_state<P>(&self, plane: &P) -> Option<&P::State>
-> +    where
-> +        P: ModesettablePlane + ModeObject<Driver =3D T>,
-> +    {
-> +        // SAFETY: This function either returns NULL or a valid pointer =
-to a `drm_plane_state`
-> +        unsafe {
-> +            bindings::drm_atomic_get_old_plane_state(self.as_raw(), plan=
-e.as_raw())
-> +                .as_ref()
-> +                .map(|p| P::State::from_raw(p))
-> +        }
-> +    }
-> +
-> +    /// Return the old atomic state for `connector` if it is present wit=
-hin this [`AtomicState`].
-> +    pub fn get_old_connector_state<C>(&self, connector: &C) -> Option<&C=
-::State>
-> +    where
-> +        C: ModesettableConnector + ModeObject<Driver =3D T>,
-> +    {
-> +        // SAFETY: This function either returns NULL or a valid pointer =
-to a `drm_connector_state`.
-> +        unsafe {
-> +            bindings::drm_atomic_get_old_connector_state(self.as_raw(), =
-connector.as_raw())
-> +                .as_ref()
-> +                .map(|p| C::State::from_raw(p))
-> +        }
-> +    }
-> +}
-> +
-> +// SAFETY: DRM atomic state objects are always reference counted and the=
- get/put functions satisfy
-> +// the requirements.
-> +unsafe impl<T: KmsDriver> AlwaysRefCounted for AtomicState<T> {
-> +    fn inc_ref(&self) {
-> +        // SAFETY: `state` is initialized for as long as this type is ex=
-posed to users
-> +        unsafe { bindings::drm_atomic_state_get(self.state.get()) }
-> +    }
-> +
-> +    unsafe fn dec_ref(obj: NonNull<Self>) {
-> +        // SAFETY: `obj` contains a valid non-null pointer to an initial=
-ized `Self`.
-> +        unsafe { bindings::drm_atomic_state_put(obj.as_ptr().cast()) }
-> +    }
-> +}
-> +
-> +/// A smart-pointer for modifying the contents of an atomic state.
-> +///
-> +/// As it's not unreasonable for a modesetting driver to want to have re=
-ferences to the state of
-> +/// multiple modesetting objects at once, along with mutating multiple s=
-tates for unique modesetting
-> +/// objects at once, this type provides a mechanism for safely doing bot=
-h of these things.
-> +///
-> +/// To honor Rust's aliasing rules regarding mutable references, this st=
-ructure ensures only one
-> +/// mutable reference to a mode object's atomic state may exist at a tim=
-e - and refuses to provide
-> +/// another if one has already been taken out using runtime checks.
-> +pub struct AtomicStateMutator<T: KmsDriver> {
-> +    /// The state being mutated. Note that the use of `ManuallyDrop` her=
-e is because mutators are
-> +    /// only constructed in FFI callbacks and thus borrow their referenc=
-es to the atomic state from
-> +    /// DRM. Composers, which make use of mutators internally, can poten=
-tially be owned by rust code
-> +    /// if a driver is performing an atomic commit internally - and thus=
- will call the drop
-> +    /// implementation here.
-> +    state: ManuallyDrop<ARef<AtomicState<T>>>,
-> +
-> +    /// Bitmask of borrowed CRTC state objects
-> +    pub(super) borrowed_crtcs: Cell<u32>,
-> +    /// Bitmask of borrowed plane state objects
-> +    pub(super) borrowed_planes: Cell<u32>,
-> +    /// Bitmask of borrowed connector state objects
-> +    pub(super) borrowed_connectors: Cell<u32>,
-> +}
-> +
-> +impl<T: KmsDriver> AtomicStateMutator<T> {
-> +    /// Construct a new [`AtomicStateMutator`]
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `ptr` must point to a valid `drm_atomic_state`
-> +    #[allow(dead_code)]
-> +    pub(super) unsafe fn new(ptr: NonNull<bindings::drm_atomic_state>) -=
-> Self {
-> +        Self {
-> +            // SAFETY: The data layout of `AtomicState<T>` is identical =
-to drm_atomic_state
-> +            // We use `ManuallyDrop` because `AtomicStateMutator` is onl=
-y ever provided to users in
-> +            // the context of KMS callbacks. As such, skipping ref inc/d=
-ec for the atomic state is
-> +            // convienent for our bindings.
-> +            state: ManuallyDrop::new(unsafe { ARef::from_raw(ptr.cast())=
- }),
-> +            borrowed_planes: Cell::default(),
-> +            borrowed_crtcs: Cell::default(),
-> +            borrowed_connectors: Cell::default(),
-> +        }
-> +    }
-> +
-> +    pub(crate) fn as_raw(&self) -> *mut bindings::drm_atomic_state {
-> +        self.state.as_raw()
-> +    }
-> +
-> +    /// Return the [`Device`] for this [`AtomicStateMutator`].
-> +    pub fn drm_dev(&self) -> &Device<T> {
-> +        self.state.drm_dev()
-> +    }
-> +
-> +    /// Retrieve the last committed atomic state for `crtc` if `crtc` ha=
-s already been added to the
-> +    /// atomic state being composed.
-> +    ///
-> +    /// Returns `None` otherwise.
-> +    pub fn get_old_crtc_state<C>(&self, crtc: &C) -> Option<&C::State>
-> +    where
-> +        C: ModesettableCrtc + ModeObject<Driver =3D T>,
-> +    {
-> +        self.state.get_old_crtc_state(crtc)
-> +    }
-> +
-> +    /// Retrieve the last committed atomic state for `connector` if `con=
-nector` has already been
-> +    /// added to the atomic state being composed.
-> +    ///
-> +    /// Returns `None` otherwise.
-> +    pub fn get_old_connector_state<C>(&self, connector: &C) -> Option<&C=
-::State>
-> +    where
-> +        C: ModesettableConnector + ModeObject<Driver =3D T>,
-> +    {
-> +        self.state.get_old_connector_state(connector)
-> +    }
-> +
-> +    /// Retrieve the last committed atomic state for `plane` if `plane` =
-has already been added to
-> +    /// the atomic state being composed.
-> +    ///
-> +    /// Returns `None` otherwise.
-> +    pub fn get_old_plane_state<P>(&self, plane: &P) -> Option<&P::State>
-> +    where
-> +        P: ModesettablePlane + ModeObject<Driver =3D T>,
-> +    {
-> +        self.state.get_old_plane_state(plane)
-> +    }
-> +
-> +    /// Return a composer for `plane`s new atomic state if it was previo=
-usly added to the atomic
-> +    /// state being composed.
-> +    ///
-> +    /// Returns `None` otherwise, or if another mutator still exists for=
- this state.
-> +    pub fn get_new_crtc_state<C>(&self, crtc: &C) -> Option<CrtcStateMut=
-ator<'_, C::State>>
-> +    where
-> +        C: ModesettableCrtc + ModeObject<Driver =3D T>,
-> +    {
-> +        // SAFETY: DRM either returns NULL or a valid pointer to a `drm_=
-crtc_state`
-> +        let state =3D
-> +            unsafe { bindings::drm_atomic_get_new_crtc_state(self.as_raw=
-(), crtc.as_raw()) };
-> +
-> +        CrtcStateMutator::<C::State>::new(self, NonNull::new(state)?)
-> +    }
-> +
-> +    /// Return a composer for `plane`s new atomic state if it was previo=
-usly added to the atomic
-> +    /// state being composed.
-> +    ///
-> +    /// Returns `None` otherwise, or if another mutator still exists for=
- this state.
-> +    pub fn get_new_plane_state<P>(&self, plane: &P) -> Option<PlaneState=
-Mutator<'_, P::State>>
-> +    where
-> +        P: ModesettablePlane + ModeObject<Driver =3D T>,
-> +    {
-> +        // SAFETY: DRM either returns NULL or a valid pointer to a `drm_=
-plane_state`.
-> +        let state =3D
-> +            unsafe { bindings::drm_atomic_get_new_plane_state(self.as_ra=
-w(), plane.as_raw()) };
-> +
-> +        PlaneStateMutator::<P::State>::new(self, NonNull::new(state)?)
-> +    }
-> +
-> +    /// Return a composer for `crtc`s new atomic state if it was previou=
-sly added to the atomic
-> +    /// state being composed.
-> +    ///
-> +    /// Returns `None` otherwise, or if another mutator still exists for=
- this state.
-> +    pub fn get_new_connector_state<C>(
-> +        &self,
-> +        connector: &C,
-> +    ) -> Option<ConnectorStateMutator<'_, C::State>>
-> +    where
-> +        C: ModesettableConnector + ModeObject<Driver =3D T>,
-> +    {
-> +        // SAFETY: DRM either returns NULL or a valid pointer to a `drm_=
-connector_state`
-> +        let state =3D unsafe {
-> +            bindings::drm_atomic_get_new_connector_state(self.as_raw(), =
-connector.as_raw())
-> +        };
-> +
-> +        ConnectorStateMutator::<C::State>::new(self, NonNull::new(state)=
-?)
-> +    }
-> +}
-> +
-> +/// An [`AtomicStateMutator`] wrapper which is not yet part of any commi=
-t operation.
-> +///
-> +/// Since it's not yet part of a commit operation, new mode objects may =
-be added to the state. It
-> +/// also holds a reference to the underlying [`AtomicState`] that will b=
-e released when this object
-> +/// is dropped.
-> +pub struct AtomicStateComposer<T: KmsDriver>(AtomicStateMutator<T>);
-> +
-> +impl<T: KmsDriver> Deref for AtomicStateComposer<T> {
-> +    type Target =3D AtomicStateMutator<T>;
-> +
-> +    fn deref(&self) -> &Self::Target {
-> +        &self.0
-> +    }
-> +}
-> +
-> +impl<T: KmsDriver> Drop for AtomicStateComposer<T> {
-> +    fn drop(&mut self) {
-> +        // SAFETY: We're in drop, so this is guaranteed to be the last p=
-ossible reference
-> +        unsafe { ManuallyDrop::drop(&mut self.0.state) }
-> +    }
-> +}
-> +
-> +impl<T: KmsDriver> AtomicStateComposer<T> {
-> +    /// # Safety
-> +    ///
-> +    /// The caller guarantees that `ptr` points to a valid instance of `=
-drm_atomic_state`.
-> +    #[allow(dead_code)]
-> +    pub(crate) unsafe fn new(ptr: NonNull<bindings::drm_atomic_state>) -=
-> Self {
-> +        // SAFETY: see `AtomicStateMutator::from_raw()`
-> +        Self(unsafe { AtomicStateMutator::new(ptr) })
-> +    }
-> +
-> +    /// Attempt to add the state for `crtc` to the atomic state for this=
- composer if it hasn't
-> +    /// already been added, and create a mutator for it.
-> +    ///
-> +    /// If a composer already exists for this `crtc`, this function retu=
-rns `Error(EBUSY)`. If
-> +    /// attempting to add the state fails, another error code will be re=
-turned.
-> +    pub fn add_crtc_state<C>(&self, crtc: &C) -> Result<CrtcStateMutator=
-<'_, C::State>>
-> +    where
-> +        C: ModesettableCrtc + ModeObject<Driver =3D T>,
-> +    {
-> +        // SAFETY: DRM will only return a valid pointer to a `drm_crtc_s=
-tate` - or an error.
-> +        let state =3D unsafe {
-> +            from_err_ptr(bindings::drm_atomic_get_crtc_state(
-> +                self.as_raw(),
-> +                crtc.as_raw(),
-> +            ))
-> +            .map(|c| NonNull::new_unchecked(c))
-> +        }?;
-> +
-> +        CrtcStateMutator::<C::State>::new(self, state).ok_or(EBUSY)
-> +    }
+On Fri, Mar 14, 2025 at 12:54=E2=80=AFPM Paul Menzel <pmenzel@molgen.mpg.de=
+> wrote:
+> >>>
+> >>> Brief looking at the error descriptions and the practical use the bes=
+t (and
+> >>> unique enough) choice may be EBADSLT.
+> >>
+> >> In any case, I proposed to revert to the previous behavior in
+> >> gpiochip_add_data() in my follow-up series so the issue should soon go
+> >> away.
+> >
+> > Yes, I noted. The above is a material to discuss. We can make that sema=
+ntics
+> > documented and strict and then one may filter out those errors if/when
+> > required.
+>
+> I am still seeing this with 6.14.0-rc6-00022-gb7f94fcf5546. Do you know,
+> if the reverts are going to be in the final 6.14 release?
+>
 
-I think it should be called get_crtc_state. First because it would be
-consistent with the C part of KMS, but also because, to me, add would
-take the state and return void. Here, you take no state and return it,
-so it's more of a get operation than add.
+linux-next should probably be a better point of reference. I'm about
+to send out my PR to Linus so it'll be in 6.14-rc7 alright.
 
-Maxime
-
---nnpxz5ci3sflqgc6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ9QefwAKCRAnX84Zoj2+
-dsjsAYDbcy1LAI7wqsYCuEzzSK8ev7CT66GYLAIyGYLfDvvlrpty/3G3m26oAksg
-JDqUhj4BgNPk2NQ8rj9nhYiIW3plfwddz3tYYeNtFFzsmUfGLjdtTA3WORLqN3jl
-t/9iYjb9XQ==
-=bWOs
------END PGP SIGNATURE-----
-
---nnpxz5ci3sflqgc6--
+Bartosz
 
