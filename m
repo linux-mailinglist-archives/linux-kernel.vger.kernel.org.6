@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-562225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 553C1A61F5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:51:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B6B6A61F61
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BD541897D7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:51:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E5CE7AFA5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA8A236A99;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9575C2376F2;
 	Fri, 14 Mar 2025 21:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQZfgOzL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Krr+bTIy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA54235C01
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5622236A84
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741988525; cv=none; b=mdt1m3mKCDJs07PMfopqe4PM+/jBXj7gXQ54NbcO+s7QnJneoGfBKDwMhlpvFlD0ptbnpxJ2AWH8LTYePPmllKyAqK83lvWuhjoAh5vP1Hx9CnbH6eQ3HaBFvbYXrWIc2eo06OBvP3vt6Jz9XlY6VnXXkfpj9ryNzn/IVVkiqTg=
+	t=1741988526; cv=none; b=S95e0h44dWZQzDMpX3PAe+FtG+Ix1RzxiEXTgL0PzRqnhTl+xJ6NbhjdI8bPdYWGiasTb4l6v4jc+krG3VEflv4abuYEIsAraCddvTyXteWGxsOAk7f+0Vf6RUASe9SvvAiqKMW+J+sVEjDxaaz3W8Z/Wn79WFGzawffLfafe5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741988525; c=relaxed/simple;
-	bh=qkGFv5PkAYcsVJJDYuUSexRQt+wXN3/4FXTTpwxW2NI=;
+	s=arc-20240116; t=1741988526; c=relaxed/simple;
+	bh=QEu/+JYx8qH0znXupo+H8I159zjwFZQNXDvmmFhC/iQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FDOby0vu7JNSbJrTSqq+QhC0YKWPV530lLCM2Vr8Tz+zJmjyD6537hnA+lldg31bgg8i1ZUsTTffEA8uEplmopLIBogUOApnxvUoeispPWgfm/DW+qjiaiZTqDG48v5/nrMiN6EGZZfudFdzMwIoGWxB/7OaPyu6eka9d48axKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQZfgOzL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E4CC4CEEF;
+	 MIME-Version; b=CoER1v7Ad0yq1Wm0ahvW/1VuATyJVZCd+VfR01vkogqSa+xmE6L7EyQw0n1BnAtz82kwLnlcrB58J5UMn4Gl702kN7P6HCLhm2OumB18xRN2v3n3DncJM9bWbjpbdp5PKlWoPaKZHRKOGrk0ajN05o5wnBg8rZyN8F1GwiDI8X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Krr+bTIy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0C99C4CEE3;
 	Fri, 14 Mar 2025 21:42:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741988524;
-	bh=qkGFv5PkAYcsVJJDYuUSexRQt+wXN3/4FXTTpwxW2NI=;
+	s=k20201202; t=1741988525;
+	bh=QEu/+JYx8qH0znXupo+H8I159zjwFZQNXDvmmFhC/iQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nQZfgOzL1IkA/XyvFXbht5J0EPTQVYmV5Z7C8DDVCDs9yuZdttYIvwRxsUbLPLlZe
-	 cecAEaGCpwNkL/56dllMDJ1e430Dze7US1UlVwwEnZJCnVrQDgSK8XVC5iHXXbvG9X
-	 LPeiUcAObJiaW4jHh8ydRAUbLVHb2x5j1y6rVfGOZk2MacTsJyZBlxRVoNN9xq2a9h
-	 H5unFA3tBLpMGx5xbjo0tCVVvzpk7blLZm8eNaOWGNDJj3nAAwZ5WWrWqTKZSMHeXf
-	 fEFniofwyX+I8ViUNlUVf4j3pHAV5amugYUTjIgCV3/u+GGdolLhuF+ItPTll6aEkG
-	 izSC6QT3RQi3g==
+	b=Krr+bTIyxkdmvcoK1uPAfAZqbgqdA1gRsg+CV8sTJlO8qSNWgVIXa0fbrL8wwgmhG
+	 O5rmx5cWCdVcMjrKa1DA63ryr8ZLoKRwgj+W8uxJGP12ayeOKz1bhPDjWRPCUHsIha
+	 kjFiyevm2WWUE/P58N0f+e0dY2ujUFmmqMgVg0qqXsa28DpflQ6QoOR4zKxPQWDsCS
+	 exFzJnKdjWIPNNic+DzZ6l4GXd0foRGDUQxrgChHbCe7JeEQkBwnfQ7FSIyZY6d+R8
+	 XW/nx9AK0BOKmnmI1zjrVHNW8lw30Pbnc1Q+rfofmEIfjNaEPGAHoeUJ8a+luK/13E
+	 XiP1unRmUuFKg==
 From: Josh Poimboeuf <jpoimboe@kernel.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -50,9 +50,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Uros Bizjak <ubizjak@gmail.com>,
 	Andrew Cooper <andrew.cooper3@citrix.com>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 19/20] x86/uaccess: Use alternative_io() in __untagged_addr()
-Date: Fri, 14 Mar 2025 14:41:32 -0700
-Message-ID: <df08c856d0f2b7f2db503249d551d09408393cc3.1741988314.git.jpoimboe@kernel.org>
+Subject: [PATCH 20/20] x86/msr: Use alternative_2_io() in rdtsc_ordered()
+Date: Fri, 14 Mar 2025 14:41:33 -0700
+Message-ID: <acc41322fdb01204f365b6b7342bed403a99773a.1741988314.git.jpoimboe@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1741988314.git.jpoimboe@kernel.org>
 References: <cover.1741988314.git.jpoimboe@kernel.org>
@@ -64,31 +64,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use the standard alternative_io() interface.
+Use the standard alternative_2_io() interface.
 
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- arch/x86/include/asm/uaccess_64.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/msr.h | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
-index c52f0133425b..b507d5fb5443 100644
---- a/arch/x86/include/asm/uaccess_64.h
-+++ b/arch/x86/include/asm/uaccess_64.h
-@@ -26,10 +26,10 @@ extern unsigned long USER_PTR_MAX;
-  */
- static inline unsigned long __untagged_addr(unsigned long addr)
- {
--	asm (ALTERNATIVE("",
--			 "and " __percpu_arg([mask]) ", %[addr]", X86_FEATURE_LAM)
--	     : [addr] "+r" (addr)
--	     : [mask] "m" (__my_cpu_var(tlbstate_untag_mask)));
-+	alternative_io("",
-+		       "and " __percpu_arg([mask]) ", %[addr]", X86_FEATURE_LAM,
-+		       ARG([addr] "+r" (addr)),
-+		       ARG([mask] "m" (__my_cpu_var(tlbstate_untag_mask))));
+diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
+index 001853541f1e..996e3b5857c6 100644
+--- a/arch/x86/include/asm/msr.h
++++ b/arch/x86/include/asm/msr.h
+@@ -214,12 +214,13 @@ static __always_inline unsigned long long rdtsc_ordered(void)
+ 	 * Thus, use the preferred barrier on the respective CPU, aiming for
+ 	 * RDTSCP as the default.
+ 	 */
+-	asm volatile(ALTERNATIVE_2("rdtsc",
+-				   "lfence; rdtsc", X86_FEATURE_LFENCE_RDTSC,
+-				   "rdtscp", X86_FEATURE_RDTSCP)
+-			: EAX_EDX_RET(val, low, high)
+-			/* RDTSCP clobbers ECX with MSR_TSC_AUX. */
+-			:: "ecx");
++	alternative_2_io("rdtsc",
++			 "lfence; rdtsc", X86_FEATURE_LFENCE_RDTSC,
++			 "rdtscp", X86_FEATURE_RDTSCP,
++			 ARG(EAX_EDX_RET(val, low, high)),
++			 ARG(),
++			 /* RDTSCP clobbers ECX with MSR_TSC_AUX. */
++			 ARG("ecx"));
  
- 	return addr;
+ 	return EAX_EDX_VAL(val, low, high);
  }
 -- 
 2.48.1
