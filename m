@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-561859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CFDAA61794
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:27:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AFEAA61796
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:27:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32B31461AD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:27:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8550D19C67C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C553204C10;
-	Fri, 14 Mar 2025 17:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA322204C24;
+	Fri, 14 Mar 2025 17:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="krxFLivp"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bNOtLBNi"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6A22045B5
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409EC2045BF
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741973213; cv=none; b=mvUuZ8m1y9s9W/n+MYuvuZViq4E1nyREDo9syxcPvyiCe3BDBNw39eigGcMpGpYdAKzbLF5DxYN3sjWOaAKaKtwTBZCW7XtDx/0JliIGI+hiW3Gpg/ACjQsrasWxr+rQNRBED1W0jjVuGxn3z1yFXE7lJrk5v+H4SKs5eKfwI7o=
+	t=1741973214; cv=none; b=P9fC6H8Ivp2WW74wa6wxQ8cVNQzmsq+lKMMdzinbJcsrjDBw4TE1yom3z3lyBOa0W8fCIjbfyaiEcbNxYwCKttvd3PZdjVYqK4nRaltHNuhvL4V+Srdm9pANvSY4kZf1oDyWGVDHDtM0zzFbrcaSwHB+EHFn7tYr3ZFvQe5FTF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741973213; c=relaxed/simple;
-	bh=dp4AYd5zIokUQ1uGBpUz6CR9JIcnAYZG/kwUZz9JECw=;
+	s=arc-20240116; t=1741973214; c=relaxed/simple;
+	bh=WwZ38Qfz/wky1umxpNuW6XlYc82TLQQGT7sMC7dqOiI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dO1kBbOQc8MJr0B0hvhzM9lZ/fSTxZa4RAeg5SCYmYmQbkeoNBkBF/PKt99TBbvq2mq0jpDzE9ruabLBC35BaTke4biDS4+BRvCE1hCl+/JkvzyjZP11FxvgqcmTj5f3WB/qzptf5caZGOX8LXn6W1sDueEic3r7NiGFB/s3qGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=krxFLivp; arc=none smtp.client-ip=198.175.65.12
+	 MIME-Version; b=hpTJCxxkfvhqCrpRvI1lcyudPB+g8jJzH2oSBmWlAwwy+ibPIjdPN9NJjZO/PxjGWbuTTbu3vvlbdfdTtpoeS38DhkRIyyXlIlp1G6E4yVBoywm+3cxKosQsQq146ND+LD5EFa8B8OaAefMCOQUicBRyukk5K3BXyZKh4NlzcUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bNOtLBNi; arc=none smtp.client-ip=198.175.65.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,26 +35,26 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1741973212; x=1773509212;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=dp4AYd5zIokUQ1uGBpUz6CR9JIcnAYZG/kwUZz9JECw=;
-  b=krxFLivprVww8m8UUQSG5smLfdezszh1anI4sOcGn5WdPGlWvTNXnzcS
-   RvM0YW+cL0ViMsNKz/f28+ddnOry7vmPRsTlg2uxiFNmxqopYHniUosCA
-   Fns0hghRss31CrYZ0FC5OY25jPDL951xp2fINc8phjB6tCoCOWX+LOOJ1
-   I3khAVbk/nbpHzyT97MS1nnhtyeIHlWL0bEuV1YQGKxIvcCQtQxBoErET
-   weegkx6S3JOcB2Bq1PG0GyBpf1IXFQXjO6pQe/o+y+ApM4Zr4kYpvYDg9
-   UR3jJUDcD54SU4r0P5zjGwYJkSOJ/UCsTgduLv7nzqVYACu8qzAD/xQbc
+  bh=WwZ38Qfz/wky1umxpNuW6XlYc82TLQQGT7sMC7dqOiI=;
+  b=bNOtLBNikLVeOE758RosBrd3xeNfqjp1/ulQ/7Q/rjIaXIzf78GRy5gn
+   VBRo1dahV2gaCsyF+3H5kWhzKyvMNo25umF7StEeWT0L687jwdaGfcVCy
+   XIWLxnLLjCfNd9CMgdM2JJDUIAVL+YFvSIXrgS/lxx5anOPy6Preh2s+3
+   Pr6hKTQT8N0BFieMvIixgrU5b6PF9WET8vBpo4Y4LgoGCe0BTD0EJbe5z
+   4x9oaaUf6wJcpi8xOzt/yZbWqr3iT5N9OYTN5BFTkI4x7aGdh4jEr8kLu
+   5GpZPuXaOrrA+djsNXxeXfOJXrh8Yit1WRCuvGNrs9LbTi8ml7kHf/W6i
    g==;
-X-CSE-ConnectionGUID: wyVudxfCQtOn2Chv1YhSWg==
-X-CSE-MsgGUID: kzUGwsAmSjyadU5RwIL69w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="54516537"
+X-CSE-ConnectionGUID: i++WnKqNRlavFBWALEBTkw==
+X-CSE-MsgGUID: YXMXgQw5SNaahyxrAlF7lA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="54516547"
 X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="54516537"
+   d="scan'208";a="54516547"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 10:26:49 -0700
-X-CSE-ConnectionGUID: hmq0h1ZjRaa7f3tW9sxG7A==
-X-CSE-MsgGUID: Z3xlfc67Sqq2dlP271umew==
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 10:26:50 -0700
+X-CSE-ConnectionGUID: SX7qRkpRQCy8rYAJ/9svpA==
+X-CSE-MsgGUID: eN58uGCiT8+nStxjvK7Y7g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="152231806"
+   d="scan'208";a="152231808"
 Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
   by orviesa002.jf.intel.com with ESMTP; 14 Mar 2025 10:26:49 -0700
 From: kan.liang@linux.intel.com
@@ -68,14 +68,10 @@ To: peterz@infradead.org,
 	linux-kernel@vger.kernel.org
 Cc: ak@linux.intel.com,
 	eranian@google.com,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Dennis Zhou <dennis@kernel.org>,
-	Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	linux-mm@kvack.org
-Subject: [PATCH V10 2/7] locking/percpu-rwsem: Add guard support
-Date: Fri, 14 Mar 2025 10:26:55 -0700
-Message-Id: <20250314172700.438923-2-kan.liang@linux.intel.com>
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V10 3/7] perf: attach/detach PMU specific data
+Date: Fri, 14 Mar 2025 10:26:56 -0700
+Message-Id: <20250314172700.438923-3-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20250314172700.438923-1-kan.liang@linux.intel.com>
 References: <20250314172700.438923-1-kan.liang@linux.intel.com>
@@ -87,49 +83,378 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-To simplify the usage of the percpu rw semaphore.
+The LBR call stack data has to be saved/restored during context switch
+to fix the shorter LBRs call stacks issue in the  system-wide mode.
+Allocate PMU specific data and attach them to the corresponding
+task_struct during LBR call stack monitoring.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+When a LBR call stack event is accounted, the perf_ctx_data for the
+related tasks will be allocated/attached by attach_perf_ctx_data().
+When a LBR call stack event is unaccounted, the perf_ctx_data for
+related tasks will be detached/freed by detach_perf_ctx_data().
+
+The LBR call stack event could be a per-task event or a system-wide
+event.
+- For a per-task event, perf only allocates the perf_ctx_data for the
+  current task. If the allocation fails, perf will error out.
+- For a system-wide event, perf has to allocate the perf_ctx_data for
+  both the existing tasks and the upcoming tasks.
+  The allocation for the existing tasks is done in perf_event_alloc().
+  If any allocation fails, perf will error out.
+  The allocation for the new tasks will be done in perf_event_fork().
+  A global reader/writer semaphore, global_ctx_data_rwsem, is added to
+  address the global race.
+- The perf_ctx_data only be freed by the last LBR call stack event.
+  The number of the per-task events is tracked by refcount of each task.
+  Since the system-wide events impact all tasks, it's not practical to
+  go through the whole task list to update the refcount for each
+  system-wide event. The number of system-wide events is tracked by a
+  global variable global_ctx_data_ref.
+
+Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: Dennis Zhou <dennis@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: linux-mm@kvack.org
 ---
 
-No changes since V9
+Changes since V10
+- Move the attach_perf_ctx_data() right behind perf_event_init()
+  Support it in __free_event()
 
- include/linux/percpu-rwsem.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ kernel/events/core.c | 283 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 283 insertions(+)
 
-diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
-index c012df33a9f0..af7d75ede619 100644
---- a/include/linux/percpu-rwsem.h
-+++ b/include/linux/percpu-rwsem.h
-@@ -8,6 +8,7 @@
- #include <linux/wait.h>
- #include <linux/rcu_sync.h>
- #include <linux/lockdep.h>
-+#include <linux/cleanup.h>
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 2e5f0a204484..16424e77cd82 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -55,6 +55,7 @@
+ #include <linux/pgtable.h>
+ #include <linux/buildid.h>
+ #include <linux/task_work.h>
++#include <linux/percpu-rwsem.h>
  
- struct percpu_rw_semaphore {
- 	struct rcu_sync		rss;
-@@ -125,6 +126,13 @@ extern bool percpu_is_read_locked(struct percpu_rw_semaphore *);
- extern void percpu_down_write(struct percpu_rw_semaphore *);
- extern void percpu_up_write(struct percpu_rw_semaphore *);
+ #include "internal.h"
  
-+DEFINE_GUARD(percpu_read, struct percpu_rw_semaphore *,
-+	     percpu_down_read(_T), percpu_up_read(_T))
-+DEFINE_GUARD_COND(percpu_read, _try, percpu_down_read_trylock(_T))
+@@ -5212,6 +5213,217 @@ static void unaccount_freq_event(void)
+ 		atomic_dec(&nr_freq_events);
+ }
+ 
 +
-+DEFINE_GUARD(percpu_write, struct percpu_rw_semaphore *,
-+	     percpu_down_write(_T), percpu_up_write(_T))
++static struct perf_ctx_data *
++alloc_perf_ctx_data(struct kmem_cache *ctx_cache, bool global)
++{
++	struct perf_ctx_data *cd;
 +
- static inline bool percpu_is_write_locked(struct percpu_rw_semaphore *sem)
++	cd = kzalloc(sizeof(*cd), GFP_KERNEL);
++	if (!cd)
++		return NULL;
++
++	cd->data = kmem_cache_zalloc(ctx_cache, GFP_KERNEL);
++	if (!cd->data) {
++		kfree(cd);
++		return NULL;
++	}
++
++	cd->global = global;
++	cd->ctx_cache = ctx_cache;
++	refcount_set(&cd->refcount, 1);
++
++	return cd;
++}
++
++static void free_perf_ctx_data(struct perf_ctx_data *cd)
++{
++	kmem_cache_free(cd->ctx_cache, cd->data);
++	kfree(cd);
++}
++
++static void __free_perf_ctx_data_rcu(struct rcu_head *rcu_head)
++{
++	struct perf_ctx_data *cd;
++
++	cd = container_of(rcu_head, struct perf_ctx_data, rcu_head);
++	free_perf_ctx_data(cd);
++}
++
++static inline void perf_free_ctx_data_rcu(struct perf_ctx_data *cd)
++{
++	call_rcu(&cd->rcu_head, __free_perf_ctx_data_rcu);
++}
++
++static int
++attach_task_ctx_data(struct task_struct *task, struct kmem_cache *ctx_cache,
++		     bool global)
++{
++	struct perf_ctx_data *cd, *old = NULL;
++
++	cd = alloc_perf_ctx_data(ctx_cache, global);
++	if (!cd)
++		return -ENOMEM;
++
++	for (;;) {
++		if (try_cmpxchg((struct perf_ctx_data **)&task->perf_ctx_data, &old, cd)) {
++			if (old)
++				perf_free_ctx_data_rcu(old);
++			return 0;
++		}
++
++		if (!old) {
++			/*
++			 * After seeing a dead @old, we raced with
++			 * removal and lost, try again to install @cd.
++			 */
++			continue;
++		}
++
++		if (refcount_inc_not_zero(&old->refcount)) {
++			free_perf_ctx_data(cd); /* unused */
++			return 0;
++		}
++
++		/*
++		 * @old is a dead object, refcount==0 is stable, try and
++		 * replace it with @cd.
++		 */
++	}
++	return 0;
++}
++
++static void __detach_global_ctx_data(void);
++DEFINE_STATIC_PERCPU_RWSEM(global_ctx_data_rwsem);
++static refcount_t global_ctx_data_ref;
++
++static int
++attach_global_ctx_data(struct kmem_cache *ctx_cache)
++{
++	struct task_struct *g, *p;
++	struct perf_ctx_data *cd;
++	int ret;
++
++	if (refcount_inc_not_zero(&global_ctx_data_ref))
++		return 0;
++
++	guard(percpu_write)(&global_ctx_data_rwsem);
++	if (refcount_inc_not_zero(&global_ctx_data_ref))
++		return 0;
++again:
++	/* Allocate everything */
++	scoped_guard (rcu) {
++		for_each_process_thread(g, p) {
++			cd = rcu_dereference(p->perf_ctx_data);
++			if (cd && !cd->global) {
++				cd->global = 1;
++				if (!refcount_inc_not_zero(&cd->refcount))
++					cd = NULL;
++			}
++			if (!cd) {
++				get_task_struct(p);
++				goto alloc;
++			}
++		}
++	}
++
++	refcount_set(&global_ctx_data_ref, 1);
++
++	return 0;
++alloc:
++	ret = attach_task_ctx_data(p, ctx_cache, true);
++	put_task_struct(p);
++	if (ret) {
++		__detach_global_ctx_data();
++		return ret;
++	}
++	goto again;
++}
++
++static int
++attach_perf_ctx_data(struct perf_event *event)
++{
++	struct task_struct *task = event->hw.target;
++	struct kmem_cache *ctx_cache = event->pmu->task_ctx_cache;
++
++	if (!ctx_cache)
++		return -ENOMEM;
++
++	if (task)
++		return attach_task_ctx_data(task, ctx_cache, false);
++	else
++		return attach_global_ctx_data(ctx_cache);
++}
++
++static void
++detach_task_ctx_data(struct task_struct *p)
++{
++	struct perf_ctx_data *cd;
++
++	scoped_guard (rcu) {
++		cd = rcu_dereference(p->perf_ctx_data);
++		if (!cd || !refcount_dec_and_test(&cd->refcount))
++			return;
++	}
++
++	/*
++	 * The old ctx_data may be lost because of the race.
++	 * Nothing is required to do for the case.
++	 * See attach_task_ctx_data().
++	 */
++	if (try_cmpxchg((struct perf_ctx_data **)&p->perf_ctx_data, &cd, NULL))
++		perf_free_ctx_data_rcu(cd);
++}
++
++static void __detach_global_ctx_data(void)
++{
++	struct task_struct *g, *p;
++	struct perf_ctx_data *cd;
++
++again:
++	scoped_guard (rcu) {
++		for_each_process_thread(g, p) {
++			cd = rcu_dereference(p->perf_ctx_data);
++			if (!cd || !cd->global)
++				continue;
++			cd->global = 0;
++			get_task_struct(p);
++			goto detach;
++		}
++	}
++	return;
++detach:
++	detach_task_ctx_data(p);
++	put_task_struct(p);
++	goto again;
++}
++
++static void detach_global_ctx_data(void)
++{
++	if (refcount_dec_not_one(&global_ctx_data_ref))
++		return;
++
++	guard(percpu_write)(&global_ctx_data_rwsem);
++	if (!refcount_dec_and_test(&global_ctx_data_ref))
++		return;
++
++	/* remove everything */
++	__detach_global_ctx_data();
++}
++
++static void detach_perf_ctx_data(struct perf_event *event)
++{
++	struct task_struct *task = event->hw.target;
++
++	if (!event->pmu->task_ctx_cache)
++		return;
++
++	if (task)
++		detach_task_ctx_data(task);
++	else
++		detach_global_ctx_data();
++}
++
+ static void unaccount_event(struct perf_event *event)
  {
- 	return atomic_read(&sem->block);
+ 	bool dec = false;
+@@ -5393,6 +5607,9 @@ static void __free_event(struct perf_event *event)
+ 	if (is_cgroup_event(event))
+ 		perf_detach_cgroup(event);
+ 
++	if (event->attach_state & PERF_ATTACH_TASK_DATA)
++		detach_perf_ctx_data(event);
++
+ 	if (event->destroy)
+ 		event->destroy(event);
+ 
+@@ -8598,10 +8815,58 @@ static void perf_event_task(struct task_struct *task,
+ 		       task_ctx);
+ }
+ 
++/*
++ * Allocate data for a new task when profiling system-wide
++ * events which require PMU specific data
++ */
++static void
++perf_event_alloc_task_data(struct task_struct *child,
++			   struct task_struct *parent)
++{
++	struct kmem_cache *ctx_cache = NULL;
++	struct perf_ctx_data *cd;
++
++	if (!refcount_read(&global_ctx_data_ref))
++		return;
++
++	scoped_guard (rcu) {
++		cd = rcu_dereference(parent->perf_ctx_data);
++		if (cd)
++			ctx_cache = cd->ctx_cache;
++	}
++
++	if (!ctx_cache)
++		return;
++
++	guard(percpu_read)(&global_ctx_data_rwsem);
++	scoped_guard (rcu) {
++		cd = rcu_dereference(child->perf_ctx_data);
++		if (!cd) {
++			/*
++			 * A system-wide event may be unaccount,
++			 * when attaching the perf_ctx_data.
++			 */
++			if (!refcount_read(&global_ctx_data_ref))
++				return;
++			goto attach;
++		}
++
++		if (!cd->global) {
++			cd->global = 1;
++			refcount_inc(&cd->refcount);
++		}
++	}
++
++	return;
++attach:
++	attach_task_ctx_data(child, ctx_cache, true);
++}
++
+ void perf_event_fork(struct task_struct *task)
+ {
+ 	perf_event_task(task, NULL, 1);
+ 	perf_event_namespaces(task);
++	perf_event_alloc_task_data(task, current);
+ }
+ 
+ /*
+@@ -12481,6 +12746,18 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+ 	if (IS_ERR(pmu))
+ 		return (void*)pmu;
+ 
++	/*
++	 * The PERF_ATTACH_TASK_DATA is set in the event_init()->hw_config().
++	 * The attach should be right after the perf_init_event().
++	 * Otherwise, the __free_event() would mistakenly detach the non-exist
++	 * perf_ctx_data because of the other errors between them.
++	 */
++	if (event->attach_state & PERF_ATTACH_TASK_DATA) {
++		err = attach_perf_ctx_data(event);
++		if (err)
++			return ERR_PTR(err);
++	}
++
+ 	/*
+ 	 * Disallow uncore-task events. Similarly, disallow uncore-cgroup
+ 	 * events (they don't make sense as the cgroup will be different
+@@ -13628,6 +13905,12 @@ void perf_event_exit_task(struct task_struct *child)
+ 	 * At this point we need to send EXIT events to cpu contexts.
+ 	 */
+ 	perf_event_task(child, NULL, 0);
++
++	/*
++	 * Detach the perf_ctx_data for the system-wide event.
++	 */
++	guard(percpu_read)(&global_ctx_data_rwsem);
++	detach_task_ctx_data(child);
+ }
+ 
+ static void perf_free_event(struct perf_event *event,
 -- 
 2.38.1
 
