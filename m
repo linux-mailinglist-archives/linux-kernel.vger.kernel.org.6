@@ -1,194 +1,109 @@
-Return-Path: <linux-kernel+bounces-561199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53BEDA60EA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:23:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D96A60EAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:23:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AB5C461419
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:23:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B31251B60F73
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3F01EEA54;
-	Fri, 14 Mar 2025 10:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AF41F2369;
+	Fri, 14 Mar 2025 10:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="XhotPjCt"
-Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YG15XV3e"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A31A1E5B8E
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739CB1EEA54
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741947773; cv=none; b=KDPGD4lH4Sb/TLPVQsYHM3X5hkJj3UAD3sD1wpaKLqcv1KPYOuoaj2S4StPtn4PDxctX8AYKwTDAX3K3Ab+RpXiOjWrFuXp1usTVHt+0VIIYBUqqRqvG6MJLep9Ph6KA0+iW7Ik0AIpnfRez9XpqUAN9D9E5JMei542f/VzDIC8=
+	t=1741947784; cv=none; b=h13Uyx/F4Z5omA9iuvCnhri4jqoSqcUbODLlVzR7phCLDC6DIusbH/up5g2+3Zu5kNgejMwZN1QfsMWeRqlnCUVlXYaqn7uMa3vZu/ZugKQ6YRIS7kLKw4UIPNmtjCIiG3wbtSRZjK0gEzngR4QLH1VUpPoJngyMzm9PWQR5nH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741947773; c=relaxed/simple;
-	bh=MbdRv+iM89FnZKw451+VGkit0JczZSSrCCsWB6ggDHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aZ+gLlCosoCZi/EGhuJ63QP4b9UQHuNWqerOvo6RwzG9Po/29NCNaPDe2WvvRJ6Ep82ZipEQItpzLrMAF6knZcnFrSBoxtAKe8lwvdFW0N+waX7CxNUCdXDpUOGtNaQsG87DPX2CcX1EJ1zr37EFuowhYeR0DuZVnogQWCr84JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=XhotPjCt; arc=none smtp.client-ip=209.85.218.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso401084266b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:22:51 -0700 (PDT)
+	s=arc-20240116; t=1741947784; c=relaxed/simple;
+	bh=R3FNuXX2GmqDhO1V0LTe9ZodhGNso/MxtnDwLp/xsVM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WV+Jf3J7iTv6UVmWDC5FEaxuMgmM+6EVApGF25n3dOBApYJaD546/DaTf3Mkg7SnQeZ2mmE82nsciziXn/7gO7YDKC9wM6JxdY+V8bax6L7t0I1VGVwoH3MVJ/rDcRXXdKU201R/OqnX12WrDTnUl+g3ZJRrVRJxpJXIxQtNZyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YG15XV3e; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30bfd4d4c63so19776531fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:23:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1741947770; x=1742552570; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WLC14bT7l5qVe9L1a3up7gLBRmwJJU5Zq8l66jxt7TQ=;
-        b=XhotPjCtFrrkvpxaJbXNGbFVj2zrV24A5/UMXkO+qCweMi6RqSJTI3nTz9E3pkpxkL
-         sQG3oMV8xV61qP3oL6uXPtfsatrt0Hn62gRWFcZaWpGY6eDzhs35swUJVES7W2To6DvB
-         ovWaS/GAjHmMGx5OYRr5WL7gZgsza8nh2w61FT2WTViUdN3nFOpFzDXftlmLV44C0I1Y
-         ku4049pvwKlTRtQUDBBgvi7um3k8i32r6v3RqkCEin72Z6o9bO/PvMo4wnDWItOfH6nU
-         kLEZBzpwthjfdxrqHXL3PrIWwXeHUaZopxJ12bDPTzP3psN1/ICsWv66AxuORESaNTSs
-         OqZA==
+        d=linaro.org; s=google; t=1741947780; x=1742552580; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R3FNuXX2GmqDhO1V0LTe9ZodhGNso/MxtnDwLp/xsVM=;
+        b=YG15XV3eTz1eSHuWLs3V/5O9+7tUafD3ST9ePndQs6Fus8jBm1r98ZTQABTzsr5dKe
+         fcfK6Zdm0nWjMtGmVMURHXhMRBILWEXzzIRO5ihrdliWZJMxFzBd2dF78SIYoHs7PI7j
+         qWalYNvbaoHwosoGYVFrisUtwmRkG2DYvMuLdt/ZN0gyf1I01DdXHC0AJStH5gGbsetz
+         BNKo+TpWP3fEDxoKfadcZ01JNUqpucvlDSp4ZEPX/Zug1xDR9rzzhvar4N62N/D6UtwO
+         Zi6uvW+OEoZnLtbahBw4jYYxpZtej69J50l7HbyJqdUvxH7aI/Zu+Q+Co2uVQrrqPgx4
+         XA0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741947770; x=1742552570;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WLC14bT7l5qVe9L1a3up7gLBRmwJJU5Zq8l66jxt7TQ=;
-        b=YLvznSeZWvVZ0SkdKguEHSJQjzongODG+skK8x/X0YOabAWF0syBmAiB0s31ZyXwb9
-         xJ9GolkqQM7JaF5tmJZpgypJN9fGOCw9Yf0urVGG6/BYJGHt1Rj+3a/8YP0dOci2MftY
-         gWqhgnZ17B7LOJ6vRgmzeIwJFZHuJisGneSTMKoIyMRCLSdLXn9MFSmg4hZfGjsU4F0L
-         mO4ilwv0f4f7nNpPK0wE0/Hda1RW3OB3/rNazgAUbpqGuVkAcI/RXOPcHtCLlS3gmXe2
-         RU87mS00thai7RaP9G870jz7FhBi+bEQx7GlpVJfIgDbqHio/3zQTswU2aiGl+2IIi6T
-         yM/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXP6WCD663b+dSjc25tZZmloyNI3M7DbXYiMTcYsB8UzPdvjJzld0+STAJEchgeS0JgjbWehnlpYrqVx8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/mrWD6MD9DojyV4W+WogFadWHKcM7zhfYqTUZP9eUSCGaTq28
-	DITtySRFDByWj89w/ka4PQ7WjXQIVPbRzE1LIIcnTxGFvwjpqMeiaAkxX1OogRU=
-X-Gm-Gg: ASbGncveiT8fA9G1BeP6WSqYsv+VxxBXybPX6WLQd0v1xdwkhD9HgtYW0SXJtSyPOFC
-	qRHctt7fdRG3uYX1J6ydepa/RGVn+BE0Pg69pwBQABOmW/RlVumEvc52NQV8/aD4N9BzZB8jCG6
-	08B0DoKpfDTkMCGD0oEoMh2zuztkC7vwhyZ5hwKToZgtNs7bT+/XRn3hfb0hk04vBGq4H/CpqHr
-	Cx+ycIkozVIRZT7iSVkq+nPI/tGFKBftl67An3qhSIqfxdyShFGyAyZS2rx1eDN0vKhCge79mNI
-	ViGT3THiP9/ZeenbNGKiDzT48GtelMxuiXG+DcTkWqE2ZPN9oSUlrpAn
-X-Google-Smtp-Source: AGHT+IEtf+5uMhZHeMpuNHp44VDObLkwKhS755JgMPyzBh3Tkne5oU6MDvaxu9uSs1lL4nigwL2EYA==
-X-Received: by 2002:a17:906:c10d:b0:ac2:9210:d96e with SMTP id a640c23a62f3a-ac3304412b9mr190659866b.43.1741947769542;
-        Fri, 14 Mar 2025 03:22:49 -0700 (PDT)
-Received: from [10.20.7.108] ([195.29.209.28])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a9db94sm209442666b.171.2025.03.14.03.22.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 03:22:49 -0700 (PDT)
-Message-ID: <21d52659-622a-4b2a-b091-787bf0f5d67f@blackwall.org>
-Date: Fri, 14 Mar 2025 12:22:47 +0200
+        d=1e100.net; s=20230601; t=1741947780; x=1742552580;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R3FNuXX2GmqDhO1V0LTe9ZodhGNso/MxtnDwLp/xsVM=;
+        b=sOqC3IsPDkS6XdKHenp/lIdAt345/7oSwQmNMMsCAtIY1ZZJnnL3aQSQdhIIa8XEhX
+         pLGJS203AlNztpBY/zeWF/3WuJ01CSXjJp+bkzNq0mfyZT1qEC6kqFWQl0IgK/pBD84k
+         dkRxJtqr3zscGzF8koOz/coCDCR7M4OaKuCtQKAZhhVDt2G9qxogzPru68yJpZrCYk+E
+         F59wVNnX8Ho5sEzjI3TOClhBZ31lyWxtju9Dll+LL1lFdTSR/MAxOgUpq6Bh/SY82Bhu
+         pX0FcCOjoHxQo82o1qcmRyDCa70LltXFyGXVc2QUwxfEn2dnqeiw1ZXBASJsno8N5I/A
+         YzjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAZ8NP7pv04l7HsDHjoy6KZn3tituaSpBy65l3pYW9VlCquKbUPgLDB5jU7bKFEr0s5J1O7sAacqmAgQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEB/eV9ZEo7S33UDppkZjYSv1yoGn+INAFg0UlS7WDoaymcSBF
+	2swTFZuji1Lx2CJ21B39RIRlXpyXekBZ6W9EY48SBm99oS6hO2iephz5C5kUnnFQ16vsQJ1HzUf
+	1g03bcvXhdrkd7DezYKW3v+QzbBG7ny/mCS2Fug==
+X-Gm-Gg: ASbGncuw9AEbsj9cmuVk9xK3hi0aM/2M8VHFdzV394++BY8+wnbm7EyZzTyhPlSIggc
+	0AjfIXSp7VrGpwR3xQcbS4Kt54x7c7gA3sxtcWEmScT/Gb8ggypyTPrikU416pVDSHGhQhQECTc
+	RUlXNrZlSEpxpNH0QNKqNQdmE=
+X-Google-Smtp-Source: AGHT+IFRy+oj381HcLG17WN2twiWfwvbXqYf+FzldwnytvF99CDrolKoTfBkWEHzPycGeBhKT3RqAyyS6qDRC3LGTmw=
+X-Received: by 2002:a05:6512:118a:b0:545:f4b:ed58 with SMTP id
+ 2adb3069b0e04-549c3902d36mr745591e87.18.1741947780537; Fri, 14 Mar 2025
+ 03:23:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] bonding: check xdp prog when set bond mode
-To: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
- Wang Liang <wangliang74@huawei.com>, jv@jvosburgh.net,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net,
- hawk@kernel.org, john.fastabend@gmail.com, joamaki@gmail.com
-Cc: yuehaibing@huawei.com, zhangchangzhong@huawei.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-References: <20250314073549.1030998-1-wangliang74@huawei.com>
- <87y0x7rkck.fsf@toke.dk>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <87y0x7rkck.fsf@toke.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <cover.1741268122.git.Jonathan.Santos@analog.com> <d055d21a2a1e4e1d64c457d38e3cf6630d4183bc.1741268122.git.Jonathan.Santos@analog.com>
+In-Reply-To: <d055d21a2a1e4e1d64c457d38e3cf6630d4183bc.1741268122.git.Jonathan.Santos@analog.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 14 Mar 2025 11:22:49 +0100
+X-Gm-Features: AQ5f1JqGYkWzEfKnAtPNgqr4uBw_KbB-Dek4h3EJu5HoogzTnrZCjzpFr3BwQdY
+Message-ID: <CACRpkdZsnDtvKdzRmSUqDSVLfdz_NYygXQq5V5Eig4b64Fwr+Q@mail.gmail.com>
+Subject: Re: [PATCH v4 04/17] dt-bindings: iio: adc: ad7768-1: Document GPIO controller
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, lars@metafoo.de, 
+	Michael.Hennerich@analog.com, marcelo.schmitt@analog.com, jic23@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, brgl@bgdev.pl, 
+	lgirdwood@gmail.com, broonie@kernel.org, dlechner@baylibre.com, 
+	marcelo.schmitt1@gmail.com, jonath4nns@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/14/25 12:13 PM, Toke Høiland-Jørgensen wrote:
-> Wang Liang <wangliang74@huawei.com> writes:
-> 
->> Following operations can trigger a warning[1]:
->>
->>     ip netns add ns1
->>     ip netns exec ns1 ip link add bond0 type bond mode balance-rr
->>     ip netns exec ns1 ip link set dev bond0 xdp obj af_xdp_kern.o sec xdp
->>     ip netns exec ns1 ip link set bond0 type bond mode broadcast
->>     ip netns del ns1
->>
->> When delete the namespace, dev_xdp_uninstall() is called to remove xdp
->> program on bond dev, and bond_xdp_set() will check the bond mode. If bond
->> mode is changed after attaching xdp program, the warning may occur.
->>
->> Some bond modes (broadcast, etc.) do not support native xdp. Set bond mode
->> with xdp program attached is not good. Add check for xdp program when set
->> bond mode.
->>
->>     [1]
->>     ------------[ cut here ]------------
->>     WARNING: CPU: 0 PID: 11 at net/core/dev.c:9912 unregister_netdevice_many_notify+0x8d9/0x930
->>     Modules linked in:
->>     CPU: 0 UID: 0 PID: 11 Comm: kworker/u4:0 Not tainted 6.14.0-rc4 #107
->>     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.15.0-0-g2dd4b9b3f840-prebuilt.qemu.org 04/01/2014
->>     Workqueue: netns cleanup_net
->>     RIP: 0010:unregister_netdevice_many_notify+0x8d9/0x930
->>     Code: 00 00 48 c7 c6 6f e3 a2 82 48 c7 c7 d0 b3 96 82 e8 9c 10 3e ...
->>     RSP: 0018:ffffc90000063d80 EFLAGS: 00000282
->>     RAX: 00000000ffffffa1 RBX: ffff888004959000 RCX: 00000000ffffdfff
->>     RDX: 0000000000000000 RSI: 00000000ffffffea RDI: ffffc90000063b48
->>     RBP: ffffc90000063e28 R08: ffffffff82d39b28 R09: 0000000000009ffb
->>     R10: 0000000000000175 R11: ffffffff82d09b40 R12: ffff8880049598e8
->>     R13: 0000000000000001 R14: dead000000000100 R15: ffffc90000045000
->>     FS:  0000000000000000(0000) GS:ffff888007a00000(0000) knlGS:0000000000000000
->>     CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>     CR2: 000000000d406b60 CR3: 000000000483e000 CR4: 00000000000006f0
->>     Call Trace:
->>      <TASK>
->>      ? __warn+0x83/0x130
->>      ? unregister_netdevice_many_notify+0x8d9/0x930
->>      ? report_bug+0x18e/0x1a0
->>      ? handle_bug+0x54/0x90
->>      ? exc_invalid_op+0x18/0x70
->>      ? asm_exc_invalid_op+0x1a/0x20
->>      ? unregister_netdevice_many_notify+0x8d9/0x930
->>      ? bond_net_exit_batch_rtnl+0x5c/0x90
->>      cleanup_net+0x237/0x3d0
->>      process_one_work+0x163/0x390
->>      worker_thread+0x293/0x3b0
->>      ? __pfx_worker_thread+0x10/0x10
->>      kthread+0xec/0x1e0
->>      ? __pfx_kthread+0x10/0x10
->>      ? __pfx_kthread+0x10/0x10
->>      ret_from_fork+0x2f/0x50
->>      ? __pfx_kthread+0x10/0x10
->>      ret_from_fork_asm+0x1a/0x30
->>      </TASK>
->>     ---[ end trace 0000000000000000 ]---
->>
->> Fixes: 9e2ee5c7e7c3 ("net, bonding: Add XDP support to the bonding driver")
->> Signed-off-by: Wang Liang <wangliang74@huawei.com>
->> ---
->>  drivers/net/bonding/bond_options.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
->> index 327b6ecdc77e..127181866829 100644
->> --- a/drivers/net/bonding/bond_options.c
->> +++ b/drivers/net/bonding/bond_options.c
->> @@ -868,6 +868,9 @@ static bool bond_set_xfrm_features(struct bonding *bond)
->>  static int bond_option_mode_set(struct bonding *bond,
->>  				const struct bond_opt_value *newval)
->>  {
->> +	if (bond->xdp_prog)
->> +		return -EOPNOTSUPP;
->> +
-> 
-> Should we allow changing as long as the new mode also supports XDP?
-> 
-> -Toke
-> 
-> 
+On Thu, Mar 6, 2025 at 10:01=E2=80=AFPM Jonathan Santos
+<Jonathan.Santos@analog.com> wrote:
 
-+1
-I think we should allow it, the best way probably is to add a new
-BOND_VALFLAG_XDP_UNSUPP (for example) as a bond option flag and to set
-it in bond_options.c for each mode that doesn't support XDP, then you
-can do the check in a generic way (for any option) in
-bond_opt_check_deps. Any bond option that can't be changed with XDP prog
-should have that flag set.
+> The AD7768-1 ADC exports four bidirectional GPIOs accessible
+> via register map.
+>
+> Document GPIO properties necessary to enable GPIO controller for this
+> device.
+>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
 
-Cheers,
- Nik
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
+Yours,
+Linus Walleij
 
