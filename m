@@ -1,131 +1,272 @@
-Return-Path: <linux-kernel+bounces-561007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03119A60C55
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:56:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3AEA60C56
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:57:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48A8A3A6929
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:56:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7456A189DEF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928C11DC9BE;
-	Fri, 14 Mar 2025 08:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C5A1DC198;
+	Fri, 14 Mar 2025 08:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iDPa7L2F"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="U1UYqkR8"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B439832C85;
-	Fri, 14 Mar 2025 08:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4720032C85
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741942606; cv=none; b=Mud96/JwgYQltWEi2rzgXtLFitLJqBsR4EaozbNup6YtTUtO5ZP6Wa34GgB0uH4Y/+S6rEQvrkE8PpLv2OaHqKHLTywdswsL2D3ezsAduSNRuKKeVVJNaVYC8G6EcoiafLfL4yvzziIH0JrhGlnVr7tV6rhJMXqmptgnif8PMDo=
+	t=1741942641; cv=none; b=QHUyJVMn5bmL9O3+OY2+L50K04SavSg75fwr0oRvFAJVPCRqQwfc3iyRKB2Fg+VheGmn+qK9sWSLsxCES10XaDV5PWf8TaY75boSJMWzKAcgJ4gjt35R90NqRxTiCqmNutFyAvfYMTcQPYkZbTwuaGCNB0Ih8dB3JamOaqNoLro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741942606; c=relaxed/simple;
-	bh=QLyMwjsZtXxK1jY3SWBM7wMH3m1w4+gwsm3Hy9Ser+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EInuRxdegfAEZXIV8N7hgSYO1Q3wZrPqr/GVz+oK7ApoOUWsaEOFf/fxBSFFdfpw2K6TrSS/CvgSKcNPrTj/xjLs/owuIA1jgU7hBYdtowuhT1x3exTLDyRt2x/psG/abjrtLVzEQi8tqAQTyZ+Pxuo3GT2fGjq4z+a9NXnO5KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iDPa7L2F; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-223959039f4so39318035ad.3;
-        Fri, 14 Mar 2025 01:56:44 -0700 (PDT)
+	s=arc-20240116; t=1741942641; c=relaxed/simple;
+	bh=Tlz+4JyveplqUguhzEKW3sCzVDhA3oNQ0nW9bI6BnZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dSbRqC2W908NwYzVCN0YAI64UKRinIsZ9Vveug0D0uUiZVymD+XQNLpDV5NiDahtBv09EQWRRvMyTH06wC04L+2R4BTPlGrJ8org/Hu/MrzI/23aFx6UU8RFTybfBTeBzFP912ZSs/015ef1k6e6RZtDe76hIyWT2pTiPkv1LM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=U1UYqkR8; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2239c066347so38676245ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:57:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741942604; x=1742547404; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ftfEQdTm72xkfn+mdf+x14iHvTM0uwjPjWeDA0BK8wE=;
-        b=iDPa7L2F5zl7EJr8C6dBu4qB8hE0GaoqdAm/NdX12jKZqRhxE1gYnmv6muPxvEklj4
-         nVnO3wRYBL05t6Yjwh0M23wbIxJPnncS1/bQMFSrWdoTpTnKeUwrdTW++zo+OEJviFrV
-         3AjILzXs3538OhDEUXjZDSmZQ7dS7NHJJNwd1uwQ/6r3gTlP7d6j7oeqPxHqJyESZFPR
-         iIDMWqX3QWJKwcMyXMn7W2w0BEWHaokd8/1bba/kiC9PlxRjVfuXhHFoSAq7yO2xBY7r
-         ITrmO9xz+v5Mqn511IALpXExFTVWkjdZOa2jlHcfTaeaVyD2bHKS30OQ75N0ftX/NS+H
-         e4HQ==
+        d=bytedance.com; s=google; t=1741942637; x=1742547437; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hiaKvR0kxbaf4pPu409exjMHDDq+NtYqWRmCUcc44FI=;
+        b=U1UYqkR8+dfedttcV1MbuypTRDCEk25hxIafYENSougGp5A+VEN0tBugWFUzWSVDrn
+         Y8ju7GTnis+hf9ubzWe39qcby+eEoPySFQ6WQz71I3mi2aavf8hJr87p/7MX1zvGDCum
+         OsjfqckMHa8SmOgo2uFX1kvbrJw4xBURJOa3762W/JP3e5N8nv3fN5lbhjzBK94Axoy8
+         p+ADgXGZ6ubOuYxOR3kD/px1fO8cSPkFMWBTLJe7nDuS4mxJsDPKAGQRZX9bH4RLACzq
+         pKwbGxNegTJb9vVknIViY04SMLHLQJNClei2BBiNwXdqr0qMdr/VTO643yfSl6m44lf+
+         7jXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741942604; x=1742547404;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ftfEQdTm72xkfn+mdf+x14iHvTM0uwjPjWeDA0BK8wE=;
-        b=U+Oi9vscku8kEHrIVWQ+czZfP8G/DsdiUtb8hf3vH4k0PNAMHTM+m5gLtVVWMBlKXQ
-         ZzO6/m/2I5NG9SMaphYjrbZKNnaMgPIhggIQGL+6G8h9lD7B0/UV/8fb4dPQuGl6A1nA
-         DZoWRCwOlqnBxsE5X2dYq9m0w7QXkGYnXsrWDysdhW+acQeRehbJoScNpKbex+ySaHaK
-         zlBwyd8xIJH7lC1GkPznoZU2YrF8yBwX3x14rJJX7nG8ZCgsE7lGIX40KoCHVbuS0gtx
-         m0YUxt2zWMrYlVa52gIO5CorZMEpgyAlA0pSC7GvCPVQXX4uRv6e0rIiwrglvGYoO4yW
-         WRtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/xDIE8MfiV42xpqRTxRdcy2K4LkEh+AildDHVAaQE865oJPY6VlQvKbjWgxDZ3c4rrRW9kEWTrLLNL2tv@vger.kernel.org, AJvYcCW3rSwbShb43LLBx8kYaHpMdeSEKJUxbZn0TrlrjS0kPhBiqBOS70jsHcCg2PZYgDsjATXSBYW2VbGHzdEX3nJp4xy2@vger.kernel.org, AJvYcCWqR8M6lNTIycE5MTigig1dpc3IhdAQ0cJC1VlDEkuzZwzr3mg0TngzHaof2jdot25AqMbQP7qWJTY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyuTcviKyJD3msk9Isk96mpxA+I2Gls2WLHyQXsQYwUfEbWnnc
-	yzfnfNKnZaEAI2+IBBgevA29qvboMvq9DMvoXgvaVXRsChxL82nP
-X-Gm-Gg: ASbGncvJEnkzfM2TzKn5+h/BHl7+fj2yn9uB6mZfV72yRVI2/nhA01qaw1wkAdZazhn
-	6SHqG8w2JDYcr6VPENPTgHBO1lx8O02JVjuhV1beKS/VG4lFUOi3y1AtI6sXVa7hmpMmB5Myeza
-	zJ1UnX1gDCwr2vaMb0kPiWeq0rEYowRDhWz3DmlgimI9xVTJOUZ+ONSd29SwhAATrmoSPkG7Nm1
-	G1TXkpEkQcx0re+Z72/2x+7hlyNlkwgrm0ieDZc+EMSid3w7pFogWvyqKe6UtIDMoIA9sBIXuqv
-	43sXoKe9Bv5+b2nMGNgs21X/1jm4TqRLRzUdt0H51+vaIIMAzrZmqx1McSOvgP6yv3PpB4g0dq7
-	h/3LQ/WFfdCvnEWUUa6kAFoLt
-X-Google-Smtp-Source: AGHT+IFkHAs56yagSZOwh3L76DEzQQHRblLwhIx9gbXSDvYUUKATBY72wgulZSwXPSnQZw7/mhvIdQ==
-X-Received: by 2002:a17:902:f684:b0:220:fb23:48df with SMTP id d9443c01a7336-225e0af4fa7mr25477585ad.36.1741942603891;
-        Fri, 14 Mar 2025 01:56:43 -0700 (PDT)
-Received: from ?IPV6:2409:4081:1112:2682:6150:d7c3:7955:f419? ([2409:4081:1112:2682:6150:d7c3:7955:f419])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68a7f87sm25237265ad.81.2025.03.14.01.56.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 01:56:43 -0700 (PDT)
-Message-ID: <b1882a1f-3ed0-4307-8a34-3236bdfb79a6@gmail.com>
-Date: Fri, 14 Mar 2025 14:26:37 +0530
+        d=1e100.net; s=20230601; t=1741942637; x=1742547437;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hiaKvR0kxbaf4pPu409exjMHDDq+NtYqWRmCUcc44FI=;
+        b=Wnvc/BfUA15P28yWCbxD5xTkRCy4mtzGhvVhKH9bxNTPCYM262lvQwm8Iu7UyawQKw
+         dDFPwW7agICdywZaM3SF6KzE2DmsD0y1fgN9UIXmQbG6+ux9plbYT3OcHa2KwCF80/js
+         pRY4FN4V81Zo/caVECLz292U1P3c6L0paROlJsvmGFrLs4oRu5Ju6eKKZaWOBzI6mCwd
+         07fiZvTVo7mTh3E+V6Dcd2IYRx28X+tI5o/RgM+Gj3XX+h0cDEs77Y4rX49eYwBO3WlM
+         l4N4dAgNtKzZPXlZMaVnloxWZGEy/TyEbeMgR51I2gan6H7mNy18jn33v4yw6ewSxUSm
+         jkcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWAsJMspWiq+SHYCxXd+P9aBKD6ukAi73ulrIzKu+pgqM4MixGAPjQDh4muHemqD8tsi9taF2HcYuJC9S8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVBKTqC6e0gqXll014Zkk/s3TGVzex6vYqZdbWFYXqoEc4Nw9q
+	Bl2Chyy7LSjTpXxFsPlG+WKAEluod4I7anFCHxqvz2f6QOKWDvTndXBY02jVTQ==
+X-Gm-Gg: ASbGncvmTv6cQtMVyL3KT9+q9W4xiK6eBlkazMcAs5Qx2jQOb5TK4z3pZcnaXxQdJ7S
+	rUDI2bOFdAq98W0Hhx84PFWB0OuU6z3Jn4E8j/bnqCmrvTorSMj4IevBE6K0XmeW+xJ4W1rGwQP
+	xAJlVQcVegMzLApf1wjuBES028YPl8Y5VZHKJIF/IFfA0PWMPItN3PnS8QVAHSCGTfRrDnHq3Y9
+	nvs83eA2MeC65BCAmUBEW4qzPkeowLZ7YwZmtoN8RFCgqW9f4AIcRCAUo8Adeh4S6gFNCVPg9fR
+	GEknjSOYHtGpwLlJvo9uYxGaYzKfneovnhM7258oyLOC
+X-Google-Smtp-Source: AGHT+IH65+ikBQ8QAYBYxA40hi3MDN3FgRNsSk3rU/vDJOI7F4DnlQISS6IdbMAg5N6qGAP1PSEzwA==
+X-Received: by 2002:a17:902:f545:b0:21c:fb6:7c3c with SMTP id d9443c01a7336-225e0a626b7mr21650295ad.17.1741942637397;
+        Fri, 14 Mar 2025 01:57:17 -0700 (PDT)
+Received: from bytedance ([115.190.40.14])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bd5c03sm24837205ad.249.2025.03.14.01.57.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 01:57:16 -0700 (PDT)
+Date: Fri, 14 Mar 2025 16:57:09 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>
+Subject: Re: [RFC PATCH 2/7] sched/fair: Handle throttle path for task based
+ throttle
+Message-ID: <20250314085709.GB1633113@bytedance>
+References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
+ <CANCG0GcFF7cnR4rCbU5MmY1Gq3M+r4gPXv39QPXXC=Cdr6sRww@mail.gmail.com>
+ <ddd839a6-916b-4a23-a998-0d44486588ab@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] docs: tracing: Reduce maxdepth in index
- documentation
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20250312124717.7208-1-purvayeshi550@gmail.com>
- <20250312134907.06d27d78@batman.local.home> <Z9JKqVvG1iw0bFXR@archie.me>
- <20250313070457.647c8c57@batman.local.home>
- <4cc0a072-3eaf-4fbf-a334-012aacf9039f@gmail.com>
-Content-Language: en-US
-From: Purva Yeshi <purvayeshi550@gmail.com>
-In-Reply-To: <4cc0a072-3eaf-4fbf-a334-012aacf9039f@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ddd839a6-916b-4a23-a998-0d44486588ab@amd.com>
 
-On 13/03/25 17:46, Bagas Sanjaya wrote:
-> On 3/13/25 18:04, Steven Rostedt wrote:
->> On Thu, 13 Mar 2025 10:02:01 +0700
->> Bagas Sanjaya <bagasdotme@gmail.com> wrote:
->>
->>> If you'd like to generate a patch series, you can refer to thoughtbot
->>> blogpost at [1].
->>
->> ??
->>
->> This is already a patch series.
->>
->>>
->>> And you can also add cover letter by passing --cover-letter to
->>> git-format-patch(1).
->>
->> It's simple enough it doesn't need a cover letter.
->>
+On Fri, Mar 14, 2025 at 08:58:14AM +0530, K Prateek Nayak wrote:
+> Hello Aaron,
 > 
-> I mean I'm directing my reply to Purva.
+> On 3/13/2025 12:51 PM, Aaron Lu wrote:
 > 
-> Thanks anyway.
-
-Hi Bagas,
-
-Thanks for the reference. I will keep this in mind for future patch 
-series and include a cover letter.
-
+> [..snip..]
 > 
+> > 
+> > +static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags);
+> >   static void throttle_cfs_rq_work(struct callback_head *work)
+> >   {
+> > +	struct task_struct *p = container_of(work, struct task_struct,
+> > sched_throttle_work);
+> > +	struct sched_entity *se;
+> > +	struct cfs_rq *cfs_rq;
+> > +	struct rq *rq;
+> > +	struct rq_flags rf;
+> > +
+> > +	WARN_ON_ONCE(p != current);
+> > +	p->sched_throttle_work.next = &p->sched_throttle_work;
+> > +
+> > +	/*
+> > +	 * If task is exiting, then there won't be a return to userspace, so we
+> > +	 * don't have to bother with any of this.
+> > +	 */
+> > +	if ((p->flags & PF_EXITING))
+> > +		return;
+> > +
+> > +	rq = task_rq_lock(p, &rf);
+> 
+> nit. With CLASS(task_rq_lock, rq_guard)(p), you can fetch the rq with
+> "rq_gurad.rq" and the "goto out_unlock" can be replaced with simple
+> return.
 
+Got it, thanks for the suggestion.
+
+> > +
+> > +	se = &p->se;
+> > +	cfs_rq = cfs_rq_of(se);
+> > +
+> > +	/* Raced, forget */
+> > +	if (p->sched_class != &fair_sched_class)
+> > +		goto out_unlock;
+> > +
+> > +	/*
+> > +	 * If not in limbo, then either replenish has happened or this task got
+> > +	 * migrated out of the throttled cfs_rq, move along
+> > +	 */
+> > +	if (!cfs_rq->throttle_count)
+> > +		goto out_unlock;
+> > +
+> > +	update_rq_clock(rq);
+> > +	WARN_ON_ONCE(!list_empty(&p->throttle_node));
+> > +	list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
+> > +	dequeue_task_fair(rq, p, DEQUEUE_SLEEP | DEQUEUE_SPECIAL);> +	resched_curr(rq);
+> > +
+> > +out_unlock:
+> > +	task_rq_unlock(rq, p, &rf);
+> >   }
+> > 
+> >   void init_cfs_throttle_work(struct task_struct *p)
+> > @@ -5873,32 +5914,81 @@ static int tg_unthrottle_up(struct task_group
+> > *tg, void *data)
+> >   	return 0;
+> >   }
+> > 
+> > +static inline bool task_has_throttle_work(struct task_struct *p)
+> > +{
+> > +	return p->sched_throttle_work.next != &p->sched_throttle_work;
+> > +}
+> > +
+> > +static inline void task_throttle_setup_work(struct task_struct *p)
+> > +{
+> > +	/*
+> > +	 * Kthreads and exiting tasks don't return to userspace, so adding the
+> > +	 * work is pointless
+> > +	 */
+> > +	if ((p->flags & (PF_EXITING | PF_KTHREAD)))
+> > +		return;
+> > +
+> > +	if (task_has_throttle_work(p))
+> > +		return;
+> > +
+> > +	task_work_add(p, &p->sched_throttle_work, TWA_RESUME);
+> > +}
+> > +
+> >   static int tg_throttle_down(struct task_group *tg, void *data)
+> >   {
+> >   	struct rq *rq = data;
+> >   	struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
+> > +	struct task_struct *p;
+> > +	struct rb_node *node;
+> > +
+> > +	cfs_rq->throttle_count++;
+> > +	if (cfs_rq->throttle_count > 1)
+> > +		return 0;
+> 
+> General question: Do we need the throttled_lb_pair() check in
+> can_migrate_task() with the per-task throttle? Moving a throttled task
+> to another CPU can ensures that the task can run quicker and exit to
+> user space as quickly as possible and once the task dequeues, it will
+> remove itself from the list of fair tasks making it unreachable for
+> the load balancer. Thoughts?
+
+That's a good point.
+
+The current approach dequeued the task and removed it from rq's
+cfs_tasks list, causing it lose the load balance opportunity. This is
+pretty sad.
+
+I'll need to think about this. I hope we can somehow keep the throttled
+tasks in cfs_tasks list, I'll see how to make this happen.
+
+Thanks,
+Aaron
+
+> > 
+> >   	/* group is entering throttled state, stop time */
+> > -	if (!cfs_rq->throttle_count) {
+> > -		cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
+> > -		list_del_leaf_cfs_rq(cfs_rq);
+> > +	cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
+> > +	list_del_leaf_cfs_rq(cfs_rq);
+> > 
+> > -		SCHED_WARN_ON(cfs_rq->throttled_clock_self);
+> > -		if (cfs_rq->nr_queued)
+> > -			cfs_rq->throttled_clock_self = rq_clock(rq);
+> > +	SCHED_WARN_ON(cfs_rq->throttled_clock_self);
+> > +	if (cfs_rq->nr_queued)
+> > +		cfs_rq->throttled_clock_self = rq_clock(rq);
+> > +
+> > +	WARN_ON_ONCE(!list_empty(&cfs_rq->throttled_limbo_list));
+> > +	/*
+> > +	 * rq_lock is held, current is (obviously) executing this in kernelspace.
+> > +	 *
+> > +	 * All other tasks enqueued on this rq have their saved PC at the
+> > +	 * context switch, so they will go through the kernel before returning
+> > +	 * to userspace. Thus, there are no tasks-in-userspace to handle, just
+> > +	 * install the task_work on all of them.
+> > +	 */
+> > +	node = rb_first(&cfs_rq->tasks_timeline.rb_root);
+> > +	while (node) {
+> > +		struct sched_entity *se = __node_2_se(node);
+> > +
+> > +		if (!entity_is_task(se))
+> > +			goto next;
+> > +
+> > +		p = task_of(se);
+> > +		task_throttle_setup_work(p);
+> > +next:
+> > +		node = rb_next(node);
+> > +	}
+> > +
+> > +	/* curr is not in the timeline tree */
+> > +	if (cfs_rq->curr && entity_is_task(cfs_rq->curr)) {
+> > +		p = task_of(cfs_rq->curr);
+> > +		task_throttle_setup_work(p);
+> >   	}
+> > -	cfs_rq->throttle_count++;
+> > 
+> >   	return 0;
+> >   }
+> > 
+> 
+> [..snip..]
+> 
+> -- 
+> Thanks and Regards,
+> Prateek
+> 
 
