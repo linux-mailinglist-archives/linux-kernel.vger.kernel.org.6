@@ -1,99 +1,177 @@
-Return-Path: <linux-kernel+bounces-560965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C12A60BAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:33:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB9E5A60BB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:33:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAC6019C1F9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:33:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34E247A695D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59491CDFAC;
-	Fri, 14 Mar 2025 08:32:54 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E101C1AAA1B;
+	Fri, 14 Mar 2025 08:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Btwlg3gQ"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9151C862E;
-	Fri, 14 Mar 2025 08:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18781ACEA5
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741941174; cv=none; b=amw24gSdtmFHF+/Em7qFd+XPsmaes3apWbSMnHGm5nDDrcstliFh5uiUlasIvr9Mogd6JUweaff7Ecvu64Z+f6sAHHqjvPmJEP+ScKSxaMK4oz2TGa1cLZjwuy5gGG+5O4dNPsO8diwxZ2vff/qfOzryQGLGt1X4Xk2TNA76ZHk=
+	t=1741941184; cv=none; b=T8+cqQR9IvDp0cvUmatzGouYVEF+h3Qgy/IMgsl1qw5DofZbNVD2Px95VcPFGlynBwQSxI58Q6lc90GFJkJFGwaSQ2Y+SkJseOhWWGZvFMQFF679xgdqSpBJ0rgRgEzCkMNZSI81TEXgOF2n7Nl1c+sX5Lj1bP5iYCdTq2rixYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741941174; c=relaxed/simple;
-	bh=MOrnk0Qp328GYxb+Li/Avejp1YhRukc3wwHbN6pL8eA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fp0sSyzzpxnTSGdPpHIx8EIM0G0nNpA5w6nUOmb4WbHC3zk7HNTtmpix6KpdbdfClr4hc8q/mUJXF/tv3+O0hQYoHvsqLBn9JQlZY+T2F/Ctqd8yw6WE6izRikFEmJD+N2tBu3K033Ug9+9Hgh7ALJ7Y/kpZMlLzNOEmn65jbE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id C4E1E100FBF26;
-	Fri, 14 Mar 2025 09:32:47 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 92DB8100E1; Fri, 14 Mar 2025 09:32:47 +0100 (CET)
-Date: Fri, 14 Mar 2025 09:32:47 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	Guenter Roeck <groeck@juniper.net>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Rajat Jain <rajatxjain@gmail.com>,
-	Joel Mathew Thomas <proxy0@tutamail.com>,
-	linux-kernel@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH 3/4] PCI/hotplug: reset_lock is not required
- synchronizing with irq thread
-Message-ID: <Z9Ppr63yDUhOF1Xo@wunner.de>
-References: <20250313142333.5792-1-ilpo.jarvinen@linux.intel.com>
- <20250313142333.5792-4-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1741941184; c=relaxed/simple;
+	bh=xu5967BJsmCni8bG3U0wXv5e5cioeeVqhN7TGp+1s6Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SOZRo1Vsq5qhv0ruKCemCvpu9oKuFF5g5wt+/zeKEyHbKkG3aipYn1il/WY7CPPZvJiNX+HoCH5b07ds63HkwKX/ZZUPpQU3ZOAP1ueXEq04ygsHqjrSYmpvzcKDA9l81WJREDgoYt2xe7auIljIIX1c+fckDLTunqdv8huCjgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Btwlg3gQ; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3ce87d31480so10633575ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:33:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1741941181; x=1742545981; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CV+0B9PMq9Sjr8aBQyixXXym4Bdz4psV6MbgJ2u7viA=;
+        b=Btwlg3gQgAztUdFtEpHuxg8zMhCONXa2XtIaK2uQniS/aYGF4CkUwspO0nPi80ZJEe
+         SUQti+198JpYXtmjZi4rCaxmTuXwMOlVGawT6wwy/L8YMIjzEbXH2e8u4nwXAAvsb/LW
+         C9KyinUbMrXBGG+SFUfnZ3odUJzWH+CmElUJgYC7d1oCjg0pWSBrbKB/2BB3V4/dK/Yp
+         7s7JIJQ23PPEbpcb8Ch07qNUwnpBt7ELuPrG9ZYnnfTHNrSK795AFHwwkz7sZ46+/48/
+         JkpPHlCTWe/7ZoGt2YhfEMFA2dz3lYslt6wpFtgLFaAcyjk7bR6VmcA762tMYCIcpSjr
+         nAOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741941181; x=1742545981;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CV+0B9PMq9Sjr8aBQyixXXym4Bdz4psV6MbgJ2u7viA=;
+        b=qRSLrG8uXQvOf2gREBpy+I9zaoTBVFtqtiZPxt+V1iQtI7Mx6B9NG9f+/93ApzZ0I8
+         0UgxzYUbt4f6gCrfT14OBPz6MAvADFrZ/tSjVTX5ySh8YrI94RPDlbKY18mVz9j9Up30
+         xD0a0yP9cb/T0yHAQprB/4SOkGDL17u2LiPDnSmBZ/R7M2fcWNhQMU1HAnY+UXMhaYlX
+         ueWEsxtq3y5AacxURgW+gPfwnLIuIcOnypjVsP8A/Q/p6CsAfKWPKeMk7cmk7No5/2k7
+         79ZYiWvCuKuNPflw2jkRGqLbUMHK1SgzmCYYBMbZADVPyw762o/jyBPULHJhBybHEjpF
+         ZAkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+GbMBTem+VK2ik5JZDM82bp2GqIRtyloN65gIEJYJyR+L/BqOsg6S78B+VFZEPYY2jD+MEPCHy6vyIeA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8ZNZUP1Tn3FNUlcgNof+7WcUyvtqg5dfHeREzk7S+ff+ZZJLe
+	/5SpxZr14Ur9Uzu6YWrBYn1ewuzM37yt1jN7LUIJObAL/KLSWmvvcjzyrYc7t5X+VDpdMZHbRxF
+	GdXD2DjFoj37+2gda+/wqd7pjN2QtpBKYH1A2BA==
+X-Gm-Gg: ASbGncuwV14BIcLCuH3AdzJ/bjSS1MNviFdX5R9XH90bdc0E2ODuC0Pw5V79ATjZ/WE
+	qZPfQMEYB9VEIAA9ZMKsG7/P/O9GSeYSEhFHsY1w4BLWLUR2HqI5dloKlIViyvQIdXQBalVsqLg
+	01z/QLfz4cRYt98k6cnIMTeXICaIY=
+X-Google-Smtp-Source: AGHT+IEK8x1+7mzx/mnDrC0M1b3ETC4HGejLwUZPvYTs3VLjL6kfJlzbOoQCxNSGwzcmIdWjSKb0aGOGjwHoH1VTRPk=
+X-Received: by 2002:a05:6e02:1747:b0:3d4:3ab3:e1a4 with SMTP id
+ e9e14a558f8ab-3d483a8a2femr13198795ab.22.1741941181448; Fri, 14 Mar 2025
+ 01:33:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250313142333.5792-4-ilpo.jarvinen@linux.intel.com>
+References: <20250310-v5_user_cfi_series-v11-0-86b36cbfb910@rivosinc.com> <20250310-v5_user_cfi_series-v11-20-86b36cbfb910@rivosinc.com>
+In-Reply-To: <20250310-v5_user_cfi_series-v11-20-86b36cbfb910@rivosinc.com>
+From: Zong Li <zong.li@sifive.com>
+Date: Fri, 14 Mar 2025 16:32:50 +0800
+X-Gm-Features: AQ5f1JroBVweXAVM7x9VC6V9Zhe5tUAc0jIbedQxG7U-9QMDJKkaaRUA9PVo_hg
+Message-ID: <CANXhq0oC4mgVRjQ0ZCdnqZupitJaGOb1_=Goad8bbqkAY_bqbg@mail.gmail.com>
+Subject: Re: [PATCH v11 20/27] riscv: Add Firmware Feature SBI extensions definitions
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
+	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
+	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
+	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 13, 2025 at 04:23:32PM +0200, Ilpo Järvinen wrote:
-> Disabling HPIE (Hot-Plug Interrupt Enable) and synchronizing with irq
-> handling in pciehp_reset_slot() is enough to ensure no pending events
-> are processed during the slot reset. Thus, there is no need to take
-> reset_lock in the IRQ thread.
-[...]
-> --- a/drivers/pci/hotplug/pciehp_hpc.c
-> +++ b/drivers/pci/hotplug/pciehp_hpc.c
-> @@ -748,12 +748,10 @@ static irqreturn_t pciehp_ist(int irq, void *dev_id)
->  	 * Disable requests have higher priority than Presence Detect Changed
->  	 * or Data Link Layer State Changed events.
->  	 */
-> -	down_read_nested(&ctrl->reset_lock, ctrl->depth);
->  	if (events & DISABLE_SLOT)
->  		pciehp_handle_disable_request(ctrl);
->  	else if (events & (PCI_EXP_SLTSTA_PDC | PCI_EXP_SLTSTA_DLLSC))
->  		pciehp_handle_presence_or_link_change(ctrl, events);
-> -	up_read(&ctrl->reset_lock);
->  
->  	ret = IRQ_HANDLED;
->  out:
+On Mon, Mar 10, 2025 at 11:42=E2=80=AFPM Deepak Gupta <debug@rivosinc.com> =
+wrote:
+>
+> From: Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
+>
+> Add necessary SBI definitions to use the FWFT extension.
+>
+> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
+> ---
+>  arch/riscv/include/asm/sbi.h | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>
+> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+> index 3d250824178b..23bfb254e3f4 100644
+> --- a/arch/riscv/include/asm/sbi.h
+> +++ b/arch/riscv/include/asm/sbi.h
+> @@ -35,6 +35,7 @@ enum sbi_ext_id {
+>         SBI_EXT_DBCN =3D 0x4442434E,
+>         SBI_EXT_STA =3D 0x535441,
+>         SBI_EXT_NACL =3D 0x4E41434C,
+> +       SBI_EXT_FWFT =3D 0x46574654,
+>
+>         /* Experimentals extensions must lie within this range */
+>         SBI_EXT_EXPERIMENTAL_START =3D 0x08000000,
+> @@ -401,6 +402,31 @@ enum sbi_ext_nacl_feature {
+>
+>  #define SBI_NACL_SHMEM_SRET_X(__i)             ((__riscv_xlen / 8) * (__=
+i))
+>  #define SBI_NACL_SHMEM_SRET_X_LAST             31
+> +/* SBI function IDs for FW feature extension */
+> +#define SBI_EXT_FWFT_SET               0x0
+> +#define SBI_EXT_FWFT_GET               0x1
+> +
+> +enum sbi_fwft_feature_t {
+> +       SBI_FWFT_MISALIGNED_EXC_DELEG           =3D 0x0,
+> +       SBI_FWFT_LANDING_PAD                    =3D 0x1,
+> +       SBI_FWFT_SHADOW_STACK                   =3D 0x2,
+> +       SBI_FWFT_DOUBLE_TRAP                    =3D 0x3,
+> +       SBI_FWFT_PTE_AD_HW_UPDATING             =3D 0x4,
+> +       SBI_FWFT_LOCAL_RESERVED_START           =3D 0x5,
+> +       SBI_FWFT_LOCAL_RESERVED_END             =3D 0x3fffffff,
+> +       SBI_FWFT_LOCAL_PLATFORM_START           =3D 0x40000000,
+> +       SBI_FWFT_LOCAL_PLATFORM_END             =3D 0x7fffffff,
+> +
+> +       SBI_FWFT_GLOBAL_RESERVED_START          =3D 0x80000000,
+> +       SBI_FWFT_GLOBAL_RESERVED_END            =3D 0xbfffffff,
+> +       SBI_FWFT_GLOBAL_PLATFORM_START          =3D 0xc0000000,
+> +       SBI_FWFT_GLOBAL_PLATFORM_END            =3D 0xffffffff,
+> +};
+> +
+> +#define SBI_FWFT_GLOBAL_FEATURE_BIT            (1 << 31)
+> +#define SBI_FWFT_PLATFORM_FEATURE_BIT          (1 << 30)
+> +
+> +#define SBI_FWFT_SET_FLAG_LOCK                 (1 << 0)
+>
+>  /* SBI spec version fields */
+>  #define SBI_SPEC_VERSION_DEFAULT       0x1
+>
 
-The release and re-acquisition of reset_lock in
-pciehp_configure_device() and pciehp_unconfigure_device()
-needs to be removed as well if the above hunk is applied.
+LGTM.
 
-But please wait a little while before respinning so that I can
-think through the whole series.
-
-Thanks,
-
-Lukas
+Reviewed-by: Zong Li <zong.li@sifive.com>
+> --
+> 2.34.1
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
