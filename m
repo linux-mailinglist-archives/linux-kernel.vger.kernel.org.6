@@ -1,106 +1,149 @@
-Return-Path: <linux-kernel+bounces-560578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF0CA606C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:55:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D030DA606C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:57:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5195419C41BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:55:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16D88460F53
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE50D530;
-	Fri, 14 Mar 2025 00:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ar98Jctd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E747D51C;
+	Fri, 14 Mar 2025 00:57:31 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63B44C8F;
-	Fri, 14 Mar 2025 00:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A5A2E3383;
+	Fri, 14 Mar 2025 00:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741913712; cv=none; b=JSeg4MybY2W5ImpxH1S8ks6rvGm4trH82pDFR/0yD0S7DwgcfdTaZzHN4kofou+2Wu1nRNV/tTA21/C1/0QIkI+A9rSI7QA+cqP2RUUXPkwiSxK+jcba0DEn48bcp2nx2kZvJK5HyVRuG1K3ideeD81Y/0ncqlKVpaQfq4IRiaU=
+	t=1741913851; cv=none; b=iZNLlfW+wMH8Aua5ahlS+SJx8SoWX7P95wovW0RNVQHFle5l/AZuCg6J4j3X847LRNH82G4gCVKo3I3Ps3lQPJMCQFGTWUo0s8lwj2Wh9V3MY0P4y2Z1wXCJHRQAABr49lGMceD24LnuEOwwzqhe3DuTfyNy+zyZtR6tD8qCpV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741913712; c=relaxed/simple;
-	bh=xiymOwGdpiolvxSpo7Wc6Qj4/3bVL26RjucPZbihx6s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p36P9aTtwDDSpDtS0zXFCNjg8S6OPVtrBS2YXmYciI+BgIddj97zCxqXe0Y8UZuenim6geoIoVoMD3RAjMULhT43Trj/pq6INDfs1Izttrglrq2bO5qZKYTzeBJKvrP3BmCYtJ0w3deqBUUnHDxhdq0TPc+WvIovsOV8ES3UmGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ar98Jctd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0045BC4CEDD;
-	Fri, 14 Mar 2025 00:55:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741913712;
-	bh=xiymOwGdpiolvxSpo7Wc6Qj4/3bVL26RjucPZbihx6s=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Ar98JctdXNu7QRSMtiH7m0xRPs6m1fV3Uat8DhDc/fVHyYGBbNAc8uUJgCwGPNfHz
-	 Hfp6yY78SXlPsD3s3gSkkof5y9iIAjfxeI4TrqrRU6muKIDgJvbI8FPaiSTlLiz4yK
-	 DOnfoKN4RSZLmCHITVo8W91lSIHy5/0BLwSG3DMvtPUY3/Iow8QkeugbzDmeQwtXMp
-	 fyb1PRpczW3N1/3kDNQUqD0YAcFpk8EBEebId924T5yECTarCg1bADoKeRujacbyQF
-	 wpBdhcmghsvgmB6WpveNEZrpuedYYO7kgyIf/M39Wh4fByhbd7OJRw83eXc9Dfa3i4
-	 XxvdCHAQFdZTw==
-From: Stephen Boyd <sboyd@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v6.14-rc6
-Date: Thu, 13 Mar 2025 17:55:10 -0700
-Message-ID: <20250314005511.1022757-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+	s=arc-20240116; t=1741913851; c=relaxed/simple;
+	bh=vBTlnOmgxZWKGka4jRBvC3fk3Xwx7Sqyo+qnil3kH7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CHflmXXXVQbL8EQs4X8uzO+McGTd/G9BTiRaEwdVE7x/vcg4U/V9ovCvRs5JDUxOqQUlqyhzfFihYoE4mn+YuOACOG+5zeYm3iceBO2BtUlEs+hmxxpeBt+W9rdD2V5hIGTovWEJYeuB4yHg33RrPOSzR7zUJm5u2Q+hEZC+9TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZDQtj69Fpz4f3jrh;
+	Fri, 14 Mar 2025 08:57:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 50D9D1A138F;
+	Fri, 14 Mar 2025 08:57:24 +0800 (CST)
+Received: from [10.67.110.36] (unknown [10.67.110.36])
+	by APP3 (Coremail) with SMTP id _Ch0CgC3V8LzftNn+P1aGQ--.6324S2;
+	Fri, 14 Mar 2025 08:57:24 +0800 (CST)
+Message-ID: <1921659c-9bf7-4fd5-97e7-512da777461f@huaweicloud.com>
+Date: Fri, 14 Mar 2025 08:57:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tracing: Correct the refcount for hist/hist_debug file if
+ single_open() fails
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Zheng Yejian <zhengyejian1@huawei.com>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250313103719.1191073-1-wutengda@huaweicloud.com>
+ <20250313104446.7b31820e@batman.local.home>
+Content-Language: en-US
+From: Tengda Wu <wutengda@huaweicloud.com>
+In-Reply-To: <20250313104446.7b31820e@batman.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_Ch0CgC3V8LzftNn+P1aGQ--.6324S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tr4xuF4rCr4DZF4xAr43Wrg_yoW8Kw1rpr
+	Z5Gan8KF18tFy8K3Z7AFs7uryfZ3y8trW7WFyqgayrtrn8u340gFWDK3y5uF15trs5JrWI
+	va1jgFy29rW5ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jjVbkUUUUU=
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+Hi Steven,
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+On 2025/3/13 22:44, Steven Rostedt wrote:
+> On Thu, 13 Mar 2025 10:37:19 +0000
+> Tengda Wu <wutengda@huaweicloud.com> wrote:
+> 
+>> The function event_{hist,hist_debug}_open() maintains the refcount of
+>> 'file->tr' and 'file' through tracing_open_file_tr(), but it does not
+>> roll back these counts when the subsequent single_open() call fails,
+>> leading to a refcount leak.
+>>
+>> A very obvious case is that if the hist/hist_debug file belongs to a
+>> certain instance, the failure of single_open() will prevent the deletion
+>> of that instance, as it relies on the condition 'tr->ref == 1' within
+>> __remove_instance().
+>>
+>> Fix this by calling tracing_release_file_tr() to correct the refcount
+>> when single_open() fails.
+>>
+>> Fixes: 1cc111b9cddc ("tracing: Fix uaf issue when open the hist or hist_debug file")
+>> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
+>> Cc: stable@vger.kernel.org # v6.7+
+>> ---
+>>  kernel/trace/trace_events_hist.c | 9 +++++++--
+>>  1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+>> index ad7419e24055..900b06fa8505 100644
+>> --- a/kernel/trace/trace_events_hist.c
+>> +++ b/kernel/trace/trace_events_hist.c
+>> @@ -5702,8 +5702,10 @@ static int event_hist_open(struct inode *inode, struct file *file)
+>>  	/* Clear private_data to avoid warning in single_open() */
+>>  	file->private_data = NULL;
+>>  	ret = single_open(file, hist_show, hist_file);
+>> -	if (ret)
+>> +	if (ret) {
+>>  		kfree(hist_file);
+>> +		tracing_release_file_tr(inode, file);
+>> +	}
+> 
+> Hmm, this function has a couple more error path exits after taking the
+> ref count. If this is to be fixed, let's fix it completely. Each of
+> those error paths need to call tracing_release_file_tr().
+> 
+> -- Steve
 
-are available in the Git repository at:
+Oops, I got it. The v2 is coming soon. Thanks a lot.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+-- Tengda
 
-for you to fetch changes up to 54493279312f9e6edf64173681cb18d1df4297c1:
+> 
+> 
+>>  
+>>  	return ret;
+>>  }
+>> @@ -5979,7 +5981,10 @@ static int event_hist_debug_open(struct inode *inode, struct file *file)
+>>  
+>>  	/* Clear private_data to avoid warning in single_open() */
+>>  	file->private_data = NULL;
+>> -	return single_open(file, hist_debug_show, file);
+>> +	ret = single_open(file, hist_debug_show, file);
+>> +	if (ret)
+>> +		tracing_release_file_tr(inode, file);
+>> +	return ret;
+>>  }
+>>  
+>>  const struct file_operations event_hist_debug_fops = {
 
-  Merge tag 'samsung-clk-fixes-6.14' of https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux into clk-fixes (2025-03-11 10:51:13 -0700)
-
-----------------------------------------------------------------
-A few clk driver fixes for Samsung and Qualcomm clk drivers
-
- - Suspend on Google GS101 crashes when trying to save some clk
-   registers that we shouldn't be saving so we don't do that anymore
-
- - The PLL lock time was wrong on the Tesla FSD which could lead to the
-   PLL never locking
-
- - Qualcomm's display clk controller on SM8750 was trying to change the
-   frequency of a parent clk for the DSI device when it should have
-   stopped and adjusted the divider. The failure is that the clk
-   frequency was half what was expected, leading to broken display.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_PARENT on byte intf parent
-
-Peter Griffin (1):
-      clk: samsung: gs101: fix synchronous external abort in samsung_clk_save()
-
-Stephen Boyd (1):
-      Merge tag 'samsung-clk-fixes-6.14' of https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux into clk-fixes
-
-Varada Pavani (1):
-      clk: samsung: update PLL locktime for PLL142XX used on FSD platform
-
- drivers/clk/qcom/dispcc-sm8750.c | 2 --
- drivers/clk/samsung/clk-gs101.c  | 8 --------
- drivers/clk/samsung/clk-pll.c    | 7 ++++++-
- 3 files changed, 6 insertions(+), 11 deletions(-)
-
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
 
