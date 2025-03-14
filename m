@@ -1,131 +1,208 @@
-Return-Path: <linux-kernel+bounces-562245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A69DA61FDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 23:08:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 139ACA61FF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 23:11:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 066EF1B61ED2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:08:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 486291735FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2D01C8635;
-	Fri, 14 Mar 2025 22:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20B01C8630;
+	Fri, 14 Mar 2025 22:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mv7Sh3+c"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RigElek/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6E21C54AA
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 22:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135BF262BE;
+	Fri, 14 Mar 2025 22:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741990117; cv=none; b=u1plHGeCBzMZ/ZbdinslVAIfD4K3mttGXjDAh5GO4nafna82buX2g9Pmwdiabng2uKo80q9hMCI5uVEmQRnZdJfZKuon7+ICmdx+aXQenCam42QmNXCR3xrLegQ5IBo2lWKS88ehOog/ES+fujq/H1N5Ur6KP81oyFDyg/hWDOc=
+	t=1741990262; cv=none; b=Z+TsoJ4vsRjBN/NWQ+713AyxBxlChs9x6NKOcoO3GIBjRom1fSiDZstyo0Hyi3IK4wwOpM7ePI6P8UR+Cf47WP8+O0W6zHv5WjDe3ndledei9ESLSfvsm8L+m1Tzr1iGnc74SWL01LOeg+FK7wTSZBJHXEDrTiRJa9ZGyDVlF9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741990117; c=relaxed/simple;
-	bh=gwxABmgYRskBGGcXdPSEOoUwGSoADu5LQaEr7bCwsdE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LTdLnSWGBD/TiHO8RrYJfFx+9HMmNp6aDwNPOmoFUHpIe2Rio6g9ymEUWz9/PShb5PNlVw5v4OADHC5/M+QIWDMK9/ND4Zw2KTrD+zHPA8cYfEOHbZCN2OU8+9d4PBwt8wTEXT98KsnnChHuvk7mGNMNVcxq6Gpgjqri4D3yLZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mv7Sh3+c; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52EAPAmk019874
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 22:08:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FuwgRurmVtMBmvvOLj3w9vZf+M7qrxQwJlt3f7s0ts8=; b=mv7Sh3+cP3okyvFF
-	6jGVPI7t3fs3ihrZ4Zod6d19m30uBz0rySJGK7+DRnGUVhUOtlVPdI62NvDCKWNS
-	KyB+AdnSpAH52PJZB4BGThuUB5vIAAjK+9hiM+TCadJXgpcvOa2qULDqeU5OF/Yx
-	AuY+OXq7R6c0rjb7w7UvbOBV3mmUE1RYAxvQj5tiVBULMk0V492jKjrs/wDuhENi
-	LWwzR1ISWEeqHZPAiLjiWph1WXXTnBOKepfktdf8kUyHvnagypu6ppH63tIYJYLJ
-	V36vyGqmQq4JYTHqfBMDazfxjrVafjGUMDl3vGTBoxmcZVyJ3oALbzDN5uXyKZgz
-	MPzKfA==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45cjph1spb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 22:08:34 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e4546f8c47so8052866d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 15:08:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741990113; x=1742594913;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FuwgRurmVtMBmvvOLj3w9vZf+M7qrxQwJlt3f7s0ts8=;
-        b=NDsKn+YEUwOAvlZKYBD13GlrCuphLtJYWtIfrOqyI0c9Vr3gLtoOuxsyWnQ6+QNFTt
-         JvKN+NH8zs7RFVtHs7aKmNCtNfmUtMEycOa9aFx5AQQKqHGu4A0cqlc7i/1tHYLBaAqV
-         UESHDCPcSIN9yELCPsXKVLvMBTThnHXe0vfd4e12Qke6ZpaXz7EsQXB+KbM7/GjSqrgo
-         hv2OUOBAWJULR4fUTWPR1UqZLz/L5WlxDYjgZbVRsfh9tMfAxoZSo4mbIT1Up7hTr+zb
-         RXZ5/reQhamkjQ+vPp0JJnaOZgqkGYsyF0hVOupbadMJ2QfRIgKhAThx1eUKSAWsPA4s
-         KXeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIIc14lFM13chAXqHXlqZTTVTfL0ViPzajRNakLneUU54aWBej6JJpirskMLrETHG/cK486xfIbBfgorg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygOO8Bb0PJCQuv4TQs3Z0TxSgHFkAdhhZDpvvQedjz30At6MP5
-	9izwB0vpFwAimpLyEbiKFrA//ZeAjrdIIskZZSua4LsLmDfLr8VJQQRh7FTQWMiu+sFAjETKpbh
-	di+/SbDhlZp0VNUFxng7QPCG3mYvPwXkKu7dkOtIcVvr5IgRcdDqYzk1O9eiY9oQ=
-X-Gm-Gg: ASbGnct52FCpCkjtuwGsMf6yUXznLdq7MD8M+sZEnu6yCjcwRaZ5q+W77OOn8WOC1jr
-	ujbLZR1xjur8C9cP6PEoU2HB8E80hjDhK55cE3Twa50jhPn/LFIXYhxTug3y5yXIoAYZFItscB2
-	Ovw0fowrDKWbh7kvJyXlRHnr3kUg/a0gQJ/jcr1JEFNXZ/VPQElm4vSJu0noYFFHJGfbriny1bP
-	vIz7Yf6pcAz1DszjJfxbNwutI5czFE3QM55XbQlpncEEYycd7e3vO025482oFp3jC/F9eN9Pc5Q
-	0WbSTxFA/Jn7WxcJzUeTF1pf06ycSsglBsLP68B4ARpn22XgpGYCsJHJFZVRViWWGxL5BQ==
-X-Received: by 2002:a05:6214:e8d:b0:6e6:5cad:5ce8 with SMTP id 6a1803df08f44-6eaeaaa0ca1mr20751906d6.6.1741990113580;
-        Fri, 14 Mar 2025 15:08:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHTYLhW3z7EdnBjx1RVyRwxYNeiYQoV/z78yiw1kmfY/RA7Dx/0r1LzHNoKRCiQmy1kGLpZUw==
-X-Received: by 2002:a05:6214:e8d:b0:6e6:5cad:5ce8 with SMTP id 6a1803df08f44-6eaeaaa0ca1mr20751746d6.6.1741990113232;
-        Fri, 14 Mar 2025 15:08:33 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146aea4csm279191066b.33.2025.03.14.15.08.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 15:08:32 -0700 (PDT)
-Message-ID: <3fe50417-67b3-40e2-9f64-cb3b9d5363f8@oss.qualcomm.com>
-Date: Fri, 14 Mar 2025 23:08:31 +0100
+	s=arc-20240116; t=1741990262; c=relaxed/simple;
+	bh=Xh+a/XWN8QqEqM2NFk/G96MrvApikJtNFQXq2WvNhb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=cLo1cNrRXYtBRLEu35rsBdUJAg5DbendZNBzaUXjJj7zw4zsH2uLQk1XmxriKOpEA2dWg+C9LOa3aeVCaMPimCn5fN5vfHkawyJs0m+spbCeKYxlgJJ5k+uX8lXtRAGrHYWn+6qZdAesOKo0NTvdtfJX0ZU04gXpbZmXk7qFyCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RigElek/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C284C4CEE3;
+	Fri, 14 Mar 2025 22:11:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741990261;
+	bh=Xh+a/XWN8QqEqM2NFk/G96MrvApikJtNFQXq2WvNhb8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=RigElek/U3wRrB77G3Pwmz/aC+2T3zPaqblr1Wdc0E+Mqfh7tLm5lWd7p4TJBrmky
+	 6SEIBUxpkUx4lhrMLJF9TI+A7hw2HTpoY9X2V2Hh1L9Dd2dxey7hB8zvbUC5uVfzfi
+	 T+1uHluADbGjDq/lZ4oqp88t3lhGah/errOo/VqSl8R1t6VUFy7cMM4CZ3mMqKkDlk
+	 qeR88q1vl2L1gUuEvnbuzv3DWo4BUx7g0vahg9CMg4Xkged4jxUJLOu5Tg/uUAM89n
+	 Fup2of443Y97ocD/AuSp4QcJ8wLYgiDRZHaUYS26c8HnJyGXwgPbwovYSCI3uED1i7
+	 TMQcQFEY6CrmQ==
+Date: Fri, 14 Mar 2025 17:10:59 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	Niklas Cassel <cassel@kernel.org>
+Subject: Re: [PATCH v11 06/11] PCI: dwc: Use devicetree 'ranges' property to
+ get rid of cpu_addr_fixup() callback
+Message-ID: <20250314221059.GA806127@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: sm6350: Add interconnect support to
- UFS
-To: Luca Weiss <luca.weiss@fairphone.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250314-sm6350-ufs-things-v1-0-3600362cc52c@fairphone.com>
- <20250314-sm6350-ufs-things-v1-3-3600362cc52c@fairphone.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250314-sm6350-ufs-things-v1-3-3600362cc52c@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=a7sw9VSF c=1 sm=1 tr=0 ts=67d4a8e2 cx=c_pps a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8 a=WWQFUNGd85j635JlVwcA:9 a=QEXdDO2ut3YA:10
- a=AYr37p2UDEkA:10 a=pJ04lnu7RYOZP9TFuWaZ:22 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-GUID: gd3YSq2XGWf8VBR_xdmk3Aw6SfMJZ-tC
-X-Proofpoint-ORIG-GUID: gd3YSq2XGWf8VBR_xdmk3Aw6SfMJZ-tC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-14_09,2025-03-14_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 clxscore=1015 suspectscore=0 adultscore=0 impostorscore=0
- mlxlogscore=695 priorityscore=1501 mlxscore=0 phishscore=0 malwarescore=0
- spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503140171
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z9RJbyoFdkiYHXu9@lizhi-Precision-Tower-5810>
 
-On 3/14/25 10:17 AM, Luca Weiss wrote:
-> Define the two NoC paths used by UFS: ufs-ddr and cpu-ufs.
+On Fri, Mar 14, 2025 at 11:21:19AM -0400, Frank Li wrote:
+> On Thu, Mar 13, 2025 at 06:56:17PM -0400, Frank Li wrote:
+> > On Thu, Mar 13, 2025 at 05:04:50PM -0500, Bjorn Helgaas wrote:
+> > > On Thu, Mar 13, 2025 at 11:38:42AM -0400, Frank Li wrote:
+> > > > The 'ranges' property at PCI controller parent bus can indicate address
+> > > > translation information. Most system's bus fabric use 1:1 map between input
+> > > > and output address. but some hardware like i.MX8QXP doesn't use 1:1 map.
+> > >
+> > > I think you've used reg["addr_space"] to get the offset for Endpoints
+> > > forever.
+> >
+> > Yes, it still need ranges informaiton at parent bus.
+> >
+> > 	bus@000
+> > 	{
+> > 		ranges = <...>; [1] /* still need this */
+> > 		pcie {
+> > 			ranges = <...>;[2]
+> > 		};
+> > 		pcie-ep {};
+> > 	}
+
+Yes, of course. I'm just making the point that the subject/commit log
+says this patch uses 'ranges' but in fact it uses 'reg'.
+
+> > > I just noticed that through v9, you used 'ranges' to get the offset
+> > > for the Root Complex (with "Add parent_bus_offset to resource_entry"),
+> > > and I think v10 switched to use reg["config"] instead.
+> > >
+> > > I think I originally proposed the idea of "Add parent_bus_offset to
+> > > resource_entry" patch, but I think it turned out to be kind of an ugly
+> > > approach.
+> > >
+> > > Anyway, IIUC this v11 patch actually uses reg["config"] to compute the
+> > > offset, not 'ranges', so we should probably update the subject and
+> > > commit log to reflect that, and maybe remove the now-unused bits of
+> > > the devicetree example.
+> >
+> > We use reg["config"] to detect offset, but still need parent dts's ranges.
+> > There are two ranges, one is at parent pci bus [1], the other is under
+> > 'pci bus' [2].
 > 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
+> Beside, luckly dwc use reg["config"] to indicate config space. but dt also
+> define ranges [2] under pcie node, which can also include 'config's space.
+> 
+> cadence also use reg["cfg"] to do that.
+> res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
+> 
+> I am not sure why both choose use reg[] instead of [2]ranges under
+> pcie node. But the result make our situation simpler.
+> 
+> > Although use reg["config"], but still need ranges [1]. And information at
+> > ranges [2] also need be correct.
+> >
+> > The whole devicetree example also validate to help write address translate
+> > informaiton.
+> >
+> > > I do worry a little bit about the assumption that the offset of
+> > > reg["config"] is the same as the offset of the other pieces.  The main
+> > > place we use the offset on RCs is for the ATU, and isn't the ATU in
+> > > the MemSpace area at 0x8000_0000 below?
+> >
+> > No, "Bus fabric" only decode input address from "0x7000_0000..UPLIMIT".
+> > Then output address to 0x8000_0000..UPLIMIT. So below 0x8000_0000 never
+> > happen.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Minor miscommunication, I think.   I didn't mean there were addresses
+smaller than 0x8000_0000; I meant that in the picture, MemSpace at
+0x8000_0000 is below CfgSpace at 0x8ff0_0000.  The important point is
+that CfgSpace is a separate region from MemSpace, and we're applying
+the CfgSpace offset to the ATU in MemSpace.
 
-Konrad
+I think it's OK to assume that for now.  AFAICS there is nothing in
+devicetree that explicitly mentions the ATU input address space; it's
+just implicitly part of the intermediate address space described by
+the bus@5f000000 'ranges'.
+
+> > > It's great that in this case the 0x7ff0_0000 to 0x8ff0_0000 "config"
+> > > offset is the same as the 0x7000_0000 to 0x8000_0000 MemSpace offset,
+> > > but I don't know that this is guaranteed for all designs.
+> >
+> > So far, it is the same for use dwc chips. If we meet difference, we can
+> > add later.
+> >
+> > reg["config"] only simplied our implement base on the offset is the same.
+> > But whole concept is unchanged.
+
+> > > > See below diagram:
+> > > >
+> > > >             ┌─────────┐                    ┌────────────┐
+> > > >  ┌─────┐    │         │ IA: 0x8ff8_0000    │            │
+> > > >  │ CPU ├───►│   ┌────►├─────────────────┐  │ PCI        │
+> > > >  └─────┘    │   │     │ IA: 0x8ff0_0000 │  │            │
+> > > >   CPU Addr  │   │  ┌─►├─────────────┐   │  │ Controller │
+> > > > 0x7ff8_0000─┼───┘  │  │             │   │  │            │
+> > > >             │      │  │             │   │  │            │   PCI Addr
+> > > > 0x7ff0_0000─┼──────┘  │             │   └──► IOSpace   ─┼────────────►
+> > > >             │         │             │      │            │    0
+> > > > 0x7000_0000─┼────────►├─────────┐   │      │            │
+> > > >             └─────────┘         │   └──────► CfgSpace  ─┼────────────►
+> > > >              BUS Fabric         │          │            │    0
+> > > >                                 │          │            │
+> > > >                                 └──────────► MemSpace  ─┼────────────►
+> > > >                         IA: 0x8000_0000    │            │  0x8000_0000
+> > > >                                            └────────────┘
+> > > >
+> > > > bus@5f000000 {
+> > > > 	compatible = "simple-bus";
+> > > > 	#address-cells = <1>;
+> > > > 	#size-cells = <1>;
+> > > > 	ranges = <0x80000000 0x0 0x70000000 0x10000000>;
+> > > >
+> > > > 	pcie@5f010000 {
+> > > > 		compatible = "fsl,imx8q-pcie";
+> > > > 		reg = <0x5f010000 0x10000>, <0x8ff00000 0x80000>;
+> > > > 		reg-names = "dbi", "config";
+
+> > > > 		#address-cells = <3>;
+> > > > 		#size-cells = <2>;
+> > > > 		device_type = "pci";
+> > > > 		bus-range = <0x00 0xff>;
+> > > > 		ranges = <0x81000000 0 0x00000000 0x8ff80000 0 0x00010000>,
+> > > > 			 <0x82000000 0 0x80000000 0x80000000 0 0x0ff00000>;
+
+Of course we need this 'ranges' to describe the translation between
+intermediate addresses and PCI bus addresses.  My point is that this
+is not relevant to the parent bus offset we're computing in this
+patch.
+
+So I think for purposes of this patch, we can omit pcie@5f010000
+#address-cells and everything after it.
+
+Bjorn
 
