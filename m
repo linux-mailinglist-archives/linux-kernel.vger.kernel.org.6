@@ -1,98 +1,136 @@
-Return-Path: <linux-kernel+bounces-561920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C461A6189C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:53:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB4DA618A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:53:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 920E33B1242
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:52:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 296E5462F96
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095F62040B5;
-	Fri, 14 Mar 2025 17:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34DE204C20;
+	Fri, 14 Mar 2025 17:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="POkAVb8U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="atPE9HXj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BF9202C48
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92893202C55
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741974776; cv=none; b=U/Nz55nr9sWtXu8UrVfnzIBTly35rARunx1Ox0AUEx70mh4Zb+wvuGIWxLsvhEEX5IRm5WspQ/6AH8S5sHPsNKN3suIITZ6EWoQBk55QTQ55h5IgB1Z1ydUIyo4jQNsCveaQZTH8pGKg+dSHye0r2G5BHOdo3VPZvtrJBYHPwJE=
+	t=1741974806; cv=none; b=dxlgQQitGFdW1OgZZ8OotR7oeFMMNyq0ZwyPV4xqBMtOKBsmiSzNEJuyel2X9q/x+zjDWO64GMD5R8rtQFqf/KIDGJGBRz9N/0Hlfs1TzAFoeaZqsFiC8KCv+Msd1uCJy2VPf3EIYrvH2YcljUrjhaUOV5vY1LDI0qm/LHhQUsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741974776; c=relaxed/simple;
-	bh=5g8HVlEZNBZf95r55n45O6hgoNz0UUSUIU9ZhFx25DE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jnQoTZLtBQz2R40HHPlkCIhm8gMEgI1HVzj9hsjmhf6qZNta1falF2w3V9KRtiuYDRECFbxhWIpBedIgVFS+6k6Xwm0K2Gyg2JrEsHHcNF1UieSKH9Qd/zy8K3EimU3A7wzf0VvG5ps0b23vurV6sxpP+wk09r8PSZ3xa3uuo+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=POkAVb8U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C66CCC4CEE3;
-	Fri, 14 Mar 2025 17:52:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741974775;
-	bh=5g8HVlEZNBZf95r55n45O6hgoNz0UUSUIU9ZhFx25DE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=POkAVb8U62Loy7N6T3lCrkfQxTNhGrLfAYVnSbSFHz08vRAvlkHmDn9omL1T5YJvw
-	 +2vIlLjsYRmWUSkDlp6fp9Dlt7NfkXa427L3Es/QFetlbitu1S5szwcdiPabQh7z6T
-	 PW3R9G82ujHmdQVnzmaghWjhTMXHEan9tiVw22XfUgTx7rrPN76OcEVNPgzphhYnzv
-	 WwJVdI5Be4C7qUVXbec7o0BLkmXNTPvpIUwEr/P850OSWxkzwqXuv+JMAmdCouZfqj
-	 QyN4RCyRuwHV+nX85g+J9lu/M9NCywGo2+tc+wAc7BdRdTWoP46HmC0tSQygh+OEMJ
-	 X70Yxoo33CArw==
-Date: Fri, 14 Mar 2025 10:52:53 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, 
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Nikolay Borisov <nik.borisov@suse.com>, linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>, 
-	Dave Young <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>, bsz@amazon.de
-Subject: Re: [PATCH v7 8/8] [DO NOT MERGE] x86/kexec: Add CFI type
- information to relocate_kernel()
-Message-ID: <7tq4tti5pv7fjboiapuglkcsodl4nsk53rj36skg4xb2bkysei@ncoz2ztiddm7>
-References: <20250312144257.2348250-1-dwmw2@infradead.org>
- <20250312144257.2348250-9-dwmw2@infradead.org>
- <ra6zlx2iz7eks3y4ymoi6mn7o6rvnjc3lnjoaadf3szaocbkae@yg2lyjzlnqdn>
- <c2471b0a81ebd183d32e76f995a70b7912c1d4a1.camel@infradead.org>
+	s=arc-20240116; t=1741974806; c=relaxed/simple;
+	bh=upqKoVusoCUr5x6/idcI9vYY8Ge9PfhUUDmqNXfdh8w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nAA7asoZJrMEhLs2N+3FS6wBdxOSC2BMOtfjWcmvxDNVg1Wtn7vmdK4GQJ7Wowy2bOiDEFOrT1JW+rEa+Jks1ovxMc682WrSIxPViYZL5+sjwSLhJZj5KTTX1X2gbw5GJtn9Ac1cOYcaOtPQcwfSzECJsvnLTpNBH6TTGG1wLLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=atPE9HXj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741974803;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bB6YFM9MmhDasWEynGvfo3R/5ogFVYWGX5dYTaSRdAk=;
+	b=atPE9HXjhfXywcyXiydkf7CiMa8Og6HKYp8bXqybF2gxyveHHM4Fh0glF4HZOy7jBOyD0d
+	O239BJF6/0U63vx1SpdSTfSu8vHVJp2L6rNeYvGYn44olWvGNc4EdKbvRxRQ79TyahYGLX
+	zHinVMJtQeJODDunwosfSehGVR84Wco=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-665-QT7vdptgNIm5uDV61YbtIA-1; Fri,
+ 14 Mar 2025 13:53:18 -0400
+X-MC-Unique: QT7vdptgNIm5uDV61YbtIA-1
+X-Mimecast-MFC-AGG-ID: QT7vdptgNIm5uDV61YbtIA_1741974795
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9C240187B6AB;
+	Fri, 14 Mar 2025 17:53:12 +0000 (UTC)
+Received: from redhat.com (unknown [10.96.134.26])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EA1341828A9F;
+	Fri, 14 Mar 2025 17:53:10 +0000 (UTC)
+From: "Herton R. Krzesinski" <herton@redhat.com>
+To: x86@kernel.org
+Cc: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	olichtne@redhat.com,
+	atomasov@redhat.com,
+	aokuliar@redhat.com
+Subject: Performance issues in copy_user_generic() in x86_64
+Date: Fri, 14 Mar 2025 14:53:08 -0300
+Message-ID: <20250314175309.2263997-1-herton@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c2471b0a81ebd183d32e76f995a70b7912c1d4a1.camel@infradead.org>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Fri, Mar 14, 2025 at 05:23:15PM +0000, David Woodhouse wrote:
-> ISTR this version is OK with Clang and CONFIG_CFI_CLANG but with GCC I
-> get this:
-> 
-> vmlinux.o: warning: objtool: relocate_kernel+0x69: unsupported stack register modification
-> 
->         /* setup a new stack at the end of the physical control page */
->         lea     PAGE_SIZE(%rsi), %rsp
->   79:   48 8d a6 00 10 00 00    lea    0x1000(%rsi),%rsp
-> 
-> 
-> Maybe the answer is to put the UNWIND_HINT_FUNC into #ifdef
-> CONFIG_CFI_CLANG but that seems wrong.
+Hello,
 
-The UNWIND_HINT_FUNC definitely looks wrong, why would Clang need it?
+recently I have got two reports of performance loss in copy_user_generic()
+after updates in user copy functions in x86_64, when benchmarking with iperf3.
+I believe the write alignment to 8 bytes that was done through the old
+ALIGN_DESTINATION macro was helping in some cases, and when it was removed the
+performance drop can be noticed. Looks like this theory is corroborated by some
+performance testing I did.
 
-> I'll have another look at putting it in the data section, and see if I
-> can remember why I didn't want to do that before (and if that's still
-> relevant now).
+Please take a look at the following email with the patch if everything is sane.
+I already did some testing as explained in the changelog of the patch. I used
+the following scripts to run the testing, I just wrote them to get the job done
+and get some results, so there is nothing fancy about them.
 
-IIRC, the reasons were the patched alternative, and also you wanted to
-disassemble (but note that's still possible with gdb).
+---- bench.sh
+#!/bin/bash
 
-Here was a patch to make it work:
+dir=$1
+mkdir -p $dir
 
-  https://lore.kernel.org/20241218212326.44qff3i5n6cxuu5d@jpoimboe
+for cpu in 19 21 23 none; do
+	sync
+	echo 3 > /proc/sys/vm/drop_caches
+	cpu_opt=""
+	if [ "$cpu" != "none" ]; then
+		cpu_opt="taskset -c $cpu"
+	fi
+	$cpu_opt iperf3 -D -s -B 127.0.0.1 -p 12000
+	perf stat -o $dir/stat.$cpu.txt taskset -c 17 iperf3 -c 127.0.0.1 -b 0/1000 -V -n 50G --repeating-payload -l 16384 -p 12000 --cport 12001 2>&1 > $dir/stat-$cpu.txt
+	cat $dir/stat.$cpu.txt >> $dir/stat-$cpu.txt
+	rm -f $dir/stat.$cpu.txt
+	killall iperf3
+done
+----
 
--- 
-Josh
+---- stat.sh
+#!/bin/bash
+
+dir=$1
+printf "            %4s  %13s %12s %12s %11s\n" "CPU" "RATE     " "SYS     " "TIME    " "sender-receiver"
+
+for cpu in 19 21 23 none; do
+	time=$(grep 'seconds time elapsed' $dir/stat-$cpu.txt | awk '{ print $1 }')
+	sys=$(grep 'seconds sys' $dir/stat-$cpu.txt | awk '{ print $1 }')
+	rate=$(grep ' sender' $dir/stat-$cpu.txt | awk '{ print $7 $8 }')
+	cpuu=$(grep 'CPU Utilization' $dir/stat-$cpu.txt | awk '{ printf "%s-%s\n", $4, $7 }')
+
+	printf "Server bind %4s: $rate $sys $time %s\n" $cpu $cpuu
+done
+----
+
+Example of a test run:
+nice -n -20 ./bench.sh align
+./stat.sh align
+
 
