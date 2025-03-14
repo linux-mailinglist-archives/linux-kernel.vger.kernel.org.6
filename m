@@ -1,156 +1,161 @@
-Return-Path: <linux-kernel+bounces-561377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B31FA6109D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:05:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5993A6109F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:06:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0D893A3106
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:05:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 275643A2AF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAAC1FDA76;
-	Fri, 14 Mar 2025 12:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DBE1FDA9D;
+	Fri, 14 Mar 2025 12:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="U1usQ47y";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eFCf37Lc"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mqJ37J7F"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315A51C8623;
-	Fri, 14 Mar 2025 12:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A09192D6B;
+	Fri, 14 Mar 2025 12:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741953949; cv=none; b=kqMSKvaCwKalN1FP+zTFBzv49I0hSq0Eu/jkftII8i1dA4mgnGZrO9EsWx83/hXEoWEdG3PGHC0Zm7i803Yi1NqGkPcC/euk7S2iiMmspJVaNxZ2/QnZbo0H8DHC4+EzbN6HMS1YuCAw65UHVmw3mwMjdaJSVdqUJitYWL13KsU=
+	t=1741954004; cv=none; b=DvHjrDha+RZoW684U0EldqYCX8HIN9jgPdIAKHS7FvCDMQc6lLV4Hs7egyu3NvT6UOwAh5YYhaURjI8z+mvOYn8S3fPO3Xo+xDp3WYkMTy5QwzRcIa7wq8QlV3RmP2onqDM+alfCmGwfyxXqDg8U0U/uVWA52xv8qXruqbBKcG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741953949; c=relaxed/simple;
-	bh=oDvcCqTNPmr960TVhAPx7ki91/X/IM30EuXnWEwEHmw=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=CdbRKjB4OgVRic9yywBKgQGR2c6RUmhOzUoLtZzxNMJX1z6zhJKBsI/vakxuuUVer8fjX0JYIdQgFGrcB/4QqOYxctyC/ixRuTteplhuu/0GPSlBt0y08hSMGRlMWlDI4KZx7mY9HZZFJ93mR4gtGroc/7gjn4Tnz5Lw3Yce2Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=U1usQ47y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eFCf37Lc; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.phl.internal (Postfix) with ESMTP id DB6121382D51;
-	Fri, 14 Mar 2025 08:05:45 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Fri, 14 Mar 2025 08:05:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1741953945;
-	 x=1742040345; bh=2vOhmJSQwki0yk55AruyUCr5jm9yS9UmHlRqG9oZypI=; b=
-	U1usQ47ySSlx9y4TuLmc1toq6rZ7ZjtIhkR5HJ8wvDZd+NfY1IZcjeokncNxvzs6
-	qwBo7KJ1462wWD3t0YhJDPDjEq6Osh/sRcRU+/lzVCM09bnXME8LTMMTggIjw4G2
-	h8Vdx7iz9nRtf0dTaUsv1Ms3yKaJ/l1mR3c2HudLRTyl/8WFA2q6OdXu7ELwwPbw
-	G72Oi6dESAgTifzYLT8OE2A7lgR2v1q2R/nokvIJur1DCmUfAVa4Ws7GoX89ZR8K
-	h6tiIOSJclkkK9SXZNg4HimIoqmxLQy5K3fgqVhORC/XQb64tINUZBXXTRAFtALM
-	pf2+bhVa5V4DEdfDves34w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741953945; x=
-	1742040345; bh=2vOhmJSQwki0yk55AruyUCr5jm9yS9UmHlRqG9oZypI=; b=e
-	FCf37Lc5A/CUWHeCkzatnquhB/+DBfQPWq0DQO+HNsWyHbYCPO+849o5TiPEbUDP
-	5kukSCZps7gRPBedxr7zBJOBYmC4BfwjJoD0bPGshm8tCx/V8jAEajteLM9qBnHI
-	Bn7ze++kfoIbN8vU1HMB+aqYiYAXX+r1gARAx7Xtid3X7XdyMqdk3+XwF0cuDVgf
-	1OICThfDvwcsPGpRN4FcKZMkQPZlWMIO4nVqp203D1iNDwuFv7fKiG/mqNzkaaHs
-	hzDaGczL8ur0mfshnBBvKg+a22Qy8b8xH5Nd+QSZ/wgpxS8tyTNX1TQQoqX9266p
-	KTYOB2qGtZ+Ul+8A38ugg==
-X-ME-Sender: <xms:mRvUZ68vNiGMQT0QkZSA4c0OjAb4e9M87kENGxS50xn9s1A-wynYtQ>
-    <xme:mRvUZ6ujM9Ka_H6BPJlySphav0RKtsNBCIY2lMvC02ZWPBcz6The2Q3SKeE6uvKMT
-    8rkTPoMjlVTqWPrnPs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedtjeekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    hedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinh
-    grshesrghrmhdrtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtohepthhhuhhthhesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugi
-    dqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:mRvUZwCqDAg562USMOyCv2KtmR_WXPGBZLQd_Xj3_oGAVvsxFxHGqQ>
-    <xmx:mRvUZyfOA8tzccGcvmDh7qfllQg65rHBdL09cZ9wDgnmH9yNRR39Qw>
-    <xmx:mRvUZ_OUDfYLjpMF6OLwH5DjQ589-vcqJb4ZdqWEB8nsqL_JvWXg_w>
-    <xmx:mRvUZ8lZhYKys4zvkuyzCgJHe5oxRUoHiv1VyKQnWdVpOcSSnOyHXw>
-    <xmx:mRvUZ0r5jtxIl35QxlCy4sYqyDva_6miJBth9AjK_yLusp0aIHbN4ayD>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 8310C2220072; Fri, 14 Mar 2025 08:05:45 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1741954004; c=relaxed/simple;
+	bh=8pNOnJ2LC70pKfJZznXtgqsVw3dIIVR2oklK86YS4/o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BDtBMv4/0Lf4GohNn8Mf2WugTea89Ei/u6RxxZRw8jCUL813yyx5wH3sCBsadH0eQB4Z25MUETtTr6zZPLVjDiQAN9QF8G/5k/RmA6KdFqtoN14K90pWFQO+RnOzekRPq2l512ojPvoznKzEfOIhMmHAZUNIVoPo3QP0eOXITYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mqJ37J7F; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52E9YDkr019596;
+	Fri, 14 Mar 2025 12:06:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Bh21o9dLy7lEDe68zirb2d
+	JGXUgB9M6JRV3a9ZiHRpQ=; b=mqJ37J7FFAoxjprTR+G2mcoRA0gD2U5mKoxy4c
+	dA4YIywenHa9qQKGqGVXZCcjdxmU2f7OZHJj+nrSis8q++VdUokC0yi8pnQ4+1Ze
+	8WDWJsidCfwfts9anqPlBT3L0OcQwhUt/eG0oMvOp8XpLqN3XKZrC7RTrJEmaRUb
+	zBzlNhiydZ3XsE3NieBPaGQLmX0jKHMmVhsbPuxcSFWRLkfCNe9PWgxf/+y0eKfx
+	dhHtVGeOnen6Bou2zM+qi0RVBlCGjumXNHd51i3UMvDmQ20ysytmYdme0fhwOspl
+	XJGqZ93LvFH7EY/Q1xvPOn/WHCyW6KQj74p7+m/ZKTNknY1Q==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2p1752-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 12:06:33 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52EC6W4T027291
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 12:06:32 GMT
+Received: from zhonhan-gv.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 14 Mar 2025 05:06:30 -0700
+From: Zhongqiu Han <quic_zhonhan@quicinc.com>
+To: <johannes@sipsolutions.net>, <miriam.rachel.korenblit@intel.com>
+CC: <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_zhonhan@quicinc.com>,
+        <syzbot+5a7b40bcb34dea5ca959@syzkaller.appspotmail.com>
+Subject: [PATCH v2] wifi: mac80211: Prevent disconnect reports when no AP is associated
+Date: Fri, 14 Mar 2025 20:06:14 +0800
+Message-ID: <20250314120614.4032434-1-quic_zhonhan@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 14 Mar 2025 13:05:15 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Will Deacon" <will@kernel.org>, "Thomas Huth" <thuth@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>
-Message-Id: <df30d093-c173-495a-8ed9-874857df7dee@app.fastmail.com>
-In-Reply-To: <20250314115554.GA8986@willie-the-truck>
-References: <20250314071013.1575167-1-thuth@redhat.com>
- <20250314071013.1575167-9-thuth@redhat.com>
- <20250314115554.GA8986@willie-the-truck>
-Subject: Re: [PATCH 08/41] arm64: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi
- headers
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: _yH3PE4g3TpHY-sTnofQESHunOcXBlqB
+X-Authority-Analysis: v=2.4 cv=Q4XS452a c=1 sm=1 tr=0 ts=67d41bc9 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=COk6AnOGAAAA:8 a=hSkVLCK3AAAA:8
+ a=IS6kxbfz1l1t9IyL_bAA:9 a=TjNXssC_j7lpFel5tvFf:22 a=cQPPKAXgyycSBL8etih5:22
+X-Proofpoint-ORIG-GUID: _yH3PE4g3TpHY-sTnofQESHunOcXBlqB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-14_05,2025-03-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
+ lowpriorityscore=0 mlxscore=0 clxscore=1015 phishscore=0 malwarescore=0
+ spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503140095
 
-On Fri, Mar 14, 2025, at 12:55, Will Deacon wrote:
-> On Fri, Mar 14, 2025 at 08:09:39AM +0100, Thomas Huth wrote:
->> __ASSEMBLY__ is only defined by the Makefile of the kernel, so
->> this is not really useful for uapi headers (unless the userspace
->> Makefile defines it, too). Let's switch to __ASSEMBLER__ which
->> gets set automatically by the compiler when compiling assembly
->> code.
->> 
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Signed-off-by: Thomas Huth <thuth@redhat.com>
->> ---
->>  arch/arm64/include/uapi/asm/kvm.h        | 2 +-
->>  arch/arm64/include/uapi/asm/ptrace.h     | 4 ++--
->>  arch/arm64/include/uapi/asm/sigcontext.h | 4 ++--
->>  3 files changed, 5 insertions(+), 5 deletions(-)
->
-> Is there a risk of breaking userspace with this? I wonder if it would
-> be more conservative to do something like:
->
-> #if !defined(__ASSEMBLY__) && !defined(__ASSEMBLER__)
->
-> so that if somebody is doing '#define __ASSEMBLY__' then they get the
-> same behaviour as today.
->
-> Or maybe we don't care?
+syzbot reports that cfg80211_tx_mlme_mgmt is using uninit-value:
 
-I think the main risk we would have is user applications relying
-on the __ASSEMBLER__ checks in new kernel headers and not defining
-__ASSEMBLY__. This would result in the application not building
-against old kernel headers that only check against __ASSEMBLY__.
+=====================================================
+BUG: KMSAN: uninit-value in cfg80211_tx_mlme_mgmt+0x155/0x300 net/wireless/mlme.c:226
+cfg80211_tx_mlme_mgmt+0x155/0x300 net/wireless/mlme.c:226
+ieee80211_report_disconnect net/mac80211/mlme.c:4238 [inline]
+ieee80211_sta_connection_lost+0xfa/0x150 net/mac80211/mlme.c:7811
+ieee80211_sta_work+0x1dea/0x4ef0
+ieee80211_iface_work+0x1900/0x1970 net/mac80211/iface.c:1684
+cfg80211_wiphy_work+0x396/0x860 net/wireless/core.c:435
+process_one_work kernel/workqueue.c:3236 [inline]
+process_scheduled_works+0xc1a/0x1e80 kernel/workqueue.c:3317
+worker_thread+0xea7/0x14f0 kernel/workqueue.c:3398
+kthread+0x6b9/0xef0 kernel/kthread.c:464
+ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:148
+ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-Checking for both in the kernel headers does not solve this
-problem, and I think we can still decide that we don't care:
-in the worst case, an application using the headers from assembly
-will have to get fixed later when it needs to be built against
-old headers.
+Local variable frame_buf created at:
+ieee80211_sta_connection_lost+0x43/0x150 net/mac80211/mlme.c:7806
+ieee80211_sta_work+0x1dea/0x4ef0
+=====================================================
 
-I checked that old gcc versions pass __ASSEMBLY__ at least as
-far back as gcc-2.95, and it should be completely safe to
-assume that no older gcc versions would be used on kernel
-headers, and they probably would choke on c99 features like
-'long long'. I would also assume that any other compiler that
-may be used to include kernel headers has to have enough
-gcc compatibility to define all the common macros.
+The reason is that the local variable frame_buf on the stack cannot be
+initialized by default. However one more question is that avoiding the
+uninit-value bug by explicitly initializing it is not enough. Since commit
+687a7c8a7227 ("wifi: mac80211: change disassoc sequence a bit"), if there
+is no AP station, frame_buf has no chance to be assigned a valid value.
+The function ieee80211_report_disconnect should not continue executing
+with the frame_buf parameter that is merely initialized to zero.
 
-      Arnd
+Reported-by: syzbot+5a7b40bcb34dea5ca959@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/67bf36d3.050a0220.38b081.01ff.GAE@google.com/
+Fixes: 687a7c8a7227 ("wifi: mac80211: change disassoc sequence a bit")
+Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
+---
+v1 -> v2:
+- Rebased on top of current next.
+- Reorder the tags.
+- Link to v1: https://lore.kernel.org/all/20250227090932.1871272-1-quic_zhonhan@quicinc.com/
+
+ net/mac80211/mlme.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
+index c010bb3d24e3..08fb3fb740fd 100644
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@ -4433,6 +4433,10 @@ static void ieee80211_report_disconnect(struct ieee80211_sub_if_data *sdata,
+ 		.u.mlme.data = tx ? DEAUTH_TX_EVENT : DEAUTH_RX_EVENT,
+ 		.u.mlme.reason = reason,
+ 	};
++	struct sta_info *ap_sta = sta_info_get(sdata, sdata->vif.cfg.ap_addr);
++
++	if (WARN_ON(!ap_sta))
++		return;
+ 
+ 	if (tx)
+ 		cfg80211_tx_mlme_mgmt(sdata->dev, buf, len, reconnect);
+@@ -8090,7 +8094,7 @@ static void ieee80211_sta_timer(struct timer_list *t)
+ void ieee80211_sta_connection_lost(struct ieee80211_sub_if_data *sdata,
+ 				   u8 reason, bool tx)
+ {
+-	u8 frame_buf[IEEE80211_DEAUTH_FRAME_LEN];
++	u8 frame_buf[IEEE80211_DEAUTH_FRAME_LEN] = {0};
+ 
+ 	ieee80211_set_disassoc(sdata, IEEE80211_STYPE_DEAUTH, reason,
+ 			       tx, frame_buf);
+-- 
+2.25.1
+
 
