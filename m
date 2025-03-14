@@ -1,448 +1,314 @@
-Return-Path: <linux-kernel+bounces-560971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7565EA60BD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:35:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D3D2A60BD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:35:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC2F6189C195
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:35:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC1667AB16F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1CA1DC9B3;
-	Fri, 14 Mar 2025 08:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2870E12CDBE;
+	Fri, 14 Mar 2025 08:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F/J1Cg80"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ZX6pQS8C"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FAC315854F
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79E01B0413
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741941269; cv=none; b=oojHe3jNatL/2FoP5Eb/oXSbtq745xMVIjMeutpyFfxMUGr1ttHxWqg2d7uVZ+zfMNVN4GXfekln93N6OcjgieCZAn0GjY8OhX1Qd1VWrRePaiIDfcT8+s07sHPXmbjqXV36fI8kK7FBnBKtNLoIDo56RO5bEHShoL94ZBODB9I=
+	t=1741941290; cv=none; b=Fx6wtKHcqdBtjKY892Ap+Ls6KbgnjmfakBRbeXKQGwIYUCuMMr3TerB74GR7DU4JiS4Tk/pT2BxZ3hJdPj28plfgzZ74SpYeuWyrSz545LZzbONSXQMTrpGrQNH2/L28AjGVc35wpX2UjN+k09qMWiWH29aoAD2m45H2zsoBic8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741941269; c=relaxed/simple;
-	bh=Y6avr2myEPlVX/TtmeWB+WHBd87SJ1PkPTov3+80k5Q=;
+	s=arc-20240116; t=1741941290; c=relaxed/simple;
+	bh=5OarQnCgTAfdocmYPDrI94tCD2az3gBLGjrATX3zRF0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XFT5lRgR6OBpG9cZVlihfQhmWiyw6Hr+m8Y91Z4CKUUVmAqiWJTsF8mSpgbSpirHeGasDbXFzj4OR5TWd4/DU4PKCh6l34sKsuSjxy4W6V/KlOf81t0Z7aIo2BYWDnwQv1bvhZkaWRC9J+5PF5thFIpHqYYMuwgcQYWflHvFiiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=F/J1Cg80; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5498c742661so2044125e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:34:26 -0700 (PDT)
+	 To:Cc:Content-Type; b=TGgGqxn0MQyufE8Nd/O1KhWVBt4xW/PR+XL32gTLTydaMTe/rP/ZClOEHD/ZBoJi0WWesWUHQpRsz3eDX2TOZ6/Q+gjEQLH+oV9kEDOR2Z+bSJgRlQs7WPaKOA0Ljwxr8ImFmKnFO1ZvgDNWbwJCmgoQ2LgZZJrmnz0RXbrpvi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=ZX6pQS8C; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-85b5e49615aso177250739f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:34:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741941265; x=1742546065; darn=vger.kernel.org;
+        d=sifive.com; s=google; t=1741941287; x=1742546087; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zZpAgjGwH0utmNulKzYZy5inQOshYJyhiBsdybHGg9A=;
-        b=F/J1Cg80kgJSEhc2F1h4jZcfkFE8duM5s2vMzdsHdyE2gTHtFgNbv6RRfY1GFKznMD
-         MmJgiMb28NweFIq4JgpOK8xr3tK6e0UEVrI90g4AXSU1b3/JQ8d2Yc2GFNOVsIb0Q6ph
-         8Z30kuHsk9WnoVsS3VdxhMQXvSEhL2XDTZW6E=
+        bh=bm74IWNiiddtjCmKDIAkneaMK7FpbJuBZ2ZaX1ZQ1kw=;
+        b=ZX6pQS8CA8sOlSwbzuDg4s1RIS/l5u6Tl+MWW7j/4eqXrW0Pyb7d2+y/dCWX7meg4u
+         6BuAWQNFN168Q8j6G6Kj3PoV+ddtd4vN7DuYDQdFa3DllG6HhBIp5496HaK7YHdxfaFC
+         Zh+Pceg1h69NFSa3eah8hnSWqbA0gIWz8O13sl46uVlt1K068o0G/Eyb6Moe02+3wiK5
+         tQJVJgK6Ns6YDYxiK/93Gozdoh8sy9UkG1bdLlKrekYqHsjpRqsLHtSiFHCGTIKFLZPF
+         3/uIAPKsJ4ZFAfDxzV4wOVs1Hvxf4sTo9nqw3CcGz1M5E5oxmtDxI8XHAPJSZAA5O6ZR
+         oDIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741941265; x=1742546065;
+        d=1e100.net; s=20230601; t=1741941287; x=1742546087;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zZpAgjGwH0utmNulKzYZy5inQOshYJyhiBsdybHGg9A=;
-        b=eMytU2hALWsfvQrDxeD4OqX4P1CuCijYdtPIm1Q7xNyjm6DZQr9PBrhJmQrrol02ng
-         fbJJbu5vMREvi4dz1HypzKmvSPr54wEZOxEHydF7FHjE55Mg+DUMX8mG0a1hStArZGjI
-         DkpsczHeIYUclZkbuN/UPRzR9lA+YktFDr4MpmNSWFoTmCFAx0HdDRHYExdge/mfALAh
-         4vvJy/1EKTAGJ0A9JvM5PjdVjkjx30Z6J2WMFd3Qfutmd7mP5TppySbjGVlotkT0Bcud
-         0oPZ+ILFC3RtTfupXOic7DJmzE8gptczni1qRj1wa2ccTE544/EuJwFMdS/IYG2Vjmj2
-         GKOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVw8X3ttwQj9oC5RTOfAicL+cwOXzgay5T4KXlBj+9xDvrf/WWa1JN+oZjEj95adjeNCP1bhFezcqtYETs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWSGNxxrsEizfMuDUwZgYHcekF5PXXj6lZ6fByLTXXo+yUBBN5
-	eQkxAwGBpAQLwhPh2Qy/jZhlgVbSmnT6clvFsRBKnaCLUtjaM8lLbeQcFW+AU4vxD2sI7jmFgRR
-	SfPh4oCNwKRs+FaUcxA40ciUfRwg4hqSiBrO/
-X-Gm-Gg: ASbGnctJi5/IJdRvT0wf3jpBOg33uYJdWHWdGPTzswdsif/ZDdfZ3xQjSXnJZaPJZnq
-	L1RlO8ISG/GS3pQxLvszeBDRRnGa7oM14Q7MjDS8MGu1yJaLfGEcz3uhEjM4DyhwnBepor5cXCW
-	AmqiaSG1y2D/OqRo4qX+bAtCJffDDC+UAWljz5wbYeyPRLnbH/ZJW8Kv0FTEbPewg=
-X-Google-Smtp-Source: AGHT+IFeG2vASJFBcUYON5CpB2pCpsn5Qni6S+429lhxSZT9jExopLARUFhUuvYTV/jamF8BmUY325TX1o31O/IfcCs=
-X-Received: by 2002:a05:6512:1241:b0:549:5769:6adb with SMTP id
- 2adb3069b0e04-549c38eabd5mr545062e87.5.1741941265129; Fri, 14 Mar 2025
- 01:34:25 -0700 (PDT)
+        bh=bm74IWNiiddtjCmKDIAkneaMK7FpbJuBZ2ZaX1ZQ1kw=;
+        b=lZ8yAJiSXADL2jQdmAOx6UDLaGae18i2OUOsoDx02k2PdMVJ8yWgAJDkcfOukaoTe5
+         nO4jmeJFWwn3Nf3q13PA7VxlhiI6W+8O5bwjIPWS62GJeOo08aJlpHlBUk8xk7H5YCCn
+         pqSkON+xyd0i6sXXKx+cJe0X9xMxnIMoeZ+Nz9a52g7pxPqPOzjrLIEwiPsIpEetUJwx
+         MOSedhSiuMYek7/i35dNu/IORnQrUM/CNohrfKjjJDCceHXD15yTsHhvilJplK4UscSn
+         LFzlgpmSChYRdHaE0V34NEXWlcVvUZUB8nrZT0TKdcbEdoWgNxVifJS+EmdCm6pkms4F
+         0B5g==
+X-Forwarded-Encrypted: i=1; AJvYcCU88lJ+wY+Xf5PPNPpaDDdCKlPqP7Lrj4Zqr231xMlsVjnyInyKAQcYm3tLU7qRSVi4UL34FudZ2s1/abQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBj035ViHeoKoWiaRJpcOKgbxX6PdlG8xgb8CW8MgDITDpemjp
+	X4dCOCMXObue1lVDnOmzwQnkdM+Or5CsFlidRfpySKB7u/GZLbPueSLHih+8DzQjBxoKWMX5Xc4
+	pj10GMg0B3hfvtqIbnfsWFg7hDBB7KVEb8T8cgA==
+X-Gm-Gg: ASbGncubqsCfsUfQQNLBRdt/+QKUSAr2yjFtbe9hCbmLuTh2EYbUsesJAf23cjKI5QG
+	8TMJt9XQ8FLQpsgWdoKS6IdhQ+8gPVJKyStlInkijHKzJeVNFJ+HMvKOkmavkEPzzfvoObbX+N7
+	kIg6ey04Ss0Ff/cpx3YRboos+7zG8=
+X-Google-Smtp-Source: AGHT+IFRA5Az3Um9tJHHRXJFx+3mnIqGojBtFl6JREsVb2G4EXt33cQMlFoJn1d6ltMZlRWKhpPmG6wKGqrSmlkGBr0=
+X-Received: by 2002:a05:6602:3f08:b0:85b:5869:b5b with SMTP id
+ ca18e2360f4ac-85dc48334c9mr187830339f.6.1741941286887; Fri, 14 Mar 2025
+ 01:34:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250314073307.25092-1-Lu.Tang@mediatek.com> <20250314073307.25092-6-Lu.Tang@mediatek.com>
-In-Reply-To: <20250314073307.25092-6-Lu.Tang@mediatek.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 14 Mar 2025 16:34:13 +0800
-X-Gm-Features: AQ5f1JrxNwBtyEMHMU4cnPir_h2MVBk0naTrsiwIFPX2nky8qr1kDmNLCL6d8BU
-Message-ID: <CAGXv+5GMgkCSthLgna-0DwyMbw5pOd-jLi_H2Gk+5U0sUsnAFQ@mail.gmail.com>
-Subject: Re: [PATCH 5/5] dt-bindings: pmic: mediatek: Add pmic documents
-To: "Lu.Tang" <Lu.Tang@mediatek.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Chen Zhong <chen.zhong@mediatek.com>, Sen Chu <shen.chu@mediatek.com>, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20250310-v5_user_cfi_series-v11-0-86b36cbfb910@rivosinc.com> <20250310-v5_user_cfi_series-v11-25-86b36cbfb910@rivosinc.com>
+In-Reply-To: <20250310-v5_user_cfi_series-v11-25-86b36cbfb910@rivosinc.com>
+From: Zong Li <zong.li@sifive.com>
+Date: Fri, 14 Mar 2025 16:34:36 +0800
+X-Gm-Features: AQ5f1JpXeE6tU44day2kKwZlk-ke3YkF8t6JJiPonVbxjr2JHrkve7GNBaApiH4
+Message-ID: <CANXhq0qTYAuc_2A+51-BxEKKT67t3-d_nj3-R2O=+khHNOR+AQ@mail.gmail.com>
+Subject: Re: [PATCH v11 25/27] riscv: Documentation for landing pad / indirect
+ branch tracking
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
+	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
+	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
+	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 14, 2025 at 4:03=E2=80=AFPM Lu.Tang <Lu.Tang@mediatek.com> wrot=
-e:
+On Mon, Mar 10, 2025 at 11:44=E2=80=AFPM Deepak Gupta <debug@rivosinc.com> =
+wrote:
 >
-> Add new pmic mfd and adc documents for mt8196
+> Adding documentation on landing pad aka indirect branch tracking on riscv
+> and kernel interfaces exposed so that user tasks can enable it.
 >
-> Signed-off-by: Lu.Tang <Lu.Tang@mediatek.com>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
 > ---
->  .../iio/adc/mediatek,spmi-pmic-auxadc.yaml    |  31 ++++
->  .../bindings/input/mediatek,pmic-keys.yaml    |   1 +
->  .../bindings/mfd/mediatek,mt6685.yaml         |  50 +++++
->  .../bindings/mfd/mediatek,spmi-pmic.yaml      | 173 ++++++++++++++++++
->  .../pinctrl/mediatek,mt65xx-pinctrl.yaml      |   1 +
->  5 files changed, 256 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/mediatek,sp=
-mi-pmic-auxadc.yaml
->  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mt6685=
-.yaml
->  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,spmi-p=
-mic.yaml
+>  Documentation/arch/riscv/index.rst   |   1 +
+>  Documentation/arch/riscv/zicfilp.rst | 115 +++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 116 insertions(+)
 >
-> diff --git a/Documentation/devicetree/bindings/iio/adc/mediatek,spmi-pmic=
--auxadc.yaml b/Documentation/devicetree/bindings/iio/adc/mediatek,spmi-pmic=
--auxadc.yaml
-> new file mode 100644
-> index 000000000000..250782ad7d01
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/mediatek,spmi-pmic-auxadc=
-.yaml
-> @@ -0,0 +1,31 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/mediatek,spmi-pmic-auxadc.yam=
-l#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek SPMI PMIC AUXADC
-> +
-> +maintainers:
-> +  - Lu Tang <lu.tang@mediatek.com>
-> +
-> +description:
-> +  The Auxiliary Analog/Digital Converter (AUXADC) is an ADC found
-> +  in some MediaTek PMICs, performing various PMIC related measurements
-> +  such as battery and PMIC internal voltage regulators temperatures,
-> +  other than voltages for various PMIC internal components.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - mediatek,mt6363-auxadc
-> +      - mediatek,mt6373-auxadc
-> +
-> +  "#io-channel-cells":
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - "#io-channel-cells"
-> +
-> +additionalProperties: false
-
-This is simply a sub-function of the PMIC, and is really not tied to
-whatever interface the PMIC uses. Please integrate this into the existing
-binding:
-
-    Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
-
-> diff --git a/Documentation/devicetree/bindings/input/mediatek,pmic-keys.y=
-aml b/Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml
-> index b95435bd6a9b..ce760039d4c2 100644
-> --- a/Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml
-> +++ b/Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml
-> @@ -31,6 +31,7 @@ properties:
->        - mediatek,mt6358-keys
->        - mediatek,mt6359-keys
->        - mediatek,mt6397-keys
-> +      - mediatek,mt6363-keys
+> diff --git a/Documentation/arch/riscv/index.rst b/Documentation/arch/risc=
+v/index.rst
+> index eecf347ce849..be7237b69682 100644
+> --- a/Documentation/arch/riscv/index.rst
+> +++ b/Documentation/arch/riscv/index.rst
+> @@ -14,6 +14,7 @@ RISC-V architecture
+>      uabi
+>      vector
+>      cmodx
+> +    zicfilp
 >
->    power-off-time-sec: true
+>      features
 >
-> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6685.yaml b=
-/Documentation/devicetree/bindings/mfd/mediatek,mt6685.yaml
+> diff --git a/Documentation/arch/riscv/zicfilp.rst b/Documentation/arch/ri=
+scv/zicfilp.rst
 > new file mode 100644
-> index 000000000000..d3276df8952b
+> index 000000000000..a188d78fcde6
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6685.yaml
-> @@ -0,0 +1,50 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/mediatek,mt6685.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +++ b/Documentation/arch/riscv/zicfilp.rst
+> @@ -0,0 +1,115 @@
+> +.. SPDX-License-Identifier: GPL-2.0
 > +
-> +title: MediaTek MT6685 Clock IC
+> +:Author: Deepak Gupta <debug@rivosinc.com>
+> +:Date:   12 January 2024
 > +
-> +maintainers:
-> +  - Lu Tang <lu.tang@mediatek.com>
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> +Tracking indirect control transfers on RISC-V Linux
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
 > +
-> +description: |
-> +  MT6685 is a clock IC.
-> +  Please see the sub-modules below for supported features.
+> +This document briefly describes the interface provided to userspace by L=
+inux
+> +to enable indirect branch tracking for user mode applications on RISV-V
 > +
-> +  MT6685 is a multifunction device with the following sub modules:
-> +  - RTC
-> +  - Clock
+> +1. Feature Overview
+> +--------------------
 > +
-> +properties:
-> +  compatible:
-> +    const: mediatek,mt6685
+> +Memory corruption issues usually result in to crashes, however when in h=
+ands of
+> +an adversary and if used creatively can result into variety security iss=
+ues.
 > +
-> +  interrupts:
-> +    maxItems: 1
+> +One of those security issues can be code re-use attacks on program where=
+ adversary
+> +can use corrupt function pointers and chain them together to perform jum=
+p oriented
+> +programming (JOP) or call oriented programming (COP) and thus compromisi=
+ng control
+> +flow integrity (CFI) of the program.
 > +
-> +  interrupt-controller: true
+> +Function pointers live in read-write memory and thus are susceptible to =
+corruption
+> +and allows an adversary to reach any program counter (PC) in address spa=
+ce. On
+> +RISC-V zicfilp extension enforces a restriction on such indirect control
+> +transfers:
 > +
-> +  "#interrupt-cells":
-> +    const: 2
+> +- indirect control transfers must land on a landing pad instruction ``lp=
+ad``.
+> +  There are two exception to this rule:
 > +
-> +required:
-> +  - compatible
+> +  - rs1 =3D x1 or rs1 =3D x5, i.e. a return from a function and returns =
+are
+> +    protected using shadow stack (see zicfiss.rst)
 > +
-> +additionalProperties: false
+> +  - rs1 =3D x7. On RISC-V compiler usually does below to reach function
+> +    which is beyond the offset possible J-type instruction::
 > +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/spmi/spmi.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +      auipc x7, <imm>
+> +      jalr (x7)
 > +
-> +    spmi {
-> +        mfd@9 {
-> +            compatible =3D "mediatek,mt6685";
-> +            reg =3D <0x9 SPMI_USID>;
-> +            #address-cells =3D <1>;
-> +            #size-cells =3D <0>;
-> +        };
-> +    };
-> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.yam=
-l b/Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.yaml
-> new file mode 100644
-> index 000000000000..a8f1231623cf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.yaml
-> @@ -0,0 +1,173 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/mediatek,spmi-pmic.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +       Such form of indirect control transfer are still immutable and do=
+n't rely
+> +    on memory and thus rs1=3Dx7 is exempted from tracking and considered=
+ software
+> +    guarded jumps.
 > +
-> +title: MediaTek SPMI PMICs multi-function device
+> +``lpad`` instruction is pseudo of ``auipc rd, <imm_20bit>`` with ``rd=3D=
+x0`` and
+> +is a HINT nop. ``lpad`` instruction must be aligned on 4 byte boundary a=
+nd
+> +compares 20 bit immediate withx7. If ``imm_20bit`` =3D=3D 0, CPU don't p=
+erform any
+> +comparision with ``x7``. If ``imm_20bit`` !=3D 0, then ``imm_20bit`` mus=
+t match
+> +``x7`` else CPU will raise ``software check exception`` (``cause=3D18``)=
+ with
+> +``*tval =3D 2``.
 > +
-> +maintainers:
-> +  - Lu Tang <lu.tang@mediatek.com>
+> +Compiler can generate a hash over function signatures and setup them (tr=
+uncated
+> +to 20bit) in x7 at callsites and function prologues can have ``lpad`` wi=
+th same
+> +function hash. This further reduces number of program counters a call si=
+te can
+> +reach.
 > +
-> +description: |
-> +  Some Mediatek PMICs are interfaced to the chip via the SPMI (System Po=
-wer
-> +  Management Interface) bus.
+> +2. ELF and psABI
+> +-----------------
 > +
-> +  The Mediatek SPMI series includes the MT6363, MT6373, MT6316 and other
-> +  PMICs.Please see the sub-modules below for supported features.
+> +Toolchain sets up :c:macro:`GNU_PROPERTY_RISCV_FEATURE_1_FCFI` for prope=
+rty
+> +:c:macro:`GNU_PROPERTY_RISCV_FEATURE_1_AND` in notes section of the obje=
+ct file.
 > +
-> +   MT6363/MT6373 is a multifunction device with the following sub module=
-s:
-> +  - Regulators
-> +  - ADC
-> +  - GPIO
-> +  - Keys
+> +3. Linux enabling
+> +------------------
+> +
+> +User space programs can have multiple shared objects loaded in its addre=
+ss space
+> +and it's a difficult task to make sure all the dependencies have been co=
+mpiled
+> +with support of indirect branch. Thus it's left to dynamic loader to ena=
+ble
+> +indirect branch tracking for the program.
+> +
+> +4. prctl() enabling
+> +--------------------
+> +
+> +:c:macro:`PR_SET_INDIR_BR_LP_STATUS` / :c:macro:`PR_GET_INDIR_BR_LP_STAT=
+US` /
+> +:c:macro:`PR_LOCK_INDIR_BR_LP_STATUS` are three prctls added to manage i=
+ndirect
+> +branch tracking. prctls are arch agnostic and returns -EINVAL on other a=
+rches.
+> +
+> +* prctl(PR_SET_INDIR_BR_LP_STATUS, unsigned long arg)
+> +
+> +If arg1 is :c:macro:`PR_INDIR_BR_LP_ENABLE` and if CPU supports ``zicfil=
+p``
+> +then kernel will enabled indirect branch tracking for the task. Dynamic =
+loader
+> +can issue this :c:macro:`prctl` once it has determined that all the obje=
+cts
+> +loaded in address space support indirect branch tracking. Additionally i=
+f there
+> +is a `dlopen` to an object which wasn't compiled with ``zicfilp``, dynam=
+ic
+> +loader can issue this prctl with arg1 set to 0 (i.e.
+> +:c:macro:`PR_INDIR_BR_LP_ENABLE` being clear)
+> +
+> +* prctl(PR_GET_INDIR_BR_LP_STATUS, unsigned long arg)
+> +
+> +Returns current status of indirect branch tracking. If enabled it'll ret=
+urn
+> +:c:macro:`PR_INDIR_BR_LP_ENABLE`
+> +
+> +* prctl(PR_LOCK_INDIR_BR_LP_STATUS, unsigned long arg)
+> +
+> +Locks current status of indirect branch tracking on the task. User space=
+ may
+> +want to run with strict security posture and wouldn't want loading of ob=
+jects
+> +without ``zicfilp`` support in it and thus would want to disallow disabl=
+ing of
+> +indirect branch tracking. In that case user space can use this prctl to =
+lock
+> +current settings.
+> +
+> +5. violations related to indirect branch tracking
+> +--------------------------------------------------
+> +
+> +Pertaining to indirect branch tracking, CPU raises software check except=
+ion in
+> +following conditions:
+> +
+> +- missing ``lpad`` after indirect call / jmp
+> +- ``lpad`` not on 4 byte boundary
+> +- ``imm_20bit`` embedded in ``lpad`` instruction doesn't match with ``x7=
+``
+> +
+> +In all 3 cases, ``*tval =3D 2`` is captured and software check exception=
+ is
+> +raised (``cause=3D18``)
+> +
+> +Linux kernel will treat this as :c:macro:`SIGSEV`` with code =3D
+> +:c:macro:`SEGV_CPERR` and follow normal course of signal delivery.
+>
 
+LGTM.
 
-> +   MT6316 is a multifunction device with the following sub modules:
-> +  - Regulators
-
-Then it is not multifunctional. Please move this to the MT6315
-binding:
-
-    Documentation/devicetree/bindings/regulator/mt6315-regulator.yaml
-
-Also, you have not covered regulator bindings in this series.
-
-
-ChenYu
-
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - mediatek,mt6363
-> +          - mediatek,mt6373
-> +          - mediatek,mt6316
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  interrupt-controller: true
-> +
-> +  "#interrupt-cells":
-> +    const: 2
-> +
-> +  regulators:
-> +    type: object
-> +    description:
-> +      List of child nodes that specify the regulators.
-> +    additionalProperties: true
-> +
-> +    properties:
-> +      compatible:
-> +        oneOf:
-> +          - enum:
-> +              - mediatek,mt6363-regulator
-> +              - mediatek,mt6373-regulator
-> +              - mediatek,mt6316-regulator
-> +
-> +    required:
-> +      - compatible
-> +
-> +  adc:
-> +    type: object
-> +    $ref: /schemas/iio/adc/mediatek,spmi-pmic-auxadc.yaml#
-> +    unevaluatedProperties: false
-> +
-> +  keys:
-> +    type: object
-> +    $ref: /schemas/input/mediatek,pmic-keys.yaml
-> +    unevaluatedProperties: false
-> +    description:
-> +      Power and Home keys.
-> +
-> +  pinctrl:
-> +    type: object
-> +    $ref: /schemas/pinctrl/mediatek,mt65xx-pinctrl.yaml
-> +    unevaluatedProperties: false
-> +    description:
-> +      Pin controller
-> +
-> +required:
-> +  - compatible
-> +  - regulators
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/spmi/spmi.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    spmi {
-> +        main_pmic: pmic@4 {
-> +            compatible =3D "mediatek,mt6363";
-> +            reg =3D <0x4 SPMI_USID>;
-> +            interrupts =3D <0x4 IRQ_TYPE_NONE>;
-> +            #address-cells =3D <0>;
-> +            interrupt-controller;
-> +            #interrupt-cells =3D <2>;
-> +
-> +            mt6363keys: keys {
-> +                compatible =3D "mediatek,mt6363-keys";
-> +                mediatek,long-press-mode =3D <1>;
-> +                power-off-time-sec =3D <0>;
-> +
-> +                power {
-> +                    linux,keycodes =3D <116>;
-> +                    wakeup-source;
-> +                };
-> +
-> +                home {
-> +                    linux,keycodes =3D <115>;
-> +                };
-> +            };
-> +
-> +            mt6363_pio: pinctrl {
-> +                compatible =3D "mediatek,mt6363-pinctrl";
-> +                gpio-controller;
-> +                #gpio-cells =3D <2>;
-> +            };
-> +
-> +            mt6363regulator: regulators {
-> +                compatible =3D "mediatek,mt6363-regulator";
-> +
-> +                mt6363_vs2: vs2 {
-> +                    regulator-name =3D "mt6363_vs2";
-> +                    regulator-allowed-modes =3D <0 1 2>;
-> +                    regulator-always-on;
-> +                    regulator-allow-set-load;
-> +                };
-> +
-> +                mt6363_vbuck1: vbuck1 {
-> +                    regulator-name =3D "mt6363_vbuck1";
-> +                    regulator-allowed-modes =3D <0 1 2>;
-> +                };
-> +
-> +                mt6363_vbuck2: vbuck2 {
-> +                    regulator-name =3D "mt6363_vbuck2";
-> +                    regulator-allowed-modes =3D <0 1 2>;
-> +                };
-> +
-> +                mt6363_vbuck3: vbuck3 {
-> +                    regulator-name =3D "mt6363_vbuck3";
-> +                    regulator-allowed-modes =3D <0 1 2>;
-> +                };
-> +
-> +                mt6363_vbuck4: vbuck4 {
-> +                    regulator-name =3D "mt6363_vbuck4";
-> +                    regulator-allowed-modes =3D <0 1 2>;
-> +                };
-> +
-> +                mt6363_vbuck5: vbuck5 {
-> +                    regulator-name =3D "mt6363_vbuck5";
-> +                    regulator-allowed-modes =3D <0 1 2>;
-> +                };
-> +
-> +                mt6363_vbuck6: vbuck6 {
-> +                    regulator-name =3D "mt6363_vbuck6";
-> +                    regulator-allowed-modes =3D <0 1 2>;
-> +                };
-> +
-> +                mt6363_vbuck7: vbuck7 {
-> +                    regulator-name =3D "mt6363_vbuck7";
-> +                    regulator-allowed-modes =3D <0 1 2>;
-> +                };
-> +
-> +                // ...
-> +
-> +                mt6363_isink_load: isink-load {
-> +                    regulator-name =3D "mt6363_isink_load";
-> +                };
-> +            };
-> +        };
-> +    };
-> diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pi=
-nctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinc=
-trl.yaml
-> index bccff08a5ba3..bf3ba58a7705 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.y=
-aml
-> +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.y=
-aml
-> @@ -17,6 +17,7 @@ properties:
->      enum:
->        - mediatek,mt2701-pinctrl
->        - mediatek,mt2712-pinctrl
-> +      - mediatek,mt6363-pinctrl
->        - mediatek,mt6397-pinctrl
->        - mediatek,mt7623-pinctrl
->        - mediatek,mt8127-pinctrl
+Reviewed-by: Zong Li <zong.li@sifive.com>
 > --
-> 2.46.0
+> 2.34.1
 >
 >
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
