@@ -1,297 +1,186 @@
-Return-Path: <linux-kernel+bounces-560607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF83AA60704
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:25:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B505EA60706
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:29:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C5C3BBEDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:25:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC3BE7A9F0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D507DF60;
-	Fri, 14 Mar 2025 01:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7C815E8B;
+	Fri, 14 Mar 2025 01:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jbEq2FtL"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="V1fpHnss"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013008.outbound.protection.outlook.com [40.107.162.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1CA2E3374
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741915522; cv=none; b=DfxXpZq6LMT2yvY18d9vHivbZvh9xVPDU9AswzgLoN/DYV6r6x3p6PAbSQTPsuMNtxqgqmnw28v6p/AfMjGsHa+bOQxhRxhNzQGODS/ZoZLMRrBYJDOoQXqkXfsaLHJH4GicdYgKDqDfPOd+d2ohNj0d0MYfBAos8RhoPf+Q8Uc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741915522; c=relaxed/simple;
-	bh=pYR6POtptZTzDvs5AVhjHcD47+c/Tf1NxJgmYWlgvdw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c8uOp2rdfajWHVi7A/nYlN4egBX6Am8OjXZO6djfx84LneOPWJqqyMG1pAVf4WxnvyB/7hHexQYBfP39dPpeCUOSj89GcXqVrX93Bry7eAF0iQv9fMWCN9GaDI4BeflIQDrPUHmM+WJ4kOFh+N79YPpe7wnM3BUay4YBuL5yGGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jbEq2FtL; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5499bd3084aso1589225e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:25:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741915519; x=1742520319; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NJUHBBzL/5px/4xfGZBmnoN11NHSw0VyPD+uekvDR+4=;
-        b=jbEq2FtLPcPuVUOZ8gJ81mcEAHhZTQtKffOg3QwEyjJ8QNuq6Cn66DOEcxOk02aXfF
-         v+1eEeXhhWHRMvd5KjSVwfjTvHGue8+xoaffakZi4UOImimzROcsBB54qCcOfHH3a+T4
-         x8XkHyJfzn4YxFEhAbBnNyczBm2dbNB7aUQZG9Ajpbi/mrS7AcjFCofgtt37IW/yuRY5
-         hHV190tCcUTEltPqFqY0fIYkFwmo2wxC+vCt5XWaWA5PCJkL4tnwlz/LDjXj3f0m7AS9
-         K3ElAwWZEk9JKUcxNaLWGfzdZuX1Z0yMo/rwzK5wfwkxG71TEiQiBL1KS/a9WrConC8o
-         AlZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741915519; x=1742520319;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NJUHBBzL/5px/4xfGZBmnoN11NHSw0VyPD+uekvDR+4=;
-        b=lJYmFfHjWwFWGg5YiKY1+xv7py3xOGLLW9d1ksOfI0VRSlmFdIyf6D5VldVJPpDwLo
-         iWCJFHsQkVgZg4WuNbPBcViv/GnPNXcKq9jxzK/QLG+7dIvvD2kwaV1QBn0DbhGxU868
-         /16UMDnhrfxGkR517c70k4iaOT8KFqu/FfGJPmXYGTcYFVGBq824ZkDqMpSkRHHXLJG5
-         c1nvzKdvktPaohmNBNC4yblXf4Ok+0iOYWBo9pIj6fzMesAiJibL/L2WJiFqQ0Y8z4bK
-         a9k3Zntv5KSgJ0PZh62WHIm3ctZ+gDCDYstbKC4QgX/iIyle6TuPCREwxJFM4/Xs27fQ
-         2xoQ==
-X-Gm-Message-State: AOJu0Yz0eBCUgDSZTiuMlXFUe04gu1yXDCvuRc2j5G44q27h3cnXUQgM
-	f50POgO+CXIDpaOizIFMCE3wxinAlqt8iPzzDMmPU3lKNE5nTZ/VHpS7aAQOvhgaHQSxfDbeC5D
-	kYkOj9GlVAYiL/QC0UCjZTPnAhg==
-X-Gm-Gg: ASbGncslPGG3MjnGV3ZMbgcZTYf/dj+/7zC32FqKNR564BK93SPl18BpzTIfKYLtut6
-	qD7DOmDBQpci4TK0vguRaoWv1UBMIQLxca/fkYuNb1VXd01/uXjxQW1tt+gREbutW+uNmAtPxnZ
-	6WcXHV4D8rfZBLluD2kw7hL/ZzrFRq+EP7S7Y+R2tl
-X-Google-Smtp-Source: AGHT+IH3eUsPhbcfN8V4FyyOJUpSRgPMnEVleUVSWCJjj/2SlKX3KF6zFdb4pZcM0Pj9DzPdSEsdJHuFFvw/nzCK6Gg=
-X-Received: by 2002:a05:6512:ba9:b0:549:5b54:2c77 with SMTP id
- 2adb3069b0e04-549c3924ecfmr187743e87.32.1741915518430; Thu, 13 Mar 2025
- 18:25:18 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DD72E3374;
+	Fri, 14 Mar 2025 01:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741915733; cv=fail; b=N+zOz4tDq3Kr9SaXInr4bcUwlshZEvtTqVaW7vvVFnV32isctmWTkMccQol18Elm6MRkJ15mLe4sRvd9wWXdDymdBMTfOb/YQA6BAayfIJJm/1td5OMZ7hEJaaLyYwn+k3RmvLKvRFj+7+mCFFYo8w8wkhAnP7KTTyem1GPQY9A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741915733; c=relaxed/simple;
+	bh=qlsyXlEZmCBIJHkz5PtOYxFu0YwSUun+7mcqxzIOj4o=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=N59zJhCFaohP2ejtdH5BCKJiZmM6UrfrSA+azA/yqYlo7t3t5HavW2nTCgdYGjFuvOVFa+bwFeOyK4eyFT2P4CbgglVQlGCA7H3ZpGMiQAqPMUsxX24vi0pGeT4eBOQpx3R3yCMLlAJtvhUTr+ldUW9ykk3YhKtauCiy+rB9O7A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=V1fpHnss; arc=fail smtp.client-ip=40.107.162.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PpQKpp5P7zAM53OsKM3lfk39L0yxlEcz+XiBD30NQ/QUT60lIJK8hr2FK6BUwBlDLsDqPSA6FwED3XWddmldnH0lo2rD5bcl7M1a7tOwnUUgZDLaGxi/hLZ+zMW95UgyH0/3brC6mBG8bYqCAawV+cLpswPV387niWppbj6soQVBeFYbX72fpe8EUsoAJ5C4KoC/pP77rszs75vjX80+axC7zkBRg90sDQhu3eRlhT3okTqdqQA1USWoyzFQs4q2BQ/LTSzjt1SiuQGXMVdvA88cN8dM+aarPqGEF9/zrLv3Nmkh4nf1yly4PsJ0qTssmSbrj2L5S/d7IgABeulWpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qlsyXlEZmCBIJHkz5PtOYxFu0YwSUun+7mcqxzIOj4o=;
+ b=vNOsETot433A6Ex2RbgdnN8tvjHNqWyf/CJAgcv+WiGIrqFth7F7MCufEq/mfjxYjrfPsZx/NkU+Nl9LthAXyimP36UqirABOLo7jRal2tsJCPeAsenfVId+TKkmZl8VClZDXzirLr2ioJ3NhR4ChjiH5X4j7Fv1oStA9r97B7ZGJkPeGmQIYyhOYdIDwO+KP31vQxpmdEaxJBXDFxu3a3ExUqGALmbDYxI0JmKCu64Q3hGyyaQeZmDPLvdqiX6OA9jHkgrI/GJbu8NqzxNLH62+HVXm9Ghm8sXOwBKwYnaPLfjTTsJKkkc3YfVkgR2C/xxgWLCYoBZBtGn2YXxGQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qlsyXlEZmCBIJHkz5PtOYxFu0YwSUun+7mcqxzIOj4o=;
+ b=V1fpHnssQhPjhHsK+T4ZV2PsV6pbrnsKU8HnJoVSu3pthivvREjwTnpD2dmN2TqqE1FRHiJgWKGK2wp7u036LaH+jnO34MtgydfMhHu5q8RiwYqwiDEHk7GsIRVl4xT7bmeyGOjqWUMRAiU+kGtK24sXiVmgQaGAJ3sjcshi23T3BAZAKr8sxIvfJP9fH8hn5EkCsfjAFntAZFHgrZw2biVEgVuKESxZ4tEI3BLlwx+CAyQPPkjfH+eBaI023dUb7qHMasZgo0roSffYYzAkKMorGB1skXRjb+BIy0s9vrBxY0w897UrShO/ujehVcHgTgM+V0E36sGa5NznBc03eA==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by PA3PR04MB11178.eurprd04.prod.outlook.com (2603:10a6:102:4ab::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.25; Fri, 14 Mar
+ 2025 01:28:48 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8534.027; Fri, 14 Mar 2025
+ 01:28:48 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+CC: Claudiu Manoil <claudiu.manoil@nxp.com>, Clark Wang
+	<xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "christophe.leroy@csgroup.eu"
+	<christophe.leroy@csgroup.eu>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v4 net-next 00/14] Add more feautues for ENETC v4 - round
+ 2
+Thread-Topic: [PATCH v4 net-next 00/14] Add more feautues for ENETC v4 - round
+ 2
+Thread-Index: AQHbkkpAQng3kVTgPU+Fe/EB7aXGq7NxGTyAgADC7cA=
+Date: Fri, 14 Mar 2025 01:28:48 +0000
+Message-ID:
+ <PAXPR04MB85101D921FD07B882E03216088D22@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250311053830.1516523-1-wei.fang@nxp.com>
+ <20250313135041.uex3gvhpbmnh4hmp@skbuf>
+In-Reply-To: <20250313135041.uex3gvhpbmnh4hmp@skbuf>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|PA3PR04MB11178:EE_
+x-ms-office365-filtering-correlation-id: eea1d685-b7cc-4129-8f9b-08dd6297921f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?FLVSD9PuoT8anqurMFUev7wg3nZ386lp1RVKoo1nLr8virSgRY4j4nTZEzEe?=
+ =?us-ascii?Q?R3aN9einLgvluLjA4lco7vB4FiIlEZs9GSt8PZtBpgs8Akv88pWvwqELsW27?=
+ =?us-ascii?Q?gpg/afJhWR2r0G9zBx77AH1EpA5S1FAGYBwbgGcSfkiduLUipZ5HXSxU/nt0?=
+ =?us-ascii?Q?GzU5F5qacgstyOB0quwX2LEkhtZkwi6kRIomxu90YRWcqJuMI2xDoxkwvq2D?=
+ =?us-ascii?Q?DPWH4mqw69GwaBMXgYzQ1/UY3fCwJsaKj68tlvTDv5Qmg/U+DX1XX5wKhlLC?=
+ =?us-ascii?Q?VfFrC3Jer2bMWvZ2q717Ob6vuUjjctdtPOIkumaaTtbFVED8JohmzHcOk9yV?=
+ =?us-ascii?Q?4tLKVqHnUBdhzE8cGGyrdXNsrEAaT3zDy7dtbbWlBC4QWHUVA0OGvYfqUMfN?=
+ =?us-ascii?Q?XGfOJwdkIfPC5nIALshBiumG9D5D9PVYLO2yE/OuBw86M6VWjhAYVj46HOBc?=
+ =?us-ascii?Q?qIYi35WGttW1FrG8AJm70I6znpnyMg3XLkMdBmEqBr/EiicvqYSLLuIh9W8I?=
+ =?us-ascii?Q?z0ViXtYy7y+LeALf3fpwtK19bKSg0rDWpyvZ3Y0EMsBkrzDWopZmp/IcL/5O?=
+ =?us-ascii?Q?aN8PAW/Cp/Qti0P4aRExQw7a4QT2sy+ckW+bN05mt8JJGevFcbe83t7LP1HO?=
+ =?us-ascii?Q?m/csKAgGiV6Bs8gVLZUw+ek1KQfaLH+b9Edl8T7Jy0TU90VRmtx1UDsGTdg0?=
+ =?us-ascii?Q?P29Xa7WCUs5cSCi9Z5rt0MJG0Dv5ZkWrcc2DkGZU0KaKAUgScnDmYP1Hi9YH?=
+ =?us-ascii?Q?pp8usz1botCMTjDkeYZHA2V1Apk+xL6xOhc5yEQitUCMoWxxTeVQVGbHKuSP?=
+ =?us-ascii?Q?W9rKtlbnfn7FYPDPbR26emE/WMj33rCzfVvS/1ZAIyYL9sdQfXEyomMMC2Ee?=
+ =?us-ascii?Q?8AG4q/si5M85I0xtMf0wJuAFNw5xmeH2MjIug36c7BPCdKmENdJBsQnT7kOD?=
+ =?us-ascii?Q?aopPhWK8/0cIgrXRgJYV004S+lL+OIK8a8hcYk52BBNymJc6ux3fOCiKVMv0?=
+ =?us-ascii?Q?K4h7ex4/dkZnebwa2bF6ctOjqsK2ylBA50Yntz8MDNsZ3xQ0Fml/bjIT3cNA?=
+ =?us-ascii?Q?Ybx3B/nKcyEMpFrX0a6JWgfzqAxOt1eqjCMNd6iO+n4f/RpxdhbY1gN7p6sI?=
+ =?us-ascii?Q?N9ABTD/LaM3OqkkB4Wwmer7HnG9a96AVgn30i+NWEwxIgALrXSeS2bhhO+WT?=
+ =?us-ascii?Q?nJTVjtwfm1XFU3rfz+Hb/B4CpeAB3u38k24YSVUnd/vZ29LKMHIaA9zEOCbb?=
+ =?us-ascii?Q?Pbf6J8N/tptGXzFaZjngz5b6TPzzd9n6C1oQ9axnzNSMohvYA350TKJK2MKZ?=
+ =?us-ascii?Q?/d8YFNS2l0y0yHN/XUEMzESE7g+e5oBxg2F2hgIYQ/tQlXUlUQMvPPyq7Q/j?=
+ =?us-ascii?Q?LSnh8aTR5aAiuhvlTxabxis5qz1mK3Xrr1CeP8OKrtEzqXipm9mN1mXwkWtI?=
+ =?us-ascii?Q?vqUrekvDGa/fWEPWcIjDllb9J0hPeK/6?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?JYfAl7u4deaLol7phXeqTng5vD8UaV6jSLk3DQEVTSW7AJsUdtyUeDJlRFAa?=
+ =?us-ascii?Q?o4Vin7g582JYdGPdk0wx1BnD/X39SkWNvWePa2VJGCTseqVY626fMMjg+y+i?=
+ =?us-ascii?Q?YBv0f+dCJDo9ckEaeRi0v5vfsprhyU7UlZq0Ra568+WGYF5hVfCcbUhwAJcW?=
+ =?us-ascii?Q?C5RL0nIXUQ0CsqKsKPvoNas0eHlDow/+iV7AQMvbUZtI8h3S1qomvEAWnNrN?=
+ =?us-ascii?Q?Au1GHMY+IV0hPENC/haHAxtf8ucQWYLgoOv0PUI+/RMQ2KjE5+1WF1ye0ZAJ?=
+ =?us-ascii?Q?3Z04Nc9dFKj7JgP7WFE2TrxSEGT+UD2ssi9ZzKq89CVvJoq3zzFCZuraUbO9?=
+ =?us-ascii?Q?ro3CAV1PaK6Lw0msrRe7sRBtmv+HKfWGb3PDLKFJHYBjPmYYbm3EAJpFIrJl?=
+ =?us-ascii?Q?9rxg098G0T1klQrUlN5IzMTYf6U8Qd1MI4MNhzPx9cY+TdcwZgXC2AEodY9u?=
+ =?us-ascii?Q?YqiBF3/EpGEM+zjomjpn2Je5mEAG7BkXYEsz++T5loSnFzSeia4NsDMqzb1+?=
+ =?us-ascii?Q?rmm+P384reeFfLtEjQSJUs+JZyCO9KuErZbQ/m+nDn9qh+0IK7PZJu9fgUZF?=
+ =?us-ascii?Q?XeH4DjgjnaI6MamI/awYMwj4kHlhkhCUBlby+fNP5hTnJc8e+o1ngNRDT3Jk?=
+ =?us-ascii?Q?Ff7ETOS01Ph8z9czuOgmYFYxxULJcEfyFVo9iufwPYyVkDx6Is2s7sSPlI44?=
+ =?us-ascii?Q?IXr6bTB90/dmjFFT1Ea/kCBX1ZN4Yw5+hJb9wrDgrYjcJlZPQK47UY9/Q1s1?=
+ =?us-ascii?Q?0ZDY8fKtLSwDzXNFRyACkObX9VaF/JQjS5xVNG/3xLFrJDlM38kKb0K/j+4l?=
+ =?us-ascii?Q?GngV5+MVuJFHfjr8C3M2S+S7nowdXFWxBVfNK9ECnUyvstljBmjnonqLQ8T6?=
+ =?us-ascii?Q?NrH7NwrIUXK+jB7X/T3GWBZ+0vF+Zhpxw7s9QjI1n1WArSWwWcc421yfH2yM?=
+ =?us-ascii?Q?6mFMDpbb1Puvljoy0oVWIhdUA4BqgjV35LEJW+upo4Iy9OM5nXJZyYIaVOCg?=
+ =?us-ascii?Q?TfUOtCZoJDzlw/LIHR5ddNUvdXw2RsgRN5yjlLsQ7DGhoeXBUc7sR7cJzhTG?=
+ =?us-ascii?Q?1VG5IZMWE/AoH+Gqm0D7cAoxim2agC15vC/7h1UEJsM76z/AGJx9sLfGk2wk?=
+ =?us-ascii?Q?CizYkGEkLYtjjUUZGJwkBVgv5n436f0BUAsRQdOV9liU41oBNmDrvD1bdArZ?=
+ =?us-ascii?Q?VITVIkAiSUQ9hKsjxKmP1ytyXh6663fM5pJbizTYLRNEXSbdM5wNtgAYd7ei?=
+ =?us-ascii?Q?eiyiEQgEIzlKUGPbk+UKnL8951iI2Db9YOHdz5YFCezu0UGqGt9A1mZxavGB?=
+ =?us-ascii?Q?WT6zGmRlghKAvnxQUaOSw40igarlEIE69OaIodIzo+dinysfQgMd0GljkI6K?=
+ =?us-ascii?Q?k+ueTvR/zatPU189B9wL3pcxQRJ7KI//yGGA6HVzG41HHgTaVJmuZEKGpyde?=
+ =?us-ascii?Q?boBGowUruTfh2dhB/pyHTiz/2DEObEjmPMSlYYcKp4mQTZjrbohuYB0LF87V?=
+ =?us-ascii?Q?ztT6lw/Qf9y3qwHYBG2IxZKLbq4xMS4vBFMW7+QdSJ7RlGAPKDEak5GRE3Qy?=
+ =?us-ascii?Q?faqfHew7C4hPlzdo2U4=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313182236.655724-1-brgerst@gmail.com> <20250313182236.655724-3-brgerst@gmail.com>
- <5ac97442-78b1-40ce-9282-06cd62d97a67@intel.com>
-In-Reply-To: <5ac97442-78b1-40ce-9282-06cd62d97a67@intel.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Thu, 13 Mar 2025 21:25:06 -0400
-X-Gm-Features: AQ5f1JqDOCXu7C8_LAVIJ_D8LrUKMbrDeBfIvbdRdnIdi-kBd_9zKMRZZc6O0XU
-Message-ID: <CAMzpN2iu5NRe2PE-TYS9beJp7Ze439C9k8AWHjfcibXi_mGuug@mail.gmail.com>
-Subject: Re: [PATCH 2/5] x86/syscall/32: Move 32-bit syscall dispatch code
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>, Juergen Gross <jgross@suse.com>, 
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eea1d685-b7cc-4129-8f9b-08dd6297921f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Mar 2025 01:28:48.7083
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: p8iTf4VROLielJmJ/KnFjKEq4Mzvzzb2uwHibM7muJ6EsyiyHBtyABclC5OwfjOp+JR63cCRpcZVkc7tUlTsoA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA3PR04MB11178
 
-On Thu, Mar 13, 2025 at 7:45=E2=80=AFPM Sohil Mehta <sohil.mehta@intel.com>=
- wrote:
->
-> On 3/13/2025 11:22 AM, Brian Gerst wrote:
->
-> >  SYSCALL_DEFINE0(ni_syscall)
-> >  {
-> >       return -ENOSYS;
-> > diff --git a/arch/x86/entry/syscall_32.c b/arch/x86/entry/syscall_32.c
-> > index 8cc9950d7104..7c286e89fd04 100644
-> > --- a/arch/x86/entry/syscall_32.c
-> > +++ b/arch/x86/entry/syscall_32.c
-> > @@ -1,10 +1,23 @@
-> > -// SPDX-License-Identifier: GPL-2.0
-> > -/* System call table for i386. */
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * 32-bit system call dispatch
-> > + *
-> > + * Copyright (c) 2015 Andrew Lutomirski
-> > + *
-> > + * Based on asm and ptrace code by many authors.  The code here origin=
-ated
-> > + * in ptrace.c and signal.c.
->
-> Wondering if we can skip copying over some of these old comments? As the
-> file grows, it's hard to discerne what specific code originated where.
-> For example, the FRED code is all new.
+> On Tue, Mar 11, 2025 at 01:38:16PM +0800, Wei Fang wrote:
+> > This patch set adds the following features.
+> > 1. Compared with ENETC v1, the formats of tables and command BD of ENET=
+C
+> > v4 have changed significantly, and the two are not compatible. Therefor=
+e,
+> > in order to support the NETC Table Management Protocol (NTMP) v2.0, we
+> > introduced the netc-lib driver and added support for MAC address filter
+> > table and RSS table.
+> > 2. Add MAC filter and VLAN filter support for i.MX95 ENETC PF.
+> > 3. Add RSS support for i.MX95 ENETC PF.
+> > 4. Add loopback support for i.MX95 ENETC PF.
+>=20
+> Can you please fix the "feautues" typo in the cover letter title? It
+> will get used for the merge commit.
 
-I wasn't sure what the appropriate thing would be so I just copied it
-over.  The git history is probably a better way to attribute this
-though.
-
->
-> > +#ifdef CONFIG_IA32_EMULATION
-> > +static __always_inline bool int80_is_external(void)
-> > +{
-> > +     const unsigned int offs =3D (0x80 / 32) * 0x10;
-> > +     const u32 bit =3D BIT(0x80 % 32);
-> > +
-> > +     /* The local APIC on XENPV guests is fake */
-> > +     if (cpu_feature_enabled(X86_FEATURE_XENPV))
-> > +             return false;
-> > +
-> > +     /*
-> > +      * If vector 0x80 is set in the APIC ISR then this is an external
-> > +      * interrupt. Either from broken hardware or injected by a VMM.
-> > +      *
-> > +      * Note: In guest mode this is only valid for secure guests where
-> > +      * the secure module fully controls the vAPIC exposed to the gues=
-t.
-> > +      */
-> > +     return apic_read(APIC_ISR + offs) & bit;
-> > +}
-> > +
-> > +/**
-> > + * do_int80_emulation - 32-bit legacy syscall C entry from asm
-> > + * @regs: syscall arguments in struct pt_args on the stack.
-> > + *
-> > + * This entry point can be used by 32-bit and 64-bit programs to perfo=
-rm
-> > + * 32-bit system calls.  Instances of INT $0x80 can be found inline in
-> > + * various programs and libraries.  It is also used by the vDSO's
-> > + * __kernel_vsyscall fallback for hardware that doesn't support a fast=
-er
-> > + * entry method.  Restarted 32-bit system calls also fall back to INT
-> > + * $0x80 regardless of what instruction was originally used to do the
-> > + * system call.
-> > + *
-> > + * This is considered a slow path.  It is not used by most libc
-> > + * implementations on modern hardware except during process startup.
-> > + *
-> > + * The arguments for the INT $0x80 based syscall are on stack in the
-> > + * pt_regs structure:
-> > + *   eax:                            system call number
-> > + *   ebx, ecx, edx, esi, edi, ebp:   arg1 - arg 6
-> > + */
-> > +__visible noinstr void do_int80_emulation(struct pt_regs *regs)
-> > +{
-> > +     int nr;
-> > +
-> > +     /* Kernel does not use INT $0x80! */
-> > +     if (unlikely(!user_mode(regs))) {
-> > +             irqentry_enter(regs);
-> > +             instrumentation_begin();
-> > +             panic("Unexpected external interrupt 0x80\n");
-> > +     }
-> > +
-> > +     /*
-> > +      * Establish kernel context for instrumentation, including for
-> > +      * int80_is_external() below which calls into the APIC driver.
-> > +      * Identical for soft and external interrupts.
-> > +      */
-> > +     enter_from_user_mode(regs);
-> > +
-> > +     instrumentation_begin();
-> > +     add_random_kstack_offset();
-> > +
-> > +     /* Validate that this is a soft interrupt to the extent possible =
-*/
-> > +     if (unlikely(int80_is_external()))
-> > +             panic("Unexpected external interrupt 0x80\n");
-> > +
-> > +     /*
-> > +      * The low level idtentry code pushed -1 into regs::orig_ax
-> > +      * and regs::ax contains the syscall number.
-> > +      *
-> > +      * User tracing code (ptrace or signal handlers) might assume
-> > +      * that the regs::orig_ax contains a 32-bit number on invoking
-> > +      * a 32-bit syscall.
-> > +      *
-> > +      * Establish the syscall convention by saving the 32bit truncated
-> > +      * syscall number in regs::orig_ax and by invalidating regs::ax.
-> > +      */
-> > +     regs->orig_ax =3D regs->ax & GENMASK(31, 0);
-> > +     regs->ax =3D -ENOSYS;
-> > +
-> > +     nr =3D syscall_32_enter(regs);
-> > +
-> > +     local_irq_enable();
-> > +     nr =3D syscall_enter_from_user_mode_work(regs, nr);
-> > +     do_syscall_32_irqs_on(regs, nr);
-> > +
-> > +     instrumentation_end();
-> > +     syscall_exit_to_user_mode(regs);
-> > +}
-> > +
-> > +#ifdef CONFIG_X86_FRED
-> > +/*
-> > + * A FRED-specific INT80 handler is warranted for the follwing reasons=
-:
-> > + *
-> > + * 1) As INT instructions and hardware interrupts are separate event
-> > + *    types, FRED does not preclude the use of vector 0x80 for externa=
-l
-> > + *    interrupts. As a result, the FRED setup code does not reserve
-> > + *    vector 0x80 and calling int80_is_external() is not merely
-> > + *    suboptimal but actively incorrect: it could cause a system call
-> > + *    to be incorrectly ignored.
-> > + *
-> > + * 2) It is called only for handling vector 0x80 of event type
-> > + *    EVENT_TYPE_SWINT and will never be called to handle any external
-> > + *    interrupt (event type EVENT_TYPE_EXTINT).
-> > + *
-> > + * 3) FRED has separate entry flows depending on if the event came fro=
-m
-> > + *    user space or kernel space, and because the kernel does not use
-> > + *    INT insns, the FRED kernel entry handler fred_entry_from_kernel(=
-)
-> > + *    falls through to fred_bad_type() if the event type is
-> > + *    EVENT_TYPE_SWINT, i.e., INT insns. So if the kernel is handling
-> > + *    an INT insn, it can only be from a user level.
-> > + *
-> > + * 4) int80_emulation() does a CLEAR_BRANCH_HISTORY. While FRED will
-> > + *    likely take a different approach if it is ever needed: it
-> > + *    probably belongs in either fred_intx()/ fred_other() or
-> > + *    asm_fred_entrypoint_user(), depending on if this ought to be don=
-e
-> > + *    for all entries from userspace or only system
-> > + *    calls.
-> > + *
-> > + * 5) INT $0x80 is the fast path for 32-bit system calls under FRED.
-> > + */
-> > +DEFINE_FREDENTRY_RAW(int80_emulation)
-> > +{
-> > +     int nr;
-> > +
-> > +     enter_from_user_mode(regs);
-> > +
-> > +     instrumentation_begin();
-> > +     add_random_kstack_offset();
-> > +
-> > +     /*
-> > +      * FRED pushed 0 into regs::orig_ax and regs::ax contains the
-> > +      * syscall number.
-> > +      *
-> > +      * User tracing code (ptrace or signal handlers) might assume
-> > +      * that the regs::orig_ax contains a 32-bit number on invoking
-> > +      * a 32-bit syscall.
-> > +      *
-> > +      * Establish the syscall convention by saving the 32bit truncated
-> > +      * syscall number in regs::orig_ax and by invalidating regs::ax.
-> > +      */
-> > +     regs->orig_ax =3D regs->ax & GENMASK(31, 0);
-> > +     regs->ax =3D -ENOSYS;
-> > +
-> > +     nr =3D syscall_32_enter(regs);
-> > +
-> > +     local_irq_enable();
-> > +     nr =3D syscall_enter_from_user_mode_work(regs, nr);
-> > +     do_syscall_32_irqs_on(regs, nr);
-> > +
-> > +     instrumentation_end();
-> > +     syscall_exit_to_user_mode(regs);
-> > +}
-> > +#endif
->
-> Nit: Would it be useful to add /* CONFIG_X86_FRED */ here since there
-> are nested #ifdefs?
-
-These patches should be as close to a copy and paste as possible, so
-that it's easy to prove that nothing changes.  This could be a
-followup patch later though.
-
-
-Brian Gerst
+Yes, sure, thanks for pointing this typo.
 
