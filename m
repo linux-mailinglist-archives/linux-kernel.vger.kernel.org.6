@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-561227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BE10A60EFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:33:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C56B1A60EFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:34:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E64D91702B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:33:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7737116EB55
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DC41FBC89;
-	Fri, 14 Mar 2025 10:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F276C1FBE92;
+	Fri, 14 Mar 2025 10:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oYCLKhCp"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="imYmTWDR"
 Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FD71FAC25
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50301F4739
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741948322; cv=none; b=Vx7G0sDVboYTZ4i2DyRA3aOdJ6g+ty9hBK2EVp2NI5yYYM0d945laQuxsVb3LdkMKJyZwrrrJOCGs7VLrgFwJTgHFYLR8dzFFmYkmwzFRi+S3b6akzY3reDN+lHbVIg1DqV05G8N3TP6uPVW/wikDEwcraoTaiDM8XG3eC/L8Qc=
+	t=1741948325; cv=none; b=iBovRFYO1FbI71q3OFacxWB0IRzMrTwfDNDm+G3hhc2e+UJvpM4mujglRGoZ5orCmVUpeiP2S+UtxcPKuVLVm2dbD3c+CnmW19kA8WHdVYQvkcIyrrS4w0R4aucWs2mZbzoZLRdVjLOxkgygYTlxc5AxWfDt5wNta4jacTjD7Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741948322; c=relaxed/simple;
-	bh=ekiRdX9vdVrqgZj/ZjFfDACAiwswC32h4LbUeMmoiR4=;
+	s=arc-20240116; t=1741948325; c=relaxed/simple;
+	bh=U45g8iwNmKVwF8JuRRE40MIZL8GxhqYLJewGT8n6f/E=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IQHIPccvCFIjNpqCLUEwEUup5tSvW5WiwY7/fr+eqZB+PS6NfotAVfP4in1Fc8TEn8GzWkHGtR02r7181tso7CcpU6y0AfR+q7c99Y9lpHYo1RDEu66a4sqKI9R9trHRLQmkqGDlP6yfb3/STaXJ6bLJJSqidxpTF/6/FO+AUgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oYCLKhCp; arc=none smtp.client-ip=217.70.183.197
+	 In-Reply-To:To:Cc; b=qdkoH4CHlyRSq061S30H8Sx/kDey4fm6r/5+5/JzDNpu32h5mGKu8T3//iiuhuq3g6xP15WNx5Zo5upe+So6GmyugBt7xc+58gZcY46nvP41ShzLL+f0Gn8sJu0DGIJi/qjix1svLbEfvzdgUxmHU3UG9Boopc9m2R5CGJYwRQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=imYmTWDR; arc=none smtp.client-ip=217.70.183.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3F1EB432F7;
-	Fri, 14 Mar 2025 10:31:57 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B6A1E43319;
+	Fri, 14 Mar 2025 10:31:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741948319;
+	t=1741948322;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/XKer6YRzFC14aGKwfShakn2j9MH1LzXqYnu+85QMDI=;
-	b=oYCLKhCpkUSfVDFsTef4kEEhEtrt57hqo9DiqZimZ+kP38HnpNI+oB/DQdpmG9kslsatL3
-	sf6LLlZdS0sDMYcUedmogR+OtuiDgpznIGj6ZZZo+j0W7E5TnLRQU36nzajyKBEXtnVV3x
-	9Gnf+zwJuYUrAaPQsmchlkh4Uk/Jg4xFoWET6Hyj/Z/y/4YnACduByU1FIBmyq/5BWIZV8
-	eTLnf6x+k7EnXcDO/EEjfszFrhClEp9vbsrIyoFalx1pvYxux5mTykbzxQl4fKi12xiQxp
-	eLts8ukaDXw6JmMvVnWE3Z6LjiSO9fl3FdIw1SLO3kWVP4bSHx3t6acKkTlDRQ==
+	bh=9Iwx6p4M4famV166YaX+k9uap2aPfGPkWwiC9dV1gl4=;
+	b=imYmTWDRRIhUzZAYkTcvQhg8TrX0tR95/uZwexFiDRyobi1MbuYgAzHHu8UrE4vrOiGNSp
+	fgV5k/Hvcmdeog5rwuJDO8Cxr7IxdKBworYIYdJMfSuromtX0+7UGt2SqwAqrNW6ctBZJm
+	IQHWnEbAXWf3kKMdtJKfqf/AiBz2xR0SucCqwZPEstgACaqqqI8f1p4j9lX7uwpqGzPOLB
+	E4Ctq+Drb4UDgJgVXoZT08m/J1DXqIzSHU/ngDTSvPLshSGWrjY2xNiM7DRhaF2U8HOW4k
+	yN2GpNT2b7qEt2j5MyJhBuIlLZohvL45JmPGP1hVfbnvyYU7xCBvH7nCNw6/Qg==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 14 Mar 2025 11:31:23 +0100
-Subject: [PATCH v7 10/11] drm/bridge: ti-sn65dsi83: use dynamic lifetime
+Date: Fri, 14 Mar 2025 11:31:24 +0100
+Subject: [PATCH v7 11/11] drm/bridge: samsung-dsim: use dynamic lifetime
  management
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250314-drm-bridge-refcount-v7-10-152571f8c694@bootlin.com>
+Message-Id: <20250314-drm-bridge-refcount-v7-11-152571f8c694@bootlin.com>
 References: <20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com>
 In-Reply-To: <20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -95,41 +95,36 @@ Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
 ---
 
-Changes in v7: none
-
-Changed in v6:
- - Update to use devm_drm_bridge_alloc(), remove .destroy
-
-This patch was added in v5.
+This patch was added in v7.
 ---
- drivers/gpu/drm/bridge/ti-sn65dsi83.c | 7 +++----
+ drivers/gpu/drm/bridge/samsung-dsim.c | 7 +++----
  1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-index 5f8bfeeb553f970671a602fcf2594016243b9db2..bc092fb926563439e316c2cb5a817bd938093df4 100644
---- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-+++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-@@ -952,9 +952,9 @@ static int sn65dsi83_probe(struct i2c_client *client)
- 	struct sn65dsi83 *ctx;
- 	int ret;
+diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+index 54de6ed2fae81bc13301a6b1ee8f38183a3118b6..3d41db7a0ceeddccc1a89a2ff1f38fe10ec6acfe 100644
+--- a/drivers/gpu/drm/bridge/samsung-dsim.c
++++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+@@ -1935,9 +1935,9 @@ int samsung_dsim_probe(struct platform_device *pdev)
+ 	struct samsung_dsim *dsi;
+ 	int ret, i;
  
--	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
--	if (!ctx)
+-	dsi = devm_kzalloc(dev, sizeof(*dsi), GFP_KERNEL);
+-	if (!dsi)
 -		return -ENOMEM;
-+	ctx = devm_drm_bridge_alloc(dev, struct sn65dsi83, bridge, &sn65dsi83_funcs);
-+	if (IS_ERR(ctx))
-+		return PTR_ERR(ctx);
++	dsi = devm_drm_bridge_alloc(dev, struct samsung_dsim, bridge, &samsung_dsim_bridge_funcs);
++	if (IS_ERR(dsi))
++		return PTR_ERR(dsi);
  
- 	ctx->dev = dev;
- 	INIT_WORK(&ctx->reset_work, sn65dsi83_reset_work);
-@@ -994,7 +994,6 @@ static int sn65dsi83_probe(struct i2c_client *client)
- 	dev_set_drvdata(dev, ctx);
- 	i2c_set_clientdata(client, ctx);
+ 	init_completion(&dsi->completed);
+ 	spin_lock_init(&dsi->transfer_lock);
+@@ -2007,7 +2007,6 @@ int samsung_dsim_probe(struct platform_device *pdev)
  
--	ctx->bridge.funcs = &sn65dsi83_funcs;
- 	ctx->bridge.of_node = dev->of_node;
- 	ctx->bridge.pre_enable_prev_first = true;
- 	ctx->bridge.type = DRM_MODE_CONNECTOR_LVDS;
+ 	pm_runtime_enable(dev);
+ 
+-	dsi->bridge.funcs = &samsung_dsim_bridge_funcs;
+ 	dsi->bridge.of_node = dev->of_node;
+ 	dsi->bridge.type = DRM_MODE_CONNECTOR_DSI;
+ 
 
 -- 
 2.48.1
