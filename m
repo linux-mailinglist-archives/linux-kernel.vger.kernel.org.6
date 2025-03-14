@@ -1,196 +1,113 @@
-Return-Path: <linux-kernel+bounces-560910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D51DA60AE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:11:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4196A60AEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:12:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E874719C0B7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:12:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51463A261E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630A51A23AA;
-	Fri, 14 Mar 2025 08:11:31 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB61198833;
+	Fri, 14 Mar 2025 08:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FRyWSnqM"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C273319644B;
-	Fri, 14 Mar 2025 08:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C6C13E02D
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741939890; cv=none; b=cEWDQmmBDmkzJjJfIxvCv3fDK+eiWxLDcND6ELWtid1cksNOCjYZBsx5KDAm/kjk2rEYOY9wTQYDT37AYPNB1vN5r0UZ6Rc6quQfYa5FEBr1ZfqXv4hGoqjT0Zd6ygj2VlfQXsHNAt8a/zw/ZSyXoUfU50r3U2lH9nrpuZHs8AQ=
+	t=1741939931; cv=none; b=cwyDhgdueoexTjmNWRYK0qLLdyxNgr4hoHC0Br3BnY2YWmCiYtoMmKpW5YjlkOxDKbVqahBqatEN7l9ZMdOBm+ozDKLX9YXnrmVwpDSirWLlVGqSNU9I7bFBTJxh+HlTbKlzQS6JMmgfXIPlVb6z5aEX4YKXA0VtFwVGJHdEybM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741939890; c=relaxed/simple;
-	bh=cYLRd27LwxxnhKQhH3BhhGFa+yC1TVrMPzCfEId7PKI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ggU+nXHETdMr0zC/6BKAmKmkAb7jcfQXc2czz8L/QwrJYwDEM0HeRxCgHIKwOxna5vFpaq9Ir72HohgfLig97LhxG2onGJ1DRCXQrrCrOoBlWvLEvKYcg1STSNWL44Sd7dDAA9fTYOs3EETxyvS4F4RIlBurEz8hoYpfYKaFnLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDcSG2kMsz6J7pL;
-	Fri, 14 Mar 2025 16:08:14 +0800 (CST)
-Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4F8C31403D2;
-	Fri, 14 Mar 2025 16:11:25 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (7.182.85.71) by
- frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 14 Mar 2025 09:11:25 +0100
-Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
- frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
- Fri, 14 Mar 2025 09:11:25 +0100
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
- Cameron" <jonathan.cameron@huawei.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
-Subject: RE: [PATCH v5 5/5] hisi_acc_vfio_pci: bugfix live migration function
- without VF device driver
-Thread-Topic: [PATCH v5 5/5] hisi_acc_vfio_pci: bugfix live migration function
- without VF device driver
-Thread-Index: AQHbk+i60KhSVn4sokWhcM22rbK+SbNyR/ZA
-Date: Fri, 14 Mar 2025 08:11:24 +0000
-Message-ID: <53d0f91f3d8440bc91858dd4811b7170@huawei.com>
-References: <20250313072010.57199-1-liulongfang@huawei.com>
- <20250313072010.57199-6-liulongfang@huawei.com>
-In-Reply-To: <20250313072010.57199-6-liulongfang@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1741939931; c=relaxed/simple;
+	bh=8cylVulYPsuLj2+UhzkDhFzJQRXHh4cjgiNVztEekzg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FiPPNZjcDerZ1LFK5m6AyikB4+GjJIqWeOeASSaKZkuVDuw5csP436aP8cttTBdx6BHsaKRo0C/DVuHVT0mmKu53QfGPfwE18oe0DMxmfhXHwPtXXsBiZAGldG9uZnYzs3Wqnz30tyVT4a0wqGC1bsujP+pNh975swvS/WIIhL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FRyWSnqM; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54954fa61c9so2235675e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:12:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741939927; x=1742544727; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8cylVulYPsuLj2+UhzkDhFzJQRXHh4cjgiNVztEekzg=;
+        b=FRyWSnqMEyPY+gP/jY8GMChTQDD7FoaYmdrauibjYspGsEJpAZpgxaKKfkNUczeEcR
+         n29CanJ+CrsFvqe3vIAr9F8Qp7U5bhf48RtP7aa0+K8H3QHt+oiNYj9TtLMreBp6Tdpz
+         EYT6K365tXBiP6Bw4e6AFYc0BmBKUt0b/fmfMYCq23jKWJ3ApVP0TlxcfzlND+if5VT+
+         I8jBv02KNzzKfjwxHKPhnAxmq61HjUPlqOuD8DOADBABX83NCYk01Jhz74qhknMP9pAY
+         6A+MW3txCTp1F5ev2lOic0gowPqPutxDtIR29OzpIZGZ6o6UZlu/adXHAzaVXAYV9+o9
+         JrQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741939927; x=1742544727;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8cylVulYPsuLj2+UhzkDhFzJQRXHh4cjgiNVztEekzg=;
+        b=dg8MN7E9qCoLx/6q40P0TbNG41M4ohENld1ouqYmiFfH9zj74+nFYPm+iczAB4SciE
+         xplAXzdU0InnQQTkbnkIE22GKW6lgSz3uvGYjMSkrk3fwX/q+LQyPKQvebokX/KUwF+c
+         +4qHmsAJcz8n8tkiYBJKPGFocuy++lyk5vhNY+UyUaE3sGsOMpN3TKtBDt0dKXTnwAGz
+         9wlskuXjg2NZFDBT85DCS6Ok/9PWhbm2N+3kWaUzKIrgLjTwmH1AgqJhzsSHJdl+gMVv
+         Om+PvI5mls5MKhRLU5jVchTiIliV37gq09fEl812zozrlM8NHxalhK4GN5I1mXrglmZ/
+         GXeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUw7AbKTYq3WNQyLq5fyovieFYtmduKI1DsQdyEJan0hn9LBYrCTXGn/u9JXyH/oDC7LV0rWb/a9R1fb4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMi4YrtpBHkxaPNVWrxq5K2cVbNrBYJQgP+r7csMVVocZOOwzw
+	bPRfwwH7Bz+ObTyczvTmZC7JhsjvB4nwLxZdyv7FF/RynKNL/80q8quafsbXX2JOqa6O4bRj9j3
+	PuFq0DxZtgDMXpw270oxcZb9cCwJMeFqdpukgtQ==
+X-Gm-Gg: ASbGncvkrJSB6ar4+Z6tJ0HlGFDuVmChnKRrrB6OlKBn3/z4d3BDtntKdqTSvvN1ldI
+	QpRRJLx4O272F7q15ZNGsN+f7NMOw5JD3TAwZRd9MNe3C+0ywc1pkyFKDY9xLxx0SVY+wHQjGbn
+	kHClA46Ds9e/tk5IGCU4NRw7ihanRx7J8=
+X-Google-Smtp-Source: AGHT+IHGGeVJFh8IQpmki3V8LS3prqRn4mV+TlJsniBWV8GinnRd8uZ8FEwuJhvhNULLOQP3lZKdtvLj/4wJYkEQLZY=
+X-Received: by 2002:a05:6512:10cd:b0:549:4e88:2e6a with SMTP id
+ 2adb3069b0e04-549c38f52b3mr415545e87.6.1741939927425; Fri, 14 Mar 2025
+ 01:12:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250313051953.4064532-1-baolu.lu@linux.intel.com>
+In-Reply-To: <20250313051953.4064532-1-baolu.lu@linux.intel.com>
+From: Zhangfei Gao <zhangfei.gao@linaro.org>
+Date: Fri, 14 Mar 2025 16:11:56 +0800
+X-Gm-Features: AQ5f1JoAIzauNjyPIPxiG7nniTwbUahcmK3Y--Iy4ho8pIyBMKTUSfeN7GKy6pY
+Message-ID: <CABQgh9G2kTqWvjDTMupCJ_YNMxTg75PwgooMSsvEuT_hvemvDw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] iommu: Remove IOMMU_DEV_FEAT_SVA/_IOPF
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>, 
+	Fenghua Yu <fenghuay@nvidia.com>, Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi, Baolu
 
+On Thu, 13 Mar 2025 at 13:19, Lu Baolu <baolu.lu@linux.intel.com> wrote:
+>
+> The new method for driver fault reporting support relies on the domain
+> to specify a iopf_handler. The driver should detect this and setup the
+> HW when fault capable domains are attached.
+>
+> Move SMMUv3 to use this method and have VT-D validate support during
+> attach so that all three fault capable drivers have a no-op FEAT_SVA and
+> _IOPF. Then remove them.
+>
+> This was initiated by Jason. I'm following up to remove FEAT_IOPF and
+> further clean up.
+>
+> The whole series is also available at github:
+> https://github.com/LuBaolu/intel-iommu/commits/iommu_no_feat-v4
 
-> -----Original Message-----
-> From: liulongfang <liulongfang@huawei.com>
-> Sent: Thursday, March 13, 2025 7:20 AM
-> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
-> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
-> <jonathan.cameron@huawei.com>
-> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
-> Subject: [PATCH v5 5/5] hisi_acc_vfio_pci: bugfix live migration function
-> without VF device driver
->=20
-> If the VF device driver is not loaded in the Guest OS and we attempt to
-> perform device data migration, the address of the migrated data will
-> be NULL.
-> The live migration recovery operation on the destination side will
-> access a null address value, which will cause access errors.
->=20
-> Therefore, live migration of VMs without added VF device drivers
-> does not require device data migration.
-> In addition, when the queue address data obtained by the destination
-> is empty, device queue recovery processing will not be performed.
->=20
-> Fixes: b0eed085903e ("hisi_acc_vfio_pci: Add support for VFIO live
-> migration")
-> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
-> ---
->  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 25 +++++++++++++------
->  1 file changed, 18 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> index cadc82419dca..44fa2d16bbcc 100644
-> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> @@ -426,13 +426,6 @@ static int vf_qm_check_match(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev,
->  		return -EINVAL;
->  	}
->=20
-> -	ret =3D qm_write_regs(vf_qm, QM_VF_STATE, &vf_data->vf_qm_state,
-> 1);
-> -	if (ret) {
-> -		dev_err(dev, "failed to write QM_VF_STATE\n");
-> -		return ret;
-> -	}
-> -
-> -	hisi_acc_vdev->vf_qm_state =3D vf_data->vf_qm_state;
->  	hisi_acc_vdev->match_done =3D true;
->  	return 0;
->  }
-> @@ -498,6 +491,13 @@ static int vf_qm_load_data(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev,
->  	if (migf->total_length < sizeof(struct acc_vf_data))
->  		return -EINVAL;
->=20
-> +	ret =3D qm_write_regs(qm, QM_VF_STATE, &vf_data->vf_qm_state, 1);
-> +	if (ret) {
-> +		dev_err(dev, "failed to write QM_VF_STATE\n");
-> +		return -EINVAL;
-> +	}
-> +	hisi_acc_vdev->vf_qm_state =3D vf_data->vf_qm_state;
-> +
->  	qm->eqe_dma =3D vf_data->eqe_dma;
->  	qm->aeqe_dma =3D vf_data->aeqe_dma;
->  	qm->sqc_dma =3D vf_data->sqc_dma;
-> @@ -506,6 +506,12 @@ static int vf_qm_load_data(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev,
->  	qm->qp_base =3D vf_data->qp_base;
->  	qm->qp_num =3D vf_data->qp_num;
->=20
-> +	if (!vf_data->eqe_dma || !vf_data->aeqe_dma ||
-> +	    !vf_data->sqc_dma || !vf_data->cqc_dma) {
-> +		dev_err(dev, "resume dma addr is NULL!\n");
-> +		return -EINVAL;
-> +	}
-> +
->  	ret =3D qm_set_regs(qm, vf_data);
->  	if (ret) {
->  		dev_err(dev, "set VF regs failed\n");
-> @@ -726,8 +732,12 @@ static int hisi_acc_vf_load_state(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev)
->  {
->  	struct device *dev =3D &hisi_acc_vdev->vf_dev->dev;
->  	struct hisi_acc_vf_migration_file *migf =3D hisi_acc_vdev-
-> >resuming_migf;
-> +	struct acc_vf_data *vf_data =3D &migf->vf_data;
->  	int ret;
->=20
-> +	if (vf_data->vf_qm_state !=3D QM_READY)
-> +		return 0;
+I retested this branch, and it works
 
-I don't think we need to check the above. In vf_qm_satte_save(),=20
-If  vf_qm_state !=3D  QM_READY, we set the
- migf->total_length =3D QM_MATCH_SIZE.
+https://github.com/Linaro/linux-kernel-uadk/tree/iommu_no_feat-v4
 
-Hence it will return 0 in the below  vf_qm_load_data() anyway.
-
-With that corrected,
-
-Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-
-Thanks,
-Shameer
-
-> +
->  	/* Recover data to VF */
->  	ret =3D vf_qm_load_data(hisi_acc_vdev, migf);
->  	if (ret) {
-> @@ -1531,6 +1541,7 @@ static int hisi_acc_vfio_pci_migrn_init_dev(struct
-> vfio_device *core_vdev)
->  	hisi_acc_vdev->vf_id =3D pci_iov_vf_id(pdev) + 1;
->  	hisi_acc_vdev->pf_qm =3D pf_qm;
->  	hisi_acc_vdev->vf_dev =3D pdev;
-> +	hisi_acc_vdev->vf_qm_state =3D QM_NOT_READY;
->  	mutex_init(&hisi_acc_vdev->state_mutex);
->  	mutex_init(&hisi_acc_vdev->open_mutex);
->=20
-> --
-> 2.24.0
-
+Thanks
 
