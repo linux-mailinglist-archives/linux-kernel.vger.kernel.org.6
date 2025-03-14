@@ -1,137 +1,115 @@
-Return-Path: <linux-kernel+bounces-560944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BDB7A60B4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:25:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72606A60B4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:25:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C55523AE0CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:25:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1C003AA2FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164531A3160;
-	Fri, 14 Mar 2025 08:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386B8199920;
+	Fri, 14 Mar 2025 08:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ernyX5Ah"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="chq/MjDm"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFE7EAD7;
-	Fri, 14 Mar 2025 08:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A47FEAD7
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741940728; cv=none; b=AtpbLncuKC0vndiTDTV7aFJprSe+wU29+TaAyxhpDwIfA7SyNnLDgMFuTv4pLH0k3r0t7NEN1f3U8NEfAxKl/0rcisgvov27I2tg2tW1UMEXIAx2RtQ2HsI1Wh36RVUxf9RS2jD3cUNLhxUyLiyw+H+l8tt8pMEx4orADQ5v0xQ=
+	t=1741940734; cv=none; b=o8pRlNBqE1SeA8W9xGZ2wF6AVW95wh2BXreW+pQoKB/soNR0T1nyFos7XlhX52B1F/Ff9rlpvEjeOlpuISOUfRyBNvNRICOPVfdYLYgqJ50rwr1jktbuMtERNnB2y7D0YQliir8jIRNMARsaLcEv/Nb+a46JZfFxvP6fF6mI3SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741940728; c=relaxed/simple;
-	bh=0n02eITWIzf/++JmvY0KKczZbmpT4M52h+UOP3gyX1g=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=FuSGHdXI2UcyOf/54kGDkaeD8CZCvjXOOovNTB6NcnLFKeHLkeBLqprkK86/P2gEkTt93ZgZzcbpFq0eekRtxp5kKKayc688uMEkZ6wmA7XLXweTdhyS8QBuEd6FS/1rZ/wrPiz1JO6na81yXvuVrZZkHSwkLKF9XQIEtqorVdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ernyX5Ah; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94DF0C4CEE3;
-	Fri, 14 Mar 2025 08:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741940727;
-	bh=0n02eITWIzf/++JmvY0KKczZbmpT4M52h+UOP3gyX1g=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=ernyX5AhaKGHwsNYKemwwl6b7FOv05dkpRXhpU5QS+zhW5D7DNpEo5YRcsxACotTO
-	 dxDHIIcVX9E10h2Rzz5V4Kq96KUxuFuxvpb0S6mVtXF+Z5vYsWxpHGxjAMzuMDu0+C
-	 StPKm+3Rz0/sbTXytr5TzT6kF9aATfKUbLTLUSjJQbghCxcokeUANygDzT8bohdsFK
-	 XLQ2ubvepmUDzbNSJeQ4CYGwI4QpYthXPSdS9ni+dgdfKPhDzLJQFoe12XoHlUp/vw
-	 jX28yQDa5nkawQdXf1hGV3ASGoxbetnLybGPSphwAt079jT71u8Btk+GbGko8d6bNA
-	 Q7MHme6WdhGsg==
-Date: Fri, 14 Mar 2025 03:25:26 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1741940734; c=relaxed/simple;
+	bh=y24J/kCYXbdEatcZBlA0Z55YnWy3JNX0aXHHLJDUa0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N0R/Hz0T5sczp4a/8jSMmsBg3XUn1iYer0ZlnLq6K+Cziuue/73jAijcCeZ5OVnOFJwA6TIE7L0G6XiKvCeihBqTqGSTHLgSzMF29ZkwCRm6pMhm9cSNABBNJp0z5fAqTgQnYAndz2DgDBgF0i3G1QQRLJComcH3Tbz6uz3Xem4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=chq/MjDm; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Z7pgffBCJ64s8SUSy2F4lOeJncQvjpMHvfcMDHpHISU=; b=chq/MjDmPZbcwvng7KEQEyltYs
+	0B/7QZ/AuEbZazc6aejMs4WhONAtLYkvgXCXuH5ALxsMlWtynUkdr2HaJB9aUrNeSUoYFPeIdbhlr
+	uzkt+wPPkAw1rq5490pS1vaEkbUaciXRmH07/+pUUmrB29kNWL6j5289WSiZhOtMobAe3m7NRCL47
+	/TE2fkspHx0ucgkwpu3frb0PkLvSEiy/7UzUP/093VjRlnJKsRBksFii7xWrxy1XkReF25xHYfyx7
+	rkb75+XNocsjpXyjidaxpsddigYobR4rKD8a385m+9wZ21BfHvtG0tY+qr/KQ+PuZ6HqiTghpTqAo
+	XzA3fcvg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tt0MC-00000002rQb-1DsY;
+	Fri, 14 Mar 2025 08:25:28 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id DFAFE300599; Fri, 14 Mar 2025 09:25:27 +0100 (CET)
+Date: Fri, 14 Mar 2025 09:25:27 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org, npiggin@gmail.com,
+	christophe.leroy@csgroup.eu, mpe@ellerman.id.au,
+	fbarrat@linux.ibm.com, ajd@linux.ibm.com, mahesh@linux.ibm.com,
+	oohall@gmail.com, hbathini@linux.ibm.com, dhowells@redhat.com,
+	haren@linux.ibm.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] powerpc: book3s: vas: use lock guard for mutex
+Message-ID: <20250314082527.GU5880@noisy.programming.kicks-ass.net>
+References: <20250314054544.1998928-1-sshegde@linux.ibm.com>
+ <20250314054544.1998928-5-sshegde@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
- Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, linux-input@vger.kernel.org, 
- Stephen Boyd <sboyd@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- linux-iio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
- linux-mediatek@lists.infradead.org, 
- Project_Global_Chrome_Upstream_Group@mediatek.com, 
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Chen Zhong <chen.zhong@mediatek.com>, Lars-Peter Clausen <lars@metafoo.de>, 
- Sen Chu <shen.chu@mediatek.com>
-To: "Lu.Tang" <Lu.Tang@mediatek.com>
-In-Reply-To: <20250314073307.25092-6-Lu.Tang@mediatek.com>
-References: <20250314073307.25092-1-Lu.Tang@mediatek.com>
- <20250314073307.25092-6-Lu.Tang@mediatek.com>
-Message-Id: <174194072655.964967.9270640013940045148.robh@kernel.org>
-Subject: Re: [PATCH 5/5] dt-bindings: pmic: mediatek: Add pmic documents
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314054544.1998928-5-sshegde@linux.ibm.com>
 
-
-On Fri, 14 Mar 2025 15:32:31 +0800, Lu.Tang wrote:
-> Add new pmic mfd and adc documents for mt8196
+On Fri, Mar 14, 2025 at 11:15:42AM +0530, Shrikanth Hegde wrote:
+> use guard(mutex) for scope based resource management of mutex.
+> This would make the code simpler and easier to maintain.
 > 
-> Signed-off-by: Lu.Tang <Lu.Tang@mediatek.com>
+> More details on lock guards can be found at
+> https://lore.kernel.org/all/20230612093537.614161713@infradead.org/T/#u
+> 
+> There is also an example of using scoped_guard. 
+> 
+> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
 > ---
->  .../iio/adc/mediatek,spmi-pmic-auxadc.yaml    |  31 ++++
->  .../bindings/input/mediatek,pmic-keys.yaml    |   1 +
->  .../bindings/mfd/mediatek,mt6685.yaml         |  50 +++++
->  .../bindings/mfd/mediatek,spmi-pmic.yaml      | 173 ++++++++++++++++++
->  .../pinctrl/mediatek,mt65xx-pinctrl.yaml      |   1 +
->  5 files changed, 256 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/mediatek,spmi-pmic-auxadc.yaml
->  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mt6685.yaml
->  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.yaml
+>  arch/powerpc/platforms/book3s/vas-api.c | 19 ++++++-------------
+>  1 file changed, 6 insertions(+), 13 deletions(-)
 > 
+> diff --git a/arch/powerpc/platforms/book3s/vas-api.c b/arch/powerpc/platforms/book3s/vas-api.c
+> index 0b6365d85d11..eb1a97271afb 100644
+> --- a/arch/powerpc/platforms/book3s/vas-api.c
+> +++ b/arch/powerpc/platforms/book3s/vas-api.c
+> @@ -425,7 +425,7 @@ static vm_fault_t vas_mmap_fault(struct vm_fault *vmf)
+>  		return VM_FAULT_SIGBUS;
+>  	}
+>  
+> -	mutex_lock(&txwin->task_ref.mmap_mutex);
+> +	guard(mutex)(&txwin->task_ref.mmap_mutex);
+>  	/*
+>  	 * The window may be inactive due to lost credit (Ex: core
+>  	 * removal with DLPAR). If the window is active again when
+> @@ -437,11 +437,9 @@ static vm_fault_t vas_mmap_fault(struct vm_fault *vmf)
+>  		if (paste_addr) {
+>  			fault = vmf_insert_pfn(vma, vma->vm_start,
+>  					(paste_addr >> PAGE_SHIFT));
+> -			mutex_unlock(&txwin->task_ref.mmap_mutex);
+>  			return fault;
+>  		}
+>  	}
+> -	mutex_unlock(&txwin->task_ref.mmap_mutex);
 
-My bot found errors running 'make dt_binding_check' on your patch:
+I had to open up this file to check, but this seems incorrect since you
+now also run do_fail_paste() with the lock held, where previously you
+did not.
 
-yamllint warnings/errors:
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/mfd/mediatek,mt6685.example.dts:25.17-31: Warning (reg_format): /example-0/spmi/mfd@9:reg: property has invalid length (8 bytes) (#address-cells == 2, #size-cells == 1)
-Documentation/devicetree/bindings/mfd/mediatek,mt6685.example.dtb: Warning (pci_device_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mfd/mediatek,mt6685.example.dtb: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mfd/mediatek,mt6685.example.dtb: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mfd/mediatek,mt6685.example.dtb: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mfd/mediatek,mt6685.example.dtb: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mfd/mediatek,mt6685.example.dts:23.19-28.15: Warning (avoid_default_addr_size): /example-0/spmi/mfd@9: Relying on default #address-cells value
-Documentation/devicetree/bindings/mfd/mediatek,mt6685.example.dts:23.19-28.15: Warning (avoid_default_addr_size): /example-0/spmi/mfd@9: Relying on default #size-cells value
-Documentation/devicetree/bindings/mfd/mediatek,mt6685.example.dtb: Warning (unique_unit_address_if_enabled): Failed prerequisite 'avoid_default_addr_size'
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/mediatek,mt6685.example.dtb: mfd@9: '#address-cells', '#size-cells', 'reg' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6685.yaml#
-Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.example.dts:31.17-31: Warning (reg_format): /example-0/spmi/pmic@4:reg: property has invalid length (8 bytes) (#address-cells == 2, #size-cells == 1)
-Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.example.dtb: Warning (pci_device_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.example.dtb: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.example.dtb: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.example.dtb: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.example.dtb: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.example.dts:29.31-109.15: Warning (avoid_default_addr_size): /example-0/spmi/pmic@4: Relying on default #address-cells value
-Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.example.dts:29.31-109.15: Warning (avoid_default_addr_size): /example-0/spmi/pmic@4: Relying on default #size-cells value
-Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.example.dtb: Warning (unique_unit_address_if_enabled): Failed prerequisite 'avoid_default_addr_size'
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.example.dtb: pmic@4: '#address-cells', 'reg' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,spmi-pmic.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250314073307.25092-6-Lu.Tang@mediatek.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+>  	/*
+>  	 * Received this fault due to closing the actual window.
 
