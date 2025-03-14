@@ -1,147 +1,199 @@
-Return-Path: <linux-kernel+bounces-561532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF21A61320
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:55:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11EBFA61329
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5F767AC79C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:54:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0148188F27B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCD21FFC6B;
-	Fri, 14 Mar 2025 13:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FCF200BAA;
+	Fri, 14 Mar 2025 13:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZ8nTXI+"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NqoP6jpb"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1E11EB3E;
-	Fri, 14 Mar 2025 13:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2409E20013C;
+	Fri, 14 Mar 2025 13:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741960547; cv=none; b=hU1tDZPsCYwGaSFVcxNFteHxKaGKkPOziHS0MMNR0dw8bHMs08iabLU16PTuNHWJpmMudlGWqrCv+xXAnNiFkzJRp28TebhS2n1ASPF4o2e8HFAcsEZ0PHHUI/inccCjxTpmwWNj97wHBwiQkC5CDF/m4kQe+ILcYwq6bSF0CYM=
+	t=1741960577; cv=none; b=oJUhgaN21CTakomMb5/uaX4SLGJxvD0vkpblJDKpInfrHXrhbOq7g2omxZ1vS8kL0kyZBDLtGWb7Lv8hEOlHmmpYTf4rnwaeN3DnnN9zZd5oszyCoyVkJOOs9H3w3Nn9RTwWTW7KX+/IoMbSWdyZdUf+98/RODjsmmsVluDZnuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741960547; c=relaxed/simple;
-	bh=CGaulF+UNq/UkfDb8/gi2jAvYZbz2RC3gaALMdwvzBI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cqjzyjGtPV5Ss+UaQHczzYrE6De30icBMBVevxmexn/tLpUax83vpVSU9kya7aElQkvP0MiDQcMMMJz3tGWdqadpBJJYFC6ir9tYYYGNlCXoF2A+KwycrqS7p49dkXKLPZQKPD2vKxr3JPN4Oy9hmf/x4+x23OSk5gL2eAC8LJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZ8nTXI+; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac25313ea37so423446366b.1;
-        Fri, 14 Mar 2025 06:55:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741960544; x=1742565344; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DEnFpGM/wdzS+VVXhShlJt1TkX2vM3Hth/UdwF3fpV0=;
-        b=JZ8nTXI+jMCPL5OKFg6fG5EV06XAsmozv1/bl8gzTKqwA5qDb2Uzhy8u2cUikZGxfU
-         DHkREwc4DmL2JtHGoD6T7uU70FW86Al9Uf9QvX33G/4ba6pw8FoUlr3JjCSByMfcM2HF
-         5uwTlWrORBHaoIc86fmLbRfooljZfjQoQdR/dh2dD0jFk3JNmSd6jePnRcDFCcn8xYKQ
-         iXgbOJaDIJxs5Y7OnN9lCLbKatxXcST20dyA4TANsWznkx/rjSNQNAyBHHsUjD2nHsIY
-         LuoVL+lf+95yY7EZKOGvYV3mNjiXsGRDEtmr701a5azCScLoeEmgqBhA/QvGd1kYwXe0
-         cOfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741960544; x=1742565344;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DEnFpGM/wdzS+VVXhShlJt1TkX2vM3Hth/UdwF3fpV0=;
-        b=Rz3U48SLWrHXUCGdyCc/PUL+WtaTejPKaBm/G44NdK3rbpkrl3tiDaEt+EF8kzstUQ
-         NXVqqrL8meRTq9cHhnKCrWL8B9mT+tbcJlQrybYGL3EHdmcxaySvnC6qgghX1laiq0Un
-         UO9ObtVF/5y0yoFxiNub6A9ZsKctpuLmui4y4wBdXoDsNG+qnPoDA+6UPTSCvC+F9H3Y
-         k0j9UxvBQcPRKy/DNFy+9tsMyw8fHa7SrzvaDdfHI4ZZfInrlfwR1dSuDy7u9OVQRAjU
-         D0DtGPostwv5BZudY7pqrHmcmxFQOSRCpjQilTuYDnv7Ll8UZ+pSwjkT6ueDfZcPDBGV
-         WeGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZFql+6LmSeCRtCOipvlf4i2yz+WWcdlJ6KjoLPwyyWOVnKvH2FpiNcoS36jUQQJzRVdYCQqzx8OZjCSs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGVb5MSQS+szYb0tl8BUqK+Mh+3D1OEn6d/48R84JtphxI9amC
-	E3Sqqyi6gtskBPEqHZUZLR2plj9pwyZvQj5RVpwh4dYphGsHi3em/APbK4I+NMGjVvrAC5+qooO
-	H26YcoXPTDvISZEMffpxcxOjC3ZY=
-X-Gm-Gg: ASbGncv5gVbmphjbGTBbWxu6NiH+7x1cCmF/+1WfYu9Wduy1a6Vj3H1WpLAxBMXfldB
-	7Pusebh+d5ivtRJ6LcaQsvtOZ9Ht2ckwNEfrU4IlnmtDx0cFdAhvdFsLBRLc+onVTtAL4Bk0qLi
-	Pc2m0oR8PBsheDo5UndVkHVoUWFE8e
-X-Google-Smtp-Source: AGHT+IHdwlSCytzicDp8ttI013vOivNNvzskW2SaRoEZIL3BQOo2nH1sG1pGrPPerD8oKcQ6RlJrx+EqJyrJFetsRgk=
-X-Received: by 2002:a17:907:3d8d:b0:abf:614a:3e48 with SMTP id
- a640c23a62f3a-ac3304042e6mr371696466b.50.1741960544227; Fri, 14 Mar 2025
- 06:55:44 -0700 (PDT)
+	s=arc-20240116; t=1741960577; c=relaxed/simple;
+	bh=23kUg45TiltK6jfFPUiytRYVIdZWBMvVjh3gTfi8+Yc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JO1G/VgwwUyVoUnFUAqnpn2Rq9RgqdjHDvviAdq58AxTcrevxAyWegUealPrLzH++y9D5Nju5aGlORMCASwzClYjMq/ZLghkYEjitQ0KHStbBeWTQTtOBbwOM+OB6MEsyH99blG8Fhn2k7uOOh+wn6Y1ILI+p2V6xg4omFlO8q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NqoP6jpb; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52EDu5UG024754;
+	Fri, 14 Mar 2025 13:56:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YSHpRfudomt1+AaKesezGs0x3pN3M5StEnb5ZNKlRqw=; b=NqoP6jpbD/PULXN7
+	6I7zo+8IfD02R6gJ6uHuGGAwk7QjIIDuUOPO0eNHbQDNInSSIOiuGF4J0zVMn2tw
+	rE8KuMGmRy3Zva/C95nZVp7YS4WSoEAvJe5bKM76Ue5jN/XHO4jVpTK7hHh/0tek
+	k6jobTfCbvWVMHm+W7Z2s4cJrZRbe3d7nJZz6jjc0CUY1mT9l8aUq3wOuw91W98j
+	Rq2eqGuaUqmkxUwWYDx/F2Qxh2P/e/nqYcZdEokLxSrVMuV1HHP2AaCgmIqe7utd
+	rUWEzB51stuSC5NyLVsxtFJWB6Np80k/dHaPRBLub4msp9VnKwWVBHWcwTqsaQzL
+	keVoPw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45cnscr00x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 13:56:08 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52EDu7cD008662
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 13:56:07 GMT
+Received: from [10.253.39.117] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 14 Mar
+ 2025 06:56:05 -0700
+Message-ID: <c34f7d6c-0565-4ff6-aed6-902657938b39@quicinc.com>
+Date: Fri, 14 Mar 2025 21:56:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250314125244.3202791-1-adamsimonelli@gmail.com> <20250314125244.3202791-2-adamsimonelli@gmail.com>
-In-Reply-To: <20250314125244.3202791-2-adamsimonelli@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 14 Mar 2025 15:55:07 +0200
-X-Gm-Features: AQ5f1Jp0MccMsvrLa3GEqzTCm2sbhOoSasPVMaeJBLsToKhCQaFmPTrA1CQHVDM
-Message-ID: <CAHp75VdaDyyNEKi=S4Y9wKR-Dqb0M30c+rHVs6FiWc3L0vc=Uw@mail.gmail.com>
-Subject: Re: [PATCH v11 1/1] printk: Add an option to allow ttynull to be a
- default console device
-To: adamsimonelli@gmail.com
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jiri Slaby <jirislaby@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek <pmladek@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
+ length
+To: Johan Hovold <johan@kernel.org>
+CC: <quic_jjohnson@quicinc.com>, <ath11k@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <johan+linaro@kernel.org>
+References: <20250314061353.106194-1-quic_miaoqing@quicinc.com>
+ <20250314061353.106194-3-quic_miaoqing@quicinc.com>
+ <Z9Pm56Xx7kYZl8fk@hovoldconsulting.com>
+Content-Language: en-US
+From: Miaoqing Pan <quic_miaoqing@quicinc.com>
+In-Reply-To: <Z9Pm56Xx7kYZl8fk@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=Qbxmvtbv c=1 sm=1 tr=0 ts=67d43578 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=zvfRP35NZ5SxQhbWGWEA:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: Q-UnRDT5vKxIkVsA9GpuaaNJ4RkeofkG
+X-Proofpoint-GUID: Q-UnRDT5vKxIkVsA9GpuaaNJ4RkeofkG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-14_05,2025-03-14_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ lowpriorityscore=0 adultscore=0 mlxlogscore=999 mlxscore=0 phishscore=0
+ impostorscore=0 suspectscore=0 clxscore=1015 priorityscore=1501
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503140110
 
-On Fri, Mar 14, 2025 at 2:52=E2=80=AFPM <adamsimonelli@gmail.com> wrote:
->
-> From: Adam Simonelli <adamsimonelli@gmail.com>
->
-> The new option is CONFIG_NULL_TTY_DEFAULT_CONSOLE.
->
-> if enabled, and CONFIG_VT is disabled, ttynull will become the default
-> primary console device.
->
-> ttynull will be the only console device usually with this option enabled.
-> Some architectures do call add_preferred_console() which may add another
-> console though.
->
-> Motivation:
->
-> Many distributions ship with CONFIG_VT enabled. On tested desktop hardwar=
-e
-> if CONFIG_VT is disabled, the default console device falls back to
-> /dev/ttyS0 instead of /dev/tty.
->
-> This could cause issues in user space, and hardware problems:
->
-> 1. The user space issues include the case where  /dev/ttyS0 is
-> disconnected, and the TCGETS ioctl, which some user space libraries use
-> as a probe to determine if a file is a tty, is called on /dev/console and
-> fails. Programs that call isatty() on /dev/console and get an incorrect
-> false value may skip expected logging to /dev/console.
->
-> 2. The hardware issues include the case if a user has a science instrumen=
-t
-> or other device connected to the /dev/ttyS0 port, and they were to upgrad=
-e
-> to a kernel that is disabling the CONFIG_VT option, kernel logs will then=
- be
-> sent to the device connected to /dev/ttyS0 unless they edit their kernel
-> command line manually.
->
-> The new CONFIG_NULL_TTY_DEFAULT_CONSOLE option will give users and
-> distribution maintainers an option to avoid this. Disabling CONFIG_VT and
-> enabling CONFIG_NULL_TTY_DEFAULT_CONSOLE will ensure the default kernel
-> console behavior is not dependent on hardware configuration by default, a=
-nd
-> avoid unexpected new behavior on devices connected to the /dev/ttyS0 seri=
-al
-> port.
 
-> Signed-off-by: Adam Simonelli <adamsimonelli@gmail.com>
 
-You forgot to collect Petr's tags. Use `b4` (should be available in
-your distro) to gather them from the mailing list (as of the previous
-round of the review).
+On 3/14/2025 4:20 PM, Johan Hovold wrote:
+> On Fri, Mar 14, 2025 at 02:13:53PM +0800, Miaoqing Pan wrote:
+>> A relatively unusual race condition occurs between host software
+>> and hardware, where the host sees the updated destination ring head
+>> pointer before the hardware updates the corresponding descriptor.
+>> When this situation occurs, the length of the descriptor returns 0.
+>>
+>> The current error handling method is to increment descriptor tail
+>> pointer by 1, but 'sw_index' is not updated, causing descriptor and
+>> skb to not correspond one-to-one, resulting in the following error:
+>>
+>> ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1488, expected 1492
+>> ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
+>>
+>> To address this problem and work around the broken hardware,
+>> temporarily skip processing the current descriptor and handle it
+>> again next time. However, to prevent this descriptor from
+>> continuously returning 0, use the skb control block (cb) to set
+>> a flag. If the length returns 0 again, this descriptor will be
+>> discarded.
+>>
+>> Tested-on: QCA6698AQ hw2.1 PCI WLAN.HSP.1.1-04546-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
+>>
+>> Reported-by: Johan Hovold <johan+linaro@kernel.org>
+>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218623
+>> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
+> 
+>> @@ -387,18 +387,36 @@ static int ath11k_ce_completed_recv_next(struct ath11k_ce_pipe *pipe,
+>>   
+>>   	ath11k_hal_srng_access_begin(ab, srng);
+>>   
+>> -	desc = ath11k_hal_srng_dst_get_next_entry(ab, srng);
+>> +	desc = ath11k_hal_srng_dst_peek(ab, srng);
+>>   	if (!desc) {
+>>   		ret = -EIO;
+>>   		goto err;
+>>   	}
+>>   
+>>   	*nbytes = ath11k_hal_ce_dst_status_get_length(desc);
+> 
+> As I mentioned elsewhere, this function also sets the length field in
+> the descriptor to zero. So if there's a racing update, you may never see
+> the updated length.
+> 
 
---=20
-With Best Regards,
-Andy Shevchenko
+Will add below check.
+
+--- a/drivers/net/wireless/ath/ath11k/hal.c
++++ b/drivers/net/wireless/ath/ath11k/hal.c
+@@ -602,7 +602,11 @@ u32 ath11k_hal_ce_dst_status_get_length(void *buf)
+         u32 len;
+
+         len = FIELD_GET(HAL_CE_DST_STATUS_DESC_FLAGS_LEN, desc->flags);
+-       desc->flags &= ~HAL_CE_DST_STATUS_DESC_FLAGS_LEN;
++       /* Avoid setting the length field in the descriptor to zero when 
+length
++        * is 0, as there's a racing update, may never see the updated 
+length.
++        */
++       if (likely(len))
++               desc->flags &= ~HAL_CE_DST_STATUS_DESC_FLAGS_LEN;
+
+
+
+>> -	if (*nbytes == 0) {
+>> -		ret = -EIO;
+>> -		goto err;
+>> +	if (unlikely(*nbytes == 0)) {
+>> +		struct ath11k_skb_rxcb *rxcb =
+>> +			ATH11K_SKB_RXCB(pipe->dest_ring->skb[sw_index]);
+>> +
+>> +		/* A relatively unusual race condition occurs between host
+>> +		 * software and hardware, where the host sees the updated
+>> +		 * destination ring head pointer before the hardware updates
+>> +		 * the corresponding descriptor.
+>> +		 *
+>> +		 * Temporarily skip processing the current descriptor and handle
+>> +		 * it again next time. However, to prevent this descriptor from
+>> +		 * continuously returning 0, set 'is_desc_len0' flag. If the
+>> +		 * length returns 0 again, this descriptor will be discarded.
+>> +		 */
+>> +		if (!rxcb->is_desc_len0) {
+>> +			rxcb->is_desc_len0 = true;
+>> +			ret = -EIO;
+>> +			goto err;
+>> +		}
+> 
+> If you add the memory barrier and make sure not to clear the length
+> field above, do you still see the length sometimes always reading zero
+> if you retry more than once (i.e. drop the is_desc_len0 flag)?
+> 
+> Perhaps the device is really passing you a zero-length descriptor that
+> can simply be discarded straight away?
+> 
+> Johan
+
+Will verify your suggestion, thanks.
+
 
