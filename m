@@ -1,322 +1,120 @@
-Return-Path: <linux-kernel+bounces-561476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B72F7A61275
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:21:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6380A61277
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:22:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80DD51B62E38
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:21:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11F031714ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9ED1FF5EB;
-	Fri, 14 Mar 2025 13:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55061FF5EB;
+	Fri, 14 Mar 2025 13:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XGLvP/7D"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HWLvJLro"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF5933062
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48331FF1BA
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741958489; cv=none; b=i3HnpMRWlBM6RXGVn25tTkd0iU3If6V8L88qEP/WKYWdIS/tDIYEWtYrnAtDtbRxBkF+mLfw3MAVwq08qzClRpquWqnQ9cjQnjrF6TeTejPfK875S2YotDqgmeL2TQdKWVJczQGU/K3qryDAkw+fZsl3N98t8CznE7O/mCZSgPY=
+	t=1741958563; cv=none; b=gZV/1BBV8jdVNOwXvPoRu36NwqM/gndnhuercrItafT5z7Ze3R1GX/73PEQyyI+0gqm0G3tZK70dBPHOcF+B8RDl+Mm/Na68jVOBd887GLq9rE/o8tdAyq3reSAr1jyEqNOWw0E+38UjccEBc6fSodZE2Oh05ziWc/+jM4eBd3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741958489; c=relaxed/simple;
-	bh=et1KWl+GmikDH+nAZK+eZMciYBDno4m0DwZOZx7tjEM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cy/xK4Vf5L1APM08W/oa4UV2qdUgoaqKdd+D/h+0cUaVD+f/ZufCDd74r3+UtAGLBicnq3Y6OqK2Kc5QNn4NQBcVNq+sY/VZAedYEnYdUzEptyT3hiG601li5f3+zTxLQL85EQRRu41oPeR2JPIgmENfmHVsdR/8gQ/pxcQx8fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XGLvP/7D; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4394a823036so20060475e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:21:26 -0700 (PDT)
+	s=arc-20240116; t=1741958563; c=relaxed/simple;
+	bh=T43WpE2mKpI72ELnZYpALkFuYcFiYQUgNQSw5JiJNwI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SqfErBAut/G/znFp8tuetQlWedGrAjB2vFwCWE+FVLuqKFWm6J2weB0A1RjtOppCSeN6kUhh1Ru0i7OGjW6j8flQvj9LvGtkzLr0iz5c6+Vk6FEzC2wok8TdL1KD0qgVB6twRZOYWXu1D9K2KtKxZ16jWIA2iYEuhovtF1BHmks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HWLvJLro; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54954fa61c9so2568339e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:22:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741958485; x=1742563285; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pfZBJkbB0rxqkRnLOvSzKKZry2EipJmvWVg+07Btrmw=;
-        b=XGLvP/7DmP//ovtuyTwK5u41Ba2ETtcEoVxDw4EEBuLMgV7yjqLLHC5MCtcgRxH7TW
-         UxHOjszysQLsUSva16y4wdLQcSpFEgtxp6WAaiqtkI1WqL2F5Srxtwld/7OFiXrbiiUq
-         x14swLhB0HgI558gGdgk+YnEe4XiGl28l0yEb1fu3h9k4tnbU6zAb+zGQY71Dwcyis1t
-         0AMisBFNg64Vb7X9VokHr+mT3T1WM9Xn27W2LP4LsOynmjIjweHy9Cf/BXScp3t7I+Du
-         +ZAxKlLhNn5wcrXPX7QOOxoaucACBPgi5DPNAGBykExr8pLeAHOJXwueOPhZUU1EaOe6
-         krtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741958485; x=1742563285;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741958560; x=1742563360; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pfZBJkbB0rxqkRnLOvSzKKZry2EipJmvWVg+07Btrmw=;
-        b=mjVuCqe6Duw8xLH9sU/trb/ezDw3mtYiqnqe3x0+CNx5CuCXbqr+1WNNxNPRjCzWWF
-         v0MVTqtHdY7vCdGHLxF9RNuB1wkWjsk8OoUUzaP0BqoQI4FNVhUKjs9pBFeJgJjZuxpY
-         /7+4ti1DYznU08I0XR1QLx7RBKvooPNPo7dFMdU7GRWAWMze1Q/TQAC9tfHvoyTv0pqn
-         k3CLTJvFZiVdld5Lni+g5t1gYP1EIU+szrVuO6oHeYxYKDMhfCSQA2h/pRmHv1Or6a7u
-         6IKIpgrYQZIL28N7h4pmtm+4PyudKQrEfQaXVL22AkDAhsw3lb0AAa+ZvBzvi70gdK5R
-         LwWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWHOio/eBFNpoW3NpmYHd6OTJ172BH7fTv3uHQNv6OnAL6RYpO5M+LBLBd0tDKimxGOfM4hvd3AWnznR3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYmyqn1i7xPPXJlA03npnGRW/dK3Po+yQGEkLJKdsGKwK38Gcd
-	lVi3NRdcQDS6EnQyPndr4zdxbMS0lhFPU2W5h8yWl9gMgr7gTyXXy2+ddKHE3Sc=
-X-Gm-Gg: ASbGncvb8/7uRXpzaNFCTJQetAlFKWDWE1LIVIbPpcQhFpxojOIb7W3lAe89Z3PZ8BM
-	2SINP/Q6NwHhTtJMtmnS4JUiJ8T14sZQpHOEuTDxr9DwX+b2V0LXzpfrQfXLneIVTf8Hvz/LmCQ
-	g1TmCaB+hOiulzoutef3T4PnDf2tjH7G3YDmMGBalX0i5DuJnHy1VFORvWXgAMXsvy42SpOyApj
-	ZdFI04dsJMajGF2HEg48RyxzuSGtdjH/27dDMAkJcmsIsVuIYV1hG5nQ2HJzU1YZfrcsFaJdWE3
-	31m4+KaLUw+8A/oYV+zxoBeR0tBo0pYxzJsU9eVbopuJs2Y=
-X-Google-Smtp-Source: AGHT+IHz4rLkTjIbottnvR1bTWD1He70uzCstqzoITMLF0sKAgHxlQ/29uxxKSBaLDiz0yI5D5qYSQ==
-X-Received: by 2002:a05:600c:3ca0:b0:439:9b2a:1b2f with SMTP id 5b1f17b1804b1-43d1ec72a12mr33996705e9.3.1741958484966;
-        Fri, 14 Mar 2025 06:21:24 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe74f4asm10674595e9.1.2025.03.14.06.21.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 06:21:24 -0700 (PDT)
-Date: Fri, 14 Mar 2025 14:21:22 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: David Gow <davidgow@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v9 6/6] scanf: further break kunit into test cases
-Message-ID: <Z9QtUoFdCoTXnkzE@pathway.suse.cz>
-References: <20250307-scanf-kunit-convert-v9-0-b98820fa39ff@gmail.com>
- <20250307-scanf-kunit-convert-v9-6-b98820fa39ff@gmail.com>
+        bh=T43WpE2mKpI72ELnZYpALkFuYcFiYQUgNQSw5JiJNwI=;
+        b=HWLvJLroj/Swwp0sAGjee2evRKxcU1f3t4sd9VeNToQLCwG5YZjvFdZLrFpuTynuyP
+         uD6tHGSLkSx2kfOcu4RuksQp69FExb1oN6ujmfb5UOaBkRQprfi89dCHqUnDiCawDSZh
+         8LaiGSIlnpdXfW6lNDVnJKKf7hSAxEucMtGw3oQs5nM0I99DseVfxgsTCWeWKeMw3ySy
+         CDLvSAbnQOrt3eZUip/sJ2PDWuQsK7UCNPRi+kTXnNvGvnl60Ula7xCtYooM6w+M9Nx9
+         DI7n58ccKz0NrW1PIzHJ9K9IHJWnVj3m1K4AxgbuxLDKhEmx1kyM3jRKC/DqGnBNA27m
+         zCMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741958560; x=1742563360;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T43WpE2mKpI72ELnZYpALkFuYcFiYQUgNQSw5JiJNwI=;
+        b=lX0wu58Kq8aTl24QpoLF1dbKUy+eho3xbBbk+h820J79ftPoT8sQRDI4KEbbPhJXkm
+         BvWAuzPk+5yTtjPC7TKqkyP5XzqSh6HtpBMRzdzQzXMK6UpDc3uZS4S/R6y+9MWPpOTb
+         sNVYpQf5NlagUnlu0izTlFAvVq9JZ0XeZH8vszl+qCxjDnGW9RTlsVplsm8w20OyqsVz
+         jdmH6Xt3HQ7xHr95s2ih6nwFCp3spfJJ0Lwj/ys/oLY1n1JMNtk5dGoE6T3aVuyjbsf1
+         Ui7ollI7eRpfNtLc0+Ji+ISHYi6h7vkE1c9TT6tL0L9ZjuH7fv0q8Qp5g+dqtPyhRixq
+         Vjew==
+X-Forwarded-Encrypted: i=1; AJvYcCXhI7mCh2kCr1sDeUkZtjyjqePUTULxzpnJw2zefDEszNErKlYBDc03ryNvKniq5OcCMWktWA9c9K8cKDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxciaAC2ss06PzErmSFfzmBk5gPk7rN1r+mCT9VoxWqfR4hDJRw
+	gCxg1/J8ciSLBqiSbP8zN1gWY6aoY4t2GaWSNvQykGqWFvzcp0QK/J7m8K1YXRXAx/zyKzIu0AV
+	KlM2q8iPBEEkFwqEYDpF+KJP8Qgo=
+X-Gm-Gg: ASbGncssuoMvy1U5rrW7qNhNscSYOPgKvsdEioFp3eXtpH/EgMdK5tNfJhqJFVwD2jC
+	fbK5nu/EEzygfI+tKgt7OUcwDwB4guqyEYicmNOLUV4ykzbMGL/iMJ21JB8YyMduj1S3gCzFUpO
+	xDYmDlUaE/cZcnJrxVf5MkeWWWSw==
+X-Google-Smtp-Source: AGHT+IEkaEFbne5fMuPXZQ2jz13UeoDut1DQHM9ZXHMTo+enu32eEgEj9dHiip7c/bsg/ZjQmTkGacNST+9eRVmoq5Q=
+X-Received: by 2002:a05:6512:1392:b0:549:7145:5d24 with SMTP id
+ 2adb3069b0e04-549c39ae770mr696985e87.46.1741958559488; Fri, 14 Mar 2025
+ 06:22:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307-scanf-kunit-convert-v9-6-b98820fa39ff@gmail.com>
+References: <20250314093111.654359-1-ubizjak@gmail.com> <20250314112504.GBZ9QSEL1hgjp376ey@fat_crate.local>
+In-Reply-To: <20250314112504.GBZ9QSEL1hgjp376ey@fat_crate.local>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Fri, 14 Mar 2025 14:22:45 +0100
+X-Gm-Features: AQ5f1JpeA1-9bK5Cu-KGLIij4AI669j3MEp7CHnh9LL8A2Wb7ZF4jAPd5eO3ogY
+Message-ID: <CAFULd4bwsZENN5eVLXDDizt6+EcdwgnFBaS4b7YjjqzR-Rmjjw@mail.gmail.com>
+Subject: Re: [PATCH] x86/asm: Use asm_inline() instead of asm() in __untagged_addr()
+To: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 2025-03-07 06:27:39, Tamir Duberstein wrote:
-> This gives us more granular test output.
-> 
-> Output before:
-> 
-> > KTAP version 1
-> > 1..1
-> >     KTAP version 1
-> >     # Subtest: scanf
-> >     # module: scanf_kunit
-> >     1..10
-> >     ok 1 numbers_simple
-> >         KTAP version 1
-> >         # Subtest: numbers_list
-> >         ok 1 " "
-> >         ok 2 ":"
-> >         ok 3 ","
-> >         ok 4 "-"
-> >         ok 5 "/"
-> >     # numbers_list: pass:5 fail:0 skip:0 total:5
-> >     ok 2 numbers_list
-> >         KTAP version 1
-> >         # Subtest: numbers_list_field_width_typemax
-> >         ok 1 " "
-> >         ok 2 ":"
-> >         ok 3 ","
-> >         ok 4 "-"
-> >         ok 5 "/"
-> >     # numbers_list_field_width_typemax: pass:5 fail:0 skip:0 total:5
-> >     ok 3 numbers_list_field_width_typemax
-> >         KTAP version 1
-> >         # Subtest: numbers_list_field_width_val_width
-> >         ok 1 " "
-> >         ok 2 ":"
-> >         ok 3 ","
-> >         ok 4 "-"
-> >         ok 5 "/"
-> >     # numbers_list_field_width_val_width: pass:5 fail:0 skip:0 total:5
-> >     ok 4 numbers_list_field_width_val_width
-> >     ok 5 numbers_slice
-> >     ok 6 numbers_prefix_overflow
-> >     ok 7 test_simple_strtoull
-> >     ok 8 test_simple_strtoll
-> >     ok 9 test_simple_strtoul
-> >     ok 10 test_simple_strtol
-> > # scanf: pass:10 fail:0 skip:0 total:10
-> > # Totals: pass:22 fail:0 skip:0 total:22
-> > ok 1 scanf
-> 
-> Output after:
-> 
-> > KTAP version 1
-> > 1..1
-> >     KTAP version 1
-> >     # Subtest: scanf
-> >     # module: scanf_kunit
-> >     1..21
-> >     ok 1 numbers_simple
-> >         KTAP version 1
-> >         # Subtest: numbers_list_ll
-> >         ok 1 " "
-> >         ok 2 ":"
-> >         ok 3 ","
-> >         ok 4 "-"
-> >         ok 5 "/"
-> >     # numbers_list_ll: pass:5 fail:0 skip:0 total:5
-> >     ok 2 numbers_list_ll
-> >         KTAP version 1
-> >         # Subtest: numbers_list_l
-> >         ok 1 " "
-> >         ok 2 ":"
-> >         ok 3 ","
-> >         ok 4 "-"
-> >         ok 5 "/"
-> >     # numbers_list_l: pass:5 fail:0 skip:0 total:5
-> >     ok 3 numbers_list_l
-> >         KTAP version 1
-> >         # Subtest: numbers_list_d
-> >         ok 1 " "
-> >         ok 2 ":"
-> >         ok 3 ","
-> >         ok 4 "-"
-> >         ok 5 "/"
-> >     # numbers_list_d: pass:5 fail:0 skip:0 total:5
-> >     ok 4 numbers_list_d
-> >         KTAP version 1
-> >         # Subtest: numbers_list_h
-> >         ok 1 " "
-> >         ok 2 ":"
-> >         ok 3 ","
-> >         ok 4 "-"
-> >         ok 5 "/"
-> >     # numbers_list_h: pass:5 fail:0 skip:0 total:5
-> >     ok 5 numbers_list_h
-> >         KTAP version 1
-> >         # Subtest: numbers_list_hh
-> >         ok 1 " "
-> >         ok 2 ":"
-> >         ok 3 ","
-> >         ok 4 "-"
-> >         ok 5 "/"
-> >     # numbers_list_hh: pass:5 fail:0 skip:0 total:5
-> >     ok 6 numbers_list_hh
-> >         KTAP version 1
-> >         # Subtest: numbers_list_field_width_ll
-> >         ok 1 " "
-> >         ok 2 ":"
-> >         ok 3 ","
-> >         ok 4 "-"
-> >         ok 5 "/"
-> >     # numbers_list_field_width_ll: pass:5 fail:0 skip:0 total:5
-> >     ok 7 numbers_list_field_width_ll
-> >         KTAP version 1
-> >         # Subtest: numbers_list_field_width_l
-> >         ok 1 " "
-> >         ok 2 ":"
-> >         ok 3 ","
-> >         ok 4 "-"
-> >         ok 5 "/"
-> >     # numbers_list_field_width_l: pass:5 fail:0 skip:0 total:5
-> >     ok 8 numbers_list_field_width_l
-> >         KTAP version 1
-> >         # Subtest: numbers_list_field_width_d
-> >         ok 1 " "
-> >         ok 2 ":"
-> >         ok 3 ","
-> >         ok 4 "-"
-> >         ok 5 "/"
-> >     # numbers_list_field_width_d: pass:5 fail:0 skip:0 total:5
-> >     ok 9 numbers_list_field_width_d
-> >         KTAP version 1
-> >         # Subtest: numbers_list_field_width_h
-> >         ok 1 " "
-> >         ok 2 ":"
-> >         ok 3 ","
-> >         ok 4 "-"
-> >         ok 5 "/"
-> >     # numbers_list_field_width_h: pass:5 fail:0 skip:0 total:5
-> >     ok 10 numbers_list_field_width_h
-> >         KTAP version 1
-> >         # Subtest: numbers_list_field_width_hh
-> >         ok 1 " "
-> >         ok 2 ":"
-> >         ok 3 ","
-> >         ok 4 "-"
-> >         ok 5 "/"
-> >     # numbers_list_field_width_hh: pass:5 fail:0 skip:0 total:5
-> >     ok 11 numbers_list_field_width_hh
-> >         KTAP version 1
-> >         # Subtest: numbers_list_field_width_val_ll
-> >         ok 1 ""
-> >         ok 2 " "
-> >         ok 3 ":"
-> >         ok 4 ","
-> >         ok 5 "-"
-> >         ok 6 "/"
-> >     # numbers_list_field_width_val_ll: pass:6 fail:0 skip:0 total:6
-> >     ok 12 numbers_list_field_width_val_ll
-> >         KTAP version 1
-> >         # Subtest: numbers_list_field_width_val_l
-> >         ok 1 ""
-> >         ok 2 " "
-> >         ok 3 ":"
-> >         ok 4 ","
-> >         ok 5 "-"
-> >         ok 6 "/"
-> >     # numbers_list_field_width_val_l: pass:6 fail:0 skip:0 total:6
-> >     ok 13 numbers_list_field_width_val_l
-> >         KTAP version 1
-> >         # Subtest: numbers_list_field_width_val_d
-> >         ok 1 ""
-> >         ok 2 " "
-> >         ok 3 ":"
-> >         ok 4 ","
-> >         ok 5 "-"
-> >         ok 6 "/"
-> >     # numbers_list_field_width_val_d: pass:6 fail:0 skip:0 total:6
-> >     ok 14 numbers_list_field_width_val_d
-> >         KTAP version 1
-> >         # Subtest: numbers_list_field_width_val_h
-> >         ok 1 ""
-> >         ok 2 " "
-> >         ok 3 ":"
-> >         ok 4 ","
-> >         ok 5 "-"
-> >         ok 6 "/"
-> >     # numbers_list_field_width_val_h: pass:6 fail:0 skip:0 total:6
-> >     ok 15 numbers_list_field_width_val_h
-> >         KTAP version 1
-> >         # Subtest: numbers_list_field_width_val_hh
-> >         ok 1 ""
-> >         ok 2 " "
-> >         ok 3 ":"
-> >         ok 4 ","
-> >         ok 5 "-"
-> >         ok 6 "/"
-> >     # numbers_list_field_width_val_hh: pass:6 fail:0 skip:0 total:6
-> >     ok 16 numbers_list_field_width_val_hh
-> >     ok 17 numbers_prefix_overflow
-> >     ok 18 test_simple_strtoull
-> >     ok 19 test_simple_strtoll
-> >     ok 20 test_simple_strtoul
-> >     ok 21 test_simple_strtol
-> > # scanf: pass:21 fail:0 skip:0 total:21
-> > # Totals: pass:86 fail:0 skip:0 total:86
-> > ok 1 scanf
-> 
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+On Fri, Mar 14, 2025 at 12:25=E2=80=AFPM Borislav Petkov <bp@alien8.de> wro=
+te:
+>
+> On Fri, Mar 14, 2025 at 10:30:55AM +0100, Uros Bizjak wrote:
+> > Use asm_inline() to instruct the compiler that the size of asm()
+> > is the minimum size of one instruction, ignoring how many instructions
+> > the compiler thinks it is. ALTERNATIVE macro that expands to several
+> > pseudo directives causes instruction length estimate to count
+> > more than 20 instructions.
+> >
+> > bloat-o-meter reports minimal code size increase
+>
+> If you see an increase and *no* *other* *palpable* improvement, you don't=
+ send
+> it. It is that simple.
 
-Thanks for trying this. But I personally do not find this as a big win.
-It causes that the test log is longer than one screen and thus harder
-to review.
+Do you see the removed functions? These are now fully inlined and
+optimized in their inlined places. The program does not have to set up
+a function call, invoke call/ret insn and create a frame in the called
+function. The well tuned compiler heuristics make trade offs between
+performance and code growth and it chose it that way. The heuristics
+are as good as the data the programmer provides, and choking the
+compiler with incorrect data, as provided by asm() interface,
+certainly does no good. The asm() code in the patch declares *one*
+instruction, not 23. Please count it.
 
-It might be fine when running only this test and running it only once.
-But I think that it is quite common to run more tests and then
-it is easy to get lost.
+Code size is not the right metric with -O2. It is that simple.
 
-I guess that there are tools for handling the KTAP format which might
-make this easier but...
-
-So, I would prefer to avoid this patch.
-
-Best Regards,
-Petr
+BR,
+Uros.
 
