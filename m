@@ -1,57 +1,73 @@
-Return-Path: <linux-kernel+bounces-562030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F009A61AAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:33:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B82A61ABC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:35:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82E1C7ACAF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:32:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DBAC3AA7C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9728620E32A;
-	Fri, 14 Mar 2025 19:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764F918D65A;
+	Fri, 14 Mar 2025 19:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cuZYKOeF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="cAk5r7vo"
+Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E194D20DD45
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 19:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603711E521;
+	Fri, 14 Mar 2025 19:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741980574; cv=none; b=OBmq+uy5JaoqrSlzLxVCaAHRJd370KPIaw/JL6PQC3Sr7YxRA1eXQ4/R2t87F8vWYlNFiRwwy52v077keDr58kj9CEYTkrT+osO9vU1t4u8kB+5t0FNx4DCus0rV0CaTHomSMcnj2xph3XqM7GuPkZLWrzrBJP6nxiEDiy6bItE=
+	t=1741980905; cv=none; b=tHjtg0sC8+Qr67I6gqI5UIusad/dgicETHiqK2jr48nkphFJqjIqkGEEbj5GgiT7eY6OVL9ZuZ8XAWWzjPF2FzT/N8sgrKPznPqeUL1v3K0VQJmj9ClN61ZPGqSicUbuXox/PTtXhmp4bY53FxtonuB0KSMsc1Mvf6oL0fo1zNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741980574; c=relaxed/simple;
-	bh=MuEUQXRk4MGKZ+To5bORRPLRoNHakjJEWiddaL41TJc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Bm9SS2FpwSo8enYHdVvu/qgmTGs37jeNTsYLc4IRD59KO33LAqeLxMRQyQJV3aKm7CPl2ESg3LvmpKkLF/arqNWmTvyyjHjIMm6qjVQAas8baGsuAe5Wvbl0jRBsVTPIEQ0AccuNm2CIJoyDWKGt+zNzRVE/o8zrVw5dBp8yajI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cuZYKOeF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8529FC4CEEC;
-	Fri, 14 Mar 2025 19:29:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741980573;
-	bh=MuEUQXRk4MGKZ+To5bORRPLRoNHakjJEWiddaL41TJc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cuZYKOeFT39LOsL9h+w7Ag+3V8hADSWC1DjT8PERQwD+q2+ykQJ+qVV2WZd23XQiM
-	 1EipFpDf2edZzLvtEsSiplQlo5Lnge7qNAKMfDdHXCbKerueX84yynK8aG3MtMGzX7
-	 qhepZGzLKwKjxve0tXT9+DiR+JOaIkKk3WhA652CfSjOb4NYV8Sw2gkjDLywbMXxoS
-	 Hp8MQF10SbSBaDNIjSVVLs3coiQ+vIHzKnKnnFnUKseVg46DzIXCB242tH30dNIoTF
-	 vqmYouOrNNFl2mLLbLuyK/3jXwg4lbpttdFGn+qGukYiYokHMS1DZQ3ZAi3vOya3df
-	 wXQ30p37vM7IQ==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: [PATCH 13/13] objtool: Add CONFIG_OBJTOOL_WERROR
-Date: Fri, 14 Mar 2025 12:29:11 -0700
-Message-ID: <3e7c109313ff15da6c80788965cc7450115b0196.1741975349.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1741980905; c=relaxed/simple;
+	bh=u6pYaIUSlIhp06+qImIcSSLIYJdqfmb5VYF7EzlNOtw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X4JUpJ7VlQJMc/cigeZAokRIWGfwktT0NC7YJtfyc302h5g1b9fa4yKg8DiuG5nIQZZi2BB/KfuXhtbLFmngTJfwkzKCkBOcIBRacO0ABOODOQQQHP5XmpjM6Hl1JwxeB5IDj2wqsZi4UBgwsJ6yWjqTH+9hiHYex0GH2peIOuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=cAk5r7vo; arc=none smtp.client-ip=99.78.197.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1741980905; x=1773516905;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=uuc0tqWY3GKjPk2lk41qIHNDa1aDEdFdztuPFonfLZI=;
+  b=cAk5r7vohCNincUhWYK7I2sZMtSkNrk8XOJ3dBol+vuuC7iRu0omRUiM
+   F3HGLNFtwjV0HpoB0LwTEhEI1BcSoaIsaLEOwm5cIi05+VSLrE1J5MQat
+   o2U9L0LTX83HbI8eOXtqHn+Ol0UCxW4Ey5VKPtri6nyp8dwjAz5EA6Oar
+   w=;
+X-IronPort-AV: E=Sophos;i="6.14,246,1736812800"; 
+   d="scan'208";a="32025508"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 19:35:03 +0000
+Received: from EX19MTAUWB001.ant.amazon.com [10.0.38.20:28298]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.22.127:2525] with esmtp (Farcaster)
+ id 8dd8bf03-971d-4054-a1a3-49ad34eff961; Fri, 14 Mar 2025 19:35:02 +0000 (UTC)
+X-Farcaster-Flow-ID: 8dd8bf03-971d-4054-a1a3-49ad34eff961
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 14 Mar 2025 19:34:56 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.119.227.109) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 14 Mar 2025 19:34:53 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <linma@zju.edu.cn>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <gnaaman@drivenets.com>,
+	<horms@kernel.org>, <joel.granados@kernel.org>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>, <lizetao1@huawei.com>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>
+Subject: Re: [PATCH net] net/neighbor: add missing policy for NDTPA_QUEUE_LENBYTES
+Date: Fri, 14 Mar 2025 12:34:44 -0700
+Message-ID: <20250314193445.26852-1-kuniyu@amazon.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1741975349.git.jpoimboe@kernel.org>
-References: <cover.1741975349.git.jpoimboe@kernel.org>
+In-Reply-To: <20250314155237.81071-1-linma@zju.edu.cn>
+References: <20250314155237.81071-1-linma@zju.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,61 +75,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D039UWB002.ant.amazon.com (10.13.138.79) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-Objtool warnings can be indicative of crashes, broken live patching, or
-even boot failures.  Ignoring them is not recommended.
+From: Lin Ma <linma@zju.edu.cn>
+Date: Fri, 14 Mar 2025 23:52:37 +0800
+> Previous commit 8b5c171bb3dc ("neigh: new unresolved queue limits")
+> introduces new netlink attribute NDTPA_QUEUE_LENBYTES to represent
+> approximative value for deprecated QUEUE_LEN. However, it forgot to add
+> the associated nla_policy in nl_ntbl_parm_policy array. Fix it with one
+> simple NLA_U32 type policy.
+> 
+> Fixes: 8b5c171bb3dc ("neigh: new unresolved queue limits")
+> Signed-off-by: Lin Ma <linma@zju.edu.cn>
+> ---
+>  net/core/neighbour.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+> index bd0251bd74a1..b4f89fbb59df 100644
+> --- a/net/core/neighbour.c
+> +++ b/net/core/neighbour.c
+> @@ -2250,6 +2250,7 @@ static const struct nla_policy nl_neightbl_policy[NDTA_MAX+1] = {
+>  static const struct nla_policy nl_ntbl_parm_policy[NDTPA_MAX+1] = {
+>  	[NDTPA_IFINDEX]			= { .type = NLA_U32 },
+>  	[NDTPA_QUEUE_LEN]		= { .type = NLA_U32 },
+> +	[NDTPA_QUEUE_LENBYTES]	= { .type = NLA_U32 },
 
-Add CONFIG_OBJTOOL_WERROR to upgrade objtool warnings to errors by
-enabling the objtool --Werror option.  Also set --backtrace to print the
-branches leading up to the warning, which can help considerably when
-debugging certain warnings.
+Please keep this line alinged with other lines; add one more tab
+before '='.
 
-To avoid breaking bots too badly for now, make it the default for real
-world builds only (!COMPILE_TEST).
 
-Co-developed-by: Brendan Jackman <jackmanb@google.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
- lib/Kconfig.debug    | 12 ++++++++++++
- scripts/Makefile.lib |  1 +
- 2 files changed, 13 insertions(+)
-
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 35796c290ca3..bbfb9d575f97 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -545,6 +545,18 @@ config FRAME_POINTER
- config OBJTOOL
- 	bool
- 
-+config OBJTOOL_WERROR
-+	bool "Upgrade objtool warnings to errors"
-+	default y
-+	depends on OBJTOOL && !COMPILE_TEST
-+	help
-+	  Fail the build on objtool warnings.
-+
-+	  Objtool warnings can indicate kernel instability, including boot
-+	  failures.  This option is highly recommended.
-+
-+	  If unsure, say Y.
-+
- config STACK_VALIDATION
- 	bool "Compile-time stack metadata validation"
- 	depends on HAVE_STACK_VALIDATION && UNWINDER_FRAME_POINTER
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index cad20f0e66ee..99e281966ba3 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -277,6 +277,7 @@ objtool-args-$(CONFIG_HAVE_STATIC_CALL_INLINE)		+= --static-call
- objtool-args-$(CONFIG_HAVE_UACCESS_VALIDATION)		+= --uaccess
- objtool-args-$(CONFIG_GCOV_KERNEL)			+= --no-unreachable
- objtool-args-$(CONFIG_PREFIX_SYMBOLS)			+= --prefix=$(CONFIG_FUNCTION_PADDING_BYTES)
-+objtool-args-$(CONFIG_OBJTOOL_WERROR)			+= --Werror --backtrace
- 
- objtool-args = $(objtool-args-y)					\
- 	$(if $(delay-objtool), --link)					\
--- 
-2.48.1
-
+>  	[NDTPA_PROXY_QLEN]		= { .type = NLA_U32 },
+>  	[NDTPA_APP_PROBES]		= { .type = NLA_U32 },
+>  	[NDTPA_UCAST_PROBES]		= { .type = NLA_U32 },
+> -- 
+> 2.39.0
 
