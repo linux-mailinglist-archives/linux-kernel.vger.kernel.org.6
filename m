@@ -1,67 +1,81 @@
-Return-Path: <linux-kernel+bounces-561378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5993A6109F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:06:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C54D0A610A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:07:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 275643A2AF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:06:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07598172A0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DBE1FDA9D;
-	Fri, 14 Mar 2025 12:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3931FDA76;
+	Fri, 14 Mar 2025 12:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mqJ37J7F"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="H8jTsLgk"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A09192D6B;
-	Fri, 14 Mar 2025 12:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96214192D6B
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 12:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741954004; cv=none; b=DvHjrDha+RZoW684U0EldqYCX8HIN9jgPdIAKHS7FvCDMQc6lLV4Hs7egyu3NvT6UOwAh5YYhaURjI8z+mvOYn8S3fPO3Xo+xDp3WYkMTy5QwzRcIa7wq8QlV3RmP2onqDM+alfCmGwfyxXqDg8U0U/uVWA52xv8qXruqbBKcG0=
+	t=1741954025; cv=none; b=sO7pzVc3SXLEMVaO5eQap378IaRjdnuOb7BIp3RtIQvTv6cXugoeMcmwNkkoWDrzS1ekN3KKClQSq4tuZwVR07WXt0E/1j+jfUwfBCrGow1b7NVCOE55ZPJiYxdKDj/+Yy4gUtx2dokRtLlEYMPjXFTh31nL4v6QLa0ZZdPSN9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741954004; c=relaxed/simple;
-	bh=8pNOnJ2LC70pKfJZznXtgqsVw3dIIVR2oklK86YS4/o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BDtBMv4/0Lf4GohNn8Mf2WugTea89Ei/u6RxxZRw8jCUL813yyx5wH3sCBsadH0eQB4Z25MUETtTr6zZPLVjDiQAN9QF8G/5k/RmA6KdFqtoN14K90pWFQO+RnOzekRPq2l512ojPvoznKzEfOIhMmHAZUNIVoPo3QP0eOXITYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mqJ37J7F; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52E9YDkr019596;
-	Fri, 14 Mar 2025 12:06:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Bh21o9dLy7lEDe68zirb2d
-	JGXUgB9M6JRV3a9ZiHRpQ=; b=mqJ37J7FFAoxjprTR+G2mcoRA0gD2U5mKoxy4c
-	dA4YIywenHa9qQKGqGVXZCcjdxmU2f7OZHJj+nrSis8q++VdUokC0yi8pnQ4+1Ze
-	8WDWJsidCfwfts9anqPlBT3L0OcQwhUt/eG0oMvOp8XpLqN3XKZrC7RTrJEmaRUb
-	zBzlNhiydZ3XsE3NieBPaGQLmX0jKHMmVhsbPuxcSFWRLkfCNe9PWgxf/+y0eKfx
-	dhHtVGeOnen6Bou2zM+qi0RVBlCGjumXNHd51i3UMvDmQ20ysytmYdme0fhwOspl
-	XJGqZ93LvFH7EY/Q1xvPOn/WHCyW6KQj74p7+m/ZKTNknY1Q==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2p1752-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Mar 2025 12:06:33 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52EC6W4T027291
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Mar 2025 12:06:32 GMT
-Received: from zhonhan-gv.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 14 Mar 2025 05:06:30 -0700
-From: Zhongqiu Han <quic_zhonhan@quicinc.com>
-To: <johannes@sipsolutions.net>, <miriam.rachel.korenblit@intel.com>
-CC: <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_zhonhan@quicinc.com>,
-        <syzbot+5a7b40bcb34dea5ca959@syzkaller.appspotmail.com>
-Subject: [PATCH v2] wifi: mac80211: Prevent disconnect reports when no AP is associated
-Date: Fri, 14 Mar 2025 20:06:14 +0800
-Message-ID: <20250314120614.4032434-1-quic_zhonhan@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741954025; c=relaxed/simple;
+	bh=aW+dUuBjugebCW7pNePcHGxkrvB8hnscoWMmuwa2TVU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=JcOW+EiumILobPdQIA33DWOCfW2jEEH6t6e9JJYkayXJtSXZojL9ZopLXQj47Yv6QBgBT9VWbz3cKqNCGg7yqkfXL4ki3cFpwW31sCuMx63ByPi81otzxBr4RttBeO7LD1yRh0rFUn80A2gsSCdCeCwR08ycXLd8UwWwU0CkOJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=H8jTsLgk; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250314120700epoutp01a31265e9e1d12e5751b648d4f3aba613~sqfPKpMxQ2554425544epoutp01I
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 12:07:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250314120700epoutp01a31265e9e1d12e5751b648d4f3aba613~sqfPKpMxQ2554425544epoutp01I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741954020;
+	bh=3Qe1SlvfIOmhga1czt7f9j5ahiyJmMc+mCo4mIR3ZTM=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=H8jTsLgkUoczOVmOP1AH/uYneM0pNRWr87Dm6635ieAMDzwBFpmqXV5I6khfw+kGt
+	 rhvM8T8o52V6vGNRKPQIm+Grr+m+X9wYtOE2qysSyhE7nYvbpEWVvhcaLezR4X1xiz
+	 l7B+80kCUr4OIu1wWYu/zmQJuVTa1lSTeBXkmTEM=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+	20250314120659epcas1p428f75bf92265487d7840bab312f09157~sqfObOmmU2356423564epcas1p4Q;
+	Fri, 14 Mar 2025 12:06:59 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.36.225]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4ZDjll22czz4x9Pr; Fri, 14 Mar
+	2025 12:06:59 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+	epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8A.B6.21650.3EB14D76; Fri, 14 Mar 2025 21:06:59 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250314120658epcas1p2d3ec037c294d4c907ce7fa2fe1c3aa27~sqfNyV_pk1539815398epcas1p21;
+	Fri, 14 Mar 2025 12:06:58 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250314120658epsmtrp24285d6abe485c2681b1d51588ee95741~sqfNxeWfe2301523015epsmtrp29;
+	Fri, 14 Mar 2025 12:06:58 +0000 (GMT)
+X-AuditID: b6c32a35-093de70000005492-bc-67d41be32211
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4F.8E.23488.2EB14D76; Fri, 14 Mar 2025 21:06:58 +0900 (KST)
+Received: from mypc.. (unknown [10.253.99.41]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250314120658epsmtip1724f69d6e811c7ec07a9dd415071d29f~sqfNj6PrX0376503765epsmtip15;
+	Fri, 14 Mar 2025 12:06:58 +0000 (GMT)
+From: Yeongjin Gil <youngjin.gil@samsung.com>
+To: jaegeuk@kernel.org, chao@kernel.org, daehojeong@google.com,
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Cc: sj1557.seo@samsung.com, s_min.jeong@samsung.com, Yeongjin Gil
+	<youngjin.gil@samsung.com>
+Subject: [PATCH] f2fs: fix to avoid atomicity corruption of atomic file
+Date: Fri, 14 Mar 2025 21:06:51 +0900
+Message-Id: <20250314120651.443184-1-youngjin.gil@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,93 +83,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: _yH3PE4g3TpHY-sTnofQESHunOcXBlqB
-X-Authority-Analysis: v=2.4 cv=Q4XS452a c=1 sm=1 tr=0 ts=67d41bc9 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=COk6AnOGAAAA:8 a=hSkVLCK3AAAA:8
- a=IS6kxbfz1l1t9IyL_bAA:9 a=TjNXssC_j7lpFel5tvFf:22 a=cQPPKAXgyycSBL8etih5:22
-X-Proofpoint-ORIG-GUID: _yH3PE4g3TpHY-sTnofQESHunOcXBlqB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-14_05,2025-03-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- lowpriorityscore=0 mlxscore=0 clxscore=1015 phishscore=0 malwarescore=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503140095
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFJsWRmVeSWpSXmKPExsWy7bCmge5j6SvpBkfOcFmcnnqWyWJq+15G
+	iyfrZzFbXFrkbnF51xw2iwWtv1kstvw7wmoxY/9TdgcOjwWbSj02repk89i94DOTR9+WVYwe
+	nzfJBbBGNTDaJBYlZ2SWpSqk5iXnp2TmpdsqhYa46VooKWTkF5fYKkUbGhrpGRqY6xkZGemZ
+	GsVaGZkqKeQl5qbaKlXoQvUqKRQlFwDV5lYWAw3ISdWDiusVp+alOGTll4Kcr1ecmFtcmpeu
+	l5yfq6RQlphTCjRCST/hG2PGrndr2Ao+81X07L7A1sC4nKeLkZNDQsBEYlb/W9YuRi4OIYEd
+	jBITzjQxQTifGCXe9n6GynxjlOh69IoFpuXBsjdQib2MEueW/GWEcB4zSrz4+JQVpIpNQFdi
+	6sunYFUiAm2MEns+X2AHSTALxEks3DARaBQHh7CAu8S2HUIgYRYBVYld796AbeAVsJM4+qmb
+	EWKbvMT+g2eZIeKCEidnPmGBGCMv0bx1NjPIfAmBS+wSm6/NZYNocJHo6X3GCmELS7w6voUd
+	wpaS+PxuLxtEwypGiTetn5ggnO2MEtMf90B120s0tzazgVzHLKApsX6XPsQ2Pol3X3ughgpK
+	nL7WzQxSIiHAK9HRJgQRVpO4MukXVImMRN+DWVB7PSQOX24Ds4UEYiU+XH7EMoFRfhaSf2Yh
+	+WcWwuIFjMyrGMVSC4pz01OLDQsMkaN2EyM4mWqZ7mCc+PaD3iFGJg7GQ4wSHMxKIrwWly+n
+	C/GmJFZWpRblxxeV5qQWH2JMBobwRGYp0eR8YDrPK4k3NDOztLA0MjE0NjM0JCxsYmlgYmZk
+	YmFsaWymJM57YVtLupBAemJJanZqakFqEcwWJg5OqQam9YdMvwcsnlZrl6a/IMldJ/BGRETs
+	ZAuLTZM3i06p7/+31UL3bbDfbtWLu+esDGlUN58Ts6hpSk7jJ9v+y1tfejpIZRzZc+vYW5Y1
+	OY5F59I3i9vstZl/OFv2ws+Utid6z/Nv+C1taC7cprZwsc0P9cNz1ARuuB8W0tn+8qymf1fV
+	4vus55dN1fH70XK8+Ea37MXrFi/yxSd081oy33+vOXeJz+r83Wr9iy+6L6+yOSJpWfhtsvaT
+	jy85WdZ4qtW51ITcv92X08rYV658V2J7TebsDe4v3naJMBVMTnneLibwbc61GfZvW2VeLxfl
+	eC7y+/5TtR9VgRfcjqzkn7Rlt4fIDbs50dGs+8NcEjl8lFiKMxINtZiLihMBYsG6+l0EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsWy7bCSnO4j6SvpBpevGFicnnqWyWJq+15G
+	iyfrZzFbXFrkbnF51xw2iwWtv1kstvw7wmoxY/9TdgcOjwWbSj02repk89i94DOTR9+WVYwe
+	nzfJBbBGcdmkpOZklqUW6dslcGXsereGreAzX0XP7gtsDYzLeboYOTkkBEwkHix7w9rFyMUh
+	JLCbUWLGrnnMEAkZiT8T37N1MXIA2cIShw8Xg4SFBB4ySsw/5ApiswnoSkx9+RSsV0Sgh1Hi
+	bMs5FpAEs0CCxM4ls5hAeoUF3CW27RACCbMIqErsevcGrIRXwE7i6KduRohV8hL7D55lhogL
+	Spyc+QRqjLxE89bZzBMY+WYhSc1CklrAyLSKUTK1oDg3PTfZsMAwL7Vcrzgxt7g0L10vOT93
+	EyM4ULU0djC++9akf4iRiYPxEKMEB7OSCK/F5cvpQrwpiZVVqUX58UWlOanFhxilOViUxHlX
+	GkakCwmkJ5akZqemFqQWwWSZODilGpgqLnKeZL4u08ugIWYy+9KbfBlbr+Q9Cd6r30wVm7Ul
+	Vqh1vf5ZQd9oHXFxqx2ikhKZ25OMEsOSS06e4Sm3PLOgmFGpl/3QlPLve7XZoh/UJAVk6y9S
+	bI54pDnLjH/NX58CUf6Mypc+d9f3Ka7geMXxb8sHyYQ/rJvdU/QsN6wqs7z2YV3sEjbfdUU1
+	7u+qs7R7/wmxzciZujTrWx1rKbOthk97VL25baLjnn797dnSgvtPJTjfqgp9Z/togvuyOHnD
+	9uxb3wqVND44L+BX/P28837Tn+1JxeFPAvfoiZlOKpVRtJvTW3Ox5p1FhGZdq4Yjx/LqR9am
+	aVvv650S8vpve8L9S8LRfm79blYlluKMREMt5qLiRABcFAnZwwIAAA==
+X-CMS-MailID: 20250314120658epcas1p2d3ec037c294d4c907ce7fa2fe1c3aa27
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-ArchiveUser: EV
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250314120658epcas1p2d3ec037c294d4c907ce7fa2fe1c3aa27
+References: <CGME20250314120658epcas1p2d3ec037c294d4c907ce7fa2fe1c3aa27@epcas1p2.samsung.com>
 
-syzbot reports that cfg80211_tx_mlme_mgmt is using uninit-value:
+In the case of the following call stack for an atomic file,
+FI_DIRTY_INODE is set, but FI_ATOMIC_DIRTIED is not subsequently set.
 
-=====================================================
-BUG: KMSAN: uninit-value in cfg80211_tx_mlme_mgmt+0x155/0x300 net/wireless/mlme.c:226
-cfg80211_tx_mlme_mgmt+0x155/0x300 net/wireless/mlme.c:226
-ieee80211_report_disconnect net/mac80211/mlme.c:4238 [inline]
-ieee80211_sta_connection_lost+0xfa/0x150 net/mac80211/mlme.c:7811
-ieee80211_sta_work+0x1dea/0x4ef0
-ieee80211_iface_work+0x1900/0x1970 net/mac80211/iface.c:1684
-cfg80211_wiphy_work+0x396/0x860 net/wireless/core.c:435
-process_one_work kernel/workqueue.c:3236 [inline]
-process_scheduled_works+0xc1a/0x1e80 kernel/workqueue.c:3317
-worker_thread+0xea7/0x14f0 kernel/workqueue.c:3398
-kthread+0x6b9/0xef0 kernel/kthread.c:464
-ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:148
-ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+f2fs_file_write_iter
+  f2fs_map_blocks
+    f2fs_reserve_new_blocks
+      inc_valid_block_count
+        __mark_inode_dirty(dquot)
+          f2fs_dirty_inode
 
-Local variable frame_buf created at:
-ieee80211_sta_connection_lost+0x43/0x150 net/mac80211/mlme.c:7806
-ieee80211_sta_work+0x1dea/0x4ef0
-=====================================================
+If FI_ATOMIC_DIRTIED is not set, atomic file can encounter corruption
+due to a mismatch between old file size and new data.
 
-The reason is that the local variable frame_buf on the stack cannot be
-initialized by default. However one more question is that avoiding the
-uninit-value bug by explicitly initializing it is not enough. Since commit
-687a7c8a7227 ("wifi: mac80211: change disassoc sequence a bit"), if there
-is no AP station, frame_buf has no chance to be assigned a valid value.
-The function ieee80211_report_disconnect should not continue executing
-with the frame_buf parameter that is merely initialized to zero.
+To resolve this issue, I changed to set FI_ATOMIC_DIRTIED when
+FI_DIRTY_INODE is set. This ensures that FI_DIRTY_INODE, which was
+previously cleared by the Writeback thread during the commit atomic, is
+set and i_size is updated.
 
-Reported-by: syzbot+5a7b40bcb34dea5ca959@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/67bf36d3.050a0220.38b081.01ff.GAE@google.com/
-Fixes: 687a7c8a7227 ("wifi: mac80211: change disassoc sequence a bit")
-Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
+Fixes: fccaa81de87e ("f2fs: prevent atomic file from being dirtied before commit")
+Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
+Reviewed-by: Sunmin Jeong <s_min.jeong@samsung.com>
+Signed-off-by: Yeongjin Gil <youngjin.gil@samsung.com>
 ---
-v1 -> v2:
-- Rebased on top of current next.
-- Reorder the tags.
-- Link to v1: https://lore.kernel.org/all/20250227090932.1871272-1-quic_zhonhan@quicinc.com/
+ fs/f2fs/inode.c | 4 +---
+ fs/f2fs/super.c | 4 ++++
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
- net/mac80211/mlme.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
-index c010bb3d24e3..08fb3fb740fd 100644
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -4433,6 +4433,10 @@ static void ieee80211_report_disconnect(struct ieee80211_sub_if_data *sdata,
- 		.u.mlme.data = tx ? DEAUTH_TX_EVENT : DEAUTH_RX_EVENT,
- 		.u.mlme.reason = reason,
- 	};
-+	struct sta_info *ap_sta = sta_info_get(sdata, sdata->vif.cfg.ap_addr);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index aa2f41696a88..83f862578fc8 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -34,10 +34,8 @@ void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync)
+ 	if (f2fs_inode_dirtied(inode, sync))
+ 		return;
+ 
+-	if (f2fs_is_atomic_file(inode)) {
+-		set_inode_flag(inode, FI_ATOMIC_DIRTIED);
++	if (f2fs_is_atomic_file(inode))
+ 		return;
+-	}
+ 
+ 	mark_inode_dirty_sync(inode);
+ }
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 397df271885c..c08d52c6467a 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1534,6 +1534,10 @@ int f2fs_inode_dirtied(struct inode *inode, bool sync)
+ 		inc_page_count(sbi, F2FS_DIRTY_IMETA);
+ 	}
+ 	spin_unlock(&sbi->inode_lock[DIRTY_META]);
 +
-+	if (WARN_ON(!ap_sta))
-+		return;
++	if (!ret && f2fs_is_atomic_file(inode))
++		set_inode_flag(inode, FI_ATOMIC_DIRTIED);
++
+ 	return ret;
+ }
  
- 	if (tx)
- 		cfg80211_tx_mlme_mgmt(sdata->dev, buf, len, reconnect);
-@@ -8090,7 +8094,7 @@ static void ieee80211_sta_timer(struct timer_list *t)
- void ieee80211_sta_connection_lost(struct ieee80211_sub_if_data *sdata,
- 				   u8 reason, bool tx)
- {
--	u8 frame_buf[IEEE80211_DEAUTH_FRAME_LEN];
-+	u8 frame_buf[IEEE80211_DEAUTH_FRAME_LEN] = {0};
- 
- 	ieee80211_set_disassoc(sdata, IEEE80211_STYPE_DEAUTH, reason,
- 			       tx, frame_buf);
 -- 
-2.25.1
+2.34.1
 
 
