@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-561541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D626FA61344
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:03:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C62FA61347
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:04:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 089DC172E8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:03:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D8C8178C8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA281FFC7F;
-	Fri, 14 Mar 2025 14:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E19200BB5;
+	Fri, 14 Mar 2025 14:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X75HbMkD"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FNfeafim"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195B21F4620
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C7A1FFC7A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741961025; cv=none; b=P1+zo0r0jTl5eIQTkUBtYO5hqNZQo6ARecfbkE65oDNPPVUd6Gp8PyVsE1u57LnFJ3qSdsU/iPBt6i5DSHV/oueZZz0iVFex54PxmnAO/tSxClCuO4r3Yvhz0CTPbvrRivhnz4c0VWlM3pGRbEDBVwr345hO/RunkOke4oly4OQ=
+	t=1741961028; cv=none; b=rc2shDcqybrjclWgP2fnMrO7XXcD9GXJSqsGP36xG5tsCc0fwp4b6KqbnYlaipCu5CR0DN42/sWd39gt+DzyyUZ8j/h9UdJhLFYGr4kw3oZOpeVW6zeEwCg7I/ksGCNv74U0YsfItNl8Z0yijyyzR70beom5LrEgWNUPsUlIH7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741961025; c=relaxed/simple;
-	bh=pxJDHvkqM7uHR1MrrOabNXE1KJAbMRipuo/qn8mCmfE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=do+N3tO+AKBS7N1lrBuEeGL3zPCWmmqPyEQ6/2Y1eurwHYs7CFDpub26U+Da5Rv8DFhHka2P6hOE4wDGZgdofOksCrVZ3NiYVW/ONdQT64njrUD6LKF5NWMXbC6cdpuQrARKWisLGD0iEK6Z4jC83gZn2Aat1VQyzAnemc6gQgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X75HbMkD; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1741961028; c=relaxed/simple;
+	bh=DF6LBm7oBQoMFX+SLpJBlp0Dl8XtrOzdWQmhNfaOJK0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=dpdR6Yy+SmsU8HqGdanU0WkP1/qrQOSwq8je4zWnln7Nds1YF9Mi27UhUXKqxy7XoSEZ/aTnp0ZiL4GxM8Mv/K2UfFGU98HWJUFVmfjPcd/F153l4wFetWsvdSaEq6wu8lhqaC35B0r2OZ64eNCLDFlszzesUgGPKez34DYe0ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FNfeafim; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43ce70f9afbso19426155e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:03:43 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so19221575e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:03:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741961022; x=1742565822; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DfJf8Ga9vB90szm23Um7D9SA1QG9ZKGN12DmFyfILjU=;
-        b=X75HbMkDp6dvMPUjo/MdBhCRVyZ104qZTB4okzpjPGofD/MSHr5QM/w5khedXfjbP3
-         +vsd7iyYv0sb4KF+ZKN+AsT/esNXWpbtWnNLV9vPr68cMMHxMl78mPP5sBP6prjQ7F/A
-         GdmPeo1ZBpyvVvmAyL5GS6mAunereP54lViB3OWIeLe00L2dS6rtfctMs7ztPnWk9C1V
-         y4t74t2bNY9XrGfsYpEWUYRdVgRLi+banYi+W2w8eCLyHzesprxCku3a4WonDSN9FNYz
-         ROzqZhQVg/y9Zs5iT87aM27YpNMxOjV6wQsKgIxWTj7SRqywX9be7Mu0ZATtS6L0G5xp
-         Xx1Q==
+        d=linaro.org; s=google; t=1741961025; x=1742565825; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mrs2pi/IR80jSTZMZiwbcMuogKUEOta3sRCRaBeIlpM=;
+        b=FNfeafimwnGu5ssoT3SEsr57SHzKNkcjq1lAdEM5gRkU/jBp4JC4EmdPvKamcNLP6m
+         iO8G/xOx8kMTGLlT5ahCRxaeFecV8URUvTcJ3KdQ1gTrwPOywiqNlHy/7/B4H5O6tm2R
+         ZiizeUXFNvb6C+PCpohoo3LfnhwNwimtCL8pAo/M/FXCnLtKKOZY8UdQMNgrN/ex+YYk
+         Oq8EZq3dn3pieJ8W2bbXHhsNzxUk9nlbpAZn7g+Z+lDxxHx41d7XvZ27h4EDpoud8hRE
+         BRBIxQ7xqKyOu4mejKt7geOIuPrrlUdsbVNEPHeT/tf3Q3K/MqEoVeFr/2dJzWJfnnjw
+         ZgFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741961022; x=1742565822;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DfJf8Ga9vB90szm23Um7D9SA1QG9ZKGN12DmFyfILjU=;
-        b=ayya9uN/G70qvw77VqxONgEPPqaLYtXfIvWyeqdxYVrP97xo7ECXIDr1LzS7rMDAAm
-         dHzQ06aXGjpJnTuoFrF5JlfM2p7/sFei6gmI6BBikM4YLwtnaJCkKJ1dJnD5YfJ2/rCf
-         tiCvE6CZLM9mlBTlRMiWOaP3aEkscKYrsqGzTp8m4jvoxZ769MkDkjmbXFxlu2kfqzXC
-         Wb7FH/e9d2bCGbOlIWrsZHV7LB/sGMDUPovR7b6th6LxprlTJKNLPhHRJt/fUQlvInA9
-         AERIFimKLjNmNb4UzjtChu6ok6IKsGiMDzPTqdwEqqTwRzPDqOs9PGITYylRTfEglDby
-         KUPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBI/Nty/Rq5z/n9Gd1tTHfeBT1vECL1KZLncn64Obq8vtdTMvYvmFA0g75XSMLo4FHbTlM63xsBgP3GTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKDoXfXIMzdt8FjyHuN8qIa8z3S9M31DZ5XPVt5CuYHwDTimNv
-	cgskhw2+s8//nl4mDypRNluGwxdtRiPR/If+quYHYiJ87Dcs0p0o9ZQKpZaqECM=
-X-Gm-Gg: ASbGncvF2f9T9X4e7SLwLr4f7wL/zP8xUk7HyIKtDx8aDD+JkW+F+bUf0+Jrip6nFKp
-	M4sNc8PrpJpGQNH+7SfTNGGqtnwLCzVh5aoua+oMRdRha6wK32Zx3QRH+fG9VYMhWp2Oo+sIVgy
-	v9j9Z0kvHeB1fUbBRQlb9RGs53sl29zZTLB49B4UvsIIumPA7xbwzFNOU264XMu+5xcytcVRM3u
-	yeoMLY2wf6Jf5IkMNkSaY1ZH3rHMtvWNKrydWvKGQmEo80v9wdOlQ0SPHO9dN3holWG/njzcjvz
-	5yEP3xaiAPeWWGrG9ZniK4UnB4w/MZRypYbDyN51Sdk=
-X-Google-Smtp-Source: AGHT+IEonzHqZfnBCRYQlfonbOnPQxvgulbGIw/W6HLD6It30BpUPgq+V9lDW+DY/K6ZIL0S87HICA==
-X-Received: by 2002:a05:600c:4706:b0:43c:fdbe:43be with SMTP id 5b1f17b1804b1-43d1ecd035fmr30872895e9.27.1741961022202;
-        Fri, 14 Mar 2025 07:03:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741961025; x=1742565825;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mrs2pi/IR80jSTZMZiwbcMuogKUEOta3sRCRaBeIlpM=;
+        b=BUnp5p20gtAgD5rIlPfDi7zvqJcXB0ZmM0oav72d437YSCojdZ3Wx0CtU/R/v7R3fM
+         l5w9U1k/yXAdIxatI2e364QwbNGyZCxuAciKNtk+oxKZ+RzSWfzC2LpgQIsOQqzkH04Z
+         QgmYJ/RnvmyHRItJQkwUDo3c/0W9gKdGhiU3Ty2hgzlQ7DFx445oNqwo7fN8ojquBIOM
+         vaK59CsyuMnxPBjtt0wNGthu3DLCfsUdGcdnG4rS8B7inQA+z/i1Llr/N+K8eWbc1Wgd
+         /XChQG3lH0mJpRk21fMsFrLFafnnykHYpfd/buvRGNFZfzaJR1e/68pEuU/HURqEKhDG
+         cg5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWpsdErorXDipbVr6j++Ai1wj5Zv7rG7HpmqSvIFqW1+niNriSRXApwjLMwT/8Ai5wvA/FwG+0vxDNfJZ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjomIBDK96TTZPOZRCevV7OVccDKiuxT5KEtwlfbeJke45vvSH
+	Ey+rlqpTcfqkLTrXDpBlAWwanuFtmADd4n1xLTDBQrgMMQf5AlFMhdX+cWlV9mw=
+X-Gm-Gg: ASbGncvXnNHuxU8bNBmmVBBg2J90VlIW+7bgcwhzcQkglClOfZRIdgRgNrpTbE4u9sM
+	G4W3HNgatB4iNfG7E3r2dvWuQ2FjS4wpEO5zzXbaKLMqMdPmvlRXbkwby6XcqfmMxjkz8BgXuxN
+	p03DW63E3sTtvjBXXx4KuN/TJNIwO7KYBGYf9//uo2a+zS8ThungYQDGzvSI2Mx63YorUees/3s
+	DFPiyqFEHi1Jo9ldJ/EAXk2X+loVdN1wuRJwzJ+vGcawlzqouiXjJKfCJh+lgzXFbY7pV1ryWMS
+	0M4o0sxa1GFQhya1fIeWhmRbLxrH3fDWG1mpL8LD8Fs=
+X-Google-Smtp-Source: AGHT+IE5MmqvNVK29oXVp5YU+GxENy/l3KYf+hYkaIt3jW75ricplBKSUTwse/i4MPM+8TgKs3dyZg==
+X-Received: by 2002:a05:600c:4f87:b0:43c:f629:66f3 with SMTP id 5b1f17b1804b1-43d1ec82c14mr33789905e9.18.1741961024508;
+        Fri, 14 Mar 2025 07:03:44 -0700 (PDT)
 Received: from hackbox.lan ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d200fae32sm18156455e9.31.2025.03.14.07.03.39
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d200fae32sm18156455e9.31.2025.03.14.07.03.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 07:03:40 -0700 (PDT)
+        Fri, 14 Mar 2025 07:03:43 -0700 (PDT)
 From: Abel Vesa <abel.vesa@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Konrad Dybcio <konradybcio@kernel.org>,
@@ -80,11 +82,14 @@ Cc: Johan Hovold <johan@kernel.org>,
 	linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Sebastian Reichel <sre@kernel.org>
-Subject: [PATCH v3 0/3] arm64: dts: qcom: x1e78100-t14s: Rework devicetree for LCD and OLED SKUs
-Date: Fri, 14 Mar 2025 16:03:22 +0200
-Message-Id: <20250314140325.4143779-1-abel.vesa@linaro.org>
+	Sebastian Reichel <sre@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 1/3] dt-bindings: arm: qcom: Document Lenovo ThinkPad T14s Gen 6 LCD and OLED
+Date: Fri, 14 Mar 2025 16:03:23 +0200
+Message-Id: <20250314140325.4143779-2-abel.vesa@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250314140325.4143779-1-abel.vesa@linaro.org>
+References: <20250314140325.4143779-1-abel.vesa@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,60 +98,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Lenovo Thinkpad T14s Gen6 comes in different SKUs when it comes to
-panels. The only difference that is important is whether it is an OLED
-or an LCD. The way that backlight is handled in devicetree between OLED
-and LCD forces the need of two separate DTBs.
+Due to the difference in how the panel backlight is being handled
+between the OLED variant and LCD one, it is required to have two
+separate DTBs.
 
-So create a common T14s dtsi that describes everything except the
-backlight handling, by renaming the existent dts to dtsi. Then make the
-legacy dts the LCD version, while adding a prepended oled dts. Both
-include the generic T14s dtsi.
+So document the compatible string for both the OLED and LCD variants.
 
-For the OLED version, I do not have HW to test it on, so OLED specific
-bits will come at a later stage. Still, add the OLED dts in order to set
-the stage for it.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+ Documentation/devicetree/bindings/arm/qcom.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Had to format it using "git format-patch" since b4 doesn't currently
-support -B when formatting the patch, and the renaming of the dts into
-dtsi (plus the panel properties being dropped) would've not been visible
-enough for reviewers.
-
-Changes in v3:
- - rebased on next-20250314
- - picked up Krzysztof's R-b tags
- - picked up Sebastian's T-b tag
- - Link to v2:
-   https://lore.kernel.org/r/20250310141504.3008517-1-abel.vesa@linaro.org/
-
-Changes in v2:
- - rebased on next-20250307
- - Dropped the RFC, as it seems to be agreed upon already
- - Added dt-bindings patch to document the new oled and lcd compatibles
- - Added panel variant compatible strings to each dts and included the
-   the panel type into model string as well
- - Changed backlight PWM period to 4266537 to match exact period the
-   PMIC can do.
- - Link to v1 (RFC):
-   https://lore.kernel.org/r/20250306090503.724390-1-abel.vesa@linaro.org/
-
-Abel Vesa (3):
-  dt-bindings: arm: qcom: Document Lenovo ThinkPad T14s Gen 6 LCD and
-    OLED
-  arm64: dts: qcom: x1e78100-t14s: Add LCD variant with backlight
-    support
-  arm64: dts: qcom: x1e78100-t14s: Add OLED variant
-
- .../devicetree/bindings/arm/qcom.yaml         |    4 +-
- arch/arm64/boot/dts/qcom/Makefile             |    1 +
- .../x1e78100-lenovo-thinkpad-t14s-oled.dts    |   12 +
- .../qcom/x1e78100-lenovo-thinkpad-t14s.dts    | 1506 +----------------
- ...dts => x1e78100-lenovo-thinkpad-t14s.dtsi} |    6 +-
- 5 files changed, 77 insertions(+), 1452 deletions(-)
- create mode 100644 arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
- rewrite arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts (98%)
- copy arch/arm64/boot/dts/qcom/{x1e78100-lenovo-thinkpad-t14s.dts => x1e78100-lenovo-thinkpad-t14s.dtsi} (99%)
-
+diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+index 618a87693ac1..6260839fe972 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.yaml
++++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+@@ -1123,7 +1123,9 @@ properties:
+ 
+       - items:
+           - enum:
+-              - lenovo,thinkpad-t14s
++              - lenovo,thinkpad-t14s-lcd
++              - lenovo,thinkpad-t14s-oled
++          - const: lenovo,thinkpad-t14s
+           - const: qcom,x1e78100
+           - const: qcom,x1e80100
+ 
 -- 
 2.34.1
 
