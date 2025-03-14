@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-562252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C240A6201A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 23:17:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D992A6209B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 23:39:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A868A4617AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:17:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51761460913
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B301CD21C;
-	Fri, 14 Mar 2025 22:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="G/k4c3PV"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A9A204C21;
+	Fri, 14 Mar 2025 22:39:31 +0000 (UTC)
+Received: from ida.uls.co.za (ida.uls.co.za [154.73.32.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E1C7083D
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 22:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923862046AF;
+	Fri, 14 Mar 2025 22:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.73.32.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741990644; cv=none; b=Im6JfmBKAJ2Sc4S9k7Ym/TSQrDtI8aM1CxF9K8wCge/G60XwMrqrxTetPweZ2kjzuQLoThNCszs/E811nwvs+synh7Rxf8eh3gpF6bjpJVGiRPGc6KfPl62rDsOIgGrR3K4lRjNXz1UeX/jQw37SsSvHfO0SpbkTZa8l2j/KeOM=
+	t=1741991971; cv=none; b=cJa/PVkUdaXRU45TVBW5zbFMphZ+Pr3/kvPE4ZnlVLWX0ckLRefheVwgCQiCnNTvIumBajmV5HVCfbrmvdyBcu/P5MedSks9z5PAnkfkc4uGowB1wTlxbVw/lsssIVRx9edSm82KqCubXUTXBiTp9gRmkrldPr1F6jldl5DkJEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741990644; c=relaxed/simple;
-	bh=MCa0vkcQsABiNsiBneufPykvB8LMRiVfF0XBRX4jBKE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S+T/XiE0MOWPkta+qB08wKiAuF4rgDkp6zGXNwl/3Zx10o0qivWUdx3xZWIv4EEXxk3bDaz62EhhGA+d8E3bx3JH1YvdNrMaXOzyaR5YtbRRrdET8tyX0rQG7AynUmPgeoagKZlRYw1BxUtE2gKlkbl5/r12UX2jMoIKkCZwn0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=G/k4c3PV; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741990638;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8HlGgSem6D58B/bo6nzktQDox6aIVXarAjOGoDX+TIM=;
-	b=G/k4c3PVyqfyZ6Mrqs/U03IIgxT0LRxq/dfHXWbxRJNEVstAjMA0jPIJWldHdOZgeeJKeL
-	fTKEo/ZsJt6GyE8fcwRaAX69qT0khj7pVDT0RZrtZOBqPc96v2rwMbW259DOGlLs0G8UF0
-	dHOx+eW6KNTg80ysTnj+tLCBJ6LZysw=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Satish Kharat <satishkh@cisco.com>,
-	Sesidhar Baddela <sebaddel@cisco.com>,
-	Karan Tilak Kumar <kartilak@cisco.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: fnic: Remove unnecessary NUL-terminations
-Date: Fri, 14 Mar 2025 23:16:26 +0100
-Message-ID: <20250314221626.43174-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1741991971; c=relaxed/simple;
+	bh=enX3BKgBPbznwP1Q8EVY+z08xiZnaUPXsr0MrYjgP/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KO8NvXyWLkKmHOkoEr/CPaEDNWPV+xukD3frIGorYvbTBcFIEIA4e3LWf/d8+FPb1d9dW5gkG914gn5YSshCzyK0mj3Dg5IcovnvFcH18TWZMkTcjN8UfFDO5NYlRgPQfqwoC8LmZeGaFT2fbWEaNd20/arw2RiQ/N5j2XhUbRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uls.co.za; spf=pass smtp.mailfrom=uls.co.za; arc=none smtp.client-ip=154.73.32.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uls.co.za
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uls.co.za
+Received: from [192.168.1.104] (helo=plastiekpoot)
+	by ida.uls.co.za with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <jkroon@uls.co.za>)
+	id 1ttDKz-000000005qd-2pBk;
+	Sat, 15 Mar 2025 00:17:05 +0200
+Received: from jkroon by plastiekpoot with local (Exim 4.97.1)
+	(envelope-from <jkroon@uls.co.za>)
+	id 1ttDKx-000000003kg-0TFA;
+	Sat, 15 Mar 2025 00:17:03 +0200
+From: Jaco Kroon <jaco@uls.co.za>
+To: jaco@uls.co.za
+Cc: bernd.schubert@fastmail.fm,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	miklos@szeredi.hu,
+	rdunlap@infradead.org,
+	trapexit@spawn.link
+Subject: fuse: increase readdir() buffer size
+Date: Sat, 15 Mar 2025 00:16:26 +0200
+Message-ID: <20250314221701.12509-1-jaco@uls.co.za>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20230727081237.18217-1-jaco@uls.co.za>
+References: <20230727081237.18217-1-jaco@uls.co.za>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,47 +59,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Spam-report: Relay access (ida.uls.co.za).
 
-strscpy_pad() already NUL-terminates 'data' at the corresponding
-indexes. Remove any unnecessary NUL-terminations.
+This is a follow up to the attempt made a while ago.
 
-No functional changes intended.
+Whist the patch worked, newer kernels have moved from pages to folios,
+which gave me the motivation to implement the mechanism based on the
+userspace buffer size patch that Miklos supplied.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/scsi/fnic/fdls_disc.c | 3 ---
- 1 file changed, 3 deletions(-)
+That patch works as is, but I note there are changes to components
+(overlayfs and exportfs) that I've got very little experience with, and
+have not tested specifically here.  They do look logical.  I've marked
+Miklos as the Author: here, and added my own Signed-off-by - I hope this
+is correct.
 
-diff --git a/drivers/scsi/fnic/fdls_disc.c b/drivers/scsi/fnic/fdls_disc.c
-index 11211c469583..7294645ed6d2 100644
---- a/drivers/scsi/fnic/fdls_disc.c
-+++ b/drivers/scsi/fnic/fdls_disc.c
-@@ -1898,7 +1898,6 @@ static void fdls_fdmi_register_hba(struct fnic_iport_s *iport)
- 	if (fnic->subsys_desc_len >= FNIC_FDMI_MODEL_LEN)
- 		fnic->subsys_desc_len = FNIC_FDMI_MODEL_LEN - 1;
- 	strscpy_pad(data, fnic->subsys_desc, FNIC_FDMI_MODEL_LEN);
--	data[FNIC_FDMI_MODEL_LEN - 1] = 0;
- 	fnic_fdmi_attr_set(fdmi_attr, FNIC_FDMI_TYPE_MODEL, FNIC_FDMI_MODEL_LEN,
- 		data, &attr_off_bytes);
- 
-@@ -2061,7 +2060,6 @@ static void fdls_fdmi_register_pa(struct fnic_iport_s *iport)
- 	snprintf(tmp_data, FNIC_FDMI_OS_NAME_LEN - 1, "host%d",
- 		 fnic->host->host_no);
- 	strscpy_pad(data, tmp_data, FNIC_FDMI_OS_NAME_LEN);
--	data[FNIC_FDMI_OS_NAME_LEN - 1] = 0;
- 	fnic_fdmi_attr_set(fdmi_attr, FNIC_FDMI_TYPE_OS_NAME,
- 		FNIC_FDMI_OS_NAME_LEN, data, &attr_off_bytes);
- 
-@@ -2071,7 +2069,6 @@ static void fdls_fdmi_register_pa(struct fnic_iport_s *iport)
- 	sprintf(fc_host_system_hostname(fnic->host), "%s", utsname()->nodename);
- 	strscpy_pad(data, fc_host_system_hostname(fnic->host),
- 					FNIC_FDMI_HN_LEN);
--	data[FNIC_FDMI_HN_LEN - 1] = 0;
- 	fnic_fdmi_attr_set(fdmi_attr, FNIC_FDMI_TYPE_HOST_NAME,
- 		FNIC_FDMI_HN_LEN, data, &attr_off_bytes);
- 
--- 
-2.48.1
+The second patch in the series implements the changes to fuse's readdir
+in order to utilize the first to enable reading more than one page of
+dent structures at a time from userspace, I've included a strace from
+before and after this patch in the commit to illustrate the difference.
+
+To get the relevant performance on glusterfs improved (which was
+mentioned elsewhere in the thread) changes to glusterfs to increase the
+number of cached dentries is also required (these are pushed to github
+but not yet merged, because similar to this patch, got stalled before
+getting to the "ready for merge" phase even though it's operational).
+
+Please advise if these two patches looks good (I've only done relatively
+basic testing now, and it's not running on production systems yet)
+
+Kind regards,
+Jaco
 
 
