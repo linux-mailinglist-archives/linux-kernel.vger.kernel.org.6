@@ -1,115 +1,97 @@
-Return-Path: <linux-kernel+bounces-561016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285CBA60C78
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:59:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 782FEA60C7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:00:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C0691896BF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:00:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F48D7A305D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA0F1DE8A5;
-	Fri, 14 Mar 2025 08:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE7B1DFDAE;
+	Fri, 14 Mar 2025 08:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="owLJ1WJu"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AjTrZ4fo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44AF1DE2B4;
-	Fri, 14 Mar 2025 08:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AB91DF98D
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741942769; cv=none; b=MS9fwEd1p6uA6Deel5X3R8b6hS4okLnnfovx9pImBzSHD9npAUQGajNb/eULAIrqa3XViOI5r/YvPC1WFxofA2xSUWeVMeZPVVGFZTZAvRvxxDUF1V5aW9Nl+aynRm38Fjck3yd7Ogw8wBZNF5dtRUs5gWEkzqm1AHpSdrA6Fjw=
+	t=1741942781; cv=none; b=Y8bsLqhUYsnUIkzOWXp9y1FQ7JKpI3b2SKDsocv+K/9wmAPfIY2prsZnqG3N73ycgiyt8hOBRVllJphnOEV00F6ZcB7Z8pCVFrlcqA3S43FQtOtE8a7nJ/RkxptSyPcR9HMbpp8KRFhKsZ/AhWvx4PoMX98YD9IqZDeEgEYyNSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741942769; c=relaxed/simple;
-	bh=dO2g62Nlwp+u8LGId8NUD6lLWl2ArcKsTpjA88vbPVo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aKNsikXAM9Egwg30ZB1U3skch7HHAj+K5p6jL8j3tKYbsFJtQgLtKiT2g1runz1F2absaw1vTLNChyLus6FfkHusqKxisTKprmKpO15Ja4B63yn/1YIcyGD+xcrT0Y+xE/E7yFpUlnShZeYBqKsM4Vg/vF6B0Py4JJbD4hXZHU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=owLJ1WJu; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741942766;
-	bh=dO2g62Nlwp+u8LGId8NUD6lLWl2ArcKsTpjA88vbPVo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=owLJ1WJu0YKFv0vCeABK86Cs/4CF+m+pf5V2jGXI5Th+cqcCaysIujd1olFmyZou5
-	 BCH9bEIqNTJqx1LnT4yxIuzQofiE/ZmInPnWe0LdLTgbdS4E7MnSSROdWsAZmRNFIz
-	 E57s7m+GwOo0FVvu/yTb63il4pNmhvdRSvBNyYx0AUBBgppteciBMEnkMP1bigrN9n
-	 FE8PjZ1TMZLHsZNg5OX+KHgCP8hcGn5LKLQMbGVlb+NrziOiD1kfWAbgOtjjughYo2
-	 oPCPP/nflkUJDGUVQesX6PZE5MxUzbvkSpbLSsda6Fn2xQHqxvinFdcXt3g7WPcH2z
-	 UW8sjJvbCRGrw==
-Received: from debian.. (unknown [103.163.65.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id CA66717E0ABD;
-	Fri, 14 Mar 2025 09:59:21 +0100 (CET)
-From: Vignesh Raman <vignesh.raman@collabora.com>
-To: dri-devel@lists.freedesktop.org
-Cc: daniels@collabora.com,
-	helen.fornazier@gmail.com,
-	airlied@gmail.com,
-	simona.vetter@ffwll.ch,
-	robdclark@gmail.com,
-	guilherme.gallo@collabora.com,
-	sergi.blanch.torne@collabora.com,
-	valentine.burley@collabora.com,
-	lumag@kernel.org,
-	quic_abhinavk@quicinc.com,
-	mripard@kernel.org,
-	jani.nikula@linux.intel.com,
-	linux-mediatek@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	amd-gfx@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] drm/ci: arm64.config: mediatek: enable PHY drivers
-Date: Fri, 14 Mar 2025 14:28:52 +0530
-Message-ID: <20250314085858.39328-4-vignesh.raman@collabora.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250314085858.39328-1-vignesh.raman@collabora.com>
-References: <20250314085858.39328-1-vignesh.raman@collabora.com>
+	s=arc-20240116; t=1741942781; c=relaxed/simple;
+	bh=1AuhTTwym8ZiEhPHHXjGf6cveKLzhSFxbirQjF+OwYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=plUVB025umf5ic33blNDZ2K1E8dgIQuL79usd6GUlDmPHS06NUUJ89vMbSxln1uRBgwmwHM1dVcqN6U9ysqIskR/ORCkyXsdcG6TMxSFa/kOD7qOaBY+CBsHf1axDR+X3XsaJoNK8uoCApFxkipm2jffBgUKf9tRge+nzjo6goI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AjTrZ4fo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD01EC4CEEB;
+	Fri, 14 Mar 2025 08:59:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741942780;
+	bh=1AuhTTwym8ZiEhPHHXjGf6cveKLzhSFxbirQjF+OwYc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=AjTrZ4foNlGW7mesTBeWiIT2eWFAMwUy1XPwLy/0qZLT/5SaeaGrEfw4p5J3lLlOY
+	 vLgAOYlXp/bUqWmZOPdpJKCGBmDoyweUV/bTLR16OECmxl3aAqxQ27Ixh8zu5PxuxJ
+	 ZP61mUZ1zs0TcyMz89iMqHykZZCEi6kagokiSebO7Q7vungem1/KhBO0T0xMx9LTxr
+	 GXqCC50mTYiQcFE9cVuJn9MajYvT0G4xIEliKsUfdYsa9yWr+4gB9WhmlEr+h2eiUi
+	 PH1qWKD5QdjYVy9YNoCgtnHFDVROPYCooRdYy4zK9XpjLYMq009uZauxObwyiRvJi2
+	 UFTK9D/5LEn/g==
+Date: Fri, 14 Mar 2025 09:59:36 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <a.p.zijlstra@chello.nl>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] core kernel fix
+Message-ID: <Z9Pv-InPlIE03148@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 
-The mediatek display driver fails to probe on mt8173-elm-hana and
-mt8183-kukui-jacuzzi-juniper-sku16 in v6.14-rc4 due to missing PHY
-configurations.
+Linus,
 
-Enable the following PHY drivers for MediaTek platforms:
-- CONFIG_PHY_MTK_HDMI=y for HDMI display
-- CONFIG_PHY_MTK_MIPI_DSI=y for DSI display
+Please pull the latest core/urgent Git tree from:
 
-Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
----
- drivers/gpu/drm/ci/arm64.config | 2 ++
- 1 file changed, 2 insertions(+)
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-urgent-2025-03-14
 
-diff --git a/drivers/gpu/drm/ci/arm64.config b/drivers/gpu/drm/ci/arm64.config
-index a8fca079921b..fddfbd4d2493 100644
---- a/drivers/gpu/drm/ci/arm64.config
-+++ b/drivers/gpu/drm/ci/arm64.config
-@@ -193,6 +193,8 @@ CONFIG_PWM_MTK_DISP=y
- CONFIG_MTK_CMDQ=y
- CONFIG_REGULATOR_DA9211=y
- CONFIG_DRM_ANALOGIX_ANX7625=y
-+CONFIG_PHY_MTK_HDMI=y
-+CONFIG_PHY_MTK_MIPI_DSI=y
+   # HEAD: 366fef794bd2b7c2e9df933f6828dd9739bfba84 <linux/cleanup.h>: Allow the passing of both iomem and non-iomem pointers to no_free_ptr()
+
+Fix a Sparse false positive warning triggered by no_free_ptr().
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Ilpo Järvinen (1):
+      <linux/cleanup.h>: Allow the passing of both iomem and non-iomem pointers to no_free_ptr()
+
+
+ include/linux/cleanup.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
+index ec00e3f7af2b..ee2614adb785 100644
+--- a/include/linux/cleanup.h
++++ b/include/linux/cleanup.h
+@@ -212,7 +212,7 @@ const volatile void * __must_check_fn(const volatile void *val)
+ { return val; }
  
- # For nouveau.  Note that DRM must be a module so that it's loaded after NFS is up to provide the firmware.
- CONFIG_ARCH_TEGRA=y
--- 
-2.47.2
-
+ #define no_free_ptr(p) \
+-	((typeof(p)) __must_check_fn(__get_and_null(p, NULL)))
++	((typeof(p)) __must_check_fn((__force const volatile void *)__get_and_null(p, NULL)))
+ 
+ #define return_ptr(p)	return no_free_ptr(p)
+ 
 
