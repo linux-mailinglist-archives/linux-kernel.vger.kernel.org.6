@@ -1,110 +1,125 @@
-Return-Path: <linux-kernel+bounces-561179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFE2A60E57
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:11:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1781DA60E4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:10:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5B901B60A90
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:11:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A0E27AAA7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C831F4739;
-	Fri, 14 Mar 2025 10:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431571F3BB5;
+	Fri, 14 Mar 2025 10:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DII7biZc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yeQh5Txs"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38421F3FF1
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00ED1F30C3
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741947068; cv=none; b=Ib4iuCI4WTFct7uYYdOMD9ePIsZSoktr0vRX01nCxSMCR4x7PmWgnlYYC7/OMyTU8N5EuUhp8jGE1h7E5VgFM/r0sBBBtI1JvtShsgYKS0MjwJHXY23vhlsG4/cHQZh77dVA5tzyyQYn8SlZdNKBXifjhVLcJX4JhBHJqh8ZYuc=
+	t=1741947033; cv=none; b=Xpb1hRP6UTa1/KySaaDcgZAfLyDEMZszy+E0qZ/3alfFGF5QNRm66Hz5tn0Sl4ZuQLT5rnmdSz/uhOHu2iw/jCD3MJPmlxmB/aMcubFJ/1reT2IC0QrnS94WuERvZUnbml9p/RAmKh2Tj4o4K4U5Ec6Yw2LDpgBV6oHdh4Ev20A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741947068; c=relaxed/simple;
-	bh=U98yKqR09pci6Dos0Xkhum9zeW7dWjBPjiKDCl11NQ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FLLYFUIoB1I4f/KpNGsNdogJZBtoN+IXD95Cm0Nrjvwwh+JYRFnzaKvxdo6nvyj0aTctLo4XBZJ/d3cQ3WrhDfpMZLbAddDqkM5XtrN4GLeV2qe4kgigHg60xSd5ud7a9p2ygD1zOWmh71+0ywkHUTMLEeyuIoV2hm9mdP7FbCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DII7biZc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B88BC4CEE9;
-	Fri, 14 Mar 2025 10:11:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741947068;
-	bh=U98yKqR09pci6Dos0Xkhum9zeW7dWjBPjiKDCl11NQ0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DII7biZchvhnRhdU3rKFzW0yo5dl9ZwMpZtayi1CfTmdqFN+PQIv22aSNvg7oYTgR
-	 lHPvJ0NBG3rgGW+XT/294GuK1Rp4csTkCJ2/ZWG+0Aan+NNYMvU1iDLBA/k4P01gQ4
-	 zEzhLccNyDWZijIG1GqSe5Mu+bUhBUIrTeqR//Lf0Q4FZOTFQnbWVF/Ma9L3KxI4Rz
-	 wGhiZGDF+jjbsfq1TSBWNRGNHJ/Gx299k4XLQLIBF7PDWp0OY9/CpLP62uScflhU45
-	 OYIX6wtQ0LxYR7HcZ0auXmVKqQ2i2hdH2o9BDa0QxWH9v5jlm1j5ZVauJTyaTDS7Ih
-	 quMNxGTIOqHYQ==
-From: Philipp Stanner <phasta@kernel.org>
-To: Matthew Brost <matthew.brost@intel.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Subject: [PATCH v3 2/2] drm/sched: Remove kthread header
-Date: Fri, 14 Mar 2025 11:10:24 +0100
-Message-ID: <20250314101023.111248-3-phasta@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250314101023.111248-2-phasta@kernel.org>
-References: <20250314101023.111248-2-phasta@kernel.org>
+	s=arc-20240116; t=1741947033; c=relaxed/simple;
+	bh=BcXDWjNDH9NxBSFwCKcCR4CNXdHbwnkXYntrn0DgUxs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=u0H4xDCVvT+KC2trmHcdfB9iWnG31uqRMWEmywu247JiOceDrfv5bKObGbYNltn5RlEpsHTXxBhhkiU6U97A1fQnPs9L8O7xlguD6FuQpeNLLaUGjNgiX8dGkFpq6MmRu4yOZG0Ds8FRInj1YLZ71DXqssHkoHF0sibaiJh1W1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yeQh5Txs; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4394036c0efso12647455e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:10:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741947030; x=1742551830; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/yH/A8g/K36DzReQ5QPIAfNlm2z6G0ua2f9/UOEVNfA=;
+        b=yeQh5TxsE/Zn0ovKKnABzxT5d1YlflNH1uxPrW5qwwFMmW4lZUo3rUxfBqKgJYv4t+
+         kFajJBom1SGitl2Bd9/FajND4CGfl6da9G9zctTlWtt7Os221Cck0uDNmecv2/FQBpYH
+         5qwYpmcUX0NRHkOcuvTazjjjnGO/d4gq7dUwUOMoAa4f+Ka7q8f/DpB4aGHHOu+DH0nb
+         Q9EV0lq2Kt9rtaONO+3yLY3RVjrlfok1J6eT0volhFE8cJETATN/KymTCEje9HZuPqud
+         9UpxMGL8ONEkyV8p7cp3Lp5/hAiExbgcpsbOrZYl9cXznnC1vSlaRYxMyZLoXI83t7YY
+         x0jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741947030; x=1742551830;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/yH/A8g/K36DzReQ5QPIAfNlm2z6G0ua2f9/UOEVNfA=;
+        b=L+WtmoA9vyZ5mKfS0vl/iL9VsikvichmorHZ0PK8t6+ExXDCE6ltH3QYknrRcH1zjv
+         dISlDKufNz82vDcOgUasU7MjxnDVWsB8i3/wBYboOtMoQ1oQifi2nlDBQt7WN8lr6ANU
+         uuxXdDQXIOABtTltHorgc0K+qwQVpg5AMjMiP2WDq0STBVEhPRbxv1dUzDWCWxYmGKqU
+         YE5MNaN7yT1Av0NopIzcyuRALawGgPvyiMC/ipgZuCh3URptCU1jTIWhhbcwmHQLT4rW
+         W6gOaDdO4T9317u2JneeDgJPZxMmFfpMLrVWCXAkrv+J/Jk5AwabKqfr2rDvHn9TwswN
+         rLxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUk+HJc5APDwuE/IfYRE6HgPrRGaT/z5WRHdlJsI0s6sZP1KqyPMDWbTU8eCV3c8rStY3XETKml7WkP2Ac=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3fMpS3fnEIHK1yvlCNXKARyUCptY3pUjhgt3WKWYvuax6J6us
+	2LAPgpZ09O4k6xOhZ49Yz0S/3n7Y1j7nXiNUELkidZkktyQgF4QGq8oblBmjz8g=
+X-Gm-Gg: ASbGncswE8VU3zSbWWCwaMCDs/BQGWGkbMYpX3K6BiMRdDz9Lm5yHYLOwMtfJZ/F/C/
+	StM/Nr57lP6Eye4Xn0Z0GGM2eo1L+3TptYb7SKBdFdgj/IKRub4WJuAOzOjvVjhDTEBp2K5TctG
+	AevxGm0kCZd6D3rajpPo7UxUsvNR7ZAp+ByydEVQ7xnRdXgxAfWOBaVZ0f56se9VDOMDf18REFn
+	2pWEJLB/Xh4zTdgc7E5ZN6gXDthtC/kaCdXQWkxSqo6jgy31a88LVbPnHn1zD5w2ZfIICnqnT6T
+	DYKeIk/i7vW6b5nlAe4xyBHYW1VCLVQ7niB2liJ7RcZ4s/OdMw==
+X-Google-Smtp-Source: AGHT+IEECOLyJp5NIeQvulNAkbhsGSs7V93hbdXM58mYrb+Q+2KYj17/lCT2jxHZ53RSu/8bRhtopA==
+X-Received: by 2002:a05:600c:3592:b0:43c:f44c:72b7 with SMTP id 5b1f17b1804b1-43d1ec86200mr26793325e9.14.1741947030009;
+        Fri, 14 Mar 2025 03:10:30 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395c8975d65sm5143965f8f.56.2025.03.14.03.10.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 03:10:29 -0700 (PDT)
+Date: Fri, 14 Mar 2025 13:10:26 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Longbin Li <looong.bin@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] spi: sg2044-nor: fix uninitialized variable in probe
+Message-ID: <d343921b-16b8-429b-888a-f51bb6f2edc8@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <79c71b81-73a9-407d-be6f-481da27180bc@stanley.mountain>
 
-The kthread header doesn't need to be included anymore. It's a relict
-from commit a6149f039369 ("drm/sched: Convert drm scheduler to use a
-work queue rather than kthread").
+The "base" pointer is uninitialized.  It should be "spifmc->io_base"
+instead.
 
-Remove the unneeded includes.
-
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Fixes: de16c322eefb ("spi: sophgo: add SG2044 SPI NOR controller driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/scheduler/sched_entity.c | 1 -
- drivers/gpu/drm/scheduler/sched_fence.c  | 1 -
- 2 files changed, 2 deletions(-)
+ drivers/spi/spi-sg2044-nor.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
-index 74a72c0a9c0a..8551892aca12 100644
---- a/drivers/gpu/drm/scheduler/sched_entity.c
-+++ b/drivers/gpu/drm/scheduler/sched_entity.c
-@@ -21,7 +21,6 @@
-  *
-  */
+diff --git a/drivers/spi/spi-sg2044-nor.c b/drivers/spi/spi-sg2044-nor.c
+index baa4cf677663..97d6b3a21d54 100644
+--- a/drivers/spi/spi-sg2044-nor.c
++++ b/drivers/spi/spi-sg2044-nor.c
+@@ -427,7 +427,6 @@ static int sg2044_spifmc_probe(struct platform_device *pdev)
+ {
+ 	struct spi_controller *ctrl;
+ 	struct sg2044_spifmc *spifmc;
+-	void __iomem *base;
+ 	int ret;
  
--#include <linux/kthread.h>
- #include <linux/slab.h>
- #include <linux/completion.h>
+ 	ctrl = devm_spi_alloc_host(&pdev->dev, sizeof(*spifmc));
+@@ -447,8 +446,8 @@ static int sg2044_spifmc_probe(struct platform_device *pdev)
+ 	spifmc->ctrl = ctrl;
  
-diff --git a/drivers/gpu/drm/scheduler/sched_fence.c b/drivers/gpu/drm/scheduler/sched_fence.c
-index e971528504a5..d6239e015b66 100644
---- a/drivers/gpu/drm/scheduler/sched_fence.c
-+++ b/drivers/gpu/drm/scheduler/sched_fence.c
-@@ -21,7 +21,6 @@
-  *
-  */
+ 	spifmc->io_base = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(base))
+-		return PTR_ERR(base);
++	if (IS_ERR(spifmc->io_base))
++		return PTR_ERR(spifmc->io_base);
  
--#include <linux/kthread.h>
- #include <linux/module.h>
- #include <linux/sched.h>
- #include <linux/slab.h>
+ 	ctrl->num_chipselect = 1;
+ 	ctrl->dev.of_node = pdev->dev.of_node;
 -- 
-2.48.1
+2.47.2
 
 
