@@ -1,93 +1,147 @@
-Return-Path: <linux-kernel+bounces-561551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FAB7A61364
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:11:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398BCA6137E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:18:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A36F19C15AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:11:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6427A16F66B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D16200B98;
-	Fri, 14 Mar 2025 14:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8C2200127;
+	Fri, 14 Mar 2025 14:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A1I1ZoXS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="xCdQdTxd"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBF11FFC4B;
-	Fri, 14 Mar 2025 14:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F33B2E336A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741961481; cv=none; b=GwFTZMgfvdoXoAANJ1NZExOZx20UN9W9pLidvj6OD71Ri8URTtbFsKP/zZZITgzhG3IYK3R4o18wxPxt50b87WcQCuy+olWCH+o7wZjNLQMtEso8yeCoXF4tQbyQ8l5xayGEIwSu5e3lu8myrugb1PrJlfs6KI8xMoCuQTL8GZQ=
+	t=1741961923; cv=none; b=eyJSETI7ZXy0Ivf6eghNeZET/IgHefmKBzc/KDjp8vTr7cmWCRnGq/42siHpr3o+j+A5GeuA63bjppn4T9pevkgIc9gYF23RqdqlqfyN5owIjMhIAvBrUe9SslIuWQL6C34l+mHDLq63IhAkMnskA5J34jHg/LJIb275pn/Y3K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741961481; c=relaxed/simple;
-	bh=bz59DFEQD327qDVN2cGR9TZ8G4JDN8ygzzmv/amSG0A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uojhKZEjufdpDZmQKvS/axLElllMi7tyN3iPBJHeG4eXzwsVHSIDbnRFGOhKu/TVCR2xV2WNvNmXDSzleV38RLx7YOk6u2JjUZ+XeVgcBPa3PnvTp1EQ7zt0FwKAJSNGLa4EicMP14gq6dC5tylSPwB0jYfhFAbYLPlwVGCmQZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A1I1ZoXS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4257C4CEE3;
-	Fri, 14 Mar 2025 14:11:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741961480;
-	bh=bz59DFEQD327qDVN2cGR9TZ8G4JDN8ygzzmv/amSG0A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=A1I1ZoXSJZ/HoftzzNT7OwBrH2CZeWDU9huoWJmrzzf7zdfoY+UfixwevwXk5EgWg
-	 WzfLVYyh2wLc3dF/HWUWkuQEtaxuBP/oV9ee23E7IrNzeEhimQRcQxoqDfYXMT+Ssd
-	 DItuWLpkKDDOtLZ6eEryBen58FZh2V4lPOqtkvbNGGB0KwAhmX+6op/A/iRo4Zc2lJ
-	 YBjKeOqjVrFtW9G6EBxGCSzAploj7M1fHA3R6smKZ5664rLNgomd489DqEoIf/5DnU
-	 fiHArSxJ7stzvdjAoc0oUcAQ18X6FavZ15p8iiKICBrtGSfqyWfPKvVt1hqlZE5cI2
-	 zSFassawFghVg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH RFC v2 1/2] dt-bindings: remoteproc: Add SM8750 MPSS
-Date: Fri, 14 Mar 2025 07:17:10 -0700
-Message-ID: <174196182746.401258.18204547306747015679.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250221160300.160404-1-krzysztof.kozlowski@linaro.org>
-References: <20250221160300.160404-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1741961923; c=relaxed/simple;
+	bh=lBBP5TqAT8LnzORobHQMDmtz1K3uTro/RaLi3DNhWVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BUeaGoir3Jwitm6t4E256IFwUOFaXCFR6ReeCrD6kSDzt3jwdVvSRxlMwERo2YA6RRjT5R6l97dOE75ps/YtEMra5ezvasGR7iQpDmHfPGKZx/D+aa2mP3YfYYc8cTfK90js4a1MhCQ0wy6ALftBypGpzYlm/E766v/a6JXTTho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=xCdQdTxd; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4768f90bf36so17876561cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:18:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1741961919; x=1742566719; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IaDYviHzXbMRVdS6PNoP5phPb9zBK8u8E5XEDQrfB7c=;
+        b=xCdQdTxdVkCQNyzuB276+D7tHd5AedJraIRaGOYtzlxRmZe9r9I6mLZ/E3AcZ+2cIh
+         4v9mqOrehdM6OmNlbymrnhdetcbRb72N9IwxOdn8DYDySieXYPfzv9pQPBNEvg5T2Cbe
+         URNHTBKKFY3VClL7wECtspgvxm8yOw4d1bu17AgvFvLveJMn4SkAkbqo6fgJA5bVINqy
+         y50MhblUCzzOxvXD1PGtuEMWI374YeRdF1srXhIpiKQ+uJq8sBjVTcxY6nlGVds1WdUs
+         RYqCWtLNUJkM1NQ+FHtNO9kNaMv/7smvVSrTq7qOtAzFkg6R9p0TmhhUGDG9A/g/ippD
+         cINg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741961919; x=1742566719;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IaDYviHzXbMRVdS6PNoP5phPb9zBK8u8E5XEDQrfB7c=;
+        b=Tqw1NkPYkZ+toRLettEx/j8MiRJkWV/HjSNXEVQy154MEq/duUJ78paMidZyXQjOCv
+         RgZkUk3Qz/PD/oa/YOS8Clyd4pbX3J/cJPqIP4Z7ebLxp7+KvdpiUgEWhtPNs1LRrhwq
+         jTZgrFfh7g10Dn6FmcVj8HaUp1rRH7g6aX88TuUUCBGe/VKS+hUwDTv+sX0KyQQwkBfH
+         xF5BoAgeHoP6oGmqHpg6DIe6CDejZXlAr7YO7GUgL3p8gnhNhgvg0CkBo3LA023+pUVR
+         6XqCOEeWwZOetfoEnS8m4bDONcmeVfIu5/wNC0Xy7F0E6C5xfJSuk7/mftGVBAzqt5/K
+         NZ6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW6Lcls4PeUalFznvA0DoRjJ0cUvZWmSveGIrf092SYH9Yy2tBHFLjJykQI5msK+OpE/EE+KqJzT15bvIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPvPep9JewJRgMj67mBXUNvYBRhYTNcbH0L67o8w7yfN8zEVR3
+	Iy9S7H8vcvSB9Jjf2u+pUwaac1/D8ImLnqwtdaH3AX7L17tmwcK807ezvXZxHRU=
+X-Gm-Gg: ASbGncuvGgbS+ZxWS2NnuS/b1zAijB5hqsNgdz8ByGTrL2tO2MygGtm5bZShQDX2LLF
+	nVTU0XEYE/nna+UfPZ15cNDcJHgEMaQZAszfTZ3pWFBmxN7GW+vfc/10BPQMTJhZWuDiFGHC4rT
+	XJFba1hl8Efiqk1wFBs0MdkQ6xqvgrj7GcC6WwXJ7iTnacOZZr0jFVCzmMO5wcPAbNzJpJ/3TsZ
+	oYrTOQbwFY+acLj5dMSKGAvtDY43fVHs7NsnIXlUTEyaD3KoXVk2ID0p20kPoHLt6hy6+WtxJRi
+	eKAB8aeDgqyL0fyK6wxAlaWIPIb7d6JFR3ZCmEtUvcI=
+X-Google-Smtp-Source: AGHT+IG7F2ni/878Zv1My77dBoi+suAvL96gvrp6tTD3MWR04MKx7wwf6zLBRFeSQYIOoSvEPfAl0g==
+X-Received: by 2002:a05:622a:250:b0:476:9e28:ce49 with SMTP id d75a77b69052e-476c81e8cc8mr35426001cf.43.1741961918922;
+        Fri, 14 Mar 2025 07:18:38 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-476bb6370aasm23704331cf.20.2025.03.14.07.18.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 07:18:37 -0700 (PDT)
+Date: Fri, 14 Mar 2025 10:18:33 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Zhongkun He <hezhongkun.hzk@bytedance.com>, akpm@linux-foundation.org,
+	muchun.song@linux.dev, yosry.ahmed@linux.dev, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] mm: vmscan: skip the file folios in proactive reclaim
+ if swappiness is MAX
+Message-ID: <20250314141833.GA1316033@cmpxchg.org>
+References: <20250314033350.1156370-1-hezhongkun.hzk@bytedance.com>
+ <Z9PuXMlHycL6Gco0@tiehlicka>
+ <Z9P2nZ6b75FRMhCp@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9P2nZ6b75FRMhCp@tiehlicka>
 
-
-On Fri, 21 Feb 2025 17:02:59 +0100, Krzysztof Kozlowski wrote:
-> Add remote processor PAS loader for SM8750 MPSS (modem).  Device looks
-> fully compatible with SM8650, however it lacks fifth memory region for
-> Qlink Logging, according to downstream sources.  This is a bit tricky,
-> because updated downstream sources for newer downstream release dropped
-> that fifth memory region as well.
+On Fri, Mar 14, 2025 at 10:27:57AM +0100, Michal Hocko wrote:
+> On Fri 14-03-25 09:52:45, Michal Hocko wrote:
+> > On Fri 14-03-25 11:33:50, Zhongkun He wrote:
+> > > With this patch 'commit <68cd9050d871> ("mm: add swappiness= arg to
+> > > memory.reclaim")', we can submit an additional swappiness=<val> argument
+> > > to memory.reclaim. It is very useful because we can dynamically adjust
+> > > the reclamation ratio based on the anonymous folios and file folios of
+> > > each cgroup. For example,when swappiness is set to 0, we only reclaim
+> > > from file folios.
+> > > 
+> > > However,we have also encountered a new issue: when swappiness is set to
+> > > the MAX_SWAPPINESS, it may still only reclaim file folios. This is due
+> > > to the knob of cache_trim_mode, which depends solely on the ratio of
+> > > inactive folios, regardless of whether there are a large number of cold
+> > > folios in anonymous folio list.
+> > > 
+> > > So, we hope to add a new control logic where proactive memory reclaim only
+> > > reclaims from anonymous folios when swappiness is set to MAX_SWAPPINESS.
+> > > For example, something like this:
+> > > 
+> > > echo "2M swappiness=200" > /sys/fs/cgroup/memory.reclaim
+> > > 
+> > > will perform reclaim on the rootcg with a swappiness setting of 200 (max
+> > > swappiness) regardless of the file folios. Users have a more comprehensive
+> > > view of the application's memory distribution because there are many
+> > > metrics available. For example, if we find that a certain cgroup has a
+> > > large number of inactive anon folios, we can reclaim only those and skip
+> > > file folios, because with the zram/zswap, the IO tradeoff that
+> > > cache_trim_mode is making doesn't hold - file refaults will cause IO,
+> > > whereas anon decompression will not.
+> > > 
+> > > With this patch, the swappiness argument of memory.reclaim has a more
+> > > precise semantics: 0 means reclaiming only from file pages, while 200
+> > > means reclaiming just from anonymous pages.
+> > 
+> > Haven't you said you will try a slightly different approach and always
+> > bypass LRU balancing heuristics for pro-active reclaim and swappiness
+> > provided? What has happened with that?
 > 
-> There might be other differences against SM8650, because the modem
-> currently crashes after starting.
-> 
-> [...]
+> I have just noticed that you have followed up [1] with a concern that
+> using swappiness in the whole min-max range without any heuristics turns
+> out to be harder than just relying on the min and max as extremes.
+> What seems to be still missing (or maybe it is just me not seeing that)
+> is why should we only enforce those extreme ends of the range and still
+> preserve under-defined semantic for all other swappiness values in the
+> pro-active reclaim.
 
-Applied, thanks!
-
-[1/2] dt-bindings: remoteproc: Add SM8750 MPSS
-      commit: 89f95f2108de52431bbf0ca432e337fc1f40ee00
-[2/2] remoteproc: qcom: pas: Add SM8750 MPSS
-      commit: 6174206a4b5bebc0b4e01a684672e2bf79df38d8
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+I'm guess I'm not seeing the "under-defined" part. cache_trim_mode is
+there to make sure a streaming file access pattern doesn't cause
+swapping. He has a special usecase to override cache_trim_mode when he
+knows a large amount of anon is going cold. There is no way we can
+generally remove it from proactive reclaim.
 
