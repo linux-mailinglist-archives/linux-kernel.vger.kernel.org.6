@@ -1,173 +1,102 @@
-Return-Path: <linux-kernel+bounces-562135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD24BA61D1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:48:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A72DCA61D1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:48:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE7347A6CDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:47:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7BBC3B7192
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205951957E4;
-	Fri, 14 Mar 2025 20:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283371A4B69;
+	Fri, 14 Mar 2025 20:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L3Ixpg0H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="p/o5pkzq"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7512F1E871;
-	Fri, 14 Mar 2025 20:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3315716DED2;
+	Fri, 14 Mar 2025 20:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741985295; cv=none; b=Jj8PQSdNQhPf1k2WjyZd7WTClR6DVbagUV4dKq+WsLag5PN479/b5TZ7HZd3LrQ3hJ7g5tSnhFPbpBL9glqTqaAZvmEYQ5ukls1r7JKnxKOBNx5kgFloA1kznn2UD9te1Mzc6gdvKlkZu6eW2D9As/wkEVWOt4AHt1PhkmRH0hI=
+	t=1741985328; cv=none; b=rmtj5pEgEt6hELCPbLCKV3B+YDKVNSrv9NHXtTb0VAU+AzZu+SSgYFupkOdi2cQkPsYMYQFoLJ5xsKluLObOVAS6BpvTd0mQ6NRdWtDMVl45uvNb0IR0c07pX65OAbCORjPouhjmuJ+Fy/+Z8BAklaIGzE0YyvxK4UKalEDWWmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741985295; c=relaxed/simple;
-	bh=QZITLRQh5Pilrk+i/O0RCZEME5s/otaVmwmlBiRuMuc=;
+	s=arc-20240116; t=1741985328; c=relaxed/simple;
+	bh=hb+j22OLJfbyikJ7HtNDHq4frjzAGP3W5g1S+Tq6vBY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mnLn0QdN+7AG9UXtmCJh2lgjbWrTCW4tGRSoTavL5ufJAF9XCg09TOnxwTRfO8cuXiIXyv5QjoSyPiMTl/9to/Cz5mNhgsv6xMHi+Q+w03MiSK3JBSWVjlDLvHMqGK+qBfp5VHpvnB8o0/jRD/KbK/YTdLlDrDGTSMSt7CV/G/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L3Ixpg0H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6662EC4CEE3;
-	Fri, 14 Mar 2025 20:48:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741985294;
-	bh=QZITLRQh5Pilrk+i/O0RCZEME5s/otaVmwmlBiRuMuc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L3Ixpg0HJRCUFTfxE27Wt1rf8UBwz/oBrqEwQ9TeF9/iO30PlBJ8WNVSSD5qv5EqV
-	 0QZowG9NQuNgXghNkjEX/Tx//JTcWhTB+KMh7ybKLX5Td2nN+NXi3lYZEhzxwVPsXr
-	 CBZvSaTK2r4/M/SSF53bjnEDUhx9cygiadLNhksopMJag21XS1RvvDrHOOiyQvC4q3
-	 KzpDNpGOq86V8Bs8t/v0iom/0v/rp39B2r7cXw8M5qtlRboDqOAiyuruu8z1dCjK62
-	 g33yb3zw2Yj9QIlS8v0fOot5OPXhLXXBjoIA7/RltVeW6qxvels5qW8AGtYIxV/Lww
-	 tropxqqdJRitQ==
-Date: Fri, 14 Mar 2025 17:48:12 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	guoren <guoren@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
-	linux-riscv@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v5 00/11] perf: Support multiple system call tables in
- the build
-Message-ID: <Z9SWDGsdgagMr8PV@x1>
-References: <20250308003209.234114-1-irogers@google.com>
- <Z9KFLGpenwOP32q3@google.com>
- <Z9M24AJzui9lFbGo@x1>
- <Z9M9-YhDJg3NgiUy@x1>
- <Z9NEX3j_1RUvaFI0@x1>
- <Z9PCjQ8PhOadVGQ8@google.com>
- <Z9RjHpEJGWtj8PAM@x1>
- <Z9Rm0W6YLpxKIcI1@x1>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dpI8YNL5ofDuhmk99vy6p3npBpSfXB3unXg4gpm+dfu4XA0DD2/+jriJiD1LtsBfntNvn4lGc6G/QdieO8TvEV9emUqmmfxh3SuJ6LGPugT+tqMxLwVr82yWq8PrE9PnfZp4/dCpXfiWwrGNYgHBd0sN2kIOqfrmbWVyngYgoWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=p/o5pkzq; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 01CDC1C013F; Fri, 14 Mar 2025 21:48:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1741985323;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=agBWb0L435hF7qWd2hGkcc2Wd0nw5fdjW1N6ZFvPe6U=;
+	b=p/o5pkzqywPXrLEnMTzoV+i6h8NrUkt+Nju/phgeIqnSJm7za2R/gzQokAiUgEWz1Ltthc
+	ADXZ86xwQSjxAjGIYQo3u9nr5WDN3JmHAQYys1D/kKs2GRSZxaMR8aeOPVt95kyqAvbYN+
+	QOdO3QMzcMMC6OCR74JF5c9wPqQzN8w=
+Date: Fri, 14 Mar 2025 21:48:42 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: david@ixit.cz
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: dt-bindings: Convert Analog Devices ad5820 to
+ DT schema
+Message-ID: <Z9SWKqtnpBGZokJl@duo.ucw.cz>
+References: <20250314-b4-ad5820-dt-yaml-v2-1-287958c3c07c@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+rF7RP1KY17rheuH"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z9Rm0W6YLpxKIcI1@x1>
-
-On Fri, Mar 14, 2025 at 02:26:41PM -0300, Arnaldo Carvalho de Melo wrote:
-> it finds the pair, but then its sc->args has a bogus pointer... I'll see
-> where this isn't being initialized...
-
-Breakpoint 4, trace__find_usable_bpf_prog_entry (trace=0x7fffffffa510, sc=0x1046f10) at builtin-trace.c:3874
-3874			bool is_candidate = false;
-(gdb) n
-3876			if (pair == NULL || pair == sc ||
-(gdb) p pair
-$7 = (struct syscall *) 0x1083c50
-(gdb) p pair->name
-$8 = 0x81478e "accept4"
-(gdb) n
-3877			    pair->bpf_prog.sys_enter == trace->skel->progs.syscall_unaugmented)
-(gdb) p i
-$9 = 1
-(gdb) n
-3876			if (pair == NULL || pair == sc ||
-(gdb) n
-3880			printf("sc=%p\n", sc); fflush(stdout);
-(gdb) n
-sc=0x1046f10
-3881			printf("sc->name=%p\n", sc->name); fflush(stdout);
-(gdb) n
-sc->name=0x6c66202c786c3830
-3882			printf("sc->nr_args=%d, sc->args=%p\n", sc->nr_args, sc->args); fflush(stdout);
-(gdb) p sc->nr_args
-$10 = 1935635045
-(gdb) p sc->args
-$11 = (struct tep_format_field *) 0x257830203a6e656c
-(gdb) p *sc
-$12 = {e_machine = 540697702, id = 807761968, tp_format = 0x657075202c786c38, nr_args = 1935635045, args_size = 1634427759, bpf_prog = {sys_enter = 0x257830203a726464, 
-    sys_exit = 0x7075202c786c3830}, is_exit = 101, is_open = 101, nonexistent = 114, use_btf = 95, args = 0x257830203a6e656c, 
-  name = 0x6c66202c786c3830 <error: Cannot access memory at address 0x6c66202c786c3830>, fmt = 0x257830203a736761, arg_fmt = 0x786c3830}
-(gdb) 
-
-Ok, ran out of time, but if I simple avoid the second loop in:
-
-static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace, int e_machine)
+In-Reply-To: <20250314-b4-ad5820-dt-yaml-v2-1-287958c3c07c@ixit.cz>
 
 
-I.e. the one that starts with:
+--+rF7RP1KY17rheuH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-        /*
-         * Now lets do a second pass looking for enabled syscalls without
-         * an augmenter that have a signature that is a superset of another
-         * syscall with an augmenter so that we can auto-reuse it.
+On Fri 2025-03-14 20:58:27, David Heidelberg via B4 Relay wrote:
+> From: David Heidelberg <david@ixit.cz>
+>=20
+> Convert the Analog Devices ad5820 to DT schema format.
+>=20
+> Add the previously undocumented io-channel-cells property,
+> which can be omitted. If present, it must be set to 0,
+> as the device provides only one channel.
+>=20
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-This:
+Thanks,
+							Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index e0434f7dc67cb988..3664bb512c70cabf 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -3989,6 +3989,8 @@ static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace, int e_m
-                        goto out;
-        }
- 
-+       return 0;
-+
-        /*
-         * Now lets do a second pass looking for enabled syscalls without
-         * an augmenter that have a signature that is a superset of another
-⬢ [acme@toolbox perf-tools-next]$ 
+--+rF7RP1KY17rheuH
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-Then all works, we don't reuse any BPF program, but then that is an
-heuristic anyway, that is tried becuase landlock_add_rule has a pointer
-argument:
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ9SWKgAKCRAw5/Bqldv6
+8kkXAJ0Y2ueeFfa0qnTi36Afpe2clLTImQCfYo1CfahtRdBI8z0KG6jM2o+DQio=
+=8ghC
+-----END PGP SIGNATURE-----
 
-root@number:~# perf trace -e landlock_add_rule perf test -w landlock
-     0.000 ( 0.003 ms): perf/71034 landlock_add_rule(ruleset_fd: 11, rule_type: LANDLOCK_RULE_PATH_BENEATH, rule_attr: 0x7fff6f2bb550, flags: 45) = -1 EINVAL (Invalid argument)
-     0.004 ( 0.001 ms): perf/71034 landlock_add_rule(ruleset_fd: 11, rule_type: LANDLOCK_RULE_NET_PORT, rule_attr: 0x7fff6f2bb540, flags: 45) = -1 EINVAL (Invalid argument)
-root@number:~# perf test enum
-105: perf trace enum augmentation tests                              : Ok
-root@number:~#
-
-So its some sort of syncronization on the various new tables, sorted by
-name, etc that then when iterating over the syscalls ends up using a sc
-that is not initialized.
-
-- Arnaldo
+--+rF7RP1KY17rheuH--
 
