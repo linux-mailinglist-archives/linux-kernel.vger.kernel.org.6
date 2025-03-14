@@ -1,131 +1,170 @@
-Return-Path: <linux-kernel+bounces-562073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92A3FA61BBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:07:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D5CA61C01
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:10:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FA91882610
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:07:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE64219C78D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CCC213E98;
-	Fri, 14 Mar 2025 20:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545A6204F7C;
+	Fri, 14 Mar 2025 20:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A3sPZpsl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="p6vCjM5P"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09F7214230;
-	Fri, 14 Mar 2025 20:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5A1204C38
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 20:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741982514; cv=none; b=KccntXwCaTWmS615Hb9cyCo/hm8OjvBWC+n0LhyR5RwxpJ3k3vTqQB3sQruKEoFjxFOaoakrccPnfKiqDdDosrlUxMVnSsaPo6iYx74jO0gQY28yXP+PysycSQFyUgB1QMGt2DxtYjzu5g3/S61JlhLK65PLIDav0dBJge5z894=
+	t=1741982628; cv=none; b=cnBAEeOOyeMWYAE9KSidC+HEcbZoB187/6NFgDn5ppyoGyEcH/1barU13ps8xwAtgvuC1njXUeDK3Hdb5oDm/rIf22eyNpgTnYz6I9lwYWDILZ03BzAX+K75wiiwG2f8jC/EiB17F1R/erPvHf88XxxgJh03m+cShD1aytU9/DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741982514; c=relaxed/simple;
-	bh=vhl18IjHPw/3AHnEoOG25hlLaV4rPR1ZA18lcGudXUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=InrLVDlqKgITlBF0wBD1KqogZvUCVmXZAvZX/KXgy5+gD6ieNIrKsYwblbWrbkFepYbnYCQ90moRUq/RXqru6UrkrIWpY/UK7YcyUgCYWmkqPIffvfn9GXx+Bq+Sj+u4gYtNkpGBxDBWBlvOABFdwudupNVsQ61NqlM3MXnu5rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A3sPZpsl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23841C4CEE3;
-	Fri, 14 Mar 2025 20:01:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741982514;
-	bh=vhl18IjHPw/3AHnEoOG25hlLaV4rPR1ZA18lcGudXUE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A3sPZpsl/bxbNcIC37Jq9ZzpslkKIzt8lpwVtxTAd/B1i5FG31OfWq7947h1IJrPa
-	 Sfx46gUQfn+O07m3b3v/SeGZkFiG1mjeTOnFHWheK32ocP5TRc0DUnmB9Wxc0YBgu5
-	 h3+OW/FPkNlwhWpeFiLo3+twehzihXKvGRdbVqVV9yLHYWkzlhKvywqFFYYGXg0lSl
-	 rwEKJQtrqcfHZ/eT8h+cRzeTkPAlSpuH7louhzYIecDC0tKxkyqJjyZh7t4+sStO7n
-	 8vcmDBQkQKDJaC+vIqWK+ZQ7fFcR/P+sJH1j6g6OAzoCpPpEGPCUCW+8W3w8cYS1iq
-	 vdX0Lt5M6d+Qg==
-Date: Fri, 14 Mar 2025 17:01:51 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Howard Chu <howardchu95@gmail.com>, Andi Kleen <ak@linux.intel.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Anne Macedo <retpolanne@posteo.net>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] perf machine: Factor creating a "live" machine
- out of dwarf-unwind
-Message-ID: <Z9SLL50yuiLOGGYI@x1>
-References: <20250313052952.871958-1-irogers@google.com>
- <Z9Rk-YdoK-fK_62d@x1>
- <Z9SK96s4PAp680k6@x1>
+	s=arc-20240116; t=1741982628; c=relaxed/simple;
+	bh=NBh1ib8TOp9yV+GZ8BCBjXKYANmqvBc+qIjMQrykCt0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=cahH0hpBtr7YcemxuWTf277ZBVpQ+vpkGlYxuoDOaAxR/OBdtbV6RgRJgwgU07bACb40OADwwej7/XDBDoWc0Gj+pcPlcLE28vJHLtCz6uVXF82NP1JpF/FngMViPmTiI+0sj/EALUsZ6GIs7Zv1y5RaY4+pwbT9UopCiExtP7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=p6vCjM5P; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2c11ddc865eso852184fac.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:03:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741982625; x=1742587425; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/t8DGEkQgF9HsFcbNry4sid1C4GD98meoHnJLzxyotQ=;
+        b=p6vCjM5PH9L2oX6E2UYzwchfFPUuj894SxrVOU7xZEEjJ6cbeJngyt+PzKc01SzjAG
+         /lzOLir0vy8G3uZk2/td5Nt7+eMgXFSUKY74CEQXUxKh/dD2DlOwyAWehEZw9Y8dKxu/
+         QVt9vArEBhDwdd/BvrvB8VBuhxsRk6WoLTYHI4Bu8Ln4efIlH/rFlSYwUS52cMzgjZci
+         Q33U0N3RTQId/6maB5tl10QjYs9DW02yo+W7uamjDyjAPALXorjBF/GHiP/Pm7gW4q/q
+         45Qnxni7sFWhiRc6bQ4uoMTGu+H5K+EW+4tiMvy5/REd1K6HHez0dZKnO6PlN53yS7zo
+         WbZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741982625; x=1742587425;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/t8DGEkQgF9HsFcbNry4sid1C4GD98meoHnJLzxyotQ=;
+        b=Huul+6oj9nP+sq54VR1oGJNUWFgO7mI9etjMqh2YHmmnXhpRMTq4J0lrMrtaAjCrIV
+         7N3cMi+gKNehTBr0xVyCzcu+IsZOvSq2dK76RKTXmtQ60MXvssbm+vsQ+HiSl4v7P6aJ
+         0BbIYZuTZbSW3v0OJOzxKP9Rl48SL7NeNxcm/H924t3tD0R3Saesom+Yv9l8uie2QhRA
+         1RDsz+IAoc7VzrtApiaZ4wdjnmiRgTO2BzxURaimHclCr+UO84IIX1mopV14JyZXSOkK
+         E3GWD8CmXQWPrAp45RfZud9sXCfh2V01vpK9XxQpKTxelw1fWkhf46adfCkCtUHitAH1
+         WAfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqpFs0n8QK3cYpIAjJFOc1CQAejeQFsaxKRYRCnW3lC2pcLVQE7B6O/rvIIWJTkpFxeKJ0N5tyOlewChE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO1fByzeWeZUYTusZYqgPIhBQL00vZHYK/onDC2uvNaWQoTOeK
+	5myi8ArmwepShTn7nmYP+zq+eQAKh60SgXz6mkwku5GicBiCQHIGH1zVoNyhvNo6ga5yMh7Nbe4
+	O+xQ=
+X-Gm-Gg: ASbGnctd4w3uGE3Dq9KfqsUdr5sfV9spRH3bvTnWhZ6NbcXPNivxAbd92R4TvVfczjc
+	Klef8MVLTxp5CmnJoZ5LmzXEzw9wX+zRtQqNLdgxvgBC1z3TvdlW8zgBf6QtKM1g6reKOVYFb6+
+	/iMXHPGxv/VA1sfeJHcy51b1aI4Zq3Jysy+KsXA55pzTwGKUYnuP9mU+ppbyNU+GPn64yf8MAvX
+	AuerOWEG0msSkmmuIvL/XtBukmSOYbe+CTXgp7egKrsXN/9adgXog9UcZ9jyI2pMxPqfbEcrOQc
+	LYAyf3XjufXF8XtUeBcgVSP5hoRIXdm6R8FwgAs3vv5cC4kfHOx4QJSuMtkoeSygEXBvNH2nifz
+	70TffEQ==
+X-Google-Smtp-Source: AGHT+IHkQhbCbr5tEQHM5PgoUcAYVVLVKKXP4thp4rJGiHPtHTJRGgiHkIs124SWGjZIG2J1tZ5H7w==
+X-Received: by 2002:a05:6871:153:b0:297:2376:9b17 with SMTP id 586e51a60fabf-2c690fe92bcmr2006147fac.19.1741982624833;
+        Fri, 14 Mar 2025 13:03:44 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72bb26bbe2esm773443a34.31.2025.03.14.13.03.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Mar 2025 13:03:44 -0700 (PDT)
+Message-ID: <177eb738-fe13-43ae-a02a-7c6b026536ef@baylibre.com>
+Date: Fri, 14 Mar 2025 15:03:43 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9SK96s4PAp680k6@x1>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: ad7380: add support for SPI offload
+From: David Lechner <dlechner@baylibre.com>
+To: Angelo Dureghello <adureghello@baylibre.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250220-wip-bl-spi-offload-ad7380-v1-1-838aa873e62a@baylibre.com>
+ <7b64c6a9-0606-45ba-be45-7ae11c4fdf39@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <7b64c6a9-0606-45ba-be45-7ae11c4fdf39@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 14, 2025 at 05:00:58PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Fri, Mar 14, 2025 at 02:18:49PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Wed, Mar 12, 2025 at 10:29:51PM -0700, Ian Rogers wrote:
-> > > Factor out for use in places other than the dwarf unwinding tests for
-> > > libunwind.
-> > 
-> > Testing with another patchset being reviewed/tested, seems to work, if
-> > it showed the line number would be even better!
+On 2/22/25 11:31 AM, David Lechner wrote:
+> On 2/20/25 12:03 PM, Angelo Dureghello wrote:
+>> From: Angelo Dureghello <adureghello@baylibre.com>
+>>
+>> Add support for SPI offload to the ad7380 driver. SPI offload allows
+>> sampling data at the max sample rate (2MSPS with one SDO line).
+>>
+>> This is developed and tested against the ADI example FPGA design for
+>> this family of ADCs [1].
+>>
+>> [1]: http://analogdevicesinc.github.io/hdl/projects/ad738x_fmc/index.html
+>>
+>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+>> ---
 > 
-> But it gets the lines, at least in this secoond attempt, after applying
-> Namhyungs fix for the previous problem (int16_t):
 
-Nevermind, this time I built with DEBUG=1, so DWARF, probably.
+...
 
-- Arnaldo
- 
-> root@number:~# perf trace -e landlock_add_rule perf test -w landlock
-> perf: Segmentation fault
->     #0 0x6698d0 in dump_stack debug.c:355
->     #1 0x66994c in sighandler_dump_stack debug.c:367
->     #2 0x7f784be95fd0 in __restore_rt libc.so.6[40fd0]
->     #3 0x4d0e56 in trace__find_usable_bpf_prog_entry builtin-trace.c:3882
->     #4 0x4cf3de in trace__init_syscalls_bpf_prog_array_maps builtin-trace.c:4040
->     #5 0x4bf626 in trace__run builtin-trace.c:4477
->     #6 0x4bb7a9 in cmd_trace builtin-trace.c:5741
->     #7 0x4d873f in run_builtin perf.c:351
->     #8 0x4d7df3 in handle_internal_command perf.c:404
->     #9 0x4d860f in run_argv perf.c:451
->     #10 0x4d7a4f in main perf.c:558
->     #11 0x7f784be7f088 in __libc_start_call_main libc.so.6[2a088]
->     #12 0x7f784be7f14b in __libc_start_main@@GLIBC_2.34 libc.so.6[2a14b]
->     #13 0x410ff5 in _start perf[410ff5]
-> Segmentation fault (core dumped)
-> root@number:~# 
->  
-> > I'll continue working on that other case with this applied just before
-> > that series and finally will give my Tested-by.
-> > 
-> > - Arnaldo
-> > 
-> > root@number:~# perf trace -e landlock_add_rule perf test -w landlock
-> > perf: Segmentation fault
-> >     #0 0x5be81d in dump_stack perf[5be81d]
-> >     #1 0x5be879 in sighandler_dump_stack perf[5be879]
-> >     #2 0x7f313d24efd0 in __restore_rt libc.so.6[40fd0]
-> >     #3 0x491bc1 in cmd_trace perf[491bc1]
-> >     #4 0x497090 in run_builtin perf.c:0
-> >     #5 0x4973ab in handle_internal_command perf.c:0
-> >     #6 0x413483 in main perf[413483]
-> >     #7 0x7f313d238088 in __libc_start_call_main libc.so.6[2a088]
-> >     #8 0x7f313d23814b in __libc_start_main@@GLIBC_2.34 libc.so.6[2a14b]
-> >     #9 0x413ad5 in _start perf[413ad5]
-> > Segmentation fault (core dumped)
-> > root@number:~#
+>> +#define _AD7380_OFFLOAD_CHANNEL(index, bits, diff, sign, gain) {		\
+>> +	.type = IIO_VOLTAGE,							\
+>> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |                          \
+>> +		((gain) ? BIT(IIO_CHAN_INFO_SCALE) : 0) |			\
+>> +		((diff) ? 0 : BIT(IIO_CHAN_INFO_OFFSET)),			\
+>> +	.info_mask_shared_by_type = ((gain) ? 0 : BIT(IIO_CHAN_INFO_SCALE)) |   \
+>> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO) |				\
+>> +		BIT(IIO_CHAN_INFO_SAMP_FREQ),					\
+> 
+> Not sure if this is worth troubling with, but it might make more sense to make
+> IIO_CHAN_INFO_SAMP_FREQ info_mask_separate instead of info_mask_shared_by_type,
+> at least in the case of the single-ended chips.
+> 
+> This family of chips does simultaneous conversions so shared_by_type (or shared_by_all)
+> would typically be the right thing to do here. However, the single-ended versions
+> of these chips also have a multiplexer, so there are 2 banks of simultaneously
+> sampled inputs. So the effective sample rate as far as IIO is concerned would
+> actually be 1/2 of the sampling_frequency attribute value.
+> 
+> Since we have a channel mask restriction where we force all channels in a bank
+> to be enabled at once, I think it would work to make IIO_CHAN_INFO_SAMP_FREQ
+> info_mask_separate where the reported sampling frequency is the conversion rate
+> divided by the number of channels in a bank.
+> 
+
+Hi Jonathan,
+
+You might have missed this since v2 was sent before you had a chance to review
+v1. I am testing the chip with the mux now, so I was curious if you had any
+wisdom to add here. The way we implemented it feels a little odd to me with
+sampling_frequency as info_mask_shared_by_type instead of info_mask_separate
+or info_mask_shared_by_all like on most other chips I've worked with so far.
+
+I found a bug in this series that I need to send a fix for, so if we decide
+there is a better way here, now would be a good time to do it.
+
+>> +	.info_mask_shared_by_type_available =					\
+>> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO) |				\
+>> +		BIT(IIO_CHAN_INFO_SAMP_FREQ),					\
+>> +	.indexed = 1,                                                           \
+>> +	.differential = (diff),                                                 \
+>> +	.channel = (diff) ? (2 * (index)) : (index),                            \
+>> +	.channel2 = (diff) ? (2 * (index) + 1) : 0,                             \
+>> +	.scan_index = (index),                                                  \
+>> +	.has_ext_scan_type = 1,                                                 \
+>> +	.ext_scan_type = ad7380_scan_type_##bits##_##sign##_offload,            \
+>> +	.num_ext_scan_type =                                                    \
+>> +		ARRAY_SIZE(ad7380_scan_type_##bits##_##sign##_offload),		\
+>> +	.event_spec = ad7380_events,                                            \
+>> +	.num_event_specs = ARRAY_SIZE(ad7380_events),                           \
+>> +}
+>> +
+
 
