@@ -1,193 +1,269 @@
-Return-Path: <linux-kernel+bounces-560860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CC1A60A40
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:45:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD867A60A43
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:45:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF3EE17E819
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:45:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15B667AB657
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00577196D90;
-	Fri, 14 Mar 2025 07:44:47 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE0A190468;
-	Fri, 14 Mar 2025 07:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A252018F2DF;
+	Fri, 14 Mar 2025 07:45:12 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F318B18A6D2
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741938286; cv=none; b=gtHgMt6kz6bfE16Z/93Gyf9LywKMvypoJ7bUTL6GsJIM9kkXC4t+dLx04O4L/kINGffZk+XQ0lFK8e/3DKC7N1Lh+eFuIj8+x8izvYk6tm1Bm/lmnkZ5w5YSDj+1UBugT53wyVL7EMXmPrzDlWM4MY2sc6faWB7qeKR4jRHd8so=
+	t=1741938312; cv=none; b=Wq3gUpBTMoMrv3bUodgZT9QJ4EVcgIDUwrRF6qYnOPxomXXt+ilkimk8e+1wD6z6KTswHDVgk5QYptB2FCRuz5qJu5hbIN1TLaAwtCbb0Nm8YkSNXqwQ/niumTAYtWTUjeWvQx0NEHllyfel5CJT5XCp0WmZY2BOhfTyYgtDPyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741938286; c=relaxed/simple;
-	bh=91ptrKYVgvUExZhnsTJFVT9CkAFHXxfrnrnkNYBuX54=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sJEFj4YmZDwUzEj2jGiDyAXnJdR/FE3n95aW694YOG03Z1umgNG7f9Dx37BuSMSKhlg9eD6MLjfhRNOvSsOdYevdKlAMUW6ObKYtCxrF2Kmrl9LUCJs6jIzj3NnyQT9Pwti21l/wINjIf3Pvei0MRUqkLuBPxiUnV6WdE83AjJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-a6-67d3de65ef9c
-From: Rakie Kim <rakie.kim@sk.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: akpm@linux-foundation.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	joshua.hahnjy@gmail.com,
-	dan.j.williams@intel.com,
-	ying.huang@linux.alibaba.com,
-	kernel_team@skhynix.com,
-	honggyu.kim@sk.com,
-	yunjeong.mun@sk.com,
-	Rakie Kim <rakie.kim@sk.com>
-Subject: Re: [PATCH v2 1/4] mm/mempolicy: Fix memory leaks in mempolicy_sysfs_init()
-Date: Fri, 14 Mar 2025 16:44:11 +0900
-Message-ID: <20250314074433.780-1-rakie.kim@sk.com>
-X-Mailer: git-send-email 2.48.1.windows.1
-In-Reply-To: <Z9L_MgjuhrploEUm@gourry-fedora-PF4VCD3F>
-References: 
+	s=arc-20240116; t=1741938312; c=relaxed/simple;
+	bh=dLw1fTtQWhKETOLZRN9EKDbih1kWeJ4Ju5mJsROpm0Q=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=XIMIH87kc5algaguFMPe3dGweJIFbS+vcvuJfaE2DaCVlwvA6WdeeRSV/XOgY/N4vEzXkBhUigIxat1nZ6wlz7D2aphJp00iD0Guxsm4OYAFvTmUL4fVtvjfOkMOScgAKKZgHqXYINBrsg3Qf7MzLrIX8jmeBxCn/TWqN46F/l4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4ZDbyF55mhz27gbb;
+	Fri, 14 Mar 2025 15:45:41 +0800 (CST)
+Received: from dggemv711-chm.china.huawei.com (unknown [10.1.198.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5D5B01A0171;
+	Fri, 14 Mar 2025 15:45:06 +0800 (CST)
+Received: from kwepemn500004.china.huawei.com (7.202.194.145) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 14 Mar 2025 15:45:06 +0800
+Received: from [10.67.120.218] (10.67.120.218) by
+ kwepemn500004.china.huawei.com (7.202.194.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 14 Mar 2025 15:45:05 +0800
+Subject: Re: [PATCH] coresight: Fixes device's owner field for registered
+ using coresight_init_driver()
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, <james.clark@arm.com>,
+	<anshuman.khandual@arm.com>
+References: <20240918035327.9710-1-hejunhao3@huawei.com>
+ <e2194d2a-0f51-4e59-a1ca-b4563b3389ec@arm.com>
+CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<jonathan.cameron@huawei.com>, <yangyicong@huawei.com>,
+	<prime.zeng@hisilicon.com>, hejunhao <hejunhao3@huawei.com>
+From: hejunhao <hejunhao3@huawei.com>
+Message-ID: <c3744062-f7c1-82df-2fa1-591da3b2dc5e@huawei.com>
+Date: Fri, 14 Mar 2025 15:44:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsXC9ZZnkW7qvcvpBqeOqVnMWb+GzWL61AuM
-	Fj/vHme3OL51HrvF+VmnWCwu75rDZnFvzX9Wi9VrMhw4PHbOusvu0d12md1j8Z6XTB6bPk1i
-	9zgx4zeLx86Hlh6fN8kFsEdx2aSk5mSWpRbp2yVwZWxf94a94JZUxcz3txgbGM+JdDFyckgI
-	mEisaNzBDGO/WL8OyObgYBNQkji2NwbEFBFQlWi74t7FyMXBLLCeSeL1pllsIOXCAiES624t
-	ZgexWYBquo/NZQep5xUwlpgwswhioqZEw6V7TCA2p4CZxIS928HKhQR4JF5t2M8IYvMKCEqc
-	nPmEBcRmFpCXaN46mxlkl4TAGTaJie8esUMMkpQ4uOIGywRG/llIemYh6VnAyLSKUSgzryw3
-	MTPHRC+jMi+zQi85P3cTIzCIl9X+id7B+OlC8CFGAQ5GJR7eDbsupQuxJpYVV+YeYpTgYFYS
-	4bW4fDldiDclsbIqtSg/vqg0J7X4EKM0B4uSOK/Rt/IUIYH0xJLU7NTUgtQimCwTB6dUA6Pw
-	/Ig+v1DByaKfo9VjXbsPm4YZTp5ZoJv/ZtaK+EUFfW8FO05nL7h55cqj1Krwe40nFXRDQrXv
-	8rCVaXy9M3U9i8PaykRdw4x7fxjz6y6L7OyprcgIO/x+z76ECY8SC4wC90fPVz22bbaZk8OE
-	1G+3qtlkpr1v2Lk1d/3th+sEsoorkmKXPVRiKc5INNRiLipOBAAtAxLgXgIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsXCNUNNSzf13uV0g8dHxSzmrF/DZjF96gVG
-	i593j7NbfH72mtni+NZ57BaH555ktTg/6xSLxeVdc9gs7q35z2px6NpzVovVazIsfm9bwebA
-	47Fz1l12j+62y+wei/e8ZPLY9GkSu8eJGb9ZPHY+tPT4dtvDY/GLD0wenzfJBXBGcdmkpOZk
-	lqUW6dslcGVsX/eGveCWVMXM97cYGxjPiXQxcnJICJhIvFi/jrmLkYODTUBJ4tjeGBBTREBV
-	ou2KexcjFwezwHomidebZrGBlAsLhEisu7WYHcRmAarpPjaXHaSeV8BYYsLMIoiJmhINl+4x
-	gdicAmYSE/ZuBysXEuCReLVhPyOIzSsgKHFy5hMWEJtZQF6ieets5gmMPLOQpGYhSS1gZFrF
-	KJKZV5abmJljqlecnVGZl1mhl5yfu4kRGLjLav9M3MH45bL7IUYBDkYlHt4Nuy6lC7EmlhVX
-	5h5ilOBgVhLhtbh8OV2INyWxsiq1KD++qDQntfgQozQHi5I4r1d4aoKQQHpiSWp2ampBahFM
-	lomDU6qB8aKTlJnOix/t0/WKP0Tt3jahb0+Aqt1vsRcXHGoai7xvirr+Zjwwz/TJnvrtfAXr
-	ORQ2HHg5p5CHucrpQ/jas5q3q1bebNof5fL92f+s61ESib1aEgo68yb0fRYxUpN5WHDtudmR
-	L3w1v0U8ru2bcTzmpAlTSNn+sCmOU1iOyStbzr/6tulqohJLcUaioRZzUXEiAOU/NchYAgAA
-X-CFilter-Loop: Reflected
+In-Reply-To: <e2194d2a-0f51-4e59-a1ca-b4563b3389ec@arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemn500004.china.huawei.com (7.202.194.145)
 
-On Thu, 13 Mar 2025 11:52:18 -0400 Gregory Price <gourry@gourry.net> wrote:
-> On Thu, Mar 13, 2025 at 03:31:38PM +0900, Rakie Kim wrote:
-> > > Is this correct? If kobject_init_and_add fails, from other examples we
-> > > need only free the mempolicy_kobj - because it failed to initialize and
-> > > therefore should not have any references.  I think this causes an
-> > > underflow.
-> > 
-> > Regarding the reordering of mempolicy_kobj allocation:
-> > 1) In kobject_init_and_add(), kobject_init() is always called, which
-> 
-> Quite right, mea culpa.
-> 
-> > 
-> > 2) The release function for mempolicy_kobj is responsible for freeing
-> >    associated memory:
-> > 
-> >    static void mempolicy_kobj_release(struct kobject *kobj)
-> >    {
-> >        ...
-> >        kfree(ngrp->nattrs);
-> >        kfree(ngrp);
-> >        kfree(kobj);
-> >    }
-> > 
-> 
-> I see what you're trying to do now after looking at the free-ordering
-> at little closer.
-> 
-> Lets do the following:
-> 
-> 1) allocate node_attrs and mempolicy_kobj up front and keep your
->    reordering, this lets us clean up allocations on failure before
->    kobject_init is called
-> 
-> 2) after this remove all the other code and just let
->    mempolicy_kobj_release clean up node_attrs
-> 
-> 3) Add a (%d) to the error message to differentiate failures
-> 
-> This is a little bit cleaner and is a bit less code. (Not built or
-> tested, just a recommendation).
-> 
-> I'd recommend submitting this patch by itself to mm-stable, since the
-> remainder of the patch line changes functionality and this fixes a bug
-> in LTS kernels.
-> 
-> ~Gregory
-> 
+Hi Suzuki,
 
-I will make every effort to incorporate your suggestions.
-Additionally, I will separate this patch from the current patch series
-and create it as an independent patch.
+Could you confirm if this patch was queued in coresight/next or upstream 
+of the mainline?
 
-Rakie
+I couldn't find it in: kernel/git/coresight/linux.git or Kernel v6.14.0-rc4.
 
-> 
-> 
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index 530e71fe9147..05a410db08b4 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -3541,38 +3541,34 @@ static int __init mempolicy_sysfs_init(void)
->  	int err;
->  	static struct kobject *mempolicy_kobj;
-> 
-> -	mempolicy_kobj = kzalloc(sizeof(*mempolicy_kobj), GFP_KERNEL);
-> -	if (!mempolicy_kobj) {
-> +	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
-> +			     GFP_KERNEL);
-> +	if (!node_attrs) {
->  		err = -ENOMEM;
->  		goto err_out;
->  	}
-> 
-> -	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
-> -			     GFP_KERNEL);
-> -	if (!node_attrs) {
-> +	mempolicy_kobj = kzalloc(sizeof(*mempolicy_kobj), GFP_KERNEL);
-> +	if (!mempolicy_kobj) {
->  		err = -ENOMEM;
-> -		goto mempol_out;
-> +		kfree(node_attrs);
-> +		goto err_out;
->  	}
-> 
->  	err = kobject_init_and_add(mempolicy_kobj, &mempolicy_ktype, mm_kobj,
->  				   "mempolicy");
->  	if (err)
-> -		goto node_out;
-> +		goto mempol_out;
-> 
->  	err = add_weighted_interleave_group(mempolicy_kobj);
-> -	if (err) {
-> -		pr_err("mempolicy sysfs structure failed to initialize\n");
-> -		kobject_put(mempolicy_kobj);
-> -		return err;
-> -	}
-> +	if (err)
-> +		goto mempol_out;
-> 
-> -	return err;
-> -node_out:
-> -	kfree(node_attrs);
-> +	return 0;
->  mempol_out:
-> -	kfree(mempolicy_kobj);
-> +	kobject_put(mempolicy_kobj);
->  err_out:
-> -	pr_err("failed to add mempolicy kobject to the system\n");
-> +	pr_err("mempolicy sysfs structure failed to initialize (%d)\n", err);
->  	return err;
->  }
-> 
+Maybe am I missing some information?
+
+Best regards,
+Junhao.
+
+
+On 2024/9/18 16:29, Suzuki K Poulose wrote:
+> On 18/09/2024 04:53, Junhao He wrote:
+>> The coresight_init_driver() of the coresight-core module is called from
+>> the sub coresgiht device (such as tmc/stm/funnle/...) module. It calls
+>> amba_driver_register() and Platform_driver_register(), which are macro
+>> functions that use the coresight-core's module to initialize the 
+>> caller's
+>> owner field.  Therefore, when the sub coresight device calls
+>> coresight_init_driver(), an incorrect THIS_MODULE value is captured.
+>>
+>> The sub coesgiht modules can be removed while their callbacks are
+>> running, resulting in a general protection failure.
+>>
+>> Add module parameter to coresight_init_driver() so can be called
+>> with the module of the callback.
+>>
+>> Fixes: 075b7cd7ad7d ("coresight: Add helpers registering/removing 
+>> both AMBA and platform drivers")
+>> Signed-off-by: Junhao He <hejunhao3@huawei.com>
+>
+> Thanks for the fix, looks good to me. I will queue this for v6.13
+>
+> Suzuki
+>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-catu.c       | 2 +-
+>>   drivers/hwtracing/coresight/coresight-core.c       | 6 +++---
+>>   drivers/hwtracing/coresight/coresight-cpu-debug.c  | 3 ++-
+>>   drivers/hwtracing/coresight/coresight-funnel.c     | 3 ++-
+>>   drivers/hwtracing/coresight/coresight-replicator.c | 3 ++-
+>>   drivers/hwtracing/coresight/coresight-stm.c        | 2 +-
+>>   drivers/hwtracing/coresight/coresight-tmc-core.c   | 2 +-
+>>   drivers/hwtracing/coresight/coresight-tpiu.c       | 2 +-
+>>   include/linux/coresight.h                          | 2 +-
+>>   9 files changed, 14 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-catu.c 
+>> b/drivers/hwtracing/coresight/coresight-catu.c
+>> index bfea880d6dfb..337668f9cfd4 100644
+>> --- a/drivers/hwtracing/coresight/coresight-catu.c
+>> +++ b/drivers/hwtracing/coresight/coresight-catu.c
+>> @@ -702,7 +702,7 @@ static int __init catu_init(void)
+>>   {
+>>       int ret;
+>>   -    ret = coresight_init_driver("catu", &catu_driver, 
+>> &catu_platform_driver);
+>> +    ret = coresight_init_driver("catu", &catu_driver, 
+>> &catu_platform_driver, THIS_MODULE);
+>>       tmc_etr_set_catu_ops(&etr_catu_buf_ops);
+>>       return ret;
+>>   }
+>> diff --git a/drivers/hwtracing/coresight/coresight-core.c 
+>> b/drivers/hwtracing/coresight/coresight-core.c
+>> index 9fc6f6b863e0..c546a417836c 100644
+>> --- a/drivers/hwtracing/coresight/coresight-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-core.c
+>> @@ -1399,17 +1399,17 @@ module_init(coresight_init);
+>>   module_exit(coresight_exit);
+>>     int coresight_init_driver(const char *drv, struct amba_driver 
+>> *amba_drv,
+>> -              struct platform_driver *pdev_drv)
+>> +              struct platform_driver *pdev_drv, struct module *owner)
+>>   {
+>>       int ret;
+>>   -    ret = amba_driver_register(amba_drv);
+>> +    ret = __amba_driver_register(amba_drv, owner);
+>>       if (ret) {
+>>           pr_err("%s: error registering AMBA driver\n", drv);
+>>           return ret;
+>>       }
+>>   -    ret = platform_driver_register(pdev_drv);
+>> +    ret = __platform_driver_register(pdev_drv, owner);
+>>       if (!ret)
+>>           return 0;
+>>   diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c 
+>> b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+>> index 75962dae9aa1..cc599c5ef4b2 100644
+>> --- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
+>> +++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+>> @@ -774,7 +774,8 @@ static struct platform_driver 
+>> debug_platform_driver = {
+>>     static int __init debug_init(void)
+>>   {
+>> -    return coresight_init_driver("debug", &debug_driver, 
+>> &debug_platform_driver);
+>> +    return coresight_init_driver("debug", &debug_driver, 
+>> &debug_platform_driver,
+>> +                     THIS_MODULE);
+>>   }
+>>     static void __exit debug_exit(void)
+>> diff --git a/drivers/hwtracing/coresight/coresight-funnel.c 
+>> b/drivers/hwtracing/coresight/coresight-funnel.c
+>> index 5a819c8970fb..8f451b051ddc 100644
+>> --- a/drivers/hwtracing/coresight/coresight-funnel.c
+>> +++ b/drivers/hwtracing/coresight/coresight-funnel.c
+>> @@ -433,7 +433,8 @@ static struct amba_driver dynamic_funnel_driver = {
+>>     static int __init funnel_init(void)
+>>   {
+>> -    return coresight_init_driver("funnel", &dynamic_funnel_driver, 
+>> &funnel_driver);
+>> +    return coresight_init_driver("funnel", &dynamic_funnel_driver, 
+>> &funnel_driver,
+>> +                     THIS_MODULE);
+>>   }
+>>     static void __exit funnel_exit(void)
+>> diff --git a/drivers/hwtracing/coresight/coresight-replicator.c 
+>> b/drivers/hwtracing/coresight/coresight-replicator.c
+>> index 3e55be9c8418..f7607c72857c 100644
+>> --- a/drivers/hwtracing/coresight/coresight-replicator.c
+>> +++ b/drivers/hwtracing/coresight/coresight-replicator.c
+>> @@ -438,7 +438,8 @@ static struct amba_driver 
+>> dynamic_replicator_driver = {
+>>     static int __init replicator_init(void)
+>>   {
+>> -    return coresight_init_driver("replicator", 
+>> &dynamic_replicator_driver, &replicator_driver);
+>> +    return coresight_init_driver("replicator", 
+>> &dynamic_replicator_driver, &replicator_driver,
+>> +                     THIS_MODULE);
+>>   }
+>>     static void __exit replicator_exit(void)
+>> diff --git a/drivers/hwtracing/coresight/coresight-stm.c 
+>> b/drivers/hwtracing/coresight/coresight-stm.c
+>> index 117dbb484543..403eea8f95d4 100644
+>> --- a/drivers/hwtracing/coresight/coresight-stm.c
+>> +++ b/drivers/hwtracing/coresight/coresight-stm.c
+>> @@ -1046,7 +1046,7 @@ static struct platform_driver 
+>> stm_platform_driver = {
+>>     static int __init stm_init(void)
+>>   {
+>> -    return coresight_init_driver("stm", &stm_driver, 
+>> &stm_platform_driver);
+>> +    return coresight_init_driver("stm", &stm_driver, 
+>> &stm_platform_driver, THIS_MODULE);
+>>   }
+>>     static void __exit stm_exit(void)
+>> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c 
+>> b/drivers/hwtracing/coresight/coresight-tmc-core.c
+>> index b54562f392f3..e31e36635394 100644
+>> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
+>> @@ -742,7 +742,7 @@ static struct platform_driver tmc_platform_driver 
+>> = {
+>>     static int __init tmc_init(void)
+>>   {
+>> -    return coresight_init_driver("tmc", &tmc_driver, 
+>> &tmc_platform_driver);
+>> +    return coresight_init_driver("tmc", &tmc_driver, 
+>> &tmc_platform_driver, THIS_MODULE);
+>>   }
+>>     static void __exit tmc_exit(void)
+>> diff --git a/drivers/hwtracing/coresight/coresight-tpiu.c 
+>> b/drivers/hwtracing/coresight/coresight-tpiu.c
+>> index b048e146fbb1..f9ecd05cbe5c 100644
+>> --- a/drivers/hwtracing/coresight/coresight-tpiu.c
+>> +++ b/drivers/hwtracing/coresight/coresight-tpiu.c
+>> @@ -318,7 +318,7 @@ static struct platform_driver 
+>> tpiu_platform_driver = {
+>>     static int __init tpiu_init(void)
+>>   {
+>> -    return coresight_init_driver("tpiu", &tpiu_driver, 
+>> &tpiu_platform_driver);
+>> +    return coresight_init_driver("tpiu", &tpiu_driver, 
+>> &tpiu_platform_driver, THIS_MODULE);
+>>   }
+>>     static void __exit tpiu_exit(void)
+>> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+>> index f09ace92176e..e6c26952ddc2 100644
+>> --- a/include/linux/coresight.h
+>> +++ b/include/linux/coresight.h
+>> @@ -660,7 +660,7 @@ coresight_find_output_type(struct 
+>> coresight_platform_data *pdata,
+>>                  union coresight_dev_subtype subtype);
+>>     int coresight_init_driver(const char *drv, struct amba_driver 
+>> *amba_drv,
+>> -              struct platform_driver *pdev_drv);
+>> +              struct platform_driver *pdev_drv, struct module *owner);
+>>     void coresight_remove_driver(struct amba_driver *amba_drv,
+>>                    struct platform_driver *pdev_drv);
+>
+>
+> .
+>
+
 
