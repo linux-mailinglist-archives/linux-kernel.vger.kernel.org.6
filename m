@@ -1,224 +1,124 @@
-Return-Path: <linux-kernel+bounces-561309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21386A60FF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:31:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3846A60FF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:32:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A2323AF0BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:31:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 424F31729F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9013D1FDA9E;
-	Fri, 14 Mar 2025 11:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2375B1FA856;
+	Fri, 14 Mar 2025 11:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rs0srUy6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="drFHfaDf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED0A1FA851;
-	Fri, 14 Mar 2025 11:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F621F1818
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741951899; cv=none; b=sg+2B0ZELY0oyHMSOSRQgKnQjuVtma3oLN8/pmEKSXyC2ukqZVHenthgE02mS770yRPBVkdXAW6rzg5219wx4MX3eWyl4FWLdZjcDAXMPxhaCsKWF/x5Sy2HuHNMIjysw855SQA8bmiLvTvpVnSX7pjXX8ZgGTO/4wx+9sJi32o=
+	t=1741951908; cv=none; b=gb1GHgvkocCPlTpvY2B7F8lMfkRh7jCsXtmzrl2o8em/7G2XwqCqmnd1G9zc5I81taKVg2zceS01o8K2MiWN3JiTT/3UCHUi8XD+knt9suws1t11Kqb9M0qW3YwrBlJDKC0xQthZ2BMPGljvVs/kr/usWnuz3OyGIPEVKn9fyQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741951899; c=relaxed/simple;
-	bh=DGJHNwI3HJHy6/8KAf2cH/+W9kLO7caGDy1t4fpZLfA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QVi5pw48eeu3T5FueX/AV0PHYI7H8fdNVKHJuzfeB3kkhROeQOrcIg/79LLMU7KpibkZpKgoCAIIhPmlEZpKZJ3DxgcKL642OlWqJrKP+KmT0MFGuMjEA+uiNOCdGXL0KCuA2klHRamdEqRRtx397M3xpvK8C0Jh/ZH81DDenm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rs0srUy6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D6E9C4CEE3;
-	Fri, 14 Mar 2025 11:31:39 +0000 (UTC)
+	s=arc-20240116; t=1741951908; c=relaxed/simple;
+	bh=YgTxtawVTwqVrsIanp4JgigiPn9sO0G0cXdeTcArrgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gPm3f+h0CvcQcQiB91YutgL2OBl3u5tFWOHK5UKggLcBZ4hODDk9jQnUokiMaKtsEuQhXwll7+JltvWrIGaHlvGdH2UqHwRjOczAnZL8evI2GHZ2y7nLmzg5VWDzyDzMcL9ippVcZLTprfgfo3HxbirsMatwP1Ki11IZVsiPjds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=drFHfaDf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10D1CC4CEE3;
+	Fri, 14 Mar 2025 11:31:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741951899;
-	bh=DGJHNwI3HJHy6/8KAf2cH/+W9kLO7caGDy1t4fpZLfA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Rs0srUy6sSifnXSbrqc0OO6qUWq/kxM86oPPFhUczWqxwncNcy5S5RvafohnEhCUa
-	 KByRMuBcU7D9ClmjhzPOzddPuKxin30KqSDJwBaoKcSuQGPsH4703UIewszLHFHU3g
-	 yuRlZexwP5B6fi1ijsXJ9RVYJOAy4ymBpCidojHu9S3L7ay0ckdCF6SXwe+b4MAHz7
-	 yGrowb1ZWafhxYWJbNNOnICMbP/r8mvQ4/0suGTVdpy0qEmBZfbZoHpkcUrSo8bENl
-	 7La7+DP9z2HqbXirjVqmjgRxkqi5xIp0BMdRwIbhch11KnWHI46T7ryj9bIamtTfAP
-	 hubQVUanhpzlw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tt3GK-00DXQI-PO;
-	Fri, 14 Mar 2025 11:31:37 +0000
-Date: Fri, 14 Mar 2025 11:31:36 +0000
-Message-ID: <86bju3onl3.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Quentin Perret <qperret@google.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Vincent Donnefort <vdonnefort@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] KVM: arm64: Move hyp state to hyp_vmemmap
-In-Reply-To: <20250227003310.367350-5-qperret@google.com>
-References: <20250227003310.367350-1-qperret@google.com>
-	<20250227003310.367350-5-qperret@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1741951908;
+	bh=YgTxtawVTwqVrsIanp4JgigiPn9sO0G0cXdeTcArrgc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=drFHfaDfovZf9GOFxyy0AnpqYpfAaFkc0IL2UZ9ZetWEoaIY/veVHwSOY2zxe0Nmn
+	 id/BsYalBwZE5wPD5lNAJb9rofUHb8FcbOH3C26LoaHt7QsmuY+zVRexeaBvTDAdr1
+	 Hy09FVDAXlxbHOqyTgOTuBEcsyCFYU4I6m/oDKgS/wt7j0Jga5HscfjzeBI9ZkOjRN
+	 nilFzqfaroEI/zXVH9+JJXEHmFBY+zUQ39ZwVWcoUFuE2P8LzeuiM4jL2+iADrj4M2
+	 a39TxFUXv3CXfPY5kg7MYZOxYfaHdC6ANsw1j1UOlxF+24UTk7SrtlzxV0NCWDtskX
+	 hXJoCoioAkE9Q==
+Date: Fri, 14 Mar 2025 11:31:38 +0000
+From: Will Deacon <will@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: James Clark <james.clark@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, robh@kernel.org,
+	broonie@kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] arm64/sysreg: Enforce whole word match for
+ open/close tokens
+Message-ID: <20250314113137.GA8865@willie-the-truck>
+References: <20250115162600.2153226-1-james.clark@linaro.org>
+ <20250115162600.2153226-3-james.clark@linaro.org>
+ <20250313215622.GA8101@willie-the-truck>
+ <36968527640d231882444ba7065317fe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: qperret@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, vdonnefort@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <36968527640d231882444ba7065317fe@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, 27 Feb 2025 00:33:08 +0000,
-Quentin Perret <qperret@google.com> wrote:
+On Fri, Mar 14, 2025 at 07:40:36AM +0000, Marc Zyngier wrote:
+> On 2025-03-13 21:56, Will Deacon wrote:
+> > On Wed, Jan 15, 2025 at 04:25:56PM +0000, James Clark wrote:
+> > > Opening and closing tokens can also match on words with common
+> > > prefixes
+> > > like "Endsysreg" vs "EndsysregFields". This could potentially make the
+> > > script go wrong in weird ways so make it fall through to the fatal
+> > > unhandled statement catcher if it doesn't fully match the current
+> > > block.
+> > > 
+> > > Closing ones also get expect_fields(1) to ensure nothing other than
+> > > whitespace follows.
+> > > 
+> > > Signed-off-by: James Clark <james.clark@linaro.org>
+> > > ---
+> > >  arch/arm64/tools/gen-sysreg.awk | 31 +++++++++++++++++--------------
+> > >  1 file changed, 17 insertions(+), 14 deletions(-)
+> > > 
+> > > diff --git a/arch/arm64/tools/gen-sysreg.awk
+> > > b/arch/arm64/tools/gen-sysreg.awk
+> > > index 1a2afc9fdd42..f2a1732cb1f6 100755
+> > > --- a/arch/arm64/tools/gen-sysreg.awk
+> > > +++ b/arch/arm64/tools/gen-sysreg.awk
+> > > @@ -111,7 +111,7 @@ END {
+> > >  /^$/ { next }
+> > >  /^[\t ]*#/ { next }
+> > > 
+> > > -/^SysregFields/ && block_current() == "Root" {
+> > > +$1 == "SysregFields" && block_current() == "Root" {
+> > 
+> > Stylistic nit, but could you just do:
+> > 
+> > 	/^SysregFields$/ && block_current() == "Root" {
+> > 
+> > instead? That way the diff is smaller (well, same number of lines) and
+> > you avoid the ugly $1.
 > 
-> Tracking the hypervisor's ownership state into struct hyp_page has
-> several benefits, including allowing far more efficient lookups (no
-> page-table walk needed) and de-corelating the state from the presence
-> of a mapping. This will later allow to map pages into EL2 stage-1 less
-> proactively which is generally a good thing for security. And in the
-> future this will help with tracking the state of pages mapped into the
-> hypervisor's private range without requiring an alias into the 'linear
-> map' range.
+> The code is trying to match the first field of a line such as:
 > 
-> Signed-off-by: Quentin Perret <qperret@google.com>
-> ---
->  arch/arm64/kvm/hyp/include/nvhe/memory.h | 20 +++++++++-
->  arch/arm64/kvm/hyp/nvhe/mem_protect.c    | 51 ++++++++++++------------
->  arch/arm64/kvm/hyp/nvhe/setup.c          |  6 ++-
->  3 files changed, 49 insertions(+), 28 deletions(-)
+> SysregFields	ZCR_ELx
 > 
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/memory.h b/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> index 4a3c55d26ef3..cc4c01158368 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> @@ -22,6 +22,7 @@ enum pkvm_page_state {
->  	/* Meta-states which aren't encoded directly in the PTE's SW bits */
->  	PKVM_NOPAGE			= BIT(0) | BIT(1),
->  };
-> +#define PKVM_PAGE_STATE_MASK		(BIT(0) | BIT(1))
->  
->  #define PKVM_PAGE_STATE_PROT_MASK	(KVM_PGTABLE_PROT_SW0 | KVM_PGTABLE_PROT_SW1)
->  static inline enum kvm_pgtable_prot pkvm_mkstate(enum kvm_pgtable_prot prot,
-> @@ -42,7 +43,14 @@ struct hyp_page {
->  	u8 order;
->  
->  	/* Host (non-meta) state. Guarded by the host stage-2 lock. */
-> -	unsigned __host_state : 8;
-> +	unsigned __host_state : 4;
-> +
-> +	/*
-> +	 * Complement of the hyp (non-meta) state. Guarded by the hyp stage-1 lock. We use the
-> +	 * complement so that the initial 0 in __hyp_state_comp (due to the entire vmemmap starting
-> +	 * off zeroed) encodes PKVM_NOPAGE.
-> +	 */
-> +	unsigned __hyp_state_comp : 4;
->  
->  	u32 host_share_guest_count;
->  };
-> @@ -89,6 +97,16 @@ static inline void set_host_state(phys_addr_t phys, enum pkvm_page_state state)
->  	hyp_phys_to_page(phys)->__host_state = state;
->  }
->  
-> +static inline enum pkvm_page_state get_hyp_state(phys_addr_t phys)
-> +{
-> +	return hyp_phys_to_page(phys)->__hyp_state_comp ^ PKVM_PAGE_STATE_MASK;
-> +}
-> +
-> +static inline void set_hyp_state(phys_addr_t phys, enum pkvm_page_state state)
-> +{
-> +	hyp_phys_to_page(phys)->__hyp_state_comp = state ^ PKVM_PAGE_STATE_MASK;
-> +}
-> +
->  /*
->   * Refcounting for 'struct hyp_page'.
->   * hyp_pool::lock must be held if atomic access to the refcount is required.
-> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> index a45ffdec7612..3ab8c81500c2 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> @@ -642,24 +642,24 @@ static int __host_set_page_state_range(u64 addr, u64 size,
->  	return 0;
->  }
->  
-> -static enum pkvm_page_state hyp_get_page_state(kvm_pte_t pte, u64 addr)
-> +static void __hyp_set_page_state_range(phys_addr_t phys, u64 size, enum pkvm_page_state state)
->  {
-> -	if (!kvm_pte_valid(pte))
-> -		return PKVM_NOPAGE;
-> +	phys_addr_t end = phys + size;
->  
-> -	return pkvm_getstate(kvm_pgtable_hyp_pte_prot(pte));
-> +	for (; phys < end; phys += PAGE_SIZE)
-> +		set_hyp_state(phys, state);
->  }
->  
-> -static int __hyp_check_page_state_range(u64 addr, u64 size,
-> -					enum pkvm_page_state state)
-> +static int __hyp_check_page_state_range(phys_addr_t phys, u64 size, enum pkvm_page_state state)
->  {
-> -	struct check_walk_data d = {
-> -		.desired	= state,
-> -		.get_page_state	= hyp_get_page_state,
-> -	};
-> +	phys_addr_t end = phys + size;
-> +
-> +	for (; phys < end; phys += PAGE_SIZE) {
-> +		if (get_hyp_state(phys) != state)
-> +			return -EPERM;
-> +	}
->  
-> -	hyp_assert_lock_held(&pkvm_pgd_lock);
-> -	return check_page_state_range(&pkvm_pgtable, addr, size, &d);
-> +	return 0;
->  }
->  
->  static enum pkvm_page_state guest_get_page_state(kvm_pte_t pte, u64 addr)
-> @@ -687,7 +687,6 @@ int __pkvm_host_share_hyp(u64 pfn)
->  {
->  	u64 phys = hyp_pfn_to_phys(pfn);
->  	void *virt = __hyp_va(phys);
-> -	enum kvm_pgtable_prot prot;
->  	u64 size = PAGE_SIZE;
->  	int ret;
->  
-> @@ -698,13 +697,13 @@ int __pkvm_host_share_hyp(u64 pfn)
->  	if (ret)
->  		goto unlock;
->  	if (IS_ENABLED(CONFIG_NVHE_EL2_DEBUG)) {
-> -		ret = __hyp_check_page_state_range((u64)virt, size, PKVM_NOPAGE);
-> +		ret = __hyp_check_page_state_range(phys, size, PKVM_NOPAGE);
+> while you seem to try and match a SysregFields all alone on a line.
+> 
+> That being said, my perl-foo is sub-zero, so I may be very wrong myself.
 
-OK, I think I finally clicked here. Does it mean that all the tracking
-is now done in terms of PAs instead of VAs?
 
->  		if (ret)
->  			goto unlock;
->  	}
->  
-> -	prot = pkvm_mkstate(PAGE_HYP, PKVM_PAGE_SHARED_BORROWED);
-> -	WARN_ON(pkvm_create_mappings_locked(virt, virt + size, prot));
-> +	__hyp_set_page_state_range(phys, size, PKVM_PAGE_SHARED_BORROWED);
-> +	WARN_ON(pkvm_create_mappings_locked(virt, virt + size, PAGE_HYP));
+Ah, and this is *awk* so $1 is the first field.
 
-And this is the split between the state now being kept in the on a PA
-base and the actual mapping that is now only takes the page attributes
-and no SW bits?
+So my suggestion is totally broken and the original patch looks correct:
 
-Thanks,
+Acked-by: Will Deacon <will@kernel.org>
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Will
 
