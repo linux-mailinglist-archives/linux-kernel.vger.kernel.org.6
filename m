@@ -1,154 +1,250 @@
-Return-Path: <linux-kernel+bounces-560987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD11A60C0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:49:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 471E5A60C0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:49:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E73031896E33
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:49:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CD1E17F295
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8CC1D5159;
-	Fri, 14 Mar 2025 08:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3331C8FBA;
+	Fri, 14 Mar 2025 08:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fIsMQEFZ"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="KzPzQxn6"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FA418FDDB;
-	Fri, 14 Mar 2025 08:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C99F19C56D
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741942134; cv=none; b=gje7dtR5YboYP5COq1WhcLGSJXB/PrIhrvqZt7t/l/C90K/rEzC9GW8DsjUfbvud271e0RPPncQz7UTMqWSJTn6M4fQuzqThiquwyH1q90Rw0aymMbkgPA2foZHdL6yLQT7ckwM8F8I8GJ4ak3O+FyTmHRoa4fTb8IV6c+avjuM=
+	t=1741942159; cv=none; b=McpDDC+YOAA/61UcZ0Sg5ky7l9f1aYMDL9JXotT70zVpLFVGmypZggnzbtuAikHNe16l7JS3xksyCRthA1t1CwluyVSXMoevizmpkTLYdgRvJgldDuIRyAvqlzStYsEGB8AgHO733YPnEZUemmc6TffiJWbhogu86oDgLCozSs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741942134; c=relaxed/simple;
-	bh=izFKGd6NIgePdak/hVqrXszrqeizjfGI2wWT42fp3+U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iX3u4K7ClMalXZeeF1WYRq+hLYGE3NqrFjfyxgqmZ+m5UHUgCSw0Y89ZwU5eB2DJwAo0rCZuB4JESWqtRQbgC4urjiV6+VR2bGM22om1fnYTmOWtWAUXVk5iG/j1+QTly7rFpKXGEZE/BaxJAmPsEQcwzbG10PX95OIIpHab06U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fIsMQEFZ; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2254e0b4b79so49620985ad.2;
-        Fri, 14 Mar 2025 01:48:52 -0700 (PDT)
+	s=arc-20240116; t=1741942159; c=relaxed/simple;
+	bh=6VNXUsHqHYqRXJR6qzm8s6ArlWGiBJM3isQFbI1HiB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z/n7YKlo/baxr7979GbUKKRuhlpGavOgzcIZylVfAZd3GT/RGbeY25E5j/+Z0BWYuNOKdMY+aVJZehf+yytKJPT8hq9uCa8T/xDEtzIep1m9eK1Z22CablRlI9cVnzSIPlrMhXhzXzY9w+IwCiE/BhdYY3dmNLJzagKIwEKc9O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KzPzQxn6; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-224019ad9edso48407915ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:49:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741942132; x=1742546932; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ToBMldha4NXdM4Yn/DOmK+H4G7j9iFfVU8ytUf5bV8g=;
-        b=fIsMQEFZfFqH9vpdFonz2A4aNgM7NflopAisHHVDRuivtHUqhWMg6QxmZHSgAMXSKM
-         +ezCZGAvtKYnfYqOaghSylDeEjnOZKPhGaRi+3ac9IPaIFXgpfa1UvMW+7HLniqLy8o2
-         3rJiDrgRa3qRsmJRKc1GIpSUB/Rm4CKAQsaIRIsBQ18Xh0CzH8QNvjxWMeqxvheeRcKV
-         3oYQVJAo43Sp5AKmLCnmkK2iw+ZKU0RhrEt/c/8a413nj7+dcnOda3M5/UC3su5nR74r
-         +17BjuUThrIfC6+2mo3Pm9s7Dg9qy6LnkNqrDG+dTyNtX0ufx97FmLGcei/6pPgf8ipl
-         qd9g==
+        d=bytedance.com; s=google; t=1741942155; x=1742546955; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X34uhsKT3t0fFMyDV+L78XVEZLOjmlr61Qqm68Y4G9k=;
+        b=KzPzQxn6kcDY7gsVvRb3p5t6Z7a7BWrXQ81JdwBrCaAf2NVEBqGcJEO/My+lPp0/Tc
+         04j5yCgCIfPuLrAU9iFCVSyrhSrR8wcHFQ4th2doTo5xaZxbRyQN/J3qft0JOA74IrL/
+         /Yk4dMrMaxA86DnRIMKh4EmN5+1D+Nq8mpBt41Re63YTyCORuTyFOAp0Tif8KPw/e9jL
+         96KlgkxpNQbDeUjeJkKwF2vcxoD9bsPZ+kvJ/GusCC1JZpHkZgI76hQ7Gpg6tfmf+rad
+         hQBPq/e/cMh08Jb0sDjFdRgZ5NYoepGcqmCbR64yWzSVXatU5VCP50ICMGQ+yywQmuQB
+         HCrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741942132; x=1742546932;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ToBMldha4NXdM4Yn/DOmK+H4G7j9iFfVU8ytUf5bV8g=;
-        b=ekiPW31roY1pZJAxHT9UYxgfUKfGGEHjeXlyEo2FPhI+O63DpuFglFNEAJodghg7MR
-         LN0XtzKOflJCIrUcqiexehCbPn/QMKqd/iU3AEYExeTpPfacCOPodVae7/ZjWiXzjOxD
-         R3Qayk7+215W1WJEfw4jUJzMlM/3Y+yq1EQI3SmIcfd83PeTtpPf69e0L1X0klX202xS
-         jSObPRbMle/L5y3GJgI4R9/iWGJhsWnwtgvY1JbcVqCZm8Q+Ne8qi0u/EOJHC3V3dwBA
-         x+DDsW47U5gAJ7cGbv7AkKc7FXxOaqASw8wPKUhL/igAHXX02Z0xjTrhkmmhuYQYlX56
-         mnfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJA0f1gbqcYcI86azqEr32tq644FCfl4ecYjeYbZ3FenDyHmw8mAM3MJh/w5UUmsSMp8bKmzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR2jqDehpor/gpTpQ2Nne3XZzv5eNfVjY00H1Ktp8LOri+muKj
-	Usa/Xt9pbTsw3xsy7OD1kx7/KoSNr46IBf1D9jly1CTnktVgcao1rsVFVQ==
-X-Gm-Gg: ASbGncusvdimbhv+5Gee6opU66A+4nCCikxoSvOw1NeC8qRr6DfRdHWIO5nvlvKGrh1
-	3qVWTFSFP1HLSwQDXA02XUYmGcGuc6LZF1y9XUIE4Op9EcqSNbh/w1cjbcZt7nlRInUioJIKfKt
-	oz6kU1KBxn/1Vy9sroFaZTF5klCJWiJj832FbvI8mkutNVbJiaYfq8SfkGVHvOHlbDYY6aoUxRi
-	kMTK5il/VtOMpZhgjO1Y6NGkPrw+VMCVrswP26CudfMCRXSxdisiRli2AphwgzrYTuz2jFOi5U2
-	7ZgVIB/PPaCguO4lxrcCvBXyU4t9G7dzmkG/byjdcQkSqWDHYEHVpv2igMidJgkz3eJOkuY7o/M
-	lU7OxvSEys+hr9s315S5FcaAm1f1kjQ==
-X-Google-Smtp-Source: AGHT+IHNO30cGGLGuV0WLrMnJ/Sw+C7qW79wTrVUmizif/e7ihpkQc6O9ilMkMKWsarELvo9s7M3+w==
-X-Received: by 2002:a05:6a00:2389:b0:736:ab21:8a69 with SMTP id d2e1a72fcca58-7372225a7eamr2482874b3a.0.1741942132421;
-        Fri, 14 Mar 2025 01:48:52 -0700 (PDT)
-Received: from suda-ws01.. (p1201013-ipoe.ipoe.ocn.ne.jp. [122.26.46.12])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73711551245sm2601955b3a.57.2025.03.14.01.48.50
+        d=1e100.net; s=20230601; t=1741942155; x=1742546955;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X34uhsKT3t0fFMyDV+L78XVEZLOjmlr61Qqm68Y4G9k=;
+        b=bq/BZ0FXJZb649tgbDKAiSUOYrM+Yw1NOvuEQf8Enh+VzSJO0N+NkjxXwX/Zc5Pd8/
+         BIhmyNOuSHGUrobO4le6X98t2sUVeNhGdSkNS/AJpmUDjpZs2g9rlouKf0cbzI/1JxYL
+         QfM+j7x6FvUzT/DmyWCFKAcQAge3qauxYc13LlQuVjCvQY0W2qynYeRpMsndun2tH535
+         VwynURoHrw7OOjk0i+McuayvQQsbRCEqxdJAVti+Q0I66X+7kRlmsr8ApFR/lmEMqvur
+         6rECfmsKtKQAp6hm4/mgQOZ8TgQbcQzjmI99OWnihF23+rpcim0dVsI+O7epR6fExjPW
+         Wnhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpy8p3AxUWtBmZGVdvTJbksoZ3yWqxnbhCymuz6+FC2kHhwC78TWmX09wOWk2D6y+ZdnY1Roohj1h7JxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9dMuGzToT+FLhEqyYNrvjictSZg4lFI2pl3PpjJI8eyb55HaW
+	uHnySLZQCVFE4O6zqYi3eScnREuSABCA1UKCo/vs9tljYNgv2LwTShTPaIr1Qw==
+X-Gm-Gg: ASbGnctqymuh7E7GplZzVo3f3Cpo7hhjimR14F5hIAC4PUJ8MvqzeqRPKs+ydrCj3kJ
+	Hg7x71Yfk79Me/J13sKg+sSD+nEJvLnCZHzzKcRBInIti9UOcvfFzzm62cL/7j9MGTJGG6v2LjA
+	4O66fXSyo7yg9QZ83YEEaceolWxJrxWQYUakSGnZ0xvPFU6oXlrDDHdHaIIF9H3hCAXs1jfc0SX
+	QLsEWtiB8p4guhebrHHdx7moolBcCIecaeO5kjSrOa2ZFpfBVhmcz9RSjFInMB7RpItuGhoxSpa
+	mzFYrfVRdJH16ZPwyYzKrhMRA+YHMPt+gKaw5tC/PXbZ
+X-Google-Smtp-Source: AGHT+IH+F5Q38i7UCDmkQsV6WlBgaRoj4yCnOMzu24AKup4f2fRSoBmYQgCh1aInwGgnBblV97Vpow==
+X-Received: by 2002:a17:903:1b6d:b0:223:fd7f:2752 with SMTP id d9443c01a7336-225e0a954abmr24742775ad.29.1741942155363;
+        Fri, 14 Mar 2025 01:49:15 -0700 (PDT)
+Received: from bytedance ([115.190.40.10])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbfb4fsm24959155ad.208.2025.03.14.01.49.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 01:48:52 -0700 (PDT)
-From: Akihiro Suda <suda.gitsendemail@gmail.com>
-X-Google-Original-From: Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org,
-	stable@vger.kernel.org,
-	suda.kyoto@gmail.com,
-	regressions@lists.linux.dev,
-	aruna.ramakrishna@oracle.com,
-	tglx@linutronix.de,
-	Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
-Subject: [PATCH] x86/pkeys: Disable PKU when XFEATURE_PKRU is missing
-Date: Fri, 14 Mar 2025 17:48:18 +0900
-Message-ID: <20250314084818.2826-1-akihiro.suda.cz@hco.ntt.co.jp>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <CAG8fp8S92hXFxMKQtMBkGqk1sWGu7pdHYDowsYbmurt0BGjfww@mail.gmail.com>
-References: <CAG8fp8S92hXFxMKQtMBkGqk1sWGu7pdHYDowsYbmurt0BGjfww@mail.gmail.com>
+        Fri, 14 Mar 2025 01:49:14 -0700 (PDT)
+Date: Fri, 14 Mar 2025 16:48:54 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>
+Subject: Re: [RFC PATCH 2/7] sched/fair: Handle throttle path for task based
+ throttle
+Message-ID: <20250314084854.GA1633113@bytedance>
+References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
+ <CANCG0GcFF7cnR4rCbU5MmY1Gq3M+r4gPXv39QPXXC=Cdr6sRww@mail.gmail.com>
+ <c9b1d117-2824-4238-bb8c-6390ec3e931b@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c9b1d117-2824-4238-bb8c-6390ec3e931b@amd.com>
 
-Even when X86_FEATURE_PKU and X86_FEATURE_OSPKE are available,
-XFEATURE_PKRU can be missing.
-In such a case, pkeys has to be disabled to avoid hanging up.
+On Thu, Mar 13, 2025 at 11:44:49PM +0530, K Prateek Nayak wrote:
+> Hello Aaron,
+> 
+> P.S. I've fixed the wrapped lines and have been testing the series. So
+> far I haven't run into any issues yet on my machine. Will report back if
+> anything surface.
 
-  WARNING: CPU: 0 PID: 1 at arch/x86/kernel/fpu/xstate.c:1003 get_xsave_addr_user+0x28/0x40
-  (...)
-  Call Trace:
-   <TASK>
-   ? get_xsave_addr_user+0x28/0x40
-   ? __warn.cold+0x8e/0xea
-   ? get_xsave_addr_user+0x28/0x40
-   ? report_bug+0xff/0x140
-   ? handle_bug+0x3b/0x70
-   ? exc_invalid_op+0x17/0x70
-   ? asm_exc_invalid_op+0x1a/0x20
-   ? get_xsave_addr_user+0x28/0x40
-   copy_fpstate_to_sigframe+0x1be/0x380
-   ? __put_user_8+0x11/0x20
-   get_sigframe+0xf1/0x280
-   x64_setup_rt_frame+0x67/0x2c0
-   arch_do_signal_or_restart+0x1b3/0x240
-   syscall_exit_to_user_mode+0xb0/0x130
-   do_syscall_64+0xab/0x1a0
-   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Thanks a lot for taking the time to review and test.
 
-This fix is known to be needed on Apple Virtualization.
-Tested with macOS 13.5.2 running on MacBook Pro 2020 with
-Intel(R) Core(TM) i7-1068NG7 CPU @ 2.30GHz.
+> 
+> I've few comments inlined below.
+> 
+> On 3/13/2025 12:51 PM, Aaron Lu wrote:
+> 
+> [..snip..]
+> 
+> > +static inline void task_throttle_setup_work(struct task_struct *p)
+> > +{
+> > +	/*
+> > +	 * Kthreads and exiting tasks don't return to userspace, so adding the
+> > +	 * work is pointless
+> > +	 */
+> > +	if ((p->flags & (PF_EXITING | PF_KTHREAD)))
+> > +		return;
+> > +
+> > +	if (task_has_throttle_work(p))
+> > +		return;
+> > +
+> > +	task_work_add(p, &p->sched_throttle_work, TWA_RESUME);
+> 
+> Does it make sense to add a throttle work to a delayed task? It may be
 
-Fixes: 70044df250d0 ("x86/pkeys: Update PKRU to enable all pkeys before XSAVE")
-Link: https://lore.kernel.org/regressions/CAG8fp8QvH71Wi_y7b7tgFp7knK38rfrF7rRHh-gFKqeS0gxY6Q@mail.gmail.com/T/#u
-Link: https://github.com/lima-vm/lima/issues/3334
+I missed the case that a delayed task can still be on cfs_rq and I agree
+there is no need to add throttle work to a delayed task.
 
-Signed-off-by: Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
----
- arch/x86/kernel/cpu/common.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> dequeued soon and when it is queued back, the throttle situation might
+> have changed but the work is unnecessarily run. Could the throttle work
+> be instead added at the point of enqueue for delayed tasks?
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index e9464fe411ac..4c2c268af214 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -517,7 +517,8 @@ static bool pku_disabled;
- static __always_inline void setup_pku(struct cpuinfo_x86 *c)
- {
- 	if (c == &boot_cpu_data) {
--		if (pku_disabled || !cpu_feature_enabled(X86_FEATURE_PKU))
-+		if (pku_disabled || !cpu_feature_enabled(X86_FEATURE_PKU) ||
-+		    !cpu_has_xfeatures(XFEATURE_PKRU, NULL))
- 			return;
- 		/*
- 		 * Setting CR4.PKE will cause the X86_FEATURE_OSPKE cpuid
--- 
-2.45.2
+Yes. If a delayed task gets re-queued and its cfs_rq is in throttled
+hierarchy, it should be added the throttle work.
 
+> 
+> > +}
+> > +
+> >   static int tg_throttle_down(struct task_group *tg, void *data)
+> >   {
+> >   	struct rq *rq = data;
+> >   	struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
+> > +	struct task_struct *p;
+> > +	struct rb_node *node;
+> > +
+> > +	cfs_rq->throttle_count++;
+> > +	if (cfs_rq->throttle_count > 1)
+> > +		return 0;
+> > 
+> >   	/* group is entering throttled state, stop time */
+> > -	if (!cfs_rq->throttle_count) {
+> > -		cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
+> > -		list_del_leaf_cfs_rq(cfs_rq);
+> > +	cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
+> 
+> Once cencern here is that the PELT is seemingly frozen despite the
+> hierarchy being runnable. I've still not tracked down whether it'll
+> cause any problems once unthrottled and all throttled time is negated
+> from the pelt clock but is there any concerns here?
+ 
+I chose to do it this way because:
+1 I expect most of the time, if a task has to continue to run after its
+cfs_rq gets throttled, the time is relatively small so should not cause
+much impact. But I agree there can be times a task runs relatively long;
+2 I think the original intent to freeze cfs_rq's pelt clock on throttle
+is so that on unthrottle, it can retore its loada(without its load being
+decayed etc.). If I chose to not freeze its pelt clock on throttle
+because some task is still running in kernel mode, since some of this
+cfs_rq's tasks are throttled, its load can become smaller and this can
+impact its load on unthrottle.
+
+I think both approach is not perfect, so I chose the simple one for now
+:) Not sure if my thinking is correct though.
+
+> Maybe this can be done at dequeue when cfs_rq->nr_queued on a
+> throttled_hierarchy() reached 0.
+
+Yes, this looks more consistent, maybe I should change to this approach.
+
+> > +	list_del_leaf_cfs_rq(cfs_rq);
+> > 
+> > -		SCHED_WARN_ON(cfs_rq->throttled_clock_self);
+> > -		if (cfs_rq->nr_queued)
+> > -			cfs_rq->throttled_clock_self = rq_clock(rq);
+> > +	SCHED_WARN_ON(cfs_rq->throttled_clock_self);
+> > +	if (cfs_rq->nr_queued)
+> > +		cfs_rq->throttled_clock_self = rq_clock(rq);
+> > +
+> > +	WARN_ON_ONCE(!list_empty(&cfs_rq->throttled_limbo_list));
+> > +	/*
+> > +	 * rq_lock is held, current is (obviously) executing this in kernelspace.
+> > +	 *
+> > +	 * All other tasks enqueued on this rq have their saved PC at the
+> > +	 * context switch, so they will go through the kernel before returning
+> > +	 * to userspace. Thus, there are no tasks-in-userspace to handle, just
+> > +	 * install the task_work on all of them.
+> > +	 */
+> > +	node = rb_first(&cfs_rq->tasks_timeline.rb_root);
+> > +	while (node) {
+> > +		struct sched_entity *se = __node_2_se(node);
+> > +
+> > +		if (!entity_is_task(se))
+> > +			goto next;
+> > +
+> > +		p = task_of(se);
+> > +		task_throttle_setup_work(p);
+> > +next:
+> > +		node = rb_next(node);
+> > +	}
+> > +
+> > +	/* curr is not in the timeline tree */
+> > +	if (cfs_rq->curr && entity_is_task(cfs_rq->curr)) {
+> 
+> I believe we can reach here from pick_next_task_fair() ->
+> check_cfs_rq_runtime() -> throttle_cfs_rq() in which case cfs_rq->curr
+> will still be set despite the task being blocked since put_prev_entity()
+> has not been called yet.
+> 
+> I believe there should be a check for task_on_rq_queued() here for the
+> current task.
+
+Ah right, I'll see how to fix this.
+
+Thanks,
+Aaron
+
+> > +		p = task_of(cfs_rq->curr);
+> > +		task_throttle_setup_work(p);
+> >   	}
+> > -	cfs_rq->throttle_count++;
+> > 
+> >   	return 0;
+> >   }
+> > 
+> 
+> [..snip..]
+> 
+> -- 
+> Thanks and Regards,
+> Prateek
+> 
 
