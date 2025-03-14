@@ -1,171 +1,149 @@
-Return-Path: <linux-kernel+bounces-560950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EAADA60B65
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:27:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D1A3A60B6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:28:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9468617665A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:27:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBBCF3B6824
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1461A7253;
-	Fri, 14 Mar 2025 08:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169201C84BC;
+	Fri, 14 Mar 2025 08:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NIyuv0no"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="lXGyMbyJ"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15CF1A23AA
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5B91AAA1B
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741940866; cv=none; b=o+7Xmmhqb0Znpy+k27s/hAl0yZrUe51FkgDMZTEDPKS0MuEgPDFv2tjkGY2ga9mEoZTVcPx3d+dk4mfjIUXM0yO7x0aTc8x4S4UEY/aYy/u0SXGpNs6UTi5A5on8NNVsI1kRyC77gkrjswzd6BvI1uE2I1t+hQ0OUlyFjyoONq8=
+	t=1741940872; cv=none; b=uaJOt+gEsZHxPo1svUvQC4af7gj1jDsiVy9tAAc1fZg9ZHQHd0s6GvbbEUTKL0Oii8oNO77Td9/Xp1NCx4tYdTgDTRv1UFJQRMwupKTYljYl02Mu5yFaE6uy/zBYzen7LjA5uf4zAUzAWHPhe9lR0s1q5ECX+muPV4/J1p/iNcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741940866; c=relaxed/simple;
-	bh=M0qV+T0e9lTbs6LgBpVvFlT54WXYpOStA4hJ0BfvdEw=;
+	s=arc-20240116; t=1741940872; c=relaxed/simple;
+	bh=17a3PwSysj48lPS/+FE8SBsjkBQN0LxJJw0V3mx+3A4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XvLv/1gyj52XJIQoQ+SMWdAl+O9sqg9BHgrhMxFkn+XkD6AYJaJycP0ira2fJOrb2FwVekLIEKkI7qkhIEtB3Zgds9YycpeFcoD4Tw619W43+89sP/SxBs4ylXxwxaXUQOY+LD64nBYZQGhQiV2pE114+PQ/UR1CucMga2SJtFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NIyuv0no; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5499c8fa0f3so2022023e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:27:44 -0700 (PDT)
+	 To:Cc:Content-Type; b=Olv4qgWYDtLJ0KhechbWrpJhjOSobA97H8N6UzPd/lkgevk2TTG77fvGTJzunBIpfTfZUYrGxhMMGtcqmldr7iTK91XElqiwfJRZjioiADcsLMiyjZc3Mb34Bn6sUchIKr42d2MhPKhqYsA+5BygR56T95Np0SpnUeqr2LgYF6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=lXGyMbyJ; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-855bd88ee2cso53554639f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:27:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741940863; x=1742545663; darn=vger.kernel.org;
+        d=sifive.com; s=google; t=1741940868; x=1742545668; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AIazsbhGjTnWVs4powPGcBo+ahU9A4azfZMflVf9GOM=;
-        b=NIyuv0noqkjgWjeY3l5wyiGXiv7C/n6qbRj+6jSfWsnAhEiB65CSQ4poXUbQp7JyFA
-         BPH8eESAK4jD3BvDyOfKTFV1R9+dwf642Xu5aty2d44KFVHjWwNpofCkFD0XuXGrsm2Z
-         tM+t8sCdsbUnk3NxkN0AS5uEgu7Wts9EUyHtc=
+        bh=X8bj5T6m1yE9zyibPVyLAnvEMluIIdsT4MhqvG4OGMI=;
+        b=lXGyMbyJVnHCblZg3g/JTyiTy4xoXLTEc0oty0KZixAAvLU/bphTStcqgha/sCs0Fb
+         xadq/gaBwC77dVLpdE4XYn+F7x19BdpQSt93xPFbmbSnGSeB/O532yzM0Kk83kCfvwrB
+         jislODgATcppurGUmYYvtwGLE1MruYvgApl8Q0s2f5mvVReOspKAdBpJfYTb5/6is4GU
+         70A8zUnzj5H5ocxvoN0w0CFCXBd9YQUSIBQ7ONVpjCqc9HAY2/LKWDDrkSlTLwh0xBmV
+         rCv95HgU/od27rWIgNJE4RXXqGP60EvIuiqujU9ls+04dhMgm4PIAEqXD0ZAvzZZ9gAz
+         o5Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741940863; x=1742545663;
+        d=1e100.net; s=20230601; t=1741940868; x=1742545668;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AIazsbhGjTnWVs4powPGcBo+ahU9A4azfZMflVf9GOM=;
-        b=BLPj4gMZa5WpwPoHyebLEU3QN9UfUd3bcXmElw43VG4owesyR41Mg3AoeIhcllqVjK
-         e49DrCwllugSSeS16gFf57wL3tVLyjusF4SmqwQH41YPV6/FTTB3r3PIznl5zIJP3K2l
-         ewtv064K52YhDuTOrJNP6rHWdAICJ9RNFTtlb7XFOcZfxyW1KOOZXQ9PTRk07eZ+HuEQ
-         KYZ9uTnPNHdUzhQUibk4npwyvTK4AgQFWTMII5HOhi7NWTtxbTHpU3JnqVzrxPpHxk3m
-         +hIVB5kFUUrPmg0/r5LYeiZS2wF1BEhcroNvUX/tZYccpv4G1Kzz3yrdB/Hh966GOdku
-         7Nwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVhZPkKv4z1d1ip1qdLivIs2arwYHU2U+0il3P3MjJaUpBgLLoLTEGuMtzq2Eo7t+l0PllqKnkGQJF1TXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHKzgojh6Jmuoh1pmz61y3Z8Qgt24tsRsJSBXjwid4a0vO7r9r
-	TZ3O6BRPBNLo+EAmWGI8O3K8qAEbOcbhguOfUudzFa5XHukN1Lu0Y09RhhmyCUbDJdsOfYSnS/y
-	62P5xGvddqQfU5adFeNzg/zr92SYhM329lsWo
-X-Gm-Gg: ASbGncuIKZh7nA7reqXRlXhlenI+imm+B5ADTM+90miH4EEfbURReKRVXfrnr+pqgnb
-	B0te8RBQTS8xETmmnCcmWCU3szQ3w7K/HcIjq2b9vZi9+kWQJ1Re+oN15LpRYHaElb2X2hJjVan
-	T/KtYUEBIzGWmpYnTnpW2KCR3yQze4cjLDUvTWH/qvU5amlaHek5G/
-X-Google-Smtp-Source: AGHT+IFNFAiq0DF0mxEisHTLx9G59G5mtBKcvgViPsH0J58VO/6T1UIYLgI9JMkclJbxf4qIJjWLMm8EKW+D8w91aec=
-X-Received: by 2002:a05:6512:2245:b0:549:4d73:641b with SMTP id
- 2adb3069b0e04-549c398d3bdmr568085e87.52.1741940863125; Fri, 14 Mar 2025
- 01:27:43 -0700 (PDT)
+        bh=X8bj5T6m1yE9zyibPVyLAnvEMluIIdsT4MhqvG4OGMI=;
+        b=co6ca0n+gHTnQ3/ElhsKy8egjJfOh32Zo6tSXaSQ27gL3aNY2znzyS/cuRVu1AO+cP
+         j1VGoB0PL0f3ywfdqB2WtK4WrS+UYOnCWCJmOtKa7s0MZCCUqEErY3UcinQn52RjYikV
+         eWHeh53btiziNbj53LwbKiqEPve/vOhikmC8xBbLNJdAOO8Dc/SnjGjBbNFiMfs65mCU
+         VHB3XhiPk+7X8feZxY+1ZU8H6yeO8wIsZh3DI9eurjEYzrj5p0vga1Fi79S9WInLN28O
+         zKIXSjVzVxFZC5eN8fYj21rKxkHTTihsVQLIhwKZEz5sLTPm0zzFH44NLYqqHJQkBtMW
+         3b9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWQt7zSVT4W9xTlV6Wot/kwJIZoZzTytSC3M+tOj1VAGUtc5B+4VbbNHZYplBZ5IVVb69SSe250Bx2bGfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJB7ua9CQcmRkxNag1uvIUola7+0ixtPv07bTjlga4Oz7VMcef
+	icC58ltlb4KyM/vYMzTsYRsX+lvnBqMIPrjVModaAlm2XgmcYGFoULCmsrHa/tntVe23Kmpnhu1
+	Z4PW1GYwxbvZnNsCJ7igt3HVhNGGsfFDSRzVOlw==
+X-Gm-Gg: ASbGnctkQ4Gb2uPNfHFS90gN1blt+CP95+9hyVS9y1y0SWVvUyYBAFFCB1fkSW1Xr8L
+	Wt0NEavNvRZKsNwxujNtP7QqB926gmKs4ZxegKZz7ZRgUPL0158MS9Wp7ONgEib+V3CO3Tu1YDm
+	Edq5T8EfTA4XFS3+FVJCCJwVE378xu37mdrhpI4w==
+X-Google-Smtp-Source: AGHT+IEEDueBTR/qjkseHCu/6hHmmY6d8gCCfHNJAKAWerhJ6BCGW/4G5xYr8+OUgNTAl9wCy3v958LMiQIhsbPcBw4=
+X-Received: by 2002:a05:6602:3a0a:b0:85d:b14a:bb56 with SMTP id
+ ca18e2360f4ac-85dc4761730mr159183339f.2.1741940868086; Fri, 14 Mar 2025
+ 01:27:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250314073307.25092-1-Lu.Tang@mediatek.com>
-In-Reply-To: <20250314073307.25092-1-Lu.Tang@mediatek.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 14 Mar 2025 16:27:32 +0800
-X-Gm-Features: AQ5f1Jpo3FChFigHgYdppgke4q0-o7VP4uIqPhGPsM2p4V783Z7jAOTWY1--PXQ
-Message-ID: <CAGXv+5EzdMtOXotGUNdwdP-cKPwMccH6kGDifpg+WgjX_2z2VQ@mail.gmail.com>
-Subject: Re: [PATCH 0/5] Add PMIC and SPMI driver for mt8196
-To: "Lu.Tang" <Lu.Tang@mediatek.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Chen Zhong <chen.zhong@mediatek.com>, Sen Chu <shen.chu@mediatek.com>, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20250310-v5_user_cfi_series-v11-0-86b36cbfb910@rivosinc.com> <20250310-v5_user_cfi_series-v11-1-86b36cbfb910@rivosinc.com>
+In-Reply-To: <20250310-v5_user_cfi_series-v11-1-86b36cbfb910@rivosinc.com>
+From: Zong Li <zong.li@sifive.com>
+Date: Fri, 14 Mar 2025 16:27:37 +0800
+X-Gm-Features: AQ5f1Jr6EIItMT0M4w7j1TkQMGeFFM7Vn70Ljf5lKdhIMO0pijsGnR7Gg0wOpRc
+Message-ID: <CANXhq0rtY_zDcLn4_TH0F083e4K58L-V2ingTwPgyoPBXEnY=g@mail.gmail.com>
+Subject: Re: [PATCH v11 01/27] mm: VM_SHADOW_STACK definition for riscv
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
+	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
+	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
+	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 14, 2025 at 3:56=E2=80=AFPM Lu.Tang <Lu.Tang@mediatek.com> wrot=
-e:
+On Mon, Mar 10, 2025 at 11:42=E2=80=AFPM Deepak Gupta <debug@rivosinc.com> =
+wrote:
 >
-> This series is based on linux-next.
+> VM_HIGH_ARCH_5 is used for riscv
 >
-> Changes in v0:
-> - Modify SPMI driver for mt8196
-> - Add SPMI PMIC mfd driver
-> - Add PMIC regulator driver for mt8196
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>  include/linux/mm.h | 7 +++++++
+>  1 file changed, 7 insertions(+)
 >
-> *** BLURB HERE ***
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 7b1068ddcbb7..1ef231cbc8fe 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -378,6 +378,13 @@ extern unsigned int kobjsize(const void *objp);
+>  # define VM_SHADOW_STACK       VM_HIGH_ARCH_6
+>  #endif
 >
-> Lu.Tang (5):
->   pmic: mediatek: Add pmic auxadc driver
->   pmic: mediatek: Add pmic regulator driver
->   pmic: mediatek: Add spmi pmic mfd driver
->   spmi: mediatek: modify spmi dirver for mt8196
->   dt-bindings: pmic: mediatek: Add pmic documents
+> +#if defined(CONFIG_RISCV_USER_CFI)
+> +/*
+> + * Following x86 and picking up the same bitpos.
+> + */
+> +# define VM_SHADOW_STACK       VM_HIGH_ARCH_5
+> +#endif
+> +
+>  #ifndef VM_SHADOW_STACK
+>  # define VM_SHADOW_STACK       VM_NONE
+>  #endif
+>
 
-You are adding three PMICs at the same time. Please separate each
-patch in this series so that it is one patch per type per PMIC.
+LGTM.
 
-ChenYu
+Reviewed-by: Zong Li <zong.li@sifive.com>
 
-
->  .../iio/adc/mediatek,spmi-pmic-auxadc.yaml    |   31 +
->  .../bindings/input/mediatek,pmic-keys.yaml    |    1 +
->  .../bindings/mfd/mediatek,mt6685.yaml         |   50 +
->  .../bindings/mfd/mediatek,spmi-pmic.yaml      |  173 +++
->  .../pinctrl/mediatek,mt65xx-pinctrl.yaml      |    1 +
->  drivers/iio/adc/Kconfig                       |   10 +
->  drivers/iio/adc/Makefile                      |    1 +
->  drivers/iio/adc/mtk-spmi-pmic-adc.c           |  576 +++++++++
->  drivers/mfd/Kconfig                           |   26 +
->  drivers/mfd/Makefile                          |    2 +
->  drivers/mfd/mt6685-core.c                     |   83 ++
->  drivers/mfd/mtk-spmi-pmic.c                   |  518 ++++++++
->  drivers/regulator/Kconfig                     |   34 +
->  drivers/regulator/Makefile                    |    3 +
->  drivers/regulator/mt6316-regulator.c          |  381 ++++++
->  drivers/regulator/mt6363-regulator.c          | 1106 +++++++++++++++++
->  drivers/regulator/mt6373-regulator.c          |  826 ++++++++++++
->  drivers/spmi/spmi-mtk-pmif.c                  | 1040 +++++++++++++++-
->  include/linux/mfd/mt6363/core.h               |  134 ++
->  include/linux/mfd/mt6363/registers.h          |  168 +++
->  include/linux/mfd/mt6373/core.h               |   94 ++
->  include/linux/mfd/mt6373/registers.h          |   53 +
->  include/linux/regulator/mt6316-regulator.h    |   48 +
->  include/linux/regulator/mt6363-regulator.h    |  424 +++++++
->  include/linux/regulator/mt6373-regulator.h    |  318 +++++
->  25 files changed, 6037 insertions(+), 64 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/mediatek,sp=
-mi-pmic-auxadc.yaml
->  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mt6685=
-.yaml
->  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,spmi-p=
-mic.yaml
->  create mode 100644 drivers/iio/adc/mtk-spmi-pmic-adc.c
->  create mode 100644 drivers/mfd/mt6685-core.c
->  create mode 100644 drivers/mfd/mtk-spmi-pmic.c
->  create mode 100644 drivers/regulator/mt6316-regulator.c
->  create mode 100644 drivers/regulator/mt6363-regulator.c
->  create mode 100644 drivers/regulator/mt6373-regulator.c
->  create mode 100644 include/linux/mfd/mt6363/core.h
->  create mode 100644 include/linux/mfd/mt6363/registers.h
->  create mode 100644 include/linux/mfd/mt6373/core.h
->  create mode 100644 include/linux/mfd/mt6373/registers.h
->  create mode 100644 include/linux/regulator/mt6316-regulator.h
->  create mode 100644 include/linux/regulator/mt6363-regulator.h
->  create mode 100644 include/linux/regulator/mt6373-regulator.h
->
 > --
-> 2.46.0
+> 2.34.1
 >
 >
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
