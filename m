@@ -1,76 +1,75 @@
-Return-Path: <linux-kernel+bounces-560759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1240A6092F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:26:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1780A60930
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:26:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC7E517FA82
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:26:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E76DB19C2570
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360E41547C5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A87157465;
 	Fri, 14 Mar 2025 06:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VVJ2Pgw0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SPMVLbWE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08C413D8B2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653DD13541B
 	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741933608; cv=none; b=FU5l7bqubd2B9L98tD/zBQphC6nFGPCkrcUsTHmH5g5pWu/rtBPZt77eCsw6VLMkUVyvPa19PMm7W6AwN6pMfC+2c2a8KZPNKyptLQbWPTbL44jy8ym6c87S5Q6miMqHvv8HoW+fO9uRypcJR5YMNRdFUoHfRpqb9Gv9dYwuvso=
+	t=1741933609; cv=none; b=ecZwipytWPp4RRp5jF4jibniXEzaPIOTwnv2iMXs4q3cwDJVIqxq/bx/+vKYiqHd0cFwNHg57gVTXblT4CoDNP2eR5kbV58e55qMHpeWGBm0z86UO1i3HyhFtviGoRREVsUXHsp+Ekg0WMqMa1Nn3ik7YdpW3r5fEdXCAws0YyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741933608; c=relaxed/simple;
-	bh=xtDmUpOhUGdsKu/dDtCQocF38vOZK8ZuTVa2vDYkYyw=;
+	s=arc-20240116; t=1741933609; c=relaxed/simple;
+	bh=snmgh2zd1FAsGdElxkgkln6qGNbcnvjtAcmEBlbJiwo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iM7Bx55cMZr13IJ8agBu3tBIf+tWpeMQvD7DS6rm2l4fesSNwHSf3zlna5IPCRLtcRFwSvfqLGxdRy+QceGwDoEx/lZsHUgGqOEXsvpr4xVZ/hPvFKNL80y/hUJBX0dbti0b4kilm6Ee3dvjSC0LLByVGITq7wTpP8aR7Idmb8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VVJ2Pgw0; arc=none smtp.client-ip=198.175.65.14
+	 Content-Type:Content-Disposition:In-Reply-To; b=T0s3Laap17ZJKBnOMk2WpdCOWXcOgI4Mk6lyRv0WR7B42PsbuS2dxAEsp+dKseU1jNcpZH8tUb1fJ21xHJWWyJgtz4jtEEHj2eo5r0haFsQ3d3ThPRJwsqDIEkOUXQohQtXEDu+uLzho4HvLLT+30c2jng0/JC5BdNPKOLHe7Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SPMVLbWE; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741933607; x=1773469607;
+  t=1741933606; x=1773469606;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=xtDmUpOhUGdsKu/dDtCQocF38vOZK8ZuTVa2vDYkYyw=;
-  b=VVJ2Pgw0vy02R5/ic+Jo+Dz5HkX5zv4Q37Va/NuY7xYnorOW+LDP6RHy
-   up5cUQreu2oepqM8+5u7JdCkXfyYwfozOBQD4fX3heAcGhgq80gxxnRsS
-   o7saxdROTY7f5+Ccbui96y9YJBDISKAlbh/BWiNW59S+HakKsaeEnWzF1
-   TMslLGm/CGn/Z5nl0ek7LfvK4482x8VszvfECaWZFIN6ho3sAb2PO84w1
-   a0cQ9TZQbWppUtRYzA7GpQW8xH0JUvkZgEcdv6UdJIYIZKZ+UmzVM4UZb
-   ruoqZvqMpm1EdZz7Q9sM5DU0Zy69mbdi3hsBC4ruuBd9Bry0HiwX5YtaH
-   g==;
-X-CSE-ConnectionGUID: pXtB15dVSVecyeln7bRkPw==
-X-CSE-MsgGUID: f+K/zet7RAiKfRKmqQ8w8A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="46864450"
+  bh=snmgh2zd1FAsGdElxkgkln6qGNbcnvjtAcmEBlbJiwo=;
+  b=SPMVLbWE4xzR5SEURmvx7DA+248mT+dNVJmMJHxYyRYaFCBwuzBaDhHa
+   dz4vJbM66h3a6Tgygbc2K9uTUNsg9+iAPJBwKL8s3mXjBxQ3CVOmHi1Rh
+   J+oWceo5W0yG4WXuQhovLSjaOCv4nwi+tG63JXSCrMvSb98U/R+9cT7uu
+   igRrrMcrUj7n0PlY9L1l74MaKJbEzlIkKu83sG58ZHn1xeeb+8EG5XAqF
+   7DgoOj9qk/ec6eKC2YRCsiputYOQeOk1qHlp7Vh1hJjNv7EKq/JvrgwQi
+   6L7tSCcvBB3UgcZrK+YyDG5aupkvPMRVEN2WLZLWOQcKBJKzXdJe3VtCQ
+   w==;
+X-CSE-ConnectionGUID: /mUpfLZjRoCWhSI7DZB4Uw==
+X-CSE-MsgGUID: MeUJUhtaRCqQWdN7pVFBWQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="46973470"
 X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="46864450"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 23:26:46 -0700
-X-CSE-ConnectionGUID: E+gooA7VTPG0Le0F9GWE8w==
-X-CSE-MsgGUID: RAap+ChgSfCkmHnI2VjlxA==
+   d="scan'208";a="46973470"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 23:26:46 -0700
+X-CSE-ConnectionGUID: tM4sylPKSte3nDGW+dRSow==
+X-CSE-MsgGUID: IXOjg544TlWNKs+YHCSoZg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="144368273"
+   d="scan'208";a="120956136"
 Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 13 Mar 2025 23:26:43 -0700
+  by fmviesa006.fm.intel.com with ESMTP; 13 Mar 2025 23:26:43 -0700
 Received: from kbuild by a4747d147074 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tsyVF-000A9s-0g;
+	id 1tsyVF-000A9u-0q;
 	Fri, 14 Mar 2025 06:26:41 +0000
 Date: Fri, 14 Mar 2025 14:26:12 +0800
 From: kernel test robot <lkp@intel.com>
 To: Akihiro Suda <suda.gitsendemail@gmail.com>,
 	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, x86@kernel.org,
-	suda.kyoto@gmail.com, regressions@lists.linux.dev,
-	aruna.ramakrishna@oracle.com, tglx@linutronix.de,
-	Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
+Cc: oe-kbuild-all@lists.linux.dev, x86@kernel.org, suda.kyoto@gmail.com,
+	regressions@lists.linux.dev, aruna.ramakrishna@oracle.com,
+	tglx@linutronix.de, Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
 Subject: Re: [PATCH v2] x86: disable PKU when running on Apple Virtualization
-Message-ID: <202503141349.bpi8pvc4-lkp@intel.com>
+Message-ID: <202503141345.LkDyBcmV-lkp@intel.com>
 References: <20250312100926.34954-1-akihiro.suda.cz@hco.ntt.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -97,24 +96,26 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Akihiro-Suda/x86-disable-
 base:   tip/x86/core
 patch link:    https://lore.kernel.org/r/20250312100926.34954-1-akihiro.suda.cz%40hco.ntt.co.jp
 patch subject: [PATCH v2] x86: disable PKU when running on Apple Virtualization
-config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20250314/202503141349.bpi8pvc4-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250314/202503141349.bpi8pvc4-lkp@intel.com/reproduce)
+config: i386-allnoconfig (https://download.01.org/0day-ci/archive/20250314/202503141345.LkDyBcmV-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250314/202503141345.LkDyBcmV-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503141349.bpi8pvc4-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503141345.LkDyBcmV-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
->> arch/x86/kernel/cpu/common.c:530:14: error: use of undeclared identifier 'acpi_gbl_FADT'
+   arch/x86/kernel/cpu/common.c: In function 'setup_pku':
+>> arch/x86/kernel/cpu/common.c:530:21: error: 'acpi_gbl_FADT' undeclared (first use in this function); did you mean 'acpi_table_fadt'?
      530 |         if (!memcmp(acpi_gbl_FADT.header.oem_table_id, "Apple Vz", 8)) {
-         |                     ^
-   1 error generated.
+         |                     ^~~~~~~~~~~~~
+         |                     acpi_table_fadt
+   arch/x86/kernel/cpu/common.c:530:21: note: each undeclared identifier is reported only once for each function it appears in
 
 
-vim +/acpi_gbl_FADT +530 arch/x86/kernel/cpu/common.c
+vim +530 arch/x86/kernel/cpu/common.c
 
    517	
    518	static __always_inline void setup_pku(struct cpuinfo_x86 *c)
