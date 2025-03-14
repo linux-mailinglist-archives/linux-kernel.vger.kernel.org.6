@@ -1,119 +1,119 @@
-Return-Path: <linux-kernel+bounces-562166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD19FA61E21
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:32:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BF7A61E2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:34:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C2777AF393
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:30:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83674883248
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6411C6FE8;
-	Fri, 14 Mar 2025 21:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C92D1C84B4;
+	Fri, 14 Mar 2025 21:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjrVbzoY"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="reyiEnln"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E7F1DFED;
-	Fri, 14 Mar 2025 21:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB2F1DFED;
+	Fri, 14 Mar 2025 21:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741987912; cv=none; b=XWSqDwzmGy0HILW+/ZLmnCpS9ixzDxv6uCk8kJzH0Ag3D+iDM9cUfTEYdrJd2pmOW2qEVFp+0lmaNEIGPY8r7THnxiBigOquqTj/udxUUwBynUfSs9w7mNRdOArrsSw7L5g5C3GT1/y7MkhCW6tNr+G6EWV/UI6NVqS3MNQxhJ4=
+	t=1741988046; cv=none; b=dM3MQTAO/Zjqfxam2dhAiMtfK97H46kakri09CA3jnFF32C8HNWdUGZn1wYLhWkRdazVVBoNOHX17x609v2EEcDwJJlRsAdN0KMJNOYJ64dp0OCnKdpg9CA35s30SBUJUATdG5sMkb3XSr+bGVFp0QzeLNInNihKAZI90hK8EvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741987912; c=relaxed/simple;
-	bh=tdMHO0jj9RFU5MULcgSTnXLqIZQqh2jLw20/uhG/UvM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U1ZK9m9K8QNwRjTFT9D8acdPfKZUYlNksukknCk2OS3rhcuqNKYArxfWn+hkItMic/s1RXlbQgbWNCUiKCUqJMsRSDfv2KcvARqPrT0Bg7HAPu7j99Ac8h7vJxNEWnxFbLKiC672cspItCX84tJjVSKP1EdqkwuKaryGsSyQMnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fjrVbzoY; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30bf1d48843so23271881fa.2;
-        Fri, 14 Mar 2025 14:31:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741987909; x=1742592709; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EFXMMPpZWxz33l8FJhCnqL9k4pO7ympJw9WZ9XEWmCM=;
-        b=fjrVbzoY69B3q+dkoJYjJejEm7NKsTAOJdl4IQ+bDy0/Jnsk/KRu59ms3tdQEbCxzA
-         6Q4dx6nIc8bxO2gbE3QGxmfiw5FUZnZshbPN8uNRWKKMh6bV42dP1AIN1NfiDYFhk979
-         ohnbI/3zc8CJDA9p9kQxz0p98r3uDdvpXNRul3JqtU61AD+iCj6L1HdIBEgSFhBMZME/
-         7zBj3BwfwFCqXcEfH1Z2vxpGCTGtaRpotuCYZZaR+MSgem567Eqkz+WHgvF15cY3/5gd
-         aoPSy+DQ5gi0wJnlUMxKpJfTq8KMBinLf39kK1VU/FwvREgXrWsRjPGmleLhkV9q3xD3
-         Zqiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741987909; x=1742592709;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EFXMMPpZWxz33l8FJhCnqL9k4pO7ympJw9WZ9XEWmCM=;
-        b=gzv4V4e/bEahrNIkWNVEMnmA4NpIDvRZF+mWmh6NkKBv/PRe6AKHsmLNF6+w5AahPP
-         M3YNU5SSiG4GjgEdeXz2mDnr2cl6ijW19uym/oDYzKNWfSAaRl1vMWqfNHwDnI0Vex9Q
-         gYyUP1Z9yEqneVcwjZdDmF5QRrBsdmCWJk7YZQdfGl3gCxhjAMkqNMAF7/k7eYlXDJju
-         jH/YwH4wnEvssm2LIL90/MW5mdjQ/23yXc8vanUh68CssPtgopuwrtZWU8glWr8iUvla
-         xETHroZttkrXqIxC70Jt2GHqEPzMz8rRoC2Q9/T4oVboYYmwhF1FHQRYwR19bEwxNxCr
-         2n+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW2h/wZ95npG/misURhmTN3JHGFLV3EG0OcHzOUXNGXqJ2Y2yjINT9MqlqZycbUs1vONia5jjB/aLnynhg+3uk5@vger.kernel.org, AJvYcCX+HmzGTchWBBINOE3/6S033PhNIv/4MiGeBMtA/kKatmPQwj3sWdXP7+FM13RLyeTMkv9dj/xz/QMZUmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMI7H5919O04iIxzKeDRdKKeSeHGxB2QmEx/PpPYHe0rP4pRax
-	TA+E+8UA1NIRLwHY0FujZJU1clffmYiCTjchG/5kF2A41+eF0FFPFs/iDQaO1trDOEL1ftV7Znr
-	jmuoz0RNUagqaRUsO5UveUjRJmSE=
-X-Gm-Gg: ASbGnctAYe9eeqf2tTCUo+TnSA6N3m7dJfyd5sHPDlPKOXVe74JNKJsuVASyodsBXbj
-	MAbrHHEEuntXcN4CNbWulEjMAPyFcmbm9B9Ofu/YeaJTvOQMIo/eCt8cXFNMrfzamoXjRYLR//k
-	T1+yR2jwM71Hw5L0wsqNq8+jYOuGaBTONg04L91AfyUnj+RGShiqaAm2gdaAhN
-X-Google-Smtp-Source: AGHT+IEtWT4VddWn6SOUrtR/atH2QmgVmvC8h5A6OHeGOpq918BGiPw69dJEpIGNtjkeGi+d9+Kll0e+2xNj6VEs/zc=
-X-Received: by 2002:a05:651c:2127:b0:30b:b184:a904 with SMTP id
- 38308e7fff4ca-30c4a75e6eamr16856411fa.4.1741987908479; Fri, 14 Mar 2025
- 14:31:48 -0700 (PDT)
+	s=arc-20240116; t=1741988046; c=relaxed/simple;
+	bh=yZIuloNXhuF5Z8BfZA1mYt0ELvR7GzpoA/U2KGPfEG4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ORidebA/y4uAibrF2+g2ABcgf2fDAWmlS13SeZMrFPIikTe7ym7+TB370WfOI6A18LE/ACPVK9x/POP4SaRA5+H8fS6ppUU3fqr/od1kofkVVek5ZqXqHv3iQ2BQrJ9s2xeUZrDEPKeUGi73A6I/ZbODNiM7hmzOcc0Xw//wUns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=reyiEnln; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52649C4CEE3;
+	Fri, 14 Mar 2025 21:34:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741988045;
+	bh=yZIuloNXhuF5Z8BfZA1mYt0ELvR7GzpoA/U2KGPfEG4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=reyiEnlndX4MH+SxzFQI5HynnCqCV/TbbnGqI+cipORUKHkt4djDi32ZPQGv4TD6C
+	 1EI1hBg2jm7w7UbtuuU54dAynixRlzk7OcRXWGohlRFjaqnzm8Kb1m7h3TESeuhXDJ
+	 DdKid1+AUVAFlmqcyxk/qbW98KQsjh26WgnIWV8Yjjbo2AjuZmsMfUGEWMEjcE7qQG
+	 RF/IXF7v/ken/ZC/o6sHk4ynJ8q5sj8dexqe5WD9ssawvWsc8UCkQ95i+kHgLc+sc8
+	 gSWwxCPjIuI7+pG8z0fmNDbQVjM5o6dfbGOijMppStvyJxR+Z1m0biTpopmmISAJbp
+	 UHXv9CVRZbnoQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	linux-kbuild@vger.kernel.org,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] rust: kbuild: skip `--remap-path-prefix` for `rustdoc`
+Date: Fri, 14 Mar 2025 22:33:33 +0100
+Message-ID: <20250314213333.2230670-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307-scanf-kunit-convert-v9-0-b98820fa39ff@gmail.com> <174198596655.151146.11778711834752944011.b4-ty@kernel.org>
-In-Reply-To: <174198596655.151146.11778711834752944011.b4-ty@kernel.org>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 14 Mar 2025 17:31:12 -0400
-X-Gm-Features: AQ5f1JrYArdxNFd2qwfXi-WujPoyGdtOJ9PdMwGeio2CLt0IFrT9Z8SBBffsYsw
-Message-ID: <CAJ-ks9nJSoj-3HmG4LRTA=1LMERJ5O5aAPLcWy_ZYCQc_jp9qg@mail.gmail.com>
-Subject: Re: (subset) [PATCH v9 0/6] scanf: convert self-test to KUnit
-To: Kees Cook <kees@kernel.org>
-Cc: David Gow <davidgow@google.com>, Petr Mladek <pmladek@suse.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 14, 2025 at 5:00=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
->
-> On Fri, 07 Mar 2025 06:27:33 -0500, Tamir Duberstein wrote:
-> > This is one of just 3 remaining "Test Module" kselftests (the others
-> > being bitmap and printf), the rest having been converted to KUnit. In
-> > addition to the enclosed patch, please consider this an RFC on the
-> > removal of the "Test Module" kselftest machinery.
-> >
-> > I tested this using:
-> >
-> > [...]
->
-> (I had to rebase on the printf move, but I think it got it all.)
->
-> Applied to for-next/move-kunit-tests, thanks!
->
-> [1/6] scanf: implicate test line in failure messages
->       https://git.kernel.org/kees/c/5866730da723
-> [2/6] scanf: remove redundant debug logs
->       https://git.kernel.org/kees/c/6340d61b9005
-> [3/6] scanf: convert self-test to KUnit
->       https://git.kernel.org/kees/c/97c1f302f2bc
-> [4/6] scanf: break kunit into test cases
->       https://git.kernel.org/kees/c/d62f8c95470c
+`rustdoc` only recognizes `--remap-path-prefix` starting with
+Rust 1.81.0, which is later than on minimum, so we cannot pass it
+unconditionally. Otherwise, we get:
 
-Looks good to me. Thanks Kees!
+    error: Unrecognized option: 'remap-path-prefix'
+
+Note that `rustc` (the compiler) does recognize the flag since a long
+time ago (1.26.0).
+
+Moreover, `rustdoc` since Rust 1.82.0 ICEs in out-of-tree builds when
+using `--remap-path-prefix`. The issue has been reduced and reported
+upstream [1].
+
+Thus workaround both issues by simply skipping the flag when generating
+the docs -- it is not critical there anyway.
+
+Fixes: 6b5747d07138 ("kbuild, rust: use -fremap-path-prefix to make paths relative")
+Link: https://github.com/rust-lang/rust/issues/138520 [1]
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+ rust/Makefile | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/rust/Makefile b/rust/Makefile
+index ea3849eb78f6..6586a7aa007e 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -57,10 +57,14 @@ endif
+ core-cfgs = \
+     --cfg no_fp_fmt_parse
+ 
++# `rustc` recognizes `--remap-path-prefix` since 1.26.0, but `rustdoc` only
++# since Rust 1.81.0. Moreover, `rustdoc` ICEs on out-of-tree builds since Rust
++# 1.82.0 (https://github.com/rust-lang/rust/issues/138520). Thus workaround both
++# issues skipping the flag.
+ quiet_cmd_rustdoc = RUSTDOC $(if $(rustdoc_host),H, ) $<
+       cmd_rustdoc = \
+ 	OBJTREE=$(abspath $(objtree)) \
+-	$(RUSTDOC) $(filter-out $(skip_flags),$(if $(rustdoc_host),$(rust_common_flags),$(rust_flags))) \
++	$(RUSTDOC) $(filter-out $(skip_flags) --remap-path-prefix=%,$(if $(rustdoc_host),$(rust_common_flags),$(rust_flags))) \
+ 		$(rustc_target_flags) -L$(objtree)/$(obj) \
+ 		-Zunstable-options --generate-link-to-definition \
+ 		--output $(rustdoc_output) \
+
+base-commit: bc5431693696b3f928b0b7acf8d7a120127db7a4
+-- 
+2.49.0
+
 
