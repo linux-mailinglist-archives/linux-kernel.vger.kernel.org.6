@@ -1,135 +1,129 @@
-Return-Path: <linux-kernel+bounces-561454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587D5A611F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:04:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFD7A611F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:04:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDF771B62BB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:04:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 050EF7AB7A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EB81FF603;
-	Fri, 14 Mar 2025 13:04:36 +0000 (UTC)
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168071FA272;
+	Fri, 14 Mar 2025 13:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FVC0cYeu"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80181F130E;
-	Fri, 14 Mar 2025 13:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD821EB39
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741957475; cv=none; b=mU18nOEcZB/osgGO1mHi/Xa2yYPgFClLFT2jG5bWUUOHT35urFZf20I2Tox+rvlTf9vcbNjeBKtP41hE8IbiFc3HO95XNVc8uUHOyW8nnVP7gNsYSjjRj40Ttnb4/v18W2u/Tl5yAI3TC6VFrZD2rVTvGpfjq1q9Y0hLYjTa2sM=
+	t=1741957473; cv=none; b=X4ZQh/HU7ZqhvVYwegNYaNE4Cb7uYrz645V30XeMrtVUFBe/p4Io/V4MKoVwdz1K45MT7HgRciQjm0PyRmosOTXE6wZudExteSrEV4HTGs91QsWGURdbWAsBYvzY+Ju4gPupU6xKA+OlgsJ/U0f51Y4qka/BOQBJdpjcWwyoFk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741957475; c=relaxed/simple;
-	bh=bVfaM4S7euKltLXfWQBe119rJoD+30fakO6Y9ADN0jw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BPoSC1X05xYesuYATF5ydKWVckT7rbE1hyOpBtcbheq1aPzti1B6SqWEslIh2ziliiy5VW+EpzaE0+/sid5A+75/0LXPus7qFMU/l+mfH/ouaXCZIZgxGD/e9hDollLYsWgwOUmkoKgfB7nY6v9CAoaGy5wC5CRpP0lxc+UNnZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6dd01781b56so26481726d6.0;
-        Fri, 14 Mar 2025 06:04:33 -0700 (PDT)
+	s=arc-20240116; t=1741957473; c=relaxed/simple;
+	bh=YrtvhfhP/Znn3fNZU4UiIYAYE8ptrotjbF/EGYUxQK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bmETt6AVKpROQLiIoOjiCnPLBF0YKvXmf4OKzSAsQDYLtqKXR6DWDYWM/UQQ9Lo3jgU1zWYa9czRiWf9BVzwxLXqzU1gZW0qSaw198SQhEaLFxWWpDBeEsCs7ILVIAAMRDTy4dOXVJJV8tSDfXqi9G+gcEAXzdmVYVUKsVSPX6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FVC0cYeu; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso14325765e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:04:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1741957470; x=1742562270; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RXEAhjO+FZzhjAKSipo0fbPH75GS1MBoxQtrIWgvBF8=;
+        b=FVC0cYeuzs7pNCqvicGAQv1g5hluybS2mHAoYAfP8+fJkhAEl4aS3EE0v69oB0agcE
+         sahcxak3kFs4otGN7ipVLs0mriF+NknzUr3rwMInepXp2fJuk74f7XngBuY0iGC7qyoQ
+         ZntLWyuWR9zeRCQp9ugBIDfPcM6pPdi0QZ17McEb2HsWBBlpnmIv8rL/QtdgW8jRER1X
+         gtbNsy+cG5PualPgGUSIutNm1seLKBgq4ah7NgQNm14sUWlagQ4V7n6MQsjPKoF2WfMb
+         3nndap5ssyZmceFZ/3K1V1UFknitgeNwfSXW7LiLs2koC/tEQC76l8v2APMxV8zYtlLR
+         z5fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741957472; x=1742562272;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PhGVsuA5CT9u8xsJRxxk8XXjhVy20k+vHhGYdzJeyyI=;
-        b=cCgmeFNYZLS738BnjazzMs5LigdfcnzVmSauaEg/CZhLIppKUommkiQy2iAl2y8q4z
-         bDAlZOfim3d1mDs6v2TsigaJ4QSTTCH6qcUWBww6eHFFFLo3HM+cRUrkUVGuZkhHpRqq
-         AGTaGvoA8nfKliM5D2EzBLutuLSdfchtdZuJTyXKdpZnhCMHRIpgOT3+GWXCuqbaEPT9
-         BsxjajziSVUGO6thGIn7LOf+SoFuWpntR1/YGdBIT9Z3MQ5JcUhRi7bi4Gso16MkCbdu
-         8VgWonfX3Y3k0FLQ1k9Iq2mNN6q3rQMOhXAfeB84C/Ut6WLx+rV4UVlnkn5W+0vhyKBY
-         q4wg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwVguodaJ9q6Mc1nQKCioo41tFYowjifvRoI/1XE4oMUUuyOUe70yrfXygi2i8sSTIPUMsiRlvlG4HiACZjef1C7s=@vger.kernel.org, AJvYcCV47Vi+PTDpwTd3f0QhSFgG0rkthKku6FXpmI28vEpjDj1Hs5Mh9ireiXgRSsbIsLullyECvvApkAU=@vger.kernel.org, AJvYcCVMfWlzC8OYLI7pDuVC0PoJNGG6bw741Q/D/SefTnUbYugXB/xLud7uj8WuX+hyNm22RjKzzUmtOqFLX6HD@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ7v7nYnXZ0GcdN89mhPa52imlMtOhxUf4M16ejdWJMGaszREu
-	GjigggavGBstKj5qdnlm4+gly13AnzyUMJmamJpytiMH855yRXq/50s3fgwXnVU=
-X-Gm-Gg: ASbGncskqtYna+zsMUHUuwcFXNuCIrsiegnSQnYpQ3xBCHopbKc78pmrgrgh2wTYGmd
-	+OYd9Wvv+oBnGkUKCEXw3Ooho0L1B/TnQWLAB7zR1qkmeF2kHk30FC8jk/PBpNb1IFLvGQ+xjSg
-	3MsOkW/QOKvmhYMalzhFQ0Tb4Oogkpm36gIGem4bPqCEjuOY/E5FABVzgd5ywsxTUti5tlo97F6
-	xQ0sZVsBarcxuW1z9YxValclYSAgIYpTfidBw1f3rdrpctozehdhpeTfAJrbebpMpru+UssH6lV
-	kUtY34leOKANpDE54k3w0P3M65aEze3NxIpLXRqLWJFuJd6AHtTp1zHYOU4B9IitwB+1LdBJR59
-	ownKdRdZNOOg=
-X-Google-Smtp-Source: AGHT+IHLBTeBmZMCKyn3gRpnuO0X1rBngeEC3sFl7/1vBspepZ73SLFYrFdWR5C84kwPNmx9oVhnJw==
-X-Received: by 2002:a05:6214:202b:b0:6e8:fa38:46aa with SMTP id 6a1803df08f44-6eaeaa9d01cmr29288566d6.33.1741957471746;
-        Fri, 14 Mar 2025 06:04:31 -0700 (PDT)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com. [209.85.222.175])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade24d7f1sm23384476d6.54.2025.03.14.06.04.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 06:04:31 -0700 (PDT)
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c0155af484so281152785a.0;
-        Fri, 14 Mar 2025 06:04:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV1/Fi2dzrJudcjVbUr8djHXaLfmj3udszl7httOW9ul5CnGmRfcLMHO+MqjuOicLfGz1fBp3YGLcw=@vger.kernel.org, AJvYcCWPm89+ytwobbsfnFR+3/erJXj1AtppGD0A5h2TL0n7nhFhSlF5vm5Tv7LN7OzeCs+oarhhHHosGoiTOzK9@vger.kernel.org, AJvYcCXOOo0UCDc7QpKuJzEZZntQptBUn4GxyHSDPvsJfSF3xeFJBL6iVjD+WoOcRYzxe263FVMKpZi5xvKa+eyfGUwAOps=@vger.kernel.org
-X-Received: by 2002:a05:620a:2787:b0:7c5:431f:f5eb with SMTP id
- af79cd13be357-7c57c7d6ccamr267628485a.20.1741957471269; Fri, 14 Mar 2025
- 06:04:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741957470; x=1742562270;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RXEAhjO+FZzhjAKSipo0fbPH75GS1MBoxQtrIWgvBF8=;
+        b=sy05Y2kGttFaTu+7l6ev+pPB6YasGr61Ubcowvh8iitMYL4JJjcBlZpIcLxib2UDvd
+         1RSLvqvJ9hVXV5En/ErYhF7F+JHbAiA8c0X3cq4PUP4KVjZbltDOz4nPyFnHf9QzCYtm
+         2iWmYwb7x71T7iD1z1dgD0+Ig1UOreIuhuVe8YxxTBkFam2rHa155T+7qQtRaU7lknkf
+         ZbslnZh8h4+GOWERxFBaHXrDdVt3ZvvexBCLS+kthps2YGMtISW2JW572gXy9VbNZClr
+         h5M3zreNr1r7A5ORj09CBCzT6qfGBwhQL8xVOCylT3OhnDvwi/Ag3GTPwZTO9i97BE1h
+         ZlRw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGm+oId90uXQmlVSAz+MmiAKvo0MaAVfwBYoTT+5X3RpDm0OEtaHYkQAPAcGSFgUwCDfWYQy0a5nSbvG4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVlF5zLSpPZ2GF4nKC8ok9b1eV1/XEeLGErhDuAJWYQ5GtxMfQ
+	ho9Ex3nB9+9BxVXSmARh5zQhEy+7uWuCymltntZ79MlqZXi0idoMfvjYNSEdyWs=
+X-Gm-Gg: ASbGncsto0xaqM+l9b9ssWzVjMPPfeHsr5FzGpmtPwqPneC4389Jb4ysfE17NaG6tYI
+	NPTlUyBvndltf1r1IYp8vKpbUJrgAaY8hXfouhY76ktU0Nf5jXn7W000ouMXV+WwYp9IB2riKJq
+	vHuwrZLzGA5WAtdlETkE/SwDnR4c+P+FI8fu/Nwqhe8BTjrSQmOoxj8jIU2iJAZteJUrNHvlIYf
+	OAsYcjPOpsCvlgJnHhROkQtuPiX6rldjZ4/kUpy7CELxOzzLVXUfP568+pdGGG/3/mhkseZnH7K
+	tadSEgn5+dmn4oy2Egbzxuma8PP0K6I2WyqqcAzJhmXj6WM=
+X-Google-Smtp-Source: AGHT+IHX8lnwJXQp9lmsaTQS54crU+G64pDcAvklWf9R0V2hsgHpJVwfSwI5w9rxAsR7GygmwCqXlA==
+X-Received: by 2002:a05:600c:1c29:b0:43d:ce4:ef3f with SMTP id 5b1f17b1804b1-43d1ecbc1damr30518925e9.12.1741957469797;
+        Fri, 14 Mar 2025 06:04:29 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1ffc4173sm16908685e9.20.2025.03.14.06.04.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 06:04:29 -0700 (PDT)
+Date: Fri, 14 Mar 2025 14:04:27 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: David Gow <davidgow@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v9 5/6] scanf: tidy header `#include`s
+Message-ID: <Z9QpWwlJn1U3tTjP@pathway.suse.cz>
+References: <20250307-scanf-kunit-convert-v9-0-b98820fa39ff@gmail.com>
+ <20250307-scanf-kunit-convert-v9-5-b98820fa39ff@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250309211402.80886-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250309211402.80886-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250309211402.80886-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 14 Mar 2025 14:04:19 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU5tr2sNZQtVkT922sJd_7Lbt=nYUujX0WtnrzkWOJqiQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JrWpj5EMfqGnEa9ZPso7-fQV6lKkk6CyOSlSHuEHppV3ja1dOF1Fn7DheE
-Message-ID: <CAMuHMdU5tr2sNZQtVkT922sJd_7Lbt=nYUujX0WtnrzkWOJqiQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] clk: renesas: rzv2h: Refactor PLL configuration handling
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307-scanf-kunit-convert-v9-5-b98820fa39ff@gmail.com>
 
-Hi Prabhakar,
+On Fri 2025-03-07 06:27:38, Tamir Duberstein wrote:
+> Remove the unused `kernel.h`. Replace `string.h` with `sprintf.h` as the
+> former doesn't seem to be used directly.
 
-On Sun, 9 Mar 2025 at 22:14, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Refactor PLL handling by introducing a `struct pll` to encapsulate PLL
-> configuration parameters, ensuring consistency with the existing dynamic
-> divider structure.
->
-> Introduce the `PLL_PACK()` macro to simplify PLL structure initialization
-> and update the `DEF_PLL()` macro to use the new `pll` structure. Modify
-> relevant clock register functions to utilize the structured PLL data
-> instead of raw configuration values.
->
-> This refactoring improves code readability, maintainability, and
-> alignment with the existing clock configuration approach.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> --- a/lib/tests/scanf_kunit.c
+> +++ b/lib/tests/scanf_kunit.c
+> @@ -5,12 +5,11 @@
+>  
+>  #include <kunit/test.h>
+>  #include <linux/bitops.h>
+> -#include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/overflow.h>
+>  #include <linux/prandom.h>
+>  #include <linux/slab.h>
+> -#include <linux/string.h>
+> +#include <linux/sprintf.h>
+>  
+>  #define BUF_SIZE 1024
+>  
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.16.
 
-> --- a/drivers/clk/renesas/rzv2h-cpg.h
-> +++ b/drivers/clk/renesas/rzv2h-cpg.h
-> @@ -10,6 +10,25 @@
->
->  #include <linux/bitfield.h>
->
-> +/**
-> + * struct pll - Structure for PLL configuration
-> + *
-> + * @offset: STBY register offset
-> + * @clk: Flag to indicate if CLK1/2 are accessible or not
+The change makes sense and looks good to me. I would go with it.
 
-If you don't mind, I'll rename this to "has_clkn" while applying.
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Tested-by: Petr Mladek <pmladek@suse.com>
 
-Gr{oetje,eeting}s,
+Further improvements might be done later in a separate patchset...
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best Regards,
+Petr
 
