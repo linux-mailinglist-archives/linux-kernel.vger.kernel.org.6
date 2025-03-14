@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-562142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B71A61D51
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:56:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6564CA61D5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:57:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFEFC880195
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:56:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAB20422580
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7124A1ACEDD;
-	Fri, 14 Mar 2025 20:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491521C8605;
+	Fri, 14 Mar 2025 20:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJe26a6f"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ghYmiEkJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C981518E756;
-	Fri, 14 Mar 2025 20:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A8C18E756;
+	Fri, 14 Mar 2025 20:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741985781; cv=none; b=WTvf25TaBzTOUWaSp6cLM1aoJ+B7nW6zslydcwR53sx2q2Dc2BxWTI3hi2rDas2FyV8iPgRJ1y2PwVqArHFY0ST4UrGjP/45Y2KKiCHwkfqjg32PnIklEg0f1nSpR9armbCbajFy/ztTzC7x80JzGkPB2OFcWTS1R2iZOJDL19g=
+	t=1741985859; cv=none; b=Q+UMduLZADXY9LawcWUW23Y78EOShVbobwddsVX6RplHPd00ouwL3UuOirSKcIh5ZAkI/dL7qCtYllqePwXqJqqc3Kv58kf2yu7eQeKfSeEieZVGL8OnjuUbbG13BH0l4G8FoUj/KHXVWQRGEoKTgQJ0LsGmejSKVSJgsKPZHl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741985781; c=relaxed/simple;
-	bh=iMSgarGi3krQEJm++0O0SbMFE13iiQP7gPT7GMX+qiM=;
+	s=arc-20240116; t=1741985859; c=relaxed/simple;
+	bh=j781fFqLGV5IZKM4oQ3qsgK08fIYHDIRWP9xGNBmhM8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W15VUe/awdlPp1ikloSiQo+nhlPs8kNgISocYLrF2R+P4bHbE0snQAkk1eXTjeEp17ioHgOwXFE7Yl0NBC+cyt57miIDPtRDS7u0+VM/gq1jE4tWwS7TtJTUMW4hiLuR+Nz2nYph88o7tirIMuzp77VzRvTpfIjLjNCm4rz+xAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JJe26a6f; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-394780e98easo1650680f8f.1;
-        Fri, 14 Mar 2025 13:56:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741985777; x=1742590577; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9XvA72KRtE9ykA6OaKpXZqUYJNmXiecakc7nsFpYupQ=;
-        b=JJe26a6fdcpCyTMk5UnsWiBofNdVmkxE7j969YIoqoQyizRgsdOcvt5bKuy16nihK7
-         fTgqIDBQyoy+Cvdx3pvzknLdKfHJyi7pjp1Jh/z+K6QD6PnaZXV8oMZQjsuwEal+OnPS
-         xQbwMiTtAHJgh3vS+tOtquIFMqbSsJclY6sIMNllECm9gNuLM17e0ShkGjUgpquo+bRt
-         56RdruRQO6T1lqvwn/FPi7S9QLmEq0ZD4A8zHHxLVtgs/ijJcGgNadW9gnSknlKW0QiX
-         NbYmUHFSD2tdmShAOQ0QTh4luKQTxb9njDwu4kURj3XexibLD3f2tIueMtWg7HR99hn/
-         NzoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741985777; x=1742590577;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9XvA72KRtE9ykA6OaKpXZqUYJNmXiecakc7nsFpYupQ=;
-        b=sF4PMzsFx5mVFfsw5IGbLJrB0YrqVb+REKSb4h7b2uQD7qfAG1gNYR48PV1IOnOYW3
-         MfQVFn3f1sd2gkj2KG6W4W77g1tpzhKgvDePQAfqvdL6aSRonh7oQ3u/Fb53Umfba/hS
-         NzpgK8so+MwOBBfrPP3WwDD/fiVQNZkCC7PXRGX94IvcwztValrWQVugpkG0/5m4U/Nn
-         0WW/PXd1e1fe9eOBBJrTJDhhm6NcaTP0MVfDzbT6KzDsyoklD8tdk/PqmHHPtARTD0Fz
-         xeYkX5FceRGcy8hW5IZApU4y79G42tlyUA6LKc1xO5igIId4MVX9zaiFWz93jaatNMzW
-         orfA==
-X-Forwarded-Encrypted: i=1; AJvYcCULi8Sa9Gv1xtCezOZAJbPvvir880J3dT8PR63TQFVU09WtPq6+lpylu426ooCP9pVbxpU9gOCp5w0Bgy8=@vger.kernel.org, AJvYcCXImdYltrWoYsnm9DqKMh0E7XS0dXaXKlagaEiLxGm7N0IDWl5aJOr7u1WmATYsbsS6QrFvb5wBilcl9Piu/60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT7kw91VaOpDWQEMcUBZgxx8myuw9mNQZ6aJTteKC+L7oWM7rw
-	sBLRk9w6x1GLTYXdPx+aYTwf2InWOJgnZ9UL7SisXqf4SvE5aVgV
-X-Gm-Gg: ASbGncvGtTP/7BCMzLe5lnIRjK0+e4io1IBow6CMutRSdpDiWlNHXytrANG3FBQALWQ
-	pwgQ1ZXXm3PySZO+F6O8Pv7dv0BYSz407aWDBFeduDLGGch+fk9O78Ag0d0p/zmS7KmIJknEvl8
-	y8RxJ31IWzosAwykF24zOUIeoCLb4IalSQo57T1JadMFj+HSHr3VyysnLh0DzI/0vxLys9RPorI
-	EVZU1QSUb3UD/Rj3ZVWeRloD3TtFZFSrOQ6FuYdgfy6HIhow0p90CJzOGpBa292HKViusXMcjQ5
-	Pogo12fwY+HzCHNwLDi1USQ7moEl/LWhsjfg/7N/HiEI0UkEmH8g/X6T+rUVgKjntRWBbpC2pej
-	TOiaR9+blsKsDOXvaiVU=
-X-Google-Smtp-Source: AGHT+IEs/WKOQPjFGV0aoNdB2WhHlKZBgSHJIoJwuaamm+ZJDpLpBtCL4BNxsqmU82Oa3Ao/u1kxMQ==
-X-Received: by 2002:a5d:6484:0:b0:38f:23f4:2d7a with SMTP id ffacd0b85a97d-3971f9e79fcmr5636583f8f.40.1741985776438;
-        Fri, 14 Mar 2025 13:56:16 -0700 (PDT)
-Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe609a2sm27733215e9.30.2025.03.14.13.56.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 13:56:15 -0700 (PDT)
-Date: Fri, 14 Mar 2025 20:56:14 +0000
-From: Stafford Horne <shorne@gmail.com>
-To: Sahil Siddiq <icegambit91@gmail.com>
-Cc: jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
-	sahilcdq@proton.me, linux-openrisc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC] openrisc: Add cacheinfo support
-Message-ID: <Z9SX7thyConoDjLT@antec>
-References: <20250310191358.67912-1-sahilcdq@proton.me>
- <Z9NM8K92M8kS6t4k@antec>
- <ee43f507-c0a2-45ed-818e-f24babf07d60@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PNZroZ+N+qY9WmE6fAF0MCQ3U5h+Z6mUceyeY9JU9qZLniZFj+rQQGbDWrS7iyByv2aOGIm5B7McCqlzHeQJNOs1N+gCgxy5oVWaO8wmoBoV88wD1YCOjtyMxhP8N80rzpmHw0KlQC4nbMgtBlrNwFyP4PRQkx9/EoS+QCr1c3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ghYmiEkJ; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741985858; x=1773521858;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=j781fFqLGV5IZKM4oQ3qsgK08fIYHDIRWP9xGNBmhM8=;
+  b=ghYmiEkJ09LT7WR8MV97Mulp2m90bls+pQI4N/EmF73E542hBr6WhYM5
+   1EOtvyOQmp5SxlWGEU3qAvV+vaCSRjB4i2Dwatm86BtRCbdpFDdKsAjgU
+   CZRezHDkDmMyhrYHmRN/0P/m/9mWWfW8+Hrl/1uww1p0T+SQWvs5h6JhL
+   Hd+toJ8j9zNzEoqBpqM9c89MgmxubnVDdgfjk7y2SXw1GLnnfn+pYs8ZJ
+   4u32kaPzXHR3in7ub13XLnqEyAG5Ss805oowtUfmIW0yUREKZZD/QD3rr
+   5c5XnuH5ZkRZQ+DWIFLAf8l5tqn57/hGxgxMrYVPodxNmhzylbBXFaoEV
+   Q==;
+X-CSE-ConnectionGUID: lL6B3YuuQRydsNTHtZbVKQ==
+X-CSE-MsgGUID: mIFk/nWcQAi8OvlFZt1G2A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="60695394"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="60695394"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 13:57:38 -0700
+X-CSE-ConnectionGUID: DkqhZqCcQmCDZ7JeDDLWpg==
+X-CSE-MsgGUID: zPD6lZDpQAGsMRHh02vZUA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="121422228"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 13:57:31 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 8B13511F944;
+	Fri, 14 Mar 2025 22:57:28 +0200 (EET)
+Date: Fri, 14 Mar 2025 20:57:28 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: david@ixit.cz
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: dt-bindings: Convert Analog Devices ad5820 to
+ DT schema
+Message-ID: <Z9SYOCVxt70u_bad@kekkonen.localdomain>
+References: <20250314-b4-ad5820-dt-yaml-v2-1-287958c3c07c@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,168 +82,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ee43f507-c0a2-45ed-818e-f24babf07d60@gmail.com>
+In-Reply-To: <20250314-b4-ad5820-dt-yaml-v2-1-287958c3c07c@ixit.cz>
 
-On Sat, Mar 15, 2025 at 01:34:03AM +0530, Sahil Siddiq wrote:
-> Hi,
+Hi David,
+
+Thanks for converting this to YAML.
+
+On Fri, Mar 14, 2025 at 08:58:27PM +0100, David Heidelberg via B4 Relay wrote:
+> From: David Heidelberg <david@ixit.cz>
 > 
-> On 3/14/25 2:54 AM, Stafford Horne wrote:
-> > On Tue, Mar 11, 2025 at 12:43:57AM +0530, Sahil Siddiq wrote:
-> > > Add cacheinfo support for OpenRISC.
-> > > 
-> > > [...]
-> > > None of the functions in drivers/base/cacheinfo.c that are capable of
-> > > pulling these details (e.g.: cache_size) have been used. This is because
-> > > they pull these details by reading properties present in the device tree
-> > > file. In setup.c, for example, the value of "clock-frequency" is pulled
-> > > from the device tree file.
-> > > 
-> > > Cache related properties are currently not present in OpenRISC's device
-> > > tree files.
-> > 
-> > If we want to add L2 caches and define them in the device tree would
-> > it "just work" or is more work needed?
-> > 
+> Convert the Analog Devices ad5820 to DT schema format.
 > 
-> A little more work will have to be done. The implementation of "init_cache_level"
-> and "populate_cache_leaves" will have to be extended. To pull L2 cache attributes,
-> they'll need to make calls to the "of_get_property" family of functions similar to
-> what's being done for RISC-V and PowerPC.
-> 
-> Shall I resubmit this patch with those extensions? I think I'll be able to test
-> those changes with a modified device tree file that has an L2 cache component.
+> Add the previously undocumented io-channel-cells property,
+> which can be omitted. If present, it must be set to 0,
+> as the device provides only one channel.
 
-Since we don't have any such hardware now I don't think its needed.
+What's the purpose of this property? The driver doesn't use it nor I think
+it provides any information on the hardware either. The above description
+also appears to be saying it's redundant.
 
-> > > Regarding the "shared_cpu_map" cache attribute, I wasn't able to find
-> > > anything in the OpenRISC architecture manual to indicate that processors
-> > > in a multi-processor system may share the same cache component. MIPS uses
-> > > "globalnumber" to detect siblings. LoongArch uses a "CACHE_PRIVATE" flag
-> > > to detect siblings sharing the same cache.
-> > 
-> > In SMP environment the L1 caches are not shared they are specific to each CPU.
-> > 
-> > Also, we do not have hyperthreading in OpenRISC so shared_cpu_map should be a
-> > 1-to-1 mapping with the cpu.  Do you need to do extra work to setup that
-> > mapping?
-> > 
-> 
-> No extra work has to be done to set up the 1-to-1 mapping. This is already being
-> done in "ci_leaf_init()".
+-- 
+Kind regards,
 
-OK.
-
-> > > I am running with the assumption that every OpenRISC core has its own
-> > > icache and dcache. Given that OpenRISC does not support a multi-level
-> > > cache architecture and that icache and dcache are like L1 caches, I
-> > > think this assumption is reasonable. What are your thoughts on this?
-> > 
-> > Currently this is the case, but it could be possible to create an SoC with L2
-> > caches.  I could imagine these would be outside of the CPU and we could define
-> > them with the device tree.
-> 
-> In this case, some extra work will have to be done to set the "shared_cpu_map"
-> appropriately. But I think the modifications will be quite small. If the L2 cache
-> is external to all CPUs, then all online CPUs will have their corresponding bit
-> set in the "shared_cpu_map".
-
-Yes, it could be so.  For now, let's not do this as no such hardware exists.
-
-> > > Another issue I noticed is that the unit used in ...cache/indexN/size
-> > > is KB. The actual value of the size is right-shifted by 10 before being
-> > > reported. When testing these changes using QEMU (and without making any
-> > > modifications to the values stored in DCCFGR and ICCFGR), the cache size
-> > > is far smaller than 1KB. Consequently, this is reported as 0K. For cache
-> > > sizes smaller than 1KB, should something be done to report it in another
-> > > unit? Reporting 0K seems a little misleading.
-> > 
-> > I think this is fine, as long as we pass in the correct size in bytes.
-> 
-> Understood.
-
-OK.
-
-> > > [...]
-> > > +
-> > > +int init_cache_level(unsigned int cpu)
-> > > +{
-> > > +	struct cpuinfo_or1k *cpuinfo = &cpuinfo_or1k[smp_processor_id()];
-> > > +	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
-> > > +	int leaves = 0, levels = 0;
-> > > +	unsigned long upr = mfspr(SPR_UPR);
-> > > +	unsigned long iccfgr, dccfgr;
-> > > +
-> > > +	if (!(upr & SPR_UPR_UP)) {
-> > > +		printk(KERN_INFO
-> > > +		       "-- no UPR register... unable to detect configuration\n");
-> > > +		return -ENOENT;
-> > > +	}
-> > > +
-> > > +	if (upr & SPR_UPR_DCP) {
-> > > +		dccfgr = mfspr(SPR_DCCFGR);
-> > > +		cpuinfo->dcache.ways = 1 << (dccfgr & SPR_DCCFGR_NCW);
-> > > +		cpuinfo->dcache.sets = 1 << ((dccfgr & SPR_DCCFGR_NCS) >> 3);
-> > > +		cpuinfo->dcache.block_size = 16 << ((dccfgr & SPR_DCCFGR_CBS) >> 7);
-> > > +		cpuinfo->dcache.size =
-> > > +		    cpuinfo->dcache.sets * cpuinfo->dcache.ways * cpuinfo->dcache.block_size;
-> > > +		leaves += 1;
-> > > +		printk(KERN_INFO
-> > > +		       "-- dcache: %4d bytes total, %2d bytes/line, %d way(s)\n",
-> > > +		       cpuinfo->dcache.size, cpuinfo->dcache.block_size,
-> > > +		       cpuinfo->dcache.ways);
-> > 
-> > Can we print the number of sets here too?  Also is there a reason to pad these
-> > int's with 4 and 2 spaces? I am not sure the padding is needed.
-> > 
-> > > +	} else
-> > > +		printk(KERN_INFO "-- dcache disabled\n");
-> > > +
-> > > +	if (upr & SPR_UPR_ICP) {
-> > > +		iccfgr = mfspr(SPR_ICCFGR);
-> > > +		cpuinfo->icache.ways = 1 << (iccfgr & SPR_ICCFGR_NCW);
-> > > +		cpuinfo->icache.sets = 1 << ((iccfgr & SPR_ICCFGR_NCS) >> 3);
-> > > +		cpuinfo->icache.block_size = 16 << ((iccfgr & SPR_ICCFGR_CBS) >> 7);
-> > > +		cpuinfo->icache.size =
-> > > +		    cpuinfo->icache.sets * cpuinfo->icache.ways * cpuinfo->icache.block_size;
-> > > +		leaves += 1;
-> > > +		printk(KERN_INFO
-> > > +		       "-- icache: %4d bytes total, %2d bytes/line, %d way(s)\n",
-> > > +		       cpuinfo->icache.size, cpuinfo->icache.block_size,
-> > > +		       cpuinfo->icache.ways);
-> > 
-> > Same here.
-> 
-> 
-> Sure, I'll print the number of sets as well.
-> 
-> I don't think there's any reason for the padding. It was part of the original
-> implementation in setup.c. There shouldn't be any issues in removing them.
-
-Right, it would be good to fix.
-
-> > > [...]
-> > >   	seq_printf(m, "frequency\t\t: %ld\n", loops_per_jiffy * HZ);
-> > > -	seq_printf(m, "dcache size\t\t: %d bytes\n", cpuinfo->dcache_size);
-> > > -	seq_printf(m, "dcache block size\t: %d bytes\n",
-> > > -		   cpuinfo->dcache_block_size);
-> > > -	seq_printf(m, "dcache ways\t\t: %d\n", cpuinfo->dcache_ways);
-> > > -	seq_printf(m, "icache size\t\t: %d bytes\n", cpuinfo->icache_size);
-> > > -	seq_printf(m, "icache block size\t: %d bytes\n",
-> > > -		   cpuinfo->icache_block_size);
-> > > -	seq_printf(m, "icache ways\t\t: %d\n", cpuinfo->icache_ways);
-> > >   	seq_printf(m, "immu\t\t\t: %d entries, %lu ways\n",
-> > >   		   1 << ((mfspr(SPR_DMMUCFGR) & SPR_DMMUCFGR_NTS) >> 2),
-> > >   		   1 + (mfspr(SPR_DMMUCFGR) & SPR_DMMUCFGR_NTW));
-> > > -- 
-> > > 2.48.1
-> > > 
-> > 
-> > This pretty much looks ok to me.
-> > 
-> 
-> Thank you for the review.
-
-Thank you.
-
--Stafford
+Sakari Ailus
 
