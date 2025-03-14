@@ -1,164 +1,198 @@
-Return-Path: <linux-kernel+bounces-560627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D045CA60771
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:21:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3E0AA60775
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:23:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9323B7AD19C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:20:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4648A3BC87B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83E038F82;
-	Fri, 14 Mar 2025 02:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E31259B71;
+	Fri, 14 Mar 2025 02:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="CP49vXR9"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JVEUyqe9"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E675D2E337C
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 02:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA4218B03;
+	Fri, 14 Mar 2025 02:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741918864; cv=none; b=dSLkR5wwrUBphSAsrfUQRYRw7WmQI4xkiXFSULjIvJZtwLzw5+0X6+Bk8q/nRspP0KtO0on3H7SR4yeR1tQVFmYEc/8TpMxkFK6LnwyFmnCpLxFYU181HlkJIUcWzOe1Ig4WyK2WYdOyXU7SeQ7dpv2J4T7ps7mosyDrghlhv3A=
+	t=1741918969; cv=none; b=FKC8VpBkThJsi/FR5K5VtmNR5Q+cA4sPNdrAcLs6wazyoOwcFFhzVZTQqY1snMJQ0dctqWC9bxn1AgoqqlfrF6ziwjH2PuRxuXE805jBf1/Fxf8yoZTHYGcJqWpsjTcDIBi7mvCTO8xQ26J2aBE1YQ4j4BApZdqIM7ywGkzQ0/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741918864; c=relaxed/simple;
-	bh=HJDMDz0CiZl9AfGnk3V9PTSAVcMWoVMzTqWgk1eiCi0=;
+	s=arc-20240116; t=1741918969; c=relaxed/simple;
+	bh=sWKXN8cKrNB+gGdwxIZoWICKKlVuMO6GlnugQx/2dZo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uAI8C8IjpTsh3DJJCY4k5IY3piOFa5Z374Q7CUjxNSDlY6fTPj0rzxjv7lyYrH5r81nEpqCMaR12qI+lePTC7syQdTZQ4tjtNj5Xw0nTsVN1mYqTWDpk+lsMe27VKmhhklL5CHJPI+2ET2sysXf7ilncWQszAbWN4Q2ekj56Cb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=CP49vXR9; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5498c742661so1809964e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 19:21:01 -0700 (PDT)
+	 To:Cc:Content-Type; b=vAUPIuRqWjM3fgPS4AxSwexaFev5oki2dP8GPSBouChq2nELSrnLHv16PeJT0Q2kryeLcVtbM4w7PoBcdsmcneDPn611Irq3IB3evP1JJ2Vrq0CsfsrSGCbDIopO+ChMieAa+8/augXHrZNXsusjnCk7BaOP4Mguub63ZZFLiZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JVEUyqe9; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-524038ba657so1451635e0c.0;
+        Thu, 13 Mar 2025 19:22:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1741918860; x=1742523660; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741918966; x=1742523766; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JhvEgULRCeABMBBVLY/qi5SSG7BfaBYoCdPiyeDpY/s=;
-        b=CP49vXR9/n8Yw2c9+gFMqiXB7nwTubZfxXcnlbDIGcx6K3pOF4s3KGNzju8hyRXLHW
-         PWKSNA6PzvK6YSPIqPpKsyw8fPzzKiRz3PIaGMnjgm4qXztHM7X32hYR6tbjhS+xuqAU
-         m5wbPPbQZuCsVEVJvzyXG9Fq2I/ggG66mqgR5LgdowkIOWBJdvOFQ0K2g6kpUBABXlKQ
-         gwMw8k+WoaHmjjpPfMorBsJtq6dLURS2wMpJVT7ZAlZutNwT4mOR4e/XeSl/bIxGcMau
-         NPzjBsMwmZF+kH8j+w08oCo5454xZiJz3+AEtQ8W0qbpQnwYE32NpgzEWmqJ4Em6Fglu
-         y0gA==
+        bh=6pUSAt2gBWS/THix03rDWEWBe6ltaTHViojJEsG79IE=;
+        b=JVEUyqe9S0pc3xLgmFRmCg0gQXqijaJhY2QKO6zaknGbsOIszjX56pMiVMK0TQzDbo
+         rOD8K/QL+eWjWjlpPbgAK6JtZ0KnpoNJ0/3rUIB429b0tJsVNt6di9XPkimeIXcxybL9
+         r16nchIjG+KcPf8ISDYpRMIxGi/QqY/o2F7nXZSBMuYdEMV1TqMqUo+L5QCWNkD6zGTN
+         OBeoS9F3SiChvvBa7vLEyAK8IevYnlDT5OltvO4TXVz0xu7Mm7vhgVbMajwGPeevAYoE
+         Vvmtmxu17JRl0vlIUuSvQwFnLvkZWvxMes8nXwDHy/lnyDXUELxqYlrvkOImgPQ2tEz1
+         UEkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741918860; x=1742523660;
+        d=1e100.net; s=20230601; t=1741918966; x=1742523766;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JhvEgULRCeABMBBVLY/qi5SSG7BfaBYoCdPiyeDpY/s=;
-        b=p9glCpTC7N5YeRTcBMCzNUb/jQIT8pYr9BJlfCX10z13eHwupw6jOs0krwfmLNPHqW
-         It5otzdD2anla7n2hSayVYAbtxcC6NOkANe6q3OhvLB5Odsx7gupBH1Xv+M9029TLKRq
-         ucqAm3w1u9x1yO6Q51xYOV1RoOuNVDt/YfdZaoj6JGFXwNrvaSeAr36Fy+XZrLS8ngHW
-         igDbeA93LeGvTo0Cl4oSycIQG+n+d/VaWEGn1bBeVT0lZkBxQ+qOpkL4P0ZlLjY/7Vz5
-         PFkjFz5dn9ku6AqTwoxHLfrOHmwmE4P9cBkz7IfJXKPuteGUATnRMKMSe8oENY15rxNG
-         n38w==
-X-Forwarded-Encrypted: i=1; AJvYcCUsgdcMNi1yHSFtAnUa38FMpCvrbh8w/ZDa6y9OuGEd4piDhJF3PNojnpFMcPSSvfov4Z7SQvzmp/1V3VQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUWTmjhgRus6tE6H25EM5cSRUU7BXsEUnyqgnYB/5WS0NYBcxi
-	Lx1ieaQpSaHpP/2hsoKhEHcTntnfzMxkIYhLSKtXUbK8i19NDg4CoalONVF+oIkBIgAdY6fqG5/
-	g9cCeXIGIjoKdluHqv7O/wB3RDXc7wIcI6L2gDw==
-X-Gm-Gg: ASbGncv5LN1FqgsUaIJR1u1lullN860Tv5yNYzAnkgLE0q7KgL+VKieVir+BtokVoX0
-	tjY4AwV9hgMC7QH3MMrz/2tB4l4C5cAYkHup3VEda7qLYl3zIl4zkU7IrntU6QYZ1VIFhwqs2hA
-	gT4niMg+au9/nEi088EVCwwh1+/Ng8D4n/f9EUKpwW
-X-Google-Smtp-Source: AGHT+IEQU3O4OvJAPMBVbp+9v3wiBt3lm6Z3gqLTilJ9zNqtvYkgmwPglVyR3QyNU8ynw0ua8c8Xt/QXuPoDakLUlUs=
-X-Received: by 2002:a05:6512:234f:b0:545:3dd:aa69 with SMTP id
- 2adb3069b0e04-549c3969f3bmr221089e87.36.1741918859813; Thu, 13 Mar 2025
- 19:20:59 -0700 (PDT)
+        bh=6pUSAt2gBWS/THix03rDWEWBe6ltaTHViojJEsG79IE=;
+        b=IThG/lI9Z1Pl0rWRRPyee2/g8x5cLf8A2j1nkEajHEQc/QjTLlNTv0HRgvbuOVQoQC
+         GaU6zXmToHJM4j5qLcmXn0WVc3kNQ8ZZWml7TXASH3e1uA9iZoO7emrGIMU6vU/K/cUM
+         aRGiXrgg5kYecSM7xT2dqKaeeG+p8ZUl0jlkkaBmu7Aq5KvvDpEQWlEnF38IdySuX4by
+         UuuBVjTHUjXvrmb9dxi9pm6jVlDagV8IiAFMIn1IC3KRFknWCp/VGIVd8D+yIlIb0O8z
+         YRRvyXGCFtIUCOleByZaeSG2hcLtIjW6YJEyMe9OTn0d9nUlmnfU5i8/42FE1UOYUivZ
+         zZkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZKitR8VIA+5eH+T7XS5wjpetCAzPjcpQPNsAQ5ZIpgU3npNeaXX4eAoIjWZ/vZXYd9gv1bfNHNFD6KGaZ@vger.kernel.org, AJvYcCUoKto7+J9o6G9/7XPxQb+ezcGfVjT0V1KrV6drUIo3cRckKllwtpIjdK0VmdkSDS6mUgiAUPqOxLl5SZyqxPXh80g=@vger.kernel.org, AJvYcCVrv7IqZklrJ26v1x3D2nn0SE25YIIX+aUQyQXl+NMcQq2Gop8nTzQfu07QlKHp/+R9dpo1286txE7O@vger.kernel.org, AJvYcCXeuvv1coHO78YbJwp+pkeXVcnr1NYE/6YOpRkZgUJ/1r3w6alyQkADGfJWhIn72GnYQPMH7qQ9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBfOvnPaIy5iZuizhpB8jX2hBYiRNqsYjxTYE9GG+eDRP2w6h1
+	4fCvODKZeAURD4dU0Da1eMpbqUCxSi+fai3UJ6T5NMcSTIG8+pi6QIpffmEu4HLHjLMsxW05Kgk
+	GANtaUcAhUwPwIvoA7dNj2gGRe7U=
+X-Gm-Gg: ASbGncvMD/3hcqWhgN3TKAtqFEcPQdSONejnxCjUk3rFo8cET9uTC+WxZ5CBjT++uEv
+	q/mEX6P+mvzBY+pZgZ5/2ag6dpYIwEPLmlMQ4LkDPHmjM3O3O+FZG3T0i4H0ZrR2HoNgi1NC2kT
+	6SQ+EvNyjJDJr8X2asXN6fU1aQ9Q==
+X-Google-Smtp-Source: AGHT+IGs2NI4xge/a4lyvxOg3g3F9PYZhdFTackqpL56vrER50A7S7MWIvWppAene15n03kRY8o9uLvEhOJigkhj1z0=
+X-Received: by 2002:a05:6122:881:b0:50d:39aa:7881 with SMTP id
+ 71dfb90a1353d-5244a70f321mr354682e0c.0.1741918966551; Thu, 13 Mar 2025
+ 19:22:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312094337.2296278-1-hezhongkun.hzk@bytedance.com> <Z9N1ntdaKpxlrq26@google.com>
-In-Reply-To: <Z9N1ntdaKpxlrq26@google.com>
-From: Zhongkun He <hezhongkun.hzk@bytedance.com>
-Date: Fri, 14 Mar 2025 10:20:23 +0800
-X-Gm-Features: AQ5f1JrqaVlfn6VtonAFOuMAO3DY1FI2fmUUcsILkYntOGv_rkxwA5SUOWwgiiY
-Message-ID: <CACSyD1PvaqLVuYS9ZVc8UDGqDmabTkaySrRog-ELOdJCwkj3PQ@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] mm: vmscan: skip the file folios in
- proactive reclaim if swappiness is MAX
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: akpm@linux-foundation.org, mhocko@suse.com, hannes@cmpxchg.org, 
-	muchun.song@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250311221730.40720-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250311221730.40720-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250312131623.GA489176-robh@kernel.org>
+In-Reply-To: <20250312131623.GA489176-robh@kernel.org>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 14 Mar 2025 02:22:20 +0000
+X-Gm-Features: AQ5f1JpzjU4xztKpl7U06A1goxhOy8oR5lsFxv1C9RO1B1QjTjJrg3KeCUuStEU
+Message-ID: <CA+V-a8vvd7uGx=M=vUauKGA4O5uhwsCgRzVqb387Z8JUXFBHBQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 1/3] dt-bindings: net: dwmac: Increase
+ 'maxItems' for 'interrupts' and 'interrupt-names'
+To: Rob Herring <robh@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 14, 2025 at 8:17=E2=80=AFAM Yosry Ahmed <yosry.ahmed@linux.dev>=
- wrote:
->
-> On Wed, Mar 12, 2025 at 05:43:37PM +0800, Zhongkun He wrote:
-> > With this patch 'commit <68cd9050d871> ("mm: add swappiness=3D arg to
-> > memory.reclaim")', we can submit an additional swappiness=3D<val> argum=
-ent
-> > to memory.reclaim. It is very useful because we can dynamically adjust
-> > the reclamation ratio based on the anonymous folios and file folios of
-> > each cgroup. For example,when swappiness is set to 0, we only reclaim
-> > from file pages.
-> >
-> > However,we have also encountered a new issue: when swappiness is set to
-> > the MAX_SWAPPINESS, it may still only reclaim file folios. This is due
-> > to the knob of cache_trim_mode, which depends solely on the ratio of
-> > inactive folios, regardless of whether there are a large number of cold
-> > folios in anonymous folio list.
-> >
-> > So, we hope to add a new control logic where proactive memory reclaim o=
-nly
-> > reclaims from anonymous folios when swappiness is set to MAX_SWAPPINESS=
-.
-> > For example, something like this:
-> >
-> > echo "2M swappiness=3D200" > /sys/fs/cgroup/memory.reclaim
-> >
-> > will perform reclaim on the rootcg with a swappiness setting of 200 (ma=
-x
-> > swappiness) regardless of the file folios. Users have a more comprehens=
-ive
-> > view of the application's memory distribution because there are many
-> > metrics available.
-> >
-> > With this patch, the swappiness argument of memory.reclaim has a more
-> > precise semantics: 0 means reclaiming only from file pages, while 200
-> > means reclaiming just from anonymous pages.
-> >
-> > Signed-off-by: Zhongkun He <hezhongkun.hzk@bytedance.com>
->
-> Reviewed-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+Hi Rob,
 
-Thanks for your time, Yosry.
+Thank you for the review.
 
+On Wed, Mar 12, 2025 at 1:16=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
+:
 >
+> On Tue, Mar 11, 2025 at 10:17:28PM +0000, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Increase the `maxItems` value for the `interrupts` and `interrupt-names=
+`
+> > properties to 11 to support additional per-channel Tx/Rx completion
+> > interrupts on the Renesas RZ/V2H(P) SoC, which features the
+> > `snps,dwmac-5.20` IP.
+> >
+> > Refactor the `interrupt-names` property by replacing repeated `enum`
+> > entries with a `oneOf` list. Add support for per-channel receive and
+> > transmit completion interrupts using regex patterns.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > > ---
-> >  mm/vmscan.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
+> > Note, for adding constraints to vendor bindings patch [0] has been sent
+> > out seprately.
 > >
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index c767d71c43d7..f4312b41e0e0 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -2438,6 +2438,16 @@ static void get_scan_count(struct lruvec *lruvec=
-, struct scan_control *sc,
-> >               goto out;
-> >       }
+> > [0] https://lore.kernel.org/all/20250309003301.1152228-1-prabhakar.maha=
+dev-lad.rj@bp.renesas.com/
 > >
-> > +     /*
-> > +      * Do not bother scanning file folios if the memory reclaim
-> > +      * invoked by userspace through memory.reclaim and the
-> > +      * swappiness is MAX_SWAPPINESS.
-> > +      */
-> > +     if (sc->proactive && (swappiness =3D=3D MAX_SWAPPINESS)) {
-> > +             scan_balance =3D SCAN_ANON;
-> > +             goto out;
-> > +     }
-> > +
-> >       /*
-> >        * Do not apply any pressure balancing cleverness when the
-> >        * system is close to OOM, scan both anon and file equally
+> > v2->v3
+> > - Dropped adding `additionalItems`
+> > - Moved interrupts description into interrupt-names
+> > - Replaced enum with a oneOf and added Rx/Tx regex patterns
+> >
+> > v1->v2
+> > - No change
+> > ---
+> >  .../devicetree/bindings/net/snps,dwmac.yaml   | 24 ++++++++++++-------
+> >  1 file changed, 15 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Do=
+cumentation/devicetree/bindings/net/snps,dwmac.yaml
+> > index 78b3030dc56d..bacec6e6514b 100644
+> > --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > @@ -114,19 +114,25 @@ properties:
+> >
+> >    interrupts:
+> >      minItems: 1
+> > -    items:
+> > -      - description: Combined signal for various interrupt events
+> > -      - description: The interrupt to manage the remote wake-up packet=
+ detection
+> > -      - description: The interrupt that occurs when Rx exits the LPI s=
+tate
+> > -      - description: The interrupt that occurs when HW safety error tr=
+iggered
+> > +    maxItems: 11
+> >
+> >    interrupt-names:
+> >      minItems: 1
+> > +    maxItems: 26
+>
+> Oops! I assume you meant 11. With that fixed:
+Ouch, I will fix this in v4.
+
+>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>
+> >      items:
+> > -      - const: macirq
+> > -      - enum: [eth_wake_irq, eth_lpi, sfty]
+> > -      - enum: [eth_wake_irq, eth_lpi, sfty]
+> > -      - enum: [eth_wake_irq, eth_lpi, sfty]
+> > +      oneOf:
+> > +        - description: Combined signal for various interrupt events
+> > +          const: macirq
+> > +        - description: The interrupt to manage the remote wake-up pack=
+et detection
+> > +          const: eth_wake_irq
+> > +        - description: The interrupt that occurs when Rx exits the LPI=
+ state
+> > +          const: eth_lpi
+> > +        - description: The interrupt that occurs when HW safety error =
+triggered
+> > +          const: sfty
+> > +        - description: Per channel receive completion interrupt
+> > +          pattern: '^rx-queue-[0-3]$'
+> > +        - description: Per channel transmit completion interrupt
+> > +          pattern: '^tx-queue-[0-3]$'
+> >
+> >    clocks:
+> >      minItems: 1
 > > --
-> > 2.39.5
+> > 2.43.0
 > >
-> >
+
+Cheers,
+Prabhakar
 
