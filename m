@@ -1,161 +1,188 @@
-Return-Path: <linux-kernel+bounces-561210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B7EA60ECF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:27:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD1FA60ED0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:27:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8BC016AB97
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:27:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A423B5A36
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B06D1F4282;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBE11F3BAE;
 	Fri, 14 Mar 2025 10:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="skypVqA9"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="m+jmdcM7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2Da2GVXQ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="m+jmdcM7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2Da2GVXQ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA8D1DF98D;
-	Fri, 14 Mar 2025 10:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE921F416F
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741948064; cv=none; b=q0xxqvO4ApONEk+cMz2VcRprsJGiQKY3yPjlTUDIeCR5rApOBUFVvbmyibo5ffDdFjzoV4WB84wVnYlMTFyGJmNWTemPoQ17YoQ1MKLIbhkMddX7pDIy4ncYXjBJCnzTaBgOKeXggG8M2xtmGRPKmKm2koXcK5vRsRA86tveujw=
+	t=1741948064; cv=none; b=Lr4Gz0y6IAb0/1MFS5uKihcfmMAah7MLSqCCDkVL4erLTXH5mbInqtgdCFW8vs8H29p0PcSpyDcpv/xyqH450dBwT2M6GB9l8iUrqPRFV199o3bVmPsyG7stvCwXAuFwoNj1PKgthGjVRpEIXz1qPCFnbmKipL9Y1t1Rytn0yuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741948064; c=relaxed/simple;
-	bh=AqCLx8QBF1KMM98GnBfyED4kWGNOck2ntohHUtYJDSo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YLPRUlWm8yzSyr/VD97bkr4spdTDuC17hKslSp3T5NXY+e6JBTF2se6c53bSAB6clzuLGVPJhZ+iEEXePOi05sI5VZI1d7GgrukMnATe4gGE0t7xNWOM3jUlckiAk79dltH7OE2DgUwkc3VOoxpHbwb9pkrPrNXl2VcgN5Dsw4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=skypVqA9; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52EAROek1654743
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Mar 2025 05:27:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741948045;
-	bh=w5qzGqYNtcXVKnkJY6yYk6vm8l8FZO+5k1KrJz2DeFQ=;
-	h=From:To:CC:Subject:Date;
-	b=skypVqA9Lnak3jdekm/tYR026cOAKKMklxqsQO2Jyv/aQOmizSmFIjWsAJ5XfHvYV
-	 qE3RpsNe7Fio+1DeV3cmUji9lbDMr+TGDI34hgwKae34pGS2juB/MLtQvhEzIvlgN2
-	 f7GtZHlO18seGqlhhewsXkUkzTviGFkWrrhOzuKM=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52EARONO116857
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 14 Mar 2025 05:27:24 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
- Mar 2025 05:27:24 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 14 Mar 2025 05:27:24 -0500
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52EAROxS081406;
-	Fri, 14 Mar 2025 05:27:24 -0500
-Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 52EARN2R024336;
-	Fri, 14 Mar 2025 05:27:24 -0500
-From: MD Danish Anwar <danishanwar@ti.com>
-To: Sai Krishna <saikrishnag@marvell.com>, Meghana Malladi <m-malladi@ti.com>,
-        Diogo Ivo <diogo.ivo@siemens.com>, Paolo Abeni <pabeni@redhat.com>,
-        Jakub
- Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
-        "David S.
- Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew+netdev@lunn.ch>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net] net: ti: icssg-prueth: Add lock to stats
-Date: Fri, 14 Mar 2025 15:57:21 +0530
-Message-ID: <20250314102721.1394366-1-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
+	bh=6MUnyoMqfWRXJzMvRu/uODIoNq/j211mmEZ2WIPba3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YiM+QpsgP+18KPkVwktHDOjqk12toXb3La/Y+oCjnxLBsW4+5wtCSakHCEUbqjTW2az77Jkj0PHzznrAqQdQPudj8AHT3JbJntbymP/9ZXL8ABP9O55M2FncZgkrr9osxR1FDNiiNmJdWFFQB06wO2lsvxMqxBhtJeM0Ee3ca2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=m+jmdcM7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2Da2GVXQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=m+jmdcM7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2Da2GVXQ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 288B01F38E;
+	Fri, 14 Mar 2025 10:27:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741948061; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cgnd6h/8+X/DkEnqQwYn262MXQhZFGwUf0NqimX6ZLs=;
+	b=m+jmdcM7naaaJYDjiLUoxBoxJ1CUuX2Lg4vABxBJHyTXYB5MR9GuIes3/qRccuoKZF4HDU
+	3KeFroriA7gVH/riqYktnDgM1V4ZgY4otUSaZE9PNYqCuWikLFrAlwzSmMrvGPwgZ9YbHG
+	dCK2cYFsreK6SZ2EDzsLBlKDEL9qxuM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741948061;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cgnd6h/8+X/DkEnqQwYn262MXQhZFGwUf0NqimX6ZLs=;
+	b=2Da2GVXQOSiDIHTxiRa89PZSJ4zgmkGZnKDEmxXRDLU6yAL5/8ePn1raLqhnLE6MJ5Yijm
+	e1ZU+M9xehJbbsCw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=m+jmdcM7;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=2Da2GVXQ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741948061; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cgnd6h/8+X/DkEnqQwYn262MXQhZFGwUf0NqimX6ZLs=;
+	b=m+jmdcM7naaaJYDjiLUoxBoxJ1CUuX2Lg4vABxBJHyTXYB5MR9GuIes3/qRccuoKZF4HDU
+	3KeFroriA7gVH/riqYktnDgM1V4ZgY4otUSaZE9PNYqCuWikLFrAlwzSmMrvGPwgZ9YbHG
+	dCK2cYFsreK6SZ2EDzsLBlKDEL9qxuM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741948061;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cgnd6h/8+X/DkEnqQwYn262MXQhZFGwUf0NqimX6ZLs=;
+	b=2Da2GVXQOSiDIHTxiRa89PZSJ4zgmkGZnKDEmxXRDLU6yAL5/8ePn1raLqhnLE6MJ5Yijm
+	e1ZU+M9xehJbbsCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 11CDD13A31;
+	Fri, 14 Mar 2025 10:27:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id mxH5A50E1GeiZQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 14 Mar 2025 10:27:41 +0000
+Message-ID: <c88739b4-1fe3-47dc-8ed6-22adf0aadcb4@suse.cz>
+Date: Fri, 14 Mar 2025 11:27:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 07/10] memcg: use __mod_memcg_state in drain_obj_stock
+Content-Language: en-US
+To: Shakeel Butt <shakeel.butt@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-mm@kvack.org,
+ cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Meta kernel team <kernel-team@meta.com>
+References: <20250314061511.1308152-1-shakeel.butt@linux.dev>
+ <20250314061511.1308152-8-shakeel.butt@linux.dev>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20250314061511.1308152-8-shakeel.butt@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 288B01F38E
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,suse.cz:dkim,suse.cz:mid];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-Currently the API emac_update_hardware_stats() reads different ICSSG
-stats without any lock protection.
+On 3/14/25 07:15, Shakeel Butt wrote:
+> For non-PREEMPT_RT kernels, drain_obj_stock() is always called with irq
+> disabled, so we can use __mod_memcg_state() instead of
+> mod_memcg_state(). For PREEMPT_RT, we need to add memcg_stats_[un]lock
+> in __mod_memcg_state().
+> 
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-This API gets called by .ndo_get_stats64() which is only under RCU
-protection and nothing else. Add lock to this API so that the reading of
-statistics happens during lock.
+Maybe it'll make sense later but as of this patch itself it begs a question
+why put memcg_stats_lock()/unlock() in __mod_memcg_state itself and not just
+around the call in drain_obj_stock()?
 
-Fixes: c1e10d5dc7a1 ("net: ti: icssg-prueth: Add ICSSG Stats")
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
-NOTE: This was suggested by Jakub Kicinski <kuba@kernel.org> [1] to get
-this as bug fix in net during upstreaming of FW Stats for ICSSG driver
-This patch doesn't depend on [1] and can be applied cleanly on net/main
-
-[1] https://lore.kernel.org/all/20250306165513.541ff46e@kernel.org/
-
- drivers/net/ethernet/ti/icssg/icssg_prueth.c | 1 +
- drivers/net/ethernet/ti/icssg/icssg_prueth.h | 2 ++
- drivers/net/ethernet/ti/icssg/icssg_stats.c  | 4 ++++
- 3 files changed, 7 insertions(+)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 00ed97860547..9a75733e3f8f 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -1679,6 +1679,7 @@ static int prueth_probe(struct platform_device *pdev)
- 	}
- 
- 	spin_lock_init(&prueth->vtbl_lock);
-+	spin_lock_init(&prueth->stats_lock);
- 	/* setup netdev interfaces */
- 	if (eth0_node) {
- 		ret = prueth_netdev_init(prueth, eth0_node);
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-index 329b46e9ee53..f41786b05741 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-@@ -305,6 +305,8 @@ struct prueth {
- 	int default_vlan;
- 	/** @vtbl_lock: Lock for vtbl in shared memory */
- 	spinlock_t vtbl_lock;
-+	/** @stats_lock: Lock for reading icssg stats */
-+	spinlock_t stats_lock;
- };
- 
- struct emac_tx_ts_response {
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_stats.c b/drivers/net/ethernet/ti/icssg/icssg_stats.c
-index 8800bd3a8d07..6f0edae38ea2 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_stats.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_stats.c
-@@ -26,6 +26,8 @@ void emac_update_hardware_stats(struct prueth_emac *emac)
- 	u32 val, reg;
- 	int i;
- 
-+	spin_lock(&prueth->stats_lock);
-+
- 	for (i = 0; i < ARRAY_SIZE(icssg_all_miig_stats); i++) {
- 		regmap_read(prueth->miig_rt,
- 			    base + icssg_all_miig_stats[i].offset,
-@@ -51,6 +53,8 @@ void emac_update_hardware_stats(struct prueth_emac *emac)
- 			emac->pa_stats[i] += val;
- 		}
- 	}
-+
-+	spin_unlock(&prueth->stats_lock);
- }
- 
- void icssg_stats_work_handler(struct work_struct *work)
-
-base-commit: 4003c9e78778e93188a09d6043a74f7154449d43
--- 
-2.34.1
+> ---
+>  mm/memcontrol.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 3c4de384b5a0..dfe9c2eb7816 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -707,10 +707,12 @@ void __mod_memcg_state(struct mem_cgroup *memcg, enum memcg_stat_item idx,
+>  	if (WARN_ONCE(BAD_STAT_IDX(i), "%s: missing stat item %d\n", __func__, idx))
+>  		return;
+>  
+> +	memcg_stats_lock();
+>  	__this_cpu_add(memcg->vmstats_percpu->state[i], val);
+>  	val = memcg_state_val_in_pages(idx, val);
+>  	memcg_rstat_updated(memcg, val);
+>  	trace_mod_memcg_state(memcg, idx, val);
+> +	memcg_stats_unlock();
+>  }
+>  
+>  #ifdef CONFIG_MEMCG_V1
+> @@ -2845,7 +2847,7 @@ static void drain_obj_stock(struct memcg_stock_pcp *stock)
+>  
+>  			memcg = get_mem_cgroup_from_objcg(old);
+>  
+> -			mod_memcg_state(memcg, MEMCG_KMEM, -nr_pages);
+> +			__mod_memcg_state(memcg, MEMCG_KMEM, -nr_pages);
+>  			memcg1_account_kmem(memcg, -nr_pages);
+>  			if (!mem_cgroup_is_root(memcg))
+>  				memcg_uncharge(memcg, nr_pages);
 
 
