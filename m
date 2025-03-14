@@ -1,126 +1,99 @@
-Return-Path: <linux-kernel+bounces-561958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD01BA61949
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:19:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51557A6194A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:20:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 557E07AD068
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:18:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94F783AB02D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9996F204C04;
-	Fri, 14 Mar 2025 18:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF792A8D0;
+	Fri, 14 Mar 2025 18:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="ol8hJbbh"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hSb1GWIB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bdlMZGy4"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9836C2A8D0;
-	Fri, 14 Mar 2025 18:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407CE202F96;
+	Fri, 14 Mar 2025 18:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741976384; cv=none; b=hihD9PlZer4gXfeGDPPV5kmLVqd5/E2L6mMmE4MFjT/3BM+L6MaTRodZC4kGovivEAlocd4wuwIpr7RW1B0lvAa+R/2iN5eHMAXMUul+NStsvK2BLw/gHicHvy9zXY9j2Ds29WBlqZ8Ol5iJ8C9u63txXQOhOIDWkGowDBaitUY=
+	t=1741976393; cv=none; b=cHlUlH9VaXHZfQvz/XLNPgA28XNbN2sbDG2OgwH2rQuAwVc6e+m00tlHYhe63kz7AO2I0VzU2g8bWCZDMFJoUY/fZtNRKycyIFmdyxjJxbuBasJ7/BW7LiGw7epS1AXXED9USzsaHURzxMiCBvwyra72Yf2fsGhMfErX9W6n1mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741976384; c=relaxed/simple;
-	bh=AOYfO4ZZb0Tcg03UebkhFJQ4VfghZe4t2bFK6GitxSo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b3UFBXLwUJsN0/Jw5HxFJJ6hY/Zpvg0iv/D/rDCdAjvV49HI13pSXiy/bMQ2RIrsVG5KimFV4wfGpqqVJEXpp7NDD/r/oSSDERm5OGOrIIf+ujcO4u59ThIpkYTDz6HNyRBu863YG8AEoFuzPxlLsCg2CbRQ1DmakRhX9nfel0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=ol8hJbbh; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1741976383; x=1773512383;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ydZtQRvTydeU4Abeyx8VyHan8eAipND3FLIzwSP4EMs=;
-  b=ol8hJbbhQYdMHYaGOdkwxj4o0pfW1Vh0cFE7EHJbJhgBtrGCWc+8nynD
-   bhLHdJ0VvubiP4lhhVr0Fmj+crYi6djPiEarfsppN7rYvy3silOBcMonI
-   v7g7d1g2AqtEyFrEkQ0HW3iFNbNu6lLWDASHBCZmgMA9pl7M2z4Izr6YD
-   g=;
-X-IronPort-AV: E=Sophos;i="6.14,246,1736812800"; 
-   d="scan'208";a="386789117"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 18:19:41 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.38.20:31107]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.62.245:2525] with esmtp (Farcaster)
- id ddda351e-1bdf-4c43-80a6-1c4b19950bed; Fri, 14 Mar 2025 18:19:40 +0000 (UTC)
-X-Farcaster-Flow-ID: ddda351e-1bdf-4c43-80a6-1c4b19950bed
-Received: from EX19D003ANC003.ant.amazon.com (10.37.240.197) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 14 Mar 2025 18:19:39 +0000
-Received: from b0be8375a521.amazon.com (10.119.2.177) by
- EX19D003ANC003.ant.amazon.com (10.37.240.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 14 Mar 2025 18:19:34 +0000
-From: Kohei Enju <enjuk@amazon.com>
-To: <syzbot+a5964227adc0f904549c@syzkaller.appspotmail.com>
-CC: <andrii@kernel.org>, <ast@kernel.org>, <bpf@vger.kernel.org>,
-	<daniel@iogearbox.net>, <eddyz87@gmail.com>, <haoluo@google.com>,
-	<iii@linux.ibm.com>, <john.fastabend@gmail.com>, <jolsa@kernel.org>,
-	<kpsingh@kernel.org>, <linux-kernel@vger.kernel.org>, <martin.lau@linux.dev>,
-	<netdev@vger.kernel.org>, <sdf@fomichev.me>, <song@kernel.org>,
-	<syzkaller-bugs@googlegroups.com>, <yepeilin@google.com>,
-	<yonghong.song@linux.dev>
-Subject: Re: [syzbot] [bpf?] KASAN: slab-out-of-bounds Read in atomic_ptr_type_ok
-Date: Sat, 15 Mar 2025 03:19:25 +0900
-Message-ID: <20250314181925.69459-1-enjuk@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <67d30ef2.050a0220.14e108.0039.GAE@google.com>
-References: <67d30ef2.050a0220.14e108.0039.GAE@google.com>
+	s=arc-20240116; t=1741976393; c=relaxed/simple;
+	bh=p3lEx5AeDIot0RR3wPr6612f9S8LWcZEp9QT/e8nkC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ESOi4L+8aezIz/xgdXr72+3lSfC406abaRFR1ZKq+ddM2nwmDj5uWzRc4IEDWJPihfAMkohgOAPgTQy3R1McWyxwm3cwo7zyUjeXR4PbNzt4tFsncqEPr9/IGj/T10mQNg+47N+TJ2jWDNzR+r7x3KwJxmg4fSWW44o5u3BX0fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hSb1GWIB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bdlMZGy4; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 14 Mar 2025 19:19:48 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741976390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=kPyPW+naAFlbw+Xbn145mrlsK5koPOENM07QgOBvPOk=;
+	b=hSb1GWIBOVE0BOuFpl5XdClM2mEBLIp1uIUdWCR8I+zfcY5Sdn9gitO56UzTe0m7dCXAyQ
+	0tAvFZzWXoq1UPqgPY1l420712+f+MnRZOMIqh/KiKTCp1+akGlSla5c6OF12yZhfH+5N+
+	rHmCe7NMrSaHdhqGHYg4hp0HOwz4nXePSBr5y4kSC3gR/BEjFvEajxuL1i8DD93HniWFOx
+	aHTYijk4rLMz4Vf+JsBVZ4vhlVGPPfJgDw5QrpeqKCldjnWhrgDNJ05vFLViKJbH4gkwZS
+	H7bzkgmBSNzUZfT16I04g8e8FHCyXNZ9vmR2094+lX2EzUUdWuf/YkAVtA3pmQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741976390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=kPyPW+naAFlbw+Xbn145mrlsK5koPOENM07QgOBvPOk=;
+	b=bdlMZGy4ApqFqNgI6RekFFiyr7GJTpLsP7DgYwDv0wToSDbymjVhJXgUI9s78Z9V4DP/f9
+	f/E6keN2I68610BA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [RFC PATCH 10/10] memcg: no more irq disabling for stock locks
+Message-ID: <20250314181948.A5DQsYZB@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D041UWA003.ant.amazon.com (10.13.139.105) To
- EX19D003ANC003.ant.amazon.com (10.37.240.197)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <t6gqzrhipj3zxmev7pdmxbbbkx76eyscvkn4m66ifwcq3kfqtx@7jmqtzu5bs54>
 
-> syzbot found the following issue on:
+On 2025-03-14 10:02:47 [-0700], Shakeel Butt wrote:
+> > 
+> > on arm64, __this_cpu_add will "load, add, store". preemptible.
+> > this_cpu_add() will "disable preemption, atomic-load, add, atomic-store or
+> > start over with atomic-load. if succeeded enable preemption and move an"
 > 
-> HEAD commit:    f28214603dc6 Merge branch 'selftests-bpf-move-test_lwt_seg..
-> git tree:       bpf-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=15f84664580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b7bde34acd8f53b1
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a5964227adc0f904549c
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16450ba8580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11f5fa54580000
+> So, this_cpu_add() on arm64 is not protected against interrupts but is
+> protected against preemption. We have a following comment in
+> include/linux/percpu-defs.h. Is this not true anymore?
 
-#syz test
+It performs an atomic update. So it loads exclusive from memory and then
+stores conditionally if the exclusive monitor did not observe another
+load on this address. Disabling preemption is only done to ensure that
+the operation happens on the local-CPU and task gets not moved another
+CPU during the operation. The concurrent update to the same memory
+address from an interrupt will be caught by the exclusive monitor.
 
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -7788,6 +7788,12 @@ static int check_atomic_rmw(struct bpf_verifier_env *env,
- static int check_atomic_load(struct bpf_verifier_env *env,
- 			     struct bpf_insn *insn)
- {
-+	int err;
-+
-+	err = check_reg_arg(env, insn->src_reg, SRC_OP);
-+	if (err)
-+		return err;
-+
- 	if (!atomic_ptr_type_ok(env, insn->src_reg, insn)) {
- 		verbose(env, "BPF_ATOMIC loads from R%d %s is not allowed\n",
- 			insn->src_reg,
-@@ -7801,6 +7807,12 @@ static int check_atomic_load(struct bpf_verifier_env *env,
- static int check_atomic_store(struct bpf_verifier_env *env,
- 			      struct bpf_insn *insn)
- {
-+	int err;
-+
-+	err = check_reg_arg(env, insn->dst_reg, SRC_OP);
-+	if (err)
-+		return err;
-+
- 	if (!atomic_ptr_type_ok(env, insn->dst_reg, insn)) {
- 		verbose(env, "BPF_ATOMIC stores into R%d %s is not allowed\n",
- 			insn->dst_reg,
+The reason to remain on the same CPU is probably to ensure that
+__this_cpu_add() in an IRQ-off region does not clash with an atomic
+update performed elsewhere.
+
+While looking at it, there is also the LSE extension which results in a
+single add _if_ atomic.
+
+Sebastian
 
