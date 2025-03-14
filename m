@@ -1,294 +1,321 @@
-Return-Path: <linux-kernel+bounces-561575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F4DEA613A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:30:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B08A613A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:30:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D39C880E6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:30:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B93619C461C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B5C20126B;
-	Fri, 14 Mar 2025 14:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397002AF07;
+	Fri, 14 Mar 2025 14:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nR+Ioo33"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AnH9ZP7Y"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5796C201004
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3E322338;
+	Fri, 14 Mar 2025 14:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741962587; cv=none; b=qA/o09VSTGVgGr/WQr2lByEHtRTTInhFn0YjdwwYFTilmcliHDZ9UsTG5mcSH9Bt/zKyI/at4g6bUj/fDgmIlvB4gX6rDza1oTRw9XjH0Je79qlg0A2av1Vo3omv6ncTwoyiQiMvA0IiqJrVoTv2xQfoGSxLWTRFJXBARrSPufo=
+	t=1741962642; cv=none; b=Zxz7/0GQa1PFKU+dtqv3qX0il53Qt6owFEmabqZPfJX41cXJtG0/oaJMbmMetS8wK5L4V8yxAeoP8HuCHFxN3/R3rpodKbnMV0669WW4UZQk97EIt6WdtcHNFjKW2EwhUCocvK5wXvRfI/OKQpseI5xmdiixTG0ZKJk8WMkMfvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741962587; c=relaxed/simple;
-	bh=RwTvuR+8zoXcFD65bjjmsvaSxIRGI2NthpF/9DgsU/4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YDVeC3ukUFsDGb2nuJiJf5XUZhoinY5nX0M+3M7jYo+beBImDg3kzT6oU59AqQJZ5BpCBDxNSTO5PQt3me6dgW3PPwG7GRo2RLn47AlkHPy7o5gp0VXxhi71QsJM/SgsLijDRpffKADX0Uil1ufiPRjIp+UzNzyGQR7xMaPhxdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nR+Ioo33; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22403cbb47fso41449265ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:29:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741962584; x=1742567384; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ay65LUbO5eKcGHPVzII/RlhoUMhAUU/uSsTtf/99OL0=;
-        b=nR+Ioo33gjVE+09uaLImAbeV4mVB6zAz9zGjX7p9mACakr1/OuBfljx59p+wmH+0Wm
-         QuG8MasU7To//KS6q3GA58UL7yvOTaxrBQxjxBtU1SPu3XOXT6zEPt4TRFyHyBGCflP5
-         7UcoorP25n0NomctWiHf6RMKwU2Z8qtzjAyi2nx7Of7ztrOzDXQA0+yShKTYQvIE0myi
-         1ZpLdeBf+WgXxsgAQWLZLNvOqvoQFdva08puftuwcT+FmDDjoL7xEbCTp2Ki/gAbVOF1
-         kQUSXVQS+sVnYQOHzj+xzfv/IvzKYGHedqhp1x745sT3qcuVSWsZ4zgYuK0paRfDAN39
-         k+uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741962584; x=1742567384;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ay65LUbO5eKcGHPVzII/RlhoUMhAUU/uSsTtf/99OL0=;
-        b=q5KklkKaXLNpCSJc4Oo+mijgwi8vFSyDEh4wx/KnSKS0jCXMuu1ebA8/oZoCDFaktN
-         i6IZBJWtGUwnaNUAYm3sCFH8XB+IiN+nupcGn5vM2vzf4EoSZERLH0U4eODSLKII0gKg
-         PQPPgpEwEAcmDi7C9SSi0e+bncDFt8j35XW3dlUMsRvdsd92HV7JIs2dyYWGi2YgBSih
-         nsb78avEEPIFfAmI+rFnXj+lwn+NWHaG0DbVpnyLjWOKaZ6CZLFOIQLwPLY/421dFwOi
-         wCjjdBpRyCqZmcmp6JNSBpioX1f+iToR3aJqivtusR/TVtutL2fsyaj3cNm3klBKLBXP
-         zpsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAwQ9LVyIFWBKXz/TI6Swpz/rhuCBFkGBlH2JYqYieCcZLGnNFoUDTZi889670bRDrRbcZsTsUFZL1zLo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIkWjxK5Ien4e6hLpb7r1LFax31r7fwg4fx4q8xU0OsK/cpTCR
-	Duv6u1L3+k4DgoFKe6FbYsd2GgmjI5zj4+SocNVya4jThdw3vksR
-X-Gm-Gg: ASbGncu/1OTqbPgQ/lAdM8WB/fEspVptO+2e3kjsxWHiYZKQ67rHkrqKxH7rkxuHQ/h
-	d9GKBEB+2xOjy7GzNu04E9fUKFc+9iqs96Wwz0HTcHG7gvUnx8V4r5ad5LQv/nh+7Z9QKXhzWcU
-	REElqqEIHzqtgv+cXBZqiEgcBGWexvJTSA+WP8nxJpu2a5uPCYHZX6wRb3UZdCozSV23VchDlTb
-	PybelhefJI0BJn6Dz6dAiXCPllcJmWpVlp7g4EhAHxg2oOG7cJE1feIYS7zsXlky31Zuk0ouAhf
-	xQr++dy/GH/7myvwUIOzdY7WT0/V7zzPhLIpijRtBL4f1iN4eudHgqo=
-X-Google-Smtp-Source: AGHT+IEdTzwUl491Lo3IGpsgVfAmXzJqFtxM9eDgUmVh/3vTRIKANJ3UBFfhbV00zb/svUrQHNnLXA==
-X-Received: by 2002:a17:903:2412:b0:223:5ca1:3b0b with SMTP id d9443c01a7336-225e0af4fe0mr42137685ad.40.1741962584486;
-        Fri, 14 Mar 2025 07:29:44 -0700 (PDT)
-Received: from localhost.localdomain ([124.156.216.125])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbe833sm29142445ad.183.2025.03.14.07.29.38
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 14 Mar 2025 07:29:44 -0700 (PDT)
-From: Lance Yang <ioworker0@gmail.com>
-To: akpm@linux-foundation.org
-Cc: will@kernel.org,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	longman@redhat.com,
-	mhiramat@kernel.org,
-	anna.schumaker@oracle.com,
-	boqun.feng@gmail.com,
-	joel.granados@kernel.org,
-	kent.overstreet@linux.dev,
-	leonylgao@tencent.com,
-	linux-kernel@vger.kernel.org,
-	rostedt@goodmis.org,
-	senozhatsky@chromium.org,
-	tfiga@chromium.org,
-	amaindex@outlook.com,
-	Lance Yang <ioworker0@gmail.com>
-Subject: [PATCH 3/3] samples: add hung_task detector semaphore blocking sample
-Date: Fri, 14 Mar 2025 22:28:38 +0800
-Message-ID: <20250314142839.24910-4-ioworker0@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250314142839.24910-1-ioworker0@gmail.com>
-References: <20250314142839.24910-1-ioworker0@gmail.com>
+	s=arc-20240116; t=1741962642; c=relaxed/simple;
+	bh=a5PlPmBAYxkGhv4IUUNWaMcmFYlqqbR728KvzqefdRo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dSbhc098zaTs59ASoffNDaIf8wTBzeyyJPtLU6K9JYb8MJ9iwgfU6h5M61Dih3n2suGanYasm5UMIPcDt+TAaEommUQmUzopmCBrIbiHh9nu+cs1LLMrjGHK4zlA94XMSfWKBTsQLmcEuNnrmCojA8dIMFLgXl2JyqbuJlHOxPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AnH9ZP7Y; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741962641; x=1773498641;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=a5PlPmBAYxkGhv4IUUNWaMcmFYlqqbR728KvzqefdRo=;
+  b=AnH9ZP7Y39i5knUTe0i/g3mfdvz7FZhLGXU/OBTDfFG0+G45DRjKoF2C
+   RUYdhk1POxlR9cyKBBkp5eeEy7cUN0NhdOMbgxgSv3sPExGTYuIio3u+r
+   BAce7JXjiOOLIIPV6CyFUT9ZV4Y+FJNzWGGlJ+CatgH545ZQt0HUrPr71
+   vSMmazs2p/8ru9tvxZYxl0hsLuFYizaXhcvlAyqDqkTXZP0jYaxHy7hii
+   PzmlttduLiVrzOP+3D2MzVKOtUJIaj+b4taJoNyzpRrYSQQCRDs4bSViC
+   ldp+4Pq8cd0VIm6jzn3DsKEmHxYQuWQoNyhlbQcuDHdIrRutW2mCOQyDg
+   Q==;
+X-CSE-ConnectionGUID: E0RJljGDT5KVDh704EyeiA==
+X-CSE-MsgGUID: 14DZlcIwQg28MTTN6y8opg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="53322752"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="53322752"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 07:30:40 -0700
+X-CSE-ConnectionGUID: J9i6mq9uSqmnzLVkPMV90w==
+X-CSE-MsgGUID: vx2E6BZ6RxWJycm+CGUFWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="122239932"
+Received: from spandruv-desk1.amr.corp.intel.com ([10.125.108.163])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 07:30:40 -0700
+Message-ID: <ab3fb97f30656badde65c542c72885392bfd7762.camel@linux.intel.com>
+Subject: Re: [PATCH 1/3] thermal: intel: int340x: Add platform temperature
+ control interface
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: "Zhang, Rui" <rui.zhang@intel.com>, "lukasz.luba@arm.com"
+	 <lukasz.luba@arm.com>, "rafael@kernel.org" <rafael@kernel.org>, 
+ "daniel.lezcano@linaro.org"
+	 <daniel.lezcano@linaro.org>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
+ "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>
+Date: Fri, 14 Mar 2025 07:30:39 -0700
+In-Reply-To: <ca935ccd07fb27a77a39fa797738e7a2e96abeb1.camel@intel.com>
+References: <20250308183812.118311-1-srinivas.pandruvada@linux.intel.com>
+	 <20250308183812.118311-2-srinivas.pandruvada@linux.intel.com>
+	 <ca935ccd07fb27a77a39fa797738e7a2e96abeb1.camel@intel.com>
+Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
+ YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
+ y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
+ NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
+ GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
+ TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
+ oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
+ AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
+ b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
+ AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
+ oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
+ UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
+ ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
+ wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
+ NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
+ J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
+ oOfCQxricddC
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Zi Li <amaindex@outlook.com>
+On Tue, 2025-03-11 at 05:56 +0000, Zhang, Rui wrote:
+> On Sat, 2025-03-08 at 10:38 -0800, Srinivas Pandruvada wrote:
+> > Platform Temperature Control is a dynamic control loop implemented
+> > in
+> > hardware to manage the skin or any board temperature of a device.
+> > The
+> > reported skin or board temperature is controlled by comparing to a
+> > configured target temperature and adjusting the SoC (System on
+> > Chip)
+> > performance accordingly. The feature supports up to three platform
+> > sensors.
+> >=20
+> > OEMs (Original Equipment Manufacturers) can configure this feature
+> > through the BIOS and provide temperature input directly to the
+> > hardware
+> > via the Platform Environment Control Interface (PECI).
+>=20
+> Does this mean each PTC instance is bound to a certain skin/board
+> sensor?
+Yes.
 
-Add a hung_task detector semaphore blocking test sample code.
+>  And writing the "temperature_target" sysfs tells firmware the
+> target temperature, as well as the target sensor that the temperature
+> applies to?=C2=A0
+Yes
 
-This module will create a dummy file on the debugfs. That file will cause
-the read process to sleep for a sufficiently long time (256 seconds)
-while holding a semaphore. As a result, the second process will wait on
-the semaphore for a prolonged duration and be detected by the hung_task
-detector.
+> if yes, is there a way for userspace to know which sensor
+> each PTC instance applies to?
+No.
+You can just change threshold up and down by observation only.
 
-Usage is;
+Thanks,
+Srinivas
 
- > cd /sys/kernel/debug/hung_task
- > cat semaphore & cat semaphore
-
-and wait for hung_task message.
-
-Signed-off-by: Lance Yang <ioworker0@gmail.com>
-Signed-off-by: Zi Li <amaindex@outlook.com>
----
- samples/Kconfig                         | 11 ++--
- samples/hung_task/Makefile              |  3 +-
- samples/hung_task/hung_task_mutex.c     | 20 ++++---
- samples/hung_task/hung_task_semaphore.c | 74 +++++++++++++++++++++++++
- 4 files changed, 96 insertions(+), 12 deletions(-)
- create mode 100644 samples/hung_task/hung_task_semaphore.c
-
-diff --git a/samples/Kconfig b/samples/Kconfig
-index 09011be2391a..3a073d6b848b 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -304,10 +304,13 @@ config SAMPLE_HUNG_TASK
- 	tristate "Hung task detector test code"
- 	depends on DETECT_HUNG_TASK && DEBUG_FS
- 	help
--	  Build a module which provide a simple debugfs file. If user reads
--	  the file, it will sleep long time (256 seconds) with holding a
--	  mutex. Thus if there are 2 or more processes read this file, it
--	  will be detected by the hung_task watchdog.
-+	  Build multiple modules to test the hung task detector. Each module
-+	  provides a simple debugfs file corresponding to a specific
-+	  synchronization primitive (e.g., mutex, semaphore, etc.). When the
-+	  file is read, the module will sleep for a long time (256 seconds)
-+	  while holding the respective synchronizer. If multiple processes
-+	  attempt to read these files concurrently, the hung_task watchdog
-+	  can detect potential hangs or deadlocks.
- 
- source "samples/rust/Kconfig"
- 
-diff --git a/samples/hung_task/Makefile b/samples/hung_task/Makefile
-index fe9dde799880..7483c2c0a0ef 100644
---- a/samples/hung_task/Makefile
-+++ b/samples/hung_task/Makefile
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
--obj-$(CONFIG_SAMPLE_HUNG_TASK) += hung_task_mutex.o
-\ No newline at end of file
-+obj-$(CONFIG_SAMPLE_HUNG_TASK) += hung_task_mutex.o
-+obj-$(CONFIG_SAMPLE_HUNG_TASK) += hung_task_semaphore.o
-\ No newline at end of file
-diff --git a/samples/hung_task/hung_task_mutex.c b/samples/hung_task/hung_task_mutex.c
-index 7a29f2246d22..e4d1d69618b8 100644
---- a/samples/hung_task/hung_task_mutex.c
-+++ b/samples/hung_task/hung_task_mutex.c
-@@ -22,7 +22,7 @@
- 
- static const char dummy_string[] = "This is a dummy string.";
- static DEFINE_MUTEX(dummy_mutex);
--struct dentry *hung_task_dir;
-+static struct dentry *hung_task_dir;
- 
- static ssize_t read_dummy(struct file *file, char __user *user_buf,
- 			  size_t count, loff_t *ppos)
-@@ -43,19 +43,25 @@ static const struct file_operations hung_task_fops = {
- 
- static int __init hung_task_sample_init(void)
- {
--	hung_task_dir = debugfs_create_dir(HUNG_TASK_DIR, NULL);
--	if (IS_ERR(hung_task_dir))
--		return PTR_ERR(hung_task_dir);
-+	hung_task_dir = debugfs_lookup(HUNG_TASK_DIR, NULL);
-+	if (!hung_task_dir) {
-+		hung_task_dir = debugfs_create_dir(HUNG_TASK_DIR, NULL);
-+		if (IS_ERR(hung_task_dir))
-+			return PTR_ERR(hung_task_dir);
-+	}
- 
--	debugfs_create_file(HUNG_TASK_FILE, 0400, hung_task_dir,
--			    NULL, &hung_task_fops);
-+	debugfs_create_file(HUNG_TASK_FILE, 0400, hung_task_dir, NULL,
-+			    &hung_task_fops);
- 
- 	return 0;
- }
- 
- static void __exit hung_task_sample_exit(void)
- {
--	debugfs_remove_recursive(hung_task_dir);
-+	debugfs_lookup_and_remove(HUNG_TASK_FILE, hung_task_dir);
-+
-+	if (simple_empty(hung_task_dir))
-+		debugfs_remove(hung_task_dir);
- }
- 
- module_init(hung_task_sample_init);
-diff --git a/samples/hung_task/hung_task_semaphore.c b/samples/hung_task/hung_task_semaphore.c
-new file mode 100644
-index 000000000000..a5814971bfb8
---- /dev/null
-+++ b/samples/hung_task/hung_task_semaphore.c
-@@ -0,0 +1,74 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * hung_task_semaphore.c - Sample code which causes hung task by semaphore
-+ *
-+ * Usage: load this module and read `<debugfs>/hung_task/semaphore`
-+ *        by 2 or more processes.
-+ *
-+ * This is for testing kernel hung_task error message.
-+ * Note that this will make your system freeze and maybe
-+ * cause panic. So do not use this except for the test.
-+ */
-+
-+#include <linux/debugfs.h>
-+#include <linux/delay.h>
-+#include <linux/fs.h>
-+#include <linux/module.h>
-+#include <linux/semaphore.h>
-+
-+#define HUNG_TASK_DIR   "hung_task"
-+#define HUNG_TASK_FILE  "semaphore"
-+#define SLEEP_SECOND 256
-+
-+static const char dummy_string[] = "This is a dummy string.";
-+static DEFINE_SEMAPHORE(dummy_sem, 1);
-+static struct dentry *hung_task_dir;
-+
-+static ssize_t read_dummy(struct file *file, char __user *user_buf,
-+			  size_t count, loff_t *ppos)
-+{
-+	/* If the second task waits on the semaphore, it is uninterruptible sleep. */
-+	down(&dummy_sem);
-+
-+	/* When the first task sleep here, it is interruptible. */
-+	msleep_interruptible(SLEEP_SECOND * 1000);
-+
-+	up(&dummy_sem);
-+
-+	return simple_read_from_buffer(user_buf, count, ppos, dummy_string,
-+				       sizeof(dummy_string));
-+}
-+
-+static const struct file_operations hung_task_fops = {
-+	.read = read_dummy,
-+};
-+
-+static int __init hung_task_sample_init(void)
-+{
-+	hung_task_dir = debugfs_lookup(HUNG_TASK_DIR, NULL);
-+	if (!hung_task_dir) {
-+		hung_task_dir = debugfs_create_dir(HUNG_TASK_DIR, NULL);
-+		if (IS_ERR(hung_task_dir))
-+			return PTR_ERR(hung_task_dir);
-+	}
-+
-+	debugfs_create_file(HUNG_TASK_FILE, 0400, hung_task_dir, NULL,
-+			    &hung_task_fops);
-+
-+	return 0;
-+}
-+
-+static void __exit hung_task_sample_exit(void)
-+{
-+	debugfs_lookup_and_remove(HUNG_TASK_FILE, hung_task_dir);
-+
-+	if (simple_empty(hung_task_dir))
-+		debugfs_remove(hung_task_dir);
-+}
-+
-+module_init(hung_task_sample_init);
-+module_exit(hung_task_sample_exit);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Zi Li");
-+MODULE_DESCRIPTION("Simple sleep under semaphore file for testing hung task");
--- 
-2.45.2
+>=20
+> > =C2=A0As a result,
+> > this feature can operate independently of any OS-level control.
+> >=20
+> > The OS interface can be used to further fine-tune the default OEM
+> > configuration. Here are some scenarios where the OS interface is
+> > beneficial:
+> > Verification of Firmware Control: Check if firmware-based control
+> > is
+> > enabled. If it is, thermal controls from the OS/user space can be
+> > backed out.
+> > Adjusting Target Limits: While OEMs can set an aggressive target
+> > limit,
+> > the OS can adjust this to a less aggressive limit based on
+> > operating
+> > modes or conditions.
+> >=20
+> > The hardware control interface is via a MMIO offsets via processor
+> > thermal device. There are three instances of MMIO registers. All
+> > are 64 bit registers
+> >=20
+> > Name: PLATFORM_TEMPERATURE_CONTROL
+> > Offsets: 0x5B20, 0x5B28, 0x5B30
+> >=20
+> > All values have RW access
+> >=20
+> > Bits=C2=A0=C2=A0=C2=A0 Description
+> > 7:0=C2=A0=C2=A0=C2=A0=C2=A0 TARGET_TEMP : Target temperature limit to w=
+hich the control
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mechanism is regulating. Uni=
+ts: 0.5C.
+> > 8:8=C2=A0=C2=A0=C2=A0=C2=A0 ENABLE: Read current enable status of the f=
+eature or enable
+> > 	feature.
+> > 11:9	GAIN: Sets the aggressiveness of control loop from 0 to 7
+> > 	7 graceful, favors performance at the expense of
+> > temperature
+> > 	overshoots
+> > 	0 aggressive, favors tight regulation over performance
+> > 12:12	TEMPERATURE_OVERRIDE_EN
+> > 	When set, hardware will use TEMPERATURE_OVERRIDE values
+> > instead
+> > 	of reading from corresponding sensor.
+> > 15:13	RESERVED
+> > 23:16	MIN_PERFORMANCE_LEVEL: Minimum Performance level below
+> > which
+> > the
+> > 	there will be no throttling. 0 - all levels of throttling
+> > allowed
+> > 	including survivability actions. 255 - no throttling
+> > allowed.
+> > 31:24	TEMPERATURE_OVERRIDE: Allows SW to override the input
+> > temperature.
+> > 	hardware will use this value instead of the sensor
+> > temperature.
+> > 	Units: 0.5C.
+> > 63:32	RESERVED
+> >=20
+> > Out of the above controls, only "enable" and "temperature_target"
+> > is
+> > exposed via sysfs.
+> > There are three instances of this controls. So up to three
+> > different
+> > sensors can be controlled independently.
+> >=20
+> > Sysfs interface:
+> > tree
+> > /sys/bus/pci/devices/0000\:00\:04.0/platform_temperature_?_control/
+> > /sys/bus/pci/devices/0000:00:04.0/platform_temperature_0_control/
+> > =E2=94=9C=E2=94=80=E2=94=80 enable
+> > =E2=94=9C=E2=94=80=E2=94=80 temperature_target
+> > /sys/bus/pci/devices/0000:00:04.0/platform_temperature_1_control/
+> > =E2=94=9C=E2=94=80=E2=94=80 enable
+> > =E2=94=9C=E2=94=80=E2=94=80 temperature_target
+> > /sys/bus/pci/devices/0000:00:04.0/platform_temperature_2_control/
+> > =E2=94=9C=E2=94=80=E2=94=80 enable
+> > =E2=94=9C=E2=94=80=E2=94=80 temperature_target
+> >=20
+> > Description of attributes:
+> >=20
+> > Enable: 1 for enable, 0 for disable. This attribute can be used to
+> > read the current status. User space can write 0 or 1 to disable or
+> > enable this feature respectively.
+> > temperature_target: Target temperature limit to which hardware
+> > will try to limit in milli degree C.
+> >=20
+> > Signed-off-by: Srinivas Pandruvada
+> > <srinivas.pandruvada@linux.intel.com>
+> > ---
+> > =C2=A0.../thermal/intel/int340x_thermal/Makefile=C2=A0=C2=A0=C2=A0 |=C2=
+=A0=C2=A0 1 +
+> > =C2=A0.../platform_temperature_control.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 181
+> > ++++++++++++++++++
+> > =C2=A0.../processor_thermal_device.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 15 +-
+> > =C2=A0.../processor_thermal_device.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +
+> > =C2=A04 files changed, 199 insertions(+), 1 deletion(-)
+> > =C2=A0create mode 100644
+> > drivers/thermal/intel/int340x_thermal/platform_temperature_control.
+> > c
+> >=20
+> > diff --git a/drivers/thermal/intel/int340x_thermal/Makefile
+> > b/drivers/thermal/intel/int340x_thermal/Makefile
+> > index fe3f43924525..184318d1792b 100644
+> > --- a/drivers/thermal/intel/int340x_thermal/Makefile
+> > +++ b/drivers/thermal/intel/int340x_thermal/Makefile
+> > @@ -9,6 +9,7 @@ obj-$(CONFIG_INT340X_THERMAL)	+=3D
+> > processor_thermal_device_pci_legacy.o
+> > =C2=A0obj-$(CONFIG_INT340X_THERMAL)	+=3D processor_thermal_device_pci.o
+> > =C2=A0obj-$(CONFIG_PROC_THERMAL_MMIO_RAPL) +=3D processor_thermal_rapl.=
+o
+> > =C2=A0obj-$(CONFIG_INT340X_THERMAL)	+=3D processor_thermal_rfim.o
+> > +obj-$(CONFIG_INT340X_THERMAL)	+=3D platform_temperature_control.o
+> > =C2=A0obj-$(CONFIG_INT340X_THERMAL)	+=3D processor_thermal_mbox.o
+> > =C2=A0obj-$(CONFIG_INT340X_THERMAL)	+=3D processor_thermal_wt_req.o
+> > =C2=A0obj-$(CONFIG_INT340X_THERMAL)	+=3D processor_thermal_wt_hint.o
+> > diff --git
+> > a/drivers/thermal/intel/int340x_thermal/platform_temperature_contro
+> > l.
+> > c
+> > b/drivers/thermal/intel/int340x_thermal/platform_temperature_contro
+> > l.
+> > c
+> > new file mode 100644
+> > index 000000000000..dd3ea7165800
+> > --- /dev/null
+> > +++
+> > b/drivers/thermal/intel/int340x_thermal/platform_temperature_contro
+> > l.
+> > c
+> > @@ -0,0 +1,181 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * processor thermal device platform temperature controls
+> > + * Copyright (c) 2025, Intel Corporation.
+> > + */
+> > +
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/pci.h>
+> > +#include "processor_thermal_device.h"
+> > +
+> > +struct mmio_reg {
+> > +	int bits;
+> > +	u16 mask;
+> > +	u16 shift;
+> > +	u16 units;
+> > +};
+> > +
+> > +#define MAX_ATTR_GROUP_NAME_LEN 32
+> > +
+> > +struct ptc_data {
+> > +	u32 offset;
+> > +	struct attribute_group ptc_attr_group;
+> > +	struct attribute *ptc_attrs[3];
+> > +	struct device_attribute temperature_target_attr;
+> > +	struct device_attribute enable_attr;
+> > +	char group_name[MAX_ATTR_GROUP_NAME_LEN];
+> > +};
+> > +
+> > +static const struct mmio_reg ptc_mmio_regs[] =3D {
+> > +	{ 8, 0xFF, 0, 500}, /* temperature_target, units 0.5C*/
+> > +	{ 1, 0x01, 8, 0}, /* enable */
+> > +	{ 3, 0x7, 9, 0}, /* gain */
+> > +	{ 8, 0xFF, 16, 0}, /* min_performance_level */
+> > +	{ 1, 0x1, 12, 0}, /* temperature_override_enable */
+> > +	{ 8, 0xFF, 24, 500}, /* temperature_override, units 0.5C
+> > */
+> > +};
+> > +
+> > +/* Unique offset for each PTC instance */
+> > +static u32 ptc_offsets[] =3D {0x5B20, 0x5B28, 0x5B30};
+>=20
+> I'd prefer to define PTC_MAX_INSTANCES earlier and use
+> =C2=A0 static u32 ptc_offsets[PTC_MAX_INSTANCES] =3D {0x5B20, 0x5B28,
+> 0x5B30};
+> instead.
+>=20
+> thanks,
+> rui
 
 
