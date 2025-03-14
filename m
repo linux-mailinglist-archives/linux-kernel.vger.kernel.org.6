@@ -1,52 +1,66 @@
-Return-Path: <linux-kernel+bounces-561977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A4E2A6199E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:37:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34464A619A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:38:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 774A919C6A82
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:37:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C27F19C6B47
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BC2200B8C;
-	Fri, 14 Mar 2025 18:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70B12036ED;
+	Fri, 14 Mar 2025 18:38:07 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10BA43169
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE8E14A0A3
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741977465; cv=none; b=GE+xi/sxPmMZIFAC43iAuxAvXSKK9Ju34sJfU2P19PenX33593pDIpmpLlDCF05Pw5+pl4nXk/ruqbOJ+/JCfEdfzeLLyDDNkBePGmEeIyDTBDfXEpSu9YIKJV22tn+O4yUbx4OvGH7ZsAaQ0VWFsYPM9Bz6Tlc3jQFeQZuC0gg=
+	t=1741977487; cv=none; b=uMRi3kjVj/6sH+AR8gIp4QfhAFtnk1gBHn24sXcXPqFv0f1dGPLreF7Vi3hj/WdWBhxy9LR9G3W16SAkpehoGaxsHK2ObYQBRpuSP6i/gDJ4Yi/O+iNrod5MFaGDPk2YzXytlaYcm6+Y8jnRhswEUZnOOvHsyCRAs5Q9jTP+Zas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741977465; c=relaxed/simple;
-	bh=p2yRpDdz5CLF+9HAM4qPs8IFakltxOYhSQ9nVT5oSK8=;
+	s=arc-20240116; t=1741977487; c=relaxed/simple;
+	bh=GmZpefo1d3CDgwRgakp0qb0rmkXAeE/vN96MhKu4eu4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D6cGmxhvjHjvAzpPshIpcLKRyYV8B6JXhuinuhZt9P6eoPxEBt6qD1a9qBpbiatCvwFpJ0z7jYs3nk66ovZ+0rU92asEbiiJXD/Z7OPQaSg1Li4KLlHcDGl26TgK4MXekydiKajhl4KQ7VY9049cgohbL8ACQigDjynY2n0WS7U=
+	 MIME-Version:Content-Type; b=CBqGGkkNdP6beimnJhYbs37XEGKglMDxf0ng3oeSH9sjPAFqFASOPChtXzZjGz/GcwjVOG4T/T3IvNXkMHgYFTqkxdxJfUIGZ+Mk6AwEvP4Ey5r9z6QUfr6NQX8xPimtF9c6djUXaLAj6xC9JhEK6F0I7bb+IHqvERJoGg1WkWo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B0F7C4CEE3;
-	Fri, 14 Mar 2025 18:37:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A66AC4CEE3;
+	Fri, 14 Mar 2025 18:38:02 +0000 (UTC)
 From: Catalin Marinas <catalin.marinas@arm.com>
-To: linux-arm-kernel@lists.infradead.org,
-	Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
+To: will@kernel.org,
+	sudeep.holla@arm.com,
+	tglx@linutronix.de,
+	peterz@infradead.org,
+	mpe@ellerman.id.au,
+	linux-arm-kernel@lists.infradead.org,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	pierre.gondois@arm.com,
+	dietmar.eggemann@arm.com,
+	Yicong Yang <yangyicong@huawei.com>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	x86@kernel.org,
 	linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com
-Subject: Re: [PATCH V3] arm64/mm: Define PTDESC_ORDER
-Date: Fri, 14 Mar 2025 18:37:39 +0000
-Message-Id: <174197745246.735540.15365076503205188211.b4-ty@arm.com>
+	morten.rasmussen@arm.com,
+	msuchanek@suse.de,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	jonathan.cameron@huawei.com,
+	prime.zeng@hisilicon.com,
+	linuxarm@huawei.com,
+	yangyicong@hisilicon.com,
+	xuwei5@huawei.com,
+	guohanjun@huawei.com,
+	sshegde@linux.ibm.com
+Subject: Re: [PATCH v12 0/4] Support SMT control on arm64
+Date: Fri, 14 Mar 2025 18:37:59 +0000
+Message-Id: <174197746840.735682.9575626401918508908.b4-ty@arm.com>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250311045710.550625-1-anshuman.khandual@arm.com>
-References: <20250311045710.550625-1-anshuman.khandual@arm.com>
+In-Reply-To: <20250311075143.61078-1-yangyicong@huawei.com>
+References: <20250311075143.61078-1-yangyicong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,25 +70,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Tue, 11 Mar 2025 10:27:10 +0530, Anshuman Khandual wrote:
-> Address bytes shifted with a single 64 bit page table entry (any page table
-> level) has been always hard coded as 3 (aka 2^3 = 8). Although intuitive it
-> is not very readable or easy to reason about. Besides it is going to change
-> with D128, where each 128 bit page table entry will shift address bytes by
-> 4 (aka 2^4 = 16) instead.
+On Tue, 11 Mar 2025 15:51:39 +0800, Yicong Yang wrote:
+> The core CPU control framework supports runtime SMT control which
+> is not yet supported on arm64. Besides the general vulnerabilities
+> concerns we want this runtime control on our arm64 server for:
 > 
-> Let's just formalise this address bytes shift value into a new macro called
-> PTDESC_ORDER establishing a logical abstraction, thus improving readability
-> as well. While here re-organize EARLY_LEVEL macro along with its dependents
-> for better clarity. This does not cause any functional change. Also replace
-> all (PAGE_SHIFT - PTDESC_ORDER) instances with PTDESC_TABLE_SHIFT.
+> - better single CPU performance in some cases
+> - saving overall power consumption
 > 
 > [...]
 
-Applied to arm64 (for-next/pgtable-cleanups), thanks!
+Applied to arm64 (for-next/smt-control), thanks!
 
-[1/1] arm64/mm: Define PTDESC_ORDER
-      https://git.kernel.org/arm64/c/51ecb29f7a65
+[1/4] cpu/SMT: Provide a default topology_is_primary_thread()
+      https://git.kernel.org/arm64/c/4b455f59945a
+[2/4] arch_topology: Support SMT control for OF based system
+      https://git.kernel.org/arm64/c/5deb9c789ae4
+[3/4] arm64: topology: Support SMT control on ACPI based system
+      https://git.kernel.org/arm64/c/e6b18ebfaf63
+[4/4] arm64: Kconfig: Enable HOTPLUG_SMT
+      https://git.kernel.org/arm64/c/eed4583bcf9a
 
 -- 
 Catalin
