@@ -1,229 +1,93 @@
-Return-Path: <linux-kernel+bounces-561338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CA45A61036
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:42:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FA53A6103F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:43:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 721B8176F4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:42:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80756177165
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B151FDE12;
-	Fri, 14 Mar 2025 11:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAA31FDE26;
+	Fri, 14 Mar 2025 11:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OEoHZK24"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rUqIMvDk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E39D1FDA82;
-	Fri, 14 Mar 2025 11:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F034C1FC7CD;
+	Fri, 14 Mar 2025 11:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741952528; cv=none; b=iLzB6WRXV04Oxjj6bh/Q9OMsyC6ZOnbwwViQljXoDIl9/6YpMRZnsjExbL2+SOBBdKsC+IpjOsYpl5zn1KGRuH3WSnlllC4bspVaWl2NKbdmHUGNDpZmL6+pCQQpUCFxNRgCOeteBemOOPNtCEDGiSbo7Ut2nYSk2Sp9/JV83go=
+	t=1741952606; cv=none; b=bFqN23fnunXroPvOzlY00hNIjgnAtbZRPwBXh0L+Tm3TJGbH8fJai6V6f4TVKCRjwtpnkI7oZSU1Za2/C73LQyDN4w1tJmORNb7R9ZfZkCLC//nzjLLjOavYmB0t29Tk/c8k8iI6D4C/B/esBNv3CmOnASQ56/YVf4zwJpic6yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741952528; c=relaxed/simple;
-	bh=nVOcPJg81+ypVYooo5YBQ0LvK+/ZjYvHXezBn4qqtAo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B6+x+SDvpPpk2ZG7EArCb8XhD4o3zWRgZrTuHF3ji/dNekeS1gWPyncso4BDuBAqN+6p0QdXGhyn5j6y0VXQvKRfroF0HVyvluJavfVWMbYMUxlhk3cGKvyp7ieoSPvIrWtkg17E00NKaiLyjFxYfqebGOD0I12b/hzCUjDJ1NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OEoHZK24; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52EAeDIH014198;
-	Fri, 14 Mar 2025 11:41:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=QMHbiVdF4O6NsMrpAke9v18+Iz0kX6/uRd/3dGnJP
-	Lg=; b=OEoHZK24FkzBYLZauUS2BA+PzTr/2mDinByo8jks48auT0neSZDFPJzDG
-	LKNd0t6Vo2zGVfeQKkXx5aM8hU2JT9++lSz/0lh42Ayxb2urRF5QZwy4DAvu+qIq
-	pC2RvmbDIETL77iSIYKwRo9/G6mQqj1hKnkURKSKMhRQPc7ZI1Fj/mt2TiN09BjE
-	uvFwqiEEwHtFQg/ICXVH+QCZF5b2CwMGt9qxzi0jz+q5MHjuJ98aOV3Z0+/IO+Tb
-	Dc4owZ242nPxijb7gH51Q1JGHzBTseOg5vSJDoqEph1LndppZgf/Lf5NVj9rb8gR
-	sxabdJapZ1AYC3p8cAa/8aE+Vz5Kg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45c6k03c2p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Mar 2025 11:41:49 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52EBfdQN021972;
-	Fri, 14 Mar 2025 11:41:49 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45c6k03c2m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Mar 2025 11:41:48 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52E8rENB015368;
-	Fri, 14 Mar 2025 11:41:48 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atspppy6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Mar 2025 11:41:48 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52EBfkIc57278972
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Mar 2025 11:41:46 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7CE5920043;
-	Fri, 14 Mar 2025 11:41:46 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 079F620040;
-	Fri, 14 Mar 2025 11:41:45 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.24.194])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 14 Mar 2025 11:41:44 +0000 (GMT)
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
-Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] ext4: cache es->s_journal_inum in ext4_sb_info
-Date: Fri, 14 Mar 2025 17:11:43 +0530
-Message-ID: <d1a9328a41029f6210a1924b192a59afcd3c5cee.1741952406.git.ojaswin@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741952606; c=relaxed/simple;
+	bh=HhnRgeIRMl8/ytxbRB5L7HJeFXLaGEfrKsFgITuJCvI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=sMyDhzxCsi80pPeluV4fMN1Eim9fmCV3iA/Rgn6l4AICqZNUqGt05CkxXrgGANqPiEz3U0k9kD7O9v5fh0cbYITlSSPBukhpfM713t1HaTh4zblEgx6TE8CIgPGkQBx4vjwQ5zn4O9nUl2jXt47dk2hr2r9YbrKIlJfg4Q1A4kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rUqIMvDk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9191EC4CEE3;
+	Fri, 14 Mar 2025 11:43:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741952605;
+	bh=HhnRgeIRMl8/ytxbRB5L7HJeFXLaGEfrKsFgITuJCvI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=rUqIMvDkJPFPCIq8jp3YHiYV3Gkj0ISBfNfEhyGb/UYdeNZ9wvPqnfLIeTOkKFmYV
+	 dFNxLMNyjlpZZgoLlmVRwNAvDXLl+UYC1i5hq6DBp6/Im/fXKy+DukkMRx5nJmMupM
+	 LjNMv+Y0nvOFd9gjlJidoByXiu2ub1uT5UW/KW5Xvvama+/3ffoD72FyGdBom6UsQY
+	 h6h3ReIQtoB/BqwnOgT4gfBoUp0sTLFs7JlDIhBses8n7h+fsiqHNHPgbqAK+e6L0h
+	 CaX0FIPH5AWPOKRsb+OOJxnXh+HkCy4HvK+lWQz4dKqVe6gt7eCFW+fNvtTWh3H6RH
+	 I1lEigMyHyA+g==
+From: Lee Jones <lee@kernel.org>
+To: arnd@arndb.de, lee@kernel.org, dmitry.torokhov@gmail.com, 
+ sre@kernel.org, lgirdwood@gmail.com, broonie@kernel.org, 
+ alexandre.belloni@bootlin.com, danielt@kernel.org, jingoohan1@gmail.com, 
+ deller@gmx.de, linus.walleij@linaro.org, brgl@bgdev.pl, 
+ tsbogend@alpha.franken.de, linux@treblig.org
+Cc: linux-mips@vger.kernel.org, linux-input@vger.kernel.org, 
+ linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250311014959.743322-1-linux@treblig.org>
+References: <20250311014959.743322-1-linux@treblig.org>
+Subject: Re: (subset) [PATCH v2 0/9] Remove pcf50633
+Message-Id: <174195260130.4016186.12257329269298391220.b4-ty@kernel.org>
+Date: Fri, 14 Mar 2025 11:43:21 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: F3LawNexBkdp0jJNdrlxSwR1Il06KrhQ
-X-Proofpoint-ORIG-GUID: _AQLMt3fWaMY2sYl2EUJSpid7b0Mar7U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-14_04,2025-03-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=999 priorityscore=1501 impostorscore=0 lowpriorityscore=0
- bulkscore=0 phishscore=0 adultscore=0 spamscore=0 mlxscore=0
- suspectscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502280000 definitions=main-2503140091
+X-Mailer: b4 0.15-dev-510f9
 
-Currently, we access journal ino through sbi->s_es->s_journal_inum,
-which directly reads from the ext4 sb buffer head. If someone modifies
-this underneath us then the s_journal_inum field might get corrupted.
+On Tue, 11 Mar 2025 01:49:50 +0000, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> The pcf50633 was used as part of the OpenMoko devices but
+> the support for its main chip was recently removed in:
+> commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support")
+> 
+> See https://lore.kernel.org/all/Z8z236h4B5A6Ki3D@gallifrey/
+> 
+> [...]
 
-Although direct block device modifications can be expected to cause
-issues in the FS, let's cache s_journal_inum in sbi->s_journal_ino so
-our checks can be more resillient.
+Applied, thanks!
 
-Suggested-by: Baokun Li <libaokun1@huawei.com>
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- fs/ext4/block_validity.c | 23 ++++++++++++++++-------
- fs/ext4/ext4.h           |  1 +
- fs/ext4/inode.c          | 19 +++++++++++++++----
- fs/ext4/super.c          |  5 ++++-
- 4 files changed, 36 insertions(+), 12 deletions(-)
+[1/9] mfd: pcf50633-adc: Remove
+      commit: 0d0e54953805af76f0022df39602f5668145f747
+[3/9] mfd: pcF50633-gpio: Remove
+      commit: 8559602247d0d054451c7a755942588d2c0de85d
+[8/9] mfd: pcf50633: Remove irq code
+      commit: 786ad21f4350601c9d118ddbd19b7b830c04ece6
+[9/9] mfd: pcf50633: Remove remains
+      commit: 44356090d59efd8db152e9eecb8e7f843be319f0
 
-diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
-index 87ee3a17bd29..54e6f3499263 100644
---- a/fs/ext4/block_validity.c
-+++ b/fs/ext4/block_validity.c
-@@ -247,9 +247,9 @@ int ext4_setup_system_zone(struct super_block *sb)
- 		if (ret)
- 			goto err;
- 	}
--	if (ext4_has_feature_journal(sb) && sbi->s_es->s_journal_inum) {
-+	if (ext4_has_feature_journal(sb) && sbi->s_journal_ino) {
- 		ret = ext4_protect_reserved_inode(sb, system_blks,
--				le32_to_cpu(sbi->s_es->s_journal_inum));
-+						  sbi->s_journal_ino);
- 		if (ret)
- 			goto err;
- 	}
-@@ -351,11 +351,20 @@ int ext4_check_blockref(const char *function, unsigned int line,
- {
- 	__le32 *bref = p;
- 	unsigned int blk;
--
--	if (ext4_has_feature_journal(inode->i_sb) &&
--	    (inode->i_ino ==
--	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
--		return 0;
-+	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
-+
-+	if (ext4_has_feature_journal(inode->i_sb)) {
-+		/* If we are called from journal init path then
-+		 * sbi->s_journal_ino would be 0
-+		 */
-+		u32 journal_ino = sbi->s_journal_ino ?
-+					  sbi->s_journal_ino :
-+					  sbi->s_es->s_journal_inum;
-+		WARN_ON_ONCE(journal_ino == 0);
-+
-+		if (inode->i_ino == journal_ino)
-+			return 0;
-+	}
- 
- 	while (bref < p+max) {
- 		blk = le32_to_cpu(*bref++);
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 2b7d781bfcad..648b0459e9fd 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1556,6 +1556,7 @@ struct ext4_sb_info {
- 	u32 s_max_batch_time;
- 	u32 s_min_batch_time;
- 	struct file *s_journal_bdev_file;
-+	u32 s_journal_ino;
- #ifdef CONFIG_QUOTA
- 	/* Names of quota files with journalled quota */
- 	char __rcu *s_qf_names[EXT4_MAXQUOTAS];
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 365d31004bd0..50961bc0c94d 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -384,10 +384,21 @@ static int __check_block_validity(struct inode *inode, const char *func,
- 				unsigned int line,
- 				struct ext4_map_blocks *map)
- {
--	if (ext4_has_feature_journal(inode->i_sb) &&
--	    (inode->i_ino ==
--	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
--		return 0;
-+	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
-+
-+	if (ext4_has_feature_journal(inode->i_sb)) {
-+		/*
-+		 * If we are called from journal init path then
-+		 * sbi->s_journal_ino would be 0
-+		 */
-+		u32 journal_ino = sbi->s_journal_ino ?
-+					  sbi->s_journal_ino :
-+					  sbi->s_es->s_journal_inum;
-+		WARN_ON_ONCE(journal_ino == 0);
-+
-+		if (inode->i_ino == journal_ino)
-+			return 0;
-+	}
- 	if (!ext4_inode_block_valid(inode, map->m_pblk, map->m_len)) {
- 		ext4_error_inode(inode, func, line, map->m_pblk,
- 				 "lblock %lu mapped to illegal pblock %llu "
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index a963ffda692a..44e79db7f12a 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -4162,7 +4162,8 @@ int ext4_calculate_overhead(struct super_block *sb)
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	struct ext4_super_block *es = sbi->s_es;
- 	struct inode *j_inode;
--	unsigned int j_blocks, j_inum = le32_to_cpu(es->s_journal_inum);
-+	unsigned int j_blocks;
-+	u32 j_inum = sbi->s_journal_ino;
- 	ext4_group_t i, ngroups = ext4_get_groups_count(sb);
- 	ext4_fsblk_t overhead = 0;
- 	char *buf = (char *) get_zeroed_page(GFP_NOFS);
-@@ -6091,6 +6092,8 @@ static int ext4_load_journal(struct super_block *sb,
- 		ext4_commit_super(sb);
- 	}
- 
-+	EXT4_SB(sb)->s_journal_ino = le32_to_cpu(es->s_journal_inum);
-+
- 	return 0;
- 
- err_out:
--- 
-2.48.1
+--
+Lee Jones [李琼斯]
 
 
