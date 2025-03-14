@@ -1,159 +1,209 @@
-Return-Path: <linux-kernel+bounces-560773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749E6A60956
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:55:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1682A60957
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:55:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 798C47AC8B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:54:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32C5917D156
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F790158D96;
-	Fri, 14 Mar 2025 06:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE60156C5E;
+	Fri, 14 Mar 2025 06:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kwK2PpU/"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bxC0hTFe"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2046.outbound.protection.outlook.com [40.107.94.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A037512B94;
-	Fri, 14 Mar 2025 06:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741935307; cv=none; b=tRVufmsWmWHdMr5a2E8eE+P1dMwCNIV7egCNgVByExTa7duEnQ8dSvOtXoOWoM4+prNDsBJ0MG1SFpF9BgddE6gIu7apw8mtEuosNdarmMp6Xki/DdHy4AbIATu6irgc7Qr9p6UR9fD1eGhiNzgnvngHwbsWqwmXHkeitexnPrQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741935307; c=relaxed/simple;
-	bh=6gTzgQOVd3ne/8XxLFr1dWkRTC9CQZ+P5VXsdL+HTeU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DfVUQkbHBlT2q4EaRHlHGwWG2HwtEtUWiUyqMlJ5KQI3hjv4ydYwjrsE3PmU37LwnDtyWKniSMp+9hyggHz2PULFaHyKM/fSX/bbatVgv1KOCJi7nrEcXRbJ8+VYpvVSHgPZRMlrTkMB/XwwdMa/nUPU8tx821RE7Q5bUGAYFqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kwK2PpU/; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52E6skUj2064774
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Mar 2025 01:54:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741935286;
-	bh=Dtma4NIIxwZ25QmncfJqv/YPoOIELjervTPth/gAlKU=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=kwK2PpU/bjctEmztwr2AEu5GYAxTepORfZ7T/uDON7Do6KtcT/0PM7dHxR7ccWh/O
-	 kDgB6WtEZ5AJHuRsA32IK6VcZErzgbJ/J1f0NuXX6Yv77d+/pts2MX4WLk5Ew59+NJ
-	 gM1oxS9pfpG0xFPZweuyWIrit78DYbR9xWstwqDs=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52E6skSm003712
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 14 Mar 2025 01:54:46 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
- Mar 2025 01:54:46 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 14 Mar 2025 01:54:46 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52E6simv093913;
-	Fri, 14 Mar 2025 01:54:45 -0500
-Date: Fri, 14 Mar 2025 12:24:44 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <vigneshr@ti.com>, <kishon@kernel.org>, <cassel@kernel.org>,
-        <wojciech.jasko-EXT@continental-corporation.com>,
-        <thomas.richard@bootlin.com>, <bwawrzyn@cisco.com>,
-        <linux-pci@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>
-Subject: Re: [PATCH 1/4] PCI: cadence: Add support to build pcie-cadence
- library as a kernel module
-Message-ID: <20250314065444.fmvhyqmuefnm4mcq@uda0492258>
-References: <20250307103128.3287497-1-s-vadapalli@ti.com>
- <20250307103128.3287497-2-s-vadapalli@ti.com>
- <20250313174416.n3c4srf6hb2l3bvg@thinkpad>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3DD22339
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741935328; cv=fail; b=L09IhaqEgaHFqEF04BC2+XN2wM65dRtgcOdp+Ss6cxtx2SrHa5LABfQm6kPFbnCn9GKqdn047MzJHl2CqN/R21JO+BeMnzqOz7MDs5K+7UXXFIV4CzH9I1k9pI1FzBgoPT/xXHcVWNlJQmEhU2tIaKAVDgCcz/wTilNOnoe30Ks=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741935328; c=relaxed/simple;
+	bh=dKfPcG/jx2JdwqfhVnuesfyqgG0WQEDUYyfGNEG6vuk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=g0Ae5rykKZevnazBENZPy6uBgTDQSEeC8MCROKH9f30XlNsOlYj63i6GgMsDpV9RJNfA6yyVc/2V4Vsxl6zwKfpFcFZvH0wEqHl+p5P/8AME9iXRITMfbJLsre+w82rgBIcKG4JDOGW1f5YUSQHo2wm2c9hKOo7IXDeg0IZnw+s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bxC0hTFe; arc=fail smtp.client-ip=40.107.94.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hmm1moY1gEkt6d4Tgm1BgIQmbsJrJd+qIoDvNKi37uF9Xpu5akzeAdm3mEJaJveqxS7QTHXYJf/1ubqAXAy9nCUbOxf81GfkweyA+yr6XpIYKov5aqe2jVGht+eSmcbnz4LhXkADSM5Xa+aadwnSe9hzW3vtdvHoe1jivU9PDZVTMxYEbZwBtEGxk2Kpt4g64MihPdiOu6Cu9P31nJBdd4Vrpv/HqnFAytgXrFTukwlRy0rbqrDucBEppRRmrq6R+2ou20RuLpVTDwcrR4wkDc/aPnr3aSE7EBRRjuX5fkbNC+vOcJ5LVeVO+EAd0aChlpqNAu7Htpan93HtnYAJjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ztZ/38nIodEJCAZH1vYPdYqni2Hru7dGgnA1FSc7Iww=;
+ b=Y/juUFUkN+2NQU2+Z3C9nOWYVwG3bQGe/katfzMAhnywxn0RzCYAlRZr0UG0W+3dF24qiC/hgIuTBqWXygXJmGIto4Zrxg/yTJ4VG+N5Oy4WEpQ+SKmtDoE7F1mxcrABhmm/eTY3+mC3qzP9xNzC0nfzJr+gF933nwmn7Op4E684F/Hw2hxOzEpROE1bsf31ipB6N9KeeylQHGAcn5o3Wg11Dyg+G81ukwv6ugcrLq7+MG+LFOervI0R5Cf5HcfRYrYc/82ZsOG2XhM+OXzyLvnxgOoKZ0v6iFh00fUveDZPjyduGTNaZNlDFlZnsoa9pKZ38wF0tIJq+Id9ZcAzng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ztZ/38nIodEJCAZH1vYPdYqni2Hru7dGgnA1FSc7Iww=;
+ b=bxC0hTFeVU/dGr6I5g/WbKz0ww1e2r/4Mq6mfvsTJOMZ2StK1C414+ZZh4bZNhXDRJ9zd/48MbWlmpwAazsH0GgOY+YHPAlyhBuhav+amhBon41xTVUw+RFURZyX3PBrxwzIYTHnqOR0HFEN/o2LBpmnp4ofdRww2IlhsnwdfBU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by PH8PR12MB7230.namprd12.prod.outlook.com (2603:10b6:510:226::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Fri, 14 Mar
+ 2025 06:55:24 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8511.026; Fri, 14 Mar 2025
+ 06:55:24 +0000
+Message-ID: <738f554f-1ab3-4baa-84d1-91c76e508a53@amd.com>
+Date: Fri, 14 Mar 2025 07:55:19 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/ttm/tests: fix incorrect assert in
+ ttm_bo_unreserve_bulk()
+To: Qasim Ijaz <qasdev00@gmail.com>, ray.huang@amd.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, thomas.hellstrom@linux.intel.com,
+ Arunpravin.PaneerSelvam@amd.com, karolina.stolarek@intel.com,
+ jeff.johnson@oss.qualcomm.com, bigeasy@linutronix.de
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250313161424.10688-1-qasdev00@gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20250313161424.10688-1-qasdev00@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0126.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:97::6) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250313174416.n3c4srf6hb2l3bvg@thinkpad>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|PH8PR12MB7230:EE_
+X-MS-Office365-Filtering-Correlation-Id: f4d95a22-e1fc-44b4-b72d-08dd62c531c7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VXRocnRwdWdNa3hBeE85TDRoRU5ESzc5ajJWWXhVZSttUmNWMHhCUE5lbFBy?=
+ =?utf-8?B?OHNpbUV0VXJGekI4WUlGc2RHVjVOUkNGQ3JXaWxacWZ4Um9Pc2JHblUxclZ0?=
+ =?utf-8?B?Unhkd0sxUTcwV3hTR25mNGxIeTNFUDgyMGFldmhtUnpPc0VOUk80Rms5aGVQ?=
+ =?utf-8?B?RUxPaVJhZGFBOU9IejJFRXMyYmZqT1ZWbk9iREdWcEVRMkREL3MvaVpsRmFM?=
+ =?utf-8?B?THpEVVRqbHc2OHBzWEx2blJDNTh0T25QQWZQOWZrbHo5SmNjdmYrcEUraWt2?=
+ =?utf-8?B?R0Z0bXJQQUNyRDF3QkthNU9LNWh6cHdUdW5EcUZoOEIwaWhNN1QvL05nMFdP?=
+ =?utf-8?B?YUJMS0NCZGxkS045Mng2N3NSaXVSSUZnamhPNDdhUDdXcEZ6dVhkU2Z2ZTlj?=
+ =?utf-8?B?OERYTnkzV3JRK255aDA0VkcvQ2RoYlk0NXlpbmIrak9zbEtIUVNvU2hqZ2ZV?=
+ =?utf-8?B?Vk9WVVdBOFJwZ3lwd0xXaW5JNGZkTUJpamhSeWFvcEFZd3c0djNrS2sxSFVz?=
+ =?utf-8?B?RWZDVVBMOFRGWklXbE0zMjJCNlVMdHQyYUsrUGI4WXA0VFNEY2FWMDdYQUg0?=
+ =?utf-8?B?WVBydTl6emJLZlhocHNJcnVhZ0NhTE5CRGFOL0MyTTVhaldBK3h2ZU0rQkVK?=
+ =?utf-8?B?TGdabzd0THRFWjQxMEJSMEJucTNvM25SeUFLcW5YREJtM1llRmcvendReHNG?=
+ =?utf-8?B?NVliZkxLTTgzRTJRbU5IOEhLWTR4TG45RGdPU1pNaTJwRkFLWDVDNWFDdXpr?=
+ =?utf-8?B?Wm9GMEN3UmFITHhpVzlVcW9WbUswYmFad3hVUDVBOE4rUDNvdUFJZmxDQ2FV?=
+ =?utf-8?B?NytKZDl0amxEZGFzK3drVUJnRnh5bU04VzFoeUh2NUh1ZHY4cmVZOFFsOFV4?=
+ =?utf-8?B?MWJJYnpGSFdSOWRqU24zZVNSK0RzT0RTdlgxMUhUNm9wMTB3N2hLdy9NMG82?=
+ =?utf-8?B?VWdwODdGc2lBSklpMTZxV3FUOEY0cXRVVmVqOW5jKzhTQTNsRnpMTGJqcVVG?=
+ =?utf-8?B?eWNiZVFZdzBoTDZxK3ljVFdGTTJHVTRwbi82elVoR09hOTE4cURiWHhUb1dY?=
+ =?utf-8?B?aldYNGIyT3FQZ0REWUN3cFhtWnhxQStGZFlNQlBGZWxEbitnK1pIVjdobmoy?=
+ =?utf-8?B?cEN4U0FkZEprSkc1REw5YUpOVWZQdWRuWGd4eXZFRU9nM1BxOEhTajIraDM2?=
+ =?utf-8?B?bjh2eStUZW1CQ3U3dkQxd2FmOEJLdFNmeElxaFdBamsvVVQyK2NJOFVWU3BF?=
+ =?utf-8?B?RlF5S0FvRElWaWk5ZGl1MEVsS05zYnJuYjcvTS9SSFc3bjVrYWpOeUxzUkVr?=
+ =?utf-8?B?ci9SQThwUU9yczFrdFc2aFhHaTdFWjdid2pMeXdaZEhLR1NTOW1CQWluaXVT?=
+ =?utf-8?B?WXZ2aEY2M2l0c1I1MGYxaS9qQmdzMFNaYmdZQm92OUozcUh4Zkc1VjZKNUN6?=
+ =?utf-8?B?Risrc0N3VnQ2ZDdhMVNBY3RLMTBvZkJJUkEzL3JsV3p6NWhFNTZvUWlTOGpT?=
+ =?utf-8?B?Vks5VkRybXFXQWVUbjM5S2pXSWtmS1lhMEEzcXNBbW8wUlJDOUVoSlpaQWhp?=
+ =?utf-8?B?RHZSK05EV0FPWEpFZ3hVWWd2a2VYTHk3aXk0UnpjT3hGZllXMWF2ZGVMcER2?=
+ =?utf-8?B?bGN5d29YVmFFcDBhczdUcUhYWDh5cFRaclFyNlNwQnEySnNHZ0M2bVZsMEQw?=
+ =?utf-8?B?ZmtsbkJlMGV1LzVwNGk5aTZHQk5UdXo1c0tUeHFoMk5XbGNqa1ljcW9NUzRs?=
+ =?utf-8?B?KytlWjdoUHI3WFlVakZDMFhVRFAxbW04SzhiT285OTM3UFYvNzBVVHBBTTNw?=
+ =?utf-8?B?SE5WSjNtSWVtcjEvSTBUMlc0RGNmMkNadWwrYyt6NFBEL2E3d3o3emc0VEJu?=
+ =?utf-8?B?dmVVdEd4VjhwcVhNVVE4TFE3WU9JYkpValFMZ04vUC9kaTAxSGxBOEI0RTEv?=
+ =?utf-8?Q?r5ZA/y5MPLw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?djdORkNsckxQd2laZC9DbzFGZ0o4c3VPeVdOc1dVdTNNcjl5MFdud2R2d2Nn?=
+ =?utf-8?B?bTBHWHZVT0UrczViSms0Tzh4dFl2dnVvRWVVdWZDcWhYV0k0dE9VMWVWOWN5?=
+ =?utf-8?B?OW9Ma3FCMHFQc09XaWFKSlY3a3FiZVNqOVd5aE1YOCtkWUozWXdyQSswN0k0?=
+ =?utf-8?B?c0ozNlBRQWJ5YUFDS2Vyc2pyNGlEV1diUllrWlJUVWtpVnhpYWxOQVlBMFNl?=
+ =?utf-8?B?MUxoOXFycHJ4YzZYN2tRYVZCMVdiQUh3ZmlqdFlxelpvYzYwcjhhWlR5SHZB?=
+ =?utf-8?B?Mlk1UC93eS9zeVJOYVE1SFJOMkFNUWxFcC9yOC8rR3luT0ZjTTk3bjg0cXNp?=
+ =?utf-8?B?SUIzU0s0ZENabU1iUENsR29ONGtOVnBQVERyNjhraFhiRk9RQ2RQL1ZMbUZX?=
+ =?utf-8?B?UitvRXJMMEhPRzFUY2dLTDk2aUlOcTdFaW5DTVJlVDg4OE44MkRRZ2hla1g0?=
+ =?utf-8?B?bzFWaGxEQ2lDK3RrTHZNa2Z2bVUxN3J3QXRGUmJ5RHJwWHk5RE1xZGFPUHpt?=
+ =?utf-8?B?T0s2VWhoYlRrNE01RDdYeDlBbU0rUjZ4UW80cGpUR0JsNTdXR3JHWlZYMmx6?=
+ =?utf-8?B?VVZtc2hRK2hBM0VaVUNXLzVpRzNZMERFNVpNOWdzejlGWnh1VHNFdjF4dHhQ?=
+ =?utf-8?B?cWhYVFRoZjZOQm5KcVUwYUltWjFMRmV1WElPNFg1ZkFyVENNZk5lVStGOC91?=
+ =?utf-8?B?M2ZQVldXWU42RFprNWVMWlQ0UjFGOXVaazFEMHVyQzN1VmRPQU5MbEgrVy9K?=
+ =?utf-8?B?YThWV2VtaDJjNDVjdUE4OGlPUklUQzg4S3VGOEc2L29JTlNPWk1hUkxlSmx3?=
+ =?utf-8?B?NWlFL2lHTnRBdllvYTVVSXRzeTVTaXBKa3FFR3Z1MHBWcXRhZUlxd3BNZzd3?=
+ =?utf-8?B?YjJrb0wzVnc0U3c4TUl3VVJQc2w2c3BUajFsS1J2am16dWN5clVQeUREQWhF?=
+ =?utf-8?B?UE5LazA0ZnFibUJubDIzZDNBSm11TUlEZUtDSDRHanYrYkczRUVKMjRzd2do?=
+ =?utf-8?B?a1pjZVMzQWgxeHkxYzlXMXM1SjY5Z01zOUltcTZLa24xWkVJWUxXNmpYbW9N?=
+ =?utf-8?B?d1FiV2FFN2picitaTExzWFNNL3RaQUhadzhHVDJydGIxTDVFZDArUk11YVNU?=
+ =?utf-8?B?STAyZ1FKdW9iN3VsZkxrdVdUZmIzbUJZV3dBOVBoWVJQVWpFMDNsSnFHZzA1?=
+ =?utf-8?B?WlZGZ0RiUFplbXgvN0JpQmhVcWw1SFhEVFFnYkF2YzB4UGhxN3ZET3pNRGQ2?=
+ =?utf-8?B?U0ZtQnZaaVdxdWdVc2NnM3VMMUNFRk9rVW02Sm40NE1aQ1lmekFCWVpJSURq?=
+ =?utf-8?B?TUZDclRKUjRlMUxCN0RhTzAyc3NYekV2cEpGS3ExcjFnaUlQd3FWMWMxeitr?=
+ =?utf-8?B?NWc1aTBWQVZ5bktNSzNGY0RNNG1JNERHQWZSZnArb2E4dDZ2MDhocnZ2REdH?=
+ =?utf-8?B?SEFDQXowdGl2YlJMUHN0MnJQTTlQaktTanYwaG5uNVRXMmgwL1dCTUx2RHFS?=
+ =?utf-8?B?cFRJem4ySHh0K2YzejN4eS9zUkpVQzBNV3FqbEdVOXhJRXZYVnRnVFp3WWpy?=
+ =?utf-8?B?QlZBWlFQZTg2QXhEeTQzZjFPYlJSVStXQ2RWWUh5Z3ZLQ1g2L1V5bWpjYnF1?=
+ =?utf-8?B?N0xHcURkdENMOTYxV05IQU9YSVNqOHVZV0V5cU9zNVBYdUs0Y0dOT20waG9E?=
+ =?utf-8?B?dzFDYUxaMThseHowTVNCWDZOdzhhSURKWDRkSzRmdlRiMXRzMzM2dUFBWjBY?=
+ =?utf-8?B?NnpJSW42SkppQlJkZUVVUy9YWVQwKzNTUENWTnRLdVFNZ2wvOWVaNC83TU81?=
+ =?utf-8?B?YmpYRWRObHUyQWhoMU1Tb08yTXhvQ1dRTDh5ZUFDK2E4NEticFFSb3lNS1Zy?=
+ =?utf-8?B?cExDc0dNNEllS0UwcUh1RTZScVZ3bnlxWWo5TUxmbnZnbkNIaGY5QVBxcDU4?=
+ =?utf-8?B?TEMrT0RDUnlRakJ0M0REMWRRRFZ1YngvckppSWpXMkEvQVY3Q1pqYlVRdUl0?=
+ =?utf-8?B?Y2tzcmVVM3ZPbW9oWlZnZFZvMU9iV2hOOU96OUtnVE9LYnVPRUpTVDJLRUsy?=
+ =?utf-8?B?aG9VRm11d045OHg2WGlpa3Q1bDFqNmV2U2NJS2NIZ202VWs2MG00aFdsQk1O?=
+ =?utf-8?Q?lWHHDzAk3luHI//RbYcD5EzsN?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4d95a22-e1fc-44b4-b72d-08dd62c531c7
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2025 06:55:24.2839
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VgRhRBZuHNLBN/ndxDT+IBoqk65rBeEPymhfh8MeA6E0kONQ422reTJvLB6rinbR
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7230
 
-On Thu, Mar 13, 2025 at 11:14:16PM +0530, Manivannan Sadhasivam wrote:
+Am 13.03.25 um 17:14 schrieb Qasim Ijaz:
+> In the ttm_bo_unreserve_bulk() test function, resv is allocated using
+> kunit_kzalloc(), but the subsequent assertion mistakenly verifies the
+> ttm_dev pointer instead of the resv pointer.
+>
+> Fix the assertion to properly verify the resv pointer.
+>
+> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
 
-Hello Mani,
+Reviewed and pushed.
 
-> On Fri, Mar 07, 2025 at 04:01:25PM +0530, Siddharth Vadapalli wrote:
-> > From: Kishon Vijay Abraham I <kishon@ti.com>
-> > 
-> > Currently, the Cadence PCIe controller driver can be built as a built-in
-> > module only. Since PCIe functionality is not a necessity for booting, add
-> > support to build the Cadence PCIe driver as a loadable module as well.
-> > 
-> > Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> 
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> > ---
-> >  drivers/pci/controller/cadence/Kconfig             |  6 +++---
-> >  drivers/pci/controller/cadence/pcie-cadence-ep.c   |  6 ++++++
-> >  drivers/pci/controller/cadence/pcie-cadence-host.c |  9 +++++++++
-> >  drivers/pci/controller/cadence/pcie-cadence.c      | 12 ++++++++++++
-> >  drivers/pci/controller/cadence/pcie-cadence.h      |  4 ++--
-> >  5 files changed, 32 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/cadence/Kconfig b/drivers/pci/controller/cadence/Kconfig
-> > index 8a0044bb3989..82b58096eea0 100644
-> > --- a/drivers/pci/controller/cadence/Kconfig
-> > +++ b/drivers/pci/controller/cadence/Kconfig
-> > @@ -4,16 +4,16 @@ menu "Cadence-based PCIe controllers"
-> >  	depends on PCI
-> >  
-> >  config PCIE_CADENCE
-> > -	bool
-> > +	tristate
-> >  
-> >  config PCIE_CADENCE_HOST
-> > -	bool
-> > +	tristate
-> >  	depends on OF
-> >  	select IRQ_DOMAIN
-> 
-> Even though this was added earlier, looks like not needed.
+Thanks,
+Christian.
 
-Thank you for reviewing this patch.
+> ---
+>  drivers/gpu/drm/ttm/tests/ttm_bo_test.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/ttm/tests/ttm_bo_test.c b/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
+> index f8f20d2f6174..e08e5a138420 100644
+> --- a/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
+> +++ b/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
+> @@ -340,7 +340,7 @@ static void ttm_bo_unreserve_bulk(struct kunit *test)
+>  	KUNIT_ASSERT_NOT_NULL(test, ttm_dev);
+>  
+>  	resv = kunit_kzalloc(test, sizeof(*resv), GFP_KERNEL);
+> -	KUNIT_ASSERT_NOT_NULL(test, ttm_dev);
+> +	KUNIT_ASSERT_NOT_NULL(test, resv);
+>  
+>  	err = ttm_device_kunit_init(priv, ttm_dev, false, false);
+>  	KUNIT_ASSERT_EQ(test, err, 0);
 
-drivers/pci/controller/cadence/Kconfig has the following:
-...
-	config PCIE_CADENCE_HOST
-		bool
-		depends on OF
-		select IRQ_DOMAIN
-		select PCIE_CADENCE
-...
-	config PCI_J721E_HOST
-		bool "TI J721E PCIe controller (host mode)"
-		depends on ARCH_K3 || COMPILE_TEST
-		depends on OF
-		select PCIE_CADENCE_HOST
-		select PCI_J721E
-...
-So PCI_J721E_HOST selects PCIE_CADENCE_HOST which in turn selects
-PCIE_CADENCE. As of now, none of these configs are enabled in
-arm64-defconfig, and they also will not be accepted as built-in modules
-as it will bloat the Linux Image for everyone. For that reason, they are
-all being converted to loadable modules, and their configs will eventually
-be enabled in arm64-defconfig as loadable modules.
-
-Please let me know if I misunderstood your comment regarding the quoted
-change not being required.
-
-Regards,
-Siddharth.
 
