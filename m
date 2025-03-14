@@ -1,130 +1,157 @@
-Return-Path: <linux-kernel+bounces-561070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8627CA60D38
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:26:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C932EA60D3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:27:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2E9A3AA177
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:26:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 949287A26E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9DC1EDA24;
-	Fri, 14 Mar 2025 09:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="GaH0sGeR"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFE11DE2A5
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6051EB1B5;
+	Fri, 14 Mar 2025 09:27:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A121C07D9;
+	Fri, 14 Mar 2025 09:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741944389; cv=none; b=t2fVHZRs9M1iAnH/S23CCGsjNLvk/x95fV3499zqOMiuNuJIPKEOVASlXAexQ8CwhZaplTCy+7yUdCKLQft5K6DPMS4OsiTUdvCUpJCzOLQ91IcxrcQs6JvenPuXshYt/yHZ5lMZlZT58wpA6XpG5IejlJlqUANkNFBxXanH9WI=
+	t=1741944423; cv=none; b=jPfRFdUEsBpJ1gThwHW1uVfDdAAdnndZ2J9VCTlQoh98wzkre4ywgQlI0pfXOe0LR40wkvSQL1p3MIBuVYmhtYrDAJR7MR3p5MI8BqBEyoo9dwtxRMjOL5VaIgGjUkc3LIehWHPMHMvHLoO/RelYxrWmZK2bpK7AsZxL/0hwCg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741944389; c=relaxed/simple;
-	bh=9KPejcYgPQWoZLY3OvNB6ndV866qO//pAbZhNYYEcVg=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Dk0x/xsOnpebJ9EI82bNc8ekBAtriGeYE4PMWCF1sUzNNjCCfXqq2qvnES2GDvKxyNYir7G13RY7TqA/5Htk3kWKYjgvUYhBvf+nk4WnON9He5NkK53SIRj0Hmu77bmgMDj3eVlpAshPvn9KllRAcTXcVp1duSEUh4hTg28tXhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=GaH0sGeR; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22401f4d35aso37427345ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 02:26:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1741944387; x=1742549187; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JIomnUM1ObwovI7+jMPD5tnDDFMcgSa79cSje7Mcl24=;
-        b=GaH0sGeRvJJCuQ8fXxw62DvGGnuBYTIkjilct1z36B2CK8UY39JI20yJaK28nZh7cp
-         Ew55S6U49j83BAq3r+fJLD/vgeOzoTUvuIGFaLEiZrlTPHTANPgtTsgUvAjrL/e7TJsS
-         elU8r4guN9py4+MGLpuXDfPBkqfbq5oXQ2Prfwdz6efzfpMpO0WyUibTJORKSA+RtXjm
-         Nrb/ad/kQBp1eRw4vK56Ta5xANJmLJ9WJ5k8YZhsOY7xSUbqWQR8kmftqs6c0tPEiA0O
-         zDpsLVSvWl66EyzkSO4MjSFYXxXh0F3YmwJGlZaiBA3yxQjirXDEsVVmRRDUHqi4/s48
-         bXAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741944387; x=1742549187;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JIomnUM1ObwovI7+jMPD5tnDDFMcgSa79cSje7Mcl24=;
-        b=naMYYOTFPlScaWm1M+jCLpsDp9Uvv5o7tn/FEnBALAmK6aNpr44uDIthL4Jahf1A+8
-         3rxgDSJqosdcLwHS6zEU3LtLzMPR9afLV0hbbHd8y5BROJNTaJKbdq/SWNe1efyifpMf
-         DnM5+dNgu8AdG2DbnWnVufKyyiUuuCJpf6zMKrqVH81cWZRQui3v/bHu3pJdHvmg+uTg
-         Px1W/JIaW3XZ+Jf4HNVnegMxtH9MWuFO6TAxuKOxVNOCn+zZ2eW8Iz5gr2gVgsrDtitN
-         NN0lciwd9KuIg2GfXFQhHOJvX3d5fpV8JYuiOTE05Bq4RC//Fvh639Achq9nhOpwQD3K
-         bAiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPitxlX9IqGj1Xn3SU74ffRlxPOKHghTTuG7NxJdVOCCdEmMD2pOjD2swrVHitA09McKFm82s4WBvlPFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqoGGm5Ruo3C8wd5HwFF/hIesGxqNYZUN3koLc9JCedKjrgsPY
-	PQE47rzP0YQ4eTfs4zIfYkzT1sDiwL+7OZnQfCchqlZwzGh1acyU0PTCmFCr8ec=
-X-Gm-Gg: ASbGncuphxmFrVIzAVkDb65maNP4fHZS74VtEtmNOrbWDAAyVpwBGS0Qfg6U8LTXn0J
-	SaMZ4VzkKmxMGhNtxurJkbT/+cjnO8zk7khe6g0140Dw7LncZEWz/EFiAxZwyLRJ/SfDa4zKCiQ
-	czaK1re+aaLeBqBnff2EW9WLLS68fG2zrPQORTfuKlPLl7U4olMLR3IB0TlHQaeXgId9SInrt7x
-	0kCP4EalQF6wa63JAWbPNswdWoJpNt5AGQQZYw+x+1QUr+Q4DThTxWo2AaRu0i6bTVI2AYKzaAi
-	nlw5sTlqv5zLMEs4A5YTTxKGx1ZVD57qBHtGSMRfdgn+abRAxZ/v1mIkaNUFYcdm56o=
-X-Google-Smtp-Source: AGHT+IHiGiOU9ohAlsLexvW8pavyjjMgJ95S5cWuBYJBZm1j31219a1vu4hI7Lz1u+vTNN/5fDQ2pg==
-X-Received: by 2002:a05:6a21:38c:b0:1f5:769a:a4c0 with SMTP id adf61e73a8af0-1f5c11f2c72mr3167518637.22.1741944386953;
-        Fri, 14 Mar 2025 02:26:26 -0700 (PDT)
-Received: from hsinchu26.internal.sifive.com ([210.176.154.34])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56e9e4cd5sm2467828a12.31.2025.03.14.02.26.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 02:26:26 -0700 (PDT)
-From: Zong Li <zong.li@sifive.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	debug@rivosinc.com,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Zong Li <zong.li@sifive.com>
-Subject: [PATCH] riscv: traps: handle uprobe event in software-check exception
-Date: Fri, 14 Mar 2025 17:26:14 +0800
-Message-Id: <20250314092614.27372-1-zong.li@sifive.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1741944423; c=relaxed/simple;
+	bh=JcldlY/ETPmR3IenknhNxPNgRcWA0ROHMHWWITDho/I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BqtDtBIi8pw7nja+MEluEiSLuSWQoEw7Sb1w/8jK4z9ZIo5h4UwKZPNr/sUMrjMlhTa/6cDhu6VLnpsC4eB5UXpIkLOnJ8pnW+TpyMBtx11f+J7WFYeuFsO72ywSeNlFsyu7NlHTPonOkLn1cXtsQsTO+C6LMOeRsIecR8vXz5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 549631424;
+	Fri, 14 Mar 2025 02:27:11 -0700 (PDT)
+Received: from [10.57.85.159] (unknown [10.57.85.159])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 73EA03F673;
+	Fri, 14 Mar 2025 02:26:57 -0700 (PDT)
+Message-ID: <d3a15aaf-16a6-4a88-a6c5-9b9afaa5f370@arm.com>
+Date: Fri, 14 Mar 2025 09:26:56 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] arm64: Add BBM Level 2 cpu feature
+Content-Language: en-GB
+To: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>
+Cc: suzuki.poulose@arm.com, yang@os.amperecomputing.com, corbet@lwn.net,
+ catalin.marinas@arm.com, will@kernel.org, jean-philippe@linaro.org,
+ robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org,
+ mark.rutland@arm.com, joey.gouly@arm.com, maz@kernel.org,
+ james.morse@arm.com, broonie@kernel.org, anshuman.khandual@arm.com,
+ oliver.upton@linux.dev, ioworker0@gmail.com, baohua@kernel.org,
+ david@redhat.com, jgg@ziepe.ca, shameerali.kolothum.thodi@huawei.com,
+ nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
+ smostafa@google.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ iommu@lists.linux.dev
+References: <20250313104111.24196-2-miko.lenczewski@arm.com>
+ <20250313104111.24196-3-miko.lenczewski@arm.com>
+ <ea10caee-59ef-4a00-9b61-37cb0a379411@arm.com>
+ <20250313180833.GA40525@mazurka.cambridge.arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250313180833.GA40525@mazurka.cambridge.arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Handle the uprobe event first before handling the CFI violation in
-software-check exception handler. Because when the landing pad is
-activated, if the uprobe point is set at the lpad instruction at
-the beginning of a function, the system triggers a software-check
-exception instead of an ebreak exception due to the exception
-priority, then uprobe can't work successfully.
+On 13/03/2025 18:08, Mikołaj Lenczewski wrote:
+> On Thu, Mar 13, 2025 at 04:13:22PM +0000, Ryan Roberts wrote:
+>> On 13/03/2025 10:41, Mikołaj Lenczewski wrote: 
+>>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+>>> index d561cf3b8ac7..b936e0805161 100644
+>>> --- a/arch/arm64/kernel/cpufeature.c
+>>> +++ b/arch/arm64/kernel/cpufeature.c
+>>> @@ -2176,6 +2176,76 @@ static bool hvhe_possible(const struct arm64_cpu_capabilities *entry,
+>>>  	return arm64_test_sw_feature_override(ARM64_SW_FEATURE_OVERRIDE_HVHE);
+>>>  }
+>>>  
+>>> +static inline bool bbml2_possible(void)
+>>> +{
+>>> +	return !arm64_test_sw_feature_override(ARM64_SW_FEATURE_OVERRIDE_NOBBML2);
+>>
+>> If you're going to keep this helper, I think it really needs to be:
+>>
+>> return IS_ENABLED(CONFIG_ARM64_BBML2_NOABORT) &&
+>>        !arm64_test_sw_feature_override(ARM64_SW_FEATURE_OVERRIDE_NOBBML2);
+>>
+>> Then you would simplify the caller to remove it's own
+>> IS_ENABLED(CONFIG_ARM64_BBML2_NOABORT) check.
+>>
+>> But personally I would remove the helper and just fold the test into
+>> has_bbml2_noabort().
+>>
+>> Thanks,
+>> Ryan
+> 
+> I was debating folding it into has_bbml2_noabort(), but went ahead and
+> implemented it separately to match hvhe_possible(), which was another sw
+> feature helper.
 
-Co-developed-by: Deepak Gupta <debug@rivosinc.com>
-Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-Signed-off-by: Zong Li <zong.li@sifive.com>
----
+hvhe_possible() is a .matches function, so there is nothing to fold it into.
 
-This patch is based on top of the following series
-[PATCH v11 00/27] riscv control-flow integrity for usermode
+> 
+> But I agree, folding it will be simpler and read just as easily (if not
+> easier). Will do so.
+> 
+>>> +}
+>>> +
+>>> +static bool cpu_has_bbml2_noabort(unsigned int cpu_midr)
+>>> +{
+>>> +	/* We want to allow usage of bbml2 in as wide a range of kernel contexts
+>>> +	 * as possible. This list is therefore an allow-list of known-good
+>>> +	 * implementations that both support bbml2 and additionally, fulfill the
+>>> +	 * extra constraint of never generating TLB conflict aborts when using
+>>> +	 * the relaxed bbml2 semantics (such aborts make use of bbml2 in certain
+>>> +	 * kernel contexts difficult to prove safe against recursive aborts).
+>>> +	 *
+>>> +	 * Note that implementations can only be considered "known-good" if their
+>>> +	 * implementors attest to the fact that the implementation never raises
+>>> +	 * TLBI conflict aborts for bbml2 mapping granularity changes.
+>>> +	 */
+>>> +	static const struct midr_range supports_bbml2_noabort_list[] = {
+>>> +		MIDR_REV_RANGE(MIDR_CORTEX_X4, 0, 3, 0xf),
+>>> +		MIDR_REV_RANGE(MIDR_NEOVERSE_V3, 0, 2, 0xf),
+>>> +		{}
+>>> +	};
+>>> +
+>>> +	return is_midr_in_range_list(cpu_midr, supports_bbml2_noabort_list);
+>>> +}
+>>> +
+>>> +static inline unsigned int __cpu_read_midr(int cpu)
+>>
+>> nit: why the double underscrore prefix?
+> 
+> Again copying other helpers I saw that seemed to do similar things.
+> Didn't know if this was the expected style, so did as other helpers did.
+> Will remove.
 
- arch/riscv/kernel/traps.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Often those double underscores are used when you have a public function wrapping
+into a private function, like this:
 
-diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-index 3f7709f4595a..ef5a92111ee1 100644
---- a/arch/riscv/kernel/traps.c
-+++ b/arch/riscv/kernel/traps.c
-@@ -386,9 +386,12 @@ asmlinkage __visible __trap_section void do_trap_software_check(struct pt_regs *
- 	if (user_mode(regs)) {
- 		irqentry_enter_from_user_mode(regs);
- 
--		/* not a cfi violation, then merge into flow of unknown trap handler */
--		if (!handle_user_cfi_violation(regs))
--			do_trap_unknown(regs);
-+		/* handle uprobe event frist */
-+		if (!probe_breakpoint_handler(regs)) {
-+			/* not a cfi violation, then merge into flow of unknown trap handler */
-+			if (!handle_user_cfi_violation(regs))
-+				do_trap_unknown(regs);
-+		}
- 
- 		irqentry_exit_to_user_mode(regs);
- 	} else {
--- 
-2.17.1
+static void __do_a_thing(bool modify_behaviour_in_some_way);
+
+void do_a_thing(void)
+{
+	__do_a_thing(false);
+}
+
+I'm sure the coding style offers a better explanation.
+
+Thanks,
+Ryan
+
+> 
+> Thank you for the review.
+> 
 
 
