@@ -1,155 +1,250 @@
-Return-Path: <linux-kernel+bounces-561083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 965F9A60D5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:31:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF67A60D61
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:33:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57FEE16E091
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:31:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126AC1712F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063DD19DF61;
-	Fri, 14 Mar 2025 09:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6F41EEA30;
+	Fri, 14 Mar 2025 09:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EcwOuobH"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PWlmhW9N"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940821C861D;
-	Fri, 14 Mar 2025 09:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B901DE4C1
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741944684; cv=none; b=Sc19Qrm90aEyAkU2YC+frFzh1vEHwGFg74VVvN9sVl3UPKqeBSnQUdjNHyDXIfW7n9+HbjBrbMZvfYrcodbu0PNFc4a9hUemJeK3kbsRe5ebBOQiUl0bkP2q4GelDPvXH/A5TbvK+iCm3hEs1Hb0ku30P/8wmxjwz+zWkAQtyzE=
+	t=1741944798; cv=none; b=T9zAkoumAR8Ghubc70SfXrsdBdFKoLKptxu77uiq4aCcrT4xm5r066mbnxuEgYBclGbV34gFxS+1/uZhUs3kWCEMfZy9CD2QHqiOv9EhxldhH3/OQgQosP9tF9DWnyQ+pS2ED4XFz6DT5Ne4Utem17YH9DH/QgCXG1Y7qpNHXA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741944684; c=relaxed/simple;
-	bh=EFG/RUQsEPWHQayDu6FgBejS5LjvkZoTkpo4V8Q+rn4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aewe+GiFk8jtq6Fe4msEbpNOq/GXt1K9I9qI2P6zh7wMZWYdDuKCMd1mQn6pjjjTeOijorh+2aocmOcML/mGLHCzWjynpY/RhWB/gtvSsbyOAg1+lEr7C217zhFzN3vq24aMMNVWX13rymFPqKZErUk62uCH2ocW4hXsK8WpsvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EcwOuobH; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so12436135e9.1;
-        Fri, 14 Mar 2025 02:31:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741944681; x=1742549481; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DgZq1Cihy2mEZuEesHcsZ2TIpT7DRI6TgV6LGAhY23M=;
-        b=EcwOuobHgJI5yddMSiPDxZTR9B8CEPFXzwkQKUA8p4qBDfBcNXeK6xTqbNN3kE9xKF
-         8VPgAeiGWz89A2Cb1d5XsRtbziNWeeFmaSMN42c99clFIKlqr1SyOZEEEPwyL+JbPP/j
-         DfZHFCWX4tdftL3wYcb+nzeNDBQ85xw69ore/c3afGPDGXP3toCHgJmVRhwxA12f+5Cq
-         Aofj2vJ74O/abtedjmvPhRRBqEpzW1RByPwjC8hqLIOK2NXmVajDVz8XyUovxZhHm56d
-         lKvo6C/NppLlxpcRcpaH0KVGEI/4Cc2TE/g0hnyy3Jt+aAIrIticKo6v6lxSJ4Vl4HH8
-         wquA==
+	s=arc-20240116; t=1741944798; c=relaxed/simple;
+	bh=jRvSQnR5WlpmJDJ5I3vj9NBji+NiyQe734v/9qpFQIA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fkwG0ESbJLHW/5Rpd49/PQkKiua6Mw43yZwkOBbCnUIbpWineWZLHTF1Zg21MPxO0d2Dd5/+zkx09t4e0yqLaay0vBwgdnsaJZysdTeN4usMUvaHfoRm6zR+Q9jEJ9yim0kbJJG5RgZBhlJI7i//le8HcetquVLk0bXOccnVd3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PWlmhW9N; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741944793;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=kr+GM52HOX7QpsfoABLNv8i9AtL+eNgSpKohidSEYe8=;
+	b=PWlmhW9NDh041NZwIHxG54HCHW6yztcEOo8T8fU0YtQ8brCyjhR5ln3zxWGFGtlpG8ztFK
+	8+2i/f3QnKIoJqjjDmKJMamRkW2Q8S884Nb0r13NeBKk2xKU33CrPt9GIu5FvbNkGM87nG
+	LAw4CP5Xp+QIEHyePL7eiWpMhV9rbvw=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-284-h9XacPEHOyuvz-EYGAZcxg-1; Fri, 14 Mar 2025 05:33:11 -0400
+X-MC-Unique: h9XacPEHOyuvz-EYGAZcxg-1
+X-Mimecast-MFC-AGG-ID: h9XacPEHOyuvz-EYGAZcxg_1741944791
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43cfda30a3cso10978705e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 02:33:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741944681; x=1742549481;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DgZq1Cihy2mEZuEesHcsZ2TIpT7DRI6TgV6LGAhY23M=;
-        b=xDsxRkMvIpt0yjXT/o4lDk6ATI9xFb/StyGZIicZhdrKaTGYkPef+dQn6PjojG/p+D
-         jMub8a9i5fEA1PxZQdbpW6lMvO9RxMkv5vfON8b5xl4gIlbOmOkT7EZ4U4OOhkJ6n4oi
-         LLQBmq+zLZFfiEsmh2Grzq03VVo04R+pKTDtvDHBm8/448ZIVdy3QY+CiJP/7UKbhjoW
-         AW9pSsgspjtC5caGdillb2a5RNafM8Jx5y72QOegkw5D+tCH6+zkiSIIiCZv0WRBMtOr
-         C2dd0+qbj4etcy6ZVn9wk1GhW1ohERaZPnScBrg+l1zIdVBYC0U4GMfuAyCivuI1+68W
-         a+yg==
-X-Forwarded-Encrypted: i=1; AJvYcCWoXr0gVZSyXrocDUtg4nbX2wyhNgMhTd/KUWJtGLoESh/4uKEUi2PCmTOzXssPUfcx+W7qYEdXGptS@vger.kernel.org, AJvYcCXQtFyXv85y1I1Yq3WOVPDinmAO04PcLEJ3VdyyoBg/knJqc59hZIR1M4I0mceNfNmlbhXLKOIM8dgg@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvPPRlIFsvXunNLKbkdojhZ3XsmfCdoGcEY+ZUogTg0fcJx9CJ
-	Q4vLLJiw87k/qgyiGfsUwj43TysJUvx86Q6FmQjPuYADx9cPEWK/
-X-Gm-Gg: ASbGncu/iOu6LRU714glmIA1u36gpXog99fZGrqxM49Q+p5OwGi05h1YFlIrHGqc32S
-	onmqpSrFTqlHoRHnryRMfSdzZqJWE5U4nHftg0jNIS7c6SEUIpcg+dyBCP+V4tjtr1PeboRKsVb
-	7o+h5YTEoiKidWSdAMfTRP/TlqRxjL2oaZ8mCDkJa8U1qQIjF/oF4PgIJS8TjvuEG5WejimwBu1
-	iWOdbYMgBP2RvrKdy2yHVPmvYk+65MGr6Y9LX1Fo5/dApOx6LmFl+1Qu5NxlysSOlCUb5eYirkn
-	cjjUbAN+yTk6MFkVqhnMMQt/m7+FpkRoD6/Wlsf9sITW9TdALKHwJctDQDS80g==
-X-Google-Smtp-Source: AGHT+IG0nQfUihbWpCEv6X5UBbk7/FaQ6P3azQnp23XNoCBldqucN5qWH0TKNQJOpSr3KZzsS8ZAgQ==
-X-Received: by 2002:a05:600c:1c17:b0:43c:f597:d589 with SMTP id 5b1f17b1804b1-43d1ecd2d21mr20134765e9.27.1741944680525;
-        Fri, 14 Mar 2025 02:31:20 -0700 (PDT)
-Received: from giga-mm.home ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1ffbcef5sm11197635e9.9.2025.03.14.02.31.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 02:31:20 -0700 (PDT)
-Message-ID: <2d1995d39ac050eeb7cec4183ebdb307e520a7c7.camel@gmail.com>
-Subject: Re: [PATCH v13 2/3] soc: sophgo: cv1800: rtcsys: New driver
- (handling RTC only)
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: Inochi Amaoto <inochiama@gmail.com>, sophgo@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-rtc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Date: Fri, 14 Mar 2025 10:31:09 +0100
-In-Reply-To: <fuc5zzq3izowktmafrhy5vkjddydxg5673ggr64ukh7v5knjmi@r6xozjxcw7r2>
-References: <20250309202629.3516822-1-alexander.sverdlin@gmail.com>
-	 <20250309202629.3516822-3-alexander.sverdlin@gmail.com>
-	 <fuc5zzq3izowktmafrhy5vkjddydxg5673ggr64ukh7v5knjmi@r6xozjxcw7r2>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 
+        d=1e100.net; s=20230601; t=1741944790; x=1742549590;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kr+GM52HOX7QpsfoABLNv8i9AtL+eNgSpKohidSEYe8=;
+        b=eJykjsFGoiWTkXJLdDb8gMx/f6rZS5uoHB6kW/zMlmvKZbhnntnar/jq3fGtUF3TF6
+         ZNmeABHgvtX3Gm3nbWHPdV8hMZ1SehOa3if4X3rgBM5OhcIWdC7s3dNHJs3yNXX/jpH+
+         mcIL4xTqXsT+BpP4wTsbX1P1xAMXI9hkTf6MEBc1dPLxrBOHLXu1NOxgvtYmArSpsw2e
+         PDv45ManQQDZXG99EDgpd0D9cLuhYN9Vjc8nsqBTOS36Y1Zw92lgt8l1qKd5fXJLxXNm
+         npDSrIADwG3iM+1kJz1G2OAWOK/Ig2xCSo4ziaXdSkPJ6fYadj0iXHSp2xNmE/BgcL6K
+         tpnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXLAQP+RZ8rsMhgc6G4kE8xMDfhZlWU3cQZgoULJN1QyoNjHytWoM/bFW0ynrt2idbfrXl7OUX6pcSXL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfDSI1Hsl5q7SBOXNbGnS6pZ5JpqUaMSm+mF6T5REs7WIgdAsR
+	tEutHgZqVEKtsnfOiHpMow0cRetq2inFq+3BNLM5Q7u9RuwttkosFO2aUjKYxFT9mlohsyDCq+S
+	3hg7ImNsB6t7RDAcSCtVraWjvRDeU+tEe7oXMzbUUSPRa7djv/5JnHzOTS2vICw==
+X-Gm-Gg: ASbGncuIzkgqYIjgoo6HyJhu3wBgDA2zdVSiudOW2L5qjGC0FOtwJLDKxA5URE6mEEt
+	0lATdoOth8jZmMg5zL6yJaeBXqnNwSJc/OyG17Lhgqa+wjHmg/te52sc7EyNfSISc4llHpRdrPh
+	TLWEijwcYWBDIeQWBPT2Zq7/0wRKxMHal7RrDknP1iCziV6Zriy/DH3MEE+bQfcrCMFHsOmK00q
+	xhoz/PEKiiNLhqu0Ti+Bjnp1JS29sl5D0t91lKC+teUAJv5zHnjSKB4B0d/mEg8HION6TyQ+957
+	wv69o5q17osyo1XUuCD7I1uEvcYK4y0yMou5UMRFO9o0CUVqkqHFlGCGgX3r2ItT55svkg9dEm0
+	wHe8dVVwpOi6zZwiPZyNmXhSU7Hle8Mbc9zedHA5jndA=
+X-Received: by 2002:a05:600c:510c:b0:43a:b8eb:9e5f with SMTP id 5b1f17b1804b1-43d1ec90beamr23184255e9.3.1741944790587;
+        Fri, 14 Mar 2025 02:33:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxZxe66PEHA3sRublZ+jKCA2QM/pZrwH4q+h0r2rqv07VI5Vyt2jEI2LSjNPPj9D5cOHGJUg==
+X-Received: by 2002:a05:600c:510c:b0:43a:b8eb:9e5f with SMTP id 5b1f17b1804b1-43d1ec90beamr23183865e9.3.1741944790191;
+        Fri, 14 Mar 2025 02:33:10 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c745:2000:5e9f:9789:2c3b:8b3d? (p200300cbc74520005e9f97892c3b8b3d.dip0.t-ipconnect.de. [2003:cb:c745:2000:5e9f:9789:2c3b:8b3d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe2a2c8sm11664425e9.23.2025.03.14.02.33.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Mar 2025 02:33:08 -0700 (PDT)
+Message-ID: <18db10a0-bd40-4c6a-b099-236f4dcaf0cf@redhat.com>
+Date: Fri, 14 Mar 2025 10:33:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v1 0/5] KVM: gmem: 2MB THP support and preparedness
+ tracking changes
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: "Shah, Amit" <Amit.Shah@amd.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "Roth, Michael" <Michael.Roth@amd.com>,
+ "liam.merwick@oracle.com" <liam.merwick@oracle.com>,
+ "seanjc@google.com" <seanjc@google.com>, "jroedel@suse.de"
+ <jroedel@suse.de>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "Sampat, Pratik Rajesh" <PratikRajesh.Sampat@amd.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Lendacky, Thomas" <Thomas.Lendacky@amd.com>, "vbabka@suse.cz"
+ <vbabka@suse.cz>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+ "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>,
+ "Kalra, Ashish" <Ashish.Kalra@amd.com>,
+ "ackerleytng@google.com" <ackerleytng@google.com>,
+ "vannapurve@google.com" <vannapurve@google.com>
+References: <20241212063635.712877-1-michael.roth@amd.com>
+ <11280705-bcb1-4a5e-a689-b8a5f8a0a9a6@redhat.com>
+ <3bd7936624b11f755608b1c51cc1376ebf2c3a4f.camel@amd.com>
+ <6e55db63-debf-41e6-941e-04690024d591@redhat.com>
+ <Z9PyLE/LCrSr2jCM@yzhao56-desk.sh.intel.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Z9PyLE/LCrSr2jCM@yzhao56-desk.sh.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Inochi!
+On 14.03.25 10:09, Yan Zhao wrote:
+> On Wed, Jan 22, 2025 at 03:25:29PM +0100, David Hildenbrand wrote:
+>> (split is possible if there are no unexpected folio references; private
+>> pages cannot be GUP'ed, so it is feasible)
+> ...
+>>>> Note that I'm not quite sure about the "2MB" interface, should it be
+>>>> a
+>>>> "PMD-size" interface?
+>>>
+>>> I think Mike and I touched upon this aspect too - and I may be
+>>> misremembering - Mike suggested getting 1M, 2M, and bigger page sizes
+>>> in increments -- and then fitting in PMD sizes when we've had enough of
+>>> those.  That is to say he didn't want to preclude it, or gate the PMD
+>>> work on enabling all sizes first.
+>>
+>> Starting with 2M is reasonable for now. The real question is how we want to
+>> deal with
+> Hi David,
+> 
 
-On Fri, 2025-03-14 at 08:51 +0800, Inochi Amaoto wrote:
-> On Sun, Mar 09, 2025 at 09:26:24PM +0100, Alexander Sverdlin wrote:
-> > Add driver for Sophgo CV1800 series SoC RTC subsystem. The RTC module
-> > comprises a 32kHz oscillator, Power-on-Reset (PoR) sub-module, HW state
-> > machine to control chip power-on, power-off and reset. Furthermore, the
-> > 8051 subsystem is located within RTCSYS including associated SRAM block=
-.
-> >=20
-> > This patch only populates RTC sub-device.
-> >=20
+Hi!
 
-...
+> I'm just trying to understand the background of in-place conversion.
+> 
+> Regarding to the two issues you mentioned with THP and non-in-place-conversion,
+> I have some questions (still based on starting with 2M):
+> 
+>> (a) Not being able to allocate a 2M folio reliably
+> If we start with fault in private pages from guest_memfd (not in page pool way)
+> and shared pages anonymously, is it correct to say that this is only a concern
+> when memory is under pressure?
 
-> > +++ b/drivers/soc/sophgo/cv1800-rtcsys.c
-> > @@ -0,0 +1,63 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Driver for Sophgo CV1800 series SoC RTC subsystem
-> > + *
-> > + * The RTC module comprises a 32kHz oscillator, Power-on-Reset (PoR) s=
-ub-module,
-> > + * HW state machine to control chip power-on, power-off and reset. Fur=
-thermore,
-> > + * the 8051 subsystem is located within RTCSYS including associated SR=
-AM block.
-> > + *
-> > + * Copyright (C) 2025 Alexander Sverdlin <alexander.sverdlin@gmail.com=
->
-> > + *
-> > + */
-> > +
-> > +#include <linux/mfd/core.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/property.h>
-> > +
-> > +static struct resource cv1800_rtcsys_irq_resources[] =3D {
-> > +	DEFINE_RES_IRQ_NAMED(0, "alarm"),
-> > +};
-> > +
-> > +static const struct mfd_cell cv1800_rtcsys_subdev[] =3D {
-> > +	{
->=20
-> > +		.name =3D "cv1800-rtc",
->=20
-> Make this a specifc one, like "sophgo,cv1800b-rtc"
+Usually, fragmentation starts being a problem under memory pressure, and 
+memory pressure can show up simply because the page cache makes us of as 
+much memory as it wants.
 
-Could it be that you mixed up device instance name and "compatible"?
+As soon as we start allocating a 2 MB page for guest_memfd, to then 
+split it up + free only some parts back to the buddy (on private->shared 
+conversion), we create fragmentation that cannot get resolved as long as 
+the remaining private pages are not freed. A new conversion from 
+shared->private on the previously freed parts will allocate other 
+unmovable pages (not the freed ones) and make fragmentation worse.
 
-Please refer to all other MFD cells with `grep -C3 -R -F "struct mfd_cell"`
-either in drivers/soc or in drivers/mfd, there are no vendor prefixes in th=
-e
-names.
+In-place conversion improves that quite a lot, because guest_memfd tself 
+will not cause unmovable fragmentation. Of course, under memory 
+pressure, when and cannot allocate a 2M page for guest_memfd, it's 
+unavoidable. But then, we already had fragmentation (and did not really 
+cause any new one).
 
---=20
-Alexander Sverdlin.
+We discussed in the upstream call, that if guest_memfd (primarily) only 
+allocates 2M pages and frees 2M pages, it will not cause fragmentation 
+itself, which is pretty nice.
+
+> 
+>> (b) Partial discarding
+> For shared pages, page migration and folio split are possible for shared THP?
+
+I assume by "shared" you mean "not guest_memfd, but some other memory we 
+use as an overlay" -- so no in-place conversion.
+
+Yes, that should be possible as long as nothing else prevents 
+migration/split (e.g., longterm pinning)
+
+> 
+> For private pages, as you pointed out earlier, if we can ensure there are no
+> unexpected folio references for private memory, splitting a private huge folio
+> should succeed. 
+
+Yes, and maybe (hopefully) we'll reach a point where private parts will 
+not have a refcount at all (initially, frozen refcount, discussed during 
+the last upstream call).
+
+Are you concerned about the memory fragmentation after repeated
+> partial conversions of private pages to and from shared?
+
+Not only repeated, even just a single partial conversion. But of course, 
+repeated partial conversions will make it worse (e.g., never getting a 
+private huge page back when there was a partial conversion).
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
