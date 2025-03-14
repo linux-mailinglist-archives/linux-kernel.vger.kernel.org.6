@@ -1,157 +1,157 @@
-Return-Path: <linux-kernel+bounces-561071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C932EA60D3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:27:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21FABA60D3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:27:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 949287A26E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:26:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5800A46096B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6051EB1B5;
-	Fri, 14 Mar 2025 09:27:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A121C07D9;
-	Fri, 14 Mar 2025 09:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B4B1EEA4E;
+	Fri, 14 Mar 2025 09:27:11 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99AE1C861D;
+	Fri, 14 Mar 2025 09:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741944423; cv=none; b=jPfRFdUEsBpJ1gThwHW1uVfDdAAdnndZ2J9VCTlQoh98wzkre4ywgQlI0pfXOe0LR40wkvSQL1p3MIBuVYmhtYrDAJR7MR3p5MI8BqBEyoo9dwtxRMjOL5VaIgGjUkc3LIehWHPMHMvHLoO/RelYxrWmZK2bpK7AsZxL/0hwCg8=
+	t=1741944430; cv=none; b=dIhz7GSeoJ9fWJPYCXSzAS9eEB6xZuDBhClLag+YhqYQ0hDZBqwk0N9moUgD2PIZEzFNZj1gEq9c7LScZUQ598vM7DXPuhcXUJsIrU9a9uHSbtmHuwyGgTcXc1dZA4ZbHtpEw1n98Wig8CqzbRn4bKTH5g2EUmtlF+TIMCW+7QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741944423; c=relaxed/simple;
-	bh=JcldlY/ETPmR3IenknhNxPNgRcWA0ROHMHWWITDho/I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BqtDtBIi8pw7nja+MEluEiSLuSWQoEw7Sb1w/8jK4z9ZIo5h4UwKZPNr/sUMrjMlhTa/6cDhu6VLnpsC4eB5UXpIkLOnJ8pnW+TpyMBtx11f+J7WFYeuFsO72ywSeNlFsyu7NlHTPonOkLn1cXtsQsTO+C6LMOeRsIecR8vXz5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 549631424;
-	Fri, 14 Mar 2025 02:27:11 -0700 (PDT)
-Received: from [10.57.85.159] (unknown [10.57.85.159])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 73EA03F673;
-	Fri, 14 Mar 2025 02:26:57 -0700 (PDT)
-Message-ID: <d3a15aaf-16a6-4a88-a6c5-9b9afaa5f370@arm.com>
-Date: Fri, 14 Mar 2025 09:26:56 +0000
+	s=arc-20240116; t=1741944430; c=relaxed/simple;
+	bh=PqUbDXVDaiUum+Dew0MC5ziN5yYPu9hhy423HzIFiWY=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CpH3ng9OjSGhIUyBVPk4RrPwi3/dFN01eRzl/X9FisMb/vlhrgz2yeiewhcoQuveBQkqN1qzZnf/MQ1oPdkmuojTWlPRR03KqiwvBRP7W5daBdCsfbW2cH0AlpjkiVIWMkfoTz5tZk4vEezlz1LQ5foFCh37hTHBsLvfnqoNZpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDf7b3c1Yz6J7qr;
+	Fri, 14 Mar 2025 17:23:55 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7F87C1400CD;
+	Fri, 14 Mar 2025 17:27:06 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Mar
+ 2025 10:27:05 +0100
+Date: Fri, 14 Mar 2025 09:27:04 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Zaid Alali <zaidal@os.amperecomputing.com>
+CC: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
+	<tony.luck@intel.com>, <bp@alien8.de>, <robert.moore@intel.com>,
+	<dan.j.williams@intel.com>, <Benjamin.Cheatham@amd.com>,
+	<Avadhut.Naik@amd.com>, <viro@zeniv.linux.org.uk>, <arnd@arndb.de>,
+	<ira.weiny@intel.com>, <dave.jiang@intel.com>,
+	<sthanneeru.opensrc@micron.com>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <acpica-devel@lists.linux.dev>
+Subject: Re: [PATCH v4 6/9] ACPI: APEI: EINJ: Add einjv2 extension struct
+Message-ID: <20250314092704.00006ffe@huawei.com>
+In-Reply-To: <Z9M6ryapTGlBWA3Q@zaid-VirtualBox>
+References: <20250306234810.75511-1-zaidal@os.amperecomputing.com>
+	<20250306234810.75511-7-zaidal@os.amperecomputing.com>
+	<20250313094230.00004696@huawei.com>
+	<Z9M6ryapTGlBWA3Q@zaid-VirtualBox>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] arm64: Add BBM Level 2 cpu feature
-Content-Language: en-GB
-To: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>
-Cc: suzuki.poulose@arm.com, yang@os.amperecomputing.com, corbet@lwn.net,
- catalin.marinas@arm.com, will@kernel.org, jean-philippe@linaro.org,
- robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org,
- mark.rutland@arm.com, joey.gouly@arm.com, maz@kernel.org,
- james.morse@arm.com, broonie@kernel.org, anshuman.khandual@arm.com,
- oliver.upton@linux.dev, ioworker0@gmail.com, baohua@kernel.org,
- david@redhat.com, jgg@ziepe.ca, shameerali.kolothum.thodi@huawei.com,
- nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
- smostafa@google.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev
-References: <20250313104111.24196-2-miko.lenczewski@arm.com>
- <20250313104111.24196-3-miko.lenczewski@arm.com>
- <ea10caee-59ef-4a00-9b61-37cb0a379411@arm.com>
- <20250313180833.GA40525@mazurka.cambridge.arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250313180833.GA40525@mazurka.cambridge.arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 13/03/2025 18:08, Mikołaj Lenczewski wrote:
-> On Thu, Mar 13, 2025 at 04:13:22PM +0000, Ryan Roberts wrote:
->> On 13/03/2025 10:41, Mikołaj Lenczewski wrote: 
->>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->>> index d561cf3b8ac7..b936e0805161 100644
->>> --- a/arch/arm64/kernel/cpufeature.c
->>> +++ b/arch/arm64/kernel/cpufeature.c
->>> @@ -2176,6 +2176,76 @@ static bool hvhe_possible(const struct arm64_cpu_capabilities *entry,
->>>  	return arm64_test_sw_feature_override(ARM64_SW_FEATURE_OVERRIDE_HVHE);
->>>  }
->>>  
->>> +static inline bool bbml2_possible(void)
->>> +{
->>> +	return !arm64_test_sw_feature_override(ARM64_SW_FEATURE_OVERRIDE_NOBBML2);
->>
->> If you're going to keep this helper, I think it really needs to be:
->>
->> return IS_ENABLED(CONFIG_ARM64_BBML2_NOABORT) &&
->>        !arm64_test_sw_feature_override(ARM64_SW_FEATURE_OVERRIDE_NOBBML2);
->>
->> Then you would simplify the caller to remove it's own
->> IS_ENABLED(CONFIG_ARM64_BBML2_NOABORT) check.
->>
->> But personally I would remove the helper and just fold the test into
->> has_bbml2_noabort().
->>
->> Thanks,
->> Ryan
+On Thu, 13 Mar 2025 13:06:07 -0700
+Zaid Alali <zaidal@os.amperecomputing.com> wrote:
+
+> On Thu, Mar 13, 2025 at 09:42:30AM +0000, Jonathan Cameron wrote:
+> > On Thu,  6 Mar 2025 15:48:07 -0800
+> > Zaid Alali <zaidal@os.amperecomputing.com> wrote:
+> >   
+> > > Add einjv2 extension struct and EINJv2 error types to prepare
+> > > the driver for EINJv2 support. ACPI specifications(1) enables
+> > > EINJv2 by extending set_error_type_with_address struct.
+> > > 
+> > > (1) https://bugzilla.tianocore.org/show_bug.cgi?id=4615  
+> > Still seems to be down.
+> > Also, we have tag for this.  
+> > > 
+> > > Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>  
+> > 
+> > Link: https://bugzilla.tianocore.org/show_bug.cgi?id=4615 # [1]
+> > 
+> > 
+> > One additional request inline.
+> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>  
+> > > ---
+> > >  drivers/acpi/apei/einj-core.c | 23 +++++++++++++++++++++++
+> > >  1 file changed, 23 insertions(+)
+> > > 
+> > > diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
+> > > index aee9a7b17313..32b8d102f399 100644
+> > > --- a/drivers/acpi/apei/einj-core.c
+> > > +++ b/drivers/acpi/apei/einj-core.c
+> > > @@ -50,6 +50,28 @@
+> > >   */
+> > >  static int acpi5;
+> > >  
+> > > +struct syndrome_array {
+> > > +	union {
+> > > +		u32	acpi_id;
+> > > +		u32	device_id;
+> > > +		u32	pcie_sbdf;
+> > > +		u8	vendor_id[16];
+> > > +	} comp_id;
+> > > +	union {
+> > > +		u32	proc_synd;
+> > > +		u32	mem_synd;
+> > > +		u32	pcie_synd;
+> > > +		u8	vendor_synd[16];
+> > > +	} comp_synd;
+> > > +};
+> > > +
+> > > +struct einjv2_extension_struct {
+> > > +	u32 length;
+> > > +	u16 revision;
+> > > +	u16 component_arr_count;
+> > > +	struct syndrome_array component_arr[];  
+> > 
+> > __counted_by(component_arr_count);
+> > should be fine and marking these is always good to do in
+> > new code (and old code if you have time!)  
 > 
-> I was debating folding it into has_bbml2_noabort(), but went ahead and
-> implemented it separately to match hvhe_possible(), which was another sw
-> feature helper.
+> I am not sure if __counted_by is appropriate here. Please note that component_arr_count
+> is set by the user and does NOT represent the size of the component_arr[].
 
-hvhe_possible() is a .matches function, so there is nothing to fold it into.
+Does it represent the length that should ever be accessed (which is what
+the __counted_by() stuff will help us find bugs around).
 
-> 
-> But I agree, folding it will be simpler and read just as easily (if not
-> easier). Will do so.
-> 
->>> +}
->>> +
->>> +static bool cpu_has_bbml2_noabort(unsigned int cpu_midr)
->>> +{
->>> +	/* We want to allow usage of bbml2 in as wide a range of kernel contexts
->>> +	 * as possible. This list is therefore an allow-list of known-good
->>> +	 * implementations that both support bbml2 and additionally, fulfill the
->>> +	 * extra constraint of never generating TLB conflict aborts when using
->>> +	 * the relaxed bbml2 semantics (such aborts make use of bbml2 in certain
->>> +	 * kernel contexts difficult to prove safe against recursive aborts).
->>> +	 *
->>> +	 * Note that implementations can only be considered "known-good" if their
->>> +	 * implementors attest to the fact that the implementation never raises
->>> +	 * TLBI conflict aborts for bbml2 mapping granularity changes.
->>> +	 */
->>> +	static const struct midr_range supports_bbml2_noabort_list[] = {
->>> +		MIDR_REV_RANGE(MIDR_CORTEX_X4, 0, 3, 0xf),
->>> +		MIDR_REV_RANGE(MIDR_NEOVERSE_V3, 0, 2, 0xf),
->>> +		{}
->>> +	};
->>> +
->>> +	return is_midr_in_range_list(cpu_midr, supports_bbml2_noabort_list);
->>> +}
->>> +
->>> +static inline unsigned int __cpu_read_midr(int cpu)
->>
->> nit: why the double underscrore prefix?
-> 
-> Again copying other helpers I saw that seemed to do similar things.
-> Didn't know if this was the expected style, so did as other helpers did.
-> Will remove.
+If not that wins an award for misleading naming :)
 
-Often those double underscores are used when you have a public function wrapping
-into a private function, like this:
+Jonathan
 
-static void __do_a_thing(bool modify_behaviour_in_some_way);
 
-void do_a_thing(void)
-{
-	__do_a_thing(false);
-}
-
-I'm sure the coding style offers a better explanation.
-
-Thanks,
-Ryan
-
-> 
-> Thank you for the review.
-> 
+> > 
+> >   
+> > > +};
+> > > +
+> > >  struct set_error_type_with_address {
+> > >  	u32	type;
+> > >  	u32	vendor_extension;
+> > > @@ -58,6 +80,7 @@ struct set_error_type_with_address {
+> > >  	u64	memory_address;
+> > >  	u64	memory_address_range;
+> > >  	u32	pcie_sbdf;
+> > > +	struct	einjv2_extension_struct einjv2_struct;
+> > >  };
+> > >  enum {
+> > >  	SETWA_FLAGS_APICID = 1,  
+> >   
 
 
