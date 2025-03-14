@@ -1,170 +1,137 @@
-Return-Path: <linux-kernel+bounces-562090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D5CA61C01
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:10:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98133A61C04
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:11:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE64219C78D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:11:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCCBE17F65C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545A6204F7C;
-	Fri, 14 Mar 2025 20:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4A52063D4;
+	Fri, 14 Mar 2025 20:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="p6vCjM5P"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QH8GqYVj";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ezeCYSJi"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5A1204C38
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 20:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA41204F93;
+	Fri, 14 Mar 2025 20:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741982628; cv=none; b=cnBAEeOOyeMWYAE9KSidC+HEcbZoB187/6NFgDn5ppyoGyEcH/1barU13ps8xwAtgvuC1njXUeDK3Hdb5oDm/rIf22eyNpgTnYz6I9lwYWDILZ03BzAX+K75wiiwG2f8jC/EiB17F1R/erPvHf88XxxgJh03m+cShD1aytU9/DQ=
+	t=1741982644; cv=none; b=AupV+bzOKy2iSGRCLXVkbGWJseZcLS4IhoMiivDNOl9IFctpQBsYWOchxGfg0QySPQtRqX9S02zqOMaO1YLdcVYecx18ZF947PbxXzoP/Hbsvzwb5tDoVoriYOsOb+nq/ZpoZFsqhHDxbC27w0XjvQSq15BRyToAU478DzVCwlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741982628; c=relaxed/simple;
-	bh=NBh1ib8TOp9yV+GZ8BCBjXKYANmqvBc+qIjMQrykCt0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cahH0hpBtr7YcemxuWTf277ZBVpQ+vpkGlYxuoDOaAxR/OBdtbV6RgRJgwgU07bACb40OADwwej7/XDBDoWc0Gj+pcPlcLE28vJHLtCz6uVXF82NP1JpF/FngMViPmTiI+0sj/EALUsZ6GIs7Zv1y5RaY4+pwbT9UopCiExtP7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=p6vCjM5P; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2c11ddc865eso852184fac.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:03:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741982625; x=1742587425; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/t8DGEkQgF9HsFcbNry4sid1C4GD98meoHnJLzxyotQ=;
-        b=p6vCjM5PH9L2oX6E2UYzwchfFPUuj894SxrVOU7xZEEjJ6cbeJngyt+PzKc01SzjAG
-         /lzOLir0vy8G3uZk2/td5Nt7+eMgXFSUKY74CEQXUxKh/dD2DlOwyAWehEZw9Y8dKxu/
-         QVt9vArEBhDwdd/BvrvB8VBuhxsRk6WoLTYHI4Bu8Ln4efIlH/rFlSYwUS52cMzgjZci
-         Q33U0N3RTQId/6maB5tl10QjYs9DW02yo+W7uamjDyjAPALXorjBF/GHiP/Pm7gW4q/q
-         45Qnxni7sFWhiRc6bQ4uoMTGu+H5K+EW+4tiMvy5/REd1K6HHez0dZKnO6PlN53yS7zo
-         WbZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741982625; x=1742587425;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/t8DGEkQgF9HsFcbNry4sid1C4GD98meoHnJLzxyotQ=;
-        b=Huul+6oj9nP+sq54VR1oGJNUWFgO7mI9etjMqh2YHmmnXhpRMTq4J0lrMrtaAjCrIV
-         7N3cMi+gKNehTBr0xVyCzcu+IsZOvSq2dK76RKTXmtQ60MXvssbm+vsQ+HiSl4v7P6aJ
-         0BbIYZuTZbSW3v0OJOzxKP9Rl48SL7NeNxcm/H924t3tD0R3Saesom+Yv9l8uie2QhRA
-         1RDsz+IAoc7VzrtApiaZ4wdjnmiRgTO2BzxURaimHclCr+UO84IIX1mopV14JyZXSOkK
-         E3GWD8CmXQWPrAp45RfZud9sXCfh2V01vpK9XxQpKTxelw1fWkhf46adfCkCtUHitAH1
-         WAfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqpFs0n8QK3cYpIAjJFOc1CQAejeQFsaxKRYRCnW3lC2pcLVQE7B6O/rvIIWJTkpFxeKJ0N5tyOlewChE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO1fByzeWeZUYTusZYqgPIhBQL00vZHYK/onDC2uvNaWQoTOeK
-	5myi8ArmwepShTn7nmYP+zq+eQAKh60SgXz6mkwku5GicBiCQHIGH1zVoNyhvNo6ga5yMh7Nbe4
-	O+xQ=
-X-Gm-Gg: ASbGnctd4w3uGE3Dq9KfqsUdr5sfV9spRH3bvTnWhZ6NbcXPNivxAbd92R4TvVfczjc
-	Klef8MVLTxp5CmnJoZ5LmzXEzw9wX+zRtQqNLdgxvgBC1z3TvdlW8zgBf6QtKM1g6reKOVYFb6+
-	/iMXHPGxv/VA1sfeJHcy51b1aI4Zq3Jysy+KsXA55pzTwGKUYnuP9mU+ppbyNU+GPn64yf8MAvX
-	AuerOWEG0msSkmmuIvL/XtBukmSOYbe+CTXgp7egKrsXN/9adgXog9UcZ9jyI2pMxPqfbEcrOQc
-	LYAyf3XjufXF8XtUeBcgVSP5hoRIXdm6R8FwgAs3vv5cC4kfHOx4QJSuMtkoeSygEXBvNH2nifz
-	70TffEQ==
-X-Google-Smtp-Source: AGHT+IHkQhbCbr5tEQHM5PgoUcAYVVLVKKXP4thp4rJGiHPtHTJRGgiHkIs124SWGjZIG2J1tZ5H7w==
-X-Received: by 2002:a05:6871:153:b0:297:2376:9b17 with SMTP id 586e51a60fabf-2c690fe92bcmr2006147fac.19.1741982624833;
-        Fri, 14 Mar 2025 13:03:44 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72bb26bbe2esm773443a34.31.2025.03.14.13.03.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 13:03:44 -0700 (PDT)
-Message-ID: <177eb738-fe13-43ae-a02a-7c6b026536ef@baylibre.com>
-Date: Fri, 14 Mar 2025 15:03:43 -0500
+	s=arc-20240116; t=1741982644; c=relaxed/simple;
+	bh=6fl19qt8uRo7rVlCXhkBK8V5Sevp1OWU//aOfS+PLCU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=IRxJT4HqbStvEF1OgvoRL8MkosQKsmklr7Cs2RnfwIlj9LGAmEmPEiQVxIgfwaythXOOSEDL1yTeCbwwqBb577UYfpGwGkX0bpwlY2SqJ3x0KsAqnhQuuCBZgRrA1WMVhsW4/pMAjWPnwfs8e0JjzvYr+Vip2Z3lzjP9ooBrqcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QH8GqYVj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ezeCYSJi; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 14 Mar 2025 20:03:56 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741982640;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5zo1iE4mmcJfK6JAhDZYn2eC23iWPOwtDxs1bIqYZJ0=;
+	b=QH8GqYVja7uYmQs6UFDkCmL3J46luuHokbygzwQqLF/InOuIh//GYDxSMEzki/2nWbId47
+	aL16qeH8DHFlEcSqCUxiAadhsIQUykIyV2/QBgge9OaUlKQed8JuJAdmHxQUo+fS1hEzw6
+	LywYRHIrWixnkbTFh7pxQTogxapYwLwxIpfsBESY/LkN6a084SY5XqrNSLniZuKXmpgSp3
+	TjpPcpdADfjXw761jb53+96D0vM22OtHinoH/bEQqqfW4HyvLSTj1hkNmN9bPBwRr/wj4s
+	BChIbYWLOMtQxjvq0zRu7smd7XHuoYvCL8wzq8KnkIIYrJf8YBflTo1uQnTfRg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741982640;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5zo1iE4mmcJfK6JAhDZYn2eC23iWPOwtDxs1bIqYZJ0=;
+	b=ezeCYSJiz1zU0eNjPcK341JDsQtAV9PZqZeuOXVz4b3QcFyQyXk61UX84wgjvjW7SUuZIO
+	KvTpXz4hIapLo6DA==
+From: "tip-bot2 for Tiezhu Yang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: objtool/core] LoongArch: Enable jump table for objtool
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Huacai Chen <chenhuacai@loongson.cn>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241217010905.13054-8-yangtiezhu@loongson.cn>
+References: <20241217010905.13054-8-yangtiezhu@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: ad7380: add support for SPI offload
-From: David Lechner <dlechner@baylibre.com>
-To: Angelo Dureghello <adureghello@baylibre.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250220-wip-bl-spi-offload-ad7380-v1-1-838aa873e62a@baylibre.com>
- <7b64c6a9-0606-45ba-be45-7ae11c4fdf39@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <7b64c6a9-0606-45ba-be45-7ae11c4fdf39@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <174198263615.14745.12782989496753781204.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 2/22/25 11:31 AM, David Lechner wrote:
-> On 2/20/25 12:03 PM, Angelo Dureghello wrote:
->> From: Angelo Dureghello <adureghello@baylibre.com>
->>
->> Add support for SPI offload to the ad7380 driver. SPI offload allows
->> sampling data at the max sample rate (2MSPS with one SDO line).
->>
->> This is developed and tested against the ADI example FPGA design for
->> this family of ADCs [1].
->>
->> [1]: http://analogdevicesinc.github.io/hdl/projects/ad738x_fmc/index.html
->>
->> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
->> ---
-> 
+The following commit has been merged into the objtool/core branch of tip:
 
-...
+Commit-ID:     e20ab7d454ee8d1e0e8b9ff73a7c87e84c666b2f
+Gitweb:        https://git.kernel.org/tip/e20ab7d454ee8d1e0e8b9ff73a7c87e84c666b2f
+Author:        Tiezhu Yang <yangtiezhu@loongson.cn>
+AuthorDate:    Tue, 17 Dec 2024 09:09:03 +08:00
+Committer:     Josh Poimboeuf <jpoimboe@kernel.org>
+CommitterDate: Wed, 12 Mar 2025 15:43:39 -07:00
 
->> +#define _AD7380_OFFLOAD_CHANNEL(index, bits, diff, sign, gain) {		\
->> +	.type = IIO_VOLTAGE,							\
->> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |                          \
->> +		((gain) ? BIT(IIO_CHAN_INFO_SCALE) : 0) |			\
->> +		((diff) ? 0 : BIT(IIO_CHAN_INFO_OFFSET)),			\
->> +	.info_mask_shared_by_type = ((gain) ? 0 : BIT(IIO_CHAN_INFO_SCALE)) |   \
->> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO) |				\
->> +		BIT(IIO_CHAN_INFO_SAMP_FREQ),					\
-> 
-> Not sure if this is worth troubling with, but it might make more sense to make
-> IIO_CHAN_INFO_SAMP_FREQ info_mask_separate instead of info_mask_shared_by_type,
-> at least in the case of the single-ended chips.
-> 
-> This family of chips does simultaneous conversions so shared_by_type (or shared_by_all)
-> would typically be the right thing to do here. However, the single-ended versions
-> of these chips also have a multiplexer, so there are 2 banks of simultaneously
-> sampled inputs. So the effective sample rate as far as IIO is concerned would
-> actually be 1/2 of the sampling_frequency attribute value.
-> 
-> Since we have a channel mask restriction where we force all channels in a bank
-> to be enabled at once, I think it would work to make IIO_CHAN_INFO_SAMP_FREQ
-> info_mask_separate where the reported sampling frequency is the conversion rate
-> divided by the number of channels in a bank.
-> 
+LoongArch: Enable jump table for objtool
 
-Hi Jonathan,
+For now, it is time to remove -fno-jump-tables to enable jump table for
+objtool if the compiler has -mannotate-tablejump, otherwise it is better
+to remain -fno-jump-tables to keep compatibility with older compilers.
 
-You might have missed this since v2 was sent before you had a chance to review
-v1. I am testing the chip with the mux now, so I was curious if you had any
-wisdom to add here. The way we implemented it feels a little odd to me with
-sampling_frequency as info_mask_shared_by_type instead of info_mask_separate
-or info_mask_shared_by_all like on most other chips I've worked with so far.
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+Link: https://lore.kernel.org/r/20241217010905.13054-8-yangtiezhu@loongson.cn
+Acked-by: Huacai Chen <chenhuacai@loongson.cn>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+---
+ arch/loongarch/Kconfig  | 3 +++
+ arch/loongarch/Makefile | 6 +++++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-I found a bug in this series that I need to send a fix for, so if we decide
-there is a better way here, now would be a good time to do it.
-
->> +	.info_mask_shared_by_type_available =					\
->> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO) |				\
->> +		BIT(IIO_CHAN_INFO_SAMP_FREQ),					\
->> +	.indexed = 1,                                                           \
->> +	.differential = (diff),                                                 \
->> +	.channel = (diff) ? (2 * (index)) : (index),                            \
->> +	.channel2 = (diff) ? (2 * (index) + 1) : 0,                             \
->> +	.scan_index = (index),                                                  \
->> +	.has_ext_scan_type = 1,                                                 \
->> +	.ext_scan_type = ad7380_scan_type_##bits##_##sign##_offload,            \
->> +	.num_ext_scan_type =                                                    \
->> +		ARRAY_SIZE(ad7380_scan_type_##bits##_##sign##_offload),		\
->> +	.event_spec = ad7380_events,                                            \
->> +	.num_event_specs = ARRAY_SIZE(ad7380_events),                           \
->> +}
->> +
-
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index 2b8bd27..15aaa2e 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -291,6 +291,9 @@ config AS_HAS_LBT_EXTENSION
+ config AS_HAS_LVZ_EXTENSION
+ 	def_bool $(as-instr,hvcl 0)
+ 
++config CC_HAS_ANNOTATE_TABLEJUMP
++	def_bool $(cc-option,-mannotate-tablejump)
++
+ menu "Kernel type and options"
+ 
+ source "kernel/Kconfig.hz"
+diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
+index 567bd12..0304eab 100644
+--- a/arch/loongarch/Makefile
++++ b/arch/loongarch/Makefile
+@@ -101,7 +101,11 @@ KBUILD_AFLAGS			+= $(call cc-option,-mthin-add-sub) $(call cc-option,-Wa$(comma)
+ KBUILD_CFLAGS			+= $(call cc-option,-mthin-add-sub) $(call cc-option,-Wa$(comma)-mthin-add-sub)
+ 
+ ifdef CONFIG_OBJTOOL
+-KBUILD_CFLAGS			+= -fno-jump-tables
++ifdef CONFIG_CC_HAS_ANNOTATE_TABLEJUMP
++KBUILD_CFLAGS			+= -mannotate-tablejump
++else
++KBUILD_CFLAGS			+= -fno-jump-tables # keep compatibility with older compilers
++endif
+ endif
+ 
+ KBUILD_RUSTFLAGS		+= --target=loongarch64-unknown-none-softfloat -Ccode-model=small
 
