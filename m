@@ -1,293 +1,231 @@
-Return-Path: <linux-kernel+bounces-560564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04AD7A606A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:40:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59333A6069F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:40:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 584593AA90A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:40:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D32CD460521
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4334BA38;
-	Fri, 14 Mar 2025 00:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF8A79F5;
+	Fri, 14 Mar 2025 00:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ad5NT4Um"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="HJDZ29IN"
+Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D11A17D2;
-	Fri, 14 Mar 2025 00:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED7C17D2
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 00:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741912846; cv=none; b=bPUv655z1Ixwk7id5cv4jOhPfqcPsAPghHKlNSbFtv3qBf0yWcjkg9DA6a8rt7Q5yvRyaUFfKbdUXi99FDlUCtdGxpo0wehn4VT15qajgcjzi8lnHk+2AunOAWPhVBJPZe9RuVF9emd9f1uWyERUpFd1JlAwjfSG9LaupO/+ojI=
+	t=1741912830; cv=none; b=FLvkoKXSnSIURd54BXf7pB1PCyium1gg5xoPavzkeSFS4Kofmwdf6UTdxsgpKvPeP6bd2iu5FVCaCJL3ExBhivf2SGabs6+r9LNaggCXYZkWSR29qbMqTyj4ZxBFle6qTi33fkmaoJ4UpZ9xHCqqlCTpFLcZim4wy9b9lVZxIB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741912846; c=relaxed/simple;
-	bh=yh9gUpLEVvc3+ONX1Vqjd3EhaUP2y/M/ogOK4rtz3LQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WgbhOq6QJ+71jbbzmVdfKuqoS24c4Y5rm1DoUAEpqRDwd8+K6EMxMVfa1sJv39nRls2Y08Ts8owzVMDs7HGXO/lV8lr49OKEpbDtegApJilE1wzZl7JWdM1PJO19fpgr3ja8pPAL5zdIC9nQY78ru3+1joyAyMdpLBloJtMdAfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ad5NT4Um; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac2bb7ca40bso282819566b.3;
-        Thu, 13 Mar 2025 17:40:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741912843; x=1742517643; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yh9gUpLEVvc3+ONX1Vqjd3EhaUP2y/M/ogOK4rtz3LQ=;
-        b=ad5NT4UmLHvU+nhmJ1XRvQOhwr+7iN+JZI9NC8JwVB+5+Qy+32s7lAAocgq0lInBOJ
-         WqzE97ssLBKmT9xAdknVRalMyvcPhyxEHKE/ejwMbsbRF62meK+8yNZCakjSWwD5KGnM
-         hoL5TCpGTFSrH7WBT+Nvcw0PNHOCenSijWrLSCgCTdY7rvkQHdHteiKsCFYRENLjl6X1
-         BsebG75MRiNbz8eyC1TpXWmHPVYj0RhiBWRcVSywnzS4hZpuYSceCcZOYiNzhy1PTGfu
-         iAWO+V7xtYVamOC9MXXfnrluTyd/sx9UZnvGgQENwQOYi6EbFyOzW9p4R3tleETEl2b/
-         Z3Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741912843; x=1742517643;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yh9gUpLEVvc3+ONX1Vqjd3EhaUP2y/M/ogOK4rtz3LQ=;
-        b=cD4/ZpNhsw7ZY9thSUL1MtIhmc0a0/Xuq5sqBhGLOIB0BCbS1f9HiBrIQ1n6iSHNvZ
-         85vSMtZbzpwG5f+JO7qEUGIf/wdD8wNSU3r4UvtnHwsSU/RsuLRSVDICjjHwYps7V28w
-         8rTUihWN9aF5p0ZYqA3FJGBocn1s+rYBiRGflXrZ0/kM4fiGknYxy3c2PaI0532aPoDa
-         27lazDHOeUs9OMtbFNx12THfQOKdZ5Ng7EsIy8kzpMwGC7u84RniN3/DryPOGFeZ6Brn
-         cOQ6RV9Gx48YuYvoiMh4zrTXiSTpXsgwZdd8OaQAspatSAbXz3hbQUEfNres8AfsPRiq
-         aGBw==
-X-Forwarded-Encrypted: i=1; AJvYcCULWjFkCBMwnrc8jJM41O63SGIWQfYGTgpZte4gpPfLwg4JapuSPZAbVar/uSQurh2/ct0NLmEhttw=@vger.kernel.org, AJvYcCUhLCnlpXGRh4lp2B3eGmJ4iK7e9YkJ+r9+4INoREGQ0OiaYtsYb3yoXT5QsPj2mSXFq4HmWe6zWixjNGUE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd3KZhImRAC03C5p3itAtRC9p2gYlSrjSr1PCuEPwtd5mLnkof
-	u9dx9jefD+sQXUNG2VhQZSBW/r17M/g/5AgprzIfTlH7FtVLBDXGGeF7SAz7gzkhar2iu6Fe4Yk
-	0B+m3gyluK4inlu8GxyPEzhktxcc=
-X-Gm-Gg: ASbGnctRDueUKsK5ZEtOlcNh9tzj4O/U2SzLXtT2tUf5BE5ZJWytElnS7yU48BYcvZd
-	wpxwoIHeYQh8L6P4qrQBtstIEHSWn9LOg9IyY+bN262sL18LrDP8OuKSkbKXKYu2i00hPdZPttg
-	fL55s6hAkAQ+tCPEJLWuoUROE7Jq7k
-X-Google-Smtp-Source: AGHT+IF30g+oybtDe22WdFMbO2EFs/fVWAfLZuXwIgd1zspwxeuUFihvlndWXwo8QrUoXM/UBtPz1a1Wa3G2waBTaPM=
-X-Received: by 2002:a17:907:608c:b0:abf:56e3:e88b with SMTP id
- a640c23a62f3a-ac330373a56mr46335766b.38.1741912842441; Thu, 13 Mar 2025
- 17:40:42 -0700 (PDT)
+	s=arc-20240116; t=1741912830; c=relaxed/simple;
+	bh=CLjoHk/2FywAKu201Za30kVxpQ8oFSYXRt+qLjcB/iE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fyaoZ8YxHLHOhrriBPyk5DelRhnA18UhWgrgwJ8bU8wKgOkl5k9s+t7ev1wDvzgdJu60CPHX54Iw/2e7cgvRen5Gu+2GYD8nirEMk8bkzywH7OU/QloGCelUKPeqpOY2RsR6uSzJJBU4b0wWDMzR8NMfex9IMBk48l8BlgP6wcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=HJDZ29IN; arc=none smtp.client-ip=79.135.106.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741912825; x=1742172025;
+	bh=ya/bcmooFTPxVHeVVCfgw55NiPTjhYrR/nnf5aWTFck=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=HJDZ29INaDatoDQ7obeuyu1eXEiEQc1+Wy9bNJlLDUZby5U4eDqh6hvaE7IuxuCOW
+	 xFsvQQa96NAKqQNa1BGzfA0+FEsEWPrNuQx4MaUBMNOCyQf40P2vV+eU8Y1e+0oXhd
+	 FerfzBhOyGuPh9xPiD4QXe9x68+8GH5S01YfEZVXUf4myctITweZbSVL+WLz9EYMJl
+	 CSTe7/Uf/p8Wb1Q99GqV+qY1vMrCorhWG589fHF9gBhDhCjQ+LuM1zSXH369RlFvqe
+	 YIOyVCihENZ5VVeqUHrBBB71Mv3C81JDea9/lxTzsRkOwglOvNYH2kG0f/nO7zb5Zy
+	 fjrx7s7B1DBRw==
+Date: Fri, 14 Mar 2025 00:40:19 +0000
+To: Randy Dunlap <rdunlap@infradead.org>
+From: Denis Mukhin <dmkhn@proton.me>
+Cc: dmukhin@ford.com, Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/early_printk: add MMIO-based UARTs
+Message-ID: <7_SFqopQLJqdOZk_EAmrbfmAvP9O8_zhcriVwUnSH01zgm9x3XV_G_PBgyno7fTB3Nq5DtfKDumaJZHnXT0Ju1cPflzZPX3ME5k2MtBUb0A=@proton.me>
+In-Reply-To: <60067986-ce08-45da-85ba-a9ea8fedfe06@infradead.org>
+References: <20250313-earlyprintk-v1-1-8f818d77a8dd@ford.com> <60067986-ce08-45da-85ba-a9ea8fedfe06@infradead.org>
+Feedback-ID: 123220910:user:proton
+X-Pm-Message-ID: 6471ce0ba7d43692ab059397d523171614a69a95
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313135904589bPGz00-l-A1PtKxvMW5TC@zte.com.cn>
-In-Reply-To: <20250313135904589bPGz00-l-A1PtKxvMW5TC@zte.com.cn>
-From: Dongliang Mu <mudongliangabcd@gmail.com>
-Date: Fri, 14 Mar 2025 08:40:16 +0800
-X-Gm-Features: AQ5f1JrfoFgxzuvQNB3FJk2c6N7dj7btGrwP3FBnDyIODsB-Wae2bfUdj7_J4z0
-Message-ID: <CAD-N9QUZ5qZ0gGPc2+4hb3G2YY_-gwGYSOcB5KwAmfswPE3d+Q@mail.gmail.com>
-Subject: Re: [PATCH linux next v4] Docs/zh_CN: Translate msg_zerocopy.rst to
- Simplified Chinese
-To: jiang.kun2@zte.com.cn
-Cc: alexs@kernel.org, si.yanteng@linux.dev, corbet@lwn.net, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, xu.xin16@zte.com.cn, 
-	yang.yang29@zte.com.cn, wang.yaxin@zte.com.cn, fan.yu9@zte.com.cn, 
-	he.peilin@zte.com.cn, tu.qiang35@zte.com.cn, qiu.yutan@zte.com.cn, 
-	zhang.yunkai@zte.com.cn, ye.xingchen@zte.com.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-T24gVGh1LCBNYXIgMTMsIDIwMjUgYXQgMTo1OeKAr1BNIDxqaWFuZy5rdW4yQHp0ZS5jb20uY24+
-IHdyb3RlOg0KPg0KPiBGcm9tOiBXYW5nIFlheGluIDx3YW5nLnlheGluQHp0ZS5jb20uY24+DQo+
-IHRyYW5zbGF0ZSB0aGUgIm1zZ196ZXJvY29weS5yc3QiIGludG8gU2ltcGxpZmllZCBDaGluZXNl
-Lg0KPg0KPiBVcGRhdGUgdG8gY29tbWl0IGJhYzJjYWMxMmMyNigiZG9jczogbmV0OiBkZXNjcmlw
-dGlvbiBvZg0KPiBNU0dfWkVST0NPUFkgZm9yIEFGX1ZTT0NLIikNCg0KU2luY2UgdGhpcyBpcyB0
-aGUgZmlyc3QgdHJhbnNsYXRpb24gb2YgemhfQ04vbmV0d29ya2luZywgSSBzdWdnZXN0DQp0cmFu
-c2xhdGluZyBpbmRleC5yc3QgYW5kIGFkZGluZyBtc2dfemVyb2NvcHkucnN0IGludG8gaW5kZXgu
-cnN0Lg0KDQpEb25nbGlhbmcgTXUNCg0KPiBTaWduZWQtb2ZmLWJ5OiBXYW5nIFlheGluIDx3YW5n
-LnlheGluQHp0ZS5jb20uY24+DQo+IFNpZ25lZC1vZmYtYnk6IEppYW5nIEt1biA8amlhbmcua3Vu
-MkB6dGUuY29tLmNuPg0KPiBSZXZpZXdlZC1ieTogWWFudGVuZyBTaSA8c2kueWFudGVuZ0BsaW51
-eC5kZXY+DQo+IC0tLQ0KPiB2My0+djQ6DQo+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC84
-OTQ1MjUwYy0zZjZlLTQzZWItYmFjOC0wM2NhMDQ0ZmNiYWVAbGludXguZGV2Lw0KPiAxLiBhZGQg
-dGhlIFJldmlld2VkLWJ5IHRhZyBpbiB2NC4NCj4NCj4gIC4uLi96aF9DTi9uZXR3b3JraW5nL21z
-Z196ZXJvY29weS5yc3QgICAgICAgICB8IDIyMyArKysrKysrKysrKysrKysrKysNCj4gIDEgZmls
-ZSBjaGFuZ2VkLCAyMjMgaW5zZXJ0aW9ucygrKQ0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3Vt
-ZW50YXRpb24vdHJhbnNsYXRpb25zL3poX0NOL25ldHdvcmtpbmcvbXNnX3plcm9jb3B5LnJzdA0K
-Pg0KPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvemhfQ04vbmV0d29y
-a2luZy9tc2dfemVyb2NvcHkucnN0IGIvRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvemhfQ04v
-bmV0d29ya2luZy9tc2dfemVyb2NvcHkucnN0DQo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+IGlu
-ZGV4IDAwMDAwMDAwMDAwMC4uNzM2MmI4NTE0ZTcwDQo+IC0tLSAvZGV2L251bGwNCj4gKysrIGIv
-RG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvemhfQ04vbmV0d29ya2luZy9tc2dfemVyb2NvcHku
-cnN0DQo+IEBAIC0wLDAgKzEsMjIzIEBADQo+ICsuLiBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjog
-R1BMLTIuMA0KPiArDQo+ICsuLiBpbmNsdWRlOjogLi4vZGlzY2xhaW1lci16aF9DTi5yc3QNCj4g
-Kw0KPiArOk9yaWdpbmFsOiBEb2N1bWVudGF0aW9uL25ldHdvcmtpbmcvbXNnX3plcm9jb3B5LnJz
-dA0KPiArDQo+ICs657+76K+ROg0KPiArDQo+ICsgICDnjovkuprpkasgV2FuZyBZYXhpbiA8d2Fu
-Zy55YXhpbkB6dGUuY29tLmNuPg0KPiArDQo+ICs65qCh6K+ROg0KPiArDQo+ICsgICAtIOW+kOmR
-qyB4dSB4aW4gPHh1LnhpbjE2QHp0ZS5jb20uY24+DQo+ICsgICAtIOS9lemFjeaelyBIZSBQZWls
-aW4gPGhlLnBlaWxpbkB6dGUuY29tLmNuPg0KPiArDQo+ICs9PT09PT09PT09PT0NCj4gK01TR19a
-RVJPQ09QWQ0KPiArPT09PT09PT09PT09DQo+ICsNCj4gK+eugOS7iw0KPiArPT09PQ0KPiArDQo+
-ICtNU0dfWkVST0NPUFkg5qCH5b+X55So5LqO5ZCv55So5aWX5o6l5a2X5Y+R6YCB6LCD55So55qE
-5YWN5ou36LSd5Yqf6IO944CC6K+l5Yqf6IO955uu5YmN6YCC55So5LqOIFRDUOOAgVVEUCDlkowg
-VlNPQ0sNCj4gK++8iOS9v+eUqCB2aXJ0aW8g5Lyg6L6T77yJ5aWX5o6l5a2X44CCDQo+ICsNCj4g
-K+acuumBh+S4juazqOaEj+S6i+mhuQ0KPiArLS0tLS0tLS0tLS0tLS0NCj4gKw0KPiAr5Zyo55So
-5oi36L+b56iL5LiO5YaF5qC45LmL6Ze05ou36LSd5aSn5Z6L57yT5Yay5Yy65Y+v6IO95Lya5raI
-6ICX5aSn6YeP6LWE5rqQ44CCTGludXgg5pSv5oyB5aSa56eN5YWN5ou36LSd55qE5o6l5Y+j77yM
-5aaCc2VuZGZpbGUNCj4gK+WSjCBzcGxpY2XjgIJNU0dfWkVST0NPUFkg5qCH5b+X5bCG5bqV5bGC
-55qE5ou36LSd6YG/5YWN5py65Yi25omp5bGV5Yiw5LqG5bi46KeB55qE5aWX5o6l5a2X5Y+R6YCB
-6LCD55So5Lit44CCDQo+ICsNCj4gK+WFjeaLt+i0neW5tumdnuavq+aXoOS7o+S7t+OAguWcqOWu
-nueOsOS4iu+8jOWug+mAmui/h+mhtemdouWbuuWumu+8iHBhZ2UgcGlubmluZ++8ieWwhuaMieWt
-l+iKguaLt+i0neeahOaIkOacrOabv+aNouS4uumhtemdoue7n+iuoQ0KPiAr77yIcGFnZSBhY2Nv
-dW50aW5n77yJ5ZKM5a6M5oiQ6YCa55+l55qE5byA6ZSA44CC5Zug5q2k77yMTVNHX1pFUk9DT1BZ
-IOmAmuW4uOS7heWcqOWGmeWFpemHj+i2hei/h+Wkp+e6piAxMCBLQiDml7YNCj4gK+aJjeacieaV
-iOOAgg0KPiArDQo+ICvpobXpnaLlm7rlrprov5jkvJrmlLnlj5jns7vnu5/osIPnlKjnmoTor63k
-uYnjgILlroPkvJrmmoLml7blnKjov5vnqIvlkoznvZHnu5zloIbmoIjkuYvpl7TlhbHkuqvnvJPl
-hrLljLrjgILkuI7mi7fotJ3kuI3lkIzvvIzov5vnqIvlnKjns7vnu58NCj4gK+iwg+eUqOi/lOWb
-nuWQjuS4jeiDveeri+WNs+imhueblue8k+WGsuWMuu+8jOWQpuWImeWPr+iDveS8muS/ruaUueat
-o+WcqOS8oOi+k+S4reeahOaVsOaNruOAguWGheaguOeahOWujOaVtOaAp+S4jeS8muWPl+WIsOW9
-seWTje+8jOS9huaciee8ug0KPiAr6Zm355qE56iL5bqP5Y+v6IO95Lya56C05Z2P6Ieq5bex55qE
-5pWw5o2u5rWB44CCDQo+ICsNCj4gK+W9k+WGheaguOi/lOWbnuaVsOaNruWPr+S7peWuieWFqOS/
-ruaUueeahOmAmuefpeaXtu+8jOi/m+eoi+aJjeWPr+S7peS/ruaUueaVsOaNruOAguWboOatpO+8
-jOWwhueOsOacieW6lOeUqOeoi+W6j+i9rOaNouS4uuS9v+eUqA0KPiArTVNHX1pFUk9DT1BZIOW5
-tumdnuaAu+aYr+WDj+eugOWNleWcsOS8oOmAkuivpeagh+W/l+mCo+agt+WuueaYk+OAgg0KPiAr
-DQo+ICvmm7TlpJrkv6Hmga8NCj4gKy0tLS0tLS0tDQo+ICsNCj4gK+acrOaWh+aho+eahOWkp+mD
-qOWIhuWGheWuueaYr+adpeiHquS6jiBuZXRkZXYgMi4xIOS4iuWPkeihqOeahOS4gOevh+mVv+ev
-h+iuuuaWh+OAguWmgumcgOabtOa3seWFpeeahOS/oeaBr++8jOivt+WPgumYheivpeiuuuaWh+WS
-jA0KPiAr5ryU6K6y77yM5oiW6ICF5rWP6KeIIExXTi5uZXQg5LiK55qE57K+5b2p5oql6YGT77yM
-5Lmf5Y+v5Lul55u05o6l6ZiF6K+75rqQ56CB44CCDQo+ICsNCj4gKyAg6K665paH44CB5bm754Gv
-54mH44CB6KeG6aKR77yaDQo+ICsgICAgaHR0cHM6Ly9uZXRkZXZjb25mLm9yZy8yLjEvc2Vzc2lv
-bi5odG1sP2RlYnJ1aWpuDQo+ICsNCj4gKyAgTFdOIOaWh+eroO+8mg0KPiArICAgIGh0dHBzOi8v
-bHduLm5ldC9BcnRpY2xlcy83MjY5MTcvDQo+ICsNCj4gKyAg6KGl5LiB6ZuG77yaDQo+ICsgICAg
-W1BBVENIIG5ldC1uZXh0IHY0IDAvOV0gc29ja2V0IHNlbmRtc2cgTVNHX1pFUk9DT1BZDQo+ICsg
-ICAgaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbmV0ZGV2LzIwMTcwODAzMjAyOTQ1LjcwNzUwLTEt
-d2lsbGVtZGVicnVpam4ua2VybmVsQGdtYWlsLmNvbQ0KPiArDQo+ICvmjqXlj6MNCj4gKz09PT0N
-Cj4gKw0KPiAr5Lyg6YCSIE1TR19aRVJPQ09QWSDmoIflv5fmmK/lkK/nlKjlhY3mi7fotJ3lip/o
-g73nmoTmnIDmmI7mmL7mraXpqqTvvIzkvYblubbpnZ7llK/kuIDnmoTmraXpqqTjgIINCj4gKw0K
-PiAr5aWX5o6l5a2X6K6+572uDQo+ICstLS0tLS0tLS0tDQo+ICsNCj4gK+W9k+W6lOeUqOeoi+W6
-j+WQkSBzZW5kIOezu+e7n+iwg+eUqOS8oOmAkuacquWumuS5ieeahOagh+W/l+aXtu+8jOWGheag
-uOmAmuW4uOS8muWuveWuueWvueW+heOAgum7mOiupOaDheWGteS4i++8jOWug+S8mueugOWNleWc
-sOW/veeVpQ0KPiAr6L+Z5Lqb5qCH5b+X44CC5Li65LqG6YG/5YWN5Li66YKj5Lqb5YG254S25Lyg
-6YCS5q2k5qCH5b+X55qE6YGX55WZ6L+b56iL5ZCv55So5YWN5ou36LSd5qih5byP77yM6L+b56iL
-5b+F6aG76aaW5YWI6YCa6L+H6K6+572u5aWX5o6l5a2X6YCJ6aG5DQo+ICvmnaXooajmmI7mhI/l
-m77vvJoNCj4gKw0KPiArOjoNCj4gKw0KPiArICAgIGlmIChzZXRzb2Nrb3B0KGZkLCBTT0xfU09D
-S0VULCBTT19aRVJPQ09QWSwgJm9uZSwgc2l6ZW9mKG9uZSkpKQ0KPiArICAgICAgICBlcnJvcigx
-LCBlcnJubywgInNldHNvY2tvcHQgemVyb2NvcHkiKTsNCj4gKw0KPiAr5Lyg6L6TDQo+ICstLS0t
-DQo+ICsNCj4gK+WvuSBzZW5k77yI5oiWIHNlbmR0b+OAgXNlbmRtc2fjgIFzZW5kbW1zZ++8ieac
-rOi6q+eahOaUueWKqOmdnuW4uOeugOWNleOAguWPqumcgOS8oOmAkuaWsOeahOagh+W/l+WNs+WP
-r+OAgg0KPiArDQo+ICs6Og0KPiArDQo+ICsgICAgcmV0ID0gc2VuZChmZCwgYnVmLCBzaXplb2Yo
-YnVmKSwgTVNHX1pFUk9DT1BZKTsNCj4gKw0KPiAr5aaC5p6c6Zu25ou36LSd5pON5L2c5aSx6LSl
-77yM5bCG6L+U5ZueIC0x77yM5bm26K6+572uIGVycm5vIOS4uiBFTk9CVUZT44CC6L+Z56eN5oOF
-5Ya15Y+v6IO95Y+R55Sf5Zyo5aWX5o6l5a2X6LaF5Ye65YW2DQo+ICtvcHRtZW0g6ZmQ5Yi277yM
-5oiW6ICF55So5oi36LaF5Ye65YW26ZSB5a6a6aG16Z2i55qEIHVsaW1pdCDml7bjgIINCj4gKw0K
-PiAr5re35ZCI5L2/55So5YWN5ou36LSd5ZKM5ou36LSdDQo+ICt+fn5+fn5+fn5+fn5+fn5+fn5+
-fg0KPiArDQo+ICvorrjlpJrlt6XkvZzotJ/ovb3lkIzml7bljIXlkKvlpKflnovlkozlsI/lnovn
-vJPlhrLljLrjgILnlLHkuo7lr7nkuo7lsI/mlbDmja7ljIXmnaXor7TvvIzlhY3mi7fotJ3nmoTm
-iJDmnKzpq5jkuo7mi7fotJ3vvIzlm6DmraTor6UNCj4gK+WKn+iDveaYr+mAmui/h+agh+W/l+Wu
-nueOsOeahOOAguW4puacieagh+W/l+eahOiwg+eUqOWSjOayoeacieagh+W/l+eahOiwg+eUqOWP
-r+S7peWuieWFqOWcsOa3t+WQiOS9v+eUqOOAgg0KPiArDQo+ICvpgJrnn6UNCj4gKy0tLS0NCj4g
-Kw0KPiAr5b2T5YaF5qC46K6k5Li65Y+v5Lul5a6J5YWo5Zyw6YeN55So5LmL5YmN5Lyg6YCS55qE
-57yT5Yay5Yy65pe277yM5a6D5b+F6aG76YCa55+l6L+b56iL44CC5a6M5oiQ6YCa55+l5Zyo5aWX
-5o6l5a2X55qE6ZSZ6K+v6Zif5YiX5LiKDQo+ICvmjpLpmJ/vvIznsbvkvLzkuo7kvKDovpPml7bp
-l7TmiLPmjqXlj6PjgIINCj4gKw0KPiAr6YCa55+l5pys6Lqr5piv5LiA5Liq566A5Y2V55qE5qCH
-6YeP5YC844CC5q+P5Liq5aWX5o6l5a2X6YO957u05oqk5LiA5Liq5YaF6YOo55qE5peg56ym5Y+3
-IDMyIOS9jeiuoeaVsOWZqOOAguavj+asoeW4puaciQ0KPiArTVNHX1pFUk9DT1BZIOagh+W/l+ea
-hCBzZW5kIOiwg+eUqOaIkOWKn+WPkemAgeaVsOaNruaXtu+8jOiuoeaVsOWZqOmDveS8muWinuWK
-oOOAguWmguaenOiwg+eUqOWksei0peaIlumVv+W6puS4uumbtu+8jA0KPiAr5YiZ6K6h5pWw5Zmo
-5LiN5Lya5aKe5Yqg44CC6K+l6K6h5pWw5Zmo57uf6K6h57O757uf6LCD55So55qE6LCD55So5qyh
-5pWw77yM6ICM5LiN5piv5a2X6IqC5pWw44CC5ZyoIFVJTlRfTUFYIOasoeiwg+eUqOWQju+8jA0K
-PiAr6K6h5pWw5Zmo5Lya5b6q546v44CCDQo+ICsNCj4gK+mAmuefpeaOpeaUtg0KPiArfn5+fn5+
-fn4NCj4gKw0KPiAr5LiL6Z2i55qE5Luj56CB54mH5q615bGV56S65LqGIEFQSSDnmoTkvb/nlKjj
-gILlnKjmnIDnroDljZXnmoTmg4XlhrXkuIvvvIzmr4/mrKEgc2VuZCDns7vnu5/osIPnlKjlkI7v
-vIzpg73kvJrlr7nplJnor6/pmJ/liJcNCj4gK+i/m+ihjOi9ruivouWSjCByZWN2bXNnIOiwg+eU
-qOOAgg0KPiArDQo+ICvku47plJnor6/pmJ/liJfor7vlj5blp4vnu4jmmK/kuIDkuKrpnZ7pmLvl
-oZ7mk43kvZzjgIJwb2xsIOiwg+eUqOeUqOS6jumYu+Whnu+8jOebtOWIsOWHuueOsOmUmeivr+OA
-guWug+S8muWcqOWFtui+k+WHuuagh+W/l+S4rQ0KPiAr6K6+572uIFBPTExFUlLjgILor6XmoIfl
-v5fkuI3pnIDopoHlnKggZXZlbnRzIOWtl+auteS4reiuvue9ruOAgumUmeivr+S8muaXoOadoeS7
-tuWcsOWPkeWHuuS/oeWPt+OAgg0KPiArDQo+ICs6Og0KPiArDQo+ICsgICAgcGZkLmZkID0gZmQ7
-DQo+ICsgICAgcGZkLmV2ZW50cyA9IDA7DQo+ICsgICAgaWYgKHBvbGwoJnBmZCwgMSwgLTEpICE9
-IDEgfHwgcGZkLnJldmVudHMgJiBQT0xMRVJSID09IDApDQo+ICsgICAgICAgIGVycm9yKDEsIGVy
-cm5vLCAicG9sbCIpOw0KPiArDQo+ICsgICAgcmV0ID0gcmVjdm1zZyhmZCwgJm1zZywgTVNHX0VS
-UlFVRVVFKTsNCj4gKyAgICBpZiAocmV0ID09IC0xKQ0KPiArICAgICAgICBlcnJvcigxLCBlcnJu
-bywgInJlY3Ztc2ciKTsNCj4gKw0KPiArICAgIHJlYWRfbm90aWZpY2F0aW9uKG1zZyk7DQo+ICsN
-Cj4gKw0KPiAr6L+Z5Liq56S65L6L5LuF55So5LqO5ryU56S655uu55qE44CC5Zyo5a6e6ZmF5bqU
-55So5Lit77yM5LiN562J5b6F6YCa55+l77yM6ICM5piv5q+P6ZqU5Yeg5qyhIHNlbmQg6LCD55So
-5bCx6L+b6KGM5LiA5qyh6Z2e6Zi75aGeDQo+ICvor7vlj5bkvJrmm7Tpq5jmlYjjgIINCj4gKw0K
-PiAr6Zu25ou36LSd6YCa55+l5Y+v5Lul5LiO5YW25LuW5aWX5o6l5a2X5pON5L2c5Lmx5bqP5aSE
-55CG44CC6YCa5bi477yM5oul5pyJ6ZSZ6K+v6Zif5YiX5aWX5o6l5a2X5Lya6Zi75aGe5YW25LuW
-5pON5L2c77yM55u05Yiw6ZSZ6K+vDQo+ICvooqvor7vlj5bjgILnhLbogIzvvIzpm7bmi7fotJ3p
-gJrnn6XlhbfmnInpm7bplJnor6/ku6PnoIHvvIzlm6DmraTkuI3kvJrpmLvloZ4gc2VuZCDlkowg
-cmVjdiDosIPnlKjjgIINCj4gKw0KPiAr6YCa55+l5om55aSE55CGDQo+ICt+fn5+fn5+fn5+fn4N
-Cj4gKw0KPiAr5Y+v5Lul5L2/55SoIHJlY3ZtbXNnIOiwg+eUqOadpeS4gOasoeaAp+ivu+WPluWk
-muS4quacquWGs+eahOaVsOaNruWMheOAgui/memAmuW4uOS4jeaYr+W/hemcgOeahOOAguWcqOav
-j+adoea2iOaBr+S4re+8jOWGheaguA0KPiAr6L+U5Zue55qE5LiN5piv5LiA5Liq5Y2V5LiA55qE
-5YC877yM6ICM5piv5LiA5Liq6IyD5Zu044CC5b2T6ZSZ6K+v6Zif5YiX5LiK5pyJ5LiA5Liq6YCa
-55+l5q2j5Zyo562J5b6F5o6l5pS25pe277yM5a6D5Lya5bCG6L+e57ut55qE6YCaDQo+ICvnn6Xl
-kIjlubbotbfmnaXjgIINCj4gKw0KPiAr5b2T5LiA5Liq5paw55qE6YCa55+l5Y2z5bCG6KKr5o6S
-6Zif5pe277yM5a6D5Lya5qOA5p+l6Zif5YiX5bC+6YOo55qE6YCa55+l55qE6IyD5Zu05piv5ZCm
-5Y+v5Lul5omp5bGV5Lul5YyF5ZCr5paw55qE5YC844CC5aaC5p6c5piv6L+ZDQo+ICvmoLfvvIzl
-roPkvJrkuKLlvIPmlrDnmoTpgJrnn6XmlbDmja7ljIXvvIzlubblop7lpKfmnKrlpITnkIbpgJrn
-n6XnmoTojIPlm7TkuIrpmZDlgLzjgIINCj4gKw0KPiAr5a+55LqO5oyJ6aG65bqP56Gu6K6k5pWw
-5o2u55qE5Y2P6K6u77yI5aaCIFRDUO+8ie+8jOavj+S4qumAmuefpemDveWPr+S7peWQiOW5tuWI
-sOWJjeS4gOS4qumAmuefpeS4re+8jOWboOatpOWcqOS7u+S9leaXtuWAmeWcqOetieW+hQ0KPiAr
-55qE6YCa55+l6YO95LiN5Lya6LaF6L+H5LiA5Liq44CCDQo+ICsNCj4gK+acieW6j+S6pOS7mOaY
-r+W4uOingeeahOaDheWGte+8jOS9huS4jeiDveS/neivgeOAguWcqOmHjeS8oOWSjOWll+aOpeWt
-l+aLhumZpOaXtu+8jOmAmuefpeWPr+iDveS8muS5seW6j+WIsOi+vuOAgg0KPiArDQo+ICvpgJrn
-n6Xop6PmnpANCj4gK35+fn5+fn5+DQo+ICsNCj4gK+S4i+mdoueahOS7o+eggeeJh+autea8lOek
-uuS6huWmguS9leino+aekOaOp+WItua2iOaBr++8muWJjemdouS7o+eggeeJh+auteS4reeahCBy
-ZWFkX25vdGlmaWNhdGlvbigpIOiwg+eUqOOAgumAmuefpQ0KPiAr5Lul5qCH5YeG6ZSZ6K+v5qC8
-5byPIHNvY2tfZXh0ZW5kZWRfZXJyIOe8lueggeOAgg0KPiArDQo+ICvmjqfliLbmlbDmja7kuK3n
-moTnuqfliKvlkoznsbvlnovlrZfmrrXmmK/ljY/orq7ml4/nibnlrprnmoTvvIzlr7nkuo4gVENQ
-IOaIliBVRFAg5aWX5o6l5a2X77yM5YiG5Yir5Li6IElQX1JFQ1ZFUlIg5oiWDQo+ICtJUFY2X1JF
-Q1ZFUlLjgILlr7nkuo4gVlNPQ0sg5aWX5o6l5a2X77yMY21zZ19sZXZlbCDkuLogU09MX1ZTT0NL
-77yMY21zZ190eXBlIOS4uiBWU09DS19SRUNWRVJS44CCDQo+ICsNCj4gK+mUmeivr+adpea6kOaY
-r+aWsOeahOexu+WeiyBTT19FRV9PUklHSU5fWkVST0NPUFnjgILlpoLliY3miYDov7DvvIxlZV9l
-cnJubyDkuLrpm7bvvIzku6Xpgb/lhY3lnKjlpZfmjqXlrZfkuIoNCj4gK+mYu+WhnuWcsOivu+WP
-luWSjOWGmeWFpeezu+e7n+iwg+eUqOOAgg0KPiArDQo+ICszMiDkvY3pgJrnn6XojIPlm7TnvJbn
-oIHkuLogW2VlX2luZm8sIGVlX2RhdGFd44CC6L+Z5Liq6IyD5Zu05piv5YyF5ZCr6L6555WM5YC8
-55qE44CC6Zmk5LqG5LiL6Z2i6K6o6K6655qEIGVlX2NvZGUNCj4gK+Wtl+auteWklu+8jOe7k+ae
-hOS4reeahOWFtuS7luWtl+auteW6lOiiq+inhuS4uuacquWumuS5ieeahOOAgg0KPiArDQo+ICs6
-Og0KPiArDQo+ICsgICAgc3RydWN0IHNvY2tfZXh0ZW5kZWRfZXJyICpzZXJyOw0KPiArICAgIHN0
-cnVjdCBjbXNnaGRyICpjbTsNCj4gKw0KPiArICAgIGNtID0gQ01TR19GSVJTVEhEUihtc2cpOw0K
-PiArICAgIGlmIChjbS0+Y21zZ19sZXZlbCAhPSBTT0xfSVAgJiYNCj4gKyAgICAgICAgY20tPmNt
-c2dfdHlwZSAhPSBJUF9SRUNWRVJSKQ0KPiArICAgICAgICBlcnJvcigxLCAwLCAiY21zZyIpOw0K
-PiArDQo+ICsgICAgc2VyciA9ICh2b2lkICopIENNU0dfREFUQShjbSk7DQo+ICsgICAgaWYgKHNl
-cnItPmVlX2Vycm5vICE9IDAgfHwNCj4gKyAgICAgICAgc2Vyci0+ZWVfb3JpZ2luICE9IFNPX0VF
-X09SSUdJTl9aRVJPQ09QWSkNCj4gKyAgICAgICAgZXJyb3IoMSwgMCwgInNlcnIiKTsNCj4gKw0K
-PiArICAgIHByaW50ZigiY29tcGxldGVkOiAldS4uJXVcbiIsIHNlcnItPmVlX2luZm8sIHNlcnIt
-PmVlX2RhdGEpOw0KPiArDQo+ICsNCj4gK+W7tui/n+aLt+i0nQ0KPiArfn5+fn5+fn4NCj4gKw0K
-PiAr5Lyg6YCS5qCH5b+XIE1TR19aRVJPQ09QWSDmmK/lkJHlhoXmoLjlj5Hlh7rnmoTkuIDkuKrm
-j5DnpLrvvIzorqnlhoXmoLjph4fnlKjlhY3mi7fotJ3nmoTnrZbnlaXvvIzlkIzml7bkuZ/mmK/k
-uIDnp43nuqYNCj4gK+Wumu+8jOWNs+WGheaguOS8muWvueWujOaIkOmAmuefpei/m+ihjOaOkumY
-n+WkhOeQhuOAguS9hui/meW5tuS4jeS/neivgeaLt+i0neaTjeS9nOS4gOWumuS8muiiq+ecgeeV
-peOAgg0KPiArDQo+ICvmi7fotJ3pgb/lhY3kuI3mgLvmmK/pgILnlKjnmoTjgILkuI3mlK/mjIHl
-iIbmlaMv6IGa6ZuGIEkvTyDnmoTorr7lpIfml6Dms5Xlj5HpgIHnlLHlhoXmoLjnlJ/miJDnmoTl
-jY/orq7lpLTliqDkuIrpm7bmi7fotJ3nlKjmiLcNCj4gK+aVsOaNrue7hOaIkOeahOaVsOaNruWM
-heOAguaVsOaNruWMheWPr+iDvemcgOimgeWcqOWNj+iuruagiOW6leWxgui9rOaNouS4uuS4gOS7
-veengeacieaVsOaNruWJr+acrO+8jOS+i+WmgueUqOS6juiuoeeul+agoemqjOWSjOOAgg0KPiAr
-DQo+ICvlnKjmiYDmnInov5nkupvmg4XlhrXkuIvvvIzlvZPlhoXmoLjph4rmlL7lr7nlhbHkuqvp
-obXpnaLnmoTmjIHmnInmnYPml7bvvIzlroPkvJrov5Tlm57kuIDkuKrlrozmiJDpgJrnn6XjgILo
-r6XpgJrnn6Xlj6/og73lnKjvvIjlt7INCj4gK+aLt+i0ne+8ieaVsOaNruWujOWFqOS8oOi+k+S5
-i+WJjeWIsOi+vuOAguWboOatpOOAgumbtuaLt+i0neWujOaIkOmAmuefpeW5tuS4jeaYr+S8oOi+
-k+WujOaIkOmAmuefpeOAgg0KPiArDQo+ICvlpoLmnpzmlbDmja7kuI3lnKjnvJPlrZjkuK3vvIzl
-u7bov5/mi7fotJ3lj6/og73kvJrmr5Tnq4vljbPlnKjns7vnu5/osIPnlKjkuK3mi7fotJ3lvIDp
-lIDmm7TlpKfjgILov5vnqIvov5jkvJrlm6DpgJrnn6XlpITnkIbogIzkuqcNCj4gK+eUn+aIkOac
-rO+8jOS9huWNtOayoeacieW4puadpeS7u+S9leWlveWkhOOAguWboOatpO+8jOWGheaguOS8muWc
-qOi/lOWbnuaXtumAmui/h+WcqCBlZV9jb2RlIOWtl+auteS4reiuvue9ruagh+W/lw0KPiArU09f
-RUVfQ09ERV9aRVJPQ09QWV9DT1BJRUQg5p2l5oyH56S65pWw5o2u5piv5ZCm5Lul5ou36LSd55qE
-5pa55byP5a6M5oiQ44CC6L+b56iL5Y+v5Lul5Yip55So6L+Z5Liq5L+h5Y+377yM5ZyoDQo+ICvl
-kIzkuIDlpZfmjqXlrZfkuIrlkI7nu63nmoTor7fmsYLkuK3lgZzmraLkvKDpgJIgTVNHX1pFUk9D
-T1BZIOagh+W/l+OAgg0KPiArDQo+ICvlrp7njrANCj4gKz09PT0NCj4gKw0KPiAr546v5ZueDQo+
-ICstLS0tDQo+ICsNCj4gK+WvueS6jiBUQ1Ag5ZKMIFVEUO+8mg0KPiAr5aaC5p6c5o6l5pS26L+b
-56iL5LiN6K+75Y+W5YW25aWX5o6l5a2X77yM5Y+R6YCB5Yiw5pys5Zyw5aWX5o6l5a2X55qE5pWw
-5o2u5Y+v6IO95Lya5peg6ZmQ5pyf5o6S6Zif44CC5peg6ZmQ5pyf55qE6YCa55+l5bu26L+f5piv
-5LiNDQo+ICvlj6/mjqXlj5fnmoTjgILlm6DmraTvvIzmiYDmnInkvb/nlKggTVNHX1pFUk9DT1BZ
-IOeUn+aIkOW5tueOr+WbnuWIsOacrOWcsOWll+aOpeWtl+eahOaVsOaNruWMhemDveWwhuS6p+eU
-n+W7tui/n+aLt+i0neOAgg0KPiAr6L+Z5YyF5ous546v5Zue5Yiw5pWw5o2u5YyF5aWX5o6l5a2X
-77yI5L6L5aaC77yMdGNwZHVtcO+8ieWSjCB0dW4g6K6+5aSH44CCDQo+ICsNCj4gK+WvueS6jiBW
-U09DS++8mg0KPiAr5Y+R6YCB5Yiw5pys5Zyw5aWX5o6l5a2X55qE5pWw5o2u6Lev5b6E5LiO6Z2e
-5pys5Zyw5aWX5o6l5a2X55u45ZCM44CCDQo+ICsNCj4gK+a1i+ivlQ0KPiArPT09PQ0KPiArDQo+
-ICvmm7TlhbfkvZPnmoTnpLrkvovku6PnoIHlj6/ku6XlnKjlhoXmoLjmupDnoIHnmoQgdG9vbHMv
-dGVzdGluZy9zZWxmdGVzdHMvbmV0L21zZ196ZXJvY29weS5jIOS4reaJvuWIsOOAgg0KPiArDQo+
-ICvopoHnlZnmhI/njq/lm57nuqbmnZ/pl67popjjgILor6XmtYvor5Xlj6/ku6XlnKjkuIDlr7nk
-uLvmnLrkuYvpl7Tov5vooYzjgILkvYblpoLmnpzmmK/lnKjmnKzlnLDnmoTkuIDlr7nov5vnqIvk
-uYvpl7Tov5DooYzvvIzkvovlpoLlvZPkvb/nlKgNCj4gK21zZ196ZXJvY29weS5zaCDohJrmnKzl
-nKjot6jlkb3lkI3nqbrpl7TnmoTomZrmi5/ku6XlpKrnvZHvvIh2ZXRo77yJ5a+55LmL6Ze06L+Q
-6KGM5pe277yM5rWL6K+V5bCG5LiN5Lya5pi+56S65Ye65Lu75L2V5oCn6IO9DQo+ICvmj5DljYfj
-gILkuLrkuobkvr/kuo7mtYvor5XvvIzlj6/ku6XpgJrov4forqkgc2tiX29ycGhhbl9mcmFnc19y
-eCDkuI4gc2tiX29ycGhhbl9mcmFncyDnm7jlkIzvvIzmnaXmmoLml7bmlL7lrr0NCj4gK+eOr+Wb
-numZkOWItuOAgg0KPiArDQo+ICvlr7nkuo4gVlNPQ0sg57G75Z6L5aWX5o6l5a2X55qE56S65L6L
-5Y+v5Lul5ZyoIHRvb2xzL3Rlc3RpbmcvdnNvY2svdnNvY2tfdGVzdF96ZXJvY29weS5jIOS4reaJ
-vuWIsOOAgg0KPiAtLQ0KPiAyLjI1LjENCj4NCg==
+On Thursday, March 13th, 2025 at 5:04 PM, Randy Dunlap <rdunlap@infradead.o=
+rg> wrote:
+
+>=20
+>=20
+> Hi,
+>=20
+> On 3/13/25 4:45 PM, Denis Mukhin via B4 Relay wrote:
+>=20
+> > From: Denis Mukhin dmukhin@ford.com
+> >=20
+> > During the bring-up of an x86 board, the kernel was crashing before
+> > reaching the platform's console driver because of a bug in the firmware=
+,
+> > leaving no trace of the boot progress.
+> >=20
+> > It was discovered that the only available method to debug the kernel
+> > boot process was via the platform's MMIO-based UART, as the board lacke=
+d
+> > an I/O port-based UART, PCI UART, or functional video output.
+> >=20
+> > Then it turned out that earlyprintk=3D does not have a knob to configur=
+e
+> > the MMIO-mapped UART.
+> >=20
+> > Extend the early printk facility to support platform MMIO-based UARTs
+> > on x86 systems, enabling debugging during the system bring-up phase.
+> >=20
+> > The command line syntax to enable platform MMIO-based UART is:
+> > earlyprintk=3Dmmio,membase[,{nocfg|baudrate}][,keep]
+> >=20
+> > Note, the change does not integrate MMIO-based UART support to:
+> > arch/x86/boot/early_serial_console.c
+> >=20
+> > Signed-off-by: Denis Mukhin dmukhin@ford.com
+> > ---
+> > Documentation/admin-guide/kernel-parameters.txt | 4 +++
+> > arch/x86/kernel/early_printk.c | 45 ++++++++++++++++++++++++-
+> > 2 files changed, 48 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Document=
+ation/admin-guide/kernel-parameters.txt
+> > index fb8752b42ec8582b8750d7e014c4d76166fa2fc1..bee9ee18a506d019dc3d330=
+268e3e1c83434ebba 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -1414,11 +1414,15 @@
+> > earlyprintk=3Dpciserial[,force],bus:device.function[,baudrate]
+> > earlyprintk=3Dxdbc[xhciController#]
+> > earlyprintk=3Dbios
+> > + earlyprintk=3Dmmio,membase[,{nocfg|baudrate}][,keep]
+> >=20
+> > earlyprintk is useful when the kernel crashes before
+> > the normal console is initialized. It is not enabled by
+> > default because it has some cosmetic problems.
+> >=20
+> > + Use "nocfg" to skip UART configuration, assume
+> > + BIOS/firmware has configured UART correctly.
+> > +
+> > Append ",keep" to not disable it when the real console
+> > takes over.
+> >=20
+> > diff --git a/arch/x86/kernel/early_printk.c b/arch/x86/kernel/early_pri=
+ntk.c
+> > index 44f937015e1e25bf41532eb7e1031a6be32a6523..19248c73b5b0950e9edf1a6=
+0ba67829f1cd3279e 100644
+> > --- a/arch/x86/kernel/early_printk.c
+> > +++ b/arch/x86/kernel/early_printk.c
+> > @@ -191,7 +191,6 @@ static __init void early_serial_init(char *s)
+> > early_serial_hw_init(divisor);
+> > }
+> >=20
+> > -#ifdef CONFIG_PCI
+> > static void mem32_serial_out(unsigned long addr, int offset, int value)
+> > {
+> > u32 __iomem *vaddr =3D (u32 __iomem *)addr;
+> > @@ -206,6 +205,45 @@ static unsigned int mem32_serial_in(unsigned long =
+addr, int offset)
+> > return readl(vaddr + offset);
+> > }
+> >=20
+> > +/*
+> > + * early_mmio_serial_init() - Initialize MMIO-based early serial conso=
+le.
+> > + * @membase: UART base address.
+> > + * @nocfg: Skip configuration, assume BIOS has configured UART correct=
+ly.
+> > + * @baudrate (int): Baud rate.
+>=20
+>=20
+> Looks like unsigned long to me.
+>=20
+> > + * @keep: Keep after the real driver is available.
+>=20
+>=20
+> These 4 "parameters" are not the function arguments.
+> @s is the function argument.
+>=20
+> You could say in a comment that @s is scanned to obtain
+> these 4 parameters or something like that.
+
+Sorry, I messed the description.
+
+These 4 parameters meant to describe the arguments of the string to parse:
+   membase[,{nocfg|baudrate}][,keep]
+
+I will update.
+
+Thanks!
+
+>=20
+> > + */
+> > +static __init void early_mmio_serial_init(char *s)
+> > +{
+> > + unsigned long baudrate;
+> > + unsigned long membase;
+> > + char *e;
+> > +
+> > + if (*s =3D=3D ',')
+> > + s++;
+> > +
+> > + if (!strncmp(s, "0x", 2)) {
+> > + membase =3D simple_strtoul(s, &e, 16);
+> > + early_serial_base =3D (unsigned long)early_ioremap(membase, PAGE_SIZE=
+);
+> > + serial_in =3D mem32_serial_in;
+> > + serial_out =3D mem32_serial_out;
+> > +
+> > + s +=3D strcspn(s, ",");
+> > + if (s =3D=3D ',')
+> > + s++;
+> > + }
+> > +
+> > + if (!strncmp(s, "nocfg", 5))
+> > + baudrate =3D 0;
+> > + else {
+> > + baudrate =3D simple_strtoul(s, &e, 0);
+> > + if (baudrate =3D=3D 0 || s =3D=3D e)
+> > + baudrate =3D DEFAULT_BAUD;
+> > + }
+> > + if (baudrate)
+> > + early_serial_hw_init(115200 / baudrate);
+> > +}
+> > +
+> > +#ifdef CONFIG_PCI
+> > /
+> > * early_pci_serial_init()
+> > *
+> > @@ -352,6 +390,11 @@ static int __init setup_early_printk(char *buf)
+> > keep =3D (strstr(buf, "keep") !=3D NULL);
+> >=20
+> > while (*buf !=3D '\0') {
+> > + if (!strncmp(buf, "mmio", 4)) {
+> > + early_mmio_serial_init(buf + 4);
+> > + early_console_register(&early_serial_console, keep);
+> > + buf +=3D 4;
+> > + }
+> > if (!strncmp(buf, "serial", 6)) {
+> > buf +=3D 6;
+> > early_serial_init(buf);
+> >=20
+> > ---
+>=20
+>=20
+>=20
+> --
+> ~Randy
 
