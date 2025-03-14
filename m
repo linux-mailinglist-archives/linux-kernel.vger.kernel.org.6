@@ -1,117 +1,96 @@
-Return-Path: <linux-kernel+bounces-561182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DFD2A60EA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:21:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A40A60E79
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:13:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92675460FF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:21:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 015A0164E36
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19B51F4276;
-	Fri, 14 Mar 2025 10:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f/BlHhQI"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06355225D6;
+	Fri, 14 Mar 2025 10:12:34 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED311F2B90
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7781F3BB2;
+	Fri, 14 Mar 2025 10:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741947110; cv=none; b=e3j1mP4u1Zrbk053smIZGqF2RVaHR/t95trGrDX62YhVD+BCiDZs9952DkuKDb55KCE0x4S/USJYsOVOfrax6Lb2r/7AP74LOxj0ED41wsTnWdAI/Iepv78yKNRu7FtS+H/InM8eNIxS5xUhvmdXMaxyv4XYnjcX+Tl/0usNj4M=
+	t=1741947153; cv=none; b=D6UuHkdUqnH1A1llozCwoavjxCiF3WSDlru8YA4ea5vChopiZg5PWLPzNEo6DSCrImtjbzoVEzKhyGibqmDGtn0AuRzRt8m5LzNWeIfzjeu8TtpuCsHUOUxhb8mdnXPwzOfm70nd8VLWOzUkip+zVcTRDtW1rgzLiEhDrfz+es4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741947110; c=relaxed/simple;
-	bh=1Vi0CajOHRKeNKzH6avY9kIwFZ/TezpCqJGypsjuUds=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cUwQNQqvoHdGa5IteGxyVerEHLzxgaFXUlgR2OPrpJh/JN6+7RiRSon27cmKeJ6x0BaSgjHIzcoyPe9QlEaNcEkr/1BZoYnGGT1rTdfzSfT5xFaWYAXOV8sutQAUHyRIo0wvc7YqGBQq0SJlJfY6NsgnLW4V9fekugNyGa7Vtb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f/BlHhQI; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cfe574976so12086275e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:11:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741947107; x=1742551907; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IXrdPdZYVwV2bWnv1UKchMA+tMF9lSgD0HH6znImayo=;
-        b=f/BlHhQIdTYqTmPA/b5rXE/Z/Uwi37jn73qTlU30S6DYZNhAu/o5Gbd4w3GHON9ZI/
-         fq9Wj4Lt3PLeD4mZKrxRpQghy07pQWxwsGPMEo/P9warcLMx+GcDF5xxbWzDZWEysjyZ
-         ljBZzVros80DZIjd65x8TX5sZ8yMHVjOPDJCyXmMJN4YZL5YM01fJoqLOmzb4pWkz1pi
-         ipvKJj68NGqq9GRer9n9MXwC5Ou2eQJUEnV0ZmG2oR1eFBftJrtgj7umYfNvFb+mToJk
-         42mdbVEhTWL6qkCxmmn+VMF9DydsuAFds1sqUSajijuPmEO4bJf9fUQp87/6SqZS/mZK
-         KikA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741947107; x=1742551907;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IXrdPdZYVwV2bWnv1UKchMA+tMF9lSgD0HH6znImayo=;
-        b=Hq+YoI4ASYYPlNw9GMzMeNrIpshj1IGpfBSw9aJuSgW0Pnr9YnV6fK4XZVPscCbktY
-         f2lk0kJOee6kWYO0dNvO6ucIBi9e7lMRkmwUVGtnFAO8KxlH8kXCKcNoKItPb86yLcJB
-         NDNorrKMB/aIyT9OMc+YXQPmrqmWQ6dMq5VdQDhZQZOCOJadueFo2elbGdDUtmiwa+Un
-         tVnYg0KgysBySBPn+IDkZ/VDbdOIE33cv2iLZHyIzCTy/LObLNx8PUeyODtjkD2o7I+8
-         KvWkNBZhScs/sGsHoxWTQ/qriGAQp0vVJE8IH9zkg20S1WVM4mz1gFTROKU+TjgpeX2X
-         1EFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNULXJPiL6QhspMk7A642yQ3GkG3dOr4Onb41H571rYGvwWZ6EduwIeN8++XyowtvSittc9fNG6NLtNkU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3Oj8YE4ckkHnth96L00H357KGcFotYWOPolObG3qbEyd+BbW+
-	MeQwfhPtCS6Z3ZHvYVtd7miL3fgV1YRmrXRwHa7lnNe7Ky3oDJv9fITfJcit7vI=
-X-Gm-Gg: ASbGncumuHq+w2hPcS/d49y/mv4i/cdWV+CgPKMeA1r9SF3vNrcoKJUSx4ABasghV53
-	ww6ayQcy18Zhvoi2dqLv0Qhl+AA9uKLebSr18QKX0yyReCpt8XmBaUHVPnWnFF6/BvM5BI0kqzp
-	ORIwXh786bZJIOh2CLlhXUzBa/pOirErFBEDygHyBIpIBZ49OZx42UidMZ96CiDRy84eNvr8tn5
-	hvDH+8iaDUbOQ1qlEnktqP7xn0R+R4hobrqnkchWxJWxZijLjvBJj4WOONiy44g/a392KVbLrTR
-	SRusNtSp5Ah41solpqodFdSfIjOK4gNpUhL5ydE6S/dCQSuMew==
-X-Google-Smtp-Source: AGHT+IFu33nlZq8eDE9nkYaBwVTjMj37ygSLQh0y3dybArIim3lL6otY1GCHq+RK2eeNyDGoSAttHg==
-X-Received: by 2002:a05:600c:3108:b0:43c:fe15:41e1 with SMTP id 5b1f17b1804b1-43d1ec66daamr22153745e9.4.1741947106739;
-        Fri, 14 Mar 2025 03:11:46 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d2010e2a2sm12352535e9.39.2025.03.14.03.11.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 03:11:46 -0700 (PDT)
-Date: Fri, 14 Mar 2025 13:11:43 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] ASoC: amd: acp: Fix leak in acp_pci_probe()
-Message-ID: <3dad80cb-e177-45aa-97ac-df9c98a47d94@stanley.mountain>
+	s=arc-20240116; t=1741947153; c=relaxed/simple;
+	bh=TuNwZbXOlp8yH3oYznGzycF2Huzd0afoCR8oHtR6Sv4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ec+HjM2kg4XC64T+JlPHQf5msjFdLREf7lSsTX7f9tWLnsr+YZPdhDbCjXgV3s3uGH0st2U/Q5EDhYa4LOTTD9g26/8jHG2QNLiN2MU2sXJRzloqgCi5asDrlRslTiGWg9jJISvtbKeJpTOynkfMh/ItaBQyGFmAwHg+apogo/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDg7x59l3z6J7rg;
+	Fri, 14 Mar 2025 18:09:17 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id BEE8E140A70;
+	Fri, 14 Mar 2025 18:12:28 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Mar
+ 2025 11:12:28 +0100
+Date: Fri, 14 Mar 2025 10:12:26 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Gregory Price <gourry@gourry.net>
+CC: Yuquan Wang <wangyuquan1236@phytium.com.cn>, <rafael@kernel.org>,
+	<lenb@kernel.org>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <dan.j.williams@intel.com>, <rrichter@amd.com>,
+	<bfaccini@nvidia.com>, <rppt@kernel.org>, <haibo1.xu@intel.com>,
+	<chenbaozi@phytium.com.cn>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>
+Subject: Re: [PATCH v2] ACPI: NUMA: debug invalid unused PXM value for CFMWs
+Message-ID: <20250314101226.00003830@huawei.com>
+In-Reply-To: <Z9LzjQCKFfsdE2yJ@gourry-fedora-PF4VCD3F>
+References: <20250313060907.2381416-1-wangyuquan1236@phytium.com.cn>
+	<Z9LzjQCKFfsdE2yJ@gourry-fedora-PF4VCD3F>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-There needs to be some cleanup on this error path.  We can't just
-return directly.
+On Thu, 13 Mar 2025 11:02:37 -0400
+Gregory Price <gourry@gourry.net> wrote:
 
-Fixes: aaf7a668bb38 ("ASoC: amd: acp: Add new interrupt handle callbacks in acp_common_hw_ops")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- sound/soc/amd/acp/acp-pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Thu, Mar 13, 2025 at 02:09:07PM +0800, Yuquan Wang wrote:
+> > @@ -441,6 +441,11 @@ static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
+> >  	start = cfmws->base_hpa;
+> >  	end = cfmws->base_hpa + cfmws->window_size;
+> >  
+> > +	if (srat_disabled()) {
+> > +		pr_err("SRAT is missing or bad while processing CFMWS.\n");
+> > +		return -EINVAL;
+> > +	}
+> > +  
+> 
+> I thought the srat was optional regardless of the presence of a CFMWS.
+> Is this not the case?
 
-diff --git a/sound/soc/amd/acp/acp-pci.c b/sound/soc/amd/acp/acp-pci.c
-index 9322379cb36f..123524f90d6c 100644
---- a/sound/soc/amd/acp/acp-pci.c
-+++ b/sound/soc/amd/acp/acp-pci.c
-@@ -183,7 +183,7 @@ static int acp_pci_probe(struct pci_dev *pci, const struct pci_device_id *pci_id
- 			       IRQF_SHARED, "ACP_I2S_IRQ", chip);
- 	if (ret) {
- 		dev_err(&pci->dev, "ACP I2S IRQ request failed %d\n", ret);
--		return ret;
-+		goto de_init;
- 	}
- 
- 	check_acp_config(pci, chip);
--- 
-2.47.2
+True in theory, but do we want to support it?
+
+I'd vote no unless someone is shipping such a system and can't fix it up.
+
+Jonathan
+
+
+> 
+> ~Gregory
+> 
 
 
