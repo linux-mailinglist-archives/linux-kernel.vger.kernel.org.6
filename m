@@ -1,672 +1,853 @@
-Return-Path: <linux-kernel+bounces-560651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C4AA607B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 04:21:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC503A607BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 04:28:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAC4719C22F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:21:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 218CB3A8B75
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264985103F;
-	Fri, 14 Mar 2025 03:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F0512CDBE;
+	Fri, 14 Mar 2025 03:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="nDhmY6je"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="u3XgDTpG"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azolkn19010015.outbound.protection.outlook.com [52.103.10.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971BE5223
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741922477; cv=none; b=cyiz/qLMmOgutTyuQzZSwkW9o+/Plxf3ePJ+te6RDqujp8QjZeCt5EY4Lt5yDPXrTNGcSayjvHuwU1dYUehvpGHwG3HXxDjhebxVsK3Jyawb9U05vBphXSeuK2VVD5/CGrNU45RiIQqw4Q1NLm310VM5ALTD5Pi96+339EMbrpI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741922477; c=relaxed/simple;
-	bh=67Uwgi/9ZaKiD9tZ6e7rc7nRTP+h6eU43DGvE0C2P6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CLuhR3gqmoWa7zTvzCp40kSCdS9KmnDnezyF4CBT39nPtT69J53IYC5nZxvN2alEUfzCGBd0O9oaLGQe7MzJvSt2g1f2jMJHPdDda4szGOA0e95Euqau6G3Rliwwp+2+lonvB3kFxmMt61mVN3pxccXP/qLbWmsNDTdpdCuicCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=nDhmY6je; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c0155af484so225264885a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 20:21:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1741922474; x=1742527274; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2ux6CFNgIf3vTaeLtNojt06t4nFGVzH4j0lyfxDGjHY=;
-        b=nDhmY6jeguw3PnbP6XoKDBjyQ6FNOwd0HDsB/3Z5NVM7BkXJioM2s0bVA+zcYDIzX9
-         ISleOeU/kBohNSH3VZA7nBa1TRHiv/W2crSdwfdb6khwF7QuYg9UY/jg/XVwE+aGKaxb
-         y5K08cw1pa/drCUI/1NYkb9AK3PEBGXuZkWKoo0t7HZGZfTE7N8BKU1dkEWThSn+GLq+
-         759evI62N0LEngsU7t17VB3SGzCb5L3sH4fzz8g6thFTXqvY0smzVgoiTJil/YwE35XR
-         RsB47G8BXOCtCIVNfNrEybQMuYm468KPAPs9f147ijFyZ8H0M+B94cZClnYEvs+Pgaos
-         t4lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741922474; x=1742527274;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2ux6CFNgIf3vTaeLtNojt06t4nFGVzH4j0lyfxDGjHY=;
-        b=fG5FUMFAi9z61RG14wiENa/lyyFfBVpGyVq9I8iMZgZG54D1G49oLjNN+zDiKPw54L
-         W0yyzUYUj+BEUBgj3FYkHsFl4xk5uOQIyLQIZ7TBTd4MB3jc16RpSYvmxOWSAGTZRC69
-         cR8ekkY1L+RAwL6jWK9Ms3y821UObs8sdN9PqnJZiQCH4a5fp93jmFJhMawDIk0Zbu3Z
-         clNha2S+vcLEjg+syvPIFWBz4L+GhZO3fP26+31KyC2D+2KlZHhHcbpPr3/JRWtkt2TZ
-         6pJ0yO47ttSW4utHLvsUFlV/Q1Wh1NxWmmz5M/ewaTkaojE4dZNvzGuSbmFFV9xggVxQ
-         GUoA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/I7blaAsMF4w6jRatlRX8l+eZaQXHihPJV71+cK+NDXuEpAcyW994t5+tV6uORLXYUTJr5OR22SYloGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysEzX8cqCM0ST25jEq1iCJISymItmG4d8iMVKoos9MxbJLhifQ
-	6tXlQUq1EkXAuW53p5eUAtfa75TJ4XQkV3huTgeLuoY1ZdaXP56aAmxYJLpzrWU=
-X-Gm-Gg: ASbGnctgDxmOMiKKsbmX4G/vdnfJxeCBpoPFiVXg9TLy46QgupIJeNEGNnsPD9CG2qT
-	VLnZ7nB6OgLoKOdV41+Iv8Chj8gb6keDMaz6IlRPpOZh/o0Clqd1WhM3RtQDtEH6zfgE7olCwk8
-	WCAz1L/TNQlfPyP4c3PGf0MAOnlPaXqwPjCphZyc+YmFu2m0qtEZX4DDBGvab09qGydcpp3NrOR
-	dcAP9whJqUUisycE94v3mPQsKkDVDQj6jihj7T55oeWl3hDFflko+IXGFNtIRRi8GBesLOW5GYq
-	W3eu9suImRiL4PU8NeJum/A1hJRPQ4BRk9kcA/xIxba7t8tlhLKZSwEOZ1IxT3EiK7Uu5nIt400
-	FbcI/ZbQQH9J5Lf5/nO4Gbr4PLxo=
-X-Google-Smtp-Source: AGHT+IF1asb2m4Q7VP1ePD104ALa7KxEpSasJCIfnfDaTFg+XuwdvZgE3PbHIFrHXhS0rPd+wUtwWg==
-X-Received: by 2002:a05:620a:1920:b0:7c5:405e:e88f with SMTP id af79cd13be357-7c57c7d6cf6mr122564685a.21.1741922474195;
-        Thu, 13 Mar 2025 20:21:14 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573c98225sm186000785a.49.2025.03.13.20.21.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 20:21:13 -0700 (PDT)
-Date: Thu, 13 Mar 2025 23:21:11 -0400
-From: Gregory Price <gourry@gourry.net>
-To: lsf-pc@lists.linux-foundation.org
-Cc: linux-mm@kvack.org, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [LSF/MM] CXL Boot to Bash - Section 6: Page allocation
-Message-ID: <Z9Ogp9fCEPoORfnh@gourry-fedora-PF4VCD3F>
-References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DDD5223;
+	Fri, 14 Mar 2025 03:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.10.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741922885; cv=fail; b=IK4VvlWTAIrP2V4acovzmzMm28K+gGEDlVjNsJ+fwCMO+FybzmNeJDoItkUoM8pHCkGNN3NlicbHgTOcIjF6KPPXpSYMohW+IzC/bz2Fj8kvfnrZM9gQfAweawXooMXq00yIqLN24GQbXJbU084IG0souXqJ2OtNT43yCMqtvhY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741922885; c=relaxed/simple;
+	bh=0PogA0qjexboIFmrYmKzTs8LfE412eeWZ0Cg845iIoo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=kjQEwhwP6aev+9MjRgIPw7sABUv0sBRf/ai5swGoiUB6vuO4e8GNoF9CXVIuCtWWwzngQnDFoOyaM+y8WXbVjOU75PNE11thMbtrV0+zSdPEX8UpQaAd7zMhZCBdHd1qrASmY/smHZbk1XD48DTit89pLbQioWlrSVFapnI4AwQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=u3XgDTpG; arc=fail smtp.client-ip=52.103.10.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LGfLnaxz8zppsjmCyYWmFqYxbamlqm8nrBuu/+wKursbzPo8zX29yykJ1bT8JqieS+dgGQnbQndoMv3R+P/wiHC3Wofbl+Nc8AfVsQbo/ajZoUTWhMJZ6kEaRHrTaim7z0vuG3n1l0nol8aQL7nlBdFGHM7agzp9TeHFgDdk61PtbSwWc1Q9CyxmYOyFJosKX6NNjn4I3+HcCD/HVFL7e8Jksl17evY9HYzvZWq0lIpxSq0OTdPYwA4Q4Wc4eG2WzgyuMeh0yoDEaabCA1/KAs/YvkNy4Jxn0P+EJAkc/IeGofVdV9cWp2frSyDyz+Z7tZTqDIhc5GbZNURNIuoNTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vqzIrktUDSceqVDWq2mFAjpGLT3xhxA7U5ytD+lLKnc=;
+ b=r8ly7p4xgSwNDlzfd1/m9sbOp6yHoZmqiyAZa62wGkmC9zTbQml14z9nf1UL1NGnNMtcSw+cnKYoTuvrqgwIpSx5hhIZrV4fd7ort/Z6Xv3OESztIG7bzJVab6J6ZV9/rt95NBiLH2+8gEKiIzwulQIteQbvanvAGdptxfxuIj8OSVSVtjrIdChnyRDXHyR61/yqdHym1a4p9AljwYem6Q7y3Vhq9Bw3Z3xl3ViRQEcb7ZbqterxplwLQMnuvJkiPYTMBAxDKb5dQ3+KzhhWorYd9HalBxCtm97wrK1uniuSizvAFKFgypeQj1x6U0umz1puGg/vvtUyO8Eq3POHCg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vqzIrktUDSceqVDWq2mFAjpGLT3xhxA7U5ytD+lLKnc=;
+ b=u3XgDTpGDEtzorFRwigQQohUgXXWsgJyFYBEhPEhWY/53oDC7Wb3yWPjRVelyOsWKiByquTjQn5jBs88lJFRMg0bRQaRpBCuWPakVSB5gBRMIKf89tI3Fi4Cc9HKzQN457d9WwIW0jmh3hPMTvfDi1BPxf1OIIGL9tNMJYYCjcYiL9pCPKJ/AhhVE+sGYdlnijw81LpX0I62oCM82VAdSFBQF58eH9SKO+/xhzYwVNsloiZm27Sy+FPZD+O5/mdH9j5X1hO+AAqEVtpMzgdxisS1fL/VOutLRE2jfLRx4pzOIkCS220pclNlnA/1AJtyj4QXY8KtcYZQRq4y6eWAWw==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by CH4PR02MB10777.namprd02.prod.outlook.com (2603:10b6:610:246::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Fri, 14 Mar
+ 2025 03:28:00 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8511.026; Fri, 14 Mar 2025
+ 03:27:59 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org"
+	<linux-arch@vger.kernel.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>
+CC: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
+	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com"
+	<hpa@zytor.com>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+	"joro@8bytes.org" <joro@8bytes.org>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "arnd@arndb.de" <arnd@arndb.de>,
+	"jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+	"muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+	"skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+	"mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
+	"ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+	"apais@linux.microsoft.com" <apais@linux.microsoft.com>,
+	"Tianyu.Lan@microsoft.com" <Tianyu.Lan@microsoft.com>,
+	"stanislav.kinsburskiy@gmail.com" <stanislav.kinsburskiy@gmail.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"vkuznets@redhat.com" <vkuznets@redhat.com>, "prapal@linux.microsoft.com"
+	<prapal@linux.microsoft.com>, "muislam@microsoft.com"
+	<muislam@microsoft.com>, "anrayabh@linux.microsoft.com"
+	<anrayabh@linux.microsoft.com>, "rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>
+Subject: RE: [PATCH v5 10/10] Drivers: hv: Introduce mshv_root module to
+ expose /dev/mshv to VMMs
+Thread-Topic: [PATCH v5 10/10] Drivers: hv: Introduce mshv_root module to
+ expose /dev/mshv to VMMs
+Thread-Index: AQHbiKNt140GtdgK20KtRyAXlJwH1rNuG4iAgAPhJoCAAA1jIA==
+Date: Fri, 14 Mar 2025 03:27:59 +0000
+Message-ID:
+ <SN6PR02MB41574CEB28BBC338EFBAE624D4D22@SN6PR02MB4157.namprd02.prod.outlook.com>
+References:
+ <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-11-git-send-email-nunodasneves@linux.microsoft.com>
+ <SN6PR02MB4157C3F431CD26EDA05E4AD4D4D32@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <adfdd111-f838-48a4-b77d-4207f3ab9976@linux.microsoft.com>
+In-Reply-To: <adfdd111-f838-48a4-b77d-4207f3ab9976@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CH4PR02MB10777:EE_
+x-ms-office365-filtering-correlation-id: f4d9cf8d-0923-48f4-36b0-08dd62a83861
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|8060799006|15080799006|19110799003|8062599003|102099032|10035399004|440099028|3412199025|12091999003|41001999003;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?3GtBaFzMdk50h9pmGt0PDjTGxA7M+X73vSRFGdsSBNkFsRP4YjhEcqnx4O0L?=
+ =?us-ascii?Q?JzMphRWTlgvxG92s9MI0ilzvo3ghdn13DUYJ47hc3XmJ0KqbfQvNvlI5Aj3F?=
+ =?us-ascii?Q?/EJFpz4VGtYsNJBa6F93h+9Qo7Ev7Xq9z9+eDDP3px+fpPkm3qwujxNvWzym?=
+ =?us-ascii?Q?y2LgcfFncefN1eXrZi4UVBt7tEmWGxLqqnSfx/MhKtKnwMOI7X5LL5XCzE3S?=
+ =?us-ascii?Q?bKz+U8xA0djmlEbU3arkFqrFWYNR3OjrMf5IoRT6ZzjIvgcBJF+9Finjgvum?=
+ =?us-ascii?Q?Sg8jBOd5EL/IgE4JuhxHmzMmr6/p/rqbtuXzzw//cBBN0RW/jRQzgCS3j7lr?=
+ =?us-ascii?Q?mEckY3fnJncIXcqdLB8u25yO+GO54/5YJ++eHFDZLGt2dbodkxrJgCQ1ZqrZ?=
+ =?us-ascii?Q?MaIvVGgd04SsRImgNwvEZcZa/iaYpSbDkUgKajtVmscG1m4Nj+DY6k8HVSfn?=
+ =?us-ascii?Q?K8fV2wJLpmIdP8iIiRFsaNVb2fzPKz8yq0ILApCIuFSW7trm36tZQGrex7o9?=
+ =?us-ascii?Q?nzMu98Gm3+y/e0PbfifmkMW7THLFix9P1YAWVtH1xqPHNThHF7MIuS44COwZ?=
+ =?us-ascii?Q?rDIXLz7auhGWyif+aT8AeOYyjxBN1rly3NA2x7sH/52sGnYAhzzKzELs52gX?=
+ =?us-ascii?Q?IIEmh+3Obn3J994uYwJOUW04QdPpxKb450JF3kiCEVVqkeQ0gtun4jGl6Fxh?=
+ =?us-ascii?Q?LUsNlpW1LzbLOYC5UYGdOpJcH8Ml5pLoyPK5870YV/iTHT8VAsRgNfZ26gFK?=
+ =?us-ascii?Q?oocKROxNhlEOBm5G6CkgCNYKMJIXRS9OH0MG7h3P4TDKl6vs9ZadGh9FuNAk?=
+ =?us-ascii?Q?fZcdTCA0DxSM+NfXJ8CSOcBaudi0Cs8fnNlT3DysbjeWLRaHdCfR86AOeDSe?=
+ =?us-ascii?Q?nRLxmxntRkAdEkcb2Uv+qndYHSSV3GG5KOYx1phFBAlEnokTsyzDOnQ+ueBu?=
+ =?us-ascii?Q?POSubuMYMCcEGjJaQq7yNIUkMXr53xN4qE6T8ls1Og9L3CeSBn0XcXEXpAat?=
+ =?us-ascii?Q?oH/IbahX1DDh0s3VBADYIsIxCAxgTaSk5DTdGvh6apngPp83UQ1tuuyYwPfF?=
+ =?us-ascii?Q?ZP/NL9/6RngdSMTxACbhISlJvVUhwA4GajjAXWUsfn3rf9tPkrNX0DmmkOYK?=
+ =?us-ascii?Q?jKypD0orXjGG+BosaG+jaU0K1aKgXDEO1neLIaP47StEuUoAlBOjVMdqVS26?=
+ =?us-ascii?Q?3gMF+h0a/uisNhjMCjuMuY8yPDrQxvYsIVB9jm16wzuO7oLi7S3+p5Afeasl?=
+ =?us-ascii?Q?QgDuIebrgZ9V4bpukp8y?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?LHvBiSaKDTms4eDTZm8mjE0csHJn1cwqGUeqd1pH2ElCV9j+RG3idj+oNXf4?=
+ =?us-ascii?Q?5V2Cwx5hR5bGzNCpYHOUX7X81pRzBKoaEP2F1osgDY6NuCStQ0W5Mg9pyDLK?=
+ =?us-ascii?Q?yLp7XEFLiUy7ZOAMXx2gbS2b4y7+V7MzZe/Ctoi3PX9Lj3th8aVd9xeAvphc?=
+ =?us-ascii?Q?Cz5yWqqn2w88msml6+zvB0lTpFp7IBkscDXgkNkgX1gTqRZ30uL62ewud72b?=
+ =?us-ascii?Q?UDYHLe5os49kNUgGXRup1QFebF3NlKK+wcgvTURvjr+KsMxGuTAssKTB3o6V?=
+ =?us-ascii?Q?zCt0aAWHrNFCoRn5ETWjug4GvWSvO7RGxUUvRz1bBSiFUukZ7k7jjD6wlZil?=
+ =?us-ascii?Q?Ca6RGXN1pkubXpfz9+o5q+qQP67aMqojEAgwjW8nSXALWLLkLWfto1ubSBSj?=
+ =?us-ascii?Q?8X4qnxp67mFIG0UO/xZaxl9QK+kRXeETnbhSTZ4t4mqlYDbNGlBt0ybbSMQn?=
+ =?us-ascii?Q?pdY0OvAzbx/cknhHI2JF/YcwIiVYP9k1M7aVw1d4pd3Ai0DYL8WLOIaZZcXx?=
+ =?us-ascii?Q?7eRrfl8GTdMLSzPWwLmKvh+8TSR6iXi1u2SDbEzR41Z9cImkwKNttUL7wmh3?=
+ =?us-ascii?Q?pJmWIkPB1OmX5PZsE08TmCzVmkAMTXzHa03zcuXbr167Cgjk8OlljYeh0+jw?=
+ =?us-ascii?Q?OBrjTjSKPOZS+WlJ982TPSxGM2OMPrpsrJUIYON4RaEZ31mjg5hsTPangH5O?=
+ =?us-ascii?Q?AB4oGw5ed5Sil3oONOZlKQWzaGCvU833qkCtjp8fpMLRM8WC8tX4JPYv2aa3?=
+ =?us-ascii?Q?g0K3Adh99UW1cRXUaV/lWyGSFfinnP/KIVSF2U8QYXqC4uiy7DkfcOrNMHp0?=
+ =?us-ascii?Q?9RSd7nNg+n6e15Kcy+O18gamEmyLA+5cVzm9qwW5IGmwdIog1pjgKRbnqlUR?=
+ =?us-ascii?Q?BIao9/sSe4D48+8O5QRz851KMRdXakzeoagKDBxk1uJd8O9Viy/vWeK92ynR?=
+ =?us-ascii?Q?wqWFbePrCLmVL0RVJkp8mmP5louKoZLScgOHHOueV5lbraF8hsUSgRWT0uG1?=
+ =?us-ascii?Q?YepWOjYLxlMLAmrDg8GYQXGORHaDKlfWF3sh34ufuY7o+5mbvg8S+C9mxxMY?=
+ =?us-ascii?Q?tf+jZvpEqTe5QJuoa/P6yk50in5ClblQG7Jr0HCy/ZNHt6fK7MjfHJ0MKoAR?=
+ =?us-ascii?Q?61wg8pEhL9u//wf+j2GtFaVnO3L7hF4hwpOjGKrshpn3vtqiykT/tvufV4bm?=
+ =?us-ascii?Q?iKHLsvdk5je6skWdWWjYQ/4AY0WYJUXleVp9tjea6B+luVOEo5U2xq7YRQc?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4d9cf8d-0923-48f4-36b0-08dd62a83861
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Mar 2025 03:27:59.5781
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH4PR02MB10777
+
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Thursday, Mar=
+ch 13, 2025 7:16 PM
+>=20
+> On 3/13/2025 9:43 AM, Michael Kelley wrote:
+> > From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Wednesday=
+,
+> February 26, 2025 3:08 PM
+> >>
+> >
+> > I've done a partial review of the code in this patch.  See comments inl=
+ine
+> > as usual.
+> >
+> > I'd like to still review most of the code in mshv_root_main.c, and mayb=
+e
+> > some of mshv_synic.c and include/uapi/linux/mshv.c. I'll send a separat=
+e
+> > email with those comments when I complete them. The patch is huge, so
+> > I'm breaking my review comments into two parts.
+> >
+> > I've glanced through mshv_eventfd.c, mshv_eventfd.h, and mshv_irq.c,
+> > but I don't have enough knowledge/expertise in these areas to add any
+> > useful comments, so I'm not planning to review them further.
+> >
+> Thanks for taking a look. Just so you know, I was getting ready to post v=
+6 of
+> this patchset when I saw this email. So not all the comments will be addr=
+essed
+> in the next version, but I've noted them and I will keep an eye out for t=
+he
+> second part if you send it after v6 is posted.
+
+That's fine.
+
+>=20
+> <snip>
+> >> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> >> b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> >> index 6d1465315df3..66dcfaae698b 100644
+> >> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> >> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> >> @@ -370,6 +370,8 @@ Code  Seq#    Include File                        =
+                   Comments
+> >>  0xB7  all    uapi/linux/remoteproc_cdev.h                            =
+<mailto:linux-
+> >> remoteproc@vger.kernel.org>
+> >>  0xB7  all    uapi/linux/nsfs.h                                       =
+<mailto:Andrei Vagin
+> >> <avagin@openvz.org>>
+> >>  0xB8  01-02  uapi/misc/mrvl_cn10k_dpi.h                              =
+Marvell CN10K DPI driver
+> >> +0xB8  all    uapi/linux/mshv.h                                       =
+Microsoft Hyper-V /dev/mshv driver
+> >
+> > Hmmm. Doesn't this mean that the mshv ioctls overlap with the Marvell
+> > CN10K DPI ioctls? Is that intentional? I thought the goal of the centra=
+l
+> > registry in ioctl-number.rst is to avoid overlap.
+> >
+> Yes, they overlap. In practice it really doesn't matter IMO - IOCTL numbe=
+rs
+> are only interpreted by the driver of the device that the ioctl() syscall
+> is made on.
+>=20
+> I believe the whole scheme to generate unique IOCTL numbers and try not t=
+o
+> overlap them was is some case I'm not familiar with - something like
+> multiple drivers handling IOCTLs on the same device FD? And maybe it's ha=
+ndy
+> in debugging if you see an IOCTL number in isolation and want to know whe=
+re
+> it comes from?
+
+Yes, I think the debugging aspect is one that is mentioned in the text in
+ioctl-number.rst. For example, maybe you want to filter the ioctl() system =
+call
+based on a particular ioctl value.
+
+>=20
+> On a practical note, we have been using this IOCTL range for some time
+> in other upstream code like our userspace rust library which interfaces w=
+ith
+> this driver (https://github.com/rust-vmm/mshv). So it would also be nice =
+to
+> keep that all working as much as possible with the kernel code that is on
+> this mailing list.
+
+I can see that having to change the ioctl values could be a pain. And appar=
+ently
+there are already some historical overlaps. Also I saw that later in Patch =
+10 where
+the mshv ioctls are defined, you have some overlaps just within the mshv sp=
+ace.
+I don't really like the idea of having overlaps, either within the mshv spa=
+ce, or
+with other drivers.  Doing a transition to non-overlapping values would pro=
+bably
+mean the driver having to accept both the "old" and "new" values for a whil=
+e
+until the rust library can be updated and deployed copies using the old val=
+ues
+go away.  It could be done in a relatively seamless fashion, but I can't re=
+ally
+make a strong argument that it would be worth the hassle.
+
+>=20
+> <snip>>> +#endif /* _MSHV_H */
+> >> diff --git a/drivers/hv/mshv_common.c b/drivers/hv/mshv_common.c
+> >> new file mode 100644
+> >> index 000000000000..d97631dcbee1
+> >> --- /dev/null
+> >> +++ b/drivers/hv/mshv_common.c
+> >> @@ -0,0 +1,161 @@
+> >> +// SPDX-License-Identifier: GPL-2.0-only
+> >> +/*
+> >> + * Copyright (c) 2024, Microsoft Corporation.
+> >> + *
+> >> + * This file contains functions that are called from one or more modu=
+les: ROOT,
+> >> + * DIAG, or VTL. If any of these modules are configured to build, thi=
+s file is
+> >
+> > What are the DIAG and VTL modules?  I see only a root module in the Mak=
+efile.
+> >
+> Ah, yep, they are not in this patchset but will follow. I can remove ther=
+eferences to them
+> here, and make this comment future tense: "functions that WILL
+> be called from one or more modules".
+>=20
+> <snip>>> +
+> >> +struct mshv_vp {
+> >> +	u32 vp_index;
+> >> +	struct mshv_partition *vp_partition;
+> >> +	struct mutex vp_mutex;
+> >> +	struct hv_vp_register_page *vp_register_page;
+> >> +	struct hv_message *vp_intercept_msg_page;
+> >> +	void *vp_ghcb_page;
+> >> +	struct hv_stats_page *vp_stats_pages[2];
+> >> +	struct {
+> >> +		atomic64_t vp_signaled_count;
+> >> +		struct {
+> >> +			u64 intercept_suspend: 1;
+> >> +			u64 root_sched_blocked: 1; /* root scheduler only */
+> >> +			u64 root_sched_dispatched: 1; /* root scheduler only */
+> >> +			u64 reserved: 62;
+> >
+> > Hmmm.  This looks like 65 bits allocated in a u64.
+> >
+> Indeed it is, good catch
+>=20
+> >> +
+> >> +	/*
+> >> +	 * Since MSHV does not support more than one async hypercall in flig=
+ht
+> >
+> > Wording is a bit messed up.  Drop the "Since"?
+> >
+> Yep, thanks
+>=20
+> >> +	 * for a single partition. Thus, it is okay to define per partition
+> >> +	 * async hypercall status.
+> >> +	 */
+> <snip>
+> >> +
+> >> +extern struct mshv_root mshv_root;
+> >> +extern enum hv_scheduler_type hv_scheduler_type;
+> >> +extern u8 __percpu **hv_synic_eventring_tail;
+> >
+> > Per comments on an earlier patch, the __percpu is in the wrong place.
+> >
+> Thanks, will fix here too.
+> <snip>>> +int hv_call_create_partition(u64 flags,
+> >> +			     struct hv_partition_creation_properties creation_properties,
+> >> +			     union hv_partition_isolation_properties isolation_properties,
+> >> +			     u64 *partition_id)
+> >> +{
+> >> +	struct hv_input_create_partition *input;
+> >> +	struct hv_output_create_partition *output;
+> >> +	u64 status;
+> >> +	int ret;
+> >> +	unsigned long irq_flags;
+> >> +
+> >> +	do {
+> >> +		local_irq_save(irq_flags);
+> >> +		input =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> >> +		output =3D *this_cpu_ptr(hyperv_pcpu_output_arg);
+> >> +
+> >> +		memset(input, 0, sizeof(*input));
+> >> +		input->flags =3D flags;
+> >> +		input->compatibility_version =3D HV_COMPATIBILITY_21_H2;
+> >> +
+> >> +		memcpy(&input->partition_creation_properties, &creation_properties,
+> >> +		       sizeof(creation_properties));
+> >
+> > This is an example of a generic question/concern that occurs in several=
+ places. By
+> > doing a memcpy into the hypercall input, the assumption is that the cre=
+ation
+> > properties supplied by the caller have zeros in all the reserved or unu=
+sed fields.
+> > Is that a valid assumption?
+> >
+> When the entire struct is provided as a function parameter, I think it's =
+a valid
+> assumption that that struct is initialized correctly by the caller.
+>=20
+> The alternative (taking it to an extreme, in my opinion) is that we go th=
+rough
+> each field in the parameters and assign them all individually, which coul=
+d be quite
+> a lot of fields. E.g. going through all the bits in these structs with 60=
++ bitfields
+> and re-setting them here to be sure the reserved bits are 0.
+
+Agreed -- I would not advocate the extreme alternative.  But perhaps the
+requirement on the caller to correctly initialize all the memory should
+be made more explicit in the cases where that's true.
+
+>=20
+> >> +
+> >> +		memcpy(&input->isolation_properties, &isolation_properties,
+> >> +		       sizeof(isolation_properties));
+> >> +
+> >> +		status =3D hv_do_hypercall(HVCALL_CREATE_PARTITION,
+> >> +					 input, output);
+
+<snip>
+
+> >> +/* Ask the hypervisor to map guest ram pages or the guest mmio space =
+*/
+> >> +static int hv_do_map_gpa_hcall(u64 partition_id, u64 gfn, u64 page_st=
+ruct_count,
+> >> +			       u32 flags, struct page **pages, u64 mmio_spa)
+> >> +{
+> >> +	struct hv_input_map_gpa_pages *input_page;
+> >> +	u64 status, *pfnlist;
+> >> +	unsigned long irq_flags, large_shift =3D 0;
+> >> +	int ret =3D 0, done =3D 0;
+> >> +	u64 page_count =3D page_struct_count;
+> >> +
+> >> +	if (page_count =3D=3D 0 || (pages && mmio_spa))
+> >> +		return -EINVAL;
+> >> +
+> >> +	if (flags & HV_MAP_GPA_LARGE_PAGE) {
+> >> +		if (mmio_spa)
+> >> +			return -EINVAL;
+> >> +
+> >> +		if (!HV_PAGE_COUNT_2M_ALIGNED(page_count))
+> >> +			return -EINVAL;
+> >> +
+> >> +		large_shift =3D HV_HYP_LARGE_PAGE_SHIFT - HV_HYP_PAGE_SHIFT;
+> >> +		page_count >>=3D large_shift;
+> >> +	}
+> >> +
+> >> +	while (done < page_count) {
+> >> +		ulong i, completed, remain =3D page_count - done;
+> >> +		int rep_count =3D min(remain, HV_MAP_GPA_BATCH_SIZE);
+> >> +
+> >> +		local_irq_save(irq_flags);
+> >> +		input_page =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> >> +
+> >> +		input_page->target_partition_id =3D partition_id;
+> >> +		input_page->target_gpa_base =3D gfn + (done << large_shift);
+> >> +		input_page->map_flags =3D flags;
+> >> +		pfnlist =3D input_page->source_gpa_page_list;
+> >> +
+> >> +		for (i =3D 0; i < rep_count; i++)
+> >> +			if (flags & HV_MAP_GPA_NO_ACCESS) {
+> >> +				pfnlist[i] =3D 0;
+> >> +			} else if (pages) {
+> >> +				u64 index =3D (done + i) << large_shift;
+> >> +
+> >> +				if (index >=3D page_struct_count) {
+> >
+> > Can this test ever be true?  It looks like the pages array must
+> > have space for each 4K page even if mapping in 2Meg granularity.> But o=
+nly every 512th
+> entry in the pages array is looked at
+> > (which seems a little weird). But based on how rep_count is set up,
+> > I don't see how the algorithm could go past the end of the pages
+> > array.
+> >
+> I don't think the test can actually be true - IIRC I wrote it as a kind
+> of "is my math correct?" sanity check, and there was a pr_err() or a
+> WARN()here in a previous iteration of the code.
+>=20
+> The large page list is a bit weird - When we allocate the large pages in
+> the kernel, we get all the (4K) page structs for that range back from the
+> kernel, and we hang onto them. When mapping the large pages into the
+> hypervisor we just have to map the PFN of the first page of each 2M page,
+> hence the skipping.
+>=20
+> Now I'm thinking about it again, maybe we can discard most of the 4K page
+> structs the kernel gives back and keep it as a packed array of the "head"
+> pages which are all we really need (and then also simplify this mapping
+> code and save some memory).
+>=20
+> The current code was just the simplest way to add the large page
+> functionality on top of what we already had, but looks like it could
+> probably be improved.
+>=20
+> >> +					ret =3D -EINVAL;
+> >> +					break;
+> >> +				}
+> >> +				pfnlist[i] =3D page_to_pfn(pages[index]);
+> >> +			} else {
+> >> +				pfnlist[i] =3D mmio_spa + done + i;
+> >> +			}
+> >> +		if (ret)
+> >> +			break;
+> >
+> > This test could also go away if the ret =3D -EINVAL error above can't
+> > happen.
+> >
+> Ack
+> <snip>
+> >> +
+> >> +/* Ask the hypervisor to map guest mmio space */
+> >> +int hv_call_map_mmio_pages(u64 partition_id, u64 gfn, u64 mmio_spa, u=
+64 numpgs)
+> >> +{
+> >> +	int i;
+> >> +	u32 flags =3D HV_MAP_GPA_READABLE | HV_MAP_GPA_WRITABLE |
+> >> +		    HV_MAP_GPA_NOT_CACHED;
+> >> +
+> >> +	for (i =3D 0; i < numpgs; i++)
+> >> +		if (page_is_ram(mmio_spa + i))
+> >
+> > FWIW, doing this check one-page-at-a-time is somewhat expensive if nump=
+gs
+> > is large. The underlying data structures should support doing a single =
+range
+> > check, but I haven't looked at whether functions exist to do such a ran=
+ge check.
+> >
+> Indeed - I'll make a note to investigate, thanks.
+>=20
+> >> +			return -EINVAL;
+> >> +
+> >> +	return hv_do_map_gpa_hcall(partition_id, gfn, numpgs, flags, NULL,
+> >> +				   mmio_spa);
+> >> +}
+> >> +
+> >> +int hv_call_unmap_gpa_pages(u64 partition_id, u64 gfn, u64 page_count=
+_4k,
+> >> +			    u32 flags)
+> >> +{
+> >> +	struct hv_input_unmap_gpa_pages *input_page;
+> >> +	u64 status, page_count =3D page_count_4k;
+> >> +	unsigned long irq_flags, large_shift =3D 0;
+> >> +	int ret =3D 0, done =3D 0;
+> >> +
+> >> +	if (page_count =3D=3D 0)
+> >> +		return -EINVAL;
+> >> +
+> >> +	if (flags & HV_UNMAP_GPA_LARGE_PAGE) {
+> >> +		if (!HV_PAGE_COUNT_2M_ALIGNED(page_count))
+> >> +			return -EINVAL;
+> >> +
+> >> +		large_shift =3D HV_HYP_LARGE_PAGE_SHIFT - HV_HYP_PAGE_SHIFT;
+> >> +		page_count >>=3D large_shift;
+> >> +	}
+> >> +
+> >> +	while (done < page_count) {
+> >> +		ulong completed, remain =3D page_count - done;
+> >> +		int rep_count =3D min(remain, HV_MAP_GPA_BATCH_SIZE);
+> >
+> > Using HV_MAP_GPA_BATCH_SIZE seems a little weird here since there's
+> > no input array and hence no constraint based on keeping input args to
+> > just one page. Is it being used as an arbitrary limit so the rep_count
+> > passed to the hypercall isn't "too large" for some definition of "too l=
+arge"?
+> > If that's the case, perhaps a separate #define and a comment would
+> > make sense. I kept trying to figure out how the batch size for unmap wa=
+s
+> > related to the map hypercall, and I don't think there is any relationsh=
+ip.
+> >
+> I think batching this was intentional so that we can be sure to re-enable
+> interrupts periodically when unmapping an entire VM's worth of memory. Th=
+at
+> said, as you know the hypercall will return if it takes longer than a cer=
+tain
+> amount of time so I guess that is "built-in" in some sense.
+>=20
+> I think keeping the batching, but #defining a specific value for unmap as=
+ you
+> suggest is a good idea.
+>=20
+> I'd be inclined to use a similar number (something like 512).
+
+Yes, I agree the batching should be kept because interrupts are disabled.
+If the rep hypercall is taking a "long time", it will by itself come up for
+air to allow taking interrupts. If interrupts were not disabled, that would
+solve the problem. But with interrupts disabled, you do need some
+batching.
+
+Using a number like 512 makes sense to me. Just add a comment that
+the value is somewhat arbitrary and only to allow for interrupts. It's
+not based on memory space for input/output arguments like all the
+other batch sizes.
+
+>=20
+> >> +
+> >> +		local_irq_save(irq_flags);
+> >> +		input_page =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> >> +
+> >> +		input_page->target_partition_id =3D partition_id;
+> >> +		input_page->target_gpa_base =3D gfn + (done << large_shift);
+> >> +		input_page->unmap_flags =3D flags;
+> >> +		status =3D hv_do_rep_hypercall(HVCALL_UNMAP_GPA_PAGES, rep_count,
+> >> +					     0, input_page, NULL);
+> >> +		local_irq_restore(irq_flags);
+> >> +
+> >> +		completed =3D hv_repcomp(status);
+> >> +		if (!hv_result_success(status)) {
+> >> +			ret =3D hv_result_to_errno(status);
+> >> +			break;
+> >> +		}
+> >> +
+> >> +		done +=3D completed;
+> >> +	}
+> >> +
+> >> +	return ret;
+> >> +}
+> >> +
+> >> +int hv_call_get_gpa_access_states(u64 partition_id, u32 count, u64 gp=
+a_base_pfn,
+> >> +				  union hv_gpa_page_access_state_flags state_flags,
+> >> +				  int *written_total,
+> >> +				  union hv_gpa_page_access_state *states)
+> >> +{
+> >> +	struct hv_input_get_gpa_pages_access_state *input_page;
+> >> +	union hv_gpa_page_access_state *output_page;
+> >> +	int completed =3D 0;
+> >> +	unsigned long remaining =3D count;
+> >> +	int rep_count, i;
+> >> +	u64 status;
+> >> +	unsigned long flags;
+> >> +
+> >> +	*written_total =3D 0;
+> >> +	while (remaining) {
+> >> +		local_irq_save(flags);
+> >> +		input_page =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> >> +		output_page =3D *this_cpu_ptr(hyperv_pcpu_output_arg);
+> >> +
+> >> +		input_page->partition_id =3D partition_id;
+> >> +		input_page->hv_gpa_page_number =3D gpa_base_pfn + *written_total;
+> >> +		input_page->flags =3D state_flags;
+> >> +		rep_count =3D min(remaining, HV_GET_GPA_ACCESS_STATES_BATCH_SIZE);
+> >> +
+> >> +		status =3D hv_do_rep_hypercall(HVCALL_GET_GPA_PAGES_ACCESS_STATES,
+> rep_count,
+> >> +					     0, input_page, output_page);
+> >> +		if (!hv_result_success(status)) {
+> >> +			local_irq_restore(flags);
+> >> +			break;
+> >> +		}
+> >> +		completed =3D hv_repcomp(status);
+> >> +		for (i =3D 0; i < completed; ++i)
+> >> +			states[i].as_uint8 =3D output_page[i].as_uint8;
+> >> +
+> >> +		states +=3D completed;
+> >> +		*written_total +=3D completed;
+> >> +		remaining -=3D completed;
+> >> +		local_irq_restore(flags);
+> >
+> > FWIW, this local_irq_restore() could move up three lines to before the =
+progress
+> > accounting is done.
+> >
+> Good point, thanks.
+> <snip>
+> >> +		memset(input, 0, sizeof(*input));
+> >> +		memset(output, 0, sizeof(*output));
+> >
+> > Why is the output set to zero?  I would think Hyper-V is responsible fo=
+r
+> > ensuring that the output is properly populated, with unused fields/area=
+s
+> > set to zero.
+> >
+> Overabundance of caution, I think! It doesn't need to be zeroed AFAIK.
+>=20
+> I recently did a some cleanup (in our internal tree) to make sure we are
+> memset()ing the input and *not* memset()ing the output everywhere, but
+> it didn't make it into this series. There are a few more places like this=
+.
+>=20
+> <snip>
+> >> +
+> >> +int hv_call_set_vp_state(u32 vp_index, u64 partition_id,
+> >> +			 /* Choose between pages and bytes */
+> >> +			 struct hv_vp_state_data state_data, u64 page_count,
+> >
+> > The size of "struct hv_vp_state_data" looks to be 24 bytes (3 64-bit wo=
+rds).
+> > Is there a reason to pass this by value instead of as a pointer? I gues=
+s it works
+> > like this, but it seems atypical.
+> >
+> No particular reason. I'm guessing the compiler will pass this by copying=
+ it to this
+> function's stack frame - 24 bytes is still rather small so I don't think =
+it's an issue.
+
+Right, I think the code works as written. It's just atypical. When I see st=
+uff that
+doesn't fit the usual pattern, I always wonder "why?"  And if there's no go=
+od
+reason "why", reverting to the usual pattern avoids somebody else wondering
+"why" in the future. :-)  But you can leave it as is.
+
+>=20
+> I'm also under the impression the compiler may optimize this to a pointer=
+ since it is
+> not modified?
+
+It might. I'm not sure.
+
+>=20
+> I usually only pass a pointer (for read-only values) when it's something =
+really
+> large that I *definitely* don't want to be copied on the stack (like, 100=
+ bytes?).
+> In that case I probably only have a pointer to vmalloc'd/kalloc()'d memor=
+y anyway.
+>=20
+> <snip>
+> >> +	local_irq_save(flags);
+> >> +	status =3D hv_do_fast_hypercall8(HVCALL_CLEAR_VIRTUAL_INTERRUPT,
+> >> +				       partition_id) &
+> >> +			HV_HYPERCALL_RESULT_MASK;
+> >
+> > This "anding" with HV_HYPERCALL_RESULT_MASK should be removed.
+> >
+> Yep, thanks.
+>=20
+> >> +	local_irq_restore(flags);
+> >
+> > The irq save/restore isn't needed here since this is a fast hypercall a=
+nd
+> > per-cpu arg memory is not used.
+> >
+> Agreed, will remove these for the fast hypercall sites.
+>=20
+> <snip>
+> >> +		input->proximity_domain_info =3D hv_numa_node_to_pxm_info(node);
+> >> +		status =3D hv_do_hypercall(HVCALL_CREATE_PORT, input, NULL) &
+> >> +			 HV_HYPERCALL_RESULT_MASK;
+> >
+> > Use the hv_status checking macros instead of and'ing with
+> > HV_HYPERCALL_RESULT_MASK.
+> >
+> Thanks, these need a bit of cleanup.
+>=20
+> <snip>
+> >> +	status =3D hv_do_fast_hypercall16(HVCALL_DELETE_PORT,
+> >> +					input.as_uint64[0],
+> >> +					input.as_uint64[1]) &
+> >> +			HV_HYPERCALL_RESULT_MASK;
+> >> +	local_irq_restore(flags);
+> >
+> > Same a previous comment about and'ing.  And irq save/restore
+> > isn't needed.
+> >
+> ack
+>=20
+> <snip>
+> >> +		status =3D hv_do_hypercall(HVCALL_CONNECT_PORT, input, NULL) &
+> >> +			 HV_HYPERCALL_RESULT_MASK;
+> >
+> > Same here.  Use hv_* macros.
+> >
+> ack
+>=20
+> <snip>
+> >> +	status =3D hv_do_fast_hypercall16(HVCALL_DISCONNECT_PORT,
+> >> +					input.as_uint64[0],
+> >> +					input.as_uint64[1]) &
+> >> +			HV_HYPERCALL_RESULT_MASK;
+> >> +	local_irq_restore(flags);
+> >
+> > Same as above.
+> >
+> ack
+>=20
+> <snip>
+> >> +	local_irq_save(flags);
+> >> +	input.sint_index =3D sint_index;
+> >> +	status =3D hv_do_fast_hypercall8(HVCALL_NOTIFY_PORT_RING_EMPTY,
+> >> +				       input.as_uint64) &
+> >> +		 HV_HYPERCALL_RESULT_MASK;
+> >> +	local_irq_restore(flags);
+> >
+> > Same as above.
+> >
+> ack, and I'll double check we don't have other fast hypercall sites doing=
+ this
+>=20
+> <snip>>> +		/*
+> >> +		 * This is required to make sure that reserved field is set to
+> >> +		 * zero, because MSHV has a check to make sure reserved bits are
+> >> +		 * set to zero.
+> >> +		 */
+> >
+> > Is this comment about checking reserved bits unique to this hypercall? =
+If not, it
+> > seems a little odd to see this comment here, but not other places where=
+ the input
+> > is zero'ed.
+> >
+> I agree the comment isn't necessary - memset()ing the input to zero shoul=
+d be the
+> default policy. I'll remove it.
+
+This is another case where something doesn't fit the usual pattern, and I w=
+onder
+"why". :-)
+
+>=20
+> >> +		memset(input_page, 0, sizeof(*input_page));
+> >> +		/* Only set the partition id if you are making the pages
+> >> +		 * exclusive
+> >> +		 */
+> >> +		if (flags & HV_MODIFY_SPA_PAGE_HOST_ACCESS_MAKE_EXCLUSIVE)
+> >> +			input_page->partition_id =3D partition_id;
+> >> +		input_page->flags =3D flags;
+> >> +		input_page->host_access =3D host_access;
+> >> +
+> >> +		for (i =3D 0; i < rep_count; i++) {
+> >> +			u64 index =3D (done + i) << large_shift;
+> >> +
+> >> +			if (index >=3D page_struct_count)
+> >> +				return -EINVAL;
+> >
+> > Can this test ever be true?
+> >
+> See above in hv_do_map_gpa_hcall(), it's more of a sanity check or assert=
+.
+>=20
+> >> +
+> >> +			input_page->spa_page_list[i] =3D
+> >> +						page_to_pfn(pages[index]);
+> >
+> > When large_shift is non-zero, it seems weird to be skipping over most
+> > of the entries in the "pages" array.  But maybe there's a reason for th=
+at.
+> >
+> See above where we do the same thing in hv_do_map_gpa_hcall(). The hyperv=
+isor
+> only needs to see the "head" pages - the GPAs of the 2MB pages.
+>=20
+> >> +		}
+> >> +
+> >> +		status =3D hv_do_rep_hypercall(code, rep_count, 0, input_page,
+> >> +					     NULL);
+> >> +		local_irq_restore(irq_flags);
+> >> +
+> >> +		completed =3D hv_repcomp(status);
+> >> +
+> >> +		if (!hv_result_success(status))
+> >> +			return hv_result_to_errno(status);
+> >> +
+> >> +		done +=3D completed;
+> >> +	}
+> >> +
+> >> +	return 0;
+> >> +}
+> >
+> > [snip the rest of the patch that I haven't reviewed yet]
+> >
+> > Michael
 
-
-Of course, the whole purpose of using CXL memory is to allocate it.
-
-So lets talk about a real use case!
-
-   char* a_page = malloc(4096);
-   a_page[0] = '\x42'; /* Page fault and allocation occurs */
-
-Congrats, you may or may not have allocated CXL memory!
-
-Fin.
-
------------------------------------------------------------------------
-
-Ok, in all seriousness, the intent is hopefully to make this whole thing
-as transparent as possible - but there's quite a bit of complexity in
-how this is done while keeping things reasonably performant.
-
-
-This section won't cover the general intricacies of how page allocation
-works in the kernel, for that I would recommend Lorenzo Stoaks' book:
-
-                   The Linux Memory Manager.
-
-Notably, however, much of the content of this book concerned with Nodes
-and Zones was written pre-CXL. For the sake of this section we'll focus
-on how additional nodes and tiers *affect* allocations - whatever their
-mechanism (faults, file access, explicit, etc).
-
-That means I expect you'll at least have a base level understand of
-virtual memory and allocation-on-fault behavior.  Most of what we're
-talking about here is reclaim and migration - not page faults.
-
---------------------------------
-Nodes, Tiers, and Zones - Oh My!
---------------------------------
-
-==========
-NUMA Nodes
-==========
-A NUMA node can *tacitly* be thought of as a "collection of homogeneous
-resources". This is a fancy way of saying "All the memory on a given
-node should have the same performance characteristics."
-
-As discussed in Sections 0 and 1, however, we saw how nodes are
-consturcted quite arbitrarily. All that truly matters is what your
-platform vendor has chosen to associate devices with "Proximity Domains"
-in the various ACPI tables.
-
-I'll stick with my moderately sane, and moderately wrong, definition.
-
-Lets consider a system with 2 sockets and 1 CXL device attached to a
-host bridge on each socket.
-
-```
-              socket-interconnect
-                       |
-    DRAM -- CPU0--------------CPU1 -- DRAM
-              |                 |
-            CXL0              CXL1
-```
-
-The "Locality" information for these devices is built in the ACPI SLIT
-(System Locality Information Table). 
-
-For example (caveat - fake!):
-```
-  Signature : "SLIT"    [System Locality Information Table]
-  ...
-    Localities : 0000000000000004
-  Locality   0 : 10 20 20 30
-  Locality   1 : 20 10 30 20
-  Locality   2 : FF FF 0A FF
-  Locality   3 : FF FF FF 0A
-```
-
-This is what shows up via the `numactl -H` command
-```
-$ numactl -H
-node distances:
-node     0    1    2    3
-   0:   16   32   32   48
-   1:   32   16   48   32
-   2:  255  255   16  255
-   3:  255  255  255   16
-
-       ^^^ 255 typically means a node can't initiate access... typically
-           i.e. "has no processors"
-```
-
-
-These "Locality" values are "Abstract Distances" - i.e. fancy lies from
-a black box piece of code that portends to describe something useful.
-
-You may think NUMA nodes have a clean topological relationship like so:
-```
-     node0--------------node1
-       |                  |
-     node2              node2
-```
-
-
-In reality, all Linux knows is that these are "relative distances".
-
-```
-  Node 0 distance from other nodes:
-      0->[1,2]->3
-  Node 1 distance from other nodes:
-      1->[0,3]->2
-```
-
-Why does this matter?
-
-Lets imagine a Node 0 CPU allocates a page, but Node 0 is out of memory.
-Which node should Node 0 fall back to allocate from?
-
-In our example above, nodes `[1,2]` seem like equally good options. In
-reality, the cross-socket interconnect will usually be classified as
-"closer" than a CXL device.
-
-You can expect the following to be more realistic.
-```
-  $ numactl -H
-  node distances:
-  node     0    1    2    3
-     0:   16   32   48   64
-     1:   32   16   64   48
-     2:  255  255   16  255
-     3:  255  255  255   16
-
-  Node 0 distance perspective:
-      0->1->2->3
-  Node 1 distance perspective
-      1->0->3->2
-```
-
-Which makes sense, because typically the cross-socket interconnect will
-be faster than a CXL link, and for Node0 to access Node3, it must cross
-both interconnects.
-
-`Memory Tiers`, however, are quite a bit different.
-
-
-=============
-Memory Tiers.
-=============
-Memory tiers collect all similar-performance devices into a single "Tier".
-
-These tiers can be inspected via sysfs:
-
-    [/sys/devices/virtual/memory_tiering/]# ls
-        memory_tier4  memory_tier961
-
-    [/sys/devices/virtual/memory_tiering/]# cat memory_tier4/nodelist
-        0-1
-
-    [/sys/devices/virtual/memory_tiering/]# cat memory_tier4/nodelist
-        2-3
-
-On our example 2-socket system, both sockets hosting local DRAM Would
-get lumped into the same tier, while both CXL devices would get lumped
-into the same tier (lets assume they have the same latency/bandwidth).
-
-```
-            memory_tier4--------------------
-           /            \                  |
-      node0              node1             |
-                                     memory_tier961
-                                    /            \
-                               node2              node3
-```
-
-This relationship, ostensibly, provides a quick and easy way to
-determine a rough performance-based relationship between nodes.
-This is, ostensibly, useful if you want to do memory tiering (demotion
-and/or promotion).  More on this in a bit.
-
-Tiers are created based on performance data - typically provided by the
-HMAT or CXL CDAT data.  The memory-tiers component treats
-socket-attached DRAM as the baseline, and generates its own abstract
-distance (different that the SLIT abstract distance!).
-
-```
-int mt_perf_to_adistance(struct access_coordinate *perf, int *adist)
-{
-... snip ...
-    /*
-     * The abstract distance of a memory node is in direct proportion to
-     * its memory latency (read + write) and inversely proportional to its
-     * memory bandwidth (read + write).  The abstract distance, memory
-     * latency, and memory bandwidth of the default DRAM nodes are used as
-     * the base.
-     */
-    *adist = MEMTIER_ADISTANCE_DRAM *
-            (perf->read_latency + perf->write_latency) /
-            (default_dram_perf.read_latency + default_dram_perf.write_latency) *
-            (default_dram_perf.read_bandwidth + default_dram_perf.write_bandwidth) /
-            (perf->read_bandwidth + perf->write_bandwidth);
-}
-```
-
-The memory-tier component also provides a demotion-target mechanism,
-which creates a recommended demotion-target based on a given node.
-
-```
-/**
- * next_demotion_node() - Get the next node in the demotion path
- * @node: The starting node to lookup the next node
- *
- * Return: node id for next memory node in the demotion path hierarchy
- * from @node; NUMA_NO_NODE if @node is terminal.  This does not keep
- * @node online or guarantee that it *continues* to be the next demotion
- * target.
- */
-int next_demotion_node(int node);
-```
-
-
-The node_demotion map uses... SLIT provided node abstract distances to
-determine the target!
-```
-/*
- * node_demotion[] examples:
- *
- * Example 1:
- *
- * Node 0 & 1 are CPU + DRAM nodes, node 2 & 3 are PMEM nodes.
- *
- * node distances:
- * node   0    1    2    3
- *    0  10   20   30   40
- *    1  20   10   40   30
- *    2  30   40   10   40
- *    3  40   30   40   10
- *
- * memory_tiers0 = 0-1
- * memory_tiers1 = 2-3
- *
- * node_demotion[0].preferred = 2
- * node_demotion[1].preferred = 3
- * node_demotion[2].preferred = <empty>
- * node_demotion[3].preferred = <empty>
- * ...
- * /
-```
-
-As of 03/13/2025, there is no `next_promotion_node()` counterpart to
-this function.  As we'll probably learn in a later section:
-
-    Promotion Is Hard. (TM)
-
-There is at least an interface to tell you whether a node is toptier:
-
-    bool node_is_toptier(int node);
-
-
-The grand total of interfaces you need to know for the remainder of
-this section are exactly:
-
-    next_demotion_node(int node)
-
-I may consider another section on Memory Tiering in the future, but
-this is sufficient for now.
-
-
-
-                     < unwarrated snark >
-"But Greg", you say, "it seems to me that memory-tiers as designed are
-of dubious value considering hardware interleave as described in
-Section 4 already combines multiple devices into a single node - and
-lumping remote nodes regardless of socket-relationship is at best
-misleading and at worst may actively cause performance regressions!"
-
-Very astute observation. Maybe we should rethink this component a bit.
-                    < / unwarranted snark >
-
-
-=============
-Memory Zones.
-=============
-In Section 3 (Memory Hotplug) we briefly discussed memory zones.  For
-the purpose of this section, all we need to know is how these zones
-impact allocation.  I will largely quote the Linux kernel docs here.
-
-```
-* ZONE_NORMAL is for normal memory that can be accessed by the kernel
-  all the time. DMA operations can be performed on pages in this zone
-  if the DMA devices support transfers to all addressable memory.
-
-  ZONE_NORMAL is always enabled.
-
-
-* ZONE_MOVABLE is for normal accessible memory, just like ZONE_NORMAL.
-
-  The difference is that the contents of most pages in ZONE_MOVABLE are
-  movable. That means that while virtual addresses of these pages do
-  not change, their content may move between different physical pages.
-
-
-```
-  
-  note: ZONE_NORMAL allocations MAY be movable.  ZONE_MOVABLE must be.
-        (for some definition of `must`, suspend disbelief for now)
-
-
-We generally don't want kernel resources incidentally finding themselves
-on CXL memory (a highly contended lock landing on far-memory by complete
-happenstance would by absolutely tragic).  However, there aren't many
-mechanism to prevent this from occurring.
-
-While the kernel may *explicitly* allocate ZONE_MOVABLE memory via
-special interfaces, a typical `kmalloc()` call will utilize ZONE_NORMAL
-memory, as most kernel allocations are not guaranteed to be movable.
-
-That means most kernel allocations, should they happen to land on a
-remote node, are *stuck there*. For most use cases, then, we will want
-CXL memory onlined into ZONE_MOVABLE, because we'd like the option to
-migrate memory off of these devices for a variety of reasons.
-
-The most obvious mechanism to prevent the kernel from using CXL memory
-is to online CXL memory in ZONE_MOVABLE.
-
-
-However, ZONE_MOVABLE isn't without drawbacks. For example...
-
-Gigantic (1GB) pages are not allocable from ZONE_MOVABLE.  Many
-hypervisors utilize Gigantic pages to limit TLB pressure.  That means,
-for now, VM use cases must pick between incidental kernel use, and
-Gigantic page use.
-
-This is all to say: Memory zone configuration affects your performance.
-
-
-
-
-----------------
-Page Allocation.
-----------------
-
-There are a variety of ways pages can be allocated, for this section
-we'll just focus on a plain old allocate-on-fault interaction.
-
-    char* page = malloc(4096);
-    page[0] = '\x42'; /* Page fault, kernel allocates a page */
-
-Assuming no special conditions (memory pressure, mempolicies, special
-prefetchers - whatever), the default allocation policy in linux is to
-allocate a page from the same node as the accessing CPU.
-
-So if, in our example, we are running on a node1 CPU and hit the above
-page fault, we'll allocate from the node1 DRAM.
-
-```
-  Default allocation policy:
-
-                           access
-                          /      \- allocation
-      DRAM -- CPU0------CPU1 -- DRAM
-                |         |
-                |         |
-              CXL0      CXL1
-```
-
-Simple and, dare I say, elegant - really.
-
-This is, of course, assuming, we have no special conditions - of which
-there are, of course, many.
-
-================
-Memory Pressure.
-================
-Lets assume DRAM on node1 is pressured, and there is insufficient
-headroom to allocate a page on node1.  What should we do?
-
-We have a few options.
-    1) Fall back to another node
-    2) Attempt to steal a physical page from someone else. ("reclaim")
-
-Lets assume reclaim doesn't exist for a moment.
-
-What node should fall back to?  One might assume we would consider
-attempting to allocate based on the NUMA node topology. 
-
-For example:
-```
- * node distances:
- * node   0    1    2    3
- *    0  10   20   30   40
- *    1  20   10   40   30
- *    2  30   40   10   40
- *    3  40   30   40   10
-```
-
-In this topology, Node1 would prefer allocating from Node0 as a
-secondary source, and subsequently fall back to Node3 and Node2 as
-those nodes become pressured.
-
-This is basically what happens.  But is that what we want?
-
-If a page is being allocated, it is almost by definition "hot", and
-so this has lead the kernel to conclude that - generally speaking - new
-allocations should be local unless explicitly requested otherwise.
-
-So instead, by default, we will start engaging the reclaim system.
-
-
-
-================================
-Reclaim - LRU, Zones, and Nodes.
-================================
-In the scenario where memory is pressured and reclaim is in use, Linux
-will go through a variety of phases to based on watermarks (Min, Low,
-High memory availability).   These watermarks are used to determine
-when reclaim should run and when the system should block further
-allocations to ensure the kernel has sufficient headroom to make
-forward progress.
-
-An allocation may cause a kernel daemon to start moving pages through
-the LRU (least-recently-used) mechanism, or it may cause the task
-itself to engage in the process.
-
-The reclaim system may choose to swap pages to disk or to demote pages
-from the local node to a remote node.
-
-The key piece here is understanding the main LRU types and their
-relationship to zones and nodes.
-
-```
-                     ______node______
-                    /                \
-         ZONE_NORMAL                  ZONE_MOVABLE
-        /           \                /            \
-   active LRU   inactive LRU     active LRU   inactive LRU
-```
-
-Typically reclaim is engaged when attempting an allocation and the
-requested zone hits a low or min watermark.  On our imaginary system,
-lets assume we've set up the following structure.
-
-```
-          node0 - DRAM                 node2 - CXL
-            |                            |
-        ZONE_NORMAL                 ZONE_MOVABLE
-       /          \                /            \
-  active_lru   inactive_lru   active_lru   inactive_lru
-```
-
-node0 (local) has no ZONE_MOVABLE, and node2 has no ZONE_NORMAL.  Since
-we always prefer allocations from the local node, we'll evicting pages
-from ZONE_NORMAL on node0 - that's the only zone we can allocate from.
-
-Specifically, reclaim will prefer to evict pages from the inactive lru
-and "age off" pages from the active_lru to the inactive_lru.  If 
-reclaim fails, it may then fail to allocate from the requested node and
-fallback to another node to continue forward progress.
-
-(or maybe OOM, or some other nebulous conditions - it's all really quite
-complex and well documented in Lorenzo's book, highly recommended!)
-
-
-==================
-Swap vs. Demotion.
-===================
-By default, the reclaim system will only age pages from active to
-inactive LRUs, and then move to evict pages from the inactive LRU
-(possibly engaging swap or just nixing read-only page mappings).
-
-However, reclaim can be configured to *demote* pages as well via
-the sysfs option:
-
-    $ echo 1 > /sys/kernel/mm/numa/demotion_enabled
-
-
-In this scenario, rather than evict from inactive LRU to swap, we
-can demote a page from its current node to its closest demotion target.
-
-```
-mm/vmscan.c:
-
-static bool can_demote(int nid, struct scan_control *sc)
-{
-        if (!numa_demotion_enabled)
-                return false;
-        if (sc && sc->no_demotion)
-                return false;
-        if (next_demotion_node(nid) == NUMA_NO_NODE)
-                return false;
-
-        return true;
-}
-
-/*
- * Take folios on @demote_folios and attempt to demote them to another node.
- * Folios which are not demoted are left on @demote_folios.
- */
-static unsigned int demote_folio_list(struct list_head *demote_folios,
-                                     struct pglist_data *pgdat)
-{
-...
-        /* Demotion ignores all cpuset and mempolicy settings */
-        migrate_pages(demote_folios, alloc_migrate_folio, NULL,
-                      (unsigned long)&mtc, MIGRATE_ASYNC, MR_DEMOTION,
-                      &nr_succeeded);
-}
-```
-
-Notice that the comment here says "Demotion ignores cpuset". That means
-if you turn this setting on, and you require strong cpuset.mems
-isolation, you're in for a surprise!  Another fun nuance to trip over.
-
-
-======================================
-Kernel Memory Tiering - A Short Story.
-======================================
-
-The story so far:
-    In the beginning [Memory Tiering] was created.
-    This has made a lot of people very angry and
-    been widely regarded as a bad move.
-     ~ Douglas Adams, The Restaurant at the End of the [CXL Fabric]
-
-There isn't a solid consensus on how memory tiering should be
-implemented in the kernel, so I will refrain from commenting on
-the various proposals for now.
-
-This obviously ikely deserves its own section which tumbles over
-6 or 7 different RFCs in varying states - and ever so slightly
-misrepresents the work enough confuse everyone.
-
-Lets not, for now.
-
-So I will leave it here:
-
-Most of these systems aim at 3 goals:
-  1) create space on the local nodes for new allocations
-  2) demote cold memory from local nodes to make room for hot memory
-  3) promote hot memory from remote nodes to reduce average latencies.
-
-No one (largely) agrees what the best approach for this is, yet.
-
-If I were to make one request before anyone proposes yet *another*
-tiering mechanism, I would ask that you take a crack at implementing
-`next_promotion_node()` first.
-
-```
-    /**
-     * next_promotion_node() - Get the next node in the promotion path
-     * @node: The starting node to lookup the next node
-     *
-     * Return: node id for next memory node in the promotion path hierarchy
-     * from @node; NUMA_NO_NODE if @node is top tier.  This does not keep
-     * @node online or guarantee that it *continues* to be the next promotion
-     * target.
-     */
-    int next_promotion_node(int node);
-```
-
-That's the whole ballgame.
-
-Fin.
-
-
------------------------------------------------------------------------
-
-
-Yes, that's basically it.  The kernel prefers to allocate new pages from
-the local node, and it tries to demote memory to make sure this can
-happen.  Otherwise - incidental direct allocation can occur on fallback.
-
-But how you configure your CXL memory dictates all this behavior.  So
-it's extremely important that we get the configuration part right.
-
-
-This will be the end of the Boot to Bash series for the purpose of
-LSFMM 2025 background. We will likely continue in a github repo or
-something from here on.
-
-See you all in Montreal.
-
-~Gregory
 
