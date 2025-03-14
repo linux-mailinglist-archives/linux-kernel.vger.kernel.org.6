@@ -1,92 +1,135 @@
-Return-Path: <linux-kernel+bounces-561359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56871A61074
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:56:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C1BA61076
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:56:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51B9019C1AF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:56:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71DF6461DB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7090E1FDE24;
-	Fri, 14 Mar 2025 11:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CEB51FDE31;
+	Fri, 14 Mar 2025 11:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="stxdG8mU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IWrmmagk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFC38635A;
-	Fri, 14 Mar 2025 11:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B511FDA66;
+	Fri, 14 Mar 2025 11:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741953360; cv=none; b=Bn+/gbDjcpo+dCKzknfVCEJGOmmfJjZ2r/ncoCnQw+0z0lvDVScGIWe5Q8RIfIGVMVyPDJrV2uET1Fv407o262t26pFpZc/rbEI4doK5Wv333yJunRvBnfryYIsO1jK3OgWpiKyhEU3Iev+V0uGNUhtydXsoGArnd3H9SHUudLc=
+	t=1741953378; cv=none; b=Qe7Msyg+AI283bms2yg7rSif/jvsmxQSBdpzVQd7UJy4kyd1ebPiEW0vq7XJ9yX8mGtfvL/ZMxx3o9nYEcTuraGD2V4Yb86RdDV8h3w7wrivTDR4ZM2EGPkh+6S+YUYimd6diets7XEsL01VI3DmxlLuMimrfQO+I8jOTOOknvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741953360; c=relaxed/simple;
-	bh=7Hx6Q9lC2DgdGt5P1YXcQpLbuvxU/kOlzCk1p2eLrbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W13g/r40+/2+n0epaqcxdY7BzXqjcLGfke/eZvO3HsXihQViHVdNaQgcffFIPGFE8GOFy+sImlOLTDin+8KDCH+lICuh/w1t7pp8VZqBzzCtdShRAbgwuqxiochFXYwPsdHNpiHVbiS5wOH06CAQJWyIEhchufOzzdsOdghQWps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=stxdG8mU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EC4AC4CEE9;
-	Fri, 14 Mar 2025 11:55:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741953360;
-	bh=7Hx6Q9lC2DgdGt5P1YXcQpLbuvxU/kOlzCk1p2eLrbY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=stxdG8mU4g020nWvNrre/5eu7WrtFVA/R54Fm4ssOU9wK5zqhQK/Pexraw3aiMQml
-	 18vKDhy2sGSD/TQFeT8RV3/xXgP0AXl7Bln42uuNqsYrh5DadUzexD7rx1XbvidYfx
-	 6Dr2q73RpT5Drju6YYHJjP68pLS3oRSKhdpVm9FMl75iGaGyb3D1EYIiFZ8Yb8XJnj
-	 OVbpQCly7/plRE9G24RZujweR53javdoOoUS+uSIbqn95rvxs6hBlkQJVYwiaXqQwG
-	 /kSHDb7GZ/kQSoJdYWkQV+CqIHRItdPcrtgWn5+pqExzoSd9x5DAaLF+iKtJ3P/diZ
-	 nTnjBTaCoSoHQ==
-Date: Fri, 14 Mar 2025 11:55:55 +0000
-From: Will Deacon <will@kernel.org>
-To: Thomas Huth <thuth@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	linux-arch@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH 08/41] arm64: Replace __ASSEMBLY__ with __ASSEMBLER__ in
- uapi headers
-Message-ID: <20250314115554.GA8986@willie-the-truck>
-References: <20250314071013.1575167-1-thuth@redhat.com>
- <20250314071013.1575167-9-thuth@redhat.com>
+	s=arc-20240116; t=1741953378; c=relaxed/simple;
+	bh=saN+oyAs7en/yrR6Un/aRcgUQkDXElpe0GDCuKxLkJk=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=UjBw/ceSrxGC9ZYUYu0Fhe7Ll72fS32kogKYDsgQ2q5Yz0+NvlghztWnk32kjNykL9TLw02b3Sm5GnB7J0DKSSv12TAOwyyrW02SexaXWSSCNHbQjaN9B0crqNzvbbKHi0r4lbI0yY7oIOwLvgscGMVHCTlvQYALwQkjedRvjDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IWrmmagk; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741953377; x=1773489377;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=saN+oyAs7en/yrR6Un/aRcgUQkDXElpe0GDCuKxLkJk=;
+  b=IWrmmagkse325YJEW6aezqhyCr3E5pbnDUgpoiuImcZtSNTHRk6E2RT6
+   xYmRARBAJEC9JatFkNDDJYGlIelMstJT1eZIYUTcPeNjNUBitE04x4AjI
+   LtBhVQ9QSyBEUMBDh9dMxuwYdWcCvqfebgP/7Lx4kFAz1ityXvVBzPb7t
+   uQHV1DKCHIJ8jIxzX7D6CFZZNePm5v4pvIJhbGIAQrd8NGv/emaK0zjVD
+   DS55MlyKStR359t98hewSuRFG3oMtwPoItUkUyeRL4pKqMMgCNytaJN9k
+   5DY3BcpIxos+E5MT5vWLSRgJ7m+8IZdrAKneV7TvkMKQI5yg50webOzdi
+   w==;
+X-CSE-ConnectionGUID: ySmjTaK7TD+GELOXAmlBhw==
+X-CSE-MsgGUID: dkTG25RZS9yDUPNGWb2STA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="65561234"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="65561234"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 04:56:11 -0700
+X-CSE-ConnectionGUID: NFvoujGuSVKWWoxL9f8j+w==
+X-CSE-MsgGUID: 9PG90Pj9RLaCqHhmrgkl5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="121044011"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.56])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 04:56:07 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 14 Mar 2025 13:56:04 +0200 (EET)
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+cc: Choong Yong Liang <yong.liang.choong@linux.intel.com>, 
+    Hans de Goede <hdegoede@redhat.com>, 
+    =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+    David E Box <david.e.box@linux.intel.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] platform/x86: intel_pmc_ipc: add option to build
+ without ACPI
+In-Reply-To: <CAHp75Vcjqv+j9gkZiQ_LtYE1F7YH8ZweHVTa31AbPht8_Knnkg@mail.gmail.com>
+Message-ID: <2a00773a-b887-7966-36de-0e2b93359912@linux.intel.com>
+References: <20250313085526.1439092-1-yong.liang.choong@linux.intel.com> <CAHp75Vcjqv+j9gkZiQ_LtYE1F7YH8ZweHVTa31AbPht8_Knnkg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250314071013.1575167-9-thuth@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/mixed; boundary="8323328-2117771442-1741953364=:10784"
 
-On Fri, Mar 14, 2025 at 08:09:39AM +0100, Thomas Huth wrote:
-> __ASSEMBLY__ is only defined by the Makefile of the kernel, so
-> this is not really useful for uapi headers (unless the userspace
-> Makefile defines it, too). Let's switch to __ASSEMBLER__ which
-> gets set automatically by the compiler when compiling assembly
-> code.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Signed-off-by: Thomas Huth <thuth@redhat.com>
-> ---
->  arch/arm64/include/uapi/asm/kvm.h        | 2 +-
->  arch/arm64/include/uapi/asm/ptrace.h     | 4 ++--
->  arch/arm64/include/uapi/asm/sigcontext.h | 4 ++--
->  3 files changed, 5 insertions(+), 5 deletions(-)
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Is there a risk of breaking userspace with this? I wonder if it would
-be more conservative to do something like:
+--8323328-2117771442-1741953364=:10784
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-#if !defined(__ASSEMBLY__) && !defined(__ASSEMBLER__)
+On Thu, 13 Mar 2025, Andy Shevchenko wrote:
 
-so that if somebody is doing '#define __ASSEMBLY__' then they get the
-same behaviour as today.
+> On Thu, Mar 13, 2025 at 10:55=E2=80=AFAM Choong Yong Liang
+> <yong.liang.choong@linux.intel.com> wrote:
+> >
+> > From: David E. Box <david.e.box@linux.intel.com>
+> >
+> > Introduce a configuration option that allows users to build the
+> > intel_pmc_ipc driver without ACPI support. This is useful for
+> > systems where ACPI is not available or desired.
+> >
+> > Based on the discussion from the patch [1], it was necessary to
+> > provide this option to accommodate specific use cases.
+>=20
+> > Link: https://patchwork.kernel.org/project/netdevbpf/patch/202502271215=
+22.1802832-6-yong.liang.choong@linux.intel.com/#26280764 [1]
+>=20
+> >
+>=20
+> No blank line here, but I think Hans or Ilpo may tweak this when applying=
+=2E
+>=20
+> Otherwise LGTM,
+> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+> Thanks!
 
-Or maybe we don't care?
+Hi both,
 
-Will
+The original commit went through net-next tree so I cannot take this into=
+=20
+pdx86 tree until after the merge window. It seems low impact enough that=20
+coordinating with the netdev might not be worth the effort.
+
+To get it going through net-next tree, you'd need to submit v3 so that in=
+=20
+addition to the current receipients, all relevant netdev people & ML are=20
+included as receipients. But I'd be fine if you leave it until after the=20
+merge window and I can then handle it then.
+
+> > Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+> > Co-developed-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+> > Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+
+--=20
+ i.
+
+--8323328-2117771442-1741953364=:10784--
 
