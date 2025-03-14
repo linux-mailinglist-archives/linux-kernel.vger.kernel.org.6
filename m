@@ -1,181 +1,142 @@
-Return-Path: <linux-kernel+bounces-560936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75E6FA60B33
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:22:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CC22A60B2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:22:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9FBA461677
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:22:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB5CC46139E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9BC21E8327;
-	Fri, 14 Mar 2025 08:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549AB1A9B2C;
+	Fri, 14 Mar 2025 08:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s/6CT7dr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvofsQ9o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B931AA1FF;
-	Fri, 14 Mar 2025 08:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE1F1A3153;
+	Fri, 14 Mar 2025 08:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741940459; cv=none; b=ZGFSp4Y3fpGNAdMn83iw6OdLbpLN1P3AiqrxusAYC60gOh+PCjxL1Sg8gBnWTIx2I27nj/rNWdVpuAU53rkSb6X0Ckpz+0cO8aD8MunK99sLqT6UrEY/dapDFeIgYz2Y9fH0OuLZxL+GABpiTQjr2Eebk18Fv/oyrd1dXXiOiso=
+	t=1741940457; cv=none; b=PdhR37op8ZFqgtHUdZiJQffqXfuMeel8/XYjLiHRtkKu46p/MA8N4C9eHLsgFCYYW10NXxX2eJXMYy+JNnv+XGHgni2ToGpFkYZHHg7OW9vMGi/Wz/Yw2qrx/ixUL9IZPZQx7wEmCZS3glofrjYe10+m27z4e1IPePROIsvWzeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741940459; c=relaxed/simple;
-	bh=/9Cg9kqhR9YMfKzyRY8A1lAV2O/WdaBXMSuS45Wh5Hk=;
+	s=arc-20240116; t=1741940457; c=relaxed/simple;
+	bh=f/kStw48aQBGQy35frF+7V2aEEA00ieAtTWKjV0l8cg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eri2Y1zdr68P1U7cxiCPbOb8n7QwV3Pb9EQGNV7nLJDiLU6AJXaAMGXc+uE6n8Inc/TuQI/hSBIht6i6ny5asSgly0bOIm6KloUIQxzkpklvlyw+65XhwIOwK/eKwIHyhKRkHP54mNTiZLPTJHJd30eghp8A2oxxqpjqvxd+FCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s/6CT7dr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE206C4CEE5;
+	 Content-Type:Content-Disposition:In-Reply-To; b=g51a9oPHKpnd1bzyaljSBmKWP8+4CJ99woNhLu0mCkYhUWt9ZEoZXTQ2wQQ7tMVfs1fUsFPXcwzmKMODWRVLgQPeewXb156YejBEBkJ+hCn9EOs5cL0vbW04BVS+bqc1Q6BwKCSV5/nNxhOJKlDDUhenIhX8xGNKBpS7oFRwDNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TvofsQ9o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C887C4CEE3;
 	Fri, 14 Mar 2025 08:20:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741940458;
-	bh=/9Cg9kqhR9YMfKzyRY8A1lAV2O/WdaBXMSuS45Wh5Hk=;
+	s=k20201202; t=1741940457;
+	bh=f/kStw48aQBGQy35frF+7V2aEEA00ieAtTWKjV0l8cg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s/6CT7drnf2lyr/FUF5clP+re7piIqacdm0sZqSXxngUmPHKA9slQIPMJwnMP7v9f
-	 nZbwvG+9hwb8fX1Jz9urzyit16vewMSGTKW4rgzYEqVzpb7HUtvVmC/ET/XyTwBVgx
-	 dOEB/VkmXustLdncKq5je8upSBdt/S2eHshFlfB6hpnCd1KTq0j0yNV3rOaWQKuhHi
-	 c61D9XkfItQ4hb7rXWehQQdgQudDfabAIEAEglm7RScuL4XKaUKiuKRktp7kX1QwvI
-	 W19dV6oHGGRMzUfFWtwwqyMF0VMBsmOGiIyP6jB5RDMPTQng+jbn8C8gMUN6HiO+eP
-	 50+ZYXwhkj0kQ==
-Date: Fri, 14 Mar 2025 09:20:54 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: George Moussalem <george.moussalem@outlook.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org, andersson@kernel.org, 
-	bhelgaas@google.com, conor+dt@kernel.org, devicetree@vger.kernel.org, 
-	lumag@kernel.org, kishon@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
-	kw@linux.com, lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org, 
-	p.zabel@pengutronix.de, quic_nsekar@quicinc.com, robh@kernel.org, robimarko@gmail.com, 
-	vkoul@kernel.org, quic_srichara@quicinc.com
-Subject: Re: [PATCH v4 3/6] dt-bindings: PCI: qcom: Add IPQ5018 SoC
-Message-ID: <20250314-greedy-tested-flamingo-59ae28@krzk-bin>
-References: <DS7PR19MB8883F2538AA7D047E13C102B9DD22@DS7PR19MB8883.namprd19.prod.outlook.com>
- <20250314055644.32705-1-george.moussalem@outlook.com>
- <DS7PR19MB88834CAC414A0C2B4D71D57C9DD22@DS7PR19MB8883.namprd19.prod.outlook.com>
+	b=TvofsQ9olLoE2wHocil0BEsP7JID4FC94pY7TNU+FzdCexy/ZRjuBqDuRRxTCuD4V
+	 HGChAh+uSkdnuF24sOIJB0AAhrGn65lsZblrgEa8czF/E2c4aTXh5eZlMzdkeMCMuj
+	 1GhCQbRNVhVXR4GYB9bjNaMQ2//WLJrK3I5ukrqOY/5xaXbjPGtkwJQUchGs0QfZ6B
+	 MUVm/InIbotLdROlmorA9Uf+ehWYIO9hFE2Gm9pXYSMSjDJSmaO5pyzBHVOISJPad6
+	 jKs1kEyJjQonXU2NlldsB6QFrVr5U+CHi0VRs2e/mDvZfl49qeqiCDdJD5LS+CtMIz
+	 m1Z19QZz5CWXw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tt0Hn-0000000032G-0Xpi;
+	Fri, 14 Mar 2025 09:20:55 +0100
+Date: Fri, 14 Mar 2025 09:20:55 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Miaoqing Pan <quic_miaoqing@quicinc.com>
+Cc: quic_jjohnson@quicinc.com, ath11k@lists.infradead.org,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	johan+linaro@kernel.org
+Subject: Re: [PATCH v3 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
+ length
+Message-ID: <Z9Pm56Xx7kYZl8fk@hovoldconsulting.com>
+References: <20250314061353.106194-1-quic_miaoqing@quicinc.com>
+ <20250314061353.106194-3-quic_miaoqing@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DS7PR19MB88834CAC414A0C2B4D71D57C9DD22@DS7PR19MB8883.namprd19.prod.outlook.com>
+In-Reply-To: <20250314061353.106194-3-quic_miaoqing@quicinc.com>
 
-On Fri, Mar 14, 2025 at 09:56:41AM +0400, George Moussalem wrote:
-> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
+On Fri, Mar 14, 2025 at 02:13:53PM +0800, Miaoqing Pan wrote:
+> A relatively unusual race condition occurs between host software
+> and hardware, where the host sees the updated destination ring head
+> pointer before the hardware updates the corresponding descriptor.
+> When this situation occurs, the length of the descriptor returns 0.
 > 
-> Add support for the PCIe controller on the Qualcomm
-> IPQ5108 SoC to the bindings.
+> The current error handling method is to increment descriptor tail
+> pointer by 1, but 'sw_index' is not updated, causing descriptor and
+> skb to not correspond one-to-one, resulting in the following error:
 > 
-> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
-> ---
->  .../devicetree/bindings/pci/qcom,pcie.yaml    | 59 +++++++++++++++++++
->  1 file changed, 59 insertions(+)
+> ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1488, expected 1492
+> ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
 > 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> index 8f628939209e..d8befaa558e2 100644
-> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> @@ -21,6 +21,7 @@ properties:
->            - qcom,pcie-apq8064
->            - qcom,pcie-apq8084
->            - qcom,pcie-ipq4019
-> +          - qcom,pcie-ipq5018
->            - qcom,pcie-ipq6018
->            - qcom,pcie-ipq8064
->            - qcom,pcie-ipq8064-v2
-> @@ -322,6 +323,63 @@ allOf:
->              - const: ahb # AHB reset
->              - const: phy_ahb # PHY AHB reset
+> To address this problem and work around the broken hardware,
+> temporarily skip processing the current descriptor and handle it
+> again next time. However, to prevent this descriptor from
+> continuously returning 0, use the skb control block (cb) to set
+> a flag. If the length returns 0 again, this descriptor will be
+> discarded.
+> 
+> Tested-on: QCA6698AQ hw2.1 PCI WLAN.HSP.1.1-04546-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
+> 
+> Reported-by: Johan Hovold <johan+linaro@kernel.org>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218623
+> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
+
+> @@ -387,18 +387,36 @@ static int ath11k_ce_completed_recv_next(struct ath11k_ce_pipe *pipe,
 >  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,pcie-ipq5018
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 5
-> +          maxItems: 5
-> +        reg-names:
-> +          items:
-> +            - const: parf # Qualcomm specific registers
-> +            - const: dbi # DesignWare PCIe registers
-> +            - const: elbi # External local bus interface registers
-> +            - const: atu # ATU address space
-> +            - const: config # PCIe configuration space
+>  	ath11k_hal_srng_access_begin(ab, srng);
+>  
+> -	desc = ath11k_hal_srng_dst_get_next_entry(ab, srng);
+> +	desc = ath11k_hal_srng_dst_peek(ab, srng);
+>  	if (!desc) {
+>  		ret = -EIO;
+>  		goto err;
+>  	}
+>  
+>  	*nbytes = ath11k_hal_ce_dst_status_get_length(desc);
 
-Keep the same order as other IPQ, so dbi+elbi+atu+parf+config. Same for
-everything else, so standard rule applies: devices are supposed to use
-ordering from existing variants.
+As I mentioned elsewhere, this function also sets the length field in
+the descriptor to zero. So if there's a racing update, you may never see
+the updated length.
 
-There is some huge mess with IPQ PCI bindings, including things on the
-list. Apparently it became my job to oversee Qualcomm PCI work... well,
-I do not have time for that, so rather I expect contributors to
-cooperate in this matter.
+> -	if (*nbytes == 0) {
+> -		ret = -EIO;
+> -		goto err;
+> +	if (unlikely(*nbytes == 0)) {
+> +		struct ath11k_skb_rxcb *rxcb =
+> +			ATH11K_SKB_RXCB(pipe->dest_ring->skb[sw_index]);
+> +
+> +		/* A relatively unusual race condition occurs between host
+> +		 * software and hardware, where the host sees the updated
+> +		 * destination ring head pointer before the hardware updates
+> +		 * the corresponding descriptor.
+> +		 *
+> +		 * Temporarily skip processing the current descriptor and handle
+> +		 * it again next time. However, to prevent this descriptor from
+> +		 * continuously returning 0, set 'is_desc_len0' flag. If the
+> +		 * length returns 0 again, this descriptor will be discarded.
+> +		 */
+> +		if (!rxcb->is_desc_len0) {
+> +			rxcb->is_desc_len0 = true;
+> +			ret = -EIO;
+> +			goto err;
+> +		}
 
-Don't throw your patches over the wall.
+If you add the memory barrier and make sure not to clear the length
+field above, do you still see the length sometimes always reading zero
+if you retry more than once (i.e. drop the is_desc_len0 flag)?
 
-If you need to rework the patch, take the ownership and rework it.
+Perhaps the device is really passing you a zero-length descriptor that
+can simply be discarded straight away?
 
-
-
-
-
-> +        clocks:
-> +          minItems: 6
-> +          maxItems: 6
-> +        clock-names:
-> +          items:
-> +            - const: iface # PCIe to SysNOC BIU clock
-> +            - const: axi_m # AXI Master clock
-> +            - const: axi_s # AXI Slave clock
-> +            - const: ahb # AHB clock
-> +            - const: aux # Auxiliary clock
-> +            - const: axi_bridge # AXI bridge clock
-> +        resets:
-> +          minItems: 8
-> +          maxItems: 8
-> +        reset-names:
-> +          items:
-> +            - const: pipe # PIPE reset
-> +            - const: sleep # Sleep reset
-> +            - const: sticky # Core sticky reset
-> +            - const: axi_m # AXI master reset
-> +            - const: axi_s # AXI slave reset
-> +            - const: ahb # AHB reset
-> +            - const: axi_m_sticky # AXI master sticky reset
-> +            - const: axi_s_sticky # AXI slave sticky reset
-> +        interrupts:
-> +          minItems: 8
-> +          maxItems: 8
-
-8 items...
-
-> +        interrupt-names:
-> +          items:
-> +            - const: msi0
-> +            - const: msi1
-> +            - const: msi2
-> +            - const: msi3
-> +            - const: msi4
-> +            - const: msi5
-> +            - const: msi6
-> +            - const: msi7
-> +            - const: global
-
-And here 9 items. You got comment on this. What's more, I doubt that DTS
-was tsted.
-
-Best regards,
-Krzysztof
-
+Johan
 
