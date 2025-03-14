@@ -1,292 +1,157 @@
-Return-Path: <linux-kernel+bounces-561864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 590D6A6179A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:28:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 036BCA617DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:34:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69EF8846C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:28:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 269161890F2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C60020550E;
-	Fri, 14 Mar 2025 17:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6AB204C3F;
+	Fri, 14 Mar 2025 17:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xrt+ej9y"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hYkUWdCG"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A36204F72
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD7A204598
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741973217; cv=none; b=iPQhZptP9awSUhGV3Z8AUlNjB+ACIOAEIziO4rGpOwVk0Mp1Zuok1dGcS8RPFSizW3A2gAiVl4Fy/GFtgO82sL7/ipI6AvakPMSpm4t7okV8CUbI34lF1HJIsqIxIJ1d0R9UCtiBIYI868qNa+7G+gjgbI9emJtcxov1gLDAT2o=
+	t=1741973566; cv=none; b=K6Eh4u9StSgDKmrXS92ObDbnf/t9itgNgAtstdKbPdcttdXlTT1Yx0QE8BAu3wunLluhq6f6CnwofYDIfP0wDPXc1itxUYfTVY5vQ2Y5RpFlu0PImfpW+tmXdeNyRmf9djSgZ5TglwisEDgObWNJ/s7VhiKA0+u8+VGWyoDu/Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741973217; c=relaxed/simple;
-	bh=bGogLz3N653maS3jZp3WJ6CASqFwglP+GLUbaNFpvAA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CoKx9uSEhdx61M1jGyuAzd40uStX6yNuKu68sjeUUXc6ezT5zM4jR6OVglqv3WbTv2IA6B2lwjK13l1x2dNmjfR+Ww+ZkGcM7k2OP1wTskV26cn49fIw4TmrvMjcPHzqHEKwcf/n9Aq5L77d9eXwHR3gmQHirGNICT7FTIHgrMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xrt+ej9y; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741973216; x=1773509216;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=bGogLz3N653maS3jZp3WJ6CASqFwglP+GLUbaNFpvAA=;
-  b=Xrt+ej9yyqk5qFUfYZwlCYAsYxaMG7nk+9dOn3LuWZPQlstDxqHREh9K
-   XgGB0i0X+kswsoY6Xiok0kAdmu8HL83s9BHa1XO2lIPo2WV4dBG2Rdjde
-   9P42viBphR87ySrL2v7GJRV/C96tJ44sSF5aKA74mc5KHAkqskB0lwMI4
-   spvdoS2xFhXRubcIF6ZinQI2xDKRKQ1a6qZTzoqcu/E7CXx8RysmSIZXP
-   kVMw0aDDj4BrT2epIpOd30sO5JZ+PY2+gmtdJgbZd3tHglShO5+o19ybL
-   qaQ7leecD2ce2fkxI3Ir6KnLmwfKKpgIzCOthnO8JjW7E6YSBCWHc7Uij
-   Q==;
-X-CSE-ConnectionGUID: 1kxr7oHXQj2pjspaA8JNcQ==
-X-CSE-MsgGUID: Yo4Z4uvaSn2tPtG9lSuhRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="54516575"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="54516575"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 10:26:50 -0700
-X-CSE-ConnectionGUID: tq9Y4l1fQT6Z9yFBuWgI+w==
-X-CSE-MsgGUID: 57XbPHdWQ/W9To5dn0GmAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="152231815"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by orviesa002.jf.intel.com with ESMTP; 14 Mar 2025 10:26:49 -0700
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	tglx@linutronix.de,
-	bp@alien8.de,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	linux-kernel@vger.kernel.org
-Cc: ak@linux.intel.com,
-	eranian@google.com,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V10 7/7] perf: Clean up pmu specific data
-Date: Fri, 14 Mar 2025 10:27:00 -0700
-Message-Id: <20250314172700.438923-7-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20250314172700.438923-1-kan.liang@linux.intel.com>
-References: <20250314172700.438923-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1741973566; c=relaxed/simple;
+	bh=xF/2QnZTSylt/cwjFnFTL7qBGTzMhfvtQ67JNqoT4r4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Hf+KTRPR4WuAJo6IEjQS17+WgDCzq8ARbwTPvFCNx0c1e4Z/D42gHcGZwbOIUAKu+TG57PkXJRTO/oG36+dThCEvfJUWEAP118EWQy7lojqHWiB/4qNoIo0lr23+y0MqpBKReZgclCiRSsOYJ8sV8Bm1bWDIN9JqxBb2wBRzsoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hYkUWdCG; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=96s6A0/wGdg9uEowt/d0MtM4B3230XuWS7buJGJQgVo=; b=hYkUWdCGeorzJA6Fbu6tUQSfsD
+	rKkuiTnOfD+erkZFGETT3p78wEpDohBR3bKdRF/WXXzAyx9ZH7TuxytV0oSL4oP6JA4q0sQ2arUb/
+	jnCHj/0t3dDQEyMWDdmTdQ9IPd2kaGqA/IUWp8hP00aByTzAz981k5S0/1akHmrJrDuiB1srX1v20
+	FciWJCOUiaaGPrtUqrSWzFxWPbopR9myKzHtb7iVHtTC+b7pQAaeQkr3sKkLRcjxi8gR0NJBGGpph
+	8pPqJjPrWZLly99egtwGI4maLLSTpNmPtwvJVcCmVaaxrJpCtaTozMQnA94mXhxJt53zEC+GWWwRp
+	Nr1NUj4Q==;
+Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tt8tb-00000002vU9-3fUO;
+	Fri, 14 Mar 2025 17:32:32 +0000
+Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tt8tY-0000000CsVc-32QC;
+	Fri, 14 Mar 2025 17:32:28 +0000
+From: David Woodhouse <dwmw2@infradead.org>
+To: kexec@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	linux-kernel@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	Dave Young <dyoung@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	jpoimboe@kernel.org,
+	bsz@amazon.de
+Subject: [PATCH v8 0/7] x86/kexec: Add exception handling for relocate_kernel
+Date: Fri, 14 Mar 2025 17:27:32 +0000
+Message-ID: <20250314173226.3062535-1-dwmw2@infradead.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Sender: David Woodhouse <dwmw2@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-From: Kan Liang <kan.liang@linux.intel.com>
 
-The pmu specific data is saved in task_struct now. Remove it from event
-context structure.
+Debugging kexec failures is painful, as anything going wrong in execution
+of the critical relocate_kernel() function tends to just lead to a triple
+fault. Thus leading to *weeks* of my life that I won't get back. Having
+hacked something up for my own use, I figured I should share it...
 
-Remove swap_task_ctx() as well.
+Add a trivial exception handler in the relocate_kernel environment which 
+outputs to the early_printk serial console if configured. Currently only 
+8250-compatible serial ports are supported, but that could be extended.
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
+I had to hack up QEMU support for a PCI serial port which matches what
+the existing early_printk code can drive, and the *real* 8250_pci driver
+doesn't seem to cope with that setup at all, but whatever... the kexec
+code now drives the same 32-bit stride which is all that earlyprintk
+supports. We can always add more later, if anyone cares.
 
-No changes since V9
+Someone who cares might want to bring the i386 version into line with
+this, although the lack of rip-based addressing makes all the PIC code a
+bit harder.
 
- include/linux/perf_event.h | 12 ------
- kernel/events/core.c       | 76 ++------------------------------------
- 2 files changed, 3 insertions(+), 85 deletions(-)
+v8:
+ • Fix UNRET objtool warning in exc_handler.
+ • Clean up magic numbers in stack frame for exc_handler.
+ • Fix i386 build error due to making the debug support unconditional.
+ • The int3 is still a [DO NOT APPLY] hack for later, and I plan to deal
+   with that with a userspace test case based on
+   http://david.woodhou.se/loadret.c which will exercise kexec-jump at the
+   same time.
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 2625e370c334..e694c6f5642f 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -501,16 +501,6 @@ struct pmu {
- 	 */
- 	struct kmem_cache		*task_ctx_cache;
- 
--	/*
--	 * PMU specific parts of task perf event context (i.e. ctx->task_ctx_data)
--	 * can be synchronized using this function. See Intel LBR callstack support
--	 * implementation and Perf core context switch handling callbacks for usage
--	 * examples.
--	 */
--	void (*swap_task_ctx)		(struct perf_event_pmu_context *prev_epc,
--					 struct perf_event_pmu_context *next_epc);
--					/* optional */
--
- 	/*
- 	 * Set up pmu-private data structures for an AUX area
- 	 */
-@@ -932,7 +922,6 @@ struct perf_event_pmu_context {
- 	atomic_t			refcount; /* event <-> epc */
- 	struct rcu_head			rcu_head;
- 
--	void				*task_ctx_data; /* pmu specific data */
- 	/*
- 	 * Set when one or more (plausibly active) event can't be scheduled
- 	 * due to pmu overcommit or pmu constraints, except tolerant to
-@@ -980,7 +969,6 @@ struct perf_event_context {
- 	int				nr_user;
- 	int				is_active;
- 
--	int				nr_task_data;
- 	int				nr_stat;
- 	int				nr_freq;
- 	int				rotate_disable;
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index cbaf5420c902..8cf346faae6a 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -1254,20 +1254,6 @@ static void get_ctx(struct perf_event_context *ctx)
- 	refcount_inc(&ctx->refcount);
- }
- 
--static void *alloc_task_ctx_data(struct pmu *pmu)
--{
--	if (pmu->task_ctx_cache)
--		return kmem_cache_zalloc(pmu->task_ctx_cache, GFP_KERNEL);
--
--	return NULL;
--}
--
--static void free_task_ctx_data(struct pmu *pmu, void *task_ctx_data)
--{
--	if (pmu->task_ctx_cache && task_ctx_data)
--		kmem_cache_free(pmu->task_ctx_cache, task_ctx_data);
--}
--
- static void free_ctx(struct rcu_head *head)
- {
- 	struct perf_event_context *ctx;
-@@ -3577,42 +3563,6 @@ static void perf_event_sync_stat(struct perf_event_context *ctx,
- 	}
- }
- 
--#define double_list_for_each_entry(pos1, pos2, head1, head2, member)	\
--	for (pos1 = list_first_entry(head1, typeof(*pos1), member),	\
--	     pos2 = list_first_entry(head2, typeof(*pos2), member);	\
--	     !list_entry_is_head(pos1, head1, member) &&		\
--	     !list_entry_is_head(pos2, head2, member);			\
--	     pos1 = list_next_entry(pos1, member),			\
--	     pos2 = list_next_entry(pos2, member))
--
--static void perf_event_swap_task_ctx_data(struct perf_event_context *prev_ctx,
--					  struct perf_event_context *next_ctx)
--{
--	struct perf_event_pmu_context *prev_epc, *next_epc;
--
--	if (!prev_ctx->nr_task_data)
--		return;
--
--	double_list_for_each_entry(prev_epc, next_epc,
--				   &prev_ctx->pmu_ctx_list, &next_ctx->pmu_ctx_list,
--				   pmu_ctx_entry) {
--
--		if (WARN_ON_ONCE(prev_epc->pmu != next_epc->pmu))
--			continue;
--
--		/*
--		 * PMU specific parts of task perf context can require
--		 * additional synchronization. As an example of such
--		 * synchronization see implementation details of Intel
--		 * LBR call stack data profiling;
--		 */
--		if (prev_epc->pmu->swap_task_ctx)
--			prev_epc->pmu->swap_task_ctx(prev_epc, next_epc);
--		else
--			swap(prev_epc->task_ctx_data, next_epc->task_ctx_data);
--	}
--}
--
- static void perf_ctx_sched_task_cb(struct perf_event_context *ctx,
- 				   struct task_struct *task, bool sched_in)
- {
-@@ -3687,16 +3637,15 @@ perf_event_context_sched_out(struct task_struct *task, struct task_struct *next)
- 			WRITE_ONCE(next_ctx->task, task);
- 
- 			perf_ctx_sched_task_cb(ctx, task, false);
--			perf_event_swap_task_ctx_data(ctx, next_ctx);
- 
- 			perf_ctx_enable(ctx, false);
- 
- 			/*
- 			 * RCU_INIT_POINTER here is safe because we've not
- 			 * modified the ctx and the above modification of
--			 * ctx->task and ctx->task_ctx_data are immaterial
--			 * since those values are always verified under
--			 * ctx->lock which we're now holding.
-+			 * ctx->task is immaterial since this value is
-+			 * always verified under ctx->lock which we're now
-+			 * holding.
- 			 */
- 			RCU_INIT_POINTER(task->perf_event_ctxp, next_ctx);
- 			RCU_INIT_POINTER(next->perf_event_ctxp, ctx);
-@@ -5000,7 +4949,6 @@ find_get_pmu_context(struct pmu *pmu, struct perf_event_context *ctx,
- 		     struct perf_event *event)
- {
- 	struct perf_event_pmu_context *new = NULL, *pos = NULL, *epc;
--	void *task_ctx_data = NULL;
- 
- 	if (!ctx->task) {
- 		/*
-@@ -5033,14 +4981,6 @@ find_get_pmu_context(struct pmu *pmu, struct perf_event_context *ctx,
- 	if (!new)
- 		return ERR_PTR(-ENOMEM);
- 
--	if (event->attach_state & PERF_ATTACH_TASK_DATA) {
--		task_ctx_data = alloc_task_ctx_data(pmu);
--		if (!task_ctx_data) {
--			kfree(new);
--			return ERR_PTR(-ENOMEM);
--		}
--	}
--
- 	__perf_init_event_pmu_context(new, pmu);
- 
- 	/*
-@@ -5075,14 +5015,7 @@ find_get_pmu_context(struct pmu *pmu, struct perf_event_context *ctx,
- 	epc->ctx = ctx;
- 
- found_epc:
--	if (task_ctx_data && !epc->task_ctx_data) {
--		epc->task_ctx_data = task_ctx_data;
--		task_ctx_data = NULL;
--		ctx->nr_task_data++;
--	}
- 	raw_spin_unlock_irq(&ctx->lock);
--
--	free_task_ctx_data(pmu, task_ctx_data);
- 	kfree(new);
- 
- 	return epc;
-@@ -5098,7 +5031,6 @@ static void free_cpc_rcu(struct rcu_head *head)
- 	struct perf_cpu_pmu_context *cpc =
- 		container_of(head, typeof(*cpc), epc.rcu_head);
- 
--	kfree(cpc->epc.task_ctx_data);
- 	kfree(cpc);
- }
- 
-@@ -5106,7 +5038,6 @@ static void free_epc_rcu(struct rcu_head *head)
- {
- 	struct perf_event_pmu_context *epc = container_of(head, typeof(*epc), rcu_head);
- 
--	kfree(epc->task_ctx_data);
- 	kfree(epc);
- }
- 
-@@ -14088,7 +14019,6 @@ inherit_event(struct perf_event *parent_event,
- 	if (is_orphaned_event(parent_event) ||
- 	    !atomic_long_inc_not_zero(&parent_event->refcount)) {
- 		mutex_unlock(&parent_event->child_mutex);
--		/* task_ctx_data is freed with child_ctx */
- 		free_event(child_event);
- 		return NULL;
- 	}
--- 
-2.38.1
+v7: https://lore.kernel.org/kexec/20250312144257.2348250-1-dwmw2@infradead.org/
+ • Drop CONFIG_KEXEC_DEBUG and make it all unconditional in order to
+   "throw regressions back into the face of whoever manages to introduce
+   them" (Ingo, https://lore.kernel.org/kexec/Z7rwA-qVauX7lY8G@gmail.com/)
+ • Move IDT invalidation into relocate_kernel() itself.
+
+v6: https://lore.kernel.org/kexec/20250115191423.587774-1-dwmw2@infradead.org/
+ • Rebase onto already-merged fixes in tip/x86/boot.
+ • Move CONFIG_KEXEC_DEBUG to generic kernel/Kconfig.kexec as Bartosz is
+   working on an Arm64 version.
+
+v5: https://lore.kernel.org/kexec/20241205153343.3275139-1-dwmw2@infradead.org/T/
+ • Drop [RFC].
+ • Drop _PAGE_NOPTISHADOW fix, which Ingo already took into tip/x86/urgent.
+ • Add memory-mapped serial port support (32-bit MMIO spacing only).
+
+v4 (RFC): https://lore.kernel.org/kexec/20241127190343.44916-1-dwmw2@infradead.org/T/
+ • Add _PAGE_NOPTISHADOW fix for the identmap code.
+ • Drop explicit map of control page, which was masking the identmap bug.
+
+v3 (RFC): https://lore.kernel.org/kexec/20241125100815.2512-1-dwmw2@infradead.org/T/
+ • Add CONFIG_KEXEC_DEBUG option and use earlyprintk config.
+ • Allocate PGD separately from control page.
+ • Explicitly map control page into identmap.
+
+V2 (RFC): https://lore.kernel.org/kexec/20241122224715.171751-1-dwmw2@infradead.org/T/
+ • Introduce linker script, start to clean up data access.
+
+V1 (RFC): https://lore.kernel.org/kexec/20241103054019.3795299-1-dwmw2@infradead.org/T/
+ • Initial proof-of-concept hacks.
+
+David Woodhouse (7):
+      x86/kexec: Debugging support: Load an IDT and basic exception entry points
+      x86/kexec: Debugging support: Dump registers on exception
+      x86/kexec: Add 8250 serial port output
+      x86/kexec: Add 8250 MMIO serial port output
+      x86/kexec: Invalidate GDT/IDT from relocate_kernel() instead of earlier
+      [DO NOT MERGE] x86/kexec: Add int3 in kexec path for testing
+      [DO NOT MERGE] x86/kexec: Add CFI type information to relocate_kernel()
+
+ arch/x86/include/asm/kexec.h         |   7 +
+ arch/x86/kernel/early_printk.c       |   9 ++
+ arch/x86/kernel/machine_kexec_64.c   |  50 +++++--
+ arch/x86/kernel/relocate_kernel_64.S | 248 ++++++++++++++++++++++++++++++++++-
+ 4 files changed, 302 insertions(+), 12 deletions(-)
 
 
