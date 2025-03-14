@@ -1,189 +1,120 @@
-Return-Path: <linux-kernel+bounces-561512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7395BA612E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:41:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3061BA612EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:42:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EDB31B63C99
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:42:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE311B63CBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6FE1FF7DE;
-	Fri, 14 Mar 2025 13:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDBE1FFC52;
+	Fri, 14 Mar 2025 13:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lOnng4qT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JqywUOCe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE72E1EB3E
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A171FECA2;
+	Fri, 14 Mar 2025 13:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741959710; cv=none; b=C/qKyulEbTAj5eYRJjwVghCmUIEj+Cvy43Xk52vN7oi1rxtp+LV6CsDsn4s1rJt4CjTPwGn0wf8jIbmdjxnOFFNyPOf424GCpyQ9/SHWEvso2GXwhl8HMx9i1/oEX11N9ed3+3W6Io/MxcB6IJdsbP+Xd9jqZFnhWlwqlGfJE40=
+	t=1741959741; cv=none; b=FbyC75YsqlsOE9B3R/HFcbxKRIJWAvyl7NknlksoXxOXobjSuBcjwtBgBXAEVzohiDuyedau7+JKzMzQD4Fvl4oX1bxl2eQyXFRyWQEzsRA2Ps05G7Gn2c9X3owZNXwOtPD/Cd2PteOaPmXdfXnRfovg3fI3aTXKjz0RmoPoldY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741959710; c=relaxed/simple;
-	bh=YOxvcrGhtBThBHA1e26xU9KbU+1v+vE2bV/wmGGcDl0=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=E7QmltvBuuZ0kI/bUpvH33uzY4dHg/NW5apha26y04fNZQ0789aoE9xBDftUbySfsNndlrLGcStTobOxOcUayQazMSA4aZ9KZRRyH+HtQGJvwe59Z0CEJDkJG/gRI6gZCnCa5PqgGgQmhGmk56SSAajiHnQpg9XPRwfV3MljUJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lOnng4qT; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741959709; x=1773495709;
-  h=date:from:to:cc:subject:message-id;
-  bh=YOxvcrGhtBThBHA1e26xU9KbU+1v+vE2bV/wmGGcDl0=;
-  b=lOnng4qT4905OBFBSYyKT9fKEjPNN8w2aVVbAOuGG9AuN3MuJ0c3m4sa
-   QpP6gFjgIULwtJCCqqTo6aUireeNsispTQJjgyb+D1lZ/DQKYMO3XaKI5
-   5rj4+kyrxxa7YrSBCr3eTHHaUl28EOn2APGqmIccFja/CAmRhXwbt7tew
-   lENVjG3DakfFQi/P12UXZ5eVIPUBvWXMWsIBUjCuzfAo8/L3cBXbKQMDM
-   b3sSNWl1st5zpGbtZWoO10oF3hhbZMk9inOpwqgoHtYYRoNlL3MTvmZVd
-   3MFMW5z9eXrWmK7L9J1Hv319Uf5tMZLc/3Nygztc1JfJMv0Jd8lDdKyax
-   A==;
-X-CSE-ConnectionGUID: 4XHyJiZcTgWDqec5S4Dt1w==
-X-CSE-MsgGUID: HFI63NG6QYuP+DDty+1Zfg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="60508369"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="60508369"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 06:41:48 -0700
-X-CSE-ConnectionGUID: V32NBU22TmGEiUNa0Q9mpQ==
-X-CSE-MsgGUID: fk6KO1MDTIGc9XarWfWWCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="121781931"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 14 Mar 2025 06:41:47 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tt5IH-000AVo-0D;
-	Fri, 14 Mar 2025 13:41:45 +0000
-Date: Fri, 14 Mar 2025 21:40:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/msi] BUILD SUCCESS
- 537625233537179cb2e8293b2c0dc9c989363f41
-Message-ID: <202503142139.0sOz2P3T-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1741959741; c=relaxed/simple;
+	bh=ivdYHqGLMkeXJqwqg++93TWjmOD1Os6/6DS4DUvAFeE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FeGDVL75jxom8PxMRrxzEUPYJFm6TUGYL1syEl2FfzufCEy/DL3E5y/cMZ23XBm9TPEe7XKXFVnBBSP/NJuSsYTwU7DkjjXE5Oc9tdASy+C+MbMm6V2R071hfuC1umU1u5cGsurpi8s+7hTyWBW+0AX6B6LUiRng3NGy4YoxXPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JqywUOCe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1064C4CEEB;
+	Fri, 14 Mar 2025 13:42:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741959740;
+	bh=ivdYHqGLMkeXJqwqg++93TWjmOD1Os6/6DS4DUvAFeE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JqywUOCeJ+nONc2C6iNusLSzDRIra+gplxk1sdomCDT+GbRMBvq1Iqsq/xcfjuFhF
+	 5s6thcX21YS3Hk3CMW7u3orC1NEkSvG2ZcMM2g9bECOWlPxCwluDVA2c4EBjT/zOgT
+	 Z6vGuq4pTqh/2atppwQVpnG7+NO4x6jQpJlaqZMiZks//28H9F8WrJzXcvurGeKdoP
+	 xDwqrkJ6dQNYQXG1EJ6nHqmVQ05mINopc3TkcaPfb13ohvbfDMGpja/y47rwxSFkkI
+	 ILGfpldhxE9+/fKHgn9wfKsHu/rZ1z5gGfd1FIzUggNIrF+Yht5w6pKIpIZGDVJYXh
+	 l9MaYy65Uz7zw==
+Date: Fri, 14 Mar 2025 13:42:16 +0000
+From: Will Deacon <will@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Thomas Huth <thuth@redhat.com>, linux-kernel@vger.kernel.org,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH 08/41] arm64: Replace __ASSEMBLY__ with __ASSEMBLER__ in
+ uapi headers
+Message-ID: <20250314134215.GA9171@willie-the-truck>
+References: <20250314071013.1575167-1-thuth@redhat.com>
+ <20250314071013.1575167-9-thuth@redhat.com>
+ <20250314115554.GA8986@willie-the-truck>
+ <df30d093-c173-495a-8ed9-874857df7dee@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df30d093-c173-495a-8ed9-874857df7dee@app.fastmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/msi
-branch HEAD: 537625233537179cb2e8293b2c0dc9c989363f41  genirq/msi: Make a few functions static
+On Fri, Mar 14, 2025 at 01:05:15PM +0100, Arnd Bergmann wrote:
+> On Fri, Mar 14, 2025, at 12:55, Will Deacon wrote:
+> > On Fri, Mar 14, 2025 at 08:09:39AM +0100, Thomas Huth wrote:
+> >> __ASSEMBLY__ is only defined by the Makefile of the kernel, so
+> >> this is not really useful for uapi headers (unless the userspace
+> >> Makefile defines it, too). Let's switch to __ASSEMBLER__ which
+> >> gets set automatically by the compiler when compiling assembly
+> >> code.
+> >> 
+> >> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >> Cc: Will Deacon <will@kernel.org>
+> >> Signed-off-by: Thomas Huth <thuth@redhat.com>
+> >> ---
+> >>  arch/arm64/include/uapi/asm/kvm.h        | 2 +-
+> >>  arch/arm64/include/uapi/asm/ptrace.h     | 4 ++--
+> >>  arch/arm64/include/uapi/asm/sigcontext.h | 4 ++--
+> >>  3 files changed, 5 insertions(+), 5 deletions(-)
+> >
+> > Is there a risk of breaking userspace with this? I wonder if it would
+> > be more conservative to do something like:
+> >
+> > #if !defined(__ASSEMBLY__) && !defined(__ASSEMBLER__)
+> >
+> > so that if somebody is doing '#define __ASSEMBLY__' then they get the
+> > same behaviour as today.
+> >
+> > Or maybe we don't care?
+> 
+> I think the main risk we would have is user applications relying
+> on the __ASSEMBLER__ checks in new kernel headers and not defining
+> __ASSEMBLY__. This would result in the application not building
+> against old kernel headers that only check against __ASSEMBLY__.
 
-elapsed time: 1452m
+Hmm. I hadn't thought about the case of old headers :/
 
-configs tested: 97
-configs skipped: 1
+A quick Debian codesearch shows that glibc might #define __ASSEMBLY__
+for some arch-specific headers:
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+https://codesearch.debian.net/search?q=%23define+__ASSEMBLY__&literal=1
 
-tested configs:
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-13.2.0
-arc                              allyesconfig    gcc-13.2.0
-arc                   randconfig-001-20250314    gcc-13.2.0
-arc                   randconfig-002-20250314    gcc-13.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                              allyesconfig    gcc-14.2.0
-arm                   randconfig-001-20250314    clang-21
-arm                   randconfig-002-20250314    gcc-14.2.0
-arm                   randconfig-003-20250314    gcc-14.2.0
-arm                   randconfig-004-20250314    gcc-14.2.0
-arm64                            allmodconfig    clang-18
-arm64                 randconfig-001-20250314    gcc-14.2.0
-arm64                 randconfig-002-20250314    clang-21
-arm64                 randconfig-003-20250314    clang-15
-arm64                 randconfig-004-20250314    clang-21
-csky                  randconfig-001-20250314    gcc-14.2.0
-csky                  randconfig-002-20250314    gcc-14.2.0
-hexagon                          allmodconfig    clang-21
-hexagon                          allyesconfig    clang-18
-hexagon               randconfig-001-20250314    clang-21
-hexagon               randconfig-002-20250314    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250313    gcc-12
-i386        buildonly-randconfig-002-20250313    gcc-12
-i386        buildonly-randconfig-003-20250313    clang-19
-i386        buildonly-randconfig-004-20250313    gcc-12
-i386        buildonly-randconfig-005-20250313    clang-19
-i386        buildonly-randconfig-006-20250313    gcc-12
-i386                                defconfig    clang-19
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch             randconfig-001-20250314    gcc-14.2.0
-loongarch             randconfig-002-20250314    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250314    gcc-14.2.0
-nios2                 randconfig-002-20250314    gcc-14.2.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                randconfig-001-20250314    gcc-14.2.0
-parisc                randconfig-002-20250314    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-16
-powerpc               randconfig-001-20250314    clang-21
-powerpc               randconfig-002-20250314    gcc-14.2.0
-powerpc               randconfig-003-20250314    gcc-14.2.0
-powerpc64             randconfig-001-20250314    gcc-14.2.0
-powerpc64             randconfig-002-20250314    clang-17
-powerpc64             randconfig-003-20250314    clang-21
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-21
-riscv                 randconfig-001-20250314    clang-19
-riscv                 randconfig-002-20250314    gcc-14.2.0
-s390                             allmodconfig    clang-19
-s390                              allnoconfig    clang-15
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250314    gcc-14.2.0
-s390                  randconfig-002-20250314    gcc-14.2.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                    randconfig-001-20250314    gcc-14.2.0
-sh                    randconfig-002-20250314    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250314    gcc-14.2.0
-sparc                 randconfig-002-20250314    gcc-14.2.0
-sparc64               randconfig-001-20250314    gcc-14.2.0
-sparc64               randconfig-002-20250314    gcc-14.2.0
-um                               allmodconfig    clang-21
-um                                allnoconfig    clang-18
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250314    gcc-12
-um                    randconfig-002-20250314    gcc-12
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20250313    clang-19
-x86_64      buildonly-randconfig-002-20250313    clang-19
-x86_64      buildonly-randconfig-003-20250313    clang-19
-x86_64      buildonly-randconfig-004-20250313    gcc-12
-x86_64      buildonly-randconfig-005-20250313    clang-19
-x86_64      buildonly-randconfig-006-20250313    gcc-12
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250314    gcc-14.2.0
-xtensa                randconfig-002-20250314    gcc-14.2.0
+which is what I was more worried about.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Checking for both in the kernel headers does not solve this
+> problem, and I think we can still decide that we don't care:
+> in the worst case, an application using the headers from assembly
+> will have to get fixed later when it needs to be built against
+> old headers.
+
+Old headers might also just be missing definitions that the application
+wants, so I suppose there's always the potential for some manual effort
+in that case.
+
+Will
 
