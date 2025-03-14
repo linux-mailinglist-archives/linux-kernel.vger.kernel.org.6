@@ -1,114 +1,177 @@
-Return-Path: <linux-kernel+bounces-561035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4158A60CC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:07:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FD3A60CC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:08:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0DB219C5A5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:07:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9829F3B0EB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5E41DEFE0;
-	Fri, 14 Mar 2025 09:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180EC1DE4D3;
+	Fri, 14 Mar 2025 09:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="I9Gnyj6q"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Mn/OPDYa"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4869517E;
-	Fri, 14 Mar 2025 09:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147E017E
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741943252; cv=none; b=iOxUExLmUtie1y9pYd++OmqaPjMW5Nm8G84RCN/WsfMiipz0EqokKFMx08P2JQEFyqHZJ8tr7IU7kza+nAMd/oxsbaRhOYpvSm8+lVXiuXmYrNS9HvcSsp9ZboQUVO1/qX4xSGkh1YRmophiUhjqUl/EuOWFBH2MT9oBiYXs7HY=
+	t=1741943313; cv=none; b=hru2dyWWa1RKj9NRZYkPPvDE0fhxHc5D15Q1cZOtUnEKh/K4q5ay2dg9CX96hF8zRwflxrr8lV7/tmXD+YgYcUxYt+Cyv07x0+ay1IEIweGXhaXodp03QR4gG7JQbq0KBMOcuMsS7LXlZMVUQXD+52ofRm1MnR49mP9eA5+CjbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741943252; c=relaxed/simple;
-	bh=fWAl0o6kzNFqcIxGpkGrqFYkLiie1rYfsKfuIM2ZjbQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RGu2CeoBBEDWxWXx+Yn7faHfMg52Q1XUMWZorfpPmULkE2tjU5tr9TERqHJycGMP64BXOCjyWYlwszoK4RzQVKa3Nn9AAJWUiWpk+r9JCMsQ9QyhRkPGN7jYP5YhyU0PC+ZbrtNxFzrpioCfIhCMWOixstiKwgj2FWH9AGghxLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=I9Gnyj6q; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52E97BUG1638695
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Mar 2025 04:07:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741943231;
-	bh=PBc+H6lNDSCY0P/ZGAoCaWqWu97NXbYVzEJgVsi6CPI=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=I9Gnyj6qjLjU0xS0CUgxLIJLbySBdjn0ux91+G+Hk2P9/s6bLE2OX+auY59sWPwaz
-	 jAMEbPV9PCvP4qGZnRbZsZ9wEIWMobRZCUgRX6v7ZBsfc/ztQnRg5RQcaJHg+DMcxE
-	 u7wleChfDMdOUk75jk0rbrJ4oMXC0tg2OAe1QRPE=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52E97B6S005456
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 14 Mar 2025 04:07:11 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
- Mar 2025 04:07:11 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 14 Mar 2025 04:07:11 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52E97AxF127218;
-	Fri, 14 Mar 2025 04:07:10 -0500
-Date: Fri, 14 Mar 2025 14:37:09 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Thomas Richard <thomas.richard@bootlin.com>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <vigneshr@ti.com>, <kishon@kernel.org>,
-        <cassel@kernel.org>, <wojciech.jasko-EXT@continental-corporation.com>,
-        <bwawrzyn@cisco.com>, <linux-pci@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
-Subject: Re: [PATCH 4/4] PCI: j721e: Add support to build as a loadable module
-Message-ID: <20250314090709.oaaxhapvg4fxdjc7@uda0492258>
-References: <20250307103128.3287497-1-s-vadapalli@ti.com>
- <20250307103128.3287497-5-s-vadapalli@ti.com>
- <88b3ecbe-32b6-4310-afb9-da19a2d0506a@bootlin.com>
+	s=arc-20240116; t=1741943313; c=relaxed/simple;
+	bh=zb6xT2oZsSwyTUQB3pD4y4RRJdTB4nnvbdNWmI+Ia6U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jrm4olsIgNf53Pt0VAci0/3A5V7YeiqyzkGYMJ43PmGe2I4um5XqctoZKuKZE55lYjSBX9rychtLxHcvtfAgZyToCqa3NmX2Pb5T1zkdZNuYxT3FmaYFTd5rtbyxnQ3TevyxbygSRMEN3M2I4tnFJ9bLBR2TZ8f3sbFtyOCbWok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Mn/OPDYa; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DNP4Qv018322;
+	Fri, 14 Mar 2025 09:08:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=P5Ptco
+	o0re4UupnZRhseH76+bGD+NG6A68s8gCEYTzI=; b=Mn/OPDYaG0OL/6nGYnKYOY
+	DeQU50X23BQlguz7qfLDTLT0HtWVvH1ff7TYmK3WwBrFIXHbxWJa6glBFk+qBDIJ
+	QaeDKrcTXjGTzQFxdOcAaF/3SOBKDxs6TvW9XgRVnQ5cb+UNmqjk7Kc3a/Sb2lhK
+	qoSefv4V/2Tns0D6MvLoIxRTbhndbbHnW5ZGLb6kLpGs9Hb3skW3uFZ/+qNAWxVZ
+	HT1GIio5HgioUzR5b1AHVzPHV/gZUOClPGQfG37lbvNHV3msXV7ubjJ+PP+BjCmr
+	tuM+8ukjrkN1lUrdRFd752D59SQi6u4Ifqa1AzsIbEtkW5Ar8yvFm7me0eSfOu5g
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45c0srcscr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 09:08:14 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52E96Nbl017054;
+	Fri, 14 Mar 2025 09:08:13 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45c0srcscj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 09:08:13 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52E96kuE027065;
+	Fri, 14 Mar 2025 09:08:12 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45atsr644r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 09:08:12 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52E988jd18415970
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Mar 2025 09:08:08 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 767762004B;
+	Fri, 14 Mar 2025 09:08:08 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7F65320043;
+	Fri, 14 Mar 2025 09:08:05 +0000 (GMT)
+Received: from [9.39.22.126] (unknown [9.39.22.126])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 14 Mar 2025 09:08:05 +0000 (GMT)
+Message-ID: <1263bf89-a2dd-4ae9-a8f9-9c36ddd08208@linux.ibm.com>
+Date: Fri, 14 Mar 2025 14:38:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <88b3ecbe-32b6-4310-afb9-da19a2d0506a@bootlin.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/6] powerpc: fadump: use lock guard for mutex
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, mpe@ellerman.id.au, fbarrat@linux.ibm.com,
+        ajd@linux.ibm.com, mahesh@linux.ibm.com, oohall@gmail.com,
+        hbathini@linux.ibm.com, dhowells@redhat.com, haren@linux.ibm.com,
+        linux-kernel@vger.kernel.org
+References: <20250314054544.1998928-1-sshegde@linux.ibm.com>
+ <20250314054544.1998928-4-sshegde@linux.ibm.com>
+ <20250314082223.GT5880@noisy.programming.kicks-ass.net>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20250314082223.GT5880@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 2aHaGjGqb04H9xa5NdtJKF2BmYUQP55S
+X-Proofpoint-GUID: 5qlFFH1qpa3l-RY29U11zq59JxMJzqO4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-14_03,2025-03-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1015 bulkscore=0
+ malwarescore=0 phishscore=0 mlxlogscore=744 mlxscore=0 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503140071
 
-On Fri, Mar 14, 2025 at 10:03:01AM +0100, Thomas Richard wrote:
 
-Hello Thomas,
 
-> > +
-> > +	if (pcie->reset_gpio) {
-> > +		msleep(PCIE_T_PVPERL_MS);
-> > +		gpiod_set_value_cansleep(pcie->reset_gpio, 1);
-> > +	}
-> > +
-> > +	if (pcie->refclk)
-> > +		clk_disable_unprepare(pcie->refclk);
-> >  
+On 3/14/25 13:52, Peter Zijlstra wrote:
+
+Thanks Peter for taking a look.
+
+> On Fri, Mar 14, 2025 at 11:15:41AM +0530, Shrikanth Hegde wrote:
+>> use guard(mutex) for scope based resource management of mutex.
+>> This would make the code simpler and easier to maintain.
+>>
+>> More details on lock guards can be found at
+>> https://lore.kernel.org/all/20230612093537.614161713@infradead.org/T/#u
+>>
+>> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+>> ---
+>>   arch/powerpc/kernel/fadump.c | 6 ++----
+>>   1 file changed, 2 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
+>> index 4b371c738213..5fd2c546fd8c 100644
+>> --- a/arch/powerpc/kernel/fadump.c
+>> +++ b/arch/powerpc/kernel/fadump.c
+>> @@ -1374,15 +1374,13 @@ static void fadump_free_elfcorehdr_buf(void)
+>>   
+>>   static void fadump_invalidate_release_mem(void)
+>>   {
+>> -	mutex_lock(&fadump_mutex);
+>> +	guard(mutex)(&fadump_mutex);
+>> +
+>>   	if (!fw_dump.dump_active) {
+>> -		mutex_unlock(&fadump_mutex);
+>>   		return;
+>>   	}
+>>   
+>>   	fadump_cleanup();
+>> -	mutex_unlock(&fadump_mutex);
+>> -
 > 
-> Hello Siddharth,
+> This will result in running the below functions with the mutex held.
 > 
-> I think clk_disable_unprepare() is a no-op if the clock is NULL, so the
-> if statement is useless.
+>>   	fadump_free_elfcorehdr_buf();
+>>   	fadump_release_memory(fw_dump.boot_mem_top, memblock_end_of_DRAM());
+>>   	fadump_free_cpu_notes_buf();
 > 
-> https://elixir.bootlin.com/linux/v6.14-rc6/source/include/linux/clk.h#L1157
-> https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/clk/clk.c#L1237
-> https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/clk/clk.c#L1099
 
-Thank you for pointing it out. I will drop the unnecessary check in the
-next version. I will wait for feedback on other patches in this series
-before I post the next version.
+Ok. Got it, since the variable is still in scope unlock wont be called.
+So, will use scoped_guard as you suggested below in v2.
 
-Regards,
-Siddharth.
+> 
+> The equivalent transformation for the above code would look like:
+> 
+> static void fadump_invalidate_release_mem(void)
+> {
+> 	scoped_guard (mutex, &fadump_mutex) {
+> 		if (!fw_dump.dump_active)
+> 			return;
+> 
+> 		fadump_cleanup();
+> 	}
+> 
+> 	fadump_free_elfcorehdr_buf();
+> 	...
+
+ok.
 
