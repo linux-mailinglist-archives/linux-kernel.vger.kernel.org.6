@@ -1,236 +1,197 @@
-Return-Path: <linux-kernel+bounces-561311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05017A60FFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:32:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D987DA60FFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:33:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B28A173CD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:32:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50CB3177387
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80201FAC25;
-	Fri, 14 Mar 2025 11:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A411FDA82;
+	Fri, 14 Mar 2025 11:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="NFYxmnNB"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2075.outbound.protection.outlook.com [40.107.255.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DSFJFj4u"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9E41519B0
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741951943; cv=fail; b=FYnBHPARM1W5qtwRSM9s1UsdoRGWBxropsapwfC39H3+EVppu+a/Z/uGo9dWTSuzedarXo3na2fpBgJjXNhrlCr9QmcMCVnA/XLdP4JQVETNao0sUqob8/tX2/Oq+HDZJ9tzoqLVw10bycJMqcUaDLi5FOi6kaqA5nRUfr8OARA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741951943; c=relaxed/simple;
-	bh=OIMuPzsKdvMFQL6yqms0MNYcAYmj5WuhVkzxHgQls0I=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LCZeUukkJPvYEA9h9ZZJF/qUoMlCMfrG529KHJTon4jpR7k5MViv6/tJh/ylvlu0c8P75spppQNR/9/2tZEMl6+wxHLcbFWDKWXOyWnkrg3QK/xi3UOoszOxBmzZtq84De5CY7geg6ZfhLlFkrY5YV1ecy2+WJSl5J6gcXPMdr8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=NFYxmnNB; arc=fail smtp.client-ip=40.107.255.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CldaikPpVCk22oOqeIDmsOD9DToerCyU62ntSCGyl30ZL0I+r0U8VwYxlAx/V7TOMomaYIBbdUI9R/Rd26mEHppQKOG+A9seKZ2VSrja3oRGCByhHq/qqWyBVOSBiD13ITofEJBtC+7m1DJkFwLRtSL6TiyDM9aA0i1f+Vgel0dcRX37iIwN8/uAsqAobEt240bvBDeG3vQ1yFxuROfTDeELBSiyuYJN547WVt2sGqhwe6p3VwDdIN0URnW2il/VV0hcDSK905VWQdTBs/mdOW+gIY35J5f2ddRc99EViUnFXPXr4N786bI+QFsbGaOHtDHx6k1KQH+NLCjce65VhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fHMZmsHtHEyPryQbAb7cHERH06sU+TSzrvYzxFgU0g8=;
- b=QeV5QkH48E6jAzZPnrHPFK3L302SphO9HU3BYHbRo4TUwaLsqXlfvfWpZxc+rN48K1ZeuZDuHyUrCqe1VInji7PmnkXDP+pMkVcaLapyWOhO8ffRC5cRrfJrWioFOalbLfya5nQgwUXXPzpFx1FkLtlHdxGRbPoFICGAXGKBouZ96R8y0eEy5b55yQ6vzGvfSZXGGH4CAdGz5ob7UtUaZ95l/PqOBxpMczP5jlfF6VekISdU3dZ8JI3WCuCW3QvdMO8rUI06P4Dy45tZg1qXDirjU9ct0jFQcauUIKwWTqyCbB6I5r+y+xWQC6dSFZtSjmFGMMSjnefvAuL68WGx+w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=bytedance.com smtp.mailfrom=oppo.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=oppo.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fHMZmsHtHEyPryQbAb7cHERH06sU+TSzrvYzxFgU0g8=;
- b=NFYxmnNBCFN0t/a9D+8WwwPCasey8WY6+Yn/Y7A0kF3h11k4eHP0dA/NCxGIc5vwk51neK2o8hHK+kr+9qLe3wnMckFgXCYM7BGIQ4PXhuE8z0vnQnE6MJ8IqvY/X/IzrlzXBRqar/AA+2dKKMaL67R/zGln/UCl0tZFtDQKfRo=
-Received: from SG2PR01CA0132.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::36) by SEZPR02MB6279.apcprd02.prod.outlook.com
- (2603:1096:101:e4::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Fri, 14 Mar
- 2025 11:32:16 +0000
-Received: from SG1PEPF000082E7.apcprd02.prod.outlook.com
- (2603:1096:4:40:cafe::7b) by SG2PR01CA0132.outlook.office365.com
- (2603:1096:4:40::36) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.28 via Frontend Transport; Fri,
- 14 Mar 2025 11:32:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- SG1PEPF000082E7.mail.protection.outlook.com (10.167.240.10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Fri, 14 Mar 2025 11:32:16 +0000
-Received: from oppo.com (172.16.40.118) by mailappw31.adc.com (172.16.56.198)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 14 Mar
- 2025 19:32:15 +0800
-Date: Fri, 14 Mar 2025 19:32:10 +0800
-From: Hailong Liu <hailong.liu@oppo.com>
-To: Zhongkun He <hezhongkun.hzk@bytedance.com>
-CC: <akpm@linux-foundation.org>, <mhocko@suse.com>, <hannes@cmpxchg.org>,
-	<muchun.song@linux.dev>, <yosry.ahmed@linux.dev>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2] mm: vmscan: skip the file folios in proactive reclaim
- if swappiness is MAX
-Message-ID: <20250314113210.2z36hilxwfbnl4ms@oppo.com>
-References: <20250314033350.1156370-1-hezhongkun.hzk@bytedance.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67871F1818;
+	Fri, 14 Mar 2025 11:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741952002; cv=none; b=EYyO5GKaQGRhQs4QNNCDU/I0GBko4mpoc/GyO76AmUAfkKLXyRjr27aTijyyZSkMNzRqtVQoNQigwty1R1GwMXv6UFk8fZ1WiCysbSgLEsOhh4lib6uBQw8lAYKrceJQXr+kZOXH7wyFAPDv47Olsb97VBXj+MP1WZEUd8LqPSc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741952002; c=relaxed/simple;
+	bh=e2vbOHLt7ldmqEIZlKr3k/tQ8Ks5OMo8a0id0FE39iI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sbkwBG4zuMnVxoqOw8aNLaHGeVllTPaR4AX/Z+k3rOVmxxMusyBdrh6iqMWYRa3t84mLdYUyNnAN4pf7r3ky6n2WKZRQE/SwgLzIWy/0WTZ3Z2Qz3ORQWyUPbc/AhdlDRkqI8xwmH/17hVtY5vskvvqDhtm0igBwciQwxojDlLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DSFJFj4u; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3913fdd0120so1104582f8f.0;
+        Fri, 14 Mar 2025 04:33:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741951999; x=1742556799; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=PVxcOvygfG8CHgKMUZuovi6TFAONrrhe9j6tvCE6gI0=;
+        b=DSFJFj4upHDQO2wPca0hNySy2NRZVWIfm5fBEe4WM7Ac/NROIeOo1LX6+t1sJpOvAW
+         7YCSuUfwXT0/s5jP9RI2txgDyd7sh+P/SrdO0BzKYvOpqrlu5fHBdRjPboU4VRoisbED
+         54dvu9JzvXjqkQCSJYXLRmB9nirMQqUEyE5QsqbLozbQyZMFNwfqfvAvkQr1P1gfV1Fn
+         Ss0wwqQ7wfvVOhTEQrxJ/eUuWNebMnIXqyq0eA+LjrzflcrpLCfHGZISJMcDQfmFnhS4
+         xFZyGIkMmWboAA5XKi0kN4WhpAVD0is/uf7XquUeJS8M3Ra2Tb5jzCsuDCGRcpKHfoqy
+         S84g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741951999; x=1742556799;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PVxcOvygfG8CHgKMUZuovi6TFAONrrhe9j6tvCE6gI0=;
+        b=bYXq/uA54pSPH1cl3Ezs5LP3OeRernfLQtu9v2b6OLBeure+GnqbdoJ8zHmKnFtPbl
+         owrqiyifjpt08nq+feW4AsUifAUozSQyYn0ypgP3VXc0O/2xNhcfQMHbXPcYk2IYI2/+
+         wKtVKh/rbfu+pOGd3+5GxxiUQQbE+nJcW3OMkK+WK9H9bDgdi7OeQB3ikwrAY0yCG3//
+         Bhx/NW54kzHxesSNHJ3IcsLSdqSMB4QmGjupOElGtmW7Gzkg7+hKaoEMP5GYqJ16OYFm
+         09gvf2CCgP871I3ARu78qLjwoXO3f1zdKEKcM767JqJM1nR6e8RMmHb/IcvvyRChYIHl
+         7H5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ8Ssidp7mtYmB6zYd+ZuIbqjX4syaXJsCzGjULNH6KXNPJ31PcoIL8o2lJtdTSOtLvQ/CVcMgiMBKL6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPjgTeEdRBlfQgxtuc8WZ6oGK1jfgQPVIlXeOJAyBQPEzcK4F3
+	ptL0wm7aLNc0ubhIFtjTmhJuhxs8/h/rTbUyyy4T1H4NaSSmBGc3
+X-Gm-Gg: ASbGnctSSak7pS04Zk56gPbmWxabdT3R9Hj+eU+W7HpZAMFi0y617IM4dHDGGRRzX3S
+	cSZcivJU4SSvEosSR/eCRgzbJw9qliEh7YxpTOkSlS8dhTIuWrlphRSowloiNPUzpKEdHwJAJnt
+	fnj14FBsANgeuyfna9ozNzsXC4ElL0Oiu0Jn1wiHhPpx8cO/MGaa0Cbxqw+0ZXBWWvdst341vRH
+	klJOWjpfiwOSsbUSDuYHl0vbkGc72HDg/SMl5EsLAGCjhAqmSsQrBR93EkYy3KNwL15pLZFZXrS
+	JCK78hIjdGFqjxawEuS3OKwui0ihWOZjDFT4AJo3kanQHrkV9CEW2nY/Kb8ayAsIHJ2FKw+QMUW
+	qKvU/EQPHX5OpwG+++cCBZfnzBXjoK3nnQy77L6OWfsAgxdEvTNMY2Xia+gyxt8eE2t05y6bOk9
+	fdzV2P1Diog4f/fZgBIobqBLsAFog5yFrfKg==
+X-Google-Smtp-Source: AGHT+IFinYC2sZnzhAmOU9xmOX9dgX1rwM53QDrgbGAXrShy21SKX+QnCfot+G8dIqJWvF3Ge9ukNw==
+X-Received: by 2002:a05:6000:381:b0:397:8ef9:a143 with SMTP id ffacd0b85a97d-3978ef9a95amr1143409f8f.23.1741951998898;
+        Fri, 14 Mar 2025 04:33:18 -0700 (PDT)
+Received: from ?IPV6:2a02:3100:acc2:9400:c68:8c54:c04c:f0e3? (dynamic-2a02-3100-acc2-9400-0c68-8c54-c04c-f0e3.310.pool.telefonica.de. [2a02:3100:acc2:9400:c68:8c54:c04c:f0e3])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-395c8975b34sm5315454f8f.55.2025.03.14.04.33.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Mar 2025 04:33:18 -0700 (PDT)
+Message-ID: <ecfc71d3-47b6-4f17-b081-69452e7884ac@gmail.com>
+Date: Fri, 14 Mar 2025 12:33:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250314033350.1156370-1-hezhongkun.hzk@bytedance.com>
-X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw31.adc.com
- (172.16.56.198)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG1PEPF000082E7:EE_|SEZPR02MB6279:EE_
-X-MS-Office365-Filtering-Correlation-Id: ed0d3163-9eb9-4c86-94bc-08dd62ebdf9e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026|13003099007|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ByAbImgIu7TxWf5wKFWSXe4T2HMZsLRp/J3I1ZhkbNiLZCXl/ICS9sgI09PB?=
- =?us-ascii?Q?xbKaYqcOSWQz+Q8ygBM7ez6HyVbMVX17xKkIXqp/iOSwNk85KLbECVeewUzv?=
- =?us-ascii?Q?rKt6SC4q8DSUmZwjIqdzTcZV81oym/q4tDXNb7jH1n/9rp90yMNg58WlJg4v?=
- =?us-ascii?Q?C4UwddWj2g5c3Uh9QZvVO/PHBgoh9UHwikDKGJOkxPPtViUFIuvDLkKyeDYw?=
- =?us-ascii?Q?73AxsIcVGI21eL+xMrC1zA/t8UKebPPM9+7sscDT8VUwUtafUCblOWI1bEwi?=
- =?us-ascii?Q?WTiSbYj0NmCWciPhkO1aulXYzPjNUQSEdJ8dn8ly+Mb2Dij/hhYdelKc5pMC?=
- =?us-ascii?Q?VZKDW2zaC9HJUKbn2zhfIXN9b0jkWr5IXCfshqm10thgPmjXGseQp1GWjDW4?=
- =?us-ascii?Q?/9S1O0egUes2pKdwGDph0U5Xw2ORJ98G5+vsaHFVrbA/ETsMzz5CeX1/4m5o?=
- =?us-ascii?Q?dHGvKl/vyS3zuH0IpsGQw04WHdDBDtptvOsw8phyq1YGf5EPOl4nzIz6GcFS?=
- =?us-ascii?Q?kficnObhdezRfLOCvLZLXp0DX8oViH6aLqgFAqemtrPZ7/ShjXVUB/8d+tvq?=
- =?us-ascii?Q?kxn5tjapGHcn78lXAjm8xEbqwtt57ThrYe30jItYpNELhA2jaFmoRLo5EWAR?=
- =?us-ascii?Q?1eFQJ4N/7pB840BqnG2+4T1hU2T/yXGSI4SY5PllLSXVn6q2VpsytJ3DQrwd?=
- =?us-ascii?Q?qS0tEwD9QC1pwGvErn1EETsnXwj8LhpMorTJksS3Ov7BLC3HLaTXXSGWNg/R?=
- =?us-ascii?Q?IZhr6v7wYXRxPTzSbt15tbxY3G902fMKXNoU/qaaBzbNoYjRtoIR+VU7fr0a?=
- =?us-ascii?Q?z7LD+BNUzIl3jueLnBcszgU9DA+wdQVfwidbmtOaHO1szsTU9wQgNltOLNyT?=
- =?us-ascii?Q?fPnEVSiSUeAyK9lWp0HD/aLmHPMYajSyC5/HvBhwniNsMalcNIV96HiI6DTl?=
- =?us-ascii?Q?+6lPV1VKs/tp7VT408k9hBrmY5hZIhYm0ziYm0V/ghQMg0RnNiid7lOKM7M9?=
- =?us-ascii?Q?V+vlDjPt1VnScBT+qrzVPYd9QTfJgd4jS02PhzmcL25pBMhGIFZNeWPNhQQg?=
- =?us-ascii?Q?WDJFL7oYREKceXZiGdtxYk084+dIbZTAlBu7owfZAbajUg53eh5V1u1ds5Wy?=
- =?us-ascii?Q?+cWCGYPxU6uU212rZW1h3LMZBse0kQuPrJ2kSNWfhq1YuVvn995KjuRDgJ6S?=
- =?us-ascii?Q?AUPXEW8iKFZl5gcShlrfpNUoM3QkQ8yBaFnUxo3xAV2stAQJLY0juAnQfJbY?=
- =?us-ascii?Q?X4uJVDNHRvg7tFxDB4c6+2V4rZ60bYbCdpJKX/AIkk+u1HJkJZVGMlzktKcw?=
- =?us-ascii?Q?xl2BQbE9H4L96ozx2IrAJ6IhsCh5zy0jIci6ot6NtwbZskssdwOlzI3jEgDE?=
- =?us-ascii?Q?T0dMIGuCd3CHqXuLr21/EQdAVXAk8mfLKwuX5xBDla/w0o3N3Eku94Xkljs7?=
- =?us-ascii?Q?uy9MfFYgdIo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026)(13003099007)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2025 11:32:16.3776
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed0d3163-9eb9-4c86-94bc-08dd62ebdf9e
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG1PEPF000082E7.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR02MB6279
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 2/2] r8169: disable RTL8126 ZRX-DC timeout
+To: ChunHao Lin <hau@realtek.com>, nic_swsd@realtek.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250314075013.3391-1-hau@realtek.com>
+ <20250314075013.3391-3-hau@realtek.com>
+Content-Language: en-US
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Autocrypt: addr=hkallweit1@gmail.com; keydata=
+ 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
+In-Reply-To: <20250314075013.3391-3-hau@realtek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 14. Mar 11:33, Zhongkun He wrote:
-> With this patch 'commit <68cd9050d871> ("mm: add swappiness= arg to
-> memory.reclaim")', we can submit an additional swappiness=<val> argument
-> to memory.reclaim. It is very useful because we can dynamically adjust
-> the reclamation ratio based on the anonymous folios and file folios of
-> each cgroup. For example,when swappiness is set to 0, we only reclaim
-> from file folios.
->
-> However,we have also encountered a new issue: when swappiness is set to
-> the MAX_SWAPPINESS, it may still only reclaim file folios. This is due
-> to the knob of cache_trim_mode, which depends solely on the ratio of
-> inactive folios, regardless of whether there are a large number of cold
-> folios in anonymous folio list.
->
-> So, we hope to add a new control logic where proactive memory reclaim only
-> reclaims from anonymous folios when swappiness is set to MAX_SWAPPINESS.
-> For example, something like this:
->
-> echo "2M swappiness=200" > /sys/fs/cgroup/memory.reclaim
->
-> will perform reclaim on the rootcg with a swappiness setting of 200 (max
-> swappiness) regardless of the file folios. Users have a more comprehensive
-> view of the application's memory distribution because there are many
-> metrics available. For example, if we find that a certain cgroup has a
-> large number of inactive anon folios, we can reclaim only those and skip
-> file folios, because with the zram/zswap, the IO tradeoff that
-> cache_trim_mode is making doesn't hold - file refaults will cause IO,
-> whereas anon decompression will not.
->
-> With this patch, the swappiness argument of memory.reclaim has a more
-> precise semantics: 0 means reclaiming only from file pages, while 200
-> means reclaiming just from anonymous pages.
->
-> V1:
->   Update Documentation/admin-guide/cgroup-v2.rst --from Andrew Morton
->   Add more descriptions in the comment.   --from Johannes Weiner
->
-> V2:
->   Add reviewed from Yosry Ahmed.
->
-> Signed-off-by: Zhongkun He <hezhongkun.hzk@bytedance.com>
-> Reviewed-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+On 14.03.2025 08:50, ChunHao Lin wrote:
+> Disable it due to it dose not meet ZRX-DC specification. If it is enabled,
+
+dose -> does
+
+> device will exit L1 substate every 100ms. Disable it for saving more power
+> in L1 substate.
+> 
+> Signed-off-by: ChunHao Lin <hau@realtek.com>
 > ---
->  Documentation/admin-guide/cgroup-v2.rst |  4 ++++
->  mm/vmscan.c                             | 10 ++++++++++
->  2 files changed, 14 insertions(+)
->
-> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-> index cb1b4e759b7e..6a4487ead7e0 100644
-> --- a/Documentation/admin-guide/cgroup-v2.rst
-> +++ b/Documentation/admin-guide/cgroup-v2.rst
-> @@ -1343,6 +1343,10 @@ The following nested keys are defined.
->  	same semantics as vm.swappiness applied to memcg reclaim with
->  	all the existing limitations and potential future extensions.
->
-> +	The swappiness have the range [0, 200], 0 means reclaiming only
-> +	from file folios, 200 (MAX_SWAPPINESS) means reclaiming just from
-> +	anonymous folios.
+>  drivers/net/ethernet/realtek/r8169_main.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
+> index 3c663fca07d3..dfc96b09b85e 100644
+> --- a/drivers/net/ethernet/realtek/r8169_main.c
+> +++ b/drivers/net/ethernet/realtek/r8169_main.c
+> @@ -2852,6 +2852,21 @@ static u32 rtl_csi_read(struct rtl8169_private *tp, int addr)
+>  		RTL_R32(tp, CSIDR) : ~0;
+>  }
+>  
+> +static void rtl_disable_zrxdc_timeout(struct rtl8169_private *tp)
+> +{
+> +	struct pci_dev *pdev = tp->pci_dev;
+> +	u8 val;
 > +
-mglru ?
-https://elixir.bootlin.com/linux/v6.13-rc1/source/mm/vmscan.c#L4533
->    memory.peak
->  	A read-write single value file which exists on non-root cgroups.
->
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index c767d71c43d7..f4312b41e0e0 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -2438,6 +2438,16 @@ static void get_scan_count(struct lruvec *lruvec, struct scan_control *sc,
->  		goto out;
->  	}
->
-> +	/*
-> +	 * Do not bother scanning file folios if the memory reclaim
-> +	 * invoked by userspace through memory.reclaim and the
-> +	 * swappiness is MAX_SWAPPINESS.
-> +	 */
-> +	if (sc->proactive && (swappiness == MAX_SWAPPINESS)) {
-> +		scan_balance = SCAN_ANON;
-> +		goto out;
-> +	}
+> +	if (pdev->cfg_size > 0x0890 &&
+> +	    pci_read_config_byte(pdev, 0x0890, &val) == PCIBIOS_SUCCESSFUL &&
+> +	    pci_write_config_byte(pdev, 0x0890, val & ~BIT(0)) == PCIBIOS_SUCCESSFUL)
+> +		return;
 > +
->  	/*
->  	 * Do not apply any pressure balancing cleverness when the
->  	 * system is close to OOM, scan both anon and file equally
-> --
-> 2.39.5
->
->
+> +	netdev_notice_once(tp->dev,
+> +		"No native access to PCI extended config space, falling back to CSI\n");
+> +	rtl_csi_write(tp, 0x0890, rtl_csi_read(tp, 0x0890) & ~BIT(0));
+> +}
+> +
 
---
+Does the datasheet have a name for this extended config space register and bit 0?
+This would be better than using magic numbers.
 
-Help you, Help me,
-Hailong.
+I think we can factor out the extended config space access to a helper. The same code
+we have in another place already. But this can be done as a follow-up.
+
+>  static void rtl_set_aspm_entry_latency(struct rtl8169_private *tp, u8 val)
+>  {
+>  	struct pci_dev *pdev = tp->pci_dev;
+> @@ -3824,6 +3839,7 @@ static void rtl_hw_start_8125d(struct rtl8169_private *tp)
+>  
+>  static void rtl_hw_start_8126a(struct rtl8169_private *tp)
+>  {
+> +	rtl_disable_zrxdc_timeout(tp);
+>  	rtl_set_def_aspm_entry_latency(tp);
+>  	rtl_hw_start_8125_common(tp);
+>  }
+
 
