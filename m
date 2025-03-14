@@ -1,110 +1,94 @@
-Return-Path: <linux-kernel+bounces-561972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA83A6198E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:35:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2EF1A6197C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:34:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D99419C2F21
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:35:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFFCF19C2418
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861FA204876;
-	Fri, 14 Mar 2025 18:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C0E204C1B;
+	Fri, 14 Mar 2025 18:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i6duJVvo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZeAmq1N5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B328155747
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D995B1F3BAE
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741977301; cv=none; b=KoxEf/PU0Q1364sjPMkHzf/UoK4KumMoGdV4duVCJBdtdkDJ6EwJN/5ec+8KDcvp5AxvwXAtFtjmIIPTRkfJxoScJbpN4AK4kkIhHOkY/yYkIAjF9+FtLk95VFTzpXJ3eB3aAUVcoOqRkOAh/Sfn2jK5fFg9R73gy4uwLIvAsDU=
+	t=1741977271; cv=none; b=uYgkn+Yjkn7d6DSxhktVfbQi09gBJWMY3j8WdnWA8dW2tbQL8JPYnBK72M5zzKltIUI9GfwUVp0/O+Uij6zqaRvyBgMsk2u0pkbKKwwY4gPexFskN6GYqKRCX+EtbJcV5nJSOTZv57Z+EAUH/tErKzgN9OjlslsIWA8UPEnuRjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741977301; c=relaxed/simple;
-	bh=B47SLe4p5NQC36SS6dzpije70IscPGAIhQydwClkN10=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=qX0fH1hKVC3Tv171+eEsYUWELtogwZL/0XAs9566w6ISQfC0Zu8hkaUq8gLHlf6UdUkSqxD5bcvQi2EIsNQWQBAziEugMh9i/xRCuZt48yFrEFsvP7AO5SlakuM4v/pvVtJpUsjKDbhSYAmQcevsPxvJNlq0CVAvQ09aFPbJvg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i6duJVvo; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741977299; x=1773513299;
-  h=date:from:to:cc:subject:message-id;
-  bh=B47SLe4p5NQC36SS6dzpije70IscPGAIhQydwClkN10=;
-  b=i6duJVvoSTDLQyy2/CsX88ltuakmvN3hqivyZq8YeIu+3uYjn8c20nNr
-   T1HeTgAuui9ql5F8D0dYiqCdKA7VU0epZy3L+73k9O7suCv4wpo+w3LaS
-   Kvs0ryzymOMnr4TvqcQprU2EIr2Y/KA/7ocQ9WSvF+bAQ/zVJqNfL+v/r
-   nqTCr8J/ue788ugnj5MPgrUlgH2h7/gOdP+SuusU6OBaUUTf+OoirHCPF
-   uMdnlnB4sEYEpBEfX8IMCiE83KM0FzgSvcIoclaIOoT2wbZUkhNpCZAUG
-   9USzOsspqRtmC2Hl5c4BmX6SihWPCCyBCy7v2osfIEeansKHgAPPVl9ua
-   g==;
-X-CSE-ConnectionGUID: htJnL0z8StiFxZBLxHzJgg==
-X-CSE-MsgGUID: aXthyyhgSu2FkcEOXEzzNA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="42310469"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="42310469"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 11:34:58 -0700
-X-CSE-ConnectionGUID: iIOB921mTfu6WeS9JZdQMA==
-X-CSE-MsgGUID: KR1Ln5JKRR2W+abhQYbJXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="121869404"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 14 Mar 2025 11:34:57 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tt9rz-000Ajk-09;
-	Fri, 14 Mar 2025 18:34:55 +0000
-Date: Sat, 15 Mar 2025 02:34:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- a2ab25529bbcea51b5e01dded79f45aeb94f644a
-Message-ID: <202503150259.ZloBHtL8-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1741977271; c=relaxed/simple;
+	bh=CVLyX9R2vJXFh5cDZ/zHtgs3Y5yJU7mVlCHIs3KI11A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C9Kdh95WYqy/XN10z2O0JI3rhYnGBxlZNTaXyi6429lA/JIFxl3dwma4xvVOYcjNSl9KEEqOYFh8vTc7AgAVJ11fx+oRHxGcU/qTgq9gIx3UyJ/XJDBj/f3eGU2565O7Vqog8ElDrJQGKxwvxLPIuCD12cnkNaxqDM3KrvdagXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZeAmq1N5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741977268;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HK5sLkunXapSB/dnyvvTD+u7UXC4kRvUIomHQWQCwCU=;
+	b=ZeAmq1N5YnnJjues4ycFKC/wkLRxwG0YzKBnzb/78SdEAqdgeetsJkJY7fHpM4RLR+8+FC
+	4iDwOMIRBzAqVnbMtmSwwe9rdYPWIIanohPFJlno7UtT/NrAW3rOoQZL2JYbjifhHPonsY
+	qGtp0mRYsAfPRCXxNzHpqKzkxzRXBl4=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-589-3LI3WcWZP4yIzNr6iUDMXA-1; Fri,
+ 14 Mar 2025 14:34:25 -0400
+X-MC-Unique: 3LI3WcWZP4yIzNr6iUDMXA-1
+X-Mimecast-MFC-AGG-ID: 3LI3WcWZP4yIzNr6iUDMXA_1741977264
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 310DF19560B0;
+	Fri, 14 Mar 2025 18:34:24 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5D8E31801747;
+	Fri, 14 Mar 2025 18:34:23 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Cc: isaku.yamahata@intel.com,
+	nikunj@amd.com
+Subject: [PATCH v2 0/2] KVM: x86: Support protected TSC
+Date: Fri, 14 Mar 2025 14:34:20 -0400
+Message-ID: <20250314183422.2990277-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: a2ab25529bbcea51b5e01dded79f45aeb94f644a  x86/vmware: Parse MP tables for SEV-SNP enabled guests under VMware hypervisors
+These are the two patches from Isaku that were posted last October and
+which can be used for AMD's secure TSC as well..  I will rebase TDX on
+top of these in kvm-coco-queue, because these can be included in 6.15.
 
-elapsed time: 1452m
+Paolo
 
-configs tested: 18
-configs skipped: 135
+Supersedes: <cover.1728719037.git.isaku.yamahata@intel.com>
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Isaku Yamahata (2):
+  KVM: x86: Push down setting vcpu.arch.user_set_tsc
+  KVM: x86: Add infrastructure for secure TSC
 
-tested configs:
-i386                          allnoconfig    gcc-12
-i386                         allyesconfig    gcc-12
-i386    buildonly-randconfig-001-20250314    clang-19
-i386    buildonly-randconfig-002-20250314    clang-19
-i386    buildonly-randconfig-003-20250314    gcc-12
-i386    buildonly-randconfig-004-20250314    gcc-12
-i386    buildonly-randconfig-005-20250314    gcc-12
-i386    buildonly-randconfig-006-20250314    gcc-12
-i386                            defconfig    clang-19
-x86_64                        allnoconfig    clang-19
-x86_64                       allyesconfig    clang-19
-x86_64  buildonly-randconfig-001-20250314    clang-19
-x86_64  buildonly-randconfig-002-20250314    clang-19
-x86_64  buildonly-randconfig-003-20250314    gcc-12
-x86_64  buildonly-randconfig-004-20250314    clang-19
-x86_64  buildonly-randconfig-005-20250314    gcc-12
-x86_64  buildonly-randconfig-006-20250314    gcc-12
-x86_64                          defconfig    gcc-11
+ arch/x86/include/asm/kvm_host.h |  1 +
+ arch/x86/kvm/x86.c              | 23 +++++++++++++++--------
+ 2 files changed, 16 insertions(+), 8 deletions(-)
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-- 
+2.43.5
+
 
