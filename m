@@ -1,258 +1,117 @@
-Return-Path: <linux-kernel+bounces-561475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56CA0A61272
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:19:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98EB5A6124E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:16:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B5F3882452
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:19:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE6831B630EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC291FF7C1;
-	Fri, 14 Mar 2025 13:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="bE5qpaLT"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9E21FE44C;
-	Fri, 14 Mar 2025 13:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35251FF61E;
+	Fri, 14 Mar 2025 13:14:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA52F1FE470
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741958367; cv=none; b=dZzKxdFq65V+s4FCZYurLovWfXhWkLY+H/OoKRdVyxJAI3O6olvoCfY/fDx82eTa6xOCuNEL6V8PRziQTE1h6mK22dzLH2Ns9pzJ/4Z5g5pn7jxLXACqPAmJY88kULCpwaZna7AJa4c2tAVrYJcormYqbY23s/dpWaNduWQ3HKE=
+	t=1741958079; cv=none; b=UFKM4Sw7JEENFt9StrttmvjDafadfBa5SzPvMGIBsy4ixxCYYlUfNnBIE5Bm80TO8BzmZqdSbCJzhKAEs7ezdDxzPQgXZXJgOH2iqa4YBDJnD5VzOdtJdfZke5xJadp+/tp3I72qp4HZ6U2Dgxt1dC1t5t0cM4L5Cvta4GURIO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741958367; c=relaxed/simple;
-	bh=+TLFi6zGn84ndYCYlPnSlEB/FndOyxFdAhy3aD2xDak=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mMS+jeY5QjMXxzSHr8MpMp/wuFO5OZEugcGS5qIKwStkX4KHlCz02QDPPgupKISn1pCoDLnqPO6Q4StUSXxUKciMaW1fZBH3tWpcD9BXFOtApZSY+y4wPCwLFHSGJDoNv1wEN9bzSl7h3ZVuYEQ7Uh6CMRcC36NLXpx99r/RvG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=bE5qpaLT; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.3.1)
- id f27c172963a66e5f; Fri, 14 Mar 2025 14:19:23 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id D2222912CFA;
-	Fri, 14 Mar 2025 14:19:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1741958363;
-	bh=+TLFi6zGn84ndYCYlPnSlEB/FndOyxFdAhy3aD2xDak=;
-	h=From:Subject:Date;
-	b=bE5qpaLT5vih/iOq8DV5KaLz0Ofx5+j4ScSmVus2TpkE6eS/nbiI3l8G5dnjcaWkA
-	 xo3aRAlD4GylZihdVT70Z1C89APc87bqyHJWwGz+RDd4llxrV3bjPwuFp/EtCTWmeT
-	 YFeqtvVfOQR4gm11Nr/llg997C6Qu93RMq9yNMBfFRXIcVAjy8GM3lwgWpvKR/Kt26
-	 jSyQXtsg8aAOwXu5/SyBgfxW1kU4N6i1zV84QBVsOdPrMP7tgUp0q4t4o1TxFjqwOd
-	 tRMcM+66ziEyn3+LnBQv2QJPyCjruQ+F1x3SUJqKvQWVO3LM6HU7DT/YtZ4TdwlVng
-	 4t5jxLJfMUe6A==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
- Johan Hovold <johan@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Jon Hunter <jonathanh@nvidia.com>, Saravana Kannan <saravanak@google.com>
-Subject: [PATCH v3 3/5] PM: sleep: Make suspend of devices more asynchronous
-Date: Fri, 14 Mar 2025 14:14:30 +0100
-Message-ID: <1924195.CQOukoFCf9@rjwysocki.net>
-In-Reply-To: <10629535.nUPlyArG6x@rjwysocki.net>
-References: <10629535.nUPlyArG6x@rjwysocki.net>
+	s=arc-20240116; t=1741958079; c=relaxed/simple;
+	bh=LCOwegfYSlyPxTWUkilJBjC5KUTBoSn6ooShxFJ+aZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=skrSawIRqmGrKQLXVvCAxkzKWSHGxGPhsjqyThCe5FQgw+4BwfaY1N7EICoyMHZa8Ulu6fgCK4Xc2mf7tH3mpHH857gF8plb1SC8F/oaylhAHZq1w2qMQ6adiN+EKeiyFVItS9ByPVivHEIH/uyVjpKuLRG+fGgIRhKkOYBzHtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 40CF71424;
+	Fri, 14 Mar 2025 06:14:47 -0700 (PDT)
+Received: from [10.57.40.41] (unknown [10.57.40.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B3363F673;
+	Fri, 14 Mar 2025 06:14:34 -0700 (PDT)
+Message-ID: <7dbd7dd3-dbf7-42e0-97c4-c5eb50250947@arm.com>
+Date: Fri, 14 Mar 2025 13:14:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedtleegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepkedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsthgvrhhnsehrohiflhgrnhgurdhhrghrvhgrrhgurdgvughupdhrtghpthhtohepuhhlfhdrhhgrnhhsshhonheslhh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=16 Fuz1=16 Fuz2=16
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] sched/util_est: Do not sub the delayed-task's
+ util-est
+To: Xuewen Yan <xuewen.yan@unisoc.com>, dietmar.eggemann@arm.com,
+ vincent.guittot@linaro.org, mingo@redhat.com, peterz@infradead.org,
+ juri.lelli@redhat.com
+Cc: rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.co, linux-kernel@vger.kernel.org, qyousef@layalina.io,
+ ke.wang@unisoc.com, di.shen@unisoc.com, xuewen.yan94@gmail.com
+References: <20250314090909.8404-1-xuewen.yan@unisoc.com>
+Content-Language: en-US
+From: Hongyan Xia <hongyan.xia2@arm.com>
+In-Reply-To: <20250314090909.8404-1-xuewen.yan@unisoc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 14/03/2025 09:09, Xuewen Yan wrote:
+> In cpu_util_without, When the task is in rq, we should
+> sub the task's util_est, however, the delayed_task->on_rq
+> is true, however, the delayed_task's util had been sub
+> when sleep, so there is no need to sub the delayed task's
+> util-est. So add the checking of delayed-task.
+> 
+> On the other hand, as said in [1], the logic of util_est's
+> enqueue/dequeue could be simplified.
+> So simplify it by aligning with the conditions of uclamp.
+> 
+> [1]https://lore.kernel.org/all/CAB8ipk8pEvOtCm-d0o1rsekwxPWUHk9iBGtt9TLTWW-iWTQKiA@mail.gmail.com/
+> 
+> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+> ---
+>   kernel/sched/fair.c | 7 ++++---
+>   1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index c798d2795243..bebf40a0fa4e 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -6930,7 +6930,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>   	 * Let's add the task's estimated utilization to the cfs_rq's
+>   	 * estimated utilization, before we update schedutil.
+>   	 */
+> -	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE))))
+> +	if (!p->se.sched_delayed || (flags & ENQUEUE_DELAYED))
+>   		util_est_enqueue(&rq->cfs, p);
+>   
+>   	if (flags & ENQUEUE_DELAYED) {
+> @@ -7168,7 +7168,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+>    */
+>   static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>   {
+> -	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & DEQUEUE_SAVE))))
+> +	if (!p->se.sched_delayed)
+>   		util_est_dequeue(&rq->cfs, p);
+>   
+>   	util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
+> @@ -8037,7 +8037,8 @@ cpu_util(int cpu, struct task_struct *p, int dst_cpu, int boost)
+>   		 */
+>   		if (dst_cpu == cpu)
+>   			util_est += _task_util_est(p);
+> -		else if (p && unlikely(task_on_rq_queued(p) || current == p))
+> +		else if (p && unlikely(current == p ||
+> +			 (task_on_rq_queued(p) && !p->se.sched_delayed)))
+>   			lsub_positive(&util_est, _task_util_est(p));
+>   
+>   		util = max(util, util_est);
 
-In analogy with previous changes, make device_suspend_late() and
-device_suspend_noirq() start the async suspend of the device's parent
-after the device itself has been processed and make dpm_suspend_late()
-and dpm_noirq_suspend_devices() start processing "async" leaf devices
-(that is, devices without children) upfront so they don't need to wait
-for the other devices they don't depend on.
+Have you tested the above changes to make sure util_est enqueue dequeue 
+are balanced? util_est was broken for quite a while when merging delayed 
+dequeue because now enqueue_ and dequeue_task() do not always appear in 
+pairs. Since then, I always have a local patch like this (may be a bit 
+out of date now) to make sure util_est is balanced
 
-This change reduces the total duration of device suspend on some systems
-measurably, but not significantly.
-
-Suggested-by: Saravana Kannan <saravanak@google.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v2 -> v3:
-   * Adjust for the changes made in patch [2/5].
-   * Use list_splice() for merging lists on errors.
-   * Adjust changelog.
-
-v1 -> v2:
-   * Adjust for the changes in patches [1-2/3].
-   * Move all devices to the target lists even if there are errors in
-     dpm_suspend_late() and dpm_noirq_suspend_devices() so they are
-     properly resumed during rollback (Saravana).
-
----
- drivers/base/power/main.c |   64 ++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 56 insertions(+), 8 deletions(-)
-
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1308,6 +1308,8 @@
- 	device_links_read_unlock(idx);
- }
- 
-+static void async_suspend_noirq(void *data, async_cookie_t cookie);
-+
- /**
-  * device_suspend_noirq - Execute a "noirq suspend" callback for given device.
-  * @dev: Device to handle.
-@@ -1386,7 +1388,13 @@
- Complete:
- 	complete_all(&dev->power.completion);
- 	TRACE_SUSPEND(error);
--	return error;
-+
-+	if (error || async_error)
-+		return error;
-+
-+	dpm_async_suspend_parent(dev, async_suspend_noirq);
-+
-+	return 0;
- }
- 
- static void async_suspend_noirq(void *data, async_cookie_t cookie)
-@@ -1400,6 +1408,7 @@
- static int dpm_noirq_suspend_devices(pm_message_t state)
- {
- 	ktime_t starttime = ktime_get();
-+	struct device *dev;
- 	int error = 0;
- 
- 	trace_suspend_resume(TPS("dpm_suspend_noirq"), state.event, true);
-@@ -1409,12 +1418,21 @@
- 
- 	mutex_lock(&dpm_list_mtx);
- 
-+	/*
-+	 * Start processing "async" leaf devices upfront so they don't need to
-+	 * wait for the "sync" devices they don't depend on.
-+	 */
-+	list_for_each_entry_reverse(dev, &dpm_late_early_list, power.entry) {
-+		dpm_clear_async_state(dev);
-+		if (dpm_leaf_device(dev))
-+			dpm_async_with_cleanup(dev, async_suspend_noirq);
-+	}
-+
- 	while (!list_empty(&dpm_late_early_list)) {
--		struct device *dev = to_device(dpm_late_early_list.prev);
-+		dev = to_device(dpm_late_early_list.prev);
- 
- 		list_move(&dev->power.entry, &dpm_noirq_list);
- 
--		dpm_clear_async_state(dev);
- 		if (dpm_async_fn(dev, async_suspend_noirq))
- 			continue;
- 
-@@ -1428,8 +1446,14 @@
- 
- 		mutex_lock(&dpm_list_mtx);
- 
--		if (error || async_error)
-+		if (error || async_error) {
-+			/*
-+			 * Move all devices to the target list to resume them
-+			 * properly.
-+			 */
-+			list_splice(&dpm_late_early_list, &dpm_noirq_list);
- 			break;
-+		}
- 	}
- 
- 	mutex_unlock(&dpm_list_mtx);
-@@ -1482,6 +1506,8 @@
- 	spin_unlock_irq(&parent->power.lock);
- }
- 
-+static void async_suspend_late(void *data, async_cookie_t cookie);
-+
- /**
-  * device_suspend_late - Execute a "late suspend" callback for given device.
-  * @dev: Device to handle.
-@@ -1558,7 +1584,13 @@
- Complete:
- 	TRACE_SUSPEND(error);
- 	complete_all(&dev->power.completion);
--	return error;
-+
-+	if (error || async_error)
-+		return error;
-+
-+	dpm_async_suspend_parent(dev, async_suspend_late);
-+
-+	return 0;
- }
- 
- static void async_suspend_late(void *data, async_cookie_t cookie)
-@@ -1576,6 +1608,7 @@
- int dpm_suspend_late(pm_message_t state)
- {
- 	ktime_t starttime = ktime_get();
-+	struct device *dev;
- 	int error = 0;
- 
- 	trace_suspend_resume(TPS("dpm_suspend_late"), state.event, true);
-@@ -1587,12 +1620,21 @@
- 
- 	mutex_lock(&dpm_list_mtx);
- 
-+	/*
-+	 * Start processing "async" leaf devices upfront so they don't need to
-+	 * wait for the "sync" devices they don't depend on.
-+	 */
-+	list_for_each_entry_reverse(dev, &dpm_suspended_list, power.entry) {
-+		dpm_clear_async_state(dev);
-+		if (dpm_leaf_device(dev))
-+			dpm_async_with_cleanup(dev, async_suspend_late);
-+	}
-+
- 	while (!list_empty(&dpm_suspended_list)) {
--		struct device *dev = to_device(dpm_suspended_list.prev);
-+		dev = to_device(dpm_suspended_list.prev);
- 
- 		list_move(&dev->power.entry, &dpm_late_early_list);
- 
--		dpm_clear_async_state(dev);
- 		if (dpm_async_fn(dev, async_suspend_late))
- 			continue;
- 
-@@ -1606,8 +1648,14 @@
- 
- 		mutex_lock(&dpm_list_mtx);
- 
--		if (error || async_error)
-+		if (error || async_error) {
-+			/*
-+			 * Move all devices to the target list to resume them
-+			 * properly.
-+			 */
-+			list_splice(&dpm_suspended_list, &dpm_late_early_list);
- 			break;
-+		}
- 	}
- 
- 	mutex_unlock(&dpm_list_mtx);
-
-
-
+https://lore.kernel.org/all/752ae417c02b9277ca3ec18893747c54dd5f277f.1724245193.git.hongyan.xia2@arm.com/
 
