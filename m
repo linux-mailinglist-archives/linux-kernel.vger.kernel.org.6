@@ -1,117 +1,166 @@
-Return-Path: <linux-kernel+bounces-562098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD5ABA61C15
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:12:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 444D4A61C13
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:12:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 695B2882D8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:12:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 704204605E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1762F207DFC;
-	Fri, 14 Mar 2025 20:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCE7209F58;
+	Fri, 14 Mar 2025 20:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CZRaQm5Q";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8SdoCtJG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fvopIwaf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92872066DC;
-	Fri, 14 Mar 2025 20:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8498C2054EB
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 20:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741982653; cv=none; b=Fc7lG7wDof09aUY6pNEVsHsxClUGqtgKNliPKA2JCweZapoY+2yGuuaZ0isiB+rHXHDF+0wvc1Qx1mVl31XsXXMpWT3PVunX1KgQzMU6LLr+EFejE7LtUkO4bEh7BvSizVRRc6ajYByPOQ3sRsNrhbXRCA3dkhgyfAHPO8H/cCM=
+	t=1741982668; cv=none; b=k8S3G/FRtY1kmU+0X2J8XdUNrBbL1sORZSqxMl6od9tq548dCg9A/zRGwqg0qsgCLILShrBzcVz7U1cKj+mezqoUfza8Sr6bGpV/7uBntGxEI6+Am/ioDKuy6B6ynKAvowwJie2Z2CmlmHg25hsLPxzjKCqKJKqFhx2Da3QQ4wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741982653; c=relaxed/simple;
-	bh=LmduzRFItPDgKbL+UeUD/rgxc+BnpulsYzsA2Nv/lzQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=RVPzPnLDbKTEIfyMpVW1TyOn2mZR8chfto83b+59htz+IOpz9QKWC0fg+g4fLZyrmZ3ryEbd5c95p94CYiymrpPKZp5dookX0Dq2QT0aevJCLNiE8qTIch285EbJGHcw4S+ndhM7k8+2Sujt8bLmqE0J5RmrYFzFYMUj2ZfgoeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CZRaQm5Q; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8SdoCtJG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 14 Mar 2025 20:04:04 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741982650;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1741982668; c=relaxed/simple;
+	bh=+H598cocfIacpoV/aS/IeuVnKEx5ukzRWbUj/A1EjyE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tR1DEtX8ukxhp5NU0bvuYz+8fAeaaOjyfM6UeqsA+3+LE+PIOq+4CXUfuxg4GaVBnkDrtmaqtE1zD0zKGrDcgNGQNmnOeyHj8mruRqinQG52pSSMnmKROwsIqYBy0qPK++kLZbGmUfepgv3X5pL+Ehvz+Uf+kMHIVKgEVGx8Yss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fvopIwaf; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741982665;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=se9bIRcMtv/3Qo/aKYKc0ZLfgUU/NIxO04/Tw05UCoY=;
-	b=CZRaQm5QSt6QJs07g0ByiA0plkWdVbf6s5hl7BDNQBEyv7RUFwwBYCPNakMNJFQPxPQRB2
-	2r+TCdc8ZA80zhVJKyStUb0FEzJcS5Id8FsuFBSsujKdQ8A0yNghWSmlaUgFjzm2feuqr+
-	wCGuiqkvEyYCwqrHU2drO+bxnbZrRNtzmM0/7UdA7K9C4HGmRkq5lcL7DeRlyhqtOFNLlC
-	VhnfLLmp1MS5UOC8L1P5BwyGtHuCPatOeWL+eqL1dIInR+0f631Byix46FjMa/u3tYEWnp
-	Up7FGY103xEuU42FTlzz6OppC9BPv+y7WqmMrDC7uKnyG3ytt7aQi++3zkmfzw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741982650;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=se9bIRcMtv/3Qo/aKYKc0ZLfgUU/NIxO04/Tw05UCoY=;
-	b=8SdoCtJGukLO9y0zXjFZVXPNRtRUbATvyVNAwXmrWGIYZPs/Z6jidObKjZTD47lgd41maA
-	njB92qqwDJ8QaeBw==
-From: "tip-bot2 for David Engraf" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/core] objtool: Hide unnecessary compiler error message
-Cc: David Engraf <david.engraf@sysgo.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250203073610.206000-1-david.engraf@sysgo.com>
-References: <20250203073610.206000-1-david.engraf@sysgo.com>
+	bh=SqRyL6MA+QupMYvedIjsb0gClHlzTIPhGP8UWlhlKow=;
+	b=fvopIwafNGPqrnhaXHXVl0x3YmPEuFEGdMQzM/q3OIOIQ2CYYtVPpZUAa4QSNIEdouNYfv
+	ZNTif/1wILE+/TYa/TU0brLU3lhLgevWj5D2f4tpTi/KlZS9pVLITaHeymE6lTuEFYBfsm
+	WbL101GbSkwkPTcDPYPKGEYdRfkcEuU=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-250-SoATf9OQMlSreUXU3sXZBA-1; Fri, 14 Mar 2025 16:04:24 -0400
+X-MC-Unique: SoATf9OQMlSreUXU3sXZBA-1
+X-Mimecast-MFC-AGG-ID: SoATf9OQMlSreUXU3sXZBA_1741982664
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e916df0d5dso46731556d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:04:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741982664; x=1742587464;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SqRyL6MA+QupMYvedIjsb0gClHlzTIPhGP8UWlhlKow=;
+        b=vBHaWE0s1C00HPV3wHnUqlLP/O1l4Nub9lMUh+buJQnRoe69WP3SqQxg7rbaF1jSuv
+         fJ2bd96lNh6yQKg6Z3vpZRPbZBdoKpcfxpZCheNjkabYCEloaCJi95l242EvCKvx1gK0
+         RtmGlOZ9HW05bh9x1ft8aBeN3gMudqi20rtGGc494xqHKSkeN5kgZ9OSYBhU9YSoU3qz
+         HUFRBmMRDW0xxsN6GYSjD6SXJJxZSDNxoDvxoqikQsUtFTaA1pOKKbAvpKBQS+V6PRGv
+         VWUm+DGDcMTs83eci2qJlZBNYNeJBDKIq6dQKjrIY0BLJ3UIhYY7zjvFxcr406VHSjzL
+         uyFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxNidqSWJYebKtvvTRgw2ATEu4E8uavLhR/4K1CD/wqfviqrS8y6FFu7YsE8y6JFzxChprV0FAK/7EjvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1g5TxCAuKB8ZlCNL15Uq+hSqFxWKe/7q3MAGemZAZuEzpNijb
+	acPUKNMUC2cucIbcpCv1jQF9Y95k9yxP++/xiQTGiuhXOVxKPB94eNpo8dD1DEml6SZWi/oO+b6
+	4X7CIRaL7IXmxF/oiILJdPVTdh+kfmGsvQlrJ6sSRarxsEe++SdntJss5vD88Eg==
+X-Gm-Gg: ASbGnctMLUBPBdFxyQc6epSHpCMRROyqCUanlIZs4lWfD9yMjn2dHksadAfm5zEok5g
+	zhTibtWV2ezSPyvwEs+DcU5IadKUgVsgxyQCRVll498+QZW1ubtuQuZuHSYRGeHFy4qO1RLAMZf
+	iMFs5NvRy9Bui+zX8P8P0453rO5JOtr/hI/H8fsfNbZzt5oTyVJ1veuu8dU/XUjOUOwlryQtx/Q
+	wVhjBfumV6irjbR6LsEnLnc9vEJH+WG+cw4O88QqeEofW4kDbJ5p1/HF31jYtALtazzSSBXSA2C
+	dW/GI8g=
+X-Received: by 2002:ad4:5cca:0:b0:6e8:f65a:67bd with SMTP id 6a1803df08f44-6eaeaa1c6e7mr54402516d6.11.1741982663659;
+        Fri, 14 Mar 2025 13:04:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHdrnxZkVhHJCu+0L4gTXfr+cGtUYoXrRv2lUDPgB5Dtd3VDIpsWxWp29AXtnPsgwf8cd2wQQ==
+X-Received: by 2002:ad4:5cca:0:b0:6e8:f65a:67bd with SMTP id 6a1803df08f44-6eaeaa1c6e7mr54402066d6.11.1741982663335;
+        Fri, 14 Mar 2025 13:04:23 -0700 (PDT)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade209335sm27689416d6.22.2025.03.14.13.04.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 13:04:21 -0700 (PDT)
+Date: Fri, 14 Mar 2025 16:04:17 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Nikita Kalyazin <kalyazin@amazon.com>
+Cc: James Houghton <jthoughton@google.com>, akpm@linux-foundation.org,
+	pbonzini@redhat.com, shuah@kernel.org, kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, lorenzo.stoakes@oracle.com, david@redhat.com,
+	ryan.roberts@arm.com, quic_eberman@quicinc.com, graf@amazon.de,
+	jgowans@amazon.com, roypat@amazon.co.uk, derekmn@amazon.com,
+	nsaenz@amazon.es, xmarcalx@amazon.com
+Subject: Re: [RFC PATCH 0/5] KVM: guest_memfd: support for uffd missing
+Message-ID: <Z9SLwcWCMfmtwDZA@x1.local>
+References: <Z89EFbT_DKqyJUxr@x1.local>
+ <9e7536cc-211d-40ca-b458-66d3d8b94b4d@amazon.com>
+ <Z9GsIDVYWoV8d8-C@x1.local>
+ <7c304c72-1f9c-4a5a-910b-02d0f1514b01@amazon.com>
+ <Z9HhTjEWtM58Zfxf@x1.local>
+ <69dc324f-99fb-44ec-8501-086fe7af9d0d@amazon.com>
+ <Z9MuC5NCFUpCZ9l8@x1.local>
+ <507e6ad7-2e28-4199-948a-4001e0d6f421@amazon.com>
+ <Z9NeTQsn4xwTtU06@x1.local>
+ <24528be7-8f7a-4928-8bca-5869cf14eace@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174198264454.14745.1315469641657975505.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <24528be7-8f7a-4928-8bca-5869cf14eace@amazon.com>
 
-The following commit has been merged into the objtool/core branch of tip:
+On Fri, Mar 14, 2025 at 05:12:35PM +0000, Nikita Kalyazin wrote:
+> Anyway, it looks like the solution we discussed allows to choose between
+> memcpy-only and memcpy/write-combined userspace implementations.  I'm going
+> to work on the next version of the series that would include MINOR trap and
+> avoiding KVM dependency in mm via calling vm_ops->fault() in
+> UFFDIO_CONTINUE.
 
-Commit-ID:     bf71940fc16953bed84caa59b7b076ead70d42f6
-Gitweb:        https://git.kernel.org/tip/bf71940fc16953bed84caa59b7b076ead70d42f6
-Author:        David Engraf <david.engraf@sysgo.com>
-AuthorDate:    Mon, 03 Feb 2025 08:36:10 +01:00
-Committer:     Josh Poimboeuf <jpoimboe@kernel.org>
-CommitterDate: Wed, 12 Mar 2025 15:43:38 -07:00
+I'll attach some more context, not directly relevant to this series, but
+just FYI.
 
-objtool: Hide unnecessary compiler error message
+One thing I am not yet sure is whether ultimately we still need to register
+userfaultfd with another fd using offset ranges.  The problem is whether
+there will be userfaultfd trapping demand on the pure private CoCo use case
+later.  The only thing I'm not sure is if all guest-memfd use cases allow
+mmap().  If true, then maybe we can stick with the current UFFDIO_REGISTER
+on VA ranges.
 
-The check for using old libelf prints an error message when libelf.h is
-not available but does not abort. This may confuse so hide the compiler
-error message.
+In all cases, I think you can proceed with whatever you plan to do to add
+initial guest-memfd userfaultfd supports, as long as acceptable from KVM
+list.
 
-Signed-off-by: David Engraf <david.engraf@sysgo.com>
-Link: https://lore.kernel.org/r/20250203073610.206000-1-david.engraf@sysgo.com
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
- tools/objtool/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The other thing is, what you're looking for indeed looks very close to what
+we may need.  We want to have purely shared guest-memfd working just like
+vanilla memfd_create(), not only for 4K but for huge pages.  We also want
+GUP working, so it can replace the old hugetlbfs use case.
 
-diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-index 7a65948..8c20361 100644
---- a/tools/objtool/Makefile
-+++ b/tools/objtool/Makefile
-@@ -37,7 +37,7 @@ OBJTOOL_CFLAGS := -Werror $(WARNINGS) $(KBUILD_HOSTCFLAGS) -g $(INCLUDES) $(LIBE
- OBJTOOL_LDFLAGS := $(LIBELF_LIBS) $(LIBSUBCMD) $(KBUILD_HOSTLDFLAGS)
- 
- # Allow old libelf to be used:
--elfshdr := $(shell echo '$(pound)include <libelf.h>' | $(HOSTCC) $(OBJTOOL_CFLAGS) -x c -E - | grep elf_getshdr)
-+elfshdr := $(shell echo '$(pound)include <libelf.h>' | $(HOSTCC) $(OBJTOOL_CFLAGS) -x c -E - 2>/dev/null | grep elf_getshdr)
- OBJTOOL_CFLAGS += $(if $(elfshdr),,-DLIBELF_USE_DEPRECATED)
- 
- # Always want host compilation.
+I had a feeling that all the directions of guest-memfd recently happening
+on the list will ultimately need huge pages.  It would be the same for you
+maybe, but only that your use case does not allow any permanant mapping
+that is visible to the kernel. Probably that's why GUP is forbidden but
+kmap isn't in your write()s; please bare with me if I made things wrong, I
+don't understand your use case well.
+
+Just in case helpful, I have some PoC branches ready allowing 1G pages to
+be mapped to userspace.
+
+https://github.com/xzpeter/linux/commits/peter-gmem-v0.2/
+
+The work is based on Ackerley's 1G series, which contains most of the folio
+management part (but I fixed quite a few bugs in my tree; I believe
+Ackerley should have them fixed in his to-be-posted too).  I also have a
+QEMU branch ready that can boot with it (I didn't yet test more things).
+
+https://github.com/xzpeter/qemu/commits/peter-gmem-v0.2/
+
+For example, besides guest-memfd alone, we definitely also need guest-memfd
+being trappable by userfaultfd, as what you are trying to do here, one way
+or another.
+
+Thanks,
+
+-- 
+Peter Xu
+
 
