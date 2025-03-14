@@ -1,142 +1,329 @@
-Return-Path: <linux-kernel+bounces-561615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D9E8A61410
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:49:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24097A61411
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:50:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1EDC3BEC35
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:49:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B57E3B6DC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37EB201027;
-	Fri, 14 Mar 2025 14:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2357200B85;
+	Fri, 14 Mar 2025 14:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LXqmpxyY"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="okpb09VS"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E031FF7BB
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC031990BA
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741963777; cv=none; b=mNLS1PJCZQdDaeN340LDmvp7FED0KSG9IMGq5vu9KHzxGzVF6C1Y9Ezx+9A0Svk43V6LdlOqn2fdlkR5wDf11OfOfX/atJP7U1ocBNeWNocTiiDyTfCaQsehp1I0Zu//NQrvzewKQFufm712XMzK79uPBFbjhtLEXR88b5KWseQ=
+	t=1741963815; cv=none; b=Hvn5l0KdCyGV+NMuTBVZYZqaXVLKp3h9bPOm/FgalKIIsxT0oJvOos/GUxqPzouNUceKAgBWGO6HsGkYzU71uyXI3c4A6ZxuVR18jGNk5DuaKk/gmvuJcB5a6oRn8F5kap/LfQ67WsWogDTLBzZNrY9y5TQ1eVv3jk0/qQw3fOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741963777; c=relaxed/simple;
-	bh=RXZQcC4Mu61YAFZ0xJ1ONTrgbN111VHkmmQFG1fCp2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=br0f8y2l13iPGXuKVfWVkWtnEP7NvFi84SYQ5q3gPQr4Dq1PB0Di8U7R6xV+4EwKd0abBrK3PCy3SB9g8db+JHuhBP+4MOM6hcflixTYt2UaghF1od4yI1W1Q9Ithd6EPSiMrrdiNPqgwma1OCMvdrXESOOVgN7Ckubxrw3BiIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LXqmpxyY; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac2aeada833so422046766b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:49:34 -0700 (PDT)
+	s=arc-20240116; t=1741963815; c=relaxed/simple;
+	bh=1b6fOYKrDOeEBjKm5OS1L1JxubIGbOF7ajN0PGPcDGg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YJt+lPbHdpPZBZ8TTAPgwneLFswFejO/MOHqK69uTxISYLXhNZXBH89DPnyFxc94FYUj+Q1XcONuL5VR0joX8mgsKjE/DFMpKEL1mUx71UYVpP7Oz6yNs0FIEt7OlZfsRonv0K+4Mw+nNy0zfFmKo3ZaQ8njO4jMlFu3VoRl8OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=okpb09VS; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2240b4de12bso59712285ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:50:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741963773; x=1742568573; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vaYWZrrXVhr81EbJfjzrSCaLmcRbDWo2bd4uQl4U+HE=;
-        b=LXqmpxyYDPZ51LTl8jbi9JAaJUINaxm3Rc8kGywz7LPW8WpQVEhxDnchvDGT6HcQbh
-         Fjs/WU47hTb93HiGbYh1G0/+LRY4XIBU4EuyIibnYGwanbTlOuItar4yn9yxe83nnMoF
-         so5P5WX80YVisr9r7WxrJDWghTn5mM10v6Xlfxb+ww7vQwnfXN5w0rNhHrKloX9WRjgL
-         BaOBGwTXJUhfP2S0cD6/UPxpobaQstzK0ed8aLBBo9Nr4IhKEXjwqgjP+zvyEQ8Mtdbx
-         wphQk6yPnuqFfs2zB8+uSkiDg6Fi3U3u7kSGvd3wZHhr7XgLfVEqiSeju8B1ZX2FiqSj
-         AJOA==
+        d=linaro.org; s=google; t=1741963812; x=1742568612; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EdlZPQacY7WF2SEKB06YPKehd8J9E8+LtVa0C/rc4Zw=;
+        b=okpb09VSEIeQNmNklluykqnIjoslhpfmHH1n0GbOdzAgByAXoKjRi0xAKA1VUtuoCo
+         1PsEsAqdhsU3N6KGJGdRCSarZikX+KpERk3/MSvUHf2XfqIFQImEOXpKg0ykWSH/ytey
+         ylJGSlgDEKXXR2ctfFEU+j0enqBtFKvO6j1/QURkPR1zAXMvA17YIJeOtwb2kaYW2F2I
+         RbyQuPD6YUqbQQMAJ/qrsSrXcfSWqL8XWNs6qodxax54PiTojuwE68HJfGO1yLR22lHO
+         kjP/gDQHUCOnz6KvKe+m7RqddPvcHXO5D2yBfQQmM2MZhXsgzASww/PofVHlKc/S2Xmq
+         xnHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741963773; x=1742568573;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vaYWZrrXVhr81EbJfjzrSCaLmcRbDWo2bd4uQl4U+HE=;
-        b=vfCdWLq44zyHyT+u/aXto1l8iXY3zKx7JRkXPdFe+P73vyPKGIIG2/8ajcquxTFRal
-         ji3YxNajW/GppOxDNX34bN067UV8hHF1FBMQrvP6hkttct6jk1wxk/raI8+8TL5zLw1b
-         9+8xngYSKHSCH4JB1agCfj7kwn1iQcCgfLKONzXFHb7obA/zNSwgXCY2ahPliCgxZt1L
-         plZ29jhNbjz/V+XVXGgAfmzfECEYK+kp8TJ8UoLPQC3n4OgFHG3B+H0VSuwFYRlCwoFs
-         zS677cFIGLcXCoWspWoZ66wRVSuMgR/EtIn6myf8jnh1uELgvTJ6uNC64vgPoooAvLq0
-         b0+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWqKhoMR/tA4c2yYU8uPq3DwGlL5G4RIzGoETHBKbF7L0jNnB2MOyMi0XtD8shR1/zXAjd7EGfHMcELIXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx3WbtMSlr5ROgP9zZIPshGF1nOJkiHmhKqpiA6Ic6vAbmmbyt
-	56gynVfptIPM+ssOBvGRYgKov0sLOQatMndXa1Okq4fSUtft8Be0d/IzwmQpvaU=
-X-Gm-Gg: ASbGncsJntXy8HRodO2PfYLDqq7ruWxki/Ux3SS14kTbwem/eMDTasPZUkxNi1Q+Hjw
-	wBp8HbQ8m5uXCx95JFIeec0zvzzUcROGRNPALRigNYWJMwDpifJypLT8LVWpoPdH9OUxLf0dsy5
-	p6noikLFY8elNEAnafU377qXYzBCjgddBMI3nW4aPr1dd1Rdq1k9KKdEBDK0AKHCOQtBbSxeTcc
-	yqt7qBLq+f/irCuQyUNHOq5WiKNIQmqUxHD1qIG5u1Z1ClU+qsQDkrbRqpZh/f5k+5gpvHi7AHS
-	UupAAZRCcwkBn0NKUEGcBxGJmX5nSnnzThGagXWLUlgVX7WHiFIL2k3qSg==
-X-Google-Smtp-Source: AGHT+IFuZcfsNTicbAsGSdC4hoUDrMHk9sk4gAEvb2ZxuSm7mdfAF9+7SV0Qz/gkzMlJVIiYFvty/A==
-X-Received: by 2002:a17:906:c147:b0:ac3:d1c:89ce with SMTP id a640c23a62f3a-ac3313056d6mr271960666b.9.1741963772281;
-        Fri, 14 Mar 2025 07:49:32 -0700 (PDT)
-Received: from localhost (109-81-85-167.rct.o2.cz. [109.81.85.167])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ac3149d0bfbsm237138266b.95.2025.03.14.07.49.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 07:49:32 -0700 (PDT)
-Date: Fri, 14 Mar 2025 15:49:30 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Zhongkun He <hezhongkun.hzk@bytedance.com>, akpm@linux-foundation.org,
-	muchun.song@linux.dev, yosry.ahmed@linux.dev, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] mm: vmscan: skip the file folios in proactive reclaim
- if swappiness is MAX
-Message-ID: <Z9RB-gHgtXRc86ro@tiehlicka>
-References: <20250314033350.1156370-1-hezhongkun.hzk@bytedance.com>
- <Z9PuXMlHycL6Gco0@tiehlicka>
- <Z9P2nZ6b75FRMhCp@tiehlicka>
- <20250314141833.GA1316033@cmpxchg.org>
+        d=1e100.net; s=20230601; t=1741963812; x=1742568612;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EdlZPQacY7WF2SEKB06YPKehd8J9E8+LtVa0C/rc4Zw=;
+        b=wAxhmkxFVPv2KWCVNoygsZrO7oo17K6QjiSlCHImMb5M2uFmqXdLHCRY6xKgFbjE1k
+         rzbuYT4glgqS4ZDuIZidjGnrH0di9z2suqsXAxMDgddU/E5sUfXVG3EW9uCO29wv9h5S
+         mV3tL3U4VMEinm2xFYRN+iEUgv4vw3vcWZMi4ujyFcPDcuQaC3SN1T/kACZ/0f2xihO7
+         5AAdjvOUvMqWDdEnSIg9IWX9imMGcgsNyLSwFBPy/L4zJqYMjxc4SObZxHRsVEMbEO5E
+         nxQp2vNgBf+fOoEQUSs0bojJvZq+TbaK0OjTnSaRtSGR6J2fE0FD9fa0RRidTyQId65q
+         sOcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOt6+D+HJyARUYiTfk8rWLgGC6bD5oL2qjl3jEP9vP17XntAbO/VM1/Mgwb7ETT2gBT/C51BIdIRw+1P8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQzrNKwNT+kb2jlHth8I7J4NIgprXpoZoBbFc5PE1RfJz2qtaz
+	9eBdLOytgjgLTV7zcFXhybc7lfG2l0pMuu2uFrPTZzKILutDSvCgs9/rjRSxYSvOT5xj4hg7Sjr
+	Ls55vYXKwjjTJlFLi1tbfARZgTXaiO4I5xAs47Q==
+X-Gm-Gg: ASbGnctdY13ntuJ0OMdI98Wk/BHw+qIkXUsfyrLvNgLuCPjsBox0Yj+udJcW+zH4xaj
+	M5ECH+YEC1t+lfg3cYsm0GDmOwI8gXLYv74h9dLCR5eLMB0Z+PTuAmxm8ot3fRTHGzXNwY6yMPO
+	EU2irfbV5e4wS216lWt0wskTTI1lE=
+X-Google-Smtp-Source: AGHT+IHfNAUp36XMnCX/SK1JaWPhnvmshNR+2Vk1C9duS1GWTRT77F98TfUOhGL5wJRSLUOHOb+RdxqUV9fFS+99g+c=
+X-Received: by 2002:a17:902:ef51:b0:220:c143:90a0 with SMTP id
+ d9443c01a7336-225e0aaf01dmr49754705ad.24.1741963812527; Fri, 14 Mar 2025
+ 07:50:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250314141833.GA1316033@cmpxchg.org>
+References: <20250109171956.3535294-1-yeoreum.yun@arm.com>
+In-Reply-To: <20250109171956.3535294-1-yeoreum.yun@arm.com>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Fri, 14 Mar 2025 14:50:00 +0000
+X-Gm-Features: AQ5f1JoxOsWKyJm3DNqvZjWuUp7uRpfo7Q2U9LCVyTj9tsYddKfxgU51SLSJ53Q
+Message-ID: <CAJ9a7ViuVntYL62q=WYPkFR3++cyufPdKUHm0FUAPyGy76pB_A@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] coresight: prevent deactivate active config while
+ enabling the config
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: suzuki.poulose@arm.com, james.clark@linaro.org, 
+	alexander.shishkin@linux.intel.com, coresight@lists.linaro.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri 14-03-25 10:18:33, Johannes Weiner wrote:
-> On Fri, Mar 14, 2025 at 10:27:57AM +0100, Michal Hocko wrote:
-[...]
-> > I have just noticed that you have followed up [1] with a concern that
-> > using swappiness in the whole min-max range without any heuristics turns
-> > out to be harder than just relying on the min and max as extremes.
-> > What seems to be still missing (or maybe it is just me not seeing that)
-> > is why should we only enforce those extreme ends of the range and still
-> > preserve under-defined semantic for all other swappiness values in the
-> > pro-active reclaim.
-> 
-> I'm guess I'm not seeing the "under-defined" part.
+Hi,
 
-What I meant here is that any other value than both ends of swappiness
-doesn't have generally predictable behavior unless you know specific
-details of the current memory reclaim heuristics in get_scan_count.
+On Thu, 9 Jan 2025 at 17:20, Yeoreum Yun <yeoreum.yun@arm.com> wrote:
+>
+> While enable active config via cscfg_csdev_enable_active_config(),
+> active config could be deactivated via configfs' sysfs interface.
+> This could make UAF issue in below scenario:
+>
+> CPU0                                          CPU1
+> (sysfs enable)                                load module
+>                                               cscfg_load_config_sets()
+>                                               activate config. // sysfs
+>                                               (sys_active_cnt == 1)
+> ...
+> cscfg_csdev_enable_active_config()
+>   lock(csdev->cscfg_csdev_lock)
+>   // here load config activate by CPU1
+>   unlock(csdev->cscfg_csdev_lock)
+>
+>                                               deactivate config // sysfs
+>                                               (sys_activec_cnt == 0)
+>                                               cscfg_unload_config_sets()
+>                                               unload module
+>
+>   // access to config_desc which freed
+>   // while unloading module.
+>   cfs_csdev_enable_config
+>
+> To address this, use cscfg_config_desc's active_cnt as a reference count
+> which will be holded when
+>     - activate the config.
+>     - enable the activated config.
+> and put the module reference when config_active_cnt == 0.
+>
+> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> ---
+> from v2 to v3:
+>     - add cscfg_config_desc_get()/put() (from Suzuki).
+>     - remove sys_enable_cnt.
+>
+> from v1 to v2:
+>     - modify commit message.
+> ---
+>  .../hwtracing/coresight/coresight-config.h    |  2 +-
+>  .../coresight/coresight-etm4x-core.c          |  3 +
+>  .../hwtracing/coresight/coresight-syscfg.c    | 55 ++++++++++++++-----
+>  3 files changed, 44 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-config.h b/drivers/hwtracing/coresight/coresight-config.h
+> index b9ebc9fcfb7f..90fd937d3bd8 100644
+> --- a/drivers/hwtracing/coresight/coresight-config.h
+> +++ b/drivers/hwtracing/coresight/coresight-config.h
+> @@ -228,7 +228,7 @@ struct cscfg_feature_csdev {
+>   * @feats_csdev:references to the device features to enable.
+>   */
+>  struct cscfg_config_csdev {
+> -       const struct cscfg_config_desc *config_desc;
+> +       struct cscfg_config_desc *config_desc;
+>         struct coresight_device *csdev;
+>         bool enabled;
+>         struct list_head node;
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> index 86893115df17..6218ef40acbc 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> @@ -986,6 +986,9 @@ static void etm4_disable_sysfs(struct coresight_device *csdev)
+>         smp_call_function_single(drvdata->cpu, etm4_disable_hw, drvdata, 1);
+>
+>         raw_spin_unlock(&drvdata->spinlock);
+> +
+> +       cscfg_csdev_disable_active_config(csdev);
+> +
+>         cpus_read_unlock();
+>
+>         /*
+> diff --git a/drivers/hwtracing/coresight/coresight-syscfg.c b/drivers/hwtracing/coresight/coresight-syscfg.c
+> index a70c1454b410..8766f72db33e 100644
+> --- a/drivers/hwtracing/coresight/coresight-syscfg.c
+> +++ b/drivers/hwtracing/coresight/coresight-syscfg.c
+> @@ -391,14 +391,17 @@ static void cscfg_owner_put(struct cscfg_load_owner_info *owner_info)
+>  static void cscfg_remove_owned_csdev_configs(struct coresight_device *csdev, void *load_owner)
+>  {
+>         struct cscfg_config_csdev *config_csdev, *tmp;
+> +       unsigned long flags;
+>
+>         if (list_empty(&csdev->config_csdev_list))
+>                 return;
+>
+> +       raw_spin_lock_irqsave(&csdev->cscfg_csdev_lock, flags);
+>         list_for_each_entry_safe(config_csdev, tmp, &csdev->config_csdev_list, node) {
+>                 if (config_csdev->config_desc->load_owner == load_owner)
+>                         list_del(&config_csdev->node);
+>         }
+> +       raw_spin_unlock_irqrestore(&csdev->cscfg_csdev_lock, flags);
+>  }
+>
+>  static void cscfg_remove_owned_csdev_features(struct coresight_device *csdev, void *load_owner)
+> @@ -867,6 +870,28 @@ void cscfg_csdev_reset_feats(struct coresight_device *csdev)
+>  }
+>  EXPORT_SYMBOL_GPL(cscfg_csdev_reset_feats);
+>
+> +static bool cscfg_config_desc_get(struct cscfg_config_desc *config_desc, bool enable)
+> +{
+> +       if (enable)
+> +               return atomic_inc_not_zero(&config_desc->active_cnt);
+> +
 
-> cache_trim_mode is
-> there to make sure a streaming file access pattern doesn't cause
-> swapping.
+Not sure why we have an "enable" parameter here - it completely
+changes the meaning of the function - with no comment at the start.
 
-Yes, I am aware of the purpose.
+From where it is called it makes figuring out the logic confusing.
 
-> He has a special usecase to override cache_trim_mode when he
-> knows a large amount of anon is going cold. There is no way we can
-> generally remove it from proactive reclaim.
+Just keep the "get" functionality and drop the parameter & the nz check.
 
-I believe I do understand the requirement here. The patch offers
-counterpart to noswap pro-active reclaim and I do not have objections to
-that.
+> +       /* when activate config */
+> +
+> +       /* must ensure that config cannot be unloaded in use */
+> +       if (cscfg_owner_get(config_desc->load_owner))
+> +               return false;
+> +
+> +       atomic_inc(&config_desc->active_cnt);
+> +
+> +       return true;
+> +}
+> +
+> +static void cscfg_config_desc_put(struct cscfg_config_desc *config_desc)
+> +{
+> +       if (!atomic_dec_return(&config_desc->active_cnt))
+> +               cscfg_owner_put(config_desc->load_owner);
+> +}
+> +
+>  /*
+>   * This activate configuration for either perf or sysfs. Perf can have multiple
+>   * active configs, selected per event, sysfs is limited to one.
+> @@ -890,22 +915,17 @@ static int _cscfg_activate_config(unsigned long cfg_hash)
+>                         if (config_desc->available == false)
+>                                 return -EBUSY;
+>
+> -                       /* must ensure that config cannot be unloaded in use */
+> -                       err = cscfg_owner_get(config_desc->load_owner);
+> -                       if (err)
+> +                       if (!cscfg_config_desc_get(config_desc, false)) {
 
-The reason I brought this up is that everything in between 0..200 is
-kinda gray area. We've had several queries why swappiness=N doesn't work
-as expected and the usual answer was because of heuristics. Most people
-just learned to live with that and stopped fine tuning vm_swappiness.
-Which is good I guess.
+Drop the false parameter here.
 
-Pro-active reclaim is slightly different in a sense that it gives a much
-better control on how much to reclaim and since we have addes swappiness
-extension then even the balancing. So why not make that balancing work
-for real and always follow the given proportion? To prevent any
-unintended regressions this would be the case only with swappiness was
-explicitly given to the reclaim request. Does that make any sense?
+> +                               err = -EINVAL;
+>                                 break;
+> +                       }
+> +
+>                         /*
+>                          * increment the global active count - control changes to
+>                          * active configurations
+>                          */
+>                         atomic_inc(&cscfg_mgr->sys_active_cnt);
+>
+> -                       /*
+> -                        * mark the descriptor as active so enable config on a
+> -                        * device instance will use it
+> -                        */
+> -                       atomic_inc(&config_desc->active_cnt);
+> -
+>                         err = 0;
+>                         dev_dbg(cscfg_device(), "Activate config %s.\n", config_desc->name);
+>                         break;
+> @@ -920,9 +940,8 @@ static void _cscfg_deactivate_config(unsigned long cfg_hash)
+>
+>         list_for_each_entry(config_desc, &cscfg_mgr->config_desc_list, item) {
+>                 if ((unsigned long)config_desc->event_ea->var == cfg_hash) {
+> -                       atomic_dec(&config_desc->active_cnt);
+>                         atomic_dec(&cscfg_mgr->sys_active_cnt);
+> -                       cscfg_owner_put(config_desc->load_owner);
+> +                       cscfg_config_desc_put(config_desc);
+>                         dev_dbg(cscfg_device(), "Deactivate config %s.\n", config_desc->name);
+>                         break;
+>                 }
+> @@ -1047,7 +1066,7 @@ int cscfg_csdev_enable_active_config(struct coresight_device *csdev,
+>                                      unsigned long cfg_hash, int preset)
+>  {
+>         struct cscfg_config_csdev *config_csdev_active = NULL, *config_csdev_item;
+> -       const struct cscfg_config_desc *config_desc;
+> +       struct cscfg_config_desc *config_desc;
+>         unsigned long flags;
+>         int err = 0;
+>
+> @@ -1062,8 +1081,8 @@ int cscfg_csdev_enable_active_config(struct coresight_device *csdev,
+>         raw_spin_lock_irqsave(&csdev->cscfg_csdev_lock, flags);
+>         list_for_each_entry(config_csdev_item, &csdev->config_csdev_list, node) {
+>                 config_desc = config_csdev_item->config_desc;
+> -               if ((atomic_read(&config_desc->active_cnt)) &&
+> -                   ((unsigned long)config_desc->event_ea->var == cfg_hash)) {
+> +               if (((unsigned long)config_desc->event_ea->var == cfg_hash) &&
+> +                               cscfg_config_desc_get(config_desc, true)) {
+
+This obfuscates the logic of the comparisons without good reason. With
+the true parameter, the function does no "get" operation but just
+replicates the logic being replaced - checking the active_cnt is
+non-zero.
+
+Restore this to the original logic to make it readable again
+
+Regards
+
+Mike
+
+>                         config_csdev_active = config_csdev_item;
+>                         csdev->active_cscfg_ctxt = (void *)config_csdev_active;
+>                         break;
+> @@ -1097,7 +1116,11 @@ int cscfg_csdev_enable_active_config(struct coresight_device *csdev,
+>                                 err = -EBUSY;
+>                         raw_spin_unlock_irqrestore(&csdev->cscfg_csdev_lock, flags);
+>                 }
+> +
+> +               if (err)
+> +                       cscfg_config_desc_put(config_desc);
+>         }
+> +
+>         return err;
+>  }
+>  EXPORT_SYMBOL_GPL(cscfg_csdev_enable_active_config);
+> @@ -1136,8 +1159,10 @@ void cscfg_csdev_disable_active_config(struct coresight_device *csdev)
+>         raw_spin_unlock_irqrestore(&csdev->cscfg_csdev_lock, flags);
+>
+>         /* true if there was an enabled active config */
+> -       if (config_csdev)
+> +       if (config_csdev) {
+>                 cscfg_csdev_disable_config(config_csdev);
+> +               cscfg_config_desc_put(config_csdev->config_desc);
+> +       }
+>  }
+>  EXPORT_SYMBOL_GPL(cscfg_csdev_disable_active_config);
+>
+> --
+> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+>
+
+
 -- 
-Michal Hocko
-SUSE Labs
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
