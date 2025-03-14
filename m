@@ -1,79 +1,39 @@
-Return-Path: <linux-kernel+bounces-561356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42721A6106B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:49:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72535A6106D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:51:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6426388458E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:49:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ED4F19C01AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC441FDE31;
-	Fri, 14 Mar 2025 11:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="kFbnH+qA"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951C71FDE14
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3CA1FDA92;
+	Fri, 14 Mar 2025 11:51:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151CC6EB7D
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741952967; cv=none; b=CjONCQ1SkvnWy4sYDqmbyrn4KuDeqgOiA29pd6KObyu+WlpKMb/VTOPlktVGhKdiVCmSrWJX1cmgoUHhakGw+Xej+tCvhdqcwZ33YOcKmkx7gLkeC8m+rH8Dvmi+CB2X48a9QfexbpW1sCuLIUtDu2ymBQFhtcPzMxZ1Drx1hoI=
+	t=1741953084; cv=none; b=EBvGzpOXnQ9XrNqwBDpjdagQHZiKRs6cbb2Q/hIpJXPR/EcSdv08VmStCchdn5mW7YXx+A0ya7qDvRWPwaAO+lQzVQlK2d+r0ue56KhuPdy4bBA1WRArP39zdGUvqtnLLn2R5sI67UaUktu6IQRItQbCp0Bjjt84kiXZ6VqEZDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741952967; c=relaxed/simple;
-	bh=aamCCkAiQoyGFWFnn+8tRK/vXlHXvoWzeYY4i496NBo=;
+	s=arc-20240116; t=1741953084; c=relaxed/simple;
+	bh=40QpnFdQMJ/lxTWkkkKfbbxxQ0h3InN0ZYbA5vPsMT4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E58t/CsMJvCFHxHUzKnzbbVFc300F2r54U2TycfmkHCokSn08cYXPyULrqfpX3O2s16Gh05xiO+vvTVVFlaQyPC8kvxcm/H9lAHLLDJmZCbMrBVUFmbTkf9a+urhLw5xq9F5LRapAiDX3IjnwdxK/uDdlrC6ixiGU7tDN2nPbiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=kFbnH+qA; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso13455755e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 04:49:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1741952964; x=1742557764; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MnZSC151vp8qwLt12oXOY4820tmPnxSjOaRjWV8Cing=;
-        b=kFbnH+qA0gx7QtfcD2ZjmMe3oO+chE9EhFCrdWUZhxnqKv19/bCQFaep9wbXgWz4vt
-         lfEDCu/W3hrE7xk7dqrA8M0eBGj6J9U9MmwYqBDJFtpxmp0I3TRJDm3+3BqSom7UBKtV
-         MjLeekpd8Azqu/ZBN60HUiVvIdSSABejskk6batE3j3aezELD2pc0E29XiKQAg/JfmzM
-         9S4A0Ezy5ryco3WV6r/cDFB7iq9qwcSHiDPUVDQjmz5d5gsflcfam4//Oz4y4iB0UkdZ
-         DL40QvVEyqNtI6rpydYmd0JK5hdYYBdEwveHgk3XfymZRcYo21tfcb2yCbr/W2SDahtU
-         7HCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741952964; x=1742557764;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MnZSC151vp8qwLt12oXOY4820tmPnxSjOaRjWV8Cing=;
-        b=cFGR8/ympU2n0QA2z9PmCY4qJ0ipgz0WSAOPG0ouC2lax8OJaUJ9xd85J2wdPQoBKt
-         D/BX96+kqKnDwCFOKFcMqVH/g9KcM9SLMY5BSOA/ZIu5vZgYz5ouhCkU+zXjldZtFQi3
-         h6gNc4Y5GT01u9zau67b965j2x3YyX7MAeJz838v+GUpeNizzce/mBcX8N5S/NRnq+ub
-         1C1dZ4ZNAu8BE8KsO4jne9vJRg1rnrSLgr0sbt1/p4rxWhDyYsC9sxsEzGY/Sxl+ECqt
-         EEgNZrukfd3l+nSGGUF20jYkHjYb9UEIGXwZ0VDAk/HlDfM7pk+YDXiv/V+jHGqI0++q
-         AE0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXEHP/VvMkx/M+x94BSxK9b2LZNnI5ltDlOZrGpGd3p9MFs+qvKgK12YD6XI6/6xcla7n3BFNeTw5/EV4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxaxd3USoGywm4UJSI+c9ba6EMtFVkucjCUyTdk/11xRCVRUS/8
-	Yk4zvhZEK3p8J7+OMrLxpJxBoxRJId87BRl6c+pKB8O+/c+oMZ3MnXS7EGru7XY=
-X-Gm-Gg: ASbGnctX+HCw+VWPKEchXrqEEOEFcsrhH/CxgOgmjBjg7ADKYzvQlDVCsmtzu2t+4Vd
-	FGFcHwApy9V9Hzl8m1fDSPe21oUcLpMN3bmEAsvUjsdI4En7oHHLnW/UbEFcClWYLgI/oxJr62O
-	hGlAiF418LZt6CUcbQBKoYT7Vip2IfatGMlHEeLXO+2kmAyOzhB1wmoouQyYWFP1pDOC8b6WRNf
-	ZVQF7yNs2m0NAyoSmYIt3uuT9wysamPKyy7bUSgWAyiXMLyuPON+3alr2mPeVBBu3sv1dIGGWz+
-	gB6tyNdjKTtaog79Iv/5s8qAJuZwaRRDeBIgr0V1wtn8ty4RmTQyBm29m2eif603t3kquUYO8Ds
-	OPkirAEFQZHS0Sw==
-X-Google-Smtp-Source: AGHT+IFooexJGdlE71HjFHejmIN5yPGDOB48jansbCISOaAARNem81Cu631A445Q7st6CHhGvoNF9A==
-X-Received: by 2002:a05:600c:5105:b0:439:8e95:796a with SMTP id 5b1f17b1804b1-43d225b23e7mr10331325e9.13.1741952963792;
-        Fri, 14 Mar 2025 04:49:23 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb7eb92csm5408510f8f.91.2025.03.14.04.49.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 04:49:23 -0700 (PDT)
-Message-ID: <7073c4de-4735-429b-b520-f18c33ecaab7@rivosinc.com>
-Date: Fri, 14 Mar 2025 12:49:22 +0100
+	 In-Reply-To:Content-Type; b=OHlYDHs90r9HUNQTfNJePzLsPJmqd5StYTxGhH+WCnLPUdkEv84REbp7rfp3bduIm+iVA4B3/BT28dewYd/3fDYK/dDHs/QLLjuuw154kIju6wbJE5b/FgW1uy08OD0mphM4pmosDgh7nmgKzOiD4935etjpm74aiAgh579h1pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 30EFE13D5;
+	Fri, 14 Mar 2025 04:51:30 -0700 (PDT)
+Received: from [10.57.85.159] (unknown [10.57.85.159])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 27F3D3F5A1;
+	Fri, 14 Mar 2025 04:51:18 -0700 (PDT)
+Message-ID: <172bf7a8-4533-4627-83d2-552e4681c360@arm.com>
+Date: Fri, 14 Mar 2025 11:51:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,117 +41,381 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/17] riscv: misaligned: add a function to check
- misalign trap delegability
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>,
- Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-kselftest@vger.kernel.org, Samuel Holland <samuel.holland@sifive.com>
-References: <20250310151229.2365992-1-cleger@rivosinc.com>
- <20250310151229.2365992-9-cleger@rivosinc.com>
- <20250313-4bea400c5770a5a5d3d70b38@orel>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <20250313-4bea400c5770a5a5d3d70b38@orel>
+Subject: Re: [v3 PATCH 3/6] arm64: mm: make __create_pgd_mapping() and helpers
+ non-void
+Content-Language: en-GB
+To: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org,
+ catalin.marinas@arm.com, Miko.Lenczewski@arm.com,
+ scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250304222018.615808-1-yang@os.amperecomputing.com>
+ <20250304222018.615808-4-yang@os.amperecomputing.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250304222018.615808-4-yang@os.amperecomputing.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-On 13/03/2025 14:19, Andrew Jones wrote:
-> On Mon, Mar 10, 2025 at 04:12:15PM +0100, Clément Léger wrote:
->> Checking for the delegability of the misaligned access trap is needed
->> for the KVM FWFT extension implementation. Add a function to get the
->> delegability of the misaligned trap exception.
->>
->> Signed-off-by: Clément Léger <cleger@rivosinc.com>
->> ---
->>  arch/riscv/include/asm/cpufeature.h  |  5 +++++
->>  arch/riscv/kernel/traps_misaligned.c | 17 +++++++++++++++--
->>  2 files changed, 20 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm/cpufeature.h
->> index ad7d26788e6a..8b97cba99fc3 100644
->> --- a/arch/riscv/include/asm/cpufeature.h
->> +++ b/arch/riscv/include/asm/cpufeature.h
->> @@ -69,12 +69,17 @@ int cpu_online_unaligned_access_init(unsigned int cpu);
->>  #if defined(CONFIG_RISCV_SCALAR_MISALIGNED)
->>  void unaligned_emulation_finish(void);
->>  bool unaligned_ctl_available(void);
->> +bool misaligned_traps_can_delegate(void);
->>  DECLARE_PER_CPU(long, misaligned_access_speed);
->>  #else
->>  static inline bool unaligned_ctl_available(void)
->>  {
->>  	return false;
->>  }
->> +static inline bool misaligned_traps_can_delegate(void)
->> +{
->> +	return false;
->> +}
->>  #endif
->>  
->>  bool check_vector_unaligned_access_emulated_all_cpus(void);
->> diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/traps_misaligned.c
->> index db31966a834e..a67a6e709a06 100644
->> --- a/arch/riscv/kernel/traps_misaligned.c
->> +++ b/arch/riscv/kernel/traps_misaligned.c
->> @@ -716,10 +716,10 @@ static int cpu_online_check_unaligned_access_emulated(unsigned int cpu)
->>  }
->>  #endif
->>  
->> -#ifdef CONFIG_RISCV_SBI
->> -
->>  static bool misaligned_traps_delegated;
->>  
->> +#ifdef CONFIG_RISCV_SBI
->> +
->>  static int cpu_online_sbi_unaligned_setup(unsigned int cpu)
->>  {
->>  	if (sbi_fwft_set(SBI_FWFT_MISALIGNED_EXC_DELEG, 1, 0) &&
->> @@ -761,6 +761,7 @@ static int cpu_online_sbi_unaligned_setup(unsigned int cpu __always_unused)
->>  {
->>  	return 0;
->>  }
->> +
->>  #endif
->>  
->>  int cpu_online_unaligned_access_init(unsigned int cpu)
->> @@ -773,3 +774,15 @@ int cpu_online_unaligned_access_init(unsigned int cpu)
->>  
->>  	return cpu_online_check_unaligned_access_emulated(cpu);
->>  }
->> +
->> +bool misaligned_traps_can_delegate(void)
->> +{
->> +	/*
->> +	 * Either we successfully requested misaligned traps delegation for all
->> +	 * CPUS or the SBI does not implemented FWFT extension but delegated the
->> +	 * exception by default.
->> +	 */
->> +	return misaligned_traps_delegated ||
->> +	       all_cpus_unaligned_scalar_access_emulated();
->> +}
->> +EXPORT_SYMBOL_GPL(misaligned_traps_can_delegate);
->> \ No newline at end of file
+On 04/03/2025 22:19, Yang Shi wrote:
+> The later patch will enhance __create_pgd_mapping() and related helpers
+> to split kernel linear mapping, it requires have return value.  So make
+> __create_pgd_mapping() and helpers non-void functions.
 > 
-> Check your editor settings.
+> And move the BUG_ON() out of page table alloc helper since failing
+> splitting kernel linear mapping is not fatal and can be handled by the
+> callers in the later patch.  Have BUG_ON() after
+> __create_pgd_mapping_locked() returns to keep the current callers behavior
+> intact.
+> 
+> Suggested-by: Ryan Roberts <ryan.roberts@arm.com>
+> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
+> ---
+>  arch/arm64/mm/mmu.c | 127 ++++++++++++++++++++++++++++++--------------
+>  1 file changed, 86 insertions(+), 41 deletions(-)
+> 
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index b4df5bc5b1b8..dccf0877285b 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -189,11 +189,11 @@ static void init_pte(pte_t *ptep, unsigned long addr, unsigned long end,
+>  	} while (ptep++, addr += PAGE_SIZE, addr != end);
+>  }
+>  
+> -static void alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+> -				unsigned long end, phys_addr_t phys,
+> -				pgprot_t prot,
+> -				phys_addr_t (*pgtable_alloc)(int),
+> -				int flags)
+> +static int alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+> +			       unsigned long end, phys_addr_t phys,
+> +			       pgprot_t prot,
+> +			       phys_addr_t (*pgtable_alloc)(int),
+> +			       int flags)
+>  {
+>  	unsigned long next;
+>  	pmd_t pmd = READ_ONCE(*pmdp);
+> @@ -208,6 +208,8 @@ static void alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+>  			pmdval |= PMD_TABLE_PXN;
+>  		BUG_ON(!pgtable_alloc);
+>  		pte_phys = pgtable_alloc(PAGE_SHIFT);
+> +		if (!pte_phys)
+> +			return -ENOMEM;
 
-I just enabled EditorConfig as well as clang-format so hopefully that
-will be ok in the next series.
+nit: personally I'd prefer to see a "goto out" and funnel all to a single return
+statement. You do that in some functions (via loop break), but would be cleaner
+if consistent.
+
+If pgtable_alloc() is modified to return int (see my comment at the bottom),
+this becomes:
+
+ret = pgtable_alloc(PAGE_SHIFT, &pte_phys);
+if (ret)
+	goto out;
+
+
+>  		ptep = pte_set_fixmap(pte_phys);
+>  		init_clear_pgtable(ptep);
+>  		ptep += pte_index(addr);
+> @@ -239,13 +241,16 @@ static void alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+>  	 * walker.
+>  	 */
+>  	pte_clear_fixmap();
+> +
+> +	return 0;
+>  }
+>  
+> -static void init_pmd(pmd_t *pmdp, unsigned long addr, unsigned long end,
+> -		     phys_addr_t phys, pgprot_t prot,
+> -		     phys_addr_t (*pgtable_alloc)(int), int flags)
+> +static int init_pmd(pmd_t *pmdp, unsigned long addr, unsigned long end,
+> +		    phys_addr_t phys, pgprot_t prot,
+> +		    phys_addr_t (*pgtable_alloc)(int), int flags)
+>  {
+>  	unsigned long next;
+> +	int ret = 0;
+>  
+>  	do {
+>  		pmd_t old_pmd = READ_ONCE(*pmdp);
+> @@ -264,22 +269,27 @@ static void init_pmd(pmd_t *pmdp, unsigned long addr, unsigned long end,
+>  			BUG_ON(!pgattr_change_is_safe(pmd_val(old_pmd),
+>  						      READ_ONCE(pmd_val(*pmdp))));
+>  		} else {
+> -			alloc_init_cont_pte(pmdp, addr, next, phys, prot,
+> +			ret = alloc_init_cont_pte(pmdp, addr, next, phys, prot,
+>  					    pgtable_alloc, flags);
+> +			if (ret)
+> +				break;
+>  
+>  			BUG_ON(pmd_val(old_pmd) != 0 &&
+>  			       pmd_val(old_pmd) != READ_ONCE(pmd_val(*pmdp)));
+>  		}
+>  		phys += next - addr;
+>  	} while (pmdp++, addr = next, addr != end);
+> +
+> +	return ret;
+>  }
+>  
+> -static void alloc_init_cont_pmd(pud_t *pudp, unsigned long addr,
+> -				unsigned long end, phys_addr_t phys,
+> -				pgprot_t prot,
+> -				phys_addr_t (*pgtable_alloc)(int), int flags)
+> +static int alloc_init_cont_pmd(pud_t *pudp, unsigned long addr,
+> +			       unsigned long end, phys_addr_t phys,
+> +			       pgprot_t prot,
+> +			       phys_addr_t (*pgtable_alloc)(int), int flags)
+>  {
+>  	unsigned long next;
+> +	int ret = 0;
+>  	pud_t pud = READ_ONCE(*pudp);
+>  	pmd_t *pmdp;
+>  
+> @@ -295,6 +305,8 @@ static void alloc_init_cont_pmd(pud_t *pudp, unsigned long addr,
+>  			pudval |= PUD_TABLE_PXN;
+>  		BUG_ON(!pgtable_alloc);
+>  		pmd_phys = pgtable_alloc(PMD_SHIFT);
+> +		if (!pmd_phys)
+> +			return -ENOMEM;
+>  		pmdp = pmd_set_fixmap(pmd_phys);
+>  		init_clear_pgtable(pmdp);
+>  		pmdp += pmd_index(addr);
+> @@ -314,21 +326,26 @@ static void alloc_init_cont_pmd(pud_t *pudp, unsigned long addr,
+>  		    (flags & NO_CONT_MAPPINGS) == 0)
+>  			__prot = __pgprot(pgprot_val(prot) | PTE_CONT);
+>  
+> -		init_pmd(pmdp, addr, next, phys, __prot, pgtable_alloc, flags);
+> +		ret = init_pmd(pmdp, addr, next, phys, __prot, pgtable_alloc, flags);
+> +		if (ret)
+> +			break;
+>  
+>  		pmdp += pmd_index(next) - pmd_index(addr);
+>  		phys += next - addr;
+>  	} while (addr = next, addr != end);
+>  
+>  	pmd_clear_fixmap();
+> +
+> +	return ret;
+>  }
+>  
+> -static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
+> -			   phys_addr_t phys, pgprot_t prot,
+> -			   phys_addr_t (*pgtable_alloc)(int),
+> -			   int flags)
+> +static int alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
+> +			  phys_addr_t phys, pgprot_t prot,
+> +			  phys_addr_t (*pgtable_alloc)(int),
+> +			  int flags)
+>  {
+>  	unsigned long next;
+> +	int ret = 0;
+>  	p4d_t p4d = READ_ONCE(*p4dp);
+>  	pud_t *pudp;
+>  
+> @@ -340,6 +357,8 @@ static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
+>  			p4dval |= P4D_TABLE_PXN;
+>  		BUG_ON(!pgtable_alloc);
+>  		pud_phys = pgtable_alloc(PUD_SHIFT);
+> +		if (!pud_phys)
+> +			return -ENOMEM;
+>  		pudp = pud_set_fixmap(pud_phys);
+>  		init_clear_pgtable(pudp);
+>  		pudp += pud_index(addr);
+> @@ -369,8 +388,10 @@ static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
+>  			BUG_ON(!pgattr_change_is_safe(pud_val(old_pud),
+>  						      READ_ONCE(pud_val(*pudp))));
+>  		} else {
+> -			alloc_init_cont_pmd(pudp, addr, next, phys, prot,
+> +			ret = alloc_init_cont_pmd(pudp, addr, next, phys, prot,
+>  					    pgtable_alloc, flags);
+> +			if (ret)
+> +				break;
+>  
+>  			BUG_ON(pud_val(old_pud) != 0 &&
+>  			       pud_val(old_pud) != READ_ONCE(pud_val(*pudp)));
+> @@ -379,14 +400,17 @@ static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
+>  	} while (pudp++, addr = next, addr != end);
+>  
+>  	pud_clear_fixmap();
+> +
+> +	return ret;
+>  }
+>  
+> -static void alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
+> -			   phys_addr_t phys, pgprot_t prot,
+> -			   phys_addr_t (*pgtable_alloc)(int),
+> -			   int flags)
+> +static int alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
+> +			  phys_addr_t phys, pgprot_t prot,
+> +			  phys_addr_t (*pgtable_alloc)(int),
+> +			  int flags)
+>  {
+>  	unsigned long next;
+> +	int ret = 0;
+>  	pgd_t pgd = READ_ONCE(*pgdp);
+>  	p4d_t *p4dp;
+>  
+> @@ -398,6 +422,8 @@ static void alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
+>  			pgdval |= PGD_TABLE_PXN;
+>  		BUG_ON(!pgtable_alloc);
+>  		p4d_phys = pgtable_alloc(P4D_SHIFT);
+> +		if (!p4d_phys)
+> +			return -ENOMEM;
+>  		p4dp = p4d_set_fixmap(p4d_phys);
+>  		init_clear_pgtable(p4dp);
+>  		p4dp += p4d_index(addr);
+> @@ -412,8 +438,10 @@ static void alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
+>  
+>  		next = p4d_addr_end(addr, end);
+>  
+> -		alloc_init_pud(p4dp, addr, next, phys, prot,
+> +		ret = alloc_init_pud(p4dp, addr, next, phys, prot,
+>  			       pgtable_alloc, flags);
+> +		if (ret)
+> +			break;
+>  
+>  		BUG_ON(p4d_val(old_p4d) != 0 &&
+>  		       p4d_val(old_p4d) != READ_ONCE(p4d_val(*p4dp)));
+> @@ -422,23 +450,26 @@ static void alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
+>  	} while (p4dp++, addr = next, addr != end);
+>  
+>  	p4d_clear_fixmap();
+> +
+> +	return ret;
+>  }
+>  
+> -static void __create_pgd_mapping_locked(pgd_t *pgdir, phys_addr_t phys,
+> -					unsigned long virt, phys_addr_t size,
+> -					pgprot_t prot,
+> -					phys_addr_t (*pgtable_alloc)(int),
+> -					int flags)
+> +static int __create_pgd_mapping_locked(pgd_t *pgdir, phys_addr_t phys,
+> +				       unsigned long virt, phys_addr_t size,
+> +				       pgprot_t prot,
+> +				       phys_addr_t (*pgtable_alloc)(int),
+> +				       int flags)
+>  {
+>  	unsigned long addr, end, next;
+>  	pgd_t *pgdp = pgd_offset_pgd(pgdir, virt);
+> +	int ret = 0;
+>  
+>  	/*
+>  	 * If the virtual and physical address don't have the same offset
+>  	 * within a page, we cannot map the region as the caller expects.
+>  	 */
+>  	if (WARN_ON((phys ^ virt) & ~PAGE_MASK))
+> -		return;
+> +		return -EINVAL;
+>  
+>  	phys &= PAGE_MASK;
+>  	addr = virt & PAGE_MASK;
+> @@ -446,29 +477,38 @@ static void __create_pgd_mapping_locked(pgd_t *pgdir, phys_addr_t phys,
+>  
+>  	do {
+>  		next = pgd_addr_end(addr, end);
+> -		alloc_init_p4d(pgdp, addr, next, phys, prot, pgtable_alloc,
+> +		ret = alloc_init_p4d(pgdp, addr, next, phys, prot, pgtable_alloc,
+>  			       flags);
+> +		if (ret)
+> +			break;
+>  		phys += next - addr;
+>  	} while (pgdp++, addr = next, addr != end);
+> +
+> +	return ret;
+>  }
+>  
+> -static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
+> -				 unsigned long virt, phys_addr_t size,
+> -				 pgprot_t prot,
+> -				 phys_addr_t (*pgtable_alloc)(int),
+> -				 int flags)
+> +static int __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
+> +				unsigned long virt, phys_addr_t size,
+> +				pgprot_t prot,
+> +				phys_addr_t (*pgtable_alloc)(int),
+> +				int flags)
+>  {
+> +	int ret;
+> +
+>  	mutex_lock(&fixmap_lock);
+> -	__create_pgd_mapping_locked(pgdir, phys, virt, size, prot,
+> +	ret = __create_pgd_mapping_locked(pgdir, phys, virt, size, prot,
+>  				    pgtable_alloc, flags);
+> +	BUG_ON(ret);
+
+This function now returns an error, but also BUGs on ret!=0. For this patch, I'd
+suggest keeping this function as void.
+
+But I believe there is a pre-existing bug in arch_add_memory(). That's called at
+runtime so if __create_pgd_mapping() fails and BUGs, it will take down a running
+system.
+
+With this foundational patch, we can fix that with an additional patch to pass
+along the error code instead of BUGing in that case. arch_add_memory() would
+need to unwind whatever __create_pgd_mapping() managed to do before the memory
+allocation failure (presumably unmapping and freeing any allocated tables). I'm
+happy to do this as a follow up patch.
+
+>  	mutex_unlock(&fixmap_lock);
+> +
+> +	return ret;
+>  }
+>  
+>  #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  extern __alias(__create_pgd_mapping_locked)
+> -void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
+> -			     phys_addr_t size, pgprot_t prot,
+> -			     phys_addr_t (*pgtable_alloc)(int), int flags);
+> +int create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
+> +			    phys_addr_t size, pgprot_t prot,
+> +			    phys_addr_t (*pgtable_alloc)(int), int flags);
+
+create_kpti_ng_temp_pgd() now returns error instead of BUGing on allocation
+failure, but I don't see a change to handle that error. You'll want to update
+__kpti_install_ng_mappings() to BUG on error.
+
+>  #endif
+>  
+>  static phys_addr_t __pgd_pgtable_alloc(int shift)
+> @@ -476,13 +516,17 @@ static phys_addr_t __pgd_pgtable_alloc(int shift)
+>  	/* Page is zeroed by init_clear_pgtable() so don't duplicate effort. */
+>  	void *ptr = (void *)__get_free_page(GFP_PGTABLE_KERNEL & ~__GFP_ZERO);
+>  
+> -	BUG_ON(!ptr);
+> +	if (!ptr)
+> +		return 0;
+
+0 is a valid (though unlikely) physical address. I guess you could technically
+encode like ERR_PTR(), but since you are returning phys_addr_t and not a
+pointer, then perhaps it will be clearer to make this return int and accept a
+pointer to a phys_addr_t, which it will populate on success?
+
+> +
+>  	return __pa(ptr);
+>  }
+>  
+>  static phys_addr_t pgd_pgtable_alloc(int shift)
+>  {
+>  	phys_addr_t pa = __pgd_pgtable_alloc(shift);
+> +	if (!pa)
+> +		goto out;
+
+This would obviously need to be fixed up as per above.
+
+>  	struct ptdesc *ptdesc = page_ptdesc(phys_to_page(pa));
+>  
+>  	/*
+> @@ -498,6 +542,7 @@ static phys_addr_t pgd_pgtable_alloc(int shift)
+>  	else if (shift == PMD_SHIFT)
+>  		BUG_ON(!pagetable_pmd_ctor(ptdesc));
+>  
+> +out:
+>  	return pa;
+>  }
+>  
+
+You have left early_pgtable_alloc() to panic() on allocation failure. Given we
+can now unwind the stack with error code, I think it would be more consistent to
+also allow early_pgtable_alloc() to return error.
 
 Thanks,
-
-Clément
-
-> 
->> -- 
->> 2.47.2
-> 
-> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+Ryan
 
 
