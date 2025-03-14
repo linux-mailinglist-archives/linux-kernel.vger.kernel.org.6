@@ -1,235 +1,165 @@
-Return-Path: <linux-kernel+bounces-562042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA5AA61B2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:58:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8264A61B33
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:59:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50FFF4209A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:58:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D9014209AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1416D204F7F;
-	Fri, 14 Mar 2025 19:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3221D204F79;
+	Fri, 14 Mar 2025 19:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BbdoiJe+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b="TVTw6r72"
+Received: from mx0b-00300601.pphosted.com (mx0b-00300601.pphosted.com [148.163.142.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D8C1FDA6B;
-	Fri, 14 Mar 2025 19:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B20D15B122;
+	Fri, 14 Mar 2025 19:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.142.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741982312; cv=none; b=BIW2NjWBkvh6SyOC6L6jGtGLfiyS8A2guPbQV7i/puL9Wc6eA6gqbZG3oDa8qB/YqawDYll1k+aH6ZQgniY62Z7inKU0Q4jQ1HqbECqxiFb/GBMWgPxj+Nd2cDwYsJCMBbshkVB53OkqCRxFMxhUSqmg1ICxH6a1nYBvujwn1Lo=
+	t=1741982345; cv=none; b=GOuKTUyeJSqvyRLQSN/b71TuCMgmqcDjS7JNXt+rWTR+k62ceRdYsLQ94VAzqYtpAEDHDxnlKBAawnz4Gx9AUS8H7zN59jnfPZYWiM7iPJeyB2vkaZ4qZ3WVRg/z/K+t0+nUgObxpOyho7+AS7iWoDLOiNr4rsuQZRrJl/GAhk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741982312; c=relaxed/simple;
-	bh=AZQGdOvkc2ZGeOv2g07NuPSfm/3YThClhsvkw5X+ih4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uKBCwhY/Km1iwA/ZC+ch271ijjj1HbfVM6AesxmT2CM0XMWIWqgKk7l1CtR69sOjsx+duCwu1/Cn9SYEzDVfWaIYuGsCKi0zH61t9Is4MN5tA6owiSrgYFv9tiU+9ghysxkpD2glW2ZzVTS4kOwm33Q23wo1OSGA5p8/NFSb/s4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BbdoiJe+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AAAC4C4CEE3;
-	Fri, 14 Mar 2025 19:58:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741982311;
-	bh=AZQGdOvkc2ZGeOv2g07NuPSfm/3YThClhsvkw5X+ih4=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=BbdoiJe+c3fydEjOCFPygz0B2xnQ+NwRa2jWjZScDzArH9Fh0qBa2uAzZueUdFqqo
-	 xDFtgfJlVdO5WNjd3i5lj8yTLG6115TU6lfsBTLYdCN9gssVUn6AMyUiyJZnBnOwYC
-	 tZiRmAOF2vz3OLMKE+Lriox2WzLXdNbbZeFwTTduZR6xh42nNoPxApfbwq4RiKgn8O
-	 Zi9HJLsSkDdwIO1uEM+J3FjpY8I2hjYJ0jrtoJyeIgnHTQHfoZaYOxhvIGjPk1iTQM
-	 nbRUVo7sMRbPqKkVGkWOKcR3akTLh0yuhhgDEctQI43POTBI+Auar+rllb/dnQAntG
-	 nylCDRC0BXBHg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF14C28B2F;
-	Fri, 14 Mar 2025 19:58:31 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Fri, 14 Mar 2025 20:58:27 +0100
-Subject: [PATCH v2] media: dt-bindings: Convert Analog Devices ad5820 to DT
- schema
+	s=arc-20240116; t=1741982345; c=relaxed/simple;
+	bh=qpADqbD8cyaXnRCS5BTQv0v58wlWGnQ9E6uqvSF8Qlg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IN+vfH9OtpWAIipoZBYYPK84EVyDFX724eKv1jR1/YdYnK76UH6X1dx76iiIEw1dZuqcjmyK+gyuWpO98SmZUi9X6gN9w7lOAFh9Wf0LGWtbI4h0aFgvZVgFHwrGW5dXfMTPI1jOVG46aO6fxGul9OY6kXdTb56INKVb1Tj8Vjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com; spf=pass smtp.mailfrom=ni.com; dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b=TVTw6r72; arc=none smtp.client-ip=148.163.142.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ni.com
+Received: from pps.filterd (m0144091.ppops.net [127.0.0.1])
+	by mx0b-00300601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52EE8Rqg031097;
+	Fri, 14 Mar 2025 19:58:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ni.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PPS11142024; bh=k0NyECRggPo4eHprLwKw
+	atGq8Zg/3wV8nRq1tMaQXRI=; b=TVTw6r72q7R54erLeY+NmSGhFwHTSX7cuOGi
+	7MnvJ7l2fjhnu0jbOtwlVyJZhKJhzCu6+NQVA36lpbfp9DxFj5WsNFN0HobsXTE9
+	+Y4/4P/q2kqqvkSC4cAEgTILW9fIqZmKN+EIJiF1qkvpFAbk+NuhUIQly3aF7Zh4
+	40ekwzWreCyqQPyYhMZpBi+jShlcMFHcYtSU0av6x+kzI2GH3RBehPHlBGTs6yHj
+	F+RCv/tcDVifIqqKWRfy5OUKhyN86SE47NGBF/fqTUBgGi04vQ8HDAV3+x+bBnul
+	EeRg8hHozIWRuNfcSAdD4BZLI4H6HEmT8cBuKK+vVC0FArGOrA==
+Received: from us-aus-excas-p2.ni.corp.natinst.com ([130.164.94.74])
+	by mx0b-00300601.pphosted.com (PPS) with ESMTPS id 45cnxtvxy2-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 19:58:35 +0000 (GMT)
+Received: from us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) by
+ us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 14 Mar 2025 14:58:34 -0500
+Received: from ershephe-ubuntu.amer.corp.natinst.com (172.18.68.32) by
+ us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) with Microsoft SMTP
+ Server id 15.2.1258.28 via Frontend Transport; Fri, 14 Mar 2025 14:58:34
+ -0500
+From: Erick Shepherd <erick.shepherd@ni.com>
+To: <linux-mmc@vger.kernel.org>
+CC: <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
+        <keita.aihara@sony.com>, <linux-kernel@vger.kernel.org>,
+        <avri.altman@wdc.com>, <wsa+renesas@sang-engineering.com>,
+        <jason.lai@genesyslogic.com.tw>, <jeff.johnson@oss.qualcomm.com>,
+        <victor.shih@genesyslogic.com.tw>, <andy-ld.lu@mediatek.com>,
+        <dsimic@manjaro.org>, <jonathan@raspberrypi.com>,
+        Erick Shepherd
+	<erick.shepherd@ni.com>
+Subject: [PATCH] mmc: Add quirk to disable DDR50 tuning
+Date: Fri, 14 Mar 2025 14:58:32 -0500
+Message-ID: <20250314195832.1588159-1-erick.shepherd@ni.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250314-b4-ad5820-dt-yaml-v2-1-287958c3c07c@ixit.cz>
-X-B4-Tracking: v=1; b=H4sIAGKK1GcC/yWNQQqDMBBFryKz7shkjKBd9R7FRTRJHWi1JCJay
- d2b2uV78N8/ILogLsK1OCC4VaLMUwa+FDCMZno4FJsZmLimSmnsNRpbN0xoF9zN64kVM/WevXK
- aIO/ewXnZzua9yzxKXOawnxer+tl/jallqlpNpapbahpUaM0q9iabLOXwgS6l9AX/gf3DoQAAA
- A==
-X-Change-ID: 20250314-b4-ad5820-dt-yaml-3220bf2f1e40
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Pavel Machek <pavel@ucw.cz>, linux-media@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4138; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=z81Yqbut3SZDaJXDHotF1NCKDbHx0Fdm/k4FGFc127s=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBn1Ipm2nYSDpgV9ujf/RnKXz3/hUx5ecREWpynY
- I6pg8cGtIuJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCZ9SKZgAKCRBgAj/E00kg
- cspeD/97vOwKteluX4cjW3PO5WfeMenU4W3nCdvvBfjJYetpVEXUBfqy+pb13vHSDZezopxd39O
- lT5CeFtteh1dzlf7j6IXSlEOtJUuSSjL3p/2/C3JAYTbk+UNss1mDR/YPbZyLC6LEo2U18235BF
- wRv2FIz4G1E9i1nZ3yDKT1iB7im8nwkfK678qxZAK0VgSw/+D8dhh6SQcniok376fhYEceHG9fM
- K7tlXovESZbxepoKFnprKWi8K8XlfSV75ZTESFMg6wW1L+IP6mlwducL/dIFLy316qj2qeukjfs
- fW1TUQXPy/VZlPhOH291QTec+xsjqnchC9ytJU/nfJs+Je1bFMJUs5xk0J88kwMsXFX9PmD9BDJ
- 5U686vtu3Q8/j1Ov8xXSUzW0EgSjRs//Hzlv4bRZQ/SD6nT8ryRFVVOrH81IG6kYwGL56HAIrBH
- pRKQjlhjiED7/+t3ugzLzE3NWR5PHddngCXyiEIb6wuoYLWvslVinPmhTxs9l/7GKH9EjCoW3qF
- CxrDRcn5BptiwvxG7XwpdT8/J2FHXjUxyWoW4yXzC0BJR/2k2czk6VSk+i7U7SHM75+7M2V9u9v
- bh+ZMa/24sKynJHxElKEU5PYyXAAYiOe9+wzvFnKJ3kUAsrOXNW/VR6/FpeAZ0VH9Y1ka/7NLor
- p9YDZoD7nz2eudw==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: FJN8fU8j9H9iQ3fhKG6Qa2aZQFh3FcSg
+X-Proofpoint-GUID: FJN8fU8j9H9iQ3fhKG6Qa2aZQFh3FcSg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-14_08,2025-03-14_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ mlxlogscore=859 mlxscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0
+ impostorscore=0 clxscore=1011 suspectscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503140153
 
-From: David Heidelberg <david@ixit.cz>
+Adds the MMC_QUIRK_NO_UHS_DDR50_TUNING quirk and updates
+mmc_execute_tuning() to return 0 if that quirk is set. This fixes an
+issue on certain Swissbit SD cards that do not support DDR50 tuning
+where tuning requests caused I/O errors to be thrown.
 
-Convert the Analog Devices ad5820 to DT schema format.
-
-Add the previously undocumented io-channel-cells property,
-which can be omitted. If present, it must be set to 0,
-as the device provides only one channel.
-
-Signed-off-by: David Heidelberg <david@ixit.cz>
+Signed-off-by: Erick Shepherd <erick.shepherd@ni.com>
 ---
-Changes in v2:
-- added MAINTAINERS entry for the binding
-- documented why io-channel-cells got added into the binding.
-- dropped io-channel-cells in required properties.
-- adjusted example indentation to 4 spaces.
-- Link to v1: https://lore.kernel.org/r/20250209203940.159088-1-david@ixit.cz
----
- .../devicetree/bindings/media/i2c/ad5820.txt       | 28 ----------
- .../devicetree/bindings/media/i2c/adi,ad5820.yaml  | 59 ++++++++++++++++++++++
- MAINTAINERS                                        |  1 +
- 3 files changed, 60 insertions(+), 28 deletions(-)
+ drivers/mmc/core/card.h   |  1 +
+ drivers/mmc/core/core.c   |  4 ++++
+ drivers/mmc/core/quirks.h | 10 ++++++++++
+ include/linux/mmc/card.h  |  1 +
+ 4 files changed, 16 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/ad5820.txt b/Documentation/devicetree/bindings/media/i2c/ad5820.txt
-deleted file mode 100644
-index 5764cbedf9b73387ad1bfa9acf99c643f959b84a..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
-+++ /dev/null
-@@ -1,28 +0,0 @@
--* Analog Devices AD5820 autofocus coil
--
--Required Properties:
--
--  - compatible: Must contain one of:
--		- "adi,ad5820"
--		- "adi,ad5821"
--		- "adi,ad5823"
--
--  - reg: I2C slave address
--
--  - VANA-supply: supply of voltage for VANA pin
--
--Optional properties:
--
--   - enable-gpios : GPIO spec for the XSHUTDOWN pin. The XSHUTDOWN signal is
--active low, a high level on the pin enables the device.
--
--Example:
--
--       ad5820: coil@c {
--               compatible = "adi,ad5820";
--               reg = <0x0c>;
--
--               VANA-supply = <&vaux4>;
--               enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
--       };
--
-diff --git a/Documentation/devicetree/bindings/media/i2c/adi,ad5820.yaml b/Documentation/devicetree/bindings/media/i2c/adi,ad5820.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..7967b8dcd77a2171074829625d71dbb53a80fbc6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/adi,ad5820.yaml
-@@ -0,0 +1,59 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/i2c/adi,ad5820.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Analog Devices AD5820 autofocus coil
-+
-+maintainers:
-+  - Pavel Machek <pavel@ucw.cz>
-+
-+description:
-+  The AD5820 is a current sink driver designed for precise control of
-+  voice coil motors (VCMs) in camera autofocus systems.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - adi,ad5820
-+      - adi,ad5821
-+      - adi,ad5823
-+
-+  reg:
-+    maxItems: 1
-+
-+  enable-gpios:
-+    maxItems: 1
-+    description:
-+      GPIO spec for the XSHUTDOWN pin. The XSHUTDOWN signal is active low,
-+      a high level on the pin enables the device.
-+
-+  VANA-supply:
-+    description: supply of voltage for VANA pin
-+
-+  '#io-channel-cells':
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+  - VANA-supply
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        coil@c {
-+            compatible = "adi,ad5820";
-+            reg = <0x0c>;
-+
-+            enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
-+            VANA-supply = <&vaux4>;
-+        };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e4b6545aab3ec75f92c0daaabe2fc1bb1d483969..238c00d3abe2f53ea7b7e6ba265d560ad5c3fe86 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17073,6 +17073,7 @@ M:	Pavel Machek <pavel@kernel.org>
- M:	Sakari Ailus <sakari.ailus@iki.fi>
- L:	linux-media@vger.kernel.org
- S:	Maintained
-+F:	Documentation/devicetree/bindings/media/i2c/adi,ad5820.yaml
- F:	drivers/media/i2c/ad5820.c
- F:	drivers/media/i2c/et8ek8
+diff --git a/drivers/mmc/core/card.h b/drivers/mmc/core/card.h
+index 3205feb1e8ff..756f80024635 100644
+--- a/drivers/mmc/core/card.h
++++ b/drivers/mmc/core/card.h
+@@ -89,6 +89,7 @@ struct mmc_fixup {
+ #define CID_MANFID_MICRON       0x13
+ #define CID_MANFID_SAMSUNG      0x15
+ #define CID_MANFID_APACER       0x27
++#define CID_MANFID_SWISSBIT     0x5D
+ #define CID_MANFID_KINGSTON     0x70
+ #define CID_MANFID_HYNIX	0x90
+ #define CID_MANFID_KINGSTON_SD	0x9F
+diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+index 5241528f8b90..8962992f05aa 100644
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -937,6 +937,10 @@ int mmc_execute_tuning(struct mmc_card *card)
+ 	if (!host->ops->execute_tuning)
+ 		return 0;
  
-
----
-base-commit: da920b7df701770e006928053672147075587fb2
-change-id: 20250314-b4-ad5820-dt-yaml-3220bf2f1e40
-
-Best regards,
++	if ((card->quirks & MMC_QUIRK_NO_UHS_DDR50_TUNING) &&
++	    host->ios.timing == MMC_TIMING_UHS_DDR50)
++		return 0;
++
+ 	if (host->cqe_on)
+ 		host->cqe_ops->cqe_off(host);
+ 
+diff --git a/drivers/mmc/core/quirks.h b/drivers/mmc/core/quirks.h
+index 89b512905be1..7f893bafaa60 100644
+--- a/drivers/mmc/core/quirks.h
++++ b/drivers/mmc/core/quirks.h
+@@ -34,6 +34,16 @@ static const struct mmc_fixup __maybe_unused mmc_sd_fixups[] = {
+ 		   MMC_QUIRK_BROKEN_SD_CACHE | MMC_QUIRK_BROKEN_SD_POWEROFF_NOTIFY,
+ 		   EXT_CSD_REV_ANY),
+ 
++	/*
++	 * Swissbit series S46-u cards throw I/O errors during tuning requests
++	 * after the initial tuning request expectedly times out. This has
++	 * only been observed on cards manufactured on 01/2019 that are using
++	 * Bay Trail host controllers.
++	 */
++	_FIXUP_EXT("0016G", CID_MANFID_SWISSBIT, 0x5342, 2019, 1,
++		   0, -1ull, SDIO_ANY_ID, SDIO_ANY_ID, add_quirk_sd,
++		   MMC_QUIRK_NO_UHS_DDR50_TUNING, EXT_CSD_REV_ANY),
++
+ 	END_FIXUP
+ };
+ 
+diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+index 526fce581657..ddcdf23d731c 100644
+--- a/include/linux/mmc/card.h
++++ b/include/linux/mmc/card.h
+@@ -329,6 +329,7 @@ struct mmc_card {
+ #define MMC_QUIRK_BROKEN_SD_CACHE	(1<<15)	/* Disable broken SD cache support */
+ #define MMC_QUIRK_BROKEN_CACHE_FLUSH	(1<<16)	/* Don't flush cache until the write has occurred */
+ #define MMC_QUIRK_BROKEN_SD_POWEROFF_NOTIFY	(1<<17) /* Disable broken SD poweroff notify support */
++#define MMC_QUIRK_NO_UHS_DDR50_TUNING	(1<<18) /* Disable DDR50 tuning */
+ 
+ 	bool			written_flag;	/* Indicates eMMC has been written since power on */
+ 	bool			reenable_cmdq;	/* Re-enable Command Queue */
 -- 
-David Heidelberg <david@ixit.cz>
-
+2.43.0
 
 
