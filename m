@@ -1,29 +1,30 @@
-Return-Path: <linux-kernel+bounces-561294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD9BA60FD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:21:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3D1A60FD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:21:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9BC43BD04F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:21:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DFF71B60975
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524ED1FA243;
-	Fri, 14 Mar 2025 11:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CF21FDE2D;
+	Fri, 14 Mar 2025 11:21:26 +0000 (UTC)
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098631FCFF3;
-	Fri, 14 Mar 2025 11:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AB11FDA83;
+	Fri, 14 Mar 2025 11:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741951284; cv=none; b=qEnVp8keJYPSfoy0nWjs9vCXci4Bn2CHw7pBqUyaho9X2JSzrYzhc/470YNmqQ/ezm24yKlnMTkSJxM1a3Pio57hl9twHFH09eWGgOky9CeApEsUhYP6I+8FBpq//sEC4H2yYp0Q4A+2XisyVL4rHvsajopHiCYaK91eM7w7v48=
+	t=1741951285; cv=none; b=Ezh6r/WDDIViWPZmhsGA19DDw0lXFXVvc3KoOHQ9w4C12U6P5Zc+iMvxYVNL2rrSRl64i3YfzILHULj0mVOE12p3+aItmp15OmncBJbsABWSYkKWEzoMpkyGLQf+CpHQIpO2VSMUidEFD8NZFOwUN0YhKJ/qhbp2EX9Pdjbh0Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741951284; c=relaxed/simple;
-	bh=npHj6QVZ23F0tcCDkSsD3IjZb1fqRwV4e7DQZwIS5s8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QJxL70JnYI0prrsYuskjPQ324VOMn6SRLsF6RYuUxx/w/I8Z2WVnQqE5+mDCyDCtGzMxHPTAefvezyLstfDey+J6M8jdILGDEeRGvK22Er1kgOFXD3yzZSK4RWby9XrOxXfgdEEKlzaomi/+ZaAIt2WNlYjScm9879v5b5yLIaY=
+	s=arc-20240116; t=1741951285; c=relaxed/simple;
+	bh=l1EVTowwyvKKgRoAY03CsjK7TX72m3a/uOj9bXlY/Ig=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SB2+UCDRiwjqTOPrrRupjd2HfMZ3FJIDOVAkC8hLd4gv34fnfCnjS+c/0vi10XYTr48y3QenJ8uftyEEIrKWi3jcJEhxlRnldJ3ZKt+tqAC0+56+8s1AZ9zEBLSBPi9HEvHB5qdXCFWVpu/lRpD1MNTmRgf5HRfCCNrcWRCyEus=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
@@ -42,10 +43,12 @@ To: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
 	<linux-kernel@vger.kernel.org>
 CC: Kevin Chen <kevin_chen@aspeedtech.com>
-Subject: [PATCH v4 0/3] Add AST2600 LPC PCC support
-Date: Fri, 14 Mar 2025 19:21:10 +0800
-Message-ID: <20250314112113.953238-1-kevin_chen@aspeedtech.com>
+Subject: [PATCH v4 1/3] dt-binding: aspeed: Add LPC PCC controller
+Date: Fri, 14 Mar 2025 19:21:11 +0800
+Message-ID: <20250314112113.953238-2-kevin_chen@aspeedtech.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250314112113.953238-1-kevin_chen@aspeedtech.com>
+References: <20250314112113.953238-1-kevin_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,34 +58,69 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
---
-v4
-aspeed-lpc-pcc.c:
- -- Remove the debug message in the aspeed_lpc_pcc_probe.
- -- Add pcc-ports in the aspeed-g6.dtsi.
+Add dt-bindings for Aspeed for Aspeed LPC POST code capture controller.
 
-v3
-aspeed-lpc-pcc.c:
- -- Add ida_free and fix the dev usage with removing some debug messages.
-aspeed-lpc.yaml:
- -- Add description about the pcc-ports usage.
+Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
+---
+ .../devicetree/bindings/mfd/aspeed-lpc.yaml   | 38 +++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-v2:
- -- Change driver path to drivers/misc
-
-Kevin Chen (3):
-  dt-binding: aspeed: Add LPC PCC controller
-  ARM: dts: aspeed-g6: Add AST2600 LPC PCC support
-  soc: aspeed: lpc-pcc: Add PCC controller support
-
- .../devicetree/bindings/mfd/aspeed-lpc.yaml   |  38 ++
- arch/arm/boot/dts/aspeed/aspeed-g6.dtsi       |   8 +
- drivers/misc/Kconfig                          |  10 +
- drivers/misc/Makefile                         |   1 +
- drivers/misc/aspeed-lpc-pcc.c                 | 437 ++++++++++++++++++
- 5 files changed, 494 insertions(+)
- create mode 100644 drivers/misc/aspeed-lpc-pcc.c
-
+diff --git a/Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml b/Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml
+index 5dfe77aca167..178c151a19ba 100644
+--- a/Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml
++++ b/Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml
+@@ -149,6 +149,37 @@ patternProperties:
+       - interrupts
+       - snoop-ports
+ 
++  "^lpc-pcc@[0-9a-f]+$":
++    type: object
++    additionalProperties: false
++
++    description:
++      The LPC pcc interface allows the BMC to listen on and record the data
++      bytes written by the Host to the targeted LPC I/O pots.
++
++    properties:
++      compatible:
++        items:
++          - enum:
++              - aspeed,ast2600-lpc-pcc
++
++      reg:
++        maxItems: 1
++
++      interrupts:
++        maxItems: 1
++
++      pcc-ports:
++        $ref: /schemas/types.yaml#/definitions/uint32-array
++        description:
++          As a device handshake with a host using the port-mmaped I/O in x86
++          architecture, need to handle specific which port I/O address for use.
++
++    required:
++      - compatible
++      - interrupts
++      - pcc-ports
++
+   "^uart-routing@[0-9a-f]+$":
+     $ref: /schemas/soc/aspeed/uart-routing.yaml#
+     description: The UART routing control under LPC register space
+@@ -176,6 +207,13 @@ examples:
+         #size-cells = <1>;
+         ranges = <0x0 0x1e789000 0x1000>;
+ 
++        lpc_pcc: lpc-pcc@0 {
++            compatible = "aspeed,ast2600-lpc-pcc";
++            reg = <0x0 0x140>;
++            interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
++            pcc-ports = <0x80>;
++        };
++
+         lpc_ctrl: lpc-ctrl@80 {
+             compatible = "aspeed,ast2600-lpc-ctrl";
+             reg = <0x80 0x80>;
 -- 
 2.34.1
 
