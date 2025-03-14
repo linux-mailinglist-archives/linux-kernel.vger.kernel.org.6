@@ -1,134 +1,195 @@
-Return-Path: <linux-kernel+bounces-560619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E9EDA60725
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:50:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2505FA60722
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:49:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A0311899188
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:50:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ABB03BD772
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17526210FB;
-	Fri, 14 Mar 2025 01:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D6C22338;
+	Fri, 14 Mar 2025 01:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QIyNBkZU"
-Received: from mail-pj1-f65.google.com (mail-pj1-f65.google.com [209.85.216.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="EiEGok+B"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151A484A35
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28F42E337E;
+	Fri, 14 Mar 2025 01:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741916986; cv=none; b=vAt0eUvEuj3DOzS4xZTOKsswmUqUhzRAb0HQbr2cfKxzCR5VQS1Ph34EAb5IFF7eVYZCgkwSbd1t6r41p36NsNyGt47LYNbdi81LZWbW1/jK4+I/opnzFmmTAJ/l6NiHzNk8eu61YXatdcva99AG14ZG7LlDJKkrliuy6EAtn94=
+	t=1741916959; cv=none; b=hMU3mvLVueiDsSiEoH7/5MLHxVsB1eC5HQ33qyamAoemN42905VjKMQ/rXQGz1qou0HozAXd+YXXaz4LBWOQa4RV/eMvbZY7BZZOxQrpz1CstAV8Lanz4zNv6jhvd+lxw5/Y4QpPlTjjWT37I4I0IuxpMnElpig08P2hiRg+OWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741916986; c=relaxed/simple;
-	bh=yzjckJYDtH6LoM4L1UVKwAD2UJuBV64I35BWYAuX4Fg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WRd3rWGxwbD0SdveQi/1kwXXXse4om+frRh71RbJLdNp0BEIaZGMl5b016p0d9E8tVbxZ6oMm2+1jE0aSZnMv2J7+H29FNnD1IuAKPE7HCizHw6xKlAjnXs+lE4z3RwCP/Y+WjN5tSELOBYPfXHjsFz/V2dZaYTntgTjXP+bfyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QIyNBkZU; arc=none smtp.client-ip=209.85.216.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f65.google.com with SMTP id 98e67ed59e1d1-3011737dda0so2915582a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:49:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741916984; x=1742521784; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k+emGW/c8eu5PKqicRx24WECyYR/Tb4Cl3qpWXGBUv4=;
-        b=QIyNBkZUkbHATuzqU17YjFcQqCZoLhw1YAvaoHg8LA1G+5u2GmYdhuoEfAuBd+r2Na
-         XH8I0K9V+HbfsceJLuDBrif0GFdNvO4PmL0sekjTw/tUSkQO6OC7tdb7UyXxgQ+GDpgX
-         4NAy5VeGpytXmaH+2ij2L6qaKxYF4CtRRsYoRJk3xma471u2RQJj4ybh7Rg2iQvOQh+D
-         4QnEjSfGvuw39mt6bKKV7EdjTXwkod3G0MIt/2c2sMJDNn8Pvh/DrNhN/Y7ZBW1xzyF5
-         FlMs6Mt8ugA7siS+j4CPSGnwCVodGdf1d+LFWhJaH7U4KmYp+aueDB+tZXgh9b2kWD0Q
-         rNcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741916984; x=1742521784;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k+emGW/c8eu5PKqicRx24WECyYR/Tb4Cl3qpWXGBUv4=;
-        b=U+RUUxH/RQOOSZtwLUHottxi+livObi/7mPOha+4ytFXdkxHm7HQm3ShcqfAeYJkM1
-         SPcauNZQtAC6b7A1JsFgKRo2I6eX7+6eLwI6E5LR5aLvfBbI1I4PTuMIE1zuidOztzj/
-         hA50BIUnHdg5BnUQVzdaK4gcFn3nlwjAojplsmtcpoKZhMRIuyVafgpGr8LpyCk8SDez
-         42kCKqj4uuaH4EtbFEpCX+fC+JxeXHQVgMsAbV9AbhIaJ5zEOJCDjw4c/nYiIY5btL8B
-         VP/7IFCtggbW3jxQH4pUpcirtopwaUj8b4ph1qzE2/9vqjm4RdK7nAlhpw0X09kk7MyR
-         Fflw==
-X-Forwarded-Encrypted: i=1; AJvYcCWIIALW0czY/+gSZ61rU17FmAnC6RcFuevOjrCruDDWFUDVtbl4gH0/dfnXEuZ2ZuHxoWUpnlPjfeF+v7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz783ALoKtWs0/VPHI79XYkOr3GPfW3PkRorxb9PnGaQsqO6bFm
-	xOZqcUOq7AKNlD3PpMsez7SsuN6ZhW9fyh3n3KgsPLFIZm3WWr8c
-X-Gm-Gg: ASbGncsNssCxqcMtaqS3Q2IbYzQENHm6ofpLMDgHpg35YIz2PGvgIpMPyvUUpztd75G
-	VLktjYgqUDnETl3E19jXVQgAOGJ65Jzg0LYhSTkEJEruZTmAGzKibYZK/Ywea8U7hGW43i9mpC2
-	rReOzgtCfl/NFs/oBTt3DjNXQZ4I375XdtU2J5wADv6wl9kq4U0P1FctuAQYrRvkdVhJYECK9w9
-	OhtOcbUscBiKlPYlGUqbal3QX3XZwuRFph/ZIqtRRpME6z0SvwPC5uIzlcpAFQSZQl1iePUaYT6
-	zIrKEqWrgmlXKGJnqrdjRZKuFeCBd2Ut4qm5DtmpDS6ge8d2ZgBix4XX6fO4jjtIb3Iz7QE=
-X-Google-Smtp-Source: AGHT+IF/F/lT16o7LXOeNzm0tdX6+48LZ9mPSwe9paqT23CoV/EIrGGAvmXLnOpOZAMzk8rXmWkSAw==
-X-Received: by 2002:a17:90b:2dd0:b0:2ee:8e75:4aeb with SMTP id 98e67ed59e1d1-30151cc3da1mr1022481a91.17.1741916984133;
-        Thu, 13 Mar 2025 18:49:44 -0700 (PDT)
-Received: from localhost.localdomain ([2408:80e0:41fc:0:fe2d:0:2:90])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3015363278bsm64032a91.31.2025.03.13.18.49.36
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 13 Mar 2025 18:49:43 -0700 (PDT)
-From: zihan zhou <15645113830zzh@gmail.com>
-To: kprateek.nayak@amd.com
-Cc: 15645113830zzh@gmail.com,
-	bsegall@google.com,
-	dietmar.eggemann@arm.com,
-	gautham.shenoy@amd.com,
-	juri.lelli@redhat.com,
-	linux-kernel@vger.kernel.org,
-	mgorman@suse.de,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	rostedt@goodmis.org,
-	vincent.guittot@linaro.org,
-	vschneid@redhat.com
-Subject: Re: [PATCH V3 1/2] sched: Reduce the default slice to avoid tasks getting an extra tick
-Date: Fri, 14 Mar 2025 09:49:03 +0800
-Message-Id: <20250314014902.56810-1-15645113830zzh@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <3d0f9c2b-8498-4405-b178-9f6c8615f73b@amd.com>
-References: <3d0f9c2b-8498-4405-b178-9f6c8615f73b@amd.com>
+	s=arc-20240116; t=1741916959; c=relaxed/simple;
+	bh=ipJVnD5vLJyeWbgVJCp7BU1Bwa7IwU6dr5l/KZTVHXM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HmVdcKaDbr+BGYNKBWqWLpdW9FMfB5eWKH5VVGU03HJZ78nKX7VZ20fMJdX9qRf02gLaXLd7dYIRnO30sPUxG7+15BIRyqUXueSFgoFgEkGqQ6Jv8fln9DilOPTxoVtc5XRBYpgtvtyN9P4mgxpayiy54kEMnGDjrNVCx0Bw7eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=EiEGok+B; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZDS304KTRzlxY2F;
+	Fri, 14 Mar 2025 01:49:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1741916955; x=1744508956; bh=OVD8dlXS9CG6wKFU6suQFKKu
+	NzYa+NwFmWOkeL/cq5k=; b=EiEGok+BAEvGGqMRHtxD/U62vIcu6LCZvU81VaX9
+	bUgZFrk//gu+IZ1rfI9KArIiGRBA0PmB6lAHts6tgNIKnPnOyQj1yG+N0B3BXuha
+	0M8zlAqrQusolc9ashGjt6x4BVeZrCGTpfyJuGlfy1ke4KIDwmz6cplNljFk28Zh
+	libYpO+GlvKr7mhfHxBVpRRCGx7NZYkTQBRyC1dsjfpj/eyP45CaKhB8xH08Lgwu
+	9h8yc3AAxOWdaScfLGYUChvPNhpKYR9YAIU5Kyt6zH+zyj003W1zE25dzGgC7PrL
+	qe0EX6bOyOl2/DSNn6Lt1klS/CspRz5pZEwvpZvweOEFmQ==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id FKM7eojvVRNV; Fri, 14 Mar 2025 01:49:15 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZDS2p69Z7zlxY1l;
+	Fri, 14 Mar 2025 01:49:05 +0000 (UTC)
+Message-ID: <58ddc052-039b-4b9f-b0b2-102f16da5d47@acm.org>
+Date: Thu, 13 Mar 2025 18:49:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 01/19] scsi: scsi_error: Define framework for
+ LUN/target based error handle
+To: JiangJianJun <jiangjianjun3@huawei.com>, jejb@linux.ibm.com,
+ martin.petersen@oracle.com, linux-scsi@vger.kernel.org
+Cc: hare@suse.de, linux-kernel@vger.kernel.org, lixiaokeng@huawei.com,
+ hewenliang4@huawei.com, yangkunlin7@huawei.com
+References: <20250314012927.150860-1-jiangjianjun3@huawei.com>
+ <20250314012927.150860-2-jiangjianjun3@huawei.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250314012927.150860-2-jiangjianjun3@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Thank you for your reply! I don't mind at all, and I'm also sorry for the
-slow response due to too many things lately.
+On 3/13/25 6:29 PM, JiangJianJun wrote:
+> diff --git a/drivers/scsi/scsi_error.c b/drivers/scsi/scsi_error.c
+> index 815e7d63f3e2..f89de23a6807 100644
+> --- a/drivers/scsi/scsi_error.c
+> +++ b/drivers/scsi/scsi_error.c
+> @@ -291,11 +291,48 @@ static void scsi_eh_inc_host_failed(struct rcu_head *head)
+>   	spin_unlock_irqrestore(shost->host_lock, flags);
+>   }
+>   
 
-> Hello Zhou,
-> 
-> Sorry this slipped past me.
+Please move the new-style error handling functions into a new file. 
+scsi_error.c is already way too big. Mixing host-based and device-based
+error handling in a single file is confusing. Please don't do this.
 
-Thank you very much for your guidance! I realize that without a good
-benchmark, it is impossible to truly do a good job in scheduling. I will
-try my best to make time to do this well.
+> +#define SCSI_EH_NO_HANDLER 1
 
-> We use selective benchmarks from LKP: https://github.com/intel/lkp-tests
-> 
-> Then there are some larger benchmarks we run based on previous regression
-> reports and debugs. some of them are:
-> 
-> YCSB: https://github.com/brianfrankcooper/YCSB
-> netperf: https://github.com/HewlettPackard/netperf
-> DeathStarBench: https://github.com/delimitrou/DeathStarBench
-> HammerDB: https://github.com/TPC-Council/HammerDB.git
-> tbench (part of dbench): https://dbench.samba.org/web/download.html
-> schbench: https://git.kernel.org/pub/scm/linux/kernel/git/mason/schbench.git
-> sched-messaging: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/perf/bench/sched-messaging.c?h=v6.14-rc4
-> 
-> Some of them are hard to setup the first time; we internally have some
-> tools that have made it easy to run these benchmarks in a way that
-> stresses the system but we keep an eye out for regression reports to
-> understand what benchmarks folks are running in the field.
-> 
-> Sorry again for the delay and thank you.
+This should be a new enumeration type instead of a define.
 
-Thank you for your support! Wishing you all the best.
+>   /**
+>    * scsi_eh_scmd_add - add scsi cmd to error handling.
+>    * @scmd:	scmd to run eh on.
+>    */
+> -void scsi_eh_scmd_add(struct scsi_cmnd *scmd)
+> +static void __scsi_eh_scmd_add(struct scsi_cmnd *scmd)
+
+Please choose a better name for this function than __scsi_eh_scmd_add().
+
+> +void scsi_eh_scmd_add(struct scsi_cmnd *scmd)
+> +{
+> +	struct scsi_device *sdev = scmd->device;
+> +	struct scsi_target *starget = scsi_target(sdev);
+> +	struct Scsi_Host *shost = sdev->host;
+> +
+> +	if (unlikely(scsi_host_in_recovery(shost)))
+> +		__scsi_eh_scmd_add(scmd);
+> +
+> +	if (unlikely(scsi_target_in_recovery(starget)))
+> +		if (__scsi_eh_scmd_add_starget(scmd))
+> +			__scsi_eh_scmd_add(scmd);
+> +
+> +	if (__scsi_eh_scmd_add_sdev(scmd))
+> +		if (__scsi_eh_scmd_add_starget(scmd))
+> +			__scsi_eh_scmd_add(scmd);
+> +}
+
+Please rename the function __scsi_eh_scmd_add() to make it clear that it 
+is used for the host-based error handling strategey.
+
+> +static inline int scsi_device_in_recovery(struct scsi_device *sdev)
+> +{
+> +	struct scsi_device_eh *eh = sdev->eh;
+> +
+> +	if (eh && eh->is_busy)
+> +		return eh->is_busy(sdev);
+> +	return 0;
+> +}
+
+Can the return type of this function be changed into 'bool'? Can the
+three statements in the function body be combined into the following
+statement?
+
+	return eh && eh->is_busy && eh->is_busy(sdev);
+
+> +static inline int scsi_target_in_recovery(struct scsi_target *starget)
+> +{
+> +	struct scsi_target_eh *eh = starget->eh;
+> +
+> +	if (eh && eh->is_busy)
+> +		return eh->is_busy(starget);
+> +	return 0;
+> +}
+
+Same questions here.
+
+> +struct scsi_device_eh {
+> +	/*
+> +	 * add scsi command to error handler so it would be handuled by
+> +	 * driver's error handle strategy
+> +	 */
+> +	void (*add_cmnd)(struct scsi_cmnd *scmd);
+> +
+> +	/*
+> +	 * to judge if the device is busy handling errors, called before
+> +	 * dispatch scsi cmnd
+> +	 *
+> +	 * return 0 if it's ready to accepy scsi cmnd
+> +	 * return 0 if it's in error handle, command's would not be dispatched
+> +	 */
+> +	int (*is_busy)(struct scsi_device *sdev);
+> +
+> +	/*
+> +	 * wakeup device's error handle
+> +	 *
+> +	 * usually the error handler strategy would not run at once when
+> +	 * error command is added. This function would be called when any
+> +	 * scsi cmnd is finished or when scsi cmnd is added.
+> +	 */
+> +	int (*wakeup)(struct scsi_device *sdev);
+> +
+> +	/*
+> +	 * data entity for device specific error handler
+> +	 */
+> +	unsigned long driver_data[];
+> +};
+
+Adding unsigned long driver_data[] at the end of a structure is the old
+way for extending a structure. Please don't do this. Instead, leave out
+the driver_data[] array, embed the scsi_device_eh in a larger data
+structure where necessary and use container_of() to convert
+scsi_device_eh pointers into a pointer to the containing structure.
+
+Thanks,
+
+Bart.
 
