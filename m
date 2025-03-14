@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-562221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44ADA61F60
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:51:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99689A61F5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:50:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7D3C3AD2C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:50:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7086D175B3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725B7233132;
-	Fri, 14 Mar 2025 21:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64097235375;
+	Fri, 14 Mar 2025 21:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1NUnK7r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a+hTN2RE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47A722FF2E
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC5323315F
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741988522; cv=none; b=ofep+c1yPJ1HW44q1HX/jVONEQpTQB5o/leireQeCzkBhgg1iTOrg/+r2dssWkYio95SAghmtwScHxcMN69VK1Bm3qXJGJH2l/Qq0eajPqGCsFKUwD1/HOf64LvXz2cnThbWIu5GqCxgj1nlsc9fvqudICZhL90cLGhmFru7MLM=
+	t=1741988523; cv=none; b=rEsh+5fS3WTBRKMnvG+WWpRG6RUmzwYbDYFn6BP+MLJRSwigbGt1klZMBLa2gOlYL2pJAqswO5mdv5yf2d8roIFVevh5h4LaoXOAV1bqp7cnHVKPqi7W8zvC+tDFDJjUa037UticzzxQyUF+s3xVuGiitBUbo2vG5Jm+nPqddbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741988522; c=relaxed/simple;
-	bh=qqzesLOe3X4Ltjb88hOoCiAxYvll/tl7oXQIyXa17jw=;
+	s=arc-20240116; t=1741988523; c=relaxed/simple;
+	bh=5oIhQA2G6MXNN4S57DSQBoNUOOzJU2afmZyfUSBH/Tk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a00wDewpTy5PvLYqpt+fvjFlHtDRkgyDaC0mNAyRJY9/vOW8BYdCYdQ2gDFPK5FtwKkegJSmtJATAX9zFOxsYKlF9PDAdwyUN7NFGEDz3VRQY6RI7wXS5g3PBMsgQ2OC7AJT53AkVDlcEElIqeCGtUMHVaa6A43FhgtkVCGU3E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1NUnK7r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 348E2C4CEED;
+	 MIME-Version; b=lSfn+Q/GRDGpPSeYbF+9GOYgJ889NbFfmhUJ+Lv/mYu2W89WXuU3hH7j1BSJck/sSG0Yb42L2ZZcb+7p9VrU73FredkXSYKPrDeJbBl7A/lfk2I0M1wvCZzd+YNuKXlMCk/+twAAi66uv67kxwNNa/40PhoIS6BXKc2eQMY3DT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a+hTN2RE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB96EC4CEE3;
 	Fri, 14 Mar 2025 21:42:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741988522;
-	bh=qqzesLOe3X4Ltjb88hOoCiAxYvll/tl7oXQIyXa17jw=;
+	s=k20201202; t=1741988523;
+	bh=5oIhQA2G6MXNN4S57DSQBoNUOOzJU2afmZyfUSBH/Tk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=E1NUnK7rMoAPxCxOQNcWSKoO1CT39JrAMBbv2wUFC//iVYB/AxuXk5bO6wRb5AicJ
-	 zFZiu3qQ3PycpRFqFERi4KqLP+Fm3Sc8H0dkxWOoJhgDSWVhOIVWbf1qWBZb2TYK+V
-	 KCnkGiaVkQf0SSNrxddfpmJ00TtC+W5rWzhKVoFms4klIKHVziG+98c30Io4EZjlak
-	 Cdy1dsHyYHqdFkT9/FcH7dGGdoU0pI85qINNKW5B2zhDicH8/u/WHwBMEHbd5V/ZiG
-	 Vlz5H1MN/RQl2z/G5pG7ViLDCS0hhb5tPUvC12siksmDD7AjwoKLmrG48clb0kyabX
-	 +QVyuLuS6N6hw==
+	b=a+hTN2REe48/StivX0ehUohMA48AU908BP1fNGMUhWC52WwsfVoph1qEYg6j5O8qK
+	 0Y8w5dUOOe2B1BTble2AlPsdeqqasj8r/u84uYLSEyuDtSuBPZaGguxofNp6jWqYjN
+	 DRXCeNlSwTVbt6YWFhqyMfCfDnFoxspwxvyrkZ7QEmgITnqCHiHU5gvQ3II1Cfwmh5
+	 Dp0IRT8Qy94T7emcUTK8wwZTlzJwPhnK9FioADXozeFiFpZHI3+ak/IocYpclWpqXL
+	 FGpzvN1h+ynDjEVGu88mAno4q/OxG352qHAbKQpCWpilHCK2e4MdAvTFFWIx4j4BfP
+	 Y5LZrpyJp2Mmg==
 From: Josh Poimboeuf <jpoimboe@kernel.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -50,9 +50,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Uros Bizjak <ubizjak@gmail.com>,
 	Andrew Cooper <andrew.cooper3@citrix.com>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 15/20] x86/cpu/amd: Use named asm operands in asm_clear_divider()
-Date: Fri, 14 Mar 2025 14:41:28 -0700
-Message-ID: <ced9352a854e896e00f57ab2b062526d688a5b8a.1741988314.git.jpoimboe@kernel.org>
+Subject: [PATCH 16/20] x86/cpu: Use alternative_io() in amd_clear_divider()
+Date: Fri, 14 Mar 2025 14:41:29 -0700
+Message-ID: <5f79d7213503c426cf4abc8292ae6d240cacb712.1741988314.git.jpoimboe@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1741988314.git.jpoimboe@kernel.org>
 References: <cover.1741988314.git.jpoimboe@kernel.org>
@@ -64,25 +64,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use named inline asm operands in preparation for using alternative_io().
+Use the standard alternative_io() interface.
 
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- arch/x86/include/asm/processor.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/processor.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index a1baf2fc5f9b..b458ff0e4c79 100644
+index b458ff0e4c79..d7f3f03594a2 100644
 --- a/arch/x86/include/asm/processor.h
 +++ b/arch/x86/include/asm/processor.h
-@@ -709,8 +709,8 @@ static inline u32 per_cpu_l2c_id(unsigned int cpu)
+@@ -709,8 +709,10 @@ static inline u32 per_cpu_l2c_id(unsigned int cpu)
   */
  static __always_inline void amd_clear_divider(void)
  {
--	asm volatile(ALTERNATIVE("", "div %2\n\t", X86_BUG_DIV0)
--		     :: "a" (0), "d" (0), "r" (1));
-+	asm volatile(ALTERNATIVE("", "div %[one]\n\t", X86_BUG_DIV0)
-+		     :: "a" (0), "d" (0), [one] "r" (1));
+-	asm volatile(ALTERNATIVE("", "div %[one]\n\t", X86_BUG_DIV0)
+-		     :: "a" (0), "d" (0), [one] "r" (1));
++	alternative_io("",
++		       "div %[one]\n\t", X86_BUG_DIV0,
++		       ARG(),
++		       ARG("a" (0), "d" (0), [one] "r" (1)));
  }
  
  extern void amd_check_microcode(void);
