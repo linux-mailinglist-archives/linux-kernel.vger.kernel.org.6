@@ -1,113 +1,119 @@
-Return-Path: <linux-kernel+bounces-561212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49C75A60ED6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:28:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D39CCA60EDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:28:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 444761892A4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:28:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FBDD16E4FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169891F418A;
-	Fri, 14 Mar 2025 10:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9AB1F460B;
+	Fri, 14 Mar 2025 10:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jq0KWvbC"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aFGkEckF"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6E41F4192
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832171EB5D4
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741948097; cv=none; b=VMb3e8Tww8MoRY3fyNqop8E3ZDMh1KRI47BMoN3MjAnmSJHSaxzvA4lHcGZDWeeTFAwskVmI3IfdrrA6Wdjm2vmPn6gStfFCnz1Y18wOCOqjva9j7gJUaegfdFF2Ho/69ajjv+vvkyxMuCaBzPicYOAdwfG4XLTl1zNrPxqjXdo=
+	t=1741948131; cv=none; b=SGuVIT11LbERWXJxgtHdfei9ma1xuUcp97+fvBAYs6oLV62x9Ld0i+hRtsJct60mQkVaFtSDZFRoTJ1DoGh+ievTPMOEc/VT0MWIr0S9ASQfCcC7l0YB8zDyOf6mfbOwRzvsoNjyzXTf2YE85vw8CeDvmZN+VNm2vbt17Iqglb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741948097; c=relaxed/simple;
-	bh=7lhUJ6eiiWP9IJ/FYhzjbXh+LAJRJWyTLSUXs2Uq9+Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ej88ZCiegXEsXkcCeOVzufq3hea6bQr2/UFmzYIpeSlJlV+L2F8Vi8sEHnrkUIKr0GLuX31nXRU6e/7wqW1F54ZY55+lJ9aH/7nF3DT0kQWABtg1G3qA/c72cNMf62XhPitv2K3LwhjZwPWSefMDFZGndlO+rwtilC95DYL4HaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jq0KWvbC; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5499e3ec54dso2033176e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:28:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741948093; x=1742552893; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7lhUJ6eiiWP9IJ/FYhzjbXh+LAJRJWyTLSUXs2Uq9+Y=;
-        b=Jq0KWvbC+RGapBxE/79RV0BIeD9VvGdw1Fpe1TB3FQiE3Mx7M1ug74I43skmk/ysed
-         pW0eyKCVeuPLLFbAr8/7rZaVq+ypvWIqqp98ONbAm/K0er06k802QP0sKmwApc01jN5E
-         LJkRPCM7GjMxbAZVdkkbB+WFpnQ3yeovdkzSGgBhRM8hxbnIqo7S1fIfuHXiO9Srwm6f
-         0krXnLDsipucb1cr4hOpq8EflJ5+JkQWavCGVohox/GL31nKFJGEb3tY1JskSboySuXw
-         evvwW11mE8FMNJVAwglnLWQuelsD1w2tLYtm1nHAHAZQlQ3gbq3yJ1khhhuBRD+qlb/f
-         Bh5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741948093; x=1742552893;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7lhUJ6eiiWP9IJ/FYhzjbXh+LAJRJWyTLSUXs2Uq9+Y=;
-        b=ooMsBMdc2qowZGQd2NRjoEjJ85LrSRZgDxDySTdL0RsNJgBv/lpF6yoI117MyFOmlS
-         871jUQyzg2g+ebYoRWbMxN5v6ij+7lWjLcAM1Okgu8eWbOMUF4YUaS9vpeibiF8SFQaN
-         uPn/1InsvrRsLAcFTL+JcrSwFgzP64GhU1wW4zc24RsqYLc8wmzNKwXKZAKdtjkS+ED8
-         D1yNOCKL+jsdBz8cu5+RrIo8BSrqjEI1H9yggvCR+7wTBASyAb/6Ng9h0ZUjMNV32A5u
-         yARkTv0+gf9cbhzzH+KZi/6frutuVIdhiFkCrpT8z3VfHEPbON1/GdU3hFs839h0K95w
-         gJqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfGZH3RYEw7x7V1MPwz9wu+W82hbPY72YIkrQaS5f4ONVlEVhq4B7+7xE/2Q7Js4OhEm6EQIbYeTxmAk8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAPimRoC9DaWQnDrLH8qoO+lUs2IDwgUZ+2ZNqZTjvLnSWi7IJ
-	2eS8wsyf9lbP4bqwLPd+L/FOKKlHM0F1xoeQCMzZVJGsI8DQQlHPZFYtvBKltCYEqTQTmchh4BX
-	6mDxCBcukJvW65FUQxxuyya5iA6iACpKQngjpbw==
-X-Gm-Gg: ASbGnctZHQEd0kKRBgxLq1zq0AnrTPurqPFwNEMqw+MD37g0V7dvaa6tRJncH5WKhuf
-	vC0UcwX1cij9NVgXnKlYWvGIXIss+pyCHYO2o3tDpql7s8OQa3hNA4ybhbteuMyu7Wh8IHYMOm0
-	+18r3zs4p9or/AsgzKw8+13Bs=
-X-Google-Smtp-Source: AGHT+IEn/Zc2evX7ABWKYXK/Rs9IfMZdPR9tSjfOKy1a8kRLZcgdXcqx09hfLow4+l9JiJIqttYJQGRGb5b/H78iKJ8=
-X-Received: by 2002:a05:6512:3087:b0:549:7330:6a5a with SMTP id
- 2adb3069b0e04-549c3913d63mr621103e87.23.1741948093287; Fri, 14 Mar 2025
- 03:28:13 -0700 (PDT)
+	s=arc-20240116; t=1741948131; c=relaxed/simple;
+	bh=Ww0dcPpkEc4ly+HW56/GyU96/h2FBdYdV9rxKd8ebKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pdd6ZUNBG4GW3vMx4jU7rFK7iIM41BL9Kpqeb6ij5TVzcajKMjKpJN5npcHrKiS17OO8/C668dRRP9kq2RCJYvRP/8/fi+WkMs/63J8cQhtxqgvRA03kYR6Ubn9C9mnu7iLalfNDyUWLEV/qRAjLoYA0W8ZTx9K/KisH1XfSOmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aFGkEckF; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 14 Mar 2025 11:28:33 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741948117;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IGXzjo3+xT8L1j9EZ6PfRrVW8iKnbI1bkQ43mT99qKI=;
+	b=aFGkEckFxmOPtmk+8K4U3SF/zALpM/acuLFdFkBoShtw+VP8FDSYFvmYwHsxYXvAvcoh85
+	Z/qiXZU6g8XWx0P241dGhKfRN/fbJhj7uUYAEcgXkdcS6fsAUF3uQHIFTRc2luW93RUbGA
+	s5yQNogBS79uQluRgIMJDQHedO/zPI4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 4/8] Documentation: uAPI: media: add
+ V4L2_CID_FLASH_DURATION
+Message-ID: <4w7s6g32rol2ptkchczhyhgvytyeq6baqvz4h7ikurzg2tygnr@a3q7cgeagzk4>
+References: <20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev>
+ <20250314-ov9282-flash-strobe-v2-4-14d7a281342d@linux.dev>
+ <d14b8c18-55b9-472c-897d-3a481892b080@xs4all.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250309193612.251929-1-linux@treblig.org> <20250309193612.251929-5-linux@treblig.org>
-In-Reply-To: <20250309193612.251929-5-linux@treblig.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 14 Mar 2025 11:28:02 +0100
-X-Gm-Features: AQ5f1Jo6nSq2AFqXUDepXvu8J8Xduf-drgRoP8FzPPUsiMaA2xVOQZlsv65trtc
-Message-ID: <CACRpkdY2oZtu4vtTwHRMFxaoYWu3B5bfPN==thz=BT2F6BHQQw@mail.gmail.com>
-Subject: Re: [PATCH 4/9] mfd: pcF50633-gpio: Remove
-To: linux@treblig.org
-Cc: arnd@arndb.de, lee@kernel.org, dmitry.torokhov@gmail.com, sre@kernel.org, 
-	lgirdwood@gmail.com, broonie@kernel.org, alexandre.belloni@bootlin.com, 
-	danielt@kernel.org, jingoohan1@gmail.com, deller@gmx.de, brgl@bgdev.pl, 
-	tsbogend@alpha.franken.de, linux-mips@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-fbdev@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d14b8c18-55b9-472c-897d-3a481892b080@xs4all.nl>
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, Mar 9, 2025 at 8:36=E2=80=AFPM <linux@treblig.org> wrote:
+Hi Hans,
 
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->
-> The pcf50633 was used as part of the OpenMoko devices but
-> the support for its main chip was recently removed in:
-> commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support")
->
-> See https://lore.kernel.org/all/Z8z236h4B5A6Ki3D@gallifrey/
->
-> Remove it.
->
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+thanks for your quick feedback!
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+On Fri, Mar 14, 2025 at 10:41:04AM +0100, Hans Verkuil wrote:
+> On 14/03/2025 09:49, Richard Leitner wrote:
+> > Add the new strobe_duration control to v4l uAPI documentation.
+> > 
+> > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > ---
+> >  Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> > index d22c5efb806a183a3ad67ec3e6550b002a51659a..03a58ef94be7c870f55d5a9bb09503995dbfb402 100644
+> > --- a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> > +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> > @@ -186,3 +186,8 @@ Flash Control IDs
+> >      charged before strobing. LED flashes often require a cooldown period
+> >      after strobe during which another strobe will not be possible. This
+> >      is a read-only control.
+> > +
+> > +``V4L2_CID_FLASH_DURATION (integer)``
+> > +    Duration the flash should be on when the flash LED is in flash mode
+> > +    (V4L2_FLASH_LED_MODE_FLASH). The unit should be microseconds (µs)
+> > +    if possible.
+> > 
+> 
+> If this control is present, does that mean that the flash duration always have
+> to be set manually? Or can there be an 'Auto' mode as well? And if so, how is
+> that set?
 
-Yours,
-Linus Walleij
+To be honest I haven't thought about automatic flash duration. Is this
+something which is required?
+
+At least for the ov9282 sensor (which I've implemented this control for
+in this series) there is no "auto" mode AFAIK.
+
+If it's required: What would be the best solution?
+Extending V4L2_CID_FLASH_LED_MODE with a new menu option? E.g.
+V4L2_FLASH_LED_MODE_FLASH_{MANUAL,AUTO}?
+
+> 
+> Regards,
+> 
+> 	Hans
+
+Thanks!
+Richard
 
