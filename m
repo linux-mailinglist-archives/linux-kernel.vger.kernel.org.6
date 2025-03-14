@@ -1,162 +1,174 @@
-Return-Path: <linux-kernel+bounces-560768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C524A60942
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:41:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA73A60945
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:46:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C00B3BD0C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:41:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 987F93BD01C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9D8157465;
-	Fri, 14 Mar 2025 06:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA80F156C5E;
+	Fri, 14 Mar 2025 06:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=deepin.org header.i=@deepin.org header.b="wD+6YXX7"
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VnhxBSj5"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684A6146013;
-	Fri, 14 Mar 2025 06:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BD553AC;
+	Fri, 14 Mar 2025 06:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741934491; cv=none; b=T4dIRQt5q3qJw4+7kaeq67VVgwvsRobZ7twzgczTQYD8ngDg4wa/x98E5rI6q5Ra2vUTczBrdnTeOlDzt4/Wv2vfsumQhCoinEWcoEDPqAFaT1NzHEyDqVuBBcJ686MQ/qPXnaY8iKfatREkvFth6xfx2XzqbPbvN/VVXcMXp+I=
+	t=1741934791; cv=none; b=CRlvmiFlXXKMqlHlBnXwr6X8K6efXse9olo1kAI9GeZTT8DYqOqcpskguRoZ6iolQaKVyKLHfcZnzAgHKv35RmFUiw4ANW/Y8cZ/q/AEUdhq38XbJ70aFvOo+V0omBdXkWr6mvmJS+XhjkWkbcl6lz0PsofyYPdJT6HxLNIQP2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741934491; c=relaxed/simple;
-	bh=1/P245BJsOOizxZd8xVholcTcwS3i4f6zEkYxyH+TzU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rbROh+vPD2FfQ3+uJoXwITu53XK6OktkHbpLZpYNvQBrfNJcW33IMorw/oowEakxCRXlj+voVFxVm8GnePOQq2a41IdsOFz/RszH7YbUZ/P8x6bnsV5VHz0vInkSG+Jp51fne6JEATmlAC65eeuxshWCUtxawHIAfbcw9hRQRaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepin.org; spf=pass smtp.mailfrom=deepin.org; dkim=pass (1024-bit key) header.d=deepin.org header.i=@deepin.org header.b=wD+6YXX7; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepin.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deepin.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=deepin.org;
-	s=ukjg2408; t=1741934465;
-	bh=CwPqh3dkCrhZ/eHvLeAux7HyOEkcWfxttE3ma/av6pE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=wD+6YXX7YdG+fvv/KGoBB6YzZD6YFxXfwFfUmJ2tdDZUo93aDPk/BX2i69UUa1YL3
-	 GFgq4Lyvq4kyqQ/AgqG8kEoJ8cay1KI8sdTW2h0kK/lYw3QcjiBqthVUw4yR5yuPGE
-	 l3Ed/u84DZt0qKIrtnnGDQ+l6SzL/f2pP47g07uo=
-X-QQ-mid: bizesmtpsz8t1741934459tbxpkb7
-X-QQ-Originating-IP: UOH9Xc39gfe0mWHbIm7GwmW4y+2iq8iLjz9sepqAV3o=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 14 Mar 2025 14:40:57 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14611272108540318868
-From: Chen Linxuan <chenlinxuan@deepin.org>
-To: Andrii Nakryiko <andrii@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jann Horn <jannh@google.com>,
-	Chen Linxuan <chenlinxuan@deepin.org>,
-	Alexey Dobriyan <adobriyan@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>
-Cc: Yi Lai <yi1.lai@intel.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH stable 6.6] lib/buildid: Handle memfd_secret() files in build_id_parse()
-Date: Fri, 14 Mar 2025 14:40:39 +0800
-Message-ID: <6F04B7A95D1A4D64+20250314064039.21110-2-chenlinxuan@deepin.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741934791; c=relaxed/simple;
+	bh=2v5M3mN5vDhx+eD6btPkhGPIFik+gMa4uX/FFac4Buc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qPztc+CJnzNm4ZvCq6a9hj20+67+WtiLSddYh6ZlBhv5JEHt4afeawfhS8Eirl2+1azWMooHNsRrg3wTAsotxm0VQhHzUJKOWS+tEgg8IUsjVjYKOLUG3g5FejpTeaf9pjsUH9kZLE7WAVU0jRCWImcqcF1aId57ixTY3VdetL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VnhxBSj5; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52E6jtUS1566271
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 14 Mar 2025 01:45:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741934755;
+	bh=uOAP9mRHAXh/9Z10zpIVpYptP4wDPHvl/0FeEXfQ/J4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=VnhxBSj5zPPVduDolbJosbiBpcZeIIDXwRdM/NBqE2CGjHMNXloSjmxb5Ci0hjzBT
+	 12NbcYcbqZieAoxK2qx5UYDeuYmgrZQJYw4nHEDxM0dLDkAjhR/WKzw/u2Bx9+MXj1
+	 SlJbiDk7lUz35VBSaBck1UYE7ulwMXx2Y15+a3oQ=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52E6jtVJ118405;
+	Fri, 14 Mar 2025 01:45:55 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
+ Mar 2025 01:45:54 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 14 Mar 2025 01:45:54 -0500
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52E6jYiA084213;
+	Fri, 14 Mar 2025 01:45:35 -0500
+Message-ID: <c9e208e4-af14-424b-b09b-3e5068be2706@ti.com>
+Date: Fri, 14 Mar 2025 12:15:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:deepin.org:qybglogicsvrgz:qybglogicsvrgz7a-0
-X-QQ-XMAILINFO: MuqR/Ma/tDRlUbbSIQI2U6KgUnFY+5v+uELPQoIE622gmDZ9SLqJOeYN
-	M3YxXwMh4uSszRuQ7W6PRA1pQmRhuCxHQNsMrXnW8l9zhI0IDrGsM6jTjdGLMmRky0BbWlO
-	uOvttIScfURId1RDAhjbTySX9Rj9d286Djb85ckl5D99jHp+9NLmy3IzwfPR2eZmnq/LVT0
-	bi4MhJ8k19G1/Momb3thXW7gu1iG0hLRgKO+xv8U5rJ/XF4yl+YvKCxgKozW3tpSEopvR2U
-	hvSvSyMwS4YdPsqMW8pGqehFBpBAosNovWyd4c9JeB2A5PZX78gYg4NQs4JwgVZefR+fv0P
-	b5bVxx4Gd1RF8OZfIbgQYvkwuGVSzHMRKRdJnWTjbRb7xVoOqgNBPngv1DHpL0nAkspMuIE
-	bkCTpZEC36+GyXONgTHpFJNDUUkATsYWWYPgDxBP9PeTMhESFGcH+atmB7RnImqgPgD/Ggy
-	/noL9pSdsUAG4Uj2kbXFGOgAc65TD6ZkRal3gmm3HJjLRyGpevI+ZebiUMoD9Ww+FZBci0S
-	vBRGKO6Al3I21lwwDx24xeSVQfBkqMxEvJjAWwdJNONrlULlY20NiQJE2uU2pO/dLys5X6y
-	U05MHzMq+HW52/ptOyOqV/IGkLaGq/Kz+m7f/ULFDKfZzg6AAgYBtq7F8ttGs5IYZ2k4YnB
-	lxj6TDCADYW15vHK6Ld6Tzoe7bWstB/OvdjWoLrmii75tCjz4dleSDxajWN7zt2sNx0yh6b
-	yfbRf/eDT6eP7iTieU7SL9v9u/9bHk6UoEu/pApzmN6U4Z2qm9duVrQrDu1C1+NZrOqrc3t
-	delCmdFtcfNZYSM/KbYnSZiE2waMlbJtXqDA76qz9kWICFVDd/JZMr9RACtChdB7E8hzjNd
-	MOJmJAUPj99TZM4f3LDm6qqAqKBGnURNC7Ux9Dq13Ur+i0XXqHvc/JPmHV7YH6o/eo2m6LQ
-	sy0FAsKtBdBZW5ZQ2jLaAfVUZNV7K6kldH0KIZQYGq+La/kxfEjhh+7g8dh6XIcHYLFh199
-	iZXTQVo7lVcOyLv2w6DMwjBZ42Q/7OQqgNXByIYNpG74tKuEVpZmNGr9YWmdsjRDCnbzOJ4
-	V57V0ga1DwX
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] net: ti: icssg-prueth: Add ICSSG FW Stats
+To: Jakub Kicinski <kuba@kernel.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Meghana Malladi <m-malladi@ti.com>,
+        Diogo Ivo <diogo.ivo@siemens.com>, Lee Trager <lee@trager.us>,
+        Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        Roger Quadros <rogerq@kernel.org>, Jonathan Corbet
+	<corbet@lwn.net>,
+        Simon Horman <horms@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <netdev@vger.kernel.org>, <srk@ti.com>
+References: <20250305111608.520042-1-danishanwar@ti.com>
+ <20250306165513.541ff46e@kernel.org>
+ <3931a391-3967-4260-a104-4eb313810c0d@ti.com>
+ <20250307083959.33098949@kernel.org>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <20250307083959.33098949@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-[ Upstream commit 5ac9b4e935dfc6af41eee2ddc21deb5c36507a9f ]
 
->From memfd_secret(2) manpage:
 
-  The memory areas backing the file created with memfd_secret(2) are
-  visible only to the processes that have access to the file descriptor.
-  The memory region is removed from the kernel page tables and only the
-  page tables of the processes holding the file descriptor map the
-  corresponding physical memory. (Thus, the pages in the region can't be
-  accessed by the kernel itself, so that, for example, pointers to the
-  region can't be passed to system calls.)
+On 07/03/25 10:09 pm, Jakub Kicinski wrote:
+> On Fri, 7 Mar 2025 16:00:40 +0530 MD Danish Anwar wrote:
+>>> Thanks for the docs, it looks good. Now, do all of these get included
+>>> in the standard stats returned by icssg_ndo_get_stats64 ?
+>>> That's the primary source of information for the user regarding packet
+>>> loss.  
+>>
+>> No, these are not reported via icssg_ndo_get_stats64.
+>>
+>> .ndo_get_stats64 populates stats that are part of `struct
+>> rtnl_link_stats64`. icssg_ndo_get_stats64 populates those stats wherever
+>> applicable. These firmware stats are not same as the ones defined in
+>> `icssg_ndo_get_stats64` hence they are not populated. They are not
+>> standard stats, they will be dumped by `ethtool -S`. Wherever there is a
+>> standard stats, I will make sure it gets dumped from the standard
+>> interface instead of `ethtool -S`
+>>
+>> Only below stats are included in the standard stats returned by
+>> icssg_ndo_get_stats64
+>> - rx_packets
+>> - rx_bytes
+>> - tx_packets
+>> - tx_bytes
+>> - rx_crc_errors
+>> - rx_over_errors
+>> - rx_multicast_frames
+> 
+> Yes, but if the stats you're adding here relate to packets sent /
+> destined to the host which were lost you should include them
+> in the aggregate rx_errors / rx_dropped / tx_errors / tx_dropped.
+> I understand that there's unlikely to be a 1:1 match with specific
+> stats.
+> 
 
-We need to handle this special case gracefully in build ID fetching
-code. Return -EFAULT whenever secretmem file is passed to build_id_parse()
-family of APIs. Original report and repro can be found in [0].
+Sure, I will try to add such stats.
 
-  [0] https://lore.kernel.org/bpf/ZwyG8Uro%2FSyTXAni@ly-workstation/
+>>> This gets called by icssg_ndo_get_stats64() which is under RCU   
+>>
+>> Yes, this does get called by icssg_ndo_get_stats64(). Apart from that
+>> there is a workqueue (`icssg_stats_work_handler`) that calls this API
+>> periodically and updates the emac->stats and emac->pa_stats arrays.
+>>
+>>> protection and nothing else. I don't see any locking here, and  
+>>
+>> There is no locking here. I don't think this is related to the patch.
+>> The API emac_update_hardware_stats() updates all the stats supported by
+>> ICSSG not just standard stats.
+> 
+> Yes, I'm saying you should send a separate fix, not really related or
+> blocking this patch (unless they conflict)
+> 
 
-Fixes: de3ec364c3c3 ("lib/buildid: add single folio-based file reader abstraction")
-Reported-by: Yi Lai <yi1.lai@intel.com>
-Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-Link: https://lore.kernel.org/bpf/20241017175431.6183-A-hca@linux.ibm.com
-Link: https://lore.kernel.org/bpf/20241017174713.2157873-1-andrii@kernel.org
-[ Linxuan: perform an equivalent direct check without folio-based changes ]
-Fixes: 88a16a130933 ("perf: Add build id data in mmap2 event")
-Signed-off-by: Chen Linxuan <chenlinxuan@deepin.org>
----
+Sure. I will send v3 of this and a fix to net to add spin_lock before
+reading stats. I will try to make sure that they don't conflict so that
+they can be merged parallelly.
 
-Some previous discussions can be found in the following links:
-https://lore.kernel.org/stable/05D0A9F7DE394601+20250311100555.310788-2-chenlinxuan@deepin.org/
+>>> I hope the regmap doesn't sleep. cat /proc/net/dev to test.
+>>> You probably need to send some fixes to net.  
+>>
+>> I checked cat /proc/net/dev and the stats shown there are not related to
+>> the stats I am introducing in this series.
+> 
+> You misunderstood. I pointed that you so you can check on a debug
+> kernel if there are any warnings (e.g. something tries to sleep
+> since /proc/net/dev read is under RCU lock).
+> 
+>> The fix could be to add a lock in this function, but we have close to 90
+>> stats and this function is called not only from icssg_ndo_get_stats64()
+>> but from emac_get_ethtool_stats(). The function also gets called
+>> periodically (Every 25 Seconds for 1G Link). I think every time locking
+>> 90 regmap_reads() could result in performance degradation.
+> 
+> Correctness comes first.
 
----
- lib/buildid.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Understood.
 
-diff --git a/lib/buildid.c b/lib/buildid.c
-index 9fc46366597e..6249bd47fb0b 100644
---- a/lib/buildid.c
-+++ b/lib/buildid.c
-@@ -5,6 +5,7 @@
- #include <linux/elf.h>
- #include <linux/kernel.h>
- #include <linux/pagemap.h>
-+#include <linux/secretmem.h>
- 
- #define BUILD_ID 3
- 
-@@ -157,6 +158,12 @@ int build_id_parse(struct vm_area_struct *vma, unsigned char *build_id,
- 	if (!vma->vm_file)
- 		return -EINVAL;
- 
-+#ifdef CONFIG_SECRETMEM
-+       /* reject secretmem folios created with memfd_secret() */
-+       if (vma->vm_file->f_mapping->a_ops == &secretmem_aops)
-+               return -EFAULT;
-+#endif
-+
- 	page = find_get_page(vma->vm_file->f_mapping, 0);
- 	if (!page)
- 		return -EFAULT;	/* page not mapped */
 -- 
-2.48.1
-
+Thanks and Regards,
+Danish
 
