@@ -1,190 +1,209 @@
-Return-Path: <linux-kernel+bounces-560867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D90A60A54
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:47:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B33A60A55
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:48:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FC407AB778
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:46:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C9A77A975E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DA1198833;
-	Fri, 14 Mar 2025 07:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5101624D9;
+	Fri, 14 Mar 2025 07:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D60BzWrw"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nsGKZZp2"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2E818A924;
-	Fri, 14 Mar 2025 07:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A7AEAD7
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741938407; cv=none; b=MauCkdus7cFZiiDjtV5dJxkrfJAmMEZpkr1kQyL45i7jqCpsHtKWindNXXY9zQJNfwU7KFH/xA0w53L+AssMAmr1vWkEONf1LXTrrTVwhBwM2IJrniARLpwBMkrCHSIY1i/i5pD9vYtJIpe/8OEWV/frh6QQgGA6BzSthoJ+9/M=
+	t=1741938486; cv=none; b=aeEtBN2uIfoPlRt/qcOhBQdaBGcLeT0ON573Fw332DvXRvsq94gF6i44YtxNUvacwNgbzMODIzj4M3lcw3KMbCaQ8abBqTgzsNd8WeaoPe2qq5hmqAVZlpBclPyl0YGKKp2W51MfMB4Up8X9VFOuV6ybJJWrgxvYwkAwp7fNtmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741938407; c=relaxed/simple;
-	bh=tqMA4tDK31wY6qPOPD+zOTxEAh59GZPloHMScFKSisE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RZ7wMGgIbgf012WTx2+kkt0LoiDHk2/Z5oPxS9qpsIE94sHFP/nMCC+4zAcKVRTp72rM1/J8m5DC8RcQjlcw7JNKd9NutFeFI8yQtc+WAq0ARQ7dAyyT1MbZiJ/eGMSLpBxTfMzanm7FJhn/Ces5TeU8X/cph87airYl+oVRg+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D60BzWrw; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1741938486; c=relaxed/simple;
+	bh=xMiOnoLBcKG2r0Ek+9cCvmTyt9w7gKHVu7yfjUwcoCo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P83CpMWRC9oUKVBPUNhs/aeD9I+wniozi2hDH3Q3c/bxs1G6Tit11xrCcHcnxwsri8CHoY/n7dNz1dhH6j7ARX0im/q8h7w8IWZPEY4acvsinE3grMvhfG+MSUaQRrdqdIV28QJYe7gwDXKau/ZOWPrkgLHGf3J1iz7H9S1/B48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nsGKZZp2; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac2c663a3daso365514666b.2;
-        Fri, 14 Mar 2025 00:46:45 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30bf3f3539dso18158661fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 00:48:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741938404; x=1742543204; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741938482; x=1742543282; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2APlpWz7mzIZ9kmVRmF4F/OvUtoBuwDq2tijoAt+Ptk=;
-        b=D60BzWrwwyc+Z4sdIHz29RTX7GFXDOAFBMKLTE4ATD9eBFUvJroVFJTLMLmmWMbpn1
-         nDKxADhgJfcUvvADx5aDNZbZ0UIuCxgbJZ55C0WOwGU+ciV6ee/4kk2yo5YpZXcIlIOA
-         WQo3Exnt65pVgyllR1WeSrLZs7Hzx66kDc+3uNzCBXw909NY1BQ4T3mzUO9wZHttBc3Y
-         YU8vYBQsU4mb1X8hGOprDrpPvUcgXHgCT855sJ/hTgGYRgmjqdpyXFzn3jNaEQHKc6uw
-         n6dzllANF1RHji0oF6w6664T2Ks9+19cj7xoMbY/wJnTVxMBG/vsytAotfTvh8bysFw4
-         SU8A==
+        bh=JE4K030Ix2YY1jJzgtn8D5f5ys9pdEOThXvdyC2otH8=;
+        b=nsGKZZp2NSCoaJ5lL+Hsgyt75lFAeVtlqDNs6sd4DsNC5xSFPpuhGVL2cX3VredKMY
+         tMdXnxedRpIYka4F0ZGsVkRT2iLl+ij91kPIqEIcHHx48K5fk6U9f8J8gnHQiPU49Iza
+         MG3wQ6ioOhORkbkUCCuDbS0WlTehx+fnLM9K9Rmzo3bWMOfx1u2017T9P4NLY5V6dRY3
+         HuxhYsXSPm9WqPC8C5LN/HTf1LbIurhzHRT937hPkYSJDpWQwG1JMvztsuMlB8QCvl6t
+         Xk6vO6AtmBTodzvXiO0MBqq0Y554+Op1SApgKrFjjODZAIpHw7j9KYjJfSLcYxkPQhIk
+         DAFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741938404; x=1742543204;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1741938482; x=1742543282;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2APlpWz7mzIZ9kmVRmF4F/OvUtoBuwDq2tijoAt+Ptk=;
-        b=lP79glYx+i0CWBOi+H/ISAV+xcpX73vybqSO1WAUJh2FUznvO3SPgtWKXMjTvPP5Ci
-         AriOf2KfH1NZ5UZyexly5jI4n4W5JwMoS4mrOEWQUAb14v/YQwqASSdpxtpfDNDOR/2E
-         kMjWBoKGPRtftxBlPT6Kg66DVs3ERML1OGPgi8nmU7LckCBatoTpq/xi+H0BS30GgbJr
-         P7QC2bGmZyhEe+3JAQlNFhLlgEBOfxU0eicpSqlyTe3F8k/lrd2K19d8lQgZpQSfPg5Z
-         s9F1x/EH0Xhd97u5oGJpvBTIm04W1esZSH68KSqO2pITg3IdMtcWpehpWEvoYhyi7Jdp
-         SuGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQSlWpHAJQzq7UelvkR/oOTYcF+7oK+QRuvALa2gyK30q8ko0DtN9gGh6tb6ULj8fLp1VGS56iMgBG4UI=@vger.kernel.org, AJvYcCXvWBaTibUInJzz1it/+VWPGQrfpGlrfwf5h9+KBRlu8qmNU60iILWIVLGivcDxrBZQ545jblfEdS46Uv4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHj0GFEA4BU3Gs/Fa4G6FUDssShxMhCEkmuhIb6plRh6VOa4Wg
-	kSIcmPfJFxZbuRfUWPJE29PdgmoqeJxwjja1qtRrWY5XTwe7yUba
-X-Gm-Gg: ASbGncv0Q3IX98pRVc804v3gO6QQYfD+ndw0C9ZC5mr2jDmcriJdZbGgQaIkJv0+us/
-	0Mv7rWyI+8pLFzQHFC8QZpWWepJZsmSqvRSKLtLMj8sXzS45Z8MixC17fjtp0Q5kEHT2wjrInCG
-	ZLsTZiybqMr+OC6wnNKMtpGoDfZtQPG202xqYppoLjtM70IafSI9Am+JRyzmA3vQoltNsWJFT5Q
-	6NrsAMqAGG7pwCx0HXlmKUS9iu/xpr07W9ioqgvXETc9qOBbuwqYxmE+gu10C2nKdnIApv1aTxi
-	kanEbzBaXdLfvMpoGEpIxBstM/UW6HvCzqh4wIKDb1BNvR4=
-X-Google-Smtp-Source: AGHT+IFcEuHOlB6uACzJ+ijBzKNl0gnPpcN35WBOZJ5BS0wtvIsf8mERnxPKMdKxakdVxqFa1mMrRg==
-X-Received: by 2002:a17:907:a089:b0:ab7:b30:42ed with SMTP id a640c23a62f3a-ac32fa42274mr175827266b.0.1741938404253;
-        Fri, 14 Mar 2025 00:46:44 -0700 (PDT)
-Received: from xeon.. ([188.163.112.73])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a9bce7sm185498666b.164.2025.03.14.00.46.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 00:46:43 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] ARM: tegra124: complete HOST1X devices binding
-Date: Fri, 14 Mar 2025 09:45:57 +0200
-Message-ID: <20250314074557.16367-4-clamor95@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250314074557.16367-1-clamor95@gmail.com>
-References: <20250314074557.16367-1-clamor95@gmail.com>
+        bh=JE4K030Ix2YY1jJzgtn8D5f5ys9pdEOThXvdyC2otH8=;
+        b=OD3BZ/zXS3XRWTqMRL2fYTOLkAdvXHkp+ahGPvAk7l1nuWS86+Bbo0ZlRECzKBJ0yL
+         aDieXlYVR+/NMO6PQrHwhbVodJg3BNh0je7KaT7DdNEz4YeeJ+FNaIrrJBd1TogQ9fv9
+         EQOXj7VBVUUizcqEWkG4Mc3UlXRg4q+c/Jn9WWJkYuAqDC9lQEMgvRbL5Mhv15mebLvi
+         k7/cDYSH/lC6QyPiqRpbRaC2pVpwVBmzheXYdGM6V7VYKnDwD3ueHAxhXnaq1M9EDtzp
+         8zsPDwUW5gRk7UUJ5u95otOEN73MHotCMNMy82LDVm6ZIoDWn2cute8nBOJ45k0ed7dG
+         8Lbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUoYWAhukBlBgzLImxA3IJ7kBkC5Gf0U477mdk6VQF0lGqdiRR5ggW9gAPFgcScX9hx5lUt/ot8LR6kU1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrDj6/8xUmE+sNXLl+Yp6qGiDZie6oxHJiXm9hJKTvxMTwcKT5
+	9YzzGMPQHhOoyC/OT4JuMayXxR/oU1GNQPeT7oEnxmo0Y2kpmSUYgsNC1F9SXwdhAa1aYjaTvND
+	d/1xQc2CMFGycRywbJMHdhxX2PnA6IlWfXn4=
+X-Gm-Gg: ASbGncuIY32MaiXR0Db6GP8CzUHVZ5h0fQPwqaMA77FLtNjXsPxjPJP0SnCZO6bQDDQ
+	kEGBDO9m7r4RWxe8Ex/cBJUHTUEjvRiV5GGkIaf91O9ThDnTFWaiVRU/lAheFUjqIaHS9kyHJ8m
+	SIKExbR7F7vGGe34zGT10+b/6/1exmqZS/LT/6
+X-Google-Smtp-Source: AGHT+IGlde6dxe5RcixnCSr2LQ5am9MX2vuU6zDqJt+NTPBtmpmgML4SVElH9EIwe0/SVQedf+nYS95p3nhUDOcZ4t8=
+X-Received: by 2002:a2e:a9a0:0:b0:30b:c328:3cdc with SMTP id
+ 38308e7fff4ca-30c4aa76f67mr4627861fa.2.1741938481940; Fri, 14 Mar 2025
+ 00:48:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250313210515.9920-1-shikemeng@huaweicloud.com>
+ <20250313210515.9920-3-shikemeng@huaweicloud.com> <CAMgjq7Ct8b25zuCEqJ4byU8gmrvz50pUqvyjYN=_RjTk_5U8cA@mail.gmail.com>
+ <a04c8908-a12a-dab8-f4e4-61f7b85443bf@huaweicloud.com>
+In-Reply-To: <a04c8908-a12a-dab8-f4e4-61f7b85443bf@huaweicloud.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Fri, 14 Mar 2025 15:47:45 +0800
+X-Gm-Features: AQ5f1Jr0E6RKhid4P4IuEx4hmjE99QBOaGj6jSepzog0gB1psaJes3aj3iaTP3E
+Message-ID: <CAMgjq7Cq30Kb-Wysq+GkV4ZAj-PKQQaEg_YQzwJ=6COtS6k_Yw@mail.gmail.com>
+Subject: Re: [PATCH 2/9] mm: swap: factor out the actual swap entry freeing
+ logic to new helper
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add nodes for devices on the HOST1X bus: VI, ISP, ISPB, MSENC and TSEC.
+On Fri, Mar 14, 2025 at 3:32=E2=80=AFPM Kemeng Shi <shikemeng@huaweicloud.c=
+om> wrote:
+>
+> on 3/14/2025 1:42 AM, Kairui Song wrote:
+> > On Thu, Mar 13, 2025 at 8:09=E2=80=AFPM Kemeng Shi <shikemeng@huaweiclo=
+ud.com> wrote:
+> >>
+> >> Factor out the actual swap entry freeing logic to new helper
+> >> __swap_entries_free().
+> >> This allow us to futher simplify other swap entry freeing code by
+> >> leveraging __swap_entries_free() helper function.
+> >>
+> >> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> >> ---
+> >>  mm/swapfile.c | 30 ++++++++++++++++++++----------
+> >>  1 file changed, 20 insertions(+), 10 deletions(-)
+> >>
+> >> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> >> index 5a775456e26c..7c886f9dd6f9 100644
+> >> --- a/mm/swapfile.c
+> >> +++ b/mm/swapfile.c
+> >> @@ -1347,6 +1347,25 @@ static struct swap_info_struct *_swap_info_get(=
+swp_entry_t entry)
+> >>         return NULL;
+> >>  }
+> >>
+> >> +static inline void __swap_entries_free(struct swap_info_struct *si,
+> >> +                                      struct swap_cluster_info *ci,
+> >> +                                      swp_entry_t entry, unsigned int=
+ nr_pages)
+> >> +{
+> >> +       unsigned long offset =3D swp_offset(entry);
+> >> +
+> >> +       VM_BUG_ON(cluster_is_empty(ci));
+> >> +       VM_BUG_ON(ci->count < nr_pages);
+> >> +
+> >> +       ci->count -=3D nr_pages;
+> >> +       mem_cgroup_uncharge_swap(entry, nr_pages);
+> >> +       swap_range_free(si, offset, nr_pages);
+> >> +
+> >> +       if (!ci->count)
+> >> +               free_cluster(si, ci);
+> >> +       else
+> >> +               partial_free_cluster(si, ci);
+> >> +}
+> >> +
+> >>  static unsigned char swap_entry_put_locked(struct swap_info_struct *s=
+i,
+> >>                                            unsigned long offset,
+> >>                                            unsigned char usage)
+> >> @@ -1525,22 +1544,13 @@ static void swap_entry_range_free(struct swap_=
+info_struct *si,
+> >>
+> >>         /* It should never free entries across different clusters */
+> >>         VM_BUG_ON(ci !=3D offset_to_cluster(si, offset + nr_pages - 1)=
+);
+> >> -       VM_BUG_ON(cluster_is_empty(ci));
+> >> -       VM_BUG_ON(ci->count < nr_pages);
+> >>
+> >> -       ci->count -=3D nr_pages;
+> >>         do {
+> >>                 VM_BUG_ON(*map !=3D SWAP_HAS_CACHE);
+> >>                 *map =3D 0;
+> >>         } while (++map < map_end);
+> >>
+> >> -       mem_cgroup_uncharge_swap(entry, nr_pages);
+> >> -       swap_range_free(si, offset, nr_pages);
+> >> -
+> >> -       if (!ci->count)
+> >> -               free_cluster(si, ci);
+> >> -       else
+> >> -               partial_free_cluster(si, ci);
+> >> +       __swap_entries_free(si, ci, entry, nr_pages);
+> >>  }
+> >>
+> >>  static void cluster_swap_free_nr(struct swap_info_struct *si,
+> >> --
+> >> 2.30.0
+> >>
+> >>
+> >
+> > Hi Kemeng,
+> Hello Kairui,
+>
+> Thanks for feedback.
+> >
+> > This patch is a bit too trivial to be a standalone one, you can fold
+> > it with the later one easily. Also you may want to carry the
+> > VM_BUG_ON(ci !=3D offset_to_cluster(si, offset + nr_pages - 1)); check
+> > as well.
+> Sure, I will do this in next version.
+> >
+> > But, that is basically just renaming swap_entry_range_free, you may
+> > just remove the HAS_CACHE check as you rename it, that way the changes
+> > should be cleaner.
+> >
+> Sorry, I don't quite follow. Are you suggesting that should fold this
+> patch to later one which removes the HAS_CACHE check and renmae the
+> swap_entry_range_free.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- arch/arm/boot/dts/nvidia/tegra124.dtsi | 65 ++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+Hi,
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra124.dtsi b/arch/arm/boot/dts/nvidia/tegra124.dtsi
-index ec4f0e346b2b..ad7813da8aec 100644
---- a/arch/arm/boot/dts/nvidia/tegra124.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra124.dtsi
-@@ -103,6 +103,45 @@ host1x@50000000 {
- 
- 		ranges = <0 0x54000000 0 0x54000000 0 0x01000000>;
- 
-+		vi@54080000 {
-+			compatible = "nvidia,tegra124-vi";
-+			reg = <0x0 0x54080000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_VI>;
-+			resets = <&tegra_car 20>;
-+			reset-names = "vi";
-+
-+			iommus = <&mc TEGRA_SWGROUP_VI>;
-+
-+			status = "disabled";
-+		};
-+
-+		isp@54600000 {
-+			compatible = "nvidia,tegra124-isp";
-+			reg = <0x0 0x54600000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_ISP>;
-+			resets = <&tegra_car TEGRA124_CLK_ISP>;
-+			reset-names = "isp";
-+
-+			iommus = <&mc TEGRA_SWGROUP_ISP2>;
-+
-+			status = "disabled";
-+		};
-+
-+		isp@54680000 {
-+			compatible = "nvidia,tegra124-isp";
-+			reg = <0x0 0x54680000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_ISPB>;
-+			resets = <&tegra_car TEGRA124_CLK_ISPB>;
-+			reset-names = "isp";
-+
-+			iommus = <&mc TEGRA_SWGROUP_ISP2B>;
-+
-+			status = "disabled";
-+		};
-+
- 		dc@54200000 {
- 			compatible = "nvidia,tegra124-dc";
- 			reg = <0x0 0x54200000 0x0 0x00040000>;
-@@ -209,6 +248,32 @@ dsib: dsi@54400000 {
- 			#size-cells = <0>;
- 		};
- 
-+		msenc@544c0000 {
-+			compatible = "nvidia,tegra124-msenc";
-+			reg = <0x0 0x544c0000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_MSENC>;
-+			resets = <&tegra_car TEGRA124_CLK_MSENC>;
-+			reset-names = "mpe";
-+
-+			iommus = <&mc TEGRA_SWGROUP_MSENC>;
-+
-+			status = "disabled";
-+		};
-+
-+		tsec@54500000 {
-+			compatible = "nvidia,tegra124-tsec";
-+			reg = <0x0 0x54500000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_TSEC>;
-+			resets = <&tegra_car TEGRA124_CLK_TSEC>;
-+			reset-names = "tsec";
-+
-+			iommus = <&mc TEGRA_SWGROUP_TSEC>;
-+
-+			status = "disabled";
-+		};
-+
- 		sor@54540000 {
- 			compatible = "nvidia,tegra124-sor";
- 			reg = <0x0 0x54540000 0x0 0x00040000>;
--- 
-2.43.0
+Just some of my nitpicks :)
 
+After you move these parts out of swap_entry_put_locked, there is
+almost nothing left in swap_entry_put_locked except an "open coded
+memset". And in your next patch (also after the whole series), all
+callers of __swap_entries_free will have to call an "open coded
+memset" anyway, so these changes seem redundant and could be improved.
+
+BTW your next patch has a typo in the commit message:
+s/__swap_entriy_free/__swap_entries_free/g.
+
+>
+> Thanks,
+> Kemeng
+>
 
