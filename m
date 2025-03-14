@@ -1,199 +1,289 @@
-Return-Path: <linux-kernel+bounces-560574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9296A606B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:51:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE197A606B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:52:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 110FD460938
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:51:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B60819C4155
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56034BA2E;
-	Fri, 14 Mar 2025 00:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC52B13AC1;
+	Fri, 14 Mar 2025 00:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="hq0bD9Zp"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208A52F3B
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 00:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kn1ppXOc"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562DDD51C;
+	Fri, 14 Mar 2025 00:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741913506; cv=none; b=cod5HoVNmSXh+8JfIixpw6xGYv81U5VzDSmqLtI7DqxhXcjS+JMU+nIdd0SldhNkEWtBnPdU5+B6reqkg8T7vKN6lQfhVhGN4+ZmaiP56ABn8St4s49ibiNd2eor+fcmpbc3zrm8H2N494Q+Eudkju0GgQ1NqG/dsD7HufbiQh0=
+	t=1741913510; cv=none; b=cNDOQwI1f1pmUar5kcqgIhl53tTMOGo7yqEI9TQCPL7olxL3oChsSus1DUHW5exhDbbJ2+FA//I+yUFMa1CZIpBVK4y4U0xRH2Q9r3/uvbZY43PJu4ySaN/sw29yk5OHsV2rPF0zM20a/Myt77bcLXP2TGC/Ei7ml5RH46pJsk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741913506; c=relaxed/simple;
-	bh=d76x+OMSI3cmOf7adxFgEaQiAcjTxOWYz3UsxtelidM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=Wqr9ekk4vRQVf/no6LIa0NnNM5HNMpAYh/uSiAyq6tgnUxhfPrIBBADiLQYxzjRvpZdvtY+b1U0BUwx1SH627A2CFGItU4CIhTRKAUYtEtT6OPb8TnmEErE+AFyJNzLqKiO7VkHQ6UItykRh/scHTrrt7Oum8m9bJ2BkcCLKpJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=hq0bD9Zp reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=jxALLUH4lOP3HrN7kZROudEzIsqrBQNSij5Vwg6uJgM=; b=h
-	q0bD9ZpxnNH1ck99Fumg6ZOoxdFuuNOqh8mIvLp90cqs9rYonGxjWPtGkvTp4PCg
-	pDhQefRdem6pBSs7ZdpirZ9nlw34znLCH9KSlv38nZ7RjOpqIbngC8mm6zUBI9zA
-	AjwvFGpmVnmLC93KBtxiMx+S6zm285sO/W1uzzw7jU=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-146 (Coremail) ; Fri, 14 Mar 2025 08:50:29 +0800
- (CST)
-Date: Fri, 14 Mar 2025 08:50:29 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Maxime Ripard" <mripard@kernel.org>
-Cc: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
-	"Thomas Zimmermann" <tzimmermann@suse.de>,
-	"David Airlie" <airlied@gmail.com>,
-	"Simona Vetter" <simona@ffwll.ch>,
-	"Andrzej Hajda" <andrzej.hajda@intel.com>,
-	"Neil Armstrong" <neil.armstrong@linaro.org>,
-	"Robert Foss" <rfoss@kernel.org>,
-	"Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>,
-	"Jonas Karlman" <jonas@kwiboo.se>,
-	"Jernej Skrabec" <jernej.skrabec@gmail.com>,
-	"Douglas Anderson" <dianders@chromium.org>,
-	"Herve Codina" <herve.codina@bootlin.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	"Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
-	"Simona Vetter" <simona.vetter@ffwll.ch>, lumag@kernel.org
-Subject: Re:Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
- connector by encoder
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <20250313-dazzling-deer-of-ampleness-21db67@houat>
-References: <20250304-bridge-connector-v5-0-aacf461d2157@kernel.org>
- <20250304-bridge-connector-v5-4-aacf461d2157@kernel.org>
- <5180089f.a640.19566290538.Coremail.andyshrk@163.com>
- <608c01c.7716.1958e8d879f.Coremail.andyshrk@163.com>
- <20250313-dazzling-deer-of-ampleness-21db67@houat>
-X-NTES-SC: AL_Qu2fA/WavEwp7ySdY+kfmkcVgOw9UcO5v/Qk3oZXOJF8jCzr2S86fUFMJXzT+9+ONRCrrheYbT9M6PtxWaRSfYMbFP21R2Tj2ON3P88zGx8YJA==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1741913510; c=relaxed/simple;
+	bh=qzWSYH/eCAhh5s2bxnUnC01sCxZd8637XHy49KgH0+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h9mPFaBlzhb7xghbigQiZqwxPwIBF51wEFX5ganxkD9yFDG4XrkXCxb6y9DCqXMAtqJH8zOXVNUwB1y+DtvEXbrP8c41vl3mZ+F1pjmxCrI8xUa3I6zNczeW8skgTIeunqNGJos1xGYOvJ0xpLpS4k7+nCMxL1I83nCBQLWphKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kn1ppXOc; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6e8f06e13a4so24160866d6.0;
+        Thu, 13 Mar 2025 17:51:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741913507; x=1742518307; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7m/qzle7Z8SJPTCv9Yq7wZFdYLpzPxwHjo/0UoVX67k=;
+        b=Kn1ppXOcvhPxxIpwrr0nAfnA1v0q95GU/3IbnY1ql+RCP8WZcTpybfuAvh2NYbVMLz
+         sW4uCuL5/qbBzeOZC/8Wuo74I7VQnJVwNoIwh/IWFJ8/Z59ECugl0YlPMplV0K4HvDiN
+         hlGA+SoeWHSfmqia8lb9VOYjytzan816XEqDK4QujYziyE3AOTjm8/+FKy8lgP0W9zZ5
+         PjocajRVD4soDECuuXck9L35uIP+ktAFFZXbbkc+uhfn+QPaKTrur5ntQzGluQK18IYh
+         GvgvK21bTXd7mQO3EKvzXy6YI2G8CP5ngz/7I4JBhaLGJtVR5uhjsDmvPc2O5e2Axq91
+         xmnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741913507; x=1742518307;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7m/qzle7Z8SJPTCv9Yq7wZFdYLpzPxwHjo/0UoVX67k=;
+        b=tjp/gPiwNDdRwQxec6j9BEAt0MlyY5VmXJ2fkJYkGnjMQZ+SQkKrc2vsAboXYru1R/
+         wqysOU5P9h20Kymf2dRA4Qr8dshgI9FYEbU21Dzj8Dmoy2wz5dDeX0HXW4JPQOjCGVqb
+         tvRjNBZ+4Yg8qEzYPGUFK8LocGqRlrl6cNauY/ltBC26BkiWXRfmhhNzD9oQN/fI578S
+         UbnQOOXRbEY/DFkq00TN3/pVz0YKr0uJk6sDR2jERJGishtzwvy4gO3tQiGSnl3bc+fa
+         iBtLgX4Gn5VZFxrjZLTMm3Y5dTRX7ugbZUrIAqGFzEhV+HBaifQv41xMl5d+cINHXW1a
+         /70A==
+X-Forwarded-Encrypted: i=1; AJvYcCV/aTQ3TDFrhRtIJLz9UxJ9l692F6MGewLXhMxyMt5sLhxcaTECQGHcPgJRrlHWhOlkAx1CPqBp8MJQ@vger.kernel.org, AJvYcCVaYqnAr9jLLhwPp3LH0xwtz9NVoTVOmFj1KMjykLZ757TPpz4b6Ph4+LmHrepHAtrUeM8pYa5urPD7BojO@vger.kernel.org, AJvYcCXJed5huM9XCiNstfF+izmb8z0ALitBKvkHW+Xfaup+3Y6pnSvqehlmo2wlLpGDmp3fnqHZKLOX6GLT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj7H2zvk0p0ZiMJ7Gv7r/hoxdjDSv5hF69XuNl178sQW6FwXP2
+	ZDo/DDtw5OGok+WDNdRLX5gSKi9R9/dggxSBDAPuAz5NEw3Qw4cL
+X-Gm-Gg: ASbGnctG3L6k9/Wl7seYlJwO4TajIze+lTwMvNaU6UboKofRYsBpDzB6CtS9+/rCdCT
+	hJxif+wineloTa4TQ35u513QJnbrPPSYVQ6yZhVv8t+jr0017p9YnMKgVtcWQSl0uCL8NVXQknE
+	+5ZzjP8nN0WAycKpgBqjftsqYYv/HhqjR7ZAqr3o3SQZAqcT5KMaUkmQvX59arfV/gYeSCbADH5
+	pIUJeQPCeaSp/Ev5E7pM2V2/nu1cTuzXDBuhVmrl+0k8CdkcmzTajrynWgRZ0XLb4QF5yJfj2mA
+	xgcENn0DSXx021oKAd73
+X-Google-Smtp-Source: AGHT+IH0tb1brEibUfzMswXbEBGec7NTj4DU78qIWu+exAe9oKFasFAqIPbncsP7Fm+lcRKkKK2XSA==
+X-Received: by 2002:a05:622a:612:b0:476:add4:d2cd with SMTP id d75a77b69052e-476ba88ea20mr65691781cf.1.1741913507124;
+        Thu, 13 Mar 2025 17:51:47 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-476bb825396sm15373441cf.69.2025.03.13.17.51.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 17:51:46 -0700 (PDT)
+Date: Fri, 14 Mar 2025 08:51:32 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+	sophgo@lists.linux.dev, devicetree@vger.kernel.org, linux-rtc@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Jingbao Qiu <qiujingbao.dlmu@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Yangyu Chen <cyy@cyyself.name>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v13 2/3] soc: sophgo: cv1800: rtcsys: New driver
+ (handling RTC only)
+Message-ID: <fuc5zzq3izowktmafrhy5vkjddydxg5673ggr64ukh7v5knjmi@r6xozjxcw7r2>
+References: <20250309202629.3516822-1-alexander.sverdlin@gmail.com>
+ <20250309202629.3516822-3-alexander.sverdlin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <6ae1c567.8c6.195922195d6.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:kigvCgAnTS5VfdNn4BN+AA--.18349W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkAwQXmfTcpjerwACs-
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250309202629.3516822-3-alexander.sverdlin@gmail.com>
 
-CkhpIE1heGltZSBhbmQgU2ltb25hLAoKCkF0IDIwMjUtMDMtMTMgMTk6NTU6MzMsICJNYXhpbWUg
-UmlwYXJkIiA8bXJpcGFyZEBrZXJuZWwub3JnPiB3cm90ZToKPkhpLAo+Cj5PbiBUaHUsIE1hciAx
-MywgMjAyNSBhdCAwNDowOTo1NFBNICswODAwLCBBbmR5IFlhbiB3cm90ZToKPj4gQXQgMjAyNS0w
-My0wNSAxOTo1NToxOSwgIkFuZHkgWWFuIiA8YW5keXNocmtAMTYzLmNvbT4gd3JvdGU6Cj4+ID5B
-dCAyMDI1LTAzLTA0IDE5OjEwOjQ3LCAiTWF4aW1lIFJpcGFyZCIgPG1yaXBhcmRAa2VybmVsLm9y
-Zz4gd3JvdGU6Cj4+ID4+V2l0aCB0aGUgYnJpZGdlcyBzd2l0Y2hpbmcgb3ZlciB0byBkcm1fYnJp
-ZGdlX2Nvbm5lY3RvciwgdGhlIGRpcmVjdAo+PiA+PmFzc29jaWF0aW9uIGJldHdlZW4gYSBicmlk
-Z2UgZHJpdmVyIGFuZCBpdHMgY29ubmVjdG9yIHdhcyBsb3N0Lgo+PiA+Pgo+PiA+PlRoaXMgaXMg
-bWl0aWdhdGVkIGZvciBhdG9taWMgYnJpZGdlIGRyaXZlcnMgYnkgdGhlIGZhY3QgeW91IGNhbiBh
-Y2Nlc3MKPj4gPj50aGUgZW5jb2RlciwgYW5kIHRoZW4gY2FsbCBkcm1fYXRvbWljX2dldF9vbGRf
-Y29ubmVjdG9yX2Zvcl9lbmNvZGVyKCkgb3IKPj4gPj5kcm1fYXRvbWljX2dldF9uZXdfY29ubmVj
-dG9yX2Zvcl9lbmNvZGVyKCkgd2l0aCBkcm1fYXRvbWljX3N0YXRlLgo+PiA+Pgo+PiA+PlRoaXMg
-d2FzIGFsc28gbWFkZSBlYXNpZXIgYnkgcHJvdmlkaW5nIGRybV9hdG9taWNfc3RhdGUgZGlyZWN0
-bHkgdG8gYWxsCj4+ID4+YXRvbWljIGhvb2tzIGJyaWRnZXMgY2FuIGltcGxlbWVudC4KPj4gPj4K
-Pj4gPj5Ib3dldmVyLCBicmlkZ2UgZHJpdmVycyBkb24ndCBoYXZlIGEgd2F5IHRvIGFjY2VzcyBk
-cm1fYXRvbWljX3N0YXRlCj4+ID4+b3V0c2lkZSBvZiB0aGUgbW9kZXNldCBwYXRoLCBsaWtlIGZy
-b20gdGhlIGhvdHBsdWcgaW50ZXJydXB0IHBhdGggb3IgYW55Cj4+ID4+aW50ZXJydXB0IGhhbmRs
-ZXIuCj4+ID4+Cj4+ID4+TGV0J3MgaW50cm9kdWNlIGEgZnVuY3Rpb24gdG8gcmV0cmlldmUgdGhl
-IGNvbm5lY3RvciBjdXJyZW50bHkgYXNzaWduZWQKPj4gPj50byBhbiBlbmNvZGVyLCB3aXRob3V0
-IHVzaW5nIGRybV9hdG9taWNfc3RhdGUsIHRvIG1ha2UgdGhlc2UgZHJpdmVycycKPj4gPj5saWZl
-IGVhc2llci4KPj4gPj4KPj4gPj5SZXZpZXdlZC1ieTogRG1pdHJ5IEJhcnlzaGtvdiA8ZG1pdHJ5
-LmJhcnlzaGtvdkBsaW5hcm8ub3JnPgo+PiA+PkNvLWRldmVsb3BlZC1ieTogU2ltb25hIFZldHRl
-ciA8c2ltb25hLnZldHRlckBmZndsbC5jaD4KPj4gPj5TaWduZWQtb2ZmLWJ5OiBNYXhpbWUgUmlw
-YXJkIDxtcmlwYXJkQGtlcm5lbC5vcmc+Cj4+ID4+LS0tCj4+ID4+IGRyaXZlcnMvZ3B1L2RybS9k
-cm1fYXRvbWljLmMgfCA0NSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKwo+PiA+PiBpbmNsdWRlL2RybS9kcm1fYXRvbWljLmggICAgIHwgIDMgKysrCj4+ID4+IDIg
-ZmlsZXMgY2hhbmdlZCwgNDggaW5zZXJ0aW9ucygrKQo+PiA+Pgo+PiA+PmRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWMu
-Ywo+PiA+PmluZGV4IDllYTI2MTE3NzBmNDNjZTdjY2JhNDEwNDA2ZDVmMmM1MjhhYWIwMjIuLmI5
-MjZiMTMyNTkwZTc4ZjhkNDFkNDhlYjRkYTRiY2NmMTcwZWUyMzYgMTAwNjQ0Cj4+ID4+LS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWMuYwo+PiA+PisrKyBiL2RyaXZlcnMvZ3B1L2RybS9k
-cm1fYXRvbWljLmMKPj4gPj5AQCAtOTg1LDEwICs5ODUsNTUgQEAgZHJtX2F0b21pY19nZXRfbmV3
-X2Nvbm5lY3Rvcl9mb3JfZW5jb2Rlcihjb25zdCBzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3Rh
-dGUsCj4+ID4+IAo+PiA+PiAJcmV0dXJuIE5VTEw7Cj4+ID4+IH0KPj4gPj4gRVhQT1JUX1NZTUJP
-TChkcm1fYXRvbWljX2dldF9uZXdfY29ubmVjdG9yX2Zvcl9lbmNvZGVyKTsKPj4gPj4gCj4+ID4+
-Ky8qKgo+PiA+PisgKiBkcm1fYXRvbWljX2dldF9jb25uZWN0b3JfZm9yX2VuY29kZXIgLSBHZXQg
-Y29ubmVjdG9yIGN1cnJlbnRseSBhc3NpZ25lZCB0byBhbiBlbmNvZGVyCj4+ID4+KyAqIEBlbmNv
-ZGVyOiBUaGUgZW5jb2RlciB0byBmaW5kIHRoZSBjb25uZWN0b3Igb2YKPj4gPj4rICogQGN0eDog
-TW9kZXNldCBsb2NraW5nIGNvbnRleHQKPj4gPj4rICoKPj4gPj4rICogVGhpcyBmdW5jdGlvbiBm
-aW5kcyBhbmQgcmV0dXJucyB0aGUgY29ubmVjdG9yIGN1cnJlbnRseSBhc3NpZ25lZCB0bwo+PiA+
-PisgKiBhbiBAZW5jb2Rlci4KPj4gPj4rICoKPj4gPj4rICogUmV0dXJuczoKPj4gPj4rICogVGhl
-IGNvbm5lY3RvciBjb25uZWN0ZWQgdG8gQGVuY29kZXIsIG9yIGFuIGVycm9yIHBvaW50ZXIgb3Ro
-ZXJ3aXNlLgo+PiA+PisgKiBXaGVuIHRoZSBlcnJvciBpcyBFREVBRExLLCBhIGRlYWRsb2NrIGhh
-cyBiZWVuIGRldGVjdGVkIGFuZCB0aGUKPj4gPj4rICogc2VxdWVuY2UgbXVzdCBiZSByZXN0YXJ0
-ZWQuCj4+ID4+KyAqLwo+PiA+PitzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqCj4+ID4+K2RybV9hdG9t
-aWNfZ2V0X2Nvbm5lY3Rvcl9mb3JfZW5jb2Rlcihjb25zdCBzdHJ1Y3QgZHJtX2VuY29kZXIgKmVu
-Y29kZXIsCj4+ID4+KwkJCQkgICAgIHN0cnVjdCBkcm1fbW9kZXNldF9hY3F1aXJlX2N0eCAqY3R4
-KQo+PiA+Pit7Cj4+ID4+KwlzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcl9saXN0X2l0ZXIgY29ubl9pdGVy
-Owo+PiA+PisJc3RydWN0IGRybV9jb25uZWN0b3IgKm91dF9jb25uZWN0b3IgPSBFUlJfUFRSKC1F
-SU5WQUwpOwo+PiA+PisJc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvcjsKPj4gPj4rCXN0
-cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBlbmNvZGVyLT5kZXY7Cj4+ID4+KwlpbnQgcmV0Owo+PiA+
-PisKPj4gPj4rCXJldCA9IGRybV9tb2Rlc2V0X2xvY2soJmRldi0+bW9kZV9jb25maWcuY29ubmVj
-dGlvbl9tdXRleCwgY3R4KTsKPj4gPj4rCWlmIChyZXQpCj4+ID4+KwkJcmV0dXJuIEVSUl9QVFIo
-cmV0KTsKPj4gPgo+PiA+SXQgc2VlbXMgdGhhdCB0aGlzIHdpbGwgY2F1c2UgYSBkZWFkbG9jayB3
-aGVuIGNhbGxlZCBmcm9tIGEgIGhvdHBsdWcgaGFuZGxpbmcgcGF0aCwKPj4gPkkgaGF2ZSBhIFdJ
-UCBEUCBkaXZlclswXSwgIHdoaWNoIHN1Z2dlc3RlZCBieSBEbWl0cnkgdG8gdXNlIHRoaXMgQVBJ
-IGZyb20gYSAKPj4gPiZkcm1fYnJpZGdlX2Z1bmNzLmRldGVjdCBjYWxsYmFjayB0byBnZXQgdGhl
-IGNvbm5lY3RvciwgIGFzIGRldGVjdCBpcyBjYWxsZWQgYnkgZHJtX2hlbHBlcl9wcm9iZV9kZXRl
-Y3QsCj4+ID53aGljaCB3aWxsIGhvbGQgY29ubmVjdGlvbl9tdXRleCBmaXJzdCwgc28gdGhlIGRl
-YWtsb2NrIGhhcHBlbnM6Cj4+ID4KPj4gPgo+PiA+ZHJtX2hlbHBlcl9wcm9iZV9kZXRlY3Qoc3Ry
-dWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvciwKPj4gPiAgICAgICAgICAgICAgICAgICAgICAg
-IHN0cnVjdCBkcm1fbW9kZXNldF9hY3F1aXJlX2N0eCAqY3R4LAo+PiA+ICAgICAgICAgICAgICAg
-ICAgICAgICAgYm9vbCBmb3JjZSkKPj4gPnsKPj4gPiAgICAgICAgY29uc3Qgc3RydWN0IGRybV9j
-b25uZWN0b3JfaGVscGVyX2Z1bmNzICpmdW5jcyA9IGNvbm5lY3Rvci0+aGVscGVyX3ByaXZhdGU7
-Cj4+ID4gICAgICAgIHN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBjb25uZWN0b3ItPmRldjsKPj4g
-PiAgICAgICAgaW50IHJldDsKPj4gPgo+PiA+ICAgICAgICBpZiAoIWN0eCkKPj4gPiAgICAgICAg
-ICAgICAgICByZXR1cm4gZHJtX2hlbHBlcl9wcm9iZV9kZXRlY3RfY3R4KGNvbm5lY3RvciwgZm9y
-Y2UpOwo+PiA+Cj4+ID4gICAgICAgIHJldCA9IGRybV9tb2Rlc2V0X2xvY2soJmRldi0+bW9kZV9j
-b25maWcuY29ubmVjdGlvbl9tdXRleCwgY3R4KTsKPj4gPiAgICAgICAgaWYgKHJldCkKPj4gPiAg
-ICAgICAgICAgICAgICByZXR1cm4gcmV0Owo+PiA+Cj4+ID4gICAgICAgIGlmIChmdW5jcy0+ZGV0
-ZWN0X2N0eCkKPj4gPiAgICAgICAgICAgICAgICByZXQgPSBmdW5jcy0+ZGV0ZWN0X2N0eChjb25u
-ZWN0b3IsIGN0eCwgZm9yY2UpOwo+PiA+ICAgICAgICBlbHNlIGlmIChjb25uZWN0b3ItPmZ1bmNz
-LT5kZXRlY3QpCj4+ID4gICAgICAgICAgICAgICAgcmV0ID0gY29ubmVjdG9yLT5mdW5jcy0+ZGV0
-ZWN0KGNvbm5lY3RvciwgZm9yY2UpOwo+PiA+ICAgICAgICBlbHNlCj4+ID4gICAgICAgICAgICAg
-ICAgcmV0ID0gY29ubmVjdG9yX3N0YXR1c19jb25uZWN0ZWQ7Cj4+ID4KPj4gPiAgICAgICAgaWYg
-KHJldCAhPSBjb25uZWN0b3ItPnN0YXR1cykKPj4gPiAgICAgICAgICAgICAgICBjb25uZWN0b3It
-PmVwb2NoX2NvdW50ZXIgKz0gMTsKPj4gPgo+PiA+U28gSSB3b25kZXIgY2FuIHdlIGxldCBkcm1f
-YnJpZGdlX2Z1bmNzLmRldGVjdCBwYXNzIGEgY29ubmVjdG9yIGZvciB0aGlzIGNhc2UgPwo+PiA+
-Cj4+ID4KPj4gPgo+PiA+WzBdaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtcm9ja2NoaXAv
-MDQ3RUVDRkMtN0U1NS00NEVDLTg5NkYtMTNGRTA0MzMzRTREQGdtYWlsLmNvbS9ULyNtMjViYzUz
-Yjc5ZjVjYzdiZGRmY2I3YWFlNTY1NmY2OGRmMzk2ZjA5NAo+PiA+PisKPj4gPj4rCWRybV9jb25u
-ZWN0b3JfbGlzdF9pdGVyX2JlZ2luKGRldiwgJmNvbm5faXRlcik7Cj4+ID4+Kwlkcm1fZm9yX2Vh
-Y2hfY29ubmVjdG9yX2l0ZXIoY29ubmVjdG9yLCAmY29ubl9pdGVyKSB7Cj4+ID4+KwkJaWYgKCFj
-b25uZWN0b3ItPnN0YXRlKQo+PiA+PisJCQljb250aW51ZTsKPj4gPj4rCj4+ID4+KwkJaWYgKGVu
-Y29kZXIgPT0gY29ubmVjdG9yLT5zdGF0ZS0+YmVzdF9lbmNvZGVyKSB7Cj4+ID4+KwkJCW91dF9j
-b25uZWN0b3IgPSBjb25uZWN0b3I7Cj4+IAo+PiAKPj4gV2hlbiB0cnkgdG8gdXNlIHRoaXMgcGF0
-Y2ggaW4gbXkgYnJpZGdlIGRyaXZlciwgIEkgZm91bmQgdGhhdCB0aGUgY29ubmVjdG9yLT5zdGF0
-ZS0+YmVzdF9lbmNvZGVyIAo+PiAgbWF5YmUgTlVMTCB3aGVuICAgZHJtX2JyaWRnZV9mdW5jcy5k
-ZXRlY3Qgb3IgZHJtX2JyaWRnZV9mdW5jcy5kZXRlY3RfY3R4IGlzICBjYWxsZWQ6Cj4+IAo+PiBb
-ICAgNTIuNzEzMDMwXSBJbnZhbGlkIHJldHVybiB2YWx1ZSAtMjIgZm9yIGNvbm5lY3RvciBkZXRl
-Y3Rpb24KPj4gWyAgIDUyLjcxMzUzOV0gV0FSTklORzogQ1BVOiA3IFBJRDogMjg4IGF0IGRyaXZl
-cnMvZ3B1L2RybS9kcm1fcHJvYmVfaGVscGVyLmM6NjAyIGRybV9oZWxwZXJfcHJvYmVfc2luZ2xl
-X2Nvbm5lY3Rvcl9tb2RlcysweDVlMC8KPj4gMHg2M2MKPj4gWyAgIDUyLjcxNDU2OF0gTW9kdWxl
-cyBsaW5rZWQgaW46Cj4+IAo+PiBbICAgNTIuNzI0NTQ2XSBDYWxsIHRyYWNlOgo+PiBbICAgNTIu
-NzI0NzYyXSAgZHJtX2hlbHBlcl9wcm9iZV9zaW5nbGVfY29ubmVjdG9yX21vZGVzKzB4NWUwLzB4
-NjNjIChQKQo+PiBbICAgNTIuNzI1MzE5XSAgZHJtX21vZGVfZ2V0Y29ubmVjdG9yKzB4MmE0LzB4
-NDg4Cj4+IFsgICA1Mi43MjU3MTFdICBkcm1faW9jdGxfa2VybmVsKzB4YjQvMHgxMWMKPj4gWyAg
-IDUyLjcyNjA1N10gIGRybV9pb2N0bCsweDIyYy8weDU0NAo+PiBbICAgNTIuNzI2MzU4XSAgX19h
-cm02NF9zeXNfaW9jdGwrMHhhYy8weGUwCj4+IFsgICA1Mi43MjY3MDZdICBpbnZva2Vfc3lzY2Fs
-bCsweDQ0LzB4MTAwCj4+IFsgICA1Mi43MjcwMzldICBlbDBfc3ZjX2NvbW1vbi5jb25zdHByb3Au
-MCsweDNjLzB4ZDQKPj4gCj4+IFRoaXMgaXMgYmVjYXVzZSAgYmVzdF9lbmNvZGVyIGlzIHNldCBi
-eSBzZXRfYmVzdF9lbmNvZGVyLCB3aGljaCBpcyBjYWxsZWQgZnJvbQo+PiBkcm1fYXRvbWljX2hl
-bHBlcl9jaGVja19tb2Rlc2V0LiBXaGVuIHdlIGNhbGwgZHJtX21vZGVfZ2V0Y29ubmVjdG9yIAo+
-PiBmb3IgdGhlIGZpcnN0IHRpbWUsIHRoZSBmdW5jdGlvbnMgbWVudGlvbmVkIGFib3ZlIGhhdmUg
-bm90IGJlZW4gY2FsbGVkIHlldCwKPj4gdGhlbiB3ZSBjYW4ndCBtYXRjaCB0aGUgZW5jb2RlciBm
-cm9tIGNvbm5lY3Rvci0+c3RhdGUtPmJlc3RfZW5jb2RlciBmb3IgdGhpcyBjYXNlLgo+Cj5BcyBm
-YXIgYXMgSSdtIGNvbmNlcm5lZCwgaXQncyBieSBkZXNpZ24uIEVuY29kZXJzIGFuZCBjb25uZWN0
-b3JzIGhhdmUKPjE6TiByZWxhdGlvbnNoaXAsIGFuZCBvbmx5IG9uY2UgYSBjb25uZWN0b3IgaGFz
-IGJlZW4gZW5hYmxlZCBpdCBoYXMgYW4KPmVuY29kZXIuCj4KPklmIHRoZSBjb25uZWN0b3IgaXMg
-ZGlzYWJsZWQsIHRoZXJlJ3Mgbm8gYXNzb2NpYXRlZCBlbmNvZGVyLgoKRG9lcyB0aGlzIHByb3Zl
-IHRoYXQgdGhpcyBBUEkgaXMgbm90IHN1aXRhYmxlIGZvciBteSBhcHBsaWNhdGlvbiBzY2VuYXJp
-bzogCkdldCB0aGUgY29ubmVjdG9yIGluIHRoZSBicmlkZ2UncyAuZGV0ZWN0IGNhbGxiYWNrLCBz
-byB0aGlzIG1lYW5zIHRoYXQgSSBtYXkKc3RpbGwgbmVlZCB0byBtb2RpZnkgdGhlIGJyaWRnZSdz
-IGNvbm5lY3RvciBjYWxsYmFjayBzbyB0aGF0IGl0IGNhbiBwYXNzIHRoZSBjb25uZWN0b3IgPwoK
-Pgo+TWF4aW1lCg==
+On Sun, Mar 09, 2025 at 09:26:24PM +0100, Alexander Sverdlin wrote:
+> Add driver for Sophgo CV1800 series SoC RTC subsystem. The RTC module
+> comprises a 32kHz oscillator, Power-on-Reset (PoR) sub-module, HW state
+> machine to control chip power-on, power-off and reset. Furthermore, the
+> 8051 subsystem is located within RTCSYS including associated SRAM block.
+> 
+> This patch only populates RTC sub-device.
+> 
+> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+> ---
+> Changelog:
+> v13:
+> - Moved the driver from MFD into SOC subsystem
+> - Dropped unused "cv1800_rtcsys_rtc_subdev"
+> v12:
+> - new patch
+> 
+>  MAINTAINERS                        |  1 +
+>  drivers/soc/Kconfig                |  1 +
+>  drivers/soc/Makefile               |  1 +
+>  drivers/soc/sophgo/Kconfig         | 24 ++++++++++++
+>  drivers/soc/sophgo/Makefile        |  3 ++
+>  drivers/soc/sophgo/cv1800-rtcsys.c | 63 ++++++++++++++++++++++++++++++
+>  6 files changed, 93 insertions(+)
+>  create mode 100644 drivers/soc/sophgo/Kconfig
+>  create mode 100644 drivers/soc/sophgo/Makefile
+>  create mode 100644 drivers/soc/sophgo/cv1800-rtcsys.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3eee238c2ea2..ac15e448fffb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -22354,6 +22354,7 @@ L:	sophgo@lists.linux.dev
+>  W:	https://github.com/sophgo/linux/wiki
+>  T:	git https://github.com/sophgo/linux.git
+>  S:	Maintained
+
+> +F:	drivers/soc/sophgo/cv1800-rtcsys.c
+
+Please change to the drivers/soc/sophgo/.
+We should maintain all files under this.
+
+>  N:	sophgo
+>  K:	sophgo
+>  
+> diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+> index 6a8daeb8c4b9..11e2383c0654 100644
+> --- a/drivers/soc/Kconfig
+> +++ b/drivers/soc/Kconfig
+> @@ -23,6 +23,7 @@ source "drivers/soc/qcom/Kconfig"
+>  source "drivers/soc/renesas/Kconfig"
+>  source "drivers/soc/rockchip/Kconfig"
+>  source "drivers/soc/samsung/Kconfig"
+> +source "drivers/soc/sophgo/Kconfig"
+>  source "drivers/soc/sunxi/Kconfig"
+>  source "drivers/soc/tegra/Kconfig"
+>  source "drivers/soc/ti/Kconfig"
+> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+> index 2037a8695cb2..0381a0abdec8 100644
+> --- a/drivers/soc/Makefile
+> +++ b/drivers/soc/Makefile
+> @@ -29,6 +29,7 @@ obj-y				+= qcom/
+>  obj-y				+= renesas/
+>  obj-y				+= rockchip/
+>  obj-$(CONFIG_SOC_SAMSUNG)	+= samsung/
+> +obj-y				+= sophgo/
+>  obj-y				+= sunxi/
+>  obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
+>  obj-y				+= ti/
+> diff --git a/drivers/soc/sophgo/Kconfig b/drivers/soc/sophgo/Kconfig
+> new file mode 100644
+> index 000000000000..e50666e423a9
+> --- /dev/null
+> +++ b/drivers/soc/sophgo/Kconfig
+> @@ -0,0 +1,24 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +#
+> +# Sophgo/Cvitek SoC drivers
+> +#
+> +
+> +if ARCH_SOPHGO || COMPILE_TEST
+
+> +menu "Sophgo/Cvitek SoC drivers"
+
+No Cvitek, only left Sophgo here.
+
+> +
+> +config SOPHGO_CV1800_RTCSYS
+> +	tristate "Sophgo CV1800 RTC MFD"
+
+> +	default y if COMPILE_TEST
+
+I do not think it is necessary.
+
+> +	select MFD_CORE
+> +	help
+> +	  If you say yes here you get support the RTC MFD driver for Sophgo
+> +	  CV1800 series SoC. The RTC module comprises a 32kHz oscillator,
+> +	  Power-on-Reset (PoR) sub-module, HW state machine to control chip
+> +	  power-on, power-off and reset. Furthermore, the 8051 subsystem is
+> +	  located within RTCSYS including associated SRAM block.
+> +
+> +	  This driver can also be built as a module. If so, the module will be
+> +	  called cv1800-rtcsys.
+> +
+> +endmenu
+> +endif
+> diff --git a/drivers/soc/sophgo/Makefile b/drivers/soc/sophgo/Makefile
+> new file mode 100644
+> index 000000000000..8f22b4e79311
+> --- /dev/null
+> +++ b/drivers/soc/sophgo/Makefile
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +obj-$(CONFIG_SOPHGO_CV1800_RTCSYS)	+= cv1800-rtcsys.o
+> diff --git a/drivers/soc/sophgo/cv1800-rtcsys.c b/drivers/soc/sophgo/cv1800-rtcsys.c
+> new file mode 100644
+> index 000000000000..cb271f02afcc
+> --- /dev/null
+> +++ b/drivers/soc/sophgo/cv1800-rtcsys.c
+> @@ -0,0 +1,63 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Driver for Sophgo CV1800 series SoC RTC subsystem
+> + *
+> + * The RTC module comprises a 32kHz oscillator, Power-on-Reset (PoR) sub-module,
+> + * HW state machine to control chip power-on, power-off and reset. Furthermore,
+> + * the 8051 subsystem is located within RTCSYS including associated SRAM block.
+> + *
+> + * Copyright (C) 2025 Alexander Sverdlin <alexander.sverdlin@gmail.com>
+> + *
+> + */
+> +
+> +#include <linux/mfd/core.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/property.h>
+> +
+> +static struct resource cv1800_rtcsys_irq_resources[] = {
+> +	DEFINE_RES_IRQ_NAMED(0, "alarm"),
+> +};
+> +
+> +static const struct mfd_cell cv1800_rtcsys_subdev[] = {
+> +	{
+
+> +		.name = "cv1800-rtc",
+
+Make this a specifc one, like "sophgo,cv1800b-rtc"
+
+> +		.num_resources = 1,
+> +		.resources = &cv1800_rtcsys_irq_resources[0],
+> +	},
+> +};
+> +
+> +static int cv1800_rtcsys_probe(struct platform_device *pdev)
+> +{
+> +	int irq;
+> +
+> +	irq = platform_get_irq_byname(pdev, "alarm");
+> +	if (irq < 0)
+> +		return irq;
+> +	cv1800_rtcsys_irq_resources[0].start = irq;
+> +	cv1800_rtcsys_irq_resources[0].end = irq;
+> +
+> +	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO,
+> +				    cv1800_rtcsys_subdev,
+> +				    ARRAY_SIZE(cv1800_rtcsys_subdev),
+> +				    NULL, 0, NULL);
+> +}
+> +
+> +static const struct of_device_id cv1800_rtcsys_of_match[] = {
+> +	{ .compatible = "sophgo,cv1800b-rtc" },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, cv1800_rtcsys_of_match);
+> +
+> +static struct platform_driver cv1800_rtcsys_mfd = {
+> +	.probe	= cv1800_rtcsys_probe,
+> +	.driver	= {
+> +		.name		= "cv1800_rtcsys",
+> +		.of_match_table	= cv1800_rtcsys_of_match,
+> +	},
+> +};
+> +module_platform_driver(cv1800_rtcsys_mfd);
+> +
+> +MODULE_AUTHOR("Alexander Sverdlin <alexander.sverdlin@gmail.com>");
+> +MODULE_DESCRIPTION("Sophgo CV1800 series SoC RTC subsystem driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.48.1
+> 
 
