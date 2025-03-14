@@ -1,88 +1,182 @@
-Return-Path: <linux-kernel+bounces-560571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64803A606B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:48:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C368A606B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:49:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 779C088132D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:48:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFBF83BC8E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252F2C2ED;
-	Fri, 14 Mar 2025 00:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5EBBA2E;
+	Fri, 14 Mar 2025 00:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSQa20vw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4L71JKt2"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5876ADD;
-	Fri, 14 Mar 2025 00:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EBCBA27
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 00:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741913315; cv=none; b=BWAftsPJtOWa/Lajx2O0ByaywFtZm+IVN/TjU5QdfJcd8OBw2+27vn30VEAWRCncCSQ7mBMCaYKwRav97rMT76kbVZLB/4roWHVKWD5dDBNp2fQk5o8pL/8ksamGsOm5RdSsbsOG/SkSkBXAvWGk6w3RlCRkTL3Lkd9yfLoqXb0=
+	t=1741913352; cv=none; b=NzPS1S2ZfKtgBSrRbBC8C/QIhS1fMUw8wqhkaT7/MVHUM+iRzJUBWH1oSFYygSgYPkquC6o+ndx7+kUzRJF4OXzG6ZcX8OBV1YOzAdKCEkTJUNR83KWzE+OcMXZiJXqEOqzoyu/KsejekqVMcoo8S5mkfNY2ZHi2UEY3lN01238=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741913315; c=relaxed/simple;
-	bh=MjhwuksWN5o8NNgGfjhG9P6auYdqJoQ7P5XgfXtFoAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lGyjsvlLRvW433O7fJ2EdCjWbIlAoKaltyX8153FcsZkwdHq9AdBMTerBRnckAcn4NwqDiBd/4MuKxApOkgsnf3nGmPZYJ+2ZpTITCHuQYF86yZxHemZ/OLnEbZcJkg5MV19ZIkew43Yxal4VY5fVKxqUuNW+crYfW6Gzp50268=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gSQa20vw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8955CC4CEDD;
-	Fri, 14 Mar 2025 00:48:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741913315;
-	bh=MjhwuksWN5o8NNgGfjhG9P6auYdqJoQ7P5XgfXtFoAM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gSQa20vwRH0vpR8gG3ASpQrzAAkDGEjDUkn8mchuh+scg2JO1tCqK7tstRmQQ6L4v
-	 xT5zeZxFk5CJUCeTmHC0WHShA9OHKSXEuCb2qTL3lYDj4W8l/GNfqULm9WvmSNYzxV
-	 7K1bUzUeplpwj3emhxp8pu+6wj7+unl+OWqqA8KKcrNm+IRlAKZUXheOMl0PJ2sVeK
-	 G/eGeV2H+D1EXFXML1l2gbBEi+4dQIX0xar8s5f4KxE9TKy/L9afuV85pgI6tnnmW5
-	 j44NRu94rnUw6zuOj92aYzg+t18hn5EZH4nuSQvCQQ/cvyBW53CYl3BUlc8f45Fehu
-	 /EA8Yjl+Ynkuw==
-Date: Fri, 14 Mar 2025 01:48:30 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Huisong Li <lihuisong@huawei.com>, 
-	Adam Young <admiyo@os.amperecomputing.com>, Robbie King <robbiek@xsightlabs.com>, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v3 10/13] i2c: xgene-slimpro: Simplify PCC shared memory
- region handling
-Message-ID: <fp6swrbauspd6kbx6ppf7ym2clcdmem3krtvssvewjrc5oqgqw@bpkgoo5gfz3q>
-References: <20250313-pcc_fixes_updates-v3-0-019a4aa74d0f@arm.com>
- <20250313-pcc_fixes_updates-v3-10-019a4aa74d0f@arm.com>
+	s=arc-20240116; t=1741913352; c=relaxed/simple;
+	bh=qBJkENjnIqGSvFN9E/Jrkqaorc9fr43YwB91TwJpvmU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LlRotDHspak4XGCrd+b5lCDf8R6ASuB+j2ViaycX9K+MR0XYiuMYegKSmOODJgKv5PAdxUYEzb1IC9yoSPGiwgRqfjiEgTBrR75dW1vd3BdEI3XD00hss7Z+jYQrqn1xJyd+5yg12lqmf4OS1CWPKFXHK3NVApl9OhpCHieRQtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4L71JKt2; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30c2d427194so17114741fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:49:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741913349; x=1742518149; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vHvR0nMSMsB/8s/BNOWs/apd6Uvvi+MbvN0YChJeLS0=;
+        b=4L71JKt2clLE1DtgOR5IZdXbpDs0tutQvGl0HgLUo17sCOCO0ERscX56UoaQEY3W9x
+         h08DctAUkGABacXtXYEOMLO60zKqQy985agV6dmipthoqauOxBemB0HsLSAla1CAVJTv
+         jweBhf4POYw48PhRPi1WvKt4IsORiYKxaOjmnoiddISHc+TA27+UidnuFN+QDWeomwv+
+         lI4kvkug6fAf7UfYAphKEhEf5W97w4EIFl2cUceGnEicdJTCoVBinqpcZzv49cGVq41b
+         48BBe8nEMgmklI3iVSF/qLoZJnfAypRMA+t5kkikHYv/m6IAFJC0RqsugFrm38tMuC/G
+         dwyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741913349; x=1742518149;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vHvR0nMSMsB/8s/BNOWs/apd6Uvvi+MbvN0YChJeLS0=;
+        b=A0qiNuYLHFXYxn55TA8nvQsqzAOCLd0XiObfqmPC7O0LfzxyeQbGmuWFqhHVoIvzZ9
+         yILCBLRPY6QFghO24H7xt6WMPMF8jqaX6sUN4jesy9pDqMmQm0Zp8ZxThyqyD5FCihsv
+         Hg41CkgmGkPGBKzuFOqyOqSlzzX8J8JayCi7li/+1sKKGKO+Baz6xiCdplEemDhFQ9+z
+         rZiVy2+Y57jblpZC0bsNKi20MvXnIi4Fbl43S108E8d0RLKePXwhcAgO87u4dyWZ/B3j
+         DB/xsBWOel1/NjmyNAU6MIpa9nUAwDIePTO2U1ZHknGdNu3Ltriwbh5A2D2v0ZWuSL6P
+         UCyQ==
+X-Gm-Message-State: AOJu0YyLC9quGNM9r/ry+ZTVvaiMGJe+ewriuPC6YiaveIyTtSOmUa7d
+	DlFCyhZHdMtqs4ag3uHD2L0tMiBmFRzmbP3cVJrwV1UuEA8ImkKARfxzN/GLmqBo0KlRlk49qlP
+	4CeFdl3c7rhJZZFvZZC8sm9NrPItNg9y0pzU=
+X-Gm-Gg: ASbGncshQRnu7WO+Kaf80dndHf2bJjz1fWLAjVKE3YMa0UwmYZpvi6eOQYqOfvz3Dt1
+	4bB+ko8eJsrKklamRuSK8qg4vERTI+sQOh5fNkpZ6OYMcxIhzHYxqDgPhfOvk/UjiIzRytkIc68
+	G8q654U9GupSDBNJ4LFydrsm6vN24B3kciTU42uLLCQBFYvfblte/jr7uC
+X-Google-Smtp-Source: AGHT+IHZYVnQcHmOyiK/gk6vbNe4GlNRuQx357W1cZsI8kVT9f01pPELk/Uj0bTdkLa1s+RokvamnSbDdni8F81DwLg=
+X-Received: by 2002:a05:6512:ac6:b0:545:225d:6463 with SMTP id
+ 2adb3069b0e04-549c3989a09mr161863e87.42.1741913348603; Thu, 13 Mar 2025
+ 17:49:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313-pcc_fixes_updates-v3-10-019a4aa74d0f@arm.com>
+References: <20250312221147.1865364-1-jstultz@google.com> <20250312221147.1865364-2-jstultz@google.com>
+ <20250313060907.6828c62c@batman.local.home>
+In-Reply-To: <20250313060907.6828c62c@batman.local.home>
+From: John Stultz <jstultz@google.com>
+Date: Thu, 13 Mar 2025 17:48:56 -0700
+X-Gm-Features: AQ5f1JqBZuJUhf60DNuD56Qf3bhmXE0I5JU53dxzrgJYXkuhyLa6aKAbkybJ-k4
+Message-ID: <CANDhNCr_c0y6v0F5y3H5ZRDxLO4Ah7gD0q25d29YiCvUrUPBXA@mail.gmail.com>
+Subject: Re: [RFC PATCH v15 1/7] sched: Add CONFIG_SCHED_PROXY_EXEC & boot
+ argument to enable/disable
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Ben Segall <bsegall@google.com>, 
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>, 
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
+	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Suleiman Souhlal <suleiman@google.com>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sudeep,
+On Thu, Mar 13, 2025 at 3:09=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
+> wrote:
+>
+> On Wed, 12 Mar 2025 15:11:31 -0700
+> John Stultz <jstultz@google.com> wrote:
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Document=
+ation/admin-guide/kernel-parameters.txt
+> > index fb8752b42ec85..dcc2443078d00 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -6262,6 +6262,11 @@
+> >       sa1100ir        [NET]
+> >                       See drivers/net/irda/sa1100_ir.c.
+> >
+> > +     sched_proxy_exec=3D [KNL]
+> > +                     Enables or disables "proxy execution" style
+> > +                     solution to mutex-based priority inversion.
+> > +                     Format: <bool>
+>
+> To enable, does this require: sched_proxy_exec=3Dtrue
+>
+> Could we just allow it to be:
+>
+>                 sched_proxy_exec
+>
+> Also mean true? That is, both of the above would be true, but to
+> disable it, you would need: sched_proxy_exec=3Dfalse.
 
-On Thu, Mar 13, 2025 at 03:28:56PM +0000, Sudeep Holla wrote:
-> The PCC driver now handles mapping and unmapping of shared memory
-> areas as part of pcc_mbox_{request,free}_channel(). Without these before,
-> this xgene-slimpro I2C driver did handling of those mappings like several
-> other PCC mailbox client drivers.
-> 
-> There were redundant operations, leading to unnecessary code. Maintaining
-> the consistency across these driver was harder due to scattered handling
-> of shmem.
-> 
-> Just use the mapped shmem and remove all redundant operations from this
-> driver.
-> 
-> Cc: Andi Shyti <andi.shyti@kernel.org>
-> Cc: linux-i2c@vger.kernel.org
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
+Currently the flag defaults to true, so I'm not sure if
+"sched_proxy_exec" on its own makes as much sense to me.
 
-Acked-by: Andi Shyti <andi.shyti@kernel.org>
+Though, in the android16-6.12 kernel, I have an additional change that
+sets it default to false, which allows "sched_proxy_exec=3Dtrue" to be
+useful.  So I'm open to having the argument alone as an enablement
+flag (in addition to the explicit setting), but I've personally always
+found the mixed conventions there confusing, preferring the explicit
+"=3Dtrue" or "=3D1" on boot arguments.
 
-Thanks,
-Andi
+
+> > diff --git a/init/Kconfig b/init/Kconfig
+> > index d0d021b3fa3b3..b989ddc27444e 100644
+> > --- a/init/Kconfig
+> > +++ b/init/Kconfig
+> > @@ -875,6 +875,16 @@ config UCLAMP_BUCKETS_COUNT
+> >
+> >         If in doubt, use the default value.
+> >
+> > +config SCHED_PROXY_EXEC
+> > +     bool "Proxy Execution"
+> > +     default n
+>
+> Nit, you don't need "default n" because "default n" is the default ;-)
+
+Ah, thanks I'll drop that!
+
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index 67189907214d3..3968c3967ec38 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -119,6 +119,35 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(sched_compute_energy_=
+tp);
+> >
+> >  DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
+> >
+> > +#ifdef CONFIG_SCHED_PROXY_EXEC
+> > +DEFINE_STATIC_KEY_TRUE(__sched_proxy_exec);
+> > +static int __init setup_proxy_exec(char *str)
+> > +{
+> > +     bool proxy_enable;
+> > +
+> > +     if (kstrtobool(str, &proxy_enable)) {
+>
+> To make it work without adding =3Dtrue, the above could be:
+>
+>         bool proxy_enable =3D true;
+>
+>         if (*str && kstrtobool(str, &proxy_enable)) {
+>
+
+Ok, I'll give this a shot.
+
+Thanks so much for the review and feedback! Really appreciate it!
+-john
 
