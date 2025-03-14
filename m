@@ -1,119 +1,188 @@
-Return-Path: <linux-kernel+bounces-561062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C8AA60D22
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:23:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A6BA60D24
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:23:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E834A3B91A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:22:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFEF33BBFDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9838B1EFFA9;
-	Fri, 14 Mar 2025 09:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754191EB5E2;
+	Fri, 14 Mar 2025 09:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ErztoXTa"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RwMPI7bd"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C21E1802AB
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D6B1E633C;
+	Fri, 14 Mar 2025 09:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741944135; cv=none; b=iZr3Idk/pd1k+2tYMhKcgtKWvgKbeA9a5jGh2GhKwP7AuLAwTF67LOjsfNpHSoYYSKsQWOsi+Lv2cLbfvGLfsjKLG6APXweEB6iBBw7FjVv3U5MkTBrPyGkNym83VhThLgqCD4jo5jV2aE1F0qlPIAB3vGQ0hXqbIequIj+28ZU=
+	t=1741944165; cv=none; b=V5iJtqrQhJ7mk+4FS0o5hmchHdubCACltI0O3FfBQD0uO+riIsobKx1gfLpCrnYT2fg0hXBKvY0e92f6mULUrd0m9HX/Bsb027+qICCxMQkvvMaC+F20YWZjM/5Ue1uuL+jiGFMQ+PAEH76YCmtCAS1BgN64bpkGg33uafid+ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741944135; c=relaxed/simple;
-	bh=wSLy/tKZRMSxZhgOPYP+lRHCiDRNfSCHCfpnD1lPsyE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YoqDwDgx2g8StXxhW+rbXn/HEIfynsfn9GL/oHFQ8YaSZzieGUPXFGWB3CBlruybaiVG7GL2UwpKIsoECFkHx57nEtJq2utHk3m5ps5zLzSrAAzRGjmXaiJ9GEcssyAqpoUCMkw6COD4AmJQrhCMvwvbNihQkBUIevfiX/6qfTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ErztoXTa; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so12328085e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 02:22:13 -0700 (PDT)
+	s=arc-20240116; t=1741944165; c=relaxed/simple;
+	bh=nGWcyRV0f9+IrmVuV2ClcshOVIahsrNDbic5jzscPn0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jDBsQ5wtgHsUdWsaC6rRYWkD2lEhVhsYgrPVWau3Uzd8TQFDDH6Tczp+pkv7pE3V7Tb0EU54P9Rj5tuVp9QSyqngTdR3HIiB7OjS6SpY33i1gtAQzhaEaf8dfvD4RD19brWim5/FtOnoFQYG4kurRJ4m8kJbTJIch2k21u/pwe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RwMPI7bd; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30761be8fcfso20625371fa.0;
+        Fri, 14 Mar 2025 02:22:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741944132; x=1742548932; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q+KUI4Lx73PJKjwhnAttQQrPPQ9GUBTUAKyve2K4V2c=;
-        b=ErztoXTa0CXzHYmlFXmwVIZeYSVv7c/q5cdi80Re4K4o/pOn5akj3PpTSCRfxw7B9I
-         rE6UN2F/zdyq6bhsuotYz5fO8BWHfB2Xh9FP2cZaQQU8HCnTXy+moG/0PtVElSL3ajzP
-         a15elSx6S9G6A4NwFMm9PvctX16Fd2sCsdQSREtf6jBqxjB352Q86pmYXJVWjTxinSpM
-         sgJcV+8m62bQlEmaFeHmI6+tp17jeoAu6OC92sWTAaAgHuG+LShAFJNc/XjwtGA0o63v
-         ARCz1lvAKc6FtX16RGnfkgXEDxOeZMGse+8mnm6zqBAYLFZfTVSEvoEHfczCkIpBQF6+
-         zq6A==
+        d=gmail.com; s=20230601; t=1741944162; x=1742548962; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=A6mNnSing0kqpfgH/mSuQWTLvwKA4C3MvqXbpOXhFME=;
+        b=RwMPI7bdXWCGmZrggIj1yqCWa/LMxe48H8NebwRfpYJR1/9l453404CTJWW8flZwgP
+         /wHb6qgTNz6T5jauoENoxOJ5tePWh6PY+X0O9PPsUSy2mkRUcKhYi0CLRI1iXTr8jyTx
+         vpoY4qhlB8oMKcrE7PgxApe4ou32/AmT3iafHYBmFo/gc8akKq943tZmIeG8zTXrDuGH
+         vkkqmRCPwG+8IBdi1BCeiuggGtjwNX00gckPQuiGfS00trYDLYiiCelf77+hx0BxW7GZ
+         7ER5jNn6VJpV3xz9Hsom92o+wt67vYI8UoK0ap2WSgCJvwfJIZrrNcx2lN60U9V3zkkx
+         cR9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741944132; x=1742548932;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q+KUI4Lx73PJKjwhnAttQQrPPQ9GUBTUAKyve2K4V2c=;
-        b=TnV5dvPm1eHkt8yamm1KPY5JRa/QYRdN32NVaZjsuq77rD6+YJQYCAKrcIqrZ86xIu
-         w5Gi7Dlb4Bg+ASNgj1dpZnzejNKbRAUWVo3nhELKyy8+STC9MDi0inhZwwJs5rCendIg
-         eLQLBQ65kUjk5AAhIZKs6y2gzqp8MjnWbWmOR6fgtqHTiyeKF8pDVM4aygFYTzibr15X
-         YDjPUQOYE6KuR78UwBIsS5i67N6Iv+8PS5t++IxGfSUNNXoDKaHXLmpoZ92y1I7ctNoj
-         nsC4iBy6/aNOIG2t4YTu4jAEC5S6lP4hp5TSmgP903yxfTqPMluOEPBC5RIXULDc6m5S
-         TRbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXl/bgg3j9Q9a7U6QlGBIU6l3ET5reyls5CWkIm+UNKip7FSio4qfvV56WJW2adhNOTNCMFOICJMG8Ff3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQsgX4nyvXwxeYqhux3nrU1ntoyAbACzmwtp3jksqdyZwviqcx
-	PTcShhwtN8lr9JZxP3dlXOo0hp1jrJbOiFueBvSZ31NC9Wi9h9Y1f1IIlE0gAukg0VlkOi6exAd
-	BYCziy7iaqQNtABqNy8/JijjAHHogcqnHn7EY
-X-Gm-Gg: ASbGncuiK1nihxVB+tGB61Gjp3IAOqxJ66Q2WC8yWj2aEcHMgF0wdT63/zzdlSvrNt8
-	Bk0GXRBbREMZgekl3bnel9kTLDon+2UsSMa0VNLkUYr0/KUs+QlVYA2AmMVMEbLWrKwOXimZ5/p
-	7mDcm9ipB+3xsTE7JUXZsr4i0lu5qJCLTwgfOCO0fbP4RU0TwCDfEMswUs
-X-Google-Smtp-Source: AGHT+IFl2389eiJnSvgHMzd88pzFUgRlQu1y96idOrhkkY6/IW7t5kMp6T08rutu3B31Z91o7d44iA6hdHEiErEfyWc=
-X-Received: by 2002:a05:6000:188f:b0:391:39fb:59b4 with SMTP id
- ffacd0b85a97d-3971e2ae150mr2211005f8f.27.1741944131623; Fri, 14 Mar 2025
- 02:22:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741944162; x=1742548962;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A6mNnSing0kqpfgH/mSuQWTLvwKA4C3MvqXbpOXhFME=;
+        b=bXJM1yv3OoRfYpn3mz70AvTReMlQ5lkvRObGUhQmFkaorJz1Z54/yHZhwR9QfZcVST
+         F33s8Eo1M7glOdCPCgnazMTsi6RUHmjEwBRq2A+jyzCxT+HzV+QfIhruhinrKqJbQjl1
+         SvJ58TTJ8hG5TuiiSVYXhFSBnhFE8YL0r6Sw1HfFhSloXRUKx7f3hvxJCcG8M8vvoYqN
+         GmYCydss6puKHawAFpZKyFkmHA3Kz/UZSBoSeC6RR2TbQ2DjJ9hhPSkBp/A9Y42ODjL/
+         9KR5RMQTd8rhRSX7gvP/9pO6SapJLYybbZFf5ZeMDa9e4UMkHD0f3R8vwCblatpVsEGd
+         lmhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUapi77eKW8L7kWFM23D1acSFWhz69H9AhJquzLu+N49UCHgetLWq12CNJNYRyuoIz/qBWdsKNw3P++lsCL@vger.kernel.org, AJvYcCV6QzrWBkYfGzj63JppHDcce52b6pVWdn9CUEHC7o6gHtHUhDj65exXMnGi0ZmlFt5clRIKq4i8RJk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDYH4XUhKnwSjwxXTDvD60jWgiR76Yw8ftuKFGaCKNQ9bVqUje
+	mk0DhfRAwRxO4jqSxk1JKx7JxzNNCcOHsJs3ZQbltVgTjM9yw8Z2
+X-Gm-Gg: ASbGncuuVOsue9bKEUo2cx5Bzl7bQQ20ZPrKEPRlyfRZTmcUnXQC9dySQzqNusvRjMZ
+	uMIukU8+FZ6vV0NOuIPcaaneHhaRyIq8O1Pp4DQYLvOQ7lz+Lec+wHJrRnPJ4IPO28fSlL63odM
+	FRNpGmshLYiJUtrlWPlmpkjrvsEJOPRop3lqh+4IpY1b/DLFxW9AyndGUZ2CLRSh0AFdEaHzm+q
+	skiG39eQ4xOcGwLJGbrkFrm+kvGig9QwRJcp/CbgZCSlgSgrsw506IeVJ4trKb1MhqJVDKc05ou
+	USPjlE4Em9fKcRoraEehgy5LNWaK5Khf12btRRXB5mOSFOyIl68IfqimUzL3auXFhGuUk+8AmBz
+	LnZdTynfKBeDeAFKmc2Fyi6JR5yyLjbkpfSOH
+X-Google-Smtp-Source: AGHT+IGobC/JOvKfHLq/dU7ReuIOaTqTD32p1orQfOs5sriSPZ1/e4QuzKAwaWAv9sJ3Ke+R2KlC6w==
+X-Received: by 2002:a2e:a542:0:b0:30b:9813:b00e with SMTP id 38308e7fff4ca-30c4a8d8bbfmr7110691fa.24.1741944161569;
+        Fri, 14 Mar 2025 02:22:41 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f209d6esm5118641fa.112.2025.03.14.02.22.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Mar 2025 02:22:39 -0700 (PDT)
+Message-ID: <0d7b37fd-be93-42d7-9610-d2184c601981@gmail.com>
+Date: Fri, 14 Mar 2025 11:22:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313084525.773620-1-kunwu.chan@linux.dev> <Z9K3vokYu5osMCwh@google.com>
- <6c874a4f-439e-4ab2-807d-d0f59b9fe569@linux.dev>
-In-Reply-To: <6c874a4f-439e-4ab2-807d-d0f59b9fe569@linux.dev>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 14 Mar 2025 10:21:59 +0100
-X-Gm-Features: AQ5f1JpGzEAx4sBwjKxQGUxQi3t0tVfhh5Eh8mkLZ_0xoZt0Q9ivNhpJmJHKzV8
-Message-ID: <CAH5fLgjErD9r8h_tjekZ+sNNDmkU3J3kcSmCG+Mew+-6zQq8tA@mail.gmail.com>
-Subject: Re: [PATCH] rust: file: optimize rust symbol generation for FileDescriptorReservation
-To: Kunwu Chan <kunwu.chan@linux.dev>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	a.hindborg@kernel.org, tmgross@umich.edu, dakr@kernel.org, nathan@kernel.org, 
-	nick.desaulniers+lkml@gmail.com, morbo@google.com, justinstitt@google.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, Kunwu Chan <kunwu.chan@hotmail.com>, 
-	Grace Deng <Grace.Deng006@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 06/10] iio: adc: Support ROHM BD79124 ADC
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ Guillaume Stols <gstols@baylibre.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ Trevor Gamblin <tgamblin@baylibre.com>,
+ Matteo Martelli <matteomartelli3@gmail.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>,
+ =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+References: <cover.1741849323.git.mazziesaccount@gmail.com>
+ <b6c02a5d75a20bbbf8c3370ccee615d269620117.1741849323.git.mazziesaccount@gmail.com>
+ <Z9LbT1BvPEIp7U2N@smile.fi.intel.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <Z9LbT1BvPEIp7U2N@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 14, 2025 at 3:34=E2=80=AFAM Kunwu Chan <kunwu.chan@linux.dev> w=
-rote:
-> > * I think it is easier to read the symbols if you list each sybmol on
-> >    one line like this:
-> >
-> > ffff8000805b6ef0 T <kernel::fs::file::FileDescriptorReservation>::fd_in=
-stall
-> > ffff8000805b6e60 T <kernel::fs::file::FileDescriptorReservation>::get_u=
-nused_fd_flags
-> > ffff8000805b6f08 T <kernel::fs::file::FileDescriptorReservation as core=
-::ops::drop::Drop>::drop
->
-> If in one line, checkpatch.pl will report a warning:
->
-> WARNING:Prefer a maximum 75 chars per line (possible unwrapped commit
-> description?)
->
-> If no need to  bother with the warning, I'll change it to one line in v2.
+On 13/03/2025 15:19, Andy Shevchenko wrote:
+> On Thu, Mar 13, 2025 at 09:19:03AM +0200, Matti Vaittinen wrote:
 
-You could do this:
-... T <kernel::fs::file::FileDescriptorReservation>::fd_install
-but if it's still too long I'd just ignore it.
+>> +	/*
+>> +	 * Return IRQ_NONE if bailing-out without acking. This allows the IRQ
+>> +	 * subsystem to disable the offending IRQ line if we get a hardware
+>> +	 * problem. This behaviour has saved my poor bottom a few times in the
+>> +	 * past as, instead of getting unusably unresponsive, the system has
+>> +	 * spilled out the magic words "...nobody cared".
+>> +	 */
+>> +	ret = regmap_read(data->map, BD79124_REG_EVENT_FLAG_HI, &i_hi);
+>> +	if (ret)
+>> +		return IRQ_NONE;
+>> +
+>> +	ret = regmap_read(data->map, BD79124_REG_EVENT_FLAG_LO, &i_lo);
+>> +	if (ret)
+>> +		return IRQ_NONE;
+> 
+> Only I don't get why you can't use bulk read here.
+> The registers seem to be sequential.
 
-Alice
+After taking another look - there seems to be undocumented register 
+(0x1b) between the BD79124_REG_EVENT_FLAG_HI (0x1a) and the 
+BD79124_REG_EVENT_FLAG_LO (0x1c).
+
+I won't touch it unless there is a real verified performance problem.
+
+> 
+>> +	if (!i_lo && !i_hi)
+>> +		return IRQ_NONE;
+>> +
+>> +	for (i = 0; i < BD79124_MAX_NUM_CHANNELS; i++) {
+>> +		u64 ecode;
+>> +
+>> +		if (BIT(i) & i_hi) {
+>> +			ecode = IIO_UNMOD_EVENT_CODE(IIO_VOLTAGE, i,
+>> +						     IIO_EV_TYPE_THRESH,
+>> +						     IIO_EV_DIR_RISING);
+>> +
+>> +			iio_push_event(iio_dev, ecode, data->timestamp);
+>> +			/*
+>> +			 * The BD79124 keeps the IRQ asserted for as long as
+>> +			 * the voltage exceeds the threshold. It causes the IRQ
+>> +			 * to keep firing.
+>> +			 *
+>> +			 * Disable the event for the channel and schedule the
+>> +			 * re-enabling the event later to prevent storm of
+>> +			 * events.
+>> +			 */
+>> +			ret = bd79124_event_ratelimit_hi(data, i);
+>> +			if (ret)
+>> +				return IRQ_NONE;
+>> +		}
+>> +		if (BIT(i) & i_lo) {
+>> +			ecode = IIO_UNMOD_EVENT_CODE(IIO_VOLTAGE, i,
+>> +						     IIO_EV_TYPE_THRESH,
+>> +						     IIO_EV_DIR_FALLING);
+>> +
+>> +			iio_push_event(iio_dev, ecode, data->timestamp);
+>> +			ret = bd79124_event_ratelimit_lo(data, i);
+>> +			if (ret)
+>> +				return IRQ_NONE;
+>> +		}
+>> +	}
+>> +
+>> +	ret = regmap_write(data->map, BD79124_REG_EVENT_FLAG_HI, i_hi);
+>> +	if (ret)
+>> +		return IRQ_NONE;
+>> +
+>> +	ret = regmap_write(data->map, BD79124_REG_EVENT_FLAG_LO, i_lo);
+>> +	if (ret)
+>> +		return IRQ_NONE;
+> 
+> In the similar way bulk write.
+
+definitely not due to the 0x1b.
+
+>> +	return IRQ_HANDLED;
+>> +}
+
 
