@@ -1,136 +1,131 @@
-Return-Path: <linux-kernel+bounces-562082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11104A61BD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:09:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92A3FA61BBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:07:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D14B7188E4BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:09:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FA91882610
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25BF5221D93;
-	Fri, 14 Mar 2025 20:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CCC213E98;
+	Fri, 14 Mar 2025 20:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d9+Gda3K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A3sPZpsl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1225217F55
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 20:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09F7214230;
+	Fri, 14 Mar 2025 20:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741982523; cv=none; b=nPH5cXJUEibjgA0KwyNB6XtZL2BV/7vfRDZJaJVk5ov0t4Qss8qxcF9yJQtnXsu5sNNj+DViU4DTn8iIR+iDHStsxRdevwoL6pem13njD6wShq+kUwIOgS8z8EhJenMj1Rxt4qWbd8vGShQ7vUilL5QlEslkHI8gwE6A6rAVG4Y=
+	t=1741982514; cv=none; b=KccntXwCaTWmS615Hb9cyCo/hm8OjvBWC+n0LhyR5RwxpJ3k3vTqQB3sQruKEoFjxFOaoakrccPnfKiqDdDosrlUxMVnSsaPo6iYx74jO0gQY28yXP+PysycSQFyUgB1QMGt2DxtYjzu5g3/S61JlhLK65PLIDav0dBJge5z894=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741982523; c=relaxed/simple;
-	bh=IOnoKm30i2gTvyFK+uUTrGFu6CKL9+fAN1uynEfTKNU=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=s8YfbeMOtN7KFzE5Ac9FmcBi9V2RsAPV+MGteqynIOPYnVDlHvV56ynA8ZcAhkhLK7V6d9amdLI/yeZ28AkD+GLrp9NMCOKkyv3u70BeoBSlW6+5lGxiSldiNVDWumvZ1j2dqZA4JQ7Sq8DuxSVcrBw9iJUSX2r1P5uA0kHWP1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d9+Gda3K; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741982520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sP7bsciAed3mv4rlNhBPKL9uchv7k0Ev3qtjfqaxmQQ=;
-	b=d9+Gda3Ka3sLWxtBDE0EHo43hbAGqyz8UwfKzzUdiWt+Rw/Y58B7PCT1BfNzgOgT6s/v0d
-	mHiqQUyLfkuUggkr3xO5284J7VDZPgmC8+gsFT7IXyLCsUpBfkHYQSy/QIOLhlVl6zTFFw
-	J1R7uyPoI0CVZZuubMIbMnEYxXJZtRY=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-468-oQaF7_6DNZScfQClf4zY5A-1; Fri,
- 14 Mar 2025 16:01:57 -0400
-X-MC-Unique: oQaF7_6DNZScfQClf4zY5A-1
-X-Mimecast-MFC-AGG-ID: oQaF7_6DNZScfQClf4zY5A_1741982515
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 52E94195608A;
-	Fri, 14 Mar 2025 20:01:55 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A5CC73003902;
-	Fri, 14 Mar 2025 20:01:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <f6be2823c1bfd37cb7629feb40a1a579bb9378d6.camel@ibm.com>
-References: <f6be2823c1bfd37cb7629feb40a1a579bb9378d6.camel@ibm.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-3-dhowells@redhat.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
-    "slava@dubeyko.com" <slava@dubeyko.com>,
-    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-    "idryomov@gmail.com" <idryomov@gmail.com>,
-    "jlayton@kernel.org" <jlayton@kernel.org>,
-    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 02/35] libceph: Rename alignment to offset
+	s=arc-20240116; t=1741982514; c=relaxed/simple;
+	bh=vhl18IjHPw/3AHnEoOG25hlLaV4rPR1ZA18lcGudXUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=InrLVDlqKgITlBF0wBD1KqogZvUCVmXZAvZX/KXgy5+gD6ieNIrKsYwblbWrbkFepYbnYCQ90moRUq/RXqru6UrkrIWpY/UK7YcyUgCYWmkqPIffvfn9GXx+Bq+Sj+u4gYtNkpGBxDBWBlvOABFdwudupNVsQ61NqlM3MXnu5rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A3sPZpsl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23841C4CEE3;
+	Fri, 14 Mar 2025 20:01:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741982514;
+	bh=vhl18IjHPw/3AHnEoOG25hlLaV4rPR1ZA18lcGudXUE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A3sPZpsl/bxbNcIC37Jq9ZzpslkKIzt8lpwVtxTAd/B1i5FG31OfWq7947h1IJrPa
+	 Sfx46gUQfn+O07m3b3v/SeGZkFiG1mjeTOnFHWheK32ocP5TRc0DUnmB9Wxc0YBgu5
+	 h3+OW/FPkNlwhWpeFiLo3+twehzihXKvGRdbVqVV9yLHYWkzlhKvywqFFYYGXg0lSl
+	 rwEKJQtrqcfHZ/eT8h+cRzeTkPAlSpuH7louhzYIecDC0tKxkyqJjyZh7t4+sStO7n
+	 8vcmDBQkQKDJaC+vIqWK+ZQ7fFcR/P+sJH1j6g6OAzoCpPpEGPCUCW+8W3w8cYS1iq
+	 vdX0Lt5M6d+Qg==
+Date: Fri, 14 Mar 2025 17:01:51 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Howard Chu <howardchu95@gmail.com>, Andi Kleen <ak@linux.intel.com>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Anne Macedo <retpolanne@posteo.net>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] perf machine: Factor creating a "live" machine
+ out of dwarf-unwind
+Message-ID: <Z9SLL50yuiLOGGYI@x1>
+References: <20250313052952.871958-1-irogers@google.com>
+ <Z9Rk-YdoK-fK_62d@x1>
+ <Z9SK96s4PAp680k6@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1998183.1741982510.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 14 Mar 2025 20:01:50 +0000
-Message-ID: <1998185.1741982510@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9SK96s4PAp680k6@x1>
 
-Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
+On Fri, Mar 14, 2025 at 05:00:58PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Fri, Mar 14, 2025 at 02:18:49PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Wed, Mar 12, 2025 at 10:29:51PM -0700, Ian Rogers wrote:
+> > > Factor out for use in places other than the dwarf unwinding tests for
+> > > libunwind.
+> > 
+> > Testing with another patchset being reviewed/tested, seems to work, if
+> > it showed the line number would be even better!
+> 
+> But it gets the lines, at least in this secoond attempt, after applying
+> Namhyungs fix for the previous problem (int16_t):
 
-> >  		struct {
-> >  			struct page	**pages;
-> =
+Nevermind, this time I built with DEBUG=1, so DWARF, probably.
 
-> Do we still operate by pages here? It looks like we need to rework it so=
-mehow.
-
-One of the points of these patches is to rework this, working towards redu=
-cing
-everything to just an iterator where possible, using a segmented list as t=
-he
-actual buffers.
-
-One of the things hopefully to be discussed at LSF/MM is how we might comb=
-ine
-struct folio_queue, struct bvec[] and struct scatterlist into something th=
-at
-can hold references to more general pieces of memory and not just folios -=
- and
-that might be something we can use here for handing buffers about.
-
-Anyway, my aim is to get all references to pages and folios (as far as
-possible) out of 9p, afs, cifs and ceph - delegating all of that to netfsl=
-ib
-for ceph (rbd is slightly different - but I've completed the transformatio=
-n
-there).
-
-Netfslib will pass an iterator to each subrequest describing the buffer, a=
-nd
-we might need to go from there to another iterator describing a bounce buf=
-fer
-for transport encryption, but from there, we should pass the iterator dire=
-ctly
-to the socket.
-
-Further, I would like to make it so that we can link these buffers togethe=
-r
-such that we can fabricate an entire message within a single iterator - an=
-d
-then we no longer need to cork the TCP socket.
-
-David
-
+- Arnaldo
+ 
+> root@number:~# perf trace -e landlock_add_rule perf test -w landlock
+> perf: Segmentation fault
+>     #0 0x6698d0 in dump_stack debug.c:355
+>     #1 0x66994c in sighandler_dump_stack debug.c:367
+>     #2 0x7f784be95fd0 in __restore_rt libc.so.6[40fd0]
+>     #3 0x4d0e56 in trace__find_usable_bpf_prog_entry builtin-trace.c:3882
+>     #4 0x4cf3de in trace__init_syscalls_bpf_prog_array_maps builtin-trace.c:4040
+>     #5 0x4bf626 in trace__run builtin-trace.c:4477
+>     #6 0x4bb7a9 in cmd_trace builtin-trace.c:5741
+>     #7 0x4d873f in run_builtin perf.c:351
+>     #8 0x4d7df3 in handle_internal_command perf.c:404
+>     #9 0x4d860f in run_argv perf.c:451
+>     #10 0x4d7a4f in main perf.c:558
+>     #11 0x7f784be7f088 in __libc_start_call_main libc.so.6[2a088]
+>     #12 0x7f784be7f14b in __libc_start_main@@GLIBC_2.34 libc.so.6[2a14b]
+>     #13 0x410ff5 in _start perf[410ff5]
+> Segmentation fault (core dumped)
+> root@number:~# 
+>  
+> > I'll continue working on that other case with this applied just before
+> > that series and finally will give my Tested-by.
+> > 
+> > - Arnaldo
+> > 
+> > root@number:~# perf trace -e landlock_add_rule perf test -w landlock
+> > perf: Segmentation fault
+> >     #0 0x5be81d in dump_stack perf[5be81d]
+> >     #1 0x5be879 in sighandler_dump_stack perf[5be879]
+> >     #2 0x7f313d24efd0 in __restore_rt libc.so.6[40fd0]
+> >     #3 0x491bc1 in cmd_trace perf[491bc1]
+> >     #4 0x497090 in run_builtin perf.c:0
+> >     #5 0x4973ab in handle_internal_command perf.c:0
+> >     #6 0x413483 in main perf[413483]
+> >     #7 0x7f313d238088 in __libc_start_call_main libc.so.6[2a088]
+> >     #8 0x7f313d23814b in __libc_start_main@@GLIBC_2.34 libc.so.6[2a14b]
+> >     #9 0x413ad5 in _start perf[413ad5]
+> > Segmentation fault (core dumped)
+> > root@number:~#
 
