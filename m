@@ -1,213 +1,201 @@
-Return-Path: <linux-kernel+bounces-560673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79094A607FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 05:03:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 888EEA607FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 05:05:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6FA01797A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 04:03:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEE6C17C534
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 04:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D6640855;
-	Fri, 14 Mar 2025 04:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1398D7346D;
+	Fri, 14 Mar 2025 04:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1tesayRQ"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2087.outbound.protection.outlook.com [40.107.92.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dJEr1XxT"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F122D052
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 04:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741925003; cv=fail; b=CT2KXoF3dp48s4TnEppBElUiROySt9bsOGYgVAJvxVhRiMEK2GQi/I/iIn9r+xRFFdriyLiGu3FXW/c0rVczMc67G/XRbFMWoWnIwG50qhzvlRw5E44uELFJXkqpUaiUDw+MzSoEiSxXLl4ppnEogw0D3glcBAxIzCKftXygpEs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741925003; c=relaxed/simple;
-	bh=mSIQk1mmBiBrN2QjdxJIB0zeLmAIFKf7V/l2phxEXxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QuPI51KnvMkOYx4ZxF1pYCFO5BZ/GrKfZQ8M7H5LzDWJrNR6q1QeexPvs/LLvSleRzPJmc7D1A4JJgLnKe9K6YbbotJ8G1URMwJj0sRS4x75wvUNpHzlwRs1QheBnF0Ba3AXeahUY1ChBJx9OejCio3An+noxcfDGNiuVhoVPQg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1tesayRQ; arc=fail smtp.client-ip=40.107.92.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yPbXt2kpmTC+zNe9yl3CVuQV9sVpkkGK7KLwmbjSqg708uml5swRHjeQgvthTQi8oGCpqJ3AsmLovKM44yBkmo00U9DrV9OqB17gyry5YilxH3hAxQuHP5+kzfBSpw4wTRV1cRaSHpg1oAFR+fdt0Dk7PQRGqMtbfe/HDItwn85+hpV2tUvYfPge9sYdxKFDL2a2kSHoF11vistvclvU5EIgoMTdsDi5+KRqrz55xrrOFz/SOmb0ux7Z8adJsY2/Hw/lNHRWfCrExiSBPSGQIAx9z8CMgzh024hFjoJ4oBxgbxV0CIUtDG7C2+2bDC8Ayc4uVECcLy26qGYBRBdLhw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dJGJqFj6E/z3XCW+1vObHEKSPfFxNtmKzcvzlxY51E8=;
- b=WBo28xVwo1IuVnFD5Ja6+8FFVAv6j6O60WTHv+czfyfxCTWXnupudYe05wlBrfNQFIW3ZG9HGqHemkgscUnIBEbbVMbhxB4ClbnGL4/AXn0u0pOUm2VGNHiAWoVlAuFbzh0AeFKE+bmn7qwMWmFh5oxT7akXC0gxdy50MpPcnrsTslP/UPXt3VNzCH5numQXly2JsU7P2ygjlarrlzSja/FrdYb1a3S8/nVD5WZkSNKqDzSmkRa83iCmUwBDTyKM1GT81EhqKn8GjBl+8B/1yN/kQVoCe3AQuRpRPRs7U3P6M7GESgyzQdVphMknSMEc0x/0K2nSfapD/ggPc3pL6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=bytedance.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dJGJqFj6E/z3XCW+1vObHEKSPfFxNtmKzcvzlxY51E8=;
- b=1tesayRQu5EqQefxmY0m0wIaIhMstSvpgd7YPP93my8UrKexuF1XMOFsXMP1bUQnHo3Yhb2MycI+dPdvfyJBepHDkflycmNVeixExBDTv48vj1hmyd0va575WrrcuAEokJ1R7NxyRRmUDhieusQVSEEN6WrHmKxleGR2+QjmkCw=
-Received: from CH5PR05CA0007.namprd05.prod.outlook.com (2603:10b6:610:1f0::12)
- by MN2PR12MB4454.namprd12.prod.outlook.com (2603:10b6:208:26c::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.28; Fri, 14 Mar
- 2025 04:03:17 +0000
-Received: from CH2PEPF0000013B.namprd02.prod.outlook.com
- (2603:10b6:610:1f0:cafe::6a) by CH5PR05CA0007.outlook.office365.com
- (2603:10b6:610:1f0::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.25 via Frontend Transport; Fri,
- 14 Mar 2025 04:03:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH2PEPF0000013B.mail.protection.outlook.com (10.167.244.68) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Fri, 14 Mar 2025 04:03:16 +0000
-Received: from [10.136.37.23] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Mar
- 2025 23:03:12 -0500
-Message-ID: <f091f0e8-ead5-4fed-afbf-45be29db8e2e@amd.com>
-Date: Fri, 14 Mar 2025 09:33:10 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8AF62D052
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 04:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741925110; cv=none; b=fNnHFVwo6wac0/dKLbYTLwskg5Olwg85sFedizNxRLiBwgfW2/8Aq0ntGTzEiXuk69Mmf1kV/hdUwbjATIBTrySttmF7qBDLHat4o8xXri92QuoIvgqP2dSav5CFF3qnaka2mnXfBBx62kWoMp+8yGQBPAVTPTnLwbAraMl8/os=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741925110; c=relaxed/simple;
+	bh=XU7FdM3Ffg6QP05RRUEg+NX4qxvK9dQAgJRWFzfE7Os=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bbsz810zi7TkMAg9IBs1muZ1oSw6G9qMqSlur+TZzZpLnxXuM+KOwJXn8GhwLkm+mJS5Lwwbt/xi1cp+g5WIRRptMonxHU8iom2N515U6xLSLo1mJch67f2bvgYRljX3O4RYGG/jku8mcWXs8eFS3Z0D6YIQ8y1+qe/nv/IWJ9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dJEr1XxT; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bf1d48843so15334761fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 21:05:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741925104; x=1742529904; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=h//ATjia85HEojScqbuknPiD1067XRlRwJ315LGwuuA=;
+        b=dJEr1XxTsCPKjxXwIY+4g5Cs1iC/BlSouK6eYURejuy0/IkalHbN+ClTHJwbPYNWms
+         5Mrg64vo5EdAz2qdExI74gTX+GERqoLCRRWUqbPLZu8wrfG/DQBI2t3S7SQH73eeSslz
+         uKvqvuf4YehAWVLK2/GH/Twtey+PINtEUnV1H+0/ctU9Qs1NmprXHD6RA4iPFPGXsEBs
+         kYHdH5MNTxBx3qW4lRCUAVVtP+WB3doPuFOp/zN/l5g3Pm+A7jFWiQTqgMMIn+BF2D4y
+         ke3pI4dRHrolRllOV+PjPSbsJAHgg38qXKgqZEQrRqtbGy4QkwSOcLXbTqjVqglUkFYi
+         ZOUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741925104; x=1742529904;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h//ATjia85HEojScqbuknPiD1067XRlRwJ315LGwuuA=;
+        b=ec3pSX/2/i8A0TkXxRQaiwKODxHOZKi4aQCFGYlWi1l930v3Fn2oE08NtVoc2e+lIo
+         Uj9dygjh4UIiMSKn0u9xkpnpxuk0K3ICRZ4Y/IWZYM4qiFkrhOrf4XRmg2TLvUCAPqE2
+         GcNswdMxWvnmQhB1ptwjSI2DCCNSPWUW8nNM6v9Z2/bJbRC5TCeQEhtAYOK86TvH2fU7
+         FxMLa0+3j+kbIUS6z/cjPib41Z3W7yoiVSH4XoLKNVDMO2QkAkdQkDHnk6WMqx9D69LY
+         kijpr8Njbt7lqUuDNYx96FbKcmgTp8IBEHUJJ8/4j1rtoVvakJuyuzolr4kfm1eH1YsP
+         Tt3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUJwWsg/7uTSUCF1+J6HcN0DImRwpf27xKMty0MSyPuEBhsTJg139daBui3OatOHIdlkfMfyPSXkDE+JHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4cdogU4TZ2w6TAxdi6Ilk8at7yvtFYccbC5VRMMr/mbsAQTLj
+	wtMFDXTRGXuOFlNrhhpmJ1EP2ph1P5+wsmz53yARdXDTUJK5fsxnbwYKGOMpzvpSqaBtP3fm515
+	yqM4Jtxq6E8OUmCzcnN1Zp41mRUECpqVWyk/Dh9VAPGUN1h662LjQL84n
+X-Gm-Gg: ASbGncvWjWOGQh95//5QgIuhYruX31i3VM5u3BetG9xxuZTe1jrFGQ2opXRGs0VP+Gf
+	FTAos+2uGoGwKSYg/4QR4LQJCeYS47gCty4IiKV8TzwYzsGhwFcYgG++7ZEgfmi9lo4MBaNuzd0
+	vb4PpGG9J4p5VOgnmMoWq79Cq23A==
+X-Google-Smtp-Source: AGHT+IH+6Ak42L7Q+3G3rk/KoaIGmKV0+96j6H68eEIV5uqgLh6/zhd3gN2T37mcOBFNf/ch/w9xuC3da1CZk34tKc0=
+X-Received: by 2002:a05:651c:1a0a:b0:30b:ef3d:88bb with SMTP id
+ 38308e7fff4ca-30c4a8e52femr3174581fa.32.1741925103879; Thu, 13 Mar 2025
+ 21:05:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 4/7] sched/fair: Take care of migrated task for task
- based throttle
-To: Aaron Lu <ziqianlu@bytedance.com>, Valentin Schneider
-	<vschneid@redhat.com>, Ben Segall <bsegall@google.com>, Peter Zijlstra
-	<peterz@infradead.org>, Josh Don <joshdon@google.com>, Ingo Molnar
-	<mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>, Chengming Zhou
-	<chengming.zhou@linux.dev>, Chuyi Zhou <zhouchuyi@bytedance.com>
-References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
- <CANCG0Gc2vAMO_5x8wYhA-=34n0vChrSdUvnd+Cf56MXfq2YFfQ@mail.gmail.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <CANCG0Gc2vAMO_5x8wYhA-=34n0vChrSdUvnd+Cf56MXfq2YFfQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000013B:EE_|MN2PR12MB4454:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22d94ab6-cca8-4169-7f26-08dd62ad2624
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|7416014|36860700013|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ejR4emVHOVBnOXBMREtZYnJWVTdGa2M3dUZIVzZodXowZ0VxU3VxMnF6bElv?=
- =?utf-8?B?amQrOFlyWjZKaE9iajNaVXgxMDhJeW1PRTNxSFNiNzNLNWRVbzNqQno1VlhQ?=
- =?utf-8?B?dU90WkFQeGwvMm5RMTFPcS8yQ1doMmxLbXVTdmIrZ0NUcmY3OTBwSllCOERY?=
- =?utf-8?B?VnV5WXlYNEdCOVdOS1RwdjJHb2JIMHdYT1lMNzFWaWpxTlZFT1dZL2dJMFJT?=
- =?utf-8?B?SnFLR0NJNTRnTmZkamx0QU5PTVBkVksxczhPY1FTVW1CMC8wL3ZDSmlsNCtU?=
- =?utf-8?B?Y0ZpcTNVZk5kOG9RMDBwWVFlZElYc0JrcGVwdnc4Sm5XdkxrUmQ4MW9qMU5t?=
- =?utf-8?B?dDZESGRDbzNPNUtXNjdoZDhUcjg0TWUvaWRyOW95RFhaRnBJU1d0MXhxNDZE?=
- =?utf-8?B?UUZiUFE5MENKVDFjR25wT0V2RE11N09kVkxFS2FwcjlYK3FWM284MlhIQU81?=
- =?utf-8?B?bnFNTWh1dTFWbUkzUW5sR3dZbHVVZ3hJQ3RlQTRqUXpzVWoyOFJHTHZES2Ft?=
- =?utf-8?B?UzRZMjlZM1pRYkFVc2FNckJ3b0NEYzhNQlFxZjQwbkNVbjNKb1ZkYUEvVjIz?=
- =?utf-8?B?MjFaeDY1OUVwZnJRSmhFdHJHY09xK2JsVjEwUDJTZURvRWt2aHNqaytteDhX?=
- =?utf-8?B?MWhDd215c1VwYndTdTF2VXRoc2xLS0t1eDBOK0FTQ2VWZjc5cEJQMEpacVk0?=
- =?utf-8?B?Sm94OHRVamZjajd0YldxWCt1aW5xR00xSnB0RkhQbCtZZ3g5SzY1TnJvUjhD?=
- =?utf-8?B?bThKNG9EdEJ6ZExESUIwTDhRNmRLOHYvN3ZyMGJZVXRWcHl3cDhUcjE3b3Jw?=
- =?utf-8?B?UmgyVHRtNkQrTUtuTFgvL0h1aU5YcTJybHpOQlVDNlFKVmhFNHZISlM3ZUp3?=
- =?utf-8?B?QW9oai9nTGpRUWdaYlE3Wks0K1VpU3JRNVNuV2tlbTBsNktLYzMxS1VaY0tU?=
- =?utf-8?B?Y3IrSXpKclFxTUdlOEdTbjM4Z3ZsZXpVVUpVM3hmUDRJS2FGVDFCcWROYjhu?=
- =?utf-8?B?R2RFRUlIOWRDRENqWXY1WjlnT2ZLWmEvQ0FmM0N3clNaSmJobzNaWlluWTgw?=
- =?utf-8?B?cXBlVFZ5MVZ0S041SVlOSnd6VGl0WVk4eGlBZThJV2RURkM5VGpZMWo0d1du?=
- =?utf-8?B?V0RvWWhqUHV0ajJkSWlpekFZTEc3Y1c3NHhYTGtITzFaNFRTVWsxSUlpSWFz?=
- =?utf-8?B?akFoOW5xK2xFZTNJeDBLMGppd3FpNHZFcXdzYnB3bkhyekt3RTJMbmg2ZUtq?=
- =?utf-8?B?K1MzNHhlR2UwcUZoZEpPekN0bU8xN3RTaVBhWEQyaE93MnRmWElCb2o3MTBx?=
- =?utf-8?B?Z21YQ01SREFPdG93eWhJcERIREtlcFBKUVNLMnJWbFdiWExFc1h0QXNmcTB1?=
- =?utf-8?B?aENEWkQxcm9UNlJ0RkJoZkI4cXVJczZra05jMk5IZWNXazhBUWxZTzdMMlZN?=
- =?utf-8?B?TEVYR25XbDVZdUJBaVErb3B3cENwN1Y1bUo1TnBqT09VQlhGVktUalJ6V0VC?=
- =?utf-8?B?REFXNDZXQ0hhL1ZPR2tqcGdLSmpIWmtYYWVwanZGZmo0S1VQKyt4cC96TDk2?=
- =?utf-8?B?WERVenA2RklNN1JSNWo3S3cwMy9ydmcwQTRnby9Zamt1Y2krTmE5UW4wT2ht?=
- =?utf-8?B?V0c4cU1GcFlzaFU1aXczYXFPbjRHSng2a2pTYmRJbVpGZUFaYkl3U2p1SjFN?=
- =?utf-8?B?Ri9LaklYZnA0QVpQTEdkWis0OXdCM0xsT01veWxVN0t1QzdKUlZUNmNNaUVB?=
- =?utf-8?B?QnQxRjlVcjVxR1JIV1NNUXZXUTRsNGE0ZXA3SC94QVd3TkJCUmZSMEt4Rmc0?=
- =?utf-8?B?TjVPWGVod2JyWHVKRjFJa1o5SXd0T1h2V2x5RnRDa2kvUms5NmRtTzljUXlC?=
- =?utf-8?B?SW4yUWhYdWhmOGdCdFNxS2FCZnF3MmtkbzZzVXY5UXRVM2ZtSitjT1g0ZHdh?=
- =?utf-8?B?cHZldzRhT2E2VE5Yc2hQZGpoZXIrRGliMldkZnJKS2VjcktkTzZRdW91QlFW?=
- =?utf-8?Q?vwSvUVUVSketM8PJBamgI+qi4qtCTg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(7416014)(36860700013)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2025 04:03:16.4643
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22d94ab6-cca8-4169-7f26-08dd62ad2624
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000013B.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4454
+References: <20250313051953.4064532-1-baolu.lu@linux.intel.com>
+ <CABQgh9HKaDyDQXGB5ZEGg5q4a9ak_8OB9XQ+TpUNcZd_ZMeCAQ@mail.gmail.com>
+ <CABQgh9G=7q+FQ0ECZ60UjawgkAM2aeNEb6hXgndEv8S9_4CuPw@mail.gmail.com>
+ <b85990db-41f4-41cc-ab5c-0b952becdde7@linux.intel.com> <CABQgh9FGS4aug9aRH4ddgwStpVpEAOKMmJ_aDHcdYrUR3eLSOg@mail.gmail.com>
+In-Reply-To: <CABQgh9FGS4aug9aRH4ddgwStpVpEAOKMmJ_aDHcdYrUR3eLSOg@mail.gmail.com>
+From: Zhangfei Gao <zhangfei.gao@linaro.org>
+Date: Fri, 14 Mar 2025 12:04:52 +0800
+X-Gm-Features: AQ5f1JpbGhPHF3BB0AZ3jd2ZvOtpiI9SVmgWjv3sWTyjDpPVVEZSzTxjIevp0G4
+Message-ID: <CABQgh9H=415-V3qfFBn4PuCyuHO5cO_i4vnPTuxBZ9bkSU+eXQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] iommu: Remove IOMMU_DEV_FEAT_SVA/_IOPF
+To: Baolu Lu <baolu.lu@linux.intel.com>, Robin Murphy <robin.murphy@arm.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Kevin Tian <kevin.tian@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Vinod Koul <vkoul@kernel.org>, Fenghua Yu <fenghuay@nvidia.com>, 
+	Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Aaron,
+On Thu, 13 Mar 2025 at 19:37, Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
+>
+> On Thu, 13 Mar 2025 at 19:20, Baolu Lu <baolu.lu@linux.intel.com> wrote:
+> >
+> > On 2025/3/13 18:57, Zhangfei Gao wrote:
+> > > On Thu, 13 Mar 2025 at 17:51, Zhangfei Gao<zhangfei.gao@linaro.org> wrote:
+> > >> Hi, Baolu
+> > >>
+> > >> On Thu, 13 Mar 2025 at 13:19, Lu Baolu<baolu.lu@linux.intel.com> wrote:
+> > >>> The new method for driver fault reporting support relies on the domain
+> > >>> to specify a iopf_handler. The driver should detect this and setup the
+> > >>> HW when fault capable domains are attached.
+> > >>>
+> > >>> Move SMMUv3 to use this method and have VT-D validate support during
+> > >>> attach so that all three fault capable drivers have a no-op FEAT_SVA and
+> > >>> _IOPF. Then remove them.
+> > >>>
+> > >>> This was initiated by Jason. I'm following up to remove FEAT_IOPF and
+> > >>> further clean up.
+> > >>>
+> > >>> The whole series is also available at github:
+> > >>> https://github.com/LuBaolu/intel-iommu/commits/iommu_no_feat-v4
+> > >> I got an issue on this branch.
+> > >>
+> > >> Linux 6.14-rc4 + iommu_no_feat-v2
+> > >> drivers/pci/quirks.c
+> > >> quirk_huawei_pcie_sva will set dma-can-stall first
+> > >> arm_smmu_probe_device will check dma-can-stall and set stall_enabled
+> > >> accordingly.
+> > > This working branch arm_smmu_probe_device is called from pci_bus_add_device
+> > > So pci_fixup_device is called first
+> > >
+> > > [ 1121.314405]  arm_smmu_probe_device+0x48/0x450
+> > > [ 1121.314410]  __iommu_probe_device+0xc4/0x3c8
+> > > [ 1121.314412]  iommu_probe_device+0x40/0x90
+> > > [ 1121.314414]  acpi_dma_configure_id+0xb4/0x100
+> > > [ 1121.314417]  pci_dma_configure+0xf8/0x108
+> > > [ 1121.314421]  really_probe+0x78/0x278
+> > > [ 1121.314425]  __driver_probe_device+0x80/0x140
+> > > [ 1121.314427]  driver_probe_device+0x48/0x130
+> > > [ 1121.314430]  __device_attach_driver+0xc0/0x108
+> > > [ 1121.314432]  bus_for_each_drv+0x8c/0xf8
+> > > [ 1121.314435]  __device_attach+0x104/0x1a0
+> > > [ 1121.314437]  device_attach+0x1c/0x30
+> > > [ 1121.314440]  pci_bus_add_device+0xb8/0x1f0
+> > > [ 1121.314442]  pci_iov_add_virtfn+0x2ac/0x300
+> > > [ 1121.314446]  sriov_enable+0x204/0x468
+> > > [ 1121.314447]  pci_enable_sriov+0x20/0x40
+> > >
+> > >
+> > >> This branch
+> > >> arm_smmu_probe_device happens first, when dma-can-stall = 0, so
+> > >> stall_enabled =0.
+> > >> Then drivers/pci/quirks.c: quirk_xxx happens
+> > > This not working branch: Linux 6.14-rc6 + iommu_no_feat-v4
+> > > arm_smmu_probe_device is called by pci_device_add
+> > > Then call pci_bus_add_device -> pci_fixup_device
+> > >
+> > >    215.072859]  arm_smmu_probe_device+0x48/0x450
+> > > [  215.072871]  __iommu_probe_device+0xc0/0x468
+> > > [  215.072875]  iommu_probe_device+0x40/0x90
+> > > [  215.072877]  iommu_bus_notifier+0x38/0x68
+> > > [  215.072879]  notifier_call_chain+0x80/0x148
+> > > [  215.072886]  blocking_notifier_call_chain+0x50/0x80
+> > > [  215.072889]  bus_notify+0x44/0x68
+> > > [  215.072896]  device_add+0x580/0x768
+> > > [  215.072898]  pci_device_add+0x1e8/0x568
+> > > [  215.072906]  pci_iov_add_virtfn+0x198/0x300
+> > > [  215.072910]  sriov_enable+0x204/0x468
+> > > [  215.072912]  pci_enable_sriov+0x20/0x40
+> > >
+> > > pci_iov_add_virtfn:
+> > > pci_device_add(virtfn, virtfn->bus);
+> > > pci_bus_add_device(virtfn); -> pci_fixup_device(pci_fixup_final, dev);
+> >
+> > This probably is not caused by this patch series. Can you please have a
+> > try with the next branch of iommu tree? Or the latest linux-next tree?
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git
+>
+>
+> Ok, will try.
+>
+> Though still not finding which patch caused the problem, will do more
+> investigation.
+>
+> The issue is arm_smmu_probe_device is changed
+> from
+> pci_bus_add_device(virtfn); -> pci_fixup_device(pci_fixup_final, dev);
+> to
+> pci_device_add(virtfn, virtfn->bus) ->  pci_fixup_device(pci_fixup_header, dev);
 
-On 3/13/2025 12:51 PM, Aaron Lu wrote:
-> If a task is migrated to a new cpu, it is possible this task is not
-> throttled but the new cfs_rq is throttled or vice vesa. Take care of
-> these situations in enqueue path.
-> 
-> Note that we can't handle this in migrate_task_rq_fair() because there,
-> the dst cpu's rq lock is not held and things like checking if the new
-> cfs_rq needs throttle can be racy.
-> 
-> Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
-> ---
->   kernel/sched/fair.c | 17 +++++++++++++++++
->   1 file changed, 17 insertions(+)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 4a95fe3785e43..9e036f18d73e6 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -7051,6 +7051,23 @@ enqueue_task_fair(struct rq *rq, struct
-> task_struct *p, int flags)
->   	assert_list_leaf_cfs_rq(rq);
-> 
->   	hrtick_update(rq);
-> +
-> +	if (!cfs_bandwidth_used())
-> +		return;
-> +
-> +	/*
-> +	 * This is for migrate_task_rq_fair(): the new_cpu's rq lock is not held
-> +	 * in migrate_task_rq_fair() so we have to do these things in enqueue
-> +	 * time when the dst cpu's rq lock is held. Doing this check in enqueue
-> +	 * time also takes care of newly woken up tasks, e.g. a task wakes up
-> +	 * into a throttled cfs_rq.
-> +	 *
-> +	 * It's possible the task has a throttle work added but this new cfs_rq
-> +	 * is not in throttled hierarchy but that's OK, throttle_cfs_rq_work()
-> +	 * will take care of it.
-> +	 */
-> +	if (throttled_hierarchy(cfs_rq_of(&p->se)))
-> +		task_throttle_setup_work(p);
+Update:
 
-Any reason we can't move this to somewhere towards the top?
-throttled_hierarchy() check should be cheap enough and we probably don't
-need the cfs_bandwidth_used() guarding check unless there are other
-concerns that I may have missed.
+This sequence change  is caused by
+bcb81ac6ae3c iommu: Get DT/ACPI parsing into the proper probe path
 
->   }
-> 
->   static void set_next_buddy(struct sched_entity *se);
+The probe is put in earlier so we have to make fixup earlier as well.
+DECLARE_PCI_FIXUP_FINAL -> DECLARE_PCI_FIXUP_HEADER
 
--- 
-Thanks and Regards,
-Prateek
+Thanks
 
+>
+> And the issue can be solved by
+> -DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_HUAWEI, 0xa250, quirk_huawei_pcie_sva);
+> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_HUAWEI, 0xa250, quirk_huawei_pcie_sva);
+>
+> Thanks
 
