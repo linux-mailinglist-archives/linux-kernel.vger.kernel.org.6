@@ -1,148 +1,230 @@
-Return-Path: <linux-kernel+bounces-562154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3045A61D94
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:06:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4151A61D98
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:07:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C10619C2382
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:07:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2E844209F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC5C1C8635;
-	Fri, 14 Mar 2025 21:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189342046AF;
+	Fri, 14 Mar 2025 21:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="DJi/IKUS"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mllpNJ2v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE71190676;
-	Fri, 14 Mar 2025 21:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F89B190676;
+	Fri, 14 Mar 2025 21:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741986408; cv=none; b=dE5fuIu5k/pZk3amf0aowFkNUQ2fszjcWCLzPgyNkVy8Orr5Xk3NS79HX+JKUCLsM18pDtUeVfqqEPKCFeotBZndZcUF6RIvia6V+dmaPI/A+6FbzuluJq85916JaoFddnVlqSfQiE90EKKz57f+BH4HSBClHG5CXI2kVYui1Ck=
+	t=1741986413; cv=none; b=satuQsh3Xw9tOP9nVg/WicQTWCq/cBuuaQ7imJJOviNjQ0UU/kA3y6YEfvVMToehi27VZZpwGNkh9QHZDUpAbMB2lSLU7cy0Fg7TAadESyjsl+FYAY/tdwEr0LQcdxDT7oH/frRimpQKYob31qMgXkBMFtAXKTInF2WSB3ZyLOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741986408; c=relaxed/simple;
-	bh=6LYyJEQSRLfRi3eWvEUXDA8dkKvwR9DDtj4F2tbzI8M=;
+	s=arc-20240116; t=1741986413; c=relaxed/simple;
+	bh=updmW668AXuEczJRzXxFtdkEvCU4OrjNSAp3qpvjLw4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JI8B/9v8eaTgJE30kLMSc1D41uBMVN5y7kIBnBMQyXMECbaGuO5VXP3R5guMolWLZXTLl8Yrscf6gT3Vwer4CpYENvOSFjVZjauqLXcQPSyT3d2KuSGiqqQwqpwkWYCmxOvpKSaW+DvInwNRS22OZR7RtyAfIiNX1lZcj+iva/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=DJi/IKUS; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 24C141C00B2; Fri, 14 Mar 2025 22:06:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1741986403;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=smPhwJATKEjWQ+pl7R6bsg4CgAkcIEX5UUZ9M/FhqZE=;
-	b=DJi/IKUSvjJ2MP//YCjTNZjs/ita0pUBnuUuS7aGK4JeC/seuTz+RW7jJro2VKTnBHsvpE
-	NMKSF3lW3eK/OR5z8bRq23Zin1mzdpQxO1mcGqi84VEktTeW5b+3zI1ZV8eJ5HdwtHrVy+
-	RICi0A+z73e+F+oj/RUvNljmne5pHIQ=
-Date: Fri, 14 Mar 2025 22:06:42 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: Armin Wolf <W_Armin@gmx.de>, hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com, bentiss@kernel.org,
-	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
-	lee@kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org,
-	onitake@gmail.com, cs@tuxedo.de,
-	platform-driver-x86@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v5 0/1] platform/x86/tuxedo: Add virtual LampArray for
- TUXEDO NB04 devices
-Message-ID: <Z9SaYi5sKOeKTvRA@duo.ucw.cz>
-References: <20250121225510.751444-1-wse@tuxedocomputers.com>
- <aa91e17f-0ea8-4645-a0f9-57c016e36a9e@gmx.de>
- <Z53f7VNIgUWWFn9l@duo.ucw.cz>
- <b69e2766-2238-4913-ae2d-21d8716f2eef@tuxedocomputers.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QAoEprK5pRTt3IXscKDk+jDJQWCw6NEK6G6Mpwn0G6VOVCE4BLCho7HmN36NviYT13u+iSKJ8znilNOqP1c7EUmQM0WI5BDeVZtVljy/rLyZdZrY5HP//0DgQ4SeIW0Y2I4QQypaN4lAnjHjFz+ZzeUdZefR2iYjfHdY7+P6ZAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mllpNJ2v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01900C4CEE3;
+	Fri, 14 Mar 2025 21:06:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741986413;
+	bh=updmW668AXuEczJRzXxFtdkEvCU4OrjNSAp3qpvjLw4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mllpNJ2vShm53XePYhANE9KP2D4263ZkCTgGDLtAm7AFn21OBMlK1F/dNkxUhUoAM
+	 mf80c3yVKPa9GP29CvxlKBUKkSHRggb1ciT/HolwQ/a4TktfQQ2aBweYsUCF8mU7ad
+	 jIgbER5NtY8oSUMWQmNbDQlhKZfhjyeYxtz0VbLDHegKY7dlrWDLuAsz9CQ/kmqxPK
+	 lyDdyxynK7HtA/JZPnlUrCAtFmEZ/iojSonoH+9hM+IquUbweStcvNr5oR/POr7te1
+	 0oj5dQidA4o4fwcw0lD6fQ/a9CtRtcH47crB4M+bXH6C6VGlUw9SpRo22zeT78Hwad
+	 Vpbw40GJ/8tVA==
+Date: Fri, 14 Mar 2025 16:06:52 -0500
+From: Rob Herring <robh@kernel.org>
+To: Maud Spierings <maudspierings@gocontroll.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Sam Ravnborg <sam@ravnborg.org>, Liu Ying <victor.liu@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Mark Brown <broonie@kernel.org>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH v2 03/12] dt-bindings: connector: Add the GOcontroll
+ Moduline module slot bindings
+Message-ID: <20250314210652.GA2300828-robh@kernel.org>
+References: <20250226-initial_display-v2-0-23fafa130817@gocontroll.com>
+ <20250226-initial_display-v2-3-23fafa130817@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="75ovjfMpliKM0pqD"
-Content-Disposition: inline
-In-Reply-To: <b69e2766-2238-4913-ae2d-21d8716f2eef@tuxedocomputers.com>
-
-
---75ovjfMpliKM0pqD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250226-initial_display-v2-3-23fafa130817@gocontroll.com>
 
-Hi!
+On Wed, Feb 26, 2025 at 03:19:14PM +0100, Maud Spierings wrote:
+> Add the bindings that describe a GOcontroll Moduline module slot. This
+> slot provides all the interfaces to interface with a Moduline compatible
+> IO module. The actual module is not reasonable to describe as it can be
+> swapped at will, with this connector the driver will be able to probe
+> for a module on boot.
+> 
+> The connector consists of 2 parts, one part for interfacing with the SoC
+> and main board, the other part has 13 IO channels for the module to
+> interact with the outside world. The functions of these IO channels are
+> determined by the type of module in the slot. The IO on the SoC side is
+> as follows:
+> 
+>  - a 3v3 supply, this tends to be the logic level of the module and its
+>    microcontroller
+>  - a 5v0 supply, this can be used to power low power peripherals on the
+>    module
+>  - a 6v-8v supply, this can be used for high power peripherals on the
+>    module
+>  - a 6v-30v supply, this tends to be a dirty supply that comes from the
+>    controller supply after some circuit protection, or is the same as
+>    the 6v-8v supply.
+>  - an SPI bus which carries the communication between the SoC and the
+>    microcontroller on the module.
+>  - an I2C bus shared between the SoC and all module slots which can
+>    carry direct module-to-module communication.
+>  - a reset line
+>  - an interrupt line that indicates a clear to transmit signal
+>  - a sync line shared between the SoC and all module slots which could
+>    be used to synchronize modules for time sensitive IO spread across
+>    modules.
+>  - a SMBus alert line that is shared between the modules but is not
+>    connected to the SoC so that is ignored.
+> 
+> A slot-number property is used to identify the physical location of a
+> module slot. Without it, it would be impossible to identify which module
+> to control if there are multiple of one type, to address the desired IO.
 
-> > Comments from previous review were not addressed.
-> >=20
-> > Most importantly, this is not a way to do kernel interface. We want
-> > reasonable interface that can be documented and modified as needed. We
-> > want to pass /dev/input to userspace, not raw HID. This is not ok.
->=20
-> There are already 2 endless discussions about this:
->=20
-> https://lore.kernel.org/all/1fb08a74-62c7-4d0c-ba5d-648e23082dcb@tuxedoco=
-mputers.com/
->=20
-> https://lore.kernel.org/all/73c36418-34d6-46cf-9f10-6ca5e569274f@tuxedoco=
-mputers.com/
->=20
-> And a shorter one before that:
->=20
-> https://lore.kernel.org/all/30cbbf20-08cf-a69b-4f58-359a9802e86f@tuxedoco=
-mputers.com/
->=20
-> The brief:
->=20
-> - LampArray is a standard that will hit the Linux world anyway.
+Is that for a person to identify slots or s/w? If just a person, we 
+generally use 'label' as in a sticker on the connector. If s/w, we 
+generally try to avoid made up indexing in DT though there are some 
+exceptions.
 
-Maybe. Still have to see device implementing that. LampArray will
-still need /sys/class/leds for compatibility. LampArray still does not
-solve effects. More importantly, it is not okay to say "kernel
-interface is specified by that crazy document from 3rd party".
+> 
+> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> ---
+>  .../connector/gocontroll,moduline-module-slot.yaml | 88 ++++++++++++++++++++++
+>  1 file changed, 88 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/connector/gocontroll,moduline-module-slot.yaml b/Documentation/devicetree/bindings/connector/gocontroll,moduline-module-slot.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..a16ae2762d160180d5b163e20f5294235e65053b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/connector/gocontroll,moduline-module-slot.yaml
+> @@ -0,0 +1,88 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/connector/gocontroll,moduline-module-slot.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: GOcontroll Moduline Module slot
+> +
+> +maintainers:
+> +  - Maud Spierings <maudspierings@gocontroll.com>
+> +
+> +description:
+> +  The GOcontroll Moduline module slot represents a connector that fullfills the
+> +  Moduline slot specification, and can thus house any IO module that is also
+> +  built to this spec.
+> +
+> +properties:
+> +  compatible:
+> +    const: gocontroll,moduline-module-slot
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    description: indicates readiness, high means busy.
+> +    maxItems: 1
+> +  reset-gpios:
+> +    description: resets the module, active low.
+> +    maxItems: 1
+> +  sync-gpios:
+> +    description: sync line between all module slots.
+> +    maxItems: 1
+> +
+> +  vdd-supply:
+> +    description: low power 3v3 supply generally for the microcontroller.
+> +  vddp-supply:
+> +    description: medium power 5v0 supply for on module low power peripherals.
+> +  vddhpp-supply:
+> +    description: high power 6v-8v supply for on module high power peripherals.
+> +  power-supply:
+> +    description: high power 6v-30v supply for high power module circuits.
+> +
+> +  i2c-bus:
+> +    description: i2c bus shared between module slots and the SoC
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +
+> +  slot-number:
+> +    description:
+> +      The number of the module slot representing the location of on the pcb.
+> +      This enables access to the modules based on slot location.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +  spi-max-frequency: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reset-gpios
+> +  - interrupts
+> +  - sync-gpios
+> +  - i2c-bus
+> +  - slot-number
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        connector@0 {
 
-> - The alternative proposal via a led matrix does not even really fit
-> keyboards, and does not at all fit all other device types.
+I find this being a SPI device a bit strange. Is there a defined SPI 
+device that every slot is going to have? Or the connector has SPI 
+interface and *anything* could be attached on it?
 
-We are solving keyboards, not the other device types. The other devices
-can likely be handled by existing /sys/class/leds interfaces.
-
-> Hans and Benjamin already agree with me that LampArray is the way to go.
->=20
-> So after over 2 years can I please have a final decision on how to implem=
-ent this?
-
-For final decisions, you'd have to talk to Linus.
-
-(And sorry for the delay, btw).
-
-If you want to move this forward, place a driver in
-drivers/leds/keyboard. Implement /sys/class/leds interface, but make
-sure interface is clearly separated from the code talking to the
-firmware. Then we can review that, perhaps merge, so users will have
-something, and decide what interface to use for per-key control.
-
-LampArray is no-go. Other options are open.
-
-Best regards,
-								Pavel
---=20
-People of Russia, stop Putin before his war on Ukraine escalates.
-
---75ovjfMpliKM0pqD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ9SaYgAKCRAw5/Bqldv6
-8iwJAJ9mnjTAm2a5BD6DI5p8cmuCHFDsmgCfQXGzc5tidZGm75RqL1iGB0UMvPw=
-=uU6V
------END PGP SIGNATURE-----
-
---75ovjfMpliKM0pqD--
+> +            reg = <0>;
+> +            compatible = "gocontroll,moduline-module-slot";
+> +            reset-gpios = <&gpio5 10 GPIO_ACTIVE_LOW>;
+> +            sync-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
+> +            interrupt-parent = <&gpio4>;
+> +            interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
+> +            vdd-supply = <&reg_3v3_per>;
+> +            vddp-supply = <&reg_5v0>;
+> +            vddhpp-supply = <&reg_6v4>;
+> +            i2c-bus = <&i2c2>;
+> +            slot-number = <1>;
+> +        };
+> +    };
+> 
+> -- 
+> 2.48.1
+> 
 
