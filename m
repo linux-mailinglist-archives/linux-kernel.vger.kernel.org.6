@@ -1,121 +1,119 @@
-Return-Path: <linux-kernel+bounces-561061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83011A60D1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:22:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C8AA60D22
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:23:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B2573B302D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:22:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E834A3B91A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE7C1DE4D6;
-	Fri, 14 Mar 2025 09:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9838B1EFFA9;
+	Fri, 14 Mar 2025 09:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gBGuYlJ0"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ErztoXTa"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAD01EDA17
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C21E1802AB
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741944122; cv=none; b=V1MttnYzpL06zH/lMeqcC2lCpm/hm5TWy+gSshmNQbAtWadGYrk5InBHmYj5f8U/yQ6JnOhumMB+a3EhpteI9GnEZ8q90S1UseuC8FsHgcySDn4RJ3toED/EoMCxPqrDtMDrs6q49ON2WIIO3Yq5bnO6n1HjnRV4C+HVvxVP7nY=
+	t=1741944135; cv=none; b=iZr3Idk/pd1k+2tYMhKcgtKWvgKbeA9a5jGh2GhKwP7AuLAwTF67LOjsfNpHSoYYSKsQWOsi+Lv2cLbfvGLfsjKLG6APXweEB6iBBw7FjVv3U5MkTBrPyGkNym83VhThLgqCD4jo5jV2aE1F0qlPIAB3vGQ0hXqbIequIj+28ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741944122; c=relaxed/simple;
-	bh=WzAIVsamvsqiiRqt4lty9wTGIar3adKdVJo/UWq6ZJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uwhLXFpWna0TBRaJ2PY41K4DsEYEr8lKN0gFNCPD0B4L4NKSnsD9C4/xOogx8XI3uJfnt9xqhBYPuJT96yxfTmczNMbViRO9sea6G1KGY6q4VifMov6e3lbZlqBwahhQ+4dWmu7UB18qXwb52dU8sc0dkxLY1Gs/sW4XFih+Gd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gBGuYlJ0; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3912baafc58so1634529f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 02:22:00 -0700 (PDT)
+	s=arc-20240116; t=1741944135; c=relaxed/simple;
+	bh=wSLy/tKZRMSxZhgOPYP+lRHCiDRNfSCHCfpnD1lPsyE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YoqDwDgx2g8StXxhW+rbXn/HEIfynsfn9GL/oHFQ8YaSZzieGUPXFGWB3CBlruybaiVG7GL2UwpKIsoECFkHx57nEtJq2utHk3m5ps5zLzSrAAzRGjmXaiJ9GEcssyAqpoUCMkw6COD4AmJQrhCMvwvbNihQkBUIevfiX/6qfTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ErztoXTa; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so12328085e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 02:22:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741944119; x=1742548919; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QJrUGm+I0VeL1o2Iw4igeaLz8LtSBUgkIJ2qa7hBGGQ=;
-        b=gBGuYlJ0EfCM9PahybbNye58pgBqOtls0E1P9Qo6NDpmhNiSOl5LmXdbGd34gM0QhH
-         13w4WG2tEKlOp//LTRI0MePFeQ/qonZnE7zL1vuEJC6UffwBPbx1spRHQi8a5u94X0AV
-         +CFahoWyNlOsQaA2wqDbKyQ6Gt+mLfWRgt8yzeDf5b/N+c+XixAcQtLkO6Nw/DNygv2K
-         /XhSj97XZcXLe8/BGZKMtP+kSrLdZ/wc9DbeX6EW+STWKF5G1m28G1FATUWiU4+E9Mtu
-         5xFcIuXO7G0BVdGNWEB3jNXRZreAphSAly1c97S4s92juI3+j6Et0zLBRxdYLeXIyoIo
-         cu3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741944119; x=1742548919;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1741944132; x=1742548932; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QJrUGm+I0VeL1o2Iw4igeaLz8LtSBUgkIJ2qa7hBGGQ=;
-        b=byXz9yuzvsfQz4e34zk/3txxslSK1Vab66O2+mS9L3tdZFi9Zb6t4efNai9U3zL8ux
-         XGVmnu/FHGYqW4sgL8s5J1IIE6sTnNMxgiM1qM80v991r+2VvOdWK/eGn8iuyaNM3RJm
-         dUGMuQ5u6aDTI6Cwq6AmtRRSrULPUL+6VJ8s1NQRkUw0KTGsU4a9AZXX2PYcOhJPhSfo
-         MTO5nRvq/SyRVrkP5UXOZ1m/XpUqMFSQ3YQpMOKS5LSCaLfFVqv2xPkkQbJVUywSIAZD
-         K3nhLuL7DWv87EqFb4hX0RuwszcNl74zYNtbAL0rh//94bdnuaU+W45EK/9nXRwI+nx9
-         HW5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVVv8bZ7wREZgFFK5aJ2nY5apLW2+nB8BkWOEYRKVL9FjyqBIjt6w0xxxgiJJqbIaSJ/OmneNbXcTPiLl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzObecGVOV8VFuWFZN7nfgdzhNU8ijTLfYAN2BMQpb1fggoTZnU
-	2/4bchXIu+qwPPJUkZllO/bw1d2Z1UOLeaP2GPrMCRkJZRXPaf7zXsn6FsLo9MM=
-X-Gm-Gg: ASbGnctlt4q+9KDpyv8OBdW092n8VmfxvniFTKnrjlnMs7weIutDCPzihMwIwg3rgDg
-	4RHzWSjKY1P85VbHfH0EqXs/4GF0f+MlXG5EuJyzuWITRWTgIXEF7FuQxTQDz05PR9rcaiNqOLr
-	dprgCf2M5nJTwpKdyNPo2q8XRzxHkZhX78mfIzybiUT0JJnFq0fE5UHe+NRTCMtcPT1Zti6+ZHK
-	8qBA1EwyDKDBxBZI/erxSoepcDpFE7ayKQUAU3JnsIfr/VJwaVqrBCEsiUn9eSL1zvfvIcjQkCT
-	A7ueSje1gMSDPaFn131doZGtqDODSGikhCQxK9+ZlPK7+eKK0A==
-X-Google-Smtp-Source: AGHT+IFFPCKVtvQ6CGKlDDaxAhRZu9swSbTZM4Im7uWc3KAoJGx39LZyY5gIccrMjFgAH1WXoacnJA==
-X-Received: by 2002:a5d:598c:0:b0:391:1473:336a with SMTP id ffacd0b85a97d-3971f4119f0mr1912619f8f.36.1741944118769;
-        Fri, 14 Mar 2025 02:21:58 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395cb3189a0sm4996922f8f.67.2025.03.14.02.21.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 02:21:58 -0700 (PDT)
-Date: Fri, 14 Mar 2025 12:21:54 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: zfigura@codeweavers.com, shuah@kernel.org, wine-devel@winehq.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/4] selftests: ntsync: fix the wrong condition in
- wake_all
-Message-ID: <1111e313-18b5-42c3-9e53-ba46c3826fc6@stanley.mountain>
-References: <20250314071454.201697-1-suhui@nfschina.com>
- <20250314071454.201697-2-suhui@nfschina.com>
+        bh=Q+KUI4Lx73PJKjwhnAttQQrPPQ9GUBTUAKyve2K4V2c=;
+        b=ErztoXTa0CXzHYmlFXmwVIZeYSVv7c/q5cdi80Re4K4o/pOn5akj3PpTSCRfxw7B9I
+         rE6UN2F/zdyq6bhsuotYz5fO8BWHfB2Xh9FP2cZaQQU8HCnTXy+moG/0PtVElSL3ajzP
+         a15elSx6S9G6A4NwFMm9PvctX16Fd2sCsdQSREtf6jBqxjB352Q86pmYXJVWjTxinSpM
+         sgJcV+8m62bQlEmaFeHmI6+tp17jeoAu6OC92sWTAaAgHuG+LShAFJNc/XjwtGA0o63v
+         ARCz1lvAKc6FtX16RGnfkgXEDxOeZMGse+8mnm6zqBAYLFZfTVSEvoEHfczCkIpBQF6+
+         zq6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741944132; x=1742548932;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q+KUI4Lx73PJKjwhnAttQQrPPQ9GUBTUAKyve2K4V2c=;
+        b=TnV5dvPm1eHkt8yamm1KPY5JRa/QYRdN32NVaZjsuq77rD6+YJQYCAKrcIqrZ86xIu
+         w5Gi7Dlb4Bg+ASNgj1dpZnzejNKbRAUWVo3nhELKyy8+STC9MDi0inhZwwJs5rCendIg
+         eLQLBQ65kUjk5AAhIZKs6y2gzqp8MjnWbWmOR6fgtqHTiyeKF8pDVM4aygFYTzibr15X
+         YDjPUQOYE6KuR78UwBIsS5i67N6Iv+8PS5t++IxGfSUNNXoDKaHXLmpoZ92y1I7ctNoj
+         nsC4iBy6/aNOIG2t4YTu4jAEC5S6lP4hp5TSmgP903yxfTqPMluOEPBC5RIXULDc6m5S
+         TRbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXl/bgg3j9Q9a7U6QlGBIU6l3ET5reyls5CWkIm+UNKip7FSio4qfvV56WJW2adhNOTNCMFOICJMG8Ff3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQsgX4nyvXwxeYqhux3nrU1ntoyAbACzmwtp3jksqdyZwviqcx
+	PTcShhwtN8lr9JZxP3dlXOo0hp1jrJbOiFueBvSZ31NC9Wi9h9Y1f1IIlE0gAukg0VlkOi6exAd
+	BYCziy7iaqQNtABqNy8/JijjAHHogcqnHn7EY
+X-Gm-Gg: ASbGncuiK1nihxVB+tGB61Gjp3IAOqxJ66Q2WC8yWj2aEcHMgF0wdT63/zzdlSvrNt8
+	Bk0GXRBbREMZgekl3bnel9kTLDon+2UsSMa0VNLkUYr0/KUs+QlVYA2AmMVMEbLWrKwOXimZ5/p
+	7mDcm9ipB+3xsTE7JUXZsr4i0lu5qJCLTwgfOCO0fbP4RU0TwCDfEMswUs
+X-Google-Smtp-Source: AGHT+IFl2389eiJnSvgHMzd88pzFUgRlQu1y96idOrhkkY6/IW7t5kMp6T08rutu3B31Z91o7d44iA6hdHEiErEfyWc=
+X-Received: by 2002:a05:6000:188f:b0:391:39fb:59b4 with SMTP id
+ ffacd0b85a97d-3971e2ae150mr2211005f8f.27.1741944131623; Fri, 14 Mar 2025
+ 02:22:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250314071454.201697-2-suhui@nfschina.com>
+References: <20250313084525.773620-1-kunwu.chan@linux.dev> <Z9K3vokYu5osMCwh@google.com>
+ <6c874a4f-439e-4ab2-807d-d0f59b9fe569@linux.dev>
+In-Reply-To: <6c874a4f-439e-4ab2-807d-d0f59b9fe569@linux.dev>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 14 Mar 2025 10:21:59 +0100
+X-Gm-Features: AQ5f1JpGzEAx4sBwjKxQGUxQi3t0tVfhh5Eh8mkLZ_0xoZt0Q9ivNhpJmJHKzV8
+Message-ID: <CAH5fLgjErD9r8h_tjekZ+sNNDmkU3J3kcSmCG+Mew+-6zQq8tA@mail.gmail.com>
+Subject: Re: [PATCH] rust: file: optimize rust symbol generation for FileDescriptorReservation
+To: Kunwu Chan <kunwu.chan@linux.dev>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	a.hindborg@kernel.org, tmgross@umich.edu, dakr@kernel.org, nathan@kernel.org, 
+	nick.desaulniers+lkml@gmail.com, morbo@google.com, justinstitt@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, Kunwu Chan <kunwu.chan@hotmail.com>, 
+	Grace Deng <Grace.Deng006@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 14, 2025 at 03:14:51PM +0800, Su Hui wrote:
-> When  'manual=false' and  'signaled=true', then expected value when using
-> NTSYNC_IOC_CREATE_EVENT should be greater than zero. Fix this typo error.
-> 
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  tools/testing/selftests/drivers/ntsync/ntsync.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/drivers/ntsync/ntsync.c b/tools/testing/selftests/drivers/ntsync/ntsync.c
-> index 3aad311574c4..bfb6fad653d0 100644
-> --- a/tools/testing/selftests/drivers/ntsync/ntsync.c
-> +++ b/tools/testing/selftests/drivers/ntsync/ntsync.c
-> @@ -968,7 +968,7 @@ TEST(wake_all)
->  	auto_event_args.manual = false;
->  	auto_event_args.signaled = true;
->  	objs[3] = ioctl(fd, NTSYNC_IOC_CREATE_EVENT, &auto_event_args);
-> -	EXPECT_EQ(0, objs[3]);
-> +	EXPECT_LE(0, objs[3]);
+On Fri, Mar 14, 2025 at 3:34=E2=80=AFAM Kunwu Chan <kunwu.chan@linux.dev> w=
+rote:
+> > * I think it is easier to read the symbols if you list each sybmol on
+> >    one line like this:
+> >
+> > ffff8000805b6ef0 T <kernel::fs::file::FileDescriptorReservation>::fd_in=
+stall
+> > ffff8000805b6e60 T <kernel::fs::file::FileDescriptorReservation>::get_u=
+nused_fd_flags
+> > ffff8000805b6f08 T <kernel::fs::file::FileDescriptorReservation as core=
+::ops::drop::Drop>::drop
+>
+> If in one line, checkpatch.pl will report a warning:
+>
+> WARNING:Prefer a maximum 75 chars per line (possible unwrapped commit
+> description?)
+>
+> If no need to  bother with the warning, I'll change it to one line in v2.
 
-It's kind of weird how these macros put the constant on the left.
-It returns an "fd" on success.  So this look reasonable.  It probably
-won't return the zero fd so we could probably check EXPECT_LT()?
+You could do this:
+... T <kernel::fs::file::FileDescriptorReservation>::fd_install
+but if it's still too long I'd just ignore it.
 
-regards,
-dan carpenter
-
+Alice
 
