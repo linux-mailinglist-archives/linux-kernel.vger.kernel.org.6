@@ -1,138 +1,70 @@
-Return-Path: <linux-kernel+bounces-561106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66D38A60DA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:43:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C4D0A60D9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:43:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE61A19C6AF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:43:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D01CF881CE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A771F3BBC;
-	Fri, 14 Mar 2025 09:43:06 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EEF1F1523;
+	Fri, 14 Mar 2025 09:43:01 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF63B1F3B85
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08591F0E36;
+	Fri, 14 Mar 2025 09:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741945385; cv=none; b=Wf8Y6JZemvRDGt2ve34Vn/Md6mPHXKL0aqFV/BM9E37ThxE/VpL1rPVXGURbsgDmh3c3cfnSkdRJlS4ba+OmwSD4n/n4ZYVUu77Mz7LiU/AqHou85OBb57jQJPTFOZhWfZ/Z6ZFB3Ckh5A1Oz2tzYSGKfxzYp7PXzJiZlWZUkho=
+	t=1741945380; cv=none; b=ewzjVmZ2L4rFMlxvUmlg/6zngT6Jv0gWzfcifL4q5C58Sx7KLeAi+yFDAzJBMpg0HVlj4AvDWh6tirYRQszudC7zZ2ZbqEhVHkHEueTghE/VocvZ+CqTkWqOZ3PRPm7ArOU1on9rih3Wm/W7jin9PA9j0EZLrJ2+NvQQboNvGZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741945385; c=relaxed/simple;
-	bh=Qprz9wpUySPUA48GgPU3RCPs42MHXerLEut3c0IV2cI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KsKJsEBPbwoW0HFdMIiRPWTcvVAca0Ekzn6br8An6vTcQ6JvZTEK0kAenwauInewizAK4VTvNbHtekjXRRPecXRtTUYsuh0u3dQR7qyOSV6W4Jrm6rmILTvrr8VldQcslpv7Rs92wczF3VNiCFegRCPPjDFVVTt8jdMQH9C1iAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tt1ZA-00071c-Tj; Fri, 14 Mar 2025 10:42:56 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tt1ZA-005gDi-1X;
-	Fri, 14 Mar 2025 10:42:56 +0100
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 278AE3DB8E4;
-	Fri, 14 Mar 2025 09:42:56 +0000 (UTC)
-Date: Fri, 14 Mar 2025 10:42:55 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: haibo.chen@nxp.com
-Cc: mailhol.vincent@wanadoo.fr, ciprianmarian.costea@oss.nxp.com, 
-	han.xu@nxp.com, u.kleine-koenig@baylibre.com, linux-can@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH 1/2] can: flexcan: only set CAN_STATE_ERROR_ACTIVE when
- resume has no issue
-Message-ID: <20250314-married-polar-elephant-b15594-mkl@pengutronix.de>
-References: <20250306065921.2329517-1-haibo.chen@nxp.com>
- <20250314-invaluable-economic-caterpillar-80541a-mkl@pengutronix.de>
+	s=arc-20240116; t=1741945380; c=relaxed/simple;
+	bh=pbuFAEq3Ui4gAVsdTa4CTZ9yK5iev535hiEefZtJf3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fG6B9aM0OFmKagqtnzzsTGA8drAjjTt8UhrYwtRgnEQsIqHkpITeR5UE0V6vo0LzvRtV2E0NdNi5+bbY4DHzjX/++mQEkiNzKQC79UCsRBvtPWeG1Rt7uhGn7rf7XbGX/tMg+zZhrC/jqLD5jsWCPgNtIgrdMlKbXePrRu+Hgc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64954C4CEE3;
+	Fri, 14 Mar 2025 09:42:59 +0000 (UTC)
+Date: Fri, 14 Mar 2025 05:42:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] tracing: Fix a compilation error without
+ CONFIG_MODULES
+Message-ID: <20250314054257.3218dc35@batman.local.home>
+In-Reply-To: <174188321162.3845006.12665585959241736399.stgit@mhiramat.tok.corp.google.com>
+References: <174188320269.3845006.11920186078507571954.stgit@mhiramat.tok.corp.google.com>
+	<174188321162.3845006.12665585959241736399.stgit@mhiramat.tok.corp.google.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oogkrhl672fkkr2e"
-Content-Disposition: inline
-In-Reply-To: <20250314-invaluable-economic-caterpillar-80541a-mkl@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Fri, 14 Mar 2025 01:26:51 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 
---oogkrhl672fkkr2e
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/2] can: flexcan: only set CAN_STATE_ERROR_ACTIVE when
- resume has no issue
-MIME-Version: 1.0
+> @@ -6040,9 +6042,10 @@ static void update_last_data(struct trace_array *tr)
+>  		memset(tscratch->entries, 0,
+>  		       flex_array_size(tscratch, entries, tscratch->nr_entries));
+>  		tscratch->nr_entries = 0;
+> -
+> +#ifdef CONFIG_MODULES
+>  		guard(mutex)(&scratch_mutex);
+>  		module_for_each_mod(save_mod, tr);
+> +#endif
+>  	}
 
-On 14.03.2025 10:13:08, Marc Kleine-Budde wrote:
-> On 06.03.2025 14:59:20, haibo.chen@nxp.com wrote:
-> > From: Haibo Chen <haibo.chen@nxp.com>
-> >
-> > Only set CAN state to CAN_STATE_ERROR_ACTIVE when resume process has
-> > no issue, otherwise keep in CAN_STATE_SLEEPING as suspend did.
->
-> When looking at the code, it makes no sense to set the can.state to
-> CAN_STATE_ERROR_ACTIVE, if the device isn't up.
->
-> The suspend function doesn't look correct, either. I'll send a v3.
+Hmm, I think the real fix for this would be to make
+module_for_each_mod() a nop when modules are not configured.
 
-After a suspend/resume cycle on a down interface, it will come up as
-ERROR-ACTIVE.
-
-| $ ip -details -s -s a s dev flexcan0
-| 3: flexcan0: <NOARP,ECHO> mtu 16 qdisc pfifo_fast state DOWN group defaul=
-t qlen 10
-|     link/can  promiscuity 0 allmulti 0 minmtu 0 maxmtu 0
-|     can state STOPPED (berr-counter tx 0 rx 0) restart-ms 1000
-|=20
-| $ sudo systemctl suspend
-|=20
-| $ ip -details -s -s a s dev flexcan0
-| 3: flexcan0: <NOARP,ECHO> mtu 16 qdisc pfifo_fast state DOWN group defaul=
-t qlen 10
-|     link/can  promiscuity 0 allmulti 0 minmtu 0 maxmtu 0
-|     can state ERROR-ACTIVE (berr-counter tx 0 rx 0) restart-ms 1000
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---oogkrhl672fkkr2e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfT+hwACgkQDHRl3/mQ
-kZxEeggAmJe/1BSs7Ia4z0JQDnv+yNvTHRHBzW/nu0LIxl8GYJiNvdXrfqaHtyRW
-3KxMQgn2UHGnBwsGHQX0rVoCVZ/n3i5QMNTnXH7o6XFF80UgGnLL32nR/vsOUPs6
-uN7aoJL+U7SChWQvNQOiP2ojt2EVjN8MgV4URjX1nqzV8PrrUuwkX3EcIlvhOlde
-yg9UFKNApmwfqZBfRw0UJz9cfil4+HU1E3LOKN5qNvT1Dn1bd7GvWVGZdaENSxiA
-aVc90fDYdITbp5Z3iK7hfjKhJqB4X+11uP2EBjonEjKFuE4DekHIaNW0TcIeRUrz
-xOIkAVkL0D+/EE8FO6kuAL99RtW6tQ==
-=9m1P
------END PGP SIGNATURE-----
-
---oogkrhl672fkkr2e--
+-- Steve
 
