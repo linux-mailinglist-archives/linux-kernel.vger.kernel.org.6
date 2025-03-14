@@ -1,367 +1,128 @@
-Return-Path: <linux-kernel+bounces-560850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17C3AA60A27
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:38:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4963A60A29
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:40:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CC8C188BB96
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:38:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E29D16E732
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF8318A922;
-	Fri, 14 Mar 2025 07:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3990A18892D;
+	Fri, 14 Mar 2025 07:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="JAfWBBAP"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="slrqn5rS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A73416BE17
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9005C158870
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741937895; cv=none; b=jkXBtaablsro7yZ3Kfw3FIDt1ZgU1a/TAJhZbWnEC3NfU90J3nn3A2E+CRUQcQchOVh0MDqq6qB4rQa/nhdV6pGNRUvVgk6YYcK7Bm+OrAUFpdCw1ak0f1+a0Ry1WBdV721dCU961oJsoHet4Gq1aX+od5v6cbSwfTybAj+yA7M=
+	t=1741938039; cv=none; b=SLPi5xoeMMSLuBbBnefCDNAn37iSkDrqX+rVhMoJ4rnlfy/6C1KTCXTQYOPt9c+p4/YdFOYP2ohX7w1Jkbgz9m7df1qZh1Z0CIGcj/2y9tx4U3PqM9Jfa88MgDXXmkSQeMbk4rtUP95R/nj7xVSPp2ZEzCW/ND3xckHgLJcOukg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741937895; c=relaxed/simple;
-	bh=06qpn+VXc/7DV39BF58QleNxqzv6HoU8lFClzZLzhPU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NrZo1UfbJ1Vym+XxXtWg1ZRIFKWPk2IkJWS1S6qGWgdFbUVFqNaDj3aIosP94oSwhVMA5TWuZJeFko0e38oLpx71wdRhzapqSCJC3cvwVK8Sq9gaTY94LCoEij9iOZDoVE3GgdZJib9USJ77GrYYQ8VDSsRnDq3PRfMPjQGlr30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=JAfWBBAP; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3d4436ba324so13385665ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 00:38:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1741937892; x=1742542692; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6P83z22nVsy0TdwN/y1tzBRhznwCiNekdo216cawsLo=;
-        b=JAfWBBAPHQnjjILhVo7wiOsqh3MCrHPzfCRfQbgbne8adWijl+qt5Rgz361PzYOA07
-         ls0ntB5kDP5ZFUwlQLlr0Zs9KCXWVNhksSDky5X2uHwvYi584+/7fK72FXMRL085qPEV
-         A+javSvC6b2QQmO9gGuqZb3nnpwckT+qJBfmvHErjFX/GSjzvxV1lB28uw5DqytkXKC3
-         vSk7fJwy7kt20upFk5saWzAQwTfyyeJF9ImNkKSPNzIy1lx0QMSRbX5DzZhiDk6AAYPD
-         9/mkjJnBdSvcSrec7Wqfa09ChUu19xen16Obr4U9hNNWYNme9ZdDAB1cSIkmKj3sGtfD
-         mXog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741937892; x=1742542692;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6P83z22nVsy0TdwN/y1tzBRhznwCiNekdo216cawsLo=;
-        b=RIJ3Xgf0WI3hafIW2UXp0N/9OEG7xwFwEVaW6XHsMqiNJIvsOhaOAZel0fqyI4NbH+
-         DptHYsKYHSOTc64Qj5Af6js4cgu3znI/1wXRl4CSEvgtetP75XZAwSUJlzr9VBAXfh6K
-         GDbFc0yj8NiBiHvVLityoNRFs5UDwCLobAiknigNG6ukMtOGOaeE84Di2TRge0gAhsB0
-         TtbIKydufX3OoIMlvUkGiFTlJ16FvfdimgQFEDDsgtkju9Srt1cMjW9xHtnrMWu2eRDK
-         QLih50+VERcDugmb2TD/Tm1xmTqztEjQgLvYgdGkC1eDHQbY4OyJpOr8821YoUIprz35
-         GuSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtrwsOiKWxyT27fZhbhsuJlPY9WUvtb33hniF8j/3KPgIPTilFADUi826vRLgkUIwy5EUEKCiB6qZ4BwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkYNaEt3witRr6NGm7yj6fcJm6RA5ssmX/PH6nZ9JelGJtrzXv
-	tT2KphB6GknK52vWSIyt0u0FbnzkC0iBB9yC8b75SIPseXB82cFzE+kp7kJthYDT2GWJGQnKFfb
-	pHmJbj73xwZeeSp2mb3NLqrY1tudNhSoMLUbBrQ==
-X-Gm-Gg: ASbGncvav0yFiQVQumK2gzAuZrIiah/D2vKIdbEYe1HgkmFXBRU8zfJzFSWK2J3bjXr
-	7+eCnUGskH1OWhaw3mWU93UZFATy7stZ+RwWn/JLq+SM/ikAcsMLJFq4I+xoyQTeI51hKnyPRZ9
-	TIdkn/zqQ4D0EvbbdCm92sBwop1TiEFgTBzHTck7k=
-X-Google-Smtp-Source: AGHT+IFyvkT12+i013M0vxzjGYoHvGKmiPNTdSQO7eiKOWYYyKKOPLHni3BWX5f++FKmCcCNeYHl2rGHeIQykLNckAU=
-X-Received: by 2002:a05:6e02:1aa8:b0:3d3:f4fc:a291 with SMTP id
- e9e14a558f8ab-3d483a8dc2amr13220485ab.19.1741937892021; Fri, 14 Mar 2025
- 00:38:12 -0700 (PDT)
+	s=arc-20240116; t=1741938039; c=relaxed/simple;
+	bh=cZHObQyc4WIrTAFoYw+ZBLwnZMrRJxIHZxIxht/mE34=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=fSb7xuOEVEMfA1ktXKJZQD0iCcxpTNLTWhCUiy6ccLNH/9dKRn7a4Wr+owHa84EMxeUTSumgyY3xFyHTUIcY2gmrk8S3A13Jfqtzkm2Q4BzB/9EFyMunpXNdput1/UyGu3dNS3wJVKFxKZIOMCmYVC+5fVpztb8Wr8QbG3z+3Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=slrqn5rS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01C2CC4CEE3;
+	Fri, 14 Mar 2025 07:40:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741938039;
+	bh=cZHObQyc4WIrTAFoYw+ZBLwnZMrRJxIHZxIxht/mE34=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=slrqn5rSprDoCRW37ehneMOSF/4zeDbuA/8+MwVmT03/JpailkBFrOdPFVPGwJHay
+	 vnhcaD+TlbvL7VyIbaZiKfv2UrCrACOXIj6dd36+9fTjjbJt0FXbN9FAxAnZcUGbwh
+	 FIPhVPvYCAGbE79OfShlWbOeKoZafz28W+t095NishYtkFFqlK/VUd30Js1ovcktt0
+	 kzxgf2s6XOK1TCHjSZYXJyIx54D29Sb52pqqBHrKVVz9p2cS1LEj8XdhFgpOYRSko4
+	 wdk4wb8bpaJmsVTct8Giw4ID4yVc5Wxb4JG1XFyJnDCgrKqM4cOsP7Rl9GV7xgl/XE
+	 nJxlc4uFFDIew==
+Received: from disco-boy.misterjones.org ([217.182.43.188] helo=www.loen.fr)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tszem-00DSa3-IQ;
+	Fri, 14 Mar 2025 07:40:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310-v5_user_cfi_series-v11-0-86b36cbfb910@rivosinc.com> <20250310-v5_user_cfi_series-v11-23-86b36cbfb910@rivosinc.com>
-In-Reply-To: <20250310-v5_user_cfi_series-v11-23-86b36cbfb910@rivosinc.com>
-From: Zong Li <zong.li@sifive.com>
-Date: Fri, 14 Mar 2025 15:37:58 +0800
-X-Gm-Features: AQ5f1JrlSOfjsucljdPYnudPUFm9fomUfZIh4MbxfMyusAcNQh-nryqNstYXxqM
-Message-ID: <CANXhq0rsMGx_MXfss+RROHip0VLxmsWevvY0ukpRqyqscEthdw@mail.gmail.com>
-Subject: Re: [PATCH v11 23/27] arch/riscv: compile vdso with landing pad
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
-	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
-	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
-	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date: Fri, 14 Mar 2025 07:40:36 +0000
+From: Marc Zyngier <maz@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: James Clark <james.clark@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, robh@kernel.org, broonie@kernel.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Mark Rutland
+ <mark.rutland@arm.com>, Oliver Upton <oliver.upton@linux.dev>, Anshuman
+ Khandual <anshuman.khandual@arm.com>, James Morse <james.morse@arm.com>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] arm64/sysreg: Enforce whole word match for
+ open/close tokens
+In-Reply-To: <20250313215622.GA8101@willie-the-truck>
+References: <20250115162600.2153226-1-james.clark@linaro.org>
+ <20250115162600.2153226-3-james.clark@linaro.org>
+ <20250313215622.GA8101@willie-the-truck>
+User-Agent: Roundcube Webmail/1.4.15
+Message-ID: <36968527640d231882444ba7065317fe@kernel.org>
+X-Sender: maz@kernel.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 217.182.43.188
+X-SA-Exim-Rcpt-To: will@kernel.org, james.clark@linaro.org, linux-arm-kernel@lists.infradead.org, robh@kernel.org, broonie@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, oliver.upton@linux.dev, anshuman.khandual@arm.com, james.morse@arm.com, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Mar 10, 2025 at 11:44=E2=80=AFPM Deepak Gupta <debug@rivosinc.com> =
-wrote:
->
-> From: Jim Shu <jim.shu@sifive.com>
->
-> user mode tasks compiled with zicfilp may call indirectly into vdso (like
-> hwprobe indirect calls). Add landing pad compile support in vdso. vdso
-> with landing pad in it will be nop for tasks which have not enabled
-> landing pad.
-> This patch allows to run user mode tasks with cfi eanbled and do no harm.
->
-> Future work can be done on this to do below
->  - labeled landing pad on vdso functions (whenever labeling support shows
->    up in gnu-toolchain)
->  - emit shadow stack instructions only in vdso compiled objects as part o=
-f
->    kernel compile.
->
-> Signed-off-by: Jim Shu <jim.shu@sifive.com>
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->  arch/riscv/Makefile                   |  7 +++++-
->  arch/riscv/include/asm/assembler.h    | 44 +++++++++++++++++++++++++++++=
-++++++
->  arch/riscv/kernel/vdso/Makefile       | 12 ++++++++++
->  arch/riscv/kernel/vdso/flush_icache.S |  4 ++++
->  arch/riscv/kernel/vdso/getcpu.S       |  4 ++++
->  arch/riscv/kernel/vdso/rt_sigreturn.S |  4 ++++
->  arch/riscv/kernel/vdso/sys_hwprobe.S  |  4 ++++
->  7 files changed, 78 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-> index 13fbc0f94238..ea9468af2cb4 100644
-> --- a/arch/riscv/Makefile
-> +++ b/arch/riscv/Makefile
-> @@ -87,10 +87,15 @@ riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZACAS) :=3D $(risc=
-v-march-y)_zacas
->
->  # Check if the toolchain supports Zabha
->  riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZABHA) :=3D $(riscv-march-y)_zabha
-> +# Check if the toolchain supports Zihintpause extension
-> +riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZIHINTPAUSE) :=3D $(riscv-march-y)_zi=
-hintpause
+On 2025-03-13 21:56, Will Deacon wrote:
+> On Wed, Jan 15, 2025 at 04:25:56PM +0000, James Clark wrote:
+>> Opening and closing tokens can also match on words with common 
+>> prefixes
+>> like "Endsysreg" vs "EndsysregFields". This could potentially make the
+>> script go wrong in weird ways so make it fall through to the fatal
+>> unhandled statement catcher if it doesn't fully match the current
+>> block.
+>> 
+>> Closing ones also get expect_fields(1) to ensure nothing other than
+>> whitespace follows.
+>> 
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+>> ---
+>>  arch/arm64/tools/gen-sysreg.awk | 31 +++++++++++++++++--------------
+>>  1 file changed, 17 insertions(+), 14 deletions(-)
+>> 
+>> diff --git a/arch/arm64/tools/gen-sysreg.awk 
+>> b/arch/arm64/tools/gen-sysreg.awk
+>> index 1a2afc9fdd42..f2a1732cb1f6 100755
+>> --- a/arch/arm64/tools/gen-sysreg.awk
+>> +++ b/arch/arm64/tools/gen-sysreg.awk
+>> @@ -111,7 +111,7 @@ END {
+>>  /^$/ { next }
+>>  /^[\t ]*#/ { next }
+>> 
+>> -/^SysregFields/ && block_current() == "Root" {
+>> +$1 == "SysregFields" && block_current() == "Root" {
+> 
+> Stylistic nit, but could you just do:
+> 
+> 	/^SysregFields$/ && block_current() == "Root" {
+> 
+> instead? That way the diff is smaller (well, same number of lines) and
+> you avoid the ugly $1.
 
-I think we don't need this, it has removed by the '6da111574baf
-("riscv: Provide a definition for 'pause'")'. Apart from that, this
-patch looks good to me.
+The code is trying to match the first field of a line such as:
 
-Reviewed-by: Zong Li <zong.li@sifive.com>
+SysregFields	ZCR_ELx
 
-> +
-> +KBUILD_BASE_ISA =3D -march=3D$(shell echo $(riscv-march-y) | sed -E 's/(=
-rv32ima|rv64ima)fd([^v_]*)v?/\1\2/')
-> +export KBUILD_BASE_ISA
->
->  # Remove F,D,V from isa string for all. Keep extensions between "fd" and=
- "v" by
->  # matching non-v and non-multi-letter extensions out with the filter ([^=
-v_]*)
-> -KBUILD_CFLAGS +=3D -march=3D$(shell echo $(riscv-march-y) | sed -E 's/(r=
-v32ima|rv64ima)fd([^v_]*)v?/\1\2/')
-> +KBUILD_CFLAGS +=3D $(KBUILD_BASE_ISA)
->
->  KBUILD_AFLAGS +=3D -march=3D$(riscv-march-y)
->
-> diff --git a/arch/riscv/include/asm/assembler.h b/arch/riscv/include/asm/=
-assembler.h
-> index 44b1457d3e95..a058ea5e9c58 100644
-> --- a/arch/riscv/include/asm/assembler.h
-> +++ b/arch/riscv/include/asm/assembler.h
-> @@ -80,3 +80,47 @@
->         .endm
->
->  #endif /* __ASM_ASSEMBLER_H */
-> +
-> +#if defined(CONFIG_RISCV_USER_CFI) && (__riscv_xlen =3D=3D 64)
-> +.macro vdso_lpad
-> +lpad 0
-> +.endm
-> +#else
-> +.macro vdso_lpad
-> +.endm
-> +#endif
-> +
-> +/*
-> + * This macro emits a program property note section identifying
-> + * architecture features which require special handling, mainly for
-> + * use in assembly files included in the VDSO.
-> + */
-> +#define NT_GNU_PROPERTY_TYPE_0  5
-> +#define GNU_PROPERTY_RISCV_FEATURE_1_AND 0xc0000000
-> +
-> +#define GNU_PROPERTY_RISCV_FEATURE_1_ZICFILP      (1U << 0)
-> +#define GNU_PROPERTY_RISCV_FEATURE_1_ZICFISS      (1U << 1)
-> +
-> +#if defined(CONFIG_RISCV_USER_CFI) && (__riscv_xlen =3D=3D 64)
-> +#define GNU_PROPERTY_RISCV_FEATURE_1_DEFAULT \
-> +       (GNU_PROPERTY_RISCV_FEATURE_1_ZICFILP)
-> +#endif
-> +
-> +#ifdef GNU_PROPERTY_RISCV_FEATURE_1_DEFAULT
-> +.macro emit_riscv_feature_1_and, feat =3D GNU_PROPERTY_RISCV_FEATURE_1_D=
-EFAULT
-> +       .pushsection .note.gnu.property, "a"
-> +       .p2align        3
-> +       .word           4
-> +       .word           16
-> +       .word           NT_GNU_PROPERTY_TYPE_0
-> +       .asciz          "GNU"
-> +       .word           GNU_PROPERTY_RISCV_FEATURE_1_AND
-> +       .word           4
-> +       .word           \feat
-> +       .word           0
-> +       .popsection
-> +.endm
-> +#else
-> +.macro emit_riscv_feature_1_and, feat =3D 0
-> +.endm
-> +#endif
-> diff --git a/arch/riscv/kernel/vdso/Makefile b/arch/riscv/kernel/vdso/Mak=
-efile
-> index 9a1b555e8733..daa10c2b0dd1 100644
-> --- a/arch/riscv/kernel/vdso/Makefile
-> +++ b/arch/riscv/kernel/vdso/Makefile
-> @@ -13,12 +13,18 @@ vdso-syms +=3D flush_icache
->  vdso-syms +=3D hwprobe
->  vdso-syms +=3D sys_hwprobe
->
-> +ifdef CONFIG_RISCV_USER_CFI
-> +LPAD_MARCH =3D _zicfilp
-> +endif
-> +
->  # Files to link into the vdso
->  obj-vdso =3D $(patsubst %, %.o, $(vdso-syms)) note.o
->
->  ccflags-y :=3D -fno-stack-protector
->  ccflags-y +=3D -DDISABLE_BRANCH_PROFILING
->  ccflags-y +=3D -fno-builtin
-> +ccflags-y +=3D $(KBUILD_BASE_ISA)$(LPAD_MARCH)
-> +asflags-y +=3D $(KBUILD_BASE_ISA)$(LPAD_MARCH)
->
->  ifneq ($(c-gettimeofday-y),)
->    CFLAGS_vgettimeofday.o +=3D -fPIC -include $(c-gettimeofday-y)
-> @@ -40,6 +46,12 @@ endif
->  CFLAGS_REMOVE_vgettimeofday.o =3D $(CC_FLAGS_FTRACE) $(CC_FLAGS_SCS)
->  CFLAGS_REMOVE_hwprobe.o =3D $(CC_FLAGS_FTRACE) $(CC_FLAGS_SCS)
->
-> +# Disable profiling and instrumentation for VDSO code
-> +GCOV_PROFILE :=3D n
-> +KCOV_INSTRUMENT :=3D n
-> +KASAN_SANITIZE :=3D n
-> +UBSAN_SANITIZE :=3D n
-> +
->  # Force dependency
->  $(obj)/vdso.o: $(obj)/vdso.so
->
-> diff --git a/arch/riscv/kernel/vdso/flush_icache.S b/arch/riscv/kernel/vd=
-so/flush_icache.S
-> index 8f884227e8bc..e4c56970905e 100644
-> --- a/arch/riscv/kernel/vdso/flush_icache.S
-> +++ b/arch/riscv/kernel/vdso/flush_icache.S
-> @@ -5,11 +5,13 @@
->
->  #include <linux/linkage.h>
->  #include <asm/unistd.h>
-> +#include <asm/assembler.h>
->
->         .text
->  /* int __vdso_flush_icache(void *start, void *end, unsigned long flags);=
- */
->  SYM_FUNC_START(__vdso_flush_icache)
->         .cfi_startproc
-> +       vdso_lpad
->  #ifdef CONFIG_SMP
->         li a7, __NR_riscv_flush_icache
->         ecall
-> @@ -20,3 +22,5 @@ SYM_FUNC_START(__vdso_flush_icache)
->         ret
->         .cfi_endproc
->  SYM_FUNC_END(__vdso_flush_icache)
-> +
-> +emit_riscv_feature_1_and
-> diff --git a/arch/riscv/kernel/vdso/getcpu.S b/arch/riscv/kernel/vdso/get=
-cpu.S
-> index 9c1bd531907f..5c1ecc4e1465 100644
-> --- a/arch/riscv/kernel/vdso/getcpu.S
-> +++ b/arch/riscv/kernel/vdso/getcpu.S
-> @@ -5,14 +5,18 @@
->
->  #include <linux/linkage.h>
->  #include <asm/unistd.h>
-> +#include <asm/assembler.h>
->
->         .text
->  /* int __vdso_getcpu(unsigned *cpu, unsigned *node, void *unused); */
->  SYM_FUNC_START(__vdso_getcpu)
->         .cfi_startproc
-> +       vdso_lpad
->         /* For now, just do the syscall. */
->         li a7, __NR_getcpu
->         ecall
->         ret
->         .cfi_endproc
->  SYM_FUNC_END(__vdso_getcpu)
-> +
-> +emit_riscv_feature_1_and
-> diff --git a/arch/riscv/kernel/vdso/rt_sigreturn.S b/arch/riscv/kernel/vd=
-so/rt_sigreturn.S
-> index 3dc022aa8931..e82987dc3739 100644
-> --- a/arch/riscv/kernel/vdso/rt_sigreturn.S
-> +++ b/arch/riscv/kernel/vdso/rt_sigreturn.S
-> @@ -5,12 +5,16 @@
->
->  #include <linux/linkage.h>
->  #include <asm/unistd.h>
-> +#include <asm/assembler.h>
->
->         .text
->  SYM_FUNC_START(__vdso_rt_sigreturn)
->         .cfi_startproc
->         .cfi_signal_frame
-> +       vdso_lpad
->         li a7, __NR_rt_sigreturn
->         ecall
->         .cfi_endproc
->  SYM_FUNC_END(__vdso_rt_sigreturn)
-> +
-> +emit_riscv_feature_1_and
-> diff --git a/arch/riscv/kernel/vdso/sys_hwprobe.S b/arch/riscv/kernel/vds=
-o/sys_hwprobe.S
-> index 77e57f830521..f1694451a60c 100644
-> --- a/arch/riscv/kernel/vdso/sys_hwprobe.S
-> +++ b/arch/riscv/kernel/vdso/sys_hwprobe.S
-> @@ -3,13 +3,17 @@
->
->  #include <linux/linkage.h>
->  #include <asm/unistd.h>
-> +#include <asm/assembler.h>
->
->  .text
->  SYM_FUNC_START(riscv_hwprobe)
->         .cfi_startproc
-> +       vdso_lpad
->         li a7, __NR_riscv_hwprobe
->         ecall
->         ret
->
->         .cfi_endproc
->  SYM_FUNC_END(riscv_hwprobe)
-> +
-> +emit_riscv_feature_1_and
->
-> --
-> 2.34.1
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+while you seem to try and match a SysregFields all alone on a line.
+
+That being said, my perl-foo is sub-zero, so I may be very wrong myself.
+
+         M.
+-- 
+Jazz is not dead. It just smells funny...
 
