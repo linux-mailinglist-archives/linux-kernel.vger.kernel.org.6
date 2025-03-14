@@ -1,84 +1,124 @@
-Return-Path: <linux-kernel+bounces-562134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AEDA61D18
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:47:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C377A61D45
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:54:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFA9419C5183
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:47:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B37A642252B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BECC19883C;
-	Fri, 14 Mar 2025 20:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2501C6FE4;
+	Fri, 14 Mar 2025 20:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/98iReX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="hm5D51on"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BC9A32;
-	Fri, 14 Mar 2025 20:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5122A18E756;
+	Fri, 14 Mar 2025 20:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741985223; cv=none; b=CJXZf0IUS4Zrwz6QipJhq66Z3jQwgJJr6yr4MrP1RCOj+Oohft+AkKG181TiU5KcM9yXg0re7JoUdiDF0LdFSkv1yGksTdbOMNx74k5EGenOAehXNuYGHpY03hUCa1ipp4vrpdzdwhj3mgXJIgIzcMlX7uHDxZgkIx/ad/5ksiM=
+	t=1741985660; cv=none; b=ogB9Bs+M+XLGjsojBbvsfeLB+wm+p8sVBcsn3q6RFDt+/Jwj6wznFtsEDR8g3p4/1MVvm0qAnrKKgof9ixmIqskFckPt0CWy00kNLNIa1a6OQ3pzdWXqwTnFu+H8WLw5SN10pHG6c+ZAvy8w3++2p/0vilzUr+96yGMLQ0pGTnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741985223; c=relaxed/simple;
-	bh=uHSV6oY5quPamows8Y184bxeGipJYh6CjEiQx+OX2Ag=;
+	s=arc-20240116; t=1741985660; c=relaxed/simple;
+	bh=PjJZmTos+gOnXtRO1H2qb1M94GtSCP7HJkxn3jLo16k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pb16+3BBtyF7EdbMBaxs4z/plIZaYXXjnEv4yWKsAu7s89P0M+Qgh0YhBdb8+/M9rrejWT1T3ZcRsk/ur6dJDkR1iFeji/UG+0xycKoaGGoSY/EL3Ilo0DnF3Y9gWoCLa8JW1FYTEK8VtlIHZpEv2YuPgc2M84RO+HBjo0j2ax0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/98iReX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDE63C4CEE3;
-	Fri, 14 Mar 2025 20:47:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741985223;
-	bh=uHSV6oY5quPamows8Y184bxeGipJYh6CjEiQx+OX2Ag=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p/98iReXXOLjYrepz3vviDIrzCZLl/CP0pj1030dfRTdu1sSiZahBAFxCrMnxT5gq
-	 rKlz8eMfLgWTLcUC6z5luotArVLP91A5XX+UXB1g8MF7V+lJfhBumzAtllMmkw6SFO
-	 177D9nJ1C+lM6Leb8ChkE32UZPmlde/UmSioi7yiU7q8e7AWHiZ9JYtSMAlB4qB8Q4
-	 pkvHb00vfzguhKiKYtm0HwywDNkSXs3Lb3z9sXiOYmHcE2B1H3Iv4TjaMlkGX4Zp3k
-	 SdhmjoHifg8Z+9VokMTG9Aj2KMENVj4I6ivbnWqqppFuvWXMYDEKF/UIWyMRJdMVlI
-	 HAdDQY+jLcuAQ==
-Date: Fri, 14 Mar 2025 15:47:01 -0500
-From: Rob Herring <robh@kernel.org>
-To: Thomas Huth <thuth@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	linux-arch@vger.kernel.org, Saravana Kannan <saravanak@google.com>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 40/41] scripts/dtc: Update fdt.h to the latest version
-Message-ID: <20250314204701.GA2210106-robh@kernel.org>
-References: <20250314071013.1575167-1-thuth@redhat.com>
- <20250314071013.1575167-41-thuth@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D4GOi+iLUnFTKI+VtVJaiF0dnzxYKRQJ8epJM5vDOwBQZQwu2FOf19VwqEad09fByfqteW/zOg0SAqb7gymEy3bx8qE5qdqiuuy+4bFSyFFHRDwM5the4kwxSrnK3mZMZbG/KpLmfTLxPLBk/DpfJ0p4aqx/4f6LKu5APM6aAuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=hm5D51on; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 746ED1C00B2; Fri, 14 Mar 2025 21:47:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1741985254;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5GvRBr53B+OFzVgoUGb1tUNeK0A4mG9GxZ+cA93GAzc=;
+	b=hm5D51ontEP8nAAmoP48110PL9POmQhaXNQ4MJAhNrIRivswoEmEYggO7f7WDNdAzFqH1w
+	f1ur0UGMlcU1f2D5x2kg0IztkwfUxsdk/kxozKG1aI9c0ajHZ41pQPcWCnbMnpLv02it4B
+	HeEckCxqNtiMlk6FQbkwGz9QyKXmPKc=
+Date: Fri, 14 Mar 2025 21:47:33 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Saravana Kannan <saravanak@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <len.brown@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Marek Vasut <marex@denx.de>, Bird@google.com,
+	Tim <Tim.Bird@sony.com>, kernel-team@android.com,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/5] PM: sleep: Fix runtime PM issue in dpm_resume()
+Message-ID: <Z9SV5UymVcuUkSE1@duo.ucw.cz>
+References: <20241114220921.2529905-1-saravanak@google.com>
+ <20241114220921.2529905-2-saravanak@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ta7N6fkXw1LCADOj"
+Content-Disposition: inline
+In-Reply-To: <20241114220921.2529905-2-saravanak@google.com>
+
+
+--ta7N6fkXw1LCADOj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250314071013.1575167-41-thuth@redhat.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 14, 2025 at 08:10:11AM +0100, Thomas Huth wrote:
-> Update the header to this upstream version to change the
-> __ASSEMBLY__ macro into __ASSEMBLER__ :
-> 
-> https://web.git.kernel.org/pub/scm/utils/dtc/dtc.git/commit/?id=f4c53f4ebf78
-> 
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Saravana Kannan <saravanak@google.com>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Thomas Huth <thuth@redhat.com>
+Hi!
+
+> Some devices might have their is_suspended flag set to false. In these
+> cases, dpm_resume() should skip doing anything for those devices.
+> However, runtime PM enable and a few others steps are done before
+> checking for this flag. Fix it so that we do things in the right order.
+>=20
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
 > ---
->  scripts/dtc/libfdt/fdt.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/base/power/main.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index 4a67e83300e1..86e51b9fefab 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -913,6 +913,9 @@ static void device_resume(struct device *dev, pm_mess=
+age_t state, bool async)
+>  	if (dev->power.syscore)
+>  		goto Complete;
+> =20
+> +	if (!dev->power.is_suspended)
+> +		goto Unlock;
+> +
 
-Are you wanting me to apply this or ack it? Normally we only change dtc 
-with the sync with upstream script.
+This needs to be goto Complete, right?
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
 
-Or maybe it doesn't matter? Do we use this header in any assembly in the 
-kernel? Offhand, I don't think so.
+--ta7N6fkXw1LCADOj
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Rob
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ9SV5QAKCRAw5/Bqldv6
+8pFrAJ0d28+EzZhlI0lLuTyC9PJBmiDECQCgjPZ5quzU+M7vOn4F5mHwDlVR62I=
+=meXA
+-----END PGP SIGNATURE-----
+
+--ta7N6fkXw1LCADOj--
 
