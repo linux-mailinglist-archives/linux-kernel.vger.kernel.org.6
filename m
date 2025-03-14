@@ -1,107 +1,89 @@
-Return-Path: <linux-kernel+bounces-561717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C900A61532
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:43:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26EE5A61533
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:44:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F6154603A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:43:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8599C3AFFA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100241FECA9;
-	Fri, 14 Mar 2025 15:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1066E20012B;
+	Fri, 14 Mar 2025 15:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMHuEUI1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eILPBr78"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6681D7081A;
-	Fri, 14 Mar 2025 15:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFC47081A;
+	Fri, 14 Mar 2025 15:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741967010; cv=none; b=e8rIfmXGBoHMfbGzZ9vPCJDFN7JPjxnATpSdPV7rr2I53T4zyiuJXHDUEI9e4vacG9B+N8s8wDZaoHMgsMiMgt41oqGhZ/jKt+tZ+7DZHkazAc52D0CtC5y6aV9xH6rdkP5XteqKKVWuKnVB4j1XD4xD0ZdzmQDX1XpE1Ba35Xw=
+	t=1741967082; cv=none; b=fJvvb8whHf8j7fhBPxuHx2NnGaz+n507KAl/whxut/elTbpl+vboJZE9ZZwL1EH3aQWUQS5E7o+m6HNlz89Q8stdyeqEnVW+XQi0xGX47ChNRWMGXYdEe2Q3d3xMlz06BUK+WieD3x1XHJ0i4jRNBgi68EtxOoriym9VxNmdfZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741967010; c=relaxed/simple;
-	bh=A7ACwrOcDWxFSXNkSxe9leQpcdrWku29f/WynU5fGDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=H5rKeiwbruLBeQmXYd5wGVK4kFgkTXozc0yUhsfWxSGOWVaPoNPRwDCKw9CgR+KyyN/vhA3IyKv9H6ZtkdVt/9DZzNjkuIjjW2quZvrxFwT10UMOiNvAe5e0jVXuuH21AKjhek0IVQs5LNXoGgTEXcGh9Ktz9ELzdaRNbOHGROc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMHuEUI1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3546AC4CEE3;
-	Fri, 14 Mar 2025 15:43:28 +0000 (UTC)
+	s=arc-20240116; t=1741967082; c=relaxed/simple;
+	bh=12gBnWBrlsr8hAimFNvyWNcT/8eRcB41OcwjzN3xe0Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uI8gI4xoJqSyhyE73tDPPtk1Ki+VZpMPHB3bQvw+35RLujhwNOeH3TYqmKpy2EfogJkZnCItmWHg/SxZ0+fhYETOsmuo9sLbmIVldkUSjr+Kl9PJmlUWWS8aeSKWIQkjBSgjIs8x0WAjQ//3UDnfXkxHFioCGqRT40jzMQw7pcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eILPBr78; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 428FFC4CEE3;
+	Fri, 14 Mar 2025 15:44:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741967009;
-	bh=A7ACwrOcDWxFSXNkSxe9leQpcdrWku29f/WynU5fGDI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=gMHuEUI1RURRLpnDg8xy4KTaCFUJ3de3GpaH1SscQF9pcRoyZ1+XmhL+QP2J1xQ1J
-	 t05uEZmukeKHJ5+IgY592YcKv2tZDLegdJHldlfUu0vK3oeC5u0pUpIrM7i/DM2cvI
-	 WB6M2tpSbAdOGVTpEwJQlJuzXqIMXhb0rs5nZXKInx+QNFEhOrnLhzz09MYS+fOFu+
-	 Et1CxiMDXF4UqOjdLP96oC/kbjQKvJONTvCuE9XviXFtC/qogI7J6ElyRROgog++Go
-	 oiMPN/Z5HfjXXVnL6I6ztJ2YI6D7l1isuzwd4pmjk1D1jFat8WKQbvpXopo5d1O1mi
-	 1fHnvFn2truvg==
-Date: Fri, 14 Mar 2025 16:43:26 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
-	lkml <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
-Subject: [GIT PULL] i2c-host-fixes for v6.14-rc7
-Message-ID: <47qvm27cjuxtx4djqlmjinl73zsg6l3ihqtqvk7za6kfvqmnzo@q77ejrvpzzvx>
+	s=k20201202; t=1741967081;
+	bh=12gBnWBrlsr8hAimFNvyWNcT/8eRcB41OcwjzN3xe0Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=eILPBr78CLrGYrhmzv6PT4lJ6476zZRMwtCCzuhTFiG+P77Zf4Y8BjwG6+bgWY57P
+	 +cCdbMJkPpYB8/kF7FEsgJypKF7jCMoSD0prtRg9GsmmmsNQjp44FVnRMY0usvlnAc
+	 wc3481hlWwUNSwRGnkfyTFSlUD00xVULLh0iWfh/ID5OhOZYfZ6ogEkRTp/XJB/saW
+	 gDLMbGpSdcjBlgzs3F0miEY/bLclbOhnXgVFNUKsW+xXGIQzM6ArtTBX8qvtTJ3gQ2
+	 f0/HEkoOl8ptl17jjcvUn8wYjkvSAPOO9kDS4eHDT2ftzlwiGnQPwGufO2FtDeHUih
+	 Ag2Tt/QdOZhTw==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: dedup handling of struct filename init and refcounts bumps
+Date: Fri, 14 Mar 2025 16:44:34 +0100
+Message-ID: <20250314-urheber-zujubeln-ced6d7db659f@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250313142744.1323281-1-mjguzik@gmail.com>
+References: <20250313142744.1323281-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=881; i=brauner@kernel.org; h=from:subject:message-id; bh=12gBnWBrlsr8hAimFNvyWNcT/8eRcB41OcwjzN3xe0Q=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRf8XviPrFyjvYB+5jA8PftYQ8cHxcdXSjM9M1nlanL7 BUn4g4c7ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI4kOMDJMT1hcziq5i1e02 qGlYd7+30/Nt0y9GyRVB71W+r1oWcIaR4dkCu8qPyw2S3zyYuExhysct1+RbWMSX6nHt9A3z+Fb KzQMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Hi Wolfram,
+On Thu, 13 Mar 2025 15:27:44 +0100, Mateusz Guzik wrote:
+> No functional changes.
+> 
+> 
 
-somehow, for some higher forces, the trend in I2C is flipped:
-instead of slowing down, the number of fixes goes up at the end
-of the cycle. Four patches this time!
+Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.15.misc branch should appear in linux-next soon.
 
-Big thanks to the TI folks for testing and reviewing the
-i2c-omap patch, which could have caused a system hang.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Now it's time to wrap things up for the merge window—hopefully,
-I don't leave anything behind.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Have a good weekend!
-Andi
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-The following changes since commit 80e54e84911a923c40d7bee33a34c1b4be148d7a:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.15.misc
 
-  Linux 6.14-rc6 (2025-03-09 13:45:25 -1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.14-rc7
-
-for you to fetch changes up to 2b22459792fcb4def9f0936d64575ac11a95a58d:
-
-  i2c: sis630: Fix an error handling path in sis630_probe() (2025-03-12 12:24:53 +0100)
-
-----------------------------------------------------------------
-i2c-host-fixes for v6.14-rc7
-
-- omap: fixed irq ACKS to avoid irq storming and system hang.
-- ali1535, ali15x3, sis630: fixed error path at probe exit.
-
-----------------------------------------------------------------
-Andreas Kemnade (1):
-      i2c: omap: fix IRQ storms
-
-Christophe JAILLET (3):
-      i2c: ali1535: Fix an error handling path in ali1535_probe()
-      i2c: ali15x3: Fix an error handling path in ali15x3_probe()
-      i2c: sis630: Fix an error handling path in sis630_probe()
-
- drivers/i2c/busses/i2c-ali1535.c | 12 +++++++++++-
- drivers/i2c/busses/i2c-ali15x3.c | 12 +++++++++++-
- drivers/i2c/busses/i2c-omap.c    | 26 +++++++-------------------
- drivers/i2c/busses/i2c-sis630.c  | 12 +++++++++++-
- 4 files changed, 40 insertions(+), 22 deletions(-)
+[1/1] fs: dedup handling of struct filename init and refcounts bumps
+      https://git.kernel.org/vfs/vfs/c/e05a35026336
 
