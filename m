@@ -1,138 +1,221 @@
-Return-Path: <linux-kernel+bounces-561497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2649BA612AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:31:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 071C9A612B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:32:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BCB01651CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:31:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03760178A3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0EDC1FF7CF;
-	Fri, 14 Mar 2025 13:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E661F2B82;
+	Fri, 14 Mar 2025 13:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qXdZXLh3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q5TmTCTs"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B042E3372;
-	Fri, 14 Mar 2025 13:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9029E134AB;
+	Fri, 14 Mar 2025 13:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741959079; cv=none; b=R3bufR/K59Ln6Rm8aqmuL4sz7Fo95KWOMJcY22IDafCD+naY9si5QcT7Yf0K73a5O9asOABTI4F42G/zbR+a3Rb76tbs/IWopFymkeCXMkjvbFyuR3hfOSiEaGOxHS7lDqwBpiHFcvyMkUgbiGHFN9TYzZewsvmrZmnoYp05Fwg=
+	t=1741959108; cv=none; b=WZ76e/cSEbToI3yVOM5FcBF8tfXWrWPwAi+VMNOhvAIho5E7KHBINPXo1PI7VJ3fj3NBj4RxOEgLzLj87fihKyyZP4a7VmdyIwftTGpUGnuiiLuNgXIQJ7tLJfo1LjUxV1swgOPs6c8eLnExllGDNMCCLwbmf3JtMcy8FUvJFMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741959079; c=relaxed/simple;
-	bh=mC9X5wHeLWgi2jQT/EqiLwWxn9S7NLyyuFOfO3+rr6M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g9AmXr0ey7VSded7R1g0/cEToMGT35+2wl6wJys8iefvowdWwd7XGCROT584zz2ulFaEFeDfQtFZzaYkNGj1at8zZObp3mtJWvSQ+VnlOZB7Yxz3luVdwIognJDI2AsYsTWP2l8ht9r+nxrRJo9/fQ40oa58WeodmosxxFMQ52g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qXdZXLh3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DF32C4CEE3;
-	Fri, 14 Mar 2025 13:31:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741959078;
-	bh=mC9X5wHeLWgi2jQT/EqiLwWxn9S7NLyyuFOfO3+rr6M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qXdZXLh3cjSoDympksyMN5qy03vbKNK9/po8U2LcaSTKuJJ9fUZsPkx2MD1ZXycOk
-	 t/hOSouf3xcRJ4s5y797UyCqn7SSkr05pUHnjOIJ5GCQWzs49jcn/pPCJMfifpGx3F
-	 ACiBCnHLHD+TGh1oSM4/Zg6GXmM1Oo+n6GtzEVQ+WhFnyOgk1mj7LAPnUP+alqBCaj
-	 Z/WEolvMT4Ya2vgpY5UtIm0ckJmbUV+LfANeHd039m1UQowLp0dgfx/LGRkI7zSN0V
-	 Pa/gnMR+Y3Zc0rsS6FNQjMyHhb0Yr4mJxoDz1O/VbbUWtlo0GwOflAWElchsYaPrhM
-	 wCMjOPSKEXuqQ==
-Message-ID: <e58f5851-9988-463b-824e-ad3da1137c33@kernel.org>
-Date: Fri, 14 Mar 2025 14:31:12 +0100
+	s=arc-20240116; t=1741959108; c=relaxed/simple;
+	bh=gj3NYI3coGahkYXwx6USbGbvU6D17tfuUeQTPPTb6Aw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oOafQkkhBHq1jukGg565q1omscktFBj/wrQesACAGlxiGok9QML5cb6dXj/eFLs23NTVJ4JWGBeYwjn9SrGz4EdBE0doapYfbv93O2OaCvbsLqEEujmSXuk8H2Tmq+16/Y2Qw8YV8tRlLkShQeXsgGgjmG4wjdUXcpvM7nqhEv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q5TmTCTs; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22398e09e39so43526155ad.3;
+        Fri, 14 Mar 2025 06:31:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741959106; x=1742563906; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vRnRGl1AfdbXlS77j82nE9ScaNFhXXtMhswVLJe3pAE=;
+        b=Q5TmTCTsv2qPO7bQvI5UH9Xx/2IwW7s5oFIGD+CIOGlPZRDCwmEM0v0p0Obatg7SXZ
+         WLy+AiOD7xv+D5xOGgsWrgl2P2OnWwKGaD2shLueeSM2X1DiS2z31A0xX6O5jKi2dZLf
+         M/VfW0k/tbcgffq5vpZKLkHMuRaLMF2h3tWmvh0KIa7/sAeGMGmAIDvZw5fYN4wWBibj
+         xAYNqcCnsRPWoM03l6DAvDHJH3p+dXJAct8PSqP43piIgi5yMCMmLTH9rWDVZ/rU7Blk
+         rWVuAaM0hRwMroMlmYW5N2s9OZtchP25yWXCGjMhNhfUhq44i1qNRD2OzhIlYYERCkPQ
+         DZ7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741959106; x=1742563906;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vRnRGl1AfdbXlS77j82nE9ScaNFhXXtMhswVLJe3pAE=;
+        b=VRm5hPNvN4WPHI/5r4J6xH5Fm+Iz8XcSd/qzYSzhrGPpDsXlC6bqnGtO2hdqadpiSi
+         NOghHD+Ra6XZ+yLoKTd1IgUpHWm/GS4s/QRGgPOE1AAnTpkq6tHt0JgccHG1GaVSh0Ik
+         BvKIUqGxLqmEpY3xxPXUZMQh4AmRE4/q5bivh6NkQiZdVR/MRsxBT93srvPzHhucGBwN
+         rV+jfiQ0PxuZKSEyIakthkk5dB6yl9izoIQOd6CQEqmLUPAlE7nhGmbOsIfBVJyO7rkG
+         rQuFUndsj8VdY43UbarRup4ZiMdm5Gu7JQlXBdDU8stXH4SwujE5jYBqzgwtpf98b1vL
+         1w7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUihpFnsy+UIPePLp8Ysx3LCjMGf3kdCBhMMtTPxis1eVYG4vjYGgyunqgnPsv/DA/Hj8X9Dpc5fomA7/g=@vger.kernel.org, AJvYcCVXm76ssRy3xaO9vXO9pHfZLz4zRv3/7nXrgxTjuGy0GV/DTP0WX1X1vgr6dm5t7CMuQNdjpMoB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQNwI4lRQLSEtuoKC3OzcXJKd20v67pj1R4cRCrmlaHpucfo33
+	Z6qdL+yna7W5crB9+kWAymefqWRgiRVQJ5yqmwkcSyEEIuzGE+/zeSHLv8hX44PXWFzWmaR6K3q
+	1AV2/4m/QwEoZrkUCo4PjZGwWl2Y=
+X-Gm-Gg: ASbGncsvOW3875Hg7oCLMJAXZWN2PRvb3CTIuAmr1zgZlgekLWE6KNMn18ZEE9i5O2b
+	OZ8urmMRa6n+aAfomtYGA468NHrjaE5VkHrJN8hddC0i1DrMp4qIZpV81nMoM+t6tzK9atiItc6
+	8O0sWQvRT35glEPAySk/3tnkkLlVj6FT7bovZIJog9Ox9+tdTaMeNiLHglJX0=
+X-Google-Smtp-Source: AGHT+IFiAWiKj+MJwn+S3HigGFeBovw0sPdQYFXD28BrLYC4NGbnywq9LbSsyUrkKeF0to/BJtRSGNGdYXVJp590efw=
+X-Received: by 2002:a17:90b:2707:b0:2ee:c918:cd60 with SMTP id
+ 98e67ed59e1d1-30151ca0e05mr3418497a91.20.1741959105688; Fri, 14 Mar 2025
+ 06:31:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] Input: snvs_pwrkey - support power-off-time-sec
-To: Ian Ray <ian.ray@gehealthcare.com>
-Cc: dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-input@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250314094213.902-1-ian.ray@gehealthcare.com>
- <20250314094213.902-2-ian.ray@gehealthcare.com>
- <aa893df6-fe40-49a8-920d-7d7240bb18b8@kernel.org>
- <Z9QuC7tZoXj3DRZs@9e5302bffcb7>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Z9QuC7tZoXj3DRZs@9e5302bffcb7>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250309121526.86670-1-aleksandr.mikhalitsyn@canonical.com>
+ <CAL+tcoDhPe3G_iheA0M_9dO-Tij-dYROfneiGS3SUr8w7bhH8A@mail.gmail.com> <CAJqdLrp+d=d2rZ776_zvw_Kz8FT317skkE+SufyUk_9secE_9w@mail.gmail.com>
+In-Reply-To: <CAJqdLrp+d=d2rZ776_zvw_Kz8FT317skkE+SufyUk_9secE_9w@mail.gmail.com>
+From: Anna Nyiri <annaemesenyiri@gmail.com>
+Date: Fri, 14 Mar 2025 14:31:34 +0100
+X-Gm-Features: AQ5f1Jpl1eZvO9TwMCXdy9qA1FDmOIBQXsUQV-i0tHUZkyoMr31eqj3wUhXsCaU
+Message-ID: <CAKm6_RsfA_Ygn4aZQdUxfBujxxgdB=PvgymChDtWSVHhhp6WZQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] tools headers: Sync uapi/asm-generic/socket.h
+ with the kernel sources
+To: Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Cc: Jason Xing <kerneljasonxing@gmail.com>, 
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, edumazet@google.com, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Jakub Kicinski <kuba@kernel.org>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Willem de Bruijn <willemb@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14/03/2025 14:24, Ian Ray wrote:
-> On Fri, Mar 14, 2025 at 01:55:47PM +0100, Krzysztof Kozlowski wrote:
->> On 14/03/2025 10:42, Ian Ray wrote:
->>>
->>>       /* Get SNVS register Page */
->>> @@ -148,6 +152,24 @@ static int imx_snvs_pwrkey_probe(struct platform_device *pdev)
->>>       if (pdata->irq < 0)
->>>               return -EINVAL;
->>>
->>> +     if (!of_property_read_u32(np, "power-off-time-sec", &val)) {
->>
->> And when you test your DTS against binding what do you see? I suspect
->> new warning.
-> 
-> I checked the build logs (from a clean workarea), plus run-time dmesg,
-> both with the DTS change -- and without it.  There are no new warnings
-> (specifically nothing mentioning snvs-pwrkey or dts or power-off-time).
-> 
-> If an invalid value (such as "42") is chosen then the probe fails with
-> -EINVAL as expected.
-> 
-> Is there something else that I should have checked?
+Alexander Mikhalitsyn <alexander@mihalicyn.com> ezt =C3=ADrta (id=C5=91pont=
+:
+2025. m=C3=A1rc. 10., H, 9:22):
+>
+> Am Mo., 10. M=C3=A4rz 2025 um 06:33 Uhr schrieb Jason Xing
+> <kerneljasonxing@gmail.com>:
+> >
+> > On Sun, Mar 9, 2025 at 1:15=E2=80=AFPM Alexander Mikhalitsyn
+> > <aleksandr.mikhalitsyn@canonical.com> wrote:
+> > >
+> > > This also fixes a wrong definitions for SCM_TS_OPT_ID & SO_RCVPRIORIT=
+Y.
+> > >
+> > > Accidentally found while working on another patchset.
+> > >
+> > > Cc: linux-kernel@vger.kernel.org
+> > > Cc: netdev@vger.kernel.org
+> > > Cc: Eric Dumazet <edumazet@google.com>
+> > > Cc: Jakub Kicinski <kuba@kernel.org>
+> > > Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> > > Cc: Willem de Bruijn <willemb@google.com>
+> > > Cc: Jason Xing <kerneljasonxing@gmail.com>
+> > > Cc: Anna Emese Nyiri <annaemesenyiri@gmail.com>
+> > > Fixes: a89568e9be75 ("selftests: txtimestamp: add SCM_TS_OPT_ID test"=
+)
+> > > Fixes: e45469e594b2 ("sock: Introduce SO_RCVPRIORITY socket option")
+> > > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical=
+.com>
+> >
+>
+> Hi Jason,
+>
+> Thanks for looking into this!
+>
+> > I'm not sure if it's a bug. As you may notice, in
+> > arch/parisc/include/uapi/asm/socket.h, it has its own management of
+> > definitions.
+> >
+> > I'm worried that since this file is uapi, is it allowed to adjust the
+> > number like this patch does if it's not a bug.
+>
+> My understanding is that this file (tools/include/uapi/asm-generic/socket=
+.h) is
+> a mirror copy of the actual UAPI file (uapi/asm-generic/socket.h),
+> and definitions need to be in sync with it.
 
-I don't know what your build logs process has. I meant dtbs_check
-against the bindings.
+I don=E2=80=99t completely understand this either=E2=80=94if the definition=
+s need to
+be in sync, why is there a discrepancy?
 
-Best regards,
-Krzysztof
+Specifically, I am referring to the ones that caused the shift in
+numbering in uapi/asm-generic/socket.h:
+#define SO_DEVMEM_LINEAR 78
+#define SCM_DEVMEM_LINEAR SO_DEVMEM_LINEAR
+#define SO_DEVMEM_DMABUF 79
+#define SCM_DEVMEM_DMABUF SO_DEVMEM_DMABUF
+#define SO_DEVMEM_DONTNEED 80
+
+In the case of SO_RCVPRIORITY, I simply continued the numbering
+sequence as it was=E2=80=94I didn=E2=80=99t intend to disrupt the structure=
+ of the
+definitions. It=E2=80=99s possible that I made a mistake in doing so.
+If this doesn=E2=80=99t cause any issues, I would also vote for modifying t=
+he
+numbering. Could someone more familiar with this area confirm whether
+adjusting the numbering is acceptable?
+
+> But I absolutely agree that we need someone who knows that for sure
+> and can confirm.
+> Breaking anything, especially UAPI-related stuff is my nightmare.
+>
+> >
+> > Otherwise, the change looks good to me.
+>
+> Kind regards,
+> Alex
+>
+> >
+> > Thanks,
+> > Jason
+> >
+> > > ---
+> > >  tools/include/uapi/asm-generic/socket.h | 21 +++++++++++++++++++--
+> > >  1 file changed, 19 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/tools/include/uapi/asm-generic/socket.h b/tools/include/=
+uapi/asm-generic/socket.h
+> > > index ffff554a5230..aa5016ff3d91 100644
+> > > --- a/tools/include/uapi/asm-generic/socket.h
+> > > +++ b/tools/include/uapi/asm-generic/socket.h
+> > > @@ -119,14 +119,31 @@
+> > >
+> > >  #define SO_DETACH_REUSEPORT_BPF 68
+> > >
+> > > +#define SO_PREFER_BUSY_POLL    69
+> > > +#define SO_BUSY_POLL_BUDGET    70
+> > > +
+> > > +#define SO_NETNS_COOKIE                71
+> > > +
+> > > +#define SO_BUF_LOCK            72
+> > > +
+> > > +#define SO_RESERVE_MEM         73
+> > > +
+> > > +#define SO_TXREHASH            74
+> > > +
+> > >  #define SO_RCVMARK             75
+> > >
+> > >  #define SO_PASSPIDFD           76
+> > >  #define SO_PEERPIDFD           77
+> > >
+> > > -#define SCM_TS_OPT_ID          78
+> > > +#define SO_DEVMEM_LINEAR       78
+> > > +#define SCM_DEVMEM_LINEAR      SO_DEVMEM_LINEAR
+> > > +#define SO_DEVMEM_DMABUF       79
+> > > +#define SCM_DEVMEM_DMABUF      SO_DEVMEM_DMABUF
+> > > +#define SO_DEVMEM_DONTNEED     80
+> > > +
+> > > +#define SCM_TS_OPT_ID          81
+> > >
+> > > -#define SO_RCVPRIORITY         79
+> > > +#define SO_RCVPRIORITY         82
+> > >
+> > >  #if !defined(__KERNEL__)
+> > >
+> > > --
+> > > 2.43.0
+> > >
 
