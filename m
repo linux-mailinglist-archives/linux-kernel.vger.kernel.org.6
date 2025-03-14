@@ -1,57 +1,52 @@
-Return-Path: <linux-kernel+bounces-561716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38DBFA61530
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:42:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C900A61532
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:43:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14B443B06F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:42:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F6154603A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87806201261;
-	Fri, 14 Mar 2025 15:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100241FECA9;
+	Fri, 14 Mar 2025 15:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O0z8wAAv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMHuEUI1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60F11EEA5D;
-	Fri, 14 Mar 2025 15:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6681D7081A;
+	Fri, 14 Mar 2025 15:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741966951; cv=none; b=mpf5MK5EVXOKfN1HMEZHIuHbij54Wl3+5Y6bsZKCgjo/ClBoM7Zlu/vHitvZOv1/qberLc49gq1LlkggApwsXFA6GSPZwxlOWS1Eo9tmCxt/buT99JtsJEd60/gLChdn8yWi6EfAIzzzVZxgqDSVnNaSFGHPi55hCqkc2rH8wIU=
+	t=1741967010; cv=none; b=e8rIfmXGBoHMfbGzZ9vPCJDFN7JPjxnATpSdPV7rr2I53T4zyiuJXHDUEI9e4vacG9B+N8s8wDZaoHMgsMiMgt41oqGhZ/jKt+tZ+7DZHkazAc52D0CtC5y6aV9xH6rdkP5XteqKKVWuKnVB4j1XD4xD0ZdzmQDX1XpE1Ba35Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741966951; c=relaxed/simple;
-	bh=fY6NNdYXbkSUdnsh0gksJ+CeGLSLZTHOrTd9nCzEgKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oQFUZX/6gn3fHqXhJQl6LCBk9wobq+LGHnyoE3PeIi561ssG2vql+1hMpROYrOCY23rXfO23FMoDbKbwtCyah6t5uPqAz/MD243VN1p9/Vjf9khiuShyqCrsXIysdY3eJVzCd0S4pjdmXVV1ah6i+Zk/W6Xfix/eYp4CzsM211c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O0z8wAAv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4687C4CEE3;
-	Fri, 14 Mar 2025 15:42:28 +0000 (UTC)
+	s=arc-20240116; t=1741967010; c=relaxed/simple;
+	bh=A7ACwrOcDWxFSXNkSxe9leQpcdrWku29f/WynU5fGDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=H5rKeiwbruLBeQmXYd5wGVK4kFgkTXozc0yUhsfWxSGOWVaPoNPRwDCKw9CgR+KyyN/vhA3IyKv9H6ZtkdVt/9DZzNjkuIjjW2quZvrxFwT10UMOiNvAe5e0jVXuuH21AKjhek0IVQs5LNXoGgTEXcGh9Ktz9ELzdaRNbOHGROc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMHuEUI1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3546AC4CEE3;
+	Fri, 14 Mar 2025 15:43:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741966951;
-	bh=fY6NNdYXbkSUdnsh0gksJ+CeGLSLZTHOrTd9nCzEgKg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O0z8wAAvDMVbxhPFUO4yQ6mIyPoO/Nn61F0mub1Kts+IN+O0H2lhLc00FkF5RCXdZ
-	 /gX7MSKa3eBqjnyu3j3+OQ+AaS8efjChjmH9Mmj1CB6+HvW3edQ8UiFz7cLKQxqJf0
-	 ex0m+fEbSu82LjrS0qIC5Ur/X2w3p8JoNBm26mY0yvpqrHesS9AJHgHvsgCOQ9Gcsv
-	 YU1+Uz073mk7x50KnMDkEymHyEJUfuPRsA1d+EEOYzAwuqVbQDbWIyVr6BoHGP4gff
-	 bm9MD7U5mCkPHmQw1y4F6pHkc4PkEtbj0kRuCJomFXJsnX7ZKn/XsatVtmgPFfGr9n
-	 dN2s4rlMztn/Q==
-Date: Fri, 14 Mar 2025 16:42:26 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Paul Moore <paul@paul-moore.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Kees Cook <kees@kernel.org>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1] landlock: Allow signals between threads of the
- same process
-Message-ID: <20250314-unkritisch-triangel-b0c733841974@brauner>
-References: <20250313145904.3238184-1-mic@digikod.net>
+	s=k20201202; t=1741967009;
+	bh=A7ACwrOcDWxFSXNkSxe9leQpcdrWku29f/WynU5fGDI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=gMHuEUI1RURRLpnDg8xy4KTaCFUJ3de3GpaH1SscQF9pcRoyZ1+XmhL+QP2J1xQ1J
+	 t05uEZmukeKHJ5+IgY592YcKv2tZDLegdJHldlfUu0vK3oeC5u0pUpIrM7i/DM2cvI
+	 WB6M2tpSbAdOGVTpEwJQlJuzXqIMXhb0rs5nZXKInx+QNFEhOrnLhzz09MYS+fOFu+
+	 Et1CxiMDXF4UqOjdLP96oC/kbjQKvJONTvCuE9XviXFtC/qogI7J6ElyRROgog++Go
+	 oiMPN/Z5HfjXXVnL6I6ztJ2YI6D7l1isuzwd4pmjk1D1jFat8WKQbvpXopo5d1O1mi
+	 1fHnvFn2truvg==
+Date: Fri, 14 Mar 2025 16:43:26 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
+	lkml <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
+Subject: [GIT PULL] i2c-host-fixes for v6.14-rc7
+Message-ID: <47qvm27cjuxtx4djqlmjinl73zsg6l3ihqtqvk7za6kfvqmnzo@q77ejrvpzzvx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,157 +56,52 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250313145904.3238184-1-mic@digikod.net>
 
-On Thu, Mar 13, 2025 at 03:59:04PM +0100, Mickaël Salaün wrote:
-> Because Linux credentials are managed per thread, user space relies on
-> some hack to synchronize credential update across threads from the same
-> process.  This is required by the Native POSIX Threads Library and
-> implemented by set*id(2) wrappers and libcap(3) to use tgkill(2) to
-> synchronize threads.  See nptl(7) and libpsx(3).  Furthermore, some
-> runtimes like Go do not enable developers to have control over threads
-> [1].
-> 
-> To avoid potential issues, and because threads are not security
-> boundaries, let's relax the Landlock signal scoping to always allow
-> signals sent between threads of the same process.  This exception is
-> similar to the __ptrace_may_access() one.
-> 
-> hook_file_set_fowner() now checks if the target task is part of the same
-> process as the caller.  If this is the case, then the related signal
-> triggered by the socket will always be allowed.
+Hi Wolfram,
 
-Seems fine,
-Acked-by: Christian Brauner <brauner@kernel.org>
+somehow, for some higher forces, the trend in I2C is flipped:
+instead of slowing down, the number of fixes goes up at the end
+of the cycle. Four patches this time!
 
-> 
-> Scoping of abstract UNIX sockets is not changed because kernel objects
-> (e.g. sockets) should be tied to their creator's domain at creation
-> time.
-> 
-> Note that creating one Landlock domain per thread puts each of these
-> threads (and their future children) in their own scope, which is
-> probably not what users expect, especially in Go where we do not control
-> threads.  However, being able to drop permissions on all threads should
-> not be restricted by signal scoping.  We are working on a way to make it
-> possible to atomically restrict all threads of a process with the same
-> domain [2].
-> 
-> Closes: https://github.com/landlock-lsm/go-landlock/issues/36
-> Fixes: 54a6e6bbf3be ("landlock: Add signal scoping")
-> Fixes: c8994965013e ("selftests/landlock: Test signal scoping for threads")
-> Depends-on: 26f204380a3c ("fs: Fix file_set_fowner LSM hook inconsistencies")
-> Link: https://pkg.go.dev/kernel.org/pub/linux/libs/security/libcap/psx [1]
-> Link: https://github.com/landlock-lsm/linux/issues/2 [2]
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Serge Hallyn <serge@hallyn.com>
-> Cc: Tahera Fahimi <fahimitahera@gmail.com>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20250313145904.3238184-1-mic@digikod.net
-> ---
-> 
-> I'm still not sure how we could reliably detect if the running kernel
-> has this fix or not, especially in Go.
-> ---
->  security/landlock/fs.c                        | 22 +++++++++++++++----
->  security/landlock/task.c                      | 12 ++++++++++
->  .../selftests/landlock/scoped_signal_test.c   |  2 +-
->  3 files changed, 31 insertions(+), 5 deletions(-)
-> 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 71b9dc331aae..47c862fe14e4 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -27,7 +27,9 @@
->  #include <linux/mount.h>
->  #include <linux/namei.h>
->  #include <linux/path.h>
-> +#include <linux/pid.h>
->  #include <linux/rcupdate.h>
-> +#include <linux/sched/signal.h>
->  #include <linux/spinlock.h>
->  #include <linux/stat.h>
->  #include <linux/types.h>
-> @@ -1630,15 +1632,27 @@ static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
->  
->  static void hook_file_set_fowner(struct file *file)
->  {
-> -	struct landlock_ruleset *new_dom, *prev_dom;
-> +	struct fown_struct *fown = file_f_owner(file);
-> +	struct landlock_ruleset *new_dom = NULL;
-> +	struct landlock_ruleset *prev_dom;
-> +	struct task_struct *p;
->  
->  	/*
->  	 * Lock already held by __f_setown(), see commit 26f204380a3c ("fs: Fix
->  	 * file_set_fowner LSM hook inconsistencies").
->  	 */
-> -	lockdep_assert_held(&file_f_owner(file)->lock);
-> -	new_dom = landlock_get_current_domain();
-> -	landlock_get_ruleset(new_dom);
-> +	lockdep_assert_held(&fown->lock);
-> +
-> +	/*
-> +	 * Always allow sending signals between threads of the same process.  This
-> +	 * ensures consistency with hook_task_kill().
-> +	 */
-> +	p = pid_task(fown->pid, fown->pid_type);
-> +	if (!same_thread_group(p, current)) {
-> +		new_dom = landlock_get_current_domain();
-> +		landlock_get_ruleset(new_dom);
-> +	}
-> +
->  	prev_dom = landlock_file(file)->fown_domain;
->  	landlock_file(file)->fown_domain = new_dom;
->  
-> diff --git a/security/landlock/task.c b/security/landlock/task.c
-> index dc7dab78392e..4578ce6e319d 100644
-> --- a/security/landlock/task.c
-> +++ b/security/landlock/task.c
-> @@ -13,6 +13,7 @@
->  #include <linux/lsm_hooks.h>
->  #include <linux/rcupdate.h>
->  #include <linux/sched.h>
-> +#include <linux/sched/signal.h>
->  #include <net/af_unix.h>
->  #include <net/sock.h>
->  
-> @@ -264,6 +265,17 @@ static int hook_task_kill(struct task_struct *const p,
->  		/* Dealing with USB IO. */
->  		dom = landlock_cred(cred)->domain;
->  	} else {
-> +		/*
-> +		 * Always allow sending signals between threads of the same process.
-> +		 * This is required for process credential changes by the Native POSIX
-> +		 * Threads Library and implemented by the set*id(2) wrappers and
-> +		 * libcap(3) with tgkill(2).  See nptl(7) and libpsx(3).
-> +		 *
-> +		 * This exception is similar to the __ptrace_may_access() one.
-> +		 */
-> +		if (same_thread_group(p, current))
-> +			return 0;
-> +
->  		dom = landlock_get_current_domain();
->  	}
->  	dom = landlock_get_applicable_domain(dom, signal_scope);
-> diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
-> index 475ee62a832d..767f117703b7 100644
-> --- a/tools/testing/selftests/landlock/scoped_signal_test.c
-> +++ b/tools/testing/selftests/landlock/scoped_signal_test.c
-> @@ -281,7 +281,7 @@ TEST(signal_scoping_threads)
->  	/* Restricts the domain after creating the first thread. */
->  	create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
->  
-> -	ASSERT_EQ(EPERM, pthread_kill(no_sandbox_thread, 0));
-> +	ASSERT_EQ(0, pthread_kill(no_sandbox_thread, 0));
->  	ASSERT_EQ(1, write(thread_pipe[1], ".", 1));
->  
->  	ASSERT_EQ(0, pthread_create(&scoped_thread, NULL, thread_func, NULL));
-> 
-> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
-> -- 
-> 2.48.1
-> 
+Big thanks to the TI folks for testing and reviewing the
+i2c-omap patch, which could have caused a system hang.
+
+Now it's time to wrap things up for the merge window—hopefully,
+I don't leave anything behind.
+
+Have a good weekend!
+Andi
+
+The following changes since commit 80e54e84911a923c40d7bee33a34c1b4be148d7a:
+
+  Linux 6.14-rc6 (2025-03-09 13:45:25 -1000)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.14-rc7
+
+for you to fetch changes up to 2b22459792fcb4def9f0936d64575ac11a95a58d:
+
+  i2c: sis630: Fix an error handling path in sis630_probe() (2025-03-12 12:24:53 +0100)
+
+----------------------------------------------------------------
+i2c-host-fixes for v6.14-rc7
+
+- omap: fixed irq ACKS to avoid irq storming and system hang.
+- ali1535, ali15x3, sis630: fixed error path at probe exit.
+
+----------------------------------------------------------------
+Andreas Kemnade (1):
+      i2c: omap: fix IRQ storms
+
+Christophe JAILLET (3):
+      i2c: ali1535: Fix an error handling path in ali1535_probe()
+      i2c: ali15x3: Fix an error handling path in ali15x3_probe()
+      i2c: sis630: Fix an error handling path in sis630_probe()
+
+ drivers/i2c/busses/i2c-ali1535.c | 12 +++++++++++-
+ drivers/i2c/busses/i2c-ali15x3.c | 12 +++++++++++-
+ drivers/i2c/busses/i2c-omap.c    | 26 +++++++-------------------
+ drivers/i2c/busses/i2c-sis630.c  | 12 +++++++++++-
+ 4 files changed, 40 insertions(+), 22 deletions(-)
 
