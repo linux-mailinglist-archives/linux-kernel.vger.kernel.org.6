@@ -1,242 +1,89 @@
-Return-Path: <linux-kernel+bounces-560955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D648A60B7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:29:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B238A60BD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:36:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD69B3BB2DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:29:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 793753BFE1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469391A5B93;
-	Fri, 14 Mar 2025 08:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Oc8ZU/Qn"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FA41A7AFD;
+	Fri, 14 Mar 2025 08:36:39 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D94A1A5B84
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832F91A3174
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741940933; cv=none; b=XnAkXUNrJoMuOF28pzeMxxsT/4jryXfyU5WfrlkhffxAh5jbabtlIAdkMVBToKhEnO+y/TNcVNsRVZilEJm3uhSckLkWhiny1wsK6oqbQV68vD5V1r4Jtl/gkhtb9FVmBQnbWjCMmZfTEnrPstUG69PPPXn64Um21KlhvrXbj/Y=
+	t=1741941399; cv=none; b=HeVFHkhvJcgItazkgis+t0vn6IjoXFWDGaLYgqpyiYJNGJCqMu6fm0tpQyL1wMGBCgzFdaaY4DMGGxkNwUCatg6BwDKhshQKMQI7mY1JkCsrT6e8k2YfHiJ48CUswYS+qZ9GjLei2CPLPaSlV8XI1BfqojXpSnz/1IMZsbptHww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741940933; c=relaxed/simple;
-	bh=/GK6YaXtExvy/eQBO9qlqSFnCbHsXIRbaqcz6aTvle0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ioUnAqRQhf4NsyDYZpzrgnNZCdNqrvn6+giKRSnJee7gEpTghL1Me8MgDC41rV1ROt1XoMerJk0O5O7tgtJ2sx4UJFiXyrzFioJnTdH+kd9IOgCvVOfsPPXfdAkBIFw1QwgXC0JQJO+IoYv1r4VhOJrq0Y9xTfA9nwg4/Up0zSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Oc8ZU/Qn; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3cf82bd380bso17639445ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:28:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1741940930; x=1742545730; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jYQ8WklltJ5CnB1F6nWEydwmD/n5vdx4jj1xbKUOGOw=;
-        b=Oc8ZU/QnGJ9IYTfXircPV8UhoRx+dpDbiZij0XUreTc0hTc2VgvwlL1hSM6KRJO7gZ
-         7zLM/2BWFe5Qv3O3wHt2ck5FQCofcAizHzWoP9Gpd1oAPsK2HlxXOwqU1uPkshpPCzjS
-         pKNwD6mciYTE02v29YnePvscOmSQ5W+qknyWnCW+v263BmUznA5ty76O4s8ecqJaJ+e7
-         JJev/vbqw6yVmQsxWafiZeLZheyizc2/bbsW8nSeNI+hQSGXnmvPcV0S0Q0ji/CbwhQc
-         7H5aoD96FvHnfZN1uBdlyGCupFxRrmXMoZ+OHOmfCK+ozd4llVf23IXTiZXrjyasRPVB
-         rzZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741940930; x=1742545730;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jYQ8WklltJ5CnB1F6nWEydwmD/n5vdx4jj1xbKUOGOw=;
-        b=cC5B3btq+Ux2vOgxs6zno016Zcejhei1YoenW4KMUNBgETpencgKBZdYKmNrDDMH85
-         GYjNaN3yb/e07MTvvDZrhuh9Tt8s2nRAsd+D2S5tG6JA+ziw4rMALjOkrumQqzEMIHqK
-         X5Io6tCmiooxHb+BSDV7CAIhHjyhI3cXgTgr8IGJXddT8CY1o6WzDjz+xyCXaua4LhH/
-         bvCvZ74Kk1i9zNsKiFwsgAxesgzU5+yamAPZya2nOFKV7zwyXajAXSuKEsHv42CxoKS9
-         rJ3H31ZWpDfZx0BZiJkbAqWszmxq56q92NIi/Ullie2PL39yhj5Vu+KM/cm3vKsLVkGt
-         Ou5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUhVz6ki8zWeCKTigg1Z1PlpQ9SSe950SkcFvP427YBKHx1RXV76vHJpNssoc1JG/ao4zZpD4IKxBumHIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRGtwYHoZ2+TSPadmFckKcI6O8vyxP8g4Wjs00EeDxy28DA6Oi
-	JZjTQqujID8x/UuKNUHRl/0dqr9V6G3/tAN3hNB5/KchovDhnAdov8BChoPfNRwi+XyywpRP01M
-	rzvCikLfsnURhsi9sAosPVPDTtXpeA+zEoS3tCQ==
-X-Gm-Gg: ASbGncvilnwzYMrqMQOTCAtZn0mGh1sqEKFiI5BdydWGZmHsDhjleRCbrBCwFpaJzvm
-	x/LW6OD6+jaQRvdlHKeH3/2owQCA0iwwLNwQpxEW28eYy2pGTHJ8xZP7ODGgGax+Dlu/louT3Sm
-	131F/d4WZbL4yt8merv5KjtJ6mJLV5Sl7QeoI2xQ==
-X-Google-Smtp-Source: AGHT+IG+6oGPXZWI7buI+qLSPhZnhJwwr7Hbk+z7bXsShxCE3wUQfaPagpNJnFiXw0YRZXX1FtMy1so34umJojVa7Qo=
-X-Received: by 2002:a05:6e02:370b:b0:3d3:fa8d:be6e with SMTP id
- e9e14a558f8ab-3d483a63d6amr12103875ab.14.1741940930607; Fri, 14 Mar 2025
- 01:28:50 -0700 (PDT)
+	s=arc-20240116; t=1741941399; c=relaxed/simple;
+	bh=SrrfmRRllZqFek6rbG9nWhX6cTCKReG+Vak6XmvztYc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bsb/0UaXiXbv6GvoThs8A5fNojRCDdDvtXB9hN2yMKeyz8ww0a7/CqxWbL4BhV1Gf/fRjxtwrmeXSnbJg0RBGYv++RGq/NCP9OfXeZn/8qKEYnkvx5Nu/+CuhplJxIV09BLyFP8Qqx2OjD6v72+EvuBHe4rcGoL0kvQncXN6uuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZDd0r21k7zCs9h;
+	Fri, 14 Mar 2025 16:33:00 +0800 (CST)
+Received: from dggemv711-chm.china.huawei.com (unknown [10.1.198.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id ECE59180102;
+	Fri, 14 Mar 2025 16:36:33 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 14 Mar 2025 16:36:33 +0800
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 14 Mar 2025 16:36:33 +0800
+From: Huisong Li <lihuisong@huawei.com>
+To: <xuwei5@hisilicon.com>
+CC: <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <Jonathan.Cameron@Huawei.com>,
+	<liuyonglong@huawei.com>, <lihuisong@huawei.com>
+Subject: [PATCH] soc: hisilicon: kunpeng_hccs: Fix incorrect string assembly
+Date: Fri, 14 Mar 2025 16:28:56 +0800
+Message-ID: <20250314082856.3257783-1-lihuisong@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310-v5_user_cfi_series-v11-0-86b36cbfb910@rivosinc.com> <20250310-v5_user_cfi_series-v11-6-86b36cbfb910@rivosinc.com>
-In-Reply-To: <20250310-v5_user_cfi_series-v11-6-86b36cbfb910@rivosinc.com>
-From: Zong Li <zong.li@sifive.com>
-Date: Fri, 14 Mar 2025 16:28:39 +0800
-X-Gm-Features: AQ5f1Jo6BmeaPVN-BpPNuNRR3aEeI1qJOuvP_eZRv9-j2_Jz5UNXStZ6Qvn-cko
-Message-ID: <CANXhq0pE+o4C_mn-Ofkf8uqEUJ+9SCpv5+z8zaSVQi0nW3558Q@mail.gmail.com>
-Subject: Re: [PATCH v11 06/27] riscv/mm : ensure PROT_WRITE leads to VM_READ | VM_WRITE
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
-	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
-	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
-	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-On Mon, Mar 10, 2025 at 11:42=E2=80=AFPM Deepak Gupta <debug@rivosinc.com> =
-wrote:
->
-> `arch_calc_vm_prot_bits` is implemented on risc-v to return VM_READ |
-> VM_WRITE if PROT_WRITE is specified. Similarly `riscv_sys_mmap` is
-> updated to convert all incoming PROT_WRITE to (PROT_WRITE | PROT_READ).
-> This is to make sure that any existing apps using PROT_WRITE still work.
->
-> Earlier `protection_map[VM_WRITE]` used to pick read-write PTE encodings.
-> Now `protection_map[VM_WRITE]` will always pick PAGE_SHADOWSTACK PTE
-> encodings for shadow stack. Above changes ensure that existing apps
-> continue to work because underneath kernel will be picking
-> `protection_map[VM_WRITE|VM_READ]` PTE encodings.
->
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->  arch/riscv/include/asm/mman.h    | 25 +++++++++++++++++++++++++
->  arch/riscv/include/asm/pgtable.h |  1 +
->  arch/riscv/kernel/sys_riscv.c    | 10 ++++++++++
->  arch/riscv/mm/init.c             |  2 +-
->  4 files changed, 37 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/include/asm/mman.h b/arch/riscv/include/asm/mman.=
-h
-> new file mode 100644
-> index 000000000000..392c9c2d2e78
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/mman.h
-> @@ -0,0 +1,25 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __ASM_MMAN_H__
-> +#define __ASM_MMAN_H__
-> +
-> +#include <linux/compiler.h>
-> +#include <linux/types.h>
-> +#include <uapi/asm/mman.h>
-> +
-> +static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
-> +                                                  unsigned long pkey __a=
-lways_unused)
-> +{
-> +       unsigned long ret =3D 0;
-> +
-> +       /*
-> +        * If PROT_WRITE was specified, force it to VM_READ | VM_WRITE.
-> +        * Only VM_WRITE means shadow stack.
-> +        */
-> +       if (prot & PROT_WRITE)
-> +               ret =3D (VM_READ | VM_WRITE);
-> +       return ret;
-> +}
-> +
-> +#define arch_calc_vm_prot_bits(prot, pkey) arch_calc_vm_prot_bits(prot, =
-pkey)
-> +
-> +#endif /* ! __ASM_MMAN_H__ */
-> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pg=
-table.h
-> index 050fdc49b5ad..8c528cd7347a 100644
-> --- a/arch/riscv/include/asm/pgtable.h
-> +++ b/arch/riscv/include/asm/pgtable.h
-> @@ -178,6 +178,7 @@ extern struct pt_alloc_ops pt_ops __meminitdata;
->  #define PAGE_READ_EXEC         __pgprot(_PAGE_BASE | _PAGE_READ | _PAGE_=
-EXEC)
->  #define PAGE_WRITE_EXEC                __pgprot(_PAGE_BASE | _PAGE_READ =
-|      \
->                                          _PAGE_EXEC | _PAGE_WRITE)
-> +#define PAGE_SHADOWSTACK       __pgprot(_PAGE_BASE | _PAGE_WRITE)
->
->  #define PAGE_COPY              PAGE_READ
->  #define PAGE_COPY_EXEC         PAGE_READ_EXEC
-> diff --git a/arch/riscv/kernel/sys_riscv.c b/arch/riscv/kernel/sys_riscv.=
-c
-> index d77afe05578f..43a448bf254b 100644
-> --- a/arch/riscv/kernel/sys_riscv.c
-> +++ b/arch/riscv/kernel/sys_riscv.c
-> @@ -7,6 +7,7 @@
->
->  #include <linux/syscalls.h>
->  #include <asm/cacheflush.h>
-> +#include <asm-generic/mman-common.h>
->
->  static long riscv_sys_mmap(unsigned long addr, unsigned long len,
->                            unsigned long prot, unsigned long flags,
-> @@ -16,6 +17,15 @@ static long riscv_sys_mmap(unsigned long addr, unsigne=
-d long len,
->         if (unlikely(offset & (~PAGE_MASK >> page_shift_offset)))
->                 return -EINVAL;
->
-> +       /*
-> +        * If PROT_WRITE is specified then extend that to PROT_READ
-> +        * protection_map[VM_WRITE] is now going to select shadow stack e=
-ncodings.
-> +        * So specifying PROT_WRITE actually should select protection_map=
- [VM_WRITE | VM_READ]
-> +        * If user wants to create shadow stack then they should use `map=
-_shadow_stack` syscall.
-> +        */
-> +       if (unlikely((prot & PROT_WRITE) && !(prot & PROT_READ)))
-> +               prot |=3D PROT_READ;
-> +
->         return ksys_mmap_pgoff(addr, len, prot, flags, fd,
->                                offset >> (PAGE_SHIFT - page_shift_offset)=
-);
->  }
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index 15b2eda4c364..9d6661638d0b 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -342,7 +342,7 @@ pgd_t early_pg_dir[PTRS_PER_PGD] __initdata __aligned=
-(PAGE_SIZE);
->  static const pgprot_t protection_map[16] =3D {
->         [VM_NONE]                                       =3D PAGE_NONE,
->         [VM_READ]                                       =3D PAGE_READ,
-> -       [VM_WRITE]                                      =3D PAGE_COPY,
-> +       [VM_WRITE]                                      =3D PAGE_SHADOWST=
-ACK,
->         [VM_WRITE | VM_READ]                            =3D PAGE_COPY,
->         [VM_EXEC]                                       =3D PAGE_EXEC,
->         [VM_EXEC | VM_READ]                             =3D PAGE_READ_EXE=
-C,
->
+String assembly should use sysfs_emit_at() instead of sysfs_emit().
 
-LGTM.
+Signed-off-by: Huisong Li <lihuisong@huawei.com>
+---
+ drivers/soc/hisilicon/kunpeng_hccs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Zong Li <zong.li@sifive.com>
+diff --git a/drivers/soc/hisilicon/kunpeng_hccs.c b/drivers/soc/hisilicon/kunpeng_hccs.c
+index 8aa8dec14911..444a8f59b7da 100644
+--- a/drivers/soc/hisilicon/kunpeng_hccs.c
++++ b/drivers/soc/hisilicon/kunpeng_hccs.c
+@@ -1539,8 +1539,8 @@ static ssize_t used_types_show(struct kobject *kobj,
+ 	u16 i;
+ 
+ 	for (i = 0; i < hdev->used_type_num - 1; i++)
+-		len += sysfs_emit(&buf[len], "%s ", hdev->type_name_maps[i].name);
+-	len += sysfs_emit(&buf[len], "%s\n", hdev->type_name_maps[i].name);
++		len += sysfs_emit_at(buf, len, "%s ", hdev->type_name_maps[i].name);
++	len += sysfs_emit_at(buf, len, "%s\n", hdev->type_name_maps[i].name);
+ 
+ 	return len;
+ }
+-- 
+2.33.0
 
-> --
-> 2.34.1
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
