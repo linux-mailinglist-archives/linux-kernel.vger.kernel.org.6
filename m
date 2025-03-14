@@ -1,116 +1,180 @@
-Return-Path: <linux-kernel+bounces-560561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9171DA6069A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:37:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084C2A6069D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:39:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D55B546055F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:37:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC43919C3CC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B11B13D246;
-	Fri, 14 Mar 2025 00:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF080B674;
+	Fri, 14 Mar 2025 00:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="IV0LVRvT"
-Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="Mvjr3659"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BC61386B4
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 00:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2710420ED;
+	Fri, 14 Mar 2025 00:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741912561; cv=none; b=mpqQg1vVp5f/EqmaZLxWGECIKhYJ+f1PsQlFAl+Nx04M0kSX48p2/0nkG3ruKY5HL11OddlVwzdprRbuYzcnQskPTNYxZqOgzkagBmv1ebaOhLWuWBluwmxdYHzREPhEQKApA4Bipk3b1o0k4A/0MwidSxZWy9Dda933PYezUig=
+	t=1741912766; cv=none; b=NznUQpwEyMQvb01YIA+2BGDlxX+tfv+Zv6ofNy27Au83F9hgYNovPpKeooJ88M0laTpvHdpTQZn7nA5g0qoWxD1EYoWwh3wk69+Jnur5kdvoDgdQYQfam8vs/vHj+fLOzaY5ZmKmY0q1JquU/gGiZcK6O6IrgRjqkff5vA7enRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741912561; c=relaxed/simple;
-	bh=UBQCkinyVXtoYGUuEtjWctCIDp6wpWpyJrrlXuHXHrw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MUojfLpd4qHHetn/pU7EUpOZWDXr3RMEEEph/gO0KBHCCLiZrCoytQmSG9T1/KNoVy9Qs7rpmm+CSssYvV4O8upcB7frUhZcvqgSVq9UQtyvxJUkU4TannXf3BCm5LN6lstrL0uXM/OjuU21MuThiQx20+yGSlb7qxmrc+yWukM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=IV0LVRvT; arc=none smtp.client-ip=79.135.106.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741912556; x=1742171756;
-	bh=UBQCkinyVXtoYGUuEtjWctCIDp6wpWpyJrrlXuHXHrw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=IV0LVRvTpLturMerlgpQ229BAnypstXfgepPxUmuyE5OiyLgX4ON40CsFnA/sLrlB
-	 tJVPws9e8f/uDMgpRj3uguH9oXWhVG4JfP3pH8WJkDdBCi1A/NwpgGnHUN9p4VqGDf
-	 C+OvaLVXqtViPXZcSydswkJBSyJeuN0ryIIDBzKW4PukMQZZ/kQDn2wdpmea1VdoG/
-	 ZaFUzcvekBC3cJw/B2ds9s0YsPR415I9bLvUMrHr2CyQOKJq8kyKWF0xr+o4Hgorwv
-	 GOB20eUIMfoNnLCN5bQZtsdHYWmys6dau7ckRaOQTR4AtXau+AWZIDvkBR6Md0JYYP
-	 M0zygLONimdVg==
-Date: Fri, 14 Mar 2025 00:35:51 +0000
-To: Dave Hansen <dave.hansen@intel.com>
-From: Denis Mukhin <dmkhn@proton.me>
-Cc: dmukhin@ford.com, Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/early_printk: add MMIO-based UARTs
-Message-ID: <QKiXvDxnTzqiTDN61eP_MtKY53BNMuH5wG_PHWrr_VbdjypCjsDmioJ7SYg4a8sfp1In8OV0aihcLffmjkNCklhe5cTZ3km22cS604TpIYE=@proton.me>
-In-Reply-To: <cfc6916e-802f-4727-aa74-b052f94d0101@intel.com>
-References: <20250313-earlyprintk-v1-1-8f818d77a8dd@ford.com> <cfc6916e-802f-4727-aa74-b052f94d0101@intel.com>
-Feedback-ID: 123220910:user:proton
-X-Pm-Message-ID: 321b00b4827518539abbe38e6b337b1d8c0a534a
+	s=arc-20240116; t=1741912766; c=relaxed/simple;
+	bh=+PjJVE098bZa/wU50gzrS6mqYmWbxu5ewW7VD/uon2A=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HXhfhS5Io+rbiZymWGO2rdvcbcqEglDRaf+Nt4/8mc6yHAVknOwmDmczDt5y4htHSP6qNmbwo+c650FnCKq52mmBNvT3WYgvkDmC/6aG91i1NtXHfmw7QQC6NVke6rIiogRqvGIspkHFzl3PAfOII2mIiTK6UdYpAe+Pr9hWeFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=Mvjr3659; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 52E0cJpxD2137090, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1741912699; bh=+PjJVE098bZa/wU50gzrS6mqYmWbxu5ewW7VD/uon2A=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=Mvjr36592I0PnIn+ZJ0etW/hp6ShwMpJa0ZXuzCTvj9IQ3jcUuVXPNaG+z2cAwCh2
+	 FtgNxeramY2a7EGRt6TS/hCaqCZ9hdLPuFnIjKX5v/CtMicW+nFuYKwIZUuqMTHkl4
+	 bi9v3rM9mnnbQ1akc6wXwu2dusiAjiZtFGqiSYXRMVEOc/SVz7l2EYiGXnLFGsvNEk
+	 qV8Ymx/HIwFuA/7ckPvCCtnriB+uA1FfbUeZbi17QCUaKHS6BQcQfdNVdqYtx4sKyV
+	 ZaKaBdiIgCEaxsH6TZZLTAgPht1hUAxUxt/22hM/vJRwPOKv1w0CJysjmSxPI0VCad
+	 K3sWUDLKuYWoA==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 52E0cJpxD2137090
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Mar 2025 08:38:19 +0800
+Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 14 Mar 2025 08:38:19 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 14 Mar 2025 08:38:18 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
+ RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
+ 15.01.2507.035; Fri, 14 Mar 2025 08:38:18 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Shengyu Qu <wiagn233@outlook.com>, "nbd@nbd.name" <nbd@nbd.name>,
+        "lorenzo@kernel.org" <lorenzo@kernel.org>,
+        "ryder.lee@mediatek.com"
+	<ryder.lee@mediatek.com>,
+        "shayne.chen@mediatek.com"
+	<shayne.chen@mediatek.com>,
+        "sean.wang@mediatek.com"
+	<sean.wang@mediatek.com>,
+        "johannes@sipsolutions.net"
+	<johannes@sipsolutions.net>,
+        "matthias.bgg@gmail.com"
+	<matthias.bgg@gmail.com>,
+        "angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org"
+	<linux-mediatek@lists.infradead.org>
+CC: Peter Chiu <chui-hao.chiu@mediatek.com>
+Subject: RE: [PATCH v2] mt76: mt7915: wed: find rx token by physical address
+Thread-Topic: [PATCH v2] mt76: mt7915: wed: find rx token by physical address
+Thread-Index: AQHblBmGB45wtbg220K+EOh15tj5ybNxx3Qg
+Date: Fri, 14 Mar 2025 00:38:18 +0000
+Message-ID: <e935ee9c19de4b9baf547aa6861d23e7@realtek.com>
+References: <TYCPR01MB843753CE1DBAF4FAEF76B17698D32@TYCPR01MB8437.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYCPR01MB843753CE1DBAF4FAEF76B17698D32@TYCPR01MB8437.jpnprd01.prod.outlook.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-On Thursday, March 13th, 2025 at 5:04 PM, Dave Hansen <dave.hansen@intel.co=
-m> wrote:
+Shengyu Qu <wiagn233@outlook.com> wrote:
+> The token id in RxDMAD may be incorrect when it is not the last frame
+> due to WED HW bug. Lookup correct token id by physical address in sdp0.
+>=20
+> Downstream patch link:
+> https://git01.mediatek.com/plugins/gitiles/openwrt/feeds/mtk-openwrt-feed=
+s/+/737340322ab22b138fd200e02
+> 0d61ffdbe3e36a9/autobuild/autobuild_5.4_mac80211_release/mt7988_wifi7_mac=
+80211_mlo/package/kernel/mt76
+> /patches/0062-mtk-wifi-mt76-mt7915-wed-find-rx-token-by-physical-a.patch
+>=20
+> Signed-off-by: Peter Chiu <chui-hao.chiu@mediatek.com>
+> Signed-off-by: Shengyu Qu <wiagn233@outlook.com>
+> ---
+> Changes since v1:
+>  - Reordered code sequence to reversed Xmas tree order
+>  - Renamed some variables
+> ---
+>  drivers/net/wireless/mediatek/mt76/dma.c | 26 +++++++++++++++++++++++-
+>  1 file changed, 25 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/net/wireless/mediatek/mt76/dma.c b/drivers/net/wirel=
+ess/mediatek/mt76/dma.c
+> index 844af16ee5513..25893686cbe85 100644
+> --- a/drivers/net/wireless/mediatek/mt76/dma.c
+> +++ b/drivers/net/wireless/mediatek/mt76/dma.c
+> @@ -445,8 +445,32 @@ mt76_dma_get_buf(struct mt76_dev *dev, struct mt76_q=
+ueue *q, int idx,
+>=20
+>         if (mt76_queue_is_wed_rx(q)) {
+>                 u32 token =3D FIELD_GET(MT_DMA_CTL_TOKEN, buf1);
+> -               struct mt76_txwi_cache *t =3D mt76_rx_token_release(dev, =
+token);
+> +               struct mt76_txwi_cache *t;
+> +               bool found =3D false;
+> +               u32 id;
+> +
+> +               if (*more) {
+> +                       spin_lock_bh(&dev->rx_token_lock);
+> +
+> +                       idr_for_each_entry(&dev->rx_token, t, id) {
+> +                               if (t->dma_addr =3D=3D le32_to_cpu(desc->=
+buf0)) {
+> +                                       token =3D id;
+> +                                       found =3D 1;
 
->=20
->=20
-> On 3/13/25 16:45, Denis Mukhin via B4 Relay wrote:
->=20
-> > During the bring-up of an x86 board, the kernel was crashing before
-> > reaching the platform's console driver because of a bug in the firmware=
-,
-> > leaving no trace of the boot progress.
-> >=20
-> > It was discovered that the only available method to debug the kernel
-> > boot process was via the platform's MMIO-based UART, as the board lacke=
-d
-> > an I/O port-based UART, PCI UART, or functional video output.
->=20
->=20
-> This is a pretty exotic piece of hardware, right? It's not some off the
-> shelf laptop?
+found =3D true;
 
-Correct, this is not off the shelf laptop.
+Since you are digging how frequent this can occur, you may decide to have a
+conversion function afterward, so it would be good to move this loop
+into a function, like mt76_dma_get_id_from_txwi(dev, t). Then the you can
+replace the implementation at that time.
 
->=20
-> Is there a driver for it during normal runtime?
+By the way, I personally don't like so many indents. A function can ease
+indents.
 
-Yes, that is a variant of NS16550 UART.
+> +
+> +                                       /* Write correct id back to DMA*/
+> +                                       u32p_replace_bits(&buf1, id,
+> +                                                         MT_DMA_CTL_TOKE=
+N);
+> +                                       WRITE_ONCE(desc->buf1, cpu_to_le3=
+2(buf1));
+> +                                       break;
+> +                               }
+> +                       }
+> +
+> +                       spin_unlock_bh(&dev->rx_token_lock);
+> +                       if (!found)
+> +                               return NULL;
+> +               }
+>=20
+> +               t =3D mt76_rx_token_release(dev, token);
+>                 if (!t)
+>                         return NULL;
+>=20
+> --
+> 2.48.1
 
->=20
-> > Then it turned out that earlyprintk=3D does not have a knob to configur=
-e
-> > the MMIO-mapped UART.
-> >=20
-> > Extend the early printk facility to support platform MMIO-based UARTs
-> > on x86 systems, enabling debugging during the system bring-up phase.
-> >=20
-> > The command line syntax to enable platform MMIO-based UART is:
-> > earlyprintk=3Dmmio,membase[,{nocfg|baudrate}][,keep]
->=20
->=20
->=20
-> I'll stick this in the queue to take a closer look after the next merge
-> window closes. It's a bit on the late side in the 6.14 cycle for new stuf=
-f.
->=20
-> I do appreciate the importance of having this tool in your toolbox.
-> earlyprintk has saved my bacon more times than I can count.
-
-Thanks!
-
---
-Denis
 
