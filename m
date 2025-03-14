@@ -1,181 +1,134 @@
-Return-Path: <linux-kernel+bounces-562238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B427DA61FA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 23:00:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D679BA61FB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 23:01:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DC151B61F4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:00:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CB9B46258C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A311C6FE8;
-	Fri, 14 Mar 2025 21:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8D72054EC;
+	Fri, 14 Mar 2025 22:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k+sGneMA"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="adP6xDqC"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6AB205AB1
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121021A317D;
+	Fri, 14 Mar 2025 22:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741989538; cv=none; b=SbJcZP7dmjXwBey4Ual8x2AKW9l4ElyMhnRai41LMjzb/3zb4+yDW7ip4gv5Z1cf2wZYo6cjzAzNXYoofCbXS6kpMd0J8bcQA39ywbzgUrR7VqP0Eo/clULPSanJymlB682trD0p8tZ8FlmAJXSeqZYJO1xS8sJM7eyn2oqnWaw=
+	t=1741989635; cv=none; b=S9hVMM67H1oFHswGhkLy9RoVhCdvTd4EjTrm0KRfeZTBS+Yp921HRyidosRJoGnhr6TLjRlLnAkd2qF6BwruHviVrsOSgKtX0BbVIRqDhW7gOP4vIBEZtRCAmcpfk8QKHdoRHckkR9IgV3/eDx0Txhcc3hpWZqzogkR7nSQ6l+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741989538; c=relaxed/simple;
-	bh=CKhlM71HHWzhYTD7pWKMXzC0UBFFhRub+4ucFciopmk=;
+	s=arc-20240116; t=1741989635; c=relaxed/simple;
+	bh=C0kd9aKABRj1QAtLOroFspun/9OddRjZbQKvrKafBuY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fzksRUJCwxuubnZdT5MdxVfFt7QRu5/l1Sxg9alfnqgxn2klGryWh6DPGPX1P9Vt6XRq4tINXnTsfTk+LsP+Y7ZuCaf6wa+IlNITcfg3S2PMr0aEBHuNaneFo74lQihkADtNC9gJUuEL3uws5e8j8IZAOrrC1LVAV6E7B1fhwTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=k+sGneMA; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-307bc125e2eso28587951fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:58:55 -0700 (PDT)
+	 To:Cc:Content-Type; b=P5mpvQ03u513eqjPoAejueIlIN1gUkI3fszizLYcPrjvfjfv4yL6x8KsJBOi/ud2r0jeZd28rEIr6oJHY6CoWaYemlNkOscMUEX/2m2EFirR36lzLPFwTSCeWNE2CMIPZM3eyp38spqtAqaJ5nPIMb1R17TeSB9pOI7Y640g0/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=adP6xDqC; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22403c99457so6142405ad.3;
+        Fri, 14 Mar 2025 15:00:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741989533; x=1742594333; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741989632; x=1742594432; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Q+G1znUUY7rtTf9DzLNl5P+qD4jbuh64Bw3HveeQEA0=;
-        b=k+sGneMAjDfXVM+6MfhMurTkAiqpoeCqkT+6UEDX9GLingylidLihAv/qEt+bxs2ni
-         GS1Hb2SZHKvLjImpm0eZRhWpLmTL50DpI7AkNwqGcKvcbY8TIMxprTMj9BRTjEY2uqTI
-         Lp7ylu5pxh/t6RTuh1+wcQTd4oWMJg7vFfts4=
+        bh=C0kd9aKABRj1QAtLOroFspun/9OddRjZbQKvrKafBuY=;
+        b=adP6xDqCZUW7MI0v01FOX/i0qU/lWjv2duJT/Nfhh1Z0jdMmAWXejFYfMlth2U8V/I
+         OrYSlwAL2wKRsT/wVZoqoCfwZdehhSgMP2uB/ZePyx5VXYfMHkNxkYfoL7XRoIUxAyho
+         W/wlgWqq5LISSXJJBX/3Xl6W8kqg0RGg+7aQ6jHRAM+1Eq2mMxofVL04vbDwf7vrx/sW
+         1zCDnMWyOole63nlTa30ieg8RF4lK5OkOmlggbUi/GyAUezIwCfp+vBr30OYyiXU8kSu
+         hf0IuEdBPULrHT+VtvInBS0uOUVz6969QWaZEZOxc8GhQ4ZzXk2pSuW7kQCWVH++t1nO
+         1jkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741989533; x=1742594333;
+        d=1e100.net; s=20230601; t=1741989632; x=1742594432;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q+G1znUUY7rtTf9DzLNl5P+qD4jbuh64Bw3HveeQEA0=;
-        b=nBPBlmAWsSRQLgWoK4WHDBpJ1V9nvexTLhIV7hIE1KC0AqO4ilysoObpgBwLzB6bZm
-         aCP99FIw5rkzXdeuwuAy+yXeTmQfarrXcTd9S4yG6c5VBI+U7s5GU9w7tLlLbqMLWuXt
-         zpGeKJQvthLzZpb616miXVbFE53s2+RyTt2Cde/ErlrWDZwyadOV2CZs7z39vnx/wvo4
-         NHUo9r84xl9Fx3t5xwUVWKvxNQf3CmES/eoWW40yOU4tg6NFxHApf5EBf2sK9INa52mB
-         lHtIB48/YHeWMHDlUTYuwxO14Tg0+Tzjt+QY2VhVlKvWq60g4cr8p5iFdK0grl75kYqD
-         wmyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDQftF586FDBXdfdTuZVQe+pecbvGLxlJljT6A+WS314bSwBGphqALqX2CU3wLjicyeDxR/qzcCcodqm8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygzjO8fbPMa8K+FOnggs/oRvpv2sd80cRfG9eSaoPGzwPOCS4V
-	6F2S9fWKsWwaWw0afv6/OIMt62T3/SOZhO0qw2N2oQhJ6u4mb9AvEbrBuo2MFfo8ThYHvSK2UTU
-	lO9SZ
-X-Gm-Gg: ASbGncvW9mpkNlfCRql7Zga3IqmoCdRpzsXR3wpP5U9x3/BjVaNAqhrWvvLUq5U5Sxx
-	kovoYPXR63SWdISuL6yYVUmswp4/67/gx9TpPb5GPCIIQhJha/876bR7ecSh3WjcWbBwuPnK07c
-	4plTCcuSA1Jkj/OOmAR9b8ljBp/Tz7ZXZoMfGoKkw99GAfN8D0H9sLB0EL3ydlVmsRFKzZb46pB
-	RLTCfN7KVpSNq/08fyby+uk2C16lAps6EJhh5objOAJYCJY1fmn8C5fBxmWzA0NLwdmyrcO6n41
-	yn3iCK7taSoQbm5XaEx3G70qqPpziTT14M7FsC+fpN7VOC/3pS5lbB0hLemJ56+/5uiYBLygIIE
-	rf8cyVMI3
-X-Google-Smtp-Source: AGHT+IFmYA0qcE2YliLZ2B4UQL6NMDMgZ3Mr9jOYQp29xaJmhpVow68pkpLGw2DVRg13Ya5tJMsenw==
-X-Received: by 2002:a05:651c:220f:b0:30b:c569:4689 with SMTP id 38308e7fff4ca-30c4a8d8c2bmr16338071fa.27.1741989532903;
-        Fri, 14 Mar 2025 14:58:52 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f1c253dsm7119951fa.80.2025.03.14.14.58.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 14:58:49 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54943bb8006so2438130e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:58:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXchVXhiPjSdB6NHUCne9B0RLFyzu5LcBvZdYEXsA6OZ1BFCZ4FVGlapEKRvP3YS1+zcpgkLiHKCXTz0gA=@vger.kernel.org
-X-Received: by 2002:a05:6512:3d02:b0:545:c7d:1784 with SMTP id
- 2adb3069b0e04-549c3988b84mr1398468e87.43.1741989528244; Fri, 14 Mar 2025
- 14:58:48 -0700 (PDT)
+        bh=C0kd9aKABRj1QAtLOroFspun/9OddRjZbQKvrKafBuY=;
+        b=URoi9kT6497PsP7dlh3bi6V0fRZ0PbwRjWujMGeNwXe7RbPY5Xi2o1bayVoCr0EcnQ
+         mxk28UQ2X/JLqdKLQBxpGC3WcWAtCLj3RwNzOpmwsowMo+kdLkJ8J0oW/XsY493z17Lx
+         fEmDCeqE4iIdSnkS/Cz8ynsIg1FUnH4rlcRCM26P2onKss+v0h680X/s9Pn8xi/qADb/
+         WFOPJFdGgLYWP1yQfEKBvrnhy4NtKYCcvUC8eAAHA8eOWeIPqFIVKRwPrQJc+tfZgkMR
+         xoA4ObSJ1SAWvFDVFRvQguwalvAD0ObgGNncOYAGHQ+c/YoViYQGTjP/wZbjNYpP2bfo
+         MVeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9lLgI08nJFM8+A8eShJLPZOrJ8nWAJeOCj0nnfpUEsVBILr85cA0j05KVE1zIEj4mcr7K+A2lpbpI3J8=@vger.kernel.org, AJvYcCUb9NkHXwmEgMytp5I/mW/M+vz8Yl5/xdQIBxXDbHfbgdqvpNP+L/DzpX8SypjUTTR+2m5MjlqxenNf5VCt@vger.kernel.org, AJvYcCVXvNa39NiFcWf1yBjC8v8Lkqv1dkKn92szPOvuuTiy6/I0Y0nvhwGu7M8csQYlHRtp3jBH9UeDnSAN1Rm41ZoG@vger.kernel.org, AJvYcCVjCpnTmdS5H3MiC1BDR7+FiCdeWS3fy2qZGkfEGjYLA+rSgRwfecW9lKPxO0dD08rg5uxhhC6PovQq@vger.kernel.org, AJvYcCWIln/36lfXItxGnLbxMUnm7JPUAFDH0GtFPDRnSb5OhpZBCoGrrFBFRZLjAnjxgX2nROWpEL4DqL+62C1d@vger.kernel.org, AJvYcCX8y5gPsG0UIgDDISsX2mdpNtecKC9MTaNI/7t6HCoQBCO1YQfwCffX41/nqWmyMDZW2uEu7dnDkMWZmyQcK/g=@vger.kernel.org, AJvYcCXVwbdK3JN0gUPdDb3fTWGusiBN/iNuLaCnEYnuaVZj961NI9ug+8xMQIr+f5qyVAUPlzHtWcMMEORN@vger.kernel.org
+X-Gm-Message-State: AOJu0YySgq1Omh/qb2o8OjQ0ehlyCdlJdD/mJAfHSa//AzDEi82U+phg
+	Mq55DOqWfkJv/OjObNunpsTzpBulkwAIEJCcJD/YPHAd88qG+aLpUd4wE6f+rN+PcJmGlhOzu3f
+	276JKkucT22Pq4Zuzr3WwqukDQ1o7KVK204IU2Q==
+X-Gm-Gg: ASbGncvBJstUcwzGGJCZ2Y6qCjgcNiQX7bojcBxr6m+xK0WsHUhpK/ou987eD7hrWQ2
+	pSN624js3Dz6Sb1co3jHE0gLw5x7kEi6JQggDnw7kmqZayIAD2yYabu9UcaCbrYD5qR9ytUuWRJ
+	BHj9zAlIujM5PzJGdmfKOhc/vqcg==
+X-Google-Smtp-Source: AGHT+IGIUg/02s/2JHqPXRDH7/TVhuII4i8lcqJu/RWFW/EJed7lRFJjAAKliqw8+h54oGAl7/TlDjGvEyNR+aIcAyI=
+X-Received: by 2002:a17:903:24f:b0:21f:1365:8bcf with SMTP id
+ d9443c01a7336-225e0acca8cmr22208805ad.10.1741989632152; Fri, 14 Mar 2025
+ 15:00:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312104344.3084425-1-wenst@chromium.org> <20250312104344.3084425-2-wenst@chromium.org>
-In-Reply-To: <20250312104344.3084425-2-wenst@chromium.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 14 Mar 2025 14:58:36 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=X14XEdikE3hP4y53uZec12O_ZPtU+GyJ+Tf8R3DK89AA@mail.gmail.com>
-X-Gm-Features: AQ5f1Jqp4S31G39Rg1NsczcQY3Hb3QPTaquvIuzNNpiFQjs9eAjzZVdMi2mJRe0
-Message-ID: <CAD=FV=X14XEdikE3hP4y53uZec12O_ZPtU+GyJ+Tf8R3DK89AA@mail.gmail.com>
-Subject: Re: [PATCH 1/8] dt-bindings: HID: i2c-hid: elan: Introduce Elan eKTH8D18
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, chrome-platform@lists.linux.dev, 
-	linux-input@vger.kernel.org
+References: <20250314-ptr-as-ptr-v3-0-e7ba61048f4a@gmail.com>
+ <20250314-ptr-as-ptr-v3-6-e7ba61048f4a@gmail.com> <D8G9LZCS7ETL.9UPPQ73CAUQM@proton.me>
+In-Reply-To: <D8G9LZCS7ETL.9UPPQ73CAUQM@proton.me>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 14 Mar 2025 23:00:20 +0100
+X-Gm-Features: AQ5f1JpGXNTQUt_9OGK-niix7_yVJl6KGktSOGjR233jaFdbDnqZxcfMo88tqPc
+Message-ID: <CANiq72=JCgdmd+h4_2VguOO9kxdx3OuTqUmpLix3mTLLHLKbZw@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] rust: use strict provenance APIs
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Tamir Duberstein <tamird@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
+	devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-
-On Wed, Mar 12, 2025 at 3:43=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.org> w=
-rote:
+On Fri, Mar 14, 2025 at 9:18=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
 >
-> The Elan eKTH8D18 touchscreen controller is an I2C HID device with a
-> longer boot-up time. Power sequence timing wise it is compatible with
-> the eKTH6A12NAY, with a power-on delay of at least 5ms, 20ms
-> out-of-reset for I2C ack response, and 150ms out-of-reset for I2C HID
-> enumeration. Enumeration and subsequent operation follows the I2C HID
-> standard. The eKTH6A12NAY requires longer times for both parts.
-
-Somehow the last sentence above confused me. Can it just be dropped?
-All you care about is that the new trackpad matches the timings for
-"eKTH6A12NAY". Not sure what you mean by "eKTH6A12NAY" needing
-"longer" timings.
-
-
-> Add a compatible string for it with the ekth6a12nay one as a fallback.
+> I don't know when we'll be bumping the minimum version. IIRC 1.85.0 is
+> going to be in debian trixie, so eventually we could bump it to that,
+> but I'm not sure what the time frame will be for that.
 >
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
->  .../bindings/input/elan,ekth6915.yaml         | 29 ++++++++++++++++---
->  1 file changed, 25 insertions(+), 4 deletions(-)
+> Maybe we can salvage this effort by gating both the lint and the
+> unstable features on the versions where it works? @Miguel, what's your
+> opinion?
 >
-> diff --git a/Documentation/devicetree/bindings/input/elan,ekth6915.yaml b=
-/Documentation/devicetree/bindings/input/elan,ekth6915.yaml
-> index cb3e1801b0d3..81c391952ccc 100644
-> --- a/Documentation/devicetree/bindings/input/elan,ekth6915.yaml
-> +++ b/Documentation/devicetree/bindings/input/elan,ekth6915.yaml
-> @@ -4,14 +4,14 @@
->  $id: http://devicetree.org/schemas/input/elan,ekth6915.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->
-> -title: Elan eKTH6915 touchscreen controller
-> +title: Elan I2C-HID touchscreen controllers
->
->  maintainers:
->    - Douglas Anderson <dianders@chromium.org>
->
->  description:
-> -  Supports the Elan eKTH6915 touchscreen controller.
-> -  This touchscreen controller uses the i2c-hid protocol with a reset GPI=
-O.
-> +  Supports the Elan eKTH6915 and other I2C-HID touchscreen controllers.
-> +  These touchscreen controller use the i2c-hid protocol with a reset GPI=
-O.
->
->  allOf:
->    - $ref: /schemas/input/touchscreen/touchscreen.yaml#
-> @@ -23,12 +23,18 @@ properties:
->            - enum:
->                - elan,ekth5015m
->            - const: elan,ekth6915
-> +      - items:
-> +          - enum:
-> +              - elan,ekth8d18
-> +          - const: elan,ekth6a12nay
+> We could even make it simple, requiring 1.84 and not bothering with the
+> older versions.
 
-The "enum" above is weird, but it matches what we did for
-"elan,ekth5015m" so I guess it's fine? I'd leave it up to bindings
-maintainers. I guess the assumption is that we might add additional
-touchscreens to the list...
+Regarding Debian Trixie: unknown, since my understanding is that it
+does not have a release date yet, but apparently mid May is the Hard
+Freeze and then it may take e.g. a month or two to the release.
 
+And when it releases, we may want to wait a while before bumping it,
+depending on how much time has passed since Rust 1.85.0 and depending
+on whether we managed to get e.g. Ubuntu LTSs to provide a versioned
+package etc.
 
->    reg:
-> -    const: 0x10
-> +    enum:
-> +      - 0x10
-> +      - 0x16
+If something simple works, then let's just go for that -- we do not
+care too much about older versions for linting purposes, since people
+should be testing with the latest stable too anyway.
 
-Again happy to leave it to the bindings maintainers, but _maybe_ just
-drop the "reg" parts here and below. It doesn't really have to be part
-of the bindings.
+Thanks!
+
+Cheers,
+Miguel
 
