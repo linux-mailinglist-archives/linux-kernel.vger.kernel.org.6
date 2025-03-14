@@ -1,188 +1,93 @@
-Return-Path: <linux-kernel+bounces-561439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECAC9A611BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:49:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B13C6A611C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:50:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41BE03BDD79
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:49:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BBDF1B61EB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1A01FF1A4;
-	Fri, 14 Mar 2025 12:49:54 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7341FF1A4;
+	Fri, 14 Mar 2025 12:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oEKY3nMo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71801D540;
-	Fri, 14 Mar 2025 12:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7777D1C878E;
+	Fri, 14 Mar 2025 12:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741956593; cv=none; b=kUSq03/6JF1hMEQ96SGSZqgAq+wJqe7LPU+KSURAQYv1wwZVxJSSlJiiSOzkH07hH3A3bostnJQzwWOH+DnUUOyv87zEBBezdY+BrgvDl2dmMdcwYeXBUedW64j4midZc5gjcVM348y693J2SN531XqAfF1M/I170819VQRnpe4=
+	t=1741956638; cv=none; b=eJs/xfUfeFYHlxoUI6ct30AiMmPDFeVQfgVufG9gOspQNjrgHKsWQOjXDYCuwn294ZwcNoiFbjbGxiPygUNmKHGN4SAUCkCNhdM1z1O7AQPrcZ2dAnZoqORTLwhXj+FWcMoXIoYJ6gCz4ra8Ichho/Filwjqm3L1vjBHhKh+6FQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741956593; c=relaxed/simple;
-	bh=ykkSyokurIZOkGVyHZ6RGiCF1TX/5YvFq1AdmVuGnFU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s+eyaQrwDi21Phy0nY8a5fHTJjiGi7MdQaJGpVjm9hLb+LpG8MI85+T9cQrSjyqkASZzhNn8wZsQyUuozqj4c8/ZDvai+SZTjyuQKbLyvE9qXcdezYqWmaLSodIsN8U6uUEYh0a1PyPrxJgdo+laEcQn1qO55emup58KrOqTr0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDkdV32Shz6K8hM;
-	Fri, 14 Mar 2025 20:46:38 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8AB4F140D1D;
-	Fri, 14 Mar 2025 20:49:49 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Mar
- 2025 13:49:48 +0100
-Date: Fri, 14 Mar 2025 12:49:47 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Robert Richter <rrichter@amd.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
- Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
- De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
-	<terry.bowman@amd.com>
-Subject: Re: [PATCH v2 10/15] cxl/region: Use root decoders interleaving
- parameters to create a region
-Message-ID: <20250314124947.00001d93@huawei.com>
-In-Reply-To: <20250218132356.1809075-11-rrichter@amd.com>
-References: <20250218132356.1809075-1-rrichter@amd.com>
-	<20250218132356.1809075-11-rrichter@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1741956638; c=relaxed/simple;
+	bh=OeGswBVPI/6SsI19fFlhJ44+XD/kiqe3Sytjmk3wOtE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QMmfW5kJJcOCzYW3eeYriYDuI2aHtVtHdpNuJWTGby0qyIpLtDJWxD1ggIh/K/eePaaeh3AvrkY6POlwNgmyzrqnWWvRc+A97P1WwyC1g/4DmXYolVN7M9SGbFWJNywz8QMxFmqbqIMut51oC89QnRs9f7Fv8NA0xUSrmbGok6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oEKY3nMo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7783AC4CEE3;
+	Fri, 14 Mar 2025 12:50:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741956638;
+	bh=OeGswBVPI/6SsI19fFlhJ44+XD/kiqe3Sytjmk3wOtE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oEKY3nMo7ZOBUxVAfSKtyUSDByLj0ugqUJ3MdSYx4HxLzN2bIHtoiok2D3LcgaLKM
+	 2/FXBxCk0iYxJKCwUw6hs25p6UlJGmtTJOVpfV5fBW8Ug+n7sg9OPipPBzdYl9Gdhf
+	 IYTNggWwyktbPEEUUDQ47tviQ3hwtyNnSj+Z5DOgiOohuW6rwLLkH2lWWN9UDkKZ2d
+	 TG+KdO14rV4WHFMFbfS6gzijeRUWFRDGyhCkNpgyECrHufbIf9UVR9jBR2LzKQEgCj
+	 Bi4Er8fTrDxMIXxM1dVE06mCYgFK7erFys5ovpXc0Lr8w8WmzADo3BauM/AA/Qzq0Z
+	 miwxwfeoKTL9Q==
+Date: Fri, 14 Mar 2025 13:50:31 +0100
+From: Carlos Maiolino <cem@kernel.org>
+To: long.yunjian@zte.com.cn
+Cc: djwong@kernel.org, linux-xfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mou.yi@zte.com.cn, zhang.xianwei8@zte.com.cn, 
+	ouyang.maochun@zte.com.cn, jiang.xuexin@zte.com.cn, xu.lifeng1@zte.com.cn, 
+	lv.mengzhao@zte.com.cn
+Subject: Re: [PATCH] xfs: Fix spelling mistake "drity" -> "dirty"
+Message-ID: <xau6zxgyzjfc5jdr7n32hs3rajy4fuq7iup6ps25p26ofazar5@rzqxxtuc4r7i>
+References: <3eLFqScxqqqFtCE-kU0njYzH-fDA4KyBwtDLw0-CYrrAP2axi7rZATwik2Vb4EJgw08oZUhrr6patP6Aqz7wMw==@protonmail.internalid>
+ <20250314142907818PyT07oeDc9Sr9svXo7qLc@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314142907818PyT07oeDc9Sr9svXo7qLc@zte.com.cn>
 
-On Tue, 18 Feb 2025 14:23:51 +0100
-Robert Richter <rrichter@amd.com> wrote:
-
-> Endpoints requiring address translation might not be aware of the
-> system's interleaving configuration. Instead, interleaving can be
-> configured on an upper memory domain (from an endpoint view) and thus
-> is not visible to the endpoint. For region creation this might cause
-> an invalid interleaving config that does not match the CFMWS entries.
-> 
-> Use the interleaving configuration of the root decoders to create a
-> region which bases on CFMWS entries. This always matches the system's
-> interleaving configuration and is independent of the underlying memory
-> topology.
-> 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
+On Fri, Mar 14, 2025 at 02:29:07PM +0800, long.yunjian@zte.com.cn wrote:
+> From: Zhang Xianwei <zhang.xianwei8@zte.com.cn>
+> There is a spelling mistake in fs/xfs/xfs_log.c. Fix it.
+> Signed-off-by: Zhang Xianwei <zhang.xianwei8@zte.com.cn>
 > ---
->  drivers/cxl/core/region.c | 39 ++++++++++++++++++++++++++++++++++-----
->  drivers/cxl/cxl.h         |  2 ++
->  2 files changed, 36 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 6e0434eee6df..3afcc9ca06ae 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -1749,6 +1749,15 @@ static int cxl_region_validate_position(struct cxl_region *cxlr,
->  		}
->  	}
->  
-> +	if (p->interleave_ways != cxled->interleave_ways ||
-> +	    p->interleave_granularity != cxled->interleave_granularity ) {
-> +		dev_dbg(&cxlr->dev, "interleaving config mismatch with %s: ways: %d:%d granularity: %d:%d\n",
-> +			dev_name(&cxled->cxld.dev), p->interleave_ways,
-> +			cxled->interleave_ways, p->interleave_granularity,
-> +			cxled->interleave_granularity);
-> +		return -ENXIO;
-> +	}
-> +
->  	return 0;
->  }
->  
-> @@ -1852,7 +1861,7 @@ static int match_switch_decoder_by_range(struct device *dev,
->  }
->  
->  static int find_pos_and_ways(struct cxl_port *port, struct range *range,
-> -			     int *pos, int *ways)
-> +			     int *pos, int *ways, int *granularity)
->  {
->  	struct cxl_switch_decoder *cxlsd;
->  	struct cxl_port *parent;
-> @@ -1873,6 +1882,7 @@ static int find_pos_and_ways(struct cxl_port *port, struct range *range,
->  	}
->  	cxlsd = to_cxl_switch_decoder(dev);
->  	*ways = cxlsd->cxld.interleave_ways;
-> +	*granularity = cxlsd->cxld.interleave_granularity;
->  
->  	for (int i = 0; i < *ways; i++) {
->  		if (cxlsd->target[i] == port->parent_dport) {
-> @@ -1896,6 +1906,8 @@ static int find_pos_and_ways(struct cxl_port *port, struct range *range,
->  struct cxl_interleave_context {
->  	struct range *hpa_range;
->  	int pos;
-> +	int interleave_ways;
-> +	int interleave_granularity;
-
-Ah. And here is our context expansion
-
->  };
->  
->  /**
-> @@ -1914,13 +1926,17 @@ struct cxl_interleave_context {
->   * the topology from the endpoint to the root decoder and iteratively
->   * applying the function for each port.
->   *
-> + * Calculation of interleaving ways:
-> + *
-> + *    interleave_ways = interleave_ways * parent_ways;
-> + *
->   * Return: position >= 0 on success
->   *	   -ENXIO on failure
->   */
->  static int cxl_port_calc_interleave(struct cxl_port *port,
->  				    struct cxl_interleave_context *ctx)
->  {
-> -	int parent_ways = 0, parent_pos = 0;
-> +	int parent_ways = 0, parent_pos = 0, parent_granularity = 0;
->  	int rc;
->  
->  	/*
-> @@ -1955,12 +1971,23 @@ static int cxl_port_calc_interleave(struct cxl_port *port,
->  	if (is_cxl_root(port))
->  		return 0;
->  
-> -	rc = find_pos_and_ways(port, ctx->hpa_range, &parent_pos, &parent_ways);
-> +	rc = find_pos_and_ways(port, ctx->hpa_range, &parent_pos, &parent_ways,
-> +			&parent_granularity);
->  	if (rc)
->  		return rc;
->  
->  	ctx->pos = ctx->pos * parent_ways + parent_pos;
->  
-> +	if (ctx->interleave_ways)
-> +		ctx->interleave_ways *= parent_ways;
-> +	else
-> +		ctx->interleave_ways = parent_ways;
-> +
-> +	if (ctx->interleave_granularity)
-> +		ctx->interleave_granularity *= ctx->interleave_ways;
-> +	else
-> +		ctx->interleave_granularity = parent_granularity;
-> +
->  	return ctx->pos;
-
-I think Gregory called this out in earlier patch.  Mixing and matching
-between returning pos and use of ctx makes things hard to read.  If
-we need to have it in context, then make this return 0 or -ERR instead.
-
->  }
+> fs/xfs/xfs_log.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+> diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
+> index f8851ff835de..ba700785759a 100644
+> --- a/fs/xfs/xfs_log.c
+> +++ b/fs/xfs/xfs_log.c
+> @@ -2887,7 +2887,7 @@ xlog_force_and_check_iclog(
+> *
+> *     1. the current iclog is active and has no data; the previous iclog
+> *             is in the active or dirty state.
+> - *     2. the current iclog is drity, and the previous iclog is in the
+> + *     2. the current iclog is dirty, and the previous iclog is in the
+> *             active or dirty state.
+> *
+> * We may sleep if:
 
 
+This patch does not apply. Please fix it and send in the correct format. Make
+sure it applies on top of the tree with `git am`.
+
+You can carry my previous RwB to the V2
+
+> --
+> 2.27.0
 
