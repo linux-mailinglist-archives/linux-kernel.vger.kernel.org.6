@@ -1,218 +1,195 @@
-Return-Path: <linux-kernel+bounces-562128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747A6A61CDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:37:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40CD9A61CFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:45:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEFE83BDFCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:37:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F14D19C476F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA432040A8;
-	Fri, 14 Mar 2025 20:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40702054FF;
+	Fri, 14 Mar 2025 20:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IQANX0qK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="afjIK5bM"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8226413F434
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 20:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2241632D3;
+	Fri, 14 Mar 2025 20:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741984634; cv=none; b=dN/YJghhlgD2rzg0Iua27hLNwZ9f0qSoc9qcDOC9b0kbKgDV93tVkcNmNIC16YE+cbHJHPNu/c4YDbZVy3IUNY6KD30WhHEbKBSlM5rbTLB47ZgjxPx/zaNf5QJRhnuWV+98igZbC8Wrq0wMxz8JF+7F39OOUbMUKDW4V960oEk=
+	t=1741985089; cv=none; b=djwnzpswAwu/vx4TkRIL3Q4Quc14okRUnZEMHwmCqZ1XCFYaNGglBoEhYXPb0bb3CQXmqUr19qOwB67R8qdPjJmju+FjKFhR6JH7TU2jHhBL/vH2SmLkJm87f2C5gCpp0FFSyUjtnzW4K2hmiid8tJz3M5wjKN+5aqE3+FFl+FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741984634; c=relaxed/simple;
-	bh=pLogKHCK6/xqcLDL69+57MQERBAH4w9RM879vblarPg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QpOFquwoedT3N6oe47ZQ3ZJmENRxfzy6IBfoIKgLt/t/BMhUl+H2hCnWWetrI3Gie1g2Y5CrFD/FU1rUW02+hIj1ZZA6b+ur+mKqvNfhWNJer/bmPVHhaK+rMpLWG5QPk0yJXQMDNh8Qt8EuWuh2KaVDh28saJKYza6y785NdeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IQANX0qK; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741984633; x=1773520633;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=pLogKHCK6/xqcLDL69+57MQERBAH4w9RM879vblarPg=;
-  b=IQANX0qK0KPGTP0r7TrvPq7R0Jm6LEA/c9Pi392C8v71fqJde2SBNnUM
-   oWIFmJYJpmFTKmjSkWbjZ03xUoIh60hdJxlYK6SPgPXRR7YoW3aopxU23
-   DTVRy1ilneNqNXzugCMEyOVF1WSvgXf1G93IAecHQJW3pud8H8v3p/QE7
-   GZM97836wp+Z3nQz7BuA6NrPixmuUYStoSpGdw823nyZ3JikB137IU3zs
-   ZXBGvueixVAhrNXKjbnuXG8GKaz/t6zoWaGj94GthIS/akqFlpHZ+EaIg
-   1UnCYV1NaP68dYmiZKcboiz0g3ZdaFf3peU5AgRo5n08+YyWGXXaQf0xC
-   g==;
-X-CSE-ConnectionGUID: SjIVEowkSGCWfQ2YQoaUYQ==
-X-CSE-MsgGUID: AQrU+rz5RZKcM9wAcxuC6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="43187563"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="43187563"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 13:37:12 -0700
-X-CSE-ConnectionGUID: meas/1QGQ66R85WAgFb4PQ==
-X-CSE-MsgGUID: O4xvvHE/SpqHWFuEd5AW2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="122325334"
-Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.108.212]) ([10.125.108.212])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 13:37:11 -0700
-Message-ID: <c7f9151ecdd54340f5f059f0a791cc68b5048fc4.camel@linux.intel.com>
-Subject: Re: [PATCH 1/9] mm: swap: rename
- __swap_[entry/entries]_free[_locked] to swap_[entry/entries]_put[_locked]
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: Kemeng Shi <shikemeng@huaweicloud.com>, akpm@linux-foundation.org
-Cc: kasong@tencent.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Date: Fri, 14 Mar 2025 13:37:11 -0700
-In-Reply-To: <20250313210515.9920-2-shikemeng@huaweicloud.com>
-References: <20250313210515.9920-1-shikemeng@huaweicloud.com>
-	 <20250313210515.9920-2-shikemeng@huaweicloud.com>
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1741985089; c=relaxed/simple;
+	bh=K38rtCg0kuf5BLUm4oFEtAJew5kJ4vmq8l+3NjU1z5A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XQoh6LkHDybsIrldsTBZzpExkmwnHFBLo3k+LH8otG3WYDyXkFKJ7Xoqa/bETMgEgqP50nGmCGfr9Sz5Ru6P76wbYrWdAmyFYJrEE2oDxVoijTcfp+5dkzVoYFqwAmHNk1fE/Rop7Bbb9OXjLhJ2Mb7/GqUyss/6k9uFOp+DNXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=afjIK5bM; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30bf8f5dde5so22616831fa.2;
+        Fri, 14 Mar 2025 13:44:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741985085; x=1742589885; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WbuICH0xY+23m7hRrkhkpy/RJHHQ5P9b5jI+i1zRw3Q=;
+        b=afjIK5bMN1uPHMEjkGieYEiIlmVyPS+KKv4Ui5l33sE8VgVgTumN2zt0k/R1OZ1Ugf
+         iJW4NceEayc3gvUNELbnSrLq3+6TsMckKNP0+rWzs7ZfCU4/qs1eOOa+3MXEFx3PSYnV
+         bGHl03eJZBZBXhIbV4FmxI6uskpR0ovzfsXukLxpD+4ozst5o8JX2NMrRGCEE2TtJF8G
+         nAfT9V9QyyGCWkVxxNwh2pM/9aDzQJkSjEfE0ot/EAa9m5Vy/LkWpkmLO5UAgS18sMBi
+         6eRZUjJQh4tOwNnMDLtTuUHHCK21ylpJeLf5krWwsNXovLSMkZeOTSqQvmdqcD+OLscu
+         YJGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741985085; x=1742589885;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WbuICH0xY+23m7hRrkhkpy/RJHHQ5P9b5jI+i1zRw3Q=;
+        b=T2a2mJWvTo7kCDZtYCP+aWfP0qiiWxKHrCuxj54IoFUT1a1bcWFGlIevGknfhp2gQF
+         dcQ1b0P0MT6Ouw4w3Gyctj5VEYlSTp0qKgGy9YcRxLEIBbDJ9Sy0PwFfe+GnyWxNzxWG
+         YxkE1CdhZCK33L0f+xbgSoYf0aPgHxiIV7j9LvdtGu2LGUlHM761HdsqKVrSafrwXTki
+         CvadUsiVLeh9Gj5VnZO5Gd8oLRuq5vP8SelT/wOmO8pqcqEWwt8yoC4pVUWW5XVyrKNS
+         Hbc57+eNJShB9igRfslEQ4cLBHUNAxiEz/dDy3VZ9RQ7PmEV0dIAlsYJb+sCjMVcDZUr
+         PGAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/VP1StKsL0+OlysiGg+soldO6xMRqDwS+R7d7R7+HpM/gqP97UNFnOLyzF5mF3e337V1J3P1tf0yeTGrHSPo=@vger.kernel.org, AJvYcCUF2uqqdygaETdklYblOMUwhgeUUx0dcBSe7ChagO/e7LP9zoYmu32xWbqSDkBpNbcQutHbnC8dxuoQJI0=@vger.kernel.org, AJvYcCXezX4bscy4YWF6/bICk+IpvkQ3uEQ6QJwUVT63EwH86c6QA8MvuikBLd2L6vwd69ynHl0vZN965xBI@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUHeDt0GmIMv0f3uj52jq1zaZeI4jSpOMcwmOTL0KG/1SDMhKC
+	jHv7l/Kc2/Tau12YJb3klUnM5g/Cbk4HK9S2oQWC8k3yrw7sAoE69jA9U0Lxum7mqA389SeRfZ0
+	jsJzETaN/SdHum/pYyx3YZHOv2TU=
+X-Gm-Gg: ASbGncvNEpZF/rVWA2vrGGA+MuuyfWN4lCSY/h45izdbxyf3EqRCnme1fD6YieKBpqV
+	ZRpmBEu4ngtWhkSrUhHwGto2DAcp3bcKN9bOoqRelrQ79eBrFibWM42nhmiQRRl5RdlJUFkC76k
+	s2INl1EmNEyynTIwFrX1VnRPxwl1zR2hGf2kHcozibWZbHjQm3tip/7DTHVJEgM+1Pf0gN+A==
+X-Google-Smtp-Source: AGHT+IHyjRUH5bP0g+Qn62uRuFdDAKIS1VuKzputx8lydYnmmk3AzYJzf9o4T+3pIf85TbzIVYTDR1jqyEevJPhekyg=
+X-Received: by 2002:a2e:bc29:0:b0:30b:feb4:ed4 with SMTP id
+ 38308e7fff4ca-30c4a8f4854mr13405891fa.31.1741985085005; Fri, 14 Mar 2025
+ 13:44:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250307-no-offset-v1-0-0c728f63b69c@gmail.com>
+ <20250307-no-offset-v1-2-0c728f63b69c@gmail.com> <D8G8DV3PX8VX.2WHSM0TWH8JWV@proton.me>
+In-Reply-To: <D8G8DV3PX8VX.2WHSM0TWH8JWV@proton.me>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Fri, 14 Mar 2025 16:44:08 -0400
+X-Gm-Features: AQ5f1JqK-ZmY1G6R0T76WtY--7gK8sc6Jlrs7D3Ueck0gX06YyrRpp9KYLIz3RI
+Message-ID: <CAJ-ks9m2ZHguB9N9-WM0EsO5MjaZ9yRamo_9NytAdzaDdb9aWQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] rust: workqueue: remove HasWork::OFFSET
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-03-14 at 05:05 +0800, Kemeng Shi wrote:
-> In __swap_entry_free[_locked] and __swap_entries_free, we decrease count
-> first and only free swap entry if count drops to zero. This behavior is
-> more akin to a put() operation rather than a free() operation. Therefore,
-> rename these functions with "put" instead of "free".
-> Additionally, add "_nr" suffix to swap_entries_put to indicate the input
-> range may span swap clusters.
->=20
+On Fri, Mar 14, 2025 at 3:20=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
+>
+> On Fri Mar 7, 2025 at 10:58 PM CET, Tamir Duberstein wrote:
+> > Implement `HasWork::work_container_of` in `impl_has_work!`, narrowing
+> > the interface of `HasWork` and replacing pointer arithmetic with
+> > `container_of!`. Remove the provided implementation of
+> > `HasWork::get_work_offset` without replacement; an implementation is
+> > already generated in `impl_has_work!`. Remove the `Self: Sized` bound o=
+n
+> > `HasWork::work_container_of` which was apparently necessary to access
+> > `OFFSET` as `OFFSET` no longer exists.
+> >
+> > A similar API change was discussed on the hrtimer series[1].
+> >
+> > Link: https://lore.kernel.org/all/20250224-hrtimer-v3-v6-12-rc2-v9-1-5b=
+d3bf0ce6cc@kernel.org/ [1]
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> > ---
+> >  rust/kernel/workqueue.rs | 45 ++++++++++++----------------------------=
+-----
+> >  1 file changed, 12 insertions(+), 33 deletions(-)
+>
+> What is the motivation of this change? I didn't follow the discussion,
+> so if you explained it there, it would be nice if you could also add it
+> to this commit message.
 
-Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+The motivation is right at the top: it narrows the interface and
+replaces pointer arithmetic with an existing macro, and then deletes
+unnecessary code.
 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> ---
->  mm/swapfile.c | 28 ++++++++++++++--------------
->  1 file changed, 14 insertions(+), 14 deletions(-)
->=20
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 628f67974a7c..5a775456e26c 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -1347,9 +1347,9 @@ static struct swap_info_struct *_swap_info_get(swp_=
-entry_t entry)
->  	return NULL;
->  }
-> =20
-> -static unsigned char __swap_entry_free_locked(struct swap_info_struct *s=
-i,
-> -					      unsigned long offset,
-> -					      unsigned char usage)
-> +static unsigned char swap_entry_put_locked(struct swap_info_struct *si,
-> +					   unsigned long offset,
-> +					   unsigned char usage)
->  {
->  	unsigned char count;
->  	unsigned char has_cache;
-> @@ -1453,15 +1453,15 @@ struct swap_info_struct *get_swap_device(swp_entr=
-y_t entry)
->  	return NULL;
->  }
-> =20
-> -static unsigned char __swap_entry_free(struct swap_info_struct *si,
-> -				       swp_entry_t entry)
-> +static unsigned char swap_entry_put(struct swap_info_struct *si,
-> +				    swp_entry_t entry)
->  {
->  	struct swap_cluster_info *ci;
->  	unsigned long offset =3D swp_offset(entry);
->  	unsigned char usage;
-> =20
->  	ci =3D lock_cluster(si, offset);
-> -	usage =3D __swap_entry_free_locked(si, offset, 1);
-> +	usage =3D swap_entry_put_locked(si, offset, 1);
->  	if (!usage)
->  		swap_entry_range_free(si, ci, swp_entry(si->type, offset), 1);
->  	unlock_cluster(ci);
-> @@ -1469,8 +1469,8 @@ static unsigned char __swap_entry_free(struct swap_=
-info_struct *si,
->  	return usage;
->  }
-> =20
-> -static bool __swap_entries_free(struct swap_info_struct *si,
-> -		swp_entry_t entry, int nr)
-> +static bool swap_entries_put_nr(struct swap_info_struct *si,
-> +				swp_entry_t entry, int nr)
->  {
->  	unsigned long offset =3D swp_offset(entry);
->  	unsigned int type =3D swp_type(entry);
-> @@ -1501,7 +1501,7 @@ static bool __swap_entries_free(struct swap_info_st=
-ruct *si,
->  fallback:
->  	for (i =3D 0; i < nr; i++) {
->  		if (data_race(si->swap_map[offset + i])) {
-> -			count =3D __swap_entry_free(si, swp_entry(type, offset + i));
-> +			count =3D swap_entry_put(si, swp_entry(type, offset + i));
->  			if (count =3D=3D SWAP_HAS_CACHE)
->  				has_cache =3D true;
->  		} else {
-> @@ -1552,7 +1552,7 @@ static void cluster_swap_free_nr(struct swap_info_s=
-truct *si,
-> =20
->  	ci =3D lock_cluster(si, offset);
->  	do {
-> -		if (!__swap_entry_free_locked(si, offset, usage))
-> +		if (!swap_entry_put_locked(si, offset, usage))
->  			swap_entry_range_free(si, ci, swp_entry(si->type, offset), 1);
->  	} while (++offset < end);
->  	unlock_cluster(ci);
-> @@ -1599,7 +1599,7 @@ void put_swap_folio(struct folio *folio, swp_entry_=
-t entry)
->  		swap_entry_range_free(si, ci, entry, size);
->  	else {
->  		for (int i =3D 0; i < size; i++, entry.val++) {
-> -			if (!__swap_entry_free_locked(si, offset + i, SWAP_HAS_CACHE))
-> +			if (!swap_entry_put_locked(si, offset + i, SWAP_HAS_CACHE))
->  				swap_entry_range_free(si, ci, entry, 1);
->  		}
->  	}
-> @@ -1798,7 +1798,7 @@ void free_swap_and_cache_nr(swp_entry_t entry, int =
-nr)
->  	/*
->  	 * First free all entries in the range.
->  	 */
-> -	any_only_cache =3D __swap_entries_free(si, entry, nr);
-> +	any_only_cache =3D swap_entries_put_nr(si, entry, nr);
-> =20
->  	/*
->  	 * Short-circuit the below loop if none of the entries had their
-> @@ -1811,7 +1811,7 @@ void free_swap_and_cache_nr(swp_entry_t entry, int =
-nr)
->  	 * Now go back over the range trying to reclaim the swap cache. This is
->  	 * more efficient for large folios because we will only try to reclaim
->  	 * the swap once per folio in the common case. If we do
-> -	 * __swap_entry_free() and __try_to_reclaim_swap() in the same loop, th=
-e
-> +	 * swap_entry_put() and __try_to_reclaim_swap() in the same loop, the
->  	 * latter will get a reference and lock the folio for every individual
->  	 * page but will only succeed once the swap slot for every subpage is
->  	 * zero.
-> @@ -3758,7 +3758,7 @@ int add_swap_count_continuation(swp_entry_t entry, =
-gfp_t gfp_mask)
->   * into, carry if so, or else fail until a new continuation page is allo=
-cated;
->   * when the original swap_map count is decremented from 0 with continuat=
-ion,
->   * borrow from the continuation and report whether it still holds more.
-> - * Called while __swap_duplicate() or caller of __swap_entry_free_locked=
-()
-> + * Called while __swap_duplicate() or caller of swap_entry_put_locked()
->   * holds cluster lock.
->   */
->  static bool swap_count_continued(struct swap_info_struct *si,
+> > diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
+> > index 0cd100d2aefb..0e2e0ecc58a6 100644
+> > --- a/rust/kernel/workqueue.rs
+> > +++ b/rust/kernel/workqueue.rs
+> > @@ -429,51 +429,23 @@ pub unsafe fn raw_get(ptr: *const Self) -> *mut b=
+indings::work_struct {
+> >  ///
+> >  /// # Safety
+> >  ///
+> > -/// The [`OFFSET`] constant must be the offset of a field in `Self` of=
+ type [`Work<T, ID>`]. The
+> > -/// methods on this trait must have exactly the behavior that the defi=
+nitions given below have.
+> > +/// The methods on this trait must have exactly the behavior that the =
+definitions given below have.
+> >  ///
+> >  /// [`impl_has_work!`]: crate::impl_has_work
+> > -/// [`OFFSET`]: HasWork::OFFSET
+> >  pub unsafe trait HasWork<T, const ID: u64 =3D 0> {
+> > -    /// The offset of the [`Work<T, ID>`] field.
+> > -    const OFFSET: usize;
+> > -
+> > -    /// Returns the offset of the [`Work<T, ID>`] field.
+> > -    ///
+> > -    /// This method exists because the [`OFFSET`] constant cannot be a=
+ccessed if the type is not
+> > -    /// [`Sized`].
+> > -    ///
+> > -    /// [`OFFSET`]: HasWork::OFFSET
+> > -    #[inline]
+> > -    fn get_work_offset(&self) -> usize {
+> > -        Self::OFFSET
+> > -    }
+> > -
+> >      /// Returns a pointer to the [`Work<T, ID>`] field.
+> >      ///
+> >      /// # Safety
+> >      ///
+> >      /// The provided pointer must point at a valid struct of type `Sel=
+f`.
+> > -    #[inline]
+> > -    unsafe fn raw_get_work(ptr: *mut Self) -> *mut Work<T, ID> {
+> > -        // SAFETY: The caller promises that the pointer is valid.
+> > -        unsafe { (ptr as *mut u8).add(Self::OFFSET) as *mut Work<T, ID=
+> }
+> > -    }
+> > +    unsafe fn raw_get_work(ptr: *mut Self) -> *mut Work<T, ID>;
+> >
+> >      /// Returns a pointer to the struct containing the [`Work<T, ID>`]=
+ field.
+> >      ///
+> >      /// # Safety
+> >      ///
+> >      /// The pointer must point at a [`Work<T, ID>`] field in a struct =
+of type `Self`.
+> > -    #[inline]
+> > -    unsafe fn work_container_of(ptr: *mut Work<T, ID>) -> *mut Self
+> > -    where
+> > -        Self: Sized,
+>
+> This bound is required in order to allow the usage of `dyn HasWork` (ie
+> object safety), so it should stay.
+>
+> Maybe add a comment explaining why it's there.
 
+I guess a doctest would be better, but I still don't understand why
+the bound is needed. Sorry, can you cite something or explain in more
+detail please?
 
