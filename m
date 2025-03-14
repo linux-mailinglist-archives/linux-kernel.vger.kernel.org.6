@@ -1,93 +1,52 @@
-Return-Path: <linux-kernel+bounces-561660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92FCBA61495
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:13:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9257A61497
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:14:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84EEF1B6311A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:13:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F2D419C1BF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15051200119;
-	Fri, 14 Mar 2025 15:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XBdE7JvL"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8A92036E0
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 15:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39120200116;
+	Fri, 14 Mar 2025 15:14:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9509C3B7A8
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 15:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741965171; cv=none; b=CPNVTaztREK2iks/pogzRGvTg3uBVV1uVqlTylpa9U/dc/ZbLaHPhRvZL7Bkxl3JnzbCrtWK3k4xqkwtigCFL6pvL5OvwR0XTJdwES0zrOBMkGEN7NzzrCPK3jWTE2wc3wPh1+r/Dg4zRxQMxmgIRJqHLyqjhadiIpPLAU2MNYo=
+	t=1741965240; cv=none; b=MAq9fzvFU71ZzP+rw6OfVumaXQstLMrxqNJjJmqdq80uhyx0ExgQ8oETLYwpoUWFLrFvHEziP0Gk3TEhMBZbJoVq5GYIhzBQgbctCUcKHrmTbtQuff3ICzhOMEnw1GYyAGnfqiT+HXlgu3IXwyXOdgVg4NYnonTlvVtSgpjxg0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741965171; c=relaxed/simple;
-	bh=DGaQ8KNqj5JX+vu9aJ/q2g9z8GN4HJfBRJSib5L7PVU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lzQQYVV3mjugeu8PQFRNd6Xu7/0bG1mLK7mhrA19zvWhXbYYBn9+EZRwDf76GuiBzPAhO6CVC8fx2lF1cvfdbFw2W5FnAuKJn5RoRr1ttnjddMZmRCo/xQ8BQPyLycuCC3rOSQTJSyx/lcnzjFNaoUhQqZNOCvh/kTPE+8l3p9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XBdE7JvL; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2bcc5c887efso1830265fac.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:12:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741965169; x=1742569969; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LPkJbM+LB7smtMlLHqRxnuiLsZ6gkfVdWfSfDGioiKY=;
-        b=XBdE7JvLT1ULBph+kYl0nLJcYgdy7PX+5KCE7ax4/HxWQ88+BZ7IFlJhCabL/hCcIV
-         fBlErBJrrA2A29Kww+DFgQdePS3bhn+g+WIOSHZaeX88dHjfywEFU9q85tdO+1Kx2GqC
-         iTnCiTRHnNf9FdBCConGGOGLO6Sps4n8lIQlgCISDsYG44a/xVvkWOVqUeN6Xr5TW5Z1
-         w3MrYnFEssD3zL8X97020BGvU0ST4Ojdd+Ac74NeHXfiUwDsBcBBG2VLqqhezhenXX8q
-         u1iK/tHpY/EJZHTWXmUukueXhPj475CuAUde1qcPE9/jIrlOfYfWCXzpMmslG1Uy1F8B
-         1ZlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741965169; x=1742569969;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LPkJbM+LB7smtMlLHqRxnuiLsZ6gkfVdWfSfDGioiKY=;
-        b=UGOCacBBXTKNlEmKDv3Wm5RssGtw/KaGfT10qV0dZsMyIOq6gCUCgXRh+7OEnpPgTg
-         a6dLY+CREdUyiYbTIB9qcGwD9errjsHyi3StDkVKqC8ME5qw6sCwZNnDriu8DXiPwlLz
-         LP8nD2GylTcTQXUnhv1t8g0ifkFSmcOUN+B9Py+C2gpSuBa/ggsAjMLws75cVfoT1yx9
-         yi3pL7UvdIVyBlwqDTAZbR3EKiYVzT10Aaqp2wwCprdNRvjliDBO3wNVpex8PtSNfczl
-         OS+dPAAqS+3GTGxPJECkBEWYpdBvLlR3iMQ+T0rZFO6fjmctMk3bHHQ6HU0ayxZV+xW/
-         HJYQ==
-X-Gm-Message-State: AOJu0YyTsTqw50Pi62bcV4sOBKuJ3xVQS/O2OFXx8yGmeqEUMNB32sHU
-	W7QuuM7ffYjCxbYoeQKQJPijILOUfMvnA3K73mAYG6BK4NDHXnTDsj0L
-X-Gm-Gg: ASbGncu9Ig/81NgjfKUEzMcNRcVteXWmR17hqcjGdQDpgjPgkNTSR+swRtdqk75xcxT
-	YuyAelDoq6Fe5C3eQcPjZptlv+LsacMMrPKoTYPnFi9PGKsRQlzO0BsrjQkhnmpEEBMC669NgdX
-	26O8SN5cPYP8qFT+rYkk9NfqhJhrX/u6+L5kuiePm0vGAkzIICBRPf23XxIoJRtw9CwdBD+0CVJ
-	SxAVGJbiv0t75yXSfNlNwz2b1GBX/5+GbQo75j/6IvDnD3WQ3UdLd6xxcTQTlAC0TT8pF8PYj7k
-	pLcvhRXnm/+UQRk0CmvsTM5emFjkE2HDfvz4
-X-Google-Smtp-Source: AGHT+IEpS/x4kN0eYs37tl0L+r0Fo7v65AtFdSROcUeGHnZ9j2RneAV06uq5ofBr8TOzT+2shiIMCw==
-X-Received: by 2002:a05:6870:9126:b0:2b8:3d8c:15ad with SMTP id 586e51a60fabf-2c690ec979dmr1476448fac.1.1741965168643;
-        Fri, 14 Mar 2025 08:12:48 -0700 (PDT)
-Received: from citadel.lan ([2600:6c4a:4d3f:6d5c::1019])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c6710f21efsm883026fac.30.2025.03.14.08.12.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 08:12:47 -0700 (PDT)
-From: Brian Gerst <brgerst@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Cc: Ingo Molnar <mingo@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Andy Lutomirski <luto@kernel.org>,
-	Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Sohil Mehta <sohil.mehta@intel.com>
-Subject: [PATCH v2 7/7] x86/syscall/32: Add comment to conditional
-Date: Fri, 14 Mar 2025 11:12:20 -0400
-Message-ID: <20250314151220.862768-8-brgerst@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250314151220.862768-1-brgerst@gmail.com>
-References: <20250314151220.862768-1-brgerst@gmail.com>
+	s=arc-20240116; t=1741965240; c=relaxed/simple;
+	bh=RiXXWX3kH29UPxw8aYNz01QrT3fmUFBQQ/Ye3YBfEjE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jey31DFy0xJEylippqg3J8NsrMyD+ytvX+Sja5Y9II5tEYIO3NWQ6s7f5Y52atYPAnUf3Bcjqo7INqAhbp/oeS3szWlWCldWE0U9sr+lUpLQWMkfJVJyqoi6Wi5Wn6hSsNsQ9tutHmoS2Kb6Bk/oMMjT/Ao3hOT7umeKXQue7uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A40DA1424;
+	Fri, 14 Mar 2025 08:14:06 -0700 (PDT)
+Received: from e125579.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F20453F673;
+	Fri, 14 Mar 2025 08:13:54 -0700 (PDT)
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Hagar Hemdan <hagarhem@amazon.com>,
+	Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Revert "sched/core: Reduce cost of sched_move_task when config autogroup"
+Date: Fri, 14 Mar 2025 16:13:45 +0100
+Message-Id: <20250314151345.275739-1-dietmar.eggemann@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,29 +55,183 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a CONFIG_X86_FRED comment, since this conditional is nested.
+This reverts commit eff6c8ce8d4d7faef75f66614dd20bb50595d261.
 
-Signed-off-by: Brian Gerst <brgerst@gmail.com>
-Suggested-by: Sohil Mehta <sohil.mehta@intel.com>
+Hazem reported a 30% drop in UnixBench spawn test with commit
+eff6c8ce8d4d ("sched/core: Reduce cost of sched_move_task when config
+autogroup") on a m6g.xlarge AWS EC2 instance with 4 vCPUs and 16 GiB RAM
+(aarch64) (single level MC sched domain) [1].
+
+There is an early bail from sched_move_task() if p->sched_task_group is
+equal to p's 'cpu cgroup' (sched_get_task_group()). E.g. both are
+pointing to taskgroup '/user.slice/user-1000.slice/session-1.scope'
+(Ubuntu '22.04.5 LTS').
+
+So in:
+
+  do_exit()
+
+    sched_autogroup_exit_task()
+
+      sched_move_task()
+
+        if sched_get_task_group(p) == p->sched_task_group
+          return
+
+        /* p is enqueued */
+        dequeue_task()              \
+        sched_change_group()        |
+          task_change_group_fair()  |
+            detach_task_cfs_rq()    |                              (1)
+            set_task_rq()           |
+            attach_task_cfs_rq()    |
+        enqueue_task()              /
+
+(1) isn't called for p anymore.
+
+Turns out that the regression is related to sgs->group_util in
+group_is_overloaded() and group_has_capacity(). If (1) isn't called for
+all the 'spawn' tasks then sgs->group_util is ~900 and
+sgs->group_capacity = 1024 (single CPU sched domain) and this leads to
+group_is_overloaded() returning true (2) and group_has_capacity() false
+(3) much more often compared to the case when (1) is called.
+
+I.e. there are much more cases of 'group_is_overloaded' and
+'group_fully_busy' in WF_FORK wakeup sched_balance_find_dst_cpu() which
+then returns much more often a CPU != smp_processor_id() (5).
+
+This isn't good for these extremely short running tasks (FORK + EXIT)
+and also involves calling sched_balance_find_dst_group_cpu() unnecessary
+(single CPU sched domain).
+
+Instead if (1) is called for 'p->flags & PF_EXITING' then the path
+(4),(6) is taken much more often.
+
+  select_task_rq_fair(..., wake_flags = WF_FORK)
+
+    cpu = smp_processor_id()
+
+    new_cpu = sched_balance_find_dst_cpu(..., cpu, ...)
+
+      group = sched_balance_find_dst_group(..., cpu)
+
+        do {
+
+          update_sg_wakeup_stats()
+
+            sgs->group_type = group_classify()
+
+              if group_is_overloaded()                             (2)
+                return group_overloaded
+
+              if !group_has_capacity()                             (3)
+                return group_fully_busy
+
+              return group_has_spare                               (4)
+
+        } while group
+
+        if local_sgs.group_type > idlest_sgs.group_type
+          return idlest                                            (5)
+
+        case group_has_spare:
+
+          if local_sgs.idle_cpus >= idlest_sgs.idle_cpus
+            return NULL                                            (6)
+
+Unixbench Tests './Run -c 4 spawn' on:
+
+(a) VM AWS instance (m7gd.16xlarge) with v6.13 ('maxcpus=4 nr_cpus=4')
+    and Ubuntu 22.04.5 LTS (aarch64).
+
+    Shell & test run in '/user.slice/user-1000.slice/session-1.scope'.
+
+    w/o patch	w/ patch
+    21005	27120
+
+(b) i7-13700K with tip/sched/core ('nosmt maxcpus=8 nr_cpus=8') and
+    Ubuntu 22.04.5 LTS (x86_64).
+
+    Shell & test run in '/A'.
+
+    w/o patch	w/ patch
+    67675	88806
+
+CONFIG_SCHED_AUTOGROUP=y & /sys/proc/kernel/sched_autogroup_enabled equal
+0 or 1.
+
+[1] https://lkml.kernel.org/r/20250205151026.13061-1-hagarhem@amazon.com
+
+Reported-by: Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>
+Tested-by: Hagar Hemdan <hagarhem@amazon.com>
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 ---
- arch/x86/entry/syscall_32.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/entry/syscall_32.c b/arch/x86/entry/syscall_32.c
-index 993d72504fc5..2b15ea17bb7c 100644
---- a/arch/x86/entry/syscall_32.c
-+++ b/arch/x86/entry/syscall_32.c
-@@ -238,7 +238,8 @@ DEFINE_FREDENTRY_RAW(int80_emulation)
- 	instrumentation_end();
- 	syscall_exit_to_user_mode(regs);
+Previous discussion under:
+https://lkml.kernel.org/r/20250306162635.2614376-1-dietmar.eggemann@arm.com
+
+ kernel/sched/core.c | 21 +++------------------
+ 1 file changed, 3 insertions(+), 18 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 621cfc731c5b..532119a3f72b 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -9015,7 +9015,7 @@ void sched_release_group(struct task_group *tg)
+ 	spin_unlock_irqrestore(&task_group_lock, flags);
  }
--#endif
-+#endif /* CONFIG_X86_FRED */
-+
- #else /* CONFIG_IA32_EMULATION */
  
- /* Handles int $0x80 on a 32bit kernel */
+-static struct task_group *sched_get_task_group(struct task_struct *tsk)
++static void sched_change_group(struct task_struct *tsk)
+ {
+ 	struct task_group *tg;
+ 
+@@ -9027,13 +9027,7 @@ static struct task_group *sched_get_task_group(struct task_struct *tsk)
+ 	tg = container_of(task_css_check(tsk, cpu_cgrp_id, true),
+ 			  struct task_group, css);
+ 	tg = autogroup_task_group(tsk, tg);
+-
+-	return tg;
+-}
+-
+-static void sched_change_group(struct task_struct *tsk, struct task_group *group)
+-{
+-	tsk->sched_task_group = group;
++	tsk->sched_task_group = tg;
+ 
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 	if (tsk->sched_class->task_change_group)
+@@ -9054,20 +9048,11 @@ void sched_move_task(struct task_struct *tsk, bool for_autogroup)
+ {
+ 	int queued, running, queue_flags =
+ 		DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
+-	struct task_group *group;
+ 	struct rq *rq;
+ 
+ 	CLASS(task_rq_lock, rq_guard)(tsk);
+ 	rq = rq_guard.rq;
+ 
+-	/*
+-	 * Esp. with SCHED_AUTOGROUP enabled it is possible to get superfluous
+-	 * group changes.
+-	 */
+-	group = sched_get_task_group(tsk);
+-	if (group == tsk->sched_task_group)
+-		return;
+-
+ 	update_rq_clock(rq);
+ 
+ 	running = task_current_donor(rq, tsk);
+@@ -9078,7 +9063,7 @@ void sched_move_task(struct task_struct *tsk, bool for_autogroup)
+ 	if (running)
+ 		put_prev_task(rq, tsk);
+ 
+-	sched_change_group(tsk, group);
++	sched_change_group(tsk);
+ 	if (!for_autogroup)
+ 		scx_cgroup_move_task(tsk);
+ 
 -- 
-2.48.1
+2.34.1
 
 
