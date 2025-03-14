@@ -1,215 +1,209 @@
-Return-Path: <linux-kernel+bounces-561984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4D5A619CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:49:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A105DA619D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:51:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9604A1898F0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:49:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD461462B8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78600204C38;
-	Fri, 14 Mar 2025 18:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1FE2046BB;
+	Fri, 14 Mar 2025 18:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQVmjcjZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AyzJoHi9"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F39913A26D;
-	Fri, 14 Mar 2025 18:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174DF1FF601
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741978157; cv=none; b=Rfwp00l7YChLwnfv2D+qvaSMdEVw1AreDkDDDNwQzwyC2a345rvLAWq8TG9Dywqhqyw98QPazUfpYgeY9Al0JzksAc4Mwk44OIfneIJeJUKTsNPLYy4w1zRBPftr5mKlafeLRX7/Qjz5VX8o7Dj9ndpXiatN1qg96M52qDxwdRQ=
+	t=1741978263; cv=none; b=OtpednPtnyfsLcsGQeEnQQbAn+SOOG8cJ7CtYRJd5HF9Hx2cokyG3e1+HgxeownvWDF1LgwMVbXlAb58sS2WcM11Rjps3q/Zp8jG5XO/Eo3f3WyhMVz9pE20zuvZM4MdPsoVIh8zWrBr/d/AZxbkiOdY5fKqEZryVNocLScrCLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741978157; c=relaxed/simple;
-	bh=O6TQHcNZOIDORUQUex99gbjkbXRSAsx+LziCN6QYCcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XRiC/ALWiGdDRnu3t9+TNmp2WE4FzEkuuQpnHJWJ1ue3RLEWuflPvd+mKPiw+yQRyhtZvud2ba2W8pNmOZxDsOJtB8ilWir8dyaU/ycLGwPBAqtl/3Y3JXfH9BKmC1ybq0dn3NNPjGFSytbWyfTDFZFpjRluh1ptVui85nhswDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQVmjcjZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C4A3C4CEE9;
-	Fri, 14 Mar 2025 18:49:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741978156;
-	bh=O6TQHcNZOIDORUQUex99gbjkbXRSAsx+LziCN6QYCcQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rQVmjcjZhe/sj5yONxV2qVxL98CsQ/XLSI8I1aZI9aDjryLW+sVGMqcfI9Bca9bOS
-	 BjeRuzyi8Km8hWOU7pWxLh0zSj3Q5xmQc8mdYFqkiDMoJN2jPM4GlDtxa49auZ9+wv
-	 o4Atu8WInpcl8PAepC/fXyU6iiNJ15uue0LdQRbYK1nJzWh83j90x9tnoa0sRasVK1
-	 38iJcCj/HUFJNu/wqR3UGB0O36uPS2R51CHZ5YoiakTWuHP1tXd0Pvob4wtZn293CI
-	 sVep3kKdHjc3A4MK0/PKcdqXaMCX1hnu3s63bSmSw7dabMqNw6WwX2YJoxC1T+nsVF
-	 6r+AVkQEbO0Yg==
-Date: Fri, 14 Mar 2025 20:49:11 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v7 00/17] Provide a new two step DMA mapping API
-Message-ID: <20250314184911.GR1322339@unreal>
-References: <cover.1738765879.git.leonro@nvidia.com>
- <20250220124827.GR53094@unreal>
- <CGME20250228195423eucas1p221736d964e9aeb1b055d3ee93a4d2648@eucas1p2.samsung.com>
- <1166a5f5-23cc-4cce-ba40-5e10ad2606de@arm.com>
- <d408b1c7-eabf-4a1e-861c-b2ddf8bf9f0e@samsung.com>
- <20250312193249.GI1322339@unreal>
- <adb63b87-d8f2-4ae6-90c4-125bde41dc29@samsung.com>
+	s=arc-20240116; t=1741978263; c=relaxed/simple;
+	bh=biTMhZyqbSZ5OpjoUKkXxxrQGtvdeJJW2CqyCCdcrPg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p1DTkU7n1WcaFhfrPaX/vbURb7SV2MUOlnWdAQoGvoGebu+VHYEJs+hsYy1vgBrwdYIH3fbGp5ZEJZN4hFS/RogLKSiWfuUkB32KOg/V1MrWvwfgCdm4+hVFxo+devJ4ifU09xs/dUJfYshcnudxF4kPGfjiLJv9eioKVp1rFl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AyzJoHi9; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22403cbb47fso46256335ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:51:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741978261; x=1742583061; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xR1q/p4dv/c/p+PdWJis9Ue2zjgGhBL8/ljRGUVkwv0=;
+        b=AyzJoHi90jr0i75VhzmODePM1772fZEsuPM/+kLBbt0m5usnCkJk+OBwur7fioPq+y
+         ym1RrvYZbYmtfG4KXwzoXa1fTxVGRQarAUqEIedetfUTwyn3qR5XowjN0e1MzXll1/Fl
+         RgBS9PDAuuYScmX+JPMAKyVeBi0Wd18fu02FT3/I46LQGYL9DEnsbs3LWjn/MRHcoL3p
+         9pQ+W+POcrvUnZYZaVpHNSOYayPCIMatarJQsLnWtJUMATW2rrX6MysB0vRxoHqVd2To
+         5l6IUvEjK0glQEvM5kYJxz/9zoSvJ7Agokzk9yuDLwEVqfG6GT2nYinTREmxaiBBzmEB
+         nmAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741978261; x=1742583061;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xR1q/p4dv/c/p+PdWJis9Ue2zjgGhBL8/ljRGUVkwv0=;
+        b=FTsblKmUJSTveSav+mtPjEWfnGqm63sMDtmY3xBqGt65Wjbb+MbBqUQRyZlIsPXtmE
+         1dZiiPGMXXaFxqRjoePiT1rmEML8nFRPdeO4Q8l405Kpwl6t9rJddcAmfZpsdgEq/abT
+         pPJA0cFSBtAqZFxexb9+qR5LoCwWKqx1jVvC9hs3zDsuCnaJU8USNvd6O0wI9RfMPR+n
+         XLcnumsK4GnXFak4unvPFGA/Hophd8MT/q5oKEjglD8lsdbyrrbOBwnPU7XzN2UDYjUX
+         xe9nvoChPW+b9fEETLRpzUJfgYKwx1CdIbDeG369C2T7UZ9uNprHVNmaGC6Fzl4YsXBe
+         L1Fg==
+X-Gm-Message-State: AOJu0YydVHrul+uj0bF0l0Mo8L9IwSn89fqfJSkUehHhv1ZfTsg4+a5j
+	QwClT3y8Yh+cmJCajz2aUHFesDqSX7MHl2s2xlhXmu0t/yxTyUN/
+X-Gm-Gg: ASbGncvIUEW4YlHd4Mq2qGF+21Q3PHVZbxSsJ4FjQnobc2qolb45tl6Ga5Cmf8LJIOF
+	1oD53joeroCkw6QdKR1+nrxkMhIZVeZ0/aKpMRTimP5y3gcSNjy/O5eCaXPyhlwb+zsCTCypipa
+	oQqGPJZL8QFSWcCIkzDVi6VYvWQXTXbFGzh0/cnkOJ00b261k7F4X51iv2pst2u8pi4ZqQxi9sf
+	gYXzufi4NXaJqBSUGjuNmxboCpEipObVYnGVZjd+32rRnR096JCmZ12RMYTLUXWRGDTNV5PXt9Z
+	o0zqJDSaGFfUX0F5Y/xqVnSuGpwWaKyupU24/lQliKVCEMpOiy+5
+X-Google-Smtp-Source: AGHT+IG4QFsTgyYvmWd6ggoZobed9wE7WmEtjhmxkW9qsuaaHrmco+HhfjePUaAOt9YnENLqT5jY3g==
+X-Received: by 2002:a17:903:8d0:b0:215:acb3:3786 with SMTP id d9443c01a7336-225e0a754e6mr51556465ad.19.1741978261113;
+        Fri, 14 Mar 2025 11:51:01 -0700 (PDT)
+Received: from linuxsimoes.. ([187.120.156.44])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371167e018sm3285703b3a.91.2025.03.14.11.50.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 11:51:00 -0700 (PDT)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: apw@canonical.com,
+	joe@perches.com,
+	dwaipayanray1@gmail.com,
+	lukas.bulwahn@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	trintaeoitogc@gmail.com
+Subject: [PATCH] checkpatch: check format of Vec<String> in modules
+Date: Fri, 14 Mar 2025 15:50:52 -0300
+Message-Id: <20250314185052.1126157-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <adb63b87-d8f2-4ae6-90c4-125bde41dc29@samsung.com>
 
-On Fri, Mar 14, 2025 at 11:52:58AM +0100, Marek Szyprowski wrote:
-> On 12.03.2025 20:32, Leon Romanovsky wrote:
-> > On Wed, Mar 12, 2025 at 10:28:32AM +0100, Marek Szyprowski wrote:
-> >> Hi Robin
-> >>
-> >> On 28.02.2025 20:54, Robin Murphy wrote:
-> >>> On 20/02/2025 12:48 pm, Leon Romanovsky wrote:
-> >>>> On Wed, Feb 05, 2025 at 04:40:20PM +0200, Leon Romanovsky wrote:
-> >>>>> From: Leon Romanovsky <leonro@nvidia.com>
-> >>>>>
-> >>>>> Changelog:
-> >>>>> v7:
-> >>>>>    * Rebased to v6.14-rc1
-> >>>> <...>
-> >>>>
-> >>>>> Christoph Hellwig (6):
-> >>>>>     PCI/P2PDMA: Refactor the p2pdma mapping helpers
-> >>>>>     dma-mapping: move the PCI P2PDMA mapping helpers to pci-p2pdma.h
-> >>>>>     iommu: generalize the batched sync after map interface
-> >>>>>     iommu/dma: Factor out a iommu_dma_map_swiotlb helper
-> >>>>>     dma-mapping: add a dma_need_unmap helper
-> >>>>>     docs: core-api: document the IOVA-based API
-> >>>>>
-> >>>>> Leon Romanovsky (11):
-> >>>>>     iommu: add kernel-doc for iommu_unmap and iommu_unmap_fast
-> >>>>>     dma-mapping: Provide an interface to allow allocate IOVA
-> >>>>>     dma-mapping: Implement link/unlink ranges API
-> >>>>>     mm/hmm: let users to tag specific PFN with DMA mapped bit
-> >>>>>     mm/hmm: provide generic DMA managing logic
-> >>>>>     RDMA/umem: Store ODP access mask information in PFN
-> >>>>>     RDMA/core: Convert UMEM ODP DMA mapping to caching IOVA and page
-> >>>>>       linkage
-> >>>>>     RDMA/umem: Separate implicit ODP initialization from explicit ODP
-> >>>>>     vfio/mlx5: Explicitly use number of pages instead of allocated
-> >>>>> length
-> >>>>>     vfio/mlx5: Rewrite create mkey flow to allow better code reuse
-> >>>>>     vfio/mlx5: Enable the DMA link API
-> >>>>>
-> >>>>>    Documentation/core-api/dma-api.rst   |  70 ++++
-> >>>>    drivers/infiniband/core/umem_odp.c   | 250 +++++---------
-> >>>>>    drivers/infiniband/hw/mlx5/mlx5_ib.h |  12 +-
-> >>>>>    drivers/infiniband/hw/mlx5/odp.c     |  65 ++--
-> >>>>>    drivers/infiniband/hw/mlx5/umr.c     |  12 +-
-> >>>>>    drivers/iommu/dma-iommu.c            | 468
-> >>>>> +++++++++++++++++++++++----
-> >>>>>    drivers/iommu/iommu.c                |  84 ++---
-> >>>>>    drivers/pci/p2pdma.c                 |  38 +--
-> >>>>>    drivers/vfio/pci/mlx5/cmd.c          | 375 +++++++++++----------
-> >>>>>    drivers/vfio/pci/mlx5/cmd.h          |  35 +-
-> >>>>>    drivers/vfio/pci/mlx5/main.c         |  87 +++--
-> >>>>>    include/linux/dma-map-ops.h          |  54 ----
-> >>>>>    include/linux/dma-mapping.h          |  85 +++++
-> >>>>>    include/linux/hmm-dma.h              |  33 ++
-> >>>>>    include/linux/hmm.h                  |  21 ++
-> >>>>>    include/linux/iommu.h                |   4 +
-> >>>>>    include/linux/pci-p2pdma.h           |  84 +++++
-> >>>>>    include/rdma/ib_umem_odp.h           |  25 +-
-> >>>>>    kernel/dma/direct.c                  |  44 +--
-> >>>>>    kernel/dma/mapping.c                 |  18 ++
-> >>>>>    mm/hmm.c                             | 264 +++++++++++++--
-> >>>>>    21 files changed, 1435 insertions(+), 693 deletions(-)
-> >>>>>    create mode 100644 include/linux/hmm-dma.h
-> >>>> Kind reminder.
-> > <...>
-> >
-> >> Removing the need for scatterlists was advertised as the main goal of
-> >> this new API, but it looks that similar effects can be achieved with
-> >> just iterating over the pages and calling page-based DMA API directly.
-> > Such iteration can't be enough because P2P pages don't have struct pages,
-> > so you can't use reliably and efficiently dma_map_page_attrs() call.
-> >
-> > The only way to do so is to use dma_map_sg_attrs(), which relies on SG
-> > (the one that we want to remove) to map P2P pages.
-> 
-> That's something I don't get yet. How P2P pages can be used with 
-> dma_map_sg_attrs(), but not with dma_map_page_attrs()? Both operate 
-> internally on struct page pointer.
+Implement a check to ensure that the author, firmware, and alias fields
+of the module! macro are properly formatted.
 
-Yes, and no.
-See users of is_pci_p2pdma_page(...) function. In dma_*_sg() APIs, there
-is a real check and support for p2p. In dma_map_page_attrs() variants,
-this support is missing (ignored, or error is returned).
+* If the array contains more than one value, enforce vertical
+  formatting.
+* If the array contains only one value, it may be formatted on a single
+  line
+* If the array is not indentation aligned, enforce indentation alignment
 
-> 
-> >> Maybe I missed something. I still see some advantages in this DMA API
-> >> extension, but I would also like to see the clear benefits from
-> >> introducing it, like perf logs or other benchmark summary.
-> > We didn't focus yet on performance, however Christoph mentioned in his
-> > block RFC [1] that even simple conversion should improve performance as
-> > we are performing one P2P lookup per-bio and not per-SG entry as was
-> > before [2]. In addition it decreases memory [3] too.
-> >
-> > [1] https://lore.kernel.org/all/cover.1730037261.git.leon@kernel.org/
-> > [2] https://lore.kernel.org/all/34d44537a65aba6ede215a8ad882aeee028b423a.1730037261.git.leon@kernel.org/
-> > [3] https://lore.kernel.org/all/383557d0fa1aa393dbab4e1daec94b6cced384ab.1730037261.git.leon@kernel.org/
-> >
-> > So clear benefits are:
-> > 1. Ability to use native for subsystem structure, e.g. bio for block,
-> > umem for RDMA, dmabuf for DRM, e.t.c. It removes current wasteful
-> > conversions from and to SG in order to work with DMA API.
-> > 2. Batched request and iotlb sync optimizations (perform only once).
-> > 3. Avoid very expensive call to pgmap pointer.
-> > 4. Expose MMIO over VFIO without hacks (PCI BAR doesn't have struct pages).
-> > See this series for such a hack
-> > https://lore.kernel.org/all/20250307052248.405803-1-vivek.kasireddy@intel.com/
-> 
-> I see those benefits and I admit that for typical DMA-with-IOMMU case it 
-> would improve some things. I think that main concern from Robin was how 
-> to handle it for the cases without an IOMMU.
+Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+---
+ scripts/checkpatch.pl | 77 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
-In such case, we fallback to non-IOMMU flow (old, well-established one).
-See this HMM patch as an example https://lore.kernel.org/all/a796da065fa8a9cb35d591ce6930400619572dcc.1738765879.git.leonro@nvidia.com/
-+dma_addr_t hmm_dma_map_pfn(struct device *dev, struct hmm_dma_map *map,
-+			   size_t idx,
-+			   struct pci_p2pdma_map_state *p2pdma_state)
-...
-+	if (dma_use_iova(state)) {
-...
-+	} else {
-...
-+		dma_addr = dma_map_page(dev, page, 0, map->dma_entry_size,
-+					DMA_BIDIRECTIONAL);
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 7b28ad331742..3b8db30c6972 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2775,6 +2775,12 @@ sub process {
+ 	$realcnt = 0;
+ 	$linenr = 0;
+ 	$fixlinenr = -1;
++
++	my %array_parse_module;
++	my $expected_spaces;
++	my $spaces;
++	my $herevet_space_add;
++
+ 	foreach my $line (@lines) {
+ 		$linenr++;
+ 		$fixlinenr++;
+@@ -2851,6 +2857,11 @@ sub process {
+ 			$realfile =~ s@^([^/]*)/@@ if (!$file);
+ 			$in_commit_log = 0;
+ 			$found_file = 1;
++
++			%array_parse_module = ();
++			$expected_spaces = undef;
++			$spaces = undef;
++
+ 		} elsif ($line =~ /^\+\+\+\s+(\S+)/) {
+ 			$realfile = $1;
+ 			$realfile =~ s@^([^/]*)/@@ if (!$file);
+@@ -3567,6 +3578,72 @@ sub process {
+ # ignore non-hunk lines and lines being removed
+ 		next if (!$hunk_line || $line =~ /^-/);
+ 
++# check if the field is about author, firmware or alias from module! macro and find malformed arrays
++		my $inline = 0;
++		my $key = "";
++		my $add_line = $line =~ /^\+/;
++
++		if ($line =~ /\b(authors|alias|firmware)\s*:\s*\[/) {
++			$inline = 1;
++			$array_parse_module{$1} = 1;
++		}
++
++		my @keys = keys %array_parse_module;
++		if (@keys) {
++			$key = $keys[0];
++		}
++
++		if (!$expected_spaces && !$add_line && $key && !$inline) {
++			if ($line =~ /^([\t ]+)(\s)/) {
++				$expected_spaces = $1;
++			}
++		}
++
++		if ($add_line && $key) {
++			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
++
++			my $counter = () = $line =~ /"/g;
++			my $more_than_one = $counter > 2;
++			if ($more_than_one) {
++				WARN("ARRAY_MODULE_MACRO",
++				     "Prefer each array element on a separate line\n". $herevet);
++			} elsif ($inline && $line !~ /\]/ && $line !~ /,/ && $line =~ /"/) {
++				WARN("ARRAY_MODULE_MACRO",
++				     "Prefer to declare ] on the same line\n" . $herevet);
++			} elsif (!$inline && $line =~ /\]/ && $line =~ /\"/) {
++				WARN("ARRAY_MODULE_MACRO",
++				     "Prefer a new line after the last value and before ]\n" . $herevet);
++			} elsif ($inline && $line =~ /,/ && $line !~ /\]/) {
++				WARN("ARRAY_MODULE_MACRO",
++				     "Prefer a new line after [\n" . $herevet);
++			}
++
++			my $line_cmp = $line;
++			$line_cmp =~ s/\+/ /;
++			$spaces = -1;
++			if ($line_cmp =~ /^([\t ]+)(\s)/) {
++				$spaces = $1;
++			}
++
++			$herevet_space_add = $herevet;
++		}
++
++		if ($expected_spaces && $spaces) {
++			if ($spaces ne $expected_spaces) {
++				WARN("ARRAY_MODULE_MACRO",
++				     "Prefer aligned parameters\n" . $herevet_space_add);
++			}
++
++			$spaces = undef;
++		}
++
++		#END OF ANALYZE FIELD
++		if ($line =~ /\]/) {
++			delete $array_parse_module{$key};
++			$expected_spaces = undef;
++			$spaces = undef;
++		}
++
+ #trailing whitespace
+ 		if ($line =~ /^\+.*\015/) {
+ 			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
+-- 
+2.34.1
 
-Thanks
-
-> 
-> Best regards
-> -- 
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
-> 
 
