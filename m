@@ -1,118 +1,144 @@
-Return-Path: <linux-kernel+bounces-561043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA5BA60CDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:13:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8163A60CE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:13:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C92319C26CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:13:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 517D7178B4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992291DEFE0;
-	Fri, 14 Mar 2025 09:13:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D8B1DE4D3
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9F81E1C1A;
+	Fri, 14 Mar 2025 09:13:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C78A1DE3AD;
+	Fri, 14 Mar 2025 09:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741943599; cv=none; b=XR7lyFPz45qGE6QUqP0eaxLKMcdHD1Tgo+4lXe49hiwOe1MtOzrqyjUvL/AjZJQCwAPiOUE3tO9LDMpsgAC6DHx22BVlXRJY3d12ZI738ixGG6Uuor7lNZK8rNJgqB8rxTcoY8REyp+Nd8UEfYuRf5qBfDKh9Tu8MEgwfPwa/eQ=
+	t=1741943608; cv=none; b=LXyt32AlUrzRoTon0T92zD1IrCUkaIw02zodJEvM/NzwDeZY8+1nowseCUALbM2gaC1JwrWvV17FWlT3H9bCrdTZmFIKekt7Jw/J+AhsC3IG7+EpSLj8geComssD27lO+nXwWquWb+dr3q143HbIWjU76IibpC2jPlh27mbLfhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741943599; c=relaxed/simple;
-	bh=gA269ZA7re/1zq17sICYw8fQwFZdnE3HKJAQuA1wjrI=;
+	s=arc-20240116; t=1741943608; c=relaxed/simple;
+	bh=WLlJgksv67r1gjn1fyE/ylFD8IWYUjpqVtcR1DHY0rs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=agd1kSWFaGGVg9gXl8mGmfXDMpAwZP8g94badWlC1p3FqVq7VUQDyMcd/Osho92SUxXUch3nebdp33AMip3Tm61FMciy1io6TUQAW83a06hc5NGaz3zNI9viRJM09E5AhYvtv4xsbIsV261gfMDp8DWm6dasFo89QM9yD0eCfwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tt16N-00032P-JB; Fri, 14 Mar 2025 10:13:11 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tt16M-005g5a-2p;
-	Fri, 14 Mar 2025 10:13:10 +0100
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 8547B3DB889;
-	Fri, 14 Mar 2025 09:13:10 +0000 (UTC)
-Date: Fri, 14 Mar 2025 10:13:08 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: haibo.chen@nxp.com
-Cc: mailhol.vincent@wanadoo.fr, ciprianmarian.costea@oss.nxp.com, 
-	han.xu@nxp.com, u.kleine-koenig@baylibre.com, linux-can@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH 1/2] can: flexcan: only set CAN_STATE_ERROR_ACTIVE when
- resume has no issue
-Message-ID: <20250314-invaluable-economic-caterpillar-80541a-mkl@pengutronix.de>
-References: <20250306065921.2329517-1-haibo.chen@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OXPYgES+Ege0Cn4zjV4xM9bB+Fdn2/UvhziSOwSAOauOyw/dJViEIjcpU3PdxVJIcgd3XgcfRUJ5Nd0yBT9rjDK7P0Z5xt8jhlLdimqDaQc37wuWzo9rzauBuALoTV6AVCM49EUXw15h6mQ2vIiKBKwM6GH2BNQQNVrmiIlj4mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 682471424;
+	Fri, 14 Mar 2025 02:13:29 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ECF303F673;
+	Fri, 14 Mar 2025 02:13:18 -0700 (PDT)
+Date: Fri, 14 Mar 2025 09:13:14 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	German Gomez <german.gomez@arm.com>
+Subject: Re: [PATCH v1] perf tests: Harden branch stack sampling test
+Message-ID: <20250314091314.GV9682@e132581.arm.com>
+References: <20250312055846.671522-1-irogers@google.com>
+ <20250312105450.GN9682@e132581.arm.com>
+ <Z9M9gK4VS199CRKh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7dixbjw5nb2p3hgi"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250306065921.2329517-1-haibo.chen@nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <Z9M9gK4VS199CRKh@google.com>
 
+Hi Namhyung,
 
---7dixbjw5nb2p3hgi
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/2] can: flexcan: only set CAN_STATE_ERROR_ACTIVE when
- resume has no issue
-MIME-Version: 1.0
+On Thu, Mar 13, 2025 at 01:18:08PM -0700, Namhyung Kim wrote:
 
-On 06.03.2025 14:59:20, haibo.chen@nxp.com wrote:
-> From: Haibo Chen <haibo.chen@nxp.com>
->=20
-> Only set CAN state to CAN_STATE_ERROR_ACTIVE when resume process has
-> no issue, otherwise keep in CAN_STATE_SLEEPING as suspend did.
+[...]
 
-When looking at the code, it makes no sense to set the can.state to
-CAN_STATE_ERROR_ACTIVE, if the device isn't up.
+> > >  test_user_branches() {
+> > >  	echo "Testing user branch stack sampling"
+> > >  
+> > > -	perf record -o $TMPDIR/perf.data --branch-filter any,save_type,u -- ${TESTPROG} > /dev/null 2>&1
+> > > -	perf script -i $TMPDIR/perf.data --fields brstacksym | tr -s ' ' '\n' > $TMPDIR/perf.script
+> > > +	perf record -o "$TMPDIR/perf.data" --branch-filter any,save_type,u -- ${TESTPROG} > "$TMPDIR/record.txt" 2>&1
+> > > +	perf script -i "$TMPDIR/perf.data" --fields brstacksym > "$TMPDIR/perf.script"
+> > >  
+> > >  	# example of branch entries:
+> > >  	# 	brstack_foo+0x14/brstack_bar+0x40/P/-/-/0/CALL
+> > >  
+> > > -	set -x
+> > > -	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/IND_CALL/.*$"	$TMPDIR/perf.script
+> > > -	grep -E -m1 "^brstack_foo\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
+> > > -	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
+> > > -	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
+> > > -	grep -E -m1 "^brstack_bar\+[^ ]*/brstack_foo\+[^ ]*/RET/.*$"		$TMPDIR/perf.script
+> > > -	grep -E -m1 "^brstack_foo\+[^ ]*/brstack_bench\+[^ ]*/RET/.*$"	$TMPDIR/perf.script
+> > > -	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_bench\+[^ ]*/COND/.*$"	$TMPDIR/perf.script
+> > > -	grep -E -m1 "^brstack\+[^ ]*/brstack\+[^ ]*/UNCOND/.*$"		$TMPDIR/perf.script
+> > > -	set +x
+> > > -
+> > > +	expected=(
+> > > +		"^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/IND_CALL/.*$"
+> > > +		"^brstack_foo\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"
+> > > +		"^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/CALL/.*$"
+> > > +		"^brstack_bench\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"
+> > > +		"^brstack_bar\+[^ ]*/brstack_foo\+[^ ]*/RET/.*$"
+> > > +		"^brstack_foo\+[^ ]*/brstack_bench\+[^ ]*/RET/.*$"
+> > > +		"^brstack_bench\+[^ ]*/brstack_bench\+[^ ]*/COND/.*$"
+> > > +		"^brstack\+[^ ]*/brstack\+[^ ]*/UNCOND/.*$"
+> > > +	)
+> > > +	for x in "${expected[@]}"
+> > > +	do
+> > > +		if ! tr -s ' ' '\n' < "$TMPDIR/perf.script" | grep -E -m1 -q "$x"
+> > > +		then
+> > > +			echo "Branches missing $x"
+> > > +			if [ "x$err" == "x0" ]
+> > > +			then
+> > > +				err=2
+> > 
+> > Here it sets "err=2", as a result, if any grep command fails, the script
+> > exits while reporting to skip the test.  This seems incorrect to me.
+> > 
+> > My understanding is the regular expressions above are mandatory to be
+> > matched, otherwise, it must be something is wrong.  We should not skip
+> > the test in this case.
+> > 
+> > I can understand that 'perf record' cannot record all branch types, if
+> > this is the case, maybe we can improve the recording quality rather
+> > than reporting skip?  E.g.,
+> > 
+> >   cat <<EOF > "$TMPDIR/loop.sh"
+> >   for run in {1..5}; do perf test -w brstack; done
+> >   EOF
+> > 
+> >   perf record -o "$TMPDIR/perf.data" --branch-filter any,save_type,u
+> >     -- sh $TMPDIR/loop.sh
+> > 
+> > If we run the test for 5 times, should this can allow us to ensure the
+> > branch samples are recorded?
+> 
+> The brstack (and other workload programs) can take an argument to
+> control its duration.  For brstack, it's the number of loop iteration
+> and default is 999999.
 
-The suspend function doesn't look correct, either. I'll send a v3.
+Sorry I did not dig into the brstack workload program.
 
-Marc
+If the workload has run for a large number of loops, the question is:
+why isn't the test capturing the expected branch stacks?
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---7dixbjw5nb2p3hgi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfT8yEACgkQDHRl3/mQ
-kZxexQf+JmEKpW48n7JZaT4itKhpbShwu5VNhVjXTZjgyErhN7cqpKyFglMMPIru
-JpKW8al/V5egAvSxVkC3LbKGE8/CtKXG8cY9cPAcgY2tdHU5bwxCbMWAcdbunSru
-+OQn4fdsUrC0kt15a8G+0u3rXrChh4GA4lMBB4oGuGWlO2UgqWClEaJsJj098sAn
-7E6ysBMUw70/ungoZfQb7xDOZt2/qTQVdgrZWRkypaqoxbTDQRylWHMCzFwJdxSj
-Ykq8PB9q6fRIozXgNc9vVfLTVFTxdVWf1Rc6Ujp+4JBHkI2AGXb7Np67kyntk8Bl
-l6WLqe3SQNzUGLY6pQ10ImsmW1w8kA==
-=JpVT
------END PGP SIGNATURE-----
-
---7dixbjw5nb2p3hgi--
+Thanks,
+Leo
 
