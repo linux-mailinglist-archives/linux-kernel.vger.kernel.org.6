@@ -1,129 +1,129 @@
-Return-Path: <linux-kernel+bounces-561136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F20A60DF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:53:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F92A60DF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:54:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C41EC4620E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:53:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFAA73BD7E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5078C1F12E7;
-	Fri, 14 Mar 2025 09:53:44 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9226F1E04AC;
+	Fri, 14 Mar 2025 09:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZApk60Ws"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6B51C861D
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C171EF0A5;
+	Fri, 14 Mar 2025 09:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741946023; cv=none; b=DrGqFnWvh+2W/swicpbQ0wcDfyO5NluHqaTKbWLwn/LT1EnBgjutWHLsK52lb8gGIjBQnyr9ZrcBEOqgF4LkwUkd/WtWZJeZ+1nMclm4TnrdpeVp0BgG3NhxBwaW/PxhIrCk/aPoZchLVVZTp++eU8iQgNZBeOrkkLtv4lsgl+s=
+	t=1741946031; cv=none; b=gJqS45P/jzAyTS+JYL4/cYZfSVjn14cW9MUP31G3C+kzBPIkVendTP0HIJRC8qUY33SVlBsiX8vIbKIy6LaPSvAAziSBvZDeEle15Fn3yjriwGgZOguhsNH5IWChtfMF1xqLI4h5+527cjGVWGnsB7QqwcYAgC9yPt6tt1uA58E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741946023; c=relaxed/simple;
-	bh=uqi4a1i44VuR63mk4mLewvz1DOGcGyysr+VYBowc650=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fvaGBYFo2oTypsHuIspcg5+lInnpKLCgXD4RHAU+SHHmDkzKmAO1EBmQ9W28UUmnOojWsV4kbpyvvX0dcw8lg+Ha9QQsqjT87UaqoU0bWpkBeLutUaZRbfKNR5wUtHYX8uTo6waYhIRsRUugnH3wKwPeoUKTtMVShcJY/JEexEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tt1jT-00006B-3y; Fri, 14 Mar 2025 10:53:35 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tt1jS-005gEk-29;
-	Fri, 14 Mar 2025 10:53:34 +0100
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 4E22B3DB8FA;
-	Fri, 14 Mar 2025 09:53:34 +0000 (UTC)
-Date: Fri, 14 Mar 2025 10:53:33 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Bough Chen <haibo.chen@nxp.com>
-Cc: "mailhol.vincent@wanadoo.fr" <mailhol.vincent@wanadoo.fr>, 
-	"Ciprian Marian Costea (OSS)" <ciprianmarian.costea@oss.nxp.com>, Han Xu <han.xu@nxp.com>, 
-	"u.kleine-koenig@baylibre.com" <u.kleine-koenig@baylibre.com>, "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: RE: [PATCH 1/2] can: flexcan: only set CAN_STATE_ERROR_ACTIVE
- when resume has no issue
-Message-ID: <20250314-astonishing-astute-caracara-4ba78c-mkl@pengutronix.de>
-References: <20250306065921.2329517-1-haibo.chen@nxp.com>
- <20250314-invaluable-economic-caterpillar-80541a-mkl@pengutronix.de>
- <20250314-married-polar-elephant-b15594-mkl@pengutronix.de>
- <DU0PR04MB9496EC52CF54A8F635F1408690D22@DU0PR04MB9496.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1741946031; c=relaxed/simple;
+	bh=NDKWPSLGvJ3Ug3WTN3vPKlY5C5wF9a4+rp8Xn+Biyiw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YOP3zZB1WcfeXb68/KMNkx/RtbUk7Hox3oLjsodc/H+YcpH7jpRzMMGfXdFko0CiMJSQK6zzLmEwk5ktO36pLuQvQxNunPbr2xMfRzJXAKb2EIsnJn3h28z7wVgBzYLVt7v0XkXLPyZnRY6iNMKFgq50/gOHarxhqa/vboNBJXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZApk60Ws; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE5BEC4CEE3;
+	Fri, 14 Mar 2025 09:53:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741946031;
+	bh=NDKWPSLGvJ3Ug3WTN3vPKlY5C5wF9a4+rp8Xn+Biyiw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZApk60WsYXJyzXQzBWpQhsm5pwn6Lc+fuLyQAB2khhL41/ql7tpCzuR2WH5yJrh8W
+	 9vB05pupO8wQ4OlN56OmohGT+1wSUVB6D28uUlu4Le9IahGh7CS0ultKH3RHY3yAUY
+	 iACxW/eaLoX8hSrcgIeD1ABdEZGJ+ImHrVA/CsQX+rPhZMoyxvT/vz2N1rWwEaokfu
+	 MkJr8kBwknV5Uylq27Q4lpkEEsd+s97Ay072uEl989Ytw3fdAamQ8N19mZDYlho8HK
+	 nILt6cxoObR1kXi7b2J+B8Gt32mwbIDZg7yb81M1IIe9bzQmdqCsU9MH6tRt/h2DzF
+	 Bkf6phJkwrplA==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Ben Hutchings <ben@decadent.org.uk>,
+	Matt Fleming <matt@readmodwrite.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: [PATCH] deb-pkg: add comment about future removal of KDEB_COMPRESS
+Date: Fri, 14 Mar 2025 18:53:35 +0900
+Message-ID: <20250314095337.2209653-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="migyawgtbe5skj3c"
-Content-Disposition: inline
-In-Reply-To: <DU0PR04MB9496EC52CF54A8F635F1408690D22@DU0PR04MB9496.eurprd04.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+'man dpkg-deb' describes as follows:
 
---migyawgtbe5skj3c
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: RE: [PATCH 1/2] can: flexcan: only set CAN_STATE_ERROR_ACTIVE
- when resume has no issue
-MIME-Version: 1.0
+    DPKG_DEB_COMPRESSOR_TYPE
+        Sets the compressor type to use (since dpkg 1.21.10).
 
-On 14.03.2025 09:48:06, Bough Chen wrote:
-> > > > Only set CAN state to CAN_STATE_ERROR_ACTIVE when resume process has
-> > > > no issue, otherwise keep in CAN_STATE_SLEEPING as suspend did.
-> > >
-> > > When looking at the code, it makes no sense to set the can.state to
-> > > CAN_STATE_ERROR_ACTIVE, if the device isn't up.
-> > >
-> > > The suspend function doesn't look correct, either. I'll send a v3.
-> >=20
-> > After a suspend/resume cycle on a down interface, it will come up as
-> > ERROR-ACTIVE.
->=20
-> Seems only need to handle the priv->can.state when netif_running(dev) ret=
-urn true in PM.
+        The -Z option overrides this value.
 
-ACK - in both the suspend and the resume function.
+When commit 1a7f0a34ea7d ("builddeb: allow selection of .deb compressor")
+was applied, dpkg-deb did not support this environment variable.
 
-regards,
-Marc
+Later, dpkg commit c10aeffc6d71 ("dpkg-deb: Add support for
+DPKG_DEB_COMPRESSOR_TYPE/LEVEL") introduced support for
+DPKG_DEB_COMPRESSOR_TYPE, which provides the same functionality as
+KDEB_COMPRESS.
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+KDEB_COMPRESS is still useful for users of older dpkg versions, but I
+would like to remove this redundant functionality in the future.
 
---migyawgtbe5skj3c
-Content-Type: application/pgp-signature; name="signature.asc"
+This commit adds comments to notify users of the planned removal and to
+encourage migration to DPKG_DEB_COMPRESSOR_TYPE where possible.
 
------BEGIN PGP SIGNATURE-----
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfT/JoACgkQDHRl3/mQ
-kZx+Pwf/ZfEVLAzTROaB11mfgT1llPVOR7Xa88LWmIyUoRfgnqK/V4RQ5RSQYXvJ
-GwxehE4EaqhAN4O79BMA3D1E7Tc8lB9zo/npgG/+2Oew6cu4a8GCC0ZQHi2HwAx+
-eWYQBNTY5F3Hr7C/osnwavurydlvMK/Cq0UYXJ8fqp5ucCW03F/A5IuFULfhgvZ3
-G7rvdOjKTiaM2dY3IafRQuDBzle25Lr1UKbDQ/OtaARVWL7XOkTLtRGupMOWjeEU
-/m1JevFi9L8QxXKcRYWnZMfsra2q1gbUMTNCRQvMjOySiz/yeLhyD37XHWywHnZC
-mfEjnSMblOxB+xKbqkMXcrZbE/yYdw==
-=jj4o
------END PGP SIGNATURE-----
+ lib/Kconfig.debug            | 6 +++---
+ scripts/package/debian/rules | 4 ++++
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
---migyawgtbe5skj3c--
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 17ccd913975d..be9f5af4c05c 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -335,12 +335,12 @@ config DEBUG_INFO_COMPRESSED_ZLIB
+ 	  Compress the debug information using zlib.  Requires GCC 5.0+ or Clang
+ 	  5.0+, binutils 2.26+, and zlib.
+ 
+-	  Users of dpkg-deb via scripts/package/builddeb may find an increase in
++	  Users of dpkg-deb via debian/rules may find an increase in
+ 	  size of their debug .deb packages with this config set, due to the
+ 	  debug info being compressed with zlib, then the object files being
+ 	  recompressed with a different compression scheme. But this is still
+-	  preferable to setting $KDEB_COMPRESS to "none" which would be even
+-	  larger.
++	  preferable to setting KDEB_COMPRESS or DPKG_DEB_COMPRESSOR_TYPE to
++	  "none" which would be even larger.
+ 
+ config DEBUG_INFO_COMPRESSED_ZSTD
+ 	bool "Compress debugging information with zstd"
+diff --git a/scripts/package/debian/rules b/scripts/package/debian/rules
+index ca07243bd5cd..33bfd00974b3 100755
+--- a/scripts/package/debian/rules
++++ b/scripts/package/debian/rules
+@@ -41,6 +41,10 @@ package = $($(@:binary-%=%-package))
+ # which package is being processed in the build log.
+ DH_OPTIONS = -p$(package)
+ 
++# Note: future removal of KDEB_COMPRESS
++# dpkg-deb >= 1.21.10 supports the DPKG_DEB_COMPRESSOR_TYPE environment
++# variable, which provides the same functionality as KDEB_COMPRESS. The
++# KDEB_COMPRESS variable will be removed in the future.
+ define binary
+ 	$(Q)dh_testdir $(DH_OPTIONS)
+ 	$(Q)dh_testroot $(DH_OPTIONS)
+-- 
+2.43.0
+
 
