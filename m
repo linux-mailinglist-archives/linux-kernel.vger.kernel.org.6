@@ -1,136 +1,129 @@
-Return-Path: <linux-kernel+bounces-561991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBDDA619F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:00:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B1BA61A05
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:02:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B632A462B31
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:00:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1774D7A9A6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B978204C18;
-	Fri, 14 Mar 2025 19:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E7B204C14;
+	Fri, 14 Mar 2025 19:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GieJe+56"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="YLpwZDBg"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E222AEE1;
-	Fri, 14 Mar 2025 19:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEBD202C30
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 19:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741978826; cv=none; b=PYMa0GKqtofFh7qCwNaKmKNV8h5Z5jq2l/iQ/eOrIW3gptciSche+2CvZVrgQxyR4dalaA7yKJ90nWrIViBVee4w9yokqAmXo3NA3g5psl9M5W2UV1/C0fWO0Sq8J8WfjstbQXs99fKRYNATZTGAXzOOl5DfWldpxsWCpmNeh6A=
+	t=1741978920; cv=none; b=o9Shi1gYLlZW4SzEP/Pyakc306eK86Z+EgCEVTnuXpDtABikPg5OgAdfT/vwZ/0DTUX/XbDCblYh3BQk51kTKusAfe6ZHB8Dg7A24GjmjpvoWfyCMw+VQzUOAIwkeA/juZqWG5fjB8Bj90dKSw8GaV/d1Wc8kLmVSPG8++AsGQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741978826; c=relaxed/simple;
-	bh=D0QlhNXbW/xyzK2YRcvVYmbstyauIMT/uvZG4gqT/LY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rm0gORj7Ksbg+UPUCgu+b6tRhWFAzbS/1I5rtTkH+Mduqi/vppP77CRyFHUsmu7VhxAzPBjbq2LUSbt5oFVw5V5P261CAkifComTPcodvZQ61IX2UBFSKWxkXwIE/iD85KFsQc+RZ5ooKZsj+HfNBo42D7uajMI248CIbUDq1Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GieJe+56; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-224171d6826so61123705ad.3;
-        Fri, 14 Mar 2025 12:00:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741978824; x=1742583624; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6TttbHfEDzusPiqbLfENwtPHN2UcwDBYMxJRLAbcwVE=;
-        b=GieJe+56p1TdTk8rdtLatYPLudjGkELdS8msA90p76Hw/Bs3UWB004c0qLgTAAU9Dv
-         jilMvC097mKeZNBP6Y7Z2QHDy4joNcBpE6JlIx6S5kp74HIeyOJbWVo7GiMbIRyzUUN7
-         53JkjH+OnVKeAtbKrumGFYtpIay4uMu4ek0fGEBQJc3g2s0SHhgzsX0/Hei60+zIk01V
-         BL1bwNUL1wb+Bs/2XmCoM45ViIU3sSNJB++Y7akLva1//SUnEb3YqLWbYMU+i0mTeRA3
-         fs44rhvcuY1ZHB4G4EI7IIpOyiB+Fdt/RTAPAdogDv7tMXVv2M93B8lZ5sOyaLzwlMAn
-         rKuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741978824; x=1742583624;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6TttbHfEDzusPiqbLfENwtPHN2UcwDBYMxJRLAbcwVE=;
-        b=P5q1h7rd564pbKRnsK6yrRj0AJV1oYB0C0J2JZhj230EZblPzWlAysFgheQbU2Li91
-         Zd4i6LfaAufS92AghVbFvNRi6E58qePEUgnMafja2v7QjY3xlVfn41rIlE1GtX+CCVCv
-         cJX4gvOev1g1uWZx+4EXD8R4IrDS8ageZZxJAKRbxsCkauLfZNQm8bFTaznTsDtKKfyy
-         8APy34Xh1hW2uE50hKai5PY9l6mAjEuSOTcSbadQte1Ck5LXSFJdZLMYM093PIk9uKP3
-         dmxBOY80PtpJnB29a1I+mZz2bfJa8OrNmdmEa9GUp4bTA4Jxs+lvT05bgNw4yR/bc1ZW
-         ZxsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGaGX6/vaD6CuzJx3QF57gs6SEhaU+MIIWR1XYLOjxoqIC7tm4qZrUtQubL49MwUXWUpVJ97XPmO3B+fAcBMF4@vger.kernel.org, AJvYcCVYsbFznJjYvb59+21KZa4F5ZvowPyQ/BG3euEX7Vyc88g45DLUae9LEyvO8SrIlHj79gRqHDWIKPesywZjRA==@vger.kernel.org, AJvYcCX8DhkxiKKZ3rf3MNdmcuFFwbTTn47pJz/rGVKeIa9GBCVj++Q4b9stzEwKKxciRyudljQpS8K7PjIANOg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeNSXXMyFYUtcmG4upX/WFBsSz8iy7zP5+JjDZ3k7lxJH4h86X
-	1IWBDlP3e/IwpzkSGZ3at8smtm+OKzqY/0/fHFfPRZhUFOOLYaJRvT9d64Iu
-X-Gm-Gg: ASbGncvlqdINc9JtCR4cJMDnv1qMHZgqm3p5bkrD1a/AGvZGZ5O6YY4b15mmaMSnKj8
-	3GQoS1wsHeKn8iH9nTDq/UlMwr12ctavrW4C5JdLglw0LeZKJqhVjL3zHYF/gwcr6LiZTuhjDuw
-	aV3nGCWNCxF7SHjmL2F1vbxeaOGrKTAoSvf/TrUhELDfRNpffXJz7UlwPF5C6z82un39TB82aPR
-	/4bhGIl6tOazvVDCUFMMRTs2RQ0Gh6JGsDSsIIFd1EOu2LYKU4yE2tVf8+QZSKMWc/14RAIY/bq
-	GhsSYIo3BHq886MumAukzblmf8e52ElUMKpJBTv80uP3efSZ5Y2H+bKazL2XoH3BtXGKkFrzJFw
-	Js79O79hbM3mGx+n88vTF
-X-Google-Smtp-Source: AGHT+IHNCKUEoQeU5JuTLB28zDQI1qq1nJ7mhk9VQYn/ahnO4Z55+xZYRRq0I3bKdFHKwOs72+RMXQ==
-X-Received: by 2002:a17:902:e78b:b0:220:e1e6:4472 with SMTP id d9443c01a7336-225e0a82ca7mr38015695ad.13.1741978823899;
-        Fri, 14 Mar 2025 12:00:23 -0700 (PDT)
-Received: from ?IPV6:2804:d57:4e50:a700:f33d:65d1:e22e:109b? ([2804:d57:4e50:a700:f33d:65d1:e22e:109b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbe8f9sm31682105ad.175.2025.03.14.12.00.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 12:00:23 -0700 (PDT)
-Message-ID: <6d9b9394-690b-49a3-b8df-7ef510c96c00@gmail.com>
-Date: Fri, 14 Mar 2025 16:00:19 -0300
+	s=arc-20240116; t=1741978920; c=relaxed/simple;
+	bh=zS+VIJjPhOlqAPHbDVyzgjWl85m3r5eFV1c/Tnbug5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=riLSKEGBpushk18x1p2WexoGllWEseBE2vZgE2Sq26q885WfKP8Ru+Uuf13wII4hKMYxsedsqmWnmpewZjaA1clJrDzOpMgzvwEB3aQpZR5MekqNU8PzwQkrpvjGFqbF+KS82PqMMyyvGV5wVhneY/2sRipRqpuF6/sPyFU+Udk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=YLpwZDBg; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=zS+V
+	IJjPhOlqAPHbDVyzgjWl85m3r5eFV1c/Tnbug5k=; b=YLpwZDBgF/VSqDMynIRm
+	LJDJQiJypZ+nVqjD3C61y0f/+/7m9iRFAGS1FSY0kQcHLSps4z5NjG4D25ZI3/MK
+	hTMTeNuP4JOGaE4IcjUiAnaeyqkuJUU6ap/LTXfocrOrcg1gmDLx+W1KWshnBmT2
+	ULz4ztm95hEx5EqyZJNIB35NE8U3S2eXqqCeBczc+nlJGRJHuqsdjlhMgi5j3Hfg
+	qEBa5L6WbKMhQ4l0r+/DD4JouZfW2ecHQLm/a60r2vWjfYuCjFTdnsR9vGHe5OQl
+	bMIjbs7JUZQqZ5rXhPHA0Hup2MHuqt/XfI6d+HYZumjOPA3Xnj8ujWCXno5jk+gT
+	Pw==
+Received: (qmail 2137754 invoked from network); 14 Mar 2025 20:01:52 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Mar 2025 20:01:52 +0100
+X-UD-Smtp-Session: l3s3148p1@FGpDElIwgI0ujnuL
+Date: Fri, 14 Mar 2025 20:01:52 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
+Subject: Re: [PATCH v3] ARM: dts: r9a06g032: add r9a06g032-rzn1d400-eb board
+ device-tree
+Message-ID: <Z9R9IHyXK0TBcPZa@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
+References: <20250314-rzn1d400-eb-v3-1-45c4fd3f6e01@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH PATCH 2/2] selftests: livepatch: test if ftrace can trace
- a livepatched function
-To: Miroslav Benes <mbenes@suse.cz>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>,
- Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Marcos Paulo de Souza <mpdesouza@suse.com>,
- live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, felipe_life@live.com
-References: <20250306-ftrace-sftest-livepatch-v1-0-a6f1dfc30e17@gmail.com>
- <20250306-ftrace-sftest-livepatch-v1-2-a6f1dfc30e17@gmail.com>
- <alpine.LSU.2.21.2503141411010.4442@pobox.suse.cz>
-Content-Language: en-US
-From: Filipe Xavier <felipeaggger@gmail.com>
-In-Reply-To: <alpine.LSU.2.21.2503141411010.4442@pobox.suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Txifhr+AlaUgRoBc"
+Content-Disposition: inline
+In-Reply-To: <20250314-rzn1d400-eb-v3-1-45c4fd3f6e01@bootlin.com>
 
-On 3/14/25 10:14 AM, Miroslav Benes wrote:
 
-> Hi,
->
->> +start_test "trace livepatched function and check that the live patch remains in effect"
->> +
->> +FUNCTION_NAME="livepatch_cmdline_proc_show"
->> +
->> +load_lp $MOD_LIVEPATCH
->> +trace_function "$FUNCTION_NAME"
-> trace_funtion() calls cleanup_ftrace() to prepare the test. Ok.
->
->> +if [[ "$(cat /proc/cmdline)" == "$MOD_LIVEPATCH: this has been live patched" ]] ; then
->> +	log "livepatch: ok"
->> +fi
->> +
->> +check_traced_function "$FUNCTION_NAME"
->> +
->> +cleanup_tracing
-> Here, I suppose, cleanup_tracing() is called to clean up after the check
-> above so that nothing stays and more tests can be added later. Right?
-> Would it make sense then to call cleanup_tracing() in
-> check_traced_function()? I think it would less error prone.
-> If needed, check_traced_function() can always be upgraded so that it
-> checks for more traced functions.
+--Txifhr+AlaUgRoBc
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In cases where we need to check two or more functions with 
-check_traced_function,
+On Fri, Mar 14, 2025 at 07:56:29PM +0100, Thomas Bonnefille wrote:
+> From: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+>=20
+> The EB board (Expansion board) supports both RZ/N1D and RZ-N1S. Since this
+> configuration targets only the RZ/N1D, it is named r9a06g032-rzn1d400-eb.
+> It adds support for the 2 additional switch ports (port C and D) that are
+> available on that board.
+>=20
+> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+>=20
+> [Thomas moved the dts to the renesas directory and declared the leds in
+> each phy]
+>=20
+> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
 
-if there is cleanup_tracing, it will not be possible, make sense?
+Oh, cool! I will definitely test it next week. Thanks a lot!
 
-e.g: function1 call -> function2 call -> function3.
 
->
-> Miroslav
+--Txifhr+AlaUgRoBc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfUfRoACgkQFA3kzBSg
+KbbnTA//UVMxsSokBVUsoucOsPcgopRUy4JIr/IfHjKqhD1z0GrjT6QVBeUhKV41
+ddKB8oFb0voidl15RNyFgF2sfl2rGVmvz7QWob5FZeGYLoPrCJJ9BF2YxBachGYV
+qxTtljqsYpmduFOV3U3xH9vZbSPbQNVS09aMHMMXUeKNArjwQG6HEnB0sA2N3nwp
+8fMPL9yzrtXBOhmE+lNxCNn+Fq18Mw2r4H8VB3o2YlaHXFBp7l0cN/fG/NNe+eg+
+st+VxbYtOo1u3U4NH923nCiXshz7VthEI5DPgCnB7dmY5zk5fX7rx3b13vRUyVzM
+OkAtQv/383aoi6Imh6qibj8s8IAn2nbjmrRUOGBDAuSCUxed1YpeibOLx53fLnLm
+UKlWpaeG4W8aOvBl9p6hyCF4inkShXxE996LK6fP1i9HNhhGfgXv8WHgNLE7/dcx
+rXSY7xALjEBze8InOFA+9d/SqYlfdmnPMCGXMLufKLN76A601widsRNVNGuQbEPN
+2TE8vOPy9B8A6OVjL3C6t2E1Ou1uIUIal1tZwCl6a20hq3zdfe17bxRzXvcjjAMz
+6X0aDO9eMA5+WfQdIiNkwdZSkh3mN1BdveIz4pkm+JCLdAikvni75ngyOwuAaY1E
+l+M7bV5ePvYFGoH0Ybtt3c6Q9das7shYbVzfHZ8B1zrYB+RWKME=
+=bZxX
+-----END PGP SIGNATURE-----
+
+--Txifhr+AlaUgRoBc--
 
