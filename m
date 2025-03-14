@@ -1,169 +1,133 @@
-Return-Path: <linux-kernel+bounces-562227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42523A61F63
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:51:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 842BDA61F65
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:52:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3D837AFFDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:50:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09BFA463EE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D576920485B;
-	Fri, 14 Mar 2025 21:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6863204F86;
+	Fri, 14 Mar 2025 21:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="bnRMVnrH"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="QiFjnhyk"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47AA205518
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F5A1FCFE3
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741988543; cv=none; b=BqED92fl2LfQDbd+BQ1uZ2jMAPMe87sbeZ2EXj9Jhh/8FpQKl0HQ+Vz4AGKnKmRnfW5DMoMC8FuVwWnINZ8ZzYbc2UeMME7eXv1wzsnc3ef5tIQNoF77+WG81bnxddx5B5ISA46Dr3ZCVegkebQp9wHb7GfnA3qjd7C56bH2EWs=
+	t=1741988680; cv=none; b=jwED/mTXLPAKuIEgw7JQ8/Dpg6g0GZ/nYDuJZFy5tF0ws90KGYrtaEpx7x+Jt/iGBW8/kc7f6nRMxJyFA9p4sopwm8pOmPIBsxsvpMpOmGR/0RbrpJWoqJdepQ5fNsokG2R2Pdf55Lxt6ZfLIQSPaeTAEAfyshHsPZFi+wE59Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741988543; c=relaxed/simple;
-	bh=uGg8JXJSXC6XUKko3vtFo3VClaWGJcePp4VmFBAeI6g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pQGzMsiKkHlDWo/Vn2NqpyzxPGGjnrmNcPgQ7smeh3xmJvAPeU/72ToRVGr/dyLqE+SxP6bAZTEIzqCZ+9aa4mFFzeUywi+Chf7FRdBOEtzzUIkM5Qq0Kozm7IoqPZ+3xfz7qmpXXzFpf4cHci6phMqtQK/2ZHUQ4FX6hc2gGes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=bnRMVnrH; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 508673F887
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:42:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1741988537;
-	bh=lY70/mS/r8Et37CQTVQ0HZOmZvOsgWjqVKwtQtIRegA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=bnRMVnrHpkuZy0uBKHS7xSxt54T1zHlKo+wkcSAZMo3Yvkv18sL64uMKWGyWJS5EF
-	 1RpKFobHtqPoBaNYOi5lL4qwdlxmoOliEps4eSZ2s0aerCkmxNyVdPDYwxJ4HmXqgu
-	 fA19bMdJdWmBgylmL1MCjKhVd8uogfiVOLuq5MrPFT7YV1T/BphsrCtnXYtLBKM49Q
-	 fGMJdpjO2DHRxAfU/bS+2dI/4W9s7HC55MnWOeOsp5FLuXyHEaNvfEw61kYJxA1AgA
-	 hucKY96S8T0CMCFSlPIrBHch6odkYRfRIE+hZrGUCuXARWNaHQUJNyczjqrmhzQeZE
-	 TpkaddyLarMbQ==
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ac2840b1ee8so256827966b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:42:17 -0700 (PDT)
+	s=arc-20240116; t=1741988680; c=relaxed/simple;
+	bh=vfncAfddjIcNiQo8ie81bODzjNZjL66lZljd6RJcJBU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CqoOJq6VDoqLkSqGGK0EilpjCJ0QCEPG0Jwaxk67GgZjoSkzPtb/XITHmL3cLQOtRl+Nrp8cMVyLGy2+3Tf2DhN73JCVXobdXWVh8zi7GwmsVYtSw0JE/rgf6FgAPOdXoTuabjxoAusBhO8xCeyDp/qMI2JfGuwtyM85pPzpd1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=QiFjnhyk; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-547bcef2f96so2882226e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:44:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mihalicyn.com; s=mihalicyn; t=1741988675; x=1742593475; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ygJ0H2vxATGxkU1M58pqnJ01OJulJY0qCIFHyH4kGoc=;
+        b=QiFjnhykMld5xiCWfCALlB3OfAYorrYYO/UN4EhO9dKKWrmcEXM8uURHxSRWDkqkRm
+         eMuXTdsD0SiU0rFlbg8Fm94uqoXkK1+mmXDPUgr+DEZKHAOntAEvrc7342eEZzVN64ju
+         Whud/Cgnyi5YNbfXAPPjzTUTeQULKPpK9vWxI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741988533; x=1742593333;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lY70/mS/r8Et37CQTVQ0HZOmZvOsgWjqVKwtQtIRegA=;
-        b=dAz7V4ntJILsfQarvlhePpghgxLzknABXr5/Ct1WhmGQgW3XURRxUOMhRoffBSZ+8U
-         GYHLtGcQ8DdmKi2ZTeVtMq7lpFBiDtoybgJry4BH/HzCQuZ3nJh+sRWa/ZsjWgeb+YyQ
-         mvkQNpxj5aiccHRLQg2tDeIdj5ARskDZ5udfpQHRSu/0M5+BM56p1P/5Y0dmGvX4nFKJ
-         GFNHhFxZdikXSegoCoagoG61dpUUoK3KgEP69JdJwlU/MUlFmfUHnautImaBkhRjHDET
-         M2rUeZV5qp1CCdwKWWhkqfeaPW/gqxc/WCdBkA/cfii7es71iJPHGcGRxS7/oK2AoRT+
-         Uc5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUUOISC0maXFMr1Fwqyy3vBZWQT1PzCGJ6hQCOLGcxQtEjTzkLSnk9G3QyPVmHd+BqHn3x8BKAxsZjevGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRlouSiOOND7u9GCMSzj3Xm/kgLiF6p8KvPxT55PQcS2NR2EIc
-	JAkBgyswaXgBKboByQ9mgMBZfzoSKAdzydhZ0634WjoC1eNOQekl0oXY7M/jOqrkiF60JEvrkEU
-	mU+CztMccmDvKVoz347NfGhlPAmFIaLLuv/6ooZLrkltyKr3TojGs64xyzhxHbSM1FkUPanjw1B
-	EkKg==
-X-Gm-Gg: ASbGncvy0DrAJm2MSKe+7nz+usYiQhoDpPadhubIA7bYahGXyj9OGRQzaoxVBTRZ6Px
-	7BQlbkHMQPQqdDmAUP89Yv8guXJG1jlfkY3GMIoCIeo5K2iv8hYyilu/6BxTABEhHa5ZsDcNPuf
-	fKbevcqC9NCti6X18OCRzU1ryIVOeX9NbuwR9WnWJUsJWTZaPExraOcvOIbHrrDxRwJYM86clUK
-	FOdRaOiKVA5rPj2YNUtBB183LzFWGN2O0UAThbjs2dytjqrMUTTpAE0YWCR7CHZF9dAXocjAYOT
-	+bB2yNELqCM1Jnqqt3Zm1q2QqNPq0pwxrw7cFO8YfPZbSlwF2w==
-X-Received: by 2002:a17:907:2ce3:b0:ac1:db49:99b7 with SMTP id a640c23a62f3a-ac33041a398mr452869366b.51.1741988532709;
-        Fri, 14 Mar 2025 14:42:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFYZ/shXBTmdAZ4tudDMccFXpts+ICQBG5lI5HLvE8Waomrj9sbmxYGzKr+xsBq7Krj4ozlDQ==
-X-Received: by 2002:a17:907:2ce3:b0:ac1:db49:99b7 with SMTP id a640c23a62f3a-ac33041a398mr452867966b.51.1741988532379;
-        Fri, 14 Mar 2025 14:42:12 -0700 (PDT)
-Received: from localhost.localdomain ([188.192.113.77])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314aa6083sm272732866b.182.2025.03.14.14.42.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 14:42:11 -0700 (PDT)
-From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-To: kuniyu@amazon.com
-Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Willem de Bruijn <willemb@google.com>,
-	Jason Xing <kerneljasonxing@gmail.com>,
-	Anna Emese Nyiri <annaemesenyiri@gmail.com>,
-	Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH net] tools headers: Sync uapi/asm-generic/socket.h with the kernel sources
-Date: Fri, 14 Mar 2025 22:41:54 +0100
-Message-ID: <20250314214155.16046-1-aleksandr.mikhalitsyn@canonical.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1741988675; x=1742593475;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ygJ0H2vxATGxkU1M58pqnJ01OJulJY0qCIFHyH4kGoc=;
+        b=W0io0xA4WoQW9oTPj1wnmsgZ3pJmREipCXq94KoqmR6VcVeytkjizlfl7OcMafX9+s
+         DorneEo6fHzXW/A5MY36jxNFgMid9I+Y+Bu/FAqN+XEtax82QH6n4OUkHW5kRjAc831Z
+         uf4h4X4xAMEzSTL6Jxs7SftXm7Z6W1T4n8U4pyl7Kroy+F3jadW5Luxd4rXUJ0K9Qsqt
+         C4Gt8xefWtbhRbyFNYIKJOmas7ZfMU9MLW2NtjFGNjt98qhhuGrYqCI3Adw5LHCBGq4T
+         e2rKjcSuSxXW7lBcyFGAMwgguqHSnqQZlApVOP+Ejj0e23fOc6ChYCdRwe2U/P8twxi2
+         bTvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNszko3uU4TOqpoIZqlrHTLgOt5dl6vofQyBP8SyaA2FYypJB30g++rLM8u2o8cZlhiTwWknw6fwOaS+0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxofxnFi1uGH2kJFW33HyJ3nFASvup7EGj/DfGLmUe0mZrs3rK+
+	2AJ1gcYp9vLY5zyt94o76NkLhN5CsbTNC/2L7A3+Vru/qI9rMFSTAMiqm3s8HVnCt5skJ0qzL3r
+	APdADM1AR94ocYX8XYQs277nOEilAiF0AnhVF03DfSGUZREeBh67mYw==
+X-Gm-Gg: ASbGncuQGNSVrTnxJQtwgIamkgR59k0YqNUD1A2SfPA4SiIyabK6b9jAv9ITXPX9ph3
+	C/pLZVSCUES+wNQQ/bYRvQjk+D6muU4jMyIdiZmZVmSVt4qS8fqtLEi5gUZzM+DtmW2Iof2P2LD
+	kRFBG0mkvHWGmuW+AJkj0PxkEIVMU=
+X-Google-Smtp-Source: AGHT+IEWnBhSIPLhooGWGB0QxRqKLPoxClk0plnFc0aU0hQcJNEEZNrsXc81K8BgPOFalpv3pmHZB9T+v3qJh5b2Kao=
+X-Received: by 2002:a05:6512:1148:b0:549:7394:2ce5 with SMTP id
+ 2adb3069b0e04-549c3989a46mr1481063e87.41.1741988675047; Fri, 14 Mar 2025
+ 14:44:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250309121526.86670-1-aleksandr.mikhalitsyn@canonical.com> <20250314195257.34854-1-kuniyu@amazon.com>
+In-Reply-To: <20250314195257.34854-1-kuniyu@amazon.com>
+From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Date: Fri, 14 Mar 2025 22:44:24 +0100
+X-Gm-Features: AQ5f1JpjBGfpOP5zNlKX7GO_VCD0NDNoLpNnm489_7MjjqdnEeHOwR7BjyJB7Lk
+Message-ID: <CAJqdLrqJska=kCcq7WUEPFnttHfvB_xaN12MDEkc0MQzgMVZ8g@mail.gmail.com>
+Subject: Re: [PATCH net-next] tools headers: Sync uapi/asm-generic/socket.h
+ with the kernel sources
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: aleksandr.mikhalitsyn@canonical.com, annaemesenyiri@gmail.com, 
+	edumazet@google.com, kerneljasonxing@gmail.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	vadim.fedorenko@linux.dev, willemb@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This also fixes a wrong definitions for SCM_TS_OPT_ID & SO_RCVPRIORITY.
+Am Fr., 14. M=C3=A4rz 2025 um 20:53 Uhr schrieb Kuniyuki Iwashima
+<kuniyu@amazon.com>:
+>
+> From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> Date: Sun,  9 Mar 2025 13:15:24 +0100
+> > This also fixes a wrong definitions for SCM_TS_OPT_ID & SO_RCVPRIORITY.
+> >
+> > Accidentally found while working on another patchset.
+> >
+> > Cc: linux-kernel@vger.kernel.org
+> > Cc: netdev@vger.kernel.org
+> > Cc: Eric Dumazet <edumazet@google.com>
+> > Cc: Jakub Kicinski <kuba@kernel.org>
+> > Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> > Cc: Willem de Bruijn <willemb@google.com>
+> > Cc: Jason Xing <kerneljasonxing@gmail.com>
+> > Cc: Anna Emese Nyiri <annaemesenyiri@gmail.com>
+> > Fixes: a89568e9be75 ("selftests: txtimestamp: add SCM_TS_OPT_ID test")
+> > Fixes: e45469e594b2 ("sock: Introduce SO_RCVPRIORITY socket option")
+> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.c=
+om>
 
-Accidentally found while working on another patchset.
+Dear Kuniyuki,
 
-Cc: linux-kernel@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Willem de Bruijn <willemb@google.com>
-Cc: Jason Xing <kerneljasonxing@gmail.com>
-Cc: Anna Emese Nyiri <annaemesenyiri@gmail.com>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Fixes: a89568e9be75 ("selftests: txtimestamp: add SCM_TS_OPT_ID test")
-Fixes: e45469e594b2 ("sock: Introduce SO_RCVPRIORITY socket option")
-Link: https://lore.kernel.org/netdev/20250314195257.34854-1-kuniyu@amazon.com/
-Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
----
- tools/include/uapi/asm-generic/socket.h | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+Thanks for looking into this!
 
-diff --git a/tools/include/uapi/asm-generic/socket.h b/tools/include/uapi/asm-generic/socket.h
-index ffff554a5230..aa5016ff3d91 100644
---- a/tools/include/uapi/asm-generic/socket.h
-+++ b/tools/include/uapi/asm-generic/socket.h
-@@ -119,14 +119,31 @@
- 
- #define SO_DETACH_REUSEPORT_BPF 68
- 
-+#define SO_PREFER_BUSY_POLL	69
-+#define SO_BUSY_POLL_BUDGET	70
-+
-+#define SO_NETNS_COOKIE		71
-+
-+#define SO_BUF_LOCK		72
-+
-+#define SO_RESERVE_MEM		73
-+
-+#define SO_TXREHASH		74
-+
- #define SO_RCVMARK		75
- 
- #define SO_PASSPIDFD		76
- #define SO_PEERPIDFD		77
- 
--#define SCM_TS_OPT_ID		78
-+#define SO_DEVMEM_LINEAR	78
-+#define SCM_DEVMEM_LINEAR	SO_DEVMEM_LINEAR
-+#define SO_DEVMEM_DMABUF	79
-+#define SCM_DEVMEM_DMABUF	SO_DEVMEM_DMABUF
-+#define SO_DEVMEM_DONTNEED	80
-+
-+#define SCM_TS_OPT_ID		81
- 
--#define SO_RCVPRIORITY		79
-+#define SO_RCVPRIORITY		82
- 
- #if !defined(__KERNEL__)
- 
--- 
-2.43.0
+>
+> Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+>
+> It seems the patch is marked as Changes Requested on patchwork.
+> Also, I think this is net.git material than net-next.
+>
+> So, could you repost to net.git ?
 
+Have done:
+https://lore.kernel.org/netdev/20250314214155.16046-1-aleksandr.mikhalitsyn=
+@canonical.com/
+
+Kind regards,
+Alex
+>
+> Thanks!
+>
+>
 
