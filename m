@@ -1,149 +1,195 @@
-Return-Path: <linux-kernel+bounces-561633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F93A61461
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:00:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D777A61463
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:00:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55D501B62359
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:00:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09D93A37F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF6C2010EE;
-	Fri, 14 Mar 2025 15:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13FA200132;
+	Fri, 14 Mar 2025 15:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ug50TmXm"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Bq0JgtMY"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09AA20101E
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 15:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B5D17579
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 15:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741964416; cv=none; b=BZ46o+EcUXHfXDGPw+itYtI2/usStCuNV2L0HtCa8lRJvDy3ZIo274vQ+rPmdUjh03BFDyjkyx5nP13SGaY9TV/SEwB4iTvtml0iKWXOQmxGN4Aar0KJGmJzprbq1ri8xGQGTDUoFSaM7AyIrdE5bZQNshSNzlvVMg9odd6lj9U=
+	t=1741964424; cv=none; b=NkXWROyd8ajSPhomhwHjOGEM02kHh6h9ScSQ8sUB14pj1W/ga3sLCkqfHgin7vYl+4lhGAdxeXOhc3hqCfNooi9zfKN57wDMaztJdRBeTBhh+WT+3sqRF87ZLKyUmLyjFH5w1yfdVBiOcAF14Tn0OcPkRPgeDUhh0m6VOIiHmhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741964416; c=relaxed/simple;
-	bh=wVO9ce9ZlRAVIzi8gnvoeWyyJtrFVY+UI1wkCjaHpb8=;
+	s=arc-20240116; t=1741964424; c=relaxed/simple;
+	bh=x1PLoyIRwWCrKRdFyzASe67Wyr+y7IAO/4CM0PBgJCY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S8cfgyVCcTvB5m7JsNEe+U4thEK8/PbnJ6pCgZudL74EB4fZ5mga5kmaFXXABzXb7WNZ3w6Ka68a0Io4TxR68vMUTmOBkw1f2tpaqzbAmZfiohSDCB02DiazvXVp/S4nOj5ZSO8VnluqswtI1rvXg0118a17zUKzZycJw9+mzmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ug50TmXm; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-30155bbbed9so816740a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:00:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741964413; x=1742569213; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SVSx58DsHtkAMotnaLKAEooZxKwTq9f+R9xk+PmCQj4=;
-        b=Ug50TmXmfbKkgxpUWizNvvpPF3dyn0bBPtrnYCiXcmNhEUoenyfqGTM6DvrCWP5yUc
-         gLZZMXv0I5ztPv6FXaC6KieYxHP0TcJA1gklu2LVqL8QP4gPugBAHnPpg57JSMP3MzA+
-         VIQcB3mZcXvnXzqbzIUUJUPFTINHwil37eb+DiyfBz/KF8xlRfeQWSfuOHyJDhprt+b2
-         +65oJflC9zS2Y3EaHMXgVfc1jqyKpsRUjupG+SI17Deu1h0/MV8j0vHmTg7Y+t1kRzxE
-         NgmQVZnaOqsOB2+t1KkuadMIku/HgJ01SqmWGv/0OqEjpd7bkKF06NjotDEOulivVc0X
-         h5kA==
+	 Content-Type:Content-Disposition:In-Reply-To; b=PkP37RzMFCC6iX3SK4X/J0LW7VbAHmMjuBjc7aTTlgITVrb7tsHULOtjLT7s4cR3CrS+1JDWR3cJuGl/9L5mQ1XSqBx5rqSGs5k+kxWwQu4VQ9VsA3yKdGVvHPbzeqHr5dhchIrN0ba3tYyEwLhHEIn1Rc26u7UMKvtCqXPugSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Bq0JgtMY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52EA4Hm3027567
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 15:00:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=5Q1/t28eBE47VhslKnKzc2xe
+	LvFBD34uadwrGYmHEs8=; b=Bq0JgtMYKQTYFkthrwll6D6i7x2kHLEY1SZZOluH
+	Jpbxvynhgc2jljLcuBhAY2pJ28v1sMxcrSpBzPZo0DciI/4ER1SjszylH4fcFtT4
+	PXOuhysQ8iauOg2KD3qJjakXZSZwltWLuriHyqSgpK8Zt2r5Hq7Kp8wMCYZ0A8er
+	VrEsbkiCqk/f3Rwh4HlefbfpW0GwY7++kN2sx3QfFc5m2Lfd2W827042ws7w22j+
+	zDqgb/jJIF6mGTCrI3uEHDzbVTHu6UKq8d9uQrMytyKiVIVMErJu0IXx2HRPB6qx
+	Izs/yCSnpCVS6VyuNyq4fnA0bsDLuGFyOZ2R3F9N3/mAgA==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45c6732hvd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 15:00:22 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e91054ea4eso37901546d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:00:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741964413; x=1742569213;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SVSx58DsHtkAMotnaLKAEooZxKwTq9f+R9xk+PmCQj4=;
-        b=VElgruGGav1rJttbheFCCXfAB9Dft8koKsrQSsAlboFi2rbj3QeT/YK/onsPzd1ExN
-         lq6Z3H96pzIHLj01NmtIQZ7eXuNSfaZp3HiLGz6o4TDzbkYEkfSugq1HPzP85N/uqu4A
-         uuSqy21UgshbihXYvFPdgezAOFueybQ05lixEIYJIikJixroHEy7x5RUGv3FUvwFcDZY
-         D77YDWsfflsVt0cWwkmRtmqNN82kA86xQLovqaFZ/SL9U1AQWMFnyvxLRHf9V8G26XVT
-         zxowWnOOC9KyZFg6y9i5FoslLIwJ/xlErX7PXonH1FWQLOpq0VjPXLbqHiMaoCWrQ/WX
-         7PKw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0DlsEjjd8hXXNw5XFTNS8nErEVg2LOZfkyx3660tpoWJu2Ol/+n3K1+UpkqhUMdEK65uaZGOMqHlFlTo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5NCgarGWq6ccfhMyRObQhWwEyBLteaiJQg3rL65HjoF+i3eAV
-	oQAsFAhqkbBu4z/zKElVBMlGjp2B8Dm3s8Iz0LjuDJbZ/oQzYqT40iGVt0Aedg==
-X-Gm-Gg: ASbGncts+JI8nVbfzEUg/lpIGGFWrn3hfgq0H1bS+JmY2yIntwef2ljn1QFK+/jl56u
-	vnCT4ozDsF4pXfesANU8hCAUbPPTUqXrxWLjxCJGQSeNcGqCFUTT6ziBdLb9802b5wP6giW3Adu
-	7USyzpdpqLCOz94rbc5X/IKNykMMYHwjxsMk6vpNOZpv82B1YOzGF5hFvqDWrIoGRjs8xPQ57Uy
-	c3saswPSUh/sWh2yt+bItsDwsDQkmKqg2aE73TVyrP1ptxAiSNycv38JGQvFXJ8zuQENHQtaxfy
-	y56oYX3iCqoEPvRh1PGkUJYC5kemiOrJBvC64xfqM2mO8OViVrjG3SYG
-X-Google-Smtp-Source: AGHT+IGXi5pJN6hlN3/mXEHRZ3EVVSDKdTJMkkncbCWed/2kKH5Frpp3CpqUy6VX2Tj7ji39o+bPMA==
-X-Received: by 2002:a17:90b:3a08:b0:2fe:8217:2da6 with SMTP id 98e67ed59e1d1-30151d9d6eemr3264998a91.22.1741964412845;
-        Fri, 14 Mar 2025 08:00:12 -0700 (PDT)
-Received: from thinkpad ([120.56.195.144])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301539e9817sm1085872a91.13.2025.03.14.08.00.08
+        d=1e100.net; s=20230601; t=1741964420; x=1742569220;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5Q1/t28eBE47VhslKnKzc2xeLvFBD34uadwrGYmHEs8=;
+        b=O3At3mw+dB8YGdhd1o7IJrAM5a/xjUE8ApI5NgCSpzZ+TuBcwWvFuBtscbZw1IooYi
+         RN2bvjFieskxAAli6ezFutZv9Hf3sXOBUFTTrv+huchZNgtXotRFvo1JnfrS2eZf0X+g
+         WuwK78YmZb2nNC+h4xQnJ4FQC6EvNHyfn2bqwlB2UtPUE8G+AHuiZ/RL9yVICDlzO5Ts
+         q42YJM1YCmQPGODt7w2BgWGcgnGLzfgOOs9WybGzBOf5WgUrSxY7vbACdaPTO0F/sjCs
+         Lu5BOfdr2wmnbZXuwNqtCfstqLJus792Wq+2YO+Zd/H3m3nh2yAUK537f5eTeYyCWBYc
+         byqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV78drMZLYaOhtpJziBC4u34GZDaycHyA3NQy+e6rF2C2dZZgil70HUYQFzqEPuI1gM1pCugV/DgzudIkg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXxz7jUkIlw7Ou8hyI/oM3MJlFrcUH4YlZnJUCMnNbDSu+lFK9
+	lh0pP6qoW8ZdCarmzPXhcfOn0mVGiVm1jW+krkIq3FSs65lOXW24UBCvNC0jdGOPYKYl8CvJE5o
+	R8aQXO0ydpilpZexiKVjM94WngTVWChKEsRCeJxjIoCyrwIai0Sk6NQZtnjUrpb969SBpiuQ=
+X-Gm-Gg: ASbGnctk4JG1VrN8MEDFZy81d7xPcD7QMrcXILnGwjOM/JQy39D0YF6iA2z+M9+8TfC
+	kYQvs+zEKOyx4O4Zq5Gui1XJNwXvcit/nrmq7FTJbEYqXBTEYmLJSFJCc7yDF8vTcKCC8Culylf
+	2Um5FgOny5+LqbaIsf7Ik+gWuN8/oRWYE3uSrAYBbe/vahL4Gjjbl7Ilpz0VAwgl87HixyGZYeK
+	10vjmn7spSjl0707UfdjnJVmhdhwDqozVaeQqoNwMqp9Prp4qN2r+6X0Qe8ZSyrexh97jUDjCDR
+	ouQfq9z8ZibyUkfN4POZ8oa+Tx9N+DUGUzweB9BSrPviBtZfnK66+rfo9kH6DFILqSrfkpCxtN4
+	Mzw0=
+X-Received: by 2002:a05:6214:c47:b0:6e6:5f08:e77d with SMTP id 6a1803df08f44-6eaeaa64726mr38922716d6.19.1741964418942;
+        Fri, 14 Mar 2025 08:00:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IElOf5VcuP4Qfeqk7k77duSbY0HMHuiCaGOzAq7nuu0v/lm1rSxjObW30d/t+f4KOijDX3OSg==
+X-Received: by 2002:a05:6214:c47:b0:6e6:5f08:e77d with SMTP id 6a1803df08f44-6eaeaa64726mr38922006d6.19.1741964418512;
+        Fri, 14 Mar 2025 08:00:18 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba88536csm537756e87.177.2025.03.14.08.00.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 08:00:12 -0700 (PDT)
-Date: Fri, 14 Mar 2025 20:30:06 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	quic_mrana@quicinc.com, quic_vbadigan@quicinc.com
-Subject: Re: [PATCH v7 2/4] PCI: of: Add API to retrieve equalization presets
- from device tree
-Message-ID: <20250314150006.crjestg3rtxu726q@thinkpad>
-References: <20250225-preset_v6-v7-0-a593f3ef3951@oss.qualcomm.com>
- <20250225-preset_v6-v7-2-a593f3ef3951@oss.qualcomm.com>
- <20250306032250.vzfhznmionz3qkx7@thinkpad>
- <9be6ce8e-f0e2-7226-e900-3a0c2506a16a@oss.qualcomm.com>
+        Fri, 14 Mar 2025 08:00:16 -0700 (PDT)
+Date: Fri, 14 Mar 2025 17:00:14 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Dmitry Baryshkov <lumag@kernel.org>,
+        Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/7] drm/connector: hdmi: Use YUV420 output format as
+ an RGB fallback
+Message-ID: <zfbamnotz4smuswgzhtp7maqw5o7d5boi5urvqfrqylszbbyok@jtwqtjmji4qr>
+References: <20250311-hdmi-conn-yuv-v2-0-fbdb94f02562@collabora.com>
+ <20250311-hdmi-conn-yuv-v2-4-fbdb94f02562@collabora.com>
+ <20250311-hypersonic-mature-leopard-d3afdc@houat>
+ <g25hgb2mocl4sjny26k4nzn2hwpwhlodenqganzcqfzzg6itms@herenniualnw>
+ <20250314-airborne-magenta-corgi-afd52c@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9be6ce8e-f0e2-7226-e900-3a0c2506a16a@oss.qualcomm.com>
+In-Reply-To: <20250314-airborne-magenta-corgi-afd52c@houat>
+X-Authority-Analysis: v=2.4 cv=a5Iw9VSF c=1 sm=1 tr=0 ts=67d44486 cx=c_pps a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=QX4gbG5DAAAA:8 a=JkxHsKVaOhtT2WVG5y0A:9 a=CjuIK1q_8ugA:10 a=1HOtulTD9v-eNWfpl4qZ:22
+ a=AbAUZ8qAyYyZVLSsDulk:22
+X-Proofpoint-GUID: YKBwKv1RkEUZWITGoJnJiVca8Lmirxyf
+X-Proofpoint-ORIG-GUID: YKBwKv1RkEUZWITGoJnJiVca8Lmirxyf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-14_05,2025-03-14_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ suspectscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ impostorscore=0 clxscore=1015 spamscore=0 mlxscore=0 adultscore=0
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503140118
 
-On Tue, Mar 11, 2025 at 04:31:33PM +0530, Krishna Chaitanya Chundru wrote:
-
-[...]
-
-> > > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> > > index 01e51db8d285..c8d44b21ef03 100644
-> > > --- a/drivers/pci/pci.h
-> > > +++ b/drivers/pci/pci.h
-> > > @@ -9,6 +9,8 @@ struct pcie_tlp_log;
-> > >   /* Number of possible devfns: 0.0 to 1f.7 inclusive */
-> > >   #define MAX_NR_DEVFNS 256
-> > > +#define MAX_NR_LANES 16
-> > > +
-> > >   #define PCI_FIND_CAP_TTL	48
-> > >   #define PCI_VSEC_ID_INTEL_TBT	0x1234	/* Thunderbolt */
-> > > @@ -808,6 +810,20 @@ static inline u64 pci_rebar_size_to_bytes(int size)
-> > >   struct device_node;
-> > > +#define PCI_EQ_RESV	0xff
-> > > +
-> > > +enum equalization_preset_type {
+On Fri, Mar 14, 2025 at 02:47:53PM +0100, Maxime Ripard wrote:
+> On Tue, Mar 11, 2025 at 09:46:39PM +0200, Dmitry Baryshkov wrote:
+> > On Tue, Mar 11, 2025 at 04:55:17PM +0100, Maxime Ripard wrote:
+> > > Hi,
+> > > 
+> > > I think the first thing we need to address is that we will need to
+> > > differentiate between HDMI 1.4 devices and HDMI 2.0.
+> > > 
+> > > It applies to YUV420, which is HDMI 2.0-only, and I guess your patches
+> > > are good enough if you consider YUV420 support only, but scrambler setup
+> > > for example is a thing we want to support in that infrastructure
+> > > eventually, and is conditioned on HDMI 2.0 as well.
+> > > 
+> > > On Tue, Mar 11, 2025 at 12:57:36PM +0200, Cristian Ciocaltea wrote:
+> > > > Try to make use of YUV420 when computing the best output format and
+> > > > RGB cannot be supported for any of the available color depths.
+> > > > 
+> > > > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> > > > ---
+> > > >  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 69 +++++++++++++------------
+> > > >  1 file changed, 35 insertions(+), 34 deletions(-)
+> > > > 
 > > 
-> > For the sake of completeness, you should add EQ_PRESET_TYPE_8GTS also. You could
-> > skip it while reading the of_property_read_u8_array().
-> Can we add like this to make parsing logic easier otherwise while
-> deference the presets array we need to subtract -1.
-
-Without EQ_PRESET_TYPE_8GTS, it would look like a missing enum. So someone will
-add EQ_PRESET_TYPE_8GTS in the future and it will break the driver. So be
-prepared for it. 
-
-> currently we are using like this presets[EQ_PRESET_TYPE_16GTS] if
-> we want to keep in same way we need to use like below.
+> > [...]
+> > 
+> > > >  	return -EINVAL;
+> > > >  }
+> > > >  
+> > > > +static int
+> > > > +hdmi_compute_config(const struct drm_connector *connector,
+> > > > +		    struct drm_connector_state *conn_state,
+> > > > +		    const struct drm_display_mode *mode)
+> > > > +{
+> > > > +	unsigned int max_bpc = clamp_t(unsigned int,
+> > > > +				       conn_state->max_bpc,
+> > > > +				       8, connector->max_bpc);
+> > > > +	int ret;
+> > > > +
+> > > > +	ret = hdmi_try_format(connector, conn_state, mode, max_bpc,
+> > > > +			      HDMI_COLORSPACE_RGB);
+> > > > +	if (!ret)
+> > > > +		return 0;
+> > > > +
+> > > > +	if (connector->ycbcr_420_allowed)
+> > > > +		ret = hdmi_try_format(connector, conn_state, mode, max_bpc,
+> > > > +				      HDMI_COLORSPACE_YUV420);
+> > > 
+> > > I think that's conditioned on a few more things:
+> > >   - That the driver supports HDMI 2.0
+> > 
+> > Isn't that included into connector->ycbcr_420_allowed? I'd expect that
+> > HDMI 1.4-only drivers don't set that flag.
 > 
-> 	EQ_PRESET_TYPE_8GTS,
-> 	EQ_PRESET_TYPE_16GTS = 0,
+> Yeah, I guess that's one way to do it, but we don't have any way to
+> express it at the moment
 
-No. First enum element should be initialized with 0.
+Yes, we do not have a way to specify that the connector is HDMI 1.x or
+2.0. However I think the code that we currently have ensures that the
+flag is set if and only if the HDMI Host and all the chain after it
+actually supports YUV 420, which would imply HDMI 2.0.
 
-- Mani
+I know that drm_bridge_connector has one deficiency wrt. YCbCr 420 flag:
+it is impossible to "inject" YUV420 in the middle of the chain (e.g. DSI
+host outputs RGB data, but then comes DSI2HDMI bridge which can convert
+RGB data to YUV). I kept that in mind, but I'd like to see an actual
+usecase first. And anyway, this currently limits YUV support rather than
+enabing it in the unwanted cases.
 
 -- 
-மணிவண்ணன் சதாசிவம்
+With best wishes
+Dmitry
 
