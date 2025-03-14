@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-561677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E472DA614CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:25:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2CF0A614D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:26:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D22C176ACB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:25:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 798B93B99D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA52520299A;
-	Fri, 14 Mar 2025 15:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150F420297B;
+	Fri, 14 Mar 2025 15:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NMptf53W"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dxKdV02r"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E7720125F;
-	Fri, 14 Mar 2025 15:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5CE1C878E;
+	Fri, 14 Mar 2025 15:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741965920; cv=none; b=lJID5Sb3SgnXtROYXVS1e5x0LjkUV2Jk0bcmynO+PMZu+c+LNc0BAaFoMrWXfVN48dXe5lak/SBdP50xqvKlUepbCAtAcUgbSDNf0LXwAF+sCGrFABY8HQ4jBLR9rsjHspVEowfwgA0KBDNwCnQGiAF0c/adjjVdrym6yxgL/Xo=
+	t=1741966002; cv=none; b=Je0TaCo1H+j1ouoouKohQweOUgIcts1cxoe2/XsBXe8+sQA0wSvwopZurUsYvUDVnswtMiERiHzM8EXNHcSdlsTiew4ZG2WPK1WyWRAImYq4iX7Kx3tpdWfbw6EJ/5Lvd/1Ryi3wlrLIkDhNAXg6CPbaEoT/H3opRMdvZIZMvig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741965920; c=relaxed/simple;
-	bh=ttfHvGjFPNT8a847marGdgc/cqlZkvi7C3hk9IguScM=;
+	s=arc-20240116; t=1741966002; c=relaxed/simple;
+	bh=n/ZX5jYth2ykBJT1A/3j+S+zp0ZH2eoj4N17f4Q1vlM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q6iuyGz4qwuxKFbmEqpvSsdWOn9/gtQBDbRkcy5BxM5TadOUvb/Q+5Fp83fmv9/fmS38FP6btTggLBhvXR0YcLGAeqmyAWXluaYREUjQucyjtbtJYoCWoygjfMrpXlqtDC2ULhs41C/ULecXGkkTXEtT5oH/GXoy5KGdToo/kdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NMptf53W; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 14 Mar 2025 08:25:09 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741965915;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vxlRek5piQEOqJgTgUW73cEStZDjS6tHAoz6Zpz+OY0=;
-	b=NMptf53W6V7UzUIOvVx4QrFJjyUz3uT6qHJp7SoOKAyL/8wDqb03/VSR2iR6x4IQC3zCh1
-	YPOwrtAJFAlLPLOh7p646kyd6orl48+O4yP8IJCfz11amr55tRcZig6/pe3S/osHVJm/1i
-	JzF8Jj8MPPw/EoI3jxCLxJ0QVLN63XU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
-Subject: Re: [RFC PATCH 05/10] memcg: no refilling stock from
- obj_cgroup_release
-Message-ID: <pjfrevsiu6gyyrvncbel5upglwu3lgcxdccrm26b3rlqwcmnx6@di3hjzxyl6ar>
-References: <20250314061511.1308152-1-shakeel.butt@linux.dev>
- <20250314061511.1308152-6-shakeel.butt@linux.dev>
- <20250314112627.dPKeawXj@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cb50t6TS0HJ2J5iS6xYEybjIOgDa8av3BGez6qJ1e8FL454DGUBRUZ4AoA7E2GT9yYiqsuoNkoqYQ2Qe6+YsGXn6E0G9YGVtIWGXXc4xVCIu4WFsUPN3GtiVxphbMbVsQSr6u0MW5Rb23OKQvayqIR7J0DOM0uBKWC4xDnb7J9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=dxKdV02r; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=JLucXbicvVl54mzBcNVonvbBRXxVtH+iL2usTqSk+no=; b=dxKdV02rXHfgVSFw7R4z1vXt5E
+	qxRShK8xSLKSLnYm3xgPi1lpr+Y93UkG3VTdNNXaMmGJv1KLDhlcL9NvQzjENK/qSOGa+QIwNIAFD
+	BOPUlYdwRJImizJrjZb0ZSgRCxTUdl6BR9aoWdGJHp3+uYB/ydewEuPx7k7p1JXDMGYs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tt6vN-005KYR-62; Fri, 14 Mar 2025 16:26:13 +0100
+Date: Fri, 14 Mar 2025 16:26:13 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	sander@svanheule.net, markus.stockhausen@gmx.de,
+	daniel@makrotopia.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v11] net: mdio: Add RTL9300 MDIO driver
+Message-ID: <bd1d1cb9-a72b-484b-8cfd-7e91179391d2@lunn.ch>
+References: <20250313233811.3280255-1-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,23 +60,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250314112627.dPKeawXj@linutronix.de>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250313233811.3280255-1-chris.packham@alliedtelesis.co.nz>
 
-On Fri, Mar 14, 2025 at 12:26:27PM +0100, Sebastian Andrzej Siewior wrote:
-> On 2025-03-13 23:15:06 [-0700], Shakeel Butt wrote:
-> > obj_cgroup_release is called when all the references to the objcg has
-> 
-> "references to the objcg have"
-> 
-> > been released i.e. no more memory objects are pointing to it. Most
-> > probably objcg->memcg will be pointing to some ancestor memcg and at the
-> > moment, in obj_cgroup_release, the kernel call
-> > obj_cgroup_uncharge_pages() to uncharge last remaining memory.
-> 
-> This sounds somehow funny. I think the point is to uncharge the pages
-> without tampering memcg_stock because it is unnecessary.
-> 
+> +static int rtl9300_mdiobus_probe_one(struct device *dev, struct rtl9300_mdio_priv *priv,
+> +				     struct fwnode_handle *node)
+> +{
+> +	struct rtl9300_mdio_chan *chan;
+> +	struct fwnode_handle *child;
+> +	struct mii_bus *bus;
+> +	u32 mdio_bus;
+> +	int err;
+> +
+> +	err = fwnode_property_read_u32(node, "reg", &mdio_bus);
+> +	if (err)
+> +		return err;
+> +
+> +	/* The MDIO interfaces are either in GPHY (i.e. clause 22) or 10GPHY
+> +	 * mode (i.e. clause 45).
 
-Thanks, I will see to make the point more clean in the next version.
+I still need more clarification about this. Is this solely about the
+polling? Or does an interface in C22 mode go horribly wrong when asked
+to do a C45 bus transaction?
+
+> +	bus->name = "Realtek Switch MDIO Bus";
+> +	bus->read = rtl9300_mdio_read_c22;
+> +	bus->write = rtl9300_mdio_write_c22;
+> +	bus->read_c45 = rtl9300_mdio_read_c45;
+> +	bus->write_c45 =  rtl9300_mdio_write_c45;
+
+You are providing C45 bus methods, independent of the interface
+mode. So when accessing EEE registers in C45 address space, C45 bus
+transactions are going to be used, even on an MDIO interface using C22
+mode. Does this work? Can you actually do both C22 and C45 bus
+transactions independent of the interface mode?
+
+	Andrew
 
