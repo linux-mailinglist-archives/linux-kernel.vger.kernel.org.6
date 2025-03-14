@@ -1,79 +1,158 @@
-Return-Path: <linux-kernel+bounces-561189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE024A60E92
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:17:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 992C1A60E95
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:17:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C6833A7D4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:16:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88B28172F3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B993B2AF00;
-	Fri, 14 Mar 2025 10:16:52 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id B1CB21DE4D3;
-	Fri, 14 Mar 2025 10:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8C81F3BA3;
+	Fri, 14 Mar 2025 10:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N7rOcszd";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kCBbWfU7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB5D1EEA54;
+	Fri, 14 Mar 2025 10:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741947412; cv=none; b=lq4cZEXDnlFT7XHapn8+miO6tzgXewJlmekyLN3lTLVjQ0rgkKpN6pT/qV9luOIZHDi2xFnEJzhYPx9i/kXD3U4n6gZcXbxqsvU8KvLDFRebp5A2ex3xBVGhpEr8ziQEkXmKaahFw+Fc4AT1JLQUhGyg7i3E/DViqoYD8/5XAIM=
+	t=1741947428; cv=none; b=jOWbfVrCdwl4I9M1pIALuE7Q+KowQfjI5U8pv+GhRqaDqqfXmzG8ogmESrJVz0gdhpgqv9xuaU8gr3v42l95h0S+vWCvwQPddcMTaMF5B8LwMTwpsvcBibL4ooQtkpn5s5itI4pp97n2eDZWKrFjLgw+kK0czwb7ATnZ5PpTNUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741947412; c=relaxed/simple;
-	bh=qu9+01MrubQ8jJ4PaiAEj8ZJmo2Troqlc/dltCG/xdA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version; b=qTr/T79AFwU0K/DE3kQR/CGk9SRIhnyQg2zCJlLJQEGaEAAZDpi6TRUasTOWH1wUUEzHg7MBdCdQIBMUGbjKqfzeyDigO6wQ5JkJubANw27xT4Mpq0YHaMVqyakyNncKV9iU2HxGMDS1eFLzukVUq8BLhD8nweEPsgy8Njz3pDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from liqiong-suma.shanghai.nfschina.local (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 0287C606FFD3E;
-	Fri, 14 Mar 2025 18:16:44 +0800 (CST)
-X-MD-Sfrom: liqiong@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Li Qiong <liqiong@nfschina.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Michal Simek <michal.simek@amd.com>
-Cc: Li Qiong <liqiong@nfschina.com>,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] usb: gadget: udc-xilinx: Remove the invalid comment
-Date: Fri, 14 Mar 2025 18:16:39 +0800
-Message-Id: <20250314101639.424013-2-liqiong@nfschina.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20250314101639.424013-1-liqiong@nfschina.com>
+	s=arc-20240116; t=1741947428; c=relaxed/simple;
+	bh=GElny8AJlFfTQUvvFDvOBylkmwecw2sp/9Dmjh6W9h0=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=lLJpLSoVNp9a98r9MTRNqgoNxLeqPUCk/pCD8v7gnGt2AYTXZWb4hlr+2m0C8JIOyRy6hv6LOc2TvGq9q2MNcb0gsqDaYWUpRlaK0dIILX2NvDwFhqhDDwkEHIBFkAcrDUOa9OZvmOaqhAgOakkJ342OSW5gKHegmIGyFk93beI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N7rOcszd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kCBbWfU7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 14 Mar 2025 10:16:57 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741947424;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eWymMseujqYB7Jp1PIQpjkL6tDEWb1PW/g1EZTY8mFg=;
+	b=N7rOcszd7B+qgoAF6Q/fObhDBnsAzblBcNtpJA3UJnF7ZeEZYmF3K827ttMsXcFpzEhNeK
+	o5ol+sjnZqXDmswAd0E4dCW3tsJonBXRDcrksu+Sv45GNHSHBlhR5QwpOUyLu+/GBkP4A8
+	vc0Hqy/bSdiC4ZgEDoIB9VIs4vO7SURwNF1IteGOwRRjSnPDu1mesH7eOtUfOIlp3n8TJh
+	JPI/mIVFb/hMCF4ZpZ+LBI9lKJc4tG9dCEFS2GIlpElK6QEclpENXUUiRzf0ocsK/WZ6Fi
+	XG0pdaBFqLE4nrFr91gwiOWIjKntxDxOICd5LpxqjLFbv0I5TYoF3a3gV5QTvg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741947424;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eWymMseujqYB7Jp1PIQpjkL6tDEWb1PW/g1EZTY8mFg=;
+	b=kCBbWfU7YNI/cPx4MRaaiKl/XYA64Uod16ekn1Q8xtsk75LlC51IQO4jVEcQ8XbyA5GsNT
+	uKVYXEK47Za6pkBQ==
+From: "tip-bot2 for David Woodhouse" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/boot] x86/kexec: Add relocate_kernel() debugging support:
+ Load a GDT
+Cc: David Woodhouse <dwmw@amazon.co.uk>, Ingo Molnar <mingo@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>,
+ Ard Biesheuvel <ardb@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250312144257.2348250-2-dwmw2@infradead.org>
+References: <20250312144257.2348250-2-dwmw2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <174194741889.14745.5868283555442287108.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-The function don't return value, remove the invalid comment.
+The following commit has been merged into the x86/boot branch of tip:
 
-Signed-off-by: Li Qiong <liqiong@nfschina.com>
+Commit-ID:     b25eb5f5e419b81f124d5ba2abaaacf1948fb97e
+Gitweb:        https://git.kernel.org/tip/b25eb5f5e419b81f124d5ba2abaaacf1948fb97e
+Author:        David Woodhouse <dwmw@amazon.co.uk>
+AuthorDate:    Wed, 12 Mar 2025 14:34:13 
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 14 Mar 2025 11:01:53 +01:00
+
+x86/kexec: Add relocate_kernel() debugging support: Load a GDT
+
+There are some failure modes which lead to triple-faults in the
+relocate_kernel() function, which is fairly much undebuggable
+for normal mortals.
+
+Adding a GDT in the relocate_kernel() environment is step 1 towards
+being able to catch faults and do something more useful.
+
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/20250312144257.2348250-2-dwmw2@infradead.org
 ---
-v2: Split the first patch to two patches.
-v3: Add changes from the previous version.
+ arch/x86/kernel/relocate_kernel_64.S | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
- drivers/usb/gadget/udc/udc-xilinx.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/usb/gadget/udc/udc-xilinx.c b/drivers/usb/gadget/udc/udc-xilinx.c
-index ae2aeb271897..fa94cc065274 100644
---- a/drivers/usb/gadget/udc/udc-xilinx.c
-+++ b/drivers/usb/gadget/udc/udc-xilinx.c
-@@ -2178,8 +2178,6 @@ static int xudc_probe(struct platform_device *pdev)
- /**
-  * xudc_remove - Releases the resources allocated during the initialization.
-  * @pdev: pointer to the platform device structure.
-- *
-- * Return: 0 always
-  */
- static void xudc_remove(struct platform_device *pdev)
- {
--- 
-2.30.2
-
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+index b44d886..ac05897 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -40,6 +40,16 @@ SYM_DATA(kexec_pa_table_page, .quad 0)
+ SYM_DATA(kexec_pa_swap_page, .quad 0)
+ SYM_DATA_LOCAL(pa_backup_pages_map, .quad 0)
+ 
++	.balign 16
++SYM_DATA_START_LOCAL(kexec_debug_gdt)
++	.word   kexec_debug_gdt_end - kexec_debug_gdt - 1
++	.long   0
++	.word   0
++	.quad   0x00cf9a000000ffff      /* __KERNEL32_CS */
++	.quad   0x00af9a000000ffff      /* __KERNEL_CS */
++	.quad   0x00cf92000000ffff      /* __KERNEL_DS */
++SYM_DATA_END_LABEL(kexec_debug_gdt, SYM_L_LOCAL, kexec_debug_gdt_end)
++
+ 	.section .text..relocate_kernel,"ax";
+ 	.code64
+ SYM_CODE_START_NOALIGN(relocate_kernel)
+@@ -116,6 +126,19 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 	/* store the start address on the stack */
+ 	pushq   %rdx
+ 
++	/* Create a GDTR (16 bits limit, 64 bits addr) on stack */
++	leaq	kexec_debug_gdt(%rip), %rax
++	pushq	%rax
++	pushw	(%rax)
++
++	/* Load the GDT, put the stack back */
++	lgdt	(%rsp)
++	addq	$10, %rsp
++
++	/* Test that we can load segments */
++	movq	%ds, %rax
++	movq	%rax, %ds
++
+ 	/*
+ 	 * Clear X86_CR4_CET (if it was set) such that we can clear CR0_WP
+ 	 * below.
 
