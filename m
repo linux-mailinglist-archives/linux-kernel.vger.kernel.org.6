@@ -1,209 +1,348 @@
-Return-Path: <linux-kernel+bounces-561942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98DD5A618EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:03:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A17A618FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:04:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C117B1B63EFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:03:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C3D91B642FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBC31FF601;
-	Fri, 14 Mar 2025 18:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72FA202F96;
+	Fri, 14 Mar 2025 18:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FaVPpnln"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u8s3Pa9u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB0C204F65
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4042E3389;
+	Fri, 14 Mar 2025 18:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741975314; cv=none; b=OeZAH2AMbN6KdI5OZkWLlcumW3EBSJ7953hyeQwZoMRDM9fxIbvKtOryo7+Y/q/vt+50+cAzgGjoMRAJT40XTkDb50jXW1Mxmx02aRwJF9BNymLHp05j7dcPfk6cU+ernp1IuWvJe2+xQMJvcfKFMzTHeBeFFMZZ6vlM+WGQLT8=
+	t=1741975486; cv=none; b=lEUtiv4t+WcYslGrC3hgepSPZiyMgt7I53g2tX5Nk0NAmoSFAyIhNxyfIfM3Q9U8wzsiF6VR6VJFUqpLzSomc9gOwnlzSSuOb3bTM8R56nTCtXBhU1Oj3GnwocvRTLNgaHjLEiVM5PlQbnw2tUkJNgaRyLwulbVRLQhz1y8514c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741975314; c=relaxed/simple;
-	bh=EEYxWwY8kCTLySnOVtwdYcS5zBb5IL6//3e/jf2TqxM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=atXI6K4c/4eQ0/ofwgPuIjj2Y63npc6QL7aKmSkiA6Y5p/5s4kNtllhxW7XDJDhyDFA35ROmpwXJ6AGphiMhtss9RGNjWMSYLoSqBE5cAQZqoz4vBy6LFUaVzsJdQWLM9tvuuH4ghUyFholggG8aUpwlTYzNrh1xwpkeKvcP2no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FaVPpnln; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741975311;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sdKP65qdr3ROgUgJg8MYQwM2EODCLBcK6u+sVD8ojXA=;
-	b=FaVPpnlnRBtlTBtEC+Q2DGmlB4IdX1L7im2i3eCe2e0+0Rcmkbk/UqnGAWJa0gEsz8eVNA
-	PmyRFKzlZmKBEt16+VJQO4Gab7kr4heaWJNh2TldErh750ghbhrzuvIsFUrrVDThGxkOj2
-	OWNhsefFDjvAj7SqTizUHvU0QX+jlWc=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-465-0bquKPSJNI-FZIh3iKkRRw-1; Fri, 14 Mar 2025 14:01:49 -0400
-X-MC-Unique: 0bquKPSJNI-FZIh3iKkRRw-1
-X-Mimecast-MFC-AGG-ID: 0bquKPSJNI-FZIh3iKkRRw_1741975309
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d01024089so22255e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:01:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741975309; x=1742580109;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sdKP65qdr3ROgUgJg8MYQwM2EODCLBcK6u+sVD8ojXA=;
-        b=iiMFVbzvsqLDN9yhfpYpog7rhq+T/qkHkt25x2lu7ixtUfLV4vv+8QPggDYcUPnAe+
-         JZk2cNPmnrYPHT/tMPYpzdua3kcbvYONX4Jq9poWOpoSJ5Y3ZQPb43by2T/AIIHygnUY
-         jUkhPAJt7eSBDjadOTwZ84Xs4OiUDTpAV0ttl0QYW+oNivB7V7O6OntkGQCOzJB+D1i/
-         Fl5XoAisMYpD3T7KQpFOTtfxRh/NcC28Bso8Zng8Jb3lp/4/Sayay6c3PhpVtNHUbeWl
-         UIVLP1m1dhlYAsrcZx4LNoSy2VP4IVU/9cSKycl/9PJRPlwUgjXWjXSwmskD4DrY0KDb
-         D0gw==
-X-Gm-Message-State: AOJu0YyCx/HwzJzJbVbafpEPfasBWdltMXtTfN4dbZ5uFTEIwTIIPhGG
-	U8S31iWsT+BxAMmKdPzX+AuQw6BVLNfCXxOzCiDFF6fWTIj29dc5pzmlPh9JzFx3snYB81Pm/A1
-	wxCW+WvKlT6wfTd+GBrBbJK+uqdArUUt9CN1zMU3sOaTjK6b2AxNoZtN0RjhmRw==
-X-Gm-Gg: ASbGncuyt5JO9uOuLXt50EbUCCM1zADQ2PByt536Ak0yp1x7/i2F8ivgq2O6njaQdFr
-	9ZfJyR479H/GiThb+VcKd8W/redegYwTqj4R+ysIf4ikWpUgbF6VXZfw+ELF++F2mPPMl3jHWvx
-	npGrbMh4j4GvAMmOzY35boi+DFiPFaWGnDStf5NYsZgfcsMMfDDei3YGuR7jTmNFul2ey6KZeGw
-	mjAInkaDxx2e6nKB9AlVglDGzIZptaojjBVtmW3XKAdFgFZNRoLBLAOyf2+M6dcD0PVyBpjqUns
-	iMyNavD8d1CEr1NA59e70N1kVyN0b034I80MJxCFczb1OoA=
-X-Received: by 2002:a05:600c:198e:b0:43c:fa52:7d2d with SMTP id 5b1f17b1804b1-43d1ecd8631mr43492625e9.20.1741975308659;
-        Fri, 14 Mar 2025 11:01:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHVfqZ0VtjIa24aKX7T579NwZ9Rq/vt8mIPi/r8NwfDGe5UQOF2w13UZuRKaiVNkmwC8wV0kA==
-X-Received: by 2002:a05:600c:198e:b0:43c:fa52:7d2d with SMTP id 5b1f17b1804b1-43d1ecd8631mr43491465e9.20.1741975307549;
-        Fri, 14 Mar 2025 11:01:47 -0700 (PDT)
-Received: from [192.168.0.7] (ip-109-42-51-207.web.vodafone.de. [109.42.51.207])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1ffbcf12sm23837335e9.12.2025.03.14.11.01.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 11:01:47 -0700 (PDT)
-Message-ID: <71188823-2a9e-4565-8ace-03a682d8d0da@redhat.com>
-Date: Fri, 14 Mar 2025 19:01:45 +0100
+	s=arc-20240116; t=1741975486; c=relaxed/simple;
+	bh=dc+5Fwuqnj7VThwM2tp+KuPSbbCmFL6xhXJcyRarTx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t73qzQrcOov2rLUuOXbcfMLI1t8h7AokLkeYjN+6f4VW+4aRzdPPEFG2Sw1+hrsq4KqVo8kvgp5ErBiy4uQ/h8ldmp0BmLhn3euDDCCwCKeloGGNu6spQ+j07sGfJk+zk2Kw+JMRVRDrnMbUpTf8Eg4HITEVRpptUAVvBUiSrfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u8s3Pa9u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B5EEC4CEE3;
+	Fri, 14 Mar 2025 18:04:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741975483;
+	bh=dc+5Fwuqnj7VThwM2tp+KuPSbbCmFL6xhXJcyRarTx0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u8s3Pa9uc2R03aqOxHsgjhJL9fFv7bs2a+kw03vbXaqvQBgxetaOnIpQyRQcLq6xR
+	 zqr/IrjBjCKigQp3pC7vlUAIjDkyktnRqXtEj09/0E8KPXhDjfdWUqGbXNPGoIgRYw
+	 toDPkqhfPuVKQF0zBltgvMAAEI7gjzuhGadfRZTrkILYKBiFyGqHMrD7ubCvJRJyje
+	 IUTkULwspqSyCVF+Q8sR5uE1SCyY2crzmi+GseQuUMC+SdZ9ebGAYEnb9D871z5+Di
+	 DNWvGOd4AcjCihziIAkzc6opk6rFd17GY4EdntSBY412OW14vYqVqAENhJgGCIQEQw
+	 7VLeuPLpS7Xlw==
+Date: Fri, 14 Mar 2025 19:04:40 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Anusha Srivatsa <asrivats@redhat.com>, Paul Kocialkowski <paulk@sys-base.io>, 
+	Dmitry Baryshkov <lumag@kernel.org>, =?utf-8?B?SGVydsOp?= Codina <herve.codina@bootlin.com>, 
+	Hui Pu <Hui.Pu@gehealthcare.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 02/11] drm/bridge: add support for refcounting
+Message-ID: <20250314-amorphous-congenial-woodlouse-f50bde@houat>
+References: <20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com>
+ <20250314-drm-bridge-refcount-v7-2-152571f8c694@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/41] arm64: Replace __ASSEMBLY__ with __ASSEMBLER__ in
- uapi headers
-To: Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>
-References: <20250314071013.1575167-1-thuth@redhat.com>
- <20250314071013.1575167-9-thuth@redhat.com>
- <20250314115554.GA8986@willie-the-truck>
- <df30d093-c173-495a-8ed9-874857df7dee@app.fastmail.com>
- <20250314134215.GA9171@willie-the-truck>
-Content-Language: en-US
-From: Thomas Huth <thuth@redhat.com>
-Autocrypt: addr=thuth@redhat.com; keydata=
- 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
-In-Reply-To: <20250314134215.GA9171@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ogfn2prbpwhr3lh7"
+Content-Disposition: inline
+In-Reply-To: <20250314-drm-bridge-refcount-v7-2-152571f8c694@bootlin.com>
 
-On 14/03/2025 14.42, Will Deacon wrote:
-> On Fri, Mar 14, 2025 at 01:05:15PM +0100, Arnd Bergmann wrote:
->> On Fri, Mar 14, 2025, at 12:55, Will Deacon wrote:
->>> On Fri, Mar 14, 2025 at 08:09:39AM +0100, Thomas Huth wrote:
->>>> __ASSEMBLY__ is only defined by the Makefile of the kernel, so
->>>> this is not really useful for uapi headers (unless the userspace
->>>> Makefile defines it, too). Let's switch to __ASSEMBLER__ which
->>>> gets set automatically by the compiler when compiling assembly
->>>> code.
->>>>
->>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>>> Cc: Will Deacon <will@kernel.org>
->>>> Signed-off-by: Thomas Huth <thuth@redhat.com>
->>>> ---
->>>>   arch/arm64/include/uapi/asm/kvm.h        | 2 +-
->>>>   arch/arm64/include/uapi/asm/ptrace.h     | 4 ++--
->>>>   arch/arm64/include/uapi/asm/sigcontext.h | 4 ++--
->>>>   3 files changed, 5 insertions(+), 5 deletions(-)
->>>
->>> Is there a risk of breaking userspace with this? I wonder if it would
->>> be more conservative to do something like:
->>>
->>> #if !defined(__ASSEMBLY__) && !defined(__ASSEMBLER__)
->>>
->>> so that if somebody is doing '#define __ASSEMBLY__' then they get the
->>> same behaviour as today.
->>>
->>> Or maybe we don't care?
->>
->> I think the main risk we would have is user applications relying
->> on the __ASSEMBLER__ checks in new kernel headers and not defining
->> __ASSEMBLY__. This would result in the application not building
->> against old kernel headers that only check against __ASSEMBLY__.
-> 
-> Hmm. I hadn't thought about the case of old headers :/
-> 
-> A quick Debian codesearch shows that glibc might #define __ASSEMBLY__
-> for some arch-specific headers:
-> 
-> https://codesearch.debian.net/search?q=%23define+__ASSEMBLY__&literal=1
-> 
-> which is what I was more worried about.
 
-Since both, GCC and Clang, define __ASSEMBLER__ since a long time (Arnd 
-checked GCC 2.95, and I checked that at least Clang 7.0 still has it), I 
-think the only problem might be other compiler toolchains that might not set 
-__ASSEMBLER__ automatically. I just checked Tiny-C 0.9.27, and that also 
-sets __ASSEMBLER__ already. And according to 
-https://github.com/IanHarvey/pcc/blob/master/cc/cc/cc.1#L405 it is also set 
-in PCC.
+--ogfn2prbpwhr3lh7
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v7 02/11] drm/bridge: add support for refcounting
+MIME-Version: 1.0
 
-I haven't spotted it in LCC though (which seems to be an old C89 compiler if 
-I got it right). So if we are worried about such exotic old compilers, it's 
-maybe better to check both, __ASSEMBLY__ and __ASSEMBLER__ in the uapi 
-files? Or would it be ok to force those few people to set __ASSEMBLER__ 
-manually in their Makefiles (just like they had to do before with 
-__ASSEMBLY__) in case they want to compile assembler code with such exotic 
-compilers and new kernel headers?
+On Fri, Mar 14, 2025 at 11:31:15AM +0100, Luca Ceresoli wrote:
+> DRM bridges are currently considered as a fixed element of a DRM card, and
+> thus their lifetime is assumed to extend for as long as the card
+> exists. New use cases, such as hot-pluggable hardware with video bridges,
+> require DRM bridges to be added to and removed from a DRM card without
+> tearing the card down. This is possible for connectors already (used by DP
+> MST), it is now needed for DRM bridges as well.
+>=20
+> As a first preliminary step, make bridges reference-counted to allow a
+> struct drm_bridge (along with the private driver structure embedding it) =
+to
+> stay allocated even after the driver has been removed, until the last
+> reference is put.
+>=20
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>=20
+> ---
+>=20
+> Changes in v7:
+>  - export drm_bridge_put_void
+>  - struct drm_bridge: use container pointer instead of container_offset
+>  - remove drm_bridge_is_refcounted()
+>  - remove all DRM_DEBUG()s
+>  - drm_bridge_get/put: accept NULL pointer and return the bridge pointer =
+to
+>    allow pass-through calls
+>  - extract to separate patches:
+>     - the addition of drm_bridge_alloc
+>     - the addition of drm_bridge_get/put() to drm_bridge_add/remove()
+>     - the addition of drm_bridge_get/put() to drm_bridge_attach/detach()
+>  - fix a typo, slightly improve kerneldoc
+>=20
+> Changes in v6:
+>  - use drm_warn, not WARN_ON (Jani Nikula)
+>  - Add devm_drm_bridge_alloc() to replace drm_bridge_init() (similar to
+>    drmm_encoder_alloc)
+>  - Remove .destroy func: deallocation is done via the struct offset
+>    computed by the devm_drm_bridge_alloc() macro
+>  - use fixed free callback, as the same callback is used in all cases
+>    anyway (remove free_cb, add bool is_refcounted)
+>  - add drm_bridge_get/put() to drm_bridge_attach/detach() (add the bridge
+>    to a list)
+>  - make some DRM_DEBUG() strings more informative
+>=20
+> This patch was added in v5.
+> ---
+>  drivers/gpu/drm/drm_bridge.c | 33 +++++++++++++++-
+>  include/drm/drm_bridge.h     | 91 ++++++++++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 123 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+> index 96df717b2caeb41d45346ded576eaeb2806fd051..2ba0dac9bfc2dfd709d5e2457=
+d69067c7324972c 100644
+> --- a/drivers/gpu/drm/drm_bridge.c
+> +++ b/drivers/gpu/drm/drm_bridge.c
+> @@ -199,23 +199,54 @@
+>  static DEFINE_MUTEX(bridge_lock);
+>  static LIST_HEAD(bridge_list);
+> =20
+> +void __drm_bridge_free(struct kref *kref)
+> +{
+> +	struct drm_bridge *bridge =3D container_of(kref, struct drm_bridge, ref=
+count);
+> +
+> +	kfree(bridge->container);
+> +}
+> +EXPORT_SYMBOL(__drm_bridge_free);
+> +
+> +/**
+> + * drm_bridge_put_void - wrapper to drm_bridge_put() taking a void point=
+er
+> + *
+> + * @data: pointer to @struct drm_bridge, cast to a void pointer
+> + *
+> + * Wrapper of drm_bridge_put() to be used when a function taking a void
+> + * pointer is needed, for example as a devm action.
+> + */
+> +void drm_bridge_put_void(void *data)
+> +{
+> +	struct drm_bridge *bridge =3D (struct drm_bridge *)data;
+> +
+> +	drm_bridge_put(bridge);
+> +}
+> +EXPORT_SYMBOL(drm_bridge_put_void);
+> +
+>  void *__devm_drm_bridge_alloc(struct device *dev, size_t size, size_t of=
+fset,
+>  			      const struct drm_bridge_funcs *funcs)
+>  {
+>  	void *container;
+>  	struct drm_bridge *bridge;
+> +	int err;
+> =20
+>  	if (!funcs) {
+>  		dev_warn(dev, "Missing funcs pointer\n");
+>  		return ERR_PTR(-EINVAL);
+>  	}
+> =20
+> -	container =3D devm_kzalloc(dev, size, GFP_KERNEL);
+> +	container =3D kzalloc(size, GFP_KERNEL);
+>  	if (!container)
+>  		return ERR_PTR(-ENOMEM);
+> =20
+>  	bridge =3D container + offset;
+> +	bridge->container =3D container;
+>  	bridge->funcs =3D funcs;
+> +	kref_init(&bridge->refcount);
+> +
+> +	err =3D devm_add_action_or_reset(dev, drm_bridge_put_void, bridge);
+> +	if (err)
+> +		return ERR_PTR(err);
+> =20
+>  	return container;
+>  }
+> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> index dae463b30542d586a595b67f7bdf5a5e898e9572..5c1e2b9cafb12eb429d1f5d3e=
+f312e6cf9b54f47 100644
+> --- a/include/drm/drm_bridge.h
+> +++ b/include/drm/drm_bridge.h
+> @@ -840,6 +840,17 @@ struct drm_bridge {
+>  	const struct drm_bridge_timings *timings;
+>  	/** @funcs: control functions */
+>  	const struct drm_bridge_funcs *funcs;
+> +
+> +	/**
+> +	 * @container: Pointer to the private driver struct embedding this
+> +	 * @struct drm_bridge.
+> +	 */
+> +	void *container;
 
-  Thomas
+newline here
 
+> +	/**
+> +	 * @refcount: reference count of users referencing this bridge.
+> +	 */
+> +	struct kref refcount;
+> +
+>  	/** @driver_private: pointer to the bridge driver's internal context */
+>  	void *driver_private;
+>  	/** @ops: bitmask of operations supported by the bridge */
+> @@ -941,6 +952,82 @@ drm_priv_to_bridge(struct drm_private_obj *priv)
+>  	return container_of(priv, struct drm_bridge, base);
+>  }
+> =20
+> +void __drm_bridge_free(struct kref *kref);
+> +
+> +/**
+> + * drm_bridge_get - Acquire a bridge reference
+> + * @bridge: DRM bridge
+> + *
+> + * This function increments the bridge's refcount.
+> + *
+> + * Returns:
+> + * Pointer to @bridge.
+> + */
+> +static inline struct drm_bridge *drm_bridge_get(struct drm_bridge *bridg=
+e)
+> +{
+> +	if (!bridge)
+> +		return bridge;
+> +
+> +	kref_get(&bridge->refcount);
+> +
+> +	return bridge;
+> +}
+> +
+> +/**
+> + * drm_bridge_put - Release a bridge reference
+> + * @bridge: DRM bridge
+> + *
+> + * This function decrements the bridge's reference count and frees the
+> + * object if the reference count drops to zero.
+> + *
+> + * See also drm_bridge_put_and_clear() which is more handy in many cases.
+> + *
+> + * Returns:
+> + * Pointer to @bridge.
+> + */
+> +static inline struct drm_bridge *drm_bridge_put(struct drm_bridge *bridg=
+e)
+> +{
+> +	if (!bridge)
+> +		return bridge;
+> +
+> +	kref_put(&bridge->refcount, __drm_bridge_free);
+> +
+> +	return bridge;
+> +}
+
+I'm not sure we discussed it already, but why do you need to put both
+drm_bridge_get and drm_bridge_put into the header, and thus export
+__drm_bridge_free?
+
+I'd expect both to be in drm_bridge.c?
+
+> +
+> +void drm_bridge_put_void(void *data);
+> +
+> +/**
+> + * drm_bridge_put_and_clear - Given a bridge pointer, clear the pointer
+> + *                            then put the bridge
+> + *
+> + * @bridge_pp: pointer to pointer to a struct drm_bridge
+> + *
+> + * Helper to put a DRM bridge (whose pointer is passed), but only after
+> + * setting its pointer to NULL. Useful for drivers having struct drm_bri=
+dge
+> + * pointers they need to dispose of, without leaving a use-after-free
+> + * window where the pointed bridge might have been freed while still
+> + * holding a pointer to it.
+> + *
+> + * For example a driver having this private struct::
+> + *
+> + *     struct my_bridge {
+> + *         struct drm_bridge *remote_bridge;
+> + *         ...
+> + *     };
+> + *
+> + * can dispose of remote_bridge using::
+> + *
+> + *     drm_bridge_put_and_clear(&my_bridge->remote_bridge);
+> + */
+> +static inline void drm_bridge_put_and_clear(struct drm_bridge **bridge_p=
+p)
+> +{
+> +	struct drm_bridge *bridge =3D *bridge_pp;
+> +
+> +	*bridge_pp =3D NULL;
+> +	drm_bridge_put(bridge);
+> +}
+
+I'm not convinced we need that one for now, and it doesn't look like
+there's a user for it in your series, so I'd rather introduce it once we
+actually need it.
+
+>  void *__devm_drm_bridge_alloc(struct device *dev, size_t size, size_t of=
+fset,
+>  			      const struct drm_bridge_funcs *funcs);
+> =20
+> @@ -951,6 +1038,10 @@ void *__devm_drm_bridge_alloc(struct device *dev, s=
+ize_t size, size_t offset,
+>   * @member: the name of the &drm_bridge within @type
+>   * @funcs: callbacks for this bridge
+>   *
+> + * The returned refcount is initialized to 1.
+
+I'm confused, there's no returned refcount here? Or did you mean the
+returned bridge refcount?
+
+Maxime
+
+--ogfn2prbpwhr3lh7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ9RvuAAKCRAnX84Zoj2+
+dtM5AYCvzfyI8gpm36jTfrIY96znjt1wzijA2lQ52UxjSFkYO9t694AMup+ITzs7
+EyQVzgABgIg4gTydgrw1WqSFnOK2JnBDYv4sNhcaTrhO/VRhtqjjmYMxojwjjHEe
+jjPoI3FqXw==
+=Jlmw
+-----END PGP SIGNATURE-----
+
+--ogfn2prbpwhr3lh7--
 
