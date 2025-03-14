@@ -1,173 +1,114 @@
-Return-Path: <linux-kernel+bounces-561838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0A1A6172A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:13:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8093AA61728
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:12:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A695F1B60C90
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:13:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39AD53B8996
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F4A20468F;
-	Fri, 14 Mar 2025 17:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="m99CFGec"
-Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C53317579;
-	Fri, 14 Mar 2025 17:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4632204588;
+	Fri, 14 Mar 2025 17:12:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1FB1FDA7A;
+	Fri, 14 Mar 2025 17:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741972371; cv=none; b=sPxlHl6kAESbHNLeYlbEurAExhoXJgdAX6QHfifBVZMM3KMaOmCRiL8Ciw/v1qnHuTkWKE+J6yCEulmRx7VS7DIeqPGC5tEzNWERuC0OCusooOxIQgRGijVu4ROugBfKZWznGX4Phlk6ibTblgKX+ktVZTOyd/brVa1z/8Mu/go=
+	t=1741972364; cv=none; b=JL/b0z8xN1ASncv39sv4dczRPxO14qNb+pCi97fkfMJOerpUFJsqyBx4dgs++PqICKh6j/uAtmUTXZtTM6h9UhkHk3LP9lyrB9VWUCQ80106dijkgdcqNrAJYeINSJcD80yC2Uk1O/UhqQc4bh9+MRdB5hEExv6qPZzV3yEH/n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741972371; c=relaxed/simple;
-	bh=Gte+tyJJhHhkQ4HCK5AFq1SUTXMbefl2oe3vqXFLODc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KYZfys++kqTwCsBa7ofgUeBMRJe7YHbvtplLHxmhGsIaStEb718vADGvbiuw/g8sr857ITrPAQumhSzOtoEnbYXuo1FO3Mtx/vuSGCoA3GyhgO42H1l1b9QbUfYHRjnwy+jn9cIfaAUIi2G8D9qey939Yw0kGAUFvV/+H1kLZcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=m99CFGec; arc=none smtp.client-ip=52.119.213.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1741972369; x=1773508369;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=oyAepvDv+0bsEwZzYOM+K7FhxhX7gKg3uHeMpyD+04E=;
-  b=m99CFGec5UA1CsU4NgmcR6G8jAAmlA9lBOGEKjfZaEp86qAjDS/4Vqq1
-   RZcpFaGeJVKX0ahqfLVukdPVeW0BBE1e8Pu1bBkFUiH7xlJfWY6B+c7T2
-   4i6jtp4S8NASSN0lYRA5MxSGs/muWab2c9BevrfYFtSOynhv44hku6t/A
-   c=;
-X-IronPort-AV: E=Sophos;i="6.14,246,1736812800"; 
-   d="scan'208";a="74461133"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 17:12:45 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.17.79:48372]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.37.123:2525] with esmtp (Farcaster)
- id a718f9c8-6f48-4c18-94f5-eb2eba6844c3; Fri, 14 Mar 2025 17:12:45 +0000 (UTC)
-X-Farcaster-Flow-ID: a718f9c8-6f48-4c18-94f5-eb2eba6844c3
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 14 Mar 2025 17:12:38 +0000
-Received: from [192.168.30.216] (10.106.83.27) by
- EX19D022EUC002.ant.amazon.com (10.252.51.137) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 14 Mar 2025 17:12:36 +0000
-Message-ID: <24528be7-8f7a-4928-8bca-5869cf14eace@amazon.com>
+	s=arc-20240116; t=1741972364; c=relaxed/simple;
+	bh=oMRf5D9xED76AloBmylBsBKYgSUDihyoTcfIWxoaKyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mOprRF10kA9YpQSy6UxB6FlWPpEf+t8HxDuwatjj99yL6+7HACq+m//Py425lni87jeNilCxRT0HFID1KV//cRYKytj5O7Z2Nn3Q7TCJnrWmZ1ZX5fVvoxwWS6hRM4rDyDvLVBoFvSE0RrpoTk2swRKwdWLvHmd7JTipURqqqtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B18E1424;
+	Fri, 14 Mar 2025 10:12:52 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 251433F673;
+	Fri, 14 Mar 2025 10:12:40 -0700 (PDT)
 Date: Fri, 14 Mar 2025 17:12:35 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>
+Cc: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+ <linux-watchdog@vger.kernel.org>, Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v3 03/15] dt-bindings: watchdog: sunxi: add Allwinner
+ A523 compatible string
+Message-ID: <20250314171235.25db7044@donnerap.manchester.arm.com>
+In-Reply-To: <20250307005712.16828-4-andre.przywara@arm.com>
+References: <20250307005712.16828-1-andre.przywara@arm.com>
+	<20250307005712.16828-4-andre.przywara@arm.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [RFC PATCH 0/5] KVM: guest_memfd: support for uffd missing
-To: Peter Xu <peterx@redhat.com>
-CC: James Houghton <jthoughton@google.com>, <akpm@linux-foundation.org>,
-	<pbonzini@redhat.com>, <shuah@kernel.org>, <kvm@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <lorenzo.stoakes@oracle.com>, <david@redhat.com>,
-	<ryan.roberts@arm.com>, <quic_eberman@quicinc.com>, <graf@amazon.de>,
-	<jgowans@amazon.com>, <roypat@amazon.co.uk>, <derekmn@amazon.com>,
-	<nsaenz@amazon.es>, <xmarcalx@amazon.com>
-References: <Z8i0HXen8gzVdgnh@x1.local>
- <fdae95e3-962b-4eaf-9ae7-c6bd1062c518@amazon.com> <Z89EFbT_DKqyJUxr@x1.local>
- <9e7536cc-211d-40ca-b458-66d3d8b94b4d@amazon.com> <Z9GsIDVYWoV8d8-C@x1.local>
- <7c304c72-1f9c-4a5a-910b-02d0f1514b01@amazon.com> <Z9HhTjEWtM58Zfxf@x1.local>
- <69dc324f-99fb-44ec-8501-086fe7af9d0d@amazon.com> <Z9MuC5NCFUpCZ9l8@x1.local>
- <507e6ad7-2e28-4199-948a-4001e0d6f421@amazon.com> <Z9NeTQsn4xwTtU06@x1.local>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
- CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
- i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
-In-Reply-To: <Z9NeTQsn4xwTtU06@x1.local>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D006EUA003.ant.amazon.com (10.252.50.176) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
+On Fri, 7 Mar 2025 00:57:00 +0000
+Andre Przywara <andre.przywara@arm.com> wrote:
 
+Hi Wim, Guenter,
 
-On 13/03/2025 22:38, Peter Xu wrote:
-> On Thu, Mar 13, 2025 at 10:13:23PM +0000, Nikita Kalyazin wrote:
->> Yes, that's right, mmap() + memcpy() is functionally sufficient. write() is
->> an optimisation.  Most of the pages in guest_memfd are only ever accessed by
->> the vCPU (not userspace) via TDP (stage-2 pagetables) so they don't need
->> userspace pagetables set up.  By using write() we can avoid VMA faults,
->> installing corresponding PTEs and double page initialisation we discussed
->> earlier.  The optimised path only contains pagecache population via write().
->> Even TDP faults can be avoided if using KVM prefaulting API [1].
->>
->> [1] https://docs.kernel.org/virt/kvm/api.html#kvm-pre-fault-memory
+> The Allwinner A523 SoC features a watchdog similar to the one used in
+> previous SoCs, but moves some registers around (by just one word), making
+> it incompatible to existing IPs.
 > 
-> Could you elaborate why VMA faults matters in perf?
-
-Based on my experiments, I can populate 3GiB of guest_memfd with write() 
-in 980 ms, while memcpy takes 2140 ms.  When I was profiling it, I saw 
-~63% of memcpy time spent in the exception handler, which made me think 
-VMA faults mattered.
-
-> If we're talking about postcopy-like migrations on top of KVM guest-memfd,
-> IIUC the VMAs can be pre-faulted too just like the TDP pgtables, e.g. with
-> MADV_POPULATE_WRITE.
-
-Yes, I was thinking about MADV_POPULATE_WRITE as well, but AFAIK it 
-isn't available in guest_memfd, at least with direct map removed due to 
-[1] being updated in [2]:
-
-diff --git a/mm/gup.c b/mm/gup.c
-index 3883b307780e..7ddaf93c5b6a 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1283,7 +1283,7 @@ static int check_vma_flags(struct vm_area_struct 
-*vma, unsigned long gup_flags)
-  	if ((gup_flags & FOLL_LONGTERM) && vma_is_fsdax(vma))
-  		return -EOPNOTSUPP;
-
--	if (vma_is_secretmem(vma))
-+	if (vma_is_secretmem(vma) || vma_is_no_direct_map(vma))
-  		return -EFAULT;
-
-  	if (write) {
-
-[1] https://elixir.bootlin.com/linux/v6.13.6/source/mm/gup.c#L1286
-[2] 
-https://lore.kernel.org/kvm/20250221160728.1584559-1-roypat@amazon.co.uk/T/#m05b5c6366be27c98a86baece52b2f408c455e962
-
-> Normally, AFAIU userapp optimizes IOs the other way round.. to change
-> write()s into mmap()s, which at least avoids one round of copy.
+> Add the new name to the list of compatible string, and also to the list
+> of IP requiring two clock inputs.
 > 
-> For postcopy using minor traps (and since guest-memfd is always shared and
-> non-private..), it's also possible to feed the mmap()ed VAs to NIC as
-> buffers (e.g. in recvmsg(), for example, as part of iovec[]), and as long
-> as the mmap()ed ranges are not registered by KVM memslots, there's no
-> concern on non-atomic copy.
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Yes, I see what you mean.  It may be faster depending on the setup, if 
-it's possible to remove one copy.
+is there any chance that this DT binding patch (and patch 04/15, touching
+the actual driver) would make it into -next any time soon, and hopefully
+into v6.15? From what I can see it's the only binding left before the
+sunxi maintainers can merge the devicetree patches for this new SoC (most
+others are in, pinctrl and NMI should show up in the next days).
 
-Anyway, it looks like the solution we discussed allows to choose between 
-memcpy-only and memcpy/write-combined userspace implementations.  I'm 
-going to work on the next version of the series that would include MINOR 
-trap and avoiding KVM dependency in mm via calling vm_ops->fault() in 
-UFFDIO_CONTINUE.
+Let me know if I can help with anything or if you need more information!
 
-> Thanks,
+Thanks,
+Andre
+
+> ---
+>  .../devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml   | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> --
-> Peter Xu
-> 
+> diff --git a/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml b/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml
+> index 64c8f73938099..b35ac03d51727 100644
+> --- a/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml
+> +++ b/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml
+> @@ -32,6 +32,7 @@ properties:
+>        - items:
+>            - const: allwinner,sun20i-d1-wdt-reset
+>            - const: allwinner,sun20i-d1-wdt
+> +      - const: allwinner,sun55i-a523-wdt
+>  
+>    reg:
+>      maxItems: 1
+> @@ -60,6 +61,7 @@ if:
+>            - allwinner,sun20i-d1-wdt-reset
+>            - allwinner,sun50i-r329-wdt
+>            - allwinner,sun50i-r329-wdt-reset
+> +          - allwinner,sun55i-a523-wdt
+>  
+>  then:
+>    properties:
 
 
