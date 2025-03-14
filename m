@@ -1,95 +1,137 @@
-Return-Path: <linux-kernel+bounces-560776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8758A6095C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:00:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23DD8A6094F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:49:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 064CD3BAA6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:00:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 750ED3AF82E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC52157A6C;
-	Fri, 14 Mar 2025 07:00:16 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD6B157A6C;
+	Fri, 14 Mar 2025 06:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FZxlmLdu"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B462B1547E1
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877D81459F6;
+	Fri, 14 Mar 2025 06:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741935616; cv=none; b=XomeqknOvIzaPBUGqJzD37gcn2fL4krrpb7hJJ50T9lwR7/4gggvMrBgymfAN2oVJEH+qmMv17uMOrH54g530oxcJ3spPPMP5A0Mk6gJIK2Y1k3I8Y8quhE3wVG8DC3D+AC4AxzONciiuL6XYiKVToFnBN3xH8GnehzUNYLvGKA=
+	t=1741934943; cv=none; b=l1Vt24InvkyFN/kxqy+IoTGXujsljr15H0UUa8lRQG4+i81MHz1/r7Zy5N45Wchv/Pe+3J5XCasyaVsuR2vGe3eQXmGYLDaiFpjZ187WmFmKCt8jh9O48b5cNFCCmTjnD0xKg5NuVD+0SMU7/jBmckBiFQui6lHJtQ4yyiqcRRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741935616; c=relaxed/simple;
-	bh=1bbpBCM8izED4ho1GRqfmW+se0PWB24MxbQ99B+S7vA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bKCtnIve506upijGNYX03UP8pMx2ZTJIQMZEHpOghXPuh/+7xqpHbZNWUWHAG5MFEfVUQ7Vpdc133gHm8IlJoLvEQ1EDHuO65DtwCFPtBOADTDjXmKz8SFgEeaMV9yeM0LPEaeHr9Ohc/5UMQjlUQoncYhU/dfeO13SA0q6jOY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4ZDZsw0zqTzCtQ9;
-	Fri, 14 Mar 2025 14:56:52 +0800 (CST)
-Received: from kwepemh200013.china.huawei.com (unknown [7.202.181.122])
-	by mail.maildlp.com (Postfix) with ESMTPS id 03221180102;
-	Fri, 14 Mar 2025 15:00:04 +0800 (CST)
-Received: from hulk-vt.huawei.com (10.67.175.36) by
- kwepemh200013.china.huawei.com (7.202.181.122) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 14 Mar 2025 15:00:03 +0800
-From: Xiaomeng Zhang <zhangxiaomeng13@huawei.com>
-To: Carlos Llamas <cmllamas@google.com>
-CC: Andrew Morton <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, "J. R. Okajima" <hooanon05g@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>, Waiman Long <longman@redhat.com>, Ingo
- Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>
-Subject: [PATCH] lockdep: Fix upper limit for LOCKDEP_BITS configs
-Date: Fri, 14 Mar 2025 06:47:29 +0000
-Message-ID: <20250314064729.163602-1-zhangxiaomeng13@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741934943; c=relaxed/simple;
+	bh=7siKfymkqxeKWqRMOBQc0N37LTnF6XkxQ3srqGFEvAI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=B6T2YPCDN3f7US1hquXqeBTC+nDVm/MNc6QZxjVxEcL7/JTamKMzoUSA1WBu/6bmA76O7/VzO9pgWRtYPSUG2BS2niQmRWj9gZNuDFzhBpwp7NYyYYmDhaYZTD0T/qjEYqyh761Rqm/+/QN0fU3k7FhS+yhnjnqkW+yfr5Dc9fU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FZxlmLdu; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DNQFWV016250;
+	Fri, 14 Mar 2025 06:48:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MaCpXfb3JPjPHy6NINCGjp1vFdz3O7GQV4p4DUWQ9ZU=; b=FZxlmLduVbQAKx+N
+	HGVwSQsBu4a+1pkRqxHlxKkjz4vRxEz7Qh1tS0LsXpieRJQUPgBoKJlsq5m/soEd
+	4Ol+R/JaS3mRxPyWlqh2k8MU4f38yJ060nj5dF8p/LCFc/BR8CeIrUrxqZB6S7AO
+	clAfiDWr4aNtLIqZCb87YnX3xbbGmoB7d35wm458Fy0F+mtqHsMhEaG47X7tj48l
+	TxH5KxHipn1Adw2ohUCr48fPhvYhQT+EFsIZhagevmyRIjUOFOgUAIhPUwB3bUEM
+	nhbjW+NgOBybhixgFTeuPIfEGqByZ6RmHbtJa6ilKx9ViACSFUWP0krls1+FrvSA
+	ZvZndQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2p0aa9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 06:48:55 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52E6mtOP022785
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 06:48:55 GMT
+Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
+ 2025 23:48:51 -0700
+Message-ID: <7137bf34-5b97-47ca-b4d8-375db26b433e@quicinc.com>
+Date: Fri, 14 Mar 2025 14:48:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemh200013.china.huawei.com (7.202.181.122)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16] arm64: dts: qcom: sa8775p: Add CTCU and ETR nodes
+From: Jie Gan <quic_jiegan@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Jinlong Mao
+	<quic_jinlmao@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+References: <20250310095625.2073735-1-quic_jiegan@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20250310095625.2073735-1-quic_jiegan@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: F3tgMyC3ewozuhG1qMmXy_gTst4NIAxU
+X-Authority-Analysis: v=2.4 cv=ZObXmW7b c=1 sm=1 tr=0 ts=67d3d157 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=7CQSdrXTAAAA:8 a=Hs2wwgZTwTzAjPb5Lc0A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=a-qgeE7W1pNrGK8U0ZQC:22
+X-Proofpoint-ORIG-GUID: F3tgMyC3ewozuhG1qMmXy_gTst4NIAxU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-14_02,2025-03-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=770 mlxscore=0
+ suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 phishscore=0
+ lowpriorityscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503140052
 
-The upper limit that was initially setup for LOCKDEP_BITS configs
-is too high (24 bit shift), which causes the kernel image size to exceed
-KERNEL_IMAGE_SIZE (1024MB) limit. When LOCKDEP_BITS is set to 24,
-the kernel image size grows to 1562.19MB.
 
-Adjust LOCKDEP_BITS to 22, which results in a kernel image size of
-888.19MB, keeping it under the KERNEL_IMAGE_SIZE limit while still
-maintaining adequate debug information capacity.
 
-This change prevents the linker error:
-  ld: kernel image bigger than KERNEL_IMAGE_SIZE
+On 3/10/2025 5:56 PM, Jie Gan wrote:
+> Add CTCU and ETR nodes in DT to enable related functionalities.
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+> ---
+> Separate from the patch series: Coresight: Add Coresight TMC Control Unit driver
+> 
+> Changes in V16:
+> 1. Add acked-by tag from Suzuki.
+> 2. Rebased on next-20250307.
+> Link to V15 - https://lore.kernel.org/all/20250303032931.2500935-11-quic_jiegan@quicinc.com/
+> ---
+>   arch/arm64/boot/dts/qcom/sa8775p.dtsi | 153 ++++++++++++++++++++++++++
+>   1 file changed, 153 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> index 23049cc58896..93ca37843990 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
 
-Fixes: e638072e6172 ("lockdep: Fix upper limit for LOCKDEP_*_BITS configs")
-Signed-off-by: Xiaomeng Zhang <zhangxiaomeng13@huawei.com>
----
- lib/Kconfig.debug | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 35796c290ca3..6faba965a349 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1504,7 +1504,7 @@ config LOCKDEP_SMALL
- config LOCKDEP_BITS
- 	int "Size for MAX_LOCKDEP_ENTRIES (as Nth power of 2)"
- 	depends on LOCKDEP && !LOCKDEP_SMALL
--	range 10 24
-+	range 10 22
- 	default 15
- 	help
- 	  Try increasing this value if you hit "BUG: MAX_LOCKDEP_ENTRIES too low!" message.
--- 
-2.34.1
+Gentle ping. Can you please help to review the patch?
 
+Thanks,
+Jie
+
+[...]
 
