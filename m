@@ -1,135 +1,213 @@
-Return-Path: <linux-kernel+bounces-560672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CA44A607F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 04:57:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79094A607FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 05:03:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32BFB189FC68
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:57:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6FA01797A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 04:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB64813633F;
-	Fri, 14 Mar 2025 03:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D6640855;
+	Fri, 14 Mar 2025 04:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQ52ARFw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1tesayRQ"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2087.outbound.protection.outlook.com [40.107.92.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4694F2E3368
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741924626; cv=none; b=ZTbZpuwWG/jmDeLljhSne1inkP7lenuWRswJoQeENWDLgWTcXB2h0sU+njZ6j8dzyEioow9/5nm0CedkzFnft1upUgNmHIE7HmUgZWIF2V7ERftWFpuIeG64No1wXcQ8AjLGUoBsEoj5Ieq2MQq4mcliJfydCaAvhB0P4C7swec=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741924626; c=relaxed/simple;
-	bh=eVhz0dM8Si2LGrbI7U3eIT1DLlq6q4vu/1VKwbyzC5Y=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=hdafxVejVI5zoBAs8rB+v3268tROGTQbWP2BbWHHU+NQhLXS4ej5VJQL4NoXvXwkcfiAu5yFQubg7OMrf7MgsdZOysBrrUxVM/gnCZ0Uix3aCKL9Yk3uuqqEWNh9eA0dQnWGPJPlaug/ue2LkMJHF5aIMNxWJozh9Q3KYzE0hkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQ52ARFw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99F27C4CEE3;
-	Fri, 14 Mar 2025 03:57:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741924625;
-	bh=eVhz0dM8Si2LGrbI7U3eIT1DLlq6q4vu/1VKwbyzC5Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QQ52ARFw6VqENt98nbVJEzuB/zTC+MaDWcEhokGJPuv8mEw1wk/da73g4tVJ1uKRB
-	 QmYaAT9ZikJ4XgP6BvB3UqdtUcku0csiWM4Hv81lgxj7qBtR7tpyu87sWfw2vWdTrH
-	 Kt7ygVVt1FeFHQNAidtch5HYiMTW0hvn7kQyhC2fsKYvoeXCRD+gE68Z+DkWzTQ2Ii
-	 oUhYa8P7wwkfukz/Ef3AVgonYOMtBsTsOyulM3tMc/NVrdXdnQ6p9LDeo1x39i8ADj
-	 8t0abdI4BBXUnfhVZqNbHSkUC2CRw70YY/DV1tj5ikr2P67NLNVGC0XcqGNV8NegGN
-	 7ZZdg2D+xdOaQ==
-Date: Fri, 14 Mar 2025 12:57:00 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Waiman
- Long <longman@redhat.com>, Joel Granados <joel.granados@kernel.org>, Anna
- Schumaker <anna.schumaker@oracle.com>, Lance Yang <ioworker0@gmail.com>,
- Kent Overstreet <kent.overstreet@linux.dev>, Yongliang Gao
- <leonylgao@tencent.com>, Steven Rostedt <rostedt@goodmis.org>, Tomasz Figa
- <tfiga@chromium.org>, Sergey Senozhatsky <senozhatsky@chromium.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] hung_task: Show the blocker task if the task is
- hung on mutex
-Message-Id: <20250314125700.86cc80f6cc51af636f453056@kernel.org>
-In-Reply-To: <20250313152946.69f209c76a6f479c46584ef0@linux-foundation.org>
-References: <174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com>
-	<174046695384.2194069.16796289525958195643.stgit@mhiramat.tok.corp.google.com>
-	<20250313152946.69f209c76a6f479c46584ef0@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F122D052
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 04:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741925003; cv=fail; b=CT2KXoF3dp48s4TnEppBElUiROySt9bsOGYgVAJvxVhRiMEK2GQi/I/iIn9r+xRFFdriyLiGu3FXW/c0rVczMc67G/XRbFMWoWnIwG50qhzvlRw5E44uELFJXkqpUaiUDw+MzSoEiSxXLl4ppnEogw0D3glcBAxIzCKftXygpEs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741925003; c=relaxed/simple;
+	bh=mSIQk1mmBiBrN2QjdxJIB0zeLmAIFKf7V/l2phxEXxo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QuPI51KnvMkOYx4ZxF1pYCFO5BZ/GrKfZQ8M7H5LzDWJrNR6q1QeexPvs/LLvSleRzPJmc7D1A4JJgLnKe9K6YbbotJ8G1URMwJj0sRS4x75wvUNpHzlwRs1QheBnF0Ba3AXeahUY1ChBJx9OejCio3An+noxcfDGNiuVhoVPQg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1tesayRQ; arc=fail smtp.client-ip=40.107.92.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yPbXt2kpmTC+zNe9yl3CVuQV9sVpkkGK7KLwmbjSqg708uml5swRHjeQgvthTQi8oGCpqJ3AsmLovKM44yBkmo00U9DrV9OqB17gyry5YilxH3hAxQuHP5+kzfBSpw4wTRV1cRaSHpg1oAFR+fdt0Dk7PQRGqMtbfe/HDItwn85+hpV2tUvYfPge9sYdxKFDL2a2kSHoF11vistvclvU5EIgoMTdsDi5+KRqrz55xrrOFz/SOmb0ux7Z8adJsY2/Hw/lNHRWfCrExiSBPSGQIAx9z8CMgzh024hFjoJ4oBxgbxV0CIUtDG7C2+2bDC8Ayc4uVECcLy26qGYBRBdLhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dJGJqFj6E/z3XCW+1vObHEKSPfFxNtmKzcvzlxY51E8=;
+ b=WBo28xVwo1IuVnFD5Ja6+8FFVAv6j6O60WTHv+czfyfxCTWXnupudYe05wlBrfNQFIW3ZG9HGqHemkgscUnIBEbbVMbhxB4ClbnGL4/AXn0u0pOUm2VGNHiAWoVlAuFbzh0AeFKE+bmn7qwMWmFh5oxT7akXC0gxdy50MpPcnrsTslP/UPXt3VNzCH5numQXly2JsU7P2ygjlarrlzSja/FrdYb1a3S8/nVD5WZkSNKqDzSmkRa83iCmUwBDTyKM1GT81EhqKn8GjBl+8B/1yN/kQVoCe3AQuRpRPRs7U3P6M7GESgyzQdVphMknSMEc0x/0K2nSfapD/ggPc3pL6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=bytedance.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dJGJqFj6E/z3XCW+1vObHEKSPfFxNtmKzcvzlxY51E8=;
+ b=1tesayRQu5EqQefxmY0m0wIaIhMstSvpgd7YPP93my8UrKexuF1XMOFsXMP1bUQnHo3Yhb2MycI+dPdvfyJBepHDkflycmNVeixExBDTv48vj1hmyd0va575WrrcuAEokJ1R7NxyRRmUDhieusQVSEEN6WrHmKxleGR2+QjmkCw=
+Received: from CH5PR05CA0007.namprd05.prod.outlook.com (2603:10b6:610:1f0::12)
+ by MN2PR12MB4454.namprd12.prod.outlook.com (2603:10b6:208:26c::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.28; Fri, 14 Mar
+ 2025 04:03:17 +0000
+Received: from CH2PEPF0000013B.namprd02.prod.outlook.com
+ (2603:10b6:610:1f0:cafe::6a) by CH5PR05CA0007.outlook.office365.com
+ (2603:10b6:610:1f0::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.25 via Frontend Transport; Fri,
+ 14 Mar 2025 04:03:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH2PEPF0000013B.mail.protection.outlook.com (10.167.244.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Fri, 14 Mar 2025 04:03:16 +0000
+Received: from [10.136.37.23] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Mar
+ 2025 23:03:12 -0500
+Message-ID: <f091f0e8-ead5-4fed-afbf-45be29db8e2e@amd.com>
+Date: Fri, 14 Mar 2025 09:33:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 4/7] sched/fair: Take care of migrated task for task
+ based throttle
+To: Aaron Lu <ziqianlu@bytedance.com>, Valentin Schneider
+	<vschneid@redhat.com>, Ben Segall <bsegall@google.com>, Peter Zijlstra
+	<peterz@infradead.org>, Josh Don <joshdon@google.com>, Ingo Molnar
+	<mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
+	<rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>, Chengming Zhou
+	<chengming.zhou@linux.dev>, Chuyi Zhou <zhouchuyi@bytedance.com>
+References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
+ <CANCG0Gc2vAMO_5x8wYhA-=34n0vChrSdUvnd+Cf56MXfq2YFfQ@mail.gmail.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <CANCG0Gc2vAMO_5x8wYhA-=34n0vChrSdUvnd+Cf56MXfq2YFfQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000013B:EE_|MN2PR12MB4454:EE_
+X-MS-Office365-Filtering-Correlation-Id: 22d94ab6-cca8-4169-7f26-08dd62ad2624
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|7416014|36860700013|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ejR4emVHOVBnOXBMREtZYnJWVTdGa2M3dUZIVzZodXowZ0VxU3VxMnF6bElv?=
+ =?utf-8?B?amQrOFlyWjZKaE9iajNaVXgxMDhJeW1PRTNxSFNiNzNLNWRVbzNqQno1VlhQ?=
+ =?utf-8?B?dU90WkFQeGwvMm5RMTFPcS8yQ1doMmxLbXVTdmIrZ0NUcmY3OTBwSllCOERY?=
+ =?utf-8?B?VnV5WXlYNEdCOVdOS1RwdjJHb2JIMHdYT1lMNzFWaWpxTlZFT1dZL2dJMFJT?=
+ =?utf-8?B?SnFLR0NJNTRnTmZkamx0QU5PTVBkVksxczhPY1FTVW1CMC8wL3ZDSmlsNCtU?=
+ =?utf-8?B?Y0ZpcTNVZk5kOG9RMDBwWVFlZElYc0JrcGVwdnc4Sm5XdkxrUmQ4MW9qMU5t?=
+ =?utf-8?B?dDZESGRDbzNPNUtXNjdoZDhUcjg0TWUvaWRyOW95RFhaRnBJU1d0MXhxNDZE?=
+ =?utf-8?B?UUZiUFE5MENKVDFjR25wT0V2RE11N09kVkxFS2FwcjlYK3FWM284MlhIQU81?=
+ =?utf-8?B?bnFNTWh1dTFWbUkzUW5sR3dZbHVVZ3hJQ3RlQTRqUXpzVWoyOFJHTHZES2Ft?=
+ =?utf-8?B?UzRZMjlZM1pRYkFVc2FNckJ3b0NEYzhNQlFxZjQwbkNVbjNKb1ZkYUEvVjIz?=
+ =?utf-8?B?MjFaeDY1OUVwZnJRSmhFdHJHY09xK2JsVjEwUDJTZURvRWt2aHNqaytteDhX?=
+ =?utf-8?B?MWhDd215c1VwYndTdTF2VXRoc2xLS0t1eDBOK0FTQ2VWZjc5cEJQMEpacVk0?=
+ =?utf-8?B?Sm94OHRVamZjajd0YldxWCt1aW5xR00xSnB0RkhQbCtZZ3g5SzY1TnJvUjhD?=
+ =?utf-8?B?bThKNG9EdEJ6ZExESUIwTDhRNmRLOHYvN3ZyMGJZVXRWcHl3cDhUcjE3b3Jw?=
+ =?utf-8?B?UmgyVHRtNkQrTUtuTFgvL0h1aU5YcTJybHpOQlVDNlFKVmhFNHZISlM3ZUp3?=
+ =?utf-8?B?QW9oai9nTGpRUWdaYlE3Wks0K1VpU3JRNVNuV2tlbTBsNktLYzMxS1VaY0tU?=
+ =?utf-8?B?Y3IrSXpKclFxTUdlOEdTbjM4Z3ZsZXpVVUpVM3hmUDRJS2FGVDFCcWROYjhu?=
+ =?utf-8?B?R2RFRUlIOWRDRENqWXY1WjlnT2ZLWmEvQ0FmM0N3clNaSmJobzNaWlluWTgw?=
+ =?utf-8?B?cXBlVFZ5MVZ0S041SVlOSnd6VGl0WVk4eGlBZThJV2RURkM5VGpZMWo0d1du?=
+ =?utf-8?B?V0RvWWhqUHV0ajJkSWlpekFZTEc3Y1c3NHhYTGtITzFaNFRTVWsxSUlpSWFz?=
+ =?utf-8?B?akFoOW5xK2xFZTNJeDBLMGppd3FpNHZFcXdzYnB3bkhyekt3RTJMbmg2ZUtq?=
+ =?utf-8?B?K1MzNHhlR2UwcUZoZEpPekN0bU8xN3RTaVBhWEQyaE93MnRmWElCb2o3MTBx?=
+ =?utf-8?B?Z21YQ01SREFPdG93eWhJcERIREtlcFBKUVNLMnJWbFdiWExFc1h0QXNmcTB1?=
+ =?utf-8?B?aENEWkQxcm9UNlJ0RkJoZkI4cXVJczZra05jMk5IZWNXazhBUWxZTzdMMlZN?=
+ =?utf-8?B?TEVYR25XbDVZdUJBaVErb3B3cENwN1Y1bUo1TnBqT09VQlhGVktUalJ6V0VC?=
+ =?utf-8?B?REFXNDZXQ0hhL1ZPR2tqcGdLSmpIWmtYYWVwanZGZmo0S1VQKyt4cC96TDk2?=
+ =?utf-8?B?WERVenA2RklNN1JSNWo3S3cwMy9ydmcwQTRnby9Zamt1Y2krTmE5UW4wT2ht?=
+ =?utf-8?B?V0c4cU1GcFlzaFU1aXczYXFPbjRHSng2a2pTYmRJbVpGZUFaYkl3U2p1SjFN?=
+ =?utf-8?B?Ri9LaklYZnA0QVpQTEdkWis0OXdCM0xsT01veWxVN0t1QzdKUlZUNmNNaUVB?=
+ =?utf-8?B?QnQxRjlVcjVxR1JIV1NNUXZXUTRsNGE0ZXA3SC94QVd3TkJCUmZSMEt4Rmc0?=
+ =?utf-8?B?TjVPWGVod2JyWHVKRjFJa1o5SXd0T1h2V2x5RnRDa2kvUms5NmRtTzljUXlC?=
+ =?utf-8?B?SW4yUWhYdWhmOGdCdFNxS2FCZnF3MmtkbzZzVXY5UXRVM2ZtSitjT1g0ZHdh?=
+ =?utf-8?B?cHZldzRhT2E2VE5Yc2hQZGpoZXIrRGliMldkZnJKS2VjcktkTzZRdW91QlFW?=
+ =?utf-8?Q?vwSvUVUVSketM8PJBamgI+qi4qtCTg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(7416014)(36860700013)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2025 04:03:16.4643
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22d94ab6-cca8-4169-7f26-08dd62ad2624
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF0000013B.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4454
 
-On Thu, 13 Mar 2025 15:29:46 -0700
-Andrew Morton <akpm@linux-foundation.org> wrote:
+Hello Aaron,
 
-> On Tue, 25 Feb 2025 16:02:34 +0900 "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+On 3/13/2025 12:51 PM, Aaron Lu wrote:
+> If a task is migrated to a new cpu, it is possible this task is not
+> throttled but the new cfs_rq is throttled or vice vesa. Take care of
+> these situations in enqueue path.
 > 
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > The "hung_task" shows a long-time uninterruptible slept task, but most
-> > often, it's blocked on a mutex acquired by another task. Without
-> > dumping such a task, investigating the root cause of the hung task
-> > problem is very difficult.
-> > 
-> > This introduce task_struct::blocker_mutex to point the mutex lock
-> > which this task is waiting for. Since the mutex has "owner"
-> > information, we can find the owner task and dump it with hung tasks.
-> > 
-> > Note: the owner can be changed while dumping the owner task, so
-> > this is "likely" the owner of the mutex.
-> > 
-> > With this change, the hung task shows blocker task's info like below;
+> Note that we can't handle this in migrate_task_rq_fair() because there,
+> the dst cpu's rq lock is not held and things like checking if the new
+> cfs_rq needs throttle can be racy.
 > 
-> Seems useful.
+> Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
+> ---
+>   kernel/sched/fair.c | 17 +++++++++++++++++
+>   1 file changed, 17 insertions(+)
 > 
-> > ...
-> >
-> > +static void debug_show_blocker(struct task_struct *task)
-> > +{
-> >
-> > ...
-> >
-> > +}
-> > +#else
-> > +#define debug_show_blocker(t)	do {} while (0)
-> > +#endif
-> > +
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 4a95fe3785e43..9e036f18d73e6 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -7051,6 +7051,23 @@ enqueue_task_fair(struct rq *rq, struct
+> task_struct *p, int flags)
+>   	assert_list_leaf_cfs_rq(rq);
 > 
-> Nit. It's unpleasing to have one side a C function and the other a
-> macro.  Plus C functions are simply better - only use a macro if one
-> has to!
+>   	hrtick_update(rq);
+> +
+> +	if (!cfs_bandwidth_used())
+> +		return;
+> +
+> +	/*
+> +	 * This is for migrate_task_rq_fair(): the new_cpu's rq lock is not held
+> +	 * in migrate_task_rq_fair() so we have to do these things in enqueue
+> +	 * time when the dst cpu's rq lock is held. Doing this check in enqueue
+> +	 * time also takes care of newly woken up tasks, e.g. a task wakes up
+> +	 * into a throttled cfs_rq.
+> +	 *
+> +	 * It's possible the task has a throttle work added but this new cfs_rq
+> +	 * is not in throttled hierarchy but that's OK, throttle_cfs_rq_work()
+> +	 * will take care of it.
+> +	 */
+> +	if (throttled_hierarchy(cfs_rq_of(&p->se)))
+> +		task_throttle_setup_work(p);
 
-Ah, that's nice to know. Thanks for the fix!
+Any reason we can't move this to somewhere towards the top?
+throttled_hierarchy() check should be cheap enough and we probably don't
+need the cfs_bandwidth_used() guarding check unless there are other
+concerns that I may have missed.
 
+>   }
 > 
-> So,
-> 
-> --- a/kernel/hung_task.c~hung_task-show-the-blocker-task-if-the-task-is-hung-on-mutex-fix
-> +++ a/kernel/hung_task.c
-> @@ -125,7 +125,9 @@ static void debug_show_blocker(struct ta
->  	}
->  }
->  #else
-> -#define debug_show_blocker(t)	do {} while (0)
-> +static inline void debug_show_blocker(struct task_struct *task)
-> +{
-> +}
->  #endif
->  
->  static void check_hung_task(struct task_struct *t, unsigned long timeout)
-> _
-> 
-
+>   static void set_next_buddy(struct sched_entity *se);
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thanks and Regards,
+Prateek
+
 
