@@ -1,137 +1,159 @@
-Return-Path: <linux-kernel+bounces-562107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AEDFA61C28
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:14:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A8DA61C3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:15:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A89317A80BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:13:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3B1519C7C8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22998206F04;
-	Fri, 14 Mar 2025 20:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D463207A02;
+	Fri, 14 Mar 2025 20:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fPHqsbuh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZWvsYNgj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724562066C2;
-	Fri, 14 Mar 2025 20:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EB7204C2B;
+	Fri, 14 Mar 2025 20:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741983133; cv=none; b=NmFcLb2ht4cbP+eu2NdrFhN5ArjrRBiDoLV9KNBSn2VfLn8cVOMUpv6GA44juhWInGRMztJ1y3pB/8huCJQFZIZ/KObowdc21P837evdno8pRogaSJXOfWCSlOadkCKVwh84TxyADnPiCjTGZ4huqF+eoOCZkaLAJRC4JpTuroE=
+	t=1741983191; cv=none; b=F3ASRmYkLdwjHawYTkiMzytutqBuvnZrTO/bnxMgSmjCGZDDkecsGW8XzM1PKnIDMlVAloZjdwHd+IhqdQhKLgJIfT+DNKd3xSy3UEeGLWh8ZSIDCbrBmJmLpk07x16cVfVD74BIm3ufyr5nvyht3SSeZLyI733sZjKUS0Eg8Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741983133; c=relaxed/simple;
-	bh=VNSKAbcRLuCrJ7z0XpO3AjyVVmDvQNQN+M90Z/9YUl4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZStviCV4L5sLJ2s6e98ITgN/lw5AoBJ14ubEal/qiLUJnk6TwGI/bzXUalvWzstgybFjg7+RfHZLpZ/mcx/adH5eXb6MHch5xv9tUMTvSs8LmYABUkza8Psfje9svDm8cDTufvBPIEF+Yh9kfUFe+Y67tD6Gx6CkraI/yonxJJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fPHqsbuh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0C12C4CEEC;
-	Fri, 14 Mar 2025 20:12:08 +0000 (UTC)
+	s=arc-20240116; t=1741983191; c=relaxed/simple;
+	bh=SRZhjkmehzZBEvC3oDCw/sRygUrcVGuFKOmk99vqfVA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=raVNpsp4hTo575/HwswrsRqC5n3V1BcbgSHngEyIj1IOikCUyB/Ernh1p+zVjxa4e0Mb1F1tT3mCI0wBfHyFfJ0iKoaDT0hnyP5Fg8xuhGAfCEnpx8jYkaw11Y7QrmKp7EKsGnFFmgAFhq1/CZLsb1xXYqU+YMOtsOqWaD0KzaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZWvsYNgj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C80F2C4CEEF;
+	Fri, 14 Mar 2025 20:13:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741983132;
-	bh=VNSKAbcRLuCrJ7z0XpO3AjyVVmDvQNQN+M90Z/9YUl4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=fPHqsbuhJioIBVVFMH4ju/t30fEgMVYnwFEUlqldSTNKOznAO5Olcu86hOtBVs8/z
-	 XX8ff5H5Pan/EWipX7+DKfMMzDvcGT9x0rO8Z3pLNQ3H2e50zLU1TUStez4HpS7A5m
-	 KVPFyQ4oCBpJQNrNDuTbFEL2wVdIyJfmRoHfCvacuF9KEflpCiDU80cOXWbFWN1kJJ
-	 jJIYGpST6amGCEoJ3jBAu4MKd9YMfSmnkV9T+g1EtSARxaU+I+vn7CojeZ7VCPNDI1
-	 zpXZZDENQPOy6MHsJCMZxeqO4w2yStH5is4RCke7mxzqcAlNSISNqv7dCSLdpSZO+P
-	 Ooax1C7O9/MSQ==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Fri, 14 Mar 2025 21:11:33 +0100
-Subject: [PATCH net 3/3] mptcp: sockopt: fix getting freebind & transparent
+	s=k20201202; t=1741983190;
+	bh=SRZhjkmehzZBEvC3oDCw/sRygUrcVGuFKOmk99vqfVA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZWvsYNgjITiLsZdrePpvv4CT67dqQ6hEUqye9FvJRdvxZ4W+chZq1KUDQ7O3O+Twp
+	 fKGNbDqle/CKOZLWFonJrcvM5Sol34jmlJwin6l83EvVNpbBSYmlokZc7FBdY+S/Ls
+	 zYfXxQj7mCTcBDYyrdgXg/BgSbr5hMDxm+SM1VP+3K51nlcHr2GyTNPrQChuhriHFX
+	 qOsnM/2tzA7JEVWGgW3N1b3tDR1SqLy2gvUbxkj772PlP0bBAw1vZz2pDqj8d80/py
+	 XvszV+FY7hxcPzkmBG7Bf3dynEYkLZ7MK5dUxKoT95i7XPXr6/zYZWGueEfu/zAhQW
+	 LrTHZLyEZWIEg==
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2bcbd92d5dbso1351142fac.2;
+        Fri, 14 Mar 2025 13:13:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUez7rHefhnujfUf3IMtcQa+Ox64l3KNAoJX7b/yqSs4k/uCZTTs6aoXt5TnSEioEQIhtARI+KHktgTiw==@vger.kernel.org, AJvYcCVT52RWW1Zfekt/Pv9Fz+juHLLu+/dTnYhDBUDoLP1ld90KI5VD311DN93ktU2Ac57O88VLjB1PMFMB@vger.kernel.org, AJvYcCWdXzryswf4rnCdxy5j1eZiY1VOolDlFfXxY7AtxwyFIOpgs1FFYoH05Nhrqa0RTzvOciG/kITJ6Ijbptyp@vger.kernel.org, AJvYcCXdMHgn7g7t/gyHeQIfcMwu4vXoysCtkkL/7bxGLGwjMBjrn1CbJpq8jwsEzFjEA445hpoPBOQuL02P@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJC6k+K48IlWTY4JFtFObvDGGFmD3eIieIy0UIFS2FbamAo92O
+	CQB8c5RIyIseOuh9Nec8mHH6Vq7++uLbOTDt6MLKU241qyu/kK6OQ1yj2VNJj/tWBQa/PhYbKYN
+	D31Kfu2Lq6tfkmSMAmqd3dsD5CDo=
+X-Google-Smtp-Source: AGHT+IGmABUgq93wpmmAX1OWd3S8vWyNXtmmbOZA3gPdYnN68o8ZqrNHt+4lqcxj/RC+Zxg7dvl5ge06ELPI4Pgy6zA=
+X-Received: by 2002:a05:6871:4145:b0:2c2:5028:70bd with SMTP id
+ 586e51a60fabf-2c691140b7fmr2149180fac.24.1741983189940; Fri, 14 Mar 2025
+ 13:13:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250314-net-mptcp-fix-data-stream-corr-sockopt-v1-3-122dbb249db3@kernel.org>
-References: <20250314-net-mptcp-fix-data-stream-corr-sockopt-v1-0-122dbb249db3@kernel.org>
-In-Reply-To: <20250314-net-mptcp-fix-data-stream-corr-sockopt-v1-0-122dbb249db3@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Florian Westphal <fw@strlen.de>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2125; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=VNSKAbcRLuCrJ7z0XpO3AjyVVmDvQNQN+M90Z/9YUl4=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBn1I2Hfq5LsFzARDWfayx67sdfPp9WXUcvkhv+u
- Odk6YPT5H+JAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ9SNhwAKCRD2t4JPQmmg
- c8FWD/9F+dbp1XxKCCOgUX8azpnuojlX7oNZuZjI0+jkr/rk9RNBL/JyuiYMDcFI+qIJG5cewgE
- /SpCuhz9Bl9hW0SvJADUO9Nw5SqynVahXT7bi36OC32V60M6xT4NJtHdVXj7gsMWNVy+Ox1nhmT
- GwmT7a4poKlTKUwrKr85BYFf3JE1psMp2vpuNlOKPDOaVr/YZ58pQrXVigJeePfSgfsnqK/M75K
- FWo2Ls+LU/3VmIybJ++W/5KiK895srJvrCCqOSxg/nOeqo9H0uBvP90KNorKKqia9WwNN0XtzWS
- bUNMAkm8vgCVT2Z8lkgHEHLLrUianyvRdxFxPNUIcXU/X6KAgk8Bd9djypRp+32TgqVqvyK/e0l
- cio2dkGnwqkVSOe9hWVvFKvp/9PesFY6MKRKKJBKnORlG3MDqRt5XgE73TX7XyMwXpP9NWyvFAA
- NmNXSoWr6fGHUJRoe6n1J3x12BqOEa6walGcwvxafu+keV/WXywJ9LwqlTQi1fxB8DwoHoT61LK
- q2PHfj4S9TYih0PIxgn4dk5ZciSdMFbJ/uTnDeisZ1WQqDcFB1SXJTz9q32JYBfWgr/8A+nEd4U
- FBgn5mKopJQp4EcMwf9PA9BJKZNIX78lpryqhgTWJ27hcicnfotGZGHPjnwG+Upqou6RneyA9Nd
- dujMkG7Ttw7QXqw==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+References: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com> <20250310150835.3139322-2-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20250310150835.3139322-2-andriy.shevchenko@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 14 Mar 2025 21:12:58 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0ia-K1bPT-A3TbmZ6T18nbrJ8aUsdU2zbbTfvS0eGbwOw@mail.gmail.com>
+X-Gm-Features: AQ5f1JpD27XX7GKH0JoAJhN4-R5SwlqrRghlvbqZvTkUxcM_j5DPO_HuD4OL0N4
+Message-ID: <CAJZ5v0ia-K1bPT-A3TbmZ6T18nbrJ8aUsdU2zbbTfvS0eGbwOw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/4] device property: Split fwnode_get_child_node_count()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rob Herring (Arm)" <robh@kernel.org>, 
+	Markus Elfring <elfring@users.sourceforge.net>, Jakob Riepler <jakob+lkml@paranoidlabs.org>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+	linux-usb@vger.kernel.org, Daniel Scally <djrscally@gmail.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Matti Vaittinen <mazziesaccount@gmail.com>, Jonathan Cameron <jic23@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When adding a socket option support in MPTCP, both the get and set parts
-are supposed to be implemented.
+On Mon, Mar 10, 2025 at 4:08=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> The new helper is introduced to allow counting the child firmware nodes
+> of their parent without requiring a device to be passed. This also makes
+> the fwnode and device property API more symmetrical with the rest.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-IP(V6)_FREEBIND and IP(V6)_TRANSPARENT support for the setsockopt part
-has been added a while ago, but it looks like the get part got
-forgotten. It should have been present as a way to verify a setting has
-been set as expected, and not to act differently from TCP or any other
-socket types.
+Acked-by: Rafael J. Wysocki <rafael@kernel.org>
 
-Everything was in place to expose it, just the last step was missing.
-Only new code is added to cover these specific getsockopt(), that seems
-safe.
-
-Fixes: c9406a23c116 ("mptcp: sockopt: add SOL_IP freebind & transparent options")
-Cc: stable@vger.kernel.org
-Reviewed-by: Mat Martineau <martineau@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- net/mptcp/sockopt.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/net/mptcp/sockopt.c b/net/mptcp/sockopt.c
-index 4b99eb796855e4578d14df90f9d1cc3f1cd5b8c7..3caa0a9d3b3885ce6399570f2d98a2e8f103638d 100644
---- a/net/mptcp/sockopt.c
-+++ b/net/mptcp/sockopt.c
-@@ -1419,6 +1419,12 @@ static int mptcp_getsockopt_v4(struct mptcp_sock *msk, int optname,
- 	switch (optname) {
- 	case IP_TOS:
- 		return mptcp_put_int_option(msk, optval, optlen, READ_ONCE(inet_sk(sk)->tos));
-+	case IP_FREEBIND:
-+		return mptcp_put_int_option(msk, optval, optlen,
-+				inet_test_bit(FREEBIND, sk));
-+	case IP_TRANSPARENT:
-+		return mptcp_put_int_option(msk, optval, optlen,
-+				inet_test_bit(TRANSPARENT, sk));
- 	case IP_BIND_ADDRESS_NO_PORT:
- 		return mptcp_put_int_option(msk, optval, optlen,
- 				inet_test_bit(BIND_ADDRESS_NO_PORT, sk));
-@@ -1439,6 +1445,12 @@ static int mptcp_getsockopt_v6(struct mptcp_sock *msk, int optname,
- 	case IPV6_V6ONLY:
- 		return mptcp_put_int_option(msk, optval, optlen,
- 					    sk->sk_ipv6only);
-+	case IPV6_TRANSPARENT:
-+		return mptcp_put_int_option(msk, optval, optlen,
-+					    inet_test_bit(TRANSPARENT, sk));
-+	case IPV6_FREEBIND:
-+		return mptcp_put_int_option(msk, optval, optlen,
-+					    inet_test_bit(FREEBIND, sk));
- 	}
- 
- 	return -EOPNOTSUPP;
-
--- 
-2.48.1
-
+> ---
+>  drivers/base/property.c  | 12 ++++++------
+>  include/linux/property.h |  7 ++++++-
+>  2 files changed, 12 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/base/property.c b/drivers/base/property.c
+> index c1392743df9c..805f75b35115 100644
+> --- a/drivers/base/property.c
+> +++ b/drivers/base/property.c
+> @@ -928,22 +928,22 @@ bool fwnode_device_is_available(const struct fwnode=
+_handle *fwnode)
+>  EXPORT_SYMBOL_GPL(fwnode_device_is_available);
+>
+>  /**
+> - * device_get_child_node_count - return the number of child nodes for de=
+vice
+> - * @dev: Device to count the child nodes for
+> + * fwnode_get_child_node_count - return the number of child nodes for a =
+given firmware node
+> + * @fwnode: Pointer to the parent firmware node
+>   *
+> - * Return: the number of child nodes for a given device.
+> + * Return: the number of child nodes for a given firmware node.
+>   */
+> -unsigned int device_get_child_node_count(const struct device *dev)
+> +unsigned int fwnode_get_child_node_count(const struct fwnode_handle *fwn=
+ode)
+>  {
+>         struct fwnode_handle *child;
+>         unsigned int count =3D 0;
+>
+> -       device_for_each_child_node(dev, child)
+> +       fwnode_for_each_child_node(fwnode, child)
+>                 count++;
+>
+>         return count;
+>  }
+> -EXPORT_SYMBOL_GPL(device_get_child_node_count);
+> +EXPORT_SYMBOL_GPL(fwnode_get_child_node_count);
+>
+>  bool device_dma_supported(const struct device *dev)
+>  {
+> diff --git a/include/linux/property.h b/include/linux/property.h
+> index e214ecd241eb..bc5bfc98176b 100644
+> --- a/include/linux/property.h
+> +++ b/include/linux/property.h
+> @@ -208,7 +208,12 @@ DEFINE_FREE(fwnode_handle, struct fwnode_handle *, f=
+wnode_handle_put(_T))
+>  int fwnode_irq_get(const struct fwnode_handle *fwnode, unsigned int inde=
+x);
+>  int fwnode_irq_get_byname(const struct fwnode_handle *fwnode, const char=
+ *name);
+>
+> -unsigned int device_get_child_node_count(const struct device *dev);
+> +unsigned int fwnode_get_child_node_count(const struct fwnode_handle *fwn=
+ode);
+> +
+> +static inline unsigned int device_get_child_node_count(const struct devi=
+ce *dev)
+> +{
+> +       return fwnode_get_child_node_count(dev_fwnode(dev));
+> +}
+>
+>  static inline int device_property_read_u8(const struct device *dev,
+>                                           const char *propname, u8 *val)
+> --
+> 2.47.2
+>
 
