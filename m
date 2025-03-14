@@ -1,236 +1,155 @@
-Return-Path: <linux-kernel+bounces-561059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6161A60D1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:22:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946BEA60D33
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:25:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB783B5423
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:21:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC6E73A3D88
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3461F0E27;
-	Fri, 14 Mar 2025 09:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F031EC00B;
+	Fri, 14 Mar 2025 09:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iubXgSoZ"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="fdUkS3dw"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608B21E7C32
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1221DF757
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741944102; cv=none; b=QmrFKqtwwSUcPoEosp4ZXdWLh7DQB5g4sLVlkaLUsYjNx0hGEXdFokhHrpZB0a3AFAZ0rIqfpi1JGsc8Zu2fjsNo1JHbP9KTiOQ7RmIoxnVExGbwmV47mojYu3FQpY6UP2L4IdkR7qKTIlDXFidCSvyWZvKq2uuNyakxl9uS2a0=
+	t=1741944328; cv=none; b=JM1Ir84X+YHq7WY6y+X0Hze6VOga9fR8ob1ttiuuoGBpUYn8DD/2xYTs44495eI55+thKkUf/CcR/6bRoCb5254ZKA5LN/RzxGG1ndQMUt/SfizRPNBki1mBjPSsQ8q8KVKMWZTadqM25BrYbahguYkZvIhN1mV+dYft4lqqYWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741944102; c=relaxed/simple;
-	bh=BzrI+MQVbm/6jXqGUS8ON4OO4Uhb3M0vnil1W0SY4xg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=aVdq0SySlf0qgH2pkVBWqyHoumkDctupcrE5shJ3Ue+QY93sHT5bpzA5becnKORtM+arpfQYdEZeHAxnxFie/u6DN1cjHRsC+BgYXFIeLFrg0GO6keUBL7ujqnXcp6RHLzuG03fvm5nRBb9BYT6E7sSm9wcgRLOPg/Mrbflf3ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=iubXgSoZ; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250314092132epoutp044eb002036eebc7ef2cdcb9584a667a75~soOxdMrPP0312003120epoutp04d
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:21:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250314092132epoutp044eb002036eebc7ef2cdcb9584a667a75~soOxdMrPP0312003120epoutp04d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1741944092;
-	bh=jwFybI78FScw6EFw2tJIl/DO2vG2x0q+jbEpcWUDHSE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iubXgSoZIgQcm2rgzOMy+uYqpZahF7j3HrP+WSD3Jwt2M022aTMakQLFpJpCmssJi
-	 hCLEJS89et/yzw+jA2nZCabK0wWxu9GFophp4hxWgbvHrGJdO3SL6mMRGEcIUzw0SX
-	 FLUi2dDOImBGhL042XdmioeFMO5bl5/1XQmYmt8k=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20250314092131epcas2p13cc2885f7118460459b017cc64689920~soOwlZDa10480104801epcas2p15;
-	Fri, 14 Mar 2025 09:21:31 +0000 (GMT)
-Received: from epsmgec2p1.samsung.com (unknown [182.195.36.69]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4ZDf4q2TyFz4x9Pr; Fri, 14 Mar
-	2025 09:21:31 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D9.AC.22938.B15F3D76; Fri, 14 Mar 2025 18:21:31 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250314092130epcas2p34e60b23ff983fe03195820a38fb376c5~soOvcsHce2154821548epcas2p3W;
-	Fri, 14 Mar 2025 09:21:30 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250314092130epsmtrp1de9057981f4c9787b7a5af45f1a110cf~soOvazgVF0533405334epsmtrp1X;
-	Fri, 14 Mar 2025 09:21:30 +0000 (GMT)
-X-AuditID: b6c32a43-0d1e67000000599a-cc-67d3f51b3aee
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	50.73.23488.A15F3D76; Fri, 14 Mar 2025 18:21:30 +0900 (KST)
-Received: from perf.dsn.sec.samsung.com (unknown [10.229.95.91]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250314092130epsmtip1f5c58ffeaf0f71b70bea83097dc7db2a~soOvK0vle0080200802epsmtip1K;
-	Fri, 14 Mar 2025 09:21:30 +0000 (GMT)
-From: Youngmin Nam <youngmin.nam@samsung.com>
-To: stable@vger.kernel.org
-Cc: ncardwell@google.com, edumazet@google.com, kuba@kernel.org,
-	davem@davemloft.net, dsahern@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, guo88.liu@samsung.com, yiwang.cai@samsung.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	joonki.min@samsung.com, hajun.sung@samsung.com, d7271.choe@samsung.com,
-	sw.ju@samsung.com, dujeong.lee@samsung.com, ycheng@google.com,
-	yyd@google.com, kuro@kuroa.me, youngmin.nam@samsung.com,
-	cmllamas@google.com, willdeacon@google.com, maennich@google.com,
-	gregkh@google.com, Lorenzo Colitti <lorenzo@google.com>, Jason Xing
-	<kerneljasonxing@gmail.com>
-Subject: [PATCH 2/2] tcp: fix forever orphan socket caused by tcp_abort
-Date: Fri, 14 Mar 2025 18:24:46 +0900
-Message-Id: <20250314092446.852230-2-youngmin.nam@samsung.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250314092446.852230-1-youngmin.nam@samsung.com>
+	s=arc-20240116; t=1741944328; c=relaxed/simple;
+	bh=0i/TUOGKh5zJ1RuoNnpT3g0OxCdYQqEgi9AErd0ye/k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jA0cdxCcIJlpQiadtrVYWuShQNyTZmO7SkffbCi0/4B44IMXuPxhkej35dIW1Ihy9k8vVpk4u/wnLD5/Qc8Z/JYeSrGWDUkrlVl4L/74J3JHL78RHq6MTdTk74PwGuyj3SIKIcjgUM4SQWTCP3/h5VUImkje+XO1YIK6aW7JDb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=fdUkS3dw; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30bfd4d4c63so19304351fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 02:25:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1741944324; x=1742549124; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OdpgR/K+jG8H9Mmix9bCdPdwnrgEiVRubiQLwqas2JE=;
+        b=fdUkS3dwQzJ8ujVqPc85pDju9bltqlDJpzF65/Nyoh1KN7aQhBEj9vqb+PNVAB2/mQ
+         +29TsE9bKEGXOP4jZWYy3A/JPEcYkRAoDFlssbVLHxcG9w/GlHg6DhzXbM4mAk0T+lQg
+         TWnsfSw1NGQwnL+OvZSjPqOdzec8+IlhzPRwNmlfkVfaTD1uP/dN2vbv8+NPDNU/7FLK
+         q+Uy8yeQYjPpmJVuIPocDtutSJ0p+G4YPshQCTqlk0vsGzByoOAeb5ZkJPfAc1j5zT2A
+         lXmXd89xA7XKjE5Ejn4nvMDMkHqbsMgBsdBF/KVm0D8yNQBl8Hvft0o/Z94Hsf+kdEkK
+         ZZhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741944324; x=1742549124;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OdpgR/K+jG8H9Mmix9bCdPdwnrgEiVRubiQLwqas2JE=;
+        b=MeKg7zs3EFoKJDIW8q7/A9IW7buagnDu6rJNCcNg6swVgzVcgW5kDFywe64x9kUgS9
+         gyE0n+K5yT6HuiRiKYqlqNxV/RtgJN8sx9H8NHaoXuobss203i6fHRix6lGNG8NPL2kh
+         9+zucx4+l9umMlNvW3B8whJeQihH/pwFCOI0dj2vDMoKinNVcrBXIN4q1PuAcGrdRAF4
+         qmhLaly6WP+voB5f7zbAoGMjgy5mmaczYjDN+Mteb3ZIGldVprdj0UChTHxRaykfCsd+
+         PEB7vZl05zElqDJlX0nmqlhsjxHWT7lzLGFJkeLNmfHcjXrHk41BJUim8oaXaH5PgTUM
+         8R1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXoop0yoeeT4tMAY0k+w4ULg5M+k6m2oFAFqIX6LcsvLTREMbRJdHOaRunlxsTHa4PIqCV+Lg4OLvIByn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykMgYjP+ePh6uf1Lk4uED/+OXY1mJo9v/zXDOqYrbkNbzCXBYN
+	dnfzWtC2stIMSdbT1qyGi9ZzbPXPkMQwsOx1UsETQkGs3AXZn1F9+xzVoT0DwazmZP5d75HOHCT
+	h4SyoBMR1/oY/tdZ+FwPMzXTqBOfXGiV42lw0+4rUOYFHFlcNFlCAjg==
+X-Gm-Gg: ASbGncsE6XtTbJ+rUHJLfCKEbE8ote2ZyM5e3PEquDOvmEcP7nuRfoSFWeaq4r+PhGg
+	chtm/QoKoJdeT9caDlpoXLqRqTHIS5ha117GhILBJoWmO0zp7fTVN2rOhxmJ2CqwE9SlbJhx2Zw
+	1cUjNbx/3IKlywWkVnTWi1U4eUZP8w4mjCxYjPXs0=
+X-Google-Smtp-Source: AGHT+IEjVen50YVpwUrK456NvIgY0rwkW0OYrnlQs6iiVW7g/V8zHkeH6055LHMjUjoDNm/N0Eo8uGzNKzgcUV2w3yg=
+X-Received: by 2002:a05:6512:2216:b0:549:38eb:d694 with SMTP id
+ 2adb3069b0e04-549c3913c35mr566242e87.26.1741944324144; Fri, 14 Mar 2025
+ 02:25:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xTZxT3673cW4iMu8rgGxipZeB0obRI6QcKvojUbMnY1GVTIzZw0zL6
-	Wh8G2eYIlMdQ6XCwKY/Zpfhim9SO18BOUgiwEXSjdAYcD0GBKeILEExko9xu87/f+X2/c87v
-	nC+HjXHmiSB2ukpPa1VSBY/wwRva1osigmedMoFtyA/NtPaS6A97CYkqrxtxdKk5j4XGzadw
-	dKdjlETjcwsY+rIUoJyrvRgaNXURyNUyjaGWhq9J9FtDsRdytE2QyNlcSaDa7mmA5uxTJCr8
-	046jDnMAmuueAsh8eRSgvLEnJCpYuIejmTEXgR515pDI0vqYRLnfXsK3BkvqLvazJD+VD5IS
-	s80gsdV8TkjMxaTkwc8uQlJcVwMkT2xrktn7MjbLaWkareXSqlR1WrpKFs97c3fKjhRRjEAY
-	IYxFYh5XJVXS8bzEt5IjdqYrlqbmcQ9LFYYlKlmq0/EiEzZr1QY9zZWrdfp4Hq1JU2jEGr5O
-	qtQZVDK+itbHCQWCKNGS8FCGvKa/kaXpCc7suibOBpWBRYDNhlQ0/D1XWAR82ByqCUDLcxvG
-	BI8BHM2ZZzHBHIDmiSG8CHgvZ9xrz/eo7AD2uY57glkAa3snvdwqgoqADV2LwN3DnwqCw65N
-	bhqj7uDwZm6mG6+ikuCVGyPAjXEqDC4s9rHc2JdKgDfPVuKMvRBoGYFu2pvaAstsA4CRvAx/
-	OX0bZ0qGwNz6imULkDrmDQfLzgHGaCK8X1zqxeBV8G5nHcngIPiXKd+DdTB7eMCTbATw1xuT
-	GPOwEZaPFyz7x6j1sLY5kvETCtsHPH1fgoVtz0mG9oWF+RwmMRw+K7V6HKyGLZYLnoISaJ9a
-	8GI2dRLAYZMZ+wJwy18Yp/yFccr/b2wGWA0IoDU6pYxOjdII//veVLXSBpZPYMOOJtB3ZpHv
-	ACw2cADIxnj+vsjplHF806RHsmitOkVrUNA6BxAt7boEC3olVb10Qyp9ijA6VhAdEyMUR4kE
-	Yl6g78dNRhmHkkn1dAZNa2jtv3kstndQNkt9MiSOn7535zzH7ies/0y7dW3FlXe3HBU+qPpI
-	8SNltPasORT3gaU29NjQ4HeOjW8ok8SShJQV+151HCgo3B4sOvKJYZthV7j8fkmBIsNu3W4Q
-	qsNn/Vp7BM7uKjzSxJ99e/+pzEznN8NzuxvyQtRjwwcC9zQ+2m+USKzELWvspyMV3g/Pv3O3
-	+wSRZ5kh+h8e9vdrRE8nz8ovmp4SAfkz7yWVCcP42861dlVdXxmantG9+nxfh9cJ6Hpt1jxR
-	U38LGLnHq0NYnZt00nVZK394/9qz6b/b66qN37dws26ve51zdCJ0RdjVXVnKxK9OHyyLW6zM
-	qz7oNEVf6NvrY4378PKeMzxcJ5cKN2BanfQfKG9d9IsEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Re0hTYRiH+3aO5xyHxnFafs20WBcvpXNl9XVRgyKPFGFQUFbk0sO6OB27
-	dLFC8a7BKsqa03IiBgotXLYyW8Wxi2llc62lJs1L2cUsUwdDkJwS9N/D7/m9Ly+8FCa4gwup
-	oxlqVpkhTRcRfNzcIgqJFE7YZNHnq0PR+JNOEr23XCJRZUc+jowPCnjoi0GHo8/P+0n0xeXG
-	0OUrAOU+7sRQ/4VWAtmbRzDUbL5GordmrRfiWoZIZHtQSaDb7SMAuSzDJCr+aMHRc8N85Gof
-	BsjQ0A9QwcAYiYrcP3A0PmAn0OiLXBLVPPlDorxqI745iGms6+IxTfpekjGYNIypvoRgDFqS
-	+fXITjDaxnrAjJlCkqhk/qY0Nv3oCVYpjkvhH6nvusdTvA461fpmXQ6oDCwF3hSkY+CPp4WY
-	hwV0M4Cjv/mz+ULYU2fzmmV/+Cn/6TTzpztjAFqd+TOCoCOhuXUKlAKKCqCF8JN9o6eD0QVe
-	sK8iZ2apP50AHzqcwMM4vQy6p97xPOxLx8Ge2krcMwvpRbDGCT2xNx0Py0zdYPaeOFg1pMNm
-	637wZfkg7mFsup53twK7CGj9f0r/nzIAXj1YwCpUcpk8VaKQZLAno1RSuUqTIYtKzZSbwMxf
-	I8LugxFXrpgDPApwAFKYKMAX2WwygW+a9HQWq8w8pNSksyoOBFG4KNC3TrJXJqBlUjV7nGUV
-	rPKf5VHewhxe8dZxxty2Ilg8xvpEVHHVuhNrJy5jKdutXF7gyWD1n5FjwysVzuRtU9URjQLm
-	WFTSpLFzVLHnKzF/V2z8wJbV3rFDMtYYtHqhY2lNglxcou67aosd7zPtFpBOn6uZTS2HB2N2
-	cY/DlndnPZrU+w3FZ6k7yr7f4BznSrb1gfOJjim9xsfr/fbC2p6wsxM3DmbffrVCbgTClvAa
-	ftd+E0lw8msrddbQEHveFUH2h6pbvanusgSN+EyiVoOvsiRGW9bx3c/E1pi5HbGlbeXWl6d2
-	lHdtyXfNK3rhiP55c/D0nInWijU7C75Jrg+k7Fu8PzwkYMM5v8kDDeuDl2jrdCoRrjoilURg
-	SpX0L7wOt81GAwAA
-X-CMS-MailID: 20250314092130epcas2p34e60b23ff983fe03195820a38fb376c5
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250314092130epcas2p34e60b23ff983fe03195820a38fb376c5
-References: <20250314092446.852230-1-youngmin.nam@samsung.com>
-	<CGME20250314092130epcas2p34e60b23ff983fe03195820a38fb376c5@epcas2p3.samsung.com>
+References: <20250314033350.1156370-1-hezhongkun.hzk@bytedance.com> <Z9PuXMlHycL6Gco0@tiehlicka>
+In-Reply-To: <Z9PuXMlHycL6Gco0@tiehlicka>
+From: Zhongkun He <hezhongkun.hzk@bytedance.com>
+Date: Fri, 14 Mar 2025 17:24:47 +0800
+X-Gm-Features: AQ5f1JqB7zSyjpT8_t67e_MWnk5d31Q2OfVpYekPNjXCTE9-Bw2QjQJ5WgPleAU
+Message-ID: <CACSyD1NMQp83-38FO-pHXStF=p=R82DqQwNfdx3SBQ-qNuyYUA@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH V2] mm: vmscan: skip the file folios in
+ proactive reclaim if swappiness is MAX
+To: Michal Hocko <mhocko@suse.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, muchun.song@linux.dev, 
+	yosry.ahmed@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Xueming Feng <kuro@kuroa.me>
+On Fri, Mar 14, 2025 at 4:53=E2=80=AFPM Michal Hocko <mhocko@suse.com> wrot=
+e:
+>
+> On Fri 14-03-25 11:33:50, Zhongkun He wrote:
+> > With this patch 'commit <68cd9050d871> ("mm: add swappiness=3D arg to
+> > memory.reclaim")', we can submit an additional swappiness=3D<val> argum=
+ent
+> > to memory.reclaim. It is very useful because we can dynamically adjust
+> > the reclamation ratio based on the anonymous folios and file folios of
+> > each cgroup. For example,when swappiness is set to 0, we only reclaim
+> > from file folios.
+> >
+> > However,we have also encountered a new issue: when swappiness is set to
+> > the MAX_SWAPPINESS, it may still only reclaim file folios. This is due
+> > to the knob of cache_trim_mode, which depends solely on the ratio of
+> > inactive folios, regardless of whether there are a large number of cold
+> > folios in anonymous folio list.
+> >
+> > So, we hope to add a new control logic where proactive memory reclaim o=
+nly
+> > reclaims from anonymous folios when swappiness is set to MAX_SWAPPINESS=
+.
+> > For example, something like this:
+> >
+> > echo "2M swappiness=3D200" > /sys/fs/cgroup/memory.reclaim
+> >
+> > will perform reclaim on the rootcg with a swappiness setting of 200 (ma=
+x
+> > swappiness) regardless of the file folios. Users have a more comprehens=
+ive
+> > view of the application's memory distribution because there are many
+> > metrics available. For example, if we find that a certain cgroup has a
+> > large number of inactive anon folios, we can reclaim only those and ski=
+p
+> > file folios, because with the zram/zswap, the IO tradeoff that
+> > cache_trim_mode is making doesn't hold - file refaults will cause IO,
+> > whereas anon decompression will not.
+> >
+> > With this patch, the swappiness argument of memory.reclaim has a more
+> > precise semantics: 0 means reclaiming only from file pages, while 200
+> > means reclaiming just from anonymous pages.
+>
+> Haven't you said you will try a slightly different approach and always
+> bypass LRU balancing heuristics for pro-active reclaim and swappiness
+> provided? What has happened with that?
+>
 
-commit bac76cf89816bff06c4ec2f3df97dc34e150a1c4 upstream.
+Hi Michal
+I'm not sure if we should do that. Because i found a problem that If we
+drop all the heuristics for scanning LRUs, the swappiness value each
+time will accurately represent the ratio of memory to be reclaimed. This
+means that before each pro reclamation operation, we would need to
+have relatively clear information of the current memory ratio and dynamical=
+ly
+changing the swappiness more often because with the pro memory reclaiming,
+the ratio of anon and file is alway changing . Therefore, we should adjust =
+the
+swappiness value more frequently.  The frequency of setting Swappiness to
+200 is relatively much lower.
 
-We have some problem closing zero-window fin-wait-1 tcp sockets in our
-environment. This patch come from the investigation.
+Do you have any commits about this concern?
 
-Previously tcp_abort only sends out reset and calls tcp_done when the
-socket is not SOCK_DEAD, aka orphan. For orphan socket, it will only
-purging the write queue, but not close the socket and left it to the
-timer.
-
-While purging the write queue, tp->packets_out and sk->sk_write_queue
-is cleared along the way. However tcp_retransmit_timer have early
-return based on !tp->packets_out and tcp_probe_timer have early
-return based on !sk->sk_write_queue.
-
-This caused ICSK_TIME_RETRANS and ICSK_TIME_PROBE0 not being resched
-and socket not being killed by the timers, converting a zero-windowed
-orphan into a forever orphan.
-
-This patch removes the SOCK_DEAD check in tcp_abort, making it send
-reset to peer and close the socket accordingly. Preventing the
-timer-less orphan from happening.
-
-According to Lorenzo's email in the v1 thread, the check was there to
-prevent force-closing the same socket twice. That situation is handled
-by testing for TCP_CLOSE inside lock, and returning -ENOENT if it is
-already closed.
-
-The -ENOENT code comes from the associate patch Lorenzo made for
-iproute2-ss; link attached below, which also conform to RFC 9293.
-
-At the end of the patch, tcp_write_queue_purge(sk) is removed because it
-was already called in tcp_done_with_error().
-
-p.s. This is the same patch with v2. Resent due to mis-labeled "changes
-requested" on patchwork.kernel.org.
-
-Link: https://patchwork.ozlabs.org/project/netdev/patch/1450773094-7978-3-git-send-email-lorenzo@google.com/
-Fixes: c1e64e298b8c ("net: diag: Support destroying TCP sockets.")
-Signed-off-by: Xueming Feng <kuro@kuroa.me>
-Tested-by: Lorenzo Colitti <lorenzo@google.com>
-Reviewed-by: Jason Xing <kerneljasonxing@gmail.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Link: https://patch.msgid.link/20240826102327.1461482-1-kuro@kuroa.me
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Cc: <stable@vger.kernel.org> # v5.10+
-Link: https://lore.kernel.org/lkml/Z9OZS%2Fhc+v5og6%2FU@perf/
-[youngmin: Resolved minor conflict in net/ipv4/tcp.c]
-Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
----
- net/ipv4/tcp.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
-
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index 9fe164aa185c..ff22060f9145 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -4620,6 +4620,13 @@ int tcp_abort(struct sock *sk, int err)
- 		/* Don't race with userspace socket closes such as tcp_close. */
- 		lock_sock(sk);
- 
-+	/* Avoid closing the same socket twice. */
-+	if (sk->sk_state == TCP_CLOSE) {
-+		if (!has_current_bpf_ctx())
-+			release_sock(sk);
-+		return -ENOENT;
-+	}
-+
- 	if (sk->sk_state == TCP_LISTEN) {
- 		tcp_set_state(sk, TCP_CLOSE);
- 		inet_csk_listen_stop(sk);
-@@ -4629,15 +4636,12 @@ int tcp_abort(struct sock *sk, int err)
- 	local_bh_disable();
- 	bh_lock_sock(sk);
- 
--	if (!sock_flag(sk, SOCK_DEAD)) {
--		if (tcp_need_reset(sk->sk_state))
--			tcp_send_active_reset(sk, GFP_ATOMIC);
--		tcp_done_with_error(sk, err);
--	}
-+	if (tcp_need_reset(sk->sk_state))
-+		tcp_send_active_reset(sk, GFP_ATOMIC);
-+	tcp_done_with_error(sk, err);
- 
- 	bh_unlock_sock(sk);
- 	local_bh_enable();
--	tcp_write_queue_purge(sk);
- 	if (!has_current_bpf_ctx())
- 		release_sock(sk);
- 	return 0;
--- 
-2.39.2
-
+> --
+> Michal Hocko
+> SUSE Labs
 
