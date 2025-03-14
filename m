@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-562216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 930F9A61F45
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:49:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8997DA61F4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:49:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D7127A7249
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:48:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3244617D283
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B7C229B28;
-	Fri, 14 Mar 2025 21:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891EA22CBE3;
+	Fri, 14 Mar 2025 21:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ka9QUfzg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mkAEvpgF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39790225404
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E90229B2D
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741988520; cv=none; b=rs9wWinW+20vTocBPgBTvzj989ZiJUViJMJeX59F4dqhdHTJOOU/dkPhONOMLNmh+wYRRa7p5tb8LUzePDuXj1O5IlE75X/Iic3AWgde+4sd6d0JS4xQ8NjbxSdDMAoZeg/wrhibWEwkzCw6NtK2BBXv6u7OSF2ZWKaVfxncIsI=
+	t=1741988521; cv=none; b=q2kJgk44VZrrQlZnVc4uwb6YJMjqbfaa1M26ekraucypHxBT2TfDPls98pKh//SMkOKI0f0zFrxxhMAUjcy3i+XlVBH6nrzmEwCKPZCrmFgRb2+vo2uOcMcaFp+aQH9Mh0XZPYJzwfZcv32cx/695ESc/ZtGtGuaw6OnDjGGW68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741988520; c=relaxed/simple;
-	bh=0kn0S4ccqzhgBAKRunMO8Nv5aGRcCEGvj6oTNQnlhOg=;
+	s=arc-20240116; t=1741988521; c=relaxed/simple;
+	bh=SwyNGWtwQgHOApJI6bIB7Y2YZV2fZzV/abNiCm9lxKw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qw5JozhferIHfE2V0k25/LhyILnsLThcEjc6j1XZv+iZXsQWgI19ty7B8LK5Gvm9kaHXeSdvsRJZaxQZFvTWJAmifWg6ALEo/CHVHYBdWuJJp9EpotRptnrl9dAbRhhHyT8kBq81GmoUaU/K6NgEgDWeGnCPkLQ2D1eIRa31qCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ka9QUfzg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45F59C4CEE3;
+	 MIME-Version; b=ZTPF5xAa4ltAFmJ6agUDYmSosGiMIuXQsxYASDYPHybLzNtbp6MwyIuDULG6lgH4gMNag+Oefn3EI6NexBuENFdWTUHAK6g0OplRMFg9540cHiUXuSmR8XqZ4TDE01NmIr7UfKVoarWg9LyQ5jE818pJSY/cv91vkhg+iiAQoYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mkAEvpgF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3B87C4CEED;
 	Fri, 14 Mar 2025 21:41:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741988519;
-	bh=0kn0S4ccqzhgBAKRunMO8Nv5aGRcCEGvj6oTNQnlhOg=;
+	s=k20201202; t=1741988520;
+	bh=SwyNGWtwQgHOApJI6bIB7Y2YZV2fZzV/abNiCm9lxKw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ka9QUfzgNzBiId7jTkdJI6w0XRIMkukM4XH83qejB4ktuAb73KG0QP7Dy0EJBD0Ns
-	 KVHpQvmqfnz8W6jTdSi+zBQ6CeGmXzZKgN70/11Vq5RMSPlBRO7y29MikDcOYqIlh+
-	 5lcuT9gTZjeMtKD4M+e0U4N4mDJwSJC9M9OZTTRmldSMfBeEKw1xTxI0kECH4SiqHC
-	 rY2oWRzdqPjmOrw3nIXE8sg5K/dsz3r/s7n5XxbJTAgnfxRfGXbWm9ayp+aNuM0YYw
-	 XQIHmPCa+8tLikbnMPv9tYnTJ/7+lX93g53MSlQgb/NgOD2UQB+/SHxPxlFRyvSfjl
-	 uOp4BLlrGqCEg==
+	b=mkAEvpgFyJI9gYhec+b37dyVF5dYFBk8pOV34YLpBDnjAheJGY/+qR28TEQLkYk0G
+	 dS4T1jpmZW+aXWmdH9Jf9Ky3pKngBiIDFfa3QFRs4ue5HhoqeKjTfBoSXE8oX+fkJx
+	 T476dnurSeVW5kHkvkDqJ3aI+fd8aU71laYyVaMvSAXDujTJYBJU+PwTuswcECs9ts
+	 7o1D20TD3Lx66+EdE+XzvVLTIaahBIQ7Jd+3uFGsovbNLODC8Ym0ucNRNU7dL6YIT+
+	 48Mp4AAeSapbsGNnCuJReaEUXFR31DqBobSfg2fv4ZLaAXsaU0r88sZf1+puvhJHz9
+	 NP8+CkTad3g1Q==
 From: Josh Poimboeuf <jpoimboe@kernel.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -50,9 +50,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Uros Bizjak <ubizjak@gmail.com>,
 	Andrew Cooper <andrew.cooper3@citrix.com>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 10/20] x86/alternative: Add alternative_2_io()
-Date: Fri, 14 Mar 2025 14:41:23 -0700
-Message-ID: <f7de31883141bae5b555acbccf5bd5b4457d3734.1741988314.git.jpoimboe@kernel.org>
+Subject: [PATCH 11/20] x86/alternative: Make alternative() a wrapper around alternative_io()
+Date: Fri, 14 Mar 2025 14:41:24 -0700
+Message-ID: <7861339dadc2bfff65634db421ca0fc81d468c1e.1741988314.git.jpoimboe@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1741988314.git.jpoimboe@kernel.org>
 References: <cover.1741988314.git.jpoimboe@kernel.org>
@@ -64,32 +64,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make an ALTERNATIVE_2() version of alternative_io().
+To reduce the number of independent implementations, make alternative()
+and alternative_2() wrappers around alternative_io() and
+alternative_2_io() respectively.
 
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- arch/x86/include/asm/alternative.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/x86/include/asm/alternative.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index 870b1633e1e0..0acbb013e7ae 100644
+index 0acbb013e7ae..92014d56e3aa 100644
 --- a/arch/x86/include/asm/alternative.h
 +++ b/arch/x86/include/asm/alternative.h
-@@ -231,6 +231,14 @@ static inline int alternatives_text_reserved(void *start, void *end)
- 			    : input							\
- 			    : "memory", ## clobbers)
+@@ -204,10 +204,10 @@ static inline int alternatives_text_reserved(void *start, void *end)
+  * without volatile and memory clobber.
+  */
+ #define alternative(oldinstr, newinstr, ft_flags)			\
+-	asm_inline volatile(ALTERNATIVE(oldinstr, newinstr, ft_flags) : : : "memory")
++	alternative_io(oldinstr, newinstr, ft_flags,,)
  
-+#define alternative_2_io(oldinstr, newinstr1, ft_flags1, newinstr2, ft_flags2,		\
-+			 output, input, clobbers...)					\
-+	asm_inline volatile(ALTERNATIVE_2(oldinstr, newinstr1, ft_flags1,		\
-+					  newinstr2, ft_flags2)				\
-+			    : output							\
-+			    : input							\
-+			    : "memory", ## clobbers)
-+
+ #define alternative_2(oldinstr, newinstr1, ft_flags1, newinstr2, ft_flags2) \
+-	asm_inline volatile(ALTERNATIVE_2(oldinstr, newinstr1, ft_flags1, newinstr2, ft_flags2) ::: "memory")
++	alternatve_2_io(oldinstr, newinstr1, ft_flags1, newinstr2, ft_flags2,,)
+ 
  /*
-  * Like alternative_io, but for replacing a direct call with another one.
-  *
+  * Alternative inline assembly with input.
 -- 
 2.48.1
 
