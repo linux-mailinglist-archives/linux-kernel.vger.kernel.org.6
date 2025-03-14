@@ -1,176 +1,151 @@
-Return-Path: <linux-kernel+bounces-561930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A587BA618C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:58:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F955A618CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:00:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A034189EF2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:58:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E8393B3AA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D94204582;
-	Fri, 14 Mar 2025 17:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NCZeqH9x"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742102046B5;
+	Fri, 14 Mar 2025 17:59:53 +0000 (UTC)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B272520297B;
-	Fri, 14 Mar 2025 17:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380C5802;
+	Fri, 14 Mar 2025 17:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741975112; cv=none; b=QCh336TuurnhBVAnHNvbsUFTAXmyUlWM5CQjrb/acnHpSL86RXslZ84+Mvs6ZI4OWT5XfRku6PpOncjjfju0jmiCOZ9dSWH6fUbdjJvY0OnVGVQvJziUwxt4tS/hQnNftzDz/3nqOZmG3mZClXdu0n9v9bLcXcGYJ9D5ORJ2PO4=
+	t=1741975193; cv=none; b=BIjm32KipcKgg0CVEk5npIXQWqcy0VTe8Uwkbkx4JGYYzcZq3aTGfHIBS9V8OYwfFGQEnahBqk43aBnld4D9VHdH4r/r6WJJeRdn8c8SOmugH/B+b8vl8JGxoYlrzeASXXUYjWy0498rEPFDHP+oR+wJH5REQs7svk0jWBhVtls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741975112; c=relaxed/simple;
-	bh=x5hWKuWxbPdAKVKQKdaQxLlT/0xhENbBoD5c1ixw4rc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nq6XNAJH2Sa5j/bJvmkLaOdBvT/AKI9HiPK03miIpLrYiPVZwPel0NWaVKzzKZhmOdyP1qZ8vPWdaWunBclRfbcX2Z2YZTStT54+dXKUJ8UkWEUKT42LFXW1CALhAEj03JbAZk6xpxXPEHjezOvqXO3LxfYoELKt5N4n3IH0fGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NCZeqH9x; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1741975193; c=relaxed/simple;
+	bh=z+hyA79TBor9nfo/BG+geJXkAW0YDbn3zU9dqjRz9+g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qLx6vllV1xuunwO172HjBR7kzNdypRDay1UXFYRaM1iqtTV9bOlfQa5dQOMcIFgGtP/o8A7SeOMMfxmD4aoKs6CxxGbzUn4a13x/jH370jSFtd/xeJGjvQMHTiFjApLQkkh0Y4cNuW7hHfndXax3MDAau0tlO95i5LxJ7VdRRIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22423adf751so39042305ad.2;
-        Fri, 14 Mar 2025 10:58:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741975108; x=1742579908; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=c/nB+EprANSiiLTLvezU1vuAXuyjHhh7tXywCPXdMdU=;
-        b=NCZeqH9xNBzLr/0D6FL5VRhJtGDCCNAIbe1VDccYwm9w3JlBPECRpEwhfSIb0NCtTG
-         E4X+uDhjy/WTiSy41a1OMElwGdqS8x0bJt96mHw3CSoHChqMmDBLcVnC4loCEZSkhcIP
-         zmz6XsDS81/7cUln/A6Ef0RctbunlitubH8wzroF6glHGnkVvu2b88C15aJkOjFlfJRn
-         khPaWXTfHLaRX3OuXcdQn9lV/0GyNelxnQHoC6iBU01MIwz9A17J0WEfi3b3oQPXrGs8
-         zkVhMue6ipg1aYeE8iP9Feii7hQp3tr7gMneN92G0ChtlXuNK+tlgDDXPR5PSa/oA6Hi
-         OUkQ==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac289147833so422965966b.2;
+        Fri, 14 Mar 2025 10:59:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741975108; x=1742579908;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1741975189; x=1742579989;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=c/nB+EprANSiiLTLvezU1vuAXuyjHhh7tXywCPXdMdU=;
-        b=cJMY+FqjbA1pzrnqp44SHODpFrO8fHmyUI3XB1Kpn/WTjn3oR0pOuzvtphkm7IVt9c
-         UGJJOcnRW62PPxmeMEZq5mvjZsBp1P8MnISeFJJCYy3jXD6gX6FPNEcxw/jX2+AiWknk
-         gtmQcgBk7GBaXWVUszALa560pVt1OhHmrTHfZmK7eOFKnhjrJFCR4s7RmOTYDYNzlSm5
-         utsNv51t3VyOdwhEoP6Fz8vg3i6roViG0HLrhpxnrG92WltjA2ai2Xh88dZnmU2Sz3YJ
-         1NFPuYGCf+lEZ9GkdtzVqoBS6qTkF8PIkLedj9hw0PEyStUxgA1vDCzYfhXksEIAQH2l
-         S/2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXQgFxQDVadATrT0nPtvGyCWPoAIspIw8zq0SKGgyF3ihByJDwg2lR/2QM/NJoPEEaLAeXBT3ZXD0GnACU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzII6hslmn/IPW9ksyXgPX2ElKBMkKgMCBEdJLTb7cQNH0sa6y/
-	jiDtI6RqnQoVgXIDXsiqU50raNJBYTuRVwyQSSkMyMGdU3dGxfTK
-X-Gm-Gg: ASbGncs8zVPJtRIdpdhxVPjZS0XYBKFWVaiKbMrG5bR0QuGOIapNPzkzU9OqzBbzq9a
-	D15iw3pGrgywN0h8a/2vYHvSJwlq0JBVvAqnPQUH6yTkc+hnz53oPUMtoh5im88soglpydA21fH
-	i8rqI7bhoQNHU98dxOenATMWQKzL8js24hsrPX9D9LPGErC+x9PRukQjOpFyKHTuwiOEt0nGp6/
-	LgbZvXaG2zSAoScuqXF3vFQPQaW8LFVlwg9ZUbVVGX73PrsKrz905xONua2G8eTrTGiV9i7t7Cy
-	c2YSyYL/lxQ+/3akoL4HNREc9bXPbnm0jQ6L8Ns1CRg0ulO7YYVhg5gCFvDBEmMvMtdzQdgqtHn
-	meFIQjZXEWKhS7JTcgTY=
-X-Google-Smtp-Source: AGHT+IFboGzFCFtY2YrWd36M9O/xP69dJrRf4kY9d1YlDpQIOB21fIIEL0GCNbPYS4EL7EjpGpHCPw==
-X-Received: by 2002:a05:6a00:21d3:b0:736:6ecd:8e32 with SMTP id d2e1a72fcca58-73722470508mr4728372b3a.21.1741975107715;
-        Fri, 14 Mar 2025 10:58:27 -0700 (PDT)
-Received: from localhost ([2a00:79e0:3e00:2601:3afc:446b:f0df:eadc])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371152938csm3243466b3a.12.2025.03.14.10.58.26
+        bh=u06Wqt5UnTCx1/rDxRjIUZ8ark85C9sk7HH7Q+RzTx4=;
+        b=i3m965UEFesfuMHqRKbPTZcNIgAMpGlRqD8s4kcxGAt0sQ/hUnIzNvuRsYn7I/ps55
+         McROizZXpoJd7rXBnl2cNd6yU87p0Rxkqh2ocsDPnADUUaR9nCHlM37tAaAuwNLgGm6t
+         woCV12gUpFzxEPizvhDTS4OoGIC0GregXCVCQu2TfJ2ZVfw8bMkPeIPVA3fbOdb/9kqD
+         xDJqaGr7lN5kR9O2K3oIiZyBhbQohAJjRDedigw8Nb97+V0xOKhXxL13AmD1Nml5u7g9
+         OV8R+sbMageNOYFORcSmbd2o2Gi5r68PqWITUqRZTVj/ANygcRhSsKZPA41N2zi27sGc
+         P12Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVFZDGEUGfZOV5rVQ1u3fbTd3kU3jE7y4SFqMjEg7W99egb1gK1in+zBmkc+2a9gR0FchF/X2V3LOM=@vger.kernel.org, AJvYcCVb3n+dIPfQ8UWwRjGpL+y2hYEK3H2NZOw5Ja437g1hc/lx0/QSETitb8jsAnysyI+eP+N+AD1wjOb6PawJC496@vger.kernel.org, AJvYcCWbftD7m4juOPLiVvYeipWamvUpduMqkCK0rDO/Bgfw9oU/rGwVXWHYsZ2I5NKzC0uI+1Z/6zmeIHRA2gby@vger.kernel.org
+X-Gm-Message-State: AOJu0YwznLxIFJyT34igIgKpXvuRiBDCYTRzE7LjEwQEZAwwtYjcjXOX
+	tzmu2kfuVvY2TCxoKIyU3xaOSBidC9Mlxi9kr/DGFnZ+0xy+6HJPb4tCVw==
+X-Gm-Gg: ASbGncuVVTnvOBrfzRRanIE164kC0PK6CwMy4ukzwF0RfQhgRmKQLesmWncOedHus5L
+	RX9cZXxgL3cHCpivPCX2gA5Wyfwpjf6lRSyjZsrdNKSDNfvuDBBK6Cpey5K8iK0z1OyjCG8bvwy
+	7KYn6urm31r3yrNNemrfAVuhzHRT863xbHwPZ7+I9/qRB/cBMrkLKE4QiS6hYae1JY1Lo2AXo4N
+	2dDrVMfukZL6JREeD5DfLa5MYRI00LI/Wz6BiN8Yi5PR23fZHmY4k1jtHnFHbG1aGThNh531HT6
+	k+JB+PiJn21as914bgsMLp5vp4bpznt4
+X-Google-Smtp-Source: AGHT+IFYDxKMBWIGzBC4CKcYNP3rqPlnMH3TYElMbnrF8utngO3Q5U/WETtPDhdVpn1KtZoWtTyV2w==
+X-Received: by 2002:a17:907:60d3:b0:ac3:1763:cc32 with SMTP id a640c23a62f3a-ac330272de0mr357638566b.29.1741975188697;
+        Fri, 14 Mar 2025 10:59:48 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3149d0b4csm252667166b.122.2025.03.14.10.59.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 10:58:26 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	Rob Clark <robdclark@chromium.org>,
-	Connor Abbott <cwabbott0@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jordan Crouse <jordan@cosmicpenguin.net>,
-	Jonathan Marek <jonathan@marek.ca>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/msm/a6xx+: Don't let IB_SIZE overflow
-Date: Fri, 14 Mar 2025 10:58:19 -0700
-Message-ID: <20250314175820.112340-1-robdclark@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        Fri, 14 Mar 2025 10:59:48 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net-next 0/6] netconsole: Add support for userdata release
+Date: Fri, 14 Mar 2025 10:58:44 -0700
+Message-Id: <20250314-netcons_release-v1-0-07979c4b86af@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFVu1GcC/x3MUQqDMBAFwKss79tAYpVCrlJKCfHFBspasqEI4
+ t2FzgHmgLFVGqIcaPxVq5siShgE+Z10pasLomD04+xvYXLKnje1V+OHyeiWHEooc06+3DEIvo2
+ l7v/xAWV3yr3jeZ4XrJYGqmsAAAA=
+X-Change-ID: 20250314-netcons_release-dc1f1f5ca0f7
+To: Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Manu Bretelle <chantr4@gmail.com>, kernel-team@meta.com
+X-Mailer: b4 0.15-dev-42535
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2231; i=leitao@debian.org;
+ h=from:subject:message-id; bh=z+hyA79TBor9nfo/BG+geJXkAW0YDbn3zU9dqjRz9+g=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBn1G6S4a+zwK4lGwwA+aGwJjrXmT2MwHOv+zZrA
+ bYT+jmp9b6JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ9RukgAKCRA1o5Of/Hh3
+ bWu6D/wJxlbJLBPQE4vG6FDiDWy6obPrTsCZczJVm5bojuSYwD/uo7BNVU/twjlWGYrinGY/Kwk
+ LP4y9m3lS0T2C+241+BXHobAoJVxelun1i6bt1MTJ29cAoeEmwN38buPBmoIKJnYOz9UCPn9ZLF
+ cEm3VEJzIH6iCdHwlP7qjbLT30Hdcqugqbt5OrWHcyDT+yK+ZrPh2leNq81EWGdFZB+meJO/RWW
+ NduRUCalj9CM0v9jlR/u6gHuNs/aTr+Qf2pievPpT+j5H0N1XJtLg8xbB832HFtcTwcHOhb2umh
+ vasUpsRTfBpnf/zHq+GLigb630wbsYh2oPsAuGQK6IVhJMown2OZnnfMq+bIquCqnYwb5WeiKhs
+ 6Zmoq4W1sBpbhcPKxIxzkEcK9PGMETzTeVkHAYwCluISQ6HV0DiQ8p34n1hj8p5d/qVhnZwy6nG
+ F5FLD1oIGeNyaNUTRBSF8/RMrPicu5PzhoBy8J3xAq2IjeApfEvZz+uDJDUoahC/7KJNXn9Smga
+ nRPWVI2ywynhiTgQWSiZEzznfbRu2y/v5GeK0MYBKc5HXvoltJlOhLdjISnVie7x4CjY6i+boZi
+ x5PXvkWjvVeIMsQOtgitg+ICE48M6IcxelWdnaG6PXaIrskv0Et6N8cqnxMX+++jtlFy6DarKsg
+ MrEVh2FsQIwuKJA==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-From: Rob Clark <robdclark@chromium.org>
+I am submitting a series of patches that introduce a new feature for the
+netconsole subsystem, specifically the addition of the 'release' field
+to the sysdata structure. This feature allows the kernel release/version
+to be appended to the userdata dictionary in every message sent,
+enhancing the information available for debugging and monitoring
+purposes.
 
-IB_SIZE is only b0..b19.  Starting with a6xx gen3, additional fields
-were added above the IB_SIZE.  Accidentially setting them can cause
-badness.  Fix this by properly defining the CP_INDIRECT_BUFFER packet
-and using the generated builder macro to ensure unintended bits are not
-set.
+This complements the already supported release prepend feature, which
+was added some time ago. The release prepend appends the release
+information at the message header, which is not ideal for two reasons:
 
-Reported-by: Connor Abbott <cwabbott0@gmail.com>
-Fixes: a83366ef19ea ("drm/msm/a6xx: add A640/A650 to gpulist")
-Signed-off-by: Rob Clark <robdclark@chromium.org>
+ 1) It is difficult to determine if a message includes this information,
+    making it hard and resource-intensive to parse.
+
+ 2) When a message is fragmented, the release information is appended to
+    every message fragment, consuming valuable space in the packet.
+
+The "release prepend" feature was created before the concept of userdata
+and sysdata. Now that this format has proven successful, we are
+implementing the release feature as part of this enhanced structure.
+
+This patch series aims to improve the netconsole subsystem by providing
+a more efficient and user-friendly way to include kernel release
+information in messages. I believe these changes will significantly aid
+in system analysis and troubleshooting.
+
+Suggested-by: Manu Bretelle <chantr4@gmail.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+
 ---
-Backport notes, prior to commit ae22a94997b8 ("drm/msm: import A2xx-A4xx
-XML display registers database"), just open code, ie:
+Breno Leitao (6):
+      netconsole: introduce 'release' as a new sysdata field
+      netconsole: implement configfs for release_enabled
+      netconsole: add 'sysdata' suffix to related functions
+      netconsole: append release to sysdata
+      selftests: netconsole: Add tests for 'release' feature in sysdata
+      docs: netconsole: document release feature
 
-   OUT_RING(ring, submit->cmd[i].size & 0xfffff);
+ Documentation/networking/netconsole.rst            | 25 ++++++++
+ drivers/net/netconsole.c                           | 71 ++++++++++++++++++++--
+ .../selftests/drivers/net/netcons_sysdata.sh       | 44 +++++++++++++-
+ 3 files changed, 133 insertions(+), 7 deletions(-)
+---
+base-commit: 941defcea7e11ad7ff8f0d4856716dd637d757dd
+change-id: 20250314-netcons_release-dc1f1f5ca0f7
 
-Prior to commit af66706accdf ("drm/msm/a6xx: Add skeleton A7xx
-support"), a7xx_submit() did not exist so that hunk can be dropped.
-
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c               | 8 ++++----
- drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml | 7 +++++++
- 2 files changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-index d3978cfa3f20..ea52b7d0b212 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-@@ -245,10 +245,10 @@ static void a6xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
- 				break;
- 			fallthrough;
- 		case MSM_SUBMIT_CMD_BUF:
--			OUT_PKT7(ring, CP_INDIRECT_BUFFER_PFE, 3);
-+			OUT_PKT7(ring, CP_INDIRECT_BUFFER, 3);
- 			OUT_RING(ring, lower_32_bits(submit->cmd[i].iova));
- 			OUT_RING(ring, upper_32_bits(submit->cmd[i].iova));
--			OUT_RING(ring, submit->cmd[i].size);
-+			OUT_RING(ring, A5XX_CP_INDIRECT_BUFFER_3_IB_SIZE(submit->cmd[i].size));
- 			ibs++;
- 			break;
- 		}
-@@ -382,10 +382,10 @@ static void a7xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
- 				break;
- 			fallthrough;
- 		case MSM_SUBMIT_CMD_BUF:
--			OUT_PKT7(ring, CP_INDIRECT_BUFFER_PFE, 3);
-+			OUT_PKT7(ring, CP_INDIRECT_BUFFER, 3);
- 			OUT_RING(ring, lower_32_bits(submit->cmd[i].iova));
- 			OUT_RING(ring, upper_32_bits(submit->cmd[i].iova));
--			OUT_RING(ring, submit->cmd[i].size);
-+			OUT_RING(ring, A5XX_CP_INDIRECT_BUFFER_3_IB_SIZE(submit->cmd[i].size));
- 			ibs++;
- 			break;
- 		}
-diff --git a/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml b/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
-index 55a35182858c..16848259af51 100644
---- a/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
-+++ b/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
-@@ -2259,5 +2259,12 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
- 	</reg32>
- </domain>
- 
-+<domain name="CP_INDIRECT_BUFFER" width="32" varset="chip" prefix="chip" variants="A5XX-">
-+	<reg64 offset="0" name="IB_BASE"/>
-+	<reg32 offset="3" name="3">
-+		<bitfield name="IB_SIZE" low="0" high="19"/>
-+	</reg32>
-+</domain>
-+
- </database>
- 
+Best regards,
 -- 
-2.48.1
+Breno Leitao <leitao@debian.org>
 
 
