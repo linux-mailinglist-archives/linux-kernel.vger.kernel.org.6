@@ -1,90 +1,164 @@
-Return-Path: <linux-kernel+bounces-561550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA1FA61363
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:11:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20429A61369
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:13:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F331B16E6C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:11:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 715863BFD4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E73200B9F;
-	Fri, 14 Mar 2025 14:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D7C200108;
+	Fri, 14 Mar 2025 14:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="xFzPl6eV"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSVc8Z0R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81B21EB3E;
-	Fri, 14 Mar 2025 14:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68581EB3E;
+	Fri, 14 Mar 2025 14:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741961481; cv=none; b=qY9n4qWll5SL2KZ00om+x2S83gN8TAWItq5eh9N99fMw4sqMvSLCvLf8QZ6t94npEoUUMHLVg7w7IzffnhhPzozbwmBmiSwSF/7deGdEsHs0k2BwlDOzBbIgXUIVRVvHKOXMx2xC1LGZVu5GfrsL3iLu6Uh26SJ8FFpKr+5OikQ=
+	t=1741961586; cv=none; b=Y3z4s5863nE8mdqi72D02q8QYskhG6g6rWACV3motPw7vBt3tqoeoaNVmYtmyq0W9YXWGpLhfV0xnWSn3OS9D9mDMdCpemhv9B3RTq5iJZWdQmKWViQtjMMsQDC9tDQpYqMAq+Z8q16DKaaHMy6Wivgb572fM8J/P1OY7Siwp8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741961481; c=relaxed/simple;
-	bh=CPBTHkqPzfVpKzNFgNPoisYMyOv0IqONQ41uCQM5qjY=;
+	s=arc-20240116; t=1741961586; c=relaxed/simple;
+	bh=tv2/YZah4h5uni5BO770OWJaT6m0SKAE40mTAbHFDK8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q74cqTtHFXPfMghqZX+4ralYk/FeYq90qUrwBOPUKh+ken+ZNv0MXqpHqMMAvde0trHKQphdCsnGG7Wcxva44MQiSdi6HTTRz0W1+fCvpBmVkSboH8Fl6ftOFBFd6DFviQeabBsOoyaLuzQLsFHcS4amxlmeCzXVRJVUfP5JGvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=xFzPl6eV; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 8F7DB1F93A;
-	Fri, 14 Mar 2025 15:11:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1741961475;
-	bh=HsRFrggS6kqtvPWhfFvFAXCpmID8ibMboUcQ9J3zcys=;
-	h=Received:From:To:Subject;
-	b=xFzPl6eVh2TOJXz8G8hYw1ipGkmfc9k9ecY9ayNFP84AU6PMy6ywJmyREEhnBp/yE
-	 suRuIDZu0HPv92vmu5BXFsw3NdmOWsZ9sO5PYiNcXG6NvcKMo3zsrFQdsF9oYatdv0
-	 kFhclZyEmj7sLpIYfzk3nifhmk3TcWy1cbPVQVd3cc2CbpIYI10NYJaaLm5ZSTEn5e
-	 /74mxX0rE98cxNtkrnEmiClvvKiATOurlXmrL3x/z8fPpscuR4RrF3KcplHkz8hwV5
-	 QLluNFIlHJCH9ixZ27GfZxkL+A64APTUjX2YXIZP14eJW6LF80ZyAfM6GU4g9sxfAf
-	 Zh+1aUnAoPMAw==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id 3EDA87FA28; Fri, 14 Mar 2025 15:11:15 +0100 (CET)
-Date: Fri, 14 Mar 2025 15:11:15 +0100
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Jeff Chen <jeff.chen_1@nxp.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	briannorris@chromium.org, johannes@sipsolutions.net,
-	francesco@dolcini.it, tsung-hsien.hsieh@nxp.com,
-	s.hauer@pengutronix.de
-Subject: Re: [PATCH v3] wifi: mwifiex: Fix HT40 bandwidth issue.
-Message-ID: <Z9Q5Ay9lZPA4OC6n@gaggiata.pivistrello.it>
-References: <20250314094238.2097341-1-jeff.chen_1@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=h5QCBMB2eYuwrLGOKjsyoOyl407YEhWzzxpyoyOe8168kDz3c+BEKwLhU8gTGwl8TmffMnDv4rCoQmvoymRSLOrrSAe9Pl9yMiq55qMBu38EGI+bILM6rGuy3gUQw1+22PHI/OMoN4tZYrdaqGiyr95L3UWAACpz225DoHLSdbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSVc8Z0R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FF65C4CEEB;
+	Fri, 14 Mar 2025 14:13:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741961585;
+	bh=tv2/YZah4h5uni5BO770OWJaT6m0SKAE40mTAbHFDK8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bSVc8Z0Rd/kqWGnja6etUX9psQ//jkPbBPi5VFuqeb3fzEcVnv9bYDxkZ/CVIPWjA
+	 CFubRNPB3fR/NoOuo2eJFnnaHZEum+j16m2AtWUC9y7z1bLFs7r7lzRbmSajYPFo5E
+	 YBDc5u3AonaRPHHEedANJBfUPh/yh13vxcmjyezAxsrIb0E/mPrtCROdYxdNNi5ecJ
+	 hbDMsq1imjI4l/ovJArcqKVtoRpYub0w6zTsIcOp5QRn+PDLwnUwNSdoVKey3EGgDG
+	 m1XmteKVCOsgRlLFt8/dCTKFyV/pJBTHf9PgcX4aFOo4ag8VFaSZzqoPRdpD4bcPsq
+	 CK0xQY4GHyPuA==
+Date: Fri, 14 Mar 2025 14:13:00 +0000
+From: Lee Jones <lee@kernel.org>
+To: Matthias Fend <matthias.fend@emfend.at>
+Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bsp-development.geo@leica-geosystems.com
+Subject: Re: [PATCH 2/2] leds: tps6131x: add support for Texas Instruments
+ TPS6131X flash LED driver
+Message-ID: <20250314141300.GR3890718@google.com>
+References: <20250228-leds-tps6131x-v1-0-d1071d90f9ea@emfend.at>
+ <20250228-leds-tps6131x-v1-2-d1071d90f9ea@emfend.at>
+ <20250310144946.GH8350@google.com>
+ <def0351b-c037-47c8-b395-d64cfca7ae25@emfend.at>
+ <20250314105257.GD3890718@google.com>
+ <8a16c018-8466-4dea-8f1e-e8a65e3ed950@emfend.at>
+ <20250314114551.GL3890718@google.com>
+ <7f9b920f-1851-4ebe-9054-d32de79d3678@emfend.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250314094238.2097341-1-jeff.chen_1@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7f9b920f-1851-4ebe-9054-d32de79d3678@emfend.at>
 
-Hello Jeff,
-for future patches, please be sure to have a changelog after the ---
-at the end of the commit message.
+On Fri, 14 Mar 2025, Matthias Fend wrote:
 
-See
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#commentary
-
-and in general that whole document.
-
-
-On Fri, Mar 14, 2025 at 05:42:38PM +0800, Jeff Chen wrote:
-> This patch addresses an issue where, despite the AP supporting 40MHz
-> bandwidth, the connection was limited to 20MHz. Without this fix,
-> even if the access point supports 40MHz, the bandwidth after
-> connection remains at 20MHz. This issue is not a regression.
+> Hi Lee,
 > 
-> Signed-off-by: Jeff Chen <jeff.chen_1@nxp.com>
+> Am 14.03.2025 um 12:45 schrieb Lee Jones:
+> > On Fri, 14 Mar 2025, Matthias Fend wrote:
+> > 
+> > > Hi Lee,
+> > > 
+> > > Am 14.03.2025 um 11:52 schrieb Lee Jones:
+> > > > On Fri, 14 Mar 2025, Matthias Fend wrote:
+> > > > 
+> > > > > Hi Lee,
+> > > > > 
+> > > > > thanks a lot for your feedback!
+> > > > > 
+> > > > > Am 10.03.2025 um 15:49 schrieb Lee Jones:
+> > > > > > On Fri, 28 Feb 2025, Matthias Fend wrote:
+> > > > > > 
+> > > > > > > The TPS61310/TPS61311 is a flash LED driver with I2C interface. Its power
+> > > > > > > stage is capable of supplying a maximum total current of roughly 1500mA.
+> > > > > > > The TPS6131x provides three constant-current sinks, capable of sinking up
+> > > > > > > to 2 × 400mA (LED1 and LED3) and 800mA (LED2) in flash mode. In torch mode
+> > > > > > > each sink (LED1, LED2, LED3) supports currents up to 175mA.
+> > > > > > > 
+> > > > > > > Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+> > > > > > > ---
+> > > > > > >     MAINTAINERS                        |   7 +
+> > > > > > >     drivers/leds/flash/Kconfig         |  11 +
+> > > > > > >     drivers/leds/flash/Makefile        |   1 +
+> > > > > > >     drivers/leds/flash/leds-tps6131x.c | 798 +++++++++++++++++++++++++++++++++++++
+> > > > > > >     4 files changed, 817 insertions(+)
+> > 
+> > [...]
+> > 
+> > > > > > > +static int tps6131x_flash_external_strobe_set(struct v4l2_flash *v4l2_flash, bool enable)
+> > > > > > > +{
+> > > > > > > +	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
+> > > > > > > +	struct tps6131x *tps6131x = fled_cdev_to_tps6131x(fled_cdev);
+> > > > > > > +
+> > > > > > > +	guard(mutex)(&tps6131x->lock);
+> > > > > > > +
+> > > > > > /> +	return tps6131x_set_mode(tps6131x, enable ? TPS6131X_MODE_FLASH : TPS6131X_MODE_SHUTDOWN,
+> > > > > > > +				 false);
+> > > > > > > +}
+> > > > > > > +
+> > > > > > > +static const struct v4l2_flash_ops tps6131x_v4l2_flash_ops = {
+> > > > > > > +	.external_strobe_set = tps6131x_flash_external_strobe_set,
+> > > > > > > +};
+> > > > > > > +
+> > > > > > > +static int tps6131x_v4l2_setup(struct tps6131x *tps6131x)
+> > > > > > > +{
+> > > > > > > +	struct v4l2_flash_config v4l2_cfg = { 0 };
+> > > > > > > +	struct led_flash_setting *intensity = &v4l2_cfg.intensity;
+> > > > > > > +
+> > > > > > > +	intensity->min = tps6131x->step_torch_current_ma;
+> > > > > > > +	intensity->max = tps6131x->max_torch_current_ma;
+> > > > > > > +	intensity->step = tps6131x->step_torch_current_ma;
+> > > > > > > +	intensity->val = intensity->min;
+> > > > > > > +
+> > > > > > > +	strscpy(v4l2_cfg.dev_name, tps6131x->fled_cdev.led_cdev.dev->kobj.name,
+> > > > > > 
+> > > > > > tps6131x->client->dev?
+> > > > > 
+> > > > > Do you mean the name should be taken from the I2C device?
+> > > > > The current name, for example, is 'white:flash-0', while the I2C device name
+> > > > > would be '4-0033'. So I think the current version is appropriate, don't you
+> > > > > think?
+> > > > 
+> > > > No, I'm implying that:
+> > > > 
+> > > >     tps6131x->client->dev == tps6131x->fled_cdev.led_cdev.dev
+> > > > 
+> > > > ... and that the former is shorter / neater.
+> > > 
+> > > Hmm. That's interesting. I thought these were two different devices, which
+> > > seems to be actually the case for me. Hence the different names in the kobj.
+> > > Are the devices really supposed to be identical?
+> > 
+> > Interesting.  What are their names?
+> 
+> tps6131x->fled_cdev.led_cdev.dev: 'white:flash-0'
+> tps6131x->client->dev: '4-0033'
 
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+Presumably this is an I2C address?  What a helpful device name!
 
-Francesco
+Okay, seeing as they are both clearly different, I think you are
+correct.  Scrap this review comment.
 
+-- 
+Lee Jones [李琼斯]
 
