@@ -1,77 +1,84 @@
-Return-Path: <linux-kernel+bounces-560650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026F7A607B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 04:20:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C4AA607B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 04:21:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58C0D3BF657
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:20:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAC4719C22F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5303A8F7;
-	Fri, 14 Mar 2025 03:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264985103F;
+	Fri, 14 Mar 2025 03:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z15e7nmM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="nDhmY6je"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420715223;
-	Fri, 14 Mar 2025 03:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971BE5223
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741922438; cv=none; b=SVNbBU1nz93WV9mATiNQPgmpGLCjI2DgQw2iYFvRcUF4ksR3+96Nrsw4UjPOrQVXC5GDNAsoSP7ZyI/MdvI4z7Z6nOhXckrrh16n6knJ8yTezuBjKGMP3h+1+lzYadYM8ilsU6+tVzaObHOoiIjcpebM7Nd041LKPgexVc2dWrY=
+	t=1741922477; cv=none; b=cyiz/qLMmOgutTyuQzZSwkW9o+/Plxf3ePJ+te6RDqujp8QjZeCt5EY4Lt5yDPXrTNGcSayjvHuwU1dYUehvpGHwG3HXxDjhebxVsK3Jyawb9U05vBphXSeuK2VVD5/CGrNU45RiIQqw4Q1NLm310VM5ALTD5Pi96+339EMbrpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741922438; c=relaxed/simple;
-	bh=OcG9u49WrKu3JlX28UJO1gB2f62enMW3n6sc0munZoE=;
+	s=arc-20240116; t=1741922477; c=relaxed/simple;
+	bh=67Uwgi/9ZaKiD9tZ6e7rc7nRTP+h6eU43DGvE0C2P6k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aXnCAWAhRWM1+G8CiY83ZNEkn8O1b5NdiiQ8d6++gbif/DBEKM1yP2xkIWoi91GXo9Z29AL2vWJ3/yd4LisE0IpEJJyaqViqmh3uBkLtGEJ2Ry4zvmoxvV7QCNznslRLN3FHI5Kqt6NLqZXyZCoAk75aIqcdhizsirBP05eovSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z15e7nmM; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741922437; x=1773458437;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OcG9u49WrKu3JlX28UJO1gB2f62enMW3n6sc0munZoE=;
-  b=Z15e7nmMLfnB6Tu9Xr3vqvLV0QEzCLmaQqnhxQmuNJPvk9rA66Sg/nSv
-   F4pQS//JKsUhRq7SKsA/VIjHaEkL0oipqA+Qqdteh2JOjHNWrjUWxfy8X
-   XQxKcZBU1mbs+Ryvb01YwIaxWHk68+JaalSyZw9vTcF1f+opauEOUQ4YD
-   JSyx0rAI8p77vjRXsgUsUfGMHkfEZLvnpb/yvcTY3E61nEy4KSCGgDAMD
-   o3YCwCqTBdcyMmzITxlPgOp4sevGGHYn2nyQ8EWN3D0AbjeLKzTLaT/LR
-   wFydZun4s/1Q9EMso/lJm2gj5xHNoieGrDfvQN+WHNJ/qCBk5XuiZvpNS
-   w==;
-X-CSE-ConnectionGUID: 9h++I4T9SCq0ca7Yz0g+Gw==
-X-CSE-MsgGUID: t+g1lpg5Rfyhpukr7KH99g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="53718421"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="53718421"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 20:20:35 -0700
-X-CSE-ConnectionGUID: e2cBkMs/RJKiQnEtDpUZ4A==
-X-CSE-MsgGUID: z/YrGz/2Q5e85hZjXd2VEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="126184273"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 13 Mar 2025 20:20:33 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tsvb4-000A5o-21;
-	Fri, 14 Mar 2025 03:20:30 +0000
-Date: Fri, 14 Mar 2025 11:19:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Subu Dwevedi <messigoatcr7nop@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, Subu Dwevedi <messigoatcr7nop@gmail.com>,
-	Henrik Rydberg <rydberg@bitmath.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=CLuhR3gqmoWa7zTvzCp40kSCdS9KmnDnezyF4CBT39nPtT69J53IYC5nZxvN2alEUfzCGBd0O9oaLGQe7MzJvSt2g1f2jMJHPdDda4szGOA0e95Euqau6G3Rliwwp+2+lonvB3kFxmMt61mVN3pxccXP/qLbWmsNDTdpdCuicCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=nDhmY6je; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c0155af484so225264885a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 20:21:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1741922474; x=1742527274; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ux6CFNgIf3vTaeLtNojt06t4nFGVzH4j0lyfxDGjHY=;
+        b=nDhmY6jeguw3PnbP6XoKDBjyQ6FNOwd0HDsB/3Z5NVM7BkXJioM2s0bVA+zcYDIzX9
+         ISleOeU/kBohNSH3VZA7nBa1TRHiv/W2crSdwfdb6khwF7QuYg9UY/jg/XVwE+aGKaxb
+         y5K08cw1pa/drCUI/1NYkb9AK3PEBGXuZkWKoo0t7HZGZfTE7N8BKU1dkEWThSn+GLq+
+         759evI62N0LEngsU7t17VB3SGzCb5L3sH4fzz8g6thFTXqvY0smzVgoiTJil/YwE35XR
+         RsB47G8BXOCtCIVNfNrEybQMuYm468KPAPs9f147ijFyZ8H0M+B94cZClnYEvs+Pgaos
+         t4lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741922474; x=1742527274;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2ux6CFNgIf3vTaeLtNojt06t4nFGVzH4j0lyfxDGjHY=;
+        b=fG5FUMFAi9z61RG14wiENa/lyyFfBVpGyVq9I8iMZgZG54D1G49oLjNN+zDiKPw54L
+         W0yyzUYUj+BEUBgj3FYkHsFl4xk5uOQIyLQIZ7TBTd4MB3jc16RpSYvmxOWSAGTZRC69
+         cR8ekkY1L+RAwL6jWK9Ms3y821UObs8sdN9PqnJZiQCH4a5fp93jmFJhMawDIk0Zbu3Z
+         clNha2S+vcLEjg+syvPIFWBz4L+GhZO3fP26+31KyC2D+2KlZHhHcbpPr3/JRWtkt2TZ
+         6pJ0yO47ttSW4utHLvsUFlV/Q1Wh1NxWmmz5M/ewaTkaojE4dZNvzGuSbmFFV9xggVxQ
+         GUoA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/I7blaAsMF4w6jRatlRX8l+eZaQXHihPJV71+cK+NDXuEpAcyW994t5+tV6uORLXYUTJr5OR22SYloGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysEzX8cqCM0ST25jEq1iCJISymItmG4d8iMVKoos9MxbJLhifQ
+	6tXlQUq1EkXAuW53p5eUAtfa75TJ4XQkV3huTgeLuoY1ZdaXP56aAmxYJLpzrWU=
+X-Gm-Gg: ASbGnctgDxmOMiKKsbmX4G/vdnfJxeCBpoPFiVXg9TLy46QgupIJeNEGNnsPD9CG2qT
+	VLnZ7nB6OgLoKOdV41+Iv8Chj8gb6keDMaz6IlRPpOZh/o0Clqd1WhM3RtQDtEH6zfgE7olCwk8
+	WCAz1L/TNQlfPyP4c3PGf0MAOnlPaXqwPjCphZyc+YmFu2m0qtEZX4DDBGvab09qGydcpp3NrOR
+	dcAP9whJqUUisycE94v3mPQsKkDVDQj6jihj7T55oeWl3hDFflko+IXGFNtIRRi8GBesLOW5GYq
+	W3eu9suImRiL4PU8NeJum/A1hJRPQ4BRk9kcA/xIxba7t8tlhLKZSwEOZ1IxT3EiK7Uu5nIt400
+	FbcI/ZbQQH9J5Lf5/nO4Gbr4PLxo=
+X-Google-Smtp-Source: AGHT+IF1asb2m4Q7VP1ePD104ALa7KxEpSasJCIfnfDaTFg+XuwdvZgE3PbHIFrHXhS0rPd+wUtwWg==
+X-Received: by 2002:a05:620a:1920:b0:7c5:405e:e88f with SMTP id af79cd13be357-7c57c7d6cf6mr122564685a.21.1741922474195;
+        Thu, 13 Mar 2025 20:21:14 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573c98225sm186000785a.49.2025.03.13.20.21.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 20:21:13 -0700 (PDT)
+Date: Thu, 13 Mar 2025 23:21:11 -0400
+From: Gregory Price <gourry@gourry.net>
+To: lsf-pc@lists.linux-foundation.org
+Cc: linux-mm@kvack.org, linux-cxl@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] hwmon/applesmc: add MMIO for newer macs
-Message-ID: <202503141052.v7b9psFM-lkp@intel.com>
-References: <20250312123055.1735-2-messigoatcr7nop@gmail.com>
+Subject: [LSF/MM] CXL Boot to Bash - Section 6: Page allocation
+Message-ID: <Z9Ogp9fCEPoORfnh@gourry-fedora-PF4VCD3F>
+References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,259 +87,586 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250312123055.1735-2-messigoatcr7nop@gmail.com>
+In-Reply-To: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
 
-Hi Subu,
 
-kernel test robot noticed the following build warnings:
+Of course, the whole purpose of using CXL memory is to allocate it.
 
-[auto build test WARNING on groeck-staging/hwmon-next]
-[also build test WARNING on linus/master v6.14-rc6 next-20250313]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+So lets talk about a real use case!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Subu-Dwevedi/hwmon-applesmc-add-MMIO-for-newer-macs/20250312-203248
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
-patch link:    https://lore.kernel.org/r/20250312123055.1735-2-messigoatcr7nop%40gmail.com
-patch subject: [PATCH 1/2] hwmon/applesmc: add MMIO for newer macs
-config: x86_64-randconfig-122-20250313 (https://download.01.org/0day-ci/archive/20250314/202503141052.v7b9psFM-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250314/202503141052.v7b9psFM-lkp@intel.com/reproduce)
+   char* a_page = malloc(4096);
+   a_page[0] = '\x42'; /* Page fault and allocation occurs */
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503141052.v7b9psFM-lkp@intel.com/
+Congrats, you may or may not have allocated CXL memory!
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/hwmon/applesmc.c:257:31: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:257:31: sparse:     expected void const [noderef] __iomem *
-   drivers/hwmon/applesmc.c:257:31: sparse:     got unsigned char [usertype] *
->> drivers/hwmon/applesmc.c:258:46: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:258:46: sparse:     expected void [noderef] __iomem *
-   drivers/hwmon/applesmc.c:258:46: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:269:44: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:269:44: sparse:     expected void const [noderef] __iomem *
-   drivers/hwmon/applesmc.c:269:44: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:281:44: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:281:44: sparse:     expected void [noderef] __iomem *
-   drivers/hwmon/applesmc.c:281:44: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:282:34: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:282:34: sparse:     expected void [noderef] __iomem *
-   drivers/hwmon/applesmc.c:282:34: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:283:33: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:283:33: sparse:     expected void [noderef] __iomem *
-   drivers/hwmon/applesmc.c:283:33: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:288:31: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:288:31: sparse:     expected void const [noderef] __iomem *
-   drivers/hwmon/applesmc.c:288:31: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:292:39: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:292:39: sparse:     expected void const [noderef] __iomem *
-   drivers/hwmon/applesmc.c:292:39: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:299:71: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:299:71: sparse:     expected void const [noderef] __iomem *
-   drivers/hwmon/applesmc.c:299:71: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:302:81: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:302:81: sparse:     expected void const [noderef] __iomem *
-   drivers/hwmon/applesmc.c:302:81: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:306:73: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:306:73: sparse:     expected void const [noderef] __iomem *
-   drivers/hwmon/applesmc.c:306:73: sparse:     got unsigned char [usertype] *
->> drivers/hwmon/applesmc.c:311:49: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const volatile [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:311:49: sparse:     expected void const volatile [noderef] __iomem *
-   drivers/hwmon/applesmc.c:311:49: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:320:44: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:320:44: sparse:     expected void [noderef] __iomem *
-   drivers/hwmon/applesmc.c:320:44: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:324:63: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:324:63: sparse:     expected void [noderef] __iomem *
-   drivers/hwmon/applesmc.c:324:63: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:327:73: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:327:73: sparse:     expected void [noderef] __iomem *
-   drivers/hwmon/applesmc.c:327:73: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:331:65: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:331:65: sparse:     expected void [noderef] __iomem *
-   drivers/hwmon/applesmc.c:331:65: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:335:33: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:335:33: sparse:     expected void [noderef] __iomem *
-   drivers/hwmon/applesmc.c:335:33: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:336:34: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:336:34: sparse:     expected void [noderef] __iomem *
-   drivers/hwmon/applesmc.c:336:34: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:337:33: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:337:33: sparse:     expected void [noderef] __iomem *
-   drivers/hwmon/applesmc.c:337:33: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:341:31: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:341:31: sparse:     expected void const [noderef] __iomem *
-   drivers/hwmon/applesmc.c:341:31: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:510:52: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:510:52: sparse:     expected void [noderef] __iomem *
-   drivers/hwmon/applesmc.c:510:52: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:511:39: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:511:39: sparse:     expected void [noderef] __iomem *
-   drivers/hwmon/applesmc.c:511:39: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:512:63: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:512:63: sparse:     expected void [noderef] __iomem *
-   drivers/hwmon/applesmc.c:512:63: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:517:41: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:517:41: sparse:     expected void const [noderef] __iomem *
-   drivers/hwmon/applesmc.c:517:41: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:521:58: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:521:58: sparse:     expected void const [noderef] __iomem *
-   drivers/hwmon/applesmc.c:521:58: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:522:48: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:522:48: sparse:     expected void const [noderef] __iomem *
-   drivers/hwmon/applesmc.c:522:48: sparse:     got unsigned char [usertype] *
-   drivers/hwmon/applesmc.c:523:50: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:523:50: sparse:     expected void const [noderef] __iomem *
-   drivers/hwmon/applesmc.c:523:50: sparse:     got unsigned char [usertype] *
->> drivers/hwmon/applesmc.c:740:19: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected unsigned char [usertype] *static [noderef] [toplevel] __iomem mmio_base @@     got void [noderef] __iomem * @@
-   drivers/hwmon/applesmc.c:740:19: sparse:     expected unsigned char [usertype] *static [noderef] [toplevel] __iomem mmio_base
-   drivers/hwmon/applesmc.c:740:19: sparse:     got void [noderef] __iomem *
-   drivers/hwmon/applesmc.c:745:31: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const [noderef] __iomem * @@     got unsigned char [usertype] * @@
-   drivers/hwmon/applesmc.c:745:31: sparse:     expected void const [noderef] __iomem *
-   drivers/hwmon/applesmc.c:745:31: sparse:     got unsigned char [usertype] *
->> drivers/hwmon/applesmc.c:757:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got unsigned char [usertype] *static [noderef] [toplevel] __iomem mmio_base @@
-   drivers/hwmon/applesmc.c:757:17: sparse:     expected void volatile [noderef] __iomem *addr
-   drivers/hwmon/applesmc.c:757:17: sparse:     got unsigned char [usertype] *static [noderef] [toplevel] __iomem mmio_base
-   drivers/hwmon/applesmc.c:1611:25: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got unsigned char [usertype] *static [noderef] [toplevel] __iomem mmio_base @@
-   drivers/hwmon/applesmc.c:1611:25: sparse:     expected void volatile [noderef] __iomem *addr
-   drivers/hwmon/applesmc.c:1611:25: sparse:     got unsigned char [usertype] *static [noderef] [toplevel] __iomem mmio_base
->> drivers/hwmon/applesmc.c:257:21: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:258:36: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:269:34: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:281:34: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:282:24: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:283:23: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:288:21: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:292:29: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:299:61: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:302:71: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:306:63: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:311:39: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:320:34: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:324:53: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:327:63: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:331:55: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:335:23: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:336:24: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:337:23: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:341:21: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:510:42: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:511:29: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:512:53: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:517:31: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:521:48: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:522:38: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:523:40: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:742:14: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:745:21: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:757:17: sparse: sparse: dereference of noderef expression
-   drivers/hwmon/applesmc.c:1611:25: sparse: sparse: dereference of noderef expression
+Fin.
 
-vim +257 drivers/hwmon/applesmc.c
+-----------------------------------------------------------------------
 
-   250	
-   251	/*
-   252	 * MMIO Impliementation
-   253	 */
-   254	
-   255	static void clearArbitration(void)
-   256	{
- > 257		if (ioread8(mmio_base + 0x4005))
- > 258			return iowrite8(0, mmio_base + 0x4005);
-   259	}
-   260	static int waitForKeyDone(void)
-   261	{
-   262		int i = 1000; //millisecounds
-   263		u8 status;
-   264	
-   265		while (i) {
-   266			msleep(1);
-   267			i--;
-   268	
-   269			status = ioread8(mmio_base + 0x4005);
-   270			if (status & 0x20)
-   271				return 0;
-   272		}
-   273	
-   274		return -EIO;
-   275	}
-   276	static int mmio_read_smc(u8 cmd, const char *key, u8 *buffer, u64 len)
-   277	{
-   278		u8 i, u = 0;
-   279	
-   280		clearArbitration();
-   281		iowrite32(*((u32 *)key), mmio_base + 0x78);
-   282		iowrite8(0x15, mmio_base + 0x7E);
-   283		iowrite8(cmd, mmio_base + 0x7F);
-   284	
-   285		if (waitForKeyDone())
-   286			return -EIO;
-   287	
-   288		i = ioread8(mmio_base + 0x7F);
-   289		if (i)
-   290			return -EIO;
-   291		if (cmd == APPLESMC_READ_CMD) {
-   292			i = ioread8(mmio_base + 0x7D);
-   293			if (i > len || !i)
-   294				return -EIO;
-   295	
-   296			while (u < i) {
-   297				if ((i - u) < 4) {
-   298					if ((i - u) < 2) {
-   299						buffer[u] = ioread8(mmio_base + u);
-   300						u += 1;
-   301					} else {
-   302						*(u16 *)&buffer[u] = ioread16(mmio_base + u);
-   303						u += 2;
-   304					}
-   305				} else {
-   306					*(u32 *)&buffer[u] = ioread32(mmio_base + u);
-   307					u += 4;
-   308				}
-   309			}
-   310		} else
- > 311			memcpy_fromio(buffer, mmio_base + 0x0, len);
-   312	
-   313		return 0;
-   314	}
-   315	static int mmio_write_smc(u8 cmd, const char *key, const u8 *buffer, u8 len)
-   316	{
-   317		u8 i = 0;
-   318	
-   319		clearArbitration();
-   320		iowrite32(*((u32 *)key), mmio_base + 0x78);
-   321		while (i < len) {
-   322			if (len - i < 4) {
-   323				if (len - i < 2) {
-   324					iowrite8(buffer[i], mmio_base + i);
-   325					i += 1;
-   326				} else {
-   327					iowrite16(*(u16 *)&buffer[i], mmio_base + i);
-   328					i += 2;
-   329				}
-   330			} else {
-   331				iowrite32(*(u32 *)&buffer[i], mmio_base + i);
-   332				i += 4;
-   333			}
-   334		}
-   335		iowrite8(len, mmio_base + 0x7D);
-   336		iowrite8(0x15, mmio_base + 0x7E);
-   337		iowrite8(cmd, mmio_base + 0x7F);
-   338		if (waitForKeyDone())
-   339			return -EIO;
-   340	
-   341		i = ioread8(mmio_base + 0x7F);
-   342		if (i)
-   343			return -EIO;
-   344	
-   345		return 0;
-   346	}
-   347	
+Ok, in all seriousness, the intent is hopefully to make this whole thing
+as transparent as possible - but there's quite a bit of complexity in
+how this is done while keeping things reasonably performant.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+This section won't cover the general intricacies of how page allocation
+works in the kernel, for that I would recommend Lorenzo Stoaks' book:
+
+                   The Linux Memory Manager.
+
+Notably, however, much of the content of this book concerned with Nodes
+and Zones was written pre-CXL. For the sake of this section we'll focus
+on how additional nodes and tiers *affect* allocations - whatever their
+mechanism (faults, file access, explicit, etc).
+
+That means I expect you'll at least have a base level understand of
+virtual memory and allocation-on-fault behavior.  Most of what we're
+talking about here is reclaim and migration - not page faults.
+
+--------------------------------
+Nodes, Tiers, and Zones - Oh My!
+--------------------------------
+
+==========
+NUMA Nodes
+==========
+A NUMA node can *tacitly* be thought of as a "collection of homogeneous
+resources". This is a fancy way of saying "All the memory on a given
+node should have the same performance characteristics."
+
+As discussed in Sections 0 and 1, however, we saw how nodes are
+consturcted quite arbitrarily. All that truly matters is what your
+platform vendor has chosen to associate devices with "Proximity Domains"
+in the various ACPI tables.
+
+I'll stick with my moderately sane, and moderately wrong, definition.
+
+Lets consider a system with 2 sockets and 1 CXL device attached to a
+host bridge on each socket.
+
+```
+              socket-interconnect
+                       |
+    DRAM -- CPU0--------------CPU1 -- DRAM
+              |                 |
+            CXL0              CXL1
+```
+
+The "Locality" information for these devices is built in the ACPI SLIT
+(System Locality Information Table). 
+
+For example (caveat - fake!):
+```
+  Signature : "SLIT"    [System Locality Information Table]
+  ...
+    Localities : 0000000000000004
+  Locality   0 : 10 20 20 30
+  Locality   1 : 20 10 30 20
+  Locality   2 : FF FF 0A FF
+  Locality   3 : FF FF FF 0A
+```
+
+This is what shows up via the `numactl -H` command
+```
+$ numactl -H
+node distances:
+node     0    1    2    3
+   0:   16   32   32   48
+   1:   32   16   48   32
+   2:  255  255   16  255
+   3:  255  255  255   16
+
+       ^^^ 255 typically means a node can't initiate access... typically
+           i.e. "has no processors"
+```
+
+
+These "Locality" values are "Abstract Distances" - i.e. fancy lies from
+a black box piece of code that portends to describe something useful.
+
+You may think NUMA nodes have a clean topological relationship like so:
+```
+     node0--------------node1
+       |                  |
+     node2              node2
+```
+
+
+In reality, all Linux knows is that these are "relative distances".
+
+```
+  Node 0 distance from other nodes:
+      0->[1,2]->3
+  Node 1 distance from other nodes:
+      1->[0,3]->2
+```
+
+Why does this matter?
+
+Lets imagine a Node 0 CPU allocates a page, but Node 0 is out of memory.
+Which node should Node 0 fall back to allocate from?
+
+In our example above, nodes `[1,2]` seem like equally good options. In
+reality, the cross-socket interconnect will usually be classified as
+"closer" than a CXL device.
+
+You can expect the following to be more realistic.
+```
+  $ numactl -H
+  node distances:
+  node     0    1    2    3
+     0:   16   32   48   64
+     1:   32   16   64   48
+     2:  255  255   16  255
+     3:  255  255  255   16
+
+  Node 0 distance perspective:
+      0->1->2->3
+  Node 1 distance perspective
+      1->0->3->2
+```
+
+Which makes sense, because typically the cross-socket interconnect will
+be faster than a CXL link, and for Node0 to access Node3, it must cross
+both interconnects.
+
+`Memory Tiers`, however, are quite a bit different.
+
+
+=============
+Memory Tiers.
+=============
+Memory tiers collect all similar-performance devices into a single "Tier".
+
+These tiers can be inspected via sysfs:
+
+    [/sys/devices/virtual/memory_tiering/]# ls
+        memory_tier4  memory_tier961
+
+    [/sys/devices/virtual/memory_tiering/]# cat memory_tier4/nodelist
+        0-1
+
+    [/sys/devices/virtual/memory_tiering/]# cat memory_tier4/nodelist
+        2-3
+
+On our example 2-socket system, both sockets hosting local DRAM Would
+get lumped into the same tier, while both CXL devices would get lumped
+into the same tier (lets assume they have the same latency/bandwidth).
+
+```
+            memory_tier4--------------------
+           /            \                  |
+      node0              node1             |
+                                     memory_tier961
+                                    /            \
+                               node2              node3
+```
+
+This relationship, ostensibly, provides a quick and easy way to
+determine a rough performance-based relationship between nodes.
+This is, ostensibly, useful if you want to do memory tiering (demotion
+and/or promotion).  More on this in a bit.
+
+Tiers are created based on performance data - typically provided by the
+HMAT or CXL CDAT data.  The memory-tiers component treats
+socket-attached DRAM as the baseline, and generates its own abstract
+distance (different that the SLIT abstract distance!).
+
+```
+int mt_perf_to_adistance(struct access_coordinate *perf, int *adist)
+{
+... snip ...
+    /*
+     * The abstract distance of a memory node is in direct proportion to
+     * its memory latency (read + write) and inversely proportional to its
+     * memory bandwidth (read + write).  The abstract distance, memory
+     * latency, and memory bandwidth of the default DRAM nodes are used as
+     * the base.
+     */
+    *adist = MEMTIER_ADISTANCE_DRAM *
+            (perf->read_latency + perf->write_latency) /
+            (default_dram_perf.read_latency + default_dram_perf.write_latency) *
+            (default_dram_perf.read_bandwidth + default_dram_perf.write_bandwidth) /
+            (perf->read_bandwidth + perf->write_bandwidth);
+}
+```
+
+The memory-tier component also provides a demotion-target mechanism,
+which creates a recommended demotion-target based on a given node.
+
+```
+/**
+ * next_demotion_node() - Get the next node in the demotion path
+ * @node: The starting node to lookup the next node
+ *
+ * Return: node id for next memory node in the demotion path hierarchy
+ * from @node; NUMA_NO_NODE if @node is terminal.  This does not keep
+ * @node online or guarantee that it *continues* to be the next demotion
+ * target.
+ */
+int next_demotion_node(int node);
+```
+
+
+The node_demotion map uses... SLIT provided node abstract distances to
+determine the target!
+```
+/*
+ * node_demotion[] examples:
+ *
+ * Example 1:
+ *
+ * Node 0 & 1 are CPU + DRAM nodes, node 2 & 3 are PMEM nodes.
+ *
+ * node distances:
+ * node   0    1    2    3
+ *    0  10   20   30   40
+ *    1  20   10   40   30
+ *    2  30   40   10   40
+ *    3  40   30   40   10
+ *
+ * memory_tiers0 = 0-1
+ * memory_tiers1 = 2-3
+ *
+ * node_demotion[0].preferred = 2
+ * node_demotion[1].preferred = 3
+ * node_demotion[2].preferred = <empty>
+ * node_demotion[3].preferred = <empty>
+ * ...
+ * /
+```
+
+As of 03/13/2025, there is no `next_promotion_node()` counterpart to
+this function.  As we'll probably learn in a later section:
+
+    Promotion Is Hard. (TM)
+
+There is at least an interface to tell you whether a node is toptier:
+
+    bool node_is_toptier(int node);
+
+
+The grand total of interfaces you need to know for the remainder of
+this section are exactly:
+
+    next_demotion_node(int node)
+
+I may consider another section on Memory Tiering in the future, but
+this is sufficient for now.
+
+
+
+                     < unwarrated snark >
+"But Greg", you say, "it seems to me that memory-tiers as designed are
+of dubious value considering hardware interleave as described in
+Section 4 already combines multiple devices into a single node - and
+lumping remote nodes regardless of socket-relationship is at best
+misleading and at worst may actively cause performance regressions!"
+
+Very astute observation. Maybe we should rethink this component a bit.
+                    < / unwarranted snark >
+
+
+=============
+Memory Zones.
+=============
+In Section 3 (Memory Hotplug) we briefly discussed memory zones.  For
+the purpose of this section, all we need to know is how these zones
+impact allocation.  I will largely quote the Linux kernel docs here.
+
+```
+* ZONE_NORMAL is for normal memory that can be accessed by the kernel
+  all the time. DMA operations can be performed on pages in this zone
+  if the DMA devices support transfers to all addressable memory.
+
+  ZONE_NORMAL is always enabled.
+
+
+* ZONE_MOVABLE is for normal accessible memory, just like ZONE_NORMAL.
+
+  The difference is that the contents of most pages in ZONE_MOVABLE are
+  movable. That means that while virtual addresses of these pages do
+  not change, their content may move between different physical pages.
+
+
+```
+  
+  note: ZONE_NORMAL allocations MAY be movable.  ZONE_MOVABLE must be.
+        (for some definition of `must`, suspend disbelief for now)
+
+
+We generally don't want kernel resources incidentally finding themselves
+on CXL memory (a highly contended lock landing on far-memory by complete
+happenstance would by absolutely tragic).  However, there aren't many
+mechanism to prevent this from occurring.
+
+While the kernel may *explicitly* allocate ZONE_MOVABLE memory via
+special interfaces, a typical `kmalloc()` call will utilize ZONE_NORMAL
+memory, as most kernel allocations are not guaranteed to be movable.
+
+That means most kernel allocations, should they happen to land on a
+remote node, are *stuck there*. For most use cases, then, we will want
+CXL memory onlined into ZONE_MOVABLE, because we'd like the option to
+migrate memory off of these devices for a variety of reasons.
+
+The most obvious mechanism to prevent the kernel from using CXL memory
+is to online CXL memory in ZONE_MOVABLE.
+
+
+However, ZONE_MOVABLE isn't without drawbacks. For example...
+
+Gigantic (1GB) pages are not allocable from ZONE_MOVABLE.  Many
+hypervisors utilize Gigantic pages to limit TLB pressure.  That means,
+for now, VM use cases must pick between incidental kernel use, and
+Gigantic page use.
+
+This is all to say: Memory zone configuration affects your performance.
+
+
+
+
+----------------
+Page Allocation.
+----------------
+
+There are a variety of ways pages can be allocated, for this section
+we'll just focus on a plain old allocate-on-fault interaction.
+
+    char* page = malloc(4096);
+    page[0] = '\x42'; /* Page fault, kernel allocates a page */
+
+Assuming no special conditions (memory pressure, mempolicies, special
+prefetchers - whatever), the default allocation policy in linux is to
+allocate a page from the same node as the accessing CPU.
+
+So if, in our example, we are running on a node1 CPU and hit the above
+page fault, we'll allocate from the node1 DRAM.
+
+```
+  Default allocation policy:
+
+                           access
+                          /      \- allocation
+      DRAM -- CPU0------CPU1 -- DRAM
+                |         |
+                |         |
+              CXL0      CXL1
+```
+
+Simple and, dare I say, elegant - really.
+
+This is, of course, assuming, we have no special conditions - of which
+there are, of course, many.
+
+================
+Memory Pressure.
+================
+Lets assume DRAM on node1 is pressured, and there is insufficient
+headroom to allocate a page on node1.  What should we do?
+
+We have a few options.
+    1) Fall back to another node
+    2) Attempt to steal a physical page from someone else. ("reclaim")
+
+Lets assume reclaim doesn't exist for a moment.
+
+What node should fall back to?  One might assume we would consider
+attempting to allocate based on the NUMA node topology. 
+
+For example:
+```
+ * node distances:
+ * node   0    1    2    3
+ *    0  10   20   30   40
+ *    1  20   10   40   30
+ *    2  30   40   10   40
+ *    3  40   30   40   10
+```
+
+In this topology, Node1 would prefer allocating from Node0 as a
+secondary source, and subsequently fall back to Node3 and Node2 as
+those nodes become pressured.
+
+This is basically what happens.  But is that what we want?
+
+If a page is being allocated, it is almost by definition "hot", and
+so this has lead the kernel to conclude that - generally speaking - new
+allocations should be local unless explicitly requested otherwise.
+
+So instead, by default, we will start engaging the reclaim system.
+
+
+
+================================
+Reclaim - LRU, Zones, and Nodes.
+================================
+In the scenario where memory is pressured and reclaim is in use, Linux
+will go through a variety of phases to based on watermarks (Min, Low,
+High memory availability).   These watermarks are used to determine
+when reclaim should run and when the system should block further
+allocations to ensure the kernel has sufficient headroom to make
+forward progress.
+
+An allocation may cause a kernel daemon to start moving pages through
+the LRU (least-recently-used) mechanism, or it may cause the task
+itself to engage in the process.
+
+The reclaim system may choose to swap pages to disk or to demote pages
+from the local node to a remote node.
+
+The key piece here is understanding the main LRU types and their
+relationship to zones and nodes.
+
+```
+                     ______node______
+                    /                \
+         ZONE_NORMAL                  ZONE_MOVABLE
+        /           \                /            \
+   active LRU   inactive LRU     active LRU   inactive LRU
+```
+
+Typically reclaim is engaged when attempting an allocation and the
+requested zone hits a low or min watermark.  On our imaginary system,
+lets assume we've set up the following structure.
+
+```
+          node0 - DRAM                 node2 - CXL
+            |                            |
+        ZONE_NORMAL                 ZONE_MOVABLE
+       /          \                /            \
+  active_lru   inactive_lru   active_lru   inactive_lru
+```
+
+node0 (local) has no ZONE_MOVABLE, and node2 has no ZONE_NORMAL.  Since
+we always prefer allocations from the local node, we'll evicting pages
+from ZONE_NORMAL on node0 - that's the only zone we can allocate from.
+
+Specifically, reclaim will prefer to evict pages from the inactive lru
+and "age off" pages from the active_lru to the inactive_lru.  If 
+reclaim fails, it may then fail to allocate from the requested node and
+fallback to another node to continue forward progress.
+
+(or maybe OOM, or some other nebulous conditions - it's all really quite
+complex and well documented in Lorenzo's book, highly recommended!)
+
+
+==================
+Swap vs. Demotion.
+===================
+By default, the reclaim system will only age pages from active to
+inactive LRUs, and then move to evict pages from the inactive LRU
+(possibly engaging swap or just nixing read-only page mappings).
+
+However, reclaim can be configured to *demote* pages as well via
+the sysfs option:
+
+    $ echo 1 > /sys/kernel/mm/numa/demotion_enabled
+
+
+In this scenario, rather than evict from inactive LRU to swap, we
+can demote a page from its current node to its closest demotion target.
+
+```
+mm/vmscan.c:
+
+static bool can_demote(int nid, struct scan_control *sc)
+{
+        if (!numa_demotion_enabled)
+                return false;
+        if (sc && sc->no_demotion)
+                return false;
+        if (next_demotion_node(nid) == NUMA_NO_NODE)
+                return false;
+
+        return true;
+}
+
+/*
+ * Take folios on @demote_folios and attempt to demote them to another node.
+ * Folios which are not demoted are left on @demote_folios.
+ */
+static unsigned int demote_folio_list(struct list_head *demote_folios,
+                                     struct pglist_data *pgdat)
+{
+...
+        /* Demotion ignores all cpuset and mempolicy settings */
+        migrate_pages(demote_folios, alloc_migrate_folio, NULL,
+                      (unsigned long)&mtc, MIGRATE_ASYNC, MR_DEMOTION,
+                      &nr_succeeded);
+}
+```
+
+Notice that the comment here says "Demotion ignores cpuset". That means
+if you turn this setting on, and you require strong cpuset.mems
+isolation, you're in for a surprise!  Another fun nuance to trip over.
+
+
+======================================
+Kernel Memory Tiering - A Short Story.
+======================================
+
+The story so far:
+    In the beginning [Memory Tiering] was created.
+    This has made a lot of people very angry and
+    been widely regarded as a bad move.
+     ~ Douglas Adams, The Restaurant at the End of the [CXL Fabric]
+
+There isn't a solid consensus on how memory tiering should be
+implemented in the kernel, so I will refrain from commenting on
+the various proposals for now.
+
+This obviously ikely deserves its own section which tumbles over
+6 or 7 different RFCs in varying states - and ever so slightly
+misrepresents the work enough confuse everyone.
+
+Lets not, for now.
+
+So I will leave it here:
+
+Most of these systems aim at 3 goals:
+  1) create space on the local nodes for new allocations
+  2) demote cold memory from local nodes to make room for hot memory
+  3) promote hot memory from remote nodes to reduce average latencies.
+
+No one (largely) agrees what the best approach for this is, yet.
+
+If I were to make one request before anyone proposes yet *another*
+tiering mechanism, I would ask that you take a crack at implementing
+`next_promotion_node()` first.
+
+```
+    /**
+     * next_promotion_node() - Get the next node in the promotion path
+     * @node: The starting node to lookup the next node
+     *
+     * Return: node id for next memory node in the promotion path hierarchy
+     * from @node; NUMA_NO_NODE if @node is top tier.  This does not keep
+     * @node online or guarantee that it *continues* to be the next promotion
+     * target.
+     */
+    int next_promotion_node(int node);
+```
+
+That's the whole ballgame.
+
+Fin.
+
+
+-----------------------------------------------------------------------
+
+
+Yes, that's basically it.  The kernel prefers to allocate new pages from
+the local node, and it tries to demote memory to make sure this can
+happen.  Otherwise - incidental direct allocation can occur on fallback.
+
+But how you configure your CXL memory dictates all this behavior.  So
+it's extremely important that we get the configuration part right.
+
+
+This will be the end of the Boot to Bash series for the purpose of
+LSFMM 2025 background. We will likely continue in a github repo or
+something from here on.
+
+See you all in Montreal.
+
+~Gregory
 
