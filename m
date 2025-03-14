@@ -1,126 +1,95 @@
-Return-Path: <linux-kernel+bounces-561878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E5BFA617FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:36:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E137DA61742
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:16:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E2FB1898B48
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:35:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F5E017DD52
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764CD204C18;
-	Fri, 14 Mar 2025 17:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7682045AB;
+	Fri, 14 Mar 2025 17:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="NLZzZFNa"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lejCfl3W"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBFF1FFC60;
-	Fri, 14 Mar 2025 17:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A961F957;
+	Fri, 14 Mar 2025 17:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741973685; cv=none; b=U2PEIhQerFFGl/ptlenxKE9eeJyVEMjngzw0qi338vNbk+X/RwOeXkorXE5RpHzsXBojBACX6Hg+D7AP9706rds55irVvM44kR5oakBlQxsG1mthy6v3yB6PWY8R6yYgwdfMsI6J77QXilkU7gQ6Si0G73yDkd5zWHxMyktU/2Q=
+	t=1741972582; cv=none; b=XayC7hRGjDhIkqLAzusBDM0XocRzrAwu8JtE/XL/tGzX1CyNV/6a/A1o2oe9Mj2D/g3vcDO0crGZs2pyEIaKpcP28JlQ/3q5ynob2cElkHivZ4xi+/eIRVEfhN0Jy6dhU9FDGlAjFi0vrqy++OZ3nXr9nwVWY3nz6HxJ3s3lFHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741973685; c=relaxed/simple;
-	bh=0UnlsJ/QMPp3en93prvQfDrfGSRGtCvMeCyLsWlTT+o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fv/r1b9K7a3kdeCr92FmkoU+FY8JLdpxsOIvyjDuVAjuGi3GFJioIWWDBp/1F3nu3jFjNOUQzcurZnMIwWQ7sQkNIvi1vBISU8005i9cQsLjoOb43e569fIkFG2tt4flvkaYKOY/uhyrZO80XNJkOp1AkJ3AQZD67G8vI3fNabE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=NLZzZFNa; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52EDke2E027886;
-	Fri, 14 Mar 2025 18:34:18 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	2wY6Dic8hzBm+S2wld/DgwBFhKKy9RZVyTbW8u8LUKQ=; b=NLZzZFNaTFhpYia3
-	zIwTPaiqdlnOWgVcyZy3qcYBc67FCn06QIA17ArpYzlM2L1MzzEvTNc11CHR0h+J
-	jqulFlQrQHBtyr4x3Dh0F6kwQEB9jzGl6IaUUCH+f9v+aV1TzH5tbW9qlvGGl6YK
-	vNwqMrwbNd0XtEumsk0FTKzAe0++dQPAovXFEkXE8cXCyInoQt4F2DvROPn3WiLx
-	VAuKU7VkJmf+X0y0uLFjHE90vUc8fGrKnxldW8sGsdG9mSgay0UdrrdStUQjIyT4
-	+pMqIYoK25ifbheX4Ky2R1BLW3E+Dp4m6N9YjqvpdDmj0OvRj5fxH501tZw5wVvV
-	PcqPHw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45au3p6xct-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Mar 2025 18:34:18 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 458FA40064;
-	Fri, 14 Mar 2025 18:33:01 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8BDE96DB61A;
-	Fri, 14 Mar 2025 18:15:10 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
- (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 14 Mar
- 2025 18:15:10 +0100
-Received: from localhost (10.252.1.141) by SAFDAG1NODE1.st.com (10.75.90.17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 14 Mar
- 2025 18:15:10 +0100
-From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-To: <lee@kernel.org>, <ukleinek@kernel.org>, <alexandre.torgue@foss.st.com>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <jic23@kernel.org>,
-        <daniel.lezcano@linaro.org>, <tglx@linutronix.de>
-CC: <robh@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
-        <devicetree@vger.kernel.org>, <wbg@kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <olivier.moysan@foss.st.com>, <fabrice.gasnier@foss.st.com>
-Subject: [PATCH v4 8/8] arm64: dts: st: use lptimer3 as tick broadcast source on stm32mp257f-ev1
-Date: Fri, 14 Mar 2025 18:14:51 +0100
-Message-ID: <20250314171451.3497789-9-fabrice.gasnier@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250314171451.3497789-1-fabrice.gasnier@foss.st.com>
-References: <20250314171451.3497789-1-fabrice.gasnier@foss.st.com>
+	s=arc-20240116; t=1741972582; c=relaxed/simple;
+	bh=W67U60VL6XmhN/hWl8e/1wv3U9CJq+LTfzrtdFVpEB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQB88U9bgpnM5vzCn0YHuVvjxjaOOQZJcVfkDlsqCaTXYvalD06WsEcbrcjKhbDkoBIa6p3KUfdMRQ060HrB05Y80ErsymrHdN1WGlWFWr8gYHNYZoVjFf0A2Yk8qWFoVR+rgL7CTXTpfwUIsHUHPFkq2AaT15daNOb/Tr1/p70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lejCfl3W; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741972581; x=1773508581;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=W67U60VL6XmhN/hWl8e/1wv3U9CJq+LTfzrtdFVpEB8=;
+  b=lejCfl3WNdk78id8HCaPAkAi1cYdXr1H85Qce5WozsCuQPflmcPeQYuj
+   8lPshPbyMq84DpV9W+toxP5MQQetH1VkRbYhJ9B3h543R03NQmQI996mz
+   iqu4NWXhMcD+xW5sjeCmDUChG0eL9RBG2aIEUeLAj1pvWyY/LPelIyIzD
+   aJUbrY9RYBoN8i69/X5I1oK5+B2gOWErCj1m0+Qi1jxkGPywx3zGurPQD
+   XyxCh2O2PW5g8LEA0x1CQJ8hzXMeGFNV1nekhfNfe2D7urCNW0w2AJNb8
+   f7R9+LMmEO7zN5dAtr87cbuvuu8x7FL9Z0AQhBtGDj9AQ77wysMOHj+aN
+   w==;
+X-CSE-ConnectionGUID: A4Sjp5X0QxqlHSvlQHrBZQ==
+X-CSE-MsgGUID: rAzAzIrQSPSPgw08yUyu2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="30720343"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="30720343"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 10:16:21 -0700
+X-CSE-ConnectionGUID: hqNtd0hmROWRJLLpHgHIiQ==
+X-CSE-MsgGUID: YZMEWzVsTmqNNkvxYWYKhQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="121828284"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 10:16:19 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tt8dt-00000002WvJ-0ohV;
+	Fri, 14 Mar 2025 19:16:17 +0200
+Date: Fri, 14 Mar 2025 19:16:16 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH v3 1/1] media: v4l2-core: Replace the check for firmware
+ registered I2C devices
+Message-ID: <Z9RkYCJ-ggJl2kn0@smile.fi.intel.com>
+References: <20250313113115.359942-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-14_06,2025-03-14_01,2024-11-22_01
+In-Reply-To: <20250313113115.359942-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-During the low power modes the generic ARM timer is deactivated, so the
-the tick broadcast is used, based on LPTIMER3 which is clocked by LSE on
-STMicroelectronics boards.
+On Thu, Mar 13, 2025 at 01:30:34PM +0200, Andy Shevchenko wrote:
+> Replace the check for firmware registered I²C devices as the firmware node
+> independently on type should be retrieved via dev_fwnode().
 
-Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Hans, are you okay with this now? Can it be applied?
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index 1b88485a62a1..242115863ab4 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -190,6 +190,14 @@ &i2c8 {
- 	status = "disabled";
- };
- 
-+/* use LPTIMER with tick broadcast for suspend mode */
-+&lptimer3 {
-+	status = "okay";
-+	timer {
-+		status = "okay";
-+	};
-+};
-+
- &rtc {
- 	status = "okay";
- };
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
 
