@@ -1,279 +1,523 @@
-Return-Path: <linux-kernel+bounces-561637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6815A6146C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:01:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ADBEA6146F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:02:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 912F67AB43C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:00:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF0A37AB6E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB893202994;
-	Fri, 14 Mar 2025 15:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA727083F;
+	Fri, 14 Mar 2025 15:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b="Jwkwgpg5"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2086.outbound.protection.outlook.com [40.107.21.86])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b8zAwdf4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867A1201032;
-	Fri, 14 Mar 2025 15:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741964488; cv=fail; b=L70+DXaVY4N0earSnJq6CmJjNkbzo07yoD653nqXCOVC5F8Q3Sizh/P8I0mwRh2dxAc1IhzjSrrpsX39kLf3lO68/+DA2RpNym7rWcwmGc5agl6a9S6Qg5aGNqZoyrqGYYuLw1J+x7GN+4P/lqQkWwPtflRA+1rm81BI42SPdhc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741964488; c=relaxed/simple;
-	bh=UccYv181rPRuMNF8hdHWfcq985C1VbRIb6ce+3AG2cY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=T6eLkMz2DFG0FohPIRc624R6l9269pqv/vATJh3K2z/EOYJhFvtwRcrk8Z5ymYgWISJVAusqWHdvJp/LUaOu+2AC8FSWhnpHGjank/5+G/4VZybn2pY1Qi5Jqm15G3IMHfknXmFEuVi+ujtpjM3I1rl747+CjBWVXKvhNrKkFRE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com; spf=pass smtp.mailfrom=mt.com; dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b=Jwkwgpg5; arc=fail smtp.client-ip=40.107.21.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=i94xId+FOgM6DgaQu61l8OzmRM6CDyx0Xb1S0gvxv7RgDdwWK5ZIKwOxbw/vrAdY7xPSfgLeBHC7HL9ltlmRF5NG7XR2u0pHh6ITmQKBWATeZyCiIkTF9TJymvpoitlKU0OOXK2y6GINqChyRSoTEQ39fsAI/mdZjGYxJIzkEedHq//1Y676AK1eGtXNCD0ytBBf8YjSrwEdYJ5HFCcKE9P5aSifhOyYHCKBFIcwW2CHso/sMWzg8pY2v4u+skqDkFztqKM97uYVF29E//qqloylqDJAhgpjrYtUrWxxolNDowvXjcQMRwvQ989t7S1UxnFEJZyADr7jRBINfbWM0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Cb+SEARfgQdeMn/vWlDMXAky7UAEXJ4n63Gtew6G/cQ=;
- b=OZ3CWLbA5v1XorriJbDw4sU1+Mz7tUJCGF2cBujWtsb5wK7EHwxv3G7HnwbHf+qTDLwpGQ51MscRJW8rNpHjYV/jD5nD4bJnMCYX/Hiq70IpMwTO9fwju1+UWTGmDHsPBZ+VWGGqJiAhOSKSxohIvkwweEAMjZF4p/rnSlZTc48MeoZQ9W3tR5/T7imFd5pz8zmNYcB9Vzio9NV4gNiAWyoAdTQCvvPXR0/Ptk8vxkDJylaWBjQR76WQWxK3Cb8u8+eyKaf3VIdbJ80jkqofW7IMuxVDyUo+ZjNCLZZdwEbITTYMA0gFs24d2mkC5WC4RYwQPSE2g/hKqUY9d0khnQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mt.com; dmarc=pass action=none header.from=mt.com; dkim=pass
- header.d=mt.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Cb+SEARfgQdeMn/vWlDMXAky7UAEXJ4n63Gtew6G/cQ=;
- b=Jwkwgpg5h3H0jd7taQm3TmBcy2aEf4CsSkZNAHXpwYd0o0s44NLbZrhvPaWtBD7V3zPMKhD4tCQjfCd/EWFPnyNv+JEaLeSrU7x89fjD7n1nU8Zo1eZ8Zm5Dpbl640JQMhiZlEss3Enj4fvPvdb8+7vyjs4L4PtNjVvsQoZLjW422gNiulbVQ5r11Kh++ouveHgVB9i+5VPr0xPCrjMg3hdOUFxPmF0WxVhqCFldcQv/xX83q5viJ8n23UjhIBVBgwKtDm0gp8c6xo/bZWrgUh1xF8S6IGBLD5R6N4DZ3ZwSfrs0mUliIW8dncAzAdZbni8/BqDOHkKu0cFeTR3eKQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mt.com;
-Received: from DBBPR03MB10396.eurprd03.prod.outlook.com (2603:10a6:10:53a::11)
- by DU0PR03MB8292.eurprd03.prod.outlook.com (2603:10a6:10:320::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Fri, 14 Mar
- 2025 15:01:20 +0000
-Received: from DBBPR03MB10396.eurprd03.prod.outlook.com
- ([fe80::ee3c:c9be:681:c0bf]) by DBBPR03MB10396.eurprd03.prod.outlook.com
- ([fe80::ee3c:c9be:681:c0bf%4]) with mapi id 15.20.8511.026; Fri, 14 Mar 2025
- 15:01:20 +0000
-From: Mathis Foerst <mathis.foerst@mt.com>
-To: linux-kernel@vger.kernel.org
-Cc: Mathis Foerst <mathis.foerst@mt.com>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	manuel.traut@mt.com,
-	mathis.foerst@zuehlke.com
-Subject: [PATCH v3 1/1] media: imx: csi: Parse link configuration from fw_node
-Date: Fri, 14 Mar 2025 16:01:08 +0100
-Message-Id: <20250314150108.254535-2-mathis.foerst@mt.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250314150108.254535-1-mathis.foerst@mt.com>
-References: <20250314150108.254535-1-mathis.foerst@mt.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ZR0P278CA0217.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:6a::15) To DBBPR03MB10396.eurprd03.prod.outlook.com
- (2603:10a6:10:53a::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121F93B7A8;
+	Fri, 14 Mar 2025 15:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741964535; cv=none; b=A6lJpzygKY8a6pY9ph4hz78F2E2HScyUj6kLXtXIO4g/NYPtr6sNvVIWX+oZ3vqwWNi/PgSyBWOe1lP8ZWe3wtvoVEBvhHcvRakJMgKovB7ff/2hWtU+necgGnvhnE9X+aabLvW4VfFopyY/zuS2EoiBF0lbSljj1Uj+If56hZw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741964535; c=relaxed/simple;
+	bh=dPRozqUMCMlrai6HQIPjDl4kLipU3Yl7huxuozEgPEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hv91rM7AdKLmT5GEWV+iBB7w7F9WRb9bIXCGUYpRgLGyTt1oN+l1sP8pZkdTvybJdRmuqgOld0XZ5u1x3zDY4Xm2VTxP5WQAmZyS/Rpym/9cCO9SIWjMWhSz7FoUToBjdg9CS+U4V4lcCO1mvJp5VE8uhr+6JflRpaELjuZgshs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b8zAwdf4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E183DC4CEE3;
+	Fri, 14 Mar 2025 15:02:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741964534;
+	bh=dPRozqUMCMlrai6HQIPjDl4kLipU3Yl7huxuozEgPEQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b8zAwdf4chnoLMMON9P77bTQx6Qh+Z1SyotCsOkXWUooRpqi++qI3cx0C5jVwC3wn
+	 a5XEnLZ0qlaZVmX6dZCH4+9qd9ZSDRXhjBhB57xeeFrXUwQAPcC0RA4OtQBpBWsvs6
+	 He3D2av0Avqy/khwpvsx33AJCwsPeJMIIW+cwxn1UsyxamBTnX16J9iNN/5EgO+z6y
+	 V1JWvcovTrRLp/ASgwL4aaqJSbUQyYdmRp732401yuT77pRtLDCaMVok487KSRvwDp
+	 osvclEbkHdlMEmfbt1ol3mcYjIxPimlb18xUwAhWSs+3c10v8nI+7KVRe1TtKNIZAl
+	 Ami0j7ByVca2A==
+Date: Fri, 14 Mar 2025 17:02:09 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stuart Yoder <stuart.yoder@arm.com>
+Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+	sudeep.holla@arm.com, rafael@kernel.org, lenb@kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 1/5] tpm_crb: ffa_tpm: implement driver compliant to
+ CRB over FF-A
+Message-ID: <Z9RE8bOGqpSCcc6e@kernel.org>
+References: <20250312215828.664402-1-stuart.yoder@arm.com>
+ <20250312215828.664402-2-stuart.yoder@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DBBPR03MB10396:EE_|DU0PR03MB8292:EE_
-X-MS-Office365-Filtering-Correlation-Id: e0efcc1f-760f-4d37-f8b3-08dd6309147a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|1800799024|366016|7416014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MU/7iPF5W92U3pj2mbyQiIMaDpEebAXMBDgQYFI2hNVVqGKmxfk9ZywpC8aB?=
- =?us-ascii?Q?KIl42NnSDueCfhX4CZ7Rs072u0+R74AOnY794ywINPI/+bvfrZUXzy31/Uv5?=
- =?us-ascii?Q?qvbSsfci5BNzfWU6AitfwaXb7YhaUtE+1DTySVHAyhRHl30CitQxW6INHv4O?=
- =?us-ascii?Q?jqM0jjftaqQVdEluX0VlCDA9Drg2Rw9k0GwDe+t6EJdQ0kdMPF9oBCpkj2XH?=
- =?us-ascii?Q?Zr9QVTNH9d/wr0sYQ+Y3WQIXhihS065U4QrBJ7V7vu5wbesbBV6tWbZmdVNx?=
- =?us-ascii?Q?A+PLdU71/HLpc+D8doZTCVoDcRxoDXVYMJo4wx/SOuk2KS5wN9Pwx5JCQHF5?=
- =?us-ascii?Q?5hAm5FNWY+z/BMdc2V0ymkcN/mjQt+AiLzelAmoWSbWdESMxRCT4O4qKnQSR?=
- =?us-ascii?Q?+Lo2ctjPTLmk4nM5aniWQCgUXmdR/BVKsY3h59uJQqka7cjtiFMnywGsUodG?=
- =?us-ascii?Q?ViPltBmgILYLDixLmLePJRUdgw4JCQBa4B7j3SY+FlaNJrJs43F88XNsjVt8?=
- =?us-ascii?Q?F81uviX+3N1cKlpKcgU7cPXTg7IeWqucyCvur0/m2gFlfGVQCOwsGY76/410?=
- =?us-ascii?Q?LruL7e3u1hYmUCrL1FNLO3JyrK5UuxktHCXBQs5F9jFW4+GrhXjbBO73RjNj?=
- =?us-ascii?Q?REofmgKY9w+dpG6DVRiHCc8SIBGcpx7Qip35rl7GFUpklBzSAmqD2d7Wz72S?=
- =?us-ascii?Q?gKJ9XV/Qd1pGrCjrZPGhB1BvjXLpcs+7ASVjmZBBu8EfjGWvB8sJFD911gaB?=
- =?us-ascii?Q?QRGk+iosHlLWeCAhaJFJDUGs5RQF+fxtkhUNSf+SNXsywUVeh4vCeApP2m0H?=
- =?us-ascii?Q?bPAdryDEer46I2ciaXJJL7K+mqMBJFk1pdJnMgrxzgOUT/QCKyR6i9i+dWM+?=
- =?us-ascii?Q?n57z5tdMWTCbBAZ94s7V0MeweFTyJaAgkX6jX6/pUQO8Ps+V8k6XCQBoCuF8?=
- =?us-ascii?Q?6axlNVzcZP+cwBhyUHpQTvHKWjTUY7aU/fa3k1Xq2+0QTO+Z4Lix7pVoq++G?=
- =?us-ascii?Q?w25gbEihHCkyCLWePu7YsB+PohzpVoeqXNhSBA9TF6PgZgEvtEbq9kjdMMiO?=
- =?us-ascii?Q?a8o8PT9t5SF/2Z8xYkKDCGmckYVXFNuvTVykvfc9KNvSKG7GipKTjFmN7ZO5?=
- =?us-ascii?Q?MdrKTnxOc0URDTu3TXMfBdCwJXo6XhaULR+ZwGhgJcz3xGl82TU+wHGyXEBo?=
- =?us-ascii?Q?9I1ZMB/RplSxJ5VE3CuPOvlGUljRk8h/+EY/b23jfvFxP1ImaLH6h4ssT71T?=
- =?us-ascii?Q?bt3illPwnw/Llos9CH9/KSZL8wjJTeoAiPjLpXyDVoXMUL6N7HjKJVgNiSYU?=
- =?us-ascii?Q?Oq4L7JuoXcjOMiETL9kCM3Exdz83lPUrr+jOK5cv4nvEzb4hLULtrDqXJfGU?=
- =?us-ascii?Q?AJh77hIOHlIpK7H1VNOPUnLIOW0PVK8AIOMitMu7+I6bknpUUbCyund3Eep/?=
- =?us-ascii?Q?xtl2btX+SM5sDdqQ+t8dtoKbrl22RMsL?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR03MB10396.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(366016)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?1WAzUZcShM3TjyK2euZZSJ1SBFDJisXqdGUK8nv2kJMNhOZk2Da5G9RAtKKJ?=
- =?us-ascii?Q?mTIGZtVrbABvtKmPAaWkGNKQNTb3ZRugMQaoiOvzMtoKyY5hFJvUMjfLr3c9?=
- =?us-ascii?Q?ehnrAfgQfL1QM6AbqyAsLvkYkcys+6JLMxaXgRkFxvSNm/rmMABy/lbRNAra?=
- =?us-ascii?Q?K3x0waRDZVNjYVjrRuwK7/3MbcJQkXQPx57KdVgPiyIU5SUmHjCCAqyvZ1Is?=
- =?us-ascii?Q?d9nTVrQUEy1x4BUydb9htbBD+KtH3KYeHAn5VAxIcg3V4Drxs9iMgaGmcKv4?=
- =?us-ascii?Q?YCaZ92LZa3ckgPT6UHUTmQeXtGgENNLI6D6ulFUYKEvgEMiIXjI4fyMODcnk?=
- =?us-ascii?Q?YGnTiG1WIIukPS6H0FM8OmvkKzN62aLJ8m9LAz4dxuMWV8dA/97UIzKTqKrL?=
- =?us-ascii?Q?T+C6rVjNjwlg9YD4ZA62vJ7lxoaTpFMOzWBpHlw8L2aUmWRt53Futi0c13r4?=
- =?us-ascii?Q?lLvBJnAybd02NSHz6nLFh12lKzmKOgrgHHnzSmFH5XUCtm5iKmckD7MAN5kn?=
- =?us-ascii?Q?dG7HdzedsipK3UyaahDNdLyIPwXoM5H3B/wfvQEfmkmvKBPzZ1iVYF5pFnrg?=
- =?us-ascii?Q?JoUZ5wZfT4hRdYo+su50ZSP/Rt1Pf83LPQAFm3VBcbf9oFEBA+YDfRPri3zJ?=
- =?us-ascii?Q?wtACUV0XNh1OKw9kV3yDooVipdwg2bOK/PAlTKajplYFBoZ9H9d9HbQiTcQ8?=
- =?us-ascii?Q?ukDx0OlTO0Lf6t0TQbspOZfhR3wZwcvWAxhiGX0o9Z7icL0tkzHAx+cPJe2E?=
- =?us-ascii?Q?kQvFmQtPixIWBLoS4aTDsTddGJ3od+l9rsRwrSu1GZCeZWnGrl2DeOgfVRM8?=
- =?us-ascii?Q?SYH9OZIgzsN9V17s9MJLgu8Vm8iPyzZZcpdFVKX/xfxLpgcHaDXRVxRsSViO?=
- =?us-ascii?Q?enVYb5Ephd7FYyrXA25u6KnbPPY7wwi5atAZGtIRr2K9u8+M9rmgu1RiTxMz?=
- =?us-ascii?Q?9ACzH3Q0JVwXYdttMAtOqm9A1fFVn5GLV0k1fZFi0MfbqFkQH1qTqhUCOGpo?=
- =?us-ascii?Q?xiFifNuJNpoN+Ymiqz4x18aa10190QnZzRa8UU2hCse29RlGROubRKiE7Eof?=
- =?us-ascii?Q?Zv3m6CBRYNw6RgnhDDHjVO7JtlMkPXaCBKv/k7ecUMC8tyknRG3uiK/tTSuj?=
- =?us-ascii?Q?nDMUyDUgfYwn+qo7SxdXxF15B4sQRxWqBVIh00c5Y5g+VVUD5a7C2Wmrzytr?=
- =?us-ascii?Q?kzTcdxz10/XcMn7tt+hNv0Ui0BCWozCUiGOg32VM/CWWWA79TqL9E0718ov4?=
- =?us-ascii?Q?UrCg13mTwfaR5Xbkw066A/JZG7KkDvjISSBgzNXaBmtVCtL/4xkJk4HZAaSO?=
- =?us-ascii?Q?ThLRF1LwL0yl47jkJ0yFXkPIEmejfr/jXJJyz75QPr3KmP9UPWK3BQ+7OgfR?=
- =?us-ascii?Q?XyP7IG4EMkk6NZnop/tmj7CFG2Ydk5/7E5FD9OCsgjT9EdFN27/flJVxmimj?=
- =?us-ascii?Q?1+rnexNJcp0CLOLycl3BM9Ay3s1kiBIeLp/F4KOfBjkj2h4o/bp9IVZvKPZx?=
- =?us-ascii?Q?IDsjvx2vkLU/XG9m45eLa8zWr8RtRcDI5qNcYCtEuxhTePBmqQT8minVgkZx?=
- =?us-ascii?Q?rnBBOUDM6qasfjCgajL9f4ED0uIEU3ypXWlph4cf?=
-X-OriginatorOrg: mt.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0efcc1f-760f-4d37-f8b3-08dd6309147a
-X-MS-Exchange-CrossTenant-AuthSource: DBBPR03MB10396.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2025 15:01:20.7823
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fb4c0aee-6cd2-482f-a1a5-717e7c02496b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UGJ+mHEtyCoOhACbmxupEad9cHsMzTWSv3XSqNp60pib89ByuXduu/OleGF0mtv1phhmqTgEJZHM3VTmEqo6bA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR03MB8292
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312215828.664402-2-stuart.yoder@arm.com>
 
-The imx-media-csi driver requires upstream camera drivers to implement
-the subdev-pad-op "get_mbus_config" [0]. Camera drivers that don't
-implement this function are not usable on the i.MX6.
+On Wed, Mar 12, 2025 at 04:58:24PM -0500, Stuart Yoder wrote:
+> The Arm specification TPM Service CRB over FF-A specification
+> defines the FF-A messages to interact with a CRB-based TPM
+> implemented as an FF-A secure partition.
+> 
+> Spec URL:
+> https://developer.arm.com/documentation/den0138/latest/
+> 
+> This driver is probed when a TPM Secure Partition is
+> discovered by the FF-A subsystem. It exposes APIs
+> used by the TPM CRB driver to send notifications to
+> the TPM.
+> 
+> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-The docs for get_mbus_config [1] say:
-@get_mbus_config: get the media bus configuration of a remote sub-device.
-            The media bus configuration is usually retrieved from the
-            firmware interface at sub-device probe time, immediately
-            applied to the hardware and eventually adjusted by the
-            driver.
+nit: should have been removed given the build issue (to make
+apparent the need for review).
 
-Currently, the imx-media-csi driver is not incorporating the information
-from the firmware interface and therefore relies on the implementation of
-get_mbus_config by the camera driver.
+> Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
+> ---
+>  drivers/char/tpm/Kconfig       |   9 +
+>  drivers/char/tpm/Makefile      |   1 +
+>  drivers/char/tpm/tpm_crb_ffa.c | 348 +++++++++++++++++++++++++++++++++
+>  drivers/char/tpm/tpm_crb_ffa.h |  25 +++
+>  4 files changed, 383 insertions(+)
+>  create mode 100644 drivers/char/tpm/tpm_crb_ffa.c
+>  create mode 100644 drivers/char/tpm/tpm_crb_ffa.h
+> 
+> diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+> index 0fc9a510e059..fe4f3a609934 100644
+> --- a/drivers/char/tpm/Kconfig
+> +++ b/drivers/char/tpm/Kconfig
+> @@ -210,6 +210,15 @@ config TCG_CRB
+>  	  from within Linux.  To compile this driver as a module, choose
+>  	  M here; the module will be called tpm_crb.
+>  
+> +config TCG_ARM_CRB_FFA
+> +	tristate "TPM CRB over Arm FF-A Transport"
+> +	depends on ARM_FFA_TRANSPORT && TCG_CRB
+> +	default TCG_CRB
+> +	help
+> +	  If the Arm FF-A transport is used to access the TPM say Yes.
+> +	  To compile this driver as a module, choose M here; the module
+> +	  will be called tpm_crb_ffa.
+> +
+>  config TCG_VTPM_PROXY
+>  	tristate "VTPM Proxy Interface"
+>  	depends on TCG_TPM
+> diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+> index 9bb142c75243..2b004df8c04b 100644
+> --- a/drivers/char/tpm/Makefile
+> +++ b/drivers/char/tpm/Makefile
+> @@ -42,5 +42,6 @@ obj-$(CONFIG_TCG_IBMVTPM) += tpm_ibmvtpm.o
+>  obj-$(CONFIG_TCG_TIS_ST33ZP24) += st33zp24/
+>  obj-$(CONFIG_TCG_XEN) += xen-tpmfront.o
+>  obj-$(CONFIG_TCG_CRB) += tpm_crb.o
+> +obj-$(CONFIG_TCG_ARM_CRB_FFA) += tpm_crb_ffa.o
+>  obj-$(CONFIG_TCG_VTPM_PROXY) += tpm_vtpm_proxy.o
+>  obj-$(CONFIG_TCG_FTPM_TEE) += tpm_ftpm_tee.o
+> diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
+> new file mode 100644
+> index 000000000000..3169a87a56b6
+> --- /dev/null
+> +++ b/drivers/char/tpm/tpm_crb_ffa.c
+> @@ -0,0 +1,348 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2024 Arm Ltd.
+> + *
+> + * This device driver implements the TPM CRB start method
+> + * as defined in the TPM Service Command Response Buffer
+> + * Interface Over FF-A (DEN0138).
+> + */
+> +
+> +#define pr_fmt(fmt) "CRB_FFA: " fmt
+> +
+> +#include <linux/arm_ffa.h>
+> +#include "tpm_crb_ffa.h"
+> +
+> +/* TPM service function status codes */
+> +#define CRB_FFA_OK			0x05000001
+> +#define CRB_FFA_OK_RESULTS_RETURNED	0x05000002
+> +#define CRB_FFA_NOFUNC			0x8e000001
+> +#define CRB_FFA_NOTSUP			0x8e000002
+> +#define CRB_FFA_INVARG			0x8e000005
+> +#define CRB_FFA_INV_CRB_CTRL_DATA	0x8e000006
+> +#define CRB_FFA_ALREADY			0x8e000009
+> +#define CRB_FFA_DENIED			0x8e00000a
+> +#define CRB_FFA_NOMEM			0x8e00000b
+> +
+> +#define CRB_FFA_VERSION_MAJOR	1
+> +#define CRB_FFA_VERSION_MINOR	0
+> +
+> +/* version encoding */
+> +#define CRB_FFA_MAJOR_VERSION_MASK  GENMASK(30, 16)
+> +#define CRB_FFA_MINOR_VERSION_MASK  GENMASK(15, 0)
+> +#define CRB_FFA_MAJOR_VERSION(x)    ((u16)(FIELD_GET(CRB_FFA_MAJOR_VERSION_MASK, (x))))
+> +#define CRB_FFA_MINOR_VERSION(x)    ((u16)(FIELD_GET(CRB_FFA_MINOR_VERSION_MASK, (x))))
+> +
+> +/*
+> + * Normal world sends requests with FFA_MSG_SEND_DIRECT_REQ and
+> + * responses are returned with FFA_MSG_SEND_DIRECT_RESP for normal
+> + * messages.
+> + *
+> + * All requests with FFA_MSG_SEND_DIRECT_REQ and FFA_MSG_SEND_DIRECT_RESP
+> + * are using the AArch32 SMC calling convention with register usage as
+> + * defined in FF-A specification:
+> + * w0:    Function ID (0x8400006F or 0x84000070)
+> + * w1:    Source/Destination IDs
+> + * w2:    Reserved (MBZ)
+> + * w3-w7: Implementation defined, free to be used below
+> + */
+> +
+> +/*
+> + * Returns the version of the interface that is available
+> + * Call register usage:
+> + * w3:    Not used (MBZ)
+> + * w4:    TPM service function ID, CRB_FFA_GET_INTERFACE_VERSION
+> + * w5-w7: Reserved (MBZ)
+> + *
+> + * Return register usage:
+> + * w3:    Not used (MBZ)
+> + * w4:    TPM service function status
+> + * w5:    TPM service interface version
+> + *        Bits[31:16]: major version
+> + *        Bits[15:0]: minor version
+> + * w6-w7: Reserved (MBZ)
+> + *
+> + * Possible function status codes in register w4:
+> + *     CRB_FFA_OK_RESULTS_RETURNED: The version of the interface has been
+> + *                                  returned.
+> + */
+> +#define CRB_FFA_GET_INTERFACE_VERSION 0x0f000001
+> +
+> +/*
+> + * Return information on a given feature of the TPM service
+> + * Call register usage:
+> + * w3:    Not used (MBZ)
+> + * w4:    TPM service function ID, CRB_FFA_START
+> + * w5:    Start function qualifier
+> + *            Bits[31:8] (MBZ)
+> + *            Bits[7:0]
+> + *              0: Notifies TPM that a command is ready to be processed
+> + *              1: Notifies TPM that a locality request is ready to be processed
+> + * w6:    TPM locality, one of 0..4
+> + *            -If the start function qualifier is 0, identifies the locality
+> + *             from where the command originated.
+> + *            -If the start function qualifier is 1, identifies the locality
+> + *             of the locality request
+> + * w6-w7: Reserved (MBZ)
+> + *
+> + * Return register usage:
+> + * w3:    Not used (MBZ)
+> + * w4:    TPM service function status
+> + * w5-w7: Reserved (MBZ)
+> + *
+> + * Possible function status codes in register w4:
+> + *     CRB_FFA_OK: the TPM service has been notified successfully
+> + *     CRB_FFA_INVARG: one or more arguments are not valid
+> + *     CRB_FFA_INV_CRB_CTRL_DATA: CRB control data or locality control
+> + *         data at the given TPM locality is not valid
+> + *     CRB_FFA_DENIED: the TPM has previously disabled locality requests and
+> + *         command processing at the given locality
+> + */
+> +#define CRB_FFA_START 0x0f000201
+> +
+> +struct tpm_crb_ffa {
+> +	struct ffa_device *ffa_dev;
+> +	u16 major_version;
+> +	u16 minor_version;
+> +	/* lock to protect sending of FF-A messages: */
+> +	struct mutex msg_data_lock;
+> +	struct ffa_send_direct_data direct_msg_data;
+> +};
+> +
+> +static struct tpm_crb_ffa *tpm_crb_ffa;
+> +
+> +static int tpm_crb_ffa_to_linux_errno(int errno)
+> +{
+> +	int rc;
+> +
+> +	switch (errno) {
+> +	case CRB_FFA_OK:
+> +		rc = 0;
+> +		break;
+> +	case CRB_FFA_OK_RESULTS_RETURNED:
+> +		rc = 0;
+> +		break;
+> +	case CRB_FFA_NOFUNC:
+> +		rc = -ENOENT;
+> +		break;
+> +	case CRB_FFA_NOTSUP:
+> +		rc = -EPERM;
+> +		break;
+> +	case CRB_FFA_INVARG:
+> +		rc = -EINVAL;
+> +		break;
+> +	case CRB_FFA_INV_CRB_CTRL_DATA:
+> +		rc = -ENOEXEC;
+> +		break;
+> +	case CRB_FFA_ALREADY:
+> +		rc = -EEXIST;
+> +		break;
+> +	case CRB_FFA_DENIED:
+> +		rc = -EACCES;
+> +		break;
+> +	case CRB_FFA_NOMEM:
+> +		rc = -ENOMEM;
+> +		break;
+> +	default:
+> +		rc = -EINVAL;
+> +	}
+> +
+> +	return rc;
+> +}
+> +
+> +/**
+> + * tpm_crb_ffa_init - called by the CRB driver to do any needed initialization
+> + *
+> + * This function is called by the tpm_crb driver during the tpm_crb
+> + * driver's initialization. If the tpm_crb_ffa has not been probed
+> + * yet, returns -ENOENT in order to force a retry.  If th ffa_crb
+> + * driver had been probed  but failed with an error, returns -ENODEV
+> + * in order to prevent further retries.
+> + *
+> + * Return: 0 on success, negative error code on failure.
+> + */
+> +int tpm_crb_ffa_init(void)
+> +{
+> +	if (!tpm_crb_ffa)
+> +		return -ENOENT;
+> +
+> +	if (IS_ERR_VALUE(tpm_crb_ffa))
+> +		return -ENODEV;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
+> +
+> +static int __tpm_crb_ffa_send_recieve(unsigned long func_id,
+> +				      unsigned long a0,
+> +				      unsigned long a1,
+> +				      unsigned long a2)
+> +{
+> +	const struct ffa_msg_ops *msg_ops;
+> +	int ret;
+> +
+> +	if (!tpm_crb_ffa)
+> +		return -ENOENT;
+> +
+> +	msg_ops = tpm_crb_ffa->ffa_dev->ops->msg_ops;
+> +
+> +	memset(&tpm_crb_ffa->direct_msg_data, 0x00,
+> +	       sizeof(struct ffa_send_direct_data));
+> +
+> +	tpm_crb_ffa->direct_msg_data.data1 = func_id;
+> +	tpm_crb_ffa->direct_msg_data.data2 = a0;
+> +	tpm_crb_ffa->direct_msg_data.data3 = a1;
+> +	tpm_crb_ffa->direct_msg_data.data4 = a2;
+> +
+> +	ret = msg_ops->sync_send_receive(tpm_crb_ffa->ffa_dev,
+> +			&tpm_crb_ffa->direct_msg_data);
+> +	if (!ret)
+> +		ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data.data1);
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * tpm_crb_ffa_get_interface_version() - gets the ABI version of the TPM service
+> + * @major: Pointer to caller-allocated buffer to hold the major version
+> + *         number the ABI
+> + * @minor: Pointer to caller-allocated buffer to hold the minor version
+> + *         number the ABI
+> + *
+> + * Returns the major and minor version of the ABI of the FF-A based TPM.
+> + * Allows the caller to evaluate its compatibility with the version of
+> + * the ABI.
+> + *
+> + * Return: 0 on success, negative error code on failure.
+> + */
+> +int tpm_crb_ffa_get_interface_version(u16 *major, u16 *minor)
+> +{
+> +	int rc;
+> +
+> +	if (!tpm_crb_ffa)
+> +		return -ENOENT;
+> +
+> +	if (IS_ERR_VALUE(tpm_crb_ffa))
+> +		return -ENODEV;
+> +
+> +	if (!major || !minor)
+> +		return -EINVAL;
+> +
+> +	guard(mutex)(&tpm_crb_ffa->msg_data_lock);
+> +
+> +	rc = __tpm_crb_ffa_send_recieve(CRB_FFA_GET_INTERFACE_VERSION, 0x00, 0x00, 0x00);
+> +	if (!rc) {
+> +		*major = CRB_FFA_MAJOR_VERSION(tpm_crb_ffa->direct_msg_data.data2);
+> +		*minor = CRB_FFA_MINOR_VERSION(tpm_crb_ffa->direct_msg_data.data2);
+> +	}
+> +
+> +	return rc;
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_crb_ffa_get_interface_version);
+> +
+> +/**
+> + * tpm_crb_ffa_start() - signals the TPM that a field has changed in the CRB
+> + * @request_type: Identifies whether the change to the CRB is in the command
+> + *                fields or locality fields.
+> + * @locality: Specifies the locality number.
+> + *
+> + * Used by the CRB driver
+> + * that might be useful to those using or modifying it.  Begins with
+> + * empty comment line, and may include additional embedded empty
+> + * comment lines.
+> + *
+> + * Return: 0 on success, negative error code on failure.
+> + */
+> +int tpm_crb_ffa_start(int request_type, int locality)
+> +{
+> +	if (!tpm_crb_ffa)
+> +		return -ENOENT;
+> +
+> +	if (IS_ERR_VALUE(tpm_crb_ffa))
+> +		return -ENODEV;
+> +
+> +	guard(mutex)(&tpm_crb_ffa->msg_data_lock);
+> +
+> +	return __tpm_crb_ffa_send_recieve(CRB_FFA_START, request_type, locality, 0x00);
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_crb_ffa_start);
+> +
+> +static int tpm_crb_ffa_probe(struct ffa_device *ffa_dev)
+> +{
+> +	struct tpm_crb_ffa *p;
+> +	int rc;
+> +
+> +	/* only one instance of a TPM partition is supported */
+> +	if (tpm_crb_ffa && !IS_ERR_VALUE(tpm_crb_ffa))
+> +		return -EEXIST;
+> +
+> +	tpm_crb_ffa = ERR_PTR(-ENODEV); // set tpm_crb_ffa so we can detect probe failure
+> +
+> +	if (!ffa_partition_supports_direct_recv(ffa_dev)) {
+> +		pr_err("TPM partition doesn't support direct message receive.\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	p = kzalloc(sizeof(*tpm_crb_ffa), GFP_KERNEL);
+> +	if (!p)
+> +		return -ENOMEM;
+> +	tpm_crb_ffa = p;
+> +
+> +	mutex_init(&tpm_crb_ffa->msg_data_lock);
+> +	tpm_crb_ffa->ffa_dev = ffa_dev;
+> +	ffa_dev_set_drvdata(ffa_dev, tpm_crb_ffa);
+> +
+> +	/* if TPM is aarch32 use 32-bit SMCs */
+> +	if (!ffa_partition_check_property(ffa_dev, FFA_PARTITION_AARCH64_EXEC))
+> +		ffa_dev->ops->msg_ops->mode_32bit_set(ffa_dev);
+> +
+> +	/* verify compatibility of TPM service version number */
+> +	rc = tpm_crb_ffa_get_interface_version(&tpm_crb_ffa->major_version,
+> +					       &tpm_crb_ffa->minor_version);
+> +	if (rc) {
+> +		pr_err("failed to get crb interface version. rc:%d", rc);
+> +		goto out;
+> +	}
+> +
+> +	pr_info("ABI version %u.%u", tpm_crb_ffa->major_version,
+> +		tpm_crb_ffa->minor_version);
+> +
+> +	if (tpm_crb_ffa->major_version != CRB_FFA_VERSION_MAJOR ||
+> +	    (tpm_crb_ffa->minor_version > 0 &&
+> +	    tpm_crb_ffa->minor_version < CRB_FFA_VERSION_MINOR)) {
+> +		pr_err("Incompatible ABI version");
+> +		goto out;
+> +	}
+> +
+> +	return 0;
+> +
+> +out:
+> +	kfree(tpm_crb_ffa);
+> +	tpm_crb_ffa = ERR_PTR(-ENODEV);
+> +	return -EINVAL;
+> +}
+> +
+> +static void tpm_crb_ffa_remove(struct ffa_device *ffa_dev)
+> +{
+> +	kfree(tpm_crb_ffa);
+> +	tpm_crb_ffa = NULL;
+> +}
+> +
+> +static const struct ffa_device_id tpm_crb_ffa_device_id[] = {
+> +	/* 17b862a4-1806-4faf-86b3-089a58353861 */
+> +	{ UUID_INIT(0x17b862a4, 0x1806, 0x4faf,
+> +		    0x86, 0xb3, 0x08, 0x9a, 0x58, 0x35, 0x38, 0x61) },
+> +	{}
+> +};
+> +
+> +static struct ffa_driver tpm_crb_ffa_driver = {
+> +	.name = "ffa-crb",
+> +	.probe = tpm_crb_ffa_probe,
+> +	.remove = tpm_crb_ffa_remove,
+> +	.id_table = tpm_crb_ffa_device_id,
+> +};
+> +
+> +module_ffa_driver(tpm_crb_ffa_driver);
+> +
+> +MODULE_AUTHOR("Arm");
+> +MODULE_DESCRIPTION("TPM CRB FFA driver");
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/char/tpm/tpm_crb_ffa.h b/drivers/char/tpm/tpm_crb_ffa.h
+> new file mode 100644
+> index 000000000000..645c41ede10e
+> --- /dev/null
+> +++ b/drivers/char/tpm/tpm_crb_ffa.h
+> @@ -0,0 +1,25 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2024 Arm Ltd.
+> + *
+> + * This device driver implements the TPM CRB start method
+> + * as defined in the TPM Service Command Response Buffer
+> + * Interface Over FF-A (DEN0138).
+> + */
+> +#ifndef _TPM_CRB_FFA_H
+> +#define _TPM_CRB_FFA_H
+> +
+> +#if IS_REACHABLE(CONFIG_TCG_ARM_CRB_FFA)
 
-To be compatible with camera drivers not implementing get_mbus_config
-(which is the usual case), use the bus information from the fw interface:
+Yes, this is correct given that it returns false on "vmlinux -> module"
+situation ("vmlinux -> vmlinux" and "module -> module" still work).
 
-The camera does not necessarily has a direct media bus link to the CSI as
-the video-mux and/or the MIPI CSI-2 receiver of the i.MX6 might be in
-between them on the media pipeline.
-The CSI driver already implements the functionality to find the connected
-camera sub-device to call get_mbus_config on it.
+> +int tpm_crb_ffa_init(void);
+> +int tpm_crb_ffa_get_interface_version(u16 *major, u16 *minor);
+> +int tpm_crb_ffa_start(int request_type, int locality);
+> +#else
+> +static inline int tpm_crb_ffa_init(void) { return 0; }
+> +static inline int tpm_crb_ffa_get_interface_version(u16 *major, u16 *minor) { return 0; }
+> +static inline int tpm_crb_ffa_start(int request_type, int locality) { return 0; }
+> +#endif
+> +
+> +#define CRB_FFA_START_TYPE_COMMAND 0
+> +#define CRB_FFA_START_TYPE_LOCALITY_REQUEST 1
+> +
+> +#endif
+> -- 
+> 2.34.1
+> 
+> 
 
-At this point the driver is modified as follows:
-In the case that get_mbus_config is not implemented by the upstream
-camera, try to get its endpoint configuration from the firmware interface
-usign v4l2_fwnode_endpoint_parse.
-For the supported mbus_types (V4L2_MBUS_PARALLEL, V4L2_MBUS_BT656 and
-V4L2_MBUS_CSI2_DPHY), extract the mbus_config from the endpoint
-configuration.
-For all other mbus_types, return an error.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Note that parsing the mbus_config from the fw interface is not done during
-probing because the camera that's connected to the CSI can change based on
-the selected input of the video-mux at runtime.
+[applying next week]
 
-[0] drivers/staging/media/imx/imx-media-csi.c - line 211..216
-[1] include/media/v4l2-subdev.h - line 814
-
-Signed-off-by: Mathis Foerst <mathis.foerst@mt.com>
----
- drivers/staging/media/imx/imx-media-csi.c | 45 +++++++++++++++++++++--
- 1 file changed, 42 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-index 3edbc57be2ca..e642b4cc6182 100644
---- a/drivers/staging/media/imx/imx-media-csi.c
-+++ b/drivers/staging/media/imx/imx-media-csi.c
-@@ -158,6 +158,42 @@ static inline bool requires_passthrough(struct v4l2_mbus_config *mbus_cfg,
- 		 infmt->code != MEDIA_BUS_FMT_YUYV8_2X8);
- }
- 
-+static int csi_parse_upstream_fw_link_config(struct csi_priv *priv,
-+					     struct v4l2_subdev *remote_sd,
-+					     struct v4l2_mbus_config *mbus_cfg)
-+{
-+	struct fwnode_handle *ep_node;
-+	struct v4l2_fwnode_endpoint ep = { .bus_type = V4L2_MBUS_UNKNOWN };
-+	int ret;
-+
-+	ep_node = fwnode_graph_get_endpoint_by_id(dev_fwnode(remote_sd->dev),
-+						  0, 0,
-+						  FWNODE_GRAPH_ENDPOINT_NEXT);
-+	if (!ep_node)
-+		return -ENOTCONN;
-+
-+	ret = v4l2_fwnode_endpoint_parse(ep_node, &ep);
-+	fwnode_handle_put(ep_node);
-+	if (ret)
-+		return ret;
-+
-+	mbus_cfg->type = ep.bus_type;
-+	switch (ep.bus_type) {
-+	case V4L2_MBUS_PARALLEL:
-+	case V4L2_MBUS_BT656:
-+		mbus_cfg->bus.parallel = ep.bus.parallel;
-+		break;
-+	case V4L2_MBUS_CSI2_DPHY:
-+		mbus_cfg->bus.mipi_csi2 = ep.bus.mipi_csi2;
-+		break;
-+	default:
-+		v4l2_err(&priv->sd, "Unsupported mbus_type: %i\n",
-+			 ep.bus_type);
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
- /*
-  * Queries the media bus config of the upstream entity that provides data to
-  * the CSI. This will either be the entity directly upstream from the CSI-2
-@@ -211,9 +247,12 @@ static int csi_get_upstream_mbus_config(struct csi_priv *priv,
- 	ret = v4l2_subdev_call(remote_sd, pad, get_mbus_config,
- 			       remote_pad->index, mbus_cfg);
- 	if (ret == -ENOIOCTLCMD)
--		v4l2_err(&priv->sd,
--			 "entity %s does not implement get_mbus_config()\n",
--			 remote_pad->entity->name);
-+		/*
-+		 * If the upstream sd does not implement get_mbus_config,
-+		 * try to parse the link configuration from its fw_node
-+		 */
-+		ret = csi_parse_upstream_fw_link_config(priv, remote_sd,
-+							mbus_cfg);
- 
- 	return ret;
- }
--- 
-2.34.1
-
+BR, Jarkko
 
