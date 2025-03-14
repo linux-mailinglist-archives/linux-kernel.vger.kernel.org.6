@@ -1,226 +1,156 @@
-Return-Path: <linux-kernel+bounces-561376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D021A6109B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:04:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B31FA6109D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:05:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 073F81B619FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:04:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0D893A3106
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA1E1FCFFC;
-	Fri, 14 Mar 2025 12:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAAC1FDA76;
+	Fri, 14 Mar 2025 12:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GWgE8Vok"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="U1usQ47y";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eFCf37Lc"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83E41C8623;
-	Fri, 14 Mar 2025 12:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315A51C8623;
+	Fri, 14 Mar 2025 12:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741953863; cv=none; b=HB8Ysn/yqN8pVbfSRrtHJysJmKeVX/6Yaba//iGHIANo7l5qbzzGstOcrQIegsET81+E/jbeRDX2gdKrbv5H8qpXK2y7x9oksNryL89CPBX4nLLDsNToJLAoeKF9LbFNxiMcW3cG6THZnLI8XCcVZjVfVPdtVI5NulNG92EKYPw=
+	t=1741953949; cv=none; b=kqMSKvaCwKalN1FP+zTFBzv49I0hSq0Eu/jkftII8i1dA4mgnGZrO9EsWx83/hXEoWEdG3PGHC0Zm7i803Yi1NqGkPcC/euk7S2iiMmspJVaNxZ2/QnZbo0H8DHC4+EzbN6HMS1YuCAw65UHVmw3mwMjdaJSVdqUJitYWL13KsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741953863; c=relaxed/simple;
-	bh=eDunAIeASy7Pjg5qTAnpOdksPevECMyo44pXuVgDuJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LdH7gzwjPFUAg9RVOwR/SgHJjRR63xDn0ElwxiRx1eIKAydoZNqeDyppS6RwnKxw0q8mtOWhHBcxkQyRSd4zYl0pCSYqLxt8DshmCUL+KqKNrCuXWNew4PhOko6yzTe+Rw1vVGgQdrcZqvKAxbczFTIimiszYLOYkAU4NaTeg8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GWgE8Vok; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92356C4CEE3;
-	Fri, 14 Mar 2025 12:04:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741953863;
-	bh=eDunAIeASy7Pjg5qTAnpOdksPevECMyo44pXuVgDuJU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GWgE8VokPJ+VVTMmnh2Ulc2HT3tMuksI6Yz65gHuVo/M5VfTaPCDCrBBmJbydELb7
-	 eyEmiMzTGKNzIoxWyYXAIbE0SsP26wS6CZeNSmL/IAxgN9eGxT6g/+x8DNyU48iyPJ
-	 ci0GyECBRgEmafpLZ4JWeIY+Ro3F2XfIQr2GNR4rOcC+q/a5mm5HA+YDf7xG41eUsL
-	 +U0DR2FUCNmvHdFdMoI3rjZf/VxmZWOBoriOt7NjKtkjnv0ZtU67lK07Ja0e5r/fg/
-	 J2N9Oe9uZ7my29QjUohutm/Ek2X6yYDXj6zIyOPsSdQJhR0MJcnDK0JEegRcfBJxw5
-	 lAY4CV0hO6KVg==
-Date: Fri, 14 Mar 2025 13:04:20 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Lyude Paul <lyude@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
-	Danilo Krummrich <dakr@kernel.org>, mcanal@igalia.com, Alice Ryhl <aliceryhl@google.com>, 
-	Simona Vetter <sima@ffwll.ch>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC v3 12/33] rust: drm/kms: Add RawConnector and
- RawConnectorState
-Message-ID: <20250314-meteoric-flounder-of-success-f9c9e1@houat>
-References: <20250305230406.567126-1-lyude@redhat.com>
- <20250305230406.567126-13-lyude@redhat.com>
+	s=arc-20240116; t=1741953949; c=relaxed/simple;
+	bh=oDvcCqTNPmr960TVhAPx7ki91/X/IM30EuXnWEwEHmw=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=CdbRKjB4OgVRic9yywBKgQGR2c6RUmhOzUoLtZzxNMJX1z6zhJKBsI/vakxuuUVer8fjX0JYIdQgFGrcB/4QqOYxctyC/ixRuTteplhuu/0GPSlBt0y08hSMGRlMWlDI4KZx7mY9HZZFJ93mR4gtGroc/7gjn4Tnz5Lw3Yce2Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=U1usQ47y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eFCf37Lc; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.phl.internal (Postfix) with ESMTP id DB6121382D51;
+	Fri, 14 Mar 2025 08:05:45 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Fri, 14 Mar 2025 08:05:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1741953945;
+	 x=1742040345; bh=2vOhmJSQwki0yk55AruyUCr5jm9yS9UmHlRqG9oZypI=; b=
+	U1usQ47ySSlx9y4TuLmc1toq6rZ7ZjtIhkR5HJ8wvDZd+NfY1IZcjeokncNxvzs6
+	qwBo7KJ1462wWD3t0YhJDPDjEq6Osh/sRcRU+/lzVCM09bnXME8LTMMTggIjw4G2
+	h8Vdx7iz9nRtf0dTaUsv1Ms3yKaJ/l1mR3c2HudLRTyl/8WFA2q6OdXu7ELwwPbw
+	G72Oi6dESAgTifzYLT8OE2A7lgR2v1q2R/nokvIJur1DCmUfAVa4Ws7GoX89ZR8K
+	h6tiIOSJclkkK9SXZNg4HimIoqmxLQy5K3fgqVhORC/XQb64tINUZBXXTRAFtALM
+	pf2+bhVa5V4DEdfDves34w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741953945; x=
+	1742040345; bh=2vOhmJSQwki0yk55AruyUCr5jm9yS9UmHlRqG9oZypI=; b=e
+	FCf37Lc5A/CUWHeCkzatnquhB/+DBfQPWq0DQO+HNsWyHbYCPO+849o5TiPEbUDP
+	5kukSCZps7gRPBedxr7zBJOBYmC4BfwjJoD0bPGshm8tCx/V8jAEajteLM9qBnHI
+	Bn7ze++kfoIbN8vU1HMB+aqYiYAXX+r1gARAx7Xtid3X7XdyMqdk3+XwF0cuDVgf
+	1OICThfDvwcsPGpRN4FcKZMkQPZlWMIO4nVqp203D1iNDwuFv7fKiG/mqNzkaaHs
+	hzDaGczL8ur0mfshnBBvKg+a22Qy8b8xH5Nd+QSZ/wgpxS8tyTNX1TQQoqX9266p
+	KTYOB2qGtZ+Ul+8A38ugg==
+X-ME-Sender: <xms:mRvUZ68vNiGMQT0QkZSA4c0OjAb4e9M87kENGxS50xn9s1A-wynYtQ>
+    <xme:mRvUZ6ujM9Ka_H6BPJlySphav0RKtsNBCIY2lMvC02ZWPBcz6The2Q3SKeE6uvKMT
+    8rkTPoMjlVTqWPrnPs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedtjeekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    hedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinh
+    grshesrghrmhdrtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtohepthhhuhhthhesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugi
+    dqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
+    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:mRvUZwCqDAg562USMOyCv2KtmR_WXPGBZLQd_Xj3_oGAVvsxFxHGqQ>
+    <xmx:mRvUZyfOA8tzccGcvmDh7qfllQg65rHBdL09cZ9wDgnmH9yNRR39Qw>
+    <xmx:mRvUZ_OUDfYLjpMF6OLwH5DjQ589-vcqJb4ZdqWEB8nsqL_JvWXg_w>
+    <xmx:mRvUZ8lZhYKys4zvkuyzCgJHe5oxRUoHiv1VyKQnWdVpOcSSnOyHXw>
+    <xmx:mRvUZ0r5jtxIl35QxlCy4sYqyDva_6miJBth9AjK_yLusp0aIHbN4ayD>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 8310C2220072; Fri, 14 Mar 2025 08:05:45 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="s26t2q64hdk63c6l"
-Content-Disposition: inline
-In-Reply-To: <20250305230406.567126-13-lyude@redhat.com>
+Date: Fri, 14 Mar 2025 13:05:15 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Will Deacon" <will@kernel.org>, "Thomas Huth" <thuth@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ "Catalin Marinas" <catalin.marinas@arm.com>
+Message-Id: <df30d093-c173-495a-8ed9-874857df7dee@app.fastmail.com>
+In-Reply-To: <20250314115554.GA8986@willie-the-truck>
+References: <20250314071013.1575167-1-thuth@redhat.com>
+ <20250314071013.1575167-9-thuth@redhat.com>
+ <20250314115554.GA8986@willie-the-truck>
+Subject: Re: [PATCH 08/41] arm64: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi
+ headers
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
+On Fri, Mar 14, 2025, at 12:55, Will Deacon wrote:
+> On Fri, Mar 14, 2025 at 08:09:39AM +0100, Thomas Huth wrote:
+>> __ASSEMBLY__ is only defined by the Makefile of the kernel, so
+>> this is not really useful for uapi headers (unless the userspace
+>> Makefile defines it, too). Let's switch to __ASSEMBLER__ which
+>> gets set automatically by the compiler when compiling assembly
+>> code.
+>> 
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> Signed-off-by: Thomas Huth <thuth@redhat.com>
+>> ---
+>>  arch/arm64/include/uapi/asm/kvm.h        | 2 +-
+>>  arch/arm64/include/uapi/asm/ptrace.h     | 4 ++--
+>>  arch/arm64/include/uapi/asm/sigcontext.h | 4 ++--
+>>  3 files changed, 5 insertions(+), 5 deletions(-)
+>
+> Is there a risk of breaking userspace with this? I wonder if it would
+> be more conservative to do something like:
+>
+> #if !defined(__ASSEMBLY__) && !defined(__ASSEMBLER__)
+>
+> so that if somebody is doing '#define __ASSEMBLY__' then they get the
+> same behaviour as today.
+>
+> Or maybe we don't care?
 
---s26t2q64hdk63c6l
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC v3 12/33] rust: drm/kms: Add RawConnector and
- RawConnectorState
-MIME-Version: 1.0
+I think the main risk we would have is user applications relying
+on the __ASSEMBLER__ checks in new kernel headers and not defining
+__ASSEMBLY__. This would result in the application not building
+against old kernel headers that only check against __ASSEMBLY__.
 
-On Wed, Mar 05, 2025 at 05:59:28PM -0500, Lyude Paul wrote:
-> Now that we have more then one way to refer to connectors, we also want to
-> ensure that any methods which are common to any kind of connector type can
-> be used on all connector representations. This is where RawConnector and
-> RawConnectorState come in: we implement these traits for any type which
-> implements AsRawConnector or AsRawConnectorState respectively.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  rust/kernel/drm/kms/connector.rs | 35 ++++++++++++++++++++++++++++++++
->  rust/kernel/drm/kms/crtc.rs      | 26 ++++++++++++++++++++++--
->  2 files changed, 59 insertions(+), 2 deletions(-)
->=20
-> diff --git a/rust/kernel/drm/kms/connector.rs b/rust/kernel/drm/kms/conne=
-ctor.rs
-> index 244db1cfdc552..0cfe346b4760e 100644
-> --- a/rust/kernel/drm/kms/connector.rs
-> +++ b/rust/kernel/drm/kms/connector.rs
-> @@ -397,6 +397,27 @@ pub fn attach_encoder(&self, encoder: &impl AsRawEnc=
-oder) -> Result {
->      }
->  }
-> =20
-> +/// Common methods available on any type which implements [`AsRawConnect=
-or`].
-> +///
-> +/// This is implemented internally by DRM, and provides many of the basi=
-c methods for working with
-> +/// connectors.
-> +pub trait RawConnector: AsRawConnector {
-> +    /// Return the index of this DRM connector
-> +    #[inline]
-> +    fn index(&self) -> u32 {
-> +        // SAFETY: The index is initialized by the time we expose DRM co=
-nnector objects to users,
-> +        // and is invariant throughout the lifetime of the connector
-> +        unsafe { (*self.as_raw()).index }
-> +    }
-> +
-> +    /// Return the bitmask derived from this DRM connector's index
-> +    #[inline]
-> +    fn mask(&self) -> u32 {
-> +        1 << self.index()
-> +    }
-> +}
-> +impl<T: AsRawConnector> RawConnector for T {}
-> +
->  unsafe extern "C" fn connector_destroy_callback<T: DriverConnector>(
->      connector: *mut bindings::drm_connector,
->  ) {
-> @@ -536,6 +557,20 @@ pub trait FromRawConnectorState: AsRawConnectorState=
- {
->      unsafe fn from_raw_mut<'a>(ptr: *mut bindings::drm_connector_state) =
--> &'a mut Self;
->  }
-> =20
-> +/// Common methods available on any type which implements [`AsRawConnect=
-orState`].
-> +///
-> +/// This is implemented internally by DRM, and provides many of the basi=
-c methods for working with
-> +/// the atomic state of [`Connector`]s.
-> +pub trait RawConnectorState: AsRawConnectorState {
-> +    /// Return the connector that this atomic state belongs to.
-> +    fn connector(&self) -> &Self::Connector {
-> +        // SAFETY: This is guaranteed safe by type invariance, and we're=
- guaranteed by DRM that
-> +        // `self.state.connector` points to a valid instance of a `Conne=
-ctor<T>`
-> +        unsafe { Self::Connector::from_raw((*self.as_raw()).connector) }
-> +    }
-> +}
-> +impl<T: AsRawConnectorState> RawConnectorState for T {}
-> +
->  /// The main interface for a [`struct drm_connector_state`].
->  ///
->  /// This type is the main interface for dealing with the atomic state of=
- DRM connectors. In
-> diff --git a/rust/kernel/drm/kms/crtc.rs b/rust/kernel/drm/kms/crtc.rs
-> index 95c79ffb584cd..9950b09754072 100644
-> --- a/rust/kernel/drm/kms/crtc.rs
-> +++ b/rust/kernel/drm/kms/crtc.rs
-> @@ -341,6 +341,26 @@ pub unsafe trait ModesettableCrtc: AsRawCrtc {
->      /// The type that should be returned for a CRTC state acquired using=
- this CRTC interface
->      type State: FromRawCrtcState;
->  }
-> +
-> +/// Common methods available on any type which implements [`AsRawCrtc`].
-> +///
-> +/// This is implemented internally by DRM, and provides many of the basi=
-c methods for working with
-> +/// CRTCs.
-> +pub trait RawCrtc: AsRawCrtc {
-> +    /// Return the index of this CRTC.
-> +    fn index(&self) -> u32 {
-> +        // SAFETY: The index is initialized by the time we expose Crtc o=
-bjects to users, and is
-> +        // invariant throughout the lifetime of the Crtc
-> +        unsafe { (*self.as_raw()).index }
-> +    }
-> +
-> +    /// Return the index of this DRM CRTC in the form of a bitmask.
-> +    fn mask(&self) -> u32 {
-> +        1 << self.index()
-> +    }
-> +}
-> +impl<T: AsRawCrtc> RawCrtc for T {}
-> +
->  unsafe impl Zeroable for bindings::drm_crtc_state {}
-> =20
->  impl<T: DriverCrtcState> Sealed for CrtcState<T> {}
-> @@ -432,8 +452,10 @@ pub trait AsRawCrtcState {
->      }
->  }
-> =20
-> -/// A trait for providing common methods which can be used on any type t=
-hat can be used as an atomic
-> -/// CRTC state.
-> +/// Common methods available on any type which implements [`AsRawCrtcSta=
-te`].
-> +///
-> +/// This is implemented internally by DRM, and provides many of the basi=
-c methods for working with
-> +/// the atomic state of [`Crtc`]s.
->  pub trait RawCrtcState: AsRawCrtcState {
->      /// Return the CRTC that owns this state.
->      fn crtc(&self) -> &Self::Crtc {
+Checking for both in the kernel headers does not solve this
+problem, and I think we can still decide that we don't care:
+in the worst case, an application using the headers from assembly
+will have to get fixed later when it needs to be built against
+old headers.
 
-This looks like unrelated changes, or at least it's not mentioned in the co=
-mmit log at all.
+I checked that old gcc versions pass __ASSEMBLY__ at least as
+far back as gcc-2.95, and it should be completely safe to
+assume that no older gcc versions would be used on kernel
+headers, and they probably would choke on c99 features like
+'long long'. I would also assume that any other compiler that
+may be used to include kernel headers has to have enough
+gcc compatibility to define all the common macros.
 
-Maxime
-
---s26t2q64hdk63c6l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ9QbRAAKCRAnX84Zoj2+
-dhauAYDZdcNDT/zBuvE5DOr9kacVBlWkfSGrs2fOz1QWIj4U74eBG41HPoqxsYHK
-Qieb6PYBgIF6VyGWr5UxoOQQxZBx5dI7WtX5wLDhc1G+MTNRa4BMPxAYNRxevb44
-vDIQcgoHaw==
-=eioq
------END PGP SIGNATURE-----
-
---s26t2q64hdk63c6l--
+      Arnd
 
