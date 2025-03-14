@@ -1,150 +1,155 @@
-Return-Path: <linux-kernel+bounces-561082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08B6A60D56
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:31:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 965F9A60D5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:31:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88FAB3B3E5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:31:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57FEE16E091
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F22C1EF0B7;
-	Fri, 14 Mar 2025 09:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063DD19DF61;
+	Fri, 14 Mar 2025 09:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PDwULLus"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EcwOuobH"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA201C861D
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940821C861D;
+	Fri, 14 Mar 2025 09:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741944661; cv=none; b=GI8kbGxr7q19jsrruuLgQVlB23ZTqv98h9DEnGd7gdyGNLbXNOraNm+XF4aUtGYD+E4jtriVNvPBxm3eFTo1kxvVmMZy+s8C6a0/jJLdF/fRSGD6aEdLmxM/sGPZwVex7swGOt7efFgK59h7rk4pbTTtxUpsUCV/0YE3BWk2rxg=
+	t=1741944684; cv=none; b=Sc19Qrm90aEyAkU2YC+frFzh1vEHwGFg74VVvN9sVl3UPKqeBSnQUdjNHyDXIfW7n9+HbjBrbMZvfYrcodbu0PNFc4a9hUemJeK3kbsRe5ebBOQiUl0bkP2q4GelDPvXH/A5TbvK+iCm3hEs1Hb0ku30P/8wmxjwz+zWkAQtyzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741944661; c=relaxed/simple;
-	bh=xuQEv5HHTGk73xsSBeXVLTX8mBkQ60JuWPeHMXmiq6E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eKDtPeehLH9lygCWOyxf0UBuuO+Cae4LEGJ0UJVNKpw5mZrwqUw7zwTWoUYgyuHZg4l+CxSOQo5bT6wK5bVOMHwtVldTpt2H0/7LM+6Qy01KY/+mW4JjfXsycTwbWf1dsabWvK66wbxARCRS98If8Ttt0fiOd+vrvB5PKp5SM6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PDwULLus; arc=none smtp.client-ip=209.85.218.44
+	s=arc-20240116; t=1741944684; c=relaxed/simple;
+	bh=EFG/RUQsEPWHQayDu6FgBejS5LjvkZoTkpo4V8Q+rn4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aewe+GiFk8jtq6Fe4msEbpNOq/GXt1K9I9qI2P6zh7wMZWYdDuKCMd1mQn6pjjjTeOijorh+2aocmOcML/mGLHCzWjynpY/RhWB/gtvSsbyOAg1+lEr7C217zhFzN3vq24aMMNVWX13rymFPqKZErUk62uCH2ocW4hXsK8WpsvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EcwOuobH; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso276264066b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 02:30:59 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so12436135e9.1;
+        Fri, 14 Mar 2025 02:31:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741944658; x=1742549458; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uIW5h9flL0z254Wl4wP17SIc55EF1XwRlmQ99cCsC8w=;
-        b=PDwULLusSoZC5ZLAaZFMmSaeRO/XpeMaQC3O6hlO2MBggCE9sfcuB/j3dKcU/05yOX
-         3siEhwFHUxle8PrrOnMob+KHXpRRQ35gscp0gynNxcqNG2Ukewm+AjZttGgZXw/a4wBY
-         +i1UW3Ae2DvUC+va9YG2gcUdoY6VUJYOmQw8xC06f2y0PL4TY26bAyLbJaRD03sZb7k3
-         DI09jM94uXWmeYCakHvoyeZKfAwuaoLFMVZzCqFY16TdvaaS5JaWco9GdTfAG6KGKctl
-         9TJoh+ByunExf9KCDMC34lPI2Aci0sbNrcomgCgmre1B7EbD1dXoR6FlVvQ0RUuLQLBI
-         0KzQ==
+        d=gmail.com; s=20230601; t=1741944681; x=1742549481; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DgZq1Cihy2mEZuEesHcsZ2TIpT7DRI6TgV6LGAhY23M=;
+        b=EcwOuobHgJI5yddMSiPDxZTR9B8CEPFXzwkQKUA8p4qBDfBcNXeK6xTqbNN3kE9xKF
+         8VPgAeiGWz89A2Cb1d5XsRtbziNWeeFmaSMN42c99clFIKlqr1SyOZEEEPwyL+JbPP/j
+         DfZHFCWX4tdftL3wYcb+nzeNDBQ85xw69ore/c3afGPDGXP3toCHgJmVRhwxA12f+5Cq
+         Aofj2vJ74O/abtedjmvPhRRBqEpzW1RByPwjC8hqLIOK2NXmVajDVz8XyUovxZhHm56d
+         lKvo6C/NppLlxpcRcpaH0KVGEI/4Cc2TE/g0hnyy3Jt+aAIrIticKo6v6lxSJ4Vl4HH8
+         wquA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741944658; x=1742549458;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uIW5h9flL0z254Wl4wP17SIc55EF1XwRlmQ99cCsC8w=;
-        b=Ud+5RuhDUKbDWBM6s+VJYKZXHi604s24BpKO9z6GJ5V1XACaPX9d5v7y0t/UvbnRRj
-         l0D+em9YFIiijHcR0GLd8D0paUKGke3gWWBed2ZE6KEGXTcEVxxwdOfE2iqQCxBjCIwY
-         sZFT16MY2WNOVfG8QrHAEX1reJSJzo9q9ElPORRJVuS1XA/0F2lacDAOJGDCP3yLpPt0
-         BsWTDfHlHGP2jCmGJboXNr2aoOQFTvcwutkfyCvGzJZmNLF432Kc14qf51x381Ll0728
-         JKfgzFHHn9VoVoue0CHwLiauwP3Q9vnTuNoF9RyC3DlZMwl1kt6spe5GQLsNy0UK49NC
-         LY9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXFlr9NFFAFzMTX10ICUKzEI1Z7y9ImhulzHoXi5PuYhSTi1Vkem96WCvPPiF/Vk176Eu8maHZFHWZ0GZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh+ADe+4gU5YrIz+/fGLBaWJmDD3eds5TbtoZmvduqUpWG1JF2
-	F92eOHXzrg37eh1LJ+b2exdjI8p3Pcriwti7XzQbPVIQyr9gsYu+
-X-Gm-Gg: ASbGnct3lVb71PLCJPUHJIcxPHpxVgR31Iiw0VH+SiO61q1QMlUX6J6upnorADo9UpK
-	yaw19oBVUw56g+dfxnXgItfqqN9/INRy6B+V5OmZJOTH6KbI0HgW3gu81mKuzDTcYoWdMVci9Z+
-	glBvP9g3yakxZV2pkjBy17CX/1pWaa9rz+NCnjQN0PLDjzaLIUujEANexTpgnuC+PQzfOBRS4mT
-	Lw5DDBrN8nWqYy30KLYXpoYs27B3J2j64U+DaK/cVhDoe7AcuOAPh6fnYGjLDwgYPgfj8agt6zl
-	m7/CHfyiSrd9MHX4fxZqi3mDOcQMXwOD8G3OiB9RDehbDqY=
-X-Google-Smtp-Source: AGHT+IENEbKqV6ujzjKsOzU7ssdVpEddM44X7XRA2VDTkB7A670oiFcZWkcRS6JNJbisnVgj1LhSpA==
-X-Received: by 2002:a17:907:3f8e:b0:ac2:7ec8:c31d with SMTP id a640c23a62f3a-ac330267166mr150839866b.17.1741944657866;
-        Fri, 14 Mar 2025 02:30:57 -0700 (PDT)
-Received: from fedora.. ([193.77.86.199])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3149cf09dsm196800566b.121.2025.03.14.02.30.56
+        d=1e100.net; s=20230601; t=1741944681; x=1742549481;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DgZq1Cihy2mEZuEesHcsZ2TIpT7DRI6TgV6LGAhY23M=;
+        b=xDsxRkMvIpt0yjXT/o4lDk6ATI9xFb/StyGZIicZhdrKaTGYkPef+dQn6PjojG/p+D
+         jMub8a9i5fEA1PxZQdbpW6lMvO9RxMkv5vfON8b5xl4gIlbOmOkT7EZ4U4OOhkJ6n4oi
+         LLQBmq+zLZFfiEsmh2Grzq03VVo04R+pKTDtvDHBm8/448ZIVdy3QY+CiJP/7UKbhjoW
+         AW9pSsgspjtC5caGdillb2a5RNafM8Jx5y72QOegkw5D+tCH6+zkiSIIiCZv0WRBMtOr
+         C2dd0+qbj4etcy6ZVn9wk1GhW1ohERaZPnScBrg+l1zIdVBYC0U4GMfuAyCivuI1+68W
+         a+yg==
+X-Forwarded-Encrypted: i=1; AJvYcCWoXr0gVZSyXrocDUtg4nbX2wyhNgMhTd/KUWJtGLoESh/4uKEUi2PCmTOzXssPUfcx+W7qYEdXGptS@vger.kernel.org, AJvYcCXQtFyXv85y1I1Yq3WOVPDinmAO04PcLEJ3VdyyoBg/knJqc59hZIR1M4I0mceNfNmlbhXLKOIM8dgg@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvPPRlIFsvXunNLKbkdojhZ3XsmfCdoGcEY+ZUogTg0fcJx9CJ
+	Q4vLLJiw87k/qgyiGfsUwj43TysJUvx86Q6FmQjPuYADx9cPEWK/
+X-Gm-Gg: ASbGncu/iOu6LRU714glmIA1u36gpXog99fZGrqxM49Q+p5OwGi05h1YFlIrHGqc32S
+	onmqpSrFTqlHoRHnryRMfSdzZqJWE5U4nHftg0jNIS7c6SEUIpcg+dyBCP+V4tjtr1PeboRKsVb
+	7o+h5YTEoiKidWSdAMfTRP/TlqRxjL2oaZ8mCDkJa8U1qQIjF/oF4PgIJS8TjvuEG5WejimwBu1
+	iWOdbYMgBP2RvrKdy2yHVPmvYk+65MGr6Y9LX1Fo5/dApOx6LmFl+1Qu5NxlysSOlCUb5eYirkn
+	cjjUbAN+yTk6MFkVqhnMMQt/m7+FpkRoD6/Wlsf9sITW9TdALKHwJctDQDS80g==
+X-Google-Smtp-Source: AGHT+IG0nQfUihbWpCEv6X5UBbk7/FaQ6P3azQnp23XNoCBldqucN5qWH0TKNQJOpSr3KZzsS8ZAgQ==
+X-Received: by 2002:a05:600c:1c17:b0:43c:f597:d589 with SMTP id 5b1f17b1804b1-43d1ecd2d21mr20134765e9.27.1741944680525;
+        Fri, 14 Mar 2025 02:31:20 -0700 (PDT)
+Received: from giga-mm.home ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1ffbcef5sm11197635e9.9.2025.03.14.02.31.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 02:30:57 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH] x86/asm: Use asm_inline() instead of asm() in __untagged_addr()
-Date: Fri, 14 Mar 2025 10:30:55 +0100
-Message-ID: <20250314093111.654359-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        Fri, 14 Mar 2025 02:31:20 -0700 (PDT)
+Message-ID: <2d1995d39ac050eeb7cec4183ebdb307e520a7c7.camel@gmail.com>
+Subject: Re: [PATCH v13 2/3] soc: sophgo: cv1800: rtcsys: New driver
+ (handling RTC only)
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Inochi Amaoto <inochiama@gmail.com>, sophgo@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-rtc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Date: Fri, 14 Mar 2025 10:31:09 +0100
+In-Reply-To: <fuc5zzq3izowktmafrhy5vkjddydxg5673ggr64ukh7v5knjmi@r6xozjxcw7r2>
+References: <20250309202629.3516822-1-alexander.sverdlin@gmail.com>
+	 <20250309202629.3516822-3-alexander.sverdlin@gmail.com>
+	 <fuc5zzq3izowktmafrhy5vkjddydxg5673ggr64ukh7v5knjmi@r6xozjxcw7r2>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Use asm_inline() to instruct the compiler that the size of asm()
-is the minimum size of one instruction, ignoring how many instructions
-the compiler thinks it is. ALTERNATIVE macro that expands to several
-pseudo directives causes instruction length estimate to count
-more than 20 instructions.
+Hi Inochi!
 
-bloat-o-meter reports minimal code size increase
-(x86_64 defconfig with CONFIG_ADDRESS_MASKING, gcc-14.2.1):
+On Fri, 2025-03-14 at 08:51 +0800, Inochi Amaoto wrote:
+> On Sun, Mar 09, 2025 at 09:26:24PM +0100, Alexander Sverdlin wrote:
+> > Add driver for Sophgo CV1800 series SoC RTC subsystem. The RTC module
+> > comprises a 32kHz oscillator, Power-on-Reset (PoR) sub-module, HW state
+> > machine to control chip power-on, power-off and reset. Furthermore, the
+> > 8051 subsystem is located within RTCSYS including associated SRAM block=
+.
+> >=20
+> > This patch only populates RTC sub-device.
+> >=20
 
-  add/remove: 2/2 grow/shrink: 5/1 up/down: 2365/-1995 (370)
+...
 
-	Function                          old     new   delta
-	-----------------------------------------------------
-	do_get_mempolicy                    -    1449   +1449
-	copy_nodes_to_user                  -     226    +226
-	__x64_sys_get_mempolicy            35     213    +178
-	syscall_user_dispatch_set_config  157     332    +175
-	__ia32_sys_get_mempolicy           31     206    +175
-	set_syscall_user_dispatch          29     181    +152
-	__do_sys_mremap                  2073    2083     +10
-	sp_insert                         133     117     -16
-	task_set_syscall_user_dispatch    172       -    -172
-	kernel_get_mempolicy             1807       -   -1807
+> > +++ b/drivers/soc/sophgo/cv1800-rtcsys.c
+> > @@ -0,0 +1,63 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Driver for Sophgo CV1800 series SoC RTC subsystem
+> > + *
+> > + * The RTC module comprises a 32kHz oscillator, Power-on-Reset (PoR) s=
+ub-module,
+> > + * HW state machine to control chip power-on, power-off and reset. Fur=
+thermore,
+> > + * the 8051 subsystem is located within RTCSYS including associated SR=
+AM block.
+> > + *
+> > + * Copyright (C) 2025 Alexander Sverdlin <alexander.sverdlin@gmail.com=
+>
+> > + *
+> > + */
+> > +
+> > +#include <linux/mfd/core.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/property.h>
+> > +
+> > +static struct resource cv1800_rtcsys_irq_resources[] =3D {
+> > +	DEFINE_RES_IRQ_NAMED(0, "alarm"),
+> > +};
+> > +
+> > +static const struct mfd_cell cv1800_rtcsys_subdev[] =3D {
+> > +	{
+>=20
+> > +		.name =3D "cv1800-rtc",
+>=20
+> Make this a specifc one, like "sophgo,cv1800b-rtc"
 
-  Total: Before=21423151, After=21423521, chg +0.00%
+Could it be that you mixed up device instance name and "compatible"?
 
-The code size increase is due to the compiler inlining
-more functions that inline untagged_addr().
+Please refer to all other MFD cells with `grep -C3 -R -F "struct mfd_cell"`
+either in drivers/soc or in drivers/mfd, there are no vendor prefixes in th=
+e
+names.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
- arch/x86/include/asm/uaccess_64.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
-index c52f0133425b..3c1bec3a0405 100644
---- a/arch/x86/include/asm/uaccess_64.h
-+++ b/arch/x86/include/asm/uaccess_64.h
-@@ -26,8 +26,8 @@ extern unsigned long USER_PTR_MAX;
-  */
- static inline unsigned long __untagged_addr(unsigned long addr)
- {
--	asm (ALTERNATIVE("",
--			 "and " __percpu_arg([mask]) ", %[addr]", X86_FEATURE_LAM)
-+	asm_inline (ALTERNATIVE("", "and " __percpu_arg([mask]) ", %[addr]",
-+				X86_FEATURE_LAM)
- 	     : [addr] "+r" (addr)
- 	     : [mask] "m" (__my_cpu_var(tlbstate_untag_mask)));
- 
--- 
-2.48.1
+--=20
+Alexander Sverdlin.
 
 
