@@ -1,188 +1,113 @@
-Return-Path: <linux-kernel+bounces-561211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BD1FA60ED0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:27:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C75A60ED6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:28:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A423B5A36
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:27:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 444761892A4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBE11F3BAE;
-	Fri, 14 Mar 2025 10:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169891F418A;
+	Fri, 14 Mar 2025 10:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="m+jmdcM7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2Da2GVXQ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="m+jmdcM7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2Da2GVXQ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jq0KWvbC"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE921F416F
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6E41F4192
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741948064; cv=none; b=Lr4Gz0y6IAb0/1MFS5uKihcfmMAah7MLSqCCDkVL4erLTXH5mbInqtgdCFW8vs8H29p0PcSpyDcpv/xyqH450dBwT2M6GB9l8iUrqPRFV199o3bVmPsyG7stvCwXAuFwoNj1PKgthGjVRpEIXz1qPCFnbmKipL9Y1t1Rytn0yuA=
+	t=1741948097; cv=none; b=VMb3e8Tww8MoRY3fyNqop8E3ZDMh1KRI47BMoN3MjAnmSJHSaxzvA4lHcGZDWeeTFAwskVmI3IfdrrA6Wdjm2vmPn6gStfFCnz1Y18wOCOqjva9j7gJUaegfdFF2Ho/69ajjv+vvkyxMuCaBzPicYOAdwfG4XLTl1zNrPxqjXdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741948064; c=relaxed/simple;
-	bh=6MUnyoMqfWRXJzMvRu/uODIoNq/j211mmEZ2WIPba3E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YiM+QpsgP+18KPkVwktHDOjqk12toXb3La/Y+oCjnxLBsW4+5wtCSakHCEUbqjTW2az77Jkj0PHzznrAqQdQPudj8AHT3JbJntbymP/9ZXL8ABP9O55M2FncZgkrr9osxR1FDNiiNmJdWFFQB06wO2lsvxMqxBhtJeM0Ee3ca2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=m+jmdcM7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2Da2GVXQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=m+jmdcM7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2Da2GVXQ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 288B01F38E;
-	Fri, 14 Mar 2025 10:27:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741948061; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cgnd6h/8+X/DkEnqQwYn262MXQhZFGwUf0NqimX6ZLs=;
-	b=m+jmdcM7naaaJYDjiLUoxBoxJ1CUuX2Lg4vABxBJHyTXYB5MR9GuIes3/qRccuoKZF4HDU
-	3KeFroriA7gVH/riqYktnDgM1V4ZgY4otUSaZE9PNYqCuWikLFrAlwzSmMrvGPwgZ9YbHG
-	dCK2cYFsreK6SZ2EDzsLBlKDEL9qxuM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741948061;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cgnd6h/8+X/DkEnqQwYn262MXQhZFGwUf0NqimX6ZLs=;
-	b=2Da2GVXQOSiDIHTxiRa89PZSJ4zgmkGZnKDEmxXRDLU6yAL5/8ePn1raLqhnLE6MJ5Yijm
-	e1ZU+M9xehJbbsCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=m+jmdcM7;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=2Da2GVXQ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741948061; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cgnd6h/8+X/DkEnqQwYn262MXQhZFGwUf0NqimX6ZLs=;
-	b=m+jmdcM7naaaJYDjiLUoxBoxJ1CUuX2Lg4vABxBJHyTXYB5MR9GuIes3/qRccuoKZF4HDU
-	3KeFroriA7gVH/riqYktnDgM1V4ZgY4otUSaZE9PNYqCuWikLFrAlwzSmMrvGPwgZ9YbHG
-	dCK2cYFsreK6SZ2EDzsLBlKDEL9qxuM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741948061;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cgnd6h/8+X/DkEnqQwYn262MXQhZFGwUf0NqimX6ZLs=;
-	b=2Da2GVXQOSiDIHTxiRa89PZSJ4zgmkGZnKDEmxXRDLU6yAL5/8ePn1raLqhnLE6MJ5Yijm
-	e1ZU+M9xehJbbsCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 11CDD13A31;
-	Fri, 14 Mar 2025 10:27:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mxH5A50E1GeiZQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 14 Mar 2025 10:27:41 +0000
-Message-ID: <c88739b4-1fe3-47dc-8ed6-22adf0aadcb4@suse.cz>
-Date: Fri, 14 Mar 2025 11:27:40 +0100
+	s=arc-20240116; t=1741948097; c=relaxed/simple;
+	bh=7lhUJ6eiiWP9IJ/FYhzjbXh+LAJRJWyTLSUXs2Uq9+Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ej88ZCiegXEsXkcCeOVzufq3hea6bQr2/UFmzYIpeSlJlV+L2F8Vi8sEHnrkUIKr0GLuX31nXRU6e/7wqW1F54ZY55+lJ9aH/7nF3DT0kQWABtg1G3qA/c72cNMf62XhPitv2K3LwhjZwPWSefMDFZGndlO+rwtilC95DYL4HaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jq0KWvbC; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5499e3ec54dso2033176e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:28:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741948093; x=1742552893; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7lhUJ6eiiWP9IJ/FYhzjbXh+LAJRJWyTLSUXs2Uq9+Y=;
+        b=Jq0KWvbC+RGapBxE/79RV0BIeD9VvGdw1Fpe1TB3FQiE3Mx7M1ug74I43skmk/ysed
+         pW0eyKCVeuPLLFbAr8/7rZaVq+ypvWIqqp98ONbAm/K0er06k802QP0sKmwApc01jN5E
+         LJkRPCM7GjMxbAZVdkkbB+WFpnQ3yeovdkzSGgBhRM8hxbnIqo7S1fIfuHXiO9Srwm6f
+         0krXnLDsipucb1cr4hOpq8EflJ5+JkQWavCGVohox/GL31nKFJGEb3tY1JskSboySuXw
+         evvwW11mE8FMNJVAwglnLWQuelsD1w2tLYtm1nHAHAZQlQ3gbq3yJ1khhhuBRD+qlb/f
+         Bh5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741948093; x=1742552893;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7lhUJ6eiiWP9IJ/FYhzjbXh+LAJRJWyTLSUXs2Uq9+Y=;
+        b=ooMsBMdc2qowZGQd2NRjoEjJ85LrSRZgDxDySTdL0RsNJgBv/lpF6yoI117MyFOmlS
+         871jUQyzg2g+ebYoRWbMxN5v6ij+7lWjLcAM1Okgu8eWbOMUF4YUaS9vpeibiF8SFQaN
+         uPn/1InsvrRsLAcFTL+JcrSwFgzP64GhU1wW4zc24RsqYLc8wmzNKwXKZAKdtjkS+ED8
+         D1yNOCKL+jsdBz8cu5+RrIo8BSrqjEI1H9yggvCR+7wTBASyAb/6Ng9h0ZUjMNV32A5u
+         yARkTv0+gf9cbhzzH+KZi/6frutuVIdhiFkCrpT8z3VfHEPbON1/GdU3hFs839h0K95w
+         gJqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfGZH3RYEw7x7V1MPwz9wu+W82hbPY72YIkrQaS5f4ONVlEVhq4B7+7xE/2Q7Js4OhEm6EQIbYeTxmAk8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAPimRoC9DaWQnDrLH8qoO+lUs2IDwgUZ+2ZNqZTjvLnSWi7IJ
+	2eS8wsyf9lbP4bqwLPd+L/FOKKlHM0F1xoeQCMzZVJGsI8DQQlHPZFYtvBKltCYEqTQTmchh4BX
+	6mDxCBcukJvW65FUQxxuyya5iA6iACpKQngjpbw==
+X-Gm-Gg: ASbGnctZHQEd0kKRBgxLq1zq0AnrTPurqPFwNEMqw+MD37g0V7dvaa6tRJncH5WKhuf
+	vC0UcwX1cij9NVgXnKlYWvGIXIss+pyCHYO2o3tDpql7s8OQa3hNA4ybhbteuMyu7Wh8IHYMOm0
+	+18r3zs4p9or/AsgzKw8+13Bs=
+X-Google-Smtp-Source: AGHT+IEn/Zc2evX7ABWKYXK/Rs9IfMZdPR9tSjfOKy1a8kRLZcgdXcqx09hfLow4+l9JiJIqttYJQGRGb5b/H78iKJ8=
+X-Received: by 2002:a05:6512:3087:b0:549:7330:6a5a with SMTP id
+ 2adb3069b0e04-549c3913d63mr621103e87.23.1741948093287; Fri, 14 Mar 2025
+ 03:28:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 07/10] memcg: use __mod_memcg_state in drain_obj_stock
-Content-Language: en-US
-To: Shakeel Butt <shakeel.butt@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-mm@kvack.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Meta kernel team <kernel-team@meta.com>
-References: <20250314061511.1308152-1-shakeel.butt@linux.dev>
- <20250314061511.1308152-8-shakeel.butt@linux.dev>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20250314061511.1308152-8-shakeel.butt@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 288B01F38E
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,suse.cz:dkim,suse.cz:mid];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+References: <20250309193612.251929-1-linux@treblig.org> <20250309193612.251929-5-linux@treblig.org>
+In-Reply-To: <20250309193612.251929-5-linux@treblig.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 14 Mar 2025 11:28:02 +0100
+X-Gm-Features: AQ5f1Jo6nSq2AFqXUDepXvu8J8Xduf-drgRoP8FzPPUsiMaA2xVOQZlsv65trtc
+Message-ID: <CACRpkdY2oZtu4vtTwHRMFxaoYWu3B5bfPN==thz=BT2F6BHQQw@mail.gmail.com>
+Subject: Re: [PATCH 4/9] mfd: pcF50633-gpio: Remove
+To: linux@treblig.org
+Cc: arnd@arndb.de, lee@kernel.org, dmitry.torokhov@gmail.com, sre@kernel.org, 
+	lgirdwood@gmail.com, broonie@kernel.org, alexandre.belloni@bootlin.com, 
+	danielt@kernel.org, jingoohan1@gmail.com, deller@gmx.de, brgl@bgdev.pl, 
+	tsbogend@alpha.franken.de, linux-mips@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-fbdev@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/14/25 07:15, Shakeel Butt wrote:
-> For non-PREEMPT_RT kernels, drain_obj_stock() is always called with irq
-> disabled, so we can use __mod_memcg_state() instead of
-> mod_memcg_state(). For PREEMPT_RT, we need to add memcg_stats_[un]lock
-> in __mod_memcg_state().
-> 
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+On Sun, Mar 9, 2025 at 8:36=E2=80=AFPM <linux@treblig.org> wrote:
 
-Maybe it'll make sense later but as of this patch itself it begs a question
-why put memcg_stats_lock()/unlock() in __mod_memcg_state itself and not just
-around the call in drain_obj_stock()?
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>
+> The pcf50633 was used as part of the OpenMoko devices but
+> the support for its main chip was recently removed in:
+> commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support")
+>
+> See https://lore.kernel.org/all/Z8z236h4B5A6Ki3D@gallifrey/
+>
+> Remove it.
+>
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-> ---
->  mm/memcontrol.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 3c4de384b5a0..dfe9c2eb7816 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -707,10 +707,12 @@ void __mod_memcg_state(struct mem_cgroup *memcg, enum memcg_stat_item idx,
->  	if (WARN_ONCE(BAD_STAT_IDX(i), "%s: missing stat item %d\n", __func__, idx))
->  		return;
->  
-> +	memcg_stats_lock();
->  	__this_cpu_add(memcg->vmstats_percpu->state[i], val);
->  	val = memcg_state_val_in_pages(idx, val);
->  	memcg_rstat_updated(memcg, val);
->  	trace_mod_memcg_state(memcg, idx, val);
-> +	memcg_stats_unlock();
->  }
->  
->  #ifdef CONFIG_MEMCG_V1
-> @@ -2845,7 +2847,7 @@ static void drain_obj_stock(struct memcg_stock_pcp *stock)
->  
->  			memcg = get_mem_cgroup_from_objcg(old);
->  
-> -			mod_memcg_state(memcg, MEMCG_KMEM, -nr_pages);
-> +			__mod_memcg_state(memcg, MEMCG_KMEM, -nr_pages);
->  			memcg1_account_kmem(memcg, -nr_pages);
->  			if (!mem_cgroup_is_root(memcg))
->  				memcg_uncharge(memcg, nr_pages);
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
+Yours,
+Linus Walleij
 
