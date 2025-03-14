@@ -1,321 +1,151 @@
-Return-Path: <linux-kernel+bounces-561576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B08A613A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:30:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64EABA613AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:31:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B93619C461C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:30:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57F1819C4A21
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397002AF07;
-	Fri, 14 Mar 2025 14:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D102201006;
+	Fri, 14 Mar 2025 14:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AnH9ZP7Y"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/1YYG7t"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3E322338;
-	Fri, 14 Mar 2025 14:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E487485;
+	Fri, 14 Mar 2025 14:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741962642; cv=none; b=Zxz7/0GQa1PFKU+dtqv3qX0il53Qt6owFEmabqZPfJX41cXJtG0/oaJMbmMetS8wK5L4V8yxAeoP8HuCHFxN3/R3rpodKbnMV0669WW4UZQk97EIt6WdtcHNFjKW2EwhUCocvK5wXvRfI/OKQpseI5xmdiixTG0ZKJk8WMkMfvk=
+	t=1741962691; cv=none; b=kHGgwS7lMGeFAicqHwe3bDY+910cpsJxIoul/n7gmXjdgEnwLGXyXW9C55eCOCM9UTbED2e7LLfYP9OLsZPez34YkUvMl3NqpyJupKtiYfTkDc4GbS8SJNFceiOodTpBSb+zgV/AtxSeIO63l+7zUkOGU4eR6hDGS8oIfRFpjdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741962642; c=relaxed/simple;
-	bh=a5PlPmBAYxkGhv4IUUNWaMcmFYlqqbR728KvzqefdRo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dSbhc098zaTs59ASoffNDaIf8wTBzeyyJPtLU6K9JYb8MJ9iwgfU6h5M61Dih3n2suGanYasm5UMIPcDt+TAaEommUQmUzopmCBrIbiHh9nu+cs1LLMrjGHK4zlA94XMSfWKBTsQLmcEuNnrmCojA8dIMFLgXl2JyqbuJlHOxPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AnH9ZP7Y; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741962641; x=1773498641;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=a5PlPmBAYxkGhv4IUUNWaMcmFYlqqbR728KvzqefdRo=;
-  b=AnH9ZP7Y39i5knUTe0i/g3mfdvz7FZhLGXU/OBTDfFG0+G45DRjKoF2C
-   RUYdhk1POxlR9cyKBBkp5eeEy7cUN0NhdOMbgxgSv3sPExGTYuIio3u+r
-   BAce7JXjiOOLIIPV6CyFUT9ZV4Y+FJNzWGGlJ+CatgH545ZQt0HUrPr71
-   vSMmazs2p/8ru9tvxZYxl0hsLuFYizaXhcvlAyqDqkTXZP0jYaxHy7hii
-   PzmlttduLiVrzOP+3D2MzVKOtUJIaj+b4taJoNyzpRrYSQQCRDs4bSViC
-   ldp+4Pq8cd0VIm6jzn3DsKEmHxYQuWQoNyhlbQcuDHdIrRutW2mCOQyDg
-   Q==;
-X-CSE-ConnectionGUID: E0RJljGDT5KVDh704EyeiA==
-X-CSE-MsgGUID: 14DZlcIwQg28MTTN6y8opg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="53322752"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="53322752"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 07:30:40 -0700
-X-CSE-ConnectionGUID: J9i6mq9uSqmnzLVkPMV90w==
-X-CSE-MsgGUID: vx2E6BZ6RxWJycm+CGUFWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="122239932"
-Received: from spandruv-desk1.amr.corp.intel.com ([10.125.108.163])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 07:30:40 -0700
-Message-ID: <ab3fb97f30656badde65c542c72885392bfd7762.camel@linux.intel.com>
-Subject: Re: [PATCH 1/3] thermal: intel: int340x: Add platform temperature
- control interface
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: "Zhang, Rui" <rui.zhang@intel.com>, "lukasz.luba@arm.com"
-	 <lukasz.luba@arm.com>, "rafael@kernel.org" <rafael@kernel.org>, 
- "daniel.lezcano@linaro.org"
-	 <daniel.lezcano@linaro.org>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
- "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>
-Date: Fri, 14 Mar 2025 07:30:39 -0700
-In-Reply-To: <ca935ccd07fb27a77a39fa797738e7a2e96abeb1.camel@intel.com>
-References: <20250308183812.118311-1-srinivas.pandruvada@linux.intel.com>
-	 <20250308183812.118311-2-srinivas.pandruvada@linux.intel.com>
-	 <ca935ccd07fb27a77a39fa797738e7a2e96abeb1.camel@intel.com>
-Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
- keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
- YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
- y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
- NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
- GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
- TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
- oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
- AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
- b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
- AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
- oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
- UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
- ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
- wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
- NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
- J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
- oOfCQxricddC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1741962691; c=relaxed/simple;
+	bh=ym1t0HhYzi+uNqAzKhYR0HUnH6j3cdUQ68UUxTYpXMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SZLIFJr+ARf95vblVH5Dp5ZA1aPtq8ECeQPinwoDaxvur/uj9KTOCqNzMIFgMxYzBrr40Us6kWaiCyQ48U3qAvVBJNbv+bpyWIGwA8iBUoWl/Ppldn0eRhrThIKtKXWEkeLCp5sFYjF7V9Nk6wtiJT/Rj4ChRjWSESPxaG4QlH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b/1YYG7t; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2239c066347so46041535ad.2;
+        Fri, 14 Mar 2025 07:31:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741962689; x=1742567489; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SrjknHmgf65ssRMbGjRwe0QuLHCWzzid6s0x5foLqw0=;
+        b=b/1YYG7ty/XdFz55MEBqKZkNdlazVxy7yy7MgzCoH7yx0F2cnga019fGVRQj3NKzm4
+         5GyuppzjGChhp90qkrahUnZn+3t9H2SJsfJuysGzigMuNlsp3LJEHkYDjRnixslenJbe
+         ZkhuDSSnlXJd62whT59a81QmC0qCpcz6r0urgxBIbCqLokxiLpnJNoXrUGnUHfXYxZ9I
+         VvkDTCe0mPK843EK3Gs0C12FIEpUqhX9TqvlSkUtO26VOERH4h03BfCI7PTayBC8cQni
+         kYFwvgLFA+4xTCZovxYKihZBfiJacU6J43S8bDco1udTgzwPwiz+0J3Rvv3lqH5OhWbo
+         588g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741962689; x=1742567489;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SrjknHmgf65ssRMbGjRwe0QuLHCWzzid6s0x5foLqw0=;
+        b=HowxtV/M31Vf4gEhcphxnJJYj7Cdl6uc2fJsXGAuCYxfKBKB4knGQ4ftjMxtLDtDHa
+         gapMZPx1pFvfpqHe2nrBPkcW2Lu3Vlv2SPvd8Qnc+a4p+l2w4IPAjo9QxMLdxgkd2BZN
+         gSjGFVUYbUHzTgAMStN39xKZuKC+4ZyVkVYqf4NBgU/YTbcerPPITAzpLG2tm+oxo55+
+         BQBAr+q+9vsmDdQdOy3m8Aavf60EbLD0qim6y/CpaFrOK0cNMv2AbynZZ1UYezyYhgXT
+         PaPU+hXvY9NOK34PZVa7nxhw3lesAhgPvzBA7Pc91OpoLXUML4e73hsmTQLFkiR8sc23
+         606Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW1lXmsK6z9pZSXxldB6K2Z75zk2Bv5lXjI+AFj753Cz6s5XEanPRRPMx7UldG4m2SZEOx0zmnkjmE=@vger.kernel.org, AJvYcCWEePq8ru+Ki6qzHTwtNhxSPd9hNDp8fn/WqZ+lOXlVSn5VhQ/GLtkwBdC8SuTjaTbOWLZqgjesYQXycA==@vger.kernel.org, AJvYcCWOGx/z1DmwvXdelVP6I9BOZ6HT/8bBtZDAJfN2uI3/MyG0/x0RH0DFUvnhJhETRQuWJnotQ3dr@vger.kernel.org, AJvYcCWkkoCNAuCh1z2vJv6IedTYb2X/iqwYoitzwKsJFJy6w8BBz2DUoQQybTr8SzPsDV1Z85aoeROqoo8K6dph@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZvKzKMz22n/6+xZOgG7hEMeEQd7bQiovKfkQpXEQmv4UWSTie
+	Sd3tziSKK2J1HXxF7kL+AAKuJV58GIl3PqmOUWp9ChJhJMs0yaY=
+X-Gm-Gg: ASbGncvH960lHcRsPHxVxGrJ2pUuhXmnfmg7Phrk8VQI3tYTptYZOEtYVDYTrtdAHC+
+	agBj6RYcje9n2rC4qIIHGR7Rcl5Oxy7XXuM/kph3wzvysBKAJANqZ5yj+voVGIJmqGsBKlZwcgW
+	bUP4bUvQNr2mUrsLM8ZGuNbRGHkKpqa8W/PNLIeziIid2jxEofGRlsh63OJhiPInSsu2HUmdPum
+	AllTbo0w3NPqz63yZ+5M8qI0bdiCiSB0umWnpiUwaqL+cDg50s+qaU1um7wm7lArXp5evf4/Ke2
+	H54fE4ixRf5TjIb0KtdM0zoTbHFmNxWLDzpzRmGKeWlP
+X-Google-Smtp-Source: AGHT+IFJDqwdI6R+aufvCxuFg6s86CheuRTM4g3HmlZAvyFwPx9dHRbgZdyuUHEYvNKRcVKJeJG2/w==
+X-Received: by 2002:a17:903:2388:b0:21f:4c8b:c514 with SMTP id d9443c01a7336-225e0b14e9fmr36237525ad.45.1741962689271;
+        Fri, 14 Mar 2025 07:31:29 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-225c68884b6sm29234745ad.3.2025.03.14.07.31.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 07:31:28 -0700 (PDT)
+Date: Fri, 14 Mar 2025 07:31:28 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, Gal Pressman <gal@nvidia.com>,
+	Mark Bloch <mbloch@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yael Chemla <ychemla@nvidia.com>
+Subject: Re: [PATCH net-next 4/4] net/mlx5e: Expose port reset cycle recovery
+ counter via ethtool
+Message-ID: <Z9Q9wBuDYHvEc4zY@mini-arch>
+References: <1741893886-188294-1-git-send-email-tariqt@nvidia.com>
+ <1741893886-188294-5-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1741893886-188294-5-git-send-email-tariqt@nvidia.com>
 
-On Tue, 2025-03-11 at 05:56 +0000, Zhang, Rui wrote:
-> On Sat, 2025-03-08 at 10:38 -0800, Srinivas Pandruvada wrote:
-> > Platform Temperature Control is a dynamic control loop implemented
-> > in
-> > hardware to manage the skin or any board temperature of a device.
-> > The
-> > reported skin or board temperature is controlled by comparing to a
-> > configured target temperature and adjusting the SoC (System on
-> > Chip)
-> > performance accordingly. The feature supports up to three platform
-> > sensors.
-> >=20
-> > OEMs (Original Equipment Manufacturers) can configure this feature
-> > through the BIOS and provide temperature input directly to the
-> > hardware
-> > via the Platform Environment Control Interface (PECI).
->=20
-> Does this mean each PTC instance is bound to a certain skin/board
-> sensor?
-Yes.
+On 03/13, Tariq Toukan wrote:
+> From: Yael Chemla <ychemla@nvidia.com>
+> 
+> Display recovery event of PPCNT recovery counters group. Counts (per
+> link) the number of total successful recovery events of any recovery
+> types during port reset cycle.
+> 
+> Signed-off-by: Yael Chemla <ychemla@nvidia.com>
+> Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+> ---
+>  .../ethernet/mellanox/mlx5/counters.rst       |  5 +++
+>  .../ethernet/mellanox/mlx5/core/en_stats.c    | 44 ++++++++++++++++---
+>  .../ethernet/mellanox/mlx5/core/en_stats.h    |  4 ++
+>  3 files changed, 48 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/networking/device_drivers/ethernet/mellanox/mlx5/counters.rst b/Documentation/networking/device_drivers/ethernet/mellanox/mlx5/counters.rst
+> index 99d95be4d159..f9a1cf370b5a 100644
+> --- a/Documentation/networking/device_drivers/ethernet/mellanox/mlx5/counters.rst
+> +++ b/Documentation/networking/device_drivers/ethernet/mellanox/mlx5/counters.rst
+> @@ -1082,6 +1082,11 @@ like flow control, FEC and more.
+>         need to replace the cable/transceiver.
+>       - Error
+>  
+> +  * - `total_success_recovery_phy`
+> +     - The number of total successful recovery events of any type during
+> +       ports reset cycle.
+> +     - Error
+> +
 
->  And writing the "temperature_target" sysfs tells firmware the
-> target temperature, as well as the target sensor that the temperature
-> applies to?=C2=A0
-Yes
+html build complains with the following:
+Sphinx parallel build error:
+docutils.utils.SystemMessagePropagation: <system_message level="3" line="896" source="/home/doc-build/testing/Documentation/networking/device_drivers/ethernet/mellanox/mlx5/counters.rst" type="ERROR"><paragraph>Error parsing content block for the "flat-table" directive: exactly one bullet list expected.</paragraph><literal_block xml:space="preserve">.. flat-table:: Physical Port Counter Table
 
-> if yes, is there a way for userspace to know which sensor
-> each PTC instance applies to?
-No.
-You can just change threshold up and down by observation only.
+https://netdev-3.bots.linux.dev/doc-build/results/32382/stderr
 
-Thanks,
-Srinivas
+The indent is wrong?
 
->=20
-> > =C2=A0As a result,
-> > this feature can operate independently of any OS-level control.
-> >=20
-> > The OS interface can be used to further fine-tune the default OEM
-> > configuration. Here are some scenarios where the OS interface is
-> > beneficial:
-> > Verification of Firmware Control: Check if firmware-based control
-> > is
-> > enabled. If it is, thermal controls from the OS/user space can be
-> > backed out.
-> > Adjusting Target Limits: While OEMs can set an aggressive target
-> > limit,
-> > the OS can adjust this to a less aggressive limit based on
-> > operating
-> > modes or conditions.
-> >=20
-> > The hardware control interface is via a MMIO offsets via processor
-> > thermal device. There are three instances of MMIO registers. All
-> > are 64 bit registers
-> >=20
-> > Name: PLATFORM_TEMPERATURE_CONTROL
-> > Offsets: 0x5B20, 0x5B28, 0x5B30
-> >=20
-> > All values have RW access
-> >=20
-> > Bits=C2=A0=C2=A0=C2=A0 Description
-> > 7:0=C2=A0=C2=A0=C2=A0=C2=A0 TARGET_TEMP : Target temperature limit to w=
-hich the control
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mechanism is regulating. Uni=
-ts: 0.5C.
-> > 8:8=C2=A0=C2=A0=C2=A0=C2=A0 ENABLE: Read current enable status of the f=
-eature or enable
-> > 	feature.
-> > 11:9	GAIN: Sets the aggressiveness of control loop from 0 to 7
-> > 	7 graceful, favors performance at the expense of
-> > temperature
-> > 	overshoots
-> > 	0 aggressive, favors tight regulation over performance
-> > 12:12	TEMPERATURE_OVERRIDE_EN
-> > 	When set, hardware will use TEMPERATURE_OVERRIDE values
-> > instead
-> > 	of reading from corresponding sensor.
-> > 15:13	RESERVED
-> > 23:16	MIN_PERFORMANCE_LEVEL: Minimum Performance level below
-> > which
-> > the
-> > 	there will be no throttling. 0 - all levels of throttling
-> > allowed
-> > 	including survivability actions. 255 - no throttling
-> > allowed.
-> > 31:24	TEMPERATURE_OVERRIDE: Allows SW to override the input
-> > temperature.
-> > 	hardware will use this value instead of the sensor
-> > temperature.
-> > 	Units: 0.5C.
-> > 63:32	RESERVED
-> >=20
-> > Out of the above controls, only "enable" and "temperature_target"
-> > is
-> > exposed via sysfs.
-> > There are three instances of this controls. So up to three
-> > different
-> > sensors can be controlled independently.
-> >=20
-> > Sysfs interface:
-> > tree
-> > /sys/bus/pci/devices/0000\:00\:04.0/platform_temperature_?_control/
-> > /sys/bus/pci/devices/0000:00:04.0/platform_temperature_0_control/
-> > =E2=94=9C=E2=94=80=E2=94=80 enable
-> > =E2=94=9C=E2=94=80=E2=94=80 temperature_target
-> > /sys/bus/pci/devices/0000:00:04.0/platform_temperature_1_control/
-> > =E2=94=9C=E2=94=80=E2=94=80 enable
-> > =E2=94=9C=E2=94=80=E2=94=80 temperature_target
-> > /sys/bus/pci/devices/0000:00:04.0/platform_temperature_2_control/
-> > =E2=94=9C=E2=94=80=E2=94=80 enable
-> > =E2=94=9C=E2=94=80=E2=94=80 temperature_target
-> >=20
-> > Description of attributes:
-> >=20
-> > Enable: 1 for enable, 0 for disable. This attribute can be used to
-> > read the current status. User space can write 0 or 1 to disable or
-> > enable this feature respectively.
-> > temperature_target: Target temperature limit to which hardware
-> > will try to limit in milli degree C.
-> >=20
-> > Signed-off-by: Srinivas Pandruvada
-> > <srinivas.pandruvada@linux.intel.com>
-> > ---
-> > =C2=A0.../thermal/intel/int340x_thermal/Makefile=C2=A0=C2=A0=C2=A0 |=C2=
-=A0=C2=A0 1 +
-> > =C2=A0.../platform_temperature_control.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 181
-> > ++++++++++++++++++
-> > =C2=A0.../processor_thermal_device.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 15 +-
-> > =C2=A0.../processor_thermal_device.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +
-> > =C2=A04 files changed, 199 insertions(+), 1 deletion(-)
-> > =C2=A0create mode 100644
-> > drivers/thermal/intel/int340x_thermal/platform_temperature_control.
-> > c
-> >=20
-> > diff --git a/drivers/thermal/intel/int340x_thermal/Makefile
-> > b/drivers/thermal/intel/int340x_thermal/Makefile
-> > index fe3f43924525..184318d1792b 100644
-> > --- a/drivers/thermal/intel/int340x_thermal/Makefile
-> > +++ b/drivers/thermal/intel/int340x_thermal/Makefile
-> > @@ -9,6 +9,7 @@ obj-$(CONFIG_INT340X_THERMAL)	+=3D
-> > processor_thermal_device_pci_legacy.o
-> > =C2=A0obj-$(CONFIG_INT340X_THERMAL)	+=3D processor_thermal_device_pci.o
-> > =C2=A0obj-$(CONFIG_PROC_THERMAL_MMIO_RAPL) +=3D processor_thermal_rapl.=
-o
-> > =C2=A0obj-$(CONFIG_INT340X_THERMAL)	+=3D processor_thermal_rfim.o
-> > +obj-$(CONFIG_INT340X_THERMAL)	+=3D platform_temperature_control.o
-> > =C2=A0obj-$(CONFIG_INT340X_THERMAL)	+=3D processor_thermal_mbox.o
-> > =C2=A0obj-$(CONFIG_INT340X_THERMAL)	+=3D processor_thermal_wt_req.o
-> > =C2=A0obj-$(CONFIG_INT340X_THERMAL)	+=3D processor_thermal_wt_hint.o
-> > diff --git
-> > a/drivers/thermal/intel/int340x_thermal/platform_temperature_contro
-> > l.
-> > c
-> > b/drivers/thermal/intel/int340x_thermal/platform_temperature_contro
-> > l.
-> > c
-> > new file mode 100644
-> > index 000000000000..dd3ea7165800
-> > --- /dev/null
-> > +++
-> > b/drivers/thermal/intel/int340x_thermal/platform_temperature_contro
-> > l.
-> > c
-> > @@ -0,0 +1,181 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * processor thermal device platform temperature controls
-> > + * Copyright (c) 2025, Intel Corporation.
-> > + */
-> > +
-> > +#include <linux/kernel.h>
-> > +#include <linux/module.h>
-> > +#include <linux/pci.h>
-> > +#include "processor_thermal_device.h"
-> > +
-> > +struct mmio_reg {
-> > +	int bits;
-> > +	u16 mask;
-> > +	u16 shift;
-> > +	u16 units;
-> > +};
-> > +
-> > +#define MAX_ATTR_GROUP_NAME_LEN 32
-> > +
-> > +struct ptc_data {
-> > +	u32 offset;
-> > +	struct attribute_group ptc_attr_group;
-> > +	struct attribute *ptc_attrs[3];
-> > +	struct device_attribute temperature_target_attr;
-> > +	struct device_attribute enable_attr;
-> > +	char group_name[MAX_ATTR_GROUP_NAME_LEN];
-> > +};
-> > +
-> > +static const struct mmio_reg ptc_mmio_regs[] =3D {
-> > +	{ 8, 0xFF, 0, 500}, /* temperature_target, units 0.5C*/
-> > +	{ 1, 0x01, 8, 0}, /* enable */
-> > +	{ 3, 0x7, 9, 0}, /* gain */
-> > +	{ 8, 0xFF, 16, 0}, /* min_performance_level */
-> > +	{ 1, 0x1, 12, 0}, /* temperature_override_enable */
-> > +	{ 8, 0xFF, 24, 500}, /* temperature_override, units 0.5C
-> > */
-> > +};
-> > +
-> > +/* Unique offset for each PTC instance */
-> > +static u32 ptc_offsets[] =3D {0x5B20, 0x5B28, 0x5B30};
->=20
-> I'd prefer to define PTC_MAX_INSTANCES earlier and use
-> =C2=A0 static u32 ptc_offsets[PTC_MAX_INSTANCES] =3D {0x5B20, 0x5B28,
-> 0x5B30};
-> instead.
->=20
-> thanks,
-> rui
+* - xx
+  - xx
+  - xx
 
+Vs yours:
+
+* - xx
+   - xx
+   - xx
+
+---
+pw-bot: cr
 
