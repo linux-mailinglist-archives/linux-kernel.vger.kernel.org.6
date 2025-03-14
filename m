@@ -1,149 +1,156 @@
-Return-Path: <linux-kernel+bounces-560914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB93A60AEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:13:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42AC5A60AF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:14:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FCF516AC40
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:13:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D6FB3BF07B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B95194137;
-	Fri, 14 Mar 2025 08:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDF8199249;
+	Fri, 14 Mar 2025 08:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="JgJckKZm"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RxM5DLHL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E1219408C
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36DF194137
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741939993; cv=none; b=dM/UthvQxPQ2kR7CKWIjTkXTBdxuwCxOmMccj2fcMJFlE/HwYBToc630c/Hjt4YavbsReoYgUXTC/qvuFnWYCR9hYjZNhysD0r0CC/3QmkTty2evYWX4pT3Cc/beMapZ/EkUuFWUJCOh2RdpsmOrkX7mWOQDyJMyic7bgRFNaFQ=
+	t=1741940038; cv=none; b=G376hKwxN3jDBKP8x1RG0wkXzSffbZmpTiL0jDvZjbACQ4dywDDt63Mg4uM477mmOEBD9kT4LAXiD0iUoMxsNEtvCx8HDoBC6hXDh6hZ8kJVkE2JAjFWIi6J7YBxX/04rUyfVNmSFd3HiOIl52777yQaaIcBNHsq29K5JtP0I+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741939993; c=relaxed/simple;
-	bh=aBoaIA8pL5dPRNJ/NbTzYxXHLL9HdGISKk2JuLHQGXI=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=bawJ5g1AznYwevIxw997azfOvotdvTPuttZREdzKwwDgHIuNo7hJu7YKgrnm0sEgwKuHUJycYheEzUEbXapL0z3K0S3e3IsY0Bp6sTeOcB/XZan0sTpNgratP9YDZ+4YrpXosQyUshzD88UyXXdmy1NL4iBoH5Fzpy4Q523LimA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=JgJckKZm; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-225d66a4839so18738865ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:13:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1741939992; x=1742544792; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mIaypJwWB+9Cndggia9exzQ6t2dGjEXmye283vVYlI0=;
-        b=JgJckKZmSp2AP6KqwvTSkWxomm/g8Ffk/KsLG27YD+8UwrApDIo0lX6Q6dFNRdNOXf
-         2Jk4tlGPaBqeJlamdzvvAdYDXjQobXRBQojHAcet0whmJd+IdOwXInPjMO11CFveN6Ub
-         md54E/rPe884+II3J9ZI47FIqFXYUHT9KA5vhMQn7btqE/UN5P+bRgtrv+7Gm4JfNgjE
-         3V0sTIUA0sPKFsmWSUV4LvROY/4btpX/s6S0W7S8BLBCTLjdFyP9rdn7QCAjcrTPMj+l
-         bu6WTG/YUXCdGTa/WceijqlxcfN4mk+5lKLCzuRz3m8sTVMW8UbiEKuYatIKWv5lXF28
-         QDvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741939992; x=1742544792;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mIaypJwWB+9Cndggia9exzQ6t2dGjEXmye283vVYlI0=;
-        b=oV+W8CbLjYU+h1r5KZ9H3nq95nBNFifx3FRT3ijlndS2a9PRe0iZh+K4xS0GjKBudu
-         eoj2Hq/xUjWu89eAqGAyBd+swQiTrdOElP6K6U40cpGyTquSNZ9q3Fhm9yry5JNfnkZE
-         c5N5VwP/k906gsWtfEFZ/X+lx2Xu+4+Q1iOhgl+wcM7VE3WYlnWwtPvpVTkscYLb2Lq1
-         4qqygf9e0eGdqSkAgCGQI2BN+1R+JeYcFac6J26FbW7/Bt8a3IixvsfwoPwgEcLv41Bu
-         we/2t6Es/fMRPwAM2cZAOesGm6SYY8h+BmLc2+Ow8Tlm+vypW9uJAKeriRqHZvZLXYf8
-         mgbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWBSFNgVot356Tv9nUmNPKcCtPPsTiSbOFEOVJYKTD7kqZHAYw38bNSF2/Cxs3rIu/KbA98OJuAr7R2Jg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQK5O7nBR4Cyw/ndrYbPzBo/UkXVLn82QTBl6zvS9hJ81QGRPB
-	udpBZ8kkXD1RkpkuypaL2NGW2EYbyPqYV0g/OpwDFGbekKg9NqfjGvQkT9VBdyQ=
-X-Gm-Gg: ASbGncss9/WwZVJyZx4DrCLRoOxnZeCjaqODJ6dd6PB3nZqxko2T95g7pwpEzalGfS6
-	MVeb8CDTTDnhxmGltnbO+XuTNcQfHGAI+igOH3BQgKwEXA7gt9e2mVT1FSkQmfmrpbTpvdhMgxM
-	uJQ8xGgcg2S1WIVPNy6Uc9SCH2ikqXt7kshB2AOlsWkRePOQtHyLsP6c5oynsT3fF4d3HshKZOc
-	HAezwkRvz547UNo9wTNOV9iGo6Dbkjt4AwuWjTUrPhletHF79UCuF1mE1hLgbV3uBcUze7McSAa
-	ObtTxc/UI+aM8w+CznG6oY07dZlMA8GmKp7K8owN0TqZrkkcG/l12ESVdRBDn/2gjN4=
-X-Google-Smtp-Source: AGHT+IEU8f9gJD9fpGi0dkqDON/MFDwlzwvX7/+G8p0jqw7GozR3XpJHe76R/qoNe2N8VD05r7VjlQ==
-X-Received: by 2002:a17:90a:d003:b0:2ff:53d6:2b82 with SMTP id 98e67ed59e1d1-30135f4e5f5mr7721021a91.11.1741939991712;
-        Fri, 14 Mar 2025 01:13:11 -0700 (PDT)
-Received: from hsinchu26.internal.sifive.com ([210.176.154.34])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3015364ec2bsm611920a91.46.2025.03.14.01.13.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 01:13:11 -0700 (PDT)
-From: Nick Hu <nick.hu@sifive.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Anup Patel <anup@brainfault.org>
-Cc: Nick Hu <nick.hu@sifive.com>,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v2] dt-bindings: timer: Add SiFive CLINT2
-Date: Fri, 14 Mar 2025 16:12:54 +0800
-Message-Id: <20250314081255.3718-1-nick.hu@sifive.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1741940038; c=relaxed/simple;
+	bh=seuKXhHZYUd/bOYJs3Ge/7ExXVxxWS0G9fYTItKU0us=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EhLl22wiqafzAgz7b8+RAf4ThdJvbWstk2zrDaipFMI+IVLgQLiSUSfJGfTTwiZsSYCjV+4trnmnKzrEI3bHvhHrq0TCVvyGRVk6t3f0CXtKSFZg2pH1rXnUb5PXoAf33xyClIMqFNYisVZxmCtBK1Aydxl0N0HafnlKu6czowg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RxM5DLHL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FC9CC4CEE3;
+	Fri, 14 Mar 2025 08:13:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741940038;
+	bh=seuKXhHZYUd/bOYJs3Ge/7ExXVxxWS0G9fYTItKU0us=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RxM5DLHLPAU3fzVvKAULE492oYzs1GB4NvP+zUr0ofQ28hs4KyL9mUWwpY+h2xK4g
+	 N30ejhrcJ4/0iC5ZOn55QvGqdwKea33Tsqpf+LN2eklZDHjS1GhVJl5g1qYmPDLxeC
+	 h3ru4Q/ayhb42EaAov+BiPwJihivgjptYbUJcCxA2fpnBog2llP+IelP7RavxDMex1
+	 hVWwKvxaiaubSaXTKoJe5DmiqACik2eP86+lZHMQG535e9i7HC/NdHdQeSORhjF0OT
+	 36/EmD2z1nyqbNZ2Ymt4vK2/aUM39DfnQkfQaOB88ftPy80G7NRIKtP7L3uk2eRJM9
+	 jTwm4RZojS/QA==
+Message-ID: <d0d82010-e311-4a41-a6c4-027626e408ba@kernel.org>
+Date: Fri, 14 Mar 2025 09:13:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: mailbox: cix: add device tree binding
+ documentation.
+To: Guomin chen <guomin.chen@cixtech.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
+ Peter Chen <peter.chen@cixtech.com>, Lihua Liu <Lihua.Liu@cixtech.com>
+References: <20250313132405.742360-1-guomin.chen@cixtech.com>
+ <27cf6dab-da29-458a-b376-4013c05434ab@kernel.org> <Z9PkUxlQ1t5zZxuf@gchen>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Z9PkUxlQ1t5zZxuf@gchen>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add compatible string and property for the SiFive CLINT v2.
+On 14/03/2025 09:09, Guomin chen wrote:
+>>
+>>> +
+>>> +      This controller supports three types of unidirectional channels, they are
+>>> +      1 register based channel, 1 fifo based channel and 8 fast channels.
+>>> +      A total of 10 channels for each controller. Following types are
+>>> +      supported:
+>>> +      channel 0_7 - Fast channel with 32bit transmit register and IRQ support.
+>>> +      channel 8   - Reg based channel with 32*32bit transsmit register and
+>>> +                    Doorbell+transmit acknowledgment IRQ support
+>>> +      channel 9   - Fifo based channel with 32*32bit depth fifo and IRQ support.
+>>> +    const: 1
+>>> +
+>>> +  cix,mbox-dir:
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>> +    description: Direction of the mailbox (0:TX or 1:RX)
+>>> +    enum: [0, 1]
+>>
+>> I don't understand why do you need it. By not sending us driver patch,
+>> you are not making it easier. Why would provider care how consumers use
+>> the mbox channel? Maybe consumer should choose the direction?
+>>
+> 
+> As for the mbox-dir property, my driver code has already been submitted. 
 
-Signed-off-by: Nick Hu <nick.hu@sifive.com>
-Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
----
-- v2 changes:
-  - Don't allow sifive,clint2 by itself. Add '-{}' to the first entry
-  - Mark the sifive,fine-ctr-bits as the required property when
-    the compatible includes the sifive,clint2
+There is no thing in this thread, so next time be sure you use standard
+submitting process, so your work will be threaded.
 
- .../bindings/timer/sifive,clint.yaml          | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+> On the Cixtech Soc platform, although each mbox is unidirectional, 
+> there are multiple mboxes—some for reading and some for writing. 
 
-diff --git a/Documentation/devicetree/bindings/timer/sifive,clint.yaml b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-index 76d83aea4e2b..4b9dad11c1e9 100644
---- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-+++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-@@ -36,6 +36,10 @@ properties:
-               - starfive,jh7110-clint   # StarFive JH7110
-               - starfive,jh8100-clint   # StarFive JH8100
-           - const: sifive,clint0        # SiFive CLINT v0 IP block
-+      - items:
-+          - {}
-+          - const: sifive,clint2        # SiFive CLINT v2 IP block
-+        description: SiFive CLINT v2 is the HRT that supports the Zicntr
-       - items:
-           - enum:
-               - allwinner,sun20i-d1-clint
-@@ -62,6 +66,22 @@ properties:
-     minItems: 1
-     maxItems: 4095
- 
-+  sifive,fine-ctr-bits:
-+    maximum: 15
-+    description: The width in bits of the fine counter.
-+
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: sifive,clint2
-+then:
-+  required:
-+    - sifive,fine-ctr-bits
-+else:
-+  properties:
-+    sifive,fine-ctr-bits: false
-+
- additionalProperties: false
- 
- required:
--- 
-2.17.1
+So all mboxes in a controller have the same direction or not? Do you
+configure it or is it defined by hardware?
 
+> Therefore, the mbox controller has added the mbox-dir property. 
+> 
+> Consumers only need to reference the corresponding mbox controller node, 
+> and whether it is for reading or writing is already determined by the mbox controller, 
+> without needing to further understand the mbox-dir property.
+
+Don't explain how DT works, I know. Why this property is needed in DT in
+the first place?
+
+
+Best regards,
+Krzysztof
 
