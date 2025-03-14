@@ -1,114 +1,132 @@
-Return-Path: <linux-kernel+bounces-560687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB12A60844
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:25:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4317A60847
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:27:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F12C5189EAC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 05:25:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E8B219C1D4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 05:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A29D13AA27;
-	Fri, 14 Mar 2025 05:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DD7144304;
+	Fri, 14 Mar 2025 05:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WXkffR6R"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="RwvylZvw"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BA423B0;
-	Fri, 14 Mar 2025 05:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B05C84A35;
+	Fri, 14 Mar 2025 05:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741929900; cv=none; b=Gb791U/+6mxW2c0iPGwY8dOteplcBuNh/dtyg2C9dL6OkrzyqjdY/vsmKdJfW+UNWf3XC+VRcNM67mV+Q/BLSS8vpchEiZi3EfHGwQBk2vkh179I5KPXJ2+HDRCg4ypjp7WheyN0odYOdar5ocx09n+Ac++zjnWIsUVimKnqWHw=
+	t=1741930064; cv=none; b=P5R7fMYi2XSRIq6k7cprrN/TEFJN7IDjjPwT2/1vShD/sVqTKV0DcA1UpJt2kEs7k1I3S+NEs1q5P6UxkeMmEuLZTtazMWVmGqtSyJZD03TupaFEgf26cMkdtC2Z4wtcncofa12EvjHKry7ZpkGbdHX+dJDdhpz6yGC0ng9yheI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741929900; c=relaxed/simple;
-	bh=+fVoc7XNeFKCZ37Rccm/HbLIlhNX1vUMUUE0C/R2huo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WYDrxlYXSuWbvVl+zs2DEA/tUm12FzIHHrIsRMwM5eV+Y3esysgA8lhLbYoB3t7zVXnTHDdQXnPhdMUJfP9GowEKnU0Aey9GNI7vZThylKLyEz/VpOPN/7SD+gn9PFEhi6zklTTrpHCs+rhWSCkUjrj0lg/7FO5Wm9dhnLvxo5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=WXkffR6R; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741929893;
-	bh=MRyOq7tFhofYkpJafqzsLR7vzTIeaFHuxhMekUeg5uQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=WXkffR6RZo1kLt2wYoQxEY2HTAmRV3i+l6xQdeo2Mb/6y0QFfls5jQ9wS1D+c3EM8
-	 E1YJHCqZjM/P9t82dKxLQ9GZAtwEV73OPFjl4bQyPtc416F0xeNJkncNa+F00KYAB3
-	 2UWWJYnyO4du2Ubd4tuHMOb1k6tHGGzYt9qjF9WLEeeGAmiIPHbZ5R5p4f7GcqAsWO
-	 hDBmawcG7KHlPJVla4KU79y6Rjs3rRHUxkWK57xCdrb84wq3ad9/XyJQeXziKNNQDp
-	 nvlt0dIM6dsWtDs7GHy0Ux2PTlF8IhkzowLUNGpdONeWSvgJVb1WGnK/H9YD1zoyiN
-	 bWxOs4Cr+DMTA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZDXqn0pLtz4wcy;
-	Fri, 14 Mar 2025 16:24:53 +1100 (AEDT)
-Date: Fri, 14 Mar 2025 16:24:52 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the pinctrl tree
-Message-ID: <20250314162452.2657f42b@canb.auug.org.au>
+	s=arc-20240116; t=1741930064; c=relaxed/simple;
+	bh=9H+50duVwBYTkpJlWh1d37TQqOH12/nsxscTKEHf88E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SiawEN66nVoUUx37WEaC8hbyg2ioTtFqHCMxLrC8qnoeAM5TgIU9Prjwfnrk73gYfrST/IRouWoAx9xJ1LHM6QJJymRhJrbN7bdPoMn3hH0VFtsOXB14hJ7grc5RPS/Kald6oi9dcnqpKgG4S4c3h8Bp54f84S+1MNIH9wRi5mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=RwvylZvw; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=ub0rLInAZOn0cTAgGmjvriynN2G3FgC62TIsmUrmL5s=; b=RwvylZvwIAqSKG+GQgAT35f45Q
+	dJn7abVxmrizfLE8/P/YMJjAEsxB2b0dP9cXGMWXcFg0j3Y7uwGngzJeQE9JRbwRsd2cGONz22Jsx
+	xuIURhy/Iw3QjK3tuRlaNKHYi7Hg5U0UBQluOwCztsQZaQ4MQ+rqyarjN3dMPAtcqzX4HsVY2atHu
+	VXA4ADwSLQOdln0hfPrhpYC/5S4w/yOz0/YWCQS2yQP2xEmK9JGqZEkmzmH4DFUsxHAerJhfKVeui
+	o8RsnOZraeeLuLcHgLI6JVbnNHXUsJ5hBvq1ST2YzVpTJ3ZtnikagvbQmntq7pwmUJ3P5aKlRxXAe
+	0zFJxywg==;
+Received: from [223.233.77.29] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tsxZr-008TWs-PU; Fri, 14 Mar 2025 06:27:29 +0100
+From: Bhupesh <bhupesh@igalia.com>
+To: akpm@linux-foundation.org
+Cc: bhupesh@igalia.com,
+	kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	oliver.sang@intel.com,
+	lkp@intel.com,
+	laoar.shao@gmail.com,
+	pmladek@suse.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	arnaldo.melo@gmail.com,
+	alexei.starovoitov@gmail.com,
+	andrii.nakryiko@gmail.com,
+	mirq-linux@rere.qmqm.pl,
+	peterz@infradead.org,
+	willy@infradead.org,
+	david@redhat.com,
+	viro@zeniv.linux.org.uk,
+	keescook@chromium.org,
+	ebiederm@xmission.com,
+	brauner@kernel.org,
+	jack@suse.cz,
+	mingo@redhat.com,
+	juri.lelli@redhat.com,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com
+Subject: [PATCH RFC 0/2] Dynamically allocate memory to store task's full name
+Date: Fri, 14 Mar 2025 10:57:13 +0530
+Message-Id: <20250314052715.610377-1-bhupesh@igalia.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/gMNTSVF9wFxhsQHf+TrXvTL";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/gMNTSVF9wFxhsQHf+TrXvTL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+While working with user-space debugging tools which work especially
+on linux gaming platforms, I found that the task name is truncated due
+to the limitation of TASK_COMM_LEN.
 
-Hi all,
+For example, currently running 'ps', the task->comm value of a long
+task name is truncated due to the limitation of TASK_COMM_LEN.
+    create_very_lon
 
-After merging the pinctrl tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+This leads to the names passed from userland via pthread_setname_np()
+being truncated.
 
-drivers/pinctrl/bcm/pinctrl-bcm281xx.c:1576:35: error: redefinition of 'bcm=
-281xx_pinctrl_regmap_config'
- 1576 | static const struct regmap_config bcm281xx_pinctrl_regmap_config =
-=3D {
-      |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/pinctrl/bcm/pinctrl-bcm281xx.c:963:35: note: previous definition of=
- 'bcm281xx_pinctrl_regmap_config' with type 'const struct regmap_config'
-  963 | static const struct regmap_config bcm281xx_pinctrl_regmap_config =
-=3D {
-      |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Now, during debug tracing, seeing truncated names is not very useful,
+especially on gaming platforms where the number of tasks running can
+be very hight.
 
-Caused by commit
+For example for debug applications invoking 'pthread_getname_np()'
+to debug task names.
 
-  a40b63c773c2 ("Merge branch 'devel' into for-next")
+This RFC aims to start a conversation and improve the initial RFC
+patchset to avoid such buffer overflows by introducing a new
+dynamically allocated pointer to store task's full name, which
+shouldn't introduce too much overhead as it is in the non-critical
+path.
 
-Each of the parents of that commit has only one definition, so something
-went wrong with the merge :-(
+After this change, the full name of these (otherwise truncated) tasks
+will be shown in 'ps'. For example:
+    create_very_long_name_user_space_script.sh
 
-I have used the pinctrl tree from next-20250313 for today.
+Bhupesh (2):
+  exec: Dynamically allocate memory to store task's full name
+  fs/proc: Pass 'task->full_name' via 'proc_task_name()'
 
---=20
-Cheers,
-Stephen Rothwell
+ fs/exec.c             | 21 ++++++++++++++++++---
+ fs/proc/array.c       |  2 +-
+ include/linux/sched.h |  9 +++++++++
+ 3 files changed, 28 insertions(+), 4 deletions(-)
 
---Sig_/gMNTSVF9wFxhsQHf+TrXvTL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+-- 
+2.38.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfTvaQACgkQAVBC80lX
-0GyTkAgAkGJgQ1qRzlLsL4c6gHy2eofz6mjgYAwoDtkXml67kiji5oQkXweOxSU3
-Pvq7bwC2U2Xa09tCOpVE8g92i5mGoO58qOEZ+SJR00NH8/5oxtbH/FgOp6fDZ/4h
-cLF6pZOpxwiDhwS4+JamauJx2XpPEMTCwJJpooXOu9tNuyUO/GAbvUVdS32Qtd48
-OgFuteqWV8lo8p2sOTq8KTxrvp6alja8uas3xFKioWlJSrZ7ZuTlx39kpli9Y6OC
-9W12F2m7LQecTchVKTgSgbpL/0i0ZZV7AllA9jyuSYvrOOk6DcarL7qfguOiouTq
-zLGRgwBfdDWEp7i/9JVSj479uCEg8w==
-=t5Zj
------END PGP SIGNATURE-----
-
---Sig_/gMNTSVF9wFxhsQHf+TrXvTL--
 
