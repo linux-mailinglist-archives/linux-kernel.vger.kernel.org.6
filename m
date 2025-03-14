@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-561343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12681A6104B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:45:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 425FDA6104D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:45:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48B2B173B0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:45:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B255D882E86
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE17D1F3BB6;
-	Fri, 14 Mar 2025 11:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547541FDE3D;
+	Fri, 14 Mar 2025 11:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tlb/aZpm"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aPok21Cp"
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92DAD531
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AA91FDE19
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741952740; cv=none; b=WTSKKCAQA7zTteD07MDvcUz/bG1dCK7+KTCR1JxvLQrEs30YisH9lmqIXUVpi7TiBnSK9FyX90kKhrvoMxuizEDSywFMeJDmZ2eeeL5UE1l9o0bCsDkbkAP1GSVUj6F5DSjnBFdTvlEFBWQBAajMYALqdxzbvyp7IJKmHSB08Cc=
+	t=1741952743; cv=none; b=LnFyC/NnS3kMsUPYD4eoqUCxI96XLzW9yVHk2W4svJrxlACG69GON66kUlB+h7n1SCgnBzREh9VAtK9r1/qbotE1QFvgbBdUXuBTFi5M4LXqPceryAxXMb4fbywoNDN3q/sDwCIAwCrOpp3UjeOkiA/YFUHGsvm0LwrY7fSWRp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741952740; c=relaxed/simple;
-	bh=ZyGVq0S0EOqM5FKt+DAdSJlYUvdd97L+RpScOrgFW7c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tf54/d2Oc8JASdT/ItGPgXS1yubBz1i8xbkftG8jHZElgHfQthGJ9DTXTz3Jcorygbw9FQFH5VqXtEPubssyXQM2DmsAjI86h56PGB3lXSvLrnhBsgEiBxxjj0yZJcxx/V2KmfSt/24h8vChULUFXGFXBxKVks0YE30sUQHmdm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tlb/aZpm; arc=none smtp.client-ip=148.163.158.5
+	s=arc-20240116; t=1741952743; c=relaxed/simple;
+	bh=JfkqTO4XQAFJC3G9pkhdVDCoq+KaJL7gqWaGsD8ehVc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ev+vfs5PjWqx2U9mD141muRqo9YW+bJYQTplU/aQHa/Wa0ueMkBf12A6FoLh+jl5wFvBYq/m+/g3oqF3nqcC04/Xzf6QEexxK3n5PyyLS+C3u8l6/ljmbNyD/I1OVwTU3Zfw8WEi7wPydHeHRdb+PmzA8nHONCdSwi29lo+gw30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aPok21Cp; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52EBWM4E007346;
-	Fri, 14 Mar 2025 11:45:22 GMT
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52E9d8D9005804;
+	Fri, 14 Mar 2025 11:45:27 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=a4eygYsgH6xm9j1ChXbxlbPu3rkyFVZVTKzeR/0lq
-	0s=; b=tlb/aZpmlthnowGS0PNnQfnS9cB+hM04WDklSxCXyYlMkG6c5X6NyxoNm
-	D5UJ4Z/WSOTny8sXP9LIzOCiRTjm9ZIBLSioJ6Z5/qnpVGnhJjQ43g15BBIFjgCS
-	ka3kwGsBmTpU1rCfRKCGQF6wvS9wxVA6H7YjbBTpdRMWBmzYp/DzLYgkQSTyZMMI
-	N66k+TCSr3pmZ+yLYDMuDubFYlZhoQdz6E2wla+2d89abrzUGz1uep2xJtefcMMo
-	xrtdiFIKq38IEH4/kH6bmV+dLPClm6qXeUzneUTAnv77Ik0aN2U+cL/VU2Xc8wux
-	XrGjvLrJRB/7YLrNMKvVZeHBp2GiA==
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pp1; bh=XxU5XP2xQsKie4KRP
+	nlKDhPgga75rXA+r7mJnNP2BIg=; b=aPok21CpJprGHm/w34C5YGH9cufkq/pCl
+	0DjQW28yt7zFX4DfaC/FJOw3KUT3hf1Jip32rUrjvzhjchxB28ZJbf3dSTxPB2w/
+	8+AmMdFUAD2qB11Kf4VJJWTInOg/Dl94Qv65RoKsZ7KmzbZ0TrDqtvBc+NFY8bej
+	PwuBMcfC+98i8ih7tzHIfKgv+UGz74oLo187Pc3GIX76TKBu8GDfLHga11ww0Y9e
+	FunRhs66cNReq1ly3UlSOWt4EEznLVsMYtZT3xO836KDMDHLxmOEjYrkkAoT+B5H
+	hiS871KV2Js05xtg6l1QBee+cIBCmk+WHyyFeHvcijmEpBVa9CZPQ==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45c6s5b9m5-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45c6s5b9mk-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Mar 2025 11:45:21 +0000 (GMT)
+	Fri, 14 Mar 2025 11:45:27 +0000 (GMT)
 Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52EBh9Q5023801;
-	Fri, 14 Mar 2025 11:45:21 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45c6s5b9m1-1
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52EBe7ob016034;
+	Fri, 14 Mar 2025 11:45:27 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45c6s5b9mh-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Mar 2025 11:45:21 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52E8qbev003127;
-	Fri, 14 Mar 2025 11:45:20 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atstxqca-1
+	Fri, 14 Mar 2025 11:45:27 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52E9334q007468;
+	Fri, 14 Mar 2025 11:45:26 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45atsrepht-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Mar 2025 11:45:20 +0000
+	Fri, 14 Mar 2025 11:45:26 +0000
 Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52EBjHFV11600278
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52EBjMfZ45023522
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Mar 2025 11:45:17 GMT
+	Fri, 14 Mar 2025 11:45:22 GMT
 Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E536A20040;
-	Fri, 14 Mar 2025 11:45:16 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 739A320040;
+	Fri, 14 Mar 2025 11:45:22 +0000 (GMT)
 Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 77FB62004D;
-	Fri, 14 Mar 2025 11:45:13 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 2909F2004B;
+	Fri, 14 Mar 2025 11:45:19 +0000 (GMT)
 Received: from li-7bb28a4c-2dab-11b2-a85c-887b5c60d769.ibm.com.com (unknown [9.39.22.126])
 	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 14 Mar 2025 11:45:13 +0000 (GMT)
+	Fri, 14 Mar 2025 11:45:18 +0000 (GMT)
 From: Shrikanth Hegde <sshegde@linux.ibm.com>
 To: maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org
 Cc: sshegde@linux.ibm.com, npiggin@gmail.com, christophe.leroy@csgroup.eu,
@@ -79,10 +80,12 @@ Cc: sshegde@linux.ibm.com, npiggin@gmail.com, christophe.leroy@csgroup.eu,
         ajd@linux.ibm.com, mahesh@linux.ibm.com, oohall@gmail.com,
         hbathini@linux.ibm.com, dhowells@redhat.com, haren@linux.ibm.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/6] powerpc: use lock guards for mutex Set 1
-Date: Fri, 14 Mar 2025 17:14:56 +0530
-Message-ID: <20250314114502.2083434-1-sshegde@linux.ibm.com>
+Subject: [PATCH v2 1/6] powerpc: eeh: use lock guard for mutex
+Date: Fri, 14 Mar 2025 17:14:57 +0530
+Message-ID: <20250314114502.2083434-2-sshegde@linux.ibm.com>
 X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20250314114502.2083434-1-sshegde@linux.ibm.com>
+References: <20250314114502.2083434-1-sshegde@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,55 +94,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: lQBN-gJFQBdMZA5nDmDmNRwgD7dTPS11
-X-Proofpoint-ORIG-GUID: QTQFsMH0n01PuCdtn-ytwrnZaQI54Aph
+X-Proofpoint-GUID: UturKL8y2FZj2RR3JkdIyvvHbWZN1fG9
+X-Proofpoint-ORIG-GUID: kqQps5Cxte0KhNP6-ur22Y3F7FQeCl-p
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-14_04,2025-03-13_01,2024-11-22_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=997 clxscore=1015 impostorscore=0 lowpriorityscore=0
+ mlxlogscore=808 clxscore=1015 impostorscore=0 lowpriorityscore=0
  malwarescore=0 bulkscore=0 mlxscore=0 phishscore=0 spamscore=0
  adultscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.19.0-2502280000 definitions=main-2503140091
 
-This is an effort to make the code simpler by making use of lock
-guards which were introduced in [1], which works by using __cleanup 
-attributes. More details in v1 cover letter
+use guard(mutex) for scope based resource management of mutex.
+This would make the code simpler and easier to maintain.
 
-This series aims mainly at simplifying code around mutex with goto
-statements. If it makes sense, there are more code simplification which 
-can done for preempt, rcu, spinlock as well. Even for mutex, there is
-more which could be done. Even there are usecases for kfree which could
-use the new __free infra. 
+More details on lock guards can be found at
+https://lore.kernel.org/all/20230612093537.614161713@infradead.org/T/#u
 
-Please review. Code is compile/boot tested except for powernv. 
-Have kept the patches separate for easier bisect. Let me if they should
-be combined into one. Commit message is same for all. 
+Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+---
+ arch/powerpc/kernel/eeh.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-[1]: https://lkml.kernel.org/r/20230612093537.614161713%40infradead.org
-v1: https://lore.kernel.org/all/20250314054544.1998928-1-sshegde@linux.ibm.com/#t
-
-v1->v2:
-- Fix changelog of powernv (Andrew Donnellan)
-- use scoped_guard in couple of places to avoid holding mutex
-  un-necessarily (Peter Zijlstra)
-
-Shrikanth Hegde (6):
-  powerpc: eeh: use lock guard for mutex
-  powerpc: rtas: use lock guard for mutex
-  powerpc: fadump: use lock guard for mutex
-  powerpc: book3s: vas: use lock guard for mutex
-  powerpc: powernv: ocxl: use lock guard for mutex
-  powerpc: sysdev: use lock guard for mutex
-
- arch/powerpc/kernel/eeh.c                   | 20 +++----
- arch/powerpc/kernel/fadump.c                | 11 ++--
- arch/powerpc/kernel/rtas_flash.c            | 64 +++++++--------------
- arch/powerpc/platforms/book3s/vas-api.c     | 32 +++++------
- arch/powerpc/platforms/powernv/ocxl.c       | 12 +---
- arch/powerpc/sysdev/fsl_mpic_timer_wakeup.c |  8 +--
- 6 files changed, 48 insertions(+), 99 deletions(-)
-
+diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
+index 83fe99861eb1..929474c0ec77 100644
+--- a/arch/powerpc/kernel/eeh.c
++++ b/arch/powerpc/kernel/eeh.c
+@@ -1208,16 +1208,16 @@ int eeh_dev_open(struct pci_dev *pdev)
+ 	struct eeh_dev *edev;
+ 	int ret = -ENODEV;
+ 
+-	mutex_lock(&eeh_dev_mutex);
++	guard(mutex)(&eeh_dev_mutex);
+ 
+ 	/* No PCI device ? */
+ 	if (!pdev)
+-		goto out;
++		return ret;
+ 
+ 	/* No EEH device or PE ? */
+ 	edev = pci_dev_to_eeh_dev(pdev);
+ 	if (!edev || !edev->pe)
+-		goto out;
++		return ret;
+ 
+ 	/*
+ 	 * The PE might have been put into frozen state, but we
+@@ -1227,16 +1227,12 @@ int eeh_dev_open(struct pci_dev *pdev)
+ 	 */
+ 	ret = eeh_pe_change_owner(edev->pe);
+ 	if (ret)
+-		goto out;
++		return ret;
+ 
+ 	/* Increase PE's pass through count */
+ 	atomic_inc(&edev->pe->pass_dev_cnt);
+-	mutex_unlock(&eeh_dev_mutex);
+ 
+ 	return 0;
+-out:
+-	mutex_unlock(&eeh_dev_mutex);
+-	return ret;
+ }
+ EXPORT_SYMBOL_GPL(eeh_dev_open);
+ 
+@@ -1252,22 +1248,20 @@ void eeh_dev_release(struct pci_dev *pdev)
+ {
+ 	struct eeh_dev *edev;
+ 
+-	mutex_lock(&eeh_dev_mutex);
++	guard(mutex)(&eeh_dev_mutex);
+ 
+ 	/* No PCI device ? */
+ 	if (!pdev)
+-		goto out;
++		return;
+ 
+ 	/* No EEH device ? */
+ 	edev = pci_dev_to_eeh_dev(pdev);
+ 	if (!edev || !edev->pe || !eeh_pe_passed(edev->pe))
+-		goto out;
++		return;
+ 
+ 	/* Decrease PE's pass through count */
+ 	WARN_ON(atomic_dec_if_positive(&edev->pe->pass_dev_cnt) < 0);
+ 	eeh_pe_change_owner(edev->pe);
+-out:
+-	mutex_unlock(&eeh_dev_mutex);
+ }
+ EXPORT_SYMBOL(eeh_dev_release);
+ 
 -- 
 2.39.3
 
