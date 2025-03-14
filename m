@@ -1,329 +1,140 @@
-Return-Path: <linux-kernel+bounces-561479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E57A6127C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:23:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B80A4A611FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:06:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06577882CAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:23:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5CD1B62B43
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656B81FF7D5;
-	Fri, 14 Mar 2025 13:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF381F130E;
+	Fri, 14 Mar 2025 13:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="dnHLHjMi"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WZkl0rIf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7483B33062;
-	Fri, 14 Mar 2025 13:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11682E3398
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741958591; cv=none; b=bJgiQWhzC6VPtTgpxB1ZiW39ZqyWdFhQArjIqQ23FEIeWruOiQ5zAoSnMzs8BCnT+bHY/sPEAUscaFTKQinFLwTBnvoAt1O8eR+UsWV51ngE/kuC1JIsYOz8wEUOWUt4UHl1cL2/6n87DeeuEeNv/iiFoA2rxCiFQO2/NGEtmlM=
+	t=1741957573; cv=none; b=GhgQ+iG6bBrHV8MyuRMROL6HfIwG9fzhD/6Ss422TqGlyHVunOO5R5eOvZ6R5ic6lkXcYeqn2uQdK6CqdKlkAUKhFoKjqy5PLAfGBfRBkZEmutvCUJmhg09SRojO2XJLsoay9vM++rSIpeQ2dkkzN+dxxW/bV6rZt+Z/jvcj7rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741958591; c=relaxed/simple;
-	bh=Xi6eAIqF9YoMvolpEr548W5nu/pRhUxpbEp+MqJVoug=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pSjDvQZ8MFnMT2aBOSGd6/9GItcoqL7PEqXIc2QecfIo8Uw0Hal9tARk3nGNsNDuKgv6jJ8NT6JWbodPS7tB3Ukx30OKXT++oI8O5zKn4tl6xXLmbUcuNdpIIgeywAIT4ijND2+I6A8c9UgyyF9MoY3kEEvYe3gEvWViH/7VKSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=dnHLHjMi; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.3.1)
- id 85438b371985ad6e; Fri, 14 Mar 2025 14:23:07 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	s=arc-20240116; t=1741957573; c=relaxed/simple;
+	bh=5ykfQotWkvLY3QAFu6nKaTw+qHt85KWptUeqV8O95+Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aMd8EsPJVJ6SHo2E2QLWeC/vFF97HvZDPU6vaXQXD/Rkudai61zkV9aXSW9k3FdKtKgJXKX+wDz90oozyL6AllP30Rv2QgHZpzDFbsMxpVgKhzGy5mTrc+L5kA7VxSIe8nG1l9j4meaDCeIQ5TqhzT+iqlDmGICN2o88QuH7fLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WZkl0rIf; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741957572; x=1773493572;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=5ykfQotWkvLY3QAFu6nKaTw+qHt85KWptUeqV8O95+Q=;
+  b=WZkl0rIfoPkjdRVFq8tRtL8bVoMWmieqJAdicnSwRS4ZSgEOTrNf22br
+   1I22sekF93PD6GXBcXyfBgqM8/7hEF5of/jNsnBAfuItgryzToGXYYcP+
+   ML514JX/uZ4Vq3WduwD1PrBuDEFFweQk2I1Wfd2QHYwyJ1wci+NNyFSLD
+   +CartfXxfkwBKSL7Z8tbprAeLQNds+jBCfYemAtUZ7f1sERQgqDJbF/fD
+   rU5ZY2psZfBE5geDS82sHh8+/HkL8W2GaJayouN7ZsBn4AvGtRoTVzQ/I
+   i6WCJELjCQ5iMPzwnaKKALxQhU4sjYXS1PQDLhkBhA9+DQC1mj57nXYPE
+   Q==;
+X-CSE-ConnectionGUID: R1IcS2ZxTuK89kVbsAbeSQ==
+X-CSE-MsgGUID: X/RBbJhkSjCP/NzPga8ZXQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="53761963"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="53761963"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 06:06:11 -0700
+X-CSE-ConnectionGUID: buFAKAfyS5GFxeujkPvRXA==
+X-CSE-MsgGUID: ZNf8xV09RYyoCcFw6IrnKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="121778146"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 06:06:12 -0700
+Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 9C612912D03;
-	Fri, 14 Mar 2025 14:23:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1741958587;
-	bh=Xi6eAIqF9YoMvolpEr548W5nu/pRhUxpbEp+MqJVoug=;
-	h=From:Subject:Date;
-	b=dnHLHjMi2HqXVGWzEVcSUwKzwM0/LyfPDbbSgWpI7rWUCSCLVkiS32Pm9Xv/AY2/X
-	 EU19fnoN+fjI32oF1iuhTANLrOxeeyemK4NzMjDNV6NLnIvYpWsJsLNlq78vNeYaOm
-	 bBb3tY1TlYTAxgfSUKH9hDYuTOWmVJ5iwOFGATmWxqEO2vuK4LGCv3IkyU0TZkwr7Z
-	 hAfCi+L++U7BqrNThfTnIz6NCImAiydS7uOCaf5Kn95CGJ7p2B12UARl1Fky+2oIJQ
-	 MrtBhfigioVsBVu8rj9PcrQfRP2BM20TSUiYAwPfdyRkePwxgtGvyAUYjsUlDXGs97
-	 9Zgg2rCBg+KfQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
- Johan Hovold <johan@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Jon Hunter <jonathanh@nvidia.com>, Saravana Kannan <saravanak@google.com>
-Subject: [PATCH v3 1/5] PM: sleep: Resume children after resuming the parent
-Date: Fri, 14 Mar 2025 13:50:09 +0100
-Message-ID: <22630663.EfDdHjke4D@rjwysocki.net>
-In-Reply-To: <10629535.nUPlyArG6x@rjwysocki.net>
-References: <10629535.nUPlyArG6x@rjwysocki.net>
+	by linux.intel.com (Postfix) with ESMTPS id 89FA220B5736;
+	Fri, 14 Mar 2025 06:06:09 -0700 (PDT)
+Message-ID: <108c7d02-257c-4131-a7f0-f9cb34ed3f5c@linux.intel.com>
+Date: Fri, 14 Mar 2025 09:06:07 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedtleegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepfeduudeutdeugfelffduieegiedtueefledvjeegffdttefhhffhtefhleejgfetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeekpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtvghrnhesrhhofihlrghnugdrhhgrrhhvrghrugdrvgguuhdprhg
-X-DCC--Metrics: v370.home.net.pl 1024; Body=24 Fuz1=24 Fuz2=24
-
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-According to [1], the handling of device suspend and resume, and
-particularly the latter, involves unnecessary overhead related to
-starting new async work items for devices that cannot make progress
-right away because they have to wait for other devices.
-
-To reduce this problem in the resume path, use the observation that
-starting the async resume of the children of a device after resuming
-the parent is likely to produce less scheduling and memory management
-noise than starting it upfront while at the same time it should not
-increase the resume duration substantially.
-
-Accordingly, modify the code to start the async resume of the device's
-children when the processing of the parent has been completed in each
-stage of device resume and only start async resume upfront for devices
-without parents.
-
-Also make it check if a given device can be resumed asynchronously
-before starting the synchronous resume of it in case it will have to
-wait for another that is already resuming asynchronously.
-
-In addition to making the async resume of devices more friendly to
-systems with relatively less computing resources, this change is also
-preliminary for analogous changes in the suspend path.
-
-On the systems where it has been tested, this change by itself does
-not affect the overall system resume duration in a measurable way.
-
-Link: https://lore.kernel.org/linux-pm/20241114220921.2529905-1-saravanak@google.com/ [1]
-Suggested-by: Saravana Kannan <saravanak@google.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v2 -> v3:
-   Introduce dpm_root_device() as a wrapper around the dev->parent check,
-   adjust comments.
-
-v1 -> v2:
-   Use a separate lock for power.work_in_progress protection which should
-   reduce lock contention on dpm_list_mtx.
-
----
- drivers/base/power/main.c |   85 +++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 66 insertions(+), 19 deletions(-)
-
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -63,6 +63,7 @@
- static DEFINE_MUTEX(dpm_list_mtx);
- static pm_message_t pm_transition;
- 
-+static DEFINE_MUTEX(async_wip_mtx);
- static int async_error;
- 
- static const char *pm_verb(int event)
-@@ -597,8 +598,11 @@
- 		&& !pm_trace_is_enabled();
- }
- 
--static bool dpm_async_fn(struct device *dev, async_func_t func)
-+static bool __dpm_async(struct device *dev, async_func_t func)
- {
-+	if (dev->power.work_in_progress)
-+		return true;
-+
- 	if (!is_async(dev))
- 		return false;
- 
-@@ -611,14 +615,37 @@
- 
- 	put_device(dev);
- 
-+	return false;
-+}
-+
-+static bool dpm_async_fn(struct device *dev, async_func_t func)
-+{
-+	guard(mutex)(&async_wip_mtx);
-+
-+	return __dpm_async(dev, func);
-+}
-+
-+static int dpm_async_with_cleanup(struct device *dev, void *fn)
-+{
-+	guard(mutex)(&async_wip_mtx);
-+
-+	if (!__dpm_async(dev, fn))
-+		dev->power.work_in_progress = false;
-+
-+	return 0;
-+}
-+
-+static void dpm_async_resume_children(struct device *dev, async_func_t func)
-+{
- 	/*
--	 * async_schedule_dev_nocall() above has returned false, so func() is
--	 * not running and it is safe to update power.work_in_progress without
--	 * extra synchronization.
-+	 * Start processing "async" children of the device unless it's been
-+	 * started already for them.
-+	 *
-+	 * This could have been done for the device's "async" consumers too, but
-+	 * they either need to wait for their parents or the processing has
-+	 * already started for them after their parents were processed.
- 	 */
--	dev->power.work_in_progress = false;
--
--	return false;
-+	device_for_each_child(dev, func, dpm_async_with_cleanup);
- }
- 
- static void dpm_clear_async_state(struct device *dev)
-@@ -627,6 +654,13 @@
- 	dev->power.work_in_progress = false;
- }
- 
-+static bool dpm_root_device(struct device *dev)
-+{
-+	return !dev->parent;
-+}
-+
-+static void async_resume_noirq(void *data, async_cookie_t cookie);
-+
- /**
-  * device_resume_noirq - Execute a "noirq resume" callback for given device.
-  * @dev: Device to handle.
-@@ -710,6 +744,8 @@
- 		dpm_save_failed_dev(dev_name(dev));
- 		pm_dev_err(dev, state, async ? " async noirq" : " noirq", error);
- 	}
-+
-+	dpm_async_resume_children(dev, async_resume_noirq);
- }
- 
- static void async_resume_noirq(void *data, async_cookie_t cookie)
-@@ -733,19 +769,20 @@
- 	mutex_lock(&dpm_list_mtx);
- 
- 	/*
--	 * Trigger the resume of "async" devices upfront so they don't have to
--	 * wait for the "non-async" ones they don't depend on.
-+	 * Start processing "async" root devices upfront so they don't wait for
-+	 * the "sync" devices they don't depend on.
- 	 */
- 	list_for_each_entry(dev, &dpm_noirq_list, power.entry) {
- 		dpm_clear_async_state(dev);
--		dpm_async_fn(dev, async_resume_noirq);
-+		if (dpm_root_device(dev))
-+			dpm_async_with_cleanup(dev, async_resume_noirq);
- 	}
- 
- 	while (!list_empty(&dpm_noirq_list)) {
- 		dev = to_device(dpm_noirq_list.next);
- 		list_move_tail(&dev->power.entry, &dpm_late_early_list);
- 
--		if (!dev->power.work_in_progress) {
-+		if (!dpm_async_fn(dev, async_resume_noirq)) {
- 			get_device(dev);
- 
- 			mutex_unlock(&dpm_list_mtx);
-@@ -781,6 +818,8 @@
- 	device_wakeup_disarm_wake_irqs();
- }
- 
-+static void async_resume_early(void *data, async_cookie_t cookie);
-+
- /**
-  * device_resume_early - Execute an "early resume" callback for given device.
-  * @dev: Device to handle.
-@@ -848,6 +887,8 @@
- 		dpm_save_failed_dev(dev_name(dev));
- 		pm_dev_err(dev, state, async ? " async early" : " early", error);
- 	}
-+
-+	dpm_async_resume_children(dev, async_resume_early);
- }
- 
- static void async_resume_early(void *data, async_cookie_t cookie)
-@@ -875,19 +916,20 @@
- 	mutex_lock(&dpm_list_mtx);
- 
- 	/*
--	 * Trigger the resume of "async" devices upfront so they don't have to
--	 * wait for the "non-async" ones they don't depend on.
-+	 * Start processing "async" root devices upfront so they don't wait for
-+	 * the "sync" devices they don't depend on.
- 	 */
- 	list_for_each_entry(dev, &dpm_late_early_list, power.entry) {
- 		dpm_clear_async_state(dev);
--		dpm_async_fn(dev, async_resume_early);
-+		if (dpm_root_device(dev))
-+			dpm_async_with_cleanup(dev, async_resume_early);
- 	}
- 
- 	while (!list_empty(&dpm_late_early_list)) {
- 		dev = to_device(dpm_late_early_list.next);
- 		list_move_tail(&dev->power.entry, &dpm_suspended_list);
- 
--		if (!dev->power.work_in_progress) {
-+		if (!dpm_async_fn(dev, async_resume_early)) {
- 			get_device(dev);
- 
- 			mutex_unlock(&dpm_list_mtx);
-@@ -919,6 +961,8 @@
- }
- EXPORT_SYMBOL_GPL(dpm_resume_start);
- 
-+static void async_resume(void *data, async_cookie_t cookie);
-+
- /**
-  * device_resume - Execute "resume" callbacks for given device.
-  * @dev: Device to handle.
-@@ -1018,6 +1062,8 @@
- 		dpm_save_failed_dev(dev_name(dev));
- 		pm_dev_err(dev, state, async ? " async" : "", error);
- 	}
-+
-+	dpm_async_resume_children(dev, async_resume);
- }
- 
- static void async_resume(void *data, async_cookie_t cookie)
-@@ -1049,19 +1095,20 @@
- 	mutex_lock(&dpm_list_mtx);
- 
- 	/*
--	 * Trigger the resume of "async" devices upfront so they don't have to
--	 * wait for the "non-async" ones they don't depend on.
-+	 * Start processing "async" root devices upfront so they don't wait for
-+	 * the "sync" devices they don't depend on.
- 	 */
- 	list_for_each_entry(dev, &dpm_suspended_list, power.entry) {
- 		dpm_clear_async_state(dev);
--		dpm_async_fn(dev, async_resume);
-+		if (dpm_root_device(dev))
-+			dpm_async_with_cleanup(dev, async_resume);
- 	}
- 
- 	while (!list_empty(&dpm_suspended_list)) {
- 		dev = to_device(dpm_suspended_list.next);
- 		list_move_tail(&dev->power.entry, &dpm_prepared_list);
- 
--		if (!dev->power.work_in_progress) {
-+		if (!dpm_async_fn(dev, async_resume)) {
- 			get_device(dev);
- 
- 			mutex_unlock(&dpm_list_mtx);
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 0/3] Support auto counter reload
+To: Ingo Molnar <mingo@kernel.org>
+Cc: peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com, ak@linux.intel.com,
+ linux-kernel@vger.kernel.org, eranian@google.com, thomas.falcon@intel.com
+References: <20241010192844.1006990-1-kan.liang@linux.intel.com>
+ <Z9P8EDcGv0m__WiN@gmail.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <Z9P8EDcGv0m__WiN@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
+
+On 2025-03-14 5:51 a.m., Ingo Molnar wrote:
+> 
+> * kan.liang@linux.intel.com <kan.liang@linux.intel.com> wrote:
+> 
+>> From: Kan Liang <kan.liang@linux.intel.com>
+>>
+>> Changes since V1:
+>> - Add a check to the reload value which cannot exceeds the max period
+>> - Avoid invoking intel_pmu_enable_acr() for the perf metrics event.
+>> - Update comments explain to case which the event->attr.config2 exceeds
+>>   the group size
+> 
+>> The 2498 samples are all from the branch-misses events for the Loop 2.
+>>
+>> The number of samples and overhead is significantly reduced without
+>> losing any information.
+> 
+> Ok, that looks like a pretty sweet PMU feature.
+> 
+
+Thanks for the review.
+
+> What is the hardware support range of this auto count reload feature, 
+> how recent CPU does one have to have?
+
+The feature was first introduced into the Sierra Forest server, which
+was launched last year.
+https://en.wikipedia.org/wiki/Sierra_Forest
+
+All the future platforms should have it support as well.
+
+> 
+> The series has aged a bit though, while a variant of patch #1 has been 
+> merged already under:
+> 
+>   47a973fd7563 perf/x86/intel: Fix ARCH_PERFMON_NUM_COUNTER_LEAF
+> 
+> ... but #2 and #3 don't apply cleanly anymore.
+> 
+> Mind sending a refreshed series perhaps?
+
+No problem.
+
+I saw Peter just gives several feedback. I will also address the
+concerns in the new series.
+
+Thanks,
+Kan
 
 
 
