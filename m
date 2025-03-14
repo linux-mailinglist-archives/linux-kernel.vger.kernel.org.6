@@ -1,97 +1,115 @@
-Return-Path: <linux-kernel+bounces-561017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 782FEA60C7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:00:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73BB1A60C7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:00:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F48D7A305D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:59:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AA111896717
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE7B1DFDAE;
-	Fri, 14 Mar 2025 08:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD941C84AB;
+	Fri, 14 Mar 2025 09:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AjTrZ4fo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="CO+I2Npd"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AB91DF98D
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEED153800;
+	Fri, 14 Mar 2025 09:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741942781; cv=none; b=Y8bsLqhUYsnUIkzOWXp9y1FQ7JKpI3b2SKDsocv+K/9wmAPfIY2prsZnqG3N73ycgiyt8hOBRVllJphnOEV00F6ZcB7Z8pCVFrlcqA3S43FQtOtE8a7nJ/RkxptSyPcR9HMbpp8KRFhKsZ/AhWvx4PoMX98YD9IqZDeEgEYyNSY=
+	t=1741942845; cv=none; b=WYH6wu2T88JZtSv9UI5KjRjfngF+jqWheeEamJXQ5b9bRtEn+oJ1pSBQRdOYr9gfzNWhBKmc+tNnc2dNIxTTubmanWvEQuB3BMFC7Zp1MAWHAzUfzZpiYUjrvLCL61fFIe3Loyua//z0MYwIjwf7Kpqxhq48OmgzxRrWwZtA+cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741942781; c=relaxed/simple;
-	bh=1AuhTTwym8ZiEhPHHXjGf6cveKLzhSFxbirQjF+OwYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=plUVB025umf5ic33blNDZ2K1E8dgIQuL79usd6GUlDmPHS06NUUJ89vMbSxln1uRBgwmwHM1dVcqN6U9ysqIskR/ORCkyXsdcG6TMxSFa/kOD7qOaBY+CBsHf1axDR+X3XsaJoNK8uoCApFxkipm2jffBgUKf9tRge+nzjo6goI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AjTrZ4fo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD01EC4CEEB;
-	Fri, 14 Mar 2025 08:59:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741942780;
-	bh=1AuhTTwym8ZiEhPHHXjGf6cveKLzhSFxbirQjF+OwYc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=AjTrZ4foNlGW7mesTBeWiIT2eWFAMwUy1XPwLy/0qZLT/5SaeaGrEfw4p5J3lLlOY
-	 vLgAOYlXp/bUqWmZOPdpJKCGBmDoyweUV/bTLR16OECmxl3aAqxQ27Ixh8zu5PxuxJ
-	 ZP61mUZ1zs0TcyMz89iMqHykZZCEi6kagokiSebO7Q7vungem1/KhBO0T0xMx9LTxr
-	 GXqCC50mTYiQcFE9cVuJn9MajYvT0G4xIEliKsUfdYsa9yWr+4gB9WhmlEr+h2eiUi
-	 PH1qWKD5QdjYVy9YNoCgtnHFDVROPYCooRdYy4zK9XpjLYMq009uZauxObwyiRvJi2
-	 UFTK9D/5LEn/g==
-Date: Fri, 14 Mar 2025 09:59:36 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <a.p.zijlstra@chello.nl>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] core kernel fix
-Message-ID: <Z9Pv-InPlIE03148@gmail.com>
+	s=arc-20240116; t=1741942845; c=relaxed/simple;
+	bh=Z823sMIBtSmRUwV1I+DT2YaMz3HkGJqwNiwsH3j3zsE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RiTIL/eAorWoPN8mubdBB/XfksAuwoz9lvbyteFg+JlJUfVUFXDQXKJz+jFpZSCRO4koI30eF8QskRxmLKJ5/T8HZYuxrT5Yf/I/xCc/6Qbv33XgCQ775wRwC87GMexsuoCkjPf+hLWmhSJufm1udB8127v/ehiPgyQ8JlcIP8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=CO+I2Npd; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2EED42047E;
+	Fri, 14 Mar 2025 09:00:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1741942835;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G2gYY1JMiXCVrx0k9285ZmdwltYFhtlXfBufrR3acPk=;
+	b=CO+I2NpdUQgmILYfKbz+eoe5Qgj08VnR31tmv/odKki2xHwmzY3uVRvvAt0tqNPmrlpzZb
+	kuYJhbmXqy+7e33RkCcUQ2CzS/+wp2D9aawJV4vJFFyHXdxXnVj6mUk+gXO5zB4TrgrEjm
+	nWLHenSMcjjrtll81Lu5CiOWJ3vMrqBpWysZwh6SUQH11o4pz5KeZXznrq+fHqFBvu52AO
+	PVNoc+x2NfE3yLh0iOju/YxMFep9pTIcdEjNjqQOFdaXA8nsA8d5/uMp94mjaxf3gHJAnW
+	SIf+JldeMI1eUZuBmZsFm0vdv+QFYhMmp65XSjAGdEqg+6Y5Oq1YOsE4SiJWFg==
+Message-ID: <757e9a32-9b35-4818-b41b-09eaac97eb8d@yoseli.org>
+Date: Fri, 14 Mar 2025 10:00:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] net: phy: dp83826: Fix TX data voltage support
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Catalin Popescu <catalin.popescu@leica-geosystems.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250303-dp83826-fixes-v1-0-6901a04f262d@yoseli.org>
+ <20250303-dp83826-fixes-v1-1-6901a04f262d@yoseli.org>
+Content-Language: en-US, fr
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+In-Reply-To: <20250303-dp83826-fixes-v1-1-6901a04f262d@yoseli.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedtgedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheplfgvrghnqdfoihgthhgvlhcujfgruhhtsghoihhsuceojhgvrghnmhhitghhvghlrdhhrghuthgsohhisheshihoshgvlhhirdhorhhgqeenucggtffrrghtthgvrhhnpeefieetgeehvdeggffgffetheehhfetkeefhefhgeeuheetueffueeikefgffffteenucfkphepudelfedrvdefledrudelvddrjeegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelfedrvdefledrudelvddrjeegpdhhvghloheplgduledvrdduieekrddvuddurdehvdgnpdhmrghilhhfrhhomhepjhgvrghnmhhitghhvghlrdhhrghuthgsohhisheshihoshgvlhhirdhorhhgpdhnsggprhgtphhtthhopedutddprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesg
+ hhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrphhophgvshgtuheslhgvihgtrgdqghgvohhshihsthgvmhhsrdgtohhm
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-Linus,
+Hi there !
 
-Please pull the latest core/urgent Git tree from:
+On 3/3/25 6:05 PM, Jean-Michel Hautbois wrote:
+> When CONFIG_OF_MDIO is not set, the cfg_dac_minus and cfg_dac_plus are
+> not set in dp83826_of_init(). This leads to a bad behavior in
+> dp83826_config_init: the phy initialization fails, after
+> MII_DP83826_VOD_CFG1 and MII_DP83826_VOD_CFG2 are set.
+> 
+> Fix it by setting the default value for both variables.
+> 
+> Fixes: d1d77120bc28 ("net: phy: dp83826: support TX data voltage tuning")
+> 
+> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+> ---
+>   drivers/net/phy/dp83822.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/net/phy/dp83822.c b/drivers/net/phy/dp83822.c
+> index 6599feca1967d705331d6e354205a2485ea962f2..88c49e8fe13e20e97191cddcd0885a6e075ae326 100644
+> --- a/drivers/net/phy/dp83822.c
+> +++ b/drivers/net/phy/dp83822.c
+> @@ -854,6 +854,10 @@ static int dp83822_of_init(struct phy_device *phydev)
+>   
+>   static void dp83826_of_init(struct phy_device *phydev)
+>   {
+> +	struct dp83822_private *dp83822 = phydev->priv;
+> +
+> +	dp83822->cfg_dac_minus = DP83826_CFG_DAC_MINUS_DEFAULT;
+> +	dp83822->cfg_dac_plus = DP83826_CFG_DAC_PLUS_DEFAULT;
+>   }
+>   #endif /* CONFIG_OF_MDIO */
+>   
+> 
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-urgent-2025-03-14
+Gentle ping to know if this patch is ok (patch 2/2 is not) and if so, 
+should I repost a v2 maybe ?
 
-   # HEAD: 366fef794bd2b7c2e9df933f6828dd9739bfba84 <linux/cleanup.h>: Allow the passing of both iomem and non-iomem pointers to no_free_ptr()
-
-Fix a Sparse false positive warning triggered by no_free_ptr().
-
- Thanks,
-
-	Ingo
-
------------------->
-Ilpo Järvinen (1):
-      <linux/cleanup.h>: Allow the passing of both iomem and non-iomem pointers to no_free_ptr()
-
-
- include/linux/cleanup.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-index ec00e3f7af2b..ee2614adb785 100644
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -212,7 +212,7 @@ const volatile void * __must_check_fn(const volatile void *val)
- { return val; }
- 
- #define no_free_ptr(p) \
--	((typeof(p)) __must_check_fn(__get_and_null(p, NULL)))
-+	((typeof(p)) __must_check_fn((__force const volatile void *)__get_and_null(p, NULL)))
- 
- #define return_ptr(p)	return no_free_ptr(p)
- 
+Thanks !
+JM
 
