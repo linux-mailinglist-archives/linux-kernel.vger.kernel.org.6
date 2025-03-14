@@ -1,357 +1,148 @@
-Return-Path: <linux-kernel+bounces-561361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F8F9A61078
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:57:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAAC7A61082
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:58:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF3E83A1B15
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4B8F3B2B8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9981FDE2B;
-	Fri, 14 Mar 2025 11:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F021FE46A;
+	Fri, 14 Mar 2025 11:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rwEVISHx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GJHImAf3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XrDfQ8Ms"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693468635A;
-	Fri, 14 Mar 2025 11:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C828635A;
+	Fri, 14 Mar 2025 11:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741953436; cv=none; b=sbqq72sdfszkgZb/cPXcD0T+loxNDYe1obs3eqFDednuRDtagVAF2JOzis8gw+gzkS+2pKFexBPqM54yZmCbf0zGJhTbgLY9YmWCE8H8tCye1G/uQAWqxEqrVCFNJHRW2njewTpeoNWpanG6BR0iMHqRMNUHKBfkTMeM0VuvZIo=
+	t=1741953488; cv=none; b=D3u/IJNU2S/J4flTte33sZY8AJVQW1lxdFsWmd5j1u7+pMMmG1WCPnF0wgQzb+ZpQ2K4/73v8RBbkgzz+7ioY+fXQPTo/b4zzoFZXidzXaybSLNLI64+TNCIzbW6vGks0Jw5R6F3Gc0yPrtzqLQhlabUEfDGzthd2lqCT1ODNL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741953436; c=relaxed/simple;
-	bh=VxaxwjK+niSMzXPPlLDr7WIz4BtXQ1WcjaUYmy+sD5w=;
+	s=arc-20240116; t=1741953488; c=relaxed/simple;
+	bh=alG2VBcqxu4/KeTppLaYTCBjh974VZnVLlGEUyVJ34s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ni1+1tlpTMh36YBgetszaGPdXz5qn4DsqelKR2r/X0bcP6yzzVHC48/6PTM6R3O/cuFO6fdMFglwt7CUnH1Tky6dBpxmLo2D4BvywkxI+ui0mGAtkVYfR1mczBCpJPqK7ji0LESZ5jA3d4X8I4j7K6dea3XVZd+9HJa8/PEeBDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rwEVISHx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83269C4CEE3;
-	Fri, 14 Mar 2025 11:57:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741953435;
-	bh=VxaxwjK+niSMzXPPlLDr7WIz4BtXQ1WcjaUYmy+sD5w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rwEVISHx65bRzneHmAZfN6WGuIIQxhyirha4to4EORUNqjZzdFBRklKT47M7XKhDl
-	 zAQaSt2GTDlkfZv/W5upxPZH/3aXDW248TArmO2RfdYuGaxbmzc2aPDVszF1ebrtsy
-	 zWhf5erSNDYhRS4AYAVadm1DdwtpPjqM/8TiwsnIJsB2ZKKfMryLztIEeY13XmBIb6
-	 1oBthumGXnIbQvTvuNKiHqIxTjos2/gRn2hd4mAA54zoyU8HUzbmGNFF3pwxyv9ffe
-	 IIoRIhdLy16Z6gv3rO/zvGmg9H5Zd7VXxJPGVowqyim0YJ5jgEIhu9VOqg/eayxIqp
-	 CNrYv3/29QPcg==
-Date: Fri, 14 Mar 2025 12:57:13 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Lyude Paul <lyude@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
-	Danilo Krummrich <dakr@kernel.org>, mcanal@igalia.com, Alice Ryhl <aliceryhl@google.com>, 
-	Simona Vetter <sima@ffwll.ch>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Asahi Lina <lina@asahilina.net>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC v3 09/33] rust: drm/kms: Add DriverConnector::get_mode
- callback
-Message-ID: <20250314-gigantic-frisky-condor-9b35c8@houat>
-References: <20250305230406.567126-1-lyude@redhat.com>
- <20250305230406.567126-10-lyude@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7zcJqQBwZ01Y7U40ec+ajtZHL1XJFQbXktU17LseKJbhTXqdWmFaKTPrOCX1QUZvN3fub7KSynzjnh+nAZUZ//k1b1XNcQXNx9UoGt9lXrdMxUX8sXdVi+d+IPksW8UXmjc/ZZPugjTz5/Dg12M4lNKDxU9G6XHq9rpaPWF5ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GJHImAf3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XrDfQ8Ms; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 14 Mar 2025 12:58:02 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741953484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8uewKNoT8JWDI3vksDZ1lfM+BZl6yGTaXxxJLZKOzx0=;
+	b=GJHImAf3Y7UB1RzvBxLOtqJc4jRh/h+gxXQP7hVvQ/uY/ozVfmBAfaT5PfjDbUEAMAEzQf
+	bVUsG69XNEjcbVktmfv5cUUhbUXkOV1kn+I4LergArsjOqTRm7Z0L2FpJdi8y6AhZMLAbU
+	zu9OzdHZShuCHv+RwE7UXK/SIfi8IC3f2a+ZT0zMZfv2mMT53i8AsWG64l8Mh9cvHeCK0i
+	zhb9MIRl9kbT/AVN58rnwvDktH164Oajfi6GVfdriyNWMh8xGFV75Da5ypk6GadFo5nvpc
+	WpCx8iKXJp8hOJ1Fw+l+i8b207JoNIKHeK2ihdkh9rwZPkf0YCcC6M7y/z7ASQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741953484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8uewKNoT8JWDI3vksDZ1lfM+BZl6yGTaXxxJLZKOzx0=;
+	b=XrDfQ8MsdqFP7ajJekANqTpOTS7uitbjh6jCB/v6tJ8WB2HHfVYXFwxVhWlu66lnTyqneO
+	nIYvnaaaA+Xkn7Aw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [RFC PATCH 10/10] memcg: no more irq disabling for stock locks
+Message-ID: <20250314115802.DESa-C1z@linutronix.de>
+References: <20250314061511.1308152-1-shakeel.butt@linux.dev>
+ <20250314061511.1308152-11-shakeel.butt@linux.dev>
+ <9e1e3877-55ae-4546-a5c1-08ea730ea638@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="36i6rvascxdsmql5"
-Content-Disposition: inline
-In-Reply-To: <20250305230406.567126-10-lyude@redhat.com>
-
-
---36i6rvascxdsmql5
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC v3 09/33] rust: drm/kms: Add DriverConnector::get_mode
- callback
-MIME-Version: 1.0
+In-Reply-To: <9e1e3877-55ae-4546-a5c1-08ea730ea638@suse.cz>
 
-On Wed, Mar 05, 2025 at 05:59:25PM -0500, Lyude Paul wrote:
-> Next up is filling out some of the basic connector hotplugging callbacks -
-> which we'll need for setting up the fbdev helpers for KMS devices. Note
-> that connector hotplugging in DRM follows a BFL scheme: pretty much all
-> probing is protected under the mighty drm_device->mode_config.lock, which
-> of course is a bit counter-intuitive to rust's locking schemes where data
-> is always associated with its lock.
+On 2025-03-14 11:54:34 [+0100], Vlastimil Babka wrote:
+> On 3/14/25 07:15, Shakeel Butt wrote:
+> > Let's switch all memcg_stock locks acquire and release places to not
+> > disable and enable irqs. There are two still functions (i.e.
+> > mod_objcg_state() and drain_obj_stock) which needs to disable irqs to
+> > update the stats on non-RT kernels. For now add a simple wrapper for
+> > that functionality.
 >=20
-> Since that lock is embedded in an FFI type and not a rust type, we need to
-> introduce our own wrapper type that acts as a lock acquisition for this.
-> This brings us to introducing a few new types:
+> BTW, which part of __mod_objcg_mlstate() really needs disabled irqs and n=
+ot
+> just preemption? I see it does rcu_read_lock() anyway, which disables
+> preemption. Then in __mod_memcg_lruvec_state() we do some __this_cpu_add()
+> updates. I think these also are fine with just disabled preemption as they
+> are atomic vs irqs (but don't need LOCK prefix to be atomic vs other cpus
+> updates).
+
+__this_cpu_add() is not safe if also used in interrupt context. Some
+architectures (not x86) implemented as read, add, write.
+this_cpu_add()() does the same but disables interrupts during the
+operation.
+So __this_cpu_add() should not be used if interrupts are not disabled
+and a modification can happen from interrupt context.
+
+> Is it just memcg_rstat_updated() which does READ_ONCE/WRITE_ONCE? Could we
+> perhaps just change it to operations where disabled preemption is enough?
 >=20
-> * ModeConfigGuard - the most basic lock guard, as long as this object is
->   alive we are guaranteed to be holding drm_device->mode_config.lock. This
->   object doesn't do much else on its own currently.
-> * ConnectorGuard - an object which corresponds to a specific typed DRM
->   connector. This can only be acquired with a ModeConfigGuard, and will be
->   used to allow calling methods that are only safe to call with
->   drm_device->mode_config.lock held. Since it implements
->   Deref<Target=3DConnector<T>> as well, it can also be used for any other
->   operations that would normally be available on a DRM connector.
->=20
-> And finally, we add the DriverConnector::get_modes() trait method which
-> drivers can use to implement the drm_connector_helper_funcs.get_modes
-> callback. Note that while we make this trait method mandatory, we only do
-> so for the time being since VKMS doesn't do very much with DRM connectors=
- -
-> and as such we have no need yet to implement alternative connector probing
-> schemes outside of get_modes().
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
->=20
-> ---
-> V3:
-> * Document uses of ManuallyDrop
-> * Use addr_of_mut!() instead of &mut
-> * Add some missing invariant comments
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  rust/bindings/bindings_helper.h  |  1 +
->  rust/kernel/drm/kms.rs           | 90 +++++++++++++++++++++++++++++++-
->  rust/kernel/drm/kms/connector.rs | 62 ++++++++++++++++++++--
->  3 files changed, 147 insertions(+), 6 deletions(-)
->=20
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_hel=
-per.h
-> index a6735f6fba947..27828dd36d4f2 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -21,6 +21,7 @@
->  #include <drm/drm_gem_framebuffer_helper.h>
->  #include <drm/drm_gem_shmem_helper.h>
->  #include <drm/drm_plane.h>
-> +#include <drm/drm_probe_helper.h>
->  #include <drm/drm_ioctl.h>
->  #include <kunit/test.h>
->  #include <linux/blk-mq.h>
-> diff --git a/rust/kernel/drm/kms.rs b/rust/kernel/drm/kms.rs
-> index f0044d396e1eb..7935e935f9975 100644
-> --- a/rust/kernel/drm/kms.rs
-> +++ b/rust/kernel/drm/kms.rs
-> @@ -8,15 +8,20 @@
->  pub mod plane;
-> =20
->  use crate::{
-> -    device,
-> +    container_of, device,
->      drm::{device::Device, drv::Driver},
->      error::to_result,
->      prelude::*,
->      private::Sealed,
-> +    sync::{Mutex, MutexGuard},
->      types::*,
->  };
->  use bindings;
-> -use core::{marker::PhantomData, ops::Deref, ptr::NonNull};
-> +use core::{
-> +    marker::PhantomData,
-> +    ops::Deref,
-> +    ptr::{self, addr_of_mut, NonNull},
-> +};
-> =20
->  /// The C vtable for a [`Device`].
->  ///
-> @@ -191,6 +196,23 @@ pub struct ModeConfigInfo {
->      pub preferred_fourcc: Option<u32>,
->  }
-> =20
-> +impl<T: KmsDriver> Device<T> {
-> +    /// Retrieve a pointer to the mode_config mutex
-> +    #[inline]
-> +    pub(crate) fn mode_config_mutex(&self) -> &Mutex<()> {
-> +        // SAFETY: This lock is initialized for as long as `Device<T>` i=
-s exposed to users
-> +        unsafe { Mutex::from_raw(addr_of_mut!((*self.as_raw()).mode_conf=
-ig.mutex)) }
-> +    }
-> +
-> +    /// Acquire the [`mode_config.mutex`] for this [`Device`].
-> +    #[inline]
-> +    pub fn mode_config_lock(&self) -> ModeConfigGuard<'_, T> {
-> +        // INVARIANT: We're locking mode_config.mutex, fulfilling our in=
-variant that this lock is
-> +        // held throughout ModeConfigGuard's lifetime.
-> +        ModeConfigGuard(self.mode_config_mutex().lock(), PhantomData)
-> +    }
-> +}
-> +
+> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+=E2=80=A6
+> > @@ -2757,6 +2745,28 @@ static void replace_stock_objcg(struct memcg_sto=
+ck_pcp *stock,
+> >  	WRITE_ONCE(stock->cached_objcg, objcg);
+> >  }
+> > =20
+> > +static unsigned long rt_lock(void)
+> > +{
 
-Again, I think the introduction of ModeConfigGuard, the new API to get
-the mutex and guard from the DRM device, etc, while obviously called
-for, would be better in separate patches.
+No, we don't name it rt_lock(). We have local_lock() for this exact
+reason. And migrate_disable() does not protect vs re-enter of the
+function on the CPU while local_irq_save() does.
 
->  /// A modesetting object in DRM.
->  ///
->  /// This is any type of object where the underlying C object contains a =
-[`struct drm_mode_object`].
-> @@ -314,3 +336,67 @@ unsafe fn dec_ref(obj: NonNull<Self>) {
->          unsafe { bindings::drm_mode_object_put(obj.as_ref().raw_mode_obj=
-()) }
->      }
->  }
-> +
-> +/// A mode config guard.
-> +///
-> +/// This is an exclusive primitive that represents when [`drm_device.mod=
-e_config.mutex`] is held - as
-> +/// some modesetting operations (particularly ones related to [`connecto=
-rs`](connector)) are still
-> +/// protected under this single lock. The lock will be dropped once this=
- object is dropped.
-> +///
-> +/// # Invariants
-> +///
-> +/// - `self.0` is contained within a [`struct drm_mode_config`], which i=
-s contained within a
-> +///   [`struct drm_device`].
-> +/// - The [`KmsDriver`] implementation of that [`struct drm_device`] is =
-always `T`.
-> +/// - This type proves that [`drm_device.mode_config.mutex`] is acquired.
-> +///
-> +/// [`struct drm_mode_config`]: (srctree/include/drm/drm_device.h)
-> +/// [`drm_device.mode_config.mutex`]: (srctree/include/drm/drm_device.h)
-> +/// [`struct drm_device`]: (srctree/include/drm/drm_device.h)
-> +pub struct ModeConfigGuard<'a, T: KmsDriver>(MutexGuard<'a, ()>, Phantom=
-Data<T>);
-> +
-> +impl<'a, T: KmsDriver> ModeConfigGuard<'a, T> {
-> +    /// Construct a new [`ModeConfigGuard`].
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The caller must ensure that [`drm_device.mode_config.mutex`] is =
-acquired.
-> +    ///
-> +    /// [`drm_device.mode_config.mutex`]: (srctree/include/drm/drm_devic=
-e.h)
-> +    pub(crate) unsafe fn new(drm: &'a Device<T>) -> Self {
-> +        // SAFETY: Our safety contract fulfills the requirements of `Mut=
-exGuard::new()`
-> +        // INVARIANT: And our safety contract ensures that this type pro=
-ves that
-> +        // `drm_device.mode_config.mutex` is acquired.
-> +        Self(
-> +            unsafe { MutexGuard::new(drm.mode_config_mutex(), ()) },
-> +            PhantomData,
-> +        )
-> +    }
-> +
-> +    /// Return the [`Device`] that this [`ModeConfigGuard`] belongs to.
-> +    pub fn drm_dev(&self) -> &'a Device<T> {
-> +        // SAFETY:
-> +        // - `self` is embedded within a `drm_mode_config` via our type =
-invariants
-> +        // - `self.0.lock` has an equivalent data type to `mutex` via it=
-s type invariants.
-> +        let mode_config =3D unsafe { container_of!(self.0.lock, bindings=
-::drm_mode_config, mutex) };
-> +
-> +        // SAFETY: And that `drm_mode_config` lives in a `drm_device` vi=
-a type invariants.
-> +        unsafe {
-> +            Device::borrow(container_of!(
-> +                mode_config,
-> +                bindings::drm_device,
-> +                mode_config
-> +            ))
-> +        }
-> +    }
-> +
-> +    /// Assert that the given device is the owner of this mode config gu=
-ard.
-> +    ///
-> +    /// # Panics
-> +    ///
-> +    /// Panics if `dev` is different from the owning device for this mod=
-e config guard.
-> +    #[inline]
-> +    pub(crate) fn assert_owner(&self, dev: &Device<T>) {
-> +        assert!(ptr::eq(self.drm_dev(), dev));
-> +    }
-> +}
-> diff --git a/rust/kernel/drm/kms/connector.rs b/rust/kernel/drm/kms/conne=
-ctor.rs
-> index 6fe0a7517bd55..14de3b0529f89 100644
-> --- a/rust/kernel/drm/kms/connector.rs
-> +++ b/rust/kernel/drm/kms/connector.rs
-> @@ -4,7 +4,7 @@
->  //!
->  //! C header: [`include/drm/drm_connector.h`](srctree/include/drm/drm_co=
-nnector.h)
-> =20
-> -use super::{encoder::*, KmsDriver, ModeObject, RcModeObject};
-> +use super::{encoder::*, KmsDriver, ModeConfigGuard, ModeObject, RcModeOb=
-ject};
->  use crate::{
->      alloc::KBox,
->      bindings,
-> @@ -17,7 +17,7 @@
->  };
->  use core::{
->      marker::*,
-> -    mem,
-> +    mem::{self, ManuallyDrop},
->      ops::*,
->      ptr::{addr_of_mut, null_mut},
->      stringify,
-> @@ -106,7 +106,7 @@ pub trait DriverConnector: Send + Sync + Sized {
->              destroy: Some(connector_destroy_callback::<Self>),
->              force: None,
->              detect: None,
-> -            fill_modes: None,
-> +            fill_modes: Some(bindings::drm_helper_probe_single_connector=
-_modes),
+> > +#ifdef CONFIG_PREEMPT_RT
+> > +	migrate_disable();
+> > +	return 0;
+> > +#else
+> > +	unsigned long flags =3D 0;
+> > +
+> > +	local_irq_save(flags);
+> > +	return flags;
+> > +#endif
+> > +}
+> > +
+> > +static void rt_unlock(unsigned long flags)
+> > +{
+> > +#ifdef CONFIG_PREEMPT_RT
+> > +	migrate_enable();
+> > +#else
+> > +	local_irq_restore(flags);
+> > +#endif
+> > +}
+> > +
+> >  static void mod_objcg_state(struct obj_cgroup *objcg, struct pglist_da=
+ta *pgdat,
+> >  		     enum node_stat_item idx, int nr)
+> >  {
 
-It's kind of what I wanted to express in my earlier statements I guess,
-but I'm not really sure we should force down helpers on drivers. The
-larger approach KMS has taken over the years was to provide hooks and
-default implementations, with the drivers allowed to use different
-implementations if they wanted to.
-
-That approach largely worked for us I think, so I'm a bit worried about
-changing that.
-
->              debugfs_init: None,
->              oob_hotplug_event: None,
->              atomic_duplicate_state: Some(atomic_duplicate_state_callback=
-::<Self::State>),
-> @@ -114,7 +114,7 @@ pub trait DriverConnector: Send + Sync + Sized {
->          helper_funcs: bindings::drm_connector_helper_funcs {
->              mode_valid: None,
->              atomic_check: None,
-> -            get_modes: None,
-> +            get_modes: Some(get_modes_callback::<Self>),
->              detect_ctx: None,
-
-Since you pass (the equivalent of) the locking context to get_modes, I'd
-rather keep the convention you have with detect here and use the _ctx
-suffix, or drop the one from detect_ctx, and pass the context
-everywhere. But we should be consistent there at least.
-
-Maxime
-
---36i6rvascxdsmql5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ9QZmAAKCRAnX84Zoj2+
-dpVsAX4yGH76zjBhSWlLOh2qzSVSXb8yusnOsYHn31IQY5PbEvcD++uO7+wwZC9l
-FR9Xh9EBgITG1cYAzaBSEYEt71OjCp3WmdPIyrZKDDP5PT9hTEIm6Zu2n3zxW83q
-IDhuxeCOuQ==
-=jJ2K
------END PGP SIGNATURE-----
-
---36i6rvascxdsmql5--
+Sebastian
 
