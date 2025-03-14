@@ -1,92 +1,78 @@
-Return-Path: <linux-kernel+bounces-560612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D6D6A60713
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:35:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D808A60715
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:38:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A24953BC432
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:35:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B3AE7A7573
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA89C27735;
-	Fri, 14 Mar 2025 01:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0523C1BC3C;
+	Fri, 14 Mar 2025 01:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="J2IhqacH"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tl/lhG52"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FC31BC3C;
-	Fri, 14 Mar 2025 01:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527B42E336C;
+	Fri, 14 Mar 2025 01:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741916130; cv=none; b=QwtlVknxQH6x6GgfAriiWVfBZ3vc26iVX0yRNVpXB49l0FiM1uNHMJQsbxW6E5Vt78q4Hsw1WA7cmMsuR1ZNw0C/xMpB1++JShDXuBEYGqP2cELHbtgb4pNNlGoro7Tru7xX6tpwQWyJ77op+4Yw27Syjr4Ed8K4VlNqHUZioDc=
+	t=1741916290; cv=none; b=Bm8RWXUzKef/bZIET4MK8cbAOJ7wdZB6XnZJASZyhu+L6VPT+mg1ga8q1heAdQXx6N1B07to0nkPresykAjNIL1N8ul6StibrazN2HscYMfjOcJM+32x3l2Dhv+dA50NZ4+e/kzFZMNq7PGWtPStzF/afz/0Gflom+yEQzpu+Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741916130; c=relaxed/simple;
-	bh=+rXvagmmqnv+l1UF0oIBQjSTsbM1a0sIGXjE1qIXr7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BXT7QDJethYGRJVBXtYDYuS8e4HUCnDofVcfl1lkhD+4OkurNhyN2GHfiUE0+SKPfDbYujX8El5U7H61LBPgMlf6ZH5bDfU2fQCkGMfkxN/gWyzM/WRXklprmDquXHOZKwHlR0x5+ysXco95S4Gyo8e/MlhOJ79f+JXv6VOMJEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=J2IhqacH; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ZDRl2732Czm0ySj;
-	Fri, 14 Mar 2025 01:35:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1741916125; x=1744508126; bh=+rXvagmmqnv+l1UF0oIBQjST
-	sbM1a0sIGXjE1qIXr7I=; b=J2IhqacHlqBBmWr+s+RnzzGoZQFtYCYAJrt1nV3F
-	JIEs/XHa3NkxZrFnE+dYHnkh3+YJjMs70l+/Xj+k8b0Y9OPN7EY0Txb0H57vRDpf
-	k1zt3OnJbFPvi/r5iIrks3+MX88Jo127ICbZJVuV82qnfqEY1fBrQL5j0Vuj01mn
-	WC2iltIwQkfz+fUXHUy/LhVktFR0Uj/Dwb8ualGN/l8BF5T6JUDAghdITklZVY2t
-	fazRHpED7gnbYmGbsXMZnkaqhajCT6+a2otLz/vSMxu0N6FQWbTVcxJp+NEVV/Lr
-	kgUhwi6pP/CgswDJDPt+sPJRJjy4hEuOgjxhKJXs9xa4OQ==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 2e4iigJ2aOgj; Fri, 14 Mar 2025 01:35:25 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ZDRkt0bzbzm0djt;
-	Fri, 14 Mar 2025 01:35:16 +0000 (UTC)
-Message-ID: <0238dfce-49c2-43f0-9c71-556c7c5ffc75@acm.org>
-Date: Thu, 13 Mar 2025 18:35:15 -0700
+	s=arc-20240116; t=1741916290; c=relaxed/simple;
+	bh=v7zvDlgRx2sfNhAiFBb5W2ZUm46c/FpEEaft0pQ9tro=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=sWwILZqogVyvHg1HvB83DdBhhWx2A1/0dUAaBfuzbgJ+mCI3PewoXeDMR4QSktY5qwhh5N+G1Ba8eS3QvZAREJXRfCsoa9vkxD7UDYj1+2aJhCOP51aipHOI7YDnQA4UrW+5RRa0Wrcx0SPp59T+lsE9K1QFf96+ssHlHNM2CaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tl/lhG52; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD3BEC4CEDD;
+	Fri, 14 Mar 2025 01:38:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741916289;
+	bh=v7zvDlgRx2sfNhAiFBb5W2ZUm46c/FpEEaft0pQ9tro=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=tl/lhG524RlQuH1MOqm2ov3Y+7nAuf9kCb5m0F174MEBTd3/Z+UYFDvWL+lI10WzM
+	 ZBWt9OCc68mg6Wc0b9EMLlnRZOCxUlO3LS4EKxk2tqn/kwrv3cU/m76sPqPOVwQwpR
+	 rlKaHBMjSLff204lV78HxWcgjO70wsTSXVeeqOdCUqt6GdguX7mvqHT5UVMe+VCLG2
+	 dT2bLAsanaOjkqZUqhtu2O//Jpyt4RV0EQ5Sj9+W4weCb/sePUW29I7lch1d5W7We4
+	 Rysk4HvzGm2OR12hnK+vMoBuFDkZeMT6NBzg9LfLL+/NX9kTJSaJKTckRQk/ab40Kf
+	 n3hFiCbOH3v4Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADEE23806651;
+	Fri, 14 Mar 2025 01:38:45 +0000 (UTC)
+Subject: Re: [GIT PULL] bcachefs fixes for 6.14-rc7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <de7fintuxlgh7wteymuo4oproofqngifpul6gq5f66p4b7qih3@5q34khdi2ikv>
+References: <de7fintuxlgh7wteymuo4oproofqngifpul6gq5f66p4b7qih3@5q34khdi2ikv>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <de7fintuxlgh7wteymuo4oproofqngifpul6gq5f66p4b7qih3@5q34khdi2ikv>
+X-PR-Tracked-Remote: git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-13
+X-PR-Tracked-Commit-Id: 9c18ea7ffee090b47afaa7dc41903fb1b436d7bd
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 131c040bbb0f561ef68ad2ba6fcd28c97fa6d4cf
+Message-Id: <174191632441.1722086.11557226538495304115.pr-tracker-bot@kernel.org>
+Date: Fri, 14 Mar 2025 01:38:44 +0000
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 09/19] scsi: core: increase/decrease target_busy
- without check can_queue
-To: JiangJianJun <jiangjianjun3@huawei.com>, jejb@linux.ibm.com,
- martin.petersen@oracle.com, linux-scsi@vger.kernel.org
-Cc: hare@suse.de, linux-kernel@vger.kernel.org, lixiaokeng@huawei.com,
- hewenliang4@huawei.com, yangkunlin7@huawei.com
-References: <20250314012927.150860-1-jiangjianjun3@huawei.com>
- <20250314012927.150860-10-jiangjianjun3@huawei.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250314012927.150860-10-jiangjianjun3@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 3/13/25 6:29 PM, JiangJianJun wrote:
-> This is preparation for a genernal target based error handle strategy
-> to check if to wake up actual error handler.
+The pull request you sent on Thu, 13 Mar 2025 18:45:30 -0400:
 
-I don't like this change because it slows down the hot path for LLD
-drivers that do not set starget->can_queue. Why is this change
-necessary? What are the alternatives?
+> git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-13
 
-Thanks,
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/131c040bbb0f561ef68ad2ba6fcd28c97fa6d4cf
 
-Bart.
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
