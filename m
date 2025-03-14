@@ -1,307 +1,252 @@
-Return-Path: <linux-kernel+bounces-560862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A6FA60A44
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:45:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F859A60A46
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:45:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40F921890FC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:45:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44EB4189DA49
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6C015CD4A;
-	Fri, 14 Mar 2025 07:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C30E18FC90;
+	Fri, 14 Mar 2025 07:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VqlZ/yLF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Mlic8t4N";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Mlic8t4N"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2811624D9
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7DF18A6A1
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741938320; cv=none; b=CuAZrZX08GtNUr85sgZ6kvP6Y2Du0ePLcWAQYOLEZjs/QpzKlMwww6MJWdPNPvBTKuEFmfPJCdlfzIGoYm1N9JBFlOKlkVCxi6ajVZGwWTaFh4f8zdKtOnc9oyoJZlT3wgzgswW/0Wex1bpjGcndGYypL5UG4VMaQ7Ney87shiM=
+	t=1741938334; cv=none; b=Fh3lsgq7P2ZcwHsprIw7ZQeE+oscbaG5SrsOYG2Co4kBCnnlPY4/jxoXx3/hBNABpySE4fzKpAaLXHx6XeyO3A9bPeHRTnTsgXKtOygZkOuq4x6Ym7QeQ6WmXA8ug7IoIiUPL2UNN9D3sXPKRe2fucBs7jYG7Gd7ryCQSV5RJVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741938320; c=relaxed/simple;
-	bh=rB/Ef3oLC3JztquXBp2C1XHzq8oE979wb4eRW4XPG/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N3A1OJNEkDfxGVn2nOWuspY0gRGMOUF08LqW4Xcox4XkBBZXymleGLEo4T8XaYC72gBhTzoCAs8UKg0pha8Tt2qHBQXOD8ztRz/fHiGPfR3LU+hPlEF5Ihhs1CKyAXeC15CTXMmxECmSveJCfmqFLEqotRQJx8pC8Uxowl6dBcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VqlZ/yLF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2124C4CEE3;
-	Fri, 14 Mar 2025 07:45:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741938320;
-	bh=rB/Ef3oLC3JztquXBp2C1XHzq8oE979wb4eRW4XPG/s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VqlZ/yLFIl+p9kr2RAScnZCNlqZJ3KtWeyUO2sLAO9Dn0zaRVibODadci+iX0SHQX
-	 VhD15JbJh00OlLpwWSHibMFlJXxVSqXleoXgKgMXkqPAVaDtSbg5vj6o8X3P40IHLC
-	 bpTr3/lqcIErKaM2QKT8FoGGditgqw+X5mHl0mHDqwxup1HKywwCfszR6UrHr+i4OQ
-	 fGHgtNY5w4o3Zj61eGvC49MdLI8bLLdmDL6QsCpXoGLQM3HURvq4Hioh8/GgAs4EL3
-	 sQ4bLB0OV6RgGjHKfmbPacKWghtYU9qNqGw650sdA0dPgxSEt+6/8mdO7MBKh2vZUH
-	 t2y4IfmzCXyrQ==
-Date: Fri, 14 Mar 2025 08:45:17 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Andy Yan <andyshrk@163.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Douglas Anderson <dianders@chromium.org>, Herve Codina <herve.codina@bootlin.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Simona Vetter <simona.vetter@ffwll.ch>, lumag@kernel.org
-Subject: Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
- connector by encoder
-Message-ID: <20250314-courageous-bison-of-prestige-8b884b@houat>
-References: <20250304-bridge-connector-v5-0-aacf461d2157@kernel.org>
- <20250304-bridge-connector-v5-4-aacf461d2157@kernel.org>
- <5180089f.a640.19566290538.Coremail.andyshrk@163.com>
- <608c01c.7716.1958e8d879f.Coremail.andyshrk@163.com>
- <20250313-dazzling-deer-of-ampleness-21db67@houat>
- <6ae1c567.8c6.195922195d6.Coremail.andyshrk@163.com>
- <k2md4q2tgwsdynaeljieqlzjdds677wqqduimfyrgmvyfi732a@vh3dbg7kdaop>
+	s=arc-20240116; t=1741938334; c=relaxed/simple;
+	bh=2He6U1T3rx01SlC4U068AwRELpGzmBrbp6AF8j0ikQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c5Q8xeNs8ftQTwnUfByxZFl2hNbup860sC03xIGdkljuzMF/ZHd/6ylyvtEFuLqqXCgnwcrxoI+0IcezuSU7pODy0BzSi8aYDxje2eZx0VYLavBmoNa/VdaQ42AvMikNTY6vfAhP8XPElmENvlcnP3Hk5LzHsZCvLUWdkfKI9WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Mlic8t4N; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Mlic8t4N; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7091421184;
+	Fri, 14 Mar 2025 07:45:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1741938329; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2He6U1T3rx01SlC4U068AwRELpGzmBrbp6AF8j0ikQU=;
+	b=Mlic8t4NlhWaCCxQ4cL9MxZSb4cw0vxNE6RAHoVkl+T+ZD32GirdQJjpvoqfYZWr5xXjZP
+	PJ9q8O1dbH7Oish8hGCspK0U0gzX4POJ/22yYm8EsxwiRKrXDt/rMGGLuERJ/5HmL7f06O
+	+aEei8XQXTEwxo/8XwDa13SMkVkcR7I=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1741938329; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2He6U1T3rx01SlC4U068AwRELpGzmBrbp6AF8j0ikQU=;
+	b=Mlic8t4NlhWaCCxQ4cL9MxZSb4cw0vxNE6RAHoVkl+T+ZD32GirdQJjpvoqfYZWr5xXjZP
+	PJ9q8O1dbH7Oish8hGCspK0U0gzX4POJ/22yYm8EsxwiRKrXDt/rMGGLuERJ/5HmL7f06O
+	+aEei8XQXTEwxo/8XwDa13SMkVkcR7I=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3E2CE13A31;
+	Fri, 14 Mar 2025 07:45:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id W6hTDJne02eYLwAAD6G6ig
+	(envelope-from <jgross@suse.com>); Fri, 14 Mar 2025 07:45:29 +0000
+Message-ID: <cf579113-538d-4104-96cc-df6b3919e618@suse.com>
+Date: Fri, 14 Mar 2025 08:45:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="fau2wb4ziq56b5rc"
-Content-Disposition: inline
-In-Reply-To: <k2md4q2tgwsdynaeljieqlzjdds677wqqduimfyrgmvyfi732a@vh3dbg7kdaop>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] xen/pciback: Remove unused pcistub_get_pci_dev
+To: linux@treblig.org, sstabellini@kernel.org, oleksandr_tyshchenko@epam.com
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20250307004736.291229-1-linux@treblig.org>
+Content-Language: en-US
+From: Juergen Gross <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <20250307004736.291229-1-linux@treblig.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------ix365KrzVuZWdMjLvhE6CMac"
+X-Spam-Level: 
+X-Spamd-Result: default: False [-5.19 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SIGNED_PGP(-2.00)[];
+	MIME_BASE64_TEXT_BOGUS(1.00)[];
+	NEURAL_HAM_LONG(-0.99)[-0.989];
+	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
+	NEURAL_HAM_SHORT(-0.20)[-0.996];
+	MIME_BASE64_TEXT(0.10)[];
+	MIME_UNKNOWN(0.10)[application/pgp-keys];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:mid];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	HAS_ATTACHMENT(0.00)[]
+X-Spam-Score: -5.19
+X-Spam-Flag: NO
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------ix365KrzVuZWdMjLvhE6CMac
+Content-Type: multipart/mixed; boundary="------------GipTESq8HJbUyOR7EHkbaoNP";
+ protected-headers="v1"
+From: Juergen Gross <jgross@suse.com>
+To: linux@treblig.org, sstabellini@kernel.org, oleksandr_tyshchenko@epam.com
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Message-ID: <cf579113-538d-4104-96cc-df6b3919e618@suse.com>
+Subject: Re: [PATCH] xen/pciback: Remove unused pcistub_get_pci_dev
+References: <20250307004736.291229-1-linux@treblig.org>
+In-Reply-To: <20250307004736.291229-1-linux@treblig.org>
 
---fau2wb4ziq56b5rc
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+--------------GipTESq8HJbUyOR7EHkbaoNP
+Content-Type: multipart/mixed; boundary="------------Yrz9RgzTLwG3B9vyTaAel2Iw"
+
+--------------Yrz9RgzTLwG3B9vyTaAel2Iw
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
+
+T24gMDcuMDMuMjUgMDE6NDcsIGxpbnV4QHRyZWJsaWcub3JnIHdyb3RlOg0KPiBGcm9tOiAi
+RHIuIERhdmlkIEFsYW4gR2lsYmVydCIgPGxpbnV4QHRyZWJsaWcub3JnPg0KPiANCj4gcGNp
+c3R1Yl9nZXRfcGNpX2RldigpIHdhcyBhZGRlZCBpbiAyMDA5IGFzIHBhcnQgb2Y6DQo+IGNv
+bW1pdCAzMGVkYzE0YmYzOWEgKCJ4ZW4vcGNpYmFjazogeGVuIHBjaSBiYWNrZW5kIGRyaXZl
+ci4iKQ0KPiANCj4gUmVtb3ZlIGl0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogRHIuIERhdmlk
+IEFsYW4gR2lsYmVydCA8bGludXhAdHJlYmxpZy5vcmc+DQoNClJldmlld2VkLWJ5OiBKdWVy
+Z2VuIEdyb3NzIDxqZ3Jvc3NAc3VzZS5jb20+DQoNCg0KSnVlcmdlbg0K
+--------------Yrz9RgzTLwG3B9vyTaAel2Iw
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
- connector by encoder
-MIME-Version: 1.0
 
-On Fri, Mar 14, 2025 at 07:52:35AM +0200, Dmitry Baryshkov wrote:
-> On Fri, Mar 14, 2025 at 08:50:29AM +0800, Andy Yan wrote:
-> >=20
-> > Hi Maxime and Simona,
-> >=20
-> >=20
-> > At 2025-03-13 19:55:33, "Maxime Ripard" <mripard@kernel.org> wrote:
-> > >Hi,
-> > >
-> > >On Thu, Mar 13, 2025 at 04:09:54PM +0800, Andy Yan wrote:
-> > >> At 2025-03-05 19:55:19, "Andy Yan" <andyshrk@163.com> wrote:
-> > >> >At 2025-03-04 19:10:47, "Maxime Ripard" <mripard@kernel.org> wrote:
-> > >> >>With the bridges switching over to drm_bridge_connector, the direct
-> > >> >>association between a bridge driver and its connector was lost.
-> > >> >>
-> > >> >>This is mitigated for atomic bridge drivers by the fact you can ac=
-cess
-> > >> >>the encoder, and then call drm_atomic_get_old_connector_for_encode=
-r() or
-> > >> >>drm_atomic_get_new_connector_for_encoder() with drm_atomic_state.
-> > >> >>
-> > >> >>This was also made easier by providing drm_atomic_state directly t=
-o all
-> > >> >>atomic hooks bridges can implement.
-> > >> >>
-> > >> >>However, bridge drivers don't have a way to access drm_atomic_state
-> > >> >>outside of the modeset path, like from the hotplug interrupt path =
-or any
-> > >> >>interrupt handler.
-> > >> >>
-> > >> >>Let's introduce a function to retrieve the connector currently ass=
-igned
-> > >> >>to an encoder, without using drm_atomic_state, to make these drive=
-rs'
-> > >> >>life easier.
-> > >> >>
-> > >> >>Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > >> >>Co-developed-by: Simona Vetter <simona.vetter@ffwll.ch>
-> > >> >>Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> > >> >>---
-> > >> >> drivers/gpu/drm/drm_atomic.c | 45 +++++++++++++++++++++++++++++++=
-+++++++++++++
-> > >> >> include/drm/drm_atomic.h     |  3 +++
-> > >> >> 2 files changed, 48 insertions(+)
-> > >> >>
-> > >> >>diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_at=
-omic.c
-> > >> >>index 9ea2611770f43ce7ccba410406d5f2c528aab022..b926b132590e78f8d4=
-1d48eb4da4bccf170ee236 100644
-> > >> >>--- a/drivers/gpu/drm/drm_atomic.c
-> > >> >>+++ b/drivers/gpu/drm/drm_atomic.c
-> > >> >>@@ -985,10 +985,55 @@ drm_atomic_get_new_connector_for_encoder(con=
-st struct drm_atomic_state *state,
-> > >> >>=20
-> > >> >> 	return NULL;
-> > >> >> }
-> > >> >> EXPORT_SYMBOL(drm_atomic_get_new_connector_for_encoder);
-> > >> >>=20
-> > >> >>+/**
-> > >> >>+ * drm_atomic_get_connector_for_encoder - Get connector currently=
- assigned to an encoder
-> > >> >>+ * @encoder: The encoder to find the connector of
-> > >> >>+ * @ctx: Modeset locking context
-> > >> >>+ *
-> > >> >>+ * This function finds and returns the connector currently assign=
-ed to
-> > >> >>+ * an @encoder.
-> > >> >>+ *
-> > >> >>+ * Returns:
-> > >> >>+ * The connector connected to @encoder, or an error pointer other=
-wise.
-> > >> >>+ * When the error is EDEADLK, a deadlock has been detected and the
-> > >> >>+ * sequence must be restarted.
-> > >> >>+ */
-> > >> >>+struct drm_connector *
-> > >> >>+drm_atomic_get_connector_for_encoder(const struct drm_encoder *en=
-coder,
-> > >> >>+				     struct drm_modeset_acquire_ctx *ctx)
-> > >> >>+{
-> > >> >>+	struct drm_connector_list_iter conn_iter;
-> > >> >>+	struct drm_connector *out_connector =3D ERR_PTR(-EINVAL);
-> > >> >>+	struct drm_connector *connector;
-> > >> >>+	struct drm_device *dev =3D encoder->dev;
-> > >> >>+	int ret;
-> > >> >>+
-> > >> >>+	ret =3D drm_modeset_lock(&dev->mode_config.connection_mutex, ctx=
-);
-> > >> >>+	if (ret)
-> > >> >>+		return ERR_PTR(ret);
-> > >> >
-> > >> >It seems that this will cause a deadlock when called from a  hotplu=
-g handling path,
-> > >> >I have a WIP DP diver[0],  which suggested by Dmitry to use this AP=
-I from a=20
-> > >> >&drm_bridge_funcs.detect callback to get the connector,  as detect =
-is called by drm_helper_probe_detect,
-> > >> >which will hold connection_mutex first, so the deaklock happens:
-> > >> >
-> > >> >
-> > >> >drm_helper_probe_detect(struct drm_connector *connector,
-> > >> >                        struct drm_modeset_acquire_ctx *ctx,
-> > >> >                        bool force)
-> > >> >{
-> > >> >        const struct drm_connector_helper_funcs *funcs =3D connecto=
-r->helper_private;
-> > >> >        struct drm_device *dev =3D connector->dev;
-> > >> >        int ret;
-> > >> >
-> > >> >        if (!ctx)
-> > >> >                return drm_helper_probe_detect_ctx(connector, force=
-);
-> > >> >
-> > >> >        ret =3D drm_modeset_lock(&dev->mode_config.connection_mutex=
-, ctx);
-> > >> >        if (ret)
-> > >> >                return ret;
-> > >> >
-> > >> >        if (funcs->detect_ctx)
-> > >> >                ret =3D funcs->detect_ctx(connector, ctx, force);
-> > >> >        else if (connector->funcs->detect)
-> > >> >                ret =3D connector->funcs->detect(connector, force);
-> > >> >        else
-> > >> >                ret =3D connector_status_connected;
-> > >> >
-> > >> >        if (ret !=3D connector->status)
-> > >> >                connector->epoch_counter +=3D 1;
-> > >> >
-> > >> >So I wonder can we let drm_bridge_funcs.detect pass a connector for=
- this case ?
-> > >> >
-> > >> >
-> > >> >
-> > >> >[0]https://lore.kernel.org/linux-rockchip/047EECFC-7E55-44EC-896F-1=
-3FE04333E4D@gmail.com/T/#m25bc53b79f5cc7bddfcb7aae5656f68df396f094
-> > >> >>+
-> > >> >>+	drm_connector_list_iter_begin(dev, &conn_iter);
-> > >> >>+	drm_for_each_connector_iter(connector, &conn_iter) {
-> > >> >>+		if (!connector->state)
-> > >> >>+			continue;
-> > >> >>+
-> > >> >>+		if (encoder =3D=3D connector->state->best_encoder) {
-> > >> >>+			out_connector =3D connector;
-> > >>=20
-> > >>=20
-> > >> When try to use this patch in my bridge driver,  I found that the co=
-nnector->state->best_encoder=20
-> > >>  maybe NULL when   drm_bridge_funcs.detect or drm_bridge_funcs.detec=
-t_ctx is  called:
-> > >>=20
-> > >> [   52.713030] Invalid return value -22 for connector detection
-> > >> [   52.713539] WARNING: CPU: 7 PID: 288 at drivers/gpu/drm/drm_probe=
-_helper.c:602 drm_helper_probe_single_connector_modes+0x5e0/
-> > >> 0x63c
-> > >> [   52.714568] Modules linked in:
-> > >>=20
-> > >> [   52.724546] Call trace:
-> > >> [   52.724762]  drm_helper_probe_single_connector_modes+0x5e0/0x63c =
-(P)
-> > >> [   52.725319]  drm_mode_getconnector+0x2a4/0x488
-> > >> [   52.725711]  drm_ioctl_kernel+0xb4/0x11c
-> > >> [   52.726057]  drm_ioctl+0x22c/0x544
-> > >> [   52.726358]  __arm64_sys_ioctl+0xac/0xe0
-> > >> [   52.726706]  invoke_syscall+0x44/0x100
-> > >> [   52.727039]  el0_svc_common.constprop.0+0x3c/0xd4
-> > >>=20
-> > >> This is because  best_encoder is set by set_best_encoder, which is c=
-alled from
-> > >> drm_atomic_helper_check_modeset. When we call drm_mode_getconnector=
-=20
-> > >> for the first time, the functions mentioned above have not been call=
-ed yet,
-> > >> then we can't match the encoder from connector->state->best_encoder =
-for this case.
-> > >
-> > >As far as I'm concerned, it's by design. Encoders and connectors have
-> > >1:N relationship, and only once a connector has been enabled it has an
-> > >encoder.
-> > >
-> > >If the connector is disabled, there's no associated encoder.
-> >=20
-> > Does this prove that this API is not suitable for my application scenar=
-io:=20
-> > Get the connector in the bridge's .detect callback, so this means that =
-I may
-> > still need to modify the bridge's connector callback so that it can pas=
-s the connector ?
->=20
-> I'd say, yes, please.
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-And I'd say no :)
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
-There's no reason to deviate from the API other entities have here. It's
-just that the switch to DRM_BRIDGE_ATTACH_NO_CONNECTOR hasn't been
-completely thought through and it's one of the part where it shows.
+--------------Yrz9RgzTLwG3B9vyTaAel2Iw--
 
-We have two alternative solutions: Either the driver creates the
-connector itself, since it doesn't seem to use any downstream bridge
-anyway, or we need a new bridge helper to find the connector on a bridge
-chain.
+--------------GipTESq8HJbUyOR7EHkbaoNP--
 
-We have the iterator already, we just need a new accessor to retrieve
-the (optional) connector of a bridge, and if there's none, go to the
-next bridge and try again.
-
-There's a decent amount of variations that ideally call for tests too,
-but it should be pretty simple overall.
-
-Maxime
-
---fau2wb4ziq56b5rc
-Content-Type: application/pgp-signature; name="signature.asc"
+--------------ix365KrzVuZWdMjLvhE6CMac
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ9PejAAKCRAnX84Zoj2+
-djf9AX0W1BCHeuxaCTpGaOsUgonctU0H4uXU+bNeJLXIxkM2W0kujkJxZb+yDIIl
-G2+dKPgBgMdlmHsK5JDWS5tuEJMHfq2wA1B6pjSegicOYtGabKbz3AalW2uxcXMh
-jy92DPI0Hg==
-=LmmJ
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmfT3pgFAwAAAAAACgkQsN6d1ii/Ey90
+XAgAhP8i9hk4NALIilJPCP8Kf2UqEg7F6D1ngyIv0BJosfaoh9v73ffK+7v/h/dLPPJd1wlwFNnl
+PqSNhvXfrBTF7QEXfoSRm/ZLuiK9styF3/pwHEgpRoIWfZJfYfOJG1JhNxRFbqpPiErAAWcIosq/
+UX8wBOkhdRaVwFF2+jLoL4CFfIX/RR1z623f3a/bBvpA7qp9H6mt/2Hvh3gfuEVmyrTWwmKwcEhs
+yV66SGdN8b8Duw0XJ1N9e8ijTvSVkWFDhgIshQoYUjlbQnUD+pn6c0+wD6bbdzF7culZIjhvxyAY
+7aYawAhbbIlYK7xNaYJ28qIRjSbxyfHZMLKkFS4cnQ==
+=g6z6
 -----END PGP SIGNATURE-----
 
---fau2wb4ziq56b5rc--
+--------------ix365KrzVuZWdMjLvhE6CMac--
 
