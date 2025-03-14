@@ -1,82 +1,172 @@
-Return-Path: <linux-kernel+bounces-562259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF73EA62046
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 23:25:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9E4A6204F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 23:26:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C66A81B60A4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:25:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A764E3B965A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FD11DE89E;
-	Fri, 14 Mar 2025 22:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90461FE456;
+	Fri, 14 Mar 2025 22:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IiwCextC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="0305XuJA"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A111953A9
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 22:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0291B1953A9;
+	Fri, 14 Mar 2025 22:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741991116; cv=none; b=Kg/nmA6YvG9f0JEXays9kGu+WtQMMTujBaXHj+y9U4qJn/cB3lzHsY4N6SFMbuopB5OaSTGMEDTmdE5F/CULWpJXz1pKhrgbkMTCnZJvJ7N4fkg/1QB7gF2zk5uZr0502Jo/4dgJu3SWOzKEWpczWCT3qImaI1fUtBch5bn4U+c=
+	t=1741991149; cv=none; b=AnD/sUKq88AijqqAJbWoeMIcx3KKW/bUxQUwSjn09yXcNyQynq9Yv6qA1+fG1I8H6sPj8ZMYfguZ2tXFpAyCbx44Qx5hjpoVfzzNrBlShraBMYrlR7GlnBL8SjeXsEp6sgeac7yKhIwDVCEt2BGcQNTjc3MnU3WUx4BQ6ORhqkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741991116; c=relaxed/simple;
-	bh=eauF56c391tHLzKpWgANfyOwSYxYihpfxMmqsDFNMeY=;
+	s=arc-20240116; t=1741991149; c=relaxed/simple;
+	bh=ZVLdK11Lq3hOJ2AwZ/4yIqrekAVtkjZF3tElAiA+gIc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H3ZcOfaMRzOxDggoto7pG79vRrZAJysHu7FlfWXvo7eeKsRkj6I9eqNJ7uzm7bqn52ubhSmeO2BkziGygLWeK6pOZGISRhF15Wq/H+rJFetRqdndArW++R3iBts990o5ZpzzbGhX751fbx2d4e03QjOl+c14beqI8Cna2j0l55Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IiwCextC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48187C4CEE3;
-	Fri, 14 Mar 2025 22:25:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741991114;
-	bh=eauF56c391tHLzKpWgANfyOwSYxYihpfxMmqsDFNMeY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IiwCextCpwt0WEaoTGHKcJ3pIbfNcBAE0TS4pZBMYcQdQ2dsOuXtNcSOpJZ7WGC/y
-	 TJ1/jiPeypw3ouAromBGXmFthl3r2GSOt+GiPzCk55BDy7xITBGZGwQ7gSC8NTLKOd
-	 kE0F/AXrOz3fC2lGovlvviH+lGKVCo+JL3jNncoetSWy5c2G/Y43EE3gpgZaar1Kgn
-	 7/Aw/lfcLKgtCDYAY1Wmqo8gu7IYqhF3EoROAnb+6eMGrsMqYMyvNq4dEo221xFeAN
-	 zGDLC99aSoI7g+bGU0QQrETaRRkzPXSzW7oHEJ7SPuflb/ahJst0UmtuZj/8/tB5ha
-	 I918WzkTsCi6g==
-Date: Fri, 14 Mar 2025 15:25:11 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Uros Bizjak <ubizjak@gmail.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH 00/20] x86: Cleanup alternative_io() and friends, prep
- for asm_call()
-Message-ID: <tcizy2pikr4nonjo3bi74fr63kctbh6333rxdkoeb4bnnnwffn@qpd7igl33f2e>
-References: <cover.1741988314.git.jpoimboe@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ka2+6SU9QbpdQVJQVNkl4Udon3uCCiOaqH+Z1iALNvnJiILFBZ9ZXG8tXsqrzNtl0JpGtlUTfKnZ4kxrPVmkfjfQ3xbtDZpIBNhQE0nSaKHF30L4UE43U6JJDkr86R0vX5IaG3wNwf7R3vGI87sDnQaKBGUmu5G5U0UetPHXPDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=0305XuJA; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=lPaccfJ0sEBvFjPYyS8PLhimTq5kEa5pqJCwOZtsTeE=; b=0305XuJAFlMgsafcUGGQRfctCU
+	JdAoUkijrDOjSzQwqYtd9RcxWlj5Y9YLXBkmtaDZ1l3s/RQ64+yA3wQX4f+Zq5iBPQqb8ZdSG8xO+
+	WWmljz5V6MrKGxY7vHEI9iQO9bsYiy2f2amyKmrZAurAeIzyaCgVv2RLe7ly1hTyizB62imBvfLKD
+	BEWNlBDS6qyVnlY7GKB4eLnF7DtGuDWd/rC9TAd8dZkhGn3oxbsYkTncbLIT3jPpUec8j5/Ew3wUo
+	kZ8jAKbm+tqiptaY41cVEf9FS28l4G3rFBwGNOFRZewEfCVRJJySpiptptcwEwYVSoiVwZUiGy+9h
+	2WQQ5baw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:41742)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1ttDT7-0000vY-0X;
+	Fri, 14 Mar 2025 22:25:29 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1ttDT0-0006x5-2r;
+	Fri, 14 Mar 2025 22:25:22 +0000
+Date: Fri, 14 Mar 2025 22:25:22 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v12 07/13] net: mdio: regmap: add support for
+ multiple valid addr
+Message-ID: <Z9Ss0qrxCcEbyJY7@shell.armlinux.org.uk>
+References: <20250309172717.9067-1-ansuelsmth@gmail.com>
+ <20250309172717.9067-8-ansuelsmth@gmail.com>
+ <Z83RsW1_bzoEWheo@shell.armlinux.org.uk>
+ <67cdd3c9.df0a0220.1c827e.b244@mx.google.com>
+ <0c6cb801-5592-4449-b776-a337161b3326@lunn.ch>
+ <Z9SZRDykbTwvGW6S@shell.armlinux.org.uk>
+ <67d49d64.050a0220.35694d.b7ab@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1741988314.git.jpoimboe@kernel.org>
+In-Reply-To: <67d49d64.050a0220.35694d.b7ab@mx.google.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, Mar 14, 2025 at 02:41:13PM -0700, Josh Poimboeuf wrote:
-> Make the alternative_io() interface more straightforward and flexible,
-> and get rid of alternative_input().
+On Fri, Mar 14, 2025 at 10:19:29PM +0100, Christian Marangi wrote:
+> On Fri, Mar 14, 2025 at 09:01:56PM +0000, Russell King (Oracle) wrote:
+> > I'd prefer we didn't bring that abomination back. The detail about how
+> > things are stored in regmap should be internal within regmap, and I
+> > think it would be better to have an API presented that takes sensible
+> > parameters, rather than something that's been encoded.
 > 
-> These patches are a prereq for another set[1] which will get rid of
-> ASM_CALL_CONSTRAINT[2] in favor of a much more flexible asm_call()
-> interface similar to the new alternative_io().
+> Well problem is that regmap_write and regmap_read will take max 2 value
+> at the very end (reg and value) so it's really a matter of making the
+> encoding part internal but encoding it can't be skipped.
 > 
-> [1] Additional 20+ patches not posted yet to avoid flooding inboxes
+> You are suggesting to introduce additional API like
+> 
+> mdio_regmap_write(regmap, phy, addr, val);
+> mdio_mmd_regmap_write(regmap, phy, mmd, addr, val);
+> 
+> And the encoding is done internally?
 
-The rest of the patches are here if anybody wants to see where this is
-going:
+Yes, because littering drivers with the details of the conversion is
+unreasonable.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git asm-call
+> My concern is the decoding part from the .write/read_bits regmap OPs.
+> I guess for that also some helper should be exposed (to keep the
+> decoding/encoding internal to the driver and not expose the
+> _abomination_)
+
+Sadly, I don't think that's something we can get away from, but we
+should make it _easy_ for people to get it right.
+
+From what I remember from the days of shoe-horning C45 into the C22
+MDIO API, encoding and/or decoding addresses was buggy because people
+would use the wrong encoders and decoders.
+
+For example, we had MDIO drivers using mdio_phy_id_is_c45() to test
+whether the access being requested was C45 - mdio_phy_id_is_c45() is
+for the _userspace_ MII API encoding (struct mii_ioctl_data), not the
+kernel space. Kernel space used:
+
+-#define MII_ADDR_C45 (1<<30)
+-#define MII_DEVADDR_C45_SHIFT  16
+-#define MII_REGADDR_C45_MASK   GENMASK(15, 0)
+
+to encode into the register number argument vs the userspace encoding
+into the phy_id member of struct mii_ioctl_data:
+
+#define MDIO_PHY_ID_C45                 0x8000
+#define MDIO_PHY_ID_PRTAD               0x03e0
+#define MDIO_PHY_ID_DEVAD               0x001f
+
+which is what the mdio_phy_id_*() accessors are using. The two
+approaches are incompatible, and using the userspace one in a MDIO
+driver wasn't going to work correctly - but people did it.
+
+This is one of the reasons I hated the old MDIO API, and why we now
+have separate C22 and C45 interfaces in the driver code.
+
+This is exactly why I don't like reintroducing a new set of "massage
+the package, mmd and address into some single integer representation"
+and "decode a single integer into their respective parts" - we've
+been here before, it's lead to problems because driver authors can't
+grasp what the right approach is, and it results in bugs.
+
+Given the history here, my personal opinion would be... if regmap can't
+cope with MDIO devices having a three-part address without requiring
+callers to flatten it first, and then have various regmap drivers
+unflatten it, then regmap is unsuitable to be used with MDIO and ought
+not be used.
+
+So, this encoding/decoding is a problem that should be solved entirely
+within regmap, and not spread out into users of regmap and drivers
+behind regmap. Anything else is, IMHO, insane.
 
 -- 
-Josh
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
