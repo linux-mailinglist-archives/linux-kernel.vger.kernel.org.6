@@ -1,185 +1,107 @@
-Return-Path: <linux-kernel+bounces-561302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE9CA60FE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:26:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEE0CA60F8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:06:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CD3C461CEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:26:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1752178E40
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897E51FDA7C;
-	Fri, 14 Mar 2025 11:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D551D1FCFE7;
+	Fri, 14 Mar 2025 11:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="f6auMja0";
-	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="WSO+vn28"
-Received: from e3i103.smtp2go.com (e3i103.smtp2go.com [158.120.84.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RgZ684Ni"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F7A1FDA63
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.84.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6841A5B82
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741951555; cv=none; b=VelAAPLn55b9lyNuYsMps+seXU98qUOfVngH+31mWkZK4Hh2Y731nJc34KvrAYsppyUv5zuEsShjXxDRGDNiHOSC+tWeI1hgk0lsh0hffy6yRzIagnMVY7/ARldCwsndddwHCbhPB0/YxZjzn7fp5OOKPkFuC3NCy6RrQ7aJmsU=
+	t=1741950359; cv=none; b=PSnbmy/XxmllvxnNexyiHTd7mnQDXwGicjJxSmGYrRhLJScAkfwxIpXN1VFxBdAwo+fcaLhZuAmOiGacx9q+ZdL++JgW/Je9P0g5y1NFcBpL/lhnLusLiP5Evn55WRk+KD/Yeo/ZmLLkUhH0JyWxI35zUlSuUzyRpat30HN5at0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741951555; c=relaxed/simple;
-	bh=bui+sgPyzR2G8LRYmNaQRxDDZhKG5Gh4x3fA0txGOy0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=s0iBTkZ2gL9B1UBU+4RA+Rf5TeXC8AQY7FqacG0kRgVCKy7/CxRu/iHEfACRwrs2cznSpu5X0dPPwpp6jfPcySL30ioM5RuNgV71NApr8bG1HIYd6uvQh7Oygn4cnHKshorjitdQHLvFCgIMQTYWzUjSBFnWzGBHycWUg01sszQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=f6auMja0; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=WSO+vn28; arc=none smtp.client-ip=158.120.84.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
- i=@smtpservice.net; q=dns/txt; s=a1-4; t=1741950642; h=feedback-id :
- x-smtpcorp-track : date : message-id : to : subject : from : reply-to
- : sender : list-unsubscribe : list-unsubscribe-post;
- bh=Tf4BrW1vWLMedPyDJ2iLarCXnf06nMp0xpM83vTGV/w=;
- b=f6auMja0CgrSBMqZowVTTB0RHXLifRKeJttN2O1hnoN3N1pW8f6FAud60rN6u6lqmVDw+
- Hg2s/jvWAqwGdXFlylRgX1jx8CEdXiZra1HSthgwtpxayGuVxI3NDbJ4RnJw9viU1HbEzC/
- waIKyWT9dtQsiNu7a26yPOF7tVPSbTMxfWyfIpEPVitQ79tzVuIuy94PJSpPT1QDumNqinq
- Vy63RrcVzQIIqFbxDbLJk0wWA7es0/UBOELh5tc7t1GdDoBY6YD/3dXQEj0uXOWPnbzCqLB
- S8S/MIxI+M9EQfwF0UlQOEWIDlZefSa5+gts69rX0M05V/QUu44SgQ7UtHJw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
- i=@triplefau.lt; q=dns/txt; s=s510616; t=1741950642; h=from : subject
- : to : message-id : date;
- bh=Tf4BrW1vWLMedPyDJ2iLarCXnf06nMp0xpM83vTGV/w=;
- b=WSO+vn28IrGg+dPA75yvrgBHDjGby29HcSB32lknZD6cm7TQY1qaHU4FwPD5+1ub/gLqh
- O0NGY5g3RbfTR6JRGWHO5QxpOjWJZw+aP2RZjemiPETbxvALPhLx4Kh/sWz3A3FM8b3dYAe
- BBb1VBfot6qprp04orU5sfNMovk6p+Qfar2+M3/N+tPaPBTG6+xLW5VK8vSKGMKAx/ySxkg
- VuMHXXxKekyV5QRN73dQUUjcZptQitq8bmOhr9V62GrzTx4EgEXMtIdCKE6J27KsWwybqO6
- hh5OLxv1Rs4suO/6DUuWOrpeGwSyP21grKm7hbWNCk020VXHxuZGnGH7G+FQ==
-Received: from [10.12.239.196] (helo=localhost)
-	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97.1-S2G)
-	(envelope-from <repk@triplefau.lt>)
-	id 1tt2w0-FnQW0hPoaKZ-lQRB;
-	Fri, 14 Mar 2025 11:10:36 +0000
-From: Remi Pommarel <repk@triplefau.lt>
-To: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-	Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH 2/2] wifi: mac80211: Purge vif txq in ieee80211_do_stop()
-Date: Fri, 14 Mar 2025 12:04:25 +0100
-Message-Id: <54c3c83ea8f58af89d275d410682d73cc6289dc8.1741950009.git.repk@triplefau.lt>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <cover.1741950009.git.repk@triplefau.lt>
-References: <cover.1741950009.git.repk@triplefau.lt>
+	s=arc-20240116; t=1741950359; c=relaxed/simple;
+	bh=XxBikUZY8aio3BzZ0PwzUhcA6cIoxXU6nbqOx8gyLzc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JVAm53UNt5hLzaZXULy+yk73Tnf7QLHMiK0BSehCGhJGC7/6NyFIZHpMBWZ8m6OooKfqIC2Wh9YTGq1CEF8cMMmHwPa61kUkC5jPX2fYNlG1FpYNyc0PHLfTXk4iLVqA34TCsmBGtIsRIQYKbk1uX2zhvXjFe+6Z4j0+Q/kBzFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RgZ684Ni; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5499bd3084aso1968111e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 04:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741950356; x=1742555156; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XxBikUZY8aio3BzZ0PwzUhcA6cIoxXU6nbqOx8gyLzc=;
+        b=RgZ684NiMVxyjEe2ggUmSWm2pHyOHmOvvAZFazNWOrukjHbCWik9Y+T2u1tEIHfN/s
+         TtVhc09UAZgtCKrJLijakB4GP22ymg6rW8qf0i3ENDs+83HczkfNXJVyNMzE4WEOEirA
+         jSbtVQ1thXolsIbG7YXmhuRjSn1yfV9j8LVjIfudMU+Y1NWbLAVac3+iwrjoB8S1O4Kp
+         CLtczlp6cyZ4zsvacrp1niD9jZlL4A95svrv9io+QKyqFx/X9HmU0zsUyUTzYZhRlLui
+         Oc6IxH8J9SxIz+RSgCegQKaNVKtzXhjMl3oLCsp5VFyryy1QGCRf/hwA8oFjJIxYaVxQ
+         m2oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741950356; x=1742555156;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XxBikUZY8aio3BzZ0PwzUhcA6cIoxXU6nbqOx8gyLzc=;
+        b=JEWoxBmfWaTMlOfVqbKbeCUXYUL9XbKgX1rVPajNNckomY/PLAA2Lbdd+ffUBjSQLQ
+         OxchmCfy+0ewLrN99hhQu/+DT6v0larpbfewYuh6a80FA2MEVplQs7n3aJ+gOlSbexOY
+         3rblNcYDmfSAjVqhO4d9GDdwX3kpFFTwEyl5Y87qspfrZILyaZFSILi51U89G87pVTq2
+         +M2a6NMN2MUMT4AJa+QEAAnV9woPH1Xirlg4KX6Mu1s5lM6fKLemjGo+9HpfrLLj3URo
+         RPEUHJ2v3ATM6rDP7h+n4FOjfoJ6frPbN7mHxWuJgi4hQ0tfpvBh5CJTytq+ooEhdMcw
+         lcmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWyenfHmK0F04L76lxHXhtuCP1POB48vvrNR3WpXsbLCwfaT8Lguo0F0Eu1VMwgDj2IF2s0Lwr9HNUpAp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3urszXIG5A5/PB5jihdH+6paQ8gIM5YiimdPibwm1NUWalcyK
+	D0cQ0QMwbpuSgU072NoPF8Zhtr9bp/3yZteEFWVbfZZR4QuXsfXDxhdepI9rC4fxoRUfs3ozxch
+	lUGdA7Tk7we5MkR2qz4kx6ybvyarNFb9OMMa4Kw==
+X-Gm-Gg: ASbGncsybFm/m/WATubROJ40NC6JKoM8pN6koqlunnajKcTZO+l12rnKQD1UwGNIj+6
+	HEJzxXaso7BxYd7Bndm57xh2nPfQTuSWBU3JxXH5j5FqNgbSda44U57uc6MR02ME73rwiMlNN29
+	WEbl7ftHnZASldegdwuMRW2i4=
+X-Google-Smtp-Source: AGHT+IEtWG3hGAPpwZpW2Kb03ek5XF1oybcCjHGNlFQDEQWQLDYho05PNF9pKqd+gnKE83MT+G5mKyZ2nU0ypW9l18U=
+X-Received: by 2002:a05:6512:696:b0:549:8b24:9896 with SMTP id
+ 2adb3069b0e04-549c360f4a4mr746105e87.0.1741950355704; Fri, 14 Mar 2025
+ 04:05:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
-Feedback-ID: 510616m:510616apGKSTK:510616s0w53aj45L
-X-smtpcorp-track: 1rbwuQsAEFkw.R_M73qoQTkhb.ukuHNQC7DFB
+References: <20250313-tlmm-test-disabled-irq-delivered-v1-1-f0be903732ac@oss.qualcomm.com>
+In-Reply-To: <20250313-tlmm-test-disabled-irq-delivered-v1-1-f0be903732ac@oss.qualcomm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 14 Mar 2025 12:05:44 +0100
+X-Gm-Features: AQ5f1JquHlFLF2H3luwsKOipVRgfi7l4qhjJICzwca1VCtyRkDi9-duvsKNCvNc
+Message-ID: <CACRpkdaXQ9=9+ec3VNSE1YXADbRttKx2wJQB+o+WHmzaNj5ZVw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: qcom: tlmm-test: Validate irq_enable delivers
+ edge irqs
+To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Douglas Anderson <dianders@chromium.org>, 
+	Stephan Gerhold <stephan.gerhold@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-After ieee80211_do_stop() SKB from vif's txq could still be processed.
-Indeed another concurrent vif schedule_and_wake_txq call could cause
-those packets to be dequeued (see ieee80211_handle_wake_tx_queue())
-without checking the sdata current state.
+On Thu, Mar 13, 2025 at 10:21=E2=80=AFPM Bjorn Andersson
+<bjorn.andersson@oss.qualcomm.com> wrote:
 
-Because vif.drv_priv is now cleared in this function, this could lead to
-driver crash.
+> In commit 'cf9d052aa600 ("pinctrl: qcom: Don't clear pending interrupts
+> when enabling")' Doug establishes an expectation that edge interrupts
+> occurring while an interrupt is disabled should be delivered once the
+> interrupt is enabled again.
+>
+> Implement a test to validate that this is the case.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 
-For example in ath12k, ahvif is store in vif.drv_priv. Thus if
-ath12k_mac_op_tx() is called after ieee80211_do_stop(), ahvif->ah can be
-NULL, leading the ath12k_warn(ahvif->ah,...) call in this function to
-trigger the NULL deref below.
+Patch applied!
 
-  Unable to handle kernel paging request at virtual address dfffffc000000001
-  KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-  batman_adv: bat0: Interface deactivated: brbh1337
-  Mem abort info:
-    ESR = 0x0000000096000004
-    EC = 0x25: DABT (current EL), IL = 32 bits
-    SET = 0, FnV = 0
-    EA = 0, S1PTW = 0
-    FSC = 0x04: level 0 translation fault
-  Data abort info:
-    ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-    CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-    GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-  [dfffffc000000001] address between user and kernel address ranges
-  Internal error: Oops: 0000000096000004 [#1] SMP
-  CPU: 1 UID: 0 PID: 978 Comm: lbd Not tainted 6.13.0-g633f875b8f1e #114
-  Hardware name: HW (DT)
-  pstate: 10000005 (nzcV daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-  pc : ath12k_mac_op_tx+0x6cc/0x29b8 [ath12k]
-  lr : ath12k_mac_op_tx+0x174/0x29b8 [ath12k]
-  sp : ffffffc086ace450
-  x29: ffffffc086ace450 x28: 0000000000000000 x27: 1ffffff810d59ca4
-  x26: ffffff801d05f7c0 x25: 0000000000000000 x24: 000000004000001e
-  x23: ffffff8009ce4926 x22: ffffff801f9c0800 x21: ffffff801d05f7f0
-  x20: ffffff8034a19f40 x19: 0000000000000000 x18: ffffff801f9c0958
-  x17: ffffff800bc0a504 x16: dfffffc000000000 x15: ffffffc086ace4f8
-  x14: ffffff801d05f83c x13: 0000000000000000 x12: ffffffb003a0bf03
-  x11: 0000000000000000 x10: ffffffb003a0bf02 x9 : ffffff8034a19f40
-  x8 : ffffff801d05f818 x7 : 1ffffff0069433dc x6 : ffffff8034a19ee0
-  x5 : ffffff801d05f7f0 x4 : 0000000000000000 x3 : 0000000000000001
-  x2 : 0000000000000000 x1 : dfffffc000000000 x0 : 0000000000000008
-  Call trace:
-   ath12k_mac_op_tx+0x6cc/0x29b8 [ath12k] (P)
-   ieee80211_handle_wake_tx_queue+0x16c/0x260
-   ieee80211_queue_skb+0xeec/0x1d20
-   ieee80211_tx+0x200/0x2c8
-   ieee80211_xmit+0x22c/0x338
-   __ieee80211_subif_start_xmit+0x7e8/0xc60
-   ieee80211_subif_start_xmit+0xc4/0xee0
-   __ieee80211_subif_start_xmit_8023.isra.0+0x854/0x17a0
-   ieee80211_subif_start_xmit_8023+0x124/0x488
-   dev_hard_start_xmit+0x160/0x5a8
-   __dev_queue_xmit+0x6f8/0x3120
-   br_dev_queue_push_xmit+0x120/0x4a8
-   __br_forward+0xe4/0x2b0
-   deliver_clone+0x5c/0xd0
-   br_flood+0x398/0x580
-   br_dev_xmit+0x454/0x9f8
-   dev_hard_start_xmit+0x160/0x5a8
-   __dev_queue_xmit+0x6f8/0x3120
-   ip6_finish_output2+0xc28/0x1b60
-   __ip6_finish_output+0x38c/0x638
-   ip6_output+0x1b4/0x338
-   ip6_local_out+0x7c/0xa8
-   ip6_send_skb+0x7c/0x1b0
-   ip6_push_pending_frames+0x94/0xd0
-   rawv6_sendmsg+0x1a98/0x2898
-   inet_sendmsg+0x94/0xe0
-   __sys_sendto+0x1e4/0x308
-   __arm64_sys_sendto+0xc4/0x140
-   do_el0_svc+0x110/0x280
-   el0_svc+0x20/0x60
-   el0t_64_sync_handler+0x104/0x138
-   el0t_64_sync+0x154/0x158
-
-To avoid that, empty vif's txq at ieee80211_do_stop() so no packet could
-be dequeued after ieee80211_do_stop() (new packets cannot be queued
-because SDATA_STATE_RUNNING is cleared at this point).
-
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
----
- net/mac80211/iface.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/net/mac80211/iface.c b/net/mac80211/iface.c
-index 738de269e13f..e60c1ffebaea 100644
---- a/net/mac80211/iface.c
-+++ b/net/mac80211/iface.c
-@@ -660,6 +660,9 @@ static void ieee80211_do_stop(struct ieee80211_sub_if_data *sdata, bool going_do
- 	if (sdata->vif.type == NL80211_IFTYPE_AP_VLAN)
- 		ieee80211_txq_remove_vlan(local, sdata);
- 
-+	if (sdata->vif.txq)
-+		ieee80211_txq_purge(sdata->local, to_txq_info(sdata->vif.txq));
-+
- 	sdata->bss = NULL;
- 
- 	if (local->open_count == 0)
--- 
-2.40.0
-
+Yours,
+Linus Walleij
 
