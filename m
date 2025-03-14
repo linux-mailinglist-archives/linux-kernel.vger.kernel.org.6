@@ -1,51 +1,68 @@
-Return-Path: <linux-kernel+bounces-560765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDF9AA60939
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:36:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81256A6093E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:40:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA72119C1998
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:36:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C66D189785E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF231547C5;
-	Fri, 14 Mar 2025 06:36:00 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6BD13AA2E;
-	Fri, 14 Mar 2025 06:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D424156C71;
+	Fri, 14 Mar 2025 06:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=deepin.org header.i=@deepin.org header.b="BveosaYA"
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1C378F4E;
+	Fri, 14 Mar 2025 06:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741934160; cv=none; b=sEKJ/+rZR5cm6jA4/ROM32sdRJi4+hK2Ukar8e4pWr0pgkuaizlg0NnnzFW25hbwAQ3V08QjMDUOphQmV4JweyDm54xw7JX1GI6ICbuWG/we8XFou8KUeroHUjChzIEnxUg2VvpZVXNlTTxmWRZ18Fbd8RJ9OykkyzDyqsFxxm4=
+	t=1741934442; cv=none; b=GnCreiPvJ6r9W5msrwbb7DjZZClRLXvDJJtAG5g/gL1GC2gVmRXF6sWuR1osclXfJa/QOvPUSRXw/IU5oolKr0o4e0We/eKabu2h70gFgZeni64ig41x8ymzHXrJSr8WMtpv+wTImcf3AS8WzmYKojQgxBLQ86IvDWkMIhXNEbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741934160; c=relaxed/simple;
-	bh=mFDtmYZsMJ3f91VrML5go1J6TKHkulMHxYAi5Y5fuRY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J/rYpo1dJoNfXZ04IzI1S67RaBcu6sGtW/V9KpfXMrf3QqsbjKPGYIZeTvBQ33T4rTzHxaP//SZV9aNX3kPf5IhkQwo0ocBlr9LsZ0gm3OZ7uYCFDL1uEV4FpS4bDP57wyznDXFQvJ/yzPcfh7M2O60vTo2rslnMP9FB+jkhNxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-51-67d3ce4a1a60
-From: Rakie Kim <rakie.kim@sk.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: akpm@linux-foundation.org,
-	linux-mm@kvack.org,
+	s=arc-20240116; t=1741934442; c=relaxed/simple;
+	bh=1/P245BJsOOizxZd8xVholcTcwS3i4f6zEkYxyH+TzU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aI4IXl6wIlZJCQEQlXlJVuMq2bZxFDSBTu2t9tptBeWgSrZuUHGr2Z8lKNCYJQO/ivrGqxY5Y5Fq+og109IgCHAYLA1TGGwWrx7rycEagAaKDQyDDO8lP4+iOyuqVaQFDWpXNvYRUbIUQiH6cXuN/Swb2fs1AnRKRvU/ShvY4bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepin.org; spf=pass smtp.mailfrom=deepin.org; dkim=pass (1024-bit key) header.d=deepin.org header.i=@deepin.org header.b=BveosaYA; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepin.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deepin.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=deepin.org;
+	s=ukjg2408; t=1741934406;
+	bh=CwPqh3dkCrhZ/eHvLeAux7HyOEkcWfxttE3ma/av6pE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=BveosaYANXwcwLdtoWX9NBvCpprYGtn8Vfs20Rxpjd+FOMKkH168Z6VlcV8id1kzb
+	 28YXhg83J13YwMLZanSEUqM0HwOUYYflbQMeTXxEINzhDhlKWktBJ+tOZCvgHkQC0E
+	 Ixc0rmBLfkmOSBSiPgdyKhwIGCzO5D4YBaSXJb+o=
+X-QQ-mid: bizesmtpsz10t1741934404t26o9y
+X-QQ-Originating-IP: 6Fr0MgwcHkdky+mdy7jdVuBXvxbbn5kRhnpDYS15j4Y=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 14 Mar 2025 14:40:02 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 17251125290504518748
+From: Chen Linxuan <chenlinxuan@deepin.org>
+To: Andrii Nakryiko <andrii@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	Chen Linxuan <chenlinxuan@deepin.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>
+Cc: Yi Lai <yi1.lai@intel.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
 	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	joshua.hahnjy@gmail.com,
-	dan.j.williams@intel.com,
-	ying.huang@linux.alibaba.com,
-	kernel_team@skhynix.com,
-	honggyu.kim@sk.com,
-	yunjeong.mun@sk.com,
-	Rakie Kim <rakie.kim@sk.com>
-Subject: Re: [PATCH v2 4/4] mm/mempolicy: Fix duplicate node addition in sysfs for weighted interleave
-Date: Fri, 14 Mar 2025 15:35:40 +0900
-Message-ID: <20250314063547.765-1-rakie.kim@sk.com>
-X-Mailer: git-send-email 2.48.1.windows.1
-In-Reply-To: <Z9MK235uVDmK1oYB@gourry-fedora-PF4VCD3F>
-References: 
+	bpf@vger.kernel.org
+Subject: [PATCH stable 5.15] lib/buildid: Handle memfd_secret() files in build_id_parse()
+Date: Fri, 14 Mar 2025 14:37:20 +0800
+Message-ID: <2BB12F289DA93614+20250314063720.20463-2-chenlinxuan@deepin.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,50 +70,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsXC9ZZnka7XucvpBrM2SVnMWb+GzWL61AuM
-	Fj/vHme3OL51HrvF+VmnWCwu75rDZnFvzX9Wi9VrMhw4PHbOusvu0d12md1j8Z6XTB6bPk1i
-	9zgx4zeLx86Hlh6fN8kFsEdx2aSk5mSWpRbp2yVwZUw7eJ+54Cp7Rcufz0wNjH1sXYycHBIC
-	JhJNJ3azwNivm/YDxTk42ASUJI7tjQExRQRUJdquuHcxcnEwC6xnkni9aRZYq7BAmsTxY8dZ
-	QWwWoJqLn1ayg9i8AsYSDXtaGSFGako0XLrHBGJzCphJvPv6FKxXSIBH4tWG/YwQ9YISJ2c+
-	ATuBWUBeonnrbGaQZRICJ9gkDvfMZ4YYJClxcMUNlgmM/LOQ9MxC0rOAkWkVo1BmXlluYmaO
-	iV5GZV5mhV5yfu4mRmAYL6v9E72D8dOF4EOMAhyMSjy8G3ZdShdiTSwrrsw9xCjBwawkwrva
-	9kK6EG9KYmVValF+fFFpTmrxIUZpDhYlcV6jb+UpQgLpiSWp2ampBalFMFkmDk6pBkbnx/er
-	PnXzSt3ecGlF8ff352t3xyV9zgoumf/0Sfgjg6ALcz6a/trl9HxPLaPF/cZNi2yOvzBuLpwz
-	e4vKTfFjO1PEexYK50nKis/+Vu3noOrYsKV+9eNpZ70ObSg8sFJmrpPPhsboqPyZk4LmLYue
-	EXi6rcOi1el8glgv2+3b1juDHjFLVHYqsRRnJBpqMRcVJwIAG1HM9l8CAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsXCNUNNS9fr3OV0g1O3uSzmrF/DZjF96gVG
-	i593j7NbfH72mtni+NZ57BaH555ktTg/6xSLxeVdc9gs7q35z2px6NpzVovVazIsfm9bwebA
-	47Fz1l12j+62y+wei/e8ZPLY9GkSu8eJGb9ZPHY+tPT4dtvDY/GLD0wenzfJBXBGcdmkpOZk
-	lqUW6dslcGVMO3ifueAqe0XLn89MDYx9bF2MnBwSAiYSr5v2A9kcHGwCShLH9saAmCICqhJt
-	V9y7GLk4mAXWM0m83jQLrFxYIE3i+LHjrCA2C1DNxU8r2UFsXgFjiYY9rYwQIzUlGi7dYwKx
-	OQXMJN59fQrWKyTAI/Fqw35GiHpBiZMzn7CA2MwC8hLNW2czT2DkmYUkNQtJagEj0ypGkcy8
-	stzEzBxTveLsjMq8zAq95PzcTYzA0F1W+2fiDsYvl90PMQpwMCrx8G7YdSldiDWxrLgy9xCj
-	BAezkgjvatsL6UK8KYmVValF+fFFpTmpxYcYpTlYlMR5vcJTE4QE0hNLUrNTUwtSi2CyTByc
-	Ug2MvLE9qRVvTOqX6y3Ndz5jz39xxSHVpdq+nB2PHp+rj3Tlvcf2bvPRzca9x30P/E+vaP5q
-	sc3+/K8zP6ac/SZx8yiLpAZbjMTdj8f+2sVXS5y4x9j7+Ren1DTvajnNha0mL9n436xr/JN5
-	5nz4IetsG/+H2vcuXhXj1NnA+9OtSnWF0ISbx5ROKrEUZyQaajEXFScCAKBQDMRZAgAA
-X-CFilter-Loop: Reflected
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:deepin.org:qybglogicsvrgz:qybglogicsvrgz7a-0
+X-QQ-XMAILINFO: NulC8gp9xT8siKGavyBmRLtpa2lNONBL4Z2xMreGsZPpuoHR7OqVDLgA
+	+ABrcnLe7POSeHiOE/obf3HTXfMz24Z7z7F2l0VAbtLfZoA4q2lO/abMbzucwxHCchTPTLa
+	NNXGo9LeMVNL2eiu16xgqVL9bpfUIcSerg7kYz4yAJiHpUeiedRQBtfFyBsH4GmEAxQE0+z
+	uC7LwIIJ3oEDDZw8A+HtiEec3SPyzod4yN5uLWuwuprR5aCPCki9eZkefigTrJhKbqX1TRe
+	LH5+xRXzd+h65fTeW7RfT5FzUPkDymz39YaRlwwOcKcx8Z6M+FtLO+yZ9hKKDLH/dC3tZ3M
+	Ow13A8ZeccnAt5nt/QdcOhCETz+R+uwbFsaFn5fKGOiAi+1w9VVZd+hCzmPhF99le8oefq5
+	8rNabpfAA0ry0Z0qiUCgRXnQyPwT38E+zv6S0o4E83ojSnAMgq1CYWjAl1Jzd3WrPCXNqw2
+	FHcMNO0rcrLRZOFU0RixkEZ2ybACTOkpZmfDU0cMhiK6uanWlAZ3OfE9jpwVVxbVf0/tENZ
+	NJv//quDd6+elbf25/rwJZIWBg2WsRXiCUf3EtrVUKUQPgqDvcucQKMrMQWejdvXgqyv8L3
+	Ei7bsmY9h5IlL+EgU747rx7AE8SPlWiWeTE8/UxWwwOIonNurwbCtdzFnXfKf4LIEA970Ws
+	fS2/qXpVyNGRHpHyeYNkMdNTcDcf8Oaz3IPuEAVHuI9pLacJU7Mfr4iyalIDI3u6K5HT86w
+	qL9yC1pGV2wLWB6p1kCVLyfPIhaMl8V8CCzQHNiNhveymdqA95BAQMDanMHMOg17PXPj3OY
+	p6qMCRMuHWbeboLKS13zfsnejYUTY6MF4AXhhzDophbBbvu/kE/u6Zx5Tpmg8rjjtfpk11R
+	JrE2bkDRJy2j+aMseFeToi/YrGWhzXiOl/8tvnN3pm7ytmqUQMlrQVs+MT4eARS/9xqK7Tu
+	9I/fugj8sBg04mjK4S4AZXXN5zfmuYWv4xjtkyR4N3FmLCQ==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-On Thu, 13 Mar 2025 12:42:03 -0400 Gregory Price <gourry@gourry.net> wrote:
-> On Wed, Mar 12, 2025 at 04:56:27PM +0900, Rakie Kim wrote:
-> > Sysfs attributes for interleave control were registered both at initialization
-> > and when new nodes were detected via hotplug, leading to potential duplicates.
-> > 
-> > This patch ensures that each node is registered only once, preventing conflicts
-> > and redundant sysfs entries.
-> >
-> 
-> After looking more closely at patch 2, this seems to suggest we're not
-> understanding the OFFLINE/ONLINE events well enough to use for this
-> purpose.  I think this patch won't be needed once we address the
-> concerns in patch 2 - and more generally if we discover it is needed
-> this should just be rolled into patch 2 rather than kept separate.
-> 
-> ~Gregory
+[ Upstream commit 5ac9b4e935dfc6af41eee2ddc21deb5c36507a9f ]
 
-For this patch, it might be beneficial to merge it with another patch
-or change its form. I will consider the changes, including the feedback
-from Joshua.
+>From memfd_secret(2) manpage:
 
-Rakie
+  The memory areas backing the file created with memfd_secret(2) are
+  visible only to the processes that have access to the file descriptor.
+  The memory region is removed from the kernel page tables and only the
+  page tables of the processes holding the file descriptor map the
+  corresponding physical memory. (Thus, the pages in the region can't be
+  accessed by the kernel itself, so that, for example, pointers to the
+  region can't be passed to system calls.)
+
+We need to handle this special case gracefully in build ID fetching
+code. Return -EFAULT whenever secretmem file is passed to build_id_parse()
+family of APIs. Original report and repro can be found in [0].
+
+  [0] https://lore.kernel.org/bpf/ZwyG8Uro%2FSyTXAni@ly-workstation/
+
+Fixes: de3ec364c3c3 ("lib/buildid: add single folio-based file reader abstraction")
+Reported-by: Yi Lai <yi1.lai@intel.com>
+Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+Link: https://lore.kernel.org/bpf/20241017175431.6183-A-hca@linux.ibm.com
+Link: https://lore.kernel.org/bpf/20241017174713.2157873-1-andrii@kernel.org
+[ Linxuan: perform an equivalent direct check without folio-based changes ]
+Fixes: 88a16a130933 ("perf: Add build id data in mmap2 event")
+Signed-off-by: Chen Linxuan <chenlinxuan@deepin.org>
+---
+
+Some previous discussions can be found in the following links:
+https://lore.kernel.org/stable/05D0A9F7DE394601+20250311100555.310788-2-chenlinxuan@deepin.org/
+
+---
+ lib/buildid.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/lib/buildid.c b/lib/buildid.c
+index 9fc46366597e..6249bd47fb0b 100644
+--- a/lib/buildid.c
++++ b/lib/buildid.c
+@@ -5,6 +5,7 @@
+ #include <linux/elf.h>
+ #include <linux/kernel.h>
+ #include <linux/pagemap.h>
++#include <linux/secretmem.h>
+ 
+ #define BUILD_ID 3
+ 
+@@ -157,6 +158,12 @@ int build_id_parse(struct vm_area_struct *vma, unsigned char *build_id,
+ 	if (!vma->vm_file)
+ 		return -EINVAL;
+ 
++#ifdef CONFIG_SECRETMEM
++       /* reject secretmem folios created with memfd_secret() */
++       if (vma->vm_file->f_mapping->a_ops == &secretmem_aops)
++               return -EFAULT;
++#endif
++
+ 	page = find_get_page(vma->vm_file->f_mapping, 0);
+ 	if (!page)
+ 		return -EFAULT;	/* page not mapped */
+-- 
+2.48.1
+
 
