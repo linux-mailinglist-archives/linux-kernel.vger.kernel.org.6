@@ -1,142 +1,191 @@
-Return-Path: <linux-kernel+bounces-561871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5F86A617D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:34:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6794A6179E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:29:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC40F885E30
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:33:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AB03885158
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC0B204C09;
-	Fri, 14 Mar 2025 17:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EFE20485F;
+	Fri, 14 Mar 2025 17:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h8NSWW96"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y+mVsdSe"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7268C201002
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A145204694;
+	Fri, 14 Mar 2025 17:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741973565; cv=none; b=hwRFDVsImxSbMeR22Z00kNtgae1oe5cwoktJiUlKEDPelkO9bGl0iI8z1RFrpeljZexRIJoMUUtwkbccuj8D6H/E5phm1AuJi0crrrY6G7tbskQ8cn1nsGRCz9idbHHiuh8L7VWQgCIgXofvhu7JVgJNholXV6PI9qvv8rKxKFs=
+	t=1741973298; cv=none; b=sLZvrf0osTrAup9J+itHTl4vA4mRYZMggpygYm6Et2RupKqptvVm8vgWyds8v/giHhT2FojcK+Uhmn/eFEZVNSzA25WdPMGMJENGrxf2xLFiGKmw4IOLFspG3XmNxAsYCwMf/Q5aAICkjxyzYW5NZAkj5/7RnYEAqZ1WiX9QQUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741973565; c=relaxed/simple;
-	bh=vAy0a/6TMYOoP2YK49H3iPUzcwOqZD68MfTy3bsmu/8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Aiq5iFkxbrOkhKnSLLIh66xB/gbMBY6mXSJJbfhN+wn19rZA1Nm1iw6DqIgIIumxeFFNmAfnp4cgZZ/0ykv92henzJtSUjwRC2zqHHcQKocJQiG6/gFgMsfkATLeXy1iHKo8cb6LCDKZ7u2CRJxl4sBeoXxdXZoMZR2CW0eGKlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h8NSWW96; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=7ZEU4ooB9JbXRgCaEf2/WOsbQmZpDXUsz2616q1hGqk=; b=h8NSWW9622lyf+TkR66+QUn3pB
-	vnD9qJh9YuRa82X3/xejTJyv4mUvkP02rihXQkbmK9S7TSOHAABGDtKRRHlDRYrdEU4RlAO/8S3fE
-	DcDjjNZLB5FK7pL7gWtdVbWck58neWnKh6XbdGCIWD6Pv/qO6tNprEj3VN1ZIBdPkFfb8JyBxEtIB
-	6/evZ7cZ3tJC0hGc1NaK6/wjYhN/TtnpM9KV5whneVvCSs2tMHyluC+6Q71rzWr883CJu2uvYXgGr
-	5S44TQNl/dX2pQ8l22tfnJP5WyVBCDevxUUtj5gBd/PzlSSYlvJ7mjBfb0v+/vDhpb+m0T2CVAw8R
-	4V0G+bcw==;
-Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tt8tb-00000002vUA-3fSj;
-	Fri, 14 Mar 2025 17:32:32 +0000
-Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tt8tZ-0000000CsWL-0pvp;
-	Fri, 14 Mar 2025 17:32:29 +0000
-From: David Woodhouse <dwmw2@infradead.org>
-To: kexec@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	linux-kernel@vger.kernel.org,
-	Simon Horman <horms@kernel.org>,
-	Dave Young <dyoung@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	jpoimboe@kernel.org,
-	bsz@amazon.de
-Subject: [PATCH v8 7/7] [DO NOT MERGE] x86/kexec: Add CFI type information to relocate_kernel()
-Date: Fri, 14 Mar 2025 17:27:39 +0000
-Message-ID: <20250314173226.3062535-8-dwmw2@infradead.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250314173226.3062535-1-dwmw2@infradead.org>
-References: <20250314173226.3062535-1-dwmw2@infradead.org>
+	s=arc-20240116; t=1741973298; c=relaxed/simple;
+	bh=mRc6Qzp+fDySnwvcYJlAcal8yjcDJzBh4K2OKc81DgM=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PTIeFkaVq+ltlVRQF3e3zSyw3BDaBFQyPvPz8s0w4Sr1yCD6BtXE9qY9G4+diRoc/+skcDnqGZe1vxhzBDhLfIaCjlGE7/6rpz1HTlKsqGfbidQT7LpC7eVawPUd4HhsYTDZ83hAT9HtfE0im1LQFqGWUR/aGTkZi7XnLw+xC1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y+mVsdSe; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4767e969b94so36910151cf.2;
+        Fri, 14 Mar 2025 10:28:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741973294; x=1742578094; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:feedback-id:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KJghd27vPBEu/LGbRtV6LiK050yXADXaFFga3GAq6fg=;
+        b=Y+mVsdSeMacyBLhsWHNekr21R4AqDWskzSPb9c+YnmYW/4EEdZ8t0dBm0N4zPFQQXC
+         NDpQWjxoDR82PW+SWormp7+d0N2BIgONMJzs2Z4+ENfmrxuB3bRTdsSU+XMD9DJTNRxQ
+         2WZFadrb/wkGMFIh2EMkLcUY63yKNfIt0x4gS6Y6pQLpYZ/Jtzrl4jTAdOzQHeXP2ecG
+         YDVshHlMhAxt18rJrMGEg6vbb7/804sP8HJD3Un30f8a+xMLpW8tNdg+6nSMIT02X0MU
+         CoCaTJJaslRAXatJabKcoZ0H/CKekIJL0xbC2twyClJkceXWD7Z61/pL1jGsKsGdJA37
+         aGoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741973294; x=1742578094;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:feedback-id:message-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KJghd27vPBEu/LGbRtV6LiK050yXADXaFFga3GAq6fg=;
+        b=ONazWLH7+ukpOTCnCnPjONw9UkFT0j3lK3BQF797HkbcACkCnfNQvu2FN7svGS1FrJ
+         /KHYWwiNCJHmEiA14FmigzOHeNy2rFLUV9aQWKx1xHaqzAHhhVC1lge7ltp8dpz5kNvT
+         /1qgsomOwlAqxx5fmAL4/ttDcihAqXhF1ay4RC+7r20efk+oJ4y+nluJdSfrw4lJZPCo
+         /AwGqOSrVpMP9YvuW0PIqKBowpFfhHwvnx3acsHycIHgQ6ljPHpnwaAzfWQjFbzJszHl
+         7rtJS25sipA2cGZQsnQYryVN532tTxXOUTf5KnivaF4N6fU3xQB01iFa4krAee1ApVoE
+         CZgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUv4X+7wuEMDuqKEEul4hbaYrFZtD2IQv8pBXKlIFbF4GszuEb6f1VE6KCrwwoGKBXLNXwuSbPhp+5ABJE=@vger.kernel.org, AJvYcCV49PDrHCJbDz9GM+mP2LwoNCoINmJub+E8n/f2cE24d1IByYe/8C1EpmEYCHesj6G/H5U2YDs493T1ki98OCQ=@vger.kernel.org, AJvYcCVshgStkbiPQypWRFrz1PuYtUQEdqGhkuqK0KokElVyYGhkHc20dHez1vlw0Ys9SzC7TvHL2i82v8xx@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZb7IxrU27cNcbKhjPyM1NWBZ5UixIzDoLEnsBzQrcRz3tHhb+
+	EG7i8Dl6DcqSczQWQAEPXuPogTGTc7Sejcd263Ld6N58fnXFLiI/
+X-Gm-Gg: ASbGncvT93Z83lTFzwc1uloXOQ5pqjH7uZhT3wVhZNJb4Y+b1yTHAh9Ai3ZYKXVJxab
+	ZOSLgbZDCB7UtoSvQDfL2dFJnAoa+95mvcN63eRpD4NcO41B1jhNTEBe0qUCWYBwCw2e8XZ5oQn
+	VihmdMoILht44hUeX4rnyFNoTaPNLPIxx8+tVDAoSe2lIVhs6StaIMDapNIi1RitsaACivbbS+q
+	aiPPiJFMZxuWY4OHntZKQBXfGFOwtNcIOygF663HQgxHczNUJmlEtyp0Cy0jTMaddWl11jvjqMf
+	lCi2EBiyBsqDc8u1ZrtPm4OaBOlNmJzTx1L+DVo6Y4rdiEp8ia3iocgOmtLeXKXzc81fcjga8GT
+	D9+jBPL1fN7+Z6Se2uKK3xgLI8J1hm82F/0g=
+X-Google-Smtp-Source: AGHT+IFYWh9NNAwSznb00n2bz+DizWEr9n7C6oGg7LjQgfQkMSaO5pJuBPli7Iv5c8DcDoF88oq7Rg==
+X-Received: by 2002:a05:622a:180d:b0:476:6215:eaf7 with SMTP id d75a77b69052e-476c813f762mr51629721cf.19.1741973294000;
+        Fri, 14 Mar 2025 10:28:14 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-476bb63cb1csm25507461cf.19.2025.03.14.10.28.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 10:28:13 -0700 (PDT)
+Message-ID: <67d4672d.c80a0220.68408.902a@mx.google.com>
+X-Google-Original-Message-ID: <Z9RnKWBz92zhhAUc@winterfell.>
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 03E18120007F;
+	Fri, 14 Mar 2025 13:28:13 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Fri, 14 Mar 2025 13:28:13 -0400
+X-ME-Sender: <xms:LGfUZ3JSA28Qxtl7xetqlKDJhjjl6PMMIOGMkPEkIai3uM7cQjslKA>
+    <xme:LGfUZ7KiimWhf9Br8rB0f8oLFStG7KPOhURRCVFwUFnxoJzn3XZWixoYBcUMIQEAI
+    _hYkxfw626mRD-bTQ>
+X-ME-Received: <xmr:LGfUZ_uJqxn_PdhwEwlCyW1g9i2aCtfjpi_dc6yF34Yfa_thOGQniwDwyA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedugedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedv
+    teehuddujedvkedtkeefgedvvdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgne
+    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhu
+    nhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqdduje
+    ejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdr
+    nhgrmhgvpdhnsggprhgtphhtthhopeduiedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhi
+    nhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdp
+    rhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgi
+    drghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihg
+    uhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrd
+    gtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgv
+X-ME-Proxy: <xmx:LGfUZwauSC5jiRC3mPD-sOuRoIfdLg7bgzSsyL9IVgIEpnUHNIxdxQ>
+    <xmx:LGfUZ-ZAF99Zrt_TgZFrXaeZzMki3pZ9naa2fQ8rKBofBajlnG2jDQ>
+    <xmx:LGfUZ0DiI6pz7GVQFQiJv8-HSnoh-5tMf6P4CKYeDDHbJMa7Ky-3jg>
+    <xmx:LGfUZ8ZmKjTZAA2robFGRsly6-MJoJ7IJvY8t2FEvXQG8WAcEUV7dA>
+    <xmx:LGfUZypznMllDmytb7hJL-pn2gjxQNSYoPy2SwmjU66xUGeUN3QoIzWW>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 14 Mar 2025 13:28:12 -0400 (EDT)
+Date: Fri, 14 Mar 2025 10:28:09 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] Improve soundness of bus device abstractions
+References: <20250314160932.100165-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: David Woodhouse <dwmw2@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314160932.100165-1-dakr@kernel.org>
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+On Fri, Mar 14, 2025 at 05:09:03PM +0100, Danilo Krummrich wrote:
+> Currently, when sharing references of bus devices (e.g. ARef<pci::Device>), we
+> do not have a way to restrict which functions of a bus device can be called.
+> 
+> Consequently, it is possible to call all bus device functions concurrently from
+> any context. This includes functions, which access fields of the (bus) device,
+> which are not protected against concurrent access.
+> 
+> This is improved by applying an execution context to the bus device in form of a
+> generic type.
+> 
+> For instance, the PCI device reference that is passed to probe() has the type
+> pci::Device<Core>, which implements all functions that are only allowed to be
+> called from bus callbacks.
+> 
+> The implementation for the default context (pci::Device) contains all functions
+> that are safe to call from any context concurrently.
+> 
+> The context types can be extended as required, e.g. to limit availability  of
+> certain (bus) device functions to probe().
+> 
+> A branch containing the patches can be found in [1].
+> 
+> [1] https://web.git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/device
+> 
 
-A previous commit added __nocfi to machine_kexec() because it makes an
-indirect call to relocate_kernel() which lacked CFI type information,
-and caused the system to crash.
+Again,
 
-Use SYM_TYPED_FUNC_START() to ensure that the type information is
-present, and remove the __nocfi tag.
+Acked-by: Boqun Feng <boqun.feng@gmail.com>
 
-I still can't make objtool happy with this in both GCC and Clang builds
-at the same time, so not yet for merging; only included in this series
-to nerd-snipe the objtool maintainers.
+Regards,
+Boqun
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- arch/x86/kernel/machine_kexec_64.c   | 2 +-
- arch/x86/kernel/relocate_kernel_64.S | 4 +++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-index 7abc7aa0261b..84f59f18dcb6 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -380,7 +380,7 @@ void machine_kexec_cleanup(struct kimage *image)
-  * Do not allocate memory (or fail in any way) in machine_kexec().
-  * We are past the point of no return, committed to rebooting now.
-  */
--void __nocfi machine_kexec(struct kimage *image)
-+void machine_kexec(struct kimage *image)
- {
- 	unsigned long reloc_start = (unsigned long)__relocate_kernel_start;
- 	relocate_kernel_fn *relocate_kernel_ptr;
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index 228301ac66e9..dbcef3430285 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -5,6 +5,7 @@
-  */
- 
- #include <linux/linkage.h>
-+#include <linux/cfi_types.h>
- #include <linux/stringify.h>
- #include <asm/alternative.h>
- #include <asm/page_types.h>
-@@ -59,8 +60,9 @@ SYM_DATA_END(kexec_debug_idt)
- 
- 	.section .text..relocate_kernel,"ax";
- 	.code64
--SYM_CODE_START_NOALIGN(relocate_kernel)
-+SYM_TYPED_FUNC_START(relocate_kernel)
- 	UNWIND_HINT_END_OF_STACK
-+	UNWIND_HINT_FUNC
- 	ANNOTATE_NOENDBR
- 	/*
- 	 * %rdi indirection_page
--- 
-2.48.1
-
+> Changes in v2:
+>   - make `DeviceContext` trait sealed
+>   - impl From<&pci::Device<device::Core>> for ARef<pci::Device>
+>   - impl From<&platform::Device<device::Core>> for ARef<platform::Device>
+>   - rebase onto v6.14-rc6
+>   - apply RBs
+> 
+> Danilo Krummrich (4):
+>   rust: pci: use to_result() in enable_device_mem()
+>   rust: device: implement device context marker
+>   rust: pci: fix unrestricted &mut pci::Device
+>   rust: platform: fix unrestricted &mut platform::Device
+> 
+>  rust/kernel/device.rs                |  26 +++++
+>  rust/kernel/pci.rs                   | 137 +++++++++++++++++----------
+>  rust/kernel/platform.rs              |  95 +++++++++++++------
+>  samples/rust/rust_driver_pci.rs      |   8 +-
+>  samples/rust/rust_driver_platform.rs |  11 ++-
+>  5 files changed, 187 insertions(+), 90 deletions(-)
+> 
+> 
+> base-commit: 80e54e84911a923c40d7bee33a34c1b4be148d7a
+> -- 
+> 2.48.1
+> 
 
