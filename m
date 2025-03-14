@@ -1,115 +1,165 @@
-Return-Path: <linux-kernel+bounces-561535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07C7CA61334
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:57:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25477A61335
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:58:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C860B7A30C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:56:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17477461409
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBE91FFC7A;
-	Fri, 14 Mar 2025 13:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301131FFC78;
+	Fri, 14 Mar 2025 13:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q1NMBXR2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WQtpx3E+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890A61FF7D0;
-	Fri, 14 Mar 2025 13:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CA51FFC45
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741960660; cv=none; b=K4FENUPNrmykMsLDU9GyuTbC4DFLlUCsvg0QJr+ANsSctpZqIh/Jj6FCuqiYG7TTci3KS5r9Y0R31TI11U94SwH+TkAU77kc0Pv8hJw40K0BuuV5UStH9UeOVCJo8ppayS6j3WEtUwx3e/ty2aKzeg+7ybwmkQxNqqaLkyflcx8=
+	t=1741960672; cv=none; b=AZqFA/8lQDbl5SJ/M0zxWqZ0v/+RaLXn/E808uJC30dSRAaM7wZY2chzM+F0JbwPolYaOEqvS5ezmGrTGcwcT2US4wIC7AcAXke+JekDpU+pY3MwKOOZJTTZ+5A295Xa22916ITyAzDmd9qk2VbZLiwlqIvLSlEPuouk2l2ofVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741960660; c=relaxed/simple;
-	bh=N0yYU5+15Ys+DJvx6CTLdFfOTne1R47pRi6mznUGWeM=;
+	s=arc-20240116; t=1741960672; c=relaxed/simple;
+	bh=Dt1Y8+HCCvJEAhz4M2H2OErQcY12lGpLspMVP4VqwZo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PKW2YL+N4pEFKAole/38YuQFTzSwzSi/be36lav9JEfy09Gh6pBaRZrxhWGViLUgI+1QWpqA+SIcGtUxzz3lcmh2qqxMHz9xs9sG4g1uqHkXPfr3hQlnR82L/dI4DfWqsSt9Zp/ayfjNa+wd91bBd7SpxerGtIAcDVudvFVn2Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q1NMBXR2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AB72C4CEE9;
-	Fri, 14 Mar 2025 13:57:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=EO/lr+wljJ6xCEEC6E8UU93XHJIYopLLTUi9opm4elXLS/jbKgYB9tPrXlpubQ4Db47YWXll6PKO5IyEM0ooYiE/B5WoUQv2Hsxv6K0MJWlEDu5udLgphvE+wxJiuAryA1psZsipHDyih/2bYtpBHuWvtlrr6lGjON2VXFTH+y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WQtpx3E+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B050AC4CEE3;
+	Fri, 14 Mar 2025 13:57:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741960660;
-	bh=N0yYU5+15Ys+DJvx6CTLdFfOTne1R47pRi6mznUGWeM=;
+	s=k20201202; t=1741960672;
+	bh=Dt1Y8+HCCvJEAhz4M2H2OErQcY12lGpLspMVP4VqwZo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q1NMBXR2uXANFdaO2KkOr6dleUjsoOW6WZFuqqFEFDignJ7wWouqPPWFPKIVeJZRI
-	 yAeIUx462VTZTVjsP8L+FrbIOjTmA/qKVv0JqPoIx0VivUV8a69ftoruS01gKT7FpG
-	 B1WKzmr/AfJNQKFhVVRNhGHIdH6N7SwfU+BY8YSsmwnd8VRsoJ3SCkp7/6AZy3Q6VN
-	 uLWcBl8xHtMgyhP4i5uxrKxCR/i2SgfG0pFqboYWx5a8/EcAoqT9fJrkT/e4hAS7HZ
-	 z8BsFljSGmMlGbNpMJFJSkjfhu9EcTrW2/rfLx3UxjECjEiYBfno/Aw2hohQ+yKD28
-	 jQ2ns1NvUeS1w==
-Date: Fri, 14 Mar 2025 13:57:35 +0000
-From: Lee Jones <lee@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Raag Jadav <raag.jadav@intel.com>, giometti@enneenne.com,
-	gregkh@linuxfoundation.org, raymond.tan@intel.com,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] mfd: intel_ehl_pse_gpio: Introduce Intel Elkhart
- Lake PSE GPIO and TIO
-Message-ID: <20250314135735.GQ3890718@google.com>
-References: <20250307052231.551737-1-raag.jadav@intel.com>
- <20250307052231.551737-2-raag.jadav@intel.com>
- <20250314124450.GP3890718@google.com>
- <Z9QxqH3DJvyW3sjo@smile.fi.intel.com>
+	b=WQtpx3E+tS4Dlx3xwEiFpYOs9qiXnhVjzOFJHQ8s8oZvbbUQZgmh01jgrDkPX25m9
+	 RInTIjA7/oxQkBu1FhzzODu6ZQcSDwil3a82YTEHbR5SR67/YdvMiB+NMMY25suby/
+	 ZhjnYK4qxWj7/vqsQX4s0MVJ5Wu+nLPShVhrr4U9jvV8j+Uz73b+UL0EZiNms1ZlYi
+	 YyoKMPvjQDIkjphskAYDJqIqdFOWW9lODhojVcln4LwqXOsMJRwaAExp9pLhyaCVWo
+	 eqS0eI39KMxJAfqRkmBod37YtGkRw+n2ezKFxdWyE+KBT4emsVws+qphMg8u0dyX8h
+	 +UedhBSRIOyPw==
+Date: Fri, 14 Mar 2025 14:57:49 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/7] drm/connector: hdmi: Use YUV420 output format as
+ an RGB fallback
+Message-ID: <20250314-abstract-brainy-parrot-2a6b93@houat>
+References: <20250311-hdmi-conn-yuv-v2-0-fbdb94f02562@collabora.com>
+ <20250311-hdmi-conn-yuv-v2-4-fbdb94f02562@collabora.com>
+ <20250311-hypersonic-mature-leopard-d3afdc@houat>
+ <c6f4233f-4a66-44c2-b962-9c80352bb7e1@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="a4qbuepxhsh2smfz"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z9QxqH3DJvyW3sjo@smile.fi.intel.com>
+In-Reply-To: <c6f4233f-4a66-44c2-b962-9c80352bb7e1@collabora.com>
 
-On Fri, 14 Mar 2025, Andy Shevchenko wrote:
 
-> On Fri, Mar 14, 2025 at 12:44:50PM +0000, Lee Jones wrote:
-> > On Fri, 07 Mar 2025, Raag Jadav wrote:
-> > 
-> > > Intel Elkhart Lake Programmable Service Engine (PSE) includes two PCI
-> > > devices that expose two different capabilities of GPIO and Timed I/O
-> > > as a single PCI function through shared MMIO.
-> 
-> ...
-> 
-> > > +	ret = pci_alloc_irq_vectors(pci, 2, 2, PCI_IRQ_ALL_TYPES);
-> > > +	if (ret < 0)
-> > > +		return ret;
-> > > +
-> > > +	ret = mfd_add_devices(&pci->dev, PLATFORM_DEVID_AUTO, ehl_pse_gpio_devs,
-> > 
-> > dev_*?
-> 
-> devm_* ?
+--a4qbuepxhsh2smfz
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 4/7] drm/connector: hdmi: Use YUV420 output format as
+ an RGB fallback
+MIME-Version: 1.0
 
-Yes, typo.
+On Tue, Mar 11, 2025 at 08:59:00PM +0200, Cristian Ciocaltea wrote:
+> >> +static int
+> >> +hdmi_compute_config(const struct drm_connector *connector,
+> >> +		    struct drm_connector_state *conn_state,
+> >> +		    const struct drm_display_mode *mode)
+> >> +{
+> >> +	unsigned int max_bpc =3D clamp_t(unsigned int,
+> >> +				       conn_state->max_bpc,
+> >> +				       8, connector->max_bpc);
+> >> +	int ret;
+> >> +
+> >> +	ret =3D hdmi_try_format(connector, conn_state, mode, max_bpc,
+> >> +			      HDMI_COLORSPACE_RGB);
+> >> +	if (!ret)
+> >> +		return 0;
+> >> +
+> >> +	if (connector->ycbcr_420_allowed)
+> >> +		ret =3D hdmi_try_format(connector, conn_state, mode, max_bpc,
+> >> +				      HDMI_COLORSPACE_YUV420);
+> >=20
+> > I think that's conditioned on a few more things:
+>=20
+> I've actually expected this! :-)
+>=20
+> You've already raised some points during v1, but I preferred to restart t=
+he
+> discussion on updated code instead - sorry for taking so long to respin t=
+he
+> series.  In particular, I worked on [1] to improve handling of
+> ycbcr_420_allowed flag and fix some consistency issues with
+> HDMI_COLORSPACE_YUV420 advertised in drm_bridge->supported_formats.  Hence
+> I assumed it's now safe to rely exclusively on this flag to indicate the
+> connector is YUV420 capable, without doing any additional checks.
+>=20
+> >   - That the driver supports HDMI 2.0
+>=20
+> Probably I'm missing something obvious here, but is this necessary to
+> actually double-check ycbcr_420_allowed has been set correctly?
+>
+> E.g. for bridges with DRM_BRIDGE_OP_HDMI set in drm_bridge->ops, the
+> framework does already adjust ycbcr_420_allowed, hence any additional
+> verification would be redundant.  When not making use of the framework,
+> drivers are not expected to set the flag if they are not HDMI 2.0 complia=
+nt
+> or not supporting YUV420, right? Are there any other use cases we need to
+> handle?
 
-> > > +			      ARRAY_SIZE(ehl_pse_gpio_devs), pci_resource_n(pci, 0),
-> > > +			      pci_irq_vector(pci, 0), NULL);
-> > > +	if (ret)
-> > > +		pci_free_irq_vectors(pci);
-> 
-> Anyway, the choice as far as I understood it is motivated by usage of
-> pci_*_irq_vector() APIs, which are officially not manageable (however
-> in practice they are).
-> 
-> > > +	return ret;
-> > > +}
-> > > +
-> > > +static void ehl_pse_gpio_remove(struct pci_dev *pdev)
-> > > +{
-> > > +	mfd_remove_devices(&pdev->dev);
-> > > +	pci_free_irq_vectors(pdev);
-> > > +}
-> 
-> Same here.
+That's what I answered Dmitry as well, we can definitely make
+ycbcr_420_allowed conditional on HDMI 2.0 support being implemented.
+We'd have to check that it's properly set through
+drmm_connector_hdmi_init tests too I guess.
 
-Also, Greg has been quite vocal about converting PCI devices to Platform
-ones in the past.  We may wish to run this past him before continuing.
+> >   - That the display is an HDMI output
+>=20
+> I think this should be handled by sink_supports_format_bpc() via:
+>=20
+>     if (!info->is_hdmi &&
+>         (format !=3D HDMI_COLORSPACE_RGB || bpc !=3D 8)) {
+>             drm_dbg_kms(dev, "DVI Monitors require an RGB output at 8 bpc=
+\n");
+>             return false;
+>     }
 
--- 
-Lee Jones [李琼斯]
+Yeah, that makes sense.
+
+> >   - That the mode is allowed YUV420 by the sink EDIDs
+>=20
+> And that would be handled via the changes introduced by "drm/connector:
+> hdmi: Add support for YUV420 format verification".
+
+ACK
+
+Maxime
+
+--a4qbuepxhsh2smfz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ9Q13QAKCRAnX84Zoj2+
+dsmRAX9EtHDl6YO84MrS7lWMqfxMSH7FqkJGWWjBG6CB3xEsWUhENGQdsu1i9CQX
+Gz8E/jcBfRgCnXTYItB4Ie2LNz81tFtHp/b1Sgk4pgsVeZhg0DuHPINrum340EhC
+2PS0Q6HgeQ==
+=BGna
+-----END PGP SIGNATURE-----
+
+--a4qbuepxhsh2smfz--
 
