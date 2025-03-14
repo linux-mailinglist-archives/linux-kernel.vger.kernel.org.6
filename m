@@ -1,166 +1,130 @@
-Return-Path: <linux-kernel+bounces-561803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57EA5A6166D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:39:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC4AA61677
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:40:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 975AF3AA7CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:39:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C32DE461C07
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F8E2036ED;
-	Fri, 14 Mar 2025 16:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2DC203711;
+	Fri, 14 Mar 2025 16:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hDbiAUy1"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yEk4w/wW"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3071C156C79
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0568156C79
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741970367; cv=none; b=Mn6NTKL3h5Om1LMdhS0DO+SKtC2MMsLji1/zgoChq+Pg3tg+9bM099GGRR1uphY/lXxWGEaJjq1QQ2XbE3xUyHpJXIk2BB3faJxb5CFWXDdKY/GgubSfci3T0iw6YpN9v9iBOXUUtAz/smLGFHFwr5j1mx3ExlICamlsb4GUbdE=
+	t=1741970406; cv=none; b=n8QQ1V50rI4unGCs+7/03vPW971ydnfqQOHYWG+P1S2RpHGZOeBFcJ/2npS2PaOGa4/Sx8WGvXnxz9GhPvg6Hat4Ub6TLRtzc/DY+ZYFImzyScRPOu9bvf7JorECmfmFvhKafgiI63d7dYX1UL1IpyPQeAjxjTZ4MiNODuibR4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741970367; c=relaxed/simple;
-	bh=b2CDGTHEdr5TqAfo7dRyPvR+VI//VpkqVSraMSMASI8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=YYANci7G8E+qe2WYFr/q1OYUusQw6NyJeWX23Llk4pnj1yq26ua5TbZsFmhlpYew6dqVd9gHOOv8Y8HTouuL7UbvHc0o5ZU7afk4jjzxK9zKzCZdl9L+Vq2cxBygMDKruhBPxr3xDflfVWYd34H1067tgFmwt/ele/s/ypyj4mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hDbiAUy1; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250314163922euoutp01c4db5bdfa79a43e7ec9bf60ddbcfbfe4~suNCpajsB1096110961euoutp01M
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:39:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250314163922euoutp01c4db5bdfa79a43e7ec9bf60ddbcfbfe4~suNCpajsB1096110961euoutp01M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1741970362;
-	bh=dzOCOe3jSYGQUYrbxXDJcmvsZO+JY8Q+Bt4sctrFBbQ=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=hDbiAUy15byHcEO5qZWfpygu715rJ2NeEFcoXkAc/Z8tukH3ZZS2ltQfmOA+88dbQ
-	 +OJgzuBOrPABYUF6DKJNu60QyNPa+a9cDgNxZaGyxF9unnjPrmahbgQF14LkeURKp4
-	 eS3ywUy0Wxm1ZfB4S6mXDhv1Y01GRq4XhsinG8ew=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250314163921eucas1p1316e47fdbbbdec736e4d586d6cc6d740~suNCWW1BS2043720437eucas1p1Q;
-	Fri, 14 Mar 2025 16:39:21 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 0B.6E.20409.9BB54D76; Fri, 14
-	Mar 2025 16:39:21 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250314163920eucas1p262769c736d910231bd8ec798578b99be~suNBabrkU1864618646eucas1p2h;
-	Fri, 14 Mar 2025 16:39:20 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250314163920eusmtrp23292ba24cbbd8ba914e4b41076e8c141~suNBYj6tf1144611446eusmtrp2m;
-	Fri, 14 Mar 2025 16:39:20 +0000 (GMT)
-X-AuditID: cbfec7f4-c39fa70000004fb9-29-67d45bb90057
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 29.AB.19654.8BB54D76; Fri, 14
-	Mar 2025 16:39:20 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250314163920eusmtip29bead9a32087e6d3e1013b8809a8762f~suNA0eaom0371903719eusmtip2b;
-	Fri, 14 Mar 2025 16:39:20 +0000 (GMT)
-Message-ID: <d9f3b44e-a1f7-4441-a731-ea99990de871@samsung.com>
-Date: Fri, 14 Mar 2025 17:39:19 +0100
+	s=arc-20240116; t=1741970406; c=relaxed/simple;
+	bh=VajMfayeKQOz3VOYSjkIp/5rQbCz+OcLxQOVHfXWSdc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MVMLbPZkUJN9KmEaCMA+nunHNwtnd/ErBhWnsxYLFNzwHQyCkwBBHpOpULq32UhX7r8+F0su/vp2MiB3/64Y8OUaP9p3vZT1yWXGSdLzSvSi7gW8fXDU7lrMkohzJRq7KKpImKgRDy3XN6L/n7vv27lt+hAmOgiI/IeGgBFIFjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yEk4w/wW; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e61da95244so4025296a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:40:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741970403; x=1742575203; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KhvzLiY857SGZEqzmins+PvzyIr/NTQcyLXE/tMCnFQ=;
+        b=yEk4w/wWrrsAK0EdJyl66u1ASaF8V83cVATbkJ3lE4t5ihOkDvYuCqdNZHnWoRB8SA
+         7kCu/4ePthXgdaa6nCe4IQN5TPxSTz/3/DQvI8U4eQW8mUKUCCpJcFeKogfHbDvw4KAQ
+         EYik9M/CxhaKeoGpS3OdpTAhIbcIHeKh6LzagYcRWUE/r74xiAhniPw27IqlTcI/KqGo
+         CKGe11yCTYb+z8KtdUz+zrx18n8nJSfRZfBf8CSEfcn4TmRPReuu1ltMJvguEA3UPLqW
+         cLUlS1ctxERXRjbT9s//+tnDlGZqZZrU5LUKuznZmXYX1UmWoZZMsmzjIAEaZ+oDsIbW
+         Nclw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741970403; x=1742575203;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KhvzLiY857SGZEqzmins+PvzyIr/NTQcyLXE/tMCnFQ=;
+        b=H1PjWrDqlwKw2weLSqrABDTXmL2MhxY7vZuovfjkrHaxKouYD3gCZucrH6tmTFqrX2
+         mvMpm2D+8y6RUo+Oyo51W6e6CJbFrMRwOPoREF9ikMtjXaawOpuXNqZZNeqLMRECvkVM
+         aMQRkTSi21a1NONuuD6Nf6kx9l/JbQ+3Jw3uAodYmKiP8PtAf+9JxNEajDWBk3CY0f2f
+         fkpIJ9lJw8Exqqb6hoPeC6XBDUlcIPj6h4+D9iD7RD2pd2PtiIXtZtO23gFcLpzhYlG3
+         AYtxY9F8vZeA+Dzt6wBdBDvKTeNZ5wMxKtwS+RutHSJsm6BmTgKfZlVw7HkNP8RioWR7
+         LohQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUERzYu48pysIT2yBj5uT7kkMtlEO50d7DxEgYVD+daXoV8BA/PSSBQrz5NVS5ZF5o2N4JDnWKkQ3jUwtI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4BZZzM2zoshdagS3ZPTo4s3+gOyTG/Zj8Q/qI5xNSi5Xk+1c3
+	qpcFnlCY1CAsDSbLDuTFP0KYb6JXE4gyYGB//nwWBPgYF1IdIg7KBpvH8O4U3hM=
+X-Gm-Gg: ASbGnctcCMmtkbWbb7jZisY97swLDW/+oBZagM/drtI4Cs/v7gao8IflD480dLpiSPy
+	0q9RxIrnAGVDx4YtsSc7lVSF316CqoEMI3Oot+PW9zsZIffQDPawKrtbOT3T1Yl2+yEfYKamGne
+	xvKWwNK+O9Lm9i+4VgDlZ6hx6/byNSQ4/i9c4BJ5LJRkKR/2lIPShdZmLIuyz91wFa26Ofvdr+d
+	LcvfgbFfGUiLnm3VXvTU54+gWsFc8Hq6wfcGkmP7ZKIBx1B49wl0i4Mg/oyuvViinvSsagNu2lG
+	p1bIHQHI0vTzmGHglQcm4iM057jjDaTJ4thI/9OV6RxxOOmjC6EUWo0YAwvPs2XuLfESoxXCrua
+	a4zMITN32x2r0AsHkOTl8cH4wpDnn
+X-Google-Smtp-Source: AGHT+IFGfvz33USapJBinW272gepivtVA3O/20eKJ/+H17ddACPCm8qjeCgFc9bP4W9ixUKFcXUt8A==
+X-Received: by 2002:a05:6402:4301:b0:5e5:bcd6:4ad8 with SMTP id 4fb4d7f45d1cf-5e89f24c63fmr3817601a12.9.1741970402855;
+        Fri, 14 Mar 2025 09:40:02 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816968cd8sm2115727a12.18.2025.03.14.09.40.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 09:40:02 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH 0/3] firmware: exynos-acpm: read fix & reduce log verbosity
+Date: Fri, 14 Mar 2025 16:40:00 +0000
+Message-Id: <20250314-acpm-fixes-v1-0-ab03ca8e723f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] firmware: thead: add CONFIG_MAILBOX dependency
-To: Arnd Bergmann <arnd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Drew Fustini <drew@pdp7.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Guillaume La Roque
-	<glaroque@baylibre.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Prasad Pandit <pjp@fedoraproject.org>, linux-kernel@vger.kernel.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20250314154816.4045334-1-arnd@kernel.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDKsWRmVeSWpSXmKPExsWy7djPc7o7o6+kG7TNN7D4O+kYu8W2LZtY
-	Le5d2sJksXDyXDaLva+3sltc3jWHzeLzr4usFp9uxVkcXxvuwOnx+9ckRo/3N1rZPabca2Hz
-	2LSqk83jzrU9bB4ta48xeXzeJBfAHsVlk5Kak1mWWqRvl8CVsbtVvmA/d8W2nUkNjPc4uxg5
-	OCQETCS+3g/pYuTiEBJYwSjx8N0VNgjnC6PEkn/b2LsYOYGcz4wSZ+4KgtggDd+eHGeGKFrO
-	KPF/zToo5y2jRPed5ywgVbwCdhJNM34zgdgsAqoS907eYoSIC0qcnPkErEZUQF7i/q0ZYBuE
-	BZwlmu+tZgWxRQQyJRYfb2EEGcos8INRYvv+HWANzALiEreezAcbyiZgJPFg+XywBk4Bc4kd
-	e7ezQtTIS2x/OwfsIgmBHxwS827MZYW420Vix5d1bBC2sMSr41vYIWwZif87IYZKCORLPNj6
-	iRnCrpHY2XMcyraWuHPuFxsowJgFNCXW79KHCDtKvP05kx0SjnwSN94KQpzAJzFp23RmiDCv
-	REebEES1msTUnl64pedWbGOawKg0CylUZiF5chaSZ2Yh7F3AyLKKUTy1tDg3PbXYKC+1XK84
-	Mbe4NC9dLzk/dxMjMEGd/nf8yw7G5a8+6h1iZOJgPMQowcGsJMK7R+VKuhBvSmJlVWpRfnxR
-	aU5q8SFGaQ4WJXHeRftb04UE0hNLUrNTUwtSi2CyTBycUg1MnRwKcYFirSt6lGqC4lqtr326
-	+XTamSWMDLzPyn4HhBXnrPfsrTN/77M07kLsVqvQj6uqJbY8kPtles899H2lYamaqHvGrbV/
-	lK/t/S05QyR1get3UZVjm7g4TvZ8ajhuKJy8+5ZlByfnU8VXflMWnL0hu+DRsr74Wz++NHE8
-	4BdI//AypvdO/sd5k07xnlDMy9klJPv1vo47z5HKKW+05P/svDFxfvC+Tt5lj9flq+TWPTjS
-	nqd4+93kR20N0ScWXFUPPfDkBqN+oTWrc2xbU2/z2U1MO39nVc5s+LvouNiOCQUGIZK16fcu
-	rloZFXi2OyOk3KUkR0Pj0NovOrM3ndZx7k59p75kz4VmAS5RJZbijERDLeai4kQAjdLjsL8D
-	AAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsVy+t/xe7o7oq+kGyzdrmfxd9IxdottWzax
-	Wty7tIXJYuHkuWwWe19vZbe4vGsOm8XnXxdZLT7dirM4vjbcgdPj969JjB7vb7Sye0y518Lm
-	sWlVJ5vHnWt72Dxa1h5j8vi8SS6APUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzW
-	yshUSd/OJiU1J7MstUjfLkEvY3erfMF+7optO5MaGO9xdjFyckgImEh8e3KcuYuRi0NIYCmj
-	xLb1bUwQCRmJa90vWSBsYYk/17rYIIpeM0p86P/OBpLgFbCTaJrxG6yBRUBV4t7JW4wQcUGJ
-	kzOfgDWLCshL3L81gx3EFhZwlmi+t5oVxBYRyJSYcv4NC8hQZoEfjBKX57RBbehilJjRfZUZ
-	pIpZQFzi1pP5YBvYBIwkHiyfD9bNKWAusWPvdiCbA6hGXWL9PCGIcnmJ7W/nME9gFJqF5I5Z
-	SCbNQuiYhaRjASPLKkaR1NLi3PTcYiO94sTc4tK8dL3k/NxNjMCo3Hbs55YdjCtffdQ7xMjE
-	wXiIUYKDWUmEd4/KlXQh3pTEyqrUovz4otKc1OJDjKbAsJjILCWanA9MC3kl8YZmBqaGJmaW
-	BqaWZsZK4rxsV86nCQmkJ5akZqemFqQWwfQxcXBKNTB5tHM5a/SXm8qkmcfG71JYqN0icWj2
-	wgm+s2adMrl2osQgufXq+mW9/EfKzyy4pX3PYe/kxbmFFszfN4cb15rZ6lTpfr17oVRzvnex
-	wtxcxuDlP1enl5W+Xft5v5f7Hs5FNWFzVr7cGuDHsDD/8ZO8qScnFM7/dcjIjnvL/NtCB1zP
-	MH5Y6NLocm317uJ1Jtv6n7z922Kqdnv+crOQS05pUU+T954UKCkXW2d4ppZbYqnuneD+TfMb
-	Xycda4tdF3uZNaF9ao7mrakC+9srrd3Nv04w79tm794yZ8GK/rUfmdK5o1hr5h6Pn3F2/81m
-	nboP+UkJv2MOLl9WU1n2qdDjRl9HUY6l2M6GXxJX45crsRRnJBpqMRcVJwIALnpjBVMDAAA=
-X-CMS-MailID: 20250314163920eucas1p262769c736d910231bd8ec798578b99be
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250314154826eucas1p20139736cab789432ed0884b020eec244
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250314154826eucas1p20139736cab789432ed0884b020eec244
-References: <CGME20250314154826eucas1p20139736cab789432ed0884b020eec244@eucas1p2.samsung.com>
-	<20250314154816.4045334-1-arnd@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOBb1GcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDY0MT3cTkglzdtMyK1GJdYxOLZANTCxNzs0RzJaCGgqJUsARQfXRsbS0
+ AgKKOcFwAAAA=
+X-Change-ID: 20250314-acpm-fixes-348c058476a7
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
+While trying to use the ACPM driver, I stubmbled across two issues:
 
+    * acpm_pmic_bulk_read() doesn't return the correct register values
+    * superfluous log messages during boot
 
-On 3/14/25 16:48, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Without this, the driver fails to build:
-> 
-> ld: drivers/firmware/thead,th1520-aon.o: in function `th1520_aon_call_rpc':
-> thead,th1520-aon.c:(.text+0x28): undefined reference to `mbox_send_message'
-> ld: drivers/firmware/thead,th1520-aon.o: in function `th1520_aon_deinit':
-> thead,th1520-aon.c:(.text+0x17e): undefined reference to `mbox_free_channel'
-> ld: drivers/firmware/thead,th1520-aon.o: in function `th1520_aon_init':
-> thead,th1520-aon.c:(.text+0x1d9): undefined reference to `mbox_request_channel_byname'
-> 
-> Fixes: e4b3cbd840e5 ("firmware: thead: Add AON firmware protocol driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/firmware/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-> index 42e3dd1c387a..6ab9f7ca7ff1 100644
-> --- a/drivers/firmware/Kconfig
-> +++ b/drivers/firmware/Kconfig
-> @@ -239,6 +239,7 @@ config SYSFB_SIMPLEFB
->  config TH1520_AON_PROTOCOL
->  	tristate "Always-On firmware protocol"
->  	depends on ARCH_THEAD || COMPILE_TEST
-> +	depends on MAILBOX
->  	help
->  	  Power, clock, and resource management capabilities on the TH1520 SoC are
->  	  managed by the E902 core. Firmware running on this core communicates with
+The patches attached are the result and hopefully self-explanatory.
 
-Thanks, looks good shouldn't have missed that.
+This driver only exists in linux-next at the moment.
 
-Reviewed-by: Michal Wilczynski <m.wilczynski@samsung.com>
+Cheers,
+Andre'
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+André Draszik (3):
+      firmware: exynos-acpm: fix reading longer results
+      firmware: exynos-acpm: silence EPROBE_DEFER error on boot
+      firmware: exynos-acpm: convert to dev_err_probe() in client API
+
+ drivers/firmware/samsung/exynos-acpm-pmic.c | 16 ++++++++--------
+ drivers/firmware/samsung/exynos-acpm.c      | 13 ++++++-------
+ 2 files changed, 14 insertions(+), 15 deletions(-)
+---
+base-commit: 0226d0ce98a477937ed295fb7df4cc30b46fc304
+change-id: 20250314-acpm-fixes-348c058476a7
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
 
