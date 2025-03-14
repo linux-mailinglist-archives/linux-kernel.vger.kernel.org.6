@@ -1,321 +1,226 @@
-Return-Path: <linux-kernel+bounces-561469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 508F0A6124D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:16:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3B28A61250
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:16:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77A411B6308A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:16:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 038C71B63084
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:16:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F4C1FF1CA;
-	Fri, 14 Mar 2025 13:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797741FFC6F;
+	Fri, 14 Mar 2025 13:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="td9yKDRE"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="buQiEUuv"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A3D200BA2
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957481FFC4B;
+	Fri, 14 Mar 2025 13:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741958060; cv=none; b=cj8CDf2cjEDncH6WYdlbUM2JAXwsP/caP3hrTDBtikVpHx94phYVTzR9heI1d2JTarjHxl7ksANabL63WMEGQKnwu6+WZFL8a85XRpfD4zy2iGtCQhvrHF+eJOWm2SrOf07mV05rGAgKUWHCVVGI4P5uMrWNfKDFRtl9WXCc6H8=
+	t=1741958086; cv=none; b=SnesYz5dMdknQU0aJidjJpBhdpyBhJ45CRwAjKFumk3AhA5RWn0GrJM2mTKYzypjE5P6nnbmXZXW7u367kLNZHOoWJfQ9U5uVxs+PEH7P73yqjIHNdARA82iiKLTeITghfi7mKMpoQYnPS8cy9Bm0JEwwRmhbExbzh++oCGoMwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741958060; c=relaxed/simple;
-	bh=3qEj3bbV+h7bw70W9Qu2rgKmNJSTX2xHpgR9W8Jm1k8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NKLvJuD6F/HJIpgKOF9ei08Ajzi7E0e0eSFYrjMDIgK4zmJmhbpyQdGsOVChC5caLXkdF1hjxpfiUAvx+irtUS1HERJVIZZuqZb7zOYWefQ9A5HWOKxS9hM3yOFpw+cTX8/1s/tQ3BPW63xljdr28U+0ovWg3u5EfJhcQ8oLCKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=td9yKDRE; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ab7430e27b2so384055166b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:14:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741958055; x=1742562855; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RP6R7UedA0jjAiOICwsvyjhC9KhOLijiSoq6VNfxblc=;
-        b=td9yKDREf3HjMyOdGu5Uhh+ulSqxvfsFGhuijG2zu3b1VSYNtNAL1AgaoR5NCLjH5C
-         +ghQUj3EFcU2PnZ3uXAEZbg2p8Uk3jEfegtYxKqe8zKveG9oqLNGvtmyzhoAxPT+tUBo
-         06fR9D0U9o90M/up83Jw3zVA/3SzJHmChfaEJHQbzox0V6OoCDJrYt68KEP2sHBpHsBc
-         xoCP/NzchrenJ6CTs+zgGtG4hZellaFdabcPiOos+yuGO3AMi47uRAC7SIGZ0gHk+V67
-         lSGeJQB31nyJ2Js3I0vMUrNMmT2dhz8pM5Vxl9NmWj9PsAybqqxt+hVKbw2M38a8antr
-         NNlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741958055; x=1742562855;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RP6R7UedA0jjAiOICwsvyjhC9KhOLijiSoq6VNfxblc=;
-        b=qeNcc7LumiAvACx7Dgo1/yRl1falBRNkFq9aokChlSTA9e3AZHTqBNACQ7+lqI6EON
-         owWAAv0dKFFQvIsPsbt3hKYpl3UU/lQk3abBIibW/uH+/dMyFzRjpQT9QKujYSCsCngt
-         OUVK09KXan4wh5l7dqk9z4sVHzH/Oe8uiP81HwGL403iSWcwJSfc9TMf0EptkkmJa28j
-         1DFUvUM1f8zNfCfEWbhAoxvw1mAK/ecwdvAk9Qp6TCEH/5635oaZuSBcq5Lywec8AATg
-         JoByZV5XFb9N1TtwHkMDapGdiCFt/OilWYIWd0dfKp8Ffpy0fza/bJt+x/RlkCs7zJwP
-         +47Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU/EXUcDGytnOSc9vWVdkx+k2TGPf42SLW+6v7jIH4oVYe44kmJBWkKnhVRGcZu5c9esIvKDeSDpwQT5vU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6i6P3sAyPRuC2pdwR3aU082Lgz2jhlejrbWwHS8Ad40wv5AV7
-	vgRew+xcifAWyPp1y+GiVAGs3IUH0azYXqZjtUbH2K3eoc3/Bd6BI/rxHAVYF/0=
-X-Gm-Gg: ASbGncsROmkbUz2BVT1JNapfclE5IV45aoD4OlGmmnasyYxiTrHNsmaDA4GChQL5z8N
-	JY36T4Xw9MRechx2UfNoziQP+/SajI9DpRcPMiy5fsFH/Zt85B0vCGi4nOTeqD+kpreK+1L+uXT
-	CpkoIddcTDVZMT7xqVH0figOuVd7kuQ5f5st+eAUw38M7dWkZ75a+tdY/0l0d49/ek/GnpYwtRJ
-	CYjwr0xnwvkYpKmWYoPPJ8+pthaYZbEJoHJO8tE4BkUjCB9yLkWO23rAd6XGhn43QDsPhW5RV5I
-	Uw/UDe//QTA0j3PZQuqoktpbRV2Ya+CbdS/6fdVX2cG5lQAHG7U79xvEBORTWiVA2QXrnpIM07Q
-	POvihyjI3EXS7vHycTGJtjvRAOHAS/gb0ryv5TfqH7zj6I12XecbeaJW76LUnLgLsbbWe
-X-Google-Smtp-Source: AGHT+IH6lz7+L7jSWCp/dupY+i3E2c1bi9sBCsicl1Tdt+QjUj8+2p5pZTHaCBVg2QBhL+EH+3ixqQ==
-X-Received: by 2002:a17:906:ef0b:b0:ac2:7a97:87fb with SMTP id a640c23a62f3a-ac3302f0a5fmr234668166b.33.1741958055309;
-        Fri, 14 Mar 2025 06:14:15 -0700 (PDT)
-Received: from [192.168.178.107] (2001-1c06-2302-5600-7555-cca3-bbc4-648b.cable.dynamic.v6.ziggo.nl. [2001:1c06:2302:5600:7555:cca3:bbc4:648b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a3fc0esm226008566b.137.2025.03.14.06.14.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 06:14:14 -0700 (PDT)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Fri, 14 Mar 2025 13:14:03 +0000
-Subject: [PATCH v6 5/5] arm64: dts: qcom: x1e80100: Add CAMSS block
- definition
+	s=arc-20240116; t=1741958086; c=relaxed/simple;
+	bh=7DMjWm8n/7fLinZzNMznJvbWq1as/rJpVihvFho7YMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J3TOLdDKiTyrYTYZqmpiQCF2o1z4VF8WS36X/+Uslc9xR1a8QbMy4UEosSIdLbrnZTGU9mPJGxT2D9S/JiKXHjT8egU4b5M3tAZ/bCcUGzGiTGBbedyzuOSRwFXx9UbAWZdhJZCoLETMzRaEF3nwDdRZXgBTFdSMWvo/kr0MZRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=buQiEUuv; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 270D340E015E;
+	Fri, 14 Mar 2025 13:14:41 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id z-pXS9vvo2h3; Fri, 14 Mar 2025 13:14:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741958076; bh=rK3jFCPqqItfl6ZwdgpRWuAuoUZAqjm53rLp3ckpUT0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=buQiEUuvGPz5ahlbn9PZtwPr+7vVbnqzon3HVoWjnvJq7YlGd1eCukMFuwc5DbzNq
+	 +BBRyB87TCk0D6ai9KuTHjQxQgVo83ZljRWXRyJ5xCSwl3aEOfYGhGUX3zDZDLnqn+
+	 s2MU7ElEGXfjAV89BWTTnroEzUBIS3Wf3RUT/kV2+7OjClA9DQG/Hvopy2xRaK7Bn8
+	 lmG1GyeoHZ8k5v3BYHWevFZgw8ryzPcmzY7T/A8YyzHsCdFH//sIIUfXajgXZbotnx
+	 IhXKl0/iiNsMHRKO7/uUyXgXoiIaz5gaEaAA8W8VdjBES3RrkRV+0aDAd3j+6kSHUV
+	 6k++mMLZZyAN2jc0Hu6M4sR91Y9zoHt/jS7tc7Bgbr/ypFP1R4MkETlxEvEn8gvWO/
+	 Y7rPYfvUfrnjUTMWCLU9v/5/s2XYAqsS6ftcIib2NBhMmT2R7V3ROm6PNzSbzb3Rvl
+	 9JgDLtLPWisWvlUMzaDaH5Unqhf8eG2wm/sVnKTsR98OQDs/Ooj0UY6GeH6Pu6P1J/
+	 2qAAJ83OLDHUGkfe0hPZzL6plpiHGeQlHlXjJoHhtm8q57frspkNwtX2/53ad6KY0u
+	 S32/I19c9GIX27/+TaNuIc4iI9x2XZe0tre/KLSLBG8Wtyc5d6Fs/HOtJAVxxel8/N
+	 jmLhNS9GU2k3ONwVLl4hBbDw=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1A99F40E023B;
+	Fri, 14 Mar 2025 13:14:25 +0000 (UTC)
+Date: Fri, 14 Mar 2025 14:14:19 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Brendan Jackman <jackmanb@google.com>
+Cc: akpm@linux-foundation.org, dave.hansen@linux.intel.com,
+	yosryahmed@google.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	peterz@infradead.org, seanjc@google.com, tglx@linutronix.de,
+	x86@kernel.org
+Subject: Re: [PATCH RFC v2 03/29] mm: asi: Introduce ASI core API
+Message-ID: <20250314131419.GJZ9Qrq8scAtDyBUcg@fat_crate.local>
+References: <20250227120607.GPZ8BVL2762we1j3uE@fat_crate.local>
+ <20250228084355.2061899-1-jackmanb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-5-edcb2cfc3122@linaro.org>
-References: <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-0-edcb2cfc3122@linaro.org>
-In-Reply-To: <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-0-edcb2cfc3122@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>, 
- Todor Tomov <todor.too@gmail.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-media@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250228084355.2061899-1-jackmanb@google.com>
 
-Add dtsi to describe the xe180100 CAMSS block
+On Fri, Feb 28, 2025 at 08:43:55AM +0000, Brendan Jackman wrote:
+> Yeah I see what you mean. I think the issues are:
+> 
+> 1. We're mixing up two different aspects in the API:
+> 
+>    a. Starting and finishing "critical sections" (i.e. the region
+>       between asi_enter() and asi_relax())
+> 
+>    b. Actually triggering address space transitions.
+> 
+> 2. There is a fundamental asymmetry at play here: asi_enter() and
+>    asi_exit() can both be NOPs (when we're already in the relevant
+>    address space), and asi_enter() being a NOP is really the _whole
+>    point of ASI_.
 
-4 x CSIPHY
-2 x CSID
-2 x CSID Lite
-2 x IFE
-2 x IFE Lite
+I'm guessing you mean this thing in __asi_enter():
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 185 +++++++++++++++++++++++++++++++++
- 1 file changed, 185 insertions(+)
++	if (!target || target == this_cpu_read(curr_asi))
++		return;
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 4ae0f67a634a982143df7aa933ec4de697f357a5..ee78c630e2a1c38643c9222a6d6fff4cc1216a47 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -5195,6 +5195,191 @@ cci1_i2c1: i2c-bus@1 {
- 			};
- 		};
- 
-+		camss: isp@acb6000 {
-+			compatible = "qcom,x1e80100-camss";
-+
-+			reg = <0 0x0acb7000 0 0x2000>,
-+			      <0 0x0acb9000 0 0x2000>,
-+			      <0 0x0acbb000 0 0x2000>,
-+			      <0 0x0acc6000 0 0x1000>,
-+			      <0 0x0acca000 0 0x1000>,
-+			      <0 0x0acb6000 0 0x1000>,
-+			      <0 0x0ace4000 0 0x2000>,
-+			      <0 0x0ace6000 0 0x2000>,
-+			      <0 0x0ace8000 0 0x2000>,
-+			      <0 0x0acec000 0 0x2000>,
-+			      <0 0x0acf6000 0 0x1000>,
-+			      <0 0x0acf7000 0 0x1000>,
-+			      <0 0x0acf8000 0 0x1000>,
-+			      <0 0x0ac62000 0 0x4000>,
-+			      <0 0x0ac71000 0 0x4000>,
-+			      <0 0x0acc7000 0 0x2000>,
-+			      <0 0x0accb000 0 0x2000>;
-+			reg-names = "csid0",
-+				    "csid1",
-+				    "csid2",
-+				    "csid_lite0",
-+				    "csid_lite1",
-+				    "csid_wrapper",
-+				    "csiphy0",
-+				    "csiphy1",
-+				    "csiphy2",
-+				    "csiphy4",
-+				    "csitpg0",
-+				    "csitpg1",
-+				    "csitpg2",
-+				    "vfe0",
-+				    "vfe1",
-+				    "vfe_lite0",
-+				    "vfe_lite1";
-+
-+			clocks = <&camcc CAM_CC_CAMNOC_AXI_NRT_CLK>,
-+				 <&camcc CAM_CC_CAMNOC_AXI_RT_CLK>,
-+				 <&camcc CAM_CC_CORE_AHB_CLK>,
-+				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-+				 <&camcc CAM_CC_CPAS_FAST_AHB_CLK>,
-+				 <&camcc CAM_CC_CPAS_IFE_0_CLK>,
-+				 <&camcc CAM_CC_CPAS_IFE_1_CLK>,
-+				 <&camcc CAM_CC_CPAS_IFE_LITE_CLK>,
-+				 <&camcc CAM_CC_CPHY_RX_CLK_SRC>,
-+				 <&camcc CAM_CC_CSID_CLK>,
-+				 <&camcc CAM_CC_CSID_CSIPHY_RX_CLK>,
-+				 <&camcc CAM_CC_CSIPHY0_CLK>,
-+				 <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY1_CLK>,
-+				 <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY2_CLK>,
-+				 <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY4_CLK>,
-+				 <&camcc CAM_CC_CSI4PHYTIMER_CLK>,
-+				 <&gcc GCC_CAMERA_HF_AXI_CLK>,
-+				 <&gcc GCC_CAMERA_SF_AXI_CLK>,
-+				 <&camcc CAM_CC_IFE_0_CLK>,
-+				 <&camcc CAM_CC_IFE_0_FAST_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_1_CLK>,
-+				 <&camcc CAM_CC_IFE_1_FAST_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CSID_CLK>;
-+			clock-names = "camnoc_nrt_axi",
-+				      "camnoc_rt_axi",
-+				      "core_ahb",
-+				      "cpas_ahb",
-+				      "cpas_fast_ahb",
-+				      "cpas_vfe0",
-+				      "cpas_vfe1",
-+				      "cpas_vfe_lite",
-+				      "cphy_rx_clk_src",
-+				      "csid",
-+				      "csid_csiphy_rx",
-+				      "csiphy0",
-+				      "csiphy0_timer",
-+				      "csiphy1",
-+				      "csiphy1_timer",
-+				      "csiphy2",
-+				      "csiphy2_timer",
-+				      "csiphy4",
-+				      "csiphy4_timer",
-+				      "gcc_axi_hf",
-+				      "gcc_axi_sf",
-+				      "vfe0",
-+				      "vfe0_fast_ahb",
-+				      "vfe1",
-+				      "vfe1_fast_ahb",
-+				      "vfe_lite",
-+				      "vfe_lite_ahb",
-+				      "vfe_lite_cphy_rx",
-+				      "vfe_lite_csid";
-+
-+			interrupts = <GIC_SPI 464 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 466 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 431 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 359 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 122 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 360 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "csid0",
-+					  "csid1",
-+					  "csid2",
-+					  "csid_lite0",
-+					  "csid_lite1",
-+					  "csiphy0",
-+					  "csiphy1",
-+					  "csiphy2",
-+					  "csiphy4",
-+					  "vfe0",
-+					  "vfe1",
-+					  "vfe_lite0",
-+					  "vfe_lite1";
-+
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &config_noc SLAVE_CAMERA_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&mmss_noc MASTER_CAMNOC_HF QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-+					<&mmss_noc MASTER_CAMNOC_SF QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-+					<&mmss_noc MASTER_CAMNOC_ICP QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+			interconnect-names = "ahb",
-+					     "hf_mnoc",
-+					     "sf_mnoc",
-+					     "sf_icp_mnoc";
-+
-+			iommus = <&apps_smmu 0x800 0x60>,
-+				 <&apps_smmu 0x860 0x60>,
-+				 <&apps_smmu 0x1800 0x60>,
-+				 <&apps_smmu 0x1860 0x60>,
-+				 <&apps_smmu 0x18e0 0x00>,
-+				 <&apps_smmu 0x1900 0x00>,
-+				 <&apps_smmu 0x1980 0x20>,
-+				 <&apps_smmu 0x19a0 0x20>;
-+
-+			power-domains = <&camcc CAM_CC_IFE_0_GDSC>,
-+					<&camcc CAM_CC_IFE_1_GDSC>,
-+					<&camcc CAM_CC_TITAN_TOP_GDSC>;
-+			power-domain-names = "ife0",
-+					     "ife1",
-+					     "top";
-+
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+				};
-+
-+				port@3 {
-+					reg = <3>;
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+				};
-+			};
-+		};
-+
- 		camcc: clock-controller@ade0000 {
- 			compatible = "qcom,x1e80100-camcc";
- 			reg = <0 0x0ade0000 0 0x20000>;
+The assumption being that curr_asi will be the target most of the time after
+having done the expensive switch once...
+
+>    The ideal world is where asi_exit() is very very rare, so
+>    asi_enter() is almost always a NOP.
+
+... asi_exit() being the actual switch to the unrestricted CR3.
+
+And asi_relax() being the switch of current task's asi target ptr to NULL.
+Comment says
+
+"Domain to enter when returning to process context."
+
+but I'm none-the-wiser.
+
+So, why are we doing that relaxing thing?
+
+I'm guessing the relaxing is marking the end of the region where we're running
+untrusted code. After asi_relax() we are still in the restricted CR3 but we're
+not running untrusted code.
+
+> So we could disentangle part 1 by just rejigging things as you suggest,
+> and I think the naming would be like:
+> 
+> asi_enter
+>   asi_start_critical
+>   asi_end_critical
+> asi_exit
+
+Yap, that's what I was gonna suggest: asi_enter and asi_exit do the actual CR3
+build and switch and start_critical and end_critical do the cheaper tracking
+thing.
+
+> But the issue with that is that asi_start_critical() _must_ imply
+> asi_enter()
+
+What does that mean exactly?
+
+asi_start_critical() must never be called before asi_enter()?
+
+If so, I'm sure there are ways to track and check that and warn if not, right?
+
+> (otherwise if we get an NMI between asi_enter() and
+> asi_start_critical(), and that causes a #PF, we will start the
+> critical section in the wrong address space and ASI won't do its job).
+> So, we are somewhat forced to mix up a. and b. from above.
+
+I don't understand: asi_enter() can be interrupted by an NMI at any random
+point. How is the current, imbalanced interface not vulnerable to this
+scenario?
+
+> BTW, there is another thing complicating this picture a little: ASI
+> "clients" (really just meaning KVM code at this point) are not not
+> really supposed to care at all about the actual address space, the fact
+> that they currently have to call asi_exit() in part 4b is just a
+> temporary thing to simplify the initial implementation. It has a
+> performance cost (not enormous, serious KVM platforms try pretty hard
+
+You mean the switch to the unrestricted_cr3? I can imagine...
+
+> to avoid returning to user space, but it does still matter) so
+> Google's internal version has already got rid of it and that's where I
+> expect this thing to evolve too. But for now it just lets us keep
+> things simple since e.g. we never have to think about context
+> switching in the restricted address space.
+> 
+> With that in mind, what if it looked like this:
+> 
+> ioctl(KVM_RUN) {
+>     enter_from_user_mode()
+>     while !need_userspace_handling()
+> 	// This implies asi_enter(), but this code "doesn't care"
+> 	// about that.
+>         asi_start_critical();
+>         vmenter();
+>         asi_end_critical();
+>     }
+>     // TODO: This is temporary, it should not be needed.
+>     asi_exit();
+>     exit_to_user_mode()
+> }
+> 
+> Once the asi_exit() call disappears, it will be symmetrical from the
+> "client API"'s point of view. And while we still mix up address space
+> switching with critical section boundaries, the address space
+> switching is "just an implementation detail" and not really visible as
+> part of the API.
+
+So I'm still unclear on that whole design here so I'm asking silly questions
+but I know that:
+
+1. you can do empty calls to keep the interface balanced and easy to use
+
+2. once you can remove asi_exit(), you should be able to replace all in-tree
+   users in one atomic change so that they're all switched to the new,
+   simplified interface
+
+But I still have the feeling that we could re-jig what asi_enter/relax/exit do
+and thus have a balanced interface. We'll see...
+
+> I have now setup Mutt.
+
+I did that 20 years ago. Never looked back. I'd say you're on the right track
+:-)
+
+> But, for now I am replying with plan vim + git-send-email, because I also
+> sent this RFC to a ridiculous CC list (I just blindly used the
+> get_maintainers.pl output, I don't know why I thought that was a reasonable
+> approach) and it turns out this is the easiest way to trim it in a reply!
+> Hopefully I can get the headers right...
+
+Yeah, works. On the next version, you could trim it to the couple relevant
+lists and to whoever reviewed this. The others can always get the thread from
+lore and there's really no need anymore to Cc the whole world :)
+
+Thx.
 
 -- 
-2.48.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
