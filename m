@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-561573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD56A613A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:29:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E57B7A613A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:30:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3982819C471F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:29:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2816D462919
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21519201002;
-	Fri, 14 Mar 2025 14:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C4A201103;
+	Fri, 14 Mar 2025 14:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cho3dOnH"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Agk6YD6C"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E4C28DB3
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD99B20101E
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741962574; cv=none; b=gVS1hagZR+gLgn8tgwLsZ9HYjyjSqY06lISyj/1Ov3ovUZQ44/S41xQDABH1r/B+1hHXyNYbd3zdyrPeqK/UNZjBKWM/yWIA/Nxs6iXJ6vVYH14iQMmFKcjKQHldFVMkbVpBWamm61hzhIppfMObHQ/A9P7I+FtC86GVuFjrYok=
+	t=1741962580; cv=none; b=pau9ecvNYvRbRJwzwh9MMscbHkhhJoX1T2T9k+i1s8n1NaOma/L57V4+mGWwTRO5XLK5bv1xMM5fbj0c5QXiVFF7rwHYTvdvgs3WRe1QRJ1PhG/zsnM343u1MwlzAaBXm8XlBcZYxrF0vvlS62du8nLu5FesBi6pdE2gA2rcsbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741962574; c=relaxed/simple;
-	bh=/BpjvfSorWraWWygAxTXKqjuAb/WHKVfa62nChACPBE=;
+	s=arc-20240116; t=1741962580; c=relaxed/simple;
+	bh=BqQweHj1taDVaefBkiV60dq8AecfQdEfOe0GHRoeYBM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EcjKyqdUK+vjR+VGcTN5YoIqgZ4E42yBeqilIURM2H7BDAceO7puMirBHqCQ0gJ/UwGAviESVfszVGXPT+hemp6jXoqVkBeo9AMj0K8QheKuJUEp7HHv/D58tZCWLHijteNpWhWco0XMcBo5glT4aKW34dhiaHnbBfb53/GGOy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cho3dOnH; arc=none smtp.client-ip=209.85.214.177
+	 MIME-Version; b=XC+sDygNviRTzYMlVP73WvX1RHSygQ/gq4WMbNZoEgDz9q9RzP+AabNtOiowl+BwcGB8qYzrtVnM4L8Q9BhYIrQWUUH3gTh78N3AlZ7NurnoI5/UNc9GXETdgPy/XwdJJi+h9venkEra5CdaZ/IkOZBCOtxX9ZLwOljWIVuum/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Agk6YD6C; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-223fb0f619dso39497405ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:29:31 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22349bb8605so48169285ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:29:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741962571; x=1742567371; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741962578; x=1742567378; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RCqv96c1xYGiVFkUw2dAmjH7VP4TawbSEvBpf+3+AQY=;
-        b=Cho3dOnHl/RvQL+qpV/ab2xBxHDSpGPz8i/McebmZe/B3BDIp09TRG6CXbcUR4BcuZ
-         uqHCSge1axARycjn+PlQYr/iNLq6K2rR5qBZ/BkwY7LxnAzSXDSGc6Njzgt8ffqGK6/W
-         lGFhVmzD741B+/vvj6AbF5MkXqFVSp77tOkH61SND2Kz8HcLf8e3eLsnp4BEWCDJe5Yo
-         1kSmMPZrRu9DNDRgOS1IY1/qgowpdtE8AFJpVoo/sxMaFuIwjuSCGsJ7dsb4rLwS86XD
-         30OHzywlpCQb544W6iS0zTXflmXSVqOhbxJ1GKz+RmBK3Exf57elsWVhN0uXF7TT+gqe
-         00FA==
+        bh=yRhqkxlrS3uwij/58/obj1kyvtyLdc5DV6wOXBnkXCI=;
+        b=Agk6YD6CKTwwU+LXWx7B6DaP1EkrQKClWR2LTmTYbas5/JI7XyOh/HQUYR6Z+fQPp+
+         lYRYVs7lch8EHRi1IL6rUV7AJge1Ar1d96iCsbWuNegFOLhBoU4DWYIqIW7QLqKlISA2
+         t6QllGqR8f7WHZ6hHUerKUrWkpVPceH17kUOiMZiXu8F0zcp6m/7GBQT1yBObbEgfez6
+         gL0sR8nGtz3uHp1qsu0RuVdCx4yTNIFtouqpZOJq7JjM+wqq21Gw0+unZfjQGhdRjzku
+         m+8IY/iNXRlm5VbE7rlBvOQ1KQQ7DxGxtujDw901+oOtbOL0eQYTyz+zrQKOWkP3lYZM
+         zj/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741962571; x=1742567371;
+        d=1e100.net; s=20230601; t=1741962578; x=1742567378;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RCqv96c1xYGiVFkUw2dAmjH7VP4TawbSEvBpf+3+AQY=;
-        b=hf4LLKFIt6qiRhNIrKfEhr7IhcFcOTicnq3B+mJq1DwHUQ3LXIGunRWJNXtfFUe8k0
-         RiK1KoQ0BtJ6PtsFKuUSXLsp8fxoI3u8OGm/7uwTqsGuzuGJ3QgtoYt2oErgmr/MKz8D
-         kHKkEoSo5BPJUrjoAZ2vpqIpw5eGdopwoNijLI3K0iN2VgQFd+CYG1TPnL5YD71B6jGx
-         sokIl3ROU8mJyDJAQs6Vz69KiGGvkwXiC36jZSW4XcC8BLmiOpyHq2tv3nbCk005fmtc
-         48imw1fiVVkwWmRuqEMOKywgp4rMez0nyquHBdNrRaQx1PlZ8Kf769FevYSrMB/IglX0
-         HQlg==
-X-Forwarded-Encrypted: i=1; AJvYcCWPo49dTycO/0ruQ12TXy8MclCdiOWS6v4NVI+QjlljEOvbzoN0CxMnUvPdylA3tjq+18KIoZqb1zzfF4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2FIlSrPnCo9gMv4LFvkTgiGYnpFBKZmICAzhrr5IwGLkypCmg
-	UVBzWWTnwLtjke2lPeiArjD877ulOKQx6TqjbjS6u9OO5vdenFjs
-X-Gm-Gg: ASbGncu0SQu5NrHr/k21jasO5A6o9vZGfAa52iypv4EEB6AU6E2Z3y1uQYnV6ZNB3Rk
-	eByFoVR6j1IitSocUdIbbZaR6rI2rNxuwj+6k/CxFY3JkdMP2O3oyySfntDA8IWUM/t8FVsPCDV
-	jUEq4e385751a5rcd/xfXJTRhu8ZS4/qJpmGeJJCxRyn+AMU7dQFMW6KmGGTCVOAf1C6y+gncxg
-	2SB6HicxIJl2PfQ7XozO8mgyckBllmZcMt4oB9i4FWQ6iZDMRsupJsV0UhLX50ssh0xBtCrD5SK
-	GHflekv8km98QErG7GrhyZLs0+tG46ULT/7t2vixo98nGkdhoECnLLc=
-X-Google-Smtp-Source: AGHT+IEoa2pa+++oKxSveSUboFGRRI+MANuUcKVn5pRv4S3lBj2T2XA1lbdwTfIVrQBYybpZfwXP2A==
-X-Received: by 2002:a17:903:2cd:b0:224:721:cc with SMTP id d9443c01a7336-225e0a52150mr28034115ad.13.1741962571137;
-        Fri, 14 Mar 2025 07:29:31 -0700 (PDT)
+        bh=yRhqkxlrS3uwij/58/obj1kyvtyLdc5DV6wOXBnkXCI=;
+        b=YbuopaMZMPHVNPZsiL2fwlTcMDZ0h9mbqyC5brdxN1V2MtXpOk9nvqugX/C4XHeMQ2
+         7+o9UUMs4CdOF2NFuS2sxpgi1/EcP81rulzmJMrK/oulOxzox0ApfVEwDk/iuxOiaZc+
+         YP77hs4wC7oD2SmgyyVvxymUVTT/lqdr6f56PjTl84Nhtu2daAzkZl3iq0dl4Oq47uBQ
+         uTJJZas8GiZIqqre7zw3I9sFfrHyDUNo/kaMx0N7cGpI+5xX3u6v0TjKaX/YO9flo8Le
+         mEsIZAb2b+ZhcEqhOQvNvO/lbsMWQ+oEdv5zT8wAgcrhrmqv8qtzUrPdcX0SSMKj26D/
+         Uv1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXusF64pZV8sTymoLiPN8kQGIJ7olInjBU5yNBhRaVdsRIq5c50R3b9FWoc+/z/FysWoCAKRk6RQNESZ8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmzFWBA95qYi5/SSAjI40/bK68L5NzgJpU5rdoEzKxmnQWM6ZB
+	9Xri/J2fufjqIFYfzkQjhZxZoHK/1CYxlqx0+E27TmfinYzdka9+
+X-Gm-Gg: ASbGncu7eV6nfXMssg6nAlQJ1w7/aDB+044wYh7PlDs8NgPNoqoW0J7dgZcUYum3t3q
+	/hfJIrk0q12g1KhctFw5zt25F3IZY4qNlyjNBgDk9TbJ05LRNU+IdxNrHVk7nh9/xKot1fv1xsw
+	9zdlTA0HalprBFVtPSnXmTjTglVEgvSAzOfVJjmCcQY1P2UNkve+p8bqrvYixX3SPyRGgdyRbkm
+	wqsjsLUVClBBcm/EhOenMhAxSgl7zGTq1z5dfIPnAKSYIRP/4YMJ/L0N/fD/AWzp3fKqke5d0A+
+	v+NhLIjvO1I6WJjRamf3KvhHrpoWszhd+SBjZ9pZD56edyyxwjL+f0oexSUMuNiQOg==
+X-Google-Smtp-Source: AGHT+IFh2jlx6bTUDh9v6aA4RpK/6ZE3glRVFaV3OMshFKxAXKOszrNe96B0IgYOw183x0HFcD+VYA==
+X-Received: by 2002:a17:902:d481:b0:220:f151:b668 with SMTP id d9443c01a7336-225e0a6afc9mr27887395ad.20.1741962578017;
+        Fri, 14 Mar 2025 07:29:38 -0700 (PDT)
 Received: from localhost.localdomain ([124.156.216.125])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbe833sm29142445ad.183.2025.03.14.07.29.24
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbe833sm29142445ad.183.2025.03.14.07.29.31
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 14 Mar 2025 07:29:30 -0700 (PDT)
+        Fri, 14 Mar 2025 07:29:37 -0700 (PDT)
 From: Lance Yang <ioworker0@gmail.com>
 To: akpm@linux-foundation.org
 Cc: will@kernel.org,
@@ -90,9 +90,9 @@ Cc: will@kernel.org,
 	amaindex@outlook.com,
 	Lance Yang <ioworker0@gmail.com>,
 	Mingzhe Yang <mingzhe.yang@ly.com>
-Subject: [PATCH 1/3] hung_task: replace blocker_mutex with encoded blocker
-Date: Fri, 14 Mar 2025 22:28:36 +0800
-Message-ID: <20250314142839.24910-2-ioworker0@gmail.com>
+Subject: [PATCH 2/3] hung_task: show the blocker task if the task is hung on semaphore
+Date: Fri, 14 Mar 2025 22:28:37 +0800
+Message-ID: <20250314142839.24910-3-ioworker0@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250314142839.24910-1-ioworker0@gmail.com>
 References: <20250314142839.24910-1-ioworker0@gmail.com>
@@ -104,211 +104,321 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch replaces 'struct mutex *blocker_mutex' with 'unsigned long
-blocker', as only one blocker is active at a time.
+Inspired by mutex blocker tracking[1], this patch makes a trade-off to
+balance the overhead and utility of the hung task detector.
 
-The blocker filed can store both the lock addrees and the lock type, with
-LSB used to encode the type as Masami suggested, making it easier to extend
-the feature to cover other types of locks.
+Unlike mutexes, semaphores lack explicit ownership tracking, making it
+challenging to identify the root cause of hangs. To address this, we
+introduce a last_holder field to the semaphore structure, which is
+updated when a task successfully calls down() and cleared during up().
 
-Also, once the lock type is determined, we can directly extract the address
-and cast it to a lock pointer ;)
+The assumption is that if a task is blocked on a semaphore, the holders
+must not have released it. While this does not guarantee that the last
+holder is one of the current blockers, it likely provides a practical hint
+for diagnosing semaphore-related stalls.
+
+With this change, the hung task detector can now show blocker task's info
+like below:
+
+[Thu Mar 13 15:18:38 2025] INFO: task cat:1803 blocked for more than 122 seconds.
+[Thu Mar 13 15:18:38 2025]       Tainted: G           OE      6.14.0-rc3+ #14
+[Thu Mar 13 15:18:38 2025] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[Thu Mar 13 15:18:38 2025] task:cat             state:D stack:0     pid:1803  tgid:1803  ppid:1057   task_flags:0x400000 flags:0x00000004
+[Thu Mar 13 15:18:38 2025] Call trace:
+[Thu Mar 13 15:18:38 2025]  __switch_to+0x1ec/0x380 (T)
+[Thu Mar 13 15:18:38 2025]  __schedule+0xc30/0x44f8
+[Thu Mar 13 15:18:38 2025]  schedule+0xb8/0x3b0
+[Thu Mar 13 15:18:38 2025]  schedule_timeout+0x1d0/0x208
+[Thu Mar 13 15:18:38 2025]  __down_common+0x2d4/0x6f8
+[Thu Mar 13 15:18:38 2025]  __down+0x24/0x50
+[Thu Mar 13 15:18:38 2025]  down+0xd0/0x140
+[Thu Mar 13 15:18:38 2025]  read_dummy+0x3c/0xa0 [hung_task_sem]
+[Thu Mar 13 15:18:38 2025]  full_proxy_read+0xfc/0x1d0
+[Thu Mar 13 15:18:38 2025]  vfs_read+0x1a0/0x858
+[Thu Mar 13 15:18:38 2025]  ksys_read+0x100/0x220
+[Thu Mar 13 15:18:38 2025]  __arm64_sys_read+0x78/0xc8
+[Thu Mar 13 15:18:38 2025]  invoke_syscall+0xd8/0x278
+[Thu Mar 13 15:18:38 2025]  el0_svc_common.constprop.0+0xb8/0x298
+[Thu Mar 13 15:18:38 2025]  do_el0_svc+0x4c/0x88
+[Thu Mar 13 15:18:38 2025]  el0_svc+0x44/0x108
+[Thu Mar 13 15:18:38 2025]  el0t_64_sync_handler+0x134/0x160
+[Thu Mar 13 15:18:38 2025]  el0t_64_sync+0x1b8/0x1c0
+[Thu Mar 13 15:18:38 2025] INFO: task cat:1803 blocked on a semaphore likely last held by task cat:1802
+[Thu Mar 13 15:18:38 2025] task:cat             state:S stack:0     pid:1802  tgid:1802  ppid:1057   task_flags:0x400000 flags:0x00000004
+[Thu Mar 13 15:18:38 2025] Call trace:
+[Thu Mar 13 15:18:38 2025]  __switch_to+0x1ec/0x380 (T)
+[Thu Mar 13 15:18:38 2025]  __schedule+0xc30/0x44f8
+[Thu Mar 13 15:18:38 2025]  schedule+0xb8/0x3b0
+[Thu Mar 13 15:18:38 2025]  schedule_timeout+0xf4/0x208
+[Thu Mar 13 15:18:38 2025]  msleep_interruptible+0x70/0x130
+[Thu Mar 13 15:18:38 2025]  read_dummy+0x48/0xa0 [hung_task_sem]
+[Thu Mar 13 15:18:38 2025]  full_proxy_read+0xfc/0x1d0
+[Thu Mar 13 15:18:38 2025]  vfs_read+0x1a0/0x858
+[Thu Mar 13 15:18:38 2025]  ksys_read+0x100/0x220
+[Thu Mar 13 15:18:38 2025]  __arm64_sys_read+0x78/0xc8
+[Thu Mar 13 15:18:38 2025]  invoke_syscall+0xd8/0x278
+[Thu Mar 13 15:18:38 2025]  el0_svc_common.constprop.0+0xb8/0x298
+[Thu Mar 13 15:18:38 2025]  do_el0_svc+0x4c/0x88
+[Thu Mar 13 15:18:38 2025]  el0_svc+0x44/0x108
+[Thu Mar 13 15:18:38 2025]  el0t_64_sync_handler+0x134/0x160
+[Thu Mar 13 15:18:38 2025]  el0t_64_sync+0x1b8/0x1c0
+
+[1] https://lore.kernel.org/all/174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com
 
 Suggested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
 Signed-off-by: Lance Yang <ioworker0@gmail.com>
 ---
- include/linux/hung_task.h | 94 +++++++++++++++++++++++++++++++++++++++
- include/linux/sched.h     |  2 +-
- kernel/hung_task.c        | 15 ++++---
- kernel/locking/mutex.c    |  8 +++-
- 4 files changed, 111 insertions(+), 8 deletions(-)
- create mode 100644 include/linux/hung_task.h
+ include/linux/semaphore.h  | 15 ++++++++++-
+ kernel/hung_task.c         | 45 ++++++++++++++++++++++++-------
+ kernel/locking/semaphore.c | 55 +++++++++++++++++++++++++++++++++-----
+ 3 files changed, 98 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/hung_task.h b/include/linux/hung_task.h
-new file mode 100644
-index 000000000000..64ced33b0d1f
---- /dev/null
-+++ b/include/linux/hung_task.h
-@@ -0,0 +1,94 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Detect Hung Task: detecting tasks stuck in D state
-+ *
-+ * Copyright (C) 2025 Tongcheng Travel (www.ly.com)
-+ * Author: Lance Yang <mingzhe.yang@ly.com>
-+ */
-+#ifndef __LINUX_HUNG_TASK_H
-+#define __LINUX_HUNG_TASK_H
-+
-+#include <linux/bug.h>
-+#include <linux/sched.h>
-+#include <linux/compiler.h>
-+
-+/*
-+ * @blocker: Combines lock address and blocking type.
-+ *
-+ * Since lock pointers are at least 4-byte aligned(32-bit) or 8-byte
-+ * aligned(64-bit). This leaves the 2 least bits (LSBs) of the pointer
-+ * always zero. So we can use these bits to encode the specific blocking
-+ * type.
-+ *
-+ * Type encoding:
-+ * 00 - Blocked on mutex        (BLOCKER_TYPE_MUTEX)
-+ * 01 - Blocked on semaphore    (BLOCKER_TYPE_SEM)
-+ * 10 - Blocked on rt-mutex     (BLOCKER_TYPE_RTMUTEX)
-+ * 11 - Blocked on rw-semaphore (BLOCKER_TYPE_RWSEM)
-+ */
-+#define BLOCKER_TYPE_MUTEX      0x00UL
-+#define BLOCKER_TYPE_SEM        0x01UL
-+#define BLOCKER_TYPE_RTMUTEX    0x02UL
-+#define BLOCKER_TYPE_RWSEM      0x03UL
-+
-+#define BLOCKER_TYPE_MASK       0x03UL
+diff --git a/include/linux/semaphore.h b/include/linux/semaphore.h
+index 04655faadc2d..89706157e622 100644
+--- a/include/linux/semaphore.h
++++ b/include/linux/semaphore.h
+@@ -16,13 +16,25 @@ struct semaphore {
+ 	raw_spinlock_t		lock;
+ 	unsigned int		count;
+ 	struct list_head	wait_list;
 +
 +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-+static inline void hung_task_set_blocker(void *lock, unsigned long type)
-+{
-+	unsigned long lock_ptr = (unsigned long)lock;
-+
-+	WARN_ON_ONCE(!lock_ptr);
-+	WARN_ON_ONCE(lock_ptr & BLOCKER_TYPE_MASK);
-+	WARN_ON_ONCE(READ_ONCE(current->blocker));
-+
-+	/*
-+	 * If the lock pointer matches the BLOCKER_TYPE_MASK, return
-+	 * without writing anything.
-+	 */
-+	if (lock_ptr & BLOCKER_TYPE_MASK)
-+		return;
-+
-+	WRITE_ONCE(current->blocker, lock_ptr | type);
-+}
-+
-+static inline void hung_task_clear_blocker(void)
-+{
-+	WARN_ON_ONCE(!READ_ONCE(current->blocker));
-+
-+	WRITE_ONCE(current->blocker, 0UL);
-+}
-+
-+static inline bool hung_task_blocker_is_type(unsigned long blocker,
-+					  unsigned long type)
-+{
-+	WARN_ON_ONCE(!blocker);
-+
-+	return (blocker & BLOCKER_TYPE_MASK) == type;
-+}
-+
-+static inline void *hung_task_blocker_to_lock(unsigned long blocker)
-+{
-+	WARN_ON_ONCE(!blocker);
-+
-+	return (void *)(blocker & ~BLOCKER_TYPE_MASK);
-+}
++	unsigned long		last_holder;
++#endif
+ };
+ 
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++#define __LAST_HOLDER_SEMAPHORE_INITIALIZER				\
++	, .last_holder = 0UL
 +#else
-+static inline void hung_task_set_blocker(void *lock, unsigned long type)
-+{
-+}
-+static inline void hung_task_clear_blocker(void)
-+{
-+}
-+static inline bool hung_task_blocker_is_type(unsigned long blocker,
-+					     unsigned long type)
-+{
-+	return false;
-+}
-+static inline void *hung_task_blocker_to_lock(unsigned long blocker)
-+{
-+	return NULL;
-+}
++#define __LAST_HOLDER_SEMAPHORE_INITIALIZER
 +#endif
 +
-+#endif /* __LINUX_HUNG_TASK_H */
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 1419d94c8e87..f27060dac499 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1218,7 +1218,7 @@ struct task_struct {
- #endif
+ #define __SEMAPHORE_INITIALIZER(name, n)				\
+ {									\
+ 	.lock		= __RAW_SPIN_LOCK_UNLOCKED((name).lock),	\
+ 	.count		= n,						\
+-	.wait_list	= LIST_HEAD_INIT((name).wait_list),		\
++	.wait_list	= LIST_HEAD_INIT((name).wait_list)		\
++	__LAST_HOLDER_SEMAPHORE_INITIALIZER				\
+ }
  
- #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
--	struct mutex			*blocker_mutex;
-+	unsigned long			blocker;
- #endif
+ /*
+@@ -47,5 +59,6 @@ extern int __must_check down_killable(struct semaphore *sem);
+ extern int __must_check down_trylock(struct semaphore *sem);
+ extern int __must_check down_timeout(struct semaphore *sem, long jiffies);
+ extern void up(struct semaphore *sem);
++extern unsigned long sem_last_holder(struct semaphore *sem);
  
- #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
+ #endif /* __LINUX_SEMAPHORE_H */
 diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index dc898ec93463..46eb6717564d 100644
+index 46eb6717564d..f8cb5a0e14f7 100644
 --- a/kernel/hung_task.c
 +++ b/kernel/hung_task.c
-@@ -25,6 +25,10 @@
- 
- #include <trace/events/sched.h>
- 
-+#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-+#include <linux/hung_task.h>
-+#endif
-+
- /*
-  * The number of tasks checked:
-  */
-@@ -98,16 +102,17 @@ static struct notifier_block panic_block = {
+@@ -102,31 +102,56 @@ static struct notifier_block panic_block = {
  static void debug_show_blocker(struct task_struct *task)
  {
  	struct task_struct *g, *t;
--	unsigned long owner;
--	struct mutex *lock;
-+	unsigned long owner, blocker;
+-	unsigned long owner, blocker;
++	unsigned long owner, blocker, blocker_lock_type;
  
  	RCU_LOCKDEP_WARN(!rcu_read_lock_held(), "No rcu lock held");
  
--	lock = READ_ONCE(task->blocker_mutex);
--	if (!lock)
-+	blocker = READ_ONCE(task->blocker);
-+	if (!blocker || !hung_task_blocker_is_type(blocker, BLOCKER_TYPE_MUTEX))
+ 	blocker = READ_ONCE(task->blocker);
+-	if (!blocker || !hung_task_blocker_is_type(blocker, BLOCKER_TYPE_MUTEX))
++	if (!blocker)
  		return;
  
--	owner = mutex_get_owner(lock);
-+	owner = mutex_get_owner(
-+		(struct mutex *)hung_task_blocker_to_lock(blocker));
-+
+-	owner = mutex_get_owner(
+-		(struct mutex *)hung_task_blocker_to_lock(blocker));
++	if (hung_task_blocker_is_type(blocker, BLOCKER_TYPE_MUTEX)) {
++		owner = mutex_get_owner(
++			(struct mutex *)hung_task_blocker_to_lock(blocker));
++		blocker_lock_type = BLOCKER_TYPE_MUTEX;
++	} else if (hung_task_blocker_is_type(blocker, BLOCKER_TYPE_SEM)) {
++		owner = sem_last_holder(
++			(struct semaphore *)hung_task_blocker_to_lock(blocker));
++		blocker_lock_type = BLOCKER_TYPE_SEM;
++	} else
++		return;
+ 
  	if (unlikely(!owner)) {
- 		pr_err("INFO: task %s:%d is blocked on a mutex, but the owner is not found.\n",
- 			task->comm, task->pid);
-diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
-index 6a543c204a14..642d6398e0dd 100644
---- a/kernel/locking/mutex.c
-+++ b/kernel/locking/mutex.c
-@@ -42,6 +42,10 @@
- # define MUTEX_WARN_ON(cond)
- #endif
+-		pr_err("INFO: task %s:%d is blocked on a mutex, but the owner is not found.\n",
+-			task->comm, task->pid);
++		switch (blocker_lock_type) {
++		case BLOCKER_TYPE_MUTEX:
++			pr_err("INFO: task %s:%d is blocked on a mutex, but the owner is not found.\n",
++			       task->comm, task->pid);
++			break;
++		case BLOCKER_TYPE_SEM:
++			pr_err("INFO: task %s:%d is blocked on a semaphore, but the last holder is not found.\n",
++			       task->comm, task->pid);
++			break;
++		}
+ 		return;
+ 	}
+ 
+ 	/* Ensure the owner information is correct. */
+ 	for_each_process_thread(g, t) {
+-		if ((unsigned long)t == owner) {
++		if ((unsigned long)t != owner)
++			continue;
++
++		switch (blocker_lock_type) {
++		case BLOCKER_TYPE_MUTEX:
+ 			pr_err("INFO: task %s:%d is blocked on a mutex likely owned by task %s:%d.\n",
+-				task->comm, task->pid, t->comm, t->pid);
+-			sched_show_task(t);
+-			return;
++			       task->comm, task->pid, t->comm, t->pid);
++			break;
++		case BLOCKER_TYPE_SEM:
++			pr_err("INFO: task %s:%d blocked on a semaphore likely last held by task %s:%d\n",
++			       task->comm, task->pid, t->comm, t->pid);
++			break;
+ 		}
++		sched_show_task(t);
++		return;
+ 	}
+ }
+ #else
+diff --git a/kernel/locking/semaphore.c b/kernel/locking/semaphore.c
+index 34bfae72f295..87dfb93a812d 100644
+--- a/kernel/locking/semaphore.c
++++ b/kernel/locking/semaphore.c
+@@ -34,11 +34,16 @@
+ #include <linux/ftrace.h>
+ #include <trace/events/lock.h>
  
 +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
 +#include <linux/hung_task.h>
 +#endif
 +
- void
- __mutex_init(struct mutex *lock, const char *name, struct lock_class_key *key)
- {
-@@ -189,7 +193,7 @@ __mutex_add_waiter(struct mutex *lock, struct mutex_waiter *waiter,
- 		   struct list_head *list)
- {
- #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
--	WRITE_ONCE(current->blocker_mutex, lock);
-+	hung_task_set_blocker(lock, BLOCKER_TYPE_MUTEX);
- #endif
- 	debug_mutex_add_waiter(lock, waiter, current);
+ static noinline void __down(struct semaphore *sem);
+ static noinline int __down_interruptible(struct semaphore *sem);
+ static noinline int __down_killable(struct semaphore *sem);
+ static noinline int __down_timeout(struct semaphore *sem, long timeout);
+ static noinline void __up(struct semaphore *sem);
++static inline void __sem_acquire(struct semaphore *sem);
  
-@@ -207,7 +211,7 @@ __mutex_remove_waiter(struct mutex *lock, struct mutex_waiter *waiter)
+ /**
+  * down - acquire the semaphore
+@@ -58,7 +63,7 @@ void __sched down(struct semaphore *sem)
+ 	might_sleep();
+ 	raw_spin_lock_irqsave(&sem->lock, flags);
+ 	if (likely(sem->count > 0))
+-		sem->count--;
++		__sem_acquire(sem);
+ 	else
+ 		__down(sem);
+ 	raw_spin_unlock_irqrestore(&sem->lock, flags);
+@@ -82,7 +87,7 @@ int __sched down_interruptible(struct semaphore *sem)
+ 	might_sleep();
+ 	raw_spin_lock_irqsave(&sem->lock, flags);
+ 	if (likely(sem->count > 0))
+-		sem->count--;
++		__sem_acquire(sem);
+ 	else
+ 		result = __down_interruptible(sem);
+ 	raw_spin_unlock_irqrestore(&sem->lock, flags);
+@@ -109,7 +114,7 @@ int __sched down_killable(struct semaphore *sem)
+ 	might_sleep();
+ 	raw_spin_lock_irqsave(&sem->lock, flags);
+ 	if (likely(sem->count > 0))
+-		sem->count--;
++		__sem_acquire(sem);
+ 	else
+ 		result = __down_killable(sem);
+ 	raw_spin_unlock_irqrestore(&sem->lock, flags);
+@@ -139,7 +144,7 @@ int __sched down_trylock(struct semaphore *sem)
+ 	raw_spin_lock_irqsave(&sem->lock, flags);
+ 	count = sem->count - 1;
+ 	if (likely(count >= 0))
+-		sem->count = count;
++		__sem_acquire(sem);
+ 	raw_spin_unlock_irqrestore(&sem->lock, flags);
  
- 	debug_mutex_remove_waiter(lock, waiter, current);
- #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
--	WRITE_ONCE(current->blocker_mutex, NULL);
+ 	return (count < 0);
+@@ -164,7 +169,7 @@ int __sched down_timeout(struct semaphore *sem, long timeout)
+ 	might_sleep();
+ 	raw_spin_lock_irqsave(&sem->lock, flags);
+ 	if (likely(sem->count > 0))
+-		sem->count--;
++		__sem_acquire(sem);
+ 	else
+ 		result = __down_timeout(sem, timeout);
+ 	raw_spin_unlock_irqrestore(&sem->lock, flags);
+@@ -185,6 +190,12 @@ void __sched up(struct semaphore *sem)
+ 	unsigned long flags;
+ 
+ 	raw_spin_lock_irqsave(&sem->lock, flags);
++
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++	if (READ_ONCE(sem->last_holder) == (unsigned long)current)
++		WRITE_ONCE(sem->last_holder, 0UL);
++#endif
++
+ 	if (likely(list_empty(&sem->wait_list)))
+ 		sem->count++;
+ 	else
+@@ -224,8 +235,12 @@ static inline int __sched ___down_common(struct semaphore *sem, long state,
+ 		raw_spin_unlock_irq(&sem->lock);
+ 		timeout = schedule_timeout(timeout);
+ 		raw_spin_lock_irq(&sem->lock);
+-		if (waiter.up)
++		if (waiter.up) {
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++			WRITE_ONCE(sem->last_holder, (unsigned long)current);
++#endif
+ 			return 0;
++		}
+ 	}
+ 
+  timed_out:
+@@ -242,10 +257,18 @@ static inline int __sched __down_common(struct semaphore *sem, long state,
+ {
+ 	int ret;
+ 
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++	hung_task_set_blocker(sem, BLOCKER_TYPE_SEM);
++#endif
++
+ 	trace_contention_begin(sem, 0);
+ 	ret = ___down_common(sem, state, timeout);
+ 	trace_contention_end(sem, ret);
+ 
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
 +	hung_task_clear_blocker();
- #endif
++#endif
++
+ 	return ret;
  }
  
+@@ -277,3 +300,23 @@ static noinline void __sched __up(struct semaphore *sem)
+ 	waiter->up = true;
+ 	wake_up_process(waiter->task);
+ }
++
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++unsigned long sem_last_holder(struct semaphore *sem)
++{
++	return READ_ONCE(sem->last_holder);
++}
++#else
++unsigned long sem_last_holder(struct semaphore *sem)
++{
++	return 0UL;
++}
++#endif
++
++static inline void __sem_acquire(struct semaphore *sem)
++{
++	sem->count--;
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++	WRITE_ONCE(sem->last_holder, (unsigned long)current);
++#endif
++}
 -- 
 2.45.2
 
