@@ -1,195 +1,126 @@
-Return-Path: <linux-kernel+bounces-560920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9E8AA60B02
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:15:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A0EA60AF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:14:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29B4A17443D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:15:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 535B13A3BF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12A0198822;
-	Fri, 14 Mar 2025 08:15:46 +0000 (UTC)
-Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FF6198845;
+	Fri, 14 Mar 2025 08:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VPezrNba"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CD732C85
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5408B194137
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741940146; cv=none; b=bnTTl+YIyi/HtT6V69n6GkVFuXgLft7HnE6ujoWyTIkYGwDNz+LiJpTB455cn9xXz2wdnYXEEdW4C1+UCIbav8cbAHk4isoytzSkM2dw5ztzlUT+JUcB/Chc0TgrDazCV+dk+yNWgpECqHikqf3/4mUvBoujvZ3KPg+Go1zd7dw=
+	t=1741940082; cv=none; b=m4s2S1kWvbEVv8Wk8O1u4hiBZKfmHbx+ZxDOB0kh0I1uziXL1ogUFVyw+c/+L3YBPHFS/Wc3W6nyR/xfC2xB3BBig+NM9R1PhibPxuKUbHTW93UhJ+fMUEwQ+yuha0Nz39APi/9ewuf9K/lckRH2GgM4Z1bfVz5AMDcKJdgyv2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741940146; c=relaxed/simple;
-	bh=Phim3QMX2arQqUJumjGiDsAj5I+AJWKE1SRlMfzlBYE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G7K9IbWQS1FSuWuCUu4hvl3kXf2b9p+o9dbolELqiSV2+lwdaThBuMob+pGHbTcIGAswM8qdX4hM62W0tDx1hJNCBF0vMRzca0wBWFjNcZ0nBQO5LQEkZhic9CtXGADUQ25yIWD7H3FZqTJbJq1MZyIQ9CNH406Sk7U8Yb0K9V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-26-232.elisa-laajakaista.fi [88.113.26.232])
-	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-	id 57970cea-00ac-11f0-8da8-005056bdfda7;
-	Fri, 14 Mar 2025 10:14:25 +0200 (EET)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 14 Mar 2025 10:14:25 +0200
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 07/10] gpio: max7360: Add MAX7360 gpio support
-Message-ID: <Z9PlYSZDviGOCV7X@surfacebook.localdomain>
-References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
- <20250214-mdb-max7360-support-v4-7-8a35c6dbb966@bootlin.com>
- <Z69oa8_LKFxUacbj@smile.fi.intel.com>
- <D8FAX4E29LZK.3VUK90WB04MV2@bootlin.com>
+	s=arc-20240116; t=1741940082; c=relaxed/simple;
+	bh=O9LQG/lpPnOhkT+jYoKuvDbee+y6Sz3wefUhFAgS2yY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AHPUqMnFClm3Oh5pIYTGZOm+b8Jq9IO6P2hSLSBpnKa1PzZzB0wVCx6rSddoY3pJkwtV0d+hbTa1q/ayElkqVPXKA4CFq2RWpV4cxnXQnjnvlAcRJlwSNsKOZAm+CnCGOL01axDnHgLuwHW/N1qhnHcCiSHFG/rk16fLBDV01Dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VPezrNba; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e4d50ed90aso2306124a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:14:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741940079; x=1742544879; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4jL5xAzxvHMCk7fi6TBU/sDX0DbhcH+sqMw7FTW5ldM=;
+        b=VPezrNbaU/S1mOE6z1Ihr/mpoULdSL9kpiY0hkF8dW1GNZ8Gt/4r8Rz4ImjOTmHf2F
+         AD3YuMzzinlkKGmdU12+PtFX4U6x330X9XE0uIloVHeb/9HkUECUaJK/OYcZw+xYkukz
+         JS/btE/jkwpt3hDeUfWQD3JuzffKv78EJgJLekTHtGx1GQUZwzV8CjOAUMWxVYNS1o4w
+         2Spqb0/+i2xnQ7uRnjCTjaQdrWfYDdFzzP1/XFGVDcY8yM2PLnKcNo/V8VD3axYhZ65L
+         5lZtFel+CfV+BvxFpG6WoXydGXsKBVdL23vWhogmLcky/+b1LKrJSXFVAwD9cB3JFfKz
+         ALnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741940079; x=1742544879;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4jL5xAzxvHMCk7fi6TBU/sDX0DbhcH+sqMw7FTW5ldM=;
+        b=qioUclEm6dmztm7paH/yHdNvsP+Do2AhX0ZxMRP66HPC2NFidwNdSlV+0rQrnoGlVU
+         bFrvXHWk6DhLY7jwwQ8LFZCE7oHUM6caqB3FMnvnpSxyt7mG750+z9JGM8HQyqAf6QYJ
+         I5aXV4vcTv+Mp/wk16oc4xylpx2PMy1Kfvj4r8kyI5YlCjsnFh3RpyKekXbr8p0/yEg2
+         Zbr+4XUUo9Sgrf22BTzj42Bwev7XCDcezVPguJfViEtrly9p0cLdlqmGiMYcm/kTHRzt
+         WYMv8zkEu4mGOryRocedN8NcgtDw4K/as4x0/1Mwo7G2CTrtHwcSej0EEu9p2xC0Hx18
+         ha9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUt6GjKF1xWq2r3/kyPJI5hWXlM5O6o2OrPHn0cWeGfYdLOxfIOc2ErlIS5cTc2pK5yrlYSrNa3Hc1KzEw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3OyRKge/uUDbqFjhHooIs4vnLm6RiM6wFN1UUYxhwcoWgXp8c
+	tYTDt73DUVFFXqppRNBrDt5qOaz+aocbHpM87BBD3Hz7IA3+dn2pTor0VXGe
+X-Gm-Gg: ASbGncv4wTiI5EUvWuVWa4oZryC1gJOajG4iasnIeVkeFSyp5kZkxg1ELcSojEPEI1Q
+	b2+WzCDK+0/QO+9iVEk2b0SmDh5MbRapwHiuPzkQ6a1+OmLXOQfcHcOzG6vZiSIgx3DT5MqKb+S
+	8tfqyPlXXtP0MuZfX+zayRoazdwQTpxHD5IQ0A5QRGzqCRZrdi7r3avg4KXZr7OcrupfaGd5p4V
+	XzU8K1WrzTq7V8z1n3T179QEi1xCV62AXIAnsa0bvmLmLG0EWmZQQl/kDBKw6kjsrke2Q1Qlnqm
+	GwlUmTMlaxam05DV9lI1Kh07mgUQ0srx4VAdKqL+SakX3gE=
+X-Google-Smtp-Source: AGHT+IH2uHvvaFjRLgPzz/axbDjRTaASMSL04mCeERLdmEA2nw9uAOEg7/99W5lF+t00yYVFiSpFOQ==
+X-Received: by 2002:a05:6402:1ed3:b0:5e7:f707:d7c4 with SMTP id 4fb4d7f45d1cf-5e8a0c0d331mr1485652a12.31.1741940078358;
+        Fri, 14 Mar 2025 01:14:38 -0700 (PDT)
+Received: from fedora.. ([193.77.86.199])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816afe26bsm1651871a12.72.2025.03.14.01.14.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 01:14:37 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH] x86/asm: Use alternative_input() in amd_clear_divider()
+Date: Fri, 14 Mar 2025 09:14:38 +0100
+Message-ID: <20250314081453.565859-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D8FAX4E29LZK.3VUK90WB04MV2@bootlin.com>
+Content-Transfer-Encoding: 8bit
 
-Thu, Mar 13, 2025 at 06:07:03PM +0100, Mathieu Dubois-Briand kirjoitti:
-> On Fri Feb 14, 2025 at 4:59 PM CET, Andy Shevchenko wrote:
-> > On Fri, Feb 14, 2025 at 12:49:57PM +0100, Mathieu Dubois-Briand wrote:
-> > > Add driver for Maxim Integrated MAX7360 GPIO/GPO controller.
+Use higher-level API to declare assembly with alternatives.
 
-...
+bloat-o-meter reports no code size changes.
 
-> > > +	/*
-> > > +	 * MAX7360_REG_DEBOUNCE contains configuration both for keypad debounce
-> > > +	 * timings and gpos/keypad columns repartition. Only the later is
-> > > +	 * modified here.
-> > > +	 */
-> > > +	val = FIELD_PREP(MAX7360_PORTS, ngpios);
-> > > +	ret = regmap_write_bits(regmap, MAX7360_REG_DEBOUNCE, MAX7360_PORTS, val);
-> > > +	if (ret) {
-> > > +		dev_err(dev, "Failed to write max7360 columns/gpos configuration");
-> > > +		return ret;
-> > > +	}
-> >
-> > Shouldn't this be configured via ->set_config() callback?
-> 
-> I believe this comment has been a bit outdated by our discussion on
-> using GPIO valid mask, but I believe we could not use the ->set_config()
-> callback here: this callback is made to configure a single pin while the
-> gpos/keypad columns repartition is global.
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+---
+ arch/x86/include/asm/processor.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Yeah, we have similar desing in Intel Bay Trail (see pinctrl-baytrail.c) and it
-requires some software driven heuristics on how individual setting may affect
-the global one. But the Q here is is the debounce affects only keypad? Then it
-should be configured via keypad matrix driver. Btw, have you checked
-drivers/input/keyboard/matrix_keypad.c? Is there anything that can be useful
-here?
-
-...
-
-> > > +		if (irq < 0)
-> > > +			return dev_err_probe(dev, irq, "Failed to get IRQ\n");
-> > > +
-> > > +		irq_chip = devm_kzalloc(dev, sizeof(*irq_chip), GFP_KERNEL);
-> > > +		if (!irq_chip)
-> > > +			return -ENOMEM;
-> > > +
-> > > +		irq_chip->name = dev_name(dev);
-> > > +		irq_chip->status_base = MAX7360_REG_GPIOIN;
-> > > +		irq_chip->num_regs = 1;
-> > > +		irq_chip->num_irqs = MAX7360_MAX_GPIO;
-> > > +		irq_chip->irqs = max7360_regmap_irqs;
-> > > +		irq_chip->handle_mask_sync = max7360_handle_mask_sync;
-> > > +		irq_chip->status_is_level = true;
-> > > +		irq_chip->irq_drv_data = regmap;
-> > > +
-> > > +		for (unsigned int i = 0; i < MAX7360_MAX_GPIO; i++) {
-> > > +			regmap_write_bits(regmap, MAX7360_REG_PWMCFG(i),
-> > > +					  MAX7360_PORT_CFG_INTERRUPT_EDGES,
-> > > +					  MAX7360_PORT_CFG_INTERRUPT_EDGES);
-> > > +		}
-> > > +
-> > > +		flags = IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED;
-> > > +		ret = devm_regmap_add_irq_chip_fwnode(dev, dev_fwnode(dev), regmap, irq, flags, 0,
-> > > +						      irq_chip, &irq_chip_data);
-> >
-> > Right.
-> >
-> > What I mean in previous discussion is to update gpio-regmap to call this from inside.
-> > You need to add irq_chip pointer and irq_chip_data pointer to the regmap configuration
-> > and if they are set (or the first one, I dunno if this is supported by IRQ chip core)
-> > call this function and assign domain. This should be called after GPIO chip is
-> > added, but before IRQ domain attachment.
-> >
-> 
-> Ok, this is a bit more clear to me now. So I came up with something, it
-> will be part of the next iteration, probably during the next week.
-> 
-> This required to add a few additional fields to the gpio_regmap_config
-> structure, specifying the IRQ configuration:
-> 
-> + * @regmap_irq_chip:   (Optional) Pointer on an regmap_irq_chip structure. If
-> + *                     set, a regmap-irq device will be created and the IRQ
-> + *                     domain will be set accordingly.
-> + * @regmap_irq_chip_data: (Optional) Pointer on an regmap_irq_chip_data
-> + *                      structure pointer. If set, it will be populated with a
-> + *                      pointer on allocated regmap_irq data.
-> + * @regmap_irq_irqno   (Optional) The IRQ the device uses to signal interrupts.
-> + * @regmap_irq_flags   (Optional) The IRQF_ flags to use for the interrupt.
-
-Okay, just make sure it's guarded by the same ifdeffery as the similar in the
-GPIO:
-
-#ifdef CONFIG_GPIOLIB_IRQCHIP
-
-...
-
-> > > +
-> > > +		regmap_write(regmap, MAX7360_REG_GPIOOUTM, outconf);
-> > > +	}
-> > > +
-> > > +	/* Add gpio device. */
-> > > +	gpio_config.parent = dev;
-> > > +	gpio_config.regmap = regmap;
-> >
-> > > +	if (gpio_function == MAX7360_GPIO_PORT) {
-> > > +		gpio_config.ngpio = MAX7360_MAX_GPIO;
-> >
-> > Why this case can't be managed also via ngpios property? Maybe at the end of
-> > the day you rather need to have another property to tell where the split is?
-> >
-> > This will help a lot and removes unneeded sharing of ngpios here and there.
-> >
-> > What I read from this code is like you are trying to put _two_in_one_ semantics
-> > on the shoulders of "ngpios".
-> 
-> So as I reworked the keypad columns GPIOs, PORT GPIOs and the COL GPIOs
-> are a bit more similar on this point. So far I now use a constant value
-> assigned in the driver for both, as I believe there is no way the number
-> of GPIOs could be a different. Yet I can easily switch back to a value
-> provided by a device property.
-
-Sounds good as long as ngpios is not overloaded with the additional meanings.
-
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 5d2f7e5aff26..b4b5aa46f68b 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -707,8 +707,9 @@ static inline u32 per_cpu_l2c_id(unsigned int cpu)
+  */
+ static __always_inline void amd_clear_divider(void)
+ {
+-	asm volatile(ALTERNATIVE("", "div %2\n\t", X86_BUG_DIV0)
+-		     :: "a" (0), "d" (0), "r" (1));
++	alternative_input("", "div %[den]",
++			  X86_BUG_DIV0,
++			  "a" (0), "d" (0), [den] "r" (1));
+ }
+ 
+ extern void amd_check_microcode(void);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.48.1
 
 
