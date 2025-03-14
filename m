@@ -1,224 +1,86 @@
-Return-Path: <linux-kernel+bounces-562004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B2B7A61A49
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:21:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEC69A61A4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:22:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA1919C474E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:22:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FC807AA634
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D59A204C39;
-	Fri, 14 Mar 2025 19:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BE3204F6F;
+	Fri, 14 Mar 2025 19:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w+Gk4mHz"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="nHOTwdJm"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7092F84D08
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 19:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803BA204C09;
+	Fri, 14 Mar 2025 19:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741980111; cv=none; b=ql+d3tsW++U0nv+3wMl5yybRbnE4Ax4hp5NjOx+1NhecL5WY6ZPWFp88xF2XX7vgQu/fmIDwGf+Dtjy8KaqMfZFwY0O6Rj7vLW1ibxM0efolqSA+xfkE6nNnUmGdCuqN09tNJRVkzBgoGEAwrS2iM4Jt4tPwYbhIVZhkBgu+W2E=
+	t=1741980141; cv=none; b=qhxiVoY46G9MWJTmlKaaBPb6oc+FSG3+4lqjKP4vFkaB6BeCS4Ij5uz5B8DGAtGBXXKdmlUneI/rBf4KE6aVuHU5hUH0yynDClLQdJEjJKUqVXI4TjzHoyGVT0pcQJgZ8AS7yq2usW/ZMSKTtanKB+tmm6D1WEmD26u1Dc9INJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741980111; c=relaxed/simple;
-	bh=ryx0zKuenANkRXsYf6XtKpB+n4QJDHZaIXQLpHiMN1o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i1TNM8qMKekvksUfeoirnZ41ggAbp9aQk3qmkbLJ3Q0WLJZX/h2OtzLk1yzyN9t+w0Zpvk1DeW6OrPqXZ6w/8gAJIGodE8H8Au8JFoEAe7m0J68+iSomejKAKXzHpHbq4geAoqB1Ylqh5j02tMa4GadLZSzitOUywVjj+5nBaPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w+Gk4mHz; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5497590ffbbso2545909e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 12:21:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741980107; x=1742584907; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s9+9Ep+7gxZljLN0TqwcK3ZG0MxqsMjlhUkQ26uvgW0=;
-        b=w+Gk4mHzVyX3yxrKczmfN+FtCY5HdmYHZcy0vwTaTEzGE6v/Vc52uJJH3JBPWfPDZO
-         7Rj18sga/GPLXXwIw7QP13o0SRyxvg0a/H5jI65UN6Khv64PIRlVb7lpdLGjgVwp07hl
-         Wk65xchh0XPmgTaUT6sZQulSgcBxMpWjRAS3Iw5HReB8UrVNnIKjHKzaEKhC05Ck2hRQ
-         Ev79A9l8OEXAy0hFBmtIhzzvICcx58pEfQ4VT1+hR/tdflCNn2j8V5tRNK0I7nbmZcDW
-         945osC+3W2JgQFA3HHyAaHNSjqyZF38jojubE/4X7Daljaf9eh+mhjTqH69qL+JPCAna
-         YHwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741980107; x=1742584907;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s9+9Ep+7gxZljLN0TqwcK3ZG0MxqsMjlhUkQ26uvgW0=;
-        b=KTG9I0/5mNjC2EBE/p1CfaLokDNMM3cZi3G76T2b9C537KIGgzC+5BA6cGJqrZPclo
-         CSfeP+sMuEOvp8+hhq+JiPQeihzB9NVkRs3Bpu9+PYfleXxwpRLNnKQaOJJ2jQyZHHU4
-         AmjFBa2gCgxDm2uLT3RMFr8JQhoe6hpRo1stATZOPopZIl9FKQ/eNOYcBEmUMRMazYha
-         tdoIddIvVI8KiDSfUZcYuuEjxYpdi4Ub2Hz6Z5EWaXUAfPrrgC8+/ClfcAnBfA74UzN8
-         QMRZ8DnytMB8LvrG2CORo/RBA8whU/dbPMCd0mOv5yfdirnrJ1JevdVnigv1DkyZZ1dH
-         wz4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUjRrU9IyyaUDn0jT9P8C86dRdXchcGT9UgkTP1jRr/2CeErDMshtZNBjWgZNB2PBhV+DSgKxZiyI5XqQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIHQMGc+UF+Lxf1BNQ1rSxR8qtwDgJPYnmCl7AxsJwBHTi1eoz
-	87zOi9dPzTQe6u0avtfCSZ+kTqJd4seFUkqCFRYXoasOBt7i3T6JsWXRZvIf/oLxg2IYpBBseqt
-	MAtMOW+FtMDXse44PJbUVAFvvbzYFvsQiLlE=
-X-Gm-Gg: ASbGncv7WWQ2iNT4Ta9/X7CnaEI3AmAFplTHPP8abOCoU2ke1JmNc/H4bjCIpzRjvwB
-	GcN5F2LdUABY1YQxg/nqsGMUBUNcU4XNCJZ5v7R931ReE21t2ErZFd6ZBOcudTTv4/6bK/XEnDx
-	wwf1n+jMX8KpI+mLPFVO/0+PnlGyiVQtyh/2uydDFHShZERa5WlkhfQg==
-X-Google-Smtp-Source: AGHT+IFmKudeedk+byre9+uuSYw848xLagZWetRKEOSCrq2CWQNdL6+bnwO8Fitbbk5qQ2XaUGXigHBY0L+t3tmqeII=
-X-Received: by 2002:a05:6512:4006:b0:549:8b97:75f2 with SMTP id
- 2adb3069b0e04-549c38ef3e1mr1159648e87.1.1741980107030; Fri, 14 Mar 2025
- 12:21:47 -0700 (PDT)
+	s=arc-20240116; t=1741980141; c=relaxed/simple;
+	bh=5wStfRse0ijF6zcJLGwhrVt53N+8xSvK12PqiJP104I=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W7iSydCqMfi7drZLZJ3VCJJdB/mU1Z7nBG6cgK2T9cRtka4dJw/14kXnuuuRmf9juyKzjwNnsIqYq+miBVElsICI1VjgrWgmYyCtFFinl54KVCUDb1wX3P462a/gmLBS0w49K3VWHLTm8PVd6eF/FekEY2/YaFAeJ+tnyVd95T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=nHOTwdJm; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741980137; x=1742239337;
+	bh=thJECz48gUXx5fCuiQ2QxMOjva1RYIRgnYdCOp04aPY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=nHOTwdJmcWno63mC9jXXayErfsOlb4jB/UTVTv2YFHjVL7+vS4gpYe2ZyPyZrVRnM
+	 XnASK1Wpj3hr8Sjn/DFCl27B/vXILM94ttXwyaJSyhfRYtogn3TCVMJVHvx8iWFGzN
+	 L6qUvw2bIjnWduyVJSzVs1cSM6dR3DofPS0h1VUA4yorSxN3K3mvU0kierHrXIWU1w
+	 9HO1c7PzupM2+KrT6mZOAl3F6C+r5ASTdz2Ksx5ERfGLXD2BWff9+OamPIz2oON7x8
+	 pOh8VmFOg9Y+2lCGcGOB+pWU+CkyHHeR7roTqxBXx9diUlv82TXvPBIh7YewNdYkn1
+	 uD+IuNiAtkWVA==
+Date: Fri, 14 Mar 2025 19:22:09 +0000
+To: Tamir Duberstein <tamird@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH 1/2] rust: retain pointer mut-ness in `container_of!`
+Message-ID: <D8G8F0X59XBY.1ZCW3BOLXCYP5@proton.me>
+In-Reply-To: <20250307-no-offset-v1-1-0c728f63b69c@gmail.com>
+References: <20250307-no-offset-v1-0-0c728f63b69c@gmail.com> <20250307-no-offset-v1-1-0c728f63b69c@gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: a5798fbb667a529e08d919bf50c046bee6c0afa8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310030004.3705801-1-lei.chen@smartx.com> <CANDhNCoRxxA-CxOQ6vxfjf6BDxR-gqCC_QE1wwf4L3gwrvfv6A@mail.gmail.com>
- <CAKcXpBwvjrmoPnfFgaXs81XF5du-mWzLiJ+8YvvhM_1tQMiZBQ@mail.gmail.com>
-In-Reply-To: <CAKcXpBwvjrmoPnfFgaXs81XF5du-mWzLiJ+8YvvhM_1tQMiZBQ@mail.gmail.com>
-From: John Stultz <jstultz@google.com>
-Date: Fri, 14 Mar 2025 12:21:34 -0700
-X-Gm-Features: AQ5f1Jrm7wC0CVW9h6COejewRncxLSkkA6cB_Ppj_hgyHgI2UNGyMRp35_Vi0UY
-Message-ID: <CANDhNCpSB5HzMHne94rnGEi+=yd1Q2j+pJX8pdX5RbEojwpZcA@mail.gmail.com>
-Subject: Re: [PATCH] Fix rolling back of CLOCK_MONOTONIC_COARSE
-To: Lei Chen <lei.chen@smartx.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 13, 2025 at 11:32=E2=80=AFPM Lei Chen <lei.chen@smartx.com> wro=
-te:
+On Fri Mar 7, 2025 at 10:58 PM CET, Tamir Duberstein wrote:
+> Avoid casting the input pointer to `*const _`, allowing the output
+> pointer to be `*mut` if the input is `*mut`. This allows a number of
+> `*const` to `*mut` conversions to be removed at the cost of slightly
+> worse ergonomics when the macro is used with a reference rather than a
+> pointer; the only example of this was in the macro's own doctest.
 >
-> Hi John,
-> Thanks for your reply.
->
-> On Fri, Mar 14, 2025 at 1:20=E2=80=AFAM John Stultz <jstultz@google.com> =
-wrote:
-> >
-> > On Sun, Mar 9, 2025 at 8:00=E2=80=AFPM Lei Chen <lei.chen@smartx.com> w=
-rote:
-> > >
-> > > timekeeping_apply_adjustment try to adjust tkr_mono.mult by @mult_adj=
-.
-> > > If @mult_adj > 0, tk->tkr_mono.xtime_nsec will be decreased by @offse=
-t.
-> > > Then timekeeping_update flushes shadow_timekeeper to real tk and vdso
-> > > data region. Then rolling back happens.
-> > >
-> > > The drawing below illustrates the reason why timekeeping_apply_adjust=
-ment
-> > > descreases tk->tkr_mono.xtime_nsec.
-> > >
-> > >      cycle_interval       offset        clock_delta
-> > > x-----------------------x----------x---------------------------x
-> > >
-> > > P0                      P1         P2                         P3
-> > >
-> > > N(P) means the nano sec count at the point P.
-> > >
-> > > Assume timekeeping_apply_adjustment runs at P1, with unaccumulated
-> > > cycles @offset. Then tkr_mono.mult is adjusted from M1 to M2.
-> > >
-> > > Since offset happens before tkr_mono.mult adjustment, so we want to
-> > > achieve:
-> > > N(P3) =3D=3D offset * M1 + clock_delta * M2 + N(P1)   -------- (1)
-> > >
-> > > But at P3, the code works as following:
-> > > N(P3) :=3D (offset + clock_delta) * M2 + N(P1)
-> > >        =3D offset * M2 + clock_delta * M2 + N(P1)
-> > >
-> > > Apprently, N(P3) goes away from equation (1). To correct it, N(P1)
-> > > should be adjusted at P2:
-> > > N(P1) -=3D offset * (M2 - M1)
-> > >
-> > > To fix this issue, the patch accumulates offset into tk, and export
-> > > N(P2) to real tk and vdso.
-> > >
-> > > tk.tkr_mono :=3D N(P2) =3D N(P1) + offset * M1
-> > >
-> > > Then at P3, we calculate N(P3) based on N(P2) instead of N(P1):
-> > > N(P3) :=3D N(P2) + clock_delta * M2
-> > >
-> > > Signed-off-by: Lei Chen <lei.chen@smartx.com>
-> >
-> > Thanks for the email and the patch!
-> >
-> > So, I'm having a bit of a hard time understanding the issue you're
-> > actually seeing. It seems to be that you're seeing
-> > CLOCK_MONOTONIC_COARSE go backwards?
-> >
-> I'm sorry for that.
-> Yes, it's CLOCK_MONOTONIC_COARSE that goes backwards.
->
-> I hope the code flow can help to explain it.
->
-> In user space, clock_gettime(CLOCK_MONOTONIC_COARSE) actually reads
-> tk->xtime_sec and tk->tkr_mono.xtime_nsec.
->
-> But when ntp calls adjtimex, the code works as following:
-> do_adjtimex
->     timekeeping_advance
->         timekeeping_apply_adjustment
->              tk->tkr_mono.xtime_nsec -=3D offset; ------------------- (1)
->     timekeeping_update
->         update_vsyscall    -------------------------(2)
->
-> At (1) , if offset > 0, xtime_nsec will go backwards.
-> And  after (2) CLOCK_MONOTONIC_COARSE will go backwards.
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-So, I understand we subtract offset from xtime_nsec, when the mult is
-incremented, as this is necessary to avoid time inconsistencies with
-the non-coarse clockids, since we have unaccumulated cycles in offset.
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
-Briefly:
-mult_2 =3D mult_1 + 1
-xtime_nsec_1 + (mult_1 * offset)  =3D=3D  xtime_nsec_2  + (mult_2 * offset)
-  =3D=3D  xtime_nsec_2  + (mult_1 +1) * offset)
-  =3D=3D  xtime_nsec_2  + (mult_1 * offset) + offset
+---
+Cheers,
+Benno
 
-Then cancelling from both sides:
-xtime_nsec_1  =3D=3D  xtime_nsec_2  + offset
-And re-arranging as such:
-xtime_nsec_2 =3D=3D xtime_nsec_1 - offset
+> ---
+>  rust/kernel/lib.rs      |  5 ++---
+>  rust/kernel/pci.rs      |  2 +-
+>  rust/kernel/platform.rs |  2 +-
+>  rust/kernel/rbtree.rs   | 23 ++++++++++-------------
+>  4 files changed, 14 insertions(+), 18 deletions(-)
 
-So yeah, I see the concern, as when we are dealing with the _COARSE
-clocks, we don't use the offset value. So the subtracting offset from
-xtime_nsec initially seems problematic.
-
-But the key here is the timekeeping_adjust() logic, which adjusts the
-multiplier and is all done *after* we do the accumulation, adding
-(possibly multiple) (mult*cycle_interval) intervals from the offset to
-xtime_nsec.
-
-After the accumulation, offset must be smaller than cycle_interval.
-So the negative (un-multiplied) offset size adjustment to xtime_nsec
-should be smaller than what was immediately before added to it.  Both
-accumulation and adjustment are done atomically together under the
-tk_core.lock, so I'd not expect to see an inconsistency here.
-
-My suspicion is that if we are coming into timekeeping_advance() more
-frequently then cycle_interval cycles, than its possible we didn't
-actually accumulate anything, but had some left over ntp error that
-triggered a mult adjustment, causing a xtime_nsec to be decremented
-without the normal accumulation before that. Opening up a window for
-the inconsistency.
-
-The "if (offset < real_tk->cycle_interval && mode =3D=3D TK_ADV_TICK)"
-check there is supposed to catch that, but with
-timekeeping_advance(TK_ADV_FREQ) it looks like during an ntp
-adjustment we can try to do the mult adjustment without accumulation.
-
-Thomas just tells me now he's found a fix, so hopefully that will be
-incoming soon. I'll probably be drafting my own approach just to make
-sure we're aligned.
-
-I've also found this is pretty easy to reproduce but unfortunately the
-kselftest skew_consistency focused on MONOTONIC and didn't check
-_COARSE clockids, so I'll try to tweak that test as well so that we
-have better coverage for this case.
-
-Thanks so much for finding and reporting this!
-
-thanks
--john
 
