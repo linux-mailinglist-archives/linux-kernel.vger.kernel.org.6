@@ -1,196 +1,181 @@
-Return-Path: <linux-kernel+bounces-562158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6631AA61DAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:09:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B873A61DAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:09:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04C7018968EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:09:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80C0917C06E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694C31EA7F8;
-	Fri, 14 Mar 2025 21:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA0D1C54AA;
+	Fri, 14 Mar 2025 21:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lvvaG+Id"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fjg8+95j"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AFD1A5B8F;
-	Fri, 14 Mar 2025 21:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C830C1957E4
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741986541; cv=none; b=W6egNIBksVsjVhwSywjt2IHoyZgYNym1eeEbTUOagtnpm/PuL/4L3nbYY7s6EBcVQQXB3U/396aSj64TtxepPlI/OKnr3IVz5y4amZc+c04QELGzs2T4KlDGm6kA3EC9a7X48CiT0V3B9NgAoE3o0IWCkVR65+vooCFJaAZi8D4=
+	t=1741986591; cv=none; b=XAT3DiwFXOvfM2tW0MxKU3qQ0F9pww2YNtoS98UCD/DnwZMeNGqjus6rPzUhVtn9SNNz1+Fbl5X7W9bOPmZGdx7/h4vB/zm5tr08baVtD196Cx6S4SxABPLt9hiHbOcXyxlpnXwmQc6YiDUDswelxsV6JA8BY1GYKYL7yxDJxXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741986541; c=relaxed/simple;
-	bh=TLAXK8F0Zg+uOm7YobOgE1LYNRmrAqUPZYhBWDVwNVM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H3+zLOOG/SaBVfjvR0YQPb+HHQ2hrGVQX1E56uEWa/xBTguzi94fYLSBPC2/L+fNgDkFmedd/w2EF7mgZNdaWdClY60UgCdsjXrmAt5UzT98MG+2ozOIyPCfpNoqRRDpYgvHDIarKn7vyeKLXI4e56w7gJmPtk2S90apFH29CzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lvvaG+Id; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d03ac846a7so9264965ab.2;
-        Fri, 14 Mar 2025 14:08:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741986539; x=1742591339; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BkRLpqMUrdRcSP/upvwA3EN8NMAu0/tqM1GHILgEdFw=;
-        b=lvvaG+Idedc3D9mkx60cQIKzlIhTUi/r507glVQbxHGAZ7ojFYjysBD8dpzTJ1ERRt
-         9iuz3jfOunbm8buw6+xyFPlloH00yPMgxf+FXH8suA1uB4OnDhaVYpDlP5dqL8arOkm8
-         ojQs6YjOR0irMpaKziIGXydk1XbRCg3Q+WbTTIKwONbZ36BHmX7iQ9R2yGrPzFET1Wwk
-         SnUgKsqjXLSeww2RCDuxWY+2CG/pNtYg3T2vFEcC8GqozUgro9GhLl9/K/T2+UQx+gkL
-         GD1X8LlVCk5ORgiH+FwPjTwY6Gpc9zYfvfhWmKmBe3mwtTi15N8mURynujctfWgar/TV
-         OADg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741986539; x=1742591339;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BkRLpqMUrdRcSP/upvwA3EN8NMAu0/tqM1GHILgEdFw=;
-        b=eqN3yvowcyWBxQBp0supKPGGPEwFbNXGvjLnw1ke9Y3Sz4GOXgPu+rhznPcO76sGON
-         JUWQkUEUtI9OtH0tMYHoWQTZw1KFn8znQlQzfmtIZwikby7bFMjOSy1spUcHTJ38mpiX
-         ostClq8BMqF/ZfLvEGmjP2Seu2mlJY+M0mDIqQ5rq/JUYNKOYQXhaWkSx2yBtd4Wigo+
-         FPHXpeO5YC+XCF5XspyeDfl/Uc4fUQR9b3z15YCx2Otyy9Ng4bznnUqvSNZtCIBgkijC
-         GdAaavYf4L1s3X83HspFESPyAELK2vGfaN5qtdKV1mrvO5Nakl71+JujsTS7alEOWm89
-         8KiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvz7yYOq4htDjZyDhvgqUgbZF74orQsz85EJmahCSWQJ0qOuySsghKUYnX8xPSnzmedeSQbJmycx5ZQwHh@vger.kernel.org, AJvYcCVyfM05qnMz/sYx23tlLgCkPZ4PDLv4+TreuWJk4fEEu8hfxPBd/1b53pRaN+IRGaja6nl+FTEWHt8XO7s1@vger.kernel.org
-X-Gm-Message-State: AOJu0YyM6Qb9FsXazLi1tgmnb0A8r+Nzl4dq4y4Nch046oY1LgZYX/0N
-	hPkhTrfkvbMS02o/6qDCfHb+ulLSg20XqnLe8j1YRGuedJ0eeZL8jVSrMPDnZhX8Ei2m/IKVl/8
-	gecziE8iAtDiQo9r+LYHDy+jEcqL8qg==
-X-Gm-Gg: ASbGncvlMTcdPEhcToJysMx1WDiphcP46OsxXEyb4ePdhDEIBKGjFU1nvlA+EZUWmYg
-	6i7m4gXbbq9DADWDZvNYFx7v5/rAsY6tnLlyTPKEDncelRWPlMR2ZkL1OzGaYfzANesrBiJ0luP
-	ZK/1Vi/DPEeZWQLYKuCwdqp1OSn7/+gaXkmOT26Nu3XcQDWZdtQM/s0gyg
-X-Google-Smtp-Source: AGHT+IHnRUSdUAiE6xSCF7qK008yqz2CYgd4uPUsSUYmFzhuSr+lKmrz+rNzsxjiPE7EHSpTAr2kzC8PGntP7byzmIU=
-X-Received: by 2002:a05:6e02:20c8:b0:3d3:db70:b585 with SMTP id
- e9e14a558f8ab-3d483a803femr39260345ab.21.1741986538694; Fri, 14 Mar 2025
- 14:08:58 -0700 (PDT)
+	s=arc-20240116; t=1741986591; c=relaxed/simple;
+	bh=XXQKZzpeQsVPULgRa91+jVxZbesblCs2/OJYhz+jCr0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QJaRAcAd/cSgWFV8oRVuTEOQcALOfh/NMe1fhRfOHIMwgqOAOxHMUZJlrV1EeZ35ZPu8CyzRMuUsuYbY/ajwsMLGoMB4aodxSKHyCBe5dBqMzfCRM8UWCVwlE+/5R/vJticPlXhjufkAs2klcBgRLGthg0vs5GguqKoo2YqjR9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fjg8+95j; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741986589; x=1773522589;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=XXQKZzpeQsVPULgRa91+jVxZbesblCs2/OJYhz+jCr0=;
+  b=fjg8+95jIPArD0b0c9ZgvsW41f0+AjWdw1LGJVd7bAYm04qzus6DQmHs
+   /15b+E30l0zgvyeYy7JJ5e6R3Q/N/Ml6jGPVeyWLYiO9TE2ALLMFA1F3P
+   6L4VZbANKiXzpcdb3HguTHiI+1njmTj1znVfHM8smRWzvGByz1xXE6K6W
+   MTTgludqjwkhKuw5UNFoPEwpR1DVKpPmiWAw16ncW5d7S5RRee7zcsUU5
+   PTFoNny9AdPdi+4MeaWc4fxr5tNxF+Nqt6kX4VtkVM3JHKkVVN1ADZnPu
+   Hm2a0V+/3gC4Zfm7r3vWLSvpjDxsSpItHMpEkp7wlW1lDbzT7p1zDLna0
+   Q==;
+X-CSE-ConnectionGUID: HpzeCSxcQFmtOc+PPZFJTA==
+X-CSE-MsgGUID: esiTMmjBR9+HXt+40kLQRg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="43358416"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="43358416"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 14:09:49 -0700
+X-CSE-ConnectionGUID: 3wpcDs1oTOeE+KZV1DRGnw==
+X-CSE-MsgGUID: 8qPtg8DqQaadwOsnzF3rSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="122332839"
+Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.108.212]) ([10.125.108.212])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 14:09:49 -0700
+Message-ID: <8624268dd3a211e656b3fb179c46c1742fe80790.camel@linux.intel.com>
+Subject: Re: [PATCH 4/9] mm: swap: remove unneeded VM_BUG_ON(*map !=
+ SWAP_HAS_CACHE) in swap_entry_range_free()
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Kemeng Shi <shikemeng@huaweicloud.com>, akpm@linux-foundation.org
+Cc: kasong@tencent.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Date: Fri, 14 Mar 2025 14:09:48 -0700
+In-Reply-To: <20250313210515.9920-5-shikemeng@huaweicloud.com>
+References: <20250313210515.9920-1-shikemeng@huaweicloud.com>
+	 <20250313210515.9920-5-shikemeng@huaweicloud.com>
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250314183455.120824-1-robdclark@gmail.com> <4525d045-745a-4d8b-987e-45d3fa9917b5@quicinc.com>
-In-Reply-To: <4525d045-745a-4d8b-987e-45d3fa9917b5@quicinc.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Fri, 14 Mar 2025 14:08:46 -0700
-X-Gm-Features: AQ5f1Joqit6DTlPsGxZi33_LsW2JIVjOxNSfy35r8VHQ4UBkw--tifeiumMS4JI
-Message-ID: <CAF6AEGuneF8Yi0ViA4ActvmGL7aOFT75jNBN=YZf37YyoBkCFA@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/msm/a6xx+: Don't let IB_SIZE overflow
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>, 
-	Connor Abbott <cwabbott0@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jordan Crouse <jordan@cosmicpenguin.net>, Jonathan Marek <jonathan@marek.ca>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 14, 2025 at 1:07=E2=80=AFPM Akhil P Oommen <quic_akhilpo@quicin=
-c.com> wrote:
->
-> On 3/15/2025 12:04 AM, Rob Clark wrote:
-> > From: Rob Clark <robdclark@chromium.org>
-> >
-> > IB_SIZE is only b0..b19.  Starting with a6xx gen3, additional fields
-> > were added above the IB_SIZE.  Accidentially setting them can cause
-> > badness.  Fix this by properly defining the CP_INDIRECT_BUFFER packet
-> > and using the generated builder macro to ensure unintended bits are not
-> > set.
-> >
-> > v2: add missing type attribute for IB_BASE
-> >
-> > Reported-by: Connor Abbott <cwabbott0@gmail.com>
-> > Fixes: a83366ef19ea ("drm/msm/a6xx: add A640/A650 to gpulist")
-> > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > ---
-> > Backport notes, prior to commit ae22a94997b8 ("drm/msm: import A2xx-A4x=
-x
-> > XML display registers database"), just open code, ie:
-> >
-> >    OUT_RING(ring, submit->cmd[i].size & 0xfffff);
-> >
-> > Prior to commit af66706accdf ("drm/msm/a6xx: Add skeleton A7xx
-> > support"), a7xx_submit() did not exist so that hunk can be dropped.
-> >
-> >  drivers/gpu/drm/msm/adreno/a6xx_gpu.c               | 8 ++++----
-> >  drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml | 7 +++++++
-> >  2 files changed, 11 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/ms=
-m/adreno/a6xx_gpu.c
-> > index d3978cfa3f20..ea52b7d0b212 100644
-> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> > @@ -245,10 +245,10 @@ static void a6xx_submit(struct msm_gpu *gpu, stru=
-ct msm_gem_submit *submit)
-> >                               break;
-> >                       fallthrough;
-> >               case MSM_SUBMIT_CMD_BUF:
-> > -                     OUT_PKT7(ring, CP_INDIRECT_BUFFER_PFE, 3);
-> > +                     OUT_PKT7(ring, CP_INDIRECT_BUFFER, 3);
-> >                       OUT_RING(ring, lower_32_bits(submit->cmd[i].iova)=
-);
-> >                       OUT_RING(ring, upper_32_bits(submit->cmd[i].iova)=
-);
-> > -                     OUT_RING(ring, submit->cmd[i].size);
-> > +                     OUT_RING(ring, A5XX_CP_INDIRECT_BUFFER_3_IB_SIZE(=
-submit->cmd[i].size));
-> >                       ibs++;
-> >                       break;
-> >               }
-> > @@ -382,10 +382,10 @@ static void a7xx_submit(struct msm_gpu *gpu, stru=
-ct msm_gem_submit *submit)
-> >                               break;
-> >                       fallthrough;
-> >               case MSM_SUBMIT_CMD_BUF:
-> > -                     OUT_PKT7(ring, CP_INDIRECT_BUFFER_PFE, 3);
-> > +                     OUT_PKT7(ring, CP_INDIRECT_BUFFER, 3);
-> >                       OUT_RING(ring, lower_32_bits(submit->cmd[i].iova)=
-);
-> >                       OUT_RING(ring, upper_32_bits(submit->cmd[i].iova)=
-);
-> > -                     OUT_RING(ring, submit->cmd[i].size);
-> > +                     OUT_RING(ring, A5XX_CP_INDIRECT_BUFFER_3_IB_SIZE(=
-submit->cmd[i].size));
-> >                       ibs++;
-> >                       break;
-> >               }
-> > diff --git a/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml b/driv=
-ers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
-> > index 55a35182858c..a71bc6f16cbf 100644
-> > --- a/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
-> > +++ b/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
-> > @@ -2259,5 +2259,12 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
-> >       </reg32>
-> >  </domain>
-> >
-> > +<domain name=3D"CP_INDIRECT_BUFFER" width=3D"32" varset=3D"chip" prefi=
-x=3D"chip" variants=3D"A5XX-">
-> > +     <reg64 offset=3D"0" name=3D"IB_BASE" type=3D"address"/>
-> > +     <reg32 offset=3D"3" name=3D"3">
->
-> Why is the offset 3 here? It looks to me that it doesn't match the code
-> above.
+On Fri, 2025-03-14 at 05:05 +0800, Kemeng Shi wrote:
+> As all callers of swap_entry_range_free() have already ensured slots to
+> be freed are marked as SWAP_HAS_CACHE while holding the cluster lock,
+> the BUG_ON check can be safely removed. After this, the function
+> swap_entry_range_free() could drop any kind of last flag, rename it to
+> swap_entries_free() and update it's comment accordingly.
+>=20
+> This is a preparation to use swap_entries_free() to drop last 1 and
 
-oh, bad copy/pasta.. it should be 2 (dword offset)
+Probably clearer to say=20
+drop last ref count=20
+instead or drop last 1
 
-BR,
--R
+> SWAP_MAP_SHMEM flag.
+>=20
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> ---
+>  mm/swapfile.c | 21 ++++++++++-----------
+>  1 file changed, 10 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index ba37b9bff586..14b7b37996ff 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -52,9 +52,9 @@
+>  static bool swap_count_continued(struct swap_info_struct *, pgoff_t,
+>  				 unsigned char);
+>  static void free_swap_count_continuations(struct swap_info_struct *);
+> -static void swap_entry_range_free(struct swap_info_struct *si,
+> -				  struct swap_cluster_info *ci,
+> -				  swp_entry_t entry, unsigned int nr_pages);
+> +static void swap_entries_free(struct swap_info_struct *si,
+> +			      struct swap_cluster_info *ci,
+> +			      swp_entry_t entry, unsigned int nr_pages);
+>  static void swap_range_alloc(struct swap_info_struct *si,
+>  			     unsigned int nr_entries);
+>  static bool folio_swapcache_freeable(struct folio *folio);
+> @@ -1511,7 +1511,7 @@ static bool swap_entries_put_nr(struct swap_info_st=
+ruct *si,
+>  	for (i =3D 0; i < nr; i++)
+>  		WRITE_ONCE(si->swap_map[offset + i], SWAP_HAS_CACHE);
+>  	if (!has_cache)
+> -		swap_entry_range_free(si, ci, entry, nr);
+> +		swap_entries_free(si, ci, entry, nr);
+>  	unlock_cluster(ci);
+> =20
+>  	return has_cache;
+> @@ -1530,12 +1530,12 @@ static bool swap_entries_put_nr(struct swap_info_=
+struct *si,
+>  }
+> =20
+>  /*
+> - * Drop the last HAS_CACHE flag of swap entries, caller have to
+> - * ensure all entries belong to the same cgroup.
+> + * Drop the last flag(1, SWAP_HAS_CACHE or SWAP_MAP_SHMEM) of swap entri=
+es,
+> + * caller have to ensure all entries belong to the same cgroup.
 
-> -Akhil.
->
-> > +             <bitfield name=3D"IB_SIZE" low=3D"0" high=3D"19"/>
-> > +     </reg32>
-> > +</domain>
-> > +
-> >  </database>
-> >
->
+Will be nice to modify the above comment:=C2=A0
+	all entries belong to the same cgroup and cluster.
+
+Otherwise
+
+Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+=20
+> =20
+> -static void swap_entry_range_free(struct swap_info_struct *si,
+> -				  struct swap_cluster_info *ci,
+> -				  swp_entry_t entry, unsigned int nr_pages)
+> +static void swap_entries_free(struct swap_info_struct *si,
+> +			      struct swap_cluster_info *ci,
+> +			      swp_entry_t entry, unsigned int nr_pages)
+>  {
+>  	unsigned long offset =3D swp_offset(entry);
+>  	unsigned char *map =3D si->swap_map + offset;
+> @@ -1545,7 +1545,6 @@ static void swap_entry_range_free(struct swap_info_=
+struct *si,
+>  	VM_BUG_ON(ci !=3D offset_to_cluster(si, offset + nr_pages - 1));
+> =20
+>  	do {
+> -		VM_BUG_ON(*map !=3D SWAP_HAS_CACHE);
+>  		*map =3D 0;
+>  	} while (++map < map_end);
+> =20
+> @@ -1605,7 +1604,7 @@ void put_swap_folio(struct folio *folio, swp_entry_=
+t entry)
+> =20
+>  	ci =3D lock_cluster(si, offset);
+>  	if (swap_only_has_cache(si, offset, size))
+> -		swap_entry_range_free(si, ci, entry, size);
+> +		swap_entries_free(si, ci, entry, size);
+>  	else
+>  		for (int i =3D 0; i < size; i++, entry.val++)
+>  			swap_entry_put_locked(si, ci, entry, SWAP_HAS_CACHE);
+
 
