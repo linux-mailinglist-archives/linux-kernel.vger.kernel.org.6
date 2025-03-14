@@ -1,76 +1,102 @@
-Return-Path: <linux-kernel+bounces-561504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF68A612BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:34:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE1DBA612C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:35:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6849D7A6A93
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:33:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1EBF1B6397B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099371FF61D;
-	Fri, 14 Mar 2025 13:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E081200119;
+	Fri, 14 Mar 2025 13:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V7xhDzVO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JwXjMUAu"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F1A1FDE26
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C191EB3E
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741959227; cv=none; b=FUxc2QS0r5aVj8rGkekV8U9VO4xdYtPmpecbOAgWPSOfYe67eY0DQztMCLnwVgjC7ij/LUMk9GWEKzg/a/E4NiX246JCGsCglc9Erpi3pPs8PT4xoUuedxxJHo7CdHZKiSihz16TQWkeftbq28i5LDQ1HjahSY/txEATuqQwT4E=
+	t=1741959266; cv=none; b=YbWMrcbPWKMZJoO866zr5m4ckqb/UtUCKc+yy9AMg4ir+Jn1zyH+JXiD9mf2XpS23k/WKsK1ONMGmRKcc7FtEBdvsRA/ACchtnzDiYEXSKECTekXpxzYVfBNmfMYI6O3PwuSBKDtLwpCcA9g+0YXCd6jgk+4Uj2MoFqLSw65Hpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741959227; c=relaxed/simple;
-	bh=loodNzrUi1U1/aKWFeUcg7+3ZF6ne7Dvoyl2XSrp6i4=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=AS/kpDz19HNaLOHFRLyZf7giJVon6hPQO7d/Z5GebjIW74ByHfOyhj02jK8IyK0NfASZh1QTV4HN92FbyqBdsplFVIwIfeCDSijUJQlpgxNCmO2EtXGCbHHmnkxDKBtiNNVifgm39EFSo0jQ6S9NPL1tsxh/e2aSEIAwUzkRy14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V7xhDzVO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88F46C4CEE3;
-	Fri, 14 Mar 2025 13:33:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741959226;
-	bh=loodNzrUi1U1/aKWFeUcg7+3ZF6ne7Dvoyl2XSrp6i4=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=V7xhDzVOqhy8xuG6nppZU7U3mCPKnBa5vHNF6X/Adc/djde5FnmcCnviMX8nv/Pam
-	 K/MR2imbb6+qixX1FQ1K6a/H/NClX6AadNd7aO48BRkFDSsIKzZvym0+gG1yjsoeoF
-	 6Qc3xAllcjFi3sKgX0s7sA+2wY7bbFF/D7inxrRTTb8qYFp4R1WuNZPFgO2cpgdYbV
-	 w72C1U7ploBr5IRT2NuBJKFYSFbj+dVPzOln6H5vJCvaQgLpnns2IGr+SQkqanFu4C
-	 ftbsMq+F/WC+QEHMXelKuwJgJxm8kxC72PRHfLcOTi9mNuNIsU/XeowotzJsV3TARv
-	 GPo9FQ5/pr87A==
-Message-ID: <25f45ec5103eebdee9883a60f0af5fb6@kernel.org>
-Date: Fri, 14 Mar 2025 13:33:44 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "David Turner" <david.turner@raspberrypi.com>
-Subject: Re: [PATCH v3 2/2] drm/vc4: hdmi: Add jack detection to HDMI audio
- driver
-In-Reply-To: <20250312-vc4_hotplug-v3-2-d75878677de8@raspberrypi.com>
-References: <20250312-vc4_hotplug-v3-2-d75878677de8@raspberrypi.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, "Dave
- Stevenson" <dave.stevenson@raspberrypi.com>, "David Airlie" <airlied@gmail.com>, "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>, "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime
- Ripard" <mripard@kernel.org>, =?utf-8?b?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, "Raspberry
- Pi Kernel Maintenance" <kernel-list@raspberrypi.com>, "Simona Vetter" <simona@ffwll.ch>, "Stefan
- Wahren" <wahrenst@gmx.net>, "Thomas Zimmermann" <tzimmermann@suse.de>
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1741959266; c=relaxed/simple;
+	bh=hEWNd4+ZbADXTs7pFR7y0qjRbhEivmqNY5fnmLcsHuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lip5bybGInT0OsHBP5JrEEEGCKj8VxPPfq/XIEDTQkBE5gp/GW4CvzbI7rfQwcoPEb78FDM4RpABNHYI0Ri/L7hK2L/TcikjP8Pf7u1a5UsUqqWfPMYKQ9QKlFMq8kw7Ow//R4GZY1FTOCnIRRJZJNsdBi8HHUuo3jsLVqQCPCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JwXjMUAu; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B766940E015E;
+	Fri, 14 Mar 2025 13:34:22 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 6VzkRisj_CbX; Fri, 14 Mar 2025 13:34:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741959259; bh=5XLbc6mtHdBLfYeaOQAZ7qgWMakane4UKzHxMIhvsKI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JwXjMUAugAcXhDdW6TKtABIMLeEvoEMiy5CR9tUFwk5pSOH6llsMRf9IBVCcEPQm6
+	 xGr1x4fsBAnO6y/l1SFH4w0jzQweHrYtTG0sGtP6BOnXnuJ/NqRNcPMUmUFOd7Ckqk
+	 TQ5u5xXumejKW/FWAqszAon0xfXdvUSjDLy3xb0wi75CLwzqEPHi/0pBf3gWcQ2yfX
+	 O/Gcxj8mVCGv47upjspTTyark6/wtE7xb+nI+m/AJF4gvRi1E+aS2T2SQhPPZ4cnGo
+	 zVeHj6buzGl0seBM2HxhdPDEAk9W4psV+10b/B3Ii3TCmRMs5MeEOQODpW6vvVSUfd
+	 XZKplHaJj6wd54wsJyU2e+W2twnL4BFUfCFHoop/DtFmI4B1p1CXeIY3TCVT1b4JQs
+	 ircaNqFD5xYtz89NxM7fzR05MxLerc/mxHEm1W1iSnDIuoeYY2AiTzw3BApT1Tet7g
+	 lCz2HZoJBQXjI+pmwaOzpgmJBXisT9FFI6aBACGYOUg2H4nKFQ5RCIS8V0sMLwIoGa
+	 weJZ4QN0NUcAPVpBKoPv6A7oreMtvEUL9FMJ4bmlBdNUDKm65p7KDFyIKAtf5Qak9c
+	 T4biGQasFATp7hvW4fia+E4vKAexsIDNMwXSCqXEMtEbBgSXK/8jzWBlAbs/l4wLuM
+	 2QodZDeFQbgqDn8nGmcNGncU=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1E1F640E023B;
+	Fri, 14 Mar 2025 13:34:12 +0000 (UTC)
+Date: Fri, 14 Mar 2025 14:34:06 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86/asm: Use asm_inline() instead of asm() in
+ __untagged_addr()
+Message-ID: <20250314133406.GEZ9QwTmnwjtX6PiJ6@fat_crate.local>
+References: <20250314093111.654359-1-ubizjak@gmail.com>
+ <20250314112504.GBZ9QSEL1hgjp376ey@fat_crate.local>
+ <CAFULd4bwsZENN5eVLXDDizt6+EcdwgnFBaS4b7YjjqzR-Rmjjw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAFULd4bwsZENN5eVLXDDizt6+EcdwgnFBaS4b7YjjqzR-Rmjjw@mail.gmail.com>
 
-On Wed, 12 Mar 2025 15:40:56 +0000, David Turner wrote:
-> Add ALSA jack detection to the vc4-hdmi audio driver so userspace knows
-> when to add/remove HDMI audio devices.
-> 
-> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-> Signed-off-by: David Turner <david.turner@raspberrypi.com>
-> 
-> [ ... ]
+On Fri, Mar 14, 2025 at 02:22:45PM +0100, Uros Bizjak wrote:
+> Do you see the removed functions?
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
+I'd actually wanna see real benchmarks which show any performance improvement.
+Like this one here. But this one which shows only within-the-noise:
 
-Thanks!
-Maxime
+https://lore.kernel.org/all/20250314132306.GDZ9QtukcVVtDmW1V1@fat_crate.local
+
+But hey, apparently it doesn't cause any slowdowns either and apparently Ingo
+thinks all that churn makes sense so whatever...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
