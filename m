@@ -1,153 +1,145 @@
-Return-Path: <linux-kernel+bounces-560780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0CD4A60966
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:07:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D683A60969
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:09:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61EB33AE274
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:07:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9DA83AE882
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3DA1624CF;
-	Fri, 14 Mar 2025 07:07:25 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15561624FC;
+	Fri, 14 Mar 2025 07:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DL3xjQQ7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19C6C8C7;
-	Fri, 14 Mar 2025 07:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B6914900B;
+	Fri, 14 Mar 2025 07:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741936045; cv=none; b=U4nxFmrqPx9fCM2RGWfLkrTxnEH+C3m+sYRLW2g5skzn0JjMoL2WxRq8OZ2qcQOixrmTbSdyNToglX96NbjEsEDCTmDzo4M4dG/LZ5FC6aKese0xhfS3DllQMmN5zoU0rZa+tQG87pE+nfGt2YKQBwbK2ZZapq4DL3r8t7O6Sp4=
+	t=1741936165; cv=none; b=mYaz16oSMFRqfpirqpa2TJXjjZlfqjpF8rM8SKuqAE4XUNtsBRnxqT2uFYzT7CZDUe+Y+PYEUoWaDT1rOcSue2EfX7JqwbVHJtTnrHGtrc6DFPcU7TfAiXoz0DJy6thSeJrcz7oZupcVaDcDAuitYtFgI8/ejONzFc0nKph+4c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741936045; c=relaxed/simple;
-	bh=+kOlz/Q28jG0cYfTsBiLwIHMZVZA54BpzkbvmNbTCks=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SDUjUa96/p/yGOztZfRjNoBEXcpO8pjc0chnGdfyR405X/J4B2nhuwgC6WyuVANkScdCm0QYHrcN32NavY+K+oM0YcLres2GlZaAdEg8itc955ds/b6NAbVGKCrMyBFnHX5ey5sgl575F5j6I+6zEJRmgt3VdJg0JccW5DNEsms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZDb5X1p4rz4f3jXT;
-	Fri, 14 Mar 2025 15:06:56 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B14CE1A084E;
-	Fri, 14 Mar 2025 15:07:18 +0800 (CST)
-Received: from huawei.com (unknown [10.67.174.45])
-	by APP4 (Coremail) with SMTP id gCh0CgDXN1yf1dNnGzXOGQ--.57039S2;
-	Fri, 14 Mar 2025 15:07:18 +0800 (CST)
-From: Tengda Wu <wutengda@huaweicloud.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Zheng Yejian <zhengyejian1@huawei.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] tracing: Correct the refcount if the hist/hist_debug file fails to open
-Date: Fri, 14 Mar 2025 06:53:35 +0000
-Message-Id: <20250314065335.1202817-1-wutengda@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741936165; c=relaxed/simple;
+	bh=lqlDqv7jzNf6tqp0lQNzjAUzLYXihdBDIDWxPPSL4dU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UuIo4I6f5rTfFAUds6TDpTqnts2kxk9uEti9zNXFbN8Gt/WLk+JblXq+t6vKq+ONiWFAdroT2IKcGbSMvYZrNruJJzQ428Qj8pwQ3H6HAEaniT16wZTmr13ATRDbmKq0VECPAXEWUy6hopQxM8W/QKlfCz+3esnZdQPRJ2zTc0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DL3xjQQ7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E181CC4CEE3;
+	Fri, 14 Mar 2025 07:09:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741936164;
+	bh=lqlDqv7jzNf6tqp0lQNzjAUzLYXihdBDIDWxPPSL4dU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DL3xjQQ7TpGaZkZgshJl1BQqJfoC6QT02GkwvSfOJ2KhMmuZ9ClbhtZvs5gqP3x6T
+	 1aV+ieqONwOxSy2rNRGswx3PSoUPOodwNUBpYmP6ssVGltKmqO0HrFbvUZpVEQY82o
+	 UA0pyTGsDdY4tACHSFpmH73+BaM9B3p8FYrwqKP2ZkyQhcZQFfaW3mHrI777kzX6ji
+	 yYd38TDva2Xf/EXSj+sUQJBQi9fLT8GvseleDAuqCBacemvEI5GvHIezM2b3HP+zU8
+	 qu9hNlbk1Qa6M3VNHbpKWGKrf55TSJ8AcsnB2jT1FJU8yzUIyl3cazns5WUEJcO/B6
+	 Jv9OUw6MGNOwQ==
+Message-ID: <8db9a032-0469-4655-9ae0-89070df5760b@kernel.org>
+Date: Fri, 14 Mar 2025 08:09:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXN1yf1dNnGzXOGQ--.57039S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Aw1kur43AFy7XrWxAr15XFb_yoW5JF4Upr
-	WrJrn8Kry8J3WIgr1fAan7ZFyfZ3y8tFWxWa4Du34ftrn8W34Fqay7K345ZF15trZ5Jrya
-	qa1qgry2krWUuaDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1ZmRUUUUUU==
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16] arm64: dts: qcom: sa8775p: Add CTCU and ETR nodes
+To: Jie Gan <quic_jiegan@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Jinlong Mao <quic_jinlmao@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>
+References: <20250310095625.2073735-1-quic_jiegan@quicinc.com>
+ <7137bf34-5b97-47ca-b4d8-375db26b433e@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <7137bf34-5b97-47ca-b4d8-375db26b433e@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The function event_{hist,hist_debug}_open() maintains the refcount of
-'file->tr' and 'file' through tracing_open_file_tr(). However, it does
-not roll back these counts on subsequent failure paths, resulting in a
-refcount leak.
+On 14/03/2025 07:48, Jie Gan wrote:
+> 
+> 
+> On 3/10/2025 5:56 PM, Jie Gan wrote:
+>> Add CTCU and ETR nodes in DT to enable related functionalities.
+>>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>> Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+>> ---
+>> Separate from the patch series: Coresight: Add Coresight TMC Control Unit driver
+>>
+>> Changes in V16:
+>> 1. Add acked-by tag from Suzuki.
+>> 2. Rebased on next-20250307.
+>> Link to V15 - https://lore.kernel.org/all/20250303032931.2500935-11-quic_jiegan@quicinc.com/
+>> ---
+>>   arch/arm64/boot/dts/qcom/sa8775p.dtsi | 153 ++++++++++++++++++++++++++
+>>   1 file changed, 153 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>> index 23049cc58896..93ca37843990 100644
+>> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> 
+> 
+> Gentle ping. Can you please help to review the patch?
+4 days? You gave us exactly four days and ping? This contribution is not
+special and should not receive any special treatment.
 
-A very obvious case is that if the hist/hist_debug file belongs to a
-specific instance, the refcount leak will prevent the deletion of that
-instance, as it relies on the condition 'tr->ref == 1' within
-__remove_instance().
-
-Fix this by calling tracing_release_file_tr() on all failure paths in
-event_{hist,hist_debug}_open() to correct the refcount.
-
-Fixes: 1cc111b9cddc ("tracing: Fix uaf issue when open the hist or hist_debug file")
-Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
-Cc: stable@vger.kernel.org # v6.7+
----
-v2: Fix all error path exits after taking the refcount.
-
- kernel/trace/trace_events_hist.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index ad7419e24055..53dc6719181e 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -5689,12 +5689,16 @@ static int event_hist_open(struct inode *inode, struct file *file)
- 	guard(mutex)(&event_mutex);
- 
- 	event_file = event_file_data(file);
--	if (!event_file)
--		return -ENODEV;
-+	if (!event_file) {
-+		ret = -ENODEV;
-+		goto err;
-+	}
- 
- 	hist_file = kzalloc(sizeof(*hist_file), GFP_KERNEL);
--	if (!hist_file)
--		return -ENOMEM;
-+	if (!hist_file) {
-+		ret = -ENOMEM;
-+		goto err;
-+	}
- 
- 	hist_file->file = file;
- 	hist_file->last_act = get_hist_hit_count(event_file);
-@@ -5702,9 +5706,14 @@ static int event_hist_open(struct inode *inode, struct file *file)
- 	/* Clear private_data to avoid warning in single_open() */
- 	file->private_data = NULL;
- 	ret = single_open(file, hist_show, hist_file);
--	if (ret)
-+	if (ret) {
- 		kfree(hist_file);
-+		goto err;
-+	}
- 
-+	return 0;
-+err:
-+	tracing_release_file_tr(inode, file);
- 	return ret;
- }
- 
-@@ -5979,7 +5988,10 @@ static int event_hist_debug_open(struct inode *inode, struct file *file)
- 
- 	/* Clear private_data to avoid warning in single_open() */
- 	file->private_data = NULL;
--	return single_open(file, hist_debug_show, file);
-+	ret = single_open(file, hist_debug_show, file);
-+	if (ret)
-+		tracing_release_file_tr(inode, file);
-+	return ret;
- }
- 
- const struct file_operations event_hist_debug_fops = {
--- 
-2.34.1
-
+Best regards,
+Krzysztof
 
