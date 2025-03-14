@@ -1,143 +1,162 @@
-Return-Path: <linux-kernel+bounces-561483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B18A6128F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:26:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D9BCA61294
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:27:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787181891670
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:26:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73A20171661
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3291FF615;
-	Fri, 14 Mar 2025 13:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8381FF7DC;
+	Fri, 14 Mar 2025 13:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2u5RcoG"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="e8HuVzn+"
+Received: from sender3-pp-f112.zoho.com (sender3-pp-f112.zoho.com [136.143.184.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACFA2E3398;
-	Fri, 14 Mar 2025 13:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741958792; cv=none; b=nJ0NygE8ezvQ2z6YqsU3nBjXp32RMVD0iviHuyKJMYKzMNBkDssCo0+Y9GekRbAlD/xh04Vu9EW+jIt77qCn1aGPpjCMEKhtXpv/HEaMFHLaRk1xjedm/taLYX6l9ihuuauYjjTHiI6pBKMdsPygTJ61vrrO/+N/8LkfOeESdKY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741958792; c=relaxed/simple;
-	bh=a1ewCs15d7EUwAKtdHew2LfV3smx2PG4+Aap1SXq+x4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tLQyTb0grWJKgenhwwVzrH88t70vWH1OQytD8hIeZDiT4+8s6kw4Os9R09NRV5TZmMB2khjXuWSABs2K0k46xlK7yjsxAkGWk9ojU0/9CvDutP7M8b0MeYi4yegn8PqIXE8IuaolUoCTgFhbAMHcmFqLOBnm1AFnNBFmYGsYCxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2u5RcoG; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-523fa0df55dso2637991e0c.1;
-        Fri, 14 Mar 2025 06:26:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741958789; x=1742563589; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wyULV2YmhZdLQ8JK+SLrjPauKQSBOhz1Nvb61q64AGQ=;
-        b=k2u5RcoGS/KgCfkeQ4IOqDCFOK1Cvx/UAz0EyQ1g3LbYbPdpVIRTeOTN8fn1TDdwRn
-         w9LTImcCUNqPl8bGsNhsu2KURoyhmvwfPhBsBNNBdenfUeBSWMhQX0x8MrI1GbumiY3u
-         6RAI54/4e2hFANo9aNuzHNm+l5IDvfXeLJqFyjpn83dtCHF39AnOcE+24/kIPc7ucpZp
-         eRvPC1/U65nHEHGfnA6PH7Wlb+VJEmmmTJJ/r4eMR4Mu/rNjrpb6EpruYPTcRVzh0iMO
-         pL1ZCTWVd1pf3F2203CYMG9v4HT0vAofxMDUt0hg+1BunFaWd2QkuaUCPVdSkrx6LLMV
-         39Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741958789; x=1742563589;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wyULV2YmhZdLQ8JK+SLrjPauKQSBOhz1Nvb61q64AGQ=;
-        b=HpHjz496+nYQ1GeC813mCqxkj81x+00iUhuW0MrNtjK4ETKGdn2uhKr9xgQxbT3yzz
-         jJD4FPDB6Ozli1MB2RTwolYpac+KyUwpHnWqA07QiOBODEqeO11tz77UiMsEb9a2a0eb
-         JxkWByNbw2w9yOnVE16fGZLOzNdLghRA6FvKCzx5zLLE98/5Y3M/YCszd/McPpw635gd
-         oBpK9SZbsDZlAopeh7if0dagskyG8aOpr7h7UcK9+koKTfu/qC8P4CB1OhmXt/4TpWHn
-         2qvzhc5vXMA84+jOaqP2xPyaUVDS32QpTWNj1r+DRQQm9KBO/ZawnDjwXTxcjhTqx32I
-         tw+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUanjnS9imvxFPAUJlRY/AUAuKUYOau/aiHdfYpyY4SLkdPYhWTQnCDGwk9LfODKRkXrDNBPG2aH94x0UPA@vger.kernel.org, AJvYcCVHkhR0Mwzeui0AejHHNPTRcj2oyd4KHSzkYpfvhEGMD6bYDhMD185PQA5k7B11Mz1XO+iQ8IMrWgo=@vger.kernel.org, AJvYcCX/zyo8WCnGAYPuS8HzTdFUyGkLuZre+UI2eRwKuY9NXXSpQItov6juZJ3AQdMwSTPLTtzZFmFjIgY3gad6SJ2Ol+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhtqUi4z6YsGQTPuXxsMvH/tR46NKzBLy6vPsEQJBrnHliUPUI
-	nfWbkgj08A658+rX2lmv3Fp+VWkbjwUB5NthA3K/NOJC2hAYVdOQ93it1cL15WmiccKswCVvYxM
-	2EkY5tp+FMGifqlkDPtpzsckZX/R/dBxk
-X-Gm-Gg: ASbGnctbvETUgUv8wt+M8U/K4QFq8NQAJ3kDiJIKbF5KE5uk4BJYwPuoNOZicaXne2y
-	3zh0BqQiedsHc/InV4nNvO+we3FfeYayqRRMchZt8/TqWyAWUEZAX2UjUu4nDnIv2tNtm8spJ1K
-	2rqTJQs4xOOxL0+HkcsVyapoGh2A==
-X-Google-Smtp-Source: AGHT+IHWtmEo1+EDvlsPdWDsjR/+rksCl4aBp8qnpq4JIJmYST5qgVAs+Cx6K79rRZ0Y9jaQodtaiC0jygkOLDDsgUc=
-X-Received: by 2002:a05:6122:3782:b0:523:e4c6:dddb with SMTP id
- 71dfb90a1353d-5243a15b6f4mr7059436e0c.0.1741958789562; Fri, 14 Mar 2025
- 06:26:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF9812FF6F;
+	Fri, 14 Mar 2025 13:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741958834; cv=pass; b=AlSU1FOuJlEoOAjD18xSR8q/v1L6gudDr4JrMtRxGP1juFJ3vsABUOJVq01t0mWd2gbDCSpgkmZAGRuCMBH5PhhgvsveqLul/BxXvLh1ou1dFYfYLRfRjMT6LqUyszaA0f42ue31v2dyAXrFp3LkIeu7NHsuF9tgWu3JfQkOq6M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741958834; c=relaxed/simple;
+	bh=Xp0Y8pHU3fv/bIXLAawK95MaSBrGEYjOs4pySFviY/w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Q48YmewAEbMoimHxUYehE6y0xCFDvxKN5bwKIiSEaKDKPPR4ZjJx9Za/4fFuNtjggqrdkxMXWV4qX3jD8FZHbhCMYkdu5p8SSf4ZC1v59t3A4DcvtKb7xr4T4OLxaa7wiAeyls/0OVfrSXKveJIEj5Z0r/qTmVfl1+f9SvF8BPQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=e8HuVzn+; arc=pass smtp.client-ip=136.143.184.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741958798; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=D4k3SKsVi5dF8Z3ZB4rjnk6FXSb8ROD01yQSVBAcAm46+r9Rk7SRAbIJ6MQv07q8S1LSSg8TXuJousZ8TmJq6zDyYryNfkab3SWxrsn4h6K/T1VJgnY22rigFDVRgFIKLyM3b0+7DZt6aSomlfBL7QV2ZG7ryXCeWXbBsVFzL9w=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741958798; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=TFP7XQ1cObdqQ6De6eSsgjYNzHKxK2Nt4AObjojPfNo=; 
+	b=ihm1Uo8exTE5IABlu3X5y8qdKU30rmWh6Ur83wSEQy7JNbyR5qb3uL5z0jIE3x45f5YpRfK+6honuCaYvUztaL1MQPzCZDmua5z7xcTFsSPUG8sLLPD2AxKUsPMjf1zYMKnySvLbECuitGVqK1XyPjFOlI7Q+pa5bAW79c3XMqw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
+	dmarc=pass header.from=<sebastian.fricke@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741958798;
+	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=TFP7XQ1cObdqQ6De6eSsgjYNzHKxK2Nt4AObjojPfNo=;
+	b=e8HuVzn+uMJOmOW7EN341A6UjAQkT9ccnM/Tw2WnM/Wz7ZDoRNKTyETONJgq4Gsk
+	+GcnhLxcvKVjru8HwuU4j1nJgqRx4JVIzTtqey3QO022T0sMu56+a9SRH+QKyqOH2uW
+	EDC819E5xZUpFRcGzCQJJCEaa3KSEtWDFxpsqnRk=
+Received: by mx.zohomail.com with SMTPS id 1741958796725877.1323443038518;
+	Fri, 14 Mar 2025 06:26:36 -0700 (PDT)
+From: Sebastian Fricke <sebastian.fricke@collabora.com>
+Subject: [PATCH 0/5] Add manual request completion to the MediaTek VCodec
+ driver
+Date: Fri, 14 Mar 2025 14:26:25 +0100
+Message-Id: <20250314-sebastianfricke-vcodec_manual_request_completion_with_state_machine-v1-0-5e277a3d695b@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250309211402.80886-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250309211402.80886-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdU5tr2sNZQtVkT922sJd_7Lbt=nYUujX0WtnrzkWOJqiQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdU5tr2sNZQtVkT922sJd_7Lbt=nYUujX0WtnrzkWOJqiQ@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 14 Mar 2025 13:26:03 +0000
-X-Gm-Features: AQ5f1JrV4PHhFqtGVE7ctpK40g8AtfmAvdlUDemWvkd-J_FwgcQljHoue9rWgco
-Message-ID: <CA+V-a8uhJPssjTsKPwfh7G7P26uuRj+xy_uZF6SQPPQOTx33-A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] clk: renesas: rzv2h: Refactor PLL configuration handling
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIEu1GcC/x2O0QqCQBBFf0X2uQVdy6JfiVim8ZpDutrOaoH47
+ y09HricezajiAI112IzEauoTCFDdSgM9xSesNJmNq50p7KunFU8SJNQ6KLwC3blqQX7kcJCg49
+ 4L9DkeRrnASnL/EdS7zVRQh5xLwG2qRvH5+5SUnU0+WmO6OT7r7jd9/0HIUjRl5UAAAA=
+X-Change-ID: 20250312-sebastianfricke-vcodec_manual_request_completion_with_state_machine-6362c7f80a14
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Hans Verkuil <hverkuil@xs4all.nl>, Tiffany Lin <tiffany.lin@mediatek.com>, 
+ Andrew-CT Chen <andrew-ct.chen@mediatek.com>, 
+ Yunfei Dong <yunfei.dong@mediatek.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ kernel@collabora.com, Sebastian Fricke <sebastian.fricke@collabora.com>, 
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
+ Hans Verkuil <hverkuil@xs4all.nl>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741958789; l=3501;
+ i=sebastian.fricke@collabora.com; s=linux-media; h=from:subject:message-id;
+ bh=Xp0Y8pHU3fv/bIXLAawK95MaSBrGEYjOs4pySFviY/w=;
+ b=3QIJWz8aO21ikn7G/sTIYXAiWCA335VBVJ6d1vE+9/medWSofWgVGyuBgGZC7ZJa/b73S13ls
+ ZkS/Y9WunT3BVM1lwJ4dQnDfWRlQ+VNg5hKS73rldUKBA7XZligWjVL
+X-Developer-Key: i=sebastian.fricke@collabora.com; a=ed25519;
+ pk=pYXedPwrTtErcj7ERYeo/IpTrpe4QbJuEzSB52fslBg=
+X-ZohoMailClient: External
 
-Hi Geert,
+This set introduces the manual request completion API by the author Hans
+Verkuil and implements it within the MediaTek VCodec driver.
 
-Thank you for the review.
+Why is this needed?
 
-On Fri, Mar 14, 2025 at 1:04=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Sun, 9 Mar 2025 at 22:14, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Refactor PLL handling by introducing a `struct pll` to encapsulate PLL
-> > configuration parameters, ensuring consistency with the existing dynami=
-c
-> > divider structure.
-> >
-> > Introduce the `PLL_PACK()` macro to simplify PLL structure initializati=
-on
-> > and update the `DEF_PLL()` macro to use the new `pll` structure. Modify
-> > relevant clock register functions to utilize the structured PLL data
-> > instead of raw configuration values.
-> >
-> > This refactoring improves code readability, maintainability, and
-> > alignment with the existing clock configuration approach.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-clk for v6.16.
->
-> > --- a/drivers/clk/renesas/rzv2h-cpg.h
-> > +++ b/drivers/clk/renesas/rzv2h-cpg.h
-> > @@ -10,6 +10,25 @@
-> >
-> >  #include <linux/bitfield.h>
-> >
-> > +/**
-> > + * struct pll - Structure for PLL configuration
-> > + *
-> > + * @offset: STBY register offset
-> > + * @clk: Flag to indicate if CLK1/2 are accessible or not
->
-> If you don't mind, I'll rename this to "has_clkn" while applying.
->
-sounds good to me, thank you for taking care of it.
+The VCodec driver supports a hardware containing two separate cores, the
+CORE and the LAT, these are working in a serial manner without this
+series. This series solves two issues, the first being that the current
+code runs into a problem, that occurs when the last request object is
+unbound from the request, before the v4l2_ctrl_request_complete function
+is called, causing an implicit transition to the COMPLETE state.
+This issues has been found in applications which didn't attach the
+controls for the very first request (which is supposed to enable the
+driver to sniff out the correct formats, etc.).
+The second issue is that the VCodec driver can not utilize the full
+performance of both cores, when the LAT core has to wait for the CORE
+core to finishing processing the decode. Thus by enabling the LAT core
+to process the next bitstream, right after processing the last we can
+increase the performance of the driver.
+With the manual request completion API, we can separate the
+completion of the request objects of a request and from the completion
+of the request itself, which allows to send a new bitstream after the
+LAT core has processed the previous and while the CORE core decodes the
+previous bitstream, so both cores can work in a parallel manner, but
+while keeping the request alive during both steps.
 
-Cheers,
-Prabhakar
+A new state machine for the VCodec driver ensures, that all necessary
+processing steps are handled in the correct order depending on the
+current step in the execution. This state machine has been added to each
+request to ensure that new requests do not alter the state of still
+ongoing requests.
+
+Additionally, this series adds a small patch to avoid trying to handle a
+scenario, which is not supported by the hardware and thus runs into a
+timeout.
+
+Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
+---
+Hans Verkuil (3):
+      media: mc: add manual request completion
+      media: vicodec: add support for manual completion
+      media: mc: add debugfs node to keep track of requests
+
+Nicolas Dufresne (1):
+      media: mtk-vcodec: Don't try to decode 422/444 VP9
+
+Sebastian Fricke (1):
+      media: vcodec: Implement manual request completion
+
+ drivers/media/mc/mc-device.c                       | 30 +++++++++++++
+ drivers/media/mc/mc-devnode.c                      |  5 +++
+ drivers/media/mc/mc-request.c                      | 44 +++++++++++++++++-
+ .../mediatek/vcodec/common/mtk_vcodec_cmn_drv.h    | 13 ++++++
+ .../mediatek/vcodec/decoder/mtk_vcodec_dec.c       |  4 +-
+ .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c   | 52 ++++++++++++++++++++++
+ .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h   |  4 ++
+ .../vcodec/decoder/mtk_vcodec_dec_stateless.c      | 52 ++++++++++++----------
+ drivers/media/test-drivers/vicodec/vicodec-core.c  | 21 +++++++--
+ include/media/media-device.h                       |  9 ++++
+ include/media/media-devnode.h                      |  4 ++
+ include/media/media-request.h                      | 38 +++++++++++++++-
+ 12 files changed, 244 insertions(+), 32 deletions(-)
+---
+base-commit: f2151613e040973c868d28c8b00885dfab69eb75
+change-id: 20250312-sebastianfricke-vcodec_manual_request_completion_with_state_machine-6362c7f80a14
+
+Best regards,
+-- 
+Sebastian Fricke <sebastian.fricke@collabora.com>
+
 
