@@ -1,95 +1,157 @@
-Return-Path: <linux-kernel+bounces-561840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E137DA61742
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:16:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80036A61745
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:16:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F5E017DD52
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:16:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0729E8800BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7682045AB;
-	Fri, 14 Mar 2025 17:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lejCfl3W"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EBE2036E0;
+	Fri, 14 Mar 2025 17:16:40 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A961F957;
-	Fri, 14 Mar 2025 17:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0311FF7CA;
+	Fri, 14 Mar 2025 17:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741972582; cv=none; b=XayC7hRGjDhIkqLAzusBDM0XocRzrAwu8JtE/XL/tGzX1CyNV/6a/A1o2oe9Mj2D/g3vcDO0crGZs2pyEIaKpcP28JlQ/3q5ynob2cElkHivZ4xi+/eIRVEfhN0Jy6dhU9FDGlAjFi0vrqy++OZ3nXr9nwVWY3nz6HxJ3s3lFHA=
+	t=1741972600; cv=none; b=kgHNc2mKstDAIXcKuUTNOuPoQqgrEdBQRbIBXMBwFFpm/mAhkBsQF8QppCH1oC8tKu4/qSjFqwxOVWONDAf1jMI7Zoh2JGrGeEaNO7eLfru9zw8ZCEbJQELHOHgeYfR08ckKnPFSxXLjIS5H059Wz4KX5gZQE/Y6nY6aUy/Lndo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741972582; c=relaxed/simple;
-	bh=W67U60VL6XmhN/hWl8e/1wv3U9CJq+LTfzrtdFVpEB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CQB88U9bgpnM5vzCn0YHuVvjxjaOOQZJcVfkDlsqCaTXYvalD06WsEcbrcjKhbDkoBIa6p3KUfdMRQ060HrB05Y80ErsymrHdN1WGlWFWr8gYHNYZoVjFf0A2Yk8qWFoVR+rgL7CTXTpfwUIsHUHPFkq2AaT15daNOb/Tr1/p70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lejCfl3W; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741972581; x=1773508581;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=W67U60VL6XmhN/hWl8e/1wv3U9CJq+LTfzrtdFVpEB8=;
-  b=lejCfl3WNdk78id8HCaPAkAi1cYdXr1H85Qce5WozsCuQPflmcPeQYuj
-   8lPshPbyMq84DpV9W+toxP5MQQetH1VkRbYhJ9B3h543R03NQmQI996mz
-   iqu4NWXhMcD+xW5sjeCmDUChG0eL9RBG2aIEUeLAj1pvWyY/LPelIyIzD
-   aJUbrY9RYBoN8i69/X5I1oK5+B2gOWErCj1m0+Qi1jxkGPywx3zGurPQD
-   XyxCh2O2PW5g8LEA0x1CQJ8hzXMeGFNV1nekhfNfe2D7urCNW0w2AJNb8
-   f7R9+LMmEO7zN5dAtr87cbuvuu8x7FL9Z0AQhBtGDj9AQ77wysMOHj+aN
-   w==;
-X-CSE-ConnectionGUID: A4Sjp5X0QxqlHSvlQHrBZQ==
-X-CSE-MsgGUID: rAzAzIrQSPSPgw08yUyu2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="30720343"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="30720343"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 10:16:21 -0700
-X-CSE-ConnectionGUID: hqNtd0hmROWRJLLpHgHIiQ==
-X-CSE-MsgGUID: YZMEWzVsTmqNNkvxYWYKhQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="121828284"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 10:16:19 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tt8dt-00000002WvJ-0ohV;
-	Fri, 14 Mar 2025 19:16:17 +0200
-Date: Fri, 14 Mar 2025 19:16:16 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH v3 1/1] media: v4l2-core: Replace the check for firmware
- registered I2C devices
-Message-ID: <Z9RkYCJ-ggJl2kn0@smile.fi.intel.com>
-References: <20250313113115.359942-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1741972600; c=relaxed/simple;
+	bh=0Nz3fw421OR1HpIMBgabaR/cBVwKujxG5ayl5xh+MNg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eSO5KDt8yTtCfK4Lmpoqu6cqGd2lKmG84BQO2Wv/F8IRgPWEzNu9GwJDrcCWcw5KRCqU7HPlyEr4iN+sdX9OnvTgEIvssVTrIc0OCRrcOtv1GqRMWjfOh4i4oiqpvzDB07jwLWoF6xajyMpFjFI8CHxXJU6S/c3rO6nPPdibKXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDrYt0d2Bz6JB7h;
+	Sat, 15 Mar 2025 01:13:54 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6C916140B55;
+	Sat, 15 Mar 2025 01:16:35 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Mar
+ 2025 18:16:34 +0100
+Date: Fri, 14 Mar 2025 17:16:33 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Siddharth Menon <simeddon@gmail.com>
+CC: <linux-iio@vger.kernel.org>, <lars@metafoo.de>,
+	<Michael.Hennerich@analog.com>, <jic23@kernel.org>,
+	<gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+	<linux-staging@lists.linux.dev>, "Marcelo Schmitt"
+	<marcelo.schmitt1@gmail.com>
+Subject: Re: [PATCH] iio: frequency: ad9832: Use FIELD_PREP macro to set bit
+ fields
+Message-ID: <20250314171633.0000654e@huawei.com>
+In-Reply-To: <20250313195442.30264-1-simeddon@gmail.com>
+References: <20250313195442.30264-1-simeddon@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250313113115.359942-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, Mar 13, 2025 at 01:30:34PM +0200, Andy Shevchenko wrote:
-> Replace the check for firmware registered I²C devices as the firmware node
-> independently on type should be retrieved via dev_fwnode().
+On Fri, 14 Mar 2025 01:24:17 +0530
+Siddharth Menon <simeddon@gmail.com> wrote:
 
-Hans, are you okay with this now? Can it be applied?
+> Refactor code to use the FIELD_PREP macro for setting bit fields
+> instead of manual bit manipulation.
+> 
+> Suggested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+> Signed-off-by: Siddharth Menon <simeddon@gmail.com>
+> ---
+>  drivers/staging/iio/frequency/ad9832.c | 39 ++++++++++++++------------
+>  1 file changed, 21 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
+> index 140ee4f9c137..bbde1f0e84ff 100644
+> --- a/drivers/staging/iio/frequency/ad9832.c
+> +++ b/drivers/staging/iio/frequency/ad9832.c
+> @@ -70,6 +70,9 @@
+>  #define AD9832_FREQ_BITS	32
+>  #define AD9832_PHASE_BITS	12
+>  #define RES_MASK(bits)		((1 << (bits)) - 1)
+> +#define DATA_MASK       0xFF
+> +#define CMD_MASK        (0xF << CMD_SHIFT)
+> +#define ADD_MASK        (0xF << ADD_SHIFT)
+Don't mix and match.  If we can't get rid of CMD_SHIFT then
+this is not worth ti.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Ideally should end up with
+#define AD9832_CMD_MSK 0xF000
+#define AD9832_ADD_MSK 0x0F00
 
+
+>  
+>  /**
+>   * struct ad9832_state - driver instance specific data
+> @@ -139,18 +142,18 @@ static int ad9832_write_frequency(struct ad9832_state *st,
+>  
+>  	regval = ad9832_calc_freqreg(clk_freq, fout);
+>  
+> -	st->freq_data[0] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
+> -					(addr << ADD_SHIFT) |
+> -					((regval >> 24) & 0xFF));
+> -	st->freq_data[1] = cpu_to_be16((AD9832_CMD_FRE16BITSW << CMD_SHIFT) |
+> -					((addr - 1) << ADD_SHIFT) |
+> -					((regval >> 16) & 0xFF));
+> -	st->freq_data[2] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
+> -					((addr - 2) << ADD_SHIFT) |
+> -					((regval >> 8) & 0xFF));
+> -	st->freq_data[3] = cpu_to_be16((AD9832_CMD_FRE16BITSW << CMD_SHIFT) |
+> -					((addr - 3) << ADD_SHIFT) |
+> -					((regval >> 0) & 0xFF));
+> +	st->freq_data[0] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE8BITSW) |
+> +					FIELD_PREP(ADD_MASK, addr) |
+> +					FIELD_PREP(DATA_MASK, (regval >> 24) & 0xFF));
+> +	st->freq_data[1] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE16BITSW) |
+> +					FIELD_PREP(ADD_MASK, (addr - 1)) |
+> +					FIELD_PREP(DATA_MASK, (regval >> 16) & 0xFF));
+> +	st->freq_data[2] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE8BITSW) |
+> +					FIELD_PREP(ADD_MASK, (addr - 2)) |
+> +					FIELD_PREP(DATA_MASK, (regval >> 8) & 0xFF));
+> +	st->freq_data[3] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE16BITSW) |
+> +					FIELD_PREP(ADD_MASK, (addr - 3)) |
+> +					FIELD_PREP(DATA_MASK, (regval >> 0) & 0xFF));
+
+These are doing a byte wise write. Instead of this regval shifting madness look
+at converting to array with appropriate unaligned_put_be32
+then a loop to do this.
+
+
+>  
+>  	return spi_sync(st->spi, &st->freq_msg);
+>  }
+> @@ -161,12 +164,12 @@ static int ad9832_write_phase(struct ad9832_state *st,
+>  	if (phase >= BIT(AD9832_PHASE_BITS))
+>  		return -EINVAL;
+>  
+> -	st->phase_data[0] = cpu_to_be16((AD9832_CMD_PHA8BITSW << CMD_SHIFT) |
+> -					(addr << ADD_SHIFT) |
+> -					((phase >> 8) & 0xFF));
+> -	st->phase_data[1] = cpu_to_be16((AD9832_CMD_PHA16BITSW << CMD_SHIFT) |
+> -					((addr - 1) << ADD_SHIFT) |
+> -					(phase & 0xFF));
+> +	st->phase_data[0] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_PHA8BITSW) |
+> +					FIELD_PREP(ADD_MASK, addr) |
+> +					FIELD_PREP(DATA_MASK, (phase >> 8) & 0xFF));
+> +	st->phase_data[1] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_PHA16BITSW) |
+> +					FIELD_PREP(ADD_MASK, (addr - 1)) |
+> +					FIELD_PREP(DATA_MASK, phase & 0xFF));
+>  
+>  	return spi_sync(st->spi, &st->phase_msg);
+>  }
 
 
