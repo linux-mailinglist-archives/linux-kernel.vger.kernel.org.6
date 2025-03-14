@@ -1,90 +1,102 @@
-Return-Path: <linux-kernel+bounces-561397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D88A61113
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:28:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF09A6110F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:27:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 709597B00A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:25:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 877358822A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C6C1FECDB;
-	Fri, 14 Mar 2025 12:25:41 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597BB1FF1A4;
+	Fri, 14 Mar 2025 12:26:23 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCE73C6BA;
-	Fri, 14 Mar 2025 12:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62951CBE8C;
+	Fri, 14 Mar 2025 12:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741955141; cv=none; b=PPHAkSR2eVpFs1t7qvhyXEo+NilAYkj9suhrZMZ2aMD9YwqxHj7ae7BlMeO4kwiGG1m2/fNciXvO+0ebNXnyaugr5xOfJ/qwOV+cZ8hfS2kbDy2KieOM8vOWl0VjiTPJNRmqNuFf4hBk/x38BlXjbDtXt2NYgytG0+rLzX+tbfU=
+	t=1741955183; cv=none; b=KbacmWN6Wa24w9u6gdo0NKSPMXpl9aR9VuPfmAPzGUbQ/LpiDySldm3TKbbdSJ8Wu96aPJrWxKChydFAS+cDGARwa6t/L2JPGXKI/4Xo9fKb5XHjJjvFOIk6ETghMib/LyPn/dw6tt79Dh17OupAFp6qXDJUlUAlbpdU8fZjdC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741955141; c=relaxed/simple;
-	bh=C3ajX4JAUrPquYgWiiRnIxeWnSa1+l96cAGrlH5vXnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gCwV5gblvJ0lEjDKedm5fkUJjKrtgZdD4KkI1gn3HWPWJl88+mtdZtCzwA7jIXbvc6HCejPezODhNaUTnl1S1pb9WgJU6vN7tI1AVWnAcbYb2hFGJYAjFGXeYbij1wbIMx7S+9TualLCVNodp1cxNH3ifg+5CAyvfG7xE+RG33g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 215A4C4CEE3;
-	Fri, 14 Mar 2025 12:25:37 +0000 (UTC)
-Date: Fri, 14 Mar 2025 08:25:34 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, linux-mm@kvack.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>, Michael Petlan
- <mpetlan@redhat.com>, Veronika Molnarova <vmolnaro@redhat.com>, Suren
- Baghdasaryan <surenb@google.com>, Rasmus Villemoes
- <linux@rasmusvillemoes.dk>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Tamir Duberstein <tamird@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RESEND][PATCH] tracing: gfp: Remove duplication of recording
- GFP flags
-Message-ID: <20250314082534.57ef07c4@batman.local.home>
-In-Reply-To: <20250313125313.4f3d98f4@batman.local.home>
-References: <20250225135611.1942b65c@gandalf.local.home>
-	<Z9L5HsVzQ0bVZtjp@pathway.suse.cz>
-	<20250313125313.4f3d98f4@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741955183; c=relaxed/simple;
+	bh=CTOADkKaiXL14ofE1ctHaZx6+5tXRWKRi8L0z3hb+x8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bwMpoCNpLoEOlQZ01VQmgNvYzCRAP+Az/afXlvQ8AoYIRq5IYjSWvFcPkCffzi4Eia6Ckw2EoTz8TOXhQHTCIVBr19ZqSLWMsWabi+prGEr7TrpW9titrq69mr6rFJyHxWNEIk+/sgu+Zo5Uz1KdiYNnT1BAhjcUf6C/diAS4l0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.43] (g43.guest.molgen.mpg.de [141.14.220.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 87A6F61E647AE;
+	Fri, 14 Mar 2025 13:25:52 +0100 (CET)
+Message-ID: <cb12d8d3-229c-4ef9-b585-778772b34ac7@molgen.mpg.de>
+Date: Fri, 14 Mar 2025 13:25:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: Linux logs new warning `gpio gpiochip0:
+ gpiochip_add_data_with_key: get_direction failed: -22`
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org,
+ regressions@lists.linux.dev
+References: <9ded85ef-46f1-4682-aabd-531401b511e5@molgen.mpg.de>
+ <CAMRc=McJpGMgaUDM2fHZUD7YMi2PBMcWhDWN8dU0MAr911BvXw@mail.gmail.com>
+ <36cace3b-7419-409d-95a9-e7c45d335bef@molgen.mpg.de>
+ <CAMRc=Mf-ObnFzau9OO1RvsdJ-pj4Tq2BSjVvCXkHgkK2t5DECQ@mail.gmail.com>
+ <a8c9b81c-bc0d-4ed5-845e-ecbf5e341064@molgen.mpg.de>
+ <CAMRc=MdNnJZBd=eCa5ggATmqH4EwsGW3K6OgcF=oQrkEj_5S_g@mail.gmail.com>
+ <CACRpkdZbu=ii_Aq1rdNN_z+T0SBRpLEm-aoc-QnWW9OnA83+Vw@mail.gmail.com>
+ <Z78ZK8Sh0cOhMEsH@black.fi.intel.com> <Z78bUPN7kdSnbIjW@black.fi.intel.com>
+ <CACMJSevxA8pC2NTQq3jcKCog+o02Y07gVgQydo19YjC9+5Gs6Q@mail.gmail.com>
+ <Z78jjr8LMa165CZP@smile.fi.intel.com>
+ <dd9d62d5-54fc-4e7e-8508-1b8e22ac28d5@molgen.mpg.de>
+ <CAMRc=Mez_3F0NifXLb18_XNH+-Q7D47HVOrYNt37EWsO9z0zgg@mail.gmail.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <CAMRc=Mez_3F0NifXLb18_XNH+-Q7D47HVOrYNt37EWsO9z0zgg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 13 Mar 2025 12:53:13 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Dear Bartosz,
 
-> > --- a/include/trace/events/mmflags.h
-> > +++ b/include/trace/events/mmflags.h
-> > @@ -101,7 +101,7 @@ TRACE_DEFINE_ENUM(___GFP_LAST_BIT);
-> >  	gfpflag_string(GFP_DMA32),		\
-> >  	gfpflag_string(__GFP_RECLAIM),		\
-> >  	TRACE_GFP_FLAGS				\
-> > -	{ 0, "none" }
-> > +	{ 0, NULL }
-> >  
-> >  #define show_gfp_flags(flags)						\
-> >  	(flags) ? __print_flags(flags, "|", __def_gfpflag_names		\
-> > 
-> > It seems to be safe because the callers end up the cycle when .name == NULL.
-> > 
-> > I think that it actually allows to remove similar trailing {} but I am not sure
-> > if we want it.  
+
+Am 14.03.25 um 13:19 schrieb Bartosz Golaszewski:
+> On Fri, Mar 14, 2025 at 12:54 PM Paul Menzel <pmenzel@molgen.mpg.de> wrote:
+>>>>>
+>>>>> Brief looking at the error descriptions and the practical use the best (and
+>>>>> unique enough) choice may be EBADSLT.
+>>>>
+>>>> In any case, I proposed to revert to the previous behavior in
+>>>> gpiochip_add_data() in my follow-up series so the issue should soon go
+>>>> away.
+>>>
+>>> Yes, I noted. The above is a material to discuss. We can make that semantics
+>>> documented and strict and then one may filter out those errors if/when
+>>> required.
+>>
+>> I am still seeing this with 6.14.0-rc6-00022-gb7f94fcf5546. Do you know,
+>> if the reverts are going to be in the final 6.14 release?
 > 
-> Hmm, I could get rid of that last one with this patch. What do you think?
+> linux-next should probably be a better point of reference. I'm about
+> to send out my PR to Linus so it'll be in 6.14-rc7 alright.
 
-OK, I think this is too hacky, and it only affects tracing if there's a
-flag not defined (which never happened so I didn't see this issue).
+Awesome. Thank you!
 
-I'll just go with your approach.
 
-You want to send a formal patch?
+Kind regards,
 
--- Steve
+Paul
 
