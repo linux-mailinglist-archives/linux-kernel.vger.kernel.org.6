@@ -1,158 +1,115 @@
-Return-Path: <linux-kernel+bounces-560763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A8DA60936
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:35:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC4BEA60938
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:35:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 236E1189DD30
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:35:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 476C33A8723
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76761547C5;
-	Fri, 14 Mar 2025 06:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfVqAqKi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178F32F4A;
-	Fri, 14 Mar 2025 06:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CAD1519BD;
+	Fri, 14 Mar 2025 06:35:39 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C35913A244;
+	Fri, 14 Mar 2025 06:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741934102; cv=none; b=WGJxt6OQhn13I5L2zZdXb4EnfCMmZxiF/OSWNTsuAk3JIxWGoSF2XV545kcVSoVpLuExcrO9MgK2X3RYvVTHNWG7/y4to7sHJfwbkqVjUDGrwKZqLz1Mzroul4MaJh0ZSqnESLxqqM10KtKBMMoGrynW+vxvOV7KoSHFaZjKDXc=
+	t=1741934139; cv=none; b=EZmbj4l0iigqgUWDB+CzGSBfIsAntSYCFGi3rILwocEzxv2G+n3jKEBfbiq3ygxjdwnnbNbSuw3P2eiLbtJCeLqFtReD+2ZHRSj3V9IzgfQLsdOWGbvU53atyxTag1A5qAr2zKVbr9ITJ4MNby2jtZTmCFSIt1OwVLgCtVbExuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741934102; c=relaxed/simple;
-	bh=zHa1YR43gS+g+8/IcC54v4zmSih9SACYwhm1yGincVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KI30O9AYlItROcpxeWJalgJgEcaRH/xTVs8tK5InL/N99Y10pTKxPFYNrvO9hx6sBxQbikYa5AZl1ECrwA9yEfJmJ2ZrvoqYBX1KKwFcKdsU8mDJxb4bRGWQj+DGxWflUij+tb+ZDOLO7Xm1dZSAZ42mCtbTZdB2tRaaNxluiUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfVqAqKi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E28F1C4CEE3;
-	Fri, 14 Mar 2025 06:34:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741934101;
-	bh=zHa1YR43gS+g+8/IcC54v4zmSih9SACYwhm1yGincVg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qfVqAqKiSFbgrzaWubxdV5cdnie0qi43IqStGiLj/XlAXiThAl8eGS0iZqLBULNWb
-	 dRKLQUKZmIkaP4BIdBgEwis/gz0yvUQQzYrdkLyQmdNK3a95ztTYw2SpNjVhLdeAzT
-	 zPP+o9s5Q6kVgNE+uVo9duQlOe8omR/wekTow6g5ayRFEnORMt/C2ZTt9MuvT0CCNa
-	 ACTeB54QLLlV6NpLWcBb1XuPOzKmvD7KshNrMQ0wrnJ5cwBpiJHdcG+xF80Wg1SGZ6
-	 ygZ39b3IwDWUuxoU5jKAJK6szOUEqzdR9UmCQRmB+PwAGIF/unxxmE9pukXV9wNuQb
-	 qNTINQdTAPeTg==
-Date: Fri, 14 Mar 2025 07:34:56 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Hans de Goede <hdegoede@redhat.com>,
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] media: uvcvideo: Introduce
- V4L2_META_FMT_UVC_CUSTOM
-Message-ID: <20250314073456.25817a3d@foz.lan>
-In-Reply-To: <20250313-uvc-metadata-v3-3-c467af869c60@chromium.org>
-References: <20250313-uvc-metadata-v3-0-c467af869c60@chromium.org>
-	<20250313-uvc-metadata-v3-3-c467af869c60@chromium.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1741934139; c=relaxed/simple;
+	bh=zGQIXkMAaHFfg3ZpQh56TFbyK/3WzGnwBf853ZkYZ+4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bz8BNM64bXC9knMijyF4pqJSyZS9L7mLJK3EtAMxFzyXoV3TCzD7qWrXE1skzbaay2w9007nRtvc4CT1UpC/YtQTcj6WhgzCQglc9M6X7TJj2MyUNWbOc5cyVPLoQ3Gi08KLMLBOTECGKb8MMwC2jr4K9YqHHbbwWWcFZ3cuuCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-fa-67d3ce2da8f2
+From: Rakie Kim <rakie.kim@sk.com>
+To: Gregory Price <gourry@gourry.net>
+Cc: akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com,
+	dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com,
+	kernel_team@skhynix.com,
+	honggyu.kim@sk.com,
+	yunjeong.mun@sk.com,
+	Rakie Kim <rakie.kim@sk.com>
+Subject: Re: [PATCH v2 3/4] mm/mempolicy: Enable sysfs support for memory hotplug in weighted interleave
+Date: Fri, 14 Mar 2025 15:35:11 +0900
+Message-ID: <20250314063521.754-1-rakie.kim@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
+In-Reply-To: <Z9MKYlJW9WtotzR3@gourry-fedora-PF4VCD3F>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsXC9ZZnoa7uucvpBjv/8VnMWb+GzWL61AuM
+	Fj/vHme3OL51HrvF+VmnWCwu75rDZnFvzX9Wi9VrMhw4PHbOusvu0d12md1j8Z6XTB6bPk1i
+	9zgx4zeLx86Hlh6fN8kFsEdx2aSk5mSWpRbp2yVwZew8soGp4BxnxZV9i9gaGPezdzFyckgI
+	mEhs39MGZ786/5a1i5GDg01ASeLY3hgQU0RAVaLtinsXIxcHs8B6JonXm2axgZQLC2RInJnb
+	wwJiswDVHNu6ghXE5hUwlrh9cDbUSE2Jhkv3mEBsTgEziQnvLzKD2EICPBKvNuxnhKgXlDg5
+	8wnYHGYBeYnmrbOZQZZJCJxhk9gz4wcrxCBJiYMrbrBMYOSfhaRnFpKeBYxMqxiFMvPKchMz
+	c0z0MirzMiv0kvNzNzECw3hZ7Z/oHYyfLgQfYhTgYFTi4d2w61K6EGtiWXFl7iFGCQ5mJRHe
+	1bYX0oV4UxIrq1KL8uOLSnNSiw8xSnOwKInzGn0rTxESSE8sSc1OTS1ILYLJMnFwSjUwFl5n
+	uDrRPmVhVPBb/42lzUsXZSobVe3lrO/2kGyr6VTtC52ZsnlaQe7cr3G2XAd3i/z49KxB3crn
+	Z2KuYW5wFa9xYn7bE0ll1s/PtV6v+jg76ZgC2+eygIfPFv187GFxuC7ZfWHKpJLFiXKuASon
+	JZeUGN/xM79fqLtf8EPb1SeB5X+vpfYqsRRnJBpqMRcVJwIA8J8bkV8CAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsXCNUNNS1f33OV0g8uPmC3mrF/DZjF96gVG
+	i593j7NbfH72mtni+NZ57BaH555ktTg/6xSLxeVdc9gs7q35z2px6NpzVovVazIsfm9bwebA
+	47Fz1l12j+62y+wei/e8ZPLY9GkSu8eJGb9ZPHY+tPT4dtvDY/GLD0wenzfJBXBGcdmkpOZk
+	lqUW6dslcGXsPLKBqeAcZ8WVfYvYGhj3s3cxcnJICJhIvDr/lrWLkYODTUBJ4tjeGBBTREBV
+	ou2KexcjFwezwHomidebZrGBlAsLZEicmdvDAmKzANUc27qCFcTmFTCWuH1wNtRITYmGS/eY
+	QGxOATOJCe8vMoPYQgI8Eq827GeEqBeUODnzCdgcZgF5ieats5knMPLMQpKahSS1gJFpFaNI
+	Zl5ZbmJmjqlecXZGZV5mhV5yfu4mRmDoLqv9M3EH45fL7ocYBTgYlXh4N+y6lC7EmlhWXJl7
+	iFGCg1lJhHe17YV0Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4rxe4akJQgLpiSWp2ampBalFMFkm
+	Dk6pBsbKg+yux3P221xv2y1mpvFr9wKtqw6eWz6+1RW4t1UrcO7ud29zu3efirsqkf1L7pCd
+	p55kT84S46APZVMv1gU5TO+LenelSlxw35e356JrD4QEPj/xaqF+xo/8L0Her/92fMjZ8qfE
+	ru0hSxpToOccUUaHt4JzkwvqBX3TavjfB3yfGS8YX6XEUpyRaKjFXFScCABnLrm9WQIAAA==
+X-CFilter-Loop: Reflected
 
-Em Thu, 13 Mar 2025 12:06:27 +0000
-Ricardo Ribalda <ribalda@chromium.org> escreveu:
+On Thu, 13 Mar 2025 12:40:02 -0400 Gregory Price <gourry@gourry.net> wrote:
 
-> The UVC driver provides two metadata types V4L2_META_FMT_UVC, and
-> V4L2_META_FMT_D4XX. The only difference between the two of them is that
-> V4L2_META_FMT_UVC only copies PTS, SCR, size and flags, and
-> V4L2_META_FMT_D4XX copies the whole metadata section.
+Hi Gregory
+
+> On Thu, Mar 13, 2025 at 03:34:10PM +0900, Rakie Kim wrote:
+> > On Wed, 12 Mar 2025 12:14:48 -0400 Gregory Price <gourry@gourry.net> wrote:
+> > 
+> > Given that this adjustment is part of integrating the refactored
+> > structure, I believe this patch does not need to be split into two.
+> > However, I would appreciate any further input you may have on this.
+> >
 > 
-> Now we only enable V4L2_META_FMT_D4XX for the Intel D4xx family of
-> devices, but it is useful to have the whole metadata section for any
-> device where vendors include other metadata, such as the one described by
-> Microsoft:
-> https://learn.microsoft.com/en-us/windows-hardware/drivers/stream/mf-capture-metadata
+> Another way of saying this is: can you please change the ordering of
+> patch 2 and 3 and place the functional changes into "make mempolicy
+> support memory hotplug" patch.
 > 
-> This patch introduces a new format V4L2_META_FMT_UVC_CUSTOM, that is
-> identical to V4L2_META_FMT_D4XX but it is available to all the UVC
-> devices.
+> It's a little odd to "make mempolicy support memory hotplug" and then
+> follow that up with a patch that says "now make it REALLY support it".
 > 
-> Suggested-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  .../userspace-api/media/v4l/meta-formats.rst       |  1 +
->  .../userspace-api/media/v4l/metafmt-uvc-custom.rst | 31 +++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  drivers/media/usb/uvc/uvc_metadata.c               | 40 ++++++++++++++++++----
->  drivers/media/v4l2-core/v4l2-ioctl.c               |  1 +
->  include/uapi/linux/videodev2.h                     |  1 +
->  6 files changed, 69 insertions(+), 6 deletions(-)
+> Patch 2 should read:
+>    "Refactor weighted_interleave sysfs to allow node structure to be
+>     dynamic"
+> Patch 3 should read:
+>    "Make weighted interleave sysfs structure support memory hotplug"
 > 
-> diff --git a/Documentation/userspace-api/media/v4l/meta-formats.rst b/Documentation/userspace-api/media/v4l/meta-formats.rst
-> index 86ffb3bc8ade2e0c563dd84441572ecea1a571a6..9fd83f4a3cc8509702a2a9f032fdc04bf6c6d1bc 100644
-> --- a/Documentation/userspace-api/media/v4l/meta-formats.rst
-> +++ b/Documentation/userspace-api/media/v4l/meta-formats.rst
-> @@ -19,6 +19,7 @@ These formats are used for the :ref:`metadata` interface only.
->      metafmt-pisp-fe
->      metafmt-rkisp1
->      metafmt-uvc
-> +    metafmt-uvc-custom
->      metafmt-vivid
->      metafmt-vsp1-hgo
->      metafmt-vsp1-hgt
-> diff --git a/Documentation/userspace-api/media/v4l/metafmt-uvc-custom.rst b/Documentation/userspace-api/media/v4l/metafmt-uvc-custom.rst
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..9f150fc2b6f379cc4707ff45041dd014956ae11a
-> --- /dev/null
-> +++ b/Documentation/userspace-api/media/v4l/metafmt-uvc-custom.rst
-> @@ -0,0 +1,31 @@
-> +.. SPDX-License-Identifier: GFDL-1.1-no-invariants-or-later
-> +
-> +.. _v4l2-meta-fmt-uvc-custom:
-> +
-> +*********************************
-> +V4L2_META_FMT_UVC_CUSTOM ('UVCC')
-> +*********************************
-> +
-> +UVC Custom Payload Metadata.
-> +
-> +
-> +Description
-> +===========
-> +
-> +V4L2_META_FMT_UVC_CUSTOM buffers follow the metadata buffer layout of
-> +V4L2_META_FMT_UVC with the only difference that it includes all the UVC
-> +metadata, not just the first 2-12 bytes.
-> +
-> +The most common metadata format is the one proposed by Microsoft(R)'s UVC
-> +extension [1_], but other vendors might have different formats.
-> +
-> +Applications might use information from the Hardware Database (hwdb)[2_] to
-> +process the camera's metadata accordingly.
+> I think you'll find the patches end up looking much cleaner this way as
+> well.
+> 
+> ~Gregory
 
-Having something like that at the userspace API shouldn't be handled
-lightly. This sounds to me that passing a blank check for vendors to stream
-whatever they want without any requirements to provide and sort of
-documentation for the usersace to decode it.
+Your suggestion seems appropriate. I will rearrange the order as you
+suggested when creating version 3.
 
-Also, it would be hard for userspace to distinguish what metatata
-is contained for a random UVC camera. Please let's not do that.
+Rakie
 
-As the specific issue here is to support an already known extension,
-which is already documented, Just add an specific format for it, e.g. 
-you could add something like that at the documentation:
-
-	V4L2_META_FMT_MSXU_UVC_1_5
-	   Microsoft extensions to USB Video Class 1.5 specification.
-	
-	   For more details, see: https://learn.microsoft.com/en-us/windows-hardware/drivers/stream/uvc-extensions-1-5	
-
-And then add the corresponding format to V4L2 API.
-
-Regards,
-Mauro
 
