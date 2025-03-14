@@ -1,177 +1,211 @@
-Return-Path: <linux-kernel+bounces-561229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB52EA60F01
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:34:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C61A60F08
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:34:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F6567ACD04
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:33:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 014727AE85C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0731F5839;
-	Fri, 14 Mar 2025 10:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6051F63F9;
+	Fri, 14 Mar 2025 10:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3+19/Bi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="naYBomTg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0781F4CAD;
-	Fri, 14 Mar 2025 10:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BFC1FC7C9;
+	Fri, 14 Mar 2025 10:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741948339; cv=none; b=WqtQ7Mz8HW1HYzb6f1axtuyS9loi7nOkONksiLYjFX287sF11HQRPtMD1RchqdkOGwBeCd33HXVi8X/Sgf2ZatDu8knQaaWzfcE8t/EG8YX3wN6qRf/31Ofgd8WZUdaozSBMSry9VZA48X8HY1c/nghS9/z3SMK5Wt8xj/ey0HA=
+	t=1741948345; cv=none; b=L2tkwlCDQUbI4DIo8CqG0WODgtdAtukVwLQus1cQORmeKjlYT6tC9H7eff6irBe1gryTv0buf2lJGQdi3tAp3t1EBRMN0LAKh4LZCMbqlimmtgAkX5qgkdBd1fYgRjAidY0pcvtSxazUT9bSUqDfBsyl2ewzf/Q4bdTL84aWLPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741948339; c=relaxed/simple;
-	bh=bIVEOosLbXV7zBjslXZjI9/mMTUHcG4P15ca5rWDDm0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EuAPJGY/3JQczJhCo1YhSN8ZirczNnAklNh0FfM2D1LpBfxwvxPjq/SXle8ryotrQ1sAWxiAVEX9VbGrkxTdKWlHAI092aPBDFP7gUS161d/0qCJjz5ZrNhwxK0tWvoRaPaai27+VoD3CNtu89ktxBMhbEcU+WjfMW2pfcfEkUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3+19/Bi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 735C0C4CEF4;
-	Fri, 14 Mar 2025 10:32:18 +0000 (UTC)
+	s=arc-20240116; t=1741948345; c=relaxed/simple;
+	bh=fNvNDqVEbRp/SUOH8DN2J2EdftYPKxBHy32M6zxTM9I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V/DSUAjqhLP7qn59cgYaSEIPOJwQ7TRA2oUANuoBuJkwvgyPxXM9DYk90MB1iNI/DrRN1A/jnKfszwWRW6nt1eLAA5vpjFYoMIJlh92yE/lthbYCHyLWy4p+oHqj1WSJmTay/Vv1na4irIifqQdGvoy8cWC2eBKnZucavYztCSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=naYBomTg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA27CC4CEE3;
+	Fri, 14 Mar 2025 10:32:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741948338;
-	bh=bIVEOosLbXV7zBjslXZjI9/mMTUHcG4P15ca5rWDDm0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=j3+19/BiN6v+pKli7W3LfZ4dOW/TqRiIxjSoUqF9o+jkG4SSng7zRIqEKXKKBsH4C
-	 xkZ11M7AcGfz/2r4brm4/Xx4UhzihYkcsZDkpM8yn02ikkw3QTpvp5VKBsj26525oi
-	 5K0yrlqBThCiaSvkU1bzENme1lXVpV644FHoeWZ/u0yhkz8Mqm7ShqeWu4VjQ3VZrs
-	 M6jxYoyZTzIQY3Yy9ACoJLNz/1MPJo91jmWcq5GH1xosg1hhFuBUG+TFhibP2gQMCQ
-	 W8wpYHTeCVg1ZMErre5+7Ri//vKGuvhIjYvFEt2kjnee7bwYxbOsWAa1scEc2gWCLp
-	 fejBWC9+Re/zg==
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2c1c4e364c8so864348fac.1;
-        Fri, 14 Mar 2025 03:32:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVZjn0UIaNMmKJudSk9qSWkK9TtYp8OChmevBXg76ysmXXaCZoVCLCvs1ctju9rktUSyVt4aFx5FHXc@vger.kernel.org, AJvYcCW0fdv/uP3FOs16J2Q+d7UdVeVfU74fnmTr7ga92nagBkyCAfP0bj1PqRxbjwLPEqbzGw8LjBSQDfn02k/r@vger.kernel.org, AJvYcCW3KoxyXYr0O/DLLfuwOtVjdAybD53xpYZ350fhtYDmpJcNnLHggIfDGbANv0jPjYc/nWSBYmWVG5Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCyeC7OM2QYfn1QHBkyLCJ5jrgsSRoFy72vCNGehDhZFJ7vb8p
-	9mY2bi1S5+WJ/fe8DQ/b+hodbG6tOFXHYkhAWFE7puj6PS4OUzIsGqiW46iR3T0zqvCvePXzJJ8
-	549LATPFzF/bGaoSoT+GgenyYQOY=
-X-Google-Smtp-Source: AGHT+IHMIhcxmJiI89lHkmcp10N9Gc8dwaHNOvydy7F0N4rYcB6pfEg4Jewk4sgyfM2HYz8d8QVhijGhPoQRMSCLG6M=
-X-Received: by 2002:a05:6871:8907:b0:2c3:13f7:2b3d with SMTP id
- 586e51a60fabf-2c66faa0ad9mr3253949fac.13.1741948337647; Fri, 14 Mar 2025
- 03:32:17 -0700 (PDT)
+	s=k20201202; t=1741948345;
+	bh=fNvNDqVEbRp/SUOH8DN2J2EdftYPKxBHy32M6zxTM9I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=naYBomTgPGZbIg5N19AAYOb4jjzvS+OurVkqTiN/o2E46M+WWwbK0wxDrB+w0AaP6
+	 dCQS3tL9/Pi68+rBvn4AsggnZgUvPpvuZzwZUpI6zGeUrq4EUbKfRFl9T4P2HAwBW5
+	 1C6425kADzUzfterlxQMykmGE6TAJCzwzoR+SFw4Ia9u6ztyjq2/lcgZoth6SNNpPR
+	 gNwcnWZ/Fh6MvKLIecXyoJsh7YrncAol26Hi2GCBdZQJOMQ5OQ7FknBUJJmos43YL7
+	 rHVuaG6/0EC0u2Y61LYPUl8EBLhoV1/u8XjYm5bBA3jQOYY/zrQJbf5gAGB7TX/PVi
+	 OaqO+q556XM0g==
+Message-ID: <19ddb133-7f11-4c1b-b0e1-91523d42040c@kernel.org>
+Date: Fri, 14 Mar 2025 11:32:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250206131428.3261578-1-zhenglifeng1@huawei.com>
- <20250206131428.3261578-4-zhenglifeng1@huawei.com> <CAJZ5v0iNzNROkPD4+b=Au8DwdF9unajKivdRQMBFfwzjFxHLcg@mail.gmail.com>
- <4fc77a58-8c77-463c-a50d-06ad19685bfb@huawei.com>
-In-Reply-To: <4fc77a58-8c77-463c-a50d-06ad19685bfb@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 14 Mar 2025 11:32:05 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gmGx-9QsTTdbKi6EMQm2tePfhBdYMry_88gbybLUY6WA@mail.gmail.com>
-X-Gm-Features: AQ5f1JoupU6GpOA9Iyps8s1JuMZY-IPPw-xEHtHAfwnoaE6pdAQsbzMgFba8YeA
-Message-ID: <CAJZ5v0gmGx-9QsTTdbKi6EMQm2tePfhBdYMry_88gbybLUY6WA@mail.gmail.com>
-Subject: Re: [PATCH v5 3/8] ACPI: CPPC: Rename cppc_get_perf() to cppc_get_reg_val()
-To: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, robert.moore@intel.com, 
-	viresh.kumar@linaro.org, mario.limonciello@amd.com, gautham.shenoy@amd.com, 
-	ray.huang@amd.com, pierre.gondois@arm.com, acpica-devel@lists.linux.dev, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linuxarm@huawei.com, yumpusamongus@gmail.com, 
-	srinivas.pandruvada@linux.intel.com, jonathan.cameron@huawei.com, 
-	zhanjie9@hisilicon.com, lihuisong@huawei.com, hepeng68@huawei.com, 
-	fanghao11@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] dt-bindings: pmic: mediatek: Add pmic documents
+To: "Lu.Tang" <Lu.Tang@mediatek.com>, Jonathan Cameron <jic23@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sean Wang <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Chen Zhong <chen.zhong@mediatek.com>,
+ Sen Chu <shen.chu@mediatek.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-gpio@vger.kernel.org, Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20250314073307.25092-1-Lu.Tang@mediatek.com>
+ <20250314073307.25092-6-Lu.Tang@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250314073307.25092-6-Lu.Tang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 14, 2025 at 10:25=E2=80=AFAM zhenglifeng (A)
-<zhenglifeng1@huawei.com> wrote:
->
-> On 2025/3/13 3:54, Rafael J. Wysocki wrote:
->
-> > On Thu, Feb 6, 2025 at 2:14=E2=80=AFPM Lifeng Zheng <zhenglifeng1@huawe=
-i.com> wrote:
-> >>
-> >> Rename cppc_get_perf() to cppc_get_reg_val() as a generic function to =
-read
-> >> cppc registers. And extract the operations if register is in pcc out a=
-s
-> >> cppc_get_reg_val_in_pcc(). Without functional change.
-> >
-> > This should be split into two patches IMV.
->
-> Yes. That makes sense. Thanks.
->
-> >
-> >> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
-> >> ---
-> >>  drivers/acpi/cppc_acpi.c | 66 +++++++++++++++++++++------------------=
--
-> >>  1 file changed, 35 insertions(+), 31 deletions(-)
-> >>
-> >> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-> >> index db22f8f107db..3c9c4ce2a0b0 100644
-> >> --- a/drivers/acpi/cppc_acpi.c
-> >> +++ b/drivers/acpi/cppc_acpi.c
-> >> @@ -1189,48 +1189,52 @@ static int cpc_write(int cpu, struct cpc_regis=
-ter_resource *reg_res, u64 val)
-> >>         return ret_val;
-> >>  }
-> >>
-> >> -static int cppc_get_perf(int cpunum, enum cppc_regs reg_idx, u64 *per=
-f)
-> >> +static int cppc_get_reg_val_in_pcc(int cpu, struct cpc_register_resou=
-rce *reg, u64 *val)
-> >>  {
-> >> -       struct cpc_desc *cpc_desc =3D per_cpu(cpc_desc_ptr, cpunum);
-> >> -       struct cpc_register_resource *reg;
-> >> +       int pcc_ss_id =3D per_cpu(cpu_pcc_subspace_idx, cpu);
-> >> +       struct cppc_pcc_data *pcc_ss_data =3D NULL;
-> >> +       int ret;
-> >>
-> >> -       if (!cpc_desc) {
-> >> -               pr_debug("No CPC descriptor for CPU:%d\n", cpunum);
-> >> +       if (pcc_ss_id < 0) {
-> >> +               pr_debug("Invalid pcc_ss_id\n");
-> >>                 return -ENODEV;
-> >>         }
-> >>
-> >> -       reg =3D &cpc_desc->cpc_regs[reg_idx];
-> >> +       pcc_ss_data =3D pcc_data[pcc_ss_id];
-> >>
-> >> -       if (IS_OPTIONAL_CPC_REG(reg_idx) && !CPC_SUPPORTED(reg)) {
-> >> -               pr_debug("CPC register (reg_idx=3D%d) is not supported=
-\n", reg_idx);
-> >> -               return -EOPNOTSUPP;
-> >> -       }
-> >
-> > I'm not a big fan of the IS_OPTIONAL_CPC_REG() macro.  I'm not
-> > convinced at all that it adds any value above (and in the next patch
-> > for that matter) and the message printing the register index is just
-> > plain unuseful to anyone who doesn't know how to decode it.
->
-> With this index, it is easier to locate problems. This is what a "pr_debu=
-g"
-> for, isn't it?
+On 14/03/2025 08:32, Lu.Tang wrote:
 
-For those who know how to decode it, yes.  For others, not really.
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-> >
-> > If CPC_SUPPORTED(reg) is not true, the register cannot be used AFAICS
-> > regardless of what IS_OPTIONAL_CPC_REG() has to say about it.
->
-> The name "CPC_SUPPORTED" may be a little confused. Actually, in ACPI 6.5,
-> only optional _CPC package fields that are not supported by the platform
-> should be encoded as 0 intergers or NULL registers. A mandatory field as =
-a
-> 0 interger is valid. So If I wanted to make this function as a generic on=
-e
-> to read cppc registers, it would have been more reasonable to do this
-> IS_OPTIONAL_CPC_REG() check before CPC_SUPPORTED().
+There is no subsystem "pmic".
 
-I see, so you need to explain this in the changelog.
+> Add new pmic mfd and adc documents for mt8196
+> 
+> Signed-off-by: Lu.Tang <Lu.Tang@mediatek.com>
 
-And IMV the code logic should be:
+Are you sure Latin transcription of your name includes '.' or you just
+copy-paste email address?
 
-(1) If this is a NULL register, don't use it.
-(2) If it is integer 0, check if it is optional.
-    (a) If it is optional, don't use it.
-    (b) Otherwise, use 0 as the value.
 
-Of course, there is a problem for platforms that may want to pass 0 as
-an optional field value, but this is a spec issue.
+...
+
+> +  - Lu Tang <lu.tang@mediatek.com>
+> +
+> +description:
+> +  The Auxiliary Analog/Digital Converter (AUXADC) is an ADC found
+> +  in some MediaTek PMICs, performing various PMIC related measurements
+> +  such as battery and PMIC internal voltage regulators temperatures,
+> +  other than voltages for various PMIC internal components.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - mediatek,mt6363-auxadc
+> +      - mediatek,mt6373-auxadc
+
+Just fold the device to the parent node.
+
+
+
+..
+
+
+
+> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.yaml b/Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.yaml
+> new file mode 100644
+> index 000000000000..a8f1231623cf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.yaml
+
+Filename matching one of the compatibles, e.g. the oldest one.
+
+> @@ -0,0 +1,173 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/mediatek,spmi-pmic.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek SPMI PMICs multi-function device
+> +
+> +maintainers:
+> +  - Lu Tang <lu.tang@mediatek.com>
+> +
+> +description: |
+> +  Some Mediatek PMICs are interfaced to the chip via the SPMI (System Power
+> +  Management Interface) bus.
+> +
+> +  The Mediatek SPMI series includes the MT6363, MT6373, MT6316 and other
+> +  PMICs.Please see the sub-modules below for supported features.
+> +
+> +   MT6363/MT6373 is a multifunction device with the following sub modules:
+> +  - Regulators
+> +  - ADC
+> +  - GPIO
+> +  - Keys
+> +   MT6316 is a multifunction device with the following sub modules:
+> +  - Regulators
+
+I don't get why they are in the same schema. It would result in
+unnecessary big if:then with half of children not applicable for other
+variants.
+
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - mediatek,mt6363
+> +          - mediatek,mt6373
+> +          - mediatek,mt6316
+Sort these with alphanumeric order.
+
+Best regards,
+Krzysztof
 
