@@ -1,269 +1,307 @@
-Return-Path: <linux-kernel+bounces-560861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD867A60A43
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:45:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A6FA60A44
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:45:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15B667AB657
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:44:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40F921890FC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A252018F2DF;
-	Fri, 14 Mar 2025 07:45:12 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6C015CD4A;
+	Fri, 14 Mar 2025 07:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VqlZ/yLF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F318B18A6D2
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2811624D9
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741938312; cv=none; b=Wq3gUpBTMoMrv3bUodgZT9QJ4EVcgIDUwrRF6qYnOPxomXXt+ilkimk8e+1wD6z6KTswHDVgk5QYptB2FCRuz5qJu5hbIN1TLaAwtCbb0Nm8YkSNXqwQ/niumTAYtWTUjeWvQx0NEHllyfel5CJT5XCp0WmZY2BOhfTyYgtDPyk=
+	t=1741938320; cv=none; b=CuAZrZX08GtNUr85sgZ6kvP6Y2Du0ePLcWAQYOLEZjs/QpzKlMwww6MJWdPNPvBTKuEFmfPJCdlfzIGoYm1N9JBFlOKlkVCxi6ajVZGwWTaFh4f8zdKtOnc9oyoJZlT3wgzgswW/0Wex1bpjGcndGYypL5UG4VMaQ7Ney87shiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741938312; c=relaxed/simple;
-	bh=dLw1fTtQWhKETOLZRN9EKDbih1kWeJ4Ju5mJsROpm0Q=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=XIMIH87kc5algaguFMPe3dGweJIFbS+vcvuJfaE2DaCVlwvA6WdeeRSV/XOgY/N4vEzXkBhUigIxat1nZ6wlz7D2aphJp00iD0Guxsm4OYAFvTmUL4fVtvjfOkMOScgAKKZgHqXYINBrsg3Qf7MzLrIX8jmeBxCn/TWqN46F/l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4ZDbyF55mhz27gbb;
-	Fri, 14 Mar 2025 15:45:41 +0800 (CST)
-Received: from dggemv711-chm.china.huawei.com (unknown [10.1.198.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5D5B01A0171;
-	Fri, 14 Mar 2025 15:45:06 +0800 (CST)
-Received: from kwepemn500004.china.huawei.com (7.202.194.145) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 14 Mar 2025 15:45:06 +0800
-Received: from [10.67.120.218] (10.67.120.218) by
- kwepemn500004.china.huawei.com (7.202.194.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 14 Mar 2025 15:45:05 +0800
-Subject: Re: [PATCH] coresight: Fixes device's owner field for registered
- using coresight_init_driver()
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, <james.clark@arm.com>,
-	<anshuman.khandual@arm.com>
-References: <20240918035327.9710-1-hejunhao3@huawei.com>
- <e2194d2a-0f51-4e59-a1ca-b4563b3389ec@arm.com>
-CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>, <yangyicong@huawei.com>,
-	<prime.zeng@hisilicon.com>, hejunhao <hejunhao3@huawei.com>
-From: hejunhao <hejunhao3@huawei.com>
-Message-ID: <c3744062-f7c1-82df-2fa1-591da3b2dc5e@huawei.com>
-Date: Fri, 14 Mar 2025 15:44:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1741938320; c=relaxed/simple;
+	bh=rB/Ef3oLC3JztquXBp2C1XHzq8oE979wb4eRW4XPG/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N3A1OJNEkDfxGVn2nOWuspY0gRGMOUF08LqW4Xcox4XkBBZXymleGLEo4T8XaYC72gBhTzoCAs8UKg0pha8Tt2qHBQXOD8ztRz/fHiGPfR3LU+hPlEF5Ihhs1CKyAXeC15CTXMmxECmSveJCfmqFLEqotRQJx8pC8Uxowl6dBcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VqlZ/yLF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2124C4CEE3;
+	Fri, 14 Mar 2025 07:45:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741938320;
+	bh=rB/Ef3oLC3JztquXBp2C1XHzq8oE979wb4eRW4XPG/s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VqlZ/yLFIl+p9kr2RAScnZCNlqZJ3KtWeyUO2sLAO9Dn0zaRVibODadci+iX0SHQX
+	 VhD15JbJh00OlLpwWSHibMFlJXxVSqXleoXgKgMXkqPAVaDtSbg5vj6o8X3P40IHLC
+	 bpTr3/lqcIErKaM2QKT8FoGGditgqw+X5mHl0mHDqwxup1HKywwCfszR6UrHr+i4OQ
+	 fGHgtNY5w4o3Zj61eGvC49MdLI8bLLdmDL6QsCpXoGLQM3HURvq4Hioh8/GgAs4EL3
+	 sQ4bLB0OV6RgGjHKfmbPacKWghtYU9qNqGw650sdA0dPgxSEt+6/8mdO7MBKh2vZUH
+	 t2y4IfmzCXyrQ==
+Date: Fri, 14 Mar 2025 08:45:17 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Andy Yan <andyshrk@163.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Douglas Anderson <dianders@chromium.org>, Herve Codina <herve.codina@bootlin.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Simona Vetter <simona.vetter@ffwll.ch>, lumag@kernel.org
+Subject: Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
+ connector by encoder
+Message-ID: <20250314-courageous-bison-of-prestige-8b884b@houat>
+References: <20250304-bridge-connector-v5-0-aacf461d2157@kernel.org>
+ <20250304-bridge-connector-v5-4-aacf461d2157@kernel.org>
+ <5180089f.a640.19566290538.Coremail.andyshrk@163.com>
+ <608c01c.7716.1958e8d879f.Coremail.andyshrk@163.com>
+ <20250313-dazzling-deer-of-ampleness-21db67@houat>
+ <6ae1c567.8c6.195922195d6.Coremail.andyshrk@163.com>
+ <k2md4q2tgwsdynaeljieqlzjdds677wqqduimfyrgmvyfi732a@vh3dbg7kdaop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <e2194d2a-0f51-4e59-a1ca-b4563b3389ec@arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemn500004.china.huawei.com (7.202.194.145)
-
-Hi Suzuki,
-
-Could you confirm if this patch was queued in coresight/next or upstream 
-of the mainline?
-
-I couldn't find it in: kernel/git/coresight/linux.git or Kernel v6.14.0-rc4.
-
-Maybe am I missing some information?
-
-Best regards,
-Junhao.
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="fau2wb4ziq56b5rc"
+Content-Disposition: inline
+In-Reply-To: <k2md4q2tgwsdynaeljieqlzjdds677wqqduimfyrgmvyfi732a@vh3dbg7kdaop>
 
 
-On 2024/9/18 16:29, Suzuki K Poulose wrote:
-> On 18/09/2024 04:53, Junhao He wrote:
->> The coresight_init_driver() of the coresight-core module is called from
->> the sub coresgiht device (such as tmc/stm/funnle/...) module. It calls
->> amba_driver_register() and Platform_driver_register(), which are macro
->> functions that use the coresight-core's module to initialize the 
->> caller's
->> owner field.  Therefore, when the sub coresight device calls
->> coresight_init_driver(), an incorrect THIS_MODULE value is captured.
->>
->> The sub coesgiht modules can be removed while their callbacks are
->> running, resulting in a general protection failure.
->>
->> Add module parameter to coresight_init_driver() so can be called
->> with the module of the callback.
->>
->> Fixes: 075b7cd7ad7d ("coresight: Add helpers registering/removing 
->> both AMBA and platform drivers")
->> Signed-off-by: Junhao He <hejunhao3@huawei.com>
->
-> Thanks for the fix, looks good to me. I will queue this for v6.13
->
-> Suzuki
->
->> ---
->>   drivers/hwtracing/coresight/coresight-catu.c       | 2 +-
->>   drivers/hwtracing/coresight/coresight-core.c       | 6 +++---
->>   drivers/hwtracing/coresight/coresight-cpu-debug.c  | 3 ++-
->>   drivers/hwtracing/coresight/coresight-funnel.c     | 3 ++-
->>   drivers/hwtracing/coresight/coresight-replicator.c | 3 ++-
->>   drivers/hwtracing/coresight/coresight-stm.c        | 2 +-
->>   drivers/hwtracing/coresight/coresight-tmc-core.c   | 2 +-
->>   drivers/hwtracing/coresight/coresight-tpiu.c       | 2 +-
->>   include/linux/coresight.h                          | 2 +-
->>   9 files changed, 14 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/hwtracing/coresight/coresight-catu.c 
->> b/drivers/hwtracing/coresight/coresight-catu.c
->> index bfea880d6dfb..337668f9cfd4 100644
->> --- a/drivers/hwtracing/coresight/coresight-catu.c
->> +++ b/drivers/hwtracing/coresight/coresight-catu.c
->> @@ -702,7 +702,7 @@ static int __init catu_init(void)
->>   {
->>       int ret;
->>   -    ret = coresight_init_driver("catu", &catu_driver, 
->> &catu_platform_driver);
->> +    ret = coresight_init_driver("catu", &catu_driver, 
->> &catu_platform_driver, THIS_MODULE);
->>       tmc_etr_set_catu_ops(&etr_catu_buf_ops);
->>       return ret;
->>   }
->> diff --git a/drivers/hwtracing/coresight/coresight-core.c 
->> b/drivers/hwtracing/coresight/coresight-core.c
->> index 9fc6f6b863e0..c546a417836c 100644
->> --- a/drivers/hwtracing/coresight/coresight-core.c
->> +++ b/drivers/hwtracing/coresight/coresight-core.c
->> @@ -1399,17 +1399,17 @@ module_init(coresight_init);
->>   module_exit(coresight_exit);
->>     int coresight_init_driver(const char *drv, struct amba_driver 
->> *amba_drv,
->> -              struct platform_driver *pdev_drv)
->> +              struct platform_driver *pdev_drv, struct module *owner)
->>   {
->>       int ret;
->>   -    ret = amba_driver_register(amba_drv);
->> +    ret = __amba_driver_register(amba_drv, owner);
->>       if (ret) {
->>           pr_err("%s: error registering AMBA driver\n", drv);
->>           return ret;
->>       }
->>   -    ret = platform_driver_register(pdev_drv);
->> +    ret = __platform_driver_register(pdev_drv, owner);
->>       if (!ret)
->>           return 0;
->>   diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c 
->> b/drivers/hwtracing/coresight/coresight-cpu-debug.c
->> index 75962dae9aa1..cc599c5ef4b2 100644
->> --- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
->> +++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
->> @@ -774,7 +774,8 @@ static struct platform_driver 
->> debug_platform_driver = {
->>     static int __init debug_init(void)
->>   {
->> -    return coresight_init_driver("debug", &debug_driver, 
->> &debug_platform_driver);
->> +    return coresight_init_driver("debug", &debug_driver, 
->> &debug_platform_driver,
->> +                     THIS_MODULE);
->>   }
->>     static void __exit debug_exit(void)
->> diff --git a/drivers/hwtracing/coresight/coresight-funnel.c 
->> b/drivers/hwtracing/coresight/coresight-funnel.c
->> index 5a819c8970fb..8f451b051ddc 100644
->> --- a/drivers/hwtracing/coresight/coresight-funnel.c
->> +++ b/drivers/hwtracing/coresight/coresight-funnel.c
->> @@ -433,7 +433,8 @@ static struct amba_driver dynamic_funnel_driver = {
->>     static int __init funnel_init(void)
->>   {
->> -    return coresight_init_driver("funnel", &dynamic_funnel_driver, 
->> &funnel_driver);
->> +    return coresight_init_driver("funnel", &dynamic_funnel_driver, 
->> &funnel_driver,
->> +                     THIS_MODULE);
->>   }
->>     static void __exit funnel_exit(void)
->> diff --git a/drivers/hwtracing/coresight/coresight-replicator.c 
->> b/drivers/hwtracing/coresight/coresight-replicator.c
->> index 3e55be9c8418..f7607c72857c 100644
->> --- a/drivers/hwtracing/coresight/coresight-replicator.c
->> +++ b/drivers/hwtracing/coresight/coresight-replicator.c
->> @@ -438,7 +438,8 @@ static struct amba_driver 
->> dynamic_replicator_driver = {
->>     static int __init replicator_init(void)
->>   {
->> -    return coresight_init_driver("replicator", 
->> &dynamic_replicator_driver, &replicator_driver);
->> +    return coresight_init_driver("replicator", 
->> &dynamic_replicator_driver, &replicator_driver,
->> +                     THIS_MODULE);
->>   }
->>     static void __exit replicator_exit(void)
->> diff --git a/drivers/hwtracing/coresight/coresight-stm.c 
->> b/drivers/hwtracing/coresight/coresight-stm.c
->> index 117dbb484543..403eea8f95d4 100644
->> --- a/drivers/hwtracing/coresight/coresight-stm.c
->> +++ b/drivers/hwtracing/coresight/coresight-stm.c
->> @@ -1046,7 +1046,7 @@ static struct platform_driver 
->> stm_platform_driver = {
->>     static int __init stm_init(void)
->>   {
->> -    return coresight_init_driver("stm", &stm_driver, 
->> &stm_platform_driver);
->> +    return coresight_init_driver("stm", &stm_driver, 
->> &stm_platform_driver, THIS_MODULE);
->>   }
->>     static void __exit stm_exit(void)
->> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c 
->> b/drivers/hwtracing/coresight/coresight-tmc-core.c
->> index b54562f392f3..e31e36635394 100644
->> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
->> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
->> @@ -742,7 +742,7 @@ static struct platform_driver tmc_platform_driver 
->> = {
->>     static int __init tmc_init(void)
->>   {
->> -    return coresight_init_driver("tmc", &tmc_driver, 
->> &tmc_platform_driver);
->> +    return coresight_init_driver("tmc", &tmc_driver, 
->> &tmc_platform_driver, THIS_MODULE);
->>   }
->>     static void __exit tmc_exit(void)
->> diff --git a/drivers/hwtracing/coresight/coresight-tpiu.c 
->> b/drivers/hwtracing/coresight/coresight-tpiu.c
->> index b048e146fbb1..f9ecd05cbe5c 100644
->> --- a/drivers/hwtracing/coresight/coresight-tpiu.c
->> +++ b/drivers/hwtracing/coresight/coresight-tpiu.c
->> @@ -318,7 +318,7 @@ static struct platform_driver 
->> tpiu_platform_driver = {
->>     static int __init tpiu_init(void)
->>   {
->> -    return coresight_init_driver("tpiu", &tpiu_driver, 
->> &tpiu_platform_driver);
->> +    return coresight_init_driver("tpiu", &tpiu_driver, 
->> &tpiu_platform_driver, THIS_MODULE);
->>   }
->>     static void __exit tpiu_exit(void)
->> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
->> index f09ace92176e..e6c26952ddc2 100644
->> --- a/include/linux/coresight.h
->> +++ b/include/linux/coresight.h
->> @@ -660,7 +660,7 @@ coresight_find_output_type(struct 
->> coresight_platform_data *pdata,
->>                  union coresight_dev_subtype subtype);
->>     int coresight_init_driver(const char *drv, struct amba_driver 
->> *amba_drv,
->> -              struct platform_driver *pdev_drv);
->> +              struct platform_driver *pdev_drv, struct module *owner);
->>     void coresight_remove_driver(struct amba_driver *amba_drv,
->>                    struct platform_driver *pdev_drv);
->
->
-> .
->
+--fau2wb4ziq56b5rc
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
+ connector by encoder
+MIME-Version: 1.0
 
+On Fri, Mar 14, 2025 at 07:52:35AM +0200, Dmitry Baryshkov wrote:
+> On Fri, Mar 14, 2025 at 08:50:29AM +0800, Andy Yan wrote:
+> >=20
+> > Hi Maxime and Simona,
+> >=20
+> >=20
+> > At 2025-03-13 19:55:33, "Maxime Ripard" <mripard@kernel.org> wrote:
+> > >Hi,
+> > >
+> > >On Thu, Mar 13, 2025 at 04:09:54PM +0800, Andy Yan wrote:
+> > >> At 2025-03-05 19:55:19, "Andy Yan" <andyshrk@163.com> wrote:
+> > >> >At 2025-03-04 19:10:47, "Maxime Ripard" <mripard@kernel.org> wrote:
+> > >> >>With the bridges switching over to drm_bridge_connector, the direct
+> > >> >>association between a bridge driver and its connector was lost.
+> > >> >>
+> > >> >>This is mitigated for atomic bridge drivers by the fact you can ac=
+cess
+> > >> >>the encoder, and then call drm_atomic_get_old_connector_for_encode=
+r() or
+> > >> >>drm_atomic_get_new_connector_for_encoder() with drm_atomic_state.
+> > >> >>
+> > >> >>This was also made easier by providing drm_atomic_state directly t=
+o all
+> > >> >>atomic hooks bridges can implement.
+> > >> >>
+> > >> >>However, bridge drivers don't have a way to access drm_atomic_state
+> > >> >>outside of the modeset path, like from the hotplug interrupt path =
+or any
+> > >> >>interrupt handler.
+> > >> >>
+> > >> >>Let's introduce a function to retrieve the connector currently ass=
+igned
+> > >> >>to an encoder, without using drm_atomic_state, to make these drive=
+rs'
+> > >> >>life easier.
+> > >> >>
+> > >> >>Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > >> >>Co-developed-by: Simona Vetter <simona.vetter@ffwll.ch>
+> > >> >>Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> > >> >>---
+> > >> >> drivers/gpu/drm/drm_atomic.c | 45 +++++++++++++++++++++++++++++++=
++++++++++++++
+> > >> >> include/drm/drm_atomic.h     |  3 +++
+> > >> >> 2 files changed, 48 insertions(+)
+> > >> >>
+> > >> >>diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_at=
+omic.c
+> > >> >>index 9ea2611770f43ce7ccba410406d5f2c528aab022..b926b132590e78f8d4=
+1d48eb4da4bccf170ee236 100644
+> > >> >>--- a/drivers/gpu/drm/drm_atomic.c
+> > >> >>+++ b/drivers/gpu/drm/drm_atomic.c
+> > >> >>@@ -985,10 +985,55 @@ drm_atomic_get_new_connector_for_encoder(con=
+st struct drm_atomic_state *state,
+> > >> >>=20
+> > >> >> 	return NULL;
+> > >> >> }
+> > >> >> EXPORT_SYMBOL(drm_atomic_get_new_connector_for_encoder);
+> > >> >>=20
+> > >> >>+/**
+> > >> >>+ * drm_atomic_get_connector_for_encoder - Get connector currently=
+ assigned to an encoder
+> > >> >>+ * @encoder: The encoder to find the connector of
+> > >> >>+ * @ctx: Modeset locking context
+> > >> >>+ *
+> > >> >>+ * This function finds and returns the connector currently assign=
+ed to
+> > >> >>+ * an @encoder.
+> > >> >>+ *
+> > >> >>+ * Returns:
+> > >> >>+ * The connector connected to @encoder, or an error pointer other=
+wise.
+> > >> >>+ * When the error is EDEADLK, a deadlock has been detected and the
+> > >> >>+ * sequence must be restarted.
+> > >> >>+ */
+> > >> >>+struct drm_connector *
+> > >> >>+drm_atomic_get_connector_for_encoder(const struct drm_encoder *en=
+coder,
+> > >> >>+				     struct drm_modeset_acquire_ctx *ctx)
+> > >> >>+{
+> > >> >>+	struct drm_connector_list_iter conn_iter;
+> > >> >>+	struct drm_connector *out_connector =3D ERR_PTR(-EINVAL);
+> > >> >>+	struct drm_connector *connector;
+> > >> >>+	struct drm_device *dev =3D encoder->dev;
+> > >> >>+	int ret;
+> > >> >>+
+> > >> >>+	ret =3D drm_modeset_lock(&dev->mode_config.connection_mutex, ctx=
+);
+> > >> >>+	if (ret)
+> > >> >>+		return ERR_PTR(ret);
+> > >> >
+> > >> >It seems that this will cause a deadlock when called from a  hotplu=
+g handling path,
+> > >> >I have a WIP DP diver[0],  which suggested by Dmitry to use this AP=
+I from a=20
+> > >> >&drm_bridge_funcs.detect callback to get the connector,  as detect =
+is called by drm_helper_probe_detect,
+> > >> >which will hold connection_mutex first, so the deaklock happens:
+> > >> >
+> > >> >
+> > >> >drm_helper_probe_detect(struct drm_connector *connector,
+> > >> >                        struct drm_modeset_acquire_ctx *ctx,
+> > >> >                        bool force)
+> > >> >{
+> > >> >        const struct drm_connector_helper_funcs *funcs =3D connecto=
+r->helper_private;
+> > >> >        struct drm_device *dev =3D connector->dev;
+> > >> >        int ret;
+> > >> >
+> > >> >        if (!ctx)
+> > >> >                return drm_helper_probe_detect_ctx(connector, force=
+);
+> > >> >
+> > >> >        ret =3D drm_modeset_lock(&dev->mode_config.connection_mutex=
+, ctx);
+> > >> >        if (ret)
+> > >> >                return ret;
+> > >> >
+> > >> >        if (funcs->detect_ctx)
+> > >> >                ret =3D funcs->detect_ctx(connector, ctx, force);
+> > >> >        else if (connector->funcs->detect)
+> > >> >                ret =3D connector->funcs->detect(connector, force);
+> > >> >        else
+> > >> >                ret =3D connector_status_connected;
+> > >> >
+> > >> >        if (ret !=3D connector->status)
+> > >> >                connector->epoch_counter +=3D 1;
+> > >> >
+> > >> >So I wonder can we let drm_bridge_funcs.detect pass a connector for=
+ this case ?
+> > >> >
+> > >> >
+> > >> >
+> > >> >[0]https://lore.kernel.org/linux-rockchip/047EECFC-7E55-44EC-896F-1=
+3FE04333E4D@gmail.com/T/#m25bc53b79f5cc7bddfcb7aae5656f68df396f094
+> > >> >>+
+> > >> >>+	drm_connector_list_iter_begin(dev, &conn_iter);
+> > >> >>+	drm_for_each_connector_iter(connector, &conn_iter) {
+> > >> >>+		if (!connector->state)
+> > >> >>+			continue;
+> > >> >>+
+> > >> >>+		if (encoder =3D=3D connector->state->best_encoder) {
+> > >> >>+			out_connector =3D connector;
+> > >>=20
+> > >>=20
+> > >> When try to use this patch in my bridge driver,  I found that the co=
+nnector->state->best_encoder=20
+> > >>  maybe NULL when   drm_bridge_funcs.detect or drm_bridge_funcs.detec=
+t_ctx is  called:
+> > >>=20
+> > >> [   52.713030] Invalid return value -22 for connector detection
+> > >> [   52.713539] WARNING: CPU: 7 PID: 288 at drivers/gpu/drm/drm_probe=
+_helper.c:602 drm_helper_probe_single_connector_modes+0x5e0/
+> > >> 0x63c
+> > >> [   52.714568] Modules linked in:
+> > >>=20
+> > >> [   52.724546] Call trace:
+> > >> [   52.724762]  drm_helper_probe_single_connector_modes+0x5e0/0x63c =
+(P)
+> > >> [   52.725319]  drm_mode_getconnector+0x2a4/0x488
+> > >> [   52.725711]  drm_ioctl_kernel+0xb4/0x11c
+> > >> [   52.726057]  drm_ioctl+0x22c/0x544
+> > >> [   52.726358]  __arm64_sys_ioctl+0xac/0xe0
+> > >> [   52.726706]  invoke_syscall+0x44/0x100
+> > >> [   52.727039]  el0_svc_common.constprop.0+0x3c/0xd4
+> > >>=20
+> > >> This is because  best_encoder is set by set_best_encoder, which is c=
+alled from
+> > >> drm_atomic_helper_check_modeset. When we call drm_mode_getconnector=
+=20
+> > >> for the first time, the functions mentioned above have not been call=
+ed yet,
+> > >> then we can't match the encoder from connector->state->best_encoder =
+for this case.
+> > >
+> > >As far as I'm concerned, it's by design. Encoders and connectors have
+> > >1:N relationship, and only once a connector has been enabled it has an
+> > >encoder.
+> > >
+> > >If the connector is disabled, there's no associated encoder.
+> >=20
+> > Does this prove that this API is not suitable for my application scenar=
+io:=20
+> > Get the connector in the bridge's .detect callback, so this means that =
+I may
+> > still need to modify the bridge's connector callback so that it can pas=
+s the connector ?
+>=20
+> I'd say, yes, please.
+
+And I'd say no :)
+
+There's no reason to deviate from the API other entities have here. It's
+just that the switch to DRM_BRIDGE_ATTACH_NO_CONNECTOR hasn't been
+completely thought through and it's one of the part where it shows.
+
+We have two alternative solutions: Either the driver creates the
+connector itself, since it doesn't seem to use any downstream bridge
+anyway, or we need a new bridge helper to find the connector on a bridge
+chain.
+
+We have the iterator already, we just need a new accessor to retrieve
+the (optional) connector of a bridge, and if there's none, go to the
+next bridge and try again.
+
+There's a decent amount of variations that ideally call for tests too,
+but it should be pretty simple overall.
+
+Maxime
+
+--fau2wb4ziq56b5rc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ9PejAAKCRAnX84Zoj2+
+djf9AX0W1BCHeuxaCTpGaOsUgonctU0H4uXU+bNeJLXIxkM2W0kujkJxZb+yDIIl
+G2+dKPgBgMdlmHsK5JDWS5tuEJMHfq2wA1B6pjSegicOYtGabKbz3AalW2uxcXMh
+jy92DPI0Hg==
+=LmmJ
+-----END PGP SIGNATURE-----
+
+--fau2wb4ziq56b5rc--
 
