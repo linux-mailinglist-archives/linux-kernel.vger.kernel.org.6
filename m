@@ -1,110 +1,123 @@
-Return-Path: <linux-kernel+bounces-561281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E8FA60F96
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:07:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ECB5A60F97
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:07:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E49E83AB33C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:07:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 465601B635BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD7B1E5B95;
-	Fri, 14 Mar 2025 11:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C9B1FAC59;
+	Fri, 14 Mar 2025 11:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XRbT6rnQ"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Q/7LEbCD"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0BA1FAC59
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6931FCFC5
 	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741950443; cv=none; b=O6wdFH5+vjGo/4mlt+6gDo0iyFs+xs3lCEGgsChnCDtLv5ShwJTRTuD9p5SzrXcssyBaQ5HKooKc62KBpbzyLRiSCaIeu7yJsX0PPow4h0fosBXOmfB94UU05xwQsvsiLVogSvfRewOjk7/xlKPVZJ3iKcgK7SGXUKK8zQ3ijyQ=
+	t=1741950444; cv=none; b=s+L+ALnUrMExTNi6clh1DjY9zdrp3hIYv1momu2mdKL70+rotcjr4Mq64iUiTMG3ifBZYM4O2X5MbyZBzzapls3f6RGbtp316BcxKCCspCdFmOJ8qqB91dSme89OXPcpPPMBYaa1ehSREbmsc6J99dMbb1I5iNJsMWnKBiSwqik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741950443; c=relaxed/simple;
-	bh=vZi2jP0lUPybBYEbDuYNmDxbGVhPNTPD3/wL8bL3hhk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SoIe4Z5N0vPGRx44s2Rfti/DjKGcz1frIaCEv7yuHZlyBo1Jq5M2DxvJJTUk8gDSrKasXwREb9o0S09BdnH+5Xt+hKLjBm0zvVAWEcz54PxmrmDwr9Qdpgshhz4i8vMycaB6XupbY4KXerToXWrYuQD9QEdu2CKS/TAxAyeOAaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XRbT6rnQ; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-549963b5551so1934490e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 04:07:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741950439; x=1742555239; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vZi2jP0lUPybBYEbDuYNmDxbGVhPNTPD3/wL8bL3hhk=;
-        b=XRbT6rnQ1I33ewxkLDdpOOgjOnVLWLzLkcm8yxXvaKji177ZoUJGyvI3L+O16xANoS
-         ET1fe6A+kzRloiMVNWgpPOkp/+sitixwuxvIdQ/75Q2L3hg8f5GBfJiXSUnFmVz43FH3
-         Cwxqnf8PzWMw0TH3FB1SnPFikaPDKyUb6AuB3mQTFUt7dAhRg+5m1cZSuxz6GrpbqYo0
-         Cwep9jYZ2bOO0klZ0XtO2F+MozdxSV7xH/tpn4K8Xrwme5aHCZq9StRGBGjFP7i9tcVm
-         PNeLZfDFH5blmtziZL+5yHHl9im2egbZR1Ws5267ZU9G0BfJQ5JfPwaVGz7XVikU9rBf
-         X8mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741950439; x=1742555239;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vZi2jP0lUPybBYEbDuYNmDxbGVhPNTPD3/wL8bL3hhk=;
-        b=HiaDsi7gWPJJZkBPTZe9hj1uLp1MhImY1WG/qgl5W1uGPizhkAUb3qC/UIzh9o3M2S
-         UmJZN+7Iz4+zun6SCiH5E1jsPms0bJ1LKJVeZ++n2MSv5TBKDsm3czs1IkpYkfJIcKKG
-         Y174v/OIMDMqdNGHKPWGCq07kIdDx86XNudbCVA+JFB6NpCbEWENEI/rFIV9XsyqMgAJ
-         nrgzwYz98cCKFilL6BLZ6HzTuSery80jjHmEUdfbkOOEvDKzaJWr5IJduz0RB9iuZTDj
-         ihIUkKT0ZclRZF3YifGaOqMQGuOh8XY5seG9XJ+1SoHw7MYxuR9LW19/02mn/AJu/eNq
-         X76Q==
-X-Gm-Message-State: AOJu0Yyg3gcCNEsb1CUhrjCOMfiDT78x7s0iLyv+s8GTMc3Xi5iAShXB
-	cQM3bzv4G1GmpDoBkx1nLOHt1PoCyQMBhrLrgC/JsJWmf6uVQieil/XFdPJPzvBioqsNEzlw9tS
-	O0EvCxkN+EcVVwECXPU5QJGilz6XgMpEX0ljXHA==
-X-Gm-Gg: ASbGncub3XFKOtvtzC3BTHZ0B5QXdnQ+gnP3m6gQnj1DgXxsCsAJfL1+h6ZZj69l1HH
-	ZXEqqkDuWCjWjbXOod196T98TR6zq2q4j38942eqGWBqf7r6ra/nhLtJIECxbNJQUJuKP7x64Sk
-	+tP92DrdOOEzPI4qOgiRvPfns=
-X-Google-Smtp-Source: AGHT+IFcSJixnoEkwjBUQViqWqnA082lFxNmXc+zDCN3J9rinIe1fmSsbkJHXctBWaopHE8b2FJcr+Xj5vpkvUqtL74=
-X-Received: by 2002:a05:6512:3b90:b0:540:2da2:f282 with SMTP id
- 2adb3069b0e04-549c396e64fmr616002e87.42.1741950439299; Fri, 14 Mar 2025
- 04:07:19 -0700 (PDT)
+	s=arc-20240116; t=1741950444; c=relaxed/simple;
+	bh=RGeuciyPCOqXnqmW9vfSVTfcIOmCaRdu6j3O1HpEQi4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LHUATqTaRc54KbWi+o4Er8aSB685E8zvfUhQeW+R7xwYgP4yJ9w6y88cSnrISTdRg0EyvamUc/3GdpMxw+LMRk/tllwElBhm7bo+m23UZVU7KhL3EFxcCB/hcIrRaZcZQG/vi+3FYEf7h1zoyUDUKxwPrtJOZfZyHtSrQcsuS2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Q/7LEbCD; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a257205f-525f-48cf-b8d9-101ad8a95081@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741950438;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1NYjTbUrQ1ivB2JOofCxjfC09nCkE1h3GJAT87/k1R0=;
+	b=Q/7LEbCDXcC1e9AWESRcsMbkmleLIDqpZfOa6Xw6/zIEBI+Z+aYHCnDbKJlA9ITmDXgtUL
+	uEmhcFQ1NVlyh7CvAR/FV/64uRY2+0+mo0YMJaPxvGSLsA91fCh+hPpCBgod6+AT1mAtvB
+	+XafOxJj28sC7mVvmadakgO6jExugPg=
+Date: Fri, 14 Mar 2025 19:07:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313142404.896902416@linutronix.de> <20250313142524.262678485@linutronix.de>
-In-Reply-To: <20250313142524.262678485@linutronix.de>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 14 Mar 2025 12:07:08 +0100
-X-Gm-Features: AQ5f1JoyhjvS7zFo9QW7bazOqObF1OBeqJTSOJinfX79D7Z9kBdnTxqrbBSnBCc
-Message-ID: <CACRpkdb-=VdXDMwMC_gdnbXOQjKbexLv7RTsHxjuywinxd57eg@mail.gmail.com>
-Subject: Re: [patch 5/7] gpio: mvebu: Convert generic irqchip locking to guard()
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
-	Gregory Clement <gregory.clement@bootlin.com>, Talel Shenhar <talel@amazon.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Guo Ren <guoren@kernel.org>, 
-	Herve Codina <herve.codina@bootlin.com>, Huacai Chen <chenhuacai@kernel.org>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH 2/7] sched/fair: Handle throttle path for task based
+ throttle
+To: Aaron Lu <ziqianlu@bytedance.com>
+Cc: Valentin Schneider <vschneid@redhat.com>, Ben Segall
+ <bsegall@google.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
+ Peter Zijlstra <peterz@infradead.org>, Josh Don <joshdon@google.com>,
+ Ingo Molnar <mingo@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, linux-kernel@vger.kernel.org,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+ Chuyi Zhou <zhouchuyi@bytedance.com>
+References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
+ <CANCG0GcFF7cnR4rCbU5MmY1Gq3M+r4gPXv39QPXXC=Cdr6sRww@mail.gmail.com>
+ <58e0515a-ed67-4d1a-825f-bfc2b31d1d18@linux.dev>
+ <20250314094249.GC1633113@bytedance>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <20250314094249.GC1633113@bytedance>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Mar 13, 2025 at 3:31=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
+On 2025/3/14 17:42, Aaron Lu wrote:
+> On Fri, Mar 14, 2025 at 04:39:41PM +0800, Chengming Zhou wrote:
+>> On 2025/3/13 15:21, Aaron Lu wrote:
+>>> From: Valentin Schneider <vschneid@redhat.com>
+>>>
+>>> Once a cfs_rq gets throttled, for all tasks belonging to this cfs_rq,
+>>> add a task work to them so that when those tasks return to user, the
+>>> actual throttle/dequeue can happen.
+>>>
+>>> Note that since the throttle/dequeue always happens on a task basis when
+>>> it returns to user, it's no longer necessary for check_cfs_rq_runtime()
+>>> to return a value and pick_task_fair() acts differently according to that
+>>> return value, so check_cfs_rq_runtime() is changed to not return a
+>>> value.
+>>
+>> Previously with the per-cfs_rq throttling, we use update_curr() -> put() path
+>> to throttle the cfs_rq and dequeue it from the cfs_rq tree.
+>>
+>> Now with your per-task throttling, maybe things can become simpler. That we
+>> can just throttle_cfs_rq() (cfs_rq subtree) when curr accouting to mark these
+>> throttled.
+> 
+> Do I understand correctly that now in throttle_cfs_rq(), we just mark
+> this hierarchy as throttled, but do not add any throttle work to these
+> tasks in this hierarchy and leave the throttle work add job to pick
+> time?
 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: "Uwe Kleine-K=C3=B6nig" <ukleinek@kernel.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+Right, we can move throttle_cfs_rq() forward to the curr accouting time, which
+just mark these throttled.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+And move setup_task_work() afterward to the pick task time, which make that task
+dequeue when ret2user.
 
-Yours,
-Linus Walleij
+> 
+>> Then then if we pick a task from a throttled cfs_rq subtree, we can setup task work
+>> for it, so we don't botter with the delayed_dequeue task case that Prateek mentioned.
+> 
+> If we add a check point in pick time, maybe we can also avoid the check
+> in enqueue time. One thing I'm thinking is, for a task, it may be picked
+> multiple times with only a single enqueue so if we do the check in pick,
+> the overhead can be larger?
+
+As Prateek already mentioned, this check cost is negligeable.
+
+> 
+>> WDYT?
+> 
+> Thanks for your suggestion. I'll try this approach and see how it turned
+> out.
 
