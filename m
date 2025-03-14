@@ -1,125 +1,224 @@
-Return-Path: <linux-kernel+bounces-561308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7E1A60FF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:31:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21386A60FF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:31:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 712FD3B0CFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:31:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A2323AF0BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE4E1FAC25;
-	Fri, 14 Mar 2025 11:31:39 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9013D1FDA9E;
+	Fri, 14 Mar 2025 11:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rs0srUy6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F001519B0;
-	Fri, 14 Mar 2025 11:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED0A1FA851;
+	Fri, 14 Mar 2025 11:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741951899; cv=none; b=CQ3bgkayxkDNKVe52Me2Azxv9WNQviTJeroDthGHnKgBJaoEuFVFmem1WInD/v1NE1FtLTtfziCi4It1zfzwFtwJyADDeqfS0Qjpf1Eqrv3FKo7zwNvfEnaf4G2UFRJlw3CKKILMDolvDP0lKI6e1A44x0Jv+tfc5B7BPYRrvk8=
+	t=1741951899; cv=none; b=sg+2B0ZELY0oyHMSOSRQgKnQjuVtma3oLN8/pmEKSXyC2ukqZVHenthgE02mS770yRPBVkdXAW6rzg5219wx4MX3eWyl4FWLdZjcDAXMPxhaCsKWF/x5Sy2HuHNMIjysw855SQA8bmiLvTvpVnSX7pjXX8ZgGTO/4wx+9sJi32o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741951899; c=relaxed/simple;
-	bh=grr53J3wv2CQbIqmII5z7WbBcrMBMQ/wYtPz7OGp2wk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A90NF6UQi071UapLS8UTHBjZoOkA9wxB/0a3gtpMHBUinR7gdNwh5A1CMaMIn+s+dO73JWazTxiPpf5TviRRSTszW1rS4McvffK4Umd8pvgbRYdZ01nWCiq1VFpkYbLjfK7fuLr11bySJueP9XT11LDZs5Ie54EhQmvXQEh+9i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDhvn6wPcz6K94D;
-	Fri, 14 Mar 2025 19:28:53 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id BDE4C140A70;
-	Fri, 14 Mar 2025 19:31:34 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Mar
- 2025 12:31:34 +0100
-Date: Fri, 14 Mar 2025 11:31:32 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Robert Richter <rrichter@amd.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
- Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
- De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
-	<terry.bowman@amd.com>
-Subject: Re: [PATCH v4 02/14] cxl/pci: Moving code in cxl_hdm_decode_init()
-Message-ID: <20250314113132.000043ce@huawei.com>
-In-Reply-To: <20250306164448.3354845-3-rrichter@amd.com>
-References: <20250306164448.3354845-1-rrichter@amd.com>
-	<20250306164448.3354845-3-rrichter@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	bh=DGJHNwI3HJHy6/8KAf2cH/+W9kLO7caGDy1t4fpZLfA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QVi5pw48eeu3T5FueX/AV0PHYI7H8fdNVKHJuzfeB3kkhROeQOrcIg/79LLMU7KpibkZpKgoCAIIhPmlEZpKZJ3DxgcKL642OlWqJrKP+KmT0MFGuMjEA+uiNOCdGXL0KCuA2klHRamdEqRRtx397M3xpvK8C0Jh/ZH81DDenm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rs0srUy6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D6E9C4CEE3;
+	Fri, 14 Mar 2025 11:31:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741951899;
+	bh=DGJHNwI3HJHy6/8KAf2cH/+W9kLO7caGDy1t4fpZLfA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Rs0srUy6sSifnXSbrqc0OO6qUWq/kxM86oPPFhUczWqxwncNcy5S5RvafohnEhCUa
+	 KByRMuBcU7D9ClmjhzPOzddPuKxin30KqSDJwBaoKcSuQGPsH4703UIewszLHFHU3g
+	 yuRlZexwP5B6fi1ijsXJ9RVYJOAy4ymBpCidojHu9S3L7ay0ckdCF6SXwe+b4MAHz7
+	 yGrowb1ZWafhxYWJbNNOnICMbP/r8mvQ4/0suGTVdpy0qEmBZfbZoHpkcUrSo8bENl
+	 7La7+DP9z2HqbXirjVqmjgRxkqi5xIp0BMdRwIbhch11KnWHI46T7ryj9bIamtTfAP
+	 hubQVUanhpzlw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tt3GK-00DXQI-PO;
+	Fri, 14 Mar 2025 11:31:37 +0000
+Date: Fri, 14 Mar 2025 11:31:36 +0000
+Message-ID: <86bju3onl3.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Quentin Perret <qperret@google.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] KVM: arm64: Move hyp state to hyp_vmemmap
+In-Reply-To: <20250227003310.367350-5-qperret@google.com>
+References: <20250227003310.367350-1-qperret@google.com>
+	<20250227003310.367350-5-qperret@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
- frapeml500008.china.huawei.com (7.182.85.71)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: qperret@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, vdonnefort@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, 6 Mar 2025 17:44:36 +0100
-Robert Richter <rrichter@amd.com> wrote:
-
-> Commit 3f9e07531778 ("cxl/pci: simplify the check of mem_enabled in
-> cxl_hdm_decode_init()") changed the code flow in this function. The
-> root port is determined before a check to leave the function. Since
-> the root port is not used by the check it can be moved to run the
-> check first. This improves code readability and avoids unnesessary
-> code execution.
+On Thu, 27 Feb 2025 00:33:08 +0000,
+Quentin Perret <qperret@google.com> wrote:
 > 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
-> Tested-by: Gregory Price <gourry@gourry.net>
+> Tracking the hypervisor's ownership state into struct hyp_page has
+> several benefits, including allowing far more efficient lookups (no
+> page-table walk needed) and de-corelating the state from the presence
+> of a mapping. This will later allow to map pages into EL2 stage-1 less
+> proactively which is generally a good thing for security. And in the
+> future this will help with tracking the state of pages mapped into the
+> hypervisor's private range without requiring an alias into the 'linear
+> map' range.
+> 
+> Signed-off-by: Quentin Perret <qperret@google.com>
 > ---
->  drivers/cxl/core/pci.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
+>  arch/arm64/kvm/hyp/include/nvhe/memory.h | 20 +++++++++-
+>  arch/arm64/kvm/hyp/nvhe/mem_protect.c    | 51 ++++++++++++------------
+>  arch/arm64/kvm/hyp/nvhe/setup.c          |  6 ++-
+>  3 files changed, 49 insertions(+), 28 deletions(-)
 > 
-> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> index 33c3bdd35b24..6386e84e51a4 100644
-> --- a/drivers/cxl/core/pci.c
-> +++ b/drivers/cxl/core/pci.c
-> @@ -419,14 +419,6 @@ int cxl_hdm_decode_init(struct cxl_dev_state *cxlds, struct cxl_hdm *cxlhdm,
->  	if (!hdm)
->  		return -ENODEV;
+> diff --git a/arch/arm64/kvm/hyp/include/nvhe/memory.h b/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> index 4a3c55d26ef3..cc4c01158368 100644
+> --- a/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> +++ b/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> @@ -22,6 +22,7 @@ enum pkvm_page_state {
+>  	/* Meta-states which aren't encoded directly in the PTE's SW bits */
+>  	PKVM_NOPAGE			= BIT(0) | BIT(1),
+>  };
+> +#define PKVM_PAGE_STATE_MASK		(BIT(0) | BIT(1))
 >  
-> -	root = to_cxl_port(port->dev.parent);
-> -	while (!is_cxl_root(root) && is_cxl_port(root->dev.parent))
-> -		root = to_cxl_port(root->dev.parent);
-> -	if (!is_cxl_root(root)) {
-> -		dev_err(dev, "Failed to acquire root port for HDM enable\n");
-> -		return -ENODEV;
-> -	}
-> -
->  	if (!info->mem_enabled) {
->  		rc = devm_cxl_enable_hdm(&port->dev, cxlhdm);
->  		if (rc)
-> @@ -435,6 +427,14 @@ int cxl_hdm_decode_init(struct cxl_dev_state *cxlds, struct cxl_hdm *cxlhdm,
->  		return devm_cxl_enable_mem(&port->dev, cxlds);
+>  #define PKVM_PAGE_STATE_PROT_MASK	(KVM_PGTABLE_PROT_SW0 | KVM_PGTABLE_PROT_SW1)
+>  static inline enum kvm_pgtable_prot pkvm_mkstate(enum kvm_pgtable_prot prot,
+> @@ -42,7 +43,14 @@ struct hyp_page {
+>  	u8 order;
+>  
+>  	/* Host (non-meta) state. Guarded by the host stage-2 lock. */
+> -	unsigned __host_state : 8;
+> +	unsigned __host_state : 4;
+> +
+> +	/*
+> +	 * Complement of the hyp (non-meta) state. Guarded by the hyp stage-1 lock. We use the
+> +	 * complement so that the initial 0 in __hyp_state_comp (due to the entire vmemmap starting
+> +	 * off zeroed) encodes PKVM_NOPAGE.
+> +	 */
+> +	unsigned __hyp_state_comp : 4;
+>  
+>  	u32 host_share_guest_count;
+>  };
+> @@ -89,6 +97,16 @@ static inline void set_host_state(phys_addr_t phys, enum pkvm_page_state state)
+>  	hyp_phys_to_page(phys)->__host_state = state;
+>  }
+>  
+> +static inline enum pkvm_page_state get_hyp_state(phys_addr_t phys)
+> +{
+> +	return hyp_phys_to_page(phys)->__hyp_state_comp ^ PKVM_PAGE_STATE_MASK;
+> +}
+> +
+> +static inline void set_hyp_state(phys_addr_t phys, enum pkvm_page_state state)
+> +{
+> +	hyp_phys_to_page(phys)->__hyp_state_comp = state ^ PKVM_PAGE_STATE_MASK;
+> +}
+> +
+>  /*
+>   * Refcounting for 'struct hyp_page'.
+>   * hyp_pool::lock must be held if atomic access to the refcount is required.
+> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> index a45ffdec7612..3ab8c81500c2 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> @@ -642,24 +642,24 @@ static int __host_set_page_state_range(u64 addr, u64 size,
+>  	return 0;
+>  }
+>  
+> -static enum pkvm_page_state hyp_get_page_state(kvm_pte_t pte, u64 addr)
+> +static void __hyp_set_page_state_range(phys_addr_t phys, u64 size, enum pkvm_page_state state)
+>  {
+> -	if (!kvm_pte_valid(pte))
+> -		return PKVM_NOPAGE;
+> +	phys_addr_t end = phys + size;
+>  
+> -	return pkvm_getstate(kvm_pgtable_hyp_pte_prot(pte));
+> +	for (; phys < end; phys += PAGE_SIZE)
+> +		set_hyp_state(phys, state);
+>  }
+>  
+> -static int __hyp_check_page_state_range(u64 addr, u64 size,
+> -					enum pkvm_page_state state)
+> +static int __hyp_check_page_state_range(phys_addr_t phys, u64 size, enum pkvm_page_state state)
+>  {
+> -	struct check_walk_data d = {
+> -		.desired	= state,
+> -		.get_page_state	= hyp_get_page_state,
+> -	};
+> +	phys_addr_t end = phys + size;
+> +
+> +	for (; phys < end; phys += PAGE_SIZE) {
+> +		if (get_hyp_state(phys) != state)
+> +			return -EPERM;
+> +	}
+>  
+> -	hyp_assert_lock_held(&pkvm_pgd_lock);
+> -	return check_page_state_range(&pkvm_pgtable, addr, size, &d);
+> +	return 0;
+>  }
+>  
+>  static enum pkvm_page_state guest_get_page_state(kvm_pte_t pte, u64 addr)
+> @@ -687,7 +687,6 @@ int __pkvm_host_share_hyp(u64 pfn)
+>  {
+>  	u64 phys = hyp_pfn_to_phys(pfn);
+>  	void *virt = __hyp_va(phys);
+> -	enum kvm_pgtable_prot prot;
+>  	u64 size = PAGE_SIZE;
+>  	int ret;
+>  
+> @@ -698,13 +697,13 @@ int __pkvm_host_share_hyp(u64 pfn)
+>  	if (ret)
+>  		goto unlock;
+>  	if (IS_ENABLED(CONFIG_NVHE_EL2_DEBUG)) {
+> -		ret = __hyp_check_page_state_range((u64)virt, size, PKVM_NOPAGE);
+> +		ret = __hyp_check_page_state_range(phys, size, PKVM_NOPAGE);
+
+OK, I think I finally clicked here. Does it mean that all the tracking
+is now done in terms of PAs instead of VAs?
+
+>  		if (ret)
+>  			goto unlock;
 >  	}
 >  
-> +	root = to_cxl_port(port->dev.parent);
-> +	while (!is_cxl_root(root) && is_cxl_port(root->dev.parent))
-> +		root = to_cxl_port(root->dev.parent);
-> +	if (!is_cxl_root(root)) {
-> +		dev_err(dev, "Failed to acquire root port for HDM enable\n");
+> -	prot = pkvm_mkstate(PAGE_HYP, PKVM_PAGE_SHARED_BORROWED);
+> -	WARN_ON(pkvm_create_mappings_locked(virt, virt + size, prot));
+> +	__hyp_set_page_state_range(phys, size, PKVM_PAGE_SHARED_BORROWED);
+> +	WARN_ON(pkvm_create_mappings_locked(virt, virt + size, PAGE_HYP));
 
-Is this error message suffering from code rot?  In the path where
-root is used, use no HDM enabling occurs.
+And this is the split between the state now being kept in the on a PA
+base and the actual mapping that is now only takes the page attributes
+and no SW bits?
 
-> +		return -ENODEV;
-> +	}
-> +
->  	for (i = 0, allowed = 0; i < info->ranges; i++) {
->  		struct device *cxld_dev;
->  
+Thanks,
 
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
