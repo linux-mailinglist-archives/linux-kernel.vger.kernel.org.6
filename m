@@ -1,73 +1,61 @@
-Return-Path: <linux-kernel+bounces-562033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E34CA61AC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:35:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F89DA61AD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:39:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 522DB167F4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:35:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 457D64200A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0ACB204C3E;
-	Fri, 14 Mar 2025 19:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0F61FF1AF;
+	Fri, 14 Mar 2025 19:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pQoRp/7P"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IhukAQGd"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A89A7CF16;
-	Fri, 14 Mar 2025 19:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65374190678
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 19:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741980914; cv=none; b=NdkRplAsJyad5l09/TB7yEk74cU/UX7BXZ/oUdLdGGedub9bFKSmuV3MCQWYrNhlGkAEsyJL+NrJRSaYkgjO7bAdbV8SUkoHtvbMaVO2koGaR/EYQmrQE0KzZk3/n77/wHxurRKPR8pQEjx8NplhZ75+9hYgV6px/qzhhzLZwG8=
+	t=1741981134; cv=none; b=BiyH6mXntCUms7hS8tyoqHaO+YJni6Q6wemMnQf0kXQ/ddSLUFOSLWbtpFjoOZfcT8WTLnG+URley1raWXG7g6qSBvsHJiVsIhz1eOqKYyASt2ZB7i/ADslCd8W+g/1V84R3j0RPXsby6vTljaeWv89xnwDhMI3XOLj+fgxv/m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741980914; c=relaxed/simple;
-	bh=vYaI8TNAD0wf8G3xgVt/LG69aIHxTT4jJn0bM9w+O5U=;
+	s=arc-20240116; t=1741981134; c=relaxed/simple;
+	bh=ExFXyaqrz41vrDcaD+bz6tA5Abqg2qEiBgaNOeRWvqI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QmswjLuz3Oana9FJa0NJ6SJTZL1YK5URIHatFWoxCKxA532gITB/5SoRpAoTLKUP8BQLQb/WpKYIZPbhYnhTRdYN8/Uk8cVzzDabhjzLKSNVZF1xRVe8pBcAn32NzI0q1q3wKiAWwlRR3LOwjpPzysZxO10Dt4YNvhtlLVkN/m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=pQoRp/7P; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=g9UiPlgUHg/BOEsx5e3OD0q6bWRlSXKycrwmYgrT/Zs=; b=pQoRp/7P+Sr7BTNSui6T0CDG8p
-	jN222Pv7h5IjEgKbvugzirzqLvVNQUI9zxKCuJIeyOnNOM4SE0lQy1k1Zc8iKo83nf1vgblKfhqrR
-	96eHsQOxH+/mIY+dWa/H8z+bNST8C3BjfhE2kQhKlbB4jiUFe6KMtd9B3Kh7wvibDh68=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ttAo6-005O1r-Na; Fri, 14 Mar 2025 20:34:58 +0100
-Date: Fri, 14 Mar 2025 20:34:58 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Lee Jones <lee@kernel.org>
-Cc: Christian Marangi <ansuelsmth@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v12 09/13] mfd: an8855: Add support for Airoha
- AN8855 Switch MFD
-Message-ID: <49d2cfed-cb31-438d-9736-6d8e0bb24041@lunn.ch>
-References: <20250309172717.9067-1-ansuelsmth@gmail.com>
- <20250309172717.9067-10-ansuelsmth@gmail.com>
- <20250314113551.GK3890718@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SBJL7PzxBP0SbieoVGI8Mw0u6a046UjzDL3F0umUrQIzKUXimRUjLvZts9VgRDpBuLGzWXtRmCVu7OYliYrNaSKX+DeKGSkzry/7gYyJjshEm4gPxiXtMinCdCCitvkf42TgrkPg8CbdyruciZpHPmRD/3iNTc3lGBd4OUTKRmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IhukAQGd; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=egNB+R+BV2t876Q/5MMm+o7bPUDS9T+6cymtdQUameY=; b=IhukAQGdS9meL53sN39G7N9qaC
+	5IRKj6LS0R4dkP4EQZvl7QhH4MAy1PKUJk77SI5uvkuSM7SSZVIS42DTnwp0rEd/6iGfvygbjiDTC
+	UGq7CpMKj7GQfsNSotFoq8bZoE2+jEVBjEEJlMg8d9qZxWe6r3rlDnylvwgSRsaotK6xuL2/6EXJu
+	H6OSZDfn6IhIbrS9b/+qWTSEQzPwdOVsnTfUeV0SRbvIH1rkWpYEufzamwRgZ1t9O36t2yoIovIml
+	S/7od6fZZ3OkkxMAvkw1cwXJZ/9w/QjFe+vs/TOJfx4QFny7PqoXXNvhYV3NHaCOIYsaq8gfH8eln
+	BAd+0VgQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1ttArq-00000002wS0-0Mxy;
+	Fri, 14 Mar 2025 19:38:50 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 874A4300599; Fri, 14 Mar 2025 20:38:48 +0100 (CET)
+Date: Fri, 14 Mar 2025 20:38:48 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Brendan Jackman <jackmanb@google.com>,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 06/13] objtool: Remove --unret dependency on --rethunk
+Message-ID: <20250314193848.GE36322@noisy.programming.kicks-ass.net>
+References: <cover.1741975349.git.jpoimboe@kernel.org>
+ <c6f5635784a28ed4b10ac4307b1858e015e6eff0.1741975349.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,68 +64,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250314113551.GK3890718@google.com>
+In-Reply-To: <c6f5635784a28ed4b10ac4307b1858e015e6eff0.1741975349.git.jpoimboe@kernel.org>
 
-> > +static int an8855_mii_set_page(struct an8855_mfd_priv *priv, u8 phy_id,
-> > +			       u8 page) __must_hold(&priv->bus->mdio_lock)
-> > +{
-> > +	struct mii_bus *bus = priv->bus;
-> > +	int ret;
-> > +
-> > +	ret = __mdiobus_write(bus, phy_id, AN8855_PHY_SELECT_PAGE, page);
+On Fri, Mar 14, 2025 at 12:29:04PM -0700, Josh Poimboeuf wrote:
+> With unret validation enabled and IBT/LTO disabled, objtool runs on TUs
+> with --rethunk and on vmlinux.o with --unret.  So this dependency isn't
+> valid as they don't always run on the same object.
 > 
-> Calling functions with '__' is a red flag.
-
-In this case, it is correct. It was probably a bad decision to call
-this __mdiobus_write() in the first place, but we were not expecting
-it to be used in real driver code, just in core code, where calls to
-it are wrapped with a mutex lock/unlock.
-
-But drivers started to need to perform multiple read/write operations
-in an atomic sequence, so they started doing there own taking of the
-lock, and using these unlocked low level helpers.
-
-We should probably rename __mdiobus_write() to _mdiobus_write() to
-avoid compiler namespace issues.
-
-> > +	if (ret < 0)
-> > +		dev_err_ratelimited(&bus->dev,
-> > +				    "failed to set an8855 mii page\n");
+> This error never triggered before because --unret is always coupled with
+> --noinstr, so the first conditional in opts_valid() returns early due to
+> opts.noinstr being true.
 > 
-> Use 100-chars if it avoids these kind of line breaks.
-
-I _guess_ the code is following networking coding style, even though
-it is outside of normal networking directories. netdev keeps with the
-old 80 limit.
-
-> > +static int an8855_regmap_read(void *ctx, uint32_t reg, uint32_t *val)
-> > +{
-> > +	struct an8855_mfd_priv *priv = ctx;
-> > +	struct mii_bus *bus = priv->bus;
-> > +	u16 addr = priv->switch_addr;
-> > +	int ret;
-> > +
-> > +	mutex_lock_nested(&bus->mdio_lock, MDIO_MUTEX_NESTED);
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> ---
+>  tools/objtool/builtin-check.c | 5 -----
+>  1 file changed, 5 deletions(-)
 > 
-> guard()?
+> diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
+> index 387d56a7f5fb..c7275cf7641b 100644
+> --- a/tools/objtool/builtin-check.c
+> +++ b/tools/objtool/builtin-check.c
+> @@ -151,11 +151,6 @@ static bool opts_valid(void)
+>  		return true;
+>  	}
+>  
+> -	if (opts.unret && !opts.rethunk) {
+> -		ERROR("--unret requires --rethunk");
+> -		return false;
+> -	}
 
-netdev people consider guard() too magical. scoped_guard() is however
-O.K.
-
-> > +	return ret < 0 ? ret : 0;
-> 
-> Doesn't the caller already expect possible >0 results?
-
-It should not happen. Networking has a very small number of functions
-which do return 1 on a different sort of success. Such functions are
-generally called foo_changed(), e.g. mdiobus_modify_changed(). This
-will do a read/modify/write. If it did not need to modify anything,
-because of the current value, it will return 0. If something did
-actually change, it returns 1. If something did actually change, you
-sometimes need to take further actions. But many callers don't care,
-so we have wrappers e.g. mdiobus_modify() calls
-mdiobus_modify_changed() and then converts 0 or 1 to just 0. I'm
-guessing this code copied such a helper when it should not of done.
-
-	Andrew
+But but but, the whole UNTRAIN_RET stuff relies on return thunks. Even
+though objtool can do that VALUDATE_UNRET_BEGIN -> VALIDATE_UNRET_END
+check without there being return thunks, it simply doesn't make sense.
 
