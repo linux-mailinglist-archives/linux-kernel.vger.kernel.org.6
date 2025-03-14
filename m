@@ -1,164 +1,97 @@
-Return-Path: <linux-kernel+bounces-561617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9457BA61413
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:50:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C631AA61421
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:51:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA41F17C457
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:50:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D20A17F4A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96619201035;
-	Fri, 14 Mar 2025 14:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6560920125B;
+	Fri, 14 Mar 2025 14:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mksSY5yo"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcIqeTIR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818C1200B85
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29231990BA;
+	Fri, 14 Mar 2025 14:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741963843; cv=none; b=YJ/vesRZvjEUXceAYjDqlhe59HuTj7cPXHjK/FpxOblHKEqCM2P+fRK4ADJLPjk/bIeU6qp8yGfrAzhlXFXoSEQQCfi3A9C17XvI/seMXnV7k7Y1IlMt7adK4mchom1lDlSZN+HU9oDMOHPQ3nfsYpCEKWmV7sIXDnQshMNsrVc=
+	t=1741963884; cv=none; b=BGIOrJgpf1FUe64j/ya1n1jyloNIE1RP+nwJppwi3uVx8PAPanTJabS5r4ibWzW56eRrIKKbZ99H+sN6uw3OhZEQyD7hEJIONtrumySVb1a9flMsVpnh7qAiP1z0E3M/DPdgr1f9f1PHigUrUgAzT4ad1Dp2cyRQ4F6+fFINEYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741963843; c=relaxed/simple;
-	bh=maO4VrlOA5Crgv/3qBCu9Kk+oUeartKpyLArd51qh7A=;
+	s=arc-20240116; t=1741963884; c=relaxed/simple;
+	bh=5gPnzD0GDq9FStP/meepINPu9bg61FYeib/5YwHS270=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oJv2R6PrYDorsV8KiqKxHT7bPVyhQS5hsHlZYQk0QO6RkbxTXhKmkQ/mPDb2P8KtE5iswZNgwaGI5uHEMpVmS+Xon0HbVP/XRUKkSYU5tA0RYFBzFnTiZfenSPbG0HkBtTGPcdDa/07yyTT/eXpLnBLWZupITTGGDebP95T352o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mksSY5yo; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22401f4d35aso43860775ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:50:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741963841; x=1742568641; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7OrItOGYSNYN0heMZXm9O2Sd5YIsOC/lcspBLUrGTOo=;
-        b=mksSY5yoJH4Tcp4rWXEzbFSEBM9Uco3ucM3ETh8xpcnQEugnJiob/Wz45hlEhsFZWn
-         Hvew+7z4nw75/MOVQmuK3iOQsrNs7Odc3ZeF+BP197vSuU5gZfUWje0L+AHED5x0vyJP
-         z2qHOEU5E8iRnhom4XZwPINW2qk6qrm/HPShoEYJpSe6nVgVAwxoXbfoz83tpF78rNCh
-         IjLq7Gzvhy/VJHJkDXWNUkpBXCZ/OHIgqYwy5aQqSw/iLVdKFao3pr7gz4D2qLH6m56e
-         pzj1wqaVN3jduVNJJ0bwh+omPAQZffjlzAa6o1C+s+pvP2r8IoN+rDfV5ayYA1wloSiU
-         z2yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741963841; x=1742568641;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7OrItOGYSNYN0heMZXm9O2Sd5YIsOC/lcspBLUrGTOo=;
-        b=bJa16ArC4jW/eRZwAbUaxeSN+wglWPxAJ4qMcpgAatsMqW2XQIpCzL+YU0Au0Kp3TL
-         99Z+FZnxxIVzIbp2lDmS1Mz6SXWtLPuFQhIH1dQ412ZetNbI3mroUdFVjCzym0vLgSjg
-         iyIoVaGkkJegKsVitEUPL5CjtqVcjvHK1PMOrau6F5tH5trd72GD6eF8HGe5zG5kS7Tp
-         vS93fxsMIpBebrATdXCbVR2Nbtd/doZbhwbygXupM6zyGkD3Qb/eTJxtF43JrSfCgowb
-         rUEpZD1wNRes8H3542i+j8vEpRVSHwn8HEzrn4Abj9EmMlsgqXkthbHcyg3aqGVFqU8p
-         mpmw==
-X-Forwarded-Encrypted: i=1; AJvYcCW8bXp3MbDsf2JN44niV7Gk+zzFQ2YwXY9aMnL+qAseyrFtcgPLIiP3oiu0Cmx0pmPjCGh1DPvgztfNxDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVePsgKqqNGHj/6Fo2FPrDuAgPMsRzCgWeNCqRP5z51vLpPoK4
-	T8EbUYKA9xEWGVM2OB7P083cqpm8BogOb4dDFiR6ChvjGTAGYrfcjaAlJQTJRw==
-X-Gm-Gg: ASbGncvbYbswTjHVU4fwQHsXdsFlMcn/umWOciBGiCkQEf+qHhI+Jjoes0zTbFJaEu3
-	nx8ZtOrQ9jmvVojwHvkzGwq0nJjhqTaiSjafnmR6hnNVLPzui5Y6MNYsPbFn1XaP3cTDAWEUHqJ
-	u8Y3r9SpfIns8aRQO6/oEiTl9px1s87BqeTkILL7+aixQpku1zFOO5ZMIleMRod0rnqmpaOkZ0I
-	7zqeKRwiXLn18k5JoZrT+JtusLb85qDqdB9AOpHn0WuLS+HKM4Q5pP9/iIDIa1rwygth6qqmsAo
-	6dK2fIL2cb3k1dbQ3D5WPxyeaRChaC8+wWRkZO7UDdOlUgghkakFPwGc
-X-Google-Smtp-Source: AGHT+IHmY97xSOZQboXnoTB4b5k6xHHuACGBmQ9IazWwAK8CRME94eJLpOCS80qaR25WQuoGvR2UGA==
-X-Received: by 2002:a17:903:98b:b0:21f:4c8b:c4de with SMTP id d9443c01a7336-225e0aeeabemr39677735ad.42.1741963840675;
-        Fri, 14 Mar 2025 07:50:40 -0700 (PDT)
-Received: from thinkpad ([120.56.195.144])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba734esm29357815ad.141.2025.03.14.07.50.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 07:50:40 -0700 (PDT)
-Date: Fri, 14 Mar 2025 20:20:35 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Wenbin Yao <quic_wenbyao@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, p.zabel@pengutronix.de,
-	dmitry.baryshkov@linaro.org, abel.vesa@linaro.org,
-	quic_qianyu@quicinc.com, neil.armstrong@linaro.org,
-	quic_devipriy@quicinc.com, konrad.dybcio@oss.qualcomm.com,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] phy: qcom: qmp-pcie: Add PHY register retention
- support
-Message-ID: <20250314145035.h3nybvvko3ew37wl@thinkpad>
-References: <20250226103600.1923047-1-quic_wenbyao@quicinc.com>
- <20250226103600.1923047-3-quic_wenbyao@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bf1hBBm6TCbU/4Oedl3Lakp4NUKDkgnu9C7uHUgBSJT/5+nwiLMMDD6dblGgSS0j3O+eQ2Fw86ZrmkulZlYsBAKxNtUbzmyV6PPSclkvH9KkWE1jbnE+Y+gW7w0bCgwDmTK+t47ZrghVLevkwefObnd5OuxCgW/EuEQXt3iHwvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcIqeTIR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC185C4CEE3;
+	Fri, 14 Mar 2025 14:51:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741963884;
+	bh=5gPnzD0GDq9FStP/meepINPu9bg61FYeib/5YwHS270=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bcIqeTIRacLyhmGOXRYMtoEpjZOkvtoxlCyZ1PwEqvYmoHWM1ejH0e5sidmFF/b+U
+	 H9LaRPguudxnqk/mjNRa5Qot77DsHj5vr1WVURdx2OlUiGfcYxvTsjPEmBFynHgsHc
+	 UcOBK4r1ovyqwjTGStoHCHGhfLQwwPbfaz60x0CF8RXZg1HMKYfXudb6M+oVZk2c3h
+	 CtYaWosJRlKypHsioRRHjDD9Ai/2uzFwIfknehj1J+pvxp89V4CppSbIjJVAtBZYX/
+	 Tu7fcF+cYJxZN9aOUb2HCShMW12y8NU2tyv5wHMGp3ZZVkQQbrmkSxTjPvmco1lGiv
+	 wlI2tnTxP4mkw==
+Date: Fri, 14 Mar 2025 16:51:19 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, linux-integrity@vger.kernel.org,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm/tpm_ftpm_tee: fix struct ftpm_tee_private
+ documentation
+Message-ID: <Z9RCZ_L6HS0GZhWL@kernel.org>
+References: <20250313093717.69270-1-sgarzare@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250226103600.1923047-3-quic_wenbyao@quicinc.com>
+In-Reply-To: <20250313093717.69270-1-sgarzare@redhat.com>
 
-On Wed, Feb 26, 2025 at 06:36:00PM +0800, Wenbin Yao wrote:
-> From: Qiang Yu <quic_qianyu@quicinc.com>
+On Thu, Mar 13, 2025 at 10:37:17AM +0100, Stefano Garzarella wrote:
+> The `state` member in `struct ftpm_tee_private` is in the documentation,
+> but it has never been in the implementation since the commit 09e574831b27
+> ("tpm/tpm_ftpm_tee: A driver for firmware TPM running inside TEE") that
+> introduced it.
 > 
-> Some QCOM PCIe PHYs support no_csr reset. Unlike BCR reset which resets the
-> whole PHY (hardware and register), no_csr reset only resets PHY hardware
-> but retains register values, which means PHY setting can be skipped during
-> PHY init if PCIe link is enabled in booltloader and only no_csr is toggled
-> after that.
+> Remove it to have a match between documentation and implementation.
 > 
-> Hence, determine whether the PHY has been enabled in bootloader by
-> verifying QPHY_START_CTRL register. If it's programmed and no_csr reset is
-> available, skip BCR reset and PHY register setting to establish the PCIe
-> link with bootloader - programmed PHY settings.
-> 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-One nit below.
-
+> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
 > ---
->  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 69 ++++++++++++++++++++----
->  1 file changed, 59 insertions(+), 10 deletions(-)
+>  drivers/char/tpm/tpm_ftpm_tee.h | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> index 219266125cf2..c3642d1807e4 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> @@ -2805,6 +2805,7 @@ struct qmp_pcie {
->  
->  	const struct qmp_phy_cfg *cfg;
->  	bool tcsr_4ln_config;
-> +	bool skip_init;
->  
->  	void __iomem *serdes;
->  	void __iomem *pcs;
-> @@ -3976,18 +3977,38 @@ static int qmp_pcie_init(struct phy *phy)
->  {
->  	struct qmp_pcie *qmp = phy_get_drvdata(phy);
->  	const struct qmp_phy_cfg *cfg = qmp->cfg;
-> +	void __iomem *pcs = qmp->pcs;
-> +	bool phy_initialized = !!(readl(pcs + cfg->regs[QPHY_START_CTRL]));
->  	int ret;
->  
-> +	qmp->skip_init = qmp->nocsr_reset && phy_initialized;
-> +	/*
-> +	 * We need to check the existence of init sequences in two cases:
-> +	 * 1. The PHY doesn't support no_csr reset.
-> +	 * 2. The PHY supports no_csr reset but isn't initialized by bootloader.
-> +	 * As we can't skip init in these two cases.
-> +	 */
-> +	if (!qmp->skip_init && !cfg->tbls.serdes_num) {
-> +		dev_err(qmp->dev, "no init sequences are available\n");
+> diff --git a/drivers/char/tpm/tpm_ftpm_tee.h b/drivers/char/tpm/tpm_ftpm_tee.h
+> index f98daa7bf68c..e39903b7ea07 100644
+> --- a/drivers/char/tpm/tpm_ftpm_tee.h
+> +++ b/drivers/char/tpm/tpm_ftpm_tee.h
+> @@ -21,7 +21,6 @@
+>  /**
+>   * struct ftpm_tee_private - fTPM's private data
+>   * @chip:     struct tpm_chip instance registered with tpm framework.
+> - * @state:    internal state
+>   * @session:  fTPM TA session identifier.
+>   * @resp_len: cached response buffer length.
+>   * @resp_buf: cached response buffer.
+> -- 
+> 2.48.1
+> 
 
-"Init sequence not available\n"
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-> +		return -EINVAL;
+[applying next week]
 
--ENODATA
 
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+BR, Jarkko
 
