@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-561873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 036BCA617DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:34:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DA2A617D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:33:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 269161890F2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:34:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 757FD885641
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6AB204C3F;
-	Fri, 14 Mar 2025 17:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600762045AC;
+	Fri, 14 Mar 2025 17:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hYkUWdCG"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CaR08mpK"
 Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD7A204598
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236A71FFC60
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741973566; cv=none; b=K6Eh4u9StSgDKmrXS92ObDbnf/t9itgNgAtstdKbPdcttdXlTT1Yx0QE8BAu3wunLluhq6f6CnwofYDIfP0wDPXc1itxUYfTVY5vQ2Y5RpFlu0PImfpW+tmXdeNyRmf9djSgZ5TglwisEDgObWNJ/s7VhiKA0+u8+VGWyoDu/Wk=
+	t=1741973563; cv=none; b=NZpCGNbllHkR/fX2Q+b9EPbYNsAi88NNypNuOckEWe14ilS1YOVsQUeHpRnsmmZxwijoGPnZVc2q+xmNma9YKA0vLuvqDPI/NSwZvKYcBTTA48FdlqXm/veIO58weZOXEZhDqTZR3FiJoF9SIegjLHu1cCKH0IM3yd5TZLy/olU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741973566; c=relaxed/simple;
-	bh=xF/2QnZTSylt/cwjFnFTL7qBGTzMhfvtQ67JNqoT4r4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Hf+KTRPR4WuAJo6IEjQS17+WgDCzq8ARbwTPvFCNx0c1e4Z/D42gHcGZwbOIUAKu+TG57PkXJRTO/oG36+dThCEvfJUWEAP118EWQy7lojqHWiB/4qNoIo0lr23+y0MqpBKReZgclCiRSsOYJ8sV8Bm1bWDIN9JqxBb2wBRzsoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hYkUWdCG; arc=none smtp.client-ip=90.155.92.199
+	s=arc-20240116; t=1741973563; c=relaxed/simple;
+	bh=KcZmg1zIUwYl+d2uu76ow2WhOsy6u7gEqnTVmBZKyz8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HyXmhopg8bvGcvY4xRAR6nd6PZGhdsVkEzNIoS8usgQ+wMaXjMoj5CxDLJ51NvUm5qE4lFE574fA9/NyRhJym7Gyxp+epZITzUjoLiJii4Aqml4N9PfFDjwYUWOvFqz0zJrHIydOfpwZkLfHAJZC7T7y6njZ8x76DxjYRr3ZSsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CaR08mpK; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=96s6A0/wGdg9uEowt/d0MtM4B3230XuWS7buJGJQgVo=; b=hYkUWdCGeorzJA6Fbu6tUQSfsD
-	rKkuiTnOfD+erkZFGETT3p78wEpDohBR3bKdRF/WXXzAyx9ZH7TuxytV0oSL4oP6JA4q0sQ2arUb/
-	jnCHj/0t3dDQEyMWDdmTdQ9IPd2kaGqA/IUWp8hP00aByTzAz981k5S0/1akHmrJrDuiB1srX1v20
-	FciWJCOUiaaGPrtUqrSWzFxWPbopR9myKzHtb7iVHtTC+b7pQAaeQkr3sKkLRcjxi8gR0NJBGGpph
-	8pPqJjPrWZLly99egtwGI4maLLSTpNmPtwvJVcCmVaaxrJpCtaTozMQnA94mXhxJt53zEC+GWWwRp
-	Nr1NUj4Q==;
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=I5Awq6moaztxY22uQpLVPuBkTzBbIxEtYFjSbRAN49Y=; b=CaR08mpK+sw0slWVjMplYOL9ou
+	8OaStTEcVYPeMmXoOSQ/y4t41ZXejoGL40x32rlJ0ltjUw56aQmTN/JaSd+NloQNKQ5Yu6JYSfMPv
+	tn3exLJQlbxB+sJrb8hLhaqkGute3MV3eG2vrQ2HCCJANlAQ4WS2/pj5ehW0b2MXTFRE0Khjaisyp
+	4hYUfM0+cjyIkVU4ouKmHo/FXmq3sQAhMUQjepR4nrTWKm5M4kGs/cxOBmE5vdQHGKchsfUBLm4md
+	QraBeazfY3zr9/M+msg5KTr7knguUpW/LR3z+KA9oKD+Lxbmk97QE8kmdv5Y8zOB4mCNLMucnn4o4
+	Oono+19A==;
 Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
 	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tt8tb-00000002vU9-3fUO;
+	id 1tt8tb-00000002vUC-3fT3;
 	Fri, 14 Mar 2025 17:32:32 +0000
 Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tt8tY-0000000CsVc-32QC;
+	id 1tt8tY-0000000CsVj-3Mn6;
 	Fri, 14 Mar 2025 17:32:28 +0000
 From: David Woodhouse <dwmw2@infradead.org>
 To: kexec@lists.infradead.org
@@ -64,94 +65,193 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	Peter Zijlstra <peterz@infradead.org>,
 	jpoimboe@kernel.org,
 	bsz@amazon.de
-Subject: [PATCH v8 0/7] x86/kexec: Add exception handling for relocate_kernel
-Date: Fri, 14 Mar 2025 17:27:32 +0000
-Message-ID: <20250314173226.3062535-1-dwmw2@infradead.org>
+Subject: [PATCH v8 1/7] x86/kexec: Debugging support: Load an IDT and basic exception entry points
+Date: Fri, 14 Mar 2025 17:27:33 +0000
+Message-ID: <20250314173226.3062535-2-dwmw2@infradead.org>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250314173226.3062535-1-dwmw2@infradead.org>
+References: <20250314173226.3062535-1-dwmw2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: David Woodhouse <dwmw2@infradead.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-Debugging kexec failures is painful, as anything going wrong in execution
-of the critical relocate_kernel() function tends to just lead to a triple
-fault. Thus leading to *weeks* of my life that I won't get back. Having
-hacked something up for my own use, I figured I should share it...
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+---
+ arch/x86/include/asm/kexec.h         |  5 ++
+ arch/x86/kernel/machine_kexec_64.c   | 21 ++++++++
+ arch/x86/kernel/relocate_kernel_64.S | 77 ++++++++++++++++++++++++++++
+ 3 files changed, 103 insertions(+)
 
-Add a trivial exception handler in the relocate_kernel environment which 
-outputs to the early_printk serial console if configured. Currently only 
-8250-compatible serial ports are supported, but that could be extended.
-
-I had to hack up QEMU support for a PCI serial port which matches what
-the existing early_printk code can drive, and the *real* 8250_pci driver
-doesn't seem to cope with that setup at all, but whatever... the kexec
-code now drives the same 32-bit stride which is all that earlyprintk
-supports. We can always add more later, if anyone cares.
-
-Someone who cares might want to bring the i386 version into line with
-this, although the lack of rip-based addressing makes all the PIC code a
-bit harder.
-
-v8:
- • Fix UNRET objtool warning in exc_handler.
- • Clean up magic numbers in stack frame for exc_handler.
- • Fix i386 build error due to making the debug support unconditional.
- • The int3 is still a [DO NOT APPLY] hack for later, and I plan to deal
-   with that with a userspace test case based on
-   http://david.woodhou.se/loadret.c which will exercise kexec-jump at the
-   same time.
-
-v7: https://lore.kernel.org/kexec/20250312144257.2348250-1-dwmw2@infradead.org/
- • Drop CONFIG_KEXEC_DEBUG and make it all unconditional in order to
-   "throw regressions back into the face of whoever manages to introduce
-   them" (Ingo, https://lore.kernel.org/kexec/Z7rwA-qVauX7lY8G@gmail.com/)
- • Move IDT invalidation into relocate_kernel() itself.
-
-v6: https://lore.kernel.org/kexec/20250115191423.587774-1-dwmw2@infradead.org/
- • Rebase onto already-merged fixes in tip/x86/boot.
- • Move CONFIG_KEXEC_DEBUG to generic kernel/Kconfig.kexec as Bartosz is
-   working on an Arm64 version.
-
-v5: https://lore.kernel.org/kexec/20241205153343.3275139-1-dwmw2@infradead.org/T/
- • Drop [RFC].
- • Drop _PAGE_NOPTISHADOW fix, which Ingo already took into tip/x86/urgent.
- • Add memory-mapped serial port support (32-bit MMIO spacing only).
-
-v4 (RFC): https://lore.kernel.org/kexec/20241127190343.44916-1-dwmw2@infradead.org/T/
- • Add _PAGE_NOPTISHADOW fix for the identmap code.
- • Drop explicit map of control page, which was masking the identmap bug.
-
-v3 (RFC): https://lore.kernel.org/kexec/20241125100815.2512-1-dwmw2@infradead.org/T/
- • Add CONFIG_KEXEC_DEBUG option and use earlyprintk config.
- • Allocate PGD separately from control page.
- • Explicitly map control page into identmap.
-
-V2 (RFC): https://lore.kernel.org/kexec/20241122224715.171751-1-dwmw2@infradead.org/T/
- • Introduce linker script, start to clean up data access.
-
-V1 (RFC): https://lore.kernel.org/kexec/20241103054019.3795299-1-dwmw2@infradead.org/T/
- • Initial proof-of-concept hacks.
-
-David Woodhouse (7):
-      x86/kexec: Debugging support: Load an IDT and basic exception entry points
-      x86/kexec: Debugging support: Dump registers on exception
-      x86/kexec: Add 8250 serial port output
-      x86/kexec: Add 8250 MMIO serial port output
-      x86/kexec: Invalidate GDT/IDT from relocate_kernel() instead of earlier
-      [DO NOT MERGE] x86/kexec: Add int3 in kexec path for testing
-      [DO NOT MERGE] x86/kexec: Add CFI type information to relocate_kernel()
-
- arch/x86/include/asm/kexec.h         |   7 +
- arch/x86/kernel/early_printk.c       |   9 ++
- arch/x86/kernel/machine_kexec_64.c   |  50 +++++--
- arch/x86/kernel/relocate_kernel_64.S | 248 ++++++++++++++++++++++++++++++++++-
- 4 files changed, 302 insertions(+), 12 deletions(-)
+diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
+index 8ad187462b68..ec7636f4f86a 100644
+--- a/arch/x86/include/asm/kexec.h
++++ b/arch/x86/include/asm/kexec.h
+@@ -8,6 +8,9 @@
+ # define PA_PGD			2
+ # define PA_SWAP_PAGE		3
+ # define PAGES_NR		4
++#else
++/* Size of each exception handler referenced by the IDT */
++# define KEXEC_DEBUG_EXC_HANDLER_SIZE	6 /* pushi, pushi, 2-byte jmp */
+ #endif
+ 
+ # define KEXEC_CONTROL_PAGE_SIZE	4096
+@@ -58,6 +61,8 @@ struct kimage;
+ extern unsigned long kexec_va_control_page;
+ extern unsigned long kexec_pa_table_page;
+ extern unsigned long kexec_pa_swap_page;
++extern gate_desc kexec_debug_idt[];
++extern unsigned char kexec_debug_exc_vectors[];
+ #endif
+ 
+ /*
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index a68f5a0a9f37..faf2fb1cd9f6 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -304,6 +304,24 @@ static void load_segments(void)
+ 		);
+ }
+ 
++static void prepare_debug_idt(unsigned long control_page, unsigned long vec_ofs)
++{
++	gate_desc idtentry = { 0 };
++	int i;
++
++	idtentry.bits.p = 1;
++	idtentry.bits.type = GATE_TRAP;
++	idtentry.segment = __KERNEL_CS;
++	idtentry.offset_low = (control_page & 0xFFFF) + vec_ofs;
++	idtentry.offset_middle = (control_page >> 16) & 0xFFFF;
++	idtentry.offset_high = control_page >> 32;
++
++	for (i = 0; i < 16; i++) {
++		kexec_debug_idt[i] = idtentry;
++		idtentry.offset_low += KEXEC_DEBUG_EXC_HANDLER_SIZE;
++	}
++}
++
+ int machine_kexec_prepare(struct kimage *image)
+ {
+ 	void *control_page = page_address(image->control_code_page);
+@@ -321,6 +339,9 @@ int machine_kexec_prepare(struct kimage *image)
+ 	if (image->type == KEXEC_TYPE_DEFAULT)
+ 		kexec_pa_swap_page = page_to_pfn(image->swap_page) << PAGE_SHIFT;
+ 
++	prepare_debug_idt((unsigned long)__pa(control_page),
++			  (unsigned long)kexec_debug_exc_vectors - reloc_start);
++
+ 	__memcpy(control_page, __relocate_kernel_start, reloc_end - reloc_start);
+ 
+ 	set_memory_rox((unsigned long)control_page, 1);
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+index ac058971a382..b07c55019ce5 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -50,6 +50,11 @@ SYM_DATA_START_LOCAL(kexec_debug_gdt)
+ 	.quad   0x00cf92000000ffff      /* __KERNEL_DS */
+ SYM_DATA_END_LABEL(kexec_debug_gdt, SYM_L_LOCAL, kexec_debug_gdt_end)
+ 
++	.balign 8
++SYM_DATA_START(kexec_debug_idt)
++	.skip 0x100, 0x00
++SYM_DATA_END(kexec_debug_idt)
++
+ 	.section .text..relocate_kernel,"ax";
+ 	.code64
+ SYM_CODE_START_NOALIGN(relocate_kernel)
+@@ -139,6 +144,15 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 	movq	%ds, %rax
+ 	movq	%rax, %ds
+ 
++	/* Now an IDTR on the stack to load the IDT the kernel created */
++	leaq	kexec_debug_idt(%rip), %rsi
++	pushq	%rsi
++	pushw	$0xff
++	lidt	(%rsp)
++	addq	$10, %rsp
++
++	//int3
++
+ 	/*
+ 	 * Clear X86_CR4_CET (if it was set) such that we can clear CR0_WP
+ 	 * below.
+@@ -364,3 +378,66 @@ SYM_CODE_START_LOCAL_NOALIGN(swap_pages)
+ 	ret
+ 	int3
+ SYM_CODE_END(swap_pages)
++
++SYM_CODE_START_NOALIGN(kexec_debug_exc_vectors)
++	/* Each of these is 6 bytes. */
++.macro vec_err exc
++	UNWIND_HINT_ENTRY
++	. = kexec_debug_exc_vectors + (\exc * KEXEC_DEBUG_EXC_HANDLER_SIZE)
++	nop
++	nop
++	pushq	$\exc
++	jmp	exc_handler
++.endm
++
++.macro vec_noerr exc
++	UNWIND_HINT_ENTRY
++	. = kexec_debug_exc_vectors + (\exc * KEXEC_DEBUG_EXC_HANDLER_SIZE)
++	pushq	$0
++	pushq	$\exc
++	jmp	exc_handler
++.endm
++
++	ANNOTATE_NOENDBR
++	vec_noerr 0 // #DE
++	vec_noerr 1 // #DB
++	vec_noerr 2 // #NMI
++	vec_noerr 3 // #BP
++	vec_noerr 4 // #OF
++	vec_noerr 5 // #BR
++	vec_noerr 6 // #UD
++	vec_noerr 7 // #NM
++	vec_err 8   // #DF
++	vec_noerr 9
++	vec_err 10 // #TS
++	vec_err 11 // #NP
++	vec_err 12 // #SS
++	vec_err 13 // #GP
++	vec_err 14 // #PF
++	vec_noerr 15
++SYM_CODE_END(kexec_debug_exc_vectors)
++
++SYM_CODE_START_LOCAL_NOALIGN(exc_handler)
++	/* No need for ret mitigations during kexec */
++	VALIDATE_UNRET_END
++
++	pushq	%rax
++	pushq	%rdx
++	movw	$0x3f8, %dx
++	movb	$'A', %al
++	outb	%al, %dx
++	popq	%rdx
++	popq	%rax
++
++	/* Only return from int3 */
++	cmpq	$3, (%rsp)
++	jne	.Ldie
++
++	addq	$16, %rsp
++	iretq
++
++.Ldie:
++	hlt
++	jmp	.Ldie
++
++SYM_CODE_END(exc_handler)
+-- 
+2.48.1
 
 
