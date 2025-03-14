@@ -1,131 +1,176 @@
-Return-Path: <linux-kernel+bounces-561929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57D46A618B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:56:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A587BA618C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:58:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CA2617C9D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:56:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A034189EF2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8071F20371B;
-	Fri, 14 Mar 2025 17:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D94204582;
+	Fri, 14 Mar 2025 17:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="d+uoEhMG"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NCZeqH9x"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B436186340
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B272520297B;
+	Fri, 14 Mar 2025 17:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741974978; cv=none; b=s0mxQ9py9hsZVLGihxBLBR07JcT8d7r6BDQ+aiCI2PnFTDtwa4oi9iEQLdTSyP2Lw4T++yADdLfHasDzEzsGvt5tbghD31m3wwrsEmuQNMM0Vi9FuJDHrhfgd2Ow1PUZ52f0mKG2997U5CweT0Zcf7DXQ3Kcel3OyV1M8A+Txxw=
+	t=1741975112; cv=none; b=QCh336TuurnhBVAnHNvbsUFTAXmyUlWM5CQjrb/acnHpSL86RXslZ84+Mvs6ZI4OWT5XfRku6PpOncjjfju0jmiCOZ9dSWH6fUbdjJvY0OnVGVQvJziUwxt4tS/hQnNftzDz/3nqOZmG3mZClXdu0n9v9bLcXcGYJ9D5ORJ2PO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741974978; c=relaxed/simple;
-	bh=rCirKjzfvYAc5wfNn20g1mquip2FF65JR86cA0xldIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HYmI24s3jglvoYyM7lYew03faxHGX5KXHI/rpGuOLKRxyhxeJk1mT8c3lMIK81Rj8S4LdvS1WbkRLjGacJgA9lfiiasByBEhGxpTfncO0uscVD7S7M5GkiKNrAiuBeQYFw/TTp0oghX24SEH9Y98U/V9lU1te/WFqFA2GoMmgQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=d+uoEhMG; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 14 Mar 2025 17:56:06 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741974972;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0BQq+xAUXw60P/WE4bsmNx/WDxIn+sXXBd4O7Hava98=;
-	b=d+uoEhMG5JP4+cAPvMVU5tsk/NNKrtJjzzDxQt0oICJuSR6SVt3GPfUnoBT/gvSLdRfwCj
-	bVa/b43CObA8GFyMyeLk8DWajc20Z3qYilR3LkAtRzB6x4gQZZKv4rhlBGyYFW5YVD1z4n
-	3btLDqoJP/58bzLTXF4kPuiXJk47JXE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Rientjes <rientjes@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Mike Rapoport <rppt@kernel.org>,
-	Junaid Shahid <junaids@google.com>,
-	Reiji Watanabe <reijiw@google.com>,
-	Patrick Bellasi <derkling@google.com>
-Subject: Re: [PATCH RFC 03/11] x86/mm: Add lookup_pgtable_in_pgd()
-Message-ID: <Z9Rttphxya4VjgFX@google.com>
-References: <20250313-asi-page-alloc-v1-0-04972e046cea@google.com>
- <20250313-asi-page-alloc-v1-3-04972e046cea@google.com>
- <Z9NXkZ0_5dtqzaUB@google.com>
- <Z9Py5PX05iKhreqr@google.com>
+	s=arc-20240116; t=1741975112; c=relaxed/simple;
+	bh=x5hWKuWxbPdAKVKQKdaQxLlT/0xhENbBoD5c1ixw4rc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nq6XNAJH2Sa5j/bJvmkLaOdBvT/AKI9HiPK03miIpLrYiPVZwPel0NWaVKzzKZhmOdyP1qZ8vPWdaWunBclRfbcX2Z2YZTStT54+dXKUJ8UkWEUKT42LFXW1CALhAEj03JbAZk6xpxXPEHjezOvqXO3LxfYoELKt5N4n3IH0fGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NCZeqH9x; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22423adf751so39042305ad.2;
+        Fri, 14 Mar 2025 10:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741975108; x=1742579908; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c/nB+EprANSiiLTLvezU1vuAXuyjHhh7tXywCPXdMdU=;
+        b=NCZeqH9xNBzLr/0D6FL5VRhJtGDCCNAIbe1VDccYwm9w3JlBPECRpEwhfSIb0NCtTG
+         E4X+uDhjy/WTiSy41a1OMElwGdqS8x0bJt96mHw3CSoHChqMmDBLcVnC4loCEZSkhcIP
+         zmz6XsDS81/7cUln/A6Ef0RctbunlitubH8wzroF6glHGnkVvu2b88C15aJkOjFlfJRn
+         khPaWXTfHLaRX3OuXcdQn9lV/0GyNelxnQHoC6iBU01MIwz9A17J0WEfi3b3oQPXrGs8
+         zkVhMue6ipg1aYeE8iP9Feii7hQp3tr7gMneN92G0ChtlXuNK+tlgDDXPR5PSa/oA6Hi
+         OUkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741975108; x=1742579908;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c/nB+EprANSiiLTLvezU1vuAXuyjHhh7tXywCPXdMdU=;
+        b=cJMY+FqjbA1pzrnqp44SHODpFrO8fHmyUI3XB1Kpn/WTjn3oR0pOuzvtphkm7IVt9c
+         UGJJOcnRW62PPxmeMEZq5mvjZsBp1P8MnISeFJJCYy3jXD6gX6FPNEcxw/jX2+AiWknk
+         gtmQcgBk7GBaXWVUszALa560pVt1OhHmrTHfZmK7eOFKnhjrJFCR4s7RmOTYDYNzlSm5
+         utsNv51t3VyOdwhEoP6Fz8vg3i6roViG0HLrhpxnrG92WltjA2ai2Xh88dZnmU2Sz3YJ
+         1NFPuYGCf+lEZ9GkdtzVqoBS6qTkF8PIkLedj9hw0PEyStUxgA1vDCzYfhXksEIAQH2l
+         S/2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXQgFxQDVadATrT0nPtvGyCWPoAIspIw8zq0SKGgyF3ihByJDwg2lR/2QM/NJoPEEaLAeXBT3ZXD0GnACU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzII6hslmn/IPW9ksyXgPX2ElKBMkKgMCBEdJLTb7cQNH0sa6y/
+	jiDtI6RqnQoVgXIDXsiqU50raNJBYTuRVwyQSSkMyMGdU3dGxfTK
+X-Gm-Gg: ASbGncs8zVPJtRIdpdhxVPjZS0XYBKFWVaiKbMrG5bR0QuGOIapNPzkzU9OqzBbzq9a
+	D15iw3pGrgywN0h8a/2vYHvSJwlq0JBVvAqnPQUH6yTkc+hnz53oPUMtoh5im88soglpydA21fH
+	i8rqI7bhoQNHU98dxOenATMWQKzL8js24hsrPX9D9LPGErC+x9PRukQjOpFyKHTuwiOEt0nGp6/
+	LgbZvXaG2zSAoScuqXF3vFQPQaW8LFVlwg9ZUbVVGX73PrsKrz905xONua2G8eTrTGiV9i7t7Cy
+	c2YSyYL/lxQ+/3akoL4HNREc9bXPbnm0jQ6L8Ns1CRg0ulO7YYVhg5gCFvDBEmMvMtdzQdgqtHn
+	meFIQjZXEWKhS7JTcgTY=
+X-Google-Smtp-Source: AGHT+IFboGzFCFtY2YrWd36M9O/xP69dJrRf4kY9d1YlDpQIOB21fIIEL0GCNbPYS4EL7EjpGpHCPw==
+X-Received: by 2002:a05:6a00:21d3:b0:736:6ecd:8e32 with SMTP id d2e1a72fcca58-73722470508mr4728372b3a.21.1741975107715;
+        Fri, 14 Mar 2025 10:58:27 -0700 (PDT)
+Received: from localhost ([2a00:79e0:3e00:2601:3afc:446b:f0df:eadc])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371152938csm3243466b3a.12.2025.03.14.10.58.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 10:58:26 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	Rob Clark <robdclark@chromium.org>,
+	Connor Abbott <cwabbott0@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jordan Crouse <jordan@cosmicpenguin.net>,
+	Jonathan Marek <jonathan@marek.ca>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/msm/a6xx+: Don't let IB_SIZE overflow
+Date: Fri, 14 Mar 2025 10:58:19 -0700
+Message-ID: <20250314175820.112340-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9Py5PX05iKhreqr@google.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 14, 2025 at 09:12:04AM +0000, Brendan Jackman wrote:
-> On Thu, Mar 13, 2025 at 10:09:21PM +0000, Yosry Ahmed wrote:
-> > On Thu, Mar 13, 2025 at 06:11:22PM +0000, Brendan Jackman wrote:
-> > > This is the same thing as lookup_address_in_pgd(), but it returns the
-> > > pagetable unconditionally instead of returning NULL when the pagetable
-> > > is none. This will be used for looking up and modifying pages that are
-> > > *_none() in order to map memory into the ASI restricted address space.
-> > > 
-> > > For a [PATCH], if this logic is needed, the surrounding code should
-> > > probably first be somewhat refactored. It now looks pretty repetitive,
-> > > and it's confusing that lookup_address_in_pgd() returns NULL when
-> > > pmd_none() but note when pte_none(). For now here's something that
-> > > works.
-> > 
-> > My first instinct reading this is that lookup_address_in_pgd() should be
-> > calling lookup_pgtable_in_pgd(), but I didn't look too closely.
-> 
-> Yeah. That outer function would get a "generic" PTE pointer isntead of
-> a strongly-typed p4d_t/pud_t/etc. So we either need to encode
-> assumptions that all the page tables have the same structure at
-> different levels for the bits we care about, or we need to have a
-> switch(*level) and then be careful about pgtable_l5_enabled(). I
-> think the former is fine but it needs a bit of care and attention to
-> ensure we don't miss anything and avoid creating
-> confusion/antipatterns in the code.
+From: Rob Clark <robdclark@chromium.org>
 
-Hmm another option is to have a common helper that takes in a lot of
-parameters to control the exact behavior (e.g. do we check for 'none'?),
-and have both lookup_pgtable_in_pgd() and lookup_address_in_pgd() call
-it with different parameters.
+IB_SIZE is only b0..b19.  Starting with a6xx gen3, additional fields
+were added above the IB_SIZE.  Accidentially setting them can cause
+badness.  Fix this by properly defining the CP_INDIRECT_BUFFER packet
+and using the generated builder macro to ensure unintended bits are not
+set.
 
-This could avoid the need for a generic pointer, for example.
+Reported-by: Connor Abbott <cwabbott0@gmail.com>
+Fixes: a83366ef19ea ("drm/msm/a6xx: add A640/A650 to gpulist")
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+Backport notes, prior to commit ae22a94997b8 ("drm/msm: import A2xx-A4xx
+XML display registers database"), just open code, ie:
 
-> 
-> And perhaps more importantly, lookup_adress_in_pgd_attr() sets *nx and
-> *rw based on the level above the entry it returns.  E.g. when it
-> returns a pte_t* it sets *nx pased on pmd_flags(). I haven't looked
-> into why this is.
-> 
-> So yeah overall it needs a bit of research and most likely needs a
-> couple of prep patches. Hopefully it's possible to do it in a way that
-> leaves the existing code in a clearer state.
+   OUT_RING(ring, submit->cmd[i].size & 0xfffff);
 
-Agreed.
+Prior to commit af66706accdf ("drm/msm/a6xx: Add skeleton A7xx
+support"), a7xx_submit() did not exist so that hunk can be dropped.
 
-> 
-> Anyway, I was originally planning not to have asi_map()/asi_unmap() in
-> asi.c at all, and instead just kinda make set_memory.c natively aware
-> of ASI somehow. At that point I think this code is probably gonna look
-> a bit different. That's something I ran out of time for and had to
-> drop from the scope of this RFC. It's definitely not ideal in this
-> series that e.g. page_alloc.c, asi.c, and set_memory.c are all
-> implicitly coupled to one another (i.e. they are all colluding to
-> ensure asi_[un]map() never has to allocate). Maybe I should've called
-> this out as a TODO on the cover letter actually.
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c               | 8 ++++----
+ drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml | 7 +++++++
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
-Looking forward to seeing how this would look like :)
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+index d3978cfa3f20..ea52b7d0b212 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+@@ -245,10 +245,10 @@ static void a6xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
+ 				break;
+ 			fallthrough;
+ 		case MSM_SUBMIT_CMD_BUF:
+-			OUT_PKT7(ring, CP_INDIRECT_BUFFER_PFE, 3);
++			OUT_PKT7(ring, CP_INDIRECT_BUFFER, 3);
+ 			OUT_RING(ring, lower_32_bits(submit->cmd[i].iova));
+ 			OUT_RING(ring, upper_32_bits(submit->cmd[i].iova));
+-			OUT_RING(ring, submit->cmd[i].size);
++			OUT_RING(ring, A5XX_CP_INDIRECT_BUFFER_3_IB_SIZE(submit->cmd[i].size));
+ 			ibs++;
+ 			break;
+ 		}
+@@ -382,10 +382,10 @@ static void a7xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
+ 				break;
+ 			fallthrough;
+ 		case MSM_SUBMIT_CMD_BUF:
+-			OUT_PKT7(ring, CP_INDIRECT_BUFFER_PFE, 3);
++			OUT_PKT7(ring, CP_INDIRECT_BUFFER, 3);
+ 			OUT_RING(ring, lower_32_bits(submit->cmd[i].iova));
+ 			OUT_RING(ring, upper_32_bits(submit->cmd[i].iova));
+-			OUT_RING(ring, submit->cmd[i].size);
++			OUT_RING(ring, A5XX_CP_INDIRECT_BUFFER_3_IB_SIZE(submit->cmd[i].size));
+ 			ibs++;
+ 			break;
+ 		}
+diff --git a/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml b/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
+index 55a35182858c..16848259af51 100644
+--- a/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
++++ b/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
+@@ -2259,5 +2259,12 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 	</reg32>
+ </domain>
+ 
++<domain name="CP_INDIRECT_BUFFER" width="32" varset="chip" prefix="chip" variants="A5XX-">
++	<reg64 offset="0" name="IB_BASE"/>
++	<reg32 offset="3" name="3">
++		<bitfield name="IB_SIZE" low="0" high="19"/>
++	</reg32>
++</domain>
++
+ </database>
+ 
+-- 
+2.48.1
+
 
