@@ -1,178 +1,186 @@
-Return-Path: <linux-kernel+bounces-561973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD2EA61990
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:35:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50FF3A6199C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:37:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3329419C6A3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:35:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8637D1753FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54063204C35;
-	Fri, 14 Mar 2025 18:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3C6204C20;
+	Fri, 14 Mar 2025 18:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iSyp237W"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NT6pFdoO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5DF43169;
-	Fri, 14 Mar 2025 18:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B601F3BAE
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741977308; cv=none; b=OFnDqG8sSxa9UrXukjbcJXCwQ2o16IznqRraBgWNcbPSgO0gAf9NboZBC+xiarXGhY9J2HunvnfSjWVz8zrNbRoEYilmsmLlQ4uPi/kgVK25nQvpTz/GBJFUMW3zUR/btilccI/ISCAsPPeF01hOI2I+6rq3Id/7w7drYqKPLAM=
+	t=1741977425; cv=none; b=VbuaiX3MzqIl/w82O6Q+rmt+A9Hb/+uZfgGzItEu3dLgbE+Hj2KKTuBjJ1KW8+kXdKPEYeU+u2Ag3Fw/itCuZPKEn9JNoqe6E5sf4JZx20s3FiQTiBvX1K/HkCQWe8GBAjmzvtuNtZ2272Zsiz9ILH5X5EFqZL4f04dOSVYXIlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741977308; c=relaxed/simple;
-	bh=VScq2fw2bpujBQWsv35LjmBtGERbWvzezXJcennzOYo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E4apguiCMR5meuc5TJW4Qi0AAssYe7/YnP3hbY9JBe0lAZ43fkaXyGdkcCDyyeJhth/ZZdi1g+gfHoxhGMqD5vD1uYddxH7j4YTxbg9ztR6a4oT1Sw4saKqXtsxb5bP+CrhiJHDRA64JMZWjd+Dmc6yXyu+zsZNsmWW34pF22ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iSyp237W; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2239aa5da08so49626245ad.3;
-        Fri, 14 Mar 2025 11:35:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741977306; x=1742582106; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KOGfE1bp0apHOUPvuww94GVOY0/BGeOxjq/fkDzIXwE=;
-        b=iSyp237W2HYZAQHGpBFwpWU2WAs9NkSfN7cOFZrwKGRZwQ7k/UPTE+48904tM18qEK
-         NXKbo59ZqVELcdjBAEGavIXg2EmftULio/RbzI4wxAyFWZ2ockF/2l4AR/XIqqDO+9V8
-         aNj9M7MEZeli1lRUsYVu/VOY0htov4Xczk1Q/vupiCNlTj44myNFNUKmX42jMqmO5tr+
-         PM2Y/sTmUuwIhVEupHQzOmoBNvSAY8eiCaNiFoWQIMu57Bi2C3nHRYhRLTooOM/pOknc
-         3E+BQPoNIYBBt/SE9YuDHXhA6DYr2TuV3UK+l7gQsLEO7iomXctUGkM8adKBJ+0KBOT7
-         5b6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741977306; x=1742582106;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KOGfE1bp0apHOUPvuww94GVOY0/BGeOxjq/fkDzIXwE=;
-        b=YbOc3MQMFakQI5yta/f3JhwIjIk5ZPpVxuKzkS1K5YYbNW5H6SlbWG+YDfIDd7gwHe
-         P/hHbHahm3Lxb9nHJmoCbv3N4IW+vP01SFNvj4sZHcojHocrGMbfk1Hx1tYU+wRKM5ZN
-         a8OGbgpZoGAQmS6e6PJmpgooztXySh7qMncgS/PGtvG35j9LgFhKPMA90fy4hRQ68MRu
-         Loa7IuGbx+vxVMm9E7qduO+sA68pRRUmf4iNhuriBDyOCQNCNrvu+7+FDP5POFQa8i+Q
-         l+73nG3JC8qrRsr1BoyX/Utli8wCscno91F9MRg2gZEP+q3FWGFuQWYSAZWl3Hg3DgGT
-         U5eA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIEYaQa8q9Zq9Vb+tVTGZQJn6hjUxOXNnfG3hubvt17io/W79fnRHAwvKYYuz/NEv4/iW8UZPjQIdeE/w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0Xg/xyD71LZ2tNZgopV91CVbMvjFzeaClxNcN7yI+LA/zWn9Q
-	wnGOQFLiRu5VlFY98JiGS5q6MeARIhJCPbh6OehtebqYKh91KCa1
-X-Gm-Gg: ASbGncvZ+DPrhVXowSTtKFhiBgISpI0ZxPsCYK7PgIsih7nRfbEBasmeDclVubATDdL
-	fd8bcKNStTcdK9jY7Fat3wr3ZCQIP3B0DWaJTlHC8+zQxyMtHAoEF1LXof6gllWO7u0AQ7MoANm
-	IWxiK7PU6REHjf3dS6cU7EjzVe4kf+JUWO+cGLmQGkkV+q6adhb/rEOAylnoW5VVTj5NOpbd1bY
-	T4aB9GZVwZdhxK0ssULFYzpW1W453QSvuBbcKn+d/bM8nYNwow0dnMwow0ADeEc3BmOyIHfY2Wf
-	ESARvAq1o1eMIzNTalNcfMj7f2/b0MAM+YrCw5U5tBjHlH/5xvkV80Q+IeUpGcCNzZ5nliSrNAu
-	sqYUyBdIvaHsc8NNSvsk=
-X-Google-Smtp-Source: AGHT+IGyHLOiEcz0CUx+B5T1oc0d5NEOsRtR01l/PJbeEXJcQ7LU9JwYgvAyRbB0tUWON/7rymzn8Q==
-X-Received: by 2002:a05:6a21:6d97:b0:1f3:37c4:5005 with SMTP id adf61e73a8af0-1f5c12d7458mr5644246637.33.1741977306172;
-        Fri, 14 Mar 2025 11:35:06 -0700 (PDT)
-Received: from localhost ([2a00:79e0:3e00:2601:3afc:446b:f0df:eadc])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56ea9489esm3071103a12.65.2025.03.14.11.35.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 11:35:05 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	Rob Clark <robdclark@chromium.org>,
-	Connor Abbott <cwabbott0@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jordan Crouse <jordan@cosmicpenguin.net>,
-	Jonathan Marek <jonathan@marek.ca>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] drm/msm/a6xx+: Don't let IB_SIZE overflow
-Date: Fri, 14 Mar 2025 11:34:54 -0700
-Message-ID: <20250314183455.120824-1-robdclark@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741977425; c=relaxed/simple;
+	bh=gGjnehE79EwVbZmtu+ygVi03xKqX8gTkTcXvfkXxfFM=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=Jba4CF8qKZGGX8cGZr5wZMV4aBLrtcEfKlZZfgjMe6MT9860eYQMm8SD+oVTHSAQdQqCq4buE7G46VPAulrmQ4T8omouW3mzmbqnTl/u6uKh0DK+xlzHtNqKbsTsjoc+BjAj7lVXRs2cx6lqX5SWAdX9zgZUzlLTfIwzPlfepdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NT6pFdoO; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741977423; x=1773513423;
+  h=date:from:to:cc:subject:message-id;
+  bh=gGjnehE79EwVbZmtu+ygVi03xKqX8gTkTcXvfkXxfFM=;
+  b=NT6pFdoOG/4iFZI55RIxzG3O7qwwPExA+Huo8eOgIkUG9W/590x3lAUC
+   uQ3P7EfE0Ene1Q7cztVNJY0zigxhlzBL0lqP0uRqcPIjM8pMYww0L2/Am
+   MrXbKsenWYMhcikfWsF899f7QFbT4ylo7Ai0SbgNA1eHJg44NcUSJhMln
+   3Qy4U6QrQxHIFal6nVL60V+d6ysmYbo8PqRUY+CzRpBcslBLPkw8mriZh
+   +5YwSymE5dZjrOXrQnpvWE1larsTbGaYZqNo/FGlGD8QBpNXPK5qVlYNh
+   9jylHXwd06yypR+P/qfLmeIPhMF/s0+ac0n/9iyToqiIcoE8YORpEHAcJ
+   g==;
+X-CSE-ConnectionGUID: pqmSNcyIQJOEXbV4gOgBpw==
+X-CSE-MsgGUID: tFPSeZGXQSyndUAoZJWgXQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="42871865"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="42871865"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 11:36:58 -0700
+X-CSE-ConnectionGUID: rpRDxQZ8Q/Sk0irMFf0c5w==
+X-CSE-MsgGUID: WLWg0BlZRDSmXlFR2hLoaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="121083175"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 14 Mar 2025 11:36:57 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tt9tv-000Ajz-1E;
+	Fri, 14 Mar 2025 18:36:55 +0000
+Date: Sat, 15 Mar 2025 02:36:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/fpu] BUILD SUCCESS
+ 2883b4c2169a435488f7845e1b6fdc6f3438c7c6
+Message-ID: <202503150204.gFqSowLP-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Rob Clark <robdclark@chromium.org>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/fpu
+branch HEAD: 2883b4c2169a435488f7845e1b6fdc6f3438c7c6  x86/fpu: Use XSAVE{,OPT,C,S} and XRSTOR{,S} mnemonics in xstate.h
 
-IB_SIZE is only b0..b19.  Starting with a6xx gen3, additional fields
-were added above the IB_SIZE.  Accidentially setting them can cause
-badness.  Fix this by properly defining the CP_INDIRECT_BUFFER packet
-and using the generated builder macro to ensure unintended bits are not
-set.
+elapsed time: 1454m
 
-v2: add missing type attribute for IB_BASE
+configs tested: 94
+configs skipped: 2
 
-Reported-by: Connor Abbott <cwabbott0@gmail.com>
-Fixes: a83366ef19ea ("drm/msm/a6xx: add A640/A650 to gpulist")
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
-Backport notes, prior to commit ae22a94997b8 ("drm/msm: import A2xx-A4xx
-XML display registers database"), just open code, ie:
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-   OUT_RING(ring, submit->cmd[i].size & 0xfffff);
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-13.2.0
+arc                               allnoconfig    gcc-13.2.0
+arc                              allyesconfig    gcc-13.2.0
+arc                   randconfig-001-20250314    gcc-13.2.0
+arc                   randconfig-002-20250314    gcc-13.2.0
+arm                              allmodconfig    gcc-14.2.0
+arm                               allnoconfig    clang-17
+arm                              allyesconfig    gcc-14.2.0
+arm                           h3600_defconfig    gcc-14.2.0
+arm                   randconfig-001-20250314    clang-21
+arm                   randconfig-002-20250314    gcc-14.2.0
+arm                   randconfig-003-20250314    gcc-14.2.0
+arm                   randconfig-004-20250314    gcc-14.2.0
+arm64                            allmodconfig    clang-18
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20250314    gcc-14.2.0
+arm64                 randconfig-002-20250314    clang-21
+arm64                 randconfig-003-20250314    clang-15
+arm64                 randconfig-004-20250314    clang-21
+csky                              allnoconfig    gcc-14.2.0
+csky                  randconfig-001-20250314    gcc-14.2.0
+csky                  randconfig-002-20250314    gcc-14.2.0
+hexagon                          allmodconfig    clang-21
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-18
+hexagon               randconfig-001-20250314    clang-21
+hexagon               randconfig-002-20250314    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250314    clang-19
+i386        buildonly-randconfig-002-20250314    clang-19
+i386        buildonly-randconfig-003-20250314    gcc-12
+i386        buildonly-randconfig-004-20250314    gcc-12
+i386        buildonly-randconfig-005-20250314    gcc-12
+i386        buildonly-randconfig-006-20250314    gcc-12
+i386                                defconfig    clang-19
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch             randconfig-001-20250314    gcc-14.2.0
+loongarch             randconfig-002-20250314    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250314    gcc-14.2.0
+nios2                 randconfig-002-20250314    gcc-14.2.0
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                            defconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                randconfig-001-20250314    gcc-14.2.0
+parisc                randconfig-002-20250314    gcc-14.2.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc               randconfig-001-20250314    clang-21
+powerpc               randconfig-002-20250314    gcc-14.2.0
+powerpc               randconfig-003-20250314    gcc-14.2.0
+powerpc64             randconfig-001-20250314    gcc-14.2.0
+powerpc64             randconfig-002-20250314    clang-17
+powerpc64             randconfig-003-20250314    clang-21
+riscv                             allnoconfig    gcc-14.2.0
+riscv                 randconfig-001-20250314    clang-19
+riscv                 randconfig-002-20250314    gcc-14.2.0
+s390                             allmodconfig    clang-19
+s390                             allyesconfig    gcc-14.2.0
+s390                  randconfig-001-20250314    gcc-14.2.0
+s390                  randconfig-002-20250314    gcc-14.2.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                    randconfig-001-20250314    gcc-14.2.0
+sh                    randconfig-002-20250314    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250314    gcc-14.2.0
+sparc                 randconfig-002-20250314    gcc-14.2.0
+sparc64               randconfig-001-20250314    gcc-14.2.0
+sparc64               randconfig-002-20250314    gcc-14.2.0
+um                               allmodconfig    clang-21
+um                               allyesconfig    gcc-12
+um                    randconfig-001-20250314    gcc-12
+um                    randconfig-002-20250314    gcc-12
+x86_64                            allnoconfig    clang-19
+x86_64                           allyesconfig    clang-19
+x86_64      buildonly-randconfig-001-20250314    clang-19
+x86_64      buildonly-randconfig-002-20250314    clang-19
+x86_64      buildonly-randconfig-003-20250314    gcc-12
+x86_64      buildonly-randconfig-004-20250314    clang-19
+x86_64      buildonly-randconfig-005-20250314    gcc-12
+x86_64      buildonly-randconfig-006-20250314    gcc-12
+x86_64                              defconfig    gcc-11
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250314    gcc-14.2.0
+xtensa                randconfig-002-20250314    gcc-14.2.0
 
-Prior to commit af66706accdf ("drm/msm/a6xx: Add skeleton A7xx
-support"), a7xx_submit() did not exist so that hunk can be dropped.
-
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c               | 8 ++++----
- drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml | 7 +++++++
- 2 files changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-index d3978cfa3f20..ea52b7d0b212 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-@@ -245,10 +245,10 @@ static void a6xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
- 				break;
- 			fallthrough;
- 		case MSM_SUBMIT_CMD_BUF:
--			OUT_PKT7(ring, CP_INDIRECT_BUFFER_PFE, 3);
-+			OUT_PKT7(ring, CP_INDIRECT_BUFFER, 3);
- 			OUT_RING(ring, lower_32_bits(submit->cmd[i].iova));
- 			OUT_RING(ring, upper_32_bits(submit->cmd[i].iova));
--			OUT_RING(ring, submit->cmd[i].size);
-+			OUT_RING(ring, A5XX_CP_INDIRECT_BUFFER_3_IB_SIZE(submit->cmd[i].size));
- 			ibs++;
- 			break;
- 		}
-@@ -382,10 +382,10 @@ static void a7xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
- 				break;
- 			fallthrough;
- 		case MSM_SUBMIT_CMD_BUF:
--			OUT_PKT7(ring, CP_INDIRECT_BUFFER_PFE, 3);
-+			OUT_PKT7(ring, CP_INDIRECT_BUFFER, 3);
- 			OUT_RING(ring, lower_32_bits(submit->cmd[i].iova));
- 			OUT_RING(ring, upper_32_bits(submit->cmd[i].iova));
--			OUT_RING(ring, submit->cmd[i].size);
-+			OUT_RING(ring, A5XX_CP_INDIRECT_BUFFER_3_IB_SIZE(submit->cmd[i].size));
- 			ibs++;
- 			break;
- 		}
-diff --git a/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml b/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
-index 55a35182858c..a71bc6f16cbf 100644
---- a/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
-+++ b/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
-@@ -2259,5 +2259,12 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
- 	</reg32>
- </domain>
- 
-+<domain name="CP_INDIRECT_BUFFER" width="32" varset="chip" prefix="chip" variants="A5XX-">
-+	<reg64 offset="0" name="IB_BASE" type="address"/>
-+	<reg32 offset="3" name="3">
-+		<bitfield name="IB_SIZE" low="0" high="19"/>
-+	</reg32>
-+</domain>
-+
- </database>
- 
--- 
-2.48.1
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
