@@ -1,221 +1,175 @@
-Return-Path: <linux-kernel+bounces-561835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A772A61719
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:10:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D82A61721
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:11:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 463FC7A70A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:09:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B6993B7EDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AED20409D;
-	Fri, 14 Mar 2025 17:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60232204592;
+	Fri, 14 Mar 2025 17:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lLYY5z8f"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i5KAdulO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8CE1FF7B5
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B9A17579;
+	Fri, 14 Mar 2025 17:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741972238; cv=none; b=RE6e0H2xhhS1cB4l2/xmtvRu5/wbfwrXrAWl4b3FeEmP9LnyJsOQsYe1Gn4/LUON9yg3cTRetu/MtjGpF/5FUV7ivicO4FCaGjeHG+QP/X+byeBeGLap5dHb8yuC6kZy+PUpgSWcCCeMucpJKHfskSHXi6VVQvhurWk/C6UTH8A=
+	t=1741972259; cv=none; b=ZxPLBWDENafmIldWAHhzdyXAIKJyKCpKncpvA/gJEYIpukqrfgrPtQhx8zZf8I7FCOY9U4KNNLf82VY35XdcXxCFSlWkDm2t1Vhhvh8boH29gpygPh+VOeAXJPbTTKDeTtCBZE6cbfjD/vA6zBrTYHIXArUl+hCazbYAnT3T0Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741972238; c=relaxed/simple;
-	bh=fZLD1w5OTYWmuxjNNme0MtrVD/MUya9rZScKtXEj+Fw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=iHW7SQ+kNVHdiTMdQjeQTzuaJqVCtsqix3T7zK8T/ZxklXCBjfg97g21uZl9GP1+CFAJvAPzsUcAjY5ngG6OMaVjDl8FEQ6K3sBQ2zrZx+7tSeJvf9zQwJY+vKEdK95vnEG7TCYtH/0bYvkknLWzhQleh4pR5NzopBj2w0IRuGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lLYY5z8f; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-47681dba807so7481cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:10:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741972235; x=1742577035; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8EWHBV9blsC4VUtgf9tmLM/z12+DckHNCkeHcX1VEX4=;
-        b=lLYY5z8flTTN5c3nalYVYrQijq8OfRlu2JYGFi7QJG/s1W/45sybU+iO6x+pBuWYnF
-         rPnr3M1sgOfthnyYJsZyQ7+dK2wJvINCievh0SriaaGpamgbZh665Fb3HM7IC1UnwtKF
-         WGHgNk74UDWCRhe4XfNW0RkuWkIXLNqoI5l6c/noDEhYWQQ4xjRbIJwooyLCR573ULIl
-         sL8f63cYRsDxCL9a9wD6BU98+Dx//8hVGfRIo0V2UfJiorg3nJlBQ9ysu2xZRjiYdvDU
-         36eFhYjhTHV6tcbMbWiV6rqd6DqRKLPWG2d3CnWaDK92XWPh+qE3A/jLti3zXWRLXgQW
-         wPDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741972235; x=1742577035;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8EWHBV9blsC4VUtgf9tmLM/z12+DckHNCkeHcX1VEX4=;
-        b=TIiriaYmI8Jzuxa4MAkrm6o5wTYiacRCOyNSk9V4oYZaBu/EMWgU4rX3h8lelgvZZS
-         CFEMcvSqoGAHZoFCqJXAx8uMHazUzSUPPN/+V0WLolIlMYjk+aHYEh3CzvZ87MmYLbtV
-         hcUfRGKpQyh2Xut2RrZ0JdwzG5PgYAFQouh6a+zGVZC5mCg8iLHX0uYON4rzN9gw3VPD
-         tEFG67xT9QBZPSdREZfHB/cCrgk2J7wel8E47M8A39m/pPrw1+fmQ8yIXtUybyIoJ8aA
-         KZ/pjlqJefsMCYrqCvZkalPo4arO/+mI/R4ZIqW8B9su0cMsK84ikhCwsaVWKmizkNX8
-         YyGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWk5avywUi8PHCdIgdXzdhT9AnVxvyb9spXHN+nOfpIfdCyU7/emF3ZMFxukim0Y2cbVFmXx6OQJ9DCBmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBbQI01UoHT9nVTXFH+rzgU2qsBSz8QnCRQ4K2wbGPYl5qylLQ
-	khG/BknC2SbGi/l4PWmk63gXisqJpDS0aW/yRUdAehjDVlR+u4tzfwPngmBpjMmdnpuRcDN4gGm
-	dq09c3z7j1PlNNw8i9uvfwvKwGxeXyvCrYz+g
-X-Gm-Gg: ASbGncvqqeg1sXNCo1GZYgFcgnqAvdsrduSwGmQfgkfHlWV/Rj6voeuZF9ApK9Evt/B
-	iD5BTmqGDLBEcoIGCL+YxQp+J9j9/9t2Y3iSTTDQLoF96xx76Mp+A6Znt/qPi09cVOe9UhFy9c4
-	+/l2/OgWj1AxkTwxPFd9podori6Q==
-X-Google-Smtp-Source: AGHT+IGJHHQF4NTn6NB5LyU5PLdvXbvdu8URRo9QL8eVBvNhUTnHirCkG4lnLyzQ9QiIKZuvzTbY1DBtZlnZfbcpR3A=
-X-Received: by 2002:ac8:7d0a:0:b0:466:8887:6751 with SMTP id
- d75a77b69052e-476c7fe8345mr3392701cf.23.1741972234384; Fri, 14 Mar 2025
- 10:10:34 -0700 (PDT)
+	s=arc-20240116; t=1741972259; c=relaxed/simple;
+	bh=3qP/K6PXaEbNCIbhWyqtBndfXRD1PmrR9u5qWPtx+EM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nYLu7/LDfjwzpfrv0nHoY6Q+CqnVoH0Lwii0ntjWXwBGramnatUH+muFGhcrIv36DEZ16I+D++i7zY7UHmhSDUyHrZyFLcGn0/BWKMKYnRXZTzGS01ayR/G0pp4WhgoDF1eFOdSukY+A63kGnGqU8QI8CSZ0RTaMVcsZYF7s6Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i5KAdulO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A66C3C4CEE3;
+	Fri, 14 Mar 2025 17:10:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741972257;
+	bh=3qP/K6PXaEbNCIbhWyqtBndfXRD1PmrR9u5qWPtx+EM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i5KAdulOYgMy3ouEcbFDhjjRmX2PTm/c5kxpGiIgEd9iHVllcNGqlGQAuz2n+X2+R
+	 sD4Cz79U3Tu9xoURi0jxEuxYMt6N5HISh5IItBwW8auateSihlVnVhJ4zWCnVpQpsm
+	 /t5KrbTGd8fE1jGsk/7YGBtAsjJED9o3CeNUBNEdjQUKDF5D3f7Vq7RzcSYGQd/mFQ
+	 wcknwDegn3KZIBWPhoWw+vrP2+h8q+PoCv3uGwN2jZ5fzX+oBMP6Tvhmk2R/+7h4Bf
+	 b3CyO4xiflCXNnrTFlRdJ+lMat42gpOwSJsRMkUfQVTvknoX0VvTmCes5t+v0XOx6n
+	 O4cpFlPMbldSw==
+Date: Fri, 14 Mar 2025 14:10:54 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	guoren <guoren@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+	linux-riscv@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v5 00/11] perf: Support multiple system call tables in
+ the build
+Message-ID: <Z9RjHpEJGWtj8PAM@x1>
+References: <20250308003209.234114-1-irogers@google.com>
+ <Z9KFLGpenwOP32q3@google.com>
+ <Z9M24AJzui9lFbGo@x1>
+ <Z9M9-YhDJg3NgiUy@x1>
+ <Z9NEX3j_1RUvaFI0@x1>
+ <Z9PCjQ8PhOadVGQ8@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
- <ztssad52ikws3a2dwodju4o73h6rsutxnvzj5i6vyjjkudkiel@g7c7g5i3l7jd>
- <CAJuCfpHi4Od4K2xQEUFWuG=a4zCKecWBMwBiy_7mVn6QgsTSvA@mail.gmail.com>
- <CAJuCfpEq8P4cz7HXaRVqaagONPBKrFgOSqdigEYU60sGAE4-rg@mail.gmail.com>
- <173d4dbe-399d-4330-944c-9689588f18e8@suse.cz> <CAJuCfpHHXYKGjaOxHcuJcuQbUVO7YqLMpcYeF3HM5Ayxy1fE+g@mail.gmail.com>
- <CAJuCfpE7t83PKWw+8XJLE5538kKJnbhirLg2siDSw=F4sw=9uA@mail.gmail.com>
- <19df9218-c984-4cbc-8b5d-4e0f7658935f@suse.cz> <ape445nrqgod4ivtzcwacmfdshi3fgcqmmu54iascbjsk3sluo@w4jjihiz5jzr>
-In-Reply-To: <ape445nrqgod4ivtzcwacmfdshi3fgcqmmu54iascbjsk3sluo@w4jjihiz5jzr>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 14 Mar 2025 10:10:23 -0700
-X-Gm-Features: AQ5f1JrG8no_e7JHX8g1zQia30PtCt7dt-uwm8dg_Hv_0Iod5LHZmZ0lPg9sYMk
-Message-ID: <CAJuCfpFVopL+sMdU4bLRxs+HS_WPCmFZBdCmwE8qV2Dpa5WZnA@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 00/10] SLUB percpu sheaves
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Suren Baghdasaryan <surenb@google.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	rcu@vger.kernel.org, maple-tree@lists.infradead.org, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Alexei Starovoitov <ast@kernel.org>, 
-	Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z9PCjQ8PhOadVGQ8@google.com>
 
-On Tue, Mar 4, 2025 at 11:08=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> * Vlastimil Babka <vbabka@suse.cz> [250304 05:55]:
-> > On 2/25/25 21:26, Suren Baghdasaryan wrote:
-> > > On Mon, Feb 24, 2025 at 1:12=E2=80=AFPM Suren Baghdasaryan <surenb@go=
-ogle.com> wrote:
-> > >>
-> > >> >
-> > >> > > The values represent the total time it took to perform mmap sysc=
-alls, less is
-> > >> > > better.
-> > >> > >
-> > >> > > (1)                  baseline       control
-> > >> > > Little core       7.58327       6.614939 (-12.77%)
-> > >> > > Medium core  2.125315     1.428702 (-32.78%)
-> > >> > > Big core          0.514673     0.422948 (-17.82%)
-> > >> > >
-> > >> > > (2)                  baseline      control
-> > >> > > Little core       7.58327       5.141478 (-32.20%)
-> > >> > > Medium core  2.125315     0.427692 (-79.88%)
-> > >> > > Big core          0.514673    0.046642 (-90.94%)
-> > >> > >
-> > >> > > (3)                   baseline      control
-> > >> > > Little core        7.58327      4.779624 (-36.97%)
-> > >> > > Medium core   2.125315    0.450368 (-78.81%)
-> > >> > > Big core           0.514673    0.037776 (-92.66%)
-> > >
-> > > (4)                   baseline      control
-> > > Little core        7.58327      4.642977 (-38.77%)
-> > > Medium core   2.125315    0.373692 (-82.42%)
-> > > Big core           0.514673    0.043613 (-91.53%)
-> > >
-> > > I think the difference between (3) and (4) is noise.
-> > > Thanks,
-> > > Suren.
-> >
-> > Hi, as we discussed yesterday, it would be useful to set the baseline t=
-o
-> > include everything before sheaves as that's already on the way to 6.15,=
- so
-> > we can see more clearly what sheaves do relative to that. So at this po=
-int
-> > it's the vma lock conversion including TYPESAFE_BY_RCU (that's not undo=
-ne,
-> > thus like in scenario (4)), and benchmark the following:
-> >
-> > - baseline - vma locking conversion with TYPESAFE_BY_RCU
-> > - baseline+maple tree node reduction from mm-unstable (Liam might point=
- out
-> > which patches?)
->
-> Sid's patches [1] are already in mm-unstable.
->
->
-> > - the above + this series + sheaves enabled for vm_area_struct cache
-> > - the above + full maple node sheaves conversion [1]
-> > - the above + the top-most patches from [1] that are optimizations with=
- a
-> > tradeoff (not clear win-win) so it would be good to know if they are us=
-eful
-> >
-> > [1] currently the 4 commits here:
-> > https://web.git.kernel.org/pub/scm/linux/kernel/git/vbabka/linux.git/lo=
-g/?h=3Dslub-percpu-sheaves-v2-maple
-> > from "maple_tree: Sheaf conversion" to "maple_tree: Clean up sheaf"
-> > but as Liam noted, they won't cherry pick without conflict once maple t=
-ree
-> > node reduction is backported, but he's working on a rebase
->
-> Rebased maple tree sheaves, patches are here [2].
+On Thu, Mar 13, 2025 at 10:45:49PM -0700, Namhyung Kim wrote:
+> On Thu, Mar 13, 2025 at 05:47:27PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Thu, Mar 13, 2025 at 05:20:09PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > Still building, but noticed this on x86_64:
+> > > 
+> > > 105: perf trace enum augmentation tests                              : FAILED!
+> > > 106: perf trace BTF general tests                                    : FAILED!
+> > > 107: perf trace exit race                                            : Ok
+> > > 108: perf trace record and replay                                    : FAILED!
+> > > 
+> > > 
+> > > The first doesn´t help that much with verbose mode, haven't checked if
+> > > before this series it was failing :-\
+> > > 
+> > > root@x1:~# perf test -vvv 105
+> > > 105: perf trace enum augmentation tests:
+> > > --- start ---
+> > > test child forked, pid 19411
+> > > Checking if vmlinux exists
+> > > Tracing syscall landlock_add_rule
+> > > ---- end(-1) ----
+> > > 105: perf trace enum augmentation tests                              : FAILED!
+> > > root@x1:~#
+> > 
+> > So:
+> > 
+> > root@x1:~# perf trace -e landlock_add_rule perf test -w landlock
+> > root@x1:~# 
+> > 
+> > But:
+> > 
+> > root@x1:~# perf trace perf test -w landlock |& grep landlock_add_rule
+> >     26.120 ( 0.002 ms): perf/19791 landlock_add_rule(ruleset_fd: 11, rule_type: LANDLOCK_RULE_PATH_BENEATH, rule_attr: 0x7ffde75e2680, flags: 45) = -1 EINVAL (Invalid argument)
+> >     26.124 ( 0.001 ms): perf/19791 landlock_add_rule(ruleset_fd: 11, rule_type: LANDLOCK_RULE_NET_PORT, rule_attr: 0x7ffde75e2690, flags: 45) = -1 EINVAL (Invalid argument)
+> > root@x1:~# 
+> > 
+> > -e is having some trouble, when no event is specified, then it works.
+> > 
+> > Something in the changes made to:
+> > 
+> > static int trace__parse_events_option(const struct option *opt, const char *str,
+> >                                       int unset __maybe_unused)
+> 
+> Thanks for the test, I think this should fix it:
+> 
 
-Hi Folks,
-Sorry for the delay. I got the numbers last week but they looked a bit
-weird, so I reran the test increasing the number of iterations to make
-sure noise is not a factor. That took most of this week. Below are the
-results. Please note that I had to backport the patchsets to 6.12
-because that's the closest stable Android kernel I can use. I measure
-cumulative time to execute mmap syscalls, so the smaller the number
-the better mmap performance is:
+Well, not really:
 
-baseline: 6.12 + vm_lock conversion and TYPESAFE_BY_RCU
-config1: baseline + Sid's patches [1]
-config2: sheaves RFC
-config3: config1 + vm_area_struct with sheaves
-config4: config2 + maple_tree Sheaf conversion [2]
-config5: config3 + 2 last optimization patches from [3]
+root@number:~# perf trace -e landlock_add_rule perf test -w landlock
+perf: Segmentation fault
+Obtained 10 stack frames.
+perf() [0x5be761]
+perf() [0x5be7f9]
+/lib64/libc.so.6(+0x40fd0) [0x7fe005c4efd0]
+perf() [0x491bc1]
+perf() [0x497090]
+perf() [0x4973ab]
+perf() [0x413483]
+/lib64/libc.so.6(+0x2a088) [0x7fe005c38088]
+/lib64/libc.so.6(__libc_start_main+0x8b) [0x7fe005c3814b]
+perf() [0x413ad5]
+Segmentation fault (core dumped)
+root@number:~#
 
-               config1     config2     config3     config4     config5
-Little core    -0.10%      -10.10%     -12.89%     -10.02%     -13.64%
-Mid core       -21.05%     -37.31%     -44.97%     -15.81%     -22.15%
-Big core       -17.17%     -34.41%     -45.68%     -11.39%     -15.29%
+Time for me to test another patch from Ian, the one symbolizing the
+above backtrace...
 
-[1] https://lore.kernel.org/linux-mm/20250227204823.758784-1-sidhartha.kuma=
-r@oracle.com/
-[2] https://www.infradead.org/git/?p=3Dusers/jedix/linux-maple.git;a=3Dshor=
-tlog;h=3Drefs/heads/sheaves_rebase_20250304
-[3] https://web.git.kernel.org/pub/scm/linux/kernel/git/vbabka/linux.git/lo=
-g/?h=3Dslub-percpu-sheaves-v2-maple
+- Arnaldo
 
-From the numbers, it looks like config4 regresses the performance and
-that's what looked weird to me last week and I wanted to confirm this.
-But from sheaves POV, it looks like they provide the benefits I saw
-before. Sid's patches which I did not test separately before also look
-beneficial.
-Thanks,
-Suren.
 
->
->
-> >
-> >
-> ...
->
-> Thanks,
-> Liam
->
-> [1]. https://lore.kernel.org/linux-mm/20250227204823.758784-1-sidhartha.k=
-umar@oracle.com/
-> [2]. https://www.infradead.org/git/?p=3Dusers/jedix/linux-maple.git;a=3Ds=
-hortlog;h=3Drefs/heads/sheaves_rebase_20250304
+> 
+> 
+> ---8<---
+> diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
+> index ace66e69c1bcde1e..67a8ec10e9e4bc8d 100644
+> --- a/tools/perf/util/syscalltbl.c
+> +++ b/tools/perf/util/syscalltbl.c
+> @@ -76,7 +76,7 @@ int syscalltbl__id(int e_machine, const char *name)
+>  {
+>         const struct syscalltbl *table = find_table(e_machine);
+>         struct syscall_cmp_key key;
+> -       const int *id;
+> +       const uint16_t *id;
+>  
+>         if (!table)
+>                 return -1;
 
