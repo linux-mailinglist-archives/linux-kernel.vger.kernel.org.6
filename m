@@ -1,199 +1,250 @@
-Return-Path: <linux-kernel+bounces-561537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D33A61337
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:58:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95EB3A6133D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:59:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ADE81895340
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:58:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 679C519C13BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3EF11FFC77;
-	Fri, 14 Mar 2025 13:58:27 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2493200116;
+	Fri, 14 Mar 2025 13:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lZlbcuvD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F781FF7D0
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178B41FCF7D;
+	Fri, 14 Mar 2025 13:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741960707; cv=none; b=m+MjBQZsEodCbJbmJ0yBXpUsTlDEwiqr3EEvWSX5wA+d5e2rBSJLGYuAn8/y8bWl5m9l8n1NB7Zc6NGQJ1NZZLLXnvzJoq8gXyzDhUqsAeYe2lLpOVfL0gmFHzo+9na6KVs2Wd3YmlNdmMv2fCNiqQLfGLgJ9uwO7JAfeEA7few=
+	t=1741960764; cv=none; b=pzgLDa3kItlMcUqFALe27iBrmdaILK62+B63pbOKewT/4LmB1pi1f7sC2/zTti2vRErkfGkPN1VPTqSB6Nkc1JB9r+PT7c29n6H5diFE7fvbGNs5YxXcpB/VhrkdaCWRoW5uNtmKZWKbXNVBe/FQks+Xpzbx2cuTN7ffsJBC/pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741960707; c=relaxed/simple;
-	bh=KbSfhs000aWL/fVzPlgvuOymFrW/+1ewrl9D2gJNWaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D8tPPNybYd9DTjjkPdLKapMeNF6Gpj6EQolqeQgofBANWmgEbBn5gr/NVEWflX/IfCih2ZX41q03CoZrtSBncMIYjMQwfe6rHN0s4TExNo1x3YA6xlCIuDseh/3tbQ4zUdNUxSLdZDOKHY5iDKIV3F4FutIYfjPU/tKqkpnUfms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tt5YB-0007Oz-W5; Fri, 14 Mar 2025 14:58:12 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tt5YB-005iFQ-0G;
-	Fri, 14 Mar 2025 14:58:11 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tt5YA-00DAzU-35;
-	Fri, 14 Mar 2025 14:58:10 +0100
-Date: Fri, 14 Mar 2025 14:58:10 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org,
-	=?utf-8?B?U8O4cmVu?= Andersen <san@skov.dk>,
-	Guenter Roeck <groeck@chromium.org>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	chrome-platform@lists.linux.dev
-Subject: Re: [PATCH v6 3/7] power: reset: Introduce PSCR Recording Framework
- for Non-Volatile Storage
-Message-ID: <Z9Q18k_wu1JQxrtJ@pengutronix.de>
-References: <20250314113604.1776201-1-o.rempel@pengutronix.de>
- <20250314113604.1776201-4-o.rempel@pengutronix.de>
- <58e19481-530c-4465-aec5-1f44462eaf5f@gmail.com>
+	s=arc-20240116; t=1741960764; c=relaxed/simple;
+	bh=tWgripgzVsas+qOUIR7LTha2CLQlLotbIOYZtXB4pPg=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Xo9xaSvQCf/+RPt/qHfMPoOLUqvK9J9V4lq7oQVlvIYGO12qsSd+pBjJGSEs5zYJhbD42yY0XbWBGUaRELaoSylDCmksL/CVtDZSyxUkjN2uuUKyhmA6mQB6Xi/ooiGDPJoEIcbQrA0q5QfFcs681NLbFJ/w2daXtJB5MfeMugo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lZlbcuvD; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741960762; x=1773496762;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=tWgripgzVsas+qOUIR7LTha2CLQlLotbIOYZtXB4pPg=;
+  b=lZlbcuvDWOvREDbl2Qjb+oTkAmHKHOGlx+mrZVqOloavfj8NZD7ZAy+Q
+   yjpI+1QVxBcL8JBMC/XsmqyEmx9ptb5bsWKgD8rifcRn+DCkCrNnrtYVl
+   Gh1VUbBfBUtfzIvlCzQiDne+/xnl+x2lIIBlqKNrVVUkxy49SiiId7bHx
+   ZT6bTBuVmuY9tRIL6w9mstFOIIlK8yto9p1xzWCZ7PftMSzcf2jkf0JqN
+   CLWUAzWVaVe1ahchW2eKjcI1zcJnwtt0yuYlWdAvHKuZKNuv4mnec/P3s
+   Aax21u+6Hxp6DwE9nl/QiJAqPI+XxzgLokjD81pF3KnBYpCIVYOqgzkWL
+   w==;
+X-CSE-ConnectionGUID: UYf+YlHPTbaEp0Es5cQ+qA==
+X-CSE-MsgGUID: rcndQ0JOSjKiVh7Dhk/MyQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="42360920"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="42360920"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 06:59:21 -0700
+X-CSE-ConnectionGUID: jxpPO/uoRsmbTq31ulCqDg==
+X-CSE-MsgGUID: WzKRZISmTq6N/BMa9pu+7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="121785779"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.56])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 06:59:18 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 14 Mar 2025 15:59:15 +0200 (EET)
+To: Werner Sembach <wse@tuxedocomputers.com>
+cc: Hans de Goede <hdegoede@redhat.com>, Jean Delvare <jdelvare@suse.com>, 
+    Guenter Roeck <linux@roeck-us.net>, LKML <linux-kernel@vger.kernel.org>, 
+    platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH v2] platform/x86/tuxedo: Implement TUXEDO TUXI ACPI TFAN
+ via hwmon
+In-Reply-To: <49ceb1f4-93b1-47ed-a87b-b936fee1b371@tuxedocomputers.com>
+Message-ID: <ad2e303d-1b13-d575-d58c-f4785e71d6e7@linux.intel.com>
+References: <20250306132639.642369-1-wse@tuxedocomputers.com> <70633701-31d2-c2ab-f4f4-043dd186f485@linux.intel.com> <75556900-5fe3-4083-b81b-240994e4f8e0@tuxedocomputers.com> <4344644a-582b-aee6-7eef-8afd3c0ee16f@linux.intel.com>
+ <49ceb1f4-93b1-47ed-a87b-b936fee1b371@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <58e19481-530c-4465-aec5-1f44462eaf5f@gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="8323328-237687533-1741960755=:10784"
 
-Hi Matti,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Thanks for your feedback and for taking the time to review this patch series! 
+--8323328-237687533-1741960755=:10784
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On Fri, Mar 14, 2025 at 02:22:40PM +0200, Matti Vaittinen wrote:
-> Hi deee Ho Oleksij,
-> 
-> On 14/03/2025 13:36, Oleksij Rempel wrote:
-> > This commit introduces the Power State Change Reasons Recording (PSCRR)
-> > framework into the kernel. The framework is vital for systems where
-> > PMICs or watchdogs cannot provide information on power state changes. It
-> > stores reasons for system shutdowns and reboots, like under-voltage or
-> > software-triggered events, in non-volatile hardware storage. This
-> > approach is essential for postmortem analysis in scenarios where
-> > traditional storage methods (block devices, RAM) are not feasible. The
-> > framework aids bootloaders and early-stage system components in recovery
-> > decision-making, although it does not cover resets caused by hardware
-> > issues like system freezes or watchdog timeouts.
-> > 
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> 
-> I see you're already at v6, so I am probably slightly late... I think I
-> hadn't noticed this before. Thus, feel free to treat my comments as mere
-> suggestions.
-> 
-> All in all, I do like this series. Looks mostly very good to me :) Just
-> wondering if we could utilize this same for standardizing reading the reset
-> reason registers which are included in many PMICs?
-> 
-> > ---
-> 
-> ...
-> 
-> > +int pscrr_core_init(const struct pscrr_backend_ops *ops)
-> > +{
-> > +	enum psc_reason stored_val = PSCR_UNKNOWN;
-> > +	int ret;
-> > +
-> > +	mutex_lock(&pscrr_lock);
-> > +
-> > +	if (g_pscrr) {
-> > +		pr_err("PSCRR: Core is already initialized!\n");
-> > +		ret = -EBUSY;
-> > +		goto err_unlock;
-> > +	}
-> > +
-> > +	if (!ops->read_reason || !ops->write_reason) {
-> > +		pr_err("PSCRR: Backend must provide read and write callbacks\n");
-> 
-> Why both are required?
-> 
-> I can easily envision integrating the some PMIC's 'boot reason' register
-> reading to the PSCRR. Benefit would be that user-space could use this same
-> interface when reading the reset reason on a system where reason is stored
-> using mechanisms provided by this series - and when reset reason is
-> automatically stored by the HW (for example to a PMIC).
-> 
-> In a PMIC case the write_reason might not be needed, right?
- 
-I agree that PMICs could be valuable sources of reset reasons, and integrating 
-them into PSCRR makes sense. However, this introduces new challenges when 
-multiple providers exist on the same system, each reporting different power 
-state change reasons.
+On Fri, 14 Mar 2025, Werner Sembach wrote:
 
-Handling Multiple Read-Only Providers (PMIC, Firmware, etc.):
-- If we have multiple sources (e.g., PMIC, firmware logs, NVMEM-based storage), 
-  we need to define how to handle conflicting or differing reset reasons.
-- Using priorities may work in simple cases but is unlikely to scale well
-  across different platforms.
-- A more flexible solution would be to expose all read-only providers
-  separately, rather than forcing one to override others.
+> Sorry, resend, mail client did html message by accident
 
-Potential UAPI and Sysfs Structure
-- The current sysfs API exposes:
-  - `/sys/kernel/pscrr/reason` → Default recorder
-  - `/sys/kernel/pscrr/reason_boot` → Last stored reason on default recorder
-     from before boot
-- If we introduce read-only providers (like PMICs), we may need a dedicated 
-  subdirectory to keep them separate.
-- A possible structure:
-  ```
-  /sys/kernel/pscrr/
-  ├── reason         # Default recorder
-  ├── reason_boot    # Default recorder (before boot)
-  ├── providers/
-  │   ├── pmic0      # Read-only reset reason from PMIC
-  │   ├── firmware   # Reset reason from firmware logs
-  │   ├── another_provider
-  ```
-- This would allow user-space tools to query all available sources while keeping 
-  the default recorder behavior intact.
+Np.
 
-Next Steps
-- I propose keeping this patch series focused on the default PSCRR recorder.
-- Support for multiple read-only providers should be designed as a future 
-  extension, possibly with an expanded sysfs API.
+> Am 14.03.25 um 11:05 schrieb Ilpo J=C3=A4rvinen:
 
-Would you agree that this approach keeps things maintainable while allowing 
-for future extensibility? Also, do you have a preference for naming the 
-subdirectory (`providers/`, `sources/`, etc.)?
+> > > > > +=09=09=09S32_MAX : (retval - TUXI_FW_TEMP_OFFSET) *
+> > > > > 100;
+> > > > Is the math wrong, as you do retval - TUXI_FW_TEMP_OFFSET before
+> > > > multiplying?
+> > > No, retval is in 10th of =C2=B0K (but the last number is always 0) so=
+ is
+> > > TUXI_FW_TEMP_OFFSET which is there to convert it to 10th of =C2=B0C, =
+the * 100
+> > > is
+> > > then to bring it in line with hwmon wanting to output milli degrees
+> > So is result of S32_MAX correct when retval is 21474837?
+> >=20
+> > (21474837-2730)*100
+> > 2147210700
+> > 2^31-1
+> > 2147483647
+> >=20
+> > 2147210700 would have been representable but the upper bound is
+> > still applied (the value might be large enough to not have practical
+> > significance but to me the code looks still illogical why it applies th=
+e
+> > bound prematurely).
+>
+> Yeah my though was: this check is only here to catch the firmware doing s=
+ome
+> crazy stuff and sending highly unrealistic values, so gifting a small bit=
+ of
+> the available range away doesn't matter
 
-Thanks again for your feedback!
+But it does matter as you could note. I stumbled on the logic which didn't=
+=20
+look right while reviewing. You even claimed afterwards is not wrong when=
+=20
+I raised this. :-/
 
-Best regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Please just correct the logic so it makes sense to the code reader, there=
+=20
+seems to be no well justified reason to keep the illogical code even if=20
+the practical impact is very low. It's probably done the way it is only=20
+because the variable types are what they are so you couldn't do the=20
+subtraction like I proposed ;-). At minimum you'd need to add a comment to=
+=20
+warn about the inconsistency at which point rewriting to correct logic is=
+=20
+already way simpler.
+
+> > I see you already sent another version, it would have been prudent to w=
+ait
+> > a bit longer as you contested some of the comments so you could have se=
+en
+> > my replies before sending the next version.
+>
+> I'm sorry. I just wanted to show that I'm iterating as I wait for the rep=
+ly if
+> the design with the periodic safeguard is acceptable. If that's gets reje=
+cted
+> this driver must be rewritten anyway.
+
+Kernel development is not a sprint. It's better to avoid sending versions=
+=20
+unnecessarily, a day or two isn't worth it when compared with ending up=20
+into people's low priority bin which will inevitably happen when the=20
+version counter starts to grow beyond v5-6.
+
+I (and likely others too) appreciate if they don't have to waste review=20
+cycles on something that is not "complete" because we have to look at the=
+=20
+completed one later too. Maintainers work in good faith that developers=20
+are simply improving their patches (or working on some other great=20
+improvements to the kernel :-)) while nothing seemingly happens for a=20
+while. There's no need to prove that something is going on just for the=20
+sake of proving.
+
+Obviously RFC patches are still fine to ask specific questions about=20
+something, but that's not about proving progress (in fact, RFC patches are=
+=20
+more about being "stuck" than about making progress).
+
+> > > > Shouldn't it be like this:
+> > > >=20
+> > > > =09=09retval -=3D TUXI_FW_TEMP_OFFSET;
+> > > > =09=09*val =3D min(retval * 100, (unsigned long long)S32_MAX);
+> > > As retval is unsigned this would not work with (theoretical) negative=
+ =C2=B0C.
+> > So your code relies on implicit type conversion in this: (retval -
+> > TUXI_FW_TEMP_OFFSET) ?
+>=20
+> I can add an explicit cast, np.
+>=20
+> [snip]
+>=20
+> > > > > +=09}
+> > > > > +=09if (temp >=3D temp_high)
+> > > > > +=09=09ret =3D i;
+> > Now that I reread things, is this also incorrect, as "i" is at the
+> > terminator entry at this point?
+>=20
+> Yes that's intentional, the 3 entries in the array open up 4 ranges:
+>=20
+> lower then 1st entry i=3D0, between 1st and 2nd entry i=3D1, 2nd and 3rd =
+i=3D2,
+> higher then 3rd i=3D3 (the value that terminates the for loop)
+
+I didn't realize that. To me { } looks just an terminating entry. So=20
+what's the min_speed going to be for that last entry since it's=20
+initialized to 0?
+
+Oh, I see you're taking .min_speed from temp_levels[temp_level - 1] which
+I don't like either. You have a "state" and then store min_speed for the=20
+state into other index inside the array?!?
+
+> > > > > +
+> > > > > +=09=09temp =3D retval > S32_MAX / 100 ?
+> > > > > +=09=09=09S32_MAX : (retval - TUXI_FW_TEMP_OFFSET) *
+> > > > > 100;
+> > > > Same math issue comment as above.
+> > > >=20
+> > > > Why is the read+conversion code duplicated into two places?
+> > > because here it is with special error handling and didn't thought abo=
+ut an
+> > > own
+> > > function for a defacto 2 liner
+> > A function that does read+conversion would be 6-8 lines with the error
+> > handling.
+>=20
+> I can add it.
+>=20
+> [snip]
+>=20
+> Thanks for the code review again.
+>=20
+>=20
+> Last but not least: As already mentioned, I still wonder if the design wi=
+th
+> the periodic safeguard is ok or not or?
+
+I'm not sure if fully understand Daniel's suggestion [1] as it=20
+doesn't specify who/what is sending that notification to the thermal=20
+engine.
+
+[1] https://lore.kernel.org/all/286f5efc-cd15-4e0b-bec2-2e9bbb93dd37@linaro=
+=2Eorg/#t
+
+
+When it comes to your own concerns, I'm not exactly buying the argument=20
+that userspace can do dangerous things. Yeah, it can shoot one's own=20
+foot, no doubt, such as unloading this driver and there goes your periodic=
+=20
+safeguards. If the argument would be that userspace fails to respond (in=20
+time), I would have less trouble in accepting that argument.
+
+--=20
+ i.
+
+--8323328-237687533-1741960755=:10784--
 
