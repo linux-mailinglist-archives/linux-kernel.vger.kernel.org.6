@@ -1,139 +1,169 @@
-Return-Path: <linux-kernel+bounces-561807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1E3A6167D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:40:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594EFA616B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:47:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70C533AE7C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:40:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6769C189F6AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3226204588;
-	Fri, 14 Mar 2025 16:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBC02040BC;
+	Fri, 14 Mar 2025 16:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UND6oMNs"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L9GCcLde"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5D92036F6
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E672036FF;
+	Fri, 14 Mar 2025 16:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741970408; cv=none; b=F7XIwsj/BsxVwiX55mZzgfGIoa9EE8fFIJBFk9Oz3XDvKF3ZNIaQFnyt1h1eyN2qmAPSImKk5zBXTg0s1EeiPDoFTcIbzqTvk3uApZng3Y75mQpNgamOdnx6HWcN7t7bc6PSEF4VTreX0V+BCrEgPVmbC3DoX6fBS9VZUATwsWA=
+	t=1741970824; cv=none; b=VuEAT+LFUrrHN+6j55+y9bG7LlwkWdoQ6ITQ7i5F1SdNI7KY7U0uOLLl0YHht1U7ky7uMCPE9rQXOAzQwjM0RrRu9QxlbsTXr6DuVb3/yonAGxGJJUea+fbN0Dekd6cpGMzW1PqvFVdeesijVGq4ULF75ICYUKiM3vnUci2ZdIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741970408; c=relaxed/simple;
-	bh=W7OrtNale60JOsrxsaBAlHsDJ4WH3rrsx+Tnb7U2MME=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gTTDazBG7KlkMfDOgf9udPa4oKk+HL2ypiG1T0l7ydTLpuR1wOFN83PRD4Y5J5MDP82HsaE8FYkYEMbTqo/wmiIfjiA9kwZ5wQ98SVlY4nWfgZsjxbkquoj6Y9WDPR2IvQ4WD+I2wOc7syz/pN2gaeZi/PM0TFJEdm4YI6/pqwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UND6oMNs; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e6167d0536so4299540a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:40:06 -0700 (PDT)
+	s=arc-20240116; t=1741970824; c=relaxed/simple;
+	bh=5ow0IO1Lxno0ruL0X/rFbPZdHMBzwVXIJvTvpzKa9Go=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=keQ+ANEtls+mStLGrGmEOgxy2++1y4mDOWJASnWpNSAkoROjXlTWvsbiZPRz9ELt5qncSeV5MYQoibsbnYCaVK/6pc9dmZTI0TzoSj31DqGMrBY+JC1S8dtEw2D6kYRdafzgRrbXqN7r887nQHmL7XoYdcFnGvPlXHgW1M18dUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L9GCcLde; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-225df540edcso17497465ad.0;
+        Fri, 14 Mar 2025 09:47:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741970404; x=1742575204; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FqlKsxagPbT76Z6CLNAsMWFx/025f7qb7NuOScguaQY=;
-        b=UND6oMNsPyx969ds3VEUYTRVcHo0xohPWHSOWKyD0LAMM1xJO+h777IilgNxOefsWl
-         qkiPetbmfP3YUrr6nfVezMjIweY97GHkrvNUjLFNPujSx2ucXeOiuhZ3HU9sn+pSWpsf
-         R0Ji6fu0WvFFTg0GCx1hY1Dws3CsaJDSEGw/KZvHDZ/BZMrfL06iDH+BTn9YpCjKdekG
-         866WO/Oo+iMhfYzlyxv3kRA6uq+J7OAYd90WkBqwUESSMtvf0yjxBJeCvRnwFz5JeUUc
-         uyfntCkdEiFIw0RR0fc7cKpnqcaUjXT5dnveLaT10OeG3W4oA51I8N7L1445pq4QvBeW
-         cUwA==
+        d=gmail.com; s=20230601; t=1741970822; x=1742575622; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gXQOhE3zWBqm8qiTh3H8EE+99XmrXnz6Df0P1iclh/U=;
+        b=L9GCcLdevMBFSfGKFB72/VOcGz2JXADWdrpt7d/w1V65kM/J2uSLnk5GHsIEqsSETx
+         kMXcQ3ce9Rc3iHM1tGUK4Ub+KxKrQSgjh7KTEv+39oh2YvTYT3JgpnZoRl1iQyhIZTLi
+         iaMtHhBsBGZvc8iv21DXske3/Q2LdKbrabVpTiMJDFhqmrHkSj/qgt/NPxZETIcbffEu
+         KMTxVc0Z1q1fDLzAkUwDIuXtWNMcQySxkOcgjTmuhfInZy1gK2g4JR8Y4DQuhXK1g2Oz
+         1tBDuXcDcHXS5Q32fHHNASp4T+GKT41Ujylc8xJ8yFTpoNf9Cd/h9OR103Omg7UO6Mnj
+         grsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741970404; x=1742575204;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FqlKsxagPbT76Z6CLNAsMWFx/025f7qb7NuOScguaQY=;
-        b=fM+O42O2sfyOnViuljzo/0ftEyRPNp+gQNo9MgbFTQ3fpBohAbksy9cYXbE/DfgY4k
-         qGrKWp9ckfCfYEa+nAW6XQjZBUTR+xC0pM/JIs16On0hwgEcPzEUxykXSJwBorVO3Nba
-         h3N3s0cGt0LXWbABb56dsBw2qFu6zj0boL79VUUU1QNvxfJj0KN9dlNt7XIKlhgLb1+o
-         Uacpeye6gl9Y5AuDGU6PuOmvu5045fkK6lJZOgA/ZYRAYZ8rBhoToKSkZJZDbDAsayme
-         9MAGvGhcI0pvkjMsTOciKlZmX+LNpcxonz+8P1yexe9KBphEJhpGFprGc2v/Xj+VSFyQ
-         ky7A==
-X-Forwarded-Encrypted: i=1; AJvYcCV65O3XXNoEE60oXbJd4wGsFqk7JyBPGJ7d7SXT6yA+c6jy5lRU9DCx4I3UNi3Lij5ULD9biR6NGMGoGIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsB0qPagXy6lvvmwcuyDiJBqxRjt65fgGegynT7HcLr3c8PGRt
-	LjDjL4rZbFp/ZH0KCVfdeZe5NHcXaeDLR3qnehmfuOJUPHOX+BNFOWGezJoNPNM=
-X-Gm-Gg: ASbGncsqmLAfCBmzGqSOQOT+auNJZt6YDCfhvMBbOz2Y/+/UQ6MGYiTLweeHMheyre3
-	JCGaEM47fVMx8CFrSKVjaTcfwzzFWILLcLfi4Nokscju6eXW24/WALIqWLRoU3szLB0vWedUIn8
-	etd3LaIl86G/c0TzQ70RfqgsEOI59bZO4/EKhoJ1RY3mNwm5LKpX341yjh6BmQhbUtHsmFxVXCF
-	26bOTwdLbN3WhZ5v+cgxTC4Zdd1h1yh8HL+zGmVgcIJ0Qr8cKqlFNKtZoKfISwV7Wk0HzoAXLDk
-	CR+tXZIANlibBzxRWJqnAcDXLFQ2sf2VZUcDIWos6ttdHMZBhT96k8BZK3zBmxPFPjTmWYDqt7o
-	MVHt7RsJ3aOBuRIvGH+EbTyuadV1b
-X-Google-Smtp-Source: AGHT+IHLsxwF/DHZEPhOyEzlgmcKjsoUUujUnQwnbW8+qgc574E5shkDM/HanOkkYGXBGqTnr36IXw==
-X-Received: by 2002:a05:6402:254d:b0:5e6:267c:a6bd with SMTP id 4fb4d7f45d1cf-5e8a051fdf9mr4301988a12.28.1741970404463;
-        Fri, 14 Mar 2025 09:40:04 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816968cd8sm2115727a12.18.2025.03.14.09.40.04
+        d=1e100.net; s=20230601; t=1741970822; x=1742575622;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gXQOhE3zWBqm8qiTh3H8EE+99XmrXnz6Df0P1iclh/U=;
+        b=Mjf+SFf7g1vUvcS7ntp1KXH9J89d3w6RbiC8JGzo1coSQdf8SVimCiiGnX7J3BjcSu
+         0LOHD9opRQ54rNE880tuy7GK42wTrGv7/8P+3wDHIwOi1BGnV86d1WZRrerf+xfh54eC
+         fW4wx05tnERzU71y6/A8cKcwJTXa07LQhqbdvpHHYk9ZZmlSWbktaesAycsOFKnoLzON
+         nAY7GVLym0Ked5mMmHaL5mXsrQwo3ky42y4x6MRZ3Hv/iYI+JpfGs+pknUQCN2kY7/wf
+         pPe1SgkdDPtdE7PUhbMaR5EwTbOEOobW2nvZ35nSfdELPFI8HEoSuQ/Tfqyoi6ThUZhA
+         ehiA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzBDr8SIC+c2NxhWT7nUYmrtHTQuavLGKat1BH3tnwD+YwUkM75uj1dAbBqhUbk7YyWkOixm4u2LsN4bg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIywiIfOBR0Uq4d7Va8YMGwJia1WxHq1iFjPTEz2+jVkTY7WhD
+	sYsymoZAIHF0/DN0s10PFVbQLU71iHi67KdLNUd/qqnQBuzIGOXO
+X-Gm-Gg: ASbGncuALh29hRSzDfd8ERkEDAjGbfM6k6NaysDPxZw6DxPxKc2qUPxoeC18KTOnsMJ
+	9R79vqdXbU915uj4Ot9oVuvDNEq2kFaeZ6HZvZQbWTdaK3EKOcUpkjiRyFl7kfpKUICD8NV9FLf
+	i0zlBtzSyx9+nohmN57pIpv3GE3+ShKOz9+mr711qLQ2U0xZlwTC067pUfgDc4BWzPFcVfrlwKF
+	kW2yaHVp4OCOT10xfnZltIguZJ50VYa49AteeUtKeHprlLKRx/9UzpsRRy+xqa9Us5iFSheYGnI
+	We/Zunfweo/MFCI+YQQ5m69mrq6dJmi6sExU9Xfr1XLc03v70VDJA/Jg+gPu
+X-Google-Smtp-Source: AGHT+IETW085KBPhOBloqrxL4/C+oH11RFHan0UJ9ycgygib4EUNqH/YQXg7hN/Xw6Rij2HvsdIMVQ==
+X-Received: by 2002:a05:6a00:893:b0:725:4a1b:38ec with SMTP id d2e1a72fcca58-737106d1c9dmr11397192b3a.3.1741970822195;
+        Fri, 14 Mar 2025 09:47:02 -0700 (PDT)
+Received: from localhost.localdomain ([2601:646:8f03:9fee:8f4e:a163:c61a:7fed])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371167e07fsm3069624b3a.119.2025.03.14.09.46.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 09:40:04 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 14 Mar 2025 16:40:03 +0000
-Subject: [PATCH 3/3] firmware: exynos-acpm: convert to dev_err_probe() in
- client API
+        Fri, 14 Mar 2025 09:47:01 -0700 (PDT)
+From: nifan.cxl@gmail.com
+To: dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com,
+	Jonathan.Cameron@huawei.com
+Cc: linux-cxl@vger.kernel.org,
+	a.manzanares@samsung.com,
+	dave@stgolabs.net,
+	linux-kernel@vger.kernel.org,
+	nifan.cxl@gmail.com,
+	anisa.su887@gmail.com,
+	Fan Ni <fan.ni@samsung.com>
+Subject: [RFC] cxl/region: set numa node for target memdevs when a region is committed
+Date: Fri, 14 Mar 2025 09:40:19 -0700
+Message-ID: <20250314164629.6937-1-nifan.cxl@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250314-acpm-fixes-v1-3-ab03ca8e723f@linaro.org>
-References: <20250314-acpm-fixes-v1-0-ab03ca8e723f@linaro.org>
-In-Reply-To: <20250314-acpm-fixes-v1-0-ab03ca8e723f@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
 
-dev_err_probe() exists to simplify code and unify error messages by
-using its message template.
+From: Fan Ni <fan.ni@samsung.com>
 
-Convert the remaining dev_err() in acpm_get_by_phandle() to
-dev_err_probe().
+There is a sysfs attribute named "numa_node" for cxl memory device.
+however, it is never set so -1 is returned whenever it is read.
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
+With this change, the numa_node of each target memdev is set based on the
+start address of the hpa_range of the endpoint decoder it associated when a
+cxl region is created; and it is reset when the region decoders are
+reset.
+
+Open qeustion: do we need to set the numa_node when the memdev is
+probed instead of waiting until a region is created?
+
+Signed-off-by: Fan Ni <fan.ni@samsung.com>
 ---
- drivers/firmware/samsung/exynos-acpm.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/cxl/core/region.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
-index 48f1e3cacaa709ae703115169df138b659ddae44..03f907a95c6acd66d89cd8af2f52e7c6dadf492a 100644
---- a/drivers/firmware/samsung/exynos-acpm.c
-+++ b/drivers/firmware/samsung/exynos-acpm.c
-@@ -701,12 +701,14 @@ static const struct acpm_handle *acpm_get_by_phandle(struct device *dev,
+diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+index e8d11a988fd9..935ee0b1dd26 100644
+--- a/drivers/cxl/core/region.c
++++ b/drivers/cxl/core/region.c
+@@ -242,6 +242,13 @@ static int cxl_region_invalidate_memregion(struct cxl_region *cxlr)
+ 	return 0;
+ }
  
- 	link = device_link_add(dev, &pdev->dev, DL_FLAG_AUTOREMOVE_SUPPLIER);
- 	if (!link) {
--		dev_err(&pdev->dev,
--			"Failed to create device link to consumer %s.\n",
--			dev_name(dev));
-+		int ret = -EINVAL;
++static void cxl_mem_reset_numa_node(struct cxl_endpoint_decoder *cxled)
++{
++	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
 +
-+		dev_err_probe(&pdev->dev, ret,
-+			      "Failed to create device link to consumer %s.\n",
-+			      dev_name(dev));
- 		platform_device_put(pdev);
- 		module_put(pdev->dev.driver->owner);
--		return ERR_PTR(-EINVAL);
-+		return ERR_PTR(ret);
++	cxlmd->dev.numa_node = NUMA_NO_NODE;
++}
++
+ static void cxl_region_decode_reset(struct cxl_region *cxlr, int count)
+ {
+ 	struct cxl_region_params *p = &cxlr->params;
+@@ -264,6 +271,7 @@ static void cxl_region_decode_reset(struct cxl_region *cxlr, int count)
+ 		if (cxlds->rcd)
+ 			goto endpoint_reset;
+ 
++		cxl_mem_reset_numa_node(cxled);
+ 		while (!is_cxl_root(to_cxl_port(iter->dev.parent)))
+ 			iter = to_cxl_port(iter->dev.parent);
+ 
+@@ -304,6 +312,15 @@ static int commit_decoder(struct cxl_decoder *cxld)
+ 	return 0;
+ }
+ 
++static void cxl_mem_set_numa_node(struct cxl_endpoint_decoder *cxled)
++{
++	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
++	u64 addr = cxled->cxld.hpa_range.start;
++
++	cxlmd->dev.numa_node = phys_to_target_node(addr);
++	dev_dbg(&cxlmd->dev, "set numa node: %d\n", phys_to_target_node(addr));
++}
++
+ static int cxl_region_decode_commit(struct cxl_region *cxlr)
+ {
+ 	struct cxl_region_params *p = &cxlr->params;
+@@ -340,6 +357,7 @@ static int cxl_region_decode_commit(struct cxl_region *cxlr)
+ 			cxled->cxld.reset(&cxled->cxld);
+ 			goto err;
+ 		}
++		cxl_mem_set_numa_node(cxled);
  	}
  
- 	return &acpm->handle;
-
+ 	return 0;
 -- 
-2.49.0.rc1.451.g8f38331e32-goog
+2.47.2
 
 
