@@ -1,150 +1,148 @@
-Return-Path: <linux-kernel+bounces-561839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B7DA61736
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:14:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF29A6180B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:36:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47B8817D890
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:14:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3AC8886B4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307572045A6;
-	Fri, 14 Mar 2025 17:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D9A205AD6;
+	Fri, 14 Mar 2025 17:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UOfIrw7o"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="VZ3xLcv6"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114AE2E3389
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A26D204C1D;
+	Fri, 14 Mar 2025 17:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741972461; cv=none; b=hKRQr1lwSUpYjJUzRFz4R7Q7CY7ff1XOVzG4z91wZ45s8c2WThMuaR+fJV9OwwmEJ7xJx7imlanBGGC6/t/qNqQdIcw9h2EwEqGVEbqCfwq4UPry+8I5k0qE25XdrG3qbzBOaDilymKRdk5jRoM++j6ivdKIr7XFk2dHLQ7vKAo=
+	t=1741973688; cv=none; b=hExSl2je2e0TpodhVlAKoU36cpFIZkINqOHIqZFph+8mkKLmanA01etm5LTX2LAgNqSsTIsftFY0RGwXNHgC3/+McPcMQW5NwJbJlg82pPa9wALURI4iu2G4wn8d1jRsQfGat7oLxdWKHx9NZ+PPKw24EoAqRacpYw5shkVkXeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741972461; c=relaxed/simple;
-	bh=5p0iC2SItNuF6AwjE1Hf3HgmLAJx6GZW09MUMx1WDn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W/9LZ+WdV2r0Xd/GDM1vigBZLU2FWhg5aMdUgNMUIko31BWO890tMUE9G38ozxGHp5r2wLpqFxtDP2qnmOK1LaTr0eXvIz1l2XH3uXKETbeoWr74yqoruzk7ko7xLXM8/BR4Li3yzUd1a1j37qZUiSRT3KGgI2ubC/LYifEvHaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UOfIrw7o; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2235189adaeso42440735ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:14:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741972458; x=1742577258; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yix95Y58aFVDLktEp8lmDmKYUrlcv0lyEDYQZgOfJW0=;
-        b=UOfIrw7oT+4b8yEPf7Mh2zudvDHT7LjYjk4PRUR6nDtvJF0TAUvoBvgiK0Wtqpefy3
-         K2DeSrNEw5yqYkY/8/Gskgg1juSt3h4RKFgqvxywGTIK3cXUCqeytxE2fwAEq0w+QQZ0
-         K7UEssTLnlSZeVpuYoIhv/EJnJAs48MpjhUcwjDqxDj4f2uy2qYLPmGIrU3zYlyka04a
-         sj3RPl9mZ5IDgN31WaOCkDmyFBk4mXyDwhyWV0SZyjOgl6k0mpDJ6nAKkVV7f3Zi+Yzh
-         bydkQrtjV6L5+s6tfjUE8X3hr7Os0yPQ12lC9+adIWz1kIFTRqv32C7MPbkjpv+lR8P6
-         /vNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741972458; x=1742577258;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yix95Y58aFVDLktEp8lmDmKYUrlcv0lyEDYQZgOfJW0=;
-        b=baDTcBVZV2k+1qwqRzSVe70CVNjR4RGFTtvun21IlnHwo0EhVY76H2Tgcv8vicqhIT
-         FPrcw6xtO40Mj/ba81AWVcUAikmaWkh25R54OgwcvogLuwunqpQ6WbrcGJu8uYsBd2bt
-         DUIBnfiLADSBH8epm9pJrroTTNmocyNeUhCHACQ1AUBifCRwB0qdbAmOLSHVc1AziBnl
-         fR4HwDXaggWfEhS+5c1W5sgZzBzRvG4CkSpK7hBxK3CmCjbzwpAIw5bdCV+WmVI6EBlv
-         Nrfhq4CFT5HWOrRRNpElCvBdopby9urDbHA9zvztoWp9nMdD317jHsxU00qmH+V/HwRu
-         ocGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCfwlYKFDIFz9Ctqmmz30KP4K0sqLFK+EhDT27FULZSidvqvvehcz+7oUM55C3NwNx2XIAGkAseuHHr/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQmCMQ0S+NsCygqvwQjvwjejlih0fYlhnx8GLf3ypKNedlDGgX
-	NJkto0L7bFHmLyb9ZlEn7m6ompWiwiNpsdw7brsyH546RQ7jkhc8RwSb3BggxA==
-X-Gm-Gg: ASbGncvham6Wp6uoNQWfW4qPdYVqpMMAcUa54/t7Tnb7Z2IUnoafsfQ0drGqhXmy+T8
-	OfpbcWJ2voqxTEuQ/hcZZTrX5nUrkfzbb7rsFt5egAU60AGTeBgfCo1VHB0JPqORmY22jG34Wr7
-	8mMku77HVzUDRHQsMkzq7iwuh1rhJyBWz2w6iWU0k9ku3IibKMy/SOulnItv+PA+QzcRmccyRAv
-	cysoSsFn7im7MLDAvyUhDTYIXbl2aNpVCAxTmkeOvhMUo5TRuqMQHCM8TlXTQRlIv9NxEO3I8kz
-	SuWcvSvsWCv2U0r12zWvmJOkuM1Vx0QWOKEwqN5zCIs+5M1OkAiSEvuuNG1Xgb05z6z/9AFS7t8
-	fXxLJa0qVdENZX3I=
-X-Google-Smtp-Source: AGHT+IGy7HWrkPvjUpMMYhRQbw/am4ugxDMqJdGJdWH8dd6X/1N9h09zGNW9ExGPYF3hEaJz1QwaUQ==
-X-Received: by 2002:a17:902:d4cd:b0:224:3994:8a8c with SMTP id d9443c01a7336-225c6613932mr89268175ad.8.1741972457947;
-        Fri, 14 Mar 2025 10:14:17 -0700 (PDT)
-Received: from google.com (198.103.247.35.bc.googleusercontent.com. [35.247.103.198])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bd4d61sm30841415ad.242.2025.03.14.10.14.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 10:14:17 -0700 (PDT)
-Date: Fri, 14 Mar 2025 10:14:13 -0700
-From: William McVicker <willmcvicker@google.com>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-	kernel-team@android.com, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm64: dts: exynos: gs101: ufs: add dma-coherent
- property
-Message-ID: <Z9Rj5T8il4rZAsoq@google.com>
-References: <20250314-ufs-dma-coherent-v1-0-bdf9f9be2919@linaro.org>
- <20250314-ufs-dma-coherent-v1-1-bdf9f9be2919@linaro.org>
+	s=arc-20240116; t=1741973688; c=relaxed/simple;
+	bh=I0hRg3+7eOPrCpoM+YBmX89YQ659KGd7giv6ISq462k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fm4MLVSHUPLsZr/ChP6zV9mvvKfEff2PpxgMxHVqODrbtPEAUou1vxmfkbu1bvkl4609bKfSz3GiEIqE4K0XmZMeLGKxFt4YbSsL3ENOnOOJG3OIn2YRJuLQMXvynI30D+SbnlirnRDQUJwZOJMCij6jaojPKE8lCtn1BHn2vu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=VZ3xLcv6; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52EF6KLg008585;
+	Fri, 14 Mar 2025 18:34:13 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=TbD/TdwU+qHq+NwWIps3/L
+	hUGddSUepWeKH8hb9UQKc=; b=VZ3xLcv6tx+H3qO2Y6pL+h3q1yn8UsQQ+z+s/R
+	Va2hhkTOiNfcyLTPCcQOjjMw9JoPjkJwtanyf8W4lw4Cd0i1wCfQAjzAVve4pXoK
+	YzBbVysPCv6i1dhl7K7uV8Nvmxd6cSw350BwTMbt4JUjikNXpXODisUHqZPM1Q7y
+	Nj2XH/fz2m4tVPqMISgD1b/tLJFPPtW0nhSaXz2MZIX7jTDwS4XcHJZ8nptJbYMH
+	zcLx39/f0KCNBftuC2RjXqgs3CEwvhTGxEwfqkspLDn3NozMarzX11cn4pWpNGzn
+	kFdpJkqNlPWVYo/hY7syKspvIyYug/28BWs2Jyh/5Qkd260w==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45c2nswdtk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 18:34:13 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4B2204005F;
+	Fri, 14 Mar 2025 18:32:59 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D6E076D07B8;
+	Fri, 14 Mar 2025 18:15:03 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 14 Mar
+ 2025 18:15:03 +0100
+Received: from localhost (10.252.1.141) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 14 Mar
+ 2025 18:15:03 +0100
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+To: <lee@kernel.org>, <ukleinek@kernel.org>, <alexandre.torgue@foss.st.com>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <jic23@kernel.org>,
+        <daniel.lezcano@linaro.org>, <tglx@linutronix.de>
+CC: <robh@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
+        <devicetree@vger.kernel.org>, <wbg@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <olivier.moysan@foss.st.com>, <fabrice.gasnier@foss.st.com>
+Subject: [PATCH v4 0/8] Add STM32MP25 LPTIM support: MFD, PWM, IIO, counter, clocksource
+Date: Fri, 14 Mar 2025 18:14:43 +0100
+Message-ID: <20250314171451.3497789-1-fabrice.gasnier@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250314-ufs-dma-coherent-v1-1-bdf9f9be2919@linaro.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-14_06,2025-03-14_01,2024-11-22_01
 
-On 03/14/2025, Peter Griffin wrote:
-> ufs-exynos driver configures the sysreg shareability as
-> cacheable for gs101 so we need to set the dma-coherent
-> property so the descriptors are also allocated cacheable.
-> 
-> This fixes the UFS stability issues we have seen with
-> the upstream UFS driver on gs101.
-> 
-> Fixes: 4c65d7054b4c ("arm64: dts: exynos: gs101: Add ufs and ufs-phy dt nodes")
-> Cc: stable@vger.kernel.org
-> Suggested-by: Will McVicker <willmcvicker@google.com>
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+This series adds support for STM32MP25 to MFD PWM, IIO, counter and
+clocksource low-power timer (LPTIM) drivers.
+This new variant is managed by using a new DT compatible string, hardware
+configuration and version registers.
+It comes with a slightly updated register set, some new features and new
+interconnect signals inside the SoC.
+Same feature list as on STM32MP1x is supported currently.
+The device tree files add all instances in stm32mp251 dtsi file.
 
-Tested-by: Will McVicker <willmcvicker@google.com>
+Changes in V4
+---
+- Simplify IIO trigger driver as per Jonathan's comments.
+- Rework clocksource driver: encapsulate mp25 changes in separate function
+  after Daniel's suggestion.
+- Add some definitions to MFD header.
 
-Verified I can properly boot to Android recovery with UFS probing and mounting
-the partitions in the fstab.
+Changes in V3
+---
+- Yaml indentation issue fixed, reported by Rob's bot
 
-Can you send this to 6.12 stable as well since this is fixing booting issues
-with Android?
+Changes in V2
+---
+- Review comments from Krzysztof
+  - Adopt compatible fallback in dt-bindings and driver
+  - drivers: drop "st,stm32mp25-..." compatibles when unused (e.g. no .data)
+  - counter driver: no update (patch dropped)
+  - defconfig: only enable the necessary config for upstream board
+  - add lptimer DT node in stm32mp257f-ev1 board
+- Add missing management of IER access for stm32mp25
 
-Thanks,
-Will
+Fabrice Gasnier (7):
+  dt-bindings: mfd: stm32-lptimer: add support for stm32mp25
+  mfd: stm32-lptimer: add support for stm32mp25
+  clocksource: stm32-lptimer: add support for stm32mp25
+  pwm: stm32-lp: add support for stm32mp25
+  arm64: defconfig: enable STM32 LP timer clockevent driver
+  arm64: dts: st: add low-power timer nodes on stm32mp251
+  arm64: dts: st: use lptimer3 as tick broadcast source on
+    stm32mp257f-ev1
 
-> ---
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> index c5335dd59dfe9fcf8c64d66a466799600f8447b0..cf30128ef004568f01b1c7150c5585ba267d64bc 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> @@ -1360,6 +1360,7 @@ ufs_0: ufs@14700000 {
->  				 <&cmu_hsi2 CLK_GOUT_HSI2_SYSREG_HSI2_PCLK>;
->  			clock-names = "core_clk", "sclk_unipro_main", "fmp",
->  				      "aclk", "pclk", "sysreg";
-> +			dma-coherent;
->  			freq-table-hz = <0 0>, <0 0>, <0 0>, <0 0>, <0 0>, <0 0>;
->  			pinctrl-0 = <&ufs_rst_n &ufs_refclk_out>;
->  			pinctrl-names = "default";
-> 
-> -- 
-> 2.49.0.rc1.451.g8f38331e32-goog
-> 
+Olivier Moysan (1):
+  iio: trigger: stm32-lptimer: add support for stm32mp25
+
+ .../bindings/mfd/st,stm32-lptimer.yaml        |  40 +++-
+ arch/arm64/boot/dts/st/stm32mp251.dtsi        | 177 ++++++++++++++
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts    |   8 +
+ arch/arm64/configs/defconfig                  |   2 +
+ drivers/clocksource/timer-stm32-lp.c          |  51 +++-
+ drivers/iio/trigger/stm32-lptimer-trigger.c   |  75 ++++--
+ drivers/mfd/stm32-lptimer.c                   |  33 ++-
+ drivers/pwm/pwm-stm32-lp.c                    | 219 +++++++++++++++---
+ include/linux/iio/timer/stm32-lptim-trigger.h |   9 +
+ include/linux/mfd/stm32-lptimer.h             |  37 ++-
+ 10 files changed, 594 insertions(+), 57 deletions(-)
+
+-- 
+2.25.1
+
 
