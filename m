@@ -1,158 +1,265 @@
-Return-Path: <linux-kernel+bounces-561190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 992C1A60E95
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:17:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F091BA60E9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:18:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88B28172F3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:17:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6CEC3B2828
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8C81F3BA3;
-	Fri, 14 Mar 2025 10:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C761F418E;
+	Fri, 14 Mar 2025 10:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N7rOcszd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kCBbWfU7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QoWRGuZy"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB5D1EEA54;
-	Fri, 14 Mar 2025 10:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DE81F30CC
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741947428; cv=none; b=jOWbfVrCdwl4I9M1pIALuE7Q+KowQfjI5U8pv+GhRqaDqqfXmzG8ogmESrJVz0gdhpgqv9xuaU8gr3v42l95h0S+vWCvwQPddcMTaMF5B8LwMTwpsvcBibL4ooQtkpn5s5itI4pp97n2eDZWKrFjLgw+kK0czwb7ATnZ5PpTNUc=
+	t=1741947458; cv=none; b=H24s7qBzzaqWCJFj62e1kntfA3ud1EHLtuUWi7TvTSLXy7ukOjBpLz65zTuzeKwzJAECYSbxM5z3jV8YbrmXqj1b6/ucK2qh7gZXsVPsb0fKM71WvFA3ey+JZQRJpi5IkpevL/W1FNHKWss6mUOpm6LrV/pPE8DnM+uyKF5swpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741947428; c=relaxed/simple;
-	bh=GElny8AJlFfTQUvvFDvOBylkmwecw2sp/9Dmjh6W9h0=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=lLJpLSoVNp9a98r9MTRNqgoNxLeqPUCk/pCD8v7gnGt2AYTXZWb4hlr+2m0C8JIOyRy6hv6LOc2TvGq9q2MNcb0gsqDaYWUpRlaK0dIILX2NvDwFhqhDDwkEHIBFkAcrDUOa9OZvmOaqhAgOakkJ342OSW5gKHegmIGyFk93beI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N7rOcszd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kCBbWfU7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 14 Mar 2025 10:16:57 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741947424;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eWymMseujqYB7Jp1PIQpjkL6tDEWb1PW/g1EZTY8mFg=;
-	b=N7rOcszd7B+qgoAF6Q/fObhDBnsAzblBcNtpJA3UJnF7ZeEZYmF3K827ttMsXcFpzEhNeK
-	o5ol+sjnZqXDmswAd0E4dCW3tsJonBXRDcrksu+Sv45GNHSHBlhR5QwpOUyLu+/GBkP4A8
-	vc0Hqy/bSdiC4ZgEDoIB9VIs4vO7SURwNF1IteGOwRRjSnPDu1mesH7eOtUfOIlp3n8TJh
-	JPI/mIVFb/hMCF4ZpZ+LBI9lKJc4tG9dCEFS2GIlpElK6QEclpENXUUiRzf0ocsK/WZ6Fi
-	XG0pdaBFqLE4nrFr91gwiOWIjKntxDxOICd5LpxqjLFbv0I5TYoF3a3gV5QTvg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741947424;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eWymMseujqYB7Jp1PIQpjkL6tDEWb1PW/g1EZTY8mFg=;
-	b=kCBbWfU7YNI/cPx4MRaaiKl/XYA64Uod16ekn1Q8xtsk75LlC51IQO4jVEcQ8XbyA5GsNT
-	uKVYXEK47Za6pkBQ==
-From: "tip-bot2 for David Woodhouse" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/boot] x86/kexec: Add relocate_kernel() debugging support:
- Load a GDT
-Cc: David Woodhouse <dwmw@amazon.co.uk>, Ingo Molnar <mingo@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>,
- Ard Biesheuvel <ardb@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250312144257.2348250-2-dwmw2@infradead.org>
-References: <20250312144257.2348250-2-dwmw2@infradead.org>
+	s=arc-20240116; t=1741947458; c=relaxed/simple;
+	bh=SHvxG4U/t4MAKWu3QBRXuQRdvpbSKp4HtfYs/YjTz54=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NXf0Zkn+IsYvy30kNvMde1MUUCgGc8DTwwRt1wUA+oF74gnNEvVLk1Q0njKIyEZt1eiQ8yXfcFmfH9zMDz9TGDHReW6iJyqDo3i1qIC9DZa4fl1svj84kg+vTGm0Nqev09I4yE/PtpmuZPy8qGBlCoP1JSG0bAW9e6oGYQq9VWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QoWRGuZy; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-543d8badc30so2218781e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:17:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1741947454; x=1742552254; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BPOkp6EW8yihrul0VeKT4eelAXrH0oyo+XW5bxSEhIQ=;
+        b=QoWRGuZy7M3tgMQnUu/qr3vF/1p3yf2YH1NgKe+KIe9RGNgCrD33uluK9XUvlK9m5Y
+         f2ez9k89ORPfxOCCHhuHqzTJLuPsCMoLuksTpwICrK4kl+sKaONKwDG8FG0AusXrDvyO
+         0Sy62SvF8SOjg8VWaKxhM/sgF0t3MamhgpsKo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741947454; x=1742552254;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BPOkp6EW8yihrul0VeKT4eelAXrH0oyo+XW5bxSEhIQ=;
+        b=HbAWW4Fm5Vj9NAys3HJ55lMEmMUdgibKAcsUuzZe7qbS1qAexpoYLZ8piTVl38xNi6
+         V+Ln+Qd0Ge92pjLOpHg5/b76alIR7kujR4pKRfkOskLWiROS0YUWpO5/p4GWxn1l6JHC
+         X3K+yB8F7GCraMjq5aV4dFsNqPeOE5v9N65xRn6/sclD64d3F44pOF5Nk1b8H6Dm9YLu
+         EZIXksX6BBXisphRobyuY4ffPqL8JL4fyXrKOurewFYRVR9B8qudxzL8RSzd4bxS0ybG
+         DM9DyrmWbtNJaV2Yrs6s32eSQqFisgeOpRU7Yl6Ap9z7uu/gAG1g6SI/WhpA7x2Fwg0N
+         y7FA==
+X-Forwarded-Encrypted: i=1; AJvYcCWg4KtGYAzpph0OgJnWK5Qr76ICYq2RaJ/ajcd/LDyHb65botpXOiYWCk8OHYxsTWadyte0zRGHI1daWp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtR3QzV+qjpQU0IGfJ7y1VZMF1/6s2NwWheOfgg7IXljfUb9th
+	po6ccja3q6IJyEQhoDWpxNJIjo3q/O5+m6eWjBx7t31MOm/HIJX2mF60ngoVbDwtCquMw/zBXh6
+	58Q==
+X-Gm-Gg: ASbGnctKtiVxbxoyUzb3jfgCaTrfqaQTEvQPfybPfLa9XxZ28zOY/xEPY2H8+R8SW2F
+	xcc2R6BY3pCsTimw/T6teWFlAOyhAVIIbZspRdk8B51n5UkL6dwWHm2rzBuPrf74os2qn0nAa9c
+	/E5hFd4MEg9UB5xTN+EDgz1jibrkaU5Yl8l/YIQ6ntgF1Ic4rPeFv1owLG3Y6wy68947rKYK/Jl
+	69lDvMuZJKiKjKhSHGJYsh2teSBGpGWG12R8ON+TbbCtL9bc7Fd6yAKLyyNQ17FVX9HwteVO6h2
+	w6RHenUMajtLtZbLZNfVHd9XFLutGL9k18fINEmlIZaIW8IDu1/dX8tcrsudfFK2lIj1a5Z2Uge
+	0L+bkhXo=
+X-Google-Smtp-Source: AGHT+IGmADKxHKuPKC4KeCOzesWm4ChDMLtEw/qIY5lMDdY/koJF8S0KOSFW9hocyCj+irUt+kqn/A==
+X-Received: by 2002:a05:6512:2823:b0:545:5a5:b69f with SMTP id 2adb3069b0e04-549c38f542bmr545291e87.9.1741947453853;
+        Fri, 14 Mar 2025 03:17:33 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba88577csm471952e87.205.2025.03.14.03.17.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Mar 2025 03:17:33 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-543d8badc30so2218757e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:17:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVXkKNcP1zEHMiGBOCIzcCtp/kyS/1DMExdAI1JxL7uovjQ21XaoxECOjRKkvv+1wZX2u3UMwo1HpXSmeA=@vger.kernel.org
+X-Received: by 2002:a05:6512:2250:b0:545:2fa9:8cf5 with SMTP id
+ 2adb3069b0e04-549c39aebb7mr722856e87.49.1741947452607; Fri, 14 Mar 2025
+ 03:17:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174194741889.14745.5868283555442287108.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20250313-uvc-metadata-v3-0-c467af869c60@chromium.org>
+ <20250313-uvc-metadata-v3-3-c467af869c60@chromium.org> <20250314073456.25817a3d@foz.lan>
+ <CANiDSCuNzwqhYOORqY+PGUbK8=tqxm6stpzQC3BFYF7pxgRG6w@mail.gmail.com> <20250314090919.GE19612@pendragon.ideasonboard.com>
+In-Reply-To: <20250314090919.GE19612@pendragon.ideasonboard.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 14 Mar 2025 11:17:19 +0100
+X-Gmail-Original-Message-ID: <CANiDSCtxNwTrQrx6naDUYJOg3S4Osr7CbN6pbJ53HO_3AdpN3g@mail.gmail.com>
+X-Gm-Features: AQ5f1Jowa8v-a-YSWeZV9kM_kjV-xZvNmmBT51ULGBfXtvwUWk2GiqsWtYFwj5E
+Message-ID: <CANiDSCtxNwTrQrx6naDUYJOg3S4Osr7CbN6pbJ53HO_3AdpN3g@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] media: uvcvideo: Introduce V4L2_META_FMT_UVC_CUSTOM
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Hans de Goede <hdegoede@redhat.com>, 
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the x86/boot branch of tip:
+On Fri, 14 Mar 2025 at 10:09, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Ricardo,
+>
+> On Fri, Mar 14, 2025 at 09:28:34AM +0100, Ricardo Ribalda wrote:
+> > On Fri, 14 Mar 2025 at 07:35, Mauro Carvalho Chehab wrote:
+> > > Em Thu, 13 Mar 2025 12:06:27 +0000 Ricardo Ribalda escreveu:
+> > >
+> > > > The UVC driver provides two metadata types V4L2_META_FMT_UVC, and
+> > > > V4L2_META_FMT_D4XX. The only difference between the two of them is that
+> > > > V4L2_META_FMT_UVC only copies PTS, SCR, size and flags, and
+> > > > V4L2_META_FMT_D4XX copies the whole metadata section.
+> > > >
+> > > > Now we only enable V4L2_META_FMT_D4XX for the Intel D4xx family of
+> > > > devices, but it is useful to have the whole metadata section for any
+> > > > device where vendors include other metadata, such as the one described by
+> > > > Microsoft:
+> > > > https://learn.microsoft.com/en-us/windows-hardware/drivers/stream/mf-capture-metadata
+> > > >
+> > > > This patch introduces a new format V4L2_META_FMT_UVC_CUSTOM, that is
+> > > > identical to V4L2_META_FMT_D4XX but it is available to all the UVC
+> > > > devices.
+> > > >
+> > > > Suggested-by: Hans de Goede <hdegoede@redhat.com>
+> > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > > ---
+> > > >  .../userspace-api/media/v4l/meta-formats.rst       |  1 +
+> > > >  .../userspace-api/media/v4l/metafmt-uvc-custom.rst | 31 +++++++++++++++++
+> > > >  MAINTAINERS                                        |  1 +
+> > > >  drivers/media/usb/uvc/uvc_metadata.c               | 40 ++++++++++++++++++----
+> > > >  drivers/media/v4l2-core/v4l2-ioctl.c               |  1 +
+> > > >  include/uapi/linux/videodev2.h                     |  1 +
+> > > >  6 files changed, 69 insertions(+), 6 deletions(-)
+> > > >
+> > > > diff --git a/Documentation/userspace-api/media/v4l/meta-formats.rst b/Documentation/userspace-api/media/v4l/meta-formats.rst
+> > > > index 86ffb3bc8ade2e0c563dd84441572ecea1a571a6..9fd83f4a3cc8509702a2a9f032fdc04bf6c6d1bc 100644
+> > > > --- a/Documentation/userspace-api/media/v4l/meta-formats.rst
+> > > > +++ b/Documentation/userspace-api/media/v4l/meta-formats.rst
+> > > > @@ -19,6 +19,7 @@ These formats are used for the :ref:`metadata` interface only.
+> > > >      metafmt-pisp-fe
+> > > >      metafmt-rkisp1
+> > > >      metafmt-uvc
+> > > > +    metafmt-uvc-custom
+> > > >      metafmt-vivid
+> > > >      metafmt-vsp1-hgo
+> > > >      metafmt-vsp1-hgt
+> > > > diff --git a/Documentation/userspace-api/media/v4l/metafmt-uvc-custom.rst b/Documentation/userspace-api/media/v4l/metafmt-uvc-custom.rst
+> > > > new file mode 100644
+> > > > index 0000000000000000000000000000000000000000..9f150fc2b6f379cc4707ff45041dd014956ae11a
+> > > > --- /dev/null
+> > > > +++ b/Documentation/userspace-api/media/v4l/metafmt-uvc-custom.rst
+> > > > @@ -0,0 +1,31 @@
+> > > > +.. SPDX-License-Identifier: GFDL-1.1-no-invariants-or-later
+> > > > +
+> > > > +.. _v4l2-meta-fmt-uvc-custom:
+> > > > +
+> > > > +*********************************
+> > > > +V4L2_META_FMT_UVC_CUSTOM ('UVCC')
+> > > > +*********************************
+> > > > +
+> > > > +UVC Custom Payload Metadata.
+> > > > +
+> > > > +
+> > > > +Description
+> > > > +===========
+> > > > +
+> > > > +V4L2_META_FMT_UVC_CUSTOM buffers follow the metadata buffer layout of
+> > > > +V4L2_META_FMT_UVC with the only difference that it includes all the UVC
+> > > > +metadata, not just the first 2-12 bytes.
+> > > > +
+> > > > +The most common metadata format is the one proposed by Microsoft(R)'s UVC
+> > > > +extension [1_], but other vendors might have different formats.
+> > > > +
+> > > > +Applications might use information from the Hardware Database (hwdb)[2_] to
+> > > > +process the camera's metadata accordingly.
+> > >
+> > > Having something like that at the userspace API shouldn't be handled
+> > > lightly. This sounds to me that passing a blank check for vendors to stream
+> > > whatever they want without any requirements to provide and sort of
+> > > documentation for the usersace to decode it.
+> >
+> > As HdG previously mentioned, all the processing is done in the camera
+> > so the metadata is not going to hide highly secret required for
+> > processing:
+> > https://lore.kernel.org/linux-media/67c1a857-7656-421f-994c-751709b6ae01@redhat.com/
+>
+> Without judging whether or not such an undocumented format should be
+> supported by the driver, a correction is needed here: the issue is not
+> "secrets required for processing", but giving closed-source application
+> an unfair advantage.
 
-Commit-ID:     b25eb5f5e419b81f124d5ba2abaaacf1948fb97e
-Gitweb:        https://git.kernel.org/tip/b25eb5f5e419b81f124d5ba2abaaacf1948fb97e
-Author:        David Woodhouse <dwmw@amazon.co.uk>
-AuthorDate:    Wed, 12 Mar 2025 14:34:13 
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 14 Mar 2025 11:01:53 +01:00
+We could argue that vendors already have the possibility to pass
+secrets to userspace:
+- A camera could add proprietary information inside the frame, only
+parseable by a closed-source application
+- They can use undocumented UVC controls
+- They can exploit documented controls to do something else that they
+are designed for.
+Given these existing possibilities, I question whether "evil metadata"
+ offers any fundamentally new capabilities that cannot be achieved
+through these established methods.
 
-x86/kexec: Add relocate_kernel() debugging support: Load a GDT
+If we have to talk about unfair advantage, Linux is at an unfair
+advantage right now: there is no way to use the *documented*
+information provided by the metadata. Other OSs can use it.
+The way I see it, with this artificial limitation we are not blocking
+evil vendors but punishing good users.
 
-There are some failure modes which lead to triple-faults in the
-relocate_kernel() function, which is fairly much undebuggable
-for normal mortals.
+if it makes you feel more comfortable we can start enabling only
+V4L2_META_FMT_UVC_CUSTOM (or V4L2_META_FMT_MSXU_UVC_1_5 as proposed by
+Mauro) to devices that support MSXU_CONTROL_METADATA, the future
+ChromeOS XU, or quirks. But that artificial limitation will hurt a lot
+of current cameras for no real reason.
 
-Adding a GDT in the relocate_kernel() environment is step 1 towards
-being able to catch faults and do something more useful.
+>
+> > > Also, it would be hard for userspace to distinguish what metatata
+> > > is contained for a random UVC camera. Please let's not do that.
+> >
+> > Userspace will use hwdb info to properly parse the metadata.
+>
+> I don't have experience with that, so I would like to see the effort
+> being started on hwdb support to see how it will look like before we
+> merge this patch. A few cameras should be added as examples, and a
+> stategy to ensure the hwdb will be properly populated should be
+> proposed.
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250312144257.2348250-2-dwmw2@infradead.org
----
- arch/x86/kernel/relocate_kernel_64.S | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+We can start by mapping the D4XX cameras. D4XX format follows
+Microsoft standard.
 
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index b44d886..ac05897 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -40,6 +40,16 @@ SYM_DATA(kexec_pa_table_page, .quad 0)
- SYM_DATA(kexec_pa_swap_page, .quad 0)
- SYM_DATA_LOCAL(pa_backup_pages_map, .quad 0)
- 
-+	.balign 16
-+SYM_DATA_START_LOCAL(kexec_debug_gdt)
-+	.word   kexec_debug_gdt_end - kexec_debug_gdt - 1
-+	.long   0
-+	.word   0
-+	.quad   0x00cf9a000000ffff      /* __KERNEL32_CS */
-+	.quad   0x00af9a000000ffff      /* __KERNEL_CS */
-+	.quad   0x00cf92000000ffff      /* __KERNEL_DS */
-+SYM_DATA_END_LABEL(kexec_debug_gdt, SYM_L_LOCAL, kexec_debug_gdt_end)
-+
- 	.section .text..relocate_kernel,"ax";
- 	.code64
- SYM_CODE_START_NOALIGN(relocate_kernel)
-@@ -116,6 +126,19 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
- 	/* store the start address on the stack */
- 	pushq   %rdx
- 
-+	/* Create a GDTR (16 bits limit, 64 bits addr) on stack */
-+	leaq	kexec_debug_gdt(%rip), %rax
-+	pushq	%rax
-+	pushw	(%rax)
-+
-+	/* Load the GDT, put the stack back */
-+	lgdt	(%rsp)
-+	addq	$10, %rsp
-+
-+	/* Test that we can load segments */
-+	movq	%ds, %rax
-+	movq	%rax, %ds
-+
- 	/*
- 	 * Clear X86_CR4_CET (if it was set) such that we can clear CR0_WP
- 	 * below.
+Would that work for you?
+
+>
+> > > As the specific issue here is to support an already known extension,
+> > > which is already documented, Just add an specific format for it, e.g.
+> > > you could add something like that at the documentation:
+> >
+> > The problem here is how do we know from the driver if a device
+> > supports V4L2_META_FMT_MSXU_UVC_1_5 or not.
+> >
+> > In Windows it seems that vendors add that information to the device
+> > .inf file. That is equivalent to the hwdb proposal.
+> > In ChromeOS we are trying to push vendors to use an extension saying
+> > if there is metadata or not. But that will take some time to land and
+> > there are thousands of modules out there not ChromeOS compliant.
+> >
+> > >
+> > >         V4L2_META_FMT_MSXU_UVC_1_5
+> > >            Microsoft extensions to USB Video Class 1.5 specification.
+> > >
+> > >            For more details, see: https://learn.microsoft.com/en-us/windows-hardware/drivers/stream/uvc-extensions-1-5
+> > >
+> > > And then add the corresponding format to V4L2 API.
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+
+
+
+-- 
+Ricardo Ribalda
 
