@@ -1,344 +1,221 @@
-Return-Path: <linux-kernel+bounces-561964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D76A6195F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:28:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D64C8A61961
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:29:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39C0317D879
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:28:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C8BA19C6403
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BD920485F;
-	Fri, 14 Mar 2025 18:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA57204845;
+	Fri, 14 Mar 2025 18:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Hvx297HW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MQpa9JhO"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7EF2A8D0
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F9F3BBE5
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741976912; cv=none; b=nqeEB3yJeUdmM27cJr91rjs1sxcphz5WHfuRniCPV+9q5aZgHq+H66nk+O+okml2dxCYaP1594kUiYZetMC4s8mPrembXILxvN00758+l85gD/YrkGa3L4ojC2XqUHTH8TrKPjcol4MZWSO2NH0rOh2w//uVD2RVIAimCwEOn30=
+	t=1741976968; cv=none; b=sgyQmp2iBJ9R3I9v4JDPaMluLmiG/tE8YDIskrnxT380ryEQfUr1ow5Gyxbw6M61+mPZYC+7sUPSQtL88xBtQ2mE4QPqeVmF+XdwVDP4mZ2bvpaiYu5Cz2ncI+O9WMMOY9X+1z4aIhuWyeUrRhVvSIdiNZR/oaHjZ3VaYm+5rPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741976912; c=relaxed/simple;
-	bh=WOK577KBsk0iNIgmC51zvZ3muESyDHyI3bA7lEjN/Fw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mv3P6B1nY1HcKTFqILEqOTEWVGe7dKc7Y+voyphXfFeX2AH8BoVUzcHuBUpq+OCGN6/z5Ky3gNe0Nh/OdpJKFLnwZJh7nFBJAB5v3+mQ11U64lGyslpCLUOXkFo6FfM+VDh5PmcgFlZHV8fKe0dnRTA2ASzr6bkw8czf7YAiGr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Hvx297HW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52EAPCpT019887
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:28:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=77SlCTEuZzQGrUvy+p+yjSOQ
-	D5z6SnrWUcEzDE7M/js=; b=Hvx297HWjmrdfv+CWxCf/w9brZcoil2p5lvk2MIN
-	xXDxT4YCLN4vhUMPEYNEAlmhR+9IH0QSn6zCPrCM52jsd5j+KUV5L9PQfJcPzcqA
-	WtoY0POjZDrwfEvyGKK6GM1bF85s0Avo5O6PDrrO8XQDFk/3qOumEKIJvopkF+9Y
-	/w9f4bradCsO+x/AUbKCB7aIQsdfpBaGbwAbORsXde10p2RuJYCdWtjwGSFzQk8H
-	L1NN4DiiVDnjmsREgkVr3OSwZyZt0TV8UonT2VlIWzFA4xncO1PDTeCRF1essw54
-	JYRpWcDrglzLFAdHCU3L9XyOLOoOIfpBaotPxtgwn/EPQg==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45cjph18a7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:28:28 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-476a44cec4cso45592161cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:28:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741976908; x=1742581708;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=77SlCTEuZzQGrUvy+p+yjSOQD5z6SnrWUcEzDE7M/js=;
-        b=G2aKiVZZu+zAo6iBh+KJrtJQs124RAaU3r/PP4SCgmqGC7A8ZvvMIsrPpFzq1xWZQP
-         OjHrdtUlKv+I9C+pXPopUQG37vVD9Ts3u+wq6/BfMiQ/pSjLs8OqGX/KdNIgMZXJYETT
-         R6nvWVFGJ9JrhKcLM9MxtJuKfHTOqdVZ4heMmnxjTcDmW3tfZ65R4E38j4ZLv2Q/GUBf
-         N8Kd6s8Y3UQgmgpsOYMIXvhbdd9KGCHtRyN7QhJKxbsV6GTCZ3ZW8MrthiALqD4D7z3f
-         jKvQO8ZUKYA/xiLDX9y1C6/bR9rpICxjMdwZ/iAgfqxNbR8pl6KY3wYJh/KFkZ1KQFFr
-         Cprw==
-X-Forwarded-Encrypted: i=1; AJvYcCU46wg3Tls8MuLoHq9+nC5AYqvpjrBIpyVpHkcvMuqgOgMmLo795fCobk2ltkzXkImbJMf6S6xtkuAnF6s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt+oiEFzDDrwcTdFUxPTqxfQ5h0UlavLnmifPBWqNJ04upYgFL
-	XZw9s/Oj7immL4aULaBI+7BsbE8G3WNsPKPl1GSYLhfU+uM+1UM+Hhth+KDMrNlEGqU/EpOOhTh
-	ksBEHxDbw7ifnGDECJtu7rJ/BY2XxLr7tCdnycLSNWfldeubAuwEL7StnOg2ZRkw=
-X-Gm-Gg: ASbGncsKYeqRPkqCG4QpHKpBysETP8KBH4NsX+JSPHK82CvDwYn/k/Mnt+nweBhtdRN
-	9eNj3sITHoqGiVDgif7Fpsgi59DLTThsFjkUhxkfQCWxlozQt9Y2sjMgpiIxAsumhJkWxGW7e2M
-	rS7VOUDfegPkYiFk9uyJtOoGxp1uBCVzxLQ9QOCpkHcpfcMgM6gYK0vLhF5Ac9MHpQrLVQVtDdV
-	td2GEljwZ6NBT5aflykorOGPjRAsUpkps3MAauixCeEGv5wJZBGfuW7J75nkDdzgjRtcqY4AUpB
-	AwgVAMj/sIT4QhbS8TDKD/E9pDYOaY5ofmH4X86A/LoNVcXzCjXon6WROTi8rNCU4VOfqKUzXV8
-	xFVc=
-X-Received: by 2002:a05:620a:4706:b0:7c5:5909:18dc with SMTP id af79cd13be357-7c57c778293mr497823385a.14.1741976907748;
-        Fri, 14 Mar 2025 11:28:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE0h8IOJ7RZc9gLRD/okAuLWAiF3FFBnJObQEwVZSv2v9bDdF6dLpNJNPQhuCBMW3JcO/JOng==
-X-Received: by 2002:a05:620a:4706:b0:7c5:5909:18dc with SMTP id af79cd13be357-7c57c778293mr497818485a.14.1741976907325;
-        Fri, 14 Mar 2025 11:28:27 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f0ea431sm6316801fa.38.2025.03.14.11.28.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 11:28:25 -0700 (PDT)
-Date: Fri, 14 Mar 2025 20:28:22 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andy Yan <andyshrk@163.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Herve Codina <herve.codina@bootlin.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Simona Vetter <simona.vetter@ffwll.ch>, lumag@kernel.org
-Subject: Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
- connector by encoder
-Message-ID: <2tfryn5plcqysdobavbjljnd3rq5ar2n2qmeyyryk6wqbx2zpk@qvqpkxe5ffjl>
-References: <20250304-bridge-connector-v5-0-aacf461d2157@kernel.org>
- <20250304-bridge-connector-v5-4-aacf461d2157@kernel.org>
- <5180089f.a640.19566290538.Coremail.andyshrk@163.com>
- <608c01c.7716.1958e8d879f.Coremail.andyshrk@163.com>
- <20250313-dazzling-deer-of-ampleness-21db67@houat>
- <6ae1c567.8c6.195922195d6.Coremail.andyshrk@163.com>
- <k2md4q2tgwsdynaeljieqlzjdds677wqqduimfyrgmvyfi732a@vh3dbg7kdaop>
- <20250314-courageous-bison-of-prestige-8b884b@houat>
- <lf4wu5v3wym3foqgimuulyzz2dmd2jezkj3otn7xm7xp77nast@azqmajrn45lw>
- <20250314-hissing-spirited-armadillo-dc9d3a@houat>
+	s=arc-20240116; t=1741976968; c=relaxed/simple;
+	bh=vY68TClbdVrf7vczBIBQFMUfXJzLuYL9cKOVsidML4E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Z6vECK5Xnd78HQ8Y05zRmKl9016F4BVDNlSHamGpb7HmCvUmIl3iYbvAa5bAaTflxxmnHqTKsHTlb28PWGbsVTFJMLQ2AHoFxtEgF3Eb0Ciw7IGiLZPD/13HMgTjQmAp8b8GclM5Cj8YRYzGD97HoSQkymj96PmNdR4VgyBapU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MQpa9JhO; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vY68TClbdVrf7vczBIBQFMUfXJzLuYL9cKOVsidML4E=; b=MQpa9JhOLeiLCmwzgsuo5LaYQl
+	9PqsItBHT0Ndx0KVSyXH1wo2SaFe4TEOnE2wAbmqXZNofeR7WETn2cV9LbbjG7aWY1WnOxG60LpYt
+	+Q9owu0K1w2JTJ6o23BsmkNMVSUVFN9qHYJ1Pwpwz1hq+TqCDGW00CE6o4oN0CUq8bHoWJoM19AU7
+	kZRHYT15zWAHZDTx0H3R51/4SwpuB9YCQfXbXjb50jvfOkr+wo0BBRCPn5xHPi0onNt9CseJaFyDr
+	JlmWIbb2/DIPLqOtxtveIy2/ac9D5REWcOtgENx71QtAlKM5LY72xEyPImhEGZQYaeoygtjGU1RxL
+	3w/ROlJA==;
+Received: from [31.94.74.194] (helo=u09cd745991455d.ant.amazon.com)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tt9mR-00000002vzU-45Zi;
+	Fri, 14 Mar 2025 18:29:12 +0000
+Message-ID: <cb9978537cc64941cfc607f2b8b38fa7f7eea884.camel@infradead.org>
+Subject: Re: [PATCH v7 8/8] [DO NOT MERGE] x86/kexec: Add CFI type
+ information to relocate_kernel()
+From: David Woodhouse <dwmw2@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H . Peter Anvin"
+ <hpa@zytor.com>,  "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>, 
+ linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>, Dave Young
+ <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>, bsz@amazon.de
+Date: Fri, 14 Mar 2025 18:29:08 +0000
+In-Reply-To: <7tq4tti5pv7fjboiapuglkcsodl4nsk53rj36skg4xb2bkysei@ncoz2ztiddm7>
+References: <20250312144257.2348250-1-dwmw2@infradead.org>
+	 <20250312144257.2348250-9-dwmw2@infradead.org>
+	 <ra6zlx2iz7eks3y4ymoi6mn7o6rvnjc3lnjoaadf3szaocbkae@yg2lyjzlnqdn>
+	 <c2471b0a81ebd183d32e76f995a70b7912c1d4a1.camel@infradead.org>
+	 <7tq4tti5pv7fjboiapuglkcsodl4nsk53rj36skg4xb2bkysei@ncoz2ztiddm7>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-nkM76pZz83D3z85hx+hS"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250314-hissing-spirited-armadillo-dc9d3a@houat>
-X-Authority-Analysis: v=2.4 cv=a7sw9VSF c=1 sm=1 tr=0 ts=67d4754c cx=c_pps a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=Byx-y9mGAAAA:8 a=KKAkSRfTAAAA:8 a=OmCYDoi2QOHnqlVcfJMA:9
- a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: dMfOo8pgPm9r6_h0Xa-BuE_VqikeMLea
-X-Proofpoint-ORIG-GUID: dMfOo8pgPm9r6_h0Xa-BuE_VqikeMLea
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-14_07,2025-03-14_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 clxscore=1015 suspectscore=0 adultscore=0 impostorscore=0
- mlxlogscore=999 priorityscore=1501 mlxscore=0 phishscore=0 malwarescore=0
- spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503140144
-
-On Fri, Mar 14, 2025 at 06:40:24PM +0100, Maxime Ripard wrote:
-> On Fri, Mar 14, 2025 at 09:59:36AM +0200, Dmitry Baryshkov wrote:
-> > On Fri, Mar 14, 2025 at 08:45:17AM +0100, Maxime Ripard wrote:
-> > > On Fri, Mar 14, 2025 at 07:52:35AM +0200, Dmitry Baryshkov wrote:
-> > > > On Fri, Mar 14, 2025 at 08:50:29AM +0800, Andy Yan wrote:
-> > > > > At 2025-03-13 19:55:33, "Maxime Ripard" <mripard@kernel.org> wrote:
-> > > > > >Hi,
-> > > > > >
-> > > > > >On Thu, Mar 13, 2025 at 04:09:54PM +0800, Andy Yan wrote:
-> > > > > >> At 2025-03-05 19:55:19, "Andy Yan" <andyshrk@163.com> wrote:
-> > > > > >> >At 2025-03-04 19:10:47, "Maxime Ripard" <mripard@kernel.org> wrote:
-> > > > > >> >>With the bridges switching over to drm_bridge_connector, the direct
-> > > > > >> >>association between a bridge driver and its connector was lost.
-> > > > > >> >>
-> > > > > >> >>This is mitigated for atomic bridge drivers by the fact you can access
-> > > > > >> >>the encoder, and then call drm_atomic_get_old_connector_for_encoder() or
-> > > > > >> >>drm_atomic_get_new_connector_for_encoder() with drm_atomic_state.
-> > > > > >> >>
-> > > > > >> >>This was also made easier by providing drm_atomic_state directly to all
-> > > > > >> >>atomic hooks bridges can implement.
-> > > > > >> >>
-> > > > > >> >>However, bridge drivers don't have a way to access drm_atomic_state
-> > > > > >> >>outside of the modeset path, like from the hotplug interrupt path or any
-> > > > > >> >>interrupt handler.
-> > > > > >> >>
-> > > > > >> >>Let's introduce a function to retrieve the connector currently assigned
-> > > > > >> >>to an encoder, without using drm_atomic_state, to make these drivers'
-> > > > > >> >>life easier.
-> > > > > >> >>
-> > > > > >> >>Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > >> >>Co-developed-by: Simona Vetter <simona.vetter@ffwll.ch>
-> > > > > >> >>Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> > > > > >> >>---
-> > > > > >> >> drivers/gpu/drm/drm_atomic.c | 45 ++++++++++++++++++++++++++++++++++++++++++++
-> > > > > >> >> include/drm/drm_atomic.h     |  3 +++
-> > > > > >> >> 2 files changed, 48 insertions(+)
-> > > > > >> >>
-> > > > > >> >>diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> > > > > >> >>index 9ea2611770f43ce7ccba410406d5f2c528aab022..b926b132590e78f8d41d48eb4da4bccf170ee236 100644
-> > > > > >> >>--- a/drivers/gpu/drm/drm_atomic.c
-> > > > > >> >>+++ b/drivers/gpu/drm/drm_atomic.c
-> > > > > >> >>@@ -985,10 +985,55 @@ drm_atomic_get_new_connector_for_encoder(const struct drm_atomic_state *state,
-> > > > > >> >> 
-> > > > > >> >> 	return NULL;
-> > > > > >> >> }
-> > > > > >> >> EXPORT_SYMBOL(drm_atomic_get_new_connector_for_encoder);
-> > > > > >> >> 
-> > > > > >> >>+/**
-> > > > > >> >>+ * drm_atomic_get_connector_for_encoder - Get connector currently assigned to an encoder
-> > > > > >> >>+ * @encoder: The encoder to find the connector of
-> > > > > >> >>+ * @ctx: Modeset locking context
-> > > > > >> >>+ *
-> > > > > >> >>+ * This function finds and returns the connector currently assigned to
-> > > > > >> >>+ * an @encoder.
-> > > > > >> >>+ *
-> > > > > >> >>+ * Returns:
-> > > > > >> >>+ * The connector connected to @encoder, or an error pointer otherwise.
-> > > > > >> >>+ * When the error is EDEADLK, a deadlock has been detected and the
-> > > > > >> >>+ * sequence must be restarted.
-> > > > > >> >>+ */
-> > > > > >> >>+struct drm_connector *
-> > > > > >> >>+drm_atomic_get_connector_for_encoder(const struct drm_encoder *encoder,
-> > > > > >> >>+				     struct drm_modeset_acquire_ctx *ctx)
-> > > > > >> >>+{
-> > > > > >> >>+	struct drm_connector_list_iter conn_iter;
-> > > > > >> >>+	struct drm_connector *out_connector = ERR_PTR(-EINVAL);
-> > > > > >> >>+	struct drm_connector *connector;
-> > > > > >> >>+	struct drm_device *dev = encoder->dev;
-> > > > > >> >>+	int ret;
-> > > > > >> >>+
-> > > > > >> >>+	ret = drm_modeset_lock(&dev->mode_config.connection_mutex, ctx);
-> > > > > >> >>+	if (ret)
-> > > > > >> >>+		return ERR_PTR(ret);
-> > > > > >> >
-> > > > > >> >It seems that this will cause a deadlock when called from a  hotplug handling path,
-> > > > > >> >I have a WIP DP diver[0],  which suggested by Dmitry to use this API from a 
-> > > > > >> >&drm_bridge_funcs.detect callback to get the connector,  as detect is called by drm_helper_probe_detect,
-> > > > > >> >which will hold connection_mutex first, so the deaklock happens:
-> > > > > >> >
-> > > > > >> >
-> > > > > >> >drm_helper_probe_detect(struct drm_connector *connector,
-> > > > > >> >                        struct drm_modeset_acquire_ctx *ctx,
-> > > > > >> >                        bool force)
-> > > > > >> >{
-> > > > > >> >        const struct drm_connector_helper_funcs *funcs = connector->helper_private;
-> > > > > >> >        struct drm_device *dev = connector->dev;
-> > > > > >> >        int ret;
-> > > > > >> >
-> > > > > >> >        if (!ctx)
-> > > > > >> >                return drm_helper_probe_detect_ctx(connector, force);
-> > > > > >> >
-> > > > > >> >        ret = drm_modeset_lock(&dev->mode_config.connection_mutex, ctx);
-> > > > > >> >        if (ret)
-> > > > > >> >                return ret;
-> > > > > >> >
-> > > > > >> >        if (funcs->detect_ctx)
-> > > > > >> >                ret = funcs->detect_ctx(connector, ctx, force);
-> > > > > >> >        else if (connector->funcs->detect)
-> > > > > >> >                ret = connector->funcs->detect(connector, force);
-> > > > > >> >        else
-> > > > > >> >                ret = connector_status_connected;
-> > > > > >> >
-> > > > > >> >        if (ret != connector->status)
-> > > > > >> >                connector->epoch_counter += 1;
-> > > > > >> >
-> > > > > >> >So I wonder can we let drm_bridge_funcs.detect pass a connector for this case ?
-> > > > > >> >
-> > > > > >> >
-> > > > > >> >
-> > > > > >> >[0]https://lore.kernel.org/linux-rockchip/047EECFC-7E55-44EC-896F-13FE04333E4D@gmail.com/T/#m25bc53b79f5cc7bddfcb7aae5656f68df396f094
-> > > > > >> >>+
-> > > > > >> >>+	drm_connector_list_iter_begin(dev, &conn_iter);
-> > > > > >> >>+	drm_for_each_connector_iter(connector, &conn_iter) {
-> > > > > >> >>+		if (!connector->state)
-> > > > > >> >>+			continue;
-> > > > > >> >>+
-> > > > > >> >>+		if (encoder == connector->state->best_encoder) {
-> > > > > >> >>+			out_connector = connector;
-> > > > > >> 
-> > > > > >> 
-> > > > > >> When try to use this patch in my bridge driver,  I found that the connector->state->best_encoder 
-> > > > > >>  maybe NULL when   drm_bridge_funcs.detect or drm_bridge_funcs.detect_ctx is  called:
-> > > > > >> 
-> > > > > >> [   52.713030] Invalid return value -22 for connector detection
-> > > > > >> [   52.713539] WARNING: CPU: 7 PID: 288 at drivers/gpu/drm/drm_probe_helper.c:602 drm_helper_probe_single_connector_modes+0x5e0/
-> > > > > >> 0x63c
-> > > > > >> [   52.714568] Modules linked in:
-> > > > > >> 
-> > > > > >> [   52.724546] Call trace:
-> > > > > >> [   52.724762]  drm_helper_probe_single_connector_modes+0x5e0/0x63c (P)
-> > > > > >> [   52.725319]  drm_mode_getconnector+0x2a4/0x488
-> > > > > >> [   52.725711]  drm_ioctl_kernel+0xb4/0x11c
-> > > > > >> [   52.726057]  drm_ioctl+0x22c/0x544
-> > > > > >> [   52.726358]  __arm64_sys_ioctl+0xac/0xe0
-> > > > > >> [   52.726706]  invoke_syscall+0x44/0x100
-> > > > > >> [   52.727039]  el0_svc_common.constprop.0+0x3c/0xd4
-> > > > > >> 
-> > > > > >> This is because  best_encoder is set by set_best_encoder, which is called from
-> > > > > >> drm_atomic_helper_check_modeset. When we call drm_mode_getconnector 
-> > > > > >> for the first time, the functions mentioned above have not been called yet,
-> > > > > >> then we can't match the encoder from connector->state->best_encoder for this case.
-> > > > > >
-> > > > > >As far as I'm concerned, it's by design. Encoders and connectors have
-> > > > > >1:N relationship, and only once a connector has been enabled it has an
-> > > > > >encoder.
-> > > > > >
-> > > > > >If the connector is disabled, there's no associated encoder.
-> > > > > 
-> > > > > Does this prove that this API is not suitable for my application scenario: 
-> > > > > Get the connector in the bridge's .detect callback, so this means that I may
-> > > > > still need to modify the bridge's connector callback so that it can pass the connector ?
-> > > > 
-> > > > I'd say, yes, please.
-> > > 
-> > > And I'd say no :)
-> > 
-> > Fair enough :-)
-> > 
-> > > There's no reason to deviate from the API other entities have here. It's
-> > > just that the switch to DRM_BRIDGE_ATTACH_NO_CONNECTOR hasn't been
-> > > completely thought through and it's one of the part where it shows.
-> > > 
-> > > We have two alternative solutions: Either the driver creates the
-> > > connector itself, since it doesn't seem to use any downstream bridge
-> > > anyway, or we need a new bridge helper to find the connector on a bridge
-> > > chain.
-> > > 
-> > > We have the iterator already, we just need a new accessor to retrieve
-> > > the (optional) connector of a bridge, and if there's none, go to the
-> > > next bridge and try again.
-> > 
-> > The problem is that there is no guarantee that the the created connector
-> > is created for or linked to any bridge. For example, for msm driver I'm
-> > waiting for several series to go in, but after that I plan to work on
-> > moving connector creation to the generic code within the msm driver.
-> > 
-> > In other words, with DRM_BRIDGE_ATTACH_NO_CONNECTOR in place it is
-> > perfectly legit not to have a bridge which has "connector of a bridge".
-> > It is possible to create drm_bridge_connector on the drm_encoder's side
-> > after the drm_bridge_attach() succeeds.
-> 
-> Sure, but then I'd expect detect and get_modes to only be called *after*
-> that connector has been created, right?
-
-Yes. But you can not get the connector by following bridge chain. Well,
-unless you include encoder into the chain. If that's what you have had
-in mind, then please excuse me, I didn't understand that from the
-beginning.
-
-But frankly speaking, I think it might be easier to pass down the
-connector to the detect callback (as drm_connector_funcs.detect already
-gets the connecor) rather than making bridge drivers go through the
-chain to get the value that is already present in the caller function.
-
-(For some other usecases I'd totally agree with you, especially if the
-connector isn't already available on the caller side).
-
-> Returning NULL in the case where we don't have a connector (yet?) in
-> such a case would make total sense to me, just like we return NULL if
-> the connector is disabled and doesn't have an encoder here.
-> 
-> Maxime
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
 
+--=-nkM76pZz83D3z85hx+hS
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
--- 
-With best wishes
-Dmitry
+On Fri, 2025-03-14 at 10:52 -0700, Josh Poimboeuf wrote:
+> On Fri, Mar 14, 2025 at 05:23:15PM +0000, David Woodhouse wrote:
+> > ISTR this version is OK with Clang and CONFIG_CFI_CLANG but with GCC I
+> > get this:
+> >=20
+> > vmlinux.o: warning: objtool: relocate_kernel+0x69: unsupported stack re=
+gister modification
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* setup a new stack at the =
+end of the physical control page */
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lea=C2=A0=C2=A0=C2=A0=C2=A0 =
+PAGE_SIZE(%rsi), %rsp
+> > =C2=A0 79:=C2=A0=C2=A0 48 8d a6 00 10 00 00=C2=A0=C2=A0=C2=A0 lea=C2=A0=
+=C2=A0=C2=A0 0x1000(%rsi),%rsp
+> >=20
+> >=20
+> > Maybe the answer is to put the UNWIND_HINT_FUNC into #ifdef
+> > CONFIG_CFI_CLANG but that seems wrong.
+>=20
+> The UNWIND_HINT_FUNC definitely looks wrong, why would Clang need it?
+
+I think it's when CONFIG_CFI_CLANG makes the SYM_TYPED_FUNC_START()
+macro actually emit the CFI prologue?=20
+
+> > I'll have another look at putting it in the data section, and see if I
+> > can remember why I didn't want to do that before (and if that's still
+> > relevant now).
+>=20
+> IIRC, the reasons were the patched alternative, and also you wanted to
+> disassemble (but note that's still possible with gdb).
+>=20
+> Here was a patch to make it work:
+>=20
+> =C2=A0 https://lore.kernel.org/20241218212326.44qff3i5n6cxuu5d@jpoimboe
+
+Yeah, that does seem reasonable. Sorry, I think I missed that before
+Christmas. I'll look at rolling it in. This part is kind of orthogonal
+to the actual debug support so it's fine to keep it separate.
+
+Thanks.
+
+
+--=-nkM76pZz83D3z85hx+hS
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
+ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
+AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
+BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
+MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
+a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
+jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
+GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
+aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
+nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
+8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
+HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
+IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
+KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
+BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
+QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
+QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
+ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
+/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
+uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
+xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
+W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
+c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
+VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
+NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
+DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
+sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
+w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
+i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
+kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
+0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
+ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
+blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
+hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
+VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
+HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
+ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
+AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
+cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
+cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
+AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
+aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
+hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
+iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
+8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
+JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
+xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
+EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
+B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
+MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
+KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
+Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
+nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
+WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
+W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
+nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
+g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
+9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
+9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
+sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
+a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
+ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
+AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
+dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
+MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
+YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
+4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
+6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
+QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
+nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
+MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
+VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
+ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDMxNDE4Mjkw
+OFowLwYJKoZIhvcNAQkEMSIEICjahdtlz82kU5PowReoywbuMSp7U2D7QpMcq5rJ4WXJMGQGCSsG
+AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
+cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
+VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
+cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAJK+Yxbzmi5Zp
+4YWrGu9grFi2Jl26hPKvvTTzrTjPyE9KNcpCVPN/eYICU8jDxXfhfTt4gTPRTiQZpH3g6aisXcl9
+6km5/DkDDJARngkLiOvQdl4YUrZFSuv80kxl8TmsqHS1rgN3IjT019eFT1zvRaFW55Z3qHteavD5
+m4AJjtu6jqy3mBnsC+5Q/fLvnDXBnKNjk62u3PkcxLfxgAK7z2nQe88cqPIRvh1VXVQDQRXKc34H
+iS67S2IKuG1eTXuJgGNuy4SOEyOPE33PUQlztNH/thp7q+W/cOlK1e2+Cc57gMjQ3S5ihtZuTJ2P
+O/6hOIEP/PiSULXUFCMFO0U6qw6aPNx2BRunL4Vb9uzgMXrN21eCkm645zKK2UQq7gHq+6xLkcrc
++c8yVzVSXjbQkfiV1k9AmQehUxnBiLXd2SFgBHK4nOOhc0TzIsfIj9YYVznAhGQdbjPUdPCJd7dH
+vs6OPxcroAFSWTsqO1DDaICcr6MIQazva+GqxvXSEolFcarwZXGRICRKm6G0YtjKnu+QkPYE5VQM
+c1HqzJdpLf6KsR+yw+F1U19TqAuOM8Gl01V82d4Mss5lNIjch48vrmsWVsthZ4SXrUOnb+9NSjlr
+w1fAFSc4ch1eDDFFKn32eeayxuFP4aFu6Yu7EjOxc0wqtd+aTTuL/TuYlJlEHQoAAAAAAAA=
+
+
+--=-nkM76pZz83D3z85hx+hS--
 
