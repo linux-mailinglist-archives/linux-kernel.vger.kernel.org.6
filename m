@@ -1,87 +1,112 @@
-Return-Path: <linux-kernel+bounces-561824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75A43A616C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:49:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B570A616DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:55:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE8FD19C5072
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:49:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8906819C61FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1D32040A9;
-	Fri, 14 Mar 2025 16:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/H70oSR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750BA2040A4;
+	Fri, 14 Mar 2025 16:55:10 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABE21FFC5B;
-	Fri, 14 Mar 2025 16:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEECD18B494;
+	Fri, 14 Mar 2025 16:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741970944; cv=none; b=BDkZTUr2oPq1p+frwTYBKB7D1ZkBGE2LlRIpHs5FpZ+mYdXJuHo+2raXXU04oc6Z+qC0BKYHgoh60WFwJ5XikbYePiiboDhwZJTsc+G7pTvC2voyO1F4J2OOqoENShbKNWM2DiYK86A7VWp5zFyuTTgK/y/PS0c1Yfaw2xi9Kg8=
+	t=1741971310; cv=none; b=WXb+ectPopU3zikjNQ77t4ZuAa5de2ZVDUQvWjcdgaSxjCUkEl6Cb7ks0cwS74xnkQk91aQkh87r8R2ByVzESopsCynejrJArqWIKI3/DeSw8tZVTnpYZ+xQLKnjCwiF6MX6o/IngyxVg/WSMjyBC62TQfznWW69rFyEprMRhic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741970944; c=relaxed/simple;
-	bh=JW6R4xOpTLFnNLrbqWO8JY6H8dfEYnttBIocU42Nwyg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ECucWLeUPONrV1PgiBn32r0lAW6RvMqz64nQKdRcvLrUIcT3Giln2FtKO+t76LJX8voDJMIr4UPMFyNyINs2lMmORZRa+h9RyK5YR9q+zr8pFVWMZOExe3qlZz39mUCLXNjfXXC3dmlbY+iiqg3E4J56qf5p4igugGhFs5mS3yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t/H70oSR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29807C4CEE3;
-	Fri, 14 Mar 2025 16:49:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741970944;
-	bh=JW6R4xOpTLFnNLrbqWO8JY6H8dfEYnttBIocU42Nwyg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t/H70oSRIEv58fq/SYOScICYA4wYmIZrtAlIALuUBTcA9nCbYazaBbNN+UfDHesEj
-	 El3fLEJcVZ2vW89HK2/CuZY8ddPZJXhlgxHdEE1A0XCAeRfybxdgZ6soYVzeTXJu+K
-	 qL9ctu6HH9Q33xO6iq+uKTh4n3cX3vczD1QHcXqJXe6P1xkCnxgNN1sMvhSuCBu0c9
-	 E5kH+PD6SBBfYULaWqTZkX8ZRr8WfVOJM6MKc1zU/Mcj96knUjlR4GjtDM9XVqWLc7
-	 6x6hERhbZSG68/bEuwYHRtiUmRhEeo0aaX4ubt+CRm1cnbQoCsPNuF9n3NAscXm1C9
-	 g5hlrk100QUuQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tt8DX-000000000aR-38Ew;
-	Fri, 14 Mar 2025 17:49:03 +0100
-Date: Fri, 14 Mar 2025 17:49:03 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2 1/8] arm64: dts: qcom: x1e80100-crd: mark l12b and
- l15b always-on
-Message-ID: <Z9Rd_yCl4_sOuC1g@hovoldconsulting.com>
-References: <20250314145440.11371-1-johan+linaro@kernel.org>
- <20250314145440.11371-2-johan+linaro@kernel.org>
- <zhiunl3doj3d5rc2m3w2isnwloyyvtbbgiiuzbg3dxy342vnhy@n27ioyo2mhvm>
+	s=arc-20240116; t=1741971310; c=relaxed/simple;
+	bh=eaqevo/8WPvN75TZGDjs5LPg1x4Azhhw0UeGvQTfxw8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ud5QyKexls1bSbYFle3uVVP9ad7Nk8cgmPwr/s0d7MkiTeMZ5jJmpK3aGa5ivpVpnZj7vLqzxc4D1X1pMpJVMZCY7GkD9G4ZYkrLKhmrH+0S7VVahtSqds8q9duW/Qo+Da8uylODYyyP9cTtWf8+DCTXwvBIObYOmULPThTag4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDr5257m2z6JB73;
+	Sat, 15 Mar 2025 00:52:22 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0952A140442;
+	Sat, 15 Mar 2025 00:55:04 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Mar
+ 2025 17:55:03 +0100
+Date: Fri, 14 Mar 2025 16:55:01 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Gregory Price <gourry@gourry.net>
+CC: Yuquan Wang <wangyuquan1236@phytium.com.cn>, <rafael@kernel.org>,
+	<lenb@kernel.org>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <dan.j.williams@intel.com>, <rrichter@amd.com>,
+	<bfaccini@nvidia.com>, <rppt@kernel.org>, <haibo1.xu@intel.com>,
+	<chenbaozi@phytium.com.cn>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>
+Subject: Re: [PATCH v2] ACPI: NUMA: debug invalid unused PXM value for CFMWs
+Message-ID: <20250314165501.00000606@huawei.com>
+In-Reply-To: <Z9QxUNP2aqTGpnMJ@gourry-fedora-PF4VCD3F>
+References: <20250313060907.2381416-1-wangyuquan1236@phytium.com.cn>
+	<Z9LzjQCKFfsdE2yJ@gourry-fedora-PF4VCD3F>
+	<20250314101226.00003830@huawei.com>
+	<Z9QxUNP2aqTGpnMJ@gourry-fedora-PF4VCD3F>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <zhiunl3doj3d5rc2m3w2isnwloyyvtbbgiiuzbg3dxy342vnhy@n27ioyo2mhvm>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, Mar 14, 2025 at 06:36:19PM +0200, Dmitry Baryshkov wrote:
-> On Fri, Mar 14, 2025 at 03:54:33PM +0100, Johan Hovold wrote:
-> > The l12b and l15b supplies are used by components that are not (fully)
-> > described (and some never will be) and must never be disabled.
+On Fri, 14 Mar 2025 09:38:24 -0400
+Gregory Price <gourry@gourry.net> wrote:
+
+> On Fri, Mar 14, 2025 at 10:12:26AM +0000, Jonathan Cameron wrote:
+> > On Thu, 13 Mar 2025 11:02:37 -0400
+> > Gregory Price <gourry@gourry.net> wrote:
+> >   
+> > > On Thu, Mar 13, 2025 at 02:09:07PM +0800, Yuquan Wang wrote:  
+> > > > @@ -441,6 +441,11 @@ static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
+> > > >  	start = cfmws->base_hpa;
+> > > >  	end = cfmws->base_hpa + cfmws->window_size;
+> > > >  
+> > > > +	if (srat_disabled()) {
+> > > > +		pr_err("SRAT is missing or bad while processing CFMWS.\n");
+> > > > +		return -EINVAL;
+> > > > +	}
+> > > > +    
+> > > 
+> > > I thought the srat was optional regardless of the presence of a CFMWS.
+> > > Is this not the case?  
+> > 
+> > True in theory, but do we want to support it?
+> > 
+> > I'd vote no unless someone is shipping such a system and can't fix it up.
+> > 
+> > Jonathan
+> >   
 > 
-> Which components?
+> Well, this is really the patch trying to deal with that I suppose. The
+> code here already states its creating 1 node per CFMWS in the absense of
+> srat - but this patch just changes that and says "no nodes 4 u".  I
+> don't think that's what we want either.
 
-	https://lore.kernel.org/lkml/Z8gPaoqLiC_b2s3I@hovoldconsulting.com/
+Under this specific set of circumstances, "no nodes 4 u" is
+to me a perfectly valid answer.
 
-Johan
+Jonathan
+
+
+> 
+> ~Gregory
+
 
