@@ -1,268 +1,140 @@
-Return-Path: <linux-kernel+bounces-561545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDBFAA61353
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:05:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E1F9A61354
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:07:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF0E7175E45
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:05:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 304081895A2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D291FFC7F;
-	Fri, 14 Mar 2025 14:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D84F1FE46B;
+	Fri, 14 Mar 2025 14:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="FIk5j+Tk"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2069.outbound.protection.outlook.com [40.107.241.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S7hqIbrH"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDF31BC3C;
-	Fri, 14 Mar 2025 14:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741961098; cv=fail; b=gHM/+ycPqeeBRuCazTg7ClOV2rZkb6zS30Dc97I53GkI5jY3BOYRPEF7kT1Bab0GSPMdLbvNMhMkXjkEMFkX4SRy9hqkFhnR4gOGD6ApvtHM8yxKSWAneSqDJSpZLasE0KaRrZ7ffCYyp4Cg0oSfKQgf9/kJqAOwfrqs15ip9gU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741961098; c=relaxed/simple;
-	bh=+tVYU/ZhuIWAC16XYDaIm0CeBAtukws8OrwWID8aJlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Krf9lbohwU6NYdW5nDI1JbXPXsQELyKoGcAq5dBRIrQWg/vZxG0iaMnqn3eyl4Vg82I7mZrTmsELn+1e58/SIOCC/9ffhVQKht7ntjbHzI5S7REOyuDLqIS1ANUGzK6HqvSBz08vSKId9ZyRdClWV6HhiIaQBuwXzch+b4u4VOI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=FIk5j+Tk; arc=fail smtp.client-ip=40.107.241.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XxjYKV6JoJY7Dz+4/IDlpgx/PN+igEadWPVQmbD5K+TRKxV//2Kr3FUD+mvYnKON9fB8S1ffjY0Ap+fqniluKBD6v37phf7T1Q+tdibGhX6Y09+u34Ci9aaCD8l1YoCInXN7yC2rXINMbBIUYJe+DcE0RZeRpX8EoWW6JKF7oKwMw/ZYbGyGyMgPJx5mayELSQL7y0/mZ6GKMohMgosPcu77LgOBgshoKh1T5kFepkFovt+Y4LcCKEB+k2u7JjQy3lVnq3a5WwWJmzWtA5c3aAaigHCk0S9rVbaxesG4itKXt/m9Jku4tGKbbnpytd/NJ+wNyl5j4iwPP7ZTN8zEaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LnnIe/RIVaYUO9HO+OUrmydE3S8jZSKu25ZzaiyDgh8=;
- b=BdZMSuPZEW+hnEZEciG5PEhRk7H3Lrcgt9LnQiy8qJs9KrXctvBrAgjGX7OGLtTY7EFKJ56RqdO3yBRgz4r0PczkVYayUl9MV8RPR+LNIVRW8U8HK8mZtSQVO7XYf9qOwjb+v1Z5eSRVwXWZbSjuHMw8VML8u8PRIwVc5m9dQTONVXAjQpv8SV509oFBcDpffozrJQN2lBRGUa932nURlX9/dTotb02aNoEF331iIwK15vFN9pLqDVzi/wPRSjT0Dj/HUz0GOmBbDTlU3ha4IALCf8JjdbgJKln4Nwbe+/gjmeP82CxHgzPNtyUwADWEZGp9B1bwFh10Xfmo470NYA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LnnIe/RIVaYUO9HO+OUrmydE3S8jZSKu25ZzaiyDgh8=;
- b=FIk5j+Tknd0GV02V/KATEljRWCYBC+agMm8H70syds/CuYVPVvqmNPzF0IAYZlOTpDDZu6ExxDBJfLVduHEDvwt/0WMQgkpPRUe4bV4/gsT5YjRepgpAkQPAqndTnrGKqQuDdF9OeJTuGt4H3WABtFYgVgcupbfQ0nxdS/IxV1v7JIaQrHUBlm9VmsKZu25qgc3SGC5VKlcUF41g3SeKc/qU8v3ALeGz5GjTtFRVy8S8N0z1rH/6wqrVdRoJqG4rQpbqrEXBWAt9SgTXOOPxZXSgoprGo6YuEDpUWPvx+seQIU/MNegmL2Vk0E+miBq3Eaz0JDOiAT5dDiAmsG1VGw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DU2PR04MB9000.eurprd04.prod.outlook.com (2603:10a6:10:2e3::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.31; Fri, 14 Mar
- 2025 14:04:53 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.8511.026; Fri, 14 Mar 2025
- 14:04:52 +0000
-Date: Fri, 14 Mar 2025 10:04:40 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, Nishanth Menon <nm@ti.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dhruva Gole <d-gole@ti.com>, Tero Kristo <kristo@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Dave Jiang <dave.jiang@intel.com>, Jon Mason <jdmason@kudzu.us>,
-	Allen Hubbe <allenbh@gmail.com>, ntb@lists.linux.dev,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	Michael Kelley <mhklinux@outlook.com>, Wei Liu <wei.liu@kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	linux-hyperv@vger.kernel.org, Wei Huang <wei.huang2@amd.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huwei.com>
-Subject: Re: [patch V2 01/10] cleanup: Provide retain_ptr()
-Message-ID: <Z9Q3eCjNfD0WQ4H5@lizhi-Precision-Tower-5810>
-References: <20250313130212.450198939@linutronix.de>
- <20250313130321.442025758@linutronix.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313130321.442025758@linutronix.de>
-X-ClientProxiedBy: BYAPR06CA0043.namprd06.prod.outlook.com
- (2603:10b6:a03:14b::20) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C461F03E6
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741961217; cv=none; b=Jaz6uDv4sN/6Ug736gLFFlZLYRpaOmUlp2znr1/uf/JAxbr7gchMv3qKSc6krUoJ57bTZEvlcH1kgIcEcyBLw9XQbF+oETxTKGP9ekQkjp2Yc7qrJgMlpRrTCI8JHy2xDDxWwqMpkwoyC7wUcXbmVqbGL9/jSea2X6/3Hk0liEI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741961217; c=relaxed/simple;
+	bh=8RpETn+FdL6begYD7ajY/6rjV7NaSs7qLxer9fBw2+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kz39bRBXCnOiKPSc93bmfxzkf0A4893gUNMdcE87IYnCNFJCtT4BcULgMcHXXMWJeBCqlqqY9+J3ADIMW/GqqbDOV2Be9bVN0t/tGNGXNlLveozGNFnLU59FAF/5+HkV+FIQOvyoGP46kAHBiLMk8HVPmu60nirCZWqK4A+mkWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S7hqIbrH; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac298c8fa50so401613166b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:06:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741961214; x=1742566014; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xQ30pCMhWZJ/vu1HO8OFsVgK23FsiB3oCPyd4i49RYc=;
+        b=S7hqIbrHP90ycYZvx8su08/vK2EnLux4MaDAnw6ZGtVgMDe1NpNqsojT6o/sxo9mOa
+         bpJDKmWdNOltTvVTUWVxUvcZPfBgeTEUvNq9e6t7Yp2KE+mz4WJ8en6GcdxWYKCmn7ve
+         Q50C1KkEofmzX1FETucbq2nR6Ln2PS1ZUgc4t4+ByHwskZc3hNSIk/pA0DCPX27eTnWN
+         Bw64k/hipPzzkzq5hXs5EUCWAaeJIl/CTrQunvtGMNNroYZasF+LPAdXRtL+tx3223Ea
+         1YcdCuUr8Tj39yOnn4CbNb/RMt7jy4qHptObeFlVDMJEspOYD+8eIV0GH0st5VHG3tbi
+         mYrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741961214; x=1742566014;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xQ30pCMhWZJ/vu1HO8OFsVgK23FsiB3oCPyd4i49RYc=;
+        b=wnHiYTnWAuE1+OLncA961v/oNQtkvfeVbY4p+tYuZW+NQ/a5yA7OkE/atMTHxspake
+         XgxAcCogrghXEm2xgfbu31FWnFMZJCDJgeNf4DN6hftuJU6KoyTDS6gztc34xH47oyTL
+         aQoMZK3cPA+V1QSS71eHFqeStA8O8ZB52MWoOYmMzOTLXn+AFC7teg3mh1okNzdU0adV
+         ZiqgcWn/8N1LuxefM9uO3aIaW8HGBYD/9Uq1yGi4tt2d6rjqZKg2wp/XFFgLmj789GnJ
+         ZAHwXo62vmrD8cc3OOlWxo27+xrh3/q/qIohWHZz4lMdYFV8th7ICDCKIYfIUU2/5vVU
+         nhEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWod5pGT51wbFkzI5Bq6VvQOHawlLxd9gDEXB6oCzvZQObJSf8q+baEljWGV0DJU7l9nRHoDBt5oI/+eOg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfynqvXL1MGeHgB8gNZQvK6xDIvPzHLfKIz/WFhyg6PAgP8dtm
+	mDi2Zi4EfYgosE8PKCsZcOA8XU2KTdgoXj3Aah7R3AWSXYq01ecVXLIjn1t41A==
+X-Gm-Gg: ASbGncspoOXIUEYzby4uXbv2AOn7ln/GwILqiFbCCIvApYxN6/cdSVastiguanQkmw1
+	QdJQZ8QGndkg6cWYfeBAuAb9iYlYPC9mWo5DG5RDPTwD4lNWxo4FlPjJjYc3Vq5Prgj4igm5hjG
+	RD/iO63ggjKMOZKWakmtUGyOdt3HjvcqCHitHCCiUPdV2Kr481bx2RUn7IGb0cH8IS6F/jysGiQ
+	8mR3LkNYiryvJbHxvHqQsrRt8vSfe8036qoaYFZw7h7wpme34WQQhiiUyU5BexzYlbX/kPForHD
+	P5fuRD3bw3aeKGL0ro8hFNcedBNLYhskTF4aEP3NKtLJcvF51OE+vSmhBaISD4DhKTIhGHgC4QJ
+	aJLp9USSQ/uRoqA==
+X-Google-Smtp-Source: AGHT+IHghq3sPYug54WmaGy7pWa7JmjzZxIJe+VrPTG+PJgUO8Og3FjVLxNejtkRIYczh769vo0fOw==
+X-Received: by 2002:a17:907:94c7:b0:ac2:9b34:89f4 with SMTP id a640c23a62f3a-ac330272cf7mr234942366b.23.1741961213314;
+        Fri, 14 Mar 2025 07:06:53 -0700 (PDT)
+Received: from google.com (140.20.91.34.bc.googleusercontent.com. [34.91.20.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a49c37sm228471866b.158.2025.03.14.07.06.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 07:06:52 -0700 (PDT)
+Date: Fri, 14 Mar 2025 14:06:48 +0000
+From: Quentin Perret <qperret@google.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] KVM: arm64: Move hyp state to hyp_vmemmap
+Message-ID: <Z9Q3-FM-QwiIn9gh@google.com>
+References: <20250227003310.367350-1-qperret@google.com>
+ <20250227003310.367350-5-qperret@google.com>
+ <86bju3onl3.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU2PR04MB9000:EE_
-X-MS-Office365-Filtering-Correlation-Id: 029cea2b-20e2-4213-da78-08dd6301311d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|52116014|1800799024|376014|366016|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?r37T0ns4tP1XLVaJBwYiQc9yna1oAMeKXPRM3LfSNQHXsvdHxA11TVG4YWXY?=
- =?us-ascii?Q?EI1SfvGP4UM1a0j9+LzqdchS2jh4SHFjfEQ6gn/UFS8nNxwM5ARuBjmXzFkJ?=
- =?us-ascii?Q?BbLiM/SUBw+Hy4Bh8kNDO1yckNhDQMkXWX0MglEGivRlrCBrVLggyXLnEO2u?=
- =?us-ascii?Q?fboPIbzmTz87ukxrTTnbHlNNCfWq2EwFjIT55wxoiQ8Th2XaRz8bBUmKu0dW?=
- =?us-ascii?Q?9lH+W1FfLtnI53pVIPYGFrrmCNyfUZvmsTk3U78inyWTMh6cfPgI3LWQn/vX?=
- =?us-ascii?Q?tvv/dUdlJQ8TYQU6Xa0v5JxwpR0tu6lfJvj1GrcY43TpRiXJBtYto0o++9tq?=
- =?us-ascii?Q?oem8UE4FbSDsriTZjLCIBuynWJTSHWmjjuG5/gW1ABrD3IbXKAA+UkIbC0fe?=
- =?us-ascii?Q?FHZ+p8E2NABayoFuJS+ogJw3WSzq3HLvfGPVefiH2kerv2rv0YqGdL+B6L1t?=
- =?us-ascii?Q?ZF5nhLz3/5z/ytbdKoq41OCBxQwXBBDlHMvjVzkcz9YnIm4ztjxNttIPoCEP?=
- =?us-ascii?Q?EPj3C+MzJJHHD8t9qOH/nXkBvqwIGAbP7FKblebBUY1+Kqm7/CKjAGsi6GMW?=
- =?us-ascii?Q?cc/Aut9MyNcCdwW05wbR4IYT8kiTknFsM4BwJNJCMkGGrBaix7dec1ds8ucg?=
- =?us-ascii?Q?l9ItfTfXymdBtpNz+IYtPOLVOHIsZ9wYKEdGpivzjwiQBnVU3lk4OqfAmXDt?=
- =?us-ascii?Q?YtVqtKzFOEtKszG2ZUlp8hSO2vgHyg2mi2DGNXB9nX2rS32OXKSztvIcohZZ?=
- =?us-ascii?Q?489aCDNSLTkNg1yLQ826kAXm+HJ+9rpa/N9FAs9tYIfOfIZLxbR8USMgX0uh?=
- =?us-ascii?Q?dY3iMcfigs0chLTfm1b5jBXXItkeaKXr7oWgmvvqOfqB9++DnGfqteHi2Zb1?=
- =?us-ascii?Q?O2iF7KWpeb7TRqLKz6iZmaNra364tM57m2JKKjsVpYyEvfEj9yKD0aYkBQcs?=
- =?us-ascii?Q?9qrgAfUnMadi6XbUHqdLJETPthUikdqAQj0kDtArzmW8iXjCXOzNlod0oZhj?=
- =?us-ascii?Q?9vn4AQr12hFOnF9bT7hhGhVQe2lO71SaPUvqSdr7LivGk3t+FPH3YInSUTtE?=
- =?us-ascii?Q?8CSIwp0RzMGHwfhkU2w4EIym+a8DflqwhNAwwHymJjC/vc6Qn7+s89iHuDSf?=
- =?us-ascii?Q?axCKh8YS2WpJy+jUxJ74GY6W7bmif+UhxX1vmJrPNrXGo8jAXfPRGsl2kzmQ?=
- =?us-ascii?Q?U+AzPaU6hnU/tYY3r3zyHXw7fDzao8okUuZc2p9rElpQ9gKZ8v920bi51zFH?=
- =?us-ascii?Q?K4Z7c7Ra854L+G4sOgyn8FBmyLn3/CHdbZT9ddQiSX2Zx/HPRpEa1WF+IjqO?=
- =?us-ascii?Q?1y8EK7ErjAuquPp9Z+qU8UG3+JqUKnGDYNxu6UkSMjjVJweH6ly0hSDErn8l?=
- =?us-ascii?Q?cf45nSXbHg85vFjTkeUq41kDI9feGb23BZJ6nEU7y31pgbLed9CLVhQMd6/O?=
- =?us-ascii?Q?RQ9FwkitwNHAmOu7EMkuISFWNYrq5kgt?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(1800799024)(376014)(366016)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?x7Tx05hQ72YIAbbTj8Gu5NBKF7TmGtw4UnTSCmfYfeZgWCoCqqhlxX1wSCIu?=
- =?us-ascii?Q?H8L1y7vKkN1I2zRmFXRXn3oC4av7bM+Uw+c/Fud9R6lKjy5JyWdNvGBuuaVa?=
- =?us-ascii?Q?1LjGygvftah2qOiUn7HlQ86A3L4q9wIVHRSiWcz4rk7u/h72ewx3peuy4AnW?=
- =?us-ascii?Q?feb3QscNXPD2HpsaHxnRekHFmoBKCIY1qjJWcd48NFbM7iZFxTAtgpN3NODz?=
- =?us-ascii?Q?Mn1nZ7ZwbykhX15Hs6FTUtJlxnfX5nm053Pi9IJJN9c94LTDKXjmTFQ+r+pz?=
- =?us-ascii?Q?o6rVaEZ7TcpUosy4QrABOWE/vSuWtClcQPvjdKoGsi04lWv0U9+NWmL464Vy?=
- =?us-ascii?Q?aJtPNGysEGVdzHuQq00Pz1UcIXOhsztX6aReZvMYpEl/d/NsMvulZ68wJkLn?=
- =?us-ascii?Q?cguEMGk90QcSpYf095LpEsdbJz5vq+GzSS5t7PFfQtAEMmpjL/NnD+c7BtkZ?=
- =?us-ascii?Q?c8NwTcdYLIeQ4pAhy8NwyurOSYAih+4rJIhGafZEKBTulIBTSFlZ7MJs7kfO?=
- =?us-ascii?Q?q5atn7WAA8L+LlKq3BknUZmaacCG6t6dENhP5lWh85TIKvv6a3Fd3ygUqIS5?=
- =?us-ascii?Q?IMi0IQZMAZ9fLffrw0Xz3zaEeThhOjydMM0fv3v0PgbSjsSikTSCkbgRD8WA?=
- =?us-ascii?Q?XSHL+pbX2OrKGOUDvZmKtm07Nc0KoL13lMgOrKXwjplB1aOPpmXO1eeeA/ep?=
- =?us-ascii?Q?1gou/lyXcBa+yc8HPgeWt3NlCAGNua1gDfB9UikQICxkcjuVqNK1aT/5R0Po?=
- =?us-ascii?Q?L+i9i0v8qxzWZ9J7mfiWWIK7aRq8wt1ljZb8CTcNYaHYYe1h/hfgRbJHp6ND?=
- =?us-ascii?Q?7iKJOs7L+INT/d2Og3h/FJeDcEtashbZl6uvU2wrawBw/aglx1p6evBuM5i6?=
- =?us-ascii?Q?bCROH+sTjt5+AzYLDWvstcn8Oti5Qf7kksZU/OjiNuEdqUR3SUsOPSfWSMST?=
- =?us-ascii?Q?tqgmhZmtiBqKx5uulM/LYlOfvMJVYrN2krCi4YmyBbguT32AECvDezt4dmTZ?=
- =?us-ascii?Q?Wzrl4YjGw8ov7uKeHNt1MmG2+VH0FFQS/MOfM2t4FiS/6ZdgbvZeFCkKzCJv?=
- =?us-ascii?Q?hDIYroIEAZMo+zvoK8eP7VqAdQafUWZGPNQO2x5dyDpWITCLtACHc/RcxXNL?=
- =?us-ascii?Q?8/BeH/XKRQqexW3Tog0Lop/y9jUjC/qDCTgAf31VuyKArMz84vd+BNHBQflr?=
- =?us-ascii?Q?eWRHfYexK1PXKrqDz3K4AHquKeMhKn7RTb6o8buEbWEbePkaCWZDsjAX49pc?=
- =?us-ascii?Q?n1Tz+pcqkPbVjwU+0ev9a0enGbMl+8MUwermnQsAc4Pf08eePjX2sHbPzZwm?=
- =?us-ascii?Q?gptnHpWkAbBUl+Xsb5hLMNNYKj3PcR1FU9t6WdxZESgLUhUPSdnSbbiEPlz3?=
- =?us-ascii?Q?QHCJKW1+LVuvwbyY50PWUaCq0UBB8kj5u60NCEJmOHmi5Wilgqdh/68LcJ4j?=
- =?us-ascii?Q?1aeAeKEDeK1F1yeyfv9FSncfJ9M4fHXgCVJrdnFfeqsnofIRnLqLYD90mmD0?=
- =?us-ascii?Q?vI6gsDTd+3dILUvmGdgxMh4ujgFZAmibcHeR3pvYLzld/6YiY5s0rpN+vK+t?=
- =?us-ascii?Q?2pBedEhtyhBIbAt/rf4=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 029cea2b-20e2-4213-da78-08dd6301311d
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2025 14:04:52.8692
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8YI07MvWSJmrik0ldlEwyi4VdpeTBPWGTzmQLpvAfYSHwSPesl4baZvoi0HV1Zt7CkTsI1dWvPiE+iUaQXec1g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB9000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86bju3onl3.wl-maz@kernel.org>
 
-On Thu, Mar 13, 2025 at 02:03:38PM +0100, Thomas Gleixner wrote:
-> In cases where an allocation is consumed by another function, the
-> allocation needs to be retained on success or freed on failure. The code
-> pattern is usually:
->
-> 	struct foo *f = kzalloc(sizeof(*f), GFP_KERNEL);
-> 	struct bar *b;
->
-> 	,,,
-> 	// Initialize f
-> 	...
-> 	if (ret)
-> 		goto free;
->         ...
-> 	bar = bar_create(f);
-> 	if (!bar) {
-> 		ret = -ENOMEM;
-> 	   	goto free;
-> 	}
-> 	...
-> 	return 0;
-> free:
-> 	kfree(f);
-> 	return ret;
->
-> This prevents using __free(kfree) on @f because there is no canonical way
-> to tell the cleanup code that the allocation should not be freed.
->
-> Abusing no_free_ptr() by force ignoring the return value is not really a
-> sensible option either.
->
-> Provide an explicit macro retain_ptr(), which NULLs the cleanup
-> pointer. That makes it easy to analyze and reason about.
->
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> ---
->  include/linux/cleanup.h |   17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->
-> --- a/include/linux/cleanup.h
-> +++ b/include/linux/cleanup.h
-> @@ -216,6 +216,23 @@ const volatile void * __must_check_fn(co
->
->  #define return_ptr(p)	return no_free_ptr(p)
->
-> +/*
-> + * Only for situations where an allocation is handed in to another function
-> + * and consumed by that function on success.
-> + *
-> + *	struct foo *f __free(kfree) = kzalloc(sizeof(*f), GFP_KERNEL);
-> + *
-> + *	setup(f);
-> + *	if (some_condition)
-> + *		return -EINVAL;
-> + *	....
-> + *	ret = bar(f);
-> + *	if (!ret)
-> + *		retain_ptr(f);
-> + *	return ret;
+On Friday 14 Mar 2025 at 11:31:36 (+0000), Marc Zyngier wrote:
+> On Thu, 27 Feb 2025 00:33:08 +0000,
+> Quentin Perret <qperret@google.com> wrote:
+> > @@ -698,13 +697,13 @@ int __pkvm_host_share_hyp(u64 pfn)
+> >  	if (ret)
+> >  		goto unlock;
+> >  	if (IS_ENABLED(CONFIG_NVHE_EL2_DEBUG)) {
+> > -		ret = __hyp_check_page_state_range((u64)virt, size, PKVM_NOPAGE);
+> > +		ret = __hyp_check_page_state_range(phys, size, PKVM_NOPAGE);
+> 
+> OK, I think I finally clicked here. Does it mean that all the tracking
+> is now done in terms of PAs instead of VAs?
 
-Is it better like
+Yep, that's exactly that. The hyp_vmemmap is indexed by pfn, so I felt
+that the conversion to a PA-based tracking made sense. That also make it
+clear that the 'hyp state' is not a property of a mapping, but really of
+the underlying physical page.
 
-	ret = bar(f);
-	if (ret)
-		return ret;
+> >  		if (ret)
+> >  			goto unlock;
+> >  	}
+> >  
+> > -	prot = pkvm_mkstate(PAGE_HYP, PKVM_PAGE_SHARED_BORROWED);
+> > -	WARN_ON(pkvm_create_mappings_locked(virt, virt + size, prot));
+> > +	__hyp_set_page_state_range(phys, size, PKVM_PAGE_SHARED_BORROWED);
+> > +	WARN_ON(pkvm_create_mappings_locked(virt, virt + size, PAGE_HYP));
+> 
+> And this is the split between the state now being kept in the on a PA
+> base and the actual mapping that is now only takes the page attributes
+> and no SW bits?
 
-	retain_ptr(f);
-	return 0;
+Precisely, and the next patch in this series takes advantage of the
+fact that we're now de-correlating the hyp state from the presence of a
+hyp s1 mapping in the linear map range. In the future there'll be more
+use-cases for this I think (e.g. the hyp allocator where we'll have
+pages owned by the hypervisor but only mapped in the 'private' range,
+things like that).
 
-If there are more than one f, like f1, f2, f3....
-
-	ret= bar(f1, f2, ....)
-	if (ret)
-		return ret;
-
-	retain_ptr(f1);
-	retain_ptr(f2);
-	...
-
-	return 0;
-
-
-Or define a macro like
-#defne no_free_ptr_on_ok(ret, p) ret ? ret : __get_and_null(p, NULL), 0
-
-	ret = bar (f);
-	return no_free_ptr_on_ok(ret, f);
-
-Frank
-
-> + */
-> +#define retain_ptr(p)				\
-> +	__get_and_null(p, NULL)
->
->  /*
->   * DEFINE_CLASS(name, type, exit, init, init_args...):
->
+Thanks,
+Quentin
 
