@@ -1,154 +1,90 @@
-Return-Path: <linux-kernel+bounces-561549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32609A6135C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:10:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA1FA61363
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:11:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 060AE19C15BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:10:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F331B16E6C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3EC1FFC5A;
-	Fri, 14 Mar 2025 14:10:40 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E73200B9F;
+	Fri, 14 Mar 2025 14:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="xFzPl6eV"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4A21EB3E
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81B21EB3E;
+	Fri, 14 Mar 2025 14:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741961439; cv=none; b=rFIX7DmbxSlVsgRynJJ1J2yjjoHU7ni31j+jsLxYIUul8g4cmvwVxk5zL+1mR/0R9811j+l9+bpVNMDN+dfaZ1QTEKswhj0MIlDXbFh0HyMzba3lEAX46kQMJ2jewiJcJT1HauKagXvemO6jPTxL1Sydh+JE0xlgEmE9xLw4RS0=
+	t=1741961481; cv=none; b=qY9n4qWll5SL2KZ00om+x2S83gN8TAWItq5eh9N99fMw4sqMvSLCvLf8QZ6t94npEoUUMHLVg7w7IzffnhhPzozbwmBmiSwSF/7deGdEsHs0k2BwlDOzBbIgXUIVRVvHKOXMx2xC1LGZVu5GfrsL3iLu6Uh26SJ8FFpKr+5OikQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741961439; c=relaxed/simple;
-	bh=C5toxvwiwwhMhsd9e2XE4L4Jrk1EIjC5qUAeyoJngFo=;
+	s=arc-20240116; t=1741961481; c=relaxed/simple;
+	bh=CPBTHkqPzfVpKzNFgNPoisYMyOv0IqONQ41uCQM5qjY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g2eFD7I86rcQoVGAgUUeOEXDrvloIWz3dudsKQ6SOM3ezBGSGPp2W6E+AY8uJ/My4kFJm0PC/uKG8XYFaY2iv72ZNgYOBkEQM8vn++QFYCMrh8V5q3BbmIShB/rHF9HH9Iqt+gfwGR1c/Ogj6AVC9fUiE74W0yd64UaRd1ICUso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tt5k1-0000lP-74; Fri, 14 Mar 2025 15:10:25 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tt5jz-005iXB-2e;
-	Fri, 14 Mar 2025 15:10:23 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tt5jz-00DBIm-2G;
-	Fri, 14 Mar 2025 15:10:23 +0100
-Date: Fri, 14 Mar 2025 15:10:23 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org,
-	=?utf-8?B?U8O4cmVu?= Andersen <san@skov.dk>,
-	Guenter Roeck <groeck@chromium.org>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	chrome-platform@lists.linux.dev
-Subject: Re: [PATCH v6 7/7] Documentation: Add sysfs documentation for PSCRR
- reboot reason tracking
-Message-ID: <Z9Q4z2dPdpqVcu6u@pengutronix.de>
-References: <20250314113604.1776201-1-o.rempel@pengutronix.de>
- <20250314113604.1776201-8-o.rempel@pengutronix.de>
- <a8f76dd0-56be-46a5-9cc1-2d17d013127d@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q74cqTtHFXPfMghqZX+4ralYk/FeYq90qUrwBOPUKh+ken+ZNv0MXqpHqMMAvde0trHKQphdCsnGG7Wcxva44MQiSdi6HTTRz0W1+fCvpBmVkSboH8Fl6ftOFBFd6DFviQeabBsOoyaLuzQLsFHcS4amxlmeCzXVRJVUfP5JGvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=xFzPl6eV; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 8F7DB1F93A;
+	Fri, 14 Mar 2025 15:11:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1741961475;
+	bh=HsRFrggS6kqtvPWhfFvFAXCpmID8ibMboUcQ9J3zcys=;
+	h=Received:From:To:Subject;
+	b=xFzPl6eVh2TOJXz8G8hYw1ipGkmfc9k9ecY9ayNFP84AU6PMy6ywJmyREEhnBp/yE
+	 suRuIDZu0HPv92vmu5BXFsw3NdmOWsZ9sO5PYiNcXG6NvcKMo3zsrFQdsF9oYatdv0
+	 kFhclZyEmj7sLpIYfzk3nifhmk3TcWy1cbPVQVd3cc2CbpIYI10NYJaaLm5ZSTEn5e
+	 /74mxX0rE98cxNtkrnEmiClvvKiATOurlXmrL3x/z8fPpscuR4RrF3KcplHkz8hwV5
+	 QLluNFIlHJCH9ixZ27GfZxkL+A64APTUjX2YXIZP14eJW6LF80ZyAfM6GU4g9sxfAf
+	 Zh+1aUnAoPMAw==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id 3EDA87FA28; Fri, 14 Mar 2025 15:11:15 +0100 (CET)
+Date: Fri, 14 Mar 2025 15:11:15 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Jeff Chen <jeff.chen_1@nxp.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	briannorris@chromium.org, johannes@sipsolutions.net,
+	francesco@dolcini.it, tsung-hsien.hsieh@nxp.com,
+	s.hauer@pengutronix.de
+Subject: Re: [PATCH v3] wifi: mwifiex: Fix HT40 bandwidth issue.
+Message-ID: <Z9Q5Ay9lZPA4OC6n@gaggiata.pivistrello.it>
+References: <20250314094238.2097341-1-jeff.chen_1@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a8f76dd0-56be-46a5-9cc1-2d17d013127d@gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20250314094238.2097341-1-jeff.chen_1@nxp.com>
 
-On Fri, Mar 14, 2025 at 03:38:55PM +0200, Matti Vaittinen wrote:
-> On 14/03/2025 13:36, Oleksij Rempel wrote:
-> > Add documentation for the Power State Change Reason Recorder (PSCRR)
-> > sysfs interface, which allows tracking of system shutdown and reboot
-> > reasons. The documentation provides details on available sysfs entries
-> > under `/sys/kernel/pscrr/`, explaining their functionality, example usage,
-> > and how they interact with different backend storage options (e.g., NVMEM).
-> > 
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > ---
-> >   .../ABI/testing/sysfs-kernel-reboot-pscrr     | 46 +++++++++++++++++++
-> >   1 file changed, 46 insertions(+)
-> >   create mode 100644 Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
-> > 
-> > diff --git a/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr b/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
-> > new file mode 100644
-> > index 000000000000..7cc643f89675
-> > --- /dev/null
-> > +++ b/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
-> > @@ -0,0 +1,46 @@
-> > +What:		/sys/kernel/pscrr/reason
-> > +Date:		April 2025
-> > +KernelVersion:  6.15
-> > +Contact:	Oleksij Rempel <o.rempel@pengutronix.de>
-> > +Description:
-> > +		This file provides access to the last recorded power state
-> > +		change reason. The storage backend is configurable and, if
-> > +		supported, the reason may be stored persistently in an
-> > +		NVMEM cell or another backend.
-> > +
-> > +		Reading this file returns an integer representing the last
-> > +		recorded shutdown or reboot cause.
-> > +
-> > +		Writing an integer value to this file sets the reason to be
-> > +		stored and recorded for system analysis.
-> > +
-> > +		Example usage (values are for illustration and may not reflect
-> > +		actual reasons used in a given system):
-> > +		  Read:
-> > +			$ cat /sys/kernel/pscrr/reason
-> > +			3   # (Example: Power loss event, may differ per system)
-> > +
-> > +		  Write:
-> > +			$ echo 5 > /sys/kernel/pscrr/reason
-> > +			# Sets the reason to 5 (Example: User-triggered reboot,
-> > +			# this may not be a real value in your system)
-> > +
-> > +		Values are defined in:
-> > +		  - `include/linux/reboot.h` (enum psc_reason)
-> 
-> Is it possible to provide the reason (also) as string?
-> 
-> I believe we should fix the meaning of the numbers so the ABI is not
-> changing for the users. Hence we could as well document the meaning of the
-> values(?) If I read the suggestion right, we will in any case have
-> predefined set of reasons in the kernel side.
-> 
-> Or, am I missing something?
+Hello Jeff,
+for future patches, please be sure to have a changelog after the ---
+at the end of the commit message.
 
-Yes, it is correct, the values should be fixed for user space. Should
-they be documented in this documentation too?
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+See
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#commentary
+
+and in general that whole document.
+
+
+On Fri, Mar 14, 2025 at 05:42:38PM +0800, Jeff Chen wrote:
+> This patch addresses an issue where, despite the AP supporting 40MHz
+> bandwidth, the connection was limited to 20MHz. Without this fix,
+> even if the access point supports 40MHz, the bandwidth after
+> connection remains at 20MHz. This issue is not a regression.
+> 
+> Signed-off-by: Jeff Chen <jeff.chen_1@nxp.com>
+
+Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+
+Francesco
+
 
