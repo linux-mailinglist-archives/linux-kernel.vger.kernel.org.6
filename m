@@ -1,125 +1,168 @@
-Return-Path: <linux-kernel+bounces-561422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63811A61182
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:38:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED52A6118F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:39:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BF90168A2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:38:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAADF173893
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7121FF1CA;
-	Fri, 14 Mar 2025 12:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80541FF1AC;
+	Fri, 14 Mar 2025 12:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ct0fMGqj"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="ZJy+PQr6"
+Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB1B1FDE29
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 12:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166401FF1A8;
+	Fri, 14 Mar 2025 12:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741955879; cv=none; b=VtffJCk+V01dQe5guIpFPZHf/aMaOWF/BnE40/dhjMkn5fL/4qaLQn9DS4CAnt/w2+NZ8SeQOXKIna1fi7agIZY29ehZay56bOFyU10R+S5r385L43YMDXqwnbQRW7buL8UWfYIGXX49VxuRQNOq1LH10JkIdcDoYoJGgTmXohs=
+	t=1741955920; cv=none; b=RKUDFgInYuz7co+S+Wy1r8gMGhzy5BAX4fn2szGZ2R4TapsgQgEE90RVELjLTXC+dsGsPYbTLAzWaQci0dru9WZ3SxI0T2Z6A4WPG74EFZXvD7m6tA0F+s9UYmUNv00BqeuzZwE8vl5HU6W+Epp/hrGzr9AK57T0sJZEW1uBqgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741955879; c=relaxed/simple;
-	bh=Z4vVBZrwdsora5jaavoKvH4SBMRfW+n+z+2ksvCX0uU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HsdUCNa6rgpfusau01Ikb7wQHB1vs67uTyOxQ9XD+zeCUKEEBzwmKO/eh550L1l8CtQ3j86Xz51U5wmoeBqzd8m0usiyU5jeQWJ7LHZsPGi8dE9omdvsu3JpLiiaeTs3dPvdU61QxUBNuVWx/w4+Ug2lXRga0igSGfteLuj3Ct4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ct0fMGqj; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6e8fce04655so18509106d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 05:37:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741955876; x=1742560676; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4Mt1R0EC3FYz66XqhH4MaCDZ6sflbyDD7zxn5LRYO4w=;
-        b=Ct0fMGqj0Zq8y6F7+IU1iK0RUohll3LgpOZJf7Cidnyoh+M6nk52fghd+lNBG/dRPA
-         XXBj0FYXMtZKcOJBMRKpx4NXtc2xWcJ3DRW9fg37sV7rG9bRnpqFWRvGGyNnOdGOkGWz
-         1GXlZ9oBOGwt72dDKU4fD7P0gaNiR0YtC/Unk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741955876; x=1742560676;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4Mt1R0EC3FYz66XqhH4MaCDZ6sflbyDD7zxn5LRYO4w=;
-        b=GmBNpIwN8kgNrOpPXcp1lshIL0P9S3QuhnqBiMjMKV9RYqJfT2FpHDOOOHmqfTCFHu
-         YJa3KNgildhE79LcVtzpmQPv16FwmOC5jaBvLQggIHUXursN7tJxkE/N+YzuCwiDJAO9
-         Tu9Bk82BRSc4Rx+DwawaAYkqcAjLkhmhWQxdtcc5xE8Nb+3UM47ACnTssgXsY/2j4Yig
-         tULfgdN/htHi/wNIpqQu7rwnt/k9Wms8h7NWdYxThhLMLL9JEO36IsfWKfSQSfVMSB1u
-         P+OAKEXTmhk4NqUfM+gkGYHYoig0P2Or3v4w7GX2uV3W1W0G6cyvXM9CnpWUdhwvvQJV
-         Mwtw==
-X-Forwarded-Encrypted: i=1; AJvYcCWe/iroFRWREv2BurbYx4TByK9dAp9i91RJH+7OpC7IpvvxNJBsumqOWkUY8S8OGwWvOLDy62A30qTd/nQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQOTHkT3FV87T3ICcFXdr1L1qpZhwqZ1bfsZeZK6lldekQbFQL
-	tByUSPWtMA2+vH5wKscbyO0GUXdiCEVpUh5v56UJuy7eRKAsp/SzYVoDoZKEO/690HcvIY8vaY0
-	xpA==
-X-Gm-Gg: ASbGncu58MGYEYZll0k3WbpEG+wCp6dX62LiuJnTxlZ8/bup2R+jCe/p7wPyvDojD+g
-	+EXgKQbwi5ssfP38B7d8YbMZHXIAYCKJP16olcKa4XC8aMQplSL92rtZLu4aoTWVEd+JmtXmO9j
-	rSIer8CqUZqjKCCM0/O+8Y9zftB51MEdtt9eSm4Ga5MNdZJOit0YyirW7sp/5cSt1S9tR0tiWlz
-	IsbJdEdG4qdHeGTs3W52NnaubCE4fXDycDZvaWHO3PXQyF/qKNAtSwZuOZ+52a6o6923csAvgUr
-	1+k76i3KDZVhVuop/9MyS5FhiUNgk/mNXogl+AupMmYXpqIVx2S5Ee86i5ohyyQT4Um59UHu7g7
-	4EfCpjUjlV0bCd4sZ6v2jCQ==
-X-Google-Smtp-Source: AGHT+IGMU11VsoezNLSdINUAsRSlE0CW48Y+kQb7z5VQcOk1VIrvuaXDWSla6So21S8lMPm/2Jii/g==
-X-Received: by 2002:a05:6214:300a:b0:6d8:99cf:d2db with SMTP id 6a1803df08f44-6eaeab5a2bfmr28487096d6.38.1741955876613;
-        Fri, 14 Mar 2025 05:37:56 -0700 (PDT)
-Received: from denia.c.googlers.com (15.237.245.35.bc.googleusercontent.com. [35.245.237.15])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade24dda0sm23168706d6.58.2025.03.14.05.37.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 05:37:56 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 14 Mar 2025 12:37:52 +0000
-Subject: [PATCH 2/2] media: vivid: Add more webcam resolutions
+	s=arc-20240116; t=1741955920; c=relaxed/simple;
+	bh=vOgy0s3Ijmkeasy12zLFJKxY8z4lZdIGDJQACKfdfX4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HZykxO9kpFk4v8YQqGxTiMPMv2/0YJW0QngalPAExT1m8gYRxmlNlmCFWcnOlbh22jqOCNkpA3Q2mjlsYnYRSbCkLPrxgCR7kr9dLboyzUBL05P2OMMvPFdU6/e8PjRuXd4U65VgfyIttb3Vcb7FSm4HbOSNr3mWUFSCTspaDNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=ZJy+PQr6; arc=none smtp.client-ip=168.119.41.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
+	 s=mail; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References
+	:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=mIxQ1dxQxp6C/TV6htutkor/iBB33VBzcKLVVA9Ia8U=; b=ZJy+PQr6ba0IlYAnto0gpfyZRG
+	jwetHAksMo+PqxkAHS4uSxggSZxQ3H2Z4KFM8v3kXQ+2+aaoy0pKkVqayfX4Ld1F/BsaRsKU579f3
+	GtqBWDpypW0g/QIZKjYo/fOk0bjBXO6RkCfc46Mscshtsqbb9mHWcOONTZpLiGXqBov0=;
+Received: from 194-208-208-245.tele.net ([194.208.208.245]:49180 helo=[192.168.0.218])
+	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+	(Exim 4.93)
+	(envelope-from <matthias.fend@emfend.at>)
+	id 1tt4J7-00EQNW-5B; Fri, 14 Mar 2025 13:38:33 +0100
+Message-ID: <7f9b920f-1851-4ebe-9054-d32de79d3678@emfend.at>
+Date: Fri, 14 Mar 2025 13:38:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250314-vivid-fix-twice-v1-2-7463c2b0ba63@chromium.org>
-References: <20250314-vivid-fix-twice-v1-0-7463c2b0ba63@chromium.org>
-In-Reply-To: <20250314-vivid-fix-twice-v1-0-7463c2b0ba63@chromium.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hidenori Kobayashi <hidenorik@chromium.com>, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] leds: tps6131x: add support for Texas Instruments
+ TPS6131X flash LED driver
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bsp-development.geo@leica-geosystems.com
+References: <20250228-leds-tps6131x-v1-0-d1071d90f9ea@emfend.at>
+ <20250228-leds-tps6131x-v1-2-d1071d90f9ea@emfend.at>
+ <20250310144946.GH8350@google.com>
+ <def0351b-c037-47c8-b395-d64cfca7ae25@emfend.at>
+ <20250314105257.GD3890718@google.com>
+ <8a16c018-8466-4dea-8f1e-e8a65e3ed950@emfend.at>
+ <20250314114551.GL3890718@google.com>
+Content-Language: de-DE
+From: Matthias Fend <matthias.fend@emfend.at>
+In-Reply-To: <20250314114551.GL3890718@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: 
+X-Spam-Bar: 
+X-Spam-Report: 
 
-Add 3 more common resolution for webcams. This is required to increase
-the test coverage of unit tests based on vivid.
+Hi Lee,
 
-Co-developed-by: Hidenori Kobayashi <hidenorik@chromium.com>
-Signed-off-by: Hidenori Kobayashi <hidenorik@chromium.com>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/test-drivers/vivid/vivid-vid-cap.c | 3 +++
- 1 file changed, 3 insertions(+)
+Am 14.03.2025 um 12:45 schrieb Lee Jones:
+> On Fri, 14 Mar 2025, Matthias Fend wrote:
+> 
+>> Hi Lee,
+>>
+>> Am 14.03.2025 um 11:52 schrieb Lee Jones:
+>>> On Fri, 14 Mar 2025, Matthias Fend wrote:
+>>>
+>>>> Hi Lee,
+>>>>
+>>>> thanks a lot for your feedback!
+>>>>
+>>>> Am 10.03.2025 um 15:49 schrieb Lee Jones:
+>>>>> On Fri, 28 Feb 2025, Matthias Fend wrote:
+>>>>>
+>>>>>> The TPS61310/TPS61311 is a flash LED driver with I2C interface. Its power
+>>>>>> stage is capable of supplying a maximum total current of roughly 1500mA.
+>>>>>> The TPS6131x provides three constant-current sinks, capable of sinking up
+>>>>>> to 2 × 400mA (LED1 and LED3) and 800mA (LED2) in flash mode. In torch mode
+>>>>>> each sink (LED1, LED2, LED3) supports currents up to 175mA.
+>>>>>>
+>>>>>> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+>>>>>> ---
+>>>>>>     MAINTAINERS                        |   7 +
+>>>>>>     drivers/leds/flash/Kconfig         |  11 +
+>>>>>>     drivers/leds/flash/Makefile        |   1 +
+>>>>>>     drivers/leds/flash/leds-tps6131x.c | 798 +++++++++++++++++++++++++++++++++++++
+>>>>>>     4 files changed, 817 insertions(+)
+> 
+> [...]
+> 
+>>>>>> +static int tps6131x_flash_external_strobe_set(struct v4l2_flash *v4l2_flash, bool enable)
+>>>>>> +{
+>>>>>> +	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
+>>>>>> +	struct tps6131x *tps6131x = fled_cdev_to_tps6131x(fled_cdev);
+>>>>>> +
+>>>>>> +	guard(mutex)(&tps6131x->lock);
+>>>>>> +
+>>>>> /> +	return tps6131x_set_mode(tps6131x, enable ? TPS6131X_MODE_FLASH : TPS6131X_MODE_SHUTDOWN,
+>>>>>> +				 false);
+>>>>>> +}
+>>>>>> +
+>>>>>> +static const struct v4l2_flash_ops tps6131x_v4l2_flash_ops = {
+>>>>>> +	.external_strobe_set = tps6131x_flash_external_strobe_set,
+>>>>>> +};
+>>>>>> +
+>>>>>> +static int tps6131x_v4l2_setup(struct tps6131x *tps6131x)
+>>>>>> +{
+>>>>>> +	struct v4l2_flash_config v4l2_cfg = { 0 };
+>>>>>> +	struct led_flash_setting *intensity = &v4l2_cfg.intensity;
+>>>>>> +
+>>>>>> +	intensity->min = tps6131x->step_torch_current_ma;
+>>>>>> +	intensity->max = tps6131x->max_torch_current_ma;
+>>>>>> +	intensity->step = tps6131x->step_torch_current_ma;
+>>>>>> +	intensity->val = intensity->min;
+>>>>>> +
+>>>>>> +	strscpy(v4l2_cfg.dev_name, tps6131x->fled_cdev.led_cdev.dev->kobj.name,
+>>>>>
+>>>>> tps6131x->client->dev?
+>>>>
+>>>> Do you mean the name should be taken from the I2C device?
+>>>> The current name, for example, is 'white:flash-0', while the I2C device name
+>>>> would be '4-0033'. So I think the current version is appropriate, don't you
+>>>> think?
+>>>
+>>> No, I'm implying that:
+>>>
+>>>     tps6131x->client->dev == tps6131x->fled_cdev.led_cdev.dev
+>>>
+>>> ... and that the former is shorter / neater.
+>>
+>> Hmm. That's interesting. I thought these were two different devices, which
+>> seems to be actually the case for me. Hence the different names in the kobj.
+>> Are the devices really supposed to be identical?
+> 
+> Interesting.  What are their names?
 
-diff --git a/drivers/media/test-drivers/vivid/vivid-vid-cap.c b/drivers/media/test-drivers/vivid/vivid-vid-cap.c
-index 623ba1e5e54791c0ac62aa2f0fcc3dcd444c873a..df726961222be874c39d19e1fb457bd816ab45fd 100644
---- a/drivers/media/test-drivers/vivid/vivid-vid-cap.c
-+++ b/drivers/media/test-drivers/vivid/vivid-vid-cap.c
-@@ -25,9 +25,12 @@
- /* Sizes must be in increasing order */
- static const struct v4l2_frmsize_discrete webcam_sizes[] = {
- 	{  320, 180 },
-+	{  320, 240 },
- 	{  640, 360 },
- 	{  640, 480 },
- 	{ 1280, 720 },
-+	{ 1280, 960 },
-+	{ 1600, 1200 },
- 	{ 1920, 1080 },
- 	{ 3840, 2160 },
- };
+tps6131x->fled_cdev.led_cdev.dev: 'white:flash-0'
+tps6131x->client->dev: '4-0033'
 
--- 
-2.49.0.rc1.451.g8f38331e32-goog
+Best regards
+  ~Matthias
+
+
+> 
 
 
