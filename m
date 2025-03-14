@@ -1,142 +1,137 @@
-Return-Path: <linux-kernel+bounces-560567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EBC0A606A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:45:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96519A606A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:47:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52D14460503
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:44:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9E3D4604DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904C5B67F;
-	Fri, 14 Mar 2025 00:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860C9BA38;
+	Fri, 14 Mar 2025 00:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n+qbwaQq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fSmv1uv2"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA3D2E338F;
-	Fri, 14 Mar 2025 00:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4A02E336D;
+	Fri, 14 Mar 2025 00:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741913093; cv=none; b=obhv36np7tO2UYi7NK4xyEQ3lpFT/oF65PQAqAw8RwlCuuwaK14b4c1O0MUKx3PGwDqZ7QPJacKWo/qo5DEdY3XG+jXAaRhKZFTZWI5gQRifLp4sMWGdbGrytHxMet4vUuF4eTY3krysT4PZi2DnhxC08VMpljTLPjIT/DFhURM=
+	t=1741913220; cv=none; b=eH2EMMjmLffb3dXWNb5Jkh7J7SewCiEEMqSvr++6ja5e0rgdxEQGpPdsx6YGBRCAx9cfKyOxUVhN92oun5NwhpmFTq++9YQCUKkE06tByOQF4FYFlVMKl1xw3zgFCdK4OL1ycTfPT+5XXkxYqIM9NL5FheshcBMcL3xjiwwKuZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741913093; c=relaxed/simple;
-	bh=FtA3xN893ieXKHXYxZAGuWY0s9YlJjx1BtNWNk5YfsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kjLffHVKQvL8BquZWGlkHc6eTGH9iasK7sXJxshyFxdQKx7n0z2NCTP+QZYW+hbn007mnn4+nziQebANPmuOlM5tBIQaYgar7l8x6nHLSm/4FyfOW1F2PIKy0ZzPqSLhubL99GjtotxrCO4FzjEsVQw2bsvMuSywSIKaAYAkjkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n+qbwaQq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1696C4CEDD;
-	Fri, 14 Mar 2025 00:44:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741913092;
-	bh=FtA3xN893ieXKHXYxZAGuWY0s9YlJjx1BtNWNk5YfsY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=n+qbwaQqeQtwbxsLxOiwy2kNv1QpNDshl3sDtqpszdil6QqdcCL8IgH/jzR3LayGm
-	 KMTxpuyFV8BZJ8swFnSRreZiIWkVCkJAAwb9pQ23aZmBEL3OlRBKsiIi0UhJ4Fjha2
-	 LXjbPcdGb5kR5zWM3ofQHnTo5aX1P7ne00rdl95Lc0wGdoNg3Zskuw4r0GtUHhJJ+S
-	 Tvvm8n2VkP32CJlC9VHPxd7FaBj5m1rHIbwTcdW2Hn9DmW/84ENL/pWg0wIbZtxQTn
-	 xL+ohOm/BCD3z268mo6Juil2sl5wfsHez+ClVmSkOULf9aglPPIUD1qT/gLSmg0DVu
-	 99Iy/LIwzVbfQ==
-Date: Fri, 14 Mar 2025 11:14:54 +1030
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>
-Cc: linux-rtc@vger.kernel.org, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] rtc: Avoid a couple of -Wflex-array-member-not-at-end
- warnings
-Message-ID: <Z9N8BsVJF-s6Hcvd@kspp>
+	s=arc-20240116; t=1741913220; c=relaxed/simple;
+	bh=EyuohB05lqPBTCRoPW2fjWSQr42oM6pNAi6Wp3SmcGw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iNH3XzylfvCuX1h5BIy2nYy6FbF2BG5qJf4Ngw2dZQZf/M7y/mddVaBelcaRVgVyyqyMGUwaHLQDFFK8IF26yhLqv5rH50E2czjgalMuPOGvM3On86K7x+4vTd2EtHaweCY9dWmSYQuJAWJKAsUC8a5VuFo3KQjrW8MgbTpcwfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fSmv1uv2; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DNQF87016250;
+	Fri, 14 Mar 2025 00:46:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hDRWHFruEAw8rPKa3kcGgs8v9/GUou8yTUSzmrvxDdM=; b=fSmv1uv2MQgLy0gj
+	+vvJuNufAluGALzRhWf/zQID9l2Y8w65znN9MzHElqEiVBI3DM6y2DvFRpV7LTfy
+	yAUgEqiHmPPycknnLhWrA7H52VCQZ4FJCzIykOCKtuTlF/U01QewC2YTCTOvLuJa
+	R93F1eeFAMIjS6s1un4nQj34DVPcWXXu/SAp4w98iNHuUDJg5/f77/o33vD93F5G
+	3n014c1yEH5HToSNoywUgDpdlmNNUk4yJ266F3SHGew2poe8ouONrEND1wIqFOv3
+	a6qmFiP0MqnGP/sz1w4zbTA60Uz7cIWWqAE94tkLA4D5tuW5a31ndiuyZ0fLkdTF
+	lzlNow==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2nykad-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 00:46:54 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52E0ksUJ021665
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 00:46:54 GMT
+Received: from [10.239.29.24] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
+ 2025 17:46:52 -0700
+Message-ID: <08cfa289-111c-416d-8e5a-971961d954ca@quicinc.com>
+Date: Fri, 14 Mar 2025 08:46:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
+ length
+To: Johan Hovold <johan@kernel.org>
+CC: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, <ath11k@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <johan+linaro@kernel.org>
+References: <20250310010217.3845141-1-quic_miaoqing@quicinc.com>
+ <20250310010217.3845141-3-quic_miaoqing@quicinc.com>
+ <Z866cCj8SWyZjCoP@hovoldconsulting.com>
+ <7b1c5e40-b11d-421b-8c8b-117a2a53298b@quicinc.com>
+ <c0cdcaf2-655b-4d22-a949-1519c552e6a4@oss.qualcomm.com>
+ <72d95d77-674e-4ae7-83b0-ab58748b8251@quicinc.com>
+ <Z9G5zEOcTdGKm7Ei@hovoldconsulting.com>
+ <8251fc50-5df4-4a3f-91bf-40c09c33cf6e@quicinc.com>
+ <Z9MAehaipGtwge8p@hovoldconsulting.com>
+Content-Language: en-US
+From: Miaoqing Pan <quic_miaoqing@quicinc.com>
+In-Reply-To: <Z9MAehaipGtwge8p@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: s6thM_5dezFFUxWCR1GvHQaUizI7jz3p
+X-Authority-Analysis: v=2.4 cv=ZObXmW7b c=1 sm=1 tr=0 ts=67d37c7e cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=Wml-KaHhdQLM07Bvzy4A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: s6thM_5dezFFUxWCR1GvHQaUizI7jz3p
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_10,2025-03-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 phishscore=0
+ lowpriorityscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503140004
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
 
-Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
-a flexible structure where the size of the flexible-array member
-is known at compile-time, and refactor the rest of the code,
-accordingly.
 
-So, with these changes, fix the following warnings:
+On 3/13/2025 11:57 PM, Johan Hovold wrote:
+> On Thu, Mar 13, 2025 at 09:41:51AM +0800, Miaoqing Pan wrote:
+>> On 3/13/2025 12:43 AM, Johan Hovold wrote:
+> 
+>>> I've taken a closer look at the driver and it seems like we're missing a
+>>> read barrier to make sure that the updated descriptor is not read until
+>>> after the head pointer.
+>>>
+>>> Miaoqing, could you try the below patch with your reproducer and see if
+>>> it is enough to fix the corruption?
+>>
+>> Sure, the stress test is running.
+> 
+> Thanks.
+> 
+>>> If so I can resend with the warning removed and include a corresponding
+>>> fix for ath12k (it looks like there are further places where barriers
+>>> are missing too).
+> 
+>> If the DMA read barrier works, do you think my submitted patch series is
+>> still needed? Because the error handling is incorrect.
+> 
+> Yeah, it would still be good to fix up the error handling even if you
+> don't expect to ever see a descriptor with length 0.
+> 
+> But unless the device is doing something wrong here, there shouldn't be
+> a need for peeking at the descriptor and retrying.
+> 
+> Johan
 
-drivers/rtc/rtc-cros-ec.c:62:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/rtc/rtc-cros-ec.c:40:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- drivers/rtc/rtc-cros-ec.c | 30 ++++++++++++------------------
- 1 file changed, 12 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/rtc/rtc-cros-ec.c b/drivers/rtc/rtc-cros-ec.c
-index 865c2e82c7a5..9144bc12e0b7 100644
---- a/drivers/rtc/rtc-cros-ec.c
-+++ b/drivers/rtc/rtc-cros-ec.c
-@@ -35,21 +35,18 @@ struct cros_ec_rtc {
- static int cros_ec_rtc_get(struct cros_ec_device *cros_ec, u32 command,
- 			   u32 *response)
- {
-+	DEFINE_RAW_FLEX(struct cros_ec_command, msg, data,
-+			sizeof(struct ec_response_rtc));
- 	int ret;
--	struct {
--		struct cros_ec_command msg;
--		struct ec_response_rtc data;
--	} __packed msg;
- 
--	memset(&msg, 0, sizeof(msg));
--	msg.msg.command = command;
--	msg.msg.insize = sizeof(msg.data);
-+	msg->command = command;
-+	msg->insize = sizeof(struct ec_response_rtc);
- 
--	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
-+	ret = cros_ec_cmd_xfer_status(cros_ec, msg);
- 	if (ret < 0)
- 		return ret;
- 
--	*response = msg.data.time;
-+	memcpy(response, msg->data, sizeof(*response));
- 
- 	return 0;
- }
-@@ -57,18 +54,15 @@ static int cros_ec_rtc_get(struct cros_ec_device *cros_ec, u32 command,
- static int cros_ec_rtc_set(struct cros_ec_device *cros_ec, u32 command,
- 			   u32 param)
- {
-+	DEFINE_RAW_FLEX(struct cros_ec_command, msg, data,
-+			sizeof(struct ec_response_rtc));
- 	int ret;
--	struct {
--		struct cros_ec_command msg;
--		struct ec_response_rtc data;
--	} __packed msg;
- 
--	memset(&msg, 0, sizeof(msg));
--	msg.msg.command = command;
--	msg.msg.outsize = sizeof(msg.data);
--	msg.data.time = param;
-+	msg->command = command;
-+	msg->outsize = sizeof(struct ec_response_rtc);
-+	memcpy(msg->data, &param, sizeof(param));
- 
--	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
-+	ret = cros_ec_cmd_xfer_status(cros_ec, msg);
- 	if (ret < 0)
- 		return ret;
- 	return 0;
--- 
-2.43.0
-
+New version will be submitted based on the previous discussion.
 
