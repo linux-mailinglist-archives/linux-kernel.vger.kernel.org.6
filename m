@@ -1,299 +1,115 @@
-Return-Path: <linux-kernel+bounces-561941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08FB2A618EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:02:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F70A618E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:02:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AF2C4647E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:02:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B227D1B63AC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A0E204F81;
-	Fri, 14 Mar 2025 18:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDECD2045A2;
+	Fri, 14 Mar 2025 18:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bdgHikAv"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cNRVlHh7"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2042B204F65
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC47214375C;
+	Fri, 14 Mar 2025 18:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741975292; cv=none; b=spFWoKeGAJi/jQuzxGd4a766eroNwLgIKw7QLZAD+GP3Z+dB/RaOvMWvRSCf4bnvn29faTlWU90+2eN6nvaVL5wgrYwrfhprsz+yFbNnolOOy5oymL8y5mBdKwkt31oHULIgkqnCSPnONCwrOTeLJx+gCNyOak6Tu844w1fx/H4=
+	t=1741975268; cv=none; b=JmXCFhIDf4UMeG5wrFaEHOA+EGosZszbmuQV0HxEma7hQKbIqMwZ8hRQU8DljdXcETb1PxAiX4tceJiQIeYp5Enu8GPJKwTw4TfXtDYneC8HtVXyZm1NmRGVcUoElC4FxLhrW4OHpQGtps1Yrs9TuG1vNCcYQWk7YZKuKHx4N6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741975292; c=relaxed/simple;
-	bh=UE+LmjO480ai/cmQ99LQCl4ggioFj0kzH6oMEeEgxyM=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=s1jcJv4BQDey14cEz7OC4CEU5YhxZDwYD/FkRlw192STA2Yx3fGaWMTBzhX/9ZPjeU+gzk0BAvBHuIQgmt2Oik7T0pPXGDBaEo+z+SbPoFg6UflMYsQFCnrjxj9076QCbu0w9LiQzR2iTmIRU0WjQu4/+nhoAURAJs1nTA3LOzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bdgHikAv; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff798e8c3bso4114416a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:01:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741975290; x=1742580090; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+x3RNoBeSKNY3yav309Zb69x4l02RtRyyB7W/znFf1I=;
-        b=bdgHikAvpoPs8GlzFP2T+v8KEDRA8xGZipH5v7Sxxdv1ds2Jt5mj4E2+hVQPozWqO/
-         BLoh3UmS+d4KpZFCsnORJ1F3TQnGaNlJAgczhokjUh6SMdh0ntlvWQ2qrOuPMit11NBd
-         Rn0qbYXq6+FYzl2qilfrIbu47H924SoYGRI7nq25r3xvwTbFaIYazhQpz7nR7Egt+bRX
-         OLd0RLyeiCUAWO5+qP7MEnQp8xqt790KuhNmWOGNGkkJMKWVDOSUmxCjBwF8ZGqwPgWT
-         Ux6bRr6Fq4UFXGA2ezlwFH22kooOirTJLkdPtSPtTHzcpVy1kbKDphkFV/+ntIvUSPn9
-         GCFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741975290; x=1742580090;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+x3RNoBeSKNY3yav309Zb69x4l02RtRyyB7W/znFf1I=;
-        b=Cn58lwZlg9XvxjfGDct+sTINCMWoS7+IGyeiKxYDIAVnGeOVzz4/p9DgIVQg7TWLZC
-         3oYgCMjReFb4fJyvIqQHn7LikCYl6mW6s9bBqNbro1FXs3FlK97BK1XE45/Ooo1n9ReV
-         j0pObD2ZAKg3J7+22HNpkXYrzC3cwA3cKLK5i39I/S+SJ8xy+V44AM2ctPHDtOVhu9e3
-         dlaOLo3lNozblZxjMMndaLneSAxOofJ/f6V/DCIHT2X5eACkTAz51vDr7Z1UYaMzA7g2
-         ECuhmcsznpZ8HiNSTApWRYOlefAS5ocpCTFCAOEHC369xzbrnFQt1xZ0mZD/5K85Rjq1
-         wmbg==
-X-Gm-Message-State: AOJu0YwdiXbGO7Ee25+LwjLNDjyKS5jnnu3UFB3HEsHS6C8q4ADz/muN
-	4GE8+RSpB8CYVmaFYUL8ydV5o+vBg/3pYl4VHbz91JEwZZbgnE7fI+dCp5XeLZsoIoyPmKXOFAs
-	51b7q6bWqUBCHA1eN4eVF/6YsRVGiDh3IJT1oiCwYyWER5sSVKeB1QSUHX4gVREbECgQDyDyHxC
-	RUdIgeOEtk5jD4+n3tY1KLoAwcPkCIGCTV3nIurfBAX+Gsyd8WppE=
-X-Google-Smtp-Source: AGHT+IGnPwDJCFasbxcqKssxJ30WYzbEPvF36jFByGyIEEosCbyc4Xg81KCKRSj0uBP83xyu6IUyrDc9GsVWGA==
-X-Received: from pjboi16.prod.google.com ([2002:a17:90b:3a10:b0:2e9:ee22:8881])
- (user=jmattson job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:4d04:b0:2fe:b8ba:62e1 with SMTP id 98e67ed59e1d1-30151d3d6f9mr4305208a91.28.1741975290319;
- Fri, 14 Mar 2025 11:01:30 -0700 (PDT)
-Date: Fri, 14 Mar 2025 11:00:23 -0700
+	s=arc-20240116; t=1741975268; c=relaxed/simple;
+	bh=yUhwWZz6MweKJmEseaeBVYn0fSUBWQP1mSHj+8asVSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R9y3mbJ2tz9isYI/0ngHH9Zkxi5k1ATEgUuBbW6/9yZU/gyqoqyTlLWWwphlS02minBnf0G/7lCdAO/kyZnEjXxfUzzLTDwr30oMNMoBZgqafSGaikPpEv/6Nt1UysLte+0UN2gYTHgSy2lxdDnQwGWjl4a7AS/2ngYIItt02bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cNRVlHh7; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3D51A432FB;
+	Fri, 14 Mar 2025 18:00:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741975258;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YMFlSCHDb0j/OxbmG9FdYf4jzMVqwOiBPWCVBhtDuSM=;
+	b=cNRVlHh7Bm1+GWYYC8JaAJYUn+9RWi9AMU/ib93vpTjziAcShYvfvqwrfB6GDXVCU+iDQc
+	BTfLisKLOKhLzzmw/2s1SIOHD5YsNI2KaSKKUdtysOARkdQj6acDiGV3+CiLB/xjKE3DYb
+	inMSsOFc+N15hncfmFFgCdpF0y1CvMKbg68pXfdq/bzu0Hu6sW2rSxXPjGWPXna1OcDZyj
+	d2Js4tjGg3+6mvyyaHyI11k2MoRuVLIAF6eHJKQXUii9fNO/QXRyPI3hL/fj91PlJCLcnv
+	z6vcROHpHohxRfKDnA/5kKTYJgw6wJAK65bkpWcBTZQf+DsM1Wj+w/0oYsNcCQ==
+Date: Fri, 14 Mar 2025 19:00:56 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Michael Klein <michael@fossekall.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [net-next,v2,1/2] net: phy: realtek: Clean up RTL8211E ExtPage
+ access
+Message-ID: <20250314190056.739f4d81@fedora-2.home>
+In-Reply-To: <20250314111545.84350-2-michael@fossekall.de>
+References: <20250314111545.84350-1-michael@fossekall.de>
+	<20250314111545.84350-2-michael@fossekall.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
-Message-ID: <20250314180117.740591-1-jmattson@google.com>
-Subject: [PATCH v2] KVM: x86: Provide a capability to disable APERF/MPERF read intercepts
-From: Jim Mattson <jmattson@google.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: Jim Mattson <jmattson@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeduhedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdqvddrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepmhhitghhrggvlhesfhhoshhsvghkrghllhdruggvpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrt
+ ghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Allow a guest to read the physical IA32_APERF and IA32_MPERF MSRs
-without interception.
+Hi Michael,
 
-The IA32_APERF and IA32_MPERF MSRs are not virtualized. Writes are not
-handled at all. The MSR values are not zeroed on vCPU creation, saved
-on suspend, or restored on resume. No accommodation is made for
-processor migration or for sharing a logical processor with other
-tasks. No adjustments are made for non-unit TSC multipliers. The MSRs
-do not account for time the same way as the comparable PMU events,
-whether the PMU is virtualized by the traditional emulation method or
-the new mediated pass-through approach.
+On Fri, 14 Mar 2025 12:15:44 +0100
+Michael Klein <michael@fossekall.de> wrote:
 
-Nonetheless, in a properly constrained environment, this capability
-can be combined with a guest CPUID table that advertises support for
-CPUID.6:ECX.APERFMPERF[bit 0] to induce a Linux guest to report the
-effective physical CPU frequency in /proc/cpuinfo. Moreover, there is
-no performance cost for this capability.
+> - Factor out RTL8211E extension page access code to
+>   rtl8211e_modify_ext_page()/rtl8211e_read_ext_page() and add some
+>   related #define:s
+> - Group RTL8211E_* and RTL8211F_* #define:s
+> - Clean up rtl8211e_config_init()
+> 
+> Signed-off-by: Michael Klein <michael@fossekall.de>
+> ---
+[...]
+> +static int rtl8211e_read_ext_page(struct phy_device *phydev, u16 ext_page,
+> +				  u32 regnum)
+> +{
+> +	int oldpage, ret = 0;
+> +
+> +	oldpage = phy_select_page(phydev, RTL8211E_SET_EXT_PAGE);
+> +	if (oldpage >= 0) {
+> +		ret = __phy_write(phydev, RTL8211E_EXT_PAGE_SELECT, ext_page);
+> +		if (!ret)
+> +			ret = __phy_read(phydev, regnum);
+> +	}
+> +
+> +	return phy_restore_page(phydev, oldpage, ret);
+> +}
 
-Signed-off-by: Jim Mattson <jmattson@google.com>
----
-v1 -> v2: Add {IA32_APERF,IA32_MPERF} to vmx_possible_passthrough_msrs[]
+You're not using that function at all in this patch, so this patch
+compiles with a warning for an unused function.
 
-          Check HW support for APERFMPERF before reporting the new
-	  capability bit in kvm_get_allowed_disable_exits() [Paolo]
----
- Documentation/virt/kvm/api.rst  | 1 +
- arch/x86/include/asm/kvm_host.h | 1 +
- arch/x86/kvm/svm/svm.c          | 7 +++++++
- arch/x86/kvm/svm/svm.h          | 2 +-
- arch/x86/kvm/vmx/vmx.c          | 6 ++++++
- arch/x86/kvm/vmx/vmx.h          | 2 +-
- arch/x86/kvm/x86.c              | 8 +++++++-
- arch/x86/kvm/x86.h              | 5 +++++
- include/uapi/linux/kvm.h        | 1 +
- tools/include/uapi/linux/kvm.h  | 4 +++-
- 10 files changed, 33 insertions(+), 4 deletions(-)
+I suggest you move that to patch 2, which is the first user for 
+rtl8211e_read_ext_page()
 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index 2b52eb77e29c..6431cd33f06a 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -7684,6 +7684,7 @@ Valid bits in args[0] are::
-   #define KVM_X86_DISABLE_EXITS_HLT              (1 << 1)
-   #define KVM_X86_DISABLE_EXITS_PAUSE            (1 << 2)
-   #define KVM_X86_DISABLE_EXITS_CSTATE           (1 << 3)
-+  #define KVM_X86_DISABLE_EXITS_APERFMPERF       (1 << 4)
- 
- Enabling this capability on a VM provides userspace with a way to no
- longer intercept some instructions for improved latency in some
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 0b7af5902ff7..53de91fccc20 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1380,6 +1380,7 @@ struct kvm_arch {
- 	bool hlt_in_guest;
- 	bool pause_in_guest;
- 	bool cstate_in_guest;
-+	bool aperfmperf_in_guest;
- 
- 	unsigned long irq_sources_bitmap;
- 	s64 kvmclock_offset;
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index a713c803a3a3..5ebcbff341bc 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -111,6 +111,8 @@ static const struct svm_direct_access_msrs {
- 	{ .index = MSR_IA32_CR_PAT,			.always = false },
- 	{ .index = MSR_AMD64_SEV_ES_GHCB,		.always = true  },
- 	{ .index = MSR_TSC_AUX,				.always = false },
-+	{ .index = MSR_IA32_APERF,			.always = false },
-+	{ .index = MSR_IA32_MPERF,			.always = false },
- 	{ .index = X2APIC_MSR(APIC_ID),			.always = false },
- 	{ .index = X2APIC_MSR(APIC_LVR),		.always = false },
- 	{ .index = X2APIC_MSR(APIC_TASKPRI),		.always = false },
-@@ -1359,6 +1361,11 @@ static void init_vmcb(struct kvm_vcpu *vcpu)
- 	if (boot_cpu_has(X86_FEATURE_V_SPEC_CTRL))
- 		set_msr_interception(vcpu, svm->msrpm, MSR_IA32_SPEC_CTRL, 1, 1);
- 
-+	if (kvm_aperfmperf_in_guest(vcpu->kvm)) {
-+		set_msr_interception(vcpu, svm->msrpm, MSR_IA32_APERF, 1, 0);
-+		set_msr_interception(vcpu, svm->msrpm, MSR_IA32_MPERF, 1, 0);
-+	}
-+
- 	if (kvm_vcpu_apicv_active(vcpu))
- 		avic_init_vmcb(svm, vmcb);
- 
-diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-index 9d7cdb8fbf87..3ee2b7e07395 100644
---- a/arch/x86/kvm/svm/svm.h
-+++ b/arch/x86/kvm/svm/svm.h
-@@ -44,7 +44,7 @@ static inline struct page *__sme_pa_to_page(unsigned long pa)
- #define	IOPM_SIZE PAGE_SIZE * 3
- #define	MSRPM_SIZE PAGE_SIZE * 2
- 
--#define MAX_DIRECT_ACCESS_MSRS	48
-+#define MAX_DIRECT_ACCESS_MSRS	50
- #define MSRPM_OFFSETS	32
- extern u32 msrpm_offsets[MSRPM_OFFSETS] __read_mostly;
- extern bool npt_enabled;
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 6c56d5235f0f..ce89881d75f7 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -186,6 +186,8 @@ static u32 vmx_possible_passthrough_msrs[MAX_POSSIBLE_PASSTHROUGH_MSRS] = {
- 	MSR_CORE_C3_RESIDENCY,
- 	MSR_CORE_C6_RESIDENCY,
- 	MSR_CORE_C7_RESIDENCY,
-+	MSR_IA32_APERF,
-+	MSR_IA32_MPERF,
- };
- 
- /*
-@@ -7597,6 +7599,10 @@ int vmx_vcpu_create(struct kvm_vcpu *vcpu)
- 		vmx_disable_intercept_for_msr(vcpu, MSR_CORE_C6_RESIDENCY, MSR_TYPE_R);
- 		vmx_disable_intercept_for_msr(vcpu, MSR_CORE_C7_RESIDENCY, MSR_TYPE_R);
- 	}
-+	if (kvm_aperfmperf_in_guest(vcpu->kvm)) {
-+		vmx_disable_intercept_for_msr(vcpu, MSR_IA32_APERF, MSR_TYPE_R);
-+		vmx_disable_intercept_for_msr(vcpu, MSR_IA32_MPERF, MSR_TYPE_R);
-+	}
- 
- 	vmx->loaded_vmcs = &vmx->vmcs01;
- 
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index 8b111ce1087c..abc574ceacfe 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -358,7 +358,7 @@ struct vcpu_vmx {
- 	struct lbr_desc lbr_desc;
- 
- 	/* Save desired MSR intercept (read: pass-through) state */
--#define MAX_POSSIBLE_PASSTHROUGH_MSRS	16
-+#define MAX_POSSIBLE_PASSTHROUGH_MSRS	18
- 	struct {
- 		DECLARE_BITMAP(read, MAX_POSSIBLE_PASSTHROUGH_MSRS);
- 		DECLARE_BITMAP(write, MAX_POSSIBLE_PASSTHROUGH_MSRS);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 02159c967d29..8f3d317d2f93 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4535,6 +4535,9 @@ static u64 kvm_get_allowed_disable_exits(void)
- {
- 	u64 r = KVM_X86_DISABLE_EXITS_PAUSE;
- 
-+	if (boot_cpu_has(X86_FEATURE_APERFMPERF))
-+		r |= KVM_X86_DISABLE_EXITS_APERFMPERF;
-+
- 	if (!mitigate_smt_rsb) {
- 		r |= KVM_X86_DISABLE_EXITS_HLT |
- 			KVM_X86_DISABLE_EXITS_CSTATE;
-@@ -6543,7 +6546,8 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
- 
- 		if (!mitigate_smt_rsb && boot_cpu_has_bug(X86_BUG_SMT_RSB) &&
- 		    cpu_smt_possible() &&
--		    (cap->args[0] & ~KVM_X86_DISABLE_EXITS_PAUSE))
-+		    (cap->args[0] & ~(KVM_X86_DISABLE_EXITS_PAUSE |
-+				      KVM_X86_DISABLE_EXITS_APERFMPERF)))
- 			pr_warn_once(SMT_RSB_MSG);
- 
- 		if (cap->args[0] & KVM_X86_DISABLE_EXITS_PAUSE)
-@@ -6554,6 +6558,8 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
- 			kvm->arch.hlt_in_guest = true;
- 		if (cap->args[0] & KVM_X86_DISABLE_EXITS_CSTATE)
- 			kvm->arch.cstate_in_guest = true;
-+		if (cap->args[0] & KVM_X86_DISABLE_EXITS_APERFMPERF)
-+			kvm->arch.aperfmperf_in_guest = true;
- 		r = 0;
- disable_exits_unlock:
- 		mutex_unlock(&kvm->lock);
-diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-index 91e50a513100..0c3ac99454e5 100644
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -488,6 +488,11 @@ static inline bool kvm_cstate_in_guest(struct kvm *kvm)
- 	return kvm->arch.cstate_in_guest;
- }
- 
-+static inline bool kvm_aperfmperf_in_guest(struct kvm *kvm)
-+{
-+	return kvm->arch.aperfmperf_in_guest;
-+}
-+
- static inline bool kvm_notify_vmexit_enabled(struct kvm *kvm)
- {
- 	return kvm->arch.notify_vmexit_flags & KVM_X86_NOTIFY_VMEXIT_ENABLED;
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 45e6d8fca9b9..b4a4eb52f6df 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -617,6 +617,7 @@ struct kvm_ioeventfd {
- #define KVM_X86_DISABLE_EXITS_HLT            (1 << 1)
- #define KVM_X86_DISABLE_EXITS_PAUSE          (1 << 2)
- #define KVM_X86_DISABLE_EXITS_CSTATE         (1 << 3)
-+#define KVM_X86_DISABLE_EXITS_APERFMPERF     (1 << 4)
- 
- /* for KVM_ENABLE_CAP */
- struct kvm_enable_cap {
-diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
-index 502ea63b5d2e..9b60f0509cdc 100644
---- a/tools/include/uapi/linux/kvm.h
-+++ b/tools/include/uapi/linux/kvm.h
-@@ -617,10 +617,12 @@ struct kvm_ioeventfd {
- #define KVM_X86_DISABLE_EXITS_HLT            (1 << 1)
- #define KVM_X86_DISABLE_EXITS_PAUSE          (1 << 2)
- #define KVM_X86_DISABLE_EXITS_CSTATE         (1 << 3)
-+#define KVM_X86_DISABLE_EXITS_APERFMPERF     (1 << 4)
- #define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT | \
-                                               KVM_X86_DISABLE_EXITS_HLT | \
-                                               KVM_X86_DISABLE_EXITS_PAUSE | \
--                                              KVM_X86_DISABLE_EXITS_CSTATE)
-+					      KVM_X86_DISABLE_EXITS_CSTATE | \
-+					      KVM_X86_DISABLE_EXITS_APERFMPERF)
- 
- /* for KVM_ENABLE_CAP */
- struct kvm_enable_cap {
--- 
-2.49.0.rc1.451.g8f38331e32-goog
+Thanks,
 
+Maxime
 
