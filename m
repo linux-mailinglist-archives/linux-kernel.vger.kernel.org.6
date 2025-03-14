@@ -1,185 +1,227 @@
-Return-Path: <linux-kernel+bounces-560624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0ADAA60767
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:14:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ADA2A60769
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:15:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 226121686A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:14:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C1AE7A5679
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3C039FD9;
-	Fri, 14 Mar 2025 02:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC9032C85;
+	Fri, 14 Mar 2025 02:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="qGaL6OH+"
-Received: from CY4PR02CU008.outbound.protection.outlook.com (mail-westcentralusazon11011013.outbound.protection.outlook.com [40.93.199.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ESVu82dv"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D1F17588;
-	Fri, 14 Mar 2025 02:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.199.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741918491; cv=fail; b=WC2yCcpmop5Be2e++oFTnt0/gMpAiosFuuIwYPpzmcqjAe3C0K7/5btqSHHVnhbOc3gXoQkodhaGYwKJM+xOGLQDWRacvwNSDxbxeHGwf7zS7obII3Eoy+L6quC8ARKDkCbu+N5Axpv5sRkuUHEIf5X4/r5EBb/qSc22sZDjPaU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741918491; c=relaxed/simple;
-	bh=KA2sFMqyYgkPW46IHLoH26tnlxXVOSgttodity3ZMTc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=c4WxTvT4+tMZETtsOWlE3kvN9xNAs3MaguCvMWGbDHCvxh62oKNUDoyA9wa61QnxAThSheVEs1UuKd/uJH2/7pZatADmayHzBkiD9+OyB4ZCOKAdgC4DZBffzf90yI32flFcqSc6tE8uH5bmzYbF0nSordPVKau0jDQzstC6O5o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=qGaL6OH+; arc=fail smtp.client-ip=40.93.199.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UkiTN+2lNGc9we3QnCctMoDQn5y5DRqwur2bbu9+xXNn6TwB495LJVOEEckk45rgIG3SnzwEbJbSOkQBduEQY5KTuexnlaHtTh8I9IbxoVgjsdCEtQleiOfUAMQKKkSFxBmUF/Sv79TAhkqp9uhJGBu5UmPXuuBvAZIRPs15k+4OO1cXxwr3hzb4wZsKmgFAnXFHvPKm9rZVG0xdlpMhoNf8DIFEnLgoLHN+OQAdWmmZULZbnRJ6oHww9/0vZFm9cSw+kbd79nOTb9I2Vzc5yARdJskKK544SRZBRuM+P1ZqUehMAhJETK97zhqgpTAR10RVYE+ic3yR5d9XzAwvLQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KA2sFMqyYgkPW46IHLoH26tnlxXVOSgttodity3ZMTc=;
- b=Z6cTOTKVE4jO0seVHISeLUCquzbEuP5hcS/EblIHFu8WvZ7s3DywRwJi+RXgHbvu2KFriBt1+bpkx/vXIgszl4fMsNu+C/wyZa0yHnixCweFecWZtFoOhD6fnRrBlknDbKvVE4DcBnLcOMCsxFhS4d9cLcGobo2S+Z/bacO8ce6uegQurf3LboI1ziBp07oJPOVATGZsruS+vY0Er0lD+kttBwt2V28UaoPilVzbpeGZTwORgVb/TblPvo5koGKmdqtPNvtUfH6chmp644AwErDxv+zuw15peZxsaScUDmj4/xTpkiF/vz6ReXI7/AJ2tBQFVBBp02MbeZWjmi0sdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KA2sFMqyYgkPW46IHLoH26tnlxXVOSgttodity3ZMTc=;
- b=qGaL6OH+2xzb+F853NIjEm7zwZpM/U4JVI/eUxMjxpCfv19olCBhAQg+yHLkMdTrtznqqtpYwLf4rYN+R2LTWiRR1WG/UbYeSXtMW8s8HD0vbpY/yDDr+XFOOjWHPUU7tvLNmB2DmtZTGPQ6+QeaIgX1HxNSG1Zj4SIAxro//njJZRzfPvcAcxMA85WyPUU7675Tw42psagYIaFVwxXG+S1sSvyjXlA7qGSw97DBRDmP5c3AAIDU1Ccmr18NbYklEA496uw3pRR/5qwY5FpzeRLgtCMq0b8VuTcKPVhDz/v/V4BdNg8BfodM0d6OI6LjoZId8eJ1yJlcFImzRt1fpg==
-Received: from BN8PR03MB5073.namprd03.prod.outlook.com (2603:10b6:408:dc::21)
- by CH2PR03MB5334.namprd03.prod.outlook.com (2603:10b6:610:92::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Fri, 14 Mar
- 2025 02:14:48 +0000
-Received: from BN8PR03MB5073.namprd03.prod.outlook.com
- ([fe80::7483:7886:9e3d:f62a]) by BN8PR03MB5073.namprd03.prod.outlook.com
- ([fe80::7483:7886:9e3d:f62a%6]) with mapi id 15.20.8534.028; Fri, 14 Mar 2025
- 02:14:48 +0000
-From: "Ng, Boon Khai" <boon.khai.ng@altera.com>
-To: Johan Hovold <johan@kernel.org>, Boon Khai Ng <boon.khai.ng@intel.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb
-	<linux-usb@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	"Ang, Tien Sung" <tien.sung.ang@altera.com>
-Subject: RE: [PATCH v3] USB: serial: ftdi_sio: add support for Altera USB
- Blaster 3
-Thread-Topic: [PATCH v3] USB: serial: ftdi_sio: add support for Altera USB
- Blaster 3
-Thread-Index: AQHbkvvMHRAvtJ8/p06DGMF0FbVNoLNvubiAgAItpwA=
-Date: Fri, 14 Mar 2025 02:14:47 +0000
-Message-ID:
- <BN8PR03MB507362B42C47E2D3FF7C2D7CB4D22@BN8PR03MB5073.namprd03.prod.outlook.com>
-References: <20250312030544.4967-1-boon.khai.ng@intel.com>
- <Z9G8-66NI_5TLSY-@hovoldconsulting.com>
-In-Reply-To: <Z9G8-66NI_5TLSY-@hovoldconsulting.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN8PR03MB5073:EE_|CH2PR03MB5334:EE_
-x-ms-office365-filtering-correlation-id: 78ace3b7-c254-47fb-d1f4-08dd629dfec8
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?1nD12y80bD78begMDZcy2uNzmF9eReHH5FpLSndBJBWhT1RSIJB0sptE6OOW?=
- =?us-ascii?Q?6IEql2CPU7bKTOG08C/UzlZNgZIDXxzZmhA8cfnlyhK7E25CuBneQOkK8YW0?=
- =?us-ascii?Q?psKw62ZfRJIURBDMI3vp2vIUr7ApEAyEbnLhp2zwEjHWDpm1GVODRxBWgNT0?=
- =?us-ascii?Q?atJaC+FSV8Jo8P4p60dzOjQJirsL62+5P9OsWXtd2m/oY+z2vp+X/unU0jwj?=
- =?us-ascii?Q?FCrpROauuDyOjlT0WPCbq66fJnWG1qwfQ42b19bJFW0Yb/qVl4FClfBQJhkE?=
- =?us-ascii?Q?MMWCy0d9bEwOxezNT3+P7X1/xpTm7wioOCMvlguahN+vREqG54upRjD9r2mz?=
- =?us-ascii?Q?0A0ZXKH7DmEyGi+h9Qahwcw3tPwSwtZKPcTzZuyo/SCbrrJoaabcGKkVIY7T?=
- =?us-ascii?Q?joanrf2u4dAInTv0v2qyXjklCLy4Euwb7/FE2XHFlJLKJyYlBX7fhpcsJTjJ?=
- =?us-ascii?Q?EVQBWvukvR0wQ4cL5busZa9ayRG/hQHsPlV2TGG0VbtgX/BafedWTPDp4RwC?=
- =?us-ascii?Q?Nh4K3KER1lFB9loNOAfi7TC5NhhtCqB2bJK5v5GG25tIibXuV2BLnUE5v+XC?=
- =?us-ascii?Q?Y1IELINRoB8Nq4u7GfghVQYykpIEOya3k619hBW2ptNA/+LHN4v4vhBixZOc?=
- =?us-ascii?Q?AwJpjwa9sMOqEr+hxLF/TbrhKH41T9ITJycFns07LWPRs3uxfuXQh1eQLhXW?=
- =?us-ascii?Q?3HksAE4KyUKH1Kd77PWZhhvqShhaAg4ZeYL23uWUPIrOwGt1MP7Em+sNX7ip?=
- =?us-ascii?Q?y1LVUemdRi2PkPWr9ka3nRZ18zx4p7ysi6B68tEHKW+I33Rg2HhWx9c9tZ64?=
- =?us-ascii?Q?mEe52cxrT+mLqCrwd2acxGWHFWSfe2QAP/4n7/njjDIa532y1nQBR/0EAfCo?=
- =?us-ascii?Q?FegoY+Qtv3Zu0gMBwrg2kij+glk6ebgf/lpPss4rEyR2dlMQj2xt6dYQYj+p?=
- =?us-ascii?Q?J4hnvLmW3evkvDGz8CXA8s592CMO1KrrisOSstsva1Ml6dQ/wn/EMXb4D71z?=
- =?us-ascii?Q?hSpTlXMNTkQmcsGw6RNtwSCXlFwV8z3AirbpDAXpImrKKM2y5s7P3EJn9Js4?=
- =?us-ascii?Q?zzphm6EGml3kqf4yjYsUl4jJVjE7zKTxIrvlGrxgcWyCQPWULNMRye0pM5H8?=
- =?us-ascii?Q?+5UsFTszJLSiRTBpUzYc1AZxG9quwbCf3Avt1E5nN6IyQkv6tpCgt0QFhs9p?=
- =?us-ascii?Q?2KHGSCs9NhjRshcDYcFREKXUVB9sNgD0Py58/2pHCMGln25rJIWDuLqGpG42?=
- =?us-ascii?Q?ZUvGWGiZ9ixMAnJmsXyvxNSh+khHRyMU9L+jqLwi8NPw974149O47/rplh04?=
- =?us-ascii?Q?9titOpwJGbz6xe2zL/Tun5JZaCOi6paqQlQpHhHYGAA3fF89360BnOdNcnTf?=
- =?us-ascii?Q?sJS7gB8/W+CEJZH9eRG/A76sVk2H6Ioa4SEOEO4Z5DHboSX9llTij8gAU2ED?=
- =?us-ascii?Q?zZKrqgcgOQNVNv36hAkb6uzJ73QJ5uoR?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR03MB5073.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?R2oKM2op7fN/U+eqn96V07lPRV5NJocue65jOd1Jj7Ah2lZf6c2jq0bxkvl3?=
- =?us-ascii?Q?cPrls5cRgJr084vgOfai7SB+S9Jj44oVrZMVVrjuIIFBsXvDiaL7edj7Apv0?=
- =?us-ascii?Q?w8m7LqwmHDcnt+X2N4fIefDxv0TdKvN6m+oXZo1Bh3zsJqNBqxQT51OD2n+c?=
- =?us-ascii?Q?3OqT+7l/AM9hnP3vCQTs22R4CD1Y7Xg9FxhLzIjSDPEAVSnrpJw6PJRVc/kx?=
- =?us-ascii?Q?GCrw9ZfdaxQuy9bT/rM3Ba6Yfg8UhnI7CS4f/S/VKofCCpeFpOagYWibICpM?=
- =?us-ascii?Q?oLPloBcp538jK81rO2JmTAN+NHNh5RvAjZy7EQN9ExykWbdNZHY+2yVYiIjc?=
- =?us-ascii?Q?apV5gwiBW0qD8pt/91nCSypjHlmxQmhk9bCAaZIUrBp2x67wx7CUcUysGwTK?=
- =?us-ascii?Q?7+uViOFiGAv4b8cW0s79pjWbXzpg4ifbQtvcvK0VGUGunbt1cyiGwVYqkWeB?=
- =?us-ascii?Q?sinaSFSxvvv7jzJ8aaGqEgo6bvhORYLxj3wmSrgpwcTJdjmjN0qXg0t3eMX7?=
- =?us-ascii?Q?hwnlGTrW85PV6kESEMBqXxuMSk/HFoKxZJk1c10UptMIlNJtyx4+SiNCQrFe?=
- =?us-ascii?Q?Dtzs0wmey+EiDXt33yelbrr3mUS6OoaMO2gAuE57lmVKvZg/D/ZdWOz8f8Sh?=
- =?us-ascii?Q?t7ESIYD6dIMJPgoo3VVZGe0JqmnOTCi5Y3MBnpAtiO4QX/b2NDQgQAeZEH9c?=
- =?us-ascii?Q?OksHqzqPXX1MKZqdzrsIzvkh6FCV31pfwVJLLbciGDFzGE2nlEsyYPUEiBAC?=
- =?us-ascii?Q?T/Tf3qoSZNRfOfKmS9/4AaKZq5YfmAvCTSfsZ9h8YLxKwxzC0K3dznbWXH3q?=
- =?us-ascii?Q?NdpW4rOD+83Ji239dCyDQPV90AOoT1I9AiJ8+IPktxLCYsdpwCzYIrEeQa9F?=
- =?us-ascii?Q?FOJaauoznbidodJSF9MsPPSWRNXRoSYd0049MK3jAgI8rh/Va+K4ouMSzs/F?=
- =?us-ascii?Q?9lMUmdg9Thifh2J2Ge+LQ886Y50oo+UokgV8TatsAc3wjl81wQ6DyCfYAgD8?=
- =?us-ascii?Q?jODRbmvcPh492GdIPQV5F6lQobFPwb8OW8ZdasQ4L6FXGLHi3adFTdgW61J1?=
- =?us-ascii?Q?2jX8JTrofLF9ar+8L54Dcmlc9omz+13GVposbz4bhPLPq7M9nF/Blr3gENw4?=
- =?us-ascii?Q?QSquX1U5ZCFX+u9gYF1CUNyQ5VOktXN0Y3ARuqO8phkQ4nWjF8OSVx8iGDRG?=
- =?us-ascii?Q?TyGnmbuQl38ipC7SPnGXydiKcleCoXXIWHofGZLHO+2CW5GWj6G/m8fQHOqy?=
- =?us-ascii?Q?HCmz8FLF4RaqWHFWY4lI67dG4OrVsNaXzkUj505LGiSLAhupY5WvdSvMuWEk?=
- =?us-ascii?Q?M1h4WANzgoX0OzB95Ty8GClUyfkS6YMxKmvKAGZSvlVzw5FyJ7woN55nOXjt?=
- =?us-ascii?Q?u9fIJTUUWsdnKda0AqJp4sJtCuqqbi+j9AlhJDbX4SjJNz7hZ/IQJRcQjEI0?=
- =?us-ascii?Q?e5l4glE7iHO6omnzEAhI5IGVRTqTO3cCxGLEFST0kLi3XwARvoMltrm80xRg?=
- =?us-ascii?Q?kUj6w8s2rYu08TETlHXQrJUZZBc3+oFbAGxpIigaHlNzlCFU+8d85wQiO3qE?=
- =?us-ascii?Q?11fv/F0GAxUxnGQX/p80ixp0n+HmBxnsQllS4HRt?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05D42E337F
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 02:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741918528; cv=none; b=iReh8ek4ipK5JWYmkpEyev4Y9rEWZzx/nzicWA1Qm0RpLgw/9W0eAOGygf8nbkKQA5mCObwRomhW1Sm47OgQhEOzGatcJWJH4eLSGoomCzqtCVGIvk+UVdCzqeKDFqFQFRCgWA38QPtj5Xo3wilbhL8f/UBMDhUBSFmhMk4zcLU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741918528; c=relaxed/simple;
+	bh=BKOJoz4jMZK3Ye9l6nyGiIeaObm2P8rqQcuaIeKOwbE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z+0n0JwNBq8AACij/L8ssu6tBns1FXX218jsYQh6dUFQ2lWx5/vXURGd4k8eehgRAsLw71L+o8+PJf10SADKjTqg7DijHj/c9NvSswucrdc6kOwi/GhuYoiDsNPIZaAjgro54TovkbBtwLue0HoE0ZrP4gnHE61KuRX/HMPrwrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=ESVu82dv; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e5ad75ca787so1592890276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 19:15:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1741918526; x=1742523326; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T99dV3Uq7aEWaCkVGWwvQtt3V/o9AKuRHiK8eGHc9PU=;
+        b=ESVu82dv6bBIU0KKkNWkFqImWWvM+tHX8aWBGAt0T55/4ekgoHM3mysqdx5kunupZB
+         EsjOgbMv8g7CZ8TFEPuRxAwKAZVXb1l30f0zcsIMdI8502e4vUOzjvip1aem7NPxjN6S
+         ZaeBEpr2j0uHMUyKcK9t/MIth+N2n6tT0+Nus4zyLsnEoexEKQLGbY+36SsRf+W9cuaw
+         m30onRKCCuA3uOQf3seGtCvcRFTGrV286Ymg7kjmFgvFOS++hBZrhErtJvAVejY+bqrR
+         hvYzNcZmhSwZG+RCln54VvAKtoCkUw04l42zlXrCiqu7yogl6hb8vQ5z8Pn2+9ykHo5V
+         3mxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741918526; x=1742523326;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T99dV3Uq7aEWaCkVGWwvQtt3V/o9AKuRHiK8eGHc9PU=;
+        b=e/avXTCWIWTEPqDHovGXhB7/hDT0Tb9UZ7Etd0q7S46CSiVN1DC4hS6NQryNoD4MEL
+         LzOhm07oCyDpYLu7mIqbDaUJlhSlK9yBgx1968MM2qPrsrzUqZIrHdJdDflSTDxvrFhX
+         BEiYxEQSLIgnsYas4Hx5fDp/LPljeCXMSTv3IDrgugRsZ4f0Ch0C7tPrIRZy5PXP+5sh
+         XKJmPCnS+KKaF63eiT0FZJT9POzZBzZbcMgNHy8if+EfToBD8AVLnU54OPsxaQu8E3Fk
+         VY0CzfI/XaWmpakJAXjty+3DQlTDTPFPbVDunvGZHEBRW+0i2/Mxx48mHQHtGW4M0ikz
+         KpKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXoLoB3+UZ284+NVpOgopKooKfn4Q4QtF9eHh5PfO/sR69UtDBdCKvy4pz28z8QKh4sic2NLi7G99Uv/gE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCVYplPEuEA5ZPPzzjXjYpAVr9HEre1pKd8FIMkKsVJvRoHQEH
+	ieupep/WuV3yMTgOnMKwU/s18sYfjkhSJo0TPf+Dkfk1aMO4dWqBFzwb58eoCRcjshNzWRtck4P
+	siuWH1MKSz9N/wHmrixdn9JIGCQRvyr41OBMNFw==
+X-Gm-Gg: ASbGncu+JC+2vWei2ERQSCYpEaAq3flfIlPO/D/xugi5oEC9gAapcdW3IT+GhM2C14s
+	EUZAEiiFqF9yeth+etHl5NaQulVRLwny7kw0KCCN7PmncVk1ySuBTd1PgDj0Ww/xnRZFoVgfjYf
+	MHYWc7UZ76Is0O8cdf1QaVdIxEOs5Z
+X-Google-Smtp-Source: AGHT+IHZJIA2sGuuLpw4nu/kd5eWiOVpCXCqNzwuBqabCwda6Hqeys5Dm5JRzxWzQFqS/5g8VYhcKp6/4iL47c09Ssc=
+X-Received: by 2002:a05:6902:2741:b0:e63:f497:6c56 with SMTP id
+ 3f1490d57ef6-e63f870c84fmr758036276.5.1741918525736; Thu, 13 Mar 2025
+ 19:15:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN8PR03MB5073.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78ace3b7-c254-47fb-d1f4-08dd629dfec8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Mar 2025 02:14:48.0105
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 3qjSGj6BMoSLSakGctuwWj5P2GrR7R3vQmOD/a3upVn+xBW+g/Si+wAc5IbXuc3B/pqg+Gia1aQcvFBz3aLX0w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR03MB5334
+References: <20250311051903.3825-1-nick.hu@sifive.com> <20250311195953.GA14239-robh@kernel.org>
+ <20250311-erasure-rival-f68525c21742@spud> <CAKddAkBwkVQS7UtVvXCdLxEz6bz1=_X1u1CGUPm-OHiyAD4Dsw@mail.gmail.com>
+ <20250313-kimono-passport-496a312a849c@spud>
+In-Reply-To: <20250313-kimono-passport-496a312a849c@spud>
+From: Nick Hu <nick.hu@sifive.com>
+Date: Fri, 14 Mar 2025 10:15:15 +0800
+X-Gm-Features: AQ5f1JqO6TLaKc51TXJ4bdfuCtPc_Kic86Fu4xccYBge3lE03TGoc4P7PcGLanE
+Message-ID: <CAKddAkCb+wAT3EcvmpoD57LFYGd8LOOUDEreFvdTnRtDjynD=g@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: timer: Add SiFive CLINT2
+To: Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Anup Patel <anup@brainfault.org>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Thanks for the update, now applied.
->=20
-> Next time, remember to put your SoB above the (first) cut-off line (---) =
-so that
-> it is included in the commit message when your patch is applied.
-> I fixed that up manually this time.
->=20
+Hi Conor
 
-Thank you for your feedback and for applying the update.
-I apologize for the misunderstanding regarding the placement of the SoB.=20
-I mistakenly thought I needed to create the cut-off line myself in the=20
-commit message.=20
+On Fri, Mar 14, 2025 at 6:34=E2=80=AFAM Conor Dooley <conor@kernel.org> wro=
+te:
+>
+> On Thu, Mar 13, 2025 at 03:58:05PM +0800, Nick Hu wrote:
+> > Hi Rob and Conor
+> >
+> > Thanks to all your feedback.
+> >
+> > On Wed, Mar 12, 2025 at 4:46=E2=80=AFAM Conor Dooley <conor@kernel.org>=
+ wrote:
+> > >
+> > > On Tue, Mar 11, 2025 at 02:59:53PM -0500, Rob Herring wrote:
+> > > > On Tue, Mar 11, 2025 at 01:19:03PM +0800, Nick Hu wrote:
+> > > > > Add compatible string and property for the SiFive CLINT v2.
+> > > > >
+> > > > > Signed-off-by: Nick Hu <nick.hu@sifive.com>
+> > > > > Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+> > > > > ---
+> > > > >  .../bindings/timer/sifive,clint.yaml          | 19 +++++++++++++=
+++++++
+> > > > >  1 file changed, 19 insertions(+)
+> > > > >
+> > > > > diff --git a/Documentation/devicetree/bindings/timer/sifive,clint=
+.yaml b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+> > > > > index 76d83aea4e2b..93d74c504b5f 100644
+> > > > > --- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+> > > > > +++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+> > > > > @@ -36,6 +36,9 @@ properties:
+> > > > >                - starfive,jh7110-clint   # StarFive JH7110
+> > > > >                - starfive,jh8100-clint   # StarFive JH8100
+> > > > >            - const: sifive,clint0        # SiFive CLINT v0 IP blo=
+ck
+> > > >
+> > > > Notice that we don't allow clint0 by itself. We shouldn't start now=
+.
+> > > >
+> > > > > +      - items:
+> > > >
+> > > > If you don't have a specific one yet, then add '- {}' for the first
+> > > > entry.
+> > > >
+> > Do you suggest something like the following?
+> >      - items:
+> >           - {}
+> >           - const: sifive,clint2        # SiFive CLINT v2 IP block
+> >         description: SiFive CLINT v2 is the HRT that supports the Zicnt=
+r
+> >
+> > > > > +          - const: sifive,clint2        # SiFive CLINT v2 IP blo=
+ck
+> > > > > +        description: SiFive CLINT v2 is the HRT that supports th=
+e Zicntr
+> > > > >        - items:
+> > > > >            - enum:
+> > > > >                - allwinner,sun20i-d1-clint
+> > > > > @@ -62,6 +65,22 @@ properties:
+> > > > >      minItems: 1
+> > > > >      maxItems: 4095
+> > > > >
+> > > > > +  sifive,fine-ctr-bits:
+> > > > > +    description: The width in bits of the fine counter.
+> > > >
+> > > > maximum: 15
+> > > >
+> > > > Unless you know of a different maximum in which case why aren't you
+> > > > documenting that too?
+> > >
+> > You are right. It's my bad. The maximum width should always be 15 in
+> > sifive,clint2.
+> > I should update to:
+> >  sifive,fine-ctr-bits:
+> >     maximum: 15
+> >     description: The width in bits of the fine counter.
+> >
+> > if:
+> >   not:
+> >     properties:
+> >       compatible:
+> >         contains:
+> >           const: sifive,clint2
+> > then:
+> >   properties:
+> >     sifive,fine-ctr-bits: false
+>
+> I think this should be inverted, to
+>
+> if: properties: compatible: contains: const: sifive,clint2
+> then: required: - sifive,fine-counter-bits
+> else: sifive,fine-counter-bits: false
+>
+> since the property has no default.
+>
+Will update it in the next version. Thanks for the advice.
 
-I now understand that I should generate the patch first and then
-manually add the change log under the first cut-off line that
-appears below the sign-off.
+> >
+> > > I'm curious why this is not something that can be discerned from the
+> > > compatible. It's max 15, but are there actually versions of this with=
+ a
+> > > less-than-15-bit width?
+> > >
+> > The width may be various on different platforms so it is possible to
+> > have a less-than-15-bit width.
+> >
+> > > >
+> > > > > +
+> > > > > +if:
+> > > > > +  properties:
+> > > > > +    compatible:
+> > > > > +      contains:
+> > > > > +        const: sifive,clint2
+> > > > > +then:
+> > > > > +  properties:
+> > > > > +    sifive,fine-ctr-bits:
+> > > > > +      maximum: 15
+> > > > > +else:
+> > > > > +  properties:
+> > > > > +    sifive,fine-ctr-bits: false
+> > > > > +
+> > > > >  additionalProperties: false
+> > > > >
+> > > > >  required:
+> > > > > --
+> > > > > 2.17.1
+> > > > >
+> >
+> > Best Regards,
+> > Nick
 
-I appreciate your kindness in manually editing the changelog
-this time. Thank you for your guidance and support.
-
-Regards,
-Boon Khai.
+Best Regards,
+Nick
 
