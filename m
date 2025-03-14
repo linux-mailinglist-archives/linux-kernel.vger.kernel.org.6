@@ -1,164 +1,112 @@
-Return-Path: <linux-kernel+bounces-561594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17307A613CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:39:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5CF9A613D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:40:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0923E883160
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:38:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9A2088417A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CC3200BBE;
-	Fri, 14 Mar 2025 14:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D331201253;
+	Fri, 14 Mar 2025 14:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KAnnbfQm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="loCBhxEB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83351FF7C9
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A0C201006;
+	Fri, 14 Mar 2025 14:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741963114; cv=none; b=ZIf0dM2rtKtCHaw2tE3Ro2Jfp5AqrgnMpJ/acZakg1Nh+900QwkSfEQBLmyM56Pb7CUsMwgxybMFCwj6BF1mTwLtu59JmplO2OKbOw4J8qFnu0EkGYA9w6Hs6thXF1+7GuyssNkfyf5pO4lurTK7IdRZqm7638+XpBHOPvhZB9g=
+	t=1741963148; cv=none; b=iCHW64y76NA3yiDQrlJeCxzoqtz6UpxKk79r6q8Qc0mcat8rcwWpJWSefMJy0H5p9x82nEWR9xKtHR9luVmZnC353ChEOeFYaWcW1VpI4s9NIdzkfi2nz8jmR/+gDEhSMWDdPTI+Wu2jrIvDftMu3eXfvKFTrgKt98LYBuYGiUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741963114; c=relaxed/simple;
-	bh=jTH9XdFtdO1Z0KkNHGhEi16y2vvmFS1zRIAktZ9HF8w=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JSiJlR2wJZ2HscPSGy6y4iy30GVve+xMwputdlYXODRKQdd9nC6quNwqrX5ayGembspLz5DYyZL8mw3UONOX0Wl3zGR/4yV5VKMBtUjYXfjLMD/XZj9QJASTsdE/YR/oXu6P0nnqlLg47Gz93nkR1StQ6OCwYIvc7S5tjqt2daU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KAnnbfQm; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741963113; x=1773499113;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=jTH9XdFtdO1Z0KkNHGhEi16y2vvmFS1zRIAktZ9HF8w=;
-  b=KAnnbfQm4AJqWsaFODHAdU3uD7TWikr2FPVBLsOH+83by2UUOe9fiXdH
-   JMUAuGsYMv2XM+dTeliBG8fliys4rrfSoR8GNIwbVO9vedjPLaU+G7B/C
-   WZsGZCk/JfDY/4yrWO5bysAwCWQvdZL6qdLOeG4Lp3N7jvLn3IugxrjcF
-   PbqFYTUwzxVNzkr8V+rtGNgiSgkmnnHXpoS9nzXSMIuTBXJPZ4dP87UQf
-   eZtaMY23wtBhL1Z2V/4nl+ev5VuynFS546poFrC1Mw7DJEwsusfJ9P/xI
-   qevBi5FjuBci3fIm2px0eRMQy4ReLS1Zn/B0VrENurtiOMaSsJNBlisCt
-   A==;
-X-CSE-ConnectionGUID: INShEdSMRMm5st+NXIOZ9A==
-X-CSE-MsgGUID: FGaP9QL1TwiR86hguRRQPA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="43291439"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="43291439"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 07:38:33 -0700
-X-CSE-ConnectionGUID: 3pwVWW/zR3eqIzDXpUo30g==
-X-CSE-MsgGUID: lvR22TT7TBWk6dR4W1t6dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="121341037"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 07:38:31 -0700
-Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 3E68720B5736;
-	Fri, 14 Mar 2025 07:38:30 -0700 (PDT)
-Message-ID: <1ec56e83-be22-480c-be60-5b898fc5f5b7@linux.intel.com>
-Date: Fri, 14 Mar 2025 10:38:29 -0400
+	s=arc-20240116; t=1741963148; c=relaxed/simple;
+	bh=+rOCS4ANpOhQrkXaIKAqHuNZwcp5/PpEXC53lEgGM7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IQzI1PMh9p70WfbSGhlFK3+eRysbapz4W0mc/TASvU3StS3fpDoBbjTAGX2Mu1niTtaPHPxirtvPO8F05wTTQ6lSNmtLBAw2ohuniWYFj11V0Xv9F52IrL4Spg2t6/rnuUVX9CvHPHtwvdlXKmAAGT4jiLT66eQ33Wu8f8wU3gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=loCBhxEB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4938EC4CEE9;
+	Fri, 14 Mar 2025 14:39:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741963147;
+	bh=+rOCS4ANpOhQrkXaIKAqHuNZwcp5/PpEXC53lEgGM7o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=loCBhxEBErKK3ZIht8R39+ptBlFC2S1QBIaARm2aLPojkPkaPZiUl/F+SVqutA0ac
+	 NX2lEwH4CexIWMDqGzyv17BXtlUwYB+szhZLa+fJGJMQd/04J64JyhCWiksYSSDHZU
+	 4Cw0l5C71+PpzLn4kYMj0m70dVGjf0gXQIpn2T/w8b/oKTCr/HaaRuMGMeLQQUvVJo
+	 MQ80z+4JEmZKB1hHaj2PqI6fpbrGlaW0viu9UwzxJpVsXs8Ra5RcaRlWX+tpq4vW4L
+	 vt2wM7lpkf2uPKIhCzk72o/e00wyCpOdIOgaEGLImdi0Ga84XrD6FXdIeHx2khLtrg
+	 UhKQbRMW/U+OQ==
+Date: Fri, 14 Mar 2025 15:39:05 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 3/3] rcu/exp: Remove needless CPU up quiescent state
+ report
+Message-ID: <Z9Q_iWaLfGb9fzA4@localhost.localdomain>
+References: <20250213232559.34163-1-frederic@kernel.org>
+ <20250213232559.34163-4-frederic@kernel.org>
+ <332cc3da-55fa-4729-81bf-625afa5290bd@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V9 3/7] perf: attach/detach PMU specific data
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, tglx@linutronix.de, bp@alien8.de, acme@kernel.org,
- namhyung@kernel.org, irogers@google.com, linux-kernel@vger.kernel.org,
- ak@linux.intel.com, eranian@google.com
-References: <20250314000242.323199-1-kan.liang@linux.intel.com>
- <20250314000242.323199-3-kan.liang@linux.intel.com>
- <20250314125958.GC36322@noisy.programming.kicks-ass.net>
- <a619615f-3313-4e55-a780-f280fbb643dc@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <a619615f-3313-4e55-a780-f280fbb643dc@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <332cc3da-55fa-4729-81bf-625afa5290bd@paulmck-laptop>
 
-
-
-On 2025-03-14 9:50 a.m., Liang, Kan wrote:
+Le Mon, Mar 03, 2025 at 12:10:50PM -0800, Paul E. McKenney a écrit :
+> On Fri, Feb 14, 2025 at 12:25:59AM +0100, Frederic Weisbecker wrote:
+> > A CPU coming online checks for an ongoing grace period and reports
+> > a quiescent state accordingly if needed. This special treatment that
+> > shortcuts the expedited IPI finds its origin as an optimization purpose
+> > on the following commit:
+> > 
+> > 	338b0f760e84 (rcu: Better hotplug handling for synchronize_sched_expedited()
+> > 
+> > The point is to avoid an IPI while waiting for a CPU to become online
+> > or failing to become offline.
+> > 
+> > However this is pointless and even error prone for several reasons:
+> > 
+> > * If the CPU has been seen offline in the first round scanning offline
+> >   and idle CPUs, no IPI is even tried and the quiescent state is
+> >   reported on behalf of the CPU.
+> > 
+> > * This means that if the IPI fails, the CPU just became offline. So
+> >   it's unlikely to become online right away, unless the cpu hotplug
+> >   operation failed and rolled back, which is a rare event that can
+> >   wait a jiffy for a new IPI to be issued.
+> > 
+> > * But then the "optimization" applying on failing CPU hotplug down only
+> >   applies to !PREEMPT_RCU.
+> > 
+> > * This force reports a quiescent state even if ->cpu_no_qs.b.exp is not
+> >   set. As a result it can race with remote QS reports on the same rdp.
+> >   Fortunately it happens to be OK but an accident is waiting to happen.
+> > 
+> > For all those reasons, remove this optimization that doesn't look worthy
+> > to keep around.
+> > 
+> > Reported-by: Paul E. McKenney <paulmck@kernel.org>
+> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 > 
+> Based on discussions:
 > 
-> On 2025-03-14 8:59 a.m., Peter Zijlstra wrote:
->> On Thu, Mar 13, 2025 at 05:02:38PM -0700, kan.liang@linux.intel.com wrote:
->>
->>> @@ -12551,6 +12813,14 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
->>>  	if (err)
->>>  		return ERR_PTR(err);
->>>  
->>> +	if (event->attach_state & PERF_ATTACH_TASK_DATA) {
->>> +		err = attach_perf_ctx_data(event);
->>> +		if (err) {
->>> +			security_perf_event_free(event);
->>> +			return ERR_PTR(err);
->>> +		}
->>> +	}
->>> +
->>>  	/* symmetric to unaccount_event() in _free_event() */
->>>  	account_event(event);
->>>  
->>
->> This seems weird. We just pushed all the error handling into
->> __free_event(), and now you're adding one special case back.
->>
->> Also, you've placed it after security_perf_event_alloc(), which I
->> _think_ wants to be last.
+> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 > 
-> Right, I will send a new series to fix it.
-> 
+> If it was still just me doing RCU, I would skip this one, just out of an
+> abundance of caution.  But you break it, you buy it!  ;-)
 
-I think the attach_perf_ctx_data() should be moved even earlier, right
-after the perf_init_event(). Because the PERF_ATTACH_TASK_DATA is set in
-the event_init()->hw_config(), rather than after perf attach the data.
-
-So any errors between perf_init_event() and attach_perf_ctx_data(event)
-would cause the detach_perf_ctx_data() mistakenly invoked.
-
-@@ -5393,6 +5607,9 @@ static void __free_event(struct perf_event *event)
- 	if (is_cgroup_event(event))
- 		perf_detach_cgroup(event);
-
-+	if (event->attach_state & PERF_ATTACH_TASK_DATA)
-+		detach_perf_ctx_data(event);
-+
- 	if (event->destroy)
- 		event->destroy(event);
-@@ -12481,6 +12746,18 @@ perf_event_alloc(struct perf_event_attr *attr,
-int cpu,
- 	if (IS_ERR(pmu))
- 		return (void*)pmu;
-
-+	/*
-+	 * The PERF_ATTACH_TASK_DATA is set in the event_init()->hw_config().
-+	 * The attach should be right after the perf_init_event().
-+	 * Otherwise, the __free_event() would mistakenly detach the non-exist
-+	 * perf_ctx_data because of the other errors between them.
-+	 */
-+	if (event->attach_state & PERF_ATTACH_TASK_DATA) {
-+		err = attach_perf_ctx_data(event);
-+ 		if (err)
-+			return ERR_PTR(err);
-+	}
-+
- 	/*
- 	 * Disallow uncore-task events. Similarly, disallow uncore-cgroup
- 	 * events (they don't make sense as the cgroup will be different
-
-
-Thanks,
-Kan
-
+I'm trying to be optimistic... ;-))
 
