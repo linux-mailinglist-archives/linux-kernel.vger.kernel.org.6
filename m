@@ -1,184 +1,221 @@
-Return-Path: <linux-kernel+bounces-561086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20312A60D64
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:34:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A3F1A60D66
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:36:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 689763BBCAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:34:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E71C919C512E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329A81E9B37;
-	Fri, 14 Mar 2025 09:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8F01EDA24;
+	Fri, 14 Mar 2025 09:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tp2MxNfo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GNiyGATv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uVhdEdBT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE001EB187
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BA31DF757;
+	Fri, 14 Mar 2025 09:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741944885; cv=none; b=LypYRAtsS0QK/sUpbGjta8lNzyJON37Xmr/tUiGV0kMIsjsQfVz68o4mSOLvxBvecmxI4PzNgU0/BNLWn+VsNHnNwgj4R5tks/oCWl0UjerYyhEZwaQVSMnahob06vXO/AMykcOBVwaqEx2tuDbHwRj+xPK62n5DawrWFowyUz4=
+	t=1741944955; cv=none; b=iz+EpzR8VIveu7kGTYk/6OIqE0Z8Z0sWiNaFZxKPGJ9qKZVRcqG12uogYC6G6eEOaj0+Wws8pJq4yU8ZVSs7th4G58S7ZPLm113ejAYJZRC5Rp7+Ng3qo8dcFNeb+tdIxhsaSmXoScTnikPDVrzDUGNv11RutDsqp5i4dDugjkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741944885; c=relaxed/simple;
-	bh=/QHGyNTxkBGYmNxvkaV7Ph8WtB7cBiAo9r7H7Fk9QrY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fI0RfkGcIGmSvcf8WT50U3xveREOTo2G+NlWiClQyguaGP5KDnfW9NpSQu7jcyNAh0gR2+ppmQbXXPaBqtB+VkUXzRjI9kuzlTWdStY8sdjTz4FEZ+MR4sOeGjO/Fs53nAjCEeLVznK3875ZK+d0bdDYUP4LITefAVqGO+tM/Uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tp2MxNfo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741944882;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1741944955; c=relaxed/simple;
+	bh=naBbdIrmrJbN2ufogs5meOjGLn+KcQCWvoXhIuC5RRk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=uBDXGGkH+7FSFZgXrczRlZkZgA/VsFXD2PXa4OVgmZB0IXXObaeT9UsQWBmJNtJ+CO8Ds81vcaRGZJhZBfq2kx7dixJg4O2VmBWW0oT78jjMkFy2HzLnhh1ahTogKGYTp3Zw7ZP/LtGsdbUkHBW5RYJOQ6rjCkfqPiX4Bs13IOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GNiyGATv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uVhdEdBT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 14 Mar 2025 09:35:42 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741944951;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=o8xq5quBupqWX+TKt9jL3mL8tzKVIibeaTozXMKawhk=;
-	b=Tp2MxNfoI0Ysneww18BLvgh5QKe/4VCuBP01X0cjpYhr6Bw4xqr5p/KBOIhgV3V4JfmH2N
-	jEuRiH/oR0j+LWp0nBQS+c9fqhIll1DezK3fwUg7uSwIOH5x6NPgJrMkFhk1LPJ/lPOgfa
-	0yIn6mlRGXTZ5PxMvLg7Idn14AMApdo=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-488-0LkdxIcWND2QIX7J0l0gJA-1; Fri, 14 Mar 2025 05:34:41 -0400
-X-MC-Unique: 0LkdxIcWND2QIX7J0l0gJA-1
-X-Mimecast-MFC-AGG-ID: 0LkdxIcWND2QIX7J0l0gJA_1741944880
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5e5d8a28de7so1975525a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 02:34:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741944880; x=1742549680;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o8xq5quBupqWX+TKt9jL3mL8tzKVIibeaTozXMKawhk=;
-        b=hTbHm+CKQg9rN3Uc5VRaFihYZef//F/Y7735KOIQWuJBNYCmZSYmfqZMXRjFU1wJEm
-         1kzsNJRsUcgoNA6/O7VfpvbfVlRXjZrSUs3juKZrEHI/1Sn1iQ7M7WfX5MnFKA8v8ddh
-         PmcHrTL8bhilVwQ8A9YvKbW1eVtGfOAGb8ABO5rh8e6qEJDhY4UNB49/oy2kIZXo33M/
-         axGaE8PQjMaIUlwfnfwmyXHRHDfXLDUCG1LSxnVwur/RLmOH161LQj72APGBhd3a8SXE
-         vCUqZ14/kD1FAPtVxer2nqggZPBvHxQmbF67QqQszZv3QKEHzilIkJhM3EfJxy48rE85
-         T2EA==
-X-Gm-Message-State: AOJu0YyKAidZfjl3nTykAUiiT+XO8/3qou8syeCD1kGZIf2zsD/D8cHf
-	V34mjFdV2Bgm5PJmSLYTUZzRvTDz0lPI4pHNiW15RLW/KUi83UPPPtnPKD0N9zPaZ5Sb5nNNyhq
-	LDSYdSqCu2FaXBl6Q6KkWAJCWUBliLEan4E8Hffd7BXrL9qvpiODD61EwDgpRlQ==
-X-Gm-Gg: ASbGnctor1WZOGlGjdu3gXlxG94YeB4HVdDe8PRSeyIJHImO0vv7pRYLXbT25K4Scj6
-	7KObMIie9NN3S8Oy+gehJg6tuKFyVuW2K2w3jGhAPXn2ZBXNS4lm5Y04pBcj4ItmCkTAej0BeCe
-	Z9BjhyhxyVeaKZgtjQ/K9ePTi3MPNW6KL+8LsnpZJIsgnQBYjVfxt9PInR5Fb9HhdHyj2TdOALU
-	GKmaOEwlyjdI2U3bk1Zfgr8gmA+HVtgBS+b5E+iI8R3cKAFxQONOZdMYQbNrJ0Qt5fgoD7tTuis
-	3uNaDVPD+AH/oo9ZRlVXGZgT7gvTPie8k8TaUUYCT9EWUK/A6SuYyrz4Svl37gv3au/1KthguAe
-	6XduXEAjSskeVtnrEM097N6664CdSL3U27ig/VHGo6iuROWw5Ipfj5zLzfyDX9LmXcA==
-X-Received: by 2002:a05:6402:5186:b0:5de:39fd:b2f5 with SMTP id 4fb4d7f45d1cf-5e89e6b0197mr1954917a12.1.1741944880045;
-        Fri, 14 Mar 2025 02:34:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHpliGVYSifHjurmVbgm/VmWpvbgqgAQYjQGwczC1Nf1XUS4HyN4u1bKDnD5mrJoxrR0ct+mA==
-X-Received: by 2002:a05:6402:5186:b0:5de:39fd:b2f5 with SMTP id 4fb4d7f45d1cf-5e89e6b0197mr1954881a12.1.1741944879441;
-        Fri, 14 Mar 2025 02:34:39 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816ad3921sm1792779a12.61.2025.03.14.02.34.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 02:34:38 -0700 (PDT)
-Message-ID: <4970c2cd-9637-460a-8e85-bc44f7b0a550@redhat.com>
-Date: Fri, 14 Mar 2025 10:34:38 +0100
+	bh=Z4o9jYahamIh4OtIDF+HZ2TgBxKOqjTD978dHaGWqxU=;
+	b=GNiyGATvOV2WaEGxbUxk39MrMFvlf37/ylLRc5OZ8qPLFSfcI6V16XDA7dEgMSiNkjyoPV
+	VPrP0WuJhJE6FzNUMFW+m5w1/6kMc1QZTfaUDRRxFGN0kWZ0yZPRSYn38kWg1NhO5DfpFX
+	2M+/ddOWrtVeMPy/3c4oMJW4Bh9erIiLzH8a25QGkN2Az+r//nu3JTcv7R30/RaROo2zU3
+	uK1FZZtD1aYg0L3tTxGPtNHQnIH9K66J88CZ8l/1OQqMi0w8jrQrJ70dLho1IxC9gp50uB
+	gNachFP3oCx64tBp1PMb/yf4Jom9hYbwlNlLQVt4k9ssYKczUJDs1HJVuIyJ+A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741944951;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z4o9jYahamIh4OtIDF+HZ2TgBxKOqjTD978dHaGWqxU=;
+	b=uVhdEdBTUfoeWMKXJJx3UKM1t9Ia1bHeIq1pJB0VmCqvZWB8Prwyjw8htsXpdUBseXi24b
+	0Yi0olSewuvBcHBQ==
+From: "tip-bot2 for Sohil Mehta" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/cpu] x86/cpufeatures: Warn about unmet CPU feature dependencies
+Cc: Tony Luck <tony.luck@intel.com>, Ingo Molnar <mingo@redhat.com>,
+ Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+ Juergen Gross <jgross@suse.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250313201608.3304135-1-sohil.mehta@intel.com>
+References: <20250313201608.3304135-1-sohil.mehta@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Fixed ideapad-laptop driver to support Yoga 9 2 in 1
- 14imh9 unknown keys
-To: =?UTF-8?Q?Ga=C5=A1per_Nemgar?= <gasper.nemgar@gmail.com>,
- ike.pan@canonical.com
-Cc: linux-kernel@vger.kernel.org,
- "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
-References: <20250313151744.34010-1-gasper.nemgar@gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20250313151744.34010-1-gasper.nemgar@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <174194494332.14745.961297784048418864.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi Gašper,
+The following commit has been merged into the x86/cpu branch of tip:
 
-Thank you for your patch. 
+Commit-ID:     96effb260ce507ed884a145d304ea1295a67844c
+Gitweb:        https://git.kernel.org/tip/96effb260ce507ed884a145d304ea1295a67844c
+Author:        Sohil Mehta <sohil.mehta@intel.com>
+AuthorDate:    Thu, 13 Mar 2025 20:16:08 
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 14 Mar 2025 10:19:44 +01:00
 
-First if all a few generic notes:
+x86/cpufeatures: Warn about unmet CPU feature dependencies
 
-1. When sending out v2 of the patch please add
-   platform-driver-x86@vger.kernel.org to the Cc
+Currently, the cpuid_deps[] table is only exercised when a particular
+feature is explicitly disabled and clear_cpu_cap() is called. However,
+some of these listed dependencies might already be missing during boot.
 
-2. The patch subject (first line of commit message) should have
-   a prefix describing the subsystem + driver, e.g. use:
-   "platform/x86: ideapad-laptop: Add a few new keymap entries"
+These types of errors shouldn't generally happen in production
+environments, but they could sometimes sneak through, especially when
+VMs and Kconfigs are in the mix. Also, the kernel might introduce
+artificial dependencies between unrelated features, such as making LAM
+depend on LASS.
 
-3. Your patch is missing a signed-off-by, see:
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#sign-your-work-the-developer-s-certificate-of-origin
+Unexpected failures can occur when the kernel tries to use such
+features. Add a simple boot-time scan of the cpuid_deps[] table to
+detect the missing dependencies. One option is to disable all of such
+features during boot, but that may cause regressions in existing
+systems. For now, just warn about the missing dependencies to create
+awareness.
 
-4. Your commit message / patch should also have a body, e.g.
-   the entirety of the commit message could look something like this:
+As a trade-off between spamming the kernel log and keeping track of all
+the features that have been warned about, only warn about the first
+missing dependency. Any subsequent unmet dependency will only be logged
+after the first one has been resolved.
 
--- begin --
-platform/x86: ideapad-laptop: Add a few new keymap entries
+Features are typically represented through unsigned integers within the
+kernel, though some of them have user-friendly names if they are exposed
+via /proc/cpuinfo.
 
-The Yoga 9 2 in 1 14imh9 introduces 4 new hotkeys which are not
-yet in ideapad_keymap[], add entries to map these keys.
+Show the friendlier name if available, otherwise display the
+X86_FEATURE_* numerals to make it easier to identify the feature.
 
-Signed-off-by: Gašper Nemgar <your-email-here>
--- end --
+Suggested-by: Tony Luck <tony.luck@intel.com>
+Suggested-by: Ingo Molnar <mingo@redhat.com>
+Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Link: https://lore.kernel.org/r/20250313201608.3304135-1-sohil.mehta@intel.com
+---
+ arch/x86/include/asm/cpufeature.h |  1 +-
+ arch/x86/kernel/cpu/common.c      |  4 +++-
+ arch/x86/kernel/cpu/cpuid-deps.c  | 35 ++++++++++++++++++++++++++++++-
+ 3 files changed, 40 insertions(+)
 
-A few more specific remarks below based on looking at
-this picture of the keyboard:
-
-https://ardes.bg/uploads/original/lenovo-yoga-9-2-in-1-14-g9-550178.jpg
-
-On 13-Mar-25 4:17 PM, Gašper Nemgar wrote:
-> diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
-> index 30bd366d7..af124aafe 100644
-> --- a/drivers/platform/x86/ideapad-laptop.c
-> +++ b/drivers/platform/x86/ideapad-laptop.c
-> @@ -1308,6 +1308,14 @@ static const struct key_entry ideapad_keymap[] = {
->  	/* Specific to some newer models */
->  	{ KE_KEY,	0x3e | IDEAPAD_WMI_KEY, { KEY_MICMUTE } },
->  	{ KE_KEY,	0x3f | IDEAPAD_WMI_KEY, { KEY_RFKILL } },
-> +	/*Star- (User Asignable Key)*/
-> +	{ KE_KEY,	0x44 | IDEAPAD_WMI_KEY, { KEY_PROG1 } },
-
-Ack.
-
-> +	/*Eye*/
-> +	{ KE_KEY,	0x45 | IDEAPAD_WMI_KEY, { KEY_DISPLAYTOGGLE } },
-
-It looks like the laptop already does display-toggle as Fn-F7 although
-it like sends super + P for this (AKA meta + P).
-
-So mapping this to KEY_DISPLAYTOGGLE seems wrong, what does this
-do under Windows?
-
-Maybe KEY_ZOOM ?
-
-> +	/*Performance*/
-> +	{ KE_KEY,	0x3d | IDEAPAD_WMI_KEY, { KEY_SPORT } },
-
-I think that instead of mapping this it should be handled specially
-and call platform_profile_cycle() instead of sending a key-press
-to userspace
-
-> +	/*shift + prtsc*/
-> +	{ KE_KEY,	0x2d | IDEAPAD_WMI_KEY, { KEY_PROG3 } },
-
-Looking a the symbol on the keyboard this should send
-KEY_SELECTIVE_SCREENSHOT
-
->  
->  	{ KE_END },
->  };
-> 
-
-Regards,
-
-Hans
-
-
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index 910601c..fe6994f 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -77,6 +77,7 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+ 
+ extern void setup_clear_cpu_cap(unsigned int bit);
+ extern void clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int bit);
++void check_cpufeature_deps(struct cpuinfo_x86 *c);
+ 
+ #define setup_force_cpu_cap(bit) do {			\
+ 							\
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 92fe56c..411378d 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1648,6 +1648,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+ 
+ 		c->cpu_index = 0;
+ 		filter_cpuid_features(c, false);
++		check_cpufeature_deps(c);
+ 
+ 		if (this_cpu->c_bsp_init)
+ 			this_cpu->c_bsp_init(c);
+@@ -1908,6 +1909,9 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ 	/* Filter out anything that depends on CPUID levels we don't have */
+ 	filter_cpuid_features(c, true);
+ 
++	/* Check for unmet dependencies based on the CPUID dependency table */
++	check_cpufeature_deps(c);
++
+ 	/* If the model name is still unset, do table lookup. */
+ 	if (!c->x86_model_id[0]) {
+ 		const char *p;
+diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
+index df838e3..a2fbea0 100644
+--- a/arch/x86/kernel/cpu/cpuid-deps.c
++++ b/arch/x86/kernel/cpu/cpuid-deps.c
+@@ -147,3 +147,38 @@ void setup_clear_cpu_cap(unsigned int feature)
+ {
+ 	do_clear_cpu_cap(NULL, feature);
+ }
++
++/*
++ * Return the feature "name" if available, otherwise return
++ * the X86_FEATURE_* numerals to make it easier to identify
++ * the feature.
++ */
++static const char *x86_feature_name(unsigned int feature, char *buf)
++{
++	if (x86_cap_flags[feature])
++		return x86_cap_flags[feature];
++
++	snprintf(buf, 16, "%d*32+%2d", feature / 32, feature % 32);
++
++	return buf;
++}
++
++void check_cpufeature_deps(struct cpuinfo_x86 *c)
++{
++	char feature_buf[16], depends_buf[16];
++	const struct cpuid_dep *d;
++
++	for (d = cpuid_deps; d->feature; d++) {
++		if (cpu_has(c, d->feature) && !cpu_has(c, d->depends)) {
++			/*
++			 * Only warn about the first unmet dependency on the
++			 * first CPU where it is encountered to avoid spamming
++			 * the kernel log.
++			 */
++			pr_warn_once("x86 CPU feature dependency check failure: CPU%d has '%s' enabled but '%s' disabled. Kernel might be fine, but no guarantees.\n",
++				     smp_processor_id(),
++				     x86_feature_name(d->feature, feature_buf),
++				     x86_feature_name(d->depends, depends_buf));
++		}
++	}
++}
 
