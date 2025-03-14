@@ -1,511 +1,899 @@
-Return-Path: <linux-kernel+bounces-560657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AEDBA607CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 04:38:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7F10A607CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 04:38:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 082B0460082
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:38:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5D663BE7CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7947B13C3F2;
-	Fri, 14 Mar 2025 03:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FAB13B2B8;
+	Fri, 14 Mar 2025 03:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="eRsoIuRS"
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jgVCCz3y"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2065.outbound.protection.outlook.com [40.107.20.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E00613D8A3;
-	Fri, 14 Mar 2025 03:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741923519; cv=none; b=VeJ2XRySt8AZS3dtQuwEc832uh8rKmRB6VFmmETQuUOHmfIrRneghvthfeyLkZ7w42pipdKgwfaN5t/iaq9WJrRd8x1Ka5kzJSIxQlkYNG9ai9eT364ZkmQ27UPndHsuWqL6qWertU2Xv4r9yXAh/uiBWSc6HKzDcG0g8NZrTwM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741923519; c=relaxed/simple;
-	bh=EAiy6oQESp4bH9RUWapq0zzIPxcPEcBVLvInJtCoZL0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JG1sLGDshAkALX0N+zFyAjthmaYWMKqD+hFi+LHeao6A9DwEurCTywFUEU5u3lXq7BlQ3I94QLeqe6Nk4PuFlvnI8q1/zgD3fsU7gOiKCAbkZqiH+D41GkzgdaXrb9PNh0RQh2h9iu6TSR8y3YcVIksJ16aMzrJ9Xte/zuPv/j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=eRsoIuRS; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1741923486;
-	bh=eGU5KbXO6e1/HojDQxT8SCCrYwesKSvunfoPBk+eObk=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=eRsoIuRSwKD3wygHwet2rFek8/JVUyOGyZon9dnIAuc0S6X80dlhZ+8/de/BG2pT2
-	 5hQ7h66/Hgs4i4i0upd2BJ2al5UaJDccC+rpKZ36RkJpz5YwAMsF4wFgF0772IMa8R
-	 BW5EJLltPol8tgPcWWXVbwp6J9bwQ0jMjhCBc0SY=
-X-QQ-mid: bizesmtpip3t1741923478tewinqq
-X-QQ-Originating-IP: k0HZa2Bi9WfEvE8CRIrOKLl4mg2LieHACR70C2zZPCY=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 14 Mar 2025 11:37:55 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 8815996796256257945
-From: raoxu <raoxu@uniontech.com>
-To: mathias.nyman@intel.com,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	wangyuli@uniontech.com,
-	zhanjun@uniontech.com,
-	Xu Rao <raoxu@uniontech.com>
-Subject: [PATCH V6] usb:xhci: Add debugfs support for xHCI port bandwidth
-Date: Fri, 14 Mar 2025 11:37:50 +0800
-Message-Id: <20250314033750.17832-1-raoxu@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4AF6BA38;
+	Fri, 14 Mar 2025 03:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741923505; cv=fail; b=IkcteF0rhlPFVfNK1fO78btn7h8hVQ2zcZ4GwNKlQS0a8fEy9WJYqFVM0DLewCcJV0LHiWZGWEVtByEwqL3PwzCrUc5og4ieBVG/F8I0JBfmDBozU85Pk9yX87Bjh9YCqWOj0vzhVOcl1ksFbkLPODoLFaMzRqnWJTQLbmTwPwY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741923505; c=relaxed/simple;
+	bh=/4kQa4J9qy64m4k8crFs597GKqr+1PGejLlVd9F4Uqw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=UwK+E3ZEkDZpKdIzLjP2gHIGFKHrTT7RexsX83rLC8KELTPdVtZgp4wNb4COjbqiZrVY1wBgz4b/HIS6fXhN2bAQNHz+M4e+rieIkgPcEkX1+j6ifoe1OmsQaVr9FuzUr1Xr7j1arWRgoI7dkoRnhBm9cfZgFCiVzOTOZuCXbOI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jgVCCz3y; arc=fail smtp.client-ip=40.107.20.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WFtH2HQHR/NilaEIWoGISuH5zIkFRljkh5GlpBoWR1zjUu1xEtA2g3vyNm3vepQ44X0SHNR5M5GBuvb+iH9PPB9F6RHQM3Vvax1Lg2+320AjzA37texOmb2NZ4OpxFRfdNUViONqlZ7mj8/jVkglA9YaeBub8O8mXL5d4vKXAUgu0eOLAgQe45KL7Stx9oZ72KZgtXBkLTUEL4ov/8fuUzNu8oKdmhF4JrkmHnU9WB4ly1goVKXXaeK80fknJJQ1KyVmQBcImgaU+Cbqcv4364g/VSzQTA55qhCd+epviYEo/+M0GyECj1GrNZ0b5MvSPfwtoxTTQbiKLKhQ3G7d7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=no2l66Flsk6qGgelDVoVbnbqevyRuH2L2Ws3OTdIDFM=;
+ b=HFLpow82hk08hUkZVVoWIo6EKQtqHI1SZ7occXS/iBJDcaf748rwxGbmSBgkHvUR6PG+8amZniK5RHJt+sNnJMvvN1wZqbLLQHo/AdOIWjyG4Wri/dG1Sa12QqHR0vV7ILV2Cfh/RdysoF1jGbpowGTem0J4bI7jARMYaTT1rq1HblVc9SczT4amLTt0gJ+LaT7DQV4VcfWighNzc05RegS0U28fWcDNr2i+aBK1yTUnz2tz+T9HHcAN8kytYagxhSE1aDSguYIulkDeXFCU5uorsdhrj0YSlKSeBYN0G46T/RICPQ77gairlIus8Ac9+Ny8jNPiipUheII6Y5d8HA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=no2l66Flsk6qGgelDVoVbnbqevyRuH2L2Ws3OTdIDFM=;
+ b=jgVCCz3y4lXemEbavLM5TOSCeOi2O+2SauGWBzbDeMO82ELjbZjDFEV5Upo9yw0mHX8+YNLp6jR48Ak0GblZZe32A2eutKmtFKPFtF+4247KNGMcTk94+3oVJV0M6cxZr7q8Y+qDekjt84a8294tSaxMPu6shaEYWH5vXYJi7UDpwTHsfFHm7gTHgM+GAuGlphHZH7e1KzfNHW6sciKKfnwoVy/KcJ1ZIwnsF1IAxjT0f8FBNoRw0Ls/GgLnIfA89Aa2rgUixeGRFPiM2c8reZM5sM3EQBli/0iBHqAI+jlpiahoHVYfL/eKXhfaiNe94bI8VQas1NcN17i1mi46cQ==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by DB9PR04MB9889.eurprd04.prod.outlook.com (2603:10a6:10:4ef::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Fri, 14 Mar
+ 2025 03:38:18 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8534.027; Fri, 14 Mar 2025
+ 03:38:18 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+CC: Claudiu Manoil <claudiu.manoil@nxp.com>, Clark Wang
+	<xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "christophe.leroy@csgroup.eu"
+	<christophe.leroy@csgroup.eu>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v4 net-next 01/14] net: enetc: add initial netc-lib driver
+ to support NTMP
+Thread-Topic: [PATCH v4 net-next 01/14] net: enetc: add initial netc-lib
+ driver to support NTMP
+Thread-Index: AQHbkkpJSjcnE6eIUE+0uP7QMRa23rNxR0QAgACVlrA=
+Date: Fri, 14 Mar 2025 03:38:18 +0000
+Message-ID:
+ <PAXPR04MB8510327277CFEAC750FE49F888D22@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250311053830.1516523-1-wei.fang@nxp.com>
+ <20250311053830.1516523-2-wei.fang@nxp.com>
+ <20250313163526.pqwp2wsfvio7avs6@skbuf>
+In-Reply-To: <20250313163526.pqwp2wsfvio7avs6@skbuf>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|DB9PR04MB9889:EE_
+x-ms-office365-filtering-correlation-id: dfa3122a-3de0-43e1-b62d-08dd62a9a951
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?NSf1nouJcGRjsC+qWzILgXn9ksaVwVLokjBPlP0w/KvIY4ioOoMlZiUz8Bqn?=
+ =?us-ascii?Q?Z7x/+8SK0uGid8CraXjJ5KcRrzVB+Wlg2Y8wjgdR0dotKymIncnjtbRzrmeK?=
+ =?us-ascii?Q?96iD+M9RE2swtUXIZ23tD/KZdPFNWldE9B+OxoZm3XrAf0IHFaj6ELnBH5cQ?=
+ =?us-ascii?Q?lJFlnCLyGtWKoJyB7Z48ARM5jgGxo+ltNJb4QzR3Ix2kkjAF0hxYYuJGo2H7?=
+ =?us-ascii?Q?HY4UoBO+GNUWAEc4gPKjr14RpmVuPRmg6/t1hxogZSdX69Z78vrYOIZj54/d?=
+ =?us-ascii?Q?VeeBSKjPMO3pSK33UYaIQ4b9oMLGwCJgz7XHZFaArkxzfHPjbLkOWz2/w54+?=
+ =?us-ascii?Q?OLs2YVQ9LDFWBTCFa1nGksY7QKLcr1JQH5j9k/rpr0zesJlzCL0V+vOX+3vl?=
+ =?us-ascii?Q?YEDeI4ZEPM51Tq/p8ldcmNf1WWugqMJxRSl9pJi+FsURsGIwUTKasp+3808V?=
+ =?us-ascii?Q?YCvc5CrsgktL10AJfUkkB9xeWlpgkvZ+xSdA1ukAfQISEojvYEoVFzN0cQ4A?=
+ =?us-ascii?Q?mceM+AbUuAoUPFr7Cw/PmSaCiBxD9banHQaT/rTfpK6xxtw+Il/AX7OEUP/u?=
+ =?us-ascii?Q?7NEGhNxunHlWV1CajXzdNcWoworszfcwcMeifyBdrzupdTuP4BxbRPUftDmq?=
+ =?us-ascii?Q?jmmGnDoN50M9fsfpa0y70mihqmwufvviA2pkqO+trb+CucL1cv3LEQBlK7aH?=
+ =?us-ascii?Q?O4oMa5NH7rPLIra5UdpaB0wcnx2zBhI7Le4qfmz2aW6IM8dI2YL+pAwMIRYG?=
+ =?us-ascii?Q?QsYWjj7JDe94UivVE4/S55D+72hBs/0p5/23c9hkkvNz4y33HxamEK8UNAFQ?=
+ =?us-ascii?Q?9Ds9JeWlmxeKoiNuymJFOphXKB9lmQEFIAO5Mg6hccOHVg7HZRgBMKQBfMt8?=
+ =?us-ascii?Q?TjaXGQm8VvNldYcJuWsdXKjA2xJKbP0zozv0fkfCCNGQRdTneTC/bUWFA7dF?=
+ =?us-ascii?Q?izRu2bT1rNmc1hWtMoG5wV04xsFE432jDsrxoYK1KVGXASNJI54sjdR/rP+w?=
+ =?us-ascii?Q?CqCg2A31QZb5Rz0hRgDg+oMizAfSVs2bn3FHY5ut4RyjoOQLQJA/8gDnjk6B?=
+ =?us-ascii?Q?MsA1hXLCC6V7tJ3fRW0Gd57YDLGhTFXqnKGcggOO55goxDaFAeuKc4NOECNY?=
+ =?us-ascii?Q?n0D2Ogg+YawHY/mnuoPIB/zr+RydGysD09/iu6lJvAxtGLLxL/auyHBA34NM?=
+ =?us-ascii?Q?N9qlslqQR9gln1tDvsZDjcJpLXDJOz6P2ogMTBL9fdJ08YPVQmWu0SpL0OVp?=
+ =?us-ascii?Q?z5RjcWy1IT9dWByjDOxU7dxWGHQYbOby87RSP0Y327RYKs2hOPsJz28A+A/M?=
+ =?us-ascii?Q?CEXDazTtX1PQDaOCRCZFbOZ1YQ7yo3kW4g4oGbsYrOo/mI+/ye0nqdGyYTdr?=
+ =?us-ascii?Q?QsPWgxDyRq3W9SpZcduT7MxKn61DPaLVvMP+8xbc/liRpVUBOE1qn+wAx/Xq?=
+ =?us-ascii?Q?lG4chBTa5WBkdKCMMo86K0gJZk1QcAvF?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?69AJDfqrdztXcb9HG5DeNrTcRZZBRG2RNGoLwu01Cb+cpyacvv3jRjD2x+VC?=
+ =?us-ascii?Q?hHbYo5hJW0Cg83FGkL7IIEedfFoGL3X9wkUKZmtUWxynYwfxHBvXY67nfYp2?=
+ =?us-ascii?Q?Q3J4O324myDRkux8iSqi/o4uHai/fC5Eqe0o7wZVUkm1Kq7c69HKgXxEi62f?=
+ =?us-ascii?Q?5OYmolu18pYC/3dgzECXM6UVTywSx7VflzKw3q+tM6Ade73foBy6Y15OUzcK?=
+ =?us-ascii?Q?PYvy8yjX8XkpoYuKe/SzJZVyVKQtod72to933qLOANCoA/qmQFGNUg9JNf3c?=
+ =?us-ascii?Q?bzpFKgWrPwhH9AYZtUvpZ7aLR3JqJ/IeZAq1OnPAwjUqjQwkG3H9tn4cZ2z1?=
+ =?us-ascii?Q?51UqRbwKveuWLNKzu+THDZThQOIH620QZNN4zqtj7qkfLuqdSxgvDZUMpyQ0?=
+ =?us-ascii?Q?JqZyydkH8L4DLzWBVY1thVTMnsO2vslqUgOuobRYbj5bWVDchoc2CcUVGq0d?=
+ =?us-ascii?Q?Y7IyNFGdpeBgrK4yY7alx+sBhdlqfg+wWHp7xWZClCcLk4ipESMA1NIgkIM6?=
+ =?us-ascii?Q?igd0OsUm16vhp1iqiaUVkjuLKrJKPB8HSiphnRwhWLi+8ZATf4JKBUhTs8I0?=
+ =?us-ascii?Q?gbPjh2zNwt92fbh0EGfKkdfaeoJaN455Liku/UpKnPkKZ4H6FCrm5xJfPZP0?=
+ =?us-ascii?Q?+uwVN34f+T6nqqbpgmtlSSBv5xUATGbHsks84Sv9Ml/oO+Sn8dU3f1fQ8gUp?=
+ =?us-ascii?Q?KFqL+B9yFp8x9YbAHnZ0KNyQPfw3pYMiEY7Mtm44GmOn6Yg59o8kHmbxNVYx?=
+ =?us-ascii?Q?ddsKg9M8gxliuendNReviwGv5aqlvF0nMtkDnfNO4+HliXomuvmAtn5EjbWc?=
+ =?us-ascii?Q?snlYigJI/OW0iw+PSCKUxtNq5f49/dDdGrC6pTCEVb2laPFH4WZo1AZiQM8g?=
+ =?us-ascii?Q?6CSt2FXfoHg46vdIGTmpl+nO8QkWHayqDO3AkEzN8yYFNwYqepOmgg6b0DJE?=
+ =?us-ascii?Q?Cqjqk6VxRchXKlzxDTH3f524Qwz+iL7C/cbZ5uG7oQJOkLcBGYY8kYzcsohH?=
+ =?us-ascii?Q?8GiTIfhw/ww4mc6VEy36BJjYtbBSrtA3nBERCPp7VS7qKZzzMvc+Y5Hw62nf?=
+ =?us-ascii?Q?7xDMAXPqucn+BDTIUKD59tiLyP5ExNCqRVWYwkF+bi5vGd7Qusw5uknLlK3v?=
+ =?us-ascii?Q?IfxwBSzfv+DsZqsiWb8wer+NgaFtp0l5mjS7T8jncH5FA4aFQNzLvhDy5nhb?=
+ =?us-ascii?Q?4LkLwnHtwcck0hivoSMILwn/FzNvT9JwxASXEtC1nKSMjUotcozHWeQzmaub?=
+ =?us-ascii?Q?wmpidmaQ2fI6AxDjxyBds6eazdfjugvEbomziuCzx1XP0MGIBLtoO4dtm8QF?=
+ =?us-ascii?Q?4Qt3Kn2uOHavoy1Q2QvIoL0aLnQpZDAEm3P4D8G71y9xRUf9SmMWLOrbKy4p?=
+ =?us-ascii?Q?7dclMZR99yL3wVTlL7rfMIuXuCfR33AeQcDbT5HQIt1782W0xE96OZOQz887?=
+ =?us-ascii?Q?W3sK2lIT49c7q+xGz7daFGIsv+Q2P7TEqAdI/ayDhQZH3uLa0R2LVTecuOSc?=
+ =?us-ascii?Q?B7OvZbeklva36ZFYsPKNLa8mX0rw7vqRMApdNaQozI6A158zMni2RooQgNNz?=
+ =?us-ascii?Q?NSOOAxaO7lY9cwwW7mk=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz7a-0
-X-QQ-XMAILINFO: NlrfLQhmr2s5qn/Bc6L66MGLuYT8ZT51W7UwWH7mt3t7IGR3kIv0NEwa
-	lPFWqqJ9Al4oWMF5eiXAcaDck9bz8aEfSLg4MeqdDLjGQQa3hUBTGxOHmfRTQc/CsXvbZg2
-	xoiNzV5ZysULSIAqwpawv+s2pE5cT+M4Lz4rjwutrY/c8UCYq+79rEmC4hdmNdRYjZmlEml
-	GMZkdHGCyTMfjGck8UYrsYLMTZBGPR0DqngCxHQBBhwZv/XWcF+pCh78BIUBn480VszXJVg
-	yOMWo2gXZmDU4dxZULCvGcgDwjwVOLLfQ/YPk0x5O7Cb5L2fOsa365BDtQX1pNtPJknvjoD
-	1M0KWgaLHL6nlu08GAhbReKyc45RI2SWXIazomfOQugkE2Qrnn5xiMOdJ4hsw9UEjPWKc6w
-	HoYSbmIKnHMmgCOIJ0DVjYPfeM8hz5MznMLw9anXz1OdemtVdm22163PiOvc+LLuVzIGznM
-	2fPiW4OGo0Lyt95LrRcw5894aHRsWtTuye0qeHRsfRRdVf46SY2X7nlDZc/Q3FZwhLx6TlV
-	m/iiA083f+wgyCx1iOnr19H5hd234HxmNshliSVWq0RMQluLwqBbA++iJlVkxbsLrPljZnQ
-	Re+SdwZgPUdn6zXVM9W7Li8tmR8cQUjHbIwFAcNaBZKmRmoOPHRz3ZpjaSNiDsa1/3fcHM6
-	stMaiQqPEnOon6H67mGz/nLBQ+kzfy8VJ0txl9BHgza+zRPEFGRAXRRQhrVhKMoCuhTAg7n
-	n4EukisYGuYwSK/UuJXmGYlBn2i5E7ZMbQ2GkbMSgUejR5FEVlhQUbQMl0nVDVPlDAFr7rz
-	UMzIunHj81o7RHqLklBVZNIZS4XlgF7Dv/MF18osVfZXCXsgMr44blLCDwswvMyQ+rMUueX
-	R9b1DAqtt/qmmscgBqQJcLJI80+UrWSPT7alBfz3/6F/c7WOiO8uSv7VBAUiiRdzaYITcYw
-	EC6NxviyRhqfbTjVIN5BzmgB4IO7/9P27tiIhNPS8hCg7pIpEvhCnzmoWNBnmlNJlRbemE/
-	/D2444EUh2FqefriHuxaZiSt+ufno=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dfa3122a-3de0-43e1-b62d-08dd62a9a951
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Mar 2025 03:38:18.5831
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Qq2OsOzEn9T9pM4S9nARekP9rYn75fPGx1tP+Ih6GQDkGqA7DBAIrBazxH8zY+IFeb6CmJewVtPviArGy3GcEw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9889
 
-From: Xu Rao <raoxu@uniontech.com>
+> On Tue, Mar 11, 2025 at 01:38:17PM +0800, Wei Fang wrote:
+> > +int ntmp_rsst_query_or_update_entry(struct netc_cbdrs *cbdrs, u32 *tab=
+le,
+> > +				    int count, bool query)
+> > +{
+> > +	struct ntmp_dma_buf data =3D {.dev =3D cbdrs->dma_dev};
+> > +	struct rsst_req_update *requ;
+> > +	struct ntmp_req_by_eid *req;
+> > +	union netc_cbd cbd;
+> > +	int err, i;
+> > +	u32 len;
+> > +
+> > +	if (count !=3D RSST_ENTRY_NUM)
+> > +		/* HW only takes in a full 64 entry table */
+> > +		return -EINVAL;
+> > +
+> > +	if (query)
+> > +		data.size =3D NTMP_ENTRY_ID_SIZE + RSST_STSE_DATA_SIZE(count) +
+> > +			    RSST_CFGE_DATA_SIZE(count);
+> > +	else
+> > +		data.size =3D struct_size(requ, groups, count);
+> > +
+> > +	err =3D ntmp_alloc_data_mem(&data, (void **)&req);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	/* Set the request data buffer */
+> > +	if (query) {
+> > +		ntmp_fill_crd_eid(req, cbdrs->tbl.rsst_ver, 0, 0, 0);
+> > +		len =3D NTMP_LEN(sizeof(*req), data.size);
+> > +		ntmp_fill_request_headr(&cbd, data.dma, len, NTMP_RSST_ID,
+> > +					NTMP_CMD_QUERY, NTMP_AM_ENTRY_ID);
+>=20
+> Please either use a commonly accepted abbreviation such as "hdr", or
+> preferably,
+> just spell "header" as such. This reminded me of Kevin Malone's quote
+> "Why waste time say lot word when few word do trick?" :)
+>=20
 
-In many projects, you need to obtain the available bandwidth of the
-xhci roothub port. Refer to xhci rev1_2 and use the TRB_GET_BW
-command to obtain it.
+Sure, I will fix it.
 
-hardware tested:
-03:00.3 USB controller: Advanced Micro Devices, Inc. [AMD] Raven USB 3.1
-(prog-if 30 [XHCI])
-Subsystem: Huawei Technologies Co., Ltd. Raven USB 3.1
-Flags: bus master, fast devsel, latency 0, IRQ 30
-Memory at c0300000 (64-bit, non-prefetchable) [size=1M]
-Capabilities: [48] Vendor Specific Information: Len=08 <?>
-Capabilities: [50] Power Management version 3
-Capabilities: [64] Express Endpoint, MSI 00
-Capabilities: [a0] MSI: Enable- Count=1/8 Maskable- 64bit+
-Capabilities: [c0] MSI-X: Enable+ Count=8 Masked-
-Kernel driver in use: xhci_hcd
+> > +	} else {
+> > +		requ =3D (struct rsst_req_update *)req;
+> > +		ntmp_fill_crd_eid(&requ->rbe, cbdrs->tbl.rsst_ver, 0,
+> > +				  NTMP_GEN_UA_CFGEU | NTMP_GEN_UA_STSEU, 0);
+> > +		for (i =3D 0; i < count; i++)
+> > +			requ->groups[i] =3D (u8)(table[i]);
+> > +
+> > +		len =3D NTMP_LEN(data.size, 0);
+> > +		ntmp_fill_request_headr(&cbd, data.dma, len, NTMP_RSST_ID,
+> > +					NTMP_CMD_UPDATE, NTMP_AM_ENTRY_ID);
+> > +	}
+> > +
+> > +	err =3D netc_xmit_ntmp_cmd(cbdrs, &cbd);
+> > +	if (err) {
+> > +		dev_err(cbdrs->dma_dev, "%s RSS table entry failed (%d)",
+> > +			query ? "Query" : "Update", err);
+> > +		goto end;
+> > +	}
+> > +
+> > +	if (query) {
+> > +		u8 *group =3D (u8 *)req;
+> > +
+> > +		group +=3D NTMP_ENTRY_ID_SIZE + RSST_STSE_DATA_SIZE(count);
+> > +		for (i =3D 0; i < count; i++)
+> > +			table[i] =3D group[i];
+> > +	}
+> > +
+> > +end:
+> > +	ntmp_free_data_mem(&data);
+> > +
+> > +	return err;
+> > +}
+> > +EXPORT_SYMBOL_GPL(ntmp_rsst_query_or_update_entry);
+>=20
+> Instead of exporting "query_or_update" mixed semantics, can you please
+> export two separate functions, one for "query" and the other for "update"=
+?
+> For query=3Dfalse, you can make the "table" argument const.
+>=20
+> Also, from the looks of their implementation, there isn't much that is
+> common anyway.
+>=20
 
-test progress:
-1. cd /sys/kernel/debug/usb/xhci/0000:03:00.3/port_bandwidth# ls
-FS_BW  HS_BW  SS_BW
-2. test fs speed  device
-cat FS_BW
-port[1] available bw: 90%.
-port[2] available bw: 90%.
-port[3] available bw: 90%.
-port[4] available bw: 90%.
-port[5] available bw: 0%.
-port[6] available bw: 0%.
-port[7] available bw: 0%.
-port[8] available bw: 0%.
-plug in fs usb audio ID 0d8c:013c
-cat FS_BW
-port[1] available bw: 76%.
-port[2] available bw: 76%.
-port[3] available bw: 76%.
-port[4] available bw: 76%.
-port[5] available bw: 0%.
-port[6] available bw: 0%.
-port[7] available bw: 0%.
-port[8] available bw: 0%.
-3. test hs speed device
-cat HS_BW
-port[1] available bw: 79%.
-port[2] available bw: 79%.
-port[3] available bw: 79%.
-port[4] available bw: 79%.
-port[5] available bw: 0%.
-port[6] available bw: 0%.
-port[7] available bw: 0%.
-port[8] available bw: 0%.
-plug in hs usb video ID 0408:1040
-cat HS_BW
-port[1] available bw: 39%.
-port[2] available bw: 39%.
-port[3] available bw: 39%.
-port[4] available bw: 39%.
-port[5] available bw: 0%.
-port[6] available bw: 0%.
-port[7] available bw: 0%.
-port[8] available bw: 0%.
-4.cat SS_BW
-port[1] available bw: 0%.
-port[2] available bw: 0%.
-port[3] available bw: 0%.
-port[4] available bw: 0%.
-port[5] available bw: 90%.
-port[6] available bw: 90%.
-port[7] available bw: 90%.
-port[8] available bw: 90%.
+Okay, accept, I will split it into two functions.
 
-Signed-off-by: Xu Rao <raoxu@uniontech.com>
----
-Changelog:
- *v1->v2: modify the patch subject no code changes.
-  v2->v3: separate files in debugfs for each speed (SS HS FS).
-	  queue one command for each speed not queuing three commands on one file.
-	  print value from context not array on stack.
-  v3->v4: Fix compilation warnings for W=1 build. Delete unused variable
-  v4->v5: Add pm_runtime_get_sync operation before get port bandwidth.
-	  When obtaining port bandwidth, alloc a new command structure with
-	  context for each time.
-	  Create dma pool instead of allocating one shared.
-  v5->v6: The memory of port bandwidth context structure shall be aligned 16-
-	  byte not 8-byte
----
- drivers/usb/host/xhci-debugfs.c | 108 ++++++++++++++++++++++++++++++++
- drivers/usb/host/xhci-mem.c     |  45 ++++++++++++-
- drivers/usb/host/xhci-ring.c    |  13 ++++
- drivers/usb/host/xhci.c         |  36 +++++++++++
- drivers/usb/host/xhci.h         |  14 +++++
- 5 files changed, 215 insertions(+), 1 deletion(-)
+> > +static int ntmp_alloc_data_mem(struct ntmp_dma_buf *data, void
+> **buf_align)
+> > +{
+> > +	void *buf;
+> > +
+> > +	buf =3D dma_alloc_coherent(data->dev, data->size +
+> NTMP_DATA_ADDR_ALIGN,
+> > +				 &data->dma, GFP_ATOMIC);
+>=20
+> Is there any call site that can't use sleeping allocations (GFP_KERNEL)?
+>=20
 
-diff --git a/drivers/usb/host/xhci-debugfs.c b/drivers/usb/host/xhci-debugfs.c
-index 1f5ef174abea..c6d44977193f 100644
---- a/drivers/usb/host/xhci-debugfs.c
-+++ b/drivers/usb/host/xhci-debugfs.c
-@@ -631,6 +631,112 @@ static void xhci_debugfs_create_ports(struct xhci_hcd *xhci,
- 	}
- }
+The initial reason was that we called ntmp_maft_add_entry() directly when
+implementing ndo_set_rx_mode(), so we changed it to GFP_ATOMIC. Later,
+we implemented ndo_set_rx_mode() using workqueue, so for the current
+patch, we can change it back to GFP_KERNEL.
 
-+static int xhci_port_bw_show(struct xhci_hcd *xhci, u8 dev_speed,
-+				struct seq_file *s)
-+{
-+	unsigned int			num_ports;
-+	unsigned int			i;
-+	int				ret;
-+	struct xhci_container_ctx	*ctx;
-+	struct usb_hcd			*hcd = xhci_to_hcd(xhci);
-+	struct device			*dev = hcd->self.controller;
-+
-+	ret = pm_runtime_get_sync(dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	num_ports = HCS_MAX_PORTS(xhci->hcs_params1);
-+
-+	ctx = xhci_alloc_port_bw_ctx(xhci, 0);
-+	if (!ctx) {
-+		pm_runtime_put_sync(dev);
-+		return -ENOMEM;
-+	}
-+
-+	/* get roothub port bandwidth */
-+	ret = xhci_get_port_bandwidth(xhci, ctx, dev_speed);
-+	if (ret)
-+		goto err_out;
-+
-+	/* print all roothub ports available bandwidth
-+	 * refer to xhci rev1_2 protocol 6.2.6 , byte 0 is reserved
-+	 */
-+	for (i = 1; i < num_ports+1; i++)
-+		seq_printf(s, "port[%d] available bw: %d%%.\n", i,
-+				ctx->bytes[i]);
-+err_out:
-+	pm_runtime_put_sync(dev);
-+	xhci_free_port_bw_ctx(xhci, ctx);
-+	return ret;
-+}
-+
-+static int xhci_ss_bw_show(struct seq_file *s, void *unused)
-+{
-+	int ret;
-+	struct xhci_hcd		*xhci = (struct xhci_hcd *)s->private;
-+
-+	ret = xhci_port_bw_show(xhci, USB_SPEED_SUPER, s);
-+	return ret;
-+}
-+
-+static int xhci_hs_bw_show(struct seq_file *s, void *unused)
-+{
-+	int ret;
-+	struct xhci_hcd		*xhci = (struct xhci_hcd *)s->private;
-+
-+	ret = xhci_port_bw_show(xhci, USB_SPEED_HIGH, s);
-+	return ret;
-+}
-+
-+static int xhci_fs_bw_show(struct seq_file *s, void *unused)
-+{
-+	int ret;
-+	struct xhci_hcd		*xhci = (struct xhci_hcd *)s->private;
-+
-+	ret = xhci_port_bw_show(xhci, USB_SPEED_FULL, s);
-+	return ret;
-+}
-+
-+static struct xhci_file_map bw_context_files[] = {
-+	{"SS_BW",	xhci_ss_bw_show, },
-+	{"HS_BW",	xhci_hs_bw_show, },
-+	{"FS_BW",	xhci_fs_bw_show, },
-+};
-+
-+static int bw_context_open(struct inode *inode, struct file *file)
-+{
-+	int			i;
-+	struct xhci_file_map	*f_map;
-+	const char		*file_name = file_dentry(file)->d_iname;
-+
-+	for (i = 0; i < ARRAY_SIZE(bw_context_files); i++) {
-+		f_map = &bw_context_files[i];
-+
-+		if (strcmp(f_map->name, file_name) == 0)
-+			break;
-+	}
-+
-+	return single_open(file, f_map->show, inode->i_private);
-+}
-+
-+static const struct file_operations bw_fops = {
-+	.open			= bw_context_open,
-+	.read			= seq_read,
-+	.llseek			= seq_lseek,
-+	.release		= single_release,
-+};
-+
-+static void xhci_debugfs_create_bandwidth(struct xhci_hcd *xhci,
-+					struct dentry *parent)
-+{
-+	parent = debugfs_create_dir("port_bandwidth", parent);
-+
-+	xhci_debugfs_create_files(xhci, bw_context_files,
-+			  ARRAY_SIZE(bw_context_files),
-+			  xhci,
-+			  parent, &bw_fops);
-+}
-+
- void xhci_debugfs_init(struct xhci_hcd *xhci)
- {
- 	struct device		*dev = xhci_to_hcd(xhci)->self.controller;
-@@ -681,6 +787,8 @@ void xhci_debugfs_init(struct xhci_hcd *xhci)
- 	xhci->debugfs_slots = debugfs_create_dir("devices", xhci->debugfs_root);
+> > +	if (!buf)
+> > +		return -ENOMEM;
+> > +
+> > +	data->buf =3D buf;
+> > +	*buf_align =3D PTR_ALIGN(buf, NTMP_DATA_ADDR_ALIGN);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > diff --git a/drivers/net/ethernet/freescale/enetc/ntmp_private.h
+> b/drivers/net/ethernet/freescale/enetc/ntmp_private.h
+> > new file mode 100644
+> > index 000000000000..45e4d083ab0a
+> > --- /dev/null
+> > +++ b/drivers/net/ethernet/freescale/enetc/ntmp_private.h
+> > @@ -0,0 +1,63 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
+> > +/*
+> > + * NTMP table request and response data buffer formats
+> > + * Copyright 2025 NXP
+> > + */
+> > +
+> > +#ifndef __NTMP_PRIVATE_H
+> > +#define __NTMP_PRIVATE_H
+> > +
+> > +#include <linux/fsl/ntmp.h>
+> > +
+> > +struct ntmp_dma_buf {
+> > +	struct device *dev;
+> > +	size_t size;
+> > +	void *buf;
+> > +	dma_addr_t dma;
+> > +};
+> > +
+> > +struct common_req_data {
+>=20
+> Some maintainers prefer to avoid definitions which "sound" generic, but t=
+ruly
+> are driver-specific, and instead recommend to prefix their names with
+> some kind of driver specific indication
+> (example:
+> https://lore.kernel.org/netdev/20190413205311.GC2268@nanopsycho.orion/).
+>=20
+> So, maybe something like "ntmp_common_req_data",
+> "ntmp_common_resp_query", ...
+> would make that more clear?
+>=20
 
- 	xhci_debugfs_create_ports(xhci, xhci->debugfs_root);
-+
-+	xhci_debugfs_create_bandwidth(xhci, xhci->debugfs_root);
- }
+I will rename these structs, thanks.
 
- void xhci_debugfs_exit(struct xhci_hcd *xhci)
-diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-index 92703efda1f7..31549b37f61e 100644
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -484,6 +484,35 @@ void xhci_free_container_ctx(struct xhci_hcd *xhci,
- 	kfree(ctx);
- }
+> > +	__le16 update_act;
+> > +	u8 dbg_opt;
+> > +	u8 tblv_qact;
+> > +#define NTMP_QUERY_ACT		GENMASK(3, 0)
+> > +#define NTMP_TBL_VER		GENMASK(7, 0)
+> > +#define NTMP_TBLV_QACT(v, a)	(FIELD_PREP(NTMP_TBL_VER, (v)) | \
+> > +				 ((a) & NTMP_QUERY_ACT))
+>=20
+> Can you please move #define macros out of structure definitions?
 
-+struct xhci_container_ctx *xhci_alloc_port_bw_ctx(struct xhci_hcd *xhci,
-+						    gfp_t flags)
-+{
-+	struct xhci_container_ctx *ctx;
-+	struct device *dev = xhci_to_hcd(xhci)->self.sysdev;
-+
-+	ctx = kzalloc_node(sizeof(*ctx), flags, dev_to_node(dev));
-+	if (!ctx)
-+		return NULL;
-+
-+	ctx->size = GET_PORT_BW_ARRAY_SIZE;
-+
-+	ctx->bytes = dma_pool_zalloc(xhci->port_bw_pool, flags, &ctx->dma);
-+	if (!ctx->bytes) {
-+		kfree(ctx);
-+		return NULL;
-+	}
-+	return ctx;
-+}
-+
-+void xhci_free_port_bw_ctx(struct xhci_hcd *xhci,
-+			     struct xhci_container_ctx *ctx)
-+{
-+	if (!ctx)
-+		return;
-+	dma_pool_free(xhci->port_bw_pool, ctx->bytes, ctx->dma);
-+	kfree(ctx);
-+}
-+
- struct xhci_input_control_ctx *xhci_get_input_control_ctx(
- 					      struct xhci_container_ctx *ctx)
- {
-@@ -1907,6 +1936,11 @@ void xhci_mem_cleanup(struct xhci_hcd *xhci)
- 	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
- 			"Freed small stream array pool");
+No, I think these macros in the structure can better reflect the specific
+meaning of these members. We can intuitively see what the bits of
+these members represent, rather than finding the definition of these
+bits in RM or elsewhere.
 
-+	dma_pool_destroy(xhci->port_bw_pool);
-+	xhci->port_bw_pool = NULL;
-+	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
-+			"Freed xhci port bw array pool");
-+
- 	dma_pool_destroy(xhci->medium_streams_pool);
- 	xhci->medium_streams_pool = NULL;
- 	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
-@@ -2463,7 +2497,16 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
- 	 * will be allocated with dma_alloc_coherent()
- 	 */
+>=20
+> > +};
+> > +
+> > +struct common_resp_query {
+> > +	__le32 entry_id;
+> > +};
+> > +
+> > +struct common_resp_nq {
+> > +	__le32 status;
+> > +};
+> > +
+> > +/* Generic structure for request data by entry ID  */
+> > +struct ntmp_req_by_eid {
+> > +	struct common_req_data crd;
+> > +	__le32 entry_id;
+> > +};
+> > +
+> > +/* MAC Address Filter Table Request Data Buffer Format of Add action *=
+/
+> > +struct maft_req_add {
+> > +	struct ntmp_req_by_eid rbe;
+> > +	struct maft_keye_data keye;
+> > +	struct maft_cfge_data cfge;
+> > +};
+> > +
+> > +/* MAC Address Filter Table Response Data Buffer Format of Query actio=
+n */
+> > +struct maft_resp_query {
+> > +	__le32 entry_id;
+> > +	struct maft_keye_data keye;
+> > +	struct maft_cfge_data cfge;
+> > +};
+> > +
+> > +/* RSS Table Request Data Buffer Format of Update action */
+> > +struct rsst_req_update {
+> > +	struct ntmp_req_by_eid rbe;
+> > +	u8 groups[];
+> > +};
+> > +
+> > +#endif
+> > diff --git a/include/linux/fsl/ntmp.h b/include/linux/fsl/ntmp.h
+> > new file mode 100644
+> > index 000000000000..fe15e394c4a4
+> > --- /dev/null
+> > +++ b/include/linux/fsl/ntmp.h
+> > @@ -0,0 +1,174 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
+> > +/* Copyright 2025 NXP */
+> > +#ifndef __NETC_NTMP_H
+> > +#define __NETC_NTMP_H
+> > +
+> > +#include <linux/bitops.h>
+> > +#include <linux/if_ether.h>
+> > +
+> > +#define NTMP_NULL_ENTRY_ID		0xffffffffU
+> > +#define NETC_CBDR_BD_NUM		256
+> > +
+> > +union netc_cbd {
+>=20
+> Do you seriously need to export the netc_cbd definition outside of
+> drivers/net/ethernet/freescale/enetc/ntmp.c? I would say even if you do
+> (which this patch set doesn't appear to need), the NTMP library exports
+> an API which doesn't do a great job abstracting the information.
 
--	if (!xhci->small_streams_pool || !xhci->medium_streams_pool)
-+	/* refer to xhci rev1_2 protocol 5.3.3 max ports is 255.
-+	 * refer to xhci rev1_2 protocol 6.4.3.14 port bandwidth buffer need
-+	 * to be 16-byte aligned.
-+	 */
-+	xhci->port_bw_pool =
-+		dma_pool_create("xHCI 256 port bw ctx arrays",
-+			dev, GET_PORT_BW_ARRAY_SIZE, 16, 0);
-+
-+	if (!xhci->small_streams_pool || !xhci->medium_streams_pool ||
-+		!xhci->port_bw_pool)
- 		goto fail;
+Sorry, I was not aware of the netc_cbd could be moved to ntmp_private.h
+as well.
 
- 	/* Set up the command ring to have one segments for now. */
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 965bffce301e..0a01753075b4 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1867,6 +1867,8 @@ static void handle_cmd_completion(struct xhci_hcd *xhci,
- 	case TRB_NEC_GET_FW:
- 		xhci_handle_cmd_nec_get_fw(xhci, event);
- 		break;
-+	case TRB_GET_BW:
-+		break;
- 	default:
- 		/* Skip over unknown commands on the event ring */
- 		xhci_info(xhci, "INFO unknown command type %d\n", cmd_type);
-@@ -4414,6 +4416,17 @@ int xhci_queue_configure_endpoint(struct xhci_hcd *xhci,
- 			command_must_succeed);
- }
+>=20
+> The question pertains to everything else that is exported to
+> include/linux/fsl/ntmp.h - what the API consumer sees. Is there a real
+> reason to export it? For many structures and macros, the answer seems no.
+>=20
+> Even for cases like struct maft_keye_data which are only used by debugfs,
+> it still seems preferable to keep data encapsulation and offer a helper
+> function to retrieve a pointer to the MAC address from the MAFT entry.
+> Then, "struct maft_keye_data;" can simply be declared, without exposing
+> its full definition.
 
-+/* Queue a get root hub port bandwidth command TRB */
-+int xhci_queue_get_port_bw(struct xhci_hcd *xhci,
-+		struct xhci_command *cmd, dma_addr_t in_ctx_ptr,
-+		u8 dev_speed, bool command_must_succeed)
-+{
-+	return queue_command(xhci, cmd, lower_32_bits(in_ctx_ptr),
-+		upper_32_bits(in_ctx_ptr), 0,
-+		TRB_TYPE(TRB_GET_BW) | DEV_SPEED_FOR_TRB(dev_speed),
-+		command_must_succeed);
-+}
-+
- /* Queue an evaluate context command TRB */
- int xhci_queue_evaluate_context(struct xhci_hcd *xhci, struct xhci_command *cmd,
- 		dma_addr_t in_ctx_ptr, u32 slot_id, bool command_must_succeed)
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 45653114ccd7..fde774408a13 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -3088,6 +3088,42 @@ void xhci_reset_bandwidth(struct usb_hcd *hcd, struct usb_device *udev)
- }
- EXPORT_SYMBOL_GPL(xhci_reset_bandwidth);
+ntmp_private.h is only used for ntmp driver, I don't want it to be included
+by any enetc files. ntmp.h is used for both enetc and switch drivers, so we
+need to add full definitions of the table data.
 
-+/* Get the available bandwidth of the ports under the xhci roothub */
-+int xhci_get_port_bandwidth(struct xhci_hcd *xhci, struct xhci_container_ctx *ctx,
-+		u8 dev_speed)
-+{
-+	struct xhci_command *cmd;
-+	unsigned long flags;
-+	int ret;
-+
-+	if (!ctx || !xhci)
-+		return -EINVAL;
-+
-+	cmd = xhci_alloc_command(xhci, true, GFP_KERNEL);
-+	if (!cmd)
-+		return -ENOMEM;
-+
-+	cmd->in_ctx = ctx;
-+
-+	/* get xhci port bandwidth, refer to xhci rev1_2 protocol 4.6.15 */
-+	spin_lock_irqsave(&xhci->lock, flags);
-+
-+	ret = xhci_queue_get_port_bw(xhci, cmd, ctx->dma, dev_speed, 0);
-+	if (ret) {
-+		spin_unlock_irqrestore(&xhci->lock, flags);
-+		goto err_out;
-+	}
-+	xhci_ring_cmd_db(xhci);
-+	spin_unlock_irqrestore(&xhci->lock, flags);
-+
-+	wait_for_completion(cmd->completion);
-+err_out:
-+	kfree(cmd->completion);
-+	kfree(cmd);
-+
-+	return ret;
-+}
-+
- static void xhci_setup_input_ctx_for_config_ep(struct xhci_hcd *xhci,
- 		struct xhci_container_ctx *in_ctx,
- 		struct xhci_container_ctx *out_ctx,
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index 8c164340a2c3..51bf99787ec9 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -586,6 +586,7 @@ struct xhci_stream_info {
+>=20
+> > +	struct {
+> > +		__le64 addr;
+> > +		__le32 len;
+> > +#define NTMP_RESP_LEN		GENMASK(19, 0)
+> > +#define NTMP_REQ_LEN		GENMASK(31, 20)
+> > +#define NTMP_LEN(req, resp)	(FIELD_PREP(NTMP_REQ_LEN, (req)) | \
+> > +				((resp) & NTMP_RESP_LEN))
+> > +		u8 cmd;
+> > +#define NTMP_CMD_DELETE		BIT(0)
+> > +#define NTMP_CMD_UPDATE		BIT(1)
+> > +#define NTMP_CMD_QUERY		BIT(2)
+> > +#define NTMP_CMD_ADD		BIT(3)
+> > +#define NTMP_CMD_QD		(NTMP_CMD_QUERY |
+> NTMP_CMD_DELETE)
+> > +#define NTMP_CMD_QU		(NTMP_CMD_QUERY |
+> NTMP_CMD_UPDATE)
+> > +#define NTMP_CMD_AU		(NTMP_CMD_ADD | NTMP_CMD_UPDATE)
+> > +#define NTMP_CMD_AQ		(NTMP_CMD_ADD | NTMP_CMD_QUERY)
+> > +#define NTMP_CMD_AQU		(NTMP_CMD_AQ | NTMP_CMD_UPDATE)
+> > +		u8 access_method;
+> > +#define NTMP_ACCESS_METHOD	GENMASK(7, 4)
+> > +#define NTMP_AM_ENTRY_ID	0
+> > +#define NTMP_AM_EXACT_KEY	1
+> > +#define NTMP_AM_SEARCH		2
+> > +#define NTMP_AM_TERNARY_KEY	3
+> > +		u8 table_id;
+> > +		u8 ver_cci_rr;
+> > +#define NTMP_HDR_VERSION	GENMASK(5, 0)
+> > +#define NTMP_HDR_VER2		2
+> > +#define NTMP_CCI		BIT(6)
+> > +#define NTMP_RR			BIT(7)
+> > +		__le32 resv[3];
+> > +		__le32 npf;
+> > +#define NTMP_NPF		BIT(15)
+> > +	} req_hdr;	/* NTMP Request Message Header Format */
+> > +
+> > +	struct {
+> > +		__le32 resv0[3];
+> > +		__le16 num_matched;
+> > +		__le16 error_rr;
+> > +#define NTMP_RESP_ERROR		GENMASK(11, 0)
+> > +#define NTMP_RESP_RR		BIT(15)
+> > +		__le32 resv1[4];
+> > +	} resp_hdr; /* NTMP Response Message Header Format */
+> > +};
+> > +
+> > +struct maft_keye_data {
+> > +	u8 mac_addr[ETH_ALEN];
+> > +	__le16 resv;
+> > +};
+> > +
+> > +struct maft_cfge_data {
+> > +	__le16 si_bitmap;
+> > +	__le16 resv;
+> > +};
+> > +
+> > +struct netc_cbdr_regs {
+> > +	void __iomem *pir;
+> > +	void __iomem *cir;
+> > +	void __iomem *mr;
+> > +
+> > +	void __iomem *bar0;
+> > +	void __iomem *bar1;
+> > +	void __iomem *lenr;
+> > +};
+> > +
+> > +struct netc_tbl_vers {
+> > +	u8 maft_ver;
+> > +	u8 rsst_ver;
+> > +};
+> > +
+> > +struct netc_cbdr {
+> > +	struct netc_cbdr_regs regs;
+> > +
+> > +	int bd_num;
+> > +	int next_to_use;
+> > +	int next_to_clean;
+> > +
+> > +	int dma_size;
+> > +	void *addr_base;
+> > +	void *addr_base_align;
+> > +	dma_addr_t dma_base;
+> > +	dma_addr_t dma_base_align;
+> > +
+> > +	spinlock_t ring_lock; /* Avoid race condition */
+>=20
+> Can this description be more specific? This type of comment is as
+> useful as not having it. Make the reader understand what is serialized
+> with what, to prevent concurrent, non-atomic access to what resources.
+>=20
+> > +};
+> > +
+> > +struct netc_cbdrs {
+> > +	int cbdr_num;	/* number of control BD ring */
+> > +	int cbdr_size;	/* number of BDs per control BD ring */
+> > +	struct device *dma_dev;
+> > +	struct netc_cbdr *ring;
+> > +	struct netc_tbl_vers tbl;
+> > +};
+> > +
+> > +enum netc_dev_type {
+> > +	NETC_DEV_ENETC,
+> > +	NETC_DEV_SWITCH
+> > +};
+>=20
+> Can you delay the introduction of this distinction until when the
+> "dev_type" will actually be used for something, and it's clear to
+> reviewers what is the intention behind it? Currently the switch driver
+> does not exist, and this has no purpose.
+>=20
 
- #define	SMALL_STREAM_ARRAY_SIZE		256
- #define	MEDIUM_STREAM_ARRAY_SIZE	1024
-+#define	GET_PORT_BW_ARRAY_SIZE		256
+Okay, I will remove it.
 
- /* Some Intel xHCI host controllers need software to keep track of the bus
-  * bandwidth.  Keep track of endpoint info here.  Each root port is allocated
-@@ -999,6 +1000,9 @@ enum xhci_setup_dev {
- /* bits 16:23 are the virtual function ID */
- /* bits 24:31 are the slot ID */
+> > +
+> > +struct ntmp_priv {
+>=20
+> Would it be better to name this "struct ntmp_client"? I don't really
+> understand the way in which it is "private".
 
-+/* bits 19:16 are the dev speed */
-+#define DEV_SPEED_FOR_TRB(p)    ((p) << 16)
-+
- /* Stop Endpoint TRB - ep_index to endpoint ID for this TRB */
- #define SUSPEND_PORT_FOR_TRB(p)		(((p) & 1) << 23)
- #define TRB_TO_SUSPEND_PORT(p)		(((p) & (1 << 23)) >> 23)
-@@ -1554,6 +1558,7 @@ struct xhci_hcd {
- 	struct dma_pool	*device_pool;
- 	struct dma_pool	*segment_pool;
- 	struct dma_pool	*small_streams_pool;
-+	struct dma_pool	*port_bw_pool;
- 	struct dma_pool	*medium_streams_pool;
+It refers to some private data of NTMP of different devices (enetc or
+switches). Since the current patch is only a small part of NTMP, many
+members have not been added to the structure. The following is the
+definition in our downstream.
 
- 	/* Host controller watchdog timer structures */
-@@ -1837,6 +1842,10 @@ struct xhci_container_ctx *xhci_alloc_container_ctx(struct xhci_hcd *xhci,
- 		int type, gfp_t flags);
- void xhci_free_container_ctx(struct xhci_hcd *xhci,
- 		struct xhci_container_ctx *ctx);
-+struct xhci_container_ctx *xhci_alloc_port_bw_ctx(struct xhci_hcd *xhci,
-+		gfp_t flags);
-+void xhci_free_port_bw_ctx(struct xhci_hcd *xhci,
-+		struct xhci_container_ctx *ctx);
- struct xhci_interrupter *
- xhci_create_secondary_interrupter(struct usb_hcd *hcd, unsigned int segs,
- 				  u32 imod_interval);
-@@ -1907,6 +1916,11 @@ int xhci_queue_isoc_tx_prepare(struct xhci_hcd *xhci, gfp_t mem_flags,
- int xhci_queue_configure_endpoint(struct xhci_hcd *xhci,
- 		struct xhci_command *cmd, dma_addr_t in_ctx_ptr, u32 slot_id,
- 		bool command_must_succeed);
-+int xhci_queue_get_port_bw(struct xhci_hcd *xhci,
-+		struct xhci_command *cmd, dma_addr_t in_ctx_ptr,
-+		u8 dev_speed, bool command_must_succeed);
-+int xhci_get_port_bandwidth(struct xhci_hcd *xhci, struct xhci_container_ctx *ctx,
-+		u8 dev_speed);
- int xhci_queue_evaluate_context(struct xhci_hcd *xhci, struct xhci_command *cmd,
- 		dma_addr_t in_ctx_ptr, u32 slot_id, bool command_must_succeed);
- int xhci_queue_reset_ep(struct xhci_hcd *xhci, struct xhci_command *cmd,
---
-2.43.4
+struct ntmp_priv {
+	enum netc_dev_type dev_type;
+	struct netc_cbdrs cbdrs;
+	u32 errata;
 
+	struct ntmp_caps caps;
+	/* bitmap of table entry ID */
+	unsigned long *ist_eid_bitmap;
+	unsigned long *rpt_eid_bitmap;
+	unsigned long *sgit_eid_bitmap;
+	unsigned long *isct_eid_bitmap;
+	unsigned long *sgclt_word_bitmap;
+	unsigned long *ett_eid_bitmap;
+	unsigned long *ect_eid_bitmap;
+	u32 ett_bitmap_size;
+	u32 ect_bitmap_size;
+
+	struct hlist_head flower_list;
+	struct mutex flower_lock; /* flower_list lock */
+
+	u64 (*adjust_base_time)(struct ntmp_priv *priv, u64 bt, u32 ct);
+	u32 (*get_tgst_free_words)(struct ntmp_priv *priv);
+};
+
+>=20
+> I'm looking at this from an API perspective, and I don't really
+> understand which one is the "top-level" object for an NTMP consumer
+> driver. Is it ntmp_priv or netc_cbdrs? Logically, ntmp_priv encapsulates
+> netc_cbdrs, but I see that all functions take the smaller netc_cbdrs,
+> which I find unintuitive. Could you just perhaps squash them into a
+> single structure, if they in fact serve the same purpose?
+>=20
+> > +	enum netc_dev_type dev_type;
+> > +	struct netc_cbdrs cbdrs;
+> > +};
+> > +
+> > +struct maft_entry_data {
+> > +	struct maft_keye_data keye;
+> > +	struct maft_cfge_data cfge;
+> > +};
+>=20
+> > +static int ntmp_delete_entry_by_id(struct netc_cbdrs *cbdrs, int tbl_i=
+d,
+> > +				   u8 tbl_ver, u32 entry_id, u32 req_len,
+> > +				   u32 resp_len)
+> > +{
+> > +	struct ntmp_dma_buf data =3D {.dev =3D cbdrs->dma_dev};
+> > +	struct ntmp_req_by_eid *req;
+> > +	union netc_cbd cbd;
+> > +	u32 len;
+> > +	int err;
+> > +
+> > +	if (entry_id =3D=3D NTMP_NULL_ENTRY_ID)
+> > +		return 0;
+>=20
+> What's the idea with the null entry ID? Why special-case it?
+>=20
+
+Some functions are configured by multiple tables. If a table is
+not needed in the current configuration, we may set its entry
+id to NTMP_NULL_ENTRY_ID, indicating that the table is bypassed.
+For the current patch, this condition can be removed.
+
+> > +
+> > +	/* If the req_len is 0, indicates the requested length is the
+> > +	 * standard length.
+> > +	 */
+> > +	if (!req_len)
+> > +		req_len =3D sizeof(*req);
+>=20
+> Objection: as submitted in this patch set, the req_len argument is _only_
+> passed as zero (the only caller is ntmp_maft_delete_entry()). I don't
+> know about downstream, but let's only add complexity that we need, when
+> we need it.
+>=20
+
+Okay, I will remove it.
+
+> > +
+> > +	data.size =3D req_len >=3D resp_len ? req_len : resp_len;
+> > +	err =3D ntmp_alloc_data_mem(&data, (void **)&req);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	ntmp_fill_crd_eid(req, tbl_ver, 0, 0, entry_id);
+> > +	len =3D NTMP_LEN(req_len, resp_len);
+> > +	ntmp_fill_request_headr(&cbd, data.dma, len, tbl_id,
+> > +				NTMP_CMD_DELETE, NTMP_AM_ENTRY_ID);
+> > +
+> > +	err =3D netc_xmit_ntmp_cmd(cbdrs, &cbd);
+> > +	if (err)
+> > +		dev_err(cbdrs->dma_dev, "Delete table (id: %d) entry failed: %d",
+> > +			tbl_id, err);
+> > +
+> > +	ntmp_free_data_mem(&data);
+> > +
+> > +	return err;
+> > +}
+> > +
+> > +static int ntmp_query_entry_by_id(struct netc_cbdrs *cbdrs, int tbl_id=
+,
+> > +				  u32 len, struct ntmp_req_by_eid *req,
+> > +				  dma_addr_t dma, bool compare_eid)
+> > +{
+> > +	struct device *dev =3D cbdrs->dma_dev;
+> > +	struct common_resp_query *resp;
+> > +	int cmd =3D NTMP_CMD_QUERY;
+> > +	union netc_cbd cbd;
+> > +	u32 entry_id;
+> > +	int err;
+> > +
+> > +	entry_id =3D le32_to_cpu(req->entry_id);
+> > +	if (le16_to_cpu(req->crd.update_act))
+> > +		cmd =3D NTMP_CMD_QU;
+> > +
+> > +	/* Request header */
+> > +	ntmp_fill_request_headr(&cbd, dma, len, tbl_id,
+> > +				cmd, NTMP_AM_ENTRY_ID);
+> > +
+> > +	err =3D netc_xmit_ntmp_cmd(cbdrs, &cbd);
+> > +	if (err) {
+> > +		dev_err(dev, "Query table (id: %d) entry failed: %d\n",
+> > +			tbl_id, err);
+> > +		return err;
+> > +	}
+> > +
+> > +	/* For a few tables, the first field of its response data is not
+>=20
+> s/its/their/
+>=20
+> > +	 * entry_id, so directly return success.
+> > +	 */
+> > +	if (!compare_eid)
+> > +		return 0;
+> > +
+> > +	resp =3D (struct common_resp_query *)req;
+> > +	if (unlikely(le32_to_cpu(resp->entry_id) !=3D entry_id)) {
+> > +		dev_err(dev, "Table (id: %d) query EID:0x%0x, response EID:0x%x\n",
+>=20
+> Can you please put some spaces between ":" and "0".
+
+Yes, sure.
+
+>=20
+> > +			tbl_id, entry_id, le32_to_cpu(resp->entry_id));
+> > +		return -EIO;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +int ntmp_maft_add_entry(struct netc_cbdrs *cbdrs, u32 entry_id,
+> > +			struct maft_entry_data *maft)
+> > +{
+> > +	struct ntmp_dma_buf data =3D {.dev =3D cbdrs->dma_dev};
+> > +	struct maft_req_add *req;
+> > +	union netc_cbd cbd;
+> > +	int err;
+> > +
+> > +	data.size =3D sizeof(*req);
+> > +	err =3D ntmp_alloc_data_mem(&data, (void **)&req);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	/* Set mac address filter table request data buffer */
+> > +	ntmp_fill_crd_eid(&req->rbe, cbdrs->tbl.maft_ver, 0, 0, entry_id);
+> > +	req->keye =3D maft->keye;
+> > +	req->cfge =3D maft->cfge;
+> > +
+> > +	ntmp_fill_request_headr(&cbd, data.dma, NTMP_LEN(data.size, 0),
+> > +				NTMP_MAFT_ID, NTMP_CMD_ADD,
+> > +				NTMP_AM_ENTRY_ID);
+> > +	err =3D netc_xmit_ntmp_cmd(cbdrs, &cbd);
+> > +	if (err)
+> > +		dev_err(cbdrs->dma_dev, "Add MAFT entry failed (%d)", err);
+>=20
+> Can you use symbolic error names? "Adding MAFT entry failed: %pe\n",
+> ERR_PTR(err).
+> Also notice the missing \n in the error message..
+
+Okay, thanks.
+
+>=20
+> Same comment for the error message in:
+> - ntmp_delete_entry_by_id()
+> - ntmp_rsst_query_or_update_entry() - which as per review feedback here
+>   should become 2 functions
+>=20
+> > +
+> > +	ntmp_free_data_mem(&data);
+> > +
+> > +	return err;
+> > +}
+> > +EXPORT_SYMBOL_GPL(ntmp_maft_add_entry);
+> > +
+> > +int ntmp_maft_query_entry(struct netc_cbdrs *cbdrs, u32 entry_id,
+> > +			  struct maft_entry_data *maft)
+> > +{
+> > +	struct ntmp_dma_buf data =3D {.dev =3D cbdrs->dma_dev};
+> > +	struct maft_resp_query *resp;
+> > +	struct ntmp_req_by_eid *req;
+> > +	u32 req_len =3D sizeof(*req);
+> > +	int err;
+> > +
+> > +	if (entry_id =3D=3D NTMP_NULL_ENTRY_ID)
+> > +		return -EINVAL;
+> > +
+> > +	data.size =3D sizeof(*resp);
+> > +	err =3D ntmp_alloc_data_mem(&data, (void **)&req);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	ntmp_fill_crd_eid(req, cbdrs->tbl.maft_ver, 0, 0, entry_id);
+> > +	err =3D ntmp_query_entry_by_id(cbdrs, NTMP_MAFT_ID,
+> > +				     NTMP_LEN(req_len, data.size),
+> > +				     req, data.dma, true);
+> > +	if (err)
+> > +		goto end;
+> > +
+> > +	resp =3D (struct maft_resp_query *)req;
+> > +	maft->keye =3D resp->keye;
+> > +	maft->cfge =3D resp->cfge;
+> > +
+> > +end:
+> > +	ntmp_free_data_mem(&data);
+> > +
+> > +	return err;
+> > +}
+> > +EXPORT_SYMBOL_GPL(ntmp_maft_query_entry);
+> > +
+> > +int ntmp_maft_delete_entry(struct netc_cbdrs *cbdrs, u32 entry_id)
+> > +{
+> > +	return ntmp_delete_entry_by_id(cbdrs, NTMP_MAFT_ID,
+> > +				       cbdrs->tbl.maft_ver,
+> > +				       entry_id, 0, 0);
+> > +}
+> > +EXPORT_SYMBOL_GPL(ntmp_maft_delete_entry);
+>=20
+> > +static void netc_clean_cbdr(struct netc_cbdr *cbdr)
+> > +{
+> > +	union netc_cbd *cbd;
+> > +	int i;
+> > +
+> > +	i =3D cbdr->next_to_clean;
+> > +	while (netc_read(cbdr->regs.cir) !=3D i) {
+> > +		cbd =3D netc_get_cbd(cbdr, i);
+> > +		memset(cbd, 0, sizeof(*cbd));
+> > +		i =3D (i + 1) % cbdr->bd_num;
+> > +	}
+> > +
+> > +	cbdr->next_to_clean =3D i;
+> > +}
+> > +
+> > +static struct netc_cbdr *netc_select_cbdr(struct netc_cbdrs *cbdrs)
+> > +{
+> > +	int i;
+> > +
+> > +	for (i =3D 0; i < cbdrs->cbdr_num; i++) {
+> > +		if (spin_is_locked(&cbdrs->ring[i].ring_lock))
+> > +			continue;
+> > +
+> > +		return &cbdrs->ring[i];
+> > +	}
+> > +
+> > +	return &cbdrs->ring[smp_processor_id() % cbdrs->cbdr_num];
+>=20
+> I think you need to be in a "preemption disabled" / "migration disable"
+> calling context for smp_processor_id() to be reliable. Otherwise, the
+> task can migrate to another CPU as soon as this function returns.
+>=20
+
+It does not matter, we just want to select a command BD ring when all
+command BD rings are busy. So smp_processor_id() is just a parameter,
+we can also use a random number.
+
+> Anyway, much can be said about this, but currently it is useless
+> complexity, because the only user, enetc4_setup_cbdr(), sets
+> "cbdrs->cbdr_num =3D 1", which side-steps the entire netc_select_cbdr()
+> logic.
+>=20
+> Please strip all unnecessary logic and only add it when the need
+> presents itself, so we can all assess whether the solution is
+> appropriate for that particular need.
+>=20
+
+Okay, agree
+
+> > +}
+> > +
+> > +static int netc_xmit_ntmp_cmd(struct netc_cbdrs *cbdrs, union netc_cbd
+> *cbd)
+> > +{
+> > +	union netc_cbd *cur_cbd;
+> > +	struct netc_cbdr *cbdr;
+> > +	int i, err;
+> > +	u16 status;
+> > +	u32 val;
+> > +
+> > +	if (cbdrs->cbdr_num =3D=3D 1)
+> > +		cbdr =3D &cbdrs->ring[0];
+> > +	else
+> > +		cbdr =3D netc_select_cbdr(cbdrs);
+> > +
+> > +	spin_lock_bh(&cbdr->ring_lock);
+> > +
+> > +	if (unlikely(!netc_get_free_cbd_num(cbdr)))
+> > +		netc_clean_cbdr(cbdr);
+> > +
+> > +	i =3D cbdr->next_to_use;
+> > +	cur_cbd =3D netc_get_cbd(cbdr, i);
+> > +	*cur_cbd =3D *cbd;
+> > +
+> > +	/* Update producer index of both software and hardware */
+> > +	i =3D (i + 1) % cbdr->bd_num;
+> > +	cbdr->next_to_use =3D i;
+> > +	dma_wmb();
+>=20
+> Can you place this dma_wmb() right next to the "*cur_cbd =3D *cbd" line,
+> to make it obvious that updating the producer index has nothing to do
+> with it? Or is there another reason for this ordering?
+>=20
+
+No special reason for this ordering, I will move it after "*cur_cbd =3D *cb=
+d".
+
+> > +	netc_write(cbdr->regs.pir, i);
+> > +
+> > +	err =3D read_poll_timeout_atomic(netc_read, val, val =3D=3D i,
+> > +				       10, NETC_CBDR_TIMEOUT, true,
+> > +				       cbdr->regs.cir);
+> > +	if (unlikely(err))
+> > +		goto cbdr_unlock;
+> > +
+> > +	dma_rmb();
+> > +	/* Get the writeback command BD, because the caller may need
+> > +	 * to check some other fields of the response header.
+> > +	 */
+> > +	*cbd =3D *cur_cbd;
+> > +
+> > +	/* Check the writeback error status */
+> > +	status =3D le16_to_cpu(cbd->resp_hdr.error_rr) & NTMP_RESP_ERROR;
+> > +	if (unlikely(status)) {
+> > +		err =3D -EIO;
+> > +		dev_err(cbdrs->dma_dev, "Command BD error: 0x%04x\n", status);
+> > +	}
+> > +
+> > +	netc_clean_cbdr(cbdr);
+> > +	dma_wmb();
+> > +
+> > +cbdr_unlock:
+> > +	spin_unlock_bh(&cbdr->ring_lock);
+> > +
+> > +	return err;
+> > +}
 
