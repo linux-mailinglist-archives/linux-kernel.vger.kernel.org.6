@@ -1,176 +1,153 @@
-Return-Path: <linux-kernel+bounces-562267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F2AA620C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 23:47:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31950A620D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 23:51:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 893F77A436A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:46:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2324519C1EC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5476B1F3B85;
-	Fri, 14 Mar 2025 22:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474221EDA26;
+	Fri, 14 Mar 2025 22:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WG20yWjb"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YX8Cb2VR"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309EA1922DE;
-	Fri, 14 Mar 2025 22:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8F81B0F2C
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 22:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741992428; cv=none; b=EVuC5EZEJd1724OJGl6yvUUPheYHq9UjG1kAl9KGLxibwdK9L0HdTLqUIfhXdn1VxjqUgfmdZc3euWRQJfRYpIJ7cb2iLUjmEe6r+taLFacCS50e3xGtt3CLldTCUcvfTTvVAmXm5fMTs9raYIt36W1g4Vq0E6mZxzoOloA4V1o=
+	t=1741992670; cv=none; b=cwPpoIdJ3gOIJAur3AFxTCaY6ePWOWKYJnK+PgAwjpOXnYohbBDvWm1bpw8nHGyLCnAYMLLxuZ0rAnnzw3zncb2Kef9PTjlaKVjlPjsE5IuHrbQIXh1DTHuoo4QY4D1hYqxmp7rkMjBKEl3TS3ITKgF1l884WrFgK6J4SzVlT7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741992428; c=relaxed/simple;
-	bh=Hk1rEIe9IsOXSaCzKOhfu7iBhtKI3LYOq/oFVgld87g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pmm570S5EYUvLyWnBdow+yxaqOYyRiQ7B63GEe+IE5b+PNKser1Hk1hc06qJYeZs7SNU6sy1og158ee7rw9iiMKp552v2dIW3WetlY274Rz7VIjlvLxG6Ywj0qATPMF3WkqFG+OC/p7dEu4IIXAUPV4e5a2TZ2FHENPwUOoxlPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WG20yWjb; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22403cbb47fso48805305ad.0;
-        Fri, 14 Mar 2025 15:47:06 -0700 (PDT)
+	s=arc-20240116; t=1741992670; c=relaxed/simple;
+	bh=0e63dBhED1vhsVehyEhcXoCrr89BKTLbrv7t2Fd2NHY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lfuUKPF80ZOlZ0kxstTuwlXzbfLLAsryBEjuIimRqJRy3EJ5BlZ0Nu5oYs3y/KAZiVxTcp46J0lF3nyd2uzyfS4m5ZenFtpqToAlvbuO/KLFsLP1BcLQ6TriDAPRJqyXrwvWd8oAOfsocwQjUcPT57jAjUzRb4Vl6W6aeGhaiVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YX8Cb2VR; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30761be8fcfso28587941fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 15:51:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741992426; x=1742597226; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0zZoEhi64Kn/eQi3WO9JY1pGevNfO0NZbYey6p1uGuc=;
-        b=WG20yWjbive7XJxidfRhUse/MsKeBOaf0Pk4bRXSI4dcuVzc3Iu3sMBGelbsJLr7lJ
-         BLc9YrC6lT5COExNsqOe3a6XtebwSzP6nAgJGR1afP6kJNBbxR7lTbIp1RedKmjFqiWS
-         l82EnqxmOzliOrUiHmSefbx4hP2Gwy7fggkf1cyx1l/Zz9cxSwtffxW7CqS+4Es+/oyn
-         MKkXwrb//bfUE1uq1GePkmTRvO+z0akIcshOb5eKa8PO9wMh/a0QZyFNlsRnOYlrH32X
-         39d/rWeqViTe080zFiXYfQBfg/j6awpTUQJisOBd7ffyPhCxY84AR87Gno/Qemmu1+S9
-         bKkQ==
+        d=google.com; s=20230601; t=1741992667; x=1742597467; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=abcj1sqti57082y+hPQTzkAaoTCwdpDPipp4Lzzk35Y=;
+        b=YX8Cb2VRReqzm15iTBa7NRzpzkqdpcPUdhGiYwhFovTymhAqZkWiYyClsaOZEVnnRi
+         nw7GJMvqnizGTk9i3l9zdGrCzx3ZRi8/yWIlmgQsgC1NLoEMDUEZgOOyQboeNWQQfigJ
+         DviaszZbvK5tKkseZFmW4tPXWks4vN7sEfF3+oDThHRUSPhcCWD2VYmiRbVRDudNJUK7
+         9LyUU2n8sFHydgAQzXIlZd+psAsOU5YEqhjFIZBq6YsNcqy+xiW+f6HENROmnC+1hUIR
+         v6HwC4Tpkq8qexP2xxfkZ3K5bM1KsPYxbYbHaO/wjNBdzGGjyOUNSM3+iYLUdw63/L+i
+         oIQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741992426; x=1742597226;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0zZoEhi64Kn/eQi3WO9JY1pGevNfO0NZbYey6p1uGuc=;
-        b=d2ZI7bxQNjbYnnTZXz/L/fTIdtsZrex/K0zbMYx8H6f/ixhC996vu2bgNsb0khnDyc
-         egtkUFjUnALLdpNd/gAsquMZvWUrGtgz+3y8dWdsuP4jW5ckZdrLnQ2r7GSKvwokH8Ry
-         20hn9iIU+rqzS76LwkGtnBdtVMTq/7k9EeqrwBZWDGzk1J0H0y1llmwOp2q9IWcI3tlU
-         gH/IU1N9HBjBm8/izccFWSvyV17/iLAbowJUjpR+VCvb1OzrIey9bIXipIS3BsUtudxa
-         aIcvftgQUygMSX+YsZ72WGwZM+6mxY7RyKzOMDfr8pV57d/xP34kQ5UmIo/5BM/Y8W/v
-         cnGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmAvYs9jXGBsTc4Sd2+cwDVcuk6//hBzmkITcqNhdhh4STJF3Sf29qdfENrFuQp+jBCKE=@vger.kernel.org, AJvYcCW/jwE/ZAo2JExcs1pLSjSOmKKPuCosOwO/q8xOCBe4x6+bjuG5MU+ERnk8GElqw3+0Bht7eCJ0k7dxFWenXENi@vger.kernel.org, AJvYcCWEtQ0T7i53/XNcJY3UkTYKFbNCi3WafU1lLyy2NT2tSZclo8/z/p9VQC8r8JWkHlD+RLtAArUJrpTkKkKN@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrBvxbZ0YSpRQkg3jQU+Q2sWszFv3jU8TLgOnuxlALS/9rRdP4
-	UIZOlgQQ9P+piRalQstnyh3YxEBHJme0mEAFixhMDqDFzrIUN98Y
-X-Gm-Gg: ASbGncuNOeW8klaUsM7usd4g8KCFq0qob7Uxi5W/Io0KXnbfw6FZLABBo/ceuYaMURO
-	DDYZqEVieAMIhR5DpSxintAdha/ueXEZPEhFekIKEoS1M6EiZPoUqebkDqReobPvXX2E54whBb8
-	+3jWXH3a+/7o3flRLX9xlCYjZpBKCA0Bn985QLgFdD1l37hDI3TCyKuMudPyQhYI4auyD/5/oXE
-	uE27KbGW1EOZ1PElN4Jng/dz0cN/0i/BX9TCVqMAfupE140Po4s3nwvw4+toqoE+wNQXBBlD0gm
-	G+WgyFGuA2PVwQ8agjsrba2pHl4nd7ynO2NjMX4n
-X-Google-Smtp-Source: AGHT+IE5BsFikv0Zy/M5K5/YooQ0IZXHiKgPfdHvD36gcvkA4VKCXVrThbSUpc5Gp513eGAfeESaMA==
-X-Received: by 2002:a05:6a00:92a3:b0:736:4abf:2961 with SMTP id d2e1a72fcca58-737223e8ef3mr4206808b3a.17.1741992426214;
-        Fri, 14 Mar 2025 15:47:06 -0700 (PDT)
-Received: from [192.168.0.56] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-737115511cfsm3390784b3a.45.2025.03.14.15.47.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 15:47:05 -0700 (PDT)
-Message-ID: <293dbe3950a782b8eb3b87b71d7a967e120191fd.camel@gmail.com>
-Subject: Re: [PATCH bpf-next 01/11] bpf: Move insn if/else into
- do_check_insn()
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Luis Gerhorst <luis.gerhorst@fau.de>, Alexei Starovoitov
- <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
- <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,  Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend	
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
- Fomichev	 <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>,  Puranjay Mohan <puranjay@kernel.org>, Xu Kuohai
- <xukuohai@huaweicloud.com>, Catalin Marinas	 <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Hari Bathini	 <hbathini@linux.ibm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,  Naveen N Rao
- <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael
- Ellerman	 <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Mykola
- Lysenko	 <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, Henriette Herzog	
- <henriette.herzog@rub.de>, Cupertino Miranda
- <cupertino.miranda@oracle.com>,  Matan Shachnai <m.shachnai@gmail.com>,
- Dimitar Kanaliev <dimitar.kanaliev@siteground.com>, Shung-Hsi Yu	
- <shung-hsi.yu@suse.com>, Daniel Xu <dxu@dxuuu.xyz>, bpf@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org, George Guo	
- <guodongtai@kylinos.cn>, WANG Xuerui <git@xen0n.name>, Tiezhu Yang	
- <yangtiezhu@loongson.cn>
-Cc: Maximilian Ott <ott@cs.fau.de>, Milan Stephan <milan.stephan@fau.de>
-Date: Fri, 14 Mar 2025 15:47:00 -0700
-In-Reply-To: <20250313172127.1098195-2-luis.gerhorst@fau.de>
-References: <20250313172127.1098195-1-luis.gerhorst@fau.de>
-	 <20250313172127.1098195-2-luis.gerhorst@fau.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+        d=1e100.net; s=20230601; t=1741992667; x=1742597467;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=abcj1sqti57082y+hPQTzkAaoTCwdpDPipp4Lzzk35Y=;
+        b=aOfYNL4+KnSPTWoTORweueIs2p+mwVQn3S97lH1Ei1/rV1JP4qXGE+7QVLHABK/bEb
+         eCA+jSHSBN8w2YPdP7RM/HMEzVW4sMc0ZvCkrJ8jDjBGSWbBN7nQ1enIoI8d1VBVaM7V
+         VpNB9MaoONYSFK0JPhSaRkbCJaGf3AZd/315aty6q08izQGo1rzPxMQCnbXSC/Q+PFNx
+         6n8xzasdGqRSqGSex1qUa8QwzyPkNN3REXaiccyxB/iqSnVbaVFlDP54ZI7nqXxGt2Tj
+         6FOPjZLq5Pi3hr7R6HxXUe1whjTH/uaj/MTFq1pjvBMthV5tBdUA8EvkH6QcJ15CIXGL
+         xrcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVZPvM1QIN/VYM0v4ZnqOB/zrh3hQtGBheaDe9ecJHW8AXeE/nwGn+S/5NuHAfDCzPaHVc+V3vd1xiolQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjRrMVomYo4+dhedZuYGikCQGn42hgv5YM/r3WYWlGEwHZwob7
+	Dw7hU7TPWb3trKCwSSHbXmrXhlxqptzrkgNyTINcI5Gi55QIxTyDMHjMNG+shDRR8a5DzkZCBx5
+	fFhglIcnv0jLDkGBVosAww+p9qOVFmn8U8NwHVvx4BGNd7bKSCg8=
+X-Gm-Gg: ASbGncvYw8oeiUGNJq7ryWK5Z/LdYnW9jGWUt+PY1xcrZOMawkEUjsEfi/coezs79XS
+	bOVI2z0p8AW+9+jvtvBcCRCYuGZU7TiAc/kj9Azji1cDYHvISLuR92wBFjUYFAduCzcvny/VsOW
+	8p8QWnCGN4UHqm1qRMocKUoy5YYRIIXLf2WqXoejdYo7yajJSGpl+OZQ==
+X-Google-Smtp-Source: AGHT+IFm3g7i0fgkNjTj5rX7/Jo01XkD7CMfZOkzb1YhI0t54Y6qJiv3UZuW9RLxsEL/MB0QZ4w++0T5EmUcfKcDATU=
+X-Received: by 2002:a05:6512:1048:b0:549:8537:79d6 with SMTP id
+ 2adb3069b0e04-549c3989676mr1462153e87.48.1741992666615; Fri, 14 Mar 2025
+ 15:51:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250310030004.3705801-1-lei.chen@smartx.com> <87cyej5rid.ffs@tglx>
+In-Reply-To: <87cyej5rid.ffs@tglx>
+From: John Stultz <jstultz@google.com>
+Date: Fri, 14 Mar 2025 15:50:53 -0700
+X-Gm-Features: AQ5f1JqB-akORsvQFGvjVXmkUMUkJqUkSvDDmb5myb8fx_M0da6KruNyOrbvmjM
+Message-ID: <CANDhNCoueki=keYNcNr4eXqgLFPh3VupDJC0hFqxm4FNKfGzYg@mail.gmail.com>
+Subject: Re: [PATCH] Fix rolling back of CLOCK_MONOTONIC_COARSE
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Lei Chen <lei.chen@smartx.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-03-13 at 18:21 +0100, Luis Gerhorst wrote:
-> This is required to catch the errors later and fall back to a nospec if
-> on a speculative path.
->=20
-> Move code into do_check_insn(), replace
-> * "continue" with "return INSN_IDX_MODIFIED"
-> * "goto process_bpf_exit" with "return PROCESS_BPF_EXIT"
-> * "do_print_state =3D " with "*do_print_state =3D "
->=20
-> Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
-> Acked-by: Henriette Herzog <henriette.herzog@rub.de>
-> Cc: Maximilian Ott <ott@cs.fau.de>
-> Cc: Milan Stephan <milan.stephan@fau.de>
-> ---
+On Fri, Mar 14, 2025 at 12:41=E2=80=AFPM Thomas Gleixner <tglx@linutronix.d=
+e> wrote:
+>
+> On Mon, Mar 10 2025 at 11:00, Lei Chen wrote:
+> > To fix this issue, the patch accumulates offset into tk, and export
+> > N(P2) to real tk and vdso.
+> >
+> > tk.tkr_mono :=3D N(P2) =3D N(P1) + offset * M1
+> >
+> > Then at P3, we calculate N(P3) based on N(P2) instead of N(P1):
+> > N(P3) :=3D N(P2) + clock_delta * M2
+>
+> Your analysis is mostly correct, but it is only correct versus the
+> coarse timekeeper.
+>
+> Moving everything forward to P2 breaks the periodic accumulation and
+> therefore NTP. Monitoring NTP/chrony immediately shows that they are
+> behaving differently and do not really converge.
+>
+> The real problem is that the introduction of the coarse time accessors
+> completely missed the fact, that xtime_nsec is adjusted by multiplier
+> changes. This went unnoticed for about 15 years :)
+>
+> So the obvious cure is to leave the accumulation logic alone and to
+> provide a seperate coarse_nsec instance, which compensates for the
+> offset.
+>
+> The offset contains the reminder of the periodic accumulation from the
+> point where timekeeping_advance() read the clocksource at T1.
+>
+> At the point of readout T1 nanoseconds have been:
+>
+>      T1nsec[OLD] =3D xtime_sec[OLD] * NSEC_PER_SEC +
+>                    (xtime_nsec[OLD] + offset * mult[OLD]) >> shift;
+>
+> After the accumulation and eventual multiplier update that becomes:
+>
+>      T1nsec[NEW] =3D xtime_sec[NEW] * NSEC_PER_SEC +
+>                    (xtime_nsec[NEW] + offset * mult[NEW]) >> shift;
+>
+> If the unmodified accumulation math is correct then:
+>
+>      T1nsec[OLD] =3D=3D T1nsec[NEW]
+>
+> The patch below implements exactly that and survives lightweight testing
+> where neither in kernel nor in userspace these time jumps are
+> observable anymore.
+>
+> It needs quite some eyeballs, testing and validation.
+>
 
-This refactoring is a long overdue, thank you!
-A few nits below.
+Hey Thomas,
+ Nice work chasing this down. The approach looks ok, but I'm wary of
+adding more state to manage.
 
-[...]
+Since this issue apparently only happens via do_adjtimex() calling
+timekeeping_advance(TK_ADV_FREQ) resulting in an mult adjustment being
+made without any accumulation before it, the approach I'm testing is:
+in that case, to do ~timekeeping_forward_now() to accumulate the small
+offset before doing the mult adjustment. I've got to move a little bit
+of code around to do this cleanly, but I'll send a patch out here
+shortly.
 
-> +		err =3D do_check_insn(env, insn, pop_log, &do_print_state, regs, state=
-,
-> +				    &prev_insn_idx);
-
-- `regs` remains declared in do_check(), while nothing prevents
-  pushing its declaration to do_check_insn().
-- `state` is `env->cur_state`, so I'd avoid passing it as a parameter
-  (just to reduce count);
-- `prev_insn_idx` is unused by `do_check_insn`;
-- `pop_log` is not used by `do_check_insn`;
-- given that `insn` is presumed to correspond to `env->insn_idx` in
-  many places down the stack not sure about this parameter.
-
-> +		if (err < 0) {
-> +			return err;
-> +		} else if (err =3D=3D INSN_IDX_MODIFIED) {
-
-Also, I'd get rid of `INSN_IDX_MODIFIED` and move `env->insn_idx++`
-into `do_check_insn()`. This would save a few mental cycles when
-looking at the code with full patch-set applied:
-
-		} else if (err =3D=3D INSN_IDX_MODIFIED) {
-			continue;
-		} else if (err =3D=3D PROCESS_BPF_EXIT) {
-			goto process_bpf_exit;
-		}
-		WARN_ON_ONCE(err);
-
-		if (state->speculative && cur_aux(env)->nospec_result) {
-			... bunch of actions ...
-		}
-
-		env->insn_idx++;
-
-One needs to stop for a moment and think why "bunch of actions" is
-performed for regular index increment, but not for INSN_IDX_MODIFIED.
-
-> +			continue;
-> +		} else if (err =3D=3D PROCESS_BPF_EXIT) {
-
-[...]
-
+thanks
+-john
 
