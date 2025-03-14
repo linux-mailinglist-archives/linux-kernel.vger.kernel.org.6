@@ -1,101 +1,142 @@
-Return-Path: <linux-kernel+bounces-561283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E50A60F9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:09:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB13BA60F9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:09:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E88AA1899BFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:09:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD45C1B602F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072281FDA6B;
-	Fri, 14 Mar 2025 11:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m6hG0Loi"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58D21FC7CD;
+	Fri, 14 Mar 2025 11:09:49 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFE01F3B94
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D9B1A5B82;
+	Fri, 14 Mar 2025 11:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741950553; cv=none; b=Mw+pvIY9ixrGaQKoUlj6aUU+vOId+6RZuYNd/35a9/hRUtn8a1sBgI4Wqgt1NUNvuYaXGWyWnSGf1k2NaY4WMvnNJeWD+Ropf6g/dTXQd23GbwxNMiaj/dIYOL99/JhdFS5mYK0mQOUvyqcu0enXfmdzFFS3b+QkcjzHPRRDh0M=
+	t=1741950589; cv=none; b=eGW5f4UoT1/GWm71bFqY2aoxTeVvFLwqbnnykyHzvxKvyFbNI5v5rJoLq1FOnzIGESrO3/12rMwVrv6rZRtC/XrH5w2SooTPiJL0dtvEP6qKdFRG8KriSRdAaqe+Uy7Am3KI5TlUlnCEVxVvLVg1mcpUgA8eXei3eR2rjlSRvAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741950553; c=relaxed/simple;
-	bh=MAwD1GtRtdpg0DZzKIDlnqc2cR1boIHlvN2IYDSCjM8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fx/rmd9sC0yxhC55VdkSUV2sxaPT82eAzaYykcQmymIhqUTi0IM3531GSjgE4U0LRZSjkApDdz+ntS5+92qNGc7P5NLrAv00pA67O3SPV+GRFGwW3le5YduJG4YG8hGOVgag8j0Vm5WQV50rdESSRRjjtO+22PNteMWp3NT9JWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m6hG0Loi; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5499da759e8so3346676e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 04:09:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741950550; x=1742555350; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MAwD1GtRtdpg0DZzKIDlnqc2cR1boIHlvN2IYDSCjM8=;
-        b=m6hG0LoilCMzzgojzMDVf6zenpvMylGBfpavXWHCQdef7eY55MPvFJCssroITc8Ye7
-         6GgIY4Br+E8GfbKyh4ciZ2dicFsLugUrgCZeyeGpxzZh+F8tGEF6u3QZqikjjllJChyU
-         +PcnxoPTEfPJMUXCAIbK8okZIwqbdw8j93cgqRs5POWZPZu4C0L5SXWN/jRzYlanUuUk
-         V++xXzwn9LzjDxFHd1zxrSYMSqQEh11CViOorklVWHALYIY5FoY4n6C2fb6OITfdQShZ
-         jI2UKloN5gRZUJQoE2TfxKe2SPSUnIsCnTLIfHT4q8/Cx0IYPlJDG8ndLx66FPrya9yJ
-         xfWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741950550; x=1742555350;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MAwD1GtRtdpg0DZzKIDlnqc2cR1boIHlvN2IYDSCjM8=;
-        b=l8d9zIy1uwu6YgZZmGvpw0C0Ek2qqBs4Uqgq9dvQQ9aPCMi5rKlSL9jOxLA+6fpwt8
-         AEn84YdsIjsM2tacIR9GsP3V0W2bdKyilRzh9hxlsMtDKNL61DqvFCRpDB0zGZ5jhD+Q
-         G4ZNnHhDF2PT/veZc5Di13xJznaEYfGk/KLPGUXKEJYhKJMFZ7a8kmrjSKzyW7EwpvOo
-         RIu4bqjJFa84MVvrrXCgneshbxWMZzueybRWXJY9OH27Sr7MwLVbcQxzwYkQajaGayJs
-         C55LuF8+wS9JrgOvO2Lc5RgfXFRJc+KbVN3MVCEeD9lRHIE6N+0J/egZXEaTk/ueSKUH
-         l3zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWT1Zq6AofVC23KOctJ5dbqQzC7j01dgw9exuckpXgpJOiUm+W/toZgn16pdrFQTgBGPVruf/K1SHSkbyM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZhWLhFzFppHB9zi+biCodwVK2IOC4Hg34s10kr2ZqtL7IsWwE
-	6xChqsKOKlm/UphfHZOJh/ss8p+44KaIco/XL71LeMW081N5kitEbKIpZkGKbgG/5DcigKgoq3d
-	NDBihwLOx/sCaM3rYk5LoigEMDdIJlHdxLU2HMw==
-X-Gm-Gg: ASbGncv0N5yg00AQqQuHdCkJg+C8/cfCuL/pGSd6JariDPLjFm82ZzG1Zupg4AeQH8G
-	XeqZxMxh8iicEZBeOY75Ah/B9L9xpRXv+lX82slNlWVy8IxzGOB1YW5MQAZQiiHLMkAKM70xeGZ
-	WI9Lki+YbhVw8grdCnphjlqTg=
-X-Google-Smtp-Source: AGHT+IExhx3X663308XXZlwm1c0/8LT2zEZAKvTgV6X9Pe3GenUDahAFj22+6QCmZWTu+4UGyOhFdfoHzjo57MlIqmE=
-X-Received: by 2002:a05:6512:238b:b0:549:88b8:ccad with SMTP id
- 2adb3069b0e04-549c3f97e1amr693966e87.20.1741950549684; Fri, 14 Mar 2025
- 04:09:09 -0700 (PDT)
+	s=arc-20240116; t=1741950589; c=relaxed/simple;
+	bh=LcUk1W4gYUAuud4YDzRGE15WvmLIL4ATkXosQxiLJL4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pLcKrmabPugeGfMkfcmRJHUCtZWfEBz3D6Nt34suZsw/GX5iHiwAr8Iv45T60tJLl+DwX/6nYqroSTU6+WNr1ahtrikm1xhMinB0Ik0EoREEP7WEDeZcNU9u1izYFLCkbCtDL76WwC5ZhCBN5n0PfcJUASD74mQgS1pxyRH0PVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDhQ10LXDz6J7rd;
+	Fri, 14 Mar 2025 19:06:33 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 29C72140680;
+	Fri, 14 Mar 2025 19:09:44 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Mar
+ 2025 12:09:43 +0100
+Date: Fri, 14 Mar 2025 11:09:42 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Gregory Price <gourry@gourry.net>
+CC: <lsf-pc@lists.linux-foundation.org>, <linux-mm@kvack.org>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [LSF/MM] CXL Boot to Bash - Section 0a: CFMWS and NUMA
+ Flexiblity
+Message-ID: <20250314110942.0000476a@huawei.com>
+In-Reply-To: <Z9MhVZmFVTPpuRe1@gourry-fedora-PF4VCD3F>
+References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
+	<Z8jORKIWC3ZwtzI4@gourry-fedora-PF4VCD3F>
+	<Z8u4GTrr-UytqXCB@gourry-fedora-PF4VCD3F>
+	<20250313172004.00002236@huawei.com>
+	<Z9MhVZmFVTPpuRe1@gourry-fedora-PF4VCD3F>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312072509.3247885-1-quic_wasimn@quicinc.com>
-In-Reply-To: <20250312072509.3247885-1-quic_wasimn@quicinc.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 14 Mar 2025 12:08:58 +0100
-X-Gm-Features: AQ5f1JqeFCXuNVd4MM_MrfjWEL2E41hAn6iGIfmUHWTfM1E_vGppRUa3h1NuRX8
-Message-ID: <CACRpkdZ6r47jhGVVoLn8XzfuMKMrkg8nCcp6hMwzUnTUSTZEwg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] pinctrl: qcom: Enable egpio function for sa8775p
-To: Wasim Nazir <quic_wasimn@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, Mar 12, 2025 at 8:25=E2=80=AFAM Wasim Nazir <quic_wasimn@quicinc.co=
-m> wrote:
+On Thu, 13 Mar 2025 14:17:57 -0400
+Gregory Price <gourry@gourry.net> wrote:
 
-> Add egpio function for GPIOs ranging from 126 to 148.
+> On Thu, Mar 13, 2025 at 05:20:04PM +0000, Jonathan Cameron wrote:
+> > Gregory Price <gourry@gourry.net> wrote:
+> >   
+> > > -------------------------------
+> > > One 2GB Device, Multiple CFMWS.
+> > > -------------------------------
+> > > Lets imagine we have one 2GB device attached to a host bridge.
+> > > 
+> > > In this example, the device hosts 2GB of persistent memory - but we
+> > > might want the flexibility to map capacity as volatile or persistent.  
+> > 
+> > Fairly sure we block persistent in a volatile CFMWS in the kernel.
+> > Any bios actually does this?
+> > 
+> > You might have a variable partition device but I thought in kernel at
+> > least we decided that no one was building that crazy?
+> >   
+> 
+> This was an example I pulled from Dan's notes elsewhere (i think).
+> 
+> I was unaware that we blocked mapping persistent as volatile.  I was
+> working off the assumption that could be flexible mapped similar to...
+> er... older, non-cxl hardware... cough.
 
-Patches applied!
+You can use it as volatile, but that doesn't mean we allow it in a CFMWS
+that says the host PA range is not suitable for persistent.
+A BIOS might though I think.
 
-Yours,
-Linus Walleij
+> 
+> > Maybe a QoS split is a better example to motivate one range, two places?
+> >   
+> 
+> That probably makes sense? 
+> 
+> > > -------------------------------------------------------------
+> > > Two Devices On One Host Bridge - With and Without Interleave.
+> > > -------------------------------------------------------------
+> > > What if we wanted some capacity on each endpoint hosted on its own NUMA
+> > > node, and wanted to interleave a portion of each device capacity?  
+> > 
+> > If anyone hits the lock on commit (i.e. annoying BIOS) the ordering
+> > checks on HPA kick in here and restrict flexibility a lot
+> > (assuming I understand them correctly that is)
+> > 
+> > This is a good illustration of why we should at some point revisit
+> > multiple NUMA nodes per CFMWS.  We have to burn SPA space just
+> > to get nodes.  From a spec point of view all that is needed here
+> > is a single CFMWS. 
+> >  
+> 
+> Along with the above note, and as mentioned on discord, I think this
+> whole section naturally evolves into a library of "Sane configurations"
+> and "We promise nothing for `reasons`" configurations.
+
+:)  Snag is that as Dan pointed out on discord we assume this applies
+even without the lock.  So it is possible to have device and host 
+hardware combinations where things are forced to be very non-intuitive.
+
+
+> 
+> Maybe that turns into a kernel doc section that requires updating if
+> a platform disagrees / comes up with new sane configurations.  This is
+> certainly the most difficult area to lock down because we have no idea
+> who is going to `innovate` and how. 
+Yup.  It gets much more 'fun' once DCD partitions/ regions enter the game
+as there are many more types of memory.
+
+Jonathan
+
+> 
+> ~Gregory
+
 
