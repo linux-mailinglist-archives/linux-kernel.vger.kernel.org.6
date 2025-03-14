@@ -1,253 +1,190 @@
-Return-Path: <linux-kernel+bounces-561433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE468A611AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:45:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65FE8A611AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:45:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F21B3AD48B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:44:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24F941B609ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA9C1FECDC;
-	Fri, 14 Mar 2025 12:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P0QfVvsR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1D71FF1BA;
+	Fri, 14 Mar 2025 12:45:10 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8461CD3F;
-	Fri, 14 Mar 2025 12:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713931FECBB;
+	Fri, 14 Mar 2025 12:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741956295; cv=none; b=kQNQuQyu9i5bnmp+BVjI3sWDDswBm2KAIkZeOTmQ5OMOmwhRWZ6hvHkdxEVEVs/GYob0QnSTkLGT4/wlwlcRgJ44XdsZ/yuqp+YWKjOcny8hfoAEOmJgoqGU8qfMkwVmO1KSHLS0ijmFXa/zV8ZiW1agEDKMLVVuTRo88ue7Sio=
+	t=1741956310; cv=none; b=KWDPmx8DpPrfBpE78FOdr6GCS1D/DL4zOLMuvCFwRup7Xu7gKvJUPKA2okAqerOp2FRGDDHCl+ClN8b8KwvK4Liz/81PMPS64mP1S2J+8xZ/O9AcHxOR1e91zGR1wg6qnl3B/Cl1A/sr+0673OMFaHmzGsfi3w3tCF2Mji3M0h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741956295; c=relaxed/simple;
-	bh=La6DZY4wbnGcBiVMBa0k0r8J7SH1OiA+ze5JGrV4quM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rw7JGjobT1J9ON1hE5l2Ymxjv03M2/LLrlo+VHmqcVWB/W5pZ3In0uREM2urhHnQzYeRqKHXHWNn3MK7VaW5Bw4bMbGUup5Q4GDkY30GyT4TpXiGBuVFbXTWtMymq+WuPqIi9M68XD7WGCEaHZYS0foGd8oPXbOc0YKw32luFzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P0QfVvsR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56D50C4CEE3;
-	Fri, 14 Mar 2025 12:44:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741956294;
-	bh=La6DZY4wbnGcBiVMBa0k0r8J7SH1OiA+ze5JGrV4quM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P0QfVvsRtcEwCo2I/kxPYbzf1oK4HUDvur8Nbp4vYklKQv7RIQUkGYWQleJr8C6Om
-	 v7YfYzBYb3jKf9ASNZyUZyGtH9LcPuonu3AcUuqjoY2+XITyS9o5byQwaGzOpcmgZ2
-	 I3d8mshiWOSx/jyElH4Ue8SNyG4XgdhQG/ZK9VPPwyCWGo1SQGlx4g5ryHIxo7X5cJ
-	 ku3XkhWs8w/xSOQu/LKkZejbeDGiQpsKY+xZElt6qvu/HkGYIdEKOD9kUHB7jo3Y/w
-	 s7jaH+0z44iBnzvtpo4xV3PEmBwYESJOc6FY+pJ766Rg0bGf28c9TmF5+Z/XZceFS5
-	 Wow5k5SkwKd8w==
-Date: Fri, 14 Mar 2025 12:44:50 +0000
-From: Lee Jones <lee@kernel.org>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: giometti@enneenne.com, gregkh@linuxfoundation.org,
-	andriy.shevchenko@linux.intel.com, raymond.tan@intel.com,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] mfd: intel_ehl_pse_gpio: Introduce Intel Elkhart
- Lake PSE GPIO and TIO
-Message-ID: <20250314124450.GP3890718@google.com>
-References: <20250307052231.551737-1-raag.jadav@intel.com>
- <20250307052231.551737-2-raag.jadav@intel.com>
+	s=arc-20240116; t=1741956310; c=relaxed/simple;
+	bh=H6/smu2eq1za5tJ/ycHo8F4oEFo0l6V+wEVVj4bRAy8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=onEcxXwqsvI+FRgy2Ov1S+L+tGxDYwln986rMBzcasMB2R9GeWAZOowLxdLQYdSkzFR4v10Y1Q7iOgxMZ2lZg+q7aDzfiv7E7BPmp9aGQs/NSVv5RymkqiOVSljt470zQqECMec8yjbFBIzu/VEhPE5Ggf6bxpX4f5A+JhfSXhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDkX20dT1z6K8hM;
+	Fri, 14 Mar 2025 20:41:54 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4B78F140680;
+	Fri, 14 Mar 2025 20:45:05 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Mar
+ 2025 13:45:04 +0100
+Date: Fri, 14 Mar 2025 12:45:03 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Robert Richter <rrichter@amd.com>
+CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
+ Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
+ De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
+	<terry.bowman@amd.com>
+Subject: Re: [PATCH v2 03/15] cxl/region: Factor out code for interleaving
+ calculations
+Message-ID: <20250314124503.000034d3@huawei.com>
+In-Reply-To: <20250218132356.1809075-4-rrichter@amd.com>
+References: <20250218132356.1809075-1-rrichter@amd.com>
+	<20250218132356.1809075-4-rrichter@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250307052231.551737-2-raag.jadav@intel.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, 07 Mar 2025, Raag Jadav wrote:
+On Tue, 18 Feb 2025 14:23:44 +0100
+Robert Richter <rrichter@amd.com> wrote:
 
-> Intel Elkhart Lake Programmable Service Engine (PSE) includes two PCI
-> devices that expose two different capabilities of GPIO and Timed I/O
-> as a single PCI function through shared MMIO.
+> Function cxl_calc_interleave_pos() contains code to calculate the
+> interleaving parameters of a port. Factor out that code for later
+> reuse. Add function cxl_port_calc_interleave() for this and introduce
+> struct cxl_interleave_context to collect all interleaving data.
 > 
-> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Robert Richter <rrichter@amd.com>
 > ---
->  MAINTAINERS                      |   5 ++
->  drivers/mfd/Kconfig              |  12 ++++
->  drivers/mfd/Makefile             |   1 +
->  drivers/mfd/intel_ehl_pse_gpio.c | 100 +++++++++++++++++++++++++++++++
->  4 files changed, 118 insertions(+)
->  create mode 100644 drivers/mfd/intel_ehl_pse_gpio.c
+>  drivers/cxl/core/region.c | 63 ++++++++++++++++++++++++++-------------
+>  1 file changed, 43 insertions(+), 20 deletions(-)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d4280facbe51..eb216eebb3a6 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11604,6 +11604,11 @@ F:	drivers/gpu/drm/xe/
->  F:	include/drm/intel/
->  F:	include/uapi/drm/xe_drm.h
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index c118bda93e86..ad4a6ce37216 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -1800,27 +1800,34 @@ static int find_pos_and_ways(struct cxl_port *port, struct range *range,
+>  	return rc;
+>  }
 >  
-> +INTEL EHL PSE GPIO MFD DRIVER
-> +M:	Raag Jadav <raag.jadav@intel.com>
-> +S:	Supported
-> +F:	drivers/mfd/intel_ehl_pse_gpio.c
+> +struct cxl_interleave_context {
+> +	struct range *hpa_range;
+> +	int pos;
+
+If this isn't going to get bigger later in the series I'd be inclined to just pass
+the two separately.  Update the pos based on return value if non negative.
+
+Maybe I'm missing a reason that doesn't work.
+
+
+
+> +};
 > +
->  INTEL ETHERNET DRIVERS
->  M:	Tony Nguyen <anthony.l.nguyen@intel.com>
->  M:	Przemek Kitszel <przemyslaw.kitszel@intel.com>
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 6b0682af6e32..36eac5245179 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -597,6 +597,18 @@ config MFD_HI655X_PMIC
->  	help
->  	  Select this option to enable Hisilicon hi655x series pmic driver.
+>  /**
+> - * cxl_calc_interleave_pos() - calculate an endpoint position in a region
+> - * @cxled: endpoint decoder member of given region
+> + * cxl_port_calc_interleave() - calculate interleave config of an endpoint for @port
+> + * @port: Port the new position is calculated for.
+> + * @ctx: Interleave context
+
+>   *
+> - * The endpoint position is calculated by traversing the topology from
+> - * the endpoint to the root decoder and iteratively applying this
+> - * calculation:
+> + * The endpoint position for the next port is calculated by applying
+> + * this calculation:
+>   *
+>   *    position = position * parent_ways + parent_pos;
+>   *
+>   * ...where @position is inferred from switch and root decoder target lists.
+>   *
+> + * The endpoint's position in a region can be calculated by traversing
+> + * the topology from the endpoint to the root decoder and iteratively
+> + * applying the function for each port.
+> + *
+>   * Return: position >= 0 on success
+>   *	   -ENXIO on failure
+>   */
+> -static int cxl_calc_interleave_pos(struct cxl_endpoint_decoder *cxled)
+> +static int cxl_port_calc_interleave(struct cxl_port *port,
+> +				    struct cxl_interleave_context *ctx)
+>  {
+> -	struct cxl_port *iter, *port = cxled_to_port(cxled);
+> -	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+> -	struct range *range = &cxled->cxld.hpa_range;
+> -	int parent_ways = 0, parent_pos = 0, pos = 0;
+> +	int parent_ways = 0, parent_pos = 0;
+>  	int rc;
 >  
-> +config MFD_INTEL_EHL_PSE_GPIO
-> +	tristate "Intel Elkhart Lake PSE GPIO MFD"
-> +	depends on PCI && (X86 || COMPILE_TEST)
-> +	select MFD_CORE
-> +	help
-> +	  This MFD provides support for GPIO and TIO that exist on Intel
-
-Remove references to MFD.
-
-> +	  Elkhart Lake PSE as a single PCI device. It splits the two I/O
-> +	  devices to their respective I/O drivers.
+>  	/*
+> @@ -1852,22 +1859,38 @@ static int cxl_calc_interleave_pos(struct cxl_endpoint_decoder *cxled)
+>  	 * complex topologies, including those with switches.
+>  	 */
+>  
+> -	/* Iterate from endpoint to root_port refining the position */
+> -	for (iter = port; iter; iter = parent_port_of(iter)) {
+> -		if (is_cxl_root(iter))
+> -			break;
+> +	if (is_cxl_root(port))
+> +		return 0;
+>  
+> -		rc = find_pos_and_ways(iter, range, &parent_pos, &parent_ways);
+> -		if (rc)
+> -			return rc;
+> +	rc = find_pos_and_ways(port, ctx->hpa_range, &parent_pos, &parent_ways);
+> +	if (rc)
+> +		return rc;
+>  
+> -		pos = pos * parent_ways + parent_pos;
+> -	}
+> +	ctx->pos = ctx->pos * parent_ways + parent_pos;
 > +
-> +	  To compile this driver as a module, choose M here: the module will
-> +	  be called intel_ehl_pse_gpio.
-> +
->  config MFD_INTEL_QUARK_I2C_GPIO
->  	tristate "Intel Quark MFD I2C GPIO"
->  	depends on PCI
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 9220eaf7cf12..8f7d257856db 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -196,6 +196,7 @@ obj-$(CONFIG_MFD_TIMBERDALE)    += timberdale.o
->  obj-$(CONFIG_PMIC_ADP5520)	+= adp5520.o
->  obj-$(CONFIG_MFD_ADP5585)	+= adp5585.o
->  obj-$(CONFIG_MFD_KEMPLD)	+= kempld-core.o
-> +obj-$(CONFIG_MFD_INTEL_EHL_PSE_GPIO)	+= intel_ehl_pse_gpio.o
->  obj-$(CONFIG_MFD_INTEL_QUARK_I2C_GPIO)	+= intel_quark_i2c_gpio.o
->  obj-$(CONFIG_LPC_SCH)		+= lpc_sch.o
->  obj-$(CONFIG_LPC_ICH)		+= lpc_ich.o
-> diff --git a/drivers/mfd/intel_ehl_pse_gpio.c b/drivers/mfd/intel_ehl_pse_gpio.c
-> new file mode 100644
-> index 000000000000..6a6ad1390a7b
-> --- /dev/null
-> +++ b/drivers/mfd/intel_ehl_pse_gpio.c
-> @@ -0,0 +1,100 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Intel MFD driver for Elkhart Lake - Programmable Service Engine
-
-As above.
-
-> + * (PSE) GPIO & TIO
-> + *
-> + * Copyright (c) 2025 Intel Corporation
-> + *
-> + * Intel Elkhart Lake PSE includes two PCI devices that expose two
-> + * different capabilities of GPIO and Timed I/O as a single PCI
-> + * function through shared MMIO.
-> + */
-> +
-> +#include <linux/array_size.h>
-> +#include <linux/ioport.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/pci.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/stddef.h>
-> +
-> +#define PSE_GPIO_OFFSET		0x0000
-> +#define PSE_GPIO_SIZE		0x0134
-> +
-> +#define PSE_TIO_OFFSET		0x1000
-> +#define PSE_TIO_SIZE		0x06B0
-> +
-> +static struct resource ehl_pse_gpio_resources[] = {
-> +	DEFINE_RES_MEM(PSE_GPIO_OFFSET, PSE_GPIO_SIZE),
-> +	DEFINE_RES_IRQ(0),
-> +};
-> +
-> +static struct resource ehl_pse_tio_resources[] = {
-> +	DEFINE_RES_MEM(PSE_TIO_OFFSET, PSE_TIO_SIZE),
-> +	DEFINE_RES_IRQ(1),
-> +};
-> +
-> +static struct mfd_cell ehl_pse_gpio_devs[] = {
-> +	{
-> +		.name = "gpio-elkhartlake",
-> +		.num_resources = ARRAY_SIZE(ehl_pse_gpio_resources),
-> +		.resources = ehl_pse_gpio_resources,
-> +		.ignore_resource_conflicts = true,
-> +	},
-> +	{
-> +		.name = "pps-gen-tio",
-> +		.num_resources = ARRAY_SIZE(ehl_pse_tio_resources),
-> +		.resources = ehl_pse_tio_resources,
-> +		.ignore_resource_conflicts = true,
-> +	},
-> +};
-> +
-> +static int ehl_pse_gpio_probe(struct pci_dev *pci, const struct pci_device_id *id)
-> +{
-> +	int ret;
-> +
-> +	ret = pcim_enable_device(pci);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pci_set_master(pci);
-> +
-> +	ret = pci_alloc_irq_vectors(pci, 2, 2, PCI_IRQ_ALL_TYPES);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = mfd_add_devices(&pci->dev, PLATFORM_DEVID_AUTO, ehl_pse_gpio_devs,
-
-dev_*?
-
-> +			      ARRAY_SIZE(ehl_pse_gpio_devs), pci_resource_n(pci, 0),
-> +			      pci_irq_vector(pci, 0), NULL);
-> +	if (ret)
-> +		pci_free_irq_vectors(pci);
-> +
-> +	return ret;
+> +	return ctx->pos;
 > +}
 > +
-> +static void ehl_pse_gpio_remove(struct pci_dev *pdev)
+> +static int cxl_calc_interleave_pos(struct cxl_endpoint_decoder *cxled)
 > +{
-> +	mfd_remove_devices(&pdev->dev);
-> +	pci_free_irq_vectors(pdev);
-> +}
+> +	struct cxl_port *iter, *port = cxled_to_port(cxled);
+> +	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+> +	struct cxl_interleave_context ctx;
+> +	int pos = 0;
 > +
-> +static const struct pci_device_id ehl_pse_gpio_ids[] = {
-> +	{ PCI_VDEVICE(INTEL, 0x4b88) },
-> +	{ PCI_VDEVICE(INTEL, 0x4b89) },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(pci, ehl_pse_gpio_ids);
+> +	ctx = (struct cxl_interleave_context) {
+> +		.hpa_range = &cxled->cxld.hpa_range,
+> +	};
 > +
-> +static struct pci_driver ehl_pse_gpio_driver = {
-> +	.probe		= ehl_pse_gpio_probe,
-> +	.remove		= ehl_pse_gpio_remove,
-> +	.id_table	= ehl_pse_gpio_ids,
-> +	.name		= "ehl_pse_gpio",
-> +};
-> +module_pci_driver(ehl_pse_gpio_driver);
-> +
-> +MODULE_AUTHOR("Raymond Tan <raymond.tan@intel.com>");
-> +MODULE_AUTHOR("Raag Jadav <raag.jadav@intel.com>");
-> +MODULE_DESCRIPTION("Intel MFD for Elkhart Lake PSE GPIO & TIO");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.34.1
-> 
+> +	for (iter = cxled_to_port(cxled); pos >= 0 && iter;
+> +	     iter = parent_port_of(iter))
+> +		pos = cxl_port_calc_interleave(iter, &ctx);
+>  
+>  	dev_dbg(&cxlmd->dev,
+>  		"decoder:%s parent:%s port:%s range:%#llx-%#llx pos:%d\n",
+>  		dev_name(&cxled->cxld.dev), dev_name(cxlmd->dev.parent),
+> -		dev_name(&port->dev), range->start, range->end, pos);
+> +		dev_name(&port->dev), ctx.hpa_range->start, ctx.hpa_range->end,
+> +		ctx.pos);
+>  
+>  	return pos;
+>  }
 
--- 
-Lee Jones [李琼斯]
 
