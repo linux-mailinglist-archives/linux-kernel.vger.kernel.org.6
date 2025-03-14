@@ -1,121 +1,117 @@
-Return-Path: <linux-kernel+bounces-561815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75FC9A616A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:44:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 790AAA616A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:44:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4639C165F58
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:43:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4BB4464B28
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB61204F7D;
-	Fri, 14 Mar 2025 16:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7559F20409D;
+	Fri, 14 Mar 2025 16:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bgEqsRfc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FI3StjOY"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fw4GoLgt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF049204C1F;
-	Fri, 14 Mar 2025 16:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A402036F3;
+	Fri, 14 Mar 2025 16:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741970559; cv=none; b=p3jH9r2vGEWXJiHt1D+1z3Vi/vhIS6aLi7iLLYt3sj4jUcLsXEuYjb4gc1nzfvaz9N7B+HEC5PRAJ8Gha86kggxr8ioj9owDFcljqejcmboENZ9H6lTRAqq/1njeiNmJt5njQBW3pMEVkCjOCTJrfpvx/h900NrQrulS24FMQu4=
+	t=1741970623; cv=none; b=OQ92UqHY0jy8vQO/Jo8CffP554Ti+DvDvZhThYtaTGPTohWRFD4BVIAft3rw7JqjoJRS9J60sLxG2l18S2A4lJBndOS3N/sByGlACMChqB3p2PmVbc7PKNhkhfEu1yqrG0IoLoRD6vEI/i/oPKqH2ffvTAcsTh/7n9TL9cjAv5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741970559; c=relaxed/simple;
-	bh=WKvPBqAheABYVXZCOMX/grkc+3SAOOYUHz4YuZsE/P0=;
+	s=arc-20240116; t=1741970623; c=relaxed/simple;
+	bh=g+pFKnCIFmlzrO15+eEkGyZ6oAi2qsmhKmTsgkZhi9w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oQGdC05sHghFCHdtS+MHy3DZlh7POOrXwZtyOovxrTlRw+7Ie95RU9eOhXdydiUtyL+6sM0nwrsPjh7CLnn/MVXwDbnOXP6kH1AAAXsKdC5hr9j0Qn1r3/YrzDghAwfmDby9Ue94nXYst7Lfi99SzWKR8iF9dqhTBMgWUAnqjzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bgEqsRfc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FI3StjOY; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 14 Mar 2025 17:42:34 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741970555;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tYlPwasXBzLfgEyJddys083H0WNthfCNPSsv0doG2Do=;
-	b=bgEqsRfcBMtkfP0wbQPmmiEkCbQ15g6h3mpeVQZARg9564I5uBy+tB0VayJFeisXX8zXJ2
-	5oKgNf1KdiJ6SkINlyCr/B6rMgQ4G725dxP/3XSCMELmDqQzoawdKi+cZYX69Qht0u2MqA
-	9Y3IffYa6JVtsoeLFNPeS8wawEQf9ud0gRiWNRrIyaAQGNqflPsK1n3jGTaqgsfm4FiJKB
-	BA3chkPe4/tVm7PrRz64hrbBZUJv7oVY43n++0ClkZvU+1RHrYvcXmK5OGlF5iCSF0CwSJ
-	vKk3FnlTi4Xf+Y6a69wx5vu+ltNu+Yf46ml6reBFmGuXNg1+ZaoKxdPtMUPBmA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741970555;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tYlPwasXBzLfgEyJddys083H0WNthfCNPSsv0doG2Do=;
-	b=FI3StjOYvtarRJPlbmUMnre0628h2cAhLZLpGcHRlRhbhgv2nEoyZgHFkTULCzvMbfKW7a
-	/zo6VemKynZh9GAg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [RFC PATCH 10/10] memcg: no more irq disabling for stock locks
-Message-ID: <20250314164234.KHdt_CWt@linutronix.de>
-References: <20250314061511.1308152-1-shakeel.butt@linux.dev>
- <20250314061511.1308152-11-shakeel.butt@linux.dev>
- <9e1e3877-55ae-4546-a5c1-08ea730ea638@suse.cz>
- <20250314115802.DESa-C1z@linutronix.de>
- <2c62mvfo4726x3ci3sze7u55encoycbbzbaatzslkbhur2dkvd@wlli7wrcjlik>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TNgg/E2BLh71X8OARerdySPHCnQ2hDPFhhHrBnQ/u5O39FLHgj6AmxMPPT3zlnpdMsv+s31yOGXPEibJjNcD0OeT2ZBmLq2DeSmW518gN91CfdSaBjpbPRH/16dDQoo3gJjYCUsvNcTTF2r71qdMRminyVGCMTn8/o1t1XsGt1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fw4GoLgt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 334C0C4CEE5;
+	Fri, 14 Mar 2025 16:43:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741970623;
+	bh=g+pFKnCIFmlzrO15+eEkGyZ6oAi2qsmhKmTsgkZhi9w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fw4GoLgtnoyJdwmTxgyMWNMMiYzieByNZtVz6yDPAMNtqis6GKwICYPS++kil9H0t
+	 zL9vGRN7kJAVBdDjkCocXexHfbMcMqrFdHKdC/sEDqs2EGCFkGU2Mk+q/RFgO6SUR2
+	 +Yd/m5Bmi+ZyNl+0ZFjSmQHDRzKrBh+F1zHxB208CO5q0T8YHubu0SOJ8U/DVdPI8l
+	 B8fK5uHobjhHS9rwc91wx72FrKje7DIKybn2z4gPDGxMg0zvnQHjRAxY/JFkPmIqwQ
+	 Jd+OZkQCwQzvvYa7aAksIRty/volC241N1kSNy73fKatfnRAOHzozTlfg6AxNntgpX
+	 QgtplaHDfLKBg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tt88L-000000000Sx-3fRZ;
+	Fri, 14 Mar 2025 17:43:42 +0100
+Date: Fri, 14 Mar 2025 17:43:41 +0100
+From: Johan Hovold <johan@kernel.org>
+To: srinivas.kandagatla@linaro.org
+Cc: broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+	krzysztof.kozlowski@linaro.org, linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dmitry.baryshkov@linaro.org, johan+linaro@kernel.org
+Subject: Re: [PATCH v4 0/5] ASoC: q6apm: fix under runs and fragment sizes
+Message-ID: <Z9RcvQBe523KITZW@hovoldconsulting.com>
+References: <20250314143220.6215-1-srinivas.kandagatla@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2c62mvfo4726x3ci3sze7u55encoycbbzbaatzslkbhur2dkvd@wlli7wrcjlik>
+In-Reply-To: <20250314143220.6215-1-srinivas.kandagatla@linaro.org>
 
-On 2025-03-14 08:55:51 [-0700], Shakeel Butt wrote:
-> On Fri, Mar 14, 2025 at 12:58:02PM +0100, Sebastian Andrzej Siewior wrote:
-> > On 2025-03-14 11:54:34 [+0100], Vlastimil Babka wrote:
-> > > On 3/14/25 07:15, Shakeel Butt wrote:
-> > > > Let's switch all memcg_stock locks acquire and release places to not
-> > > > disable and enable irqs. There are two still functions (i.e.
-> > > > mod_objcg_state() and drain_obj_stock) which needs to disable irqs to
-> > > > update the stats on non-RT kernels. For now add a simple wrapper for
-> > > > that functionality.
-> > > 
-> > > BTW, which part of __mod_objcg_mlstate() really needs disabled irqs and not
-> > > just preemption? I see it does rcu_read_lock() anyway, which disables
-> > > preemption. Then in __mod_memcg_lruvec_state() we do some __this_cpu_add()
-> > > updates. I think these also are fine with just disabled preemption as they
-> > > are atomic vs irqs (but don't need LOCK prefix to be atomic vs other cpus
-> > > updates).
-> > 
-> > __this_cpu_add() is not safe if also used in interrupt context. Some
-> > architectures (not x86) implemented as read, add, write.
-> > this_cpu_add()() does the same but disables interrupts during the
-> > operation.
-> > So __this_cpu_add() should not be used if interrupts are not disabled
-> > and a modification can happen from interrupt context.
+On Fri, Mar 14, 2025 at 02:32:15PM +0000, Srinivas Kandagatla wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > 
-> So, if I use this_cpu_add() instead of __this_cpu_add() in
-> __mod_memcg_state(), __mod_memcg_lruvec_state(), __count_memcg_events()
-> then I can call these functions without disabling interrupts. Also
-> this_cpu_add() does not disable interrupts for x86 and arm64, correct?
-> For x86 and arm64, can I assume that the cost of this_cpu_add() is the
-> same as __this_cpu_add()?
+> On Qualcomm Audioreach setup, some of the audio artifacts are seen in
+> both recording and playback. These patches fix issues by
+> 1. Adjusting the fragment size that dsp can service.
+> 2. schedule available playback buffers in time for dsp to not hit under runs 
+> 3. remove some of the manual calculations done to get hardware pointer.
+> 
+> With these patches, am able to see significant Audio quality improvements.
+> I have few more patches to optimize the dsp drivers, but for now am
+> keeping this series simple to address the underruns and overruns issues
+> noticed in pipewire setup.
+> 
+> Any testing would be appreciated.
+> 
+> Please note that on pipewire min-latency has to be set to 512 which
+> reflects the DSP latency requirements of 10ms. You might see audio
+> artifacts like glitches if you try to play audio below 256 latency.
 
-on arm64, __this_cpu_add will "load, add, store". preemptible.
-this_cpu_add() will "disable preemption, atomic-load, add, atomic-store or
-start over with atomic-load. if succeeded enable preemption and move an"
+> Changes since v3:
+> 	- updated period size aligment patch with 10ms period size
+> 	  contstriants.
+> 
+> Changes since v2:
+> 	- dropped patch which is causing regression with pluseaudio.
+> 	- setup period sizes only for capture path
+> 	- fix underruns/overruns in dsp pipelines.
+> 	- add fixes tag
+> 	- add patch to fix buffer alignment
+> 
+> Changes since v1:
+> 	- added new patches to fix the fragment size, pointer
+> 	  calculations
+> 	- updated to schedule only available buffers.
+> 
 
-so no, this is not the same. On x86 it is possible to increment a memory
-value directly with one opcode so you get preempted either before or
-after that operation.
+I tested v4 on the X13s with PulseAudio and T14s with PipeWire.
 
-Sebastian
+I'm no longer noticing any regressions with PulseAudio, while this
+series makes PipeWire actually usable.
+
+I may be hearing some crackling with PipeWire when recording with the 
+pavucontrol volume meters enabled which results in a quantum size of
+256. But I guess that's to be expected. Playback seems to work also at
+256 with v4.
+
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
+
+Johan
 
