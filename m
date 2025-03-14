@@ -1,74 +1,93 @@
-Return-Path: <linux-kernel+bounces-561448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09FAA611D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:58:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE09A611DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:00:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC560882491
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:57:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BA647A3E47
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4D61FF609;
-	Fri, 14 Mar 2025 12:57:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFC71FF1B5;
-	Fri, 14 Mar 2025 12:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142311FE470;
+	Fri, 14 Mar 2025 13:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AtI1StQk"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2589E8F54
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741957072; cv=none; b=jxWz1t48Rx61ckqPC/BfCBPonwqzOfYR7+ezVhQXA0kGnz14whXiNoNXSCvVcNeLI9ZtPsG56fO+uwIlElI3NKqGPzuooqmcHeQ7nzqz3XB6lTMxOvZIMYxhOZG3d5knSxDQ/8K7UDewYtTdjs5hm1Ps7lpHu1SrOcGW9QavQ/A=
+	t=1741957208; cv=none; b=NnzBj10zXGmPrywEeKRMQEfQfnJRkWDLwt4/Ph6btX4LxQhAJs2I263RnDK39OGTH99l6me3WhAlkNNkg+ZVO0J/phQgzK8CUvSyOiOgCoFocWs0Fo8CW39f/68NQI02goF/OqFUUJKGCGGsow8m4kxlNJrdKCLUaOMldeJOJn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741957072; c=relaxed/simple;
-	bh=RcOkYDUv35MvE/uLyzwk8BISRxmfvXl5ufdaRavJsRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X0PH+ekxj9IJ8dxIvPMBqxyaqP59JBpcm+EtGo6//8SApiJkLfkjLeb94ZOlxiL6fUwM/lB2BTVceKjmuO0KNrSHJg26Fix+QSRL86SL6b4oiL78kLbvzm2CXzDzs6fqBBahuYabIEQujZ4uj3nifh/Pi6wAwolIOOTx0pwDlRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 810651424;
-	Fri, 14 Mar 2025 05:57:59 -0700 (PDT)
-Received: from [10.174.36.208] (unknown [10.174.36.208])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9322F3F673;
-	Fri, 14 Mar 2025 05:57:46 -0700 (PDT)
-Message-ID: <acba6a71-4ee8-445a-aae9-822f88079cb3@arm.com>
-Date: Fri, 14 Mar 2025 18:27:43 +0530
+	s=arc-20240116; t=1741957208; c=relaxed/simple;
+	bh=5GiZDtcyL2LqdkjlXrFc0MGSIspCiZMg0zXNERs4NHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f9P8/oVRrhFnrpemodTHoHbyZ3HDkTgJyLt8RM5frrK26qi/iR5YA86FCrpciaW15W/ICIapdEGdOXreghObQYMeRQIR/F+qv50s0N4APx10FxgH6l1UiqbuSGJanvjlwyLSDGYFswv928P5zYD/4HxvOQI85tRVa0QB/xbZnYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AtI1StQk; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LLzNLEvRYvejLAFvOqrcf7Nl0LV+XaLJ4l6MlUXOqms=; b=AtI1StQkkr8X73dvC24TGKwScB
+	IwYxi52FCYrPvwUFc4EnmVdfHXhqY4FmBIgESJXbksmSwb8LmBLnXkVBfopFd+agqLVeqnaf7NNqZ
+	L5xFO8GpnNSLqv7m6VtVs9X5tLE6aEdsf4M6cRvMiEo0Z4s3Lx/ERFyv+JCR/kWcDPundqcBf8UuU
+	WE4Z8n9gmn9mThHa3ComioRPpzyEJ/b3qpkVRcPgyjwhv+1GxCfTpYt3kDnEINegfZLidnOz38MZX
+	3k7DRyRiJ5yA17Wtz4QCTXmC9rInyJ4r3/rTzqkYJMfvvVcVJXPccatOK/AgOxkrQdEt836ro1p1K
+	fim4kkOQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tt4dr-00000002thh-1A0k;
+	Fri, 14 Mar 2025 12:59:59 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 932EF300599; Fri, 14 Mar 2025 13:59:58 +0100 (CET)
+Date: Fri, 14 Mar 2025 13:59:58 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: kan.liang@linux.intel.com
+Cc: mingo@redhat.com, tglx@linutronix.de, bp@alien8.de, acme@kernel.org,
+	namhyung@kernel.org, irogers@google.com,
+	linux-kernel@vger.kernel.org, ak@linux.intel.com,
+	eranian@google.com
+Subject: Re: [PATCH V9 3/7] perf: attach/detach PMU specific data
+Message-ID: <20250314125958.GC36322@noisy.programming.kicks-ass.net>
+References: <20250314000242.323199-1-kan.liang@linux.intel.com>
+ <20250314000242.323199-3-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Update mask post pxd_clear_bad()
-To: Matthew Wilcox <willy@infradead.org>
-Cc: jroedel@suse.de, akpm@linux-foundation.org, ryan.roberts@arm.com,
- david@redhat.com, hch@lst.de, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250313181414.78512-1-dev.jain@arm.com>
- <Z9NDkFzSj-vnvGOy@casper.infradead.org>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <Z9NDkFzSj-vnvGOy@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314000242.323199-3-kan.liang@linux.intel.com>
 
+On Thu, Mar 13, 2025 at 05:02:38PM -0700, kan.liang@linux.intel.com wrote:
 
+> @@ -12551,6 +12813,14 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+>  	if (err)
+>  		return ERR_PTR(err);
+>  
+> +	if (event->attach_state & PERF_ATTACH_TASK_DATA) {
+> +		err = attach_perf_ctx_data(event);
+> +		if (err) {
+> +			security_perf_event_free(event);
+> +			return ERR_PTR(err);
+> +		}
+> +	}
+> +
+>  	/* symmetric to unaccount_event() in _free_event() */
+>  	account_event(event);
+>  
 
-On 14/03/25 2:14 am, Matthew Wilcox wrote:
-> On Thu, Mar 13, 2025 at 11:44:14PM +0530, Dev Jain wrote:
->> Since pxd_clear_bad() is an operation changing the state of the page tables,
->> we should call arch_sync_kernel_mappings() post this.
-> 
-> Could you explain why?  What effect does not calling
-> arch_sync_kernel_mappings() have in this case?
+This seems weird. We just pushed all the error handling into
+__free_event(), and now you're adding one special case back.
 
-Apologies, I again forgot to explain the userspace effect.
-I just found this by code inspection, using the logic the fixes commit 
-uses: we should sync when we change the pxd.
-
-The question I have been pondering on is, what is the use of the 
-pxd_bad() macros, when do we actually hit a bad state, and why don't we 
-just trigger a BUG when we hit pxd_bad()?
+Also, you've placed it after security_perf_event_alloc(), which I
+_think_ wants to be last.
 
