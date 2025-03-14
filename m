@@ -1,151 +1,83 @@
-Return-Path: <linux-kernel+bounces-561867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE48A617A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:31:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 195A3A617C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:32:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EF4F16B8DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:31:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDEC3170090
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2D1202F6D;
-	Fri, 14 Mar 2025 17:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3503204C32;
+	Fri, 14 Mar 2025 17:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JvwzHpMA"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q0qOFIXU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A4678F2E;
-	Fri, 14 Mar 2025 17:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F301E204C0D;
+	Fri, 14 Mar 2025 17:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741973484; cv=none; b=H4On0P3szfNlwX4Sls6bKJ1Zh8uqsr+Hbwj51v2l3WnMgb8mmrMCkrc7j+nJaGJvgYMhTmOOi/FL5uVkXSpSRGWyHuDhJhFCeZ9MVhG6HUJ86220F1M3mER7DbCFNGlSOO576cJWlLxBKva4ye6aLLI6w4erZbr/pHjpo5E57TY=
+	t=1741973515; cv=none; b=khhhi9EFFnlsOlgt+artCFBDS9DNnHIYN+lQJ8WiIT2eD1dAvI7kkTvxMSjKqmmNaE3Al3b1XJBma6Rt0a0gjz5RpErp+cUHSj1iiHG9TZ9HCo57WU13GzFUsHPqQ7znnZpeVcp+58sncHxOuAbImT6bjyOOQ+zj0jm3v4MZjWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741973484; c=relaxed/simple;
-	bh=lQHiypFcLak6lsLXoWDwnUCHVk/PPGA0FiTJLIOtutE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=cYxAIxbeVswWtbU0xehY2UrmxfVIYl5S0hwCsCKiLnUsTN3Rp/2l4EdPD3DFmVuklBYjOetE4E7KneVNRnbeE7kC2L3bcu3LctJV6pzh7SE47vPETg3KS3+qls5ndwFZmvYW20kr+YJYZOUTxQbeZvNQNtvXw374VlW5dyVGxEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JvwzHpMA; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-224191d92e4so48993065ad.3;
-        Fri, 14 Mar 2025 10:31:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741973482; x=1742578282; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=o2H9f8fayNTLuc4RxM/hrBITullJSe5ENEpakpPOGu4=;
-        b=JvwzHpMAhMzQ1nvz1Kwa2Vkw5QflYshLaAGnhSzcAuDSlOZmdqwA1F1quIv0+qWy3a
-         CgEK7eD62Sr0Y3a+mUchkAln1ioxsG5/ky3ulwYIBV9FqMXhEV77fNyyya3IV4ZW7BlP
-         ARNNGzw55tHOsa28x6MEzDsxBHmomNLK6AaJAIPX+1o7wcXlRQit93gQL9rCNPPG9f1q
-         deOGnUuRoVCDAyR1+QlXoBCrCQj3FJ5Wue1xA9CPX1smQQ/mrueRqrJiI6yXpfXDzA16
-         NG8to+yrJPDZWyIvBXbAccum2mwULXXEgR2RsEpfzbLHCISuY18OdI4VbN2DVlCIcaJd
-         Bjsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741973482; x=1742578282;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o2H9f8fayNTLuc4RxM/hrBITullJSe5ENEpakpPOGu4=;
-        b=od7ElcWCBukyLSzV8GdJGuxKxis0vV6tYuZ6Ulfovnz+4Hivj+dLzDUe+a3gTs7FLw
-         jTOcVQjv8CkvivDS5dFp2FZl5h8OM92BIwVyAr3giyvcxY/ummDBmg+IIw6CWapkAm8X
-         bbd0QEWK97lB6QK5LHy6n2xpyQr6MK4UBFYa6U1kzo+/DmkKO1s1G7szBdwHc03fA14x
-         3b9jP3nAn5QnphwgHgRFfLaNzK3NHBvKtFddu+yg0p4MW1sVrQGZNOsWs3l/PSo6pgU8
-         o5QCUFgayGPw4QkMEXRVMEaiJH/y+0iF2AI3b5BEJh7KJcp4eYZoTjSjZS+DftGELpxN
-         TVjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWK16r2JeHmU/GnNT1iKeCtbaBMUfLn2Jtk5Oqeg1nHRzRFtnm8y6KbFv/T02bPqzJ0YE3oXgNd4xhw4hg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLuMjNabnhDf0Dv7uFmN5/nIq5D4TXC+OkwcByTmxVYaXUkQco
-	vUQ08enFKl3RGRd3BsHOMufvKds6J+h1Zzqsw+c+8+3Z8bhvHnO+OxfLGw==
-X-Gm-Gg: ASbGncvtV+cYSUGhMJf81R5et0Pjv3+5mrOdoxEp9KKMyR6r668F1yvI6Q54pZjneXN
-	7QTc1b2mVTsKbqapWW/O4HHCv7g/rTZwXVOq57YoiwuLy3jS+Ziq/nLXpXRHuDzRxUiyrhg4RO3
-	F4m02iKcXrbQRnNGz9EpL1OaoEgnsPpHhOn8fgbV171y7tQTDUaU1uzeKFRfyHi29bcUnPNUndR
-	lCRXRHuLDRTpgTvmSuOLGhhvP5LZJXO9cyIpM6ge2wVsAWPE0NoC3uO0q658+JFr5+BhVG23xQa
-	qJVCd6fAj6UT8KonRvXK15Cs/R4eYrlDDdckbLunAeiYEupPbOo=
-X-Google-Smtp-Source: AGHT+IGW1ErhGDYOgIoHp1zxSvP+OCdC+KrhrI01W0s2eDw5SYAFJ5Fu5ht9zU33PZPMd68g4r9Xfw==
-X-Received: by 2002:a17:902:ec83:b0:223:3624:87b7 with SMTP id d9443c01a7336-225e0a4857dmr30165535ad.13.1741973482001;
-        Fri, 14 Mar 2025 10:31:22 -0700 (PDT)
-Received: from Grommit.. ([2804:7f0:3f4:18cf:4497:3613:11f3:bcd3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6f38sm31160435ad.129.2025.03.14.10.31.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 10:31:21 -0700 (PDT)
-From: Gabriel Lima Luz <lima.gabriel.luz@gmail.com>
-To: linux-fbdev@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-	Teddy Wang <teddy.wang@siliconmotion.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	~lkcamp/patches@lists.sr.ht
-Subject: [PATCH v2] staging: sm750fb: Remove unused enum dpms
-Date: Fri, 14 Mar 2025 14:31:09 -0300
-Message-ID: <20250314173114.4476-1-lima.gabriel.luz@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741973515; c=relaxed/simple;
+	bh=og9U6wqzCSAWLnFEe2nPzBgfKbgmyVXzWTGq8RgpJ3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xk804//F7wjHpORcW2zs9Yud0Dcd2Rw7c0hiWsPh4vumsP0aCsdn3AMeW8EYuD8jpEXuFYcMhP/VfXw4In5PNFymOozj1+wy07DvZ/Q2Nvk4lLez60Yq+51Ft4ukeEuWdwMdLq26krz7/P6KeLpdvcQqxPB59YSkPW3dwKsLI54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q0qOFIXU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED740C4CEE3;
+	Fri, 14 Mar 2025 17:31:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741973514;
+	bh=og9U6wqzCSAWLnFEe2nPzBgfKbgmyVXzWTGq8RgpJ3w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q0qOFIXUg4JWpcibNwNfoiloucbBlOp2T4yt/hKYOPM+pS750X/psWtyJPGNFuOU6
+	 /8nugG9iTLcRDDBU+zmlzD7Gky7yArNZ9bx1Ql55PcP+6nzlAkJXJfovL0kPBEOp8m
+	 E4xeWNCHNEkh/QtI3txE8ddIZKcoG6C+Dq+AsVdiwRXp7IDS4+OlDMq8HxAp4QzeTc
+	 Riz1I96lBvMXpeseaRg9YwyTW/LnlzF39Z9arD1Gwt9YOapvOVe4vRn2GhKLvlXWHa
+	 AQT2UlqEwekfEIXdvjN+Qg/aDe8cF0X81u7GrkqPVbcGmLp7X+vjrWHCXcdMLY3znV
+	 Hr1gujy+GhEXQ==
+Date: Fri, 14 Mar 2025 18:31:48 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] rust: device: implement device context marker
+Message-ID: <Z9RoBMXWsrjg6jjg@cassiopeiae>
+References: <20250314160932.100165-1-dakr@kernel.org>
+ <20250314160932.100165-3-dakr@kernel.org>
+ <67d465bb.050a0220.d2e19.8fc9@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67d465bb.050a0220.d2e19.8fc9@mx.google.com>
 
-remove unused enum and replace its usage with
-a unsigned int.
-add comment to ddk750_set_dpms function for
-documenting state values
+On Fri, Mar 14, 2025 at 10:21:58AM -0700, Boqun Feng wrote:
+> On Fri, Mar 14, 2025 at 05:09:05PM +0100, Danilo Krummrich wrote:
+> > Some bus device functions should only be called from bus callbacks,
+> > such as probe(), remove(), resume(), suspend(), etc.
+> > 
+> > To ensure this add device context marker structs, that can be used as
+> > generics for bus device implementations.
+> > 
+> > Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> > Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> 
+> Try chronological order for the tags? It was suggested first and then
+> reviewed.
 
-Signed-off-by: Gabriel Lima Luz <lima.gabriel.luz@gmail.com>
----
- drivers/staging/sm750fb/ddk750_power.c | 10 ++++++++--
- drivers/staging/sm750fb/ddk750_power.h |  9 +--------
- 2 files changed, 9 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/staging/sm750fb/ddk750_power.c b/drivers/staging/sm750fb/ddk750_power.c
-index 12834f78eef7..547a96ccba9b 100644
---- a/drivers/staging/sm750fb/ddk750_power.c
-+++ b/drivers/staging/sm750fb/ddk750_power.c
-@@ -3,8 +3,14 @@
- #include "ddk750_reg.h"
- #include "ddk750_power.h"
- 
--void ddk750_set_dpms(enum dpms state)
--{
-+void ddk750_set_dpms(unsigned int state)
-+{	/*
-+	 *	state values documentation
-+	 *	crt_DPMS_ON = 0x0,
-+	 *	crt_DPMS_STANDBY = 0x1,
-+	 *	crt_DPMS_SUSPEND = 0x2,
-+	 *	crt_DPMS_OFF = 0x3,	unsigned int value;
-+	 */
- 	unsigned int value;
- 
- 	if (sm750_get_chip_type() == SM750LE) {
-diff --git a/drivers/staging/sm750fb/ddk750_power.h b/drivers/staging/sm750fb/ddk750_power.h
-index 63c9e8b6ffb3..93dafdde3699 100644
---- a/drivers/staging/sm750fb/ddk750_power.h
-+++ b/drivers/staging/sm750fb/ddk750_power.h
-@@ -2,19 +2,12 @@
- #ifndef DDK750_POWER_H__
- #define DDK750_POWER_H__
- 
--enum dpms {
--	crtDPMS_ON = 0x0,
--	crtDPMS_STANDBY = 0x1,
--	crtDPMS_SUSPEND = 0x2,
--	crtDPMS_OFF = 0x3,
--};
--
- #define set_DAC(off) {							\
- 	poke32(MISC_CTRL,						\
- 	       (peek32(MISC_CTRL) & ~MISC_CTRL_DAC_POWER_OFF) | (off)); \
- }
- 
--void ddk750_set_dpms(enum dpms state);
-+void ddk750_set_dpms(unsigned int state);
- void sm750_set_power_mode(unsigned int mode);
- void sm750_set_current_gate(unsigned int gate);
- 
--- 
-2.43.0
-
+Is that a thing? When I apply patches I usully keep ACKs, RBs and SOBs together
+at the bottom.
 
