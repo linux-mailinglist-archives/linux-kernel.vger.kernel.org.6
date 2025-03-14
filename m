@@ -1,76 +1,71 @@
-Return-Path: <linux-kernel+bounces-561808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF88A6167E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:41:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A82FA61681
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:42:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA2D1461C8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:41:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F01B19C4433
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395C92036FE;
-	Fri, 14 Mar 2025 16:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF822036F6;
+	Fri, 14 Mar 2025 16:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="LNso99M4"
-Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gllG0Kdb"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BE1202F95
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34893202F9F
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741970498; cv=none; b=d9DJIDKwR+ZqZMEaPJpxZDv0YdTMAwalCEeAofJiJwxgssJEKa1TVh+xnS+C/phFUTJ4u/d8Ottrs5wB96BISiLfUJg0qxTfY8cYxiqxkRw1LG5rxAEdIEzl9VA5iOo0x3iJy5et6NWRYzcGeiXK4240ISvkIRU4O5s9Ow5b/DQ=
+	t=1741970510; cv=none; b=bL/q57PaT3wMqx0vhU2VgmnY2Xc+G7JBAnLxjtNHvX9YyIzglWNUtKGyo7lzEjZtSNOWN2FdpN+dibEdfIyKsi/h3/gofi9p0P9DwQc4V/6jFegIYucL3FyF7G4alOpwBVqE9Ak88cuPcOadM7UWvcxuCeDm355kYe37iCbUH+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741970498; c=relaxed/simple;
-	bh=O82n78ss5+Ih+r33ZKwLEO2agcUD4VZ0XGXk5KLTdfM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RkPCeqXgpAzEJSuURs5LGNUogmLNX/EVENZsUGiLvPoAYUc4dk+Gt+Pys3ZbrO680/pWgLyFgALqNOitftGuxS1NCEBAAso9qwhsFxtzSoUTIkVaECFM2lJXQISJ4jeIqOfFjXxnuh8d3lmP/3lhJX0JtEXUwLxvzfY0Wylptwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=LNso99M4; arc=none smtp.client-ip=66.163.187.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741970490; bh=LSPWeeDc4kfnTy6XAQkhnXeL0TiR4naRLFabBLo1bMs=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=LNso99M4BYH1kVbCXtvSjy5XJIwAFVQ/tOmiZhx5zPKt0+f6KcGXN2Cun8EPk4/CSNawsj3/da69jGs2owL8o5u1W29X6m/5Km+hgAL+GnqBxaWYpZQaoMymufF52JJ2feSQYASWHqXle6k/heamH8KB40UXrbCDFpws/0GWATPXgoDwxSbBCDJfuc8Dhv9IvLMdea0dSC1NP8skohfKzZ8GS+3zazFvJRvZv274K49Uzj3QlT5x1EKlBgrczGmE7m8YbJKW+YlMP3eo2nHCFpaXXMFsfdOx0KbB/mr14VagTNB/Myelt9lyB4s53SLsiVfEES7+KOsefXcZ6L7yrQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741970490; bh=6jjAwDm2pxXtJK8wOstbrf3Oxp5hYC01T9bBVHhzKM7=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=M+vtayvJBDLYYN2Z/ub+Afh22JFWT8VarfPE9GaQ9//eKxa31XVEDhgDvOiSt2/AiJRG4yg45X0Lo+m28zv4Z+XFe1WI4r4Dr3hjJqz7Dr2Caox8iEbisnzTMAMRrgfXsPGPWw1eNEQ8jR39l2A1WqsuORU4GAvktLoVIVoqg1RJGX04CdleYawapmYVkVNI3I8vVAYbPVLpBM8pnSg/eOqfaxqH239knjYIgyMIufl8YeTnrVBRdhiU1j8pIQ/vb81AwN2rJK7QlcUz11re5e1cFgGoe2dgPKMDBLdxLWpPTd+ypB9/njGVw8WaaPWMAcrJkz9878VZkCWQRUF2jw==
-X-YMail-OSG: YOJJeNAVM1nD2IKlVSMjlgST4etRQIf0.CmdGrSFZNQCmezWvojqo0m5PJLr4Zs
- IP0SAiA.xSSjs8eUYg1dqqwVb.WAJ6w2Rjetu15aL6eM71maI7mFtMRJEM2yyYOZJwqVHo7P8b20
- jIpRkkcOtYjTQpL79bPk5mX6L7Xp4s9B5IGIdB83n2N5BEoUH8b7FSHvfFBlf7yhTuW7rdEvpI6H
- F4L110vX6vzAojYCSA50OmSlIDPkJrbAwnBtHDsLEAZlx13QlgFVS1Yaf6qz60LvTUtSrG3KqyF3
- m41DtMbjiMFvUcibFHFaHByUzWDBWg5lqO7pYjMW34AopOigaqyaJFje6PdvXiq6OhuzOiCfMbLE
- Ioqjt2wfkpzznAJVK8Sn8fF5m5KkBfT3qTGClIMbQ7Q6jNUbO1a8mTpPFn_batbgFlX7vGPC_IBK
- rTTntHM8yAVJVz64E5SsJ5VRw7fyH_jhjaFcta_4p9KzULSqPXWQDNJby9RooRt3W0w2sfHunyC5
- o1wayG0pxT7FXXYaiUH0byCYr5ZWnpWhooAsfJnIIqApPkbdyXPoloOSOi0QopMJLO9U2ybbva_7
- rVm5FDorQzn32DpN1X1XC0Hj_2b2XpX21CK7rlQ17sL2zu5BeSqj2kDgHmbP9w6wYFP9kBad_x3a
- Nolh5Xq1BXBgLUQ60X07kO.Dfci_FMZVhp7u7G1CEffc_L5FkTPmhOSICeUHDOBwYQCUU7itN_QU
- PXUn3caV3sPl6uguVANFkHkj4iVBMAJLzEALzGebML1rcEroeXjF7txslCk6D_ftyQlvEc7sKMqM
- m0RwbX0Wca1V8WoZQS0FmLpicZmRkrV.nRZJa7orBGpENQF24S.ppiunW8u00TP_I2BSERzOg_H.
- exdknPjAGSWUtbhXhgLbhu5JTSLeuHLJ9abiKctv0yZNRn0Aypynan0wjn_Rz7.rybHYFYFJPEwI
- LiJ_apxgDSqPVk_zEKlJ0lzeNmuwelg0heJ_5o1lNVxPWRaI6sSMQ_kRtdZeMraz.rEWrPhG9D8L
- aSUQgPb3V0WI5dqmNbD.z8VN1Y66bzgKlRBHbNGf3Z4Ad3WaMhtMd2qBiry9ae5dXKYiF7UXnD7u
- w7svDtEfOXmpu2LgZx0EAdGbGcc8NsM361e8LlQQQDlJu9zE.xxxy5SMqCMnzwHeGIDlOABnqy09
- javx98fTTyF5K81iJSiyEuGos9A6gstr9F0yhv6R1Jr83xL7NBYYTSxHULK4kt6h0clT2XwbIdLv
- e64Rhd9Ovs7FZIVYxLI3xI6oNCv0yn3_1B2qwXir8ssLa6WKUI9MCSx2SOuQ47unytNz6jEacgO.
- 87ofhYx4wdhzfUvUXGKmsTRh_cbZTH7PaQ84pBQXGntspanC0278Sc7v1ERvz.s0aLJr44HiIrRn
- Lq.Pb5FfTu6vefHd2NgXJaF9ePh5Og9tSevAzAjHVlM.i3LBvJWQpptxLf2B9txIu3Yhz_tUTLnb
- L0xCRtTFK6uWhRwoHtxr0u3RVoTZlWwaAz4oEKbwrb17dNWhTukEgVeOOw1EiOhX_hO5fqNK7kYI
- a6uWOYPZ.hcBRd_ZCHpEUVjzQNVFz.8aRMOmZJdqCO5C2wUGfC_8nf1h5dUEmeVLmLcRtKuSuYBd
- 4LFX2BAg0l5QOdjpZ2e3TECOzY1dlJz6We7ZchXorDX0g9vdERwea.Rw2WDVKh_9wfx6IiHE7HHf
- dJT_foepbv08LUzJ0BgFRlpcRo._OAzQEHSmEB8R5WG_X7qlzzOS2euvsOQwn3Za0N6PlzL5Mami
- 6s2GVZzEQgZ6hhum0.kM1JestrnsoXCxH6lFWlxOBgoAZeT1ysmGy.FyFLHcyn9tnAdqfByUtBYY
- z92LO.MOmCSX0_yGCUUIZTts1GbCUMuErn1cNqB63tBhkjFFvxoXCgXwaNzvMuVivM71Kpegh3pp
- 9lxGxt34zzLbb4TIMJJm4PXeol5oKa3vWN47D8TTNx9jWdpfu2ChtwBvyR7xnMUNs.Ptup0FoLks
- stsTtDMxbl042_GVZTaRBXTdDWxqZTk_H_fGPwOC5POXFRP19wv4r3YVerHxPF4m4ZF3wfhBniuX
- kkiQEcd64yN_yj1aJpQc1e02GaM6lv2cXYhGCP7F28lSDAt2J0V_SzMKRrEaClATYUNwP3ILRpEd
- FLyjK6XM5osASD9uK1C0rpq1lknhgxgvE5eO0.61eLp5oYYXSDQOIJfO8Vs2IkHZaSjulCp1_lZX
- CtZa.0vLTZvXjOKsVuIAF4n2W3I4pHevyln3pItBvEphyw78JXGjFHgoNQv4htgsvJwsnt9lCp7e
- 3BUSAL1DU_cfwcjjTxuMc
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 853f45af-6bfd-42c6-8a39-b9fab4ed7dfe
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Fri, 14 Mar 2025 16:41:30 +0000
-Received: by hermes--production-gq1-7d5f4447dd-9qjv2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6c9efc90c0421e9334029701ef688062;
-          Fri, 14 Mar 2025 16:41:27 +0000 (UTC)
-Message-ID: <42e5bb33-1826-43df-940d-ec80774fc65b@schaufler-ca.com>
-Date: Fri, 14 Mar 2025 09:41:24 -0700
+	s=arc-20240116; t=1741970510; c=relaxed/simple;
+	bh=iScy1MCNzTIFtmxXYQTG2qk5hdNDHYXbrDbETGvOHo0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=BnOxyCJl6RnpcetFbu3OMCvPZKmjx9x66QJZEFm0kR6oha4I4iikCffaIwjMiIUh9QtHEY4nZPZ0CUnjgrObZ8hC2TeiKFCMyHVFFePN1ZRGVTMzi/znYirCd8LbPzO8iBu6bCuEYpr3sGUyZXizMl0yIDAU1cJ94S+huUOmYf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gllG0Kdb; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250314164146euoutp02ffd20020f9989980ace462da872c734c~suPI5OSuM2711527115euoutp02g
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:41:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250314164146euoutp02ffd20020f9989980ace462da872c734c~suPI5OSuM2711527115euoutp02g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741970506;
+	bh=lqm59DIlU8Uravjb1r9ttfGo+LbA8OSm6CzNRKe5hJc=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=gllG0Kdb9Y8NTlPmK93k2GJgd8T7nJiytIUo1OMQgDQOJKbtV9sWqbrFxJPzaqq34
+	 npcK/O5ENdTRo5bbldMIsoAm9NeRj8j56IlseFYJJU+iyiGCI3QtqdseJUxeWK9r4j
+	 wO+ZCAHrhsjIqZCbJwXiy8mlX0DtCcxaFPdXmEt8=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250314164146eucas1p13f14cfd3854a8bbf5bc969a85a48dc75~suPIqwzVb0132101321eucas1p1M;
+	Fri, 14 Mar 2025 16:41:46 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 9B.1F.20397.94C54D76; Fri, 14
+	Mar 2025 16:41:46 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250314164145eucas1p25e7a2cc4fab4cc15471b5c1b42cd16bc~suPIEhrzU2579325793eucas1p2N;
+	Fri, 14 Mar 2025 16:41:45 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250314164145eusmtrp2f2f24762421d6b18bccfe4837e014844~suPID5b_J1293912939eusmtrp2c;
+	Fri, 14 Mar 2025 16:41:45 +0000 (GMT)
+X-AuditID: cbfec7f5-e59c770000004fad-c7-67d45c49a3c7
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 48.92.19920.94C54D76; Fri, 14
+	Mar 2025 16:41:45 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250314164144eusmtip2dce068d92b28a397692e243b7a37dbfe~suPHeu5jY0477404774eusmtip2f;
+	Fri, 14 Mar 2025 16:41:44 +0000 (GMT)
+Message-ID: <d4afcf0e-3b6b-4b2a-af51-7756e57136b0@samsung.com>
+Date: Fri, 14 Mar 2025 17:41:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,88 +73,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: Initialize ctx to avoid memory allocation error
-To: Florian Westphal <fw@strlen.de>, Chenyuan Yang <chenyuan0y@gmail.com>
-Cc: netfilter-devel@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20250313195441.515267-1-chenyuan0y@gmail.com>
- <20250313201007.GA26103@breakpoint.cc>
+Subject: Re: [PATCH] pmdomain: thead: fix TH1520_AON_PROTOCOL dependency
+To: Arnd Bergmann <arnd@kernel.org>, Drew Fustini <drew@pdp7.com>, Guo Ren
+	<guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Ulf Hansson
+	<ulf.hansson@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-riscv@lists.infradead.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250313201007.GA26103@breakpoint.cc>
-Content-Type: text/plain; charset=UTF-8
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <20250314154834.4053416-1-arnd@kernel.org>
 Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.23435 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPKsWRmVeSWpSXmKPExsWy7djPc7peMVfSDVatZ7L4O+kYu8W2LZtY
+	Le5d2sJk8WJvI4vF5V1z2Cw+9x5htNj2uYXN4vjacIuW/VNYHDg9fv+axOixaVUnm8eda3vY
+	PDYvqfdoWXuMyeP9vqtsHp83yQWwR3HZpKTmZJalFunbJXBlnLx3mangOV/F7K9NTA2Ml3i6
+	GDk5JARMJJquvWXvYuTiEBJYwSjxbc03NgjnC6NE+6pOJpAqIYHPjBLbdtbBdHxa9QKqYzmj
+	xPdtH5ghnLeMEqsuLAfr4BWwkzi++yYriM0ioCox9RvIDpC4oMTJmU9YQGxRAXmJ+7dmgMWF
+	BTwkrrybCjZIRGARo0TP+wlgRcwCNRK3179mgrDFJW49mQ9mswkYSTxYPh9sAaeAucSZ2dMZ
+	IWrkJba/nQM2SELgP4fEgh897BB3u0icaG9nhrCFJV4d3wIVl5H4vxNiqIRAvsSDrZ+gamok
+	dvYch7KtJe6c+wUMGA6gBZoS63fpQ4QdJdb8X8cCEpYQ4JO48VYQ4gQ+iUnbpjNDhHklOtqE
+	IKrVJKb29MItPbdiG9MERqVZSKEyC8mTs5A8Mwth7wJGllWM4qmlxbnpqcXGeanlesWJucWl
+	eel6yfm5mxiBaer0v+NfdzCuePVR7xAjEwfjIUYJDmYlEd49KlfShXhTEiurUovy44tKc1KL
+	DzFKc7AoifMu2t+aLiSQnliSmp2aWpBaBJNl4uCUamASlgzuDtgst319WJGIxluXsNUfFm7t
+	k7maMfXAP7dZchY787pjPuZE6id/6gg9K6Hjt40lWdNx/93q+bq3pJVu2em+1f0cF+NQpMQY
+	01e9lWN34NkQ1n8VtSLGOelvtgStvJN/0jY+5UBMyh2f2pY4Drv66+4bd73/W+ZSEtIt//fp
+	tyXvfzitj3SfmunZvm3Jmrq70+pFsrdsefrllpkDb9KhJw2L1e6rpObcudnm5yLUE/pBxd6v
+	/661VKT8i7NaRTuOrHKIYbOMO/hbsv6x32bV19zTuw4Lyf1QUOH2f+pceH7H5e7zjRtaT/s4
+	FLPdNVgXrC6pouN26/k/32nVqbr8vdcSbtS9bEmoVWIpzkg01GIuKk4EADdCufvCAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsVy+t/xe7qeMVfSDab0ilr8nXSM3WLblk2s
+	FvcubWGyeLG3kcXi8q45bBafe48wWmz73MJmcXxtuEXL/iksDpwev39NYvTYtKqTzePOtT1s
+	HpuX1Hu0rD3G5PF+31U2j8+b5ALYo/RsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOt
+	jEyV9O1sUlJzMstSi/TtEvQyTt67zFTwnK9i9tcmpgbGSzxdjJwcEgImEp9WvWDvYuTiEBJY
+	yigx/8lHZoiEjMS17pcsELawxJ9rXWwQRa8ZJSbP+MYGkuAVsJM4vvsmK4jNIqAqMfXbW3aI
+	uKDEyZlPwJpFBeQl7t+aARYXFvCQuPJuKjPIIBGBRYwSJw7PZAJJMAvUSEzb3swKsaGLUWLr
+	h0WsEAlxiVtP5oMVsQkYSTxYPh8szilgLnFm9nTGLkYOoBp1ifXzhCDK5SW2v53DPIFRaBaS
+	O2YhmTQLoWMWko4FjCyrGEVSS4tz03OLDfWKE3OLS/PS9ZLzczcxAiNz27Gfm3cwznv1Ue8Q
+	IxMH4yFGCQ5mJRHePSpX0oV4UxIrq1KL8uOLSnNSiw8xmgLDYiKzlGhyPjA15JXEG5oZmBqa
+	mFkamFqaGSuJ87pdPp8mJJCeWJKanZpakFoE08fEwSnVwLRMNSDJWHlqZ7zzVPE3MlriQoYH
+	FnMtj9xw3TAnoGb+1mpTdQnWJZr30v/efBadpDb/okvb7+v2mi5b+c5/mm2aMXdtVbyx1cmJ
+	DVs3rGvKLvzfe3GObWJt+MSmj6uPvG3QOXLu5ISjXxZcmCgz52+y/DRX+cR7GcViv/5kOAkn
+	hVxacXlWstIbMc+6UzWXDhmxGl+6ceZaa4KvgoKSsroD+4X0rsOfDxgJpuaXL3J21E6ZxC0t
+	2LSdtXwSa4f8NN8yoSsLVq/ZcmDr8y1ayhFnXz5Z9OfEfh22cyfEDs+ye6M+dVJYX2XHxpf2
+	i1+tq74ft2NpcmGeaOKsrqTPKZ+uBhVPnfJZj+1U6Yz/ts5KLMUZiYZazEXFiQAZ0dUDVQMA
+	AA==
+X-CMS-MailID: 20250314164145eucas1p25e7a2cc4fab4cc15471b5c1b42cd16bc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250314154843eucas1p19fcaec24b94ca2479511cc8ea616bec2
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250314154843eucas1p19fcaec24b94ca2479511cc8ea616bec2
+References: <CGME20250314154843eucas1p19fcaec24b94ca2479511cc8ea616bec2@eucas1p1.samsung.com>
+	<20250314154834.4053416-1-arnd@kernel.org>
 
-On 3/13/2025 1:10 PM, Florian Westphal wrote:
-> [ trim CCs, CC Casey ]
->
-> Chenyuan Yang <chenyuan0y@gmail.com> wrote:
->> It is possible that ctx in nfqnl_build_packet_message() could be used
->> before it is properly initialize, which is only initialized
->> by nfqnl_get_sk_secctx().
->>
->> This patch corrects this problem by initializing the lsmctx to a safe
->> value when it is declared.
->>
->> This is similar to the commit 35fcac7a7c25
->> ("audit: Initialize lsmctx to avoid memory allocation error").
-> Fixes: 2d470c778120 ("lsm: replace context+len with lsm_context")
->
->> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
->> ---
->>  net/netfilter/nfnetlink_queue.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
->> index 5c913987901a..8b7b39d8a109 100644
->> --- a/net/netfilter/nfnetlink_queue.c
->> +++ b/net/netfilter/nfnetlink_queue.c
->> @@ -567,7 +567,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
->>  	enum ip_conntrack_info ctinfo = 0;
->>  	const struct nfnl_ct_hook *nfnl_ct;
->>  	bool csum_verify;
->> -	struct lsm_context ctx;
->> +	struct lsm_context ctx = { NULL, 0, 0 };
->>  	int seclen = 0;
->>  	ktime_t tstamp;
-> Someone that understands LSM should clarify what seclen == 0 means.
 
-If seclen is 0 it implies that there is no security context and that
-the secctx is NULL. How that is handled in the release function is up
-to the LSM. SELinux allocates secctx data, while Smack points to an
-entry in a persistent table.
 
-> seclen needs to be > 0 or no secinfo is passed to userland,
-> yet the secctx release function is called anyway.
+On 3/14/25 16:48, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Kconfig treats the dependency as optional, but the header file only provides
+> normal declarations and no empty API stubs:
+> 
+> ld: fs/btrfs/extent_io.o: in function `writepage_delalloc':
+> extent_io.c:(.text+0x2b42): undefined reference to `__udivdi3'
+> ld: drivers/pmdomain/thead/th1520-pm-domains.o: in function `th1520_pd_power_off':
+> th1520-pm-domains.c:(.text+0x57): undefined reference to `th1520_aon_power_update'
+> ld: drivers/pmdomain/thead/th1520-pm-domains.o: in function `th1520_pd_power_on':
+> th1520-pm-domains.c:(.text+0x8a): undefined reference to `th1520_aon_power_update'
+> ld: drivers/pmdomain/thead/th1520-pm-domains.o: in function `th1520_pd_probe':
+> th1520-pm-domains.c:(.text+0xb8): undefined reference to `th1520_aon_init'
+> ld: th1520-pm-domains.c:(.text+0x1c6): undefined reference to `th1520_aon_power_update'
+> 
+> Since the firmware code can easily be enabled for compile testing, there
+> is no need to add stubs either, so just make it a hard dependency.
+> 
+> Fixes: dc9a897dbb03 ("pmdomain: thead: Add power-domain driver for TH1520")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/pmdomain/thead/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pmdomain/thead/Kconfig b/drivers/pmdomain/thead/Kconfig
+> index c7a1ac0c61dc..7d52f8374b07 100644
+> --- a/drivers/pmdomain/thead/Kconfig
+> +++ b/drivers/pmdomain/thead/Kconfig
+> @@ -2,7 +2,7 @@
+>  
+>  config TH1520_PM_DOMAINS
+>  	tristate "Support TH1520 Power Domains"
+> -	depends on TH1520_AON_PROTOCOL || !TH1520_AON_PROTOCOL
+> +	depends on TH1520_AON_PROTOCOL
+>  	select REGMAP_MMIO
+>  	help
+>  	  This driver enables power domain management for the T-HEAD
 
-That is correct. The security module is responsible for handling
-the release of secctx correctly.
-
-> Should seclen be initialised to -1?  Or we need the change below too?
-
-No. The security modules handle secctx their own way.
-
->
-> diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
-> --- a/net/netfilter/nfnetlink_queue.c
-> +++ b/net/netfilter/nfnetlink_queue.c
-> @@ -812,7 +812,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
->         }
->
->         nlh->nlmsg_len = skb->len;
-> -       if (seclen >= 0)
-> +       if (seclen > 0)
->                 security_release_secctx(&ctx);
->         return skb;
->
-> @@ -821,7 +821,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
->         kfree_skb(skb);
->         net_err_ratelimited("nf_queue: error creating packet message\n");
->  nlmsg_failure:
-> -       if (seclen >= 0)
-> +       if (seclen > 0)
->                 security_release_secctx(&ctx);
->         return NULL;
->  }
+Thanks a lot !
+Reviewed-by: Michal Wilczynski <m.wilczynski@samsung.com>
 
