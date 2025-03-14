@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-562211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3E76A61F3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:48:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B1A3A61F3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:49:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB3E189D1B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:48:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BA0D3B9A24
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B9D2066F6;
-	Fri, 14 Mar 2025 21:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED342066C4;
+	Fri, 14 Mar 2025 21:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LhC3Jete"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kdc3W5Ae"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5082066C1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95FA1C84C9
 	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741988517; cv=none; b=JRlnm87KdMe2nIhhCbT0uJWvL3/r2kJn/yFT8epRsOHKtomgVwWHdFyBp4imh+37kwnszcbi5ByxBA+2JZtA9ZpBs6Wg92sC/+30/2s7c3nMBjMrtz0Ip8hFLelJIyaYx8Uc4Qv6GgCGaylb49EzoSvgKQw6HNxDePX1QdSIl9Y=
+	t=1741988516; cv=none; b=QEFjvU14lRLFS6jVqIxsncq6sueRJ4508zfa4eq6hWg/DBVAm+SuMdrWFiEpRTy0Tmg55c58kryvxI3nw5y7hNoWXDLhdfGlY/KEq7k/qKd49q4nrSl1tlTEq8skA1RDpakGjf3X2YQ41HhvuQ4FIxqNtGboUjkxJFRPNLEJbRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741988517; c=relaxed/simple;
-	bh=E3hR7r2iMC1tiZQQhuyNJ1KYebMDQRIzygmPhbaGeWU=;
+	s=arc-20240116; t=1741988516; c=relaxed/simple;
+	bh=QAJqgGLEgB7Uus6Hk6A5Xn5+3cxtjhIC2QgVp51gRuU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ucrUcwO9wWlb8HrLoGag35hV7U8LNJdsL2nDzW/awit3XlVUsRi6LhKQ8nKlaKH+orrlkYM1jamOxyxlEjyc/e/IDEvIFSGW5yaEoBkd4UGY7ejNPuSH34n7zHWUvXY8mP1e7b/gC6oNJw/k9vAux5FEne4iDVdpDa9f8JPqPVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LhC3Jete; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75398C4AF0C;
-	Fri, 14 Mar 2025 21:41:55 +0000 (UTC)
+	 MIME-Version; b=OmD/2XMISUqh3z926VAxM+7aw7C3HKDAi4R4UpIkn6JFIYCAZ5xvmcXCumEZye6MpedKI5p7DJs19YOD7qdfhZ4YkZoKZtM4/KjDRQbO30BR7XIp9KR3gPOXok7Y6Wg6pgrOCL6iHXSUyRz9JElc7sqN+Xe+4mfx3fdVeyHfuuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kdc3W5Ae; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08B6DC2BCFA;
+	Fri, 14 Mar 2025 21:41:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741988515;
-	bh=E3hR7r2iMC1tiZQQhuyNJ1KYebMDQRIzygmPhbaGeWU=;
+	s=k20201202; t=1741988516;
+	bh=QAJqgGLEgB7Uus6Hk6A5Xn5+3cxtjhIC2QgVp51gRuU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LhC3Jete99t0ASSDJup2YypbIYeuAb+kqyfnsbHhjXi0ch51+7yyrwegnzK0k3u8H
-	 zM/FPwVvU9qQUz1I4GiWRQC183J+SQV6J0te2wjsaRbB3wBFK5HrHkWITBlDzrZGdV
-	 0xs52uPxR3i+T9DZKb7BmL8o9yckvnvp7i6c7BKbKyL5i4ovNqWPrrtolAeej3ZKgb
-	 dOk7JGejsm1kbbRF+LMKHkIoZGV3dbOuAK/Y6kKsibwJxkuTtHfE5yO5btIDpf1BP6
-	 R+zzWujRfYo2RMViZfD/tYcOdydiCZwC+3vzp6nbUcGbJVsKvDnV/b4EYhzo0Fvnpj
-	 eklJ/7ic33Dyg==
+	b=kdc3W5AeKZY8S2hbQeBmv4Bu+7hWvFGu3cmFbRwRZoqz1H/GdCTysdmn8QhG4q+Kj
+	 F9vq9zOfSx05bdh2VJwSLfedd0ucU8iiELBfqoHhtQlTOqpEBbpaTfmHPl8QQGSNPr
+	 +evwcNs/3x33FH0cPYSOeh8MsZXlbZCS2WLGDqaCmFlJYQEB4s5NZ9AR5x8+XVk4FA
+	 XGAOKRw49RNiKTT3YvckUc/944uv/8oFx4rdUC2XWmhFMn91amSUBIq/u5onsd982o
+	 /D0N+jzsZ+1oRSsiHu1WvjkqlCaWghWY8Z2qZeVwxYJT0qxGwnlO3kTSABr4hRKRwd
+	 5UPO8aYD/ZZnQ==
 From: Josh Poimboeuf <jpoimboe@kernel.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -50,9 +50,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Uros Bizjak <ubizjak@gmail.com>,
 	Andrew Cooper <andrew.cooper3@citrix.com>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 03/20] x86/mm: Use named asm operands in task_size_max()
-Date: Fri, 14 Mar 2025 14:41:16 -0700
-Message-ID: <1dfdda41e63f0eefe39ab3982e917d9c3ef3a499.1741988314.git.jpoimboe@kernel.org>
+Subject: [PATCH 04/20] x86/cpu: Use named asm operands in clflushopt()
+Date: Fri, 14 Mar 2025 14:41:17 -0700
+Message-ID: <c007f4ddbfdfe92777a7df35bc121cf9bf0d0682.1741988314.git.jpoimboe@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1741988314.git.jpoimboe@kernel.org>
 References: <cover.1741988314.git.jpoimboe@kernel.org>
@@ -69,26 +69,27 @@ restrictions in alternative_io().
 
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- arch/x86/include/asm/page_64.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/special_insns.h | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
-index b5279f5d5601..db3003acd41e 100644
---- a/arch/x86/include/asm/page_64.h
-+++ b/arch/x86/include/asm/page_64.h
-@@ -85,9 +85,9 @@ static __always_inline unsigned long task_size_max(void)
+diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
+index 21ce480658b1..b905076cf7f6 100644
+--- a/arch/x86/include/asm/special_insns.h
++++ b/arch/x86/include/asm/special_insns.h
+@@ -176,10 +176,9 @@ static __always_inline void clflush(volatile void *__p)
+ 
+ static inline void clflushopt(volatile void *__p)
  {
- 	unsigned long ret;
+-	alternative_io(".byte 0x3e; clflush %0",
+-		       ".byte 0x66; clflush %0",
+-		       X86_FEATURE_CLFLUSHOPT,
+-		       "+m" (*(volatile char __force *)__p));
++	alternative_io(".byte 0x3e; clflush %[val]",
++		       ".byte 0x66; clflush %[val]", X86_FEATURE_CLFLUSHOPT,
++		       [val] "+m" (*(volatile char __force *)__p));
+ }
  
--	alternative_io("movq %[small],%0","movq %[large],%0",
--			X86_FEATURE_LA57,
--			"=r" (ret),
-+	alternative_io("movq %[small], %[ret]",
-+		       "movq %[large], %[ret]", X86_FEATURE_LA57,
-+			[ret] "=r" (ret),
- 			[small] "i" ((1ul << 47)-PAGE_SIZE),
- 			[large] "i" ((1ul << 56)-PAGE_SIZE));
- 
+ static inline void clwb(volatile void *__p)
 -- 
 2.48.1
 
