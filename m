@@ -1,115 +1,167 @@
-Return-Path: <linux-kernel+bounces-561556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E7A5A61371
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:15:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F88CA61372
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:16:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 059093B1B0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:15:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5029169909
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16EFF1FFC78;
-	Fri, 14 Mar 2025 14:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fA2MZDoX"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CB5200BBB;
+	Fri, 14 Mar 2025 14:15:51 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0882DF60;
-	Fri, 14 Mar 2025 14:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217F1200B98
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741961746; cv=none; b=mMt3rrmgfr0lphnkeFCp/H7BOkVcHmbmXuRmYac6aGdANZGb8nIT83a3PW4Sbuzi4dtc/0KlKuQv7JyaRwrXZP4wdYAB2Femzne6rPWNsyhTLyDaXyU2Z4QY4BqR0ZbYs+9/erUzyR2qW749/OU/bNdq1LMx2l0YSmBuRqlmqcQ=
+	t=1741961751; cv=none; b=DMOhVEQGHHFuLCflx64aFz98z3tczDkWxgB6NbUu+WzoLeLjgOdA7o80IDec2rFkbieVW+bfIIkBMJVWMRLn0hVD1K6D6QHE82nwTPq7+EBCGSru0sqI3XX9PBKsJLkiNHd2wTkTLPpzNbaKl3hzREuVVBxSYenX0QvoXdLIxJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741961746; c=relaxed/simple;
-	bh=hoD5OuQ9XrVOKR/0IYi9oyZiNH0tYknwNIdLHImmP2s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EMdcWRuqd0OlnZHqI5gfwJVRRR9iCQvxXZel4BVkWwHOvoSbI35jJx+stLHwSx4qQc+d/gDuFWdHm93/iHTUVFgXCDtbMAujOzAzPF1wzzroZuJVrULZu8hZRtrnlJgZBZ7bQtwVv2TrQkS4MZwoIKjnrHJ8Uf8Q1LMgfeCdsRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fA2MZDoX; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30613802a04so23280201fa.2;
-        Fri, 14 Mar 2025 07:15:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741961743; x=1742566543; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hoD5OuQ9XrVOKR/0IYi9oyZiNH0tYknwNIdLHImmP2s=;
-        b=fA2MZDoXNrIg2rsGJQtW/NTHHlA43tboUya2BMD5ERJVJNcE5jRPe4vPrPJ6RvBpoX
-         bMI3S7PWkj3CSBIwAkisWfZSdqO+XrTaY9M/zvdOhkbL+Ah7pUX0DFk1ZFuZKGe6GCqD
-         DeJ5st+T6hyPEs+nAHBU6p/q27ByFNJAHKJX8oduqZhHWfSwaGT56JL+CL3abrmWdNqD
-         rF90XO6BFaTiziW2BbFAY24rGAH0Gz5xyYsxyC6xF8J9M3Nfhwa6p+9CZooPcabP3LxA
-         ufO9zbHwK+9zbpvO1ov0P+zraefyXEUlgSoWlsU9Ad+6aAAoCDQ9fHrjJmwwvutiHgqh
-         P8og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741961743; x=1742566543;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hoD5OuQ9XrVOKR/0IYi9oyZiNH0tYknwNIdLHImmP2s=;
-        b=J8sKeAlRlVYI3QdDn+F/0LjonYMxKQwvtMWgSzhcwmEeSvGFz53QvA2GirfBHDDsdp
-         6MeLa9pUXpZhV+MwHBJYg3eYL+qlGwRRq6aNpXfx6ba03fZIViSrQvfKxCX1h5NMlClg
-         k7hHgU0VISftk867WCjkPLUgpOT44/x0vHoE94gwWxOghjserHdI36YmhBCWgA95utLN
-         xCdtoEUVTiL9zUwiA9ZRP68Tpp0pFo2ZKDfMY6ZKo1CF22ogNWbXjyUTxiCLma/pYbTy
-         Op/CkBdFUIt9EgGAAjNHpmVfFMlReAMaGq4jTElis95bDGvv9BAvoEes2KUCYXUrpeLu
-         xeYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUP5RiXMD2lxZTXwmP07IdaQrapTs/7+GurQcthzLh4NWQeL/gnKpXFryiKc4LlOe4rJWonkCN+ExQWwdLDb+U=@vger.kernel.org, AJvYcCVz8VwoGGHqiD9gDS4tQifZqoUZSNQi5vFwhnjKNy3Gv+SOO8j6KNd/qCvlGG/D3LmM7KfHC7RRvDt5joM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuUjQJ6GwcnsKQq9kGvgWimy3+Zp1sNTjde7W0QQ/2tqX+7ozk
-	IZR6d4g+TounvGACJlXWyeEps7f+hzL6VBC3cjcyh6Op1HSeeoNErRVEYk1jfAmi0mLpJNmaJ7Y
-	PrZ3ei4+177wcbAcl/edsbWZr614=
-X-Gm-Gg: ASbGncv6cq3U6agcpAccAPTzn8chKV6x/RpMU9RraDZ/uTmz/zwKsM9BSGz4cWMKUTV
-	is7bXivtTYNFmmgFbtwtDnl4BUAcWh58jweAGK+bMAw2WlyyXcLzxfAW8hNPr55d+kLUo9g/0Ro
-	UV3k+eUw0E/YSxl0caNY+s5Fmi0Vd8Tb/1B27o3qd7sUggEt67+wx66h7Er4ez
-X-Google-Smtp-Source: AGHT+IE+cuUx3bVzPL1OFOTxDv+ajzkYB2XUMolDVCyX8pmDfijIlkLdfwFg4aM/XXqZBFG7pPWD4W8UgPyMK+NI60Q=
-X-Received: by 2002:a05:651c:b14:b0:30b:b987:b676 with SMTP id
- 38308e7fff4ca-30c4a754753mr9968651fa.2.1741961742896; Fri, 14 Mar 2025
- 07:15:42 -0700 (PDT)
+	s=arc-20240116; t=1741961751; c=relaxed/simple;
+	bh=oJlanc5LhG+i3de+lB1x2lNtf0Zxg543ShTg2sKdoUk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DqifZ/dZtuMN0wrxP/lygeQB1xFu4tg1Rm1LQ8eerJMkG3d2ihYy6SObxrPvsrVRD7lKXE94e6wKjfutNqmmbC/WYgTmTBkzjsyUyFXjvFLFvYGJ+whjrj0LWy3x3eIJnrq0KfBX4O9UAstzeudWucKYNQyWYkGb2NpYfsaxbkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDmXf0Zm4z6K8wt;
+	Fri, 14 Mar 2025 22:12:34 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 60DA41403D2;
+	Fri, 14 Mar 2025 22:15:45 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Mar
+ 2025 15:15:44 +0100
+Date: Fri, 14 Mar 2025 14:15:41 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: "Huang, Ying" <ying.huang@linux.alibaba.com>
+CC: Joshua Hahn <joshua.hahnjy@gmail.com>,
+	<lsf-pc@lists.linux-foundation.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <gourry@gourry.net>, <hyeonggon.yoo@sk.com>,
+	<honggyu.kim@sk.com>, <kernel-team@meta.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Weighted interleave auto-tuning
+Message-ID: <20250314141541.00003fad@huawei.com>
+In-Reply-To: <87frjfx6u4.fsf@DESKTOP-5N7EMDA>
+References: <20250313155705.1943522-1-joshua.hahnjy@gmail.com>
+	<87frjfx6u4.fsf@DESKTOP-5N7EMDA>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250203-cstr-core-v8-0-cb3f26e78686@gmail.com>
- <CAJ-ks9kyozt45VeXG7GBTN-ejy_HGMOekFYFMmzS8AbEusZMWQ@mail.gmail.com>
- <CAH5fLgjUuCo5Ayx4WCfnrVAC1prvUbY-pvZdinkAb+KcSOWvpA@mail.gmail.com>
- <20250221142816.0c015e9f@eugeo> <CAJ-ks9=9OozDw7XotP_0Hpb4-p4VmPMSwmEdnnCpk1gCEJyZiA@mail.gmail.com>
-In-Reply-To: <CAJ-ks9=9OozDw7XotP_0Hpb4-p4VmPMSwmEdnnCpk1gCEJyZiA@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 14 Mar 2025 10:15:06 -0400
-X-Gm-Features: AQ5f1JqYWCwq_ty-NbNFuS5vkmJGhsSJl0kLU7uEsFDM1IlS7NQin4l0aSlBzoU
-Message-ID: <CAJ-ks9=Q3qwY-efP=hRH2N9XSZf6pN-2fCUMyC8z3p1jwVj3wg@mail.gmail.com>
-Subject: Re: [PATCH v8 0/4] rust: replace kernel::str::CStr w/ core::ffi::CStr
-To: Gary Guo <gary@garyguo.net>
-Cc: Alice Ryhl <aliceryhl@google.com>, Michal Rostecki <vadorovsky@protonmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, Feb 21, 2025 at 10:59=E2=80=AFAM Tamir Duberstein <tamird@gmail.com=
-> wrote:
->
-> On Fri, Feb 21, 2025 at 9:28=E2=80=AFAM Gary Guo <gary@garyguo.net> wrote=
-:
+On Fri, 14 Mar 2025 18:08:35 +0800
+"Huang, Ying" <ying.huang@linux.alibaba.com> wrote:
+
+> Joshua Hahn <joshua.hahnjy@gmail.com> writes:
+> 
+> > On Thu,  9 Jan 2025 13:50:48 -0500 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
+> >  
+> >> Hello everyone, I hope everyone has had a great start to 2025!
+> >> 
+> >> Recently, I have been working on a patch series [1] with
+> >> Gregory Price <gourry@gourry.net> that provides new default interleave
+> >> weights, along with dynamic re-weighting on hotplug events and a series
+> >> of UAPIs that allow users to configure how they want the defaults to behave.
+> >> 
+> >> In introducing these new defaults, discussions have opened up in the
+> >> community regarding how best to create a UAPI that can provide
+> >> coherent and transparent interactions for the user. In particular, consider
+> >> this scenario: when a hotplug event happens and a node comes online
+> >> with new bandwidth information (and therefore changing the bandwidth
+> >> distributions across the system), should user-set weights be overwritten
+> >> to reflect the new distributions? If so, how can we justify overwriting
+> >> user-set values in a sysfs interface? If not, how will users manually
+> >> adjust the node weights to the optimal weight?
+> >> 
+> >> I would like to revisit some of the design choices made for this patch,
+> >> including how the defaults were derived, and open the conversation to
+> >> hear what the community believes is a reasonable way to allow users to
+> >> tune weighted interleave weights. More broadly, I hope to get gather
+> >> community insight on how they use weighted interleave, and do my best to
+> >> reflect those workflows in the patch.  
 > >
-> > I'd want to add that we currently also have our own `BStr` and then we
-> > have the `CStr` -> `BStr` -> `[u8]` deref chain which is quite often
-> > useful. If we move to the `core::ffi::CStr` then we would lose ability
-> > to do so.
->
-> True. The best we could do is `impl AsRef<BStr> for CStr`, I think.
+> > Weighted interleave has since moved onto v7 [1], and a v8 is currently being
+> > drafted. Through feedback from reviewers, we have landed on a coherent UAPI
+> > that gives users two options: auto mode, which leaves all weight calculation
+> > decisions to the system, and manual mode, which leaves weighted interleave
+> > the same as it is without the patch.
+> >
+> > Given that the patch's functionality is mostly concrete and that the questions
+> > I hoped to raise during this slot were answered via patch feedback, I hope to
+> > ask another question during the talk:
+> >
+> > Should the system dynamically change what metrics it uses to weight the nodes,
+> > based on what bottlenecks the system is currently facing?
+> >
+> > In the patch, min(read_bandwidth, write_bandwidth) is used as the heuristic
+> > to determine what a node's weight should be. However, what if the system is
+> > not bottlenecked by bandwidth, but by latency? A system could also be
+> > bottlenecked by read bandwidth, but not by write bandwidth.
+> >
+> > Consider a scenario where a system has many memory nodes with varying
+> > latencies and bandwidths. When the system is not bottlenecked by bandwidth,
+> > it might prefer to allocate memory from nodes with lower latency. Once the
+> > system starts feeling pressured by bandwidth, the weights for high bandwidth
+> > (but also high latency) nodes would slowly increase to alleviate pressure
+> > from the system. Once the system is back in a manageable state, weights for
+> > low latency nodes would start increasing again. Users would not have to be
+> > aware of any of this -- they would just see the system take control of the
+> > weight changes as the system's needs continue to change.  
+> 
+> IIUC, this assumes the capacity of all kinds of memory is large enough.
+> However, this may be not true in some cases.  So, another possibility is
+> that, for a system with DRAM and CXL memory nodes.
+> 
+> - There is free space on DRAM node, the bandwidth of DRAM node isn't
+>   saturated, memory is allocated on DRAM node.
+> 
+> - There is no free space on DRAM node, the bandwidth of DRAM node isn't
+>   saturated, cold pages are migrated to CXL memory nodes, while hot
+>   pages are migrated to DRAM memory nodes.
+> 
+> - The bandwidth of DRAM node is saturated, hot pages are migrated to CXL
+>   memory nodes.
+> 
+> In general, I think that the real situation is complex and this makes it
+> hard to implement a good policy in kernel.  So, I suspect that it's
+> better to start with the experiments in user space.
+> 
+> > This proposal also has some concerns that need to be addressed:
+> > - How reactive should the system be, and how aggressively should it tune the
+> >   weights? We don't want the system to overreact to short spikes in pressure.
+> > - Does dynamic weight adjusting lead to pages being "misplaced"? Should those
+> >   "misplaced" pages be migrated? (probably not)
+> > - Does this need to be in the kernel? A userspace daemon that monitors kernel
+> >   metrics has the ability to make the changes (via the nodeN interfaces).
 
-BStr now exists upstream (though it is unstable for now). Please see
-https://github.com/Rust-for-Linux/linux/issues/1146.
+If this was done in kernel, what metrics would make sense to drive this?
+Similar to hot page tracking we may run into contention with PMUs or similar and
+their other use cases. 
 
-I sent https://github.com/rust-lang/rust/pull/138498 to see whether it
-is possible to retain this functionality in the end state where
-upstream's BStr is stable and we're able to use it.
+> >
+> > Thoughts & comments are appreciated! Thank you, and have a great day!
+> > Joshua
+> >
+> > [1] https://lore.kernel.org/all/20250305200506.2529583-1-joshua.hahnjy@gmail.com/
+> >
+> > Sent using hkml (https://github.com/sjp38/hackermail)  
+> 
+> ---
+> Best Regards,
+> Huang, Ying
+> 
+
 
