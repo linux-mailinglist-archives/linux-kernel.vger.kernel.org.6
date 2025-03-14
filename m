@@ -1,195 +1,275 @@
-Return-Path: <linux-kernel+bounces-561752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E904A615BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:06:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21544A615BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:06:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 951CD16F167
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:06:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 605853AE74A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F3B202F9A;
-	Fri, 14 Mar 2025 16:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDFC20127B;
+	Fri, 14 Mar 2025 16:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iDXRQqit"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KAx6f6bb"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CF91EE03D;
-	Fri, 14 Mar 2025 16:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A35F1FE450
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741968351; cv=none; b=rTmGt4W/q8GbJPcnx99ZNqO8ro1ElwTMUDKe/Tny9lNtZIbWVOCySxOdT1mtuuCTUgzkNDvzFFFDu/WsBgioyLXgqcYSH724ApoNIdanSbU+LP+lM+0bdQ/jcMv0nWsZVvA/GlLfTp+ACMT2I7h2zKPYE1C5KPKVa+p4QkpFj0w=
+	t=1741968394; cv=none; b=J2PgdygN8JtwS/sUfXNPd8mymwdNgWWvEdJNXCCX+XlKjui8d//T0fdn2UIsNoglbGAE2sOGIemQCxfhwVbhdirsNstBx9Xb8cYbuNl1y029LRIl89caPfiPAf1o+suTQJsWfAYY9sVhJImTczg2ndnpIDTBMt++f5EeJhY7U08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741968351; c=relaxed/simple;
-	bh=y5iLS0qAR/Fw4lPHpyN8WwukffN+ADvp20CdBHRHImg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hw8RnpKFfMSQHjIwdPPT5xX6lEA1Yy7x11s45X6wCSAaMRtPUtYIDUUZ6MglojKLVIuRIycVNY6tDkOFsPllq4re75C08kDqgbv1hxkVBY+3ndZoMdB/ZsLYGw8pi84XHI4tEWRrnB0q3NIEPUQ9xxp2dXyhd88yU/Xbm1j3Q/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iDXRQqit; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6eaf1b6ce9aso4214296d6.2;
-        Fri, 14 Mar 2025 09:05:49 -0700 (PDT)
+	s=arc-20240116; t=1741968394; c=relaxed/simple;
+	bh=nQodReb6SDEmR9+IgZ+zc8GXEFPykk3DgMnpob+uPdc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u8ExL7diVBTTnoOseypqyMPOe8cwD6sd/+6EzWiigjHICZLZo9s4m5O3sYAIe0Yzqxrf2JApMcpl5xTc+IyaFsTzE1N+KGgNmYTiguKLCJ8YSa3kyO+PHv4icohHiaMpydzcT82FjrOYzuB+Q0J+3IXDnxikptqBjiQwLkO5dsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KAx6f6bb; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e535e6739bso3377338a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:06:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741968348; x=1742573148; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kGmHPsluvU5tP9Cbeh0pEBn1lLXR4ROUfQFDzD/Nc2w=;
-        b=iDXRQqitqg4PARHCs0U4snXTmmFW5WP9jg9iDmkzah4NsZhzLBcCJI+TY2o90vvytb
-         SNNFvQFKPmE32QP3yKrAluJFQcI5cd7CNEilGy314QQZVTB8SbP5RvSewdT2F4tWUq89
-         m+TR0rDMlCbMTLCosn6ICjmBJvZGCp2tiDJLD6R9VC5Ts9IXlNFhvLrkSoqb++Mfwtz8
-         m0xzrA/hGsmsmJOvvuq2OEn1Jq75b4SFSC5MhYHtdeWj4ev/2ZtKfE5K+F+jc/jS64cl
-         1lIa0M9JHd63IZj4KYuMA5Q6EwcdDxp1xyxkRuwX4B13smGMHxeed/FbsrvyhoSpBS4d
-         DuFQ==
+        d=linaro.org; s=google; t=1741968390; x=1742573190; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=AMGhah6DZSaD2b6XWGt1C1YnVnZDgQyITdTbZFQ5dsk=;
+        b=KAx6f6bb7zbjnT2StNLhGRn3vgCKW2RZTnJHMOH7lEgRsUXiAlGIubG2Hx+Qk9HzNQ
+         kTXqN2veB6NW7UO/tPm6kfp3tHH9XNefo1HVz7IR75hRw0T6M+JBO4CuaHlSY6ExCQFh
+         Hxe1BvCotao0/fYxdYiZJBPhPj51N/UPxmcJCF3BkrKAf6c48M/faLPksW7HybQDStYc
+         ZJ2r+MSlf9V2ePBaSAMme2qjUfMELra9UYSujd0J+vVYlE9WpbyNXareKsirp/LHvP0G
+         pvW5UqoO+eJlrVYSfqwtNF+smD/P6YzxfN5WGoIQ18Sr6dNo5MWI3/0L+q8d8fBukKpa
+         PYkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741968348; x=1742573148;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kGmHPsluvU5tP9Cbeh0pEBn1lLXR4ROUfQFDzD/Nc2w=;
-        b=nOhH9DNws9VVrnHoAPLRnU8esIbFyuGDuq4W7eTgR/cvVdUSX9vXYkgWs+FTb6sRv0
-         p1H2g7Hdy680XYEiLQrLNRU5ujmjmJn1t4WX+Kj5Zb2Ml+CalX8NWuvOkKC3AwohK2XR
-         IJ1WBmZWSEgHrwlmcwPchshkd083uiAAedc9LlxozoBgnwe5OW2P/PZK9I0PYPUjlqop
-         5w1K9/587wMKB9CN1DaLp1U+LlwHCPXEBdAAM+xrCfF0jg/NkUGOvg/yQ98/PJ/60+36
-         1KoGwjHE+xZKEP1ZMsLj0zBn6ox+45o2HcqTduoWW4WxMdvsPq/7cAKuip2phJJ6/TtG
-         Fa8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXnMKAwI21sZW2jkiQ1p/NvHLO3DsuaUqy6cv8fr4eP753YuWYlq4gBeGUtCr2puSqFqzUoU0nIhh7Mqc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSU9dTilCP1DaS5OOzvasBvvEhz+ivvfXT0IAuxtebkj+5j0Zq
-	DtRR/lxo1O4PDGwLIezTJGnzgog5Qe1vsUasDHp4DEDvzg5HOc8R
-X-Gm-Gg: ASbGncuHrFckyCCu25wiDqz5RI8/eIVLUSQa39n+jyu3XHFK3IfhGUzvBfyA44GT187
-	9qM6LXq7QRBGTswl8D+iZHmuOSFvqnBjKV/AKk0F8HBJCi931wNcWpCzs1uw3Sy3L7F+OGtanMU
-	Ty5B1f9VJRI/9PFuk9mzBEw87u/U8ZRrwFvu7SkVW+Uw+xTObSHv1Oj3N0Aeb8imJiqObijvFrP
-	BcfDWSL3cIT3BW86nJ5a/7ftu4yDsYVv+/D8xI51DP6cmC9+iuxcuXokGiAciWgN9WKoQJu6blA
-	KC9T7ZdTGig0JO6gtZq1OP+Exe8Pqit63xuiTV6W5lXxGa/1bDQ1s3xB1BmpTYNopg==
-X-Google-Smtp-Source: AGHT+IHcB+IAzxI0mIV6Mj5N9hZoIKvZ4KpP2wVXOdNcCWpePYZlGUTQYghkqGrd5jjjr9WvpCN2CA==
-X-Received: by 2002:ad4:5cca:0:b0:6e8:f65a:67bd with SMTP id 6a1803df08f44-6eaeaa1c6e7mr41295056d6.11.1741968348166;
-        Fri, 14 Mar 2025 09:05:48 -0700 (PDT)
-Received: from nerdopolis2.localnet ([2600:4040:5e66:a800:d731:b11a:3691:3fd7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade3501ebsm25528146d6.116.2025.03.14.09.05.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 09:05:47 -0700 (PDT)
-From: Adam Simonelli <adamsimonelli@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jiri Slaby <jirislaby@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Andy Shevchenko <andy.shevchenko@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- John Ogness <john.ogness@linutronix.de>,
- Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject:
- Re: [PATCH v10 1/1] printk: Add an option to allow ttynull to be a default
- console device
-Date: Fri, 14 Mar 2025 12:05:46 -0400
-Message-ID: <5391570.SvYEEZNnvj@nerdopolis2>
-In-Reply-To: <Z9P6i1Caw9SWEO6t@pathway.suse.cz>
-References:
- <20250314004104.3103656-1-adamsimonelli@gmail.com>
- <20250314004104.3103656-2-adamsimonelli@gmail.com>
- <Z9P6i1Caw9SWEO6t@pathway.suse.cz>
+        d=1e100.net; s=20230601; t=1741968390; x=1742573190;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AMGhah6DZSaD2b6XWGt1C1YnVnZDgQyITdTbZFQ5dsk=;
+        b=iubegpEA9kG8bvmIxzIxwHnp1Gr+wiDRnhjngUk4FgvwiIhvDWjbNpvsOZLV7ueFIY
+         CiY0zAIIi/BTpJKmnrp9JSSwP0g8IzQC7G+6t4V17pI6alOIZU53S/3XIKemrSuhw708
+         nOgEbw36oIZsbBbZrrecv+asRSBq9gZB3H79jwYcNSfaHXyAJYoxPHfukEJQgo7gaM8D
+         0fA7ltBqm1EiPRC7CqGWDAZ/nBo1CINetp1W0deDeA3VUyWtvHifOEAGvwJtUfyTAXLZ
+         Us/spbT0o+MPFpGYrRndQk7fJZnFi5G6Y6Mo9gdiqIK31OUQ09NeCPNuuSDAnRjeoTqK
+         HOdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnlQLNAyq7kPH0Mxk6K5ZlktAIjo+lGA4R6Z2WLDb186cOKP2ul3kLvWCUipOI9OsQgiSSbiiBXRXlf/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5qBvzsyyjDaniaGumJs9Ujed1CQbH+Ge+L+fK/xiTaHJtGChJ
+	iQQ2rfNJlMgGMWtH12VhQWd4tBnH1PVNEYzJtjPMFxfyEljYDu+McH46vfJm9B10c2mw0TmkKxJ
+	cOGEgjKje4a+L44a4reEApU4hG6xvKl04RtlI/w==
+X-Gm-Gg: ASbGnctLARS/jFabeAgFk6SaZb023wHz1M4xkmtY+G56wFyPCeoFFp6NisFC2y5sXLV
+	XzypT5dtN5acdbgCey/WrPTt/Bjh1ZZ8ALgiC18TxRs9Iweo5iJFs0B96rYRBENBgxzzrb8ld4c
+	BPBlV0TtugzmfT8b0SjhJzK0AscJnKd9Gv6wvLDL14C9Wxl40KcrxiBQ==
+X-Google-Smtp-Source: AGHT+IGTAEkKQentj4nDjAW3LbI5NDMkkEyjGCVkaTPR/UZrDoWDomgvhgq/ppaIb84SJaNj9w/yM5xFp3B4q5uVqWA=
+X-Received: by 2002:a05:6402:2354:b0:5e5:d9e5:c4d7 with SMTP id
+ 4fb4d7f45d1cf-5e8a0809fa8mr3895589a12.28.1741968389938; Fri, 14 Mar 2025
+ 09:06:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20250314151345.275739-1-dietmar.eggemann@arm.com>
+In-Reply-To: <20250314151345.275739-1-dietmar.eggemann@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Fri, 14 Mar 2025 17:06:18 +0100
+X-Gm-Features: AQ5f1Jo3ZCM9_W1pAy0gxZ-6G7p-QCoi5seDjnsDSFN0L_NFxNsDXoutMunxibo
+Message-ID: <CAKfTPtD5Dx_3aMGWpD8MbfE--gy3j3Bgdnm=FebavA1BZh-8+Q@mail.gmail.com>
+Subject: Re: [PATCH] Revert "sched/core: Reduce cost of sched_move_task when
+ config autogroup"
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Hagar Hemdan <hagarhem@amazon.com>, 
+	Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Friday, March 14, 2025 5:44:43 AM EDT Petr Mladek wrote:
-> On Thu 2025-03-13 20:41:04, adamsimonelli@gmail.com wrote:
-> > From: Adam Simonelli <adamsimonelli@gmail.com>
-> > 
-> > The new option is CONFIG_NULL_TTY_DEFAULT_CONSOLE.
-> > 
-> > if enabled, and CONFIG_VT is disabled, ttynull will become the default
-> > primary console device, based on the link order.
-> 
-> The result is not longer based on the link order.
-> 
-> The linking order affected the ordering the console initcalls.
-> But this patch calls add_preferred_console() directly in console_init()
-> before processing the init calls...
-> 
-> I would just remove the ", based on the link order".
-> 
-> > ttynull will be the only console device usually with this option enabled.
-> > Some architectures do call add_preferred_console() which may add another
-> > console though.
-> 
-> I would add here the following line:
-> 
-> Motivation:
-> 
-> to clearly separate the description of the new behavior from the motivation.
-> 
-> > Many distributions ship with CONFIG_VT enabled. On tested desktop hardware
-> > if CONFIG_VT is disabled, the default console device falls back to
-> > /dev/ttyS0 instead of /dev/tty.
-> > 
-> > This could cause issues in user space, and hardware problems:
-> > 
-> > 1. The user space issues include the case where  /dev/ttyS0 is
-> > disconnected, and the TCGETS ioctl, which some user space libraries use
-> > as a probe to determine if a file is a tty, is called on /dev/console and
-> > fails. Programs that call isatty() on /dev/console and get an incorrect
-> > false value may skip expected logging to /dev/console.
-> > 
-> > 2. The hardware issues include the case if a user has a science instrument
-> > or other device connected to the /dev/ttyS0 port, and they were to upgrade
-> > to a kernel that is disabling the CONFIG_VT option, kernel logs will then be
-> > sent to the device connected to /dev/ttyS0 unless they edit their kernel
-> > command line manually.
-> > 
-> > The new CONFIG_NULL_TTY_DEFAULT_CONSOLE option will give users and
-> > distribution maintainers an option to avoid this. Disabling CONFIG_VT and
-> > enabling CONFIG_NULL_TTY_DEFAULT_CONSOLE will ensure the default kernel
-> > console behavior is not dependant on hardware configuration by default, and
-> 
-> s/dependant/dependent/
-> 
-> > avoid unexpected new behavior on devices connected to the /dev/ttyS0 serial
-> > port.
-> > 
-> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> > index 07668433644b..9dd807717cd4 100644
-> > --- a/kernel/printk/printk.c
-> > +++ b/kernel/printk/printk.c
-> > @@ -4277,6 +4277,11 @@ void __init console_init(void)
-> >  	initcall_t call;
-> >  	initcall_entry_t *ce;
-> >  
-> > +#ifdef CONFIG_NULL_TTY_DEFAULT_CONSOLE
-> > +       if (!console_set_on_cmdline)
-> > +               add_preferred_console("ttynull", 0, NULL);
-> 
-> checkpatch.pl reports that there are used spaces instead of
-> tabs in the two lines above. I suggest to use some editor which takes
-> care of proper indentation, e.g. emacs or vim and run
-> ./scripts/checkpatch.pl before sending pathes ;-)
-> 
-> > +#endif
-> > +
-> >  	/* Setup the default TTY line discipline. */
-> >  	n_tty_init();
-> 
-> With the above changes:
-> 
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
-> Tested-by: Petr Mladek <pmladek@suse.com>
-> 
-> There is no need to resend this patch unless there are other comments.
-> I could make the changes when committing the patch.
-> 
-> Best Regards,
-> Petr
-> 
-Ah, I didn't know if I was allowed to include that myself in the commit message.
-Thanks
+On Fri, 14 Mar 2025 at 16:13, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>
+> This reverts commit eff6c8ce8d4d7faef75f66614dd20bb50595d261.
+>
+> Hazem reported a 30% drop in UnixBench spawn test with commit
+> eff6c8ce8d4d ("sched/core: Reduce cost of sched_move_task when config
+> autogroup") on a m6g.xlarge AWS EC2 instance with 4 vCPUs and 16 GiB RAM
+> (aarch64) (single level MC sched domain) [1].
+>
+> There is an early bail from sched_move_task() if p->sched_task_group is
+> equal to p's 'cpu cgroup' (sched_get_task_group()). E.g. both are
+> pointing to taskgroup '/user.slice/user-1000.slice/session-1.scope'
+> (Ubuntu '22.04.5 LTS').
+>
+> So in:
+>
+>   do_exit()
+>
+>     sched_autogroup_exit_task()
+>
+>       sched_move_task()
+>
+>         if sched_get_task_group(p) == p->sched_task_group
+>           return
+>
+>         /* p is enqueued */
+>         dequeue_task()              \
+>         sched_change_group()        |
+>           task_change_group_fair()  |
+>             detach_task_cfs_rq()    |                              (1)
+>             set_task_rq()           |
+>             attach_task_cfs_rq()    |
+>         enqueue_task()              /
+>
+> (1) isn't called for p anymore.
+>
+> Turns out that the regression is related to sgs->group_util in
+> group_is_overloaded() and group_has_capacity(). If (1) isn't called for
+> all the 'spawn' tasks then sgs->group_util is ~900 and
+> sgs->group_capacity = 1024 (single CPU sched domain) and this leads to
+> group_is_overloaded() returning true (2) and group_has_capacity() false
+> (3) much more often compared to the case when (1) is called.
+>
+> I.e. there are much more cases of 'group_is_overloaded' and
+> 'group_fully_busy' in WF_FORK wakeup sched_balance_find_dst_cpu() which
+> then returns much more often a CPU != smp_processor_id() (5).
+>
+> This isn't good for these extremely short running tasks (FORK + EXIT)
+> and also involves calling sched_balance_find_dst_group_cpu() unnecessary
+> (single CPU sched domain).
+>
+> Instead if (1) is called for 'p->flags & PF_EXITING' then the path
+> (4),(6) is taken much more often.
+>
+>   select_task_rq_fair(..., wake_flags = WF_FORK)
+>
+>     cpu = smp_processor_id()
+>
+>     new_cpu = sched_balance_find_dst_cpu(..., cpu, ...)
+>
+>       group = sched_balance_find_dst_group(..., cpu)
+>
+>         do {
+>
+>           update_sg_wakeup_stats()
+>
+>             sgs->group_type = group_classify()
+>
+>               if group_is_overloaded()                             (2)
+>                 return group_overloaded
+>
+>               if !group_has_capacity()                             (3)
+>                 return group_fully_busy
+>
+>               return group_has_spare                               (4)
+>
+>         } while group
+>
+>         if local_sgs.group_type > idlest_sgs.group_type
+>           return idlest                                            (5)
+>
+>         case group_has_spare:
+>
+>           if local_sgs.idle_cpus >= idlest_sgs.idle_cpus
+>             return NULL                                            (6)
+>
+> Unixbench Tests './Run -c 4 spawn' on:
+>
+> (a) VM AWS instance (m7gd.16xlarge) with v6.13 ('maxcpus=4 nr_cpus=4')
+>     and Ubuntu 22.04.5 LTS (aarch64).
+>
+>     Shell & test run in '/user.slice/user-1000.slice/session-1.scope'.
+>
+>     w/o patch   w/ patch
+>     21005       27120
+>
+> (b) i7-13700K with tip/sched/core ('nosmt maxcpus=8 nr_cpus=8') and
+>     Ubuntu 22.04.5 LTS (x86_64).
+>
+>     Shell & test run in '/A'.
+>
+>     w/o patch   w/ patch
+>     67675       88806
+>
+> CONFIG_SCHED_AUTOGROUP=y & /sys/proc/kernel/sched_autogroup_enabled equal
+> 0 or 1.
+>
+> [1] https://lkml.kernel.org/r/20250205151026.13061-1-hagarhem@amazon.com
+>
+> Reported-by: Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>
+> Tested-by: Hagar Hemdan <hagarhem@amazon.com>
+> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-
+> ---
+>
+> Previous discussion under:
+> https://lkml.kernel.org/r/20250306162635.2614376-1-dietmar.eggemann@arm.com
+>
+>  kernel/sched/core.c | 21 +++------------------
+>  1 file changed, 3 insertions(+), 18 deletions(-)
+>
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 621cfc731c5b..532119a3f72b 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -9015,7 +9015,7 @@ void sched_release_group(struct task_group *tg)
+>         spin_unlock_irqrestore(&task_group_lock, flags);
+>  }
+>
+> -static struct task_group *sched_get_task_group(struct task_struct *tsk)
+> +static void sched_change_group(struct task_struct *tsk)
+>  {
+>         struct task_group *tg;
+>
+> @@ -9027,13 +9027,7 @@ static struct task_group *sched_get_task_group(struct task_struct *tsk)
+>         tg = container_of(task_css_check(tsk, cpu_cgrp_id, true),
+>                           struct task_group, css);
+>         tg = autogroup_task_group(tsk, tg);
+> -
+> -       return tg;
+> -}
+> -
+> -static void sched_change_group(struct task_struct *tsk, struct task_group *group)
+> -{
+> -       tsk->sched_task_group = group;
+> +       tsk->sched_task_group = tg;
+>
+>  #ifdef CONFIG_FAIR_GROUP_SCHED
+>         if (tsk->sched_class->task_change_group)
+> @@ -9054,20 +9048,11 @@ void sched_move_task(struct task_struct *tsk, bool for_autogroup)
+>  {
+>         int queued, running, queue_flags =
+>                 DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
+> -       struct task_group *group;
+>         struct rq *rq;
+>
+>         CLASS(task_rq_lock, rq_guard)(tsk);
+>         rq = rq_guard.rq;
+>
+> -       /*
+> -        * Esp. with SCHED_AUTOGROUP enabled it is possible to get superfluous
+> -        * group changes.
+> -        */
+> -       group = sched_get_task_group(tsk);
+> -       if (group == tsk->sched_task_group)
+> -               return;
+> -
+>         update_rq_clock(rq);
+>
+>         running = task_current_donor(rq, tsk);
+> @@ -9078,7 +9063,7 @@ void sched_move_task(struct task_struct *tsk, bool for_autogroup)
+>         if (running)
+>                 put_prev_task(rq, tsk);
+>
+> -       sched_change_group(tsk, group);
+> +       sched_change_group(tsk);
+>         if (!for_autogroup)
+>                 scx_cgroup_move_task(tsk);
+>
+> --
+> 2.34.1
+>
 
