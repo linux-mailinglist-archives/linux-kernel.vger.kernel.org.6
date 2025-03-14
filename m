@@ -1,169 +1,165 @@
-Return-Path: <linux-kernel+bounces-561820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 594EFA616B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:47:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF88A6167E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:41:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6769C189F6AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:47:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA2D1461C8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBC02040BC;
-	Fri, 14 Mar 2025 16:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395C92036FE;
+	Fri, 14 Mar 2025 16:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L9GCcLde"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="LNso99M4"
+Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E672036FF;
-	Fri, 14 Mar 2025 16:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BE1202F95
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741970824; cv=none; b=VuEAT+LFUrrHN+6j55+y9bG7LlwkWdoQ6ITQ7i5F1SdNI7KY7U0uOLLl0YHht1U7ky7uMCPE9rQXOAzQwjM0RrRu9QxlbsTXr6DuVb3/yonAGxGJJUea+fbN0Dekd6cpGMzW1PqvFVdeesijVGq4ULF75ICYUKiM3vnUci2ZdIY=
+	t=1741970498; cv=none; b=d9DJIDKwR+ZqZMEaPJpxZDv0YdTMAwalCEeAofJiJwxgssJEKa1TVh+xnS+C/phFUTJ4u/d8Ottrs5wB96BISiLfUJg0qxTfY8cYxiqxkRw1LG5rxAEdIEzl9VA5iOo0x3iJy5et6NWRYzcGeiXK4240ISvkIRU4O5s9Ow5b/DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741970824; c=relaxed/simple;
-	bh=5ow0IO1Lxno0ruL0X/rFbPZdHMBzwVXIJvTvpzKa9Go=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=keQ+ANEtls+mStLGrGmEOgxy2++1y4mDOWJASnWpNSAkoROjXlTWvsbiZPRz9ELt5qncSeV5MYQoibsbnYCaVK/6pc9dmZTI0TzoSj31DqGMrBY+JC1S8dtEw2D6kYRdafzgRrbXqN7r887nQHmL7XoYdcFnGvPlXHgW1M18dUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L9GCcLde; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-225df540edcso17497465ad.0;
-        Fri, 14 Mar 2025 09:47:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741970822; x=1742575622; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gXQOhE3zWBqm8qiTh3H8EE+99XmrXnz6Df0P1iclh/U=;
-        b=L9GCcLdevMBFSfGKFB72/VOcGz2JXADWdrpt7d/w1V65kM/J2uSLnk5GHsIEqsSETx
-         kMXcQ3ce9Rc3iHM1tGUK4Ub+KxKrQSgjh7KTEv+39oh2YvTYT3JgpnZoRl1iQyhIZTLi
-         iaMtHhBsBGZvc8iv21DXske3/Q2LdKbrabVpTiMJDFhqmrHkSj/qgt/NPxZETIcbffEu
-         KMTxVc0Z1q1fDLzAkUwDIuXtWNMcQySxkOcgjTmuhfInZy1gK2g4JR8Y4DQuhXK1g2Oz
-         1tBDuXcDcHXS5Q32fHHNASp4T+GKT41Ujylc8xJ8yFTpoNf9Cd/h9OR103Omg7UO6Mnj
-         grsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741970822; x=1742575622;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gXQOhE3zWBqm8qiTh3H8EE+99XmrXnz6Df0P1iclh/U=;
-        b=Mjf+SFf7g1vUvcS7ntp1KXH9J89d3w6RbiC8JGzo1coSQdf8SVimCiiGnX7J3BjcSu
-         0LOHD9opRQ54rNE880tuy7GK42wTrGv7/8P+3wDHIwOi1BGnV86d1WZRrerf+xfh54eC
-         fW4wx05tnERzU71y6/A8cKcwJTXa07LQhqbdvpHHYk9ZZmlSWbktaesAycsOFKnoLzON
-         nAY7GVLym0Ked5mMmHaL5mXsrQwo3ky42y4x6MRZ3Hv/iYI+JpfGs+pknUQCN2kY7/wf
-         pPe1SgkdDPtdE7PUhbMaR5EwTbOEOobW2nvZ35nSfdELPFI8HEoSuQ/Tfqyoi6ThUZhA
-         ehiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzBDr8SIC+c2NxhWT7nUYmrtHTQuavLGKat1BH3tnwD+YwUkM75uj1dAbBqhUbk7YyWkOixm4u2LsN4bg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIywiIfOBR0Uq4d7Va8YMGwJia1WxHq1iFjPTEz2+jVkTY7WhD
-	sYsymoZAIHF0/DN0s10PFVbQLU71iHi67KdLNUd/qqnQBuzIGOXO
-X-Gm-Gg: ASbGncuALh29hRSzDfd8ERkEDAjGbfM6k6NaysDPxZw6DxPxKc2qUPxoeC18KTOnsMJ
-	9R79vqdXbU915uj4Ot9oVuvDNEq2kFaeZ6HZvZQbWTdaK3EKOcUpkjiRyFl7kfpKUICD8NV9FLf
-	i0zlBtzSyx9+nohmN57pIpv3GE3+ShKOz9+mr711qLQ2U0xZlwTC067pUfgDc4BWzPFcVfrlwKF
-	kW2yaHVp4OCOT10xfnZltIguZJ50VYa49AteeUtKeHprlLKRx/9UzpsRRy+xqa9Us5iFSheYGnI
-	We/Zunfweo/MFCI+YQQ5m69mrq6dJmi6sExU9Xfr1XLc03v70VDJA/Jg+gPu
-X-Google-Smtp-Source: AGHT+IETW085KBPhOBloqrxL4/C+oH11RFHan0UJ9ycgygib4EUNqH/YQXg7hN/Xw6Rij2HvsdIMVQ==
-X-Received: by 2002:a05:6a00:893:b0:725:4a1b:38ec with SMTP id d2e1a72fcca58-737106d1c9dmr11397192b3a.3.1741970822195;
-        Fri, 14 Mar 2025 09:47:02 -0700 (PDT)
-Received: from localhost.localdomain ([2601:646:8f03:9fee:8f4e:a163:c61a:7fed])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371167e07fsm3069624b3a.119.2025.03.14.09.46.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 09:47:01 -0700 (PDT)
-From: nifan.cxl@gmail.com
-To: dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com,
-	Jonathan.Cameron@huawei.com
-Cc: linux-cxl@vger.kernel.org,
-	a.manzanares@samsung.com,
-	dave@stgolabs.net,
-	linux-kernel@vger.kernel.org,
-	nifan.cxl@gmail.com,
-	anisa.su887@gmail.com,
-	Fan Ni <fan.ni@samsung.com>
-Subject: [RFC] cxl/region: set numa node for target memdevs when a region is committed
-Date: Fri, 14 Mar 2025 09:40:19 -0700
-Message-ID: <20250314164629.6937-1-nifan.cxl@gmail.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1741970498; c=relaxed/simple;
+	bh=O82n78ss5+Ih+r33ZKwLEO2agcUD4VZ0XGXk5KLTdfM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RkPCeqXgpAzEJSuURs5LGNUogmLNX/EVENZsUGiLvPoAYUc4dk+Gt+Pys3ZbrO680/pWgLyFgALqNOitftGuxS1NCEBAAso9qwhsFxtzSoUTIkVaECFM2lJXQISJ4jeIqOfFjXxnuh8d3lmP/3lhJX0JtEXUwLxvzfY0Wylptwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=LNso99M4; arc=none smtp.client-ip=66.163.187.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741970490; bh=LSPWeeDc4kfnTy6XAQkhnXeL0TiR4naRLFabBLo1bMs=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=LNso99M4BYH1kVbCXtvSjy5XJIwAFVQ/tOmiZhx5zPKt0+f6KcGXN2Cun8EPk4/CSNawsj3/da69jGs2owL8o5u1W29X6m/5Km+hgAL+GnqBxaWYpZQaoMymufF52JJ2feSQYASWHqXle6k/heamH8KB40UXrbCDFpws/0GWATPXgoDwxSbBCDJfuc8Dhv9IvLMdea0dSC1NP8skohfKzZ8GS+3zazFvJRvZv274K49Uzj3QlT5x1EKlBgrczGmE7m8YbJKW+YlMP3eo2nHCFpaXXMFsfdOx0KbB/mr14VagTNB/Myelt9lyB4s53SLsiVfEES7+KOsefXcZ6L7yrQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741970490; bh=6jjAwDm2pxXtJK8wOstbrf3Oxp5hYC01T9bBVHhzKM7=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=M+vtayvJBDLYYN2Z/ub+Afh22JFWT8VarfPE9GaQ9//eKxa31XVEDhgDvOiSt2/AiJRG4yg45X0Lo+m28zv4Z+XFe1WI4r4Dr3hjJqz7Dr2Caox8iEbisnzTMAMRrgfXsPGPWw1eNEQ8jR39l2A1WqsuORU4GAvktLoVIVoqg1RJGX04CdleYawapmYVkVNI3I8vVAYbPVLpBM8pnSg/eOqfaxqH239knjYIgyMIufl8YeTnrVBRdhiU1j8pIQ/vb81AwN2rJK7QlcUz11re5e1cFgGoe2dgPKMDBLdxLWpPTd+ypB9/njGVw8WaaPWMAcrJkz9878VZkCWQRUF2jw==
+X-YMail-OSG: YOJJeNAVM1nD2IKlVSMjlgST4etRQIf0.CmdGrSFZNQCmezWvojqo0m5PJLr4Zs
+ IP0SAiA.xSSjs8eUYg1dqqwVb.WAJ6w2Rjetu15aL6eM71maI7mFtMRJEM2yyYOZJwqVHo7P8b20
+ jIpRkkcOtYjTQpL79bPk5mX6L7Xp4s9B5IGIdB83n2N5BEoUH8b7FSHvfFBlf7yhTuW7rdEvpI6H
+ F4L110vX6vzAojYCSA50OmSlIDPkJrbAwnBtHDsLEAZlx13QlgFVS1Yaf6qz60LvTUtSrG3KqyF3
+ m41DtMbjiMFvUcibFHFaHByUzWDBWg5lqO7pYjMW34AopOigaqyaJFje6PdvXiq6OhuzOiCfMbLE
+ Ioqjt2wfkpzznAJVK8Sn8fF5m5KkBfT3qTGClIMbQ7Q6jNUbO1a8mTpPFn_batbgFlX7vGPC_IBK
+ rTTntHM8yAVJVz64E5SsJ5VRw7fyH_jhjaFcta_4p9KzULSqPXWQDNJby9RooRt3W0w2sfHunyC5
+ o1wayG0pxT7FXXYaiUH0byCYr5ZWnpWhooAsfJnIIqApPkbdyXPoloOSOi0QopMJLO9U2ybbva_7
+ rVm5FDorQzn32DpN1X1XC0Hj_2b2XpX21CK7rlQ17sL2zu5BeSqj2kDgHmbP9w6wYFP9kBad_x3a
+ Nolh5Xq1BXBgLUQ60X07kO.Dfci_FMZVhp7u7G1CEffc_L5FkTPmhOSICeUHDOBwYQCUU7itN_QU
+ PXUn3caV3sPl6uguVANFkHkj4iVBMAJLzEALzGebML1rcEroeXjF7txslCk6D_ftyQlvEc7sKMqM
+ m0RwbX0Wca1V8WoZQS0FmLpicZmRkrV.nRZJa7orBGpENQF24S.ppiunW8u00TP_I2BSERzOg_H.
+ exdknPjAGSWUtbhXhgLbhu5JTSLeuHLJ9abiKctv0yZNRn0Aypynan0wjn_Rz7.rybHYFYFJPEwI
+ LiJ_apxgDSqPVk_zEKlJ0lzeNmuwelg0heJ_5o1lNVxPWRaI6sSMQ_kRtdZeMraz.rEWrPhG9D8L
+ aSUQgPb3V0WI5dqmNbD.z8VN1Y66bzgKlRBHbNGf3Z4Ad3WaMhtMd2qBiry9ae5dXKYiF7UXnD7u
+ w7svDtEfOXmpu2LgZx0EAdGbGcc8NsM361e8LlQQQDlJu9zE.xxxy5SMqCMnzwHeGIDlOABnqy09
+ javx98fTTyF5K81iJSiyEuGos9A6gstr9F0yhv6R1Jr83xL7NBYYTSxHULK4kt6h0clT2XwbIdLv
+ e64Rhd9Ovs7FZIVYxLI3xI6oNCv0yn3_1B2qwXir8ssLa6WKUI9MCSx2SOuQ47unytNz6jEacgO.
+ 87ofhYx4wdhzfUvUXGKmsTRh_cbZTH7PaQ84pBQXGntspanC0278Sc7v1ERvz.s0aLJr44HiIrRn
+ Lq.Pb5FfTu6vefHd2NgXJaF9ePh5Og9tSevAzAjHVlM.i3LBvJWQpptxLf2B9txIu3Yhz_tUTLnb
+ L0xCRtTFK6uWhRwoHtxr0u3RVoTZlWwaAz4oEKbwrb17dNWhTukEgVeOOw1EiOhX_hO5fqNK7kYI
+ a6uWOYPZ.hcBRd_ZCHpEUVjzQNVFz.8aRMOmZJdqCO5C2wUGfC_8nf1h5dUEmeVLmLcRtKuSuYBd
+ 4LFX2BAg0l5QOdjpZ2e3TECOzY1dlJz6We7ZchXorDX0g9vdERwea.Rw2WDVKh_9wfx6IiHE7HHf
+ dJT_foepbv08LUzJ0BgFRlpcRo._OAzQEHSmEB8R5WG_X7qlzzOS2euvsOQwn3Za0N6PlzL5Mami
+ 6s2GVZzEQgZ6hhum0.kM1JestrnsoXCxH6lFWlxOBgoAZeT1ysmGy.FyFLHcyn9tnAdqfByUtBYY
+ z92LO.MOmCSX0_yGCUUIZTts1GbCUMuErn1cNqB63tBhkjFFvxoXCgXwaNzvMuVivM71Kpegh3pp
+ 9lxGxt34zzLbb4TIMJJm4PXeol5oKa3vWN47D8TTNx9jWdpfu2ChtwBvyR7xnMUNs.Ptup0FoLks
+ stsTtDMxbl042_GVZTaRBXTdDWxqZTk_H_fGPwOC5POXFRP19wv4r3YVerHxPF4m4ZF3wfhBniuX
+ kkiQEcd64yN_yj1aJpQc1e02GaM6lv2cXYhGCP7F28lSDAt2J0V_SzMKRrEaClATYUNwP3ILRpEd
+ FLyjK6XM5osASD9uK1C0rpq1lknhgxgvE5eO0.61eLp5oYYXSDQOIJfO8Vs2IkHZaSjulCp1_lZX
+ CtZa.0vLTZvXjOKsVuIAF4n2W3I4pHevyln3pItBvEphyw78JXGjFHgoNQv4htgsvJwsnt9lCp7e
+ 3BUSAL1DU_cfwcjjTxuMc
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 853f45af-6bfd-42c6-8a39-b9fab4ed7dfe
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Fri, 14 Mar 2025 16:41:30 +0000
+Received: by hermes--production-gq1-7d5f4447dd-9qjv2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6c9efc90c0421e9334029701ef688062;
+          Fri, 14 Mar 2025 16:41:27 +0000 (UTC)
+Message-ID: <42e5bb33-1826-43df-940d-ec80774fc65b@schaufler-ca.com>
+Date: Fri, 14 Mar 2025 09:41:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: Initialize ctx to avoid memory allocation error
+To: Florian Westphal <fw@strlen.de>, Chenyuan Yang <chenyuan0y@gmail.com>
+Cc: netfilter-devel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20250313195441.515267-1-chenyuan0y@gmail.com>
+ <20250313201007.GA26103@breakpoint.cc>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250313201007.GA26103@breakpoint.cc>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.23435 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-From: Fan Ni <fan.ni@samsung.com>
+On 3/13/2025 1:10 PM, Florian Westphal wrote:
+> [ trim CCs, CC Casey ]
+>
+> Chenyuan Yang <chenyuan0y@gmail.com> wrote:
+>> It is possible that ctx in nfqnl_build_packet_message() could be used
+>> before it is properly initialize, which is only initialized
+>> by nfqnl_get_sk_secctx().
+>>
+>> This patch corrects this problem by initializing the lsmctx to a safe
+>> value when it is declared.
+>>
+>> This is similar to the commit 35fcac7a7c25
+>> ("audit: Initialize lsmctx to avoid memory allocation error").
+> Fixes: 2d470c778120 ("lsm: replace context+len with lsm_context")
+>
+>> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+>> ---
+>>  net/netfilter/nfnetlink_queue.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
+>> index 5c913987901a..8b7b39d8a109 100644
+>> --- a/net/netfilter/nfnetlink_queue.c
+>> +++ b/net/netfilter/nfnetlink_queue.c
+>> @@ -567,7 +567,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+>>  	enum ip_conntrack_info ctinfo = 0;
+>>  	const struct nfnl_ct_hook *nfnl_ct;
+>>  	bool csum_verify;
+>> -	struct lsm_context ctx;
+>> +	struct lsm_context ctx = { NULL, 0, 0 };
+>>  	int seclen = 0;
+>>  	ktime_t tstamp;
+> Someone that understands LSM should clarify what seclen == 0 means.
 
-There is a sysfs attribute named "numa_node" for cxl memory device.
-however, it is never set so -1 is returned whenever it is read.
+If seclen is 0 it implies that there is no security context and that
+the secctx is NULL. How that is handled in the release function is up
+to the LSM. SELinux allocates secctx data, while Smack points to an
+entry in a persistent table.
 
-With this change, the numa_node of each target memdev is set based on the
-start address of the hpa_range of the endpoint decoder it associated when a
-cxl region is created; and it is reset when the region decoders are
-reset.
+> seclen needs to be > 0 or no secinfo is passed to userland,
+> yet the secctx release function is called anyway.
 
-Open qeustion: do we need to set the numa_node when the memdev is
-probed instead of waiting until a region is created?
+That is correct. The security module is responsible for handling
+the release of secctx correctly.
 
-Signed-off-by: Fan Ni <fan.ni@samsung.com>
----
- drivers/cxl/core/region.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+> Should seclen be initialised to -1?  Or we need the change below too?
 
-diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-index e8d11a988fd9..935ee0b1dd26 100644
---- a/drivers/cxl/core/region.c
-+++ b/drivers/cxl/core/region.c
-@@ -242,6 +242,13 @@ static int cxl_region_invalidate_memregion(struct cxl_region *cxlr)
- 	return 0;
- }
- 
-+static void cxl_mem_reset_numa_node(struct cxl_endpoint_decoder *cxled)
-+{
-+	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
-+
-+	cxlmd->dev.numa_node = NUMA_NO_NODE;
-+}
-+
- static void cxl_region_decode_reset(struct cxl_region *cxlr, int count)
- {
- 	struct cxl_region_params *p = &cxlr->params;
-@@ -264,6 +271,7 @@ static void cxl_region_decode_reset(struct cxl_region *cxlr, int count)
- 		if (cxlds->rcd)
- 			goto endpoint_reset;
- 
-+		cxl_mem_reset_numa_node(cxled);
- 		while (!is_cxl_root(to_cxl_port(iter->dev.parent)))
- 			iter = to_cxl_port(iter->dev.parent);
- 
-@@ -304,6 +312,15 @@ static int commit_decoder(struct cxl_decoder *cxld)
- 	return 0;
- }
- 
-+static void cxl_mem_set_numa_node(struct cxl_endpoint_decoder *cxled)
-+{
-+	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
-+	u64 addr = cxled->cxld.hpa_range.start;
-+
-+	cxlmd->dev.numa_node = phys_to_target_node(addr);
-+	dev_dbg(&cxlmd->dev, "set numa node: %d\n", phys_to_target_node(addr));
-+}
-+
- static int cxl_region_decode_commit(struct cxl_region *cxlr)
- {
- 	struct cxl_region_params *p = &cxlr->params;
-@@ -340,6 +357,7 @@ static int cxl_region_decode_commit(struct cxl_region *cxlr)
- 			cxled->cxld.reset(&cxled->cxld);
- 			goto err;
- 		}
-+		cxl_mem_set_numa_node(cxled);
- 	}
- 
- 	return 0;
--- 
-2.47.2
+No. The security modules handle secctx their own way.
 
+>
+> diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
+> --- a/net/netfilter/nfnetlink_queue.c
+> +++ b/net/netfilter/nfnetlink_queue.c
+> @@ -812,7 +812,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+>         }
+>
+>         nlh->nlmsg_len = skb->len;
+> -       if (seclen >= 0)
+> +       if (seclen > 0)
+>                 security_release_secctx(&ctx);
+>         return skb;
+>
+> @@ -821,7 +821,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+>         kfree_skb(skb);
+>         net_err_ratelimited("nf_queue: error creating packet message\n");
+>  nlmsg_failure:
+> -       if (seclen >= 0)
+> +       if (seclen > 0)
+>                 security_release_secctx(&ctx);
+>         return NULL;
+>  }
 
