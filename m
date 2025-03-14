@@ -1,184 +1,271 @@
-Return-Path: <linux-kernel+bounces-561184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E040A60E80
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:14:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A35A60E81
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:14:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8472E3A83A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:13:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4D4E3A694C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8DE1F3BBF;
-	Fri, 14 Mar 2025 10:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1811F03C7;
+	Fri, 14 Mar 2025 10:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hui0RsCL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Wi9A2jQ1"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E3B1F03C7
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829D61F236B
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741947210; cv=none; b=LZIGiaYs1un1vH3Pb0rhcB4gGc7ZaYbiKHQKJuoGKRw7V2I2UvOjAbJGmu8nteM8nIW503sBOEpE5q8jEcNecrLJt1GeAEiO2OtVC2LYwhaJ0QTOSETQESmiaNXB4fIJNmQKlgTBb6RnQA3RhOhLylEeIqYzs4ciOokov0pthfU=
+	t=1741947279; cv=none; b=kOvzCDGzFM0CS71jZg7HVA6AOlO/oXQgzsV6DhR22nVQFZJPkLWt4+tpVdgwErd/fkONo7mqg9F0a692v2ztTVj9TW4Cca6RHeNIES0GjX+2ULJxj/084kLlKOmhkZ5uQhUQgE8aLox1tFU+9wY3+kHU66GGtwRUJHiinC29haQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741947210; c=relaxed/simple;
-	bh=3fLWeHLKHrb18Uy/MS3QJBRi1rm/wOaI7DMw2a8UkqY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZbCQPTLdb9vmVin/pTs/2+WbLUfOpz4+/ssUt3wyHxGRjhw8DtV8TRyAmq7gvOhv+GlKJp+dZS84jJyG4W0s07zshmmuyUbpaB1aKeX21KCxVXRaeVStr8idAx+dIMKe6CzxiiE31bTWDVf35g5GQGr+YwvFNXZ677AqqRZw6wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hui0RsCL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741947207;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SPd+EnkY0Li2mTO/GP70bxnkH1XCMqHnQAmmracRGtI=;
-	b=hui0RsCLXrGu0G7zqLYhtgvrcDYAesZiooZ6iceleb/RzBG+99WWziCuOHcKEKPyXLPZZC
-	6v5KL5+nu2v8R52fCT1IecOjA8ZRlsSoAk7qBVcfvFFckebY1V6YsFS26HNuUXPpKbjYqE
-	sSEAI9qoXXN2SDFCWgUW05calS+4KBk=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-454-5K3aqZgcNL-bB163s3UzOQ-1; Fri, 14 Mar 2025 06:13:26 -0400
-X-MC-Unique: 5K3aqZgcNL-bB163s3UzOQ-1
-X-Mimecast-MFC-AGG-ID: 5K3aqZgcNL-bB163s3UzOQ_1741947205
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ac2aa3513ccso170421366b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:13:26 -0700 (PDT)
+	s=arc-20240116; t=1741947279; c=relaxed/simple;
+	bh=KJJ6fPVwM15OWOjpGD1m539FVGRzH5c2a+G7+GXZ0aU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JoiHev5Us4sdCxT+BKvvCVeiqjfrZBjAe/tmXyCERGq060gM/fGJXRqaLVAbAUxO7z5rojV1R9hcUrhU4h9HyhaheuxBGBf0BwjmiMPJWzSSahvsv5/W1HYruS4mnHrl7fm1rFwQhOjKkQJdQwIjzl3mrgC1Mj5neskrcP5Bs3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Wi9A2jQ1; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e5deb6482cso5398534a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:14:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1741947276; x=1742552076; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KJJ6fPVwM15OWOjpGD1m539FVGRzH5c2a+G7+GXZ0aU=;
+        b=Wi9A2jQ17FLghuuKDY6rSGpjcSZb6I2tQA1btUSNEoveSWFYOAlDEO+y7UzmH8kcLk
+         5Cp2GloZzZ4J0amdwwavod9HtbhnmRVsWqTXFVK9WiaxE5wlswyNac0O/kuLtcIdO/th
+         CtCuOAu+K0AI0kZvqNxIXxYKI6Eyy33OFj5MO89WqZByr0S+9GJHIkw/JoCyiGlcYFL1
+         PKPVsRY7ob4st42WvYZ0pamr5QvD2gJdfqiVd/wYb/1uiA4R0/WNJR+Zv7Jy2sOJClkZ
+         n1CU4RVUoE2PEALZpTcxlpE5miMYORU5W1+HnyOVPwrY99btFnK9rYoypthcVhcgxVRR
+         fkAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741947205; x=1742552005;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SPd+EnkY0Li2mTO/GP70bxnkH1XCMqHnQAmmracRGtI=;
-        b=GwlhafFmCDKGdc2Nxaz/4E5Uw70OBiXIylyZCp6WPFfk/q+XSHg4IwggsO+xh4ZNpS
-         ltlbQbAcTbW64fZgwv7+IjKoMK0b9pza333qC+TGWA+UE4daIbscqr5L/M5/cqzMiaJr
-         geJeqZJK0DkODVh2mjWQccEcjQKRvKEdOf9PLCFOm3SljXbdJcGZ20FLAdc5j82A7lJ6
-         4hHFZKPeQ1K7qj1CLseskwFKEjMKgpkrlSrue2gKyjTnAM+641Zd8f7r6FH1elpERG2p
-         yYHHZ8AcGDvNIGUdfN6l1eRRVP4wLvVb92pOBVWM9WzkoJmFVuZdYZ5L5EoAsBw0YDv1
-         ICbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxjGc3uXS4n+gH8ChZ1kzP6iBfbS34Qcl6vWWOLi4srrOqno52eyWAi0Td7ln0zSymtbYG4O3F86FERis=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykQwZ2vDipsKeL3XQp6rhj/VANeLHWhzpgpAdWKip8XF0Hq/Zu
-	97oF5Vk4ecQTaKmNJSqLDfkl65vUXE9rfGvT43HnUp6c4hm+IvDTxyVE8x8o8KHMaD5Ysn4EubQ
-	81aHh0Yu9txOhcy6Xgsh7moLhTweY1qYNvNKd/XI04UiHMNMRbt5JgLfZkoOR2w==
-X-Gm-Gg: ASbGnct17CWOkkCb4TdoyWQPDUaJW4VbFwPtF4019HvTS05AK77n0TzpN6oYog35V5u
-	XA187QRKs9iPiyIX4gXFgY2yB09ABnOgVLw1doQS+qRTOYwYOqs7np+r50OVj5hXPG2Vg6T8rH2
-	cApKGSKrO/4sV3SIzg9Dqk7+77WGKVnZZrNg7S0OvlFsEJnivQdeFNueMeugqrbU9qmFZqexeD0
-	5qqWWPsX6t02BluwcSPs1rlwH5e8gJC55Le0bGXamN46idFtRSwkRSgX/B0NmU43vNstrEqUvyI
-	SmV73SoWKKmn
-X-Received: by 2002:a17:907:7d87:b0:ac3:26fb:f420 with SMTP id a640c23a62f3a-ac3303715c9mr200508866b.42.1741947204948;
-        Fri, 14 Mar 2025 03:13:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFSV3Kxn90NGxgDHQH3cs1oxAKHVeo2b8VKgG0w+cX9fVNQ1pDU9yg6oVegNwiT56KvNkO8iQ==
-X-Received: by 2002:a17:907:7d87:b0:ac3:26fb:f420 with SMTP id a640c23a62f3a-ac3303715c9mr200503466b.42.1741947204252;
-        Fri, 14 Mar 2025 03:13:24 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146aeb5asm204715966b.36.2025.03.14.03.13.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 03:13:23 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 27E5218FA934; Fri, 14 Mar 2025 11:13:15 +0100 (CET)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Wang Liang <wangliang74@huawei.com>, jv@jvosburgh.net,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net,
- hawk@kernel.org, john.fastabend@gmail.com, joamaki@gmail.com
-Cc: yuehaibing@huawei.com, zhangchangzhong@huawei.com,
- wangliang74@huawei.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH net] bonding: check xdp prog when set bond mode
-In-Reply-To: <20250314073549.1030998-1-wangliang74@huawei.com>
-References: <20250314073549.1030998-1-wangliang74@huawei.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Fri, 14 Mar 2025 11:13:15 +0100
-Message-ID: <87y0x7rkck.fsf@toke.dk>
+        d=1e100.net; s=20230601; t=1741947276; x=1742552076;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KJJ6fPVwM15OWOjpGD1m539FVGRzH5c2a+G7+GXZ0aU=;
+        b=UdrJoIzpHlf2+uuw3tp1bGtKcWcXOK0HFKTN4t4/K5siN1ae50nuNOlSR0UDYC1MXC
+         7T6jw8HBzq+g1q70QyO9PPGxppu3rmzJSjYit08hWg2uH3T051F5I1/qUlVxb2/wggXz
+         9H4oDAC+El8w5uVapLFVUNbgQ2mRsyzHZ1wiRDZMw43Gpp0+8kIGZE6V8LwYs4x1NNez
+         hM+na6sb+EvCQw7n2FlPQhF4ZqlJAVLxS0Qn7AfHrKssKCZio97T14Nn0QZMqz9McJYV
+         iyZg4Uj8o9SY/HrJDQ40SXtetWxAmS+0e4iyIdPtL1Kf1dlLfRMhYP7JCA6LYM9i5sXd
+         egnw==
+X-Gm-Message-State: AOJu0Yx91DBRpbBNCbh24xkvQcfuJRKVYRmpkypB8IA0DTfrBGeyZTLd
+	NiTTp3hW9Th9gHcrl80yW4z8msl+FjHw10v0SJeyrjOO14HLgoq5t3k5En7oeD4=
+X-Gm-Gg: ASbGncsSc3EKiA/pTfsdR6CIIN1boxHbO7nw7dErqClut3WdZOOFnAZnGzbmNHyvQsg
+	xXXmeolFo52WKGm/dB1I8SYAkblQkvs0b4g0w8L4jEgpXFUBzKNFcvEwSPph7inP+eefEL6QStP
+	KaykiD1NtwHMD8wvUOX6TAcADswUrD4IWuBKGCCrpAZb2BLrVsJyJWscTkTiHFbBqHn4AJVymJJ
+	wj5HVfrLls2EnzhtchPrKksW5WtvPZoGzADfbjffocVDeEJ5yFJvY8Dp2e4OF0C6XEaXsuGXOv/
+	7ZhaYDvUwGl9crj9CSorcw738qWyI9RGzK3z9nZ+NeGhHtEmVY6K5kabgG42OSiv3TQtkyT1hmf
+	eYrmG2+lY7dDjKqb0yfmSNp0+s/gs4xp5dEUEMcch3uDBaj4whOybY/rNcEKAT0Q3w/0=
+X-Google-Smtp-Source: AGHT+IGrnmM39wYi4gCRAcld43nmOa77QuZBOY2nU6j9dxGAGNYsbjEsHkqCzeDhCRxSXg9fCvKfrg==
+X-Received: by 2002:a05:6402:34d1:b0:5e4:d27a:d868 with SMTP id 4fb4d7f45d1cf-5e814839ec8mr6537137a12.0.1741947275565;
+        Fri, 14 Mar 2025 03:14:35 -0700 (PDT)
+Received: from ?IPV6:2003:e5:8714:500:2aea:6ec9:1d88:c1ef? (p200300e5871405002aea6ec91d88c1ef.dip0.t-ipconnect.de. [2003:e5:8714:500:2aea:6ec9:1d88:c1ef])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816afe1f6sm1738030a12.77.2025.03.14.03.14.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Mar 2025 03:14:35 -0700 (PDT)
+Message-ID: <eccb68b1-ae34-4576-8f98-2cd9b2b2de0b@suse.com>
+Date: Fri, 14 Mar 2025 11:14:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [tip: x86/cpu] x86/xen: Move Xen upcall handler to Xen specific
+ code files
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+ Brian Gerst <brgerst@gmail.com>, Sohil Mehta <sohil.mehta@intel.com>,
+ Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org
+References: <20250313182236.655724-2-brgerst@gmail.com>
+ <174194562029.14745.12496349660371729484.tip-bot2@tip-bot2>
+ <c54d69f0-cda6-4793-bffb-1a0c1e5e9d92@suse.com> <Z9QACrqCIxcZuY0U@gmail.com>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <Z9QACrqCIxcZuY0U@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------MpucqMB7AGFAz5lXohxlB6wO"
 
-Wang Liang <wangliang74@huawei.com> writes:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------MpucqMB7AGFAz5lXohxlB6wO
+Content-Type: multipart/mixed; boundary="------------907SwLbUGg8002oo4oRRStHo";
+ protected-headers="v1"
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+ Brian Gerst <brgerst@gmail.com>, Sohil Mehta <sohil.mehta@intel.com>,
+ Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org
+Message-ID: <eccb68b1-ae34-4576-8f98-2cd9b2b2de0b@suse.com>
+Subject: Re: [tip: x86/cpu] x86/xen: Move Xen upcall handler to Xen specific
+ code files
+References: <20250313182236.655724-2-brgerst@gmail.com>
+ <174194562029.14745.12496349660371729484.tip-bot2@tip-bot2>
+ <c54d69f0-cda6-4793-bffb-1a0c1e5e9d92@suse.com> <Z9QACrqCIxcZuY0U@gmail.com>
+In-Reply-To: <Z9QACrqCIxcZuY0U@gmail.com>
 
-> Following operations can trigger a warning[1]:
->
->     ip netns add ns1
->     ip netns exec ns1 ip link add bond0 type bond mode balance-rr
->     ip netns exec ns1 ip link set dev bond0 xdp obj af_xdp_kern.o sec xdp
->     ip netns exec ns1 ip link set bond0 type bond mode broadcast
->     ip netns del ns1
->
-> When delete the namespace, dev_xdp_uninstall() is called to remove xdp
-> program on bond dev, and bond_xdp_set() will check the bond mode. If bond
-> mode is changed after attaching xdp program, the warning may occur.
->
-> Some bond modes (broadcast, etc.) do not support native xdp. Set bond mode
-> with xdp program attached is not good. Add check for xdp program when set
-> bond mode.
->
->     [1]
->     ------------[ cut here ]------------
->     WARNING: CPU: 0 PID: 11 at net/core/dev.c:9912 unregister_netdevice_many_notify+0x8d9/0x930
->     Modules linked in:
->     CPU: 0 UID: 0 PID: 11 Comm: kworker/u4:0 Not tainted 6.14.0-rc4 #107
->     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.15.0-0-g2dd4b9b3f840-prebuilt.qemu.org 04/01/2014
->     Workqueue: netns cleanup_net
->     RIP: 0010:unregister_netdevice_many_notify+0x8d9/0x930
->     Code: 00 00 48 c7 c6 6f e3 a2 82 48 c7 c7 d0 b3 96 82 e8 9c 10 3e ...
->     RSP: 0018:ffffc90000063d80 EFLAGS: 00000282
->     RAX: 00000000ffffffa1 RBX: ffff888004959000 RCX: 00000000ffffdfff
->     RDX: 0000000000000000 RSI: 00000000ffffffea RDI: ffffc90000063b48
->     RBP: ffffc90000063e28 R08: ffffffff82d39b28 R09: 0000000000009ffb
->     R10: 0000000000000175 R11: ffffffff82d09b40 R12: ffff8880049598e8
->     R13: 0000000000000001 R14: dead000000000100 R15: ffffc90000045000
->     FS:  0000000000000000(0000) GS:ffff888007a00000(0000) knlGS:0000000000000000
->     CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->     CR2: 000000000d406b60 CR3: 000000000483e000 CR4: 00000000000006f0
->     Call Trace:
->      <TASK>
->      ? __warn+0x83/0x130
->      ? unregister_netdevice_many_notify+0x8d9/0x930
->      ? report_bug+0x18e/0x1a0
->      ? handle_bug+0x54/0x90
->      ? exc_invalid_op+0x18/0x70
->      ? asm_exc_invalid_op+0x1a/0x20
->      ? unregister_netdevice_many_notify+0x8d9/0x930
->      ? bond_net_exit_batch_rtnl+0x5c/0x90
->      cleanup_net+0x237/0x3d0
->      process_one_work+0x163/0x390
->      worker_thread+0x293/0x3b0
->      ? __pfx_worker_thread+0x10/0x10
->      kthread+0xec/0x1e0
->      ? __pfx_kthread+0x10/0x10
->      ? __pfx_kthread+0x10/0x10
->      ret_from_fork+0x2f/0x50
->      ? __pfx_kthread+0x10/0x10
->      ret_from_fork_asm+0x1a/0x30
->      </TASK>
->     ---[ end trace 0000000000000000 ]---
->
-> Fixes: 9e2ee5c7e7c3 ("net, bonding: Add XDP support to the bonding driver")
-> Signed-off-by: Wang Liang <wangliang74@huawei.com>
-> ---
->  drivers/net/bonding/bond_options.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
-> index 327b6ecdc77e..127181866829 100644
-> --- a/drivers/net/bonding/bond_options.c
-> +++ b/drivers/net/bonding/bond_options.c
-> @@ -868,6 +868,9 @@ static bool bond_set_xfrm_features(struct bonding *bond)
->  static int bond_option_mode_set(struct bonding *bond,
->  				const struct bond_opt_value *newval)
->  {
-> +	if (bond->xdp_prog)
-> +		return -EOPNOTSUPP;
-> +
+--------------907SwLbUGg8002oo4oRRStHo
+Content-Type: multipart/mixed; boundary="------------3Xc1mp00qYFtth6ifKOnT2K0"
 
-Should we allow changing as long as the new mode also supports XDP?
+--------------3Xc1mp00qYFtth6ifKOnT2K0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
--Toke
+T24gMTQuMDMuMjUgMTE6MDgsIEluZ28gTW9sbmFyIHdyb3RlOg0KPiANCj4gKiBKw7xyZ2Vu
+IEdyb8OfIDxqZ3Jvc3NAc3VzZS5jb20+IHdyb3RlOg0KPiANCj4+IE9uIDE0LjAzLjI1IDEw
+OjQ3LCB0aXAtYm90MiBmb3IgQnJpYW4gR2Vyc3Qgd3JvdGU6DQo+Pj4gVGhlIGZvbGxvd2lu
+ZyBjb21taXQgaGFzIGJlZW4gbWVyZ2VkIGludG8gdGhlIHg4Ni9jcHUgYnJhbmNoIG9mIHRp
+cDoNCj4+Pg0KPj4+IENvbW1pdC1JRDogICAgIDgyN2RjMmUzNjE3MmU5NzhkNmIxYzcwMWIw
+NGJlZTU2ODgxZjU0YmYNCj4+PiBHaXR3ZWI6ICAgICAgICBodHRwczovL2dpdC5rZXJuZWwu
+b3JnL3RpcC84MjdkYzJlMzYxNzJlOTc4ZDZiMWM3MDFiMDRiZWU1Njg4MWY1NGJmDQo+Pj4g
+QXV0aG9yOiAgICAgICAgQnJpYW4gR2Vyc3QgPGJyZ2Vyc3RAZ21haWwuY29tPg0KPj4+IEF1
+dGhvckRhdGU6ICAgIFRodSwgMTMgTWFyIDIwMjUgMTQ6MjI6MzIgLTA0OjAwDQo+Pj4gQ29t
+bWl0dGVyOiAgICAgSW5nbyBNb2xuYXIgPG1pbmdvQGtlcm5lbC5vcmc+DQo+Pj4gQ29tbWl0
+dGVyRGF0ZTogRnJpLCAxNCBNYXIgMjAyNSAxMDozMjo1MSArMDE6MDANCj4+Pg0KPj4+IHg4
+Ni94ZW46IE1vdmUgWGVuIHVwY2FsbCBoYW5kbGVyIHRvIFhlbiBzcGVjaWZpYyBjb2RlIGZp
+bGVzDQo+Pj4NCj4+PiBNb3ZlIHRoZSB1cGNhbGwgaGFuZGxlciB0byBYZW4tc3BlY2lmaWMg
+ZmlsZXMuDQo+Pj4NCj4+PiBObyBmdW5jdGlvbmFsIGNoYW5nZXMuDQo+Pj4NCj4+PiBTaWdu
+ZWQtb2ZmLWJ5OiBCcmlhbiBHZXJzdCA8YnJnZXJzdEBnbWFpbC5jb20+DQo+Pj4gU2lnbmVk
+LW9mZi1ieTogSW5nbyBNb2xuYXIgPG1pbmdvQGtlcm5lbC5vcmc+DQo+Pj4gUmV2aWV3ZWQt
+Ynk6IFNvaGlsIE1laHRhIDxzb2hpbC5tZWh0YUBpbnRlbC5jb20+DQo+Pj4gQ2M6IEFuZHkg
+THV0b21pcnNraSA8bHV0b0BrZXJuZWwub3JnPg0KPj4+IENjOiBKdWVyZ2VuIEdyb3NzIDxq
+Z3Jvc3NAc3VzZS5jb20+DQo+Pj4gQ2M6IEguIFBldGVyIEFudmluIDxocGFAenl0b3IuY29t
+Pg0KPj4+IENjOiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRhdGlvbi5v
+cmc+DQo+Pj4gQ2M6IEpvc2ggUG9pbWJvZXVmIDxqcG9pbWJvZUByZWRoYXQuY29tPg0KPj4+
+IExpbms6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3IvMjAyNTAzMTMxODIyMzYuNjU1NzI0
+LTItYnJnZXJzdEBnbWFpbC5jb20NCj4+DQo+PiBXaHkgZG8gSSBldmVuIHJlcXVlc3QgY2hh
+bmdlcyBpZiBzdWNoIGEgcmVxdWVzdCBpcyBiZWluZyBpZ25vcmVkPw0KPiANCj4gSSBtaXNz
+ZWQgeW91ciBtYWlsLCBzb3JyeS4NCj4gDQo+PiBQbGVhc2Ugbm90ZSB0aGF0IG15IHJlcXVl
+c3Qgd2Fzbid0IGFib3V0IHNvbWV0aGluZyB3aGljaCBzaG91bGQgYmUNCj4+IGhhbmRsZWQg
+aW4gYSBmb2xsb3d1cCBwYXRjaC4gSSB3YXMgYXNraW5nIHRvIE5PVCBtb3ZlIHRoZSBjb2Rl
+IGludG8NCj4+IG11bHRpcGxlIGZpbGVzLCBidXQgdG8ga2VlcCBpdCBpbiBvbmUgZmlsZSBh
+cyBpdCB3YXMgb3JpZ2luYWxseS4NCj4gDQo+IEkgYWdyZWUgd2l0aCB5b3UgdGhhdCB0aGlz
+IGNvZGUgbG9va3MgYmV0dGVyIGluIGVubGlnaHRlbl9wdi5jLCBidXQNCj4gdGhlcmUncyBu
+byByZWFzb24gdG8ga2VlcCBhcmNoL3g4Ni9lbnRyeS9jb21tb24uYywgYWdyZWVkPw0KDQpB
+YnNvbHV0ZWx5Lg0KDQo+IA0KPiBJJ3ZlIHJvbGxlZCBiYWNrIHRoZXNlIGNoYW5nZXMgYW5k
+IHdpbGwgd2FpdCBmb3IgLXYyLg0KDQpUaGFua3MNCg0KDQpKdWVyZ2VuDQo=
+--------------3Xc1mp00qYFtth6ifKOnT2K0
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------3Xc1mp00qYFtth6ifKOnT2K0--
+
+--------------907SwLbUGg8002oo4oRRStHo--
+
+--------------MpucqMB7AGFAz5lXohxlB6wO
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmfUAYoFAwAAAAAACgkQsN6d1ii/Ey81
+cgf+Izsd/BP1o69W9uUO+kyr6Qt6Z78JtIN/OPPd+ymt63VpubwEuiE4hfRkqbOehdBJWorkLK38
+8kX9vqR8tXk1Nn3N4z7aAxrIkaKLfCE6ax3Aqf63sjWeWMMxNTBJKPkpka59Qd3fYo7xvzalejdC
+hoiuu7e+0MD9nQ4I135606tZD/6h6ZOg9sKvlp9VOmv4mJ+nj7YXEzyZmdVS4kTBZOMD5FRs5nuY
+d6cE5wmSzShav10UUzkRfI+HkKTMkrtS6OkZ5jGENM8+LWVrR146yGLci9ujuThMHB3qiBY8n3TM
+q6SKC6TTmd8JnVI8j+w2xke5lzeg0eQlIR4wpmXXTQ==
+=VXLe
+-----END PGP SIGNATURE-----
+
+--------------MpucqMB7AGFAz5lXohxlB6wO--
 
