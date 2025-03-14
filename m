@@ -1,221 +1,125 @@
-Return-Path: <linux-kernel+bounces-562162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 698E4A61DE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:20:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A5AA61DEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:21:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F38147A3856
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:19:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48CCE461E87
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D8E1C8629;
-	Fri, 14 Mar 2025 21:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213581C54AA;
+	Fri, 14 Mar 2025 21:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qhg4gZjR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Edlt70Ml"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30721A3AB8
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25A8BA38
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741987185; cv=none; b=Z4FEl57H/8WxMy0go14aKWlTiFy89cQdkn63QiXQYtpRFLt9mviHU1UPQE4LDbVY0bPILF8ucbYfAcRgQfd0WgMlcRfM+ez8fbniW1iQ5h3BgxxIVCfltf+J/gegYgkKwLeQ7zqtTU4QJNpzaP08XheIPMbJxc+bjKmiPQE4wBE=
+	t=1741987264; cv=none; b=RHfYCO0EjqBpIpWEIQO3FN70nLaJ2OT649ZeJ6lxuUBUm7VXb6ZcW0mXJcqMIxwiMn9iAounNizMcsH6xs+UnFvRof1hGQn/T+07i3QV7vKsrMNYyp57CnnuJMTfU3FWGnDP6vefmYclPZSK1chwELD0Uek3+5CLkG6Mb56pwZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741987185; c=relaxed/simple;
-	bh=jqf7FEeHXNTJtC+4+XGwm1i96R01W9/xBY5heljHbQI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cHF98gzPtj9WnrDAdRyiRSIPG03a0JWO9eRcYeXYC3PBXGfIh9hMNSTHeot1ATZw0EVZRVIgiXZrcDew5TctbXxB3e7IhL8RcoLJW/ia7iB00PMDQk9/txNbolpu5hgRxZkKY6zP30rhlnhA9fA1v4YHjKq3IIO+JAChyL2Ithg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qhg4gZjR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741987182;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=M/YRvGQ/SRgXi0h5Ytl4wU6SKIBqP9xfS93kGdAJRbs=;
-	b=Qhg4gZjRpGTpnUgMAdkCpUPAWXai85dbPK2Niv0Un0/VG1p7OPapgzk66JcjVeE5ZTRjti
-	/vbdecP8RGu2BOtMqi2Nk3FG29lvKeuzdhJP8GjUg2y5sAixnCDwtL1jQCYQ1OmhDTuXro
-	DpSvDFDZ7estkp/Gc5yzGolmlsuH6dk=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-546-UWymL86QOeSrPBZrYU1T_w-1; Fri, 14 Mar 2025 17:19:41 -0400
-X-MC-Unique: UWymL86QOeSrPBZrYU1T_w-1
-X-Mimecast-MFC-AGG-ID: UWymL86QOeSrPBZrYU1T_w_1741987180
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43ce245c5acso1347895e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:19:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741987180; x=1742591980;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=M/YRvGQ/SRgXi0h5Ytl4wU6SKIBqP9xfS93kGdAJRbs=;
-        b=T6y8pW4/lCWJkzhpOVpJ67cs2q2+rKOSgP0OEPLQ9J7LwsBrwUhc+keqJ/A8ZJKgRb
-         dI24xwcmkY0zLGMWjW0exIaCwPB9uHKA2cUGu+hZOuKs+ohkepTlCqEL3hAuQ6d4kFpX
-         x91+EJYzZH5PFmmWtg4L1nhmrkowc4qG+rNNO8/l0WnniA1KXlRZNv1Obrl8y/t8FksS
-         9KejDEb9nyfnHPLP86b0vRF5wJ8a6mFYD6e+eK/8C6GJ9bJp1yjNwvyjkZwaHg1gI+Ou
-         DTEOo3td8j4Ec4Sk8eWNAVWhC/X4M/G5LqWGDCr0M3eYGn80Wn73m4yz3LGnJDAPYUcg
-         s9Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKvEX/hp+8b4tPptm0SLIefqGQV7DC/kEUQu2tdCUEr9qwghIIvgmj6YlnfIbxXd05iwd1Fsw6/GFairo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjMe+mmTcOykbleEHruiaKAzll+Ez5047C2UWawjD+GSYU1QwJ
-	40rnYLHBMvnmWIye70AgqA4EbMV0qi0aDZ51AEIr5hprH+CNixl2ZvsF5PkyllD5BKLn3JtnxnO
-	bZIJNPyzpMHOtDLghrghQ8r/tQ2/lksZdxey6HA0H6XBH4qLJXPXYMaY3NEieGw==
-X-Gm-Gg: ASbGnctsKUDBdTE0mfY+uCI3pd8OAhCRr4TgP2rQHLx+dYG/FyVCC0FGo5Pj5m+upTG
-	79PO0KKUM5taJfbTaL7mpqGH/HxDiRx+WLmuImzF8JLFUFnalGP4V7kwkTDsDwwxo4nDP1YHPqZ
-	v9i7P41REQLNf6W9ioXoUqCFj22c5ljcDbkEkRykyfPuLv8aJXXRZXnskvEnO5rTje9pYsusV8r
-	q1ZdjKD4xQ2jpYOQ0LVhmJiOaB97UP8Ggu9+AoegQDVkRqLJ67gbEzI4e8Y4hH2Nh7kUjrVhfnx
-	QB6WtvGuG3QjY0yOknuMgQW2RafAPZa5vyLrSPKip+asn3reWB6wRIZp7u7JZ+MLqywtcJP5+7j
-	5NxvvB3qU3mRvWF7bknVkHhBai+tEMUcBPegQoV6nr1U=
-X-Received: by 2002:a05:600d:e:b0:43c:ec28:d303 with SMTP id 5b1f17b1804b1-43d1f0a4287mr57881125e9.5.1741987179829;
-        Fri, 14 Mar 2025 14:19:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE7UzLfdBHiKkf80fimMtV90C5w67C079NQtLLpN6oXwwd78VGR2gRumFtRI+6ax6rJbx7bDg==
-X-Received: by 2002:a05:600d:e:b0:43c:ec28:d303 with SMTP id 5b1f17b1804b1-43d1f0a4287mr57880945e9.5.1741987179469;
-        Fri, 14 Mar 2025 14:19:39 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c745:2000:5e9f:9789:2c3b:8b3d? (p200300cbc74520005e9f97892c3b8b3d.dip0.t-ipconnect.de. [2003:cb:c745:2000:5e9f:9789:2c3b:8b3d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fdda152sm29019175e9.1.2025.03.14.14.19.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 14:19:38 -0700 (PDT)
-Message-ID: <86f91949-9972-4b0f-903e-cfa36bcd9926@redhat.com>
-Date: Fri, 14 Mar 2025 22:19:36 +0100
+	s=arc-20240116; t=1741987264; c=relaxed/simple;
+	bh=MNyKA6CVe4652u3rl1RWaJVTyW3eZ/bc4ttjJnAlW0g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ho2dy79sJ9GauN1oPPYqng1h26rGj4B+5Uz0OMgMjJjISjdQDGgZ/p3ux/DBl5QZWeWlgC0tsWY7LD0Br2f2xxh6lMJiLw0CVaWNp8zTjOkvukwc4WXfLu09a7G3NnLJES5pnKvttl96A+uzyKeXY/zR74JwlxeKdVl/8xq3p1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Edlt70Ml; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741987262; x=1773523262;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=MNyKA6CVe4652u3rl1RWaJVTyW3eZ/bc4ttjJnAlW0g=;
+  b=Edlt70MlFXAOn3BAkN5xJ3HIOGBL0x45mm/FeiTsDvpAh6NdDrdVVoM+
+   wLELIt6w4Q0Ld8u24LZsgJqeUCfOxjm2yNlGg2ulacpE3ePK1sC6pzSrR
+   bUdZmPySBaomTC6mjuDz5ojQF7E4uqZr5ckkARhhHkxbeUBjrY6hheTC8
+   hN4r9HlbmL+cT+cEdbWiSQPSSM8rEqYCu6JySzKenYcfNHPKxb2tc7PM5
+   erc0JO6aqjiWUrhEIkoCMtS7vNG7gXpc1TorP4tqTCkz311ocHCPCu5o0
+   4eE/BilM4tv9rekQQDb5EK7Gx73nslUTVtB7J1ttEM1ffnuJx9z8Rbl+0
+   A==;
+X-CSE-ConnectionGUID: UM9ESz02SeSYzyB8rb4EiA==
+X-CSE-MsgGUID: i/1PwCbqQR2fQmgqZcNPWg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="45918113"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="45918113"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 14:21:02 -0700
+X-CSE-ConnectionGUID: VSzYWg7BSh6Bqm91MWzeSA==
+X-CSE-MsgGUID: 4XmfRL0lSgCAIYi7iY2/MQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="158539339"
+Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.108.212]) ([10.125.108.212])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 14:21:01 -0700
+Message-ID: <6f2fc7279849e626f9150d0a14d544d1d641675e.camel@linux.intel.com>
+Subject: Re: [PATCH 5/9] mm: swap: use swap_entries_free() drop last 1 flag
+ in swap_entries_put_nr()
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Kemeng Shi <shikemeng@huaweicloud.com>, akpm@linux-foundation.org
+Cc: kasong@tencent.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Date: Fri, 14 Mar 2025 14:21:01 -0700
+In-Reply-To: <20250313210515.9920-6-shikemeng@huaweicloud.com>
+References: <20250313210515.9920-1-shikemeng@huaweicloud.com>
+	 <20250313210515.9920-6-shikemeng@huaweicloud.com>
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/10] selftests/mm: Skip gup_longerm tests on weird
- filesystems
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
- Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250228-mm-selftests-v3-0-958e3b6f0203@google.com>
- <20250228-mm-selftests-v3-8-958e3b6f0203@google.com>
- <08023d47-dcf4-4efb-bf13-5aef3c6dca14@redhat.com>
- <Z8mYG8eQnMsOA4c1@google.com>
- <16023193-6cb4-46d1-91c4-43342e7e6d30@redhat.com>
- <CA+i-1C3srkh44tN8dMQ5aD-jhoksUkdEpa+mMfdDtDrPAUv7gQ@mail.gmail.com>
- <41923b80-55f4-44b6-bc59-60327e5308f4@redhat.com>
- <Z9FHEdZoYbCMoj64@google.com>
- <15cc0c1d-2b02-41de-bf48-3c57cee97c53@redhat.com>
- <Z9RRkL1hom48z3Tt@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Z9RRkL1hom48z3Tt@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 14.03.25 16:56, Brendan Jackman wrote:
->>> Even if it's a bug in QEMU, I think it is worth working around this
->>> one way or another. QEMU by far the most practical way to run these
->>> tests, and virtme-ng is probably the most popular/practical way to do
->>> that.
->>
->> I'm afraid yes. Although allocating temp files form 9pfs is rather ...
->> weird. :) One would assume that /tmp is usually backed by tmpfs. But well, a
->> disto can do what it wants.
-> 
-> Ah yeah but these tests also use mkstemp() in the CWD i.e. the
-> location of run_vmtests.sh, it isn't /tmp that is causing this at the
-> moment. (At some point I thought I was hitting the issue there too,
-> but I think I was mistaken, like just not reading the test logs
-> properly or something).
+On Fri, 2025-03-14 at 05:05 +0800, Kemeng Shi wrote:
+> Use swap_entries_free() to drop last 1 flag to eliminate the need to set
+> slot to the intermediate SWAP_HAS_CACHE state.
+>=20
 
-Ah, yes run_with_local_tmpfile() ... jep, I wrote that test, now my 
-memory comes back; we wanted to test with actual filesystems (e.g., 
-ext4, xfs) easily.
+Use swap_entries_free() to directly free swap entries when
+the swap entries are not cached and referenced, without
+needing to set swap entries to intermediate SWAP_HAS_CACHE state.
+=20
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
 
-> 
->>> I think even if we are confident it's just a bunch of broken
->>> code that isn't even in Linux, it's pragmatic to spend a certain
->>> amount of energy on having green tests there.
->>>
->>
->> Yeah, we're trying ...
->>
->>> (Also, this f_type thing might be totally intentional specified
->>> filesystem behaviour, I don't know).
->>
->> I assume it's broken in various ways to mimic that you are a file system
->> which you are not.
->>
->> Your approach is likely the easiest approach to deal with this 9pfs crap.
->>
->> Can you document in the code+description better what we learned, and why we
->> cannot even trust f_type with crappy 9pfs?
-> 
-> Sure, I will be more verbose about it.
-> 
-> I've already sent v4 here:
-> 
-> https://lore.kernel.org/all/20250311-mm-selftests-v4-7-dec210a658f5@google.com/
-> 
-> So I will wait and see if there are any comments on the v4, if there
-> are I'll spin the extra commentary into v5 otherwise send it as a
-> followup, does that sound OK?
+Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
 
+> ---
+>  mm/swapfile.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>=20
 
-You can just ask Andrew to fixup the comment or description in a reply 
-to the v4 patch. Andrew will let you know if he prefers a resend.
-
-Thanks!
-
-
--- 
-Cheers,
-
-David / dhildenb
+Use swap_entries_free()=20
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 14b7b37996ff..0ce0ca08594e 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -1508,10 +1508,11 @@ static bool swap_entries_put_nr(struct swap_info_=
+struct *si,
+>  		unlock_cluster(ci);
+>  		goto fallback;
+>  	}
+> -	for (i =3D 0; i < nr; i++)
+> -		WRITE_ONCE(si->swap_map[offset + i], SWAP_HAS_CACHE);
+>  	if (!has_cache)
+>  		swap_entries_free(si, ci, entry, nr);
+> +	else
+> +		for (i =3D 0; i < nr; i++)
+> +			WRITE_ONCE(si->swap_map[offset + i], SWAP_HAS_CACHE);
+>  	unlock_cluster(ci);
+> =20
+>  	return has_cache;
 
 
