@@ -1,187 +1,148 @@
-Return-Path: <linux-kernel+bounces-562156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03E1A61D9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:07:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3045A61D94
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:06:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 802D119C0308
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:07:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C10619C2382
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4152046AC;
-	Fri, 14 Mar 2025 21:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC5C1C8635;
+	Fri, 14 Mar 2025 21:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RDb8zpg0"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="DJi/IKUS"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73A8204681
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 21:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE71190676;
+	Fri, 14 Mar 2025 21:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741986415; cv=none; b=fnnJ4vYAWOOJg/NC0soj3U6MUxrM3Ks9nKLFESETzs9WkNzg6J4hlSfkOfGTy/rCchj7GPc9oWnE4vKEGj5xPLqGGEvD1E59HN/GxUblzIoEYWHpJ6RLB1K7mvEPkFLoHHZM3uMNgk7hwGT/3z0ClfHeQSfGTWzIQmwDl/CKrDs=
+	t=1741986408; cv=none; b=dE5fuIu5k/pZk3amf0aowFkNUQ2fszjcWCLzPgyNkVy8Orr5Xk3NS79HX+JKUCLsM18pDtUeVfqqEPKCFeotBZndZcUF6RIvia6V+dmaPI/A+6FbzuluJq85916JaoFddnVlqSfQiE90EKKz57f+BH4HSBClHG5CXI2kVYui1Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741986415; c=relaxed/simple;
-	bh=EZIOvVzcE/3rVnjN+zLpfwnJoOG7WheSIbDNqh2pozE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d6ritNpyCHOyaNuQXyWGP9kv7M3iDEZZSFtEhsaMBRsG4bboWv2Xr1y8dLM1/JVq9GI1zAmQwHfQ/6qAFiAp0meyyZnb2HW0DDsv/+Fv1UmPgoKr0+VM/RhmbFr+c68LywJJpNvqBxVkCyCfxXUIlh3b/Ocq3jOzK7DoLMCBTdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RDb8zpg0; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5497590ffbbso2641968e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:06:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741986412; x=1742591212; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PUyX2OLLDGDNbSS9bFUituZMJ4sdx+0gIOIlvaqGxug=;
-        b=RDb8zpg0NHZPUsyYID+X/cFgKey8abPo9IZfAdbo2ueCdONG8x2eiJuotrWontHXkY
-         WLPVEhDSzdqObvhXN/iQUJZNANYZQhkmzM+Tno0xIlITVUcMxnbV3oEyMbDkCUS0oR3l
-         iDB1tXkvVNEfmavbSLPP8qrNGWu6mUT5HL30gcx446w2ADw03S8mnYZcukV+rLil3TdI
-         4ecexUYoTeVh7wz9c4jn1wOuOO3UlWDo/e+a/DT/ZdOlkVyia8uL59kcfn3KL83C2QJ2
-         y79Yp8EICgB9/2lEzPeTOdfmMJD70dGkdI/ZDSHJetnd5K2yfvQE8QD8EbOVFuwEyfTI
-         R7ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741986412; x=1742591212;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PUyX2OLLDGDNbSS9bFUituZMJ4sdx+0gIOIlvaqGxug=;
-        b=YLkqa3I5xAgEXliexFdyU2pkmdgWUtEFp9M8i/aMx7Ug7F4IiXkunKctH497lndfd2
-         r5PiN7paB2rcf/zm7Bdm4fi0tqFzsDXrjDa7DA7spuVR5WHyuJw651WqY7EtJq2VVvIf
-         ktfAaO8ZqkBg/DlTkVPrGHdh3W4+hbCECmQjdOBKr+htIi01PA3Kk7Tx0LsjsXJB8MTR
-         Pcts+wN0LIVrr2/n3DxoPnBrrD6qSRXpjbZjeOhqhLm8IJ084gr70Iy6HxcfUcbwj/Vk
-         Gm36qLtNRbR9WxOpjAjdlrJfx7NYV3fjRjEdlP/KVyZTMsEeTuZ/ayheITPA8m02ClAG
-         z5+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWCXinAxIxUU1YhSwwQYv/YasVkg31tMXXDT3kDeFI5C3BBlZ10gRnByGDLM3bP9IOGYXZyYaaeQuuA/0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1CkMalGpPID3D+1qfloUeKc1+NnFxeuVK3dFY1MkjJj/AZk43
-	MarnyBgLDUoOmfFXpw2dl4RDpGv03ck3KzAXwGGYH5qFcpdCr6owlYmTyTrqmnuUywM0aEM0qS5
-	ZS0yeKT7y4dXnLHOCJ52YuFe4CkX8lFuCeWGp
-X-Gm-Gg: ASbGnctmSjIDCAUhwaaDnzhQ77cwmKPnxGh1oKIJetDbW+H2p1B1iGOV0HOTMC2Fjgh
-	/120/akdo6XaBBm2mGb0qzzZyt+EcsZ6haT0Lle9FuGojC2XEJr/lr1/spu30A1vYVPyAB8haqZ
-	wvtfNOqumUgmfVe9lOfoAkmfRFXm/z+pZrn5g=
-X-Google-Smtp-Source: AGHT+IHqRlNf/oMWPkXGiZZ/bQyY1Zyz7JykPKV0OzC4Wc0dfe4AMxnxEnKTPIXDC0llj17xKy+nfLfC93GpVvAQMyg=
-X-Received: by 2002:a05:6512:3e14:b0:545:48c:6352 with SMTP id
- 2adb3069b0e04-549c3988015mr1487985e87.43.1741986411635; Fri, 14 Mar 2025
- 14:06:51 -0700 (PDT)
+	s=arc-20240116; t=1741986408; c=relaxed/simple;
+	bh=6LYyJEQSRLfRi3eWvEUXDA8dkKvwR9DDtj4F2tbzI8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JI8B/9v8eaTgJE30kLMSc1D41uBMVN5y7kIBnBMQyXMECbaGuO5VXP3R5guMolWLZXTLl8Yrscf6gT3Vwer4CpYENvOSFjVZjauqLXcQPSyT3d2KuSGiqqQwqpwkWYCmxOvpKSaW+DvInwNRS22OZR7RtyAfIiNX1lZcj+iva/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=DJi/IKUS; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 24C141C00B2; Fri, 14 Mar 2025 22:06:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1741986403;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=smPhwJATKEjWQ+pl7R6bsg4CgAkcIEX5UUZ9M/FhqZE=;
+	b=DJi/IKUSvjJ2MP//YCjTNZjs/ita0pUBnuUuS7aGK4JeC/seuTz+RW7jJro2VKTnBHsvpE
+	NMKSF3lW3eK/OR5z8bRq23Zin1mzdpQxO1mcGqi84VEktTeW5b+3zI1ZV8eJ5HdwtHrVy+
+	RICi0A+z73e+F+oj/RUvNljmne5pHIQ=
+Date: Fri, 14 Mar 2025 22:06:42 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Werner Sembach <wse@tuxedocomputers.com>
+Cc: Armin Wolf <W_Armin@gmx.de>, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, bentiss@kernel.org,
+	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
+	lee@kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org,
+	onitake@gmail.com, cs@tuxedo.de,
+	platform-driver-x86@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v5 0/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO NB04 devices
+Message-ID: <Z9SaYi5sKOeKTvRA@duo.ucw.cz>
+References: <20250121225510.751444-1-wse@tuxedocomputers.com>
+ <aa91e17f-0ea8-4645-a0f9-57c016e36a9e@gmx.de>
+ <Z53f7VNIgUWWFn9l@duo.ucw.cz>
+ <b69e2766-2238-4913-ae2d-21d8716f2eef@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <10629535.nUPlyArG6x@rjwysocki.net>
-In-Reply-To: <10629535.nUPlyArG6x@rjwysocki.net>
-From: Saravana Kannan <saravanak@google.com>
-Date: Fri, 14 Mar 2025 14:06:15 -0700
-X-Gm-Features: AQ5f1JoBBtBAAibKOwIryP0j59INA8ZBHFZCuGpPvRGBvm7KfnRM5xkSK4IkLbU
-Message-ID: <CAGETcx8VmzU9xy39=_QAQ0pf5fZY=EbGOKrdy0_wLEW1pQ2oKw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] PM: sleep: Improvements of async suspend and
- resume of devices
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Jon Hunter <jonathanh@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="75ovjfMpliKM0pqD"
+Content-Disposition: inline
+In-Reply-To: <b69e2766-2238-4913-ae2d-21d8716f2eef@tuxedocomputers.com>
+
+
+--75ovjfMpliKM0pqD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 14, 2025 at 6:24=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.ne=
-t> wrote:
->
-> Hi Everyone,
->
-> This is a new iteration of the async suspend/resume improvements work:
->
-> https://lore.kernel.org/linux-pm/1915694.tdWV9SEqCh@rjwysocki.net/
->
-> which includes some rework and fixes of the patches in the series linked
-> above.  The most significant differences are splitting the second patch
-> into two patches and adding a change to treat consumers like children
-> during resume.
->
-> This new iteration is based on linux-pm.git/linux-next and on the recent
-> fix related to direct-complete:
->
-> https://lore.kernel.org/linux-pm/12627587.O9o76ZdvQC@rjwysocki.net/
->
-> The overall idea is still to start async processing for devices that have
-> at least some dependencies met, but not necessarily all of them, to avoid
-> overhead related to queuing too many async work items that will have to
-> wait for the processing of other devices before they can make progress.
->
-> Patch [1/5] does this in all resume phases, but it just takes children
-> into account (that is, async processing is started upfront for devices
-> without parents and then, after resuming each device, it is started for
-> the device's children).
->
-> Patches [2/5] does this in the suspend phase of system suspend and only
-> takes parents into account (that is, async processing is started upfront
-> for devices without any children and then, after suspending each device,
-> it is started for the device's parent).
->
-> Patch [3/5] extends it to the "late" and "noirq" suspend phases.
->
-> Patch [4/5] adds changes to treat suppliers like parents during suspend.
-> That is, async processing is started upfront for devices without any
-> children or consumers and then, after suspending each device, it is
-> started for the device's parent and suppliers.
->
-> Patch [5/5] adds changes to treat consumers like children during resume.
-> That is, async processing is started upfront for devices without a parent
-> or any suppliers and then, after resuming each device, it is started for
-> the device's children and consumers.
->
-> Preliminary test results from one sample system are below.
->
-> "Baseline" is the linux-pm.git/testing branch, "Parent/child"
-> is that branch with patches [1-3/5] applied and "Device links"
-> is that branch with patches [1-5/5] applied.
->
-> "s/r" means "regular" suspend/resume, noRPM is "late" suspend
-> and "early" resume, and noIRQ means the "noirq" phases of
-> suspend and resume, respectively.  The numbers are suspend
-> and resume times for each phase, in milliseconds.
->
->          Baseline       Parent/child    Device links
->
->        Suspend Resume  Suspend Resume  Suspend Resume
->
-> s/r    427     449     298     450     294     442
-> noRPM  13      1       13      1       13      1
-> noIRQ  31      25      28      24      28      26
->
-> s/r    408     442     298     443     301     447
-> noRPM  13      1       13      1       13      1
-> noIRQ  32      25      30      25      28      25
->
-> s/r    408     444     310     450     298     439
-> noRPM  13      1       13      1       13      1
-> noIRQ  31      24      31      26      31      24
->
-> It clearly shows an improvement in the suspend path after
-> applying patches [1-3/5], easily attributable to patch [2/5],
-> and clear difference after updating the async processing of
-> suppliers and consumers.
->
-> Note that there are systems where resume times are shorter after
-> patches [1-3/5] too, but more testing is necessary.
->
-> I do realize that this code can be optimized further, but it is not
-> particularly clear to me that any further optimizations would make
-> a significant difference and the changes in this series are deep
-> enough to do in one go.
+Hi!
 
-Thanks for adding patches 4 and 5!
+> > Comments from previous review were not addressed.
+> >=20
+> > Most importantly, this is not a way to do kernel interface. We want
+> > reasonable interface that can be documented and modified as needed. We
+> > want to pass /dev/input to userspace, not raw HID. This is not ok.
+>=20
+> There are already 2 endless discussions about this:
+>=20
+> https://lore.kernel.org/all/1fb08a74-62c7-4d0c-ba5d-648e23082dcb@tuxedoco=
+mputers.com/
+>=20
+> https://lore.kernel.org/all/73c36418-34d6-46cf-9f10-6ca5e569274f@tuxedoco=
+mputers.com/
+>=20
+> And a shorter one before that:
+>=20
+> https://lore.kernel.org/all/30cbbf20-08cf-a69b-4f58-359a9802e86f@tuxedoco=
+mputers.com/
+>=20
+> The brief:
+>=20
+> - LampArray is a standard that will hit the Linux world anyway.
 
-Let me try to test them early next week and compare your patches 1-3,
-1-5 and my series (which does additional checks to make sure
-suppliers/consumers are done). I do about 100 suspend/resume runs for
-each kernel, so please bear with me while I get it.
+Maybe. Still have to see device implementing that. LampArray will
+still need /sys/class/leds for compatibility. LampArray still does not
+solve effects. More importantly, it is not okay to say "kernel
+interface is specified by that crazy document from 3rd party".
 
-Thanks,
-Saravana
+> - The alternative proposal via a led matrix does not even really fit
+> keyboards, and does not at all fit all other device types.
+
+We are solving keyboards, not the other device types. The other devices
+can likely be handled by existing /sys/class/leds interfaces.
+
+> Hans and Benjamin already agree with me that LampArray is the way to go.
+>=20
+> So after over 2 years can I please have a final decision on how to implem=
+ent this?
+
+For final decisions, you'd have to talk to Linus.
+
+(And sorry for the delay, btw).
+
+If you want to move this forward, place a driver in
+drivers/leds/keyboard. Implement /sys/class/leds interface, but make
+sure interface is clearly separated from the code talking to the
+firmware. Then we can review that, perhaps merge, so users will have
+something, and decide what interface to use for per-key control.
+
+LampArray is no-go. Other options are open.
+
+Best regards,
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--75ovjfMpliKM0pqD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ9SaYgAKCRAw5/Bqldv6
+8iwJAJ9mnjTAm2a5BD6DI5p8cmuCHFDsmgCfQXGzc5tidZGm75RqL1iGB0UMvPw=
+=uU6V
+-----END PGP SIGNATURE-----
+
+--75ovjfMpliKM0pqD--
 
