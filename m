@@ -1,332 +1,117 @@
-Return-Path: <linux-kernel+bounces-561896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA7F9A61843
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:40:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85851A6184C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:42:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A157C1896190
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:41:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C009217A7D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8167204859;
-	Fri, 14 Mar 2025 17:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B8E2046A5;
+	Fri, 14 Mar 2025 17:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gbu9PV1E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c6pv0Qui"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0962C204680
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9162D14375C;
+	Fri, 14 Mar 2025 17:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741974028; cv=none; b=gsrGMoDANjQipXc4MRwbF3oKe1SMKl7SdLFC92GMevogjfl/HEiGkNynTRCnpOZFcTSZEGYPHA5FgtWveGvKSrsdDFv5k0sMEr3cC8/V7i19kMY5PMb02bgN9j5xc5VDxMimJYaXME1oujhIppbx0epHRVspdETsWCx2eSU2drQ=
+	t=1741974118; cv=none; b=nytsQXcDqiy7PT1kSI1NDZ3eJuoaCqO7dZ3hzgRl43K5HflmkjMXD7oDWDGnEURd37/CwO1J2/HyDRK6xbr/TSi/MXY3BRMVTTDEGphx/ate77f/kQsFT5eA15CBP6Qn0yI1EsEk0DUJ1FKnKyMgQctsmHONrHEnn2+LIX+GGTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741974028; c=relaxed/simple;
-	bh=ZuajXDGDhMIG3DSUsVp9ytgICn7J3y1NEozaznDZzwk=;
+	s=arc-20240116; t=1741974118; c=relaxed/simple;
+	bh=nPIQa2zqNUwoVtbHR8A/I61uNaClpZ9/aE7Xl1KoV9U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jco1GkliHiYWNQGwx8T+FBHeYFzU3DzN+Ela1Bu0tZPMPhlUqDPTsyBFDpawy9zuxAy/fMt1v9Ph97EWJpvF9jSDtHAhvCXRnuCgVjABceE0GIqUthV35w4Am0fNdPtD8+sjtyLYXfO5QXzNp5ukTooofo9V3aVaIGnMD4b7GiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gbu9PV1E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6324C4CEEE;
-	Fri, 14 Mar 2025 17:40:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XrEncjH0ES88NlRjkzJWoozLKzQADR/d5YEHtCPQbh/MBWsFJzkIJTDB5E6IKtXGKjx5p4c1qS7hZ6/l8NZ+9ZYhXEaXkppiQZ8st9c4VUvMFIaY7EQIGsmhz5kWh8r+gCklVgMRjdTIySTOb9nGaV6aA1/2gVZb+9pdNsqz06k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c6pv0Qui; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C51CFC4CEE9;
+	Fri, 14 Mar 2025 17:41:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741974027;
-	bh=ZuajXDGDhMIG3DSUsVp9ytgICn7J3y1NEozaznDZzwk=;
+	s=k20201202; t=1741974118;
+	bh=nPIQa2zqNUwoVtbHR8A/I61uNaClpZ9/aE7Xl1KoV9U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gbu9PV1ERaDZyS/MqeOu1xMi2WTwTx/4nYGhvBz+q/ZFePoFFq4ubQQmA6RQSF89w
-	 YLxWChea5/8R8n1cgd1AsXoWsond72izApcWY+Zd0n1Odnz2GxLGmn4ariG1KHul3K
-	 cmE6IzmfE0Xrrskwr9FUR6cYv04TusaOuZ90pGi80I48QQwPxn0kbF9hX3YXhfoSTc
-	 je9+l5r6iI+1wHGX2rv71hVy3q5wuecAEP4c2EvuFDNvYPyWVkI49Ikp6Im9Iwqabp
-	 DkQLkjUyZxTub81/BPnUQgT+NhSZ0afrOTJmIEJZS7R0YOMi4/Ih4jWVWGjLPUrhPY
-	 YKH9ZUhh8MLjg==
-Date: Fri, 14 Mar 2025 18:40:24 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Andy Yan <andyshrk@163.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Douglas Anderson <dianders@chromium.org>, Herve Codina <herve.codina@bootlin.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Simona Vetter <simona.vetter@ffwll.ch>, lumag@kernel.org
-Subject: Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
- connector by encoder
-Message-ID: <20250314-hissing-spirited-armadillo-dc9d3a@houat>
-References: <20250304-bridge-connector-v5-0-aacf461d2157@kernel.org>
- <20250304-bridge-connector-v5-4-aacf461d2157@kernel.org>
- <5180089f.a640.19566290538.Coremail.andyshrk@163.com>
- <608c01c.7716.1958e8d879f.Coremail.andyshrk@163.com>
- <20250313-dazzling-deer-of-ampleness-21db67@houat>
- <6ae1c567.8c6.195922195d6.Coremail.andyshrk@163.com>
- <k2md4q2tgwsdynaeljieqlzjdds677wqqduimfyrgmvyfi732a@vh3dbg7kdaop>
- <20250314-courageous-bison-of-prestige-8b884b@houat>
- <lf4wu5v3wym3foqgimuulyzz2dmd2jezkj3otn7xm7xp77nast@azqmajrn45lw>
+	b=c6pv0QuiHYPrup6eHKszrLbHgWXLDutEIIZ2foZpIllM11XGA9B0l6nxEHDmXpinT
+	 C8t1I7QFNkOSypjwZXptYBMFk1V/mYFqpuXyxRNBaueKqNQ1poVjdFviw9wVaZv/86
+	 R7Reh/SPAXraeKZWHtrMJpFUxvhREQFmScRtxzMONBtpKIDWUZHc5889QJ8m4aq7UD
+	 cedM6YS6ZYI0Y+O9XJk9sbCwIU8d/EuVulQ2W/5MFRKZZ5x1IsPy3b5iRbDDd7XmI6
+	 7OnMy9Ts6tkgwq4BxkM3O5WTBiNvvEdr3M8Su/VbZaE96RCiNvtnCxcWRu6SZWQ46u
+	 +uBxWspqOPccA==
+Date: Fri, 14 Mar 2025 17:41:56 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Tianyu Lan <ltykernel@gmail.com>
+Cc: Michael Kelley <mhklinux@outlook.com>,
+	"kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	Tianyu Lan <tiala@microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] x86/Hyperv: Fix check of return value from snp_set_vmsa()
+Message-ID: <Z9RqZPc2nMs-R-RZ@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <20250313085217.45483-1-ltykernel@gmail.com>
+ <SN6PR02MB41577FAB4DD56699D48B8106D4D32@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <CAMvTesChp_kSNrJA6oCu8iZ6xFQReckRQU-_EGO7jjBPD_FUJQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="k3wlcquqcci3u7ee"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <lf4wu5v3wym3foqgimuulyzz2dmd2jezkj3otn7xm7xp77nast@azqmajrn45lw>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMvTesChp_kSNrJA6oCu8iZ6xFQReckRQU-_EGO7jjBPD_FUJQ@mail.gmail.com>
 
+On Fri, Mar 14, 2025 at 09:41:30AM +0800, Tianyu Lan wrote:
+> On Fri, Mar 14, 2025 at 4:20 AM Michael Kelley <mhklinux@outlook.com> wrote:
+> >
+> > From: Tianyu Lan <ltykernel@gmail.com> Sent: Thursday, March 13, 2025 1:52 AM
+> > >
+> > > snp_set_vmsa() returns 0 as success result and so fix it.
+> > >
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: 44676bb9d566 ("x86/hyperv: Add smp support for SEV-SNP guest")
+> > > Signed-off-by: Tianyu Lan <tiala@microsoft.com>
+> > > ---
+> > >  arch/x86/hyperv/ivm.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/arch/x86/hyperv/ivm.c b/arch/x86/hyperv/ivm.c
+> > > index ec7880271cf9..77bf05f06b9e 100644
+> > > --- a/arch/x86/hyperv/ivm.c
+> > > +++ b/arch/x86/hyperv/ivm.c
+> > > @@ -338,7 +338,7 @@ int hv_snp_boot_ap(u32 cpu, unsigned long start_ip)
+> > >       vmsa->sev_features = sev_status >> 2;
+> > >
+> > >       ret = snp_set_vmsa(vmsa, true);
+> > > -     if (!ret) {
+> > > +     if (ret) {
+> > >               pr_err("RMPADJUST(%llx) failed: %llx\n", (u64)vmsa, ret);
+> > >               free_page((u64)vmsa);
+> > >               return ret;
+> > > --
+> > > 2.25.1
+> > >
+> >
+> > Yes, with this change the code is now consistent with other call sites for
+> > snp_set_vmsa() and for direct invocation of rmpadjust().
+> >
+> > Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+> 
+> Thank you for your review, Michael!
 
---k3wlcquqcci3u7ee
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
- connector by encoder
-MIME-Version: 1.0
+Applied to hyperv-next. Thanks.
 
-On Fri, Mar 14, 2025 at 09:59:36AM +0200, Dmitry Baryshkov wrote:
-> On Fri, Mar 14, 2025 at 08:45:17AM +0100, Maxime Ripard wrote:
-> > On Fri, Mar 14, 2025 at 07:52:35AM +0200, Dmitry Baryshkov wrote:
-> > > On Fri, Mar 14, 2025 at 08:50:29AM +0800, Andy Yan wrote:
-> > > > At 2025-03-13 19:55:33, "Maxime Ripard" <mripard@kernel.org> wrote:
-> > > > >Hi,
-> > > > >
-> > > > >On Thu, Mar 13, 2025 at 04:09:54PM +0800, Andy Yan wrote:
-> > > > >> At 2025-03-05 19:55:19, "Andy Yan" <andyshrk@163.com> wrote:
-> > > > >> >At 2025-03-04 19:10:47, "Maxime Ripard" <mripard@kernel.org> wr=
-ote:
-> > > > >> >>With the bridges switching over to drm_bridge_connector, the d=
-irect
-> > > > >> >>association between a bridge driver and its connector was lost.
-> > > > >> >>
-> > > > >> >>This is mitigated for atomic bridge drivers by the fact you ca=
-n access
-> > > > >> >>the encoder, and then call drm_atomic_get_old_connector_for_en=
-coder() or
-> > > > >> >>drm_atomic_get_new_connector_for_encoder() with drm_atomic_sta=
-te.
-> > > > >> >>
-> > > > >> >>This was also made easier by providing drm_atomic_state direct=
-ly to all
-> > > > >> >>atomic hooks bridges can implement.
-> > > > >> >>
-> > > > >> >>However, bridge drivers don't have a way to access drm_atomic_=
-state
-> > > > >> >>outside of the modeset path, like from the hotplug interrupt p=
-ath or any
-> > > > >> >>interrupt handler.
-> > > > >> >>
-> > > > >> >>Let's introduce a function to retrieve the connector currently=
- assigned
-> > > > >> >>to an encoder, without using drm_atomic_state, to make these d=
-rivers'
-> > > > >> >>life easier.
-> > > > >> >>
-> > > > >> >>Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > >> >>Co-developed-by: Simona Vetter <simona.vetter@ffwll.ch>
-> > > > >> >>Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> > > > >> >>---
-> > > > >> >> drivers/gpu/drm/drm_atomic.c | 45 +++++++++++++++++++++++++++=
-+++++++++++++++++
-> > > > >> >> include/drm/drm_atomic.h     |  3 +++
-> > > > >> >> 2 files changed, 48 insertions(+)
-> > > > >> >>
-> > > > >> >>diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/dr=
-m_atomic.c
-> > > > >> >>index 9ea2611770f43ce7ccba410406d5f2c528aab022..b926b132590e78=
-f8d41d48eb4da4bccf170ee236 100644
-> > > > >> >>--- a/drivers/gpu/drm/drm_atomic.c
-> > > > >> >>+++ b/drivers/gpu/drm/drm_atomic.c
-> > > > >> >>@@ -985,10 +985,55 @@ drm_atomic_get_new_connector_for_encoder=
-(const struct drm_atomic_state *state,
-> > > > >> >>=20
-> > > > >> >> 	return NULL;
-> > > > >> >> }
-> > > > >> >> EXPORT_SYMBOL(drm_atomic_get_new_connector_for_encoder);
-> > > > >> >>=20
-> > > > >> >>+/**
-> > > > >> >>+ * drm_atomic_get_connector_for_encoder - Get connector curre=
-ntly assigned to an encoder
-> > > > >> >>+ * @encoder: The encoder to find the connector of
-> > > > >> >>+ * @ctx: Modeset locking context
-> > > > >> >>+ *
-> > > > >> >>+ * This function finds and returns the connector currently as=
-signed to
-> > > > >> >>+ * an @encoder.
-> > > > >> >>+ *
-> > > > >> >>+ * Returns:
-> > > > >> >>+ * The connector connected to @encoder, or an error pointer o=
-therwise.
-> > > > >> >>+ * When the error is EDEADLK, a deadlock has been detected an=
-d the
-> > > > >> >>+ * sequence must be restarted.
-> > > > >> >>+ */
-> > > > >> >>+struct drm_connector *
-> > > > >> >>+drm_atomic_get_connector_for_encoder(const struct drm_encoder=
- *encoder,
-> > > > >> >>+				     struct drm_modeset_acquire_ctx *ctx)
-> > > > >> >>+{
-> > > > >> >>+	struct drm_connector_list_iter conn_iter;
-> > > > >> >>+	struct drm_connector *out_connector =3D ERR_PTR(-EINVAL);
-> > > > >> >>+	struct drm_connector *connector;
-> > > > >> >>+	struct drm_device *dev =3D encoder->dev;
-> > > > >> >>+	int ret;
-> > > > >> >>+
-> > > > >> >>+	ret =3D drm_modeset_lock(&dev->mode_config.connection_mutex,=
- ctx);
-> > > > >> >>+	if (ret)
-> > > > >> >>+		return ERR_PTR(ret);
-> > > > >> >
-> > > > >> >It seems that this will cause a deadlock when called from a  ho=
-tplug handling path,
-> > > > >> >I have a WIP DP diver[0],  which suggested by Dmitry to use thi=
-s API from a=20
-> > > > >> >&drm_bridge_funcs.detect callback to get the connector,  as det=
-ect is called by drm_helper_probe_detect,
-> > > > >> >which will hold connection_mutex first, so the deaklock happens:
-> > > > >> >
-> > > > >> >
-> > > > >> >drm_helper_probe_detect(struct drm_connector *connector,
-> > > > >> >                        struct drm_modeset_acquire_ctx *ctx,
-> > > > >> >                        bool force)
-> > > > >> >{
-> > > > >> >        const struct drm_connector_helper_funcs *funcs =3D conn=
-ector->helper_private;
-> > > > >> >        struct drm_device *dev =3D connector->dev;
-> > > > >> >        int ret;
-> > > > >> >
-> > > > >> >        if (!ctx)
-> > > > >> >                return drm_helper_probe_detect_ctx(connector, f=
-orce);
-> > > > >> >
-> > > > >> >        ret =3D drm_modeset_lock(&dev->mode_config.connection_m=
-utex, ctx);
-> > > > >> >        if (ret)
-> > > > >> >                return ret;
-> > > > >> >
-> > > > >> >        if (funcs->detect_ctx)
-> > > > >> >                ret =3D funcs->detect_ctx(connector, ctx, force=
-);
-> > > > >> >        else if (connector->funcs->detect)
-> > > > >> >                ret =3D connector->funcs->detect(connector, for=
-ce);
-> > > > >> >        else
-> > > > >> >                ret =3D connector_status_connected;
-> > > > >> >
-> > > > >> >        if (ret !=3D connector->status)
-> > > > >> >                connector->epoch_counter +=3D 1;
-> > > > >> >
-> > > > >> >So I wonder can we let drm_bridge_funcs.detect pass a connector=
- for this case ?
-> > > > >> >
-> > > > >> >
-> > > > >> >
-> > > > >> >[0]https://lore.kernel.org/linux-rockchip/047EECFC-7E55-44EC-89=
-6F-13FE04333E4D@gmail.com/T/#m25bc53b79f5cc7bddfcb7aae5656f68df396f094
-> > > > >> >>+
-> > > > >> >>+	drm_connector_list_iter_begin(dev, &conn_iter);
-> > > > >> >>+	drm_for_each_connector_iter(connector, &conn_iter) {
-> > > > >> >>+		if (!connector->state)
-> > > > >> >>+			continue;
-> > > > >> >>+
-> > > > >> >>+		if (encoder =3D=3D connector->state->best_encoder) {
-> > > > >> >>+			out_connector =3D connector;
-> > > > >>=20
-> > > > >>=20
-> > > > >> When try to use this patch in my bridge driver,  I found that th=
-e connector->state->best_encoder=20
-> > > > >>  maybe NULL when   drm_bridge_funcs.detect or drm_bridge_funcs.d=
-etect_ctx is  called:
-> > > > >>=20
-> > > > >> [   52.713030] Invalid return value -22 for connector detection
-> > > > >> [   52.713539] WARNING: CPU: 7 PID: 288 at drivers/gpu/drm/drm_p=
-robe_helper.c:602 drm_helper_probe_single_connector_modes+0x5e0/
-> > > > >> 0x63c
-> > > > >> [   52.714568] Modules linked in:
-> > > > >>=20
-> > > > >> [   52.724546] Call trace:
-> > > > >> [   52.724762]  drm_helper_probe_single_connector_modes+0x5e0/0x=
-63c (P)
-> > > > >> [   52.725319]  drm_mode_getconnector+0x2a4/0x488
-> > > > >> [   52.725711]  drm_ioctl_kernel+0xb4/0x11c
-> > > > >> [   52.726057]  drm_ioctl+0x22c/0x544
-> > > > >> [   52.726358]  __arm64_sys_ioctl+0xac/0xe0
-> > > > >> [   52.726706]  invoke_syscall+0x44/0x100
-> > > > >> [   52.727039]  el0_svc_common.constprop.0+0x3c/0xd4
-> > > > >>=20
-> > > > >> This is because  best_encoder is set by set_best_encoder, which =
-is called from
-> > > > >> drm_atomic_helper_check_modeset. When we call drm_mode_getconnec=
-tor=20
-> > > > >> for the first time, the functions mentioned above have not been =
-called yet,
-> > > > >> then we can't match the encoder from connector->state->best_enco=
-der for this case.
-> > > > >
-> > > > >As far as I'm concerned, it's by design. Encoders and connectors h=
-ave
-> > > > >1:N relationship, and only once a connector has been enabled it ha=
-s an
-> > > > >encoder.
-> > > > >
-> > > > >If the connector is disabled, there's no associated encoder.
-> > > >=20
-> > > > Does this prove that this API is not suitable for my application sc=
-enario:=20
-> > > > Get the connector in the bridge's .detect callback, so this means t=
-hat I may
-> > > > still need to modify the bridge's connector callback so that it can=
- pass the connector ?
-> > >=20
-> > > I'd say, yes, please.
-> >=20
-> > And I'd say no :)
->=20
-> Fair enough :-)
->=20
-> > There's no reason to deviate from the API other entities have here. It's
-> > just that the switch to DRM_BRIDGE_ATTACH_NO_CONNECTOR hasn't been
-> > completely thought through and it's one of the part where it shows.
-> >=20
-> > We have two alternative solutions: Either the driver creates the
-> > connector itself, since it doesn't seem to use any downstream bridge
-> > anyway, or we need a new bridge helper to find the connector on a bridge
-> > chain.
-> >=20
-> > We have the iterator already, we just need a new accessor to retrieve
-> > the (optional) connector of a bridge, and if there's none, go to the
-> > next bridge and try again.
->=20
-> The problem is that there is no guarantee that the the created connector
-> is created for or linked to any bridge. For example, for msm driver I'm
-> waiting for several series to go in, but after that I plan to work on
-> moving connector creation to the generic code within the msm driver.
->=20
-> In other words, with DRM_BRIDGE_ATTACH_NO_CONNECTOR in place it is
-> perfectly legit not to have a bridge which has "connector of a bridge".
-> It is possible to create drm_bridge_connector on the drm_encoder's side
-> after the drm_bridge_attach() succeeds.
-
-Sure, but then I'd expect detect and get_modes to only be called *after*
-that connector has been created, right?
-
-Returning NULL in the case where we don't have a connector (yet?) in
-such a case would make total sense to me, just like we return NULL if
-the connector is disabled and doesn't have an encoder here.
-
-Maxime
-
---k3wlcquqcci3u7ee
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ9RqAwAKCRAnX84Zoj2+
-dgcQAX0YZZ07uCTqoST48jC3j3j869VCQ+FXuAOWVpZh60p6avCuk/kE4iKGKgzr
-MvJNJXoBfRmgqO33yTX+NhMMYOO5Sk9I+qygLkzyUk0YkRUvMfZ1ax1SLNGZdMhR
-j8kp3iUENA==
-=1Cas
------END PGP SIGNATURE-----
-
---k3wlcquqcci3u7ee--
+Wei.
 
