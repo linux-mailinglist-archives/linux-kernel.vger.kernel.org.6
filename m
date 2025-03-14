@@ -1,550 +1,203 @@
-Return-Path: <linux-kernel+bounces-561297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6293A60FDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:22:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CEC3A60FE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:22:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62AA11B629AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:22:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 476613BD0B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C621FE471;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E891FECC8;
 	Fri, 14 Mar 2025 11:21:31 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="bqbPhERJ"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2611B1FE467;
-	Fri, 14 Mar 2025 11:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516E61FE456
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741951290; cv=none; b=fGseb+OdrOiEYhHvm1L7pbrvZ5QCgnBl4qpl4cPP/qNm1yc10f5d2S3zcrDPl0FOStQcdtly3HXJ7AZn/a+pCajOPqz0EHi5hfXLXkhSn2/+UM1uP26B202uYmkPiv/3ZGL+uQbUipM6oVrHQO1VsJh1kQ8g894t/LIIQb939pE=
+	t=1741951290; cv=none; b=dnHYZkcduU5th1kJdauJHPCEMhBC+ZkoJlJhMVKC8eqzT3Pjhav3tQpnXafSMjZ5LCgF6G3oUqVqhkIXkjaQb8+HbsDrEi83iyQ31/CW1xz0zpceT9cGOrL8fXOMESfKsoyZvG2vm60jQdpq8NKKyJ6sjpQ9LymBHLMydfFvoVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741951290; c=relaxed/simple;
-	bh=k53ec9B0a9McaaRAWmhtmQgtdVim1GMb5OGjvj/rYak=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tpyyNez5Nn7pvSUMhI3q7jNMZxFqti8xEbyDVuaG+gjko+GDtO7AOQsMgIu+vZ5konUcphngwTM4ywNvN9/OpzuHPcIrgk62/XF2rL3XnPKPMpMxof+4xpugxRH0XHh7aG18B5qIKKQ4ZCudu6I/6Gizs0i2NM03yi1LxRfFMOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Fri, 14 Mar
- 2025 19:21:14 +0800
-Received: from aspeed-fw03.aspeedtech.com (192.168.10.13) by
- TWMBX01.aspeed.com (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12
- via Frontend Transport; Fri, 14 Mar 2025 19:21:14 +0800
-From: Kevin Chen <kevin_chen@aspeedtech.com>
-To: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <joel@jms.id.au>, <andrew@codeconstruct.com.au>,
-	<derek.kiernan@amd.com>, <dragan.cvetic@amd.com>, <arnd@arndb.de>,
-	<gregkh@linuxfoundation.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Kevin Chen <kevin_chen@aspeedtech.com>
-Subject: [PATCH v4 3/3] soc: aspeed: lpc-pcc: Add PCC controller support
-Date: Fri, 14 Mar 2025 19:21:13 +0800
-Message-ID: <20250314112113.953238-4-kevin_chen@aspeedtech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250314112113.953238-1-kevin_chen@aspeedtech.com>
-References: <20250314112113.953238-1-kevin_chen@aspeedtech.com>
+	bh=CxQhkQEHcVp50sqGLhhVeW5rEWOlyU0IM4BxFtlaXac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VtA4K+RwPD3ic8ZYpQHnGNLg2UyH03VJjxA93CQ3afELzUJ0FY9xeC40uEQ+VwRqWs6SUFFptvLUcSOexkTd9fzM9/yFHS9WVckEADG4gmctKShAFD3Ga3EDfL8QVEa7zHNwMuIouMARY3SZVPjqMmOAjhehOW9jfRzBxW71xu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=bqbPhERJ; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cfecdd8b2so17693465e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 04:21:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1741951286; x=1742556086; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=A6XtzYhqUw84uSezb9doRczkUr+a5kXQaPrl1FQvJuA=;
+        b=bqbPhERJhaprC4ZfVm+Gk5HBFmD7bbvxPLmobJO2El7zfnDpyfiecoHumIqThd1N9M
+         iBBL+b5bpcuY3EbOAzIPRvhW6Vd16Pa5IaRf/lZRJCqYAT8Ts4AKezOLRvVj5ELk4xT3
+         wPjLpNH8Vegf/e0OyB9D2d8KG1ycm1+VV6Odtbi7kgtyhawG31/6qmxoLret/r15zUnD
+         PtaQSzLbbjcrthDqFSCSdvkRed7WGWe6TLrwFb+Ovn7UfGss3YVastAAicQQQlaMDxd/
+         75SVmd80NoiH13GOgyzR0zBqCR/1nTfZeNzHJag0+8yj4wzntj2OyXJ7bTp0x7gPdY86
+         UPuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741951286; x=1742556086;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A6XtzYhqUw84uSezb9doRczkUr+a5kXQaPrl1FQvJuA=;
+        b=FjG6bmBOjTDKouB1e9snsn3fySgJHMBepwhlCf+w5zaEsY/j3pILt0/oVMj3DJQW8P
+         3j5YKK5cSRfEo9NwAz04a/f6b/0RYLI0e1c9LeYPYBLT+c2a0/4pLwbzzusYHh/yZfUe
+         nzhpTqgL1Rqmu/XqzAcEF79Jh3kiwAKs3/ri6+VUesG6r6169mgJS4KOsZrKiby71jtf
+         n9DqEf0AYw6H2BHNATE3N7JkHSHGFgAHbOsy6x2y1yp3Y7i0RMQoipCErco+DQs7jM3T
+         1KEahI/JitrzAynUjt+mj4DwlMPGKo+5osxaBUzqiVyt5wGuEtWkNoTdO6luTvqEbNAA
+         tBPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXi2K84Hse2wQ7vzc4ma9A+OGhaA/WWlnMzt8kL+eItjV/5CxBIpWFFLEhAcNm78gKl4hbq2lSptHO+GhA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA/J52q2kyTL1qMWjUOuirshL+hXEQRDb6NRC7/r9zmcgaGqyr
+	xCtPoNM2ZuwZe/M6MOYwke3S33qTmTlUKk7FscBPHVLo+VBNy5x8hzRG4qXmy0o=
+X-Gm-Gg: ASbGncsq982v+rwjuyb2oJep8LilYntbOwdaIvOyaoIpPB8APxqEl2+XN1fmTsOuGZ1
+	wmuhuXol8/B7TUKkIMayptzUhOpDD+8B900zVGsMFl0CJqY1CFbZ6hSGHnBn/oNSGFY25i8efTB
+	1TCDq/7PvZZZC+gGCcYdZLsIppiJ4czrzlCzSDJo04nCKR488XDLkPgProTmjXa2J3hy/H8yVSB
+	vw1o7xPMt5Rg3bn8SOyvMxYAKZTUBT0nuSdQEzC8Hnghj7ToNzFQgMyQa3Gk7KKnJyrHXdXOtrr
+	24MQ6ZM+HXdSe+Ht7Nxkdzl/PLe/2GvSMT5HGAqQVXTpNw9u+a2qOXWnZ/IULMXxX4fDvbYIJQF
+	Ogq0a3mu11Z2KcQ==
+X-Google-Smtp-Source: AGHT+IEYaWqqZpuQnf2ljZyi0dtBkuDfK6pK0aoroD3vMSUCfCqdnElivAtTAt81Xq+zCSEqCysJ0Q==
+X-Received: by 2002:a05:600c:190e:b0:43c:f513:9585 with SMTP id 5b1f17b1804b1-43d1ec808ebmr27086195e9.13.1741951285516;
+        Fri, 14 Mar 2025 04:21:25 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d200fac7asm14341405e9.28.2025.03.14.04.21.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Mar 2025 04:21:25 -0700 (PDT)
+Message-ID: <c411446b-e161-48fa-a94b-e04c00f62b01@rivosinc.com>
+Date: Fri, 14 Mar 2025 12:21:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/17] riscv: sbi: add SBI FWFT extension calls
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>,
+ Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+ linux-kselftest@vger.kernel.org, Samuel Holland <samuel.holland@sifive.com>
+References: <20250310151229.2365992-1-cleger@rivosinc.com>
+ <20250310151229.2365992-4-cleger@rivosinc.com>
+ <20250313-ce439653d16b484dba6a8d3e@orel>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <20250313-ce439653d16b484dba6a8d3e@orel>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Add LPC PCC controller driver to support POST code capture.
 
-Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
----
- drivers/misc/Kconfig          |  10 +
- drivers/misc/Makefile         |   1 +
- drivers/misc/aspeed-lpc-pcc.c | 437 ++++++++++++++++++++++++++++++++++
- 3 files changed, 448 insertions(+)
- create mode 100644 drivers/misc/aspeed-lpc-pcc.c
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 56bc72c7ce4a..35c1d2e0c271 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -50,6 +50,16 @@ config AD525X_DPOT_SPI
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called ad525x_dpot-spi.
- 
-+config ASPEED_LPC_PCC
-+	tristate "Aspeed Post Code Capture support"
-+	select REGMAP
-+	select MFD_SYSCON
-+	default ARCH_ASPEED
-+	help
-+	  Provides a driver to control the LPC PCC interface,
-+	  allowing the BMC to capture post code written by the
-+	  the host to an arbitrary LPC I/O port.
-+
- config DUMMY_IRQ
- 	tristate "Dummy IRQ handler"
- 	help
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index 545aad06d088..4762da7804bf 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_IBMVMC)		+= ibmvmc.o
- obj-$(CONFIG_AD525X_DPOT)	+= ad525x_dpot.o
- obj-$(CONFIG_AD525X_DPOT_I2C)	+= ad525x_dpot-i2c.o
- obj-$(CONFIG_AD525X_DPOT_SPI)	+= ad525x_dpot-spi.o
-+obj-$(CONFIG_ASPEED_LPC_PCC)	+= aspeed-lpc-pcc.o
- obj-$(CONFIG_ATMEL_SSC)		+= atmel-ssc.o
- obj-$(CONFIG_DUMMY_IRQ)		+= dummy-irq.o
- obj-$(CONFIG_ICS932S401)	+= ics932s401.o
-diff --git a/drivers/misc/aspeed-lpc-pcc.c b/drivers/misc/aspeed-lpc-pcc.c
-new file mode 100644
-index 000000000000..61c76cb176bc
---- /dev/null
-+++ b/drivers/misc/aspeed-lpc-pcc.c
-@@ -0,0 +1,437 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) ASPEED Technology Inc.
-+ */
-+#include <linux/bitops.h>
-+#include <linux/bitfield.h>
-+#include <linux/interrupt.h>
-+#include <linux/fs.h>
-+#include <linux/kfifo.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/miscdevice.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/poll.h>
-+#include <linux/regmap.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/sizes.h>
-+
-+#define DEVICE_NAME "aspeed-lpc-pcc"
-+
-+static DEFINE_IDA(aspeed_pcc_ida);
-+
-+#define HICR5	0x80
-+#define HICR5_EN_SNP0W			BIT(0)
-+#define HICR5_EN_SNP1W			BIT(2)
-+#define HICR6	0x084
-+#define   HICR6_EN2BMODE		BIT(19)
-+#define SNPWADR	0x090
-+#define PCCR6	0x0c4
-+#define   PCCR6_DMA_CUR_ADDR		GENMASK(27, 0)
-+#define PCCR4	0x0d0
-+#define   PCCR4_DMA_ADDRL_MASK		GENMASK(31, 0)
-+#define   PCCR4_DMA_ADDRL_SHIFT		0
-+#define PCCR5	0x0d4
-+#define   PCCR5_DMA_ADDRH_MASK		GENMASK(27, 24)
-+#define   PCCR5_DMA_ADDRH_SHIFT		24
-+#define   PCCR5_DMA_LEN_MASK		GENMASK(23, 0)
-+#define   PCCR5_DMA_LEN_SHIFT		0
-+#define HICRB	0x100
-+#define   HICRB_ENSNP0D			BIT(14)
-+#define   HICRB_ENSNP1D			BIT(15)
-+#define PCCR0	0x130
-+#define   PCCR0_EN_DMA_INT		BIT(31)
-+#define   PCCR0_EN_DMA_MODE		BIT(14)
-+#define   PCCR0_ADDR_SEL_MASK		GENMASK(13, 12)
-+#define   PCCR0_ADDR_SEL_SHIFT		12
-+#define   PCCR0_RX_TRIG_LVL_MASK	GENMASK(10, 8)
-+#define   PCCR0_RX_TRIG_LVL_SHIFT	8
-+#define   PCCR0_CLR_RX_FIFO		BIT(7)
-+#define   PCCR0_MODE_SEL_MASK		GENMASK(5, 4)
-+#define   PCCR0_MODE_SEL_SHIFT		4
-+#define   PCCR0_EN_RX_TMOUT_INT		BIT(2)
-+#define   PCCR0_EN_RX_AVAIL_INT		BIT(1)
-+#define   PCCR0_EN			BIT(0)
-+#define PCCR1	0x134
-+#define   PCCR1_BASE_ADDR_MASK		GENMASK(15, 0)
-+#define   PCCR1_BASE_ADDR_SHIFT		0
-+#define   PCCR1_DONT_CARE_BITS_MASK	GENMASK(21, 16)
-+#define   PCCR1_DONT_CARE_BITS_SHIFT	16
-+#define PCCR2	0x138
-+#define   PCCR2_INT_STATUS_PATTERN_B	BIT(16)
-+#define   PCCR2_INT_STATUS_PATTERN_A	BIT(8)
-+#define   PCCR2_INT_STATUS_DMA_DONE	BIT(4)
-+#define   PCCR2_INT_STATUS_DATA_RDY	PCCR2_INT_STATUS_DMA_DONE
-+#define   PCCR2_INT_STATUS_RX_OVER	BIT(3)
-+#define   PCCR2_INT_STATUS_RX_TMOUT	BIT(2)
-+#define   PCCR2_INT_STATUS_RX_AVAIL	BIT(1)
-+#define PCCR3	0x13c
-+#define   PCCR3_FIFO_DATA_MASK		GENMASK(7, 0)
-+
-+#define PCC_DMA_BUFSZ	(256 * SZ_1K)
-+
-+enum pcc_fifo_threshold {
-+	PCC_FIFO_THR_1_BYTE,
-+	PCC_FIFO_THR_1_EIGHTH,
-+	PCC_FIFO_THR_2_EIGHTH,
-+	PCC_FIFO_THR_3_EIGHTH,
-+	PCC_FIFO_THR_4_EIGHTH,
-+	PCC_FIFO_THR_5_EIGHTH,
-+	PCC_FIFO_THR_6_EIGHTH,
-+	PCC_FIFO_THR_7_EIGHTH,
-+	PCC_FIFO_THR_8_EIGHTH,
-+};
-+
-+enum pcc_record_mode {
-+	PCC_REC_1B,
-+	PCC_REC_2B,
-+	PCC_REC_4B,
-+	PCC_REC_FULL,
-+};
-+
-+enum pcc_port_hbits_select {
-+	PCC_PORT_HBITS_SEL_NONE,
-+	PCC_PORT_HBITS_SEL_45,
-+	PCC_PORT_HBITS_SEL_67,
-+	PCC_PORT_HBITS_SEL_89,
-+};
-+
-+struct aspeed_pcc_dma {
-+	uint32_t rptr;
-+	uint8_t *virt;
-+	dma_addr_t addr;
-+	uint32_t size;
-+};
-+
-+struct aspeed_pcc_ctrl {
-+	struct device *dev;
-+	struct regmap *regmap;
-+	int irq;
-+	uint32_t port;
-+	struct aspeed_pcc_dma dma;
-+	struct kfifo fifo;
-+	wait_queue_head_t wq;
-+	struct miscdevice mdev;
-+	int mdev_id;
-+};
-+
-+static inline bool is_valid_rec_mode(uint32_t mode)
-+{
-+	return (mode > PCC_REC_FULL) ? false : true;
-+}
-+
-+static inline bool is_valid_high_bits_select(uint32_t sel)
-+{
-+	return (sel > PCC_PORT_HBITS_SEL_89) ? false : true;
-+}
-+
-+static ssize_t aspeed_pcc_file_read(struct file *file, char __user *buffer,
-+				    size_t count, loff_t *ppos)
-+{
-+	int rc;
-+	unsigned int copied;
-+	struct aspeed_pcc_ctrl *pcc = container_of(file->private_data,
-+					      struct aspeed_pcc_ctrl,
-+					      mdev);
-+
-+	if (kfifo_is_empty(&pcc->fifo)) {
-+		if (file->f_flags & O_NONBLOCK)
-+			return -EAGAIN;
-+
-+		rc = wait_event_interruptible(pcc->wq,
-+					      !kfifo_is_empty(&pcc->fifo));
-+		if (rc == -ERESTARTSYS)
-+			return -EINTR;
-+	}
-+
-+	rc = kfifo_to_user(&pcc->fifo, buffer, count, &copied);
-+
-+	return rc ? rc : copied;
-+}
-+
-+static __poll_t aspeed_pcc_file_poll(struct file *file,
-+				     struct poll_table_struct *pt)
-+{
-+	struct aspeed_pcc_ctrl *pcc = container_of(file->private_data,
-+					      struct aspeed_pcc_ctrl,
-+					      mdev);
-+
-+	poll_wait(file, &pcc->wq, pt);
-+
-+	return !kfifo_is_empty(&pcc->fifo) ? POLLIN : 0;
-+}
-+
-+static const struct file_operations pcc_fops = {
-+	.owner = THIS_MODULE,
-+	.read = aspeed_pcc_file_read,
-+	.poll = aspeed_pcc_file_poll,
-+};
-+
-+static irqreturn_t aspeed_pcc_dma_isr(int irq, void *arg)
-+{
-+	uint32_t reg, rptr, wptr;
-+	struct aspeed_pcc_ctrl *pcc = (struct aspeed_pcc_ctrl *)arg;
-+	struct kfifo *fifo = &pcc->fifo;
-+
-+	regmap_write_bits(pcc->regmap, PCCR2, PCCR2_INT_STATUS_DMA_DONE, PCCR2_INT_STATUS_DMA_DONE);
-+
-+	regmap_read(pcc->regmap, PCCR6, &reg);
-+	wptr = (reg & PCCR6_DMA_CUR_ADDR) - (pcc->dma.addr & PCCR6_DMA_CUR_ADDR);
-+	rptr = pcc->dma.rptr;
-+
-+	do {
-+		if (kfifo_is_full(fifo))
-+			kfifo_skip(fifo);
-+
-+		kfifo_put(fifo, pcc->dma.virt[rptr]);
-+
-+		rptr = (rptr + 1) % pcc->dma.size;
-+	} while (rptr != wptr);
-+
-+	pcc->dma.rptr = rptr;
-+
-+	wake_up_interruptible(&pcc->wq);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t aspeed_pcc_isr(int irq, void *arg)
-+{
-+	uint32_t sts;
-+	struct aspeed_pcc_ctrl *pcc = (struct aspeed_pcc_ctrl *)arg;
-+
-+	regmap_read(pcc->regmap, PCCR2, &sts);
-+
-+	if (!(sts & (PCCR2_INT_STATUS_RX_TMOUT |
-+		     PCCR2_INT_STATUS_RX_AVAIL |
-+		     PCCR2_INT_STATUS_DMA_DONE)))
-+		return IRQ_NONE;
-+
-+	return aspeed_pcc_dma_isr(irq, arg);
-+}
-+
-+/*
-+ * A2600-15 AP note
-+ *
-+ * SW workaround to prevent generating Non-Fatal-Error (NFE)
-+ * eSPI response when PCC is used for port I/O byte snooping
-+ * over eSPI.
-+ */
-+static int aspeed_a2600_15(struct aspeed_pcc_ctrl *pcc, struct device *dev)
-+{
-+	u32 hicr5_en, hicrb_en;
-+
-+	/* abort if snoop is enabled */
-+	regmap_read(pcc->regmap, HICR5, &hicr5_en);
-+	if (hicr5_en & (HICR5_EN_SNP0W | HICR5_EN_SNP1W)) {
-+		dev_err(dev, "A2600-15 should be applied with snoop disabled\n");
-+		return -EPERM;
-+	}
-+
-+	/* set SNPWADR of snoop device */
-+	regmap_write(pcc->regmap, SNPWADR, pcc->port | ((pcc->port + 2) << 16));
-+
-+	/* set HICRB[15:14]=11b to enable ACCEPT response for SNPWADR */
-+	hicrb_en = HICRB_ENSNP0D | HICRB_ENSNP1D;
-+	regmap_update_bits(pcc->regmap, HICRB, hicrb_en, hicrb_en);
-+
-+	/* set HICR6[19] to extend SNPWADR to 2x range */
-+	regmap_update_bits(pcc->regmap, HICR6, HICR6_EN2BMODE, HICR6_EN2BMODE);
-+
-+	return 0;
-+}
-+
-+static int aspeed_pcc_enable(struct aspeed_pcc_ctrl *pcc, struct device *dev)
-+{
-+	int rc;
-+
-+	rc = aspeed_a2600_15(pcc, dev);
-+	if (rc)
-+		return rc;
-+
-+	/* record mode: Set 2-Byte mode. */
-+	regmap_update_bits(pcc->regmap, PCCR0,
-+			   PCCR0_MODE_SEL_MASK,
-+			   PCC_REC_2B << PCCR0_MODE_SEL_SHIFT);
-+
-+	/* port address */
-+	regmap_update_bits(pcc->regmap, PCCR1,
-+			   PCCR1_BASE_ADDR_MASK,
-+			   pcc->port << PCCR1_BASE_ADDR_SHIFT);
-+
-+	/* Set address high bits selection to 0b01 for address bit[5:4] */
-+	regmap_update_bits(pcc->regmap, PCCR0,
-+			   PCCR0_ADDR_SEL_MASK,
-+			   PCC_PORT_HBITS_SEL_45 << PCCR0_ADDR_SEL_SHIFT);
-+
-+	/* Set LPC don't care address to 0x3 for port 80~83h */
-+	regmap_update_bits(pcc->regmap, PCCR1,
-+			   PCCR1_DONT_CARE_BITS_MASK,
-+			   0x3 << PCCR1_DONT_CARE_BITS_SHIFT);
-+
-+	/* set DMA ring buffer size and enable interrupts */
-+	regmap_write(pcc->regmap, PCCR4, pcc->dma.addr & 0xffffffff);
-+#ifdef CONFIG_ARM64
-+	regmap_update_bits(pcc->regmap, PCCR5, PCCR5_DMA_ADDRH_MASK,
-+			   (pcc->dma.addr >> 32) << PCCR5_DMA_ADDRH_SHIFT);
-+#endif
-+	regmap_update_bits(pcc->regmap, PCCR5, PCCR5_DMA_LEN_MASK,
-+			   (pcc->dma.size / 4) << PCCR5_DMA_LEN_SHIFT);
-+	regmap_update_bits(pcc->regmap, PCCR0,
-+			   PCCR0_EN_DMA_INT | PCCR0_EN_DMA_MODE,
-+			   PCCR0_EN_DMA_INT | PCCR0_EN_DMA_MODE);
-+
-+	regmap_update_bits(pcc->regmap, PCCR0, PCCR0_EN, PCCR0_EN);
-+
-+	return 0;
-+}
-+
-+static int aspeed_pcc_disable(struct aspeed_pcc_ctrl *pcc)
-+{
-+	/* Disable PCC and DMA Mode for safety */
-+	regmap_update_bits(pcc->regmap, PCCR0, PCCR0_EN |  PCCR0_EN_DMA_MODE, 0);
-+
-+	/* Clear Rx FIFO. */
-+	regmap_update_bits(pcc->regmap, PCCR0, PCCR0_CLR_RX_FIFO, 1);
-+
-+	/* Clear All interrupts status. */
-+	regmap_write(pcc->regmap, PCCR2,
-+		     PCCR2_INT_STATUS_RX_OVER | PCCR2_INT_STATUS_DMA_DONE |
-+		     PCCR2_INT_STATUS_PATTERN_A | PCCR2_INT_STATUS_PATTERN_B);
-+
-+	return 0;
-+}
-+
-+static int aspeed_pcc_probe(struct platform_device *pdev)
-+{
-+	int rc;
-+	struct aspeed_pcc_ctrl *pcc;
-+	struct device *dev = &pdev->dev;
-+	uint32_t fifo_size = PAGE_SIZE;
-+
-+	pcc = devm_kzalloc(dev, sizeof(*pcc), GFP_KERNEL);
-+	if (!pcc)
-+		return -ENOMEM;
-+
-+	pcc->regmap = syscon_node_to_regmap(dev->parent->of_node);
-+	if (IS_ERR(pcc->regmap))
-+		return dev_err_probe(dev, PTR_ERR(pcc->regmap), "Couldn't get regmap\n");
-+
-+	rc = of_property_read_u32(dev->of_node, "pcc-ports", &pcc->port);
-+	if (rc) {
-+		dev_err(dev, "no pcc ports configured\n");
-+		return rc;
-+	}
-+
-+	rc = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
-+	if (rc) {
-+		dev_err(dev, "cannot set 64-bits DMA mask\n");
-+		return rc;
-+	}
-+
-+	pcc->dma.size = PCC_DMA_BUFSZ;
-+	pcc->dma.virt = dmam_alloc_coherent(dev,
-+					    pcc->dma.size,
-+					    &pcc->dma.addr,
-+					    GFP_KERNEL);
-+	if (!pcc->dma.virt) {
-+		dev_err(dev, "cannot allocate DMA buffer\n");
-+		return -ENOMEM;
-+	}
-+
-+	fifo_size = roundup(pcc->dma.size, PAGE_SIZE);
-+	rc = kfifo_alloc(&pcc->fifo, fifo_size, GFP_KERNEL);
-+	if (rc)
-+		return rc;
-+
-+	/* Disable PCC to clean up DMA buffer before request IRQ. */
-+	rc = aspeed_pcc_disable(pcc);
-+	if (rc) {
-+		dev_err(dev, "Couldn't disable PCC\n");
-+		goto err_free_kfifo;
-+	}
-+
-+	pcc->irq = platform_get_irq(pdev, 0);
-+	if (pcc->irq < 0) {
-+		rc = pcc->irq;
-+		goto err_free_kfifo;
-+	}
-+
-+	rc = devm_request_irq(dev, pcc->irq, aspeed_pcc_isr, 0, DEVICE_NAME, pcc);
-+	if (rc < 0) {
-+		dev_err(dev, "Couldn't request IRQ %d\n", pcc->irq);
-+		goto err_free_kfifo;
-+	}
-+
-+	init_waitqueue_head(&pcc->wq);
-+
-+	pcc->mdev_id = ida_alloc(&aspeed_pcc_ida, GFP_KERNEL);
-+	if (pcc->mdev_id < 0) {
-+		dev_err(dev, "Couldn't allocate ID\n");
-+		goto err_free_kfifo;
-+	}
-+
-+	pcc->mdev.parent = dev;
-+	pcc->mdev.minor = MISC_DYNAMIC_MINOR;
-+	pcc->mdev.name = devm_kasprintf(dev, GFP_KERNEL, "%s%d", DEVICE_NAME,
-+					pcc->mdev_id);
-+	pcc->mdev.fops = &pcc_fops;
-+	rc = misc_register(&pcc->mdev);
-+	if (rc) {
-+		dev_err(dev, "Couldn't register misc device\n");
-+		goto err_free_ida;
-+	}
-+
-+	rc = aspeed_pcc_enable(pcc, dev);
-+	if (rc) {
-+		dev_err(dev, "Couldn't enable PCC\n");
-+		goto err_dereg_mdev;
-+	}
-+
-+	dev_set_drvdata(dev, pcc);
-+
-+	return 0;
-+
-+err_dereg_mdev:
-+	misc_deregister(&pcc->mdev);
-+
-+err_free_ida:
-+	ida_free(&aspeed_pcc_ida, pcc->mdev_id);
-+
-+err_free_kfifo:
-+	kfifo_free(&pcc->fifo);
-+
-+	return rc;
-+}
-+
-+static void aspeed_pcc_remove(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct aspeed_pcc_ctrl *pcc = dev_get_drvdata(dev);
-+
-+	kfifo_free(&pcc->fifo);
-+	ida_free(&aspeed_pcc_ida, pcc->mdev_id);
-+	misc_deregister(&pcc->mdev);
-+}
-+
-+static const struct of_device_id aspeed_pcc_table[] = {
-+	{ .compatible = "aspeed,ast2600-lpc-pcc" },
-+};
-+
-+static struct platform_driver aspeed_pcc_driver = {
-+	.driver = {
-+		.name = "aspeed-pcc",
-+		.of_match_table = aspeed_pcc_table,
-+	},
-+	.probe = aspeed_pcc_probe,
-+	.remove = aspeed_pcc_remove,
-+};
-+
-+module_platform_driver(aspeed_pcc_driver);
-+
-+MODULE_AUTHOR("Chia-Wei Wang <chiawei_wang@aspeedtech.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Driver for Aspeed Post Code Capture");
--- 
-2.34.1
+On 13/03/2025 13:44, Andrew Jones wrote:
+> On Mon, Mar 10, 2025 at 04:12:10PM +0100, Clément Léger wrote:
+>> Add FWFT extension calls. This will be ratified in SBI V3.0 hence, it is
+>> provided as a separate commit that can be left out if needed.
+>>
+>> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+>> ---
+>>  arch/riscv/kernel/sbi.c | 30 ++++++++++++++++++++++++++++--
+>>  1 file changed, 28 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
+>> index 256910db1307..af8e2199e32d 100644
+>> --- a/arch/riscv/kernel/sbi.c
+>> +++ b/arch/riscv/kernel/sbi.c
+>> @@ -299,9 +299,19 @@ static int __sbi_rfence_v02(int fid, const struct cpumask *cpu_mask,
+>>  	return 0;
+>>  }
+>>  
+>> +static bool sbi_fwft_supported;
+>> +
+>>  int sbi_fwft_get(u32 feature, unsigned long *value)
+>>  {
+>> -	return -EOPNOTSUPP;
+>> +	struct sbiret ret;
+>> +
+>> +	if (!sbi_fwft_supported)
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	ret = sbi_ecall(SBI_EXT_FWFT, SBI_EXT_FWFT_GET,
+>> +			feature, 0, 0, 0, 0, 0);
+>> +
+>> +	return sbi_err_map_linux_errno(ret.error);
+>>  }
+>>  
+>>  /**
+>> @@ -314,7 +324,15 @@ int sbi_fwft_get(u32 feature, unsigned long *value)
+>>   */
+>>  int sbi_fwft_set(u32 feature, unsigned long value, unsigned long flags)
+>>  {
+>> -	return -EOPNOTSUPP;
+>> +	struct sbiret ret;
+>> +
+>> +	if (!sbi_fwft_supported)
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	ret = sbi_ecall(SBI_EXT_FWFT, SBI_EXT_FWFT_SET,
+>> +			feature, value, flags, 0, 0, 0);
+>> +
+>> +	return sbi_err_map_linux_errno(ret.error);
+> 
+> sbi_err_map_linux_errno() doesn't know about SBI_ERR_DENIED_LOCKED.
+
+Not only it doesn't knows about DENIED_LOCKED but also another bunch of
+errors. I'll add them in a separate commit.
+
+> 
+>>  }
+>>  
+>>  struct fwft_set_req {
+>> @@ -389,6 +407,9 @@ static int sbi_fwft_feature_local_set(u32 feature, unsigned long value,
+>>  int sbi_fwft_all_cpus_set(u32 feature, unsigned long value, unsigned long flags,
+>>  			  bool revert_on_fail)
+>>  {
+>> +	if (!sbi_fwft_supported)
+>> +		return -EOPNOTSUPP;
+>> +
+>>  	if (feature & SBI_FWFT_GLOBAL_FEATURE_BIT)
+>>  		return sbi_fwft_set(feature, value, flags);
+>>  
+>> @@ -719,6 +740,11 @@ void __init sbi_init(void)
+>>  			pr_info("SBI DBCN extension detected\n");
+>>  			sbi_debug_console_available = true;
+>>  		}
+>> +		if ((sbi_spec_version >= sbi_mk_version(2, 0)) &&
+> 
+> Should check sbi_mk_version(3, 0)
+
+Oh yes that was for testing purpose and I incorrectly squashed it.
+
+> 
+>> +		    (sbi_probe_extension(SBI_EXT_FWFT) > 0)) {
+>> +			pr_info("SBI FWFT extension detected\n");
+>> +			sbi_fwft_supported = true;
+>> +		}
+>>  	} else {
+>>  		__sbi_set_timer = __sbi_set_timer_v01;
+>>  		__sbi_send_ipi	= __sbi_send_ipi_v01;
+>> -- 
+>> 2.47.2
+>>
+> 
+
+Thanks,
+
+Clément
+
+> Thanks,
+> drew
 
 
