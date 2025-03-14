@@ -1,135 +1,164 @@
-Return-Path: <linux-kernel+bounces-561917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A9D4A6188F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:49:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53839A61892
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:50:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27362886CC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:49:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 636991884463
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF793205AC6;
-	Fri, 14 Mar 2025 17:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DD2204C11;
+	Fri, 14 Mar 2025 17:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r86B2yOL"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="heVTl5fY"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A451B204F96
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3A82046B5;
+	Fri, 14 Mar 2025 17:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741974524; cv=none; b=XvfQqEVqhXrIWwS6pUxa4J0SGWUPeSeFDmbKvs24fqV9gFpBNrzO6rhSmz/kJjV9tuYgCdlGYbC7M+R9GnsRwiOB8eGpFTSFR6DhsJVq3i504XcSN3Mj4VBNhQ9yk36sVufpirWUdYt4WFdt4rK6LN85g/YToUaDHVQ14Axiru8=
+	t=1741974542; cv=none; b=Qs/jcs6/w+fCTRW21GgiB0KsRGpPPQXYn1r/ZXei96r9pKsTKBQ1OSaMo3iRPcjAzLq87a4GmWtqYoOr6Uz4XNAbXFCLf3+OPGPzMJMvPRar5OaBcGyx3JdvgebWUn7+wO2HaOHr/QLnJ21Z3H1bC81FyUFRbom7gPHkN7PDCcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741974524; c=relaxed/simple;
-	bh=WZz3v+vsHhPD1tXnM2Sgca+yquBEKJ/qJRDwgWjeJjQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q4j9WJEcxXiH+e1PzindI+KJl7rkhhiHYVU0f61ufK2KyjW6HZOGtE1yfkrBx75CY2IDNDKVS30C9GJSAObAy7lpCoRDGJzboANmqrxojsqf4GeY2HJvJTeqx4cCbfqcU9YuMSrHqIwT2qe+MXEXmS246tGuumgIcn2H2s95hbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r86B2yOL; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3913fdd003bso1274762f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:48:41 -0700 (PDT)
+	s=arc-20240116; t=1741974542; c=relaxed/simple;
+	bh=5CX0PxqyCR/cXugcODKOqmcWv5REPQUfyw3SdDx6M1k=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BUW+kLXCNp2O1B5Ve7O11H8L4NXyYIAxjz1Cay+dR3Uaiap/YShZI0Ah0kJSGQLDjCF5RtwXwB3pxYy7m0CDaHaxPkgxWeID4TEau+QH8XAAgDNOGsdUNkEwDnMZkBZFIwX8DkhWWsh87GCv2LT0QX8rfC7cIozHP3ueHZXmoO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=heVTl5fY; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-476ab588f32so31956781cf.2;
+        Fri, 14 Mar 2025 10:49:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741974520; x=1742579320; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741974539; x=1742579339; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:feedback-id:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=J/0LkOzwwvJNcYMQhvQr0pJ6M6A5VssVoqwJh0FipfI=;
-        b=r86B2yOLrp5ovBL+sphVOm7K+tIjuBHFQSZ4+WqizlY5llipVKCrSY84Wk8kFSlOwa
-         jxc4o7LZHP5h1wT9oIiUfYqMwCZetBrYCywa0qOngkxNwfbFD8SEwMePLXaT9oUUldAE
-         2vaHBFec4+lgB+ri/yRit/iclJ7YC3JNFIcdNQTWFfeyBvJGu2+uDOJO++VKsUgsYuLU
-         gFSxpIBnvExg5ozA1LOC3LiDKy0rwzXM56xLvGvRKYWsdzKDC/ty8XxivYvWWs+ZH4ae
-         7W4gYAk/tNYVWRcsTh6DDqni1hhWfg9cZuLHrrKyfcCdlZcaIpG71ftPZUhxUkgj+/BO
-         FgeQ==
+        bh=dixI4ahQHaRBhFTm9g6VyvYe7UeqgOMzNkhyZ63tKIg=;
+        b=heVTl5fYLlEzRZnklLysYeGPTdBAscIh2i2ax6AYxN/y+g7Tu4fx4eYCTKvkbQm6tt
+         F5ShxFTSALrcbw5Rf739Zbe6cB+/+Kwh8YLdffAP2qCaBIU6no3tohS5UnE6yVSgEvop
+         tyQoqer+zieGfzMgt6geb5XWkfNOLVr3fKqkpDt8xmhVHUe7OmXMgTDmDbaFRp61DS1W
+         xzwuRUoBeKBtFk1lv4OAwmz/Okp5Ee5+K8q4NIn+W62dycfriJLeTvScHSKTvOlP7Ek6
+         UFNgOdOkTZKpL9s8Lym/BY5D7XuWr2ibSKq18bfEPL3Je9ULMCkXdwf3+1YfTvlR3MkW
+         VciQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741974520; x=1742579320;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1741974539; x=1742579339;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:feedback-id:message-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=J/0LkOzwwvJNcYMQhvQr0pJ6M6A5VssVoqwJh0FipfI=;
-        b=UuSha/rMmG8mcdg13y1rWEhFuDsix/nOyuSHEKdB8+NT77RulYcJZiLw/MItsOSgUL
-         euygda0nGxqVo2C48YC0t+BUkZz50pU6IgP3ODG/WWllZuFAiwkk7XgoQuYc40uQAY7o
-         xZrhTr54Brt734WkAdXVSehMjuv7ghjLkKgTJnBDcTx72/TeZDgwKL4u1SBkM5s8w1P3
-         EqdZx73wGyG2PYmIYpSvbvNjGpjxD18jm1B/ZzCPZ3tq6DFV6nAA/FV4niNDlFvjigb8
-         7ilI5ZM/K8YhQlBQBrXBQEBr5C2wsvZhCFqZJah4fDQ6Zqto5N/thvRJZLHxBHfzYClX
-         dFDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdSdOC01TP3vSPOMve87ZZLsEnmq2yrtkiLu/tVoNR8XyNVNFzFKvLTF+r3cmd6oEcSHWsOyp3QypWjFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJamSx8M6j1X7oJHwIljBaMPApkaCOt/nkCg1JbdGmsbj2sRd1
-	LnqhmA37857wkFkplShDl3RHxvlSxeR1t4uYMgucYwcolQSqv3Vlmv0A3Vl2ONg=
-X-Gm-Gg: ASbGncu6LPBfDovpodctg8pslytE8RD97XhCtIOtAGbjtNPMt3/7U56f/ARLWED7ZB4
-	Ur+ZK15GYV/DEpggOg71EBuqf1lk6LzYJPC+NoStJAmGOVevQuRwsEVT4RezTthZKpo48E55CU9
-	4TIvPVs0goubeUf5seJH0jZPReqPfzTCotWaUhf4BRCrjStxYsKfpUflDRX2m4Zet8uzw2IVS6G
-	zJs/JfUofWDbMXvE0KxBTRQsxVzXKP1o0TwOROI5i4DsItnJ0qmX3UM1o4Wm5Hmm5NS2XU7PtQt
-	CUUUx8GQT3MuAmaPNoN5A6fBiex6utggkCz9heSj40y1OtCcXaMywPO15nwJk9MBfnyIcJ5NhT2
-	NcllF
-X-Google-Smtp-Source: AGHT+IFSURXCATif01r54d+KQHoWw2qah8uuJQ120su2MkweaWrQyfg3Zuqy7P/UA//iCx8NnbbY1Q==
-X-Received: by 2002:a05:6000:1a8c:b0:38d:ae1e:2f3c with SMTP id ffacd0b85a97d-3971dbe80bemr5173220f8f.25.1741974519796;
-        Fri, 14 Mar 2025 10:48:39 -0700 (PDT)
-Received: from localhost.localdomain ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8975afesm6117243f8f.47.2025.03.14.10.48.38
+        bh=dixI4ahQHaRBhFTm9g6VyvYe7UeqgOMzNkhyZ63tKIg=;
+        b=mblNAhT8Zl+Rfg5eRtNNO/xtLHEpXB+fyzTTzPCMVLYX5gIha7iUKCfa3VR7cZEQMr
+         pFeyORjBGqIgOikMdoJs1b6JhiuMvLGs4QMCeCq6R+9dwI6v26Eiy+f4R+BD9IvnO++X
+         II4X5BF9+ZSIIrjzBMzvifsfejyiJHZuIp7380x4/sG2T7M64KgCiTk/od/4IPYmJJgS
+         bVIj//hjuVKRMwgO9CMRRfLrgw2GgsrLTBTHgjPz/8lPwrVhskvocphg12F1qmndteuK
+         YJuMRQ1YOc9p9FeCPfLRhg0WB65X3psZjatUDSEm1ibd8JSajluJEVZE1JYaFKPWcjSb
+         gWXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuC8974j0a7/QoL06HpU1pJ4t/L1pQWUQIBXm6X0GKjv7z2acosadqvjUp+9n5XL8LohWjSxnU+CmhJHkWCds=@vger.kernel.org, AJvYcCWCz58AsWFarlyjhCadaNbrqnfPM56RCWcbeWn1r7xaJt1MtmVUyf1r1L8Qtu9zHQK0xMTtPnokPIbcD8k=@vger.kernel.org, AJvYcCX9TVLR2XVqs61LUK6KWpuVjiesTfYERsOR+MHSzQRa/hDm1NC0cbuZJ0QKI89qZ/Y32Y0kTp/G7OQR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzul3feZ85EFZj7m7AXpRtTGrlGDr6tfnk4lA3mBbGw4Ur/YNs1
+	/UppytlBFBnR27dTEGO1j8BMa7NncZEHJjR6R3MfuwLc4AdM3heu
+X-Gm-Gg: ASbGncuIT9xKfkIXZn6TgZy2+cZFwrJJFUKq8m77kJ0k1zixGXLL0CC7kfp1iMRX8IA
+	nnNzYUDJ7QF0GavyOxSafgAFyIqFthv98bZ72fIeIPahUvxabrnHEOrbdQwdYDigTm3z9pQBj31
+	k4pBJiqx1rnNcy8LZVZUnPvBJwaJMG/ZObLxmUBysrzjO4vYCszktTlUPo8tu5qUOu5X0hNUJQt
+	CrDBpMx9oaSfwsbzdExqH5nMSGyUxGrcHDRgIdllCPMyVz59RAuPlQPL2zqNB+DiANnxhsyM7eV
+	jGjWvgRP4nZPAxKtQK3bUsgx9kxeL159ypYjz1jgVjhyKL7fpo2iN3Aklp11kasxo/R+7MkK8ce
+	y+MYXAHlt6ARv85eOMITunfT1GWobMnHwZaE=
+X-Google-Smtp-Source: AGHT+IETlmM8hWJT8cSsf7LOVEUlZOqkH94DgERsFKpZv0JEfHuxAU2VESE/j8yYxTqEvss5fhNolg==
+X-Received: by 2002:a05:622a:5e8b:b0:472:6aa:d6be with SMTP id d75a77b69052e-476c8142d12mr44697011cf.17.1741974539224;
+        Fri, 14 Mar 2025 10:48:59 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-476bb82bf45sm25513721cf.75.2025.03.14.10.48.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 10:48:38 -0700 (PDT)
-From: srinivas.kandagatla@linaro.org
-To: broonie@kernel.org
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	krzysztof.kozlowski@linaro.org,
-	linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dmitry.baryshkov@linaro.org,
-	johan+linaro@kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	stable@vger.kernel.org
-Subject: [PATCH v5 5/5] ASoC: qdsp6: q6apm-dai: fix capture pipeline overruns.
-Date: Fri, 14 Mar 2025 17:48:00 +0000
-Message-Id: <20250314174800.10142-6-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250314174800.10142-1-srinivas.kandagatla@linaro.org>
-References: <20250314174800.10142-1-srinivas.kandagatla@linaro.org>
+        Fri, 14 Mar 2025 10:48:58 -0700 (PDT)
+Message-ID: <67d46c0a.050a0220.30a410.8bef@mx.google.com>
+X-Google-Original-Message-ID: <Z9RsBhMj01baL73W@winterfell.>
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 6F3E21200043;
+	Fri, 14 Mar 2025 13:48:58 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Fri, 14 Mar 2025 13:48:58 -0400
+X-ME-Sender: <xms:CmzUZ7HmVt0brZLMe8VBEo-XzmQoPslQEmk5Dc-5jhFwR-GOUoI8PA>
+    <xme:CmzUZ4VbZcLSxmf5xWrQthK1PCVg6__haumM21E2kTN7AeyuIUvZnaH0Z4Kn-xEkZ
+    3gOj-OvGDHdHXNj9g>
+X-ME-Received: <xmr:CmzUZ9LNXYHlBq3miiJBib3Lyt0gzVzlZ5s_2Wkq-x9z7Mb_HRMrLYeKeRY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedugeekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfel
+    leeivedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
+    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
+    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudeipdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhr
+    tghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegshhgvlh
+    hgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprh
+    gtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhn
+    fegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegsvghnnhhordhloh
+    hsshhinhesphhrohhtohhnrdhmvg
+X-ME-Proxy: <xmx:CmzUZ5G6Vno3joXRmrPjeZMgbML9Ek7wmKPtIwtMHlbTk7-6zX567w>
+    <xmx:CmzUZxV6e_q2vrDx0kaRMx-glG8tBhTNvpN5p23bVfYy3UtJR71zoQ>
+    <xmx:CmzUZ0N1hNhPUEz602X6XTBrH8UqE-kT1jyeXrXmVUcte3hPF3zzGw>
+    <xmx:CmzUZw2xIdjHIURlTexrvdx32T95ufawrOa_FZ3uCB2FlRgwbAbaVg>
+    <xmx:CmzUZ2XdFtJnycZqmTYss5tEeHSu7IBcK-CpJaO-w5mQwASsbJCOLMnH>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 14 Mar 2025 13:48:57 -0400 (EDT)
+Date: Fri, 14 Mar 2025 10:48:54 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] rust: device: implement device context marker
+References: <20250314160932.100165-1-dakr@kernel.org>
+ <20250314160932.100165-3-dakr@kernel.org>
+ <67d465bb.050a0220.d2e19.8fc9@mx.google.com>
+ <Z9RoBMXWsrjg6jjg@cassiopeiae>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9RoBMXWsrjg6jjg@cassiopeiae>
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On Fri, Mar 14, 2025 at 06:31:48PM +0100, Danilo Krummrich wrote:
+> On Fri, Mar 14, 2025 at 10:21:58AM -0700, Boqun Feng wrote:
+> > On Fri, Mar 14, 2025 at 05:09:05PM +0100, Danilo Krummrich wrote:
+> > > Some bus device functions should only be called from bus callbacks,
+> > > such as probe(), remove(), resume(), suspend(), etc.
+> > > 
+> > > To ensure this add device context marker structs, that can be used as
+> > > generics for bus device implementations.
+> > > 
+> > > Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> > > Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> > 
+> > Try chronological order for the tags? It was suggested first and then
+> > reviewed.
+> 
+> Is that a thing? When I apply patches I usully keep ACKs, RBs and SOBs together
+> at the bottom.
 
-Period sizes less than 6k for capture path triggers overruns in the
-dsp capture pipeline.
+I don't think it's a hard requirement, but it makes logical sense to
+order the tags except your own SoB based on chronological order when
+re-submitting a new version IMO. It's in the same spirit of putting SoBs
+in chronological when multiple people handle the patches.
 
-Change the period size and number of periods to value which DSP is happy with.
+But it's your choice, I just feel it's a bit odd in the current order
+;-)
 
-Fixes: 9b4fe0f1cd79 ("ASoC: qdsp6: audioreach: add q6apm-dai support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Tested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
----
- sound/soc/qcom/qdsp6/q6apm-dai.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/qcom/qdsp6/q6apm-dai.c b/sound/soc/qcom/qdsp6/q6apm-dai.c
-index 180ff24041bf..2cd522108221 100644
---- a/sound/soc/qcom/qdsp6/q6apm-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6apm-dai.c
-@@ -24,8 +24,8 @@
- #define PLAYBACK_MIN_PERIOD_SIZE	128
- #define CAPTURE_MIN_NUM_PERIODS		2
- #define CAPTURE_MAX_NUM_PERIODS		8
--#define CAPTURE_MAX_PERIOD_SIZE		4096
--#define CAPTURE_MIN_PERIOD_SIZE		320
-+#define CAPTURE_MAX_PERIOD_SIZE		65536
-+#define CAPTURE_MIN_PERIOD_SIZE		6144
- #define BUFFER_BYTES_MAX (PLAYBACK_MAX_NUM_PERIODS * PLAYBACK_MAX_PERIOD_SIZE)
- #define BUFFER_BYTES_MIN (PLAYBACK_MIN_NUM_PERIODS * PLAYBACK_MIN_PERIOD_SIZE)
- #define COMPR_PLAYBACK_MAX_FRAGMENT_SIZE (128 * 1024)
--- 
-2.39.5
-
+Regards,
+Boqun
 
