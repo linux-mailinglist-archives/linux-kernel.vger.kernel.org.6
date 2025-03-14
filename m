@@ -1,115 +1,139 @@
-Return-Path: <linux-kernel+bounces-561939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F70A618E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:02:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03485A618EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:02:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B227D1B63AC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:02:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8770D1B6439C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDECD2045A2;
-	Fri, 14 Mar 2025 18:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D183E204C3A;
+	Fri, 14 Mar 2025 18:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cNRVlHh7"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C6BB3a9J"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC47214375C;
-	Fri, 14 Mar 2025 18:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AA320487F;
+	Fri, 14 Mar 2025 18:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741975268; cv=none; b=JmXCFhIDf4UMeG5wrFaEHOA+EGosZszbmuQV0HxEma7hQKbIqMwZ8hRQU8DljdXcETb1PxAiX4tceJiQIeYp5Enu8GPJKwTw4TfXtDYneC8HtVXyZm1NmRGVcUoElC4FxLhrW4OHpQGtps1Yrs9TuG1vNCcYQWk7YZKuKHx4N6E=
+	t=1741975285; cv=none; b=f0AKWrPXlsjsM4PpjscqgTc62AYsu/ioJ2BjHwyu+hTh1DPjj3ujasxpJAQEraE80cqP3M6dkXW2v7/Rd7XuSwuJzdWKXtFpZSJGl1nLM46XWa3tEw+E9Oajil75GyDApYd29Rk9NQCNHViro3zGdOi4Rha2I2NKMkS/0TG8kjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741975268; c=relaxed/simple;
-	bh=yUhwWZz6MweKJmEseaeBVYn0fSUBWQP1mSHj+8asVSQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R9y3mbJ2tz9isYI/0ngHH9Zkxi5k1ATEgUuBbW6/9yZU/gyqoqyTlLWWwphlS02minBnf0G/7lCdAO/kyZnEjXxfUzzLTDwr30oMNMoBZgqafSGaikPpEv/6Nt1UysLte+0UN2gYTHgSy2lxdDnQwGWjl4a7AS/2ngYIItt02bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cNRVlHh7; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3D51A432FB;
-	Fri, 14 Mar 2025 18:00:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741975258;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YMFlSCHDb0j/OxbmG9FdYf4jzMVqwOiBPWCVBhtDuSM=;
-	b=cNRVlHh7Bm1+GWYYC8JaAJYUn+9RWi9AMU/ib93vpTjziAcShYvfvqwrfB6GDXVCU+iDQc
-	BTfLisKLOKhLzzmw/2s1SIOHD5YsNI2KaSKKUdtysOARkdQj6acDiGV3+CiLB/xjKE3DYb
-	inMSsOFc+N15hncfmFFgCdpF0y1CvMKbg68pXfdq/bzu0Hu6sW2rSxXPjGWPXna1OcDZyj
-	d2Js4tjGg3+6mvyyaHyI11k2MoRuVLIAF6eHJKQXUii9fNO/QXRyPI3hL/fj91PlJCLcnv
-	z6vcROHpHohxRfKDnA/5kKTYJgw6wJAK65bkpWcBTZQf+DsM1Wj+w/0oYsNcCQ==
-Date: Fri, 14 Mar 2025 19:00:56 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Michael Klein <michael@fossekall.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [net-next,v2,1/2] net: phy: realtek: Clean up RTL8211E ExtPage
- access
-Message-ID: <20250314190056.739f4d81@fedora-2.home>
-In-Reply-To: <20250314111545.84350-2-michael@fossekall.de>
-References: <20250314111545.84350-1-michael@fossekall.de>
-	<20250314111545.84350-2-michael@fossekall.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1741975285; c=relaxed/simple;
+	bh=Mj9qUmLdTwKbyk2T4rHE7N4/Kk0Xg4D7AQ1z41AYH1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CumJ31SuSM2Uboi4sruF2bf6X7F71yo8ZEqupA+iGI8c99gY8NfkhT4kxx+B1S+KyTIkHmQ/m/O9Q9tAD1/zdTrQ+ITPTSZzE+SS4PeYdiIw4bChDJ8dpQue45eZNY2qju/rb3qIF96qIQ8iIWhQrMMV90fiPPrVGssbOMYItU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C6BB3a9J; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741975284; x=1773511284;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Mj9qUmLdTwKbyk2T4rHE7N4/Kk0Xg4D7AQ1z41AYH1s=;
+  b=C6BB3a9Jf8M72jFVJF4FRLe3TuS/YCS28h1C1VZCekd6lCHv2ojfLdSi
+   wdgLBbPBKp8VWzNfHuX1rvC+bgJua+HgAHKRoJT+np9XHXsoChTz6TlKR
+   3jeT24Te477jboBovzxRWkiK1prEozQIhByYKyCAlfMVj0skS/LdKgAz6
+   UBDr02NxU63+q0DpA5J6ntcI+FiRj0MSoVBoPeM95LusfmHwcIUzSX2JN
+   y4HBhmubZRWs296bCd47AotI52R97gEoAferX5aVdwAfZSrHp2XX1sMMO
+   kKLAH9s2HBTyy1EsgWVOyvkkSfNIRddlCjKFuKs1eC/vzSuUyA9TpGxJO
+   Q==;
+X-CSE-ConnectionGUID: 8mG20rwFTXK3IBhBZ/c1bw==
+X-CSE-MsgGUID: vOdDbJ1VSWqHc25V8rINow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="46787351"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="46787351"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 11:01:23 -0700
+X-CSE-ConnectionGUID: vcuAt9B4Q+S37vnK4TIgnA==
+X-CSE-MsgGUID: cTJxXrQ8TUixLi+0VRb14w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="126554866"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 11:01:20 -0700
+Date: Fri, 14 Mar 2025 20:01:17 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Lee Jones <lee@kernel.org>, giometti@enneenne.com,
+	gregkh@linuxfoundation.org, raymond.tan@intel.com,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] mfd: intel_ehl_pse_gpio: Introduce Intel Elkhart
+ Lake PSE GPIO and TIO
+Message-ID: <Z9Ru7VHP9K7Brod4@black.fi.intel.com>
+References: <20250307052231.551737-1-raag.jadav@intel.com>
+ <20250307052231.551737-2-raag.jadav@intel.com>
+ <20250314124450.GP3890718@google.com>
+ <Z9QxqH3DJvyW3sjo@smile.fi.intel.com>
+ <20250314135735.GQ3890718@google.com>
+ <Z9Q7M1Cw8X0p9eXP@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeduhedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdqvddrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepmhhitghhrggvlhesfhhoshhsvghkrghllhdruggvpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrt
- ghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9Q7M1Cw8X0p9eXP@smile.fi.intel.com>
 
-Hi Michael,
-
-On Fri, 14 Mar 2025 12:15:44 +0100
-Michael Klein <michael@fossekall.de> wrote:
-
-> - Factor out RTL8211E extension page access code to
->   rtl8211e_modify_ext_page()/rtl8211e_read_ext_page() and add some
->   related #define:s
-> - Group RTL8211E_* and RTL8211F_* #define:s
-> - Clean up rtl8211e_config_init()
+On Fri, Mar 14, 2025 at 04:20:35PM +0200, Andy Shevchenko wrote:
+> On Fri, Mar 14, 2025 at 01:57:35PM +0000, Lee Jones wrote:
+> > On Fri, 14 Mar 2025, Andy Shevchenko wrote:
+> > > On Fri, Mar 14, 2025 at 12:44:50PM +0000, Lee Jones wrote:
+> > > > On Fri, 07 Mar 2025, Raag Jadav wrote:
 > 
-> Signed-off-by: Michael Klein <michael@fossekall.de>
-> ---
-[...]
-> +static int rtl8211e_read_ext_page(struct phy_device *phydev, u16 ext_page,
-> +				  u32 regnum)
-> +{
-> +	int oldpage, ret = 0;
-> +
-> +	oldpage = phy_select_page(phydev, RTL8211E_SET_EXT_PAGE);
-> +	if (oldpage >= 0) {
-> +		ret = __phy_write(phydev, RTL8211E_EXT_PAGE_SELECT, ext_page);
-> +		if (!ret)
-> +			ret = __phy_read(phydev, regnum);
-> +	}
-> +
-> +	return phy_restore_page(phydev, oldpage, ret);
-> +}
+> ...
+> 
+> > > > > +	ret = pci_alloc_irq_vectors(pci, 2, 2, PCI_IRQ_ALL_TYPES);
+> > > > > +	if (ret < 0)
+> > > > > +		return ret;
+> > > > > +
+> > > > > +	ret = mfd_add_devices(&pci->dev, PLATFORM_DEVID_AUTO, ehl_pse_gpio_devs,
+> > > > 
+> > > > dev_*?
+> > > 
+> > > devm_* ?
+> > 
+> > Yes, typo.
+> > 
+> > > > > +			      ARRAY_SIZE(ehl_pse_gpio_devs), pci_resource_n(pci, 0),
+> > > > > +			      pci_irq_vector(pci, 0), NULL);
+> > > > > +	if (ret)
+> > > > > +		pci_free_irq_vectors(pci);
+> > > 
+> > > Anyway, the choice as far as I understood it is motivated by usage of
+> > > pci_*_irq_vector() APIs, which are officially not manageable (however
+> > > in practice they are).
 
-You're not using that function at all in this patch, so this patch
-compiles with a warning for an unused function.
+Are you referring to pcim_setup_msi_release()? I saw it but wasn't confident
+it is in the call path, so went with manual release instead.
 
-I suggest you move that to patch 2, which is the first user for 
-rtl8211e_read_ext_page()
+Now that you mentioned it, will update.
 
-Thanks,
+> > > > > +	return ret;
+> > > > > +}
+> > > > > +
+> > > > > +static void ehl_pse_gpio_remove(struct pci_dev *pdev)
+> > > > > +{
+> > > > > +	mfd_remove_devices(&pdev->dev);
+> > > > > +	pci_free_irq_vectors(pdev);
+> > > > > +}
+> > > 
+> > > Same here.
+> > 
+> > Also, Greg has been quite vocal about converting PCI devices to Platform
+> > ones in the past.  We may wish to run this past him before continuing.
+> 
+> What do you refer to? Any links to read?
 
-Maxime
+Could be about faux_device, but I could be wrong since here we do use
+platform resources.
+
+Raag
 
