@@ -1,144 +1,120 @@
-Return-Path: <linux-kernel+bounces-561769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFFFCA615F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:12:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7504A615E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:12:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2A24188345D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:11:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E73A7AEBD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CAB20409B;
-	Fri, 14 Mar 2025 16:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD15E202C5A;
+	Fri, 14 Mar 2025 16:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZEg4Jipu"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXc92o57"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B9F202C49;
-	Fri, 14 Mar 2025 16:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF81202C55;
+	Fri, 14 Mar 2025 16:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741968523; cv=none; b=TRozUtDC970tPPoccpyHeftudpYI52CJfHuaswNs2nshTI2ssMn810NQeIOpfyW5erVv24Nzv+sfCrChWfbZ4sYjKo93Tbdc40ZnHmzFegCBQbKklh3OaR+rZx9/PSTL4bdo/LE1djZh48SD+uik0S2IFCZ4KY6HVM6nTY1M4ew=
+	t=1741968579; cv=none; b=JXaX0P2UIHU1qUz6lVta6Z5IcPkZlUVzpfcvK318Fg33Z7OvI7tqATuIY3b36LRV31g5ObMokEb2/89M1AR1n9yGgeaUC0N8D2YtpIODQ2ub1xneBdzYofwksX9i2NqBdf+9ixPlrQtO1/4ydm4nn2gjJf7G1yfqHqUCMtELoBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741968523; c=relaxed/simple;
-	bh=ow/xM2BzJY15oFxKt4B5fKNXKa5WQC08GFensnmTqlk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ayxa0EgIUAIAvKM0AZbqAc+6ZTEMw9r/eRVRpZg/93+0azvVPeYOv+uqiVQgcqSbg+ZRIzBQSDFp0FwAXgnB/iknqCykalp37BBmEzNGIjoPbrDoIadc7eFimvueX0sk4u/fiwmCrZPghXbG1hf9dlufsRLa9seMRLuXIaKTttk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZEg4Jipu; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8623744287;
-	Fri, 14 Mar 2025 16:08:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741968513;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bc5lGmMpmWaulKCgFmVYIGp/S0/wgDgZkGe6mPR+/0w=;
-	b=ZEg4Jipu4DRz6VRl88DhD8Pbqq2RVPR4SJqaKqAGCMWDDtk0SPmWJWpzRl5v55zdrTgJyF
-	PG9Dm9yyQcFXRFhGD6NvHNrAOPaxlZD/1IeNhA5aj/mYVR2ZJHMgAC05z70rAvPGCaHWDx
-	pQvu/ESRIT2rPtl/glUZwLJ25qgX/jYv/Itqe+s+Sp4PwAQGB5agKr6tR9adFOYTCb88jE
-	0cMGwZeQNPHh0QGxkV0cd9zEADQuRK4npdhppBsfRMygbQpOue50xkxIJHUrbxGQ1D1i7X
-	4uYYKMGSUKXllUfwcnPZdVB871JKGDol68DQ5i9FN2NEys8CHSESOYMsOIE99w==
-Message-ID: <a8c7e353-2e5f-4cdc-99fb-0937b8121b38@bootlin.com>
-Date: Fri, 14 Mar 2025 17:08:31 +0100
+	s=arc-20240116; t=1741968579; c=relaxed/simple;
+	bh=EgFxuTDtw0Mv9w7MUEKo7ptgiuHiVtQ03WWVYzjjGeI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cxqGvjcsR6d8W0EodrIpsNsWPTB8e/o2Vpn++a1xBQl28WEg+n/hambVi8T7tGJqGXRgPNftvwzw1sPtgzlPbN/Rq7ijLAjR5uCHBYuKsfGW5LjMYaJuycj4z8VDSKIpmHOv1/3h6fkKqZSz+vE5XONfa47ulRWThxL/m6LYjFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lXc92o57; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74701C4CEEC;
+	Fri, 14 Mar 2025 16:09:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741968578;
+	bh=EgFxuTDtw0Mv9w7MUEKo7ptgiuHiVtQ03WWVYzjjGeI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lXc92o57IOowA5KO/9KakVaoZ7j3HrnQUjmusXTcyy1LoFOosjqe9nX86ej4KkOFg
+	 35ch4bVcKac/D9i06lM2Am/hmjITOIbI91qEZu0xv3hVSoBjczkmcFWxOAnFyo9Hsh
+	 MRyeWN8lCMYtc+X5DOdbWoqRyn1GvMxjBffQdJdJWq2HdGU4r7lzanyfawWQuPRv/k
+	 hKEjFJv0MSpiCmy3F4JZY50Uok5W0ldAdDpNGX3M6Vh1loxe/6LUJTXUIV0/EbQYFH
+	 NiSWirGeNEHUOnQKC5EPW4Wrx3ihI9rTXj/YSzztYIyXI72DMmWNIrK8ldSiDbmt1I
+	 0LMNeV1Ry6Pgg==
+From: Danilo Krummrich <dakr@kernel.org>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	bhelgaas@google.com,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu
+Cc: linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v2 0/4] Improve soundness of bus device abstractions
+Date: Fri, 14 Mar 2025 17:09:03 +0100
+Message-ID: <20250314160932.100165-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/13] selftests/bpf: Integrate test_xsk.c to test_progs
- framework
-To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Magnus Karlsson <magnus.karlsson@intel.com>,
- Jonathan Lemon <jonathan.lemon@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250313-xsk-v1-0-7374729a93b9@bootlin.com>
- <Z9RPNzJtBgheiTeS@boxer>
-Content-Language: en-US
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-In-Reply-To: <Z9RPNzJtBgheiTeS@boxer>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeduvdejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegrshhtihgvnhcuvehurhhuthgthhgvthcuoegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefhheeggfetffekheevuedvkedvvdeufeegjeevgfelveevveetffevfefgheeijeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddugegnpdhmrghilhhfrhhomhepsggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdejpdhrtghpthhtohepmhgrtghivghjrdhfihhjrghlkhhofihskhhisehinhhtvghlrdgtohhmpdhrtghpthhtohepsghjohhrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrghhnuhhsrdhkrghrlhhsshhonhesihhnthgvlhdrtghomhdprhgtphhtthhopehjohhnrghthhgrnhdrlhgvmhhonhesghhmrghilhdrtghomhdprhgtphhtthhop
- egrshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhhtihhnrdhlrghusehlihhnuhigrdguvghv
-X-GND-Sasl: bastien.curutchet@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hi Maciej
+Currently, when sharing references of bus devices (e.g. ARef<pci::Device>), we
+do not have a way to restrict which functions of a bus device can be called.
 
-On 3/14/25 4:45 PM, Maciej Fijalkowski wrote:
-> On Thu, Mar 13, 2025 at 11:47:58AM +0100, Bastien Curutchet (eBPF Foundation) wrote:
->> Hi all,
->>
->> This patch series continues the work to migrate the script tests into
->> prog_tests.
-> 
-> Hi Bastien,
-> 
-> the sole purpose of this is a cleanup of some sort?
-> 
+Consequently, it is possible to call all bus device functions concurrently from
+any context. This includes functions, which access fields of the (bus) device,
+which are not protected against concurrent access.
 
-The goal is to have more tests run by the CI and fewer standalone 
-scripts so that regressions are spotted more efficiently.
+This is improved by applying an execution context to the bus device in form of a
+generic type.
 
->>
->> The test_xsk.sh script tests lots of AF_XDP use cases. The tests it uses
->> are defined in xksxceiver.c. As this script is used to test real
->> hardware, the goal here is to keep it as is and only integrate the
->> tests on veth peers into the test_progs framework.
-> 
-> We're doubling the functionality for no additional benefits? Or the
-> benefit of this set would be the veth xsk tests execution within BPF CI?
-> 
+For instance, the PCI device reference that is passed to probe() has the type
+pci::Device<Core>, which implements all functions that are only allowed to be
+called from bus callbacks.
 
-Yes the benefit would be the tests execution within BPF CI.
+The implementation for the default context (pci::Device) contains all functions
+that are safe to call from any context concurrently.
 
->> Three tests are flaky on s390 so they won't be integrated to test_progs
->> yet (I'm currently trying to make them more robust).
->>
->> PATCH 1 & 2 fix some small issues xskxceiver.c
->> PATCH 3 to 9 rework the xskxceiver to ease the integration in the
->> test_progs framework. Two main points are addressed in them :
->>   - wrap kselftest calls behind macros to ease their replacement later
->>   - handle all errors to release resources instead of calling exit() when
->>     any error occurs.
->> PATCH 10 extracts test_xsk[.c/.h] from xskxceiver[.c/.h] to make the
->> tests available to test_progs
->> PATCH 11 enables kselftest de-activation
->> PATCH 12 isolates the flaky tests
->> PATCH 13 integrate the non-flaky tests to the test_progs framework
-> 
-> I didn't bisect but this set breaks the HW tests for me which *is* what we
-> care about. I'll dig onto that on monday and will get back to you.
-> 
+The context types can be extended as required, e.g. to limit availability  of
+certain (bus) device functions to probe().
 
-Ok, thank you. Can you tell me what hardware you use please ? If by any 
-chance I have the same HW somewhere in my office, I can try to reproduce 
-on my side.
+A branch containing the patches can be found in [1].
+
+[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/device
+
+Changes in v2:
+  - make `DeviceContext` trait sealed
+  - impl From<&pci::Device<device::Core>> for ARef<pci::Device>
+  - impl From<&platform::Device<device::Core>> for ARef<platform::Device>
+  - rebase onto v6.14-rc6
+  - apply RBs
+
+Danilo Krummrich (4):
+  rust: pci: use to_result() in enable_device_mem()
+  rust: device: implement device context marker
+  rust: pci: fix unrestricted &mut pci::Device
+  rust: platform: fix unrestricted &mut platform::Device
+
+ rust/kernel/device.rs                |  26 +++++
+ rust/kernel/pci.rs                   | 137 +++++++++++++++++----------
+ rust/kernel/platform.rs              |  95 +++++++++++++------
+ samples/rust/rust_driver_pci.rs      |   8 +-
+ samples/rust/rust_driver_platform.rs |  11 ++-
+ 5 files changed, 187 insertions(+), 90 deletions(-)
 
 
-Best regards,
-Bastien
+base-commit: 80e54e84911a923c40d7bee33a34c1b4be148d7a
+-- 
+2.48.1
 
 
