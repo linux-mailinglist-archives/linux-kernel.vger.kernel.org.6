@@ -1,209 +1,133 @@
-Return-Path: <linux-kernel+bounces-560774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1682A60957
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:55:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03E1CA6095A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:58:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32C5917D156
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:55:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 338413B9F9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE60156C5E;
-	Fri, 14 Mar 2025 06:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9311547E0;
+	Fri, 14 Mar 2025 06:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bxC0hTFe"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2046.outbound.protection.outlook.com [40.107.94.46])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SCDAkLZ3"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3DD22339
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741935328; cv=fail; b=L09IhaqEgaHFqEF04BC2+XN2wM65dRtgcOdp+Ss6cxtx2SrHa5LABfQm6kPFbnCn9GKqdn047MzJHl2CqN/R21JO+BeMnzqOz7MDs5K+7UXXFIV4CzH9I1k9pI1FzBgoPT/xXHcVWNlJQmEhU2tIaKAVDgCcz/wTilNOnoe30Ks=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741935328; c=relaxed/simple;
-	bh=dKfPcG/jx2JdwqfhVnuesfyqgG0WQEDUYyfGNEG6vuk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=g0Ae5rykKZevnazBENZPy6uBgTDQSEeC8MCROKH9f30XlNsOlYj63i6GgMsDpV9RJNfA6yyVc/2V4Vsxl6zwKfpFcFZvH0wEqHl+p5P/8AME9iXRITMfbJLsre+w82rgBIcKG4JDOGW1f5YUSQHo2wm2c9hKOo7IXDeg0IZnw+s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bxC0hTFe; arc=fail smtp.client-ip=40.107.94.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hmm1moY1gEkt6d4Tgm1BgIQmbsJrJd+qIoDvNKi37uF9Xpu5akzeAdm3mEJaJveqxS7QTHXYJf/1ubqAXAy9nCUbOxf81GfkweyA+yr6XpIYKov5aqe2jVGht+eSmcbnz4LhXkADSM5Xa+aadwnSe9hzW3vtdvHoe1jivU9PDZVTMxYEbZwBtEGxk2Kpt4g64MihPdiOu6Cu9P31nJBdd4Vrpv/HqnFAytgXrFTukwlRy0rbqrDucBEppRRmrq6R+2ou20RuLpVTDwcrR4wkDc/aPnr3aSE7EBRRjuX5fkbNC+vOcJ5LVeVO+EAd0aChlpqNAu7Htpan93HtnYAJjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ztZ/38nIodEJCAZH1vYPdYqni2Hru7dGgnA1FSc7Iww=;
- b=Y/juUFUkN+2NQU2+Z3C9nOWYVwG3bQGe/katfzMAhnywxn0RzCYAlRZr0UG0W+3dF24qiC/hgIuTBqWXygXJmGIto4Zrxg/yTJ4VG+N5Oy4WEpQ+SKmtDoE7F1mxcrABhmm/eTY3+mC3qzP9xNzC0nfzJr+gF933nwmn7Op4E684F/Hw2hxOzEpROE1bsf31ipB6N9KeeylQHGAcn5o3Wg11Dyg+G81ukwv6ugcrLq7+MG+LFOervI0R5Cf5HcfRYrYc/82ZsOG2XhM+OXzyLvnxgOoKZ0v6iFh00fUveDZPjyduGTNaZNlDFlZnsoa9pKZ38wF0tIJq+Id9ZcAzng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ztZ/38nIodEJCAZH1vYPdYqni2Hru7dGgnA1FSc7Iww=;
- b=bxC0hTFeVU/dGr6I5g/WbKz0ww1e2r/4Mq6mfvsTJOMZ2StK1C414+ZZh4bZNhXDRJ9zd/48MbWlmpwAazsH0GgOY+YHPAlyhBuhav+amhBon41xTVUw+RFURZyX3PBrxwzIYTHnqOR0HFEN/o2LBpmnp4ofdRww2IlhsnwdfBU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by PH8PR12MB7230.namprd12.prod.outlook.com (2603:10b6:510:226::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Fri, 14 Mar
- 2025 06:55:24 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8511.026; Fri, 14 Mar 2025
- 06:55:24 +0000
-Message-ID: <738f554f-1ab3-4baa-84d1-91c76e508a53@amd.com>
-Date: Fri, 14 Mar 2025 07:55:19 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/ttm/tests: fix incorrect assert in
- ttm_bo_unreserve_bulk()
-To: Qasim Ijaz <qasdev00@gmail.com>, ray.huang@amd.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, thomas.hellstrom@linux.intel.com,
- Arunpravin.PaneerSelvam@amd.com, karolina.stolarek@intel.com,
- jeff.johnson@oss.qualcomm.com, bigeasy@linutronix.de
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250313161424.10688-1-qasdev00@gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20250313161424.10688-1-qasdev00@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0126.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:97::6) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2484B2F4A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741935489; cv=none; b=E9SgEszJSrVKQ971NJ2u3zMuEpfvBnlFAMJ4+55vGbGwHmWK5lc3GuPf3aNGh9TINqv+tIEChXzXFJ1skzB6TnMZjnhafLyIGvGix7OWFZXuYfnQhuyByPb8Y2FT6HRwyKL26141FBs1E33rGfKq7J8Y3RkW9lHKDS9LDT9wEPw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741935489; c=relaxed/simple;
+	bh=GQwC3l1968VpQ0A+POkC4aUcgZujoXYv9oiquHzoTyQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PQrOfbNxRAY4mjk4CM1GfSY7AY3UDnQJc32idgONhrvIcldQbKOCgNXBi/CXIBKN84cY67jrNWqORM15SS/3rVTnz6HSeapbXfAEAwWwJqbehlgCmWbSxfxdpYAbn8kxTw9qBK8badyUbQn9Ub/WH9UdORoYt07NX6RykNWm06A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SCDAkLZ3; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DNQ5aq015394;
+	Fri, 14 Mar 2025 06:57:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=93rADN
+	1l4leHkQdDKQol30WlkU++J8cD8JYZk+aER8Y=; b=SCDAkLZ3+c3c3Z6R/xLZku
+	hcDQhgrw/18knPUJ3r0b4SEx0jP+gMJDsG3V2/C1tfuBd9l3NpzXQ6vOgO81YDpc
+	5evttTJMokQy5zW5NdZBmR9+bHJiTHuHjyvk4ZJwzj8p8tFNgq/dHZQNBvD5KzQT
+	/HHx2v6GHGnlOME14ESIE13EmsrTw0ySd0kM0FuO2W1mj5W/KDtSO4+eGbwO6PO4
+	P7qSjmL/H2fa7rqYpCH/9NDoJAPOtklP/hYjX5wZALiYRD0uO3SYgdAxjMH05P9D
+	1tBW7vPfSieMF3ssuffNDp5ZFsVpSKYyXpg0o73087elSW+DFwhLnM0T4SxIVejQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45c6k02397-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 06:57:49 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52E6sAH1020818;
+	Fri, 14 Mar 2025 06:57:49 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45c6k02394-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 06:57:49 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52E512Qn012259;
+	Fri, 14 Mar 2025 06:57:48 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45atsrnnbv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 06:57:48 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52E6vitF23265552
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Mar 2025 06:57:44 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8CB132004B;
+	Fri, 14 Mar 2025 06:57:44 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A2C3720043;
+	Fri, 14 Mar 2025 06:57:41 +0000 (GMT)
+Received: from [9.39.22.126] (unknown [9.39.22.126])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 14 Mar 2025 06:57:41 +0000 (GMT)
+Message-ID: <62356be0-a319-4ec8-88d6-08bed4c04945@linux.ibm.com>
+Date: Fri, 14 Mar 2025 12:27:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|PH8PR12MB7230:EE_
-X-MS-Office365-Filtering-Correlation-Id: f4d95a22-e1fc-44b4-b72d-08dd62c531c7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VXRocnRwdWdNa3hBeE85TDRoRU5ESzc5ajJWWXhVZSttUmNWMHhCUE5lbFBy?=
- =?utf-8?B?OHNpbUV0VXJGekI4WUlGc2RHVjVOUkNGQ3JXaWxacWZ4Um9Pc2JHblUxclZ0?=
- =?utf-8?B?Unhkd0sxUTcwV3hTR25mNGxIeTNFUDgyMGFldmhtUnpPc0VOUk80Rms5aGVQ?=
- =?utf-8?B?RUxPaVJhZGFBOU9IejJFRXMyYmZqT1ZWbk9iREdWcEVRMkREL3MvaVpsRmFM?=
- =?utf-8?B?THpEVVRqbHc2OHBzWEx2blJDNTh0T25QQWZQOWZrbHo5SmNjdmYrcEUraWt2?=
- =?utf-8?B?R0Z0bXJQQUNyRDF3QkthNU9LNWh6cHdUdW5EcUZoOEIwaWhNN1QvL05nMFdP?=
- =?utf-8?B?YUJMS0NCZGxkS045Mng2N3NSaXVSSUZnamhPNDdhUDdXcEZ6dVhkU2Z2ZTlj?=
- =?utf-8?B?OERYTnkzV3JRK255aDA0VkcvQ2RoYlk0NXlpbmIrak9zbEtIUVNvU2hqZ2ZV?=
- =?utf-8?B?Vk9WVVdBOFJwZ3lwd0xXaW5JNGZkTUJpamhSeWFvcEFZd3c0djNrS2sxSFVz?=
- =?utf-8?B?RWZDVVBMOFRGWklXbE0zMjJCNlVMdHQyYUsrUGI4WXA0VFNEY2FWMDdYQUg0?=
- =?utf-8?B?WVBydTl6emJLZlhocHNJcnVhZ0NhTE5CRGFOL0MyTTVhaldBK3h2ZU0rQkVK?=
- =?utf-8?B?TGdabzd0THRFWjQxMEJSMEJucTNvM25SeUFLcW5YREJtM1llRmcvendReHNG?=
- =?utf-8?B?NVliZkxLTTgzRTJRbU5IOEhLWTR4TG45RGdPU1pNaTJwRkFLWDVDNWFDdXpr?=
- =?utf-8?B?Wm9GMEN3UmFITHhpVzlVcW9WbUswYmFad3hVUDVBOE4rUDNvdUFJZmxDQ2FV?=
- =?utf-8?B?NytKZDl0amxEZGFzK3drVUJnRnh5bU04VzFoeUh2NUh1ZHY4cmVZOFFsOFV4?=
- =?utf-8?B?MWJJYnpGSFdSOWRqU24zZVNSK0RzT0RTdlgxMUhUNm9wMTB3N2hLdy9NMG82?=
- =?utf-8?B?VWdwODdGc2lBSklpMTZxV3FUOEY0cXRVVmVqOW5jKzhTQTNsRnpMTGJqcVVG?=
- =?utf-8?B?eWNiZVFZdzBoTDZxK3ljVFdGTTJHVTRwbi82elVoR09hOTE4cURiWHhUb1dY?=
- =?utf-8?B?aldYNGIyT3FQZ0REWUN3cFhtWnhxQStGZFlNQlBGZWxEbitnK1pIVjdobmoy?=
- =?utf-8?B?cEN4U0FkZEprSkc1REw5YUpOVWZQdWRuWGd4eXZFRU9nM1BxOEhTajIraDM2?=
- =?utf-8?B?bjh2eStUZW1CQ3U3dkQxd2FmOEJLdFNmeElxaFdBamsvVVQyK2NJOFVWU3BF?=
- =?utf-8?B?RlF5S0FvRElWaWk5ZGl1MEVsS05zYnJuYjcvTS9SSFc3bjVrYWpOeUxzUkVr?=
- =?utf-8?B?ci9SQThwUU9yczFrdFc2aFhHaTdFWjdid2pMeXdaZEhLR1NTOW1CQWluaXVT?=
- =?utf-8?B?WXZ2aEY2M2l0c1I1MGYxaS9qQmdzMFNaYmdZQm92OUozcUh4Zkc1VjZKNUN6?=
- =?utf-8?B?Risrc0N3VnQ2ZDdhMVNBY3RLMTBvZkJJUkEzL3JsV3p6NWhFNTZvUWlTOGpT?=
- =?utf-8?B?Vks5VkRybXFXQWVUbjM5S2pXSWtmS1lhMEEzcXNBbW8wUlJDOUVoSlpaQWhp?=
- =?utf-8?B?RHZSK05EV0FPWEpFZ3hVWWd2a2VYTHk3aXk0UnpjT3hGZllXMWF2ZGVMcER2?=
- =?utf-8?B?bGN5d29YVmFFcDBhczdUcUhYWDh5cFRaclFyNlNwQnEySnNHZ0M2bVZsMEQw?=
- =?utf-8?B?ZmtsbkJlMGV1LzVwNGk5aTZHQk5UdXo1c0tUeHFoMk5XbGNqa1ljcW9NUzRs?=
- =?utf-8?B?KytlWjdoUHI3WFlVakZDMFhVRFAxbW04SzhiT285OTM3UFYvNzBVVHBBTTNw?=
- =?utf-8?B?SE5WSjNtSWVtcjEvSTBUMlc0RGNmMkNadWwrYyt6NFBEL2E3d3o3emc0VEJu?=
- =?utf-8?B?dmVVdEd4VjhwcVhNVVE4TFE3WU9JYkpValFMZ04vUC9kaTAxSGxBOEI0RTEv?=
- =?utf-8?Q?r5ZA/y5MPLw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?djdORkNsckxQd2laZC9DbzFGZ0o4c3VPeVdOc1dVdTNNcjl5MFdud2R2d2Nn?=
- =?utf-8?B?bTBHWHZVT0UrczViSms0Tzh4dFl2dnVvRWVVdWZDcWhYV0k0dE9VMWVWOWN5?=
- =?utf-8?B?OW9Ma3FCMHFQc09XaWFKSlY3a3FiZVNqOVd5aE1YOCtkWUozWXdyQSswN0k0?=
- =?utf-8?B?c0ozNlBRQWJ5YUFDS2Vyc2pyNGlEV1diUllrWlJUVWtpVnhpYWxOQVlBMFNl?=
- =?utf-8?B?MUxoOXFycHJ4YzZYN2tRYVZCMVdiQUh3ZmlqdFlxelpvYzYwcjhhWlR5SHZB?=
- =?utf-8?B?Mlk1UC93eS9zeVJOYVE1SFJOMkFNUWxFcC9yOC8rR3luT0ZjTTk3bjg0cXNp?=
- =?utf-8?B?SUIzU0s0ZENabU1iUENsR29ONGtOVnBQVERyNjhraFhiRk9RQ2RQL1ZMbUZX?=
- =?utf-8?B?UitvRXJMMEhPRzFUY2dLTDk2aUlOcTdFaW5DTVJlVDg4OE44MkRRZ2hla1g0?=
- =?utf-8?B?bzFWaGxEQ2lDK3RrTHZNa2Z2bVUxN3J3QXRGUmJ5RHJwWHk5RE1xZGFPUHpt?=
- =?utf-8?B?T0s2VWhoYlRrNE01RDdYeDlBbU0rUjZ4UW80cGpUR0JsNTdXR3JHWlZYMmx6?=
- =?utf-8?B?VVZtc2hRK2hBM0VaVUNXLzVpRzNZMERFNVpNOWdzejlGWnh1VHNFdjF4dHhQ?=
- =?utf-8?B?cWhYVFRoZjZOQm5KcVUwYUltWjFMRmV1WElPNFg1ZkFyVENNZk5lVStGOC91?=
- =?utf-8?B?M2ZQVldXWU42RFprNWVMWlQ0UjFGOXVaazFEMHVyQzN1VmRPQU5MbEgrVy9K?=
- =?utf-8?B?YThWV2VtaDJjNDVjdUE4OGlPUklUQzg4S3VGOEc2L29JTlNPWk1hUkxlSmx3?=
- =?utf-8?B?NWlFL2lHTnRBdllvYTVVSXRzeTVTaXBKa3FFR3Z1MHBWcXRhZUlxd3BNZzd3?=
- =?utf-8?B?YjJrb0wzVnc0U3c4TUl3VVJQc2w2c3BUajFsS1J2am16dWN5clVQeUREQWhF?=
- =?utf-8?B?UE5LazA0ZnFibUJubDIzZDNBSm11TUlEZUtDSDRHanYrYkczRUVKMjRzd2do?=
- =?utf-8?B?a1pjZVMzQWgxeHkxYzlXMXM1SjY5Z01zOUltcTZLa24xWkVJWUxXNmpYbW9N?=
- =?utf-8?B?d1FiV2FFN2picitaTExzWFNNL3RaQUhadzhHVDJydGIxTDVFZDArUk11YVNU?=
- =?utf-8?B?STAyZ1FKdW9iN3VsZkxrdVdUZmIzbUJZV3dBOVBoWVJQVWpFMDNsSnFHZzA1?=
- =?utf-8?B?WlZGZ0RiUFplbXgvN0JpQmhVcWw1SFhEVFFnYkF2YzB4UGhxN3ZET3pNRGQ2?=
- =?utf-8?B?U0ZtQnZaaVdxdWdVc2NnM3VMMUNFRk9rVW02Sm40NE1aQ1lmekFCWVpJSURq?=
- =?utf-8?B?TUZDclRKUjRlMUxCN0RhTzAyc3NYekV2cEpGS3ExcjFnaUlQd3FWMWMxeitr?=
- =?utf-8?B?NWc1aTBWQVZ5bktNSzNGY0RNNG1JNERHQWZSZnArb2E4dDZ2MDhocnZ2REdH?=
- =?utf-8?B?SEFDQXowdGl2YlJMUHN0MnJQTTlQaktTanYwaG5uNVRXMmgwL1dCTUx2RHFS?=
- =?utf-8?B?cFRJem4ySHh0K2YzejN4eS9zUkpVQzBNV3FqbEdVOXhJRXZYVnRnVFp3WWpy?=
- =?utf-8?B?QlZBWlFQZTg2QXhEeTQzZjFPYlJSVStXQ2RWWUh5Z3ZLQ1g2L1V5bWpjYnF1?=
- =?utf-8?B?N0xHcURkdENMOTYxV05IQU9YSVNqOHVZV0V5cU9zNVBYdUs0Y0dOT20waG9E?=
- =?utf-8?B?dzFDYUxaMThseHowTVNCWDZOdzhhSURKWDRkSzRmdlRiMXRzMzM2dUFBWjBY?=
- =?utf-8?B?NnpJSW42SkppQlJkZUVVUy9YWVQwKzNTUENWTnRLdVFNZ2wvOWVaNC83TU81?=
- =?utf-8?B?YmpYRWRObHUyQWhoMU1Tb08yTXhvQ1dRTDh5ZUFDK2E4NEticFFSb3lNS1Zy?=
- =?utf-8?B?cExDc0dNNEllS0UwcUh1RTZScVZ3bnlxWWo5TUxmbnZnbkNIaGY5QVBxcDU4?=
- =?utf-8?B?TEMrT0RDUnlRakJ0M0REMWRRRFZ1YngvckppSWpXMkEvQVY3Q1pqYlVRdUl0?=
- =?utf-8?B?Y2tzcmVVM3ZPbW9oWlZnZFZvMU9iV2hOOU96OUtnVE9LYnVPRUpTVDJLRUsy?=
- =?utf-8?B?aG9VRm11d045OHg2WGlpa3Q1bDFqNmV2U2NJS2NIZ202VWs2MG00aFdsQk1O?=
- =?utf-8?Q?lWHHDzAk3luHI//RbYcD5EzsN?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4d95a22-e1fc-44b4-b72d-08dd62c531c7
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2025 06:55:24.2839
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VgRhRBZuHNLBN/ndxDT+IBoqk65rBeEPymhfh8MeA6E0kONQ422reTJvLB6rinbR
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7230
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/6] powerpc: powenv: oxcl: use lock guard for mutex
+To: Andrew Donnellan <ajd@linux.ibm.com>, maddy@linux.ibm.com,
+        linuxppc-dev@lists.ozlabs.org
+Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, mpe@ellerman.id.au,
+        peterz@infradead.org, fbarrat@linux.ibm.com, mahesh@linux.ibm.com,
+        oohall@gmail.com, hbathini@linux.ibm.com, dhowells@redhat.com,
+        haren@linux.ibm.com, linux-kernel@vger.kernel.org
+References: <20250314054544.1998928-1-sshegde@linux.ibm.com>
+ <20250314054544.1998928-6-sshegde@linux.ibm.com>
+ <af15fbf507dee3d96249bdfbb1a7419a26985f9b.camel@linux.ibm.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <af15fbf507dee3d96249bdfbb1a7419a26985f9b.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: KmZZO4VnmgZGcKkFmOx0OgjFyLhNuX_w
+X-Proofpoint-ORIG-GUID: n3QZFdmW8An65Vpl2vFqfy-V7FeP4Rjy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-14_02,2025-03-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=601 priorityscore=1501 impostorscore=0 lowpriorityscore=0
+ bulkscore=0 phishscore=0 adultscore=0 spamscore=0 mlxscore=0
+ suspectscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502280000 definitions=main-2503140054
 
-Am 13.03.25 um 17:14 schrieb Qasim Ijaz:
-> In the ttm_bo_unreserve_bulk() test function, resv is allocated using
-> kunit_kzalloc(), but the subsequent assertion mistakenly verifies the
-> ttm_dev pointer instead of the resv pointer.
->
-> Fix the assertion to properly verify the resv pointer.
->
-> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
 
-Reviewed and pushed.
 
-Thanks,
-Christian.
+On 3/14/25 11:36, Andrew Donnellan wrote:
+> On Fri, 2025-03-14 at 11:15 +0530, Shrikanth Hegde wrote:
+>> use guard(mutex) for scope based resource management of mutex.
+>> This would make the code simpler and easier to maintain.
+>>
+>> More details on lock guards can be found at
+>> https://lore.kernel.org/all/20230612093537.614161713@infradead.org/T/#u
+>>
+>> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+> 
+> The subject line of this patch misspells powernv and ocxl.
 
-> ---
->  drivers/gpu/drm/ttm/tests/ttm_bo_test.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/ttm/tests/ttm_bo_test.c b/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
-> index f8f20d2f6174..e08e5a138420 100644
-> --- a/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
-> +++ b/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
-> @@ -340,7 +340,7 @@ static void ttm_bo_unreserve_bulk(struct kunit *test)
->  	KUNIT_ASSERT_NOT_NULL(test, ttm_dev);
->  
->  	resv = kunit_kzalloc(test, sizeof(*resv), GFP_KERNEL);
-> -	KUNIT_ASSERT_NOT_NULL(test, ttm_dev);
-> +	KUNIT_ASSERT_NOT_NULL(test, resv);
->  
->  	err = ttm_device_kunit_init(priv, ttm_dev, false, false);
->  	KUNIT_ASSERT_EQ(test, err, 0);
+Ah. my bad. will correct it.
 
+> 
+> Otherwise this looks like a nice cleanup.
+
+Thanks.
 
