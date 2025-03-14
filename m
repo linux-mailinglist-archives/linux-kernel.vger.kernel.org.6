@@ -1,115 +1,138 @@
-Return-Path: <linux-kernel+bounces-561591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3131A613C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:38:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81C4CA613CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:38:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23C181892B67
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:38:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 382AB1631F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC97F202F6D;
-	Fri, 14 Mar 2025 14:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BE81FF1B0;
+	Fri, 14 Mar 2025 14:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9+FVapb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UAvJ9C+5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9CA202C34;
-	Fri, 14 Mar 2025 14:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5261F1818;
+	Fri, 14 Mar 2025 14:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741963021; cv=none; b=VHtpMbr3HyjnWmCH1zllClda5JgfhnaFnCfwlTh6fQvyP6tdOi0TL7AhIFfShouLBrqv4gqHfUXcCB25nhXkdcu8fn1dUnmOXvUVHaptKahFhBLNQsZI+xaaXl2YbdEFYD5fMXlZ/GPxZYZTidwmP4vrm3Ai7voCkwHWP3Tp3GU=
+	t=1741963044; cv=none; b=f66ixtUMkMtQimbkYaPeP42ywMpmHqc0ikLm7oih+fZ2SRjQEfrmzf+VeQvGWHtPkkVktChIXX+/Tgc4BtjoOIxx3Gm6mC26HZ3Y8r81rM0xp2DQL/L7RcQpqKbKT6Bu5tpIxCaqAWSxXk9ADk70s43G6CbUNoayeRjT9JT4xi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741963021; c=relaxed/simple;
-	bh=JA73+M7TZ+VjBe+WGmCS+fPRTyG1hrOlK32h7qOdmBI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S6srBFGiO2uS6+4Onb/RZpwfIdGOUkCeyu67yMcP5g8h0U9OiTyBkJxLnl/WPOHkSq+6W6YESjf789z+3v0ySmVkUoT6qMWHXqXYRB3whk3MtFwXYEK+VrCuNJthLL+x59Ftl6HOuHxYqSFlSjxUJyJaWwtem1ayA/tcP08lbJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9+FVapb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FAC5C4AF09;
-	Fri, 14 Mar 2025 14:36:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741963020;
-	bh=JA73+M7TZ+VjBe+WGmCS+fPRTyG1hrOlK32h7qOdmBI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=E9+FVapbWNejlNlU/9D+likKIEzU/gRhun9WJGpIxYVOL4oApNgcIxuzyiejYdCgO
-	 QmqzreRIcvLn8tF04rCv1Od++bmxKzTYJZbNfgrrNOFZ/L3sa7KP45oWZxXDZ0W+HQ
-	 XX1HoS96oNjBQASM1BCg/pdL4J2e53f9svDX+yMyl2i66DL0ZQkVdwi4o9StS7QZAY
-	 gw1ymmCtt96/4QiPL59VcoTf4WptsYJ7xraPriiic4i3xUijFXaG6QBzA81Qsv4wxr
-	 ePfmCe+QQeDhM7aabcL2DIZQE4P9wQEVgn9l8pgSB5WgdJ7m2VvCFtaDdPIhQ4dzGq
-	 gSw6OSMKTHnXQ==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	rcu <rcu@vger.kernel.org>
-Subject: [PATCH 5/5] rcu/exp: Warn on CPU lagging for too long within hotplug IPI's blindspot
-Date: Fri, 14 Mar 2025 15:36:42 +0100
-Message-ID: <20250314143642.72554-6-frederic@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250314143642.72554-1-frederic@kernel.org>
-References: <20250314143642.72554-1-frederic@kernel.org>
+	s=arc-20240116; t=1741963044; c=relaxed/simple;
+	bh=+jWeC/xSDCzP0BWQNTUeRpH28NuICQiZEGJ73gy54F0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VkhxlrQRYtGpPjKZL7NvsQjzThCq1He3Uok8DzjCJvVj84h5kRyQvN3wkZ+DtIgN/TvE/TdSD1ChCIBum8JuQTwgZVTrV0dp1NFAWhFzbmxdda4by+tqGRJ7WsPSvUo0zqEgd0u+veMAwHhl46GEDcERpSgQPnR9goXkUvCjijY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UAvJ9C+5; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741963042; x=1773499042;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+jWeC/xSDCzP0BWQNTUeRpH28NuICQiZEGJ73gy54F0=;
+  b=UAvJ9C+5xTFRloNlQ85VqxKE5mIbihEab0r9cbUEQvvQ6XZwod20ci2M
+   /C+Kq7ej9Emp7tMRp8alX1UIlpH3nV3Vuardl2tW+KVsAKKhz/GIRM18x
+   J5spS9E1h1e1+K8rig0hXQqAUAd3N0VEaABMF7WD71vSoRZUUWsGajhuq
+   ntAHn/voyVsAPOJaeJEMQfOu85PCT7S0cElTXSkTsV5UtfJxW2ptFz+Lp
+   gRcehwTuAKsOBbed43/XFgbVK9+a2piYbHh6GIJ1yi1n7wB3ae7JuZtER
+   ziqMnyWa4tZceUegF3VFZAHtaZCq2dwwOlYQBv/v6f5oDbw9ClwiOH7+3
+   Q==;
+X-CSE-ConnectionGUID: VPYtbaA+QqOzZYox6EaIiA==
+X-CSE-MsgGUID: BNr2AWAnTGGuF0Ydoq2PDA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="42845261"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="42845261"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 07:37:20 -0700
+X-CSE-ConnectionGUID: MEndl2yRTBebsctmfPOEOQ==
+X-CSE-MsgGUID: OushhPWLRVWYnzPewFG0ZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="121093838"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 07:37:16 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tt69x-00000002UAd-0ELI;
+	Fri, 14 Mar 2025 16:37:13 +0200
+Date: Fri, 14 Mar 2025 16:37:12 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Nuno Sa <nuno.sa@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Guillaume Stols <gstols@baylibre.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v7 06/10] iio: adc: Support ROHM BD79124 ADC
+Message-ID: <Z9Q_GK0_4J6ga1or@smile.fi.intel.com>
+References: <cover.1741849323.git.mazziesaccount@gmail.com>
+ <b6c02a5d75a20bbbf8c3370ccee615d269620117.1741849323.git.mazziesaccount@gmail.com>
+ <Z9LbT1BvPEIp7U2N@smile.fi.intel.com>
+ <0d7b37fd-be93-42d7-9610-d2184c601981@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0d7b37fd-be93-42d7-9610-d2184c601981@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-A CPU within hotplug operations can make the RCU exp kworker lagging if:
+On Fri, Mar 14, 2025 at 11:22:37AM +0200, Matti Vaittinen wrote:
+> On 13/03/2025 15:19, Andy Shevchenko wrote:
+> > On Thu, Mar 13, 2025 at 09:19:03AM +0200, Matti Vaittinen wrote:
 
-* The dying CPU is running after CPUHP_TEARDOWN_CPU but before
-  rcutree_report_cpu_dead(). It is too late to send an IPI but RCU is
-  still watching the CPU. Therefore the exp kworker can only wait for
-  the target to reach rcutree_report_cpu_dead().
+...
 
-* The booting CPU is running after rcutree_report_cpu_starting() but
-  before set_cpu_online(). RCU is watching the CPU but it is too early
-  to be able to send an IPI. Therefore the exp kworker can only wait
-  until it observes the CPU as officially online.
+> > > +	ret = regmap_read(data->map, BD79124_REG_EVENT_FLAG_HI, &i_hi);
+> > > +	if (ret)
+> > > +		return IRQ_NONE;
+> > > +
+> > > +	ret = regmap_read(data->map, BD79124_REG_EVENT_FLAG_LO, &i_lo);
+> > > +	if (ret)
+> > > +		return IRQ_NONE;
+> > 
+> > Only I don't get why you can't use bulk read here.
+> > The registers seem to be sequential.
+> 
+> After taking another look - there seems to be undocumented register (0x1b)
+> between the BD79124_REG_EVENT_FLAG_HI (0x1a) and the
+> BD79124_REG_EVENT_FLAG_LO (0x1c).
+> 
+> I won't touch it unless there is a real verified performance problem.
 
-Such a lag is expected to be very short. However #VMEXIT and other
-hazards can stay on the way. Report long delays, 10 jiffies is
-considered a high threshold already.
+...
 
-Reported-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- kernel/rcu/tree_exp.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> > In the similar way bulk write.
+> 
+> definitely not due to the 0x1b.
 
-diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index 6058a734090c..87a44423927d 100644
---- a/kernel/rcu/tree_exp.h
-+++ b/kernel/rcu/tree_exp.h
-@@ -406,8 +406,18 @@ static void __sync_rcu_exp_select_node_cpus(struct rcu_exp_work *rewp)
- 	for_each_leaf_node_cpu_mask(rnp, cpu, mask_ofl_ipi) {
- 		struct rcu_data *rdp = per_cpu_ptr(&rcu_data, cpu);
- 		unsigned long mask = rdp->grpmask;
-+		int nr_retries = 0;
- 
- retry_ipi:
-+		/*
-+		 * In case of retrying, CPU either is lagging:
-+		 *
-+		 * - between CPUHP_TEARDOWN_CPU and rcutree_report_cpu_dead()
-+		 * or:
-+		 * - between rcutree_report_cpu_starting() and set_cpu_online()
-+		 */
-+		WARN_ON_ONCE(nr_retries++ > 10);
-+
- 		if (rcu_watching_snap_stopped_since(rdp, rdp->exp_watching_snap)) {
- 			mask_ofl_test |= mask;
- 			continue;
+Okay, it seems I misinterpreted the values you have in regmap configuration,
+I was under the impression that regmap is 16-bit data, but it is about address.
+
+So, we need to know why the heck HW has sparse registers for what is supposed
+to be sequential. This needs a good comment.
+
 -- 
-2.48.1
+With Best Regards,
+Andy Shevchenko
+
 
 
