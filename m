@@ -1,252 +1,131 @@
-Return-Path: <linux-kernel+bounces-560863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F859A60A46
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:45:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D0CA60A4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44EB4189DA49
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:46:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FB2D189CD4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C30E18FC90;
-	Fri, 14 Mar 2025 07:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A7C18B482;
+	Fri, 14 Mar 2025 07:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Mlic8t4N";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Mlic8t4N"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iAS5MbTo"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7DF18A6A1
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D1913C689;
+	Fri, 14 Mar 2025 07:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741938334; cv=none; b=Fh3lsgq7P2ZcwHsprIw7ZQeE+oscbaG5SrsOYG2Co4kBCnnlPY4/jxoXx3/hBNABpySE4fzKpAaLXHx6XeyO3A9bPeHRTnTsgXKtOygZkOuq4x6Ym7QeQ6WmXA8ug7IoIiUPL2UNN9D3sXPKRe2fucBs7jYG7Gd7ryCQSV5RJVc=
+	t=1741938405; cv=none; b=DCM1TcWbWyO1jsYlLyPOoM0OzgiCBx5dVW41HYNr1S/2YNyT20aiqukj6t248KDARMEPeLU4XOgnXZUcnAM3J3I9LTq41gSqfh+po19iP+RHOBHL5GsUKK0VgvzfDYDC6zq8lt/AbblZJBxQTC4AvBi9ay15Ys6HDssoY9VgztY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741938334; c=relaxed/simple;
-	bh=2He6U1T3rx01SlC4U068AwRELpGzmBrbp6AF8j0ikQU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c5Q8xeNs8ftQTwnUfByxZFl2hNbup860sC03xIGdkljuzMF/ZHd/6ylyvtEFuLqqXCgnwcrxoI+0IcezuSU7pODy0BzSi8aYDxje2eZx0VYLavBmoNa/VdaQ42AvMikNTY6vfAhP8XPElmENvlcnP3Hk5LzHsZCvLUWdkfKI9WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Mlic8t4N; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Mlic8t4N; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7091421184;
-	Fri, 14 Mar 2025 07:45:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1741938329; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2He6U1T3rx01SlC4U068AwRELpGzmBrbp6AF8j0ikQU=;
-	b=Mlic8t4NlhWaCCxQ4cL9MxZSb4cw0vxNE6RAHoVkl+T+ZD32GirdQJjpvoqfYZWr5xXjZP
-	PJ9q8O1dbH7Oish8hGCspK0U0gzX4POJ/22yYm8EsxwiRKrXDt/rMGGLuERJ/5HmL7f06O
-	+aEei8XQXTEwxo/8XwDa13SMkVkcR7I=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1741938329; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2He6U1T3rx01SlC4U068AwRELpGzmBrbp6AF8j0ikQU=;
-	b=Mlic8t4NlhWaCCxQ4cL9MxZSb4cw0vxNE6RAHoVkl+T+ZD32GirdQJjpvoqfYZWr5xXjZP
-	PJ9q8O1dbH7Oish8hGCspK0U0gzX4POJ/22yYm8EsxwiRKrXDt/rMGGLuERJ/5HmL7f06O
-	+aEei8XQXTEwxo/8XwDa13SMkVkcR7I=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3E2CE13A31;
-	Fri, 14 Mar 2025 07:45:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id W6hTDJne02eYLwAAD6G6ig
-	(envelope-from <jgross@suse.com>); Fri, 14 Mar 2025 07:45:29 +0000
-Message-ID: <cf579113-538d-4104-96cc-df6b3919e618@suse.com>
-Date: Fri, 14 Mar 2025 08:45:28 +0100
+	s=arc-20240116; t=1741938405; c=relaxed/simple;
+	bh=s1fKh0QzGWDUZFeScnFKkL845yv38DEziSQnsNzrPH0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rsN8uqqc1IeqXwfvoEbITxroH2Tx0X/1jwK4AsCNMrlP+OE+Es0qsakM4H4WYi6UGcnaPKg9YoizBSxZeDh5cSK5EtE6D2lCe8613AteIBFqBU5PMK6jvSSAJwJW418c+5CPydKiv2fFlivKk8GaONc97LCy+Y/xQnC7TQHx1vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iAS5MbTo; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e673822f76so2996828a12.2;
+        Fri, 14 Mar 2025 00:46:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741938401; x=1742543201; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xvzOU4qdVCwUGw0rRb6hsvttK6x5TtFV/+WpulAfuC0=;
+        b=iAS5MbTohE3ydvPQRvRIYwd3uzdmjNNif0QmNZz5POwcNGEy+xHfsqhxwdfkNuq98i
+         4LBVqPGb5tZePy15Pwuy+l7HIUPiP+q2wWHzwqd/uXdtHWFGqkZog8HmscHuF9yq0XXr
+         ohm3f351BgRbqO4ySKggz6J1iP6N2k9K1s3IOBWsxs54JrD/Tz3ojV2iXTy6FOm6LCyb
+         X+7hjmyjXE5WeVp2twok4WSC6CQfUeZhMngLEzBNoPPR3ok6s/Xy6Rgh2bbgJUcIrZ4c
+         0/GVK+WTKrufv+BmR3Yyaii4graoMmQmN9zIqQsqzFXapW1tesKzvksj+enowqzqY9Dp
+         mzgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741938401; x=1742543201;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xvzOU4qdVCwUGw0rRb6hsvttK6x5TtFV/+WpulAfuC0=;
+        b=RK2nyyabCZ3MitEJna9h4r70ZFloyJzIG1AyC6ceVzfqFA9CjqrGc11ww6o8t0/JMo
+         Kxg4Vh0qArgso2Z9cQFuPURh9wmAylxeheGWNbUXRtQH2wpy2mC6653wwcsSuQAaLmIJ
+         BLzP53rH7hh/MTnzz1pmgrbvsx0FjGOPV6ONJYLmmBjEw2mK9Ia66l3NPA+Mgsd5AU8H
+         jCz4NWeiydkqMjkwXzFXXx1uRDnmrvAoxjp+QI7dGF2uQFFU5CIn3i9NOaA6GQAfLGPR
+         Bwo91GuSzjLj5pLXYa08TWiFURkDDzbNFC+QnQ3VDKI7yl5mrnkunDlJhN6jEyVHeDrL
+         Io7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ7nl6xjl8k4hXpOjCGfROxIdj2woo+HiE1JlMgTYNdGrp/PpR5myhdbeulPWC63nCrSklxBvhchzWtV4=@vger.kernel.org, AJvYcCWi+gSbLce8pocKeRXRbmJlnZX9kuj50ULjqMe0pLZskbf+J/TlGjR94dgczWATmqHoHj5XKzbfJNIKR9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaB5oAwLxn+Vj+YAmH/muG33HLyfa+RHMB3JrRBjDd9V/8pMRU
+	E0RYjHbquh4Fp8qvr2a/vQi6GWWSFamZ7AUJWwnLbcHDtyMd0UBH4EZPcg==
+X-Gm-Gg: ASbGncsAzwKtaMMRDwlHhbPWZbsuD58vsvyJ+zbuPHWLF6caeUSHbvHtOleJQsDnK3X
+	YOLFdkK+fT58t5w7JcbtdPEVF/ZxunEkZl5B6JhxVJWMl5IROQ+abkJSSZ+C/nSW5aiX+zgDk9m
+	of82fR8qslihybGRq4uWMjWIwIQU2er5qbW6GIyFGA4QXpe5d0YB+kl+Bwa2dVd48j6RKEps64C
+	5oI/vAk/i9or3V3ZNXmWnFqpznV/vt/HTyXnnt1k+AXxhtES7O8aTQnw/x1Vn6rRtYrM8PSptuR
+	pO2UoNQkD91PGynMY0Xrv6ESFd2Gt1ZEjlvNbUIMcadnYkc=
+X-Google-Smtp-Source: AGHT+IFNzKmoZKbuyzfNye/dsgQjPtY7LefesNA6de/i8ygbI+kuPY5BO441ozpXqh/ibh11MA6rtw==
+X-Received: by 2002:a17:907:9487:b0:ac3:1376:465b with SMTP id a640c23a62f3a-ac3301e1e21mr143402066b.4.1741938401154;
+        Fri, 14 Mar 2025 00:46:41 -0700 (PDT)
+Received: from xeon.. ([188.163.112.73])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a9bce7sm185498666b.164.2025.03.14.00.46.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 00:46:40 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] ARM: tegra: complete Tegra 4 and Tegra K1 device trees
+Date: Fri, 14 Mar 2025 09:45:54 +0200
+Message-ID: <20250314074557.16367-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xen/pciback: Remove unused pcistub_get_pci_dev
-To: linux@treblig.org, sstabellini@kernel.org, oleksandr_tyshchenko@epam.com
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20250307004736.291229-1-linux@treblig.org>
-Content-Language: en-US
-From: Juergen Gross <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <20250307004736.291229-1-linux@treblig.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------ix365KrzVuZWdMjLvhE6CMac"
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.19 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SIGNED_PGP(-2.00)[];
-	MIME_BASE64_TEXT_BOGUS(1.00)[];
-	NEURAL_HAM_LONG(-0.99)[-0.989];
-	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
-	NEURAL_HAM_SHORT(-0.20)[-0.996];
-	MIME_BASE64_TEXT(0.10)[];
-	MIME_UNKNOWN(0.10)[application/pgp-keys];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:mid];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	HAS_ATTACHMENT(0.00)[]
-X-Spam-Score: -5.19
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------ix365KrzVuZWdMjLvhE6CMac
-Content-Type: multipart/mixed; boundary="------------GipTESq8HJbUyOR7EHkbaoNP";
- protected-headers="v1"
-From: Juergen Gross <jgross@suse.com>
-To: linux@treblig.org, sstabellini@kernel.org, oleksandr_tyshchenko@epam.com
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Message-ID: <cf579113-538d-4104-96cc-df6b3919e618@suse.com>
-Subject: Re: [PATCH] xen/pciback: Remove unused pcistub_get_pci_dev
-References: <20250307004736.291229-1-linux@treblig.org>
-In-Reply-To: <20250307004736.291229-1-linux@treblig.org>
+Complete T114 and T124 device trees.
 
---------------GipTESq8HJbUyOR7EHkbaoNP
-Content-Type: multipart/mixed; boundary="------------Yrz9RgzTLwG3B9vyTaAel2Iw"
+---
+Changes in v3:
+- added tsec description
+- swapped compatible back to use enum
+- clock and reset description dropped, added maxItems: 1
+- reset-names preserved for consistency with other host1x devices
+- dropped interconnects and interconnect-names
+- dropped isp nodename
+- dropped multiple rest names for mpe/msenc
+- dropped tegra114 msenc example
+- fixed reset name in second isp in t124 dtsi
 
---------------Yrz9RgzTLwG3B9vyTaAel2Iw
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Changes in v2:
+- dropped accepted commits
+- added EPP, MPE and ISP compatibility for T114 and T124
+- added TSEC schema
+---
 
-T24gMDcuMDMuMjUgMDE6NDcsIGxpbnV4QHRyZWJsaWcub3JnIHdyb3RlOg0KPiBGcm9tOiAi
-RHIuIERhdmlkIEFsYW4gR2lsYmVydCIgPGxpbnV4QHRyZWJsaWcub3JnPg0KPiANCj4gcGNp
-c3R1Yl9nZXRfcGNpX2RldigpIHdhcyBhZGRlZCBpbiAyMDA5IGFzIHBhcnQgb2Y6DQo+IGNv
-bW1pdCAzMGVkYzE0YmYzOWEgKCJ4ZW4vcGNpYmFjazogeGVuIHBjaSBiYWNrZW5kIGRyaXZl
-ci4iKQ0KPiANCj4gUmVtb3ZlIGl0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogRHIuIERhdmlk
-IEFsYW4gR2lsYmVydCA8bGludXhAdHJlYmxpZy5vcmc+DQoNClJldmlld2VkLWJ5OiBKdWVy
-Z2VuIEdyb3NzIDxqZ3Jvc3NAc3VzZS5jb20+DQoNCg0KSnVlcmdlbg0K
---------------Yrz9RgzTLwG3B9vyTaAel2Iw
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+Svyatoslav Ryhel (3):
+  dt-bindings: display: tegra: document EPP, ISP, MPE and TSEC for
+    Tegra114 and Tegra124
+  ARM: tegra114: complete HOST1X devices binding
+  ARM: tegra124: complete HOST1X devices binding
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+ .../display/tegra/nvidia,tegra114-tsec.yaml   | 66 +++++++++++++++++++
+ .../display/tegra/nvidia,tegra20-epp.yaml     | 14 ++--
+ .../display/tegra/nvidia,tegra20-isp.yaml     | 14 ++--
+ .../display/tegra/nvidia,tegra20-mpe.yaml     | 18 +++--
+ arch/arm/boot/dts/nvidia/tegra114.dtsi        | 65 ++++++++++++++++++
+ arch/arm/boot/dts/nvidia/tegra124.dtsi        | 65 ++++++++++++++++++
+ 6 files changed, 229 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+-- 
+2.43.0
 
---------------Yrz9RgzTLwG3B9vyTaAel2Iw--
-
---------------GipTESq8HJbUyOR7EHkbaoNP--
-
---------------ix365KrzVuZWdMjLvhE6CMac
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmfT3pgFAwAAAAAACgkQsN6d1ii/Ey90
-XAgAhP8i9hk4NALIilJPCP8Kf2UqEg7F6D1ngyIv0BJosfaoh9v73ffK+7v/h/dLPPJd1wlwFNnl
-PqSNhvXfrBTF7QEXfoSRm/ZLuiK9styF3/pwHEgpRoIWfZJfYfOJG1JhNxRFbqpPiErAAWcIosq/
-UX8wBOkhdRaVwFF2+jLoL4CFfIX/RR1z623f3a/bBvpA7qp9H6mt/2Hvh3gfuEVmyrTWwmKwcEhs
-yV66SGdN8b8Duw0XJ1N9e8ijTvSVkWFDhgIshQoYUjlbQnUD+pn6c0+wD6bbdzF7culZIjhvxyAY
-7aYawAhbbIlYK7xNaYJ28qIRjSbxyfHZMLKkFS4cnQ==
-=g6z6
------END PGP SIGNATURE-----
-
---------------ix365KrzVuZWdMjLvhE6CMac--
 
