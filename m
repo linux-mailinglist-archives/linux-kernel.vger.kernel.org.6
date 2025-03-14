@@ -1,182 +1,126 @@
-Return-Path: <linux-kernel+bounces-560572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C368A606B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:49:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58EEA606B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:50:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFBF83BC8E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:49:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 051C616CA56
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 00:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5EBBA2E;
-	Fri, 14 Mar 2025 00:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954F0BA33;
+	Fri, 14 Mar 2025 00:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4L71JKt2"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="AFx6XJR5"
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EBCBA27
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 00:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970762F29
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 00:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741913352; cv=none; b=NzPS1S2ZfKtgBSrRbBC8C/QIhS1fMUw8wqhkaT7/MVHUM+iRzJUBWH1oSFYygSgYPkquC6o+ndx7+kUzRJF4OXzG6ZcX8OBV1YOzAdKCEkTJUNR83KWzE+OcMXZiJXqEOqzoyu/KsejekqVMcoo8S5mkfNY2ZHi2UEY3lN01238=
+	t=1741913401; cv=none; b=hPXEXmEtHDUgZUOnXyQqML/68RaWBKczwRfU3EX4noLRkYKzBHOF7Lptw4P0LqpVAmsvYgWFYBPRetMCrYyu0XQJCqgjfibC4PqRImaE2DVEWKUt9y7DsHUIAJamGytSqrksiNr9Z1AtFT7PuvIICb5F6doAc3GDVZu5iHydlZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741913352; c=relaxed/simple;
-	bh=qBJkENjnIqGSvFN9E/Jrkqaorc9fr43YwB91TwJpvmU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LlRotDHspak4XGCrd+b5lCDf8R6ASuB+j2ViaycX9K+MR0XYiuMYegKSmOODJgKv5PAdxUYEzb1IC9yoSPGiwgRqfjiEgTBrR75dW1vd3BdEI3XD00hss7Z+jYQrqn1xJyd+5yg12lqmf4OS1CWPKFXHK3NVApl9OhpCHieRQtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4L71JKt2; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30c2d427194so17114741fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:49:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741913349; x=1742518149; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vHvR0nMSMsB/8s/BNOWs/apd6Uvvi+MbvN0YChJeLS0=;
-        b=4L71JKt2clLE1DtgOR5IZdXbpDs0tutQvGl0HgLUo17sCOCO0ERscX56UoaQEY3W9x
-         h08DctAUkGABacXtXYEOMLO60zKqQy985agV6dmipthoqauOxBemB0HsLSAla1CAVJTv
-         jweBhf4POYw48PhRPi1WvKt4IsORiYKxaOjmnoiddISHc+TA27+UidnuFN+QDWeomwv+
-         lI4kvkug6fAf7UfYAphKEhEf5W97w4EIFl2cUceGnEicdJTCoVBinqpcZzv49cGVq41b
-         48BBe8nEMgmklI3iVSF/qLoZJnfAypRMA+t5kkikHYv/m6IAFJC0RqsugFrm38tMuC/G
-         dwyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741913349; x=1742518149;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vHvR0nMSMsB/8s/BNOWs/apd6Uvvi+MbvN0YChJeLS0=;
-        b=A0qiNuYLHFXYxn55TA8nvQsqzAOCLd0XiObfqmPC7O0LfzxyeQbGmuWFqhHVoIvzZ9
-         yILCBLRPY6QFghO24H7xt6WMPMF8jqaX6sUN4jesy9pDqMmQm0Zp8ZxThyqyD5FCihsv
-         Hg41CkgmGkPGBKzuFOqyOqSlzzX8J8JayCi7li/+1sKKGKO+Baz6xiCdplEemDhFQ9+z
-         rZiVy2+Y57jblpZC0bsNKi20MvXnIi4Fbl43S108E8d0RLKePXwhcAgO87u4dyWZ/B3j
-         DB/xsBWOel1/NjmyNAU6MIpa9nUAwDIePTO2U1ZHknGdNu3Ltriwbh5A2D2v0ZWuSL6P
-         UCyQ==
-X-Gm-Message-State: AOJu0YyLC9quGNM9r/ry+ZTVvaiMGJe+ewriuPC6YiaveIyTtSOmUa7d
-	DlFCyhZHdMtqs4ag3uHD2L0tMiBmFRzmbP3cVJrwV1UuEA8ImkKARfxzN/GLmqBo0KlRlk49qlP
-	4CeFdl3c7rhJZZFvZZC8sm9NrPItNg9y0pzU=
-X-Gm-Gg: ASbGncshQRnu7WO+Kaf80dndHf2bJjz1fWLAjVKE3YMa0UwmYZpvi6eOQYqOfvz3Dt1
-	4bB+ko8eJsrKklamRuSK8qg4vERTI+sQOh5fNkpZ6OYMcxIhzHYxqDgPhfOvk/UjiIzRytkIc68
-	G8q654U9GupSDBNJ4LFydrsm6vN24B3kciTU42uLLCQBFYvfblte/jr7uC
-X-Google-Smtp-Source: AGHT+IHZYVnQcHmOyiK/gk6vbNe4GlNRuQx357W1cZsI8kVT9f01pPELk/Uj0bTdkLa1s+RokvamnSbDdni8F81DwLg=
-X-Received: by 2002:a05:6512:ac6:b0:545:225d:6463 with SMTP id
- 2adb3069b0e04-549c3989a09mr161863e87.42.1741913348603; Thu, 13 Mar 2025
- 17:49:08 -0700 (PDT)
+	s=arc-20240116; t=1741913401; c=relaxed/simple;
+	bh=BsFqqdzPuPWRngzuebETkpr8uorkLQTXRuJ/0YG5SB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bLuZMslRTgBNLDjVBOgvhDTMtZNIq3bRMWwl00TPHayri6q/T4GEenmhYepCNLf4DpJs/Izrmx4u17PxJ2y6JFOwUAjFtc5DAnnl7PEPBw+JXZvDR+tQ60YZCHD1G2rodHCAvKb1sab4DKtD1jQimv25DIvOwUmzU0Y6t/hxpsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=AFx6XJR5; arc=none smtp.client-ip=35.89.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5005a.ext.cloudfilter.net ([10.0.29.234])
+	by cmsmtp with ESMTPS
+	id sU7PtWa3tWuHKstFJtKqOF; Fri, 14 Mar 2025 00:49:53 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id stFItFqCWhQfUstFJtH2NS; Fri, 14 Mar 2025 00:49:53 +0000
+X-Authority-Analysis: v=2.4 cv=Negt1HD4 c=1 sm=1 tr=0 ts=67d37d31
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=6Vi/Wpy7sgpXGMLew8oZcg==:17
+ a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=Q-fNiiVtAAAA:8 a=F5-tGhwS0eEbiyZ0YyIA:9 a=QEXdDO2ut3YA:10
+ a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=kmWv7Y4KzQN5V+KsNOlfevV3PXyysfgElxT14QC99Uw=; b=AFx6XJR5pZLyEE+oM0qFbzWWtM
+	6M8ZAalHpg7JZkYab1Pz1xjtJsL/K7A5POro0xv49MHDuF3BMLNwen1pkPgN3gZoJW8UXa6gSxD1n
+	oE00+GEbtk3AeusLkq8ymYE+ghMEPsy4N6lemwqxLNIJyIK3wn3Sq+gJCslg6v9GtJiRpo2pVbsfT
+	x0lO6+M3VqfFwfpjraxsRR7vQ3J0rU9NktZxSK2nAKnJrqNRltWX3nUgaIkqXjLRXwvCruExj7HxV
+	HOT04kumgvIDSe5CGt0f8YxIBpBuRvB+J7qLpp84AXDx9sUKrHTFYbdErUiseo5JQTqeyMzGh2mpc
+	WumPUkKg==;
+Received: from [45.124.203.140] (port=53726 helo=[192.168.0.159])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1tstFH-00000003OmV-0tFW;
+	Thu, 13 Mar 2025 19:49:52 -0500
+Message-ID: <18840a07-3a3d-4bfc-ab2f-50d1e8ce129a@embeddedor.com>
+Date: Fri, 14 Mar 2025 11:19:50 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312221147.1865364-1-jstultz@google.com> <20250312221147.1865364-2-jstultz@google.com>
- <20250313060907.6828c62c@batman.local.home>
-In-Reply-To: <20250313060907.6828c62c@batman.local.home>
-From: John Stultz <jstultz@google.com>
-Date: Thu, 13 Mar 2025 17:48:56 -0700
-X-Gm-Features: AQ5f1JqBZuJUhf60DNuD56Qf3bhmXE0I5JU53dxzrgJYXkuhyLa6aKAbkybJ-k4
-Message-ID: <CANDhNCr_c0y6v0F5y3H5ZRDxLO4Ah7gD0q25d29YiCvUrUPBXA@mail.gmail.com>
-Subject: Re: [RFC PATCH v15 1/7] sched: Add CONFIG_SCHED_PROXY_EXEC & boot
- argument to enable/disable
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Ben Segall <bsegall@google.com>, 
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
-	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Suleiman Souhlal <suleiman@google.com>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Mar 13, 2025 at 3:09=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
->
-> On Wed, 12 Mar 2025 15:11:31 -0700
-> John Stultz <jstultz@google.com> wrote:
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Document=
-ation/admin-guide/kernel-parameters.txt
-> > index fb8752b42ec85..dcc2443078d00 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -6262,6 +6262,11 @@
-> >       sa1100ir        [NET]
-> >                       See drivers/net/irda/sa1100_ir.c.
-> >
-> > +     sched_proxy_exec=3D [KNL]
-> > +                     Enables or disables "proxy execution" style
-> > +                     solution to mutex-based priority inversion.
-> > +                     Format: <bool>
->
-> To enable, does this require: sched_proxy_exec=3Dtrue
->
-> Could we just allow it to be:
->
->                 sched_proxy_exec
->
-> Also mean true? That is, both of the above would be true, but to
-> disable it, you would need: sched_proxy_exec=3Dfalse.
-
-Currently the flag defaults to true, so I'm not sure if
-"sched_proxy_exec" on its own makes as much sense to me.
-
-Though, in the android16-6.12 kernel, I have an additional change that
-sets it default to false, which allows "sched_proxy_exec=3Dtrue" to be
-useful.  So I'm open to having the argument alone as an enablement
-flag (in addition to the explicit setting), but I've personally always
-found the mixed conventions there confusing, preferring the explicit
-"=3Dtrue" or "=3D1" on boot arguments.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] misc: bcm-vk: avoid -Wflex-array-member-not-at-end
+ warning
+To: Scott Branden <scott.branden@broadcom.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <Z9Nd4AmgrQDiK1Gn@kspp>
+ <547ce7ba-7042-70ff-8468-8e449be6fada@broadcom.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <547ce7ba-7042-70ff-8468-8e449be6fada@broadcom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 45.124.203.140
+X-Source-L: No
+X-Exim-ID: 1tstFH-00000003OmV-0tFW
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.159]) [45.124.203.140]:53726
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfF7CPYR+Fr4wupglbH/whUHaYuseCLRZQFvbAssM+9CKBXbpMPCiOmwzMQ3SSQ9vFqXKRX3o7/jK64eurSZ84M7Z12FGXrvBZanvWjhGI/LbWc18NbAY
+ bl/bvecKWImaz6uEH8tWo+R0WTHKES3wWusSmFeaRgnUejtoYWE5H2sGz8VBAoi900gbHjM98EpTDmYDoi/eYNNbDALWeApUE1UZcH8m1eMRXgWj2EygTqyL
 
 
-> > diff --git a/init/Kconfig b/init/Kconfig
-> > index d0d021b3fa3b3..b989ddc27444e 100644
-> > --- a/init/Kconfig
-> > +++ b/init/Kconfig
-> > @@ -875,6 +875,16 @@ config UCLAMP_BUCKETS_COUNT
-> >
-> >         If in doubt, use the default value.
-> >
-> > +config SCHED_PROXY_EXEC
-> > +     bool "Proxy Execution"
-> > +     default n
->
-> Nit, you don't need "default n" because "default n" is the default ;-)
 
-Ah, thanks I'll drop that!
+On 14/03/25 10:34, Scott Branden wrote:
+> looks fine
+> 
+> On 2025-03-13 15:36, Gustavo A. R. Silva wrote:
+>> Fix the following warning by removing unused flex-array member
+>> `data` in `struct bcm_vk_peer_log`:
+>>
+>> drivers/misc/bcm-vk/bcm_vk.h:415:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at- 
+>> end]
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> Acked-by: Scott Branden <scott.branden@broadcom.com>
 
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index 67189907214d3..3968c3967ec38 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -119,6 +119,35 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(sched_compute_energy_=
-tp);
-> >
-> >  DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
-> >
-> > +#ifdef CONFIG_SCHED_PROXY_EXEC
-> > +DEFINE_STATIC_KEY_TRUE(__sched_proxy_exec);
-> > +static int __init setup_proxy_exec(char *str)
-> > +{
-> > +     bool proxy_enable;
-> > +
-> > +     if (kstrtobool(str, &proxy_enable)) {
->
-> To make it work without adding =3Dtrue, the above could be:
->
->         bool proxy_enable =3D true;
->
->         if (*str && kstrtobool(str, &proxy_enable)) {
->
+Thanks! :)
 
-Ok, I'll give this a shot.
-
-Thanks so much for the review and feedback! Really appreciate it!
--john
+--
+Gustavo
 
