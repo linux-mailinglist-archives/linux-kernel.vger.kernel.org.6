@@ -1,183 +1,158 @@
-Return-Path: <linux-kernel+bounces-560762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E1DA60935
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:32:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A8DA60936
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:35:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C207E3A68BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 236E1189DD30
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098CF13D246;
-	Fri, 14 Mar 2025 06:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76761547C5;
+	Fri, 14 Mar 2025 06:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="Aq9/1tfp"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfVqAqKi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4277D2F4A
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178F32F4A;
+	Fri, 14 Mar 2025 06:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741933941; cv=none; b=FZagcxj4BDWJNpRX/cqjSnJRgA9j+zSs7fT461W+xcU9LmDiwR9OdYxgEWT3RH0CwHoQUZBfCPS3IOr8hpMa5nx/Xeu1ZwTaeXDI4EFTpsXcYBpe2Cio81LToUW65jzOk20G4KarpC1VunlFZHhIEuF5rB3wVjPfsYfVwaVPAzc=
+	t=1741934102; cv=none; b=WGJxt6OQhn13I5L2zZdXb4EnfCMmZxiF/OSWNTsuAk3JIxWGoSF2XV545kcVSoVpLuExcrO9MgK2X3RYvVTHNWG7/y4to7sHJfwbkqVjUDGrwKZqLz1Mzroul4MaJh0ZSqnESLxqqM10KtKBMMoGrynW+vxvOV7KoSHFaZjKDXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741933941; c=relaxed/simple;
-	bh=tDYSQdG8a0UkcNzTAhdLSVTqfLqjx+9xH4EZD2wQ73Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LXayk+ftmK66PMw0kpnc/3xQcY3ZSQ2gkZ+xoU7I05DvGGS1skt7bmIvO+++tFE+curWnDmYR5dqOZ8uOPg/peDImJ7unxMvl4TvDDZUlk4kS9wo1062x/N3hwd+AzycbYwGlkjtE3lkkBkAj3GKE4Zzz/ajnjbcdz5XBkAN++c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smartx.com; spf=pass smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=Aq9/1tfp; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smartx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smartx.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e62d132a6a7so1334958276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 23:32:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1741933937; x=1742538737; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uSye0IM6T+fFQco88xqM+x+quRiF8O1alSjOUyDpMzU=;
-        b=Aq9/1tfpVRn18xEfiljLow6+1aZK3tuoZBfknYfxpxKz2TZi9UW/ysY+DWEZHS7gkI
-         hS88+0/+R5+6OHghg2D7A9UsyOuqZLls6WLStTG+7P+ZccbwYf03r2F9pfl08qDFPel5
-         TgaCMnyKIW8TAslX4Q2Ws5eXG5eviLl/MZADzAjjMZhl0OaIAVipRsu6LnLFcBI4Tc+d
-         /CbrM8C7fV1qdx9uaM+OLPnC/xFshjboUxy/NahC7vZyaGk37wU3xn3EL8jfI5IOfXBh
-         u4Wu6nNZw2kZuPMcy/FsAvmIsFrUAL84YV00EeqsS+pVi08zkxPmJ+73+ua3CjpSHJ4f
-         zEmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741933937; x=1742538737;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uSye0IM6T+fFQco88xqM+x+quRiF8O1alSjOUyDpMzU=;
-        b=tQjMN5Hb1bk/igrqUhSak808VV8NOQZAeatnLqNNyR7Pu9zN/wecZkvyGXP/nb4hdb
-         nXQ122lZS6NegN5av53x8PRItyW/dHWyou6v0YdEnvRqPjDIsHv0F1hoI5LVcmrZ4XKR
-         mgrY/R1/9nIcUxsTpEzclYXCDa4L/tUnDQh1z+akhIZv7JMIqXiHnpeYkyGzdpWzVFdV
-         6R5/1bDDqqM+g8jH1QcuJKl//5M2k98i0tBOSMCTb6rZov7FnZeXZb0B8zAC4rjjJ2za
-         LxMd8dFXFtiMSzRLmzpSEbKYLM8EEdcfFX8M3zKM2gszxu0wtBAhJp91C/Ht9OitUwQ+
-         Xy7A==
-X-Forwarded-Encrypted: i=1; AJvYcCXFgqAteOOIz2OMmbHSL2T/HbqMHcY2d1dPqCcIl0YQtF2nrEdPeIEc9hHlizI3eZVq2TTnoHSi+scZ6Bw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw4vZrM5KUydDA499K3i751hKDQWUCw7OeKmVdAVRYXcGyvGVz
-	nCOVbqK1LBP7j0GdHd7YBzqcnAkYx8A6BwomAEwBEG0lc1YwpPFt2pZGHlSNrRjmcEtEXz8T0TL
-	UWqDoTeA6DpwYMJcrWDPwDHu1bTgV93HhX0x9BjxhQtpFM7zLw7+eLg==
-X-Gm-Gg: ASbGncvPOj7IQXtFNi6pBKyT9a2O6WkrYNBoX/njDaX378+LpIq2lALKtxtxABQ5qp4
-	+FT+d984EciilwDRS94BbP9q3lQ5RWMoY6IyTYNlDvvgG6DGxi7HK5ITIJDadOzL0hy9qRjP/pz
-	W8zvwc3mvxxQ+6Ki3Ua7kWqKRnaFGH
-X-Google-Smtp-Source: AGHT+IFdjV9rvN6kWBxbM1SXcx8x+0H5sVId9xosBFldVnnwqvfbgP3qQnnCXQIHKgeW6aNkyaVLID3Tl8HDVLihFwI=
-X-Received: by 2002:a05:6902:208a:b0:e60:78b9:1502 with SMTP id
- 3f1490d57ef6-e63f6506badmr1495714276.16.1741933936533; Thu, 13 Mar 2025
- 23:32:16 -0700 (PDT)
+	s=arc-20240116; t=1741934102; c=relaxed/simple;
+	bh=zHa1YR43gS+g+8/IcC54v4zmSih9SACYwhm1yGincVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KI30O9AYlItROcpxeWJalgJgEcaRH/xTVs8tK5InL/N99Y10pTKxPFYNrvO9hx6sBxQbikYa5AZl1ECrwA9yEfJmJ2ZrvoqYBX1KKwFcKdsU8mDJxb4bRGWQj+DGxWflUij+tb+ZDOLO7Xm1dZSAZ42mCtbTZdB2tRaaNxluiUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfVqAqKi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E28F1C4CEE3;
+	Fri, 14 Mar 2025 06:34:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741934101;
+	bh=zHa1YR43gS+g+8/IcC54v4zmSih9SACYwhm1yGincVg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qfVqAqKiSFbgrzaWubxdV5cdnie0qi43IqStGiLj/XlAXiThAl8eGS0iZqLBULNWb
+	 dRKLQUKZmIkaP4BIdBgEwis/gz0yvUQQzYrdkLyQmdNK3a95ztTYw2SpNjVhLdeAzT
+	 zPP+o9s5Q6kVgNE+uVo9duQlOe8omR/wekTow6g5ayRFEnORMt/C2ZTt9MuvT0CCNa
+	 ACTeB54QLLlV6NpLWcBb1XuPOzKmvD7KshNrMQ0wrnJ5cwBpiJHdcG+xF80Wg1SGZ6
+	 ygZ39b3IwDWUuxoU5jKAJK6szOUEqzdR9UmCQRmB+PwAGIF/unxxmE9pukXV9wNuQb
+	 qNTINQdTAPeTg==
+Date: Fri, 14 Mar 2025 07:34:56 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Hans de Goede <hdegoede@redhat.com>,
+ Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] media: uvcvideo: Introduce
+ V4L2_META_FMT_UVC_CUSTOM
+Message-ID: <20250314073456.25817a3d@foz.lan>
+In-Reply-To: <20250313-uvc-metadata-v3-3-c467af869c60@chromium.org>
+References: <20250313-uvc-metadata-v3-0-c467af869c60@chromium.org>
+	<20250313-uvc-metadata-v3-3-c467af869c60@chromium.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310030004.3705801-1-lei.chen@smartx.com> <CANDhNCoRxxA-CxOQ6vxfjf6BDxR-gqCC_QE1wwf4L3gwrvfv6A@mail.gmail.com>
-In-Reply-To: <CANDhNCoRxxA-CxOQ6vxfjf6BDxR-gqCC_QE1wwf4L3gwrvfv6A@mail.gmail.com>
-From: Lei Chen <lei.chen@smartx.com>
-Date: Fri, 14 Mar 2025 14:32:05 +0800
-X-Gm-Features: AQ5f1JoiKQn67UElYIocTCxZX2V5H2HB55w4VkGkg4WL6wV7oqkECoizqNvItRk
-Message-ID: <CAKcXpBwvjrmoPnfFgaXs81XF5du-mWzLiJ+8YvvhM_1tQMiZBQ@mail.gmail.com>
-Subject: Re: [PATCH] Fix rolling back of CLOCK_MONOTONIC_COARSE
-To: John Stultz <jstultz@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi John,
-Thanks for your reply.
+Em Thu, 13 Mar 2025 12:06:27 +0000
+Ricardo Ribalda <ribalda@chromium.org> escreveu:
 
-On Fri, Mar 14, 2025 at 1:20=E2=80=AFAM John Stultz <jstultz@google.com> wr=
-ote:
->
-> On Sun, Mar 9, 2025 at 8:00=E2=80=AFPM Lei Chen <lei.chen@smartx.com> wro=
-te:
-> >
-> > timekeeping_apply_adjustment try to adjust tkr_mono.mult by @mult_adj.
-> > If @mult_adj > 0, tk->tkr_mono.xtime_nsec will be decreased by @offset.
-> > Then timekeeping_update flushes shadow_timekeeper to real tk and vdso
-> > data region. Then rolling back happens.
-> >
-> > The drawing below illustrates the reason why timekeeping_apply_adjustme=
-nt
-> > descreases tk->tkr_mono.xtime_nsec.
-> >
-> >      cycle_interval       offset        clock_delta
-> > x-----------------------x----------x---------------------------x
-> >
-> > P0                      P1         P2                         P3
-> >
-> > N(P) means the nano sec count at the point P.
-> >
-> > Assume timekeeping_apply_adjustment runs at P1, with unaccumulated
-> > cycles @offset. Then tkr_mono.mult is adjusted from M1 to M2.
-> >
-> > Since offset happens before tkr_mono.mult adjustment, so we want to
-> > achieve:
-> > N(P3) =3D=3D offset * M1 + clock_delta * M2 + N(P1)   -------- (1)
-> >
-> > But at P3, the code works as following:
-> > N(P3) :=3D (offset + clock_delta) * M2 + N(P1)
-> >        =3D offset * M2 + clock_delta * M2 + N(P1)
-> >
-> > Apprently, N(P3) goes away from equation (1). To correct it, N(P1)
-> > should be adjusted at P2:
-> > N(P1) -=3D offset * (M2 - M1)
-> >
-> > To fix this issue, the patch accumulates offset into tk, and export
-> > N(P2) to real tk and vdso.
-> >
-> > tk.tkr_mono :=3D N(P2) =3D N(P1) + offset * M1
-> >
-> > Then at P3, we calculate N(P3) based on N(P2) instead of N(P1):
-> > N(P3) :=3D N(P2) + clock_delta * M2
-> >
-> > Signed-off-by: Lei Chen <lei.chen@smartx.com>
->
-> Thanks for the email and the patch!
->
-> So, I'm having a bit of a hard time understanding the issue you're
-> actually seeing. It seems to be that you're seeing
-> CLOCK_MONOTONIC_COARSE go backwards?
->
-I'm sorry for that.
-Yes, it's CLOCK_MONOTONIC_COARSE that goes backwards.
+> The UVC driver provides two metadata types V4L2_META_FMT_UVC, and
+> V4L2_META_FMT_D4XX. The only difference between the two of them is that
+> V4L2_META_FMT_UVC only copies PTS, SCR, size and flags, and
+> V4L2_META_FMT_D4XX copies the whole metadata section.
+> 
+> Now we only enable V4L2_META_FMT_D4XX for the Intel D4xx family of
+> devices, but it is useful to have the whole metadata section for any
+> device where vendors include other metadata, such as the one described by
+> Microsoft:
+> https://learn.microsoft.com/en-us/windows-hardware/drivers/stream/mf-capture-metadata
+> 
+> This patch introduces a new format V4L2_META_FMT_UVC_CUSTOM, that is
+> identical to V4L2_META_FMT_D4XX but it is available to all the UVC
+> devices.
+> 
+> Suggested-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  .../userspace-api/media/v4l/meta-formats.rst       |  1 +
+>  .../userspace-api/media/v4l/metafmt-uvc-custom.rst | 31 +++++++++++++++++
+>  MAINTAINERS                                        |  1 +
+>  drivers/media/usb/uvc/uvc_metadata.c               | 40 ++++++++++++++++++----
+>  drivers/media/v4l2-core/v4l2-ioctl.c               |  1 +
+>  include/uapi/linux/videodev2.h                     |  1 +
+>  6 files changed, 69 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/userspace-api/media/v4l/meta-formats.rst b/Documentation/userspace-api/media/v4l/meta-formats.rst
+> index 86ffb3bc8ade2e0c563dd84441572ecea1a571a6..9fd83f4a3cc8509702a2a9f032fdc04bf6c6d1bc 100644
+> --- a/Documentation/userspace-api/media/v4l/meta-formats.rst
+> +++ b/Documentation/userspace-api/media/v4l/meta-formats.rst
+> @@ -19,6 +19,7 @@ These formats are used for the :ref:`metadata` interface only.
+>      metafmt-pisp-fe
+>      metafmt-rkisp1
+>      metafmt-uvc
+> +    metafmt-uvc-custom
+>      metafmt-vivid
+>      metafmt-vsp1-hgo
+>      metafmt-vsp1-hgt
+> diff --git a/Documentation/userspace-api/media/v4l/metafmt-uvc-custom.rst b/Documentation/userspace-api/media/v4l/metafmt-uvc-custom.rst
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..9f150fc2b6f379cc4707ff45041dd014956ae11a
+> --- /dev/null
+> +++ b/Documentation/userspace-api/media/v4l/metafmt-uvc-custom.rst
+> @@ -0,0 +1,31 @@
+> +.. SPDX-License-Identifier: GFDL-1.1-no-invariants-or-later
+> +
+> +.. _v4l2-meta-fmt-uvc-custom:
+> +
+> +*********************************
+> +V4L2_META_FMT_UVC_CUSTOM ('UVCC')
+> +*********************************
+> +
+> +UVC Custom Payload Metadata.
+> +
+> +
+> +Description
+> +===========
+> +
+> +V4L2_META_FMT_UVC_CUSTOM buffers follow the metadata buffer layout of
+> +V4L2_META_FMT_UVC with the only difference that it includes all the UVC
+> +metadata, not just the first 2-12 bytes.
+> +
+> +The most common metadata format is the one proposed by Microsoft(R)'s UVC
+> +extension [1_], but other vendors might have different formats.
+> +
+> +Applications might use information from the Hardware Database (hwdb)[2_] to
+> +process the camera's metadata accordingly.
 
-I hope the code flow can help to explain it.
+Having something like that at the userspace API shouldn't be handled
+lightly. This sounds to me that passing a blank check for vendors to stream
+whatever they want without any requirements to provide and sort of
+documentation for the usersace to decode it.
 
-In user space, clock_gettime(CLOCK_MONOTONIC_COARSE) actually reads
-tk->xtime_sec and tk->tkr_mono.xtime_nsec.
+Also, it would be hard for userspace to distinguish what metatata
+is contained for a random UVC camera. Please let's not do that.
 
-But when ntp calls adjtimex, the code works as following:
-do_adjtimex
-    timekeeping_advance
-        timekeeping_apply_adjustment
-             tk->tkr_mono.xtime_nsec -=3D offset; ------------------- (1)
-    timekeeping_update
-        update_vsyscall    -------------------------(2)
+As the specific issue here is to support an already known extension,
+which is already documented, Just add an specific format for it, e.g. 
+you could add something like that at the documentation:
 
-At (1) , if offset > 0, xtime_nsec will go backwards.
-And  after (2) CLOCK_MONOTONIC_COARSE will go backwards.
+	V4L2_META_FMT_MSXU_UVC_1_5
+	   Microsoft extensions to USB Video Class 1.5 specification.
+	
+	   For more details, see: https://learn.microsoft.com/en-us/windows-hardware/drivers/stream/uvc-extensions-1-5	
 
-> The approach in your proposed patch seems to undo some of the
-> cycle_interval chunked accumulation, which was intentionally avoiding
-> the multiplication. Instead it tries to accumulate the rest of the
-> sub-cycle_interval unaccumulated delta. I don't think this is correct,
-> as it likely would cause problems with the error accounting, as we
-> accumulate the error in chunks calculated to match the cycle_interval
-> chunks.
-Thanks for your suggestion.
-Can we just skip modifying tk->tkr_mono.xtime_nsec
-in timekeeping_apply_adjustment ?
->
-> Additionally, your changes are all generic to CLOCK_MONOTONIC, but
-> your subject suggests only MONOTONIC_CORASE is having the problem?
-> Could you explain in more detail the problem you are observing, and
-> how it triggers?
-> It seems like reading CLOCK_MONOTONIC_COARSE while making a large
-> negative NTP adjustment would be able to reproduce this?
->
-> thanks
-> -john
+And then add the corresponding format to V4L2 API.
+
+Regards,
+Mauro
 
