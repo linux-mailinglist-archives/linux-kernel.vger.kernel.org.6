@@ -1,108 +1,125 @@
-Return-Path: <linux-kernel+bounces-561731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32AA2A61563
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:53:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE448A6155A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:52:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA8D57AE0D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:52:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B5B67A4624
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEF1202C31;
-	Fri, 14 Mar 2025 15:53:26 +0000 (UTC)
-Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F35202994;
-	Fri, 14 Mar 2025 15:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE3C202C34;
+	Fri, 14 Mar 2025 15:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SPejpvPI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8FC78F2E;
+	Fri, 14 Mar 2025 15:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741967605; cv=none; b=tOwywzhWEamS/tIP/Oubmh6k9uTyZKySg9X3/wn+cJe1n6aRIM67CmDHL1G78NSz1Az1pGCg32MritC39fLSGb8Cg5ZxESiBh27SDH5O2SklA8D4w9nmKQ8YTYti86jbEjin8nyAbFxLxVy5zNsuB+NZzi2MRGfsvviGlWQosNY=
+	t=1741967568; cv=none; b=FGPPLldsLwMph5HjznJtYS8xAgD8LVytmGg9VkvzxhYse15yuuSBk1jdYwiz84QluLUMrsqoKpppE6Tz8y8JiWQAkS5Pd3LuZMObecFcifH7rzJriWtT6oBoDsoCI38GYkbLaKbf6q+Ny7RfnjoWXqA1KfriaGSqZNcgB5OFdBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741967605; c=relaxed/simple;
-	bh=fvneh1mx/Xz9eGv7D2eQ3GuC3fZef5sZPQDOo870RWU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ir26Y9C7CZ1hz+n//AonUsIxVfuiNIJtU+cgqJmtzkBfZsAVP2aJssngznflcmaAvXuYFKVl6SKuO0UuFzDxUMuhngYw8NM7h6cFYQ9+eZYgGk7U0ShWFdWPW0jQ9/p8MnL74pgvDP5Qb/DvFvJ9IjD8mNM7BT7LAaDShNLi5pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=206.189.79.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from zju.edu.cn (unknown [10.193.170.58])
-	by mtasvr (Coremail) with SMTP id _____wCXIgzRUNRnXP4dAA--.4062S3;
-	Fri, 14 Mar 2025 23:52:50 +0800 (CST)
-Received: from localhost (unknown [10.193.170.58])
-	by mail-app3 (Coremail) with SMTP id zS_KCgAXw3XQUNRng8sbAA--.17349S2;
-	Fri, 14 Mar 2025 23:52:48 +0800 (CST)
-From: Lin Ma <linma@zju.edu.cn>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	kuniyu@amazon.com,
-	gnaaman@drivenets.com,
-	joel.granados@kernel.org,
-	lizetao1@huawei.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Lin Ma <linma@zju.edu.cn>
-Subject: [PATCH net] net/neighbor: add missing policy for NDTPA_QUEUE_LENBYTES
-Date: Fri, 14 Mar 2025 23:52:37 +0800
-Message-Id: <20250314155237.81071-1-linma@zju.edu.cn>
-X-Mailer: git-send-email 2.39.0
+	s=arc-20240116; t=1741967568; c=relaxed/simple;
+	bh=/uS4Ng/WL4Jcl0Ypz9LMLA+hr2onBnAyckmY9Xp0WYE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=m0IyQeBQgtBqrNyNKp1BwguHHEPZ1SHWsZOGACsdZLj1XCTv+YjPVRdLBFnBFMcXNbomfzMAlpGpX7erlL4qIJftIt63Ycs7kY2rTnGBTdN7x6ewjOG4y2z2iuchYyiQV/S8We8e5lOoiUY/Xcl0aEy2qWeA/hvxPD51r5pDXUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SPejpvPI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3215C4CEE9;
+	Fri, 14 Mar 2025 15:52:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741967568;
+	bh=/uS4Ng/WL4Jcl0Ypz9LMLA+hr2onBnAyckmY9Xp0WYE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=SPejpvPIxJ3EItLLujVnFxouIcFjY4+owwjJUmcJD+19EVLugbpxI4TkF/eBm0w3J
+	 mTTlsL2Q+IbECocAChsyEtVhMEHSFbx/X2rzanjpN3AAmnnmPLdxzUwPRRhGr0Gakt
+	 QiTWToAQcWp+EgeVYDDHzxM65Jm/b4NWAna+wWSwZJBhpPLHT/HJoBg40BERmFRXBH
+	 cxO2pXqNQlOvkn9yReqYMnokyk1EcUYv1ET09Q+aI43rReDO5O66teSETXQGQZ6VKW
+	 lqUYsmshwNU9k5BevBTe0J9FHzPD8j7Y2NINAsFgilmBNC/DJE6MXS4uHzPz7slHo6
+	 VtWusLum1IuGQ==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>, 
+ Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>, 
+ Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shi Fu <shifu0704@thundersoft.com>, 
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ James Calligeros <jcalligeros99@gmail.com>
+Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
+ Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ asahi@lists.linux.dev, linux-hwmon@vger.kernel.org, 
+ Neal Gompa <neal@gompa.dev>
+In-Reply-To: <20250227-apple-codec-changes-v3-0-cbb130030acf@gmail.com>
+References: <20250227-apple-codec-changes-v3-0-cbb130030acf@gmail.com>
+Subject: Re: (subset) [PATCH v3 00/20] ASoC: tas27{64,70}: improve support
+ for Apple codec variants
+Message-Id: <174196756357.19728.11723701852037310950.b4-ty@kernel.org>
+Date: Fri, 14 Mar 2025 15:52:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zS_KCgAXw3XQUNRng8sbAA--.17349S2
-X-CM-SenderInfo: qtrwiiyqvtljo62m3hxhgxhubq/
-X-CM-DELIVERINFO: =?B?GMRYGQXKKxbFmtjJiESix3B1w3tPqcowV1L23Bze5QtIr9Db75bEBiiEybVhThS0pI
-	APHkyPSxI2Xdeyd3ul0ToYuuZO1uQ+Mstj4wZgJ07zDHSgsNdaMO3dDVqVxik8BiDZC3sl
-	TXsMkWY9Kjq6shOMukuVKUjJTMQVRzgKF9lnMIMw
-X-Coremail-Antispam: 1Uk129KBj9xXoWrZFyftr17GF1xWFy5CF4rWFX_yoWkGFXEgw
-	13ZFnak3W5GF1I93WrZwsayFn5Xw18Ka4rAFyIgF9rAa4DJw1Svr18XFZrGFZrCr4UWFn8
-	Ar1xWF1UCFs8tosvyTuYvTs0mTUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbTkYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	WxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v2
-	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjcxG0xvY0x0EwI
-	xGrVCF72vEw4AK0wACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2Iq
-	xVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r
-	106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AK
-	xVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7
-	xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_
-	Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jj7KsUUUUU=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-Previous commit 8b5c171bb3dc ("neigh: new unresolved queue limits")
-introduces new netlink attribute NDTPA_QUEUE_LENBYTES to represent
-approximative value for deprecated QUEUE_LEN. However, it forgot to add
-the associated nla_policy in nl_ntbl_parm_policy array. Fix it with one
-simple NLA_U32 type policy.
+On Thu, 27 Feb 2025 22:07:27 +1000, James Calligeros wrote:
+> This series introduces a number of changes to the drivers for
+> the Texas Instruments TAS2764 and TAS2770 amplifiers in order to
+> introduce (and improve in the case of TAS2770) support for the
+> variants of these amps found in Apple Silicon Macs.
+> 
+> Apple's variant of TAS2764 is known as SN012776, and as always with
+> Apple is a subtly incompatible variant with a number of quirks. It
+> is not publicly available. The TAS2770 variant is known as TAS5770L,
+> and does not require incompatible handling.
+> 
+> [...]
 
-Fixes: 8b5c171bb3dc ("neigh: new unresolved queue limits")
-Signed-off-by: Lin Ma <linma@zju.edu.cn>
----
- net/core/neighbour.c | 1 +
- 1 file changed, 1 insertion(+)
+Applied to
 
-diff --git a/net/core/neighbour.c b/net/core/neighbour.c
-index bd0251bd74a1..b4f89fbb59df 100644
---- a/net/core/neighbour.c
-+++ b/net/core/neighbour.c
-@@ -2250,6 +2250,7 @@ static const struct nla_policy nl_neightbl_policy[NDTA_MAX+1] = {
- static const struct nla_policy nl_ntbl_parm_policy[NDTPA_MAX+1] = {
- 	[NDTPA_IFINDEX]			= { .type = NLA_U32 },
- 	[NDTPA_QUEUE_LEN]		= { .type = NLA_U32 },
-+	[NDTPA_QUEUE_LENBYTES]	= { .type = NLA_U32 },
- 	[NDTPA_PROXY_QLEN]		= { .type = NLA_U32 },
- 	[NDTPA_APP_PROBES]		= { .type = NLA_U32 },
- 	[NDTPA_UCAST_PROBES]		= { .type = NLA_U32 },
--- 
-2.39.0
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[01/20] ASoC: dt-bindings: tas27xx: add compatible for SN012776
+        commit: 25a83f870b8a25a4b10bf5ba474a017ed5a72e7d
+[02/20] ASoC: dt-bindings: tas2770: add compatible for TAS5770L
+        commit: ce9233937f3233e277ff23395e61ea690c769bef
+[03/20] ASoC: tas2764: Extend driver to SN012776
+        commit: ad18392962df46a858432839cc6bcaf2ede7cc86
+[04/20] ASoC: tas2764: Add control concerning overcurrent events
+        commit: f8d5f28e3f2ece5a1392205022afe30c87107a9b
+[05/20] ASoC: tas2770: Factor out set_ivsense_slots
+        commit: 6553ee024b4452ef861de10605156c9d79e208ab
+[06/20] ASoC: tas2770: Fix and redo I/V sense TDM slot setting logic
+        commit: f0066c8d1d3298e9f9d136a365139bac733e84c5
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
