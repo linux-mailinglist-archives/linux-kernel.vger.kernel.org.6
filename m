@@ -1,109 +1,124 @@
-Return-Path: <linux-kernel+bounces-561336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B795A61032
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:41:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 623F4A61034
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:41:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B174188598C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:41:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC0A1886746
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FA71FDA99;
-	Fri, 14 Mar 2025 11:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F3C1FDE00;
+	Fri, 14 Mar 2025 11:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tWbXEBcO"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EoU7Qg5y"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633923C6BA
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787E73C6BA;
+	Fri, 14 Mar 2025 11:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741952476; cv=none; b=HY3QJjYo+ttHrxuutmrY4SOB/IAiac6g6J0jGd7NDTUhETyb4qzcQeNi5DKVz6OF7QLSNJ9Aqn3wE+vHxXPmr53c7JEShqoZO8BZLkwfyS5mDYNJGVq8d1LGZJzjErUTwUOjEP97v0QCSUjxCL9LStRp/lXNISz3eGTNzBNE0Qo=
+	t=1741952510; cv=none; b=kRPEayBrMicKcxOYlMx4dqZniJi8nVgxQGlyQjNKLYTHTdaxfYH73iDbLWq34IZ/winsFfvxJGgZtNWyl690ckAH6wvz9p0gYWErNS8TvwUvoLJlQiddM4JFu0+zJMupxdS/Cfz+PcZxvkoqiHwVnBq+HtJUwXndQdC+AIM8ipQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741952476; c=relaxed/simple;
-	bh=mGpMQK9vBNZAcu3QbUZ3xRBV7Yu4mpqzLVr7hHabD14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ccxpL/EKHJWJEmCm6uExGpV4kIne6I+SmLyZrQ3x33kPj3vmxtS5F6JlTgMOh9heotS5LpoSzR1q/mGb3sHFzmTWi4MlVqrPpKA5xTjWTpePdJcXfURAdJDmF4Y/Xxka3ITypv3hY0e43YiE3g6gIL7/DU6T+xKsg30wnE4jTiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tWbXEBcO; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=WM6QJni32QZqjOwkvpiimTUJhr1ijJEGttqD4uw+t5U=; b=tWbXEBcOH9GRwHaN+gEIPuXAlf
-	G5WfIaC8ir8NFXAnx3xuBbJw4i1xMTM37ptXdJGaECAul+0MbU6t2BTNB+I8YYOAnm3OcpzmuqSrg
-	xEQzO539O5izVh1WSc+vY2o8yzUjWTfVDfOTkZnyX9bcZMeZWb2N+Ai7ZiZUOKyI4jObNi0UHQNZ9
-	059F4E9JUZZB4ttmDg20lk/puKwbl6ZwA0b6xMN6Yija8UxCzqPSnLVVJI0VzTrmr8iqKUwz6KelU
-	yOcNNtKqKfZajTxRbvIKx8QCg8Py3oFXuNGcz9nNNggjLLJMGXcWhfs2nG7vAnbx0CDj3WhdCPnfP
-	ixHRm7iA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tt3PT-000000001tv-3mcS;
-	Fri, 14 Mar 2025 11:41:04 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8C38E3006C0; Fri, 14 Mar 2025 12:41:02 +0100 (CET)
-Date: Fri, 14 Mar 2025 12:41:02 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v10 00/21] futex: Add support task local hash maps,
- FUTEX2_NUMA and FUTEX2_MPOL
-Message-ID: <20250314114102.GY5880@noisy.programming.kicks-ass.net>
-References: <20250312151634.2183278-1-bigeasy@linutronix.de>
- <20250312151848.RlB_XuHA@linutronix.de>
- <20250314105856.GB36322@noisy.programming.kicks-ass.net>
- <20250314112808.-XVssA31@linutronix.de>
+	s=arc-20240116; t=1741952510; c=relaxed/simple;
+	bh=b+N4iAe5kZXWBX3ZlJCpdxKPlfsWdwzYPJJb1b47u5s=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=h+hXdm6hzRMmc8W5ZYXEMQaplvp5O8t+OH/vLFKUIavUTdrLzO/b1G30LMrAdoRLUvDbN5CNTU57Wm3ykv8yt18tTs9458EnqLhbHRyy9g0Y1/HQWbjufHZRRMOzZ0tZy3kgufxxyNhLka20dlLNMzn3Sp2xEp7gZyfxHm4iYJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EoU7Qg5y; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741952508; x=1773488508;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=b+N4iAe5kZXWBX3ZlJCpdxKPlfsWdwzYPJJb1b47u5s=;
+  b=EoU7Qg5y5XDh9nUgUyKP8H5lOrVBwckkrikvC0GgR6r//wPaxuDiE71X
+   lpkcoapkpKTEaeMcjbo3aLxe9KHOYEQHRobendqAysm3fLA07v8dQ8Yc/
+   ihaDZx4aX2DGsW1ptjXVYsL2ZfGfTw+3rCo+bE7mtOcNoUZQbgfVvYtaT
+   8cHqz9CG1cUNLnQaNPxtZ8SWj856xK1kZJuubOG/7yOVCbcH3dh/QwitM
+   GWUwn77SEpexYNl+9PhjCnX/U5eF0Zf9DHJZRKKMORaOU8fCNlmfw6sMT
+   ETapo3oPoZ3eWnt6A9nkq6z6vqkgGd2qFxOrAUSdjvuzoZLqdLiZndiw6
+   A==;
+X-CSE-ConnectionGUID: nzmskUHBRl206N5wtsbtZw==
+X-CSE-MsgGUID: Na3l5NV+T4aT64XR5Mq+xg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="42966325"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="42966325"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 04:41:47 -0700
+X-CSE-ConnectionGUID: 5997ZYRHSdSt+bVBmBzgSA==
+X-CSE-MsgGUID: QyQiBgrPTNW+IKa338ajcw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="125878045"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.56])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 04:41:46 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 14 Mar 2025 13:41:42 +0200 (EET)
+To: Chenyuan Yang <chenyuan0y@gmail.com>
+cc: W_Armin@gmx.de, Hans de Goede <hdegoede@redhat.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: wmi: Add Null check for device
+In-Reply-To: <20250313162820.3688298-1-chenyuan0y@gmail.com>
+Message-ID: <ff53debd-05bd-3a7f-89a5-2110b8103fad@linux.intel.com>
+References: <20250313162820.3688298-1-chenyuan0y@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250314112808.-XVssA31@linutronix.de>
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, Mar 14, 2025 at 12:28:08PM +0100, Sebastian Andrzej Siewior wrote:
-> On 2025-03-14 11:58:56 [+0100], Peter Zijlstra wrote:
-> > On Wed, Mar 12, 2025 at 04:18:48PM +0100, Sebastian Andrzej Siewior wrote:
-> > 
-> > > @@ -1591,7 +1597,8 @@ static int futex_hash_allocate(unsigned int hash_slots, bool custom)
-> > >  		struct futex_private_hash *free __free(kvfree) = NULL;
-> > >  		struct futex_private_hash *cur, *new;
-> > >  
-> > > -		cur = mm->futex_phash;
-> > > +		cur = rcu_dereference_protected(mm->futex_phash,
-> > > +						lockdep_is_held(&mm->futex_hash_lock));
-> > >  		new = mm->futex_phash_new;
-> > >  		mm->futex_phash_new = NULL;
-> > >  
-> > 
-> > Same thing again, this makes no sense.
+On Thu, 13 Mar 2025, Chenyuan Yang wrote:
+
+Hi,
+
+Could you please be consistent in style and write "NULL" also in the 
+shortlog in the subject.
+
+> Not all devices have an ACPI companion fwnode, so device might be NULL.
+> This is similar to the commit cd2fd6eab480
+> ("platform/x86: int3472: Check for adev == NULL").
+
+Please fold the paragraph normally.
+
+> Add a check for device not being set and return -ENODEV in that case to
+> avoid a possible NULL pointer deref in parse_wdg().
 > 
-> With "mm->futex_phash" sparse complains about direct RCU access.
+> Note, acpi_wmi_probe() under the same file has such a check.
 
-Yeah, but sparse is stupid.
+Hmm, is this a bogus fix, as parse_wdg() is only called from 
+acpi_wmi_probe() so how can ACPI companion turn NULL in between??
 
-> This makes it obvious that you can access it, it won't change as long
-> as you have the lock.
+How was this problem found??
 
-It's just plain confusing. rcu_dereference() says you care about the
-load being single copy atomic and the data dependency, we don't.
+> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> ---
+>  drivers/platform/x86/wmi.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
+> index 646370bd6b03..54e697838c1e 100644
+> --- a/drivers/platform/x86/wmi.c
+> +++ b/drivers/platform/x86/wmi.c
+> @@ -1091,6 +1091,9 @@ static int parse_wdg(struct device *wmi_bus_dev, struct platform_device *pdev)
+>  	u32 i, total;
+>  	int retval;
+>  
+> +	if (!device)
+> +		return -ENODEV;
+> +
+>  	status = acpi_evaluate_object(device->handle, "_WDG", NULL, &out);
+>  	if (ACPI_FAILURE(status))
+>  		return -ENXIO;
+> 
 
-If we just want to shut up sparse; can't we write it like:
+-- 
+ i.
 
-	cur = unrcu_pointer(mm->futex_phash);
-
-?
 
