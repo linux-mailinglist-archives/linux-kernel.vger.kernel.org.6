@@ -1,130 +1,132 @@
-Return-Path: <linux-kernel+bounces-561517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D86CA612F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:46:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C69A612F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:47:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5478E3B3616
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:46:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A24D91B63F71
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0343F1FE46B;
-	Fri, 14 Mar 2025 13:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28E71FF7C5;
+	Fri, 14 Mar 2025 13:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="HnMhbbh5"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="aykI/lnr"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D141C1E991A
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F0E2E336A;
+	Fri, 14 Mar 2025 13:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741960005; cv=none; b=PHbwr3AkzjRqKrTCrVm5p+xfIHQj8QlAeoxrqFx0TBn/Xtgy8OX0FWwtrTdl+W5yrxEfHMsZvlY+k9vK+M7P1yu8BWoLDbuuXGDarj02Q5+viwVeiz2UVDT2VsdM/RKJ8FTSRvQgpy8yZJKJB+ZpxtOQbbvwTbZvDXnNcRgEREg=
+	t=1741960037; cv=none; b=pkPcSPD6e2+x7Xw9mkNgPWdWf/oPOYj35d3/gbTZNMGC+em2VZiygVmGuj6sNb6ZT3MB1gXeYna/vvntDFFcoZJT5dpN4uWics2xcaZvf7m/Dy0XqNFx5CBtzi4b/IurlnrYeNU8zozQ3Z3OtX3n+aK+GKtsoYy/Sfr1LQPcH30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741960005; c=relaxed/simple;
-	bh=qsF+GCSSP1hKNdJdQJMBEH9O2/UfBdYkuS3yMvSb0LU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fjQiG39iaBmD4sZ4RzEunAShoYfc/I/0AtRGHjxS4wZ+jDWQkPNaY+9pQc/Nlg5Kbr/LVWp6mv32lMz4C6cLbq4HY8aKeLwTvWn/nympguPXlHrUVoFc6vAxBS+4FfIeMo5Ts1tIH67ywviz7mjWx8BjsV5qFP4ysbWi4GzEUEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=HnMhbbh5; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7be8f281714so224974485a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:46:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1741960003; x=1742564803; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7rcbULF3LHd0+z4mfmpPo+xxeDyKnDv8t+oi3P4Vssk=;
-        b=HnMhbbh5M3OD+hE7ogrGRbRRNb/XMlihPuSLhTcpEoMtSFnFYn4KZKz9CpBaCV7SwO
-         CaLdskppYuvDjjL5rLLARIXEE85kyxDP/GrTQGUiELM0j0zVqOFomnuslMfIlyCVr8Vs
-         2PeDPXxONxvgBy9wgb/HrCbWtLn+xQ/GpL2E2T11L4eTJLaJho5oWrLBP5BSnXGCTm8E
-         Qy4mcXABN7pgFBBNHtmi1F1CGzhSsng22WA7DZGSFzb/JvWX/HMimtETM9/pRlQcAOux
-         BTWVTl2a6xPYk++uKk/twBFqux/p9+/ChGrne5uaF+BcCj5ynr9bdCtZAn7YfmjcDYb5
-         8Jow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741960003; x=1742564803;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7rcbULF3LHd0+z4mfmpPo+xxeDyKnDv8t+oi3P4Vssk=;
-        b=I7UIcRqcAXDG9nhwvyy/jII2Uxl3oLww17yDdj1JNkNZRdbRMDcb00zueJ2HB71Tg1
-         HhEcv7VVOliZFm4WE/JX6wv16J2exq2GArShBwpwTy9rnlgzJynIgLhsIPoSbl4B0c+A
-         nyUbugO/MIRBWl6XHe4WA3EXN5rQjNvwHJXItfG8xeNYFLY4RnlA4yUbNPShx0bx/qjA
-         LxZPo3FZOV9IRdldWpYddqGWb1Ol4BR9xFGsEuTz76kP2WRPja2Sqa4dfleCDV53GXWl
-         4zI3eSp5lRPsny/PvgTwtA4Re9RU+qbMcKKeuOt3rxEQ3Z4YY0M0ZQaeX1KVjwZ98piI
-         fl1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV8L76COkq3HX5KZZsJ2UPviTHAzWvfz0IVNX39rqbTAJqYIqi1JN5PcEOA7pbVgv8lP/30pc1pzDIZh1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjIkqPPPxscc8zfXETIwYSknOwumLquPOtea3kRnxc3YDLs0Zk
-	FGOaTGJO5NPZ+7iyf/FixFzW9EVBXkmhnsbI5sJeC1hwO/f2hatVXIS8x78V2mfT0g3tdqe3u1C
-	F
-X-Gm-Gg: ASbGncusfKiRt5ZNPqLHRp2uQKZhRxrRN4eIbGaELWFZrf/5gNcI4XAKLw8+t9LbmHO
-	k6qZO8S/v5eLvkKm5V5WGl2M0tq8M4ZMZrVzzhQHfPePYCzL/3HM5adMFKV8qhrJBQj4QBW9rms
-	tIg5vP+QUmsRurNO1tWjey0+z9BOs8etg3OO8N7oYkFgSsgQpbmvrsFM/1KfUj3yaQLWCZ11NT3
-	iDdZ0MF8mthRFzHgxhEszcZaBv1VENY6E8UOfgd1FD53A6/av3GBQSHSbINvYG6Oigqq6cJxxsp
-	6W4g58PEkNZ9WljhUgclTOG1ohznoUqdWpGU6Rua8AN0iLX7KL+VE/zJNXFT/T0/6MHoNaKC5XR
-	z8wy8ZHTXhdlzXRI30LH/Z76eeI8=
-X-Google-Smtp-Source: AGHT+IHVQBuUbLZtTeB8fDk67fek3JEC0e06LBLUL+yeI3ow/ytEEdIxrurvEd3+ik7VQtEVYcYhqg==
-X-Received: by 2002:a05:620a:40ce:b0:7c5:59a6:bae2 with SMTP id af79cd13be357-7c57c769737mr291429885a.4.1741960002746;
-        Fri, 14 Mar 2025 06:46:42 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-476bb7f31f0sm22865331cf.64.2025.03.14.06.46.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 06:46:42 -0700 (PDT)
-Date: Fri, 14 Mar 2025 09:46:40 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [LSF/MM] CXL Boot to Bash - Section 0a: CFMWS and NUMA Flexiblity
-Message-ID: <Z9QzQEzcpHjZQI7U@gourry-fedora-PF4VCD3F>
-References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
- <Z8jORKIWC3ZwtzI4@gourry-fedora-PF4VCD3F>
- <Z8u4GTrr-UytqXCB@gourry-fedora-PF4VCD3F>
- <20250313172004.00002236@huawei.com>
- <Z9MhVZmFVTPpuRe1@gourry-fedora-PF4VCD3F>
- <20250314110942.0000476a@huawei.com>
+	s=arc-20240116; t=1741960037; c=relaxed/simple;
+	bh=u4278IkgLF+DuxgJvdtq4Czwtfa7UaWou22TGEdAdGI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Db/bqo9pPaYFb+n5F/+JykgWLCrAabALfqGOE36AkLKE4GKVMarW1SibSBEyIasOlKyvqDzAWibNDAd4VMOWjLu0AFtQSYs6qcoHu+0WFNCMsoFV9IuoLHr/H5SYSk/LRUICXT/PI8bSKqk6TJYK0ELCz7DWb1wx0QlJIS36k2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=aykI/lnr; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 52EDkiAP33121006, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1741960004; bh=u4278IkgLF+DuxgJvdtq4Czwtfa7UaWou22TGEdAdGI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=aykI/lnricLIoZUMXdk6UPG5nUtabM/zCImjXnA4DU+mnrm2I/vE9FaurEuzXvp6X
+	 hs4BFvg5qufA4UdyY8YmcriKXQg3BXZXh1aE2c3XO40g407r5zYDK1TeEBG56Xg/dd
+	 8pJVAt573LNkcYO42hOnHPUB5T/Hg65YXNqYeL9/d2e+JrARVL1QEgLntVmFm8Tx6W
+	 qimvbJBlO3XI53A6dBi2K5yS3JayhGxr9U5mH0iduW8kyXeBrewJiPyTYu2T5qGvKK
+	 Hae8+qP6p4QWcx4ZAUeDPMQc7Fl62mMLDELvOXFhzSmbSV4MCCXcwIQZrOwGeG2p45
+	 +93mhnvZWB1Qg==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 52EDkiAP33121006
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Mar 2025 21:46:44 +0800
+Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 14 Mar 2025 21:46:42 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 14 Mar 2025 21:46:40 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
+ RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
+ 15.01.2507.035; Fri, 14 Mar 2025 21:46:40 +0800
+From: Hau <hau@realtek.com>
+To: Heiner Kallweit <hkallweit1@gmail.com>, nic_swsd <nic_swsd@realtek.com>,
+        "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+        "davem@davemloft.net"
+	<davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "pabeni@redhat.com" <pabeni@redhat.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next 2/2] r8169: disable RTL8126 ZRX-DC timeout
+Thread-Topic: [PATCH net-next 2/2] r8169: disable RTL8126 ZRX-DC timeout
+Thread-Index: AQHblLW9r8Cevm0ooU+Gat1ylFmKb7Nx+kaAgACq6RA=
+Date: Fri, 14 Mar 2025 13:46:40 +0000
+Message-ID: <e626009d93cd4d5188b35ea5315b42ba@realtek.com>
+References: <20250314075013.3391-1-hau@realtek.com>
+ <20250314075013.3391-3-hau@realtek.com>
+ <ecfc71d3-47b6-4f17-b081-69452e7884ac@gmail.com>
+In-Reply-To: <ecfc71d3-47b6-4f17-b081-69452e7884ac@gmail.com>
+Accept-Language: zh-TW, en-US
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250314110942.0000476a@huawei.com>
 
-On Fri, Mar 14, 2025 at 11:09:42AM +0000, Jonathan Cameron wrote:
-> > 
-> > I was unaware that we blocked mapping persistent as volatile.  I was
-> > working off the assumption that could be flexible mapped similar to...
-> > er... older, non-cxl hardware... cough.
-> 
-> You can use it as volatile, but that doesn't mean we allow it in a CFMWS
-> that says the host PA range is not suitable for persistent.
-> A BIOS might though I think.
->
-
-aaaaaaaaaaaaah this helps.  Ok, we can repurpose the hardware, but not
-the CFMWS.  Even more pressure on platforms to get it right :P.
-
-> > 
-> > Along with the above note, and as mentioned on discord, I think this
-> > whole section naturally evolves into a library of "Sane configurations"
-> > and "We promise nothing for `reasons`" configurations.
-> 
-> :)  Snag is that as Dan pointed out on discord we assume this applies
-> even without the lock.  So it is possible to have device and host 
-> hardware combinations where things are forced to be very non-intuitive.
->
-
-Right, but i think that falls into "We promise nothing, for `reasons`".
-
-At the very least it would give us a communication tool that helps
-bridge the gap between platform, linux, and end-users.
-
-Or it'd just makes it all worse, one of the two.
-
-~Gregory
+PiBFeHRlcm5hbCBtYWlsIDogVGhpcyBlbWFpbCBvcmlnaW5hdGVkIGZyb20gb3V0c2lkZSB0aGUg
+b3JnYW5pemF0aW9uLiBEbyBub3QNCj4gcmVwbHksIGNsaWNrIGxpbmtzLCBvciBvcGVuIGF0dGFj
+aG1lbnRzIHVubGVzcyB5b3UgcmVjb2duaXplIHRoZSBzZW5kZXIgYW5kDQo+IGtub3cgdGhlIGNv
+bnRlbnQgaXMgc2FmZS4NCj4gDQo+IA0KPiANCj4gT24gMTQuMDMuMjAyNSAwODo1MCwgQ2h1bkhh
+byBMaW4gd3JvdGU6DQo+ID4gRGlzYWJsZSBpdCBkdWUgdG8gaXQgZG9zZSBub3QgbWVldCBaUlgt
+REMgc3BlY2lmaWNhdGlvbi4gSWYgaXQgaXMNCj4gPiBlbmFibGVkLA0KPiANCj4gZG9zZSAtPiBk
+b2VzDQo+IA0KPiA+IGRldmljZSB3aWxsIGV4aXQgTDEgc3Vic3RhdGUgZXZlcnkgMTAwbXMuIERp
+c2FibGUgaXQgZm9yIHNhdmluZyBtb3JlDQo+ID4gcG93ZXIgaW4gTDEgc3Vic3RhdGUuDQo+ID4N
+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBDaHVuSGFvIExpbiA8aGF1QHJlYWx0ZWsuY29tPg0KPiA+IC0t
+LQ0KPiA+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9yZWFsdGVrL3I4MTY5X21haW4uYyB8IDE2ICsr
+KysrKysrKysrKysrKysNCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDE2IGluc2VydGlvbnMoKykNCj4g
+Pg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9yZWFsdGVrL3I4MTY5X21h
+aW4uYw0KPiA+IGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvcmVhbHRlay9yODE2OV9tYWluLmMNCj4g
+PiBpbmRleCAzYzY2M2ZjYTA3ZDMuLmRmYzk2YjA5Yjg1ZSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2
+ZXJzL25ldC9ldGhlcm5ldC9yZWFsdGVrL3I4MTY5X21haW4uYw0KPiA+ICsrKyBiL2RyaXZlcnMv
+bmV0L2V0aGVybmV0L3JlYWx0ZWsvcjgxNjlfbWFpbi5jDQo+ID4gQEAgLTI4NTIsNiArMjg1Miwy
+MSBAQCBzdGF0aWMgdTMyIHJ0bF9jc2lfcmVhZChzdHJ1Y3QgcnRsODE2OV9wcml2YXRlICp0cCwN
+Cj4gaW50IGFkZHIpDQo+ID4gICAgICAgICAgICAgICBSVExfUjMyKHRwLCBDU0lEUikgOiB+MDsg
+IH0NCj4gPg0KPiA+ICtzdGF0aWMgdm9pZCBydGxfZGlzYWJsZV96cnhkY190aW1lb3V0KHN0cnVj
+dCBydGw4MTY5X3ByaXZhdGUgKnRwKSB7DQo+ID4gKyAgICAgc3RydWN0IHBjaV9kZXYgKnBkZXYg
+PSB0cC0+cGNpX2RldjsNCj4gPiArICAgICB1OCB2YWw7DQo+ID4gKw0KPiA+ICsgICAgIGlmIChw
+ZGV2LT5jZmdfc2l6ZSA+IDB4MDg5MCAmJg0KPiA+ICsgICAgICAgICBwY2lfcmVhZF9jb25maWdf
+Ynl0ZShwZGV2LCAweDA4OTAsICZ2YWwpID09IFBDSUJJT1NfU1VDQ0VTU0ZVTA0KPiAmJg0KPiA+
+ICsgICAgICAgICBwY2lfd3JpdGVfY29uZmlnX2J5dGUocGRldiwgMHgwODkwLCB2YWwgJiB+QklU
+KDApKSA9PQ0KPiBQQ0lCSU9TX1NVQ0NFU1NGVUwpDQo+ID4gKyAgICAgICAgICAgICByZXR1cm47
+DQo+ID4gKw0KPiA+ICsgICAgIG5ldGRldl9ub3RpY2Vfb25jZSh0cC0+ZGV2LA0KPiA+ICsgICAg
+ICAgICAgICAgIk5vIG5hdGl2ZSBhY2Nlc3MgdG8gUENJIGV4dGVuZGVkIGNvbmZpZyBzcGFjZSwg
+ZmFsbGluZyBiYWNrIHRvDQo+IENTSVxuIik7DQo+ID4gKyAgICAgcnRsX2NzaV93cml0ZSh0cCwg
+MHgwODkwLCBydGxfY3NpX3JlYWQodHAsIDB4MDg5MCkgJiB+QklUKDApKTsgfQ0KPiA+ICsNCj4g
+DQo+IERvZXMgdGhlIGRhdGFzaGVldCBoYXZlIGEgbmFtZSBmb3IgdGhpcyBleHRlbmRlZCBjb25m
+aWcgc3BhY2UgcmVnaXN0ZXIgYW5kDQo+IGJpdCAwPw0KPiBUaGlzIHdvdWxkIGJlIGJldHRlciB0
+aGFuIHVzaW5nIG1hZ2ljIG51bWJlcnMuDQoNCkkgd2lsbCB0cnkgdG8gZ2V0IHRoZSBuYW1lIG9m
+IHRoaXMgYml0Lg0KDQo+IEkgdGhpbmsgd2UgY2FuIGZhY3RvciBvdXQgdGhlIGV4dGVuZGVkIGNv
+bmZpZyBzcGFjZSBhY2Nlc3MgdG8gYSBoZWxwZXIuIFRoZQ0KPiBzYW1lIGNvZGUgd2UgaGF2ZSBp
+biBhbm90aGVyIHBsYWNlIGFscmVhZHkuIEJ1dCB0aGlzIGNhbiBiZSBkb25lIGFzIGENCj4gZm9s
+bG93LXVwLg0KPiANCj4gPiAgc3RhdGljIHZvaWQgcnRsX3NldF9hc3BtX2VudHJ5X2xhdGVuY3ko
+c3RydWN0IHJ0bDgxNjlfcHJpdmF0ZSAqdHAsIHU4DQo+ID4gdmFsKSAgew0KPiA+ICAgICAgIHN0
+cnVjdCBwY2lfZGV2ICpwZGV2ID0gdHAtPnBjaV9kZXY7IEBAIC0zODI0LDYgKzM4MzksNyBAQCBz
+dGF0aWMNCj4gPiB2b2lkIHJ0bF9od19zdGFydF84MTI1ZChzdHJ1Y3QgcnRsODE2OV9wcml2YXRl
+ICp0cCkNCj4gPg0KPiA+ICBzdGF0aWMgdm9pZCBydGxfaHdfc3RhcnRfODEyNmEoc3RydWN0IHJ0
+bDgxNjlfcHJpdmF0ZSAqdHApICB7DQo+ID4gKyAgICAgcnRsX2Rpc2FibGVfenJ4ZGNfdGltZW91
+dCh0cCk7DQo+ID4gICAgICAgcnRsX3NldF9kZWZfYXNwbV9lbnRyeV9sYXRlbmN5KHRwKTsNCj4g
+PiAgICAgICBydGxfaHdfc3RhcnRfODEyNV9jb21tb24odHApOw0KPiA+ICB9DQoNCg==
 
