@@ -1,290 +1,100 @@
-Return-Path: <linux-kernel+bounces-561314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE2E8A61001
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:34:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E369A61003
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:35:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AAFB1B61506
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:34:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6200946030C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF2B1FDE05;
-	Fri, 14 Mar 2025 11:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C431FDA8E;
+	Fri, 14 Mar 2025 11:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="vCtRBqFz"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pN4tX6ZF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zXTBaDHq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0471F4288
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB36F1F4275;
+	Fri, 14 Mar 2025 11:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741952041; cv=none; b=llDo2LrNyUZifgfZQC7f45d54EFrFkS3bcQDMuEI4G6HaB7IMFUK5VwBmR/I2czzzZov+Muea7fwN+Jy7XbP0vicOtbVIt/2ZwUcX3uZNxM4OHwosaKX3nz2poys4dAFSAUuvQiXLdPKJdX33h2CeQc+dANBbMkcRqhY5BuD9KM=
+	t=1741952138; cv=none; b=A7SAFQbIQIJUROj+IHeL2eNK5i8ENgrTTiHppJYG6pExmRyLkIZlYy0dUKyplzJDnS21Xq2746o0ijFuJ6Dbw7mQc6jYdCwK3nxJlVTHPAtR2PeV6I6PSf4GidZdNdJPISCr2LNxiZfznG+K/sgWk6bZPAwavlEKfqJaA8EDgKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741952041; c=relaxed/simple;
-	bh=VFo619g1ewrwqe/TdYiWkAB8pKkLXxjuW43KtWiO5EM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UWM2Qd8xOqqeiqisk7wCavblkTxyXKqsJHvAghZH25SgEk8BSAqbyR3hCk74o+eUwI2H2IAecamlXctTEA6m3LH+6861x5R84kBXNXd142PyUbW5/6WzCPW0LBpD0a4LrMUjYxIj92ji+QsBdCoSUvzQbD1KRqW399HxxZp6TYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=vCtRBqFz; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so13254015e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 04:33:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1741952037; x=1742556837; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Nsvbx0/e3umNGv5t27NVbjQ76HCEZqmQcUDkEBMQhSw=;
-        b=vCtRBqFzOc8z91AC5oBWsRqbEqxKYvRIXZ55bTJ+2REe30JiBEn8OuLpAR+GzOxSjz
-         WDSDsPr9CFy8Tl3n6qmu230zpJIIg2UU97T2bKuBWKDiS7c92MzJI03iV62Hz1rTtu9l
-         LRA1jv0sEbPDwL4Mxj4JcVUfq4vo5BP6wCpzPaJWyJtBJ/XOqAWzST+LxeoAq+Nt9ps8
-         9ePmnTdzDjAl2QIhQ4OHX6il0LHH77Cq/N2DAFhqU3llu5KUt5yJFJuFncEjklLYL9tr
-         /6HGxDHusyIHHSIQDjWw/r87Msb1fMfR+o8mB3pTVmKkP/qxqieaNoVnNHcxjOSPAQbS
-         1ElQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741952037; x=1742556837;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nsvbx0/e3umNGv5t27NVbjQ76HCEZqmQcUDkEBMQhSw=;
-        b=vap4meZ7Az1p09Wr1S7dkIAcgA2sEExP7l0kjO53udYR2BxdvV/UCmTqM/Waqwa8Ij
-         RhAfFoE19LnkQlKWkdmkn27msr8bbq+sDJGLyoEEQr64T6KPTzpoyLb61/zoZ1AmVNlG
-         5OgHl24UDBQJs6jeqwW580KviiD7xm+3UORJ06mexQmKE4xkIfe0ylFjMFV68jx6owJ5
-         uvLZHQqRVVUFYIrdK6Z2oY73MWYGupu6fAt9G6o5kMK6G0fuXcuZQkhMQTSvFYX77SMK
-         ZIeInxsSk5/TrI0jJtkw9DDH+To3qzUhxK68g9N+sLigg6peGziMyQ+d185i9HLxtPjm
-         qZ3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUrbLJGG/HuWJK5+u7INjJFbeIXrW9r7fuzV3sByvLokNISKc7ywTmevItRjvCf0He1A4wf2gmiJvWtUYg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMAcrYgbSDZJgRDEE22RRklwOz63kAyS38Xd24gfMH+gp3p6O3
-	x1QDevnm2NuOKo5iRbRkDXVKa1RxKflwJgsLkzJgYQqAteDJ37CYcxEzwsgOO00=
-X-Gm-Gg: ASbGncth61FTVVnG3zQa4//7QsAUSNce2IcaS4IKtDZf7gXM7a2soCP+5/CgGJQ+27r
-	JDhWI4+bap6jPYjdWXjiMXgrJ/aJMTHeWQ7vE+KCjyAVC/zqIzx6T+sj3A2sq1WhnRD/D21SybJ
-	mt1YSQdJrq+DY+N5Gzr+3PfVBOmEhUo2SwSc9geg7MZl+brR7cvvZJKEwtkNKm9zVpkn+A1MibJ
-	MNEMNxpwu5tx1jCYEshVfSbXa8FXsRCujWoNEkyEG1XHbP2dxBqJcZLv3Q5Uy+e6RA419Vd/K19
-	sbLW0k+n4SgrIYw6Jn0B2uBfD4iZQV/WiadFLYteGuVSN7HfLYjioGOTNRowo5UuASLsPgE5zVy
-	3Vv4jSIHyoSMy2A==
-X-Google-Smtp-Source: AGHT+IGFCS6aHC85bI1G02X5ARi0quKTYrYIojfOtWsQSuEVwoRIcZmL2DpiMo0uOfjcu6utBxTbug==
-X-Received: by 2002:a05:6000:4025:b0:391:1139:2653 with SMTP id ffacd0b85a97d-3971ffb3a29mr1899191f8f.52.1741952036756;
-        Fri, 14 Mar 2025 04:33:56 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe65977sm14993745e9.36.2025.03.14.04.33.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 04:33:56 -0700 (PDT)
-Message-ID: <dad465de-e5da-4ebb-8395-ea9e181a6f57@rivosinc.com>
-Date: Fri, 14 Mar 2025 12:33:55 +0100
+	s=arc-20240116; t=1741952138; c=relaxed/simple;
+	bh=R/tewh/p5atljgam4ymOvOpvh9GKdhUydr+c3OAOiBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EZyC9eTr4AhlgLRzCRTzWyDbBPo9EOm0um2KGVHEgA9axvU5RVT0plhoVYhPXOFVoodH/y4cAt6tnMD0DV2i1PNzoibCyjp4pNRPhQ2r7GCAmNgXR3rBG4h2h1I0qrYnVHcv1JcCaeTOMKVMuuwWT+FUqqC8gDEwV4uzyc9uJhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pN4tX6ZF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zXTBaDHq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 14 Mar 2025 12:35:33 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741952134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2FQBo+G9NS5s5m9Or6v/ScN1p/wGWm+FuNiuvYY6ACA=;
+	b=pN4tX6ZFyWEQFOPQiTwkjg7y9qa0bRlaapCNyuWUSwaWTYb6mnN5jX66hpoHhHvRHeqO/D
+	e5YIXNbIzP/4PBhL8/oF85ZOhPimml3ONrtIqIl4/A93YRuXFNDfOF17lWNZTZ32yYcxEW
+	dbjTNDGhROHWb+VDHwyCQ7p2RmHALCiaGrgSgseztU7tzRHNTXhe1TxgYuN8gJOm5HLvFb
+	6LTOKKywuApbpXeJ3CeyTwG/2Qjzxor+bKZ59rhAE02gOyWufVjuGinYKcy4X71h2SNCHv
+	C+TH+gn3bjJJfT1ckqYb0Ro18B9zYaIbcj9CByFpM9Y+/qkXu/SJXC5YHGBQ8A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741952134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2FQBo+G9NS5s5m9Or6v/ScN1p/wGWm+FuNiuvYY6ACA=;
+	b=zXTBaDHqySfpFgV+G7VyJBWir7Y4Pm+Mk8JFgK1HGEVizypNRWcb7Pr8J8qMYe7F7G9K4D
+	RfkBFbVr4bcrWtAA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [RFC PATCH 06/10] memcg: do obj_cgroup_put inside drain_obj_stock
+Message-ID: <20250314113533.jNrVXeyr@linutronix.de>
+References: <20250314061511.1308152-1-shakeel.butt@linux.dev>
+ <20250314061511.1308152-7-shakeel.butt@linux.dev>
+ <0b3ab5e5-e684-44ce-b6ed-276ad37784e6@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/17] riscv: sbi: add FWFT extension interface
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>,
- Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-kselftest@vger.kernel.org, Samuel Holland <samuel.holland@sifive.com>
-References: <20250310151229.2365992-1-cleger@rivosinc.com>
- <20250310151229.2365992-3-cleger@rivosinc.com>
- <20250313-5c22df0c08337905367fa125@orel>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <20250313-5c22df0c08337905367fa125@orel>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0b3ab5e5-e684-44ce-b6ed-276ad37784e6@suse.cz>
 
+On 2025-03-14 11:17:28 [+0100], Vlastimil Babka wrote:
+> On 3/14/25 07:15, Shakeel Butt wrote:
+> > Previously we could not call obj_cgroup_put() inside the local lock
+> > because on the put on the last reference, the release function
+> > obj_cgroup_release() may try to re-acquire the local lock. However that
+> > chain has been broken. Now simply do obj_cgroup_put() inside
+> > drain_obj_stock() instead of returning the old objcg.
+> > 
+> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> 
+> Hm is this really safe? I can see obj_cgroup_release() doing
+> percpu_ref_exit() -> kfree(), do we have guaranteed that allocation won't be
+> also in a kmemcg and recurse?
 
+This was like this until commit
+	5675114623872 ("mm/memcg: protect memcg_stock with a local_lock_t")
 
-On 13/03/2025 13:39, Andrew Jones wrote:
-> On Mon, Mar 10, 2025 at 04:12:09PM +0100, Clément Léger wrote:
->> This SBI extensions enables supervisor mode to control feature that are
->> under M-mode control (For instance, Svadu menvcfg ADUE bit, Ssdbltrp
->> DTE, etc).
->>
->> Signed-off-by: Clément Léger <cleger@rivosinc.com>
->> ---
->>  arch/riscv/include/asm/sbi.h |  5 ++
->>  arch/riscv/kernel/sbi.c      | 97 ++++++++++++++++++++++++++++++++++++
->>  2 files changed, 102 insertions(+)
->>
->> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
->> index bb077d0c912f..fc87c609c11a 100644
->> --- a/arch/riscv/include/asm/sbi.h
->> +++ b/arch/riscv/include/asm/sbi.h
->> @@ -503,6 +503,11 @@ int sbi_remote_hfence_vvma_asid(const struct cpumask *cpu_mask,
->>  				unsigned long asid);
->>  long sbi_probe_extension(int ext);
->>  
->> +int sbi_fwft_all_cpus_set(u32 feature, unsigned long value, unsigned long flags,
->> +			  bool revert_on_failure);
->> +int sbi_fwft_get(u32 feature, unsigned long *value);
->> +int sbi_fwft_set(u32 feature, unsigned long value, unsigned long flags);
->> +
->>  /* Check if current SBI specification version is 0.1 or not */
->>  static inline int sbi_spec_is_0_1(void)
->>  {
->> diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
->> index 1989b8cade1b..256910db1307 100644
->> --- a/arch/riscv/kernel/sbi.c
->> +++ b/arch/riscv/kernel/sbi.c
->> @@ -299,6 +299,103 @@ static int __sbi_rfence_v02(int fid, const struct cpumask *cpu_mask,
->>  	return 0;
->>  }
->>  
->> +int sbi_fwft_get(u32 feature, unsigned long *value)
->> +{
->> +	return -EOPNOTSUPP;
->> +}
->> +
->> +/**
->> + * sbi_fwft_set() - Set a feature on all online cpus
-> 
-> copy+paste of description from sbi_fwft_all_cpus_set(). This function
-> only sets the feature on the calling hart.
-> 
->> + * @feature: The feature to be set
->> + * @value: The feature value to be set
->> + * @flags: FWFT feature set flags
->> + *
->> + * Return: 0 on success, appropriate linux error code otherwise.
->> + */
->> +int sbi_fwft_set(u32 feature, unsigned long value, unsigned long flags)
->> +{
->> +	return -EOPNOTSUPP;
->> +}
->> +
->> +struct fwft_set_req {
->> +	u32 feature;
->> +	unsigned long value;
->> +	unsigned long flags;
->> +	cpumask_t mask;
->> +};
->> +
->> +static void cpu_sbi_fwft_set(void *arg)
->> +{
->> +	struct fwft_set_req *req = arg;
->> +
->> +	if (sbi_fwft_set(req->feature, req->value, req->flags))
->> +		cpumask_clear_cpu(smp_processor_id(), &req->mask);
->> +}
->> +
->> +static int sbi_fwft_feature_local_set(u32 feature, unsigned long value,
->> +				      unsigned long flags,
->> +				      bool revert_on_fail)
->> +{
->> +	int ret;
->> +	unsigned long prev_value;
->> +	cpumask_t tmp;
->> +	struct fwft_set_req req = {
->> +		.feature = feature,
->> +		.value = value,
->> +		.flags = flags,
->> +	};
->> +
->> +	cpumask_copy(&req.mask, cpu_online_mask);
->> +
->> +	/* We can not revert if features are locked */
->> +	if (revert_on_fail && flags & SBI_FWFT_SET_FLAG_LOCK)
-> 
-> Should use () around the flags &. I thought checkpatch complained about
-> that?
-> 
->> +		return -EINVAL;
->> +
->> +	/* Reset value is the same for all cpus, read it once. */
-> 
-> How do we know we're reading the reset value? sbi_fwft_all_cpus_set() may
-> be called multiple times on the same feature. And harts may have had
-> sbi_fwft_set() called on them independently. I think we should drop the
-> whole prev_value optimization.
+at which point the put had to happen outside. This "percpu_ref_exit() ->
+kfree()" was also prior this commit.
 
-That's actually used for revert_on_failure as well not only the
-optimization.
-
-> 
->> +	ret = sbi_fwft_get(feature, &prev_value);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Feature might already be set to the value we want */
->> +	if (prev_value == value)
->> +		return 0;
->> +
->> +	on_each_cpu_mask(&req.mask, cpu_sbi_fwft_set, &req, 1);
->> +	if (cpumask_equal(&req.mask, cpu_online_mask))
->> +		return 0;
->> +
->> +	pr_err("Failed to set feature %x for all online cpus, reverting\n",
->> +	       feature);
-> 
-> nit: I'd let the above line stick out. We have 100 chars.
-> 
->> +
->> +	req.value = prev_value;
->> +	cpumask_copy(&tmp, &req.mask);
->> +	on_each_cpu_mask(&req.mask, cpu_sbi_fwft_set, &req, 1);
->> +	if (cpumask_equal(&req.mask, &tmp))
->> +		return 0;
-> 
-> I'm not sure we want the revert_on_fail support either. What happens when
-> the revert fails and we return -EINVAL below? Also returning zero when
-> revert succeeds means the caller won't know if we successfully set what
-> we wanted or just successfully reverted.
-
-So that might actually be needed for features that needs to be enabled
-on all hart or not enabled at all. If we fail to enable all of them,
-them the hart will be in some non coherent state between the harts.
-The returned error code though is wrong and I'm not sure we would have a
-way to gracefully handle revertion failure (except maybe panicking ?).
-
-Thanks,
-
-Clément
-
-> 
->> +
->> +	return -EINVAL;
->> +}
->> +
->> +/**
->> + * sbi_fwft_all_cpus_set() - Set a feature on all online cpus
->> + * @feature: The feature to be set
->> + * @value: The feature value to be set
->> + * @flags: FWFT feature set flags
->> + * @revert_on_fail: true if feature value should be restored to it's orignal
-> 
-> its original
-> 
->> + * 		    value on failure.
-> 
-> Line 'value' up under 'true'
-> 
->> + *
->> + * Return: 0 on success, appropriate linux error code otherwise.
->> + */
->> +int sbi_fwft_all_cpus_set(u32 feature, unsigned long value, unsigned long flags,
->> +			  bool revert_on_fail)
->> +{
->> +	if (feature & SBI_FWFT_GLOBAL_FEATURE_BIT)
->> +		return sbi_fwft_set(feature, value, flags);
->> +
->> +	return sbi_fwft_feature_local_set(feature, value, flags,
->> +					  revert_on_fail);
->> +}
->> +
->>  /**
->>   * sbi_set_timer() - Program the timer for next timer event.
->>   * @stime_value: The value after which next timer event should fire.
->> -- 
->> 2.47.2
-> 
-> Thanks,
-> drew
-
+Sebastian
 
