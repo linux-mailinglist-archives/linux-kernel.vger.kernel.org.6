@@ -1,162 +1,101 @@
-Return-Path: <linux-kernel+bounces-561027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C3AA60CA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:04:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A690DA60CA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:03:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FE5016EE76
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:04:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96AB919C2AD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4911DED5F;
-	Fri, 14 Mar 2025 09:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6391E8338;
+	Fri, 14 Mar 2025 09:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=deepin.org header.i=@deepin.org header.b="jXa4I/G3"
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kvh2pmzS"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852081DE2C1;
-	Fri, 14 Mar 2025 09:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A254F1DE4D6;
+	Fri, 14 Mar 2025 09:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741943032; cv=none; b=I75emS5PAopMq3t3RECdbvNcivNAa7VGV5ALFE1sMEkzunIyQpPFsouehwibqhNKFFFRkHU8tD6ry24RLGbJ0NkFscxr90d2mS+Sie5xuMHWV7Q/l+US6GKYW03yyxlfdYDqr4RKz6Mb2+TLFuAhtq/f7i7GmnDWa37zhoi+FgU=
+	t=1741942990; cv=none; b=qJWjd779CVGQbBxF4u5NSHI/S2nP+9GZdT2bEm+XaCFBS1RtRSavAOLsFXLIM/mGUg/9dIzqC+T4mNuZPturMfw1ELYSrr5jXq8try5VOvx4nl5C90VIhalCSbNU/CM+peW/NqESn9rqbBdbxrohCtsiIxx5VRKyp6wWzHOeTBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741943032; c=relaxed/simple;
-	bh=ZErZMC+QOWToIegQ2iKmCvjBmUNPIrj83qIYnRryRRc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FnT6hK09j2f3H+fVn7df2FNJvsRViQhCNdrnKZAPqX7xKXyR4ZTUCkxayIBVyjOqyeWlQi9JfDr9kFKD/G49v+V/wzZ+baacydUVWh69JsvPK5wV0ZEn0oxWgGulwbfgkS/+DGUdjflhE9qcTEmo/21ptEir+ngcu6eCN5Pnlbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepin.org; spf=pass smtp.mailfrom=deepin.org; dkim=pass (1024-bit key) header.d=deepin.org header.i=@deepin.org header.b=jXa4I/G3; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepin.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deepin.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=deepin.org;
-	s=ukjg2408; t=1741943015;
-	bh=F3Mr2gHjrrQbbfObvuHIpoye6jVxjDNGFB92bMbmjnM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=jXa4I/G3uyCQg1WD0syZm8bEx4u8LV2xsCI9VQgC9WQoQDLXp+t7lMNZG3sHxwV+J
-	 3LmW5qqn/zc6zbIAphiW27/D8bXgkoMkmRLwN/PwiR9UhtAVotwmjHHicvnMonA6Fg
-	 hqwLVLhX58srmwO6KfZReoYIPEXbOEXQuVJGkolM=
-X-QQ-mid: bizesmtpsz6t1741943012t48o76y
-X-QQ-Originating-IP: yWt2CxAOtvx3l3yIbs0QqGFaTolnx3VFoOEH3BYpPD8=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 14 Mar 2025 17:03:30 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4056344661151254047
-From: Chen Linxuan <chenlinxuan@deepin.org>
-To: Andrii Nakryiko <andrii@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Chen Linxuan <chenlinxuan@deepin.org>,
-	Alexey Dobriyan <adobriyan@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>
-Cc: Yi Lai <yi1.lai@intel.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH stable 6.1] lib/buildid: Handle memfd_secret() files in build_id_parse()
-Date: Fri, 14 Mar 2025 17:02:47 +0800
-Message-ID: <5602B4F2D8F73293+20250314090247.31170-2-chenlinxuan@deepin.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741942990; c=relaxed/simple;
+	bh=S8YV05/G2s/h65DsiUND3q2T2qUe58pxmugx0ZXN7Jk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CLHURH4d5vXU1NM0lBMf4qF4MwqX4ONEapAEBkAf/iXv2vqbLV3/9315Dy/F0LZxZ49WQW1e+eKwyJrY1rJ2egNuhieMoTRVRely+5bwSB1Z/L8rGw3gw3OmMbxs4lD0V73O1AHCTZsuIJ2D/q6EVsRvKwaSs7eF4Ne5yquHOB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kvh2pmzS; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0737B4415D;
+	Fri, 14 Mar 2025 09:03:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741942985;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IxDTWIZSeguFxII/h+vp4Q/n1issodU5t0n062nhjZ8=;
+	b=kvh2pmzSvgV1G8pTOQLE0GER4g7Rg6JnqX+5FCPeATHnu4apFryWeq4h4e99XsPsvRhV+b
+	d1e5uo9Xn+ddHKrhTETWynLW0p2V0SLnY6JePKcSnoGBAldlXO/ZmxINYwzlcfm6ERHbHJ
+	jZKflPyalMr9ZG+npnqDsie7GBYchMZSaUMkbMFltCFDfL2ykoWdV4wGvHf7I46nq/sDa/
+	YuujSxq8by2gqoRijOSTo1JBSFP+XNtM8t8XKpFUcgWljTgbJIKY16AYYFm1goIHnEDuWR
+	h1pgDMGoWSIWbCvfJSp/LyAzjcT7NY1HroG2oZvPGCmLoXgpx0kn9EEhgNAbyA==
+Message-ID: <88b3ecbe-32b6-4310-afb9-da19a2d0506a@bootlin.com>
+Date: Fri, 14 Mar 2025 10:03:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:deepin.org:qybglogicsvrgz:qybglogicsvrgz7a-0
-X-QQ-XMAILINFO: N2uXtyrSU4Fu3wpACaovTJUP+GajuhxUR6pKBTRzKenMG8bkFVtrUdaj
-	9VnFEzRe2Jt6/MXQKV8lL0pBqDz0Bqlti5oI1KxwfRNShTixDnkT1CZ90u1uktmxkRd6WSS
-	j4natsBdxEjDIWDyeVb3HV4LjRl50Q3hpiErT1gJ2bDBFxc7C+ubitiJWcpfFc1dNYUAt65
-	QK2QIYmN5ETM3pe5mwlu+3AwzZ7mp8gonYreBmCoRf7HRnktpniGTLbhD41yk2rFrBE5RL2
-	Iol3qTwdyk03GE0Rz7iNn+1It46+j27m/4b8IJacOemhyFaQmyvNm/553jnbWfo5aensg41
-	fDrfYAFPGMaRd2+GwIZ01V7sgFd6ScOXGVcfda5n6Mxo5rwYMdolzyyU8XgHTh5SgA56MCz
-	jHfCHJx8kCbGUrV6IlHKnj77rCBxVeQIQxBVUlEwQKbo5/hT5IuNvWGE+kU5utjKv8l+dnj
-	xVVay8U2OoBidcowcZlBv0aVI3Br87EojcPYemUy0iZiAzbqI69xA+3xYx1jEjDb0SVo/Jj
-	VzVSbn1imw5YupfqkenibARcEWV7BQvtrFWtPAoZXJygPiloiwiYLHnAFe6fGTaBqrsVo+N
-	IGCA5d6FFC5DSjRnCIJgmIiv6zHfoPIpUhv8zBbW4hOO7nEj2NuNGbw6CBDOcR0mnPyqj/y
-	K2dMOk/Me3evuLKxYyj4CSjhQkAQhNI0YZrxKsJ6uJCaj2gHA8Qv50P1hJvRtnopHOGcrsI
-	Vp0dwU9CPAG0qrSXYI0mAEtRdGOs90toD0ZY+GqYG7mnxMMR/XYIHrR/mEgVui2kw8D8jHi
-	AF8aRuREqbsiMJb+zAk+1gU78NSrBAY4RtvnLvUIp1b48Co+6kcEvc8CeU5VT5G+QByyjEh
-	X46gKDrOqd7rUjzNC2PYUwljm1NbbCmnM8PzKg1RkWiG8a6ieJkPcSV0FdGPhfIvK/r0N6F
-	E4YYj9FrTBKy1L4Nw/zye35xUwcXrJn/mUbbDZLZvSn3Ke8jAONqiVD+hZo5Y/SPJkbNYpa
-	o/3xs0dkXc0n6GTVNF6orP2ppZRoyu1PxXtSxTNv+zuySJ8L3WyfdtU7WPuuJ7bSbWUPaMx
-	w==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] PCI: j721e: Add support to build as a loadable module
+To: Siddharth Vadapalli <s-vadapalli@ti.com>, lpieralisi@kernel.org,
+ kw@linux.com, manivannan.sadhasivam@linaro.org, robh@kernel.org,
+ bhelgaas@google.com, vigneshr@ti.com, kishon@kernel.org, cassel@kernel.org,
+ wojciech.jasko-EXT@continental-corporation.com, bwawrzyn@cisco.com
+Cc: linux-pci@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ srk@ti.com
+References: <20250307103128.3287497-1-s-vadapalli@ti.com>
+ <20250307103128.3287497-5-s-vadapalli@ti.com>
+Content-Language: en-US
+From: Thomas Richard <thomas.richard@bootlin.com>
+In-Reply-To: <20250307103128.3287497-5-s-vadapalli@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedtgedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeuhefgfeehveeggfeggfekhfehgfffkeeghfeuffeikeekjeehkeetvedthedtieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemfhegtdemsghftddtmehftdehgeemtgeltgdvmedvudgtfeemudehieeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemfhegtdemsghftddtmehftdehgeemtgeltgdvmedvudgtfeemudehieeipdhhvghloheplgfkrfggieemvdgrtddumegtsgdugeemfhegtdemsghftddtmehftdehgeemtgeltgdvmedvudgtfeemudehieeingdpmhgrihhlfhhrohhmpehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtohepshdqvhgruggrphgrlhhlihesthhirdgtohhmpdhrtghpthhtoheplhhpihgvrhgrl
+ hhishhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkfieslhhinhhugidrtghomhdprhgtphhtthhopehmrghnihhvrghnnhgrnhdrshgrughhrghsihhvrghmsehlihhnrghrohdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtohepkhhishhhohhnsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: thomas.richard@bootlin.com
 
-[ Upstream commit 5ac9b4e935dfc6af41eee2ddc21deb5c36507a9f ]
+> +
+> +	if (pcie->reset_gpio) {
+> +		msleep(PCIE_T_PVPERL_MS);
+> +		gpiod_set_value_cansleep(pcie->reset_gpio, 1);
+> +	}
+> +
+> +	if (pcie->refclk)
+> +		clk_disable_unprepare(pcie->refclk);
+>  
 
->From memfd_secret(2) manpage:
+Hello Siddharth,
 
-  The memory areas backing the file created with memfd_secret(2) are
-  visible only to the processes that have access to the file descriptor.
-  The memory region is removed from the kernel page tables and only the
-  page tables of the processes holding the file descriptor map the
-  corresponding physical memory. (Thus, the pages in the region can't be
-  accessed by the kernel itself, so that, for example, pointers to the
-  region can't be passed to system calls.)
+I think clk_disable_unprepare() is a no-op if the clock is NULL, so the
+if statement is useless.
 
-We need to handle this special case gracefully in build ID fetching
-code. Return -EFAULT whenever secretmem file is passed to build_id_parse()
-family of APIs. Original report and repro can be found in [0].
+https://elixir.bootlin.com/linux/v6.14-rc6/source/include/linux/clk.h#L1157
+https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/clk/clk.c#L1237
+https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/clk/clk.c#L1099
 
-  [0] https://lore.kernel.org/bpf/ZwyG8Uro%2FSyTXAni@ly-workstation/
+Regards,
 
-Fixes: de3ec364c3c3 ("lib/buildid: add single folio-based file reader abstraction")
-Reported-by: Yi Lai <yi1.lai@intel.com>
-Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-Link: https://lore.kernel.org/bpf/20241017175431.6183-A-hca@linux.ibm.com
-Link: https://lore.kernel.org/bpf/20241017174713.2157873-1-andrii@kernel.org
-[ Linxuan: perform an equivalent direct check without folio-based changes ]
-Cc: stable@vger.kernel.org
-Fixes: 88a16a130933 ("perf: Add build id data in mmap2 event")
-Signed-off-by: Chen Linxuan <chenlinxuan@deepin.org>
----
+Thomas
 
-Some previous discussions can be found in the following links:
-https://lore.kernel.org/stable/05D0A9F7DE394601+20250311100555.310788-2-chenlinxuan@deepin.org/
-
----
- lib/buildid.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/lib/buildid.c b/lib/buildid.c
-index 9fc46366597e..6249bd47fb0b 100644
---- a/lib/buildid.c
-+++ b/lib/buildid.c
-@@ -5,6 +5,7 @@
- #include <linux/elf.h>
- #include <linux/kernel.h>
- #include <linux/pagemap.h>
-+#include <linux/secretmem.h>
- 
- #define BUILD_ID 3
- 
-@@ -157,6 +158,12 @@ int build_id_parse(struct vm_area_struct *vma, unsigned char *build_id,
- 	if (!vma->vm_file)
- 		return -EINVAL;
- 
-+#ifdef CONFIG_SECRETMEM
-+       /* reject secretmem folios created with memfd_secret() */
-+       if (vma->vm_file->f_mapping->a_ops == &secretmem_aops)
-+               return -EFAULT;
-+#endif
-+
- 	page = find_get_page(vma->vm_file->f_mapping, 0);
- 	if (!page)
- 		return -EFAULT;	/* page not mapped */
--- 
-2.48.1
 
 
