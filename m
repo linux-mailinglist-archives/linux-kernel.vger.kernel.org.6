@@ -1,96 +1,88 @@
-Return-Path: <linux-kernel+bounces-561130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE57FA60DE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:51:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC7FAA60DE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:51:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5845F4605CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:51:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B5B417CB6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691631EF368;
-	Fri, 14 Mar 2025 09:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153301F1927;
+	Fri, 14 Mar 2025 09:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uH1z7qZF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uyb2ldtz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA931EE7A8
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F791DE89E;
+	Fri, 14 Mar 2025 09:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741945877; cv=none; b=kAKreWK7/TjxGnjE23CZqOlrt94KvNYTgMuJ5ZtCmoYUj7UC+lA65cZlBSIVPCxl/g7a84GsSXr3fnfzW+zBQwuxuTLgCaQm6RqH3PoDfrRseaQEkrNHhN+04M1cmJY5d13pOrDUaTJ9fKFlb9BqNIlxHqAqOAeiJjinwJd/nUU=
+	t=1741945911; cv=none; b=NkGxVlOT2T2AC+L9ugtELtK0fx45RzaGn+n0vHljGfhGCiAeoSHVkRcoimKYad9/CgDMWQuA1DiI40gozFk8Ax/Uez3LFT10TL6n4IZ/k9v2cWMcA2D4NeNc+ESmHkZlWvxBN06TrfuBNeutYaARsHbSrHqCHM8UTn6f7xe5EnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741945877; c=relaxed/simple;
-	bh=oBzN6jT/B2XBG+KQWQLjx5+/3J5yCTkKB+ABrkG8spE=;
+	s=arc-20240116; t=1741945911; c=relaxed/simple;
+	bh=WpB2wH8Zin+yYdBUElyhYpBTcPdHwyyhajffqrlOWoU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L+pVZ0ef11FArn3MVP98n0OdHGYDiQUjU+2NcdmyxbZGY6DFzEXBOeWHsOEgXDzqnS9R54y29ordjPmuB1lmQXg/QMPklVX/TKsntjzFiG59tsJVP7dU7xBxMy+QeZ5Agr7rnZwYqOY2gNPK5iY1ce9nMFshwIyZds6uQxI6mIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uH1z7qZF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A89CCC4CEE3;
-	Fri, 14 Mar 2025 09:51:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=QJ4Xx9sBG0/UgTc7/do702n+F3PN2wcVMxVjdT2fZHYQhS8JAoF+euZ00VKrwB48YQW1WDEHOYNo8+XIBnWWtcA1lcuR8VPF/1p6Xd/YFwcpPP6xzrWuE1EEKlDwEH073u7kZ5au840k1XYrF7xuhCxFRN+7P0j4qfBdDiEUfNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uyb2ldtz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DCB3C4CEE3;
+	Fri, 14 Mar 2025 09:51:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741945877;
-	bh=oBzN6jT/B2XBG+KQWQLjx5+/3J5yCTkKB+ABrkG8spE=;
+	s=k20201202; t=1741945911;
+	bh=WpB2wH8Zin+yYdBUElyhYpBTcPdHwyyhajffqrlOWoU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uH1z7qZFYkDVEhlDziVZzEKNqYLCHKs8iiT2xTGtlKLzY9tHOPI1fPSrV9/DwHf60
-	 6nTvl/TgIheU/roMm5VU8dldnQSW4eS5bHEBC7mDwD4NhB3dVWFL5iZbp3/mVAzXgq
-	 XqybVnv8ZBdeJX1dmuri+qOvWAXvx6GzceIFNdygQN8o8XjUm+iz611irmiB5NUoyR
-	 fg4BOEObJGgPy0wSc5flTe7+N+++0AoD5laO8yoKzMrdWdjao75xGUcs/w8LXA7XWB
-	 0HRZ29rS/8PfoYrSaBTtMAPI6inPGwVZkfigLEHquLvL/bTWA/2u5eGiL4hYWGxlY4
-	 fYVV1ZatXV1ug==
-Date: Fri, 14 Mar 2025 10:51:12 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: kan.liang@linux.intel.com
-Cc: peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com, ak@linux.intel.com,
-	linux-kernel@vger.kernel.org, eranian@google.com,
-	thomas.falcon@intel.com
-Subject: Re: [PATCH V2 0/3] Support auto counter reload
-Message-ID: <Z9P8EDcGv0m__WiN@gmail.com>
-References: <20241010192844.1006990-1-kan.liang@linux.intel.com>
+	b=Uyb2ldtzuogLO1GwtKSivq1GMlnydy8JV7m/HiEGhJvV9X8Alr2macKfazrpeIVxF
+	 aoKQYezFDr+m2tHphlOoiIPW/gBucybq4FBjOfoY6KBRd7qYndJ2G63Z5seEIvqks3
+	 sSevNXjTR5trP12tcqLCwaQnxI2WKIKHI2yKs4WW0gDN7XNNQL7VL4xfDSR0aU0kbG
+	 SM5TPV9suth1jlPV1qabaIbU6PC1I3Bw4OB7NufDhRSkOi47RFvuCh7hwBz0vEFcjp
+	 sGBHLJdmcQvG5rhy08Axw2g3Wzf9DBe1ijxQE1S5Ov+HNeXxCbZVh+Ys+D0s1cqHVI
+	 omCrDDBpnkmzg==
+Date: Fri, 14 Mar 2025 09:51:46 +0000
+From: Lee Jones <lee@kernel.org>
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 2/8] media: v4l2-flash: add support for flash/stobe
+ duration
+Message-ID: <20250314095146.GB3890718@google.com>
+References: <20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev>
+ <20250314-ov9282-flash-strobe-v2-2-14d7a281342d@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241010192844.1006990-1-kan.liang@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250314-ov9282-flash-strobe-v2-2-14d7a281342d@linux.dev>
 
+On Fri, 14 Mar 2025, Richard Leitner wrote:
 
-* kan.liang@linux.intel.com <kan.liang@linux.intel.com> wrote:
-
-> From: Kan Liang <kan.liang@linux.intel.com>
+> Add support for the new V4L2_CID_FLASH_DURATION control to the v4l2
+> led flash class.
 > 
-> Changes since V1:
-> - Add a check to the reload value which cannot exceeds the max period
-> - Avoid invoking intel_pmu_enable_acr() for the perf metrics event.
-> - Update comments explain to case which the event->attr.config2 exceeds
->   the group size
+> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> ---
+>  drivers/leds/led-class-flash.c                 | 15 +++++++++++++++
+>  include/linux/led-class-flash.h                | 16 ++++++++++++++++
 
-> The 2498 samples are all from the branch-misses events for the Loop 2.
-> 
-> The number of samples and overhead is significantly reduced without
-> losing any information.
+This should be a separate patch.
 
-Ok, that looks like a pretty sweet PMU feature.
+Then Mauro and I will have to come up with a merge-plan for the series.
 
-What is the hardware support range of this auto count reload feature, 
-how recent CPU does one have to have?
+>  drivers/media/v4l2-core/v4l2-flash-led-class.c | 13 +++++++++++++
+>  3 files changed, 44 insertions(+)
 
-The series has aged a bit though, while a variant of patch #1 has been 
-merged already under:
-
-  47a973fd7563 perf/x86/intel: Fix ARCH_PERFMON_NUM_COUNTER_LEAF
-
-... but #2 and #3 don't apply cleanly anymore.
-
-Mind sending a refreshed series perhaps?
-
-Thanks,
-
-	Ingo
+-- 
+Lee Jones [李琼斯]
 
