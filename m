@@ -1,94 +1,188 @@
-Return-Path: <linux-kernel+bounces-561440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E972A611BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:50:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECAC9A611BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:49:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82C471B6203D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:50:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41BE03BDD79
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73621FF60A;
-	Fri, 14 Mar 2025 12:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="krU0OQSN"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1A01FF1A4;
+	Fri, 14 Mar 2025 12:49:54 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87631FE44E;
-	Fri, 14 Mar 2025 12:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71801D540;
+	Fri, 14 Mar 2025 12:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741956595; cv=none; b=VCVCvDorHX6jxc/BXD7fnOD8yh6FIHOqM1phtGZo9UO/udkc98W1//B99Tl+JzCzj9gMx1Pr00X63nERqrZAfzmi4K+knpTPjW+YVTRK9I97IQDYYc/gBLfBPOY4rfEa4kTFoz7uG6bQt1uioruGflp34bG2ejsqa9otqDj6NvI=
+	t=1741956593; cv=none; b=kUSq03/6JF1hMEQ96SGSZqgAq+wJqe7LPU+KSURAQYv1wwZVxJSSlJiiSOzkH07hH3A3bostnJQzwWOH+DnUUOyv87zEBBezdY+BrgvDl2dmMdcwYeXBUedW64j4midZc5gjcVM348y693J2SN531XqAfF1M/I170819VQRnpe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741956595; c=relaxed/simple;
-	bh=X5zqCLpGyDYLA9j9uyKQAE8GZpKSHtYrqhwWQuvKGsw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mQv9bLcP2QznTRbH8eHFGhGBSkoJC1hE7pB5Ojre1B+hIZuM5CijEsImCt1T2rE1bW6AkT9h5+JhJhMCdojxQP27mt+Ba91EqsEjQ7JzCX7tIXbqnPMQYfkjgHVrmimC1RUVHLZ66ji763ixPEgCT4eMYgkma+AnsxoYUKLHluI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=krU0OQSN; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e6194e9d2cso3636225a12.2;
-        Fri, 14 Mar 2025 05:49:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741956592; x=1742561392; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=X5zqCLpGyDYLA9j9uyKQAE8GZpKSHtYrqhwWQuvKGsw=;
-        b=krU0OQSNTusC9ehThKm0UwB5X3ehnSGjeHaMNpqcFb9XQqldkb88Dc+k1yuI0/KTOs
-         QF+Lt79ltY6LREPKzwMpA5SejcFBthqY+xzuw1r6khIJM3y0hAdL1p9MrF3uiyC99aoV
-         HIFaFjZ/am1RAjry31jg+oy7LO+xPunFxSHqWoZOFWNNnz7BVRTKOyJmIgH1VPTV5ZH9
-         OpCZ1AwmCtgDLpZGlPhdnzLguHfb1rfAkjj/HK14KK50tNo6pjfZpPu+/kw+dzqHuFHX
-         vQLyVTaEXTrdEbQVTznlLQ4zr4YeXoQP1A8WBpaXoU8PAFuyolVZzPzs9IITj9fr46Fv
-         Qn+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741956592; x=1742561392;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=X5zqCLpGyDYLA9j9uyKQAE8GZpKSHtYrqhwWQuvKGsw=;
-        b=WWmF/HELDoza/u7/TpRIW/arl6UFhmkWcBKM+h9FuFtUNAGqQKk1jlxR2vAgFK0Zor
-         Gf6mTKEpZ/iGlv2MB2qbfmMEk4e8kX/UKBmzI6LXKNL/AzGUi/pFBtkLKFUv5gxLSiHH
-         hw5QKsrK6/ISUZ0EAtch15hOySHNPQv/XLBahWKn+m5q3HvsOOKOlkhbxYJII0rx7uTV
-         ycHZIWBjwtInMC7HYF61N98uakmxTBIXo++jvh5UT3y4/IwCguUlzKtLGggKynnGzSL/
-         vyuKPO6IyY740UgpC/fnpYIzuxJcIqtEYisGwZP1kqN4UBGQ+LacpZ6G5y3G5QiHpiOn
-         FHGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUa0lRf320MpiF19NpYZw/DL1v+M/4ZMmZhr27VUAZ4KIuftIzDAp8/1tMO913EeHlm49WTzq7ZUkkwQGA=@vger.kernel.org, AJvYcCXMN1LXDmcb03H2By4hhdFHSkyx2c8endE9u9NuGK0lZQB7Rn/XvYk6Qq+5zLUUxskDq5lpTT4vP12h@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPoNu4Dc1x4dO/0Qh5E05QFYQfAw6ZRyl9ThRJla3TPkbzGibE
-	ymmKSNaBLUy80TrvJF1LzIxbru1VPQeo+WpNoSFZ24eeoxgUZqeKBmFJQjqy23Yk+dq0Z3M6lir
-	H8GYH1GtO5Y0x2AOLJeKWgOgZshc=
-X-Gm-Gg: ASbGncsRCK1YRhSLSqQeBFs9VcXLH3suZAb69OyGQxe08J/eVAuoXIjVBPqcSxgiTY9
-	AAPHERMJKM9J7w4foaQjye/sbdzzCietEnd6/tdCTPnlEtap1b+VQeQjHyV5wzYjTadgiD5REy7
-	sYMI5cCv/pubnUwUIc5HvLSFt1KmJtq6yPK3xjDWK64pc7Z1U6jJZEgpEA56n1
-X-Google-Smtp-Source: AGHT+IEGjdkdr1fGzpz3lMEfZQVZH8C0WzNs9jmVqKwfp5G6gM62ZAjOAOpCk1J9jsxltITKchYxgMvNxAl9HVGZLPc=
-X-Received: by 2002:a05:6402:34c3:b0:5e5:bfab:524 with SMTP id
- 4fb4d7f45d1cf-5e89f24ef49mr2591094a12.3.1741956591938; Fri, 14 Mar 2025
- 05:49:51 -0700 (PDT)
+	s=arc-20240116; t=1741956593; c=relaxed/simple;
+	bh=ykkSyokurIZOkGVyHZ6RGiCF1TX/5YvFq1AdmVuGnFU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s+eyaQrwDi21Phy0nY8a5fHTJjiGi7MdQaJGpVjm9hLb+LpG8MI85+T9cQrSjyqkASZzhNn8wZsQyUuozqj4c8/ZDvai+SZTjyuQKbLyvE9qXcdezYqWmaLSodIsN8U6uUEYh0a1PyPrxJgdo+laEcQn1qO55emup58KrOqTr0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDkdV32Shz6K8hM;
+	Fri, 14 Mar 2025 20:46:38 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8AB4F140D1D;
+	Fri, 14 Mar 2025 20:49:49 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Mar
+ 2025 13:49:48 +0100
+Date: Fri, 14 Mar 2025 12:49:47 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Robert Richter <rrichter@amd.com>
+CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
+ Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
+ De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
+	<terry.bowman@amd.com>
+Subject: Re: [PATCH v2 10/15] cxl/region: Use root decoders interleaving
+ parameters to create a region
+Message-ID: <20250314124947.00001d93@huawei.com>
+In-Reply-To: <20250218132356.1809075-11-rrichter@amd.com>
+References: <20250218132356.1809075-1-rrichter@amd.com>
+	<20250218132356.1809075-11-rrichter@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307-no-offset-v1-0-0c728f63b69c@gmail.com>
-In-Reply-To: <20250307-no-offset-v1-0-0c728f63b69c@gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 14 Mar 2025 08:49:15 -0400
-X-Gm-Features: AQ5f1JodQ1cMn9jAHSmh5rXhI1uUOHZC-6K9hXSSgoYaQ-kS0BzkUlTCSiWngGw
-Message-ID: <CAJ-ks9kUUtg5BiTztCckbaU2F74uxhso5mT4Yi_p3n9LmhYZYg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] rust: workqueue: remove HasWork::OFFSET
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Gentle ping on this.
+On Tue, 18 Feb 2025 14:23:51 +0100
+Robert Richter <rrichter@amd.com> wrote:
+
+> Endpoints requiring address translation might not be aware of the
+> system's interleaving configuration. Instead, interleaving can be
+> configured on an upper memory domain (from an endpoint view) and thus
+> is not visible to the endpoint. For region creation this might cause
+> an invalid interleaving config that does not match the CFMWS entries.
+> 
+> Use the interleaving configuration of the root decoders to create a
+> region which bases on CFMWS entries. This always matches the system's
+> interleaving configuration and is independent of the underlying memory
+> topology.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+> ---
+>  drivers/cxl/core/region.c | 39 ++++++++++++++++++++++++++++++++++-----
+>  drivers/cxl/cxl.h         |  2 ++
+>  2 files changed, 36 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 6e0434eee6df..3afcc9ca06ae 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -1749,6 +1749,15 @@ static int cxl_region_validate_position(struct cxl_region *cxlr,
+>  		}
+>  	}
+>  
+> +	if (p->interleave_ways != cxled->interleave_ways ||
+> +	    p->interleave_granularity != cxled->interleave_granularity ) {
+> +		dev_dbg(&cxlr->dev, "interleaving config mismatch with %s: ways: %d:%d granularity: %d:%d\n",
+> +			dev_name(&cxled->cxld.dev), p->interleave_ways,
+> +			cxled->interleave_ways, p->interleave_granularity,
+> +			cxled->interleave_granularity);
+> +		return -ENXIO;
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> @@ -1852,7 +1861,7 @@ static int match_switch_decoder_by_range(struct device *dev,
+>  }
+>  
+>  static int find_pos_and_ways(struct cxl_port *port, struct range *range,
+> -			     int *pos, int *ways)
+> +			     int *pos, int *ways, int *granularity)
+>  {
+>  	struct cxl_switch_decoder *cxlsd;
+>  	struct cxl_port *parent;
+> @@ -1873,6 +1882,7 @@ static int find_pos_and_ways(struct cxl_port *port, struct range *range,
+>  	}
+>  	cxlsd = to_cxl_switch_decoder(dev);
+>  	*ways = cxlsd->cxld.interleave_ways;
+> +	*granularity = cxlsd->cxld.interleave_granularity;
+>  
+>  	for (int i = 0; i < *ways; i++) {
+>  		if (cxlsd->target[i] == port->parent_dport) {
+> @@ -1896,6 +1906,8 @@ static int find_pos_and_ways(struct cxl_port *port, struct range *range,
+>  struct cxl_interleave_context {
+>  	struct range *hpa_range;
+>  	int pos;
+> +	int interleave_ways;
+> +	int interleave_granularity;
+
+Ah. And here is our context expansion
+
+>  };
+>  
+>  /**
+> @@ -1914,13 +1926,17 @@ struct cxl_interleave_context {
+>   * the topology from the endpoint to the root decoder and iteratively
+>   * applying the function for each port.
+>   *
+> + * Calculation of interleaving ways:
+> + *
+> + *    interleave_ways = interleave_ways * parent_ways;
+> + *
+>   * Return: position >= 0 on success
+>   *	   -ENXIO on failure
+>   */
+>  static int cxl_port_calc_interleave(struct cxl_port *port,
+>  				    struct cxl_interleave_context *ctx)
+>  {
+> -	int parent_ways = 0, parent_pos = 0;
+> +	int parent_ways = 0, parent_pos = 0, parent_granularity = 0;
+>  	int rc;
+>  
+>  	/*
+> @@ -1955,12 +1971,23 @@ static int cxl_port_calc_interleave(struct cxl_port *port,
+>  	if (is_cxl_root(port))
+>  		return 0;
+>  
+> -	rc = find_pos_and_ways(port, ctx->hpa_range, &parent_pos, &parent_ways);
+> +	rc = find_pos_and_ways(port, ctx->hpa_range, &parent_pos, &parent_ways,
+> +			&parent_granularity);
+>  	if (rc)
+>  		return rc;
+>  
+>  	ctx->pos = ctx->pos * parent_ways + parent_pos;
+>  
+> +	if (ctx->interleave_ways)
+> +		ctx->interleave_ways *= parent_ways;
+> +	else
+> +		ctx->interleave_ways = parent_ways;
+> +
+> +	if (ctx->interleave_granularity)
+> +		ctx->interleave_granularity *= ctx->interleave_ways;
+> +	else
+> +		ctx->interleave_granularity = parent_granularity;
+> +
+>  	return ctx->pos;
+
+I think Gregory called this out in earlier patch.  Mixing and matching
+between returning pos and use of ctx makes things hard to read.  If
+we need to have it in context, then make this return 0 or -ERR instead.
+
+>  }
+
+
 
