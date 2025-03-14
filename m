@@ -1,105 +1,106 @@
-Return-Path: <linux-kernel+bounces-562130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD1DA61CFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:44:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1750A61D09
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:46:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75AE619C483A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:44:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394FE4222D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBE02054FE;
-	Fri, 14 Mar 2025 20:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7C6188CA9;
+	Fri, 14 Mar 2025 20:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="tFIgDYdA"
-Received: from mx.manguebit.com (mx.manguebit.com [167.235.159.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBLDFEKu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9331632D3;
-	Fri, 14 Mar 2025 20:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.235.159.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0C6A32;
+	Fri, 14 Mar 2025 20:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741985072; cv=none; b=TPERX7cxCGnvKdDDdeRpgl+fTabCqgffCfOEPA/G5CnVdojH/T4bseTrYjSX5Ud9X0qZ9dtCidkSqStgs2+rWYtGzJmVbl1RQcjIorwKi5GGRc0+3fYkrWjCdo5QQx1lWbSP4sAE8PwcGRRpdctVJlICULZGaHMle8R1MWZpBZo=
+	t=1741985156; cv=none; b=qI8xL5m3gIs6ElDpCMROoZj6AlpbHsWrfjdxT368U9p1iDvFHrHXPz0RILaCCR5W4J6oCMa9N6ctVq4R4s/Hz2rpVcdJ0MPuEjVNFJZrZR7ROZVC6AUQAcKAMV009KKj7Nuy18qQOv6F2aZktmfVyffJaA+ddSwX1rjEANXrOyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741985072; c=relaxed/simple;
-	bh=JyG22rQanR20rroHpv7WbHnkxDMN0Sl/fGM84V0PFu8=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=sQzDN4wsSlWyaPYCEt8NceUmt8KNtUpfs6p16PAQqfdDKb5mF57/fq2Ew8105wod6JJLjHIdq6NQt70NuWWOyZC4wzvvnb+03faY6y+uvPAOY4CQ2DIzpe02i8GqKqN2gzR8454t/YwmVMI6ffMY9J3LG+FLOZVBWGpuV8J5Urw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com; spf=pass smtp.mailfrom=manguebit.com; dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b=tFIgDYdA; arc=none smtp.client-ip=167.235.159.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.com
-Message-ID: <9a3639ed95490e40b62d364c09c24e3b@manguebit.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1741985062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6lOZkNdUaYMusY2QeOlezuCxMiABAc9kVpuc6FXYat0=;
-	b=tFIgDYdAsoNcnjS3dkr1KhlaZYrnBfwnB7kuLEFjpk6j5sw9hEBSMUs9U4HXMXoAnVO2Pc
-	THVyUetr1klfBZwTEld/u6PkRVmXHG2uA1ta6CejWl2n4dv/7hguOB2Prjm8i1d/C5NfGo
-	O0VfMw0v9AiBr4ZfcdlLjtmYFNEdV4u6HWnxH7l+02PcbXGkl4TExaRB1lvDSbENQbm4Lx
-	wWyj2hTvFuP/5tl4s/jeDPkckHkp7CJgaN3gC5Za/vCg/22KRPBhOpW0IKr0TBmxI4KmjR
-	UhYLmFRhZ9oZYSMIng6M0dfvUp+IRfLOISjgOjApm/JWdprEJ+h+rTL/JT/2SA==
-From: Paulo Alcantara <pc@manguebit.com>
-To: David Howells <dhowells@redhat.com>, Christian Brauner
- <christian@brauner.io>
-Cc: David Howells <dhowells@redhat.com>, Max Kellermann
- <max.kellermann@ionos.com>, Jeff Layton <jlayton@kernel.org>,
- netfs@lists.linux.dev, linux-afs@lists.infradead.org,
- linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
- ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] netfs: Miscellaneous fixes
-In-Reply-To: <20250314164201.1993231-1-dhowells@redhat.com>
-References: <20250314164201.1993231-1-dhowells@redhat.com>
-Date: Fri, 14 Mar 2025 17:44:17 -0300
+	s=arc-20240116; t=1741985156; c=relaxed/simple;
+	bh=EOO8H6PnKJZsg0sd1wxBqgWeZrDQtxasN7DklNFE0Hg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=suY4yZmIaPzXVRZg2RS+ErEKBJYfWIcpzggyAU3mOYb+HELVGCL4+RghzYHbz6h5REtBadj958glxvd2/Oo6tJdX+TFrQej5/vOyMRDzZSRDrMbF/1Fy6gssprGZvAGtZkJov+0IXTTcI+HpFBRcn8RJhpq7WVQrWIVt9b5nBRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBLDFEKu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D6E1C4CEE3;
+	Fri, 14 Mar 2025 20:45:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741985156;
+	bh=EOO8H6PnKJZsg0sd1wxBqgWeZrDQtxasN7DklNFE0Hg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WBLDFEKuR1Cszc60BSg1fQkxGIckBK/7hmz9wcqfhmGkPlxdzCTZhMY4SSK09xe2U
+	 iO3VrmQiyTStgNn10QhHBHd3VMqvUs8usY3ZYAoLvULUyXClF8HWWLcf4QUqwqGGuz
+	 F23WU9t/h5wHquMUYTHzVqCdvprQnb/agqRvmaYZp+uwXsjG9j+jH+RLfW01ZvCYNG
+	 KUz8t8ii7cRTfCQ8p6Xz9WCW/XvsbxNu5dNROtiJsjT0rv0MHn+CXh3fRFyXu9EOB9
+	 qEd9+Os0EqjrPTAL8FEE59ta411NSI1rLIccgZbGj7bScrwKoRI2HI0NAGAsVxqWn4
+	 MR1HqlqZIxkRg==
+Date: Fri, 14 Mar 2025 13:45:51 -0700
+From: Kees Cook <kees@kernel.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Tamir Duberstein <tamird@gmail.com>, David Gow <davidgow@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v9 0/6] scanf: convert self-test to KUnit
+Message-ID: <202503141345.0D3FB87E3@keescook>
+References: <20250307-scanf-kunit-convert-v9-0-b98820fa39ff@gmail.com>
+ <Z9QvRJE0Yun5mfsN@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9QvRJE0Yun5mfsN@pathway.suse.cz>
 
-David Howells <dhowells@redhat.com> writes:
+On Fri, Mar 14, 2025 at 02:29:40PM +0100, Petr Mladek wrote:
+> On Fri 2025-03-07 06:27:33, Tamir Duberstein wrote:
+> > This is one of just 3 remaining "Test Module" kselftests (the others
+> > being bitmap and printf), the rest having been converted to KUnit. In
+> > addition to the enclosed patch, please consider this an RFC on the
+> > removal of the "Test Module" kselftest machinery.
+> > 
+> > Tamir Duberstein (6):
+> >       scanf: implicate test line in failure messages
+> >       scanf: remove redundant debug logs
+> >       scanf: convert self-test to KUnit
+> >       scanf: break kunit into test cases
+> 
+> Kees, could you please take the above 5 patches as well
+> via the tree moving the KUNIT tests to lib/tests ?
 
-> Hi Christian,
->
-> Here are some miscellaneous fixes and changes for netfslib, if you could
-> pull them:
->
->  (1) Fix the collection of results during a pause in transmission.
->
->  (2) Call ->invalidate_cache() only if provided.
->
->  (3) Fix the rolling buffer to not hammer atomic bit clears when loading
->      from readahead.
->
->  (4) Fix netfs_unbuffered_read() to return ssize_t.
->
-> The patches can also be found here:
->
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=netfs-fixes
->
-> Thanks,
-> David
->
-> David Howells (3):
->   netfs: Fix collection of results during pause when collection
->     offloaded
->   netfs: Fix rolling_buffer_load_from_ra() to not clear mark bits
->   netfs: Fix netfs_unbuffered_read() to return ssize_t rather than int
->
-> Max Kellermann (1):
->   netfs: Call `invalidate_cache` only if implemented
->
->  fs/netfs/direct_read.c    |  6 +++---
->  fs/netfs/read_collect.c   | 18 ++++++++++--------
->  fs/netfs/rolling_buffer.c |  4 ----
->  fs/netfs/write_collect.c  |  3 ++-
->  4 files changed, 15 insertions(+), 16 deletions(-)
+I think you mean 4? Sure!
 
-Acked-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
+-Kees
+
+> 
+> They seem to be ready for linux-next and the next merge window.
+> 
+> >       scanf: tidy header `#include`s
+> 
+> This one is a bit controversial and might be added later.
+> 
+> >       scanf: further break kunit into test cases
+> 
+> This one was just an attempt. But I personally think that
+> it is not worth it.
+> 
+> Best Regards,
+> Petr
+
+-- 
+Kees Cook
 
