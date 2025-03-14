@@ -1,62 +1,70 @@
-Return-Path: <linux-kernel+bounces-561347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E18A61056
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:46:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD7AA6105A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:47:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1D82189C3FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:46:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F91117A367
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A75E1FECBB;
-	Fri, 14 Mar 2025 11:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886611FDA78;
+	Fri, 14 Mar 2025 11:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HMOTF1bp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="brbl5Kzr";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J4RAkdwY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57ED41FECA9;
-	Fri, 14 Mar 2025 11:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8960D1F3D56;
+	Fri, 14 Mar 2025 11:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741952756; cv=none; b=f+ocWGocODwWMF3PnL15eP/XNlwRp0Rg9DxD6hESE4MPQQ2ktO1BVt62rYxhPoOHCsQmIwdMgtKE5BwpfCytkN+f3bQWzX/0Q3AZZ6FIksjF2mXPtof/R8NeTCWbWuNw+U2vmsDS4umCApCxuh9M5+YLvCwpuOrhwLojlRi2QQ0=
+	t=1741952825; cv=none; b=m9ZwwWl1tLUCQUSopdmxGMa1sYFIqg6Uu5NiFL5FXvQTSpj0D2816UhX7rhlbhVhpLh0qw3gd5wGFY1WWL1czzxL92I0qhr2VH2oTrGybYPbMidmtysQttpXBT59daYh8dgymCbWR9xWA+WaZgVXhZNPlz0Zk8plucUAxPaWRAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741952756; c=relaxed/simple;
-	bh=8lZ8lWqJCnQW3eNRH8N/N9WM42Rsnw/Fz0kc5LE+2gM=;
+	s=arc-20240116; t=1741952825; c=relaxed/simple;
+	bh=eMfILifgeot0mSm0mgwERknMrMaxEIKcmKZGnclhy0k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=scBCgsU5Z0DDLRahfat1DqIYvghHoCCBULTP9PeUVRmO+1BKIoko5cg6L8kd/ppFkjotQpEk69OfHRhvHxkESD93AoeIaCqj7vuTl9aDxb3doL44h7GE3xEkr3iVL21px+IQ7NHNfUw09ZYMP4e7u3X/I4hecUVdTyFLGacdQDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HMOTF1bp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F17EAC4CEE3;
-	Fri, 14 Mar 2025 11:45:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741952755;
-	bh=8lZ8lWqJCnQW3eNRH8N/N9WM42Rsnw/Fz0kc5LE+2gM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HMOTF1bpsmp5DRtH+qEk3JG15xP5+K0NluCJqWzzZuC1mI8wGwc8RbiZqv3IkseHu
-	 dvcO06ygcGSr3DJYDFqeuwGy79kLHdtHk5OnRTCU+b1oPZFx8zVEVzjtk1/+puYRx3
-	 T2HQLSFyOdwnNRlIsM4z0XWRSmjwzu/1ENR0ow8K+I4ngXgxkeStsIQcvaJ6Tp5Y0S
-	 8qPAxYKvRFVjByuCUC5jPQNV4deVWzPpekprAkw2H5j8dnKH4bUpGIA03U3LuS3ta3
-	 xiRfoKF4rmcdVdIpwfM5rA6b6wQktajXcWZiShk0DbCnOkbzjpDUtatiqEBMGfaoo8
-	 wt8djZ0AqVNiA==
-Date: Fri, 14 Mar 2025 11:45:51 +0000
-From: Lee Jones <lee@kernel.org>
-To: Matthias Fend <matthias.fend@emfend.at>
-Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bsp-development.geo@leica-geosystems.com
-Subject: Re: [PATCH 2/2] leds: tps6131x: add support for Texas Instruments
- TPS6131X flash LED driver
-Message-ID: <20250314114551.GL3890718@google.com>
-References: <20250228-leds-tps6131x-v1-0-d1071d90f9ea@emfend.at>
- <20250228-leds-tps6131x-v1-2-d1071d90f9ea@emfend.at>
- <20250310144946.GH8350@google.com>
- <def0351b-c037-47c8-b395-d64cfca7ae25@emfend.at>
- <20250314105257.GD3890718@google.com>
- <8a16c018-8466-4dea-8f1e-e8a65e3ed950@emfend.at>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ydi28HPMSReOZwjoDKIxIvDTeXP3eq8XzJxEfAQHa9C2595DevLNh2wziM8KQF4whIJklknPYOLWQ51Phm7qsaBQKsgVaZFMi7b/Vn0CYcuPkKzNVTf3ze7/LMdE1+pNB/H5kq6CQQiCso3T3TIhFaPGLqrWS8c+C9jKX50KcGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=brbl5Kzr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J4RAkdwY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 14 Mar 2025 12:47:00 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741952821;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lPFOTPRd7Z85FnKRS0cTn5GgupBXmDpYhiKtcCMp6o0=;
+	b=brbl5Kzr7FFK1oFrldCAgathJeQCaROFZpRnUkEmMhtX6StBIfjd1rNPYkpBds/CT56svh
+	5ajvsS7TCW1GPm0MNuIiLYhCgU9oH6ykHKudw1YnJKglRQlS6B5KAwH0hOjuK95/CS6T8w
+	I6y2lMWbUviZbhH64Lo4L+jfVcYIkRQ6PsUK4wJwieT65A1hXmD/Kb0IdCQj45Y84wCD68
+	lB1r7Wt3NgRo5am22H+/y9B41fquuJrHEsCW0JJDWiFkQgXGaZHAAyJ+Mtu6fCCuVqeC0I
+	BHr5jc7pJEJ/pbLcZHT4YQhHNjvrbxYCoM0wVbhKOQ6oO/O2BZ4cc0OWN5252Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741952821;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lPFOTPRd7Z85FnKRS0cTn5GgupBXmDpYhiKtcCMp6o0=;
+	b=J4RAkdwY9BJI342ztprMtM0GCDZb/4KAR0KYVuXhvmt53e3NZy1k+Hg+Nfy914XBfdRCOS
+	Zyxnl8TAf1gJq3AA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [RFC PATCH 09/10] memcg: trylock stock for objcg
+Message-ID: <20250314114700.TiLB4FH0@linutronix.de>
+References: <20250314061511.1308152-1-shakeel.butt@linux.dev>
+ <20250314061511.1308152-10-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,85 +73,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8a16c018-8466-4dea-8f1e-e8a65e3ed950@emfend.at>
+In-Reply-To: <20250314061511.1308152-10-shakeel.butt@linux.dev>
 
-On Fri, 14 Mar 2025, Matthias Fend wrote:
-
-> Hi Lee,
+On 2025-03-13 23:15:10 [-0700], Shakeel Butt wrote:
+> To make objcg stock functions work without disabling irq, we need to
+> convert those function to use localtry_trylock_irqsave() instead of
+> localtry_lock_irqsave(). This patch for now just does the conversion and
+> later patch will eliminate the irq disabling code.
 > 
-> Am 14.03.2025 um 11:52 schrieb Lee Jones:
-> > On Fri, 14 Mar 2025, Matthias Fend wrote:
-> > 
-> > > Hi Lee,
-> > > 
-> > > thanks a lot for your feedback!
-> > > 
-> > > Am 10.03.2025 um 15:49 schrieb Lee Jones:
-> > > > On Fri, 28 Feb 2025, Matthias Fend wrote:
-> > > > 
-> > > > > The TPS61310/TPS61311 is a flash LED driver with I2C interface. Its power
-> > > > > stage is capable of supplying a maximum total current of roughly 1500mA.
-> > > > > The TPS6131x provides three constant-current sinks, capable of sinking up
-> > > > > to 2 × 400mA (LED1 and LED3) and 800mA (LED2) in flash mode. In torch mode
-> > > > > each sink (LED1, LED2, LED3) supports currents up to 175mA.
-> > > > > 
-> > > > > Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
-> > > > > ---
-> > > > >    MAINTAINERS                        |   7 +
-> > > > >    drivers/leds/flash/Kconfig         |  11 +
-> > > > >    drivers/leds/flash/Makefile        |   1 +
-> > > > >    drivers/leds/flash/leds-tps6131x.c | 798 +++++++++++++++++++++++++++++++++++++
-> > > > >    4 files changed, 817 insertions(+)
-
-[...]
-
-> > > > > +static int tps6131x_flash_external_strobe_set(struct v4l2_flash *v4l2_flash, bool enable)
-> > > > > +{
-> > > > > +	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
-> > > > > +	struct tps6131x *tps6131x = fled_cdev_to_tps6131x(fled_cdev);
-> > > > > +
-> > > > > +	guard(mutex)(&tps6131x->lock);
-> > > > > +
-> > > > /> +	return tps6131x_set_mode(tps6131x, enable ? TPS6131X_MODE_FLASH : TPS6131X_MODE_SHUTDOWN,
-> > > > > +				 false);
-> > > > > +}
-> > > > > +
-> > > > > +static const struct v4l2_flash_ops tps6131x_v4l2_flash_ops = {
-> > > > > +	.external_strobe_set = tps6131x_flash_external_strobe_set,
-> > > > > +};
-> > > > > +
-> > > > > +static int tps6131x_v4l2_setup(struct tps6131x *tps6131x)
-> > > > > +{
-> > > > > +	struct v4l2_flash_config v4l2_cfg = { 0 };
-> > > > > +	struct led_flash_setting *intensity = &v4l2_cfg.intensity;
-> > > > > +
-> > > > > +	intensity->min = tps6131x->step_torch_current_ma;
-> > > > > +	intensity->max = tps6131x->max_torch_current_ma;
-> > > > > +	intensity->step = tps6131x->step_torch_current_ma;
-> > > > > +	intensity->val = intensity->min;
-> > > > > +
-> > > > > +	strscpy(v4l2_cfg.dev_name, tps6131x->fled_cdev.led_cdev.dev->kobj.name,
-> > > > 
-> > > > tps6131x->client->dev?
-> > > 
-> > > Do you mean the name should be taken from the I2C device?
-> > > The current name, for example, is 'white:flash-0', while the I2C device name
-> > > would be '4-0033'. So I think the current version is appropriate, don't you
-> > > think?
-> > 
-> > No, I'm implying that:
-> > 
-> >    tps6131x->client->dev == tps6131x->fled_cdev.led_cdev.dev
-> > 
-> > ... and that the former is shorter / neater.
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> ---
+>  mm/memcontrol.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
 > 
-> Hmm. That's interesting. I thought these were two different devices, which
-> seems to be actually the case for me. Hence the different names in the kobj.
-> Are the devices really supposed to be identical?
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index c803d2f5e322..ba5d004049d3 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -2764,7 +2764,11 @@ static void mod_objcg_state(struct obj_cgroup *objcg, struct pglist_data *pgdat,
+>  	unsigned long flags;
+>  	int *bytes;
+>  
+> -	localtry_lock_irqsave(&memcg_stock.stock_lock, flags);
+> +	if (!localtry_trylock_irqsave(&memcg_stock.stock_lock, flags)) {
 
-Interesting.  What are their names?
+Don't you need to change the of memcg_stock.stock_lock? Didn't we
+introduce an explicit different type for this trylock feature?
 
--- 
-Lee Jones [李琼斯]
+> +		__mod_objcg_mlstate(objcg, pgdat, idx, nr);
+> +		return;
+> +	}
+> +
+>  	stock = this_cpu_ptr(&memcg_stock);
+>  
+>  	/*
+
+Sebastian
 
