@@ -1,226 +1,258 @@
-Return-Path: <linux-kernel+bounces-561471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B28A61250
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:16:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56CA0A61272
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:19:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 038C71B63084
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:16:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B5F3882452
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797741FFC6F;
-	Fri, 14 Mar 2025 13:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC291FF7C1;
+	Fri, 14 Mar 2025 13:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="buQiEUuv"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="bE5qpaLT"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957481FFC4B;
-	Fri, 14 Mar 2025 13:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9E21FE44C;
+	Fri, 14 Mar 2025 13:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741958086; cv=none; b=SnesYz5dMdknQU0aJidjJpBhdpyBhJ45CRwAjKFumk3AhA5RWn0GrJM2mTKYzypjE5P6nnbmXZXW7u367kLNZHOoWJfQ9U5uVxs+PEH7P73yqjIHNdARA82iiKLTeITghfi7mKMpoQYnPS8cy9Bm0JEwwRmhbExbzh++oCGoMwc=
+	t=1741958367; cv=none; b=dZzKxdFq65V+s4FCZYurLovWfXhWkLY+H/OoKRdVyxJAI3O6olvoCfY/fDx82eTa6xOCuNEL6V8PRziQTE1h6mK22dzLH2Ns9pzJ/4Z5g5pn7jxLXACqPAmJY88kULCpwaZna7AJa4c2tAVrYJcormYqbY23s/dpWaNduWQ3HKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741958086; c=relaxed/simple;
-	bh=7DMjWm8n/7fLinZzNMznJvbWq1as/rJpVihvFho7YMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J3TOLdDKiTyrYTYZqmpiQCF2o1z4VF8WS36X/+Uslc9xR1a8QbMy4UEosSIdLbrnZTGU9mPJGxT2D9S/JiKXHjT8egU4b5M3tAZ/bCcUGzGiTGBbedyzuOSRwFXx9UbAWZdhJZCoLETMzRaEF3nwDdRZXgBTFdSMWvo/kr0MZRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=buQiEUuv; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 270D340E015E;
-	Fri, 14 Mar 2025 13:14:41 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id z-pXS9vvo2h3; Fri, 14 Mar 2025 13:14:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741958076; bh=rK3jFCPqqItfl6ZwdgpRWuAuoUZAqjm53rLp3ckpUT0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=buQiEUuvGPz5ahlbn9PZtwPr+7vVbnqzon3HVoWjnvJq7YlGd1eCukMFuwc5DbzNq
-	 +BBRyB87TCk0D6ai9KuTHjQxQgVo83ZljRWXRyJ5xCSwl3aEOfYGhGUX3zDZDLnqn+
-	 s2MU7ElEGXfjAV89BWTTnroEzUBIS3Wf3RUT/kV2+7OjClA9DQG/Hvopy2xRaK7Bn8
-	 lmG1GyeoHZ8k5v3BYHWevFZgw8ryzPcmzY7T/A8YyzHsCdFH//sIIUfXajgXZbotnx
-	 IhXKl0/iiNsMHRKO7/uUyXgXoiIaz5gaEaAA8W8VdjBES3RrkRV+0aDAd3j+6kSHUV
-	 6k++mMLZZyAN2jc0Hu6M4sR91Y9zoHt/jS7tc7Bgbr/ypFP1R4MkETlxEvEn8gvWO/
-	 Y7rPYfvUfrnjUTMWCLU9v/5/s2XYAqsS6ftcIib2NBhMmT2R7V3ROm6PNzSbzb3Rvl
-	 9JgDLtLPWisWvlUMzaDaH5Unqhf8eG2wm/sVnKTsR98OQDs/Ooj0UY6GeH6Pu6P1J/
-	 2qAAJ83OLDHUGkfe0hPZzL6plpiHGeQlHlXjJoHhtm8q57frspkNwtX2/53ad6KY0u
-	 S32/I19c9GIX27/+TaNuIc4iI9x2XZe0tre/KLSLBG8Wtyc5d6Fs/HOtJAVxxel8/N
-	 jmLhNS9GU2k3ONwVLl4hBbDw=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	s=arc-20240116; t=1741958367; c=relaxed/simple;
+	bh=+TLFi6zGn84ndYCYlPnSlEB/FndOyxFdAhy3aD2xDak=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mMS+jeY5QjMXxzSHr8MpMp/wuFO5OZEugcGS5qIKwStkX4KHlCz02QDPPgupKISn1pCoDLnqPO6Q4StUSXxUKciMaW1fZBH3tWpcD9BXFOtApZSY+y4wPCwLFHSGJDoNv1wEN9bzSl7h3ZVuYEQ7Uh6CMRcC36NLXpx99r/RvG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=bE5qpaLT; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.3.1)
+ id f27c172963a66e5f; Fri, 14 Mar 2025 14:19:23 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1A99F40E023B;
-	Fri, 14 Mar 2025 13:14:25 +0000 (UTC)
-Date: Fri, 14 Mar 2025 14:14:19 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: akpm@linux-foundation.org, dave.hansen@linux.intel.com,
-	yosryahmed@google.com, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	peterz@infradead.org, seanjc@google.com, tglx@linutronix.de,
-	x86@kernel.org
-Subject: Re: [PATCH RFC v2 03/29] mm: asi: Introduce ASI core API
-Message-ID: <20250314131419.GJZ9Qrq8scAtDyBUcg@fat_crate.local>
-References: <20250227120607.GPZ8BVL2762we1j3uE@fat_crate.local>
- <20250228084355.2061899-1-jackmanb@google.com>
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id D2222912CFA;
+	Fri, 14 Mar 2025 14:19:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1741958363;
+	bh=+TLFi6zGn84ndYCYlPnSlEB/FndOyxFdAhy3aD2xDak=;
+	h=From:Subject:Date;
+	b=bE5qpaLT5vih/iOq8DV5KaLz0Ofx5+j4ScSmVus2TpkE6eS/nbiI3l8G5dnjcaWkA
+	 xo3aRAlD4GylZihdVT70Z1C89APc87bqyHJWwGz+RDd4llxrV3bjPwuFp/EtCTWmeT
+	 YFeqtvVfOQR4gm11Nr/llg997C6Qu93RMq9yNMBfFRXIcVAjy8GM3lwgWpvKR/Kt26
+	 jSyQXtsg8aAOwXu5/SyBgfxW1kU4N6i1zV84QBVsOdPrMP7tgUp0q4t4o1TxFjqwOd
+	 tRMcM+66ziEyn3+LnBQv2QJPyCjruQ+F1x3SUJqKvQWVO3LM6HU7DT/YtZ4TdwlVng
+	 4t5jxLJfMUe6A==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Johan Hovold <johan@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Jon Hunter <jonathanh@nvidia.com>, Saravana Kannan <saravanak@google.com>
+Subject: [PATCH v3 3/5] PM: sleep: Make suspend of devices more asynchronous
+Date: Fri, 14 Mar 2025 14:14:30 +0100
+Message-ID: <1924195.CQOukoFCf9@rjwysocki.net>
+In-Reply-To: <10629535.nUPlyArG6x@rjwysocki.net>
+References: <10629535.nUPlyArG6x@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250228084355.2061899-1-jackmanb@google.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedtleegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepkedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsthgvrhhnsehrohiflhgrnhgurdhhrghrvhgrrhgurdgvughupdhrtghpthhtohepuhhlfhdrhhgrnhhsshhonheslhh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=16 Fuz1=16 Fuz2=16
 
-On Fri, Feb 28, 2025 at 08:43:55AM +0000, Brendan Jackman wrote:
-> Yeah I see what you mean. I think the issues are:
-> 
-> 1. We're mixing up two different aspects in the API:
-> 
->    a. Starting and finishing "critical sections" (i.e. the region
->       between asi_enter() and asi_relax())
-> 
->    b. Actually triggering address space transitions.
-> 
-> 2. There is a fundamental asymmetry at play here: asi_enter() and
->    asi_exit() can both be NOPs (when we're already in the relevant
->    address space), and asi_enter() being a NOP is really the _whole
->    point of ASI_.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I'm guessing you mean this thing in __asi_enter():
+In analogy with previous changes, make device_suspend_late() and
+device_suspend_noirq() start the async suspend of the device's parent
+after the device itself has been processed and make dpm_suspend_late()
+and dpm_noirq_suspend_devices() start processing "async" leaf devices
+(that is, devices without children) upfront so they don't need to wait
+for the other devices they don't depend on.
 
-+	if (!target || target == this_cpu_read(curr_asi))
-+		return;
+This change reduces the total duration of device suspend on some systems
+measurably, but not significantly.
 
-The assumption being that curr_asi will be the target most of the time after
-having done the expensive switch once...
+Suggested-by: Saravana Kannan <saravanak@google.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
->    The ideal world is where asi_exit() is very very rare, so
->    asi_enter() is almost always a NOP.
+v2 -> v3:
+   * Adjust for the changes made in patch [2/5].
+   * Use list_splice() for merging lists on errors.
+   * Adjust changelog.
 
-... asi_exit() being the actual switch to the unrestricted CR3.
+v1 -> v2:
+   * Adjust for the changes in patches [1-2/3].
+   * Move all devices to the target lists even if there are errors in
+     dpm_suspend_late() and dpm_noirq_suspend_devices() so they are
+     properly resumed during rollback (Saravana).
 
-And asi_relax() being the switch of current task's asi target ptr to NULL.
-Comment says
+---
+ drivers/base/power/main.c |   64 ++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 56 insertions(+), 8 deletions(-)
 
-"Domain to enter when returning to process context."
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1308,6 +1308,8 @@
+ 	device_links_read_unlock(idx);
+ }
+ 
++static void async_suspend_noirq(void *data, async_cookie_t cookie);
++
+ /**
+  * device_suspend_noirq - Execute a "noirq suspend" callback for given device.
+  * @dev: Device to handle.
+@@ -1386,7 +1388,13 @@
+ Complete:
+ 	complete_all(&dev->power.completion);
+ 	TRACE_SUSPEND(error);
+-	return error;
++
++	if (error || async_error)
++		return error;
++
++	dpm_async_suspend_parent(dev, async_suspend_noirq);
++
++	return 0;
+ }
+ 
+ static void async_suspend_noirq(void *data, async_cookie_t cookie)
+@@ -1400,6 +1408,7 @@
+ static int dpm_noirq_suspend_devices(pm_message_t state)
+ {
+ 	ktime_t starttime = ktime_get();
++	struct device *dev;
+ 	int error = 0;
+ 
+ 	trace_suspend_resume(TPS("dpm_suspend_noirq"), state.event, true);
+@@ -1409,12 +1418,21 @@
+ 
+ 	mutex_lock(&dpm_list_mtx);
+ 
++	/*
++	 * Start processing "async" leaf devices upfront so they don't need to
++	 * wait for the "sync" devices they don't depend on.
++	 */
++	list_for_each_entry_reverse(dev, &dpm_late_early_list, power.entry) {
++		dpm_clear_async_state(dev);
++		if (dpm_leaf_device(dev))
++			dpm_async_with_cleanup(dev, async_suspend_noirq);
++	}
++
+ 	while (!list_empty(&dpm_late_early_list)) {
+-		struct device *dev = to_device(dpm_late_early_list.prev);
++		dev = to_device(dpm_late_early_list.prev);
+ 
+ 		list_move(&dev->power.entry, &dpm_noirq_list);
+ 
+-		dpm_clear_async_state(dev);
+ 		if (dpm_async_fn(dev, async_suspend_noirq))
+ 			continue;
+ 
+@@ -1428,8 +1446,14 @@
+ 
+ 		mutex_lock(&dpm_list_mtx);
+ 
+-		if (error || async_error)
++		if (error || async_error) {
++			/*
++			 * Move all devices to the target list to resume them
++			 * properly.
++			 */
++			list_splice(&dpm_late_early_list, &dpm_noirq_list);
+ 			break;
++		}
+ 	}
+ 
+ 	mutex_unlock(&dpm_list_mtx);
+@@ -1482,6 +1506,8 @@
+ 	spin_unlock_irq(&parent->power.lock);
+ }
+ 
++static void async_suspend_late(void *data, async_cookie_t cookie);
++
+ /**
+  * device_suspend_late - Execute a "late suspend" callback for given device.
+  * @dev: Device to handle.
+@@ -1558,7 +1584,13 @@
+ Complete:
+ 	TRACE_SUSPEND(error);
+ 	complete_all(&dev->power.completion);
+-	return error;
++
++	if (error || async_error)
++		return error;
++
++	dpm_async_suspend_parent(dev, async_suspend_late);
++
++	return 0;
+ }
+ 
+ static void async_suspend_late(void *data, async_cookie_t cookie)
+@@ -1576,6 +1608,7 @@
+ int dpm_suspend_late(pm_message_t state)
+ {
+ 	ktime_t starttime = ktime_get();
++	struct device *dev;
+ 	int error = 0;
+ 
+ 	trace_suspend_resume(TPS("dpm_suspend_late"), state.event, true);
+@@ -1587,12 +1620,21 @@
+ 
+ 	mutex_lock(&dpm_list_mtx);
+ 
++	/*
++	 * Start processing "async" leaf devices upfront so they don't need to
++	 * wait for the "sync" devices they don't depend on.
++	 */
++	list_for_each_entry_reverse(dev, &dpm_suspended_list, power.entry) {
++		dpm_clear_async_state(dev);
++		if (dpm_leaf_device(dev))
++			dpm_async_with_cleanup(dev, async_suspend_late);
++	}
++
+ 	while (!list_empty(&dpm_suspended_list)) {
+-		struct device *dev = to_device(dpm_suspended_list.prev);
++		dev = to_device(dpm_suspended_list.prev);
+ 
+ 		list_move(&dev->power.entry, &dpm_late_early_list);
+ 
+-		dpm_clear_async_state(dev);
+ 		if (dpm_async_fn(dev, async_suspend_late))
+ 			continue;
+ 
+@@ -1606,8 +1648,14 @@
+ 
+ 		mutex_lock(&dpm_list_mtx);
+ 
+-		if (error || async_error)
++		if (error || async_error) {
++			/*
++			 * Move all devices to the target list to resume them
++			 * properly.
++			 */
++			list_splice(&dpm_suspended_list, &dpm_late_early_list);
+ 			break;
++		}
+ 	}
+ 
+ 	mutex_unlock(&dpm_list_mtx);
 
-but I'm none-the-wiser.
 
-So, why are we doing that relaxing thing?
 
-I'm guessing the relaxing is marking the end of the region where we're running
-untrusted code. After asi_relax() we are still in the restricted CR3 but we're
-not running untrusted code.
-
-> So we could disentangle part 1 by just rejigging things as you suggest,
-> and I think the naming would be like:
-> 
-> asi_enter
->   asi_start_critical
->   asi_end_critical
-> asi_exit
-
-Yap, that's what I was gonna suggest: asi_enter and asi_exit do the actual CR3
-build and switch and start_critical and end_critical do the cheaper tracking
-thing.
-
-> But the issue with that is that asi_start_critical() _must_ imply
-> asi_enter()
-
-What does that mean exactly?
-
-asi_start_critical() must never be called before asi_enter()?
-
-If so, I'm sure there are ways to track and check that and warn if not, right?
-
-> (otherwise if we get an NMI between asi_enter() and
-> asi_start_critical(), and that causes a #PF, we will start the
-> critical section in the wrong address space and ASI won't do its job).
-> So, we are somewhat forced to mix up a. and b. from above.
-
-I don't understand: asi_enter() can be interrupted by an NMI at any random
-point. How is the current, imbalanced interface not vulnerable to this
-scenario?
-
-> BTW, there is another thing complicating this picture a little: ASI
-> "clients" (really just meaning KVM code at this point) are not not
-> really supposed to care at all about the actual address space, the fact
-> that they currently have to call asi_exit() in part 4b is just a
-> temporary thing to simplify the initial implementation. It has a
-> performance cost (not enormous, serious KVM platforms try pretty hard
-
-You mean the switch to the unrestricted_cr3? I can imagine...
-
-> to avoid returning to user space, but it does still matter) so
-> Google's internal version has already got rid of it and that's where I
-> expect this thing to evolve too. But for now it just lets us keep
-> things simple since e.g. we never have to think about context
-> switching in the restricted address space.
-> 
-> With that in mind, what if it looked like this:
-> 
-> ioctl(KVM_RUN) {
->     enter_from_user_mode()
->     while !need_userspace_handling()
-> 	// This implies asi_enter(), but this code "doesn't care"
-> 	// about that.
->         asi_start_critical();
->         vmenter();
->         asi_end_critical();
->     }
->     // TODO: This is temporary, it should not be needed.
->     asi_exit();
->     exit_to_user_mode()
-> }
-> 
-> Once the asi_exit() call disappears, it will be symmetrical from the
-> "client API"'s point of view. And while we still mix up address space
-> switching with critical section boundaries, the address space
-> switching is "just an implementation detail" and not really visible as
-> part of the API.
-
-So I'm still unclear on that whole design here so I'm asking silly questions
-but I know that:
-
-1. you can do empty calls to keep the interface balanced and easy to use
-
-2. once you can remove asi_exit(), you should be able to replace all in-tree
-   users in one atomic change so that they're all switched to the new,
-   simplified interface
-
-But I still have the feeling that we could re-jig what asi_enter/relax/exit do
-and thus have a balanced interface. We'll see...
-
-> I have now setup Mutt.
-
-I did that 20 years ago. Never looked back. I'd say you're on the right track
-:-)
-
-> But, for now I am replying with plan vim + git-send-email, because I also
-> sent this RFC to a ridiculous CC list (I just blindly used the
-> get_maintainers.pl output, I don't know why I thought that was a reasonable
-> approach) and it turns out this is the easiest way to trim it in a reply!
-> Hopefully I can get the headers right...
-
-Yeah, works. On the next version, you could trim it to the couple relevant
-lists and to whoever reviewed this. The others can always get the thread from
-lore and there's really no need anymore to Cc the whole world :)
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
