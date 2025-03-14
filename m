@@ -1,70 +1,184 @@
-Return-Path: <linux-kernel+bounces-561104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C4D0A60D9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:43:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C173A60DAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:44:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D01CF881CE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:42:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 520D918894A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EEF1F1523;
-	Fri, 14 Mar 2025 09:43:01 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DA01F03E0;
+	Fri, 14 Mar 2025 09:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UKsKQAaK"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08591F0E36;
-	Fri, 14 Mar 2025 09:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223C91EF0B6
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741945380; cv=none; b=ewzjVmZ2L4rFMlxvUmlg/6zngT6Jv0gWzfcifL4q5C58Sx7KLeAi+yFDAzJBMpg0HVlj4AvDWh6tirYRQszudC7zZ2ZbqEhVHkHEueTghE/VocvZ+CqTkWqOZ3PRPm7ArOU1on9rih3Wm/W7jin9PA9j0EZLrJ2+NvQQboNvGZA=
+	t=1741945489; cv=none; b=Ga5q+nQx6VFbdgMIVHJ9Ad52bKtxPYkMvfpglQnsl+Q2DtUfNbO0vAcvhD8OeKzObou35bTOVFCosOKb+ghylr5q4qzbSxXAqEKbWfu9DPyd7gKnbkFmvnYTWvMru94oZ7noYbeHw0OXpLHbsPSP4P6qHM2ZBsD51m472mXF0oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741945380; c=relaxed/simple;
-	bh=pbuFAEq3Ui4gAVsdTa4CTZ9yK5iev535hiEefZtJf3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fG6B9aM0OFmKagqtnzzsTGA8drAjjTt8UhrYwtRgnEQsIqHkpITeR5UE0V6vo0LzvRtV2E0NdNi5+bbY4DHzjX/++mQEkiNzKQC79UCsRBvtPWeG1Rt7uhGn7rf7XbGX/tMg+zZhrC/jqLD5jsWCPgNtIgrdMlKbXePrRu+Hgc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64954C4CEE3;
-	Fri, 14 Mar 2025 09:42:59 +0000 (UTC)
-Date: Fri, 14 Mar 2025 05:42:57 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] tracing: Fix a compilation error without
- CONFIG_MODULES
-Message-ID: <20250314054257.3218dc35@batman.local.home>
-In-Reply-To: <174188321162.3845006.12665585959241736399.stgit@mhiramat.tok.corp.google.com>
-References: <174188320269.3845006.11920186078507571954.stgit@mhiramat.tok.corp.google.com>
-	<174188321162.3845006.12665585959241736399.stgit@mhiramat.tok.corp.google.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741945489; c=relaxed/simple;
+	bh=VdVCw/M5HAoDmq183sWDLkgRH8JrQMhGVUGoEq2UxGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k3q86RZBanOZqm8d+dRLQUQueMR7Hz6qCm06WThyQbuaEpFO9wHDSXdb9rw9FgxEBFAgaDcWEnmk7+eVQoTBMBpBZugJcA1XUyRLG58w3nEm+WxmWuToIn1hnPDhup22rXC+O+uhpqql1ZnVs3IKs/pXge+Oup4Svh0O+0r2vR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UKsKQAaK; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso12663145e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 02:44:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1741945485; x=1742550285; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6bKs60H+9RBHyzSNlhvZhr5uBt5TPIqP3KyZeHSPjWI=;
+        b=UKsKQAaKH0mwLkXvL2TdG63NKpFGYYieQWVdi74qwsyQTRqMZc2BLqpzcosOIVvK2Q
+         nv9w4QZZh34o3M1qvVCnv3QmJaRXFzNNRdHtU5v6cVMxnrsL+jqlDf+XAzPHqGwkYFEF
+         8nqr3JzciZ2kjCNVXaAH1yDplVNqNYfGhb+LWy4ICF5vsgZgw8yV0VfyDM0hGbMbP+Pt
+         gSTl+aHDvHnixnE9rJWMqeOoFmNCqLrYCp7t44gUEOpTFR3PQwyzSiJSdyEpUCWHGmDJ
+         E1kLTiNTOabT9ue3Jx3DyNsMuRcvZkXBsFODjzuQYY5TZi2zhkn3avAKlIag6Y7vfh+3
+         qBiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741945485; x=1742550285;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6bKs60H+9RBHyzSNlhvZhr5uBt5TPIqP3KyZeHSPjWI=;
+        b=rkks0qWx8TSBjKm6q58QQF4MK7VArY1W27OBdSLtNiPgxTDkKm7jP89UcAe5haMmbw
+         Ag0w5T6MsY/Zx58PYmrXVPZK9w/BydKMvzOHoCeaP1YNOveKlWtjA8b3uWXhxQ2/bd9I
+         umkNrPYdK5FKFf96Q24FWTDbHj/WtJ8z86VOhGi8vQ5o5XoU5OekWD8/EPQW2638S3U5
+         6MuOXG+G/QdrvryYvqG0UxljfxMc1gt5gHmTEp37cXHU15jZXL8nPvvoL99eTly0o/ey
+         3e/0wy2VREqeIwYNetYtdQqODlHJ0iREm+fltnFm1mPjKXhxyUtYmHrsGjTYyyKA3RD7
+         SVqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXAOeykarEb97HM2MNekkfRF50YyHS6rLlwSjGc0JeG7Y5t1twr8+GYdyEVL6M5SlOAWaa+VyC3PTK2eXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGSzuBXmKpwzRfZlWFxHhmscucH+JIMcPHEiglrzfgB5IsSotO
+	2LXSH/vNxv1c1OFwtu8ETVyypkGVICXhMt4W0/Qt0DnpftIe1Xh8xJyqYVC2dC8=
+X-Gm-Gg: ASbGnctytuSxiLeaYIhNps7AllQj+1DN2Y1FOY5HRF1Oz4JwdddN6IjQZiWtQ5aL+6X
+	xgZrRGTeAIoSMF3myY4qJ7zEodXIuZ2IRCebCj5M3vWsJeS8+5L91AufBDfc3m+vuExT89ObFbe
+	ivCGM3ClbNcA1mJKqPpO35DqF6vcIOWdUHUvFbav3Wk74GpSn+ZvKfrXZikXzFscMrLBNCEFx04
+	7MwzxfmupkvevsYPcbbraQo87JAVj1ssV0Lqef01CiVKoYXr7uvhLWGVwkAEVdeufeW8F+3ruAo
+	voZBv3uZuI3qnPS6SYfZ6ZwntGrF2E61YUe66+SHS8eqFcY=
+X-Google-Smtp-Source: AGHT+IFcD6y0zoNmCI6iuafzIQCJbBa2vybewNuTIc8dxrnc0nfOB4ktN/T54yOqElWNf8NH1BsiGQ==
+X-Received: by 2002:a05:600c:6b09:b0:43c:f680:5c2e with SMTP id 5b1f17b1804b1-43d180cef19mr62732545e9.13.1741945485371;
+        Fri, 14 Mar 2025 02:44:45 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8975b34sm5035685f8f.55.2025.03.14.02.44.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 02:44:44 -0700 (PDT)
+Date: Fri, 14 Mar 2025 10:44:43 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: adamsimonelli@gmail.com
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v10 1/1] printk: Add an option to allow ttynull to be a
+ default console device
+Message-ID: <Z9P6i1Caw9SWEO6t@pathway.suse.cz>
+References: <20250314004104.3103656-1-adamsimonelli@gmail.com>
+ <20250314004104.3103656-2-adamsimonelli@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314004104.3103656-2-adamsimonelli@gmail.com>
 
-On Fri, 14 Mar 2025 01:26:51 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+On Thu 2025-03-13 20:41:04, adamsimonelli@gmail.com wrote:
+> From: Adam Simonelli <adamsimonelli@gmail.com>
+> 
+> The new option is CONFIG_NULL_TTY_DEFAULT_CONSOLE.
+> 
+> if enabled, and CONFIG_VT is disabled, ttynull will become the default
+> primary console device, based on the link order.
 
-> @@ -6040,9 +6042,10 @@ static void update_last_data(struct trace_array *tr)
->  		memset(tscratch->entries, 0,
->  		       flex_array_size(tscratch, entries, tscratch->nr_entries));
->  		tscratch->nr_entries = 0;
-> -
-> +#ifdef CONFIG_MODULES
->  		guard(mutex)(&scratch_mutex);
->  		module_for_each_mod(save_mod, tr);
+The result is not longer based on the link order.
+
+The linking order affected the ordering the console initcalls.
+But this patch calls add_preferred_console() directly in console_init()
+before processing the init calls...
+
+I would just remove the ", based on the link order".
+
+> ttynull will be the only console device usually with this option enabled.
+> Some architectures do call add_preferred_console() which may add another
+> console though.
+
+I would add here the following line:
+
+Motivation:
+
+to clearly separate the description of the new behavior from the motivation.
+
+> Many distributions ship with CONFIG_VT enabled. On tested desktop hardware
+> if CONFIG_VT is disabled, the default console device falls back to
+> /dev/ttyS0 instead of /dev/tty.
+> 
+> This could cause issues in user space, and hardware problems:
+> 
+> 1. The user space issues include the case where  /dev/ttyS0 is
+> disconnected, and the TCGETS ioctl, which some user space libraries use
+> as a probe to determine if a file is a tty, is called on /dev/console and
+> fails. Programs that call isatty() on /dev/console and get an incorrect
+> false value may skip expected logging to /dev/console.
+> 
+> 2. The hardware issues include the case if a user has a science instrument
+> or other device connected to the /dev/ttyS0 port, and they were to upgrade
+> to a kernel that is disabling the CONFIG_VT option, kernel logs will then be
+> sent to the device connected to /dev/ttyS0 unless they edit their kernel
+> command line manually.
+> 
+> The new CONFIG_NULL_TTY_DEFAULT_CONSOLE option will give users and
+> distribution maintainers an option to avoid this. Disabling CONFIG_VT and
+> enabling CONFIG_NULL_TTY_DEFAULT_CONSOLE will ensure the default kernel
+> console behavior is not dependant on hardware configuration by default, and
+
+s/dependant/dependent/
+
+> avoid unexpected new behavior on devices connected to the /dev/ttyS0 serial
+> port.
+> 
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 07668433644b..9dd807717cd4 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -4277,6 +4277,11 @@ void __init console_init(void)
+>  	initcall_t call;
+>  	initcall_entry_t *ce;
+>  
+> +#ifdef CONFIG_NULL_TTY_DEFAULT_CONSOLE
+> +       if (!console_set_on_cmdline)
+> +               add_preferred_console("ttynull", 0, NULL);
+
+checkpatch.pl reports that there are used spaces instead of
+tabs in the two lines above. I suggest to use some editor which takes
+care of proper indentation, e.g. emacs or vim and run
+./scripts/checkpatch.pl before sending pathes ;-)
+
 > +#endif
->  	}
+> +
+>  	/* Setup the default TTY line discipline. */
+>  	n_tty_init();
 
-Hmm, I think the real fix for this would be to make
-module_for_each_mod() a nop when modules are not configured.
+With the above changes:
 
--- Steve
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Tested-by: Petr Mladek <pmladek@suse.com>
+
+There is no need to resend this patch unless there are other comments.
+I could make the changes when committing the patch.
+
+Best Regards,
+Petr
 
