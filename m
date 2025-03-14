@@ -1,176 +1,256 @@
-Return-Path: <linux-kernel+bounces-560708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36502A60881
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:54:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB289A60883
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:55:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3369D17EFCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 05:54:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BAD817F094
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 05:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E36149C53;
-	Fri, 14 Mar 2025 05:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45F7151998;
+	Fri, 14 Mar 2025 05:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j+SWCfO5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T43dQIdq"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74ED613B7AE;
-	Fri, 14 Mar 2025 05:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA4B1487D1
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 05:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741931687; cv=none; b=a0yUQN2OaJivr3Ft1UBh5mCyXP7o/tPOl+c0x0tzypz8OWdZf7+gwJ+ZIx8Vndm86pApdDP9Y2gRqWMFKePatPJZUf5cIfFg9CLSGOJ8+pMMs7c4j4E5KBLixfqSsykBv+4p/35mg/GbCSNxAsDG5wZ1pq5NF9mg4y7h3xRxBo8=
+	t=1741931711; cv=none; b=Be2DYRenu6VESSGDSDzYcuuDn8YbZVk8e82Z/4PXgTCjV0YDd4FxZBbdQa+2z+0KWL1wyvnTPv9eIR5gED4fQz9Bikg/QHkKJnslsIU01Ee3Cf9iyvr22Vf/BhTEKdGMv+QsbVqX9a/uaRRDXARPekvH7+nqqGYLAKizp6xsB4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741931687; c=relaxed/simple;
-	bh=3ywO26UG2L26JLK96tkGan86X/b1+caxiIYeGclVZwg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S0ql+Q6edEiCGB++06YpbSmQau0wYs/MFu0NgMwheMyX5RSgoupx62FnjTO6oJr28B7ZCdSUKAjOTueClJ7wNfN5XwysVh4U1YTasIiGv12pyS0uLkbxZaDdGnPuhRiUshGmuK5NNuMIB0m+x70viUW3ALIOBtqLXwJvLxovukY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j+SWCfO5; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741931685; x=1773467685;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3ywO26UG2L26JLK96tkGan86X/b1+caxiIYeGclVZwg=;
-  b=j+SWCfO5bt3BsqlacEqms62Tl6Bsmu4+ZPIDZOaHPFhU3+t0oAfmcRk/
-   hLOJhVzT5qduAEtJexsJVfW4rVcYG4EqV2/U1Ny4fNasWPZSCF5+VB5YZ
-   qWZruTmYbUrKdTtbEeGY3ZZgPXUMcCNL/eeBJrdVhA1taVSjA0tJ5pjQC
-   eWM7fBRuIwJK0NhWwJDQjw8kogaaCx1Piq/kdcxIXFn2Rjky5aBW4PQm3
-   VkHmzf96RaYx0bDd5/U687EBNWDH9nPZoWDl2dNvLVj0ym80qoBF2GuLk
-   covnkxqwkv3Xs+LJSKDDx7PVoWRRUXDZWi9Q4TqldHrsu1rMBGhp+r2F4
-   A==;
-X-CSE-ConnectionGUID: Ypcc2i/+TVeNJvzc7om7+A==
-X-CSE-MsgGUID: TTku93sfS8aS88N55O7Gsw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="42980396"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="42980396"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 22:54:45 -0700
-X-CSE-ConnectionGUID: StOHNbAiRruTmfjSabklTQ==
-X-CSE-MsgGUID: 6Tl881GwSya0uExwGMMMng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="158306835"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 13 Mar 2025 22:54:41 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tsy0E-000A96-2y;
-	Fri, 14 Mar 2025 05:54:38 +0000
-Date: Fri, 14 Mar 2025 13:54:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Antonio Hickey <contact@antoniohickey.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Antonio Hickey <contact@antoniohickey.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] rust: clippy: disable `addr_of!` and `addr_of_mut`
- macros
-Message-ID: <202503141300.7VvqEzvm-lkp@intel.com>
-References: <010001958dfeb4c7-0ed042d2-613b-4023-bb91-0c64f8a84fc9-000000@email.amazonses.com>
+	s=arc-20240116; t=1741931711; c=relaxed/simple;
+	bh=urZDD7SqMI1dPeUfSX17Ch/qC8OVmVTVKPjzd7UPYPg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OOp9CN24/LN9juv675RX9mjy2Uk8RMhS3gjhhjaJeKjh58YFFAsFfvBnA2AvdXK2FAjBYt1tqxE93Q5VVbel2wBTgTaUrESrInFSb1NF7tMFgxetJDs6t6PlJVOQ/DFzgKoyd6Ol5V+Fm5Y597F55oOAk+O9U7SmaEkIBCErYiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T43dQIdq; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2242aca53efso63275ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 22:55:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741931708; x=1742536508; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tyhsHWhKQvd+JYS7FBXku46dzZupP9OzOBkxq4HnRPc=;
+        b=T43dQIdqyp3ytr1kRatF9RVwnfYguJH8eH6Z8hG5m9i5cOottoKMBaATR0yWKSq+34
+         qNVZJ6MuekSYZNME0YEHBB5R5OH5oSl3ZzjKTnt8m/moqURrMyYf/ng61i6O89aAnCgT
+         A41VwfCIKOhW8FelbyC/Htx8DCErw4vjNyv3WOTK6vVetBkdENBDqwAep00dUdVIXF2T
+         q6yU7jJlwhbJobh7poKv6wGkkIXuuzSvWGBPJhDggqvgz06dzNd0O/0OD4BFya7v2/CD
+         0YZQWdDGnPUiUqCRGBnU21y54iYhIrN4CxLfTlPn0HBZqtBKUKtGwZkCqk/v+PPRWL9m
+         O+aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741931708; x=1742536508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tyhsHWhKQvd+JYS7FBXku46dzZupP9OzOBkxq4HnRPc=;
+        b=M54tLlZvk/AwEt8IjPBd41z3OMBwAaJgevVvszYFzJXqajxsedJhhaK3SWic/bpd+2
+         4j9xIORwBW3h/VEUdRPWL5f8pRzhy+KE0MC3oJZMVmFoTtCr6s5S5xoOw69eHHFWU082
+         xKuZesTzP9GsEL2wHdF53on7VbhCGJVRL6dmKqzJsMF8b6QBeQr66V159wn29cKDpq6T
+         AJBc1mBc1D+bq5wFa6zKGimVOEajnNqQSCECmxCPBsE3m0mcwAJhD7ujn3RznF8es7dW
+         wloobQccwYnbtJrtmyGV4EwGu7d8bXtVg8Ar5Ic8IpHfLJ/YjKO6hUXMc9zdfE6UFAYe
+         c6EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3VwrYk7ilvC3kWrMXkGdlxcY2z8AR+jCmREALNN9ZkQvjd2vFkc9ap1GpAsSLDqf8kWYlXfjPwSXzwrc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yykvd2rzxz7UH81JW20OrG+W3EeDwrUPOS4dVtfcoclB2PmCTMh
+	26tyI7cgaZYjC3Lc/5oh1OqxCC087xSejSz5J1lBgu4ruDXIZnu3oaTLYlANaWuUKoDSnBavZOE
+	kn3H55QGbdBzQcJqR/6vjVkvjk39a1kk2D9t2
+X-Gm-Gg: ASbGncvzy1r4XFFsu+aoGOhLDMDDUmMwAbZiNiT896GgJ4QfANr+eUoM/ifoh8m78Ts
+	qsmc1yBuTMYhojmi/KBnwOzItBMylU83QB0VV1jFcGRKmI6YCh+MkOcKbWZRjh/wQacvNyg/HdH
+	ac6dKJ3vKdJ7066K3FLD8Nwyd2Hdc=
+X-Google-Smtp-Source: AGHT+IEgLWIAjxCjYNH0X+NtNqkuwI/bPH4Uumyk01Hxp41RAM67Lx0FYNOYHRHcAIdc8VeJeEOB7hLlngI/eMqwcbI=
+X-Received: by 2002:a17:902:d509:b0:21f:4986:c7d5 with SMTP id
+ d9443c01a7336-225de74a016mr2010415ad.8.1741931708229; Thu, 13 Mar 2025
+ 22:55:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <010001958dfeb4c7-0ed042d2-613b-4023-bb91-0c64f8a84fc9-000000@email.amazonses.com>
+References: <20250122062332.577009-1-irogers@google.com> <Z5K712McgLXkN6aR@google.com>
+ <CAP-5=fX2n4nCTcSXY9+jU--X010hS9Q-chBWcwEyDzEV05D=FQ@mail.gmail.com>
+ <CAP-5=fUHLP-vtktodVuvMEbOd+TfQPPndkajT=WNf3Mc4VEZaA@mail.gmail.com>
+ <CAP-5=fV_z+Ev=wDt+QDwx8GTNXNQH30H5KXzaUXQBOG1Mb8hJg@mail.gmail.com> <Z9NbFqaDQMjvYxcc@google.com>
+In-Reply-To: <Z9NbFqaDQMjvYxcc@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 13 Mar 2025 22:54:57 -0700
+X-Gm-Features: AQ5f1JpmtjskMcZorXzTagF_PQQ_b8arX_0AF-lPzn55eWXEmzSyGiUvOZGlAFk
+Message-ID: <CAP-5=fUdXRv512ZFiQKtxouNzN+HgommWGF3Pje1Tcuxg=J78Q@mail.gmail.com>
+Subject: Re: [PATCH v2 00/17] Support dynamic opening of capstone/llvm remove BUILD_NONDISTRO
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Aditya Gupta <adityag@linux.ibm.com>, "Steinar H. Gunderson" <sesse@google.com>, 
+	Charlie Jenkins <charlie@rivosinc.com>, Changbin Du <changbin.du@huawei.com>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, James Clark <james.clark@linaro.org>, 
+	Kajol Jain <kjain@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Li Huafei <lihuafei1@huawei.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Andi Kleen <ak@linux.intel.com>, Chaitanya S Prakash <chaitanyas.prakash@arm.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	llvm@lists.linux.dev, Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
+	Daniel Xu <dxu@dxuuu.xyz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Antonio,
+On Thu, Mar 13, 2025 at 3:24=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hi Ian,
+>
+> On Wed, Mar 12, 2025 at 02:04:30PM -0700, Ian Rogers wrote:
+> > On Mon, Feb 10, 2025 at 10:06=E2=80=AFAM Ian Rogers <irogers@google.com=
+> wrote:
+> > >
+> > > On Thu, Jan 23, 2025 at 3:36=E2=80=AFPM Ian Rogers <irogers@google.co=
+m> wrote:
+> > > > On Thu, Jan 23, 2025 at 1:59=E2=80=AFPM Namhyung Kim <namhyung@kern=
+el.org> wrote:
+> > > > > I like changes up to this in general.  Let me take a look at the
+> > > > > patches.
+> > >
+> > > So it would be nice to make progress with this series given some leve=
+l
+> > > of happiness, I don't see any actions currently on the patch series a=
+s
+> > > is. If I may be so bold as to recap the issues that have come up:
+> > >
+> > > 1) Andi Kleen mentions that dlopen is inferior to linking against
+> > > libraries and those libraries aren't a memory overhead if unused.
+> > >
+> > > I agree but pointed-out the data center use case means that saving
+> > > size on binaries can be important to some (me). We've also been tryin=
+g
+> > > to reduce perf's dependencies for distributions as perf dragging in
+> > > say the whole of libLLVM can be annoying for making minimal
+> > > distributions that contain perf. Perhaps somebody (Arnaldo?) more
+> > > involved with distributions can confirm or deny the distribution
+> > > problem, I'm hoping it is self-evident.
+> > >
+> > > 2) Namhyung Kim was uncomfortable with the code defining
+> > > types/constants that were in header files as the two may drift over
+> > > time
+> > >
+> > > I agree but in the same way as a function name is an ABI for dlysym,
+> > > the types/constants are too. Yes a header file may change, but in
+> > > doing so the ABI has changed and so it would be an incompatible chang=
+e
+> > > and everything would be broken. We'd need to fix the code for this,
+> > > say as we did when libbpf moved to version 1.0, but using a header
+> > > file would only weakly guard against this problem. The problem with
+> > > including the header files is that then the build either breaks
+> > > without the header or we need to support a no linking against a
+> > > library and not using dlopen case. I suspect a lot of distributions
+> > > wouldn't understand the build subtlety in this, the necessary build
+> > > options and things installed, and we'd end up not using things like
+> > > libLLVM even when it is known to be a large performance win. I also
+> > > hope one day we can move from parsing text out of forked commands, as
+> > > it is slower and more brittle, to just directly using libraries.
+> > > Making dlopen the fallback (probably with a warning on failure) seems
+> > > like the right direction for this except we won't get it if we need t=
+o
+> > > drag in extra dependency header files for the build to succeed (well
+> > > we could have a no library or dlopen option, but then we'd probably
+> > > find distributions packaging this and things like perf annotate
+> > > getting broken as they don't even know how to dlopen a library).
+> > >
+> > > 3) Namhyung Kim (and I) also raises that the libcapstone patch can be
+> > > smaller by dropping the print_capstone_detail support on x86
+> > >
+> > > Note, given the similarity between capstone and libLLVM for
+> > > disassembly, it is curious that only capstone gives the extra detail.
+> > >
+> > > I agree. Given the capstone disassembly output will be compromised we
+> > > should warn for this, probably in Makefile.config to avoid running
+> > > afoul of -Werror. It isn't clear that having a warning is a good move
+> > > given the handful of structs needed to support print_capstone_detail.
+> > > I'd prefer to keep the structs so that we haven't got a warning that
+> > > looks like it needs cleaning up.
+> > >
+> > > 4) Namhyung Kim raised concerns over #if placement
+> > >
+> > > Namhyung raised that he'd prefer:
+> > > ```
+> > > #if HAVE_LIBCAPSTONE_SUPPORT
+> > > // lots of code
+> > > #else
+> > > // lots of code
+> > > #endif
+> > > ```
+> > > rather than the #ifs being inside or around individual functions. I
+> > > raised that the large #ifs is a problem in the current code as you
+> > > lose context when trying to understand a function. You may look at a
+> > > function but not realize it isn't being used because of a #if 10s or
+> > > 100s of lines above. Namhyung raised that the large #ifs is closer to
+> > > kernel style, I disagreed as I think kernel style is only doing this
+> > > when it stubs out a bunch of API functions, not when more context
+> > > would be useful. Hopefully as the person writing the patches the styl=
+e
+> > > choice I've made can be respected.
+> > >
+> > > 5) Daniel Xu raised issues with the removal of libbfd for Rust
+> > > support, as the code implies libbfd C++ demangling is a pre-requisite
+> > > of legacy rust symbol demangling
+> > >
+> > > A separate patch was posted adding Rust v0 symbol demangling with no
+> > > libbfd dependency:
+> > > https://lore.kernel.org/lkml/20250129193037.573431-1-irogers@google.c=
+om/
+> > > The legacy support should work with the non-libbfd demanglers as
+> > > that's what we have today. We should really clean up Rust demangling
+> > > and have tests. This is blocked on the Rust community responding to:
+> > > https://github.com/rust-lang/rust/issues/60705
+>
+> I think #ifdef placements is not a big deal, but I still don't want to
+> pull libcapstone details into the perf tree.
+>
+> For LLVM, I think you should to build llvm-c-helpers anyway which means
+> you still need LLVM headers and don't need to redefine the structures.
+>
+> Can we do the same for capstone?  I think it's best to use capstone
+> headers directly and add a build option to use dlopen().
 
-kernel test robot noticed the following build warnings:
+So I don't disagree. If we have headers but someone wants dlopen,
+let's use the headers and let them use dlopen. Unfortunately the way
+the build is set up isn't for that. The build assumes either:
+1) you have libcapstone and its headers and want to link against it,
+2) you don't have libcapstone and support is just removed.
 
-[auto build test WARNING on rust/rust-next]
-[also build test WARNING on driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus shuah-kselftest/kunit shuah-kselftest/kunit-fixes pci/next pci/for-linus linus/master v6.14-rc6 next-20250313]
-[cannot apply to rust/rust-block-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+In the changes the options become:
+1) unchanged, if you have libcapstone then use the headers and link
+against - this is Andi's preferred approach,
+2) if you don't have libcapstone dlopen is used with constants derived
+from pahole and baked into the sources - much as we do for vmlinux.h
+in BPF programs.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Antonio-Hickey/rust-clippy-disable-addr_of-and-addr_of_mut-macros/20250313-133646
-base:   https://github.com/Rust-for-Linux/linux rust-next
-patch link:    https://lore.kernel.org/r/010001958dfeb4c7-0ed042d2-613b-4023-bb91-0c64f8a84fc9-000000%40email.amazonses.com
-patch subject: [PATCH 2/3] rust: clippy: disable `addr_of!` and `addr_of_mut` macros
-config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250314/202503141300.7VvqEzvm-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250314/202503141300.7VvqEzvm-lkp@intel.com/reproduce)
+One way to achieve what you are asking for is to make the build do:
+1) the link against libcapstone approach that needs the headers,
+2) the dlopen with capstone.h headers,
+but we need a way to build without libcapstone, so we get:
+3) possibly dlopen with pahole derived constants - but if we have that
+then why do 2?
+4) a no support option.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503141300.7VvqEzvm-lkp@intel.com/
+The problem is that if we don't do (3) then (4) will become the no
+libcapstone option and frankly people who care will do (1) and so (2)
+becomes redundant.
+It was intentional doing the changes the way I have so that when you
+don't build with libcapstone, were you later to add the library you
+would gain support for it. This is with the down side of a small
+number of constants being in the code. Potentially these could change
+in the header files, but any such change is an ABI breakage and so
+unlikely to happen. So I think the way the patches have things set up
+is best.
 
-All warnings (new ones prefixed by >>):
-
->> warning: use of a disallowed macro `core::ptr::addr_of`
-   --> rust/kernel/fs/file.rs:334:18
-   |
-   334 |         unsafe { core::ptr::addr_of!((*self.as_ptr()).f_flags).read_volatile() }
-   |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   |
-   = note: use `&raw` instead `addr_of!` (from clippy.toml)
-   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#disallowed_macros
---
->> warning: use of a disallowed macro `core::ptr::addr_of`
-   --> rust/kernel/list.rs:179:34
-   |
-   179 |         unsafe { Opaque::raw_get(ptr::addr_of!((*me).inner)) }
-   |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
-   |
-   = note: use `&raw` instead `addr_of!` (from clippy.toml)
-   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#disallowed_macros
---
->> warning: use of a disallowed macro `core::ptr::addr_of`
-   --> rust/kernel/sync/arc.rs:246:18
-   |
-   246 |         unsafe { core::ptr::addr_of!((*ptr).data) }
-   |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   |
-   = note: use `&raw` instead `addr_of!` (from clippy.toml)
-   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#disallowed_macros
---
->> warning: use of a disallowed macro `core::ptr::addr_of`
-   --> rust/kernel/task.rs:260:29
-   |
-   260 |         let ptr = unsafe { *ptr::addr_of!((*self.as_ptr()).group_leader) };
-   |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   |
-   = note: use `&raw` instead `addr_of!` (from clippy.toml)
-   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#disallowed_macros
---
->> warning: use of a disallowed macro `core::ptr::addr_of`
-   --> rust/kernel/task.rs:272:19
-   |
-   272 |         unsafe { *ptr::addr_of!((*self.as_ptr()).pid) }
-   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   |
-   = note: use `&raw` instead `addr_of!` (from clippy.toml)
-   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#disallowed_macros
---
->> warning: use of a disallowed macro `core::ptr::addr_of`
-   --> rust/kernel/workqueue.rs:406:34
-   |
-   406 |         unsafe { Opaque::raw_get(core::ptr::addr_of!((*ptr).work)) }
-   |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   |
-   = note: use `&raw` instead `addr_of!` (from clippy.toml)
-   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#disallowed_macros
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Ian
 
