@@ -1,63 +1,62 @@
-Return-Path: <linux-kernel+bounces-562048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 707F5A61B4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:01:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49391A61B56
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:01:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC26B420BAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:01:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E92E6881EC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBB72054EE;
-	Fri, 14 Mar 2025 20:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78500205AA9;
+	Fri, 14 Mar 2025 20:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s6yq4ZWt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTtIvoPn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90253204C3E;
-	Fri, 14 Mar 2025 20:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC522054FC;
+	Fri, 14 Mar 2025 20:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741982486; cv=none; b=pDg9XgCra5YujMLRJYYMxChWZeIpSjf8eES0ZCdK+LFJTx1IJVYQcxaT0iGm+cJoelcrtgHGT1SYR20SRgFVAFsrUwFa4D8OhMSxRzCt+KM2AE4ZfVhdc5ZV3iWvoeBg2JfshMfbTiLlN7TI1eYymiNKov8NPuc1hEaBZOs2Fto=
+	t=1741982487; cv=none; b=JwdKdw7E+8eY3p/KHilIduBuYzJAy+bEKySw7jY5hHLXsF/r1RYFEI07e0VlblAUYPjFt69U/npL7PqezRZBGUEkdZqbIjshcaFZzAZZIhTNOSVCOM8kpzoJZIy0yeRifMO5NJWKneZtqI48+YeeIljkpOw3t7UiEIb7VnhToAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741982486; c=relaxed/simple;
-	bh=WBAAZalRYYHWbyXToi/u9v+7v0p2Rb0L9PzP5RRvpH0=;
+	s=arc-20240116; t=1741982487; c=relaxed/simple;
+	bh=7QGZ7xaTf/3SlpzVut2WZXHGuqSjQkoHapFcv4678CY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sr8Cv4ysRAUFVWal38PVm6uY5UPywFxKOFhHxcUQQ/pxyoe0qq6ygYfehFaMHHOUTlqovBTAJDTzA+dlxFHngoFJwKHNEUaTafdwYVfExcNkgf41ujRbY3uNv666vu6Yq523k5yyfaUIDIi4VyC9u3AgL6dQihquPYjxh3l6+a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s6yq4ZWt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40A4DC4CEF0;
-	Fri, 14 Mar 2025 20:01:25 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Z2A3LnzYBIy7jCRzympzdLxjW4SelbQXsXcLuq7N05uReoe2A5PtLKcXQjI6tv21tTh93QVdgyC9E000XAyW5kwfAWEx/Otgxx+ReC6Hla791dwvf2z4IPltqO9JK6OGfqFJg5mvaP+Sg4I8cAQsuS8lGIRB3zEiG3A2Gu7X2YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTtIvoPn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49485C4AF0D;
+	Fri, 14 Mar 2025 20:01:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741982486;
-	bh=WBAAZalRYYHWbyXToi/u9v+7v0p2Rb0L9PzP5RRvpH0=;
+	s=k20201202; t=1741982487;
+	bh=7QGZ7xaTf/3SlpzVut2WZXHGuqSjQkoHapFcv4678CY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=s6yq4ZWt4F9kkb7MftBQo+o4OfMzlRqJHLLufzg8wnxF+GUy7oGpdx7EXkRxhz0yg
-	 9YvX+eXJBNSv23DgOdCqjn6o1ZxJeeL/vwCgJ8uNyh9dLAW5Kuh4qttZxPjN7wKrGN
-	 4W6hVHskeUdMszdBAKZIzI2iTWTBYonpFo+LlaZh73Usda9dakqAyMwS6SMMR9EtZ/
-	 0XNLmYf9WZE1n20bkqWr3JgDadVf73bZwehbznzQf4Ue9wtcfRjt5za+GVfkEVjkVq
-	 bmCuN/591gRPLNNSmj90xjeWMAw8j7MNE0CjQu1r/8xAl2uX2Rr+HmKVY33LUIJaEz
-	 oFvfCIyzYA4mA==
+	b=KTtIvoPn1yIgjBUa0Axhr94P7Y4aUqbPoPyYBb+E2U9v1uGTzq4qsBrUV0d53N29l
+	 AAJ6SOYmrfCXFZjM/7TWekM0iNIxQJKJqsuFEItE8fJlJqYG3ouZyxWpt6JiRDGcoR
+	 /A+eiyVOOyNjgq6i1GBCNIEXWsjxOBQM7tv4eZps98AP+Ogv3E6fZBmLj3XtNd9IEv
+	 lDQ5TZG5P6GGlq8UkMuzOYR1CzA2v1csVOQ2l42cHARa+IU0UCO2L0EGyttPDC3WwF
+	 JSS8HdyKhQD3DxJwahYGyFaetmMerCQu24UylSO7QT3+5Mk5aIXYwKJ6WnI63Wek0p
+	 3X4UvyhGMlwEA==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+To: konradybcio@kernel.org,
+	Alexey Klimov <alexey.klimov@linaro.org>
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	srinivas.kandagatla@linaro.org,
 	linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH v3 0/3] arm64: dts: qcom: x1e78100-t14s: Rework devicetree for LCD and OLED SKUs
-Date: Fri, 14 Mar 2025 15:00:42 -0500
-Message-ID: <174198247901.1604753.2955236264513009210.b4-ty@kernel.org>
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: qrb5165-rb5: add compressed playback support
+Date: Fri, 14 Mar 2025 15:00:43 -0500
+Message-ID: <174198247883.1604753.17086131825024158633.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250314140325.4143779-1-abel.vesa@linaro.org>
-References: <20250314140325.4143779-1-abel.vesa@linaro.org>
+In-Reply-To: <20250228162308.388818-1-alexey.klimov@linaro.org>
+References: <20250228162308.388818-1-alexey.klimov@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,27 +67,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 14 Mar 2025 16:03:22 +0200, Abel Vesa wrote:
-> The Lenovo Thinkpad T14s Gen6 comes in different SKUs when it comes to
-> panels. The only difference that is important is whether it is an OLED
-> or an LCD. The way that backlight is handled in devicetree between OLED
-> and LCD forces the need of two separate DTBs.
+On Fri, 28 Feb 2025 16:23:08 +0000, Alexey Klimov wrote:
+> Audio DSP supports compressed playback on this SoC. It is required
+> to add compressed DAI and separate MultimeMedia DAI link to enable this.
 > 
-> So create a common T14s dtsi that describes everything except the
-> backlight handling, by renaming the existent dts to dtsi. Then make the
-> legacy dts the LCD version, while adding a prepended oled dts. Both
-> include the generic T14s dtsi.
+> Fcplay or cplay tools from tinycompress can playback, say, mp3 files:
+> fcplay -c 0 -d 3 test.mp3
+> 
 > 
 > [...]
 
 Applied, thanks!
 
-[1/3] dt-bindings: arm: qcom: Document Lenovo ThinkPad T14s Gen 6 LCD and OLED
-      commit: 26cc0304d1352a4b1db7d2807cd276ab31e4da05
-[2/3] arm64: dts: qcom: x1e78100-t14s: Add LCD variant with backlight support
-      commit: 31eff589d00b1b41376800ff1322dc88d81f6ee1
-[3/3] arm64: dts: qcom: x1e78100-t14s: Add OLED variant
-      commit: ace6b365cf2a49a3600271186455b1b281babe5c
+[1/1] arm64: dts: qcom: qrb5165-rb5: add compressed playback support
+      commit: e03ed4ee41c054dcfc3fe8d045e016cc0aa3a22a
 
 Best regards,
 -- 
