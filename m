@@ -1,115 +1,105 @@
-Return-Path: <linux-kernel+bounces-562301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2781A62247
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:50:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9CCA62248
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:51:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11E3E42159F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 23:50:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D5554212AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 23:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198BA1F4723;
-	Fri, 14 Mar 2025 23:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E41D1F460B;
+	Fri, 14 Mar 2025 23:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e8ZSGsGf"
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="NFxeQgAk"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1647083D;
-	Fri, 14 Mar 2025 23:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BF0190676
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 23:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741996231; cv=none; b=Pms5yas+2eo8dgWKOIXUbtOcZJAnNzimh80FKvJqkuG4RB/VwxqzNv7vTnm3LFGeV4Q9vBJ8G5FPXld2JtyzhG5+49xl1bJqXsVKPm9xOd8WuzVvgAMqIGlPRBN7nK2bq1B/CrxEQZCmBvJ0zUZV0ODJFx0nsPhBC7gazvtPn34=
+	t=1741996314; cv=none; b=sDnvL8nkPUqKe2CXt2jCzkWOecksswgTyTDTeT4xNPgf5JvVltsDrI9z60KbuGhbdp8wwdZJ2USY0nJcuG6+obxW1Q6ghhp3LNbAI2dOFKT/YNQq0Pri/BDnLISWAnPpER1NuMqI2k9hnfc3QK4PU60MdV6XPnapEcJaCOQ6w1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741996231; c=relaxed/simple;
-	bh=FhaLeXI33H4wC5eS68es3oEBN2a+09QOjpgGG+TYMwk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tYwRGPw+Py/EhLO2qL+S7c3UUho/LHcgzFZGYka00OpqHuCUNwMJlc2FY+9N5Kv6yfLCl519/LdxXKfjFdBZlqornDVisby0JsCB853iYQ7U9XJWKxbmTbNs2mFwoOzX6NCvuBIMksVUhgV45JCL5c0YABdSAktjanWAgNEaTyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e8ZSGsGf; arc=none smtp.client-ip=209.85.218.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-ac2bfcd2a70so356434966b.0;
-        Fri, 14 Mar 2025 16:50:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741996228; x=1742601028; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FhaLeXI33H4wC5eS68es3oEBN2a+09QOjpgGG+TYMwk=;
-        b=e8ZSGsGfz1z/sjEOhaltzzNYe7H+t1MtcZV+143F/t3uYWmEqmsqVrsywUVcF/xeX/
-         IDncvcV1bggSz7/ShnXuR8oWcROf+VIiDye4lHhqwpmjNNQXDShzNLIQxjyY7rmhsmaR
-         qiB4uUGNWzDLiphPpUTJFU+Pouipd76BSbHUhUuSgOqzTQe679zeIU8TPANBo6khdVHx
-         sGSQMT81TWJr8JQY+58aP/xHqPObIcqfhzhbrT7VNGV2gryYAzOFHivHRZEI0+M4Oo3U
-         nu3NC4W7R3a2I7SVjSD1Xu/QnEMlJBdrotQfr1/oTqxKmJtTzxT8Io7oKYns/L3IUObm
-         iUug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741996228; x=1742601028;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FhaLeXI33H4wC5eS68es3oEBN2a+09QOjpgGG+TYMwk=;
-        b=d40vdrckQzK/ZSOw+ACPrFLcCH2k8KuIOcvbF0gU++HMqxJ8dg6OEM4HtQbifvtuse
-         Hw2vAD0tISqIReXyxg7wvTOxhraJfrKQ/kv7fifgAwztQqpdZ+rkWkx3fnMMfVhF7KWb
-         U10Zq//op4qj0+vR97e75M6HlJSRusW/gTkNNS9d8+XBfzP5S1Bj9VJRNpOBdE+/Y5qJ
-         bT6IR2RHj0kqVkA/di99fTdmsOEdQ1GTOHIhW7jDYzk9ujwCC0+ffkafctFeRlLgH6FY
-         4R2b027gfYAg76s3vIkedHYNDqOtkusE3nbrvQxqJvcKRZFZOKKjGqrXAOEXSKkbbxyr
-         a5fA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnDlf/3ZTewg+egkYpdO4+s11jw4BCqrj1eR+Cxs95gCDxhn+ynZz91B189CjJeqcjT+2H8+qSKW9SvLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu2WkoyMaS9C8hNsj7Kq7CfNBsrKWVDSaJEqV01BVv9xYx0zkW
-	gWZ6CCGhMh1zSberVrPcdfCDStNsG7qvujkY3oupWLl6e6ZIXIarbk/CT3wqXk40+zwCmpu7f0S
-	HkE3eSpuUF26pD3Q4l0dnRR91cAyLWg24mC0=
-X-Gm-Gg: ASbGnctvAtCnPb0MZp8gENe7IoxHfB1m64liYTqwZSwrUVD2YXJN0BaW+8iHRFDQd29
-	pxrn5Y8oMo80mv/mMrMVa0gn0i82iPcB+zJpUSZzaGMPKG7hlE/D6pGtYPHrF+pNdGLbcHCKDAh
-	k3yZsfte+mUypmPUj6QCv2yhasC2zLf3Qgz20IwpQ6kq0Ih3X5b5dChPqLDw==
-X-Google-Smtp-Source: AGHT+IFseiObElwtIvtwwHdh6W2D/y7AiXA+tiz3sPg/0iJkCw16MaB9jRCfbh+AF0S93nY9BT48BWskRpDCmzUJ804=
-X-Received: by 2002:a17:907:3f9a:b0:abf:68b5:f798 with SMTP id
- a640c23a62f3a-ac3301e1c42mr425515866b.9.1741996227456; Fri, 14 Mar 2025
- 16:50:27 -0700 (PDT)
+	s=arc-20240116; t=1741996314; c=relaxed/simple;
+	bh=p0Pj9tcQG6GfXZFp5IfdT5bVi4hWdGazLlS6zlwcJK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C72YtEERvYXyCpP7UTpwKaWPe9X1qiC/zoD4bSqOU9ilY8PYj999NZDiK/xXPcsSLW3+0etUemByh5FCv3o/MyNVhEcFyB6Aj2rS4GAP2OdExAO2Bgxwn4/MPsjkQNW0iHssqxcpZKvBttm7cKOrxbwZ2fjfHhB81NxSY0uORpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=NFxeQgAk; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+Date: Fri, 14 Mar 2025 19:51:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1741996309;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P0BbUbAG3eg70hP8/1CroK/Kf34mgOD7Ll45eATb+8I=;
+	b=NFxeQgAk/R//VsAghYt8xhZSxiEQfPlmN19UgK3B030JQ8DgU2qLncAavMBApOJvK5h5lg
+	FUI5N99t4GbrKAlZJktXynUCkOGRuTdDJO+6pTR+vnBMnEg2gyTzcvSnu8Z6AeMVQhUdCe
+	G/CygyehVX9vYdfN1LvodihTLRmi16FtkLWVdvudJpaumAGt4A6HbhqFCQ0WA8bXBghD0a
+	FaY2zdPIg22BU+zEcb1/4T24fLmnLXnoNfEToknIWMRMU6gDUUQOti7EI4zXgs4O/Y7paf
+	zr+w5Yo/Fw2B8LmI1cejA0u0Erz9SM016vXwFJNqetok9RyACi6XuJE+f6ly1w==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+To: Qasim Ijaz <qasdev00@gmail.com>
+Cc: marcan@marcan.st, fnkl.kernel@gmail.com,
+	Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu: apple-dart: fix potential null pointer deref
+Message-ID: <Z9TBEAJkOrHIWype@blossom>
+References: <20250314230102.11008-1-qasdev00@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303152305.3195648-1-memxor@gmail.com>
-In-Reply-To: <20250303152305.3195648-1-memxor@gmail.com>
-From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date: Sat, 15 Mar 2025 00:49:51 +0100
-X-Gm-Features: AQ5f1Jqb8X_ecTpFBQJRSB2pLw8-43_Uphf1mm0uCmpV5lZuYqh9UnxBIZQL3Zc
-Message-ID: <CAP01T75iEw0mU6LeigHMp06DGsgZHp7UWY422xZtX1U7tVHa0Q@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 00/25] Resilient Queued Spin Lock
-To: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Will Deacon <will@kernel.org>, Waiman Long <llong@redhat.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Tejun Heo <tj@kernel.org>, Barret Rhoden <brho@google.com>, 
-	Josh Don <joshdon@google.com>, Dohyun Kim <dohyunkim@google.com>, 
-	linux-arm-kernel@lists.infradead.org, kkd@meta.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250314230102.11008-1-qasdev00@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 3 Mar 2025 at 16:23, Kumar Kartikeya Dwivedi <memxor@gmail.com> wrote:
->
->
+Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
 
-Hello,
-
-In v4, we will fix a couple of issues noticed in patchwork, where the
-locktorture patch breaks bisection and needs to be ordered after the
-Makefile change (patch 17 and 18 need to be swapped), but the biggest
-change is that we will move rqspinlock implementation under
-kernel/bpf/ to make it clear that it should be used by the BPF
-subsystem only.
-
-Thanks
-
->
-> Introduction
-> ------------
->
-> This patch set introduces Resilient Queued Spin Lock (or rqspinlock with
-> res_spin_lock() and res_spin_unlock() APIs).
->
-> [...]
+Le Fri , Mar 14, 2025 at 11:01:02PM +0000, Qasim Ijaz a écrit :
+> If kzalloc() fails, accessing cfg->supports_bypass causes a null pointer dereference. 
+> 
+> Fix by checking for NULL immediately after allocation and returning -ENOMEM.
+> 
+> Fixes: 3bc0102835f6 ("iommu: apple-dart: Allow mismatched bypass support")
+> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+> ---
+>  drivers/iommu/apple-dart.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
+> index 13ccb801f52a..e13501541fdd 100644
+> --- a/drivers/iommu/apple-dart.c
+> +++ b/drivers/iommu/apple-dart.c
+> @@ -797,12 +797,11 @@ static int apple_dart_of_xlate(struct device *dev,
+>  
+>  	if (!cfg) {
+>  		cfg = kzalloc(sizeof(*cfg), GFP_KERNEL);
+> -
+> +		if (!cfg)
+> +			return -ENOMEM;
+>  		/* Will be ANDed with DART capabilities */
+>  		cfg->supports_bypass = true;
+>  	}
+> -	if (!cfg)
+> -		return -ENOMEM;
+>  	dev_iommu_priv_set(dev, cfg);
+>  
+>  	cfg_dart = cfg->stream_maps[0].dart;
+> -- 
+> 2.39.5
+> 
 
