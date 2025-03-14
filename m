@@ -1,203 +1,209 @@
-Return-Path: <linux-kernel+bounces-562125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2FFDA61CC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:33:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD985A61CC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:34:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F8713BDAFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:33:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA3243BDD0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD74A204099;
-	Fri, 14 Mar 2025 20:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A50204C2B;
+	Fri, 14 Mar 2025 20:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P+XftbNk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BiYyAKxa"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC3313F434
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 20:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDEF202C30
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 20:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741984427; cv=none; b=U4jaO4b17G1v1h+tVeAsdI2lJOtuc3rTREgg9Ja9gYeIMouyD5WgiG28E8hNLBSaHS7iNOr0vjggzQRFvDybCrzS/HQaBZNkwVS97998qEBS9UxFy2pSAIXd2rCy428+s4YYAQuC5INmHkYzxPvuJOe5Z3BVcpsH6MK920fzX1E=
+	t=1741984456; cv=none; b=oQNMHsR96ul2ResqY16LtCgdN5P/FK4FiyH6uVwRhbN988OfwgMeC6jIjiPs1xsURtrYGQDcXLISoAjHU1CVelxmFESV2af6ScR3cp7GoeWDiyDn4cxflb1H6n9SA9e1/7rd/i9VhGyk3zWHvJn6LO7oX/uCoK/vTGDVnuxzABI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741984427; c=relaxed/simple;
-	bh=iQIsLNCRfj0lf5B/k9Tmzx0GpzuIboL4obpgXOujCuE=;
+	s=arc-20240116; t=1741984456; c=relaxed/simple;
+	bh=c4wwXFuyd+09V8nYlFwZSaI4yQEVtJ2TGuKQbNyPRfA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i3pxwDYz3lI5zXBwkCG/9T4Qscn6KR7M/LNeouWJ7g3luFlSRLjrgDYrQroChnIZfAaxkDzwYrjiqRGjU/OsPJ/wlOjpWPiZARCbSuglHK/Bel8S1X/Ks+rIjsbxXAJURp04tdJJ2Y0V2b6T9vEey1kCYh7JA5iwSN9DtKu7meM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P+XftbNk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741984424;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bAErkp/IHtDQnLH6rRtdc4nR2qwmpdZc0Xlsth8r74U=;
-	b=P+XftbNk7clGLoyYakR5FQ4v0ReJcBEoP2diUQjqk7e9ussV3ZtpnSFpN7im983ro9sKRI
-	I9Y2DSyQD6rJJRPkEhKfO5gfe6pNHAHRd6V1fXAUj2PUZMQpLacuLj7YF+E8mZ/+0adYeK
-	/JTkKwcVDrKo/qJ8EQfzyccS6tM7npM=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-587-PhFp1sCnONigrctp0ximNA-1; Fri, 14 Mar 2025 16:33:42 -0400
-X-MC-Unique: PhFp1sCnONigrctp0ximNA-1
-X-Mimecast-MFC-AGG-ID: PhFp1sCnONigrctp0ximNA_1741984421
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-30c4fd96a7bso4293651fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:33:42 -0700 (PDT)
+	 To:Cc:Content-Type; b=EqnLarVcw09EEHlwoDxlnqxZEu+l6HZ9B5+KrwOz5QnyyMX0NVzRjiUZIcN9MmB0Ckok9UdKhckDs0upTWRav/KeCoJN4FTCQYPdxI0NFRp38yZiUq44twRSZR3wqBvljxtPtFgw8zhNM35PTaUEldKgtuIxinpRVbMIfWWZi8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BiYyAKxa; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2242ac37caeso39955ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:34:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741984452; x=1742589252; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a9Yo0jce7GsP33A0Q9dWejB0soHGZhgKYNgRPCzK2O8=;
+        b=BiYyAKxaP6RgUoWVRpwm0ikmve5UwQevwQmc1fMNO/KW17GgsN1e/7j2jgp1CYLdjg
+         HcLbxlvtIRrLoNvq3BBgix8G1YclkE6vWKDZIuVi649eGgeSj8EkvclSKATSgL400q1a
+         9DIWjusN97sajLYokL+fi6fgua78fnDdgOhS3iXKcb51l3n3uI9OwPkf63OktbPmnEM9
+         4FQnyJVK97XzQoNR6Qg/MIzYU1RnX6OnjFr4nshks3+cDT2qH9UrX4oE92uxSuzmxmnu
+         F2EetlS2XwBdjAOxARhk7PYirQcVPo/7UXoDwj47dsk72p2IkQCKbESLjQFHpcDjuasj
+         Z8ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741984421; x=1742589221;
+        d=1e100.net; s=20230601; t=1741984452; x=1742589252;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bAErkp/IHtDQnLH6rRtdc4nR2qwmpdZc0Xlsth8r74U=;
-        b=fDBIGAWHFrECNYapIZ25ivHPi6kUQSIIgKXmoOjrYLTAYqngX0By6bAg7vfn3nRpkQ
-         oWybSb9l5jIqzLrDOL4XvvRju7w+WbLR0itOx4sNRjrGySiyE/dVl3cbreqYYdTmkQ3U
-         dkjQ3qhyD3ZeQKQn0c0q4XW6xe8/w9yIJi5MtdBc2pRj0NvDGBotrRbkrCXr0dRt/1Y6
-         uPECIV3GPjzpmbHqiH4qhhpbyA/CUo6j3jEovQIgiXAioBaYtWT1bgUovvFi2dTip5I+
-         2B0xwqfy+oFqePnIzXjEnOx45psA+tcahNuDFh6I4Mtb7L8SPyRP8wVgRdvFNJqPhNr/
-         E5Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCXw8injfhV+ao7rgDBhdIcTE6WK2pPO4povBFcKO9xYUoSbjJV2cZVxRnvC8/Y2CuHL9zh0u7flcH0wwyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCWzNfPZX+nbaGsEV893f5DK7NfPgR7XzhhxDkLg6fme0E3iuu
-	LXUB4nbXayu3xdv6WjKk9lqhUbOn2FXqz6AEtunkFWBGMXS9L1ROIh9VXgDJyyrzvJPutQW2sT8
-	dtRvDkeR7rch9mbPiYvsNOHyTsZPbI91VZ5HguCjiacSXvuDEIXuWojxqfRUZboq1EjTYoob+Cu
-	tRs1AY5qvv+gLRLOqkl4GLLiXvQzRdiHrWZceL
-X-Gm-Gg: ASbGncv+n0U60IREsnM7DSqAv20szgC9I6i+ePD6uESdYcLf3T3+auPTso8c2M11eJJ
-	8bdwwc3Mr4xluvj10CtpyYVbp0mNGnhpWflmhT2YJQ43PLqr7dFVAyhVwZuyXrTY1gJu4OEIwNJ
-	TRT8/NBRrY640vmU/8P75zKh1Sh44wuQ==
-X-Received: by 2002:a2e:a7c1:0:b0:30c:160b:c741 with SMTP id 38308e7fff4ca-30c4a74da1amr14129351fa.6.1741984420863;
-        Fri, 14 Mar 2025 13:33:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFmMV19jLgRxYwpf6HS3XIPOuRMlTpE74qaKThr7BSzT6rHOSH1XcLwVctEIyqGMZy7eFruCuehw2n955y/yT8=
-X-Received: by 2002:a2e:a7c1:0:b0:30c:160b:c741 with SMTP id
- 38308e7fff4ca-30c4a74da1amr14129241fa.6.1741984420441; Fri, 14 Mar 2025
- 13:33:40 -0700 (PDT)
+        bh=a9Yo0jce7GsP33A0Q9dWejB0soHGZhgKYNgRPCzK2O8=;
+        b=R0cncM5jzzMMEK7vIFQE2Iv5xopwLsnTznCpeiCqAn8LWreOG6HgH4ffhwtLN6S6EG
+         5/Gi5RzCQnx2p2eqDvv5VQ/Nn6X9yyPC8pLQcHvFzrVMUMwy+gUCmtHwMdf91db/F3Tl
+         PUAlhI5rE2RoEfzkS4up2CM3vDuPbIzag2qHsTL7zzuDyQWLcwZF3affCbl5Jk/7tJMH
+         /eRcEbM4ofWqt4+tKlJgEhnfXztd20V00ULBx9v8hVli9VUC1fX7OdP689wpDochaOPW
+         53BsiIZ6I6VZHR9EszEMJ5qiuu90FTAvdThVrXqWRx+NaPHANtwD3Ax3HudfhQKjLm8c
+         T8/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVIeNGiUIwkSys+uAO4x2dPAFuPLJwuZu4Nfl0pBk0JHx9AZVVnTRsBRZnDihfXCrXPzaJVTQJrx+a5De8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOCSNg3xcLFuJI+iBaiTOLJIygHdLr/Xt5S0eBQEAMv6CE8UrB
+	DadSRvG936YzSdUgEj+x5qv3fvDpgxpNXjPa/CwHhVMAUcjMTiOwbwLK/LY4SFJsR+ylzFvxM/1
+	pIsyajjnt2lSqzCM4S4TQaTRvuoRwjsp/464t
+X-Gm-Gg: ASbGncs0VgdD1fpG7QjTGmK0OywSGgqKzTUPNObH3f0SpjNT2ZrtJCTnZ6G7yZUwxg+
+	S31d90TWBDjQFid1vGa46qQ320DXU87E6RirNdrc+OwnMHdnDOGWU7OL7U8avGiAii7LV60piTm
+	pyc4Sa8W5UjgmF1Fy511Z7AEW9xEscdAf42mMfkoMdZcWp+JKgIErZ8KI=
+X-Google-Smtp-Source: AGHT+IH8lndJdL7NKJPYr5hvLG6zZyAsU+28Sd0KOcd1NkXO/cXOf7zDj6pw0lueMe4InFY+SymZ15Oxm8ynkeetjBg=
+X-Received: by 2002:a17:903:2f82:b0:21f:3c4a:136f with SMTP id
+ d9443c01a7336-225f3eb05e9mr547905ad.28.1741984451984; Fri, 14 Mar 2025
+ 13:34:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250314175309.2263997-1-herton@redhat.com> <20250314175309.2263997-2-herton@redhat.com>
- <CAHk-=wj2MhDH_zjnyrUhYUf3ZqokC-jKSeRp9G6GnhwFU9z+Hg@mail.gmail.com>
-In-Reply-To: <CAHk-=wj2MhDH_zjnyrUhYUf3ZqokC-jKSeRp9G6GnhwFU9z+Hg@mail.gmail.com>
-From: Herton Krzesinski <hkrzesin@redhat.com>
-Date: Fri, 14 Mar 2025 17:33:29 -0300
-X-Gm-Features: AQ5f1JpAzkeh3xNGYnQlxoF50Om_DmXK5IGc21H2hdhQ9q-WbyPRWMspr_1NPZ8
-Message-ID: <CAJmZWFFVL++yU1XJLkXSck=GRQXiim16xVSvdxjq1k=c=Aaiqg@mail.gmail.com>
-Subject: Re: [PATCH] x86: add back the alignment of the destination to 8 bytes
- in copy_user_generic()
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, linux-kernel@vger.kernel.org, 
-	olichtne@redhat.com, atomasov@redhat.com, aokuliar@redhat.com
+References: <20250122062332.577009-1-irogers@google.com> <Z5K712McgLXkN6aR@google.com>
+ <CAP-5=fX2n4nCTcSXY9+jU--X010hS9Q-chBWcwEyDzEV05D=FQ@mail.gmail.com>
+ <CAP-5=fUHLP-vtktodVuvMEbOd+TfQPPndkajT=WNf3Mc4VEZaA@mail.gmail.com>
+ <CAP-5=fV_z+Ev=wDt+QDwx8GTNXNQH30H5KXzaUXQBOG1Mb8hJg@mail.gmail.com>
+ <Z9NbFqaDQMjvYxcc@google.com> <Z9RiI9yjpMUPRYZe@x1>
+In-Reply-To: <Z9RiI9yjpMUPRYZe@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 14 Mar 2025 13:34:00 -0700
+X-Gm-Features: AQ5f1Jp2oSwzsxV6loOKp3swePrskzYf2sJiobz94hX3O8DCQYyq7eJZBKLjY0k
+Message-ID: <CAP-5=fVGV=dbidHic4ae6EHV4cLF2M11wD17LsWntvhq_fcVTw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/17] Support dynamic opening of capstone/llvm remove BUILD_NONDISTRO
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Aditya Gupta <adityag@linux.ibm.com>, "Steinar H. Gunderson" <sesse@google.com>, 
+	Charlie Jenkins <charlie@rivosinc.com>, Changbin Du <changbin.du@huawei.com>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, James Clark <james.clark@linaro.org>, 
+	Kajol Jain <kjain@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Li Huafei <lihuafei1@huawei.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Andi Kleen <ak@linux.intel.com>, Chaitanya S Prakash <chaitanyas.prakash@arm.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	llvm@lists.linux.dev, Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
+	Daniel Xu <dxu@dxuuu.xyz>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 14, 2025 at 4:06=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Fri, Mar 14, 2025 at 10:06=E2=80=AFAM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
 >
-> On Fri, 14 Mar 2025 at 07:53, Herton R. Krzesinski <herton@redhat.com> wr=
-ote:
-> >
-> > --- a/arch/x86/include/asm/uaccess_64.h
-> > +++ b/arch/x86/include/asm/uaccess_64.h
-> > @@ -130,7 +130,7 @@ copy_user_generic(void *to, const void *from, unsig=
-ned long len)
-> >                 "2:\n"
-> >                 _ASM_EXTABLE_UA(1b, 2b)
-> >                 :"+c" (len), "+D" (to), "+S" (from), ASM_CALL_CONSTRAIN=
-T
-> > -               : : "memory", "rax");
-> > +               : : "memory", "rax", "rdx", "r8");
+> On Thu, Mar 13, 2025 at 03:24:22PM -0700, Namhyung Kim wrote:
+> > I think #ifdef placements is not a big deal, but I still don't want to
+> > pull libcapstone details into the perf tree.
 >
-> Please don't penalize the caller with the extra clobbers.
+> > For LLVM, I think you should to build llvm-c-helpers anyway which means
+> > you still need LLVM headers and don't need to redefine the structures.
 >
-> Maybe it doesn't matter - these functions are marked always_inline,
-> but they aren't inlined in very many places and maybe those places
-> have registers to spare - but let's not penalize the FSRM case anyway.
+> > Can we do the same for capstone?  I think it's best to use capstone
+> > headers directly and add a build option to use dlopen().
 >
-> And we do call it "rep_movs_alternative", so let's keep it close to
-> "rep movs" semantics (yes, we already clobber %rax, but let's not make
-> it worse).
+> My two cents: if one wants to support some library, then have its devel
+> packages available at build time.
 >
-> As to the actual change to rep_movs - that should be done differently
-> too. In particular, I doubt it makes any sense to try to align the
-> destination for small writes or for the ERMS case when we use 'rep
-> movsb', so I think this should all go into just the ".Llarge_movsq"
-> case.
+> Then, perf nowadays has lots of dependencies, we need to rein on that,
+> making the good to have but not always used things to be dlopen'ed.
 >
-> .. and then the patch can be further optimized to just do the first -
-> possibly unaligned - destination word unconditionally, and then
-> updating the addresses and counts to make the rest be aligned.
+> Like we did with gtk (that at this point I think is really deprecated,
+> BTW).
 >
-> Something ENTIRELY UNTESTED like this, in other words. And I wrote it
-> so that it doesn't need any new temporary registers, so no need for
-> clobbers or for some save/restore code.
+> gdb has prior art in this area that we could use, it is not even a TUI
+> but it asks if debuginfo should be used and if so it goes on on
+> potentially lenghty updates of the local buildid cache they keep (which
+> is not the one we use, it should be).
 >
-> NOTE! The patch below is very intentionally whitespace-damaged.
-> Anybody who applies this needs to look at it very carefully, because I
-> just threw this together with zero testing and only very limited
-> thought.
+> And in the recent discussion with Dmitry Vyukov the possibility doing a
+> question to the user about a default behaviour to be set and then using
+> .perfconfig not to bother anymore the user about things is part of
+> helping the user to deal with the myriad possibilites perf offers.
 >
-> But if it works, and if it actually improves performance, I think it
-> might be a fairly minimal approach to "align destination".
+> gdb could use that as well, why ask at every session if debuginfod
+> should be used? Annoying.
+>
+> I think perf should try to use what is available, both at build and at
+> run time, and it shouldn't change the way it output things, but should
+> warn the user about recent developments, things we over time figured out
+> are problematic and thus a new default would be better, but then obtain
+> consent if the user cares about it, and allow for backtracking, to go
+> and change .perfconfig when the user realises the old output/behaviour
+> is not really nice.
+>
+> But keeping the grass green as it used to be should be the priority.
 
-It does look good in my testing here, I built same kernel I
-was using for testing the original patch (based on
-6.14-rc6), this is one of the results I got in one of the runs
-testing on the same machine:
+So I don't understand what you are saying. If I have libcapstone
+installed should the build link against it or just use its headers for
+dlopen? Is declaring structs/constants to avoid needing the library
+acceptable?
 
-             CPU      RATE          SYS          TIME     sender-receiver
-Server bind   19: 20.8Gbits/sec 14.832313000 20.863476111 75.4%-89.2%
-Server bind   21: 18.0Gbits/sec 18.705221000 23.996913032 80.8%-89.7%
-Server bind   23: 20.1Gbits/sec 15.331761000 21.536657212 75.0%-89.7%
-Server bind none: 24.1Gbits/sec 14.164226000 18.043132731 82.3%-87.1%
+The patches as they are will link against libcapstone if it's
+installed (just as currently happens) if not it will try to use dlopen
+at runtime, if that fails then you get the current no libcapstone not
+available at build time behavior. To support this a minimal amount of
+structs and constants are necessary. See here:
+https://github.com/googleprodkernel/linux-perf/blob/google_tools_master/too=
+ls/perf/util/llvm.c#L21-L58
+https://github.com/googleprodkernel/linux-perf/blob/google_tools_master/too=
+ls/perf/util/capstone.c#L23-L132
 
-There are still some variations between runs, which is
-expected as was the same when I tested my patch or in
-the not aligned case, but it's consistently better/higher than
-the no align case. Looks really it's sufficient to align for the
-higher than or equal 64 bytes copy case.
+The patches try to make it look as though the same function exists
+with dlopen or directly calling by turning for example "cs_disasm"
+into:
+```
+static size_t perf_cs_disasm(csh handle, const uint8_t *code, size_t code_s=
+ize,
+uint64_t address, size_t count, struct cs_insn **insn)
+{
+#ifdef HAVE_LIBCAPSTONE_SUPPORT
+return cs_disasm(handle, code, code_size, address, count, insn);
+#else
+static bool fn_init;
+static enum cs_err (*fn)(csh handle, const uint8_t *code, size_t code_size,
+uint64_t address, size_t count, struct cs_insn **insn);
 
->
->             Linus
->
-> ----
->
->    arch/x86/lib/copy_user_64.S | 17 +++++++++++++++++
->    1 file changed, 17 insertions(+)
->
->   diff --git a/arch/x86/lib/copy_user_64.S b/arch/x86/lib/copy_user_64.S
->   index fc9fb5d06174..1c3090af3807 100644
->   --- a/arch/x86/lib/copy_user_64.S
->   +++ b/arch/x86/lib/copy_user_64.S
->   @@ -74,6 +74,23 @@ SYM_FUNC_START(rep_movs_alternative)
->         _ASM_EXTABLE_UA( 0b, 1b)
->
->    .Llarge_movsq:
->   +     /* Do the first possibly unaligned word */
->   +0:   movq (%rsi),%rax
->   +1:   movq %rax,(%rdi)
->   +        _ASM_EXTABLE_UA( 0b, .Lcopy_user_tail)
->   +        _ASM_EXTABLE_UA( 1b, .Lcopy_user_tail)
->   +
->   +     /* What would be the offset to the aligned destination? */
->   +     leaq 8(%rdi),%rax
->   +     andq $-8,%rax
->   +     subq %rdi,%rax
->   +
->   +     /* .. and update pointers and count to match */
->   +     addq %rax,%rdi
->   +     addq %rax,%rsi
->   +     subq %rax,%rcx
->   +
->   +     /* make %rcx contain the number of words, %rax the remainder */
->         movq %rcx,%rax
->         shrq $3,%rcx
->         andl $7,%eax
->
+if (!fn_init) {
+fn =3D dlsym(perf_cs_dll_handle(), "cs_disasm");
+if (!fn)
+pr_debug("dlsym failed for cs_disasm\n");
+fn_init =3D true;
+}
+if (!fn)
+return CS_ERR_HANDLE;
+return fn(handle, code, code_size, address, count, insn);
+#endif
+}
+```
+That is with the library linked it is just a direct call otherwise
+dlopen/dlsym are used. This means that the perf code using the library
+is unchanged except turning "cs_disasm" into "perf_cs_disasm" and we
+can unconditionally assume the perf_cs_disasm function will be
+available.
 
+If we don't create the structs/constants ourselves, which I think is
+where controversy lies, then any function that calls cs_disasm needs
+to handle a situation where there is no cs_disasm at build time. I was
+trying to avoid this clutter in the code and just have things at the
+library boundary. The structs/constants become necessary as we can't
+assume we have access to the header file to support perf's current
+build.
+
+Thanks,
+Ian
 
