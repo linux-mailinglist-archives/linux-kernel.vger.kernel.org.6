@@ -1,186 +1,176 @@
-Return-Path: <linux-kernel+bounces-561976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50FF3A6199C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:37:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA26EA61992
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:36:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8637D1753FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:37:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A0033AD7D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3C6204C20;
-	Fri, 14 Mar 2025 18:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE45F1F3BAE;
+	Fri, 14 Mar 2025 18:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NT6pFdoO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tj0Xakmu"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2069.outbound.protection.outlook.com [40.107.92.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B601F3BAE
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741977425; cv=none; b=VbuaiX3MzqIl/w82O6Q+rmt+A9Hb/+uZfgGzItEu3dLgbE+Hj2KKTuBjJ1KW8+kXdKPEYeU+u2Ag3Fw/itCuZPKEn9JNoqe6E5sf4JZx20s3FiQTiBvX1K/HkCQWe8GBAjmzvtuNtZ2272Zsiz9ILH5X5EFqZL4f04dOSVYXIlw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741977425; c=relaxed/simple;
-	bh=gGjnehE79EwVbZmtu+ygVi03xKqX8gTkTcXvfkXxfFM=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Jba4CF8qKZGGX8cGZr5wZMV4aBLrtcEfKlZZfgjMe6MT9860eYQMm8SD+oVTHSAQdQqCq4buE7G46VPAulrmQ4T8omouW3mzmbqnTl/u6uKh0DK+xlzHtNqKbsTsjoc+BjAj7lVXRs2cx6lqX5SWAdX9zgZUzlLTfIwzPlfepdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NT6pFdoO; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741977423; x=1773513423;
-  h=date:from:to:cc:subject:message-id;
-  bh=gGjnehE79EwVbZmtu+ygVi03xKqX8gTkTcXvfkXxfFM=;
-  b=NT6pFdoOG/4iFZI55RIxzG3O7qwwPExA+Huo8eOgIkUG9W/590x3lAUC
-   uQ3P7EfE0Ene1Q7cztVNJY0zigxhlzBL0lqP0uRqcPIjM8pMYww0L2/Am
-   MrXbKsenWYMhcikfWsF899f7QFbT4ylo7Ai0SbgNA1eHJg44NcUSJhMln
-   3Qy4U6QrQxHIFal6nVL60V+d6ysmYbo8PqRUY+CzRpBcslBLPkw8mriZh
-   +5YwSymE5dZjrOXrQnpvWE1larsTbGaYZqNo/FGlGD8QBpNXPK5qVlYNh
-   9jylHXwd06yypR+P/qfLmeIPhMF/s0+ac0n/9iyToqiIcoE8YORpEHAcJ
-   g==;
-X-CSE-ConnectionGUID: pqmSNcyIQJOEXbV4gOgBpw==
-X-CSE-MsgGUID: tFPSeZGXQSyndUAoZJWgXQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="42871865"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="42871865"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 11:36:58 -0700
-X-CSE-ConnectionGUID: rpRDxQZ8Q/Sk0irMFf0c5w==
-X-CSE-MsgGUID: WLWg0BlZRDSmXlFR2hLoaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="121083175"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 14 Mar 2025 11:36:57 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tt9tv-000Ajz-1E;
-	Fri, 14 Mar 2025 18:36:55 +0000
-Date: Sat, 15 Mar 2025 02:36:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/fpu] BUILD SUCCESS
- 2883b4c2169a435488f7845e1b6fdc6f3438c7c6
-Message-ID: <202503150204.gFqSowLP-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B24A2E3389
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741977397; cv=fail; b=cDtt+upMFnftSIB+F30hI6d+efiNhafXS6aD4pWoIJrwcKzRKxUdIt66c+/WT+uQNsXGU33/Is+haMrMkbjB4U2PDDvJADanGlRfUGFhQY4GucFt/rVfCVrpIcS5be69qoR7rp0Hh5ckeJvsjGHtETkh3CVP269PfDzl6CU3Qx4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741977397; c=relaxed/simple;
+	bh=TLAXvLcoB21lG2HvpU8B7gBerQMhDpU76P5JQJXzoUQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PB5PkfQcjGBLUlurOMUi5jr6CkE4THO4+ZaxaFu8qQJDdXQuFCBh7qGlJg8EgaGHCNVvLZ5VEN5/H4OZcsg5Bb0F6S8BkRam5MN2YM0E4LtKuOWeliOdvSQEZZUatcv9gc/L/s664vtEjKkwOCp/NLlsniLCwBw4iMZIjHWt5y8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tj0Xakmu; arc=fail smtp.client-ip=40.107.92.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rPEnS01qpJaWrihFjepgjgjyoKbxfXGAoYHM+pfKwA56PZQXHDo0yxupHn6YCWa5yVTZcH23Xup9SOgQqwoZTS38BqEg91HfOkwHKOtQ2UFw8R3wKJrxVWLDlqVS44Gj0zXeI+MSgFfcuUAN51uayOXSyWy2JUOlo/5blATk/kQCcalH2p5JJq1YNk7iNv/JfuvR0SJeKKQeIL031fLZoUUVbDm7bu8PVVWqirF2/5iylnWFOMpPaCF+kVg4Ffu2ucU1agwqymkKMEts/EzbU7DGOT78diF6oFngNwVN19CSoXyf5uLxBydYvdgP4KbPjQRqA1Ab2Nhehhz0ItALKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7jXdL+pwVN2aQmsvhyqR6De++YyjAF/nWdD4A/Y8/eo=;
+ b=rvkvflvuuk90WzXrYBTrgaWz1f5wq+rwFPMgF5ARntLnQfh/5KxD8PWBeKvMfIk+0tEzZJABhlp1q7OCFC1YCZehB5XgCCLjHxqneJOzAwG37R6gSaWiQBFyaWOtS5iKu7CS6Ak9nHs/6iTkRRUvqBsnFddAi8ea1ROjjV2QIC0nTjjchB3n/qT3l3J1EVKGHlWxi7o44UqXcPn64QJGgO9p1hKZrNj5/TS9LvGROKxx+0t7ZvlxFHKEF9OSl883N43vPmSW4BqH8V46sQCxzxKxVNsLuhu0b5sjkfNDVouWlnxq94GWEF2zc+fgGDallLIsq3QofpRw+/EmysNL0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7jXdL+pwVN2aQmsvhyqR6De++YyjAF/nWdD4A/Y8/eo=;
+ b=tj0XakmuFCzIxAJf8/Nx+uerwcMRSa4c+UIbikJNCGvZ97dRxQXLFYx7h5twaC3IDTO8jfFmeKjHrTvQcS5ohz4Egga8IAkQmkxiFqJYK38XjUB2q/s9nInC4ZBTbEBUayMl+Qy7XBbGnU6+0TezG10SvN5XJ60AK/Lv27r045PsHPIsqIOfkUnz+1rAwecTdWIT3LL4I54nI7uGbKSZBZZc+w1atk2DWaSylCxqSitO6wZ3NvDiLtZpv0FPoNujhjBli3fYviQWev38tcJth54CPZ5hT/nVOkDmzVdQRutt01FUhXHP5/LCMcHGW3qXjuOp6W+92K182V/+6RJDYg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ IA1PR12MB9522.namprd12.prod.outlook.com (2603:10b6:208:594::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.28; Fri, 14 Mar
+ 2025 18:36:32 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8534.027; Fri, 14 Mar 2025
+ 18:36:32 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@techsingularity.net>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] mm: page_alloc: trace type pollution from compaction
+ capturing
+Date: Fri, 14 Mar 2025 14:36:28 -0400
+X-Mailer: MailMate (2.0r6233)
+Message-ID: <9AFC1858-947B-46A7-A332-EEBCA456670F@nvidia.com>
+In-Reply-To: <20250313210647.1314586-3-hannes@cmpxchg.org>
+References: <20250313210647.1314586-1-hannes@cmpxchg.org>
+ <20250313210647.1314586-3-hannes@cmpxchg.org>
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0114.namprd03.prod.outlook.com
+ (2603:10b6:a03:333::29) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|IA1PR12MB9522:EE_
+X-MS-Office365-Filtering-Correlation-Id: fdc4e268-887b-4cd0-0381-08dd6327246d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7lWhjyHX3b/kx3QZxogaxGePRuVL7KX/cBxBBg2KdEDD7D3+UCEVEjGUo1s6?=
+ =?us-ascii?Q?AdRhk+2T7guSMdqB813Q+H7XgjVcHS5nNgumV9hfjjp8DpLd8aNmGO1R6B4e?=
+ =?us-ascii?Q?VUa4+dlHfLx+EZQnmcYIBoKZyrNCLiefKoQr3t3NQxg7Lyc4xtsOKgznIEhx?=
+ =?us-ascii?Q?40Z7sKgKU2ILOgBqsUgr4OQAQQoV4qcRosXea6TQs2haPx+w22XfJxzqAxOj?=
+ =?us-ascii?Q?bDiWBbUuCS9LcsYM3+evtrL0PdnisXRRmOkRaMl1Amm2RTMgkBQoT578A2RH?=
+ =?us-ascii?Q?xf3VCsJmIyOn1e8O9bqsX8Bz4YKzTCW/atFoFb5Zz5fZfv8gnfMahzZMFAlW?=
+ =?us-ascii?Q?h1NmU4JPwWaG4Wt2454UHrAcpk75K1acghAc3MFIKZRGVCUOSL23W/KqBsUi?=
+ =?us-ascii?Q?xyPW/+e5KqIHF7zketmGE9iMT0E51xkZ6kWCsmS3PZuQKhQxZzg7UHnla6tQ?=
+ =?us-ascii?Q?1TrLHo7+mIWUcYvLPndkPutm+/FONimrwXJGjz2S+n3VXwIZ5p0LIJX/AcA+?=
+ =?us-ascii?Q?uHLFKQWb+bKzL2KLlanDrrZN6zGnZLMHIIhmrT3R1TQsV04KXsdtu9xWS7wA?=
+ =?us-ascii?Q?9KPdBp48a4lQdyewYQOv6scgO2W60bfjQQX21fKMXqGmPZ6VxhWBOgrt1oI8?=
+ =?us-ascii?Q?JoMzVLv8CgKm4Rh6Hh6oR6jzGG3qd/xWYAzoyJlNfCsa3qQumbXkDH409cnj?=
+ =?us-ascii?Q?I+wSUIHP4c23OOCrpbgvLIMflvKPZi32BZ40zWSozCmIBIFF6qBIBo7rDkJf?=
+ =?us-ascii?Q?dWrIKvDWx9cM6cyGkjUBIACQyRV4kUS0bGMZCEV3FxgYLwtwei1wd6biaFOx?=
+ =?us-ascii?Q?nk4oRcqoUktF+H8OJAsuixsEcnxkdAnzvHq1rVmAXCePn3+SLHDLukETCS0F?=
+ =?us-ascii?Q?ym1WiDadBlckzXzROOelV3ej+Ybenc76DGfOQXP+kNCexu5POIWpKhbq8jIM?=
+ =?us-ascii?Q?M0gUv+5bP1WgOUXZxluqFduQVG40647eijainwqpfgz3S0rJODoCbyoUS01m?=
+ =?us-ascii?Q?/E7DTrFJ6VgQ5Js8Ip4kIawIutVJbMdmjtCdJpZL0t6S51WNP8DEhUvPZGEc?=
+ =?us-ascii?Q?pfsdZgS81McgCGsV6CPiQvLJg2g2MnMTe483ykiGSydZUoZPlMrHyrcIhbaS?=
+ =?us-ascii?Q?YIYagyiOidwgLjJXYa3b0aqi7dpG9JP66C4+ywnlQTUvWWHknFbGMaT0zBbD?=
+ =?us-ascii?Q?S/3NIcIQpOJPfOhPaVM3OX3VdCqub1bvDi+APsy7iT1o4c9qgUoxj/qeD/r1?=
+ =?us-ascii?Q?5436RjNOzRYvgbKk8aicnLdfeWX1t/SGLh5MSxOqhUTeJleTswr+/LX1vhKQ?=
+ =?us-ascii?Q?a3jZQC+ZxcfYuCM98piSz9aAsAgrgVyjdGPtXsqz0NTONbGCrvIvtxWmKaLT?=
+ =?us-ascii?Q?0xIwvfd3CzzRywIxz8SV/K/H6htM?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?MjTxkgIp9exV/BGNvf1PLfoeyE4bxHRyjEbVUxqAbYLv/X8lxwawu4Vl9L0V?=
+ =?us-ascii?Q?GnUe9MYhYJK0c5bYn4y3s2reBNdSVRIKUE4rrAxTp1UFb+YIHZnmQZTKFnTl?=
+ =?us-ascii?Q?GaKmu/RZ4jpw3vdmNp5z1Ce5UmTfr0AuTBCxwSejPuSKJjKUVrHW4tYrffa1?=
+ =?us-ascii?Q?U8govgTumIo6SMyLgEAVmIgdYhYZ+IrDqv/NEs3ESEGo5O3urmAy7Su5SQXM?=
+ =?us-ascii?Q?JDCxaenvf6dBLB/erKZB8+5NTx0C855+J3o+T7YqKxZs3QWgavd1t59LXJxA?=
+ =?us-ascii?Q?9bfdXKLvvK9qmQydOAMdhYq6kFnaDsHlU3/E99poQHRpXjn9ILyCKO7IDUjE?=
+ =?us-ascii?Q?8kPf6M6WO2zDIxcow1GAKwB5GGqR6/GQxcWixkcBaHSYDob/awtf4EUhKDa0?=
+ =?us-ascii?Q?7BUUtPoKmmptxfMQTbQ30LSI1X80kUiJjgRC2xO/8wfb/r8rUCC9RMyuTiT9?=
+ =?us-ascii?Q?IYb1flMeu8DunibcEJl9dzSHavXkSH0sO/sTDAj+Y7O5SmIxJKeBpyRC/KJH?=
+ =?us-ascii?Q?2qbOB8J1w5PD+Mj8dDx86De4CbZia5iL/4mrTt4tY6u88j3zMm3oSbtXef8b?=
+ =?us-ascii?Q?+QgroR5Eaf2zmoM8XVk0sPEE6/NNSbSSxsVi4FlAub718NJl1D+peclWOqHf?=
+ =?us-ascii?Q?9WHxr3NpiHyYJjhV4oqajGeMFyakO18NjRhEJRsAbnq0CuEx60lOadmCfqVI?=
+ =?us-ascii?Q?cvfWDQQmjOTmCqE66XJ8stv7fvfTv5k2GfysBDdAyScJ1i+lPG1IvLjXAlyv?=
+ =?us-ascii?Q?muxVgHvCwZtnZDbnF4GgQ9RIpvaAgeiKm9Jy4dgvzTwP6QzDGThGaxc18uJN?=
+ =?us-ascii?Q?FhLyFqMa5TWDYNl7GfYDgouVrWB/vn8q1yVN6dRYmPmOsbxWCZLP67sxdcX0?=
+ =?us-ascii?Q?PuhcX8Z13ItB7oi+Gmm4Cs+6G9nDjIUGZshvEXjF+iqA0kxkzcCSeJaXJsmk?=
+ =?us-ascii?Q?poOoaaW1Za5nX+pj16gS//IC9db/klkAiFcuZubQm6pAm1jyMyTVG7HnXekz?=
+ =?us-ascii?Q?LV67Lcbr3CLBn2TRYpgE3afzDaNRYuoIMaC7CYdGvfGNc27o17JVeLatnOfg?=
+ =?us-ascii?Q?JAJWXWrNcqJEG5DHHsd/oy8p3rohF/cVrJ3DQJgsyuWlAnZoFGSK02THBHN0?=
+ =?us-ascii?Q?XLeiuzdbgERx/1L3B8nq4OFdROQb5MAieg0ilEi/L49tRFv5BxqesZPS6cZc?=
+ =?us-ascii?Q?H5h4TGUvfJ8UJ2vob+4k09r/nWFNo75c6V1t6RpAINc3rYGAbN+21ZUG1I53?=
+ =?us-ascii?Q?hN/icelTbkJ5iWNSsyYdutuwx3JT70lUk6doMxhZw56EdqqZvDYGhdcI38jo?=
+ =?us-ascii?Q?4DOdR6qb46Ovqa808Ax7ytJ1M8nnAbp2t+ygA7wfyfu99KKOrp9WT2/brSHP?=
+ =?us-ascii?Q?LEcb2EcKdtYOFpgFUlR/yCSXRa8mZMJjgYnTb4Sah6HrrmoFWFdedAqWzurQ?=
+ =?us-ascii?Q?MInQCXxuwzTa65DhLInvhm4waVHE8WTxZerNE6ut0fu4LmckLNHDskdfJgXD?=
+ =?us-ascii?Q?UMiuh/OxXj7+kI666IpbGd9Iis+Be2tqLxSEO/DtX/prdagGXRsxRlA+d3gZ?=
+ =?us-ascii?Q?X51D+WJOhvjQRdcitVk=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdc4e268-887b-4cd0-0381-08dd6327246d
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2025 18:36:32.3335
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Jk4f3jTFG+gnC2kfWD73EplZbUZhu4FX87j30ZDrlZGKUtAB1sARF3NjySrROm1+
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9522
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/fpu
-branch HEAD: 2883b4c2169a435488f7845e1b6fdc6f3438c7c6  x86/fpu: Use XSAVE{,OPT,C,S} and XRSTOR{,S} mnemonics in xstate.h
+On 13 Mar 2025, at 17:05, Johannes Weiner wrote:
 
-elapsed time: 1454m
+> When the page allocator places pages of a certain migratetype into
+> blocks of another type, it has lasting effects on the ability to
+> compact and defragment down the line. For improving placement and
+> compaction, visibility into such events is crucial.
+>
+> The most common case, allocator fallbacks, is already annotated, but
+> compaction capturing is also allowed to grab pages of a different
+> type. Extend the tracepoint to cover this case.
+>
+> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+> ---
+>  mm/page_alloc.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+Acked-by: Zi Yan <ziy@nvidia.com>
 
-configs tested: 94
-configs skipped: 2
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-13.2.0
-arc                              allyesconfig    gcc-13.2.0
-arc                   randconfig-001-20250314    gcc-13.2.0
-arc                   randconfig-002-20250314    gcc-13.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-17
-arm                              allyesconfig    gcc-14.2.0
-arm                           h3600_defconfig    gcc-14.2.0
-arm                   randconfig-001-20250314    clang-21
-arm                   randconfig-002-20250314    gcc-14.2.0
-arm                   randconfig-003-20250314    gcc-14.2.0
-arm                   randconfig-004-20250314    gcc-14.2.0
-arm64                            allmodconfig    clang-18
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250314    gcc-14.2.0
-arm64                 randconfig-002-20250314    clang-21
-arm64                 randconfig-003-20250314    clang-15
-arm64                 randconfig-004-20250314    clang-21
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250314    gcc-14.2.0
-csky                  randconfig-002-20250314    gcc-14.2.0
-hexagon                          allmodconfig    clang-21
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-18
-hexagon               randconfig-001-20250314    clang-21
-hexagon               randconfig-002-20250314    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250314    clang-19
-i386        buildonly-randconfig-002-20250314    clang-19
-i386        buildonly-randconfig-003-20250314    gcc-12
-i386        buildonly-randconfig-004-20250314    gcc-12
-i386        buildonly-randconfig-005-20250314    gcc-12
-i386        buildonly-randconfig-006-20250314    gcc-12
-i386                                defconfig    clang-19
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250314    gcc-14.2.0
-loongarch             randconfig-002-20250314    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250314    gcc-14.2.0
-nios2                 randconfig-002-20250314    gcc-14.2.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                randconfig-001-20250314    gcc-14.2.0
-parisc                randconfig-002-20250314    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc               randconfig-001-20250314    clang-21
-powerpc               randconfig-002-20250314    gcc-14.2.0
-powerpc               randconfig-003-20250314    gcc-14.2.0
-powerpc64             randconfig-001-20250314    gcc-14.2.0
-powerpc64             randconfig-002-20250314    clang-17
-powerpc64             randconfig-003-20250314    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                 randconfig-001-20250314    clang-19
-riscv                 randconfig-002-20250314    gcc-14.2.0
-s390                             allmodconfig    clang-19
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250314    gcc-14.2.0
-s390                  randconfig-002-20250314    gcc-14.2.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                    randconfig-001-20250314    gcc-14.2.0
-sh                    randconfig-002-20250314    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250314    gcc-14.2.0
-sparc                 randconfig-002-20250314    gcc-14.2.0
-sparc64               randconfig-001-20250314    gcc-14.2.0
-sparc64               randconfig-002-20250314    gcc-14.2.0
-um                               allmodconfig    clang-21
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250314    gcc-12
-um                    randconfig-002-20250314    gcc-12
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20250314    clang-19
-x86_64      buildonly-randconfig-002-20250314    clang-19
-x86_64      buildonly-randconfig-003-20250314    gcc-12
-x86_64      buildonly-randconfig-004-20250314    clang-19
-x86_64      buildonly-randconfig-005-20250314    gcc-12
-x86_64      buildonly-randconfig-006-20250314    gcc-12
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250314    gcc-14.2.0
-xtensa                randconfig-002-20250314    gcc-14.2.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best Regards,
+Yan, Zi
 
