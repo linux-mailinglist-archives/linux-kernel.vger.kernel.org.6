@@ -1,95 +1,123 @@
-Return-Path: <linux-kernel+bounces-561714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96A1DA6152A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:40:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D53BFA6152C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:40:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDA327A61C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:39:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AC25188ADB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2CB8200119;
-	Fri, 14 Mar 2025 15:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6qVt9AY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095A5202990;
+	Fri, 14 Mar 2025 15:40:23 +0000 (UTC)
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BEA3A8F7;
-	Fri, 14 Mar 2025 15:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDE0202973;
+	Fri, 14 Mar 2025 15:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741966816; cv=none; b=sKXOQ3qRaWrGBl6WpSPRvJEgIfYQ0LxB/BJ+p6B9IbCIKurqDr3tBhjCNml/C+D6qHTpn6zpcyMuX6C+bMuMlAPycaraVSvUSI3LOG5RbsERxovQ6aZ41cSwa/YUKwvZFk6RoV532xNxDoGwmL6zK52X/Gk55G3yDVr5AgkvybM=
+	t=1741966822; cv=none; b=hiSMkZuKizqllak9j/zQRrnwKu21PBc2K/jWxocMyLynbKIzqMFicbLUCDsDUw/tebuuGK2XDy+uWMpaBprbeoYbUqD02ZNv86L2mYpmv9abeMKqFXn0q1UkDuh+8PKHldujip6tZROA73vstqK6AcCk8RbsvcqGliRfL7Tgm3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741966816; c=relaxed/simple;
-	bh=KaGpwJGyES9YlzeaSEs71SSB0DlkQlxNseafP/srjQM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tdN6/UkOTdhl444XypV6PicnuGoF8d+l75Jdrug38+/rLUyJ/LCUGovaix/bVYrrCz5FczhUlpHD9B5JJkVUVoju9MgAaHwuMbIj4wAPWub5uscwohIioY7qWx0IkCuMjVPL8A+uWXE0DbcdC81WotjU0UMqzFzI8GhFDzV8STQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6qVt9AY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFE71C4CEE3;
-	Fri, 14 Mar 2025 15:40:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741966815;
-	bh=KaGpwJGyES9YlzeaSEs71SSB0DlkQlxNseafP/srjQM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=T6qVt9AY7d+DMmTPBVoGrdYpTpT4VV5xQ5FExzmtARp8bciMkcQDbJuOyIEu/RWJF
-	 rWx586O9gl8maXuFHR3TXw+9FA3BGhLOw+L84viI6v1M3lfF7Q2cGikj0J5OvDkE/k
-	 WNspKpKyDV92ASKPtKp9lIVilWodqBcZSfuFlgQLDPbi43jTLUAUFtkd+k6ITlfIs7
-	 hIGBNcRA6rpzepFCm/6wnSRfSkUsxNS10XN3z6fyF0i9biK3J0OtQw3/1lwudYFazX
-	 rTRSSXBiu2ZBs6tbTwQbkTCjs7zmOlTMvLKZ05ooVLDBGmdl2z2Q81aM+t6IyxCWUm
-	 ji9WO3gk1YXBw==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
+	s=arc-20240116; t=1741966822; c=relaxed/simple;
+	bh=BfD28oiCDQzTZE7U5FI8BJ9IuhnfTvjWAGaG732Cg5Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=EFPeVqTy+BxGyhiSnHYhBVvghqVm1TygotedgvjLN/xWsVACNhhE5sSqKQuTRbLLqTskU5lAQe9BZpe+tiKheo3ZfcSehEiUspP9S581EKVatfDXjDmNDykP08DrSqCc9Ftabvtey+LCUrVLnfzXi7q+V9K546PCCBdR6OfRn48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [119.122.215.89])
+	by smtp.qiye.163.com (Hmail) with ESMTP id e524c720;
+	Fri, 14 Mar 2025 23:40:07 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: jonas@kwiboo.se
+Cc: amadeus@jmu.edu.cn,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	heiko@sntech.de,
+	ziyao@disroot.org,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] fs: consistently deref the files table with rcu_dereference_raw()
-Date: Fri, 14 Mar 2025 16:40:01 +0100
-Message-ID: <20250314-lastkraftwagen-kundig-d6790f4fc117@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250313135725.1320914-1-mjguzik@gmail.com>
-References: <20250313135725.1320914-1-mjguzik@gmail.com>
+	linux-pwm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 0/2] arm64: dts: rockchip: Add pwm nodes for RK3528
+Date: Fri, 14 Mar 2025 23:40:02 +0800
+Message-Id: <20250314154002.1844394-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <22d849c3-8a0d-4704-b69c-8019c7f70ca7@kwiboo.se>
+References: <22d849c3-8a0d-4704-b69c-8019c7f70ca7@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1204; i=brauner@kernel.org; h=from:subject:message-id; bh=KaGpwJGyES9YlzeaSEs71SSB0DlkQlxNseafP/srjQM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRf8b01Y8GZgrWBMo+lZRumnPE3rUh9YNVm2+jPP+F8S cH8umNFHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOpf8PIcPP6cXOZGt6IV72V vi3R139J3Z//OJYr0XQeO/Ok0jPHxBn+R/jO2eebFPb6Y1wE32f7xupNt980MR5fH7PnQ/+kHub XfAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaQk5IVh5OHksZSkJOHx0YHVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKTlVDQllXWRYaDxIVHRRZQVlPS0hVSktISk5MTlVKS0tVSk
+	JLS1kG
+X-HM-Tid: 0a959550128103a2kunme524c720
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PxA6Pgw6CDJRDAo9NwgIUQw1
+	Nw0KFE5VSlVKTE9KQk1NQ0tDT0hIVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
+	QlVKSUlVSUpOVUNCWVdZCAFZQUpPQ0M3Bg++
 
-On Thu, 13 Mar 2025 14:57:25 +0100, Mateusz Guzik wrote:
-> ... except when the table is known to be only used by one thread.
-> 
-> A file pointer can get installed at any moment despite the ->file_lock
-> being held since the following:
-> 8a81252b774b53e6 ("fs/file.c: don't acquire files->file_lock in fd_install()")
-> 
-> Accesses subject to such a race can in principle suffer load tearing.
-> 
-> [...]
+Hi,
 
-Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.15.misc branch should appear in linux-next soon.
+> Interesting, good that it works with the updated U-Boot. Main change
+> compared to v1 is that it now use clock/reset id and DT closer to what
+> has been merged in mainline Linux. It also has DT params to help
+> initialize the two pwm regulators used by these boards.
+>
+> I will try with the old v1 U-Boot series and see if I can replicated
+> your issue.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Hi, I found the reason. I did some experiments today:
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+pwm-regulator  pwm1 | pwm2 | pwm3
+-----------------------------------
+ArmSoM Sige1 |      | work | work |
+Radxa E20C   | work | hang |      |
+other 3528   | work | hang |      |
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+This looks weird, so I tested it further:
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.15.misc
+In the new series of u-boot:
+```
+--- a/arch/arm/dts/rk3528-radxa-e20c-u-boot.dtsi
++++ b/arch/arm/dts/rk3528-radxa-e20c-u-boot.dtsi
+@@ -8,9 +8,9 @@
+ };
+ 
+ &vdd_arm {
+-	regulator-init-microvolt = <953000>;
++	status = "disabled"; # Cancel changes, pwm works
+ };
+ 
+ &vdd_logic {
+-	regulator-init-microvolt = <900000>;
++	status = "disabled"; # Cancel changes, kernel hang
+ };
+```
 
-[1/1] fs: consistently deref the files table with rcu_dereference_raw()
-      https://git.kernel.org/vfs/vfs/c/c72b20d10034
+I looked at schematic and found an interesting thing:
+1. ArmSoM Sige1 schematic: VDD_LOGIC Default 0.901V
+2. Radxa E20C schematic: VDD_LOGIC No default voltage
+
+Therefore, the default voltage of VDD_LOGIC (supply to
+GPU and LOGIC) needs to be set to 0.9V when initializing.
+
+This can be done by hardware or software (such as u-boot)
+Should we support this in the kernel driver of regulator?
+
+Thanks,
+Chukun
+
+--
+2.25.1
+
 
