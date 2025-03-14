@@ -1,101 +1,99 @@
-Return-Path: <linux-kernel+bounces-561730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6126DA61562
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:53:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB4FFA61565
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:55:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EABA1B64492
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:53:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD513188F785
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF94202F8E;
-	Fri, 14 Mar 2025 15:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CF2202C2F;
+	Fri, 14 Mar 2025 15:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dofsPJ08"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vw4oB1ti"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308E5202F68;
-	Fri, 14 Mar 2025 15:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F002010E3;
+	Fri, 14 Mar 2025 15:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741967589; cv=none; b=jHs9560wrtRAcFucWzluEFTIZ7NyTW1AQ3Lw6HaH/Pci1oZco3gYL1zW0w7hQ+mW8Eaiegz85E4y2vWrMW792vmjcZK+v6KMmb5AvJMEX+W16Z36LGvLO+b9w6g/eQQJzXGIRDB7qiUjsCgqmN81pl9xGktEOV5oI217/5nKYhw=
+	t=1741967692; cv=none; b=NNG5CutTJB9pwEt7umjNAH8Ou56bxZPMdyz9wOVPHP2/2ijKI1fOg/jzarEH+YXbvGK8UG29bycBCzgm6XYpjrpDaP/PJ9+NuQ79xTEVwFKuxv0V93M/ZT6ILBNsEqOuZhSYCVv/iQ660fiRqQRoj8TZKNdpOQk5X98McpvfuCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741967589; c=relaxed/simple;
-	bh=WcvIaJXZSoQm0ADUQKO1KQ8SqfP3MvACY1Lsy7BpMHg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=afm/fY/nZWm29MbSw0pOjjngB78/mHstyuDYvhTC7oWM7SLLblvpPkPH00xsfztzaksBPS74xzQhsdyWUaLE4mS8FrOYHEx9fNZBiGd4Mm/Scjl0KSlgRX/0dYrGU90KAOp1/t0HokKMAIb9O3k8FBkmRQrPjmfwBcEyIZFhhfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dofsPJ08; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32AC1C4CEEF;
-	Fri, 14 Mar 2025 15:53:06 +0000 (UTC)
+	s=arc-20240116; t=1741967692; c=relaxed/simple;
+	bh=1ATMb0vulPx/wb7OMAj9EUf9MVvm6vgVhO1DyiqMZt4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oR7nfrnqM75NrWxYNCsetHY9DCYWsZgMOdK9cdEOZUjS1Jx04hxgXbEYamWnSu2HUBRm6tQb9yq3aLY1qTCyDarTrLB6qAQrf5Emnp6yV1mnmLoR4wPylKi88POvVHNRElAB7Fk3/iAw/obP9F2s9fLBTmehW7s4tUfADwMI+Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vw4oB1ti; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A2CCC4CEE3;
+	Fri, 14 Mar 2025 15:54:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741967588;
-	bh=WcvIaJXZSoQm0ADUQKO1KQ8SqfP3MvACY1Lsy7BpMHg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=dofsPJ08AKOVendj+CorudDO9G7YbrV1zXO3rRb7uUd9rBH6/RWSfbaTVChz7dODZ
-	 z+HdzXzspsWrJRZAhDHsCpxjywdztIG6ENN9DamoP1gyX/AWShTwzIxsjpHGF/FPIA
-	 uhBjkQmMlIFUCtRtokf5SQHRWvOrGA35NqXMzdzpalPwzJaMnPK66MsuQpchWRtwF3
-	 9Mb/fzveJKlz9AqGzRmLxaErnrEj/wG42q6/VsqeWJjyZc2kECnlOaa7WMMg2PbUQB
-	 KXM4DmfInYTcvsAu+IBXPX38hH/m47xafcz29v/xNwotkGdbOU40k1lu4eAuYj3icL
-	 iaeJEkNRYWeOw==
-From: Mark Brown <broonie@kernel.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Frank Wunderlich <linux@fw-web.de>
-Cc: Frank Wunderlich <frank-w@public-files.de>, 
- Leilk Liu <leilk.liu@mediatek.com>, linux-spi@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-In-Reply-To: <20241109105029.52748-1-linux@fw-web.de>
-References: <20241109105029.52748-1-linux@fw-web.de>
-Subject: Re: [PATCH] dt-bindings: spi: add compatibles for mt7988
-Message-Id: <174196758592.19958.17138223278523726564.b4-ty@kernel.org>
-Date: Fri, 14 Mar 2025 15:53:05 +0000
+	s=k20201202; t=1741967692;
+	bh=1ATMb0vulPx/wb7OMAj9EUf9MVvm6vgVhO1DyiqMZt4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Vw4oB1tiojbOFEprYeglzHmEbyOmCWAevEsufmEehM+qGVA8YBzywyB+zqeNsPFKJ
+	 SnOzuC2kO71Ekxj74cyp1wht2EWVYFMQoslCt0kNl96AvVPXJLClWRZ0IQLQo+G+v0
+	 JmYgDtDPz0eUBuTUPuFE9wDx4v6ssRYxayBNv8pcu4f1EEEUHNp45MYTuwbtLWB+SQ
+	 YvUDjb6Tm/rMbEMyH8M5NHbKVwwKakUBJnVTOK3M7atXuRNJBlPtv7RjFqOTDvPakx
+	 zaC/53tJGVx8wW/hGj6nNOeRM0TLogGFIby+gMPVSzqzaOJ8MqtnFlAquyNf22Pi01
+	 94iyegMPoDVUA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	Qu Wenruo <wqu@suse.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	Filipe Manana <fdmanana@suse.com>,
+	Li Zetao <lizetao1@huawei.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] btrfs: fix signedness issue in min()
+Date: Fri, 14 Mar 2025 16:54:41 +0100
+Message-Id: <20250314155447.124842-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-1b0d6
+Content-Transfer-Encoding: 8bit
 
-On Sat, 09 Nov 2024 11:50:28 +0100, Frank Wunderlich wrote:
-> MT7988 has 2 different spi controllers. Add their compatibles.
-> 
-> 
+From: Arnd Bergmann <arnd@arndb.de>
 
-Applied to
+Comparing a u64 to an loff_t causes a warning in min()
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+fs/btrfs/extent_io.c: In function 'extent_write_locked_range':
+include/linux/compiler_types.h:557:45: error: call to '__compiletime_assert_588' declared with attribute error: min(folio_pos(folio) + folio_size(folio) - 1, end) signedness error
+fs/btrfs/extent_io.c:2472:27: note: in expansion of macro 'min'
+ 2472 |                 cur_end = min(folio_pos(folio) + folio_size(folio) - 1, end);
+      |                           ^~~
 
-Thanks!
+Use min_t() instead.
 
-[1/1] dt-bindings: spi: add compatibles for mt7988
-      commit: 3b2e1b87ad0870ad37ee8f2ca0ea6ede19a29795
+Fixes: f286b1c72175 ("btrfs: prepare extent_io.c for future larger folio support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/btrfs/extent_io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index c2451194be66..88bced0bfa51 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -2468,7 +2468,7 @@ void extent_write_locked_range(struct inode *inode, const struct folio *locked_f
+ 			continue;
+ 		}
+ 
+-		cur_end = min(folio_pos(folio) + folio_size(folio) - 1, end);
++		cur_end = min_t(u64, folio_pos(folio) + folio_size(folio) - 1, end);
+ 		cur_len = cur_end + 1 - cur;
+ 
+ 		ASSERT(folio_test_locked(folio));
+-- 
+2.39.5
 
 
