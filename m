@@ -1,123 +1,188 @@
-Return-Path: <linux-kernel+bounces-560599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88ACAA606ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:13:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB868A6070E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:29:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C77C3B0703
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:13:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F4007AB3F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7770E12E5D;
-	Fri, 14 Mar 2025 01:10:27 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE94A15E8B;
+	Fri, 14 Mar 2025 01:29:25 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8355715D5C4;
-	Fri, 14 Mar 2025 01:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5ADEACE;
+	Fri, 14 Mar 2025 01:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741914626; cv=none; b=Fw96Y4bP/PhnohVb+QcvvEjuXVW1Zc8KGj/ByCmWAM8b/fVbz5TRsi902x+rw+x9w6uUYEwMX5witx+KNczueGumptAcavszTnZ7KSHd11fjJFkwnZcF+3vHTPFeXKC0j9EYRKTGSLrh71joDBpSoHJbze9xWUiaFZ9NQjUl1Fs=
+	t=1741915765; cv=none; b=e5UkJb0QcR4MsYA5ybQQb6E9g2dGIEeS032hlev8fnz+597OdX12eoidhvU7tebtSws6fHyU42CBS1x0M0xMePvXTqG1+SSsk1XDP0v3WkYZkg8izwQHAgI/2LxrI+7AwJ4FdccC2rUGhgoZVbzQe61hWxRUlzGYD7azo4Ktmw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741914626; c=relaxed/simple;
-	bh=WlDROKFimy2M3ERNPkejUxJFEzrcYWTkIFsDT4inJcA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eBb8FBbW+HxQLSIKebmWiF78eUcDBfRH10H3HVrMcJTMLbZ8u3kwhxcMdVv7tCmt6dCYvPJdPozQF+Il3DmpI2hpA0shX8621myODuONONoLGXt6aX0Dp/lDapVt1dGGdX/T7dlhhhgcw2Et85kgPm/gFUADaPo4hTbwM5+MYXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	s=arc-20240116; t=1741915765; c=relaxed/simple;
+	bh=5/ISF98sVSlGWN+z1kITjsNRve35oHcym2fF9pVz5mg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Aw+qiBfh0nlnKYmPTd/0uQcwu7U9LFBop4fCVQD6MV8ZHvh9cCR6IuyvJobr15Ay0COUevUsYiBR1d4nPHUPsQXys9mF5xYyURLKINAAKmtth30yot8SrXv2qKJtcafnYMceIXOb7BtPv5H/y82Ql1oPukXpalcx6VmXoSKjI6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZDR5Y2tFJzvWqN;
-	Fri, 14 Mar 2025 09:06:25 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id B4828180102;
-	Fri, 14 Mar 2025 09:10:16 +0800 (CST)
-Received: from localhost.localdomain (10.175.101.6) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZDRVw0KSSz2RTR8;
+	Fri, 14 Mar 2025 09:24:56 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id A6D0B1400CA;
+	Fri, 14 Mar 2025 09:29:19 +0800 (CST)
+Received: from [10.174.178.209] (10.174.178.209) by
+ kwepemg500010.china.huawei.com (7.202.181.71) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 14 Mar 2025 09:10:16 +0800
-From: JiangJianJun <jiangjianjun3@huawei.com>
-To: <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
-	<linux-scsi@vger.kernel.org>
-CC: <hare@suse.de>, <linux-kernel@vger.kernel.org>, <lixiaokeng@huawei.com>,
-	<jiangjianjun3@huawei.com>, <hewenliang4@huawei.com>,
-	<yangkunlin7@huawei.com>
-Subject: [RFC PATCH v3 09/19] scsi: core: increase/decrease target_busy without check can_queue
-Date: Fri, 14 Mar 2025 09:29:17 +0800
-Message-ID: <20250314012927.150860-10-jiangjianjun3@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250314012927.150860-1-jiangjianjun3@huawei.com>
-References: <20250314012927.150860-1-jiangjianjun3@huawei.com>
+ 15.2.1544.11; Fri, 14 Mar 2025 09:29:18 +0800
+Message-ID: <c056ce12-2b02-fe11-5f61-ce913b6de5d9@huawei.com>
+Date: Fri, 14 Mar 2025 09:29:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH] smb: client: Fix netns refcount imbalance causing leaks
+ and use-after-free
+To: Steve French <smfrench@gmail.com>
+CC: <tom@talpey.com>, <kuniyu@amazon.com>, <ematsumiya@suse.de>,
+	<linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
+	<linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>
+References: <20250218143005.1318886-1-wangzhaolong1@huawei.com>
+ <CAH2r5mstBkj5-aHcXLpb8YzrDHS+nWhW+i_Kf8eJK15sFmJx8A@mail.gmail.com>
+From: Wang Zhaolong <wangzhaolong1@huawei.com>
+In-Reply-To: <CAH2r5mstBkj5-aHcXLpb8YzrDHS+nWhW+i_Kf8eJK15sFmJx8A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
-From: Wenchao Hao <haowenchao2@huawei.com>
 
-This is preparation for a genernal target based error handle strategy
-to check if to wake up actual error handler.
 
-Signed-off-by: Wenchao Hao <haowenchao2@huawei.com>
----
- drivers/scsi/scsi_lib.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+> I was looking at this patch in more detail, and it does look important
+> but I wanted to clarify a few things.  In your detailed description
+> you mention that the retry on port 139 is missing a call put_net(0
+> 
+>>          ip_connect
+>>            generic_ip_connect /* Try port 445 */
+>>              get_net()
+>>              ->connect() /* Failed */
+>>              put_net()
+>>            generic_ip_connect /* Try port 139 */
+>>              get_net() /* Missing matching put_net() for this get_net().*/
+> 
+> but I found this confusing because generic_ip_connect() doesn't seem
+> to treat the port 445 vs. port 139 differently (there are only two
+> places the function does put_net() and the latter on line 3421 looks
+> like the only one that matters for your example).  Here is the snippet
+> from generic_ip_connect().  Could you explain why the retry on port
+> 139 example is different here?
+> 
+>          rc = kernel_connect(socket, saddr, slen,
+>                              server->noblockcnt ? O_NONBLOCK : 0);
+>          /*
+>           * When mounting SMB root file systems, we do not want to block in
+>           * connect. Otherwise bail out and then let cifs_reconnect() perform
+>           * reconnect failover - if possible.
+>           */
+>          if (server->noblockcnt && rc == -EINPROGRESS)
+>                  rc = 0;
+>          if (rc < 0) {
+>                  cifs_dbg(FYI, "Error %d connecting to server\n", rc);
+>                  trace_smb3_connect_err(server->hostname,
+> server->conn_id, &server->dstaddr, rc);
+>                  put_net(cifs_net_ns(server));
+>                  sock_release(socket);
+>                  server->ssocket = NULL;
+>                  return rc;
+>          }
 
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index 8cdab7ac5980..e477c5d3c393 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -394,8 +394,7 @@ void scsi_device_unbusy(struct scsi_device *sdev, struct scsi_cmnd *cmd)
- 
- 	scsi_dec_host_busy(shost, cmd);
- 
--	if (starget->can_queue > 0)
--		atomic_dec(&starget->target_busy);
-+	atomic_dec(&starget->target_busy);
- 
- 	sbitmap_put(&sdev->budget_map, cmd->budget_token);
- 	cmd->budget_token = -1;
-@@ -1413,10 +1412,10 @@ static inline int scsi_target_queue_ready(struct Scsi_Host *shost,
- 		spin_unlock_irq(shost->host_lock);
- 	}
- 
-+	busy = atomic_inc_return(&starget->target_busy) - 1;
- 	if (starget->can_queue <= 0)
- 		return 1;
- 
--	busy = atomic_inc_return(&starget->target_busy) - 1;
- 	if (atomic_read(&starget->target_blocked) > 0) {
- 		if (busy)
- 			goto starved;
-@@ -1441,8 +1440,7 @@ static inline int scsi_target_queue_ready(struct Scsi_Host *shost,
- 	list_move_tail(&sdev->starved_entry, &shost->starved_list);
- 	spin_unlock_irq(shost->host_lock);
- out_dec:
--	if (starget->can_queue > 0)
--		atomic_dec(&starget->target_busy);
-+	atomic_dec(&starget->target_busy);
- 	return 0;
- }
- 
-@@ -1886,8 +1884,7 @@ static blk_status_t scsi_queue_rq(struct blk_mq_hw_ctx *hctx,
- out_dec_host_busy:
- 	scsi_dec_host_busy(shost, cmd);
- out_dec_target_busy:
--	if (scsi_target(sdev)->can_queue > 0)
--		atomic_dec(&scsi_target(sdev)->target_busy);
-+	atomic_dec(&scsi_target(sdev)->target_busy);
- out_put_budget:
- 	scsi_mq_put_budget(q, cmd->budget_token);
- 	cmd->budget_token = -1;
--- 
-2.33.0
+
+Yes, both ports are treated similarly by the client; however, according
+to the network packets I captured, the access error was returned by
+the server.
+
+This issue was identified through a flawed cifs test case, where
+the cifs file system was mounted on the client before the server had
+fully initialized the smbd service. Here's a breakdown of the process:
+
+1. First Connection Attempt: The cifs client first attempts to connect
+    to port 445. Since the server has not yet completed its initialization,
+    it returns an error -111.
+
+2. Subsequent Connection Attempt: The cifs client then tries to connect
+    to port 139. At this point, the server has finished initializing, thus
+    the `kernel_connect()` API call succeeds.
+
+However, the server seemingly does not support the older data format associated
+with port 139, likely due to server configuration settings. When the cifsd thread
+processes the message, it detects this incorrect data format and triggers
+cifs_reconnect(). This action leads to the issue of leakage.
+
+By maintaining the test case essentially unchanged and simply blocking the
+server's port 445 with a firewall, I can easily reproduce this issue.
+
+The network packets I captured are as follows:
+
+5	0.896004	192.168.11.3	192.168.11.2	TCP	74	38246 → 445 [SYN] Seq=0 Win=64240 Len=0 MSS=1460 SACK_PERM TSval=210053990 TSecr=0 WS=128
+6	0.896121	192.168.11.2	192.168.11.3	ICMP	102	Destination unreachable (Port unreachable)
+7	0.896287	192.168.11.3	192.168.11.2	TCP	74	52196 → 139 [SYN] Seq=0 Win=64240 Len=0 MSS=1460 SACK_PERM TSval=210053990 TSecr=0 WS=128
+8	0.896336	192.168.11.2	192.168.11.3	TCP	74	139 → 52196 [SYN, ACK] Seq=0 Ack=1 Win=65160 Len=0 MSS=1460 SACK_PERM TSval=3568249692 TSecr=210053990 WS=128
+9	0.896410	192.168.11.3	192.168.11.2	TCP	66	52196 → 139 [ACK] Seq=1 Ack=1 Win=64256 Len=0 TSval=210053990 TSecr=3568249692
+10	0.896511	192.168.11.3	192.168.11.2	NBSS	142	Session message
+11	0.896541	192.168.11.2	192.168.11.3	TCP	66	139 → 52196 [ACK] Seq=1 Ack=77 Win=65152 Len=0 TSval=3568249692 TSecr=210053990
+12	0.898382	192.168.11.3	192.168.11.2	TCP	302	52196 → 139 [PSH, ACK] Seq=77 Ack=1 Win=64256 Len=236 TSval=210053992 TSecr=3568249692 [TCP segment of a reassembled PDU]
+13	0.898427	192.168.11.2	192.168.11.3	TCP	66	139 → 52196 [ACK] Seq=1 Ack=313 Win=65024 Len=0 TSval=3568249694 TSecr=210053992
+14	0.906736	192.168.11.2	192.168.11.3	TCP	66	139 → 52196 [RST, ACK] Seq=1 Ack=313 Win=65024 Len=0 TSval=3568249702 TSecr=210053992
+15	0.906980	192.168.11.3	192.168.11.2	TCP	74	52206 → 139 [SYN] Seq=0 Win=64240 Len=0 MSS=1460 SACK_PERM TSval=210054001 TSecr=0 WS=128
+16	0.907054	192.168.11.2	192.168.11.3	TCP	74	139 → 52206 [SYN, ACK] Seq=0 Ack=1 Win=65160 Len=0 MSS=1460 SACK_PERM TSval=3568249703 TSecr=210054001 WS=128
+17	0.907099	192.168.11.3	192.168.11.2	TCP	66	52206 → 139 [ACK] Seq=1 Ack=1 Win=64256 Len=0 TSval=210054001 TSecr=3568249703
+18	0.907175	192.168.11.3	192.168.11.2	TCP	66	52206 → 139 [FIN, ACK] Seq=1 Ack=1 Win=64256 Len=0 TSval=210054001 TSecr=3568249703
+19	0.910324	192.168.11.2	192.168.11.3	TCP	66	139 → 52206 [ACK] Seq=1 Ack=2 Win=65280 Len=0 TSval=3568249706 TSecr=210054001
+20	0.918673	192.168.11.2	192.168.11.3	TCP	66	139 → 52206 [FIN, ACK] Seq=1 Ack=2 Win=65280 Len=0 TSval=3568249714 TSecr=210054001
+21	0.918714	192.168.11.3	192.168.11.2	TCP	66	52206 → 139 [ACK] Seq=2 Ack=2 Win=64256 Len=0 TSval=210054012 TSecr=3568249714
+
+The detailed analysis process is as follows:
+
+1. Initial Connection Attempt to Port 445 (SMB Direct):
+  - Client (192.168.11.3) initiates a TCP connection to server (192.168.11.2) on port 445
+  - Server immediately rejects this with an ICMP "Port unreachable" message
+    - This indicates port 445 is either closed or blocked on the server
+
+2. Fallback Connection Attempt to Port 139 (NetBIOS)
+  - Client attempts to connect to the server on port 139 (NetBIOS)
+  - Three-way TCP handshake succeeds:
+      * Client sends SYN
+      * Server responds with SYN+ACK
+      * Client acknowledges with ACK
+
+3. NetBIOS Session Setup:
+  - Client sends a NetBIOS Session Service (NBSS) message
+  - Server acknowledges receipt
+  - Client sends additional data (236 bytes) as part of a larger PDU (Protocol Data Unit)
+  - Server acknowledges this data
+
+4. Connection Reset:
+  - Server unexpectedly terminates the connection with RST+ACK flags
+    - This indicates the server rejected the client's request after examining the session data
+
+5. Final Connection Attempt:
+  - Client tries again on port 139 from a new source port (52206)
+  - Three-way handshake completes successfully
+  - Client immediately initiates connection termination with FIN+ACK
+  - Server acknowledges, then sends its own FIN+ACK
+  - Client acknowledges, completing the graceful connection termination
+
+Please let me know if there is any other information you require or
+further details I can provide.
+
+Best regards,
+Wang Zhaolong
 
 
