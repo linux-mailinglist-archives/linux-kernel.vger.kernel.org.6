@@ -1,129 +1,185 @@
-Return-Path: <linux-kernel+bounces-561137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F92A60DF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:54:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 197F8A60DFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:54:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFAA73BD7E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:53:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F4D716B4C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9226F1E04AC;
-	Fri, 14 Mar 2025 09:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66DF1EF368;
+	Fri, 14 Mar 2025 09:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZApk60Ws"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ccsENmqP"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C171EF0A5;
-	Fri, 14 Mar 2025 09:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C9813D8B2
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741946031; cv=none; b=gJqS45P/jzAyTS+JYL4/cYZfSVjn14cW9MUP31G3C+kzBPIkVendTP0HIJRC8qUY33SVlBsiX8vIbKIy6LaPSvAAziSBvZDeEle15Fn3yjriwGgZOguhsNH5IWChtfMF1xqLI4h5+527cjGVWGnsB7QqwcYAgC9yPt6tt1uA58E=
+	t=1741946086; cv=none; b=ADaPHkIkzU19mZVI7j/1D6cW/j3EJOcFd68PWJN4F/gOoRocqehqXQAOfft9uGOm1jilImQVp0/icp2uZSeluQ4++JowxGDvl7fUJE5i5C9WlDf4QYGCz61RIys2ZuMJ7GehNh7kd3t/1R2KgroH/p5hbyGxweE6G2RibpYr2yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741946031; c=relaxed/simple;
-	bh=NDKWPSLGvJ3Ug3WTN3vPKlY5C5wF9a4+rp8Xn+Biyiw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YOP3zZB1WcfeXb68/KMNkx/RtbUk7Hox3oLjsodc/H+YcpH7jpRzMMGfXdFko0CiMJSQK6zzLmEwk5ktO36pLuQvQxNunPbr2xMfRzJXAKb2EIsnJn3h28z7wVgBzYLVt7v0XkXLPyZnRY6iNMKFgq50/gOHarxhqa/vboNBJXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZApk60Ws; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE5BEC4CEE3;
-	Fri, 14 Mar 2025 09:53:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741946031;
-	bh=NDKWPSLGvJ3Ug3WTN3vPKlY5C5wF9a4+rp8Xn+Biyiw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZApk60WsYXJyzXQzBWpQhsm5pwn6Lc+fuLyQAB2khhL41/ql7tpCzuR2WH5yJrh8W
-	 9vB05pupO8wQ4OlN56OmohGT+1wSUVB6D28uUlu4Le9IahGh7CS0ultKH3RHY3yAUY
-	 iACxW/eaLoX8hSrcgIeD1ABdEZGJ+ImHrVA/CsQX+rPhZMoyxvT/vz2N1rWwEaokfu
-	 MkJr8kBwknV5Uylq27Q4lpkEEsd+s97Ay072uEl989Ytw3fdAamQ8N19mZDYlho8HK
-	 nILt6cxoObR1kXi7b2J+B8Gt32mwbIDZg7yb81M1IIe9bzQmdqCsU9MH6tRt/h2DzF
-	 Bkf6phJkwrplA==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ben Hutchings <ben@decadent.org.uk>,
-	Matt Fleming <matt@readmodwrite.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: [PATCH] deb-pkg: add comment about future removal of KDEB_COMPRESS
-Date: Fri, 14 Mar 2025 18:53:35 +0900
-Message-ID: <20250314095337.2209653-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741946086; c=relaxed/simple;
+	bh=yqQIHUx7o1pXeM5u1HHMwNCiybG7/0wvzM0qdwpIKeU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZjQdsxdDzxHWaOlb8rFhmn9pF5gIQkB96bvaVI7AECniU6o03eRkBKqlUPbhIseXb1ZdpaFx1NP1+71KS0qVgceaglEz3UixbLPej+kZhAc6ArbED184n8t0gec9ykkMnroxxggzbRuP7rEUhYQsOWGVGUyo6Mnv140GjqK22G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=ccsENmqP; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4ZDfpy1xlwz9spX;
+	Fri, 14 Mar 2025 10:54:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1741946074; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vt6DBfrgA9VFbGhsNVqjrJNhmXJarn6PkRtjI72Rx4U=;
+	b=ccsENmqPjGJfo4kdw++x2RXTd6j5Inda41J75cIsGR513wMkw1s3hD3A8SKu2oIh11VBs6
+	4Q52BCNAHK9b1l05qKWOh5jEsUQF0vCmEqmb10dXedL03nuCBPe5jfCTHM1ThHRmq9Kp7Z
+	sy2v4pTqw8SIQ1A3U5Ozot4E7/qildkr/xLlI8/1oQvLe0SImCZuIAcXAI3D3tAIifaY0P
+	AcC9v5K1iD+c9B56HNsCf3tTXy9g3jOCYAb1G8omVTV6jl/USdCJ9//UFSyYITaJamBPH4
+	P/TBPR145/J2eNM+bkIX7Lzzfdao4OjtH1Z9ntip/pfiA9qdesgvWKXI6YPesg==
+Message-ID: <9dc6d5a13d295bbe0b22bbc8c5ab8110940826b2.camel@mailbox.org>
+Subject: Re: [PATCH] drm/sched: Clarify docu concerning drm_sched_job_arm()
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Philipp
+ Stanner <phasta@kernel.org>, Matthew Brost <matthew.brost@intel.com>,
+ Danilo Krummrich <dakr@kernel.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
+ <ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Fri, 14 Mar 2025 10:54:29 +0100
+In-Reply-To: <d02a205a-c7e7-45a5-bcba-b5a5a6bebf4e@amd.com>
+References: <20250313093053.65001-2-phasta@kernel.org>
+	 <d02a205a-c7e7-45a5-bcba-b5a5a6bebf4e@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: w58xte3rbxtsorjakawky3ouf5rcgwzf
+X-MBO-RS-ID: a3e23a15c1bd40cc9f0
 
-'man dpkg-deb' describes as follows:
+On Thu, 2025-03-13 at 11:07 +0100, Christian K=C3=B6nig wrote:
+> Am 13.03.25 um 10:30 schrieb Philipp Stanner:
+> > The documentation for drm_sched_job_arm() and especially
+> > drm_sched_job_cleanup() does not make it very clear why
+> > drm_sched_job_arm() is a point of no return, which it indeed is.
+> >=20
+> > Make the nature of drm_sched_job_arm() in the docu as clear as
+> > possible.
+> >=20
+> > Suggested-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
+>=20
+> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
 
-    DPKG_DEB_COMPRESSOR_TYPE
-        Sets the compressor type to use (since dpkg 1.21.10).
+Applied to drm-misc-next
 
-        The -Z option overrides this value.
+P.
 
-When commit 1a7f0a34ea7d ("builddeb: allow selection of .deb compressor")
-was applied, dpkg-deb did not support this environment variable.
-
-Later, dpkg commit c10aeffc6d71 ("dpkg-deb: Add support for
-DPKG_DEB_COMPRESSOR_TYPE/LEVEL") introduced support for
-DPKG_DEB_COMPRESSOR_TYPE, which provides the same functionality as
-KDEB_COMPRESS.
-
-KDEB_COMPRESS is still useful for users of older dpkg versions, but I
-would like to remove this redundant functionality in the future.
-
-This commit adds comments to notify users of the planned removal and to
-encourage migration to DPKG_DEB_COMPRESSOR_TYPE where possible.
-
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
-
- lib/Kconfig.debug            | 6 +++---
- scripts/package/debian/rules | 4 ++++
- 2 files changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 17ccd913975d..be9f5af4c05c 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -335,12 +335,12 @@ config DEBUG_INFO_COMPRESSED_ZLIB
- 	  Compress the debug information using zlib.  Requires GCC 5.0+ or Clang
- 	  5.0+, binutils 2.26+, and zlib.
- 
--	  Users of dpkg-deb via scripts/package/builddeb may find an increase in
-+	  Users of dpkg-deb via debian/rules may find an increase in
- 	  size of their debug .deb packages with this config set, due to the
- 	  debug info being compressed with zlib, then the object files being
- 	  recompressed with a different compression scheme. But this is still
--	  preferable to setting $KDEB_COMPRESS to "none" which would be even
--	  larger.
-+	  preferable to setting KDEB_COMPRESS or DPKG_DEB_COMPRESSOR_TYPE to
-+	  "none" which would be even larger.
- 
- config DEBUG_INFO_COMPRESSED_ZSTD
- 	bool "Compress debugging information with zstd"
-diff --git a/scripts/package/debian/rules b/scripts/package/debian/rules
-index ca07243bd5cd..33bfd00974b3 100755
---- a/scripts/package/debian/rules
-+++ b/scripts/package/debian/rules
-@@ -41,6 +41,10 @@ package = $($(@:binary-%=%-package))
- # which package is being processed in the build log.
- DH_OPTIONS = -p$(package)
- 
-+# Note: future removal of KDEB_COMPRESS
-+# dpkg-deb >= 1.21.10 supports the DPKG_DEB_COMPRESSOR_TYPE environment
-+# variable, which provides the same functionality as KDEB_COMPRESS. The
-+# KDEB_COMPRESS variable will be removed in the future.
- define binary
- 	$(Q)dh_testdir $(DH_OPTIONS)
- 	$(Q)dh_testroot $(DH_OPTIONS)
--- 
-2.43.0
+>=20
+> I'm currently looking into how to fix the amdgpu CS path for gang
+> submission regarding this.
+>=20
+> Any objections that I add a preload function to allocate the memory
+> for the XA outside of the critical section?
+>=20
+> Regards,
+> Christian.
+>=20
+> > ---
+> > =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 24 ++++++++++++++++++---=
+-
+> > --
+> > =C2=A01 file changed, 18 insertions(+), 6 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/scheduler/sched_main.c
+> > b/drivers/gpu/drm/scheduler/sched_main.c
+> > index 4d4219fbe49d..829579c41c6b 100644
+> > --- a/drivers/gpu/drm/scheduler/sched_main.c
+> > +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> > @@ -828,11 +828,15 @@ EXPORT_SYMBOL(drm_sched_job_init);
+> > =C2=A0 *
+> > =C2=A0 * This arms a scheduler job for execution. Specifically it
+> > initializes the
+> > =C2=A0 * &drm_sched_job.s_fence of @job, so that it can be attached to
+> > struct dma_resv
+> > - * or other places that need to track the completion of this job.
+> > + * or other places that need to track the completion of this job.
+> > It also
+> > + * initializes sequence numbers, which are fundamental for fence
+> > ordering.
+> > =C2=A0 *
+> > =C2=A0 * Refer to drm_sched_entity_push_job() documentation for locking
+> > =C2=A0 * considerations.
+> > =C2=A0 *
+> > + * Once this function was called, you *must* submit @job with
+> > + * drm_sched_entity_push_job().
+> > + *
+> > =C2=A0 * This can only be called if drm_sched_job_init() succeeded.
+> > =C2=A0 */
+> > =C2=A0void drm_sched_job_arm(struct drm_sched_job *job)
+> > @@ -1017,9 +1021,12 @@ EXPORT_SYMBOL(drm_sched_job_has_dependency);
+> > =C2=A0 * Drivers should call this from their error unwind code if @job
+> > is aborted
+> > =C2=A0 * before drm_sched_job_arm() is called.
+> > =C2=A0 *
+> > - * After that point of no return @job is committed to be executed
+> > by the
+> > - * scheduler, and this function should be called from the
+> > - * &drm_sched_backend_ops.free_job callback.
+> > + * drm_sched_job_arm() is a point of no return since it
+> > initializes the fences
+> > + * and their sequence number etc. Once that function has been
+> > called, you *must*
+> > + * submit it with drm_sched_entity_push_job() and cannot simply
+> > abort it by
+> > + * calling drm_sched_job_cleanup().
+> > + *
+> > + * This function should be called in the
+> > &drm_sched_backend_ops.free_job callback.
+> > =C2=A0 */
+> > =C2=A0void drm_sched_job_cleanup(struct drm_sched_job *job)
+> > =C2=A0{
+> > @@ -1027,10 +1034,15 @@ void drm_sched_job_cleanup(struct
+> > drm_sched_job *job)
+> > =C2=A0	unsigned long index;
+> > =C2=A0
+> > =C2=A0	if (kref_read(&job->s_fence->finished.refcount)) {
+> > -		/* drm_sched_job_arm() has been called */
+> > +		/* The job has been processed by the scheduler,
+> > i.e.,
+> > +		 * drm_sched_job_arm() and
+> > drm_sched_entity_push_job() have
+> > +		 * been called.
+> > +		 */
+> > =C2=A0		dma_fence_put(&job->s_fence->finished);
+> > =C2=A0	} else {
+> > -		/* aborted job before committing to run it */
+> > +		/* The job was aborted before it has been
+> > committed to be run;
+> > +		 * notably, drm_sched_job_arm() has not been
+> > called.
+> > +		 */
+> > =C2=A0		drm_sched_fence_free(job->s_fence);
+> > =C2=A0	}
+> > =C2=A0
+>=20
 
 
