@@ -1,142 +1,132 @@
-Return-Path: <linux-kernel+bounces-560935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CC22A60B2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:22:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13514A60B39
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:23:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB5CC46139E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:22:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A107167580
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549AB1A9B2C;
-	Fri, 14 Mar 2025 08:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077461C8605;
+	Fri, 14 Mar 2025 08:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvofsQ9o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="ABVU3d7P"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE1F1A3153;
-	Fri, 14 Mar 2025 08:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8C51C84C5
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741940457; cv=none; b=PdhR37op8ZFqgtHUdZiJQffqXfuMeel8/XYjLiHRtkKu46p/MA8N4C9eHLsgFCYYW10NXxX2eJXMYy+JNnv+XGHgni2ToGpFkYZHHg7OW9vMGi/Wz/Yw2qrx/ixUL9IZPZQx7wEmCZS3glofrjYe10+m27z4e1IPePROIsvWzeU=
+	t=1741940490; cv=none; b=YOY1DP20F/roWekNvQKdudzyCkmUeLmHZGUd+FnKCA+ymfwzCuaBIsVZf9cE6EbCkBmcqf3o1S5M8nYhRrK3uVjlb741LvO6LRqm/34AA6mf6+zIbLHwKoAPSzA/eBZ+NV8ATv/j1EfRmAXm28PLtcB31NXzbejoxErAWHCINq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741940457; c=relaxed/simple;
-	bh=f/kStw48aQBGQy35frF+7V2aEEA00ieAtTWKjV0l8cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g51a9oPHKpnd1bzyaljSBmKWP8+4CJ99woNhLu0mCkYhUWt9ZEoZXTQ2wQQ7tMVfs1fUsFPXcwzmKMODWRVLgQPeewXb156YejBEBkJ+hCn9EOs5cL0vbW04BVS+bqc1Q6BwKCSV5/nNxhOJKlDDUhenIhX8xGNKBpS7oFRwDNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TvofsQ9o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C887C4CEE3;
-	Fri, 14 Mar 2025 08:20:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741940457;
-	bh=f/kStw48aQBGQy35frF+7V2aEEA00ieAtTWKjV0l8cg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TvofsQ9olLoE2wHocil0BEsP7JID4FC94pY7TNU+FzdCexy/ZRjuBqDuRRxTCuD4V
-	 HGChAh+uSkdnuF24sOIJB0AAhrGn65lsZblrgEa8czF/E2c4aTXh5eZlMzdkeMCMuj
-	 1GhCQbRNVhVXR4GYB9bjNaMQ2//WLJrK3I5ukrqOY/5xaXbjPGtkwJQUchGs0QfZ6B
-	 MUVm/InIbotLdROlmorA9Uf+ehWYIO9hFE2Gm9pXYSMSjDJSmaO5pyzBHVOISJPad6
-	 jKs1kEyJjQonXU2NlldsB6QFrVr5U+CHi0VRs2e/mDvZfl49qeqiCDdJD5LS+CtMIz
-	 m1Z19QZz5CWXw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tt0Hn-0000000032G-0Xpi;
-	Fri, 14 Mar 2025 09:20:55 +0100
-Date: Fri, 14 Mar 2025 09:20:55 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Miaoqing Pan <quic_miaoqing@quicinc.com>
-Cc: quic_jjohnson@quicinc.com, ath11k@lists.infradead.org,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	johan+linaro@kernel.org
-Subject: Re: [PATCH v3 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
- length
-Message-ID: <Z9Pm56Xx7kYZl8fk@hovoldconsulting.com>
-References: <20250314061353.106194-1-quic_miaoqing@quicinc.com>
- <20250314061353.106194-3-quic_miaoqing@quicinc.com>
+	s=arc-20240116; t=1741940490; c=relaxed/simple;
+	bh=mppd4LmheDALrusB9T4PJj9qjgXGvLPRSBiVOVkjTwg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=n0ouqw2KN/LqVF5ywUdimYzRli+ftIQVDRCPOy4h2LVMU46x2+0f0I/aivUcAApaibsIGkijCpJdB6UQmvMRcS5h1v/+tjUn9H4KbRlwWauS8lxFUxSIZG/WMQ/Xti9FvJkwHdq+udgAvsBqYh2I5Uqlv5zWnCRbpb8OHtR8SZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=ABVU3d7P; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e5c9662131so2802971a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:21:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1741940487; x=1742545287; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c+NVtuVU2ISJtStqxHLi/aMeg5kRvIk3MtAqB/jXcng=;
+        b=ABVU3d7P8JpvvrdxbtwdJZqVgs18QiWje9f/moFUNBBMp8qXej9XFyb+bJIfhWcRuV
+         Ni4LyhVUYt6O062qf3Wa+d3iDLh3AAsGhBSb9hEJHi8GtykfW2MzuRREe3t86+PzwrSF
+         sBdQl+5p/E/owPbn9ds+F8JMpbqS0vG1C4SzfB/ppDB0+wqro8hJ1I6PuFYG7Ib2DLWB
+         xbuT4w4C5XXhobcT4jTpNaZ/MdCa6cf1XgK/V1gxCHKddIldcJU2tyFFywKR21PLADyG
+         U72WgOxx8q7cziSLU3R/LL/pQmf6H36fUy67Ajw9m7nA8yUwHGgbnh+t78AuY8S/wEAi
+         PeUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741940487; x=1742545287;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c+NVtuVU2ISJtStqxHLi/aMeg5kRvIk3MtAqB/jXcng=;
+        b=fMB/AGLbBr8ELHy9svbGLKlBBcbPA2Y2tRABNQYCkQau7uYHz5tJzNl2Ib94xiDdEA
+         R9f0tMixqHCpBLhZX5QxcoS+NH9a8D+BKrYbd+pfkY5AEweUDHn0y+TjEhmOGW8iOpJJ
+         eIKTh8xlX0UZIefxwSL6+SgQ/w/ByF4y9HA86NGeZinlMXZJ5g/0KqgIgKmhqcw4/c8z
+         1Ioa8ilXOUtIfQl4jEukkT5VO/uvoLYO8P2DfXzzK9mz9qhrs+M06W75GllHcKLzjExY
+         MR2tk3X1uOEdeVhxho55DkabxL9RxTGI4121iyznk4uZx2T5t9vzWW7L5D3+97VTjDLq
+         T0oA==
+X-Forwarded-Encrypted: i=1; AJvYcCXREzKIcNthXdjBiH7r9sF3FDyFzTVIgSZzdAzDexntMbRZgnXOhEameiExi60GdLJcuJFm33IyN3ejh6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBfxeG3R7Twa52ER6iOfsC9euzIYX6ruph9fwy8pryoD37XGyI
+	i4h6I7G9aOPmOlHR6Tlr2joaPKtpaRcTy8gXm4/r6mOf/+UQhM7dU5x+OcnV2vs=
+X-Gm-Gg: ASbGncvmSTxQVuvIMVz4v8RF7xSNjyRmco9VCn0Fir8r9xf5rclE4dwpJV+cAs5dZGT
+	8L0FTxt1/R/HUAwcCbbVqkKukeskqA1BgcbNkijiuJ/jkcWDM003+UCS2o4S3N11LE2j3djUceH
+	KmGMxkZX/bbO9KWaTNR+AcfEuqM62UnsrkFuEd4IzkK6MKnr7zI00ZbFJLMg5EZc75MPd2g4VBD
+	P5xl2YQHopqNxMKFW60VG3hgFcRCjinWY5SkLt6eM7wa7MahsSPkDT/KYV5kU10/HK+EdAEMsfK
+	q2CXSDaSdHeKPZYbc4PNb5v6bMqd/DMyVBH3svljyVegOV0hOAU9hrX0qUqDN7erkMUYecRoTsJ
+	swwyyJKCdyv+wSL1UVA==
+X-Google-Smtp-Source: AGHT+IE6U7GmQ58fz7zI6ECFfeW+9X4eiOa30l8vgfN5EOFVNew13LY0sJrmHqQgR2MvZBZ6zRu3qg==
+X-Received: by 2002:a05:6402:1d53:b0:5e6:6407:3b23 with SMTP id 4fb4d7f45d1cf-5e8a0422028mr1472473a12.21.1741940486720;
+        Fri, 14 Mar 2025 01:21:26 -0700 (PDT)
+Received: from [100.64.0.4] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816ad38fesm1643387a12.57.2025.03.14.01.21.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 01:21:26 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Date: Fri, 14 Mar 2025 09:21:16 +0100
+Subject: [PATCH] arm64: dts: qcom: sm8650: Fix domain-idle-state for CPU2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250314061353.106194-3-quic_miaoqing@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250314-sm8650-cpu2-sleep-v1-1-31d5c7c87a5d@fairphone.com>
+X-B4-Tracking: v=1; b=H4sIAPvm02cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDY0MT3eJcCzNTA93kglIj3eKc1NQCXQNTi+SkVGMLkzTzVCWgvoKi1LT
+ MCrCZ0bG1tQABYppDYwAAAA==
+X-Change-ID: 20250314-sm8650-cpu2-sleep-058cbe384f7e
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.14.2
 
-On Fri, Mar 14, 2025 at 02:13:53PM +0800, Miaoqing Pan wrote:
-> A relatively unusual race condition occurs between host software
-> and hardware, where the host sees the updated destination ring head
-> pointer before the hardware updates the corresponding descriptor.
-> When this situation occurs, the length of the descriptor returns 0.
-> 
-> The current error handling method is to increment descriptor tail
-> pointer by 1, but 'sw_index' is not updated, causing descriptor and
-> skb to not correspond one-to-one, resulting in the following error:
-> 
-> ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1488, expected 1492
-> ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
-> 
-> To address this problem and work around the broken hardware,
-> temporarily skip processing the current descriptor and handle it
-> again next time. However, to prevent this descriptor from
-> continuously returning 0, use the skb control block (cb) to set
-> a flag. If the length returns 0 again, this descriptor will be
-> discarded.
-> 
-> Tested-on: QCA6698AQ hw2.1 PCI WLAN.HSP.1.1-04546-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
-> 
-> Reported-by: Johan Hovold <johan+linaro@kernel.org>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218623
-> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
+On SM8650 the CPUs 0-1 are "silver" (Cortex-A520), CPU 2-6 are "gold"
+(Cortex-A720) and CPU 7 is "gold-plus" (Cortex-X4).
 
-> @@ -387,18 +387,36 @@ static int ath11k_ce_completed_recv_next(struct ath11k_ce_pipe *pipe,
->  
->  	ath11k_hal_srng_access_begin(ab, srng);
->  
-> -	desc = ath11k_hal_srng_dst_get_next_entry(ab, srng);
-> +	desc = ath11k_hal_srng_dst_peek(ab, srng);
->  	if (!desc) {
->  		ret = -EIO;
->  		goto err;
->  	}
->  
->  	*nbytes = ath11k_hal_ce_dst_status_get_length(desc);
+So reference the correct "gold" idle-state for CPU core 2.
 
-As I mentioned elsewhere, this function also sets the length field in
-the descriptor to zero. So if there's a racing update, you may never see
-the updated length.
+Fixes: d2350377997f ("arm64: dts: qcom: add initial SM8650 dtsi")
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+ arch/arm64/boot/dts/qcom/sm8650.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> -	if (*nbytes == 0) {
-> -		ret = -EIO;
-> -		goto err;
-> +	if (unlikely(*nbytes == 0)) {
-> +		struct ath11k_skb_rxcb *rxcb =
-> +			ATH11K_SKB_RXCB(pipe->dest_ring->skb[sw_index]);
-> +
-> +		/* A relatively unusual race condition occurs between host
-> +		 * software and hardware, where the host sees the updated
-> +		 * destination ring head pointer before the hardware updates
-> +		 * the corresponding descriptor.
-> +		 *
-> +		 * Temporarily skip processing the current descriptor and handle
-> +		 * it again next time. However, to prevent this descriptor from
-> +		 * continuously returning 0, set 'is_desc_len0' flag. If the
-> +		 * length returns 0 again, this descriptor will be discarded.
-> +		 */
-> +		if (!rxcb->is_desc_len0) {
-> +			rxcb->is_desc_len0 = true;
-> +			ret = -EIO;
-> +			goto err;
-> +		}
+diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+index 719ad437756a499cee4170abccc83f2047f0f747..5844d7d0d0e6b31c08de3391f5cae3f8d823b2cd 100644
+--- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+@@ -1449,7 +1449,7 @@ cpu_pd1: power-domain-cpu1 {
+ 		cpu_pd2: power-domain-cpu2 {
+ 			#power-domain-cells = <0>;
+ 			power-domains = <&cluster_pd>;
+-			domain-idle-states = <&silver_cpu_sleep_0>;
++			domain-idle-states = <&gold_cpu_sleep_0>;
+ 		};
+ 
+ 		cpu_pd3: power-domain-cpu3 {
 
-If you add the memory barrier and make sure not to clear the length
-field above, do you still see the length sometimes always reading zero
-if you retry more than once (i.e. drop the is_desc_len0 flag)?
+---
+base-commit: eea255893718268e1ab852fb52f70c613d109b99
+change-id: 20250314-sm8650-cpu2-sleep-058cbe384f7e
 
-Perhaps the device is really passing you a zero-length descriptor that
-can simply be discarded straight away?
+Best regards,
+-- 
+Luca Weiss <luca.weiss@fairphone.com>
 
-Johan
 
