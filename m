@@ -1,199 +1,215 @@
-Return-Path: <linux-kernel+bounces-561534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11EBFA61329
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:56:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7010A61325
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:56:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0148188F27B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:56:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91DFE3AABA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FCF200BAA;
-	Fri, 14 Mar 2025 13:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE432200118;
+	Fri, 14 Mar 2025 13:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NqoP6jpb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WI4vHW/e"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013066.outbound.protection.outlook.com [40.107.162.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2409E20013C;
-	Fri, 14 Mar 2025 13:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741960577; cv=none; b=oJUhgaN21CTakomMb5/uaX4SLGJxvD0vkpblJDKpInfrHXrhbOq7g2omxZ1vS8kL0kyZBDLtGWb7Lv8hEOlHmmpYTf4rnwaeN3DnnN9zZd5oszyCoyVkJOOs9H3w3Nn9RTwWTW7KX+/IoMbSWdyZdUf+98/RODjsmmsVluDZnuo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741960577; c=relaxed/simple;
-	bh=23kUg45TiltK6jfFPUiytRYVIdZWBMvVjh3gTfi8+Yc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JO1G/VgwwUyVoUnFUAqnpn2Rq9RgqdjHDvviAdq58AxTcrevxAyWegUealPrLzH++y9D5Nju5aGlORMCASwzClYjMq/ZLghkYEjitQ0KHStbBeWTQTtOBbwOM+OB6MEsyH99blG8Fhn2k7uOOh+wn6Y1ILI+p2V6xg4omFlO8q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NqoP6jpb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52EDu5UG024754;
-	Fri, 14 Mar 2025 13:56:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YSHpRfudomt1+AaKesezGs0x3pN3M5StEnb5ZNKlRqw=; b=NqoP6jpbD/PULXN7
-	6I7zo+8IfD02R6gJ6uHuGGAwk7QjIIDuUOPO0eNHbQDNInSSIOiuGF4J0zVMn2tw
-	rE8KuMGmRy3Zva/C95nZVp7YS4WSoEAvJe5bKM76Ue5jN/XHO4jVpTK7hHh/0tek
-	k6jobTfCbvWVMHm+W7Z2s4cJrZRbe3d7nJZz6jjc0CUY1mT9l8aUq3wOuw91W98j
-	Rq2eqGuaUqmkxUwWYDx/F2Qxh2P/e/nqYcZdEokLxSrVMuV1HHP2AaCgmIqe7utd
-	rUWEzB51stuSC5NyLVsxtFJWB6Np80k/dHaPRBLub4msp9VnKwWVBHWcwTqsaQzL
-	keVoPw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45cnscr00x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Mar 2025 13:56:08 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52EDu7cD008662
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Mar 2025 13:56:07 GMT
-Received: from [10.253.39.117] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 14 Mar
- 2025 06:56:05 -0700
-Message-ID: <c34f7d6c-0565-4ff6-aed6-902657938b39@quicinc.com>
-Date: Fri, 14 Mar 2025 21:56:03 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA831FFC41;
+	Fri, 14 Mar 2025 13:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741960573; cv=fail; b=PUky/omnTpRY11eMqyIjMVRiG29zGJHNsaXEj68NwZb8MIIgfLH8Xc5nJdssMs9n3FTrPcvMcJzO2eo7e2eDLZdHr+KiVbeKs07FML2/tGWT+TWSfhkLIP7AN7dhxzMWTKDb6xul/VJhRI77rBc4Dc/x/z0KuqZr9UqG5J6RHJ4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741960573; c=relaxed/simple;
+	bh=NcFbcaBYan/q1ZnXoFexG82u67AdrKOMOR7LyvAPJUA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=AgdB4IsN6DKoKBMYaawY4jNxqeZtFGM0SO1lBQB8KctXEDIhZkiZ4He0V3dlyds2I34j3JcYSA6S+o7va14ecNbOEgVmve5skDLn2qCOXMmRwp71ljLqw2yKuZgER1bKd2XTgzUKSgKhY3FAVmLDlHw303ffYu3DIJdf0gNO+P4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WI4vHW/e; arc=fail smtp.client-ip=40.107.162.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=I5sxaHQFZu55r8LxUFb+OKt9OAWgLn3KeFw3hP6TsNWAjZEAGUCfsSOl0O5OETQb+eMBCg0s7IWhzFhcIsYOTkv9uizUCmzwz/jzNIEwiStRw4/EoJsccl0FkzLJfDhnYxwKlYkqPiL5ZsWaeE7GllTRzgQkOAigRrAqn+9GCq0tUlgTqgk8KCy8xTYSaAfpV+sEFF4mGwOywAgLH4t4DHXypPThCe64aBf9CH6OO82ECDaH7TSWZB4ymeWwGigelDzPWBmushs/tfDvp3kd8D3U7GMtOIYF+nmECPW3/cofmee3mHKfRoFc20PXrP27zQU8MUCrl+Q2K13Wt/tr+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NcFbcaBYan/q1ZnXoFexG82u67AdrKOMOR7LyvAPJUA=;
+ b=AM0wVL2dHhG87+erfyEffsOdCBpnxJhudFQBFtVtXoRXwbpl2MWQawf5+hlkQD7WF2UKkMriVP+BY/2nNdCqFu2sDXbMLOC2WIDg+ZzmNuoX1yu9aZRMNJ/nJkTZazs9Hd9ybvAPdlrSIzFmsMhx32KY63EY6zM09Kf9vwz7tlur+WFAS0ODMBK2+AAXRG5CDUSUxJnSm4Xh5/4ZOPZBi95yBI90MsKRUbz7QNgD0XJNnLs4SR6Z/6NttlJJsXaohUPH7lfcfH8+fzuCq7yMSNQuCh0h5f/M/p8SVkcYdEEWwLSVpQqfsiWCWs50qs4eY1Q1TzSP4EUxi8VE44OahA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NcFbcaBYan/q1ZnXoFexG82u67AdrKOMOR7LyvAPJUA=;
+ b=WI4vHW/e+IwGRI1E44wnQp4QdbhkGASc5UEraXd74px/NK6P89OLlmIDiWFo5fMfWws4cl8Fm0qhWmX7sxM5oBoyXFUCiGvrQRilKnwisRCOG91Ch3xS4VaENaE4H2edZflqG3ZzDgXBweXF9fWvcwZfOEVx6SPevOZ2Q2OxmwQ5cf+pHGy273EWZ3aOSFMhdCvFT/R5Vq5MNOt/hWG+e3tU68AwR5m8Fn/AXNqzHrnzQ177c0rmx/yAO2wTSautqmmZACpgOaARqUgTlmJbxGbnAq8VilCLyF8F1A8dlvif+PcIbVdufkzlLM/5cVWhWAA/DIzGnCydl7vdlVHndg==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by GV1PR04MB10557.eurprd04.prod.outlook.com (2603:10a6:150:209::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Fri, 14 Mar
+ 2025 13:56:07 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8534.027; Fri, 14 Mar 2025
+ 13:56:07 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+CC: Claudiu Manoil <claudiu.manoil@nxp.com>, Clark Wang
+	<xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "christophe.leroy@csgroup.eu"
+	<christophe.leroy@csgroup.eu>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v4 net-next 02/14] net: enetc: add command BD ring support
+ for i.MX95 ENETC
+Thread-Topic: [PATCH v4 net-next 02/14] net: enetc: add command BD ring
+ support for i.MX95 ENETC
+Thread-Index: AQHbkkpLRYKdL7a04kCsKfHEkw9g2bNxSx9ggADF3gCAAG/sgIAAKgsQ
+Date: Fri, 14 Mar 2025 13:56:06 +0000
+Message-ID:
+ <PAXPR04MB8510E0C6A4EE36B2155D813B88D22@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250311053830.1516523-1-wei.fang@nxp.com>
+ <20250311053830.1516523-1-wei.fang@nxp.com>
+ <20250311053830.1516523-3-wei.fang@nxp.com>
+ <20250311053830.1516523-3-wei.fang@nxp.com>
+ <20250313164908.rdy3y77xno3fza3l@skbuf>
+ <PAXPR04MB8510D3A2F2A792A89941A7FD88D22@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <20250314111801.2oela3qoi5qrl6el@skbuf>
+In-Reply-To: <20250314111801.2oela3qoi5qrl6el@skbuf>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|GV1PR04MB10557:EE_
+x-ms-office365-filtering-correlation-id: 5d4b8dba-07f5-4cc9-2965-08dd62fff7d1
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?SFjCRoA87StEe+rELC4mMbbsp8/LctKjPJikUHPrtkMDt3ukCVQM4R0imyg/?=
+ =?us-ascii?Q?/r5VvlOSxA8O90nSEh/tHTR0T5xst5+Wni2esFpCtUtYkIiooMqDI6yj5wFO?=
+ =?us-ascii?Q?9ZEGDHWDU0pa4KOKHsIy4UZKZQhY7Hl5wu6YweOE76XPFDZoGv6fcP7vrv6/?=
+ =?us-ascii?Q?je3bG0Y654ITDiE6OPIYDYBX0AUHI/cbH1L65qg8kfI5kdP0Nx+Fptml+Dps?=
+ =?us-ascii?Q?rl+RV9aiidOgkN++HwGSYDx/F//ig4XF9YcG/INGjamVl2/m72L6Pgh2KUHA?=
+ =?us-ascii?Q?PV1AxAsxTqH3W6RbgHnr3U58WYqs8YQJPH6dZt48arHIvYwLHPQ28Lm1bn3X?=
+ =?us-ascii?Q?ojT8KxI4BQceZLGgMxOlZ0cHX9C3EouER5TPUKco1DNPIUN73avZCDG/HSGI?=
+ =?us-ascii?Q?1CFj+J8Pz+A2Vwa93z/8eIqZU2Cp0hM0efr2OwFodPMEDi81cdZmVQaBqFNP?=
+ =?us-ascii?Q?9VJDmiLsWcH/UzcmEn8MGnDjQ0zym1O3N240Jws/Q/HvDPINqQbsVPbPOZId?=
+ =?us-ascii?Q?FE9oAGPVyKmXwCnSqI9zwZbCD4m07rfmgXggmgWHFFA4RJzhRUfqfcP37rC5?=
+ =?us-ascii?Q?EceviTJpo0FqaANzeJT+vTkJ+uWqx/EWT0OBy8Y791m00nNRvj2Iao62qdul?=
+ =?us-ascii?Q?BBKV9m0bhNMZ5BG+xa/BWWe9s/XP+MnfbgpQBjtzw8g33G3ug0jMrX2lI9Ky?=
+ =?us-ascii?Q?7AlNUWNunsKC6nHnmXTdv6zJ9SPPbg4wSmXba3ZtgsHoAC76h+zqCKHcyYqT?=
+ =?us-ascii?Q?MSkFjWn9z9pj/TZByMMTTKemLTWE3PYCXTdDsYNYIbILAIhIqx+6t1Zh7VML?=
+ =?us-ascii?Q?SdClAGCF9LU5I2RwsGgy57zwKnVlCtPTeXlJtNfbrL2aJ2HQHcdkEtPwwOus?=
+ =?us-ascii?Q?r1vDEJCKNP//cJo/h6fxSHU+c7WxbdiDQZ+S9fdpuknjlLe7OjZSLSmg3VMr?=
+ =?us-ascii?Q?5q23BRoGIBVP3uCCeKF1p5XCMkX6BSZtuHrcmEBzqmHJpjNlfImeVqcW4g59?=
+ =?us-ascii?Q?1vnhWLmqinJRTMG791vbkCmZfBy8e/oEZcnKLnFXVuFRISpZ26K02MOVy49y?=
+ =?us-ascii?Q?xxBSlr3Qywql82O3L72FtMBH9Rvxw8QihjD/q+GkbQ+mOqTzCB5tHwAVJk3I?=
+ =?us-ascii?Q?+7g1t5dtCj8j1CEo/hl/LI54/MXF98YSb+Ji/6mEUZYuR4RVgIYNMsSO1pQ0?=
+ =?us-ascii?Q?JcC4fGNXhdRHFe54TbSPR3CEi9J7jS6Dw6UlKKR0CunQ25kQ0gi19tKnhR4o?=
+ =?us-ascii?Q?Qr8oAYjSxMVI+tmbw/UMaSEukW68Bf3eOixROVkccUO74ceV0PXaaBHJYZcU?=
+ =?us-ascii?Q?LRR+/N/jKze7pvqcz4Z2+rTKRZThWbMfew+rr7jcBOqTCX6AcRnKaC9ZYl9N?=
+ =?us-ascii?Q?4EpCL5H92QMI7JglEvptNWXnS8eznA0V49MXobyc2WewK0JUXnOCde6wqRXY?=
+ =?us-ascii?Q?ZEuHLft7OzodbUmmEVbyfBWXaNHnBWV2?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?LwSAdcqY5/XKOujWI+PiiNna3vS6zYKkeGBAmMlb8L4EDdbaRp9B0V86bU/8?=
+ =?us-ascii?Q?Kr60po6NeLKz+4n4XT/LPXFnbIiZpbZgZbaFh4kD0VNhA8vibTQfUR+Vy0Qc?=
+ =?us-ascii?Q?GHzDNVSxY03jHZSDR3IkbyUqz9yJHprWe6kXLh1xfl4chLo9fy4o8r4dfsAq?=
+ =?us-ascii?Q?oD11LL3WXF+xJZPVj2HuvH8IAQ0AUflogsHI+OnjT9phebPR/ULXVZZzI3W4?=
+ =?us-ascii?Q?3EMe7cFo9UYd2FWuRjCD333Euu82/XmHe12vlDzuHdjEi3nOQVD5itpQEhzC?=
+ =?us-ascii?Q?G02XpYkM7qFJJOGDKpg41f8O6Dwl8lxOQcE/in/WgzEPMqSVmyT+JHsRCU6e?=
+ =?us-ascii?Q?5DWq4rH5YuJjcrPiACjOoi0lOKDsD+p799wp0+BXOXzBN1dES9g/2iIEn1o1?=
+ =?us-ascii?Q?KzlMzAqg6hhShnb9K4GPS+uH+BMGR9LwmrpIDneI92NWkR2DbWTa84jAXTvM?=
+ =?us-ascii?Q?FyMdjYs/G9/SRLh9yeiayGaKdBDRR7erfpsj9wtPmUPDTGdf90tNGucy2kFR?=
+ =?us-ascii?Q?mfFu6T5N3pjMI6xKzHnWe/JV18Z+MerfR2QNNhNBGhdchDuiI1siJyfhgnbz?=
+ =?us-ascii?Q?g3uzAZENOPIZIfqXojq29g81Yl94+g/iTyHfo44G0SQyUJ0qj4fonzXZ0UOp?=
+ =?us-ascii?Q?m6EYXdLtz67y8lDT0B/jVtyOcIIHzs8Dm+LExdriBqwL3q+NuP6EHgo1Tp/s?=
+ =?us-ascii?Q?z8uAfIAPJ1VMgR6t1p2Q0BAf2zEcNilUMHWdwBYRXElyTs28X0sCkw68bCp7?=
+ =?us-ascii?Q?v8Gq7uXzqEfullpxoxlm0knYpFPjlz/N0UTQukGBZhT6M+je0kNzMoHqt8NK?=
+ =?us-ascii?Q?NFvzbsI1KVR7E2KARmcC7G5fZyYWcgCjAJrONuhzbrcoksxfRlI3U5Ogo0FS?=
+ =?us-ascii?Q?nagSA6gNE/CxQvLLoKVxzpvmNOxp2JxGtJx3dYPX9ahkym6wl6CGwyuEHX+/?=
+ =?us-ascii?Q?TsgvKhrshY9ZIn0rsK7MDzxTtTs1fN75KqO7z5sMJ3yGaPHpsXNde0rcq4oE?=
+ =?us-ascii?Q?5joNHhqa1eYRP/1guC7FmnwiFjm4hBD1pcQkU+H0kTsIEbSKQMMFZ39FgSJ8?=
+ =?us-ascii?Q?pBDBnsjxbsbEktcYU6JMztajp3Fl6pZgySxuFXuYh46qbQ9xnpYtiUTGDSf4?=
+ =?us-ascii?Q?r5tdloEjlEsubJh4+x7ptXpl2Oj4wpcr4DrtuVgKmGHN4Y8EupnHgi1PGnss?=
+ =?us-ascii?Q?wz39jI5VajY3t3mtKMTHqI2X/La+RZQ2ljOPj/xfLKiQq1X3G6LU5mkPjMbj?=
+ =?us-ascii?Q?Q3r9D2E1Zma767eD508+2GC19FN23dQKtnqE3DCtUjgUu1DH8E/BpVIv70Uh?=
+ =?us-ascii?Q?3CRV8DGo/rcrfDPPOxAFKjw3rN08TqffojvAcrC99gl26Y4tpltHUCBxeNgD?=
+ =?us-ascii?Q?GO4MRzV20td3c7MCHEuDRWZsAfetwPKKz1AQuvfFLO4YV6X3H61tRS7Gje+t?=
+ =?us-ascii?Q?YkUwxdA3surZEuvoOuy2bOlXFXoh632QSw07gpixSFfkSMIxymuBSQ796J04?=
+ =?us-ascii?Q?8Zwmbs/gkfE7EhrgseDrVClmy+z86N2g1oYBBO1d1D2lZH8PnOB6a7LcXD1u?=
+ =?us-ascii?Q?+uNj7ggw4lRa4gcDEW0=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
- length
-To: Johan Hovold <johan@kernel.org>
-CC: <quic_jjohnson@quicinc.com>, <ath11k@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <johan+linaro@kernel.org>
-References: <20250314061353.106194-1-quic_miaoqing@quicinc.com>
- <20250314061353.106194-3-quic_miaoqing@quicinc.com>
- <Z9Pm56Xx7kYZl8fk@hovoldconsulting.com>
-Content-Language: en-US
-From: Miaoqing Pan <quic_miaoqing@quicinc.com>
-In-Reply-To: <Z9Pm56Xx7kYZl8fk@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Qbxmvtbv c=1 sm=1 tr=0 ts=67d43578 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=zvfRP35NZ5SxQhbWGWEA:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: Q-UnRDT5vKxIkVsA9GpuaaNJ4RkeofkG
-X-Proofpoint-GUID: Q-UnRDT5vKxIkVsA9GpuaaNJ4RkeofkG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-14_05,2025-03-14_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- lowpriorityscore=0 adultscore=0 mlxlogscore=999 mlxscore=0 phishscore=0
- impostorscore=0 suspectscore=0 clxscore=1015 priorityscore=1501
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503140110
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d4b8dba-07f5-4cc9-2965-08dd62fff7d1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Mar 2025 13:56:06.9981
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5rYt8SBBiKP1yg9L9aywO44GIFxW0ccBBkjHwk32Yn0Je6QZORpNT4tV3B8ihZAnRo2IEWQcau1c2KbGv+XDjw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10557
 
+> On Fri, Mar 14, 2025 at 06:51:06AM +0200, Wei Fang wrote:
+> > > I don't understand the need for si->ops->setup_cbdr() and
+> > > si->ops->teardown_cbdr()?
+> > > Doesn't every call site know which kind of SI it is dealing with, and=
+ thus it
+> can
+> > > appropriately call the direct symbol?
+> > > - the v1 PSI and the VSI call enetc_setup_cbdr() and enetc_teardown_c=
+bdr()
+> > > - the v4 PSI calls enetc4_setup_cbdr() and enetc4_teardown_cbdr()
+> >
+> > Yes, for PSI we can use directly call these functions because they are =
+different
+> > drivers, but for VSI, v1 and v4 will use the same driver. I just want t=
+he PSI and
+> > VSI to be consistent. If you don't like this, I can remove these interf=
+aces from
+> > the patch set, and add vf_setup_cbdr and vf_teardown_cbdr in the future
+> when
+> > I add the VF support for ENETC v4.
+>=20
+> It's not that I don't like them, the point is rather simple: as far as
+> this patch set is concerned, converting direct function calls to
+> indirect ones is an unfinished idea. It needs to be evaluated in full
+> context, which is not present here - as you say, v4 VSIs need to be
+> further modified to call a different set of operations - but right now,
+> they call a single set of CBDR functions. Changes which require
+> subsequent patch sets in order to make any sense at all are discouraged.
+>=20
+> Given the fact that the PSI code paths still don't benefit from an
+> indirect function call in any way, I would in principle recommend to
+> keep calling their CBDR methods directly. For VSIs I don't know which is
+> preferable (if-else vs function pointer), I need to see that code first.
 
-
-On 3/14/2025 4:20 PM, Johan Hovold wrote:
-> On Fri, Mar 14, 2025 at 02:13:53PM +0800, Miaoqing Pan wrote:
->> A relatively unusual race condition occurs between host software
->> and hardware, where the host sees the updated destination ring head
->> pointer before the hardware updates the corresponding descriptor.
->> When this situation occurs, the length of the descriptor returns 0.
->>
->> The current error handling method is to increment descriptor tail
->> pointer by 1, but 'sw_index' is not updated, causing descriptor and
->> skb to not correspond one-to-one, resulting in the following error:
->>
->> ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1488, expected 1492
->> ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
->>
->> To address this problem and work around the broken hardware,
->> temporarily skip processing the current descriptor and handle it
->> again next time. However, to prevent this descriptor from
->> continuously returning 0, use the skb control block (cb) to set
->> a flag. If the length returns 0 again, this descriptor will be
->> discarded.
->>
->> Tested-on: QCA6698AQ hw2.1 PCI WLAN.HSP.1.1-04546-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
->>
->> Reported-by: Johan Hovold <johan+linaro@kernel.org>
->> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218623
->> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
-> 
->> @@ -387,18 +387,36 @@ static int ath11k_ce_completed_recv_next(struct ath11k_ce_pipe *pipe,
->>   
->>   	ath11k_hal_srng_access_begin(ab, srng);
->>   
->> -	desc = ath11k_hal_srng_dst_get_next_entry(ab, srng);
->> +	desc = ath11k_hal_srng_dst_peek(ab, srng);
->>   	if (!desc) {
->>   		ret = -EIO;
->>   		goto err;
->>   	}
->>   
->>   	*nbytes = ath11k_hal_ce_dst_status_get_length(desc);
-> 
-> As I mentioned elsewhere, this function also sets the length field in
-> the descriptor to zero. So if there's a racing update, you may never see
-> the updated length.
-> 
-
-Will add below check.
-
---- a/drivers/net/wireless/ath/ath11k/hal.c
-+++ b/drivers/net/wireless/ath/ath11k/hal.c
-@@ -602,7 +602,11 @@ u32 ath11k_hal_ce_dst_status_get_length(void *buf)
-         u32 len;
-
-         len = FIELD_GET(HAL_CE_DST_STATUS_DESC_FLAGS_LEN, desc->flags);
--       desc->flags &= ~HAL_CE_DST_STATUS_DESC_FLAGS_LEN;
-+       /* Avoid setting the length field in the descriptor to zero when 
-length
-+        * is 0, as there's a racing update, may never see the updated 
-length.
-+        */
-+       if (likely(len))
-+               desc->flags &= ~HAL_CE_DST_STATUS_DESC_FLAGS_LEN;
-
-
-
->> -	if (*nbytes == 0) {
->> -		ret = -EIO;
->> -		goto err;
->> +	if (unlikely(*nbytes == 0)) {
->> +		struct ath11k_skb_rxcb *rxcb =
->> +			ATH11K_SKB_RXCB(pipe->dest_ring->skb[sw_index]);
->> +
->> +		/* A relatively unusual race condition occurs between host
->> +		 * software and hardware, where the host sees the updated
->> +		 * destination ring head pointer before the hardware updates
->> +		 * the corresponding descriptor.
->> +		 *
->> +		 * Temporarily skip processing the current descriptor and handle
->> +		 * it again next time. However, to prevent this descriptor from
->> +		 * continuously returning 0, set 'is_desc_len0' flag. If the
->> +		 * length returns 0 again, this descriptor will be discarded.
->> +		 */
->> +		if (!rxcb->is_desc_len0) {
->> +			rxcb->is_desc_len0 = true;
->> +			ret = -EIO;
->> +			goto err;
->> +		}
-> 
-> If you add the memory barrier and make sure not to clear the length
-> field above, do you still see the length sometimes always reading zero
-> if you retry more than once (i.e. drop the is_desc_len0 flag)?
-> 
-> Perhaps the device is really passing you a zero-length descriptor that
-> can simply be discarded straight away?
-> 
-> Johan
-
-Will verify your suggestion, thanks.
+Okay, let's keep directly calls in v1 and v4 PSI drivers. Regarding to the
+VSI, some people don't like if-else because they think we may have v5,
+v6, v7 in the future which may use different version of command BD ring,
+so they prefer function pointer. But for trivial, like different register o=
+ffsets
+for different ENETC versions. I think if-else is enough.
 
 
