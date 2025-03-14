@@ -1,113 +1,183 @@
-Return-Path: <linux-kernel+bounces-560925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A4ABA60B19
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:19:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7E4A60B35
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:23:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7507919C1AA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:20:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7198B46149A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B726E1A254E;
-	Fri, 14 Mar 2025 08:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9007A1B85FD;
+	Fri, 14 Mar 2025 08:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UcvFpkS0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="L+ZrOTHg"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B19EAD7;
-	Fri, 14 Mar 2025 08:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357F71A317A;
+	Fri, 14 Mar 2025 08:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741940390; cv=none; b=YsvLvSnBXM3PY17ODbJt+bjwQabF2v97FxUS4QTz1H/zzCPqV5t3T6oLMVEXjRsPmPCbeK23/rqTPM63zlTYPJyXbtSNnpGfBEAf8VbAjHbK52SKj6ajQabgh48ZOplVycoT070s21uLW1ncuADgstExVkM2pxZf+cpayv+rkwc=
+	t=1741940470; cv=none; b=me3ZKC5Qcc5j6rP8Ow0TzHb5BGtuMl2qPcgZ1zGCM4xnPMEJIoSDLzmedWmkOtZohrXkO4kxw3AkcazPK/be/ca8+9z+GvYhVv7vSeLnqVwUhfaMf23KoPx8NR0+eFzFQJc0nyueqkv4EsGA3r3B/nPXxNF+XFLnnbOcWslfZBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741940390; c=relaxed/simple;
-	bh=kdFwwWX7uw9irI3XUeb7K1Tm67CdTCvgOj59eYAoB+Y=;
+	s=arc-20240116; t=1741940470; c=relaxed/simple;
+	bh=APocdxWic3wcmYJIWYvP7OT2+DhSgNE+HRKba5vzeZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MDPs7b5XYvfZQFzefDaEKYE2X77UVD3/KbmTrDqqRxeM4F2oTFJOwdNtHvIpZf0ut3NBy/+/2suV8DzIJ8DgmGMenUc/kc8TsPtf5m11O7kvp/ty8dYgpbsZ0hqXqdGppxxfjOBbV3R+wKP6Jnu15Cp+bGqdO1XjdTkHKsNCu8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UcvFpkS0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CFCAC4CEE3;
-	Fri, 14 Mar 2025 08:19:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741940389;
-	bh=kdFwwWX7uw9irI3XUeb7K1Tm67CdTCvgOj59eYAoB+Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UcvFpkS0poDhkXhpSzSyE7nwPlSeWDphVaJCLDBBr/DPFKJ0ZRKLDVyCvkijUzcaz
-	 aaDAc9hg7htE0YsnUhQ+0tXs3C/3LCQflA6IMamcPnkmQjE5JfcXagwSQe9KSa4h7J
-	 CLjzfsM3JgdzoGurVUvaaqdX13++ymgVUq1vHNvA=
-Date: Fri, 14 Mar 2025 09:19:47 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Li Qiong <liqiong@nfschina.com>
-Cc: Peter Chen <peter.chen@kernel.org>, Pawel Laszczak <pawell@cadence.com>,
-	Roger Quadros <rogerq@kernel.org>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] usb: cdns3: Remove the invalid comment
-Message-ID: <2025031435-candy-tacking-1c7a@gregkh>
-References: <20250314070921.355986-1-liqiong@nfschina.com>
- <20250314080249.469307-1-liqiong@nfschina.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l6xXCmV958bvBhGZQTO3FjWzvARXRO0DEzpcJVjrq+LLGxKFgo0G/tcJjkcsPtyLB49iAiQoiCyB3COXOTSpb1VAhRDVFtgEH9ewjEVz4Oc2KsgWQpxwYzJu+x1ribxKNKmjP5FUtFwYejfR3bxBxsaP4jLs2NM5YHd/E+DSEHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=L+ZrOTHg; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DNPZec000438;
+	Fri, 14 Mar 2025 08:20:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=aSKmf/
+	zE0RFtUDkCAcjTv1jKQGKI/4mOr5Oai3ghZMA=; b=L+ZrOTHgt2Z418d6TFSMqq
+	EgvjbMwJE3GspVGmSRDHnHwHydCuyKWD40KGbdC2kxZA70DISc9VQLZHDWbvMGLg
+	flXgSzjlxbGfPLqiFOgRinakoSfpkVqQA93Wf/tDCAE8bfdFXFVI2cboG6yyVga7
+	hTYkTQKgunxddPBMQIojHjoOJTupYncWezLYHgwjmpR4e+Kr089Hm4o/0ha4vXA8
+	dq081yjobpRZYFerMzvfg7vgQ6q+XAR9mKRBA0+MVpoP+zvHVTH9Apkf99miXKjJ
+	GnnYyEgapRmLrVrR01SsdcnOmAEiuQDUcBgXnuA0rh6A0+kF9/Bmzp9SCOrJ9AXA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45c6hpth3b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 08:20:54 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52E8IYeB005869;
+	Fri, 14 Mar 2025 08:20:53 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45c6hpth37-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 08:20:53 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52E8BhiJ026010;
+	Fri, 14 Mar 2025 08:20:52 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atspp1jx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 08:20:52 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52E8KpB650463166
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Mar 2025 08:20:51 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E9E6D2004B;
+	Fri, 14 Mar 2025 08:20:50 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8120B20043;
+	Fri, 14 Mar 2025 08:20:48 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.204.206.66])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 14 Mar 2025 08:20:48 +0000 (GMT)
+Date: Fri, 14 Mar 2025 13:50:43 +0530
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: Ian Rogers <irogers@google.com>
+Cc: "John B. Wyatt IV" <jwyatt@redhat.com>, peterz@infradead.org,
+        mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        maddy@linux.ibm.com
+Subject: Re: [RFC PATCH 0/3] Introduce a C extension module to allow libperf
+ usage from python
+Message-ID: <owus55cwihmlvqjcphymjvfinpag3pem4qnn5xkkk3wl6o3ffs@tgycw7azoz2p>
+References: <20250313075126.547881-1-gautam@linux.ibm.com>
+ <Z9LnuXCvK5P5KCiU@thinkpad2024>
+ <CAP-5=fWjca+SMBdsyPe8Ggsqrqz=ZzWqxDYhaF+pcYk0MJ12zA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250314080249.469307-1-liqiong@nfschina.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fWjca+SMBdsyPe8Ggsqrqz=ZzWqxDYhaF+pcYk0MJ12zA@mail.gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: hO4L7x8o7D5JNM-VijRdUCAD2s41EPDz
+X-Proofpoint-ORIG-GUID: DIJAfDk65UApmVbLOCxZmh9WQYvxFxNa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-14_03,2025-03-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 suspectscore=0 impostorscore=0 adultscore=0
+ mlxlogscore=999 malwarescore=0 bulkscore=0 clxscore=1011 spamscore=0
+ phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503140062
 
-On Fri, Mar 14, 2025 at 04:02:48PM +0800, Li Qiong wrote:
-> The function don't return value, remove the invalid comment.
+On Thu, Mar 13, 2025 at 09:01:10AM -0700, Ian Rogers wrote:
+> On Thu, Mar 13, 2025 at 7:12 AM John B. Wyatt IV <jwyatt@redhat.com> wrote:
+> >
+> > Hello Gautam
+> >
+> > On Thu, Mar 13, 2025 at 01:21:21PM +0530, Gautam Menghani wrote:
+> > > In this RFC series, we are introducing a C extension module to allow
+> > > python programs to call the libperf API functions. Currently libperf can
+> > > be used by C programs, but expanding the support to python is beneficial
+> > > for python users.
+> > >
+> > > The structure of the patch series is as follows:
+> > > 1. Patch 1 : Create wrappers for the perf structs which are used by
+> > > examples/counting.c
+> > >
+> > > 2. Patch 2: Create the C extension module that maps and exposes the
+> > > libperf functions to python programs
+> >
+> > May I ask why you are not using SWIG? With libcpupower the kernel has
+> > already been using SWIG to generate Python bindings for a C user-space API.
+> >
+> > This has several advantages including a much smaller footprint (you only
+> > need to copy the header definitions into a .swg file), can generate for
+> > several languages (Perl, Ruby, Java and C#), and SWIG is an active,
+> > tested, and mature piece of software code that has been around for
+> > almost as long as the Linux kernel.
+> >
+> > Python bindings including the makefile as an example:
+> > https://elixir.bootlin.com/linux/v6.13.6/source/tools/power/cpupower/bindings/python
+> >
+> > How to use the bindings in a script:
+> > https://elixir.bootlin.com/linux/v6.13.6/source/tools/power/cpupower/bindings/python/test_raw_pylibcpupower.py
+> >
+> > Original discussion:
+> > https://lore.kernel.org/linux-pm/20240724221122.54601-1-jwyatt@redhat.com/
+> >
+> > SWIG has been pretty useful as it helped me find two issues in the
+> > libcpupower API that have been around for over 10 years:
+> > https://lore.kernel.org/linux-pm/20240905021916.15938-1-jwyatt@redhat.com/T/#mf04b4ba93f79fe68c20c1d88d8ed966164a1c7d7
+> > https://lore.kernel.org/linux-pm/20250305210901.24177-1-jwyatt@redhat.com/
 > 
-> Signed-off-by: Li Qiong <liqiong@nfschina.com>
-> ---
->  drivers/usb/cdns3/cdns3-plat.c | 2 --
->  1 file changed, 2 deletions(-)
+> So I think we should probably get rid of libperf and re-integrate it
+> back into the perf code. There are issues in the code, like removing a
+> list element:
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/evlist.c?h=tmp.perf-tools-next#n58
+> just leaks the removed element. Deleting the element means that the
+> container evsel, rather than the libperf perf_evsel, leaks things like
+> the name variable. We can add yet more call backs and complexity but
+> I'm not sure what we're winning. Perhaps we can move things the other
+> way, perf code into libperf, like machine, session, pmus, .. I'd
+> prefer if we were to do that we refactored the code and adopted the
+> same license as libbpf as both libraries have similar packaging
+> issues. The viral GPLv2 on libperf is something of an issue. Perhaps
+> we can also migrate this code to Rust.
 > 
-> diff --git a/drivers/usb/cdns3/cdns3-plat.c b/drivers/usb/cdns3/cdns3-plat.c
-> index 59ec505e198a..735df88774e4 100644
-> --- a/drivers/usb/cdns3/cdns3-plat.c
-> +++ b/drivers/usb/cdns3/cdns3-plat.c
-> @@ -179,8 +179,6 @@ static int cdns3_plat_probe(struct platform_device *pdev)
->  /**
->   * cdns3_plat_remove() - unbind drd driver and clean up
->   * @pdev: Pointer to Linux platform device
-> - *
-> - * Returns 0 on success otherwise negative errno
->   */
->  static void cdns3_plat_remove(struct platform_device *pdev)
->  {
-> -- 
-> 2.30.2
+> SWIG is fine, there is also CLIF, I'm way of dependencies as even a
+> python dependency in the perf build is optional.
 > 
-> 
+> We already have perf python bindings, and I've been working to extend
+> those for example in:
+> https://lore.kernel.org/lkml/20250228222308.626803-1-irogers@google.com/
+> and I've been working to expand those for things like hybrid CPUs. It
+> seems a shame to reinvent all of that logic again on top of libperf.
 
-Hi,
+Thanks for the feedback and pointers. We'll look more into this
+approach.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+Thanks,
+Gautam
 
