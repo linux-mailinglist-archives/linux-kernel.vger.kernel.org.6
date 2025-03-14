@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-561010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96502A60C5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:57:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5365FA60C60
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:58:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E98C7A46CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:56:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4090D189E48D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6A31DFD9A;
-	Fri, 14 Mar 2025 08:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339C91DDA33;
+	Fri, 14 Mar 2025 08:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGLSKGKO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oH2SDzvC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE47D1DAC81
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F661DAC81;
+	Fri, 14 Mar 2025 08:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741942645; cv=none; b=OxtGBVvSzcYdqbCjaM91ai4OB7/X2O5PRxK+NG2ez7i0yMAr3Zu5i0dOYtJdRYORclP0APCw8eXSlN/x2Z2Brhpsp+d2HzJaF1FMgVr8LhHnyqDUg3bgxbfrAAD6BsTtlPyy5xHLXCc/xmcwCj9OyvpsgfBZWP5U7+FPYQ6//1Y=
+	t=1741942699; cv=none; b=pe8FeN2QqPLwem7mczTiD6yEJqbvcrRbobFpJ6GVojsQ+baBNZ9Plszl74gRniXakna7DfuQ47pn+KWpMAK+ntjEl6BI6Xkc7SItWw2fGrdS9QNJL/IiMW4TgsDMWeVigmKDVWJIP2QKo7u9FFhspbdgZLvplkOlF4+e0v0B7+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741942645; c=relaxed/simple;
-	bh=+MJQZxMv1E97Gur8vHENlU6nu0ctTvq036HNbgTS6S4=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=B7/Rsilwux7pWTJMLgdFSrIjH1q6z7wrGFFARt9mKI1T0CRzShzYHZBjCXDjY/ZTVMTPLxZAWuQPLuJTIv2Vd0gTw+BK5RsuXcoaOQB7D+LMzdzwD+HRATaJ9sQ6yBIMQyrKIXF7mS7vrnaCo27+XYR/WKA5zWsqA1DuY3kL/qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LGLSKGKO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF27DC4CEF0;
-	Fri, 14 Mar 2025 08:57:25 +0000 (UTC)
+	s=arc-20240116; t=1741942699; c=relaxed/simple;
+	bh=3mIJSm06YxRGhx1k9fxKkWTTiVXafceuKeP4nRH10+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sAxYWYiSuNLK2HMcxk9XKQ+QVrwdaS4PfBGhUVDMg2P6F5l5yOUvm5vzdK1Fq+PoLnn/7yKVyXxPBMlkj/jQhZ/m6/SpdBCb/KoJ5c98JuLAywQH9xR/xLAYTnWYnBMNvIUgalR8+6lAQ4+70bDmPYD3S4fEwyxpFmbwmRWyAU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oH2SDzvC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB311C4CEE5;
+	Fri, 14 Mar 2025 08:58:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741942645;
-	bh=+MJQZxMv1E97Gur8vHENlU6nu0ctTvq036HNbgTS6S4=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=LGLSKGKOGs68klnK4TzY6gwH1i+rYimvMcc/Y+oMyRUdCS3b4m4Ekx7qGkqP8xEE1
-	 T1ztpLXpvupFwS4nmYVsy269gFIqtmhSSB+qOAAJr6FFNGmT4xPn71QLolJPVK0V4l
-	 RoayudF8ovfOkAPe/lZR4Nfc2CwQ4zWJsTzT2MQbc3Im8O2QRD0TAMyrNYsn6Cpwmk
-	 dkp63TbJCPzus6NkoUL6Bm7avQVLKeFWXlxIMY6xeD3TbP+MGttx3WeyCGUmAB26dv
-	 TNdIv94nH5ZGvnhFPsRQAnzPWvM9AciwUw7akzzNir2BkEgUvj4b00jwIj1gFEiQel
-	 2+/2juAci2LFg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE2013806655;
-	Fri, 14 Mar 2025 08:58:01 +0000 (UTC)
-Subject: Re: [GIT PULL] LEDs fixes for v6.14
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250314082748.GI3645863@google.com>
-References: <20250314082748.GI3645863@google.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250314082748.GI3645863@google.com>
-X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/leds.git tags/leds-fixes-6.14
-X-PR-Tracked-Commit-Id: c72e455b89f216b43cd0dbb518036ec4c98f5c46
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 695caca9345a160ecd9645abab8e70cfe849e9ff
-Message-Id: <174194268024.2165191.11819529894609108758.pr-tracker-bot@kernel.org>
-Date: Fri, 14 Mar 2025 08:58:00 +0000
-To: Lee Jones <lee@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Pavel Machek <pavel@ucw.cz>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+	s=k20201202; t=1741942699;
+	bh=3mIJSm06YxRGhx1k9fxKkWTTiVXafceuKeP4nRH10+4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oH2SDzvCb26vKBz2jjfDjEUORM/o+zOTu6tdhyp2vSOjmgsv1qaxoUK7CS94utsQf
+	 JDCMZ/2B0RfV9xsoHBETGGm+zCYJERnQZR823z6kpr7y/KlWGUV/qz8UOO4SBxLVsa
+	 XTWQSG2O3c0TD8Pj9G1Tsg44usnZ8wCw+u+R5WhNP18ATlj/+UnHsm8YOo2ehhHjxX
+	 P/3PYzxh8cMHRp9lCClxBKjZODLeridLCryg2lqcr54L+3krFA1ETC2gNRRe11Sr48
+	 6MrSDiET9u0Zz9h1uc795xDyjcNm8GWiTAy+xJ+ZIaNbEd2QbakO06MvoArx2Y6Bbq
+	 1emc8fnLp+pQw==
+Date: Fri, 14 Mar 2025 08:58:15 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>, linux-rtc@vger.kernel.org,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2][next] rtc: Avoid a couple of
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <Z9Pvp4i4Mm4vAXSA@google.com>
+References: <Z9PpPg06OK8ghNvm@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9PpPg06OK8ghNvm@kspp>
 
-The pull request you sent on Fri, 14 Mar 2025 08:27:48 +0000:
+On Fri, Mar 14, 2025 at 07:00:54PM +1030, Gustavo A. R. Silva wrote:
+> Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
+> a flexible structure where the size of the flexible-array member
+> is known at compile-time, and refactor the rest of the code,
+> accordingly.
+> 
+> So, with these changes, fix the following warning:
+> 
+> drivers/rtc/rtc-cros-ec.c:62:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/rtc/rtc-cros-ec.c:40:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/leds.git tags/leds-fixes-6.14
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/695caca9345a160ecd9645abab8e70cfe849e9ff
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Reviewed-by: Tzung-Bi Shih <tzungbi@kernel.org>
 
