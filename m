@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-560660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F5EA607D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 04:46:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A7CA607D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 04:46:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 572B817C34E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:46:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 995838805F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212C8136327;
-	Fri, 14 Mar 2025 03:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98382145B3E;
+	Fri, 14 Mar 2025 03:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=antoniohickey.com header.i=@antoniohickey.com header.b="ZKMJNy9m";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="f7UyPLhJ"
-Received: from a48-105.smtp-out.amazonses.com (a48-105.smtp-out.amazonses.com [54.240.48.105])
+	dkim=pass (2048-bit key) header.d=antoniohickey.com header.i=@antoniohickey.com header.b="eU6wvbIK";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="BgwayS0N"
+Received: from a8-71.smtp-out.amazonses.com (a8-71.smtp-out.amazonses.com [54.240.8.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5684A2A1BF;
-	Fri, 14 Mar 2025 03:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.48.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717822A1BF;
+	Fri, 14 Mar 2025 03:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.8.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741923965; cv=none; b=WPK7+82jOV66EDzXOyDAoMs5uOaK2z+fDvFYjpdmwO7h7587HSyZeV3icaeyEpNMsPLCiUEKkiBg3krhvKfXUuoNcmEnBNQpbgX9YKw/aasLzmsCV8ytGpcES1rXFejFsrqkO/imEfyimK2LdCyoDFeZL6ognaUQ8WBAfY/0Vvg=
+	t=1741923971; cv=none; b=KqfU248b+pz6nMprdOV9aw2Hia2zhnCeJWYXsCR7diYECLuh1Y06KCtzLAY5cQxnMfG+1LzmRgqIC2Ngf+SdPE5A8qb+BvZV3EnOGakXlN2KRvHq60wUQ2SnZZVEEU3Ky1aKS5J/rRcP2AE+l5DqAOWAYzHgW2nQmUGcus7PZjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741923965; c=relaxed/simple;
-	bh=JMRugZggJ2ThMqml4c6bp2KzWmuB2zfRsMGqPrTwaxo=;
+	s=arc-20240116; t=1741923971; c=relaxed/simple;
+	bh=BZsxbOv11+gtP8gKLucWQhlfuchqb01i3Ny90m4JiRg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CVxVoUvzamwYp/gFCBbI+O0M3p8RfSpgaufGQaPvfo1+IY8tf3xBIKI+eqC08WUTPklwOVELzEYy4BhfywXZo12s1EpGvzKXtoYTqejnaE26rxiE+VoYcvRCzUxywvy/4CJnYTxd/CGHiuec/pdIBszHsKbXRhZyvwe7X9agJE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antoniohickey.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (2048-bit key) header.d=antoniohickey.com header.i=@antoniohickey.com header.b=ZKMJNy9m; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=f7UyPLhJ; arc=none smtp.client-ip=54.240.48.105
+	 MIME-Version; b=XEfHbcFmTg10msOa6rOH2KTZJsW8nQGnh+ub7xs3bGIs18t+hClVwJbxYW5X9keEIgW2pKuMztEOlZpTjY1F7IvyQvYwyv4moqX6uFnC5HyMhiZ2kDVgZofwXRmKqDet/3k8BEE0jK0MtQvs4e7fGGJ5VYv7/cfuQjU8hUJeMW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antoniohickey.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (2048-bit key) header.d=antoniohickey.com header.i=@antoniohickey.com header.b=eU6wvbIK; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=BgwayS0N; arc=none smtp.client-ip=54.240.8.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antoniohickey.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
 	s=cgcwyxycg75iw36cao5ku2ksreqpjkvc; d=antoniohickey.com;
-	t=1741923961;
+	t=1741923968;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=JMRugZggJ2ThMqml4c6bp2KzWmuB2zfRsMGqPrTwaxo=;
-	b=ZKMJNy9ma4CXwMuLgTNiT1nrvyKd/NEQByA1VHKDZXCgzSFxwBbtkHkaU3GXvh5E
-	loI6M+t7BOQBblXHNVP9vMlkhkQ6Ru2KYL5geSmesvstCo0mG4BCZaJuLFWJFmTkZCn
-	7Lv5GssDi1GobRzjlxy0+S4BS6xv2gdVdab4tS7ZZzPyxritkExp5SYlYUb3r0Q6ZTM
-	qmDotyvUwRk279F+RVch+dMrG1wicrF7OTmVjM6Os0GGmUz+BqH86M+o6yiI4l6++c1
-	LwweMOl7fUTy14g5NKxL7N8P+pBSwOnlZ/QYp6HgoYtOoOVYWWP2fFv36l99eEZvrRi
-	/eZ+dkdRtg==
+	bh=BZsxbOv11+gtP8gKLucWQhlfuchqb01i3Ny90m4JiRg=;
+	b=eU6wvbIKKe4irY4Ge9CZFS0v1Ak7HtwkdDCyKYzA5yx0zhTarrRiHWei9Q8l9NuV
+	rqhpZ8tbYvM2HKQPHleNoi71e4zfiHVhpQRfrG9PEHHjrVXC9GBoFCmrSG06zlJ4TwQ
+	04EDESUe+j7GkCfNIzCnLDGeV7EKIqzAOFrqNiAmrGnXAu+fICk51R7Yg1GJNeHflmU
+	djR6Pb1yxFmoF2IiF0qdDYnSavJ+7ZkIDFxTBKTlNLSkFO9z/RWROkq+sCRZXrzQFyq
+	JWThBkBlmmIWft/k4kNzed7BnvrTcbCgjaP25TVv7Gr3z76PPaTw7kwT3cfpQ7DlXgz
+	RHz2hTyMHA==
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1741923961;
+	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1741923968;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
-	bh=JMRugZggJ2ThMqml4c6bp2KzWmuB2zfRsMGqPrTwaxo=;
-	b=f7UyPLhJ5+zymfnnNY0ahcq36HUrykISgNgHe80FQp7IBXVbBTNbZVBRlUfNh+NC
-	FU5xG/I/BcXBcW8aTn9Tim+5p6JkqXA/DhS6WpMLY85HPQGG5IgfjT12JvFzUEeWsqn
-	rk5U/Mv6hNtSkUMnCPb72eraB34FpBY+bN4my7VE=
+	bh=BZsxbOv11+gtP8gKLucWQhlfuchqb01i3Ny90m4JiRg=;
+	b=BgwayS0Nz97NkoMduLV5fztWpww6kKMEHztUaAtYHfL/a1hukeESuxpnpNFvZBN6
+	xe9hqopl3GLsGr14kHBVPdCcdZ3s+bIkJbJeRGTtRf2NCHLly7QAZjZ22I/qT038Idu
+	AFiXA2b8zIuohS1uRmZuUtauyH8ohqnWveprqRe4=
 From: Antonio Hickey <contact@antoniohickey.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
@@ -59,9 +59,9 @@ To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
 	Danilo Krummrich <dakr@kernel.org>
 Cc: Antonio Hickey <contact@antoniohickey.com>, 
 	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] rust: enable `raw_ref_op` feature
-Date: Fri, 14 Mar 2025 03:46:01 +0000
-Message-ID: <0100019592c24b7d-d6988aab-2a3f-4d9e-a8d8-fc524d8d25c2-000000@email.amazonses.com>
+Subject: [PATCH v2 2/3] rust: clippy: disable `addr_of!`, `addr_of_mut!` macros
+Date: Fri, 14 Mar 2025 03:46:08 +0000
+Message-ID: <0100019592c26506-b2399cba-7bdb-4c0b-9888-393a0576a127-000000@email.amazonses.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <010001958dfeacb5-9039aaab-6114-494a-9f1d-f13982091169-000000@email.amazonses.com>
 References: <010001958dfeacb5-9039aaab-6114-494a-9f1d-f13982091169-000000@email.amazonses.com>
@@ -73,38 +73,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Feedback-ID: ::1.us-east-1.3SHHfi5Rh4c+NdtIv+pxNWeqDT0J3zAhYZLMebdhE9o=:AmazonSES
-X-SES-Outgoing: 2025.03.14-54.240.48.105
+X-SES-Outgoing: 2025.03.14-54.240.8.71
 
-Since Rust 1.82.0 the `raw_ref_op` feature is stable.
+With the `raw_ref_op` feature enabled we no longer want to
+allow use of `addr_of!` and `addr_of_mut!` macros.
 
-By enabling this feature we can use `&raw const place` and `&raw mut place`
-instead of using `addr_of!(place)` and `addr_of_mut!(place)` macros.
-
-This will allow us to reduce macro complexity, and improve consistency
-with existing reference syntax as `&raw const`, `&raw mut` is very similar to
-`&`, `&mut` making it fit more naturally with other existing code than
-the previously used macros.
+We instead want to use `&raw const` and `&raw mut` to get raw
+pointers to a place.
 
 Suggested-by: Benno Lossin <benno.lossin@proton.me>
 Link: https://github.com/Rust-for-Linux/linux/issues/1148
 Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
 ---
- rust/kernel/lib.rs | 2 ++
- 1 file changed, 2 insertions(+)
+ .clippy.toml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 398242f92a96..1d078f69bb19 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -19,6 +19,8 @@
- #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(unsize))]
- #![feature(inline_const)]
- #![feature(lint_reasons)]
-+// Stable in Rust 1.82
-+#![feature(raw_ref_op)]
- // Stable in Rust 1.83
- #![feature(const_maybe_uninit_as_mut_ptr)]
- #![feature(const_mut_refs)]
+diff --git a/.clippy.toml b/.clippy.toml
+index 815c94732ed7..95c73959f039 100644
+--- a/.clippy.toml
++++ b/.clippy.toml
+@@ -8,4 +8,8 @@ disallowed-macros = [
+     # The `clippy::dbg_macro` lint only works with `std::dbg!`, thus we simulate
+     # it here, see: https://github.com/rust-lang/rust-clippy/issues/11303.
+     { path = "kernel::dbg", reason = "the `dbg!` macro is intended as a debugging tool" },
++    # With `raw_ref_op` feature enabled we no longer want to allow use of `addr_of!`
++    # and `addr_of_mut!` macros, but instead use `&raw` or `&raw mut`.
++    { path = "core::ptr::addr_of_mut", reason = "use `&raw mut` instead `addr_of_mut!`" },
++    { path = "core::ptr::addr_of", reason = "use `&raw` instead `addr_of!`" },
+ ]
 -- 
 2.48.1
 
