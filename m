@@ -1,202 +1,131 @@
-Return-Path: <linux-kernel+bounces-561098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296CAA60D8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:41:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93DF1A60D91
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:41:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F19C460AB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:41:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A1FC19C69ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636C71EF0B7;
-	Fri, 14 Mar 2025 09:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="EL46Phh7"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0951F236B;
+	Fri, 14 Mar 2025 09:41:08 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF34B1DF261;
-	Fri, 14 Mar 2025 09:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652821DF261;
+	Fri, 14 Mar 2025 09:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741945262; cv=none; b=lLCxXMRUwj/DDvvQsN1ObIhm/D9rySogsA5IEKi045z0KXvD3ZuqSJefSz2/nmGrwIX/tfER1tMuG7WHYUc+RPPxFLAOHajmbquFkS/QOT6PJQSNRzkvmYt88v9jFkVZ2/+Wg/wzGATyySe0kjvfRGVmDkcnzLnv/XwaScanzsw=
+	t=1741945268; cv=none; b=Py5Us5dzoVt6s+IbFSt1oMFGCiZ9O1z6v5xwPMckZfzhtfunS7TBaSOT7YW8nfGp8LBh+2taelPTasW060V92iPfOYRZqyknl/1yeEuELXZFqVT40ThofytGWtgWDJ/7G8SiiC8XsX6+CKWRd0866FHPsqBTz8MGrGNg8Mp737I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741945262; c=relaxed/simple;
-	bh=udFOvdLj27iPudZRiBJ+1S1ef2uPlN9jD3ISs0kURzg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tnvc8W94LNa7Ez8awP0lpYTITR/oYsmdOVCQJIbBGlt9QDWCeBaKgGfYxUWRsbUj0AWC6KD/2hX1iJOcJWO1sgCAflJIexBBsIaD8mjha6ZxMXnHYiz6KyeZ/uJyPWHZu41phRsyyiQ+PG9EuNIaZ/ludVtKsTJAkRoKtuNhhLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=EL46Phh7; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 52E9eae672853427, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1741945236; bh=udFOvdLj27iPudZRiBJ+1S1ef2uPlN9jD3ISs0kURzg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=EL46Phh7LRGl8rzVloXPKtzZ9PvboaNbVrhrqNjDf4MekzHupe15DBZlXtNRzbFKa
-	 8ivN3R7IekMUMsiOLV26s/SjNw1BqmWzz/zjpg6u2ucZINjTWthHBdPFRqlFOv+ylb
-	 6+gJF8nMjPKCHxgguaAN1sdoPnEDItsSgakmFQ3J6IUR8c8bPSEFh0noH7QQ51su8h
-	 9NJXcMDBevz7UB+NeFRs7muCGRF91kz8a2bpDdKdiCyOTGyZ2PzOE4McEbGhlXGHhK
-	 zUpBUBjpitYYCyt29ZkSJ6cfnXSGeZIEdC6IX7EAr1w20haTn0jfg9QAjnvdpu1FAn
-	 YTbPSR0CLKAPQ==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 52E9eae672853427
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Mar 2025 17:40:36 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 14 Mar 2025 17:40:37 +0800
-Received: from RTDOMAIN (172.21.210.70) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Fri, 14 Mar
- 2025 17:40:34 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: <kuba@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-        <andrew+netdev@lunn.ch>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <horms@kernel.org>, <pkshih@realtek.com>,
-        <larry.chiu@realtek.com>, Justin Lai <justinlai0215@realtek.com>
-Subject: [PATCH net-next] rtase: Add ndo_setup_tc support for CBS offload in traffic control setup
-Date: Fri, 14 Mar 2025 17:40:21 +0800
-Message-ID: <20250314094021.10120-1-justinlai0215@realtek.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741945268; c=relaxed/simple;
+	bh=mMFVz3JEmum/iOGluXUNjmEBLYZGSnrMIdDogdRCCLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fE9AbLlIq1l3i1gm/rwHwFePahd/2N2gBNJBYyPWh46LWx+1waYVun2weGj6anTyXpcCAJAxqAAQqwWfW262YAe5n1+IdvMKbAp2OLRpw3Uc1A263brNuuYsQuA5ATlkC19NIin27/BiwT13UXq0dkHQ4bwGMyb4/xb3xybPJ8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40A3BC4CEE3;
+	Fri, 14 Mar 2025 09:41:06 +0000 (UTC)
+Message-ID: <d14b8c18-55b9-472c-897d-3a481892b080@xs4all.nl>
+Date: Fri, 14 Mar 2025 10:41:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/8] Documentation: uAPI: media: add
+ V4L2_CID_FLASH_DURATION
+To: Richard Leitner <richard.leitner@linux.dev>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>,
+ Pavel Machek <pavel@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org
+References: <20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev>
+ <20250314-ov9282-flash-strobe-v2-4-14d7a281342d@linux.dev>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20250314-ov9282-flash-strobe-v2-4-14d7a281342d@linux.dev>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-Add support for ndo_setup_tc to enable CBS offload functionality as
-part of traffic control configuration for network devices.
+On 14/03/2025 09:49, Richard Leitner wrote:
+> Add the new strobe_duration control to v4l uAPI documentation.
+> 
+> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> ---
+>  Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> index d22c5efb806a183a3ad67ec3e6550b002a51659a..03a58ef94be7c870f55d5a9bb09503995dbfb402 100644
+> --- a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> @@ -186,3 +186,8 @@ Flash Control IDs
+>      charged before strobing. LED flashes often require a cooldown period
+>      after strobe during which another strobe will not be possible. This
+>      is a read-only control.
+> +
+> +``V4L2_CID_FLASH_DURATION (integer)``
+> +    Duration the flash should be on when the flash LED is in flash mode
+> +    (V4L2_FLASH_LED_MODE_FLASH). The unit should be microseconds (µs)
+> +    if possible.
+> 
 
-Signed-off-by: Justin Lai <justinlai0215@realtek.com>
----
- drivers/net/ethernet/realtek/rtase/rtase.h    | 15 ++++++
- .../net/ethernet/realtek/rtase/rtase_main.c   | 49 +++++++++++++++++++
- 2 files changed, 64 insertions(+)
+If this control is present, does that mean that the flash duration always have
+to be set manually? Or can there be an 'Auto' mode as well? And if so, how is
+that set?
 
-diff --git a/drivers/net/ethernet/realtek/rtase/rtase.h b/drivers/net/ethernet/realtek/rtase/rtase.h
-index 2bbfcad613ab..498cfe4d0cac 100644
---- a/drivers/net/ethernet/realtek/rtase/rtase.h
-+++ b/drivers/net/ethernet/realtek/rtase/rtase.h
-@@ -170,6 +170,7 @@ enum rtase_registers {
- #define RTASE_TC_MODE_MASK GENMASK(11, 10)
- 
- 	RTASE_TOKSEL      = 0x2046,
-+	RTASE_TXQCRDT_0   = 0x2500,
- 	RTASE_RFIFONFULL  = 0x4406,
- 	RTASE_INT_MITI_TX = 0x0A00,
- 	RTASE_INT_MITI_RX = 0x0A80,
-@@ -259,6 +260,12 @@ union rtase_rx_desc {
- #define RTASE_VLAN_TAG_MASK     GENMASK(15, 0)
- #define RTASE_RX_PKT_SIZE_MASK  GENMASK(13, 0)
- 
-+/* txqos hardware definitions */
-+#define RTASE_1T_CLOCK            64
-+#define RTASE_1T_POWER            10000000
-+#define RTASE_IDLESLOPE_INT_SHIFT 25
-+#define RTASE_IDLESLOPE_INT_MASK  GENMASK(31, 25)
-+
- #define RTASE_IVEC_NAME_SIZE (IFNAMSIZ + 10)
- 
- struct rtase_int_vector {
-@@ -294,6 +301,13 @@ struct rtase_ring {
- 	u64 alloc_fail;
- };
- 
-+struct rtase_txqos {
-+	int hicredit;
-+	int locredit;
-+	int idleslope;
-+	int sendslope;
-+};
-+
- struct rtase_stats {
- 	u64 tx_dropped;
- 	u64 rx_dropped;
-@@ -313,6 +327,7 @@ struct rtase_private {
- 
- 	struct page_pool *page_pool;
- 	struct rtase_ring tx_ring[RTASE_NUM_TX_QUEUE];
-+	struct rtase_txqos tx_qos[RTASE_NUM_TX_QUEUE];
- 	struct rtase_ring rx_ring[RTASE_NUM_RX_QUEUE];
- 	struct rtase_counters *tally_vaddr;
- 	dma_addr_t tally_paddr;
-diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-index 2aacc1996796..2a61cd192026 100644
---- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
-+++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-@@ -1661,6 +1661,54 @@ static void rtase_get_stats64(struct net_device *dev,
- 	stats->rx_length_errors = tp->stats.rx_length_errors;
- }
- 
-+static void rtase_set_hw_cbs(const struct rtase_private *tp, u32 queue)
-+{
-+	u32 idle = tp->tx_qos[queue].idleslope * RTASE_1T_CLOCK;
-+	u32 val, i;
-+
-+	val = u32_encode_bits(idle / RTASE_1T_POWER, RTASE_IDLESLOPE_INT_MASK);
-+	idle %= RTASE_1T_POWER;
-+
-+	for (i = 1; i <= RTASE_IDLESLOPE_INT_SHIFT; i++) {
-+		idle *= 2;
-+		if ((idle / RTASE_1T_POWER) == 1)
-+			val |= BIT(RTASE_IDLESLOPE_INT_SHIFT - i);
-+
-+		idle %= RTASE_1T_POWER;
-+	}
-+
-+	rtase_w32(tp, RTASE_TXQCRDT_0 + queue * 4, val);
-+}
-+
-+static void rtase_setup_tc_cbs(struct rtase_private *tp,
-+			       const struct tc_cbs_qopt_offload *qopt)
-+{
-+	u32 queue = qopt->queue;
-+
-+	tp->tx_qos[queue].hicredit = qopt->hicredit;
-+	tp->tx_qos[queue].locredit = qopt->locredit;
-+	tp->tx_qos[queue].idleslope = qopt->idleslope;
-+	tp->tx_qos[queue].sendslope = qopt->sendslope;
-+
-+	rtase_set_hw_cbs(tp, queue);
-+}
-+
-+static int rtase_setup_tc(struct net_device *dev, enum tc_setup_type type,
-+			  void *type_data)
-+{
-+	struct rtase_private *tp = netdev_priv(dev);
-+
-+	switch (type) {
-+	case TC_SETUP_QDISC_CBS:
-+		rtase_setup_tc_cbs(tp, type_data);
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	return 0;
-+}
-+
- static netdev_features_t rtase_fix_features(struct net_device *dev,
- 					    netdev_features_t features)
- {
-@@ -1696,6 +1744,7 @@ static const struct net_device_ops rtase_netdev_ops = {
- 	.ndo_change_mtu = rtase_change_mtu,
- 	.ndo_tx_timeout = rtase_tx_timeout,
- 	.ndo_get_stats64 = rtase_get_stats64,
-+	.ndo_setup_tc = rtase_setup_tc,
- 	.ndo_fix_features = rtase_fix_features,
- 	.ndo_set_features = rtase_set_features,
- };
--- 
-2.34.1
+Regards,
 
+	Hans
 
