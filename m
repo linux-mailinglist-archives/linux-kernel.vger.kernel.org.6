@@ -1,166 +1,193 @@
-Return-Path: <linux-kernel+bounces-560635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAAC7A6078A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:36:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E6B6A6078E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:38:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B291F19C38ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:37:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0295719C4950
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566D43FBB3;
-	Fri, 14 Mar 2025 02:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E0926AD9;
+	Fri, 14 Mar 2025 02:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YY3zkSNS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="F1s/J4FA"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34E82E3364;
-	Fri, 14 Mar 2025 02:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A642E3364
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 02:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741919810; cv=none; b=kDAYxHCmUMPJVqRIGbf/QI997JP08PyrKtVK/DcRPZWo6Ar+2lUaMlQoMM0XsVdztvQWFsknfvRtCa/X223ZOdku1UCrbpEOQmSJPgFrUOP5nQhpDmMlbKrZpkGbnJnI9nmq3DHNPpty5mVRsqILKubvSSqPFC7lvF/dGMPTwLw=
+	t=1741919877; cv=none; b=bXqXB+4QHHGpXAsAjZ66eM0fH9NTzeTFMlw1PjuRkwXkckX4TvakVjkaJvSF5bWRribMfAFFn8PsSbi6HowvzFW6CUPGz6k1o86zpDTRMEC8no4GVAKd/csHwQNAteJtI98ZFqqSGjLBZOCRjvuYVTuszpjsrVKXMDoaMVdCDEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741919810; c=relaxed/simple;
-	bh=LnanVkXfTh7RXO0JmowPIVzjCd7u/lrefAHiW1FCTnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fw4DmroO1Mvc/WixxtnKc681GFn4ljte92BX49Fn3AR9JrbrIKl3kgcN2dX1U1ukaviHlwqvwZKVlj4N0UyABO9SVcTe0sMcVi4OMvnj3B4F6A9Uh10N/+4BPUaGKYwafhVJVct0nqiYxuFirWVXZWHzQG34+vqEeY/4Qi1Ezmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YY3zkSNS; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741919809; x=1773455809;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=LnanVkXfTh7RXO0JmowPIVzjCd7u/lrefAHiW1FCTnM=;
-  b=YY3zkSNSkVZO20W53etL3gw3t+ilFxOuKMVF3NKPvyC916xm/cchKilA
-   RufpdxPaYMB1cOmEwtf7dIr+bc9FHtVr+qtBt3yHrVziYmgh+I/P+kky0
-   h/6ZfT087epRwCshITwgZhchzh9VP2L5ui9WNv7Giypi8nusEuVrdjVVF
-   OVKF/DMBRjkB9abjWPMS0QnKSnpPeq3qyiCubZumhZWMaWEk0p3VVKmht
-   1zEP1u838WSRwgNwzhbjftKcAV/9Mhk/l5zxs6A59ZNnDD+peNfCiBRXA
-   InVlzNxgZKAvg8US3FgqGFXs0zdBKveuDSA4+eSNtCcJC4tghBfaa/63T
-   Q==;
-X-CSE-ConnectionGUID: o/WnD/08QaWXCI35+Hy7FA==
-X-CSE-MsgGUID: M10xHwAjShCjhDtTRgeHjg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="46709641"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="46709641"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 19:36:48 -0700
-X-CSE-ConnectionGUID: v+GV0h9WTU6t9RBQ+5IsHg==
-X-CSE-MsgGUID: i8iziBRoRuWN4hNhyiJ9pA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="122061086"
-Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.240.54]) ([10.124.240.54])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 19:36:46 -0700
-Message-ID: <24ada86a-131f-4624-8333-baa37e2a4a67@linux.intel.com>
-Date: Fri, 14 Mar 2025 10:36:43 +0800
+	s=arc-20240116; t=1741919877; c=relaxed/simple;
+	bh=0kKvP+ZEzWQ3LsMl458VKnmuak+ZMlN+GuF5358SUEc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bXmTyeMx2BBuGUCbaCVWStvMaporjllQjxyDC5vAtRzFq913Z1Rn0Ipie2UkY/1wuqNR1v6YTRbOCdIxsa4q39oWjRQRqUH+jF/irp0ifQhMx+dmoFAstVTGRQ91xJIELpTSpX+WEPD5jZBvKqLpxv8RuTSX/UwSFcT1LlEZzVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=F1s/J4FA; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22403cbb47fso32214065ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 19:37:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1741919875; x=1742524675; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0kKvP+ZEzWQ3LsMl458VKnmuak+ZMlN+GuF5358SUEc=;
+        b=F1s/J4FAkP9ALt9soP22LW1D40PeUX7/9Qctgc66HAumaUq+XK/PMn4/Fqyj8Oq6Er
+         5CnxSYxs4iQ8t0aFyCQNs80ZBkOQTOdk84NDuWUVTa1oIrIeYaMpTp1CB4jtn0bQ47O5
+         GQk8jH+IZm27m+60Brm2fet8evWfT3j+qso4g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741919875; x=1742524675;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0kKvP+ZEzWQ3LsMl458VKnmuak+ZMlN+GuF5358SUEc=;
+        b=R3stgrYDcOmr7eFeiNT03UDS5loJLZVi65Z/B3L0x4CSXHMkziQHf4ue35KaJnxVMK
+         cr2xZFfdvOku+fP5jHhAS3Rt6bMcPHktIo9ZXSXqSjwoe0Q6smmgs9YJ+kHFmBAt1DH3
+         x8ghc4vni6UkUW2MARIrd7r7dM7ca5+ejaH3Bq+N6GpmAgG9mV5IzdbOsgULpiDwPL6K
+         fjnBQ35bxKDIoNNgxYH3p1Db+yybRKwMc2BduO59hjCykwo1y/4FMIMp1hn+yDv/Z//+
+         +DJk/O1Kr2ebG8ykg0hNA2/F3Y2WxVlBwDTTVjYQqFZIwSfYYf2F2m/iyP/iF/oooT5W
+         bsPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWl3imrVl5U612UXDnmttMvrhcDqiep8R9yX6vZEflThn1d/NYEP+2wqKqIzcIBafOxdq9gMHnLQEomv7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNExxRFq8LM2wTgV5wNEB0QqseFA9yJX+cBI20EPUVWQpsx/9G
+	zSN0mqGAVQVUIRuDAI+VR5YepZRk19QIPo8ybbvqy1zoAeAwhC4MXXmRei34b02V9oUMP7HZuYw
+	881FO3NJ1XdLUV9iBJFxfaGY0qbE34II0qWPh
+X-Gm-Gg: ASbGncupCZQKs/Zrpx2jfPB/phOBp/F9W7ICwMZWKbO3PCVLv8pPJ64hI0SGWplPq2w
+	zi03lAjYrbcuoxv1RLdDeC0j3DBm9b2GZ/tAV99cGEGeSQyOunBwzh57ze9E8Zknv1y+1iJpVqW
+	ZI8jSWl1mfaA8he7bRpm0LAk9HDl4=
+X-Google-Smtp-Source: AGHT+IFnsSNj8wzjEvat23vsGwK4dSbuSjXDNRp0pe/fghoL6vHD6zxY9KorPbMGwwDb3TwE/KjQLXAeDcCi1IZeuhI=
+X-Received: by 2002:a05:6a00:3c8d:b0:736:53c5:33ba with SMTP id
+ d2e1a72fcca58-737223e67f0mr947825b3a.16.1741919875392; Thu, 13 Mar 2025
+ 19:37:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] KVM: TDX: Move apicv_pre_state_restore to
- posted_intr.c
-To: Vishal Verma <vishal.l.verma@intel.com>,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Rick Edgecombe <rick.p.edgecombe@intel.com>
-References: <20250313-vverma7-cleanup_x86_ops-v1-0-0346c8211a0c@intel.com>
- <20250313-vverma7-cleanup_x86_ops-v1-1-0346c8211a0c@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250313-vverma7-cleanup_x86_ops-v1-1-0346c8211a0c@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <1741893886-188294-1-git-send-email-tariqt@nvidia.com> <1741893886-188294-4-git-send-email-tariqt@nvidia.com>
+In-Reply-To: <1741893886-188294-4-git-send-email-tariqt@nvidia.com>
+From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+Date: Fri, 14 Mar 2025 08:07:43 +0530
+X-Gm-Features: AQ5f1JqgCcnaE3sJIZXWC4kiQRcCQL-P7dlQVU1fyK36sWA5MPP60anLMZvdSHY
+Message-ID: <CAH-L+nNsUKijoC3WGQGut6Zfs=s8T9mjGdS5jf+975E0OoE_zQ@mail.gmail.com>
+Subject: Re: [PATCH net-next 3/4] net/mlx5e: Get counter group size by FW capability
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Gal Pressman <gal@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Yael Chemla <ychemla@nvidia.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000006c17f406304453c7"
 
+--0000000000006c17f406304453c7
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 3/14/2025 3:30 AM, Vishal Verma wrote:
-> In preparation for a cleanup of the x86_ops struct for TDX, which turns
-> several of the ops definitions to macros, move the
-> vt_apicv_pre_state_restore() helper into posted_intr.c.
+On Fri, Mar 14, 2025 at 12:56=E2=80=AFAM Tariq Toukan <tariqt@nvidia.com> w=
+rote:
 >
-> Based on a patch by Sean Christopherson <seanjc@google.com>
+> From: Yael Chemla <ychemla@nvidia.com>
 >
-> Link: https://lore.kernel.org/kvm/Z6v9yjWLNTU6X90d@google.com/
-> Cc: Sean Christopherson <seanjc@google.com>
-> Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Vishal Verma <vishal.l.verma@intel.com>
-
-Reviewed-by: Binbin Wu <binbin.wu@linxu.intel.com>
-
-> ---
->   arch/x86/kvm/vmx/posted_intr.h |  1 +
->   arch/x86/kvm/vmx/main.c        | 10 +---------
->   arch/x86/kvm/vmx/posted_intr.c |  8 ++++++++
->   3 files changed, 10 insertions(+), 9 deletions(-)
+> Retrieve the number of fields supported by each PPCNT counter group
+> based on the FW capability for this group.
 >
-> diff --git a/arch/x86/kvm/vmx/posted_intr.h b/arch/x86/kvm/vmx/posted_intr.h
-> index 68605ca7ef68..9d0677a2ba0e 100644
-> --- a/arch/x86/kvm/vmx/posted_intr.h
-> +++ b/arch/x86/kvm/vmx/posted_intr.h
-> @@ -11,6 +11,7 @@ void vmx_vcpu_pi_load(struct kvm_vcpu *vcpu, int cpu);
->   void vmx_vcpu_pi_put(struct kvm_vcpu *vcpu);
->   void pi_wakeup_handler(void);
->   void __init pi_init_cpu(int cpu);
-> +void pi_apicv_pre_state_restore(struct kvm_vcpu *vcpu);
->   bool pi_has_pending_interrupt(struct kvm_vcpu *vcpu);
->   int vmx_pi_update_irte(struct kvm *kvm, unsigned int host_irq,
->   		       uint32_t guest_irq, bool set);
-> diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
-> index 320c96e1e80a..9d201ddb794a 100644
-> --- a/arch/x86/kvm/vmx/main.c
-> +++ b/arch/x86/kvm/vmx/main.c
-> @@ -315,14 +315,6 @@ static void vt_set_virtual_apic_mode(struct kvm_vcpu *vcpu)
->   	return vmx_set_virtual_apic_mode(vcpu);
->   }
->   
-> -static void vt_apicv_pre_state_restore(struct kvm_vcpu *vcpu)
-> -{
-> -	struct pi_desc *pi = vcpu_to_pi_desc(vcpu);
-> -
-> -	pi_clear_on(pi);
-> -	memset(pi->pir, 0, sizeof(pi->pir));
-> -}
-> -
->   static void vt_hwapic_isr_update(struct kvm_vcpu *vcpu, int max_isr)
->   {
->   	if (is_td_vcpu(vcpu))
-> @@ -983,7 +975,7 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
->   	.set_apic_access_page_addr = vt_set_apic_access_page_addr,
->   	.refresh_apicv_exec_ctrl = vt_refresh_apicv_exec_ctrl,
->   	.load_eoi_exitmap = vt_load_eoi_exitmap,
-> -	.apicv_pre_state_restore = vt_apicv_pre_state_restore,
-> +	.apicv_pre_state_restore = pi_apicv_pre_state_restore,
->   	.required_apicv_inhibits = VMX_REQUIRED_APICV_INHIBITS,
->   	.hwapic_isr_update = vt_hwapic_isr_update,
->   	.sync_pir_to_irr = vt_sync_pir_to_irr,
-> diff --git a/arch/x86/kvm/vmx/posted_intr.c b/arch/x86/kvm/vmx/posted_intr.c
-> index f2ca37b3f606..a140af060bb8 100644
-> --- a/arch/x86/kvm/vmx/posted_intr.c
-> +++ b/arch/x86/kvm/vmx/posted_intr.c
-> @@ -241,6 +241,14 @@ void __init pi_init_cpu(int cpu)
->   	raw_spin_lock_init(&per_cpu(wakeup_vcpus_on_cpu_lock, cpu));
->   }
->   
-> +void pi_apicv_pre_state_restore(struct kvm_vcpu *vcpu)
-> +{
-> +	struct pi_desc *pi = vcpu_to_pi_desc(vcpu);
-> +
-> +	pi_clear_on(pi);
-> +	memset(pi->pir, 0, sizeof(pi->pir));
-> +}
-> +
->   bool pi_has_pending_interrupt(struct kvm_vcpu *vcpu)
->   {
->   	struct pi_desc *pi_desc = vcpu_to_pi_desc(vcpu);
->
+> Signed-off-by: Yael Chemla <ychemla@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 
+LGTM,
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+
+--=20
+Regards,
+Kalesh AP
+
+--0000000000006c17f406304453c7
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
+BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
+JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
+aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
+FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
+T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
+o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
+aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
+YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
+cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
+ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
+HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
+Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
+LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
+zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
+4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
+cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
+u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
+a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
+x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJgMIICXAIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
+bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggccwLwYJKoZIhvcN
+AQkEMSIEILEQsJ7NK56qbcd61c7WmAJCAvrvOrTmkHYX707w2EVWMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDMxNDAyMzc1NVowXAYJKoZIhvcNAQkPMU8wTTAL
+BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
+9w0BAQcwCwYJYIZIAWUDBAIBMA0GCSqGSIb3DQEBAQUABIIBAA7ZOLgZBsSN7llT9JI9gbiGXIRe
+PtNZQlIDZ/XgHv0Zi/NhU3iT1NO3wl2xtt9aZpGdIHVcB00ssuwUVpMnJuz5GDkFe0voG3e6L0ju
+YxUSFp1HHH+ubwwtufDtSkl9uQNcd0D/dSN3mGjmar3JXTlaP8ULL6WrqrTLXyqHkt7gBVdzXCsp
+e99rHqnz/yNWHdz9mfLCm+NZyLa503PeJG1TRR1KWF08ve6nqnPmfIxCw/vHy8qCiDCXrHftQqV7
+5gSOwTA1M5BaCirwedTAz1sdM9phlHNHALtc/a0aRJgguQ5gePPrypEs6OVzJt6YlVuREvbS0/yL
+SS3r55ze1I8=
+--0000000000006c17f406304453c7--
 
