@@ -1,405 +1,176 @@
-Return-Path: <linux-kernel+bounces-560882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E38A60A91
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:56:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96222A60A13
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:32:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FDF4189FB80
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:56:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3DDC18992AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF6919CD0E;
-	Fri, 14 Mar 2025 07:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="uYFtcfRw"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5634F1624D5;
+	Fri, 14 Mar 2025 07:32:40 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A389C192B65;
-	Fri, 14 Mar 2025 07:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9982B4D8D1
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741938938; cv=none; b=EphBtqOqcbnigUIHjUsHWlKA2bhG9nyiVn6AMuDAUu1IX/8m3/SLnWQDVMwVwKCxoAJ2tviW34p6X/cpZ6k4jNqjG9WNVs34vGpKCdrCGTO3CsIZAwEwc1ck1VoJ7NI/YVuD1LjrRgzwUWFf0vIEAwgv+RTFGV7SIUva8UA7E0c=
+	t=1741937560; cv=none; b=YIBHsqUotH7l/whS9Y6+XO2DC1eBLOAFDhHl+AytO0cgE/PcndwLwn4G1AEc16ettFXFb++VDFguvefuRHwVxxLHbDyDg8vErk202tj8fMpLu3y7kPewudDJQYBjvc54EO0T1XycLwHkJFSLDlJiDgMxz9ASn5D3ST+NvHgn8V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741938938; c=relaxed/simple;
-	bh=HY0j+wYPJHp8dngZrnVwVVFsqEwJCPfDrPhdDj4GMec=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LTPm4AIX8Q0KWuaH5+EHRMxh1+/kyw7Gqvd3DMDGP7Q3ZD4DGGVAhLeaMGJoXbOLTD6ODvbEly07aijE9eYSUDb2DTJfceKvLxMYcXtgBXbtprql83qZRAKQ7wRKwdbNco+zXxBZW6DGcSEKdGFfEaMQ+ufrU9vLxz93Z1huyTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=uYFtcfRw; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: b381703c00a911f0aae1fd9735fae912-20250314
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=YeVPzS50yaHINy2hyaHmo427d2ZmemrCtOQyBXxOGLc=;
-	b=uYFtcfRwdxaj2iS21RarYs0NybjH/gJXTkpxGu7gB+bb9CZNKKaFzHVB+8Ok+F2h+55CFTT7AW0ctkB2bYbOhY37wEBhkDtuo6Oq5F4sZ9DbNz95V1gqOobphRk+sfFGgEjR2I/cy7ImCGuGIK3Y+e5odC+iDryIioBdNywiC+M=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:bb84586e-4306-4851-bc17-525bc5161ce1,IP:0,UR
-	L:25,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:25
-X-CID-META: VersionHash:0ef645f,CLOUDID:f35927e1-3561-4519-9a12-e2c881788b70,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:11|83|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
-	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: b381703c00a911f0aae1fd9735fae912-20250314
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
-	(envelope-from <lu.tang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 377927494; Fri, 14 Mar 2025 15:55:30 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 14 Mar 2025 15:55:30 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.28 via Frontend Transport; Fri, 14 Mar 2025 15:55:29 +0800
-From: Lu.Tang <Lu.Tang@mediatek.com>
-To: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Dmitry Torokhov
-	<dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>, Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Stephen Boyd
-	<sboyd@kernel.org>, Chen Zhong <chen.zhong@mediatek.com>, Sen Chu
-	<shen.chu@mediatek.com>
-CC: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-gpio@vger.kernel.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Lu.Tang
-	<Lu.Tang@mediatek.com>
-Subject: [PATCH 5/5] dt-bindings: pmic: mediatek: Add pmic documents
-Date: Fri, 14 Mar 2025 15:32:31 +0800
-Message-ID: <20250314073307.25092-6-Lu.Tang@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250314073307.25092-1-Lu.Tang@mediatek.com>
-References: <20250314073307.25092-1-Lu.Tang@mediatek.com>
+	s=arc-20240116; t=1741937560; c=relaxed/simple;
+	bh=STElu7lAnQxvQRWUOf9nJsfx2l78aaRDxI3sOUuzwMs=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=tq/Pfao3XoIKMrfNf7FpjJJ1RGSGsOlpLDYFeSHmMOY79HU963va7aC0yCyVHlBRMJaeccSlI7xNl7UOuwYtqLbRvVfBUe7gPvD2pHMR5drHeYm/CDOrDoJYk7B18nXSy3f9ttEOjp0RPpI/bVCwWKnEGhEu036koQXcLbrSFWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZDbfd6JQHz4f3m6Z
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 15:32:09 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id BDF051A1AD7
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 15:32:33 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP1 (Coremail) with SMTP id cCh0CgDXh3iQ29Nnwp5zGQ--.58146S2;
+	Fri, 14 Mar 2025 15:32:33 +0800 (CST)
+Subject: Re: [PATCH 2/9] mm: swap: factor out the actual swap entry freeing
+ logic to new helper
+To: Kairui Song <ryncsn@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250313210515.9920-1-shikemeng@huaweicloud.com>
+ <20250313210515.9920-3-shikemeng@huaweicloud.com>
+ <CAMgjq7Ct8b25zuCEqJ4byU8gmrvz50pUqvyjYN=_RjTk_5U8cA@mail.gmail.com>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <a04c8908-a12a-dab8-f4e4-61f7b85443bf@huaweicloud.com>
+Date: Fri, 14 Mar 2025 15:32:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <CAMgjq7Ct8b25zuCEqJ4byU8gmrvz50pUqvyjYN=_RjTk_5U8cA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-CM-TRANSID:cCh0CgDXh3iQ29Nnwp5zGQ--.58146S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFW7Zr1xKFy5Xr1rWry5twb_yoW5Ww43pF
+	9aqFs0kF4kJryxGFsxXa1qv3yayw4rKF1kXFnrKwn3AF9xJr92qF1DCrWY9ryDAwn7CFyI
+	va1DK3sruFs0yFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyCb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
+	7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UE-erUUUUU=
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-Add new pmic mfd and adc documents for mt8196
 
-Signed-off-by: Lu.Tang <Lu.Tang@mediatek.com>
----
- .../iio/adc/mediatek,spmi-pmic-auxadc.yaml    |  31 ++++
- .../bindings/input/mediatek,pmic-keys.yaml    |   1 +
- .../bindings/mfd/mediatek,mt6685.yaml         |  50 +++++
- .../bindings/mfd/mediatek,spmi-pmic.yaml      | 173 ++++++++++++++++++
- .../pinctrl/mediatek,mt65xx-pinctrl.yaml      |   1 +
- 5 files changed, 256 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/mediatek,spmi-pmic-auxadc.yaml
- create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mt6685.yaml
- create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.yaml
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/mediatek,spmi-pmic-auxadc.yaml b/Documentation/devicetree/bindings/iio/adc/mediatek,spmi-pmic-auxadc.yaml
-new file mode 100644
-index 000000000000..250782ad7d01
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/mediatek,spmi-pmic-auxadc.yaml
-@@ -0,0 +1,31 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/adc/mediatek,spmi-pmic-auxadc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MediaTek SPMI PMIC AUXADC
-+
-+maintainers:
-+  - Lu Tang <lu.tang@mediatek.com>
-+
-+description:
-+  The Auxiliary Analog/Digital Converter (AUXADC) is an ADC found
-+  in some MediaTek PMICs, performing various PMIC related measurements
-+  such as battery and PMIC internal voltage regulators temperatures,
-+  other than voltages for various PMIC internal components.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - mediatek,mt6363-auxadc
-+      - mediatek,mt6373-auxadc
-+
-+  "#io-channel-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - "#io-channel-cells"
-+
-+additionalProperties: false
-diff --git a/Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml b/Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml
-index b95435bd6a9b..ce760039d4c2 100644
---- a/Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml
-+++ b/Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml
-@@ -31,6 +31,7 @@ properties:
-       - mediatek,mt6358-keys
-       - mediatek,mt6359-keys
-       - mediatek,mt6397-keys
-+      - mediatek,mt6363-keys
- 
-   power-off-time-sec: true
- 
-diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6685.yaml b/Documentation/devicetree/bindings/mfd/mediatek,mt6685.yaml
-new file mode 100644
-index 000000000000..d3276df8952b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6685.yaml
-@@ -0,0 +1,50 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/mediatek,mt6685.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MediaTek MT6685 Clock IC
-+
-+maintainers:
-+  - Lu Tang <lu.tang@mediatek.com>
-+
-+description: |
-+  MT6685 is a clock IC.
-+  Please see the sub-modules below for supported features.
-+
-+  MT6685 is a multifunction device with the following sub modules:
-+  - RTC
-+  - Clock
-+
-+properties:
-+  compatible:
-+    const: mediatek,mt6685
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-controller: true
-+
-+  "#interrupt-cells":
-+    const: 2
-+
-+required:
-+  - compatible
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/spmi/spmi.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    spmi {
-+        mfd@9 {
-+            compatible = "mediatek,mt6685";
-+            reg = <0x9 SPMI_USID>;
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.yaml b/Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.yaml
-new file mode 100644
-index 000000000000..a8f1231623cf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.yaml
-@@ -0,0 +1,173 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/mediatek,spmi-pmic.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MediaTek SPMI PMICs multi-function device
-+
-+maintainers:
-+  - Lu Tang <lu.tang@mediatek.com>
-+
-+description: |
-+  Some Mediatek PMICs are interfaced to the chip via the SPMI (System Power
-+  Management Interface) bus.
-+
-+  The Mediatek SPMI series includes the MT6363, MT6373, MT6316 and other
-+  PMICs.Please see the sub-modules below for supported features.
-+
-+   MT6363/MT6373 is a multifunction device with the following sub modules:
-+  - Regulators
-+  - ADC
-+  - GPIO
-+  - Keys
-+   MT6316 is a multifunction device with the following sub modules:
-+  - Regulators
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - mediatek,mt6363
-+          - mediatek,mt6373
-+          - mediatek,mt6316
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-controller: true
-+
-+  "#interrupt-cells":
-+    const: 2
-+
-+  regulators:
-+    type: object
-+    description:
-+      List of child nodes that specify the regulators.
-+    additionalProperties: true
-+
-+    properties:
-+      compatible:
-+        oneOf:
-+          - enum:
-+              - mediatek,mt6363-regulator
-+              - mediatek,mt6373-regulator
-+              - mediatek,mt6316-regulator
-+
-+    required:
-+      - compatible
-+
-+  adc:
-+    type: object
-+    $ref: /schemas/iio/adc/mediatek,spmi-pmic-auxadc.yaml#
-+    unevaluatedProperties: false
-+
-+  keys:
-+    type: object
-+    $ref: /schemas/input/mediatek,pmic-keys.yaml
-+    unevaluatedProperties: false
-+    description:
-+      Power and Home keys.
-+
-+  pinctrl:
-+    type: object
-+    $ref: /schemas/pinctrl/mediatek,mt65xx-pinctrl.yaml
-+    unevaluatedProperties: false
-+    description:
-+      Pin controller
-+
-+required:
-+  - compatible
-+  - regulators
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/spmi/spmi.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    spmi {
-+        main_pmic: pmic@4 {
-+            compatible = "mediatek,mt6363";
-+            reg = <0x4 SPMI_USID>;
-+            interrupts = <0x4 IRQ_TYPE_NONE>;
-+            #address-cells = <0>;
-+            interrupt-controller;
-+            #interrupt-cells = <2>;
-+
-+            mt6363keys: keys {
-+                compatible = "mediatek,mt6363-keys";
-+                mediatek,long-press-mode = <1>;
-+                power-off-time-sec = <0>;
-+
-+                power {
-+                    linux,keycodes = <116>;
-+                    wakeup-source;
-+                };
-+
-+                home {
-+                    linux,keycodes = <115>;
-+                };
-+            };
-+
-+            mt6363_pio: pinctrl {
-+                compatible = "mediatek,mt6363-pinctrl";
-+                gpio-controller;
-+                #gpio-cells = <2>;
-+            };
-+
-+            mt6363regulator: regulators {
-+                compatible = "mediatek,mt6363-regulator";
-+
-+                mt6363_vs2: vs2 {
-+                    regulator-name = "mt6363_vs2";
-+                    regulator-allowed-modes = <0 1 2>;
-+                    regulator-always-on;
-+                    regulator-allow-set-load;
-+                };
-+
-+                mt6363_vbuck1: vbuck1 {
-+                    regulator-name = "mt6363_vbuck1";
-+                    regulator-allowed-modes = <0 1 2>;
-+                };
-+
-+                mt6363_vbuck2: vbuck2 {
-+                    regulator-name = "mt6363_vbuck2";
-+                    regulator-allowed-modes = <0 1 2>;
-+                };
-+
-+                mt6363_vbuck3: vbuck3 {
-+                    regulator-name = "mt6363_vbuck3";
-+                    regulator-allowed-modes = <0 1 2>;
-+                };
-+
-+                mt6363_vbuck4: vbuck4 {
-+                    regulator-name = "mt6363_vbuck4";
-+                    regulator-allowed-modes = <0 1 2>;
-+                };
-+
-+                mt6363_vbuck5: vbuck5 {
-+                    regulator-name = "mt6363_vbuck5";
-+                    regulator-allowed-modes = <0 1 2>;
-+                };
-+
-+                mt6363_vbuck6: vbuck6 {
-+                    regulator-name = "mt6363_vbuck6";
-+                    regulator-allowed-modes = <0 1 2>;
-+                };
-+
-+                mt6363_vbuck7: vbuck7 {
-+                    regulator-name = "mt6363_vbuck7";
-+                    regulator-allowed-modes = <0 1 2>;
-+                };
-+
-+                // ...
-+
-+                mt6363_isink_load: isink-load {
-+                    regulator-name = "mt6363_isink_load";
-+                };
-+            };
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-index bccff08a5ba3..bf3ba58a7705 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-@@ -17,6 +17,7 @@ properties:
-     enum:
-       - mediatek,mt2701-pinctrl
-       - mediatek,mt2712-pinctrl
-+      - mediatek,mt6363-pinctrl
-       - mediatek,mt6397-pinctrl
-       - mediatek,mt7623-pinctrl
-       - mediatek,mt8127-pinctrl
--- 
-2.46.0
+on 3/14/2025 1:42 AM, Kairui Song wrote:
+> On Thu, Mar 13, 2025 at 8:09 PM Kemeng Shi <shikemeng@huaweicloud.com> wrote:
+>>
+>> Factor out the actual swap entry freeing logic to new helper
+>> __swap_entries_free().
+>> This allow us to futher simplify other swap entry freeing code by
+>> leveraging __swap_entries_free() helper function.
+>>
+>> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+>> ---
+>>  mm/swapfile.c | 30 ++++++++++++++++++++----------
+>>  1 file changed, 20 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/mm/swapfile.c b/mm/swapfile.c
+>> index 5a775456e26c..7c886f9dd6f9 100644
+>> --- a/mm/swapfile.c
+>> +++ b/mm/swapfile.c
+>> @@ -1347,6 +1347,25 @@ static struct swap_info_struct *_swap_info_get(swp_entry_t entry)
+>>         return NULL;
+>>  }
+>>
+>> +static inline void __swap_entries_free(struct swap_info_struct *si,
+>> +                                      struct swap_cluster_info *ci,
+>> +                                      swp_entry_t entry, unsigned int nr_pages)
+>> +{
+>> +       unsigned long offset = swp_offset(entry);
+>> +
+>> +       VM_BUG_ON(cluster_is_empty(ci));
+>> +       VM_BUG_ON(ci->count < nr_pages);
+>> +
+>> +       ci->count -= nr_pages;
+>> +       mem_cgroup_uncharge_swap(entry, nr_pages);
+>> +       swap_range_free(si, offset, nr_pages);
+>> +
+>> +       if (!ci->count)
+>> +               free_cluster(si, ci);
+>> +       else
+>> +               partial_free_cluster(si, ci);
+>> +}
+>> +
+>>  static unsigned char swap_entry_put_locked(struct swap_info_struct *si,
+>>                                            unsigned long offset,
+>>                                            unsigned char usage)
+>> @@ -1525,22 +1544,13 @@ static void swap_entry_range_free(struct swap_info_struct *si,
+>>
+>>         /* It should never free entries across different clusters */
+>>         VM_BUG_ON(ci != offset_to_cluster(si, offset + nr_pages - 1));
+>> -       VM_BUG_ON(cluster_is_empty(ci));
+>> -       VM_BUG_ON(ci->count < nr_pages);
+>>
+>> -       ci->count -= nr_pages;
+>>         do {
+>>                 VM_BUG_ON(*map != SWAP_HAS_CACHE);
+>>                 *map = 0;
+>>         } while (++map < map_end);
+>>
+>> -       mem_cgroup_uncharge_swap(entry, nr_pages);
+>> -       swap_range_free(si, offset, nr_pages);
+>> -
+>> -       if (!ci->count)
+>> -               free_cluster(si, ci);
+>> -       else
+>> -               partial_free_cluster(si, ci);
+>> +       __swap_entries_free(si, ci, entry, nr_pages);
+>>  }
+>>
+>>  static void cluster_swap_free_nr(struct swap_info_struct *si,
+>> --
+>> 2.30.0
+>>
+>>
+> 
+> Hi Kemeng,
+Hello Kairui,
+
+Thanks for feedback.
+> 
+> This patch is a bit too trivial to be a standalone one, you can fold
+> it with the later one easily. Also you may want to carry the
+> VM_BUG_ON(ci != offset_to_cluster(si, offset + nr_pages - 1)); check
+> as well.
+Sure, I will do this in next version.
+> 
+> But, that is basically just renaming swap_entry_range_free, you may
+> just remove the HAS_CACHE check as you rename it, that way the changes
+> should be cleaner.
+> 
+Sorry, I don't quite follow. Are you suggesting that should fold this
+patch to later one which removes the HAS_CACHE check and renmae the
+swap_entry_range_free.
+
+Thanks,
+Kemeng
 
 
