@@ -1,152 +1,299 @@
-Return-Path: <linux-kernel+bounces-561938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB75CA618E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:02:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FB2A618EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:02:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE2921B63F8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:02:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AF2C4647E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFB62066CE;
-	Fri, 14 Mar 2025 18:00:03 +0000 (UTC)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A0E204F81;
+	Fri, 14 Mar 2025 18:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bdgHikAv"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF99205E18;
-	Fri, 14 Mar 2025 18:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2042B204F65
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741975203; cv=none; b=f+R4Y5pCVFVbM4cCeb8aux8NUqbwTsZgOliQFiuvXaco9WzIuAaqtld8tlxlqj5AK6TLe4PFwLCCGPWmjm59fvDhKPGSwilAcwkWL2Q3jQ4ZVf1lju7ZewMbOpN5olZIER1W3lE7HLoivFaWHuqztRp3TeOZbqIbU+jsCFD8ANE=
+	t=1741975292; cv=none; b=spFWoKeGAJi/jQuzxGd4a766eroNwLgIKw7QLZAD+GP3Z+dB/RaOvMWvRSCf4bnvn29faTlWU90+2eN6nvaVL5wgrYwrfhprsz+yFbNnolOOy5oymL8y5mBdKwkt31oHULIgkqnCSPnONCwrOTeLJx+gCNyOak6Tu844w1fx/H4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741975203; c=relaxed/simple;
-	bh=u2j/NzYgk/d8iGdvU8IUJdzQd6mljcLDKSOYxuEqFMQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iSz5sPCEZXyITB9fyx0oBFsqBZ0WuzhWLrN6NTYvjGMZnfwRy3mHm5jvZz3mlnzZOUYI2DSS9ah7cAvyDU62YP49ZEXsD9PKVciPutLJ9o25ZFdMFW15MqoQYFBnNGb2ymWNUxIHUKTBLk19LSUng779y9HT1vCd/q1Ck2YocLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso494234866b.0;
-        Fri, 14 Mar 2025 11:00:01 -0700 (PDT)
+	s=arc-20240116; t=1741975292; c=relaxed/simple;
+	bh=UE+LmjO480ai/cmQ99LQCl4ggioFj0kzH6oMEeEgxyM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=s1jcJv4BQDey14cEz7OC4CEU5YhxZDwYD/FkRlw192STA2Yx3fGaWMTBzhX/9ZPjeU+gzk0BAvBHuIQgmt2Oik7T0pPXGDBaEo+z+SbPoFg6UflMYsQFCnrjxj9076QCbu0w9LiQzR2iTmIRU0WjQu4/+nhoAURAJs1nTA3LOzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bdgHikAv; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff798e8c3bso4114416a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:01:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741975290; x=1742580090; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+x3RNoBeSKNY3yav309Zb69x4l02RtRyyB7W/znFf1I=;
+        b=bdgHikAvpoPs8GlzFP2T+v8KEDRA8xGZipH5v7Sxxdv1ds2Jt5mj4E2+hVQPozWqO/
+         BLoh3UmS+d4KpZFCsnORJ1F3TQnGaNlJAgczhokjUh6SMdh0ntlvWQ2qrOuPMit11NBd
+         Rn0qbYXq6+FYzl2qilfrIbu47H924SoYGRI7nq25r3xvwTbFaIYazhQpz7nR7Egt+bRX
+         OLd0RLyeiCUAWO5+qP7MEnQp8xqt790KuhNmWOGNGkkJMKWVDOSUmxCjBwF8ZGqwPgWT
+         Ux6bRr6Fq4UFXGA2ezlwFH22kooOirTJLkdPtSPtTHzcpVy1kbKDphkFV/+ntIvUSPn9
+         GCFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741975199; x=1742579999;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SaIvKW2mgl+3uA9xHER8fMViH0sfgfYeNYyYR2PLWqM=;
-        b=mP0j/3TRmUaYxxzSi+ZMjKP9Y5uSaR6+HBX1BKqBaKu8MjZiA1vhL7Xek18qjggsW1
-         md/h3gkXJarAt6QGh0sUr/v3wN8mUt7oA9/yNmd49O8Lm6UfD68UXDW99hIEpcydGn3x
-         tG+n+2xKA4yisB8ZANcTaHo88uPwsoD2zv63cMTM8pEqAQfjL3YslY+bfO/THPJZn7M0
-         5Pw7LvuG+XFFXSv24393ENzlnkiw2bqZ5HnZYDhtAwelFYAG9ulyUu4KIS6NZ9368Nfi
-         rJeL9O5pbZp3v4J5qwtXK9BFwI7s+22U6aepe3WXqRI6VuFGJW7B7em5V2jYjpsDXn8q
-         PQpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFqt+Iu0JFDbLcx5IoqvapcivfL6kTSG2M6cIsz+D8DJ3xfU2r6TUL+KvxTfIpbW/tsK85AUZC4uU/y0bW@vger.kernel.org, AJvYcCW4mo4RNLzRKMbDApvBg7La6MKQ48p2mFqj+NL7SwBk+6t0q6QohU+Qv8ChVVsPmHSLFNwfJhH+ou5pz47QOpSX@vger.kernel.org, AJvYcCXFt72VAcAjxUWjXwAD6mjb6LPIyWYoh5Sfrq+9plI21EsvbGa6RZhfPFJ8/RTddHoxfS9+3kgHV1Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVo3q1StCfeeX6MnFGy2vwzT6MsrpUIo0Xquzeli6B8Kgcq7K5
-	Uq7xL8kzAQles4qb5791JIpKO0lsq9dzrXzNciWmcR0nwpvpvm2hDYsU0w==
-X-Gm-Gg: ASbGncsSjXhwu4PDV61w7nuUdCRJKRfiD6cnhYgjhTZMqneJRrVGyfI3HjkWbSwaM7U
-	BoLhd8I6qZuzaiKLRdZUpVbQ3Qx1hhe5rlj8JfJkI2qcvOVTDX2Ol3Y+Uyk3/jPPOZVv5yixBC0
-	a//23BXPTL6o6de5lxt8ghcGES/YrPz6xC2YfzTExVjxXcyDR7jBnT9HNJ/DVX7xlBO9CG2AFda
-	ONP45fltYvLPHjIOBsHvOWD/WYUvxQPZ0t5CppnO0a0uC+q1bMiuMyVXXEQ/I/OjCc1aMYGwpPS
-	X1ZI7XuNBR+J+ZdqZ3nsJnfEoQCRbNs9ZNvf
-X-Google-Smtp-Source: AGHT+IE0gCLI1dRzN42ISOI3SznEjuPXbPl3ACCM4prwxY9/ZX0Qybd90r7TKQJmjA7QcpcfBxn4pQ==
-X-Received: by 2002:a17:907:7251:b0:ac1:ecb5:7207 with SMTP id a640c23a62f3a-ac330301e93mr384393666b.29.1741975198992;
-        Fri, 14 Mar 2025 10:59:58 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:70::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147ed1e4sm256125466b.66.2025.03.14.10.59.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 10:59:58 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Fri, 14 Mar 2025 10:58:50 -0700
-Subject: [PATCH net-next 6/6] docs: netconsole: document release feature
+        d=1e100.net; s=20230601; t=1741975290; x=1742580090;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+x3RNoBeSKNY3yav309Zb69x4l02RtRyyB7W/znFf1I=;
+        b=Cn58lwZlg9XvxjfGDct+sTINCMWoS7+IGyeiKxYDIAVnGeOVzz4/p9DgIVQg7TWLZC
+         3oYgCMjReFb4fJyvIqQHn7LikCYl6mW6s9bBqNbro1FXs3FlK97BK1XE45/Ooo1n9ReV
+         j0pObD2ZAKg3J7+22HNpkXYrzC3cwA3cKLK5i39I/S+SJ8xy+V44AM2ctPHDtOVhu9e3
+         dlaOLo3lNozblZxjMMndaLneSAxOofJ/f6V/DCIHT2X5eACkTAz51vDr7Z1UYaMzA7g2
+         ECuhmcsznpZ8HiNSTApWRYOlefAS5ocpCTFCAOEHC369xzbrnFQt1xZ0mZD/5K85Rjq1
+         wmbg==
+X-Gm-Message-State: AOJu0YwdiXbGO7Ee25+LwjLNDjyKS5jnnu3UFB3HEsHS6C8q4ADz/muN
+	4GE8+RSpB8CYVmaFYUL8ydV5o+vBg/3pYl4VHbz91JEwZZbgnE7fI+dCp5XeLZsoIoyPmKXOFAs
+	51b7q6bWqUBCHA1eN4eVF/6YsRVGiDh3IJT1oiCwYyWER5sSVKeB1QSUHX4gVREbECgQDyDyHxC
+	RUdIgeOEtk5jD4+n3tY1KLoAwcPkCIGCTV3nIurfBAX+Gsyd8WppE=
+X-Google-Smtp-Source: AGHT+IGnPwDJCFasbxcqKssxJ30WYzbEPvF36jFByGyIEEosCbyc4Xg81KCKRSj0uBP83xyu6IUyrDc9GsVWGA==
+X-Received: from pjboi16.prod.google.com ([2002:a17:90b:3a10:b0:2e9:ee22:8881])
+ (user=jmattson job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:4d04:b0:2fe:b8ba:62e1 with SMTP id 98e67ed59e1d1-30151d3d6f9mr4305208a91.28.1741975290319;
+ Fri, 14 Mar 2025 11:01:30 -0700 (PDT)
+Date: Fri, 14 Mar 2025 11:00:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250314-netcons_release-v1-6-07979c4b86af@debian.org>
-References: <20250314-netcons_release-v1-0-07979c4b86af@debian.org>
-In-Reply-To: <20250314-netcons_release-v1-0-07979c4b86af@debian.org>
-To: Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org, 
- Manu Bretelle <chantr4@gmail.com>, kernel-team@meta.com
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1790; i=leitao@debian.org;
- h=from:subject:message-id; bh=u2j/NzYgk/d8iGdvU8IUJdzQd6mljcLDKSOYxuEqFMQ=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBn1G6SLMwdJ4gjJcxr3mdipOopPqrC5GAx1bakl
- REwxlOE9++JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ9RukgAKCRA1o5Of/Hh3
- bSynEACdkIq8fJbzIuspTFutUJ7ZzO2CzJ1GgNRqCJwjfwjDyF6Wt4MkCQ8s2s1XbO2z7GshqLA
- cmnyIL9lGnkGZOavKJtKUCLbo+tCCnQDm3Qo+JbFG1ObICAzvus+AVfE1285o5JtO8DvK94UVVN
- 7I1lBzTVeS4hupscEEKDFA4AfrfvIwzlYYcKi6EPdz6qRU75eyzXxla09izAYIYCV5I35C+R2FC
- aXW/RNsxBDVY40h3T3MbZcuar9v7HDCUiAZZp3aUSlR7th4P7Ry3kvHVnV5TvfHJD8Og1Xs7pKT
- L6Nc4AbbVxTNshwUbmU+l6ofNaEXH7YzbWbpCjGf+SlZD3wN8KnGSUQe5APmU2kfDdsPQ0NaCKq
- XBuVl5eS6lrxYA7UAZyBLx/NkvxFlM/Qzk+8+jVAGc0UPMr6IysS8bARuHFT/mcr3pUQVcnRiMs
- QDlB5dnAO+Kam2PJZR3h9lHeXHcVeN+4nIoHiQQsg/3ifmQ0k95rzt9Nxi64zNwlzE8fSrTfpsy
- 92a6zZAwNAvObtitWqsmPS1SaRT8VsoYFe1wZq6iK88nipeCk17lwxA/naVEXcP3O013R2yUrvL
- xQH4xeZasjPD8xDQORNMWz83IhQfsPlDqpK0mBDTYntiUzRT9hVkVnzyZqgzEiULI8bDVVzNSUD
- vkqIMhd+GlV/+4Q==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+Message-ID: <20250314180117.740591-1-jmattson@google.com>
+Subject: [PATCH v2] KVM: x86: Provide a capability to disable APERF/MPERF read intercepts
+From: Jim Mattson <jmattson@google.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: Jim Mattson <jmattson@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Add documentation explaining the kernel release auto-population feature
-in netconsole.
+Allow a guest to read the physical IA32_APERF and IA32_MPERF MSRs
+without interception.
 
-This feature appends kernel version information to the userdata
-dictionary in every message sent when enabled via the `release_enabled`
-file in the configfs hierarchy.
+The IA32_APERF and IA32_MPERF MSRs are not virtualized. Writes are not
+handled at all. The MSR values are not zeroed on vCPU creation, saved
+on suspend, or restored on resume. No accommodation is made for
+processor migration or for sharing a logical processor with other
+tasks. No adjustments are made for non-unit TSC multipliers. The MSRs
+do not account for time the same way as the comparable PMU events,
+whether the PMU is virtualized by the traditional emulation method or
+the new mediated pass-through approach.
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
+Nonetheless, in a properly constrained environment, this capability
+can be combined with a guest CPUID table that advertises support for
+CPUID.6:ECX.APERFMPERF[bit 0] to induce a Linux guest to report the
+effective physical CPU frequency in /proc/cpuinfo. Moreover, there is
+no performance cost for this capability.
+
+Signed-off-by: Jim Mattson <jmattson@google.com>
 ---
- Documentation/networking/netconsole.rst | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+v1 -> v2: Add {IA32_APERF,IA32_MPERF} to vmx_possible_passthrough_msrs[]
 
-diff --git a/Documentation/networking/netconsole.rst b/Documentation/networking/netconsole.rst
-index ae82a6337a8d8..44f5a441cf813 100644
---- a/Documentation/networking/netconsole.rst
-+++ b/Documentation/networking/netconsole.rst
-@@ -268,6 +268,31 @@ Example::
- In this example, the message was generated while "echo" was the current
- scheduled process.
- 
-+Kernel release auto population in userdata
-+------------------------------------------
-+
-+Within the netconsole configfs hierarchy, there is a file named `release_enabled`
-+located in the `userdata` directory. This file controls the kernel release
-+(version) auto-population feature, which appends the kernel release information
-+to userdata dictionary in every message sent.
-+
-+To enable the release auto-population::
-+
-+  echo 1 > /sys/kernel/config/netconsole/target1/userdata/release_enabled
-+
-+Example::
-+
-+  echo "This is a message" > /dev/kmsg
-+  12,607,22085407756,-;This is a message
-+   release=6.14.0-rc6-01219-g3c027fbd941d
-+
-+.. note::
-+
-+   This feature provides the same data as the "release prepend" feature.
-+   However, in this case, the release information is appended to the userdata
-+   dictionary rather than being included in the message header.
-+
-+
- CPU number auto population in userdata
- --------------------------------------
- 
+          Check HW support for APERFMPERF before reporting the new
+	  capability bit in kvm_get_allowed_disable_exits() [Paolo]
+---
+ Documentation/virt/kvm/api.rst  | 1 +
+ arch/x86/include/asm/kvm_host.h | 1 +
+ arch/x86/kvm/svm/svm.c          | 7 +++++++
+ arch/x86/kvm/svm/svm.h          | 2 +-
+ arch/x86/kvm/vmx/vmx.c          | 6 ++++++
+ arch/x86/kvm/vmx/vmx.h          | 2 +-
+ arch/x86/kvm/x86.c              | 8 +++++++-
+ arch/x86/kvm/x86.h              | 5 +++++
+ include/uapi/linux/kvm.h        | 1 +
+ tools/include/uapi/linux/kvm.h  | 4 +++-
+ 10 files changed, 33 insertions(+), 4 deletions(-)
 
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index 2b52eb77e29c..6431cd33f06a 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -7684,6 +7684,7 @@ Valid bits in args[0] are::
+   #define KVM_X86_DISABLE_EXITS_HLT              (1 << 1)
+   #define KVM_X86_DISABLE_EXITS_PAUSE            (1 << 2)
+   #define KVM_X86_DISABLE_EXITS_CSTATE           (1 << 3)
++  #define KVM_X86_DISABLE_EXITS_APERFMPERF       (1 << 4)
+ 
+ Enabling this capability on a VM provides userspace with a way to no
+ longer intercept some instructions for improved latency in some
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 0b7af5902ff7..53de91fccc20 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1380,6 +1380,7 @@ struct kvm_arch {
+ 	bool hlt_in_guest;
+ 	bool pause_in_guest;
+ 	bool cstate_in_guest;
++	bool aperfmperf_in_guest;
+ 
+ 	unsigned long irq_sources_bitmap;
+ 	s64 kvmclock_offset;
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index a713c803a3a3..5ebcbff341bc 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -111,6 +111,8 @@ static const struct svm_direct_access_msrs {
+ 	{ .index = MSR_IA32_CR_PAT,			.always = false },
+ 	{ .index = MSR_AMD64_SEV_ES_GHCB,		.always = true  },
+ 	{ .index = MSR_TSC_AUX,				.always = false },
++	{ .index = MSR_IA32_APERF,			.always = false },
++	{ .index = MSR_IA32_MPERF,			.always = false },
+ 	{ .index = X2APIC_MSR(APIC_ID),			.always = false },
+ 	{ .index = X2APIC_MSR(APIC_LVR),		.always = false },
+ 	{ .index = X2APIC_MSR(APIC_TASKPRI),		.always = false },
+@@ -1359,6 +1361,11 @@ static void init_vmcb(struct kvm_vcpu *vcpu)
+ 	if (boot_cpu_has(X86_FEATURE_V_SPEC_CTRL))
+ 		set_msr_interception(vcpu, svm->msrpm, MSR_IA32_SPEC_CTRL, 1, 1);
+ 
++	if (kvm_aperfmperf_in_guest(vcpu->kvm)) {
++		set_msr_interception(vcpu, svm->msrpm, MSR_IA32_APERF, 1, 0);
++		set_msr_interception(vcpu, svm->msrpm, MSR_IA32_MPERF, 1, 0);
++	}
++
+ 	if (kvm_vcpu_apicv_active(vcpu))
+ 		avic_init_vmcb(svm, vmcb);
+ 
+diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+index 9d7cdb8fbf87..3ee2b7e07395 100644
+--- a/arch/x86/kvm/svm/svm.h
++++ b/arch/x86/kvm/svm/svm.h
+@@ -44,7 +44,7 @@ static inline struct page *__sme_pa_to_page(unsigned long pa)
+ #define	IOPM_SIZE PAGE_SIZE * 3
+ #define	MSRPM_SIZE PAGE_SIZE * 2
+ 
+-#define MAX_DIRECT_ACCESS_MSRS	48
++#define MAX_DIRECT_ACCESS_MSRS	50
+ #define MSRPM_OFFSETS	32
+ extern u32 msrpm_offsets[MSRPM_OFFSETS] __read_mostly;
+ extern bool npt_enabled;
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 6c56d5235f0f..ce89881d75f7 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -186,6 +186,8 @@ static u32 vmx_possible_passthrough_msrs[MAX_POSSIBLE_PASSTHROUGH_MSRS] = {
+ 	MSR_CORE_C3_RESIDENCY,
+ 	MSR_CORE_C6_RESIDENCY,
+ 	MSR_CORE_C7_RESIDENCY,
++	MSR_IA32_APERF,
++	MSR_IA32_MPERF,
+ };
+ 
+ /*
+@@ -7597,6 +7599,10 @@ int vmx_vcpu_create(struct kvm_vcpu *vcpu)
+ 		vmx_disable_intercept_for_msr(vcpu, MSR_CORE_C6_RESIDENCY, MSR_TYPE_R);
+ 		vmx_disable_intercept_for_msr(vcpu, MSR_CORE_C7_RESIDENCY, MSR_TYPE_R);
+ 	}
++	if (kvm_aperfmperf_in_guest(vcpu->kvm)) {
++		vmx_disable_intercept_for_msr(vcpu, MSR_IA32_APERF, MSR_TYPE_R);
++		vmx_disable_intercept_for_msr(vcpu, MSR_IA32_MPERF, MSR_TYPE_R);
++	}
+ 
+ 	vmx->loaded_vmcs = &vmx->vmcs01;
+ 
+diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+index 8b111ce1087c..abc574ceacfe 100644
+--- a/arch/x86/kvm/vmx/vmx.h
++++ b/arch/x86/kvm/vmx/vmx.h
+@@ -358,7 +358,7 @@ struct vcpu_vmx {
+ 	struct lbr_desc lbr_desc;
+ 
+ 	/* Save desired MSR intercept (read: pass-through) state */
+-#define MAX_POSSIBLE_PASSTHROUGH_MSRS	16
++#define MAX_POSSIBLE_PASSTHROUGH_MSRS	18
+ 	struct {
+ 		DECLARE_BITMAP(read, MAX_POSSIBLE_PASSTHROUGH_MSRS);
+ 		DECLARE_BITMAP(write, MAX_POSSIBLE_PASSTHROUGH_MSRS);
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 02159c967d29..8f3d317d2f93 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4535,6 +4535,9 @@ static u64 kvm_get_allowed_disable_exits(void)
+ {
+ 	u64 r = KVM_X86_DISABLE_EXITS_PAUSE;
+ 
++	if (boot_cpu_has(X86_FEATURE_APERFMPERF))
++		r |= KVM_X86_DISABLE_EXITS_APERFMPERF;
++
+ 	if (!mitigate_smt_rsb) {
+ 		r |= KVM_X86_DISABLE_EXITS_HLT |
+ 			KVM_X86_DISABLE_EXITS_CSTATE;
+@@ -6543,7 +6546,8 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+ 
+ 		if (!mitigate_smt_rsb && boot_cpu_has_bug(X86_BUG_SMT_RSB) &&
+ 		    cpu_smt_possible() &&
+-		    (cap->args[0] & ~KVM_X86_DISABLE_EXITS_PAUSE))
++		    (cap->args[0] & ~(KVM_X86_DISABLE_EXITS_PAUSE |
++				      KVM_X86_DISABLE_EXITS_APERFMPERF)))
+ 			pr_warn_once(SMT_RSB_MSG);
+ 
+ 		if (cap->args[0] & KVM_X86_DISABLE_EXITS_PAUSE)
+@@ -6554,6 +6558,8 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+ 			kvm->arch.hlt_in_guest = true;
+ 		if (cap->args[0] & KVM_X86_DISABLE_EXITS_CSTATE)
+ 			kvm->arch.cstate_in_guest = true;
++		if (cap->args[0] & KVM_X86_DISABLE_EXITS_APERFMPERF)
++			kvm->arch.aperfmperf_in_guest = true;
+ 		r = 0;
+ disable_exits_unlock:
+ 		mutex_unlock(&kvm->lock);
+diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+index 91e50a513100..0c3ac99454e5 100644
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -488,6 +488,11 @@ static inline bool kvm_cstate_in_guest(struct kvm *kvm)
+ 	return kvm->arch.cstate_in_guest;
+ }
+ 
++static inline bool kvm_aperfmperf_in_guest(struct kvm *kvm)
++{
++	return kvm->arch.aperfmperf_in_guest;
++}
++
+ static inline bool kvm_notify_vmexit_enabled(struct kvm *kvm)
+ {
+ 	return kvm->arch.notify_vmexit_flags & KVM_X86_NOTIFY_VMEXIT_ENABLED;
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index 45e6d8fca9b9..b4a4eb52f6df 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -617,6 +617,7 @@ struct kvm_ioeventfd {
+ #define KVM_X86_DISABLE_EXITS_HLT            (1 << 1)
+ #define KVM_X86_DISABLE_EXITS_PAUSE          (1 << 2)
+ #define KVM_X86_DISABLE_EXITS_CSTATE         (1 << 3)
++#define KVM_X86_DISABLE_EXITS_APERFMPERF     (1 << 4)
+ 
+ /* for KVM_ENABLE_CAP */
+ struct kvm_enable_cap {
+diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
+index 502ea63b5d2e..9b60f0509cdc 100644
+--- a/tools/include/uapi/linux/kvm.h
++++ b/tools/include/uapi/linux/kvm.h
+@@ -617,10 +617,12 @@ struct kvm_ioeventfd {
+ #define KVM_X86_DISABLE_EXITS_HLT            (1 << 1)
+ #define KVM_X86_DISABLE_EXITS_PAUSE          (1 << 2)
+ #define KVM_X86_DISABLE_EXITS_CSTATE         (1 << 3)
++#define KVM_X86_DISABLE_EXITS_APERFMPERF     (1 << 4)
+ #define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT | \
+                                               KVM_X86_DISABLE_EXITS_HLT | \
+                                               KVM_X86_DISABLE_EXITS_PAUSE | \
+-                                              KVM_X86_DISABLE_EXITS_CSTATE)
++					      KVM_X86_DISABLE_EXITS_CSTATE | \
++					      KVM_X86_DISABLE_EXITS_APERFMPERF)
+ 
+ /* for KVM_ENABLE_CAP */
+ struct kvm_enable_cap {
 -- 
-2.47.1
+2.49.0.rc1.451.g8f38331e32-goog
 
 
