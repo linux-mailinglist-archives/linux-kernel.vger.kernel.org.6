@@ -1,179 +1,97 @@
-Return-Path: <linux-kernel+bounces-561458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F37BA61202
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:06:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3125A6121B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:10:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF95E1B62D40
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:06:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C179E882217
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D011FF1B8;
-	Fri, 14 Mar 2025 13:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A28E1F4169;
+	Fri, 14 Mar 2025 13:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ePnssBkq"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YIUCJFQQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Vbbd0stQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E8218A6D7;
-	Fri, 14 Mar 2025 13:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DCA92E3398
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741957584; cv=none; b=MgbhYcVyEpO/4QbPNWCCMpZjgf93fC8wZI1N8d11KE4wv/0ujHIQvpZxLrxWgqgbEAiy10VT2lgKjnr0/iQX57hP2HHruWz3pRt0mHHL64WilBBSCWaakK6/hll04aWTA2PSlN3n9l7DRPMVoLSdxckAG+277qOlX5vhvqyphZk=
+	t=1741957823; cv=none; b=AvyHr77xB2wcygUCHQKBXnI+r79w7Bp5WJYVQ6cHsWuPvCzlGTUtF0+CM/aBFSdc2Pa9aeTrm6cjfQojA2yt+y7dbQKiVI9YcfIQc/6zn/NiyTNa6odxNzO2Ao/NEYqdA7+RXgET1s+laBOhVxBSk3pmStKYMSGrNbK/24lSxR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741957584; c=relaxed/simple;
-	bh=pvKDOhhPmz+nkonLGF4cGCVxtZnaV+RBHXBkesdmSXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uHN/1FZTtQ4DmQ4swtJr5O/GaspRICadnTIzFhYimH987CWQwwQKCdEQ3AlRK/L9v0Cm0ONNuprUPhv64AQHJs+NjgY8QEUZRkoeBC+XhiGkA5Uha46TSSVFegdrEAf+kCfETA+Jow4C8exmG8IxHcLnmc7cilG3KHHER8A0e+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ePnssBkq; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3913fdd003bso1107743f8f.1;
-        Fri, 14 Mar 2025 06:06:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741957579; x=1742562379; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4SFpGYCDodlkPXivSr5gqPpw/Y4gMd19OkUZwBMUB8Y=;
-        b=ePnssBkqoGeGqkHbWsGtr5JRHxO6WNwUbXTiC24G298H1qDhkOIBI5oZOtlTWd2Voj
-         zl9mCsR/BKfX2uTOBoxiJGsMUbo34rs9COVNUw+HRBYW9S7eTvRA+i1Gs09Aiqf2qK84
-         zU7dJdLE/RcdTep9ij7x5DEyu3hlV18BayX3dd0WwmJL4S+bBbnRu9GrsLWP96UI+ngE
-         q9v3PJZcRD5mzW+rN0ELPFL2nWE6MwPaKQzEovrUxXOqTbWmdp3n9yl8pQw7roF6B97k
-         asg8c7b5cXIAgVMASX0FqckTBt+QBrWRN5iFJJyb8Ygcb495StBmRBWtTJQos3jk9nvv
-         U4AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741957579; x=1742562379;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4SFpGYCDodlkPXivSr5gqPpw/Y4gMd19OkUZwBMUB8Y=;
-        b=vO99RsejxhgbCL0IhEp4DpsErUqA5LjK2aQYPBHRTofLGw2KAAoUuwxr4CLtUQvCSL
-         e9+S9BvMpzQcoO/9MqPvIy4aoMFN9bLlwOmhv3h5BH5Tibqd4lTRhC2ftALcWhQeAAU+
-         k2IsVMwCnNm1KhVfcb4lr09aB1Tv25Y/5ptOxlS7PEoY9wdBy1l7MWj5LKnPL9EYGC9Y
-         hSYQ0N13sjwfXQ9v+UiVyjxziqHvu/Tna8vFSwSF7sBr1R/MyH+FFluBn+P/XETkU2jO
-         pa/0GsyfG8cA9xfkmULwniokMoj76O/mrSXUaJgkGHKgXx5xPWxttvvX4jOGFVdm6x3G
-         JNTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVH2qYzC5qz/in2CaqiC8OkRjYkElpAFYXO+2AVcRjyn+TWJGnTwnDBJe25MQ9vLfKpyI4fZDQHOGkzPSbndMg=@vger.kernel.org, AJvYcCVaF4+CfMLRZPvhO39o/oodqlQyNzrW6jZJD3T3B5cZsrpgZP2JwhSopjoBY4rM+Ig4Cd14xvmH4zAznlT+@vger.kernel.org, AJvYcCWDyjqfy5ocL3D4NUIIaFPtVs1MUWCpM/6rdek3krY9TEz1v9hda78KuSs4uc+4l+cvkZX5zaNKHObFkA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxStquK4IZtsBA0pr+7TgpDrJj0kX2cizcq9aVMv3LOUTTu+8sQ
-	S8YupaMahEgtU2giGyi07XZmjXvnO6dernoZagtgsA2plC+oGzAv
-X-Gm-Gg: ASbGncuHx3ZONZ1PUVy4Igx959RTxsUtXRt8JJuVDuL8GFaxKUSO1G+rionyQWIISLM
-	1Vmt78iN68JD2qxrqLo64JqLFnTXGvl+voDFYhB+O4f0E/xr0s9ggjy6pcPT0M9InLbfGPRsXX7
-	hIJALPiMGKBggIyusrprBEC+3BIZxxgbRQfjTUuEfPS2f55JnHx7kyRa7OR5omh4YSq5zcH32tH
-	S3Sql3TMJK43N+O9HCRDjCc4qnLCEhyZdUiI4HftzfJ+ylqdtE+kji9lyp5OB1EIR7EhFT3jeZW
-	4Bq2ef7sC97xzyS6O0PO+dajMOaLFimAUBfUrMdWCGGej+wvcyObCMEb47DW31wpGz0oaD4MBE7
-	0CB+V5Dg=
-X-Google-Smtp-Source: AGHT+IFB9fJVxXR1+YasAAcJ2EjdchnXbaSLip2HmpU3n9g2YMrKc6gqwWkOEaCEXbcelPEursA9xQ==
-X-Received: by 2002:a05:6000:1acd:b0:390:dec3:2780 with SMTP id ffacd0b85a97d-3971dae92ddmr3160856f8f.24.1741957579032;
-        Fri, 14 Mar 2025 06:06:19 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c7df3506sm5720789f8f.11.2025.03.14.06.06.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 06:06:18 -0700 (PDT)
-Date: Fri, 14 Mar 2025 13:06:14 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Kees Cook <kees@kernel.org>
-Cc: Jack Wang <jinpu.wang@cloud.ionos.com>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] scsi: pm80xx: Use C String API for string
- comparisons
-Message-ID: <20250314130614.729131f6@pumpkin>
-In-Reply-To: <20250312200532.it.808-kees@kernel.org>
-References: <20250312200532.it.808-kees@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1741957823; c=relaxed/simple;
+	bh=EA0qdPGUD2lS0ZauKz2Z2wdeIa731EySFkiViGuC9y4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hn185HqOIZ4SUTF8CSeXuxV60GvpS4QHzDnmPlVpXyFIkKRtAExQkQcyu+lJXmkWK1nvhsGfuthz5tbqQCaN/yoLJ4xJuwVrf7SSHwGt4WsNcl4WCiDAAZc/ctPzo1Rr3qdBVl+d/uQurgcVeLvebIRncVokWEWcnz8ZQ1yReXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YIUCJFQQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Vbbd0stQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 14 Mar 2025 14:10:18 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741957820;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eznsYR8qScvWc0ljO5BhSDjnnLWmM748Zmb8ZXYo+Vo=;
+	b=YIUCJFQQRkVXgCj8loHxE04hy5lux1TB3MxJ36bJ9kQBbNUQVcXzYg5CwQCIis7DCJiRPS
+	yVtpGoEzpp6K1/RUsPG4CM4CoCRLzm7NanysGr8inpMfUhr0oaOTD4rnEDXispkhM8lUgn
+	nhyVV3UnuViMID837JkJos1oSsZimizTH0hbynPkZarT4CbWyH65oMRWrCYE5o+HaP28Ak
+	6fljVDV2WO9eR6apw5DtEzQLiM0d6eA4gNNZ6MX4E3vIGSxod0wqCffOztWG3JVr6e12UG
+	v3mIXFPfwWsExYIugrBZkfSyIoa4fjL3ao7VroQ+HYn7EMXHZFrr7j60vgJVWA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741957820;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eznsYR8qScvWc0ljO5BhSDjnnLWmM748Zmb8ZXYo+Vo=;
+	b=Vbbd0stQFw7ysGGlj0OSfYc+osK1JKpdJa3zP4AhNY0NXhk56z8991ui0UdYttlFFvRHoz
+	509A28sh9rFQWeBQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v10 15/21] futex: s/hb_p/fph/
+Message-ID: <20250314131018.YAFJq53Q@linutronix.de>
+References: <20250312151634.2183278-1-bigeasy@linutronix.de>
+ <20250312151634.2183278-16-bigeasy@linutronix.de>
+ <20250314123650.GA5880@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250314123650.GA5880@noisy.programming.kicks-ass.net>
 
-On Wed, 12 Mar 2025 13:05:36 -0700
-Kees Cook <kees@kernel.org> wrote:
-
-> When a character array without a terminating NUL character has a static
-> initializer, GCC 15's -Wunterminated-string-initialization will only
-> warn if the array lacks the "nonstring" attribute[1]. There is no reason
-> for the command lookup logic to not use strcmp(), so grow the string
-> length and update the check to eliminate the warning:
+On 2025-03-14 13:36:50 [+0100], Peter Zijlstra wrote:
+> On Wed, Mar 12, 2025 at 04:16:28PM +0100, Sebastian Andrzej Siewior wrote:
+> > From: Peter Zijlstra <peterz@infradead.org>
+> > 
+> > To me hb_p reads like hash-bucket-private, but these things are
+> > pointers to private hash table, not bucket.
+> > 
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 > 
-> ../drivers/scsi/pm8001/pm8001_ctl.c:652:7: warning: initializer-string for array of 'unsigned char' truncates NUL terminator but destination lacks 'nonstring' attribute (9 chars into 8 available) [-Wunterminated-string-initialization]
->   652 |      {"set_nvmd",    FLASH_CMD_SET_NVMD},
->       |       ^~~~~~~~~~
+> Hum, do we want to fold this back instead? It seems a bit daft to
+> introduce all this code and then go and rename it all again.
 > 
+> But whatever.
 
-Did you look at the code just before it?
-It is horrid beyond belief.
+I kept it separate. I can merge the way you want it. Your call.
 
-The function parameters include 'buf' and 'count'.
-There is no real indication buf[] is '\0' terminated, but it does:
-
-	cmd_ptr = kcalloc(count, 2, GFP_KERNEL);
-	if (!cmd_ptr) {
-		pm8001_ha->fw_status = FAIL_OUT_MEMORY;
-		return -ENOMEM;
-	}
-
-	filename_ptr = cmd_ptr + count;
-	res = sscanf(buf, "%s %s", cmd_ptr, filename_ptr);
-
-The search loop is then using cmd_ptr.
-It only needs to find the separating ' ', no need to copy anything.
-
-
-> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117178 [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> In taking another look at this, I realize that actually strcmp() should be used,
-> so just grow the size of this character array and use strcmp().
->  v1: https://lore.kernel.org/lkml/20250310222553.work.437-kees@kernel.org/
->  v2: Use strcmp()
-> ---
-> Cc: Jack Wang <jinpu.wang@cloud.ionos.com>
-> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-> Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-> Cc: linux-scsi@vger.kernel.org
-> ---
->  drivers/scsi/pm8001/pm8001_ctl.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/scsi/pm8001/pm8001_ctl.c b/drivers/scsi/pm8001/pm8001_ctl.c
-> index 85ff95c6543a..bb8fd5f0f441 100644
-> --- a/drivers/scsi/pm8001/pm8001_ctl.c
-> +++ b/drivers/scsi/pm8001/pm8001_ctl.c
-> @@ -644,7 +644,7 @@ static DEVICE_ATTR(gsm_log, S_IRUGO, pm8001_ctl_gsm_log_show, NULL);
->  #define FLASH_CMD_SET_NVMD    0x02
->  
->  struct flash_command {
-> -     u8      command[8];
-> +     u8      command[9];
->       int     code;
-
-'code' can only be 0/1/2 - so could be u8 to remove the padding.
-
->  };
->  
-> @@ -825,8 +825,7 @@ static ssize_t pm8001_store_update_fw(struct device *cdev,
->  	}
->  
->  	for (i = 0; flash_command_table[i].code != FLASH_CMD_NONE; i++) {
-> -		if (!memcmp(flash_command_table[i].command,
-> -				 cmd_ptr, strlen(cmd_ptr))) {
-> +		if (!strcmp(flash_command_table[i].command, cmd_ptr)) {
->  			flash_command = flash_command_table[i].code;
-
-This looks like a API change since an unique initial portion used to
-be enough. the strcmp() requires a full match.
-
-	David
-
->  			break;
->  		}
-
+Sebastian
 
