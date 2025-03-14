@@ -1,209 +1,291 @@
-Return-Path: <linux-kernel+bounces-561985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A105DA619D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:51:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C2D4A619DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:54:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD461462B8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:51:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED0DE19C3328
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1FE2046BB;
-	Fri, 14 Mar 2025 18:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9CC2046BB;
+	Fri, 14 Mar 2025 18:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AyzJoHi9"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nCCVdflV"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2046.outbound.protection.outlook.com [40.107.243.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174DF1FF601
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741978263; cv=none; b=OtpednPtnyfsLcsGQeEnQQbAn+SOOG8cJ7CtYRJd5HF9Hx2cokyG3e1+HgxeownvWDF1LgwMVbXlAb58sS2WcM11Rjps3q/Zp8jG5XO/Eo3f3WyhMVz9pE20zuvZM4MdPsoVIh8zWrBr/d/AZxbkiOdY5fKqEZryVNocLScrCLQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741978263; c=relaxed/simple;
-	bh=biTMhZyqbSZ5OpjoUKkXxxrQGtvdeJJW2CqyCCdcrPg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p1DTkU7n1WcaFhfrPaX/vbURb7SV2MUOlnWdAQoGvoGebu+VHYEJs+hsYy1vgBrwdYIH3fbGp5ZEJZN4hFS/RogLKSiWfuUkB32KOg/V1MrWvwfgCdm4+hVFxo+devJ4ifU09xs/dUJfYshcnudxF4kPGfjiLJv9eioKVp1rFl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AyzJoHi9; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22403cbb47fso46256335ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:51:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741978261; x=1742583061; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xR1q/p4dv/c/p+PdWJis9Ue2zjgGhBL8/ljRGUVkwv0=;
-        b=AyzJoHi90jr0i75VhzmODePM1772fZEsuPM/+kLBbt0m5usnCkJk+OBwur7fioPq+y
-         ym1RrvYZbYmtfG4KXwzoXa1fTxVGRQarAUqEIedetfUTwyn3qR5XowjN0e1MzXll1/Fl
-         RgBS9PDAuuYScmX+JPMAKyVeBi0Wd18fu02FT3/I46LQGYL9DEnsbs3LWjn/MRHcoL3p
-         9pQ+W+POcrvUnZYZaVpHNSOYayPCIMatarJQsLnWtJUMATW2rrX6MysB0vRxoHqVd2To
-         5l6IUvEjK0glQEvM5kYJxz/9zoSvJ7Agokzk9yuDLwEVqfG6GT2nYinTREmxaiBBzmEB
-         nmAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741978261; x=1742583061;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xR1q/p4dv/c/p+PdWJis9Ue2zjgGhBL8/ljRGUVkwv0=;
-        b=FTsblKmUJSTveSav+mtPjEWfnGqm63sMDtmY3xBqGt65Wjbb+MbBqUQRyZlIsPXtmE
-         1dZiiPGMXXaFxqRjoePiT1rmEML8nFRPdeO4Q8l405Kpwl6t9rJddcAmfZpsdgEq/abT
-         pPJA0cFSBtAqZFxexb9+qR5LoCwWKqx1jVvC9hs3zDsuCnaJU8USNvd6O0wI9RfMPR+n
-         XLcnumsK4GnXFak4unvPFGA/Hophd8MT/q5oKEjglD8lsdbyrrbOBwnPU7XzN2UDYjUX
-         xe9nvoChPW+b9fEETLRpzUJfgYKwx1CdIbDeG369C2T7UZ9uNprHVNmaGC6Fzl4YsXBe
-         L1Fg==
-X-Gm-Message-State: AOJu0YydVHrul+uj0bF0l0Mo8L9IwSn89fqfJSkUehHhv1ZfTsg4+a5j
-	QwClT3y8Yh+cmJCajz2aUHFesDqSX7MHl2s2xlhXmu0t/yxTyUN/
-X-Gm-Gg: ASbGncvIUEW4YlHd4Mq2qGF+21Q3PHVZbxSsJ4FjQnobc2qolb45tl6Ga5Cmf8LJIOF
-	1oD53joeroCkw6QdKR1+nrxkMhIZVeZ0/aKpMRTimP5y3gcSNjy/O5eCaXPyhlwb+zsCTCypipa
-	oQqGPJZL8QFSWcCIkzDVi6VYvWQXTXbFGzh0/cnkOJ00b261k7F4X51iv2pst2u8pi4ZqQxi9sf
-	gYXzufi4NXaJqBSUGjuNmxboCpEipObVYnGVZjd+32rRnR096JCmZ12RMYTLUXWRGDTNV5PXt9Z
-	o0zqJDSaGFfUX0F5Y/xqVnSuGpwWaKyupU24/lQliKVCEMpOiy+5
-X-Google-Smtp-Source: AGHT+IG4QFsTgyYvmWd6ggoZobed9wE7WmEtjhmxkW9qsuaaHrmco+HhfjePUaAOt9YnENLqT5jY3g==
-X-Received: by 2002:a17:903:8d0:b0:215:acb3:3786 with SMTP id d9443c01a7336-225e0a754e6mr51556465ad.19.1741978261113;
-        Fri, 14 Mar 2025 11:51:01 -0700 (PDT)
-Received: from linuxsimoes.. ([187.120.156.44])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371167e018sm3285703b3a.91.2025.03.14.11.50.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 11:51:00 -0700 (PDT)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: apw@canonical.com,
-	joe@perches.com,
-	dwaipayanray1@gmail.com,
-	lukas.bulwahn@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	trintaeoitogc@gmail.com
-Subject: [PATCH] checkpatch: check format of Vec<String> in modules
-Date: Fri, 14 Mar 2025 15:50:52 -0300
-Message-Id: <20250314185052.1126157-1-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BC71FF601
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741978451; cv=fail; b=HghS5J2WIX2+/l1NuVMrfvr+Zt6ExZ+9l8vj7HmR5hX6auAAiKvcnclBi4sRsI0mxctfj4DytSvj0ZV9Xk1STIJdg5cmr3CvFw86JOEvLYQpp77hUyYKzbtjgGU02UwPdLB7xOsT7TIxU0r4SUFMf6dIBB9mjTOOiT44K1fub0w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741978451; c=relaxed/simple;
+	bh=vLQV6DJNro8Nf8RsU+UT4eb590Tz0xfVeGmhBPQR4A4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cthnsA2AU1l/QQDThheDsigGS8YRSpHEp6Resi+0PaAVoNEbQoENXIfb4BjX6AATDWyVEIQZnUkkX9MoJN0bMkEXyuVuGGI/rT6467dAjv02zqJU/6trpMhNh5OKgR4qlELzenALZ2T1e6/MacjQwEwdfZCCnE9EsmcK+zDkA18=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nCCVdflV; arc=fail smtp.client-ip=40.107.243.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CWQT2LAC1+iOeIZWxiX7wFjX0Dj7uFlk3ycaHCifL/UkU+Ufxnqg7MSEr0pkKOibEh1ukAh7dItMFtl23Mrjgr4DGeLerV7hRw7fmb9s+oBMHcRlDzKIZu0YjAuoC0eToJqRtsAbn4z3MaEsvemlbV9tbpXfu7Lj7fQbSsQb8AtzZbDHeP7yHRtdIV1kM+E14ETQkz6RZoK3pCgsjAQtxalI9gIvnBTqD/1GSGP2VmxNeMdV27QHNaMHCQYyd4KtgJO6RhYBzjvPOXV0jq734csVQ9/VY/xP4SqZDFA3DObvjpQzPcrLCN5+smQPAuXpPI2ktTgEIJc2r3OdzWboIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HVO7VsRHYgXa/iayMjpvwprp3A9eAzMhTyDSxfayYhs=;
+ b=qnqeYqLf/WbtEfxbJH++DcZsS8xaKQf17Wd/L96uWwkQp5gTGzGGvAKAdqvqz/EsyebElRvbDY4J+sWtFxLjEMFfxSZ23iSKj9H8tjPG/PvuI0yXOz2T3VIbM39kHsSWiUaQm7sCm2cKhxNmlx2Q6GYuc+AA+hizyMl7nC9VQgk1R9tKeHj+jK5fdg7Ym4JA21gYCEh6j60EkxP7EW+vyj3OlvHkB2aPIzMo1MUs2colGX3b3qEZcSqBV6duDWA8wdCPNmcwDCcq72lbIsvbnLioHlTfEYYMnnDOfdtSdmsCgoFLpn9iaHtV7h66Ip/1qwnzOCOM705s+aypWWczqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HVO7VsRHYgXa/iayMjpvwprp3A9eAzMhTyDSxfayYhs=;
+ b=nCCVdflVWaTH9XBit6kc+rAp6T9v4nP8QpazfEYVbmqiZGVLfOH/yyRyIBvwCDxrhv+1W3YFl8tyoo6qjbHftfI+0vCpNTyQxm2K4Z5crgZKaIkQOuuSyIgf+mabIlk4nvmy7E35wEqjFkXlK4A+xssqwzlzeyba1gfGbafrnfgDykvLMkHpV2Pg/gGIYkk7HpLwOykGtmdz31oKsAU/hlaukUo8sEV7O2oiNa6tZhgr4qvNrq78MxWrwLC4OpY9LFR/5PG7tZBZE18nlOEagNPidSuA2yBjFN5L/e079A1lTngH88/Kqns4pXLoYodn0qzWvtj5X4DxsC9uoXrsVw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ DM4PR12MB7622.namprd12.prod.outlook.com (2603:10b6:8:109::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.28; Fri, 14 Mar 2025 18:54:07 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8534.027; Fri, 14 Mar 2025
+ 18:54:07 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@techsingularity.net>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] mm: page_alloc: defrag_mode
+Date: Fri, 14 Mar 2025 14:54:03 -0400
+X-Mailer: MailMate (2.0r6233)
+Message-ID: <E0358860-624D-4C9F-84E8-4887EE4DD8D4@nvidia.com>
+In-Reply-To: <20250313210647.1314586-4-hannes@cmpxchg.org>
+References: <20250313210647.1314586-1-hannes@cmpxchg.org>
+ <20250313210647.1314586-4-hannes@cmpxchg.org>
+Content-Type: text/plain
+X-ClientProxiedBy: PH8PR05CA0007.namprd05.prod.outlook.com
+ (2603:10b6:510:2cc::18) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DM4PR12MB7622:EE_
+X-MS-Office365-Filtering-Correlation-Id: 95e1486e-a965-44be-58a1-08dd63299905
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RKVxw/CeM3+HAVzML6yCYzH4PsQcQrBCsyCO45TD0+/Dcd2pmMHBgDy2NWTk?=
+ =?us-ascii?Q?Gg50t+Hu6Ge/Ogni4WZi0xuvrKaLDb/3DjRT3x8Dde+5LJufMAb5vOyE6LFD?=
+ =?us-ascii?Q?eQS8Ssbc53tfioqtUhoZqCOuL3TTmpaAmRI1MfMbGchl1zgbIasTh26tmHvu?=
+ =?us-ascii?Q?3ztc9DT2N2R/VLKIclHNzRkJwx10HFXMFhheJe60AAARK0vgKLMq4KOk1ZVE?=
+ =?us-ascii?Q?E/B4wrsKC583xMmZpR3Xh47IkE6uB/6XzMx0NFNeQ7rFytY1AlYZs2cnW0+8?=
+ =?us-ascii?Q?Q2NLeOlCwCoOG0UmGATgxro2ai/JykmuLkJqH4Jeq3n+Fzt0HhqMcj9mv2I1?=
+ =?us-ascii?Q?Q5P22sc2dOKmaNfgeLinq6wp5X1/7ESEHtxGVwRVk0GmaK/ZRGY1twLfqHrI?=
+ =?us-ascii?Q?6jZT/wPX9CSjFdw8ifPIwvo98/yqBIVqlkuBo9EBQz5UZHURSa7HorW1Ay4g?=
+ =?us-ascii?Q?DsOQXct6bq9Qf+MyRQMZ4QrwKyQJPMaMuCriIALgJZm4KMZ7jVd2K+DK58SO?=
+ =?us-ascii?Q?MBMcGIdeqNWwk8Guu36pFqK3fodDyjnNKJa1DHK6NIOIVVRppblbyLv6Bqrr?=
+ =?us-ascii?Q?uEoFN/RMxdlYqOacCH9rojzWIv7wt6GiLQ5arUZuTW78DaqMJOXcargr6/ft?=
+ =?us-ascii?Q?y8dfaMNMGabKt2XpOikjz1ayEi+HOWGftaV1mwM/hkg/KumD3NiNag4Twp9C?=
+ =?us-ascii?Q?rEAx0GU8YEqKdhUA7ny/xi2rJ7wIGuwjDQNEiADKB2qxnyDUrSLtNKXaiHhF?=
+ =?us-ascii?Q?rm6GYDx6rhyllihxjOqLkfpmliIL8pgkZUtc/g51Y2kh04CPcToGcW+c1Xk+?=
+ =?us-ascii?Q?NdI+mc6rG9UX/gNWxfCv8pwG6QeUWzO0MFe9l9Ep6wnhI7Gz3Jx+mya/4J8G?=
+ =?us-ascii?Q?ym6nHr5K4xTKNiXqT3UtWPhHcyiyLwz/byXaoF6zes34Fx+J8HOQzBLBjZyH?=
+ =?us-ascii?Q?uDJOYpR4b9mvxPPjosp8XYCbqRxcJpb24CCUVtnaCNwQsoCLjTOQZomzRlsl?=
+ =?us-ascii?Q?VSAXGZNThshkfH5gYi5O1m2iFcqxME6F7y5NQg4TulkKVBSbV2BB7JN4FHpb?=
+ =?us-ascii?Q?XC9OFe783/h3/yLUS/a6zIFiQ4YS5sVuAuaAHf9me22sh8KcNx1x7o0fD8XQ?=
+ =?us-ascii?Q?zMjsJ00ktHYY0YiIsRXpExa3u+lnhQc6JGE9lK1NpnesjA82sGRDWcsc3Qky?=
+ =?us-ascii?Q?+OxPUAbvg+HR6SwnO0T9hevPvEeDdQg8kLN3/LSeBrzEEx/CFqdXO7b0mtSd?=
+ =?us-ascii?Q?uhtAG4Ge2xZTJl3K7YTiO21nz1Vt+FnCJliBRpp7R1Ztr5F9+KPEleCjChpK?=
+ =?us-ascii?Q?rB/HRjI4r4WaT+u7klVPLNY7/pjt0Ctcm/XFL8xZJ9Cg+n75x7bF/A5lHkqT?=
+ =?us-ascii?Q?JzFxGf2mirNo4k6nc/IjPyjkJ52m?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Am4o57N8PsYQ86RcNYs5JOEpnbGlOTKbEHAgyut18fTj7pW5Z4gBUY/Dc8ws?=
+ =?us-ascii?Q?VxzaBchO5ILXeoC8+f+mg3FdlMyRAxwCcal8f1OYhaAtU0OtWKiNE5Rx5ZZr?=
+ =?us-ascii?Q?++sXlmsxSgVBHVr7gl6xuNbBWB8Hco1RTIi7axsmR7v50/cV721TAyc0uuDg?=
+ =?us-ascii?Q?3TkoFJhStVoelJJf6GaimH2vAcLd8I13pbZwH+kmqbsHGped/ORjFhsG7P8T?=
+ =?us-ascii?Q?QGMKSDqRQfw7EoYCIulyF519ROJOwaPktBftGFfE3Iu6ThxW8aHcN4rdTdWE?=
+ =?us-ascii?Q?d3Xj0uoFv1OAnJCkY9fayAW2i+6eswzZh++6ZNMb2jcpwCoyL+DoDhzzCHQC?=
+ =?us-ascii?Q?z4TVb2tPL1ehDM2dR9OygoQU+1JZCt3qnHfefypLSvI+OMpJdBUKM3w01HWu?=
+ =?us-ascii?Q?xaRnmfsbD1GTawGrt8KDMo5hkmub0YxiWgdhK628ghHkE80vLuBhmT5ZqtbD?=
+ =?us-ascii?Q?0QprkeYcG9L6TMLPPqNy6PZ938HnkSUz3tYFGn6A7fvO9hmQyqLQXE2EOy58?=
+ =?us-ascii?Q?E48eESCacRV5R8ppwyGhTp7Cc1UnmgdO5gIGBWu3nJbPnbXhcbaVvZZoFIfB?=
+ =?us-ascii?Q?YUw67yCymAm2X+pYHJuXkAwNsO4UabQMYZD1Sd+DBum/r+oHE1X2WTRgtOoZ?=
+ =?us-ascii?Q?SlJ44DQXbaWtU13vuKAcCf9ahLFn9Gx6fiDv2+jBALjIllQcGNvxQUnHJtTg?=
+ =?us-ascii?Q?dEh6iv2zNHtfon1yNMiux2lGk88oyQi/9V6iFWNkmmpj6mL6mdY+JUCdvcIK?=
+ =?us-ascii?Q?1ysbdrK57cfOLgJEdleNUQkI3wuaG+dHmDBVNgOib2CE4jEsE8St47uU3Jjm?=
+ =?us-ascii?Q?Zu5FqF7OyYRmJjDq0YiBAiw3FOqQeKbz3rfQA+FXPFcsrJH1FRvI8QCWxHgX?=
+ =?us-ascii?Q?uJr6XdAKVVtX+4Z5Sajm/IEbEHGFfE0JaRHpN9Ti6n/PF3ZjDDsgKkyUEGZQ?=
+ =?us-ascii?Q?SxKb6l8FMpZ1kGZLah61ml82DF1m+ovRPn1SPTK4A89zcpykrN6quAV1I2hw?=
+ =?us-ascii?Q?WLkALfntrStVOeb0gzjMRJUF1qbL4sMqtSOMSud5TrBQxAo4Dqh3u5Rb9Y6I?=
+ =?us-ascii?Q?7lJrO2wkjFvRDFKMJ1EzBLbU5idXs5731W8dAXsWGcny3i8r5FCh5t9Ebyb1?=
+ =?us-ascii?Q?wLRhp5aWon1LszmbRy/yRe5C786ksZ/KtIHjcmb6+K4YBcuuCsGzhxuEZFxX?=
+ =?us-ascii?Q?N8s6R1BX6TiRiVgVlLWyOywE7cyuDBE3LFbKSQtLqs6q7TZRcm5TOSehTX5P?=
+ =?us-ascii?Q?Yc3ehBhUDsV9+qNv0MxJcC4H6G8Z1s808zsmu1whCdi8SNfb8mRR99sPUJNt?=
+ =?us-ascii?Q?uY/kK2YUGXIqSeKu7FkhlqZ7/RnkH3Y6/oZpKY8mjz2JGDK1Ee5xBLNHZmvr?=
+ =?us-ascii?Q?Z7ep4qBRXy8x+UgD7VwEqYt0PK4oymMzmNUaPKwPuby9p7vlMvsFTalJX1a7?=
+ =?us-ascii?Q?kfs/IDrCoYlno/doK7Y4POSh0xgHsdwog+XV8qs3j25/JX8XDIsmbQzMG7zZ?=
+ =?us-ascii?Q?UrqV0z/gCXx2CHV1856lDuCTs1O9XCri0JlSSqzbrfYtabBwTZIp/wmJqRLx?=
+ =?us-ascii?Q?VJMv1V9OxQgWQmJXuLfXi0NvKBC1y+/cBuC2DZF9?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95e1486e-a965-44be-58a1-08dd63299905
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2025 18:54:06.9532
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VGIp0ERXHKgicgkur2GY7xEFBtEBnOynVqpkgyuAeXIiYBoEpXikPBWd+Plp2jyF
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7622
 
-Implement a check to ensure that the author, firmware, and alias fields
-of the module! macro are properly formatted.
+On 13 Mar 2025, at 17:05, Johannes Weiner wrote:
 
-* If the array contains more than one value, enforce vertical
-  formatting.
-* If the array contains only one value, it may be formatted on a single
-  line
-* If the array is not indentation aligned, enforce indentation alignment
+> The page allocator groups requests by migratetype to stave off
+> fragmentation. However, in practice this is routinely defeated by the
+> fact that it gives up *before* invoking reclaim and compaction - which
+> may well produce suitable pages. As a result, fragmentation of
+> physical memory is a common ongoing process in many load scenarios.
+>
+> Fragmentation deteriorates compaction's ability to produce huge
+> pages. Depending on the lifetime of the fragmenting allocations, those
+> effects can be long-lasting or even permanent, requiring drastic
+> measures like forcible idle states or even reboots as the only
+> reliable ways to recover the address space for THP production.
+>
+> In a kernel build test with supplemental THP pressure, the THP
+> allocation rate steadily declines over 15 runs:
+>
+>     thp_fault_alloc
+>     61988
+>     56474
+>     57258
+>     50187
+>     52388
+>     55409
+>     52925
+>     47648
+>     43669
+>     40621
+>     36077
+>     41721
+>     36685
+>     34641
+>     33215
+>
+> This is a hurdle in adopting THP in any environment where hosts are
+> shared between multiple overlapping workloads (cloud environments),
+> and rarely experience true idle periods. To make THP a reliable and
+> predictable optimization, there needs to be a stronger guarantee to
+> avoid such fragmentation.
+>
+> Introduce defrag_mode. When enabled, reclaim/compaction is invoked to
+> its full extent *before* falling back. Specifically, ALLOC_NOFRAGMENT
+> is enforced on the allocator fastpath and the reclaiming slowpath.
+>
+> For now, fallbacks are permitted to avert OOMs. There is a plan to add
+> defrag_mode=2 to prefer OOMs over fragmentation, but this requires
+> additional prep work in compaction and the reserve management to make
+> it ready for all possible allocation contexts.
+>
+> The following test results are from a kernel build with periodic
+> bursts of THP allocations, over 15 runs:
+>
+>                                         vanilla    defrag_mode=1
+> @claimer[unmovable]:                        189              103
+> @claimer[movable]:                           92              103
+> @claimer[reclaimable]:                      207               61
+> @pollute[unmovable from movable]:            25                0
+> @pollute[unmovable from reclaimable]:        28                0
+> @pollute[movable from unmovable]:         38835                0
+> @pollute[movable from reclaimable]:      147136                0
+> @pollute[reclaimable from unmovable]:       178                0
+> @pollute[reclaimable from movable]:          33                0
+> @steal[unmovable from movable]:              11                0
+> @steal[unmovable from reclaimable]:           5                0
+> @steal[reclaimable from unmovable]:         107                0
+> @steal[reclaimable from movable]:            90                0
+> @steal[movable from reclaimable]:           354                0
+> @steal[movable from unmovable]:             130                0
+>
+> Both types of polluting fallbacks are eliminated in this workload.
+>
+> Interestingly, whole block conversions are reduced as well. This is
+> because once a block is claimed for a type, its empty space remains
+> available for future allocations, instead of being padded with
+> fallbacks; this allows the native type to group up instead of
+> spreading out to new blocks. The assumption in the allocator has been
+> that pollution from movable allocations is less harmful than from
+> other types, since they can be reclaimed or migrated out should the
+> space be needed. However, since fallbacks occur *before*
+> reclaim/compaction is invoked, movable pollution will still cause
+> non-movable allocations to spread out and claim more blocks.
+>
+> Without fragmentation, THP rates hold steady with defrag_mode=1:
+>
+>     thp_fault_alloc
+>     32478
+>     20725
+>     45045
+>     32130
+>     14018
+>     21711
+>     40791
+>     29134
+>     34458
+>     45381
+>     28305
+>     17265
+>     22584
+>     28454
+>     30850
+>
+> While the downward trend is eliminated, the keen reader will of course
+> notice that the baseline rate is much smaller than the vanilla
+> kernel's to begin with. This is due to deficiencies in how reclaim and
+> compaction are currently driven: ALLOC_NOFRAGMENT increases the extent
+> to which smaller allocations are competing with THPs for pageblocks,
+> while making no effort themselves to reclaim or compact beyond their
+> own request size. This effect already exists with the current usage of
+> ALLOC_NOFRAGMENT, but is amplified by defrag_mode insisting on whole
+> block stealing much more strongly.
+>
+> Subsequent patches will address defrag_mode reclaim strategy to raise
+> the THP success baseline above the vanilla kernel.
 
-Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
----
- scripts/checkpatch.pl | 77 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
+All makes sense to me. But is there a better name than defrag_mode?
+It sounds very similar to /sys/kernel/mm/transparent_hugepage/defrag.
+Or it actually means the THP defrag mode?
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 7b28ad331742..3b8db30c6972 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -2775,6 +2775,12 @@ sub process {
- 	$realcnt = 0;
- 	$linenr = 0;
- 	$fixlinenr = -1;
-+
-+	my %array_parse_module;
-+	my $expected_spaces;
-+	my $spaces;
-+	my $herevet_space_add;
-+
- 	foreach my $line (@lines) {
- 		$linenr++;
- 		$fixlinenr++;
-@@ -2851,6 +2857,11 @@ sub process {
- 			$realfile =~ s@^([^/]*)/@@ if (!$file);
- 			$in_commit_log = 0;
- 			$found_file = 1;
-+
-+			%array_parse_module = ();
-+			$expected_spaces = undef;
-+			$spaces = undef;
-+
- 		} elsif ($line =~ /^\+\+\+\s+(\S+)/) {
- 			$realfile = $1;
- 			$realfile =~ s@^([^/]*)/@@ if (!$file);
-@@ -3567,6 +3578,72 @@ sub process {
- # ignore non-hunk lines and lines being removed
- 		next if (!$hunk_line || $line =~ /^-/);
- 
-+# check if the field is about author, firmware or alias from module! macro and find malformed arrays
-+		my $inline = 0;
-+		my $key = "";
-+		my $add_line = $line =~ /^\+/;
-+
-+		if ($line =~ /\b(authors|alias|firmware)\s*:\s*\[/) {
-+			$inline = 1;
-+			$array_parse_module{$1} = 1;
-+		}
-+
-+		my @keys = keys %array_parse_module;
-+		if (@keys) {
-+			$key = $keys[0];
-+		}
-+
-+		if (!$expected_spaces && !$add_line && $key && !$inline) {
-+			if ($line =~ /^([\t ]+)(\s)/) {
-+				$expected_spaces = $1;
-+			}
-+		}
-+
-+		if ($add_line && $key) {
-+			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
-+
-+			my $counter = () = $line =~ /"/g;
-+			my $more_than_one = $counter > 2;
-+			if ($more_than_one) {
-+				WARN("ARRAY_MODULE_MACRO",
-+				     "Prefer each array element on a separate line\n". $herevet);
-+			} elsif ($inline && $line !~ /\]/ && $line !~ /,/ && $line =~ /"/) {
-+				WARN("ARRAY_MODULE_MACRO",
-+				     "Prefer to declare ] on the same line\n" . $herevet);
-+			} elsif (!$inline && $line =~ /\]/ && $line =~ /\"/) {
-+				WARN("ARRAY_MODULE_MACRO",
-+				     "Prefer a new line after the last value and before ]\n" . $herevet);
-+			} elsif ($inline && $line =~ /,/ && $line !~ /\]/) {
-+				WARN("ARRAY_MODULE_MACRO",
-+				     "Prefer a new line after [\n" . $herevet);
-+			}
-+
-+			my $line_cmp = $line;
-+			$line_cmp =~ s/\+/ /;
-+			$spaces = -1;
-+			if ($line_cmp =~ /^([\t ]+)(\s)/) {
-+				$spaces = $1;
-+			}
-+
-+			$herevet_space_add = $herevet;
-+		}
-+
-+		if ($expected_spaces && $spaces) {
-+			if ($spaces ne $expected_spaces) {
-+				WARN("ARRAY_MODULE_MACRO",
-+				     "Prefer aligned parameters\n" . $herevet_space_add);
-+			}
-+
-+			$spaces = undef;
-+		}
-+
-+		#END OF ANALYZE FIELD
-+		if ($line =~ /\]/) {
-+			delete $array_parse_module{$key};
-+			$expected_spaces = undef;
-+			$spaces = undef;
-+		}
-+
- #trailing whitespace
- 		if ($line =~ /^\+.*\015/) {
- 			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
--- 
-2.34.1
+>
+> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+> ---
+>  Documentation/admin-guide/sysctl/vm.rst |  9 +++++++++
+>  mm/page_alloc.c                         | 27 +++++++++++++++++++++++--
+>  2 files changed, 34 insertions(+), 2 deletions(-)
+>
 
+When I am checking ALLOC_NOFRAGMENT, I find that in get_page_from_freelist(),
+ALLOC_NOFRAGMENT is removed when allocation goes into a remote node. I wonder
+if this could reduce the anti-fragmentation effort for NUMA systems. Basically,
+falling back to a remote node for allocation would fragment the remote node,
+even the remote node is trying hard to not fragment itself. Have you tested
+on a NUMA system?
+
+Thanks.
+
+Best Regards,
+Yan, Zi
 
