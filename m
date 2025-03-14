@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-561888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C6AA6182C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:39:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 883A4A617D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:34:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF7953B6DF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:37:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23A9C18926B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E583204C23;
-	Fri, 14 Mar 2025 17:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB2A204C13;
+	Fri, 14 Mar 2025 17:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SCemwOhK"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cHK7Unys"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCBF204874
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7262D13B58A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741973811; cv=none; b=r0YsiRhAwFTOJwNq/JfEKpYW2DDnv/xW6WqhCtS8Nh/w3+7Y2ioz2nhv7rEiHAxZWxJEQjWEwXdNPRYkYbBviYAw4qSDhy8eaUrjSdF1qOIGIJE2cEbNsTRQ+s0qsNT4vzOHmyikaIwQ65AMR2zf3lmEnS1qHnIl9Rr++BdqjoY=
+	t=1741973565; cv=none; b=u9aoyNjMnv3FzMQBqriZg9HM15OyWBlym9PpuHhSX+YwnIr8V+AQGoGFNmcmsvfXkgx7aHDhya2kWZ4oUVdkXs5wgPEhUuM30fzefyriJrcnPoYgYB/TJDXIzpc0CUlkiIflqHUWaWf0OH+Xs+8nbv0vrSOFitnznb5PuYMpQ68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741973811; c=relaxed/simple;
-	bh=lTGzeLVixRHII7hxGC67buyIQ540f9vcxOWP+E177FE=;
+	s=arc-20240116; t=1741973565; c=relaxed/simple;
+	bh=LgrQqVRbDq2Xk2FY6PHUIYWjD4ZdkluKRjznLW3IR2I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T3C2xwa1eHCUKHcz7tkfFIOTTJDvGtyf6QfXvQuPe1SNIg2+L+mrl+JL8T/J7xsZm+A11kqRLtYNxRoA4WebMVvzFSKfPbwEk0SX0kSm7nN+dflDcKESUbagfbxvbOKRfDjqF8EYCRoZzSIQwitFbm5pK+ZHlT3yjFf9cqN1GEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SCemwOhK; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=P3KGRePjywX0NH3Rmev6HrXhHzTA9duhhN5jK7Ggly2wi3qD0y9W9zFGF7ZlHcVq0CLs8UBuHAVdx+lgbnmTb25HRkkkaxxSFBg+M5opM1o0JVQHQIlrXkOf8yxtrbErT07DjCNuXYtAbNFjVBcGLsjt94c/OdDi4YsqkfNEZs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cHK7Unys; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Sender:Content-Transfer-Encoding:
+	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=uCEBfgh97r1ZRaD9/vr5HcRSBvjPstuhIMv+FvxUqfo=; b=SCemwOhKOdG1TiIcHIp/uPMkD1
-	IfQc5tSzVMyRqG8K5tODkP0HZ/GP5yP3OxbAZCjb9p3MjCc1kMqtLo2nF6EkAPlJP1F1bHeGNkZf7
-	eWDeVly2kq5x/hgtcYWH7qeG3AcFQBCTKIcHKl34VMAQcjXDemAE5gZcnfDQ4elUlb9E4ShogY5i8
-	l1cbwi2qiovVCHeT6ul2LThuQ1uC0/FjR4VgTyF+iZOp25xMECZK/2X6glcSXVhfApfpIIg4vD24y
-	5u/zFhg1saAgL7FWiGhTOZ7/MHc45edRI59rFcv040vRP3diA4199qTYeKKULaCef7TSBn1c+tD8N
-	03DgWDWQ==;
+	bh=ehlcQleY3ftncpfhgztEIr+jQwi7JRqC2t6K+XfXKRM=; b=cHK7Unys7pXOpHDcJMbgSAOTiT
+	3QbVEB8KdccON7QRwMyrMyxj1DN/oKmfiAPmUKFomzdElETiOl9tjV07TaRb4UMxi4yjkaLzJwOWJ
+	xFl6wcqBVSLrmi5ceaSNZ0a3KJTcclbWDnI/49p89hnz9m+wXM+91pP0lWWwvacUini2vwzoqocmt
+	AmgwC2E7UMQCs9DRm1xBm6zfZQY1DFlBFWk/xHnGND0xy0MGFbdOW9eANDNYmWQQezEjAGo3kXqW+
+	4U3IT2c5Nv2oUugYWYycqPOPUx5NBQ+oT8AGbN7dw6wPxFhh+COPkUcjnrxHqaOHZyIiZd/UZtOMO
+	bd1KC6lA==;
 Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tt8ta-00000003tcq-2ro6;
-	Fri, 14 Mar 2025 17:32:35 +0000
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tt8tb-00000002vU8-3fiC;
+	Fri, 14 Mar 2025 17:32:32 +0000
 Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tt8tY-0000000CsVv-3rUi;
-	Fri, 14 Mar 2025 17:32:28 +0000
+	id 1tt8tY-0000000CsVz-4Bsv;
+	Fri, 14 Mar 2025 17:32:29 +0000
 From: David Woodhouse <dwmw2@infradead.org>
 To: kexec@lists.infradead.org
 Cc: Thomas Gleixner <tglx@linutronix.de>,
@@ -65,9 +65,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	Peter Zijlstra <peterz@infradead.org>,
 	jpoimboe@kernel.org,
 	bsz@amazon.de
-Subject: [PATCH v8 3/7] x86/kexec: Add 8250 serial port output
-Date: Fri, 14 Mar 2025 17:27:35 +0000
-Message-ID: <20250314173226.3062535-4-dwmw2@infradead.org>
+Subject: [PATCH v8 4/7] x86/kexec: Add 8250 MMIO serial port output
+Date: Fri, 14 Mar 2025 17:27:36 +0000
+Message-ID: <20250314173226.3062535-5-dwmw2@infradead.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250314173226.3062535-1-dwmw2@infradead.org>
 References: <20250314173226.3062535-1-dwmw2@infradead.org>
@@ -79,125 +79,133 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: David Woodhouse <dwmw2@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
 From: David Woodhouse <dwmw@amazon.co.uk>
 
-If a serial port was configured for early_printk, use it for debug output
-from the relocate_kernel exception handler too.
+This supports the same 32-bit MMIO-mapped 8250 as the early_printk code.
+
+It's not clear why the early_printk code supports this form and only this
+form; the actual runtime 8250_pci doesn't seem to support it. But having
+hacked up QEMU to expose such a device, early_printk does work with it,
+and now so does the kexec debug code.
 
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 ---
  arch/x86/include/asm/kexec.h         |  1 +
- arch/x86/kernel/early_printk.c       |  6 +++++
- arch/x86/kernel/relocate_kernel_64.S | 39 +++++++++++++++++++++++-----
- 3 files changed, 40 insertions(+), 6 deletions(-)
+ arch/x86/kernel/early_printk.c       |  3 +++
+ arch/x86/kernel/machine_kexec_64.c   | 17 +++++++++++++++++
+ arch/x86/kernel/relocate_kernel_64.S | 22 ++++++++++++++++++++++
+ 4 files changed, 43 insertions(+)
 
 diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
-index ec7636f4f86a..8cbdb6fd10c2 100644
+index 8cbdb6fd10c2..5081d0b9e290 100644
 --- a/arch/x86/include/asm/kexec.h
 +++ b/arch/x86/include/asm/kexec.h
-@@ -63,6 +63,7 @@ extern unsigned long kexec_pa_table_page;
- extern unsigned long kexec_pa_swap_page;
+@@ -64,6 +64,7 @@ extern unsigned long kexec_pa_swap_page;
  extern gate_desc kexec_debug_idt[];
  extern unsigned char kexec_debug_exc_vectors[];
-+extern uint16_t kexec_debug_8250_port;
+ extern uint16_t kexec_debug_8250_port;
++extern unsigned long kexec_debug_8250_mmio32;
  #endif
  
  /*
 diff --git a/arch/x86/kernel/early_printk.c b/arch/x86/kernel/early_printk.c
-index 44f937015e1e..e98e064089cd 100644
+index e98e064089cd..eb43c51a93a7 100644
 --- a/arch/x86/kernel/early_printk.c
 +++ b/arch/x86/kernel/early_printk.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/console.h>
- #include <linux/kernel.h>
-+#include <linux/kexec.h>
- #include <linux/init.h>
- #include <linux/string.h>
- #include <linux/screen_info.h>
-@@ -141,6 +142,11 @@ static __init void early_serial_hw_init(unsigned divisor)
- 	serial_out(early_serial_base, DLL, divisor & 0xff);
- 	serial_out(early_serial_base, DLH, (divisor >> 8) & 0xff);
- 	serial_out(early_serial_base, LCR, c & ~DLAB);
-+
+@@ -296,6 +296,9 @@ static __init void early_pci_serial_init(char *s)
+ 		/* WARNING! assuming the address is always in the first 4G */
+ 		early_serial_base =
+ 			(unsigned long)early_ioremap(bar0 & PCI_BASE_ADDRESS_MEM_MASK, 0x10);
 +#if defined(CONFIG_KEXEC_CORE) && defined(CONFIG_X86_64)
-+	if (serial_in == io_serial_in)
-+		kexec_debug_8250_port = early_serial_base;
++		kexec_debug_8250_mmio32 = bar0 & PCI_BASE_ADDRESS_MEM_MASK;
 +#endif
- }
+ 		write_pci_config(bus, slot, func, PCI_COMMAND,
+ 				 cmdreg|PCI_COMMAND_MEMORY);
+ 	}
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index faf2fb1cd9f6..a2e00a814708 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -76,6 +76,19 @@ map_acpi_tables(struct x86_mapping_info *info, pgd_t *level4p)
+ static int map_acpi_tables(struct x86_mapping_info *info, pgd_t *level4p) { return 0; }
+ #endif
  
- #define DEFAULT_BAUD 9600
++static int map_mmio_serial(struct x86_mapping_info *info, pgd_t *level4p)
++{
++	unsigned long mstart, mend;
++
++	if (!kexec_debug_8250_mmio32)
++		return 0;
++
++	mstart = kexec_debug_8250_mmio32 & PAGE_MASK;
++	mend = (kexec_debug_8250_mmio32 + PAGE_SIZE + 23) & PAGE_MASK;
++	pr_info("Map PCI serial at %lx - %lx\n", mstart, mend);
++	return kernel_ident_mapping_init(info, level4p, mstart, mend);
++}
++
+ #ifdef CONFIG_KEXEC_FILE
+ const struct kexec_file_ops * const kexec_file_loaders[] = {
+ 		&kexec_bzImage64_ops,
+@@ -285,6 +298,10 @@ static int init_pgtable(struct kimage *image, unsigned long control_page)
+ 	if (result)
+ 		return result;
+ 
++	result = map_mmio_serial(&info, image->arch.pgd);
++	if (result)
++		return result;
++
+ 	/*
+ 	 * This must be last because the intermediate page table pages it
+ 	 * allocates will not be control pages and may overlap the image.
 diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index c2f73998d1b6..1f8c8890798c 100644
+index 1f8c8890798c..cf736bbaec98 100644
 --- a/arch/x86/kernel/relocate_kernel_64.S
 +++ b/arch/x86/kernel/relocate_kernel_64.S
 @@ -39,6 +39,7 @@ SYM_DATA(kexec_va_control_page, .quad 0)
  SYM_DATA(kexec_pa_table_page, .quad 0)
  SYM_DATA(kexec_pa_swap_page, .quad 0)
  SYM_DATA_LOCAL(pa_backup_pages_map, .quad 0)
-+SYM_DATA(kexec_debug_8250_port, .word 0)
++SYM_DATA(kexec_debug_8250_mmio32, .quad 0)
+ SYM_DATA(kexec_debug_8250_port, .word 0)
  
  	.balign 16
- SYM_DATA_START_LOCAL(kexec_debug_gdt)
-@@ -380,24 +381,50 @@ SYM_CODE_START_LOCAL_NOALIGN(swap_pages)
- SYM_CODE_END(swap_pages)
- 
- /*
-- * Generic 'print character' routine (as yet unimplemented)
-+ * Generic 'print character' routine
-  *  - %al: Character to be printed (may clobber %rax)
-  *  - %rdx: MMIO address or port.
-  */
--SYM_CODE_START_LOCAL_NOALIGN(pr_char)
-+#define XMTRDY          0x20
-+
-+#define TXR             0       /*  Transmit register (WRITE) */
-+#define LSR             5       /*  Line Status               */
-+
-+SYM_CODE_START_LOCAL_NOALIGN(pr_char_8250)
- 	UNWIND_HINT_FUNC
- 	ANNOTATE_NOENDBR
-+	addw	$LSR, %dx
-+	xchg	%al, %ah
-+.Lxmtrdy_loop:
-+	inb	%dx, %al
-+	testb	$XMTRDY, %al
-+	jnz	.Lready
-+	rep nop
-+	jmp .Lxmtrdy_loop
-+
-+.Lready:
-+	subw	$LSR, %dx
-+	xchg	%al, %ah
-+	outb	%al, %dx
-+pr_char_null:
-+	ANNOTATE_NOENDBR
-+
- 	ANNOTATE_UNRET_SAFE
+@@ -413,6 +414,22 @@ pr_char_null:
  	ret
--SYM_CODE_END(pr_char)
-+SYM_CODE_END(pr_char_8250)
+ SYM_CODE_END(pr_char_8250)
  
++SYM_CODE_START_LOCAL_NOALIGN(pr_char_8250_mmio32)
++	UNWIND_HINT_FUNC
++	ANNOTATE_NOENDBR
++.Lxmtrdy_loop_mmio:
++	movb	(LSR*4)(%rdx), %ah
++	testb	$XMTRDY, %ah
++	jnz	.Lready_mmio
++	rep nop
++	jmp .Lxmtrdy_loop_mmio
++
++.Lready_mmio:
++	movb	%al, (%rdx)
++	ANNOTATE_UNRET_SAFE
++	ret
++SYM_CODE_END(pr_char_8250_mmio32)
++
  /*
   * Load pr_char function pointer into %rsi and load %rdx with whatever
   * that function wants to see there (typically port/MMIO address).
-  */
--.macro	pr_setup
--	/* No output; pr_char just returns */
--	leaq	pr_char(%rip), %rsi
-+.macro pr_setup
-+	leaq	pr_char_8250(%rip), %rsi
-+	movw	kexec_debug_8250_port(%rip), %dx
-+	testw	%dx, %dx
+@@ -423,6 +440,11 @@ SYM_CODE_END(pr_char_8250)
+ 	testw	%dx, %dx
+ 	jnz	1f
+ 
++	leaq	pr_char_8250_mmio32(%rip), %rsi
++	movq	kexec_debug_8250_mmio32(%rip), %rdx
++	testq	%rdx, %rdx
 +	jnz	1f
 +
-+	leaq	pr_char_null(%rip), %rsi
-+1:
+ 	leaq	pr_char_null(%rip), %rsi
+ 1:
  .endm
- 
- /* Print the nybble in %bl, clobber %rax */
 -- 
 2.48.1
 
