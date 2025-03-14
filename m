@@ -1,146 +1,179 @@
-Return-Path: <linux-kernel+bounces-561472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4DAA61256
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:17:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 185A9A61270
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:19:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AB861B62EFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:16:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6151B881FC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E151202C31;
-	Fri, 14 Mar 2025 13:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820411FF60C;
+	Fri, 14 Mar 2025 13:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n/IyhA90";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="046hKvlz";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n/IyhA90";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="046hKvlz"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="fCGRUF1r"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3141F20299F
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E3B33062;
+	Fri, 14 Mar 2025 13:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741958090; cv=none; b=kgGlBCHl2eXdN0CfeFy2cvxtzTjmf+W/JUXuktJoT4nfj1qmyJf9iyADJD2riJB7BNKImlxG9ZuORZVJ1V+WyOSRG/dfD63UqGoy2kRameEty6/LcFGB1zNitLWYsDT5E9lo7NkyCk0ZN0Kl1ISeDC4CL8Zl3XoMM1hd2uO7aVo=
+	t=1741958367; cv=none; b=GZkSQkip+FH5o0OTL0UfDth/aVUMKOJpxYAav9S/unSVM+5iVZ8vTfGN5JmHQj4F56lRXGMv1TFzsTz2EuEaa5j/QXbWnb9QHpRl3Wfi9F59ABa+UJssc8kRHq3EHLbUNiKt2Ijh5ZghaKUOWRXaL4L+8WIsFQC1cvq+aaj+pw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741958090; c=relaxed/simple;
-	bh=i5pgVOZlVnq0y47YV+bp584paVxAqR35NM0VmcVJbdg=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=kLxHp2MdT95IPeeJuEdNiIrQfunj1PcOch+LtIIOWruyaHo473w87Vdd/BfqMXbYUYbnCDBGkgUWxRYygIV5XfFxk2ncjNBDQkcudssx428WTM5wCLgMVO+93VVdtgsLheClRlRxxAQ75knNDh5c+Za9sRRzQD/H497SPY207mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n/IyhA90; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=046hKvlz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n/IyhA90; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=046hKvlz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	s=arc-20240116; t=1741958367; c=relaxed/simple;
+	bh=QmeYUs+yErlkIvOvXDo3UhtL+w7L7+0X2Hz8PQcj7Ak=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UQLD3Wbu0S0ekvIicrazKplMmByJGIqn4cRRrekIf0V6clXDxgdYkrVFbolIi2MNya+jD9Q2HRFTMOFQZi0Kjpo4/KrdB3oWvZgEYaycDISFWhqcJLT6FGrqNfiEP9uc8j87Bome0UrjI3I2jt6aWFG1+jzRTfZXwu3nGoHXW60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=fCGRUF1r; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.3.1)
+ id 6c10fbdd4048e413; Fri, 14 Mar 2025 14:19:22 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 452362116E;
-	Fri, 14 Mar 2025 13:14:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741958087; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1avXQwhwgX4XEF1ZEtVMSZaAo6rnSr1qiGZubxC19HI=;
-	b=n/IyhA90i67l1TV9Wmw/AAAoC09i6VEIyW3oqYoz/ufMi8M80UMHynYNPrdr9T1l3aJkuU
-	mSKm4UlMNAKUUATOhTWzp6fIBkMwGiuBLWZdRKQiVgwkOztvbVBAkd1qrPIMZeCdTWEkkH
-	ObDqUvKR/S2trp9DThBQrQ+yGdUEAdw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741958087;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1avXQwhwgX4XEF1ZEtVMSZaAo6rnSr1qiGZubxC19HI=;
-	b=046hKvlzpKzF6HYX5VwZ4n+XsiebxqUX0uiwyuiUvUAS7p/JSfP+xbtLXKuurjfxiedIKo
-	msUURfaBIYr1AaCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741958087; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1avXQwhwgX4XEF1ZEtVMSZaAo6rnSr1qiGZubxC19HI=;
-	b=n/IyhA90i67l1TV9Wmw/AAAoC09i6VEIyW3oqYoz/ufMi8M80UMHynYNPrdr9T1l3aJkuU
-	mSKm4UlMNAKUUATOhTWzp6fIBkMwGiuBLWZdRKQiVgwkOztvbVBAkd1qrPIMZeCdTWEkkH
-	ObDqUvKR/S2trp9DThBQrQ+yGdUEAdw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741958087;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1avXQwhwgX4XEF1ZEtVMSZaAo6rnSr1qiGZubxC19HI=;
-	b=046hKvlzpKzF6HYX5VwZ4n+XsiebxqUX0uiwyuiUvUAS7p/JSfP+xbtLXKuurjfxiedIKo
-	msUURfaBIYr1AaCA==
-Date: Fri, 14 Mar 2025 14:14:47 +0100 (CET)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Filipe Xavier <felipeaggger@gmail.com>
-cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
-    Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, 
-    Shuah Khan <shuah@kernel.org>, Marcos Paulo de Souza <mpdesouza@suse.com>, 
-    live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, felipe_life@live.com
-Subject: Re: [PATCH PATCH 2/2] selftests: livepatch: test if ftrace can trace
- a livepatched function
-In-Reply-To: <20250306-ftrace-sftest-livepatch-v1-2-a6f1dfc30e17@gmail.com>
-Message-ID: <alpine.LSU.2.21.2503141411010.4442@pobox.suse.cz>
-References: <20250306-ftrace-sftest-livepatch-v1-0-a6f1dfc30e17@gmail.com> <20250306-ftrace-sftest-livepatch-v1-2-a6f1dfc30e17@gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 11B66912CFB;
+	Fri, 14 Mar 2025 14:19:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1741958362;
+	bh=QmeYUs+yErlkIvOvXDo3UhtL+w7L7+0X2Hz8PQcj7Ak=;
+	h=From:Subject:Date;
+	b=fCGRUF1rQZGrG8nnY8L26mFuDsV767N9RBeDfEnDqHSFsiw3H6yd9pTwOiLbcjDU7
+	 5tn1bjI484/5T2dInlx0Fl41aCk3cRaUlx41qxxB034f0/ytRASU9lkH0sxkb6Kk4P
+	 hz1ks4jcq48vluuTzXIhKO7WO27vc/R9DHjXZ6IwP4hqICNViQaIr9/5GaNb6kwj9E
+	 oMxbkMQ7EI3yzynRUbhQrqGje2Hu0y6t0DNWKtOvDmsOuCcnDy4FdTDa2CjHqwbyOj
+	 LcTvQd8jno5UugUZDnl+QItZWRp4fnkuBo9hJZN15L0BW/wqAWxInqjx4apwsfPeeu
+	 LTmJV/i8p2UXg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Johan Hovold <johan@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Jon Hunter <jonathanh@nvidia.com>, Saravana Kannan <saravanak@google.com>
+Subject:
+ [PATCH v3 4/5] PM: sleep: Make async suspend handle suppliers like parents
+Date: Fri, 14 Mar 2025 14:16:33 +0100
+Message-ID: <2651185.Lt9SDvczpP@rjwysocki.net>
+In-Reply-To: <10629535.nUPlyArG6x@rjwysocki.net>
+References: <10629535.nUPlyArG6x@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.19)[-0.973];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,suse.com,redhat.com,vger.kernel.org,live.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Spam-Score: -4.29
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedtleegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepkedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsthgvrhhnsehrohiflhgrnhgurdhhrghrvhgrrhgurdgvughupdhrtghpthhtohepuhhlfhdrhhgrnhhsshhonheslhh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=16 Fuz1=16 Fuz2=16
 
-Hi,
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> +start_test "trace livepatched function and check that the live patch remains in effect"
-> +
-> +FUNCTION_NAME="livepatch_cmdline_proc_show"
-> +
-> +load_lp $MOD_LIVEPATCH
-> +trace_function "$FUNCTION_NAME"
+Following previous changes, avoid starting "async" suspend processing
+upfront for devices that have consumers and start "async" suspend
+processing for the supplies of a device after suspending the device
+itself.
 
-trace_funtion() calls cleanup_ftrace() to prepare the test. Ok.
+Suggested-by: Saravana Kannan <saravanak@google.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-> +if [[ "$(cat /proc/cmdline)" == "$MOD_LIVEPATCH: this has been live patched" ]] ; then
-> +	log "livepatch: ok"
-> +fi
-> +
-> +check_traced_function "$FUNCTION_NAME"
-> +
-> +cleanup_tracing
+New patch in v3.
 
-Here, I suppose, cleanup_tracing() is called to clean up after the check 
-above so that nothing stays and more tests can be added later. Right? 
-Would it make sense then to call cleanup_tracing() in 
-check_traced_function()? I think it would less error prone. 
-If needed, check_traced_function() can always be upgraded so that it 
-checks for more traced functions.
+---
+ drivers/base/power/main.c |   37 +++++++++++++++++++++++++++++++------
+ 1 file changed, 31 insertions(+), 6 deletions(-)
 
-Miroslav
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1249,10 +1249,15 @@
+ 		return false;
+ 	}
+ 
+-	return true;
++	/*
++	 * Since this function is required to run under dpm_list_mtx, the
++	 * list_empty() below will only return true if the device's list of
++	 * consumers is actually empty before calling it.
++	 */
++	return list_empty(&dev->links.consumers);
+ }
+ 
+-static void dpm_async_suspend_parent(struct device *dev, async_func_t func)
++static bool dpm_async_suspend_parent(struct device *dev, async_func_t func)
+ {
+ 	guard(mutex)(&dpm_list_mtx);
+ 
+@@ -1264,11 +1269,31 @@
+ 	 * deleted before it.
+ 	 */
+ 	if (!device_pm_initialized(dev))
+-		return;
++		return false;
+ 
+ 	/* Start processing the device's parent if it is "async". */
+ 	if (dev->parent)
+ 		dpm_async_with_cleanup(dev->parent, func);
++
++	return true;
++}
++
++static void dpm_async_suspend_superior(struct device *dev, async_func_t func)
++{
++	struct device_link *link;
++	int idx;
++
++	if (!dpm_async_suspend_parent(dev, func))
++		return;
++
++	idx = device_links_read_lock();
++
++	/* Start processing the device's "async" suppliers. */
++	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
++		if (READ_ONCE(link->status) != DL_STATE_DORMANT)
++			dpm_async_with_cleanup(link->supplier, func);
++
++	device_links_read_unlock(idx);
+ }
+ 
+ /**
+@@ -1392,7 +1417,7 @@
+ 	if (error || async_error)
+ 		return error;
+ 
+-	dpm_async_suspend_parent(dev, async_suspend_noirq);
++	dpm_async_suspend_superior(dev, async_suspend_noirq);
+ 
+ 	return 0;
+ }
+@@ -1588,7 +1613,7 @@
+ 	if (error || async_error)
+ 		return error;
+ 
+-	dpm_async_suspend_parent(dev, async_suspend_late);
++	dpm_async_suspend_superior(dev, async_suspend_late);
+ 
+ 	return 0;
+ }
+@@ -1879,7 +1904,7 @@
+ 	if (error || async_error)
+ 		return error;
+ 
+-	dpm_async_suspend_parent(dev, async_suspend);
++	dpm_async_suspend_superior(dev, async_suspend);
+ 
+ 	return 0;
+ }
+
+
+
 
