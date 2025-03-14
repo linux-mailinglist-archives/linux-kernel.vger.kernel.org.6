@@ -1,106 +1,128 @@
-Return-Path: <linux-kernel+bounces-561207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F1DA60EC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:26:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41BADA60ECA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:26:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D22A4188A343
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:26:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05AE37AA77B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326A01F3BAE;
-	Fri, 14 Mar 2025 10:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6381F4261;
+	Fri, 14 Mar 2025 10:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Cm5QjtWb"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fj1rTbsV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65181F3BBA
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11B21F416F;
+	Fri, 14 Mar 2025 10:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741947960; cv=none; b=KVk4vv4uI3YO5+cs1rpmjgg+6v/CynxQWI7nDpaDHyfV2hp6o8PETrHElw3ku9Y5yk9vZLo3g6jZjJul5PMX7KEmAH60hFb7eCGYx9pcyGrYBeruBit3CCdNBRfJaHL+7pYpj284tahfSRcqVCIMfOcLLsZyJDpsbcOpgex13/o=
+	t=1741947976; cv=none; b=KoIjNkNtK9OGqY0jH5HO191UcZ0F2yGbfsxsKBzPVX/gr6yZD03ofavhxrHXP8GUhP80yo30ZW6uI0xZ+Wqrsq9nF8b7DYMF1qs7VPA/NYaPgGYNJabzathRBWUh/l1rbkHWzoIUsiBwbO7JZ6ixYwc0aBEcYEco96GAce4PBLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741947960; c=relaxed/simple;
-	bh=gYqLASBJWp7lKKB+wKpO55ak9ZSRt6st4jHwIQSkJck=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lL2E1CdHH5lQ0ObQtx7R6shR1+LP7OVjkPcUqHeGFssx0qq7/WONjAZYdnZmx/3SHKLgh06z6GTlwfzFx+uT9TlLI8JjXmcenMotKxwRWIC2SF6i/JSzSlj4T3fhVpYNkovKBZIe28zZYk2NJIkOc/6Qeq4fSOwr1Whm17iwmSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Cm5QjtWb; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741947956; x=1742207156;
-	bh=4mIkyzXkCTSZba7X1wr3G/CQrEkzemtSQxmn8eJlyXQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=Cm5QjtWbd0ZnDKEV8/EkpkV807ESbd4pvoIVpXg4pSh8UhYKlROj5EnNcMWf8mYFy
-	 /i4TZFAYpQz+RM5F/ZxnAjKxkaiU4+cjZ29ISzJ6+5WtzZaqE7Q7sEgOcRk+IWLzjj
-	 VCWUwRxWQ6eTj5B5mA5RI3EsI6nIE75cA7krCVuQZ4khm5WrAozno3fVFNCS+NcVQ5
-	 pdtmBpmErEO4PCAyMeEaWRMrsHb6OnOQJgSCtejn3uCz+XLa++I8L/Fq9sWo9qyBxx
-	 3qDGyGnyMubQrtJQInYToGiB8pF7+k4Pjmj4u2BU0Dl13JB7/IcF4n3AGHRti+CuMd
-	 yZGmVASPsTPKA==
-Date: Fri, 14 Mar 2025 10:25:52 +0000
-To: Antonio Hickey <contact@antoniohickey.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] rust: clippy: disable `addr_of!`, `addr_of_mut!` macros
-Message-ID: <D8FX0ETYS1IR.2ZEPASOQMIOVW@proton.me>
-In-Reply-To: <0100019592c26506-b2399cba-7bdb-4c0b-9888-393a0576a127-000000@email.amazonses.com>
-References: <010001958dfeacb5-9039aaab-6114-494a-9f1d-f13982091169-000000@email.amazonses.com> <0100019592c26506-b2399cba-7bdb-4c0b-9888-393a0576a127-000000@email.amazonses.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 9c53b29ec43a576bb3887b4f480f3b41bf955824
+	s=arc-20240116; t=1741947976; c=relaxed/simple;
+	bh=+vfTgiyYFj6cKd5S91WGxW+YTe/QnYFYKuf734yUw90=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uwgCByrweMRTMhmYOkrTIIsWvLTSzeOHeQB6hgcYP688pfgHBHUCxP9nil6j2QGofNah6TsRqLyTgvKKgnExb/9cibC7m3LbadeSdSqJi1Pk5cyYj22ZsGhC0BKxVcRR4OlVxdlutnNnVTFGUAso31GHcR8lqFeZQweLMVel/ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fj1rTbsV; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741947974; x=1773483974;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+vfTgiyYFj6cKd5S91WGxW+YTe/QnYFYKuf734yUw90=;
+  b=Fj1rTbsVK2pRf5daxtcEvSkZMK2fpEENit6wuIQJ37wRN9E8hHtb/RaE
+   B9PBlba6B6ovDWhNH8hV+19pIF6gKqi1K7UEdMmPlS4XG9HcHYeQkZ7Tt
+   s9DKUjI+lfy5o5excJwk8DFePQAW4HMWN8pCvUf9KDDnQGQGV9yTSZTfN
+   men4lEWn3hk38EYYMN686QzKN870UZ6kiT/swtWTLC0RQAINglQA2ryfk
+   3ZUyEImisu2HIppTVVPIC5gLo8DmD2+eeXpYKBwMNpR9oVUzAIQqfZdCn
+   KninNeDvit3W8r87MVoiwgSTfP5DeVZuF3PI40h1oOlex+JeamVE6qjNi
+   g==;
+X-CSE-ConnectionGUID: 5sStalGESwyDxj1wijQzsQ==
+X-CSE-MsgGUID: J9vrR9PnS+O5yWbJK9rcAw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="60633562"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="60633562"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 03:26:14 -0700
+X-CSE-ConnectionGUID: BLIWjnd1TE+RDaPWBBaW9w==
+X-CSE-MsgGUID: y3J9GLc1TSyDY43H3pg9tA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="158381008"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 14 Mar 2025 03:26:10 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tt2Ey-000AL0-1D;
+	Fri, 14 Mar 2025 10:26:08 +0000
+Date: Fri, 14 Mar 2025 18:26:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Sebastian Reichel <sre@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, Oleksij Rempel <o.rempel@pengutronix.de>,
+	Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org,
+	=?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>
+Subject: Re: [PATCH v5 6/7] regulator: set Power State Change Reason before
+ hw_protection_shutdown()
+Message-ID: <202503141835.M6AeKZTU-lkp@intel.com>
+References: <20250310103732.423542-7-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310103732.423542-7-o.rempel@pengutronix.de>
 
-On Fri Mar 14, 2025 at 4:46 AM CET, Antonio Hickey wrote:
-> With the `raw_ref_op` feature enabled we no longer want to
-> allow use of `addr_of!` and `addr_of_mut!` macros.
->
-> We instead want to use `&raw const` and `&raw mut` to get raw
-> pointers to a place.
->
-> Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1148
-> Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
-> ---
->  .clippy.toml | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/.clippy.toml b/.clippy.toml
-> index 815c94732ed7..95c73959f039 100644
-> --- a/.clippy.toml
-> +++ b/.clippy.toml
-> @@ -8,4 +8,8 @@ disallowed-macros =3D [
->      # The `clippy::dbg_macro` lint only works with `std::dbg!`, thus we =
-simulate
->      # it here, see: https://github.com/rust-lang/rust-clippy/issues/1130=
-3.
->      { path =3D "kernel::dbg", reason =3D "the `dbg!` macro is intended a=
-s a debugging tool" },
-> +    # With `raw_ref_op` feature enabled we no longer want to allow use o=
-f `addr_of!`
-> +    # and `addr_of_mut!` macros, but instead use `&raw` or `&raw mut`.
-> +    { path =3D "core::ptr::addr_of_mut", reason =3D "use `&raw mut` inst=
-ead `addr_of_mut!`" },
-> +    { path =3D "core::ptr::addr_of", reason =3D "use `&raw` instead `add=
-r_of!`" },
->  ]
+Hi Oleksij,
 
-This patch still needs to be done *after* the third one in order to
-avoid warnings (since you're removing the usages of `addr_of[_mut]!` in
-the next patch).
+kernel test robot noticed the following build errors:
 
----
-Cheers,
-Benno
+[auto build test ERROR on sre-power-supply/for-next]
+[also build test ERROR on broonie-regulator/for-next rafael-pm/thermal linus/master v6.14-rc6]
+[cannot apply to next-20250314]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Oleksij-Rempel/power-Extend-power_on_reason-h-for-upcoming-PSCRR-framework/20250310-184319
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git for-next
+patch link:    https://lore.kernel.org/r/20250310103732.423542-7-o.rempel%40pengutronix.de
+patch subject: [PATCH v5 6/7] regulator: set Power State Change Reason before hw_protection_shutdown()
+config: powerpc64-randconfig-r122-20250314 (https://download.01.org/0day-ci/archive/20250314/202503141835.M6AeKZTU-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250314/202503141835.M6AeKZTU-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503141835.M6AeKZTU-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   powerpc64-linux-ld: warning: discarding dynamic section .glink
+   powerpc64-linux-ld: warning: discarding dynamic section .plt
+   powerpc64-linux-ld: linkage table error against `set_power_state_change_reason'
+   powerpc64-linux-ld: stubs don't match calculated size
+   powerpc64-linux-ld: can not build stubs: bad value
+   powerpc64-linux-ld: drivers/regulator/core.o: in function `.regulator_notifier_call_chain':
+>> core.c:(.text+0xc55c): undefined reference to `.set_power_state_change_reason'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
