@@ -1,102 +1,130 @@
-Return-Path: <linux-kernel+bounces-561234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE436A60F0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:35:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59B4CA60F11
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:35:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 750D01B618E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:35:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF60D1702E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9B01DDA33;
-	Fri, 14 Mar 2025 10:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918A71F239B;
+	Fri, 14 Mar 2025 10:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L/8FmuL3"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XM1E5Zr8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CAE1F4CAD
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4212E3364
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741948486; cv=none; b=NDDre6OfsLy6lpvAgL/Ug5w6yDNiey9SvtE7mCCl+tnXsWeWDneL+2V0gBDrL3Uj7XPYRG5IVaHOFXfIaQX0c1e1PYw4QE8Lq0nO8psYaoob1FaxrxVtNyCMxQhIMZVxecwS7raPmZz9wnGL5rYFynagYk6Wg8n8yBy73BtGADg=
+	t=1741948500; cv=none; b=VySFfQgRDWYbDvxaW5wJzdLh74wIM2A6cGSHrqlozo38ev90WWIM71e4s0R1G/X/fOHs87GpVqtVSBKR6ZA4ii5m83moEPczu0AqhZfjY51yKK2wo4LoRSC2QL2Pm10G10IUc6VkJeB9yWTKBu5yKHrAU7Lzh4wWEAVE+pfO4mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741948486; c=relaxed/simple;
-	bh=aL0gXB6mSCGXve79f+GXoCVzELUaAGFZyR3q5Z30UuU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i2rktRqbi6M80xbdXmoXhKYtKNn38uCnbccCZ4tfn5EF1XlcGe30ME1D8RO7xU5ATEbBbq64GGhGwlqvJ8bWu5w38EA+niyTvlfCYV6EQrEhaVG27eVCtW9oZ/wbD7OF5asDicLddcC8Q82loHPLMoUlbC1a+9DCXP31/vE3vME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L/8FmuL3; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5499e3ec54dso2039527e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:34:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741948482; x=1742553282; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uXFlL4FEs/n/rX4YOPitVgbikcIXGJdQJLDY1EsOF8w=;
-        b=L/8FmuL3f1IHAid3EGYNfElweO601ecHo+1Xs6kAHjAqDaMrX8RnRwhJHnRkW1u4T7
-         1bF3g9xNOYrP7h9Ku07UmrBhNuZDp10f1xLsOTRlSmMGgf12qGno7CZatu2NousSrdl5
-         yNh5PSJ7FoGDYymPiJeLnEQB7M7PicuOwQD+CIqrT6rII4dgBAgam/EaC3qxArCON+av
-         J686h58ZpUUcLYHRyNdgSdmzYEhCB08ETmwCaIs1fBoJ7IxviU0HFF0qtSKBdhzz6rGx
-         DUwGpcals95bLPjjY1du+n0B0XECrl9vvA4bH38+slQwu+mF6/4fzccPAPZSL77OWSZf
-         ZSHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741948482; x=1742553282;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uXFlL4FEs/n/rX4YOPitVgbikcIXGJdQJLDY1EsOF8w=;
-        b=oAdZNYJT0nbm7fdiNGbFeZR/39z1cSTWy2BxxiHQrQXGMN7oQsML7nc0lawVNxIBwE
-         OJL2mhHeiId5hCjnQarVww1epD/LJsBFkJnpeMga5pKK8m1/RIYzvvYSQLkwaSttqjtT
-         RifOpauMZrvxQIVGqfUALrxoESCUBexD2jnIaqKJJPWQd0EseRKnWPt0fC/TtT4zEDdc
-         AnSL+LsBWeRS2+D/eAuFskHbZjI3cGtNQMDzWX9BvWLufN3YGBmDlSfPf99dXrzj4G0H
-         UuOyMciRKwDhz9ILITuObWU+sTTr/Wrg/+yH8Z9d9uB/76Vhn08CuWqNoBaXRAl6x9QP
-         DCiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVV5odNXjr/41ZEbJMqfKjpsOrKi1nD+1W4U5a05XiMYtjZDr5pICwdKAoanOfTT4ImrBRArmrUo4+Mko=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8RkFxEGHQLmIfVqN++oPEmYcwuGktBVW9mA6GMNwy/CStpzeM
-	OZg8sQ7b0zCsnEgaAkI8GiL47O60nVvp/wnPLjpVrnOmHBfDf7Uo1PcvcUfZbrfcwFhoddCcciB
-	pbi0YhQ91ytcW8AwujaREMVw56l0hODjcoAvBHg==
-X-Gm-Gg: ASbGnctbsbLIZUlyzAHn/E2ONjJ/k5lOPQBRvefYNh4pBST+XXFe7gBMirjotxqrnFO
-	LwZCwMGhIRYyONgoT4Zm0TLa61EvUARmNaHpGZP2vt07ET/tlSuTT82Irz3q6zc5Kx/PvlCw6C5
-	zifXy85pTKdjJ3B+B/tySPqmk=
-X-Google-Smtp-Source: AGHT+IH59Nam3QzVYLK/m6Rs0Q0Qn2HE9pRubALNnpoj2NMRzj++gf0khsat6J38n/8gCO1y3XF2MUrlrRs2zD0uS3w=
-X-Received: by 2002:a05:6512:398c:b0:549:31e4:9ea with SMTP id
- 2adb3069b0e04-549c3c9897amr675717e87.52.1741948482182; Fri, 14 Mar 2025
- 03:34:42 -0700 (PDT)
+	s=arc-20240116; t=1741948500; c=relaxed/simple;
+	bh=l8ntTR3a/55I6o8PPqCMsWt7nAeOmzqzgHnF4Wr5xFc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=cMFbYgPUeWxBmTj5LJQd93oXzM2ue87Ux7jffGWVZUBTQr41uAVdxu3GrkeUw2mWj3bLU6r9CU8HULJrRjEdKFye/CukBneL8TrAzEkOs8qY/jxv8Ck/JjTqyT+WxhH0TRAQ0HwM2HVMKGAy/HGXY35/4H0LSut7KcWK1Bi7lRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XM1E5Zr8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD715C4CEE3;
+	Fri, 14 Mar 2025 10:34:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1741948500;
+	bh=l8ntTR3a/55I6o8PPqCMsWt7nAeOmzqzgHnF4Wr5xFc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XM1E5Zr8Ro4VqUSVAIIoI7m5VnsBdzZkV1oiUDdBTTY2kfXjaQ26Ukpbo6UTWA31d
+	 pdvLsBjr92PBSumYIGQ7AYNPDleTGE74CI1WSTOdHx8FeiVGi+5GMashPL78zy/lrw
+	 TFKf3LQkPLU0Lq1etg2KEsVcN7iR5SV0e5puJcgU=
+Date: Fri, 14 Mar 2025 03:34:59 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, =?ISO-8859-1?Q?Andr=E9?= Almeida
+ <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, Davidlohr
+ Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, Juri Lelli
+ <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>,
+ Waiman Long <longman@redhat.com>, Uladzislau Rezki <urezki@gmail.com>,
+ Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org, Christoph
+ Hellwig <hch@lst.de>
+Subject: Re: [PATCH v10 19/21] mm: Add vmalloc_huge_node()
+Message-Id: <20250314033459.180e943deaa30dcf3549f376@linux-foundation.org>
+In-Reply-To: <20250314095931.825Pdmvi@linutronix.de>
+References: <20250312151634.2183278-1-bigeasy@linutronix.de>
+	<20250312151634.2183278-20-bigeasy@linutronix.de>
+	<20250312150206.54afabcf993bbc55f0066886@linux-foundation.org>
+	<20250313075924.qulV64zL@linutronix.de>
+	<20250313150814.075d1cd993a84005d4cd22c2@linux-foundation.org>
+	<20250314095931.825Pdmvi@linutronix.de>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <617f4c77-7837-4e24-9f4d-620ecfedf924@stanley.mountain>
-In-Reply-To: <617f4c77-7837-4e24-9f4d-620ecfedf924@stanley.mountain>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 14 Mar 2025 11:34:30 +0100
-X-Gm-Features: AQ5f1JqMDr8pDqL2jIXtFwweqNigXKcsgGd2oHbNPaqU9RFqX-TDqejST3Ot0yI
-Message-ID: <CACRpkdZkpJR--x=qgzXVmRsSexobBV9eRyQ0BecGZ4+dNBcXQg@mail.gmail.com>
-Subject: Re: [PATCH next] pinctrl: amd: isp411: Fix IS_ERR() vs NULL check in probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Pratap Nirujogi <pratap.nirujogi@amd.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 10, 2025 at 11:52=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
-o.org> wrote:
+On Fri, 14 Mar 2025 10:59:31 +0100 Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
 
-> The platform_get_resource() returns NULL on error.  It doesn't
-> return error pointers.  Fix the error checking to match.
->
-> Fixes: e97435ab09f3 ("pinctrl: amd: isp411: Add amdisp GPIO pinctrl")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> On 2025-03-13 15:08:14 [-0700], Andrew Morton wrote:
+> > That would be nice, if you think it makes sense.  There is some
+> > duplication here.
+> 
+> As you wish. That would be the following patch below.
 
-Patch applied!
+Looks OK.
 
-Yours,
-Linus Walleij
+> This is now
+> somehow unique compared to the other interfaces (like vmalloc() vs
+> vmalloc_node()).
+
+I'm not sure what this means?
+
+I kinda struggle with the name "vmalloc_huge_node".  But
+"vmalloc_node_maybe_huge" is too long!
+
+
+> --- a/mm/nommu.c
+> +++ b/mm/nommu.c
+> @@ -207,7 +207,23 @@ void *vmalloc_noprof(unsigned long size)
+>  }
+>  EXPORT_SYMBOL(vmalloc_noprof);
+>  
+> -void *vmalloc_huge_noprof(unsigned long size, gfp_t gfp_mask) __weak __alias(__vmalloc_noprof);
+> +/*
+> + *	vmalloc_huge_node  -  allocate virtually contiguous memory, on a node
+> + *
+> + *	@size:		allocation size
+> + *	@gfp_mask:	flags for the page level allocator
+> + *	@node:          node to use for allocation or NUMA_NO_NODE
+> + *
+> + *	Allocate enough pages to cover @size from the page level
+> + *	allocator and map them into contiguous kernel virtual space.
+> + *
+> + *	Due to NOMMU implications the node argument and HUGE page attribute is
+> + *	ignored.
+> + */
+> +void *vmalloc_huge_node_noprof(unsigned long size, gfp_t gfp_mask, int node)
+> +{
+> +	return __vmalloc_noprof(size, gfp_mask);
+> +}
+
+Please check, I think this wants to be EXPORTed to modules.
+
+> -void *vmalloc_huge_noprof(unsigned long size, gfp_t gfp_mask)
+> +void *vmalloc_huge_node_noprof(unsigned long size, gfp_t gfp_mask, int node)
+>  {
+>  	return __vmalloc_node_range_noprof(size, 1, VMALLOC_START, VMALLOC_END,
+> -				    gfp_mask, PAGE_KERNEL, VM_ALLOW_HUGE_VMAP,
+> -				    NUMA_NO_NODE, __builtin_return_address(0));
+> +					   gfp_mask, PAGE_KERNEL, VM_ALLOW_HUGE_VMAP,
+> +					   node, __builtin_return_address(0));
+>  }
+> -EXPORT_SYMBOL_GPL(vmalloc_huge_noprof);
+> +EXPORT_SYMBOL_GPL(vmalloc_huge_node_noprof);
+
+Like the NOMMU=n version.
 
