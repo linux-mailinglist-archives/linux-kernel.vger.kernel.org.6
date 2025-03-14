@@ -1,138 +1,125 @@
-Return-Path: <linux-kernel+bounces-561592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81C4CA613CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:38:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07493A613CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:39:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 382AB1631F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:38:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 578041890C49
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BE81FF1B0;
-	Fri, 14 Mar 2025 14:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5783F201264;
+	Fri, 14 Mar 2025 14:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UAvJ9C+5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="cLqm2583"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5261F1818;
-	Fri, 14 Mar 2025 14:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C212C1FFC4B;
+	Fri, 14 Mar 2025 14:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741963044; cv=none; b=f66ixtUMkMtQimbkYaPeP42ywMpmHqc0ikLm7oih+fZ2SRjQEfrmzf+VeQvGWHtPkkVktChIXX+/Tgc4BtjoOIxx3Gm6mC26HZ3Y8r81rM0xp2DQL/L7RcQpqKbKT6Bu5tpIxCaqAWSxXk9ADk70s43G6CbUNoayeRjT9JT4xi0=
+	t=1741963122; cv=none; b=HL+8N7zq56Rvaq/B8DepIs1iTjA9HUg70I6DukPTOaUoxG6nbs0f24x+fFUDzRAwLeOpFmG88yRRSaZWQLrWnZU3SFnS1AqpucJXgNBtMSt2s5KlG3Fhut2HwyUPyG0sHWkMPuFOmVi4CKVb7v1b1GcmQUK81e8anA7bp9ReYeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741963044; c=relaxed/simple;
-	bh=+jWeC/xSDCzP0BWQNTUeRpH28NuICQiZEGJ73gy54F0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VkhxlrQRYtGpPjKZL7NvsQjzThCq1He3Uok8DzjCJvVj84h5kRyQvN3wkZ+DtIgN/TvE/TdSD1ChCIBum8JuQTwgZVTrV0dp1NFAWhFzbmxdda4by+tqGRJ7WsPSvUo0zqEgd0u+veMAwHhl46GEDcERpSgQPnR9goXkUvCjijY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UAvJ9C+5; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741963042; x=1773499042;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+jWeC/xSDCzP0BWQNTUeRpH28NuICQiZEGJ73gy54F0=;
-  b=UAvJ9C+5xTFRloNlQ85VqxKE5mIbihEab0r9cbUEQvvQ6XZwod20ci2M
-   /C+Kq7ej9Emp7tMRp8alX1UIlpH3nV3Vuardl2tW+KVsAKKhz/GIRM18x
-   J5spS9E1h1e1+K8rig0hXQqAUAd3N0VEaABMF7WD71vSoRZUUWsGajhuq
-   ntAHn/voyVsAPOJaeJEMQfOu85PCT7S0cElTXSkTsV5UtfJxW2ptFz+Lp
-   gRcehwTuAKsOBbed43/XFgbVK9+a2piYbHh6GIJ1yi1n7wB3ae7JuZtER
-   ziqMnyWa4tZceUegF3VFZAHtaZCq2dwwOlYQBv/v6f5oDbw9ClwiOH7+3
-   Q==;
-X-CSE-ConnectionGUID: VPYtbaA+QqOzZYox6EaIiA==
-X-CSE-MsgGUID: BNr2AWAnTGGuF0Ydoq2PDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="42845261"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="42845261"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 07:37:20 -0700
-X-CSE-ConnectionGUID: MEndl2yRTBebsctmfPOEOQ==
-X-CSE-MsgGUID: OushhPWLRVWYnzPewFG0ZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="121093838"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 07:37:16 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tt69x-00000002UAd-0ELI;
-	Fri, 14 Mar 2025 16:37:13 +0200
-Date: Fri, 14 Mar 2025 16:37:12 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Nuno Sa <nuno.sa@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Guillaume Stols <gstols@baylibre.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH v7 06/10] iio: adc: Support ROHM BD79124 ADC
-Message-ID: <Z9Q_GK0_4J6ga1or@smile.fi.intel.com>
-References: <cover.1741849323.git.mazziesaccount@gmail.com>
- <b6c02a5d75a20bbbf8c3370ccee615d269620117.1741849323.git.mazziesaccount@gmail.com>
- <Z9LbT1BvPEIp7U2N@smile.fi.intel.com>
- <0d7b37fd-be93-42d7-9610-d2184c601981@gmail.com>
+	s=arc-20240116; t=1741963122; c=relaxed/simple;
+	bh=nhJwcBN5xORLe4RPTOgWh/rOF7dwwkz4g6VbVKsi+EA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=l4w7aGba4kFZ9Yve7NWQlKmSG0v/Vn1NiYBy1FL/FDWVv1UPNO+GPfk967FPqd/AlXQsW4sYDZjVFXirFJXSWQFGnAu/8VFqT5YZ3q0ENTqQplNcF220Pws4DAVPSy1xfJ65Hx4Wl3/m6IOFiTpLc5eM8lEHQ/eprIZRgEx1Noc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=cLqm2583; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4ZDn6Y4WLzz9sPv;
+	Fri, 14 Mar 2025 15:38:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
+	s=MBO0001; t=1741963109;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HR2cA/3frnVcYkSzurVNHIrja283d0wVh4XQGvYIcWE=;
+	b=cLqm2583YNQGn5NdZhcpil8v7duBCGwQlSHTnRXTXSqaiJxPv7IqwJfB+fYY4W1f4OCc6T
+	o1nLVbpG9j2sKlu+2bEUJBmWTqIOuZE4Sr1dO3Oyhgt1gKXuWG6m3l2+GJYX2xM9GC+niQ
+	lG7xEUPxGLSqdVee64SsD+Qqn7AzuPg1FaVfBuGC7LnSsG8JaEzbgOwnlvAc7/Y4YLcw64
+	T6O8bn0pPAOMIfgp+9B/bp2uA7E447cSEwVZNeViHGsZLj/OcEn3/P4TCIvyxZ+LVHJakG
+	S4eSrhbsn5qUiPV2x3rEA+XH29q3mO6MeFkzMMhcb9yUG7oiPdEjTFCdsJ8BDw==
+From: Ethan Carter Edwards <ethan@ethancedwards.com>
+Subject: [PATCH 0/4] ASoC: Intel: avs: move devm_kzalloc(..., size * n,
+ ...) to devm_kcalloc
+Date: Fri, 14 Mar 2025 10:38:20 -0400
+Message-Id: <20250314-sound-avs-kcalloc-v1-0-985f2734c020@ethancedwards.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d7b37fd-be93-42d7-9610-d2184c601981@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFw/1GcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDY0MT3eL80rwU3cSyYt3s5MScnPxkXUvD5NSUpGQTcwNzEyWgvoKi1LT
+ MCrCZ0bG1tQCjWG0wYwAAAA==
+X-Change-ID: 20250314-sound-avs-kcalloc-91cedbc47074
+To: Cezary Rojewski <cezary.rojewski@intel.com>, 
+ Liam Girdwood <liam.r.girdwood@linux.intel.com>, 
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+ Bard Liao <yung-chuan.liao@linux.intel.com>, 
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>
+Cc: gustavoars@kernel.org, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ Ethan Carter Edwards <ethan@ethancedwards.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1529;
+ i=ethan@ethancedwards.com; h=from:subject:message-id;
+ bh=nhJwcBN5xORLe4RPTOgWh/rOF7dwwkz4g6VbVKsi+EA=;
+ b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
+ GhQcXlVeHBGK3hqei8zV2R2TDRKOWRRcFhRcEpVejVOaGU5ZkJkCmNGcWRYYTRjRzluMDVzMzFi
+ VklkcFN3TVlsd01zbUtLTFA5emxOTWVhczVRMlBuWHBRbG1EaXNUeUJBR0xrNEIKbU1qU2R3eC9
+ KWHJ1cDl4aDErN1JtWFBnbGYrTVk0TEptNDNXYlpTODRMOWlYZHJmdDg5YjlqTDg5NjIzZkRkbg
+ ppOWVxaGI4VU9XSWNzZ1cvY0ZVMEh0bXU5L25Nc29UYWhVV3lMQUM5WVUrQQo9TnJIdwotLS0tL
+ UVORCBQR1AgTUVTU0FHRS0tLS0tCg==
+X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
+ fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
 
-On Fri, Mar 14, 2025 at 11:22:37AM +0200, Matti Vaittinen wrote:
-> On 13/03/2025 15:19, Andy Shevchenko wrote:
-> > On Thu, Mar 13, 2025 at 09:19:03AM +0200, Matti Vaittinen wrote:
+Open coded arithmetic in allocator arguments is discouraged. Helper
+functions like kcalloc or, in this case, devm_kcalloc are preferred. Not
+only for readability purposes but safety purposes.
 
-...
+The changes move `devm_kzalloc(dev, sizeof(var) * n, GFP_KERNEL)` to
+the helper function `devm_kcalloc(dev, n, sizeof(var), GFP_KERNEL)`.
 
-> > > +	ret = regmap_read(data->map, BD79124_REG_EVENT_FLAG_HI, &i_hi);
-> > > +	if (ret)
-> > > +		return IRQ_NONE;
-> > > +
-> > > +	ret = regmap_read(data->map, BD79124_REG_EVENT_FLAG_LO, &i_lo);
-> > > +	if (ret)
-> > > +		return IRQ_NONE;
-> > 
-> > Only I don't get why you can't use bulk read here.
-> > The registers seem to be sequential.
-> 
-> After taking another look - there seems to be undocumented register (0x1b)
-> between the BD79124_REG_EVENT_FLAG_HI (0x1a) and the
-> BD79124_REG_EVENT_FLAG_LO (0x1c).
-> 
-> I won't touch it unless there is a real verified performance problem.
+Here is a series of four patches within the Intel/avs drivers that make
+these changes. They are all compile tested only but should have no
+effect on runtime behaviour.
+    
+Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
+Link: https://github.com/KSPP/linux/issues/162
 
-...
+Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+---
+Ethan Carter Edwards (4):
+      ASoC: Intel: avs: move devm_kzalloc(..., size * n, ...) to devm_kcalloc
+      ASoC: Intel: ssm4567: move devm_kzalloc(..., size * n, ...) to devm_kcalloc
+      ASoC: Intel: max98373: move devm_kzalloc(..., size * n, ...) to devm_kcalloc
+      ASoC: Intel: max98927: move devm_kzalloc(..., size * n, ...) to devm_kcalloc
 
-> > In the similar way bulk write.
-> 
-> definitely not due to the 0x1b.
+ sound/soc/intel/avs/boards/max98373.c | 2 +-
+ sound/soc/intel/avs/boards/max98927.c | 2 +-
+ sound/soc/intel/avs/boards/ssm4567.c  | 2 +-
+ sound/soc/intel/avs/pcm.c             | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+---
+base-commit: da920b7df701770e006928053672147075587fb2
+change-id: 20250314-sound-avs-kcalloc-91cedbc47074
 
-Okay, it seems I misinterpreted the values you have in regmap configuration,
-I was under the impression that regmap is 16-bit data, but it is about address.
-
-So, we need to know why the heck HW has sparse registers for what is supposed
-to be sequential. This needs a good comment.
-
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Ethan Carter Edwards <ethan@ethancedwards.com>
 
 
