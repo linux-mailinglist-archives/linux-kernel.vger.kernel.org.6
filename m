@@ -1,138 +1,134 @@
-Return-Path: <linux-kernel+bounces-560616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC19A6071D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:42:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E9EDA60725
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:50:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 467C63BC69C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:42:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A0311899188
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6336018B03;
-	Fri, 14 Mar 2025 01:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17526210FB;
+	Fri, 14 Mar 2025 01:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ibqK9IVj"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QIyNBkZU"
+Received: from mail-pj1-f65.google.com (mail-pj1-f65.google.com [209.85.216.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B942E339D;
-	Fri, 14 Mar 2025 01:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151A484A35
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741916531; cv=none; b=iITAo4ko01JF7pT6Yi4wKShgzCNaoVqlAGoi6Wc7SVmRuGwLFMDiMCRB1AIh9i1oXfOaA1Zw5mQLkJg6Q02RpUx31fS/5jBJ+MNEnZKFOwP23w29i19hcZT1iNfmsB0SlLHSVCBzA32uZrISFdw0UHeFflnm8sYqoneWCvLb8qc=
+	t=1741916986; cv=none; b=vAt0eUvEuj3DOzS4xZTOKsswmUqUhzRAb0HQbr2cfKxzCR5VQS1Ph34EAb5IFF7eVYZCgkwSbd1t6r41p36NsNyGt47LYNbdi81LZWbW1/jK4+I/opnzFmmTAJ/l6NiHzNk8eu61YXatdcva99AG14ZG7LlDJKkrliuy6EAtn94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741916531; c=relaxed/simple;
-	bh=nxeynpp2GhM8NkuPL/rtAUAixamX6LE58LdKt000WG4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rz05d7DIOHO+toW6SMUjhrWsLsaigNmsEn3noowcNU7wJpOdi2qCSV709pqyiDQw96grM69cHKgoptelzDrgTay63xoumUdUXGgiYXPLIjDFGkYtswbhIk9IBsf1zxL0IGmlH/wmdisr6/F3JLdRTpmeiRxdbojlGBU6wWbb+6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ibqK9IVj; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1741916986; c=relaxed/simple;
+	bh=yzjckJYDtH6LoM4L1UVKwAD2UJuBV64I35BWYAuX4Fg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=WRd3rWGxwbD0SdveQi/1kwXXXse4om+frRh71RbJLdNp0BEIaZGMl5b016p0d9E8tVbxZ6oMm2+1jE0aSZnMv2J7+H29FNnD1IuAKPE7HCizHw6xKlAjnXs+lE4z3RwCP/Y+WjN5tSELOBYPfXHjsFz/V2dZaYTntgTjXP+bfyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QIyNBkZU; arc=none smtp.client-ip=209.85.216.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e5b572e45cso2903158a12.0;
-        Thu, 13 Mar 2025 18:42:09 -0700 (PDT)
+Received: by mail-pj1-f65.google.com with SMTP id 98e67ed59e1d1-3011737dda0so2915582a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:49:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741916528; x=1742521328; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741916984; x=1742521784; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CKbM0Y1xm2LvTjDY1gdE9vVuc5IoEqPbsZvGMSSIoY4=;
-        b=ibqK9IVjnDOsL263kbWrkifbIKFt4d4apsR/K+jsMCA1wgMkHqT7x0U3O8BgdF5qIZ
-         w7Cfp9o2yJWXcFh98xNy8Hur+xKhfandhEeRhHlkcItGiBJn7eIGzAvo/q1WiSSu8HIq
-         RRnSOZPKXFBX4PpqGoCkQ68xk6Jj+/+uzVt7mS9+qvChZ3sUPkTJZaLFUY/iHHkB5WDM
-         Xc61vfl1ZsodDG59GDMr26aMW5UIuJ5g/LaqokZSM0yw/FDW4EtI7vpuYbFqanCFYZ8B
-         oA3NSz+uHIXrZW8osVyP0wrIbi4moezxq3kWIs8mkl82OF+H0cuLR+rP0qfU9KT3p8fP
-         XDSg==
+        bh=k+emGW/c8eu5PKqicRx24WECyYR/Tb4Cl3qpWXGBUv4=;
+        b=QIyNBkZUkbHATuzqU17YjFcQqCZoLhw1YAvaoHg8LA1G+5u2GmYdhuoEfAuBd+r2Na
+         XH8I0K9V+HbfsceJLuDBrif0GFdNvO4PmL0sekjTw/tUSkQO6OC7tdb7UyXxgQ+GDpgX
+         4NAy5VeGpytXmaH+2ij2L6qaKxYF4CtRRsYoRJk3xma471u2RQJj4ybh7Rg2iQvOQh+D
+         4QnEjSfGvuw39mt6bKKV7EdjTXwkod3G0MIt/2c2sMJDNn8Pvh/DrNhN/Y7ZBW1xzyF5
+         FlMs6Mt8ugA7siS+j4CPSGnwCVodGdf1d+LFWhJaH7U4KmYp+aueDB+tZXgh9b2kWD0Q
+         rNcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741916528; x=1742521328;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1741916984; x=1742521784;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CKbM0Y1xm2LvTjDY1gdE9vVuc5IoEqPbsZvGMSSIoY4=;
-        b=PxL9FdB+aC1Ff5IrQPxaYrTVOxq/sPvq+w+ZevpXSizfVeDhyQFB2aYr5onuwChChA
-         Vrxc3NOR84/Jdc36dL3sbQko0C2NFQpKERvAiyqUCQPi2dSVLxdpEn1B2rGxAWKFFfth
-         tgxsOb2vgvl4G+KKzFj2qKIp9o2TWrX0NW34Aq0kJG3/KgnLWDCKOf86LjRP2LvhXGYc
-         LvepXwbjmJzWHpTDWnPODWgTVXBDCsWH0Jyv2LtLv0SSI9CufbRw6pgv/41+sROUCKGw
-         yCHQ3zWapZz0DxM7DdT/8jhw4mLasbCtY1eK4zkXtBM645JzbuJum8e++ya8Np5vBYNP
-         OdIA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6idP+c49TpLtHTVj9Qt4BDtaJgkb1zneQCT8Yc6Glx+BbOZaVxuYVXGmCQJnZhEGCw5MInXIOhWRUZTpd@vger.kernel.org, AJvYcCWXKaF2pS8wG1C8MlTMOKrGmXL1mxW5Bp7Hktd/t0pZ7Ow3fVi6nS7ZcuhJnhl/XLrzylf/nrDB@vger.kernel.org, AJvYcCXJoFV2EPTV9MuNGzc1xHdaZK2949qtapWckY+piBqlHbJZ0DRP1txn9e4Bxpb3nidJRAELlqroFA+eqro=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJFiQcPtzSkVaQbMoxq/lqW/Aq65Rq4f7I1EAS62ihijN8l4j5
-	mpJUdU9WL3SSrU/PgaKnpS6IQO0d/5t/s6VWHHUgEfyC8055fQtzPyJimi++vCWMQRq/gOecFQ3
-	bo3U6oVpj2j1r7sLLdAvqcVWyx+E=
-X-Gm-Gg: ASbGncsMKtRkxAWdXC/vawAmT0X/LE2TtjmBEs+tO91jLAOFmNMedKARbkOcvdZOdqg
-	PBelNVPFEVdyCFwHBabsukrq+csPV5k+ht2wqpNFMlf0jPbuy8fUCL116ii+KJGttFm/VbcQvET
-	gtICKUjlIxKhfAyG2gGdRauyUsRWttR4N+1aHd3fwFSqYi
-X-Google-Smtp-Source: AGHT+IF92Uz41eVjchIp+LLcwbwRxAp5s/KzrGp/+rtX/sO4N5rfVPhj49jIFasGVb1D6W//3SRtOYa2ZuTJKMVGt48=
-X-Received: by 2002:a05:6402:27d1:b0:5e4:d229:ad3d with SMTP id
- 4fb4d7f45d1cf-5e89fa4e9ccmr686122a12.16.1741916528140; Thu, 13 Mar 2025
- 18:42:08 -0700 (PDT)
+        bh=k+emGW/c8eu5PKqicRx24WECyYR/Tb4Cl3qpWXGBUv4=;
+        b=U+RUUxH/RQOOSZtwLUHottxi+livObi/7mPOha+4ytFXdkxHm7HQm3ShcqfAeYJkM1
+         SPcauNZQtAC6b7A1JsFgKRo2I6eX7+6eLwI6E5LR5aLvfBbI1I4PTuMIE1zuidOztzj/
+         hA50BIUnHdg5BnUQVzdaK4gcFn3nlwjAojplsmtcpoKZhMRIuyVafgpGr8LpyCk8SDez
+         42kCKqj4uuaH4EtbFEpCX+fC+JxeXHQVgMsAbV9AbhIaJ5zEOJCDjw4c/nYiIY5btL8B
+         VP/7IFCtggbW3jxQH4pUpcirtopwaUj8b4ph1qzE2/9vqjm4RdK7nAlhpw0X09kk7MyR
+         Fflw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIIALW0czY/+gSZ61rU17FmAnC6RcFuevOjrCruDDWFUDVtbl4gH0/dfnXEuZ2ZuHxoWUpnlPjfeF+v7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz783ALoKtWs0/VPHI79XYkOr3GPfW3PkRorxb9PnGaQsqO6bFm
+	xOZqcUOq7AKNlD3PpMsez7SsuN6ZhW9fyh3n3KgsPLFIZm3WWr8c
+X-Gm-Gg: ASbGncsNssCxqcMtaqS3Q2IbYzQENHm6ofpLMDgHpg35YIz2PGvgIpMPyvUUpztd75G
+	VLktjYgqUDnETl3E19jXVQgAOGJ65Jzg0LYhSTkEJEruZTmAGzKibYZK/Ywea8U7hGW43i9mpC2
+	rReOzgtCfl/NFs/oBTt3DjNXQZ4I375XdtU2J5wADv6wl9kq4U0P1FctuAQYrRvkdVhJYECK9w9
+	OhtOcbUscBiKlPYlGUqbal3QX3XZwuRFph/ZIqtRRpME6z0SvwPC5uIzlcpAFQSZQl1iePUaYT6
+	zIrKEqWrgmlXKGJnqrdjRZKuFeCBd2Ut4qm5DtmpDS6ge8d2ZgBix4XX6fO4jjtIb3Iz7QE=
+X-Google-Smtp-Source: AGHT+IF/F/lT16o7LXOeNzm0tdX6+48LZ9mPSwe9paqT23CoV/EIrGGAvmXLnOpOZAMzk8rXmWkSAw==
+X-Received: by 2002:a17:90b:2dd0:b0:2ee:8e75:4aeb with SMTP id 98e67ed59e1d1-30151cc3da1mr1022481a91.17.1741916984133;
+        Thu, 13 Mar 2025 18:49:44 -0700 (PDT)
+Received: from localhost.localdomain ([2408:80e0:41fc:0:fe2d:0:2:90])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3015363278bsm64032a91.31.2025.03.13.18.49.36
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 13 Mar 2025 18:49:43 -0700 (PDT)
+From: zihan zhou <15645113830zzh@gmail.com>
+To: kprateek.nayak@amd.com
+Cc: 15645113830zzh@gmail.com,
+	bsegall@google.com,
+	dietmar.eggemann@arm.com,
+	gautham.shenoy@amd.com,
+	juri.lelli@redhat.com,
+	linux-kernel@vger.kernel.org,
+	mgorman@suse.de,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	rostedt@goodmis.org,
+	vincent.guittot@linaro.org,
+	vschneid@redhat.com
+Subject: Re: [PATCH V3 1/2] sched: Reduce the default slice to avoid tasks getting an extra tick
+Date: Fri, 14 Mar 2025 09:49:03 +0800
+Message-Id: <20250314014902.56810-1-15645113830zzh@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+In-Reply-To: <3d0f9c2b-8498-4405-b178-9f6c8615f73b@amd.com>
+References: <3d0f9c2b-8498-4405-b178-9f6c8615f73b@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313085217.45483-1-ltykernel@gmail.com> <SN6PR02MB41577FAB4DD56699D48B8106D4D32@SN6PR02MB4157.namprd02.prod.outlook.com>
-In-Reply-To: <SN6PR02MB41577FAB4DD56699D48B8106D4D32@SN6PR02MB4157.namprd02.prod.outlook.com>
-From: Tianyu Lan <ltykernel@gmail.com>
-Date: Fri, 14 Mar 2025 09:41:30 +0800
-X-Gm-Features: AQ5f1JqUKAR3LzE9lrqxUKVuG-3AmtG7kgxxPntUrxsdt9pMNXzewRpxZidevQs
-Message-ID: <CAMvTesChp_kSNrJA6oCu8iZ6xFQReckRQU-_EGO7jjBPD_FUJQ@mail.gmail.com>
-Subject: Re: [PATCH] x86/Hyperv: Fix check of return value from snp_set_vmsa()
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>, 
-	"wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"hpa@zytor.com" <hpa@zytor.com>, Tianyu Lan <tiala@microsoft.com>, 
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 14, 2025 at 4:20=E2=80=AFAM Michael Kelley <mhklinux@outlook.co=
-m> wrote:
->
-> From: Tianyu Lan <ltykernel@gmail.com> Sent: Thursday, March 13, 2025 1:5=
-2 AM
-> >
-> > snp_set_vmsa() returns 0 as success result and so fix it.
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: 44676bb9d566 ("x86/hyperv: Add smp support for SEV-SNP guest")
-> > Signed-off-by: Tianyu Lan <tiala@microsoft.com>
-> > ---
-> >  arch/x86/hyperv/ivm.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/hyperv/ivm.c b/arch/x86/hyperv/ivm.c
-> > index ec7880271cf9..77bf05f06b9e 100644
-> > --- a/arch/x86/hyperv/ivm.c
-> > +++ b/arch/x86/hyperv/ivm.c
-> > @@ -338,7 +338,7 @@ int hv_snp_boot_ap(u32 cpu, unsigned long start_ip)
-> >       vmsa->sev_features =3D sev_status >> 2;
-> >
-> >       ret =3D snp_set_vmsa(vmsa, true);
-> > -     if (!ret) {
-> > +     if (ret) {
-> >               pr_err("RMPADJUST(%llx) failed: %llx\n", (u64)vmsa, ret);
-> >               free_page((u64)vmsa);
-> >               return ret;
-> > --
-> > 2.25.1
-> >
->
-> Yes, with this change the code is now consistent with other call sites fo=
-r
-> snp_set_vmsa() and for direct invocation of rmpadjust().
->
-> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+Thank you for your reply! I don't mind at all, and I'm also sorry for the
+slow response due to too many things lately.
 
-Thank you for your review, Michael!
+> Hello Zhou,
+> 
+> Sorry this slipped past me.
 
---=20
-Thanks
-Tianyu Lan
+Thank you very much for your guidance! I realize that without a good
+benchmark, it is impossible to truly do a good job in scheduling. I will
+try my best to make time to do this well.
+
+> We use selective benchmarks from LKP: https://github.com/intel/lkp-tests
+> 
+> Then there are some larger benchmarks we run based on previous regression
+> reports and debugs. some of them are:
+> 
+> YCSB: https://github.com/brianfrankcooper/YCSB
+> netperf: https://github.com/HewlettPackard/netperf
+> DeathStarBench: https://github.com/delimitrou/DeathStarBench
+> HammerDB: https://github.com/TPC-Council/HammerDB.git
+> tbench (part of dbench): https://dbench.samba.org/web/download.html
+> schbench: https://git.kernel.org/pub/scm/linux/kernel/git/mason/schbench.git
+> sched-messaging: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/perf/bench/sched-messaging.c?h=v6.14-rc4
+> 
+> Some of them are hard to setup the first time; we internally have some
+> tools that have made it easy to run these benchmarks in a way that
+> stresses the system but we keep an eye out for regression reports to
+> understand what benchmarks folks are running in the field.
+> 
+> Sorry again for the delay and thank you.
+
+Thank you for your support! Wishing you all the best.
 
