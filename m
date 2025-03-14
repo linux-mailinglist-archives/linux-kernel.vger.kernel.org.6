@@ -1,183 +1,111 @@
-Return-Path: <linux-kernel+bounces-561194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A5A0A60E9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:19:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DCBA60E9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:19:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0D1C17EBE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:19:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F0FF17EC99
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACAA01F2380;
-	Fri, 14 Mar 2025 10:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA65E1F30BB;
+	Fri, 14 Mar 2025 10:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PYuOpvm2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AVrCNw5k";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PYuOpvm2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AVrCNw5k"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="2ItMKjxf"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948A61EEA54
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A061E5B8E
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741947551; cv=none; b=mIraTw4WFtUFH7h/T5cGpHh/zSj+huU28UNs2KHNSEJJrm6ywcVlPxuOrocJx4dwxBYbEWJmoXZZHj0cMhHGkRVPTdwd+PBa3UcZbw3Qvpsugd8HKygYmH4nVjXxTQClupsbr2U9Fau4BHtSVDdIP9xNdeCsvrShOu5DobPn3Yo=
+	t=1741947573; cv=none; b=HIb/wD5R2uK3+ukjW7Y2I1IzF3f20iq9O7icJcHRTWoi2dvam4ChBjdVrHyHCjesl3+pLGJk+CbVj3io9e4Lz/xWlzjtg05Nz/DB+QXdW4iY2UQVDBDUZDB4kK0Lj8wUJviD0EjDpanchn5QQ8VhU8eE8KEwIXfVUDcMoHa8msw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741947551; c=relaxed/simple;
-	bh=EOgqDjfqM7VBbEiot2b6fCej1BF5paQRm6TKfXdPOkE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H4gD3jrPSRNyAkajeGjO7ymj8mdbcDlkfOC/Wbv6hoF7Vu7jhuIm7H2MXJbF3ETZl8kWiIFQ+gsxmzHGebnYJXzBRSrCd8Yd7XlpcWFlB6EyUM7rkOYejTKUFW7UeGzMi0uzJb+SFus7EJ7bogideK4vmrhsXU5QvLbMDs+ZjZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PYuOpvm2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AVrCNw5k; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PYuOpvm2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AVrCNw5k; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B2E9821184;
-	Fri, 14 Mar 2025 10:19:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741947546; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DbMEwshk89AHvd1r2trkgy4A2gplprrLPYdXIjP3X4E=;
-	b=PYuOpvm2F0T0InLTDlwY1K9pfHmgqk7jIOMM1vt6II290V9jy+pDkMBMKcVZYJlVwlkSbD
-	bffEb+Jk2YaMCAQ55C3o3wRmK0PPm4mH+bzRdTO6zwfyLJhGS/ZFow0DehrsRii6Juvn4+
-	Tnh8RhWwXkF8n2U/y3uVPn9BfdZcg8c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741947546;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DbMEwshk89AHvd1r2trkgy4A2gplprrLPYdXIjP3X4E=;
-	b=AVrCNw5kosgSDtykgEyx5E8KCDTWEf/Ja910oqWkrequ7TS/dBmI+yBPPbt51pIC7g3gLB
-	VGF65QsTdmrWWNCA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=PYuOpvm2;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=AVrCNw5k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741947546; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DbMEwshk89AHvd1r2trkgy4A2gplprrLPYdXIjP3X4E=;
-	b=PYuOpvm2F0T0InLTDlwY1K9pfHmgqk7jIOMM1vt6II290V9jy+pDkMBMKcVZYJlVwlkSbD
-	bffEb+Jk2YaMCAQ55C3o3wRmK0PPm4mH+bzRdTO6zwfyLJhGS/ZFow0DehrsRii6Juvn4+
-	Tnh8RhWwXkF8n2U/y3uVPn9BfdZcg8c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741947546;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DbMEwshk89AHvd1r2trkgy4A2gplprrLPYdXIjP3X4E=;
-	b=AVrCNw5kosgSDtykgEyx5E8KCDTWEf/Ja910oqWkrequ7TS/dBmI+yBPPbt51pIC7g3gLB
-	VGF65QsTdmrWWNCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 856C713A31;
-	Fri, 14 Mar 2025 10:19:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /6FZH5oC1GfLYgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 14 Mar 2025 10:19:06 +0000
-Date: Fri, 14 Mar 2025 11:19:06 +0100
-Message-ID: <87wmcr9ap1.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Ricard Wanderlof <ricard2013@butoba.net>
-Cc: Clemens Ladisch <clemens@ladisch.de>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: usb-audio: Fix CME quirk for UF series keyboards
-In-Reply-To: <20250313-cme-fix-v1-1-d404889e4de8@butoba.net>
-References: <20250313-cme-fix-v1-1-d404889e4de8@butoba.net>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1741947573; c=relaxed/simple;
+	bh=8+6+nBnmssPPC84K1/VxafkuSkp+ixBcMCR/vO1NxVw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SZryl+xkFMVcM1t2uzTt7hTK6wDEV879gNvOcTvmNjKoAm82pL4fUrdWn5W5t1V1m7zEGjf7cxnROUQsQiQzDWNf5Ejf7tyMyDQ7l5bGCMLx4NEbdEKUNTGCjIVM7Ol9lKmlKLkOx3Ret3s1uxyZkKzd25dK0JlhNJupNnc7LJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=2ItMKjxf; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30bfca745c7so18347491fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:19:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741947570; x=1742552370; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8+6+nBnmssPPC84K1/VxafkuSkp+ixBcMCR/vO1NxVw=;
+        b=2ItMKjxfEZ8XLGoryHit8w7LEDmQj9AuDy425pKvhsYKyyE9VLRPjM33+SYVzcNC2o
+         Ji9N+xtFAw91UQpIAetDU4b+YranmlWh5BPsUw94ZCykj/FIAPH28uEzoBzAJW1bh8bE
+         s3MKRkDrZIWIxRuE30WNetxa9advxPbI9YlYZxMyXx9sVTOs4QaZaeLDYp4ynpLkZgej
+         qJG+VyY/qAxoe+vNaNEG3RKdgQiMm6m0+qgk8gK7KffJlMTXMguwfQg5GXCaW6O9XzFJ
+         Bp5rGZo0/z+fLfxRhvNSLZT03wZL7mw+yq1zfNvZ33tGVui4euj3SwzH3NcH1kdXl/Ew
+         UYCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741947570; x=1742552370;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8+6+nBnmssPPC84K1/VxafkuSkp+ixBcMCR/vO1NxVw=;
+        b=eSmVez/xNIcuQaHaPYR0v/lXadfRE7TRppSHoz/3GHYzAAo5ecM4AUaHy1G68dgJXL
+         K5PNA/FrxQGa7vv6ZymQLurVasz3ol1IWa4zj5EUJxCys8p9XZAdYr/PGB1WEOJanD3X
+         GstQjlnto11bGhb7gQ40kUu7KXIj2Py7IdiN+l1ntswpCwaUdyFKe94j6cMXegTBtlE+
+         Z8yUjlw+DEFIe26LgDn0pL462szP48kG9Ehguew2WBi81MLxQTNJd+d4uiZ0vmt8Gctw
+         AhGUbkP4Puqb8wm30zSFEUnaZoqarCExljUwQdoAYzohNZuZI4XGAiOz2Rfff2Fbn3Ro
+         YuTA==
+X-Gm-Message-State: AOJu0YwPfpxlT+a5HGw9tlubAB7Qzq6ksg689K+l2sUCTsH/BKOPXxJn
+	TVqqx7AxowU9smrGGX7XlebjYv0eDTAVoT9FklKxNtck4mT6r2u8b8Eg+4OU/cTl9E4YQBzNx3O
+	uGka+waI3YxXy3VnJOUEeluY2NzDCmwYC97BpIA==
+X-Gm-Gg: ASbGncudCr4V66snPmXJP+7auRgXqeIFABQUKXzlMHvwvhNKtBkbha0bML2wtuPAWOO
+	ZvXWu4OYR+tj+qvA1RtjqaJZIQu2XtJxwQUWbenrFSYupj1WmUexiMVxq/x5oVeDptXETG3SpxZ
+	9bRPmyKevwHsD+aNzUDd1U3DbEucg/5JfqWWAXbZpr1NW6HbZ9sPru4yvx5dn8hIX8duOs
+X-Google-Smtp-Source: AGHT+IFi0YOLIA7Rd+uD2OjZZ0dCQsd26AOLRlBfDQneHZg4T0+2f3FHz99vH/xJN1Fe5bU4ZmkVrh3tUjbetjvaHck=
+X-Received: by 2002:a2e:bc1d:0:b0:30b:b987:b6a7 with SMTP id
+ 38308e7fff4ca-30c4a64ead1mr6813991fa.0.1741947569746; Fri, 14 Mar 2025
+ 03:19:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: B2E9821184
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
-X-Spam-Flag: NO
+MIME-Version: 1.0
+References: <20250313142404.896902416@linutronix.de> <20250313142524.262678485@linutronix.de>
+In-Reply-To: <20250313142524.262678485@linutronix.de>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 14 Mar 2025 11:19:17 +0100
+X-Gm-Features: AQ5f1Jo7lLqPUNkPMiztzAYLokiNFSlUwJqNuzhYxOItPxPav8yaBkgbVnTsUu4
+Message-ID: <CAMRc=MeO7r0a5JFtmBAUEO3CS3gFyowr2O8brB0x88kwLcqVAg@mail.gmail.com>
+Subject: Re: [patch 5/7] gpio: mvebu: Convert generic irqchip locking to guard()
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Andrew Lunn <andrew@lunn.ch>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+	Gregory Clement <gregory.clement@bootlin.com>, Talel Shenhar <talel@amazon.com>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Guo Ren <guoren@kernel.org>, 
+	Herve Codina <herve.codina@bootlin.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 13 Mar 2025 23:16:17 +0100,
-Ricard Wanderlof wrote:
-> 
-> Fix quirk for CME master keyboards so it not only handles
-> sysex but also song position pointer, MIDI timing clock, start
-> and stop messages, and active sensing. All of these can be
-> output by the CME UF series master keyboards.
-> 
-> Tested with a CME UF6 in a desktop Linux environment as
-> well as on the Zynthian Raspberry Pi based platform.
-> 
-> Signed-off-by: Ricard Wanderlof <ricard2013@butoba.net>
+On Thu, Mar 13, 2025 at 3:31=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
+> wrote:
+>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: "Uwe Kleine-K=C3=B6nig" <ukleinek@kernel.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
 > ---
-> The CME UF6 not only sends sysex messages using CIN 0xf which
-> in the standard is only intended for single-byte unparsed
-> messages, but also song position pointer, as well as ordinary
-> MIDI timing clock, start, stop and active sensing.
-> 
-> The old quirk sent all four bytes of the USB MIDI message through
-> when CIN 0xf was received, which caused trailing bytes in the case
-> of single byte data, which would be interpreted as zero-valued
-> repeats of the previosly received channel message due to the
-> running status feature of MIDI. (In practice, this causes
-> continuous controllers to be reset to 0 as soon as a new value is
-> set. For note messages, it basically results in a note off for
-> note number 0, which is an annoyance although harmless in 
-> practice.)
-> 
-> Furthermore, the UF6 can send multiple messages in the same
-> packet. Because of this, and the 0xf quirk, we need to parse each
-> such message individually to get the length right, before sending
-> it on.
-> 
-> Finally, the UF6 sends messages with length 0 when it has nothing
-> else to send; don't forward these useless messages.
-> 
-> According to the original comment in the code, the old
-> functionality was intended to handle sysex messages only, and this
-> commit will still handle that case properly, so should be
-> compatible with all devices utilizing this quirk. I have only
-> tested this with a CME UF6 as don't have access to any other
-> CME devices (which are pretty old and rare these days).
 
-Thanks, applied now.
+Is it ok to take this through the GPIO tree separately from the rest
+of the series?
 
-
-Takashi
+Bartosz
 
