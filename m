@@ -1,291 +1,354 @@
-Return-Path: <linux-kernel+bounces-561680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02F98A614D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:27:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B072CA614D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:29:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394C8177255
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:27:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A600B3A95EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353F5202973;
-	Fri, 14 Mar 2025 15:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="slGQaWyE"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2063.outbound.protection.outlook.com [40.107.95.63])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1B8202964;
+	Fri, 14 Mar 2025 15:29:00 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8E5201264;
-	Fri, 14 Mar 2025 15:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741966037; cv=fail; b=W81yZA0GHOHQsLO2z+RtnmBdI3TropMZ4FH8W2LDEmjsLblsBAdMj2O2Zj2PG53/MMe1QfF+0Oir99O9gmd8MhrJs7qHgdPeyWbLpOjFBztAf3iYZ2OS+0kBbmDbMMZdazpsdEjP+EaoESvE4bBPFWd0BUoZ4Cdp1wkCUk/19P4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741966037; c=relaxed/simple;
-	bh=irZCQjDt1BZWCwykosN14uyZb9Sd4I68LJpeDxlkghQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iwqFRwLIpv9LG9HSpMAE70bW5TRl2OKC6IQXrOvADa4uoWX3WzbEJqBfTrzqJ3USpxiOAnoz1g3bYWea3YFXhhrmVeEgXdzn4e7JE52KuSAJwOg/kHPS+xWWIVsA760wq8AnnmhPZARcebeUO34lx2YuWHRYMOYgeH1XY60XPRM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=slGQaWyE; arc=fail smtp.client-ip=40.107.95.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w7cib8FVEZuoGquY/znsGf8Iu2yjXBgZZZSADE4o1uW2C+5q1n0btZ4LR7vQvFePPYayIFQ+5/IJ7SJHESBUbH/fLeNxNTQ9//mLHd6ZTCsqLr+NrsuLw31+p9sAykWsE6/5ebzkJYE7VdrikaXD5c9+GFMqu+hlCRiM7XekdsfW2qEXPoqjyCjeURu9hZl94Uuzki6EBzWuP2Ou7c9yydkxglccnqgKt5lgB958lZntmW9ZfXa9UVM+RPZksGdZjGusojJB/w1v02qVWunyplWijRTLvGw4C8xF5Kr4lkqLo707uHtUAYHSt7Ja+5pNkM04f6CDYozU9eD6QSI1BQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vAbv4sLRtiHz89LiRYzwsGlMfwNeXUophYiH1250Qbc=;
- b=UtQ2nTw8waPQtj+q/3dQDcQ+iCeEK2l9W+0ne9Xio32KF/mIJ6B6R8YygHeOC1+nJJzaaIf+Fg2XKiRY7Kehp5kGLZQvUiD+6CJP4/+Wavw+cyq4wp5t31Q3Y9pG0iZ0RMfMaq8jbidz8vYtkDF1m7nT0dii0MW5bsCZ5FFa6XpYlM+XsYRVsjnZ9nGgQs3jm0hcyvVBeBSCegsOJe56muGicSNXMzEdUDP1QxK9bJ0TOv6W7WPXl2ReK0uJoqdjyqt1CzBW1H+1Yl+j0O8AHcIoujI2eoOPJEmd41f7p0Tg8140QcnqhhsgM3m1ciepX6xvqQGn4sHezLYAWpQtoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vAbv4sLRtiHz89LiRYzwsGlMfwNeXUophYiH1250Qbc=;
- b=slGQaWyE5BX3bjd9igAEVXbStnzEYfHCKKBrpiQLCWTeodeBPE0H3Ub+gsPt7D+SPGigmmpnTfWB8E7I0qSe8nbkqYKQwuwXdwGQWvMPotbkSviEUifepJHgybvOPpHK8rMTKjFvoi3EKXesBRbvanVOMDoyEJAJoYfbAL1/pso=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by BL1PR12MB5996.namprd12.prod.outlook.com (2603:10b6:208:39c::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Fri, 14 Mar
- 2025 15:27:12 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%4]) with mapi id 15.20.8534.027; Fri, 14 Mar 2025
- 15:27:12 +0000
-Message-ID: <d7e5a1d2-5fcc-bf7f-a67d-7871a1627c98@amd.com>
-Date: Fri, 14 Mar 2025 10:27:07 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 1/4] x86/sev: add SVSM vTPM probe/send_command
- functions
-Content-Language: en-US
-To: Stefano Garzarella <sgarzare@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
- x86@kernel.org, linux-kernel@vger.kernel.org, Borislav Petkov
- <bp@alien8.de>, linux-integrity@vger.kernel.org,
- Dov Murik <dovmurik@linux.ibm.com>, Dionna Glaze <dionnaglaze@google.com>,
- linux-coco@lists.linux.dev,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- Claudio Carvalho <cclaudio@linux.ibm.com>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Joerg Roedel <jroedel@suse.de>
-References: <20250311094225.35129-1-sgarzare@redhat.com>
- <20250311094225.35129-2-sgarzare@redhat.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <20250311094225.35129-2-sgarzare@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN7PR04CA0014.namprd04.prod.outlook.com
- (2603:10b6:806:f2::19) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C34B201261
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 15:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741966140; cv=none; b=piEqB4lq+kpJf/j+V5CFWNWuqg0Feyt5luwncii/2GxpGyb7JLUUUWA9gownxbv7NxMnENNNgEookbYHFTJjAS7mg6uyoMIbC4jbA2Gp0MZDSJeH7AI9FKpurp/EWFZ1xXW85PdGgLGTDTBJcts4ftPA94RWP1H2u/brYAWm4b0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741966140; c=relaxed/simple;
+	bh=Gu8311cXDMi9254TckjdgcgP6Gl04MqisFPbym68FBg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Vm/X837Jo2pyKxOWtPe5YmYo/kwDWznpFag+YoPXLhaS7ZdUyzd8Tvim0cJF/+CA+nvC0pwpxQtU6U1FkO4SOd5Gxn3GgTGLM+XGP8XjO/Irj5icuak7MgO9pmEJzdS3XKqgbpy7CBtuqCLjH5ASEB+U4WuyD2aU8sau0JvEorE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDp7Q3bdWz6H6s3;
+	Fri, 14 Mar 2025 23:24:18 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id C41EB14039F;
+	Fri, 14 Mar 2025 23:28:53 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Mar
+ 2025 16:28:52 +0100
+Date: Fri, 14 Mar 2025 15:28:50 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Bharata B Rao <bharata@amd.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<AneeshKumar.KizhakeVeetil@arm.com>, <Hasan.Maruf@amd.com>,
+	<Michael.Day@amd.com>, <akpm@linux-foundation.org>, <dave.hansen@intel.com>,
+	<david@redhat.com>, <feng.tang@intel.com>, <gourry@gourry.net>,
+	<hannes@cmpxchg.org>, <honggyu.kim@sk.com>, <hughd@google.com>,
+	<jhubbard@nvidia.com>, <k.shutemov@gmail.com>, <kbusch@meta.com>,
+	<kmanaouil.dev@gmail.com>, <leesuyeon0506@gmail.com>, <leillc@google.com>,
+	<liam.howlett@oracle.com>, <mgorman@techsingularity.net>, <mingo@redhat.com>,
+	<nadav.amit@gmail.com>, <nphamcs@gmail.com>, <peterz@infradead.org>,
+	<raghavendra.kt@amd.com>, <riel@surriel.com>, <rientjes@google.com>,
+	<rppt@kernel.org>, <shivankg@amd.com>, <shy828301@gmail.com>,
+	<sj@kernel.org>, <vbabka@suse.cz>, <weixugc@google.com>,
+	<willy@infradead.org>, <ying.huang@linux.alibaba.com>, <ziy@nvidia.com>,
+	<dave@stgolabs.net>, <yuanchu@google.com>, <hyeonggon.yoo@sk.com>
+Subject: Re: [RFC PATCH 2/4] mm: kpromoted: Hot page info collection and
+ promotion daemon
+Message-ID: <20250314152850.00003112@huawei.com>
+In-Reply-To: <20250306054532.221138-3-bharata@amd.com>
+References: <20250306054532.221138-1-bharata@amd.com>
+	<20250306054532.221138-3-bharata@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|BL1PR12MB5996:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6225e395-fb86-4607-8265-08dd630cb107
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WG9XOFNWWUNhdkRzYmJWV0JFL05aU3lYNjNUcWIvTG9FMW4rZWxiQm1pNWwz?=
- =?utf-8?B?WndiNnpIdmE4ZjZOVHB6TnpMSHVQWENUc0dsYnowazlDTEFZcFAvcWpYbFp5?=
- =?utf-8?B?dlc3RnJaenREajlCTEVFWm43aVVrVk1tSUdsZzJpaGFkWS9BQTR4MjF0REtK?=
- =?utf-8?B?dWJvRkJMV2R4NFBXM0JwMTlzaXh0cjBtMFQ3L05ybkt1WjRNLzVIeVdXb3VS?=
- =?utf-8?B?OGF5dVJSeUMxcmo3amZpdVloNjA1Q2tyc0QvS2ZVVkpmVHFaUXRIb0dwV2lX?=
- =?utf-8?B?QUFjOVFZS250L0dUNHlYZmxPVlJxQlpMd0lqaEdKNzRpUVphMFJZeUQ4ZXUr?=
- =?utf-8?B?elNBUnp2bENMSThqMlNnSDFkR3ZpSHd1ZzNGNHh5ZU5ONGUrTXZ6cFdMSDZN?=
- =?utf-8?B?VnFzT05pbGlCY3lET3J3VVNYWFcvTHVET0diM3dFa2VzYkZOZDJVQlljY1Fy?=
- =?utf-8?B?Uk5oeEk2ZE5BT1loUEwzaVZOL3pFMXpFVU5QenphZVVTK1l1TDRvdzBrRW9u?=
- =?utf-8?B?cTJnd1Zkc3RNaTlDNGNlZ1RJc3RFKzR3TjRSd00wZzBFbmoyc3pmRUdPODBq?=
- =?utf-8?B?bDI1UG5VMTJScFRnRERLWE54Zkd0b0FBdUJvTkRSTkJ1RDJYbHZEcVpraGJW?=
- =?utf-8?B?aFpXNERxV3pneDNNYzN1OEpYZjR4WGluRnI3YWhueTJLNDNmL3VwUFNYWUFN?=
- =?utf-8?B?ZnR6cytFamdTWGU5ZGhhZFkwNjl2Wk4zek4rMzFjbG0zV24xUk1SYzNDQTdS?=
- =?utf-8?B?QXQxa0J0K2V6VGgzNFU4T2ZWOGhtUmlxOTI0ZFBTY0JvYzdzZXVqMWRhK2tV?=
- =?utf-8?B?d2tsWE1MRFNkZDFzWW00SjBpSTk4dGF2Y29ScTNGZmllWk50d0h1bzhxMHRx?=
- =?utf-8?B?MzZNalRKSnFORGpOZCtQWUNuNVhkVDhpaElEMDJ1RUY2U1JURlYvRGhWZnNq?=
- =?utf-8?B?QXRhejFhTlM5SkVrQTYwbUhTNUNYdlBiei9HenFBZVBJY3Q4UlJnQlpSdzBR?=
- =?utf-8?B?RXNWUTNFdjZ6NXR1QVJRNEloa2JxekhNRHJmRTlqM2x3VEpZVkdjVzRSMkJ2?=
- =?utf-8?B?RGkwcVhRS2J3MHhoZU93QzU0Y1FSdHpYVUdvS01nM3FIMlB6MFk2N2xqTGlv?=
- =?utf-8?B?RUlpbTlVbDNzellFWFNDUE5IMXRLOEh2ZFoySjJuWVdrNGw2dkViaTdLdFF3?=
- =?utf-8?B?aVR0bmRtWnNxUEFLbVdnUFhxOVNIZ2dFMWd6eVJ1VGJIeGkvKzBtUDRERHZj?=
- =?utf-8?B?bjRrdzdwVlJabXhMaWRrOVgvMllnODlVZVh2UkU4OXlDV1FsN0tOd0RuWXNl?=
- =?utf-8?B?WitWVE1DdCtyZVZYcU5WRWh0bUJxOWpyNVRlTGtsWElYNUpEaUtwanpkZEtP?=
- =?utf-8?B?Q0lhdS9MOWs5MTVNT3ZBQjc4cjhmc3l1dG80WHZKSDloYS9IUWd1L1FURHFJ?=
- =?utf-8?B?QWV2Wkt4Uk52K2lSOE95YVVTYTZrcjJTYkgzdTh4QmxPanAyd1Bvb2hESHFI?=
- =?utf-8?B?Q3dYR1c5Y08xQUtmRCtNaG93cnRLejV3eGFyTjVpbU8xbHdmMUZkYWxoNHdm?=
- =?utf-8?B?ZUZRTENvYmxJa3ZBZzB3a1lyZ2o2eTBFeVBNcDkwdHAvQWxnT3VDa2UvanNH?=
- =?utf-8?B?UFBGYXdWRlYyem41VVIxdTc2eVBxYkNaUTdOWmlpclpXb3pFMlFUOTArejdN?=
- =?utf-8?B?UFlUZ0NrTTB0YlFkYmJuUUtveUswSEN1aXNaWGl5dzNNc3N5MUdkSkhqVGdP?=
- =?utf-8?B?N0FiUlJ6dUVCT1FadE1Xd2U5OTY0VzhTU3lpSlhUVExBbDR6Sk9CdzVMM0la?=
- =?utf-8?B?UzNYczVETTBjS0lDN3JPeGhWMVZEQmlSSkkwMWI5d1BHd3BDODFtMzFBWkRi?=
- =?utf-8?Q?YsgQM0A40MaP4?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OUVkSGxOR3VxaEt5aitXK2tmLzV5aTROcGFsWldaQnhWN1dJb3ZDUGkvRWpm?=
- =?utf-8?B?WUJUS2R1YmVROVFZOUtTWWhucER0Tk40R3ZCOVkvNUg2d2pqUENvaTF2eG9j?=
- =?utf-8?B?b0c0WmJuNkxLZ09KNWp2N3VrRXZjY05kWklPTXFLK0wrcEFIRUswdHBaRFVT?=
- =?utf-8?B?RDRRWkVidWM5Vm1xRFQwNE1UOWZYeHd1TEtGNHRnTnp0Z1ZtcWthd3ZPT0t4?=
- =?utf-8?B?aXNGNENZVGlIcEw4cGdpdDZzamNpdFB1TEpFSGR1eFR4ekNEYW0wMW5XU25T?=
- =?utf-8?B?NVl5L3ZsdFdDMlEzY0FTcnNlWG5GVzM5UkE5WnBEUDFHdCtuZlZnMmdWWXYx?=
- =?utf-8?B?UFE0S1BVVzdCOXhDRXN5S2NqRm0yOVRuODBiR21KSHFCT3lyY05Nc2ltMHcr?=
- =?utf-8?B?SE9rSy9UOTZTSHV6WnlYOVNiTHlHZFZ1aU5hT04vaGdydjhGVmZORncxSWRz?=
- =?utf-8?B?SnpIcjkwOVJEc3lQbkhlOSt5em0relZqWm1PU1hNTWtYNkFhaFZZdnBXMDNz?=
- =?utf-8?B?eFFiZWR0MDhrcHEvbi9zS1dtQlRuQ1FFYzJLOENUaXlNTmVMRkVMckFGMjRQ?=
- =?utf-8?B?QmgvRGtPZi9hWklMQkVzS0RhZkxpZ3FET2w3cFZIM0QxWFlyS3VZd0dNbGNt?=
- =?utf-8?B?d3FGTUd5bG52NGVWNGlXREN4UDdMcDRkYk95WklpSE5tbGNuMkJwemV3ZEpq?=
- =?utf-8?B?WTdmUWk2ZjFRUTF0ZGJLVWVPdzgzSTNucHJLeWVOZnJCR3g4ZU9EaU1hQ2pn?=
- =?utf-8?B?d0ZpQWhsOVZ3SUlmbS9pTXJNbHhTdlNqSTZaY1J4V2YyS2VSNkVrN1JESVA1?=
- =?utf-8?B?RHAvMGUwQUZyWGxXbzB3ZFJUYjJTQVQwWnljQm82eXNFL3BhdzJYSFFReVlO?=
- =?utf-8?B?RXpHRlhMVVkvaW1NbjBKaitHanN3Nk5SSmxWL0R6ZHlLWitHM0wxR1o2bnpr?=
- =?utf-8?B?aHJwaG5kZzlNZE9rYmxra0FqdzhqdzhxRUNpMjJaUVQrOFgxK3J0NHo3allE?=
- =?utf-8?B?YjFMVWdnSHlsWWFsODZxK3pCRG1DM0ZLZlFxaGlFSDAySVZHUWlVNkJRV3l5?=
- =?utf-8?B?K01IaHRyNTVtUk1vNnphemRmWHd4dlVhQnM2MGFBVDMrZkxiamR1Y2xSWnVy?=
- =?utf-8?B?MjV0OWRkRzhPejZ6aFdqMExtWmU1QzBPdkJqajVDSUdHM2pCZ1FMQzNaV3hG?=
- =?utf-8?B?NUlxTlNRV212R241aElPTWJzTTNyQmZzM1JEdWF5cnpaM3BvWmdqM2hrRWFi?=
- =?utf-8?B?a1NZNm53VW5YMUV4b3M5TU5XVGllNjVJODdQU054SmkxdUhSajJRZnE2elpF?=
- =?utf-8?B?cVpjcFBFTW1YQnE2dURCb2JFM3FRNnlUVXRqY1ZFOUtqWngrZVlrdFduRFRB?=
- =?utf-8?B?SUJzai9GY1FwbXVGTkQ2aVVrYUtnTVkrSGtoSkNXY2V0Q2J3aG8yZWFLb2pZ?=
- =?utf-8?B?VXhtbWlzWEZlZkNsMkVMVUxjckk0OElZQUd6YlBEZE4yUUxtU3lNMHUvd3Q2?=
- =?utf-8?B?L3VTeXl3MFZwYWt6ejIyODZJT1FJSlBJem9qS2w4U3dnd20yeVZKTUNtSHdk?=
- =?utf-8?B?Vm9SdjZGTGhMUVNzbGd2OVpsQmVMdGF2VkRUSHFUd3VxSDlraW15Rk5tUE90?=
- =?utf-8?B?d3hkaWxrVnRFN1hYMmd0eXpGWjVNNkV0U3owdlEwaWpoNmNlOGtmOGlYYkZC?=
- =?utf-8?B?TnVvcHFRMTA5Wi8vWFJ6S0RGdUt4MG1jclJ4WDNycklLaVNQY1JYVi9waHY2?=
- =?utf-8?B?VjRVZ3AyblJnWDZDK0JhRUZ0TFNNR1UyZ3R3ZDJ2SlMrcDBZeXo0ZW9VUXFv?=
- =?utf-8?B?cjJaaDhzQ2dOMTg5Tm1OdjFnakRONGVPUUV6alhDZllORjJyNmszWVI1RFZR?=
- =?utf-8?B?ZGpJeWNGNGVaSjhVR2pvbjcyMU1GR1J6T3FPNjBwMGhzRGFRazNsTkd6Z21M?=
- =?utf-8?B?Y1E1cUZ5OU9uUVlsOTcySmNnbk1iSFUwdnhERXQ2Y04velNnN0krcVZIaG5X?=
- =?utf-8?B?YmQ5VmtpNEFNb1NpYjNEMFhzbkQwTkJ4QXhuZkhid2I5dlBoTmJCRkh6dHR3?=
- =?utf-8?B?NmZqYm8yOGtjaHYzVTl0RG9nQURibkVQcmpzRTZMZW9uZXBFbW1sTlRuV2gz?=
- =?utf-8?Q?zArzDpWlGEMjixDAlH9w2DlFg?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6225e395-fb86-4607-8265-08dd630cb107
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2025 15:27:11.8847
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4q188Mm149U4Hm12XGGILazi72wDTicG9PZzQxblsqRRagjAyFLP55ts8YhYhKZ0ZIKmsGaXHLRD+LdCAbhtdw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5996
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 3/11/25 04:42, Stefano Garzarella wrote:
-> Add two new functions to probe and send commands to the SVSM vTPM.
-> They leverage the two calls defined by the AMD SVSM specification [1]
-> for the vTPM protocol: SVSM_VTPM_QUERY and SVSM_VTPM_CMD.
-> 
-> Expose these functions to be used by other modules such as a tpm
-> driver.
-> 
-> [1] "Secure VM Service Module for SEV-SNP Guests"
->     Publication # 58019 Revision: 1.00
-> 
-> Co-developed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Co-developed-by: Claudio Carvalho <cclaudio@linux.ibm.com>
-> Signed-off-by: Claudio Carvalho <cclaudio@linux.ibm.com>
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+On Thu, 6 Mar 2025 11:15:30 +0530
+Bharata B Rao <bharata@amd.com> wrote:
 
-One minor nit below, otherwise:
+> kpromoted is a kernel daemon that accumulates hot page info
+> from different sources and tries to promote pages from slow
+> tiers to top tiers. One instance of this thread runs on each
+> node that has CPUs.
+>=20
 
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Firstly, nice work. Much easier to discuss things with an
+implementation to look at.
 
-> ---
-> v3:
-> - removed link to the spec because those URLs are unstable [Borislav]
-> - squashed "x86/sev: add SVSM call macros for the vTPM protocol" patch
->   in this one [Borislav]
-> - slimmed down snp_svsm_vtpm_probe() [Borislav]
-> - removed features check and any print related [Tom]
-> ---
->  arch/x86/include/asm/sev.h |  7 +++++++
->  arch/x86/coco/sev/core.c   | 31 +++++++++++++++++++++++++++++++
->  2 files changed, 38 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-> index ba7999f66abe..09471d058ce5 100644
-> --- a/arch/x86/include/asm/sev.h
-> +++ b/arch/x86/include/asm/sev.h
-> @@ -384,6 +384,10 @@ struct svsm_call {
->  #define SVSM_ATTEST_SERVICES		0
->  #define SVSM_ATTEST_SINGLE_SERVICE	1
->  
-> +#define SVSM_VTPM_CALL(x)		((2ULL << 32) | (x))
-> +#define SVSM_VTPM_QUERY			0
-> +#define SVSM_VTPM_CMD			1
-> +
->  #ifdef CONFIG_AMD_MEM_ENCRYPT
->  
->  extern u8 snp_vmpl;
-> @@ -481,6 +485,9 @@ void snp_msg_free(struct snp_msg_desc *mdesc);
->  int snp_send_guest_request(struct snp_msg_desc *mdesc, struct snp_guest_req *req,
->  			   struct snp_guest_request_ioctl *rio);
->  
-> +bool snp_svsm_vtpm_probe(void);
-> +int snp_svsm_vtpm_send_command(u8 *buffer);
-> +
->  void __init snp_secure_tsc_prepare(void);
->  void __init snp_secure_tsc_init(void);
->  
-> diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-> index 96c7bc698e6b..2166bdff88b7 100644
-> --- a/arch/x86/coco/sev/core.c
-> +++ b/arch/x86/coco/sev/core.c
-> @@ -2628,6 +2628,37 @@ static int snp_issue_guest_request(struct snp_guest_req *req, struct snp_req_dat
->  	return ret;
->  }
->  
-> +bool snp_svsm_vtpm_probe(void)
+I'm looking at this with my hardware hotness unit "hammer" in hand :)
+
+> Subsystems that generate hot page access info can report that
+> to kpromoted via this API:
+>=20
+> int kpromoted_record_access(u64 pfn, int nid, int src,
+> 			    unsigned long time)
+
+This perhaps works as an interface for aggregating methods
+that produce per access events.  Any hardware counter solution
+is going to give you data that is closer to what you used for
+the promotion decision.
+
+We might need to aggregate at different levels.  So access
+counting promotes to a hot list and we can inject other events
+at that level.  The data I have from the CXL HMU is typically
+after an epoch (period of time) these N pages were accessed more
+than M times.  I can sort of map that to the internal storage
+you have.
+
+Would be good to evaluate approximate trackers on top of access
+counts. I've no idea if sketches or similar would be efficient
+enough (they have a bit of a write amplification problem) but
+they may give good answers with much lower storage cost at the
+risk of occasionally saying something is hot when it's not.
+
+>=20
+> @pfn: The PFN of the memory accessed
+> @nid: The accessing NUMA node ID
+> @src: The temperature source (subsystem) that generated the
+>       access info
+> @time: The access time in jiffies
+>=20
+> Some temperature sources may not provide the nid from which
+> the page was accessed. This is true for sources that use
+> page table scanning for PTE Accessed bit. Currently the toptier
+> node to which such pages should be promoted to is hard coded.
+
+For those cases (CXL HMU included) maybe we need to
+consider how to fill in missing node info with at least a vague chance
+of getting a reasonable target for migration.  We can always fall
+back to random top tier node, or nearest one to where we are coming
+from (on basis we maybe landed in this node based on a fallback
+list when the top tier was under memory pressure).
+
+=46rom an interface point of view is that a problem for this layer,
+or for the underlying tracking mechanism? (maybe with some helpers)
+Also, see later discussion of consistency of hotness tracking and
+that the best solution for that differs from that to get
+potential targets.  The answer to Is this page consistently hot?" can be
+approximated with "Was this page once hot and is it not now cold?"
+
+Access time is something some measurement techniques will only
+give you wrt to a measurement was in a window (potentially a long
+one if you are looking for consistent hotness over minutes).
+
+>=20
+> Also, the access time provided some sources may at best be
+> considered approximate. This is especially true for hot pages
+> detected by PTE A bit scanning.
+>=20
+> kpromoted currently maintains the hot PFN records in hash lists
+> hashed by PFN value. Each record stores the following info:
+>=20
+> struct page_hotness_info {
+> 	unsigned long pfn;
+>=20
+> 	/* Time when this record was updated last */
+> 	unsigned long last_update;
+>=20
+> 	/*
+> 	 * Number of times this page was accessed in the
+> 	 * current window
+I'd express here how that window was defined (I read on
+to answer the question I had here at first!)
+
+> 	 */
+> 	int frequency;
+>=20
+> 	/* Most recent access time */
+> 	unsigned long recency;
+
+Put next to the last_update so all the times are together
+
+>=20
+> 	/* Most recent access from this node */
+> 	int hot_node;
+
+Probably want to relax the most recent part.  I'd guess
+the ideal here would be if this is the node accessing it the most
+'recently'.
+
+>=20
+> 	struct hlist_node hnode;
+> };
+>=20
+> The way in which a page is categorized as hot enough to be
+> promoted is pretty primitive now.
+
+That bit is very hard even if we solve everything else and heavily dependent
+on workload access pattern stability and migration impact.  Maybe for
+'very hot' pages a fairly short consistency of hotness period is
+good enough, but it gets much messier if we care about warm pages.
+I guess we solve the 'very hot' first though and maybe avoid the phase
+transition from an application starting to when it is at steady state
+by considering a wait time for any new userspace process before we
+consider moving anything?
+
+Also worth noting that the mechanism that makes sense to check if a
+detected hot page is 'stable hot' might use entirely different tracking
+approach to that used to find it as a candidate.
+
+Whether that requires passing data between hotness trackers is an
+interesting question, or whether there is a natural ordering to trackers.
+
+
+
+> diff --git a/mm/kpromoted.c b/mm/kpromoted.c
+> new file mode 100644
+> index 000000000000..2a8b8495b6b3
+> --- /dev/null
+> +++ b/mm/kpromoted.c
+
+> +static int page_should_be_promoted(struct page_hotness_info *phi)
 > +{
-> +	struct svsm_call call = {};
+> +	struct page *page =3D pfn_to_online_page(phi->pfn);
+> +	unsigned long now =3D jiffies;
+> +	struct folio *folio;
 > +
-> +	/* The vTPM device is available only if a SVSM is present */
-> +	if (!snp_vmpl)
+> +	if (!page || is_zone_device_page(page))
 > +		return false;
 > +
-> +	call.caa = svsm_get_caa();
-> +	call.rax = SVSM_VTPM_CALL(SVSM_VTPM_QUERY);
-> +
-> +	if (svsm_perform_call_protocol(&call))
+> +	folio =3D page_folio(page);
+> +	if (!folio_test_lru(folio)) {
+> +		count_vm_event(KPROMOTED_MIG_NON_LRU);
 > +		return false;
+> +	}
+> +	if (folio_nid(folio) =3D=3D phi->hot_node) {
+> +		count_vm_event(KPROMOTED_MIG_RIGHT_NODE);
+> +		return false;
+> +	}
 > +
-> +	/* Check platform commands contains TPM_SEND_COMMAND - platform command 8 */
-> +	return (call.rcx_out & BIT_ULL(8)) == BIT_ULL(8);
+> +	/* If the page was hot a while ago, don't promote */
 
-It's a bool function, so this could simplified to just:
+	/* If the known record of hotness is old, don't promote */ ?
 
-	return call.rcx_out & BIT_ULL(8);
+Otherwise this says don't move a page just because it was hot a long time
+back. Maybe it is still hot and we just don't have an update yet?
 
-Thanks,
-Tom
-
+> +	if ((now - phi->last_update) > 2 * msecs_to_jiffies(KPROMOTED_FREQ_WIND=
+OW)) {
+> +		count_vm_event(KPROMOTED_MIG_COLD_OLD);
+> +		return false;
+> +	}
+> +
+> +	/* If the page hasn't been accessed enough number of times, don't promo=
+te */
+> +	if (phi->frequency < KPRMOTED_FREQ_THRESHOLD) {
+> +		count_vm_event(KPROMOTED_MIG_COLD_NOT_ACCESSED);
+> +		return false;
+> +	}
+> +	return true;
 > +}
-> +EXPORT_SYMBOL_GPL(snp_svsm_vtpm_probe);
 > +
-> +int snp_svsm_vtpm_send_command(u8 *buffer)
+> +/*
+> + * Go thro' page hotness information and migrate pages if required.
+> + *
+> + * Promoted pages are not longer tracked in the hot list.
+> + * Cold pages are pruned from the list as well.
+
+When we say cold here why did we ever see them?
+
+> + *
+> + * TODO: Batching could be done
+> + */
+> +static void kpromoted_migrate(pg_data_t *pgdat)
 > +{
-> +	struct svsm_call call = {};
+> +	int nid =3D pgdat->node_id;
+> +	struct page_hotness_info *phi;
+> +	struct hlist_node *tmp;
+> +	int nr_bkts =3D HASH_SIZE(page_hotness_hash);
+> +	int bkt;
 > +
-> +	call.caa = svsm_get_caa();
-> +	call.rax = SVSM_VTPM_CALL(SVSM_VTPM_CMD);
-> +	call.rcx = __pa(buffer);
+> +	for (bkt =3D 0; bkt < nr_bkts; bkt++) {
+> +		mutex_lock(&page_hotness_lock[bkt]);
+> +		hlist_for_each_entry_safe(phi, tmp, &page_hotness_hash[bkt], hnode) {
+> +			if (phi->hot_node !=3D nid)
+> +				continue;
 > +
-> +	return svsm_perform_call_protocol(&call);
+> +			if (page_should_be_promoted(phi)) {
+> +				count_vm_event(KPROMOTED_MIG_CANDIDATE);
+> +				if (!kpromote_page(phi)) {
+> +					count_vm_event(KPROMOTED_MIG_PROMOTED);
+> +					hlist_del_init(&phi->hnode);
+> +					kfree(phi);
+> +				}
+> +			} else {
+> +				/*
+> +				 * Not a suitable page or cold page, stop tracking it.
+> +				 * TODO: Identify cold pages and drive demotion?
+
+Coldness tracking is really different from hotness as we need to track what=
+ we
+didn't see to get the really cold pages. Maybe there is some hint to be had
+from the exit of this tracker but I'd definitely not try to tackle both ends
+with one approach!
+
+> +				 */
+> +				count_vm_event(KPROMOTED_MIG_DROPPED);
+> +				hlist_del_init(&phi->hnode);
+> +				kfree(phi);
+> +			}
+> +		}
+> +		mutex_unlock(&page_hotness_lock[bkt]);
+> +	}
 > +}
-> +EXPORT_SYMBOL_GPL(snp_svsm_vtpm_send_command);
+
+
+> +/*
+> + * Called by subsystems that generate page hotness/access information.
+> + *
+> + * Records the memory access info for futher action by kpromoted.
+> + */
+> +int kpromoted_record_access(u64 pfn, int nid, int src, unsigned long now)
+> +{
+
+> +	bkt =3D hash_min(pfn, KPROMOTED_HASH_ORDER);
+> +	mutex_lock(&page_hotness_lock[bkt]);
+> +	phi =3D kpromoted_lookup(pfn, bkt, now);
+> +	if (!phi) {
+> +		ret =3D PTR_ERR(phi);
+> +		goto out;
+> +	}
 > +
->  static struct platform_device sev_guest_device = {
->  	.name		= "sev-guest",
->  	.id		= -1,
+> +	if ((phi->last_update - now) > msecs_to_jiffies(KPROMOTED_FREQ_WINDOW))=
+ {
+> +		/* New window */
+> +		phi->frequency =3D 1; /* TODO: Factor in the history */
+> +		phi->last_update =3D now;
+> +	} else {
+> +		phi->frequency++;
+> +	}
+> +	phi->recency =3D now;
+> +
+> +	/*
+> +	 * TODOs:
+> +	 * 1. Source nid is hard-coded for some temperature sources
+
+Hard coded rather than unknown? I'm curious, what source has that issue?
+
+> +	 * 2. Take action if hot_node changes - may be a shared page?
+> +	 * 3. Maintain node info for every access within the window?
+
+I guess some sort of saturating counter set might not be too bad.
+
+> +	 */
+> +	phi->hot_node =3D (nid =3D=3D NUMA_NO_NODE) ? 1 : nid;
+> +	mutex_unlock(&page_hotness_lock[bkt]);
+> +out:
+> +	return 0;
+
+why store ret and not return it?
+
+> +}
+> +
+
 
