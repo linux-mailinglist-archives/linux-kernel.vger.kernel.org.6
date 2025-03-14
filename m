@@ -1,125 +1,100 @@
-Return-Path: <linux-kernel+bounces-562046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA2BA61B49
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:01:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 798F4A61B8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 21:04:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EFAB4209A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:01:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2968F189D167
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5591FDA9C;
-	Fri, 14 Mar 2025 20:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545372054F5;
+	Fri, 14 Mar 2025 20:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tU8U7c7o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NoR7RFdz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FF515853B;
-	Fri, 14 Mar 2025 20:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE6620DD54;
+	Fri, 14 Mar 2025 20:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741982459; cv=none; b=nbBpXHqopxvmOcKpk8htGTfgviDVKM/1kFcZ3UqfTTwgpHD2XJiLDi5bDuns7zHVg7SJNXvBd2eAHtr1m4vAlO7PwV2jnapdLTemp67qL7wmeCDpGSeX6Mr6hl9/jWV3n7Ay+7lk9OemyvreKtg0zgsoyEj+z+6+6Aup3jgH328=
+	t=1741982502; cv=none; b=qA9aI2bkfgG+VL47yIgwpSslkePatmM1WKp4DrKCxggCK7CN/e89TTfE/2e0zenjqtj/UzURdRd5qHDIRvO0O97ZAv3Dd60WDnlmyncZNsW5+Kv4SR+zF6VSGiHZLtlnz4oDTI02+suA8+Z0GGm8t3m7e+cW6Teu33UVVZroSGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741982459; c=relaxed/simple;
-	bh=pHADulFXfIcW9VZiz97dHbF0Kvd8olosf1ztsiboJKU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OPEEMYk16/nZNwTi7a5H6W6orFT/geDcgyziSdQuAi+aDANya9ASzSl+3WcHPyaIwdGB2SfgrSoGhIdQFBbhWShn9unvrEKhItLXqV+y+HVJ58+ztZHG16UFaJnNRgZqnULGWsxETbiwbk9X+T/B0AmieKYqdtPAv0WQWslj8fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tU8U7c7o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E368BC4CEEC;
-	Fri, 14 Mar 2025 20:00:57 +0000 (UTC)
+	s=arc-20240116; t=1741982502; c=relaxed/simple;
+	bh=pHH/bB8hkrOSrOMTOSf6cRH8t8owc3eh+OWjm66sSfA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FG0Pe3zgWIIUue4Ihp9uErnqP5AvbJKQ0LQHySRAz2rhwf4xFrjVS8QOacv4S8N8kpY5e+h7CTJEQLyyKkaQgDjXo8qvFebdLlf5EnJIiE3kdKmyrf+ibv24C/O5hG94W5BF76ox3WX5faYgnFGoZ/MlvglaUusqqCiTlO2exlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NoR7RFdz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36B44C4CEE9;
+	Fri, 14 Mar 2025 20:01:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741982458;
-	bh=pHADulFXfIcW9VZiz97dHbF0Kvd8olosf1ztsiboJKU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tU8U7c7obha1hyRMi/PRTuaGKZVqy2JhOG2HEmAFM5T8fTa5WydDVjVjcsrECSjrO
-	 xN14/AnN6ojdXoWFrWEH8JDpYjMzoq73ZpKBUIlJ+u9t97bwmci5f7XvxIvOxtOyFO
-	 BaLNUXubOKlwdxcqe956r52YaCm9C1O5vhD1DlDXViT6yLiTYZxwzI8R93utotKB8a
-	 XbzNrKsjjzj6jDVfD8MLpAjIN/TX58BKzudw7gQii5Zv3DyW+hBVVcKTXb1yDgbuYo
-	 gp7W/DMA3pw40xxNnFOVidASCSw0P+bJohch/lP6rmcA7cJzun+OFEU5NpkmjrVddI
-	 acxzkP2yMYx6Q==
-Date: Fri, 14 Mar 2025 17:00:55 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Howard Chu <howardchu95@gmail.com>, Andi Kleen <ak@linux.intel.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Anne Macedo <retpolanne@posteo.net>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] perf machine: Factor creating a "live" machine
- out of dwarf-unwind
-Message-ID: <Z9SK96s4PAp680k6@x1>
-References: <20250313052952.871958-1-irogers@google.com>
- <Z9Rk-YdoK-fK_62d@x1>
+	s=k20201202; t=1741982502;
+	bh=pHH/bB8hkrOSrOMTOSf6cRH8t8owc3eh+OWjm66sSfA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=NoR7RFdz7R1SmxawQiVoaXAqm7V4mPzq6iA3i32/LZk50M4LJmAUISlVQuHYXNdeD
+	 GZkJgIVHpqvxOzF9boMn3Fb5YWuy9EAAdbNt0dYzBD2V5ZeIxL2ppImGiXLjdLJRj9
+	 GuRTKChz/2WoFnOGJ3RngZG6sds6b8j+ehscanWlaTNbm//EV5K83e04cvJ7eR0ytU
+	 mtFTUdoYmJaEiCCIe8LlZd1UjnJg2L2LI4fo7cMGcHCcsg7b6gyJeVD0TaWPwpcisL
+	 2lfk338UYcS//J2hGGPcwBzhzLTx7xldLDocD4Du2Dup3y2TNRh7sdfAbZzXi++yT/
+	 GFDCbGtbC0vNg==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Melody Olvera <quic_molvera@quicinc.com>,
+	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v3 0/4] arm64: dts: qcom: sm8750: Initial audio support (not yet complete)
+Date: Fri, 14 Mar 2025 15:00:56 -0500
+Message-ID: <174198247867.1604753.13284559552835031505.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250312-sm8750-audio-v3-0-40fbb3e53f95@linaro.org>
+References: <20250312-sm8750-audio-v3-0-40fbb3e53f95@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9Rk-YdoK-fK_62d@x1>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 14, 2025 at 02:18:49PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Wed, Mar 12, 2025 at 10:29:51PM -0700, Ian Rogers wrote:
-> > Factor out for use in places other than the dwarf unwinding tests for
-> > libunwind.
-> 
-> Testing with another patchset being reviewed/tested, seems to work, if
-> it showed the line number would be even better!
 
-But it gets the lines, at least in this secoond attempt, after applying
-Namhyungs fix for the previous problem (int16_t):
+On Wed, 12 Mar 2025 13:44:44 +0100, Krzysztof Kozlowski wrote:
+> Changes in v3:
+> - Add Rb tags
+> - Correct va-macro region size (0x1000->0x2000)
+> - Link to v2: https://lore.kernel.org/r/20250220-sm8750-audio-v2-0-fbe243c4afc3@linaro.org
+> 
+> Changes in v2:
+> - Use 0x0 to match rest of sm8750
+> - Re-order some nodes to keep preferred order by unit address
+> - Add Rb tags
+> - Link to v1: https://lore.kernel.org/r/20241101-sm8750-audio-v1-0-730aec176459@linaro.org
+> 
+> [...]
 
-root@number:~# perf trace -e landlock_add_rule perf test -w landlock
-perf: Segmentation fault
-    #0 0x6698d0 in dump_stack debug.c:355
-    #1 0x66994c in sighandler_dump_stack debug.c:367
-    #2 0x7f784be95fd0 in __restore_rt libc.so.6[40fd0]
-    #3 0x4d0e56 in trace__find_usable_bpf_prog_entry builtin-trace.c:3882
-    #4 0x4cf3de in trace__init_syscalls_bpf_prog_array_maps builtin-trace.c:4040
-    #5 0x4bf626 in trace__run builtin-trace.c:4477
-    #6 0x4bb7a9 in cmd_trace builtin-trace.c:5741
-    #7 0x4d873f in run_builtin perf.c:351
-    #8 0x4d7df3 in handle_internal_command perf.c:404
-    #9 0x4d860f in run_argv perf.c:451
-    #10 0x4d7a4f in main perf.c:558
-    #11 0x7f784be7f088 in __libc_start_call_main libc.so.6[2a088]
-    #12 0x7f784be7f14b in __libc_start_main@@GLIBC_2.34 libc.so.6[2a14b]
-    #13 0x410ff5 in _start perf[410ff5]
-Segmentation fault (core dumped)
-root@number:~# 
- 
-> I'll continue working on that other case with this applied just before
-> that series and finally will give my Tested-by.
-> 
-> - Arnaldo
-> 
-> root@number:~# perf trace -e landlock_add_rule perf test -w landlock
-> perf: Segmentation fault
->     #0 0x5be81d in dump_stack perf[5be81d]
->     #1 0x5be879 in sighandler_dump_stack perf[5be879]
->     #2 0x7f313d24efd0 in __restore_rt libc.so.6[40fd0]
->     #3 0x491bc1 in cmd_trace perf[491bc1]
->     #4 0x497090 in run_builtin perf.c:0
->     #5 0x4973ab in handle_internal_command perf.c:0
->     #6 0x413483 in main perf[413483]
->     #7 0x7f313d238088 in __libc_start_call_main libc.so.6[2a088]
->     #8 0x7f313d23814b in __libc_start_main@@GLIBC_2.34 libc.so.6[2a14b]
->     #9 0x413ad5 in _start perf[413ad5]
-> Segmentation fault (core dumped)
-> root@number:~#
+Applied, thanks!
+
+[1/4] arm64: dts: qcom: sm8750: Add IPCC, SMP2P, AOSS and ADSP
+      commit: 8744dd90cd6b8ee105f5ade1ca9649451aff416a
+[2/4] arm64: dts: qcom: sm8750: Add LPASS macro codecs and pinctrl
+      commit: 0fe088574b30588e5fc437be376383b1372da49a
+[3/4] arm64: dts: qcom: sm8750-mtp: Enable ADSP
+      commit: 0c23fa8648871e6e74cb93ab7089c50f9bc20857
+[4/4] arm64: dts: qcom: sm8750-qrd: Enable ADSP
+      commit: 23d8b031f302a43408cf43002b6cb13e88e99a10
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
