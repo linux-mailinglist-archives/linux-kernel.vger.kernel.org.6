@@ -1,99 +1,165 @@
-Return-Path: <linux-kernel+bounces-561959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51557A6194A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:20:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC0E0A6194D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:21:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94F783AB02D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:19:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B2DB3AB8CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF792A8D0;
-	Fri, 14 Mar 2025 18:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BB720468F;
+	Fri, 14 Mar 2025 18:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hSb1GWIB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bdlMZGy4"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1wVNbwK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407CE202F96;
-	Fri, 14 Mar 2025 18:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3182A8D0;
+	Fri, 14 Mar 2025 18:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741976393; cv=none; b=cHlUlH9VaXHZfQvz/XLNPgA28XNbN2sbDG2OgwH2rQuAwVc6e+m00tlHYhe63kz7AO2I0VzU2g8bWCZDMFJoUY/fZtNRKycyIFmdyxjJxbuBasJ7/BW7LiGw7epS1AXXED9USzsaHURzxMiCBvwyra72Yf2fsGhMfErX9W6n1mI=
+	t=1741976464; cv=none; b=SVi26ea7O5bV7XAZw7HmOCKHWWgRIcLCPtUKFnfsbXUuFYfvu4dtJKRziVhAVzEFgbXWYccnxUJk/R9ABkLzqpeTVBTMxNOkX+r86yOpzfEa8txDNNBVXIvqi1BZOxNc4vI2ukcPEM9Nsq1sqRwxuk2jGSrlYaTSQfLP4SpiYZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741976393; c=relaxed/simple;
-	bh=p3lEx5AeDIot0RR3wPr6612f9S8LWcZEp9QT/e8nkC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ESOi4L+8aezIz/xgdXr72+3lSfC406abaRFR1ZKq+ddM2nwmDj5uWzRc4IEDWJPihfAMkohgOAPgTQy3R1McWyxwm3cwo7zyUjeXR4PbNzt4tFsncqEPr9/IGj/T10mQNg+47N+TJ2jWDNzR+r7x3KwJxmg4fSWW44o5u3BX0fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hSb1GWIB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bdlMZGy4; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 14 Mar 2025 19:19:48 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741976390;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=kPyPW+naAFlbw+Xbn145mrlsK5koPOENM07QgOBvPOk=;
-	b=hSb1GWIBOVE0BOuFpl5XdClM2mEBLIp1uIUdWCR8I+zfcY5Sdn9gitO56UzTe0m7dCXAyQ
-	0tAvFZzWXoq1UPqgPY1l420712+f+MnRZOMIqh/KiKTCp1+akGlSla5c6OF12yZhfH+5N+
-	rHmCe7NMrSaHdhqGHYg4hp0HOwz4nXePSBr5y4kSC3gR/BEjFvEajxuL1i8DD93HniWFOx
-	aHTYijk4rLMz4Vf+JsBVZ4vhlVGPPfJgDw5QrpeqKCldjnWhrgDNJ05vFLViKJbH4gkwZS
-	H7bzkgmBSNzUZfT16I04g8e8FHCyXNZ9vmR2094+lX2EzUUdWuf/YkAVtA3pmQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741976390;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=kPyPW+naAFlbw+Xbn145mrlsK5koPOENM07QgOBvPOk=;
-	b=bdlMZGy4ApqFqNgI6RekFFiyr7GJTpLsP7DgYwDv0wToSDbymjVhJXgUI9s78Z9V4DP/f9
-	f/E6keN2I68610BA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [RFC PATCH 10/10] memcg: no more irq disabling for stock locks
-Message-ID: <20250314181948.A5DQsYZB@linutronix.de>
+	s=arc-20240116; t=1741976464; c=relaxed/simple;
+	bh=kl2X8mVwSaZH4P+oC1wMNXj/evjiX1wGJ3tMBcCpssU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F0l5siCqUDgi3L0AYCO9Pcgy700mwjCpKHIADrMfB80R4DoxDEdUfvK0Y+mb6wLSfygpccnnJt3KXmK9g4oXDeTtkgpIrUc66XHydgjsncnWZ1UGQBqELnnMpf2Yzzp6YV52lUJnXgfPPAMc/2pbozgnYX3huSUOmPTariNBa9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L1wVNbwK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DB48C4CEE3;
+	Fri, 14 Mar 2025 18:21:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741976464;
+	bh=kl2X8mVwSaZH4P+oC1wMNXj/evjiX1wGJ3tMBcCpssU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L1wVNbwKbDzm3i2OHiUkdhMC2cbWxtIPNWUQYV9lrxpezJqu7/HcWGVSBkBHgv48N
+	 h+BdVTb3qNZMfrDpcM3B4GZ/PhumzL62IDZidEjyswRZCpH2TfYb31PUyXpr3wT7yY
+	 USIdnYdZ0h+c0sB/4qMNrorcGKWJUs0IJ3GZAQIhAy/YdIoEGX3IHc5/sTg9g8F78W
+	 rI2IIP5+93xW68HrYA/Sl2+m6OSHtXcW6+9gLZ6OmF40AudM8wVzRSALKjgjMPAvOi
+	 /7AkeQFVPNQkFJhs0h9XNEqOYZAyRlkufGEHwC2oukZrkODksegJdB9AqZLVZ1aLOK
+	 bBAuiJCUSEr7w==
+Date: Fri, 14 Mar 2025 19:21:01 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Anusha Srivatsa <asrivats@redhat.com>, Paul Kocialkowski <paulk@sys-base.io>, 
+	Dmitry Baryshkov <lumag@kernel.org>, =?utf-8?B?SGVydsOp?= Codina <herve.codina@bootlin.com>, 
+	Hui Pu <Hui.Pu@gehealthcare.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 00/11] drm/bridge: add devm_drm_bridge_alloc() with
+ bridge refcount
+Message-ID: <20250314-daft-woodoo-cheetah-e029c5@houat>
+References: <20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="mifitjekzidylpjw"
 Content-Disposition: inline
-In-Reply-To: <t6gqzrhipj3zxmev7pdmxbbbkx76eyscvkn4m66ifwcq3kfqtx@7jmqtzu5bs54>
+In-Reply-To: <20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com>
 
-On 2025-03-14 10:02:47 [-0700], Shakeel Butt wrote:
-> > 
-> > on arm64, __this_cpu_add will "load, add, store". preemptible.
-> > this_cpu_add() will "disable preemption, atomic-load, add, atomic-store or
-> > start over with atomic-load. if succeeded enable preemption and move an"
-> 
-> So, this_cpu_add() on arm64 is not protected against interrupts but is
-> protected against preemption. We have a following comment in
-> include/linux/percpu-defs.h. Is this not true anymore?
 
-It performs an atomic update. So it loads exclusive from memory and then
-stores conditionally if the exclusive monitor did not observe another
-load on this address. Disabling preemption is only done to ensure that
-the operation happens on the local-CPU and task gets not moved another
-CPU during the operation. The concurrent update to the same memory
-address from an interrupt will be caught by the exclusive monitor.
+--mifitjekzidylpjw
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v7 00/11] drm/bridge: add devm_drm_bridge_alloc() with
+ bridge refcount
+MIME-Version: 1.0
 
-The reason to remain on the same CPU is probably to ensure that
-__this_cpu_add() in an IRQ-off region does not clash with an atomic
-update performed elsewhere.
+Hi,
 
-While looking at it, there is also the LSE extension which results in a
-single add _if_ atomic.
+On Fri, Mar 14, 2025 at 11:31:13AM +0100, Luca Ceresoli wrote:
+> This series improves the way DRM bridges are allocated and initialized and
+> makes them reference-counted. The goal of reference counting is to avoid
+> use-after-free by drivers which got a pointer to a bridge and keep it
+> stored and used even after the bridge has been deallocated.
+>=20
+> The overall goal is supporting Linux devices with a DRM pipeline whose
+> final components can be hot-plugged and hot-unplugged, including one or
+> more bridges. For more details see the big picture [0].
+>=20
+> DRM bridge drivers will have to be adapted to the new API, which is pretty
+> simple for most cases. Refcounting will have to be adopted on the two
+> sides: all functions returning a bridge pointer and all code obtaining su=
+ch
+> a pointer. This series has just an overview of some of those conversions,
+> because for now the main goal is to agree on the API.
+>=20
+> Series layout:
+>=20
+>  1. Add the new API and refcounting:
+>=20
+>     drm/bridge: add devm_drm_bridge_alloc()
+>     drm/bridge: add support for refcounting
+>=20
+>  2. get/put the reference in basic operations in the bridge core:
+>=20
+>     drm/bridge: get/put the bridge reference in drm_bridge_add/remove()
+>     drm/bridge: get/put the bridge reference in drm_bridge_attach/detach()
+>=20
+>  3. as an example of changes for bridge consumers, get a reference for the
+>     bridge returned by drm_bridge_chain_get_first_bridge(), have it put by
+>     all callers (all users will be covered later on separately):
+>=20
+>     drm/bridge: add a cleanup action for scope-based drm_bridge_put() inv=
+ocation
+>     drm/bridge: get the bridge returned by drm_bridge_chain_get_first_bri=
+dge()
+>     drm/mxsfb: put the bridge returned by drm_bridge_chain_get_first_brid=
+ge()
+>     drm/atomic-helper: put the bridge returned by drm_bridge_chain_get_fi=
+rst_bridge()
+>     drm/probe-helper: put the bridge returned by drm_bridge_chain_get_fir=
+st_bridge()
+>=20
+>  4. convert a few bridge drivers (bridge providers) to the new API:
+>=20
+>     drm/bridge: ti-sn65dsi83: use dynamic lifetime management
+>     drm/bridge: samsung-dsim: use dynamic lifetime management
+>=20
+> This work was formerly a part of my v6 DRM bridge hotplug series[0], now
+> split as a standalone series with many improvements, hence the "v7" versi=
+on
+> number.
 
-Sebastian
+Except for one patch where I had comments, I think the series is in
+excellent shape. We're still missing a couple of things to close this
+topic though:
+
+  - Converting the other bridge iterators/accessors to take / put the refer=
+ences
+  - Mass converting the drivers to devm_drm_bridge_alloc
+  - Documenting somewhere (possibly in drm_bridge_init?) that it really
+    shouldn't be used anymore
+
+Maxime
+
+--mifitjekzidylpjw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ9RzjQAKCRAnX84Zoj2+
+diSPAYD12sjIXgXPRf7BpM6STJktvb89YmsuXfj5+lHzeniMrs6Zp+V4ziemLado
+cqXTAAgBfj5T5uiMZqBaPy+UxbyoWpdNB5xJ8B5O7i7F+qiCLQoCXZjhFQdI1vaR
+wbgQnB8LMA==
+=oW4m
+-----END PGP SIGNATURE-----
+
+--mifitjekzidylpjw--
 
