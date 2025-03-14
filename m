@@ -1,137 +1,215 @@
-Return-Path: <linux-kernel+bounces-561982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F170DA619C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:48:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C4D5A619CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:49:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33C413B4042
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:47:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9604A1898F0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83002040A4;
-	Fri, 14 Mar 2025 18:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78600204C38;
+	Fri, 14 Mar 2025 18:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NWjy0RXh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQVmjcjZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CF02F3B
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F39913A26D;
+	Fri, 14 Mar 2025 18:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741978085; cv=none; b=korv58M12OTKhTAyf/NY61fEHDT5KOvnf004/Fd7qjToGgJe8hMJj59lpf5QuAwp/8mY0MtCcejs8mP3TWMvtnoTI5jGWhBYCKB8aUvfi9iFPtfMybMUsDmm4xsPWkz5uMvfitLRsd3vNmDxEH1TPsK8Eoy/7Q62Av3knlyReqw=
+	t=1741978157; cv=none; b=Rfwp00l7YChLwnfv2D+qvaSMdEVw1AreDkDDDNwQzwyC2a345rvLAWq8TG9Dywqhqyw98QPazUfpYgeY9Al0JzksAc4Mwk44OIfneIJeJUKTsNPLYy4w1zRBPftr5mKlafeLRX7/Qjz5VX8o7Dj9ndpXiatN1qg96M52qDxwdRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741978085; c=relaxed/simple;
-	bh=uMMDkGQ6VhesV55oSepUIph7REV8G1+tG7T4C0ivI9w=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eIgnOsHhzac4Q7pqMOoyFMeHD0R3CaevBGwIU4eGiq6cITRbOew823+c565Q3XRGS5ua4LInYXsRY5XXCNB1Ztzn1vE4AkhhOIuBbtILVJ2QVbcQEIQ/jkndgnt70c6A/XxSgz1CPGR2w6YYcLNBn3Mz2Gw7kjT3g9R5obrXQyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NWjy0RXh; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741978084; x=1773514084;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=uMMDkGQ6VhesV55oSepUIph7REV8G1+tG7T4C0ivI9w=;
-  b=NWjy0RXh8D6GmuWlXk56TrH7QK/XrToGF8SUV3NUot4Aj63lZ5KrKlu2
-   XQ6CkNTRe/vtewux+bZX78p8XZBgiSCtMO2rxukmQAN6TynjQO5/Q0zqe
-   J6ojZY5VxYATYkzj9vqVvhhuSM+pjx+4IszexQyYtYAa9843WuDNKA5fT
-   Y8UPyq5Y4uhbAjuHPyi4yPwlAt2TcHaI4ZN0BDH5Ag15T5tW309of+YKC
-   VQYAaiMBAMiUOGT8vFk7YqvcHC59nMcv7YyRG8fNlH+QQvJoEvktq7XVA
-   qpVySmaQGy5dZvC49BUgWwIOTa0CTIW0R+lPrcaUzTarsWHZUoPBMac6T
-   A==;
-X-CSE-ConnectionGUID: 7sMO9Kf4RSCq7faqa1JHvw==
-X-CSE-MsgGUID: FS5LyT88R7WB9wmlXTxgvg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="42390695"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="42390695"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 11:48:03 -0700
-X-CSE-ConnectionGUID: f4IqP3YjTOWZi2qnkPbuVw==
-X-CSE-MsgGUID: rQYjG0V0SuOLO8sAQARJ5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="121395947"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 11:48:02 -0700
-Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 29C2320B5736;
-	Fri, 14 Mar 2025 11:48:01 -0700 (PDT)
-Message-ID: <b69595c9-5240-40ea-89e6-c36331ca245c@linux.intel.com>
-Date: Fri, 14 Mar 2025 14:48:00 -0400
+	s=arc-20240116; t=1741978157; c=relaxed/simple;
+	bh=O6TQHcNZOIDORUQUex99gbjkbXRSAsx+LziCN6QYCcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XRiC/ALWiGdDRnu3t9+TNmp2WE4FzEkuuQpnHJWJ1ue3RLEWuflPvd+mKPiw+yQRyhtZvud2ba2W8pNmOZxDsOJtB8ilWir8dyaU/ycLGwPBAqtl/3Y3JXfH9BKmC1ybq0dn3NNPjGFSytbWyfTDFZFpjRluh1ptVui85nhswDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQVmjcjZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C4A3C4CEE9;
+	Fri, 14 Mar 2025 18:49:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741978156;
+	bh=O6TQHcNZOIDORUQUex99gbjkbXRSAsx+LziCN6QYCcQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rQVmjcjZhe/sj5yONxV2qVxL98CsQ/XLSI8I1aZI9aDjryLW+sVGMqcfI9Bca9bOS
+	 BjeRuzyi8Km8hWOU7pWxLh0zSj3Q5xmQc8mdYFqkiDMoJN2jPM4GlDtxa49auZ9+wv
+	 o4Atu8WInpcl8PAepC/fXyU6iiNJ15uue0LdQRbYK1nJzWh83j90x9tnoa0sRasVK1
+	 38iJcCj/HUFJNu/wqR3UGB0O36uPS2R51CHZ5YoiakTWuHP1tXd0Pvob4wtZn293CI
+	 sVep3kKdHjc3A4MK0/PKcdqXaMCX1hnu3s63bSmSw7dabMqNw6WwX2YJoxC1T+nsVF
+	 6r+AVkQEbO0Yg==
+Date: Fri, 14 Mar 2025 20:49:11 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v7 00/17] Provide a new two step DMA mapping API
+Message-ID: <20250314184911.GR1322339@unreal>
+References: <cover.1738765879.git.leonro@nvidia.com>
+ <20250220124827.GR53094@unreal>
+ <CGME20250228195423eucas1p221736d964e9aeb1b055d3ee93a4d2648@eucas1p2.samsung.com>
+ <1166a5f5-23cc-4cce-ba40-5e10ad2606de@arm.com>
+ <d408b1c7-eabf-4a1e-861c-b2ddf8bf9f0e@samsung.com>
+ <20250312193249.GI1322339@unreal>
+ <adb63b87-d8f2-4ae6-90c4-125bde41dc29@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 3/3] perf/x86/intel: Support auto counter reload
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, acme@kernel.org, namhyung@kernel.org,
- irogers@google.com, adrian.hunter@intel.com, ak@linux.intel.com,
- linux-kernel@vger.kernel.org, eranian@google.com, thomas.falcon@intel.com
-References: <20241010192844.1006990-1-kan.liang@linux.intel.com>
- <20241010192844.1006990-4-kan.liang@linux.intel.com>
- <20250314102031.GL19344@noisy.programming.kicks-ass.net>
- <5c6b52ec-e903-42be-aa57-675abc350241@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <5c6b52ec-e903-42be-aa57-675abc350241@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <adb63b87-d8f2-4ae6-90c4-125bde41dc29@samsung.com>
 
-
-
-On 2025-03-14 9:48 a.m., Liang, Kan wrote:
->>> +	}
->>> +}
->>> +
->>> +static int intel_pmu_schedule_events(struct cpu_hw_events *cpuc, int n, int *assign)
->>> +{
->>> +	struct perf_event *event;
->>> +	int ret = x86_schedule_events(cpuc, n, assign);
->>> +
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	if (cpuc->is_fake)
->>> +		return ret;
->>> +
->>> +	event = cpuc->event_list[n - 1];
->> ISTR seeing this pattern before somewhere and then argued it was all
->> sorts of broken. Why is it sane to look at the last event here?
-> The schedule_events() is invoked for only two cases, a new event or a
-> new group. Since the event_list[] is in enabled order, the last event
-> should be either the new event or the last event of the new group.
+On Fri, Mar 14, 2025 at 11:52:58AM +0100, Marek Szyprowski wrote:
+> On 12.03.2025 20:32, Leon Romanovsky wrote:
+> > On Wed, Mar 12, 2025 at 10:28:32AM +0100, Marek Szyprowski wrote:
+> >> Hi Robin
+> >>
+> >> On 28.02.2025 20:54, Robin Murphy wrote:
+> >>> On 20/02/2025 12:48 pm, Leon Romanovsky wrote:
+> >>>> On Wed, Feb 05, 2025 at 04:40:20PM +0200, Leon Romanovsky wrote:
+> >>>>> From: Leon Romanovsky <leonro@nvidia.com>
+> >>>>>
+> >>>>> Changelog:
+> >>>>> v7:
+> >>>>>    * Rebased to v6.14-rc1
+> >>>> <...>
+> >>>>
+> >>>>> Christoph Hellwig (6):
+> >>>>>     PCI/P2PDMA: Refactor the p2pdma mapping helpers
+> >>>>>     dma-mapping: move the PCI P2PDMA mapping helpers to pci-p2pdma.h
+> >>>>>     iommu: generalize the batched sync after map interface
+> >>>>>     iommu/dma: Factor out a iommu_dma_map_swiotlb helper
+> >>>>>     dma-mapping: add a dma_need_unmap helper
+> >>>>>     docs: core-api: document the IOVA-based API
+> >>>>>
+> >>>>> Leon Romanovsky (11):
+> >>>>>     iommu: add kernel-doc for iommu_unmap and iommu_unmap_fast
+> >>>>>     dma-mapping: Provide an interface to allow allocate IOVA
+> >>>>>     dma-mapping: Implement link/unlink ranges API
+> >>>>>     mm/hmm: let users to tag specific PFN with DMA mapped bit
+> >>>>>     mm/hmm: provide generic DMA managing logic
+> >>>>>     RDMA/umem: Store ODP access mask information in PFN
+> >>>>>     RDMA/core: Convert UMEM ODP DMA mapping to caching IOVA and page
+> >>>>>       linkage
+> >>>>>     RDMA/umem: Separate implicit ODP initialization from explicit ODP
+> >>>>>     vfio/mlx5: Explicitly use number of pages instead of allocated
+> >>>>> length
+> >>>>>     vfio/mlx5: Rewrite create mkey flow to allow better code reuse
+> >>>>>     vfio/mlx5: Enable the DMA link API
+> >>>>>
+> >>>>>    Documentation/core-api/dma-api.rst   |  70 ++++
+> >>>>    drivers/infiniband/core/umem_odp.c   | 250 +++++---------
+> >>>>>    drivers/infiniband/hw/mlx5/mlx5_ib.h |  12 +-
+> >>>>>    drivers/infiniband/hw/mlx5/odp.c     |  65 ++--
+> >>>>>    drivers/infiniband/hw/mlx5/umr.c     |  12 +-
+> >>>>>    drivers/iommu/dma-iommu.c            | 468
+> >>>>> +++++++++++++++++++++++----
+> >>>>>    drivers/iommu/iommu.c                |  84 ++---
+> >>>>>    drivers/pci/p2pdma.c                 |  38 +--
+> >>>>>    drivers/vfio/pci/mlx5/cmd.c          | 375 +++++++++++----------
+> >>>>>    drivers/vfio/pci/mlx5/cmd.h          |  35 +-
+> >>>>>    drivers/vfio/pci/mlx5/main.c         |  87 +++--
+> >>>>>    include/linux/dma-map-ops.h          |  54 ----
+> >>>>>    include/linux/dma-mapping.h          |  85 +++++
+> >>>>>    include/linux/hmm-dma.h              |  33 ++
+> >>>>>    include/linux/hmm.h                  |  21 ++
+> >>>>>    include/linux/iommu.h                |   4 +
+> >>>>>    include/linux/pci-p2pdma.h           |  84 +++++
+> >>>>>    include/rdma/ib_umem_odp.h           |  25 +-
+> >>>>>    kernel/dma/direct.c                  |  44 +--
+> >>>>>    kernel/dma/mapping.c                 |  18 ++
+> >>>>>    mm/hmm.c                             | 264 +++++++++++++--
+> >>>>>    21 files changed, 1435 insertions(+), 693 deletions(-)
+> >>>>>    create mode 100644 include/linux/hmm-dma.h
+> >>>> Kind reminder.
+> > <...>
+> >
+> >> Removing the need for scatterlists was advertised as the main goal of
+> >> this new API, but it looks that similar effects can be achieved with
+> >> just iterating over the pages and calling page-based DMA API directly.
+> > Such iteration can't be enough because P2P pages don't have struct pages,
+> > so you can't use reliably and efficiently dma_map_page_attrs() call.
+> >
+> > The only way to do so is to use dma_map_sg_attrs(), which relies on SG
+> > (the one that we want to remove) to map P2P pages.
 > 
-> The is_acr_event_group() always checks the leader's flag. It doesn't
-> matter which event in the ACR group is used to do the check.
+> That's something I don't get yet. How P2P pages can be used with 
+> dma_map_sg_attrs(), but not with dma_map_page_attrs()? Both operate 
+> internally on struct page pointer.
+
+Yes, and no.
+See users of is_pci_p2pdma_page(...) function. In dma_*_sg() APIs, there
+is a real check and support for p2p. In dma_map_page_attrs() variants,
+this support is missing (ignored, or error is returned).
+
 > 
-> Checking the last event should be good enough to cover both cases.
+> >> Maybe I missed something. I still see some advantages in this DMA API
+> >> extension, but I would also like to see the clear benefits from
+> >> introducing it, like perf logs or other benchmark summary.
+> > We didn't focus yet on performance, however Christoph mentioned in his
+> > block RFC [1] that even simple conversion should improve performance as
+> > we are performing one P2P lookup per-bio and not per-SG entry as was
+> > before [2]. In addition it decreases memory [3] too.
+> >
+> > [1] https://lore.kernel.org/all/cover.1730037261.git.leon@kernel.org/
+> > [2] https://lore.kernel.org/all/34d44537a65aba6ede215a8ad882aeee028b423a.1730037261.git.leon@kernel.org/
+> > [3] https://lore.kernel.org/all/383557d0fa1aa393dbab4e1daec94b6cced384ab.1730037261.git.leon@kernel.org/
+> >
+> > So clear benefits are:
+> > 1. Ability to use native for subsystem structure, e.g. bio for block,
+> > umem for RDMA, dmabuf for DRM, e.t.c. It removes current wasteful
+> > conversions from and to SG in order to work with DMA API.
+> > 2. Batched request and iotlb sync optimizations (perform only once).
+> > 3. Avoid very expensive call to pgmap pointer.
+> > 4. Expose MMIO over VFIO without hacks (PCI BAR doesn't have struct pages).
+> > See this series for such a hack
+> > https://lore.kernel.org/all/20250307052248.405803-1-vivek.kasireddy@intel.com/
+> 
+> I see those benefits and I admit that for typical DMA-with-IOMMU case it 
+> would improve some things. I think that main concern from Robin was how 
+> to handle it for the cases without an IOMMU.
 
-This is an old implementation. Actually, I once sent a V3 last month
-which move the codes to late_setup(). The late_setup was introduced
-by the counters snapshotting feature. It does a late configuration in
-the x86_pmu_enable() after the counters are assigned.
-https://lore.kernel.org/lkml/173874832555.10177.18398857610370220622.tip-bot2@tip-bot2/
+In such case, we fallback to non-IOMMU flow (old, well-established one).
+See this HMM patch as an example https://lore.kernel.org/all/a796da065fa8a9cb35d591ce6930400619572dcc.1738765879.git.leonro@nvidia.com/
++dma_addr_t hmm_dma_map_pfn(struct device *dev, struct hmm_dma_map *map,
++			   size_t idx,
++			   struct pci_p2pdma_map_state *p2pdma_state)
+...
++	if (dma_use_iova(state)) {
+...
++	} else {
+...
++		dma_addr = dma_map_page(dev, page, 0, map->dma_entry_size,
++					DMA_BIDIRECTIONAL);
 
-We don't need to check the last event anymore.
+Thanks
 
-The V3 optimize the late_setup() a little bit.
-https://lore.kernel.org/lkml/20250213211718.2406744-3-kan.liang@linux.intel.com/
-
-and extend it for both counters snapshotting and ACR.
-https://lore.kernel.org/lkml/20250213211718.2406744-6-kan.liang@linux.intel.com/
-
-But other comments still stand. I will send a V4 later.
-
-Thanks,
-Kan
+> 
+> Best regards
+> -- 
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+> 
 
