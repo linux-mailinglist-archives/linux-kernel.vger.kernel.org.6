@@ -1,140 +1,138 @@
-Return-Path: <linux-kernel+bounces-561103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E5AFA60D9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:43:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D38A60DA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:43:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D6DA880812
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:42:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE61A19C6AF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FC31F03CB;
-	Fri, 14 Mar 2025 09:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="fumBZq77"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A771F3BBC;
+	Fri, 14 Mar 2025 09:43:06 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2AE1EBA07
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF63B1F3B85
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741945378; cv=none; b=SxQI3bUnnK3Q1X0W0TRjW8+7zcETa0k+gAe8As+OjgCqH+v92hr3wM4hyiimqvrnLXrfMSsx8c3EskPKb8gCSlm7cPB8+hUE7kJ+7EGV6V3esrhBmzveedBtQ9753m09/OLhUNLaRBvUgWc3cKoZq89mwEPpg0WvS+2cTG07kP4=
+	t=1741945385; cv=none; b=Wf8Y6JZemvRDGt2ve34Vn/Md6mPHXKL0aqFV/BM9E37ThxE/VpL1rPVXGURbsgDmh3c3cfnSkdRJlS4ba+OmwSD4n/n4ZYVUu77Mz7LiU/AqHou85OBb57jQJPTFOZhWfZ/Z6ZFB3Ckh5A1Oz2tzYSGKfxzYp7PXzJiZlWZUkho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741945378; c=relaxed/simple;
-	bh=NHWqwcmIAPSaHvvExWsY3PmsamrROfeZKayvsRC2fig=;
+	s=arc-20240116; t=1741945385; c=relaxed/simple;
+	bh=Qprz9wpUySPUA48GgPU3RCPs42MHXerLEut3c0IV2cI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GEPLjRPGin5xx3VhxukmjUF5QzH2h1CsvrsvpY7hTEvFA7zci7XVnmyc/dOTsG37QV0Fs2/JHr5g7f027dGaMjCPLTR1Rj3aJ6OC/n96o+wJWg0wcUtsXfwc4FVau3V03wFhR0QakiTnsQUrmT0eg03KF6D0U32qHFpswayCv+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=fumBZq77; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-225477548e1so34777555ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 02:42:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1741945376; x=1742550176; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v/g4jvwbC1O4PrGsUHzAriMTeGEusyCzVstb39RoEBQ=;
-        b=fumBZq772rZRBSskxtpaOXuP0R5VbbfZPTXphGBowmb7uOhiMDrMVKVPJ9HSppCt48
-         z22rYkDP32XXvbkzxE5YwioBxQOPNrrm5u8MlvfXa7ooYnaR12Cpo6S3Ne+n/isnmkTO
-         VTfR7QNAUH2j/xlkKhOqlCin7dBhRzhK0ExjgUzVQOTMnhJkNFomS8Umyb+fzi4netE+
-         yyaujFqFdXo/KGoLQyl6y3PTgrIBQP0rQsu5g6lHetmS5jwijAhzkACpN7JOPOwN+6Mg
-         MuURfGPj1hg1el7/9YOGkVCq/NfK8CcZk59XgNcrGlK695M2kHpHtDDPj5c36iEGxI+R
-         UHSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741945376; x=1742550176;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v/g4jvwbC1O4PrGsUHzAriMTeGEusyCzVstb39RoEBQ=;
-        b=Co+UQb1TDnCZsnKMXm7P4z38VKelJVd9biMkL9aPHtsUhqI9WWsTND6m/fqh1yLt2Z
-         4gwRgUVIjO2xtZgrXZBuyYnp4JfaePxSSAUw1GqqvOoQ56lFt92pWwETNuWkHezMbqTR
-         I/JMUE1ccTtdNsfBp9Mi22cQw+uNWr3AevI4sZ/cGiWM6H3xanMftQJAJ+sPg8AQqFh+
-         hOvdH4+ChOeJNoBgETzChzCJHM/KpG7qxO9FblgS0p561k8u17LI5kMUJ9s42KiN1PPn
-         INrUTQNeEzIFY3+EI0i8rwfifPPo+Q7pxjRqCxE/ynT7xmAAY19yaE6aHjQCKOvWEUDp
-         zSXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDbK73RiQO8DQ3VTuP0VR9pRIeCKigJdpFLJFch//n5Es2yQfbZ2xQW7TcTjFxVrThEVsnMYduEiQwPVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcMAF9GW162AboerapbNGuDuRPctEYoSq/SPFdxptsmHASTgul
-	FGDC9nYYiXvvUdbsPWQOYPEmNL1H9SVV5e7qdFS3unrFcRDAIHfAjckqzGmdBQ==
-X-Gm-Gg: ASbGncuB67CA2xPUl3EAHiOIAqK3CFJAF+59R+Z3gqvzIkFDysyCU3dPGxspW9/hn1t
-	FdJ++0oplMkZThM+ayL5EGde3fcTUR+Z7rmIOXnoO97CVYjZVAY1CJOVOp1ENKGSnnEb51dPcWw
-	ElW5RId+hjqC8i2kuweoo/fAbS9cfEMpaPuFGSI+g7KdOKwFWpmDw14+9IoITJ6ber5puIETrx8
-	yEhg2WGJ3QnRpzzKwccnt2l7Ef0yewzR32ppdc83UWTtSpiRb5Cjojpce06NV3M0+EyQRYsqhHg
-	9UnaXyHSCVuX4Qk/17pBmskB2A6GgoLszp4qxn+aNCfVUg/eXl55nH0=
-X-Google-Smtp-Source: AGHT+IFginwr94K2rTnjMZOsPty3WsY3qokgFbh0zQNcqDH5+oZsyBDE/AucIHSnwboCC0ZejKNxcQ==
-X-Received: by 2002:a17:90b:2707:b0:2ee:c918:cd60 with SMTP id 98e67ed59e1d1-30151ca0e05mr2548580a91.20.1741945376055;
-        Fri, 14 Mar 2025 02:42:56 -0700 (PDT)
-Received: from bytedance ([115.190.40.15])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30153afee51sm648521a91.28.2025.03.14.02.42.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 02:42:55 -0700 (PDT)
-Date: Fri, 14 Mar 2025 17:42:49 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: Chengming Zhou <chengming.zhou@linux.dev>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>
-Subject: Re: [RFC PATCH 2/7] sched/fair: Handle throttle path for task based
- throttle
-Message-ID: <20250314094249.GC1633113@bytedance>
-References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
- <CANCG0GcFF7cnR4rCbU5MmY1Gq3M+r4gPXv39QPXXC=Cdr6sRww@mail.gmail.com>
- <58e0515a-ed67-4d1a-825f-bfc2b31d1d18@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KsKJsEBPbwoW0HFdMIiRPWTcvVAca0Ekzn6br8An6vTcQ6JvZTEK0kAenwauInewizAK4VTvNbHtekjXRRPecXRtTUYsuh0u3dQR7qyOSV6W4Jrm6rmILTvrr8VldQcslpv7Rs92wczF3VNiCFegRCPPjDFVVTt8jdMQH9C1iAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tt1ZA-00071c-Tj; Fri, 14 Mar 2025 10:42:56 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tt1ZA-005gDi-1X;
+	Fri, 14 Mar 2025 10:42:56 +0100
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 278AE3DB8E4;
+	Fri, 14 Mar 2025 09:42:56 +0000 (UTC)
+Date: Fri, 14 Mar 2025 10:42:55 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: haibo.chen@nxp.com
+Cc: mailhol.vincent@wanadoo.fr, ciprianmarian.costea@oss.nxp.com, 
+	han.xu@nxp.com, u.kleine-koenig@baylibre.com, linux-can@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH 1/2] can: flexcan: only set CAN_STATE_ERROR_ACTIVE when
+ resume has no issue
+Message-ID: <20250314-married-polar-elephant-b15594-mkl@pengutronix.de>
+References: <20250306065921.2329517-1-haibo.chen@nxp.com>
+ <20250314-invaluable-economic-caterpillar-80541a-mkl@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oogkrhl672fkkr2e"
 Content-Disposition: inline
-In-Reply-To: <58e0515a-ed67-4d1a-825f-bfc2b31d1d18@linux.dev>
+In-Reply-To: <20250314-invaluable-economic-caterpillar-80541a-mkl@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, Mar 14, 2025 at 04:39:41PM +0800, Chengming Zhou wrote:
-> On 2025/3/13 15:21, Aaron Lu wrote:
-> > From: Valentin Schneider <vschneid@redhat.com>
-> > 
-> > Once a cfs_rq gets throttled, for all tasks belonging to this cfs_rq,
-> > add a task work to them so that when those tasks return to user, the
-> > actual throttle/dequeue can happen.
-> > 
-> > Note that since the throttle/dequeue always happens on a task basis when
-> > it returns to user, it's no longer necessary for check_cfs_rq_runtime()
-> > to return a value and pick_task_fair() acts differently according to that
-> > return value, so check_cfs_rq_runtime() is changed to not return a
-> > value.
-> 
-> Previously with the per-cfs_rq throttling, we use update_curr() -> put() path
-> to throttle the cfs_rq and dequeue it from the cfs_rq tree.
-> 
-> Now with your per-task throttling, maybe things can become simpler. That we
-> can just throttle_cfs_rq() (cfs_rq subtree) when curr accouting to mark these
-> throttled.
 
-Do I understand correctly that now in throttle_cfs_rq(), we just mark
-this hierarchy as throttled, but do not add any throttle work to these
-tasks in this hierarchy and leave the throttle work add job to pick
-time?
+--oogkrhl672fkkr2e
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/2] can: flexcan: only set CAN_STATE_ERROR_ACTIVE when
+ resume has no issue
+MIME-Version: 1.0
 
-> Then then if we pick a task from a throttled cfs_rq subtree, we can setup task work
-> for it, so we don't botter with the delayed_dequeue task case that Prateek mentioned.
+On 14.03.2025 10:13:08, Marc Kleine-Budde wrote:
+> On 06.03.2025 14:59:20, haibo.chen@nxp.com wrote:
+> > From: Haibo Chen <haibo.chen@nxp.com>
+> >
+> > Only set CAN state to CAN_STATE_ERROR_ACTIVE when resume process has
+> > no issue, otherwise keep in CAN_STATE_SLEEPING as suspend did.
+>
+> When looking at the code, it makes no sense to set the can.state to
+> CAN_STATE_ERROR_ACTIVE, if the device isn't up.
+>
+> The suspend function doesn't look correct, either. I'll send a v3.
 
-If we add a check point in pick time, maybe we can also avoid the check
-in enqueue time. One thing I'm thinking is, for a task, it may be picked
-multiple times with only a single enqueue so if we do the check in pick,
-the overhead can be larger?
+After a suspend/resume cycle on a down interface, it will come up as
+ERROR-ACTIVE.
 
-> WDYT?
+| $ ip -details -s -s a s dev flexcan0
+| 3: flexcan0: <NOARP,ECHO> mtu 16 qdisc pfifo_fast state DOWN group defaul=
+t qlen 10
+|     link/can  promiscuity 0 allmulti 0 minmtu 0 maxmtu 0
+|     can state STOPPED (berr-counter tx 0 rx 0) restart-ms 1000
+|=20
+| $ sudo systemctl suspend
+|=20
+| $ ip -details -s -s a s dev flexcan0
+| 3: flexcan0: <NOARP,ECHO> mtu 16 qdisc pfifo_fast state DOWN group defaul=
+t qlen 10
+|     link/can  promiscuity 0 allmulti 0 minmtu 0 maxmtu 0
+|     can state ERROR-ACTIVE (berr-counter tx 0 rx 0) restart-ms 1000
 
-Thanks for your suggestion. I'll try this approach and see how it turned
-out.
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--oogkrhl672fkkr2e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfT+hwACgkQDHRl3/mQ
+kZxEeggAmJe/1BSs7Ia4z0JQDnv+yNvTHRHBzW/nu0LIxl8GYJiNvdXrfqaHtyRW
+3KxMQgn2UHGnBwsGHQX0rVoCVZ/n3i5QMNTnXH7o6XFF80UgGnLL32nR/vsOUPs6
+uN7aoJL+U7SChWQvNQOiP2ojt2EVjN8MgV4URjX1nqzV8PrrUuwkX3EcIlvhOlde
+yg9UFKNApmwfqZBfRw0UJz9cfil4+HU1E3LOKN5qNvT1Dn1bd7GvWVGZdaENSxiA
+aVc90fDYdITbp5Z3iK7hfjKhJqB4X+11uP2EBjonEjKFuE4DekHIaNW0TcIeRUrz
+xOIkAVkL0D+/EE8FO6kuAL99RtW6tQ==
+=9m1P
+-----END PGP SIGNATURE-----
+
+--oogkrhl672fkkr2e--
 
