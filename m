@@ -1,125 +1,175 @@
-Return-Path: <linux-kernel+bounces-561177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582BFA60E54
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:11:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE463A60E59
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:11:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E4FE1B60A1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:11:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AF5C17DF93
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B7E1F4168;
-	Fri, 14 Mar 2025 10:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC831F543F;
+	Fri, 14 Mar 2025 10:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KwvWjLAk"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M74ckQG0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D561F236B
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FE41F4261;
+	Fri, 14 Mar 2025 10:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741947064; cv=none; b=iwxLPXWAUIfC0F5jhNjk4Ey7j6+dsYDyuOqrWtaaUgwP6zr/9gsLSfcJs+dvqBDjQEiAYTDhnZnQ3CPM8KzMTu0Am17iv5Od6Omno9h+iGDExc+Pw0isYxfm8xE0pIz+W/3+DouChK9+WPUxylW0D9BJKvQjFw6aYzmpEcwqXwA=
+	t=1741947072; cv=none; b=EEBteKwUujqHPkuD0bsIGqN8nFak9lQLyIi9oiwdQcrpIDdc2kubKPXeWAteeIcZx9V64wj0wPwvB55yVmUaVdsbkv3AeMBuZF8+wmXzjUVkluZrXpgCUuPBEU0GG1m9TEKHgqzL9DeJf9WDdpMunxStkszV896NhP2/AtrWhOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741947064; c=relaxed/simple;
-	bh=Ha/KS+ElT7WtLbHsW5QrAN3KE92/i3cgTDDDhR21CLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ScsgP44Us6OadogCiApsaAi+yS5OVqY/6SSLiu8vH89hDyiv644kR4UkfDPLL0k71BigSt3KoaIuBad/P3XUZNmMHJpZlWidLhj9ZXCcsu23e06J4wKkQbd1131OF5cgDTMIbLqYx34CB0AwNfBTwNLtcCIY+f7aX1vPIAN47w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KwvWjLAk; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43d0a5cfd7dso12723345e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:11:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741947061; x=1742551861; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fgud6hXh4dOzT1nJ8XNwGdjcgEPK4Gm9tj6MEJh365U=;
-        b=KwvWjLAkJF2owAbDh6RxStqsWNxAWm4zXCtDa/+eAte1WJWGZ0wWbzWh0IZNw9gADV
-         X9V3ykoqf/7sVGAidnQtRcDcYQJ2Yp9YR4utvqaR/6gXQyX+FlunGGbYluf/uG+/ejOr
-         h1hF8P7C5YSz0x52hVeJf45czACkFuINm103b9LyJo75GOeKW1Z9eU7cpyRrpQMbRSFh
-         Mi0g3kTdGDZSISHFawFuhqBXy4l1yyXgcHx3X5dZjYxpeefbHIz2NQq898Q30OjSBlkG
-         0V1zNCXDPH3yxJpjnGI4B+J+1Au1+Q97BnEL5dKgJ+IqtkmvcgwGgDaSD21pxF9jNSY/
-         DeuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741947061; x=1742551861;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fgud6hXh4dOzT1nJ8XNwGdjcgEPK4Gm9tj6MEJh365U=;
-        b=XpsEqiKMpyqPfQ7JIV807d0WwqICtmukKdB1geH5WVJ4NwrCB2ON0xY+ODIuIpzqtL
-         BbrFCqvCotXueRIxXxq16y0a8bt1JMdXepjv3Eg3ohWmXrFgGAVVzvpT1rCnbG8lZfZD
-         CM8tJrdPfupCz/wX84sgJRGaSDl/ED3QSBin3IR7Rupl8QaVqgVqZEjNK3MrnHXulOPH
-         AbkEE1PdU4UIIexhhtgnRrbnLJjM2/zQWS6AXFYgQ6278U/rbpGkwCmkNa+I5XYTa0+i
-         KUIbw0qtsb2pxcJjlSz3A1NxtAMRi/bz0SnHXadaJzhZmscJlVjqq8Zh7qdLuU1/wf88
-         3UaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMgoOoBja4jG12/O9cza5od1+u3LHYp0ZaCVdfO+9eqfR6sYf5N3ejAU2F2zcXF34qBFXDzeN7SCTxcOY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUNKqh5SP/CplIebHgYO4hBqAhRFKwO8jTILgjWNoeqQnf8jo6
-	vCTnpHuPOoTgAnLv2LD2Y+0ttXwoN00a1kxALTTnKD3CXCPGTFPBflA6/oVyHQQ=
-X-Gm-Gg: ASbGncvZFVMBWN/V4tcAU2C5hGs3ftlwaxi0Au97KHqbJEDN1/nJKrovbTg8YO/DNdw
-	1+MSij8sRJy6hbxZ9cHNDcoCzSzBQ6KAhs49DWZ4ga3LX3zN8kyO+V/7LklMruVw6PIqgGfJ/BB
-	zpuogGP9LbpgKlOzl8BgyVfSbMHNhcgK1ChS8FMVbAaDZ6YErYMOBYjDZgS6lZpbvHF2BNokJlb
-	cDpHLo3loC0Li7VoWvoXC31JJRnULzBRF850fuKlUArR53WHnN5ApQpy6JNLX7zHhTquwEVFBc0
-	CFwRiVuWrEahafd91cJnpA7teBhIkzSpUoQHHenjr18ru/x9kQ==
-X-Google-Smtp-Source: AGHT+IGrqsA9/IFFX+VNcSF8RCUcUm/rFalF5L0nX24Ys1wiCIc0uaBlGoiwZeDMhGOrmCUK6wBs1A==
-X-Received: by 2002:a05:600c:4fcc:b0:43c:fab3:4fad with SMTP id 5b1f17b1804b1-43d1ec80ebcmr26365605e9.16.1741947061151;
-        Fri, 14 Mar 2025 03:11:01 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d200fae4asm12118455e9.27.2025.03.14.03.11.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 03:11:00 -0700 (PDT)
-Date: Fri, 14 Mar 2025 13:10:57 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Simon Horman <horms@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net] net: atm: fix use after free in lec_send()
-Message-ID: <c751531d-4af4-42fe-affe-6104b34b791d@stanley.mountain>
+	s=arc-20240116; t=1741947072; c=relaxed/simple;
+	bh=tDstaa/o6sUBQipm+8mIlCkuic6AshHp3d0i/s0EITM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RIKG5yKLTyVU4HV8zMYNNAGKrlAh12S3X1Eq0SoJuC1ZwOufyAzi7ILDHfK+rFNR7B2ThhI6tQh/AhuoScF36dJZDk/mMeagDeUHgQQAXZMZ2C62qs1uwpkaeFSItYlzAIV/h/w4TGbhpmNZEJP6PLsN9Nyfanojw0dWkVgN7OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M74ckQG0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F422DC4CEE3;
+	Fri, 14 Mar 2025 10:11:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741947072;
+	bh=tDstaa/o6sUBQipm+8mIlCkuic6AshHp3d0i/s0EITM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=M74ckQG0sfvECxcaXf8Tl8WoWWhi4VT0YPYkXgn/QrpSQ5sg/X2u5ixhpCg99qZ92
+	 yJYOHdeJao8AqwcLwQCD4g0MlEnSjubhKT9LCyazptQa/koISoX3njO/nrKiQB4W5G
+	 X13YnXU0g5T9erpPZhALc3PWY7OlKct8dJCXG8XAXiLLSBhb1fvezOKgJ5+Wgm0maO
+	 PsxXQuZA7FB6TBsHmnHIRhKa+IYLhCIB/04KlUd3ALJxUcayMa2+9HfPyGBMWpfV1+
+	 XtQae7eE0BBFynLsY29h7JG092I7A2tuVFXm9wj/tGtN6dAykI3tODuqQeo3eBrdFY
+	 SRvU1zcD2guQg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tt20T-00DVK5-Fo;
+	Fri, 14 Mar 2025 10:11:09 +0000
+Date: Fri, 14 Mar 2025 10:11:08 +0000
+Message-ID: <86ecyzorb7.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: =?UTF-8?B?TWlrb8WCYWo=?= Lenczewski <miko.lenczewski@arm.com>,
+	suzuki.poulose@arm.com,	yang@os.amperecomputing.com,	corbet@lwn.net,
+	catalin.marinas@arm.com,	will@kernel.org,	jean-philippe@linaro.org,
+	robin.murphy@arm.com,	joro@8bytes.org,	akpm@linux-foundation.org,
+	mark.rutland@arm.com,	joey.gouly@arm.com,	james.morse@arm.com,
+	broonie@kernel.org,	anshuman.khandual@arm.com,	oliver.upton@linux.dev,
+	ioworker0@gmail.com,	baohua@kernel.org,	david@redhat.com,	jgg@ziepe.ca,
+	shameerali.kolothum.thodi@huawei.com,	nicolinc@nvidia.com,
+	mshavit@google.com,	jsnitsel@redhat.com,	smostafa@google.com,
+	linux-doc@vger.kernel.org,	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,	iommu@lists.linux.dev
+Subject: Re: [PATCH v3 1/3] arm64: Add BBM Level 2 cpu feature
+In-Reply-To: <4998dd9b-106d-4ca7-be88-5330429dcfe8@arm.com>
+References: <20250313104111.24196-2-miko.lenczewski@arm.com>
+	<20250313104111.24196-3-miko.lenczewski@arm.com>
+	<86ikocomvd.wl-maz@kernel.org>
+	<f244c20e-e11c-477b-9487-cb6738c028ca@arm.com>
+	<86h63wok11.wl-maz@kernel.org>
+	<4998dd9b-106d-4ca7-be88-5330429dcfe8@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: ryan.roberts@arm.com, miko.lenczewski@arm.com, suzuki.poulose@arm.com, yang@os.amperecomputing.com, corbet@lwn.net, catalin.marinas@arm.com, will@kernel.org, jean-philippe@linaro.org, robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org, mark.rutland@arm.com, joey.gouly@arm.com, james.morse@arm.com, broonie@kernel.org, anshuman.khandual@arm.com, oliver.upton@linux.dev, ioworker0@gmail.com, baohua@kernel.org, david@redhat.com, jgg@ziepe.ca, shameerali.kolothum.thodi@huawei.com, nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com, smostafa@google.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-The ->send() operation frees skb so save the length before calling
-->send() to avoid a use after free.
+On Fri, 14 Mar 2025 09:18:43 +0000,
+Ryan Roberts <ryan.roberts@arm.com> wrote:
+>=20
+> On 13/03/2025 18:36, Marc Zyngier wrote:
+> > On Thu, 13 Mar 2025 18:22:00 +0000,
+> > Ryan Roberts <ryan.roberts@arm.com> wrote:
+> >>
+> >> On 13/03/2025 17:34, Marc Zyngier wrote:
+> >>> On Thu, 13 Mar 2025 10:41:10 +0000,
+> >>> Miko=C5=82aj Lenczewski <miko.lenczewski@arm.com> wrote:
+> >>>>
+> >>>> diff --git a/arch/arm64/kernel/pi/idreg-override.c b/arch/arm64/kern=
+el/pi/idreg-override.c
+> >>>> index c6b185b885f7..9728faa10390 100644
+> >>>> --- a/arch/arm64/kernel/pi/idreg-override.c
+> >>>> +++ b/arch/arm64/kernel/pi/idreg-override.c
+> >>>> @@ -209,6 +209,7 @@ static const struct ftr_set_desc sw_features __p=
+rel64_initconst =3D {
+> >>>>  		FIELD("nokaslr", ARM64_SW_FEATURE_OVERRIDE_NOKASLR, NULL),
+> >>>>  		FIELD("hvhe", ARM64_SW_FEATURE_OVERRIDE_HVHE, hvhe_filter),
+> >>>>  		FIELD("rodataoff", ARM64_SW_FEATURE_OVERRIDE_RODATA_OFF, NULL),
+> >>>> +		FIELD("nobbml2", ARM64_SW_FEATURE_OVERRIDE_NOBBML2, NULL),
+> >>>>  		{}
+> >>>>  	},
+> >>>>  };
+> >>>> @@ -246,6 +247,7 @@ static const struct {
+> >>>>  	{ "rodata=3Doff",			"arm64_sw.rodataoff=3D1" },
+> >>>>  	{ "arm64.nolva",		"id_aa64mmfr2.varange=3D0" },
+> >>>>  	{ "arm64.no32bit_el0",		"id_aa64pfr0.el0=3D1" },
+> >>>> +	{ "arm64.nobbml2",		"arm64_sw.nobbml2=3D1" },
+> >>>
+> >>> Why is that a SW feature? This looks very much like a HW feature to
+> >>> me, and you should instead mask out ID_AA64MMFR2_EL1.BBM, and be done
+> >>> with it. Something like:
+> >>
+> >> I think this implies that we would expect the BBM field to be advertis=
+ing BBML2
+> >> support normally and we would check for that as part of the cpufeature
+> >> detection. That's how Miko was doing it in v2, but Yang pointed out th=
+at
+> >> AmpereOne, which supports BBML2+NOABORT semantics, doesn't actually ad=
+vertise
+> >> BBML2 in its MMFR2. So we don't want to check that field, and instead =
+rely
+> >> solely on the MIDR allow-list + a command line override. It was me that
+> >> suggested putting that in the SW feature register, and I think that st=
+ill sounds
+> >> like the right solution for this situation?
+> >=20
+> > I think this is mixing two different things:
+> >=20
+> > - preventing BBM-L2 from being visible to the kernel: this is what my
+> >   suggestion is doing by nuking an architectural feature in the
+> >   relevant register
+> >=20
+> > - random HW not correctly advertising what they are doing: this is an
+> >   erratum workaround
+> >=20
+> > I'd rather we don't conflate the two things, and make them very
+> > explicitly distinct.
+>=20
+> It all sounds so obvious when you put it like that! :)
+>=20
+> I'm guessing there is a layer where the workaround can be applied to the
+> sanitised feature registers on a per-cpu basis and that won't affect this=
+ global
+> override which will remain as an overlay on top? If so then that sounds p=
+erfect
+> (you can probably tell I find the whole feature management framework rath=
+er
+> inpeneterable).
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- net/atm/lec.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+You and I, brother... The only person who actually understands what's
+in that file is Suzuki.
 
-diff --git a/net/atm/lec.c b/net/atm/lec.c
-index ffef658862db..a948dd47c3f3 100644
---- a/net/atm/lec.c
-+++ b/net/atm/lec.c
-@@ -181,6 +181,7 @@ static void
- lec_send(struct atm_vcc *vcc, struct sk_buff *skb)
- {
- 	struct net_device *dev = skb->dev;
-+	unsigned int len = skb->len;
- 
- 	ATM_SKB(skb)->vcc = vcc;
- 	atm_account_tx(vcc, skb);
-@@ -191,7 +192,7 @@ lec_send(struct atm_vcc *vcc, struct sk_buff *skb)
- 	}
- 
- 	dev->stats.tx_packets++;
--	dev->stats.tx_bytes += skb->len;
-+	dev->stats.tx_bytes += len;
- }
- 
- static void lec_tx_timeout(struct net_device *dev, unsigned int txqueue)
--- 
-2.47.2
+> That workaround would be added as part of Yang's series anyway.
 
+Yup, that's what I'd expect. Ideally tied to an erratum number so that
+we have an actual promise from the vendor that their implementation is
+actually BBM-L2 compliant despite the idreg breakage.
+
+Thanks,
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
 
