@@ -1,101 +1,125 @@
-Return-Path: <linux-kernel+bounces-561307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0186CA60FF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:28:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7E1A60FF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:31:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 138DB164569
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:28:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 712FD3B0CFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEA01FCFF2;
-	Fri, 14 Mar 2025 11:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Z+31LRJn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GwwcrMYq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE4E1FAC25;
+	Fri, 14 Mar 2025 11:31:39 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401C915D1
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F001519B0;
+	Fri, 14 Mar 2025 11:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741951693; cv=none; b=aZafhFKm5bvYnuMKVWFRUczhVC5FcNkF9F6paWrJtDGW64NRDLq9QT/zy5J0td0JbdS0Ko+ZX/pyKgoDpEWnlRDx/9QBz74H2txKtGzVszESfPQkuvk+ztBOJzUnSCEBLpRmTWj8RdxLlFme30c4xLJuIK9G8w4zplmU9xZKXtI=
+	t=1741951899; cv=none; b=CQ3bgkayxkDNKVe52Me2Azxv9WNQviTJeroDthGHnKgBJaoEuFVFmem1WInD/v1NE1FtLTtfziCi4It1zfzwFtwJyADDeqfS0Qjpf1Eqrv3FKo7zwNvfEnaf4G2UFRJlw3CKKILMDolvDP0lKI6e1A44x0Jv+tfc5B7BPYRrvk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741951693; c=relaxed/simple;
-	bh=VijPbBQvRH3f8DwcTrpuF3ZMh9hz9TJnwK8Id2VP6UE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=onFC0i/eDm5/pRa1m6AUKGqOmtqoUQW81NszcAptPOLTMz/2JGRJFPiZFXCY6wAMPTsCLkGSSAcobAypIfYq2cPcV374cA2wzb/D0ctnA9ep46OsGgg9iSfo7VWoJWCI9zTXbQlm9omkfxg0kixx3y5ABdM/6se1SQBG55yXKng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Z+31LRJn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GwwcrMYq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 14 Mar 2025 12:28:08 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741951690;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u2wPlf22XBcrTV7ddhdC02TRmOZbwlazzbyfqm2zjZ8=;
-	b=Z+31LRJngHHM9VAkIYgRk8mHbku1QbCAALFr6DLBnvDZGjGF04Ee24VPkvhVrU5+/I80/l
-	hZhcmdrEz2t6j4IywIlZiKDLIS+mL7k9eyYfZaQ4Y0511XBAkzAjbkBDPspzroAMFe0kUo
-	r2GuQ1SUTw8yTwLelC6K9T/xFih/iFkx11beWEjkrODDanghhm2ciiihxTLsjsqLfDG5Tv
-	gLfutZ0NdmVspr5jZIWe4hvcf4gr25DcHLtBy+0b6p49AzNWe/3VJANUEwaBlJwLkzsnzQ
-	4WyFSW9Kk3uYcv/sNN+qVUGjDjdMDe8ptDLI8h1CbAgMi+SD9Xu90krzZvilyg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741951690;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u2wPlf22XBcrTV7ddhdC02TRmOZbwlazzbyfqm2zjZ8=;
-	b=GwwcrMYqMFwnjlKQRi8s2o0h/oEe39PT5hdTqGGCJWxOf7YJazBNQjjpuXD69fOCsfMh+z
-	PTuVcz0q04IrpjBQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org,
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v10 00/21] futex: Add support task local hash maps,
- FUTEX2_NUMA and FUTEX2_MPOL
-Message-ID: <20250314112808.-XVssA31@linutronix.de>
-References: <20250312151634.2183278-1-bigeasy@linutronix.de>
- <20250312151848.RlB_XuHA@linutronix.de>
- <20250314105856.GB36322@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1741951899; c=relaxed/simple;
+	bh=grr53J3wv2CQbIqmII5z7WbBcrMBMQ/wYtPz7OGp2wk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A90NF6UQi071UapLS8UTHBjZoOkA9wxB/0a3gtpMHBUinR7gdNwh5A1CMaMIn+s+dO73JWazTxiPpf5TviRRSTszW1rS4McvffK4Umd8pvgbRYdZ01nWCiq1VFpkYbLjfK7fuLr11bySJueP9XT11LDZs5Ie54EhQmvXQEh+9i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDhvn6wPcz6K94D;
+	Fri, 14 Mar 2025 19:28:53 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id BDE4C140A70;
+	Fri, 14 Mar 2025 19:31:34 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Mar
+ 2025 12:31:34 +0100
+Date: Fri, 14 Mar 2025 11:31:32 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Robert Richter <rrichter@amd.com>
+CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
+ Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
+ De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
+	<terry.bowman@amd.com>
+Subject: Re: [PATCH v4 02/14] cxl/pci: Moving code in cxl_hdm_decode_init()
+Message-ID: <20250314113132.000043ce@huawei.com>
+In-Reply-To: <20250306164448.3354845-3-rrichter@amd.com>
+References: <20250306164448.3354845-1-rrichter@amd.com>
+	<20250306164448.3354845-3-rrichter@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250314105856.GB36322@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 2025-03-14 11:58:56 [+0100], Peter Zijlstra wrote:
-> On Wed, Mar 12, 2025 at 04:18:48PM +0100, Sebastian Andrzej Siewior wrote:
+On Thu, 6 Mar 2025 17:44:36 +0100
+Robert Richter <rrichter@amd.com> wrote:
+
+> Commit 3f9e07531778 ("cxl/pci: simplify the check of mem_enabled in
+> cxl_hdm_decode_init()") changed the code flow in this function. The
+> root port is determined before a check to leave the function. Since
+> the root port is not used by the check it can be moved to run the
+> check first. This improves code readability and avoids unnesessary
+> code execution.
 > 
-> > @@ -1591,7 +1597,8 @@ static int futex_hash_allocate(unsigned int hash_slots, bool custom)
-> >  		struct futex_private_hash *free __free(kvfree) = NULL;
-> >  		struct futex_private_hash *cur, *new;
-> >  
-> > -		cur = mm->futex_phash;
-> > +		cur = rcu_dereference_protected(mm->futex_phash,
-> > +						lockdep_is_held(&mm->futex_hash_lock));
-> >  		new = mm->futex_phash_new;
-> >  		mm->futex_phash_new = NULL;
-> >  
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+> Reviewed-by: Gregory Price <gourry@gourry.net>
+> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+> Tested-by: Gregory Price <gourry@gourry.net>
+> ---
+>  drivers/cxl/core/pci.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
 > 
-> Same thing again, this makes no sense.
+> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+> index 33c3bdd35b24..6386e84e51a4 100644
+> --- a/drivers/cxl/core/pci.c
+> +++ b/drivers/cxl/core/pci.c
+> @@ -419,14 +419,6 @@ int cxl_hdm_decode_init(struct cxl_dev_state *cxlds, struct cxl_hdm *cxlhdm,
+>  	if (!hdm)
+>  		return -ENODEV;
+>  
+> -	root = to_cxl_port(port->dev.parent);
+> -	while (!is_cxl_root(root) && is_cxl_port(root->dev.parent))
+> -		root = to_cxl_port(root->dev.parent);
+> -	if (!is_cxl_root(root)) {
+> -		dev_err(dev, "Failed to acquire root port for HDM enable\n");
+> -		return -ENODEV;
+> -	}
+> -
+>  	if (!info->mem_enabled) {
+>  		rc = devm_cxl_enable_hdm(&port->dev, cxlhdm);
+>  		if (rc)
+> @@ -435,6 +427,14 @@ int cxl_hdm_decode_init(struct cxl_dev_state *cxlds, struct cxl_hdm *cxlhdm,
+>  		return devm_cxl_enable_mem(&port->dev, cxlds);
+>  	}
+>  
+> +	root = to_cxl_port(port->dev.parent);
+> +	while (!is_cxl_root(root) && is_cxl_port(root->dev.parent))
+> +		root = to_cxl_port(root->dev.parent);
+> +	if (!is_cxl_root(root)) {
+> +		dev_err(dev, "Failed to acquire root port for HDM enable\n");
 
-With "mm->futex_phash" sparse complains about direct RCU access. This
-makes it obvious that you can access it, it won't change as long as you
-have the lock.
+Is this error message suffering from code rot?  In the path where
+root is used, use no HDM enabling occurs.
 
-Sebastian
+> +		return -ENODEV;
+> +	}
+> +
+>  	for (i = 0, allowed = 0; i < info->ranges; i++) {
+>  		struct device *cxld_dev;
+>  
+
 
