@@ -1,164 +1,129 @@
-Return-Path: <linux-kernel+bounces-561135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5FFA60DF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:53:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F20A60DF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:53:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9106B174DFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:53:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C41EC4620E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63AD71F1303;
-	Fri, 14 Mar 2025 09:53:29 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D601C861D;
-	Fri, 14 Mar 2025 09:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5078C1F12E7;
+	Fri, 14 Mar 2025 09:53:44 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6B51C861D
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741946009; cv=none; b=UpNeN06WJ2hYXIvGNrcCLqVu+Rglo8gBpKyDA+ZJG2QqeJ2pGUMQDWSer4N9Fv7YGF+X9FrNCj3KjXRNnKfJHnT63TO95OiLFaATYw1jGmo7WLCdomOH/0NKBQCeznsq4JbvZ4gzkuThGAPHh0BAbtHi2KwJgCx0raqk1z06SU8=
+	t=1741946023; cv=none; b=DrGqFnWvh+2W/swicpbQ0wcDfyO5NluHqaTKbWLwn/LT1EnBgjutWHLsK52lb8gGIjBQnyr9ZrcBEOqgF4LkwUkd/WtWZJeZ+1nMclm4TnrdpeVp0BgG3NhxBwaW/PxhIrCk/aPoZchLVVZTp++eU8iQgNZBeOrkkLtv4lsgl+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741946009; c=relaxed/simple;
-	bh=5UvQHvHO4GAyWAAJKn2+8upCIfjbrhrfQuDzMxxV2Nw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cloeFP0gx0DRdZdFylORChN3ZXFKo7ERwEmpu6fnVzU8tj3Wo7TKCycVjIVJcWkiMKnI1RVnX3gsPnCZcj45AU/gmmzXhDMqiU7+zlFMDTJ0T7nLLjcMiH98ikinkb4xcLid5S0ZYlzLZDNGYJczRa3FNCE7Ax7P2afr48QNN4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: 6QxDgVtcThiqDbZu1u4mtw==
-X-CSE-MsgGUID: 17nN94XkTQirT/8dicy+SQ==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Mar 2025 18:53:19 +0900
-Received: from localhost.localdomain (unknown [10.226.92.208])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8000A42D23AC;
-	Fri, 14 Mar 2025 18:53:16 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: rostedt@goodmis.org
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, mark.rutland@arm.com,
-	mathieu.desnoyers@efficios.com, mhiramat@kernel.org,
-	Hi@web.codeaurora.org, all@web.codeaurora.org
-Subject: 
-Date: Fri, 14 Mar 2025 09:53:12 +0000
-Message-ID: <20250314095313.21604-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250305164539.379008535@goodmis.org>
-References: <20250305164539.379008535@goodmis.org>
+	s=arc-20240116; t=1741946023; c=relaxed/simple;
+	bh=uqi4a1i44VuR63mk4mLewvz1DOGcGyysr+VYBowc650=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fvaGBYFo2oTypsHuIspcg5+lInnpKLCgXD4RHAU+SHHmDkzKmAO1EBmQ9W28UUmnOojWsV4kbpyvvX0dcw8lg+Ha9QQsqjT87UaqoU0bWpkBeLutUaZRbfKNR5wUtHYX8uTo6waYhIRsRUugnH3wKwPeoUKTtMVShcJY/JEexEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tt1jT-00006B-3y; Fri, 14 Mar 2025 10:53:35 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tt1jS-005gEk-29;
+	Fri, 14 Mar 2025 10:53:34 +0100
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 4E22B3DB8FA;
+	Fri, 14 Mar 2025 09:53:34 +0000 (UTC)
+Date: Fri, 14 Mar 2025 10:53:33 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Bough Chen <haibo.chen@nxp.com>
+Cc: "mailhol.vincent@wanadoo.fr" <mailhol.vincent@wanadoo.fr>, 
+	"Ciprian Marian Costea (OSS)" <ciprianmarian.costea@oss.nxp.com>, Han Xu <han.xu@nxp.com>, 
+	"u.kleine-koenig@baylibre.com" <u.kleine-koenig@baylibre.com>, "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: Re: RE: [PATCH 1/2] can: flexcan: only set CAN_STATE_ERROR_ACTIVE
+ when resume has no issue
+Message-ID: <20250314-astonishing-astute-caracara-4ba78c-mkl@pengutronix.de>
+References: <20250306065921.2329517-1-haibo.chen@nxp.com>
+ <20250314-invaluable-economic-caterpillar-80541a-mkl@pengutronix.de>
+ <20250314-married-polar-elephant-b15594-mkl@pengutronix.de>
+ <DU0PR04MB9496EC52CF54A8F635F1408690D22@DU0PR04MB9496.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-This series is giving build error on linux-next for 2 days(next-20250314
-and next-20250313) on Renesas RZ/G3E SMARC EVK platform (ARM64)
-
-Reverting trace related commits fixes the build issue.
-
-build-errors:
-kernel/trace/trace.c: In function ‘save_mod’:
-kernel/trace/trace.c:6041:45: error: invalid use of undefined type ‘struct module’
- 6041 |         entry->mod_addr = (unsigned long)mod->mem[MOD_TEXT].base;
-      |                                             ^~
-  CC      net/ethtool/phc_vclocks.o
-kernel/trace/trace.c:6041:51: error: ‘MOD_TEXT’ undeclared (first use in this function)
- 6041 |         entry->mod_addr = (unsigned long)mod->mem[MOD_TEXT].base;
-      |                                                   ^~~~~~~~
-kernel/trace/trace.c:6041:51: note: each undeclared identifier is reported only once for each function it appears in
-  CC      fs/proc/cpuinfo.o
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="migyawgtbe5skj3c"
+Content-Disposition: inline
+In-Reply-To: <DU0PR04MB9496EC52CF54A8F635F1408690D22@DU0PR04MB9496.eurprd04.prod.outlook.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v4 0/8] ring-buffer/tracing: Save module information in persistent memory
-Date: Wed, 05 Mar 2025 11:45:39 -0500	[thread overview]
-Message-ID: <20250305164539.379008535@goodmis.org> (raw)
+--migyawgtbe5skj3c
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: RE: [PATCH 1/2] can: flexcan: only set CAN_STATE_ERROR_ACTIVE
+ when resume has no issue
+MIME-Version: 1.0
 
+On 14.03.2025 09:48:06, Bough Chen wrote:
+> > > > Only set CAN state to CAN_STATE_ERROR_ACTIVE when resume process has
+> > > > no issue, otherwise keep in CAN_STATE_SLEEPING as suspend did.
+> > >
+> > > When looking at the code, it makes no sense to set the can.state to
+> > > CAN_STATE_ERROR_ACTIVE, if the device isn't up.
+> > >
+> > > The suspend function doesn't look correct, either. I'll send a v3.
+> >=20
+> > After a suspend/resume cycle on a down interface, it will come up as
+> > ERROR-ACTIVE.
+>=20
+> Seems only need to handle the priv->can.state when netif_running(dev) ret=
+urn true in PM.
 
-This updates the persistent instance to record what modules were
-loaded and what addresses they were loaded at.
+ACK - in both the suspend and the resume function.
 
-First the KASLR offset is recorded in the persistent ring buffer instead of
-a text address. This can be used to calculated the address offset.
+regards,
+Marc
 
-Next the persistent memory is divided up differently so that there's
-a single global meta data for the entire buffer that can hold the
-global data, and each per CPU meta data can just hold what it needs.
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-A scratch area can be created by the caller, in this case the tracing
-system, to store data in the persistent memory area.
+--migyawgtbe5skj3c
+Content-Type: application/pgp-signature; name="signature.asc"
 
-As the KASLR offset is only needed by the tracer, that data is moved
-from the ring buffer meta data into this new storage.
+-----BEGIN PGP SIGNATURE-----
 
-Next the modules that are loaded and where they are loaded is stored in this
-new persistent storage.
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfT/JoACgkQDHRl3/mQ
+kZx+Pwf/ZfEVLAzTROaB11mfgT1llPVOR7Xa88LWmIyUoRfgnqK/V4RQ5RSQYXvJ
+GwxehE4EaqhAN4O79BMA3D1E7Tc8lB9zo/npgG/+2Oew6cu4a8GCC0ZQHi2HwAx+
+eWYQBNTY5F3Hr7C/osnwavurydlvMK/Cq0UYXJ8fqp5ucCW03F/A5IuFULfhgvZ3
+G7rvdOjKTiaM2dY3IafRQuDBzle25Lr1UKbDQ/OtaARVWL7XOkTLtRGupMOWjeEU
+/m1JevFi9L8QxXKcRYWnZMfsra2q1gbUMTNCRQvMjOySiz/yeLhyD37XHWywHnZC
+mfEjnSMblOxB+xKbqkMXcrZbE/yYdw==
+=jj4o
+-----END PGP SIGNATURE-----
 
-The module list along with the KASLR offset is now exposed in the
-last_boot_info if the buffer is from a previous boot. If it is from the
-current boot, the file will only contain:
-
-   # Current
-
-in order to not leak the KASLR offset.
-
-Finally, when new modules are loaded while the trace is active, they too
-will be added to this persistent memory. Note, if tracing is stopped, and
-then restarted, it clears the module list and will reload all the modules
-again so that it doesn't need to keep track of what is loaded or unloaded
-while no tracing is going on.
-
-Changse since v3: https://lore.kernel.org/linux-trace-kernel/20250304012516.282694507@goodmis.org/
-
-- Added kerneldoc for scratch_size parameter for __ring_buffer_alloc_range()
-
-Changes since v2: https://lore.kernel.org/linux-trace-kernel/20250215034301.624019422@goodmis.org/
-
-- Have the module loop be protected by RCU and not preemption disabling
-
-- Take the scratch_mutex outside of save_mod() to prevent deadlocks
-
-Changes since v1: https://lore.kernel.org/all/20250205225031.799739376@goodmis.org/
-
-- Rebased on top of the urgent branch
-
-- Allow the size of the scratch area in the persistent ring buffer to be
-  defined by the caller.
-
-- Change the output of the last_boot_info to show the kaslr instead of:
-  "Offset: <offset>" to "<offset>\t[kernel]" to make it consistent with
-  the module output.
-
-
-Steven Rostedt (8):
-      ring-buffer: Use kaslr address instead of text delta
-      ring-buffer: Add buffer meta data for persistent ring buffer
-      ring-buffer: Add ring_buffer_meta_scratch()
-      tracing: Have persistent trace instances save KASLR offset
-      module: Add module_for_each_mod() function
-      tracing: Have persistent trace instances save module addresses
-      tracing: Show module names and addresses of last boot
-      tracing: Update modules to persistent instances when loaded
-
-----
- include/linux/module.h      |   6 +
- include/linux/ring_buffer.h |   8 +-
- kernel/module/main.c        |  13 +++
- kernel/trace/ring_buffer.c  | 246 ++++++++++++++++++++++++-----------------
- kernel/trace/trace.c        | 264 ++++++++++++++++++++++++++++++++++++++++----
- kernel/trace/trace.h        |  15 ++-
- kernel/trace/trace_events.c |  40 +++++--
- 7 files changed, 449 insertions(+), 143 deletions(-)
- 
- 
-
-
+--migyawgtbe5skj3c--
 
