@@ -1,61 +1,47 @@
-Return-Path: <linux-kernel+bounces-561818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBC5A616B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:46:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACFC8A616B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:47:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 135FC189379C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:46:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A44351896FB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0ACC2036F4;
-	Fri, 14 Mar 2025 16:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iy9tpTmp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A014720409B;
+	Fri, 14 Mar 2025 16:47:23 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6112B9A5;
-	Fri, 14 Mar 2025 16:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FF91FE456;
+	Fri, 14 Mar 2025 16:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741970804; cv=none; b=K3ogztyNoCCC+X1jz4wRnYhW+DNZCW3wYCY2dYNdcgLiCeW4Fgounfoui8tR/K6cqcvNAhnRjyc3B0O28AmDZDdDGoqcfGuuSDxQobgMA2BSK11hIV/ag0UXTZVApRWOg41Ustrfuh9zD1DC3nc6mF6Fs1REKp/UL3xr3hBy5oc=
+	t=1741970843; cv=none; b=VtqBYvZL/BDLpiR5C3K371oX4kTKUZQueWnVb6dm0y8AirDs1aS6znWRaqiZKie1Gz6VSD3ae8JoUEYIMQFmesGH0EHnGt5H/UxrKWiVJZDkvI5trdqaRDABJoBRnfe9IQAQ3YK4XtYblLBPnBaEC3jiZdrPvGxPlfaiOTup5lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741970804; c=relaxed/simple;
-	bh=fv3iDtiDXFpq8gGd4TdoFu0Aau3u8SLRJFOBKl5H5HY=;
+	s=arc-20240116; t=1741970843; c=relaxed/simple;
+	bh=IeCWrKaDkFGUKK9xyZBHuT2sEoISC44LS+6x+Z6W2ho=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U4FzvoWraKfZZLA1JGQlirRT4UUU3k/7T6FHhbmOXGP0AfhOAo2RBKl4CBmqWMQL2UU6hAWtLf+uIDTYAnqmsTkePfkD7sRwDYub+EpdocqyMmDePuR1xGiVgv0mB7J+dj+fmsP+d03CEE7xNO7VxZjHWKXMaLsuNeg22CTz880=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iy9tpTmp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BA89C4CEE3;
-	Fri, 14 Mar 2025 16:46:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741970803;
-	bh=fv3iDtiDXFpq8gGd4TdoFu0Aau3u8SLRJFOBKl5H5HY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iy9tpTmpwvaav5tAsDFi0yB0ASQ/omQACsI1ReeAofbBI0noNW/gIEa1DEc53LHF9
-	 x6LHa3O8WMLi9vP0F6FNCjVwNGPERGAQIh/rG8M7oVlhbnku4Ilh32GO9qOeujQe66
-	 SdfDVtEbA4BQ1Wy6GWWnBB3EbtBiNxvnudMKObLprEbPRFwoFZAUrU2uzRzxLgPpiX
-	 5/eDEBZ9hFQ08FJsVyZTe6D3ysCq4WHoT/wX4C45FF+qciLZ+SpwASfP9YC3A/507K
-	 7cHtfsgdaVAMrMC0yyLRX4r1ZxYtAWa4E/VMXRd7oSfLKNEhMO39E2G53pDqL4DSRc
-	 MTqz+VWP7lMSg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tt8BH-000000000WT-0aB9;
-	Fri, 14 Mar 2025 17:46:43 +0100
-Date: Fri, 14 Mar 2025 17:46:43 +0100
-From: Johan Hovold <johan@kernel.org>
-To: srinivas.kandagatla@linaro.org
-Cc: broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-	krzysztof.kozlowski@linaro.org, linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dmitry.baryshkov@linaro.org, johan+linaro@kernel.org
-Subject: Re: [PATCH v4 4/5] ASoC: qdsp6: q6apm-dai: set 10 ms period and
- buffer alignment.
-Message-ID: <Z9Rdc-EWhEH8IQPu@hovoldconsulting.com>
-References: <20250314143220.6215-1-srinivas.kandagatla@linaro.org>
- <20250314143220.6215-5-srinivas.kandagatla@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iQpfjXrVZkwhdSCaIy3Vk+7RtTrMPsqH15WkCMhgo5TnmXGOTp2mtziz+J9ORAnXPVzop9rV1jwuHIko8iEaXu6prXORmvgeP/gN6ac17m2bCzZWkg3Gjhsp/XNyIbHbjjnjUCvtHyBViaxdir2TBSyrRAyCFcgTk6irWh18h/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1tt8Bg-0000XF-8A; Fri, 14 Mar 2025 17:47:08 +0100
+Date: Fri, 14 Mar 2025 17:47:08 +0100
+From: Florian Westphal <fw@strlen.de>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Florian Westphal <fw@strlen.de>, Chenyuan Yang <chenyuan0y@gmail.com>,
+	netfilter-devel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: Initialize ctx to avoid memory allocation error
+Message-ID: <20250314164708.GA1542@breakpoint.cc>
+References: <20250313195441.515267-1-chenyuan0y@gmail.com>
+ <20250313201007.GA26103@breakpoint.cc>
+ <42e5bb33-1826-43df-940d-ec80774fc65b@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,44 +50,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250314143220.6215-5-srinivas.kandagatla@linaro.org>
+In-Reply-To: <42e5bb33-1826-43df-940d-ec80774fc65b@schaufler-ca.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Fri, Mar 14, 2025 at 02:32:19PM +0000, Srinivas Kandagatla wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Casey Schaufler <casey@schaufler-ca.com> wrote:
+> If seclen is 0 it implies that there is no security context and that
+> the secctx is NULL. How that is handled in the release function is up
+> to the LSM. SELinux allocates secctx data, while Smack points to an
+> entry in a persistent table.
 > 
-> DSP expects the periods to be aligned to fragment sizes, currently
-> setting up to hw constriants on periods bytes is not going to work
-> correctly as we can endup with periods sizes aligned to 32 bytes however
-> not aligned to fragment size.
+> > seclen needs to be > 0 or no secinfo is passed to userland,
+> > yet the secctx release function is called anyway.
 > 
-> Update the constriants to use fragment size, and also set at step of
-> 10ms for period size to accommodate DSP requirements of 10ms latency.
+> That is correct. The security module is responsible for handling
+> the release of secctx correctly.
 > 
-> Fixes: 9b4fe0f1cd79 ("ASoC: qdsp6: audioreach: add q6apm-dai support")
-
-For all of the patches, if the intention is that they should be
-backported to stable they should have a CC stable tag here.
-
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  sound/soc/qcom/qdsp6/q6apm-dai.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> > Should seclen be initialised to -1?  Or we need the change below too?
 > 
-> diff --git a/sound/soc/qcom/qdsp6/q6apm-dai.c b/sound/soc/qcom/qdsp6/q6apm-dai.c
-> index 90cb24947f31..a636f9280645 100644
-> --- a/sound/soc/qcom/qdsp6/q6apm-dai.c
-> +++ b/sound/soc/qcom/qdsp6/q6apm-dai.c
-> @@ -231,7 +231,6 @@ static int q6apm_dai_prepare(struct snd_soc_component *component,
->  	cfg.bit_width = prtd->bits_per_sample;
->  	cfg.fmt = SND_AUDIOCODEC_PCM;
->  	audioreach_set_default_channel_mapping(cfg.channel_map, runtime->channels);
-> -
+> No. The security modules handle secctx their own way.
 
-nit: unrelated change
-
->  	if (prtd->state) {
->  		/* clear the previous setup if any  */
->  		q6apm_graph_stop(prtd->graph);
-
-Johan
+Well, as-is security_release_secctx() can be called with garbage ctx;
+seclen is inited to 0, but ctx is not initialized unconditionally.
 
