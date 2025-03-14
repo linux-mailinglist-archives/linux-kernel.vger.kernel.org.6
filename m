@@ -1,89 +1,89 @@
-Return-Path: <linux-kernel+bounces-561269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B21CA60F79
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:58:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24956A60F81
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:01:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6FA87A7E9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:57:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08B667A4E54
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123E91FCFDF;
-	Fri, 14 Mar 2025 10:58:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA2C1F4175
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D421E1F3B87;
+	Fri, 14 Mar 2025 11:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T7hWzj93"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1C91E5B95
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741949893; cv=none; b=K4qm4szKpZMOztgbbZzBiZBjrJDCFo5hBP4Cr5HRP2qpmA1jPcI3sgmbAj7RFc7Sg6vwvFuE8Hi89g0IyGGmbrIatmKgKjtJRYvzWbdzd2V1jPctoZTmHbP2h0JhHYJmimSSLGacZ9yqM+fqxFbd52xMnBsN+6kvMGm3Edop9/Y=
+	t=1741950083; cv=none; b=aVl1zRJUaxBeC/ZNQlSt9PvHRmfRvWS7H0/+k5A0eixG0o8qk9C+Y2BUD6HDZhF4jby0rYMiLJJ9pnIB13Tb/koxCUCtiUTsgyfwmg4/zZsm2c+V8EeeC4ja58HglE+GniwS2nUtZtgE/R50Rg3nWDdFpTOxVMB9xc5P7NFyZaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741949893; c=relaxed/simple;
-	bh=cBb54nEWVFs0duxHFElWvMPXLySnL8gT+4m52nAo5CU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sFWhKKKqE4ywLhPNMef1edfcATBH/bKqlp3JhCN7d/FCS0SurTfY2CuovQmqmUKiEsStPycYOxHARJj/aUa8o3tRSOpRRCye6jgr8V+TZDoXQ6RCevEfGUlM1IeFiknXUX3JLbQ1DD4t6FDghOTzWq7BQ4TW9pUIxnSvIdlsa3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 36A61113E;
-	Fri, 14 Mar 2025 03:58:21 -0700 (PDT)
-Received: from [10.57.85.159] (unknown [10.57.85.159])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E15813F673;
-	Fri, 14 Mar 2025 03:58:09 -0700 (PDT)
-Message-ID: <36c70203-5203-44a1-bc08-479334b730c7@arm.com>
-Date: Fri, 14 Mar 2025 10:58:08 +0000
+	s=arc-20240116; t=1741950083; c=relaxed/simple;
+	bh=wSrdNpvE6BBVdnL5Xg5M3p7VjhKgOqw4REV4qu72WpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uTStD8TkHOcw3QUKaNWJcq2uHbEuiBK76PMVXuSxUH+47zcLCWdeHPaq0BY3b5vyIX8YRvyYQgCtM67punULfJmQZrNwRLMsGLDgaZIJiuKcpsXzoCi7ELxjjsJtzZaBMRCK0vscXag30H0pz/KeUaj9O3ULLkJ8McHjtqjwyhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T7hWzj93; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=7isWwY/qpGnRrUm0sVQaVkG3yVbQ9GHkuVrefn9jIQo=; b=T7hWzj93s1A3hy1e+DsR7TqNmj
+	am/n3Iur8yqbfHoVaOMGzw0zIEVp9Tpp5FAYetEYWRv36VRN6ANL7Ckt+9/GEWWpHH145L08kc5O2
+	DGCTxhkjy8NbibZPvGd48Xh7yc7jLLJGWJuNQ4av0uokEFZEhdxsZa4stuAyWWmCCHEFOUz8Xat4/
+	yuX7zekhbhXjENwnkva87kqxD4Xl1WEz0MroeiREHhD5iY4D0+q0db7pWR4Ar+V2Sc29flKLKrX28
+	28hCgF45VQxxO8BoGnmrc0ZRnE0QKKbkxS5qE45Ea2eZ1dSv4JWg46a8ariZb7tk/wEggA0lfFT3H
+	/1cg7L9A==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tt2kj-0000000HLsm-42sE;
+	Fri, 14 Mar 2025 10:59:34 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D911A300599; Fri, 14 Mar 2025 11:58:56 +0100 (CET)
+Date: Fri, 14 Mar 2025 11:58:56 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v10 00/21] futex: Add support task local hash maps,
+ FUTEX2_NUMA and FUTEX2_MPOL
+Message-ID: <20250314105856.GB36322@noisy.programming.kicks-ass.net>
+References: <20250312151634.2183278-1-bigeasy@linutronix.de>
+ <20250312151848.RlB_XuHA@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v3 PATCH 2/6] arm64: cpufeature: add AmpereOne to BBML2 allow
- list
-Content-Language: en-GB
-To: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org,
- catalin.marinas@arm.com, Miko.Lenczewski@arm.com,
- scott@os.amperecomputing.com, cl@gentwo.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250304222018.615808-1-yang@os.amperecomputing.com>
- <20250304222018.615808-3-yang@os.amperecomputing.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250304222018.615808-3-yang@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312151848.RlB_XuHA@linutronix.de>
 
-On 04/03/2025 22:19, Yang Shi wrote:
-> AmpereOne supports BBML2 without conflict abort, add to the allow list.
-> 
-> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
-> ---
->  arch/arm64/kernel/cpufeature.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 7934c6dd493e..bf3df8407ca3 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -2192,6 +2192,8 @@ static bool cpu_has_bbml2_noabort(unsigned int cpu_midr)
->  	static const struct midr_range supports_bbml2_noabort_list[] = {
->  		MIDR_REV_RANGE(MIDR_CORTEX_X4, 0, 3, 0xf),
->  		MIDR_REV_RANGE(MIDR_NEOVERSE_V3, 0, 2, 0xf),
-> +		MIDR_ALL_VERSIONS(MIDR_AMPERE1),
-> +		MIDR_ALL_VERSIONS(MIDR_AMPERE1A),
->  		{}
->  	};
+On Wed, Mar 12, 2025 at 04:18:48PM +0100, Sebastian Andrzej Siewior wrote:
+
+> @@ -1591,7 +1597,8 @@ static int futex_hash_allocate(unsigned int hash_slots, bool custom)
+>  		struct futex_private_hash *free __free(kvfree) = NULL;
+>  		struct futex_private_hash *cur, *new;
+>  
+> -		cur = mm->futex_phash;
+> +		cur = rcu_dereference_protected(mm->futex_phash,
+> +						lockdep_is_held(&mm->futex_hash_lock));
+>  		new = mm->futex_phash_new;
+>  		mm->futex_phash_new = NULL;
 >  
 
-Miko's series will move back to additionally checking MMFR2.BBM, so you will
-need to add an erratum workaround for these CPUs to set MMFR2.BBM=2 in the
-per-cpu "sanitised" feature register. See:
-
-https://lore.kernel.org/linux-arm-kernel/86ecyzorb7.wl-maz@kernel.org/
-
-Thanks,
-Ryan
-
+Same thing again, this makes no sense.
 
