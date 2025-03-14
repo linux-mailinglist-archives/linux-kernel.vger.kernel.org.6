@@ -1,216 +1,234 @@
-Return-Path: <linux-kernel+bounces-561786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AADFDA61631
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:24:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF5AA61635
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:25:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 060F5463B04
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:24:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B795188294D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832F72040AD;
-	Fri, 14 Mar 2025 16:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE31A18B494;
+	Fri, 14 Mar 2025 16:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ET+X0CJa"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LPck+Ymy"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09AD202F93;
-	Fri, 14 Mar 2025 16:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3726B2E3362
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741969414; cv=none; b=IyrXbf1WbAy3Qd68WmSjHxtknHm1niVs9TIWXWyOlheZ7W4qCldAlDlfS1Xr1P3R7jCz1J35zFTgHSftbcvQINye+zmKziHGaTtzTwuH1Pml6FRw8CTMXKlkk/zCjioXhl3sacnHnCQoEXn49rI/NH6iiyKbSU0eCXLIOH3Szm8=
+	t=1741969509; cv=none; b=pkZKlK6Re1PsKfgvPqqeQ3uymtrY6A3bNnYlrNokau0kQ516NpN6q3pcObBsdyfgfAVvGElUO5/VCaI3MOADN+v86oupI2OzZKgLPQCU9eeszbcGjzCGzmpjm2U6BYu+bVA7LRuIgpcvwxHolozdDCCJ8LRK7VeQDIHPewfUieE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741969414; c=relaxed/simple;
-	bh=gq6fs21t7cSRukId97F+mIARUz3H+G4ZI0HcQILix+w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JT/1rwKXEsx7zCmPVZiieRlLK7OAB/BoZOAaiBQ9fQHkDK8cqqw6V0qtzpSEiXBc4xx9wBIbtI4IvM156DAV2CUl8U/9xrUUsUKqbjCQGEZDecsFbJYpsaQJmwRDdyWgl5uq1OA8Xq+/y/ojVc0g1an2ZZFmsR8iZONR034OCeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ET+X0CJa; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D995244534;
-	Fri, 14 Mar 2025 16:23:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741969404;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LyyfvQmKNl4kXTmIpUUFmaqUY/uk1Kr0n69NdQXeYYc=;
-	b=ET+X0CJaJKyGJdKpsOZGNs3WFrKMdlnP+JIY3eV7p3enSwI5IU5UFSBWrRqvGX6L98Q7At
-	rk0q2yMC5R1GcDWCxIguAC7zDKon907PMbLEJcSgwnqLiSol6v+QS5zFu+cxHLB4UuEjO+
-	eEX2AAalon3FWFtbVz+xwqw4R4uhL/6KEvuOIGhgncxo11gwIm/Qso4NlNTwyW5PP1uF66
-	wWVSrc4+JbM0MonUT3Ye6Sjh4N2yOH7vB5/jYPjAp1EO5vCSYmBqecVNE9tnLoHb2Fgy9J
-	6W1upBy+u3Ho8yHamzqfOxwveh1cMyQE6hEtO7ytMswGaAcX0qP7B/zO6JRPmw==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Antoine Tenart <atenart@kernel.org>,
-	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-	Sean Anderson <sean.anderson@linux.dev>,
-	=?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>
-Subject: [PATCH net-next v3 2/2] net: mdio: mdio-i2c: Add support for single-byte SMBus operations
-Date: Fri, 14 Mar 2025 17:23:18 +0100
-Message-ID: <20250314162319.516163-3-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250314162319.516163-1-maxime.chevallier@bootlin.com>
-References: <20250314162319.516163-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1741969509; c=relaxed/simple;
+	bh=0TtYOEAsABJQJrAfQKpybnT0H+a0G8O6hrnbw78aT4E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NVkrfP02Q2mdcLvTHkunERs/iad2VsgTGuaiPstzXME3Ir6chJiYZxZFCfmsZfv2JrD1VQG8DbYph23zBP13z44BpnbVPCmuD6sDQ3kV/XwYmVZ0H5/r+/0HGQFITYtDF/IPZvSEohRXTthE63A/iOOCFi7xArCDZWA8MbUCwbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LPck+Ymy; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac2a9a74d9cso470824066b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:25:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741969505; x=1742574305; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dsimnS5JfrzuySOmTnCZSejdr1ZQbpEUItt/bOPsELs=;
+        b=LPck+YmyAPl0ZxwviI4YpoomzYXmPvn8Cz90ZvPUrrVI2v/Uv22j/WDPcJHyCQP0+e
+         4l8tZwFUVhLAWNGjZiGiMuKT2e+3CD/UvNGcahoXJEHHq4bkPMEoxfxsnuvm4rYnENME
+         wOF0UPHQepHSSp1GdBIV562huKfAVh5pMNBUTWLOY8hfLd3cdzCRP2fx3givqnsRos0D
+         BuQL+lnQGQeGi17+PMs5JgxvT+5XBkBc1WUe1Sk/VJF3nFtXDJ4xBQtPHKol3qrUATs8
+         /qzq+iN9lWAtm+LWWd0vaiWkzgp+KfOlS1eaB3rcQTSHvpDk/Sh3bPED3u3I+z17+0PR
+         BBnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741969505; x=1742574305;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dsimnS5JfrzuySOmTnCZSejdr1ZQbpEUItt/bOPsELs=;
+        b=xI4HW9LI/N0OxQD5PYW/FDF62hxcXxEl3BTG1wP/NK/A0iC17jYNaU1jFxBhbzAh01
+         pKxFtXKTp1f/+M+vjVNrrxtxP8JxR8JlGwOm7dNtT+3I4KBafpdHf/GWru45JYmSg3nh
+         ajYK5u47nlW7Uc0xFU6cSgQE6YIq0/ZP2mQWjZ6UehR4NzSwN/kGq1W+UYPDWxxQKUHL
+         DrKYGFJRFFYXmI5OfPKfYeo2M1JTWKL2nt5KP7RC7aGwj4DtyOX0+jzA4bE1WOduIBXJ
+         C1tKAye4aQU5eqbs1E7qcjWQ/17CzKdd4d1phRpVG6hQotAzoIQN3G3nDN0l+A6kj40K
+         AjDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqE1zkR+sEH+MsNWZfmwVaL0TiNcZWonzNCEMR1HMNSwSUmx8nt4IFrQHNqewlXpgQ4aW3FPgRcU5i7hM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIFYct3S5I6dYJdaOKuf2p6G7h46EagaOD2S9D8ovfVSVJtSKP
+	OYUeiYlBVrE6yEGOTw5g80xY8J0YrUEq+G3wWYam0yIYcNqSbKBV4BIG9Xr8GnTfx47YFntWGGB
+	G2KTtLgreRl5RSm2vdHZz6YPFAp9ZyO8xlgKXyw==
+X-Gm-Gg: ASbGncuwC2I7N8OGV3PmhE3KmKPQMJUBbwqOTNtFV522sWhbK7c3KaOHLOiwVMN4PQp
+	roc6PchulAhG8Q/xXQya3Skz3wE/4fhCngUjdcclM8a6sGDXnZ0nXuHIhLdlAzfTVW40FNv7MRo
+	DJnwEPNN1FeStsjOhY1rqCRBWkQ8OO37zDWJmaAriNg2zZx4sKj0eKJQ==
+X-Google-Smtp-Source: AGHT+IGYGp5PC8W9a6Wtu+VM0bgbZNW6H2oHNscFU2Uc9CI6+ewvthG/0BcMabXT74Q7sjc+ug9/3kjErgehTo6VUE0=
+X-Received: by 2002:a17:906:4795:b0:abf:4d27:bddd with SMTP id
+ a640c23a62f3a-ac3301e8e0bmr348183566b.26.1741969505174; Fri, 14 Mar 2025
+ 09:25:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedufeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveegtdffleffleevueellefgjeefvedvjefhheegfefgffdvfeetgeevudetffdtnecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdqvddrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudelpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguu
- hhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhm
-X-GND-Sasl: maxime.chevallier@bootlin.com
+References: <20250302210539.1563190-1-vincent.guittot@linaro.org>
+ <20250302210539.1563190-4-vincent.guittot@linaro.org> <24bc804e-305f-4273-922a-a24070aa3e56@arm.com>
+In-Reply-To: <24bc804e-305f-4273-922a-a24070aa3e56@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Fri, 14 Mar 2025 17:24:53 +0100
+X-Gm-Features: AQ5f1Jooofq_eNdS6_8RZQkZoFnvnqCvSPJb9HBEYm1IAuJ1jqnXdZQfx7idBok
+Message-ID: <CAKfTPtBO_DYM+HK+wWMvunMzDAzHwYghy4ae7GnyQHRe1A8kZg@mail.gmail.com>
+Subject: Re: [PATCH 3/7 v5] sched/fair: Rework feec() to use cost instead of
+ spare capacity
+To: Pierre Gondois <pierre.gondois@arm.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com, 
+	rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org, qyousef@layalina.io, 
+	hongyan.xia2@arm.com, christian.loehle@arm.com, luis.machado@arm.com, 
+	qperret@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-PHYs that are within copper SFP modules have their MDIO bus accessible
-through address 0x56 (usually) on the i2c bus. The MDIO-I2C bridge is
-desgned for 16 bits accesses, but we can also perform 8bits accesses by
-reading/writing the high and low bytes sequentially.
+On Wed, 12 Mar 2025 at 15:09, Pierre Gondois <pierre.gondois@arm.com> wrote:
+>
+> Hello Vincent,
+>
+> On 3/2/25 22:05, Vincent Guittot wrote:
+> > feec() looks for the CPU with highest spare capacity in a PD assuming that
+> > it will be the best CPU from a energy efficiency PoV because it will
+> > require the smallest increase of OPP. Although this is true generally
+> > speaking, this policy also filters some others CPUs which will be as
+> > efficients because of using the same OPP.
+> > In fact, we really care about the cost of the new OPP that will be
+> > selected to handle the waking task. In many cases, several CPUs will end
+> > up selecting the same OPP and as a result using the same energy cost. In
+> > these cases, we can use other metrics to select the best CPU for the same
+> > energy cost.
+> >
+> > Rework feec() to look 1st for the lowest cost in a PD and then the most
+> > performant CPU between CPUs. The cost of the OPP remains the only
+> > comparison criteria between Performance Domains.
+> >
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >   kernel/sched/fair.c | 466 +++++++++++++++++++++++---------------------
+> >   1 file changed, 246 insertions(+), 220 deletions(-)
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index d3d1a2ba6b1a..a9b97bbc085f 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+>
+> [...]
+>
+> > +static bool update_best_cpu(struct energy_cpu_stat *target,
+> > +                         struct energy_cpu_stat *min,
+> > +                         int prev, struct sched_domain *sd)
+> >   {
+> > -     unsigned long max_util = eenv_pd_max_util(eenv, pd_cpus, p, dst_cpu);
+> > -     unsigned long busy_time = eenv->pd_busy_time;
+> > -     unsigned long energy;
+> > -
+> > -     if (dst_cpu >= 0)
+> > -             busy_time = min(eenv->pd_cap, busy_time + eenv->task_busy_time);
+> > +     /*  Select the one with the least number of running tasks */
+> > +     if (target->nr_running < min->nr_running)
+> > +             return true;
+> > +     if (target->nr_running > min->nr_running)
+> > +             return false;
+> >
+> > -     energy = em_cpu_energy(pd->em_pd, max_util, busy_time, eenv->cpu_cap);
+> > +     /* Favor previous CPU otherwise */
+> > +     if (target->cpu == prev)
+> > +             return true;
+> > +     if (min->cpu == prev)
+> > +             return false;
+> >
+> > -     trace_sched_compute_energy_tp(p, dst_cpu, energy, max_util, busy_time);
+> > +     /*
+> > +      * Choose CPU with lowest contention. One might want to consider load
+> > +      * instead of runnable but we are supposed to not be overutilized so
+> > +      * there is enough compute capacity for everybody.
+> > +      */
+>
+> I'm not sure I understand the comment. With UCLAMP_MAX tasks, a CPU can lack
+> compute capacity while not being tagged as overutilized. IIUC this is actually
+> the goal of UCLAMP_MAX.
 
-This commit adds support for this type of accesses, thus supporting
-smbus controllers such as the one in the VSC8552.
+the uclamp_max says that the task doesn't need more than a compute
+capacity of 1 so there is no lack
 
-This was only tested on Copper SFP modules that embed a Marvell 88e1111
-PHY.
+>
+> With the following workload:
+> - 2 tasks A with duty_cycle=30%, UCLAMP_MIN/MAX=(0,1), niceness=0
+> - 2 tasks B with duty_cycle=70%, UCLAMP_MIN/MAX=(0,1), niceness=-10
 
-Tested-by: Sean Anderson <sean.anderson@linux.dev>
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
- drivers/net/mdio/mdio-i2c.c | 79 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 78 insertions(+), 1 deletion(-)
+Does the duty cycle make any difference here ? they won't be able to
+run 30% or 70% anyway because of their uclamp_max, will they ?
 
-diff --git a/drivers/net/mdio/mdio-i2c.c b/drivers/net/mdio/mdio-i2c.c
-index da2001ea1f99..202f486e71f1 100644
---- a/drivers/net/mdio/mdio-i2c.c
-+++ b/drivers/net/mdio/mdio-i2c.c
-@@ -106,6 +106,62 @@ static int i2c_mii_write_default_c22(struct mii_bus *bus, int phy_id, int reg,
- 	return i2c_mii_write_default_c45(bus, phy_id, -1, reg, val);
- }
- 
-+static int smbus_byte_mii_read_default_c22(struct mii_bus *bus, int phy_id,
-+					   int reg)
-+{
-+	struct i2c_adapter *i2c = bus->priv;
-+	union i2c_smbus_data smbus_data;
-+	int val = 0, ret;
-+
-+	if (!i2c_mii_valid_phy_id(phy_id))
-+		return 0;
-+
-+	ret = i2c_smbus_xfer(i2c, i2c_mii_phy_addr(phy_id), 0,
-+			     I2C_SMBUS_READ, reg,
-+			     I2C_SMBUS_BYTE_DATA, &smbus_data);
-+	if (ret < 0)
-+		return ret;
-+
-+	val = ((smbus_data.byte & 0xff) << 8);
-+
-+	ret = i2c_smbus_xfer(i2c, i2c_mii_phy_addr(phy_id), 0,
-+			     I2C_SMBUS_READ, reg,
-+			     I2C_SMBUS_BYTE_DATA, &smbus_data);
-+	if (ret < 0)
-+		return ret;
-+
-+	val |= (smbus_data.byte & 0xff);
-+
-+	return val;
-+}
-+
-+static int smbus_byte_mii_write_default_c22(struct mii_bus *bus, int phy_id,
-+					    int reg, u16 val)
-+{
-+	struct i2c_adapter *i2c = bus->priv;
-+	union i2c_smbus_data smbus_data;
-+	int ret;
-+
-+	if (!i2c_mii_valid_phy_id(phy_id))
-+		return 0;
-+
-+	smbus_data.byte = ((val & 0xff00) >> 8);
-+
-+	ret = i2c_smbus_xfer(i2c, i2c_mii_phy_addr(phy_id), 0,
-+			     I2C_SMBUS_WRITE, reg,
-+			     I2C_SMBUS_BYTE_DATA, &smbus_data);
-+	if (ret < 0)
-+		return ret;
-+
-+	smbus_data.byte = val & 0xff;
-+
-+	ret = i2c_smbus_xfer(i2c, i2c_mii_phy_addr(phy_id), 0,
-+			     I2C_SMBUS_WRITE, reg,
-+			     I2C_SMBUS_BYTE_DATA, &smbus_data);
-+
-+	return ret < 0 ? ret : 0;
-+}
-+
- /* RollBall SFPs do not access internal PHY via I2C address 0x56, but
-  * instead via address 0x51, when SFP page is set to 0x03 and password to
-  * 0xffffffff.
-@@ -378,13 +434,26 @@ static int i2c_mii_init_rollball(struct i2c_adapter *i2c)
- 		return 0;
- }
- 
-+static bool mdio_i2c_check_functionality(struct i2c_adapter *i2c,
-+					 enum mdio_i2c_proto protocol)
-+{
-+	if (i2c_check_functionality(i2c, I2C_FUNC_I2C))
-+		return true;
-+
-+	if (i2c_check_functionality(i2c, I2C_FUNC_SMBUS_BYTE_DATA) &&
-+	    protocol == MDIO_I2C_MARVELL_C22)
-+		return true;
-+
-+	return false;
-+}
-+
- struct mii_bus *mdio_i2c_alloc(struct device *parent, struct i2c_adapter *i2c,
- 			       enum mdio_i2c_proto protocol)
- {
- 	struct mii_bus *mii;
- 	int ret;
- 
--	if (!i2c_check_functionality(i2c, I2C_FUNC_I2C))
-+	if (!mdio_i2c_check_functionality(i2c, protocol))
- 		return ERR_PTR(-EINVAL);
- 
- 	mii = mdiobus_alloc();
-@@ -395,6 +464,14 @@ struct mii_bus *mdio_i2c_alloc(struct device *parent, struct i2c_adapter *i2c,
- 	mii->parent = parent;
- 	mii->priv = i2c;
- 
-+	/* Only use SMBus if we have no other choice */
-+	if (i2c_check_functionality(i2c, I2C_FUNC_SMBUS_BYTE_DATA) &&
-+	    !i2c_check_functionality(i2c, I2C_FUNC_I2C)) {
-+		mii->read = smbus_byte_mii_read_default_c22;
-+		mii->write = smbus_byte_mii_write_default_c22;
-+		return mii;
-+	}
-+
- 	switch (protocol) {
- 	case MDIO_I2C_ROLLBALL:
- 		ret = i2c_mii_init_rollball(i2c);
--- 
-2.48.1
+> The workload runs on a Pixel6 with a reduced cpuset of [1,2,7], i.e. 2 little
+> CPUs (1,2) capa=160 and one big CPU (7) capa=1024.
+> CPU7 is avoided by the tasks as their UCLAMP_MAX setting make them fit on the
+> little CPUs.
+>
+> select_best_cpu() prefers to place tasks based on nr_running. If the 2 tasks A
+> end up being placed on one little CPU, and the 2 tasks B are placed on the
+> other little CPU, feec() is theoretically unable to balance the workload.
 
+They will all have 80 compute capacity which is more than their uclamp_max= 1
+
+> In practice, a kworker ends up spawning on one of these 2 little CPUs and tasks
+> are shuffled, so the pattern breaks after ~30ms.
+>
+> This pattern seems problematic as tasks A are:
+> - smaller (30% < 70%)
+> - nicer (0 > -10)
+> than tasks B. So I assume the correct task placement should be one task of each
+> type on each little CPU.
+>
+> ------
+>
+> There are some comments in the load balancer code:
+> 1.
+> /* Computing avg_load makes sense only when group is overloaded */
+> 2.
+> /*
+> * Computing avg_load makes sense only when group is fully busy or
+> * overloaded
+> */
+>
+> IIUC, the load is only meaningful when there is not enough compute capacity
+> to estimate the task size, otherwise util_avg makes more sense. It seems that
+> when it comes to UCLAMP_MAX task, CPUs are placed in this exact situation:
+> load_avg makes more sense that util_avg.
+> However, in this situation, energy computations also lose sense since they
+> are based on the util_avg values.
+>
+> ------
+>
+> select_best_cpu() could check the CPU load before checking nr_running, but it
+> would be meaningless if there is enough CPU time for all the tasks.
+>
+> Maybe CPU load should then be checked only if the system doesn't have enough
+> CPU time. But this would be equivalent to:
+> - remove UCLAMP_MAX in cpu_overutilized()
+> - when the system is overutilized (no UCLAMP_MAX involved), go back to the
+>    load balancer
+>
+> In other words, I don't really see how it is possible to reconciliate UCLAMP_MAX
+> tasks with EAS as EAS relies on util_avg values, and UCLAMP_MAX forces to
+> rely on load_avg value rather than util_avg.
+>
+> Regards,
+> Pierre
+>
+>
+> > +     if ((target->runnable * min->capa * sd->imbalance_pct) >=
+> > +                     (min->runnable * target->capa * 100))
+> > +             return false;
+> >
+> > -     return energy;
+> > +     return true;
+> >   }
 
