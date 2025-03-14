@@ -1,187 +1,113 @@
-Return-Path: <linux-kernel+bounces-561620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19723A61427
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:54:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 273E8A61443
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:55:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A9AE3B9518
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:54:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A0C1882C73
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA1A2010E3;
-	Fri, 14 Mar 2025 14:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCB5202C4A;
+	Fri, 14 Mar 2025 14:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m34jz9vX"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ibRlZnVY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605222AF07
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B071DD0F6;
+	Fri, 14 Mar 2025 14:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741964055; cv=none; b=mJDr++KnEjJOv9N9rgxazBYT7s7vLiy01pFn/Ll0TxoNA4chjPMwqOKeqAHmAz5mkchJhZ9QDlWvmA+Btus6CjJyvozSQ58CSs87QsV4dJkZ+F5KvJvr8f8sqCii7wUzsb0WeCwP+syvRw4B3QPVuy0uAjiSIOrVu1vkeiY0LnQ=
+	t=1741964107; cv=none; b=F/mIxwPu21YFx5NP0swrAJYQBcKjcXKQ1JAg53DmpxbI6UQA6wQVCPihcfhw/uGTY73d3clhVEr7nXjWElQmijO+/Cgx8MzjVpP1jGl9nHFaLGb/YPAhRJ6YwCUPgqd0f4V3u3VAeQjVmU7D6NWKuaZUtb0g2vRatA3LeFZL4R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741964055; c=relaxed/simple;
-	bh=auNWg3EtXdmee2r1M8LgUXlbLAnbWTsjH3D8o7NFe8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cXSk1MEI8MAHRESTy/Vs0HLFn/lS9ETtZRbAJzJsnVrcF20yLr36Iu01Xe7cI9f32duL6SltZ6axyyb/Yr2Q2YXcGI2vUa9xwyFqcvOaArtveDAN3XquEk9XsqU75tlywaS0mZerkojvbcLB5eICIH0DBES9r9DuwQJ5Ue6RWsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m34jz9vX; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-224019ad9edso57174985ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:54:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741964052; x=1742568852; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dsQQtVO/hGMC4LT3OjrS/iAkJsL7ea7avit69Kt1D9g=;
-        b=m34jz9vX7XhN1qrRHhvnpHzUFkUSqU5hDRmOwgT4JGUVH8ByMZnnyAkqQW2CEvdOjE
-         CxeTk1QVTvOZndPosy4urzmV5AbZKSick6gK6MBwUggaIB2qvFBMO/nPrikG7kZ4lDWa
-         hdJU3Uz9WZBRehSiMz8ZxFS4+yUlgJ3D5HPy+H1XaQlvICqq2f7Y+AJVTzaH1c/y9T31
-         x5XB8k35wCyA0thqHEGU2orjbrcpDIdEDAI4uHjXOn5Y+IhzQAdeO8ydznhUJqoXFYGd
-         zD+O9kTl/uPmMA+pwYyuNXY3WVxpUG+yyXqJjoGYmxPvsazxBjxqzQrk+zVXcSQozteE
-         7Cew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741964052; x=1742568852;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dsQQtVO/hGMC4LT3OjrS/iAkJsL7ea7avit69Kt1D9g=;
-        b=Unl5CtvreNz+4ZW3555+x6pDRP44zLSNrNYHP0GfECblsHavr/Nt933ldnG3g+vxjg
-         quMnoyFToN6UbvRXnlDUGAtV146P82rDGjypCLqF50UEJSjQkkxgvD1xjA2AzTfUFz8L
-         Mr94TjjZa+o9eqr7W7IYMqYNayoAkd/wnWHHTmAJGohg6vyKgDD+5CbI98FyVfNE8fqQ
-         lL5nACZ4Ah8Yb5aCntCYt+codcS1mJnnE2FPV3kWgFIuDneejfZahf2WgRdVGnzvtYam
-         zPYAQkowAyC0DXb8m06sPoT5hi9N1QiX7B8Tx2PgVuezlLkJ+Wv81FMsTfZFiEt6ifjg
-         iU0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVa3Hd2x+pOz7x8qkDrzge5ma7KuVQ+t/OY2AIeblm+0+2tQ44Whmdq3WdVhUw2h8S3izdVln36H8BKNmM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY6C+TpaBn80+UP+854Rmw35nt0P6rzmFUusAbHoNL8t7bEGkA
-	1/Oh7nIIgBhlQt+94nydFCjTMHBX8Rhf9c/YMkhanLocmH/RgnzRqOueA0QZgw==
-X-Gm-Gg: ASbGncvjplCFW/9jJxp0Kd2/ZclYnQLbTbHAtyRCuAf4wx4YNMaNQZk8Ik+3rkGv15F
-	nxQYTsCKawe2rNN0njwid/LadSqvHXDpgQBQriKDMa22GPxB6WwUvNZWcZz8fIR0xGvX/sF414j
-	3CrHVAztgyfPiVYPb2aCsBcYTb43XsdHGeHK9GNsGlPrnV1/eqjC/C0QSySjktYqtyTjjBYIaye
-	zw9Kg36L5dQA0g1LpyRMM+Wo717JxT/gWGjhRy9mGcG+xqGwxCPnx6zaoXyEyraPCjiW8H4s0zl
-	q98GcF34Q4QLsgFs/UPV93fGe7pta8aDlKTeZZABDTXu8x5BYu6Aa3G4
-X-Google-Smtp-Source: AGHT+IHzKryo+V7jF5cXWjTyfNfCm3Y69vTnLwXkAPKHfg34JnPxyDQUu9P0t75RNjjyMzo4OR6/iA==
-X-Received: by 2002:a05:6a21:4d05:b0:1f5:591b:4f82 with SMTP id adf61e73a8af0-1f5c1184768mr4519574637.16.1741964052644;
-        Fri, 14 Mar 2025 07:54:12 -0700 (PDT)
-Received: from thinkpad ([120.56.195.144])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73711694e69sm3054059b3a.141.2025.03.14.07.54.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 07:54:12 -0700 (PDT)
-Date: Fri, 14 Mar 2025 20:24:07 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>
-Cc: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>, kishon@kernel.org,
-	p.zabel@pengutronix.de, dmitry.baryshkov@linaro.org,
-	abel.vesa@linaro.org, quic_qianyu@quicinc.com,
-	neil.armstrong@linaro.org, quic_devipriy@quicinc.com,
-	konrad.dybcio@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/2] phy: qcom: qmp-pcie: Add PCIe PHY no_csr reset
- support
-Message-ID: <20250314145407.5uuw7ucrdhca4z5i@thinkpad>
-References: <20250226103600.1923047-1-quic_wenbyao@quicinc.com>
- <e556e3c9-93ee-494a-be35-9353dc5718e4@quicinc.com>
- <Z89Ek8Y7TRSgTuMg@vaman>
+	s=arc-20240116; t=1741964107; c=relaxed/simple;
+	bh=OdRwL9wibjHgxeSnK/wuK1cRL6Nw7BFn6J3Acbb0H7Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SoTzbhQx65fTEFv1yL5L44dR7xO/bs37/vbIy7EBvM6cgLeB/xR0NdoSRz6L9t2nkDTZ2VubRgOrbWP88vEHoQmJoJaU5/HoeFjjLcvxyAA34vL48WtornLlJv8+vCf65NI0GtQZity9jsZX3hTNVlp/XHgTeL9YfdqiBsp3Ijw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ibRlZnVY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 326ACC4CEEB;
+	Fri, 14 Mar 2025 14:55:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741964107;
+	bh=OdRwL9wibjHgxeSnK/wuK1cRL6Nw7BFn6J3Acbb0H7Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ibRlZnVYUR8sZZzChhJlo0gbZrAYG1n9LqH2qJJ8M/7uO+B2flJoCvU2byzSOCnn/
+	 ovuodgd28xjA3hUOezITytgO8BR6K2EFeJ2+RkKx9l9czemRXtYjFbblWr5zaYJ3oc
+	 T+m3YIFPeF9Se8LGkkM5JMgLRXyiY/L5Geffm570M7FIKjndzjsPdVclFsX+N6mxp6
+	 E9pvbFdDS1Aa5y7titRHZRAZNexTg7TBFUZ42dSGwvvHoopcjUwbpw9kcU+pPqMiBG
+	 U2pcYx7BLP3G/e3zcKql/AyBfT7RjKn6jGZBE8Miu45BSqav37XOTpTQcJXKBxpsho
+	 QrriFnj1XXZDQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1tt6RG-000000002yU-1lEC;
+	Fri, 14 Mar 2025 15:55:06 +0100
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH v2 0/8] arm64: dts: qcom: x1e: mark l12b and l15b always-on
+Date: Fri, 14 Mar 2025 15:54:32 +0100
+Message-ID: <20250314145440.11371-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z89Ek8Y7TRSgTuMg@vaman>
 
-On Tue, Mar 11, 2025 at 01:29:15AM +0530, Vinod Koul wrote:
-> On 10-03-25, 16:58, Wenbin Yao (Consultant) wrote:
-> > On 2/26/2025 6:35 PM, Wenbin Yao wrote:
-> > > The series aims to skip phy register programming and drive PCIe PHY with
-> > > register setting programmed in bootloader by simply toggling no_csr reset,
-> > > which once togglled, PHY hardware will be reset while PHY registers are
-> > > retained.
-> > > 
-> > > First, determine whether PHY setting can be skipped by checking
-> > > QPHY_START_CTRL register and the existence of nocsr reset. If it is
-> > > programmed and no_csr reset is supported, do no_csr reset and skip BCR
-> > > reset which will reset entire PHY.
-> > > 
-> > > This series also remove has_nocsr_reset flag in qmp_phy_cfg structure and
-> > > decide whether the PHY supports nocsr reset by checking the existence of
-> > > nocsr reset in device tree.
-> > > 
-> > > The series are tested on X1E80100-QCP and HDK8550.
-> > > 
-> > > The commit messages of this patchset have been modified based on comments
-> > > and suggestions.
-> > > 
-> > > Changes in v5:
-> > > - Add a check whether the init sequences are exist if the PHY needs to be
-> > >    initialized to Patch 2/2.
-> > > - Link to v4: https://lore.kernel.org/all/20250220102253.755116-1-quic_wenbyao@quicinc.com/
-> > > 
-> > > Changes in v4:
-> > > - Add Philipp's Reviewed-by tag to Patch 1/2.
-> > > - Use PHY instead of phy in comments in Patch 2/2.
-> > > - Use "if (qmp->nocsr_reset)" instead of "if (!qmp->nocsr_reset)" in
-> > >    function qmp_pcie_exit for readability in Patch 2/2.
-> > > - Use goto statements in function qmp_pcie_power_on and qmp_pcie_power_off
-> > >    for readability in Patch 2/2.
-> > > - Refine the comment of why not checking qmp->skip_init when reset PHY in
-> > >    function qmp_pcie_power_off in Patch 2/2.
-> > > - Link to v3: https://lore.kernel.org/all/20250214104539.281846-1-quic_wenbyao@quicinc.com/
-> > > 
-> > > Changes in v3:
-> > > - Replace devm_reset_control_get_exclusive with
-> > >    devm_reset_control_get_optional_exclusive when get phy_nocsr reset
-> > >    control in Patch 1/2.
-> > > - Do not ignore -EINVAL when get phy_nocsr reset control in Patch 1/2.
-> > > - Replace phy_initialized with skip_init in struct qmp_pcie in Patch 2/2.
-> > > - Add a comment to why not check qmp->skip_init in function
-> > >    qmp_pcie_power_off in Patch 2/2.
-> > > - Link to v2: https://lore.kernel.org/all/20250211094231.1813558-1-quic_wenbyao@quicinc.com/
-> > > 
-> > > Changes in v2:
-> > > - Add Abel's and Manivannan's Reviewed-by tag to Patch 1/2.
-> > > - Refine commit msg of Patch 2/2.
-> > > - Link to v1: https://lore.kernel.org/all/20250121094140.4006801-1-quic_wenbyao@quicinc.com/
-> > > 
-> > > Konrad Dybcio (1):
-> > >    phy: qcom: pcie: Determine has_nocsr_reset dynamically
-> > > 
-> > > Qiang Yu (1):
-> > >    phy: qcom: qmp-pcie: Add PHY register retention support
-> > > 
-> > >   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 86 +++++++++++++++++-------
-> > >   1 file changed, 63 insertions(+), 23 deletions(-)
-> > > 
-> > > 
-> > > base-commit: bcf2acd8f64b0a5783deeeb5fd70c6163ec5acd7
-> > 
-> > Hi, do you have any futher comments?
-> 
-> Patches lgtm, It would be great if this was tested by someone as well...
-> Abel, Stephan, Neil can you folks test this and provide T-B
-> 
+The l12b and l15b supplies are used by components that are not (fully)
+described (and some never will be) and must never be disabled.
 
-I tested the previous version and it worked well on X1P40100-CRD. Will give this
-version a go and give my tag.
+Mark the regulators as always-on to prevent them from being disabled,
+for example, when consumers probe defer or suspend.
 
-> I am also concerned about bootloader assumptions esp if the Qcom boot
-> chain is skipped
-> 
+Note that there are likely votes from other processors for these rpmh
+regulators (at least for l15b) but the OS should not rely on that in any
+case.
 
-In that case, someone should add the PHY init sequence to the driver. That's why
-I wanted to have the check in place to avoid silently failing PHY
-initialization. Right now, the driver will error out if there is no init
-sequence available.
+Included is also a patch that adds the missing HID supplies for the
+T14s. It was a corresponding change for the CRD that made me look into
+this to make sure these supplies were not disabled during suspend or on
+probe deferrals.
 
-- Mani
+Johan
+
+
+Changes in v2
+ - rebase on x1-crd and t14s dtsi renames
+
+
+Johan Hovold (8):
+  arm64: dts: qcom: x1e80100-crd: mark l12b and l15b always-on
+  arm64: dts: qcom: x1e78100-t14s: mark l12b and l15b always-on
+  arm64: dts: qcom: x1e001de-devkit: mark l12b and l15b always-on
+  arm64: dts: qcom: x1e80100-dell-xps13-9345: mark l12b and l15b
+    always-on
+  arm64: dts: qcom: x1e80100-hp-x14: mark l12b and l15b always-on
+  arm64: dts: qcom: x1e80100-yoga-slim7x: mark l12b and l15b always-on
+  arm64: dts: qcom: x1e80100-qcp: mark l12b and l15b always-on
+  arm64: dts: qcom: x1e78100-t14s: fix missing HID supplies
+
+ arch/arm64/boot/dts/qcom/x1-crd.dtsi          |  2 +
+ arch/arm64/boot/dts/qcom/x1e001de-devkit.dts  |  2 +
+ .../qcom/x1e78100-lenovo-thinkpad-t14s.dtsi   | 45 +++++++++++++++++++
+ .../dts/qcom/x1e80100-dell-xps13-9345.dts     |  2 +
+ .../dts/qcom/x1e80100-hp-omnibook-x14.dts     |  2 +
+ .../dts/qcom/x1e80100-lenovo-yoga-slim7x.dts  |  3 +-
+ arch/arm64/boot/dts/qcom/x1e80100-qcp.dts     |  2 +
+ 7 files changed, 57 insertions(+), 1 deletion(-)
 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.48.1
+
 
