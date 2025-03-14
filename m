@@ -1,137 +1,153 @@
-Return-Path: <linux-kernel+bounces-561570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB2CA6139B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:27:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20970A613CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:38:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61CF13BB12D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:27:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FD5518978FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EE7201002;
-	Fri, 14 Mar 2025 14:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550E0200B85;
+	Fri, 14 Mar 2025 14:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="A7XGH+OT"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fJS9ch9R"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A061FF1A8
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 14:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF7A1FF7B7;
+	Fri, 14 Mar 2025 14:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741962467; cv=none; b=dxel6e4sVsFNv1Qg/AjgPzWEjv0XsxvNZt4wjgs8UsnlehU2rrrgUwL59QGZ76crXXFNcTGKNUMEF5QLhRxlnx2og4nbx7B9wvXsPbzvsaXyXLwcQoJe7l3JhJOA34DXE+eQHCyvd84CpNl6uALYAE7doOAuwbT5RVZJGZ506Yg=
+	t=1741963102; cv=none; b=fhOX3pQiQC/e2heqMUsuhESQw5soorN1ktuN2wsHii18PZmRBhQ0Myw+/4BMCvVDsbvrGGkvFtBnf6uQnSi5FPP57ZpTF5+/uKjEJE21ocbs8nvA9Neh7k5ldw8pYdH6TphGEeyfiY4V8JT8MDJVSRTalJuyHTjfhk0JW4VPedE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741962467; c=relaxed/simple;
-	bh=RgeUtdIlm0fketWl8KYbwWGkxUv/Xxwz0EpGdR/2drQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hD6W46+mi5qYLmJIMOGZjMl5FiT8sapWCMrOP4HQA47VJJHSGUV0fAumdHNnA741Aes59UeX5LOVU/W7ZCtb4i6IwQg93qR8SyoP70wLva6qGm0lrm+H5BlR87qYVARxMvW00vH2YqwRSGfiy+Co0cFWTnzUwNHwr005AqYpbxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=A7XGH+OT; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39133f709f5so1342319f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:27:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741962463; x=1742567263; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=J8JeOtl31HdzN6jUKW4y8ELJUCSs3v6y5I2ghd0PFtM=;
-        b=A7XGH+OTKgko44xQs/WAAOGA3JqNFZ5pE+3t6ADSjZa7UDXY+isgRQJK7XE2ZO9VPr
-         Z3e64fALODY1aojQ++lj9FOKs6t0IsMW+/WHYorZwKZKLt/6/V0eNh3Hp0Ali5jO4ACy
-         rolvLn3h5vJ8Uu0m10jLsvMmFKUKW//rP4PgSNLEMSjqRr1dChZ6AqAVxDgNadw1zSzX
-         7FzGK/G7H3ajxrnwumdCH4I9XpddTRdLKOUVJQysK2N648HtaFRchUtge+dklKwI9uc1
-         UxQV8SoBShMDKJDJNUBllnkCjqHizJfY8H8jtBpYOMRNaUoLVDY0hvyQLOGiwixrVP1w
-         Orsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741962463; x=1742567263;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J8JeOtl31HdzN6jUKW4y8ELJUCSs3v6y5I2ghd0PFtM=;
-        b=FJZJCFLJG7diDISEaNAaju2hOgtNiioiQPIYnffQJAXOT/V7vWrfa2R2jpgSF/3whg
-         qsHL61Kax6D8GY0G4TyL7/o+2OgDyTMtXHOkl0Fk2/nnhjsp7BFzEplcD7ay6UCfmBuy
-         no83sUKT3PU23niF4xb9/JhSmZ1VujqI464nFEVpgiDRZr+YyUBiMdliDa6cmIBT+hoh
-         dcF1A5CDz8lIaymL4boM3QAs/Ia8nk85wis6xyeoMwpyFPn/SosqWbO4HrJrvv8y+jd3
-         spqX5CW38Oij3ypYyq8HsXilEz2eoISAgTABinh9qk+0W1akdSaCO9aNEUdq4qkcwfHy
-         ig4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUT5cG1aeM9pbPJRqSAA/U1PulQ4ocS3RppNXMO9VV3LI/GsMR+Vo35m4m43V4ngOhsatwCBnoNQ28BAo8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaWv4QnhbqjzsF/iBY44cB7XbBYhgE3ld0XFy/IYJl6I06rCSp
-	WeEFSa/LGt2gyC2qDdG7QJZBk1gjvWCyrWbOADdh4romXtiMyfk5YEXoQbz2Z+KRnaqamQIuiac
-	S
-X-Gm-Gg: ASbGncsPLf7PygClCvuDN07xg+y+rv/Hb+P7ZvBF3MDu1ZHt3jWlFEZMkwh94jAJ/RP
-	qfkewGLXcvll+uPhbvscbwChLQ+CPUCUo75kDTRoXiPkTvBO32SHVHh/fO88wmRNetcJJeEEZsT
-	5yM40kR0EUz097TBEg2yUmPONQeWDWkE3Lhn/sm+30tq/y7CFSlZIZO6X87NDn6fD0F+L8K0sUG
-	JGP0dAjvbSjsj49y5hnKuANsi67ih/HjFLZI9bl7Tc+ZH6NsyQyyyoBRxFPy9VDfLOsFFImQS7f
-	RxotddwZ6vtb5wHY+/6gKUn7kUh7LLfgKqrIxwLS9sTG
-X-Google-Smtp-Source: AGHT+IFGdOiD0vYJvINPeEbn5Eoy6ZXFfBenb+Y5x7v2pMRpV/unueJpQBMKaZe/bTflQ+DPn5T8FQ==
-X-Received: by 2002:a5d:6d06:0:b0:391:3261:ff48 with SMTP id ffacd0b85a97d-3971f9e496fmr4415505f8f.35.1741962463132;
-        Fri, 14 Mar 2025 07:27:43 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:5dd0:723b:f16a:8ac4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8975afesm5623081f8f.47.2025.03.14.07.27.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 07:27:42 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
+	s=arc-20240116; t=1741963102; c=relaxed/simple;
+	bh=7Xy5Hrkgm3Yk0S+DRubh13I7X1BUmB6WJ7puEzumslM=;
+	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=GemspcLS+JBiALPfAcRTJkziSo2O6TfGssheN8F6vs6Nm4G0v5W5uj1ntZ3Gz7KkS0mSU8FWpifxjths2tLmQRF5yDAlYOJ8alDj7eBBmNmVSU1txPSkh+SGre07MyeV/QWG16FoQ6zXjX2gB4f9Oq79RF6YAsy8OdmbWeAiCuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fJS9ch9R; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741963101; x=1773499101;
+  h=from:to:cc:date:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=7Xy5Hrkgm3Yk0S+DRubh13I7X1BUmB6WJ7puEzumslM=;
+  b=fJS9ch9RYKC2LT1QTq6uDLvUZc/aJfqHbU1Eq1zl2WF8zWEbO/drP9cx
+   6QJ/BBqHWMmZB+NJ6j9+r8jUWa+syyP6aBa9QdEjjJ8dzsQ/XqWEfu8eW
+   SE4uqvuuzMrOTwHyR4CWw7R23daiqQjQmZPPwm0J82DL43g/afx035ed6
+   paIsA36i+z6VHWcd0y80sXv/oYotAZOE7+VOP0/fk617/VGjFF3U5nJiW
+   4V9Vers436qADSsF/2SZOqKV/UnCmuoAvSWWbAvhuI6fdOKuZ4COzrBt2
+   3QjmSL2LwlezDmfzZPpE64mS4PDdIzZjbwg3pwhcyfao0YmyBAcDg1wC3
+   g==;
+X-CSE-ConnectionGUID: Rj6teqEuRQ2cM7+kWMx9kA==
+X-CSE-MsgGUID: UHzFvp0+QD+s+9/oEo5mCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="42980508"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="42980508"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 07:38:20 -0700
+X-CSE-ConnectionGUID: QXKqHijXRziQIz0eVCl4Yw==
+X-CSE-MsgGUID: gWbHpttISvivz6SwXBTeZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="158451756"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.56])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 07:38:18 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [GIT PULL] gpio fixes for v6.14-rc7
-Date: Fri, 14 Mar 2025 15:27:40 +0100
-Message-ID: <20250314142740.49129-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
+Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
+Date: Fri, 14 Mar 2025 16:27:43 +0200
+Subject: [GIT PULL] platform-drivers-x86 for v6.14-5
+Message-ID: <pdx86-pr-20250314162743-238386141@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Linus,
 
-Linus,
+Here is a platform-drivers-x86 fixes PR for v6.14. The diff is a bit
+larger than I'd prefer at this point due to unwinding the amd/pmf
+driver's error handling properly instead of calling a deinit function
+that was a can full of worms.
 
-Please pull the following GPIO core fixes for the next RC.
 
-The first commit is a backport from my v6.15-rc1 queue that turned out to
-be needed in v6.14 as well but as the former diverged from my fixes branch
-I had to adjust the patch a bit. I will pull in v6.14-rc7 once tagged and
-resolve the conflict between the two.
+Fixes and new HW support:
 
-The second commit fixes a regression observed in user-space where closing
-a file descriptor associated with a GPIO device results in a ~10ms delay
-due to the atomic notifier calling rcu_synchronize() when unregistering.
+ - amd/pmf:
 
-Please pull,
-Bartosz
+    - Fix error handling in amd_pmf_init_smart_pc()
 
-The following changes since commit 80e54e84911a923c40d7bee33a34c1b4be148d7a:
+    - Fix missing hidden options for Smart PC
 
-  Linux 6.14-rc6 (2025-03-09 13:45:25 -1000)
+ - surface: aggregator_registry: Add Support for Surface Pro 11
+
+Regards, i.
+
+
+The following changes since commit 376a8c2a144397d9cf2a67d403dd64f4a7ff9104:
+
+  platform/x86/amd/pmf: Update PMF Driver for Compatibility with new PMF-TA (2025-03-05 13:33:42 +0200)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.14-rc7
+  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.14-5
 
-for you to fetch changes up to dcb73cbaaeb39c9fd00bf2e019f911725945e2fe:
+for you to fetch changes up to 03fc0a2dc9f8c292fad8a1bcfb6d1f0dec1824be:
 
-  gpio: cdev: use raw notifier for line state events (2025-03-13 09:20:12 +0100)
-
-----------------------------------------------------------------
-gpio fixes for v6.14-rc7
-
-- use raw notifier for line state events
-- don't check the return value of gpio_chip::get_direction() when
-  registering a GPIO chip
+  MAINTAINERS: Update Ike Panhc's email address (2025-03-14 16:03:45 +0200)
 
 ----------------------------------------------------------------
-Bartosz Golaszewski (2):
-      gpiolib: don't check the retval of get_direction() when registering a chip
-      gpio: cdev: use raw notifier for line state events
+platform-drivers-x86 for v6.14-5
 
- drivers/gpio/gpiolib-cdev.c | 15 +++++++++------
- drivers/gpio/gpiolib.c      | 35 ++++++++++++++++-------------------
- drivers/gpio/gpiolib.h      |  5 ++++-
- 3 files changed, 29 insertions(+), 26 deletions(-)
+Fixes and new HW support:
+
+ - amd/pmf:
+
+    - Fix error handling in amd_pmf_init_smart_pc()
+
+    - Fix missing hidden options for Smart PC
+
+ - surface: aggregator_registry: Add Support for Surface Pro 11
+
+The following is an automated shortlog grouped by driver:
+
+amd/pmf:
+ -  fix cleanup in amd_pmf_init_smart_pc()
+
+amd: pmf:
+ -  Fix missing hidden options for Smart PC
+
+MAINTAINERS:
+ -  Update Ike Panhc's email address
+
+surface: aggregator_registry:
+ -  Add Support for Surface Pro 11
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      platform/x86/amd/pmf: fix cleanup in amd_pmf_init_smart_pc()
+
+Ike Panhc (1):
+      MAINTAINERS: Update Ike Panhc's email address
+
+Lukas Hetzenecker (1):
+      platform/surface: aggregator_registry: Add Support for Surface Pro 11
+
+Mario Limonciello (1):
+      platform/x86/amd: pmf: Fix missing hidden options for Smart PC
+
+ .mailmap                                           |  1 +
+ MAINTAINERS                                        |  2 +-
+ .../platform/surface/surface_aggregator_registry.c |  5 ++-
+ drivers/platform/x86/amd/pmf/spc.c                 |  2 ++
+ drivers/platform/x86/amd/pmf/tee-if.c              | 36 +++++++++++++++-------
+ 5 files changed, 33 insertions(+), 13 deletions(-)
 
