@@ -1,87 +1,183 @@
-Return-Path: <linux-kernel+bounces-560761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C16A60933
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:29:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E1DA60935
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:32:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E0FE189892D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:29:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C207E3A68BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D091547E2;
-	Fri, 14 Mar 2025 06:29:33 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098CF13D246;
+	Fri, 14 Mar 2025 06:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="Aq9/1tfp"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A16114F9FB;
-	Fri, 14 Mar 2025 06:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4277D2F4A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741933772; cv=none; b=LU3cvfcZRXiBtDXEXS/gNcdCVjDAL9T+NcGJt73uETYPKgAWo1/+FRUd6ExCdewGFnBeIVEroYjunTpZRrUv3UgckxeFrTYFODG9T9HAe5xEkhdBtXbcF02LW66j3uwDirFTMcGbpk23aGunT5fgaIltK4FJSZAu4Fpe2PXiOq0=
+	t=1741933941; cv=none; b=FZagcxj4BDWJNpRX/cqjSnJRgA9j+zSs7fT461W+xcU9LmDiwR9OdYxgEWT3RH0CwHoQUZBfCPS3IOr8hpMa5nx/Xeu1ZwTaeXDI4EFTpsXcYBpe2Cio81LToUW65jzOk20G4KarpC1VunlFZHhIEuF5rB3wVjPfsYfVwaVPAzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741933772; c=relaxed/simple;
-	bh=fdG7Zm21jVty5Th/nDfRD+WBbkdOq/e5tzr3KeOthsc=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=d3uuZ/gXphi7qwbultkHZOekGmSEv8TAVr7sde/pg9/USkyhvHJ7JMaZhNXtd+aVkcrS1/BJbOzIdRmX4lYldzv37WubmEgu3kREh6WgM8JNhks6fvqAry0E/onH/blbdD2WmS+0hv8zXv0OrUtJ5NRNxVK8sFrI1Klhfo3EB9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZDZGG6RL5z5B1Kr;
-	Fri, 14 Mar 2025 14:29:26 +0800 (CST)
-Received: from njb2app06.zte.com.cn ([10.55.23.119])
-	by mse-fl2.zte.com.cn with SMTP id 52E6T5XF001112;
-	Fri, 14 Mar 2025 14:29:06 +0800 (+08)
-	(envelope-from long.yunjian@zte.com.cn)
-Received: from mapi (njy2app08[null])
-	by mapi (Zmail) with MAPI id mid201;
-	Fri, 14 Mar 2025 14:29:07 +0800 (CST)
-Date: Fri, 14 Mar 2025 14:29:07 +0800 (CST)
-X-Zmail-TransId: 2b0067d3ccb31d8-0e125
-X-Mailer: Zmail v1.0
-Message-ID: <20250314142907818PyT07oeDc9Sr9svXo7qLc@zte.com.cn>
+	s=arc-20240116; t=1741933941; c=relaxed/simple;
+	bh=tDYSQdG8a0UkcNzTAhdLSVTqfLqjx+9xH4EZD2wQ73Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LXayk+ftmK66PMw0kpnc/3xQcY3ZSQ2gkZ+xoU7I05DvGGS1skt7bmIvO+++tFE+curWnDmYR5dqOZ8uOPg/peDImJ7unxMvl4TvDDZUlk4kS9wo1062x/N3hwd+AzycbYwGlkjtE3lkkBkAj3GKE4Zzz/ajnjbcdz5XBkAN++c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smartx.com; spf=pass smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=Aq9/1tfp; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smartx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smartx.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e62d132a6a7so1334958276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 23:32:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1741933937; x=1742538737; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uSye0IM6T+fFQco88xqM+x+quRiF8O1alSjOUyDpMzU=;
+        b=Aq9/1tfpVRn18xEfiljLow6+1aZK3tuoZBfknYfxpxKz2TZi9UW/ysY+DWEZHS7gkI
+         hS88+0/+R5+6OHghg2D7A9UsyOuqZLls6WLStTG+7P+ZccbwYf03r2F9pfl08qDFPel5
+         TgaCMnyKIW8TAslX4Q2Ws5eXG5eviLl/MZADzAjjMZhl0OaIAVipRsu6LnLFcBI4Tc+d
+         /CbrM8C7fV1qdx9uaM+OLPnC/xFshjboUxy/NahC7vZyaGk37wU3xn3EL8jfI5IOfXBh
+         u4Wu6nNZw2kZuPMcy/FsAvmIsFrUAL84YV00EeqsS+pVi08zkxPmJ+73+ua3CjpSHJ4f
+         zEmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741933937; x=1742538737;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uSye0IM6T+fFQco88xqM+x+quRiF8O1alSjOUyDpMzU=;
+        b=tQjMN5Hb1bk/igrqUhSak808VV8NOQZAeatnLqNNyR7Pu9zN/wecZkvyGXP/nb4hdb
+         nXQ122lZS6NegN5av53x8PRItyW/dHWyou6v0YdEnvRqPjDIsHv0F1hoI5LVcmrZ4XKR
+         mgrY/R1/9nIcUxsTpEzclYXCDa4L/tUnDQh1z+akhIZv7JMIqXiHnpeYkyGzdpWzVFdV
+         6R5/1bDDqqM+g8jH1QcuJKl//5M2k98i0tBOSMCTb6rZov7FnZeXZb0B8zAC4rjjJ2za
+         LxMd8dFXFtiMSzRLmzpSEbKYLM8EEdcfFX8M3zKM2gszxu0wtBAhJp91C/Ht9OitUwQ+
+         Xy7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXFgqAteOOIz2OMmbHSL2T/HbqMHcY2d1dPqCcIl0YQtF2nrEdPeIEc9hHlizI3eZVq2TTnoHSi+scZ6Bw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw4vZrM5KUydDA499K3i751hKDQWUCw7OeKmVdAVRYXcGyvGVz
+	nCOVbqK1LBP7j0GdHd7YBzqcnAkYx8A6BwomAEwBEG0lc1YwpPFt2pZGHlSNrRjmcEtEXz8T0TL
+	UWqDoTeA6DpwYMJcrWDPwDHu1bTgV93HhX0x9BjxhQtpFM7zLw7+eLg==
+X-Gm-Gg: ASbGncvPOj7IQXtFNi6pBKyT9a2O6WkrYNBoX/njDaX378+LpIq2lALKtxtxABQ5qp4
+	+FT+d984EciilwDRS94BbP9q3lQ5RWMoY6IyTYNlDvvgG6DGxi7HK5ITIJDadOzL0hy9qRjP/pz
+	W8zvwc3mvxxQ+6Ki3Ua7kWqKRnaFGH
+X-Google-Smtp-Source: AGHT+IFdjV9rvN6kWBxbM1SXcx8x+0H5sVId9xosBFldVnnwqvfbgP3qQnnCXQIHKgeW6aNkyaVLID3Tl8HDVLihFwI=
+X-Received: by 2002:a05:6902:208a:b0:e60:78b9:1502 with SMTP id
+ 3f1490d57ef6-e63f6506badmr1495714276.16.1741933936533; Thu, 13 Mar 2025
+ 23:32:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <long.yunjian@zte.com.cn>
-To: <djwong@kernel.org>
-Cc: <cem@kernel.org>, <linux-xfs@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mou.yi@zte.com.cn>,
-        <zhang.xianwei8@zte.com.cn>, <ouyang.maochun@zte.com.cn>,
-        <jiang.xuexin@zte.com.cn>, <xu.lifeng1@zte.com.cn>,
-        <lv.mengzhao@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIXSB4ZnM6IEZpeCBzcGVsbGluZyBtaXN0YWtlICJkcml0eSIgLT4gImRpcnR5Ig==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 52E6T5XF001112
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D3CCC6.004/4ZDZGG6RL5z5B1Kr
+MIME-Version: 1.0
+References: <20250310030004.3705801-1-lei.chen@smartx.com> <CANDhNCoRxxA-CxOQ6vxfjf6BDxR-gqCC_QE1wwf4L3gwrvfv6A@mail.gmail.com>
+In-Reply-To: <CANDhNCoRxxA-CxOQ6vxfjf6BDxR-gqCC_QE1wwf4L3gwrvfv6A@mail.gmail.com>
+From: Lei Chen <lei.chen@smartx.com>
+Date: Fri, 14 Mar 2025 14:32:05 +0800
+X-Gm-Features: AQ5f1JoiKQn67UElYIocTCxZX2V5H2HB55w4VkGkg4WL6wV7oqkECoizqNvItRk
+Message-ID: <CAKcXpBwvjrmoPnfFgaXs81XF5du-mWzLiJ+8YvvhM_1tQMiZBQ@mail.gmail.com>
+Subject: Re: [PATCH] Fix rolling back of CLOCK_MONOTONIC_COARSE
+To: John Stultz <jstultz@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zhang Xianwei <zhang.xianwei8@zte.com.cn>
-There is a spelling mistake in fs/xfs/xfs_log.c. Fix it.
-Signed-off-by: Zhang Xianwei <zhang.xianwei8@zte.com.cn>
----
-fs/xfs/xfs_log.c | 2 +-
-1 file changed, 1 insertion(+), 1 deletion(-)
-diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-index f8851ff835de..ba700785759a 100644
---- a/fs/xfs/xfs_log.c
-+++ b/fs/xfs/xfs_log.c
-@@ -2887,7 +2887,7 @@ xlog_force_and_check_iclog(
-*
-*     1. the current iclog is active and has no data; the previous iclog
-*             is in the active or dirty state.
-- *     2. the current iclog is drity, and the previous iclog is in the
-+ *     2. the current iclog is dirty, and the previous iclog is in the
-*             active or dirty state.
-*
-* We may sleep if:
---
-2.27.0
+Hi John,
+Thanks for your reply.
+
+On Fri, Mar 14, 2025 at 1:20=E2=80=AFAM John Stultz <jstultz@google.com> wr=
+ote:
+>
+> On Sun, Mar 9, 2025 at 8:00=E2=80=AFPM Lei Chen <lei.chen@smartx.com> wro=
+te:
+> >
+> > timekeeping_apply_adjustment try to adjust tkr_mono.mult by @mult_adj.
+> > If @mult_adj > 0, tk->tkr_mono.xtime_nsec will be decreased by @offset.
+> > Then timekeeping_update flushes shadow_timekeeper to real tk and vdso
+> > data region. Then rolling back happens.
+> >
+> > The drawing below illustrates the reason why timekeeping_apply_adjustme=
+nt
+> > descreases tk->tkr_mono.xtime_nsec.
+> >
+> >      cycle_interval       offset        clock_delta
+> > x-----------------------x----------x---------------------------x
+> >
+> > P0                      P1         P2                         P3
+> >
+> > N(P) means the nano sec count at the point P.
+> >
+> > Assume timekeeping_apply_adjustment runs at P1, with unaccumulated
+> > cycles @offset. Then tkr_mono.mult is adjusted from M1 to M2.
+> >
+> > Since offset happens before tkr_mono.mult adjustment, so we want to
+> > achieve:
+> > N(P3) =3D=3D offset * M1 + clock_delta * M2 + N(P1)   -------- (1)
+> >
+> > But at P3, the code works as following:
+> > N(P3) :=3D (offset + clock_delta) * M2 + N(P1)
+> >        =3D offset * M2 + clock_delta * M2 + N(P1)
+> >
+> > Apprently, N(P3) goes away from equation (1). To correct it, N(P1)
+> > should be adjusted at P2:
+> > N(P1) -=3D offset * (M2 - M1)
+> >
+> > To fix this issue, the patch accumulates offset into tk, and export
+> > N(P2) to real tk and vdso.
+> >
+> > tk.tkr_mono :=3D N(P2) =3D N(P1) + offset * M1
+> >
+> > Then at P3, we calculate N(P3) based on N(P2) instead of N(P1):
+> > N(P3) :=3D N(P2) + clock_delta * M2
+> >
+> > Signed-off-by: Lei Chen <lei.chen@smartx.com>
+>
+> Thanks for the email and the patch!
+>
+> So, I'm having a bit of a hard time understanding the issue you're
+> actually seeing. It seems to be that you're seeing
+> CLOCK_MONOTONIC_COARSE go backwards?
+>
+I'm sorry for that.
+Yes, it's CLOCK_MONOTONIC_COARSE that goes backwards.
+
+I hope the code flow can help to explain it.
+
+In user space, clock_gettime(CLOCK_MONOTONIC_COARSE) actually reads
+tk->xtime_sec and tk->tkr_mono.xtime_nsec.
+
+But when ntp calls adjtimex, the code works as following:
+do_adjtimex
+    timekeeping_advance
+        timekeeping_apply_adjustment
+             tk->tkr_mono.xtime_nsec -=3D offset; ------------------- (1)
+    timekeeping_update
+        update_vsyscall    -------------------------(2)
+
+At (1) , if offset > 0, xtime_nsec will go backwards.
+And  after (2) CLOCK_MONOTONIC_COARSE will go backwards.
+
+> The approach in your proposed patch seems to undo some of the
+> cycle_interval chunked accumulation, which was intentionally avoiding
+> the multiplication. Instead it tries to accumulate the rest of the
+> sub-cycle_interval unaccumulated delta. I don't think this is correct,
+> as it likely would cause problems with the error accounting, as we
+> accumulate the error in chunks calculated to match the cycle_interval
+> chunks.
+Thanks for your suggestion.
+Can we just skip modifying tk->tkr_mono.xtime_nsec
+in timekeeping_apply_adjustment ?
+>
+> Additionally, your changes are all generic to CLOCK_MONOTONIC, but
+> your subject suggests only MONOTONIC_CORASE is having the problem?
+> Could you explain in more detail the problem you are observing, and
+> how it triggers?
+> It seems like reading CLOCK_MONOTONIC_COARSE while making a large
+> negative NTP adjustment would be able to reproduce this?
+>
+> thanks
+> -john
 
