@@ -1,88 +1,51 @@
-Return-Path: <linux-kernel+bounces-560859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C273A60A3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:45:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42CC1A60A40
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:45:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D27A017D8B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:45:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF3EE17E819
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC39919644B;
-	Fri, 14 Mar 2025 07:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IhHM/Fcl"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BAC1519B0;
-	Fri, 14 Mar 2025 07:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00577196D90;
+	Fri, 14 Mar 2025 07:44:47 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE0A190468;
+	Fri, 14 Mar 2025 07:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741938284; cv=none; b=efwIW/EmAwKBQNCn1RPsEevO0aaMLGhwKvuZtLXh2naUxGNXxKLKcTD4/kR2zwIWy+V0KauQM+NWcE9SVS19K3eKUIcjjMX8gbtTdMDQqlIOzW31QovuPEY131dt7DDVoCDuosN+/StzUIg10dZ3WwlGvbE2QNsX/kbg12wuVjk=
+	t=1741938286; cv=none; b=gtHgMt6kz6bfE16Z/93Gyf9LywKMvypoJ7bUTL6GsJIM9kkXC4t+dLx04O4L/kINGffZk+XQ0lFK8e/3DKC7N1Lh+eFuIj8+x8izvYk6tm1Bm/lmnkZ5w5YSDj+1UBugT53wyVL7EMXmPrzDlWM4MY2sc6faWB7qeKR4jRHd8so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741938284; c=relaxed/simple;
-	bh=3QOphe5mum8r5bZDrO0rG19IJY/HqckSMpWXM/yLvkE=;
+	s=arc-20240116; t=1741938286; c=relaxed/simple;
+	bh=91ptrKYVgvUExZhnsTJFVT9CkAFHXxfrnrnkNYBuX54=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LMp/6Yk99QG7Pq9KgaaHkQj2SS73e+AZe2xxhOqpuXXml7jae0dgONCqQnIQxiMmCzOAJIkHDgWE+9AENLB4dj3l4DjUqD5OdK2gA0Usoh9GaVNsccHHu68wXKf0dtuoCJybKoejl1t6fWVFluyVgTYd1R0qYI9Ikp2+TtcbaUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IhHM/Fcl; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DNQqYT009763;
-	Fri, 14 Mar 2025 07:44:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=2St2wmLGyzs2MwiPD
-	LaevaKuDzpRdZ40vCxIseXnEhg=; b=IhHM/FclHfKO0esQJfnl6q00EOswk63qM
-	E+eDq/DSMpWi7dv2nrR/YkXmmFL2aWJ0uIcK0c9U//lWmH1u2d/82VYzAtW4NKJr
-	/rAMtF/MgyBA3xXlSq0zpvi6ayHsXygoSF/oZ7N0Oqr3OO48a6kAHkcpw6HmQjHc
-	VwMdAIUxmOc+VfyRl1gHMba6DjfRrpDVf7aaz1+nTAor7H1mm/9UhQLzSt7CiQSv
-	7pS/llueCeKPyuZdN4td2wgp6hYSL5hfexpVvx6+QGcY6ZrEYvV198RtxuHr93xq
-	vLSLax5MtCK4xHcgmvmpDrcaE06hvQ7eF59ERfJxDWqTlIbfEr+dA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45c6s5a7bb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Mar 2025 07:44:32 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52E7iVXN001962;
-	Fri, 14 Mar 2025 07:44:31 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45c6s5a7b8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Mar 2025 07:44:31 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52E4S83r003148;
-	Fri, 14 Mar 2025 07:44:30 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atstwurc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Mar 2025 07:44:30 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52E7iSp759441426
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Mar 2025 07:44:29 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DDFC22004E;
-	Fri, 14 Mar 2025 07:44:28 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B24E720043;
-	Fri, 14 Mar 2025 07:44:25 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.24.194])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 14 Mar 2025 07:44:25 +0000 (GMT)
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
-Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] ext4: Make sb update interval tunable
-Date: Fri, 14 Mar 2025 13:14:11 +0530
-Message-ID: <6be9a2b7757b77e9a12394c69fee35fffd3a970b.1741938027.git.ojaswin@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1741938027.git.ojaswin@linux.ibm.com>
-References: <cover.1741938027.git.ojaswin@linux.ibm.com>
+	 MIME-Version; b=sJEFj4YmZDwUzEj2jGiDyAXnJdR/FE3n95aW694YOG03Z1umgNG7f9Dx37BuSMSKhlg9eD6MLjfhRNOvSsOdYevdKlAMUW6ObKYtCxrF2Kmrl9LUCJs6jIzj3NnyQT9Pwti21l/wINjIf3Pvei0MRUqkLuBPxiUnV6WdE83AjJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-681ff7000002311f-a6-67d3de65ef9c
+From: Rakie Kim <rakie.kim@sk.com>
+To: Gregory Price <gourry@gourry.net>
+Cc: akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com,
+	dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com,
+	kernel_team@skhynix.com,
+	honggyu.kim@sk.com,
+	yunjeong.mun@sk.com,
+	Rakie Kim <rakie.kim@sk.com>
+Subject: Re: [PATCH v2 1/4] mm/mempolicy: Fix memory leaks in mempolicy_sysfs_init()
+Date: Fri, 14 Mar 2025 16:44:11 +0900
+Message-ID: <20250314074433.780-1-rakie.kim@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
+In-Reply-To: <Z9L_MgjuhrploEUm@gourry-fedora-PF4VCD3F>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,142 +53,141 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: tkAh_Lnqum6OYHoDocdK-Coiaw4oGBm1
-X-Proofpoint-ORIG-GUID: 8AH3-lFWCi-sPzVrcYMtM6qHgYrRius9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-14_03,2025-03-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=611 clxscore=1015 impostorscore=0 lowpriorityscore=0
- malwarescore=0 bulkscore=0 mlxscore=0 phishscore=0 spamscore=0
- adultscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502280000 definitions=main-2503140058
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsXC9ZZnkW7qvcvpBqeOqVnMWb+GzWL61AuM
+	Fj/vHme3OL51HrvF+VmnWCwu75rDZnFvzX9Wi9VrMhw4PHbOusvu0d12md1j8Z6XTB6bPk1i
+	9zgx4zeLx86Hlh6fN8kFsEdx2aSk5mSWpRbp2yVwZWxf94a94JZUxcz3txgbGM+JdDFyckgI
+	mEisaNzBDGO/WL8OyObgYBNQkji2NwbEFBFQlWi74t7FyMXBLLCeSeL1pllsIOXCAiES624t
+	ZgexWYBquo/NZQep5xUwlpgwswhioqZEw6V7TCA2p4CZxIS928HKhQR4JF5t2M8IYvMKCEqc
+	nPmEBcRmFpCXaN46mxlkl4TAGTaJie8esUMMkpQ4uOIGywRG/llIemYh6VnAyLSKUSgzryw3
+	MTPHRC+jMi+zQi85P3cTIzCIl9X+id7B+OlC8CFGAQ5GJR7eDbsupQuxJpYVV+YeYpTgYFYS
+	4bW4fDldiDclsbIqtSg/vqg0J7X4EKM0B4uSOK/Rt/IUIYH0xJLU7NTUgtQimCwTB6dUA6Pw
+	/Ig+v1DByaKfo9VjXbsPm4YZTp5ZoJv/ZtaK+EUFfW8FO05nL7h55cqj1Krwe40nFXRDQrXv
+	8rCVaXy9M3U9i8PaykRdw4x7fxjz6y6L7OyprcgIO/x+z76ECY8SC4wC90fPVz22bbaZk8OE
+	1G+3qtlkpr1v2Lk1d/3th+sEsoorkmKXPVRiKc5INNRiLipOBAAtAxLgXgIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsXCNUNNSzf13uV0g8dHxSzmrF/DZjF96gVG
+	i593j7NbfH72mtni+NZ57BaH555ktTg/6xSLxeVdc9gs7q35z2px6NpzVovVazIsfm9bwebA
+	47Fz1l12j+62y+wei/e8ZPLY9GkSu8eJGb9ZPHY+tPT4dtvDY/GLD0wenzfJBXBGcdmkpOZk
+	lqUW6dslcGVsX/eGveCWVMXM97cYGxjPiXQxcnJICJhIvFi/jrmLkYODTUBJ4tjeGBBTREBV
+	ou2KexcjFwezwHomidebZrGBlAsLhEisu7WYHcRmAarpPjaXHaSeV8BYYsLMIoiJmhINl+4x
+	gdicAmYSE/ZuBysXEuCReLVhPyOIzSsgKHFy5hMWEJtZQF6ieets5gmMPLOQpGYhSS1gZFrF
+	KJKZV5abmJljqlecnVGZl1mhl5yfu4kRGLjLav9M3MH45bL7IUYBDkYlHt4Nuy6lC7EmlhVX
+	5h5ilOBgVhLhtbh8OV2INyWxsiq1KD++qDQntfgQozQHi5I4r1d4aoKQQHpiSWp2ampBahFM
+	lomDU6qB8aKTlJnOix/t0/WKP0Tt3jahb0+Aqt1vsRcXHGoai7xvirr+Zjwwz/TJnvrtfAXr
+	ORQ2HHg5p5CHucrpQ/jas5q3q1bebNof5fL92f+s61ESib1aEgo68yb0fRYxUpN5WHDtudmR
+	L3w1v0U8ru2bcTzmpAlTSNn+sCmOU1iOyStbzr/6tulqohJLcUaioRZzUXEiAOU/NchYAgAA
+X-CFilter-Loop: Reflected
 
-Currently, outside error paths, we auto commit the super block after 1
-hour has passed and 16MB worth of updates have been written since last
-commit. This is a policy decision so make this tunable while keeping the
-defaults same. This is useful if user wants to tweak the superblock
-behavior or for debugging the codepath by allowing to trigger it more
-frequently.
+On Thu, 13 Mar 2025 11:52:18 -0400 Gregory Price <gourry@gourry.net> wrote:
+> On Thu, Mar 13, 2025 at 03:31:38PM +0900, Rakie Kim wrote:
+> > > Is this correct? If kobject_init_and_add fails, from other examples we
+> > > need only free the mempolicy_kobj - because it failed to initialize and
+> > > therefore should not have any references.  I think this causes an
+> > > underflow.
+> > 
+> > Regarding the reordering of mempolicy_kobj allocation:
+> > 1) In kobject_init_and_add(), kobject_init() is always called, which
+> 
+> Quite right, mea culpa.
+> 
+> > 
+> > 2) The release function for mempolicy_kobj is responsible for freeing
+> >    associated memory:
+> > 
+> >    static void mempolicy_kobj_release(struct kobject *kobj)
+> >    {
+> >        ...
+> >        kfree(ngrp->nattrs);
+> >        kfree(ngrp);
+> >        kfree(kobj);
+> >    }
+> > 
+> 
+> I see what you're trying to do now after looking at the free-ordering
+> at little closer.
+> 
+> Lets do the following:
+> 
+> 1) allocate node_attrs and mempolicy_kobj up front and keep your
+>    reordering, this lets us clean up allocations on failure before
+>    kobject_init is called
+> 
+> 2) after this remove all the other code and just let
+>    mempolicy_kobj_release clean up node_attrs
+> 
+> 3) Add a (%d) to the error message to differentiate failures
+> 
+> This is a little bit cleaner and is a bit less code. (Not built or
+> tested, just a recommendation).
+> 
+> I'd recommend submitting this patch by itself to mm-stable, since the
+> remainder of the patch line changes functionality and this fixes a bug
+> in LTS kernels.
+> 
+> ~Gregory
+> 
 
-We can now tweak the super block update using sb_update_sec and
-sb_update_kb files in /sys/fs/ext4/<dev>/
+I will make every effort to incorporate your suggestions.
+Additionally, I will separate this patch from the current patch series
+and create it as an independent patch.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-Reviewed-by: Baokun Li <libaokun1@huawei.com>
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- fs/ext4/ext4.h  |  9 +++++++++
- fs/ext4/super.c | 15 ++++++++-------
- fs/ext4/sysfs.c |  4 ++++
- 3 files changed, 21 insertions(+), 7 deletions(-)
+Rakie
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index ee54b8510791..23c3e3ced9e6 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1609,6 +1609,8 @@ struct ext4_sb_info {
- 	unsigned int s_mb_prefetch;
- 	unsigned int s_mb_prefetch_limit;
- 	unsigned int s_mb_best_avail_max_trim_order;
-+	unsigned int s_sb_update_sec;
-+	unsigned int s_sb_update_kb;
- 
- 	/* stats for buddy allocator */
- 	atomic_t s_bal_reqs;	/* number of reqs with len > 1 */
-@@ -2280,6 +2282,13 @@ static inline int ext4_forced_shutdown(struct super_block *sb)
- #define EXT4_DEF_MIN_BATCH_TIME	0
- #define EXT4_DEF_MAX_BATCH_TIME	15000 /* 15ms */
- 
-+/*
-+ * Default values for superblock update
-+ */
-+#define EXT4_DEF_SB_UPDATE_INTERVAL_SEC (3600) /* seconds (1 hour) */
-+#define EXT4_DEF_SB_UPDATE_INTERVAL_KB (16384) /* kilobytes (16MB) */
-+
-+
- /*
-  * Minimum number of groups in a flexgroup before we separate out
-  * directories into the first block group of a flexgroup
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 54ef0cc566a4..c97ca78bd48a 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -447,9 +447,6 @@ static time64_t __ext4_get_tstamp(__le32 *lo, __u8 *hi)
- #define ext4_get_tstamp(es, tstamp) \
- 	__ext4_get_tstamp(&(es)->tstamp, &(es)->tstamp ## _hi)
- 
--#define EXT4_SB_REFRESH_INTERVAL_SEC (3600) /* seconds (1 hour) */
--#define EXT4_SB_REFRESH_INTERVAL_KB (16384) /* kilobytes (16MB) */
--
- /*
-  * The ext4_maybe_update_superblock() function checks and updates the
-  * superblock if needed.
-@@ -457,8 +454,10 @@ static time64_t __ext4_get_tstamp(__le32 *lo, __u8 *hi)
-  * This function is designed to update the on-disk superblock only under
-  * certain conditions to prevent excessive disk writes and unnecessary
-  * waking of the disk from sleep. The superblock will be updated if:
-- * 1. More than an hour has passed since the last superblock update, and
-- * 2. More than 16MB have been written since the last superblock update.
-+ * 1. More than sbi->s_sb_update_sec (def: 1 hour) has passed since the last
-+ *    superblock update
-+ * 2. More than sbi->s_sb_update_kb (def: 16MB) kbs have been written since the
-+ *    last superblock update.
-  *
-  * @sb: The superblock
-  */
-@@ -479,7 +478,7 @@ static void ext4_maybe_update_superblock(struct super_block *sb)
- 	now = ktime_get_real_seconds();
- 	last_update = ext4_get_tstamp(es, s_wtime);
- 
--	if (likely(now - last_update < EXT4_SB_REFRESH_INTERVAL_SEC))
-+	if (likely(now - last_update < sbi->s_sb_update_sec))
- 		return;
- 
- 	lifetime_write_kbytes = sbi->s_kbytes_written +
-@@ -494,7 +493,7 @@ static void ext4_maybe_update_superblock(struct super_block *sb)
- 	 */
- 	diff_size = lifetime_write_kbytes - le64_to_cpu(es->s_kbytes_written);
- 
--	if (diff_size > EXT4_SB_REFRESH_INTERVAL_KB)
-+	if (diff_size > sbi->s_sb_update_kb)
- 		schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
- }
- 
-@@ -5248,6 +5247,8 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- 	sbi->s_commit_interval = JBD2_DEFAULT_MAX_COMMIT_AGE * HZ;
- 	sbi->s_min_batch_time = EXT4_DEF_MIN_BATCH_TIME;
- 	sbi->s_max_batch_time = EXT4_DEF_MAX_BATCH_TIME;
-+	sbi->s_sb_update_kb = EXT4_DEF_SB_UPDATE_INTERVAL_KB;
-+	sbi->s_sb_update_sec = EXT4_DEF_SB_UPDATE_INTERVAL_SEC;
- 
- 	/*
- 	 * set default s_li_wait_mult for lazyinit, for the case there is
-diff --git a/fs/ext4/sysfs.c b/fs/ext4/sysfs.c
-index ddb54608ca2e..987bd00f916a 100644
---- a/fs/ext4/sysfs.c
-+++ b/fs/ext4/sysfs.c
-@@ -254,6 +254,8 @@ EXT4_ATTR(journal_task, 0444, journal_task);
- EXT4_RW_ATTR_SBI_UI(mb_prefetch, s_mb_prefetch);
- EXT4_RW_ATTR_SBI_UI(mb_prefetch_limit, s_mb_prefetch_limit);
- EXT4_RW_ATTR_SBI_UL(last_trim_minblks, s_last_trim_minblks);
-+EXT4_RW_ATTR_SBI_UI(sb_update_sec, s_sb_update_sec);
-+EXT4_RW_ATTR_SBI_UI(sb_update_kb, s_sb_update_kb);
- 
- static unsigned int old_bump_val = 128;
- EXT4_ATTR_PTR(max_writeback_mb_bump, 0444, pointer_ui, &old_bump_val);
-@@ -305,6 +307,8 @@ static struct attribute *ext4_attrs[] = {
- 	ATTR_LIST(mb_prefetch),
- 	ATTR_LIST(mb_prefetch_limit),
- 	ATTR_LIST(last_trim_minblks),
-+	ATTR_LIST(sb_update_sec),
-+	ATTR_LIST(sb_update_kb),
- 	NULL,
- };
- ATTRIBUTE_GROUPS(ext4);
--- 
-2.48.1
-
+> 
+> 
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index 530e71fe9147..05a410db08b4 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -3541,38 +3541,34 @@ static int __init mempolicy_sysfs_init(void)
+>  	int err;
+>  	static struct kobject *mempolicy_kobj;
+> 
+> -	mempolicy_kobj = kzalloc(sizeof(*mempolicy_kobj), GFP_KERNEL);
+> -	if (!mempolicy_kobj) {
+> +	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
+> +			     GFP_KERNEL);
+> +	if (!node_attrs) {
+>  		err = -ENOMEM;
+>  		goto err_out;
+>  	}
+> 
+> -	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
+> -			     GFP_KERNEL);
+> -	if (!node_attrs) {
+> +	mempolicy_kobj = kzalloc(sizeof(*mempolicy_kobj), GFP_KERNEL);
+> +	if (!mempolicy_kobj) {
+>  		err = -ENOMEM;
+> -		goto mempol_out;
+> +		kfree(node_attrs);
+> +		goto err_out;
+>  	}
+> 
+>  	err = kobject_init_and_add(mempolicy_kobj, &mempolicy_ktype, mm_kobj,
+>  				   "mempolicy");
+>  	if (err)
+> -		goto node_out;
+> +		goto mempol_out;
+> 
+>  	err = add_weighted_interleave_group(mempolicy_kobj);
+> -	if (err) {
+> -		pr_err("mempolicy sysfs structure failed to initialize\n");
+> -		kobject_put(mempolicy_kobj);
+> -		return err;
+> -	}
+> +	if (err)
+> +		goto mempol_out;
+> 
+> -	return err;
+> -node_out:
+> -	kfree(node_attrs);
+> +	return 0;
+>  mempol_out:
+> -	kfree(mempolicy_kobj);
+> +	kobject_put(mempolicy_kobj);
+>  err_out:
+> -	pr_err("failed to add mempolicy kobject to the system\n");
+> +	pr_err("mempolicy sysfs structure failed to initialize (%d)\n", err);
+>  	return err;
+>  }
+> 
 
