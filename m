@@ -1,200 +1,224 @@
-Return-Path: <linux-kernel+bounces-562003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27EC5A61A47
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:21:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2B7A61A49
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 20:21:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5926E4638C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:21:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA1919C474E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3AA8204F62;
-	Fri, 14 Mar 2025 19:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D59A204C39;
+	Fri, 14 Mar 2025 19:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Fjs+NSzF"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w+Gk4mHz"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CFF204692
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 19:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7092F84D08
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 19:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741980056; cv=none; b=mu/3b2hwKP6ypOTfbssluKpLZnMMemZ2Xu9gSchs3DihhVtJj86KlvuaeCpgIzkr1cJK3KI7VSH3BE7kweIzg7yJhDSE1X8rJuyb/eIkDxJqI5iO2BQFw58ipv5sXpBvcgVCO/pO4DC9InTWvJqt/dRqjx/uO+74Ax7da9lILJg=
+	t=1741980111; cv=none; b=ql+d3tsW++U0nv+3wMl5yybRbnE4Ax4hp5NjOx+1NhecL5WY6ZPWFp88xF2XX7vgQu/fmIDwGf+Dtjy8KaqMfZFwY0O6Rj7vLW1ibxM0efolqSA+xfkE6nNnUmGdCuqN09tNJRVkzBgoGEAwrS2iM4Jt4tPwYbhIVZhkBgu+W2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741980056; c=relaxed/simple;
-	bh=wNQHuLdZvgcCKvlScN1lrTfyQ0hrUuljvEDBKsMOy6w=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y0X3gsyDN5tLUAI4F8k44s2FSUZuT73/7XQz6aWHKbYIol5zgu3VqpLu2Fx5h379aqDCDxGV59m3hXrAzw7oZPMeafsDnsJB+5VUydI5DYrrQQ6q6pbo0bgtfgCMBEDggPUeR5kQHJxSU+DEpoJAUE5/9+5RNgvqzSet/Na1Iq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Fjs+NSzF; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741980046; x=1742239246;
-	bh=9dJbCsG+3iacLH4tb4fmUoDsa/aO1aDzdfXxttzDOrY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=Fjs+NSzFawSLNsa09TFnRz6biEqh10Ncv0mh+buk3EHwrZqdxqi8/wiragXH46+tA
-	 9Cqki42WkDSHpNksr6hBbaeNCimtpIfUk77+5bFIwplsBTWRCrSD5pyXAUgc6ha/i/
-	 F/AbXBhgVOheRGaQpCgNOJ1WeX0VMSBb//HLGSk0qlyIaAhYMF50PzCAQi0M3Or2oy
-	 OFlo7aXbxTagMLVm9NAcvmcaFEAvLBm4dlaKjRB4RLWOwN1hyQJ0hHh/otSU1UaaAM
-	 7jgt3qJkyGtcgZITwoPDGvyz7CJ7o1Hkj/k/FGaoCehgKXDM58Gr8vebZK412X1hTN
-	 VQyW65skxgrjw==
-Date: Fri, 14 Mar 2025 19:20:39 +0000
-To: Tamir Duberstein <tamird@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH 2/2] rust: workqueue: remove HasWork::OFFSET
-Message-ID: <D8G8DV3PX8VX.2WHSM0TWH8JWV@proton.me>
-In-Reply-To: <20250307-no-offset-v1-2-0c728f63b69c@gmail.com>
-References: <20250307-no-offset-v1-0-0c728f63b69c@gmail.com> <20250307-no-offset-v1-2-0c728f63b69c@gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 62e23f231bb6f0fe7703572b1bd93319989c4b3a
+	s=arc-20240116; t=1741980111; c=relaxed/simple;
+	bh=ryx0zKuenANkRXsYf6XtKpB+n4QJDHZaIXQLpHiMN1o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i1TNM8qMKekvksUfeoirnZ41ggAbp9aQk3qmkbLJ3Q0WLJZX/h2OtzLk1yzyN9t+w0Zpvk1DeW6OrPqXZ6w/8gAJIGodE8H8Au8JFoEAe7m0J68+iSomejKAKXzHpHbq4geAoqB1Ylqh5j02tMa4GadLZSzitOUywVjj+5nBaPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w+Gk4mHz; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5497590ffbbso2545909e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 12:21:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741980107; x=1742584907; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s9+9Ep+7gxZljLN0TqwcK3ZG0MxqsMjlhUkQ26uvgW0=;
+        b=w+Gk4mHzVyX3yxrKczmfN+FtCY5HdmYHZcy0vwTaTEzGE6v/Vc52uJJH3JBPWfPDZO
+         7Rj18sga/GPLXXwIw7QP13o0SRyxvg0a/H5jI65UN6Khv64PIRlVb7lpdLGjgVwp07hl
+         Wk65xchh0XPmgTaUT6sZQulSgcBxMpWjRAS3Iw5HReB8UrVNnIKjHKzaEKhC05Ck2hRQ
+         Ev79A9l8OEXAy0hFBmtIhzzvICcx58pEfQ4VT1+hR/tdflCNn2j8V5tRNK0I7nbmZcDW
+         945osC+3W2JgQFA3HHyAaHNSjqyZF38jojubE/4X7Daljaf9eh+mhjTqH69qL+JPCAna
+         YHwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741980107; x=1742584907;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s9+9Ep+7gxZljLN0TqwcK3ZG0MxqsMjlhUkQ26uvgW0=;
+        b=KTG9I0/5mNjC2EBE/p1CfaLokDNMM3cZi3G76T2b9C537KIGgzC+5BA6cGJqrZPclo
+         CSfeP+sMuEOvp8+hhq+JiPQeihzB9NVkRs3Bpu9+PYfleXxwpRLNnKQaOJJ2jQyZHHU4
+         AmjFBa2gCgxDm2uLT3RMFr8JQhoe6hpRo1stATZOPopZIl9FKQ/eNOYcBEmUMRMazYha
+         tdoIddIvVI8KiDSfUZcYuuEjxYpdi4Ub2Hz6Z5EWaXUAfPrrgC8+/ClfcAnBfA74UzN8
+         QMRZ8DnytMB8LvrG2CORo/RBA8whU/dbPMCd0mOv5yfdirnrJ1JevdVnigv1DkyZZ1dH
+         wz4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUjRrU9IyyaUDn0jT9P8C86dRdXchcGT9UgkTP1jRr/2CeErDMshtZNBjWgZNB2PBhV+DSgKxZiyI5XqQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIHQMGc+UF+Lxf1BNQ1rSxR8qtwDgJPYnmCl7AxsJwBHTi1eoz
+	87zOi9dPzTQe6u0avtfCSZ+kTqJd4seFUkqCFRYXoasOBt7i3T6JsWXRZvIf/oLxg2IYpBBseqt
+	MAtMOW+FtMDXse44PJbUVAFvvbzYFvsQiLlE=
+X-Gm-Gg: ASbGncv7WWQ2iNT4Ta9/X7CnaEI3AmAFplTHPP8abOCoU2ke1JmNc/H4bjCIpzRjvwB
+	GcN5F2LdUABY1YQxg/nqsGMUBUNcU4XNCJZ5v7R931ReE21t2ErZFd6ZBOcudTTv4/6bK/XEnDx
+	wwf1n+jMX8KpI+mLPFVO/0+PnlGyiVQtyh/2uydDFHShZERa5WlkhfQg==
+X-Google-Smtp-Source: AGHT+IFmKudeedk+byre9+uuSYw848xLagZWetRKEOSCrq2CWQNdL6+bnwO8Fitbbk5qQ2XaUGXigHBY0L+t3tmqeII=
+X-Received: by 2002:a05:6512:4006:b0:549:8b97:75f2 with SMTP id
+ 2adb3069b0e04-549c38ef3e1mr1159648e87.1.1741980107030; Fri, 14 Mar 2025
+ 12:21:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250310030004.3705801-1-lei.chen@smartx.com> <CANDhNCoRxxA-CxOQ6vxfjf6BDxR-gqCC_QE1wwf4L3gwrvfv6A@mail.gmail.com>
+ <CAKcXpBwvjrmoPnfFgaXs81XF5du-mWzLiJ+8YvvhM_1tQMiZBQ@mail.gmail.com>
+In-Reply-To: <CAKcXpBwvjrmoPnfFgaXs81XF5du-mWzLiJ+8YvvhM_1tQMiZBQ@mail.gmail.com>
+From: John Stultz <jstultz@google.com>
+Date: Fri, 14 Mar 2025 12:21:34 -0700
+X-Gm-Features: AQ5f1Jrm7wC0CVW9h6COejewRncxLSkkA6cB_Ppj_hgyHgI2UNGyMRp35_Vi0UY
+Message-ID: <CANDhNCpSB5HzMHne94rnGEi+=yd1Q2j+pJX8pdX5RbEojwpZcA@mail.gmail.com>
+Subject: Re: [PATCH] Fix rolling back of CLOCK_MONOTONIC_COARSE
+To: Lei Chen <lei.chen@smartx.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri Mar 7, 2025 at 10:58 PM CET, Tamir Duberstein wrote:
-> Implement `HasWork::work_container_of` in `impl_has_work!`, narrowing
-> the interface of `HasWork` and replacing pointer arithmetic with
-> `container_of!`. Remove the provided implementation of
-> `HasWork::get_work_offset` without replacement; an implementation is
-> already generated in `impl_has_work!`. Remove the `Self: Sized` bound on
-> `HasWork::work_container_of` which was apparently necessary to access
-> `OFFSET` as `OFFSET` no longer exists.
+On Thu, Mar 13, 2025 at 11:32=E2=80=AFPM Lei Chen <lei.chen@smartx.com> wro=
+te:
 >
-> A similar API change was discussed on the hrtimer series[1].
+> Hi John,
+> Thanks for your reply.
 >
-> Link: https://lore.kernel.org/all/20250224-hrtimer-v3-v6-12-rc2-v9-1-5bd3=
-bf0ce6cc@kernel.org/ [1]
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
->  rust/kernel/workqueue.rs | 45 ++++++++++++------------------------------=
----
->  1 file changed, 12 insertions(+), 33 deletions(-)
-
-What is the motivation of this change? I didn't follow the discussion,
-so if you explained it there, it would be nice if you could also add it
-to this commit message.
-
-> diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
-> index 0cd100d2aefb..0e2e0ecc58a6 100644
-> --- a/rust/kernel/workqueue.rs
-> +++ b/rust/kernel/workqueue.rs
-> @@ -429,51 +429,23 @@ pub unsafe fn raw_get(ptr: *const Self) -> *mut bin=
-dings::work_struct {
->  ///
->  /// # Safety
->  ///
-> -/// The [`OFFSET`] constant must be the offset of a field in `Self` of t=
-ype [`Work<T, ID>`]. The
-> -/// methods on this trait must have exactly the behavior that the defini=
-tions given below have.
-> +/// The methods on this trait must have exactly the behavior that the de=
-finitions given below have.
->  ///
->  /// [`impl_has_work!`]: crate::impl_has_work
-> -/// [`OFFSET`]: HasWork::OFFSET
->  pub unsafe trait HasWork<T, const ID: u64 =3D 0> {
-> -    /// The offset of the [`Work<T, ID>`] field.
-> -    const OFFSET: usize;
-> -
-> -    /// Returns the offset of the [`Work<T, ID>`] field.
-> -    ///
-> -    /// This method exists because the [`OFFSET`] constant cannot be acc=
-essed if the type is not
-> -    /// [`Sized`].
-> -    ///
-> -    /// [`OFFSET`]: HasWork::OFFSET
-> -    #[inline]
-> -    fn get_work_offset(&self) -> usize {
-> -        Self::OFFSET
-> -    }
-> -
->      /// Returns a pointer to the [`Work<T, ID>`] field.
->      ///
->      /// # Safety
->      ///
->      /// The provided pointer must point at a valid struct of type `Self`=
+> On Fri, Mar 14, 2025 at 1:20=E2=80=AFAM John Stultz <jstultz@google.com> =
+wrote:
+> >
+> > On Sun, Mar 9, 2025 at 8:00=E2=80=AFPM Lei Chen <lei.chen@smartx.com> w=
+rote:
+> > >
+> > > timekeeping_apply_adjustment try to adjust tkr_mono.mult by @mult_adj=
 .
-> -    #[inline]
-> -    unsafe fn raw_get_work(ptr: *mut Self) -> *mut Work<T, ID> {
-> -        // SAFETY: The caller promises that the pointer is valid.
-> -        unsafe { (ptr as *mut u8).add(Self::OFFSET) as *mut Work<T, ID> =
-}
-> -    }
-> +    unsafe fn raw_get_work(ptr: *mut Self) -> *mut Work<T, ID>;
-> =20
->      /// Returns a pointer to the struct containing the [`Work<T, ID>`] f=
-ield.
->      ///
->      /// # Safety
->      ///
->      /// The pointer must point at a [`Work<T, ID>`] field in a struct of=
- type `Self`.
-> -    #[inline]
-> -    unsafe fn work_container_of(ptr: *mut Work<T, ID>) -> *mut Self
-> -    where
-> -        Self: Sized,
+> > > If @mult_adj > 0, tk->tkr_mono.xtime_nsec will be decreased by @offse=
+t.
+> > > Then timekeeping_update flushes shadow_timekeeper to real tk and vdso
+> > > data region. Then rolling back happens.
+> > >
+> > > The drawing below illustrates the reason why timekeeping_apply_adjust=
+ment
+> > > descreases tk->tkr_mono.xtime_nsec.
+> > >
+> > >      cycle_interval       offset        clock_delta
+> > > x-----------------------x----------x---------------------------x
+> > >
+> > > P0                      P1         P2                         P3
+> > >
+> > > N(P) means the nano sec count at the point P.
+> > >
+> > > Assume timekeeping_apply_adjustment runs at P1, with unaccumulated
+> > > cycles @offset. Then tkr_mono.mult is adjusted from M1 to M2.
+> > >
+> > > Since offset happens before tkr_mono.mult adjustment, so we want to
+> > > achieve:
+> > > N(P3) =3D=3D offset * M1 + clock_delta * M2 + N(P1)   -------- (1)
+> > >
+> > > But at P3, the code works as following:
+> > > N(P3) :=3D (offset + clock_delta) * M2 + N(P1)
+> > >        =3D offset * M2 + clock_delta * M2 + N(P1)
+> > >
+> > > Apprently, N(P3) goes away from equation (1). To correct it, N(P1)
+> > > should be adjusted at P2:
+> > > N(P1) -=3D offset * (M2 - M1)
+> > >
+> > > To fix this issue, the patch accumulates offset into tk, and export
+> > > N(P2) to real tk and vdso.
+> > >
+> > > tk.tkr_mono :=3D N(P2) =3D N(P1) + offset * M1
+> > >
+> > > Then at P3, we calculate N(P3) based on N(P2) instead of N(P1):
+> > > N(P3) :=3D N(P2) + clock_delta * M2
+> > >
+> > > Signed-off-by: Lei Chen <lei.chen@smartx.com>
+> >
+> > Thanks for the email and the patch!
+> >
+> > So, I'm having a bit of a hard time understanding the issue you're
+> > actually seeing. It seems to be that you're seeing
+> > CLOCK_MONOTONIC_COARSE go backwards?
+> >
+> I'm sorry for that.
+> Yes, it's CLOCK_MONOTONIC_COARSE that goes backwards.
+>
+> I hope the code flow can help to explain it.
+>
+> In user space, clock_gettime(CLOCK_MONOTONIC_COARSE) actually reads
+> tk->xtime_sec and tk->tkr_mono.xtime_nsec.
+>
+> But when ntp calls adjtimex, the code works as following:
+> do_adjtimex
+>     timekeeping_advance
+>         timekeeping_apply_adjustment
+>              tk->tkr_mono.xtime_nsec -=3D offset; ------------------- (1)
+>     timekeeping_update
+>         update_vsyscall    -------------------------(2)
+>
+> At (1) , if offset > 0, xtime_nsec will go backwards.
+> And  after (2) CLOCK_MONOTONIC_COARSE will go backwards.
 
-This bound is required in order to allow the usage of `dyn HasWork` (ie
-object safety), so it should stay.
+So, I understand we subtract offset from xtime_nsec, when the mult is
+incremented, as this is necessary to avoid time inconsistencies with
+the non-coarse clockids, since we have unaccumulated cycles in offset.
 
-Maybe add a comment explaining why it's there.
+Briefly:
+mult_2 =3D mult_1 + 1
+xtime_nsec_1 + (mult_1 * offset)  =3D=3D  xtime_nsec_2  + (mult_2 * offset)
+  =3D=3D  xtime_nsec_2  + (mult_1 +1) * offset)
+  =3D=3D  xtime_nsec_2  + (mult_1 * offset) + offset
 
----
-Cheers,
-Benno
+Then cancelling from both sides:
+xtime_nsec_1  =3D=3D  xtime_nsec_2  + offset
+And re-arranging as such:
+xtime_nsec_2 =3D=3D xtime_nsec_1 - offset
 
-> -    {
-> -        // SAFETY: The caller promises that the pointer points at a fiel=
-d of the right type in the
-> -        // right kind of struct.
-> -        unsafe { (ptr as *mut u8).sub(Self::OFFSET) as *mut Self }
-> -    }
-> +    unsafe fn work_container_of(ptr: *mut Work<T, ID>) -> *mut Self;
->  }
-> =20
->  /// Used to safely implement the [`HasWork<T, ID>`] trait.
-> @@ -504,8 +476,6 @@ macro_rules! impl_has_work {
->          // SAFETY: The implementation of `raw_get_work` only compiles if=
- the field has the right
->          // type.
->          unsafe impl$(<$($generics)+>)? $crate::workqueue::HasWork<$work_=
-type $(, $id)?> for $self {
-> -            const OFFSET: usize =3D ::core::mem::offset_of!(Self, $field=
-) as usize;
-> -
->              #[inline]
->              unsafe fn raw_get_work(ptr: *mut Self) -> *mut $crate::workq=
-ueue::Work<$work_type $(, $id)?> {
->                  // SAFETY: The caller promises that the pointer is not d=
-angling.
-> @@ -513,6 +483,15 @@ unsafe fn raw_get_work(ptr: *mut Self) -> *mut $crat=
-e::workqueue::Work<$work_typ
->                      ::core::ptr::addr_of_mut!((*ptr).$field)
->                  }
->              }
-> +
-> +            #[inline]
-> +            unsafe fn work_container_of(
-> +                ptr: *mut $crate::workqueue::Work<$work_type $(, $id)?>,
-> +            ) -> *mut Self {
-> +                // SAFETY: The caller promises that the pointer points a=
-t a field of the right type
-> +                // in the right kind of struct.
-> +                unsafe { $crate::container_of!(ptr, Self, $field) }
-> +            }
->          }
->      )*};
->  }
+So yeah, I see the concern, as when we are dealing with the _COARSE
+clocks, we don't use the offset value. So the subtracting offset from
+xtime_nsec initially seems problematic.
 
+But the key here is the timekeeping_adjust() logic, which adjusts the
+multiplier and is all done *after* we do the accumulation, adding
+(possibly multiple) (mult*cycle_interval) intervals from the offset to
+xtime_nsec.
 
+After the accumulation, offset must be smaller than cycle_interval.
+So the negative (un-multiplied) offset size adjustment to xtime_nsec
+should be smaller than what was immediately before added to it.  Both
+accumulation and adjustment are done atomically together under the
+tk_core.lock, so I'd not expect to see an inconsistency here.
+
+My suspicion is that if we are coming into timekeeping_advance() more
+frequently then cycle_interval cycles, than its possible we didn't
+actually accumulate anything, but had some left over ntp error that
+triggered a mult adjustment, causing a xtime_nsec to be decremented
+without the normal accumulation before that. Opening up a window for
+the inconsistency.
+
+The "if (offset < real_tk->cycle_interval && mode =3D=3D TK_ADV_TICK)"
+check there is supposed to catch that, but with
+timekeeping_advance(TK_ADV_FREQ) it looks like during an ntp
+adjustment we can try to do the mult adjustment without accumulation.
+
+Thomas just tells me now he's found a fix, so hopefully that will be
+incoming soon. I'll probably be drafting my own approach just to make
+sure we're aligned.
+
+I've also found this is pretty easy to reproduce but unfortunately the
+kselftest skew_consistency focused on MONOTONIC and didn't check
+_COARSE clockids, so I'll try to tweak that test as well so that we
+have better coverage for this case.
+
+Thanks so much for finding and reporting this!
+
+thanks
+-john
 
