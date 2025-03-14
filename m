@@ -1,139 +1,209 @@
-Return-Path: <linux-kernel+bounces-561940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03485A618EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:02:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DD5A618EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:03:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8770D1B6439C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:02:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C117B1B63EFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D183E204C3A;
-	Fri, 14 Mar 2025 18:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBC31FF601;
+	Fri, 14 Mar 2025 18:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C6BB3a9J"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FaVPpnln"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AA320487F;
-	Fri, 14 Mar 2025 18:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB0C204F65
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741975285; cv=none; b=f0AKWrPXlsjsM4PpjscqgTc62AYsu/ioJ2BjHwyu+hTh1DPjj3ujasxpJAQEraE80cqP3M6dkXW2v7/Rd7XuSwuJzdWKXtFpZSJGl1nLM46XWa3tEw+E9Oajil75GyDApYd29Rk9NQCNHViro3zGdOi4Rha2I2NKMkS/0TG8kjI=
+	t=1741975314; cv=none; b=OeZAH2AMbN6KdI5OZkWLlcumW3EBSJ7953hyeQwZoMRDM9fxIbvKtOryo7+Y/q/vt+50+cAzgGjoMRAJT40XTkDb50jXW1Mxmx02aRwJF9BNymLHp05j7dcPfk6cU+ernp1IuWvJe2+xQMJvcfKFMzTHeBeFFMZZ6vlM+WGQLT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741975285; c=relaxed/simple;
-	bh=Mj9qUmLdTwKbyk2T4rHE7N4/Kk0Xg4D7AQ1z41AYH1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CumJ31SuSM2Uboi4sruF2bf6X7F71yo8ZEqupA+iGI8c99gY8NfkhT4kxx+B1S+KyTIkHmQ/m/O9Q9tAD1/zdTrQ+ITPTSZzE+SS4PeYdiIw4bChDJ8dpQue45eZNY2qju/rb3qIF96qIQ8iIWhQrMMV90fiPPrVGssbOMYItU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C6BB3a9J; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741975284; x=1773511284;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Mj9qUmLdTwKbyk2T4rHE7N4/Kk0Xg4D7AQ1z41AYH1s=;
-  b=C6BB3a9Jf8M72jFVJF4FRLe3TuS/YCS28h1C1VZCekd6lCHv2ojfLdSi
-   wdgLBbPBKp8VWzNfHuX1rvC+bgJua+HgAHKRoJT+np9XHXsoChTz6TlKR
-   3jeT24Te477jboBovzxRWkiK1prEozQIhByYKyCAlfMVj0skS/LdKgAz6
-   UBDr02NxU63+q0DpA5J6ntcI+FiRj0MSoVBoPeM95LusfmHwcIUzSX2JN
-   y4HBhmubZRWs296bCd47AotI52R97gEoAferX5aVdwAfZSrHp2XX1sMMO
-   kKLAH9s2HBTyy1EsgWVOyvkkSfNIRddlCjKFuKs1eC/vzSuUyA9TpGxJO
-   Q==;
-X-CSE-ConnectionGUID: 8mG20rwFTXK3IBhBZ/c1bw==
-X-CSE-MsgGUID: vOdDbJ1VSWqHc25V8rINow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="46787351"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="46787351"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 11:01:23 -0700
-X-CSE-ConnectionGUID: vcuAt9B4Q+S37vnK4TIgnA==
-X-CSE-MsgGUID: cTJxXrQ8TUixLi+0VRb14w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="126554866"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 11:01:20 -0700
-Date: Fri, 14 Mar 2025 20:01:17 +0200
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Lee Jones <lee@kernel.org>, giometti@enneenne.com,
-	gregkh@linuxfoundation.org, raymond.tan@intel.com,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] mfd: intel_ehl_pse_gpio: Introduce Intel Elkhart
- Lake PSE GPIO and TIO
-Message-ID: <Z9Ru7VHP9K7Brod4@black.fi.intel.com>
-References: <20250307052231.551737-1-raag.jadav@intel.com>
- <20250307052231.551737-2-raag.jadav@intel.com>
- <20250314124450.GP3890718@google.com>
- <Z9QxqH3DJvyW3sjo@smile.fi.intel.com>
- <20250314135735.GQ3890718@google.com>
- <Z9Q7M1Cw8X0p9eXP@smile.fi.intel.com>
+	s=arc-20240116; t=1741975314; c=relaxed/simple;
+	bh=EEYxWwY8kCTLySnOVtwdYcS5zBb5IL6//3e/jf2TqxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=atXI6K4c/4eQ0/ofwgPuIjj2Y63npc6QL7aKmSkiA6Y5p/5s4kNtllhxW7XDJDhyDFA35ROmpwXJ6AGphiMhtss9RGNjWMSYLoSqBE5cAQZqoz4vBy6LFUaVzsJdQWLM9tvuuH4ghUyFholggG8aUpwlTYzNrh1xwpkeKvcP2no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FaVPpnln; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741975311;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=sdKP65qdr3ROgUgJg8MYQwM2EODCLBcK6u+sVD8ojXA=;
+	b=FaVPpnlnRBtlTBtEC+Q2DGmlB4IdX1L7im2i3eCe2e0+0Rcmkbk/UqnGAWJa0gEsz8eVNA
+	PmyRFKzlZmKBEt16+VJQO4Gab7kr4heaWJNh2TldErh750ghbhrzuvIsFUrrVDThGxkOj2
+	OWNhsefFDjvAj7SqTizUHvU0QX+jlWc=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-465-0bquKPSJNI-FZIh3iKkRRw-1; Fri, 14 Mar 2025 14:01:49 -0400
+X-MC-Unique: 0bquKPSJNI-FZIh3iKkRRw-1
+X-Mimecast-MFC-AGG-ID: 0bquKPSJNI-FZIh3iKkRRw_1741975309
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d01024089so22255e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:01:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741975309; x=1742580109;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sdKP65qdr3ROgUgJg8MYQwM2EODCLBcK6u+sVD8ojXA=;
+        b=iiMFVbzvsqLDN9yhfpYpog7rhq+T/qkHkt25x2lu7ixtUfLV4vv+8QPggDYcUPnAe+
+         JZk2cNPmnrYPHT/tMPYpzdua3kcbvYONX4Jq9poWOpoSJ5Y3ZQPb43by2T/AIIHygnUY
+         jUkhPAJt7eSBDjadOTwZ84Xs4OiUDTpAV0ttl0QYW+oNivB7V7O6OntkGQCOzJB+D1i/
+         Fl5XoAisMYpD3T7KQpFOTtfxRh/NcC28Bso8Zng8Jb3lp/4/Sayay6c3PhpVtNHUbeWl
+         UIVLP1m1dhlYAsrcZx4LNoSy2VP4IVU/9cSKycl/9PJRPlwUgjXWjXSwmskD4DrY0KDb
+         D0gw==
+X-Gm-Message-State: AOJu0YyCx/HwzJzJbVbafpEPfasBWdltMXtTfN4dbZ5uFTEIwTIIPhGG
+	U8S31iWsT+BxAMmKdPzX+AuQw6BVLNfCXxOzCiDFF6fWTIj29dc5pzmlPh9JzFx3snYB81Pm/A1
+	wxCW+WvKlT6wfTd+GBrBbJK+uqdArUUt9CN1zMU3sOaTjK6b2AxNoZtN0RjhmRw==
+X-Gm-Gg: ASbGncuyt5JO9uOuLXt50EbUCCM1zADQ2PByt536Ak0yp1x7/i2F8ivgq2O6njaQdFr
+	9ZfJyR479H/GiThb+VcKd8W/redegYwTqj4R+ysIf4ikWpUgbF6VXZfw+ELF++F2mPPMl3jHWvx
+	npGrbMh4j4GvAMmOzY35boi+DFiPFaWGnDStf5NYsZgfcsMMfDDei3YGuR7jTmNFul2ey6KZeGw
+	mjAInkaDxx2e6nKB9AlVglDGzIZptaojjBVtmW3XKAdFgFZNRoLBLAOyf2+M6dcD0PVyBpjqUns
+	iMyNavD8d1CEr1NA59e70N1kVyN0b034I80MJxCFczb1OoA=
+X-Received: by 2002:a05:600c:198e:b0:43c:fa52:7d2d with SMTP id 5b1f17b1804b1-43d1ecd8631mr43492625e9.20.1741975308659;
+        Fri, 14 Mar 2025 11:01:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHVfqZ0VtjIa24aKX7T579NwZ9Rq/vt8mIPi/r8NwfDGe5UQOF2w13UZuRKaiVNkmwC8wV0kA==
+X-Received: by 2002:a05:600c:198e:b0:43c:fa52:7d2d with SMTP id 5b1f17b1804b1-43d1ecd8631mr43491465e9.20.1741975307549;
+        Fri, 14 Mar 2025 11:01:47 -0700 (PDT)
+Received: from [192.168.0.7] (ip-109-42-51-207.web.vodafone.de. [109.42.51.207])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1ffbcf12sm23837335e9.12.2025.03.14.11.01.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Mar 2025 11:01:47 -0700 (PDT)
+Message-ID: <71188823-2a9e-4565-8ace-03a682d8d0da@redhat.com>
+Date: Fri, 14 Mar 2025 19:01:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9Q7M1Cw8X0p9eXP@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/41] arm64: Replace __ASSEMBLY__ with __ASSEMBLER__ in
+ uapi headers
+To: Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>
+References: <20250314071013.1575167-1-thuth@redhat.com>
+ <20250314071013.1575167-9-thuth@redhat.com>
+ <20250314115554.GA8986@willie-the-truck>
+ <df30d093-c173-495a-8ed9-874857df7dee@app.fastmail.com>
+ <20250314134215.GA9171@willie-the-truck>
+Content-Language: en-US
+From: Thomas Huth <thuth@redhat.com>
+Autocrypt: addr=thuth@redhat.com; keydata=
+ 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
+In-Reply-To: <20250314134215.GA9171@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 14, 2025 at 04:20:35PM +0200, Andy Shevchenko wrote:
-> On Fri, Mar 14, 2025 at 01:57:35PM +0000, Lee Jones wrote:
-> > On Fri, 14 Mar 2025, Andy Shevchenko wrote:
-> > > On Fri, Mar 14, 2025 at 12:44:50PM +0000, Lee Jones wrote:
-> > > > On Fri, 07 Mar 2025, Raag Jadav wrote:
+On 14/03/2025 14.42, Will Deacon wrote:
+> On Fri, Mar 14, 2025 at 01:05:15PM +0100, Arnd Bergmann wrote:
+>> On Fri, Mar 14, 2025, at 12:55, Will Deacon wrote:
+>>> On Fri, Mar 14, 2025 at 08:09:39AM +0100, Thomas Huth wrote:
+>>>> __ASSEMBLY__ is only defined by the Makefile of the kernel, so
+>>>> this is not really useful for uapi headers (unless the userspace
+>>>> Makefile defines it, too). Let's switch to __ASSEMBLER__ which
+>>>> gets set automatically by the compiler when compiling assembly
+>>>> code.
+>>>>
+>>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>>>> Cc: Will Deacon <will@kernel.org>
+>>>> Signed-off-by: Thomas Huth <thuth@redhat.com>
+>>>> ---
+>>>>   arch/arm64/include/uapi/asm/kvm.h        | 2 +-
+>>>>   arch/arm64/include/uapi/asm/ptrace.h     | 4 ++--
+>>>>   arch/arm64/include/uapi/asm/sigcontext.h | 4 ++--
+>>>>   3 files changed, 5 insertions(+), 5 deletions(-)
+>>>
+>>> Is there a risk of breaking userspace with this? I wonder if it would
+>>> be more conservative to do something like:
+>>>
+>>> #if !defined(__ASSEMBLY__) && !defined(__ASSEMBLER__)
+>>>
+>>> so that if somebody is doing '#define __ASSEMBLY__' then they get the
+>>> same behaviour as today.
+>>>
+>>> Or maybe we don't care?
+>>
+>> I think the main risk we would have is user applications relying
+>> on the __ASSEMBLER__ checks in new kernel headers and not defining
+>> __ASSEMBLY__. This would result in the application not building
+>> against old kernel headers that only check against __ASSEMBLY__.
 > 
-> ...
+> Hmm. I hadn't thought about the case of old headers :/
 > 
-> > > > > +	ret = pci_alloc_irq_vectors(pci, 2, 2, PCI_IRQ_ALL_TYPES);
-> > > > > +	if (ret < 0)
-> > > > > +		return ret;
-> > > > > +
-> > > > > +	ret = mfd_add_devices(&pci->dev, PLATFORM_DEVID_AUTO, ehl_pse_gpio_devs,
-> > > > 
-> > > > dev_*?
-> > > 
-> > > devm_* ?
-> > 
-> > Yes, typo.
-> > 
-> > > > > +			      ARRAY_SIZE(ehl_pse_gpio_devs), pci_resource_n(pci, 0),
-> > > > > +			      pci_irq_vector(pci, 0), NULL);
-> > > > > +	if (ret)
-> > > > > +		pci_free_irq_vectors(pci);
-> > > 
-> > > Anyway, the choice as far as I understood it is motivated by usage of
-> > > pci_*_irq_vector() APIs, which are officially not manageable (however
-> > > in practice they are).
-
-Are you referring to pcim_setup_msi_release()? I saw it but wasn't confident
-it is in the call path, so went with manual release instead.
-
-Now that you mentioned it, will update.
-
-> > > > > +	return ret;
-> > > > > +}
-> > > > > +
-> > > > > +static void ehl_pse_gpio_remove(struct pci_dev *pdev)
-> > > > > +{
-> > > > > +	mfd_remove_devices(&pdev->dev);
-> > > > > +	pci_free_irq_vectors(pdev);
-> > > > > +}
-> > > 
-> > > Same here.
-> > 
-> > Also, Greg has been quite vocal about converting PCI devices to Platform
-> > ones in the past.  We may wish to run this past him before continuing.
+> A quick Debian codesearch shows that glibc might #define __ASSEMBLY__
+> for some arch-specific headers:
 > 
-> What do you refer to? Any links to read?
+> https://codesearch.debian.net/search?q=%23define+__ASSEMBLY__&literal=1
+> 
+> which is what I was more worried about.
 
-Could be about faux_device, but I could be wrong since here we do use
-platform resources.
+Since both, GCC and Clang, define __ASSEMBLER__ since a long time (Arnd 
+checked GCC 2.95, and I checked that at least Clang 7.0 still has it), I 
+think the only problem might be other compiler toolchains that might not set 
+__ASSEMBLER__ automatically. I just checked Tiny-C 0.9.27, and that also 
+sets __ASSEMBLER__ already. And according to 
+https://github.com/IanHarvey/pcc/blob/master/cc/cc/cc.1#L405 it is also set 
+in PCC.
 
-Raag
+I haven't spotted it in LCC though (which seems to be an old C89 compiler if 
+I got it right). So if we are worried about such exotic old compilers, it's 
+maybe better to check both, __ASSEMBLY__ and __ASSEMBLER__ in the uapi 
+files? Or would it be ok to force those few people to set __ASSEMBLER__ 
+manually in their Makefiles (just like they had to do before with 
+__ASSEMBLY__) in case they want to compile assembler code with such exotic 
+compilers and new kernel headers?
+
+  Thomas
+
 
