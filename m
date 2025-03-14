@@ -1,101 +1,104 @@
-Return-Path: <linux-kernel+bounces-562251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CBE1A62003
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 23:14:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C240A6201A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 23:17:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44C497AC14E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:13:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A868A4617AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 22:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4984A204F6A;
-	Fri, 14 Mar 2025 22:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B301CD21C;
+	Fri, 14 Mar 2025 22:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b="WvJokkPe"
-Received: from mail.codeweavers.com (mail.codeweavers.com [4.36.192.163])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="G/k4c3PV"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8681EA7DB;
-	Fri, 14 Mar 2025 22:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.36.192.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E1C7083D
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 22:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741990433; cv=none; b=j66ANXejUy3kwRF394KC99VeqB0CzrKAOA7dO488Hu3JqAu1iogMfn5IBd2ZNbUakBJwM/GB2Ie/Mrwu4bl98R5epxhS4Aq4b8U6pffUyujbeRzJ4X+K89Td92CdLOZbgNF9cEHN6Hk0jb9eHV5nkyAYTwPG9PDuYCCDI9w2vHg=
+	t=1741990644; cv=none; b=Im6JfmBKAJ2Sc4S9k7Ym/TSQrDtI8aM1CxF9K8wCge/G60XwMrqrxTetPweZ2kjzuQLoThNCszs/E811nwvs+synh7Rxf8eh3gpF6bjpJVGiRPGc6KfPl62rDsOIgGrR3K4lRjNXz1UeX/jQw37SsSvHfO0SpbkTZa8l2j/KeOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741990433; c=relaxed/simple;
-	bh=VVmBqZsMCcaJ3Q8+Yuqt3FOElehWgfdMOK5BGwIXwf0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TQRGXfwcUp2MxlWjCvWUbuRBtWDKjUl3OaraRtAjh6RoHyTs/TW0QwAxOdr4C37OiPAcxgLpmwebgIl38Se97YZA+esUP5Nmb458oBbHYNrh3KMkiVCaHfZ4bXS4H4W13OeqiPJYhIgalNX3FfHaMzY1lpDCc+lpQFOERZp/vYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com; spf=pass smtp.mailfrom=codeweavers.com; dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b=WvJokkPe; arc=none smtp.client-ip=4.36.192.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeweavers.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codeweavers.com; s=s1; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=tARROvTEyg6Bj7/m1bSPdexGBw9j/tBptRqZVsS+nxY=; b=WvJokkPeNmTKCasnzDgI/i+rAh
-	16w6zBmYW77emxvV2pJrvnogHSQ9qOo4Yyw9ZR0AEIUFT2kbXLRD9XNKjBeGnZiO0MrHLplFB7/Fj
-	AeIKOIihBUVaV1i8UKAAgRgWHJ0dt2TjDdfgk0cJIDlcwHy4+uU2UfQdghmF1C+1NzbCqDiK9cHtW
-	R02jI3XEGxOmdLGB0hfDCSECH55EBu9eQhmuPGjVHpXRsW46DV1HuxKBwVkKokDemk3lVRsweXArW
-	reD6aguHCOn1rEfrZke+bhy7laTuGUl0Bn3aUnmhAvvdHt+4iv3GRvyPZbkwtxnkQCWeycWgTAlND
-	/z3bPwiw==;
-Received: from cw137ip160.mn.codeweavers.com ([10.69.137.160] helo=camazotz.localnet)
-	by mail.codeweavers.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <zfigura@codeweavers.com>)
-	id 1ttDHq-00EN2r-0X;
-	Fri, 14 Mar 2025 17:13:50 -0500
-From: Elizabeth Figura <zfigura@codeweavers.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Su Hui <suhui@nfschina.com>
-Cc: shuah@kernel.org, wine-devel@winehq.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject:
- Re: [PATCH 1/4] selftests: ntsync: fix the wrong condition in wake_all
-Date: Fri, 14 Mar 2025 17:13:50 -0500
-Message-ID: <2051560.PIDvDuAF1L@camazotz>
-In-Reply-To: <00d17d6d-19c9-4431-a3ac-c0f767c533d4@nfschina.com>
-References: <00d17d6d-19c9-4431-a3ac-c0f767c533d4@nfschina.com>
+	s=arc-20240116; t=1741990644; c=relaxed/simple;
+	bh=MCa0vkcQsABiNsiBneufPykvB8LMRiVfF0XBRX4jBKE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S+T/XiE0MOWPkta+qB08wKiAuF4rgDkp6zGXNwl/3Zx10o0qivWUdx3xZWIv4EEXxk3bDaz62EhhGA+d8E3bx3JH1YvdNrMaXOzyaR5YtbRRrdET8tyX0rQG7AynUmPgeoagKZlRYw1BxUtE2gKlkbl5/r12UX2jMoIKkCZwn0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=G/k4c3PV; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741990638;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8HlGgSem6D58B/bo6nzktQDox6aIVXarAjOGoDX+TIM=;
+	b=G/k4c3PVyqfyZ6Mrqs/U03IIgxT0LRxq/dfHXWbxRJNEVstAjMA0jPIJWldHdOZgeeJKeL
+	fTKEo/ZsJt6GyE8fcwRaAX69qT0khj7pVDT0RZrtZOBqPc96v2rwMbW259DOGlLs0G8UF0
+	dHOx+eW6KNTg80ysTnj+tLCBJ6LZysw=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Satish Kharat <satishkh@cisco.com>,
+	Sesidhar Baddela <sebaddel@cisco.com>,
+	Karan Tilak Kumar <kartilak@cisco.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: fnic: Remove unnecessary NUL-terminations
+Date: Fri, 14 Mar 2025 23:16:26 +0100
+Message-ID: <20250314221626.43174-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Friday, 14 March 2025 05:14:30 CDT Su Hui wrote:
-> On 2025/3/14 17:21, Dan Carpenter wrote:
-> > On Fri, Mar 14, 2025 at 03:14:51PM +0800, Su Hui wrote:
-> >> When  'manual=false' and  'signaled=true', then expected value when using
-> >> NTSYNC_IOC_CREATE_EVENT should be greater than zero. Fix this typo error.
-> >>
-> >> Signed-off-by: Su Hui<suhui@nfschina.com>
-> >> ---
-> >>   tools/testing/selftests/drivers/ntsync/ntsync.c | 2 +-
-> >>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/tools/testing/selftests/drivers/ntsync/ntsync.c b/tools/testing/selftests/drivers/ntsync/ntsync.c
-> >> index 3aad311574c4..bfb6fad653d0 100644
-> >> --- a/tools/testing/selftests/drivers/ntsync/ntsync.c
-> >> +++ b/tools/testing/selftests/drivers/ntsync/ntsync.c
-> >> @@ -968,7 +968,7 @@ TEST(wake_all)
-> >>   	auto_event_args.manual = false;
-> >>   	auto_event_args.signaled = true;
-> >>   	objs[3] = ioctl(fd, NTSYNC_IOC_CREATE_EVENT, &auto_event_args);
-> >> -	EXPECT_EQ(0, objs[3]);
-> >> +	EXPECT_LE(0, objs[3]);
-> > It's kind of weird how these macros put the constant on the left.
-> > It returns an "fd" on success.  So this look reasonable.  It probably
-> > won't return the zero fd so we could probably check EXPECT_LT()?
-> Agreed, there are about 29 items that can be changed to EXPECT_LT().
-> I can send a v2 patchset with this change if there is no more other
-> suggestions.
+strscpy_pad() already NUL-terminates 'data' at the corresponding
+indexes. Remove any unnecessary NUL-terminations.
 
-I personally think it looks wrong to use EXPECT_LT(), but I'll certainly defer to a higher maintainer on this point.
+No functional changes intended.
 
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/scsi/fnic/fdls_disc.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/scsi/fnic/fdls_disc.c b/drivers/scsi/fnic/fdls_disc.c
+index 11211c469583..7294645ed6d2 100644
+--- a/drivers/scsi/fnic/fdls_disc.c
++++ b/drivers/scsi/fnic/fdls_disc.c
+@@ -1898,7 +1898,6 @@ static void fdls_fdmi_register_hba(struct fnic_iport_s *iport)
+ 	if (fnic->subsys_desc_len >= FNIC_FDMI_MODEL_LEN)
+ 		fnic->subsys_desc_len = FNIC_FDMI_MODEL_LEN - 1;
+ 	strscpy_pad(data, fnic->subsys_desc, FNIC_FDMI_MODEL_LEN);
+-	data[FNIC_FDMI_MODEL_LEN - 1] = 0;
+ 	fnic_fdmi_attr_set(fdmi_attr, FNIC_FDMI_TYPE_MODEL, FNIC_FDMI_MODEL_LEN,
+ 		data, &attr_off_bytes);
+ 
+@@ -2061,7 +2060,6 @@ static void fdls_fdmi_register_pa(struct fnic_iport_s *iport)
+ 	snprintf(tmp_data, FNIC_FDMI_OS_NAME_LEN - 1, "host%d",
+ 		 fnic->host->host_no);
+ 	strscpy_pad(data, tmp_data, FNIC_FDMI_OS_NAME_LEN);
+-	data[FNIC_FDMI_OS_NAME_LEN - 1] = 0;
+ 	fnic_fdmi_attr_set(fdmi_attr, FNIC_FDMI_TYPE_OS_NAME,
+ 		FNIC_FDMI_OS_NAME_LEN, data, &attr_off_bytes);
+ 
+@@ -2071,7 +2069,6 @@ static void fdls_fdmi_register_pa(struct fnic_iport_s *iport)
+ 	sprintf(fc_host_system_hostname(fnic->host), "%s", utsname()->nodename);
+ 	strscpy_pad(data, fc_host_system_hostname(fnic->host),
+ 					FNIC_FDMI_HN_LEN);
+-	data[FNIC_FDMI_HN_LEN - 1] = 0;
+ 	fnic_fdmi_attr_set(fdmi_attr, FNIC_FDMI_TYPE_HOST_NAME,
+ 		FNIC_FDMI_HN_LEN, data, &attr_off_bytes);
+ 
+-- 
+2.48.1
 
 
