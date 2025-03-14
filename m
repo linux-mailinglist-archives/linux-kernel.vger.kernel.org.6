@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-561762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AACA5A615D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:09:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CB8CA615DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:09:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEABC3BEEB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:08:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 835FF3BE4C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF1120459A;
-	Fri, 14 Mar 2025 16:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E4C2046A7;
+	Fri, 14 Mar 2025 16:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CRDy1lqA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="A/TyYnpx"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oUvGicU9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BKlii9JD"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827EA202F79
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433FF202F95
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741968499; cv=none; b=j5a/61B3pSai1QiT/FN8jGjrSuQgBTHnGuoY1LvoZiLp1eE5Chqo8cEVjapj6IGKBGU+eTcDgAuTtlAaedxw4HdQyiUgN32QcYq1psp6nrwO4n/widnOYG0Ne6C2uhYptYIpRNLlk2qDDSkTIRpDqIOqVYssR7frJY9VX+2gEWY=
+	t=1741968500; cv=none; b=V3ORvESDUzKY8zctB90MEJvn7meyPLMeXVLzRHjr4pb+sHDFLqy7Pdots2wgCYh5iJ5IQ643KDNCWLL/x57Uns1sy+NuOLOCvfQn/UCTo06xQpoAgfJaKEOPRE15c/xWuTEn1PrbUBzmewLhik3b0kmcV2deMbEvdH9lECWsfag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741968499; c=relaxed/simple;
-	bh=hMEsLsglNs4AwkHsJbHuF/7QRbxSiICOISHMO54ovQ8=;
+	s=arc-20240116; t=1741968500; c=relaxed/simple;
+	bh=oQzX+7nGoxhkL+yQVBL7r8HDvb37Hr/zFK9BLTl9xrg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=au8B9FJzS41L9YhKHAEiZESd6KHLtZsPQjnDZyoK62dVPFbNy9gyBiDe6q7mcn74ThAXjCgh4tzxoZvBylqcNIhJcAcwR1RlQqaRCwVCRYwn4elLCY/lqVSmdKZ4CZfClalnXMj6S2ue6Q4LxqQZFgOKg1fmo0QJUutGvHKW8ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CRDy1lqA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=A/TyYnpx; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=gZLILO2bSjkuTgFZwHwYx+YfxcmWKrq1BQR6jjdQ2Jwsrbhl/dxJjZPNIg6g+z3XJn82VOXxVFLksbu47vJAcIsN513f5yOmGLQWOSloE4xysUyhTJuK8rcHKCid4/mE2AwE9bzHkI2ug0FIRna7wun5MVVxcFcq+SrtF+69ePQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oUvGicU9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BKlii9JD; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
@@ -38,21 +38,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hUmCwmW08CUlGez91ObC9mBwhMIwUpRmBhCO7ubM414=;
-	b=CRDy1lqAGtDW+JG/zhQo2hI2v/UAgh3ORFOgjKP45KwnFP1rT49KzKY/J3crWLpN4yHLxU
-	BTL5F51HQCU7M1YMo9VuWVy5wyJ72MCnfio7/olA/BBM7p65uJ4IUQHDS8d5maX3ck5JgY
-	iVw49MwhAUb2LGq4x5SSThekSLuCUk6Gkqh0/C5l+3ohrpt5ejZU9X8THoEg+YwBosqnx8
-	1Yj5ntUWibetqA30qK3Nc3248MmUnBqV+BuoZUg4q4Pw81kMJLMbJHEqTffkWlIM7qwFWX
-	j9R7xLusIUUW0QBYwho1ZhCvAynOc7YEEF2nW2hhMjKbqYC1MFGXVG6fto4l+A==
+	bh=3UThOL2xYE+zlzWKKbLr4gFZbbNJ4JtHESm/nz/q22I=;
+	b=oUvGicU9EzvDhQw6mwbX6KaWnwK85wGS1FqPabwF0NiVNPAIGHBx6LELfdu02mi4glujPm
+	eolrnSGgQ7aoFzpdUkQwS/VN7Z25xOGvggToNLYhR4YEbuA79BU1D6PJmqtvGRmQFVIQ4e
+	LKc6i51kdpZoP7fAFIAVgUFuP3VWMPZNe+kYoW+wgNifmq+7kYeS/QrCTEQpoEiilZ+f68
+	QEW3WPnuOpiZRyh2NDsyzdZkWTyOmlUTXwr6cgEBqNEDeYV80+HVhajnFj4dZJTcZoNqX1
+	DTsK2A1xouiZfunNcBz5zevTeJ9P3GY+g7sgstTKzqY8P8plPZurQeeQC1Sw9A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1741968496;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hUmCwmW08CUlGez91ObC9mBwhMIwUpRmBhCO7ubM414=;
-	b=A/TyYnpxt9kTOXU5xGGtNrsvn3uyfHMkD6NKJsuf0LNWc4Kb0oD+2I0R0xphQWcIqym4xU
-	XdUUWguOXGWBp0BQ==
+	bh=3UThOL2xYE+zlzWKKbLr4gFZbbNJ4JtHESm/nz/q22I=;
+	b=BKlii9JDzCL1dJehRa3nId7N9nVNEeOzD6QG3T8tFCBuRpP4qdEZBdFXR1kby22VnhG37q
+	NXHPULtxuG4UCeBQ==
 To: linux-kernel@vger.kernel.org,
 	linux-rt-devel@lists.linux.dev
 Cc: Ben Segall <bsegall@google.com>,
@@ -69,10 +69,15 @@ Cc: Ben Segall <bsegall@google.com>,
 	Vincent Guittot <vincent.guittot@linaro.org>,
 	Will Deacon <will@kernel.org>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 4/9] arm64: Rely on generic printing of preemption model.
-Date: Fri, 14 Mar 2025 17:08:05 +0100
-Message-ID: <20250314160810.2373416-5-bigeasy@linutronix.de>
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v4 5/9] powerpc: Rely on generic printing of preemption model.
+Date: Fri, 14 Mar 2025 17:08:06 +0100
+Message-ID: <20250314160810.2373416-6-bigeasy@linutronix.de>
 In-Reply-To: <20250314160810.2373416-1-bigeasy@linutronix.de>
 References: <20250314160810.2373416-1-bigeasy@linutronix.de>
 Precedence: bulk
@@ -83,50 +88,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-__die() invokes later show_regs() -> show_regs_print_info() which prints
-the current preemption model.
-Remove it from the initial line.
+After the first printk in __die() there is show_regs() ->
+show_regs_print_info() which prints the current
+preemption model.
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Acked-by: Will Deacon <will@kernel.org>
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Remove the preempion model from the arch code.
+
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Naveen N Rao <naveen@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/arm64/kernel/traps.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ arch/powerpc/kernel/traps.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index 4e26bd356a482..529cff825531c 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -172,14 +172,6 @@ static void dump_kernel_instr(const char *lvl, struct =
-pt_regs *regs)
- 	printk("%sCode: %s\n", lvl, str);
- }
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index edf5cabe5dfdb..cb8e9357383e9 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -263,10 +263,9 @@ static int __die(const char *str, struct pt_regs *regs=
+, long err)
+ {
+ 	printk("Oops: %s, sig: %ld [#%d]\n", str, err, ++die_counter);
 =20
--#ifdef CONFIG_PREEMPT
--#define S_PREEMPT " PREEMPT"
--#elif defined(CONFIG_PREEMPT_RT)
--#define S_PREEMPT " PREEMPT_RT"
--#else
--#define S_PREEMPT ""
--#endif
--
- #define S_SMP " SMP"
-=20
- static int __die(const char *str, long err, struct pt_regs *regs)
-@@ -187,7 +179,7 @@ static int __die(const char *str, long err, struct pt_r=
-egs *regs)
- 	static int die_counter;
- 	int ret;
-=20
--	pr_emerg("Internal error: %s: %016lx [#%d]" S_PREEMPT S_SMP "\n",
-+	pr_emerg("Internal error: %s: %016lx [#%d] " S_SMP "\n",
- 		 str, err, ++die_counter);
-=20
- 	/* trap and error numbers are mostly meaningless on ARM */
+-	printk("%s PAGE_SIZE=3D%luK%s%s%s%s%s%s %s\n",
++	printk("%s PAGE_SIZE=3D%luK%s %s%s%s%s %s\n",
+ 	       IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN) ? "LE" : "BE",
+ 	       PAGE_SIZE / 1024, get_mmu_str(),
+-	       IS_ENABLED(CONFIG_PREEMPT) ? " PREEMPT" : "",
+ 	       IS_ENABLED(CONFIG_SMP) ? " SMP" : "",
+ 	       IS_ENABLED(CONFIG_SMP) ? (" NR_CPUS=3D" __stringify(NR_CPUS)) : "",
+ 	       debug_pagealloc_enabled() ? " DEBUG_PAGEALLOC" : "",
 --=20
 2.47.2
 
