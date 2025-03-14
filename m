@@ -1,282 +1,224 @@
-Return-Path: <linux-kernel+bounces-560954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBEC0A60B72
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:28:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB72A60B7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:29:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8266719C5682
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:28:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B0CF19C2791
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E181A3AB8;
-	Fri, 14 Mar 2025 08:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9401AAA1A;
+	Fri, 14 Mar 2025 08:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="IopvT0Fg"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DiLUQKv+"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F2D1A3174
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF51419B5A7
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741940910; cv=none; b=XHv70HdvY5sRgck3MZsTZgzdmx6F9OyZYEprjwtWvDMd86mUTeVwcg0dlDaBIj2P/r/84nObG3osd6H0wGkCfCXRYZIQtGkBeXmvEf3R9/LtIdFu86x3MkrcrCDsxUh0hQ2vfkijl8JrYwTuU2hZk/bV9niMl5iIHN37nU1oSTo=
+	t=1741940933; cv=none; b=J+K6VD5GYJpzrdn0SEr9cYzSpz9MnnLgBYp6bNXSzywLHIGy78rNfDSp66OhP50DXqx8wScRLTi5GPhZaxEA4bZIoHW8PPpGQjpuONZiupsg/MNAizTkl1kgGdwe2CyKOfKI/2+RiIq6+8buuxK81x9qE/SH/iNuVBTm3I7J9tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741940910; c=relaxed/simple;
-	bh=7uofjIIGoCDldE/Obw0jtasiP0UD1fVzTxdYVV5y7p8=;
+	s=arc-20240116; t=1741940933; c=relaxed/simple;
+	bh=3beW1OCLWolT6HOjuqjnuVA3lH6Eoavs/ap0fe1G/BE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IiZrxfpILfHxHnqJzsSR9/r7K1Zl9+rDtVuyYk2EcaOT7DLzjiKLMI95g8r8FJSriyfb1iQ+jPdHWOsUywDlJBFlRj+Bd23H/9IExA1xFQrg8rGLmxKiUOWMVi530wI3q6z3MQ3I2eXBVHnI++KWqQAvDLIHMtlmEqQRMPP9gJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=IopvT0Fg; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3cf82bd380bso17636525ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:28:28 -0700 (PDT)
+	 To:Cc:Content-Type; b=FPOitJJnfX4G8mvYKaQ7EC/dyJiETzrRMqXlQ5m9Sa9UpkBpIWyVn+R+F8NzudO6CGv9LSeZekawY1+gq0UZEUe3dOSHtvm4CArOrfmY1yvewOb+ip6Iu9/9nseh7JSYqsjkBMqfWvEf3j0C/Cl51xamqMKRMhTE/2RxClVfKaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DiLUQKv+; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30bf8f5dde5so16666581fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:28:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1741940908; x=1742545708; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wfQM28N9JPXsaVfg+1fZcj0o7z6iPxTVilM1OHygPAA=;
-        b=IopvT0FgvxMwyhKnd8H0/5HP6O94kEZsMEBcmvACN4Fizcgcgt8gbikQrlsNOuShDz
-         6tkOTFikiWaWqh07BiL0F42bjJS3oEiABEI4fGS+GVYXPxHbrsuuH8bwO2msMdLMPXV6
-         rUkWAev2HUufRrsccxgGpBKsXHEE6YNf+GXeJYNcW01jwdCUy7Duk8+XUAlkPMsGnp9O
-         hFwjpVoPc02hf6kgukz9ADZeIQFVHTmFo474vKUZ8lw0Mc/I07oxWrbq5NgCBJYhI58C
-         VSQM4hhrIqGwIP74+Qzca6NYYq8JrtBlZEisLPNnK+LpFn/OZb5mP+Y+RXCoB0W0xu1C
-         lgfg==
+        d=chromium.org; s=google; t=1741940929; x=1742545729; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=svh2Ei3PIghL/U77TQ2sDGt373rPLDUnBNnpKbsNhmU=;
+        b=DiLUQKv+kfsM3bSdrlZZq+UYtGbiTTcfGTVmMjKS34vWbv/hor63LVAX+cGNX/2ZKE
+         12tBjLFipAL+6S8qD+C9dfkOAkJZtTBZsOilaBsFCDfs8YfGEVcDsloM2JaaxGSv4Vk3
+         2z9akqnZYmAZh9Q3/Xcz1oxn8dyH59acoBtrc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741940908; x=1742545708;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wfQM28N9JPXsaVfg+1fZcj0o7z6iPxTVilM1OHygPAA=;
-        b=ibbPB0yxkow3QdpHU4S0PBCosXTAnQgYZaYafW7SOPCv9NDFCPbXtaRY5EgVMdKhFH
-         lK+2pfZRokvwA6Dgwi0lKLtk2EG6/3ulh3Sia80gcuu1oFqpk3SaXS1ub1TtnytaZgnp
-         Q/9UCPh4ny7PfjO08UfLik7osWPLDOQqHMB9OD7aUe9HpCtzzB/5ESQ2K/4pZrFK4O+r
-         nYyggYagn1CWPtOV76+AeUxFevHFeKZa3Wb4LKkbt2DUkWpdx056eL02Rx52hGzHaAeF
-         RUQzW6KVIf7ybtuqvralmVdc1Q8peZJGU5EUKeWV03kBn1HpvSB86MifwAqJ3SJJoxAL
-         X3Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUl7oOpGADE2ysTlFwDlZBEUW1jOpFQxUVIZvB3RCR2TJpl+c/itZ7BsfgQEV0XaBxlh7ik6RuvvdVUA90=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJeVtNYxEtxHK4n0y9nw48AdLWvf67W2FcbOW7vzDSC7QBTHaG
-	EUOdLV8GqhppX5bJsqgEOcasXEhNtxWawOg/hDEpLge3SGjWDW17rLCmnSn6KTQh9CkJRSvBMnb
-	bgs3gv0j+wIYLS2NeViwQhmLnGmbjMpBKQdJRLg==
-X-Gm-Gg: ASbGncvRlx4B9cVS2Sxsc8AjTnziVcaTANMg5PdYvw2YLcIhVVSG/DKEMVuQj+ysmH0
-	lYq0yw24andp4ReuqcHVhpl2myWmZPAGtCg9fj5uSwo3HpeGoQQ0ISJ5H6uKq72zodPR9kfSyhW
-	87poIjQwPTaFmavxxpxHXprfh/ONnsI/ALJtFqOA==
-X-Google-Smtp-Source: AGHT+IEus2eidY5ho/u8kwK0lJdtjoMJ6hhBelcGc2gZ6mBgkM87bHEv8OtdPq4kzNbtkzqAYGzl75buC/L6OC0Zx7w=
-X-Received: by 2002:a05:6e02:338b:b0:3d4:3fed:81f7 with SMTP id
- e9e14a558f8ab-3d483a76c70mr14609815ab.19.1741940907731; Fri, 14 Mar 2025
- 01:28:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741940929; x=1742545729;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=svh2Ei3PIghL/U77TQ2sDGt373rPLDUnBNnpKbsNhmU=;
+        b=FkuW3ftpHkB0WTzeYy0agFP95r5wnbp9ESsSmTGuqLhW51kAPzmGEJ3rQ4LyWYWz3G
+         0TAhw6pBd3gqVDyhd6XXFy1H0hCxjMDFN66Qig6XrJXFfVuRe86cV6dvQEG957ciCDrC
+         BpueFNQS8ajp6g/VSe7Ye97/Z+VwkN6JsNmRpafFI2lqG/qX8vB7VYKyYhTaRdY6zmI7
+         okEfGofoEoa/GZqoF3oedsIkiLkcZ6g0ShTfkasy9TN1NxOPmpUE4UfIULir24sJ5Lcu
+         oy47qV58AtTfO8sqdAe5NWkq7blcYAsefHjpYJPZDJoH8IjSMreoEmBELb3xJdsuMhmr
+         EHgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsRs5sYyj6aLhN/xtzwKCOjwiVlqFbeUpsPrrYjs0cQIgr71wnFDl0SYWz/FQxxwGTXk7jq7dFSlRO54c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLmvg6ls0xfPDMWU0raLIT+X0KeGokAYPm5BcNGOToUzT3ZEhb
+	kCpXsM+XdHIV0GxJiG3/FZz8xDDw5WZz6aG+cXb8HefmfKiGexZknYwt4UogDRL9yWPl0em2CHW
+	ETg==
+X-Gm-Gg: ASbGnctgwi1RjpEvyWuH5kzFnf39NwMMglJrM79203HvZXzK8p67/TPe3u7adiGlUMD
+	umyKACp6Df62vOqIOVFJwhHnTXp76VymUqYo1eawIJ4N2L8JOAA8sC4LhalPwlzrKu95n65inPn
+	AMnYxXKA+ESoNpoSuvfgRkqya5BUGs2k1G0QsiaaTvj471VxCZPBGtbH+DRikse3J7gao2LceTM
+	Y9KSX5Tt6QDjH6POv6m3BG2BrhbIPzkYGzMKbiLbP6RniE4iu4GqFI8L0nb8aezPAhj13UKKAgu
+	YS24csbTl3swa1TN7ThYfznwiZLncOpUMQSE4uxKtRXrd+7ipxFRr1EkCc3pU2/kWWX5OyJazW3
+	nk9wRmbe5FHg=
+X-Google-Smtp-Source: AGHT+IEuDLL+3xngrYd0uZ4yUP9vHBDi0AcgG2sxJDOadWEZjbEw9RKJM1ZtQX2+zz1KRnfxwfXs+A==
+X-Received: by 2002:a05:651c:b06:b0:308:e5e8:9d4c with SMTP id 38308e7fff4ca-30c4a8d9084mr5410321fa.28.1741940929425;
+        Fri, 14 Mar 2025 01:28:49 -0700 (PDT)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f0ea489sm4768381fa.42.2025.03.14.01.28.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Mar 2025 01:28:48 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30613802a59so20669701fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:28:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWp5dx1KtBZRlGjD9XnGRqDHcsp2F6enP2eApIPfVrVoeSzLDk/M5VR2781wDNFgpezgaJWURykYRyXh1Q=@vger.kernel.org
+X-Received: by 2002:a05:6512:282c:b0:548:9786:c18a with SMTP id
+ 2adb3069b0e04-549c391098dmr577468e87.19.1741940927720; Fri, 14 Mar 2025
+ 01:28:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310-v5_user_cfi_series-v11-0-86b36cbfb910@rivosinc.com> <20250310-v5_user_cfi_series-v11-5-86b36cbfb910@rivosinc.com>
-In-Reply-To: <20250310-v5_user_cfi_series-v11-5-86b36cbfb910@rivosinc.com>
-From: Zong Li <zong.li@sifive.com>
-Date: Fri, 14 Mar 2025 16:28:16 +0800
-X-Gm-Features: AQ5f1JpDAK-Wh3zbs_fniZz3O3lKSiSx95v5vbF1bDBIyMbqDELLA2snuSUHWWE
-Message-ID: <CANXhq0pdUPu4eDSJDGpjz804hY3ZsjLCOvyTuKDYajqzT0Xw+w@mail.gmail.com>
-Subject: Re: [PATCH v11 05/27] riscv: usercfi state for task and save/restore
- of CSR_SSP on trap entry/exit
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
-	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
-	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
-	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
+References: <20250313-uvc-metadata-v3-0-c467af869c60@chromium.org>
+ <20250313-uvc-metadata-v3-3-c467af869c60@chromium.org> <20250314073456.25817a3d@foz.lan>
+In-Reply-To: <20250314073456.25817a3d@foz.lan>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 14 Mar 2025 09:28:34 +0100
+X-Gmail-Original-Message-ID: <CANiDSCuNzwqhYOORqY+PGUbK8=tqxm6stpzQC3BFYF7pxgRG6w@mail.gmail.com>
+X-Gm-Features: AQ5f1JoCE_oXYK2iy5ZNefUSZDoSx_Ql3eqvm2Z0KbemciKPzVrpZ_OR0bJVOPU
+Message-ID: <CANiDSCuNzwqhYOORqY+PGUbK8=tqxm6stpzQC3BFYF7pxgRG6w@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] media: uvcvideo: Introduce V4L2_META_FMT_UVC_CUSTOM
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 11:42=E2=80=AFPM Deepak Gupta <debug@rivosinc.com> =
-wrote:
->
-> Carves out space in arch specific thread struct for cfi status and shadow
-> stack in usermode on riscv.
->
-> This patch does following
-> - defines a new structure cfi_status with status bit for cfi feature
-> - defines shadow stack pointer, base and size in cfi_status structure
-> - defines offsets to new member fields in thread in asm-offsets.c
-> - Saves and restore shadow stack pointer on trap entry (U --> S) and exit
->   (S --> U)
->
-> Shadow stack save/restore is gated on feature availiblity and implemented
-> using alternative. CSR can be context switched in `switch_to` as well but
-> soon as kernel shadow stack support gets rolled in, shadow stack pointer
-> will need to be switched at trap entry/exit point (much like `sp`). It ca=
-n
-> be argued that kernel using shadow stack deployment scenario may not be a=
-s
-> prevalant as user mode using this feature. But even if there is some
-> minimal deployment of kernel shadow stack, that means that it needs to be
-> supported. And thus save/restore of shadow stack pointer in entry.S inste=
-ad
-> of in `switch_to.h`.
->
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
->  arch/riscv/include/asm/processor.h   |  1 +
->  arch/riscv/include/asm/thread_info.h |  3 +++
->  arch/riscv/include/asm/usercfi.h     | 24 ++++++++++++++++++++++++
->  arch/riscv/kernel/asm-offsets.c      |  4 ++++
->  arch/riscv/kernel/entry.S            | 26 ++++++++++++++++++++++++++
->  5 files changed, 58 insertions(+)
->
-> diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/=
-processor.h
-> index e3aba3336e63..d851bb5c6da0 100644
-> --- a/arch/riscv/include/asm/processor.h
-> +++ b/arch/riscv/include/asm/processor.h
-> @@ -14,6 +14,7 @@
->
->  #include <asm/ptrace.h>
->  #include <asm/hwcap.h>
-> +#include <asm/usercfi.h>
->
->  #define arch_get_mmap_end(addr, len, flags)                    \
->  ({                                                             \
-> diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/as=
-m/thread_info.h
-> index f5916a70879a..a0cfe00c2ca6 100644
-> --- a/arch/riscv/include/asm/thread_info.h
-> +++ b/arch/riscv/include/asm/thread_info.h
-> @@ -62,6 +62,9 @@ struct thread_info {
->         long                    user_sp;        /* User stack pointer */
->         int                     cpu;
->         unsigned long           syscall_work;   /* SYSCALL_WORK_ flags */
-> +#ifdef CONFIG_RISCV_USER_CFI
-> +       struct cfi_status       user_cfi_state;
-> +#endif
->  #ifdef CONFIG_SHADOW_CALL_STACK
->         void                    *scs_base;
->         void                    *scs_sp;
-> diff --git a/arch/riscv/include/asm/usercfi.h b/arch/riscv/include/asm/us=
-ercfi.h
-> new file mode 100644
-> index 000000000000..5f2027c51917
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/usercfi.h
-> @@ -0,0 +1,24 @@
-> +/* SPDX-License-Identifier: GPL-2.0
-> + * Copyright (C) 2024 Rivos, Inc.
-> + * Deepak Gupta <debug@rivosinc.com>
-> + */
-> +#ifndef _ASM_RISCV_USERCFI_H
-> +#define _ASM_RISCV_USERCFI_H
-> +
-> +#ifndef __ASSEMBLY__
-> +#include <linux/types.h>
-> +
-> +#ifdef CONFIG_RISCV_USER_CFI
-> +struct cfi_status {
-> +       unsigned long ubcfi_en : 1; /* Enable for backward cfi. */
-> +       unsigned long rsvd : ((sizeof(unsigned long) * 8) - 1);
-> +       unsigned long user_shdw_stk; /* Current user shadow stack pointer=
- */
-> +       unsigned long shdw_stk_base; /* Base address of shadow stack */
-> +       unsigned long shdw_stk_size; /* size of shadow stack */
-> +};
-> +
-> +#endif /* CONFIG_RISCV_USER_CFI */
-> +
-> +#endif /* __ASSEMBLY__ */
-> +
-> +#endif /* _ASM_RISCV_USERCFI_H */
-> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offs=
-ets.c
-> index e89455a6a0e5..0c188aaf3925 100644
-> --- a/arch/riscv/kernel/asm-offsets.c
-> +++ b/arch/riscv/kernel/asm-offsets.c
-> @@ -50,6 +50,10 @@ void asm_offsets(void)
->  #endif
->
->         OFFSET(TASK_TI_CPU_NUM, task_struct, thread_info.cpu);
-> +#ifdef CONFIG_RISCV_USER_CFI
-> +       OFFSET(TASK_TI_CFI_STATUS, task_struct, thread_info.user_cfi_stat=
-e);
-> +       OFFSET(TASK_TI_USER_SSP, task_struct, thread_info.user_cfi_state.=
-user_shdw_stk);
-> +#endif
->         OFFSET(TASK_THREAD_F0,  task_struct, thread.fstate.f[0]);
->         OFFSET(TASK_THREAD_F1,  task_struct, thread.fstate.f[1]);
->         OFFSET(TASK_THREAD_F2,  task_struct, thread.fstate.f[2]);
-> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-> index 33a5a9f2a0d4..68c99124ea55 100644
-> --- a/arch/riscv/kernel/entry.S
-> +++ b/arch/riscv/kernel/entry.S
-> @@ -147,6 +147,20 @@ SYM_CODE_START(handle_exception)
->
->         REG_L s0, TASK_TI_USER_SP(tp)
->         csrrc s1, CSR_STATUS, t0
-> +       /*
-> +        * If previous mode was U, capture shadow stack pointer and save =
-it away
-> +        * Zero CSR_SSP at the same time for sanitization.
-> +        */
-> +       ALTERNATIVE("nop; nop; nop; nop",
-> +                               __stringify(                    \
-> +                               andi s2, s1, SR_SPP;    \
-> +                               bnez s2, skip_ssp_save; \
-> +                               csrrw s2, CSR_SSP, x0;  \
-> +                               REG_S s2, TASK_TI_USER_SSP(tp); \
-> +                               skip_ssp_save:),
-> +                               0,
-> +                               RISCV_ISA_EXT_ZICFISS,
-> +                               CONFIG_RISCV_USER_CFI)
->         csrr s2, CSR_EPC
->         csrr s3, CSR_TVAL
->         csrr s4, CSR_CAUSE
-> @@ -236,6 +250,18 @@ SYM_CODE_START_NOALIGN(ret_from_exception)
->          * structures again.
->          */
->         csrw CSR_SCRATCH, tp
-> +
-> +       /*
-> +        * Going back to U mode, restore shadow stack pointer
-> +        */
-> +       ALTERNATIVE("nop; nop",
-> +                               __stringify(                             =
-       \
-> +                               REG_L s3, TASK_TI_USER_SSP(tp); \
-> +                               csrw CSR_SSP, s3),
-> +                               0,
-> +                               RISCV_ISA_EXT_ZICFISS,
-> +                               CONFIG_RISCV_USER_CFI)
-> +
->  1:
->  #ifdef CONFIG_RISCV_ISA_V_PREEMPTIVE
->         move a0, sp
->
+Hi Mauro
 
-LGTM.
-
-Reviewed-by: Zong Li <zong.li@sifive.com>
-
-> --
-> 2.34.1
+On Fri, 14 Mar 2025 at 07:35, Mauro Carvalho Chehab
+<mchehab+huawei@kernel.org> wrote:
 >
+> Em Thu, 13 Mar 2025 12:06:27 +0000
+> Ricardo Ribalda <ribalda@chromium.org> escreveu:
 >
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> > The UVC driver provides two metadata types V4L2_META_FMT_UVC, and
+> > V4L2_META_FMT_D4XX. The only difference between the two of them is that
+> > V4L2_META_FMT_UVC only copies PTS, SCR, size and flags, and
+> > V4L2_META_FMT_D4XX copies the whole metadata section.
+> >
+> > Now we only enable V4L2_META_FMT_D4XX for the Intel D4xx family of
+> > devices, but it is useful to have the whole metadata section for any
+> > device where vendors include other metadata, such as the one described by
+> > Microsoft:
+> > https://learn.microsoft.com/en-us/windows-hardware/drivers/stream/mf-capture-metadata
+> >
+> > This patch introduces a new format V4L2_META_FMT_UVC_CUSTOM, that is
+> > identical to V4L2_META_FMT_D4XX but it is available to all the UVC
+> > devices.
+> >
+> > Suggested-by: Hans de Goede <hdegoede@redhat.com>
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> >  .../userspace-api/media/v4l/meta-formats.rst       |  1 +
+> >  .../userspace-api/media/v4l/metafmt-uvc-custom.rst | 31 +++++++++++++++++
+> >  MAINTAINERS                                        |  1 +
+> >  drivers/media/usb/uvc/uvc_metadata.c               | 40 ++++++++++++++++++----
+> >  drivers/media/v4l2-core/v4l2-ioctl.c               |  1 +
+> >  include/uapi/linux/videodev2.h                     |  1 +
+> >  6 files changed, 69 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/Documentation/userspace-api/media/v4l/meta-formats.rst b/Documentation/userspace-api/media/v4l/meta-formats.rst
+> > index 86ffb3bc8ade2e0c563dd84441572ecea1a571a6..9fd83f4a3cc8509702a2a9f032fdc04bf6c6d1bc 100644
+> > --- a/Documentation/userspace-api/media/v4l/meta-formats.rst
+> > +++ b/Documentation/userspace-api/media/v4l/meta-formats.rst
+> > @@ -19,6 +19,7 @@ These formats are used for the :ref:`metadata` interface only.
+> >      metafmt-pisp-fe
+> >      metafmt-rkisp1
+> >      metafmt-uvc
+> > +    metafmt-uvc-custom
+> >      metafmt-vivid
+> >      metafmt-vsp1-hgo
+> >      metafmt-vsp1-hgt
+> > diff --git a/Documentation/userspace-api/media/v4l/metafmt-uvc-custom.rst b/Documentation/userspace-api/media/v4l/metafmt-uvc-custom.rst
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..9f150fc2b6f379cc4707ff45041dd014956ae11a
+> > --- /dev/null
+> > +++ b/Documentation/userspace-api/media/v4l/metafmt-uvc-custom.rst
+> > @@ -0,0 +1,31 @@
+> > +.. SPDX-License-Identifier: GFDL-1.1-no-invariants-or-later
+> > +
+> > +.. _v4l2-meta-fmt-uvc-custom:
+> > +
+> > +*********************************
+> > +V4L2_META_FMT_UVC_CUSTOM ('UVCC')
+> > +*********************************
+> > +
+> > +UVC Custom Payload Metadata.
+> > +
+> > +
+> > +Description
+> > +===========
+> > +
+> > +V4L2_META_FMT_UVC_CUSTOM buffers follow the metadata buffer layout of
+> > +V4L2_META_FMT_UVC with the only difference that it includes all the UVC
+> > +metadata, not just the first 2-12 bytes.
+> > +
+> > +The most common metadata format is the one proposed by Microsoft(R)'s UVC
+> > +extension [1_], but other vendors might have different formats.
+> > +
+> > +Applications might use information from the Hardware Database (hwdb)[2_] to
+> > +process the camera's metadata accordingly.
+>
+> Having something like that at the userspace API shouldn't be handled
+> lightly. This sounds to me that passing a blank check for vendors to stream
+> whatever they want without any requirements to provide and sort of
+> documentation for the usersace to decode it.
+
+As HdG previously mentioned, all the processing is done in the camera
+so the metadata is not going to hide highly secret required for
+processing:
+https://lore.kernel.org/linux-media/67c1a857-7656-421f-994c-751709b6ae01@redhat.com/
+
+>
+> Also, it would be hard for userspace to distinguish what metatata
+> is contained for a random UVC camera. Please let's not do that.
+
+Userspace will use hwdb info to properly parse the metadata.
+
+
+>
+> As the specific issue here is to support an already known extension,
+> which is already documented, Just add an specific format for it, e.g.
+> you could add something like that at the documentation:
+
+The problem here is how do we know from the driver if a device
+supports V4L2_META_FMT_MSXU_UVC_1_5 or not.
+
+In Windows it seems that vendors add that information to the device
+.inf file. That is equivalent to the hwdb proposal.
+In ChromeOS we are trying to push vendors to use an extension saying
+if there is metadata or not. But that will take some time to land and
+there are thousands of modules out there not ChromeOS compliant.
+
+
+>
+>         V4L2_META_FMT_MSXU_UVC_1_5
+>            Microsoft extensions to USB Video Class 1.5 specification.
+>
+>            For more details, see: https://learn.microsoft.com/en-us/windows-hardware/drivers/stream/uvc-extensions-1-5
+>
+> And then add the corresponding format to V4L2 API.
+>
+> Regards,
+> Mauro
+
+
+
+-- 
+Ricardo Ribalda
 
