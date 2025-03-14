@@ -1,185 +1,118 @@
-Return-Path: <linux-kernel+bounces-560967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C5D5A60BBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:33:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FA06A60BBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:34:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 392D37A76F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:32:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3DAA169925
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A781DA617;
-	Fri, 14 Mar 2025 08:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BBA1C84BA;
+	Fri, 14 Mar 2025 08:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="UodJk+DL"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="wzlQM/r4"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CBA1ACEA5
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50F91AAA1B
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741941203; cv=none; b=UM3yxaMMcr34UEG9avsjIUXFR2uKQ9qDhHlkCCE3UqpP2L+RSFbwDdDsJ1fRRBsLQ0elbxbwYNLKqac9VMmhNsaWjbdBPbEjm7Zjn87xj2BCnveVebDodMtpnP4JW2M3zqQgMKsSHO/aPAUiomj+gvp4ZH3XbwrphuPG+5IxMnI=
+	t=1741941214; cv=none; b=a4Ohs1d9mo4jJ2+pHjvDoZMFNRrdobYFjmBflMpaM4bd6O22iBEQjjkxeLTCwAsOaA/JbQ0+NjAsxX4a63GVpqpvnaAeb0DEaz0q+ibKY8syM074sqzKPYD5Atw0Wx02fNtKJTl8cX8I68g5xuplixwCuJldaRottTEzCXQX7V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741941203; c=relaxed/simple;
-	bh=KdUGoArpkJRkOaCc6KxjKNprdUz8mvS+VZ7WMx+MGU0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ODsOAAnyNbUh54431fPoyPZwG6ORDou4PUUIRkrXrEfQ9fnqbZPw/pJlvWpC0KTbLaQxB7P/OqTef1CjfwglpEh3DhzuXQNLUKG3PPRqh32ksGbON/9TQ5Sa0XsFU6WKaobj7bWnnwfOBQ5f+eul/5SviRb2/Awf/ZyUeiLySgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=UodJk+DL; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3cfce97a3d9so7908765ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:33:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1741941199; x=1742545999; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RZ6FuxCD5VQCRHQX3CMFDucd83uwpV785bHCUjNT0V8=;
-        b=UodJk+DLtsTQqQuayseDqbnBxAKNX2HlCe/tdHIc20betiZF+u7IrfMEi589b4bIpi
-         9EBP0bVaBGrjtltiDZmXbngHuHobRfGn10MQ0VoSYrwT1rD2icReJ18KcKv7HOUM1MHX
-         js+SQvSGbgNHxizfCxAUgGc9uRCxaf6wRWXUDpIkDm23Z+20pRiqzRDFs/CpI4tchdX5
-         HEwECW7X3+MPTwEKEELtke6Vbqc0DGsf/OduhuLq12pxyaIDy+JIdomVepEotcQ0KDVd
-         qoNN7jynuBJNLz3SA8VK+xySgPhLECPBgqWb/0eiJv/QooA3zeTC2VvGwaIiyWLhh8Mg
-         OLFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741941199; x=1742545999;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RZ6FuxCD5VQCRHQX3CMFDucd83uwpV785bHCUjNT0V8=;
-        b=R7n4BC2SsSzf+2Wj8xLp/z21WhBucpLcC/ZmsrdlHRzQVkfp4nmrnhhbgFFBXkAsUy
-         UKq148tzQsDlRc68zS4CbfNAsUAd4U/LhYz/CpMU+O4oMmM0VQhU+1L4Q/YxHeGOEKZp
-         +ZcNKQdNlB59HlF00BTClJxMgaehqZnOHIOJPzRuAgtif70/VqTKZhvIYcbp8R/2WFL3
-         b5FqTzht22YkRa957ZHcENC1qaiEp4X1kqPrh1imehKve8mNQ2EJ+MPorJa7LuA+ow4f
-         pX33L/7tRZcSGovymk3Ua9w/pRjLAFJ35HeAia8CGnhTz3J0jVI6NLaSKgfl3Ftwub6y
-         LxJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMauTEndCbhIDRgVO//9xmriDjZyMyhAHK/q5Futniqp0OiGhCsa7j1mSDey/ZyJNdcbbXbbZIFZfaExk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOJW6K4BamTKpDkLNqnvt/6BY+WXLfJv3JkEKoeHZNnnwgfQYw
-	X3bcVSd3vIwFuXN6siUVUPqEidkzVD39ZFHg2Jknz1ie3YoylqjyTIuo3KAqQx2HK22rGv4V8la
-	qZmPl8+IzoSjpMLUkz8Ot25gfrLMI6/XqZfklUg==
-X-Gm-Gg: ASbGncv5kAJw81n/5p+xYzdO5ZqzSPeUGfdoA/537RgkQQn0RF1dbQJSZKSk/bLif2T
-	dSEJoGW3FcqLsqlzScCgwDmRiJZOLsZpvWWSvdry4rZYFBxWt+A7NWs7/rC+T9oPnqH85Uosvg9
-	x9gjCt2hvNTbQHdwYFCfFIZijFWHw=
-X-Google-Smtp-Source: AGHT+IEpjn4sO807Vp20+x53G/QOr0uFP8XMrOnpLUB7Nd0kqwhiUZDXFX7IBtCy0L3k8Bc72TnDTAm7aisZ3g/OHoQ=
-X-Received: by 2002:a05:6e02:3285:b0:3d0:bd5:b863 with SMTP id
- e9e14a558f8ab-3d483a82c1amr15625505ab.20.1741941199592; Fri, 14 Mar 2025
- 01:33:19 -0700 (PDT)
+	s=arc-20240116; t=1741941214; c=relaxed/simple;
+	bh=MGJdDMkD6/gz2VLWUBnuEe0WVufidACgUTjTQja/X6Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lb2aA23arxWx4MoMAcuUCQKbB04/a3GcXJSu1onh9kjkZBe7Yc19OAm8CGwQwIxMwcLFNkahJZjULh4kFYTckUjRTeu5Jo4Mw9N4+UoJ8jctGCCAZ9SArrWR/stlTAOxTdQ8/zgNK0aBSnbVQWyYc2CUGaXU0oAawOFPBiXQ6sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=wzlQM/r4; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
+	by cmsmtp with ESMTPS
+	id saoUtKYWIAfjwt0TutrDBY; Fri, 14 Mar 2025 08:33:26 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id t0TttayluhQ6tt0TttItYo; Fri, 14 Mar 2025 08:33:25 +0000
+X-Authority-Analysis: v=2.4 cv=WpgtM8fv c=1 sm=1 tr=0 ts=67d3e9d5
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=6Vi/Wpy7sgpXGMLew8oZcg==:17
+ a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=dkecWN29NwlNYE_-JqQA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=l62YLbyLOHyKJhy5MddIlMXG8M11WTu9emmcANot26w=; b=wzlQM/r4FXzRdifNBt+SsYjSBo
+	V+3YuS5TdLG2Jmflg3MsnHzZ+3Ywa/mQ7hgfv75zMfPNWQyLMZrnRgNERRiPgkzkEoMhWmBZrQYqF
+	8EV+RMpT9sQJcmDms++y3rQbCjb06HpFwyJuew4QXmDup4sp9P5YWf3Xk5+UqHApF46gofIM1g0HS
+	1U0+y8uA2k7jCJnmU/bHXpc7EsZBQo/jxznUM6xJlRaKo8Ii6HKfEXICnEwZbScv5s8E/pUH0WM5z
+	rU4v4Gs3N2WukFOGP5ZcTy02xeK1TbwXm1W6TkcjmuBIvIHu3eS7Iwz35D13VDE5ub5GFWgxoMCO9
+	JFrqoI5w==;
+Received: from [45.124.203.140] (port=53657 helo=[192.168.0.159])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1tt0Tr-000000045Ms-2aDv;
+	Fri, 14 Mar 2025 03:33:24 -0500
+Message-ID: <5cb4bca3-da10-4434-a90d-f752d8f1ab1c@embeddedor.com>
+Date: Fri, 14 Mar 2025 19:03:13 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310-v5_user_cfi_series-v11-0-86b36cbfb910@rivosinc.com> <20250310-v5_user_cfi_series-v11-21-86b36cbfb910@rivosinc.com>
-In-Reply-To: <20250310-v5_user_cfi_series-v11-21-86b36cbfb910@rivosinc.com>
-From: Zong Li <zong.li@sifive.com>
-Date: Fri, 14 Mar 2025 16:33:07 +0800
-X-Gm-Features: AQ5f1JogaNhvTzIi-JULlyOhpNHglIVqmb85QzpCgn3yIvu9uGDNtiVJw3WLZ4A
-Message-ID: <CANXhq0pynCvJ5bmPErTGiiO3-d0iXX8KyMZUFOH_tO7AYyytkw@mail.gmail.com>
-Subject: Re: [PATCH v11 21/27] riscv: enable kernel access to shadow stack
- memory via FWFT sbi call
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
-	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
-	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
-	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] rtc: Avoid a couple of
+ -Wflex-array-member-not-at-end warnings
+To: Tzung-Bi Shih <tzungbi@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ linux-rtc@vger.kernel.org, chrome-platform@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <Z9N8BsVJF-s6Hcvd@kspp> <Z9PmC4lExxDMusf3@google.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <Z9PmC4lExxDMusf3@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 45.124.203.140
+X-Source-L: No
+X-Exim-ID: 1tt0Tr-000000045Ms-2aDv
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.159]) [45.124.203.140]:53657
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfGGIyF1FEZ6QiVMRYLzOi2WVnwsUyru/wwqT+nO7ppp6MCFqVJPYzC4oGFWnKxOqtlfkKIRtb4qhX37myLrNCp7nGPSfdFIgMwSmOGo7bT1Zy9fR7/PV
+ 7W1OUmMb5jaAyzPjA5NsXIYBNL07in63IJzviye6L3XexDPTOQ05Th1seo1trhR+QfiFPSVw3idilNzZOl+kEGajo9DQf2jPwfWrXPra8P9I+2NxHENPLOKw
 
-On Mon, Mar 10, 2025 at 11:44=E2=80=AFPM Deepak Gupta <debug@rivosinc.com> =
-wrote:
->
-> Kernel will have to perform shadow stack operations on user shadow stack.
-> Like during signal delivery and sigreturn, shadow stack token must be
-> created and validated respectively. Thus shadow stack access for kernel
-> must be enabled.
->
-> In future when kernel shadow stacks are enabled for linux kernel, it must
-> be enabled as early as possible for better coverage and prevent imbalance
-> between regular stack and shadow stack. After `relocate_enable_mmu` has
-> been done, this is as early as possible it can enabled.
->
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->  arch/riscv/kernel/asm-offsets.c |  4 ++++
->  arch/riscv/kernel/head.S        | 12 ++++++++++++
->  2 files changed, 16 insertions(+)
->
-> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offs=
-ets.c
-> index 0c188aaf3925..21f99d5757b6 100644
-> --- a/arch/riscv/kernel/asm-offsets.c
-> +++ b/arch/riscv/kernel/asm-offsets.c
-> @@ -515,4 +515,8 @@ void asm_offsets(void)
->         DEFINE(FREGS_A6,            offsetof(struct __arch_ftrace_regs, a=
-6));
->         DEFINE(FREGS_A7,            offsetof(struct __arch_ftrace_regs, a=
-7));
->  #endif
-> +       DEFINE(SBI_EXT_FWFT, SBI_EXT_FWFT);
-> +       DEFINE(SBI_EXT_FWFT_SET, SBI_EXT_FWFT_SET);
-> +       DEFINE(SBI_FWFT_SHADOW_STACK, SBI_FWFT_SHADOW_STACK);
-> +       DEFINE(SBI_FWFT_SET_FLAG_LOCK, SBI_FWFT_SET_FLAG_LOCK);
->  }
-> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-> index 356d5397b2a2..6244408ca917 100644
-> --- a/arch/riscv/kernel/head.S
-> +++ b/arch/riscv/kernel/head.S
-> @@ -164,6 +164,12 @@ secondary_start_sbi:
->         call relocate_enable_mmu
->  #endif
->         call .Lsetup_trap_vector
-> +       li a7, SBI_EXT_FWFT
-> +       li a6, SBI_EXT_FWFT_SET
-> +       li a0, SBI_FWFT_SHADOW_STACK
-> +       li a1, 1 /* enable supervisor to access shadow stack access */
-> +       li a2, SBI_FWFT_SET_FLAG_LOCK
-> +       ecall
->         scs_load_current
->         call smp_callin
->  #endif /* CONFIG_SMP */
-> @@ -320,6 +326,12 @@ SYM_CODE_START(_start_kernel)
->         la tp, init_task
->         la sp, init_thread_union + THREAD_SIZE
->         addi sp, sp, -PT_SIZE_ON_STACK
-> +       li a7, SBI_EXT_FWFT
-> +       li a6, SBI_EXT_FWFT_SET
-> +       li a0, SBI_FWFT_SHADOW_STACK
-> +       li a1, 1 /* enable supervisor to access shadow stack access */
-> +       li a2, SBI_FWFT_SET_FLAG_LOCK
-> +       ecall
->         scs_load_current
->
->  #ifdef CONFIG_KASAN
->
-LGTM.
 
-Reviewed-by: Zong Li <zong.li@sifive.com>
-> --
-> 2.34.1
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> Same here, how about:
+> 
+> ((struct ec_response_rtc *)msg->data)->time = param;
+
+Yeah, let's go with that then :)
+
+https://lore.kernel.org/linux-hardening/Z9PpPg06OK8ghNvm@kspp/
+
+Thanks!
+--
+Gustavo
+
 
