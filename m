@@ -1,124 +1,229 @@
-Return-Path: <linux-kernel+bounces-561337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 623F4A61034
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:41:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CA45A61036
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:42:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC0A1886746
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:42:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 721B8176F4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F3C1FDE00;
-	Fri, 14 Mar 2025 11:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B151FDE12;
+	Fri, 14 Mar 2025 11:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EoU7Qg5y"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OEoHZK24"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787E73C6BA;
-	Fri, 14 Mar 2025 11:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E39D1FDA82;
+	Fri, 14 Mar 2025 11:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741952510; cv=none; b=kRPEayBrMicKcxOYlMx4dqZniJi8nVgxQGlyQjNKLYTHTdaxfYH73iDbLWq34IZ/winsFfvxJGgZtNWyl690ckAH6wvz9p0gYWErNS8TvwUvoLJlQiddM4JFu0+zJMupxdS/Cfz+PcZxvkoqiHwVnBq+HtJUwXndQdC+AIM8ipQ=
+	t=1741952528; cv=none; b=iLzB6WRXV04Oxjj6bh/Q9OMsyC6ZOnbwwViQljXoDIl9/6YpMRZnsjExbL2+SOBBdKsC+IpjOsYpl5zn1KGRuH3WSnlllC4bspVaWl2NKbdmHUGNDpZmL6+pCQQpUCFxNRgCOeteBemOOPNtCEDGiSbo7Ut2nYSk2Sp9/JV83go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741952510; c=relaxed/simple;
-	bh=b+N4iAe5kZXWBX3ZlJCpdxKPlfsWdwzYPJJb1b47u5s=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=h+hXdm6hzRMmc8W5ZYXEMQaplvp5O8t+OH/vLFKUIavUTdrLzO/b1G30LMrAdoRLUvDbN5CNTU57Wm3ykv8yt18tTs9458EnqLhbHRyy9g0Y1/HQWbjufHZRRMOzZ0tZy3kgufxxyNhLka20dlLNMzn3Sp2xEp7gZyfxHm4iYJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EoU7Qg5y; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741952508; x=1773488508;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=b+N4iAe5kZXWBX3ZlJCpdxKPlfsWdwzYPJJb1b47u5s=;
-  b=EoU7Qg5y5XDh9nUgUyKP8H5lOrVBwckkrikvC0GgR6r//wPaxuDiE71X
-   lpkcoapkpKTEaeMcjbo3aLxe9KHOYEQHRobendqAysm3fLA07v8dQ8Yc/
-   ihaDZx4aX2DGsW1ptjXVYsL2ZfGfTw+3rCo+bE7mtOcNoUZQbgfVvYtaT
-   8cHqz9CG1cUNLnQaNPxtZ8SWj856xK1kZJuubOG/7yOVCbcH3dh/QwitM
-   GWUwn77SEpexYNl+9PhjCnX/U5eF0Zf9DHJZRKKMORaOU8fCNlmfw6sMT
-   ETapo3oPoZ3eWnt6A9nkq6z6vqkgGd2qFxOrAUSdjvuzoZLqdLiZndiw6
-   A==;
-X-CSE-ConnectionGUID: nzmskUHBRl206N5wtsbtZw==
-X-CSE-MsgGUID: Na3l5NV+T4aT64XR5Mq+xg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="42966325"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="42966325"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 04:41:47 -0700
-X-CSE-ConnectionGUID: 5997ZYRHSdSt+bVBmBzgSA==
-X-CSE-MsgGUID: QyQiBgrPTNW+IKa338ajcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="125878045"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.56])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 04:41:46 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 14 Mar 2025 13:41:42 +0200 (EET)
-To: Chenyuan Yang <chenyuan0y@gmail.com>
-cc: W_Armin@gmx.de, Hans de Goede <hdegoede@redhat.com>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] platform/x86: wmi: Add Null check for device
-In-Reply-To: <20250313162820.3688298-1-chenyuan0y@gmail.com>
-Message-ID: <ff53debd-05bd-3a7f-89a5-2110b8103fad@linux.intel.com>
-References: <20250313162820.3688298-1-chenyuan0y@gmail.com>
+	s=arc-20240116; t=1741952528; c=relaxed/simple;
+	bh=nVOcPJg81+ypVYooo5YBQ0LvK+/ZjYvHXezBn4qqtAo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B6+x+SDvpPpk2ZG7EArCb8XhD4o3zWRgZrTuHF3ji/dNekeS1gWPyncso4BDuBAqN+6p0QdXGhyn5j6y0VXQvKRfroF0HVyvluJavfVWMbYMUxlhk3cGKvyp7ieoSPvIrWtkg17E00NKaiLyjFxYfqebGOD0I12b/hzCUjDJ1NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OEoHZK24; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52EAeDIH014198;
+	Fri, 14 Mar 2025 11:41:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=QMHbiVdF4O6NsMrpAke9v18+Iz0kX6/uRd/3dGnJP
+	Lg=; b=OEoHZK24FkzBYLZauUS2BA+PzTr/2mDinByo8jks48auT0neSZDFPJzDG
+	LKNd0t6Vo2zGVfeQKkXx5aM8hU2JT9++lSz/0lh42Ayxb2urRF5QZwy4DAvu+qIq
+	pC2RvmbDIETL77iSIYKwRo9/G6mQqj1hKnkURKSKMhRQPc7ZI1Fj/mt2TiN09BjE
+	uvFwqiEEwHtFQg/ICXVH+QCZF5b2CwMGt9qxzi0jz+q5MHjuJ98aOV3Z0+/IO+Tb
+	Dc4owZ242nPxijb7gH51Q1JGHzBTseOg5vSJDoqEph1LndppZgf/Lf5NVj9rb8gR
+	sxabdJapZ1AYC3p8cAa/8aE+Vz5Kg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45c6k03c2p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 11:41:49 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52EBfdQN021972;
+	Fri, 14 Mar 2025 11:41:49 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45c6k03c2m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 11:41:48 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52E8rENB015368;
+	Fri, 14 Mar 2025 11:41:48 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atspppy6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 11:41:48 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52EBfkIc57278972
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Mar 2025 11:41:46 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7CE5920043;
+	Fri, 14 Mar 2025 11:41:46 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 079F620040;
+	Fri, 14 Mar 2025 11:41:45 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.24.194])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 14 Mar 2025 11:41:44 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
+Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
+        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] ext4: cache es->s_journal_inum in ext4_sb_info
+Date: Fri, 14 Mar 2025 17:11:43 +0530
+Message-ID: <d1a9328a41029f6210a1924b192a59afcd3c5cee.1741952406.git.ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: F3LawNexBkdp0jJNdrlxSwR1Il06KrhQ
+X-Proofpoint-ORIG-GUID: _AQLMt3fWaMY2sYl2EUJSpid7b0Mar7U
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-14_04,2025-03-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 priorityscore=1501 impostorscore=0 lowpriorityscore=0
+ bulkscore=0 phishscore=0 adultscore=0 spamscore=0 mlxscore=0
+ suspectscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502280000 definitions=main-2503140091
 
-On Thu, 13 Mar 2025, Chenyuan Yang wrote:
+Currently, we access journal ino through sbi->s_es->s_journal_inum,
+which directly reads from the ext4 sb buffer head. If someone modifies
+this underneath us then the s_journal_inum field might get corrupted.
 
-Hi,
+Although direct block device modifications can be expected to cause
+issues in the FS, let's cache s_journal_inum in sbi->s_journal_ino so
+our checks can be more resillient.
 
-Could you please be consistent in style and write "NULL" also in the 
-shortlog in the subject.
+Suggested-by: Baokun Li <libaokun1@huawei.com>
+Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+---
+ fs/ext4/block_validity.c | 23 ++++++++++++++++-------
+ fs/ext4/ext4.h           |  1 +
+ fs/ext4/inode.c          | 19 +++++++++++++++----
+ fs/ext4/super.c          |  5 ++++-
+ 4 files changed, 36 insertions(+), 12 deletions(-)
 
-> Not all devices have an ACPI companion fwnode, so device might be NULL.
-> This is similar to the commit cd2fd6eab480
-> ("platform/x86: int3472: Check for adev == NULL").
-
-Please fold the paragraph normally.
-
-> Add a check for device not being set and return -ENODEV in that case to
-> avoid a possible NULL pointer deref in parse_wdg().
-> 
-> Note, acpi_wmi_probe() under the same file has such a check.
-
-Hmm, is this a bogus fix, as parse_wdg() is only called from 
-acpi_wmi_probe() so how can ACPI companion turn NULL in between??
-
-How was this problem found??
-
-> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
-> ---
->  drivers/platform/x86/wmi.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-> index 646370bd6b03..54e697838c1e 100644
-> --- a/drivers/platform/x86/wmi.c
-> +++ b/drivers/platform/x86/wmi.c
-> @@ -1091,6 +1091,9 @@ static int parse_wdg(struct device *wmi_bus_dev, struct platform_device *pdev)
->  	u32 i, total;
->  	int retval;
->  
-> +	if (!device)
-> +		return -ENODEV;
-> +
->  	status = acpi_evaluate_object(device->handle, "_WDG", NULL, &out);
->  	if (ACPI_FAILURE(status))
->  		return -ENXIO;
-> 
-
+diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
+index 87ee3a17bd29..54e6f3499263 100644
+--- a/fs/ext4/block_validity.c
++++ b/fs/ext4/block_validity.c
+@@ -247,9 +247,9 @@ int ext4_setup_system_zone(struct super_block *sb)
+ 		if (ret)
+ 			goto err;
+ 	}
+-	if (ext4_has_feature_journal(sb) && sbi->s_es->s_journal_inum) {
++	if (ext4_has_feature_journal(sb) && sbi->s_journal_ino) {
+ 		ret = ext4_protect_reserved_inode(sb, system_blks,
+-				le32_to_cpu(sbi->s_es->s_journal_inum));
++						  sbi->s_journal_ino);
+ 		if (ret)
+ 			goto err;
+ 	}
+@@ -351,11 +351,20 @@ int ext4_check_blockref(const char *function, unsigned int line,
+ {
+ 	__le32 *bref = p;
+ 	unsigned int blk;
+-
+-	if (ext4_has_feature_journal(inode->i_sb) &&
+-	    (inode->i_ino ==
+-	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
+-		return 0;
++	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
++
++	if (ext4_has_feature_journal(inode->i_sb)) {
++		/* If we are called from journal init path then
++		 * sbi->s_journal_ino would be 0
++		 */
++		u32 journal_ino = sbi->s_journal_ino ?
++					  sbi->s_journal_ino :
++					  sbi->s_es->s_journal_inum;
++		WARN_ON_ONCE(journal_ino == 0);
++
++		if (inode->i_ino == journal_ino)
++			return 0;
++	}
+ 
+ 	while (bref < p+max) {
+ 		blk = le32_to_cpu(*bref++);
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 2b7d781bfcad..648b0459e9fd 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -1556,6 +1556,7 @@ struct ext4_sb_info {
+ 	u32 s_max_batch_time;
+ 	u32 s_min_batch_time;
+ 	struct file *s_journal_bdev_file;
++	u32 s_journal_ino;
+ #ifdef CONFIG_QUOTA
+ 	/* Names of quota files with journalled quota */
+ 	char __rcu *s_qf_names[EXT4_MAXQUOTAS];
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 365d31004bd0..50961bc0c94d 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -384,10 +384,21 @@ static int __check_block_validity(struct inode *inode, const char *func,
+ 				unsigned int line,
+ 				struct ext4_map_blocks *map)
+ {
+-	if (ext4_has_feature_journal(inode->i_sb) &&
+-	    (inode->i_ino ==
+-	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
+-		return 0;
++	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
++
++	if (ext4_has_feature_journal(inode->i_sb)) {
++		/*
++		 * If we are called from journal init path then
++		 * sbi->s_journal_ino would be 0
++		 */
++		u32 journal_ino = sbi->s_journal_ino ?
++					  sbi->s_journal_ino :
++					  sbi->s_es->s_journal_inum;
++		WARN_ON_ONCE(journal_ino == 0);
++
++		if (inode->i_ino == journal_ino)
++			return 0;
++	}
+ 	if (!ext4_inode_block_valid(inode, map->m_pblk, map->m_len)) {
+ 		ext4_error_inode(inode, func, line, map->m_pblk,
+ 				 "lblock %lu mapped to illegal pblock %llu "
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index a963ffda692a..44e79db7f12a 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4162,7 +4162,8 @@ int ext4_calculate_overhead(struct super_block *sb)
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	struct ext4_super_block *es = sbi->s_es;
+ 	struct inode *j_inode;
+-	unsigned int j_blocks, j_inum = le32_to_cpu(es->s_journal_inum);
++	unsigned int j_blocks;
++	u32 j_inum = sbi->s_journal_ino;
+ 	ext4_group_t i, ngroups = ext4_get_groups_count(sb);
+ 	ext4_fsblk_t overhead = 0;
+ 	char *buf = (char *) get_zeroed_page(GFP_NOFS);
+@@ -6091,6 +6092,8 @@ static int ext4_load_journal(struct super_block *sb,
+ 		ext4_commit_super(sb);
+ 	}
+ 
++	EXT4_SB(sb)->s_journal_ino = le32_to_cpu(es->s_journal_inum);
++
+ 	return 0;
+ 
+ err_out:
 -- 
- i.
+2.48.1
 
 
