@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-561903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D61A61855
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:42:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56F0BA6185C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:43:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9D771899364
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A813B638D
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5382120459A;
-	Fri, 14 Mar 2025 17:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1629204C10;
+	Fri, 14 Mar 2025 17:42:33 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31BA204582
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24B178F2E
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741974147; cv=none; b=CUPNyaab0ScyoO3z925G+cou40/AMBNF+y+bft2rXIPBZQA3feM6NEPMyfpilqT80Jn+9JDbCC4nVYxOcoCtWTgyT4osRLGeJnNSJv85Jqm0Lf56eJFH9osRbYgkCksqEzoaEQKx4kw9D7fqg634wECyvov6065inU6PjuOVmA8=
+	t=1741974153; cv=none; b=RRjSFQ9Ceo22s4ydRSs2ejpKhUedahNsteV+uG4tVyQ/LmkkeYewMpR01j5F1bjSm3FRq6ji0R2VrG0ERikseGxt+YDFECPViLP/JvGOAurEIBx7hnR5pzGAvAy355ACF0pLJrHfLgpii5PZBZLrFmsHdszPCRcEyx016MBjmhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741974147; c=relaxed/simple;
-	bh=DO4ObBTU4MJ4CqUcLrkahUs2weSN5R2EbdcWni1cF9o=;
+	s=arc-20240116; t=1741974153; c=relaxed/simple;
+	bh=33jttg2peo6dNKyXFbBVQDvp4YmSGRXp0c7u3G+t+6M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oedIbtB7Cp4WRNSlVaazJMq/6+y9Jmc5zHInMXP8GUq00LltbjnX5F9P3HgsyG50lAEbCjUB9y6mDXW4B5z8Rx08LEzkR1Tc6rtGDcREG6pWnyyRyf8lXhAUuawyjwhpZpZp/hkptxodoPsY4v2xI43I6Ea/J2HUe3+moWMLlfQ=
+	 In-Reply-To:Content-Type; b=gR8Ud46R3p4PbmXWZe1k8MOVC+T3jrlTOJ0DxVM7BYd8RmKwGU7KT61ySdo7kiR49KMMrEYq6Ut+qHezA8OWHEZkagElPF14C3CWN2G5SVKkH0sXCpzj4MeP+KeVMZ3YxQ7Qb9iOzEJQTb6ORuJsz3Kd3dBSgMU/KB22XEvCtDs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BAC301424;
-	Fri, 14 Mar 2025 10:42:32 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D95541BD0;
+	Fri, 14 Mar 2025 10:42:40 -0700 (PDT)
 Received: from [10.1.197.49] (eglon.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C96A93F673;
-	Fri, 14 Mar 2025 10:42:18 -0700 (PDT)
-Message-ID: <97aeaf87-b2db-4efb-9d81-43769c6f27b0@arm.com>
-Date: Fri, 14 Mar 2025 17:42:15 +0000
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 660803F673;
+	Fri, 14 Mar 2025 10:42:27 -0700 (PDT)
+Message-ID: <af1a273a-0db5-491b-9fbf-48100e29169b@arm.com>
+Date: Fri, 14 Mar 2025 17:42:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,8 +41,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 45/49] x86,fs/resctrl: Move the resctrl filesystem code
- to live in /fs/resctrl
+Subject: Re: [PATCH v7 47/49] fs/resctrl: Remove unnecessary includes
 To: Fenghua Yu <fenghuay@nvidia.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
 Cc: Reinette Chatre <reinette.chatre@intel.com>,
@@ -59,101 +58,29 @@ Cc: Reinette Chatre <reinette.chatre@intel.com>,
  Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
  Shanker Donthineni <sdonthineni@nvidia.com>
 References: <20250228195913.24895-1-james.morse@arm.com>
- <20250228195913.24895-46-james.morse@arm.com>
- <901c5cca-9a9b-4c45-b7bd-e7ce48c39282@nvidia.com>
+ <20250228195913.24895-48-james.morse@arm.com>
+ <f6f98abb-0d4c-4e41-8c83-a3ab919a8fbe@nvidia.com>
 Content-Language: en-GB
 From: James Morse <james.morse@arm.com>
-In-Reply-To: <901c5cca-9a9b-4c45-b7bd-e7ce48c39282@nvidia.com>
+In-Reply-To: <f6f98abb-0d4c-4e41-8c83-a3ab919a8fbe@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 Hi Fenghua,
 
-On 06/03/2025 20:35, Fenghua Yu wrote:
+On 07/03/2025 02:37, Fenghua Yu wrote:
 > On 2/28/25 11:59, James Morse wrote:
->> Resctrl is a filesystem interface to hardware that provides cache
->> allocation policy and bandwidth control for groups of tasks or CPUs.
->>
->> To support more than one architecture, resctrl needs to live in /fs/.
->>
->> Move the code that is concerned with the filesystem interface to
->> /fs/resctrl.
+>> When splitting and moving the resctrl code to live in fs/resctrl and
+>> arch/x86, some code was duplicated. This was done to keep the parser
+>> in the script that does the moving simple. These extra includes are
 
->>   14 files changed, 7535 insertions(+), 7285 deletions(-)
+> As for "parser in the script", my concern is people may forget or don't know the context
+> of the python script in the future and get confused when reading this patch.
 
-(this patch is large - please trim it in your reply!)
+> Is it possible to merge this patch into patch 45 which introduces the macros? It simplify
+> the patch set and avoid future confuse?
 
-[...]
-
-
->> diff --git a/arch/x86/kernel/cpu/resctrl/monitor_trace.h b/arch/x86/kernel/cpu/resctrl/
->> monitor_trace.h
->> index ade67daf42c2..b5a142dd0f0e 100644
->> --- a/arch/x86/kernel/cpu/resctrl/monitor_trace.h
->> +++ b/arch/x86/kernel/cpu/resctrl/monitor_trace.h
->> @@ -7,2m5 +7,11 @@
->>     #include <linux/tracepoint.h>
->>   -TRACE_EVENT(mon_llc_occupancy_limbo,
->> -        TP_PROTO(u32 ctrl_hw_id, u32 mon_hw_id, int domain_id, u64 llc_occupancy_bytes),
->> -        TP_ARGS(ctrl_hw_id, mon_hw_id, domain_id, llc_occupancy_bytes),
->> -        TP_STRUCT__entry(__field(u32, ctrl_hw_id)
->> -                 __field(u32, mon_hw_id)
->> -                 __field(int, domain_id)
->> -                 __field(u64, llc_occupancy_bytes)),
->> -        TP_fast_assign(__entry->ctrl_hw_id = ctrl_hw_id;
->> -               __entry->mon_hw_id = mon_hw_id;
->> -               __entry->domain_id = domain_id;
->> -               __entry->llc_occupancy_bytes = llc_occupancy_bytes;),
->> -        TP_printk("ctrl_hw_id=%u mon_hw_id=%u domain_id=%d llc_occupancy_bytes=%llu",
->> -              __entry->ctrl_hw_id, __entry->mon_hw_id, __entry->domain_id,
->> -              __entry->llc_occupancy_bytes)
->> -       );
->> -
->>   #endif /* _FS_RESCTRL_MONITOR_TRACE_H */
->>     #undef TRACE_INCLUDE_PATH
->>   #define TRACE_INCLUDE_PATH .
->> +
->>   #define TRACE_INCLUDE_FILE monitor_trace
->> +
->>   #include <trace/define_trace.h>
-
-> Similarly this file doesn't define any trace event. make W=1 complains it:
-> 
->                 from arch/x86/kernel/cpu/resctrl/monitor.c:32:
-> ./include/trace/stages/init.h:2:23: error: ‘str__resctrl__trace_system_name’ defined but
-> not used [-Werror=unused-const-variable=]
->     2 | #define __app__(x, y) str__##x##y
->       |                       ^~~~~
-> ./include/trace/stages/init.h:3:21: note: in expansion of macro ‘__app__’
->     3 | #define __app(x, y) __app__(x, y)
->       |                     ^~~~~~~
-> ./include/trace/stages/init.h:5:29: note: in expansion of macro ‘__app’
->     5 | #define TRACE_SYSTEM_STRING __app(TRACE_SYSTEM_VAR,__trace_system_name)
->       |                             ^~~~~
-> ./include/trace/stages/init.h:8:27: note: in expansion of macro ‘TRACE_SYSTEM_STRING’
->     8 |         static const char TRACE_SYSTEM_STRING[] =       \
->       |                           ^~~~~~~~~~~~~~~~~~~
-> ./include/trace/stages/init.h:11:1: note: in expansion of macro ‘TRACE_MAKE_SYSTEM_STR’
->    11 | TRACE_MAKE_SYSTEM_STR();
->       | ^~~~~~~~~~~~~~~~~~~~~
->   CC      fs/proc/consoles.o
-> cc1: all warnings being treated as errors
-> make[6]: *** [scripts/Makefile.build:207: arch/x86/kernel/cpu/resctrl/monitor.o] Error 1
-> make[6]: *** Waiting for unfinished jobs....
-
-
-> The above two compilation errors only happen when first 45 patches are applied. The whole
-> patch set won't have the errors because patch 46 removes these empty trace events.
-> 
-> The fix is simple: just merge this patch and patch 46 together. Then there is no empty
-> trace event in trace.h files and thus no compilation errors.
-
-The intent is that these last few patches are merged together by the person that applies
-them. I thought I'd described that in the cover-letter, but that text got lost.
-
-It's like this because this patch is too large to review - but it is generated by a
-script. If I merge these patches together, then its even harder to have confidence that
-some hunk isn't getting reverted to an older version.
+The plan would be for these patches to get merged together by the person that applies them.
 
 
 Thanks,
