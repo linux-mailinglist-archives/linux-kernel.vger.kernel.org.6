@@ -1,159 +1,123 @@
-Return-Path: <linux-kernel+bounces-561528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA09A61310
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:52:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E058A61313
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:52:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0509463751
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:52:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06A13462E6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A0D1FFC45;
-	Fri, 14 Mar 2025 13:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDD31E991A;
+	Fri, 14 Mar 2025 13:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="UiAKAJ/r"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJ3Yqk4/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A1C2E336A
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D502E336A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741960349; cv=none; b=n0nO1numgfKG4PGuImO0T1vl4RTfBhFIiaX0j8cIos+odmassBoDAJ6zp7mJGfnWHWYhRccqbCA9NsrmU4bR8hNzucDeIQdnBwlynh3r4PinLW35OW0Pk6H5muUk2thYgW9gM/WoOtqTP8FfnEK/qrzWf6FvT2jlkv8IOERjb+o=
+	t=1741960366; cv=none; b=V8m/pdNc1lcWlgolwuFzz3v/owv0BnPQSNpIydZOHX+oDM00fJbBiTZ23j82pzhi1YDRfkIiuDoyzTkH22frS2MDOE+bnwJcgke04Yr47az5mXLKlqzbQ/dwebPugAf+QpC2L9t2N92DLXMmAeecfnnALH7msqMNF2HojHSmUHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741960349; c=relaxed/simple;
-	bh=l6eRw8y1OmUmjOlCM4cZJphcNpxH4Gsq7pdQ03d5ry0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TQVGbuOvsnQWBozWCPB/6d/F2b4RVS2b/vI/Vxt7JFeDxwPpA9nqoNtudkS59EQcfewpMbsy7GuFlDwiBWLrhEpQYlmFvoVRQuMc61BIGb58P2RVlZb3KYJiXUFv2NE6YxPJ2YxGtpbXAZkQRwIkP5fFzLNpNlkitk6AX/7hDdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=UiAKAJ/r; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5499da759e8so3515020e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:52:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1741960346; x=1742565146; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zycopCDnnU2i+AkSw46WgSJrqCJCcusa0YK3FYhw6i4=;
-        b=UiAKAJ/rNUakfpPKB5pgexS7OOXHIuUxYQTOuBgfaQp8cIhLvXptPPI2VI+HEZAsDo
-         h50wbuOP8HYLAxAvN93rSMMsVSjU1XC7H7u51HmwdiOpU3wtGlq0di4k62P3EAo70ndG
-         yhu4q/Y42gKD9noUiTMAufsV5KC44kNhJ46Aw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741960346; x=1742565146;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zycopCDnnU2i+AkSw46WgSJrqCJCcusa0YK3FYhw6i4=;
-        b=u8ZJvAj7wMLN+1BdFNlS2V989ttYm6SLle94YMPJ03lwqIOnSFbGiuVyxoJDOqbi5m
-         TZp5sY57Y4QQUulCS9hNVSGuryPY0v93bF3ckhZs8Oa46cP8S9NI8pwoWkcWoAFN3PD3
-         3OrzmYpJ98LAIRPijvi4hOAe/V/iClYLclxVCtDGxT21E1KHSpe54Z1G6eYODpbLFxf7
-         EC60gkq5S3JamG5Td1HucDi277dgJCWiPdSYThpLp/2VyAU9WN4KgZtlcO6eIgF9QeRm
-         Y+fw9pgNpGV3owiUNmz5wvlJah0cMeMbpP4SgEoiUIKXOdYG3w9XH8EKGlHupSDNflLP
-         95BA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCcsnMX5WyWop9Zs7MeFPlBkERy2A/mmNeyd9sRZ71xsNP1C0e2dVy0oLRPFXBcYRJ1IUE8FD6f/2r1PY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVaEiBdu0ZHNO7NfFP5B8hKkVFb12UlVsEg0+ODI9B4hYKuZst
-	SnWwNyWgHMR48+fhhvNHnTr9W2nPIY+uxYv6/1Cfraujfs/nO9Wd3s5JDwkTfnKCe5GRGjFEzRw
-	YImdrAIeZcVKspAB9Qks1V7XqztsR96INsyaPig==
-X-Gm-Gg: ASbGncs4DmuDhyC1tBU/0IA36GPvuVQIvMpbvAVE8hZXjm6SJsqNN2E0Ch68YuvDrh/
-	WMDRwbwHdMTkC10LyiMl7LJRiHBBhZwoWGIVdljw4utbdsL94vj3UkLKdJQQf/70hg+DuYVhxCt
-	vmXVbCUxKM4y93g/s0WGzOI+sjvR0=
-X-Google-Smtp-Source: AGHT+IF9qRrJkTrrIobfvLSECzIZRaki1TnB6To26QFfRp9f28bu0YABV4vbDlhxwlNTG2VFpOb8agSVt6i2bJhSG7I=
-X-Received: by 2002:a05:6512:1596:b0:549:965f:5960 with SMTP id
- 2adb3069b0e04-549ba440077mr2663642e87.16.1741960345389; Fri, 14 Mar 2025
- 06:52:25 -0700 (PDT)
+	s=arc-20240116; t=1741960366; c=relaxed/simple;
+	bh=CaPV8/DUO42Un9C1VboHhkm+TZPcBTQ9zJaqy+mFrgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iEbkw9SJxH36pctihl1IvQf2V9USsOGKthvDm1l+pdsnnk3tg38Xc+o6x5/xlR1XxJ7AT/DEHj40sxu2PNSPXMPjYKj13mlx7ESisckvdnzer4e6xhB/sFldk7+zEBc8qpTyU/aKVMMbZXs05zuLYeSnEwt1wmQlyt7ctwwgKAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mJ3Yqk4/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E679C4CEE3;
+	Fri, 14 Mar 2025 13:52:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741960364;
+	bh=CaPV8/DUO42Un9C1VboHhkm+TZPcBTQ9zJaqy+mFrgk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mJ3Yqk4/wMoEP3MlA8qq5PtLHzCiq/rJpOJNLC/IeypEotMw4qQQgEc3a62+5Zv2d
+	 5O7bCvxRSI2xwSPj7CnrVSbwy0sZMX8s/Pqr3b6LBUzNpEFruA13Fq1yydUL8MnrTl
+	 Y7oKt9/mREVzVTypBLJg3xwzuR3RhD5rcB+WpFPTKzjUsuH/JM/xRuNaIfC9NWnLsM
+	 kuny6X7eyKsp6nrKeCanSadCcHPQd/AA4keKxO0/z4pGPe67sAkFXiV27UCG0fc3cJ
+	 ZGjzkpZ8gZD/1yjfYXy6u8m+5TBkyBb2SuPxaMG0MqanEzfC4u2VpRFGCJ8RWcbSfz
+	 R6SEsNYmHVXlw==
+Date: Fri, 14 Mar 2025 14:52:42 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/7] drm/tests: hdmi: Add limited range tests for
+ YUV420 mode
+Message-ID: <20250314-didactic-bandicoot-of-perspective-e077ae@houat>
+References: <20250311-hdmi-conn-yuv-v2-0-fbdb94f02562@collabora.com>
+ <20250311-hdmi-conn-yuv-v2-6-fbdb94f02562@collabora.com>
+ <20250311-burgundy-cat-of-diversity-b89681@houat>
+ <dca413e0-bad5-485d-9c77-402d806e97a5@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250309121526.86670-1-aleksandr.mikhalitsyn@canonical.com>
-In-Reply-To: <20250309121526.86670-1-aleksandr.mikhalitsyn@canonical.com>
-From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Fri, 14 Mar 2025 14:52:14 +0100
-X-Gm-Features: AQ5f1Jr2EEuusWFl1maY2c4eLIhTIDuLUbvGq7tTSg2w7PXhTO9cHpspBBibHY0
-Message-ID: <CAJqdLrp+_nHnBCLoE8uUHCSOQsKhc+WFsN8kUVY08sR9aW5uiQ@mail.gmail.com>
-Subject: Re: [PATCH net-next] tools headers: Sync uapi/asm-generic/socket.h
- with the kernel sources
-To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc: edumazet@google.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Jakub Kicinski <kuba@kernel.org>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	Willem de Bruijn <willemb@google.com>, Jason Xing <kerneljasonxing@gmail.com>, 
-	Anna Emese Nyiri <annaemesenyiri@gmail.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
-	Paolo Abeni <pabeni@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="3qcnnqf3voxkluic"
+Content-Disposition: inline
+In-Reply-To: <dca413e0-bad5-485d-9c77-402d806e97a5@collabora.com>
+
+
+--3qcnnqf3voxkluic
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 6/7] drm/tests: hdmi: Add limited range tests for
+ YUV420 mode
+MIME-Version: 1.0
 
-Am So., 9. M=C3=A4rz 2025 um 13:15 Uhr schrieb Alexander Mikhalitsyn
-<aleksandr.mikhalitsyn@canonical.com>:
->
-> This also fixes a wrong definitions for SCM_TS_OPT_ID & SO_RCVPRIORITY.
->
-> Accidentally found while working on another patchset.
->
-> Cc: linux-kernel@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-> Cc: Willem de Bruijn <willemb@google.com>
-> Cc: Jason Xing <kerneljasonxing@gmail.com>
-> Cc: Anna Emese Nyiri <annaemesenyiri@gmail.com>
+On Wed, Mar 12, 2025 at 12:54:51AM +0200, Cristian Ciocaltea wrote:
+> On 3/11/25 6:17 PM, Maxime Ripard wrote:
+> > On Tue, Mar 11, 2025 at 12:57:38PM +0200, Cristian Ciocaltea wrote:
+> >> Provide tests to verify that drm_atomic_helper_connector_hdmi_check()
+> >> helper behaviour when using YUV420 output format is to always set the
+> >> limited RGB quantization range to 'limited', no matter what the value =
+of
+> >> Broadcast RGB property is.
+>=20
+> [...]
+>=20
+> > We need more tests than that to test the various combinations, whether
+> > the fallback to YUV420 should work or not depending on the EDID, the
+> > driver capabilities, YUV420-only vs YUV420-also, etc.
+>=20
+> Some fallback tests were provided in the next patch, including checks lik=
+e:
+>=20
+>   KUNIT_ASSERT_TRUE(test, drm_mode_is_420_only(info, yuv420_only_mode));
+>   KUNIT_ASSERT_TRUE(test, drm_mode_is_420_also(info, preferred));
+>=20
+> I'll try to further extend the test coverage.
 
-+cc Paolo Abeni <pabeni@redhat.com>
-+cc Kuniyuki Iwashima <kuniyu@amazon.com>
+Yeah, sorry, I saw them after reviewing this patch. Still, I think we'll
+need more, especially to deal with the fallback cases. IIRC, you were
+testing the cases where you're forced to take YUV420 because of the
+monitors (or drivers) limit, but we should also try the tests where
+you're forced to take YUV420 but the driver implements HDMI 1.4 only for
+example, and thus we can't.
 
-> Fixes: a89568e9be75 ("selftests: txtimestamp: add SCM_TS_OPT_ID test")
-> Fixes: e45469e594b2 ("sock: Introduce SO_RCVPRIORITY socket option")
-> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com=
->
-> ---
->  tools/include/uapi/asm-generic/socket.h | 21 +++++++++++++++++++--
->  1 file changed, 19 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/include/uapi/asm-generic/socket.h b/tools/include/uapi=
-/asm-generic/socket.h
-> index ffff554a5230..aa5016ff3d91 100644
-> --- a/tools/include/uapi/asm-generic/socket.h
-> +++ b/tools/include/uapi/asm-generic/socket.h
-> @@ -119,14 +119,31 @@
->
->  #define SO_DETACH_REUSEPORT_BPF 68
->
-> +#define SO_PREFER_BUSY_POLL    69
-> +#define SO_BUSY_POLL_BUDGET    70
-> +
-> +#define SO_NETNS_COOKIE                71
-> +
-> +#define SO_BUF_LOCK            72
-> +
-> +#define SO_RESERVE_MEM         73
-> +
-> +#define SO_TXREHASH            74
-> +
->  #define SO_RCVMARK             75
->
->  #define SO_PASSPIDFD           76
->  #define SO_PEERPIDFD           77
->
-> -#define SCM_TS_OPT_ID          78
-> +#define SO_DEVMEM_LINEAR       78
-> +#define SCM_DEVMEM_LINEAR      SO_DEVMEM_LINEAR
-> +#define SO_DEVMEM_DMABUF       79
-> +#define SCM_DEVMEM_DMABUF      SO_DEVMEM_DMABUF
-> +#define SO_DEVMEM_DONTNEED     80
-> +
-> +#define SCM_TS_OPT_ID          81
->
-> -#define SO_RCVPRIORITY         79
-> +#define SO_RCVPRIORITY         82
->
->  #if !defined(__KERNEL__)
->
-> --
-> 2.43.0
->
+Maxime
+
+--3qcnnqf3voxkluic
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ9Q0qQAKCRAnX84Zoj2+
+djFTAYCuCBkdca3mDmyZr8j1d6GofqJ5n0Bb8bJklVbWIbH7K+7imNbVo3T+A9mB
+K/vjC3oBf35IdeIrLSQ8RShZCAynMcSLfo2Oi2WrGtjbVt8aT2fKukV1hGlkB1eu
+eI6OqsWeHg==
+=qXNN
+-----END PGP SIGNATURE-----
+
+--3qcnnqf3voxkluic--
 
