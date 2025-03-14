@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-560840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C74A60A09
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:25:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7C0AA60A0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:29:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A370A3AB953
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:25:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 133F03B7438
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5822716D9DF;
-	Fri, 14 Mar 2025 07:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455C616F271;
+	Fri, 14 Mar 2025 07:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RTnNSP+y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tltUgyLn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E2153AC
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 07:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A227953AC;
+	Fri, 14 Mar 2025 07:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741937147; cv=none; b=Lxif/Sydsc2YZrw357OsnvagVAfSwMW7Gx87QXqIR9YSEttEaQR3oYOpQFXceIhEx8tIJRKvkA/kLvHXyzUTnQ6dk01rPcok/uEpdGeAMaP7+zWVnduNXWmOy0outG09eLCIrKuCuYChE4u6imDRGFSo4xGzn2UGzcVnamGYUqE=
+	t=1741937372; cv=none; b=WHzOOk7vPYvCNNyBr3mvAA4HnF41pu9BTY3KCQeGw2jKjiWeCx5jgveLrCLxIgVhO85iooq987F7/AjqprwqK6nLGeUiTSeS3KZ2AUPxIm4b+k9t8AAUSh/ZBLZT6Ki10pt9+kQ36gxAcrze74VemyQfnmEKHuQy7uqrmf0xfv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741937147; c=relaxed/simple;
-	bh=4dJpQD1kFeHK613MTAjgNqXMpsoGHt7JFBPS0OKv22A=;
+	s=arc-20240116; t=1741937372; c=relaxed/simple;
+	bh=iXZn74SnGKgCnvn0uRyciX1vg53vA4YnYvhLgRyA+AE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T2/cDyjMwxOwhHsxiHo65i7IYVLvNtYKpk25XmIh0PNEKZCkoXM3/9zjaKpL8VHhzdCG2AFhbjejYZ7eiGqtJIG1a1XwkDTmsy+Azzc5NU8cp9eY/v6xIiFn30x8Zu1jTSwB1DdS1lyk1N4V+V8xq1zftP3evBduItJt4Wm2l/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RTnNSP+y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 699A2C4CEE3;
-	Fri, 14 Mar 2025 07:25:43 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=sN066n9PL8J2MZfE0EDKEbESe4fgLhLOqqaEbJnFYw5PPizVU40Gp458o/bUpXSEiXlkoUz1gYaPYBBcRarSUbeepM8ZbntoTnXNHchWZ6GglcqpdvB79BciwX6qPVAsXai8bFrllgfq+NmKF7ElZEbUeSoy3/hCV0ootR+Y3xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tltUgyLn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0995C4CEE3;
+	Fri, 14 Mar 2025 07:29:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741937147;
-	bh=4dJpQD1kFeHK613MTAjgNqXMpsoGHt7JFBPS0OKv22A=;
+	s=k20201202; t=1741937372;
+	bh=iXZn74SnGKgCnvn0uRyciX1vg53vA4YnYvhLgRyA+AE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RTnNSP+y++N9z+RjsxBD5VJZ+JOWibABVgBDTYsnG4f2+xUOnZYrkA7yYh/yZEGTL
-	 QvDvI0xn7HlJVa1IccXBreZzc21txfNcemlHIfW1D4P1NeSYPgKtkU7YLl16/rqBo5
-	 RJ0njXozsSEEpDKUS6DD1Zb4TTLV8O4Rz5MFfrgDMQCWP7PQXSBuuqtG+QUmM4Vdzk
-	 0tfU3QvoysUXcYKcjwn6XjDwnTmSRefaE8kB9tMzy6d40SIDN4y9pxGM/ArUxqemJe
-	 I8jZwhS9H7u1R3/CYnO4nI/zSttbvpS0ESvyLGjL0NGb+JOztpkmYwwP0rBFgSnedA
-	 ojYA/bkCZgZ0A==
-Message-ID: <63bba0e1-c1d6-4a83-b376-bcf89cb09533@kernel.org>
-Date: Fri, 14 Mar 2025 08:25:40 +0100
+	b=tltUgyLn0V9c1IK61pwGtl/QCl6IdJ3hGFP3IS25fkMrhy4CtBWL6ChLTCl3w1rsa
+	 mIAc190XMSaEq4Mp9FLyJkV+drEugyoEe/67/Awns642z7nwOYVn8SzCmsiOf6xp+d
+	 KB8CT2iiLCMOzdE95HS812BNf7FIViEeuiQTSUgGHJz0DfFja8pVJO8AvFTZBWWixs
+	 EjKUXf1O5NO1fIR/kp2kA0ggp5Ir0fQ/ad6doCDB+GQ22dl5eK3O5pAEckyhvkbfQX
+	 3L+0zDYRuXU3EUPfSrjjYy8USjgOvyjIwMIrMEaCFRxn7PHkQmfGJ1N4SXrlYyDfSz
+	 Jws9TA+Zt2ZmA==
+Message-ID: <ea5c1a8a-cfbb-4334-91a9-1c2cc9e07ae8@kernel.org>
+Date: Fri, 14 Mar 2025 08:29:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: mailbox: cix: add device tree binding
- documentation.
-To: Guomin Chen <guomin.chen@cixtech.com>,
- Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
- Peter Chen <peter.chen@cixtech.com>, Lihua Liu <Lihua.Liu@cixtech.com>
-References: <20250313132405.742360-1-guomin.chen@cixtech.com>
+Subject: Re: [PATCH] usb: typec: ucsi: acpi: Add Null check for adev
+To: Chenyuan Yang <chenyuan0y@gmail.com>, heikki.krogerus@linux.intel.com,
+ gregkh@linuxfoundation.org, lk@c--e.de, dmitry.baryshkov@linaro.org,
+ u.kleine-koenig@baylibre.com, diogo.ivo@tecnico.ulisboa.pt,
+ saranya.gopal@intel.com
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250313162211.3650958-1-chenyuan0y@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,38 +101,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250313132405.742360-1-guomin.chen@cixtech.com>
+In-Reply-To: <20250313162211.3650958-1-chenyuan0y@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/03/2025 14:24, Guomin Chen wrote:
-> From: Guomin Chen <Guomin.Chen@cixtech.com>
-> 
-> This patch adds device tree binding for mailbox from Cixtech.
-> 
-> Reviewed-by: Peter Chen <peter.chen@cixtech.com>
-> Signed-off-by: Lihua Liu <Lihua.Liu@cixtech.com>
-> Signed-off-by: Guomin Chen <Guomin.Chen@cixtech.com>
+On 13/03/2025 17:22, Chenyuan Yang wrote:
+> Not all devices have an ACPI companion fwnode, so adev might be NULL.
+> This is similar to the commit cd2fd6eab480
+> ("platform/x86: int3472: Check for adev == NULL").
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+Read that commit carefully and provide steps how can we reproduce it -
+bind this driver to different platform device or i2c device via sysfs?
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
 
 Best regards,
 Krzysztof
