@@ -1,87 +1,112 @@
-Return-Path: <linux-kernel+bounces-562297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0186A62218
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:43:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57DFEA6222D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:46:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 407C2421139
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 23:43:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 892A03AF12C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 23:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EA51F2BB8;
-	Fri, 14 Mar 2025 23:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44B51EF0B7;
+	Fri, 14 Mar 2025 23:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eYz7rUHG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="P9UP7RVk"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404E3126BF9;
-	Fri, 14 Mar 2025 23:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4651A257D
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 23:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741995825; cv=none; b=MxQmqjhjB44dH1O2a7FBD6GamQOYk06r3sfMPX04A7p6D6T0nGuxTbny5zIoeE69tgLiRuEGTYE7cKPMXot2+Ntfug3A4f8c22F8wtHd081521OVuxK7smfPKv2bBtG6qUWPNfASrSXUlR25LhrwCsOWmtL0Jd+EpU3/kVL+F8c=
+	t=1741995984; cv=none; b=PwZi9mhv2Yx4kbySEgSIXghdi454rYjBkUfyrehdkkd6uVyk/hI53nqmx6Ozk04r/VJQBu7oU593Gq53QloAyQfILyL+O6mNr+Z2+tIDTA25/ipoD7D1N45oONSqUk6it8+T+joCxPP75piV/0s7kysfVl7MW9dBx4YOL8iW35g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741995825; c=relaxed/simple;
-	bh=rXwMh7DKwUBAV1pWsbA1nv/BVDEbqtMibrCXomL6GL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F0huv4JIRPpH9WOy3uQWvVaCHRORX5qMGrIl4YAglGTCPdpwmIkcH25AWRwjZBz8JmDgBPDYSAq16l1lu7fg2JbUnVZfWNPTaoiqfUeJLQLQ3Le88fJq6ytjQpJMLPya+kcFSF5zKC5Lxy4BCQzAP5RiCl9lZYILo9y67lHkeMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eYz7rUHG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 854E4C4CEE3;
-	Fri, 14 Mar 2025 23:43:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741995824;
-	bh=rXwMh7DKwUBAV1pWsbA1nv/BVDEbqtMibrCXomL6GL8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eYz7rUHGgBNx2eQl4bluF0GRsaCsWKdPVrd0PDjfhvaBxAqLEq9NwHY0Stjxg9aTc
-	 EnpQ6rLuJY8fteJ3VhYDdR1+gP7Rjuj7U2XooR1JY8NESae/CAohGoLzqclc1pYSyo
-	 K3Di6WInqaV8HVnnv0FBZaTNUjoQJHwt/5T7lnKiiOVDikwz4aAjxR/VQK7fip5bEI
-	 MCN6fo0X+UnH3v21U6VCUrQXLZWA3OF7usMcjQrxfmi+sQTp/sO0H4D3sqg0O7Y3kC
-	 xvzPz8+2hWoxgDZFRWw9rcmvUl+vHIe3kC5HenJrxdoC9gpKGEirdtNWua6CcXzABD
-	 pLf4hcUBG14tA==
-Date: Fri, 14 Mar 2025 18:43:43 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: linux-mediatek@lists.infradead.org,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-input@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH 3/8] dt-bindings: arm: mediatek: Add MT8186 Squirtle
- Chromebooks
-Message-ID: <174199582298.2541457.8793216796013121859.robh@kernel.org>
-References: <20250312104344.3084425-1-wenst@chromium.org>
- <20250312104344.3084425-4-wenst@chromium.org>
+	s=arc-20240116; t=1741995984; c=relaxed/simple;
+	bh=sDOfXAXzx5D3kpzvL4bf3WLKj3zX404RYsS31fiBHz4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XMzjuy/u8vNwdY2TKqLkkpyVnR/qX5T7/hHC/nWgKWFDllVUiUR5OU8q6psLARBVRfFevDQ5c3wnJeWll0rM2SWq4Ds4qcqoOQhV9bjpoI+KmbNRo+RoabPDSbinBrpeOAwB0LS0SBeC03HdF+waFjOcs+YMQV12FuMugVpujpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=P9UP7RVk; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac2bb7ca40bso502454766b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:46:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1741995979; x=1742600779; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=l9/y7EM2Lg92fDl97meUZg+yFVClzpaEkHcF6bNK9aE=;
+        b=P9UP7RVkRlQ3d/PKi87rwiRDBXxNkRtkPxZt7Asv1wxT2PVpVJ+04K35+Z5SruwWzA
+         QVuyJjFB0FYjsYTDlC/MS43O8yHnyvhHE/OcyaO9ozany6hb1fwLyJitQQeEFYcOQu7K
+         rEW3/8TJyMkpZEljDQwi1FSm9pkOPob3us4OQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741995979; x=1742600779;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l9/y7EM2Lg92fDl97meUZg+yFVClzpaEkHcF6bNK9aE=;
+        b=A/fMmmetFD5438fGwsIxthSTiFwtqvXlzMKwXvMuAzXXj7XlOuoKjaIW3mjAG1MzAG
+         3Wc2YCKGHYjUU9OouZ/WzTqQi2l91A1fq+RgS5n/5dq9uYSSUW7BvCvTCTlWUk/USJXc
+         btMtobdc8yU3atlfh1sVKskar3FnssQC4Dq1pgM34DB5fx3MRknt+6zwdDsQ8hjcVI/0
+         HfNFCYE32sj6JhoYTej+oVdyQW7nNHSNrDj+IMXDpZH7M9os7zYcBEhE+IbVuSlqqtFL
+         5vfPCtN43/gyIMUHAWjiljatMlUMuSWLpbPUsBmlhueNzA4HxatmOpBespanUtwIlycZ
+         hTsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWqLGj/PG3EPMC+UlPPJQaF3KzVNmMLLpdxEuAYfWnWYc1IZXFTDMuM6go6Wj51OICVp8VDGjlSxHkYK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo4tklPfczFflP7SmdcRDHrCSv/4R6lrDCpnKOpejf7sNzNUhY
+	ywTHkb5NWzQPL1bvdrTX6Jn7LZb6yXUt6BcQkUfBufs+yw1g69SnM/868TqpoODpiImwzGDkRkS
+	VQuQ=
+X-Gm-Gg: ASbGnctMfsXxD4aTFkjk/v97oFl6ZS+g71b1Y361rwtuDRfDPpLirf5Wqyow2HkcLH4
+	DiV3t3l1Lp1R5Nn45mbERCWCt2J8F3CgExRLfjQu5J7YavjQLr5+NgNPZbA3SPH3X8E++kAB/y8
+	ky31YE5ZSh9qaCj2eIncqX0LXp8OWyeE7bpdvoLZjSwCP2FJhlOdG2bETuesCDUVGIpRk5l+dnT
+	Ptzg7WatMd+vzpG9elUeGI7EmCr7o3mrVGqWzHuNkYvGBqO2+avZofQOGMhySNts56wd+oQXke9
+	jpnifd65lbRJ0ADPfVVICplks4QslJeaSpS9t+8cy3UTK1fhjQ2dUfdyX3ZYB3N+XRf4csNKUTe
+	hwclaspDJtJW2Ifb5Q+s=
+X-Google-Smtp-Source: AGHT+IF00aukK8Xj6I0qIAJwyNFAkS9wD9TkZUevWI61n8CXuxwzGX9MJ8oiEny7Nd689esywYXkVQ==
+X-Received: by 2002:a17:906:7311:b0:abf:425d:5d3 with SMTP id a640c23a62f3a-ac330373b47mr492721666b.40.1741995979233;
+        Fri, 14 Mar 2025 16:46:19 -0700 (PDT)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146aea93sm287636766b.30.2025.03.14.16.46.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Mar 2025 16:46:18 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac2bb7ca40bso502450466b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:46:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUmYp+aZsdbhArQSQFua/TkMiKgMw9KNIuXsOazZx3ePwJFk+R/ZcEHRizHk8oLCQiey9nOlAOTn/es9V8=@vger.kernel.org
+X-Received: by 2002:a17:906:340f:b0:ac3:4487:6a99 with SMTP id
+ a640c23a62f3a-ac344877921mr146008566b.47.1741995976980; Fri, 14 Mar 2025
+ 16:46:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312104344.3084425-4-wenst@chromium.org>
+References: <cover.1741988314.git.jpoimboe@kernel.org> <c007f4ddbfdfe92777a7df35bc121cf9bf0d0682.1741988314.git.jpoimboe@kernel.org>
+In-Reply-To: <c007f4ddbfdfe92777a7df35bc121cf9bf0d0682.1741988314.git.jpoimboe@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 14 Mar 2025 13:46:00 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wjBjq6u+r9KGTHQ5nOA1L2TDhz0JPL_+eE07un9y9Qm-w@mail.gmail.com>
+X-Gm-Features: AQ5f1JqtNPoY6M1QnRnhfz_dPwWFomE2jxyWXH5pkbBIhtTwGucRAbCwwZA7N24
+Message-ID: <CAHk-=wjBjq6u+r9KGTHQ5nOA1L2TDhz0JPL_+eE07un9y9Qm-w@mail.gmail.com>
+Subject: Re: [PATCH 04/20] x86/cpu: Use named asm operands in clflushopt()
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Uros Bizjak <ubizjak@gmail.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 14 Mar 2025 at 11:42, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+>
+> +       alternative_io(".byte 0x3e; clflush %[val]",
+> +                      ".byte 0x66; clflush %[val]", X86_FEATURE_CLFLUSHOPT,
+> +                      [val] "+m" (*(volatile char __force *)__p));
 
-On Wed, 12 Mar 2025 18:43:37 +0800, Chen-Yu Tsai wrote:
-> Add an entry for the MT8186 based Squirtle Chromebooks, also known as the
-> Acer Chromebook Spin 311 (R724T). The device is a 2-in-1 convertible.
-> 
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
->  Documentation/devicetree/bindings/arm/mediatek.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
+Hmm. I think we could just use 'clflushopt', it looks like it exists
+in binutils-2.25, which is our minimal version requirement.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+But maybe that's a separate cleanup.
 
+             Linus
 
