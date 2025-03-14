@@ -1,165 +1,104 @@
-Return-Path: <linux-kernel+bounces-561277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CE9A60F8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:05:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 089FFA60FE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 12:25:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23C9018957ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:05:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02B821B61256
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEEE1FCFE3;
-	Fri, 14 Mar 2025 11:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810C91FCFF2;
+	Fri, 14 Mar 2025 11:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Alc408NF"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="yMfYYLhm";
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="kIKroe/R"
+Received: from e3i103.smtp2go.com (e3i103.smtp2go.com [158.120.84.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0B11A5B82
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D111F4717
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 11:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.84.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741950313; cv=none; b=sDL641yB3hxr7lB8V+oVEdQ4LokbHv/A6H8N7Xw5ZpRPVNXQxsaU2n3qVPz4JpozTuPx5m7l8vUVlrKLfV+EQHS8DDcmmmLYyRN4onlW8GRPJqV9I8nl5ADVmyGAtNvXruaK1hZgyeiaqZONucZYNOcqP0AZg6K30TMz9/Yzc6Y=
+	t=1741951547; cv=none; b=GBz25EpcrCz24rOpWq9YgQmyeJsChJx35qxXUU5h3t5YY3+RAd4qo/+lIM1Ks8wwsFFNlP88awsn3Yrvm1fC/BZUBNTtnKRmiMEaKBZO7YCzv/k49z7ZB9gshPAEOjfLBbEDnNcE5ll4YXHjwnlIGow++HB77X4aVdTzk6MZJCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741950313; c=relaxed/simple;
-	bh=mSti1lSdkZu5pzlNVnJFPEzIQmYvJ2JTwDXM6hAfHUo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K50/jwUAqM0cmOU+gQjTTTetPcNiUXB0M7OQqoh5myosRzJiOBO1tmtERX1K61M5E5a4E42yrytV/JQW8z07AXumFSBPMjDwB6i4EibXrP9rQMUBJ4QCBT6agEYpuJVh0IqwpszofxH9c9bIVEK1fzODZxzZLYjNx1IFc/3f8E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Alc408NF; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5498c742661so2177524e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 04:05:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741950309; x=1742555109; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nLwu4BItx7GSozI0hELmEc6ksU5EqrfITEr4tkmZScU=;
-        b=Alc408NFuXrlMzvZCbDAayfA98kdAg18P0E69FKzsxBVjjinS54OiueI9EYdMTsd/0
-         q1kKiFEwBZOcL5EWbhfTLS9711J9ISkrqtZIDSA9TWWz7894q95PDiiZ0sn2V2YwPPZl
-         uWhtMpgAnvX7T8z34HqDOkaYXIeb6tSGUn6bzsH6c5Ky8FyUKjTw7D9p7s5OvaWKEJFW
-         9DWwlzuzC2IlRazjmXYzjmrXw7YM7gq4x3LTIm1AVaJOdUrEYhJbDAFgL6qM8p4vNmvf
-         HYX9r/Bt4/0TKbpc76NE0UNYuXO7ncIx5yEkHeDJqOnraA7qD4PoVHsj8N/H4O98x9bR
-         NGNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741950309; x=1742555109;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nLwu4BItx7GSozI0hELmEc6ksU5EqrfITEr4tkmZScU=;
-        b=vVSroa7mi25Y6Pi03f+DW6PnzpIKyfAS/wKDsVrEl5xKTST9Tbn/AlDOrA62OV2kEB
-         XOHSbne4sxoC2S/3FlzZ9gekeLF9rAxZFgN9t4VKSLIlkLrhINoSc0LeOx5rGIFdqcEG
-         mQLk1yrgk0tfrGN3zBqWdFO/RhROvC+j57yUpR9SM9X9GsT4pqBoUT6EhMsnBnKF8qXf
-         gZ7arqIJYqKHkiubo7MECijpRnGTuTjNTOj9RvuB5Z3kvhitIQe/epPJWq4l2nYG0tFC
-         5UEQvPpqYpzcGcLUrGMzxIBATyBKKe9vuG7gTMXI43Bt5Y83kSIp/eeonou6Z5V7IyPE
-         q9bg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMENYdHdNaAeX3OGvARijVwFx6vVEIWbwZSGzBhxNxtK4XWeOG1oISlHKVsg364hBKj1qFD5rx79RGl4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywaqp5Z4P+WQ/AylBU2LMZzbd+xMAkW0a4khWm0ct2I+FnI5xZJ
-	7ngMJrOsqFs2sFvVZ86W7pTP+EO9piEHU30OXQFNWtJZLrGKQjfCkQvDKL9yK/482wxQU1fmW5Z
-	oUR8bnqJ96yd2Porb1UXk82j2yPJ49NyTwQOlNA==
-X-Gm-Gg: ASbGnctIWNnwW2TWU5FHhByRDMNPzlcaWru0EJYoYWpEFwI5f66VbN/J5l3ACtEm/+k
-	FaEklXjs3IksoWvIYFUCcLIuL5phldWORrlBvoJ6b2pvsPdaCHcT2GD3l8E6RV14b703lmfqClR
-	VnW6/Dg86ApRiHgxvGV+U/ZNE=
-X-Google-Smtp-Source: AGHT+IEyxeKdaSkt651+21OQXccVtgFy+5WZ9uKiJGH8I9fe/+huCQCgBkk3lIUQsz0H+FIvtBdc8x1f/cGJIM8GB0c=
-X-Received: by 2002:a05:6512:3f1d:b0:549:8e5e:9d8e with SMTP id
- 2adb3069b0e04-549c362983cmr681438e87.0.1741950308554; Fri, 14 Mar 2025
- 04:05:08 -0700 (PDT)
+	s=arc-20240116; t=1741951547; c=relaxed/simple;
+	bh=K/z4t4NOhqkkqSl6CQ+AsBENi23rk6XIpH50FaBpmSI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pUiI+qIHh/SD5Gy2dOwfpYzGIUYE6r+8mDwIedq8aHHMl30ft0rFWzmG5cHysmJ7Bu5eBCGBYWUzteFWAZyGx5WBdEZEUieH3H/11FLtpXu+N2pjbKb413ICd+JvoJUufUqKGhaholInBHt6K0h4Hx6kZ/3S4rMtkV8tf/18q1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=yMfYYLhm; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=kIKroe/R; arc=none smtp.client-ip=158.120.84.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
+ i=@smtpservice.net; q=dns/txt; s=a1-4; t=1741950633; h=feedback-id :
+ x-smtpcorp-track : date : message-id : to : subject : from : reply-to
+ : sender : list-unsubscribe : list-unsubscribe-post;
+ bh=Q/0NWtuCGURDovv9ooP86q0n2kOTSTLmQGJcGN0Cr98=;
+ b=yMfYYLhm4Kz9tymhoqvnEs+06fh9z6MQOSp8S1oZ1RM4CiV/SOfqW+BIox8gf5lVLhx/T
+ t9H435R5qA1PMvytzni7ERq5jW2eGYuIE/vPugbgH9QJzd/nZoZNsxhjjeLKOeaZ98tVNa5
+ evyD8Q130+ktHPcaFk3uxj6e2OABy5GuK+oAHgrwARqghY16atfySBMHeBUEmPpQDoCWDYd
+ dhLF+Ta2/O39+UFzn8xnYjmJ7J4nC2TgVxhET1Lq84TVhpNPFMFFL6pLo5xgYWqPltrOHiG
+ CKk6PzDHgcfKozJ8zFhztCNqpK4n9jhqiWocqgn1fw2FyzD/0CCEEaRrPdDg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
+ i=@triplefau.lt; q=dns/txt; s=s510616; t=1741950633; h=from : subject
+ : to : message-id : date;
+ bh=Q/0NWtuCGURDovv9ooP86q0n2kOTSTLmQGJcGN0Cr98=;
+ b=kIKroe/RfzPtPHCN6j8ggncAGOwuMnpKb1tuFLMtfnzuVD5YwczB8q4rkHVt12Yc+EoYI
+ WB86cy4AlSEJ4A4ND8TS/2wYecbdpJCjmpzE/n/MiWL5yLm2iUXhJSWTMA1WapuUvTp8Kth
+ +BUgFv1asb7e8RDeivjgNRp9hmXuCmZJlLMVsM17L0CgDIUcW+uo+WChoc9EID1PA59vK+N
+ 72sM3A8oKGAEguYO8OOkMRWz88NiJuLV9H7kk1QoHcuAsj9LGZ/W3p3jbLR7C4SmYUEEfxb
+ 8tn2gRyGjSjPmtrqbEs8X1bAHYyeJ/y5x8pmRCip51ESrN8JJhEdletkP+cw==
+Received: from [10.12.239.196] (helo=localhost)
+	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97.1-S2G)
+	(envelope-from <repk@triplefau.lt>)
+	id 1tt2vv-4o5NDgroS7Q-rZnl;
+	Fri, 14 Mar 2025 11:10:31 +0000
+From: Remi Pommarel <repk@triplefau.lt>
+To: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH 0/2] Fixes packet processes after vif is stopped
+Date: Fri, 14 Mar 2025 12:04:23 +0100
+Message-Id: <cover.1741950009.git.repk@triplefau.lt>
+X-Mailer: git-send-email 2.40.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312-pinctrl-msm-type-latch-v1-1-ce87c561d3d7@linaro.org>
-In-Reply-To: <20250312-pinctrl-msm-type-latch-v1-1-ce87c561d3d7@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 14 Mar 2025 12:04:57 +0100
-X-Gm-Features: AQ5f1Jr_N7K7lEmvAgWDKBNNbb6WNXI3ALMBHl9pGsmXAlMGAySw6CoFSe50v9k
-Message-ID: <CACRpkdY-zRy9h9bg-sJRr4Ux9rC8ZnjGxN04OQ_ZaDzN3X-SDA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: qcom: Clear latched interrupt status when
- changing IRQ type
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Douglas Anderson <dianders@chromium.org>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Stephen Boyd <swboyd@chromium.org>, 
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
+Feedback-ID: 510616m:510616apGKSTK:510616sFgC3_wmkW
+X-smtpcorp-track: Ic1l3KQJhux6.k1lhbjisfJcB.PP06FQKkFRA
 
-On Wed, Mar 12, 2025 at 2:19=E2=80=AFPM Stephan Gerhold
-<stephan.gerhold@linaro.org> wrote:
+Those are a couple of fixes that prevent crashes due to processing
+packets (especially multicast ones) for TX after vif is stopped (either
+after a mesh interface left the group or interface is put down).
 
-> When submitting the TLMM test driver, Bjorn reported that some of the tes=
-t
-> cases are failing for GPIOs that not are backed by PDC (i.e. "non-wakeup"
-> GPIOs that are handled directly in pinctrl-msm). Basically, lingering
-> latched interrupt state is still being delivered at IRQ request time, e.g=
-.:
->
->   ok 1 tlmm_test_silent_rising
->   tlmm_test_silent_falling: ASSERTION FAILED at drivers/pinctrl/qcom/tlmm=
--test.c:178
->   Expected atomic_read(&priv->intr_count) =3D=3D 0, but
->       atomic_read(&priv->intr_count) =3D=3D 1 (0x1)
->   not ok 2 tlmm_test_silent_falling
->   tlmm_test_silent_low: ASSERTION FAILED at drivers/pinctrl/qcom/tlmm-tes=
-t.c:178
->   Expected atomic_read(&priv->intr_count) =3D=3D 0, but
->       atomic_read(&priv->intr_count) =3D=3D 1 (0x1)
->   not ok 3 tlmm_test_silent_low
->   ok 4 tlmm_test_silent_high
->
-> Whether to report interrupts that came in while the IRQ was unclaimed
-> doesn't seem to be well-defined in the Linux IRQ API. However, looking
-> closer at these specific cases, we're actually reporting events that do n=
-ot
-> match the interrupt type requested by the driver:
->
->  1. After "ok 1 tlmm_test_silent_rising", the GPIO is in low state and
->     configured for IRQF_TRIGGER_RISING.
->
->  2. (a) In preparation for "tlmm_test_silent_falling", the GPIO is switch=
-ed
->         to high state. The rising interrupt gets latched.
->     (b) The GPIO is re-configured for IRQF_TRIGGER_FALLING, but the latch=
-ed
->         interrupt isn't cleared.
->     (c) The IRQ handler is called for the latched interrupt, but there
->         wasn't any falling edge.
->
->  3. (a) For "tlmm_test_silent_low", the GPIO remains in high state.
->     (b) The GPIO is re-configured for IRQF_TRIGGER_LOW. This seems to
->         result in a phantom interrupt that gets latched.
->     (c) The IRQ handler is called for the latched interrupt, but the GPIO
->         isn't in low state.
->
->  4. (a) For "tlmm_test_silent_high", the GPIO is switched to low state.
->     (b) This doesn't result in a latched interrupt, because RAW_STATUS_EN
->         was cleared when masking the level-triggered interrupt.
->
-> Fix this by clearing the interrupt state whenever making any changes to t=
-he
-> interrupt configuration. This includes previously disabled interrupts, bu=
-t
-> also any changes to interrupt polarity or detection type.
->
-> With this change, all 16 test cases are now passing for the non-wakeup
-> GPIOs in the TLMM.
->
-> Cc: stable@vger.kernel.org
-> Fixes: cf9d052aa600 ("pinctrl: qcom: Don't clear pending interrupts when =
-enabling")
-> Reported-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> Closes: https://lore.kernel.org/r/20250227-tlmm-test-v1-1-d18877b4a5db@os=
-s.qualcomm.com/
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+The first one ensure the key info passed to drivers through ieee80211
+skb control block is up to date, even after key removal.
 
-Patch applied!
+The second one ensure no packets get processed after vif driver private
+data is cleared in ieee80211_do_stop().
 
-Yours,
-Linus Walleij
+As I tried to explain in second patch footnote, I can still see a
+theoretical reason that packets get queued after ieee80211_do_stop()
+call. But I was not able to reproduce it, so I may be missing a
+something here; making that more as an open question.
+
+Remi Pommarel (2):
+  wifi: mac80211: Update skb's NULL key in ieee80211_tx_h_select_key()
+  wifi: mac80211: Purge vif txq in ieee80211_do_stop()
+
+ net/mac80211/iface.c | 3 +++
+ net/mac80211/tx.c    | 6 ++++++
+ 2 files changed, 9 insertions(+)
+
+-- 
+2.40.0
+
 
