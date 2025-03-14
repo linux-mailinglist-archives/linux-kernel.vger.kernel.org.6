@@ -1,177 +1,170 @@
-Return-Path: <linux-kernel+bounces-561498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D87A612AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:31:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18BDCA6128C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:25:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C0C2188D952
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:31:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC2CA1B63AF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2C61FFC72;
-	Fri, 14 Mar 2025 13:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB9B1FF61E;
+	Fri, 14 Mar 2025 13:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cutebit.org header.i=@cutebit.org header.b="jKqTWJyd"
-Received: from hutie.ust.cz (hutie.ust.cz [185.8.165.127])
+	dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b="XhL67BIz"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2046.outbound.protection.outlook.com [40.107.94.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DADF4ED;
-	Fri, 14 Mar 2025 13:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.8.165.127
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741959087; cv=none; b=UKxbZ9R8SCtvvUm66zgA5+SpwTNAP21LFoTQUp2t7UW0XsaB6lkNy4HRZ1OisueIKxdY6XSRHV3x9ZBGg3eMqucskbbtbmxJK3r+vKJrl8hgpE5hrI5oIsKpW5vURS9Nd9BUcyD5nlKIqy+DwBjhmn45Qn2w13ApmG5gg3dbRmo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741959087; c=relaxed/simple;
-	bh=UATdpA7cgBWM5CfhL0BSNAFRMNZeQJf0RDSodrMiFm8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=mw+qAguWniGKgaO/P5t64d3VaaJrzpmw4QXo3UerUHUgm1djM+CYJO1yANxxvSSStLC4XFB10m2lDyTXBJitmxYalMhXGeYCNk0oeNTShywG5uk3z4NOqILjx7pVBxx7TEo9345sN8Sa+8w1osfevO9u4BFSa8Ce4+wDyz6+8So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cutebit.org; spf=pass smtp.mailfrom=cutebit.org; dkim=pass (1024-bit key) header.d=cutebit.org header.i=@cutebit.org header.b=jKqTWJyd; arc=none smtp.client-ip=185.8.165.127
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cutebit.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cutebit.org
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cutebit.org; s=mail;
-	t=1741958603; bh=ZHlFpUcnqM8kwtMsWbJUG26ffc8HSmguvMRTzaq18qo=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=jKqTWJydfegfYVUU3CI43+xEXTTX0q0K+BAe7HdFbCdxYFM7FE9x0XVzalHsIuBd2
-	 ryokhFgSViug4ZiAremjxKHXTgDkao/2LXpqjFPGSzxRaEZ8iN/88ISYnRpLtnt3jt
-	 k3XKi7vuXCj9nqxTQIzpAAq5CyutQ4yrSJrz1SU0=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296501FF1BA;
+	Fri, 14 Mar 2025 13:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741958674; cv=fail; b=pVpV0r7A6uhu1srLYnw3Tnmwz0u6YlgnqeF7v5s1AO/QYri78uul8VwZMsc3KCOgDZSIfDbmD6dZ2U/bvywSMFvzHc8TRCeYyZPovepTHjP770ECkEzJ3fYlPEbs5NfJjwjw3R5rmILX+mKX4obDmzbHpfo4SZw0T3aqVD1PM/I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741958674; c=relaxed/simple;
+	bh=qTDvMx271pSXovnkhzICygwVkJCKb0msz72xs96pUnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sCrbxSvRuVlzqcTeEQoNpJPokxDjans+1w472IhnfUV3cCOvAsnxw0pV2ri4rXjqCwQmbSro8UTIoCp/JCRofBd9O07/RO3KjuuQV8SsV91xZ0U7kbS+FT71NwvNegNvwLQh03NtrdYGRLbihCDH0qRzDR9xPP6rlEMcgl88Wtg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com; spf=pass smtp.mailfrom=gehealthcare.com; dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b=XhL67BIz; arc=fail smtp.client-ip=40.107.94.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gehealthcare.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sZpmUWv6cy5QXKG9IrF/hD+8sLrd36ec4CgkiI+bn3v0lsDatpjvjgvliV/OYk3OVQ4jQyZ2yPsuqQtULoUxxut09+3++QC474JH9GDrRS9Wkfw+dhgUTvOIhQ7+YD3e4ngSsu1ik6iddWJFG2SA/plMu3EHvTSWWNIxep1BDPH6GRXPd+5D18zEFZt8TrcwCMbbL5BIYxHyQFvAG4NzvVmyklVjOj8vNRzNpfOoF9HadycJ+0zgdZCA+AY333kF3MF3zMSPWrhRzX5z9i26mBtpqUVAPVkf+dxGrwwcnqqB7NdaLbwAZ3S3wrl+Mu2/In3tai6eNv/aiyFKa35ZDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eAYy1hPH3xzgggkIDq8Q8YGvCjxcsLO5Uw0Cck2p1Qc=;
+ b=R5DSJnljI+wx4roJYtqT1POMMDm+SjLuBx9QvxBuBQ18bJBRa2m7AXzbBgelwN2vZsWt+pVtF+/L/qtGA1HSPPfORs6bQiztg4PBDQMTiBdGVF/31aCtBixo8SeYNMUHb1S2QjoaPoukGmO/csrxVCWYz6DTHG7TLUc70hz80LGoDoEZiAFYHoISF2Ky+Ikvy4OU8MO2t3KUqtorPI9NIIdPHc8duz1fLU7TEpP/MJlxUBTlLX7A1Xu13d21TWT+Nza9er+qnmZ81/pDCG5BNd0L4+Zb99re8rYEaEXqjMbdFwvR2luu7QP7XxF76BPiEC8EVU2Bq0gvUWi0+flDbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 165.85.157.49) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=gehealthcare.com; dmarc=fail (p=quarantine sp=quarantine
+ pct=100) action=quarantine header.from=gehealthcare.com; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gehealthcare.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eAYy1hPH3xzgggkIDq8Q8YGvCjxcsLO5Uw0Cck2p1Qc=;
+ b=XhL67BIzDqwtFrJ3hsLuMC02dCzcWyM2g5G/CyaxWzzvYs/wt97yuzKX6ELsgqHkwk+iNE7omeSyRzwYB4lPdl5zKOBPF6yRkj3Tk/TTgNJlm+N6jXBzbwMgA9YcLtiXRpkiQv4IVsXKNhadDx+NP2sdJXuuSChpuX7I7Haa4LicLuYMNXY0goMH6PVaeUvXQw/enNTJX4iV+kx51Ofsq+693Q/LPHt58HkMkQopXcRR19XH4zhhxEkLmIhHDTrkhBAi6IqLoKO3HQTtc/lYeXZVaW5BJPLYU+IViTCF0HeUW1G7Os8gXK2p653HTALFv6dSkRf18Tzt0pFSR4EpGQ==
+Received: from SJ0PR13CA0036.namprd13.prod.outlook.com (2603:10b6:a03:2c2::11)
+ by SJ2PR22MB4013.namprd22.prod.outlook.com (2603:10b6:a03:502::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Fri, 14 Mar
+ 2025 13:24:30 +0000
+Received: from SJ1PEPF00002311.namprd03.prod.outlook.com
+ (2603:10b6:a03:2c2::4) by SJ0PR13CA0036.outlook.office365.com
+ (2603:10b6:a03:2c2::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.28 via Frontend Transport; Fri,
+ 14 Mar 2025 13:24:30 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 165.85.157.49)
+ smtp.mailfrom=gehealthcare.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=gehealthcare.com;
+Received-SPF: Fail (protection.outlook.com: domain of gehealthcare.com does
+ not designate 165.85.157.49 as permitted sender)
+ receiver=protection.outlook.com; client-ip=165.85.157.49;
+ helo=atlrelay2.compute.ge-healthcare.net;
+Received: from atlrelay2.compute.ge-healthcare.net (165.85.157.49) by
+ SJ1PEPF00002311.mail.protection.outlook.com (10.167.242.165) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Fri, 14 Mar 2025 13:24:30 +0000
+Received: from 9e5302bffcb7 (zoo13.fihel.lab.ge-healthcare.net [10.168.174.111])
+	by builder1.fihel.lab.ge-healthcare.net (Postfix) with SMTP id BFFD99D4A8;
+	Fri, 14 Mar 2025 15:24:27 +0200 (EET)
+Date: Fri, 14 Mar 2025 15:24:27 +0200
+From: Ian Ray <ian.ray@gehealthcare.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] Input: snvs_pwrkey - support power-off-time-sec
+Message-ID: <Z9QuC7tZoXj3DRZs@9e5302bffcb7>
+References: <20250314094213.902-1-ian.ray@gehealthcare.com>
+ <20250314094213.902-2-ian.ray@gehealthcare.com>
+ <aa893df6-fe40-49a8-920d-7d7240bb18b8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: [PATCH v3 17/20] ASoC: dt-bindings: tas2770: add flags for SDOUT
- pulldown and zero-fill
-From: =?utf-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>
-In-Reply-To: <20250312125832.GA359842-robh@kernel.org>
-Date: Fri, 14 Mar 2025 14:23:11 +0100
-Cc: James Calligeros <jcalligeros99@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>,
- Shenghao Ding <shenghao-ding@ti.com>,
- Kevin Lu <kevin-lu@ti.com>,
- Baojun Xu <baojun.xu@ti.com>,
- Dan Murphy <dmurphy@ti.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Shi Fu <shifu0704@thundersoft.com>,
- Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Hector Martin <marcan@marcan.st>,
- linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org,
- asahi@lists.linux.dev,
- linux-hwmon@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <BDE96592-9DE8-407C-8FB9-B84B492D7951@cutebit.org>
-References: <20250227-apple-codec-changes-v3-0-cbb130030acf@gmail.com>
- <CAHgNfTxS1Q4PPsw520-J4Yn6xg+QZOYFkYhg5yv-uZFu5waN_g@mail.gmail.com>
- <20250307205156.GA583954-robh@kernel.org> <5996925.DvuYhMxLoT@setsuna>
- <20250312125832.GA359842-robh@kernel.org>
-To: Rob Herring <robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aa893df6-fe40-49a8-920d-7d7240bb18b8@kernel.org>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002311:EE_|SJ2PR22MB4013:EE_
+X-MS-Office365-Filtering-Correlation-Id: cfa6f635-2515-49ce-a7e5-08dd62fb8d84
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1MTGKfmLvWhltpIr4CTaK+hmlwcJPQPhPDY+AxfwVVgONc9GAf8HNtSM1xsQ?=
+ =?us-ascii?Q?58c82bUVkbX0IPgI/E+DqVOiyl93UGY1FMCI8qoRnca5oLoEdgPl4dscp/Nb?=
+ =?us-ascii?Q?zsFaqRJ9iqenSYehvPXp62Gyj0+aoaqcTLrEvUHBeDYLEnZ1IrGyrW/3W00x?=
+ =?us-ascii?Q?TAMNa4iLuvOL3YLfmuyOjiC8YQQaQPm7cu8w6NqNKi9/IOsdSQNv2T+9yjzj?=
+ =?us-ascii?Q?oZE1oD+bqhXs3Cb4ykFIXuukhlp5+KSXgl/BEHzydtmq29wJHlW1dTULmhJJ?=
+ =?us-ascii?Q?wKrn4vqJoUI2m3bDUZzRQ8isM/QjNho6PIpFSmRKnwix4/2C/tLU2qOxMaoj?=
+ =?us-ascii?Q?znl+vTqYh9d3a0clZ9tReBOx6BSeTT08SyH6pekR2bkCiDJfl84yqT7p1/ER?=
+ =?us-ascii?Q?X5lX+oqfUXpJiiLeOexAWDv/tZyqDTD94CULVOpowLjNwrCaoo5SOvf8Dd/T?=
+ =?us-ascii?Q?Es7YoXuq/p+KheLCqnW+ech/7MQgEOorTw7nii0CmLvzJf3fO1/q33y2l2th?=
+ =?us-ascii?Q?P1pVqvXc+EDrx0/0+JuR8f5MvG5NLUKcgZVWC7JeeAqD9d74QHeOqcHgRtb2?=
+ =?us-ascii?Q?m7Qi/D4YwbIZHL4/5TO4R2BxQeXlHo1LJJpruYZY/N4QVappPVOuLjCwr57S?=
+ =?us-ascii?Q?dTgg11Iqqc7bVs2D6tbphk7WCrc4iaa69dhnil7o5dbWP1CRYDG5suli8oDh?=
+ =?us-ascii?Q?/ZYNIIeTaXGOIA9lJ/aYBz6dTYnhgLAyvqSAX4jbI6/WHoPr9WwuZLqk2MMS?=
+ =?us-ascii?Q?M7OZBXHJAJn97if4t2xhkSAEixqQ7nbnzVRJGB/6DI2CE474c3dT4JiwcH5Y?=
+ =?us-ascii?Q?t1olUahi83M0YcHIqhMn25eH15EIcbGh04hdoBTVQ/qtX/t9R5fYtIcFTXJI?=
+ =?us-ascii?Q?quMhi/xx60hmVakF9RLtjWn7IrnPmTTLtHFFZhQ6rVdMehhcgG4gmIaUOtb/?=
+ =?us-ascii?Q?u3YvRBu9TyTTxdcDLS8mZHbNHnxEvwotY5YPK74XZ+xxdC/HdTlsVb4pn0VV?=
+ =?us-ascii?Q?Wxfc8Y8vLqdvVbRQjR1+hS8yMM+JK7FLFajVkLUhVA2PhIvpo3LMF4M3AtFp?=
+ =?us-ascii?Q?wb5NUyRA3MXL5hpZRoRnNUwEeRxh7U5k/HVYyDHh6ed2SM1W7V1uLYSPlDW3?=
+ =?us-ascii?Q?SshJMN11g5pSUBIj/mHrxuXix9dD409ZjRlWjreJOfmKYvsTLq7tXJ1yT3E6?=
+ =?us-ascii?Q?XSanrTTwKQZ2rDEKhSrPJvuhCU1djtQkni4jx8MX3hJYK+JAsFPDYJFiX9Jt?=
+ =?us-ascii?Q?sWHkza6XtHqe3PTIusAaNs1RPku++PWA8efkZ5doFfjuCIifAMyxnXugULf6?=
+ =?us-ascii?Q?VlbJAH5RXXO8VcJxjeVnoT1MWPsJ8p0dGYf3LgMb4XXb7Ln7V7+64mIQVIsh?=
+ =?us-ascii?Q?Gd7kAkcDQGiOlFb7fDS/OScXHQrE1hdTuHPGCvLB9DbJ4sCCoExKqGCjNPfo?=
+ =?us-ascii?Q?DzLmxc18CezqNkqqn6Axk2IP9FXwHiC1Cjr6Qqnb9HVTDTTnv/SjLFWewB96?=
+ =?us-ascii?Q?gXnc2WYZllM04qY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.85.157.49;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:atlrelay2.compute.ge-healthcare.net;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: gehealthcare.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2025 13:24:30.2698
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cfa6f635-2515-49ce-a7e5-08dd62fb8d84
+X-MS-Exchange-CrossTenant-Id: 9a309606-d6ec-4188-a28a-298812b4bbbf
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=9a309606-d6ec-4188-a28a-298812b4bbbf;Ip=[165.85.157.49];Helo=[atlrelay2.compute.ge-healthcare.net]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-SJ1PEPF00002311.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR22MB4013
 
-Hi Rob, James,
+On Fri, Mar 14, 2025 at 01:55:47PM +0100, Krzysztof Kozlowski wrote:
+> On 14/03/2025 10:42, Ian Ray wrote:
+> >
+> >       /* Get SNVS register Page */
+> > @@ -148,6 +152,24 @@ static int imx_snvs_pwrkey_probe(struct platform_device *pdev)
+> >       if (pdata->irq < 0)
+> >               return -EINVAL;
+> >
+> > +     if (!of_property_read_u32(np, "power-off-time-sec", &val)) {
+> 
+> And when you test your DTS against binding what do you see? I suspect
+> new warning.
 
-> On 12. 3. 2025, at 13:58, Rob Herring <robh@kernel.org> wrote:
->=20
-> On Mon, Mar 10, 2025 at 07:30:07PM +1000, James Calligeros wrote:
->> On Sat, Mar 8, 2025 at 6:51=E2=80=AFAM Rob Herring <robh@kernel.org> =
-wrote:
->>> How would it work when you need a mask? "dai-tdm-slot-tx-mask" is
->>> enough?
->>=20
->> The existing TX/RX slot masks are used to control which slots the =
-codec
->> is operating on, AIUI. I don't know if it makes sense to alter how =
-codecs
->> deal with this. Could we combine the suggested dai-tdm-slot-tx-idle
->> with an optional dai-tdm-slot-tx-idle-mask property? =46rom the =
-machine
->> driver's perspective, the API would then be similar to the existing
->> set_tdm_slot ops. The current downstream macaudio machine driver =
-builds
->> its links by allowing multiple codecs and CPUs to be linked to a DAI,
->> like so:
->=20
-> Wouldn't the NOT of dai-tdm-slot-tx-mask be the idle mask?
->=20
-> Don't think about the Linux APIs here. The DT is separate. So think in=20=
+I checked the build logs (from a clean workarea), plus run-time dmesg,
+both with the DTS change -- and without it.  There are no new warnings
+(specifically nothing mentioning snvs-pwrkey or dts or power-off-time).
 
-> terms of what you need to describe the TDM timing/waveform.
->=20
->>=20
->> dai-link@0 {
->> cpu {
->> sound-dai =3D <&cpu0>, <&cpu1>;
->> };
->> codec {
->> sound-dai =3D <&speaker0>,
->>  ...,
->>  <&speaker6>;
->> };
->> };
->>=20
->> In this case, the codec-specific mask property was added so that a =
-mask
->> could be applied to a specific codec rather than the whole dai, =
-however
->> from upstream drivers tt looks like the way this should be handled is =
-to
->> have "dai-tdm-slot-tx-idle-mask-n" properties at the dai level, then =
-have
->> the machine driver set the mask for the appropriate codec during =
-setup. So
->> for macaudio, assuming speaker5 requires this zerofill mask, we would
->> have something like this:
->=20
-> I'm now confused why you need n masks and what does n represent?
+If an invalid value (such as "42") is chosen then the probe fails with
+-EINVAL as expected.
 
-For this setup there are 6 codecs on the same bus but 3 of those are on =
-one
-data line and the other 3 are on another data line. Within the SoC these =
-two
-data lines (both for codec->SoC direction) are ORed together in front of =
-the
-receiver peripheral.
+Is there something else that I should have checked?
 
-This means we need at least one codec within each group of the three to =
-zero
-out the bus for the duration of the slots used by the other group of =
-three.
+> 
+> Best regards,
+> Krzysztof
 
-I solved this by attaching
-
- ti,sdout-force-zero-mask =3D <0xf0f0f0>;
-
-on one codec from the first group, and
-
- ti,sdout-force-zero-mask =3D <0x0f0f0f>;
-
-on one from the other group.
-
-FWIW the right form of these masks is not an implementation detail of =
-the
-machine driver spilling into the device tree (so that the mask would =
-need
-to be different if the machine driver was implemented differently). This =
-is
-because the slots used by each codec are specified via a DT property =
-too, e.g.
-
-  ti,imon-slot-no =3D <8>;
-  ti,vmon-slot-no =3D <10>;
-
-Martin
-
-> Rob
->=20
-
+Blue skies,
+Ian
 
