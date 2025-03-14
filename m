@@ -1,221 +1,311 @@
-Return-Path: <linux-kernel+bounces-561499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 071C9A612B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:32:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 381F2A612B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03760178A3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:31:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 017FF188FFE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E661F2B82;
-	Fri, 14 Mar 2025 13:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q5TmTCTs"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9029E134AB;
-	Fri, 14 Mar 2025 13:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42411FF61D;
+	Fri, 14 Mar 2025 13:33:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97351134AB
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741959108; cv=none; b=WZ76e/cSEbToI3yVOM5FcBF8tfXWrWPwAi+VMNOhvAIho5E7KHBINPXo1PI7VJ3fj3NBj4RxOEgLzLj87fihKyyZP4a7VmdyIwftTGpUGnuiiLuNgXIQJ7tLJfo1LjUxV1swgOPs6c8eLnExllGDNMCCLwbmf3JtMcy8FUvJFMs=
+	t=1741959191; cv=none; b=DRNB0CKM5RaVoT0aJqm/umYBjDQHnaELis0XRBnFItcr24n0ph/1BRJyDq12iHFinRb4ts1dAKbzkkUYGeDr9IcG27YL8IUl8eg2nP01Ds7QIC5oVTNQP8QcfBEjYRbgam5yPqjMWYAwZ4Yv72xmGXpqr++sYM5XOM41/8tn9pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741959108; c=relaxed/simple;
-	bh=gj3NYI3coGahkYXwx6USbGbvU6D17tfuUeQTPPTb6Aw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oOafQkkhBHq1jukGg565q1omscktFBj/wrQesACAGlxiGok9QML5cb6dXj/eFLs23NTVJ4JWGBeYwjn9SrGz4EdBE0doapYfbv93O2OaCvbsLqEEujmSXuk8H2Tmq+16/Y2Qw8YV8tRlLkShQeXsgGgjmG4wjdUXcpvM7nqhEv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q5TmTCTs; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22398e09e39so43526155ad.3;
-        Fri, 14 Mar 2025 06:31:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741959106; x=1742563906; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vRnRGl1AfdbXlS77j82nE9ScaNFhXXtMhswVLJe3pAE=;
-        b=Q5TmTCTsv2qPO7bQvI5UH9Xx/2IwW7s5oFIGD+CIOGlPZRDCwmEM0v0p0Obatg7SXZ
-         WLy+AiOD7xv+D5xOGgsWrgl2P2OnWwKGaD2shLueeSM2X1DiS2z31A0xX6O5jKi2dZLf
-         M/VfW0k/tbcgffq5vpZKLkHMuRaLMF2h3tWmvh0KIa7/sAeGMGmAIDvZw5fYN4wWBibj
-         xAYNqcCnsRPWoM03l6DAvDHJH3p+dXJAct8PSqP43piIgi5yMCMmLTH9rWDVZ/rU7Blk
-         rWVuAaM0hRwMroMlmYW5N2s9OZtchP25yWXCGjMhNhfUhq44i1qNRD2OzhIlYYERCkPQ
-         DZ7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741959106; x=1742563906;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vRnRGl1AfdbXlS77j82nE9ScaNFhXXtMhswVLJe3pAE=;
-        b=VRm5hPNvN4WPHI/5r4J6xH5Fm+Iz8XcSd/qzYSzhrGPpDsXlC6bqnGtO2hdqadpiSi
-         NOghHD+Ra6XZ+yLoKTd1IgUpHWm/GS4s/QRGgPOE1AAnTpkq6tHt0JgccHG1GaVSh0Ik
-         BvKIUqGxLqmEpY3xxPXUZMQh4AmRE4/q5bivh6NkQiZdVR/MRsxBT93srvPzHhucGBwN
-         rV+jfiQ0PxuZKSEyIakthkk5dB6yl9izoIQOd6CQEqmLUPAlE7nhGmbOsIfBVJyO7rkG
-         rQuFUndsj8VdY43UbarRup4ZiMdm5Gu7JQlXBdDU8stXH4SwujE5jYBqzgwtpf98b1vL
-         1w7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUihpFnsy+UIPePLp8Ysx3LCjMGf3kdCBhMMtTPxis1eVYG4vjYGgyunqgnPsv/DA/Hj8X9Dpc5fomA7/g=@vger.kernel.org, AJvYcCVXm76ssRy3xaO9vXO9pHfZLz4zRv3/7nXrgxTjuGy0GV/DTP0WX1X1vgr6dm5t7CMuQNdjpMoB@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQNwI4lRQLSEtuoKC3OzcXJKd20v67pj1R4cRCrmlaHpucfo33
-	Z6qdL+yna7W5crB9+kWAymefqWRgiRVQJ5yqmwkcSyEEIuzGE+/zeSHLv8hX44PXWFzWmaR6K3q
-	1AV2/4m/QwEoZrkUCo4PjZGwWl2Y=
-X-Gm-Gg: ASbGncsvOW3875Hg7oCLMJAXZWN2PRvb3CTIuAmr1zgZlgekLWE6KNMn18ZEE9i5O2b
-	OZ8urmMRa6n+aAfomtYGA468NHrjaE5VkHrJN8hddC0i1DrMp4qIZpV81nMoM+t6tzK9atiItc6
-	8O0sWQvRT35glEPAySk/3tnkkLlVj6FT7bovZIJog9Ox9+tdTaMeNiLHglJX0=
-X-Google-Smtp-Source: AGHT+IFiAWiKj+MJwn+S3HigGFeBovw0sPdQYFXD28BrLYC4NGbnywq9LbSsyUrkKeF0to/BJtRSGNGdYXVJp590efw=
-X-Received: by 2002:a17:90b:2707:b0:2ee:c918:cd60 with SMTP id
- 98e67ed59e1d1-30151ca0e05mr3418497a91.20.1741959105688; Fri, 14 Mar 2025
- 06:31:45 -0700 (PDT)
+	s=arc-20240116; t=1741959191; c=relaxed/simple;
+	bh=ZdmVBU3V7wuIxcpmANQ8xh07V8tf0UDPw5E3F9mHuTk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X5iIydOBEVh6Ake7dN9rxpoWcyGtnHyWM6Ra1wBFoI9kg2cZcEOXMgpXsr8bpD6H9aoYcRA8/HLU/uiXjZuDlCQIeqU9ziMHJ6Mu75FmafTyPcfLP1hrVxyihCW9UbtbfZlAeCbtNe5f+X1s7POzpsrUrfGZohtTwDSuM3b4p0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C4DDF1424;
+	Fri, 14 Mar 2025 06:33:18 -0700 (PDT)
+Received: from [10.57.85.159] (unknown [10.57.85.159])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 927103F673;
+	Fri, 14 Mar 2025 06:33:07 -0700 (PDT)
+Message-ID: <fe8ced5d-c9d8-479b-9088-e0294565cb95@arm.com>
+Date: Fri, 14 Mar 2025 13:33:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250309121526.86670-1-aleksandr.mikhalitsyn@canonical.com>
- <CAL+tcoDhPe3G_iheA0M_9dO-Tij-dYROfneiGS3SUr8w7bhH8A@mail.gmail.com> <CAJqdLrp+d=d2rZ776_zvw_Kz8FT317skkE+SufyUk_9secE_9w@mail.gmail.com>
-In-Reply-To: <CAJqdLrp+d=d2rZ776_zvw_Kz8FT317skkE+SufyUk_9secE_9w@mail.gmail.com>
-From: Anna Nyiri <annaemesenyiri@gmail.com>
-Date: Fri, 14 Mar 2025 14:31:34 +0100
-X-Gm-Features: AQ5f1Jpl1eZvO9TwMCXdy9qA1FDmOIBQXsUQV-i0tHUZkyoMr31eqj3wUhXsCaU
-Message-ID: <CAKm6_RsfA_Ygn4aZQdUxfBujxxgdB=PvgymChDtWSVHhhp6WZQ@mail.gmail.com>
-Subject: Re: [PATCH net-next] tools headers: Sync uapi/asm-generic/socket.h
- with the kernel sources
-To: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Cc: Jason Xing <kerneljasonxing@gmail.com>, 
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, edumazet@google.com, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Jakub Kicinski <kuba@kernel.org>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	Willem de Bruijn <willemb@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v3 PATCH 5/6] arm64: mm: support split CONT mappings
+Content-Language: en-GB
+To: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org,
+ catalin.marinas@arm.com, Miko.Lenczewski@arm.com,
+ scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250304222018.615808-1-yang@os.amperecomputing.com>
+ <20250304222018.615808-6-yang@os.amperecomputing.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250304222018.615808-6-yang@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Alexander Mikhalitsyn <alexander@mihalicyn.com> ezt =C3=ADrta (id=C5=91pont=
-:
-2025. m=C3=A1rc. 10., H, 9:22):
->
-> Am Mo., 10. M=C3=A4rz 2025 um 06:33 Uhr schrieb Jason Xing
-> <kerneljasonxing@gmail.com>:
-> >
-> > On Sun, Mar 9, 2025 at 1:15=E2=80=AFPM Alexander Mikhalitsyn
-> > <aleksandr.mikhalitsyn@canonical.com> wrote:
-> > >
-> > > This also fixes a wrong definitions for SCM_TS_OPT_ID & SO_RCVPRIORIT=
-Y.
-> > >
-> > > Accidentally found while working on another patchset.
-> > >
-> > > Cc: linux-kernel@vger.kernel.org
-> > > Cc: netdev@vger.kernel.org
-> > > Cc: Eric Dumazet <edumazet@google.com>
-> > > Cc: Jakub Kicinski <kuba@kernel.org>
-> > > Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-> > > Cc: Willem de Bruijn <willemb@google.com>
-> > > Cc: Jason Xing <kerneljasonxing@gmail.com>
-> > > Cc: Anna Emese Nyiri <annaemesenyiri@gmail.com>
-> > > Fixes: a89568e9be75 ("selftests: txtimestamp: add SCM_TS_OPT_ID test"=
-)
-> > > Fixes: e45469e594b2 ("sock: Introduce SO_RCVPRIORITY socket option")
-> > > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical=
-.com>
-> >
->
-> Hi Jason,
->
-> Thanks for looking into this!
->
-> > I'm not sure if it's a bug. As you may notice, in
-> > arch/parisc/include/uapi/asm/socket.h, it has its own management of
-> > definitions.
-> >
-> > I'm worried that since this file is uapi, is it allowed to adjust the
-> > number like this patch does if it's not a bug.
->
-> My understanding is that this file (tools/include/uapi/asm-generic/socket=
-.h) is
-> a mirror copy of the actual UAPI file (uapi/asm-generic/socket.h),
-> and definitions need to be in sync with it.
+On 04/03/2025 22:19, Yang Shi wrote:
+> Add split CONT mappings support in order to support CONT mappings for
+> direct map.  This should help reduce TLB pressure further.
+> 
+> When splitting PUD, all PMDs will have CONT bit set since the leaf PUD
+> must be naturally aligned.  When splitting PMD, all PTEs will have CONT
+> bit set since the leaf PMD must be naturally aligned too, but the PMDs
+> in the cont range of split PMD will have CONT bit cleared.  Splitting
+> CONT PTEs by clearing CONT bit for all PTEs in the range.
 
-I don=E2=80=99t completely understand this either=E2=80=94if the definition=
-s need to
-be in sync, why is there a discrepancy?
+My expectation is that this patch is not needed if you take the approach of
+reusing the existing code to generate the new lower parts of the hierachy as
+suggested in the previous patch.
 
-Specifically, I am referring to the ones that caused the shift in
-numbering in uapi/asm-generic/socket.h:
-#define SO_DEVMEM_LINEAR 78
-#define SCM_DEVMEM_LINEAR SO_DEVMEM_LINEAR
-#define SO_DEVMEM_DMABUF 79
-#define SCM_DEVMEM_DMABUF SO_DEVMEM_DMABUF
-#define SO_DEVMEM_DONTNEED 80
+Thanks,
+Ryan
 
-In the case of SO_RCVPRIORITY, I simply continued the numbering
-sequence as it was=E2=80=94I didn=E2=80=99t intend to disrupt the structure=
- of the
-definitions. It=E2=80=99s possible that I made a mistake in doing so.
-If this doesn=E2=80=99t cause any issues, I would also vote for modifying t=
-he
-numbering. Could someone more familiar with this area confirm whether
-adjusting the numbering is acceptable?
+> 
+> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
+> ---
+>  arch/arm64/include/asm/pgtable.h |  5 ++
+>  arch/arm64/mm/mmu.c              | 82 ++++++++++++++++++++++++++------
+>  arch/arm64/mm/pageattr.c         |  2 +
+>  3 files changed, 75 insertions(+), 14 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index ed2fc1dcf7ae..3c6ef47f5813 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -290,6 +290,11 @@ static inline pmd_t pmd_mkcont(pmd_t pmd)
+>  	return __pmd(pmd_val(pmd) | PMD_SECT_CONT);
+>  }
+>  
+> +static inline pmd_t pmd_mknoncont(pmd_t pmd)
+> +{
+> +	return __pmd(pmd_val(pmd) & ~PMD_SECT_CONT);
+> +}
+> +
+>  static inline pte_t pte_mkdevmap(pte_t pte)
+>  {
+>  	return set_pte_bit(pte, __pgprot(PTE_DEVMAP | PTE_SPECIAL));
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index ad0f1cc55e3a..d4dfeabc80e9 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -167,19 +167,36 @@ static void init_clear_pgtable(void *table)
+>  	dsb(ishst);
+>  }
+>  
+> +static void split_cont_pte(pte_t *ptep)
+> +{
+> +	pte_t *_ptep = PTR_ALIGN_DOWN(ptep, sizeof(*ptep) * CONT_PTES);
+> +	pte_t _pte;
+> +	for (int i = 0; i < CONT_PTES; i++, _ptep++) {
+> +		_pte = READ_ONCE(*_ptep);
+> +		_pte = pte_mknoncont(_pte);
+> +		__set_pte_nosync(_ptep, _pte);
+> +	}
+> +
+> +	dsb(ishst);
+> +	isb();
+> +}
+> +
+>  static int split_pmd(pmd_t *pmdp, pmd_t pmdval,
+> -		     phys_addr_t (*pgtable_alloc)(int))
+> +		     phys_addr_t (*pgtable_alloc)(int), int flags)
+>  {
+>  	unsigned long pfn;
+>  	pgprot_t prot;
+>  	phys_addr_t pte_phys;
+>  	pte_t *ptep;
+> +	bool cont;
+> +	int i;
+>  
+>  	if (!pmd_leaf(pmdval))
+>  		return 0;
+>  
+>  	pfn = pmd_pfn(pmdval);
+>  	prot = pmd_pgprot(pmdval);
+> +	cont = pgprot_val(prot) & PTE_CONT;
+>  
+>  	pte_phys = pgtable_alloc(PAGE_SHIFT);
+>  	if (!pte_phys)
+> @@ -188,11 +205,27 @@ static int split_pmd(pmd_t *pmdp, pmd_t pmdval,
+>  	ptep = (pte_t *)phys_to_virt(pte_phys);
+>  	init_clear_pgtable(ptep);
+>  	prot = __pgprot(pgprot_val(prot) | PTE_TYPE_PAGE);
+> -	for (int i = 0; i < PTRS_PER_PTE; i++, ptep++)
+> +
+> +	/* It must be naturally aligned if PMD is leaf */
+> +	if ((flags & NO_CONT_MAPPINGS) == 0)
+> +		prot = __pgprot(pgprot_val(prot) | PTE_CONT);
+> +
+> +	for (i = 0; i < PTRS_PER_PTE; i++, ptep++)
+>  		__set_pte_nosync(ptep, pfn_pte(pfn + i, prot));
+>  
+>  	dsb(ishst);
+>  
+> +	/* Clear CONT bit for the PMDs in the range */
+> +	if (cont) {
+> +		pmd_t *_pmdp, _pmd;
+> +		_pmdp = PTR_ALIGN_DOWN(pmdp, sizeof(*pmdp) * CONT_PMDS);
+> +		for (i = 0; i < CONT_PMDS; i++, _pmdp++) {
+> +			_pmd = READ_ONCE(*_pmdp);
+> +			_pmd = pmd_mknoncont(_pmd);
+> +			set_pmd(_pmdp, _pmd);
+> +		}
+> +	}
+> +
+>  	set_pmd(pmdp, pfn_pmd(__phys_to_pfn(pte_phys),
+>  		__pgprot(PMD_TYPE_TABLE)));
+>  
+> @@ -200,7 +233,7 @@ static int split_pmd(pmd_t *pmdp, pmd_t pmdval,
+>  }
+>  
+>  static int split_pud(pud_t *pudp, pud_t pudval,
+> -		     phys_addr_t (*pgtable_alloc)(int))
+> +		     phys_addr_t (*pgtable_alloc)(int), int flags)
+>  {
+>  	unsigned long pfn;
+>  	pgprot_t prot;
+> @@ -221,6 +254,11 @@ static int split_pud(pud_t *pudp, pud_t pudval,
+>  
+>  	pmdp = (pmd_t *)phys_to_virt(pmd_phys);
+>  	init_clear_pgtable(pmdp);
+> +
+> +	/* It must be naturally aligned if PUD is leaf */
+> +	if ((flags & NO_CONT_MAPPINGS) == 0)
+> +		prot = __pgprot(pgprot_val(prot) | PTE_CONT);
+> +
+>  	for (int i = 0; i < PTRS_PER_PMD; i++, pmdp++) {
+>  		__set_pmd_nosync(pmdp, pfn_pmd(pfn, prot));
+>  		pfn += step;
+> @@ -235,11 +273,18 @@ static int split_pud(pud_t *pudp, pud_t pudval,
+>  }
+>  
+>  static void init_pte(pte_t *ptep, unsigned long addr, unsigned long end,
+> -		     phys_addr_t phys, pgprot_t prot)
+> +		     phys_addr_t phys, pgprot_t prot, int flags)
+>  {
+>  	do {
+>  		pte_t old_pte = __ptep_get(ptep);
+>  
+> +		if (flags & SPLIT_MAPPINGS) {
+> +			if (pte_cont(old_pte))
+> +				split_cont_pte(ptep);
+> +
+> +			continue;
+> +		}
+> +
+>  		/*
+>  		 * Required barriers to make this visible to the table walker
+>  		 * are deferred to the end of alloc_init_cont_pte().
+> @@ -266,8 +311,16 @@ static int alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+>  	unsigned long next;
+>  	pmd_t pmd = READ_ONCE(*pmdp);
+>  	pte_t *ptep;
+> +	bool split = flags & SPLIT_MAPPINGS;
+>  
+>  	BUG_ON(pmd_sect(pmd));
+> +
+> +	if (split) {
+> +		BUG_ON(pmd_none(pmd));
+> +		ptep = pte_offset_kernel(pmdp, addr);
+> +		goto split_pgtable;
+> +	}
+> +
+>  	if (pmd_none(pmd)) {
+>  		pmdval_t pmdval = PMD_TYPE_TABLE | PMD_TABLE_UXN | PMD_TABLE_AF;
+>  		phys_addr_t pte_phys;
+> @@ -287,6 +340,7 @@ static int alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+>  		ptep = pte_set_fixmap_offset(pmdp, addr);
+>  	}
+>  
+> +split_pgtable:
+>  	do {
+>  		pgprot_t __prot = prot;
+>  
+> @@ -297,7 +351,7 @@ static int alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+>  		    (flags & NO_CONT_MAPPINGS) == 0)
+>  			__prot = __pgprot(pgprot_val(prot) | PTE_CONT);
+>  
+> -		init_pte(ptep, addr, next, phys, __prot);
+> +		init_pte(ptep, addr, next, phys, __prot, flags);
+>  
+>  		ptep += pte_index(next) - pte_index(addr);
+>  		phys += next - addr;
+> @@ -308,7 +362,8 @@ static int alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+>  	 * ensure that all previous pgtable writes are visible to the table
+>  	 * walker.
+>  	 */
+> -	pte_clear_fixmap();
+> +	if (!split)
+> +		pte_clear_fixmap();
+>  
+>  	return 0;
+>  }
+> @@ -327,7 +382,12 @@ static int init_pmd(pmd_t *pmdp, unsigned long addr, unsigned long end,
+>  		next = pmd_addr_end(addr, end);
+>  
+>  		if (split) {
+> -			ret = split_pmd(pmdp, old_pmd, pgtable_alloc);
+> +			ret = split_pmd(pmdp, old_pmd, pgtable_alloc, flags);
+> +			if (ret)
+> +				break;
+> +
+> +			ret = alloc_init_cont_pte(pmdp, addr, next, phys, prot,
+> +						  pgtable_alloc, flags);
+>  			if (ret)
+>  				break;
+>  
+> @@ -469,7 +529,7 @@ static int alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
+>  		next = pud_addr_end(addr, end);
+>  
+>  		if (split) {
+> -			ret = split_pud(pudp, old_pud, pgtable_alloc);
+> +			ret = split_pud(pudp, old_pud, pgtable_alloc, flags);
+>  			if (ret)
+>  				break;
+>  
+> @@ -846,9 +906,6 @@ static void __init map_mem(pgd_t *pgdp)
+>  	if (force_pte_mapping())
+>  		flags |= NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
+>  
+> -	if (rodata_full)
+> -		flags |= NO_CONT_MAPPINGS;
+> -
+>  	/*
+>  	 * Take care not to create a writable alias for the
+>  	 * read-only text and rodata sections of the kernel image.
+> @@ -1547,9 +1604,6 @@ int arch_add_memory(int nid, u64 start, u64 size,
+>  	if (force_pte_mapping())
+>  		flags |= NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
+>  
+> -	if (rodata_full)
+> -		flags |= NO_CONT_MAPPINGS;
+> -
+>  	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
+>  			     size, params->pgprot, __pgd_pgtable_alloc,
+>  			     flags);
+> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+> index 5d42d87ea7e1..25c068712cb5 100644
+> --- a/arch/arm64/mm/pageattr.c
+> +++ b/arch/arm64/mm/pageattr.c
+> @@ -43,6 +43,8 @@ static int change_page_range(pte_t *ptep, unsigned long addr, void *data)
+>  	struct page_change_data *cdata = data;
+>  	pte_t pte = __ptep_get(ptep);
+>  
+> +	BUG_ON(pte_cont(pte));
+> +
+>  	pte = clear_pte_bit(pte, cdata->clear_mask);
+>  	pte = set_pte_bit(pte, cdata->set_mask);
+>  
 
-> But I absolutely agree that we need someone who knows that for sure
-> and can confirm.
-> Breaking anything, especially UAPI-related stuff is my nightmare.
->
-> >
-> > Otherwise, the change looks good to me.
->
-> Kind regards,
-> Alex
->
-> >
-> > Thanks,
-> > Jason
-> >
-> > > ---
-> > >  tools/include/uapi/asm-generic/socket.h | 21 +++++++++++++++++++--
-> > >  1 file changed, 19 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/tools/include/uapi/asm-generic/socket.h b/tools/include/=
-uapi/asm-generic/socket.h
-> > > index ffff554a5230..aa5016ff3d91 100644
-> > > --- a/tools/include/uapi/asm-generic/socket.h
-> > > +++ b/tools/include/uapi/asm-generic/socket.h
-> > > @@ -119,14 +119,31 @@
-> > >
-> > >  #define SO_DETACH_REUSEPORT_BPF 68
-> > >
-> > > +#define SO_PREFER_BUSY_POLL    69
-> > > +#define SO_BUSY_POLL_BUDGET    70
-> > > +
-> > > +#define SO_NETNS_COOKIE                71
-> > > +
-> > > +#define SO_BUF_LOCK            72
-> > > +
-> > > +#define SO_RESERVE_MEM         73
-> > > +
-> > > +#define SO_TXREHASH            74
-> > > +
-> > >  #define SO_RCVMARK             75
-> > >
-> > >  #define SO_PASSPIDFD           76
-> > >  #define SO_PEERPIDFD           77
-> > >
-> > > -#define SCM_TS_OPT_ID          78
-> > > +#define SO_DEVMEM_LINEAR       78
-> > > +#define SCM_DEVMEM_LINEAR      SO_DEVMEM_LINEAR
-> > > +#define SO_DEVMEM_DMABUF       79
-> > > +#define SCM_DEVMEM_DMABUF      SO_DEVMEM_DMABUF
-> > > +#define SO_DEVMEM_DONTNEED     80
-> > > +
-> > > +#define SCM_TS_OPT_ID          81
-> > >
-> > > -#define SO_RCVPRIORITY         79
-> > > +#define SO_RCVPRIORITY         82
-> > >
-> > >  #if !defined(__KERNEL__)
-> > >
-> > > --
-> > > 2.43.0
-> > >
 
