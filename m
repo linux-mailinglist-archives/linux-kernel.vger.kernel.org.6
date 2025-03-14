@@ -1,119 +1,149 @@
-Return-Path: <linux-kernel+bounces-560695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C452EA6085C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:38:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 925DDA6085F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:40:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2285D3BD8D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 05:38:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A995616ECE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 05:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6156114658D;
-	Fri, 14 Mar 2025 05:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A28143895;
+	Fri, 14 Mar 2025 05:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=one-eyed-alien.net header.i=@one-eyed-alien.net header.b="lKa9qq8s"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="CAqfbod0"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAB5142624
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 05:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC21E1E86E
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 05:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741930684; cv=none; b=qjl2LcYfS0ZYud6ennsCxIx5TsLaHAQUpNoRXLAj/6RKUxPBq5pj9JAeCgsZhrO2QMNdHVUSlY/NO1Rr5mwFEqwFzAcTfx9SPGd+2pBc3/0N0RyQvTjriDED4A5kKd1aE5H3JWn9RTA/9cobSRA2faaQIDvSZ/03n0w+2m/R8v4=
+	t=1741930835; cv=none; b=qn4NW5Abg3BP9I5Om4ZFSYmlZgbHoSvorl+eQFRBL8TJuhS8xsuMh3g14k1JX/y8eX5o2PYZzcH9G0S76wT1BMVEA9PJkWLXj0w7UAVCS+Hu5mkudbQzG1652xYdPfuw52E9pi119LbwDCSnxvYdwjwOzTveUfTizumHKdNx0o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741930684; c=relaxed/simple;
-	bh=ITOM/p6bRhx2xML4qWv+gWjXj/DXsfIAYjtEmJN9yJ0=;
+	s=arc-20240116; t=1741930835; c=relaxed/simple;
+	bh=9P6g4eTczIvn1VFQPL7r3DuGjsOk7C+WUFt8Sf8NUBM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IuWduxjbbuHH1lp6ubKsj86jnaJZMjonDKcrjfZOQnCaKHiyU0SF86Gt9hQmX7R3Uw9zj20A9KWTDGlFVn5tcIqEQLbmrEIoRJxkdB2LwQT1PsBlKPBNfjPYjMF2qYKu3NZRKYIB4UkeNEOhL66IcbdIVYDEAm+C7hpIqu5IWAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=one-eyed-alien.net; spf=pass smtp.mailfrom=one-eyed-alien.net; dkim=pass (1024-bit key) header.d=one-eyed-alien.net header.i=@one-eyed-alien.net header.b=lKa9qq8s; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=one-eyed-alien.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=one-eyed-alien.net
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so11355565e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 22:38:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=one-eyed-alien.net; s=google; t=1741930681; x=1742535481; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nMdQC/9roImk0s7GMGocgKU0Ea/u69+eAi5KKCuOS4g=;
-        b=lKa9qq8sVXBNkdVk/oTnlid1r6MzI+QGdvlwNO49/r+Wlsn2603DQQVcPF4pwKLKnA
-         k3s9llr8g2HavSqLMRAcYqqbzuz9PH8QqxE1USHVmwNsRgy/v0MoAfEITLXskESS37Yk
-         Yg0eHOnOuGMavb7pKNrW7+jhSrH/Zqj+7TtZs=
+	 To:Cc:Content-Type; b=j2p65acYzSFhoS6XInLdU+cxCEKAOAIX5vg6fka1eM6l9v/JKLryVV9KaYUuCQvzYf0mSrghM11kHc4rjOw/QLa6xEd/vwnwySoREaKNoSI7XVZzOZj0egka5RYpqUXvwDBYGXLytwtmxoIZVnYCTVsOqCQiPdu7VqleFkA1e/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=CAqfbod0; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com [209.85.221.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 5BCCB3F68D
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 05:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1741930823;
+	bh=KHVvEo4a2v+cW7rLYC5E5IP2TKLmXgAPS/TIAmIpZA0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=CAqfbod0caPEckgS9cNer6BoSFf/KO1mGs/BYj49aXoHqLwxLkPzuH2eFJZuPrFIP
+	 k/i7Yma5kpGdFm2XaY+yMTtOhPSmDaErnapN/zgGAxVVjrW8k1oqoQLA9E7fXnna5R
+	 pSmDrOt5VO3fJcu8Gha8jMBWb9h/xx3x0w5FZeJNojnOs1LZUCpOu8JqBsiJUM5+/M
+	 NyleL9xzJfli2yftCCuiZNHKvknXcQyHWbPT0fj4jlnFGhT8me9vNNQdYNtihb5BNF
+	 8BtMSFtEJvDr5o8q8qUfDI0E3izwgObi3piN2yjOBs8ydNOSmHH50Yf7ymRtjnzgqt
+	 s5qF4c7ydIaGA==
+Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-523da152dbfso699646e0c.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 22:40:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741930681; x=1742535481;
+        d=1e100.net; s=20230601; t=1741930822; x=1742535622;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nMdQC/9roImk0s7GMGocgKU0Ea/u69+eAi5KKCuOS4g=;
-        b=mnvzWamAVX+X8QFt6Lyn40WiY/kYgBSHXKrzkvR3zN6mq4rlo4voQWTdRoBYkdtDNw
-         w1Hwd5NEL2QYIFMjaFT7Baq2i2tejI1EzoytWL8hZVduKbqqJORtzcVhx5qsYDeqZnE5
-         CaHp43U7aNqhrtj9uhyHafh7+6dCTu1GX228iX9GUdOnqLh6MXRA07dm6BzJr0Ivhqqa
-         8iCMIjeRP/s4Th3TpiVFChMSmxdkYjsmhkPNUxjp9wlMuDpvLXP4LIDx6/Sfc3ufN/Oa
-         VCfWRZ7nd5NT3SNLoD8HyIXulg7+d98r+pYD8Hf7tEkbJXzMDMc3QBRQBKUi13MyxEp4
-         yHOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWeFEGsdYFVzuPDcxX97Z1HF1UC7r/0+qu9BGkZS/lVmBMVgCXWxzcw1tQQGA5ZmlOgdPpavK8X2268mrM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGmdhMkUdG7SKeRgyZYB0tAUTJAaBE10IOjxpDvDAfhtF+Kcpj
-	xGAxlKKlgqxzZzgN79920qEfnK40rhtAHcNcZmdK/J3i4OQjcKcC8+iew8xWwULXCAzj6v7FiaF
-	6Ovpn/g+bVPAVC7Q2HY8Lcb0Iv/4f/rANk1bzhA==
-X-Gm-Gg: ASbGncsC4nu+CxapJ92wUD1OcFLrgvvlobWNNUHgUnzzWc6lazDF7g7u7o8WN8FNfFV
-	1om+f2JCn6a0IiP4v+gvfdmIiCCfKCLubexOTIfWtGmCItVXqcw8GkOsHNrJtkWBXNi8bFkgzXb
-	JKGcgwJznybmv9Gi5k3tLAVVrKNmUgxiLs25Vgfa5oyLPKdb5jneHob8S6VJtj
-X-Google-Smtp-Source: AGHT+IEs3u8e0SIawkS0/fJFih2WrZJWPfOVEeJPqBtFWEdhJy97lW0NcxNn7WmOkK58p0NvgKwBMcEW53Jtx0NOt5c=
-X-Received: by 2002:a05:600c:458e:b0:43b:d1ad:9241 with SMTP id
- 5b1f17b1804b1-43d1ec7264bmr12970265e9.9.1741930681134; Thu, 13 Mar 2025
- 22:38:01 -0700 (PDT)
+        bh=KHVvEo4a2v+cW7rLYC5E5IP2TKLmXgAPS/TIAmIpZA0=;
+        b=FHtAd+AhEEuNQFYGrxPKx8HhTaFCXOXxy2nk51/885SNWsbEeNQZI3dBJTmd15ql/e
+         BF8Yr0fFaK4PgoShcMt3h5MXWTa8/lzZ4iDmZCf3a/c2aZvXYqvLKHxXy7TNd1Q7vI6A
+         Jniz3kKup/YX0XfJOUJCS5piLvUJc952jJHWqDJiJQRVKTfEfLXDhnYxvL7VjDAzhEV9
+         JazmcVI9P1zrtur8MKdRNZsMCVMbSUUVhgaKIs05eJy7/k6GKnMPHTLnCGrnyZjbzRAX
+         +UXJ4guzj4JcFkGRPsKwbEHMyt+x7vsQcjA5ckw1pND1at/FJe8miud3GtrUXkWYcRMb
+         dOxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsfxnCZ6Alksc9h/W4eMrFo/OxBKU3xL6obbqHVrk7gbk3NwWXOgOyQtim20yE3Tm0MDtcHokMVm+cebQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYhAQjZayIK+vlyQCBQ2p5DsvynSkLahRhtSQ+IDqx8vWvW6wz
+	PpZpdsso0t9UA8gzKltRxUPMT68jCbEAw1GyP7M92zrwyUCf+OTQsxio2voPaRVwa4UbT9bOyEs
+	19OtdyJNnVsNQ2RMQ8hyZKPdlagJ7XEQ/lOsHe056uOIgVxEP3tYclTOS/KBzH2My5gWyUZuieX
+	lujaphQ9ZzAFpXS68xfu0Wehkk31yYpYBTuSUvRtHSFDjiHpF4C3VK
+X-Gm-Gg: ASbGncvCYsX722SrY20gIQ4W7Oj/W5fVwD2guv86W2sVRKFWr0SUlg5LjGlLkRBh0Ti
+	hWq2O4F1zFx6rZ1QyAvf8+2IkMJucVQ0dDFKWiNkozEDJsKy+prGMbyiqBsftj2Esbkqa+PgaeQ
+	==
+X-Received: by 2002:a05:6102:3ed5:b0:4c3:52f:175c with SMTP id ada2fe7eead31-4c382f9c38cmr701333137.0.1741930822217;
+        Thu, 13 Mar 2025 22:40:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFkuI4xwxwmD4W5vZwFXVV+zKk/vRrjtyFmpUBFLwhuuzFgHWzblfl66y37xJJgM90/2dkfIVuz1WX3xnyepHM=
+X-Received: by 2002:a05:6102:3ed5:b0:4c3:52f:175c with SMTP id
+ ada2fe7eead31-4c382f9c38cmr701328137.0.1741930821970; Thu, 13 Mar 2025
+ 22:40:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311084111.322351-1-daixin_tkzc@163.com> <2b6c4aa7.b165.1958f6b7a3a.Coremail.daixin_tkzc@163.com>
- <814316b6-013b-4735-995d-b6c0c616c71b@rowland.harvard.edu> <1681f087.2727.195927b7ccb.Coremail.daixin_tkzc@163.com>
-In-Reply-To: <1681f087.2727.195927b7ccb.Coremail.daixin_tkzc@163.com>
-From: Matthew Dharm <mdharm-usb@one-eyed-alien.net>
-Date: Thu, 13 Mar 2025 22:37:50 -0700
-X-Gm-Features: AQ5f1JqK7mfkFRnnHhbib_ouPOR3RruHwBQMl_f6l0-0E-jlRPVLn-J2Iu35hI8
-Message-ID: <CAA6KcBAU75TS348_NNLudMv=Ub=h_K2x9CC3=RfLtRvxKiq5Dw@mail.gmail.com>
-Subject: Re: [usb-storage] Re:Re:[PATCH] usb: storage: Fix `us->iobuf` size
- for BOT transmission to prevent memory overflow
-To: daixin_tkzc <daixin_tkzc@163.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Greg KH <gregkh@linuxfoundation.org>, 
-	linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net, 
-	linux-kernel@vger.kernel.org
+References: <20250313041711.872378-1-leo.lin@canonical.com> <878qp9dx54.fsf@intel.com>
+In-Reply-To: <878qp9dx54.fsf@intel.com>
+From: "Yo-Jung (Leo) Lin" <leo.lin@canonical.com>
+Date: Fri, 14 Mar 2025 13:40:10 +0800
+X-Gm-Features: AQ5f1Jqt4zZ3VwSHms6FObxGsQo-FxR5l0nzNgI0L4koCsAaEmsRm1MKhPg3l5o
+Message-ID: <CABscksPic1NdfVs+_g9s_HtyDtAACKNshbMXObWApmiMMhyf_A@mail.gmail.com>
+Subject: Re: [PATCH] drm: add .hdrtest to .gitignore under drm directories
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 13, 2025 at 7:28=E2=80=AFPM daixin_tkzc <daixin_tkzc@163.com> w=
-rote:
+Hi Jani,
+
+On Thu, Mar 13, 2025 at 6:48=E2=80=AFPM Jani Nikula <jani.nikula@linux.inte=
+l.com> wrote:
 >
-> When the urb complete (babble error occurs), the sg_complete function of =
-urb(s) will notify the mass storage driver that the data phase of the BOT t=
-ransfer is over. The rest is done by the mass storage driver, such us:
+> On Thu, 13 Mar 2025, "Yo-Jung (Leo) Lin" <leo.lin@canonical.com> wrote:
+> > The header self-contained tests in drm may leave .hdrtest files in
+> > include/drm/ and drivers/gpu/drm/. Omit them by adding .gitignore
+>
+> This has already been the case with usr/include for
+> CONFIG_UAPI_HEADER_TEST=3Dy but I guess nobody noticed before.
+>
+> Maybe fix that too?
 
-You appear very focused on a specific sequence of events which causes
-the babble error, but we are telling you that you are looking in the
-wrong place.
+I think for usr/include there's already a .gitignore for that. For
+example see commit  5134e94ac4f5 (usr/include: refactor .gitignore).
 
-If the DWC_otc driver does, in fact, handle packet babble properly,
-then it will never overflow the buffer.
+>
+> BR,
+> Jani.
+>
+>
+> >
+> > Signed-off-by: Yo-Jung (Leo) Lin <leo.lin@canonical.com>
+> > ---
+> >  drivers/gpu/drm/.gitignore | 1 +
+> >  include/drm/.gitignore     | 1 +
+> >  2 files changed, 2 insertions(+)
+> >  create mode 100644 drivers/gpu/drm/.gitignore
+> >  create mode 100644 include/drm/.gitignore
+> >
+> > diff --git a/drivers/gpu/drm/.gitignore b/drivers/gpu/drm/.gitignore
+> > new file mode 100644
+> > index 000000000000..d9a77f3b59b2
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/.gitignore
+> > @@ -0,0 +1 @@
+> > +*.hdrtest
+> > diff --git a/include/drm/.gitignore b/include/drm/.gitignore
+> > new file mode 100644
+> > index 000000000000..d9a77f3b59b2
+> > --- /dev/null
+> > +++ b/include/drm/.gitignore
+> > @@ -0,0 +1 @@
+> > +*.hdrtest
+>
+> --
+> Jani Nikula, Intel
 
-For example, forget the specifics of usb-storage.  Consider a BULK IN
-request to an arbitrary device with an URB that provides an iobuf of
-only 32 bytes, but the device sends 512 bytes -- the reason the device
-sends too much data is not important; this is a babble condition.  The
-controller and controller driver is *required* NOT to overflow the
-32-byte buffer.  The remaining bytes received by the host are required
-to be discarded.
-
-Thus, even when a usb-storage device gets "out of sync" (i.e. is
-sending data instead of a CSW), a buffer overflow is NOT POSSIBLE if
-the controller is functioning properly.  If the controller writes data
-beyond the end of the buffer, then that is an error of the controller
-and/or controller driver software.  The design of the Linux USB stack
-places this requirement on the controllers.
-
-Matt
+Best,
+Leo
 
