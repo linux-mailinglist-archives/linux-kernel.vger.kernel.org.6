@@ -1,146 +1,252 @@
-Return-Path: <linux-kernel+bounces-560962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D03CA60B9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:31:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81446A60BA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:32:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B0E87AEA0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:30:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4855E19C2839
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7CF1CB31D;
-	Fri, 14 Mar 2025 08:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93554190676;
+	Fri, 14 Mar 2025 08:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJ9mnZfc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="XuruNDhg"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC3A1C84C0;
-	Fri, 14 Mar 2025 08:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEA917C211
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741941054; cv=none; b=Ijs/E1E9RpEjzBI+Cks/lpZ43kWX0C+aypLamA5xdghoGqzMGiuepR4/EXMWPu07qfzedsCOKiSHCY8smCCaQCxj/L54srCtGXNrO/z1617fE/SESHRiomBYjNj3flNu4ceetuMBIU6J5TfKsnNHULl43Ww1zSjQxa5P8DRoYJI=
+	t=1741941115; cv=none; b=VJ6CQRBbqG+PQ+zRtB+poMwaznAacNuXmEn0RQqq6DisEFimnoG0waeo6zoh/PLoVRfPeCn8Xpiwb1t3wbUZkW0w8tzwvsbFCrmKu57qB5wh/h8zjhdDz5Jpy9QI/tPlHnyggr5RxPJIl5VWXhV6XOqtOV3ivejT03dQy3NijZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741941054; c=relaxed/simple;
-	bh=Rkc0SP4VHxp6hxY21Mys8rojGRFiRsk4iICpePJsRs0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=c39IXKk0bOmQGWmd1xfQxP4mccptpjRdC0GwTFIeZvCdg3Q4ZNnpFdZO7KvM042sHlGcugo1N71qCag9eSxYXuXBEhJJjKyVNQISBgmwFrDiznqH6dhiCIXuxmW79uBOHE1u6JqaG5xXj/3yVplg+9FTdSnU8xB2kIBVSv/XKZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dJ9mnZfc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAEF1C4CEF1;
-	Fri, 14 Mar 2025 08:30:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741941053;
-	bh=Rkc0SP4VHxp6hxY21Mys8rojGRFiRsk4iICpePJsRs0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=dJ9mnZfciy5Q6V6gTclDBr+qRgaKRvYg/ag4N7m4TzkCCVOvvGoDQPHqP6fbOxhM0
-	 bMsGNnjC6NQaw3LhhF/m41XvWPo3CSjrHbu4ztVX1mE6ejNN6gsYGBof4HYj1l+60B
-	 M/Sev4wrujJ3FP3xB1csvFNDZ99JI0lWifoyGs/ECNM6cfy1dlHxzU6mcR07JsEUkq
-	 A19mX/V0lqxHKk1vFXmF43stYWUHkJmI1tnh1EgT2nzGan0D9IfXnobEvYXkI5H9SO
-	 0bNjePwHMBpMEpUiqay+gCRWMCuXmED/79Gq3QxJrlaDSCqMG3IuzbZA8M8HFCOqmg
-	 w7L94Wl5jno9g==
-Date: Fri, 14 Mar 2025 19:00:54 +1030
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: linux-rtc@vger.kernel.org, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2][next] rtc: Avoid a couple of
- -Wflex-array-member-not-at-end warnings
-Message-ID: <Z9PpPg06OK8ghNvm@kspp>
+	s=arc-20240116; t=1741941115; c=relaxed/simple;
+	bh=XZMABUR4Y+HuilIvtRMdIBmboOS3JgMgTlh3Fx0OYEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hEm54hZHVaaP3ttzH9jKQezpe7wSV9iwxFk/VJcr0T6SeBKfb+QUikxSwatajn2c8S3XOHBrPsvLFzSYhSWJy1y7OMc5ST3I3i9sxs/PRpfc0BAr9HzmZ4q2sVNkzyZr6SvqLFrXiNT7xczC3FkYQ+Z96vQU6KbrSbrVUalyhH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=XuruNDhg; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-85da539030eso64601039f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:31:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1741941113; x=1742545913; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wumHTb0kka5JjaRZHTcNujfy6a7p/Uo/SNTAmw90Qd8=;
+        b=XuruNDhg4ZwPbhFXkFevnd9rUWAqj7wash+owM4KffWGWCa+i6mowcw1iHdAkFd8xi
+         cE+L60CRjcmHwOoG8avnMdDFupDcBlwbcxxkMvj14nqwAHuSKKYIJJkRZr3tcMnvfycE
+         0mBYEVA8KzVNMU1PogCGwxRn7y3oP3qd1dW/gdJNzoFafQEPucRBW4vE6slYzpQ/qpNo
+         1RzkPMwRJL9DZJbCK3gBt+6PkRrOMxUpxN9tLQRZOxNMGo0xTNy3LbLMgXEvCYxoysar
+         7NGjvP2tcDGLrdk53lGlHciNlDLig76+iRUwP4COCr1UbFTLuZf1DGXStwYY/m+9nfOR
+         EkXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741941113; x=1742545913;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wumHTb0kka5JjaRZHTcNujfy6a7p/Uo/SNTAmw90Qd8=;
+        b=BOJQn423kojOp44VSVwZ31OAyNQFFlt9O3kRbdX6uigcf4ikkiuZj76z4WNEr2fO98
+         GxHEGFEhaWjq4a1VsxLi1aOs9IgEGnEEx1/McGDJ/1qI4sDl/nZ9WBQr9S6HR9Lni/oE
+         DXIpAFsg+um/mK0x3jLQsASyESiYvwbWdnbk0diG8tMafH4NVxTrVRwufNeLXC2zNQ7T
+         V7FksPUPDEAV9vwh39r0q5YRWakrprt664dSRxMoPh9uAX4aE/kIoUOaoOrXzMazQnZ6
+         QmVTo2Z7gttfooAec23nnyimdZ8DHqGpWRXcrQLi024ikzpI+P/Ne/gydyGSOBE70pEV
+         2b9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUvlldZEirvG4gOw2kVDa/nPO0tHuDvUbjT9qF5TNVRtkeL7sX7koDfWpGWSbTl4ZJPk55PdPpd8JWbdjA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmeVTQ31GtOrEKxj5EDq8h4VnfsPzAXvAW/bkbyoI4wPdmhDG9
+	w9gS7cvq8JHRp/ZKtGzZ0EQPTrciRyZ9G9WvD6L/9RMRASRfzl2jBWeDjy4oBirrZ4m2An6kzik
+	WfPRPREnj1hXRcjnV/vAoeG1yEkJDDMBVoE4mFQ==
+X-Gm-Gg: ASbGnctMmItvOMqTh02+fmHjJl31pCzlqdE7LiKRa9VvSVms4cyJF/soif37BTEImGw
+	ulyi0UOeOZEGc3KTvHlBtpqGw3nEc/259oHBqKD/hpcuHZvAAy3nkg2ebXIJqIQtQF9AE4GsjOE
+	OawehvCIAG3XQgi/JX4AoKmBzTggc=
+X-Google-Smtp-Source: AGHT+IF3wiq44CuMfBnA+HLDTnOn67gvme9KT+6oA+bhbghqwQ9Ypxqh8gJUB2Og+bw/774omJHZRixeIKKImxlIRS8=
+X-Received: by 2002:a05:6602:610c:b0:85b:4ad0:c8cd with SMTP id
+ ca18e2360f4ac-85db81eb853mr553667539f.0.1741941113257; Fri, 14 Mar 2025
+ 01:31:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250310-v5_user_cfi_series-v11-0-86b36cbfb910@rivosinc.com> <20250310-v5_user_cfi_series-v11-14-86b36cbfb910@rivosinc.com>
+In-Reply-To: <20250310-v5_user_cfi_series-v11-14-86b36cbfb910@rivosinc.com>
+From: Zong Li <zong.li@sifive.com>
+Date: Fri, 14 Mar 2025 16:31:42 +0800
+X-Gm-Features: AQ5f1Jph57H6Q0PgCRIxwT8-PlynROINsKKGDQZtxTGL5mjRpR_T5UPaHa560LA
+Message-ID: <CANXhq0r5bgO5CkwwRbN24x66juXGi=5PMi5XkZiv-0mQJRR_Hw@mail.gmail.com>
+Subject: Re: [PATCH v11 14/27] riscv/traps: Introduce software check exception
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
+	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
+	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
+	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
-a flexible structure where the size of the flexible-array member
-is known at compile-time, and refactor the rest of the code,
-accordingly.
+On Mon, Mar 10, 2025 at 11:42=E2=80=AFPM Deepak Gupta <debug@rivosinc.com> =
+wrote:
+>
+> zicfiss / zicfilp introduces a new exception to priv isa `software check
+> exception` with cause code =3D 18. This patch implements software check
+> exception.
+>
+> Additionally it implements a cfi violation handler which checks for code
+> in xtval. If xtval=3D2, it means that sw check exception happened because=
+ of
+> an indirect branch not landing on 4 byte aligned PC or not landing on
+> `lpad` instruction or label value embedded in `lpad` not matching label
+> value setup in `x7`. If xtval=3D3, it means that sw check exception happe=
+ned
+> because of mismatch between link register (x1 or x5) and top of shadow
+> stack (on execution of `sspopchk`).
+>
+> In case of cfi violation, SIGSEGV is raised with code=3DSEGV_CPERR.
+> SEGV_CPERR was introduced by x86 shadow stack patches.
+>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>  arch/riscv/include/asm/asm-prototypes.h |  1 +
+>  arch/riscv/include/asm/entry-common.h   |  2 ++
+>  arch/riscv/kernel/entry.S               |  3 +++
+>  arch/riscv/kernel/traps.c               | 43 +++++++++++++++++++++++++++=
+++++++
+>  4 files changed, 49 insertions(+)
+>
+> diff --git a/arch/riscv/include/asm/asm-prototypes.h b/arch/riscv/include=
+/asm/asm-prototypes.h
+> index cd627ec289f1..5a27cefd7805 100644
+> --- a/arch/riscv/include/asm/asm-prototypes.h
+> +++ b/arch/riscv/include/asm/asm-prototypes.h
+> @@ -51,6 +51,7 @@ DECLARE_DO_ERROR_INFO(do_trap_ecall_u);
+>  DECLARE_DO_ERROR_INFO(do_trap_ecall_s);
+>  DECLARE_DO_ERROR_INFO(do_trap_ecall_m);
+>  DECLARE_DO_ERROR_INFO(do_trap_break);
+> +DECLARE_DO_ERROR_INFO(do_trap_software_check);
+>
+>  asmlinkage void handle_bad_stack(struct pt_regs *regs);
+>  asmlinkage void do_page_fault(struct pt_regs *regs);
+> diff --git a/arch/riscv/include/asm/entry-common.h b/arch/riscv/include/a=
+sm/entry-common.h
+> index b28ccc6cdeea..34ed149af5d1 100644
+> --- a/arch/riscv/include/asm/entry-common.h
+> +++ b/arch/riscv/include/asm/entry-common.h
+> @@ -40,4 +40,6 @@ static inline int handle_misaligned_store(struct pt_reg=
+s *regs)
+>  }
+>  #endif
+>
+> +bool handle_user_cfi_violation(struct pt_regs *regs);
+> +
+>  #endif /* _ASM_RISCV_ENTRY_COMMON_H */
+> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> index 00494b54ff4a..9c00cac3f6f2 100644
+> --- a/arch/riscv/kernel/entry.S
+> +++ b/arch/riscv/kernel/entry.S
+> @@ -472,6 +472,9 @@ SYM_DATA_START_LOCAL(excp_vect_table)
+>         RISCV_PTR do_page_fault   /* load page fault */
+>         RISCV_PTR do_trap_unknown
+>         RISCV_PTR do_page_fault   /* store page fault */
+> +       RISCV_PTR do_trap_unknown /* cause=3D16 */
+> +       RISCV_PTR do_trap_unknown /* cause=3D17 */
+> +       RISCV_PTR do_trap_software_check /* cause=3D18 is sw check except=
+ion */
+>  SYM_DATA_END_LABEL(excp_vect_table, SYM_L_LOCAL, excp_vect_table_end)
+>
+>  #ifndef CONFIG_MMU
+> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
+> index 8ff8e8b36524..3f7709f4595a 100644
+> --- a/arch/riscv/kernel/traps.c
+> +++ b/arch/riscv/kernel/traps.c
+> @@ -354,6 +354,49 @@ void do_trap_ecall_u(struct pt_regs *regs)
+>
+>  }
+>
+> +#define CFI_TVAL_FCFI_CODE     2
+> +#define CFI_TVAL_BCFI_CODE     3
+> +/* handle cfi violations */
+> +bool handle_user_cfi_violation(struct pt_regs *regs)
+> +{
+> +       bool ret =3D false;
+> +       unsigned long tval =3D csr_read(CSR_TVAL);
+> +
+> +       if ((tval =3D=3D CFI_TVAL_FCFI_CODE && cpu_supports_indirect_br_l=
+p_instr()) ||
+> +           (tval =3D=3D CFI_TVAL_BCFI_CODE && cpu_supports_shadow_stack(=
+))) {
+> +               do_trap_error(regs, SIGSEGV, SEGV_CPERR, regs->epc,
+> +                             "Oops - control flow violation");
+> +               ret =3D true;
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +/*
+> + * software check exception is defined with risc-v cfi spec. Software ch=
+eck
+> + * exception is raised when:-
+> + * a) An indirect branch doesn't land on 4 byte aligned PC or `lpad`
+> + *    instruction or `label` value programmed in `lpad` instr doesn't
+> + *    match with value setup in `x7`. reported code in `xtval` is 2.
+> + * b) `sspopchk` instruction finds a mismatch between top of shadow stac=
+k (ssp)
+> + *    and x1/x5. reported code in `xtval` is 3.
+> + */
+> +asmlinkage __visible __trap_section void do_trap_software_check(struct p=
+t_regs *regs)
+> +{
+> +       if (user_mode(regs)) {
+> +               irqentry_enter_from_user_mode(regs);
+> +
+> +               /* not a cfi violation, then merge into flow of unknown t=
+rap handler */
+> +               if (!handle_user_cfi_violation(regs))
+> +                       do_trap_unknown(regs);
+> +
+> +               irqentry_exit_to_user_mode(regs);
+> +       } else {
+> +               /* sw check exception coming from kernel is a bug in kern=
+el */
+> +               die(regs, "Kernel BUG");
+> +       }
+> +}
+> +
+>  #ifdef CONFIG_MMU
+>  asmlinkage __visible noinstr void do_page_fault(struct pt_regs *regs)
+>  {
+>
 
-So, with these changes, fix the following warning:
+LGTM.
 
-drivers/rtc/rtc-cros-ec.c:62:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/rtc/rtc-cros-ec.c:40:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+Reviewed-by: Zong Li <zong.li@sifive.com>
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
-Change in v2:
- - Cast to `struct ec_response_rtc *`, instead of using memcpy(). (Tzung-Bi Shih)
-
-v1:
- - Link: https://lore.kernel.org/linux-hardening/Z9N8BsVJF-s6Hcvd@kspp/
-
- drivers/rtc/rtc-cros-ec.c | 30 ++++++++++++------------------
- 1 file changed, 12 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/rtc/rtc-cros-ec.c b/drivers/rtc/rtc-cros-ec.c
-index 865c2e82c7a5..e956505a06fb 100644
---- a/drivers/rtc/rtc-cros-ec.c
-+++ b/drivers/rtc/rtc-cros-ec.c
-@@ -35,21 +35,18 @@ struct cros_ec_rtc {
- static int cros_ec_rtc_get(struct cros_ec_device *cros_ec, u32 command,
- 			   u32 *response)
- {
-+	DEFINE_RAW_FLEX(struct cros_ec_command, msg, data,
-+			sizeof(struct ec_response_rtc));
- 	int ret;
--	struct {
--		struct cros_ec_command msg;
--		struct ec_response_rtc data;
--	} __packed msg;
- 
--	memset(&msg, 0, sizeof(msg));
--	msg.msg.command = command;
--	msg.msg.insize = sizeof(msg.data);
-+	msg->command = command;
-+	msg->insize = sizeof(struct ec_response_rtc);
- 
--	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
-+	ret = cros_ec_cmd_xfer_status(cros_ec, msg);
- 	if (ret < 0)
- 		return ret;
- 
--	*response = msg.data.time;
-+	*response = ((struct ec_response_rtc *)msg->data)->time;
- 
- 	return 0;
- }
-@@ -57,18 +54,15 @@ static int cros_ec_rtc_get(struct cros_ec_device *cros_ec, u32 command,
- static int cros_ec_rtc_set(struct cros_ec_device *cros_ec, u32 command,
- 			   u32 param)
- {
-+	DEFINE_RAW_FLEX(struct cros_ec_command, msg, data,
-+			sizeof(struct ec_response_rtc));
- 	int ret;
--	struct {
--		struct cros_ec_command msg;
--		struct ec_response_rtc data;
--	} __packed msg;
- 
--	memset(&msg, 0, sizeof(msg));
--	msg.msg.command = command;
--	msg.msg.outsize = sizeof(msg.data);
--	msg.data.time = param;
-+	msg->command = command;
-+	msg->outsize = sizeof(struct ec_response_rtc);
-+	((struct ec_response_rtc *)msg->data)->time = param;
- 
--	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
-+	ret = cros_ec_cmd_xfer_status(cros_ec, msg);
- 	if (ret < 0)
- 		return ret;
- 	return 0;
--- 
-2.43.0
-
+> --
+> 2.34.1
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
